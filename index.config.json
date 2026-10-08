@@ -1,0 +1,31 @@
+{
+  "$schema": "folio-index-config/v1",
+  "instances": [
+    {
+      "name": "folio-assistant-core",
+      "source": {
+        "local": {
+          "at": "."
+        }
+      }
+    },
+    {
+      "name": "cat-harness",
+      "source": {
+        "remote": {
+          "repository": "litlfred/cat-harness",
+          "ref": "f7efa39c9731b5f26bcec147cf7a49b9193dba0b"
+        }
+      }
+    },
+    {
+      "name": "cat-harness-tools",
+      "source": {
+        "remote": {
+          "repository": "litlfred/cat-harness-tools",
+          "ref": "64cc1c62541dca55e779091e9881d03d8166cd39"
+        }
+      }
+    }
+  ]
+}
