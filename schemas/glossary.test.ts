@@ -170,7 +170,9 @@ describe("the glossary pages", () => {
     expect([...PAGE_KEYS] as string[]).toEqual(["index", ...ASSET_TYPES.flatMap((t) => [t, ...(LETTER_PARTS[t] ?? []).map((r) => `${t}/${r}`)])]);
     const out = outputs(c);
     for (const k of PAGE_KEYS) expect(out.get(pagePath(k))).toBe(pages.get(k)!);
-  });
+    // `outputs` renders every page AND every SKOS file over the whole corpus:
+    // the same budget, for the same reason, as the SKOS test above.
+  }, 30_000);
 
   test("every term appears exactly once across all the pages, and on the page its scheme belongs to", () => {
     const seen = new Map<string, string>();
@@ -432,7 +434,9 @@ describe("extracted KG terms", () => {
     expect(gen.length).toBe(extracted.length);
     for (const p of gen) expect(p.startsWith("folio-assistant-core/glossary/generated/")).toBe(true);
     for (const s of c.glossaries.filter((x) => !x.extracted)) expect(gen).not.toContain(s.file);
-  });
+    // `outputs` over the whole corpus: measured 5.3-5.8 s on 2026-10-09,
+    // over bun's 5 s default. A corpus budget, as above, not a hang guard.
+  }, 30_000);
 
   test("an authored scheme may not take the extracted prefix", () => {
     expect(c.glossaries.filter((s) => !s.extracted && s.glossary.id.startsWith(EXTRACTED_PREFIX))).toEqual([]);
@@ -534,7 +538,12 @@ describe("every term in the namespace of the instance that owns its source", () 
     expect(schemeOwner(REPO, g({ terms: [] }), "folio-assistant-core", owners)).toEqual({ owner: "folio-assistant-core" });
     // A sub-instance, never the root, holds a path inside it.
     expect(ownerOfPath(REPO, "cat-harness/schemas/odrl.ts", owners)).toBe("cat-harness");
-    expect(ownerOfPath(REPO, "package.json", owners)).toBe("folio-assistant");
+    // A path at the index root is held by NO instance. This read
+    // `.toBe("folio-assistant")` while the root declared that instance; the
+    // separation removed the declaration (folio-assistant@3d4caf6e0f) and
+    // the root is now an index of mounts, so a root file has no owner and a
+    // scheme sourced there is refused ("in no instance") rather than credited.
+    expect(ownerOfPath(REPO, "package.json", owners)).toBeUndefined();
     expect(repoPathOf("https://example.org/x#y", REPO)).toBeUndefined();
     expect(repoPathOf("Skills of cat-harness", REPO)).toBeUndefined();
     expect(repoPathOf("cat-harness/schemas/odrl.ts#Policy", REPO)).toBe("cat-harness/schemas/odrl.ts");
