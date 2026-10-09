@@ -256,7 +256,6 @@
     {
       "id": "beans",
       "path": "beans/",
-      "scope": "repository",
       "description": "The work plan for folio-assistant-core.",
       "graphTypologies": [
         "beans"
