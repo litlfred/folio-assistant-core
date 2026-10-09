@@ -223,14 +223,6 @@
       "status": "candidate"
     },
     {
-      "id": "fsh-guts-viewer",
-      "prefLabel": "Staging-only graph viewer",
-      "definition": "Render the kept-but-unpublished workspace graph as one page, for a local build or a staging preview only; a canonical deploy withholds it.",
-      "notation": "fsh-guts-viewer",
-      "source": "cat-harness/tools/viewers.ts#fsh-guts-viewer",
-      "status": "candidate"
-    },
-    {
       "id": "gates",
       "prefLabel": "The platform's quality gates",
       "definition": "Run the checks CI runs, derived from the workflow rather than listed here. One Tool for all of them, not one per gate: the list is computed from `.github/workflows/code-quality-gates.yml` at call time, so it cannot drift from what CI actually enforces.",
@@ -820,6 +812,14 @@
       "definition": "Build a named slice of a graph (beans, todos, library, or the whole-repo kg) as one SQLite file a browser mounts without parsing it, beside a manifest carrying its sha256, a row-content digest, its row counts and the search block the one search page reads. Heavy text is indexed by a contentless FTS5 and not stored; each row points at a content-addressed payload. `--check` builds every slice twice, requires one sha256, and requires the row digest read back from the file to equal the one computed from the source.",
       "notation": "slice-sqlite",
       "source": "cat-harness/tools/index.ts#slice-sqlite",
+      "status": "candidate"
+    },
+    {
+      "id": "staging-graph-viewer",
+      "prefLabel": "Staging-only graph viewer",
+      "definition": "Render a kept-but-unpublished workspace graph as one page, for a local build or a staging preview only; a canonical deploy withholds it.",
+      "notation": "staging-graph-viewer",
+      "source": "cat-harness/tools/viewers.ts#staging-graph-viewer",
       "status": "candidate"
     },
     {

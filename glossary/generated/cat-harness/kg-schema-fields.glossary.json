@@ -3061,7 +3061,7 @@
     {
       "id": "cat-harness.harnessvisualiserschema.coverskinds",
       "prefLabel": "HarnessVisualiserSchema.coversKinds",
-      "definition": "Graph typologies it covers across the corpus stacked on this harness.",
+      "definition": "Graph typologies it covers, over every declared directory of them in the checkout.",
       "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.coversKinds",
       "status": "candidate"
     },
