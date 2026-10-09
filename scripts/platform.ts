@@ -32,7 +32,7 @@ export { subjectPage } from "../../cat-harness/scripts/harness-tiles.js";
 // A harness declares each visualiser in its own `<instance>.json`
 // `visualisers`; its URL is `visualiserRoute`'s, never composed by a page.
 export { visualiserRoute, siteRootFrom } from "../../cat-harness/schemas/visualiser-route.js";
-export { declaredRoute, siteOwnerDir, visualiserPageDir, withRenderedBy } from "../../cat-harness/scripts/viewer-declarations.js";
+export { declaredRoute, siteOwnerDir, visualiserPageDir, withRenderedBy, withRenderedByFrontMatter } from "../../cat-harness/scripts/viewer-declarations.js";
 
 // ── cat-harness: Tool nodes, for an instance's own `tools` graph ──────────
 export { defineTool, type ToolDefinition } from "../../cat-harness/schemas/tool.js";

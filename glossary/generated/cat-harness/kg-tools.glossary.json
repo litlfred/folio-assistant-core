@@ -223,6 +223,14 @@
       "status": "candidate"
     },
     {
+      "id": "fsh-guts-viewer",
+      "prefLabel": "Staging-only graph viewer",
+      "definition": "Render the kept-but-unpublished workspace graph as one page, for a local build or a staging preview only; a canonical deploy withholds it.",
+      "notation": "fsh-guts-viewer",
+      "source": "cat-harness/tools/viewers.ts#fsh-guts-viewer",
+      "status": "candidate"
+    },
+    {
       "id": "gates",
       "prefLabel": "The platform's quality gates",
       "definition": "Run the checks CI runs, derived from the workflow rather than listed here. One Tool for all of them, not one per gate: the list is computed from `.github/workflows/code-quality-gates.yml` at call time, so it cannot drift from what CI actually enforces.",
@@ -503,6 +511,14 @@
       "status": "candidate"
     },
     {
+      "id": "npm",
+      "prefLabel": "Package manager and registry client for npm and GitHub Packages",
+      "definition": "Package, publish, inspect, and retrieve npm packages and Knowledge Graphs distributed as tarballs or packages from npm registry or GitHub Packages.",
+      "notation": "npm",
+      "source": "cat-harness/tools/index.ts#npm",
+      "status": "candidate"
+    },
+    {
       "id": "ns-vocabulary",
       "prefLabel": "Namespace vocabulary",
       "definition": "Emit the folio namespace as a document that dereferences — one node per class and property, each with an @id, a type, a label and a definition, so a consumer holding only the JSON-LD can resolve any term it meets.",
@@ -524,6 +540,14 @@
       "definition": "A person follows the package-release skill: computes the bump, writes the CHANGELOG entry, tags `<package>-v<version>`, and creates the release on the host. The same four steps with nothing to configure.",
       "notation": "package-release-manual",
       "source": "cat-harness/tools/index.ts#package-release-manual",
+      "status": "candidate"
+    },
+    {
+      "id": "package-release-workflow",
+      "prefLabel": "Release package via GitHub Actions release workflow",
+      "definition": "Build, tag, and publish an npm package tarball to GitHub Releases and GitHub Packages registry via workflow_dispatch across any repository.",
+      "notation": "package-release-workflow",
+      "source": "cat-harness/tools/index.ts#package-release-workflow",
       "status": "candidate"
     },
     {

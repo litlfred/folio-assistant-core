@@ -2499,6 +2499,13 @@
       "status": "candidate"
     },
     {
+      "id": "cat-harness.catharnessdeclaration.visualisers",
+      "prefLabel": "CatHarnessDeclaration.visualisers",
+      "definition": "The visualisers this harness declares, each at `<base>/<name>/<id>/` — {@link HarnessVisualiser}. Owner, 2026-10-09.",
+      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.visualisers",
+      "status": "candidate"
+    },
+    {
       "id": "cat-harness.catharnessdeclarationschema.alsowritten",
       "prefLabel": "CatHarnessDeclarationSchema.alsoWritten",
       "definition": "Other ways the instance's name is written, shown on the landing as a small \"also written\" list rather than run into the description as one line. Owner's choice, 2026-10-01: keep the spellings visible, as a list.",
@@ -2664,6 +2671,13 @@
       "prefLabel": "CatHarnessDeclarationSchema.version",
       "definition": "The version — an exact semver triple, `current` or `dev`. Never a range.",
       "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.version",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.catharnessdeclarationschema.visualisers",
+      "prefLabel": "CatHarnessDeclarationSchema.visualisers",
+      "definition": "The visualisers this harness declares — see {@link HarnessVisualiserSchema}. Each is published at `<base>/<name>/<id>/` and nowhere else; ids are unique and every `covers` entry names a directory declared above (refined below). `.optional()`: absent means this instance declares none.",
+      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.visualisers",
       "status": "candidate"
     },
     {
@@ -3028,6 +3042,55 @@
       "prefLabel": "GraphNodeDirectoryShape.subgraph",
       "definition": "This entry is an instance SUBGRAPH, not a part of its parent's graph.",
       "source": "cat-harness/schemas/cat-harness.ts#GraphNodeDirectoryShape.subgraph",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.alias",
+      "prefLabel": "HarnessVisualiserSchema.alias",
+      "definition": "Opt-in `<base>/<alias>/` redirect to the canonical route (bean `t4xb`).",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.alias",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.covers",
+      "prefLabel": "HarnessVisualiserSchema.covers",
+      "definition": "This instance's directory ids it covers.",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.covers",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.coverskinds",
+      "prefLabel": "HarnessVisualiserSchema.coversKinds",
+      "definition": "Graph typologies it covers across the corpus stacked on this harness.",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.coversKinds",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.id",
+      "prefLabel": "HarnessVisualiserSchema.id",
+      "definition": "The URL segment under `<base>/<harness>/`, unique within this harness.",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.id",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.renderedby",
+      "prefLabel": "HarnessVisualiserSchema.renderedBy",
+      "definition": "The Tool node that draws it.",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.renderedBy",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.subgraphs",
+      "prefLabel": "HarnessVisualiserSchema.subgraphs",
+      "definition": "What a `<sub-graph>` segment names, when the visualiser draws per-sub-graph views.",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.subgraphs",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.subgraphunder",
+      "prefLabel": "HarnessVisualiserSchema.subgraphUnder",
+      "definition": "For `subgraphs: \"directory\"`: the sub-graph PATH a covered kind's directories sit under, by kind — `{ \"skills\": \"index/skills\" }` puts the `core-skills` directory's view at `<harness>/<id>/index/skills/core-skills/`. Absent for a kind: the directory id alone. Declared because the nesting is the visualiser's own declared structure (auto-docs' `auto-docs.json`), not something a reader may infer from the pages.",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.subgraphUnder",
       "status": "candidate"
     },
     {
@@ -10633,6 +10696,41 @@
       "status": "candidate"
     },
     {
+      "id": "subgraph-source.npmsourceschema.integrity",
+      "prefLabel": "NpmSourceSchema.integrity",
+      "definition": "Integrity SRI string (sha256 or sha512) for fixity verification.",
+      "source": "cat-harness/schemas/subgraph-source.ts#NpmSourceSchema.integrity",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-source.npmsourceschema.package",
+      "prefLabel": "NpmSourceSchema.package",
+      "definition": "Scoped or unscoped package name (e.g. `@litlfred/cat-harness`).",
+      "source": "cat-harness/schemas/subgraph-source.ts#NpmSourceSchema.package",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-source.npmsourceschema.tool",
+      "prefLabel": "NpmSourceSchema.tool",
+      "definition": "Declared Tool that retrieves/mounts the package. Default: 'npm'.",
+      "source": "cat-harness/schemas/subgraph-source.ts#NpmSourceSchema.tool",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-source.npmsourceschema.upstreampath",
+      "prefLabel": "NpmSourceSchema.upstreamPath",
+      "definition": "Upstream path inside the extracted package tarball.",
+      "source": "cat-harness/schemas/subgraph-source.ts#NpmSourceSchema.upstreamPath",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-source.npmsourceschema.version",
+      "prefLabel": "NpmSourceSchema.version",
+      "definition": "Exact semver version triple (no ranges).",
+      "source": "cat-harness/schemas/subgraph-source.ts#NpmSourceSchema.version",
+      "status": "candidate"
+    },
+    {
       "id": "subgraph-source.sourcedentry.storage",
       "prefLabel": "SourcedEntry.storage",
       "definition": "#1764's field, if a declaration carries it. Read only to map it.",
@@ -13318,6 +13416,55 @@
       "prefLabel": "ViewerNavQaSchema.root",
       "definition": "The published docs root the audit walked, repo-relative.",
       "source": "cat-harness/schemas/viewer-nav-qa.ts#ViewerNavQaSchema.root",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.routeclaim.by",
+      "prefLabel": "RouteClaim.by",
+      "definition": "Who claims it, for the message: `cat-harness.visualisers[library]`, `alias of …`, `site: processes/`.",
+      "source": "cat-harness/schemas/visualiser-route.ts#RouteClaim.by",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.routeclaim.route",
+      "prefLabel": "RouteClaim.route",
+      "definition": "Site-relative route, trailing slash for a directory.",
+      "source": "cat-harness/schemas/visualiser-route.ts#RouteClaim.route",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.routecollision.kind",
+      "prefLabel": "RouteCollision.kind",
+      "definition": "`same` — one route claimed twice; `nested` — a claim inside another's subtree.",
+      "source": "cat-harness/schemas/visualiser-route.ts#RouteCollision.kind",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.visualiserrouteparts.asset",
+      "prefLabel": "VisualiserRouteParts.asset",
+      "definition": "A path below the (sub-graph's) view, `/`-separated, no leading slash.",
+      "source": "cat-harness/schemas/visualiser-route.ts#VisualiserRouteParts.asset",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.visualiserrouteparts.harness",
+      "prefLabel": "VisualiserRouteParts.harness",
+      "definition": "The declaring harness's `name`.",
+      "source": "cat-harness/schemas/visualiser-route.ts#VisualiserRouteParts.harness",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.visualiserrouteparts.subgraph",
+      "prefLabel": "VisualiserRouteParts.subgraph",
+      "definition": "A sub-graph of what the visualiser covers — absent for the full KG. One segment, or a `/`-separated path of segments when the visualiser declares its sub-graphs nested (auto-docs' `index/skills/core-skills`, owner 2026-10-03: *\"auto-docs is one declared subgraph, with declared sub-sub-graphs per writer\"*).",
+      "source": "cat-harness/schemas/visualiser-route.ts#VisualiserRouteParts.subgraph",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.visualiserrouteparts.visualiser",
+      "prefLabel": "VisualiserRouteParts.visualiser",
+      "definition": "The visualiser's declared `id`.",
+      "source": "cat-harness/schemas/visualiser-route.ts#VisualiserRouteParts.visualiser",
       "status": "candidate"
     },
     {
