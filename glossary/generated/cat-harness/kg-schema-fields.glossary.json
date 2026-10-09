@@ -7,6 +7,132 @@
   "source": "Schema fields of cat-harness",
   "terms": [
     {
+      "id": "archimate.archimateconfigmodelschema.description",
+      "prefLabel": "ArchimateConfigModelSchema.description",
+      "definition": "One sentence on what this model is and why the instance holds it.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateConfigModelSchema.description",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigmodelschema.file",
+      "prefLabel": "ArchimateConfigModelSchema.file",
+      "definition": "The `.archimate` file, relative to the declared directory.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateConfigModelSchema.file",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigmodelschema.id",
+      "prefLabel": "ArchimateConfigModelSchema.id",
+      "definition": "The model's id: its page directory and its IRI segment. A version (`0.2.0`) is a good one.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateConfigModelSchema.id",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigmodelschema.title",
+      "prefLabel": "ArchimateConfigModelSchema.title",
+      "definition": "What a reader calls it. Absent, the model's own name is used.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateConfigModelSchema.title",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigschema.directory",
+      "prefLabel": "ArchimateConfigSchema.directory",
+      "definition": "The `<instance>.json` directory id of graph typology `archimate` the models are held in.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateConfigSchema.directory",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateelement.folder",
+      "prefLabel": "ArchimateElement.folder",
+      "definition": "The folder path it is filed under in the model tree.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateElement.folder",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateelement.type",
+      "prefLabel": "ArchimateElement.type",
+      "definition": "The ArchiMate type without Archi's prefix: `ApplicationComponent`.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateElement.type",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimatemodel.archiversion",
+      "prefLabel": "ArchimateModel.archiVersion",
+      "definition": "Archi's model `version` attribute — the tool's file version, not the model's.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateModel.archiVersion",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimaterelationship.accesstype",
+      "prefLabel": "ArchimateRelationship.accessType",
+      "definition": "Access only: `write` (Archi's default), `read`, `access` or `readwrite`.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateRelationship.accessType",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimaterelationship.directed",
+      "prefLabel": "ArchimateRelationship.directed",
+      "definition": "Association only.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateRelationship.directed",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimaterelationship.strength",
+      "prefLabel": "ArchimateRelationship.strength",
+      "definition": "Influence only: the strength, e.g. `+` or `--`.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateRelationship.strength",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimaterelationship.type",
+      "prefLabel": "ArchimateRelationship.type",
+      "definition": "The relationship type without prefix or suffix: `Composition`, `Serving`.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateRelationship.type",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateviewconnection.bendpoints",
+      "prefLabel": "ArchimateViewConnection.bendpoints",
+      "definition": "Archi's relative bendpoints: offsets from the source's and the target's centres.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateViewConnection.bendpoints",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateviewconnection.relationship",
+      "prefLabel": "ArchimateViewConnection.relationship",
+      "definition": "The relationship it shows; absent for a plain line between a note and a box.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateViewConnection.relationship",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateviewnode.alternate",
+      "prefLabel": "ArchimateViewNode.alternate",
+      "definition": "Archi's `type=\"1\"`: the element drawn as its figure's alternate.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateViewNode.alternate",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateviewnode.parent",
+      "prefLabel": "ArchimateViewNode.parent",
+      "definition": "The diagram object it is drawn inside, if any.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateViewNode.parent",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateviewnode.ref",
+      "prefLabel": "ArchimateViewNode.ref",
+      "definition": "The element it shows (`element`), or the view it refers to (`view-ref`).",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateViewNode.ref",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateviewnode.text",
+      "prefLabel": "ArchimateViewNode.text",
+      "definition": "A group's label, or a note's text.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateViewNode.text",
+      "status": "candidate"
+    },
+    {
       "id": "archive-contents.archivecontentsschema.archive",
       "prefLabel": "ArchiveContentsSchema.archive",
       "definition": "The archive file's own `_tech_meta` block.",

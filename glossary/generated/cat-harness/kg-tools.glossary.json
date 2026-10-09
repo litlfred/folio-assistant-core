@@ -15,6 +15,22 @@
       "status": "candidate"
     },
     {
+      "id": "archimate-check",
+      "prefLabel": "Check an instance's ArchiMate models against its config",
+      "definition": "The gate for the `archimate` graph typology: every model `cat-archimate.config.json` names is held, parses (Archi's native XML or its zipped archive), and resolves — every box in every view draws an element the model holds, every relationship's ends are in the model — and no `.archimate` file is held that the config does not name.",
+      "notation": "archimate-check",
+      "source": "cat-harness/tools/index.ts#archimate-check",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate-pages",
+      "prefLabel": "Give every ArchiMate view, element and relationship a page and an IRI, and draw every view",
+      "definition": "Write a JSON-LD node and a thin page for each model an instance's `cat-archimate.config.json` names and for every view, element and relationship in it — keyed by Archi's own ids — plus the normalised model the pages' one loader draws from, and every view drawn as SVG from the model's own bounds and bendpoints in ArchiMate's notation, each box a link to its element. `--out` writes into a site being built at the graph's path; without it the files go into the graph and `--check` gates them.",
+      "notation": "archimate-pages",
+      "source": "cat-harness/tools/index.ts#archimate-pages",
+      "status": "candidate"
+    },
+    {
       "id": "auto-docs-viewer",
       "prefLabel": "Generated index pages",
       "definition": "Render index pages for the declared skills, docs and swimlane-glossary directories, one per directory.",
@@ -476,6 +492,14 @@
       "definition": "Render the declared methodology graph as one page.",
       "notation": "methodologies-viewer",
       "source": "cat-harness/tools/viewers.ts#methodologies-viewer",
+      "status": "candidate"
+    },
+    {
+      "id": "mount-from-lock",
+      "prefLabel": "Replay a committed mount lock with nothing but Node",
+      "definition": "Lay down every remote mount `index.lock.json` records — each instance fetched at the lock's full SHA (sparse, blob-filtered), each directory verified against its `treeDigest`, a mismatch undone and reported — importing only `node:*`, so it runs on a fresh clone before any layer is present. It never decides what to mount: `remote-mount` writes the lock (and checks trust); this only replays it. Refuses to write over a path with tracked files or bytes that no longer hash to the lock. Exit 0 mounted/current, 1 missing, 2 could-not-determine.",
+      "notation": "mount-from-lock",
+      "source": "cat-harness/tools/index.ts#mount-from-lock",
       "status": "candidate"
     },
     {
