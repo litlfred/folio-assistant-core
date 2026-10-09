@@ -6923,6 +6923,20 @@
       "status": "candidate"
     },
     {
+      "id": "index-config.indexconfigschema.description",
+      "prefLabel": "IndexConfigSchema.description",
+      "definition": "One paragraph under that title, saying what the checkout is for.",
+      "source": "cat-harness/schemas/index-config.ts#IndexConfigSchema.description",
+      "status": "candidate"
+    },
+    {
+      "id": "index-config.indexconfigschema.title",
+      "prefLabel": "IndexConfigSchema.title",
+      "definition": "What this CHECKOUT is called. The index declares no instance of its own (owner, 2026-10-08), so nothing else names it; `index:render` titles the root `README.md` and `AGENTS.md` with it (owner, 2026-10-09: those two are rendered files). Absent, they are titled generically.",
+      "source": "cat-harness/schemas/index-config.ts#IndexConfigSchema.title",
+      "status": "candidate"
+    },
+    {
       "id": "index-config.indexmigration.moved",
       "prefLabel": "IndexMigration.moved",
       "definition": "The remote mounts moved, by harness.",
