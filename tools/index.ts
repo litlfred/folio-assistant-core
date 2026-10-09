@@ -306,26 +306,5 @@ export function tools(baseUrl?: string): ToolDefinition[] {
       satisfies: ["document-intake"],
       requires: { runtime: ["bun"], network: false },
     }),
-    defineTool({
-      id: "folio-assistant-core-release-npm",
-      title: "Release folio-assistant-core package via GitHub Actions release workflow",
-      description:
-        "Build, tag, and publish the @litlfred/folio-assistant-core npm package tarball to GitHub Releases and GitHub Packages registry via workflow_dispatch.",
-      install: { none: true },
-      invoke: { shell: "gh workflow run release-npm.yml" },
-      io: {
-        inputs: [
-          { name: "version", schema: t("Text"), required: true, description: "The semver version string to release (e.g. '0.1.0')." },
-        ],
-        outputs: [
-          { name: "status", schema: t("Text"), description: "Workflow dispatch status and run URL." },
-        ],
-      },
-      satisfies: ["document-publishing"],
-      requires: { runtime: ["gh"], network: true },
-      remedies: [
-        { host: "api.github.com", none: "Dispatches release workflow on GitHub." },
-      ],
-    }),
   ];
 }
