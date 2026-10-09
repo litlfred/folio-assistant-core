@@ -10479,6 +10479,13 @@
       "status": "candidate"
     },
     {
+      "id": "sticky-contribution.declaredcontribution.instanceroot",
+      "prefLabel": "DeclaredContribution.instanceRoot",
+      "definition": "The declaring instance's root path on disk, when known.",
+      "source": "cat-harness/schemas/sticky-contribution.ts#DeclaredContribution.instanceRoot",
+      "status": "candidate"
+    },
+    {
       "id": "sticky-contribution.declaredcontribution.summary",
       "prefLabel": "DeclaredContribution.summary",
       "definition": "The declaring instance's `summary`, for `bodyFrom: \"summary\"`.",
