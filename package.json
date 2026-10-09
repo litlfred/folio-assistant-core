@@ -7,7 +7,7 @@
     "@modelcontextprotocol/sdk": "^1.12.0",
     "fast-xml-parser": "^5.10.1",
     "jsonld": "8",
-    "katex": "^0.16.47",
+    "katex": "^0.19.0",
     "mdast-util-directive": "^3.1.0",
     "mdast-util-gfm-strikethrough": "^2.0.0",
     "mdast-util-gfm-table": "^2.0.0",
