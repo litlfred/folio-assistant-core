@@ -3,6 +3,27 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.0",
+    "fast-xml-parser": "^5.10.1",
+    "jsonld": "8",
+    "katex": "^0.16.47",
+    "mdast-util-directive": "^3.1.0",
+    "mdast-util-gfm-strikethrough": "^2.0.0",
+    "mdast-util-gfm-table": "^2.0.0",
+    "micromark-extension-gfm-strikethrough": "^2.1.0",
+    "micromark-extension-gfm-table": "^2.1.1",
+    "remark": "^15.0.1",
+    "remark-directive": "^4.0.0",
+    "remark-gfm": "^4.0.1",
+    "remark-html": "^16.0.1",
+    "remark-math": "^6.0.0",
+    "unist-util-visit": "^5.1.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "playwright": "1.63.0"
+  },
   "checkoutScripts": {
     "backfill:materialized-fixity": "bun run folio-assistant-core/scripts/backfill-materialized-fixity.ts",
     "build:document-site": "bun run folio-assistant-core/scripts/build-document-site.ts",
