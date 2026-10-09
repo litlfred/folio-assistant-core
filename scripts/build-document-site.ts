@@ -60,7 +60,7 @@ import remarkHtml from "remark-html";
 import remarkMath from "remark-math";
 import { visit } from "unist-util-visit";
 
-import { folioDir } from "../../cat-harness/schemas/cat-harness.js";
+import { folioDir, readDeclaration, visualisationResolves, visualisationsOf, type CatHarnessDeclaration } from "../../cat-harness/schemas/cat-harness.js";
 import { readHarnessConfig } from "../../cat-harness/schemas/harness-config.js";
 import { detectRepoUrl, ownerRepo } from "../../cat-harness/src/core/git-refs.js";
 import { DEFAULT_TEMPLATE, injectBlockActions, readIssueForm, type BlockActionsConfig, type BlockContext } from "./block-actions.js";
@@ -674,11 +674,46 @@ export async function buildDocumentSite(
   writeFileSync(join(outDir, "outline.json"), JSON.stringify(outline) + "\n");
   mkdirSync(join(outDir, "review"), { recursive: true });
   writeFileSync(join(outDir, "review", "index.html"), reviewPageHtml());
+  const also = landingLinks(readDeclaration(repoRoot), (p) => existsSync(join(repoRoot, p)));
   writeFileSync(
     join(outDir, "index.html"),
-    page("Documents", `<h1>Documents</h1>\n<p><a href="review/index.html">What changed from main</a></p>\n<ul>\n${list}\n</ul>`),
+    page(
+      "Documents",
+      `<h1>Documents</h1>\n<p><a href="review/index.html">What changed from main</a></p>\n<ul>\n${list}\n</ul>` +
+        (also.length ? `\n<h2>Also on this site</h2>\n<ul>\n${also.map((l) => `<li><a href="${esc(l.href)}">${esc(l.title)}</a></li>`).join("\n")}\n</ul>` : ""),
+    ),
   );
   return result;
+}
+
+/**
+ * The other pages this folio's site publishes, for its landing page: every
+ * visualisation the instance DECLARES (`coverage.visualiser`) whose page
+ * resolves — on disk, or built at publish by a declared `writer` whose scripts
+ * exist (`visualisationResolves`, the one rule tiles and coverage also use).
+ *
+ * Until this, a folio's landing listed its documents and nothing else, so a
+ * graph the build also renders — smart-ra's ArchiMate models at `/archimate/`
+ * (2026-10-09, owner: "how is archimate visualizer integrated into smart-ra
+ * landing page") — was reachable only by typing its address. The navbar's
+ * tiles do not help a folio: on a foreign site they come from the PLATFORM's
+ * `harness.json`, where a folio's instance is not listed.
+ *
+ * A `ref` is repository-relative, and a folio's site is built from its root,
+ * so the ref IS the site path; `index.html` becomes its directory, the form
+ * every other link here uses. A staging-only page is left off, since this
+ * landing is also main's; so is any ref that is absolute or climbs out.
+ */
+export function landingLinks(decl: CatHarnessDeclaration | undefined, exists: (repoRelative: string) => boolean): { title: string; href: string }[] {
+  const out: { title: string; href: string }[] = [];
+  for (const d of decl?.directories ?? []) {
+    for (const v of visualisationsOf(d.coverage, d.id)) {
+      if (v.publish !== undefined || v.ref.startsWith("/") || v.ref.split("/").includes("..")) continue;
+      if (!visualisationResolves(v, exists)) continue;
+      out.push({ title: v.title, href: v.ref.replace(/(^|\/)index\.(html|md)$/, "$1").replace(/\.md$/, ".html") || "./" });
+    }
+  }
+  return out;
 }
 
 /**
