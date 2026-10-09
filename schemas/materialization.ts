@@ -249,6 +249,12 @@ export const MaterializationSchema = z
      */
     expiresAt: z.string().min(1).optional(),
     /**
+     * When this copy was last read. Absent means 'not recorded'.
+     *
+     * Recorded by readers or explicit touch helpers (bean 7wgs).
+     */
+    lastReadAt: z.string().min(1).optional(),
+    /**
      * Why the record cannot say more than it does.
      *
      * Two jobs, and both are the same discipline. Why the state is `unknown`,
@@ -448,3 +454,23 @@ export function publicationBlockers(g: Gates | undefined): Array<(typeof PUBLICA
 export function refusedGates(g: Gates): Array<keyof Gates> {
   return (Object.keys(g) as Array<keyof Gates>).filter((k) => g[k].verdict === "refused");
 }
+
+/**
+ * Record when a materialized copy was last read (bean 7wgs).
+ *
+ * Who records a read: explicit touch by a caller or reader helper (e.g. MCP node
+ * access, skill_fetch, or renderer). Access time on files is disabled on many
+ * mounts (noatime) and reset by a git checkout, so an explicit timestamp in the
+ * record is the only reliable signal.
+ */
+export function recordMaterializationRead(record: Materialization, at?: Date): Materialization {
+  const updated: Materialization = {
+    ...record,
+    lastReadAt: (at ?? new Date()).toISOString(),
+  };
+  return MaterializationSchema.parse(updated);
+}
+
+/** Alias for recordMaterializationRead. */
+export const touchMaterializedRead = recordMaterializationRead;
+
