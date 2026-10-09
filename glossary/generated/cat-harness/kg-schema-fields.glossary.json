@@ -7217,6 +7217,13 @@
       "status": "candidate"
     },
     {
+      "id": "kg-node.kgimage.ground",
+      "prefLabel": "KgImage.ground",
+      "definition": "What the navbar draws BEHIND this image when it is an avatar: `tone` (the default), the instance's hue square, which a card-art crop covers; or `none`, the image on the rail itself, for a mark that is transparent around its shape (issue #46, gap 5).",
+      "source": "cat-harness/schemas/kg-node.ts#KgImage.ground",
+      "status": "candidate"
+    },
+    {
       "id": "kg-node.kgimage.height",
       "prefLabel": "KgImage.height",
       "definition": "Intrinsic height in pixels.",
@@ -7263,6 +7270,13 @@
       "prefLabel": "KgImage.width",
       "definition": "Intrinsic width in pixels, so a renderer can reserve space.",
       "source": "cat-harness/schemas/kg-node.ts#KgImage.width",
+      "status": "candidate"
+    },
+    {
+      "id": "kg-node.kgimageschema.ground",
+      "prefLabel": "KgImageSchema.ground",
+      "definition": "{@link KgImage.ground}.",
+      "source": "cat-harness/schemas/kg-node.ts#KgImageSchema.ground",
       "status": "candidate"
     },
     {
