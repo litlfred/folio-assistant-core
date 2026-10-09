@@ -311,6 +311,14 @@
       "status": "candidate"
     },
     {
+      "id": "kg-retrieve-npm",
+      "prefLabel": "Retrieve a remote Knowledge Graph via npm package or tarball",
+      "definition": "Retrieve and inspect a remote Knowledge Graph packaged as an npm package or tarball (.tgz), supporting both unhydrated source graph views (authored declarations, skills, schemas) and hydrated materialized graph views (subgraph JSON-LD, metadata indexes, dereferenced graph projections).",
+      "notation": "kg-retrieve-npm",
+      "source": "cat-harness/tools/index.ts#kg-retrieve-npm",
+      "status": "candidate"
+    },
+    {
       "id": "kg-validate",
       "prefLabel": "Validate a node in the graph",
       "definition": "Check one file against the schema for its graph typology. ONE tool rather than one per schema: the declaration already says which directory holds which kind, so the kind is the parameter and the lookup does the rest.",
@@ -500,6 +508,14 @@
       "definition": "Emit the folio namespace as a document that dereferences — one node per class and property, each with an @id, a type, a label and a definition, so a consumer holding only the JSON-LD can resolve any term it meets.",
       "notation": "ns-vocabulary",
       "source": "cat-harness/tools/index.ts#ns-vocabulary",
+      "status": "candidate"
+    },
+    {
+      "id": "pack-tarball",
+      "prefLabel": "Package instance into an npm tarball and record binary release",
+      "definition": "Build an npm tarball (.tgz) of an instance using `bun pm pack`, compute its size and SHA-256 digest, and record it as a `folio-binary-release/v1` state node.",
+      "notation": "pack-tarball",
+      "source": "cat-harness/tools/index.ts#pack-tarball",
       "status": "candidate"
     },
     {
