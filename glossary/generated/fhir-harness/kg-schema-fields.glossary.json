@@ -30,7 +30,7 @@
     {
       "id": "fhir-artifact-index.fhirartifactindexschema.igapihub",
       "prefLabel": "FhirArtifactIndexSchema.igApiHub",
-      "definition": "The IG API hub: the region of the IG's hub page between the two markers its post-processing writes after the Publisher has run (for WHO's DAK overlay, `dak-api.html` between `DAK_API_HUB_START` and `DAK_API_HUB_END`, written by smart-base's `generate_dak_api_hub.py`). `url` is the page it was read from; `localPath` is the fragment, held so a page can fetch it (bean `680p`) rather than retype its prose — as a JSON node (`{ from, between, html }`), because an `.html` fragment published in the served graph would be a page with no <body>. Absent means the IG publishes no hub, or it was not materialised.",
+      "definition": "The IG API hub: the region of the IG's hub page between the two markers its post-processing writes after the Publisher has run (`ig-api.html` between `IG_API_HUB_START` and `IG_API_HUB_END` by default; an overlay whose post-processing uses other names passes them to the ingest). `url` is the page it was read from; `localPath` is the fragment, held so a page can fetch it (bean `680p`) rather than retype its prose — as a JSON node (`{ from, between, html }`), because an `.html` fragment published in the served graph would be a page with no <body>. Absent means the IG publishes no hub, or it was not materialised.",
       "source": "fhir-harness/schemas/fhir-artifact-index.ts#FhirArtifactIndexSchema.igApiHub",
       "status": "candidate"
     },
@@ -135,7 +135,7 @@
     {
       "id": "fhir-artifact-index.indexprovenanceschema.sidecarenumerations",
       "prefLabel": "IndexProvenanceSchema.sidecarEnumerations",
-      "definition": "The DAK API enumeration schemas, when present.",
+      "definition": "The IG API enumeration schemas, when present.",
       "source": "fhir-harness/schemas/fhir-artifact-index.ts#IndexProvenanceSchema.sidecarEnumerations",
       "status": "candidate"
     },

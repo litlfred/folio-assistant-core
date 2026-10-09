@@ -7,6 +7,22 @@
   "source": "BPMN activities of smart-base",
   "terms": [
     {
+      "id": "process_dakl3ig.callactivity_l3fhir",
+      "prefLabel": "L3 FHIR IG pipeline (fhir-harness)",
+      "definition": "fhir-harness's l3-fhir-pipeline.bpmn, from its StartEvent_ModelReady with the mapping above as the source model: author FSH, SUSHI, validate, QC, IG Publisher, publish. Called, not copied, so a change to the generic pipeline reaches every IG built on it.",
+      "notation": "CallActivity_L3Fhir",
+      "source": "smart-base/processes/content/dak-l3-ig.bpmn#CallActivity_L3Fhir",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dakl3ig.task_mapl2",
+      "prefLabel": "Map L2 → L3 [l3-fhir-authoring]",
+      "definition": "Each data element becomes a profile, each value set a ValueSet, each decision a PlanDefinition / Library. The DAK's L2 content is l3-fhir-authoring's sourceModel; this step binds l2-dak-authoring beside it, which is where the WHO L2 → L3 ordering lives now that the generic skill names no DAK (smart-* separation stage D, #1767).",
+      "notation": "Task_MapL2",
+      "source": "smart-base/processes/content/dak-l3-ig.bpmn#Task_MapL2",
+      "status": "candidate"
+    },
+    {
       "id": "process_diig.a_determineinterventions",
       "prefLabel": "Determine appropriate digital health interventions",
       "definition": "DIIG Chapter 4. Select interventions for the prioritized challenges, assess whether the enabling environment can support them, identify functional requirements and user stories, map the future-state workflow, and check whether existing applications already meet the requirements. The interventions CONSIDERED AND NOT CHOSEN are part of the output, with why — `methodology-adoption`'s fourth refusal. A deleted alternative leaves the next reader unable to tell a decision from an oversight. Selection is from the Classification, and the `who-digital-health` voice governs the naming: an intervention is a capability, not the software that delivers it.",
