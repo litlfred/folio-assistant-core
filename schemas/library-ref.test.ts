@@ -55,20 +55,23 @@ describe("instance discovery", () => {
     expect(instanceRoots(REPO).get("cat-harness")).toBe(PLATFORM);
   });
 
-  it("the REPOSITORY is its own instance, and not the harness layer", () => {
-    // Three distinct instances, per the owner 2026-09-20. They were not
-    // distinct for a few hours: the repository root gained a `harness.json`
-    // and declared `folio-assistant`, which `cat-harness/harness.json`
-    // already carried. `instanceRoots` is keyed on the declared name, so the
-    // two were ONE key and the root won — `folio-assistant` resolved to the
-    // checkout and the harness layer became unreachable by name, silently.
-    //
-    // Asserting they are DIFFERENT is the check that cannot pass by accident;
-    // asserting each resolves somewhere would have passed throughout.
+  it("the index ROOT is no instance, and the harness layer keeps its own name", () => {
+    // Restated after the repository split. This read "the REPOSITORY is its
+    // own instance": the root declared `folio-assistant` (owner 2026-09-20),
+    // and the check was that it did not collide with the harness layer —
+    // for a few hours both declared the name, `instanceRoots` is keyed on it,
+    // the root won, and the harness layer became unreachable by name,
+    // silently. The separation removed the root's declaration
+    // (folio-assistant@3d4caf6e0f, "remove root toolchain and folio-assistant
+    // declaration"): the root is now an INDEX that mounts instances from
+    // `index.lock.json` and is not one itself. So the collision this guarded
+    // can no longer arise from the root, and the live rule is the converse —
+    // no name resolves to the index root, and the harness layer still
+    // resolves to its own directory rather than to the checkout.
     const roots = instanceRoots(REPO);
-    expect(roots.get("folio-assistant")).toBe(REPO);
+    expect(roots.has("folio-assistant")).toBe(false);
+    expect([...roots.values()]).not.toContain(REPO);
     expect(roots.get("cat-harness")).toBe(PLATFORM);
-    expect(roots.get("folio-assistant")).not.toBe(roots.get("cat-harness"));
   });
 });
 
