@@ -1,10 +1,11 @@
 ---
 # folio-assistant-mw5z
 title: who-iris's two AUTHORED docs pages render as raw markdown and nothing links them
-status: todo
+status: in-progress
 type: bug
+priority: normal
 created_at: 2026-10-04T06:25:33Z
-updated_at: 2026-10-04T06:25:33Z
+updated_at: 2026-10-10T15:44:05Z
 parent: folio-assistant-0lmb
 ---
 
