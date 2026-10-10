@@ -58,7 +58,7 @@ import { dirname, join, relative, resolve } from "path";
 
 import type { CatalogueNode, MaskedRegion } from "../schemas/catalogue.js";
 import { bytesFor } from "./lib/bytes.js";
-import { inputSiteReached } from "../../cat-harness/scripts/input-trace.ts";
+import { inputSiteReached } from "../../cat-harness/schemas/input-trace.ts";
 
 /** The platform checkout — where the renderer and the render cache live, never the instance. */
 const REPO = resolve(import.meta.dir, "..", "..");
