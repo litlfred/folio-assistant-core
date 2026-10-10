@@ -1,11 +1,11 @@
 ---
 # folio-assistant-mw5z
 title: who-iris's two AUTHORED docs pages render as raw markdown and nothing links them
-status: in-progress
+status: completed
 type: bug
 priority: normal
 created_at: 2026-10-04T06:25:33Z
-updated_at: 2026-10-10T15:44:05Z
+updated_at: 2026-10-10T15:44:07Z
 parent: folio-assistant-0lmb
 ---
 
@@ -72,3 +72,23 @@ stop claiming a complete list it does not have.
       own directory
 - [ ] at least one page links them — measured by grepping the BUILT site, not
       the source
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on evidence: the fix
+already landed in `litlfred/who-iris`, the instance's own repository after the
+separation (checked at `ffdc049`). Nothing was changed in this repository.
+
+- [x] **Rendered.** Option 1 (pre-render, keeping the mount's "everything here
+      is already HTML" rule): `scripts/gen-iris-pages.ts` renders each authored
+      `docs/*.md` with GFM to `docs/style-guide.html` and
+      `docs/style-guide-agents.html`; sibling links point at the renderings.
+- [x] **Landing page no longer under-reports.** The "Pages" list is derived by
+      `authoredDocs(dir)` (every `.md` but `README.md` and front-matter
+      pages) instead of the hand-kept `PAGES.docs.fixed`; its doc comment cites
+      this bean.
+- [x] **Linked, measured in generated output.** `grep -o 'href="[^"]*style-guide[^"]*"'`
+      over who-iris `docs/` finds `index.html` → both pages and the two pages
+      linking each other. (`docs/` is committed generator output, guarded by
+      `iris:pages:check`.)
