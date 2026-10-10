@@ -1,7 +1,7 @@
 ---
 # folio-assistant-krmw
 title: 'docs-index visualiser: 6 wireframe findings'
-status: todo
+status: completed
 type: task
 priority: normal
 tags:
@@ -9,7 +9,7 @@ tags:
     - ui
     - visualiser-docs-index
 created_at: 2026-09-23T10:36:14Z
-updated_at: 2026-09-30T16:12:46Z
+updated_at: 2026-10-10T16:35:03Z
 parent: folio-assistant-4ccr
 ---
 
@@ -59,3 +59,14 @@ the harness owns the harness") puts it outside this store's reach.
 3. Scrap it. The finding no longer matters after the separation.
 
 **Default if no answer:** option 1.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on verified evidence. The
+fixes were made and recorded on this bean's cat-harness-store copy (closed
+2026-10-09). This copy was checked separately to confirm they reached the
+default branches:
+- fix commit `40d06f6c` is an ancestor of cat-harness `main` (`b675555e`);
+- the change is present on current `main`, where the generator now lives:
+  cat-harness-tools `scripts/gen-auto-docs.ts:1030,1173` (the table filter, whose threshold was later raised to 25 rows).

@@ -52,3 +52,22 @@ the harness owns the harness") puts it outside this store's reach.
 3. Scrap it. The finding no longer matters after the separation.
 
 **Default if no answer:** option 1.
+
+
+## 2026-10-10: half reverted (bean-backlog drain, lane C)
+
+The cat-harness-store copy was closed on 2026-10-09. Measured on today's
+default branches:
+- **Still holds:** the pptx deck's editorial title. cat-harness `3f8a5236` is
+  on main, and `library/kg-folio-asst-2026-09-30/manifest.jsonld:12,31`
+  carries the title.
+- **Reverted:** the CODATA title. sci `f5641f5` merged, but a later
+  regeneration (`99d054e`) overwrote it. Main's
+  `library/codata-2022/manifest.jsonld:12` reads `"title": "codata-2022"`, and
+  `:34` reads `"title_source": "slug"`.
+
+So the fix exists but the regeneration does not keep it. The real defect is
+that an editorial title is not preserved across regeneration (the resolver,
+cat-harness-tools `gen-library-jsonld.ts`). **This copy stays open as the
+owning one**, since sci has no store, until a title correction survives
+regeneration. The cat-harness-store copy should be reopened.
