@@ -1,11 +1,11 @@
 ---
 # folio-assistant-6xaz
 title: pdf-structure infers a TOC from a worked EXAMPLE and ships it as the document's own structure
-status: todo
+status: in-progress
 type: bug
 priority: normal
 created_at: 2026-09-19T00:12:09Z
-updated_at: 2026-10-06T06:33:19Z
+updated_at: 2026-10-10T15:42:59Z
 parent: folio-assistant-0lmb
 ---
 
