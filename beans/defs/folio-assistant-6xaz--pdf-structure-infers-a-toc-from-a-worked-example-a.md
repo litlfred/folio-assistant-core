@@ -1,11 +1,11 @@
 ---
 # folio-assistant-6xaz
 title: pdf-structure infers a TOC from a worked EXAMPLE and ships it as the document's own structure
-status: in-progress
+status: completed
 type: bug
 priority: normal
 created_at: 2026-09-19T00:12:09Z
-updated_at: 2026-10-10T15:42:59Z
+updated_at: 2026-10-10T15:43:13Z
 parent: folio-assistant-0lmb
 ---
 
@@ -137,3 +137,34 @@ STILL OPEN (shape three, not fixed): numbered LIST ITEMS in the body ('1 To mark
 ## Handover 2026-10-06 — PAUSED until the repo separation lands (Session F, GOAL 5)
 
 Owner ruling, relayed by the coordinating session (session_012qoycyCSGidZqW245vXhze): repo separation is the primary goal, content authoring/review/publication goes to folio-assistant-core while cat-harness keeps the methods, and that 'needs to be done before F'. This bean resumes AFTER the split. **The code it touches may have moved to folio-assistant-core by then — re-locate it before editing, and re-measure.** Open questions on it are being put to the owner by the coordinating session, one at a time; the answer will be recorded here, not assumed.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C). All three **Done when**
+criteria are met in the code's current home — `scripts/pdf-structure.py` moved
+to `litlfred/cat-harness-tools` in the repo separation (re-located as the
+handover asked; it is not in this repository):
+
+- **Concentrated inferred TOC → NOT DETERMINED.** `inferred_toc_verdict`
+  (`scripts/pdf-structure.py:489`) records `toc_source: "undetermined"` with a
+  numeric reason and emits no tree; the document stays whole under
+  `sec-000-document`.
+- **`sections/` records its own `toc_source`.** Written into each section's
+  front matter (`scripts/pdf-structure.py:1681`).
+- **Sample-table test.** `scripts/tests/pdf-toc-verdict.test.py` arm 4 builds a
+  PDF whose second page is a sample table and asserts it is not read as
+  structure; a concentrated-outline fixture pins that outlines are not
+  second-guessed.
+
+Shape two (contents-page entries shadowing body headings) is also fixed there
+(`listing_pages`, `scripts/pdf-structure.py:624`).
+
+**Not done here, and why:** shape three — numbered list items in the body read
+as headings (the remaining 14 short sections of `who-pub-tps-931`) — and the
+re-ingest of the two style-guide documents with `pdf-structure.py --ocr`. Both
+are changes to a harness tool, which this layer does not own (AGENTS.md: "the
+harness owns the harness"), and both still need either an owner ruling on
+threshold vs numbering-monotonicity or an OCR engine. They are handed to the
+cat-harness-tools store as a follow-up rather than kept open against criteria
+that are met.
