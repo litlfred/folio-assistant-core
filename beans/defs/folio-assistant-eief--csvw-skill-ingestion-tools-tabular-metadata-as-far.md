@@ -1,11 +1,11 @@
 ---
 # folio-assistant-eief
 title: 'CSVW skill + ingestion tools: tabular metadata as far as it can be determined'
-status: todo
+status: in-progress
 type: feature
 priority: normal
 created_at: 2026-09-20T12:02:21Z
-updated_at: 2026-10-06T06:36:17Z
+updated_at: 2026-10-10T16:02:52Z
 parent: folio-assistant-slw1
 ---
 
