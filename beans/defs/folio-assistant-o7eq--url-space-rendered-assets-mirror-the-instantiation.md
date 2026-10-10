@@ -425,3 +425,21 @@ move (an `@id` moves with its file), and each generator change is one line.
    thin root index.
 
 **Default if no answer:** option 1.
+
+
+## Owner ruling 2026-10-10, answered directly in the lane C session (https://claude.ai/code/session_018NFVUeJjQJdrEU32AS1Mco): the cross-instance artefacts stay at the site root, as a declared exception
+
+Option 1 chosen. The schema viewer, library viewer, repository KG, its viewer
+and their `.json` aliases keep `<base>/…`: their subject is the repository,
+and `artefactStub` already documents `<base>/` as the repository's own path.
+The exception is to be DECLARED, not left implicit, with `blv9` still gating
+any move. Every open question on this bean is now answered.
+
+What remains is harness work in cat-harness-tools and cat-harness:
+- the `enabled` field;
+- the one resolver every consumer goes through;
+- the workflow layout and its test;
+- the bootstrap `.jsonld` path.
+
+By the owner's ruling on the rehome decision, the bean is re-filed in the
+cat-harness-tools store, and this copy stays as a pointer.
