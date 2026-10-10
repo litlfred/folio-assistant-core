@@ -1,11 +1,11 @@
 ---
 # folio-assistant-ktt2
 title: 'INGEST: round-trip translation QA — back-translate to catch semantic drift and bad terminology'
-status: todo
+status: in-progress
 type: task
 priority: normal
 created_at: 2026-09-16T06:43:50Z
-updated_at: 2026-10-06T06:38:24Z
+updated_at: 2026-10-10T15:56:38Z
 parent: folio-assistant-slw1
 ---
 
