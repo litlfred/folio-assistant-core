@@ -238,7 +238,7 @@ block to give a verdict on, and an input no renderer could place may have
 changed any page. The same tag takes them, beside or instead of `block:`:
 
 ```
-page: dpi-h-ra/index.html
+page: en/dpi-h-ra/index.html
 verdict: ok
 ```
 
@@ -299,8 +299,8 @@ Nothing refreshes on a comment when there is no preview yet (no
 
 ## The review page
 
-`review/index.html` in the preview reads `../review-comments.json` beside
-`../changeset.json` when it is opened:
+`en/review/index.html` in the preview reads `review-comments.json` beside
+`changeset.json`, at the preview's root, when it is opened:
 
 - each changed block lists its comments: kind, status, reviewer and role,
   the first line, and a link to the PR comment;
