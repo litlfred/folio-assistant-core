@@ -4,8 +4,10 @@ title: 'URL SPACE: rendered assets mirror the instantiation structure — <baseu
 status: todo
 type: feature
 priority: normal
+tags:
+    - rehomed
 created_at: 2026-09-20T18:30:55Z
-updated_at: 2026-09-20T20:03:22Z
+updated_at: 2026-10-10T16:34:20Z
 parent: folio-assistant-yj32
 ---
 
@@ -443,3 +445,12 @@ What remains is harness work in cat-harness-tools and cat-harness:
 
 By the owner's ruling on the rehome decision, the bean is re-filed in the
 cat-harness-tools store, and this copy stays as a pointer.
+
+
+## Rehomed 2026-10-10: this copy is now a pointer
+
+By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a
+pointer here), this bean is re-filed in the store of the repository whose code
+it changes: **`litlfred/cat-harness-tools` bean `cat-tools-sthf`** (cat-harness-tools
+PR #68). Work it there. This copy stays open as a pointer, and closes when
+`cat-tools-sthf` does.

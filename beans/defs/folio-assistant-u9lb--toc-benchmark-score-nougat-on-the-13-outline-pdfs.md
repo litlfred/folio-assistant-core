@@ -4,8 +4,10 @@ title: 'TOC benchmark: score Nougat on the 13 outline PDFs (needs huggingface.co
 status: todo
 type: task
 priority: normal
+tags:
+    - rehomed
 created_at: 2026-10-06T18:05:01Z
-updated_at: 2026-10-07T10:57:08Z
+updated_at: 2026-10-10T16:34:20Z
 parent: folio-assistant-cp3v
 ---
 
@@ -37,3 +39,12 @@ the harness owns the harness") puts it outside this store's reach.
 3. Scrap it. The finding no longer matters after the separation.
 
 **Default if no answer:** option 1.
+
+
+## Rehomed 2026-10-10: this copy is now a pointer
+
+By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a
+pointer here), this bean is re-filed in the store of the repository whose code
+it changes: **`litlfred/cat-harness-tools` bean `cat-tools-e8vg`** (cat-harness-tools
+PR #68). Work it there. This copy stays open as a pointer, and closes when
+`cat-tools-e8vg` does.
