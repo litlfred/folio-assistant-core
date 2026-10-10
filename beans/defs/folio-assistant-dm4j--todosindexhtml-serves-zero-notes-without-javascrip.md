@@ -4,8 +4,10 @@ title: todos/index.html serves ZERO notes without JavaScript — the one page mo
 status: todo
 type: task
 priority: normal
+tags:
+    - rehomed
 created_at: 2026-10-02T17:41:46Z
-updated_at: 2026-10-02T18:08:07Z
+updated_at: 2026-10-10T16:35:20Z
 parent: folio-assistant-o3xy
 ---
 
@@ -191,3 +193,6 @@ The listing is still global (cat-harness-tools `gen-docs-pages.ts`). By the
 owner's 2026-10-10 rehome ruling, that residue is re-filed in the
 cat-harness-tools store (see the pointer below), and this copy stays open as a
 pointer.
+
+**Pointer:** the residue is `litlfred/cat-harness-tools` bean **`cat-tools-lwjc`**
+(cat-harness-tools PR #68). This copy closes when that one does.
