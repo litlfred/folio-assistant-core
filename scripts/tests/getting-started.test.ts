@@ -1,6 +1,6 @@
 /**
  * The onboarding path's two decision tables — moved here from
- * `cat-harness/scripts/tests/getting-started.test.ts` (bean `ho66`).
+ * `cat-harness-tools/scripts/tests/getting-started.test.ts` (bean `ho66`).
  * `folio-intent.dmn`, `pages-live-gate.dmn` and the `getting-started.bpmn`
  * they back are this instance's, so standing alone cat-harness has none of
  * them to read; the repo scan and the Pages-address tests stay there.
@@ -17,10 +17,10 @@
 import { describe, expect, test } from "bun:test";
 import { resolve } from "node:path";
 
-import { evaluate, loadDecisionTable, possibleOutcomes } from "../../../cat-harness/src/workflow/decision-table.js";
-import { loadProcessModel } from "../../../cat-harness/src/workflow/process-model.js";
-import { outcomeFor, type PagesOutcome } from "../../../cat-harness/scripts/pages-bootstrap.js";
-import { workflowFile } from "../../../cat-harness/scripts/known-skills.ts";
+import { evaluate, loadDecisionTable, possibleOutcomes } from "../../../cat-harness-tools/src/workflow/decision-table.js";
+import { loadProcessModel } from "../../../cat-harness-tools/src/workflow/process-model.js";
+import { outcomeFor, type PagesOutcome } from "../../../cat-harness-tools/scripts/pages-bootstrap.js";
+import { workflowFile } from "../../../cat-harness-tools/scripts/known-skills.ts";
 
 /** This instance's root; its diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
 const HARNESS = resolve(import.meta.dir, "../..");

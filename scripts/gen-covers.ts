@@ -22,7 +22,7 @@
  * DSpace generates a `THUMBNAIL` bundle of its own. **These are not those.**
  * `iris.who.int` is egress-blocked from this environment, so nothing upstream
  * was fetched; each cover is page 1 of a PDF we already hold, rasterised by
- * `cat-harness/scripts/pdf-cover.py`. A node recording one of these without
+ * `cat-harness-tools/scripts/pdf-cover.py`. A node recording one of these without
  * recording the derivation would assert that this repository holds a
  * bitstream IRIS produced, which is false — so this script REFUSES to write a
  * cover for a node whose THUMBNAIL bitstream does not declare it (see
@@ -62,7 +62,7 @@ import { inputSiteReached } from "../../cat-harness/scripts/input-trace.ts";
 
 /** The platform checkout — where the renderer and the render cache live, never the instance. */
 const REPO = resolve(import.meta.dir, "..", "..");
-const RENDERER = join(REPO, "cat-harness", "scripts", "pdf-cover.py");
+const RENDERER = join(REPO, "cat-harness-tools", "scripts", "pdf-cover.py");
 
 /** The listing width. One number, because every cover shares a column. */
 export const COVER_WIDTH = 300;

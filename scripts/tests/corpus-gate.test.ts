@@ -2,9 +2,9 @@ import { describe, expect, test, beforeEach, afterEach } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join, resolve } from "path";
-import { checkCorpusGate, COMMIT_ACTIVITY } from "../../../cat-harness/src/workflow/corpus-gate";
-import { readBlockManifest } from "../../../cat-harness/content/pipeline/qa-utils";
-import { loadBlockModuleSync } from "../../../cat-harness/content/pipeline/block-module";
+import { checkCorpusGate, COMMIT_ACTIVITY } from "../../../cat-harness-tools/src/workflow/corpus-gate";
+import { readBlockManifest } from "../../../cat-harness-tools/content/pipeline/qa-utils";
+import { loadBlockModuleSync } from "../../../cat-harness-tools/content/pipeline/block-module";
 
 /**
  * The same resolver `scripts/check-corpus-gate.ts` supplies in production.
@@ -23,11 +23,11 @@ function labelFor(tsPath: string): string | undefined {
   }
   return loaded.label;
 }
-import { drainSubprocess } from "../../../cat-harness/scripts/tests/helpers";
-import { loadProcessModel } from "../../../cat-harness/src/workflow/process-model";
-import { workflowFile } from "../../../cat-harness/scripts/known-skills.ts";
-import { complete, startInstance } from "../../../cat-harness/src/workflow/instance";
-import { instanceId, saveInstance } from "../../../cat-harness/src/workflow/store";
+import { drainSubprocess } from "../../../cat-harness-tools/scripts/tests/helpers";
+import { loadProcessModel } from "../../../cat-harness-tools/src/workflow/process-model";
+import { workflowFile } from "../../../cat-harness-tools/scripts/known-skills.ts";
+import { complete, startInstance } from "../../../cat-harness-tools/src/workflow/instance";
+import { instanceId, saveInstance } from "../../../cat-harness-tools/src/workflow/store";
 
 /**
  * Everything before this was answerable: `workflow_gate` tells an agent whether
@@ -174,7 +174,7 @@ describe("allowing what the process authorised", () => {
       workflowFile(CORE, "editing-hci-validation.bpmn"),
     );
     await authorise("prop:carbon");
-    const state = (await import("../../../cat-harness/src/workflow/store")).loadInstance(
+    const state = (await import("../../../cat-harness-tools/src/workflow/store")).loadInstance(
       repo,
       instanceId(model.id, "prop:carbon"),
     )!;

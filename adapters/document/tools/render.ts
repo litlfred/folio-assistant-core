@@ -547,7 +547,7 @@ export function registerDocumentRenderTools(server: McpServer): void {
         return { content: [{ type: "text" as const, text: resolved }] };
       }
       try {
-        const { buildDocumentMarkdown } = await import("../../../../cat-harness/content/pipeline/render-markdown.js");
+        const { buildDocumentMarkdown } = await import("../../../../cat-harness-tools/content/pipeline/render-markdown.js");
         const result = await buildDocumentMarkdown(resolved.path);
         if (!existsSync(BUILD_DIR)) mkdirSync(BUILD_DIR, { recursive: true });
         const outPath = join(BUILD_DIR, `${resolved.slug}.md`);
@@ -597,7 +597,7 @@ export function registerDocumentRenderTools(server: McpServer): void {
         return { content: [{ type: "text" as const, text: resolved }] };
       }
       try {
-        const { buildDocumentMarkdown } = await import("../../../../cat-harness/content/pipeline/render-markdown.js");
+        const { buildDocumentMarkdown } = await import("../../../../cat-harness-tools/content/pipeline/render-markdown.js");
         const result = await buildDocumentMarkdown(resolved.path);
         if (!existsSync(BUILD_DIR)) mkdirSync(BUILD_DIR, { recursive: true });
         const mdPath = join(BUILD_DIR, `${resolved.slug}.md`);
@@ -686,7 +686,7 @@ export function registerDocumentRenderTools(server: McpServer): void {
         return { content: [{ type: "text" as const, text: resolved }] };
       }
       try {
-        const { buildDocumentMarkdown } = await import("../../../../cat-harness/content/pipeline/render-markdown.js");
+        const { buildDocumentMarkdown } = await import("../../../../cat-harness-tools/content/pipeline/render-markdown.js");
         const result = await buildDocumentMarkdown(resolved.path);
         if (!existsSync(BUILD_DIR)) mkdirSync(BUILD_DIR, { recursive: true });
         const mdPath = join(BUILD_DIR, `${resolved.slug}.md`);

@@ -57,7 +57,7 @@
  *   github --event e.json [--dry-run]   one issue, comment or PR event (the workflow)
  *   install [--assistant folio-assistant] [--force]
  *                                write the issue forms and the two workflows into the
- *                                folio's .github/, from cat-harness/templates/public-comment/
+ *                                folio's .github/, from cat-harness-tools/templates/public-comment/
  *
  * Every command accepts `--repo <folio root>` and `--store <dir>`. Network
  * calls use `GITHUB_TOKEN` and `GITHUB_REPOSITORY` (or `repo` in config.json);
@@ -1012,7 +1012,7 @@ async function reconcile(store: Store, api: GithubApi, by: string, now: string):
  * The issue forms and workflows a folio running a public review needs. Not a
  * content profile, so `folio_init` does not write them: a folio opts in.
  */
-export const TEMPLATE_DIR = fileURLToPath(new URL("../../cat-harness/templates/public-comment/github", import.meta.url));
+export const TEMPLATE_DIR = fileURLToPath(new URL("../../cat-harness-tools/templates/public-comment/github", import.meta.url));
 
 export function installTemplates(repo: string, o: { assistant: string; force?: boolean }): { written: string[]; kept: string[] } {
   const walk = (d: string): string[] => readdirSync(d).flatMap((n) => (statSync(join(d, n)).isDirectory() ? walk(join(d, n)) : [join(d, n)]));

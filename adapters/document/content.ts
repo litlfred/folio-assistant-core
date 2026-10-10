@@ -36,15 +36,15 @@ import type {
   BlockDiff,
   BranchCharacterization,
   TriageResult,
-  ContentSource } from "../../../cat-harness/src/content-types.js";
+  ContentSource } from "../../../cat-harness-tools/src/content-types.js";
 // The REAL feedback type, straight from the schema that validates it (bean
 // `jcmx`): this adapter is core, so importing the schema is core -> core.
 import type { FeedbackItem } from "../../../cat-harness/schemas/types.js";
-import type { GitHelper } from "../../../cat-harness/src/core/git.js";
-import { FeedbackStore } from "../../../cat-harness/src/core/feedback.js";
-import { log } from "../../../cat-harness/src/core/logging.js";
-import { getAnthropic } from "../../../cat-harness/src/core/anthropic.js";
-import { guardUntrusted, oneLineLabel } from "../../../cat-harness/src/core/handover-screen.js";
+import type { GitHelper } from "../../../cat-harness-tools/src/core/git.js";
+import { FeedbackStore } from "../../../cat-harness-tools/src/core/feedback.js";
+import { log } from "../../../cat-harness-tools/src/core/logging.js";
+import { getAnthropic } from "../../../cat-harness-tools/src/core/anthropic.js";
+import { guardUntrusted, oneLineLabel } from "../../../cat-harness-tools/src/core/handover-screen.js";
 import { PaperResolver } from "./resolver.js";
 import { directoryForGraph, folioDir } from "../../../cat-harness/schemas/cat-harness.js";
 

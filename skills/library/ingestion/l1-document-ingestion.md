@@ -120,7 +120,7 @@ and nothing supports that weighting.
 **Two copies of one deck? Compare before you choose which to ingest:**
 
 ```sh
-python3 cat-harness/scripts/slides-structure.py --a11y-only DECK.pptx DECK.odp
+python3 cat-harness-tools/scripts/slides-structure.py --a11y-only DECK.pptx DECK.odp
 ```
 
 On #1614 the two were Google Slides exports with identical image bytes. The PPTX
@@ -182,7 +182,7 @@ the recorded sha256 identify a rendering nobody published, so they take their
 own rung instead:
 
 ```sh
-bun run cat-harness/scripts/text-structure.ts -o <library> --doc-id <slug> \
+bun run cat-harness-tools/scripts/text-structure.ts -o <library> --doc-id <slug> \
   --base <checkout> --upstream upstream.json [--title T] [--image F]... FILE...
 ```
 
@@ -327,10 +327,10 @@ because a cataloguer's choice is not a program's default.
 **Record the Info dictionary at ingest.** `pdf-structure.py` writes
 `metadata.docinfo`. `pdf-pages.py` did not until #1794, which left 20
 page-granular entries with no `/Title` to read. Backfill an older entry with
-`python3 cat-harness/scripts/pdf-pages.py --docinfo-into <entry> <pdf>`. It
+`python3 cat-harness-tools/scripts/pdf-pages.py --docinfo-into <entry> <pdf>`. It
 refuses unless the PDF's sha256 is the one the entry recorded.
 
-One resolver, `cat-harness/content/pipeline/library-title.ts`
+One resolver, `cat-harness-tools/content/pipeline/library-title.ts`
 (`resolveLibraryTitle`, `TITLE_AUTHORITY`), is used by both
 `gen-library-jsonld.ts` and `check-library-qa.ts`. The manifest records
 `meta.title_source` and `meta.title_from`, and the QA check re-derives the
@@ -600,7 +600,7 @@ or source that is not there.
 
 Every entry carrying a `structure.json` gets a **Document** panel in the
 library viewer, built from the ingestion schema by
-`cat-harness/scripts/lib/library-document.ts` and published as
+`cat-harness-tools/scripts/lib/library-document.ts` and published as
 `assets/library/entries/<id>.doc.json` (`folio-library-document/v1`) by
 `bun run cat library:viz`. Tabs: **Contents** (the TOC as a tree, collapsed below
 the first level that branches, each inferred entry's confidence, linking to its

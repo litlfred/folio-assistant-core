@@ -39,7 +39,7 @@ import { instanceRootsIn, readDeclaration } from "../../cat-harness/schemas/cat-
 
 const REPO_ROOT_FOR_NS = resolve(import.meta.dir, "../..");
 import { parseFrontMatter } from "../../cat-harness/schemas/front-matter.ts";
-import { discoverTools } from "../../cat-harness/tools/discover.ts";
+import { discoverTools } from "../../cat-harness-tools/tools/discover.ts";
 
 const NS = "https://example.org/x/ns#";
 function g(over: Record<string, unknown> = {}): unknown {

@@ -8,7 +8,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 import { TodoNodeSchema } from "../../cat-harness/schemas/todo";
-import { workflowFile } from "../../cat-harness/scripts/known-skills";
+import { workflowFile } from "../../cat-harness-tools/scripts/known-skills";
 import {
   REVIEW_TRANSITIONS,
   ReviewCommentKind,

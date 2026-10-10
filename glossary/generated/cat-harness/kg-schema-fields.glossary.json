@@ -2431,7 +2431,7 @@
     {
       "id": "cat-harness.catharnessdeclaration.gateexemptions",
       "prefLabel": "CatHarnessDeclaration.gateExemptions",
-      "definition": "The CI steps and check scripts of THIS instance that the local gate set deliberately does not run, each with its reason — the rows `cat-harness/scripts/gates.ts` holds as `STEP_EXEMPTIONS` and `SCRIPT_EXEMPTIONS` for the harness's own. Same contract: a reason is required, a step `match` is a substring of the workflow command, a script name is matched exactly. Declared by the owner so the harness need not name a layer above itself (bean `0r7u` step 0).",
+      "definition": "The CI steps and check scripts of THIS instance that the local gate set deliberately does not run, each with its reason — the rows `cat-harness-tools/scripts/gates.ts` holds as `STEP_EXEMPTIONS` and `SCRIPT_EXEMPTIONS` for the harness's own. Same contract: a reason is required, a step `match` is a substring of the workflow command, a script name is matched exactly. Declared by the owner so the harness need not name a layer above itself (bean `0r7u` step 0).",
       "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.gateExemptions",
       "status": "candidate"
     },
@@ -2606,7 +2606,7 @@
     {
       "id": "cat-harness.catharnessdeclaration.taskio",
       "prefLabel": "CatHarnessDeclaration.taskIo",
-      "definition": "What this instance's own package tasks read and write, keyed by task name — the same {@link ScriptIO}-shaped facts `cat-harness/scripts/task-io.ts` holds for the harness's own tasks: `outputs: []` (measured to write nothing, so it may run in the pool) and `inputs` (what can change the answer, so `regen` may skip it on an unchanged tree; `\"{tracked}\"` is the whole working tree). `because` keeps the measurement that justified it.",
+      "definition": "What this instance's own package tasks read and write, keyed by task name — the same {@link ScriptIO}-shaped facts `cat-harness-tools/scripts/task-io.ts` holds for the harness's own tasks: `outputs: []` (measured to write nothing, so it may run in the pool) and `inputs` (what can change the answer, so `regen` may skip it on an unchanged tree; `\"{tracked}\"` is the whole working tree). `because` keeps the measurement that justified it.",
       "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.taskIo",
       "status": "candidate"
     },
@@ -2781,7 +2781,7 @@
     {
       "id": "cat-harness.catharnessdeclarationschema.taskio",
       "prefLabel": "CatHarnessDeclarationSchema.taskIo",
-      "definition": "What this instance's own package tasks read and write, keyed by task name — the same {@link ScriptIO}-shaped facts `cat-harness/scripts/task-io.ts` holds for the harness's own tasks: `outputs: []` (measured to write nothing, so it may run in the pool) and `inputs` (what can change the answer, so `regen` may skip it on an unchanged tree; `\"{tracked}\"` is the whole working tree). `because` keeps the measurement that justified it.",
+      "definition": "What this instance's own package tasks read and write, keyed by task name — the same {@link ScriptIO}-shaped facts `cat-harness-tools/scripts/task-io.ts` holds for the harness's own tasks: `outputs: []` (measured to write nothing, so it may run in the pool) and `inputs` (what can change the answer, so `regen` may skip it on an unchanged tree; `\"{tracked}\"` is the whole working tree). `because` keeps the measurement that justified it.",
       "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.taskIo",
       "status": "candidate"
     },

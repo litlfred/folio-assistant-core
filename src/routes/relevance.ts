@@ -38,7 +38,7 @@ import { readSourceLedger, writeSourceLedger } from "../../../cat-harness/schema
 import { join } from "path";
 
 import { allows, forbidden, principalOf } from "../../../cat-harness-tools/src/core/rbac.js";
-import { log } from "../../../cat-harness/src/core/logging.js";
+import { log } from "../../../cat-harness-tools/src/core/logging.js";
 import type { MountedRoute, RouteDeps } from "../../../cat-harness-tools/src/route-groups.js";
 import type {
   LedgerEntry,

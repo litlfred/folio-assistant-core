@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { renderSectionMarkdown } from "../../cat-harness/content/pipeline/render-markdown.js";
+import { renderSectionMarkdown } from "../../cat-harness-tools/content/pipeline/render-markdown.js";
 import type { Section } from "../../cat-harness/schemas/types.js";
 import { convert, type LineMap, splitNumber, type Structure } from "./docx-to-folio.js";
 

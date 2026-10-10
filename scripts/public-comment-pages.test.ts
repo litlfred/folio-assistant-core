@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
 import type { KindNode } from "../../cat-harness/schemas/node-kind-nodes.ts";
-import type { KindPagesContext } from "../../cat-harness/scripts/gen-node-kind-pages.ts";
+import type { KindPagesContext } from "../../cat-harness-tools/scripts/gen-node-kind-pages.ts";
 import { ChangeSetPages, PublicCommentPages } from "./public-comment-pages.ts";
 
 /** Issue #2195: the public-review kinds' own sections, joined over the change-set records. */

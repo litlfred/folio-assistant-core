@@ -252,7 +252,7 @@ if (import.meta.main) {
   // otherwise careful about everywhere.
   //
   // Two scripts, one defect, fixed eight days apart: this pair moved together
-  // out of `cat-harness/content/pipeline/` (bean `yj6r`), and the move is what
+  // out of `cat-harness-tools/content/pipeline/` (bean `yj6r`), and the move is what
   // put them side by side for long enough to notice the second.
   if (positional.length === 0) {
     console.error(`Usage: codemod-refterm.ts <paper-or-chapter-dir> [--write]`);

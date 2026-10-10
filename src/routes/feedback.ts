@@ -14,11 +14,11 @@
 import {
   FeedbackStore, INVALID_ENUM, parseTodoPriority, parseTodoStatus,
   TODO_PRIORITIES, TODO_STATUSES,
-} from "../../../cat-harness/src/core/feedback.js";
+} from "../../../cat-harness-tools/src/core/feedback.js";
 import type { FeedbackItem } from "../../../cat-harness/schemas/types.js";
 import type { ContentAdapter } from "../../../cat-harness-tools/src/types.js";
 import { getUserName, getUserEmail, allows, forbidden } from "../../../cat-harness-tools/src/core/rbac.js";
-import { log } from "../../../cat-harness/src/core/logging.js";
+import { log } from "../../../cat-harness-tools/src/core/logging.js";
 import type { MountedRoute, RouteDeps } from "../../../cat-harness-tools/src/route-groups.js";
 
 const CORS = { "Access-Control-Allow-Origin": "*" };

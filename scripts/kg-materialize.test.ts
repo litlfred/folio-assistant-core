@@ -4,7 +4,7 @@
  * through the five gates. Every test runs over fixtures through the injectable
  * fetcher — no network.
  *
- * Here rather than in `cat-harness/scripts/tests/`, because the writer embeds
+ * Here rather than in `cat-harness-tools/scripts/tests/`, because the writer embeds
  * core's `MaterializationSchema`; a cat-harness test importing it would be the
  * wrong-direction edge the writer's placement avoids.
  */
@@ -14,8 +14,8 @@ import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSyn
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 
-import { judgeDeclaration, partRecordsIn, SNAPSHOT_SUFFIX, treeDigest } from "../../cat-harness/scripts/kg-subscribe.ts";
-import { partState, render, subscriptionCards } from "../../cat-harness/scripts/subscriptions-viz.ts";
+import { judgeDeclaration, partRecordsIn, SNAPSHOT_SUFFIX, treeDigest } from "../../cat-harness-tools/scripts/kg-subscribe.ts";
+import { partState, render, subscriptionCards } from "../../cat-harness-tools/scripts/subscriptions-viz.ts";
 import { SUBSTRATE_SNAPSHOT_SCHEMA } from "../../cat-harness/schemas/substrate-snapshot.ts";
 import { KgMaterializationRecordSchema, KgNodesRecordSchema, type KgDecisions } from "../schemas/kg-materialization.ts";
 import { MaterializationSchema } from "../schemas/materialization.ts";

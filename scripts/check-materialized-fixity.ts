@@ -73,7 +73,7 @@ import { join, relative, resolve } from "node:path";
 import { declarationPathIn } from "../../cat-harness/schemas/cat-harness.js";
 import { isFrozenSubtree } from "../../cat-harness/schemas/fsh-guts.js";
 import { KG_PART_RECORD_SCHEMA } from "../../cat-harness/schemas/substrate-snapshot.js";
-import { PART_RECORD_FILE, PART_TREE } from "../../cat-harness/scripts/kg-subscribe.js";
+import { PART_RECORD_FILE, PART_TREE } from "../../cat-harness-tools/scripts/kg-subscribe.js";
 
 const REPO = resolve(import.meta.dir, "..", "..");
 

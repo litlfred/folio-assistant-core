@@ -5,7 +5,7 @@
 import { describe, expect, it } from "bun:test";
 import { join } from "node:path";
 
-import { evaluate, loadDecisionTable, unreadableExpressions } from "../../../cat-harness/src/workflow/decision-table.js";
+import { evaluate, loadDecisionTable, unreadableExpressions } from "../../../cat-harness-tools/src/workflow/decision-table.js";
 
 const table = await loadDecisionTable(join(import.meta.dir, "../../processes/content/decisions/review-coverage-gate.dmn"), "Decision_ReviewCoverageGate");
 const clean = { uncoveredBlocks: 0, openDefects: 0, rendered: "known", unreviewedPages: 0, undeterminedInputs: 0, measured: "known", missedPages: 0 };

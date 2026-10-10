@@ -17,8 +17,8 @@ import { resolve } from "node:path";
 
 import jsonld from "jsonld";
 
-import { localLoader } from "../../cat-harness/scripts/publish-verify.ts";
-import type { SchemeState } from "../../cat-harness/scripts/check-term-mapping.ts";
+import { localLoader } from "../../cat-harness-tools/scripts/publish-verify.ts";
+import type { SchemeState } from "../../cat-harness-tools/scripts/check-term-mapping.ts";
 import { AUTOMATED_RUN, automatedGraphIri, termIri, toSkos, type Glossary } from "../schemas/glossary.ts";
 import { MATCHING_AGENT, automatedMatches, matchingAgentIri, sourceKey, type GlossarySource } from "./glossary-page.ts";
 

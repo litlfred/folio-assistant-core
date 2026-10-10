@@ -1,6 +1,6 @@
 /**
  * Which of folio-assistant-core's processes declare activity-log capture —
- * moved here from `cat-harness/scripts/tests/log-writer.test.ts` (bean
+ * moved here from `cat-harness-tools/scripts/tests/log-writer.test.ts` (bean
  * `ho66`). The log writer is cat-harness code and its tests stay there;
  * `editing-hci-validation` and `content-lifecycle` are this instance's, so
  * standing alone cat-harness has neither to read.
@@ -12,8 +12,8 @@ import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 
-import { workflowFile, workflowFiles } from "../../../cat-harness/scripts/known-skills.js";
-import { loadProcessModel } from "../../../cat-harness/src/workflow/process-model.ts";
+import { workflowFile, workflowFiles } from "../../../cat-harness-tools/scripts/known-skills.js";
+import { loadProcessModel } from "../../../cat-harness-tools/src/workflow/process-model.ts";
 
 describe("the process says whether running it is logged", () => {
   // Diagrams by NAME through the declared `processes` graphs (placement PR3, bean `63wl`).

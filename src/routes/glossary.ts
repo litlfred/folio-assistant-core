@@ -22,7 +22,7 @@ import { existsSync, readFileSync, writeFileSync } from "fs";
 import { join, resolve } from "path";
 
 import { allows, forbidden } from "../../../cat-harness-tools/src/core/rbac.js";
-import { log } from "../../../cat-harness/src/core/logging.js";
+import { log } from "../../../cat-harness-tools/src/core/logging.js";
 import type { MountedRoute, RouteDeps } from "../../../cat-harness-tools/src/route-groups.js";
 
 const CORS = { "Access-Control-Allow-Origin": "*" };

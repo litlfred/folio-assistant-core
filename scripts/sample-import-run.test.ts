@@ -15,10 +15,10 @@ import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync,
 import { tmpdir } from "node:os";
 import { dirname, join, resolve } from "node:path";
 
-import { complete, startInstance } from "../../cat-harness/src/workflow/instance.ts";
-import { loadProcessModel } from "../../cat-harness/src/workflow/process-model.ts";
-import { instanceId, loadInstance, saveInstance } from "../../cat-harness/src/workflow/store.ts";
-import { writeDeclaration } from "../../cat-harness/test/support/instance-fixture.ts";
+import { complete, startInstance } from "../../cat-harness-tools/src/workflow/instance.ts";
+import { loadProcessModel } from "../../cat-harness-tools/src/workflow/process-model.ts";
+import { instanceId, loadInstance, saveInstance } from "../../cat-harness-tools/src/workflow/store.ts";
+import { writeDeclaration } from "../../cat-harness-tools/test/support/instance-fixture.ts";
 import { runSampleImport, type Handler } from "./sample-import-run.ts";
 
 const REPO = resolve(import.meta.dir, "..", "..");

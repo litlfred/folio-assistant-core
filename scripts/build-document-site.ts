@@ -62,13 +62,13 @@ import { visit } from "unist-util-visit";
 
 import { folioDir, readDeclaration, visualisationResolves, visualisationsOf, type CatHarnessDeclaration } from "../../cat-harness/schemas/cat-harness.js";
 import { readHarnessConfig } from "../../cat-harness/schemas/harness-config.js";
-import { detectRepoUrl, ownerRepo } from "../../cat-harness/src/core/git-refs.js";
+import { detectRepoUrl, ownerRepo } from "../../cat-harness-tools/src/core/git-refs.js";
 import { DEFAULT_TEMPLATE, injectBlockActions, readIssueForm, type BlockActionsConfig, type BlockContext } from "./block-actions.js";
 import type { Chapter, Paper, Section, SectionRef } from "../../cat-harness/schemas/types.js";
-import { buildDocumentMarkdown } from "../../cat-harness/content/pipeline/render-markdown.js";
-import { reviewPageHtml } from "../../cat-harness/scripts/gen-review-page.js";
-import { darkRules } from "../../cat-harness/scripts/lib/scheme-css.ts";
-import { visualiserNavDeclaration, type VisualiserNavEntry } from "../../cat-harness/scripts/lib/navbar.js";
+import { buildDocumentMarkdown } from "../../cat-harness-tools/content/pipeline/render-markdown.js";
+import { reviewPageHtml } from "../../cat-harness-tools/scripts/gen-review-page.js";
+import { darkRules } from "../../cat-harness-tools/scripts/lib/scheme-css.ts";
+import { visualiserNavDeclaration, type VisualiserNavEntry } from "../../cat-harness-tools/scripts/lib/navbar.js";
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
@@ -336,7 +336,7 @@ addEventListener("DOMContentLoaded", () => {
 </script>`;
 }
 
-/** The viewer's macro table (`buildKatexMacros` in cat-harness/viewer/index.html), from a paper manifest. */
+/** The viewer's macro table (`buildKatexMacros` in cat-harness-tools/viewer/index.html), from a paper manifest. */
 export function katexMacros(paperMacros: Record<string, { tex: string }> | undefined): Record<string, string> {
   const m: Record<string, string> = { "\\bigbowtie": "\\bowtie", "\\smallmatrix": "\\begin{smallmatrix}", "\\qed": "\\square" };
   for (const [name, def] of Object.entries(paperMacros ?? {})) m["\\" + name] = def.tex;

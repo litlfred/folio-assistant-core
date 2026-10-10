@@ -9,7 +9,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 import { buildFolioSite, sectionSlug, shellHtml, type SiteOutline } from "./build-folio-site.js";
-import { initFolio } from "../../cat-harness/scripts/init-folio.js";
+import { initFolio } from "../../cat-harness-tools/scripts/init-folio.js";
 
 const REPO_ROOT = resolve(import.meta.dir, "../..");
 let roots: string[] = [];

@@ -42,7 +42,7 @@
  * absolute is baked in. A cross-reference `#label` that is not on the current
  * page is resolved through the outline to the section page that holds it.
  */
-import { editLinksAsset } from "../../cat-harness/src/core/edit-links.js";
+import { editLinksAsset } from "../../cat-harness-tools/src/core/edit-links.js";
 import { createHash } from "node:crypto";
 import { copyFileSync, cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
@@ -51,7 +51,7 @@ import { readHarnessConfig } from "../../cat-harness/schemas/harness-config.js";
 import { CONFIG_SUFFIX, isReservedIndexFile } from "../../cat-harness/schemas/instance-roots.js";
 import type { Block, Chapter, Paper, Section, SectionRef } from "../../cat-harness/schemas/types.js";
 import { kindHeading } from "../../cat-harness/schemas/translation.js";
-import { resolveLiquidValues } from "../../cat-harness/content/pipeline/liquid-values.js";
+import { resolveLiquidValues } from "../../cat-harness-tools/content/pipeline/liquid-values.js";
 import { documentManifests, katexMacros, renderDocumentHtml } from "./build-document-site.js";
 import { addToReport, emptyReport, imageExistsUnder, qaBlockHtml, type SiteQaReport } from "./folio-site-qa.js";
 
