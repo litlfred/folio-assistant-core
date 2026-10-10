@@ -47,3 +47,17 @@ Each finding re-measured on a local build of that commit (`preview-site.sh`, ser
 - **STILL-PRESENT** — Lead badge emphasis is colour alone: .badge.lead b is rgb(154,103,0) vs rgb(31,35,40) for the other badges, and all four are font-weight 700. The contrast is 4.57:1 on #f6f8fa (light) and 6.85:1 in dark. (D/p_up.js, D/p_up2.js)
 - **STILL-PRESENT** — Size wraps inside its cell at 1280: At 1280 the Size column is 64px wide, and 51 of 56 size cells wrap to two lines (e.g. '3.6 MB'), white-space normal. (D/p_up.js, D/p_up2.js)
 - **STILL-PRESENT** — Unhelpful filenames get equal weight, no grouping: 12 rows are named 'ChatGPT Image …' or a UUID. There is a single tbody with 0 group rows or captions, over 56 rows (was 50). (D/p_up.js)
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-uploads-viz.ts` in cat-harness-tools. `uploads-viz.test.ts` cites fixes for findings 1, 3, 4, 5 and 6, so a re-verify is likely to close it. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.

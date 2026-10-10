@@ -66,3 +66,27 @@ Claimed 2026-09-22 by branch claude/kind-albattani-0qe9gj (session_017nyJj3Psjvs
 ## Claim released 2026-09-29
 
 Released `in-progress` → `todo` on the owner's instruction (review session https://claude.ai/code/session_014Qj8wncQhqV52QGN1yZDnj). No git change to this bean since before 2026-09-26, and no holder recorded; the sessions that held theme C (rendered site) work stopped on the 2026-09-25 weekly usage limit. Nothing in the body was changed: re-claim with `bun run cat beans:claim <id>`.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C).
+
+**Done, re-measured:**
+- `id-unique` and `id-stable` are registered (cat-harness-tools
+  `qa-criteria-registry.ts`, `qa-checkers-ids.ts`), with tests.
+- Core's own consumers, `schemas/changeset.ts` and `schemas/review-comment.ts`,
+  already follow `renamedFrom`.
+
+**Open:**
+- `renamedFrom` sits on `BlockBase` in cat-harness `schemas/types.ts:419` and
+  `constraints.ts:245`, not in core as you asked.
+- No sweep has run over a real folio.
+
+1. **(Recommended) Close this bean.** The field moves when `BlockBase` moves
+   whole, as part of the content-model work under `0lmb`. The folio sweep
+   becomes part of `xp72`'s scale fixture, which is a real folio.
+2. Move `BlockBase` (with `renamedFrom`) into core now, as a new L-sized bean.
+3. Keep this open until a sweep over a real folio has run.
+
+**Default if no answer:** option 1.

@@ -44,3 +44,17 @@ Each finding re-measured on a local build of that commit (`preview-site.sh`, ser
 - **FIXED** — Links are not links: Changed since 2026-09-29. The node table's 'links' column now holds 14 a[href] in 3 of 5 rows (4 to GitHub, 10 to site pages such as agentic-harness.html and beans-and-todos.html). All 9 local targets return 200. The other 2 rows read 'none'. — #1592 (rv-folio.mjs, linkcheck.mjs)
 - **STILL-PRESENT** — Long cells stretch the rows: Node-table row heights are 63/245/154/63/63px at 1280 and 222/427/405/359/268px at 390, unchanged. (rv-folio.mjs)
 - **STILL-PRESENT** — Tables have no caption or heading: Neither table has a <caption> or aria-label. The preceding sibling is a DIV (stat line or previous table), not a heading. (rv-folio.mjs)
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-folio-viz.ts` in cat-harness-tools. It now emits table captions and aria-labels (finding 5). Finding 4, long cells stretching rows, is unverified. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.

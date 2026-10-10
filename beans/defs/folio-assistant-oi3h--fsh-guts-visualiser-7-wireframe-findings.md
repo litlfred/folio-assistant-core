@@ -50,3 +50,17 @@ Each finding re-measured on a local build of that commit (`preview-site.sh`, ser
 - **STILL-PRESENT** — Every file link leaves the site for github.com, and nothing marks this: 34 table links, all to github.com. 0 have target, rel, aria-label/title, an icon or ::after content. (rv-fg4.mjs)
 - **STILL-PRESENT** — Possible dead link on the canonical site: The canonical build (compose without --staging) has no /fsh-guts/ (HTTP 404). The home page still renders a visible 'fsh-guts' link, and the beans page nav (.fa-nav-sub) a visible 'F fsh-guts' link to it. This is a local preview-site build, not the deployed site. (rv-fg4.mjs)
 - **STILL-PRESENT** — Mobile: two different back controls in one panel: At 390 the discarded detail shows both '‹ All actions' and '‹ All discarded items'. The file tables are 3 columns, scrollWidth 362/362/362/362/369 in 362px wrappers; page scrollWidth 390. (rv-fg3.mjs, rv-fg.mjs)
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-fsh-guts-viz.ts` in cat-harness-tools, plus cat-harness `docs-ui.js/css`. Some findings are fixed (`fsh-guts-viz.test.ts`, `discarded-items.e2e.ts`). Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.

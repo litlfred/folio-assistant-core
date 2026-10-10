@@ -47,3 +47,17 @@ Related: `render-order` skill §"What stage 3 writes is not settled", issue
 So no dynamic-state visualiser yet names an input, and the rule above stands:
 no filename is minted here by guess. Left `todo`; re-measure when a viewer
 that reads dynamic state opens a PR.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The dynamic-state export is `render-pipeline.ts` in cat-harness-tools. It also waits on a visualiser that names an input. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.

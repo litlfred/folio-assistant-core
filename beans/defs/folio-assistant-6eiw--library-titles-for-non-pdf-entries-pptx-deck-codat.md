@@ -38,3 +38,17 @@ The owner decided on 2026-10-02 (option 1 on #1849): leave both as they are in
 
 - [ ] Both entries show a title that is verified or editorially corrected, and the source is recorded beside it.
 - [ ] A non-PDF entry with no title source is reported as such rather than shown under its file name.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The pptx title is fixed with an editorial `title_correction`. codata-2022 still shows its slug as its title (folio-assistant-sci `library/codata-2022/manifest.jsonld`). The 'report no title source' rule belongs to the cat-harness-tools resolver `gen-library-jsonld.ts`. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.

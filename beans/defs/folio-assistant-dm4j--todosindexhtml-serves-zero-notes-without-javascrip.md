@@ -157,3 +157,17 @@ all. Not in this bean's scope; recorded so it is not re-discovered.
       total (R6: a count that is not the panel's own cardinality is a number
       somebody will act on)
 - [ ] coordinated with #1886, since `footer_custom.html` is its phase C
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The original three Done-when items are met (`linear-floor.e2e.ts`, `todo-listing.test.ts`). The revised item, a per-page listing by `targetLabel`, is `gen-docs-pages.ts` in cat-harness-tools. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.

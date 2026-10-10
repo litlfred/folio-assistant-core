@@ -406,3 +406,22 @@ Five artefacts, one ruling:
 `blv9` — an `@id` must move with the file that carries it — is unchanged by any
 of this and is still the thing to gate whichever reading wins. **Nothing was
 moved**: the generators compose no path, so a change is one line per generator.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The three-case ruling
+covers per-instance artefacts. Five artefacts span instances and still have no
+place: the schema viewer, the library viewer, the repository KG, its viewer,
+and their `.json` aliases. Whichever option is chosen, `blv9` still gates the
+move (an `@id` moves with its file), and each generator change is one line.
+
+1. **(Recommended) Keep them at the site root as a declared exception.** Their
+   subject is the repository, and `<base>/` is the repository's own path.
+   `artefactStub` already documents that.
+2. Put them under `<base>/cat-harness/<kind>/`, owned by the harness that
+   renders them.
+3. Split each into per-instance pages under `<base>/<instance>/<kind>/`, plus a
+   thin root index.
+
+**Default if no answer:** option 1.

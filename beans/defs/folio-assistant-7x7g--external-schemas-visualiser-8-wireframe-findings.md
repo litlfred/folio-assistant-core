@@ -51,3 +51,17 @@ Each finding re-measured on a local build of that commit (`preview-site.sh`, ser
 - **CANNOT-TELL** — State tags fail contrast on the default dark scheme: 0 .xs-ok/.xs-na/.xs-missing elements are rendered, so there is nothing to measure. The inline <style> still defines .xs-ok #0d6e5e, .xs-na #5b5f66, .xs-missing #a8200f. (rv-xs2.mjs, contrast.mjs)
 - **STILL-PRESENT** — Mobile: the spec table is four columns in a 358 px column: At 390 the spec table has scrollWidth 430 in a .table-wrapper of 362px (overflow-x auto). There is no scroll hint (no hint text, role, tabindex or shadow). The 22-row term tables still repeat 'not yet described' on every row. (rv-xs3.mjs)
 - **STILL-PRESENT** — The notes are single long paragraphs in capitals for emphasis: The paragraphs containing 'THE TRANSCRIPTION CAME FIRST AND THAT WAS THE DEFECT' (779 ch) and 'NO XSD IS HELD' (792 ch) are each still one <p>. (xs5.mjs)
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-external-schemas-viz.ts` in cat-harness-tools. Tests there now cite fixes for findings 1, 3, 5, 6, 7 and 8 (`external-schemas-viz.test.ts`), so a re-verify is likely to close it. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.

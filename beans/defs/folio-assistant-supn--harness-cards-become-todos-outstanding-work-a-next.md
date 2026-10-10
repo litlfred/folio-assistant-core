@@ -120,3 +120,17 @@ without any new mechanism.
 
 Recorded rather than left, because a blocker stated more broadly than the
 evidence supports is one the next agent takes as impassable.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). Harness cards and next-action recommendations are harness-side. The `beans/workflows/` instances it reads no longer exist in any clone. Design it together with `v49e`. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.

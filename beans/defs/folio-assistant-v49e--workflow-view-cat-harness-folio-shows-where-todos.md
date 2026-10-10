@@ -115,3 +115,17 @@ one that draws an empty lane is the failure this repository keeps paying for.
 *"Where a process is breaking down"* is also now askable: both instances are
 `running` and one has not moved since 06:14, which is exactly the
 looks-like-nothing state this bean names.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). Where todos and beans sit in the BPMN/DMN is the cat-harness folio's own view. Design it together with `supn`. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
