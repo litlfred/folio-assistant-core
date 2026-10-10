@@ -1,11 +1,11 @@
 ---
 # folio-assistant-qbfi
 title: 'REVIEW HEAT MAPS: section-by-metric matrix of change, coverage, findings, QA and staleness — published, never colour alone'
-status: in-progress
+status: completed
 type: task
 priority: normal
 created_at: 2026-09-22T21:02:55Z
-updated_at: 2026-10-10T15:52:16Z
+updated_at: 2026-10-10T15:52:43Z
 parent: folio-assistant-q4jm
 blocked_by:
     - folio-assistant-jwox
@@ -106,3 +106,23 @@ Chosen directly by the owner in https://claude.ai/code/session_012qoycyCSGidZqW2
 2. Build now and adapt after #2080 (not chosen: the same reader would be reworked twice).
 
 The rest of q4jm (the end-to-end check on folio-test, comments, accept, the large fixture) is not held.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on evidence, checked against `litlfred/cat-harness-tools` @ `80e46e7` and `litlfred/cat-harness` (shallow main clones). Nothing was changed in this repository.
+
+The heat map is built and reads published data:
+- `cat-harness-tools/scripts/review-heat.ts` (cites this bean) computes the
+  section × metric rows for changed, open, stale, coverage and qa.
+  - **Coverage** is real now, through `px0t`'s reviewer verdicts on the current hash.
+  - **The QA column** reads `block-qa.json` from the `qa-reports` branch
+    (`publish-block-qa.ts`), as the 2026-10-06 ruling required (#2080/5hox).
+- A column with no data says so, per row, rather than showing 0.
+- `gen-review-page` embeds `computeHeat` itself, so the tested function is the
+  one the page runs.
+
+Moved out, as already recorded: the minimap is bean `eb4l`. Not re-checked
+here: a dataviz-validator pass in both themes on a built review page. That
+needs a site build of the harness, so any defect it finds belongs to the
+cat-harness-tools store, where the renderer lives.
