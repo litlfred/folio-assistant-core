@@ -32,6 +32,15 @@
  * divergence undetectable, which is the failure this whole file is shaped
  * against.
  *
+ * ## Debate before the verdict (SWE-Debate, arXiv:2507.23348v1)
+ *
+ * An outcome MAY carry {@link AdjudicationDebateSchema}: the rounds a
+ * competitive multi-agent debate ran before the adjudicator decided — ranked
+ * candidate proposals (round 1), cross-agent critique (round 2), discriminator
+ * synthesis (round 3). It records how the judgement was reached; it does not
+ * replace the reason. Bean `o57z`; it first landed on the harness's copy of
+ * this module and moved here when that duplicate was removed (2026-10-10).
+ *
  * ## What it does NOT do
  *
  * It does not decide anything, and it cannot. Adjudication is the step entered
@@ -176,6 +185,64 @@ export const AdjudicationRequestSchema = z
 export type AdjudicationRequest = z.infer<typeof AdjudicationRequestSchema>;
 
 /**
+ * A structured critique raised by one agent against another's proposal during a debate round.
+ * Formalized from SWE-Debate (arXiv:2507.23348v1 §3.3).
+ */
+export const DebateCritiqueSchema = z
+  .object({
+    targetAgent: z.string().min(1),
+    point: z.string().min(1),
+    severity: z.enum(["critical", "major", "minor"]).optional(),
+  })
+  .strict();
+export type DebateCritique = z.infer<typeof DebateCritiqueSchema>;
+
+/**
+ * A participant's stance and argument within a debate round.
+ */
+export const DebateProposalSchema = z
+  .object({
+    agent: z.string().min(1),
+    stance: z.string().min(1),
+    argument: z.string().min(1),
+    critiques: z.array(DebateCritiqueSchema).optional(),
+  })
+  .strict();
+export type DebateProposal = z.infer<typeof DebateProposalSchema>;
+
+/**
+ * One structured round in a multi-agent debate before referee adjudication.
+ * Following SWE-Debate:
+ *   - Round 1: candidate proposal & ranking (hypothesis selection);
+ *   - Round 2: competitive strategy refinement & cross-agent critique;
+ *   - Round 3: discriminator synthesis.
+ */
+export const DebateRoundSchema = z
+  .object({
+    round: z.number().int().positive(),
+    name: z.string().min(1),
+    participants: z.array(z.string().min(1)).min(1),
+    summary: z.string().min(1),
+    proposals: z.array(DebateProposalSchema).optional(),
+  })
+  .strict();
+export type DebateRound = z.infer<typeof DebateRoundSchema>;
+
+/**
+ * The structured multi-agent debate record formalizing debate rounds
+ * before an adjudicator reaches a final verdict (SWE-Debate, arXiv:2507.23348v1).
+ */
+export const AdjudicationDebateSchema = z
+  .object({
+    protocol: z.literal("swe-debate-v1").or(z.string().min(1)),
+    rounds: z.array(DebateRoundSchema).min(1),
+    consensus_reached: z.boolean().optional(),
+    resolved_conflicts: z.array(z.string().min(1)).optional(),
+  })
+  .strict();
+export type AdjudicationDebate = z.infer<typeof AdjudicationDebateSchema>;
+
+/**
  * What an adjudicator answers.
  *
  * Carries `codes` as well as `code` — see the module docstring. That is the
@@ -219,6 +286,11 @@ export const AdjudicationOutcomeSchema = z
         path: ["model"],
       }),
     at: z.string().min(1),
+    /**
+     * Optional structured debate record formalizing debate rounds
+     * conducted prior to the adjudicator's verdict (SWE-Debate / 2507.23348v1).
+     */
+    debate: AdjudicationDebateSchema.optional(),
   })
   .strict()
   .refine((o) => o.codes.includes(o.code), {
@@ -256,6 +328,14 @@ export function adjudicationDefects(
       `the enum drifted: adjudicated against (${b.join(", ")}), the request now permits (${a.join(", ")}). ` +
         `The outcome is not wrong — it was adjudicated under a different contract, and that is why it records one.`,
     );
+  }
+  if (outcome.debate) {
+    const rounds = outcome.debate.rounds;
+    for (let i = 0; i < rounds.length; i++) {
+      if (rounds[i]!.round !== i + 1) {
+        out.push(`debate rounds not sequential: expected round ${i + 1}, found ${rounds[i]!.round}`);
+      }
+    }
   }
   return out;
 }
