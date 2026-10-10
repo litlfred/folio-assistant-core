@@ -1001,6 +1001,13 @@
       "status": "candidate"
     },
     {
+      "id": "bean-graph.beanfrontmatterschema.issue",
+      "prefLabel": "BeanFrontMatterSchema.issue",
+      "definition": "GitHub issue number or reference (e.g. 730, \"#730\", or issue URL). Queryable field linking a bean to its external human adjudication/tracking issue.",
+      "source": "cat-harness/schemas/bean-graph.ts#BeanFrontMatterSchema.issue",
+      "status": "candidate"
+    },
+    {
       "id": "bean-graph.beangraphschema.directories",
       "prefLabel": "BeanGraphSchema.directories",
       "definition": "Named `directories`, like the harness declaration, not `nodes`.",
