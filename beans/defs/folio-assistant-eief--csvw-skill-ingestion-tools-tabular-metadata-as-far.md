@@ -222,4 +222,4 @@ Closed on the owner's ruling (option 1 above).
 - **Follow-ups:**
   - (a) the cat-harness Tool nodes `tabular-csv`/`tabular-xlsx` still read
     STUB. They are being replaced in a cat-harness PR by the same drain.
-  - (b) the `folio-tabular-records/v1` migration is `null`.
+  - (b) the `folio-tabular-records/v1` migration is `folio-core-urat`.
