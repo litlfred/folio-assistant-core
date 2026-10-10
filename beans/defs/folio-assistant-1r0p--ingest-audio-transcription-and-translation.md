@@ -131,3 +131,45 @@ Owner ruling, relayed by the coordinating session (session_012qoycyCSGidZqW245vX
 Asked in https://claude.ai/code/session_012qoycyCSGidZqW245vXhze, with three options (recommended first): defer until audio exists; faster-whisper (local); hosted API. **The owner chose "Defer until audio exists".**
 
 The transcription backend is chosen when the first real recording arrives, so it is tested on real speech in a real language. Until then this bean stays parked.
+
+
+## 2026-10-10: audio exists, the default tool is ruled, and the run is blocked on the network
+
+The owner, 2026-10-10: *"there is audio in smart-ra (video w/ audio to
+extract). there are two i think transcripts to compare extract tools. what
+options do we have for Tools? we should describe skills and when different
+(open-source) Tools are usable when"*. The deferral's condition ("until real
+audio exists") is met.
+
+**The recording, measured** (smart-ra `5a2b76d`):
+- `uploads/output.mp4`: 17:09, AAC mono 16 kHz, English, two speakers.
+- Two transcripts, both Microsoft Teams auto-recognition and so **one
+  opinion**: a `.vtt` (275 cues) and a `.docx` export. They agree on 98.0% of
+  words and share the same errors.
+- An earlier Vosk run (bean `uphx`, skill `crdm-recorded-walkthrough`) agreed
+  on 80.2% and corrected those errors. Its output was never committed.
+
+**Owner ruling 2026-10-10: the default independent recogniser is whisper.cpp**
+(chosen from whisper.cpp, faster-whisper, WhisperX + pyannote, and Vosk).
+
+**Done:** the skill `skills/library/ingestion/audio-transcription.md` says
+which open-source recogniser to use when. It covers:
+- audio extraction;
+- the one-opinion rule;
+- a constraint table: whisper.cpp, faster-whisper, Vosk, WhisperX + pyannote,
+  Parakeet/Canary, Distil-Whisper;
+- translation as a separate step;
+- WER, CER and DER;
+- what blocks a run.
+
+**Blocked:** every recogniser's weights are on **huggingface.co** (Vosk's on
+alphacephei.com), and this environment's network policy refuses both. Running
+whisper.cpp on the smart-ra audio needs huggingface.co added to the
+environment's allowed domains. Nothing was substituted for the run.
+
+**Next, once the host is allowed:**
+1. Build whisper.cpp and fetch `ggml-base`.
+2. Transcribe the extracted WAV.
+3. Commit the transcript with its tool, model and SHA-256.
+4. Compare it with the Teams `.vtt` (agreement, plus a name and term list).
+5. File findings for a reviewer.
