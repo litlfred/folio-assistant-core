@@ -162,16 +162,26 @@ special-casing, it would be forced conformance wearing the licence as cover.
 
 ## A stub must be impossible to mistake for a result
 
-**The CSV extractor ships; the XLSX one is still a stub.** The owner first
-said *"no tooling needed, stub out, make QA to catch absence"*, then ruled on
-2026-10-06 to build both extractors in folio-assistant-core after the content
-split. `scripts/tabular-csv.ts` is the first. It routes on content (the first
+**Both extractors ship.** The owner first said *"no tooling needed, stub out,
+make QA to catch absence"*, then ruled on 2026-10-06 to build both extractors
+in folio-assistant-core after the content split.
+
+`scripts/tabular-xlsx.ts` reads a workbook with no new dependency: a ZIP read
+with `node:zlib`, and SpreadsheetML read with `fast-xml-parser`. Each sheet is
+split into rectangular blocks, on empty rows and then on empty columns, and
+each block is one table anchored at its real top-left cell. A numeric cell
+whose number format is a date format is read as a date, not as its serial. A
+malformed part is refused rather than half-read.
+
+`scripts/tabular-csv.ts` routes on content (the first
 rows agree on a field count of two or more under exactly one width, or the
 file is refused), classifies columns through `scripts/tabular-columns.ts`,
 and records `fac:anchor` as sheet `null`, cell `null`, row 1, column 1.
 When every column is text, nothing separates a header from a first data row,
 and it takes CSVW's declared default, `header: true` (CSVW Dialect §5.9). That
-is a stated convention, not a measurement. A tool that has not been built records `fac:stub` with the
+is a stated convention, not a measurement.
+
+The stub rules below still hold for any FUTURE format. A tool that has not been built records `fac:stub` with the
 tool's name, a reason, and a **date** — undated, a stub cannot be told from
 abandoned work, which is the same argument `bean-blocking` makes for an expiry.
 

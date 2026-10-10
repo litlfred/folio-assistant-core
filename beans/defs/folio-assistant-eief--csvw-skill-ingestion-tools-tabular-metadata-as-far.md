@@ -5,7 +5,7 @@ status: todo
 type: feature
 priority: normal
 created_at: 2026-09-20T12:02:21Z
-updated_at: 2026-10-10T16:05:10Z
+updated_at: 2026-10-10T16:08:33Z
 parent: folio-assistant-slw1
 ---
 
@@ -158,3 +158,53 @@ split):
 - the `folio-tabular-records/v1` migration;
 - testing against the real smart-ra public-comment CSV/XLSX and the DAK
   workbooks.
+
+
+## 2026-10-10: XLSX extractor built (bean-backlog drain, lane C, PR 2 of 2)
+
+- **`scripts/tabular-xlsx.ts`** needs no new dependency: the ZIP is read with
+  `node:zlib` (stored and deflated, all ECMA-376 permits), and the XML with
+  the already-declared `fast-xml-parser`.
+  - Routing is by content: a file with no ZIP signature, or a ZIP without
+    `xl/workbook.xml`, is refused.
+  - Each sheet is split into **blocks**, on empty rows and then on empty
+    columns within a band. Each block is one CSVW table with a determined
+    `fac:anchor` (sheet, A1 cell, row, column), a header judged by the same
+    rule as a CSV's, and a measured extent. This is the location-on-sheet case
+    the owner named.
+  - Dates are read through `xl/styles.xml` (built-in ids 14–22 and 45–47, and
+    custom format codes with a date token), so a date column is `date`, not the
+    `integer` its serials would misread as.
+  - A malformed part is refused (`XMLValidator`) rather than half-read.
+- **`scripts/tabular-xlsx.test.ts`** has 12 tests over workbooks built byte by
+  byte in the test, including a DAK-shaped sheet: a title cell, a decision
+  table at B3, a code table beside it at G3, and a data-element table at B9.
+  All four are found and anchored where they start.
+
+**Done-when status:**
+- [x] `csvw:` in the `@context` (earlier rounds)
+- [x] the skill governs extraction, and now describes both shipped tools
+- [x] CSV and XLSX each have their own tool. The **Tool nodes** in cat-harness
+      `tools/index.ts` still read STUB with `install: { none: true }`; replacing
+      them with declarations that invoke core's scripts is a cat-harness change,
+      queued below.
+- [x] location-on-sheet recorded as an annotation on CSVW, tested (DAK-shaped
+      sheet)
+- [ ] `folio-tabular-records/v1` migrated
+- [x] p67i's manifest question (answered by jg8s, completed)
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). What remains is (a) the
+cat-harness Tool nodes for `tabular-csv` and `tabular-xlsx`, which still say
+STUB, and (b) the `folio-tabular-records/v1` migration.
+
+1. **(Recommended) Close this bean, and open two follow-ups.** (a) goes to the
+   cat-harness store: replace the stubs with real declarations invoking
+   `folio-assistant-core/scripts/tabular-{csv,xlsx}.ts`. (b) is a core bean for
+   the migration, run against the smart-ra public-comment export and a DAK
+   workbook once either is in a checkout.
+2. Keep this bean open until both are done.
+3. Lane C opens a cat-harness PR for (a) now, left for review.
+
+**Default if no answer:** option 1.
