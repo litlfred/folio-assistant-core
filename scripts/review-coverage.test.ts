@@ -32,7 +32,7 @@ describe("buildCoverage", () => {
   });
 
   it("an edit after the verdict reopens that block", () => {
-    const f = buildCoverage({ changeset, blocks: { ...blocks, "prose:a": { hash: "ha2", renamedFrom: [] } }, reviewComments: rc });
+    const f = buildCoverage({ changeset, blocks: { ...blocks, "prose:a": { hash: "ha2" } }, reviewComments: rc });
     expect(f.uncovered).toEqual(["prose:a", "prose:b"]);
     expect(f.stale).toHaveLength(1);
   });
