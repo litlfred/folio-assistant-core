@@ -16,6 +16,7 @@
 import { join, relative } from "node:path";
 
 import { folioDir, readDeclaration } from "../../cat-harness/schemas/cat-harness.js";
+import { localisedPage } from "./document-site-route.js";
 
 /** This instance's declared name: the handler segment. */
 export const HANDLER = (readDeclaration(join(import.meta.dir, "..")) as { name?: string } | undefined)?.name ?? "folio-assistant-core";
@@ -23,13 +24,25 @@ export const HANDLER = (readDeclaration(join(import.meta.dir, "..")) as { name?:
 /** The kind segment. */
 export const KIND = "public-comments";
 
-/** `<handler>/public-comments/<folio path>/<slug>`, relative to the site root, no trailing slash. */
+/**
+ * `<handler>/public-comments/<folio path>/<slug>`, relative to the site root,
+ * no trailing slash: where the dashboard's DATA is, `comments.json`.
+ */
 export function dashboardRoute(repoRoot: string, slug: string): string {
   const folio = relative(repoRoot, folioDir(repoRoot)).split("\\").join("/") || "folio";
   return `${HANDLER}/${KIND}/${folio}/${slug}`;
 }
 
-/** From the dashboard back to the site root: one `../` per segment. */
+/**
+ * Where the dashboard PAGE is: {@link dashboardRoute} under the page locale,
+ * `en/<handler>/public-comments/<folio path>/<slug>` (issue #2527). Its data
+ * stays at {@link dashboardRoute}; see `document-site-route.ts`.
+ */
+export function dashboardPageRoute(repoRoot: string, slug: string): string {
+  return localisedPage(dashboardRoute(repoRoot, slug));
+}
+
+/** From a page at `route` back to the site root: one `../` per segment. */
 export function toSiteRoot(route: string): string {
   return "../".repeat(route.split("/").length);
 }

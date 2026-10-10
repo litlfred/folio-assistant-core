@@ -3,6 +3,7 @@ import { describe, expect, test } from "bun:test";
 import type { ReviewAnchors } from "./docx-to-folio.js";
 import { PublicCommentSchema } from "../schemas/public-comment.js";
 import { dashboardHtml, overlaySnippet, siteComments, stagingSlug } from "./public-comment-site.js";
+import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
 
 const anchors: ReviewAnchors = {
   $schema: "folio-review-anchors/v1",
@@ -48,12 +49,24 @@ describe("public-comment-site", () => {
     expect(r.phase).toBe("editing");
     expect(r.section).toBe("1.1");
     expect(r.links).toMatchObject({
-      document: "../doc/index.html#prose%3A1-1-abc",
-      before: "https://o.github.io/r/doc/index.html#prose%3A1-1-abc",
-      after: "https://o.github.io/r/STAGING/pc-1.1-definitions/doc/index.html#prose%3A1-1-abc",
+      document: "../en/doc/index.html#prose%3A1-1-abc",
+      before: "https://o.github.io/r/en/doc/index.html#prose%3A1-1-abc",
+      after: "https://o.github.io/r/STAGING/pc-1.1-definitions/en/doc/index.html#prose%3A1-1-abc",
       pr: "https://github.com/o/r/pull/7",
       record: "https://github.com/o/r/blob/main/review/public-comment/comments/PC-0001.json",
     });
+  });
+
+  test("the dashboard's page is under the locale and reads its records where they stay (#2527)", () => {
+    const route = dashboardRoute("/r", "doc");
+    const page = dashboardPageRoute("/r", "doc");
+    expect(page).toBe(`en/${route}`);
+    const records = `${toSiteRoot(page)}${route}/comments.json`;
+    const html = dashboardHtml(siteComments([comment({})], anchors, { slug: "doc", toRoot: toSiteRoot(page) }), { title: "T", slug: "doc", generated: "g", toRoot: toSiteRoot(page), records });
+    expect(html).toContain(`fetch(${JSON.stringify(records)})`);
+    expect(html).toContain(`href="${toSiteRoot(page)}en/doc/index.html"`);
+    // Without a records path, the old beside-the-page address.
+    expect(dashboardHtml([], { title: "T", slug: "doc", generated: "g" })).toContain('fetch("comments.json")');
   });
 
   test("comment text is escaped in the dashboard and cannot close the overlay's script", () => {
