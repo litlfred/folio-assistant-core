@@ -1,11 +1,11 @@
 ---
 # folio-assistant-ktt2
 title: 'INGEST: round-trip translation QA — back-translate to catch semantic drift and bad terminology'
-status: todo
+status: completed
 type: task
 priority: normal
 created_at: 2026-09-16T06:43:50Z
-updated_at: 2026-10-10T15:57:45Z
+updated_at: 2026-10-10T17:25:53Z
 parent: folio-assistant-slw1
 ---
 
@@ -133,3 +133,37 @@ the translations that exist (who-iris in the six UN languages, #2229), and
 adjudicating what it flags. That run belongs in the who-iris instance and
 needs dispatched back-translator and adjudicator agents. Close this bean on
 that run's sidecars.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 on the owner's instruction ("ktt2: do so"), with both items
+of the 2026-10-06 ruling done:
+
+1. **Gate wired** (core PR #31): `Task_RoundTrip` names the agentic round trip,
+   its criterion and the separate terminology criterion.
+2. **Run over the translations that exist** (who-iris PR #35, merged). This
+   covered 600 strings: `site/iris-site.po` and `glossary/who-iris--who-terms.po`
+   in ar, es, fr, ru and zh.
+   - Each string was back-translated by an agent that saw **only the
+     `msgstr`**. It was limited to one Read and one Write, and recorded
+     `TOOLS_USED: Read,Write`.
+   - A separate adjudicator saw **only the `msgid`, its note and the
+     back-translation**, and tagged each finding `[term]` or `[sense]`.
+     That tagging is the terminology-versus-semantic distinction the Done-when
+     asks for.
+   - **Result: 532 pass, 66 warn, 2 fail.** By locale: ar 113/7/0, es 113/7/0,
+     fr 112/8/0, ru 90/28/2, zh 104/16/0.
+   - The earlier 580/580 (bean `lffo`) was self-checked by the translating
+     agent. This independent run is the measurement that one could not be.
+   - The report is `qa-results/v1`, derived by
+     `who-iris/scripts/translation-roundtrip-report.ts` from the committed agent
+     outputs. It goes stale when a catalogue changes, and `--check` and a test
+     guard it.
+
+**Mismatches become reviewer-adjudicated findings:** the 68 flagged entries are
+queued for a reviewer as `folio-core-2mb0`. Nothing was auto-corrected.
+
+**Stated limit:** the bean was written for *localized narratives*. None exist
+yet: figure narratives are English drafts (`d5f1`, now `cat-tools-e1lo`). The
+same mechanism applies to them unchanged when they are translated.
