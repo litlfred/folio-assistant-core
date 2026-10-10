@@ -1,11 +1,11 @@
 ---
 # folio-assistant-k660
 title: 'QUEUED STREAM B: the authoring surface — content model, memory and voice (0lmb + 8jt6 + 2upx, 16 open beans)'
-status: todo
+status: in-progress
 type: task
 priority: normal
 created_at: 2026-09-22T18:29:28Z
-updated_at: 2026-09-22T18:29:28Z
+updated_at: 2026-10-10T15:52:16Z
 parent: folio-assistant-0lmb
 ---
 

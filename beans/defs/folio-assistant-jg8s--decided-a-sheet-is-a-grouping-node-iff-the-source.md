@@ -1,11 +1,11 @@
 ---
 # folio-assistant-jg8s
 title: 'DECIDED: a sheet is a grouping node IFF the source has sheets — model reality, do not force conformance'
-status: todo
+status: in-progress
 type: task
 priority: normal
 created_at: 2026-09-20T13:05:11Z
-updated_at: 2026-09-20T13:05:11Z
+updated_at: 2026-10-10T15:52:15Z
 parent: folio-assistant-0lmb
 blocking:
     - folio-assistant-p67i

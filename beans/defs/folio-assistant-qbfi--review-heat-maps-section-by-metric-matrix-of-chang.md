@@ -1,11 +1,11 @@
 ---
 # folio-assistant-qbfi
 title: 'REVIEW HEAT MAPS: section-by-metric matrix of change, coverage, findings, QA and staleness — published, never colour alone'
-status: todo
+status: in-progress
 type: task
 priority: normal
 created_at: 2026-09-22T21:02:55Z
-updated_at: 2026-10-06T06:19:16Z
+updated_at: 2026-10-10T15:52:16Z
 parent: folio-assistant-q4jm
 blocked_by:
     - folio-assistant-jwox
