@@ -1,11 +1,11 @@
 ---
 # folio-assistant-xp72
 title: 'SCALE FIXTURE: a before/after large-document pair with a golden ChangeSet and a measured performance budget'
-status: todo
+status: in-progress
 type: task
 priority: normal
 created_at: 2026-09-22T21:02:55Z
-updated_at: 2026-09-22T21:04:32Z
+updated_at: 2026-10-10T15:59:24Z
 parent: folio-assistant-q4jm
 blocked_by:
     - folio-assistant-jwox
