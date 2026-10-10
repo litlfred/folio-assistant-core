@@ -114,3 +114,36 @@ Asked in https://claude.ai/code/session_012qoycyCSGidZqW245vXhze, with three opt
 - `recommendation` (document adapter, folio-assistant-core) and `health-intervention` (DAK adapter, smart-*) stay **two kinds**, joined by an optional edge from a recommendation to the health-intervention it is about.
 - Each layer keeps its own vocabulary, and nothing in core depends on the DAK adapter.
 - The block resolves. **The build waits until the content split across repos is done**, per the owner (2026-10-06: *"that needs to be done before F"*). It then lands in folio-assistant-core.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). Q1–Q3 are all ruled and
+the content split has landed, so the build is unblocked. It spans two
+repositories, re-measured today:
+
+- **core:**
+  - a `block-kinds/recommendation.json` node (`folio-block-kind/v1`,
+    `adapter: paper`, `profile: document`, `prefixEnforced: false` per Q1);
+  - the SKOS strength scheme (Q2);
+  - the authoring skill and BPMN step;
+  - `content-profiles.md`.
+- **cat-harness:** a paper-adapter kind is still TYPED there.
+  `schemas/types.ts` needs a `RecommendationBlock` member of the `Block` union
+  (with the optional edge to a `health-intervention`, per Q3),
+  `schemas/builders.ts` needs a `recommendation()` builder, and
+  `schemas/constraints.ts` needs its Zod schema and the `strength` reference.
+  A core kind node with no cat-harness type would break the discovery-vs-type
+  agreement.
+
+1. **(Recommended) Build it in two PRs: the cat-harness typing first, left for
+   review, then the core node, scheme, skill and BPMN step on top.** This
+   needs the session to be given push access to `litlfred/cat-harness`.
+2. Build only the core half now (the scheme, the skill, the BPMN step against
+   the interim `prose` carrier), and add the kind when cat-harness typing
+   lands.
+3. Keep waiting for a real L1 folio whose authors hit the gap (the bean's
+   original "do not start speculatively").
+
+**Default if no answer:** option 2. It changes nothing outside core, and
+everything it writes carries over.
