@@ -63,6 +63,14 @@
       "status": "candidate"
     },
     {
+      "id": "glossary-page",
+      "prefLabel": "Glossary page",
+      "definition": "Render every declared glossary — authored SKOS schemes, the swimlane ledger and the terms extracted from knowledge-graph assets — as the glossary page and one page per asset type, at the route of the visualiser core declares for it.",
+      "notation": "glossary-page",
+      "source": "folio-assistant-core/tools/index.ts#glossary-page",
+      "status": "candidate"
+    },
+    {
       "id": "l1-coverage",
       "prefLabel": "L1 extraction coverage",
       "definition": "Of the normative sentences in a publication (the closed marker list of smart-kg's `docs/COVERAGE.md` §1), count how many an L1 extraction CAPTURED, how many are EXCLUDED for a fixed-list reason a person signed off, and how many are UNACCOUNTED — per page and in total. Writes the contract's §4 report and exits non-zero below 100% accounted-for. Issue #2405 FR-009.",

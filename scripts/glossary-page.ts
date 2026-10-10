@@ -80,13 +80,23 @@ import { perScheme, run as runTermMapping, termState, type SchemeState, type Ter
 import { MAPPING_TARGETS } from "../../cat-harness/schemas/term-mapping.ts";
 import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, sourceText, templateName } from "./glossary-pot.ts";
 import { parsePo } from "../../cat-harness-tools/content/pipeline/po-inject.ts";
+import { declaredRoute } from "../../cat-harness-tools/scripts/viewer-declarations.ts";
 
 const CORE = resolve(import.meta.dir, "..");
 const REPO = repoRootFor(CORE);
 // declared-path-literal: the platform site the page publishes to, which is
 // cat-harness's `docs/`; core owns the page, the harness owns the site.
 const SITE = join(REPO, "cat-harness", "docs");
-const PAGE = join(SITE, "glossary", "index.md");
+/**
+ * The ROUTE of the visualiser core DECLARES for its glossary —
+ * `folio-assistant-core/glossary` — from `folio-assistant-core.json`
+ * `visualisers` (owner, 2026-10-09: *"Need harness to declare visualizer is
+ * renderedBy"*), computed by `visualiserRoute` and never spelled here. The
+ * page used to sit at `/glossary/`, a URL nothing derived; that is now the
+ * declared ALIAS, composed as a redirect.
+ */
+const ROUTE = declaredRoute(CORE, "glossary-page") ?? "folio-assistant-core/glossary";
+const PAGE = join(SITE, ...ROUTE.split("/"), "index.md");
 const ASSETS = join(SITE, "assets", "glossary");
 /**
  * Where extracted schemes are written: `generated/` inside core's own
@@ -533,12 +543,12 @@ export function pagePath(k: PageKey): string {
   return join(dirname(PAGE), typeSlug(k), "index.md");
 }
 export function permalinkOf(k: PageKey): string {
-  if (k === "index") return "/glossary/";
+  if (k === "index") return `/${ROUTE}/`;
   if (isPart(k)) {
     const [t, r] = splitPart(k);
-    return `/glossary/${typeSlug(t)}/${r}/`;
+    return `/${ROUTE}/${typeSlug(t)}/${r}/`;
   }
-  return `/glossary/${typeSlug(k)}/`;
+  return `/${ROUTE}/${typeSlug(k)}/`;
 }
 export function pageTitle(k: PageKey): string {
   if (k === "index") return "Glossary";
@@ -1225,7 +1235,7 @@ ${GENERATED_FM}
 title: Glossary
 nav_order: 90
 has_children: true
-permalink: /glossary/
+permalink: /${ROUTE}/
 ---
 ${GENERATED}
 
@@ -1330,7 +1340,7 @@ export function readGlossaryTranslations(dirs: readonly string[] = allTranslatio
 
 /** Where a locale's glossary page is written. */
 export function localePagePath(locale: string): string {
-  return join(SITE, locale, "glossary", "index.md");
+  return join(SITE, locale, ...ROUTE.split("/"), "index.md");
 }
 
 /** The text in a locale, or the source marked untranslated. */
@@ -1430,7 +1440,7 @@ export function renderLocalePage(
     "nav_exclude: true",
     GENERATED_FM,
     "translation_status: unverified",
-    "translation_source: glossary/index.md",
+    `translation_source: ${ROUTE}/index.md`,
     `available_locales: [${["en", ...locales].map((l) => `"${l}"`).join(", ")}]`,
     `description: "${locale}: ${translated}/${terms} — ${u("fullyTranslated").text.replace(/"/g, "'")}"`,
     "---",
@@ -1455,7 +1465,7 @@ export function renderLocalePage(
     "",
     `## ${mark(u("pages"))}`,
     "",
-    `${mark(u("pagesNote"))} [${mark(u("sourcePage"))}]({{ '/glossary/' | relative_url }}).`,
+    `${mark(u("pagesNote"))} [${mark(u("sourcePage"))}]({{ '/${ROUTE}/' | relative_url }}).`,
     "",
     `## ${mark(u("authored"))}`,
     "",
@@ -1468,7 +1478,7 @@ export function renderLocalePage(
     "",
     `### ${mark(u("sourcesExtracted"))}`,
     "",
-    `[${mark(u("sourcePage"))}]({{ '/glossary/' | relative_url }})`,
+    `[${mark(u("sourcePage"))}]({{ '/${ROUTE}/' | relative_url }})`,
     "",
   ];
   return L.join("\n") + "\n";
@@ -1587,8 +1597,8 @@ if (import.meta.main) {
   // Each locale's glossary directory is this generator's own too (bean c592):
   // a locale whose last .po is removed leaves an orphan page.
   const localeDirs = readdirSync(SITE, { withFileTypes: true })
-    .filter((e) => e.isDirectory() && existsSync(join(SITE, e.name, "glossary", "index.md")))
-    .map((e) => join(SITE, e.name, "glossary"));
+    .filter((e) => e.isDirectory() && existsSync(join(SITE, e.name, ...ROUTE.split("/"), "index.md")))
+    .map((e) => join(SITE, e.name, ...ROUTE.split("/")));
   const orphans = [...filesUnder(ASSETS), ...filesUnder(generatedDir()), ...filesUnder(dirname(PAGE)), ...localeDirs.flatMap(filesUnder)]
     .filter((p) => !files.has(p));
   const stale = [...files].filter(([p, s]) => !existsSync(p) || readFileSync(p, "utf-8") !== s).map(([p]) => p);

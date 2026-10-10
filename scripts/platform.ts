@@ -27,6 +27,16 @@ export { readDeclaration, repoRootFor, siteDirFor } from "../../cat-harness/sche
 export { fragment } from "../../cat-harness-tools/scripts/folio-mount.ts";
 export { embed } from "../../cat-harness-tools/scripts/pdf-viewer.ts";
 export { subjectPage } from "../../cat-harness-tools/scripts/harness-tiles.js";
+
+// ── cat-harness: declared visualisers and their routes (owner, 2026-10-09) ─
+// A harness declares each visualiser in its own `<instance>.json`
+// `visualisers`; its URL is `visualiserRoute`'s, never composed by a page.
+export { visualiserRoute, siteRootFrom } from "../../cat-harness/schemas/visualiser-route.js";
+export { declaredRoute, siteOwnerDir, visualiserPageDir, withRenderedBy, withRenderedByFrontMatter } from "../../cat-harness-tools/scripts/viewer-declarations.js";
+
+// ── cat-harness: Tool nodes, for an instance's own `tools` graph ──────────
+export { defineTool, type ToolDefinition } from "../../cat-harness/schemas/tool.js";
+export { toolTypeIri } from "../../cat-harness/schemas/tool-types.js";
 export { withRoutes } from "../../cat-harness-tools/scripts/mount-instance-docs.ts";
 export { libraryResolver } from "../../cat-harness-tools/scripts/lib/library-links.ts";
 export { withViewerNav } from "../../cat-harness-tools/scripts/viewer-page.ts";

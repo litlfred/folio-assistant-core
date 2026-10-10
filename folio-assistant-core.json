@@ -160,10 +160,7 @@
       "description": "Core's glossary (owner, 2026-09-23: \"put glossary into folio-assistant-core\", \"part of general pracice w/ glossary/ page\"): folio-glossary/v1 documents, each a SKOS concept scheme of local terms linked to external SKOS concepts by exactMatch/closeMatch, plus external concepts listed as members without being copied. A whole external scheme is referenced through remoteGraphs with graphTypologies [\"glossary\"]. `dependents: reproduce` so every folio built on core gets its own glossary/, which is what makes a glossary general practice rather than a harness feature. Rendered on the glossary/ page with the swimlane ledger (cat-harness's `swimlane-glossary`) as one more source; checked by `check:glossary`.",
       "graphTypologies": [
         "glossary"
-      ],
-      "coverage": {
-        "visualiser": "cat-harness/docs/glossary/index.md"
-      }
+      ]
     },
     {
       "id": "core-tools",
@@ -260,6 +257,10 @@
         "beans"
       ]
     }
+  ],
+  "_visualisers_comment": "THE VISUALISERS THIS HARNESS DECLARES, at its own level (owner, 2026-10-09: \"I still want the harness to be where specific visualizers/pages are declared for the harness at the level … Need harness to declare visualizer is renderedBy\"). Until then the glossary directory named its page (`coverage.visualiser: cat-harness/docs/glossary/index.md`) — a page in another layer's tree at a URL nothing derived. The page is now at <base>/folio-assistant-core/glossary/, computed by visualiserRoute from this entry, drawn by the `glossary-page` Tool (scripts/glossary-page.ts), with <base>/glossary/ kept as its declared alias so no existing link breaks.",
+  "visualisers": [
+    {"id": "glossary", "renderedBy": "glossary-page", "covers": ["glossary"], "title": "Glossary", "alias": "glossary"}
   ],
   "_needs_comment": "The layer this instance sits on. Owner, 2026-09-20: \"So bootsteap, cat harness, fa-core, f-a, from bottom to top.\" Declared rather than hardcoded in the navbar, so the ordering is a fact of the repository and not of whichever consumer needed it first. `cat-harness-tools` added 2026-10-01 on owner ruling C1 (epic 7x5n, bean rmi6): the tool implementation layer sits BELOW this one, so core may use it and it may never use core.",
   "needs": [

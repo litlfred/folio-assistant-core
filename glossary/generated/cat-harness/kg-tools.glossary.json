@@ -839,6 +839,14 @@
       "status": "candidate"
     },
     {
+      "id": "staging-graph-viewer",
+      "prefLabel": "Staging-only graph viewer",
+      "definition": "Render a kept-but-unpublished workspace graph as one page, for a local build or a staging preview only; a canonical deploy withholds it.",
+      "notation": "staging-graph-viewer",
+      "source": "cat-harness/tools/viewers.ts#staging-graph-viewer",
+      "status": "candidate"
+    },
+    {
       "id": "stakeholder-map",
       "prefLabel": "Stakeholder map",
       "definition": "Given the paths a proposed change touches, report which skills change, which roles declare them, and who therefore has a stake in the review.",

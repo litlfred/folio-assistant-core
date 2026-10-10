@@ -71,9 +71,9 @@ describe("the rendered pages say it", () => {
 
   test("every glossary page carries the mapping table", async () => {
     for (const p of [
-      "cat-harness/docs/glossary/index.md",
-      "cat-harness/docs/glossary/dmn-decisions/index.md",
-      "cat-harness/docs/glossary/skills/index.md",
+      "cat-harness/docs/folio-assistant-core/glossary/index.md",
+      "cat-harness/docs/folio-assistant-core/glossary/dmn-decisions/index.md",
+      "cat-harness/docs/folio-assistant-core/glossary/skills/index.md",
     ]) {
       const html = await read(p);
       expect(html, `${p} has no mapping table`).toContain('class="fa-gloss-mapping"');
@@ -87,8 +87,8 @@ describe("the rendered pages say it", () => {
     // dmn-decisions holds 9 terms; the index covers every scheme. If the
     // block ignored its `schemes` argument both would print the same total,
     // which is the bug this catches.
-    const dmn = await read("cat-harness/docs/glossary/dmn-decisions/index.md");
-    const idx = await read("cat-harness/docs/glossary/index.md");
+    const dmn = await read("cat-harness/docs/folio-assistant-core/glossary/dmn-decisions/index.md");
+    const idx = await read("cat-harness/docs/folio-assistant-core/glossary/index.md");
     const total = (html: string) =>
       Number(/<td><code>skos<\/code><\/td><td>(\d+)<\/td><td>(\d+)<\/td>/.exec(html)?.[2] ?? "-1");
     expect(total(dmn)).toBeGreaterThan(0);
@@ -96,7 +96,7 @@ describe("the rendered pages say it", () => {
   });
 
   test("no raw backtick survives inside the mapping table", async () => {
-    const html = await read("cat-harness/docs/glossary/index.md");
+    const html = await read("cat-harness/docs/folio-assistant-core/glossary/index.md");
     const table = /<table class="fa-gloss-mapping">[\s\S]*?<\/table>/.exec(html)?.[0] ?? "";
     expect(table.length).toBeGreaterThan(0);
     expect(table).not.toContain("`");
@@ -223,8 +223,8 @@ describe("per term — bean `5yhm`, every term's state, none of them graded", ()
   test("the rendered type pages carry the per-term note", async () => {
     // schema-fields is split by first letter (its page outgrew the budget), so
     // the note is on each part; the type's own page is a landing page.
-    const parts = ["a-e", "f-l", "m-r", "s-z"].map((r) => `cat-harness/docs/glossary/schema-fields/${r}/index.md`);
-    for (const p of ["cat-harness/docs/glossary/dmn-decisions/index.md", ...parts]) {
+    const parts = ["a-e", "f-l", "m-r", "s-z"].map((r) => `cat-harness/docs/folio-assistant-core/glossary/schema-fields/${r}/index.md`);
+    for (const p of ["cat-harness/docs/folio-assistant-core/glossary/dmn-decisions/index.md", ...parts]) {
       const html = await Bun.file(p).text();
       expect(html, `${p} has no per-term note`).toContain('class="fa-gloss-mapping-perterm"');
     }

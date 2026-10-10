@@ -306,5 +306,27 @@ export function tools(baseUrl?: string): ToolDefinition[] {
       satisfies: ["document-intake"],
       requires: { runtime: ["bun"], network: false },
     }),
+    // The glossary page, as the Tool core's `glossary` VISUALISER is
+    // `renderedBy` (owner, 2026-10-09: "Need harness to declare visualizer is
+    // renderedBy"). `renders` is what it CAN draw; the harness declaration in
+    // `folio-assistant-core.json` says what it DOES, and where:
+    // `<base>/folio-assistant-core/glossary/`.
+    defineTool({
+      id: "glossary-page",
+      title: "Glossary page",
+      description:
+        "Render every declared glossary — authored SKOS schemes, the swimlane ledger and the terms extracted from knowledge-graph assets — as the glossary page and one page per asset type, at the route of the visualiser core declares for it.",
+      install: { none: true },
+      invoke: { shell: "bun run cat glossary:page" },
+      io: {
+        inputs: [
+          { name: "check", schema: t("Flag"), required: false, arg: { flag: "--check" }, description: "Fail if a page is stale, instead of writing." },
+        ],
+        outputs: [{ name: "pages", schema: t("RepoPath"), description: "The glossary pages, under the published site directory." }],
+      },
+      satisfies: ["graph-rendering"],
+      renders: ["glossary"],
+      requires: { runtime: ["bun"], network: false },
+    }),
   ];
 }
