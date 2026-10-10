@@ -1,11 +1,11 @@
 ---
 # folio-assistant-55ao
 title: Add a first-class `recommendation` block kind for document folios
-status: todo
+status: completed
 type: task
 priority: normal
 created_at: 2026-08-28T15:04:51Z
-updated_at: 2026-10-06T06:35:08Z
+updated_at: 2026-10-10T16:48:33Z
 parent: folio-assistant-0lmb
 ---
 
@@ -156,3 +156,51 @@ access. Order, per the decision above: the cat-harness typing PR first
 (`RecommendationBlock`, builder, Zod schema with the `strength` reference
 and the optional `health-intervention` edge), then the core node, the SKOS
 strength scheme, the skill and the BPMN step.
+
+
+## Summary of Changes
+
+Built 2026-10-10 by the bean-backlog drain (lane C), in all three layers, on
+the owner's rulings (Q1–Q3, and "build both halves" on 2026-10-10).
+
+- **cat-harness** (litlfred/cat-harness#109, merged):
+  - `RecommendationBlock` and `CodeRef` in `types.ts`;
+  - `RecommendationSchema` and `CodeRefSchema` in `constraints.ts`, in
+    `BlockSchema` and in `md-exists`;
+  - the `recommendation()` builder;
+  - inline as its default diff renderer.
+- **cat-harness-tools** (litlfred/cat-harness-tools#73): the viewer-registry
+  entry, and a LaTeX arm. The arm is a run-in `\paragraph{Recommendation.
+  <title>}`, not a theorem-like environment. 3 tests.
+- **core** (this PR):
+  - `block-kinds/recommendation.json`: adapter `paper`, profile `document`,
+    `labelPrefix: rec`, `prefixEnforced: false` (Q1);
+  - a `Recommendation` heading in the five `block-kinds` catalogues, marked
+    UNOFFICIAL as those catalogues already are;
+  - a new declared `code-lists/` directory with
+    `grade-recommendation-strength` (strong, conditional; WHO handbook for
+    guideline development, 2nd ed.) and `rfc2119-requirement-level` (BCP 14)
+    (Q2);
+  - `schemas/recommendation-strength.ts` with `strengthFinding`, the
+    "resolves in the scheme" check, and 8 tests;
+  - the `normative-statements` skill rewritten for the kind, with
+    conversion from the interim `prose` carrier, and its input and output
+    schemas;
+  - `document-intake`'s superseded note and the skill definition updated;
+  - `Task_AuthorBlocks` in `authoring-a-document.bpmn` now drafts a
+    `recommendation` block, with its `.pot` templates and generated glossary
+    entry;
+  - the memory note "there is no `recommendation` block kind" archived.
+- **Q3:** `about[]` holds health-intervention labels: a link, never a merge.
+
+**Verified:**
+- In a `.git`-free workspace laid out as CI mounts it, cat-harness's
+  `block-kind-nodes.test.ts` passes 11/11 with the node present (it failed
+  only on `recommendation` without it). Its full suite shows the same 7
+  failures as main.
+- Core: `bun run typecheck` exits 0, and `bun test` shows the same 72 failures
+  as main plus 8 new passes.
+
+**Not done:** wiring `strengthFinding` into `content_validate` (cat-harness-tools
+`validate.ts`), so an unresolvable strength fails a folio build. It is pure and
+tested, ready for that call site.

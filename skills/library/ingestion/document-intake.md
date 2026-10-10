@@ -286,9 +286,10 @@ environments, sections, cross-references.
 > `definition` is a **math** kind whose `lean` field is *required*, so a
 > guideline recommendation mapped onto it will not validate at all; and
 > `proposition` and `conjecture` are math kinds that `content_profile_check`
-> rejects outright. In a document folio, a normative statement is carried by a
-> **labelled, titled `prose` block** — load `normative-statements` from the
-> `folio-document-adapter` package for the convention and its limits.
+> rejects outright. In a document folio, a normative statement is a
+> **`recommendation` block** (bean `55ao`), with its strength as a code in a
+> declared code list. Load `normative-statements` from the
+> `folio-document-adapter` package for the convention.
 >
 > The table stands as written for a **paper** folio, which is the case it was
 > written for and where all seven kinds are available.

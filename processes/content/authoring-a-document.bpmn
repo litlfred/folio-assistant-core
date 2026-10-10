@@ -103,7 +103,7 @@
       <bpmn:outgoing>D04</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_AuthorBlocks" name="4 · Author blocks&#10;[document-authoring]">
-      <bpmn:documentation>Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn. A normative statement goes through normative-statements.</bpmn:documentation>
+      <bpmn:documentation>Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn. A normative statement is a `recommendation` block (bean 55ao), drafted through normative-statements: one statement per block, a folio-chosen label, and its strength as a code in a declared code list, so a reviewer signs off each one individually.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-authoring" />
         <bootstrap.processes:skill ref="normative-statements" />
