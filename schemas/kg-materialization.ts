@@ -20,7 +20,7 @@
  * (the `sync-remote-skills` precedent), so every held byte is verified by the
  * gate that already exists. The part's own record is a DIRECTORY record for a
  * subgraph — that gate reports it `covered-by-parts` — and carries a tree
- * digest (`treeDigest` in `cat-harness/scripts/kg-subscribe.ts`), which is
+ * digest (`treeDigest` in `cat-harness-tools/scripts/kg-subscribe.ts`), which is
  * what catches a file ADDED under the tree, the one edit a per-file check
  * cannot see. `kg:materialize:check` holds that digest.
  *

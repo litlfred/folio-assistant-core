@@ -76,10 +76,10 @@ import { instanceNamespace } from "../../cat-harness/schemas/instance-repositori
 import { GlossarySchema, schemeIri, toSkos, termIri, type AutomatedMatch, type Glossary, type LangText } from "../schemas/glossary.ts";
 import { addressBook } from "../../cat-harness/schemas/prov-jsonld.ts";
 import { ASSET_TYPES, EXTRACTED_PREFIX, assetTypeTitle, assetTypeWhat, extract, type AssetType } from "./glossary-extract.ts";
-import { perScheme, run as runTermMapping, termState, type SchemeState, type TermStateAnswer } from "../../cat-harness/scripts/check-term-mapping.ts";
+import { perScheme, run as runTermMapping, termState, type SchemeState, type TermStateAnswer } from "../../cat-harness-tools/scripts/check-term-mapping.ts";
 import { MAPPING_TARGETS } from "../../cat-harness/schemas/term-mapping.ts";
 import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, sourceText, templateName } from "./glossary-pot.ts";
-import { parsePo } from "../../cat-harness/content/pipeline/po-inject.ts";
+import { parsePo } from "../../cat-harness-tools/content/pipeline/po-inject.ts";
 
 const CORE = resolve(import.meta.dir, "..");
 const REPO = repoRootFor(CORE);

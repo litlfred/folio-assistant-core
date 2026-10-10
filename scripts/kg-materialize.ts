@@ -14,7 +14,7 @@
  * ## Why it lives in core, not beside `kg-subscribe.ts`
  *
  * The record it writes embeds `MaterializationSchema`, which is core's, and
- * cat-harness needs only bootstrap: a writer in `cat-harness/scripts/` would
+ * cat-harness needs only bootstrap: a writer in `cat-harness-tools/scripts/` would
  * import up the dependency arrow, the edge `check:partition` fails on and the
  * one bean `bf5l` removed from `intake.ts`. Core needs cat-harness, so from
  * here both halves are reachable and both edges point down. The precedent is
@@ -143,7 +143,7 @@ import {
   SNAPSHOT_SUFFIX,
   treeDigest,
   treeEntries,
-} from "../../cat-harness/scripts/kg-subscribe.ts";
+} from "../../cat-harness-tools/scripts/kg-subscribe.ts";
 import {
   DEFAULT_MAX_BYTES,
   KG_NODES_RECORD_SCHEMA,
@@ -163,11 +163,11 @@ const DEFAULT_INSTANCE = join(REPO, "cat-harness");
 
 // ── The fetcher ─────────────────────────────────────────────────────────────
 
-// MOVED DOWN to `cat-harness/scripts/remote-tree.ts` (bean `0mpw`): the
+// MOVED DOWN to `cat-harness-tools/scripts/remote-tree.ts` (bean `0mpw`): the
 // remote mount reads through the same fetch, and cat-harness may not import
 // core. Re-exported so every caller and test keeps its import path.
-export { gitPartFetcher, type FetchedPart, type PartFetcher } from "../../cat-harness/scripts/remote-tree.ts";
-import { gitPartFetcher, type FetchedPart, type PartFetcher } from "../../cat-harness/scripts/remote-tree.ts";
+export { gitPartFetcher, type FetchedPart, type PartFetcher } from "../../cat-harness-tools/scripts/remote-tree.ts";
+import { gitPartFetcher, type FetchedPart, type PartFetcher } from "../../cat-harness-tools/scripts/remote-tree.ts";
 
 // ── Resolving the request against the subscription and its snapshot ─────────
 

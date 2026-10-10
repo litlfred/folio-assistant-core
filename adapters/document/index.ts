@@ -50,7 +50,7 @@ import { registerTransformTools } from "./tools/transform.js";
 import { registerDocumentAuditTools } from "./tools/audit.js";
 import type { ContentAdapter, UserRole } from "../../../cat-harness-tools/src/types.js";
 import { allows, forbidden } from "../../../cat-harness-tools/src/core/rbac.js";
-import { guardUntrusted, oneLineLabel } from "../../../cat-harness/src/core/handover-screen.ts";
+import { guardUntrusted, oneLineLabel } from "../../../cat-harness-tools/src/core/handover-screen.ts";
 import { DocumentContent, type ContentResult, type IncomingFile } from "./content.js";
 
 export { DocumentContent } from "./content.js";

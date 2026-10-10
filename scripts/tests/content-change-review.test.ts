@@ -1,9 +1,9 @@
 import { describe, expect, test } from "bun:test";
 import { resolve } from "path";
-import { drainSubprocess } from "../../../cat-harness/scripts/tests/helpers";
-import { loadProcessModel } from "../../../cat-harness/src/workflow/process-model";
-import { complete, enabled, startInstance } from "../../../cat-harness/src/workflow/instance";
-import { workflowFile } from "../../../cat-harness/scripts/known-skills.ts";
+import { drainSubprocess } from "../../../cat-harness-tools/scripts/tests/helpers";
+import { loadProcessModel } from "../../../cat-harness-tools/src/workflow/process-model";
+import { complete, enabled, startInstance } from "../../../cat-harness-tools/src/workflow/instance";
+import { workflowFile } from "../../../cat-harness-tools/scripts/known-skills.ts";
 
 /**
  * This instance's root; diagrams are found by NAME through its declared `processes` graphs (bean `63wl`).

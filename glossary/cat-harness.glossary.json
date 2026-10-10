@@ -6,6 +6,7 @@
   "hasVersion": "2026-09-24",
   "modified": "2026-09-30",
   "license": "CC-BY-4.0",
+  "source": "cat-harness/cat-harness.json",
   "terms": [
     {
       "id": "associated-harness",
@@ -132,7 +133,7 @@
       "closeMatch": [
         "http://json-schema.org/draft-07/schema#"
       ],
-      "source": "cat-harness/scripts/skill-contracts.ts",
+      "source": "cat-harness-tools/scripts/skill-contracts.ts",
       "status": "authored"
     }
   ]

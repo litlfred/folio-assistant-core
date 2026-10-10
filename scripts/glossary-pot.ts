@@ -10,7 +10,7 @@
  *
  * ## The same pipeline as the BPMN labels, not a second one
  *
- * - the template is written by `formatPot` (`cat-harness/content/pipeline/pot-extract.ts`),
+ * - the template is written by `formatPot` (`cat-harness-tools/content/pipeline/pot-extract.ts`),
  *   the formatter `translate-bpmn` uses, and compared with the same
  *   timestamp-blind `potWithoutTimestamp`;
  * - it lands in the declared `translation-sources` directory, per locale, in
@@ -48,7 +48,7 @@ import { dirname, join, relative, resolve } from "node:path";
 import { directoryForGraph, repoRootFor } from "../../cat-harness/schemas/cat-harness.ts";
 import { declaredDirectories } from "../../cat-harness/schemas/declared-nodes.ts";
 import { findDeclarationFile, instanceRootsIn } from "../../cat-harness/schemas/instance-roots.ts";
-import { formatPot, potWithoutTimestamp, type PotEntry } from "../../cat-harness/content/pipeline/pot-extract.ts";
+import { formatPot, potWithoutTimestamp, type PotEntry } from "../../cat-harness-tools/content/pipeline/pot-extract.ts";
 import { termIri, type LangText } from "../schemas/glossary.ts";
 import { LOCALE_PAGE_STRINGS, LOCALE_PAGE_TEMPLATE, collect, type GlossarySource } from "./glossary-page.ts";
 

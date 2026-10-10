@@ -36,7 +36,7 @@ import { type ChangeSet, DECISION_LABELS, IN_EDIT_STATUSES, OPEN_STATUSES, type 
 import { changeSets, discussUrl } from "./public-comment-changesets.js";
 import { Store } from "./public-comment.js";
 import { dashboardRoute, toSiteRoot } from "./public-comment-route.js";
-import { darkRules } from "../../cat-harness/scripts/lib/scheme-css.ts";
+import { darkRules } from "../../cat-harness-tools/scripts/lib/scheme-css.ts";
 
 /** `folio-staging.yml`'s slug rule, step `slug`. */
 export const stagingSlug = (branch: string) =>

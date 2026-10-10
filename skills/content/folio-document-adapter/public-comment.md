@@ -266,7 +266,7 @@ when the reopen event has already been handled.
 ### The issue forms
 
 `public-comment-changesets.ts install` writes three forms and the two
-workflows into the folio's `.github/`, from `cat-harness/templates/public-comment/`.
+workflows into the folio's `.github/`, from `cat-harness-tools/templates/public-comment/`.
 A form renders as `### Label` and the value, and the tool reads it as the same
 lines a person would type, so there is one parser for both:
 

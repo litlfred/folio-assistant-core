@@ -12,7 +12,7 @@ import { tmpdir } from "os";
 import { join, resolve } from "path";
 import { explainFailure, instanceRoots, libraryDirOf, resolveLibraryRef } from "./library-ref.js";
 import { declarationPathIn } from "../../cat-harness/schemas/cat-harness.js";
-import { writeDeclaration } from "../../cat-harness/test/support/instance-fixture.js";
+import { writeDeclaration } from "../../cat-harness-tools/test/support/instance-fixture.js";
 
 const REPO = resolve(import.meta.dir, "../..");
 const PLATFORM = resolve(REPO, "cat-harness");

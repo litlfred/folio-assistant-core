@@ -44,7 +44,7 @@ function platformPipelineDir(): string {
   // rewrite could see this break; `resolvePipelineScript("qa-sweep")` returning
   // undefined in `pipeline-resolution.test.ts` is what caught it, which is why
   // those tests moved WITH their subject.
-  return resolve(import.meta.dir, "..", "..", "..", "..", "cat-harness", "content", "pipeline");
+  return resolve(import.meta.dir, "..", "..", "..", "..", "cat-harness-tools", "content", "pipeline");
 }
 
 /**

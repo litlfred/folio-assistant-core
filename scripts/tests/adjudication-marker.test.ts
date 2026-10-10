@@ -1,6 +1,6 @@
 /**
  * The callers of the shared adjudication half — moved here from
- * `cat-harness/scripts/tests/adjudication-marker.test.ts` (bean `ho66`). Two
+ * `cat-harness-tools/scripts/tests/adjudication-marker.test.ts` (bean `ho66`). Two
  * of the four callers (`ingest-l1-completeness-gate`, `content-change-review`)
  * are this instance's diagrams, so standing alone cat-harness cannot read
  * them; the other two are cat-harness's own, reached here through the corpus
@@ -9,8 +9,8 @@
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
 
-import { loadProcessModel } from "../../../cat-harness/src/workflow/process-model.js";
-import { workflowFile } from "../../../cat-harness/scripts/known-skills.ts";
+import { loadProcessModel } from "../../../cat-harness-tools/src/workflow/process-model.js";
+import { workflowFile } from "../../../cat-harness-tools/scripts/known-skills.ts";
 
 describe("the split — bean `bvuk`, the owner's shape", () => {
   const diagram = (n: string): string => workflowFile(join(import.meta.dir, "../../../cat-harness"), n);

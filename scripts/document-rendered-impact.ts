@@ -98,7 +98,7 @@ import {
 import { STRUCTURE_FILENAME } from "../../cat-harness/schemas/document-structure.js";
 import { declarationPathIn } from "../../cat-harness/schemas/cat-harness.js";
 import { STRUCTURE_FILENAME } from "../../cat-harness/schemas/document-structure.js";
-import { gitBlobs } from "../../cat-harness/scripts/git-blobs.js";
+import { gitBlobs } from "../../cat-harness-tools/scripts/git-blobs.js";
 import { ChangeSetSchema, computeChangeSet, type ChangeSet } from "../schemas/changeset.js";
 
 export const DOCUMENT_RENDERER = "document-site";

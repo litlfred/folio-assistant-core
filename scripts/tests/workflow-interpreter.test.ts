@@ -1,6 +1,6 @@
 /**
  * The workflow interpreter against folio-assistant-core's own diagrams —
- * moved here from `cat-harness/scripts/tests/workflow-interpreter.test.ts`
+ * moved here from `cat-harness-tools/scripts/tests/workflow-interpreter.test.ts`
  * (bean `ho66`). The interpreter is cat-harness code, and its tests over
  * synthetic diagrams and over every shipped diagram stay there; these pin
  * what `editing-hci-validation` and `content-lifecycle` declare, and those
@@ -20,11 +20,11 @@ import { describe, expect, test } from "bun:test";
 import { mkdtempSync, rmSync } from "fs";
 import { tmpdir } from "os";
 import { join, resolve } from "path";
-import { drainSubprocess } from "../../../cat-harness/scripts/tests/helpers";
-import { loadProcessModel, type ProcessModel } from "../../../cat-harness/src/workflow/process-model";
-import { complete, enabled, startInstance, WorkflowError } from "../../../cat-harness/src/workflow/instance";
-import { instanceId, loadInstance, saveInstance } from "../../../cat-harness/src/workflow/store";
-import { workflowFile } from "../../../cat-harness/scripts/known-skills.ts";
+import { drainSubprocess } from "../../../cat-harness-tools/scripts/tests/helpers";
+import { loadProcessModel, type ProcessModel } from "../../../cat-harness-tools/src/workflow/process-model";
+import { complete, enabled, startInstance, WorkflowError } from "../../../cat-harness-tools/src/workflow/instance";
+import { instanceId, loadInstance, saveInstance } from "../../../cat-harness-tools/src/workflow/store";
+import { workflowFile } from "../../../cat-harness-tools/scripts/known-skills.ts";
 
 /** This instance's root; its diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
 const CORE = resolve(import.meta.dir, "../..");

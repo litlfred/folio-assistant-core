@@ -16,7 +16,7 @@
  */
 import type { KindNode } from "../../cat-harness/schemas/node-kind-nodes.ts";
 import { CHANGING_DECISIONS, type DecisionCode } from "../schemas/public-comment.ts";
-import { esc, type KindPages, type KindPagesContext, type PageSection } from "../../cat-harness/scripts/gen-node-kind-pages.ts";
+import { esc, type KindPages, type KindPagesContext, type PageSection } from "../../cat-harness-tools/scripts/gen-node-kind-pages.ts";
 
 const CHANGE_SET = "changeset";
 const COMMENT = "public-comment";

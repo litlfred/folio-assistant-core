@@ -150,15 +150,15 @@ per [`bib-qa.md §Batch intake pipeline`](../cataloguing/bib-qa.md#batch-intake-
 Convert raw format to `extracted-text.md`:
 
 **For PDFs, always start with
-[`cat-harness/scripts/pdf-extract.py`](../../../../cat-harness/scripts/pdf-extract.py)** — do not reach for a
+[`cat-harness-tools/scripts/pdf-extract.py`](../../../../cat-harness-tools/scripts/pdf-extract.py)** — do not reach for a
 Python PDF library directly. It walks a fallback ladder (`pdftotext` → `pypdf` →
 `pdfminer.six` → a zero-dependency content-stream extractor → OCR) and, when it
 cannot read a file, **tells you which rung failed and why** instead of returning
 an empty string:
 
 ```bash
-python3 cat-harness/scripts/pdf-extract.py FILE.pdf -o extracted-text.md
-python3 cat-harness/scripts/pdf-extract.py FILE.pdf --diagnose   # structure only
+python3 cat-harness-tools/scripts/pdf-extract.py FILE.pdf -o extracted-text.md
+python3 cat-harness-tools/scripts/pdf-extract.py FILE.pdf --diagnose   # structure only
 ```
 
 Exit `0` = text; **exit `2` = no text layer (a scan)**; exit `3` = a parser
@@ -179,14 +179,14 @@ Two failure modes it exists to prevent, both observed in practice:
 
 | Format | Extraction method |
 |--------|-------------------|
-| PDF (text) | `cat-harness/scripts/pdf-extract.py` (ladder; `pdftotext` when available) |
-| PDF (scan) | `cat-harness/scripts/pdf-extract.py` → exit 2, then `cat-harness/scripts/pdf-ocr.py` (Tesseract) or Claude vision |
+| PDF (text) | `cat-harness-tools/scripts/pdf-extract.py` (ladder; `pdftotext` when available) |
+| PDF (scan) | `cat-harness-tools/scripts/pdf-extract.py` → exit 2, then `cat-harness-tools/scripts/pdf-ocr.py` (Tesseract) or Claude vision |
 | LaTeX | Direct parse (strip preamble) |
 | HTML | Readability + turndown |
 | DOCX | Pandoc → markdown |
 | Images | Claude vision API |
-| PDF (tables/figures) | `cat-harness/scripts/pdf-tables.py` → `tables.json` (see Stage 3) |
-| PDF (sections) | `cat-harness/scripts/pdf-structure.py` → `structure.json` + `sections/*.md` (see Stage 3) |
+| PDF (tables/figures) | `cat-harness-tools/scripts/pdf-tables.py` → `tables.json` (see Stage 3) |
+| PDF (sections) | `cat-harness-tools/scripts/pdf-structure.py` → `structure.json` + `sections/*.md` (see Stage 3) |
 
 For scanned documents the script's OCR rung fires automatically **if**
 `tesseract` and `pdftoppm` are installed (`apt-get install -y tesseract-ocr
@@ -211,14 +211,14 @@ the corpus-grep checklist reads.
 
 | script | writes | notes |
 |---|---|---|
-| [`cat-harness/scripts/pdf-structure.py`](../../../../cat-harness/scripts/pdf-structure.py) | `library/<doc-id>/structure.json` + `sections/NN-slug.md` | metadata (a page-1 title GUESS, authors, arXiv/DOI from the page-1 stamp, and the PDF Info dictionary as `docinfo`), TOC from the PDF outline, or else inferred from the layout (see the note below), per-section text split. The page-1 guess is **never** the entry's title: [`l1-document-ingestion`](l1-document-ingestion.md) §"A manifest's title" gives the order (catalogue record → `referenced.json` → PDF `/Title` → slug) |
-| [`cat-harness/scripts/pdf-ocr.py`](../../../../cat-harness/scripts/pdf-ocr.py) | `library/<doc-id>/ocr/page-NNN.txt` | `pdftoppm -r 300 -png` then `tesseract`; per-page cache; script auto-detected via Tesseract's own OSD |
-| [`cat-harness/scripts/extract-candidates.py`](../../../../cat-harness/scripts/extract-candidates.py) | `library/<doc-id>/candidates.json` | pure regex, imports no PDF library; **proposals, never content** — nothing here writes to `content/` and nothing here creates Lean |
+| [`cat-harness-tools/scripts/pdf-structure.py`](../../../../cat-harness-tools/scripts/pdf-structure.py) | `library/<doc-id>/structure.json` + `sections/NN-slug.md` | metadata (a page-1 title GUESS, authors, arXiv/DOI from the page-1 stamp, and the PDF Info dictionary as `docinfo`), TOC from the PDF outline, or else inferred from the layout (see the note below), per-section text split. The page-1 guess is **never** the entry's title: [`l1-document-ingestion`](l1-document-ingestion.md) §"A manifest's title" gives the order (catalogue record → `referenced.json` → PDF `/Title` → slug) |
+| [`cat-harness-tools/scripts/pdf-ocr.py`](../../../../cat-harness-tools/scripts/pdf-ocr.py) | `library/<doc-id>/ocr/page-NNN.txt` | `pdftoppm -r 300 -png` then `tesseract`; per-page cache; script auto-detected via Tesseract's own OSD |
+| [`cat-harness-tools/scripts/extract-candidates.py`](../../../../cat-harness-tools/scripts/extract-candidates.py) | `library/<doc-id>/candidates.json` | pure regex, imports no PDF library; **proposals, never content** — nothing here writes to `content/` and nothing here creates Lean |
 
 ```bash
-python3 cat-harness/scripts/pdf-ocr.py FILE.pdf --outdir library/<doc-id>/   # only if scanned
-python3 cat-harness/scripts/pdf-structure.py FILE.pdf --outdir library --ocr
-python3 cat-harness/scripts/extract-candidates.py library/<doc-id>/
+python3 cat-harness-tools/scripts/pdf-ocr.py FILE.pdf --outdir library/<doc-id>/   # only if scanned
+python3 cat-harness-tools/scripts/pdf-structure.py FILE.pdf --outdir library --ocr
+python3 cat-harness-tools/scripts/extract-candidates.py library/<doc-id>/
 ```
 
 Three things about how they fit together, each of which has already cost
@@ -240,7 +240,7 @@ someone time:
   `pdf-structure.py` prefers PyMuPDF (better text on maths, real outlines) and
   falls back to `pypdf`; the Dockerfile ships `pypdf` only, deliberately, so the
   image stays BSD-licensed against PyMuPDF's AGPL. Check with
-  `python3 cat-harness/scripts/pdf-ocr.py --check`.
+  `python3 cat-harness-tools/scripts/pdf-ocr.py --check`.
 * **With no outline, the TOC is inferred from the LAYOUT, and the artefact
   says how.** `diagnostics.toc_inferred_method` is `contents` (a printed
   contents page, its page labels moved to physical pages by finding the titles
@@ -269,8 +269,8 @@ someone time:
   sources agreed), `page_label` on TOC entries and figures, and
   `label_start`/`label_end` on sections. **Cite the label, not the physical
   index**; `diagnostics.page_label_conflicts` lists pages where the PDF's
-  own labels disagree with what is printed. Before changing `cat-harness/scripts/_pdf_headings.py`,
-  run `python3 cat-harness/scripts/toc-benchmark.py` before and after: a rule
+  own labels disagree with what is printed. Before changing `cat-harness-tools/scripts/_pdf_headings.py`,
+  run `python3 cat-harness-tools/scripts/toc-benchmark.py` before and after: a rule
   that fixes one document and costs two is visible only there. The numbers,
   the methods compared and what could not be run are in
   `cat-harness/docs/research-and-analysis/toc-extraction.md`.
@@ -322,7 +322,7 @@ qualified `normativeLevel`.
 > for prose folios, and `normative-statements` is where the recommendation
 > grammar belongs.
 
-#### Tables and figures — run `cat-harness/scripts/pdf-tables.py`
+#### Tables and figures — run `cat-harness-tools/scripts/pdf-tables.py`
 
 Text extraction destroys tables. A GRADE evidence table or a boxed
 recommendation comes out of Stage 2 as a run of prose that reads exactly like
@@ -330,8 +330,8 @@ prose, and nothing downstream can recover that it was a grid — which matters
 most for precisely the guideline documents this skill exists to process.
 
 ```bash
-python3 cat-harness/scripts/pdf-tables.py FILE.pdf -o uploads/<document-id>/
-python3 cat-harness/scripts/pdf-tables.py --check     # which backends are installed
+python3 cat-harness-tools/scripts/pdf-tables.py FILE.pdf -o uploads/<document-id>/
+python3 cat-harness-tools/scripts/pdf-tables.py --check     # which backends are installed
 ```
 
 Writes `tables.json` (`pdf-tables/v1`) beside `structure.json`, with each

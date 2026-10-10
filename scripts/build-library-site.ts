@@ -36,10 +36,10 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSy
 import { basename, dirname, join, relative, resolve } from "node:path";
 
 import { folioDir, readDeclaration } from "../../cat-harness/schemas/cat-harness.js";
-import { readEntryDocument, DOCUMENT_VIEW_JS, type DocumentView, type EntryLinks } from "../../cat-harness/scripts/lib/library-document.ts";
-import { VIEWER_CSS } from "../../cat-harness/scripts/gen-library-viz.ts";
-import { EDIT_LINKS_RUNTIME } from "../../cat-harness/src/core/edit-links.js";
-import { visualiserNavDeclaration, type VisualiserNavEntry } from "../../cat-harness/scripts/lib/navbar.js";
+import { readEntryDocument, DOCUMENT_VIEW_JS, type DocumentView, type EntryLinks } from "../../cat-harness-tools/scripts/lib/library-document.ts";
+import { VIEWER_CSS } from "../../cat-harness-tools/scripts/gen-library-viz.ts";
+import { EDIT_LINKS_RUNTIME } from "../../cat-harness-tools/src/core/edit-links.js";
+import { visualiserNavDeclaration, type VisualiserNavEntry } from "../../cat-harness-tools/scripts/lib/navbar.js";
 import { defaultBlockActions } from "./build-document-site.js";
 
 /** This instance: the HANDLER segment of every page it publishes. */

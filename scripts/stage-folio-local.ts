@@ -72,13 +72,13 @@ if (build) run("bash", ["-c", build], repo);
 else run("bun", ["run", join(REPO_ROOT, "folio-assistant-core/scripts/build-folio-site.ts"), "--out", site], repo);
 
 // 2. Rail
-run("bun", ["run", join(REPO_ROOT, "cat-harness/scripts/rail-standalone-pages.ts"), "--site", site, "--built", "cat-harness", "--foreign-site", "--home-label", arg("home-label") ?? slug], REPO_ROOT);
+run("bun", ["run", join(REPO_ROOT, "cat-harness-tools/scripts/rail-standalone-pages.ts"), "--site", site, "--built", "cat-harness", "--foreign-site", "--home-label", arg("home-label") ?? slug], REPO_ROOT);
 
 // 3. Banner
 run(
   "bun",
   [
-    "run", join(REPO_ROOT, "cat-harness/scripts/staging-banner.ts"),
+    "run", join(REPO_ROOT, "cat-harness-tools/scripts/staging-banner.ts"),
     "--site", site, "--branch", slug, "--sha", sha, "--built", new Date().toISOString().replace(/\.\d+Z$/, "Z"),
     "--pr", arg("pr") ?? "n/a", "--pr-url", need("pr-url"),
     "--branch-url", `https://github.com/${publishRepo}/tree/${arg("source-ref") ?? "main"}`,

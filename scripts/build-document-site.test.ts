@@ -11,7 +11,7 @@ import { join, resolve } from "node:path";
 
 import { buildDocumentSite, citationsToHtml, documentManifests, katexMacros, renderDocumentHtml, splitBlocks, type Outline } from "./build-document-site.js";
 import { readPositions } from "../schemas/changeset.js";
-import { initFolio } from "../../cat-harness/scripts/init-folio.js";
+import { initFolio } from "../../cat-harness-tools/scripts/init-folio.js";
 
 const REPO_ROOT = resolve(import.meta.dir, "../..");
 

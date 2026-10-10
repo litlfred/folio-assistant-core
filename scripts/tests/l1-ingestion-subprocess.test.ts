@@ -8,7 +8,7 @@
  * that decomposing a process moves its steps into a child rather than deleting
  * them.
  *
- * MOVED HERE from `cat-harness/scripts/tests/workflow-subprocess.test.ts` in
+ * MOVED HERE from `cat-harness-tools/scripts/tests/workflow-subprocess.test.ts` in
  * placement PR6 (bean `apcg`), with the process it walks: the pipeline was
  * `document-ingestion.bpmn`'s body and is core's `l1-document-ingestion.bpmn`
  * now, while the harness diagram became the basic flow this one calls first.
@@ -25,14 +25,14 @@ import {
   startInstance,
   WorkflowError,
   type InstanceState,
-} from "../../../cat-harness/src/workflow/instance";
-import { checkGate } from "../../../cat-harness/src/workflow/gate";
+} from "../../../cat-harness-tools/src/workflow/instance";
+import { checkGate } from "../../../cat-harness-tools/src/workflow/gate";
 import {
   findInModel,
   loadProcessModel,
   type ProcessModel,
-} from "../../../cat-harness/src/workflow/process-model";
-import { workflowFile } from "../../../cat-harness/scripts/known-skills.ts";
+} from "../../../cat-harness-tools/src/workflow/process-model";
+import { workflowFile } from "../../../cat-harness-tools/scripts/known-skills.ts";
 
 /** This instance's root; diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
 const CORE = resolve(import.meta.dir, "../..");

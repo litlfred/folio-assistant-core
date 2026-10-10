@@ -15,7 +15,7 @@
  *
  * Grouped by the module each symbol comes from. Add a symbol here when an
  * instance of core needs it — never a direct climb from the instance, which
- * `cat-harness/scripts/tests/instance-separation-imports.test.ts` refuses.
+ * `cat-harness-tools/scripts/tests/instance-separation-imports.test.ts` refuses.
  *
  * @module folio-assistant-core/scripts/platform
  */
@@ -24,18 +24,18 @@
 export { readDeclaration, repoRootFor, siteDirFor } from "../../cat-harness/schemas/cat-harness.js";
 
 // ── cat-harness: page chrome and mounting ─────────────────────────────────
-export { fragment } from "../../cat-harness/scripts/folio-mount.ts";
-export { embed } from "../../cat-harness/scripts/pdf-viewer.ts";
-export { subjectPage } from "../../cat-harness/scripts/harness-tiles.js";
-export { withRoutes } from "../../cat-harness/scripts/mount-instance-docs.ts";
-export { libraryResolver } from "../../cat-harness/scripts/lib/library-links.ts";
-export { withViewerNav } from "../../cat-harness/scripts/viewer-page.ts";
-export { themedPage } from "../../cat-harness/scripts/lib/themed-page.ts";
+export { fragment } from "../../cat-harness-tools/scripts/folio-mount.ts";
+export { embed } from "../../cat-harness-tools/scripts/pdf-viewer.ts";
+export { subjectPage } from "../../cat-harness-tools/scripts/harness-tiles.js";
+export { withRoutes } from "../../cat-harness-tools/scripts/mount-instance-docs.ts";
+export { libraryResolver } from "../../cat-harness-tools/scripts/lib/library-links.ts";
+export { withViewerNav } from "../../cat-harness-tools/scripts/viewer-page.ts";
+export { themedPage } from "../../cat-harness-tools/scripts/lib/themed-page.ts";
 export { withInlineCode } from "../../cat-harness/schemas/inline-code.ts";
 
 // ── cat-harness: gettext ──────────────────────────────────────────────────
-export { formatPot, type PotEntry } from "../../cat-harness/content/pipeline/pot-extract.js";
-export { parsePo, parsePoEntries } from "../../cat-harness/content/pipeline/po-inject.js";
+export { formatPot, type PotEntry } from "../../cat-harness-tools/content/pipeline/pot-extract.js";
+export { parsePo, parsePoEntries } from "../../cat-harness-tools/content/pipeline/po-inject.js";
 
 // ── cat-harness: themes ───────────────────────────────────────────────────
 export {
