@@ -30,14 +30,19 @@
  *
  * | renderer | writes | reached by |
  * |---|---|---|
- * | `document-site` | `<slug>/index.html`, `<slug>/media/*`, `outline.json`, `index.html` | a changed block, a document/chapter/section manifest, a media file |
- * | `public-comment-site` | each document's dashboard, `folio-assistant-core/public-comments/<folio>/<slug>/index.html`, and the comment notes on each `<slug>/index.html` | the public-comment store |
- * | `library-site` | each library entry's Document view, `folio-assistant-core/<library>/<entry>/index.html` and `entries/<entry>.doc.json`, and the library's `index.html` | a file in a declared library entry, or a folio's `review-anchors.json` naming one (its [edit] links) |
+ * | `document-site` | `en/<slug>/index.html`, `en/<slug>/media/*`, `outline.json`, `index.html` | a changed block, a document/chapter/section manifest, a media file |
+ * | `public-comment-site` | each document's dashboard, `en/folio-assistant-core/public-comments/<folio>/<slug>/index.html`, and the comment notes on each `en/<slug>/index.html` | the public-comment store |
+ * | `library-site` | each library entry's Document view, `en/folio-assistant-core/<library>/<entry>/index.html`, its data `folio-assistant-core/<library>/<entry>/entries/<entry>.doc.json`, and the library's `en/…/index.html` | a file in a declared library entry, or a folio's `review-anchors.json` naming one (its [edit] links) |
+ *
+ * Pages are under the page locale and data is not (issue #2527); where each
+ * goes is `document-site-route.ts`. A document's page is the one
+ * `outline.json` names (`page`), so an outline from before the locale still
+ * names the page it was published with.
  *
  * A large document's page is LAZY (bean v433), and `outline.json` says so
  * (`lazy`): `index.html` is then a shell of headings and placeholders, the
  * text is in `<slug>/blocks/NNN.json`, and the whole document is in
- * `<slug>/index.hydrated.html`. A block's text edit changes its chunk and the
+ * `en/<slug>/index.hydrated.html`. A block's text edit changes its chunk and the
  * hydrated page, not the shell; a block added, removed, renamed or moved
  * changes the shell and every chunk from its position on, since the chunks
  * after it shift. Comment notes on a lazy page are in `<slug>/pc-notes.json`.
@@ -84,6 +89,7 @@
  * @module folio-assistant-core/scripts/document-rendered-impact
  */
 import { HANDLER, KIND } from "./public-comment-route.js";
+import { documentDataDir, documentPage, localisedPage } from "./document-site-route.js";
 import { execFileSync } from "node:child_process";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
@@ -97,7 +103,6 @@ import {
 } from "../../cat-harness/schemas/rendered-impact.js";
 import { STRUCTURE_FILENAME } from "../../cat-harness/schemas/document-structure.js";
 import { declarationPathIn } from "../../cat-harness/schemas/cat-harness.js";
-import { STRUCTURE_FILENAME } from "../../cat-harness/schemas/document-structure.js";
 import { gitBlobs } from "../../cat-harness-tools/scripts/git-blobs.js";
 import { ChangeSetSchema, computeChangeSet, type ChangeSet } from "../schemas/changeset.js";
 
@@ -108,13 +113,13 @@ export const LIBRARY_RENDERER = "library-site";
 /** Where the public-comment store lives, relative to the repository root. */
 const COMMENT_STORE = /^review\/public-comment\//;
 
-/** The part of `outline.json` this reads: the documents, by slug. */
+/** The part of `outline.json` this reads: the documents, by slug, and each one's page. */
 export interface OutlineLike {
-  documents: Array<{ slug: string; lazy?: { hydrated: string; chunks: number; of: Record<string, number> } }>;
+  documents: Array<{ slug: string; page?: string; lazy?: { hydrated: string; chunks: number; of: Record<string, number> } }>;
 }
 
-/** A lazy page's chunk file, as `build-document-site` names it. */
-const chunkFile = (slug: string, n: number) => `${slug}/blocks/${String(n).padStart(3, "0")}.json`;
+/** A lazy page's chunk file, as `build-document-site` names it: data, so not under the locale. */
+const chunkFile = (slug: string, n: number) => `${documentDataDir(slug)}/blocks/${String(n).padStart(3, "0")}.json`;
 
 interface Acc {
   files: Map<string, RenderedFile>;
@@ -222,10 +227,14 @@ export function documentRenderedImpact(opts: DocImpactOptions): RenderedImpact[]
   }
 
   const lazy = new Map((opts.outline?.documents ?? []).flatMap((d) => (d.lazy ? [[d.slug, d.lazy] as const] : [])));
+  // The page the outline names, else where build-document-site puts it now.
+  const pages = new Map((opts.outline?.documents ?? []).flatMap((d) => (d.page ? [[d.slug, d.page] as const] : [])));
+  const pageOf = (slug: string) => pages.get(slug) ?? documentPage(slug);
+  const pageDirOf = (slug: string) => pageOf(slug).replace(/\/[^/]*$/, "");
   /** Where a block's text renders on its document's site: the page, or a lazy page's chunk and hydrated page. */
   const blockFiles = (acc: Acc, slug: string, label: string, via: string[]) => {
     const lz = lazy.get(slug);
-    if (!lz) return add(acc, { path: `${pre}${slug}/index.html`, change: "changed", role: "content", via, anchors: [label] });
+    if (!lz) return add(acc, { path: `${pre}${pageOf(slug)}`, change: "changed", role: "content", via, anchors: [label] });
     add(acc, { path: `${pre}${lz.hydrated}`, change: "changed", role: "content", via, anchors: [label] });
     const n = lz.of[label];
     if (n !== undefined) add(acc, { path: `${pre}${chunkFile(slug, n)}`, change: "changed", role: "data", via });
@@ -245,11 +254,11 @@ export function documentRenderedImpact(opts: DocImpactOptions): RenderedImpact[]
   const libInputs: string[] = [];
   /** An entry's Document view (build-library-site.ts): its data, and with `page` its page and the library's index. */
   const libraryFiles = (dir: string, entry: string, via: string[], page: boolean) => {
-    const at = `${pre}${HANDLER}/${dir.split("/").pop()}`;
-    add(lib, { path: `${at}/${entry}/entries/${entry}.doc.json`, change: "changed", role: "data", via });
+    const route = `${HANDLER}/${dir.split("/").pop()}`;
+    add(lib, { path: `${pre}${route}/${entry}/entries/${entry}.doc.json`, change: "changed", role: "data", via });
     if (!page) return;
-    add(lib, { path: `${at}/${entry}/index.html`, change: "changed", role: "content", via });
-    add(lib, { path: `${at}/index.html`, change: "changed", role: "index", via });
+    add(lib, { path: `${pre}${localisedPage(route)}/${entry}/index.html`, change: "changed", role: "content", via });
+    add(lib, { path: `${pre}${localisedPage(route)}/index.html`, change: "changed", role: "index", via });
   };
 
   for (const f of opts.changed) {
@@ -281,12 +290,12 @@ export function documentRenderedImpact(opts: DocImpactOptions): RenderedImpact[]
       // document page is listed: safe, and with one document, exact.
       for (const slug of [...slugs].sort()) {
         // The document's dashboard, at the handler route (public-comment-route.ts).
-        add(pc, { path: `${pre}${HANDLER}/${KIND}/${folio || "folio"}/${slug}/index.html`, change: "changed", role: "content", via: [f] });
-        add(pc, { path: `${pre}${slug}/index.html`, change: "changed", role: "content", via: [f] });
+        add(pc, { path: `${pre}${localisedPage(`${HANDLER}/${KIND}/${folio || "folio"}/${slug}`)}/index.html`, change: "changed", role: "content", via: [f] });
+        add(pc, { path: `${pre}${pageOf(slug)}`, change: "changed", role: "content", via: [f] });
         const lz = lazy.get(slug);
         if (lz) {
           add(pc, { path: `${pre}${lz.hydrated}`, change: "changed", role: "content", via: [f] });
-          add(pc, { path: `${pre}${slug}/pc-notes.json`, change: "changed", role: "data", via: [f] });
+          add(pc, { path: `${pre}${documentDataDir(slug)}/pc-notes.json`, change: "changed", role: "data", via: [f] });
         }
       }
       continue;
@@ -301,10 +310,11 @@ export function documentRenderedImpact(opts: DocImpactOptions): RenderedImpact[]
     }
     const slug = rel ? slugOf(rel) : undefined;
     if (rel && slug && slugs.has(slug)) {
-      const page = `${pre}${slug}/index.html`;
+      const page = `${pre}${pageOf(slug)}`;
       const sub = rel.slice(slug.length + 1);
       if (sub.startsWith("media/")) {
-        add(doc, { path: `${pre}${rel}`, change: "changed", role: "data", via: [f] });
+        // Copied beside the page, which links it relative to itself.
+        add(doc, { path: `${pre}${pageDirOf(slug)}/${sub}`, change: "changed", role: "data", via: [f] });
         add(doc, { path: page, change: "changed", role: "content", via: [f] });
         // Which block shows the figure is in the block, not the path: every chunk.
         const lz = lazy.get(slug);
@@ -344,7 +354,7 @@ export function documentRenderedImpact(opts: DocImpactOptions): RenderedImpact[]
     });
     if (!input) continue;
     const via = [input, c.label];
-    add(doc, { path: `${pre}${slug}/index.html`, change: "changed", role: "content", via });
+    add(doc, { path: `${pre}${pageOf(slug)}`, change: "changed", role: "content", via });
     add(doc, { path: `${pre}${lz.hydrated}`, change: "changed", role: "content", via, ...(c.change === "removed" ? {} : { anchors: [c.label] }) });
     chunksFrom(doc, slug, c.change === "removed" ? 0 : lz.of[c.label] ?? 0, via);
   }
