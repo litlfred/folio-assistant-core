@@ -4,8 +4,10 @@ title: 'RENDER STAGE 3: the dynamic-state export has a position but no filename 
 status: todo
 type: task
 priority: normal
+tags:
+    - rehomed
 created_at: 2026-09-20T19:59:52Z
-updated_at: 2026-10-03T07:43:33Z
+updated_at: 2026-10-10T16:34:20Z
 parent: folio-assistant-yj32
 ---
 
@@ -61,3 +63,12 @@ the harness owns the harness") puts it outside this store's reach.
 3. Scrap it. The finding no longer matters after the separation.
 
 **Default if no answer:** option 1.
+
+
+## Rehomed 2026-10-10: this copy is now a pointer
+
+By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a
+pointer here), this bean is re-filed in the store of the repository whose code
+it changes: **`litlfred/cat-harness-tools` bean `cat-tools-1as6`** (cat-harness-tools
+PR #68). Work it there. This copy stays open as a pointer, and closes when
+`cat-tools-1as6` does.
