@@ -305,7 +305,7 @@
     {
       "id": "process_codechangereview.task_review",
       "prefLabel": "Review the change",
-      "definition": "A human or an agent acting AS reviewer. Nothing is a reviewer; somebody acts as one for the duration of this lane. For a rendered change the reviewer reads the agent's before/after preview rather than building one.",
+      "definition": "A human or an agent acting AS reviewer. Nothing is a reviewer; somebody acts as one for the duration of this lane. For a rendered change the reviewer reads the agent's before/after preview rather than building one. On agent-touched changes, an adversarial code review evaluates against the RED FLAG taxonomy and writes a committed verdict.",
       "notation": "Task_Review",
       "source": "cat-harness/processes/sdlc/code-change-review.bpmn#Task_Review",
       "status": "candidate"
@@ -612,6 +612,14 @@
       "definition": "The business analyst confirms every acceptance criterion from the requirements is met. The issue closes only on their authorisation — an agent never closes an issue on its own say-so. Since issue #2405 (FR-013) it IS an adjudication with the requirement-set answers: an approval here moves the set to `accepted`, which `check:requirements` refuses unless it is a human's and every approved member is `in-force`.",
       "notation": "BA_Confirm",
       "source": "cat-harness/processes/process/crdm-close.bpmn#BA_Confirm",
+      "status": "candidate"
+    },
+    {
+      "id": "process_crdm_close.call_mergetomain",
+      "prefLabel": "Land the feature's PRs [merge-to-main]",
+      "definition": "Phase 6's \"explicit confirmation before merging to main\", made a step that can refuse. Once per pull request the feature still has open, after the sign-off is recorded and before the issue is closed: an issue is not closed on a feature that is not on `main`. `merge-to-main.bpmn` reads each head's evidence live, establishes that the owner authorised THAT merge (a stakeholder sign-off or the BA's confirmation is acceptance of the feature, not authorisation to merge it, unless the owner's own words say so), records the authorisation, merges, and confirms the base. A PR the owner holds or refuses stays open, and A_Close then waits: the BA's authorisation to close does not cover a feature that did not land. An increment the owner asked to land earlier in Phase 6 went through the same sub-process at that time.",
+      "notation": "Call_MergeToMain",
+      "source": "cat-harness/processes/process/crdm-close.bpmn#Call_MergeToMain",
       "status": "candidate"
     },
     {
@@ -1811,6 +1819,102 @@
       "status": "candidate"
     },
     {
+      "id": "process_mergetomain.call_handback",
+      "prefLabel": "Hand it back [merge-refusal]",
+      "definition": "Red CI, a conflict or a blocking review is the PR owner's to fix, not the merger's: `merge-refusal.bpmn` records the reason on the bean and returns the PR. The merger does not fix the PR to make it pass.",
+      "notation": "Call_HandBack",
+      "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Call_HandBack",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergetomain.task_ask",
+      "prefLabel": "Put the merge to the owner, evidence first",
+      "definition": "Context, options, recommendation, question (interaction-modality §4.1). One row per PR: repo, PR, head, CI on head, mergeable, review, local gates. A repository with no CI is named as such, in words. One question may cover a batch, provided every PR in it is a row.",
+      "notation": "Task_Ask",
+      "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_Ask",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergetomain.task_confirmbase",
+      "prefLabel": "Confirm main's CI on the merge commit",
+      "definition": "Read the runs on the merge commit. Red is fixed forward (continual-progress). With no CI the report reads \"not verified: no CI\", never green.",
+      "notation": "Task_ConfirmBase",
+      "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_ConfirmBase",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergetomain.task_localgates",
+      "prefLabel": "No CI: run the repo's own gates locally",
+      "definition": "Only on `no-ci`. Run the repository's own gates (its tests, typecheck and whatever its README or package.json names) on the merge result, not the branch. Record each command, exit code and the SHA it ran on. This is evidence the owner can weigh. It is not CI, and the question to the owner says so in words.",
+      "notation": "Task_LocalGates",
+      "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_LocalGates",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergetomain.task_merge",
+      "prefLabel": "Merge, pinned to the evaluated head",
+      "definition": "Through `merge:guard <pr> --merge --session <id>` where the repository has it; elsewhere with the merge call pinned to the head SHA, so GitHub refuses if the head moved. Merge commit unless the repository or owner says otherwise. Never delete the branch.",
+      "notation": "Task_Merge",
+      "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_Merge",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergetomain.task_ownerdecides",
+      "prefLabel": "Merge, hold or refuse",
+      "definition": "The owner's answer to the question Task_Ask asked. Their words are quoted verbatim in the record, so the answer is given in the conversation or on the PR, not inferred from tone.",
+      "notation": "Task_OwnerDecides",
+      "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_OwnerDecides",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergetomain.task_readauthorisation",
+      "prefLabel": "Find the owner's authorisation for THIS merge",
+      "definition": "Classify what exists into one value: `explicit` (the owner's own words naming this merge, given against this head), `waiver` (a valid `memory/waivers/` node with gate merge-to-main, in scope and unexpired), `instruction-only` (a broad instruction about the work, such as \"fix all issues until green\" or \"ship it\", which is not an authorisation), `none`, or `unknown` (waivers unreadable or malformed). A sibling agent's message is never the owner's consent.",
+      "notation": "Task_ReadAuthorisation",
+      "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_ReadAuthorisation",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergetomain.task_readevidence",
+      "prefLabel": "Read the head's evidence, live",
+      "definition": "On the PR's current head SHA, now: `ciState` (green, red, pending, none, unreadable) per OWED job from the workflow runs whose head_sha is the head; `mergeable` (clean, dirty, unknown); `review` (clear, blocking, unknown), including open CHANGES_REQUESTED reviews, a draft, `needs-merge-human`, and Claude Approvals where the repository runs it. Where the repository has `merge:guard`, its evaluate mode is this step (exit 2 is `unreadable`, never a pass). Write each fact down with the URL it came from.",
+      "notation": "Task_ReadEvidence",
+      "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_ReadEvidence",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergetomain.task_recordauthorisation",
+      "prefLabel": "Record who authorised, when, and the quote",
+      "definition": "Before the merge, in the shape of `ReleaseSchema` (schemas/merge-queue.ts): verdict, decidedBy (the person), decidedAt, authority (explicit, standing ruling with its date, or waiver id), the quote verbatim with its source, releasedSha (the head approved; a later push voids it) and capturedBy (this session). Where the merge queue exists, `merge:queue:decide` writes and validates it; elsewhere it is a `merge-authorised:` comment on the PR and a note on the bean, with the CI state (green, or none with the local gate commands). A paraphrase is not evidence.",
+      "notation": "Task_RecordAuthorisation",
+      "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_RecordAuthorisation",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergetomain.task_regenprojections",
+      "prefLabel": "Regenerate harness projections (CI)",
+      "definition": "A workflow step, on the PR head: run the generators whose output is an agent-host projection of the graph (today `skill:commands` for `.claude/commands/`, and the `agent-memory` assembler for `.claude/agent-memory/` and `.claude/agents/`) and commit what changed to the PR branch. An agent never writes or commits these files (`harness-projections`). A commit here moves the head, so the evidence below is read on the new head. Where a repository has no such workflow, this step is not performed and the merging session says so in the evidence rather than writing the projections itself.",
+      "notation": "Task_RegenProjections",
+      "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_RegenProjections",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergetomain.task_repin",
+      "prefLabel": "Re-pin downstream mounts, as PRs",
+      "definition": "For each instance whose index.config.json mounts this repository: a PR moving `ref` to the merge commit, with a trust.consent whose evidence quotes the owner's consent to that pin, and the lock regenerated by `mount:remote`. Each re-pin PR is itself a merge to main and runs this process again. None found is recorded with where it looked.",
+      "notation": "Task_Repin",
+      "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_Repin",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergetomain.task_report",
+      "prefLabel": "Note the bean, summarise on the issue",
+      "definition": "The merge SHA and the authorisation block on the bean; a round summary on the issue (issue-working). The issue is not closed here: in CRDM, crdm-close closes it after this process returns, on the BA's authorisation.",
+      "notation": "Task_Report",
+      "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_Report",
+      "status": "candidate"
+    },
+    {
       "id": "process_mergetrain.call_checkspresent",
       "prefLabel": "Find members with no CI on their head [pr-checks-present]",
       "definition": "GitHub runs no `pull_request` CI while a PR conflicts, so a member can arrive with nothing on its head (bean `u7be` item 3). That member is T2's first suspect if the train goes red.",
@@ -1851,6 +1955,14 @@
       "status": "candidate"
     },
     {
+      "id": "process_mergetrain.call_mergetomain",
+      "prefLabel": "Land each member [merge-to-main]",
+      "definition": "Once per member, in train order, at the SHA the train's gate set tested. `merge-to-main.bpmn` is where merging is a step with its own gate: it reads the head's evidence live (the train's green run is that evidence, and `merge:guard` re-evaluates it), establishes that the owner authorised THIS merge (explicitly, or by a standing ruling quoted verbatim with its date, e.g. 2026-10-01 \"you may merge green PRs\", which covers green heads only and only the queue as it stood), records the authorisation, merges pinned to the head, and then confirms `main`, re-pins downstream mounts and notes the bean. Until 2026-10-09 this was two steps here, `Task_Release` in the owner's lane bound to interaction-modality and `Task_Land` bound to prepare-merge; neither could refuse a merge, and neither said what happens when a repository has no CI. R1 still holds: what lands is exactly what CI tested. If `main` moved after the train's CI started, re-run rather than land. Each member's `trainId` is cleared, and its preview is then taken down by `feature-staging.bpmn`. A member the sub-process does not merge (held, refused, handed back) leaves the train with its reason on its queue entry.",
+      "notation": "Call_MergeToMain",
+      "source": "cat-harness/processes/sdlc/merge-train.bpmn#Call_MergeToMain",
+      "status": "candidate"
+    },
+    {
       "id": "process_mergetrain.task_admit",
       "prefLabel": "Admit it to the train, record the train id",
       "definition": "Writes the queue entry's `trainId` and `placement` (rule, class, rank) with who decided and when. A decision, so it is stored; the facts it was decided on are not. PRECONDITION, CHECKED RATHER THAN ASSUMED: the worktree carries no untracked, non-ignored file before the member is merged and the tree regenerated. `git status --porcelain` must be empty. The reason is specific: generated directory READMEs carry a per-subdirectory file count, and the writer counts the files GIT WOULD COMMIT -- `git ls-files --cached --others --exclude-standard` (bootstrap-tools/scripts/git-files.ts:23). `--exclude-standard` already keeps IGNORED junk out, which is the `__pycache__` case that drove that line, but `--others` still counts an untracked file nobody has ignored. So a transient written by an earlier train step moves a committed count, `readme:subgraphs:check` goes red, and the red belongs to nobody. Train 6 hit this. The count is volatile for a second reason the precondition cannot fix: two members each adding a file write different integers to one line. Measured in bean `y7b3` -- 76 of 300 replayed merges conflicted on `beans/README.md`, every one on the `| defs/ | N files |` line -- and the exposure is wider than that bean states: 54 generated READMEs across 14 instances carry 207 such rows (measured 2026-10-02). `merge:main` already resolves them (`readme-generated-regions`), so the cost falls on merges made by plain git. The chosen fix is bean `ba9e`: take the integer off `main` into the KG's `_data` layer, which classifies `take-base` and is therefore auto-resolved, leaving the README with a marker that is invariant until the directory crosses LIST_LIMIT. Not done here -- it spans the pinned `bootstrap-tools` submodule.",
@@ -1883,14 +1995,6 @@
       "status": "candidate"
     },
     {
-      "id": "process_mergetrain.task_land",
-      "prefLabel": "Land the train at the tested SHA",
-      "definition": "R1: what lands is exactly what CI tested. If `main` moved after the train's CI started, re-run rather than land (open question for the owner in the requirements note §6). Clears each member's `trainId`; its preview is then taken down by `feature-staging.bpmn`.",
-      "notation": "Task_Land",
-      "source": "cat-harness/processes/sdlc/merge-train.bpmn#Task_Land",
-      "status": "candidate"
-    },
-    {
       "id": "process_mergetrain.task_override",
       "prefLabel": "Place it by hand, with a reason",
       "definition": "Recorded as a queue entry whose placement is `override` with a position and a reason; the schema refuses one without a reason. It enters the next placement as the table's `ownerOverride` input.",
@@ -1904,14 +2008,6 @@
       "definition": "From GitHub and the checkout, now: authored paths, shared declarations, size, conflict risk and overlap KIND against the other queued PRs (T3), own CI and whether it ran on the head (T2). Tools: `merge:overlap` for the overlap facts, `check:head-has-run` for `ownCi`. Nothing read here is written to a queue entry; it is the input to the placement table. `ownCi` IS NOT A VERDICT READ. Never ask whether anything is red: ask which workflow runs are OWED for the head's event and whether each one is present and successful. The two readings come apart, measured 2026-10-02 on #1889's head 7ab6119405 -- 9 runs present, all 9 gating job NAMES matching, 3 of them in_progress with a null conclusion, and 3 check SUITES completed as `action_required` having executed nothing. A filter for conclusion = failure finds zero, and counting the runs does not catch it either. `check:head-has-run` is the only thing here that asks the owed question (bean `3pqn`), and the five states it distinguishes are the five values of `ownCi`. `Rule_HeadNotGreen` in merge-priority.dmn then hands back anything but `green`, so this is a gate the engine applies rather than advice a steward remembers. Overlap kind matters as much as overlap: `merge:overlap` over all 36 open PRs on 2026-10-02 (459 pairs) found #1907 x #1909 NOT independent on `package.json` alone, with zero authored content shared. `generated-only` needs a regeneration and `shared-declaration` needs ordering; only `authored` needs a train.",
       "notation": "Task_ReadLive",
       "source": "cat-harness/processes/sdlc/merge-train.bpmn#Task_ReadLive",
-      "status": "candidate"
-    },
-    {
-      "id": "process_mergetrain.task_release",
-      "prefLabel": "Release the merge to main",
-      "definition": "Explicit confirmation before merging to `main`, or a standing ruling the steward quotes verbatim with its date (2026-10-01: \"you may merge green PRs\").",
-      "notation": "Task_Release",
-      "source": "cat-harness/processes/sdlc/merge-train.bpmn#Task_Release",
       "status": "candidate"
     },
     {
@@ -2023,6 +2119,14 @@
       "definition": "Sparse checkout of the declaration and the chosen directories, copied to the mount path (by default the instance's home path, so relative imports and sibling discovery hold). Never onto tracked bytes; never onto a directory no lock says this mount made; never over edits to a previous mount — those are left untouched and reported.",
       "notation": "Task_MountInstances",
       "source": "cat-harness/processes/kg/mount-dependency.bpmn#Task_MountInstances",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mountdependency.task_renderagentsurface",
+      "prefLabel": "Re-render the agent surface",
+      "definition": "When the lock changed, the layers an agent's skills and memory are generated from changed with it. `mount:remote` re-runs the generators of what an agent actually reads — `skill:commands` (`.claude/commands/`) and `agent-memory` (`.claude/agent-memory/` and the `.agents/` copies) — from the checkout root, and a generator that fails fails the run. A re-pin commit therefore carries the new layers AND the surface rendered from them; shipping the first without the second is how folio-assistant#2526 went red on three agent-memory tests. Owner, 2026-10-10: \"it may have new agentic skills to re-render and add. same for memory.\"",
+      "notation": "Task_RenderAgentSurface",
+      "source": "cat-harness/processes/kg/mount-dependency.bpmn#Task_RenderAgentSurface",
       "status": "candidate"
     },
     {
@@ -2817,6 +2921,54 @@
       "status": "candidate"
     },
     {
+      "id": "process_secureagentpermissions.task_explain",
+      "prefLabel": "Explain each missing permission, with the exact config diff",
+      "definition": "Per permission: what it allows the agent to do without asking, why a process here needs it, the narrowest form that would do, and the exact change to the Tool's config. Context, options, recommendation, question (interaction-modality §4.1). Least privilege is the recommendation unless there is a measured reason for more.",
+      "notation": "Task_Explain",
+      "source": "cat-harness/processes/process/secure-agent-permissions.bpmn#Task_Explain",
+      "status": "candidate"
+    },
+    {
+      "id": "process_secureagentpermissions.task_identifytools",
+      "prefLabel": "Identify the agent Tool(s) acting here",
+      "definition": "Which coding-agent Tool is running this session, and which others the instance is configured for (each has its own config files: AGENTS.md is read by many; Claude Code, Gemini CLI, Cursor, Copilot and Codex each add their own). The Tool's adapter says where its permissions live and how a rule is written. A Tool with no adapter is reported, and its permissions are left to the person.",
+      "notation": "Task_IdentifyTools",
+      "source": "cat-harness/processes/process/secure-agent-permissions.bpmn#Task_IdentifyTools",
+      "status": "candidate"
+    },
+    {
+      "id": "process_secureagentpermissions.task_ownergrants",
+      "prefLabel": "Grant, narrow or refuse each",
+      "definition": "The owner's answer, per permission, in their own words. Quoted verbatim in the record.",
+      "notation": "Task_OwnerGrants",
+      "source": "cat-harness/processes/process/secure-agent-permissions.bpmn#Task_OwnerGrants",
+      "status": "candidate"
+    },
+    {
+      "id": "process_secureagentpermissions.task_readgrants",
+      "prefLabel": "Compare what the processes need with what is granted",
+      "definition": "The needed set is the agent-permissions skill's list (write generated projections: CI only, never the agent; edit hooks or settings; run the gates; push a feature branch; open a PR), scoped to what this instance's processes actually call. The granted set is the recorded grants plus the Tool's current config, read through its adapter. A config rule with no recorded grant is reported as unrecorded, not treated as granted.",
+      "notation": "Task_ReadGrants",
+      "source": "cat-harness/processes/process/secure-agent-permissions.bpmn#Task_ReadGrants",
+      "status": "candidate"
+    },
+    {
+      "id": "process_secureagentpermissions.task_recordgrant",
+      "prefLabel": "Record each answer: who, when, scope, the quote",
+      "definition": "One record per permission: by, on, tool, permission, scope (session, instance, or until a date), the config diff, and evidence (the owner's words verbatim, with where they were said). Refusals are recorded the same way.",
+      "notation": "Task_RecordGrant",
+      "source": "cat-harness/processes/process/secure-agent-permissions.bpmn#Task_RecordGrant",
+      "status": "candidate"
+    },
+    {
+      "id": "process_secureagentpermissions.task_writeconfig",
+      "prefLabel": "Write it through the Tool's adapter",
+      "definition": "The exact diff the owner saw, nothing more, written by the person or by the agent under their consent to that diff. Hand-edited agent config only; generated projections are CI's (harness-projections).",
+      "notation": "Task_WriteConfig",
+      "source": "cat-harness/processes/process/secure-agent-permissions.bpmn#Task_WriteConfig",
+      "status": "candidate"
+    },
+    {
       "id": "process_sessionstatemachine.a_askwhoisacting",
       "prefLabel": "Ask who is acting",
       "definition": "The one step that needs a person. Asked ONCE and recorded, never re-asked: `cat-harness/memory/interaction.json` and the record exist so that a preference stated once is not requested again, which is WCAG 2.2 SC 3.3.7.",
@@ -2870,6 +3022,14 @@
       "definition": "An instance opened or closed, a bean claimed, a wait started or ended. All by REFERENCE: the bean and the instance are each the authority on themselves, and a status copied here would be free to contradict them. NO `cat-harness.processes:bean` on this step. It records that a claim happened; it does not claim.",
       "notation": "A_UpdateSession",
       "source": "cat-harness/processes/process/session-state-machine.bpmn#A_UpdateSession",
+      "status": "candidate"
+    },
+    {
+      "id": "process_sessionstatemachine.call_securepermissions",
+      "prefLabel": "Secure the agent's permissions",
+      "definition": "Once the actor is known and the record is open, check that the coding agent acting here holds the permissions this instance's processes need, granted by a person and recorded, and ask for any that are missing. This is where initiating the harness for an actor secures them, rather than the first denied command. A run that finds them current returns without asking anything; the same process is called on demand when an action is denied later in the session. Vendor-neutral: the agent is a Tool, and its config is written through that Tool's adapter. Skill: agent-permissions.",
+      "notation": "Call_SecurePermissions",
+      "source": "cat-harness/processes/process/session-state-machine.bpmn#Call_SecurePermissions",
       "status": "candidate"
     },
     {
