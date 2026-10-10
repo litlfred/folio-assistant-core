@@ -19,3 +19,25 @@ Drain the summary queue for the withheld entries with the existing machinery (li
 ## Done when
 - Both withheld entries have draft summaries for their prose blocks. The viewer banner then reads "N of M sections summarised" with N > 0.
 - A no-leak check passes: grep the generated `cat-harness/docs/assets/library/entries/<slug>.json` for sentences from the entry's sections and find none outside the summaries.
+
+
+## Progress 2026-10-10 (bean-backlog drain, lane C): drafts done, no-leak check not yet run
+
+Measured on `litlfred/who-iris` main, where the library lives after the
+separation:
+- `library/who-pub-tps-931/summaries.json` has **121** draft narratives.
+- `library/9789241548960-eng/summaries.json` has **243** draft narratives.
+
+So Done-when item 1 (N > 0) is met for both entries.
+
+**Item 2 is not met yet.** The no-leak check needs the GENERATED viewer JSON
+(`docs/assets/library/entries/<slug>.json`), which is built at deploy and not
+committed in who-iris. A proxy was run over the summaries themselves: does any
+narrative carry a verbatim 10-word run from its sections?
+- who-pub-tps-931: 0 of 121.
+- 9789241548960-eng: 13 of 243. Each is a short quoted phrase, e.g. "for
+  derivative products such as summaries algorithms or wall charts".
+
+Quoting inside a summary is allowed by the criterion ("none outside the
+summaries"), so this is no leak. It is noted because it is the closest thing
+measurable without a build. Close this bean once the grep runs on a built site.
