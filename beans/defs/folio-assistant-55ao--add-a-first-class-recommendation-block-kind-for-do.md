@@ -147,3 +147,12 @@ repositories, re-measured today:
 
 **Default if no answer:** option 2. It changes nothing outside core, and
 everything it writes carries over.
+
+
+## Owner ruling 2026-10-10, answered directly in the lane C session (https://claude.ai/code/session_018NFVUeJjQJdrEU32AS1Mco): option 1, build both halves
+
+The owner chose to build both halves, noting the session has cat-harness
+access. Order, per the decision above: the cat-harness typing PR first
+(`RecommendationBlock`, builder, Zod schema with the `strength` reference
+and the optional `health-intervention` edge), then the core node, the SKOS
+strength scheme, the skill and the BPMN step.

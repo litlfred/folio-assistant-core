@@ -1,11 +1,11 @@
 ---
 # folio-assistant-eief
 title: 'CSVW skill + ingestion tools: tabular metadata as far as it can be determined'
-status: todo
+status: completed
 type: feature
 priority: normal
 created_at: 2026-09-20T12:02:21Z
-updated_at: 2026-10-10T16:08:33Z
+updated_at: 2026-10-10T16:33:03Z
 parent: folio-assistant-slw1
 ---
 
@@ -208,3 +208,18 @@ STUB, and (b) the `folio-tabular-records/v1` migration.
 3. Lane C opens a cat-harness PR for (a) now, left for review.
 
 **Default if no answer:** option 1.
+
+
+## Owner ruling 2026-10-10, answered directly in the lane C session (https://claude.ai/code/session_018NFVUeJjQJdrEU32AS1Mco): accept the default, close
+
+## Summary of Changes
+
+Closed on the owner's ruling (option 1 above).
+- **Shipped in core:** `csvw:` in the `@context`, the `tabular-metadata`
+  skill, `scripts/tabular-csv.ts` and `scripts/tabular-xlsx.ts` with the shared
+  column classifier (31 tests), and location-on-sheet tested on a DAK-shaped
+  sheet (PRs #33, #34).
+- **Follow-ups:**
+  - (a) the cat-harness Tool nodes `tabular-csv`/`tabular-xlsx` still read
+    STUB. They are being replaced in a cat-harness PR by the same drain.
+  - (b) the `folio-tabular-records/v1` migration is `folio-core-urat`.

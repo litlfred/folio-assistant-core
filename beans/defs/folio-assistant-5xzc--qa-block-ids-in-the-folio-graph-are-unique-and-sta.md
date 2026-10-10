@@ -1,11 +1,11 @@
 ---
 # folio-assistant-5xzc
 title: 'QA: block ids in the folio/ graph are unique and stable across render, move and re-ingest — the precondition every review view keys on'
-status: todo
+status: completed
 type: feature
 priority: normal
 created_at: 2026-09-22T21:02:54Z
-updated_at: 2026-09-29T18:14:49Z
+updated_at: 2026-10-10T16:33:03Z
 parent: folio-assistant-q4jm
 ---
 
@@ -90,3 +90,17 @@ Asked 2026-10-10 by the bean-backlog drain (lane C).
 3. Keep this open until a sweep over a real folio has run.
 
 **Default if no answer:** option 1.
+
+
+## Owner ruling 2026-10-10, answered directly in the lane C session (https://claude.ai/code/session_018NFVUeJjQJdrEU32AS1Mco): accept the default, close
+
+## Summary of Changes
+
+Closed on the owner's ruling (option 1 of the 2026-10-10 decision above).
+- **Shipped:** `id-unique` and `id-stable` are registered with tests
+  (cat-harness-tools `qa-checkers-ids.ts`, `qa-criteria-registry.ts`), and
+  core's ChangeSet and review comments follow `renamedFrom`.
+- **Not carried here:** `renamedFrom` moves into core when `BlockBase` moves
+  whole, as part of `0lmb`'s content-model work. The sweep over a real folio
+  is covered by `xp72`'s 2,000-block fixture, a folio graph with declared
+  renames: `schemas/changeset-scale.test.ts`.
