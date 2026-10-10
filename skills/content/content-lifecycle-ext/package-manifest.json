@@ -1,9 +1,10 @@
 {
   "name": "content-lifecycle-ext",
   "version": "0.1.0",
-  "description": "Core refinements of the harness's generic content lifecycle: quality control across a folio's QA checks (placement PR1, #1702).",
+  "description": "Core refinements of the harness's generic content lifecycle: quality control across a folio's QA checks (placement PR1, #1702), and reviewer comments on a folio's edit-set (moved down from cat-harness, bean lthi).",
   "skills": [
-    "quality-control"
+    "quality-control",
+    "review-comments"
   ],
   "lifecycleStages": [
     "validate",
