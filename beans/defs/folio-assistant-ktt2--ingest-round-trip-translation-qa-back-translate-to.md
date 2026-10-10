@@ -5,7 +5,7 @@ status: todo
 type: task
 priority: normal
 created_at: 2026-09-16T06:43:50Z
-updated_at: 2026-10-06T06:38:24Z
+updated_at: 2026-10-10T15:57:45Z
 parent: folio-assistant-slw1
 ---
 
@@ -108,3 +108,28 @@ Asked in https://claude.ai/code/session_012qoycyCSGidZqW245vXhze. **The owner ch
 Both are recorded, and they are governed by the `untainted-verification` skill (`UntaintedDispatch`, `mergeUntainted`). `translation-manager.md` §5 documents the criterion. This bean's 2026-09-19 entry predates that code, which is why it read as unbuilt.
 
 **What is left:** run it over the translations that now exist (who-iris in the six UN languages, #2229), and wire the L1 completeness gate's `Task_RoundTrip` to it. Then close this bean on that evidence. This waits until after the content split.
+
+
+## 2026-10-10: gate wired; the run is still open (bean-backlog drain, lane C)
+
+**Done:** the first of the two items the 2026-10-06 ruling left. The
+completeness gate's `Task_RoundTrip`
+(`processes/library/ingest-l1-completeness-gate.bpmn`) no longer reads "NOT
+IMPLEMENTED" and no longer points at `document-intake`. It now names:
+- the two skills that govern the round trip: `translation-manager` (§5) and
+  `untainted-verification`;
+- the Tool that records it: `translation-roundtrip-record`;
+- the criterion it writes: `translation-semantic-roundtrip`;
+- the separate terminology criterion: `translation-terms-preserved`;
+- the rule that an empty entry list is "not yet run", never a pass;
+- the PO-reversal prohibition from 2026-09-19.
+
+The step's derived strings were updated with it: the 5 `.pot` templates under
+`translations/*/processes/` (line refs shifted, sorted as pot-extract sorts)
+and the generated `kg-bpmn-activities` glossary entry.
+
+**Still open, so the bean stays `todo`:** running the agentic round trip over
+the translations that exist (who-iris in the six UN languages, #2229), and
+adjudicating what it flags. That run belongs in the who-iris instance and
+needs dispatched back-translator and adjudicator agents. Close this bean on
+that run's sidecars.
