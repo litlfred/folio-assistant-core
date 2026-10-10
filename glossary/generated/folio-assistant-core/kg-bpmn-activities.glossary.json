@@ -1033,7 +1033,7 @@
     {
       "id": "process_l1gate.task_roundtrip",
       "prefLabel": "Round-trip translation QA",
-      "definition": "NOT IMPLEMENTED. Tracked as a bean; see docs/document-ingestion.md. Back-translate each localized narrative into its source language and compare meaning, to catch semantic drift and bad terminology that a forward-only check cannot see.",
+      "definition": "Back-translate each localized narrative into its source language and compare the meaning, to catch semantic drift and bad terminology that a forward-only check cannot see. Agentic, by the owner's ruling of 2026-10-06 (bean ktt2). Two parties are kept apart under untainted-verification: a back-translator that sees ONLY the target-language text, and an adjudicator that sees the original and the back-translation and rules. The verdict is recorded per block, under criterion `translation-semantic-roundtrip` in the block's `<block>.<locale>.translation-qa.json` sidecar, by the `translation-roundtrip-record` Tool (translation-manager §5). A terminology miss is a different criterion, `translation-terms-preserved` (acronyms, numbers, URLs that must survive), so Gateway_Drift can tell the two apart. Never close this step by reversing the PO's msgid→msgstr map: that returns the source exactly and scores 1.0 always. An empty `translation-semantic-roundtrip` entry list means \"not yet run\", which is never a pass.",
       "notation": "Task_RoundTrip",
       "source": "folio-assistant-core/processes/library/ingest-l1-completeness-gate.bpmn#Task_RoundTrip",
       "status": "candidate"
