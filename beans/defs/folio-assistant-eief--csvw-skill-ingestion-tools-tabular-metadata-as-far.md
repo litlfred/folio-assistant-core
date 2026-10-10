@@ -1,11 +1,11 @@
 ---
 # folio-assistant-eief
 title: 'CSVW skill + ingestion tools: tabular metadata as far as it can be determined'
-status: in-progress
+status: todo
 type: feature
 priority: normal
 created_at: 2026-09-20T12:02:21Z
-updated_at: 2026-10-10T16:02:52Z
+updated_at: 2026-10-10T16:05:10Z
 parent: folio-assistant-slw1
 ---
 
@@ -120,3 +120,41 @@ Asked in https://claude.ai/code/session_012qoycyCSGidZqW245vXhze, with three opt
   - the Public Comment CSV/XLSX import for litlfred/smart-ra (the DPI-H Reference Architecture, bean `v26p`; `folio-assistant-core/schemas/public-comment.ts`);
   - the DAK Excel workbooks (smart-* IGs). These have several tables per sheet, which is exactly the location-on-sheet case.
 - **Order:** the content split across repos first (owner, 2026-10-06), then CSV and XLSX extractors replacing the stubs, then the `folio-tabular-records/v1` migration. The extractors land in folio-assistant-core.
+
+
+## 2026-10-10: CSV extractor built (bean-backlog drain, lane C, PR 1 of 2)
+
+Following the 2026-10-06 ruling (build both extractors, in core, after the
+split):
+- **`scripts/tabular-csv.ts`** writes a validated `folio-tabular-csvw/v1`
+  record.
+  - Parsing follows RFC 4180.
+  - Routing is a content question: the first rows must agree on one field
+    count of two or more. Otherwise the file is refused, never guessed. Two
+    delimiters agreeing on different widths, as with decimal commas in a
+    semicolon file, is also refused.
+  - `fac:anchor` is a determined `{sheet: null, cell: null, row: 1, column: 1}`.
+  - `fac:headerRow` is `1`, or `null` when row 1 is data.
+  - `fac:extent` is measured, or undetermined with both values null when rows
+    disagree on width.
+- **`scripts/tabular-columns.ts`** is the column classifier the XLSX tool will
+  share.
+  - A column whose values all classify gets that CSVW datatype, `measured`,
+    with integer widening to decimal.
+  - All text is `string`, `measured`.
+  - Mixed or empty columns (`1, 2, 3, N/A`) are `any` + `undetermined`.
+- **`scripts/tabular-csv.test.ts`** has 19 tests, including one over a
+  public-comment-shaped export (`schemas/public-comment.ts`). The smart-ra CSV
+  itself is not in this checkout.
+- The `tabular-metadata` skill now says the CSV extractor ships, and states the
+  header convention: an all-text table takes CSVW's declared default,
+  `header: true`.
+
+**Still open:**
+- the XLSX extractor (PR 2, next);
+- the `tabular-csv`/`tabular-xlsx` Tool nodes in cat-harness `tools/index.ts`
+  still read STUB with `install: { none: true }`. They should be replaced by
+  real declarations pointing at core's scripts. That is a cat-harness change;
+- the `folio-tabular-records/v1` migration;
+- testing against the real smart-ra public-comment CSV/XLSX and the DAK
+  workbooks.
