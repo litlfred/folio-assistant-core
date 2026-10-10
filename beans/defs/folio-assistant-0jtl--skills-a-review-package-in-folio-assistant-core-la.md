@@ -1,11 +1,11 @@
 ---
 # folio-assistant-0jtl
 title: 'SKILLS: a review package in folio-assistant-core — large-document-review, review-heatmap, review-navigation, learned from WHO SOPs and inspection practice'
-status: todo
+status: in-progress
 type: task
 priority: normal
 created_at: 2026-09-22T21:02:55Z
-updated_at: 2026-10-06T06:15:04Z
+updated_at: 2026-10-10T15:54:50Z
 parent: folio-assistant-q4jm
 ---
 
