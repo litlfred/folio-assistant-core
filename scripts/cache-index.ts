@@ -57,8 +57,8 @@ export interface CacheRow {
   sizeBasis: SizeBasis;
   /** `materializedAt`, or undefined: NOT RECORDED, never "now" and never "unknown date zero". */
   fetchedAt?: string;
-  /** Always undefined today — see the module note. Present so the column exists and says so. */
-  lastReadAt?: undefined;
+  /** When last read, or undefined: NOT RECORDED (bean 54rk, 7wgs). */
+  lastReadAt?: string;
   freshness: FreshnessVerdict;
 }
 
@@ -86,6 +86,7 @@ export function cacheRows(records: readonly MaterializedRecord[] = collect()): C
     const m = (rec.record ?? { state: "materialized" }) as unknown as Materialization;
     const { bytes, basis } = sizeOf(rec);
     const fetched = rec.record?.materializedAt;
+    const lastRead = rec.record?.lastReadAt;
     return {
       source: rec.source,
       ...(rec.id ? { id: rec.id } : {}),
@@ -94,9 +95,26 @@ export function cacheRows(records: readonly MaterializedRecord[] = collect()): C
       ...(bytes !== undefined ? { bytes } : {}),
       sizeBasis: basis,
       ...(typeof fetched === "string" ? { fetchedAt: fetched } : {}),
+      ...(typeof lastRead === "string" ? { lastReadAt: lastRead } : {}),
       freshness: freshness(m, new Date()),
     };
   });
+}
+
+/**
+ * Compare eviction candidates: least recently read copies prioritized for eviction;
+ * missing lastReadAt displayed as "not recorded" and sorted after expired/known stale.
+ */
+function compareEvictionCandidates(a: CacheRow, b: CacheRow): number {
+  if (a.lastReadAt && b.lastReadAt) {
+    const diff = new Date(a.lastReadAt).getTime() - new Date(b.lastReadAt).getTime();
+    if (diff !== 0) return diff;
+  } else if (a.lastReadAt && !b.lastReadAt) {
+    return -1;
+  } else if (!a.lastReadAt && b.lastReadAt) {
+    return 1;
+  }
+  return (b.bytes ?? -1) - (a.bytes ?? -1);
 }
 
 /**
@@ -108,12 +126,15 @@ export function cacheRows(records: readonly MaterializedRecord[] = collect()): C
  * `fresh` never appear, and neither does `input-bound` (a `compiled` copy,
  * bean `gpdo`): its lifetime is its inputs, and only `compiledValidity()`
  * with the CURRENT inputs can say it is stale — which this index cannot know.
+ *
+ * Eviction candidate ranking accounts for `lastReadAt`: least recently read
+ * copies are prioritized for eviction (bean 7wgs).
  */
 export function evictionCandidates(rows: readonly CacheRow[]): EvictionCandidate[] {
   const pick = (f: FreshnessVerdict, reason: string) =>
     rows
       .filter((r) => r.freshness === f)
-      .sort((a, b) => (b.bytes ?? -1) - (a.bytes ?? -1))
+      .sort(compareEvictionCandidates)
       .map((row) => ({ row, reason }));
   return [
     ...pick("expired", "its `expiresAt` has passed"),
@@ -127,6 +148,7 @@ export interface CacheSummary {
   knownBytes: number;
   bySizeBasis: Record<SizeBasis, number>;
   fetchedRecorded: number;
+  lastReadRecorded: number;
   byFreshness: Partial<Record<FreshnessVerdict, number>>;
 }
 
@@ -135,13 +157,15 @@ export function summarise(rows: readonly CacheRow[]): CacheSummary {
   const byFreshness: Partial<Record<FreshnessVerdict, number>> = {};
   let knownBytes = 0;
   let fetchedRecorded = 0;
+  let lastReadRecorded = 0;
   for (const r of rows) {
     bySizeBasis[r.sizeBasis] += 1;
     byFreshness[r.freshness] = (byFreshness[r.freshness] ?? 0) + 1;
     if (r.bytes !== undefined && (r.sizeBasis === "recorded" || r.sizeBasis === "measured")) knownBytes += r.bytes;
     if (r.fetchedAt) fetchedRecorded += 1;
+    if (r.lastReadAt) lastReadRecorded += 1;
   }
-  return { copies: rows.length, knownBytes, bySizeBasis, fetchedRecorded, byFreshness };
+  return { copies: rows.length, knownBytes, bySizeBasis, fetchedRecorded, lastReadRecorded, byFreshness };
 }
 
 const human = (n?: number): string =>
@@ -157,11 +181,15 @@ if (import.meta.main) {
     console.log(`\nCache — ${s.copies} materialized cop${s.copies === 1 ? "y" : "ies"}, ${human(s.knownBytes)} where size is known\n`);
     console.log(`  size       recorded ${s.bySizeBasis.recorded} · measured now ${s.bySizeBasis.measured} · directory (counted by its parts) ${s.bySizeBasis.directory} · absent ${s.bySizeBasis.absent}`);
     console.log(`  fetched    recorded ${s.fetchedRecorded} · not recorded ${s.copies - s.fetchedRecorded}`);
-    console.log(`  last read  not recorded for any copy — nothing records reads (bean 54rk)`);
+    const lastReadStr =
+      s.lastReadRecorded > 0
+        ? `recorded ${s.lastReadRecorded} · not recorded ${s.copies - s.lastReadRecorded}`
+        : `not recorded for any copy — nothing records reads (bean 54rk)`;
+    console.log(`  last read  ${lastReadStr}`);
     console.log(`  freshness  ${Object.entries(s.byFreshness).map(([k, v]) => `${k} ${v}`).join(" · ")}`);
     if (process.argv.includes("--all")) {
       console.log(`\n  Every copy:`);
-      for (const r of rows) console.log(`    ${human(r.bytes).padStart(9)} ${r.sizeBasis.padEnd(9)} ${r.freshness.padEnd(16)} ${r.localPath ?? "(no localPath)"}   [${r.source}]`);
+      for (const r of rows) console.log(`    ${human(r.bytes).padStart(9)} ${r.sizeBasis.padEnd(9)} ${r.freshness.padEnd(16)} ${(r.lastReadAt ?? "not recorded").padEnd(25)} ${r.localPath ?? "(no localPath)"}   [${r.source}]`);
     }
     console.log(`\n  Eviction candidates — ${evict.length}. REPORTED ONLY: nothing is removed; a person decides.`);
     for (const e of evict.slice(0, 20)) {
