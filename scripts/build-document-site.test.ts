@@ -37,11 +37,31 @@ describe("build-document-site", () => {
     expect(r.errors).toEqual([]);
     expect(r.documents.map((x) => x.slug)).toEqual(["handbook"]);
     expect(existsSync(join(out, "index.html"))).toBe(true);
-    const html = readFileSync(join(out, "handbook", "index.html"), "utf-8");
+    const html = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
     // The anchors the review page and the ChangeSet link to, by label.
     expect(html).toContain('<a id="prose:overview"></a>');
     expect(html).toContain('<a id="chap:introduction"></a>');
-    expect(readFileSync(join(out, "index.html"), "utf-8")).toContain('href="handbook/index.html"');
+    const landing = readFileSync(join(out, "index.html"), "utf-8");
+    expect(landing).toContain('href="en/handbook/index.html"');
+    expect(landing).toContain('href="en/review/index.html"');
+  });
+
+  test("pages are under the locale, data is not, and the landing stays at the root (#2527)", async () => {
+    const d = scaffold();
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out, { lazy: "always" });
+    expect(r.documents.map((x) => x.page)).toEqual(["en/handbook/index.html"]);
+    for (const page of ["en/handbook/index.html", "en/handbook/index.hydrated.html", "en/review/index.html", "index.html"]) expect(existsSync(join(out, page))).toBe(true);
+    // The old addresses hold no page: nothing at them forwards, and nothing is left behind.
+    for (const gone of ["handbook/index.html", "handbook/index.hydrated.html", "review/index.html"]) expect(existsSync(join(out, gone))).toBe(false);
+    // Data stays where it was.
+    expect(existsSync(join(out, "handbook", "blocks", "000.json"))).toBe(true);
+    expect(existsSync(join(out, "outline.json"))).toBe(true);
+    const outline = JSON.parse(readFileSync(join(out, "outline.json"), "utf-8")) as Outline;
+    expect(outline.documents[0]!.page).toBe("en/handbook/index.html");
+    // The shell fetches its chunks from where they are, relative to itself.
+    const shell = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
+    expect(shell).toContain('fetch("../../handbook/blocks/" + String(n)');
   });
 
   test("a Markdown table in a block renders as a <table>, not raw pipes (fz39)", async () => {
@@ -49,7 +69,7 @@ describe("build-document-site", () => {
     appendFileSync(join(d, "folio", "handbook", "introduction", "overview.md"), "\n\n| Role | who |\n|---|---|\n| Bootstrapping Agent | you |\n");
     const out = join(d, "_site");
     await buildDocumentSite(d, out);
-    const html = readFileSync(join(out, "handbook", "index.html"), "utf-8");
+    const html = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
     expect(html).toContain("<table>");
     expect(html).toContain("<td>Bootstrapping Agent</td>");
     expect(html).not.toContain("| Bootstrapping Agent |");
@@ -86,7 +106,7 @@ describe("the harness rail lands in the page, not in its stylesheet (owner, 2026
     const d = scaffold();
     const out = join(d, "_site");
     await buildDocumentSite(d, out);
-    for (const f of [join(out, "index.html"), join(out, "handbook", "index.html"), join(out, "review", "index.html")]) {
+    for (const f of [join(out, "index.html"), join(out, "en", "handbook", "index.html"), join(out, "en", "review", "index.html")]) {
       const html = readFileSync(f, "utf-8");
       const styleEnd = html.indexOf("</style>");
       expect({ f, body: html.indexOf("<body") > styleEnd, main: html.indexOf("<main") > styleEnd }).toEqual({ f, body: true, main: true });
@@ -155,7 +175,7 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     const out = join(d, "_site");
     const r = await buildDocumentSite(d, out, { lazy: "always", actions: { repo: "o/r" } });
     expect(r.errors).toEqual([]);
-    const shell = readFileSync(join(out, "handbook", "index.html"), "utf-8");
+    const shell = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
     expect(shell).toContain('<a id="prose:overview"></a>');
     expect(shell).toContain('<div class="fa-blk" data-blk="prose:overview"></div>');
     expect(shell).not.toContain("<td>Bootstrapping Agent</td>");
@@ -165,7 +185,7 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     expect(shell).toContain('data-src="folio/handbook/introduction/overview.md"');
     const chunk = JSON.parse(readFileSync(join(out, "handbook", "blocks", "000.json"), "utf-8")) as Record<string, string>;
     expect(chunk["prose:overview"]).toContain("<td>Bootstrapping Agent</td>");
-    const full = readFileSync(join(out, "handbook", "index.hydrated.html"), "utf-8");
+    const full = readFileSync(join(out, "en", "handbook", "index.hydrated.html"), "utf-8");
     expect(full).toContain("<td>Bootstrapping Agent</td>");
     expect(full).toContain("https://github.com/o/r/edit/main/folio/handbook/introduction/overview.md");
     // Feedback is coded with the document's slug, on both pages (owner, 2026-10-06).
@@ -173,7 +193,7 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     expect(shell).toContain('"content":"handbook"');
     // The outline says the page is lazy and where each block's text is (rendered impact, bean bnjs).
     const outline = JSON.parse(readFileSync(join(out, "outline.json"), "utf-8"));
-    expect(outline.documents[0].lazy).toMatchObject({ hydrated: "handbook/index.hydrated.html", chunks: 1 });
+    expect(outline.documents[0].lazy).toMatchObject({ hydrated: "en/handbook/index.hydrated.html", chunks: 1 });
     expect(outline.documents[0].lazy.of["prose:overview"]).toBe(0);
   });
 
@@ -181,7 +201,7 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     const d = scaffold();
     const out = join(d, "_site");
     await buildDocumentSite(d, out);
-    expect(existsSync(join(out, "handbook", "index.hydrated.html"))).toBe(false);
+    expect(existsSync(join(out, "en", "handbook", "index.hydrated.html"))).toBe(false);
     expect(existsSync(join(out, "handbook", "blocks"))).toBe(false);
   });
 });

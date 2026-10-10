@@ -176,9 +176,11 @@ that (owner: *"no drift of metadata"*):
 - the change-set section at the top of its issue is **rendered** from the
   record, and a hand-edit to it is put back with a pointer to the commands;
 - the dashboard is built from the records. It is published per document at
-  `<site>/folio-assistant-core/public-comments/<folio>/<slug>/`, the handler
+  `<site>/en/folio-assistant-core/public-comments/<folio>/<slug>/`, the handler
   route every viewer follows (`<base>/<handler>/<kind>/<subject>`, the subject
-  being the materialised document's path in the folio); the flat
+  being the materialised document's path in the folio) under the page locale,
+  with its `comments.json` at the same route without the locale (issue #2527);
+  the flat
   `public-comments/` it had until 2026-10-07 is gone, with no redirect (owner:
   *"clean break, no deprecated/redirect links"*). `public-comment-route.ts` is
   the one place that says so: the site, the change-set issues and the

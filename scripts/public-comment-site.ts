@@ -6,9 +6,14 @@
  *
  * Run after `build-document-site.ts`, over the same `--out`:
  *
- *   <out>/folio-assistant-core/public-comments/folio/<slug>/index.html   the dashboard
+ *   <out>/en/folio-assistant-core/public-comments/folio/<slug>/index.html   the dashboard
  *                                    (`public-comment-route.ts`: <handler>/<kind>/<subject>)
- *   <out>/<slug>/index.html            gains a comment note at each anchored block
+ *   <out>/folio-assistant-core/public-comments/folio/<slug>/comments.json   its data
+ *   <out>/en/<slug>/index.html          gains a comment note at each anchored block
+ *   <out>/<slug>/pc-notes.json          a lazy page's notes, as data
+ *
+ * Pages are under the page locale and data is not (issue #2527,
+ * `document-site-route.ts`).
  *
  * ## Why the data is inlined, not fetched
  *
@@ -35,7 +40,8 @@ import type { ReviewAnchors } from "./docx-to-folio.js";
 import { type ChangeSet, DECISION_LABELS, IN_EDIT_STATUSES, OPEN_STATUSES, type PublicComment } from "../schemas/public-comment.js";
 import { changeSets, discussUrl } from "./public-comment-changesets.js";
 import { Store } from "./public-comment.js";
-import { dashboardRoute, toSiteRoot } from "./public-comment-route.js";
+import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
+import { documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage } from "./document-site-route.js";
 import { darkRules } from "../../cat-harness-tools/scripts/lib/scheme-css.ts";
 
 /** `folio-staging.yml`'s slug rule, step `slug`. */
@@ -111,9 +117,9 @@ export function siteComments(
       ...(p.decision ? { decision: { code: p.decision.code, label: DECISION_LABELS[p.decision.code], reason: p.decision.reason, by: p.decision.by } } : {}),
       changeSets: inSets.get(p.ref) ?? [],
       links: {
-        ...(c.targetLabel ? { document: `${toRoot}${opts.slug}/index.html${frag}` } : {}),
-        ...(site && c.targetLabel && cs ? { before: `${site}/${opts.slug}/index.html${frag}` } : {}),
-        ...(cs ? { after: cs.stagingUrl ? `${cs.stagingUrl.replace(/\/$/, "")}/${opts.slug}/index.html${frag}` : site ? `${site}/STAGING/${stagingSlug(cs.branch)}/${opts.slug}/index.html${frag}` : undefined } : {}),
+        ...(c.targetLabel ? { document: `${toRoot}${documentPage(opts.slug)}${frag}` } : {}),
+        ...(site && c.targetLabel && cs ? { before: `${site}/${documentPage(opts.slug)}${frag}` } : {}),
+        ...(cs ? { after: cs.stagingUrl ? `${cs.stagingUrl.replace(/\/$/, "")}/${documentPage(opts.slug)}${frag}` : site ? `${site}/STAGING/${stagingSlug(cs.branch)}/${documentPage(opts.slug)}${frag}` : undefined } : {}),
         ...(cs?.pr && opts.repo ? { pr: `https://github.com/${opts.repo}/pull/${cs.pr}` } : {}),
         ...(p.discussion ? { discussion: p.discussion } : {}),
         ...(opts.repo ? { search: `https://github.com/${opts.repo}/search?type=issues&q=${encodeURIComponent(`"${p.ref}"`)}` } : {}),
@@ -163,7 +169,10 @@ const STYLE = `
 `;
 
 /** The dashboard. Filters run in the page; with scripts off the full table still renders. */
-export function dashboardHtml(rows: SiteComment[], meta: { title: string; slug: string; generated: string; repo?: string; changeSets?: ChangeSet[]; toRoot?: string }): string {
+export function dashboardHtml(
+  rows: SiteComment[],
+  meta: { title: string; slug: string; generated: string; repo?: string; changeSets?: ChangeSet[]; toRoot?: string; records?: string },
+): string {
   const issueLink = (n: number) => (meta.repo ? `<a href="https://github.com/${esc(meta.repo)}/issues/${n}">#${n}</a>` : `#${n}`);
   // A change-set with an issue links it; one without offers to open it, which
   // is the moment it gets one (issue #2183: "dont create issue until someone
@@ -228,7 +237,7 @@ export function dashboardHtml(rows: SiteComment[], meta: { title: string; slug: 
 </head>
 <body>
 <main>
-<p><a href="${esc(meta.toRoot ?? "../")}${esc(meta.slug)}/index.html">← ${esc(meta.title)}</a></p>
+<p><a href="${esc(meta.toRoot ?? "../")}${esc(documentPage(meta.slug))}">← ${esc(meta.title)}</a></p>
 <h1>Public comments</h1>
 <p class="muted">Generated ${esc(meta.generated)} from the comment store. Open = not yet decided. Editing = decided, and the change is being made on a feature branch. Closed = incorporated, duplicate or withdrawn.</p>
 <div class="tiles" role="group" aria-label="Filter by count">
@@ -390,10 +399,11 @@ ${body}
   // to jumping to comment from CS you can expand panel to see original PC
   // details (who, what..)", and "that can be dynamic JS load of KG"). The
   // records are LOADED when a panel is first opened, from "comments.json"
-  // beside this page (the comment store as published). Opened from file://,
+  // (the comment store as published), which stays at the dashboard's route
+  // while the page is under the locale (issue #2527). Opened from file://,
   // where fetch fails, it falls back to the comment rows already on the page.
   let records = null;
-  const loadRecords = () => (records ??= fetch("comments.json")
+  const loadRecords = () => (records ??= fetch(${JSON.stringify(meta.records ?? "comments.json").replace(/</g, "\\u003c")})
     .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
     .then((list) => new Map(list.map((x) => [x.ref, x])))
     .catch(() => null));
@@ -586,7 +596,8 @@ export function buildPublicCommentSite(repo: string, out: string, storeDir?: str
   const anchors = store.anchors();
   const sets = changeSets(store);
   const route = dashboardRoute(repo, cfg.document);
-  const toRoot = toSiteRoot(route);
+  const pageRoute = dashboardPageRoute(repo, cfg.document);
+  const toRoot = toSiteRoot(pageRoute);
   const rows = siteComments(store.all(), anchors, {
     changeSets: sets,
     toRoot,
@@ -595,28 +606,50 @@ export function buildPublicCommentSite(repo: string, out: string, storeDir?: str
     repo: cfg.repo,
     storeDir: storeDir ?? "review/public-comment",
   });
-  const docPage = join(out, cfg.document, "index.html");
+  const docPage = join(out, ...documentPage(cfg.document).split("/"));
   if (!existsSync(docPage)) throw new Error(`${docPage} is missing: run build-document-site.ts --out ${out} first`);
   const issues = Object.fromEntries(sets.filter((c) => c.issue).map((c) => [c.id, c.issue!]));
   // A lazy document (bean v433) also publishes the whole text on one page,
   // index.hydrated.html; its comment notes are the same.
-  for (const f of [docPage, join(out, cfg.document, "index.hydrated.html")]) {
+  for (const f of [docPage, join(out, ...hydratedPage(cfg.document).split("/"))]) {
     if (!existsSync(f)) continue;
     const html = readFileSync(f, "utf-8");
     if (html.includes('id="pc-data"')) continue;
     // A lazy page fetches its notes' lists; the one-page version carries them.
     const lazy = html.includes('id="fa-blocks"');
-    if (lazy) writeFileSync(join(out, cfg.document, "pc-notes.json"), JSON.stringify(notesByTarget(rows)));
-    writeFileSync(f, html.replace("</body>", `${overlaySnippet(rows, { ...(cfg.repo ? { repo: cfg.repo } : {}), issues, dashboard: `../${route}/index.html`, ...(lazy ? { notesUrl: "pc-notes.json" } : {}) })}</body>`));
+    // The notes are data: beside the document's other data, not its page.
+    const notes = `${documentDataDir(cfg.document)}/pc-notes.json`;
+    if (lazy) {
+      mkdirSync(join(out, ...documentDataDir(cfg.document).split("/")), { recursive: true });
+      writeFileSync(join(out, ...notes.split("/")), JSON.stringify(notesByTarget(rows)));
+    }
+    const fromDoc = documentPageDir(cfg.document);
+    writeFileSync(
+      f,
+      html.replace(
+        "</body>",
+        `${overlaySnippet(rows, { ...(cfg.repo ? { repo: cfg.repo } : {}), issues, dashboard: `${fromPageDir(fromDoc, pageRoute)}/index.html`, ...(lazy ? { notesUrl: fromPageDir(fromDoc, notes) } : {}) })}</body>`,
+      ),
+    );
   }
-  const dash = join(out, route);
+  const dash = join(out, ...pageRoute.split("/"));
+  const data = join(out, ...route.split("/"));
   mkdirSync(dash, { recursive: true });
+  mkdirSync(data, { recursive: true });
   writeFileSync(
     join(dash, "index.html"),
-    dashboardHtml(rows, { title: cfg.title ?? cfg.document, slug: cfg.document, toRoot, ...(cfg.repo ? { repo: cfg.repo } : {}), changeSets: sets, generated: new Date().toISOString().slice(0, 16).replace("T", " ") + " UTC" }),
+    dashboardHtml(rows, {
+      title: cfg.title ?? cfg.document,
+      slug: cfg.document,
+      toRoot,
+      records: fromPageDir(pageRoute, `${route}/comments.json`),
+      ...(cfg.repo ? { repo: cfg.repo } : {}),
+      changeSets: sets,
+      generated: new Date().toISOString().slice(0, 16).replace("T", " ") + " UTC",
+    }),
   );
-  writeFileSync(join(dash, "comments.json"), JSON.stringify(rows, null, 1) + "\n");
-  return { route, comments: rows.length, open: rows.filter((r) => r.phase === "open").length };
+  writeFileSync(join(data, "comments.json"), JSON.stringify(rows, null, 1) + "\n");
+  return { route: pageRoute, comments: rows.length, open: rows.filter((r) => r.phase === "open").length };
 }
 
 /**

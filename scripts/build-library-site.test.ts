@@ -5,7 +5,7 @@
  * library, edit -> materialized version in folio/'s edit").
  */
 import { describe, expect, test } from "bun:test";
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -69,10 +69,16 @@ describe("build-library-site (bean zcak)", () => {
     expect(view.links).toEqual({ repo: "o/r", branch: "main", dir: `library/${ENTRY}` });
     const edits = view.sections.map((s: { edit?: { path: string } }) => s.edit?.path ?? null);
     expect(edits).toEqual(["folio/doc/ch1/p-1-1.md", "folio/doc/ch1/p-1-1-1.md", null]);
-    const html = readFileSync(join(at, "index.html"), "utf-8");
+    // The page is under the locale and its data is not (#2527): the page
+    // reads the data where it is, and nothing is left at the old address.
+    const html = readFileSync(join(out, "en", HANDLER, "library", ENTRY, "index.html"), "utf-8");
     expect(html).toContain("function faBlockUrls");
     expect(html).toContain("loadDocument(");
-    expect(readFileSync(join(out, HANDLER, "library", "index.html"), "utf-8")).toContain(`href="${ENTRY}/"`);
+    expect(html).toContain(`new URL("../../../../${HANDLER}/library/${ENTRY}/index.json", location.href)`);
+    expect(html).toContain(`href="../../../../${HANDLER}/library/${ENTRY}/entries/${ENTRY}.doc.json"`);
+    expect(existsSync(join(at, "index.html"))).toBe(false);
+    expect(readFileSync(join(out, "en", HANDLER, "library", "index.html"), "utf-8")).toContain(`href="${ENTRY}/"`);
+    expect(existsSync(join(out, HANDLER, "library", "index.html"))).toBe(false);
   });
 
   test("it says what it reads: the library and the folio", () => {
@@ -88,6 +94,6 @@ describe("build-library-site (bean zcak)", () => {
     expect(json.length).toBeGreaterThanOrEqual(1);
     expect(json[0].href).toMatch(/^#sec-/);
     buildLibrarySite(d, join(d, "_s"), { repo: "o/r" });
-    expect(readFileSync(join(d, "_s", HANDLER, "library", ENTRY, "index.html"), "utf-8")).toContain("data-fa-visualiser-nav");
+    expect(readFileSync(join(d, "_s", "en", HANDLER, "library", ENTRY, "index.html"), "utf-8")).toContain("data-fa-visualiser-nav");
   });
 });

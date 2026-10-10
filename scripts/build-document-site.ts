@@ -22,14 +22,18 @@
  *
  * ## Output
  *
- *   <out>/index.html          every document in the folio, linked
- *   <out>/<slug>/index.html   one page per document, block anchors intact
- *   <out>/<slug>/media/       the document's images, copied from folio/<slug>/media/
- *   <out>/review/index.html   what changed from main, read from the preview's
- *                             changeset.json when opened (bean txut)
- *   <out>/outline.json        every document's chapters, sections and blocks
- *                             in manifest order, for the review page's
- *                             outline and minimap (bean eb4l)
+ *   <out>/index.html             every document in the folio, linked
+ *   <out>/en/<slug>/index.html   one page per document, block anchors intact
+ *   <out>/en/<slug>/media/       the document's images, copied from folio/<slug>/media/
+ *   <out>/en/review/index.html   what changed from main, read from the preview's
+ *                                changeset.json when opened (bean txut)
+ *   <out>/outline.json           every document's chapters, sections and blocks
+ *                                in manifest order, for the review page's
+ *                                outline and minimap (bean eb4l)
+ *   <out>/<slug>/blocks/         a lazy document's block text, as data (bean v433)
+ *
+ * Pages are under the page locale and data is not (issue #2527): see
+ * `document-site-route.ts`, which says where each one goes.
  *
  * ## The outline's section keys are the ChangeSet's
  *
@@ -69,6 +73,7 @@ import { buildDocumentMarkdown } from "../../cat-harness-tools/content/pipeline/
 import { reviewPageHtml } from "../../cat-harness-tools/scripts/gen-review-page.js";
 import { darkRules } from "../../cat-harness-tools/scripts/lib/scheme-css.ts";
 import { visualiserNavDeclaration, type VisualiserNavEntry } from "../../cat-harness-tools/scripts/lib/navbar.js";
+import { documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
@@ -223,9 +228,14 @@ export function splitBlocks(markdown: string, labels: Set<string>): BlockSplit {
 /** Every `id="…"` in a block's HTML, so a link to a term inside an unloaded block finds its chunk. */
 const idsIn = (html: string) => [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]!);
 
-/** The loader a lazy page runs. Index: label and inner id -> chunk number. */
-function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Record<string, number> }): string {
+/**
+ * The loader a lazy page runs. Index: label and inner id -> chunk number.
+ * `blocks` is the chunks' directory relative to the page: the page is under
+ * the locale and its data is not (`document-site-route.ts`).
+ */
+function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Record<string, number> }, blocks: string): string {
   const json = JSON.stringify(index).replace(/</g, "\\u003c");
+  const dir = JSON.stringify(`${blocks}/`).replace(/</g, "\\u003c");
   return `
 <script type="application/json" id="fa-blocks">${json}</script>
 <script>
@@ -245,7 +255,7 @@ function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Re
   // Fetch fails when the page is opened from disk: the whole document is one
   // page away, so go there rather than show empty blocks.
   const load = (n) => {
-    if (!pending.has(n)) pending.set(n, fetch("blocks/" + String(n).padStart(3, "0") + ".json")
+    if (!pending.has(n)) pending.set(n, fetch(${dir} + String(n).padStart(3, "0") + ".json")
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then(fill)
       .catch(() => { if (!failed) { failed = true; location.replace("index.hydrated.html" + location.search + location.hash); } }));
@@ -493,12 +503,12 @@ export interface OutlineSection {
 export interface OutlineDocument {
   slug: string;
   title: string;
-  /** The document's page, relative to the site root. */
+  /** The document's page, relative to the site root: `en/<slug>/index.html` (`document-site-route.ts`). */
   page: string;
   chapters: Array<{ title: string; label?: string; sections: OutlineSection[] }>;
   /**
    * Present when the page is lazy (bean v433): `page` is then a shell, the
-   * text is in `blocks/NNN.json` and the whole document in `hydrated`. `of`
+   * text is in `<slug>/blocks/NNN.json` and the whole document in `hydrated`. `of`
    * maps each block to its chunk, so a change can name the file it alters
    * (rendered impact, bean `bnjs`).
    */
@@ -515,7 +525,7 @@ const isRef = (s: Section | SectionRef): s is SectionRef => !("blocks" in s);
 export async function documentOutline(manifestPath: string, folioRoot: string, slug: string): Promise<OutlineDocument> {
   const docDir = dirname(manifestPath);
   const paper = (await import(manifestPath)).default as Paper;
-  const doc: OutlineDocument = { slug, title: paper.title ?? slug, page: `${slug}/index.html`, chapters: [] };
+  const doc: OutlineDocument = { slug, title: paper.title ?? slug, page: documentPage(slug), chapters: [] };
   for (const chRef of paper.chapters) {
     const chDir = join(docDir, chRef.dir);
     const chPath = join(chDir, `${chRef.dir}.ts`);
@@ -567,7 +577,7 @@ export async function documentBlocks(manifestPath: string, repoRoot: string, slu
           const b = (await import(ts)).default as { label?: string };
           if (!b.label) continue;
           const md = join(chDir, `${root}.md`);
-          out.push({ label: b.label, source: relative(repoRoot, existsSync(md) ? md : ts), section: sec.title, page: `${slug}/index.html` });
+          out.push({ label: b.label, source: relative(repoRoot, existsSync(md) ? md : ts), section: sec.title, page: documentPage(slug) });
         }
         if (sec.subsections) await walk(sec.subsections);
       }
@@ -623,7 +633,9 @@ export async function buildDocumentSite(
     for (const i of built.issues) if (i.level === "error") result.errors.push(`${d.slug}: ${i.message}`);
     const html = await renderDocumentHtml(built.markdown, { math });
     const manifest = (await import(d.path)).default as Paper;
-    const dir = join(outDir, d.slug);
+    // The page under the locale, its data where it was (document-site-route.ts).
+    const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
+    const data = join(outDir, ...documentDataDir(d.slug).split("/"));
     mkdirSync(dir, { recursive: true });
     const mathOpts = math ? { macros: katexMacros(manifest.macros) } : undefined;
     const blocks = await documentBlocks(d.path, repoRoot, d.slug);
@@ -638,7 +650,7 @@ export async function buildDocumentSite(
       writeFileSync(join(dir, "index.hydrated.html"), withActions(page(manifest.title ?? d.slug, pageContents(html) + html, mathOpts)));
       const split = splitBlocks(built.markdown, new Set(blocks.map((b) => b.label)));
       const index = { chunks: 0, of: {} as Record<string, number>, ids: {} as Record<string, number> };
-      mkdirSync(join(dir, "blocks"), { recursive: true });
+      mkdirSync(join(data, "blocks"), { recursive: true });
       for (let i = 0; i < split.blocks.length; i += LAZY_CHUNK) {
         const n = index.chunks++;
         const chunk: Record<string, string> = {};
@@ -648,19 +660,19 @@ export async function buildDocumentSite(
           index.of[b.label] = n;
           for (const id of idsIn(h)) index.ids[id] ??= n;
         }
-        writeFileSync(join(dir, "blocks", `${String(n).padStart(3, "0")}.json`), JSON.stringify(chunk));
+        writeFileSync(join(data, "blocks", `${String(n).padStart(3, "0")}.json`), JSON.stringify(chunk));
       }
-      lazyOf.set(d.slug, { hydrated: `${d.slug}/index.hydrated.html`, chunks: index.chunks, of: index.of });
+      lazyOf.set(d.slug, { hydrated: hydratedPage(d.slug), chunks: index.chunks, of: index.of });
       const shellHtml = await renderDocumentHtml(split.shell, { math });
       const note = `<p class="fa-one-page">The text loads as you read. <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
-      writeFileSync(join(dir, "index.html"), withActions(page(manifest.title ?? d.slug, pageContents(shellHtml) + note + shellHtml, mathOpts, lazyLoader(index)), true));
+      writeFileSync(join(dir, "index.html"), withActions(page(manifest.title ?? d.slug, pageContents(shellHtml) + note + shellHtml, mathOpts, lazyLoader(index, fromPageDir(documentPageDir(d.slug), `${documentDataDir(d.slug)}/blocks`))), true));
     }
     // A document's images live in `folio/<slug>/media/` and its blocks link
-    // them as `media/<file>`, relative to the document's page. Copied, so a
-    // figure in the preview is the figure in the folio.
+    // them as `media/<file>`, relative to the document's page, so they go
+    // beside the page. Copied, so a figure in the preview is the figure in the folio.
     const media = join(dirname(d.path), "media");
     if (existsSync(media)) cpSync(media, join(dir, "media"), { recursive: true });
-    result.documents.push({ slug: d.slug, blocks: built.blockCount, page: `${d.slug}/index.html` });
+    result.documents.push({ slug: d.slug, blocks: built.blockCount, page: documentPage(d.slug) });
   }
   const list = result.documents
     .map((d) => `<li><a href="${esc(d.page)}">${esc(d.slug)}</a> (${d.blocks} blocks)</li>`)
@@ -672,14 +684,15 @@ export async function buildDocumentSite(
     outline.documents.push(lz ? { ...o, lazy: lz } : o);
   }
   writeFileSync(join(outDir, "outline.json"), JSON.stringify(outline) + "\n");
-  mkdirSync(join(outDir, "review"), { recursive: true });
-  writeFileSync(join(outDir, "review", "index.html"), reviewPageHtml());
+  const review = join(outDir, ...REVIEW_PAGE_DIR.split("/"));
+  mkdirSync(review, { recursive: true });
+  writeFileSync(join(review, "index.html"), reviewPageHtml());
   const also = landingLinks(readDeclaration(repoRoot), (p) => existsSync(join(repoRoot, p)));
   writeFileSync(
     join(outDir, "index.html"),
     page(
       "Documents",
-      `<h1>Documents</h1>\n<p><a href="review/index.html">What changed from main</a></p>\n<ul>\n${list}\n</ul>` +
+      `<h1>Documents</h1>\n<p><a href="${esc(REVIEW_PAGE_DIR)}/index.html">What changed from main</a></p>\n<ul>\n${list}\n</ul>` +
         (also.length ? `\n<h2>Also on this site</h2>\n<ul>\n${also.map((l) => `<li><a href="${esc(l.href)}">${esc(l.title)}</a></li>`).join("\n")}\n</ul>` : ""),
     ),
   );

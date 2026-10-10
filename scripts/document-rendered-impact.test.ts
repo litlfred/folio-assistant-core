@@ -44,33 +44,43 @@ describe("documentRenderedImpact — blocks, from the ChangeSet", () => {
   test("an edited, an added and a removed block each land on their own document's page, anchored at the label", () => {
     const [doc] = run(["folio/doc/ch1/p-1.md", "folio/doc/ch1/p-2.ts", "folio/other/ch1/p-9.ts"]);
     expect(doc.renderer).toBe(DOCUMENT_RENDERER);
-    expect(doc.files.map(line)).toEqual(["content:doc/index.html#prose:edited,prose:new", "content:other/index.html#prose:gone"]);
+    expect(doc.files.map(line)).toEqual(["content:en/doc/index.html#prose:edited,prose:new", "content:en/other/index.html#prose:gone"]);
     expect(doc.undetermined).toEqual([]);
   });
 
   test("the review list links each changed block", () => {
-    expect(reviewList(run(["folio/doc/ch1/p-1.md"])[0]).map(line)).toEqual(["content:doc/index.html#prose:edited"]);
+    expect(reviewList(run(["folio/doc/ch1/p-1.md"])[0]).map(line)).toEqual(["content:en/doc/index.html#prose:edited"]);
   });
 
   test("the site prefix places the pages where the preview serves them", () => {
-    expect(run(["folio/doc/ch1/p-1.ts"], "smart-ra")[0].files.map((f) => f.path)).toEqual(["smart-ra/doc/index.html"]);
+    expect(run(["folio/doc/ch1/p-1.ts"], "smart-ra")[0].files.map((f) => f.path)).toEqual(["smart-ra/en/doc/index.html"]);
   });
 });
 
 describe("documentRenderedImpact — files the ChangeSet does not name", () => {
   test("a chapter manifest moves the page and the outline; the document manifest also the document list", () => {
-    expect(run(["folio/doc/ch1/ch1.ts"])[0].files.map(line)).toEqual(["content:doc/index.html", "index:outline.json"]);
-    expect(run(["folio/doc/doc.ts"])[0].files.map(line)).toEqual(["content:doc/index.html", "index:index.html", "index:outline.json"]);
+    expect(run(["folio/doc/ch1/ch1.ts"])[0].files.map(line)).toEqual(["content:en/doc/index.html", "index:outline.json"]);
+    expect(run(["folio/doc/doc.ts"])[0].files.map(line)).toEqual(["content:en/doc/index.html", "index:index.html", "index:outline.json"]);
   });
 
   test("a media file is the copied file and the page that shows it", () => {
-    expect(run(["folio/doc/media/fig1.png"])[0].files.map(line)).toEqual(["content:doc/index.html", "data:doc/media/fig1.png"]);
+    expect(run(["folio/doc/media/fig1.png"])[0].files.map(line)).toEqual(["content:en/doc/index.html", "data:en/doc/media/fig1.png"]);
   });
 
   test("the comment store is the public-comment renderer's: the dashboard and every document page", () => {
     const out = run(["review/public-comment/comments/PC-0001.json"]);
     expect(out.map((i) => i.renderer)).toEqual([DOCUMENT_RENDERER, PUBLIC_COMMENT_RENDERER]);
-    expect(out[1].files.map(line)).toEqual(["content:doc/index.html", "content:folio-assistant-core/public-comments/folio/doc/index.html", "content:folio-assistant-core/public-comments/folio/other/index.html", "content:other/index.html"]);
+    expect(out[1].files.map(line)).toEqual(["content:en/doc/index.html", "content:en/folio-assistant-core/public-comments/folio/doc/index.html", "content:en/folio-assistant-core/public-comments/folio/other/index.html", "content:en/other/index.html"]);
+  });
+
+  test("pages are under the locale and data is not (#2527); an outline's own page wins", () => {
+    // An outline published before the locale names its page where it was, and
+    // that is the page the change alters on that site.
+    const old = { documents: [{ slug: "doc", page: "doc/index.html" }, { slug: "other", page: "other/index.html" }] };
+    expect(documentRenderedImpact({ changed: ["folio/doc/ch1/p-1.md"], changeset, outline: old })[0].files.map(line)).toEqual(["content:doc/index.html#prose:edited"]);
+    expect(documentRenderedImpact({ changed: ["folio/doc/media/fig1.png"], changeset, outline: old })[0].files.map(line)).toEqual(["content:doc/index.html", "data:doc/media/fig1.png"]);
+    // No outline: where build-document-site puts the page now.
+    expect(documentRenderedImpact({ changed: ["folio/doc/ch1/p-1.md"], changeset })[0].files.map(line)).toEqual(["content:en/doc/index.html#prose:edited"]);
   });
 
   test("anything else is undetermined with scope all, never no change", () => {
@@ -157,30 +167,30 @@ describe("documentRenderedImpact — a file no builder of the site reads (bean e
 
 describe("documentRenderedImpact — a lazy page (bean v433)", () => {
   // `doc` is lazy: three chunks, the edited block in the first, the added one in the second.
-  const lazyOutline = { documents: [{ slug: "doc", lazy: { hydrated: "doc/index.hydrated.html", chunks: 3, of: { "prose:edited": 0, "prose:new": 1 } } }, { slug: "other" }] };
+  const lazyOutline = { documents: [{ slug: "doc", lazy: { hydrated: "en/doc/index.hydrated.html", chunks: 3, of: { "prose:edited": 0, "prose:new": 1 } } }, { slug: "other" }] };
   const runLazy = (changed: string[]) => documentRenderedImpact({ changed, changeset, outline: lazyOutline })[0];
 
   test("a text edit is its chunk and the hydrated page, not the shell", () => {
-    expect(runLazy(["folio/doc/ch1/p-1.md"]).files.map(line)).toEqual(["data:doc/blocks/000.json", "content:doc/index.hydrated.html#prose:edited"]);
+    expect(runLazy(["folio/doc/ch1/p-1.md"]).files.map(line)).toEqual(["data:doc/blocks/000.json", "content:en/doc/index.hydrated.html#prose:edited"]);
   });
 
   test("an added block reshapes the shell and shifts every chunk from its own on", () => {
     expect(runLazy(["folio/doc/ch1/p-2.ts"]).files.map(line)).toEqual([
       "data:doc/blocks/001.json",
       "data:doc/blocks/002.json",
-      "content:doc/index.html",
-      "content:doc/index.hydrated.html#prose:new",
+      "content:en/doc/index.html",
+      "content:en/doc/index.hydrated.html#prose:new",
     ]);
   });
 
   test("a page that is not lazy is unchanged by any of this", () => {
-    expect(runLazy(["folio/other/ch1/p-9.ts"]).files.map(line)).toEqual(["content:other/index.html#prose:gone"]);
+    expect(runLazy(["folio/other/ch1/p-9.ts"]).files.map(line)).toEqual(["content:en/other/index.html#prose:gone"]);
   });
 
   test("the comment store also reaches the lazy page's notes and its hydrated page", () => {
     const pc = documentRenderedImpact({ changed: ["review/public-comment/comments/PC-1.json"], changeset, outline: lazyOutline })[1];
     expect(pc.files.map(line)).toContain("data:doc/pc-notes.json");
-    expect(pc.files.map(line)).toContain("content:doc/index.hydrated.html");
+    expect(pc.files.map(line)).toContain("content:en/doc/index.hydrated.html");
   });
 });
 
@@ -193,10 +203,10 @@ describe("documentRenderedImpact — a folio's library (library-site)", () => {
     expect(out.map((i) => i.renderer)).toEqual([DOCUMENT_RENDERER, LIBRARY_RENDERER]);
     expect(out[0].undetermined).toEqual([]);
     expect(out[1].files.map(line).sort()).toEqual([
-      "content:folio-assistant-core/library/v1/index.html",
+      "content:en/folio-assistant-core/library/v1/index.html",
       "data:folio-assistant-core/library/v1/entries/v1.doc.json",
       "data:folio-assistant-core/library/v2/entries/v2.doc.json",
-      "index:folio-assistant-core/library/index.html",
+      "index:en/folio-assistant-core/library/index.html",
     ]);
   });
 
