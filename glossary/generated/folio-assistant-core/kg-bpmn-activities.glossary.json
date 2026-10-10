@@ -489,7 +489,7 @@
     {
       "id": "process_documentauthoring.task_authorblocks",
       "prefLabel": "4 · Author blocks [document-authoring]",
-      "definition": "Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn. A normative statement goes through normative-statements.",
+      "definition": "Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn. A normative statement is a `recommendation` block (bean 55ao), drafted through normative-statements: one statement per block, a folio-chosen label, and its strength as a code in a declared code list, so a reviewer signs off each one individually.",
       "notation": "Task_AuthorBlocks",
       "source": "folio-assistant-core/processes/content/authoring-a-document.bpmn#Task_AuthorBlocks",
       "status": "candidate"

@@ -12,8 +12,8 @@
     },
     "kind": {
       "type": "string",
-      "const": "prose",
-      "description": "Always prose today. There is no first-class recommendation kind: adding one means a builder, schema, label prefix, viewer registration, constraint rows and QA criteria, and it is tracked separately rather than half-done. A prose block converts by changing one builder call."
+      "const": "recommendation",
+      "description": "A `recommendation` block (bean 55ao). Content authored under the interim convention, a labelled and titled `prose` block, converts by changing one builder call."
     },
     "anchor": {
       "type": "string",
@@ -25,6 +25,18 @@
         "type": "string"
       },
       "description": "Labels whose uses[] names this statement."
+    },
+    "strength": {
+      "type": "object",
+      "properties": {
+        "list": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        }
+      },
+      "description": "The strength reference as written, when the statement carries one."
     }
   }
 }
