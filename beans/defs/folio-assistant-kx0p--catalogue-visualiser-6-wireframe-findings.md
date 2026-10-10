@@ -59,3 +59,19 @@ the harness owns the harness") puts it outside this store's reach.
 3. Scrap it. The finding no longer matters after the separation.
 
 **Default if no answer:** option 1.
+
+
+## 2026-10-10: the closure did NOT land (bean-backlog drain, lane C)
+
+The cat-harness-store copy was closed on 2026-10-09 citing who-iris commit
+`6d4c623` on branch `claude/kx0p-catalogue-viz`. That commit is **not on
+who-iris `main`** (`308ee35`). Main's `scripts/gen-iris-pages.ts` has no
+`ic-filter`, no `verdict-count` and no materialized-first sort, so findings 4
+and 6 are still present. The cat-harness half (`d09d0a84`) is on main, but the
+page it regenerated moved to `docs/who-iris/catalogue/index.html`, which
+carries neither fix.
+
+**This copy stays open and is the owning one:** who-iris has no bean store.
+Next step: merge or re-apply `claude/kx0p-catalogue-viz` in who-iris,
+regenerate, and re-measure findings 4 and 6. The cat-harness-store copy
+should be reopened.

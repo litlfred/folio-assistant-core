@@ -4,8 +4,10 @@ title: todos/index.html serves ZERO notes without JavaScript — the one page mo
 status: todo
 type: task
 priority: normal
+tags:
+    - rehomed
 created_at: 2026-10-02T17:41:46Z
-updated_at: 2026-10-02T18:08:07Z
+updated_at: 2026-10-10T16:35:20Z
 parent: folio-assistant-o3xy
 ---
 
@@ -171,3 +173,26 @@ the harness owns the harness") puts it outside this store's reach.
 3. Scrap it. The finding no longer matters after the separation.
 
 **Default if no answer:** option 1.
+
+
+## 2026-10-10: half landed, half not (bean-backlog drain, lane C)
+
+The cat-harness-store copy was closed on 2026-10-09 with commit `eaccedc8`,
+which is on cat-harness `main`. It covers the `todos/index.html` case:
+`todo-listing.test.ts:168`, `linear-floor.e2e.ts:168,206`, and
+`footer_custom.html:40`.
+
+**Four of the revised Done-when items were not addressed and are still
+unchecked:**
+- a per-page `renderTodoListing` holding only that page's todos;
+- no listing markup on a page with no todo;
+- each page's own count, never the global total;
+- coordination with #1886.
+
+The listing is still global (cat-harness-tools `gen-docs-pages.ts`). By the
+owner's 2026-10-10 rehome ruling, that residue is re-filed in the
+cat-harness-tools store (see the pointer below), and this copy stays open as a
+pointer.
+
+**Pointer:** the residue is `litlfred/cat-harness-tools` bean **`cat-tools-lwjc`**
+(cat-harness-tools PR #68). This copy closes when that one does.

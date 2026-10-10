@@ -1,7 +1,7 @@
 ---
 # folio-assistant-7x7g
 title: 'external-schemas visualiser: 8 wireframe findings'
-status: todo
+status: completed
 type: task
 priority: normal
 tags:
@@ -9,7 +9,7 @@ tags:
     - ui
     - visualiser-external-schemas
 created_at: 2026-09-23T10:36:14Z
-updated_at: 2026-09-30T16:12:46Z
+updated_at: 2026-10-10T16:35:03Z
 parent: folio-assistant-4ccr
 ---
 
@@ -65,3 +65,14 @@ the harness owns the harness") puts it outside this store's reach.
 3. Scrap it. The finding no longer matters after the separation.
 
 **Default if no answer:** option 1.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on verified evidence. The
+fixes were made and recorded on this bean's cat-harness-store copy (closed
+2026-10-09). This copy was checked separately to confirm they reached the
+default branches:
+- fix commit `7ebab233` is an ancestor of cat-harness `main` (`b675555e`);
+- the change is present on current `main`, where the generator now lives:
+  cat-harness-tools `scripts/gen-external-schemas-viz.ts:127` (scroll-margin), `:137` (scroll cue), `:393` (operative descriptions).
