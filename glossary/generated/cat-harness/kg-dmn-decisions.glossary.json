@@ -21,6 +21,20 @@
       "status": "candidate"
     },
     {
+      "id": "decision_mergeauthorisation",
+      "prefLabel": "Is this merge authorised?",
+      "notation": "Decision_MergeAuthorisation",
+      "source": "cat-harness/processes/sdlc/decisions/merge-authorisation.dmn#Decision_MergeAuthorisation",
+      "status": "candidate"
+    },
+    {
+      "id": "decision_mergeevidence",
+      "prefLabel": "What does the head's evidence say?",
+      "notation": "Decision_MergeEvidence",
+      "source": "cat-harness/processes/sdlc/decisions/merge-evidence.dmn#Decision_MergeEvidence",
+      "status": "candidate"
+    },
+    {
       "id": "decision_mergepriority",
       "prefLabel": "Where does this PR go?",
       "notation": "Decision_MergePriority",

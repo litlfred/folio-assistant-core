@@ -49,6 +49,13 @@
       "status": "candidate"
     },
     {
+      "id": "adjudication.adjudicationoutcomeschema.debate",
+      "prefLabel": "AdjudicationOutcomeSchema.debate",
+      "definition": "Optional structured debate record formalizing debate rounds conducted prior to the adjudicator's verdict (SWE-Debate / 2507.23348v1).",
+      "source": "folio-assistant-core/schemas/adjudication.ts#AdjudicationOutcomeSchema.debate",
+      "status": "candidate"
+    },
+    {
       "id": "adjudication.adjudicationoutcomeschema.reasoning",
       "prefLabel": "AdjudicationOutcomeSchema.reasoning",
       "definition": "Why, as markdown. REQUIRED, and never empty.",
@@ -655,6 +662,13 @@
       "prefLabel": "MaterializationSchema.inputs",
       "definition": "Required when `purpose` is `compiled`, and only allowed then. See {@link CompiledInputsSchema}.",
       "source": "folio-assistant-core/schemas/materialization.ts#MaterializationSchema.inputs",
+      "status": "candidate"
+    },
+    {
+      "id": "materialization.materializationschema.lastreadat",
+      "prefLabel": "MaterializationSchema.lastReadAt",
+      "definition": "When this copy was last read. Absent means 'not recorded'.",
+      "source": "folio-assistant-core/schemas/materialization.ts#MaterializationSchema.lastReadAt",
       "status": "candidate"
     },
     {

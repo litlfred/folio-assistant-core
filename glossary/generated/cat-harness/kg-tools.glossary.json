@@ -25,7 +25,7 @@
     {
       "id": "archimate-pages",
       "prefLabel": "Give every ArchiMate view, element and relationship a page and an IRI, and draw every view",
-      "definition": "Write a JSON-LD node and a thin page for each model an instance's `cat-archimate.config.json` names and for every view, element and relationship in it — keyed by Archi's own ids — plus the normalised model the pages' one loader draws from, and every view drawn as SVG from the model's own bounds and bendpoints in ArchiMate's notation, each box a link to its element. `--out` writes into a site being built at the graph's path; without it the files go into the graph and `--check` gates them.",
+      "definition": "Write a JSON-LD node and a thin page for each model an instance's `cat-archimate.config.json` names and for every view, element and relationship in it — keyed by Archi's own ids — plus the normalised model the pages' one loader draws from, and every view drawn as SVG from the model's own bounds and bendpoints in ArchiMate's notation, each box a link to its element. `--out` writes into a site being built — the data at the graph's path, the pages at the route of the visualiser the instance declares for this Tool, `<locale>/<harness>/<id>/`; without it the files go into the graph and `--check` gates them.",
       "notation": "archimate-pages",
       "source": "cat-harness/tools/index.ts#archimate-pages",
       "status": "candidate"
@@ -76,6 +76,14 @@
       "definition": "Render each process diagram to SVG for the documentation site. The .bpmn file is the source of truth; the picture is generated from it, so a diagram and its image cannot disagree.",
       "notation": "bpmn-render",
       "source": "cat-harness/tools/index.ts#bpmn-render",
+      "status": "candidate"
+    },
+    {
+      "id": "build-instance-site",
+      "prefLabel": "Build, check and (on request) publish an instance's own site, or a STAGING/<branch> preview",
+      "definition": "From a checkout whose layers arrive by remote mount: mount the pinned closure, install, run the instance's own gates (`--pre`), compose the harness chrome for THIS instance, run its source steps, build with Jekyll at the base path read from the git remote (`/<repo>`, or `/<repo>/STAGING/<branch>` for a preview), run the post-build steps (mount-instance-docs, pdf-viewer, set-html-lang, publish-id-lookup, rail-standalone-pages), and check that every relative or base-rooted link in every page resolves to a file under the site, reading each page with an HTML parser. Any failing step stops the run; a link that does not resolve means nothing is published. It never decides to publish: only `--publish` does, and then a root publish keeps `STAGING/` and `_render-log/` on the branch, and a preview replaces only its own `STAGING/<branch>/`.",
+      "notation": "build-instance-site",
+      "source": "cat-harness/tools/index.ts#build-instance-site",
       "status": "candidate"
     },
     {
@@ -721,7 +729,7 @@
     {
       "id": "remote-mount",
       "prefLabel": "Mount remote harnesses at a pinned commit, only when trusted",
-      "definition": "Lay down each declared remote mount — a `source.remote` instance in the root `index.config.json`, or, in a folio with no index, a `remoteMounts` entry on its declaration (both at once is refused) — and its dependency closure, from another repository at a full commit SHA. Write the lock, `index.lock.json` (a legacy `<name>.mount-lock.json` is read, and renamed onto it when rewritten), and, with an index, regenerate the root `.gitignore` block that ignores each mount path. It READS the declared mounts and never writes them: a tool that changes a mount writes through `writeDeclaredMounts` into `index.config.json`. Before anything is checked out, each mount must pass the trust gate (`schemas/mount-trust.ts`, rule H8): a person's consent recorded for THIS pin, or a signature in a declared trust network. No signature verifier exists yet, so a signature alone is could-not-determine and does not mount. Unsigned and unconsented is refused. `--staging` mounts for a preview and needs neither, by the owner's ruling. `--check` compares the disk against the lock and never fetches.",
+      "definition": "Lay down each declared remote mount — a `source.remote` instance in the root `index.config.json`, or, in a folio with no index, a `remoteMounts` entry on its declaration (both at once is refused) — and its dependency closure, from another repository at a full commit SHA. Write the lock, `index.lock.json` (a legacy `<name>.mount-lock.json` is read, and renamed onto it when rewritten), and, with an index, regenerate the root `.gitignore` block that ignores each mount path. It READS the declared mounts and never writes them: a tool that changes a mount writes through `writeDeclaredMounts` into `index.config.json`. Before anything is checked out, each mount must pass the trust gate (`schemas/mount-trust.ts`, rule H8): a person's consent recorded for THIS pin, or a signature in a declared trust network. No signature verifier exists yet, so a signature alone is could-not-determine and does not mount. Unsigned and unconsented is refused. `--staging` mounts for a preview and needs neither, by the owner's ruling. `--check` compares the disk against the lock and never fetches. When a run CHANGES the lock, it then re-renders the agent surface (`skill:commands` → `.claude/commands/`, `agent-memory` → `.claude/agent-memory/` and `.agents/`) from the checkout root, so a re-pin commit carries the skills and memory the new layers define; a generator that fails fails the run, and `--no-agent-surface` opts out.",
       "notation": "remote-mount",
       "source": "cat-harness/tools/index.ts#remote-mount",
       "status": "candidate"
@@ -740,6 +748,14 @@
       "definition": "Flatten the repository's renders into the order their `needs` imply, and optionally run them. Two stages: the current declared state as json/jsonld and the README derived from it are FATAL; the dynamic renderers (viewers, visualisers, doc pages, diagrams) skip and log; the dynamic-state export closes it. A cycle or a missing dependency yields NO order rather than a partial one.",
       "notation": "render-order",
       "source": "cat-harness/tools/mcp.ts#render-order",
+      "status": "candidate"
+    },
+    {
+      "id": "rewrite-moved-paths",
+      "prefLabel": "Rewrite paths that still name a moved file's old layer — never in a record",
+      "definition": "After a move between two layers lands, find every mention `<from>/<prefix>/<rest>` in the scanned tree's tracked files and rewrite it to `<to>/<prefix>/<rest>` only when the file exists under the destination root and not under the source root. Records are never read: beans, todos, memory, proposals, wireframes, QA results, upstream pins, vocab mappings, provenance figures and terminologies, and test fixtures (`DEFAULT_RECORD_GLOBS`; the CLI's `--keep <glob>` adds more, generated trees among them, which their generators rewrite — a glob is not a shell-safe argument type, so it is not a declared input). Reports by default with file and line; `--write` applies; `--check` exits 1 while a rewrite is owed.",
+      "notation": "rewrite-moved-paths",
+      "source": "cat-harness/tools/index.ts#rewrite-moved-paths",
       "status": "candidate"
     },
     {
@@ -772,6 +788,14 @@
       "definition": "Serve an instance's renderings over local HTTP with their declared media types. The publication host wherever GitHub Pages is absent, and the only host that can enforce `application/ld+json` at all.",
       "notation": "serve-rendering",
       "source": "cat-harness/tools/index.ts#serve-rendering",
+      "status": "candidate"
+    },
+    {
+      "id": "serve-rendering-py",
+      "prefLabel": "Local rendering server (Python)",
+      "definition": "Serve an instance's renderings over local HTTP with their declared media types using Python 3 standard library. The publication host wherever GitHub Pages is absent, and the only host that can enforce `application/ld+json` at all.",
+      "notation": "serve-rendering-py",
+      "source": "cat-harness/tools/index.ts#serve-rendering-py",
       "status": "candidate"
     },
     {
@@ -1049,7 +1073,7 @@
     {
       "id": "uml-overview",
       "prefLabel": "UML overview per named sub-graph",
-      "definition": "Draw one UML class diagram per harness and one per named sub-graph it declares, as PlantUML and Mermaid from one model, with every class read from the graph typology's node schema, and render the PlantUML to the SVG each page shows (needs Java; the check does not). A kind with none is drawn as could-not-determine, never as an empty box.",
+      "definition": "Draw one UML class diagram per harness and one per named sub-graph it declares, as PlantUML, Mermaid and Graphviz DOT from one model, with every class read from the graph typology's node schema, and render the PlantUML to the SVG each page shows (needs Java; the check does not). The DOT is the page's Interactive view, laid out in the reader's browser by the site's vendored Graphviz WASM with draggable nodes. A kind with none is drawn as could-not-determine, never as an empty box.",
       "notation": "uml-overview",
       "source": "cat-harness/tools/index.ts#uml-overview",
       "status": "candidate"

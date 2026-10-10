@@ -23,6 +23,14 @@
       "status": "candidate"
     },
     {
+      "id": "audio-transcription",
+      "prefLabel": "audio-transcription",
+      "definition": "Turn recorded speech (a meeting recording, a video with audio, an interview) into a transcript the library can cite, and choose WHICH open-source recogniser to run for the job: whisper.cpp by default, faster-whisper, WhisperX with pyannote, Vosk, NVIDIA Parakeet/Canary, or Distil-Whisper. Covers audio extraction, why two exports of one recogniser are one opinion, how to compare transcripts (WER, CER, DER), translation, and what blocks a run. Use when an upload contains audio or video, when someone asks which transcription tool to use, or before declaring a new transcription Tool.",
+      "notation": "audio-transcription",
+      "source": "folio-assistant-core/skills/library/ingestion/audio-transcription.md",
+      "status": "candidate"
+    },
+    {
       "id": "bib-human-review",
       "prefLabel": "bib-human-review",
       "definition": "Human-validated bibliography workflow. Flag references that have not been human-reviewed against their source; drive the acquisition ladder (source-in-repo → acquire-legally → physical-library); open one GitHub issue per reference needing physical review (full project context + bibliographic data + page-photo request, assigned to the repo owner); hand off uploaded photos to the bib-photo-ingestion watcher. Use when auditing bib human-review status, ingesting an uploaded paper's results, or preparing a physical-review issue.",
@@ -115,6 +123,14 @@
       "status": "candidate"
     },
     {
+      "id": "glossary-terms",
+      "prefLabel": "glossary-terms",
+      "definition": "Add terms to an instance's glossary: local SKOS terms (folio-glossary/v1) with a definition, a code and links to external SKOS concepts, and references to whole external schemes. Rendered on the glossary/ page; gated by check:glossary. Authored terms go to gettext (.pot) for translation; a paper's glossary is one more scheme.",
+      "notation": "glossary-terms",
+      "source": "folio-assistant-core/skills/library/cataloguing/glossary-terms.md",
+      "status": "candidate"
+    },
+    {
       "id": "l1-coverage",
       "prefLabel": "l1-coverage",
       "definition": "Check that an L1 extraction accounted for every normative sentence in its source publication — captured as a node, or excluded for a fixed-list reason a person signed off. Per-page counts, captured %, accounted-for %, and a non-zero exit below 100 % accounted-for. Generic: three input files, nothing folio-specific. Implements smart-kg's docs/COVERAGE.md contract.",
@@ -181,6 +197,22 @@
       "definition": "What a requirement IS, said once for both requirements methodologies: a statement, a conformance level, a source, at least one success criterion with its verification method, and a sign-off owner. How that maps onto the `req:` schema's `successCriteria`, onto CRDM's REQ-### and spec-kit's FR/SC, and why a work plan is beans whose `## Done when` is copied from the success criteria of the statements they name.",
       "notation": "requirement-definition",
       "source": "folio-assistant-core/skills/content/requirements-planning/requirement-definition.md",
+      "status": "candidate"
+    },
+    {
+      "id": "review",
+      "prefLabel": "review",
+      "definition": "Where to start when a person or an agent reviews a document folio larger than one chapter, such as a DAK or an L1 digital transformation handbook. A pointer, not a method: it names the review skills that already exist, says which question each one answers, and gives the order to read them in. Use when someone asks \"how do I review this\", when a review session starts on a large folio, or before writing a new review skill, so it is not written twice.",
+      "notation": "review",
+      "source": "folio-assistant-core/skills/review/review.md",
+      "status": "candidate"
+    },
+    {
+      "id": "review-comments",
+      "prefLabel": "review-comments",
+      "definition": "Reviewer comments on a folio's edit-set, from a tagged pull-request comment to a structured todo on the review page. Covers the tag a reviewer types, how the comments are ingested into `review-comment/1.0.0` todos, where the published `review-comments.json` comes from and when it refreshes, how a comment follows a renamed block and survives a removed one, who may change a comment's status, and how to change this process. Use when a reviewer asks how to comment on a block, when the review page shows no comments or a wrong one, when editing the ingestion, or when a folio's staging workflow is set up.",
+      "notation": "review-comments",
+      "source": "folio-assistant-core/skills/content/content-lifecycle-ext/review-comments.md",
       "status": "candidate"
     },
     {
