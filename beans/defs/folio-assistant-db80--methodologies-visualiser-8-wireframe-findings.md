@@ -51,3 +51,17 @@ Each finding re-measured on a local build of that commit (`preview-site.sh`, ser
 - **FIXED** — Badges fail contrast on the default dark scheme: Changed since 2026-09-29. Dark: .mv-ingested rgb(92,211,189) is 7.40:1 on the row bg rgb(48,45,54) and 8.23:1 on the page bg. .mv-cited rgb(230,189,82) is 7.57:1 and 8.41:1. That is at 11.52px (10.08px at 390). Light is unchanged and passes: 6.16 and 5.54. — #1592 / rtuo (C_meth.mjs, contrast.mjs)
 - **STILL-PRESENT** — Mobile: 'Choosing one' table four columns in 358 px; later columns off-screen, no scroll cue: 390×844: .table-wrapper is 362px (14–376), overflow-x auto, mask none, with only a box-shadow. Table scrollWidth is 499. 'origin held?' at 261–404 is cut, and 'declared by' at 406–511 is off-screen. There is no scroll hint element. (C_meth5.mjs)
 - **STILL-PRESENT** — WireGen origin ('Section numbers below are the paper's') points at nothing: '… Section numbers below are the paper’s.' is followed directly by 'Ingested sources: library/arxiv-2312.07755v1 · item page · source' and the next section. No section numbers follow. (C_meth.mjs)
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-methodologies-viz.ts` in cat-harness-tools. Nothing there cites a fix yet. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.

@@ -44,3 +44,17 @@ Each finding re-measured on a local build of that commit (`preview-site.sh`, ser
 - **STILL-PRESENT** — Diagram instruction says 'filter above' but module filter is below; empty height: #ov-cap says 'Pick a module in the filter above…'. The caption is at y 335 and select#mod at y 723 at 390 (187 and 473 at 1280). #ov-svg is 150px tall with 0 children. .ov-body is 287px (390) and 228px (1280). (C_sch.mjs)
 - **STILL-PRESENT** — Field table breaks identifiers mid-token at 390 px: ArchiveContentsSchema at 390: 10 space-free cells wrap onto more than one line, including '$schema', 'archive', 'entries', 'n_entries' and 'z.literal(ARCHIVE_CONTENTS_SCHEMA_ID)'. At 1280, 7 still wrap, including 'uncompressed_bytes'. (C_sch2.mjs)
 - **STILL-PRESENT** — UML box truncates field types at fixed width even at 1280: #detail svg text at 1280 still includes '$schema: literal(ARCHIVE_CONTENTS_SCH' and 'archive: record(z.string(), z.unknown'. (C_sch2.mjs)
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-schema-viz.ts` in cat-harness-tools. `gen-schema-viz.test.ts` cites fixes for findings 1–5, so a re-verify is likely to close it. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.

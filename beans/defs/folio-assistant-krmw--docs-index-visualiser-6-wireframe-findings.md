@@ -45,3 +45,17 @@ Each finding re-measured on a local build of that commit (`preview-site.sh`, ser
 - **STILL-PRESENT** — 4. YAML quotes kept: 13 descriptions are still wrapped in literal quotes, e.g. '"folio-assistant — إطار عمل مهارات وكيل مستقل عن المحتوى."'. (idx.mjs)
 - **STILL-PRESENT** — 5. Table cannot be searched, filtered or grouped: 305 rows in one table, with 0 filter inputs (the #1592 table filter is not on docs-auto pages) and 0 h2/h3. 40 locale rows are interleaved by path. docH is 23,230px at 1280 and 40,715px at 390. (idx.mjs, filt.mjs)
 - **STILL-PRESENT** — 6. Phone layout favours the path: 390×844, first body row: the name+path cell is 164px and the description cell 132px. There is no page-level horizontal scroll (scrollWidth 390). (idx.mjs, idx2.mjs)
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `autoDocPage` in cat-harness-tools `scripts/gen-auto-docs.ts`. Nothing there cites a fix yet. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.

@@ -99,3 +99,17 @@ WORTH LIFTING WHENEVER THIS IS PICKED UP, independent of the IRI decision: input
 ## Handover 2026-10-06 — PAUSED until the repo separation lands (Session F, GOAL 5)
 
 Owner ruling, relayed by the coordinating session (session_012qoycyCSGidZqW245vXhze): repo separation is the primary goal, content authoring/review/publication goes to folio-assistant-core while cat-harness keeps the methods, and that 'needs to be done before F'. This bean resumes AFTER the split. **The code it touches may have moved to folio-assistant-core by then — re-locate it before editing, and re-measure.** Open questions on it are being put to the owner by the coordinating session, one at a time; the answer will be recorded here, not assumed.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The DAK schemas now live in smart-base `schemas/dak-blocks.ts`, and `dak.json` was renamed `dak.config.json`. It is still blocked upstream on WHO's DAK Logical Model, and its re-ask date (2026-09-29) has passed: the Logical Model status should be re-asked whichever option is chosen. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/smart-base`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/smart-base`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.

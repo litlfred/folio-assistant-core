@@ -92,3 +92,17 @@ than a read-only one.
 verbs), `d308` (Tool nodes — `folio_init` is one), `yj32` (the harness as an
 interface these verbs act through), and the `github-api` /
 `github-connector` capabilities declared this session.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The browse, materialise, instantiate and copy-into-folio affordances are harness skills and BPMN processes (cat-harness), with `src/tools/folio-init.ts` in cat-harness-tools. None is started. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.

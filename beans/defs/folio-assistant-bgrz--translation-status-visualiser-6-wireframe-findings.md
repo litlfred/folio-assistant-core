@@ -45,3 +45,17 @@ Each finding re-measured on a local build of that commit (`preview-site.sh`, ser
 - **STILL-PRESENT** — Two questions not visually separated: The 'catalogues / templates' cells have the same computed style as the string columns (transparent background, weight 400, no borders, 16px). 'Two questions, not one.' is still a note below the table (y=528 vs table y=134 at 1280). (D/p_tr.js)
 - **STILL-PRESENT** — Nothing links onward / dead end: PARTIAL, as before. The 25 links are the nav rail. There are 0 links to the fr catalogues, the .pot list or the translation-manager skill. (D/p_tr.js)
 - **STILL-PRESENT** — Accessibility markup is right (keep): This is a positive finding and it holds: 6 th[scope=col] and 5 th[scope=row]. (D/p_tr.js)
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-translation-status.ts` in cat-harness-tools. `gen-translation-status.test.ts` cites fixes for findings 1–6, so a re-verify is likely to close it. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
