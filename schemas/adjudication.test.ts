@@ -208,3 +208,82 @@ describe("it expresses the adjudication that already exists", () => {
     expect(restricted.assets.map((a) => a.ref)).not.toContain("the-artefact");
   });
 });
+
+describe("SWE-Debate multi-round debate protocol integration", () => {
+  const DEBATE_OUTCOME: AdjudicationOutcome = {
+    ...OUTCOME,
+    debate: {
+      protocol: "swe-debate-v1",
+      rounds: [
+        {
+          round: 1,
+          name: "objection-ranking",
+          participants: ["L1-formalist", "L2-skeptic", "L3-structural"],
+          summary: "L1 ranked highest due to direct theorem quantifier mismatch.",
+          proposals: [
+            {
+              agent: "L1-formalist",
+              stance: "da-false-claim",
+              argument: "Theorem 2.1 fails under boundary condition x = 0.",
+            },
+            {
+              agent: "L2-skeptic",
+              stance: "da-overclaim",
+              argument: "Asymptotic claim does not hold on finite samples.",
+            },
+          ],
+        },
+        {
+          round: 2,
+          name: "competitive-refinement",
+          participants: ["L1-formalist", "L2-skeptic", "L3-structural"],
+          summary: "L1 defended hypothesis against L2 critique; invariant cited.",
+          proposals: [
+            {
+              agent: "L1-formalist",
+              stance: "da-false-claim",
+              argument: "Boundary condition x = 0 is within stated hypothesis H1.",
+              critiques: [
+                {
+                  targetAgent: "L2-skeptic",
+                  point: "L2 focuses on empirical sample size but misses the formal impossibility.",
+                  severity: "major",
+                },
+              ],
+            },
+          ],
+        },
+        {
+          round: 3,
+          name: "discriminator-synthesis",
+          participants: ["ADJ-adjudicator"],
+          summary: "Adjudicator confirms L1 objection survives rebuttal; L2 objection pre-rebutted by Lemma 1.4.",
+        },
+      ],
+      consensus_reached: true,
+      resolved_conflicts: [
+        "Resolved conflict between L1 and L2: L1 formal falsification is structural; L2 empirical concern is subsumed.",
+      ],
+    },
+  };
+
+  it("accepts a structured 3-round debate outcome", () => {
+    expect(AdjudicationOutcomeSchema.safeParse(DEBATE_OUTCOME).success).toBe(true);
+    expect(adjudicationDefects(REQUEST, DEBATE_OUTCOME)).toEqual([]);
+  });
+
+  it("detects non-sequential debate rounds in adjudicationDefects", () => {
+    const nonSeq = {
+      ...DEBATE_OUTCOME,
+      debate: {
+        ...DEBATE_OUTCOME.debate!,
+        rounds: [
+          { ...DEBATE_OUTCOME.debate!.rounds[0]!, round: 1 },
+          { ...DEBATE_OUTCOME.debate!.rounds[1]!, round: 3 },
+        ],
+      },
+    };
+    const defects = adjudicationDefects(REQUEST, nonSeq);
+    expect(defects.some((d) => d.includes("debate rounds not sequential"))).toBe(true);
+  });
+});
