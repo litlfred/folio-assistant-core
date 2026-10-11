@@ -11,7 +11,7 @@
  * ## Synthetic, by necessity
  *
  * There is no in-repo folio to borrow (roast R7: `folios/` is a README), and
- * `smart-immunizations` renders no HTML. So the pair is GENERATED, and it is
+ * the immunization DAK instance renders no HTML. So the pair is GENERATED, and it is
  * deterministic: no clock, no randomness. The same call writes the same bytes
  * every time, which is what lets `scale-pair.changeset.json` be a golden file.
  * The generator is committed rather than its 8,000 output files.

@@ -5,7 +5,7 @@
   "description": "The strength of a recommendation in a guideline developed with the GRADE approach, as the WHO handbook for guideline development applies it: how confident the guideline group is that the desirable effects of following the recommendation outweigh the undesirable ones. Named by a `recommendation` block's `strength` (bean 55ao).",
   "source": {
     "href": "https://iris.who.int/handle/10665/145714",
-    "note": "WHO handbook for guideline development, 2nd edition (2014); ingested in the who-iris library as `9789241548960-eng`. Owner ruling 2026-09-23 (bean 55ao, Q2): strength names a concept in a declared scheme, and each domain brings its own."
+    "note": "WHO handbook for guideline development, 2nd edition (2014); ingested in the WHO IRIS library as `9789241548960-eng`. Owner ruling 2026-09-23 (bean 55ao, Q2): strength names a concept in a declared scheme, and each domain brings its own."
   },
   "codes": [
     {
