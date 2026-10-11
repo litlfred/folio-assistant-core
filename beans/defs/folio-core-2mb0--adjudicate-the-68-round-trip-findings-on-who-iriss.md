@@ -4,7 +4,7 @@ title: Adjudicate the 68 round-trip findings on who-iris's catalogues (66 warn, 
 status: todo
 type: task
 created_at: 2026-10-10T17:25:53Z
-updated_at: 2026-10-11T07:40:00Z
+updated_at: 2026-10-11T08:10:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -57,3 +57,33 @@ the tracker's own word keeps that link.
 "Held --> ok." Index 17's five warnings ('held copies' coming back as
 saved, preserved or stored) are **spurious**: no change to the PO files. 5
 more entries ruled, so 56 warn and 2 fail remain.
+
+## Owner rulings 2026-10-11, second round (who-iris#42, merged)
+
+**Correction to the first ruling.** "I didn't mean to say leave bean
+untranslated. I meant to use the translation of bean or kernel that makes
+sense." who-iris#39 had kept the English word. It is now each language's
+ordinary word for a bean or kernel, as in a coffee bean: ar «حبة»,
+es «grano», fr «grain», ru «зерно», zh «豆».
+
+| pattern | ruling | outcome |
+|---|---|---|
+| DSpace 'Bundle' → 'Package' (ru fail, fr major) | **"File Set"**, all five locales | real, fixed |
+| ru DSpace 'item' → «запись» (collides with «запись метаданных») | **«единица хранения»** | real, fixed in 15 strings |
+| 'CDN edge' → 'CDN node' (es, fr, ru) | **the CDN's edge server** (the owner asked about "CDN arrow"; that would read as a graph edge) | real, fixed |
+| ru #12: banner attributes the catalogue to WHO IRIS | apply the fix | real, fixed: the catalogue is folio-assistant's own, describing IRIS |
+| zh 'size' → 'capacity' (容量) | apply the fix: 大小 | real, fixed in 4 strings, plus 推算 → 插值 (interpolated) |
+| 'held' rendered generically | "ok" | spurious |
+
+**Round trip, re-run on the 39 changed strings.** The adjudicator was given
+these rulings as a glossary. 37 pass and 2 warn. The two warnings are fr 16
+and 41, where DSpace 'item' is «document»; that rendering predates this round
+and no ruling covers it.
+
+**Totals: 566 pass / 34 warn / 0 fail of 600** (from 532/66/2 at the start).
+
+**Still to rule:**
+- 'ingested' → 'imported' (ru) / 'included' (zh), and ru #12's
+  'INGESTED' → 'IMPORTED';
+- fr 'item' → «document»;
+- the remaining minor warnings, which are listed per entry in the report.
