@@ -189,6 +189,12 @@ describe("extractXlsx", () => {
     ]);
   });
 
+  it("numeric character references decode: Excel's &#10; in a title is a line break (urat)", () => {
+    const s = sheet({ A1: "x", B1: "y", A2: "1", B2: "2" }).replace(">x<", ">ICD-11&#10;code<").replace(">y<", ">caf&#xE9;<");
+    const t = extractXlsx(workbook({ S: s }), opts).tables[0]!;
+    expect(t.tableSchema.columns.map((c) => c.titles)).toEqual(["ICD-11\ncode", "café"]);
+  });
+
   it("an empty sheet produces no table, and the next sheet is still read", () => {
     const r = extractXlsx(workbook({ Empty: sheet({}), Comments: COMMENTS }, { shared: ["id", "comment", "submitted"] }), opts);
     expect(r.tables.map((t) => t["fac:anchor"]!.sheet)).toEqual(["Comments"]);

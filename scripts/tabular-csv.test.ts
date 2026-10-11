@@ -68,6 +68,12 @@ describe("classifyColumn: never guess a datatype", () => {
     expect(classifyColumn(["", ""])).toEqual({ datatype: "any", datatypeSource: "undetermined" });
   });
 
+  it("zero-padded digit strings are codes: string, never integer (urat)", () => {
+    expect(classifyColumn(["008", "012", "971"])).toEqual({ datatype: "string", datatypeSource: "measured" });
+    expect(classifyColumn(["008", "1.5"])).toEqual({ datatype: "any", datatypeSource: "undetermined" });
+    expect(classifyColumn(["0", "10", "0.5"])).toEqual({ datatype: "decimal", datatypeSource: "measured" });
+  });
+
   it("dates mixed with integers do not widen", () => {
     expect(classifyColumn(["2026-01-01", "7"])).toEqual({ datatype: "any", datatypeSource: "undetermined" });
   });
