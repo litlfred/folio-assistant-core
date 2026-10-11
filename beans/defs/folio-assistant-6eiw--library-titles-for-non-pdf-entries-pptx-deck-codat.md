@@ -4,10 +4,11 @@ title: Library titles for non-PDF entries (pptx deck, CODATA table)
 status: todo
 type: task
 tags:
+    - rehomed
     - ui
     - wireframe-findings
 created_at: 2026-10-02T12:55:31Z
-updated_at: 2026-10-02T12:55:31Z
+updated_at: 2026-10-11T06:25:00Z
 parent: folio-assistant-4ccr
 ---
 
@@ -71,3 +72,11 @@ that an editorial title is not preserved across regeneration (the resolver,
 cat-harness-tools `gen-library-jsonld.ts`). **This copy stays open as the
 owning one**, since sci has no store, until a title correction survives
 regeneration. The cat-harness-store copy should be reopened.
+
+## Rehomed 2026-10-11: this copy is now a pointer
+
+By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a
+pointer here), this bean is re-filed in the store of the repository whose code
+it changes: **`litlfred/cat-harness-tools` bean `cat-tools-v8wg`** (cat-harness-tools
+PR #114). Work it there. This copy stays open as a pointer, and closes when
+`cat-tools-v8wg` does.

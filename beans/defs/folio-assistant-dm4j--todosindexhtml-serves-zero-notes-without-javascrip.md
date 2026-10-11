@@ -7,7 +7,7 @@ priority: normal
 tags:
     - rehomed
 created_at: 2026-10-02T17:41:46Z
-updated_at: 2026-10-10T16:35:20Z
+updated_at: 2026-10-11T06:25:00Z
 parent: folio-assistant-o3xy
 ---
 
@@ -196,3 +196,11 @@ pointer.
 
 **Pointer:** the residue is `litlfred/cat-harness-tools` bean **`cat-tools-lwjc`**
 (cat-harness-tools PR #68). This copy closes when that one does.
+
+## Rehomed 2026-10-11: this copy is now a pointer
+
+By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a
+pointer here), this bean is re-filed in the store of the repository whose code
+it changes: **`litlfred/cat-harness-tools` bean `cat-tools-rt0l`** (cat-harness-tools
+PR #114). Work it there. This copy stays open as a pointer, and closes when
+`cat-tools-rt0l` does.
