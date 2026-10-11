@@ -4,7 +4,7 @@ title: 'DAK decision tables read as headerless: a reader for the preamble + two-
 status: todo
 type: task
 created_at: 2026-10-11T06:13:34Z
-updated_at: 2026-10-11T06:13:34Z
+updated_at: 2026-10-11T06:35:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -24,3 +24,36 @@ A DAK-specific reader, routed by content (a 'Decision ID' cell heading a block),
 - [ ] the IMMZ decision-support workbook's DTs read with titled input and output columns
 - [ ] merged ranges are read, not lost
 - [ ] the generic reader's verdict on non-DAK sheets is unchanged
+
+## Survey 2026-10-11 (lane C): the shape is regular; the record schema is the gate
+
+Measured over every `Decision ID` cell in the IMMZ decision-support workbook:
+- **90 decision tables.** 87 share one shape: the preamble rows `Decision ID`,
+  `Business rule`, `Trigger`, then a group row
+  `Inputs … Output | Guidance displayed to health worker | Annotations | Reference(s)`.
+- **The other 3** carry an extra `Potential contraindications` block inside
+  the preamble (BCG, Hepatitis B), or have no group row.
+- **Schedule tables share bands with the DTs.** The titles
+  `The name of the service for which the schedule is relevant` and
+  `What event signals the start of the service schedule?` are a SECOND table
+  family (the M-column blocks beside the DTs). It needs its own routing, by
+  its own heading cell.
+
+**What blocks a faithful record:** `CsvwTableSchema`
+(cat-harness `schemas/tabular-csvw.ts`) is a plain `z.object`, so a parse
+strips any key it does not name. Recording the preamble needs CSVW's own
+`notes`. Recording each column's role (input or output) and the merged
+ranges needs `fac:` keys. All of these are a cat-harness schema change,
+followed by the usual index repin. Without them, the best possible is titled
+columns (Done-when 1). The preamble, the roles and the don't-care marker
+would be lost on parse.
+
+**So, in order:**
+1. cat-harness: add an optional `notes` (CSVW §5.8) and an optional
+   `fac:role` per column to `CsvwTableSchema`/`CsvwColumnSchema`, and have
+   `toCsvw` keep `notes` and drop `fac:role`;
+2. core: route DT and schedule blocks by heading cell in `tabular-xlsx.ts`;
+3. repin.
+
+Depends on folio-core-urat's PR (core#53), which committed the real record
+this survey reads.
