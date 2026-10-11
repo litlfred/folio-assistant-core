@@ -7,6 +7,34 @@
   "source": "Schema fields of smart-base",
   "terms": [
     {
+      "id": "dak-annexes.dakdatadictionaryannexschema.idcolumn",
+      "prefLabel": "DakDataDictionaryAnnexSchema.idColumn",
+      "definition": "The column key that identifies a data element.",
+      "source": "smart-base/schemas/dak-annexes.ts#DakDataDictionaryAnnexSchema.idColumn",
+      "status": "candidate"
+    },
+    {
+      "id": "dak-annexes.dakdatadictionaryannexschema.source",
+      "prefLabel": "DakDataDictionaryAnnexSchema.source",
+      "definition": "The workbook it was read from, and the sha256 of its bytes.",
+      "source": "smart-base/schemas/dak-annexes.ts#DakDataDictionaryAnnexSchema.source",
+      "status": "candidate"
+    },
+    {
+      "id": "dak-annexes.dakswimlanemapschema.notpersonas",
+      "prefLabel": "DakSwimlaneMapSchema.notPersonas",
+      "definition": "Lane words that are deliberately not personas -> why.",
+      "source": "smart-base/schemas/dak-annexes.ts#DakSwimlaneMapSchema.notPersonas",
+      "status": "candidate"
+    },
+    {
+      "id": "dak-annexes.dakswimlanemapschema.personas",
+      "prefLabel": "DakSwimlaneMapSchema.personas",
+      "definition": "Persona as named on the personas page -> the words a lane uses for it.",
+      "source": "smart-base/schemas/dak-annexes.ts#DakSwimlaneMapSchema.personas",
+      "status": "candidate"
+    },
+    {
       "id": "dak-blocks.dakblockbase.layer",
       "prefLabel": "DakBlockBase.layer",
       "definition": "The WHO knowledge layer this block belongs to.",
