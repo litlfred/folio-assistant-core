@@ -53,6 +53,14 @@
       "status": "candidate"
     },
     {
+      "id": "recommendation-extraction",
+      "prefLabel": "recommendation-extraction",
+      "definition": "Extract the recommendations of an L1 source as L1 3.0 recommendation and remark nodes, then describe each one's scenario: the persona (role) who acts on it, the business process they act in, and the user story, as smart-kg L2 user-scenario candidates that reuse the target guide's own vocabulary. Read before extracting recommendations from a WHO guideline or position paper with no printed \"Recommendation N\" labels, before linking a recommendation to a DAK persona or process, and whenever a recommendation has to say who does it and where. Covers the hybrid extraction (mechanical candidates, agent structuring, verbatim and 100 % coverage gates), the reuse-first precedence for personas and processes, the WARNING format, and sign-off.",
+      "notation": "recommendation-extraction",
+      "source": "smart-base/skills/content/authoring-who-smart-guidelines/recommendation-extraction.md",
+      "status": "candidate"
+    },
+    {
       "id": "smart-base-tools",
       "prefLabel": "smart-base-tools",
       "notation": "smart-base-tools",

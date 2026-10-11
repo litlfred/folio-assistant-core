@@ -58,7 +58,7 @@
     {
       "id": "adversarial-checklist.adversarialchecklistitem.references",
       "prefLabel": "AdversarialChecklistItem.references",
-      "definition": "Reference documents or rules supporting this check.",
+      "definition": "The rules supporting this check, BY NAME — `skill:<name>` or `schema:<module>` — never by path. Code, which is addressed by path on purpose, is `code:<layer>/<module path>`. Paths went stale as skills moved between packages (two named a skill that no longer exists); a name is found wherever the declaration puts it (`check:declared-paths`, bean `rmi6` follow-up). `adversarial-checklist.test.ts` resolves every one.",
       "source": "cat-harness/schemas/adversarial-checklist.ts#AdversarialChecklistItem.references",
       "status": "candidate"
     },
@@ -6958,6 +6958,48 @@
       "status": "candidate"
     },
     {
+      "id": "health-report.pagesservingobservationschema.observedat",
+      "prefLabel": "PagesServingObservationSchema.observedAt",
+      "definition": "ISO 8601, when the CI job fetched the site.",
+      "source": "cat-harness/schemas/health-report.ts#PagesServingObservationSchema.observedAt",
+      "status": "candidate"
+    },
+    {
+      "id": "health-report.pagesservingobservationschema.run",
+      "prefLabel": "PagesServingObservationSchema.run",
+      "definition": "The workflow run that made the observation, for a reader to open.",
+      "source": "cat-harness/schemas/health-report.ts#PagesServingObservationSchema.run",
+      "status": "candidate"
+    },
+    {
+      "id": "health-report.pagesservingobservationschema.site",
+      "prefLabel": "PagesServingObservationSchema.site",
+      "definition": "The published site's root URL.",
+      "source": "cat-harness/schemas/health-report.ts#PagesServingObservationSchema.site",
+      "status": "candidate"
+    },
+    {
+      "id": "health-report.pagesservingurlschema.bytes",
+      "prefLabel": "PagesServingUrlSchema.bytes",
+      "definition": "Bytes in the response body.",
+      "source": "cat-harness/schemas/health-report.ts#PagesServingUrlSchema.bytes",
+      "status": "candidate"
+    },
+    {
+      "id": "health-report.pagesservingurlschema.expectedpage",
+      "prefLabel": "PagesServingUrlSchema.expectedPage",
+      "definition": "Whether the body is the page asked for, rather than Pages' own 404.",
+      "source": "cat-harness/schemas/health-report.ts#PagesServingUrlSchema.expectedPage",
+      "status": "candidate"
+    },
+    {
+      "id": "health-report.pagesservingurlschema.status",
+      "prefLabel": "PagesServingUrlSchema.status",
+      "definition": "HTTP status of the final response.",
+      "source": "cat-harness/schemas/health-report.ts#PagesServingUrlSchema.status",
+      "status": "candidate"
+    },
+    {
       "id": "id-lookup.identry.id",
       "prefLabel": "IdEntry.id",
       "definition": "`kind/local`, lower-case, as the catalogue names the node.",
@@ -8407,6 +8449,20 @@
       "status": "candidate"
     },
     {
+      "id": "openapi.openapiconfigschema.documents",
+      "prefLabel": "OpenApiConfigSchema.documents",
+      "definition": "Documents read from a repository (`openapi-ingest-source`).",
+      "source": "cat-harness/openapi/schemas/openapi.ts#OpenApiConfigSchema.documents",
+      "status": "candidate"
+    },
+    {
+      "id": "openapi.openapiconfigschema.rendered",
+      "prefLabel": "OpenApiConfigSchema.rendered",
+      "definition": "Documents read from a published spec URL (`openapi-ingest-rendered`).",
+      "source": "cat-harness/openapi/schemas/openapi.ts#OpenApiConfigSchema.rendered",
+      "status": "candidate"
+    },
+    {
       "id": "openapi.openapioperation.declaredid",
       "prefLabel": "OpenApiOperation.declaredId",
       "definition": "Whether {@link id} is the document's own `operationId`.",
@@ -8446,6 +8502,13 @@
       "prefLabel": "OpenApiProvenanceSchema.operations",
       "definition": "How many operations it holds — every one of which gets a page.",
       "source": "cat-harness/openapi/schemas/openapi.ts#OpenApiProvenanceSchema.operations",
+      "status": "candidate"
+    },
+    {
+      "id": "openapi.openapirenderedsourceschema.url",
+      "prefLabel": "OpenApiRenderedSourceSchema.url",
+      "definition": "The published spec's URL: an OpenAPI 3 JSON document, served over https.",
+      "source": "cat-harness/openapi/schemas/openapi.ts#OpenApiRenderedSourceSchema.url",
       "status": "candidate"
     },
     {
@@ -8498,6 +8561,13 @@
       "status": "candidate"
     },
     {
+      "id": "pdf-structure.pdfdiagnosticsschema.latex_overlay",
+      "prefLabel": "PdfDiagnosticsSchema.latex_overlay",
+      "definition": "What `latex-math-overlay.py` did: the main `.tex` file it read, how many sections it found there and how many PDF sections took their text from it, the three gates it applied, and a per-section record of each match.",
+      "source": "cat-harness/schemas/pdf-structure.ts#PdfDiagnosticsSchema.latex_overlay",
+      "status": "candidate"
+    },
+    {
       "id": "pdf-structure.pdfdiagnosticsschema.page_label_conflicts",
       "prefLabel": "PdfDiagnosticsSchema.page_label_conflicts",
       "definition": "Pages where label sources disagree, e.g. /PageLabels \"3\" against a printed \"iii\".",
@@ -8528,7 +8598,7 @@
     {
       "id": "pdf-structure.pdfdiagnosticsschema.toc_inferred_method",
       "prefLabel": "PdfDiagnosticsSchema.toc_inferred_method",
-      "definition": "Which inference produced an inferred TOC (issue #2302): a printed contents page, heading styles read from font metrics, or the text-pattern heuristic that OCR'd text falls back to.",
+      "definition": "Which inference produced an inferred TOC (issue #2302): a printed contents page, heading styles read from font metrics, the text-pattern heuristic that OCR'd text falls back to, or `latex`: the `\\section` commands of the paper's own LaTeX source, each placed on its PDF page (cat-harness-tools `_latex_headings.py`).",
       "source": "cat-harness/schemas/pdf-structure.ts#PdfDiagnosticsSchema.toc_inferred_method",
       "status": "candidate"
     },
@@ -8572,6 +8642,20 @@
       "prefLabel": "PdfSectionSchema.label_start",
       "definition": "Printed labels of page_start / page_end, where known (issue #2302).",
       "source": "cat-harness/schemas/pdf-structure.ts#PdfSectionSchema.label_start",
+      "status": "candidate"
+    },
+    {
+      "id": "pdf-structure.pdfsourceschema.math_source",
+      "prefLabel": "PdfSourceSchema.math_source",
+      "definition": "Where the entry's MATHEMATICS comes from, written by `latex-math-overlay.py`: `latex` when at least one section's text was replaced by the paper's own LaTeX, `text-layer` when the overlay ran and none passed its gates. Absent when the overlay never ran.",
+      "source": "cat-harness/schemas/pdf-structure.ts#PdfSourceSchema.math_source",
+      "status": "candidate"
+    },
+    {
+      "id": "pdf-structure.pdfstructureschema.duplicate_of",
+      "prefLabel": "PdfStructureSchema.duplicate_of",
+      "definition": "The library holds some works more than once (a preprint beside its published version, one PDF under two names). The duplicate copy names the entry to prefer in `duplicate_of` and says why in `duplicate_note`; the preferred entry lists its copies in `duplicate_copies`. Adjudicated in qou `docs/audits/library-duplicate-ledger.json`.",
+      "source": "cat-harness/schemas/pdf-structure.ts#PdfStructureSchema.duplicate_of",
       "status": "candidate"
     },
     {
@@ -11144,10 +11228,38 @@
       "status": "candidate"
     },
     {
+      "id": "tabular-csvw.csvwcolumnschema.fac-group",
+      "prefLabel": "CsvwColumnSchema.fac:group",
+      "definition": "The upper row of a two-row header: the label spanning this column, e.g. a decision table's `Inputs` or `Output`. Absent for a one-row header. CSVW has no column groups, so `toCsvw` drops it (bean folio-core-scn4).",
+      "source": "cat-harness/schemas/tabular-csvw.ts#CsvwColumnSchema.fac:group",
+      "status": "candidate"
+    },
+    {
+      "id": "tabular-csvw.csvwtableschema.fac-merged",
+      "prefLabel": "CsvwTableSchema.fac:merged",
+      "definition": "Merged cell ranges inside the table, A1 notation, e.g. `K8:K25`.",
+      "source": "cat-harness/schemas/tabular-csvw.ts#CsvwTableSchema.fac:merged",
+      "status": "candidate"
+    },
+    {
+      "id": "tabular-csvw.csvwtableschema.fac-preamble",
+      "prefLabel": "CsvwTableSchema.fac:preamble",
+      "definition": "Key/value rows ABOVE the header that describe the table rather than belong to it, in sheet order: a DAK decision table's `Decision ID`, `Business rule`, `Trigger`. Not CSVW `notes`, whose objects are JSON-LD annotations a standard reader interprets; these are the source's own labels, verbatim (bean folio-core-scn4).",
+      "source": "cat-harness/schemas/tabular-csvw.ts#CsvwTableSchema.fac:preamble",
+      "status": "candidate"
+    },
+    {
       "id": "tabular-csvw.csvwtableschema.fac-stub",
       "prefLabel": "CsvwTableSchema.fac:stub",
       "definition": "Present iff no extractor produced this.",
       "source": "cat-harness/schemas/tabular-csvw.ts#CsvwTableSchema.fac:stub",
+      "status": "candidate"
+    },
+    {
+      "id": "tabular-csvw.csvwtableschema.fac-wildcard",
+      "prefLabel": "CsvwTableSchema.fac:wildcard",
+      "definition": "The cell values meaning \"any value matches\" — a decision table's don't-care. A list: the WHO IMMZ workbook writes `–` and `-`, and 18 of its 86 decision tables use both. A wildcard is a rule, not data: it is not evidence for a column's datatype, and it is not CSVW `null` (absent), which would read a don't-care as a missing value.",
+      "source": "cat-harness/schemas/tabular-csvw.ts#CsvwTableSchema.fac:wildcard",
       "status": "candidate"
     },
     {
