@@ -4,7 +4,7 @@ title: Adjudicate the 68 round-trip findings on who-iris's catalogues (66 warn, 
 status: todo
 type: task
 created_at: 2026-10-10T17:25:53Z
-updated_at: 2026-10-11T07:25:00Z
+updated_at: 2026-10-11T07:40:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -51,3 +51,9 @@ rendered generically, index 17 in all five locales.
 For the record, the owner allowed "kernel" as an alternative. The loanword
 was chosen because the strings name a bean by its ID (`jbx2`, `yl5w`), and
 the tracker's own word keeps that link.
+
+## Owner ruling 2026-10-11: 'held' rendered generically is acceptable
+
+"Held --> ok." Index 17's five warnings ('held copies' coming back as
+saved, preserved or stored) are **spurious**: no change to the PO files. 5
+more entries ruled, so 56 warn and 2 fail remain.
