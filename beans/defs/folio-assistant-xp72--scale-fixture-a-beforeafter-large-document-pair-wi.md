@@ -5,7 +5,7 @@ status: todo
 type: task
 priority: normal
 created_at: 2026-09-22T21:02:55Z
-updated_at: 2026-10-11T06:20:00Z
+updated_at: 2026-10-11T07:10:00Z
 parent: folio-assistant-q4jm
 blocked_by:
     - folio-assistant-jwox
@@ -92,3 +92,33 @@ tools PR workflow has no e2e job, so the gate runs through
 `bun run cat test:e2e`.
 
 **Still open:** Done-when 3, the lx2s committee walk-through with screenshots.
+
+## Done-when 3: depends on staging, which is not here (2026-10-11, lane C)
+
+lx2s's scenario is folio-assistant issue #215: an author changes an
+immunization schedule, and the guidance review committee compares before and
+after **on staging**, approves, and only then is the change merged. Staging
+is folio-assistant's `.github/workflows/feature-staging.yml`. The live lx2s
+bean is in the `cat/cat-harness/beans` store (lane A). The cat-harness-tools
+copy was scrapped on 2026-10-10 for that reason. Nothing in this repository,
+or reachable from this session, can stand up that staging.
+
+What exists now: the review page at 2,000 blocks, inside its budget
+(tools#104), and the 2,000-block fixture with its golden ChangeSet. No
+immunization-schedule before/after pair exists in any checkout.
+
+## Owner decision
+
+1. **(Recommended) Keep Done-when 3 waiting on lx2s.** Walk it when #215's
+   staging exists, on a real immunization-schedule change. This bean stays
+   `todo` until then.
+2. Walk the review page locally on the xp72 fixture, with screenshots, and
+   accept that as Done-when 3. It shows the page at scale, but it is not the
+   committee scenario, and the walk-through would say so.
+3. Build an immunization-shaped pair first, from the WHO IMMZ decision tables
+   now read by `tabular-dak.ts` (e.g. a DTP booster-age change), then walk it
+   locally. Closer to the scenario, but still without staging, and it is a
+   fixture we would author ourselves.
+4. Drop Done-when 3 from this bean. lx2s owns the end-to-end walk.
+
+**Default if no answer: 1.**
