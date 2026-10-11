@@ -10,6 +10,7 @@ import { crc32, deflateRawSync } from "node:zlib";
 
 import { TabularCsvwSchema, toCsvw } from "../../cat-harness/schemas/tabular-csvw.js";
 import { NotATableError } from "./tabular-csv.js";
+import { readDecisionTable } from "./tabular-dak.js";
 import { extractXlsx, findBlocks, isDateFormat, parseRef, readZip, serialToIso, toRef } from "./tabular-xlsx.js";
 
 /** A ZIP (APPNOTE §4.3), every entry deflated unless `stored`. */
@@ -220,5 +221,87 @@ describe("extractXlsx", () => {
     const r = extractXlsx(workbook({ DAK }), opts);
     expect(r.tables.every((t) => !t["fac:stub"] && t.tableSchema.columns.length > 0)).toBe(true);
     expect(JSON.stringify(toCsvw(r))).not.toContain("fac:");
+  });
+});
+
+/** A WHO DAK decision table, shaped as the IMMZ workbook writes one (bean scn4). */
+const DT_CELLS: Record<string, Cell> = {
+  B2: "Decision ID", C2: "IMMZ.D2.DT.DTP",
+  B3: "Business rule", C3: "Determine if the client is due",
+  B4: "Trigger", C4: "IMMZ.D2",
+  B5: "Inputs", E5: "Output", F5: "Guidance displayed to health worker",
+  B6: "DTP schedule, on-time start",
+  B7: "Doses given", C7: "Client's age", D7: "–",
+  B8: "0", C8: "< 1 year", D8: "–", E8: "Client is due", F8: "Should vaccinate",
+  B9: "–", C9: "-", D9: "–", E9: "Client is not due", F9: "Should not vaccinate",
+  B10: "2", C10: "≥ 1 year", D10: "–", E10: "Client is due", F10: "Check the record",
+};
+const withMerges = (xml: string, refs: string[]) =>
+  xml.replace("</sheetData>", `</sheetData><mergeCells count="${refs.length}">${refs.map((r) => `<mergeCell ref="${r}"/>`).join("")}</mergeCells>`);
+
+describe("DAK decision tables (scn4)", () => {
+  it("reads the preamble, the section, the grouped inputs, the titled outputs and the don't-care", () => {
+    const t = extractXlsx(workbook({ DTP: sheet(DT_CELLS) }), opts).tables[0]!;
+    expect(t["fac:anchor"]!.cell).toBe("B2");
+    expect(t["fac:preamble"]).toEqual([
+      { key: "Decision ID", value: "IMMZ.D2.DT.DTP" },
+      { key: "Business rule", value: "Determine if the client is due" },
+      { key: "Trigger", value: "IMMZ.D2" },
+      { key: "Section", value: "DTP schedule, on-time start" },
+    ]);
+    expect(t["fac:headerRow"]).toBe(7);
+    expect(t["fac:extent"]).toEqual({ rows: 3, columns: 5, source: "measured" });
+    expect(t["fac:wildcard"]).toEqual(["–", "-"]);
+    expect(t.tableSchema.columns.map((c) => [c["fac:group"] ?? null, c.titles, c.datatype])).toEqual([
+      ["Inputs", "Doses given", "integer"], // `–` is not evidence: 0 and 2 are
+      ["Inputs", "Client's age", "string"],
+      ["Inputs", "", "any"], // titled `–` and only don't-cares below: nothing measured
+      [null, "Output", "string"],
+      [null, "Guidance displayed to health worker", "string"],
+    ]);
+  });
+
+  it("a title row may repeat the output labels; it is still the title row", () => {
+    const cells = { ...DT_CELLS, E7: "Output", F7: "Guidance displayed to health worker" };
+    expect(extractXlsx(workbook({ S: sheet(cells) }), opts).tables[0]!["fac:headerRow"]).toBe(7);
+  });
+
+  it("no title row (a contraindication table): the inputs stay untitled, never guessed", () => {
+    const cells: Record<string, Cell> = {
+      B2: "Decision ID", C2: "X", B3: "Business rule", C3: "Y", B4: "Trigger", C4: "Z",
+      B5: "Potential contraindications", D5: "Output",
+      B6: "The client is pregnant", C6: "–", D6: "Do not vaccinate",
+    };
+    const t = extractXlsx(workbook({ S: sheet(cells) }), opts).tables[0]!;
+    expect(t["fac:headerRow"]).toBe(5);
+    expect(t.tableSchema.columns.map((c) => [c["fac:group"] ?? null, c.titles])).toEqual([
+      ["Potential contraindications", ""],
+      ["Potential contraindications", ""],
+      [null, "Output"],
+    ]);
+  });
+
+  it("a stray cell does not swallow the table: JE!A1's `7` becomes its own block", () => {
+    const tables = extractXlsx(workbook({ JE: sheet({ ...DT_CELLS, A1: 7 }) }), opts).tables;
+    expect(tables.map((t) => t.url.split("#")[1])).toEqual(["JE!A1:A1", "JE!B2:F10"]);
+    expect(tables[1]!["fac:preamble"]?.[0]?.key).toBe("Decision ID");
+  });
+
+  it("merged ranges are read onto the table they fall inside, and no other", () => {
+    const xml = withMerges(sheet({ ...DT_CELLS, H2: "code", I2: "display", H3: "A", I3: "B" }), ["B6:F6", "F8:F9", "H2:I2"]);
+    const [dt, other] = extractXlsx(workbook({ S: xml }), opts).tables;
+    expect(dt!["fac:merged"]).toEqual(["B6:F6", "F8:F9"]);
+    expect(other!["fac:merged"]).toEqual(["H2:I2"]);
+  });
+
+  it("a block that only starts like one falls back to the generic reading", () => {
+    expect(readDecisionTable([["Decision ID", "X"], ["Business rule", "Y"]], 1)).toBeNull();
+    const t = extractXlsx(workbook({ S: sheet({ B2: "Decision ID", C2: "X", B3: "Trigger", C3: "Y" }) }), opts).tables[0]!;
+    expect(t["fac:preamble"]).toBeUndefined();
+  });
+
+  it("the CSVW export carries none of it", () => {
+    const csvw = JSON.stringify(toCsvw(extractXlsx(workbook({ S: sheet(DT_CELLS) }), opts)));
+    for (const k of ["fac:", "preamble", "wildcard", "Section"]) expect(csvw).not.toContain(k);
   });
 });

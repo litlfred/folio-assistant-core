@@ -168,7 +168,14 @@
         "rows": 44,
         "columns": 3,
         "source": "measured"
-      }
+      },
+      "fac:merged": [
+        "B9:B12",
+        "B13:B25",
+        "C25:D25",
+        "B28:B31",
+        "B33:B36"
+      ]
     },
     {
       "url": "IMMZ DAK_core data dictionary.xlsx#IMMZ.C Client registration!A1:AI18",
