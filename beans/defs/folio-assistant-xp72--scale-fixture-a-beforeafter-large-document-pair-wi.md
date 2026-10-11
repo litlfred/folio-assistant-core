@@ -5,7 +5,7 @@ status: todo
 type: task
 priority: normal
 created_at: 2026-09-22T21:02:55Z
-updated_at: 2026-10-10T16:01:16Z
+updated_at: 2026-10-11T06:20:00Z
 parent: folio-assistant-q4jm
 blocked_by:
     - folio-assistant-jwox
@@ -31,8 +31,8 @@ performance budget. Proposed budget: the review page is interactive in under
 measured, not a fact.
 
 ## Done when
-- [ ] the fixture is committed, with its expected ChangeSet as a golden file
-- [ ] the budget is measured and recorded, then enforced in the browser gate
+- [x] the fixture is committed, with its expected ChangeSet as a golden file
+- [x] the budget is measured and recorded, then enforced in the browser gate
 - [ ] the lx2s committee scenario has been walked through the review page, with screenshots on the PR
 
 
@@ -72,3 +72,23 @@ below the page budget, and it leaves most of the proposed 2 s for the page.
   feed them.
 - Done-when 3: walk the lx2s committee scenario through the review page, with
   screenshots on the PR.
+
+## 2026-10-11: budget measured and enforced (cat-harness-tools#104, merged)
+
+Measured in Chromium against a real server, at 2,000 changed blocks:
+- with change text: 1.7 s before the fix, 0.7 s after;
+- without change text: 3.6 s before, 0.6–0.8 s after.
+
+A CPU profile put the time in style and layout of entries off screen. The fix
+is one CSS rule in `gen-review-page.ts`:
+`#changes li[data-label] { content-visibility: auto; contain-intrinsic-size: auto 14rem; }`.
+Entries stay in the DOM, so j/k navigation, focus, links and find-in-page are
+unchanged.
+
+The gate is `test/review-budget.e2e.ts`: all 2,000 entries listed within 2 s.
+The no-text case is logged, not gated, because `page.route` interception
+inflates it to about 4.4 s and so measures the harness, not the page. The
+tools PR workflow has no e2e job, so the gate runs through
+`bun run cat test:e2e`.
+
+**Still open:** Done-when 3, the lx2s committee walk-through with screenshots.
