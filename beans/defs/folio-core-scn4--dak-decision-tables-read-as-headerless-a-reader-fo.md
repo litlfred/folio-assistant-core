@@ -1,10 +1,10 @@
 ---
 # folio-core-scn4
 title: 'DAK decision tables read as headerless: a reader for the preamble + two-row header shape'
-status: todo
+status: completed
 type: task
 created_at: 2026-10-11T06:13:34Z
-updated_at: 2026-10-11T06:35:00Z
+updated_at: 2026-10-11T07:05:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -21,9 +21,9 @@ The generic reading is correct by the skill's rules. It is just not useful: ever
 A DAK-specific reader, routed by content (a 'Decision ID' cell heading a block), that emits each decision table with its preamble as table notes, inputs and outputs as typed column groups, and '–' recorded as don't-care, not as a value. It also needs the merged-cell ranges, which tabular-xlsx does not read yet.
 
 ## Done when
-- [ ] the IMMZ decision-support workbook's DTs read with titled input and output columns
-- [ ] merged ranges are read, not lost
-- [ ] the generic reader's verdict on non-DAK sheets is unchanged
+- [x] the IMMZ decision-support workbook's DTs read with titled input and output columns
+- [x] merged ranges are read, not lost
+- [x] the generic reader's verdict on non-DAK sheets is unchanged
 
 ## Survey 2026-10-11 (lane C): the shape is regular; the record schema is the gate
 
@@ -57,3 +57,51 @@ would be lost on parse.
 
 Depends on folio-core-urat's PR (core#53), which committed the real record
 this survey reads.
+
+## Summary of Changes
+
+Done 2026-10-11 (lane C).
+
+**Schema** (cat-harness #148 and #149, merged). Four optional `fac:` keys on
+`folio-tabular-csvw/v1`. `toCsvw` drops all four, so the CSVW export is
+unchanged.
+- table `fac:preamble`: `[{key, value}]`;
+- table `fac:wildcard`: a non-empty list. 13 of the 86 real decision tables
+  use both `–` and `-`;
+- table `fac:merged`: A1 ranges;
+- column `fac:group`: the upper row of a two-row header.
+
+**Reader** (`scripts/tabular-dak.ts`, routed from `tabular-xlsx.ts`).
+- A block whose top-left cell is `Decision ID` reads as a decision table:
+  - the preamble rows;
+  - the group row: its first label spans the input columns, and each later
+    label titles one column;
+  - section rows, kept in the preamble under the reader's own key `Section`;
+  - an optional title row, the first row whose outputs are empty or repeat
+    their labels;
+  - the rules, with don't-cares excluded from datatype evidence.
+- Blocks are split at any `Decision ID` that is not top-left. A stray
+  backtick (Measles!E51) and a `7` (JE!A1) had joined tables to their
+  neighbours.
+- Anything that does not fit falls back to the generic reader.
+
+**Measured on the IMMZ workbook** (record regenerated in
+`test/results/tabular-real-sources/`):
+
+| | before | after |
+|---|---|---|
+| decision tables read as such | 0 | 86, plus the 2 READ ME template examples |
+| tables with a header row | 3 | 93 |
+| titled input columns | 0 | 248 of 393 |
+| tables with merged ranges recorded | 0 | 156 |
+
+- **The 145 untitled input columns** are honest:
+  - 21 contraindication tables and one `Age` table have no title row, because
+    each rule's first cell is itself the condition;
+  - the rest are columns the sheet titles `–`.
+- **Generic tables:** 72 in the decision-logic workbook and 13 in the data
+  dictionary keep the same URL and read exactly as before, apart from
+  `fac:merged`. The 3 new generic blocks are the split-off stray cells.
+
+**Tests:** 7 new specs in `tabular-xlsx.test.ts`; the tabular tests pass
+40/40, and `bun run typecheck` is clean.

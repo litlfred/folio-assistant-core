@@ -49,8 +49,14 @@
  * time token outside quotes and brackets (ECMA-376 Part 1 §18.8.30–31).
  *
  * Not read, by design: formulas (a cell's cached value `<v>` is read, its
- * `<f>` is not), merged cells and styling. CSVW cannot express them, which the
- * `tabular-metadata` skill counts as the feature.
+ * `<f>` is not) and styling. Merged ranges ARE read since bean `scn4`, as
+ * `fac:merged` on the table they fall inside: a merge is a fact about the
+ * sheet, and losing it made a DAK decision table's spanning cells read as
+ * empty. CSVW cannot express them, so `toCsvw` drops them.
+ *
+ * A block whose top-left cell is `Decision ID` is a WHO DAK decision table,
+ * and `tabular-dak.ts` reads it (preamble, two-row header, don't-care). A
+ * block that does not fit that shape falls back to the generic reading.
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { basename } from "node:path";
@@ -61,6 +67,7 @@ import { XMLParser, XMLValidator } from "fast-xml-parser";
 import { TABULAR_CSVW_SCHEMA_ID, type TabularCsvw, TabularCsvwSchema } from "../../cat-harness/schemas/tabular-csvw.js";
 import { classifyColumn, columnNames, firstRowIsHeader } from "./tabular-columns.js";
 import { NotATableError } from "./tabular-csv.js";
+import { readDecisionTable } from "./tabular-dak.js";
 
 // ── ZIP (APPNOTE.TXT §4.3) ───────────────────────────────────────
 
@@ -155,6 +162,20 @@ export function toRef(row: number, column: number): string {
   return `${s}${row}`;
 }
 
+/** A sheet's merged ranges (`<mergeCells>`), A1 notation, in document order. */
+function mergedRanges(sheetXml: string): string[] {
+  const ws = xml.parse(sheetXml).worksheet ?? {};
+  return list(ws.mergeCells?.mergeCell).map((m) => String(m["@ref"])).filter((ref) => /^[A-Z]+\d+:[A-Z]+\d+$/.test(ref));
+}
+
+/** The merged ranges lying wholly inside a block. */
+export function mergedWithin(ranges: readonly string[], b: Block): string[] {
+  return ranges.filter((ref) => {
+    const [a, z] = ref.split(":").map(parseRef) as [{ row: number; column: number }, { row: number; column: number }];
+    return a.row >= b.top && z.row <= b.bottom && a.column >= b.left && z.column <= b.right;
+  });
+}
+
 /** One sheet's non-empty cells as text, keyed `row:column`. */
 function sheetCells(sheetXml: string, shared: string[], isDate: boolean[]): Map<string, string> {
   const cells = new Map<string, string>();
@@ -179,7 +200,7 @@ function sheetCells(sheetXml: string, shared: string[], isDate: boolean[]): Map<
   return cells;
 }
 
-interface Block { top: number; left: number; bottom: number; right: number }
+export interface Block { top: number; left: number; bottom: number; right: number }
 
 /** Rectangular blocks of cells: bands split on empty rows, then on empty columns within each band. */
 export function findBlocks(cells: ReadonlyMap<string, string>): Block[] {
@@ -209,6 +230,39 @@ export function findBlocks(cells: ReadonlyMap<string, string>): Block[] {
   return blocks;
 }
 
+/** A block shrunk to the rows and columns that hold a cell, or null when it holds none. */
+function trimBlock(b: Block, cells: ReadonlyMap<string, string>): Block | null {
+  let top = Infinity, left = Infinity, bottom = -Infinity, right = -Infinity;
+  for (let r = b.top; r <= b.bottom; r++)
+    for (let c = b.left; c <= b.right; c++)
+      if (cells.has(`${r}:${c}`)) { top = Math.min(top, r); bottom = Math.max(bottom, r); left = Math.min(left, c); right = Math.max(right, c); }
+  return top === Infinity ? null : { top, left, bottom, right };
+}
+
+/**
+ * A block split at each `Decision ID` cell that is not already its top-left
+ * (bean `scn4`). One stray cell is enough to join a decision table to its
+ * neighbour: a backtick in Measles!E51, a `7` in JE!A1. So each `Decision ID`
+ * starts its own block, running to the next one or the block's end. Whatever
+ * lies above or left of it stays a block of its own, read generically, rather
+ * than being dropped.
+ */
+export function splitAtDecisionIds(b: Block, cells: ReadonlyMap<string, string>): Block[] {
+  const ids: { row: number; column: number }[] = [];
+  for (let r = b.top; r <= b.bottom; r++)
+    for (let c = b.left; c <= b.right; c++)
+      if (cells.get(`${r}:${c}`)?.trim() === "Decision ID") { ids.push({ row: r, column: c }); break; }
+  if (ids.length === 0 || (ids.length === 1 && ids[0]!.row === b.top && ids[0]!.column === b.left)) return [b];
+  const out: (Block | null)[] = [];
+  out.push(trimBlock({ ...b, bottom: ids[0]!.row - 1 }, cells));
+  ids.forEach((id, i) => {
+    const bottom = i + 1 < ids.length ? ids[i + 1]!.row - 1 : b.bottom;
+    if (id.column > b.left) out.push(trimBlock({ top: id.row, left: b.left, bottom, right: id.column - 1 }, cells));
+    out.push(trimBlock({ top: id.row, left: id.column, bottom, right: b.right }, cells));
+  });
+  return out.filter((x): x is Block => x !== null);
+}
+
 /** The record for one workbook. Pure: no filesystem. */
 export function extractXlsx(buf: Buffer, opts: { url: string; docId: string }): TabularCsvw {
   if (buf.length < 4 || buf.readUInt32LE(0) !== 0x04034b50) throw new NotATableError("no ZIP signature, so not a workbook");
@@ -236,7 +290,8 @@ export function extractXlsx(buf: Buffer, opts: { url: string; docId: string }): 
     const sheetXml = target ? text(target) : undefined;
     if (!sheetXml) throw new NotATableError(`sheet "${name}" names a part that is not in the archive`);
     const cells = sheetCells(sheetXml, shared, isDate);
-    for (const b of findBlocks(cells)) {
+    const merges = mergedRanges(sheetXml);
+    for (const b of findBlocks(cells).flatMap((blk) => splitAtDecisionIds(blk, cells))) {
       const grid: string[][] = [];
       for (let r = b.top; r <= b.bottom; r++) {
         const row: string[] = [];
@@ -244,18 +299,37 @@ export function extractXlsx(buf: Buffer, opts: { url: string; docId: string }): 
         grid.push(row);
       }
       const width = b.right - b.left + 1;
+      const url = `${opts.url}#${name}!${toRef(b.top, b.left)}:${toRef(b.bottom, b.right)}`;
+      const anchor = { sheet: name, cell: toRef(b.top, b.left), row: b.top, column: b.left };
+      const merged = mergedWithin(merges, b);
+      const extras = merged.length > 0 ? { "fac:merged": merged } : {};
+      const dt = readDecisionTable(grid, b.top);
+      if (dt) {
+        tables.push({
+          url,
+          tableSchema: { columns: dt.columns },
+          "fac:anchor": anchor,
+          "fac:headerRow": dt.headerRow,
+          "fac:extent": { rows: dt.rows, columns: width, source: "measured" },
+          "fac:preamble": dt.preamble,
+          ...(dt.wildcard ? { "fac:wildcard": dt.wildcard } : {}),
+          ...extras,
+        });
+        continue;
+      }
       const header = grid.length > 1 && firstRowIsHeader(grid[0]!, grid.slice(1));
       const data = header ? grid.slice(1) : grid;
       const titles = header ? grid[0]! : Array.from({ length: width }, () => "");
       const names = columnNames(titles);
       tables.push({
-        url: `${opts.url}#${name}!${toRef(b.top, b.left)}:${toRef(b.bottom, b.right)}`,
+        url,
         tableSchema: {
           columns: names.map((n, i) => ({ name: n, titles: titles[i]!.trim(), ...classifyColumn(data.map((r) => r[i]!)) })),
         },
-        "fac:anchor": { sheet: name, cell: toRef(b.top, b.left), row: b.top, column: b.left },
+        "fac:anchor": anchor,
         "fac:headerRow": header ? b.top : null,
         "fac:extent": { rows: data.length, columns: width, source: "measured" },
+        ...extras,
       });
     }
   }
