@@ -1,7 +1,7 @@
 ---
 # folio-assistant-kx0p
 title: 'catalogue visualiser: 6 wireframe findings'
-status: todo
+status: completed
 type: task
 priority: normal
 tags:
@@ -9,7 +9,7 @@ tags:
     - ui
     - visualiser-catalogue
 created_at: 2026-09-23T10:36:14Z
-updated_at: 2026-09-30T16:12:47Z
+updated_at: 2026-10-11T05:44:47Z
 parent: folio-assistant-4ccr
 ---
 
@@ -75,3 +75,29 @@ carries neither fix.
 Next step: merge or re-apply `claude/kx0p-catalogue-viz` in who-iris,
 regenerate, and re-measure findings 4 and 6. The cat-harness-store copy
 should be reopened.
+
+
+## Correction 2026-10-11: it DID land, by a different implementation
+
+The 2026-10-10 note above is wrong, and is withdrawn. It checked whether
+branch `claude/kx0p-catalogue-viz` (`6d4c623`) was merged, and grepped
+who-iris main for that branch's own strings (`ic-filter`, `verdict-count`).
+The branch was never merged, but **the fixes reached main another way**
+(checked at who-iris `ec377dc`):
+- **Finding 4:** materialized rows first. `STATE_ORDER` in
+  `scripts/gen-iris-pages.ts:1836` and the stable rank at `:1874` both cite
+  this bean.
+- **Finding 6:** each gate count now sits inside its pill and says what it
+  counts ("permitted: 3 of 6"). See `verdictBadge` at `:1796`, citing this bean.
+- **Test:** `scripts/tests/gen-iris-pages.test.ts:719`, "the catalogue page
+  (bean kx0p)".
+- **The filter half of finding 4** is covered by the site-wide table filter
+  (cat-harness `docs-ui.js` `mountTableFilters`). The owner chose one
+  site-wide filter on 2026-09-30, and it mounts on tables over 25 rows. The
+  catalogue holds 13 nodes, so the old branch's hand-written filter would have
+  contradicted that ruling.
+
+## Summary of Changes
+
+Closed 2026-10-11 on that evidence. The cat-harness-store copy's 2026-10-09
+closure stands. The request to reopen it is withdrawn.
