@@ -30,7 +30,7 @@
  * and a reviewer surface this local path does not have yet.
  *
  *   bun run folio-assistant-core/scripts/stage-folio-local.ts --repo <folio> --slug <slug> \
- *     --publish-repo owner/repo --pr-url <url> --run-url <url> [--check-page <path>] [--deploy]
+ *     --publish-repo owner/repo --pr-url <url> --run-url <url> [--check-page <path>] [--lean-status <json>] [--deploy]
  */
 import { execFileSync } from "node:child_process";
 import { cpSync, existsSync, mkdtempSync, rmSync } from "node:fs";
@@ -69,7 +69,11 @@ const sha = execFileSync("git", ["rev-parse", "--short=7", "HEAD"], { cwd: repo 
 rmSync(site, { recursive: true, force: true });
 const build = arg("build");
 if (build) run("bash", ["-c", build], repo);
-else run("bun", ["run", join(REPO_ROOT, "folio-assistant-core/scripts/build-folio-site.ts"), "--out", site], repo);
+else {
+  // A measured Lean compile status (qou-lean-status/v1) is the folio's to supply; without it every Lean link reads "unchecked".
+  const leanStatus = arg("lean-status");
+  run("bun", ["run", join(REPO_ROOT, "folio-assistant-core/scripts/build-folio-site.ts"), "--out", site, ...(leanStatus ? ["--lean-status", resolve(leanStatus)] : [])], repo);
+}
 
 // 2. Rail
 run("bun", ["run", join(REPO_ROOT, "cat-harness-tools/scripts/rail-standalone-pages.ts"), "--site", site, "--built", "cat-harness", "--foreign-site", "--home-label", arg("home-label") ?? slug], REPO_ROOT);

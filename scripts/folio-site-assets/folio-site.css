@@ -55,3 +55,25 @@ body.in-harness .folio-page { display: block; }
 .lean-badge { font-family: system-ui, sans-serif; font-size: .7rem; color: var(--muted); white-space: nowrap; }
 .block-links a.lean-sorry { color: #b26b00; }
 .tex-svg img { max-width: 100%; height: auto; }
+
+/* ── Per-block QA badge, Lean status and the QA report panel (folio-site-blocks.ts, qa-panel.js).
+   currentColor and translucent tints, so it reads in both schemes. ── */
+.block-links .qa-badge { font-weight: 600; border: 1px solid currentColor; border-radius: 3px; padding: 0 .3em; }
+.block-links .qa-badge.has-bad, .block-links .qa-badge.milnor-bad { color: #b45309; }
+.block-links .qa-badge.none, .block-links .lean-absent { opacity: .45; }
+.block-links .lean-absent { cursor: not-allowed; margin-left: .6rem; }
+.block-links a.build-fail { color: #b91c1c; } .block-links a.build-pass { color: #15803d; }
+.block-links .permalink { opacity: .7; }
+.fa-render-failed { color: #b91c1c; }
+.qa-dialog { max-width: min(1100px, 96vw); width: 96vw; max-height: 88vh; padding: 1em 1.2em; border: 1px solid rgba(127,127,127,.5); border-radius: 6px; background: var(--bg); color: var(--fg); font: 14px/1.45 system-ui, sans-serif; }
+.qa-dialog::backdrop { background: rgba(0,0,0,.45); }
+.qa-head { display: flex; justify-content: space-between; align-items: baseline; gap: 1em; } .qa-head h2 { font-size: 1.15em; margin: 0; }
+.qa-close { font-size: 1.1em; background: none; border: 0; color: inherit; cursor: pointer; }
+.qa-meta { margin: .4em 0; overflow-wrap: anywhere; } .qa-err { display: block; white-space: pre-wrap; margin-top: .3em; color: #b91c1c; }
+.qa-group { margin: .5em 0; border-top: 1px solid rgba(127,127,127,.3); padding-top: .3em; } .qa-group.milnor > summary { font-weight: 700; } .qa-group summary { cursor: pointer; }
+.qa-group table { border-collapse: collapse; width: 100%; margin-top: .3em; }
+.qa-group th, .qa-group td { text-align: left; vertical-align: top; padding: .2em .4em; border: 0; border-bottom: 1px solid rgba(127,127,127,.2); }
+.qa-group td.notes { max-width: 40em; overflow-wrap: anywhere; }
+.qa-group td.res-pass { color: #15803d; } .qa-group td.res-fail { color: #b91c1c; font-weight: 600; } .qa-group td.res-warn { color: #b45309; font-weight: 600; } .qa-group td.res-na { opacity: .6; }
+@media (max-width: 700px) { .qa-group td:nth-child(3), .qa-group th:nth-child(3) { display: none; } }
+@media print { .block-links { display: none; } }

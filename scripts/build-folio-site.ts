@@ -19,28 +19,47 @@
  *   <route>/<paper>/index.html                       the paper: chapters load as you scroll
  *   <route>/<paper>/<chapter>/index.html             the chapter: sections load as you scroll
  *   <route>/<paper>/<chapter>/<section>/…/index.html one section (subsections nest)
- *   <route>/<paper>/outline.json                     chapters, sections and blocks, in manifest order
- *   <route>/<paper>/blocks/<chapter>/<block>.json    one block's KG node, plus its rendered HTML
+ *   <route>/<paper>/b/<block>/index.html             one block, breadcrumbed chapter › section › block
+ *   <route>/<paper>/outline.json                     the paper and its chapters, nothing deeper
+ *   <route>/<paper>/outline/<chapter>.json           one chapter's sections and blocks, in manifest order
+ *   <route>/<paper>/labels/<chapter>.json            one chapter's label → page and label → number
+ *   <route>/<paper>/blocks/<chapter>/<block>.json    one block's KG node, its rendered HTML, its QA summary and Lean
+ *   <route>/<paper>/qa/<chapter>/<block>.json        one block's full QA report, fetched when a reader opens it
  *   <route>/assets/folio-site.{js,css}               the one loader every shell shares
  *
  * `<route>` defaults to `cat-harness/folio`.
+ *
+ * ## What a page fetches, and why the outline is sharded (outline v2)
+ *
+ * The v1 outline carried every chapter's tree and two paper-wide maps (label →
+ * page, label → number) in one file, and every page fetched it. Measured on qou
+ * 2026-10-10 it was 736 KB — labels 334 KB, chapters 305 KB, numbers 119 KB —
+ * against 0.2% of a section page's bytes being the content itself. Now:
+ *
+ * - every page fetches the TOP-LEVEL outline (the chapters, no sections);
+ * - a chapter, section or block page fetches its ONE chapter's outline; the
+ *   paper page fetches each chapter's as the reader scrolls to it;
+ * - a cross-reference needs no index at all: its target page and printed number
+ *   are written into the block HTML at build time (`data-at`, and the link
+ *   text), so the label maps are read only to resolve a `#label` that arrived
+ *   in the URL, and then only per chapter.
  *
  * ## The block payload IS the KG node
  *
  * Every block already has a JSON-LD node beside it (`<block>.jsonld`, written
  * by `gen-block-jsonld.ts`: `@id`, `@type`, kind, label, title, `uses`). The
- * payload is that node, unchanged, with one added property, `html`: the body
+ * payload is that node, unchanged, with added properties: `html`, the body
  * rendered by `renderDocumentHtml`, so math, glossary directives and
- * citations behave exactly as on the document site. A block with no `.jsonld`
- * still gets a payload built from its manifest, so a folio whose graph has not
- * been generated is not a blank site.
+ * citations behave exactly as on the document site; `qa`, the badge's counts;
+ * and `lean`, the resolved formalisation (`folio-site-blocks.ts`). A block with
+ * no `.jsonld` still gets a payload built from its manifest, so a folio whose
+ * graph has not been generated is not a blank site.
  *
  * ## Links work from any depth, and under a staging prefix
  *
  * A shell names its own depth (`data-root`, relative), so the same tree works
  * at `/`, under `/STAGING/<branch>/` and from a local file server. Nothing
- * absolute is baked in. A cross-reference `#label` that is not on the current
- * page is resolved through the outline to the section page that holds it.
+ * absolute is baked in.
  */
 import { editLinksAsset } from "../../cat-harness-tools/src/core/edit-links.js";
 import { createHash } from "node:crypto";
@@ -49,13 +68,15 @@ import { dirname, join, relative, resolve } from "node:path";
 
 import { readHarnessConfig } from "../../cat-harness/schemas/harness-config.js";
 import { CONFIG_SUFFIX, isReservedIndexFile } from "../../cat-harness/schemas/instance-roots.js";
+import type { FormalTreeCache } from "../../cat-harness/schemas/formal-ref.js";
 import type { Block, Chapter, Paper, Section, SectionRef } from "../../cat-harness/schemas/types.js";
 import { kindHeading } from "../../cat-harness/schemas/translation.js";
 import { resolveLiquidValues } from "../../cat-harness-tools/content/pipeline/liquid-values.js";
 import { documentManifests, katexMacros, renderDocumentHtml } from "./build-document-site.js";
+import { blockLean, blockQaReport, configureFolioLeanPackages, loadLeanStatus, qaSummary, textHasSorry, type LeanStatusIndex } from "./folio-site-blocks.js";
 import { addToReport, emptyReport, imageExistsUnder, qaBlockHtml, type SiteQaReport } from "./folio-site-qa.js";
 
-export const SITE_OUTLINE_SCHEMA = "folio-site-outline/v1" as const;
+export const SITE_OUTLINE_SCHEMA = "folio-site-outline/v2" as const;
 
 export interface SiteSection {
   slug: string;
@@ -63,18 +84,32 @@ export interface SiteSection {
   number: string;
   title: string;
   label?: string;
-  /** Block payload paths, relative to the paper directory. */
+  /** The section's own blocks, by manifest root: the payload is `blocks/<chapter>/<root>.json`. */
   blocks: string[];
   sections: SiteSection[];
-  /** How many of this section's blocks (its subsections included) have a sorry-free / sorry-carrying Lean sibling. */
-  lean: { proved: number; sorry: number };
+  /**
+   * Lean under this entry, its subsections included: formalisations with no
+   * sorry / with a sorry, and blocks whose kind expects Lean but none resolves.
+   */
+  lean: { proved: number; sorry: number; absent: number };
 }
+/** A chapter as the TOP-LEVEL outline lists it: no sections — those are in `outline/<slug>.json`. */
 export interface SiteChapter {
   slug: string;
   number: string;
   title: string;
   label?: string;
+  lean: { proved: number; sorry: number; absent: number };
+}
+/** `outline/<chapter>.json`: one chapter's tree. */
+export interface SiteChapterOutline extends SiteChapter {
+  $schema: "folio-site-chapter/v1";
   sections: SiteSection[];
+}
+/** `labels/<chapter>.json`: a label → its page below the paper, and its printed number. */
+export interface SiteLabels {
+  labels: Record<string, string>;
+  numbers: Record<string, string>;
 }
 export interface SiteOutline {
   $schema: typeof SITE_OUTLINE_SCHEMA;
@@ -83,12 +118,10 @@ export interface SiteOutline {
   math: boolean;
   macros: Record<string, string>;
   chapters: SiteChapter[];
-  /** Block label -> its section's path below the paper (`<chapter>/<section>/…`). */
-  labels: Record<string, string>;
-  /** Label -> its printed number (`Proposition 2.3.1` prints `2.3.1`), for `\ref` link text. */
-  numbers: Record<string, string>;
   /** Where the sources live, for each block's edit / feedback / Lean links. Absent when undeclared. */
   source?: { repository: string; ref: string };
+  /** Whether Lean compile status was measured for this build, and how; absent when it was not. */
+  leanStatus?: { measuredAt?: string; method?: string; toolchain?: string };
 }
 
 const isRef = (s: Section | SectionRef): s is SectionRef => !("blocks" in s);
@@ -96,14 +129,29 @@ const isRef = (s: Section | SectionRef): s is SectionRef => !("blocks" in s);
 /** The kinds a paper numbers (amsthm's theorem-like environments). Proofs, prose, equations and figures are not. */
 const NUMBERED_KINDS = new Set(["definition", "theorem", "lemma", "proposition", "corollary", "conjecture", "example", "remark", "algorithm"]);
 
+const slugify = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFKD")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "");
+
 /** `sec:commutative-formal-group` -> `commutative-formal-group`; a title is slugified. */
 export function sectionSlug(sec: { label?: string; title: string }, taken: Set<string>): string {
-  const base =
-    (sec.label ? sec.label.replace(/^[a-z]+:/i, "") : sec.title)
-      .toLowerCase()
-      .normalize("NFKD")
-      .replace(/[^a-z0-9]+/g, "-")
-      .replace(/^-+|-+$/g, "") || "section";
+  const base = slugify(sec.label ? sec.label.replace(/^[a-z]+:/i, "") : sec.title) || "section";
+  let slug = base;
+  for (let i = 2; taken.has(slug); i++) slug = `${base}-${i}`;
+  taken.add(slug);
+  return slug;
+}
+
+/**
+ * A block page's slug: its label with the kind prefix kept (`prop:foo` →
+ * `prop-foo`, so a definition and a proposition of one name do not collide),
+ * else its manifest root. Unique within the paper.
+ */
+export function blockSlug(block: { label?: string; root: string }, taken: Set<string>): string {
+  const base = slugify(block.label ?? block.root) || "block";
   let slug = base;
   for (let i = 2; taken.has(slug); i++) slug = `${base}-${i}`;
   taken.add(slug);
@@ -115,28 +163,33 @@ const up = (depth: number) => (depth === 0 ? "./" : "../".repeat(depth));
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
-/** The shell every page is: a title, a scope, and the shared loader. */
-export function shellHtml(title: string, depth: number, scope: { paper?: string; path?: string }): string {
+/**
+ * The shell every page is: a title, a scope, and the shared loader. A block
+ * page names its block (`data-block`, `<chapter>/<root>`) as well as the
+ * section that holds it (`data-path`).
+ */
+export function shellHtml(title: string, depth: number, scope: { paper?: string; path?: string; block?: string }): string {
   const root = up(depth);
   return `<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="fa-render-regions" content="1">
 <title>${esc(title)}</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css">
 <link rel="stylesheet" href="${root}assets/folio-site.css">
+<script defer src="${root}assets/kg-render.js"></script>
 <script defer src="${root}assets/edit-links.js"></script>
 <script defer src="${root}assets/folio-site.js"></script>
 </head>
-<body data-root="${root}" data-paper="${esc(scope.paper ?? "")}" data-path="${esc(scope.path ?? "")}">
+<body data-root="${root}" data-paper="${esc(scope.paper ?? "")}" data-path="${esc(scope.path ?? "")}"${scope.block ? ` data-block="${esc(scope.block)}"` : ""}>
 <div class="folio-page"><nav id="toc" aria-label="Contents"></nav>
 <main><p class="crumbs" id="crumbs"></p><h1>${esc(title)}</h1><div id="content"><p class="muted">Loading…</p></div></main></div>
 </body>
 </html>
 `;
 }
-
 
 /**
  * A block's fenced ```tex blocks, made readable. The paper pipeline has no
@@ -256,19 +309,74 @@ export function declaredRepository(repoRoot: string): { repository: string; ref:
  * the Lean build (L3's baseline) stays the authority on whether it compiles.
  */
 export function leanStatus(src: string): "proved" | "sorry" {
-  const code = src.replace(/\/-[\s\S]*?-\//g, "").replace(/--.*$/gm, "");
-  return /\bsorry\b/.test(code) ? "sorry" : "proved";
+  return textHasSorry(src) ? "sorry" : "proved";
+}
+
+
+/**
+ * Cross-references, resolved at build time. A `\ref` renders as
+ * `<a href="#label">label</a>`; each one whose label the paper defines gets
+ * `data-at` (the page below the paper that holds it) and, when its text is the
+ * bare label, the label's printed number. That is what lets a page resolve a
+ * reference without fetching any label index.
+ */
+export function resolveRefs(html: string, labels: Record<string, string>, numbers: Record<string, string>): string {
+  return html.replace(/<a href="#([^"]+)"([^>]*)>([^<]*)<\/a>/g, (m, href: string, rest: string, text: string) => {
+    let label = href;
+    try {
+      label = decodeURIComponent(href);
+    } catch {
+      /* not encoded */
+    }
+    const at = labels[label];
+    if (at === undefined || /data-at=/.test(rest)) return m;
+    const shown = text === label && numbers[label] ? numbers[label] : text;
+    return `<a href="#${href}"${rest} data-at="${esc(at)}">${shown}</a>`;
+  });
+}
+
+/**
+ * The shared client renderer (`kg-render.js`: the three-state fetch, failure
+ * notes, and `data-fa-render` for print), with its documentation stripped:
+ * the source is ~70% comment, and every page loads it.
+ */
+export function kgRenderAsset(): string {
+  // declared-path-literal: one specific published asset of the harness layer, read as a
+  // sibling layer the way this file imports its modules; absent, the loader works without it.
+  const src = join(import.meta.dir, "../../cat-harness/docs/assets/js/kg-render.js");
+  if (!existsSync(src)) return "/* kg-render.js not found in this checkout; folio-site.js works without it */\n";
+  return (
+    "// kg-render.js — cat-harness/docs/assets/js/kg-render.js, comments stripped (its source carries the documentation).\n" +
+    readFileSync(src, "utf-8")
+      .replace(/^[ \t]*\/\*[\s\S]*?\*\/[ \t]*\n/gm, "")
+      .replace(/^[ \t]*\/\/.*\n/gm, "")
+      .replace(/\n{2,}/g, "\n")
+  );
 }
 
 export interface FolioSiteResult {
-  papers: { slug: string; blocks: number; pages: number; qa: SiteQaReport }[];
+  papers: {
+    slug: string;
+    blocks: number;
+    pages: number;
+    qa: SiteQaReport;
+    /** Blocks with a QA verdict, and Lean found / expected-but-absent / found through `lean.ref` only. */
+    meta: { qaReports: number; leanFound: number; leanAbsent: number; leanViaRef: number; leanCompile: Record<string, number> };
+  }[];
   errors: string[];
+  /** Where the Lean packages came from, or `undefined` when the folio declares none. */
+  leanPackages?: { from?: string; count: number };
+}
+
+interface PendingBlock {
+  rel: string;
+  node: Record<string, unknown>;
 }
 
 export async function buildFolioSite(
   repoRoot: string,
   outDir: string,
-  opts: { route?: string; math?: boolean; repository?: string; ref?: string } = {},
+  opts: { route?: string; math?: boolean; repository?: string; ref?: string; leanStatus?: string; leanPackages?: string } = {},
 ): Promise<FolioSiteResult> {
   // declared-path-literal: this is the published URL ROUTE the owner named
   // (2026-10-05: "<base_url>/cat-harness/folio/<paper>/<chapter>/<section>"),
@@ -288,6 +396,11 @@ export async function buildFolioSite(
   cpSync(join(import.meta.dir, "folio-site-assets"), join(base, "assets"), { recursive: true });
   // The platform's one recipe for edit and feedback links (bean v433).
   writeFileSync(join(base, "assets", "edit-links.js"), editLinksAsset());
+  writeFileSync(join(base, "assets", "kg-render.js"), kgRenderAsset());
+
+  result.leanPackages = await configureFolioLeanPackages(repoRoot, opts.leanPackages);
+  const status: LeanStatusIndex = loadLeanStatus(opts.leanStatus);
+  const leanCache: FormalTreeCache = new Map();
 
   const papers: { slug: string; title: string }[] = [];
   const sourceRepo = opts.repository ? { repository: opts.repository, ref: opts.ref ?? "main" } : declaredRepository(repoRoot);
@@ -302,19 +415,31 @@ export async function buildFolioSite(
       math,
       macros: math ? { ...preambleMacros(docDir), ...katexMacros(paper.macros) } : {},
       chapters: [],
-      labels: {},
-      numbers: {},
       ...(sourceRepo ? { source: sourceRepo } : {}),
+      ...(status.meta ? { leanStatus: status.meta } : {}),
     };
+    // Paper-wide while building (a reference may cross chapters); written out per chapter.
+    const labels: Record<string, string> = {};
+    const numbers: Record<string, string> = {};
+    const labelChapter: Record<string, string> = {};
+    const pending: PendingBlock[] = [];
+    const chapterOutlines: SiteChapterOutline[] = [];
+    const blockSlugs = new Set<string>();
+    const meta = { qaReports: 0, leanFound: 0, leanAbsent: 0, leanViaRef: 0, leanCompile: {} as Record<string, number> };
     let blockCount = 0;
     const qa = emptyReport();
     let pages = 1;
-    const writeShell = (path: string, title: string) => {
+    const writeShell = (path: string, title: string, block?: string) => {
       const depth = path ? path.split("/").length + 1 : 1;
       const dir = join(paperOut, path);
       mkdirSync(dir, { recursive: true });
-      writeFileSync(join(dir, "index.html"), shellHtml(title, depth, { paper: d.slug, path }));
+      writeFileSync(join(dir, "index.html"), shellHtml(title, depth, { paper: d.slug, path: block ? undefined : path, block }));
       pages++;
+    };
+    const setLabel = (label: string, path: string, chapter: string, number?: string) => {
+      labels[label] = path;
+      labelChapter[label] = chapter;
+      if (number) numbers[label] = number;
     };
 
     let chIndex = 0;
@@ -327,11 +452,16 @@ export async function buildFolioSite(
       }
       const chapter = (await import(chPath)).default as Chapter;
       const chNum = String(++chIndex);
-      const ch: SiteChapter = { slug: chRef.dir, number: chNum, title: chapter.title, ...(chapter.label ? { label: chapter.label } : {}), sections: [] };
-      if (chapter.label) {
-        outline.labels[chapter.label] = chRef.dir;
-        outline.numbers[chapter.label] = chNum;
-      }
+      const ch: SiteChapterOutline = {
+        $schema: "folio-site-chapter/v1",
+        slug: chRef.dir,
+        number: chNum,
+        title: chapter.title,
+        ...(chapter.label ? { label: chapter.label } : {}),
+        lean: { proved: 0, sorry: 0, absent: 0 },
+        sections: [],
+      };
+      if (chapter.label) setLabel(chapter.label, chRef.dir, chRef.dir, chNum);
 
       // amsthm numbering: theorem-like blocks share ONE counter per top-level
       // section, so a statement prints as `Proposition <chapter>.<section>.<n>`;
@@ -351,11 +481,8 @@ export async function buildFolioSite(
           const path = `${parentPath}/${slug}`;
           const number = `${parentNum}.${++secIndex}`;
           const count = counter ?? { section: number, n: 0 };
-          const s: SiteSection = { slug, number, title: sec.title, ...(sec.label ? { label: sec.label } : {}), blocks: [], sections: [], lean: { proved: 0, sorry: 0 } };
-          if (sec.label) {
-            outline.labels[sec.label] = path;
-            outline.numbers[sec.label] = number;
-          }
+          const s: SiteSection = { slug, number, title: sec.title, ...(sec.label ? { label: sec.label } : {}), blocks: [], sections: [], lean: { proved: 0, sorry: 0, absent: 0 } };
+          if (sec.label) setLabel(sec.label, path, chRef.dir, number);
           for (const root of sec.blocks) {
             const ts = join(chDir, `${root}.ts`);
             if (!existsSync(ts)) {
@@ -385,38 +512,56 @@ export async function buildFolioSite(
             const jsonld = join(chDir, `${root}.jsonld`);
             const node: Record<string, unknown> = existsSync(jsonld)
               ? JSON.parse(readFileSync(jsonld, "utf-8"))
-              : { kind: block.kind, ...("label" in block && block.label ? { label: block.label } : {}), ...("title" in block && block.title ? { title: block.title } : {}) };
+              : { kind: block.kind, ...(label ? { label } : {}), ...("title" in block && block.title ? { title: block.title } : {}) };
             node.html = html;
             node.kind = block.kind;
-            // Repo-relative paths, so the loader can link the edit page and the Lean sibling.
+            // Repo-relative paths, so the loader can link the edit page and the Lean file.
             node.source = relative(repoRoot, mdPath);
-            const leanSibling = join(chDir, `${root}.lean`);
-            if (existsSync(leanSibling)) {
-              node.leanSource = relative(repoRoot, leanSibling);
-              node.leanStatus = leanStatus(readFileSync(leanSibling, "utf-8"));
-              s.lean[node.leanStatus === "sorry" ? "sorry" : "proved"]++;
-            }
             node.heading = block.kind === "prose" ? "" : kindHeading(block.kind, "en");
             if ("title" in block && typeof block.title === "string") node.title = block.title;
-            if (NUMBERED_KINDS.has(block.kind)) {
-              node.number = `${count.section}.${++count.n}`;
-              if (label) outline.numbers[label] = node.number as string;
+            if (NUMBERED_KINDS.has(block.kind)) node.number = `${count.section}.${++count.n}`;
+            if (label) setLabel(label, path, chRef.dir, node.number as string | undefined);
+            // Its own page, and its QA and Lean.
+            const page = blockSlug({ label, root }, blockSlugs);
+            node.page = `b/${page}`;
+            const report = blockQaReport(existsSync(mdPath) ? mdPath : ts, repoRoot);
+            if (report) {
+              node.qa = qaSummary(report);
+              const qrel = join("qa", chRef.dir, `${root}.json`);
+              mkdirSync(dirname(join(paperOut, qrel)), { recursive: true });
+              writeFileSync(join(paperOut, qrel), JSON.stringify(report) + "\n");
+              meta.qaReports++;
+            }
+            const leanRef = (block as { lean?: { ref?: unknown } }).lean?.ref;
+            const lean = blockLean({
+              kind: block.kind,
+              ref: typeof leanRef === "string" ? leanRef : undefined,
+              sibling: join(chDir, `${root}.lean`),
+              repoRoot,
+              status,
+              cache: leanCache,
+            });
+            if (lean.expected || lean.path) node.lean = lean;
+            if (lean.path) {
+              meta.leanFound++;
+              if (lean.via === "ref") meta.leanViaRef++;
+              meta.leanCompile[lean.compiles!] = (meta.leanCompile[lean.compiles!] ?? 0) + 1;
+              s.lean[lean.sorry ? "sorry" : "proved"]++;
+            } else if (lean.expected) {
+              meta.leanAbsent++;
+              s.lean.absent++;
             }
             const q = await qaBlockHtml(`${chRef.dir}/${root}`, html, { math, macros: outline.macros, imageExists: imageExistsUnder(paperOut) });
             addToReport(qa, q.findings, q.katexUnknown);
-            const rel = `blocks/${chRef.dir}/${root}.json`;
-            mkdirSync(join(paperOut, "blocks", chRef.dir), { recursive: true });
-            writeFileSync(join(paperOut, rel), JSON.stringify(node) + "\n");
-            s.blocks.push(rel);
+            pending.push({ rel: `blocks/${chRef.dir}/${root}.json`, node });
+            s.blocks.push(root);
             blockCount++;
-            if ("label" in block && typeof block.label === "string") outline.labels[block.label] = path;
+            const name = node.number ? `${node.heading} ${node.number}` : (node.heading as string) || (node.title as string) || root;
+            writeShell(node.page as string, name + (node.number && node.title ? ` (${node.title})` : ""), `${chRef.dir}/${root}`);
           }
           if (sec.subsections) {
             s.sections = await walk(sec.subsections, path, new Set(), number, count);
-            for (const sub of s.sections) {
-              s.lean.proved += sub.lean.proved;
-              s.lean.sorry += sub.lean.sorry;
-            }
+            for (const sub of s.sections) for (const k of ["proved", "sorry", "absent"] as const) s.lean[k] += sub.lean[k];
           }
           writeShell(path, sec.title);
           out.push(s);
@@ -424,16 +569,36 @@ export async function buildFolioSite(
         return out;
       };
       ch.sections = await walk(chapter.sections, chRef.dir, new Set(), chNum, null);
+      for (const s of ch.sections) for (const k of ["proved", "sorry", "absent"] as const) ch.lean[k] += s.lean[k];
       writeShell(chRef.dir, chapter.title);
-      outline.chapters.push(ch);
+      chapterOutlines.push(ch);
+      outline.chapters.push({ slug: ch.slug, number: ch.number, title: ch.title, ...(ch.label ? { label: ch.label } : {}), lean: ch.lean });
     }
-    mkdirSync(paperOut, { recursive: true });
+
+    // Now that every label is known, the block payloads go out with their references resolved.
+    for (const { rel, node } of pending) {
+      node.html = resolveRefs(node.html as string, labels, numbers);
+      mkdirSync(dirname(join(paperOut, rel)), { recursive: true });
+      writeFileSync(join(paperOut, rel), JSON.stringify(node) + "\n");
+    }
+    mkdirSync(join(paperOut, "outline"), { recursive: true });
+    mkdirSync(join(paperOut, "labels"), { recursive: true });
+    for (const ch of chapterOutlines) {
+      writeFileSync(join(paperOut, "outline", `${ch.slug}.json`), JSON.stringify(ch) + "\n");
+      const shard: SiteLabels = { labels: {}, numbers: {} };
+      for (const [l, c] of Object.entries(labelChapter)) {
+        if (c !== ch.slug) continue;
+        shard.labels[l] = labels[l]!;
+        if (numbers[l]) shard.numbers[l] = numbers[l]!;
+      }
+      writeFileSync(join(paperOut, "labels", `${ch.slug}.json`), JSON.stringify(shard) + "\n");
+    }
     writeFileSync(join(paperOut, "outline.json"), JSON.stringify(outline) + "\n");
     // The rendered-content QA, beside the site it judges (folio-site-qa.ts).
     writeFileSync(join(paperOut, "qa.json"), JSON.stringify(qa, null, 1) + "\n");
     writeFileSync(join(paperOut, "index.html"), shellHtml(outline.title, 1, { paper: d.slug, path: "" }));
     papers.push({ slug: d.slug, title: outline.title });
-    result.papers.push({ slug: d.slug, blocks: blockCount, pages, qa });
+    result.papers.push({ slug: d.slug, blocks: blockCount, pages, qa, meta });
   }
   writeFileSync(join(base, "papers.json"), JSON.stringify({ papers }) + "\n");
   writeFileSync(join(base, "index.html"), shellHtml("Folio", 0, {}));
@@ -448,24 +613,42 @@ if (import.meta.main) {
   };
   if (args.includes("--help")) {
     console.log(
-      "usage: bun run folio-assistant-core/scripts/build-folio-site.ts [--repo <folio root>] [--out _site] [--route cat-harness/folio] [--math | --no-math] [--strict] [--source-repo owner/repo] [--source-ref main]",
+      "usage: bun run folio-assistant-core/scripts/build-folio-site.ts [--repo <folio root>] [--out _site] [--route cat-harness/folio] [--math | --no-math] [--strict] " +
+        "[--source-repo owner/repo] [--source-ref main] [--lean-status <qou-lean-status/v1 json>] [--lean-packages <module exporting LEAN_PACKAGES>]",
     );
     process.exit(0);
   }
   const repo = resolve(opt("repo") ?? process.cwd());
   const out = resolve(repo, opt("out") ?? "_site");
   const math = args.includes("--math") ? true : args.includes("--no-math") ? false : undefined;
-  const r = await buildFolioSite(repo, out, { route: opt("route"), math, repository: opt("source-repo"), ref: opt("source-ref") });
+  const leanStatusPath = opt("lean-status");
+  const r = await buildFolioSite(repo, out, {
+    route: opt("route"),
+    math,
+    repository: opt("source-repo"),
+    ref: opt("source-ref"),
+    leanStatus: leanStatusPath ? resolve(leanStatusPath) : undefined,
+    leanPackages: opt("lean-packages"),
+  });
   let qaTotal = 0;
+  console.error(
+    r.leanPackages?.count
+      ? `  Lean packages: ${r.leanPackages.count} from ${r.leanPackages.from}`
+      : "  Lean packages: none declared — a lean.ref cannot be resolved, only a sibling .lean",
+  );
   for (const p of r.papers) {
     const c = p.qa.counts;
+    const m = p.meta;
     qaTotal += p.qa.findings.length;
     console.error(
       `  ${p.slug}: ${p.blocks} block(s), ${p.pages} page(s); rendered QA: raw-tex ${c["raw-tex"]}, raw-directive ${c["raw-directive"]}, ` +
         `stray-dollar ${c["stray-dollar"]}, katex ${c.katex}, missing-image ${c["missing-image"]}` +
-        (p.qa.unknown.length ? `; UNKNOWN: ${p.qa.unknown.join(", ")}` : ""),
+        (p.qa.unknown.length ? `; UNKNOWN: ${p.qa.unknown.join(", ")}` : "") +
+        `; block QA reports ${m.qaReports}; Lean found ${m.leanFound} (${m.leanViaRef} via lean.ref only), expected-but-absent ${m.leanAbsent}; ` +
+        `compile ${Object.entries(m.leanCompile).map(([k, v]) => `${k} ${v}`).join(", ") || "—"}`,
     );
   }
+  if (!leanStatusPath) console.error("  Lean compile status: NOT MEASURED (pass --lean-status); every Lean link reads 'unchecked'");
   if (args.includes("--strict") && (qaTotal > 0 || r.papers.some((p) => p.qa.unknown.length))) {
     console.error(`✗ rendered QA: ${qaTotal} finding(s) (--strict); see <route>/<paper>/qa.json`);
     process.exit(1);
