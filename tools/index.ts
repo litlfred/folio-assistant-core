@@ -29,6 +29,12 @@
  * *"make sure it is a Skill/Tool so process can be modified later"*: the
  * staging workflow only calls it.
  *
+ * ## `tabular-csv`, `tabular-xlsx` — bean `eief`, moved here by `cat-tools-1wre`
+ *
+ * The CSV and workbook extractors behind the `tabular-metadata` skill. They
+ * were declared in cat-harness as stubs until they existed; tabular metadata
+ * is content vocabulary, so the working declarations live with the code.
+ *
  * ## `block-actions` — bean `uphx`, REQ-17
  *
  * [edit] and [feedback] on every block of a document: the owner asked for it
@@ -326,6 +332,53 @@ export function tools(baseUrl?: string): ToolDefinition[] {
       },
       satisfies: ["graph-rendering"],
       renders: ["glossary"],
+      requires: { runtime: ["bun"], network: false },
+    }),
+    // ── Tabular extraction — bean `eief`, declarations moved here by `cat-tools-1wre` ──
+    //
+    // Declared in cat-harness as STUBS until the extractors existed. Tabular
+    // metadata is content vocabulary, so the working tools live with the code,
+    // as `dublin-core-render` does. Both write one `folio-tabular-csvw/v1`
+    // record, validated before it is written, and refuse (exit 2) a file not
+    // shown to be a table rather than guess.
+    defineTool({
+      id: "tabular-csv",
+      title: "CSV tabular metadata",
+      description:
+        "Read a delimited text file into a `folio-tabular-csvw/v1` record: one table, its columns and their CSVW datatypes, each measured or explicitly undetermined. Routing is by content, never by extension: the first rows must agree on one field count of two or more, under exactly one of `,` `;` TAB `|`. A CSV's `fac:anchor` sheet and cell are a determined null. Governed by the `tabular-metadata` skill (bean `eief`).",
+      install: { none: true },
+      invoke: { shell: "bun run folio-assistant-core/scripts/tabular-csv.ts" },
+      io: {
+        inputs: [
+          { name: "file", schema: t("DelimitedTextPath"), required: true, arg: { positional: 0 }, description: "Path to the delimited text file." },
+          { name: "doc-id", schema: t("Text"), required: false, arg: { flag: "--doc-id" }, description: "The record's `doc_id`. Default: the file name without its extension." },
+          { name: "out", schema: t("RepoPath"), required: false, arg: { flag: "--out" }, description: "Where to write `tabular.csvw.json`. Default: stdout." },
+        ],
+        outputs: [
+          { name: "record", schema: t("Text"), description: "A `folio-tabular-csvw/v1` document. Exit 2 when the file is not shown to be a table." },
+        ],
+      },
+      satisfies: ["tabular-metadata"],
+      requires: { runtime: ["bun"], network: false },
+    }),
+    defineTool({
+      id: "tabular-xlsx",
+      title: "Spreadsheet tabular metadata",
+      description:
+        "Read a workbook into a `folio-tabular-csvw/v1` record, one CSVW table per rectangular block of cells. Blocks are split on empty rows, then on empty columns, so several tables on one sheet are found, each anchored at its real top-left cell (`fac:anchor`: sheet, A1 cell, row, column). Dates are read through the number formats in `styles.xml`, not misread as integer serials. A malformed part is refused rather than half-read. No new dependency: ZIP via `node:zlib`, SpreadsheetML via `fast-xml-parser`. Governed by the `tabular-metadata` skill (bean `eief`).",
+      install: { none: true },
+      invoke: { shell: "bun run folio-assistant-core/scripts/tabular-xlsx.ts" },
+      io: {
+        inputs: [
+          { name: "file", schema: t("WorkbookPath"), required: true, arg: { positional: 0 }, description: "Path to the `.xlsx` workbook." },
+          { name: "doc-id", schema: t("Text"), required: false, arg: { flag: "--doc-id" }, description: "The record's `doc_id`. Default: the file name without its extension." },
+          { name: "out", schema: t("RepoPath"), required: false, arg: { flag: "--out" }, description: "Where to write `tabular.csvw.json`. Default: stdout." },
+        ],
+        outputs: [
+          { name: "record", schema: t("Text"), description: "A `folio-tabular-csvw/v1` document, one table per block. Exit 2 when the file is not a SpreadsheetML workbook." },
+        ],
+      },
+      satisfies: ["tabular-metadata"],
       requires: { runtime: ["bun"], network: false },
     }),
   ];
