@@ -77,6 +77,22 @@
       "notation": "l1-coverage",
       "source": "folio-assistant-core/tools/index.ts#l1-coverage",
       "status": "candidate"
+    },
+    {
+      "id": "tabular-csv",
+      "prefLabel": "CSV tabular metadata",
+      "definition": "Read a delimited text file into a `folio-tabular-csvw/v1` record: one table, its columns and their CSVW datatypes, each measured or explicitly undetermined. Routing is by content, never by extension: the first rows must agree on one field count of two or more, under exactly one of `,` `;` TAB `|`. A CSV's `fac:anchor` sheet and cell are a determined null. Governed by the `tabular-metadata` skill (bean `eief`).",
+      "notation": "tabular-csv",
+      "source": "folio-assistant-core/tools/index.ts#tabular-csv",
+      "status": "candidate"
+    },
+    {
+      "id": "tabular-xlsx",
+      "prefLabel": "Spreadsheet tabular metadata",
+      "definition": "Read a workbook into a `folio-tabular-csvw/v1` record, one CSVW table per rectangular block of cells. Blocks are split on empty rows, then on empty columns, so several tables on one sheet are found, each anchored at its real top-left cell (`fac:anchor`: sheet, A1 cell, row, column). Dates are read through the number formats in `styles.xml`, not misread as integer serials. A malformed part is refused rather than half-read. No new dependency: ZIP via `node:zlib`, SpreadsheetML via `fast-xml-parser`. Governed by the `tabular-metadata` skill (bean `eief`).",
+      "notation": "tabular-xlsx",
+      "source": "folio-assistant-core/tools/index.ts#tabular-xlsx",
+      "status": "candidate"
     }
   ]
 }

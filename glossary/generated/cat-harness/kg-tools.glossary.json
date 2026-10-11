@@ -71,6 +71,22 @@
       "status": "candidate"
     },
     {
+      "id": "bpmn-checklist",
+      "prefLabel": "BPMN checklist projection",
+      "definition": "Generate, per diagram, a checklist that walks the BPMN as a state machine: each task names the `workflow_complete` call that records it and ends with `next:` by node id; each decision lists its labelled branches (or the DMN that computes it); parallel forks name every branch and joins wait for all; start/end events are entry and exit lines. A rendering, never an authority: it says it is generated, and `--check` fails when one is stale.",
+      "notation": "bpmn-checklist",
+      "source": "cat-harness/tools/index.ts#bpmn-checklist",
+      "status": "candidate"
+    },
+    {
+      "id": "bpmn-engine",
+      "prefLabel": "BPMN workflow engine",
+      "definition": "Run a declared BPMN process as an instance: `workflow_start` opens one for a subject, `workflow_next` reports what is enabled, `workflow_complete` records a step or answers a decision (a DMN-computed one from `facts`) and REFUSES a step that is not enabled. State is committed under the work plan, so which edge was taken is a record, not a memory.",
+      "notation": "bpmn-engine",
+      "source": "cat-harness/tools/index.ts#bpmn-engine",
+      "status": "candidate"
+    },
+    {
       "id": "bpmn-render",
       "prefLabel": "BPMN diagram rendering",
       "definition": "Render each process diagram to SVG for the documentation site. The .bpmn file is the source of truth; the picture is generated from it, so a diagram and its image cannot disagree.",
@@ -551,6 +567,22 @@
       "status": "candidate"
     },
     {
+      "id": "openapi-ingest-rendered",
+      "prefLabel": "OpenAPI ingest from a published spec",
+      "definition": "Ingest the OpenAPI documents an instance's `cat-openapi.config.json` lists under `rendered` by fetching each published spec URL (https), verbatim, with a provenance recording the URL, when it was fetched and the document's sha256 — a URL has no commit, so the digest pins the bytes. A failed fetch or bytes that are not OpenAPI 3 write nothing and never replace a held copy.",
+      "notation": "openapi-ingest-rendered",
+      "source": "cat-harness/tools/index.ts#openapi-ingest-rendered",
+      "status": "candidate"
+    },
+    {
+      "id": "openapi-ingest-source",
+      "prefLabel": "OpenAPI ingest from source",
+      "definition": "Ingest the OpenAPI documents an instance's `cat-openapi.config.json` lists under `documents` from a local checkout of their repository, read AT a branch, tag or commit (`git show`), verbatim, with a provenance recording the resolved commit and the document's sha256. `--check` verifies the committed copies offline.",
+      "notation": "openapi-ingest-source",
+      "source": "cat-harness/tools/index.ts#openapi-ingest-source",
+      "status": "candidate"
+    },
+    {
       "id": "pack-tarball",
       "prefLabel": "Package instance into an npm tarball and record binary release",
       "definition": "Build an npm tarball (.tgz) of an instance using `bun pm pack`, compute its size and SHA-256 digest, and record it as a `folio-binary-release/v1` state node.",
@@ -775,6 +807,14 @@
       "status": "candidate"
     },
     {
+      "id": "secrets-check",
+      "prefLabel": "Check declared credential needs against workflow use and expiry, by name",
+      "definition": "Compare each repository's declared credential needs (`credentials/needs.json`, profile and registry) with the `${{ secrets.NAME }}` references its workflows make, with the secret names GitHub lists when a token allows it, and with any recorded expiry. NAMES ONLY — no value is ever read. Findings per §6.2: used-not-declared, declared-not-used, declared-not-present, present-not-declared (reported, never deleted), naming advisories, and expiry (≤30 days minor, ≤7 major, expired critical). Exits 2 when anything could not be determined, which outranks clean; else 1 on a major or critical finding; else 0.",
+      "notation": "secrets-check",
+      "source": "cat-harness/tools/index.ts#secrets-check",
+      "status": "candidate"
+    },
+    {
       "id": "security-gate",
       "prefLabel": "Run every existing security check as one named release step",
       "definition": "Run the repository's security checks — workflow injection, secret leaks, lockfile pinning, the toolchain pin, QA reviewer permission, materialised-asset fixity — plus two advisories (dependency advisories, third-party action SHA pinning), each by name as argv. Every check is reported as pass, fail or unknown; a blocking check that fails OR could not be run refuses the release, because could-not-check is never clean. Advisories are reported and never block. Called by `prepare-merge` before a push that will merge, and by any publish process before it publishes.",
@@ -908,22 +948,6 @@
       "definition": "Say where a declared subgraph gets its content — the checkout's own directory, a declared repository branch (with its keying), or a branch family (with its prefix, key and repository) — after the instance config's `subgraphSources` override by id, and which layer answered. The same `declaredSubgraph` resolver the KG export, the publishers and the mount tool use, so a shell sees the answer they act on.",
       "notation": "subgraph-resolve",
       "source": "cat-harness/tools/index.ts#subgraph-resolve",
-      "status": "candidate"
-    },
-    {
-      "id": "tabular-csv",
-      "prefLabel": "CSV tabular metadata (STUB)",
-      "definition": "STUB — not implemented. Would read a delimited text file into CSVW: one table, its columns and their datatypes. A CSV has no sheets and no cells outside the table, so `fac:anchor.sheet` and `fac:anchor.cell` are a determined null rather than an absence. Routing a CSV is not a sniff — it has no magic bytes — and must not become an extension guess (bean `p67i`).",
-      "notation": "tabular-csv",
-      "source": "cat-harness/tools/index.ts#tabular-csv",
-      "status": "candidate"
-    },
-    {
-      "id": "tabular-xlsx",
-      "prefLabel": "Spreadsheet tabular metadata (STUB)",
-      "definition": "STUB — not implemented. Would read a workbook into a CSVW TableGroup: one table per sheet, with the location CSVW cannot express (`fac:anchor`, `fac:headerRow`, `fac:extent`) carried as annotations on valid CSVW. A workbook is the case that motivates those terms: tables that do not start at A1, headers that are not row 1, several tables on one sheet.",
-      "notation": "tabular-xlsx",
-      "source": "cat-harness/tools/index.ts#tabular-xlsx",
       "status": "candidate"
     },
     {
