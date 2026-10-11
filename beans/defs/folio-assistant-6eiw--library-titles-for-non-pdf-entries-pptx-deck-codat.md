@@ -4,6 +4,7 @@ title: Library titles for non-PDF entries (pptx deck, CODATA table)
 status: todo
 type: task
 tags:
+    - rehomed
     - ui
     - wireframe-findings
 created_at: 2026-10-02T12:55:31Z
