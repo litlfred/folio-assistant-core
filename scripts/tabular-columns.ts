@@ -17,6 +17,12 @@
  *   `N/A` case), or the column holds no value at all. Either way there is
  *   nothing to measure a type from.
  *
+ * One rule sits before the three: **a zero-padded digit string is a code**.
+ * `008` read as an integer is 8, and the padding was the point (ISO 4217
+ * numeric currency codes, measured on the country-codes table, bean `urat`).
+ * So a padded value never classes as a number, and a column of digit strings
+ * holding any padded one is `string`, measured.
+ *
  * The typed classes are CSVW's own built-in datatype names (CSVW Metadata
  * §5.11.1), so the record's `datatype` is a term a CSVW reader knows.
  */
@@ -41,7 +47,11 @@ const CLASSES: ReadonlyArray<{ datatype: string; test: (v: string) => boolean }>
 /** Which typed classes widen into which: an integer is also a decimal. */
 const WIDENS: Readonly<Record<string, string>> = { integer: "decimal" };
 
+/** `008`, `-01`: a leading zero before another digit. `0`, `0.5` are numbers. */
+export const isZeroPadded = (v: string): boolean => /^[+-]?0\d/.test(v);
+
 function classOf(value: string): string | null {
+  if (isZeroPadded(value)) return null;
   for (const c of CLASSES) if (c.test(value)) return c.datatype;
   return null;
 }
@@ -53,6 +63,7 @@ function classOf(value: string): string | null {
 export function classifyColumn(values: readonly string[]): Pick<CsvwColumn, "datatype" | "datatypeSource"> {
   const present = values.map((v) => v.trim()).filter((v) => v !== "");
   if (present.length === 0) return { datatype: "any", datatypeSource: "undetermined" };
+  if (present.some(isZeroPadded) && present.every((v) => /^\d+$/.test(v))) return { datatype: "string", datatypeSource: "measured" };
   const classes = new Set(present.map(classOf));
   if (classes.size === 1 && classes.has(null)) return { datatype: "string", datatypeSource: "measured" };
   if (classes.has(null)) return { datatype: "any", datatypeSource: "undetermined" };

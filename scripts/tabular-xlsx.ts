@@ -96,7 +96,11 @@ export function readZip(buf: Buffer): Map<string, Buffer> {
 
 // ── SpreadsheetML ────────────────────────────────────────────────
 
-const xml = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: "@", removeNSPrefix: true, parseTagValue: false, trimValues: false });
+// `htmlEntities` is what decodes numeric references: Excel writes a line
+// break in a title as `&#10;`, and without it the WHO IMMZ data dictionary's
+// "ICD-11&#10;code" came through verbatim (bean `urat`). A named entity XML
+// does not define cannot reach the parser: `XMLValidator` refuses the part.
+const xml = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: "@", removeNSPrefix: true, parseTagValue: false, trimValues: false, htmlEntities: true });
 const list = <T>(v: T | T[] | undefined): T[] => (v === undefined ? [] : Array.isArray(v) ? v : [v]);
 
 /** The text of an `<si>` or `<is>`: its `<t>`, or every run's `<t>` joined. */
