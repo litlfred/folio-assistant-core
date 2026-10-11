@@ -173,3 +173,31 @@ environment's allowed domains. Nothing was substituted for the run.
 3. Commit the transcript with its tool, model and SHA-256.
 4. Compare it with the Teams `.vtt` (agreement, plus a name and term list).
 5. File findings for a reviewer.
+
+## 2026-10-11: stays blocked; the owner cannot allow huggingface.co
+
+The owner, 2026-10-11: *"i cant unblock huggingface.co"*. Probed from this
+environment:
+- `openaipublic.azureedge.net` (reference Whisper weights): refused.
+- `download.pytorch.org`: refused.
+- GitHub release downloads: refused.
+- PyPI is reachable, but no package checked ships recogniser weights in its
+  wheel. `pywhispercpp` downloads from huggingface.co at run time.
+
+So no recogniser can run in a cloud session with this network policy. No
+transcript was substituted.
+
+**What unblocks it (option 1, recommended to the owner):** on any machine
+with ordinary internet, run:
+
+```sh
+ffmpeg -i smart-ra/uploads/output.mp4 -vn -ac 1 -ar 16000 -c:a pcm_s16le output.wav
+git clone https://github.com/ggml-org/whisper.cpp && cd whisper.cpp && cmake -B build && cmake --build build -j
+sh ./models/download-ggml-model.sh base
+./build/bin/whisper-cli -m models/ggml-base.bin -f ../output.wav -oj -of output.whisper-base
+```
+
+Then commit `output.whisper-base.json` to smart-ra `uploads/`, noting the tool,
+model and the WAV's SHA-256. The comparison with the Teams `.vtt` (agreement,
+plus a name and term list) needs no network, and any session can do it from
+there.
