@@ -1,0 +1,20 @@
+{
+  "$schema": "state-manifest/v1",
+  "status": "active",
+  "authoritative": true,
+  "subgraph": "health",
+  "note": "Authoritative branch store for test/health/results/ from 2026-10-11T06:03:01Z, seeded from main at the commit below. Owner, session_01UC1NuEuSy1MBNpEhnDuiGj, 2026-10-11T05:58:12Z: \"move health to state branch now\". main drops test/health/results/ in the same change that declares this branch as the directory's source.",
+  "source": {
+    "ref": "main",
+    "sha": "f4bfe5fd947129f04d9e7908228187e022794b49"
+  },
+  "seededAt": "2026-10-11T06:03:01Z",
+  "keyedBy": "tip",
+  "graphs": [
+    {
+      "path": "test/health/results",
+      "tree": "4a6b295c09edb1052dedb053a4d8c81c836628b6",
+      "files": 1
+    }
+  ]
+}
