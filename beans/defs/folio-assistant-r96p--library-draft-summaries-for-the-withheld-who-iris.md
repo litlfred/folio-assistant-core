@@ -1,10 +1,10 @@
 ---
 # folio-assistant-r96p
 title: 'LIBRARY: draft summaries for the withheld who-iris entries (0/121, 0/250)'
-status: todo
+status: completed
 type: task
 created_at: 2026-10-01T18:43:35Z
-updated_at: 2026-10-01T18:43:35Z
+updated_at: 2026-10-11T06:30:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -41,3 +41,34 @@ narrative carry a verbatim 10-word run from its sections?
 Quoting inside a summary is allowed by the criterion ("none outside the
 summaries"), so this is no leak. It is noted because it is the closest thing
 measurable without a build. Close this bean once the grep runs on a built site.
+
+## Summary of Changes
+
+Closed 2026-10-11 (lane C). Both Done-when items are settled, the second by a
+change of premise rather than a grep.
+
+1. **Drafts:** 121/121 for `who-pub-tps-931` and 243/243 prose blocks for
+   `9789241548960-eng` (see Progress above).
+2. **No-leak check: moot, and the path it guarded is tested elsewhere.**
+   - Neither entry is withheld any more. On 2026-10-08 the owner set the
+     `copyright` and `restrictions` gates of both items to `permitted`
+     ("special development authorization for WHO staff in development
+     environment; WHO logo omitted";
+     who-iris `catalogue/nodes/item-<slug>.json`). So
+     `who-iris/library/withheld.json`, generated from those gates, lists
+     `paths: []`.
+   - Run of the viewer's own derivation (`entryBlocks` in tools
+     `scripts/gen-library-viz.ts`, via `readLibraryGraph` over who-iris with
+     `REPO_ROOT` set so core's `catalogue` kind registers) reports
+     `withheld: undefined` for all three entries. Publishing their section
+     text is now intended, so "no section sentence in entries/<slug>.json"
+     would be the wrong expectation.
+   - The withheld path itself (no prose excerpt, no avatar, summaries kept)
+     is pinned by a DECLARED fixture, per owner ruling 2026-10-09
+     (folio-assistant#2521 option b):
+     `cat-harness-tools/test/coordinator/library-withheld-checkout.test.ts`,
+     3 pass on tools main 721171e.
+
+If either gate is reverted, `withheld.json` lists the entry again and the
+fixture test is what proves its text stays off the site; the drafted
+summaries are what the rows then show.
