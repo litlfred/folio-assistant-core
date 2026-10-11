@@ -1,7 +1,8 @@
 /**
  * What each document-site builder says it reads (bean `ehh6`). smart-ra#26's
- * second run declared `beans/` and `todos/`: the site renders todos and never
- * beans, so the builders, not the declaration, are asked.
+ * second run declared `beans/` and `todos/`: the builders, not the declaration,
+ * are asked. Since bean `ujiv` a bean is a node kind, so a `bean-defs`
+ * directory on the checkout is read like `todos/`.
  */
 import { afterAll, expect, test } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
@@ -37,9 +38,10 @@ test("public-comment-site reads the comment store, or the one --store names, and
   expect(publicCommentSite(R, ["--store", "other/store"])).toEqual(["other/store", "folio"]);
 });
 
-test("gen-node-kind-pages reads the directories of the typologies holding a kind it renders: todos, never beans", async () => {
+test("gen-node-kind-pages reads the directories of the typologies holding a kind it renders: todos, and beans since ujiv", async () => {
   const got = await nodeKindPages(R, ["--root", "."]);
   expect(got).toContain("todos");
   expect(got).toContain("review/public-comment");
-  expect(got.some((d) => d.startsWith("beans"))).toBe(false);
+  expect(got.some((d) => d.startsWith("beans"))).toBe(true);
+  expect(got).not.toContain("folio");
 });
