@@ -31,6 +31,14 @@
       "status": "candidate"
     },
     {
+      "id": "ig-artifact-jsonld",
+      "prefLabel": "Write one JSON-LD node per IG artefact, and check a built site's nodes",
+      "definition": "`write` turns an artefact index into `artifact/<Type>-<id>.jsonld` (and a `.json` twin) under a docs root: one `folio-ig-artifact-jsonld/v1` node per artefact, in borrowed vocabularies only (the FHIR RDF class, dcterms, schema.org, PROV), naming the artefact's canonical URL, its representations and, for a compiled copy, what built it. `check` is the kind's QA: over a BUILT site, every artefact has its node and no node is an orphan, each node is its own file's, its twin matches, and every local resource it names is on the site. WHO-free; the asset `gen-ig-pages --thin` renders (owner, 2026-10-11, option A).",
+      "notation": "ig-artifact-jsonld",
+      "source": "fhir-harness/tools/index.ts#ig-artifact-jsonld",
+      "status": "candidate"
+    },
+    {
       "id": "ig-ast-diff",
       "prefLabel": "List and view the delta between two IG ASTs",
       "definition": "Diff two ASTs by resource key: added, removed, changed (with a structural element-level differential) and version-changed resources, plus edges added and removed; optionally fold in the incremental plan, and render just-the-docs pages (an index that lists, a page per resource that shows) every one of which carries the provisional mark. `list <ast>` summarises one AST.",
