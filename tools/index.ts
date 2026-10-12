@@ -351,7 +351,7 @@ export function tools(baseUrl?: string): ToolDefinition[] {
       io: {
         inputs: [
           { name: "file", schema: t("DelimitedTextPath"), required: true, arg: { positional: 0 }, description: "Path to the delimited text file." },
-          { name: "doc-id", schema: t("Text"), required: false, arg: { flag: "--doc-id" }, description: "The record's `doc_id`. Default: the file name without its extension." },
+          { name: "doc-id", schema: t("DocId"), required: false, arg: { flag: "--doc-id" }, description: "The record's `doc_id`. Default: the file name without its extension." },
           { name: "out", schema: t("RepoPath"), required: false, arg: { flag: "--out" }, description: "Where to write `tabular.csvw.json`. Default: stdout." },
         ],
         outputs: [
@@ -371,7 +371,7 @@ export function tools(baseUrl?: string): ToolDefinition[] {
       io: {
         inputs: [
           { name: "file", schema: t("WorkbookPath"), required: true, arg: { positional: 0 }, description: "Path to the `.xlsx` workbook." },
-          { name: "doc-id", schema: t("Text"), required: false, arg: { flag: "--doc-id" }, description: "The record's `doc_id`. Default: the file name without its extension." },
+          { name: "doc-id", schema: t("DocId"), required: false, arg: { flag: "--doc-id" }, description: "The record's `doc_id`. Default: the file name without its extension." },
           { name: "out", schema: t("RepoPath"), required: false, arg: { flag: "--out" }, description: "Where to write `tabular.csvw.json`. Default: stdout." },
         ],
         outputs: [
