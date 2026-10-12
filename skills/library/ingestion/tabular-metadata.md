@@ -210,7 +210,7 @@ exception must carry something a test can re-derive.**
   `p67i` stopped there deliberately, and the headers being right there is
   exactly why assembling one from them would be fabrication.
 - **Migrating `folio-tabular-records/v1`.** Bean `eief` carries it.
-- **Emitting the manifest.** Done — `content/pipeline/tabular-nodes.ts` builds
+- **Emitting the manifest.** Done — `pipeline/tabular-nodes.ts` builds
   the nodes and `gen-library-jsonld.ts` calls it from `buildEntryNodes`. What
   the wiring cost is worth knowing, because all three defects were invisible
   while nothing called the emitter: the nodes carried no `@context`;

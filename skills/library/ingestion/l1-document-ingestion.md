@@ -330,7 +330,7 @@ page-granular entries with no `/Title` to read. Backfill an older entry with
 `python3 cat-harness-tools/scripts/pdf-pages.py --docinfo-into <entry> <pdf>`. It
 refuses unless the PDF's sha256 is the one the entry recorded.
 
-One resolver, `cat-harness-tools/content/pipeline/library-title.ts`
+One resolver, `cat-harness-tools/pipeline/library-title.ts`
 (`resolveLibraryTitle`, `TITLE_AUTHORITY`), is used by both
 `gen-library-jsonld.ts` and `check-library-qa.ts`. The manifest records
 `meta.title_source` and `meta.title_from`, and the QA check re-derives the
@@ -621,7 +621,7 @@ and omits only section body extracts.
 (`folio-keywords/v1`) for every entry of every declared library: up to 12 for
 the document and up to 8 per section, fewer for a short section (one per ~20
 content tokens, at least 3). They are read from the **same** log-entropy matrix
-the LSI index is built from (`keywordsOf` in `content/pipeline/lsi.ts`), so a
+the LSI index is built from (`keywordsOf` in `pipeline/lsi.ts`), so a
 keyword means "frequent here, rare across this library" exactly as the index
 does — no second vocabulary. `library:keywords:check` fails on a stale file;
 re-run it after ingesting or re-splitting an entry. The Document panel shows

@@ -215,7 +215,7 @@ snapshot to validate the citation without re-fetching.
 
 #### `validate-bib` — comprehensive correctness audit
 
-`content/pipeline/validate-bib.ts` is the umbrella correctness audit
+`pipeline/validate-bib.ts` is the umbrella correctness audit
 (complement to `validate-refs` which is just key-resolution). Five
 selectable modes:
 

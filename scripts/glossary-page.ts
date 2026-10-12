@@ -79,7 +79,7 @@ import { ASSET_TYPES, EXTRACTED_PREFIX, assetTypeTitle, assetTypeWhat, extract, 
 import { perScheme, run as runTermMapping, termState, type SchemeState, type TermStateAnswer } from "../../cat-harness-tools/scripts/check-term-mapping.ts";
 import { MAPPING_TARGETS } from "../../cat-harness/schemas/term-mapping.ts";
 import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, sourceText, templateName } from "./glossary-pot.ts";
-import { parsePo } from "../../cat-harness-tools/content/pipeline/po-inject.ts";
+import { parsePo } from "../../cat-harness-tools/pipeline/po-inject.ts";
 import { declaredRoute } from "../../cat-harness-tools/scripts/viewer-declarations.ts";
 
 const CORE = resolve(import.meta.dir, "..");

@@ -137,10 +137,10 @@ first backfill batch lands, to avoid an avalanche of
 ## See also
 
 - `content-validation` — full authoring contract and agent-facing rules
-- `content/pipeline/validate-defterm.ts` — validator implementation
+- `pipeline/validate-defterm.ts` — validator implementation
 - `folio-assistant-core/scripts/build-glossary.ts` — builder implementation
 - `folio-assistant-core/scripts/codemod-refterm.ts` — backfill codemod
-- `content/pipeline/glossary-candidates.ts` — Phase C proposer
-- `content/pipeline/apply-glossary-curation.ts` — Phase C applier
+- `pipeline/glossary-candidates.ts` — Phase C proposer
+- `pipeline/apply-glossary-curation.ts` — Phase C applier
 - `ui/glossary-curator.html` — curator web UI
 - `src/routes/glossary.ts` — curator API routes

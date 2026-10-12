@@ -44,8 +44,8 @@ export { themedPage } from "../../cat-harness-tools/scripts/lib/themed-page.ts";
 export { withInlineCode } from "../../cat-harness/schemas/inline-code.ts";
 
 // ── cat-harness: gettext ──────────────────────────────────────────────────
-export { formatPot, type PotEntry } from "../../cat-harness-tools/content/pipeline/pot-extract.js";
-export { parsePo, parsePoEntries } from "../../cat-harness-tools/content/pipeline/po-inject.js";
+export { formatPot, type PotEntry } from "../../cat-harness-tools/pipeline/pot-extract.js";
+export { parsePo, parsePoEntries } from "../../cat-harness-tools/pipeline/po-inject.js";
 
 // ── cat-harness: themes ───────────────────────────────────────────────────
 export {

@@ -10,7 +10,7 @@ references:
   - kind: agent
     id: platform-boundary-guard
 ---
-`content/pipeline/render-markdown.ts` assembles the folio to one Markdown
+`pipeline/render-markdown.ts` assembles the folio to one Markdown
 file; `document_render_{md,html,pdf}` take it through pandoc, the PDF via
 weasyprint/prince/wkhtmltopdf. It **never** falls back to `latexmk`,
 deliberately — a PDF that silently came out of LaTeX would misreport what the

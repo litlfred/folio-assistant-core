@@ -3,8 +3,8 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join, resolve } from "path";
 import { checkCorpusGate, COMMIT_ACTIVITY } from "../../../cat-harness-tools/src/workflow/corpus-gate";
-import { readBlockManifest } from "../../../cat-harness-tools/content/pipeline/qa-utils";
-import { loadBlockModuleSync } from "../../../cat-harness-tools/content/pipeline/block-module";
+import { readBlockManifest } from "../../../cat-harness-tools/pipeline/qa-utils";
+import { loadBlockModuleSync } from "../../../cat-harness-tools/pipeline/block-module";
 
 /**
  * The same resolver `scripts/check-corpus-gate.ts` supplies in production.
