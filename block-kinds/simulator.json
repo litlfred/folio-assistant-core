@@ -1,7 +1,7 @@
 {
   "$schema": "folio-block-kind/v1",
   "kind": "simulator",
-  "adapter": "paper",
+  "adapter": "document",
   "profile": "document",
   "labelPrefix": "sim",
   "folioType": "folio-assistant-core:Simulator",

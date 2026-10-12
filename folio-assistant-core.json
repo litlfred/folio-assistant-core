@@ -122,6 +122,14 @@
       ]
     },
     {
+      "id": "folio-assistant-core-content-adapters",
+      "path": "content-adapters/",
+      "description": "The `document` block VOCABULARY's node, folio-content-adapter/v1: its name, its companion roles (md, ts) and that cat-harness's code types it. Every kind in block-kinds/ names it. Owner, 2026-10-12 (bean bzwk, option B): each layer declares its own adapter and a folio may mix them, so the paper profile is core's `document` kinds plus folio-assistant-sci's `mathpaper` kinds.",
+      "graphTypologies": [
+        "content-adapters"
+      ]
+    },
+    {
       "id": "folio-assistant-core-validators",
       "path": "validators/",
       "description": "The validators folio-assistant-core's code provides, one folio-validator/v1 node each naming the graph typology and $schema family it checks (bean riit).",

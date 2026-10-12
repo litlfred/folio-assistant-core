@@ -1,7 +1,7 @@
 {
   "$schema": "folio-block-kind/v1",
   "kind": "remark",
-  "adapter": "paper",
+  "adapter": "document",
   "profile": "document",
   "labelPrefix": "rem",
   "folioType": "folio-assistant-core:Remark",
