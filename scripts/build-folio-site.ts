@@ -71,7 +71,7 @@ import { CONFIG_SUFFIX, isReservedIndexFile } from "../../cat-harness/schemas/in
 import type { FormalTreeCache } from "../../cat-harness/schemas/formal-ref.js";
 import type { Block, Chapter, Paper, Section, SectionRef } from "../../cat-harness/schemas/types.js";
 import { kindHeading } from "../../cat-harness/schemas/translation.js";
-import { resolveLiquidValues } from "../../cat-harness-tools/content/pipeline/liquid-values.js";
+import { resolveLiquidValues } from "../../cat-harness-tools/pipeline/liquid-values.js";
 import { documentManifests, katexMacros, renderDocumentHtml } from "./build-document-site.js";
 import { blockLean, blockQaReport, configureFolioLeanPackages, loadLeanStatus, qaSummary, textHasSorry, type LeanStatusIndex } from "./folio-site-blocks.js";
 import { addToReport, emptyReport, imageExistsUnder, qaBlockHtml, type SiteQaReport } from "./folio-site-qa.js";

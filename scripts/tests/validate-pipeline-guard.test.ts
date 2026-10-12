@@ -72,12 +72,12 @@ describe("pipelineFailedToRun", () => {
 describe("resolveValidateScript", () => {
   test("finds a pipeline — here, the platform's own copy", () => {
     // This test runs with the platform as the repo root, which carries
-    // content/pipeline/validate.ts. The scaffolded-folio case (no
+    // pipeline/validate.ts (`content/pipeline/` before rnfl). The scaffolded-folio case (no
     // content/pipeline/ at all) resolves to the platform's copy by the same
     // fallback, which is the fix.
     const script = resolveValidateScript();
     expect(script).toBeDefined();
     expect(existsSync(script!)).toBe(true);
-    expect(script!.endsWith("content/pipeline/validate.ts")).toBe(true);
+    expect(script!.endsWith("pipeline/validate.ts")).toBe(true);
   });
 });

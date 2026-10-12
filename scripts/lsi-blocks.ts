@@ -15,7 +15,7 @@
  *
  * What a block IS — its kinds, where its text is — is content vocabulary, and
  * core owns that (`AGENTS.md`). The LSI engine is a tool, and lives below
- * (`cat-harness-tools/content/pipeline/lsi.ts`); core may import the tools
+ * (`cat-harness-tools/pipeline/lsi.ts`); core may import the tools
  * layer, never the reverse (ruling C1, epic `7x5n`). So this file decides what
  * a block's text is and hands units to the engine.
  *
@@ -53,7 +53,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 
 import { declaredGraphs, instanceRootsIn } from "../../cat-harness/schemas/cat-harness.js";
-import { buildLsi, neighboursOf, query, type LsiUnit } from "../../cat-harness-tools/content/pipeline/lsi.ts";
+import { buildLsi, neighboursOf, query, type LsiUnit } from "../../cat-harness-tools/pipeline/lsi.ts";
 
 /** A block node as the corpus writes it — only the fields a block's text is read from. */
 interface BlockNode {

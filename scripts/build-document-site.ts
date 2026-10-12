@@ -69,7 +69,7 @@ import { readHarnessConfig } from "../../cat-harness/schemas/harness-config.js";
 import { detectRepoUrl, ownerRepo } from "../../cat-harness-tools/src/core/git-refs.js";
 import { DEFAULT_TEMPLATE, injectBlockActions, readIssueForm, type BlockActionsConfig, type BlockContext } from "./block-actions.js";
 import type { Chapter, Paper, Section, SectionRef } from "../../cat-harness/schemas/types.js";
-import { buildDocumentMarkdown } from "../../cat-harness-tools/content/pipeline/render-markdown.js";
+import { buildDocumentMarkdown } from "../../cat-harness-tools/pipeline/render-markdown.js";
 import { reviewPageHtml } from "../../cat-harness-tools/scripts/gen-review-page.js";
 import { darkRules } from "../../cat-harness-tools/scripts/lib/scheme-css.ts";
 import { visualiserNavDeclaration, type VisualiserNavEntry } from "../../cat-harness-tools/scripts/lib/navbar.js";
