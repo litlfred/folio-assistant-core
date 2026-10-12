@@ -224,6 +224,13 @@
       "status": "candidate"
     },
     {
+      "id": "ig-artifact-jsonld.igartifactencodingschema.dcterms-source",
+      "prefLabel": "IgArtifactEncodingSchema.dcterms:source",
+      "definition": "`local`: a copy this site serves; `upstream`: the file where the IG publishes it.",
+      "source": "fhir-harness/schemas/ig-artifact-jsonld.ts#IgArtifactEncodingSchema.dcterms:source",
+      "status": "candidate"
+    },
+    {
       "id": "ig-ast.astmanifestschema.inputs",
       "prefLabel": "AstManifestSchema.inputs",
       "definition": "What the AST is valid for, in `CompiledInputsSchema`'s shape.",

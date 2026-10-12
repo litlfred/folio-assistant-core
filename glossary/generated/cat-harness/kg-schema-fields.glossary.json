@@ -2646,6 +2646,13 @@
       "status": "candidate"
     },
     {
+      "id": "cat-harness.catharnessdeclaration.skillprefix",
+      "prefLabel": "CatHarnessDeclaration.skillPrefix",
+      "definition": "The prefix this harness's skills get when installed into an agent host — see {@link CatHarnessDeclarationSchema}'s `skillPrefix` (bean `x4mt`).",
+      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.skillPrefix",
+      "status": "candidate"
+    },
+    {
       "id": "cat-harness.catharnessdeclaration.source",
       "prefLabel": "CatHarnessDeclaration.source",
       "definition": "Where this whole instance gets its upstream/source material (e.g. an IG source in Git). Bean `bamf`, owner ruling 2026-10-07: declare IG source in instance declaration.",
@@ -3929,7 +3936,7 @@
     {
       "id": "contribution-nodes.pipelinepluginnodeschema.slot",
       "prefLabel": "PipelinePluginNodeSchema.slot",
-      "definition": "The generic pipeline slot this fills (`content/pipeline/pipeline-plugins.ts`); the key into the table.",
+      "definition": "The generic pipeline slot this fills (`pipeline/pipeline-plugins.ts`); the key into the table.",
       "source": "cat-harness/schemas/contribution-nodes.ts#PipelinePluginNodeSchema.slot",
       "status": "candidate"
     },
@@ -4048,7 +4055,7 @@
     {
       "id": "contributions.pipelineplugincontribution.implementation",
       "prefLabel": "PipelinePluginContribution.implementation",
-      "definition": "What fills it. Shape is fixed per kind by `content/pipeline/pipeline-plugins.ts`.",
+      "definition": "What fills it. Shape is fixed per kind by `pipeline/pipeline-plugins.ts`.",
       "source": "cat-harness/schemas/contributions.ts#PipelinePluginContribution.implementation",
       "status": "candidate"
     },
@@ -8652,6 +8659,13 @@
       "status": "candidate"
     },
     {
+      "id": "pdf-structure.pdfsourceschema.runcontext",
+      "prefLabel": "PdfSourceSchema.runContext",
+      "definition": "WHICH SOFTWARE produced the text, cited by digest: the `folio-run-context/v1` of the run that wrote it (`schemas/run-context.ts`), reused rather than restated — the one optional `runContext: { sha256 }` reference that `docs/proposals/tool-releases-2026-10-07.md` gives every run and report record (owner, C1 = a).",
+      "source": "cat-harness/schemas/pdf-structure.ts#PdfSourceSchema.runContext",
+      "status": "candidate"
+    },
+    {
       "id": "pdf-structure.pdfstructureschema.duplicate_of",
       "prefLabel": "PdfStructureSchema.duplicate_of",
       "definition": "The library holds some works more than once (a preprint beside its published version, one PDF under two names). The duplicate copy names the entry to prefer in `duplicate_of` and says why in `duplicate_note`; the preferred entry lists its copies in `duplicate_copies`. Adjudicated in qou `docs/audits/library-duplicate-ledger.json`.",
@@ -10927,6 +10941,41 @@
       "status": "candidate"
     },
     {
+      "id": "state-manifest.routemanifestschema.gate",
+      "prefLabel": "RouteManifestSchema.gate",
+      "definition": "The command that checks the generator's output.",
+      "source": "cat-harness/schemas/state-manifest.ts#RouteManifestSchema.gate",
+      "status": "candidate"
+    },
+    {
+      "id": "state-manifest.routemanifestschema.writer",
+      "prefLabel": "RouteManifestSchema.writer",
+      "definition": "The ONE generator that writes it.",
+      "source": "cat-harness/schemas/state-manifest.ts#RouteManifestSchema.writer",
+      "status": "candidate"
+    },
+    {
+      "id": "state-manifest.tipmanifestschema.authoritative",
+      "prefLabel": "TipManifestSchema.authoritative",
+      "definition": "True when THIS branch, not `main`, is where readers must look.",
+      "source": "cat-harness/schemas/state-manifest.ts#TipManifestSchema.authoritative",
+      "status": "candidate"
+    },
+    {
+      "id": "state-manifest.tipmanifestschema.source",
+      "prefLabel": "TipManifestSchema.source",
+      "definition": "The commit the content was seeded from.",
+      "source": "cat-harness/schemas/state-manifest.ts#TipManifestSchema.source",
+      "status": "candidate"
+    },
+    {
+      "id": "state-manifest.tipmanifestschema.subgraph",
+      "prefLabel": "TipManifestSchema.subgraph",
+      "definition": "The subgraph it holds. Absent only on the retired multi-graph `state` branch.",
+      "source": "cat-harness/schemas/state-manifest.ts#TipManifestSchema.subgraph",
+      "status": "candidate"
+    },
+    {
       "id": "sticky-contribution.declaredcontribution.alsowritten",
       "prefLabel": "DeclaredContribution.alsoWritten",
       "definition": "The declaring instance's `alsoWritten`, for `bodyFrom: \"summary\"`.",
@@ -11218,6 +11267,41 @@
       "prefLabel": "SubstrateSnapshotSchema.summary",
       "definition": "What the judgement found, derived from `raw`.",
       "source": "cat-harness/schemas/substrate-snapshot.ts#SubstrateSnapshotSchema.summary",
+      "status": "candidate"
+    },
+    {
+      "id": "sweep-mark.sweepmarkschema.by",
+      "prefLabel": "SweepMarkSchema.by",
+      "definition": "Who ran it, so a reader can ask: a session URL or id. Absent when the runner did not know.",
+      "source": "cat-harness/schemas/sweep-mark.ts#SweepMarkSchema.by",
+      "status": "candidate"
+    },
+    {
+      "id": "sweep-mark.sweepmarkschema.check",
+      "prefLabel": "SweepMarkSchema.check",
+      "definition": "The check this marks, by its `cat` command name — `session-staleness`. Also the file's stem.",
+      "source": "cat-harness/schemas/sweep-mark.ts#SweepMarkSchema.check",
+      "status": "candidate"
+    },
+    {
+      "id": "sweep-mark.sweepmarkschema.checkedat",
+      "prefLabel": "SweepMarkSchema.checkedAt",
+      "definition": "When the check last read its input, ISO-8601 with a zone.",
+      "source": "cat-harness/schemas/sweep-mark.ts#SweepMarkSchema.checkedAt",
+      "status": "candidate"
+    },
+    {
+      "id": "sweep-mark.sweepmarkschema.findings",
+      "prefLabel": "SweepMarkSchema.findings",
+      "definition": "How many findings it reported.",
+      "source": "cat-harness/schemas/sweep-mark.ts#SweepMarkSchema.findings",
+      "status": "candidate"
+    },
+    {
+      "id": "sweep-mark.sweepmarkschema.read",
+      "prefLabel": "SweepMarkSchema.read",
+      "definition": "How many subjects the run read — sessions, for `session-staleness`. Zero is a real answer.",
+      "source": "cat-harness/schemas/sweep-mark.ts#SweepMarkSchema.read",
       "status": "candidate"
     },
     {
