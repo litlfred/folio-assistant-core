@@ -1,7 +1,7 @@
 {
   "$schema": "folio-block-kind/v1",
   "kind": "algorithm",
-  "adapter": "paper",
+  "adapter": "document",
   "profile": "document",
   "labelPrefix": "alg",
   "folioType": "folio-assistant-core:Algorithm",
