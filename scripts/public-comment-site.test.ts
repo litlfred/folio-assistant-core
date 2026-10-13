@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 
 import type { ReviewAnchors } from "./docx-to-folio.js";
-import { PublicCommentSchema } from "../schemas/public-comment.js";
+import { type ChangeSet, PublicCommentSchema } from "../schemas/public-comment.js";
 import { dashboardHtml, overlaySnippet, siteComments, stagingSlug } from "./public-comment-site.js";
 import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
 
@@ -88,5 +88,31 @@ describe("public-comment-site", () => {
     expect(html).toContain("const commentItems = rows.map((r) =>");
     expect(html).toContain("searchDebounceTimer = setTimeout(() => { apply(); save(false); }, 75)");
     expect(html).toContain("if (it.el.hidden !== !ok) it.el.hidden = !ok");
+  });
+  test("each change-set shows its committee, rolled up from its comments' TWG routing (owner, 2026-10-13)", () => {
+    const routed = (ref: string, cat: string) => {
+      const c = comment();
+      return PublicCommentSchema.parse({ ...c, id: ref.toLowerCase(), public: { ...c.public, ref, labels: { "TWG consideration? AI categorisation": cat } } });
+    };
+    const rows = siteComments([routed("PC-0001", "Clinical"), routed("PC-0002", "Clinical"), routed("PC-0003", "Core architects")], anchors, { slug: "doc" });
+    expect(rows[0]!.committee).toMatchObject({ group: "Clinical", source: "ai" });
+    const cs = { id: "CS-001", title: "t", requirements: "r", refs: ["PC-0001", "PC-0002", "PC-0003", "PC-0009"], status: "proposed", issues: [] } as unknown as ChangeSet;
+    const html = dashboardHtml(rows, { title: "T", slug: "doc", generated: "g", changeSets: [cs] });
+    expect(html).toContain('<tr id="CS-001" data-cs-status="proposed" data-committee="Clinical">');
+    expect(html).toContain("<b>Clinical</b> <span class=\"muted\">2 of 4</span>");
+    expect(html).toContain("1 not routed");
+    expect(html).toContain('<label>Committee<select id="f-committee">');
+    expect(html).toMatch(/<tr id="PC-0003"[^>]*data-committee="Core architects"/);
+  });
+  test("every comment has [edit] and [feedback], built in the page from its record (owner, 2026-10-13)", () => {
+    const rows = siteComments([comment()], anchors, { slug: "doc", repo: "o/r", storeDir: "review/public-comment" });
+    expect(rows[0]!.source).toBe("review/public-comment/comments/PC-0001.json");
+    const html = dashboardHtml(rows, { title: "T", slug: "doc", generated: "g", repo: "o/r", actions: { repo: "o/r", branch: "main", content: "doc" }, page: "en/d/index.html" });
+    expect(html).toContain('<span class="block-actions" data-block="PC-0001" data-src="review/public-comment/comments/PC-0001.json" data-sec="1.1 About">');
+    expect(html).toContain('data-fa-link="edit"');
+    expect(html).toContain('data-fa-link="feedback"');
+    expect(html).toContain('id="fa-edit-cfg"');
+    // Without a repository there is nothing to link to.
+    expect(dashboardHtml(rows, { title: "T", slug: "doc", generated: "g" })).not.toContain('data-fa-link="edit"');
   });
 });
