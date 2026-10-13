@@ -40,6 +40,7 @@ import type { ReviewAnchors } from "./docx-to-folio.js";
 import { type ChangeSet, DECISION_LABELS, IN_EDIT_STATUSES, OPEN_STATUSES, type PublicComment } from "../schemas/public-comment.js";
 import { changeSets, discussUrl } from "./public-comment-changesets.js";
 import { Store } from "./public-comment.js";
+import { changeSetRouting, commentRouting, type Routing, TWG_GROUPS } from "./public-comment-routing.js";
 import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
 import { documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage } from "./document-site-route.js";
 import { darkRules } from "../../cat-harness-tools/scripts/lib/scheme-css.ts";
@@ -66,6 +67,8 @@ export interface SiteComment {
   suggestion: string;
   reviewer: string;
   recommendations: Array<{ by: string; code: string; rationale: string; url?: string }>;
+  /** The TWG sub-group the log routed it to (public-comment-routing.ts). */
+  committee?: Routing;
   decision?: { code: string; label: string; reason: string; by: string };
   /** The change-sets it is in (issue #2183), derived from the change-set records. */
   changeSets: Array<{ id: string; title: string; status: string; issue?: number }>;
@@ -114,6 +117,7 @@ export function siteComments(
       suggestion: p.suggestedRevision ?? "",
       reviewer: [p.reviewer.name, p.reviewer.organisation, p.reviewer.country].filter(Boolean).join(", ") || "a reviewer",
       recommendations: p.recommendations.map((r) => ({ by: r.by, code: r.code, rationale: r.rationale, ...(r.url ? { url: r.url } : {}) })),
+      ...((routing) => (routing ? { committee: routing } : {}))(commentRouting(p.labels)),
       ...(p.decision ? { decision: { code: p.decision.code, label: DECISION_LABELS[p.decision.code], reason: p.decision.reason, by: p.decision.by } } : {}),
       changeSets: inSets.get(p.ref) ?? [],
       links: {
@@ -182,9 +186,26 @@ export function dashboardHtml(
     (c.issue ? ` ${issueLink(c.issue)}` : meta.repo ? ` <a href="${esc(discussUrl(meta.repo, c))}">discuss</a>` : "") +
     `</span>`;
   const sets = (meta.changeSets ?? []).filter((c) => c.status !== "merged");
+  // EACH CHANGE-SET'S COMMITTEE (owner, 2026-10-13: "I expected to see the
+  // Change Sets assigned to committees"): rolled up from its comments' TWG
+  // routing, the plurality group first, the rest as counts.
+  const byRef = new Map(rows.map((r) => [r.ref, r.committee]));
+  const unroutedLabel = "not routed";
+  const committeeOf = (r: SiteComment) => r.committee?.group ?? (r.committee ? "unmapped" : unroutedLabel);
+  const csCommittee = (c: ChangeSet) => {
+    const x = changeSetRouting(c.refs, byRef);
+    const rest = x.counts.slice(1).map((k) => `<span class="chip muted">${esc(k.group)} ${k.n}</span>`).join("");
+    const gaps = [x.unmapped && `${x.unmapped} need a ruling`, x.total - x.routed - x.unmapped && `${x.total - x.routed - x.unmapped} not routed`].filter(Boolean).join(", ");
+    return {
+      group: x.group ?? unroutedLabel,
+      cell: x.group
+        ? `<b>${esc(x.group)}</b> <span class="muted">${x.counts[0]!.n} of ${x.total}</span><br>${rest}${gaps ? `<span class="muted">${esc(gaps)}</span>` : ""}`
+        : `<span class="muted">${esc(gaps || unroutedLabel)}</span>`,
+    };
+  };
   const csRows = sets
     .map(
-      (c) => `<tr id="${esc(c.id)}" data-cs-status="${esc(c.status)}"><td>${esc(c.id)}</td><td>${esc(c.title)}<details><summary class="muted">requirements</summary><p>${esc(c.requirements).replace(/\n/g, "<br>")}</p></details><details class="cs-pcs" data-refs="${esc(c.refs.join(" "))}"><summary class="muted">its ${c.refs.length} comment${c.refs.length === 1 ? "" : "s"}, in full</summary></details></td><td>${esc(c.status)}</td><td class="cs-n">${c.refs.length}</td>` +
+      (c) => `<tr id="${esc(c.id)}" data-cs-status="${esc(c.status)}" data-committee="${esc(csCommittee(c).group)}"><td>${esc(c.id)}</td><td>${esc(c.title)}<details><summary class="muted">requirements</summary><p>${esc(c.requirements).replace(/\n/g, "<br>")}</p></details><details class="cs-pcs" data-refs="${esc(c.refs.join(" "))}"><summary class="muted">its ${c.refs.length} comment${c.refs.length === 1 ? "" : "s"}, in full</summary></details></td><td class="cs-committee">${csCommittee(c).cell}</td><td>${esc(c.status)}</td><td class="cs-n">${c.refs.length}</td>` +
         `<td>${c.issue ? issueLink(c.issue) + (c.issues.length > 1 ? ` <span class="muted">+${c.issues.length - 1} more</span>` : "") : meta.repo ? `<a class="discuss" href="${esc(discussUrl(meta.repo, c))}">Discuss</a>` : "—"}</td>` +
         `<td>${c.pr && meta.repo ? `<a href="https://github.com/${esc(meta.repo)}/pull/${c.pr.number}">#${c.pr.number}</a>` : ""}</td>` +
         `<td><a href="#" class="show-cs" data-refs="${esc(c.refs.join(" "))}">show its comments</a></td></tr>`,
@@ -211,11 +232,12 @@ export function dashboardHtml(
       .join(" ");
   const body = rows
     .map(
-      (r) => `<tr id="${esc(r.ref)}" data-phase="${r.phase}" data-status="${esc(r.status)}" data-placed="${r.target ? "1" : "0"}" data-incs="${r.changeSets.length ? "1" : "0"}" data-summary="${esc(r.summary)}" data-type="${esc(r.type)}" data-section="${esc(r.section)}" data-text="${esc(`${r.ref} ${r.text} ${r.suggestion} ${r.sectionTitle}`.toLowerCase())}">
+      (r) => `<tr id="${esc(r.ref)}" data-phase="${r.phase}" data-status="${esc(r.status)}" data-placed="${r.target ? "1" : "0"}" data-incs="${r.changeSets.length ? "1" : "0"}" data-summary="${esc(r.summary)}" data-type="${esc(r.type)}" data-committee="${esc(committeeOf(r))}" data-section="${esc(r.section)}" data-text="${esc(`${r.ref} ${r.text} ${r.suggestion} ${r.sectionTitle}`.toLowerCase())}">
 <td><input type="checkbox" class="pick" value="${esc(r.ref)}" aria-label="Select ${esc(r.ref)}"></td>
 <td><a href="#${esc(r.ref)}">${esc(r.ref)}</a></td>
 <td class="phase phase-${r.phase}">${esc(r.status)}</td>
 <td>${esc(r.type)}</td>
+<td>${r.committee ? `${r.committee.group ? `<b>${esc(r.committee.group)}</b>` : `<span class="chip" title="names no TWG category: needs a ruling">${esc(r.committee.raw)}</span>`}${r.committee.secondary.map((g) => ` <span class="chip muted">${esc(g)}</span>`).join("")}<br><span class="muted">${r.committee.source}</span>` : `<span class="muted">${unroutedLabel}</span>`}</td>
 <td>${r.target ? `${esc(r.section)} ${esc(r.sectionTitle)}` : `<em>unplaced</em>`}<br><span class="muted">${esc(r.citation)}</span>${r.confidence !== "high" && r.target ? `<br><span class="chip" title="${esc(r.anchorNote)}">anchor: ${esc(r.confidence)}</span>` : ""}</td>
 <td><details><summary>${esc(r.summary)}</summary><p>${esc(r.text)}</p>${r.suggestion ? `<p><b>Suggested revision:</b> ${esc(r.suggestion)}</p>` : ""}<p class="muted">${esc(r.reviewer)}</p></details></td>
 <td>${r.recommendations.map((x) => `<span class="chip" title="${esc(x.rationale)}">${x.url ? `<a href="${esc(x.url)}">` : ""}${esc(x.by)}: ${esc(x.code)}${x.url ? "</a>" : ""}</span>`).join("") || `<span class="muted">none</span>`}</td>
@@ -227,6 +249,7 @@ export function dashboardHtml(
     .join("\n");
   const sections = [...new Set(rows.map((r) => r.section).filter(Boolean))].sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
   const types = [...new Set(rows.map((r) => r.type).filter(Boolean))].sort();
+  const committees = [...TWG_GROUPS, "unmapped", unroutedLabel].filter((g) => rows.some((r) => committeeOf(r) === g) || sets.some((c) => csCommittee(c).group === g));
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -254,6 +277,7 @@ ${[
 <form id="filters" aria-controls="comments">
 <label>Status<select id="f-phase"><option value="">all</option><option value="open" selected>open</option><option value="editing">being edited</option><option value="decided">decided</option><option value="closed">closed</option></select></label>
 <label>Type<select id="f-type"><option value="">all</option>${types.map((t) => `<option>${esc(t)}</option>`).join("")}</select></label>
+<label>Committee<select id="f-committee"><option value="">all</option>${committees.map((g) => `<option>${esc(g)}</option>`).join("")}</select></label>
 <label>Section<select id="f-section"><option value="">all</option>${sections.map((s) => `<option>${esc(s)}</option>`).join("")}</select></label>
 <label>Search<input id="f-text" type="search" placeholder="words, or PC-0042"></label>
 <p id="f-count" class="muted" aria-live="polite"></p>
@@ -261,7 +285,7 @@ ${[
 ${
   sets.length
     ? `<details id="change-sets"><summary><b>Change-sets (${sets.length})</b>: ${["proposed", "discussing", "editing", "incorporated", "closed"].map((st) => `${sets.filter((c) => c.status === st).length} ${st}`).join(", ")}. A change-set gets its GitHub issue the first time somebody discusses it, recommends on it or decides it. <span id="cs-count" class="muted" aria-live="polite"></span></summary>
-<div class="table-wrap"><table><thead><tr><th>Id</th><th>Change</th><th>Status</th><th>Comments</th><th>Issue</th><th>PR</th><th></th></tr></thead><tbody>
+<div class="table-wrap"><table><thead><tr><th>Id</th><th>Change</th><th>Committee</th><th>Status</th><th>Comments</th><th>Issue</th><th>PR</th><th></th></tr></thead><tbody>
 ${csRows}
 </tbody></table></div></details>`
     : ""
@@ -269,7 +293,7 @@ ${csRows}
 ${meta.repo ? `<p class="picker"><button type="button" id="open-issue" disabled>New change-set from the selected comments</button> <span id="pick-count" class="muted">Tick comments to group them.</span></p>` : ""}
 <div class="table-wrap">
 <table id="comments">
-<thead><tr><th><span class="sr">Select</span></th><th>Ref</th><th>Status</th><th>Type</th><th>Where</th><th>Comment</th><th>Committee</th><th>Decision</th><th>Change-set</th><th>Links</th></tr></thead>
+<thead><tr><th><span class="sr">Select</span></th><th>Ref</th><th>Status</th><th>Type</th><th>Committee</th><th>Where</th><th>Comment</th><th>Recommendations</th><th>Decision</th><th>Change-set</th><th>Links</th></tr></thead>
 <tbody>
 ${body}
 </tbody>
@@ -292,6 +316,7 @@ ${body}
     phase: r.dataset.phase,
     status: r.dataset.status,
     type: r.dataset.type,
+    committee: r.dataset.committee,
     section: r.dataset.section,
     text: r.dataset.text,
     placed: r.dataset.placed,
@@ -304,6 +329,7 @@ ${body}
     const refs = a && a.dataset.refs ? a.dataset.refs.split(" ") : [];
     return {
       el: tr,
+      committee: tr.dataset.committee,
       refs,
       countEl,
       total: refs.length,
@@ -316,13 +342,13 @@ ${body}
   let only = null; // a change-set's comments, from "show its comments"
   const active = () => extra ?? ($("f-phase").value || "all");
   const apply = () => {
-    const ph = $("f-phase").value, ty = $("f-type").value, se = $("f-section").value, tx = $("f-text").value.trim().toLowerCase();
+    const ph = $("f-phase").value, ty = $("f-type").value, co = $("f-committee").value, se = $("f-section").value, tx = $("f-text").value.trim().toLowerCase();
     let n = 0;
     const shown = new Set();
     for (let i = 0; i < commentItems.length; i++) {
       const it = commentItems[i];
       const s = it.section;
-      const ok = (!ph || it.phase === ph) && (!ty || it.type === ty)
+      const ok = (!ph || it.phase === ph) && (!ty || it.type === ty) && (!co || it.committee === co)
         && (!se || s === se || s.startsWith(se + ".")) && (!tx || it.text.includes(tx))
         && (extra !== "unplaced" || it.placed === "0")
         && (extra !== "incorporated" || it.status === "incorporated")
@@ -344,7 +370,9 @@ ${body}
       for (let r = 0; r < cs.refs.length; r++) {
         if (shown.has(cs.refs[r])) k++;
       }
-      const csOk = k > 0;
+      // Under a committee filter a change-set shows when it is that
+      // committee's, even if only some of its comments are routed there.
+      const csOk = co ? cs.committee === co : k > 0;
       if (cs.el.hidden !== !csOk) cs.el.hidden = !csOk;
       if (csOk) m++;
       if (cs.countEl) {
@@ -364,7 +392,7 @@ ${body}
     const q = new URLSearchParams();
     const put = (k, v) => { if (v) q.set(k, v); };
     q.set("status", $("f-phase").value);
-    put("type", $("f-type").value); put("section", $("f-section").value); put("q", $("f-text").value);
+    put("type", $("f-type").value); put("committee", $("f-committee").value); put("section", $("f-section").value); put("q", $("f-text").value);
     put("tile", extra); put("only", only ? [...only].join(" ") : "");
     const url = "?" + q + location.hash;
     if (url !== location.search + location.hash) history[push ? "pushState" : "replaceState"](null, "", url);
@@ -372,7 +400,7 @@ ${body}
   function load() {
     const q = new URLSearchParams(location.search);
     if (!q.has("status")) return;
-    $("f-phase").value = q.get("status"); $("f-type").value = q.get("type") ?? "";
+    $("f-phase").value = q.get("status"); $("f-type").value = q.get("type") ?? ""; $("f-committee").value = q.get("committee") ?? "";
     $("f-section").value = q.get("section") ?? ""; $("f-text").value = q.get("q") ?? "";
     extra = q.get("tile"); only = q.get("only") ? new Set(q.get("only").split(" ")) : null;
     apply();
@@ -391,7 +419,7 @@ ${body}
     e.preventDefault();
     only = new Set(a.dataset.refs.split(" "));
     // Every one of its comments, whatever was filtered before.
-    extra = null; for (const id of ["f-phase", "f-type", "f-section", "f-text"]) $(id).value = "";
+    extra = null; for (const id of ["f-phase", "f-type", "f-committee", "f-section", "f-text"]) $(id).value = "";
     apply(); save();
     document.getElementById("comments").scrollIntoView();
   });
@@ -408,7 +436,7 @@ ${body}
     .then((list) => new Map(list.map((x) => [x.ref, x])))
     .catch(() => null));
   const h = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
-  const fromRecord = (x) => "<li class=\\"cs-pc\\"><a href=\\"#" + h(x.ref) + "\\">" + h(x.ref) + "</a> · " + h(x.status) + (x.type ? " · " + h(x.type) : "") +
+  const fromRecord = (x) => "<li class=\\"cs-pc\\"><a href=\\"#" + h(x.ref) + "\\">" + h(x.ref) + "</a> · " + h(x.status) + (x.type ? " · " + h(x.type) : "") + " · " + h(x.committee ? (x.committee.group || x.committee.raw) : "not routed") +
     "<div class=\\"muted\\">" + (x.target ? h(x.section + " " + x.sectionTitle) : "<em>unplaced</em>") + (x.citation ? " — " + h(x.citation) : "") + "</div>" +
     "<p>" + h(x.text) + "</p>" + (x.suggestion ? "<p><b>Suggested revision:</b> " + h(x.suggestion) + "</p>" : "") +
     "<p class=\\"muted\\">" + h(x.reviewer) + "</p>" +
@@ -418,9 +446,10 @@ ${body}
     const tr = document.getElementById(ref);
     if (!tr) return "<li>" + h(ref) + " <span class=\\"muted\\">(not on this page)</span></li>";
     const c = tr.cells;
-    const body = [...(c[5].querySelector("details")?.children || [])].filter((x) => x.tagName !== "SUMMARY").map((x) => x.outerHTML).join("");
-    return "<li class=\\"cs-pc\\"><a href=\\"#" + h(ref) + "\\">" + h(ref) + "</a> · " + c[2].textContent + (c[3].textContent ? " · " + c[3].textContent : "") +
-      "<div class=\\"muted\\">" + c[4].innerHTML + "</div>" + body + "<div class=\\"cs-pc-decision\\">" + c[7].innerHTML + "</div></li>";
+    // Cells: pick, ref, status, type, committee, where, comment, recommendations, decision.
+    const body = [...(c[6].querySelector("details")?.children || [])].filter((x) => x.tagName !== "SUMMARY").map((x) => x.outerHTML).join("");
+    return "<li class=\\"cs-pc\\"><a href=\\"#" + h(ref) + "\\">" + h(ref) + "</a> · " + c[2].textContent + (c[3].textContent ? " · " + c[3].textContent : "") + " · " + h(tr.dataset.committee) +
+      "<div class=\\"muted\\">" + c[5].innerHTML + "</div>" + body + "<div class=\\"cs-pc-decision\\">" + c[8].innerHTML + "</div></li>";
   };
   document.addEventListener("toggle", async (e) => {
     const d = e.target;
@@ -461,7 +490,7 @@ ${body}
   // A select replaces "show its comments" (it used to stay on, hidden, and
   // made every later filter look broken: D-2 of the 2026-10-06 walkthrough);
   // the search box narrows within it.
-  for (const id of ["f-phase", "f-type", "f-section"]) $(id).addEventListener("input", () => { only = null; apply(); save(); });
+  for (const id of ["f-phase", "f-type", "f-committee", "f-section"]) $(id).addEventListener("input", () => { only = null; apply(); save(); });
   let searchDebounceTimer = null;
   $("f-text").addEventListener("input", () => {
     clearTimeout(searchDebounceTimer);
