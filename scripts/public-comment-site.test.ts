@@ -104,4 +104,15 @@ describe("public-comment-site", () => {
     expect(html).toContain('<label>Committee<select id="f-committee">');
     expect(html).toMatch(/<tr id="PC-0003"[^>]*data-committee="Core architects"/);
   });
+  test("every comment has [edit] and [feedback], built in the page from its record (owner, 2026-10-13)", () => {
+    const rows = siteComments([comment()], anchors, { slug: "doc", repo: "o/r", storeDir: "review/public-comment" });
+    expect(rows[0]!.source).toBe("review/public-comment/comments/PC-0001.json");
+    const html = dashboardHtml(rows, { title: "T", slug: "doc", generated: "g", repo: "o/r", actions: { repo: "o/r", branch: "main", content: "doc" }, page: "en/d/index.html" });
+    expect(html).toContain('<span class="block-actions" data-block="PC-0001" data-src="review/public-comment/comments/PC-0001.json" data-sec="1.1 About">');
+    expect(html).toContain('data-fa-link="edit"');
+    expect(html).toContain('data-fa-link="feedback"');
+    expect(html).toContain('id="fa-edit-cfg"');
+    // Without a repository there is nothing to link to.
+    expect(dashboardHtml(rows, { title: "T", slug: "doc", generated: "g" })).not.toContain('data-fa-link="edit"');
+  });
 });

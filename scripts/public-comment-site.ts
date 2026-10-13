@@ -40,6 +40,7 @@ import type { ReviewAnchors } from "./docx-to-folio.js";
 import { type ChangeSet, DECISION_LABELS, IN_EDIT_STATUSES, OPEN_STATUSES, type PublicComment } from "../schemas/public-comment.js";
 import { changeSets, discussUrl } from "./public-comment-changesets.js";
 import { Store } from "./public-comment.js";
+import { BLOCK_ACTIONS_CSS, compactActionsHtml, compactActionsScript, DEFAULT_TEMPLATE, readIssueForm, type BlockActionsConfig } from "./block-actions.js";
 import { changeSetRouting, commentRouting, type Routing, TWG_GROUPS } from "./public-comment-routing.js";
 import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
 import { documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage } from "./document-site-route.js";
@@ -69,6 +70,8 @@ export interface SiteComment {
   recommendations: Array<{ by: string; code: string; rationale: string; url?: string }>;
   /** The TWG sub-group the log routed it to (public-comment-routing.ts). */
   committee?: Routing;
+  /** Its record, repo-relative: what [edit] opens and [feedback] names. */
+  source?: string;
   decision?: { code: string; label: string; reason: string; by: string };
   /** The change-sets it is in (issue #2183), derived from the change-set records. */
   changeSets: Array<{ id: string; title: string; status: string; issue?: number }>;
@@ -120,6 +123,7 @@ export function siteComments(
       ...((routing) => (routing ? { committee: routing } : {}))(commentRouting(p.labels)),
       ...(p.decision ? { decision: { code: p.decision.code, label: DECISION_LABELS[p.decision.code], reason: p.decision.reason, by: p.decision.by } } : {}),
       changeSets: inSets.get(p.ref) ?? [],
+      ...(opts.storeDir ? { source: `${opts.storeDir}/comments/${p.ref}.json` } : {}),
       links: {
         ...(c.targetLabel ? { document: `${toRoot}${documentPage(opts.slug)}${frag}` } : {}),
         ...(site && c.targetLabel && cs ? { before: `${site}/${documentPage(opts.slug)}${frag}` } : {}),
@@ -175,7 +179,13 @@ const STYLE = `
 /** The dashboard. Filters run in the page; with scripts off the full table still renders. */
 export function dashboardHtml(
   rows: SiteComment[],
-  meta: { title: string; slug: string; generated: string; repo?: string; changeSets?: ChangeSet[]; toRoot?: string; records?: string },
+  meta: {
+    title: string; slug: string; generated: string; repo?: string; changeSets?: ChangeSet[]; toRoot?: string; records?: string;
+    /** [edit] and [feedback] on every comment, the platform's block recipe (edit-links.ts). Absent: none. */
+    actions?: BlockActionsConfig;
+    /** The dashboard's own route, so a feedback issue links back to the comment. */
+    page?: string;
+  },
 ): string {
   const issueLink = (n: number) => (meta.repo ? `<a href="https://github.com/${esc(meta.repo)}/issues/${n}">#${n}</a>` : `#${n}`);
   // A change-set with an issue links it; one without offers to open it, which
@@ -230,11 +240,21 @@ export function dashboardHtml(
     ]
       .filter(Boolean)
       .join(" ");
+  // [edit] AND [feedback] ON EVERY COMMENT (owner, 2026-10-13), the same
+  // affordance as every document block: [edit] opens the comment's record in
+  // GitHub's editor, [feedback] a new issue that names its ref, so the
+  // public-comment workflow links the issue to the comment. Compact form: the
+  // hrefs are built in the page from data attributes, as 2,600 prefilled
+  // issue URLs would weigh megabytes.
+  const actionsOf = (r: SiteComment) =>
+    meta.actions?.repo && r.source
+      ? compactActionsHtml({ label: r.ref, source: r.source, ...(r.section || r.sectionTitle ? { section: `${r.section} ${r.sectionTitle}`.trim() } : {}) })
+      : "";
   const body = rows
     .map(
       (r) => `<tr id="${esc(r.ref)}" data-phase="${r.phase}" data-status="${esc(r.status)}" data-placed="${r.target ? "1" : "0"}" data-incs="${r.changeSets.length ? "1" : "0"}" data-summary="${esc(r.summary)}" data-type="${esc(r.type)}" data-committee="${esc(committeeOf(r))}" data-section="${esc(r.section)}" data-text="${esc(`${r.ref} ${r.text} ${r.suggestion} ${r.sectionTitle}`.toLowerCase())}">
 <td><input type="checkbox" class="pick" value="${esc(r.ref)}" aria-label="Select ${esc(r.ref)}"></td>
-<td><a href="#${esc(r.ref)}">${esc(r.ref)}</a></td>
+<td><a href="#${esc(r.ref)}">${esc(r.ref)}</a>${actionsOf(r)}</td>
 <td class="phase phase-${r.phase}">${esc(r.status)}</td>
 <td>${esc(r.type)}</td>
 <td>${r.committee ? `${r.committee.group ? `<b>${esc(r.committee.group)}</b>` : `<span class="chip" title="names no TWG category: needs a ruling">${esc(r.committee.raw)}</span>`}${r.committee.secondary.map((g) => ` <span class="chip muted">${esc(g)}</span>`).join("")}<br><span class="muted">${r.committee.source}</span>` : `<span class="muted">${unroutedLabel}</span>`}</td>
@@ -256,7 +276,7 @@ export function dashboardHtml(
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Public comments — ${esc(meta.title)}</title>
-<style>${STYLE}</style>
+<style>${STYLE}${meta.actions?.repo ? BLOCK_ACTIONS_CSS + "#comments .block-actions { float:none; display:block; margin:.2rem 0 0; opacity:.8; } #comments .block-actions a { margin:0 .5rem 0 0; }" : ""}</style>
 </head>
 <body>
 <main>
@@ -300,9 +320,19 @@ ${body}
 </table>
 </div>
 </main>
+${meta.actions?.repo ? compactActionsScript(meta.actions, meta.page) : ""}
 <script>
 (() => {
   const REPO = ${JSON.stringify(meta.repo ?? "")};
+  // [edit]/[feedback]: fill a row's links when the row is reached. The shared
+  // runtime fills on reaching the links' host, but a pointer that lands
+  // straight on a link (no gap crossed) or keyboard focus never reaches it, as
+  // an <a> without an href is not focusable.
+  for (const ev of ["pointerover", "focusin", "touchstart"])
+    document.addEventListener(ev, (e) => {
+      const tr = e.target.closest && e.target.closest("#comments tbody tr");
+      if (tr && window.faEditLinks && !tr.dataset.faFilled) { tr.dataset.faFilled = "1"; window.faEditLinks.fill(tr); }
+    }, { passive: true });
   const $ = (id) => document.getElementById(id);
   const rows = [...document.querySelectorAll("#comments tbody tr")];
   const csTrs = [...document.querySelectorAll("#change-sets tbody tr")];
@@ -619,6 +649,22 @@ export function overlaySnippet(rows: SiteComment[], opts: { repo?: string; issue
 `;
 }
 
+/**
+ * Where a comment's [edit] and [feedback] point: the store's repository on
+ * main, coded with the document's slug, and the folio's block-feedback form
+ * when it has one (as `defaultBlockActions` does for the document's blocks).
+ */
+export function commentActions(repoRoot: string, cfg: { repo?: string; document: string; site?: string }): BlockActionsConfig {
+  const fields = readIssueForm(repoRoot, DEFAULT_TEMPLATE);
+  return {
+    ...(cfg.repo ? { repo: cfg.repo } : {}),
+    branch: "main",
+    content: cfg.document,
+    ...(cfg.site ? { siteUrl: cfg.site } : {}),
+    ...(fields ? { template: DEFAULT_TEMPLATE, templateFields: fields } : {}),
+  };
+}
+
 export function buildPublicCommentSite(repo: string, out: string, storeDir?: string) {
   const store = Store.open(repo, storeDir);
   const cfg = store.config() as ReturnType<Store["config"]> & { title?: string };
@@ -673,6 +719,7 @@ export function buildPublicCommentSite(repo: string, out: string, storeDir?: str
       toRoot,
       records: fromPageDir(pageRoute, `${route}/comments.json`),
       ...(cfg.repo ? { repo: cfg.repo } : {}),
+      ...(cfg.repo ? { actions: commentActions(repo, cfg), page: `${pageRoute}/index.html` } : {}),
       changeSets: sets,
       generated: new Date().toISOString().slice(0, 16).replace("T", " ") + " UTC",
     }),
