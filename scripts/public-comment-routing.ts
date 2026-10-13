@@ -10,8 +10,11 @@
  * until a person rules on it.
  *
  * A comment's routing comes from the columns of the master log it was
- * ingested from, held in `public.labels`. A human categorisation overrides the
- * AI one (REQ-26). "A/ B" is a primary and a secondary group (REQ-04).
+ * ingested from, held in `public.labels`, and, for comments the log did not
+ * categorise, from the store's `routing.json`. Precedence (REQ-26): the log's
+ * human column, then a `routing.json` entry set by a person, then the log's
+ * AI column, then an agent's `routing.json` entry. "A/ B" is a primary and a
+ * secondary group (REQ-04).
  *
  * A change-set's committee is the plurality of its routed comments' primary
  * groups. Ties go to the more specific domain group (REQ-03's rule, e.g. a
@@ -51,21 +54,57 @@ export interface Routing {
   /** The primary group, absent when the value names no category. */
   group?: TwgGroup;
   secondary: TwgGroup[];
-  source: "human" | "ai";
-  /** The value as the log holds it. */
+  source: "human" | "ai" | "agent";
+  /** The value as the log or routing.json holds it. */
   raw: string;
+  /** From routing.json: why, how sure, and who. */
+  rationale?: string;
+  confidence?: "high" | "medium" | "low";
+  by?: string;
+}
+
+/** One `routing.json` entry (schema twg-routing/0.1). */
+export interface RoutingEntry {
+  category: string;
+  secondary?: string[];
+  confidence?: "high" | "medium" | "low";
+  rationale?: string;
+  /** Who set it: an agent's id, or a person's GitHub login. */
+  by: string;
+}
+
+export interface RoutingFile {
+  $schema: "twg-routing/0.1";
+  taxonomy: string;
+  routings: Record<string, RoutingEntry>;
+}
+
+/** An agent wrote it; anything else is a person's override. */
+export const isAgent = (by: string) => /(^|-)agent$|^claude/i.test(by);
+
+function fromEntry(e: RoutingEntry): Routing {
+  const group = twgGroup(e.category);
+  return {
+    ...(group ? { group } : {}),
+    secondary: group ? [...new Set((e.secondary ?? []).map(twgGroup).filter((g): g is TwgGroup => !!g && g !== group))] : [],
+    source: isAgent(e.by) ? "agent" : "human",
+    raw: e.category,
+    ...(e.rationale ? { rationale: e.rationale } : {}),
+    ...(e.confidence ? { confidence: e.confidence } : {}),
+    by: e.by,
+  };
 }
 
 const isHuman = (k: string) => /human/i.test(k) && /categori[sz]/i.test(k);
 const isAi = (k: string) => !/human/i.test(k) && /categori[sz]/i.test(k);
 
-/** A comment's routing from its ingested labels, or undefined when it has none. */
-export function commentRouting(labels: Record<string, string> | undefined): Routing | undefined {
-  if (!labels) return undefined;
-  const pick = (test: (k: string) => boolean) => Object.entries(labels).find(([k, v]) => test(k) && v.trim())?.[1];
+/** A comment's routing from its ingested labels and its routing.json entry, or undefined when it has none. */
+export function commentRouting(labels: Record<string, string> | undefined, entry?: RoutingEntry): Routing | undefined {
+  const pick = (test: (k: string) => boolean) => Object.entries(labels ?? {}).find(([k, v]) => test(k) && v.trim())?.[1];
   const human = pick(isHuman);
+  if (!human && entry && !isAgent(entry.by)) return fromEntry(entry);
   const raw = human ?? pick(isAi);
-  if (!raw) return undefined;
+  if (!raw) return entry ? fromEntry(entry) : undefined;
   const parts = raw.split("/").map((s) => s.trim()).filter(Boolean);
   const whole = twgGroup(raw);
   const groups = whole ? [whole] : parts.map(twgGroup);

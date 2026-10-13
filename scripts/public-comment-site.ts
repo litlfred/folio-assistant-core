@@ -41,7 +41,7 @@ import { type ChangeSet, DECISION_LABELS, IN_EDIT_STATUSES, OPEN_STATUSES, type 
 import { changeSets, discussUrl } from "./public-comment-changesets.js";
 import { Store } from "./public-comment.js";
 import { BLOCK_ACTIONS_CSS, compactActionsHtml, compactActionsScript, DEFAULT_TEMPLATE, readIssueForm, type BlockActionsConfig } from "./block-actions.js";
-import { changeSetRouting, commentRouting, type Routing, TWG_GROUPS } from "./public-comment-routing.js";
+import { changeSetRouting, commentRouting, type Routing, type RoutingFile, TWG_GROUPS } from "./public-comment-routing.js";
 import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
 import { documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage } from "./document-site-route.js";
 import { darkRules } from "../../cat-harness-tools/scripts/lib/scheme-css.ts";
@@ -81,7 +81,7 @@ export interface SiteComment {
 export function siteComments(
   all: PublicComment[],
   anchors: ReviewAnchors,
-  opts: { slug: string; site?: string; repo?: string; storeDir?: string; changeSets?: ChangeSet[]; toRoot?: string },
+  opts: { slug: string; site?: string; repo?: string; storeDir?: string; changeSets?: ChangeSet[]; toRoot?: string; routing?: RoutingFile },
 ): SiteComment[] {
   const toRoot = opts.toRoot ?? "../";
   const inSets = new Map<string, SiteComment["changeSets"]>();
@@ -120,7 +120,7 @@ export function siteComments(
       suggestion: p.suggestedRevision ?? "",
       reviewer: [p.reviewer.name, p.reviewer.organisation, p.reviewer.country].filter(Boolean).join(", ") || "a reviewer",
       recommendations: p.recommendations.map((r) => ({ by: r.by, code: r.code, rationale: r.rationale, ...(r.url ? { url: r.url } : {}) })),
-      ...((routing) => (routing ? { committee: routing } : {}))(commentRouting(p.labels)),
+      ...((routing) => (routing ? { committee: routing } : {}))(commentRouting(p.labels, opts.routing?.routings[p.ref])),
       ...(p.decision ? { decision: { code: p.decision.code, label: DECISION_LABELS[p.decision.code], reason: p.decision.reason, by: p.decision.by } } : {}),
       changeSets: inSets.get(p.ref) ?? [],
       ...(opts.storeDir ? { source: `${opts.storeDir}/comments/${p.ref}.json` } : {}),
@@ -257,7 +257,7 @@ export function dashboardHtml(
 <td><a href="#${esc(r.ref)}">${esc(r.ref)}</a>${actionsOf(r)}</td>
 <td class="phase phase-${r.phase}">${esc(r.status)}</td>
 <td>${esc(r.type)}</td>
-<td>${r.committee ? `${r.committee.group ? `<b>${esc(r.committee.group)}</b>` : `<span class="chip" title="names no TWG category: needs a ruling">${esc(r.committee.raw)}</span>`}${r.committee.secondary.map((g) => ` <span class="chip muted">${esc(g)}</span>`).join("")}<br><span class="muted">${r.committee.source}</span>` : `<span class="muted">${unroutedLabel}</span>`}</td>
+<td>${r.committee ? `${r.committee.group ? `<b>${esc(r.committee.group)}</b>` : `<span class="chip" title="names no TWG category: needs a ruling">${esc(r.committee.raw)}</span>`}${r.committee.secondary.map((g) => ` <span class="chip muted">${esc(g)}</span>`).join("")}<br><span class="muted"${r.committee.rationale ? ` title="${esc(r.committee.rationale)}"` : ""}>${r.committee.source === "human" && r.committee.by ? esc(r.committee.by) : r.committee.source}${r.committee.confidence && r.committee.confidence !== "high" ? `, ${r.committee.confidence}` : ""}</span>` : `<span class="muted">${unroutedLabel}</span>`}</td>
 <td>${r.target ? `${esc(r.section)} ${esc(r.sectionTitle)}` : `<em>unplaced</em>`}<br><span class="muted">${esc(r.citation)}</span>${r.confidence !== "high" && r.target ? `<br><span class="chip" title="${esc(r.anchorNote)}">anchor: ${esc(r.confidence)}</span>` : ""}</td>
 <td><details><summary>${esc(r.summary)}</summary><p>${esc(r.text)}</p>${r.suggestion ? `<p><b>Suggested revision:</b> ${esc(r.suggestion)}</p>` : ""}<p class="muted">${esc(r.reviewer)}</p></details></td>
 <td>${r.recommendations.map((x) => `<span class="chip" title="${esc(x.rationale)}">${x.url ? `<a href="${esc(x.url)}">` : ""}${esc(x.by)}: ${esc(x.code)}${x.url ? "</a>" : ""}</span>`).join("") || `<span class="muted">none</span>`}</td>
@@ -680,6 +680,7 @@ export function buildPublicCommentSite(repo: string, out: string, storeDir?: str
     site: cfg.site,
     repo: cfg.repo,
     storeDir: storeDir ?? "review/public-comment",
+    ...((f) => (existsSync(f) ? { routing: JSON.parse(readFileSync(f, "utf-8")) as RoutingFile } : {}))(join(repo, storeDir ?? "review/public-comment", "routing.json")),
   });
   const docPage = join(out, ...documentPage(cfg.document).split("/"));
   if (!existsSync(docPage)) throw new Error(`${docPage} is missing: run build-document-site.ts --out ${out} first`);
