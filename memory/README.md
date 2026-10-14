@@ -14,4 +14,5 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `memory`, holdin
 | [`document-render-path-takes-no-tex.md`](document-render-path-takes-no-tex.md) | text |  |
 | [`locale-directories-are-declared-not-inferred.md`](locale-directories-are-declared-not-inferred.md) | text |  |
 | [`there-is-no-recommendation-block-kind.md`](there-is-no-recommendation-block-kind.md) | text |  |
+
 <!-- kg:subgraph:end -->

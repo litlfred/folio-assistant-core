@@ -21,4 +21,5 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `folio-assistant
 | [`reference.json`](reference.json) | data |  |
 | [`review-verdict.json`](review-verdict.json) | data |  |
 | [`uploads-dublin-core-record.json`](uploads-dublin-core-record.json) | data |  |
+
 <!-- kg:subgraph:end -->

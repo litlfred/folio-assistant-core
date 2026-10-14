@@ -12,4 +12,5 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-library`, 
 |---|---|---|
 | [`image-verdicts.json`](image-verdicts.json) | data |  |
 | [`arxiv-2510.21603v1/`](arxiv-2510.21603v1/README.md) | described in its own README | |
+
 <!-- kg:subgraph:end -->
