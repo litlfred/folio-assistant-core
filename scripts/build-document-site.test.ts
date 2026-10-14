@@ -200,6 +200,25 @@ describe("paper content: math, glossary directives and citations (owner, 2026-10
     expect(out).toContain("\\cite{c}");
   });
 
+  test("given a bibliography, each cited key links to its entry there (bean 63q4)", () => {
+    const url = "https://litlfred.github.io/folio-assistant/folio-assistant-core/bibliography/";
+    const out = citationsToHtml("As in \\cite[p.~3]{garoufalidis2004, a:b}.", { bibliographyUrl: url });
+    expect(out).toContain('data-keys="garoufalidis2004 a:b"');
+    expect(out).toContain(`<a href="${url}#ref-garoufalidis2004">garoufalidis2004</a>`);
+    // The anchor is the one the bibliography page draws: referenceAnchor, so `a:b` → `ref-a-b`.
+    expect(out).toContain(`<a href="${url}#ref-a-b">a:b</a>`);
+    expect(out).toContain("</a>, p. 3]</span>");
+  });
+
+  test("without a bibliography, citations stay unlinked labels", () => {
+    expect(citationsToHtml("\\cite{x}")).toBe('<span class="cite" data-keys="x">[x]</span>');
+  });
+
+  test("renderDocumentHtml passes the bibliography through", async () => {
+    const html = await renderDocumentHtml("See \\cite{x}.", { math: false, bibliographyUrl: "/bib/" });
+    expect(html).toContain('<a href="/bib/#ref-x">x</a>');
+  });
+
   test("the macro table is the viewer's: \\name -> tex from the paper manifest", () => {
     expect(katexMacros({ qou: { tex: "\\mathbf{Q}" } })["\\qou"]).toBe("\\mathbf{Q}");
     expect(katexMacros(undefined)["\\bigbowtie"]).toBe("\\bowtie");
