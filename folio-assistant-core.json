@@ -317,6 +317,11 @@
     "cat-harness",
     "cat-harness-tools"
   ],
+  "_jsonldPrefixes_comment": "The external vocabularies this instance's JSON-LD speaks (cat-harness schemas/jsonld-prefixes.ts; bean folio-assistant-63q4, owner 2026-10-14). BIBO and FaBiO type and describe reference nodes (schemas/reference.ts, referenceToJsonLd); dcterms comes from cat-harness, which this instance needs, so it is not repeated here.",
+  "jsonldPrefixes": {
+    "bibo": "http://purl.org/ontology/bibo/",
+    "fabio": "http://purl.org/spar/fabio/"
+  },
   "_contentAdapters_comment": "Declared HERE, by the instance that ships the adapter, so cat-harness's composition root (`src/builtin-adapters.ts`) finds it by reading declarations instead of holding a `../folio-assistant-core/adapters/document/index.ts` path into the layer above it. That path was the last upward import out of cat-harness, and a variable one no static gate could see (bean p11x, `check:import-direction`).",
   "contentAdapters": [
     {
