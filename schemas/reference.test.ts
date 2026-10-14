@@ -10,6 +10,7 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { FOLIO_BASE } from "@litlfred/cat-harness/schemas/jsonld.ts";
 import { DublinCoreRecordSchema } from "./dublin-core.ts";
 import {
   REFERENCE_SCHEMA_TAG,
@@ -173,6 +174,14 @@ describe("exports", () => {
     expect(recs[1]).toContain("TY  - BOOK");
     expect(recs[1]).toContain("SN  - 9789241548960");
     for (const r of recs) expect(r.endsWith("ER  - ")).toBe(true);
+  });
+
+  test("the JSON-LD @id joins the citations: same @base as content documents", () => {
+    const ctx = referenceToJsonLd(garoufalidis2004)["@context"] as Record<string, unknown>;
+    expect(ctx["@base"]).toBe(FOLIO_BASE);
+    expect(ctx).not.toHaveProperty("schema");
+    expect(ctx["dcterms:source"]).toEqual({ "@type": "@id" });
+    expect(ctx["dcterms:hasVersion"]).toEqual({ "@type": "@id" });
   });
 
   test("Dublin Core / BIBO JSON-LD: one @graph", () => {
