@@ -12,7 +12,13 @@ import { join, resolve } from "node:path";
 const HERE = import.meta.dir;
 const CANON = [resolve(HERE, "../../cat-harness/schemas/staging-comparison.schema.json")].find((p) => existsSync(p));
 
-function contracts(): { file: string; json: any }[] {
+/** A skill contract, as much of it as these tests read. */
+type Contract = {
+  properties?: { stagingLinks?: { $ref?: string } };
+  $defs?: { stagingLinks?: Record<string, unknown> };
+};
+
+function contracts(): { file: string; json: Contract }[] {
   const root = join(HERE, "skills");
   return readdirSync(root).flatMap((skill) =>
     ["input.schema.json", "output.schema.json"]
@@ -35,7 +41,7 @@ describe("staging links in this layer's skill contracts", () => {
     const drifted = contracts()
       .filter((c) => c.json?.$defs?.stagingLinks !== undefined)
       .filter((c) => {
-        const { $comment: _c, ...copy } = c.json.$defs.stagingLinks;
+        const { $comment: _c, ...copy } = c.json.$defs!.stagingLinks!;
         return JSON.stringify(copy) !== JSON.stringify(canon);
       })
       .map((c) => c.file);
