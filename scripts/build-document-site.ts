@@ -33,6 +33,7 @@
  *   <out>/<slug>/blocks/         a lazy document's block text, as data (bean v433)
  *   <out>/<slug>/kg/             every block's knowledge-graph node, as committed
  *   <out>/<slug>/graph.jsonld    the document's graph: every node in one file
+ *   <out>/values.jsonld          every {{ … }} value the text refers to, as KG nodes
  *
  * Pages are under the page locale and data is not (issue #2527): see
  * `document-site-route.ts`, which says where each one goes.
@@ -70,11 +71,12 @@ import { visit } from "unist-util-visit";
 import { folioDir, readDeclaration, visualisationResolves, visualisationsOf, type CatHarnessDeclaration } from "@litlfred/cat-harness/schemas/cat-harness.js";
 import { loadContributions, readHarnessConfig } from "@litlfred/cat-harness/schemas/harness-config.js";
 import { detectRepoUrl, ownerRepo } from "@litlfred/cat-harness-tools/src/core/git-refs.js";
-import { DEFAULT_TEMPLATE, injectBlockActions, readIssueForm, type BlockActionsConfig, type BlockContext } from "./block-actions.js";
+import { DEFAULT_TEMPLATE, compactActionsScript, injectBlockActions, readIssueForm, type BlockActionsConfig, type BlockContext } from "./block-actions.js";
 import type { Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness/schemas/types.js";
 import { buildDocumentMarkdown } from "@litlfred/cat-harness-tools/pipeline/render-markdown.js";
 import { loadBlocksUnder } from "@litlfred/cat-harness-tools/pipeline/block-module.js";
 import { blockToJsonLd, serialise as serialiseNode } from "@litlfred/cat-harness-tools/pipeline/gen-block-jsonld.js";
+import { writeValuesJsonLd } from "@litlfred/cat-harness-tools/pipeline/gen-values-jsonld.js";
 import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness/schemas/contributions.js";
 import { reviewPageHtml } from "@litlfred/cat-harness-tools/scripts/gen-review-page.js";
 import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts";
@@ -304,6 +306,9 @@ export async function documentGraph(
 
 /** Errors past this many are counted, not listed: one cause usually explains them all. */
 const GRAPH_ERRORS_LISTED = 20;
+
+/** The site's variable values (`gen-values-jsonld`), at the site root. */
+export const VALUES_FILE = "values.jsonld";
 
 export const LAZY_THRESHOLD = 200;
 export const LAZY_CHUNK = 40;
@@ -739,6 +744,7 @@ export function defaultBlockActions(repoRoot: string, over: Partial<BlockActions
     ...(over.labels ? { labels: over.labels } : {}),
     ...(over.siteUrl ? { siteUrl: over.siteUrl } : {}),
     ...(over.content ? { content: over.content } : {}),
+    ...(over.values ? { values: over.values } : {}),
   };
 }
 
@@ -788,9 +794,17 @@ export async function buildDocumentSite(
     mkdirSync(dir, { recursive: true });
     const mathOpts = math ? { macros: katexMacros(manifest.macros) } : undefined;
     const blocks = await documentBlocks(d.path, repoRoot, d.slug);
-    const cfg = opts.actions === false ? undefined : defaultBlockActions(repoRoot, { content: d.slug, ...(opts.actions ?? {}) });
+    // `values`: where the ✍ suggest editor reads each variable's current value, relative to this page.
+    const cfg = opts.actions === false ? undefined : defaultBlockActions(repoRoot, { content: d.slug, values: fromPageDir(documentPageDir(d.slug), VALUES_FILE), ...(opts.actions ?? {}) });
     // [edit] and [feedback] on every block (REQ-17, bean uphx). Off only when asked.
-    const withActions = (h: string, compact = false) => (cfg ? injectBlockActions(h, blocks, cfg, { compact }).html : h);
+    // The compact form brings the runtime with it. The full form (a small,
+    // one-page document) gets it too: the runtime is what adds ✍ suggest beside
+    // every ✎ edit, and a document is not less editable for being short.
+    const withActions = (h: string, compact = false) => {
+      if (!cfg) return h;
+      const r = injectBlockActions(h, blocks, cfg, { compact });
+      return compact || r.inserted === 0 ? r.html : r.html.replace("</body>", `${compactActionsScript(cfg, documentPage(d.slug))}</body>`);
+    };
     const lazy = opts.lazy === "always" || ((opts.lazy ?? "auto") === "auto" && blocks.length >= LAZY_THRESHOLD);
     const title = manifest.title ?? d.slug;
     // Themed, the theme's sidebar is the page's index, built from heading ids;
@@ -848,6 +862,9 @@ export async function buildDocumentSite(
     outline.documents.push(lz ? { ...o, lazy: lz } : o);
   }
   writeFileSync(join(outDir, "outline.json"), JSON.stringify(outline) + "\n");
+  // The values the text refers to, as KG nodes, beside the outline: what the
+  // ✍ suggest editor shows a variable's current value from (gen-values-jsonld).
+  writeValuesJsonLd(repoRoot, outDir);
   const review = join(outDir, ...REVIEW_PAGE_DIR.split("/"));
   mkdirSync(review, { recursive: true });
   writeFileSync(join(review, "index.html"), reviewPageHtml());
