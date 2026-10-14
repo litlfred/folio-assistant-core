@@ -385,15 +385,5 @@
       "rtlSupported": true,
       "notes": "Base content type. All other types inherit Markdown translation."
     }
-  ],
-  "_gateExemptions_comment": "Steps of folio-assistant's own workflows that CI runs and the gate set does not (bean 0r7u: the instance above the tools layer declares them, so the tools layer standalone never carries a stale entry).",
-  "gateExemptions": {
-    "steps": [
-      {
-        "match": "qa:publish --add",
-        "kind": "ci-only",
-        "reason": "health-check.yml adds the daily pages-serving observation to the commit's qa-reports entry (bean 1dre): a WRITE of a network observation into the qa-reports branch, not a check; its add-only rule is covered by qa-store.test.ts in `bun test`"
-      }
-    ]
-  }
+  ]
 }
