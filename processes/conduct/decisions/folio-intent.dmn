@@ -14,9 +14,9 @@
                     mapped onto the five branches. "unstated" until they have
                     been asked. This is a fact about the conversation, not a
                     guess about the user.
-    isFolio         a `<name>.config.json` in the working directory — or its
-                    entry in `index.config.json`, whose inline fields overlay
-                    it — DECLARES a `contentType`. Not its mere presence, nor
+    isFolio         the instance's entry in `index.config.json` (the one
+                    config, bean ymvt; a legacy `<name>.config.json` it
+                    imports is overlaid by it) DECLARES a `contentType`. Not its mere presence, nor
                     its listing in the index: that is instantiation, the
                     `harness` membership, and the two were one question only
                     while the declaration was a separate file.

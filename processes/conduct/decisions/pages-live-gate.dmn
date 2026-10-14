@@ -10,8 +10,8 @@
   `bun run scripts/pages-bootstrap.ts` (its `json` flag):
 
     pagesUrlKnown   the Pages base URL could be derived at all (git remote
-                    readable, owner/repo parsed, or <name>.config.json
-                    readme.pagesBaseUrl set).
+                    readable, owner/repo parsed, or the instance's config —
+                    its index.config.json entry — sets readme.pagesBaseUrl).
     probe           "ok"        the URL returned a success status
                     "not-found" the URL answered 404 — the site is not published
                                 yet, which is the ordinary state for the first
