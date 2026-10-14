@@ -15,4 +15,5 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-processes`
 | [`content/`](content/) | _nothing declares what this holds_ | |
 | [`library/`](library/) | _nothing declares what this holds_ | |
 | [`ui/`](ui/) | _nothing declares what this holds_ | |
+
 <!-- kg:subgraph:end -->

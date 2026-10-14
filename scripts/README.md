@@ -84,4 +84,5 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`lib/`](lib/) | _nothing declares what this holds_ | |
 | [`test-fixtures/`](test-fixtures/) | _nothing declares what this holds_ | |
 | [`tests/`](tests/) | _nothing declares what this holds_ | |
+
 <!-- kg:subgraph:end -->

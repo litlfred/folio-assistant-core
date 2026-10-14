@@ -10,8 +10,10 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
+import { FOLIO_BASE } from "@litlfred/cat-harness/schemas/jsonld.ts";
 import { DublinCoreRecordSchema } from "./dublin-core.ts";
 import {
+  REFERENCE_CONTEXT,
   REFERENCE_SCHEMA_TAG,
   ReferenceNodeSchema,
   dcCreatorToName,
@@ -175,6 +177,14 @@ describe("exports", () => {
     for (const r of recs) expect(r.endsWith("ER  - ")).toBe(true);
   });
 
+  test("the JSON-LD @id joins the citations: same @base as content documents", () => {
+    const ctx = referenceToJsonLd(garoufalidis2004)["@context"] as Record<string, unknown>;
+    expect(ctx["@base"]).toBe(FOLIO_BASE);
+    expect(ctx).not.toHaveProperty("schema");
+    expect(ctx["dcterms:source"]).toEqual({ "@type": "@id" });
+    expect(ctx["dcterms:hasVersion"]).toEqual({ "@type": "@id" });
+  });
+
   test("Dublin Core / BIBO JSON-LD: one @graph", () => {
     const g = JSON.parse(toJsonLdGraph(refs)) as { "@context": object; "@graph": Record<string, unknown>[] };
     expect(g["@graph"].map((n) => n["@id"])).toEqual(["references/garoufalidis2004", "references/who2014handbook"]);
@@ -195,5 +205,12 @@ describe("declared", () => {
     expect(Object.keys(kind.nodeSchemas)).toEqual([REFERENCE_SCHEMA_TAG]);
     expect(v.validates).toEqual({ kind: "references", family: REFERENCE_SCHEMA_TAG });
     expect(v.schema).toBe("folio-assistant-core:schemas/reference.ts#ReferenceNodeSchema");
+  });
+});
+
+describe("the declared vocabulary", () => {
+  test("folio-assistant-core.json declares exactly the reference prefixes the export binds itself", () => {
+    const decl = JSON.parse(readFileSync(join(import.meta.dir, "..", "folio-assistant-core.json"), "utf-8")) as { jsonldPrefixes?: Record<string, string> };
+    expect(decl.jsonldPrefixes).toEqual({ bibo: REFERENCE_CONTEXT.bibo, fabio: REFERENCE_CONTEXT.fabio });
   });
 });

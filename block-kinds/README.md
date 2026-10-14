@@ -19,4 +19,5 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `folio-assistant
 | [`remark.json`](remark.json) | data |  |
 | [`simulator.json`](simulator.json) | data |  |
 | [`table.json`](table.json) | data |  |
+
 <!-- kg:subgraph:end -->

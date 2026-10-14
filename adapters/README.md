@@ -11,4 +11,5 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-adapters`,
 | file | what it is | used by |
 |---|---|---|
 | [`document/`](document/) | _nothing declares what this holds_ | |
+
 <!-- kg:subgraph:end -->

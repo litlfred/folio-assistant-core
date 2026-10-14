@@ -48,4 +48,5 @@ Part of [Folio Assistant Core](../../README.md) 0.1.0, declared as `voices`, hol
 | [`address-user/`](address-user/) | _nothing declares what this holds_ | |
 | [`linked-data/`](linked-data/) | _nothing declares what this holds_ | |
 | [`technical-writer/`](technical-writer/) | _nothing declares what this holds_ | |
+
 <!-- kg:subgraph:end -->
