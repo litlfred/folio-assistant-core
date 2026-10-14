@@ -75,6 +75,12 @@
       ]
     },
     {
+      "role": "review-coordinator",
+      "skills": [
+        "review-comments"
+      ]
+    },
+    {
       "role": "docs-authoring-agent",
       "skills": [
         "glossary-build",
