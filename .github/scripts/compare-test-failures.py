@@ -37,7 +37,7 @@ fixed = sorted(base - head)
 still = sorted(head & base)
 
 lines = [
-    "## cat-harness-tools tests: PR vs main",
+    f"## {os.environ.get('GITHUB_REPOSITORY', 'this repository').split('/')[-1]} tests: PR vs main",
     "",
     f"| | tests | failing |",
     f"|---|---|---|",
