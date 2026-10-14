@@ -45,3 +45,16 @@ export const REVIEW_PAGE_DIR: string = localisedPage("review");
 
 /** From a page directory to a site path, both site-relative: `en/doc` to `doc/blocks` is `../../doc/blocks`. */
 export const fromPageDir = (pageDir: string, to: string): string => posix.relative(pageDir, to);
+
+/**
+ * Where a THEMED document page ends (`--document-layout`). A standalone page
+ * ends at its closing body tag, and a later step (the public-comment notes)
+ * adds to the page just before it. A themed page is a Jekyll page with no
+ * body tag of its own, so it ends at this marker instead, inside its Liquid
+ * raw block; a step that adds to a document page looks for one or the other
+ * and fails when it finds neither.
+ */
+export const DOCUMENT_END_MARKER = "<!-- fa-doc:end -->";
+
+/** The class every rule of a themed document page is scoped under, and its document's wrapper. */
+export const DOC_CLASS = "fa-doc";
