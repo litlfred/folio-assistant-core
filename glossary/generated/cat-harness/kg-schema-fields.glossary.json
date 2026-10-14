@@ -2170,6 +2170,48 @@
       "status": "candidate"
     },
     {
+      "id": "built-at-publish.builtatpublishschema.because",
+      "prefLabel": "BuiltAtPublishSchema.because",
+      "definition": "Which half of the rule it fails.",
+      "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.because",
+      "status": "candidate"
+    },
+    {
+      "id": "built-at-publish.builtatpublishschema.directory",
+      "prefLabel": "BuiltAtPublishSchema.directory",
+      "definition": "The declared directory id this path fills, when it is one (so presence checks do not expect it on disk).",
+      "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.directory",
+      "status": "candidate"
+    },
+    {
+      "id": "built-at-publish.builtatpublishschema.from",
+      "prefLabel": "BuiltAtPublishSchema.from",
+      "definition": "`state` only: the declared directory ids of the branch-kept graphs it is computed from.",
+      "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.from",
+      "status": "candidate"
+    },
+    {
+      "id": "built-at-publish.builtatpublishschema.path",
+      "prefLabel": "BuiltAtPublishSchema.path",
+      "definition": "Instance-relative; a directory ends in `/`.",
+      "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.path",
+      "status": "candidate"
+    },
+    {
+      "id": "built-at-publish.builtatpublishschema.reason",
+      "prefLabel": "BuiltAtPublishSchema.reason",
+      "definition": "One sentence a reviewer can check: what makes it pin- or state-dependent.",
+      "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.reason",
+      "status": "candidate"
+    },
+    {
+      "id": "built-at-publish.builtatpublishschema.writer",
+      "prefLabel": "BuiltAtPublishSchema.writer",
+      "definition": "Package scripts that write it, in order — run as `bun run cat <script>`.",
+      "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.writer",
+      "status": "candidate"
+    },
+    {
       "id": "carried-note.artefactrefschema.id",
       "prefLabel": "ArtefactRefSchema.id",
       "definition": "Its identifier within the provider: `203`, a SHA, a run id.",
@@ -2461,6 +2503,13 @@
       "prefLabel": "CatHarnessDeclaration.avatar",
       "definition": "The instance's own avatar (sod4 #4); the table in avatars.ts covers only the instances below the harness.",
       "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.avatar",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.catharnessdeclaration.builtatpublish",
+      "prefLabel": "CatHarnessDeclaration.builtAtPublish",
+      "definition": "Artefacts this instance serves and must never commit, each built at publish by the package scripts it names — {@link BuiltAtPublish}. Owner, 2026-10-14 (\"B1\"): a page computed over the checkout's other instances, or from a branch-kept graph, cannot be current in a commit of this one.",
+      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.builtAtPublish",
       "status": "candidate"
     },
     {
@@ -10397,7 +10446,7 @@
     {
       "id": "site-indexes.beanindexitemschema.file",
       "prefLabel": "BeanIndexItemSchema.file",
-      "definition": "Repository-relative path of the bean file.",
+      "definition": "Path of the bean file ON {@link BeanIndexSchema} `fileRef` — the branch that keeps the store. Equal to the checkout path while the store is on `main`; since the state cutover it is a path on `cat/cat-harness/beans`.",
       "source": "cat-harness/schemas/site-indexes.ts#BeanIndexItemSchema.file",
       "status": "candidate"
     },
@@ -10420,6 +10469,13 @@
       "prefLabel": "BeanIndexSchema.edges",
       "definition": "The block graph as ONE edge set, `blocker → blocked`, over both front-matter declarations (`blocking:` on the blocker, `blocked_by:` on the blocked), deduplicated — `blockEdges` in `scripts/beans.ts`, bean `vhqq`. An end may name no bean in `items`: that edge is kept here and reported as a `blocking-unknown` finding, never dropped.",
       "source": "cat-harness/schemas/site-indexes.ts#BeanIndexSchema.edges",
+      "status": "candidate"
+    },
+    {
+      "id": "site-indexes.beanindexschema.fileweb",
+      "prefLabel": "BeanIndexSchema.fileWeb",
+      "definition": "The repository and branch every item's `file` is a path on. A board that composes `<repoWeb>/blob/main/<file>` sends every bean to a 404 once the store is kept on its own branch (owner, 2026-10-13). Optional so a projection written before these keys still parses; absent means `repoWeb` at `main`.",
+      "source": "cat-harness/schemas/site-indexes.ts#BeanIndexSchema.fileWeb",
       "status": "candidate"
     },
     {

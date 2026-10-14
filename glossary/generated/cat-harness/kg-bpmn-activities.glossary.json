@@ -1415,6 +1415,14 @@
       "status": "candidate"
     },
     {
+      "id": "process_kgseparation.task_cutovercheck",
+      "prefLabel": "Measure the cutover: separation:cutover:check",
+      "definition": "Run `bun run cat separation:cutover:check --site` in the SEPARATED repository (Tool `separation-cutover-check`). Six conditions, each decided by an existing gate and none assumed: every declared layer mounted at its pin; every path a declaration names resolves (`check:declaration-resolution` — directories, assets, visualisers, needs); no wiring still names the monorepo (`livesAt`, a submodule, a reusable workflow, a path into the old checkout — lessons 15 and 16); no import or reference against the layer order; and the site builds from the mounts alone. A finding inside a mounted layer is upstream's and is listed, not counted.",
+      "notation": "Task_CutoverCheck",
+      "source": "cat-harness/processes/kg/kg-separation.bpmn#Task_CutoverCheck",
+      "status": "candidate"
+    },
+    {
       "id": "process_kgseparation.task_decide",
       "prefLabel": "Separate this graph?",
       "definition": "The owner decides from the measured signals, and also decides the address base for its identifiers, where verdicts about it live, and what its tools repository owns. Declining is a real outcome: the graph stays where it is.",
@@ -3642,7 +3650,7 @@
     {
       "id": "process_upstreamadoption.a_impact",
       "prefLabel": "Impact analysis what of ours binds it",
-      "definition": "The half a changelog cannot supply, because upstream does not know what you reached into. Worked from the row's `binds` list in `upstream-pins.json`. For the theme: `docs/assets/js/docs-ui.js` MOVES the theme's own search markup into the action launcher and binds `.search`, `#search-input` and `.search-label`; `docs-ui.css` overrides `.side-bar`, `.site-header` and `.main-header`; three e2e specs assert the structure the theme emits. An upstream rename of any of those is not a build failure — it is a shipped feature that quietly stops working.",
+      "definition": "The half a changelog cannot supply, because upstream does not know what you reached into. Worked from the row's `binds` list in `upstream-pins.json`. For the theme: `site-chrome/assets/js/docs-ui.js` MOVES the theme's own search markup into the action launcher and binds `.search`, `#search-input` and `.search-label`; `docs-ui.css` overrides `.side-bar`, `.site-header` and `.main-header`; three e2e specs assert the structure the theme emits. An upstream rename of any of those is not a build failure — it is a shipped feature that quietly stops working.",
       "notation": "A_Impact",
       "source": "cat-harness/processes/sdlc/upstream-version-adoption.bpmn#A_Impact",
       "status": "candidate"
