@@ -13,6 +13,7 @@ import { join } from "node:path";
 import { FOLIO_BASE } from "@litlfred/cat-harness/schemas/jsonld.ts";
 import { DublinCoreRecordSchema } from "./dublin-core.ts";
 import {
+  REFERENCE_CONTEXT,
   REFERENCE_SCHEMA_TAG,
   ReferenceNodeSchema,
   dcCreatorToName,
@@ -204,5 +205,12 @@ describe("declared", () => {
     expect(Object.keys(kind.nodeSchemas)).toEqual([REFERENCE_SCHEMA_TAG]);
     expect(v.validates).toEqual({ kind: "references", family: REFERENCE_SCHEMA_TAG });
     expect(v.schema).toBe("folio-assistant-core:schemas/reference.ts#ReferenceNodeSchema");
+  });
+});
+
+describe("the declared vocabulary", () => {
+  test("folio-assistant-core.json declares exactly the reference prefixes the export binds itself", () => {
+    const decl = JSON.parse(readFileSync(join(import.meta.dir, "..", "folio-assistant-core.json"), "utf-8")) as { jsonldPrefixes?: Record<string, string> };
+    expect(decl.jsonldPrefixes).toEqual({ bibo: REFERENCE_CONTEXT.bibo, fabio: REFERENCE_CONTEXT.fabio });
   });
 });
