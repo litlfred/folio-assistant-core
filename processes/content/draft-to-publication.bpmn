@@ -149,6 +149,7 @@
       <bpmn:documentation>The draft publication is circulated to the review team for formal review.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
+        <bootstrap.processes:skill ref="staging-review" />
       </bpmn:extensionElements>
       <bpmn:incoming>G08</bpmn:incoming>
       <bpmn:outgoing>G09</bpmn:outgoing>
