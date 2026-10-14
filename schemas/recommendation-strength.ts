@@ -21,9 +21,9 @@
  * one is that folio's rule, not the platform's.
  *
  * This module is the RULE. The QA checker that applies it per block is
- * tooling, and lives in `content/pipeline/qa-checkers-recommendation.ts`, where
+ * tooling, and lives in `pipeline/qa-checkers-recommendation.ts`, where
  * the harness's `imports` input-site for a contributed checker looks
- * (`<instance>/content/pipeline/qa-checkers-*.ts`), as sci's cost checkers and
+ * (`<instance>/pipeline/qa-checkers-*.ts`), as sci's cost checkers and
  * smart-base's DAK checkers do.
  */
 import type { CodeList } from "@litlfred/cat-harness/schemas/code-list.js";

@@ -6,10 +6,10 @@
  *
  * Here and not in `schemas/` because a checker a layer CONTRIBUTES is named by
  * its `qa-checkers/` node and loaded through the harness's `imports`
- * input-site, which admits `<instance>/content/pipeline/qa-checkers-*.ts` only — the
+ * input-site, which admits `<instance>/pipeline/qa-checkers-*.ts` only — the
  * place sci's cost checkers and smart-base's DAK checkers already are.
  *
- * @module folio-assistant-core/content/pipeline/qa-checkers-recommendation
+ * @module folio-assistant-core/pipeline/qa-checkers-recommendation
  */
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, parse } from "node:path";
@@ -17,10 +17,10 @@ import { dirname, join, parse } from "node:path";
 import type { CheckerPaths, CheckerResult } from "@litlfred/cat-harness/schemas/block-qa.js";
 import { loadCodeLists } from "@litlfred/cat-harness/schemas/code-list.js";
 import { maskStringsAndComments, parseStringField } from "@litlfred/cat-harness-tools/pipeline/uses-field.js";
-import { strengthFinding } from "../../schemas/recommendation-strength.js";
+import { strengthFinding } from "../schemas/recommendation-strength.js";
 
 /** Core's own code-lists, which every folio using the `recommendation` kind depends on. */
-const CORE_CODE_LISTS = join(import.meta.dir, "..", "..", "code-lists");
+const CORE_CODE_LISTS = join(import.meta.dir, "..", "code-lists");
 
 /**
  * The code lists a block can see, in overlay order: core's first, then every
