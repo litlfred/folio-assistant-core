@@ -1,0 +1,176 @@
+# PR checks for folio-assistant-core.
+#
+# Until 2026-10-14 this repository had no pull-request CI at all — only
+# `release-npm.yml` — so a change here was judged by nothing until a
+# downstream re-pinned it. Owner, 2026-10-14: core "should at least be
+# checking the consistency of its own graph using the cat harness tools, if
+# not also adding its own specific QA".
+#
+# The layout is cat-harness-tools' `pr-tests.yml`, which already works: core's
+# code and tests read the layers beside it, so each run checks out the
+# folio-assistant index, mounts every instance from its `index.lock.json`, and
+# puts THIS repository (at the ref under test) in place of its locked mount,
+# with cat-harness and cat-harness-tools at main — core imports both by
+# package name (bean 7pvn), and its main tracks theirs. Their `.git`
+# directories are removed so each is discovered as an instance, the same as a
+# lock mount.
+#
+# Three judgements:
+#   - Typecheck, on the PR.
+#   - Tests (no new failures): the whole suite on main and on the PR; fails
+#     only on a test the PR newly breaks.
+#   - Gates (no new failures): the harness's graph checks over this instance
+#     (kg-audit, check-tools, kg-export, import-direction,
+#     declaration-resolution) and this instance's own QA (every `check:*` /
+#     `*:check` in package.json `checkoutScripts`), on main and on the PR;
+#     fails only on a gate the PR newly breaks. The set is derived in
+#     `.github/scripts/run-gates.py`.
+# A gate or test already red on main is listed in the step summary, never
+# hidden and never counted against the PR.
+
+name: PR checks
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pr-checks-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  typecheck:
+    name: Typecheck
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - &checkout-index
+        name: Check out the folio-assistant index
+        uses: actions/checkout@v4
+        with:
+          repository: litlfred/folio-assistant
+          path: fa
+      - &setup-bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.14
+      - &mount
+        name: Mount every instance from the index lock
+        run: bash fa/.github/mount-from-lock.sh --root fa
+      - &lower-layers-main
+        name: Use cat-harness and cat-harness-tools main
+        run: |
+          for r in cat-harness cat-harness-tools; do
+            rm -rf "fa/$r"
+            git clone -q --depth 1 "https://github.com/litlfred/$r" "fa/$r"
+            rm -rf "fa/$r/.git"
+          done
+      - name: Put the PR in place of the locked folio-assistant-core
+        run: rm -rf fa/folio-assistant-core
+      - uses: actions/checkout@v4
+        with:
+          path: fa/folio-assistant-core
+      - &unnest
+        # A directory holding its own `.git` inside the index checkout is a
+        # FOREIGN checkout to `instanceRootsIn`, so it is not discovered as an
+        # instance. Lock mounts carry no `.git`; make this one look the same.
+        name: Make the swapped-in checkout a plain mount
+        run: rm -rf fa/folio-assistant-core/.git
+      - &install
+        name: Install
+        working-directory: fa
+        run: bun install
+      - name: tsc --noEmit
+        working-directory: fa/folio-assistant-core
+        run: bunx tsc --noEmit -p tsconfig.json
+
+  run:
+    name: ${{ matrix.side }} — tests and gates
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    strategy:
+      fail-fast: false
+      matrix:
+        side: [base, head]
+    steps:
+      - *checkout-index
+      - *setup-bun
+      - *mount
+      - *lower-layers-main
+      - name: Put folio-assistant-core in place of the locked mount
+        run: rm -rf fa/folio-assistant-core
+      - uses: actions/checkout@v4
+        with:
+          path: fa/folio-assistant-core
+          ref: ${{ matrix.side == 'base' && (github.event.pull_request.base.sha || 'main') || '' }}
+      - name: Keep the PR's CI scripts, whichever side is checked out
+        # The base side runs main's code with THIS PR's judging scripts, so a
+        # PR that changes how gates are run is judged the same way on both
+        # sides.
+        uses: actions/checkout@v4
+        with:
+          path: ci
+          sparse-checkout: .github/scripts
+      - *unnest
+      - *install
+      - name: Mount the graphs kept on branches
+        # beans, todos and fsh-guts live on `cat/cat-harness/<id>` branches,
+        # as in the index's own CI (`state:mount`). Tests and gates read them
+        # and refuse an unmounted copy; each must come back `mounted`.
+        working-directory: fa
+        run: |
+          for id in beans todos fsh-guts; do
+            bun cat-harness-tools/scripts/state-mount.ts --id "$id" --json > "$RUNNER_TEMP/mount-$id.json"
+            python3 - "$RUNNER_TEMP/mount-$id.json" "$id" <<'PY'
+          import json, sys
+          d = json.load(open(sys.argv[1]))
+          bad = [g for g in d.get("graphs", []) if g.get("state") != "mounted"]
+          if d.get("state") != "mounted" or bad or not d.get("graphs"):
+              print(f"::error::{sys.argv[2]} did not mount: {json.dumps(d)}")
+              sys.exit(1)
+          print(f"{sys.argv[2]}: mounted")
+          PY
+          done
+      - name: bun test
+        working-directory: fa
+        # Judged by the compare job, not by this exit code.
+        run: |
+          bun test ./folio-assistant-core --reporter=junit --reporter-outfile="$RUNNER_TEMP/junit.xml" || true
+          test -s "$RUNNER_TEMP/junit.xml"
+      - name: Gates
+        # Judged by the compare job, not by this exit code.
+        run: python3 ci/.github/scripts/run-gates.py fa "$RUNNER_TEMP/gates.json"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: results-${{ matrix.side }}
+          path: |
+            ${{ runner.temp }}/junit.xml
+            ${{ runner.temp }}/gates.json
+
+  compare:
+    name: No new failures (tests and gates)
+    needs: run
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+      - uses: actions/download-artifact@v4
+        with:
+          path: results
+      - name: Tests
+        id: tests
+        continue-on-error: true
+        run: python3 .github/scripts/compare-test-failures.py results/results-base/junit.xml results/results-head/junit.xml
+      - name: Gates
+        id: gates
+        continue-on-error: true
+        run: python3 .github/scripts/compare-gates.py results/results-base/gates.json results/results-head/gates.json
+      - name: Verdict
+        if: steps.tests.outcome != 'success' || steps.gates.outcome != 'success'
+        run: |
+          echo "::error::tests: ${{ steps.tests.outcome }}, gates: ${{ steps.gates.outcome }} — see the step summary"
+          exit 1
