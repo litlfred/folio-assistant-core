@@ -59,6 +59,7 @@ import {
   ReferenceNodeSchema,
   dublinCoreToReference,
   nameText,
+  referenceAnchor,
   toBibtex,
   toCslJson,
   toJsonLdGraph,
@@ -211,8 +212,8 @@ export function byCitation(a: Entry, b: Entry): number {
 
 const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 
-/** The anchor of one reference on its sub-graph's page. */
-export const anchorOf = (key: string) => `ref-${key.replace(/[^A-Za-z0-9_-]/g, "-")}`;
+/** The anchor of one reference on its page (`referenceAnchor`, shared with the links to it). */
+export const anchorOf = referenceAnchor;
 
 /** One reference as a readable citation: authors (year). Title. Container, vol(issue), pages. Publisher. */
 export function citationHtml(r: ReferenceNode): string {
