@@ -616,7 +616,13 @@ export interface SiteBuildResult {
 export async function buildDocumentSite(
   repoRoot: string,
   outDir: string,
-  opts: { math?: boolean; actions?: Partial<BlockActionsConfig> | false; lazy?: "auto" | "always" | "never" } = {},
+  opts: {
+    math?: boolean;
+    actions?: Partial<BlockActionsConfig> | false;
+    lazy?: "auto" | "always" | "never";
+    /** Write the landing as a Jekyll page in this layout ({@link landingPage}). */
+    landingLayout?: string;
+  } = {},
 ): Promise<SiteBuildResult> {
   // Math defaults on only for a paper instance; see the note on renderDocumentHtml.
   const math = opts.math ?? readHarnessConfig(repoRoot)?.contentType === "paper";
@@ -688,15 +694,28 @@ export async function buildDocumentSite(
   mkdirSync(review, { recursive: true });
   writeFileSync(join(review, "index.html"), reviewPageHtml());
   const also = landingLinks(readDeclaration(repoRoot), (p) => existsSync(join(repoRoot, p)));
-  writeFileSync(
-    join(outDir, "index.html"),
-    page(
-      "Documents",
-      `<h1>Documents</h1>\n<p><a href="${esc(REVIEW_PAGE_DIR)}/index.html">What changed from main</a></p>\n<ul>\n${list}\n</ul>` +
-        (also.length ? `\n<h2>Also on this site</h2>\n<ul>\n${also.map((l) => `<li><a href="${esc(l.href)}">${esc(l.title)}</a></li>`).join("\n")}\n</ul>` : ""),
-    ),
-  );
+  const landing =
+    `<h1>Documents</h1>\n<p><a href="${esc(REVIEW_PAGE_DIR)}/index.html">What changed from main</a></p>\n<ul>\n${list}\n</ul>` +
+    (also.length ? `\n<h2>Also on this site</h2>\n<ul>\n${also.map((l) => `<li><a href="${esc(l.href)}">${esc(l.title)}</a></li>`).join("\n")}\n</ul>` : "");
+  if (opts.landingLayout) writeFileSync(join(outDir, "index.md"), landingPage(opts.landingLayout, "Documents", landing));
+  else writeFileSync(join(outDir, "index.html"), page("Documents", landing));
   return result;
+}
+
+/**
+ * The landing as a JEKYLL page, for a folio site whose source Jekyll builds
+ * (`build-instance-site.ts`): front matter naming `layout`, so the page wears
+ * the site's full chrome — top bar, search, sidebar with its Folders — rather
+ * than standing alone with the injected rail (owner, 2026-10-14: "what
+ * happened to rest of chrome? isnt there a default layout?").
+ *
+ * Use it or a `--home` page, not both: each is the site's `index.md`. The
+ * body is held `raw`: it is generated HTML, and a `{{` in a document title is
+ * text, not Liquid.
+ */
+export function landingPage(layout: string, title: string, body: string): string {
+  if (!/^[A-Za-z0-9_-]+$/.test(layout)) throw new Error(`landing layout ${JSON.stringify(layout)} is not a layout name`);
+  return `---\nlayout: ${layout}\ntitle: ${JSON.stringify(title)}\nnav_order: 1\n---\n\n{% raw %}\n${body.replace(/\{%\s*endraw\s*%\}/g, "{&#37; endraw &#37;}")}\n{% endraw %}\n`;
 }
 
 /**
@@ -750,7 +769,8 @@ if (import.meta.main) {
     console.log(
       "usage: bun run folio-assistant-core/scripts/build-document-site.ts [--repo <folio repo root>] [--out _site] [--math | --no-math]\n" +
         "         [--github <owner/repo>] [--edit-branch main] [--issue-template block-feedback.yml] [--site-url <url>] [--no-block-actions]\n" +
-        "         [--lazy auto|always|never]   (auto: a document of " + LAZY_THRESHOLD + "+ blocks loads its text as data)",
+        "         [--lazy auto|always|never]   (auto: a document of " + LAZY_THRESHOLD + "+ blocks loads its text as data)\n" +
+        "         [--landing-layout <name>]   (write the landing as a Jekyll page in that layout, e.g. default)",
     );
     process.exit(0);
   }
@@ -770,7 +790,13 @@ if (import.meta.main) {
     console.error(`✗ --lazy must be auto, always or never, not ${lazyOpt}`);
     process.exit(2);
   }
-  const r = await buildDocumentSite(repo, out, { math, actions, ...(lazyOpt ? { lazy: lazyOpt as "auto" | "always" | "never" } : {}) });
+  const landingLayout = opt("landing-layout");
+  const r = await buildDocumentSite(repo, out, {
+    math,
+    actions,
+    ...(lazyOpt ? { lazy: lazyOpt as "auto" | "always" | "never" } : {}),
+    ...(landingLayout ? { landingLayout } : {}),
+  });
   for (const d of r.documents) console.error(`  ${d.page}  ${d.blocks} block(s)`);
   if (r.errors.length > 0) {
     for (const e of r.errors) console.error(`✗ ${e}`);

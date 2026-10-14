@@ -4,7 +4,7 @@
  */
 import { describe, expect, test } from "bun:test";
 import type { CatHarnessDeclaration } from "../../cat-harness/schemas/cat-harness.js";
-import { landingLinks } from "./build-document-site.js";
+import { landingLinks, landingPage } from "./build-document-site.js";
 
 const decl = (directories: unknown[]) => ({ name: "f", directories }) as unknown as CatHarnessDeclaration;
 const dir = (id: string, visualiser: unknown) => ({ id, path: `${id}/`, graphTypologies: ["archimate"], coverage: { visualiser } });
@@ -35,5 +35,22 @@ describe("landingLinks", () => {
 
   test("no declaration, no links", () => {
     expect(landingLinks(undefined, () => true)).toEqual([]);
+  });
+});
+
+describe("landingPage", () => {
+  test("is a Jekyll page in the named layout, its body held raw", () => {
+    const p = landingPage("default", "Documents", "<p>{{ not liquid }}</p>");
+    expect(p.startsWith("---\nlayout: default\ntitle: \"Documents\"\nnav_order: 1\n---\n")).toBe(true);
+    expect(p).toContain("{% raw %}\n<p>{{ not liquid }}</p>\n{% endraw %}");
+  });
+
+  test("an endraw inside the body cannot close the raw block early", () => {
+    const p = landingPage("default", "D", "a {% endraw %} b");
+    expect(p.match(/\{% endraw %\}/g)).toHaveLength(1);
+  });
+
+  test("a layout that is not a bare name is refused", () => {
+    expect(() => landingPage("default\ntitle: x", "D", "")).toThrow();
   });
 });
