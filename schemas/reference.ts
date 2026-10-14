@@ -102,6 +102,13 @@ export const ReferenceNodeSchema = z
   .passthrough();
 export type ReferenceNode = z.infer<typeof ReferenceNodeSchema>;
 
+/**
+ * The fragment id of a reference on a bibliography page: `ref-<key>`, with any
+ * character that is not URL-fragment-safe replaced. One function, so the page
+ * that draws an entry and every link to it agree.
+ */
+export const referenceAnchor = (key: string): string => `ref-${key.replace(/[^A-Za-z0-9_-]/g, "-")}`;
+
 /** The KG IRI of a reference: `references/<key>`, the one `\cite` already points at. */
 export const referenceIri = (key: string): string => resolveReferenceKey(key);
 

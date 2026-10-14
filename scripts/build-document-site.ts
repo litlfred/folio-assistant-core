@@ -83,6 +83,7 @@ import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts
 import { visualiserNavDeclaration, type VisualiserNavEntry } from "@litlfred/cat-harness-tools/scripts/lib/navbar.js";
 import { wrapRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 import { scopeCss } from "./scope-css.js";
+import { referenceAnchor } from "../schemas/reference.ts";
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
@@ -445,9 +446,11 @@ function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Re
 // they are unambiguous: a `:defterm` becomes a `dfn` with its slug as the id, a
 // `:refterm` links to that id, and a directive of any OTHER name is put back
 // as the text it was written as (prose like "note:x" must not vanish).
-// `\cite{a,b}` becomes a muted `[a, b]` carrying the keys; linking it to a
-// bibliography needs the folio's reference registry, which this command does
-// not load.
+// `\cite{a,b}` becomes a muted `[a, b]` carrying the keys. Given
+// `--bibliography-url` (the published bibliography page, e.g. the platform's
+// `<base>/folio-assistant-core/bibliography/`), each key links to its entry
+// there; without it the keys are not links, because a page has no way to know
+// where the bibliography is published.
 
 export interface MathOptions {
   /** `\name` -> TeX, as KaTeX's `macros` option takes it. */
@@ -493,7 +496,7 @@ export function katexMacros(paperMacros: Record<string, { tex: string }> | undef
 }
 
 /** `\cite{a,b}` -> a muted `[a, b]`, outside fenced code. */
-export function citationsToHtml(markdown: string): string {
+export function citationsToHtml(markdown: string, opts: { bibliographyUrl?: string } = {}): string {
   // Per fenced/unfenced run rather than per line: a `\cite{a,\n b}` wrapped by
   // the author's line breaks is one citation (qou notation-collisions, found
   // by the rendered-content QA as visible raw TeX).
@@ -517,9 +520,16 @@ export function citationsToHtml(markdown: string): string {
     .join("\n");
 
   function cite(text: string): string {
-    return text.replace(/\\cite[pt]?\{([^}]+)\}/g, (_m, keys: string) => {
+    // `\cite[p.~3]{k}`: the optional note is shown after the keys, `~` as a space.
+    return text.replace(/\\cite[pt]?(?:\[([^\]]*)\])?\{([^}]+)\}/g, (_m, note: string | undefined, keys: string) => {
       const list = keys.split(",").map((k) => k.trim()).filter(Boolean);
-      return `<span class="cite" data-keys="${esc(list.join(" "))}">[${esc(list.join(", "))}]</span>`;
+      // With a bibliography to point at, each key links to its entry there
+      // (bean 63q4): `<url>#ref-<key>`, the anchor the bibliography page draws.
+      const shown = opts.bibliographyUrl
+        ? list.map((k) => `<a href="${esc(opts.bibliographyUrl!)}#${esc(referenceAnchor(k))}">${esc(k)}</a>`).join(", ")
+        : esc(list.join(", "));
+      const after = note?.trim() ? `, ${esc(note.trim().replace(/~/g, " "))}` : "";
+      return `<span class="cite" data-keys="${esc(list.join(" "))}">[${shown}${after}]</span>`;
     });
   }
 }
@@ -611,8 +621,8 @@ export function texInMarkdown(markdown: string): string {
 }
 
 /** One document's Markdown to HTML. */
-export async function renderDocumentHtml(markdown: string, opts: { math: boolean }): Promise<string> {
-  const source = citationsToHtml(opts.math ? texInMarkdown(displayMathLines(markdown)) : markdown);
+export async function renderDocumentHtml(markdown: string, opts: { math: boolean; bibliographyUrl?: string }): Promise<string> {
+  const source = citationsToHtml(opts.math ? texInMarkdown(displayMathLines(markdown)) : markdown, { bibliographyUrl: opts.bibliographyUrl });
   const base = opts.math ? remark().use(remarkMath) : remark();
   const proc = base.use(remarkGfm).use(remarkDirective).use(glossaryDirectives(source)).use(remarkHtml, { sanitize: false });
   return String(await proc.process(source));
@@ -768,6 +778,8 @@ export async function buildDocumentSite(
      * lazy document stays standalone.
      */
     documentLayout?: string;
+    /** The published bibliography page each `\cite` key links into (`<url>#ref-<key>`). Absent: citations are not links. */
+    bibliographyUrl?: string;
   } = {},
 ): Promise<SiteBuildResult> {
   // Math defaults on only for a paper instance; see the note on renderDocumentHtml.
@@ -786,7 +798,7 @@ export async function buildDocumentSite(
   for (const d of docs) {
     const built = await buildDocumentMarkdown(d.path);
     for (const i of built.issues) if (i.level === "error") result.errors.push(`${d.slug}: ${i.message}`);
-    const html = await renderDocumentHtml(built.markdown, { math });
+    const html = await renderDocumentHtml(built.markdown, { math, bibliographyUrl: opts.bibliographyUrl });
     const manifest = (await import(d.path)).default as Paper;
     // The page under the locale, its data where it was (document-site-route.ts).
     const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
@@ -822,7 +834,7 @@ export async function buildDocumentSite(
         const n = index.chunks++;
         const chunk: Record<string, string> = {};
         for (const b of split.blocks.slice(i, i + LAZY_CHUNK)) {
-          const h = await renderDocumentHtml(b.markdown, { math });
+          const h = await renderDocumentHtml(b.markdown, { math, bibliographyUrl: opts.bibliographyUrl });
           chunk[b.label] = h;
           index.of[b.label] = n;
           for (const id of idsIn(h)) index.ids[id] ??= n;
@@ -830,7 +842,7 @@ export async function buildDocumentSite(
         writeFileSync(join(data, "blocks", `${String(n).padStart(3, "0")}.json`), JSON.stringify(chunk));
       }
       lazyOf.set(d.slug, { hydrated: hydratedPage(d.slug), chunks: index.chunks, of: index.of });
-      const shellHtml = await renderDocumentHtml(split.shell, { math });
+      const shellHtml = await renderDocumentHtml(split.shell, { math, bibliographyUrl: opts.bibliographyUrl });
       const note = `<p class="fa-one-page">The text loads as you read. <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
       const loader = lazyLoader(index, fromPageDir(documentPageDir(d.slug), `${documentDataDir(d.slug)}/blocks`));
       if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, note + headingIds(shellHtml), mathOpts, loader), true)));
@@ -946,7 +958,8 @@ if (import.meta.main) {
         "         [--github <owner/repo>] [--edit-branch main] [--issue-template block-feedback.yml] [--site-url <url>] [--no-block-actions]\n" +
         "         [--lazy auto|always|never]   (auto: a document of " + LAZY_THRESHOLD + "+ blocks loads its text as data)\n" +
         "         [--landing-layout <name>]   (write the landing as a Jekyll page in that layout, e.g. default)\n" +
-        "         [--document-layout <name>]  (write each document's page as a Jekyll page in that layout, e.g. default)",
+        "         [--document-layout <name>]  (write each document's page as a Jekyll page in that layout, e.g. default)\n" +
+        "         [--bibliography-url <url>]  (link each \\cite key to its entry on this published bibliography page)",
     );
     process.exit(0);
   }
@@ -968,12 +981,14 @@ if (import.meta.main) {
   }
   const landingLayout = opt("landing-layout");
   const documentLayout = opt("document-layout");
+  const bibliographyUrl = opt("bibliography-url");
   const r = await buildDocumentSite(repo, out, {
     math,
     actions,
     ...(lazyOpt ? { lazy: lazyOpt as "auto" | "always" | "never" } : {}),
     ...(landingLayout ? { landingLayout } : {}),
     ...(documentLayout ? { documentLayout } : {}),
+    ...(bibliographyUrl ? { bibliographyUrl } : {}),
   });
   for (const d of r.documents) console.error(`  ${d.page}  ${d.blocks} block(s)`);
   if (r.errors.length > 0) {
