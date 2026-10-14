@@ -42,7 +42,7 @@
  */
 import { z } from "zod";
 
-import { resolveReferenceKey } from "@litlfred/cat-harness/schemas/jsonld.ts";
+import { FOLIO_BASE, resolveReferenceKey } from "@litlfred/cat-harness/schemas/jsonld.ts";
 import { cslToBibtex } from "@litlfred/cat-harness-tools/pipeline/bibtex-format.ts";
 import { dcValues, type DublinCoreRecord } from "./dublin-core.ts";
 
@@ -148,12 +148,23 @@ export function dateText(ref: Pick<ReferenceNode, "issued">): string | undefined
 
 // ── JSON-LD: the node read as Dublin Core and BIBO ───────────────────────────
 
-/** The prefixes a reference's JSON-LD uses. */
+/**
+ * The context a reference's JSON-LD uses.
+ *
+ * `@base` is the folio's, so `"@id": "references/<key>"` expands to the same
+ * IRI as a content block's `cito:cites` (resolved against
+ * `CONTENT_DOCUMENT_CONTEXT`'s `@base`). Without it the node and the
+ * citations naming it expanded against wherever the export was served, and
+ * never joined. `dcterms:source` and `dcterms:hasVersion` name assets, so they
+ * are coerced to IRIs rather than read as strings.
+ */
 export const REFERENCE_CONTEXT = {
+  "@base": FOLIO_BASE,
   dcterms: "http://purl.org/dc/terms/",
   bibo: "http://purl.org/ontology/bibo/",
   fabio: "http://purl.org/spar/fabio/",
-  schema: "https://schema.org/",
+  "dcterms:source": { "@type": "@id" },
+  "dcterms:hasVersion": { "@type": "@id" },
 } as const;
 
 /** CSL `type` → BIBO class. A type not here is a `bibo:Document`. */
