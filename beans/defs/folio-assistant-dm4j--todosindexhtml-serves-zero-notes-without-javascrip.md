@@ -1,13 +1,13 @@
 ---
 # folio-assistant-dm4j
 title: todos/index.html serves ZERO notes without JavaScript — the one page most about notes is the only one with no linear floor
-status: todo
+status: completed
 type: task
 priority: normal
 tags:
     - rehomed
 created_at: 2026-10-02T17:41:46Z
-updated_at: 2026-10-11T06:25:00Z
+updated_at: 2026-10-14T13:55:00Z
 parent: folio-assistant-o3xy
 ---
 
@@ -204,3 +204,7 @@ pointer here), this bean is re-filed in the store of the repository whose code
 it changes: **`litlfred/cat-harness-tools` bean `cat-tools-rt0l`** (cat-harness-tools
 PR #114). Work it there. This copy stays open as a pointer, and closes when
 `cat-tools-rt0l` does.
+
+## Summary of Changes
+
+Rehomed: the work moved to litlfred/cat-harness-tools as cat-tools-rt0l and cat-tools-lwjc (its residue), which is completed there. This copy closes as a pointer to it, so the two stores agree (bean drain, 2026-10-14, session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs).
