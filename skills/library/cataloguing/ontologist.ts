@@ -1,4 +1,4 @@
-import type { SkillDefinition } from "../../../../cat-harness/skills/framework/types.js";
+import type { SkillDefinition } from "@litlfred/cat-harness/skills/framework/types.js";
 
 export const ontologist: SkillDefinition = {
   id: "ontologist",

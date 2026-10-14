@@ -25,14 +25,14 @@ import {
   startInstance,
   WorkflowError,
   type InstanceState,
-} from "../../../cat-harness-tools/src/workflow/instance";
-import { checkGate } from "../../../cat-harness-tools/src/workflow/gate";
+} from "@litlfred/cat-harness-tools/src/workflow/instance.js";
+import { checkGate } from "@litlfred/cat-harness-tools/src/workflow/gate.js";
 import {
   findInModel,
   loadProcessModel,
   type ProcessModel,
-} from "../../../cat-harness-tools/src/workflow/process-model";
-import { workflowFile } from "../../../cat-harness-tools/scripts/known-skills.ts";
+} from "@litlfred/cat-harness-tools/src/workflow/process-model.js";
+import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
 
 /** This instance's root; diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
 const CORE = resolve(import.meta.dir, "../..");

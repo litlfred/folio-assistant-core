@@ -127,9 +127,9 @@ import { createHash } from "node:crypto";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
 
-import { findDeclarationFile, instanceRootsIn, repoRootFor, type Subscription } from "../../cat-harness/schemas/cat-harness.ts";
-import { SUBGRAPH_HYDRATED_FILE, SUBGRAPH_INDEX_FILE, SubgraphHydratedSchema, type SubgraphHydratedNode } from "../../cat-harness/schemas/subgraph-manifest.ts";
-import { SubstrateSnapshotSchema, type SubstrateSnapshot } from "../../cat-harness/schemas/substrate-snapshot.ts";
+import { findDeclarationFile, instanceRootsIn, repoRootFor, type Subscription } from "@litlfred/cat-harness/schemas/cat-harness.ts";
+import { SUBGRAPH_HYDRATED_FILE, SUBGRAPH_INDEX_FILE, SubgraphHydratedSchema, type SubgraphHydratedNode } from "@litlfred/cat-harness/schemas/subgraph-manifest.ts";
+import { SubstrateSnapshotSchema, type SubstrateSnapshot } from "@litlfred/cat-harness/schemas/substrate-snapshot.ts";
 import {
   NODES_RECORD_FILE,
   nodesDirOf,
@@ -143,7 +143,7 @@ import {
   SNAPSHOT_SUFFIX,
   treeDigest,
   treeEntries,
-} from "../../cat-harness-tools/scripts/kg-subscribe.ts";
+} from "@litlfred/cat-harness-tools/scripts/kg-subscribe.ts";
 import {
   DEFAULT_MAX_BYTES,
   KG_NODES_RECORD_SCHEMA,
@@ -166,8 +166,8 @@ const DEFAULT_INSTANCE = join(REPO, "cat-harness");
 // MOVED DOWN to `cat-harness-tools/scripts/remote-tree.ts` (bean `0mpw`): the
 // remote mount reads through the same fetch, and cat-harness may not import
 // core. Re-exported so every caller and test keeps its import path.
-export { gitPartFetcher, type FetchedPart, type PartFetcher } from "../../cat-harness-tools/scripts/remote-tree.ts";
-import { gitPartFetcher, type FetchedPart, type PartFetcher } from "../../cat-harness-tools/scripts/remote-tree.ts";
+export { gitPartFetcher, type FetchedPart, type PartFetcher } from "@litlfred/cat-harness-tools/scripts/remote-tree.ts";
+import { gitPartFetcher, type FetchedPart, type PartFetcher } from "@litlfred/cat-harness-tools/scripts/remote-tree.ts";
 
 // ── Resolving the request against the subscription and its snapshot ─────────
 

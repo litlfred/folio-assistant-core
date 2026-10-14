@@ -48,7 +48,7 @@ import { existsSync, readFileSync, readdirSync } from "fs";
 import { basename, join, relative, resolve } from "path";
 import { CatalogueNodeSchema, CatalogueSchema, handleFromUrl, materializationCensus, type CatalogueNode } from "../schemas/catalogue.js";
 import { DublinCoreRecordSchema } from "../schemas/dublin-core.js";
-import { instanceDirectoryForGraph, repoRootFor } from "../../cat-harness/schemas/cat-harness.js";
+import { instanceDirectoryForGraph, repoRootFor } from "@litlfred/cat-harness/schemas/cat-harness.js";
 import { checkLocalPath } from "./lib/local-path.js";
 import { PUBLICATION_GATES } from "../schemas/materialization.js";
 

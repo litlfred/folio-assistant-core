@@ -29,9 +29,9 @@
  */
 import { z } from "zod";
 
-import { PROV_CONTEXT } from "../../cat-harness/schemas/prov.ts";
-import { STANDARD_PREFIXES } from "../../cat-harness/schemas/vocab-mapping-fhir.ts";
-import { applyVocabMapping, contextBindings, vocabMapping, type VocabMapping } from "../../cat-harness/schemas/vocab-mapping.ts";
+import { PROV_CONTEXT } from "@litlfred/cat-harness/schemas/prov.ts";
+import { STANDARD_PREFIXES } from "@litlfred/cat-harness/schemas/vocab-mapping-fhir.ts";
+import { applyVocabMapping, contextBindings, vocabMapping, type VocabMapping } from "@litlfred/cat-harness/schemas/vocab-mapping.ts";
 import { fileURLToPath } from "node:url";
 
 export const GLOSSARY_SCHEMA_ID = "folio-glossary/v1" as const;

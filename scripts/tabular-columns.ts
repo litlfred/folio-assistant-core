@@ -28,7 +28,7 @@
  */
 import type { z } from "zod";
 
-import type { CsvwColumnSchema } from "../../cat-harness/schemas/tabular-csvw.js";
+import type { CsvwColumnSchema } from "@litlfred/cat-harness/schemas/tabular-csvw.js";
 
 export type CsvwColumn = z.infer<typeof CsvwColumnSchema>;
 

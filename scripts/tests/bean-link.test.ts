@@ -6,8 +6,8 @@
  */
 import { describe, expect, test } from "bun:test";
 import { resolve } from "path";
-import { workflowFile } from "../../../cat-harness-tools/scripts/known-skills.ts";
-import { loadProcessModel } from "../../../cat-harness-tools/src/workflow/process-model";
+import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
+import { loadProcessModel } from "@litlfred/cat-harness-tools/src/workflow/process-model.js";
 
 describe("the diagrams declare which operation each step performs", () => {
   test("the editing process claims, notes, then resolves — in that order", async () => {

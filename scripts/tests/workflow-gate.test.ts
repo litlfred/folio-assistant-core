@@ -12,16 +12,16 @@
  */
 import { describe, expect, test } from "bun:test";
 import { resolve } from "path";
-import { drainSubprocess } from "../../../cat-harness-tools/scripts/tests/helpers";
-import { loadProcessModel } from "../../../cat-harness-tools/src/workflow/process-model";
-import { complete, startInstance } from "../../../cat-harness-tools/src/workflow/instance";
+import { drainSubprocess } from "@litlfred/cat-harness-tools/scripts/tests/helpers.js";
+import { loadProcessModel } from "@litlfred/cat-harness-tools/src/workflow/process-model.js";
+import { complete, startInstance } from "@litlfred/cat-harness-tools/src/workflow/instance.js";
 import {
   checkGate,
   PolicyError,
   validateRelaxations,
   type Relaxation,
-} from "../../../cat-harness-tools/src/workflow/gate";
-import { workflowFile } from "../../../cat-harness-tools/scripts/known-skills.ts";
+} from "@litlfred/cat-harness-tools/src/workflow/gate.js";
+import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
 
 /** This instance's root; its diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
 const CORE = resolve(import.meta.dir, "../..");

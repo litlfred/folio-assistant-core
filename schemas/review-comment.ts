@@ -42,8 +42,8 @@
  */
 import { z } from "zod";
 
-import { nodeKind } from "../../cat-harness/schemas/node-kind.js";
-import { TodoNodeKind } from "../../cat-harness/schemas/todo.js";
+import { nodeKind } from "@litlfred/cat-harness/schemas/node-kind.js";
+import { TodoNodeKind } from "@litlfred/cat-harness/schemas/todo.js";
 import { ReviewVerdictSchema } from "./review-verdict.js";
 
 export const REVIEW_COMMENT_SCHEMA = "review-comment/1.0.0" as const;

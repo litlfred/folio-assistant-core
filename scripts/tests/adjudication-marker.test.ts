@@ -9,8 +9,8 @@
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";
 
-import { loadProcessModel } from "../../../cat-harness-tools/src/workflow/process-model.js";
-import { workflowFile } from "../../../cat-harness-tools/scripts/known-skills.ts";
+import { loadProcessModel } from "@litlfred/cat-harness-tools/src/workflow/process-model.js";
+import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
 
 describe("the split — bean `bvuk`, the owner's shape", () => {
   const diagram = (n: string): string => workflowFile(join(import.meta.dir, "../../../cat-harness"), n);

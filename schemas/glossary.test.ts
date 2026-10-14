@@ -35,11 +35,11 @@ import {
   localId,
   type AssetType,
 } from "../scripts/glossary-extract.ts";
-import { instanceRootsIn, readDeclaration } from "../../cat-harness/schemas/cat-harness.ts";
+import { instanceRootsIn, readDeclaration } from "@litlfred/cat-harness/schemas/cat-harness.ts";
 
 const REPO_ROOT_FOR_NS = resolve(import.meta.dir, "../..");
-import { parseFrontMatter } from "../../cat-harness/schemas/front-matter.ts";
-import { discoverTools } from "../../cat-harness-tools/tools/discover.ts";
+import { parseFrontMatter } from "@litlfred/cat-harness/schemas/front-matter.ts";
+import { discoverTools } from "@litlfred/cat-harness-tools/tools/discover.ts";
 
 const NS = "https://example.org/x/ns#";
 function g(over: Record<string, unknown> = {}): unknown {

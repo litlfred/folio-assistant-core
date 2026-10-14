@@ -100,10 +100,10 @@ import {
   RenderedImpactSchema,
   type RenderedFile,
   type RenderedImpact,
-} from "../../cat-harness/schemas/rendered-impact.js";
-import { STRUCTURE_FILENAME } from "../../cat-harness/schemas/document-structure.js";
-import { declarationPathIn } from "../../cat-harness/schemas/cat-harness.js";
-import { gitBlobs } from "../../cat-harness-tools/scripts/git-blobs.js";
+} from "@litlfred/cat-harness/schemas/rendered-impact.js";
+import { STRUCTURE_FILENAME } from "@litlfred/cat-harness/schemas/document-structure.js";
+import { declarationPathIn } from "@litlfred/cat-harness/schemas/cat-harness.js";
+import { gitBlobs } from "@litlfred/cat-harness-tools/scripts/git-blobs.js";
 import { ChangeSetSchema, computeChangeSet, type ChangeSet } from "../schemas/changeset.js";
 
 export const DOCUMENT_RENDERER = "document-site";

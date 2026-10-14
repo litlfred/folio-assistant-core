@@ -70,17 +70,17 @@ import {
   repoRootFor,
   resolveDirectories,
   forgeLocation,
-} from "../../cat-harness/schemas/cat-harness.ts";
-import { withInlineCode } from "../../cat-harness/schemas/inline-code.ts";
-import { instanceNamespace } from "../../cat-harness/schemas/instance-repositories.ts";
+} from "@litlfred/cat-harness/schemas/cat-harness.ts";
+import { withInlineCode } from "@litlfred/cat-harness/schemas/inline-code.ts";
+import { instanceNamespace } from "@litlfred/cat-harness/schemas/instance-repositories.ts";
 import { GlossarySchema, schemeIri, toSkos, termIri, type AutomatedMatch, type Glossary, type LangText } from "../schemas/glossary.ts";
-import { addressBook } from "../../cat-harness/schemas/prov-jsonld.ts";
+import { addressBook } from "@litlfred/cat-harness/schemas/prov-jsonld.ts";
 import { ASSET_TYPES, EXTRACTED_PREFIX, assetTypeTitle, assetTypeWhat, extract, type AssetType } from "./glossary-extract.ts";
-import { perScheme, run as runTermMapping, termState, type SchemeState, type TermStateAnswer } from "../../cat-harness-tools/scripts/check-term-mapping.ts";
-import { MAPPING_TARGETS } from "../../cat-harness/schemas/term-mapping.ts";
+import { perScheme, run as runTermMapping, termState, type SchemeState, type TermStateAnswer } from "@litlfred/cat-harness-tools/scripts/check-term-mapping.ts";
+import { MAPPING_TARGETS } from "@litlfred/cat-harness/schemas/term-mapping.ts";
 import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, sourceText, templateName } from "./glossary-pot.ts";
-import { parsePo } from "../../cat-harness-tools/pipeline/po-inject.ts";
-import { declaredRoute } from "../../cat-harness-tools/scripts/viewer-declarations.ts";
+import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
+import { declaredRoute } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 
 const CORE = resolve(import.meta.dir, "..");
 const REPO = repoRootFor(CORE);

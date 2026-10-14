@@ -62,11 +62,11 @@ import {
   instanceRootsIn,
   readDeclaration,
   resolveDirectories,
-} from "../../cat-harness/schemas/cat-harness.ts";
-import { parseFrontMatter, scalar } from "../../cat-harness/schemas/front-matter.ts";
-import { isSkillMd, skillMdDirs, unpublishedSkills } from "../../cat-harness-tools/scripts/known-skills.ts";
-import { readSchemaGraph } from "../../cat-harness-tools/scripts/schema-graph.ts";
-import { discoverTools } from "../../cat-harness-tools/tools/discover.ts";
+} from "@litlfred/cat-harness/schemas/cat-harness.ts";
+import { parseFrontMatter, scalar } from "@litlfred/cat-harness/schemas/front-matter.ts";
+import { isSkillMd, skillMdDirs, unpublishedSkills } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
+import { readSchemaGraph } from "@litlfred/cat-harness-tools/scripts/schema-graph.ts";
+import { discoverTools } from "@litlfred/cat-harness-tools/tools/discover.ts";
 import { GLOSSARY_SCHEMA_ID, GlossarySchema, type Glossary, type Term } from "../schemas/glossary.ts";
 
 /** The asset types this extractor reads, in the order the page lists them. */

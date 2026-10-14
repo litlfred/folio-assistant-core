@@ -11,8 +11,8 @@ import { buildDocumentSite, DOC_CLASS, headingIds, themedDocumentPage } from "./
 import { scopeCss } from "./scope-css.js";
 import { DOCUMENT_END_MARKER } from "./document-site-route.js";
 import { atDocumentEnd } from "./public-comment-site.js";
-import { initFolio } from "../../cat-harness-tools/scripts/init-folio.js";
-import { unescapeRaw } from "../../cat-harness-tools/scripts/lib/liquid-raw.ts";
+import { initFolio } from "@litlfred/cat-harness-tools/scripts/init-folio.js";
+import { unescapeRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 
 const REPO_ROOT = resolve(import.meta.dir, "../..");
 

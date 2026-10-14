@@ -41,14 +41,14 @@
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "fs";
 import { basename, dirname, join, relative, resolve } from "path";
-import type { Block, Chapter, Paper, Section } from "../../cat-harness/schemas/types";
-import { ChapterSchema, PaperSchema } from "../../cat-harness/schemas/constraints";
+import type { Block, Chapter, Paper, Section } from "@litlfred/cat-harness/schemas/types.js";
+import { ChapterSchema, PaperSchema } from "@litlfred/cat-harness/schemas/constraints.js";
 import {
   findInstanceRoot,
   instanceDirectoryForGraph,
   readDeclaration,
   siblingScopeFor,
-} from "../../cat-harness/schemas/cat-harness";
+} from "@litlfred/cat-harness/schemas/cat-harness.js";
 import {
   GLOSSARY_SCHEMA_ID,
   GlossarySchema,

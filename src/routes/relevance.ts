@@ -31,20 +31,20 @@
  * @module folio-assistant/routes/relevance
  */
 
-import { folioDir } from "../../../cat-harness/schemas/cat-harness.js";
+import { folioDir } from "@litlfred/cat-harness/schemas/cat-harness.js";
 import { existsSync, readFileSync } from "fs";
 
-import { readSourceLedger, writeSourceLedger } from "../../../cat-harness/schemas/bib-attestations.js";
+import { readSourceLedger, writeSourceLedger } from "@litlfred/cat-harness/schemas/bib-attestations.js";
 import { join } from "path";
 
-import { allows, forbidden, principalOf } from "../../../cat-harness-tools/src/core/rbac.js";
-import { log } from "../../../cat-harness-tools/src/core/logging.js";
-import type { MountedRoute, RouteDeps } from "../../../cat-harness-tools/src/route-groups.js";
+import { allows, forbidden, principalOf } from "@litlfred/cat-harness-tools/src/core/rbac.js";
+import { log } from "@litlfred/cat-harness-tools/src/core/logging.js";
+import type { MountedRoute, RouteDeps } from "@litlfred/cat-harness-tools/src/route-groups.js";
 import type {
   LedgerEntry,
   RelevanceVerdict,
   SourceLedger,
-} from "../../../cat-harness/schemas/bib-verification.js";
+} from "@litlfred/cat-harness/schemas/bib-verification.js";
 
 const CORS = { "Access-Control-Allow-Origin": "*" };
 

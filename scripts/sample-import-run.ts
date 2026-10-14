@@ -36,11 +36,11 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 
-import { registerWorkflowTools } from "../../cat-harness-tools/src/tools/workflow.ts";
-import { fshGutsDirectory } from "../../cat-harness/schemas/fsh-guts.ts";
-import { contentAt } from "../../cat-harness-tools/scripts/branch-store.ts";
-import { positionOf } from "../../cat-harness-tools/src/workflow/instance.ts";
-import { WORKFLOW_DIR, instanceId, loadInstance } from "../../cat-harness-tools/src/workflow/store.ts";
+import { registerWorkflowTools } from "@litlfred/cat-harness-tools/src/tools/workflow.ts";
+import { fshGutsDirectory } from "@litlfred/cat-harness/schemas/fsh-guts.ts";
+import { contentAt } from "@litlfred/cat-harness-tools/scripts/branch-store.ts";
+import { positionOf } from "@litlfred/cat-harness-tools/src/workflow/instance.ts";
+import { WORKFLOW_DIR, instanceId, loadInstance } from "@litlfred/cat-harness-tools/src/workflow/store.ts";
 import { CatalogueNodeSchema, type CatalogueNode } from "../schemas/catalogue.js";
 import { PUBLICATION_GATES } from "../schemas/materialization.js";
 import { checkSampleImport, describeImportCheck } from "./sample-import-check.ts";

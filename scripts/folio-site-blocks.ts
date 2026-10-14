@@ -36,9 +36,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
-import { readWitnessDoc, type QaWitness } from "../../cat-harness-tools/pipeline/qa-witness.js";
-import { resolveCanonicalFormal, type FormalTreeCache } from "../../cat-harness/schemas/formal-ref.js";
-import { configureLeanPackages, leanPackagesConfigured, type LeanPackage } from "../../cat-harness-tools/pipeline/lean-formal-ref.js";
+import { readWitnessDoc, type QaWitness } from "@litlfred/cat-harness-tools/pipeline/qa-witness.js";
+import { resolveCanonicalFormal, type FormalTreeCache } from "@litlfred/cat-harness/schemas/formal-ref.js";
+import { configureLeanPackages, leanPackagesConfigured, type LeanPackage } from "@litlfred/cat-harness-tools/pipeline/lean-formal-ref.js";
 
 // ── QA ──────────────────────────────────────────────────────────
 
