@@ -191,6 +191,22 @@
       "status": "candidate"
     },
     {
+      "id": "corpus-search",
+      "prefLabel": "Search the corpus and follow the graph",
+      "definition": "Seed lexically over the authored folio and every declared library, then expand along graph edges, labelling each hit MATCHED or REACHED and by which edge. Counts are split authored vs ingested, and a root that exists but holds no graph nodes is reported rather than read as an empty answer.",
+      "notation": "corpus-search",
+      "source": "cat-harness/tools/mcp.ts#corpus-search",
+      "status": "candidate"
+    },
+    {
+      "id": "declaration-resolution",
+      "prefLabel": "Every path a declaration names resolves — directories, assets, visualisers, needs",
+      "definition": "Read every instance declaration in the checkout and resolve what it names: `directories` (and those declared from within) through `check:declared-dirs`, `assets` through `check:declared-assets`, `visualisers[].renderedBy` through `check:visualiser-routes`, `needs` through the instance-graph resolver, and `visualisers[].coversKinds` against the graph typologies registered IN THIS CHECKOUT — its own and those a mounted layer contributes, read from the checkout under inspection rather than from where the harness module sits (lesson 6). A declaration that does not parse is a finding. One verdict per instance and field, naming the gate that decided it. Exit 0 every reference resolves, 1 one does not, 2 could not determine; a certain finding is reported before anything undetermined.",
+      "notation": "declaration-resolution",
+      "source": "cat-harness/tools/index.ts#declaration-resolution",
+      "status": "candidate"
+    },
+    {
       "id": "discuss",
       "prefLabel": "discussion",
       "definition": "Put a question to a person or a sibling agent and receive an answer, to determine which harness this repository should become and which repositories are read from and written to. The two facts no file holds.",
@@ -276,6 +292,22 @@
       "definition": "Build this branch merged with the current base in a throwaway worktree and run the full `bun run cat gates` there — the state a merge will actually produce, which neither the branch's CI nor the base's CI evaluates. Exit 0 passes, 1 conflicts or fails, 2 could not determine (never read as clean). The working copy is never touched.",
       "notation": "gates-merged",
       "source": "cat-harness/tools/index.ts#gates-merged",
+      "status": "candidate"
+    },
+    {
+      "id": "get-graph-stats",
+      "prefLabel": "Content graph counts",
+      "definition": "Node and edge counts for the content graph by provenance and kind, and whether each root exists. Tells 'nothing matched' from 'that population has not been built'.",
+      "notation": "get-graph-stats",
+      "source": "cat-harness/tools/mcp.ts#get-graph-stats",
+      "status": "candidate"
+    },
+    {
+      "id": "get-neighbors",
+      "prefLabel": "Walk the content graph from one node",
+      "definition": "List the nodes adjacent to one node, out (what it depends on) or in (what depends on it), to a given depth and optionally over named edge terms only. An unknown edge term is reported, never silently dropped.",
+      "notation": "get-neighbors",
+      "source": "cat-harness/tools/mcp.ts#get-neighbors",
       "status": "candidate"
     },
     {
@@ -807,6 +839,14 @@
       "status": "candidate"
     },
     {
+      "id": "search-graph",
+      "prefLabel": "Lexical search over the content graph",
+      "definition": "Find graph nodes, authored or ingested, whose label, title, kind or tags contain a string, with no graph expansion. corpus-search composes this with a neighbour walk.",
+      "notation": "search-graph",
+      "source": "cat-harness/tools/mcp.ts#search-graph",
+      "status": "candidate"
+    },
+    {
       "id": "secrets-check",
       "prefLabel": "Check declared credential needs against workflow use and expiry, by name",
       "definition": "Compare each repository's declared credential needs (`credentials/needs.json`, profile and registry) with the `${{ secrets.NAME }}` references its workflows make, with the secret names GitHub lists when a token allows it, and with any recorded expiry. NAMES ONLY — no value is ever read. Findings per §6.2: used-not-declared, declared-not-used, declared-not-present, present-not-declared (reported, never deleted), naming advisories, and expiry (≤30 days minor, ≤7 major, expired critical). Exits 2 when anything could not be determined, which outranks clean; else 1 on a major or critical finding; else 0.",
@@ -820,6 +860,14 @@
       "definition": "Run the repository's security checks — workflow injection, secret leaks, lockfile pinning, the toolchain pin, QA reviewer permission, materialised-asset fixity — plus two advisories (dependency advisories, third-party action SHA pinning), each by name as argv. Every check is reported as pass, fail or unknown; a blocking check that fails OR could not be run refuses the release, because could-not-check is never clean. Advisories are reported and never block. Called by `prepare-merge` before a push that will merge, and by any publish process before it publishes.",
       "notation": "security-gate",
       "source": "cat-harness/tools/index.ts#security-gate",
+      "status": "candidate"
+    },
+    {
+      "id": "separation-cutover-check",
+      "prefLabel": "Is this repository's cutover from the monorepo complete? Measured, condition by condition",
+      "definition": "Run in a separated repository. Six conditions, each decided by an existing gate: `mounts` (every declared layer on disk at its pin — `remote-mount --check`), `declarations` (every path a declaration names resolves — `declaration-resolution`), `monorepo-paths` (no wiring still names the monorepo: `livesAt` on it, a submodule of it, a reusable workflow called from it, a path into its old checkout — the one condition implemented here), `import-direction` and `reference-direction` (no layer reaches a layer above it), and `site` (the site builds from the mounts alone, every link resolving — `build-instance-site --no-mount`, only with `--site`). Findings inside a MOUNTED layer are listed and not counted: a defect in a layer pinned from upstream is fixed upstream and re-pinned. Exit 0 complete, 1 a condition failed, 2 a condition could not be determined or was not run — without `--site` the answer is never 0.",
+      "notation": "separation-cutover-check",
+      "source": "cat-harness/tools/index.ts#separation-cutover-check",
       "status": "candidate"
     },
     {
