@@ -41,7 +41,7 @@ import {
   unionRules,
   voicesPresent,
   type VoiceProfile,
-} from "../../cat-harness/schemas/voices";
+} from "@litlfred/cat-harness/schemas/voices.js";
 import {
   declaresInstance,
   defaultGraphTypologies,
@@ -50,8 +50,8 @@ import {
   readDeclaration,
   repoRootFor,
   resolveDirectories,
-} from "../../cat-harness/schemas/cat-harness.ts";
-import { readRoleGraph, type RoleGraph } from "../../cat-harness/schemas/role-graph";
+} from "@litlfred/cat-harness/schemas/cat-harness.ts";
+import { readRoleGraph, type RoleGraph } from "@litlfred/cat-harness/schemas/role-graph.js";
 
 const ROOT = resolve(import.meta.dir, "..");
 /** The checkout, one level out: a cross-instance citation is resolved against sibling instances. */

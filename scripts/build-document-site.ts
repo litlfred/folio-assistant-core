@@ -64,16 +64,16 @@ import remarkHtml from "remark-html";
 import remarkMath from "remark-math";
 import { visit } from "unist-util-visit";
 
-import { folioDir, readDeclaration, visualisationResolves, visualisationsOf, type CatHarnessDeclaration } from "../../cat-harness/schemas/cat-harness.js";
-import { readHarnessConfig } from "../../cat-harness/schemas/harness-config.js";
-import { detectRepoUrl, ownerRepo } from "../../cat-harness-tools/src/core/git-refs.js";
+import { folioDir, readDeclaration, visualisationResolves, visualisationsOf, type CatHarnessDeclaration } from "@litlfred/cat-harness/schemas/cat-harness.js";
+import { readHarnessConfig } from "@litlfred/cat-harness/schemas/harness-config.js";
+import { detectRepoUrl, ownerRepo } from "@litlfred/cat-harness-tools/src/core/git-refs.js";
 import { DEFAULT_TEMPLATE, injectBlockActions, readIssueForm, type BlockActionsConfig, type BlockContext } from "./block-actions.js";
-import type { Chapter, Paper, Section, SectionRef } from "../../cat-harness/schemas/types.js";
-import { buildDocumentMarkdown } from "../../cat-harness-tools/pipeline/render-markdown.js";
-import { reviewPageHtml } from "../../cat-harness-tools/scripts/gen-review-page.js";
-import { darkRules } from "../../cat-harness-tools/scripts/lib/scheme-css.ts";
-import { visualiserNavDeclaration, type VisualiserNavEntry } from "../../cat-harness-tools/scripts/lib/navbar.js";
-import { wrapRaw } from "../../cat-harness-tools/scripts/lib/liquid-raw.ts";
+import type { Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness/schemas/types.js";
+import { buildDocumentMarkdown } from "@litlfred/cat-harness-tools/pipeline/render-markdown.js";
+import { reviewPageHtml } from "@litlfred/cat-harness-tools/scripts/gen-review-page.js";
+import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts";
+import { visualiserNavDeclaration, type VisualiserNavEntry } from "@litlfred/cat-harness-tools/scripts/lib/navbar.js";
+import { wrapRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 import { scopeCss } from "./scope-css.js";
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 

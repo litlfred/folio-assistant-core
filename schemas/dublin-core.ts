@@ -57,7 +57,7 @@
  */
 import { z } from "zod";
 
-import { ownNamespace } from "../../cat-harness/schemas/namespaces.js";
+import { ownNamespace } from "@litlfred/cat-harness/schemas/namespaces.js";
 
 /** The `$schema` tag a record declares itself with. Extension is a coincidence; a declaration inside the file is the contract. */
 export const DUBLIN_CORE_SCHEMA_TAG = "folio-dublin-core/v1";

@@ -8,7 +8,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { configureLeanPackages } from "../../cat-harness-tools/pipeline/lean-formal-ref.js";
+import { configureLeanPackages } from "@litlfred/cat-harness-tools/pipeline/lean-formal-ref.js";
 import { blockLean, blockQaReport, criterionGroup, latestEntryIndex, loadLeanStatus, qaSummary } from "./folio-site-blocks.js";
 
 const h12 = (s: string) => createHash("sha256").update(s).digest("hex").slice(0, 12);

@@ -9,7 +9,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { siteReads as nodeKindPages } from "../../cat-harness-tools/scripts/gen-node-kind-pages.ts";
+import { siteReads as nodeKindPages } from "@litlfred/cat-harness-tools/scripts/gen-node-kind-pages.ts";
 import { siteReads as documentSite } from "./build-document-site.ts";
 import { siteReads as publicCommentSite } from "./public-comment-site.ts";
 

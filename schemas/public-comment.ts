@@ -74,9 +74,9 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
 
-import { nodeKind } from "../../cat-harness/schemas/node-kind.js";
-import { RenderedImpactSchema } from "../../cat-harness/schemas/rendered-impact.js";
-import { TodoNodeKind } from "../../cat-harness/schemas/todo.js";
+import { nodeKind } from "@litlfred/cat-harness/schemas/node-kind.js";
+import { RenderedImpactSchema } from "@litlfred/cat-harness/schemas/rendered-impact.js";
+import { TodoNodeKind } from "@litlfred/cat-harness/schemas/todo.js";
 
 export const PUBLIC_COMMENT_SCHEMA = "public-comment/1.0.0" as const;
 

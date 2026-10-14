@@ -41,8 +41,8 @@
  * as common core functionality (2026-10-06), so the document build draws the
  * links and this Tool hands them to an agent.
  */
-import { defineTool, type ToolDefinition } from "../../cat-harness/schemas/tool.js";
-import { toolTypeIri } from "../../cat-harness/schemas/tool-types.js";
+import { defineTool, type ToolDefinition } from "@litlfred/cat-harness/schemas/tool.js";
+import { toolTypeIri } from "@litlfred/cat-harness/schemas/tool-types.js";
 
 export function tools(baseUrl?: string): ToolDefinition[] {
   const B = baseUrl ?? "";

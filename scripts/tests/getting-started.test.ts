@@ -17,10 +17,10 @@
 import { describe, expect, test } from "bun:test";
 import { resolve } from "node:path";
 
-import { evaluate, loadDecisionTable, possibleOutcomes } from "../../../cat-harness-tools/src/workflow/decision-table.js";
-import { loadProcessModel } from "../../../cat-harness-tools/src/workflow/process-model.js";
-import { outcomeFor, type PagesOutcome } from "../../../cat-harness-tools/scripts/pages-bootstrap.js";
-import { workflowFile } from "../../../cat-harness-tools/scripts/known-skills.ts";
+import { evaluate, loadDecisionTable, possibleOutcomes } from "@litlfred/cat-harness-tools/src/workflow/decision-table.js";
+import { loadProcessModel } from "@litlfred/cat-harness-tools/src/workflow/process-model.js";
+import { outcomeFor, type PagesOutcome } from "@litlfred/cat-harness-tools/scripts/pages-bootstrap.js";
+import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
 
 /** This instance's root; its diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
 const HARNESS = resolve(import.meta.dir, "../..");

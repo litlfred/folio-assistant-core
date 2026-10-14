@@ -4,8 +4,8 @@
  * platform publishes, owner 2026-10-06); this module re-exports it and keeps
  * the `block-actions` Tool's command.
  */
-export * from "../../cat-harness-tools/src/core/edit-links.js";
-import { editUrl, feedbackUrl } from "../../cat-harness-tools/src/core/edit-links.js";
+export * from "@litlfred/cat-harness-tools/src/core/edit-links.js";
+import { editUrl, feedbackUrl } from "@litlfred/cat-harness-tools/src/core/edit-links.js";
 
 /**
  * `bun run folio-assistant-core/scripts/block-actions.ts --repo <folio root> [--block <label>]`

@@ -9,7 +9,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { reviewList } from "../../cat-harness/schemas/rendered-impact.js";
+import { reviewList } from "@litlfred/cat-harness/schemas/rendered-impact.js";
 import { CHANGESET_SCHEMA, type ChangeSet } from "../schemas/changeset.js";
 import {
   documentRenderedImpact,

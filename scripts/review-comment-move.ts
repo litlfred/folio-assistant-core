@@ -49,8 +49,8 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 
-import { directoryForGraph, repoRootFor } from "../../cat-harness/schemas/cat-harness.js";
-import { TODO_GRAPH_FILE, nodeOfKind, parseTodoGraph } from "../../cat-harness/schemas/todo-graph.js";
+import { directoryForGraph, repoRootFor } from "@litlfred/cat-harness/schemas/cat-harness.js";
+import { TODO_GRAPH_FILE, nodeOfKind, parseTodoGraph } from "@litlfred/cat-harness/schemas/todo-graph.js";
 import {
   REVIEW_COMMENT_STATUSES,
   ReviewCommentSchema,

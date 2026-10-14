@@ -61,17 +61,17 @@
  * at `/`, under `/STAGING/<branch>/` and from a local file server. Nothing
  * absolute is baked in.
  */
-import { editLinksAsset } from "../../cat-harness-tools/src/core/edit-links.js";
+import { editLinksAsset } from "@litlfred/cat-harness-tools/src/core/edit-links.js";
 import { createHash } from "node:crypto";
 import { copyFileSync, cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 
-import { readHarnessConfig } from "../../cat-harness/schemas/harness-config.js";
-import { CONFIG_SUFFIX, isReservedIndexFile } from "../../cat-harness/schemas/instance-roots.js";
-import type { FormalTreeCache } from "../../cat-harness/schemas/formal-ref.js";
-import type { Block, Chapter, Paper, Section, SectionRef } from "../../cat-harness/schemas/types.js";
-import { kindHeading } from "../../cat-harness/schemas/translation.js";
-import { resolveLiquidValues } from "../../cat-harness-tools/pipeline/liquid-values.js";
+import { readHarnessConfig } from "@litlfred/cat-harness/schemas/harness-config.js";
+import { CONFIG_SUFFIX, isReservedIndexFile } from "@litlfred/cat-harness/schemas/instance-roots.js";
+import type { FormalTreeCache } from "@litlfred/cat-harness/schemas/formal-ref.js";
+import type { Block, Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness/schemas/types.js";
+import { kindHeading } from "@litlfred/cat-harness/schemas/translation.js";
+import { resolveLiquidValues } from "@litlfred/cat-harness-tools/pipeline/liquid-values.js";
 import { documentManifests, katexMacros, renderDocumentHtml } from "./build-document-site.js";
 import { blockLean, blockQaReport, configureFolioLeanPackages, loadLeanStatus, qaSummary, textHasSorry, type LeanStatusIndex } from "./folio-site-blocks.js";
 import { addToReport, emptyReport, imageExistsUnder, qaBlockHtml, type SiteQaReport } from "./folio-site-qa.js";

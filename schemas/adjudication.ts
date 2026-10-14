@@ -57,7 +57,7 @@
 import { z } from "zod";
 
 import { MATERIALIZATION_STATES } from "./materialization.js";
-import { ModelIdSchema } from "../../bootstrap-tools/schemas/model-registry.ts";
+import { ModelIdSchema } from "@litlfred/bootstrap-tools/schemas/model-registry.ts";
 
 export const ADJUDICATION_SCHEMA_TAG = "folio-adjudication/v1";
 

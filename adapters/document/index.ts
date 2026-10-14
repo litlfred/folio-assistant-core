@@ -48,9 +48,9 @@ import { registerQaTools } from "./tools/qa.js";
 import { registerBibTools } from "./tools/bib.js";
 import { registerTransformTools } from "./tools/transform.js";
 import { registerDocumentAuditTools } from "./tools/audit.js";
-import type { ContentAdapter, UserRole } from "../../../cat-harness-tools/src/types.js";
-import { allows, forbidden } from "../../../cat-harness-tools/src/core/rbac.js";
-import { guardUntrusted, oneLineLabel } from "../../../cat-harness-tools/src/core/handover-screen.ts";
+import type { ContentAdapter, UserRole } from "@litlfred/cat-harness-tools/src/types.js";
+import { allows, forbidden } from "@litlfred/cat-harness-tools/src/core/rbac.js";
+import { guardUntrusted, oneLineLabel } from "@litlfred/cat-harness-tools/src/core/handover-screen.ts";
 import { DocumentContent, type ContentResult, type IncomingFile } from "./content.js";
 
 export { DocumentContent } from "./content.js";
