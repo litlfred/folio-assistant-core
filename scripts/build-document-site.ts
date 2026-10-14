@@ -73,6 +73,7 @@ import { buildDocumentMarkdown } from "../../cat-harness-tools/pipeline/render-m
 import { reviewPageHtml } from "../../cat-harness-tools/scripts/gen-review-page.js";
 import { darkRules } from "../../cat-harness-tools/scripts/lib/scheme-css.ts";
 import { visualiserNavDeclaration, type VisualiserNavEntry } from "../../cat-harness-tools/scripts/lib/navbar.js";
+import { wrapRaw } from "../../cat-harness-tools/scripts/lib/liquid-raw.ts";
 import { documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
@@ -715,7 +716,7 @@ export async function buildDocumentSite(
  */
 export function landingPage(layout: string, title: string, body: string): string {
   if (!/^[A-Za-z0-9_-]+$/.test(layout)) throw new Error(`landing layout ${JSON.stringify(layout)} is not a layout name`);
-  return `---\nlayout: ${layout}\ntitle: ${JSON.stringify(title)}\nnav_order: 1\n---\n\n{% raw %}\n${body.replace(/\{%\s*endraw\s*%\}/g, "{&#37; endraw &#37;}")}\n{% endraw %}\n`;
+  return [`---`, `layout: ${layout}`, `title: ${JSON.stringify(title)}`, `nav_order: 1`, `---`, ``, ...wrapRaw(body), ``].join("\n");
 }
 
 /**

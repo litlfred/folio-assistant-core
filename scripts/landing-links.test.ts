@@ -5,6 +5,7 @@
 import { describe, expect, test } from "bun:test";
 import type { CatHarnessDeclaration } from "../../cat-harness/schemas/cat-harness.js";
 import { landingLinks, landingPage } from "./build-document-site.js";
+import { unescapeRaw } from "../../cat-harness-tools/scripts/lib/liquid-raw.ts";
 
 const decl = (directories: unknown[]) => ({ name: "f", directories }) as unknown as CatHarnessDeclaration;
 const dir = (id: string, visualiser: unknown) => ({ id, path: `${id}/`, graphTypologies: ["archimate"], coverage: { visualiser } });
@@ -45,9 +46,11 @@ describe("landingPage", () => {
     expect(p).toContain("{% raw %}\n<p>{{ not liquid }}</p>\n{% endraw %}");
   });
 
-  test("an endraw inside the body cannot close the raw block early", () => {
-    const p = landingPage("default", "D", "a {% endraw %} b");
-    expect(p.match(/\{% endraw %\}/g)).toHaveLength(1);
+  test("an endraw inside the body cannot close the raw block early, and renders unchanged", () => {
+    const body = "a {% endraw %} b";
+    const p = landingPage("default", "D", body);
+    const inner = p.slice(p.indexOf("{% raw %}\n") + "{% raw %}\n".length, p.lastIndexOf("\n{% endraw %}"));
+    expect(unescapeRaw(inner)).toBe(body);
   });
 
   test("a layout that is not a bare name is refused", () => {
