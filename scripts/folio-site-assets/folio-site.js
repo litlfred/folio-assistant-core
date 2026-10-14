@@ -177,7 +177,12 @@
 
   // ── One block's row of actions: QA, Lean, edit, feedback, its own page ──
   const src = outline.source;
-  if (src && window.faEditLinks) window.faEditLinks.configure({ repo: src.repository, branch: src.ref });
+  // The ✍ suggest editor's profiles (their modules are relative to the route
+  // base) and the KaTeX macros they are handed: the ones this page renders with.
+  const suggest = outline.suggest
+    ? { katexMacros: outline.macros || {}, profiles: outline.suggest.profiles.map((p) => ({ ...p, module: root + p.module })) }
+    : undefined;
+  if (src && window.faEditLinks) window.faEditLinks.configure({ repo: src.repository, branch: src.ref, ...(suggest ? { suggest } : {}) });
   let qaPanel = null;
   const openQa = async (n, ch, rootName, title) => {
     qaPanel ??= new Promise((ok, no) => { const s = el("script", { src: `${root}assets/qa-panel.js` }); s.onload = () => ok(window.folioSiteQa); s.onerror = no; document.head.append(s); });

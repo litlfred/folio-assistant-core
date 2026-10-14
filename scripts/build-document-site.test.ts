@@ -5,7 +5,7 @@
  * workflow runs works on what that folio starts as.
  */
 import { afterEach, describe, expect, test } from "bun:test";
-import { appendFileSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
@@ -68,6 +68,23 @@ describe("build-document-site", () => {
     expect(html).toContain("fa-suggest");
     const values = JSON.parse(readFileSync(join(out, "values.jsonld"), "utf-8")) as { "@graph": unknown[] };
     expect(values["@graph"]).toEqual([]);
+  });
+
+  test("an editor-checker profile for the content type is bundled, and the page config names it and the graph", async () => {
+    const d = scaffold();
+    // An instance beside the folio declaring a ✍ suggest profile for documents (bean 4dx7).
+    const prof = join(d, "prof");
+    mkdirSync(join(prof, "editor-checkers"), { recursive: true });
+    writeFileSync(join(prof, "prof.json"), JSON.stringify({ name: "prof", directories: [{ id: "prof-editor-checkers", path: "editor-checkers/", graphTypologies: ["editor-checkers"] }] }));
+    writeFileSync(join(prof, "check.ts"), "export function checkIt(before: string, after: string) { return []; }\n");
+    writeFileSync(join(prof, "editor-checkers", "doc.json"), JSON.stringify({ $schema: "folio-editor-checker/v1", id: "doc-check", contentType: "document", check: "check.ts#checkIt" }));
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out, { actions: { repo: "o/r" } });
+    expect(r.errors).toEqual([]);
+    expect(existsSync(join(out, "assets", "suggest", "doc-check.js"))).toBe(true);
+    const html = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
+    expect(html).toContain('"graph":"../../handbook/graph.jsonld"');
+    expect(html).toContain('"profiles":[{"id":"doc-check","module":"../../assets/suggest/doc-check.js"}]');
   });
 
   test("a block with no KG node, or a stale one, fails the build: the graph is never silently absent", async () => {

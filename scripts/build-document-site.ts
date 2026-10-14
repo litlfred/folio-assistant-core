@@ -77,6 +77,7 @@ import { buildDocumentMarkdown } from "@litlfred/cat-harness-tools/pipeline/rend
 import { loadBlocksUnder } from "@litlfred/cat-harness-tools/pipeline/block-module.js";
 import { blockToJsonLd, serialise as serialiseNode } from "@litlfred/cat-harness-tools/pipeline/gen-block-jsonld.js";
 import { writeValuesJsonLd } from "@litlfred/cat-harness-tools/pipeline/gen-values-jsonld.js";
+import { bundleEditorProfiles } from "@litlfred/cat-harness-tools/pipeline/editor-profiles.js";
 import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness/schemas/contributions.js";
 import { reviewPageHtml } from "@litlfred/cat-harness-tools/scripts/gen-review-page.js";
 import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts";
@@ -309,6 +310,8 @@ const GRAPH_ERRORS_LISTED = 20;
 
 /** The site's variable values (`gen-values-jsonld`), at the site root. */
 export const VALUES_FILE = "values.jsonld";
+/** Where the ✍ suggest editor's profile bundles are published, from the site root. */
+export const SUGGEST_DIR = "assets/suggest";
 
 export const LAZY_THRESHOLD = 200;
 export const LAZY_CHUNK = 40;
@@ -745,6 +748,8 @@ export function defaultBlockActions(repoRoot: string, over: Partial<BlockActions
     ...(over.siteUrl ? { siteUrl: over.siteUrl } : {}),
     ...(over.content ? { content: over.content } : {}),
     ...(over.values ? { values: over.values } : {}),
+    ...(over.graph ? { graph: over.graph } : {}),
+    ...(over.suggest ? { suggest: over.suggest } : {}),
   };
 }
 
@@ -783,6 +788,10 @@ export async function buildDocumentSite(
   const themed = opts.documentLayout === undefined ? undefined : layoutName(opts.documentLayout, "document");
   mkdirSync(outDir, { recursive: true });
   const contributions = await loadContributions<FolioContribution, ContributionRegistry>(repoRoot, new ContributionRegistry());
+  // The ✍ suggest editor's checks and Crepe settings for this content type
+  // (editor-checker nodes, bean 4dx7), bundled once for every document.
+  const contentType = readHarnessConfig(repoRoot)?.contentType;
+  const suggestProfiles = contentType ? await bundleEditorProfiles(repoRoot, contentType, join(outDir, ...SUGGEST_DIR.split("/")), "") : [];
   for (const d of docs) {
     const built = await buildDocumentMarkdown(d.path);
     for (const i of built.issues) if (i.level === "error") result.errors.push(`${d.slug}: ${i.message}`);
@@ -794,8 +803,20 @@ export async function buildDocumentSite(
     mkdirSync(dir, { recursive: true });
     const mathOpts = math ? { macros: katexMacros(manifest.macros) } : undefined;
     const blocks = await documentBlocks(d.path, repoRoot, d.slug);
-    // `values`: where the ✍ suggest editor reads each variable's current value, relative to this page.
-    const cfg = opts.actions === false ? undefined : defaultBlockActions(repoRoot, { content: d.slug, values: fromPageDir(documentPageDir(d.slug), VALUES_FILE), ...(opts.actions ?? {}) });
+    // `values`: where the ✍ suggest editor reads each variable's current value,
+    // `graph` the labels and keys its checks warn against, `suggest` its profiles;
+    // all relative to this page.
+    const pageDir = documentPageDir(d.slug);
+    const suggest = suggestProfiles.length
+      ? { katexMacros: mathOpts?.macros ?? {}, profiles: suggestProfiles.map((p) => ({ ...p, module: fromPageDir(pageDir, `${SUGGEST_DIR}/${p.module}`) })) }
+      : undefined;
+    const cfg = opts.actions === false ? undefined : defaultBlockActions(repoRoot, {
+      content: d.slug,
+      values: fromPageDir(pageDir, VALUES_FILE),
+      graph: fromPageDir(pageDir, `${documentDataDir(d.slug)}/graph.jsonld`),
+      ...(suggest ? { suggest } : {}),
+      ...(opts.actions ?? {}),
+    });
     // [edit] and [feedback] on every block (REQ-17, bean uphx). Off only when asked.
     // The compact form brings the runtime with it. The full form (a small,
     // one-page document) gets it too: the runtime is what adds ✍ suggest beside
