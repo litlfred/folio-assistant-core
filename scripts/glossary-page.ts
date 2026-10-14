@@ -1625,6 +1625,32 @@ if (import.meta.main) {
   }
   // An orphan is this generator's own output for a scheme that is gone.
   for (const p of orphans) rmSync(p);
+  // ONE WRITE IS NOT A FIXED POINT, so render again until nothing moves.
+  //
+  // `mappingStates` runs `check:term-mapping`, which reads every
+  // `*.glossary.json` FROM DISK — including the extracted schemes this run has
+  // just rewritten under `generatedDir()`. So the pages and SKOS rendered
+  // above carry the mapping counts of the PREVIOUS extraction: measured on
+  // 2026-10-14 (core main 82b6eba, cat-harness main ce2e9c61, the
+  // folio-assistant#2529 pins), one `glossary:page` wrote the five locale
+  // pages with `fhir … 3731` while the extraction it had just written held
+  // 3748 terms, and the `--check` that followed failed them as stale — the
+  // command the failure message tells you to run did not clear it. Rendering
+  // again against what was written settles in one more pass; the bound turns
+  // a generator that never settles into a loud failure rather than a loop.
+  for (let pass = 2; ; pass++) {
+    const again = outputs(c);
+    const moved = [...again].filter(([p, s]) => !existsSync(p) || readFileSync(p, "utf-8") !== s);
+    if (!moved.length) break;
+    if (pass > 3) {
+      console.error(`✗ glossary:page did not settle after ${pass - 1} passes; still moving: ${moved.map(([p]) => relative(REPO, p)).join(", ")}`);
+      process.exit(1);
+    }
+    for (const [p, s] of moved) {
+      mkdirSync(dirname(p), { recursive: true });
+      writeFileSync(p, s);
+    }
+  }
   const sizes = PAGE_KEYS.map((k) => `${relative(REPO, pagePath(k))} ${sizeLabel(Buffer.byteLength(files.get(pagePath(k))!, "utf-8"))}`).join(", ");
   console.log(`Wrote ${PAGE_KEYS.length} page(s) (${sizes}), ${c.glossaries.length} SKOS file(s) and ${c.glossaries.filter((s) => s.extracted).length} extracted scheme(s): ${summary}.`);
 }
