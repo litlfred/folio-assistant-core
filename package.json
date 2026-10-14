@@ -61,6 +61,7 @@
     "backfill:materialized-fixity": "bun run folio-assistant-core/scripts/backfill-materialized-fixity.ts",
     "build:document-site": "bun run folio-assistant-core/scripts/build-document-site.ts",
     "cache:index": "bun run folio-assistant-core/scripts/cache-index.ts",
+    "check:bibliography": "bun run cat-harness-tools/scripts/publish-check.ts bibliography:page",
     "check:glossary": "bun run cat-harness-tools/scripts/publish-check.ts glossary:page",
     "check:materialized-fixity": "bun run folio-assistant-core/scripts/check-materialized-fixity.ts",
     "check:voices": "bun run folio-assistant-core/scripts/check-voices.ts",

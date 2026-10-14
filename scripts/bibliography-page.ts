@@ -41,8 +41,10 @@
  * file: qou alone would be 915 × 4 files for text the page already holds.
  *
  * `--check` writes nothing, and fails when a node does not validate, a key
- * is claimed twice in one sub-graph, or the committed output is stale. That is
- * `check:bibliography`.
+ * is claimed twice in one sub-graph, or the output on disk is stale. The pages
+ * are built at publish, never committed (cat-harness `builtAtPublish`, entry
+ * `docs/folio-assistant-core/`), so the gate is `check:bibliography`:
+ * `publish-check.ts bibliography:page` builds them and then runs this check.
  *
  * Usage:  bun run folio-assistant-core/scripts/bibliography-page.ts [--check]
  *
@@ -368,7 +370,7 @@ if (import.meta.main) {
     if (stale.length || orphans.length) {
       for (const p of stale) console.error(`✗ stale: ${relative(REPO, p)}`);
       for (const p of orphans) console.error(`✗ orphan: ${relative(REPO, p)}`);
-      console.error("Run `bun run cat bibliography:page` and commit the result.");
+      console.error("Run `bun run cat bibliography:page`. The pages are built at publish and never committed.");
       process.exit(1);
     }
     console.log(`✓ bibliography current: ${summary}`);
