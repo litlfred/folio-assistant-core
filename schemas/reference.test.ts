@@ -1,0 +1,199 @@
+/**
+ * `folio-reference/v1` (bean folio-assistant-63q4): a reference node, its
+ * Dublin Core / BIBO reading, the projection from a Dublin Core record, and
+ * the exports.
+ *
+ * The DC fixture is who-iris's `9789241548960-eng.dc.json`, cut to the fields
+ * the projection reads; the CSL fixtures are entries of qou's `references.ts`.
+ */
+import { describe, expect, test } from "bun:test";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+
+import { DublinCoreRecordSchema } from "./dublin-core.ts";
+import {
+  REFERENCE_SCHEMA_TAG,
+  ReferenceNodeSchema,
+  dcCreatorToName,
+  dcDateToCsl,
+  dublinCoreToReference,
+  referenceIri,
+  referenceToJsonLd,
+  toBibtex,
+  toCslItem,
+  toCslJson,
+  toJsonLdGraph,
+  toRis,
+  yearOf,
+  type ReferenceNode,
+} from "./reference.ts";
+
+const CORE = join(import.meta.dir, "..");
+
+const garoufalidis2004: ReferenceNode = ReferenceNodeSchema.parse({
+  $schema: REFERENCE_SCHEMA_TAG,
+  id: "garoufalidis2004",
+  type: "article-journal",
+  title: "On the characteristic and deformation varieties of a knot",
+  author: [{ family: "Garoufalidis", given: "Stavros" }],
+  "container-title": "Geometry and Topology Monographs",
+  issued: { "date-parts": [[2004]] },
+  volume: "7",
+  page: "291-309",
+  DOI: "10.2140/gtm.2004.7.291",
+  URL: "https://doi.org/10.2140/gtm.2004.7.291",
+  note: "Proceedings of the Casson Fest; arXiv:math/0306230.",
+  // qou's derived block: carried, not CSL.
+  library: { docId: "characteristic", dir: "library/characteristic", stage: "candidates" },
+});
+
+const handbook = DublinCoreRecordSchema.parse({
+  $schema: "folio-dublin-core/v1",
+  id: "63e14c27-7448-41ec-be08-a96a25a47db6",
+  fields: [
+    { schema: "dc", element: "contributor", qualifier: "author", values: [{ value: "World Health Organization" }] },
+    { schema: "dc", element: "date", qualifier: "accessioned", values: [{ value: "2014-12-18T14:37:04Z" }] },
+    { schema: "dc", element: "date", qualifier: "issued", values: [{ value: "2014-12-18" }] },
+    { schema: "dc", element: "description", qualifier: "abstract", values: [{ value: "This handbook provides comprehensive guidance on WHO guidelines.", language: "en" }] },
+    { schema: "dc", element: "identifier", qualifier: "isbn", values: [{ value: "9789241548960" }] },
+    { schema: "dc", element: "identifier", qualifier: "uri", values: [{ value: "https://iris.who.int/handle/10665/145714" }] },
+    { schema: "dc", element: "language", qualifier: "iso", values: [{ value: "en" }] },
+    { schema: "dc", element: "publisher", values: [{ value: "World Health Organization" }] },
+    { schema: "dc", element: "title", values: [{ value: "WHO handbook for guideline development", language: "en" }] },
+  ],
+  provenance: { source: "https://iris.who.int/handle/10665/145714", retrievedAt: "2026-09-20", method: "transcribed" },
+});
+
+describe("a reference node", () => {
+  test("sits at references/<key>, the IRI \\cite already resolves to", () => {
+    expect(referenceIri("garoufalidis2004")).toBe("references/garoufalidis2004");
+    expect(referenceToJsonLd(garoufalidis2004)["@id"]).toBe("references/garoufalidis2004");
+  });
+
+  test("keeps fields CSL has and its typing omits (series, note, qou's library block)", () => {
+    expect((garoufalidis2004 as Record<string, unknown>).note).toContain("Casson Fest");
+    expect((garoufalidis2004 as Record<string, unknown>).library).toBeDefined();
+  });
+
+  test("refuses a key \\cite could not name", () => {
+    for (const id of ["has space", "a/b", "#x", ""]) {
+      expect(ReferenceNodeSchema.safeParse({ ...garoufalidis2004, id }).success).toBe(false);
+    }
+  });
+
+  test("its CSL item drops the node's own fields", () => {
+    const item = toCslItem(garoufalidis2004);
+    expect(item.$schema).toBeUndefined();
+    expect(item.library).toBeUndefined();
+    expect(item.id).toBe("garoufalidis2004");
+    expect(item.note).toBeDefined();
+  });
+});
+
+describe("read as Dublin Core and BIBO", () => {
+  const ld = referenceToJsonLd(garoufalidis2004);
+  test("typed as a fabio:Work and its BIBO class", () => expect(ld["@type"]).toEqual(["fabio:Work", "bibo:AcademicArticle"]));
+  test("the properties are dcterms and bibo terms", () => {
+    expect(ld["dcterms:title"]).toBe("On the characteristic and deformation varieties of a knot");
+    expect(ld["dcterms:creator"]).toEqual(["Garoufalidis, Stavros"]);
+    expect(ld["dcterms:issued"]).toBe("2004");
+    expect(ld["dcterms:isPartOf"]).toBe("Geometry and Topology Monographs");
+    expect(ld["bibo:volume"]).toBe("7");
+    expect(ld["bibo:pages"]).toBe("291-309");
+    expect(ld["bibo:doi"]).toBe("10.2140/gtm.2004.7.291");
+  });
+  test("every key is a prefixed term or a JSON-LD keyword", () => {
+    for (const k of Object.keys(ld)) expect(k.startsWith("@") || /^(dcterms|bibo|fabio|schema):/.test(k)).toBe(true);
+  });
+});
+
+describe("from a Dublin Core record (who-iris)", () => {
+  const ref = dublinCoreToReference(handbook, {
+    key: "who2014handbook",
+    derivedFrom: "who-iris/catalogue/records/9789241548960-eng.dc.json",
+    heldAt: "who-iris/library/9789241548960-eng",
+  });
+
+  test("carries what the record states", () => {
+    expect(ref.title).toBe("WHO handbook for guideline development");
+    expect(ref.author).toEqual([{ literal: "World Health Organization" }]);
+    expect(ref.issued).toEqual({ "date-parts": [[2014, 12, 18]] });
+    expect(ref.publisher).toBe("World Health Organization");
+    expect(ref.ISBN).toBe("9789241548960");
+    expect(ref.URL).toBe("https://iris.who.int/handle/10665/145714");
+    expect(ref.language).toBe("en");
+    expect(ref.provenance).toBe("catalogue");
+    expect(ref.type).toBe("book");
+  });
+
+  test("uses date.issued, never date.accessioned", () => expect(yearOf(ref)).toBe("2014"));
+
+  test("infers nothing the record lacks", () => {
+    for (const k of ["DOI", "volume", "page", "container-title", "editor"]) expect(k in ref).toBe(false);
+  });
+
+  test("passes its own schema", () => expect(ReferenceNodeSchema.safeParse(ref).success).toBe(true));
+
+  test("names: a person splits on the first comma; an organisation stays whole", () => {
+    expect(dcCreatorToName("Grimm, Jacob Ludwig Karl")).toEqual({ family: "Grimm", given: "Jacob Ludwig Karl" });
+    expect(dcCreatorToName("World Health Organization")).toEqual({ literal: "World Health Organization" });
+  });
+
+  test("dates: year, year-month, full; anything else raw", () => {
+    expect(dcDateToCsl("2014")).toEqual({ "date-parts": [[2014]] });
+    expect(dcDateToCsl("2014-12")).toEqual({ "date-parts": [[2014, 12]] });
+    expect(dcDateToCsl("c. 1990")).toEqual({ raw: "c. 1990" });
+  });
+});
+
+describe("exports", () => {
+  const who = dublinCoreToReference(handbook, { key: "who2014handbook" });
+  const refs = [garoufalidis2004, who];
+
+  test("CSL-JSON: an array of CSL items, node fields dropped", () => {
+    const items = JSON.parse(toCslJson(refs)) as Record<string, unknown>[];
+    expect(items.map((i) => i.id)).toEqual(["garoufalidis2004", "who2014handbook"]);
+    expect(items.every((i) => !("$schema" in i) && !("provenance" in i))).toBe(true);
+  });
+
+  test("BibTeX: through the formatter references.bib is written with", () => {
+    const bib = toBibtex(refs);
+    expect(bib).toContain("@article{garoufalidis2004,");
+    expect(bib).toContain("pages   = {291--309},");
+    expect(bib).toContain("@book{who2014handbook,");
+    expect(bib).toContain("author    = {World Health Organization},");
+  });
+
+  test("RIS: one record per reference, CRLF, ER-terminated", () => {
+    const ris = toRis(refs);
+    const recs = ris.replace(/\r\n$/, "").split("\r\n\r\n");
+    expect(recs).toHaveLength(2);
+    expect(recs[0]).toContain("TY  - JOUR\r\nID  - garoufalidis2004");
+    expect(recs[0]).toContain("SP  - 291\r\nEP  - 309");
+    expect(recs[1]).toContain("TY  - BOOK");
+    expect(recs[1]).toContain("SN  - 9789241548960");
+    for (const r of recs) expect(r.endsWith("ER  - ")).toBe(true);
+  });
+
+  test("Dublin Core / BIBO JSON-LD: one @graph", () => {
+    const g = JSON.parse(toJsonLdGraph(refs)) as { "@context": object; "@graph": Record<string, unknown>[] };
+    expect(g["@graph"].map((n) => n["@id"])).toEqual(["references/garoufalidis2004", "references/who2014handbook"]);
+    expect(g["@graph"].every((n) => !("@context" in n))).toBe(true);
+  });
+
+  test("an empty set exports empty", () => {
+    expect(toBibtex([])).toBe("");
+    expect(toRis([])).toBe("");
+    expect(JSON.parse(toCslJson([]))).toEqual([]);
+  });
+});
+
+describe("declared", () => {
+  test("the references typology names the family its validator checks", () => {
+    const kind = JSON.parse(readFileSync(join(CORE, "typologies", "references.json"), "utf-8"));
+    const v = JSON.parse(readFileSync(join(CORE, "validators", "reference.json"), "utf-8"));
+    expect(Object.keys(kind.nodeSchemas)).toEqual([REFERENCE_SCHEMA_TAG]);
+    expect(v.validates).toEqual({ kind: "references", family: REFERENCE_SCHEMA_TAG });
+    expect(v.schema).toBe("folio-assistant-core:schemas/reference.ts#ReferenceNodeSchema");
+  });
+});

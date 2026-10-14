@@ -12,5 +12,6 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `folio-assistant
 |---|---|---|
 | [`catalogue.json`](catalogue.json) | Catalogue |  |
 | [`public-comments.json`](public-comments.json) | Public comments |  |
+| [`references.json`](references.json) | References |  |
 | [`review-verdicts.json`](review-verdicts.json) | Review verdicts |  |
 <!-- kg:subgraph:end -->
