@@ -6,6 +6,7 @@
   "files": [
     "adapters/",
     "block-kinds/",
+    "content/",
     "glossary/",
     "methodologies/",
     "processes/",
