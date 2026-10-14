@@ -1,14 +1,14 @@
 ---
 # folio-assistant-6eiw
 title: Library titles for non-PDF entries (pptx deck, CODATA table)
-status: todo
+status: completed
 type: task
 tags:
     - rehomed
     - ui
     - wireframe-findings
 created_at: 2026-10-02T12:55:31Z
-updated_at: 2026-10-11T06:25:00Z
+updated_at: 2026-10-14T13:55:00Z
 parent: folio-assistant-4ccr
 ---
 
@@ -80,3 +80,7 @@ pointer here), this bean is re-filed in the store of the repository whose code
 it changes: **`litlfred/cat-harness-tools` bean `cat-tools-v8wg`** (cat-harness-tools
 PR #114). Work it there. This copy stays open as a pointer, and closes when
 `cat-tools-v8wg` does.
+
+## Summary of Changes
+
+Rehomed: the work moved to litlfred/cat-harness-tools as cat-tools-v8wg, which is completed there. This copy closes as a pointer to it, so the two stores agree (bean drain, 2026-10-14, session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs).
