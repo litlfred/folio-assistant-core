@@ -15,7 +15,7 @@ const ENTRY = "review-v1";
 const FIXTURE = join(import.meta.dir, "test-fixtures", "library-structure.json");
 
 /** A folio with a library entry (a trimmed DPI-H structure) and the document made from it. */
-function scaffold(): string {
+function scaffold(anchorsExtra: Record<string, unknown> = {}): string {
   const d = mkdtempSync(join(tmpdir(), "libsite-"));
   writeFileSync(
     join(d, "doc.json"),
@@ -34,6 +34,7 @@ function scaffold(): string {
       $schema: "folio-review-anchors/v1",
       document: "doc",
       library: ENTRY,
+      ...anchorsExtra,
       sections: [
         { label: "sec:1-1", number: "1.1", title: "About" },
         { label: "sec:1-1-1", number: "1.1.1", title: "What is a reference architecture" },
@@ -48,6 +49,13 @@ function scaffold(): string {
 }
 
 describe("build-library-site (bean zcak)", () => {
+  test("the entry title says what the source is: public comment by default, the folio's own label when it gives one", () => {
+    const plain = scaffold();
+    expect(entryView(plain, join(plain, "library", ENTRY))!.title).toBe("The Handbook — the version published for public comment");
+    const labelled = scaffold({ sourceLabel: "the TWG outline it was seeded from" });
+    expect(entryView(labelled, join(labelled, "library", ENTRY))!.title).toBe("The Handbook — the TWG outline it was seeded from");
+  });
+
   test("a section maps to the first folio block of the section with its number; one with no counterpart maps to nothing", () => {
     const d = scaffold();
     const editFor = materialisedEdits(d, ENTRY)!;
