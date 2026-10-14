@@ -57,6 +57,19 @@ describe("build-document-site", () => {
     expect(graph["@graph"].map((n) => n.label)).toEqual(["prose:overview"]);
   });
 
+  test("a one-page document carries the edit-links runtime (✍ suggest) and the site its values.jsonld", async () => {
+    const d = scaffold();
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out, { actions: { repo: "o/r" } });
+    expect(r.errors).toEqual([]);
+    const html = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
+    expect(html).toContain('id="fa-edit-cfg"');
+    expect(html).toContain('"values":"../../values.jsonld"');
+    expect(html).toContain("fa-suggest");
+    const values = JSON.parse(readFileSync(join(out, "values.jsonld"), "utf-8")) as { "@graph": unknown[] };
+    expect(values["@graph"]).toEqual([]);
+  });
+
   test("a block with no KG node, or a stale one, fails the build: the graph is never silently absent", async () => {
     const d = scaffold();
     const nodePath = join(d, "folio", "handbook", "introduction", "overview.jsonld");
