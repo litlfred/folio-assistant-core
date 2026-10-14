@@ -48,4 +48,11 @@ describe("public-comment-routing", () => {
     // ... and the log's human column wins over everything.
     expect(commentRouting({ [HU]: "No" }, { category: "WHO", by: "litlfred" })).toMatchObject({ group: "No", source: "human" });
   });
+
+  test("a person's entry rules on a human label that names no category", () => {
+    const ruling = { category: "Metadata registries", by: "litlfred" };
+    expect(commentRouting({ [AI]: "Core architects", [HU]: "HWF team" }, ruling)).toMatchObject({ group: "Metadata registries", source: "human", by: "litlfred" });
+    // An agent's entry does not rule: the label stays unmapped.
+    expect(commentRouting({ [HU]: "HWF team" }, { ...ruling, by: "claude-agent" })!.group).toBeUndefined();
+  });
 });

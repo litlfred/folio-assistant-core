@@ -95,6 +95,9 @@ function fromEntry(e: RoutingEntry): Routing {
   };
 }
 
+/** Whether a label names one of the categories, whole or as 'A/ B'. */
+const humanNamesGroup = (raw: string) => !!twgGroup(raw) || raw.split("/").map((s) => s.trim()).filter(Boolean).every((p) => !!twgGroup(p));
+
 const isHuman = (k: string) => /human/i.test(k) && /categori[sz]/i.test(k);
 const isAi = (k: string) => !/human/i.test(k) && /categori[sz]/i.test(k);
 
@@ -102,7 +105,8 @@ const isAi = (k: string) => !/human/i.test(k) && /categori[sz]/i.test(k);
 export function commentRouting(labels: Record<string, string> | undefined, entry?: RoutingEntry): Routing | undefined {
   const pick = (test: (k: string) => boolean) => Object.entries(labels ?? {}).find(([k, v]) => test(k) && v.trim())?.[1];
   const human = pick(isHuman);
-  if (!human && entry && !isAgent(entry.by)) return fromEntry(entry);
+  // A person's entry is a ruling: it wins unless the log's human column already names a category.
+  if (entry && !isAgent(entry.by) && !(human && humanNamesGroup(human))) return fromEntry(entry);
   const raw = human ?? pick(isAi);
   if (!raw) return entry ? fromEntry(entry) : undefined;
   const parts = raw.split("/").map((s) => s.trim()).filter(Boolean);
