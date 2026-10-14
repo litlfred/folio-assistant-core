@@ -11,7 +11,7 @@
  * The candidates JSON is regenerated on every GET (cheap walk; ~1s on a
  * typical paper). Decisions are persisted to
  * `<repo>/content/<paper>/glossary-curation.json`. A separate apply
- * script (`bun run pipeline/apply-glossary-curation.ts`) writes the
+ * script (`bun run cat-harness-tools/pipeline/apply-glossary-curation.ts`) writes the
  * `defines: [...]` fields into the chosen blocks' `.ts` files.
  *
  * @module folio-assistant/routes/glossary
