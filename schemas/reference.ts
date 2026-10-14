@@ -10,6 +10,9 @@
  * there. It is also what a bibliography viewer lists and exports, path by path,
  * the way the glossary lists terms.
  *
+ * @module schemas/reference
+ * @graphNode schema
+ *
  * ## The body is CSL-JSON, and the node reads as Dublin Core
  *
  * Owner, 2026-10-14, on aligning qou's bibliography: *"1 + 2"*. Keep CSL-JSON
