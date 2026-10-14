@@ -31,6 +31,8 @@
  *                                in manifest order, for the review page's
  *                                outline and minimap (bean eb4l)
  *   <out>/<slug>/blocks/         a lazy document's block text, as data (bean v433)
+ *   <out>/<slug>/kg/             every block's knowledge-graph node, as committed
+ *   <out>/<slug>/graph.jsonld    the document's graph: every node in one file
  *
  * Pages are under the page locale and data is not (issue #2527): see
  * `document-site-route.ts`, which says where each one goes.
@@ -47,7 +49,8 @@
  * ## Failure is loud
  *
  * A folio with no document, or a document whose assembly reports an error,
- * exits non-zero. A site that silently omitted a document would be a preview
+ * exits non-zero. So does a block with no `.jsonld` node, or a stale one
+ * ({@link documentGraph}). A site that silently omitted a document would be a preview
  * that reads "that document was deleted" to a reviewer.
  *
  * Raw HTML in the assembled Markdown is kept (`sanitize: false`), because the
@@ -55,7 +58,7 @@
  * the folio's own workflow, which is the same trust the build command already
  * has.
  */
-import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { remark } from "remark";
 import remarkDirective from "remark-directive";
@@ -65,11 +68,14 @@ import remarkMath from "remark-math";
 import { visit } from "unist-util-visit";
 
 import { folioDir, readDeclaration, visualisationResolves, visualisationsOf, type CatHarnessDeclaration } from "@litlfred/cat-harness/schemas/cat-harness.js";
-import { readHarnessConfig } from "@litlfred/cat-harness/schemas/harness-config.js";
+import { loadContributions, readHarnessConfig } from "@litlfred/cat-harness/schemas/harness-config.js";
 import { detectRepoUrl, ownerRepo } from "@litlfred/cat-harness-tools/src/core/git-refs.js";
 import { DEFAULT_TEMPLATE, injectBlockActions, readIssueForm, type BlockActionsConfig, type BlockContext } from "./block-actions.js";
 import type { Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness/schemas/types.js";
 import { buildDocumentMarkdown } from "@litlfred/cat-harness-tools/pipeline/render-markdown.js";
+import { loadBlocksUnder } from "@litlfred/cat-harness-tools/pipeline/block-module.js";
+import { blockToJsonLd, serialise as serialiseNode } from "@litlfred/cat-harness-tools/pipeline/gen-block-jsonld.js";
+import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness/schemas/contributions.js";
 import { reviewPageHtml } from "@litlfred/cat-harness-tools/scripts/gen-review-page.js";
 import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts";
 import { visualiserNavDeclaration, type VisualiserNavEntry } from "@litlfred/cat-harness-tools/scripts/lib/navbar.js";
@@ -257,6 +263,47 @@ export function pageContents(html: string): string {
 // nothing to save, and one file is simpler to read and to test. Searching the
 // comments is the dashboard's job (owner: "only the visualizer search for the
 // PCs"), so nothing here needs the text in the page to be findable at once.
+
+// ── The knowledge graph, published (owner 2026-10-14) ───────────────────────
+//
+// Every block is a KG node: its `<block>.jsonld`, written by
+// `gen-block-jsonld.ts` and committed beside it. Bean v433 was asked for a
+// *"dynamic JS load of KG"* and published rendered HTML only, and this
+// builder never read a node, so a document folio's site carried no graph at
+// all, and a folio that had never generated one looked no different
+// (litlfred/dth-hrh, found 2026-10-14). The nodes are now published as data,
+// one per block under `kg/` and all together in `graph.jsonld`, and a node
+// that is missing, or that differs from what the generator would write now,
+// fails the build: a site whose graph is silently absent or out of date is
+// the failure this replaces.
+
+/** A document's block nodes, as committed, and what is wrong with them. */
+export async function documentGraph(
+  docDir: string,
+  slug: string,
+  contributions?: ContributionRegistry,
+): Promise<{ nodes: Array<{ rel: string; text: string }>; errors: string[] }> {
+  // A dependency's kinds (smart-base's personas, scenarios, requirements) are blocks too.
+  const kinds = new Set(contributions?.contributedBuilders().values() ?? []);
+  const { blocks, failures } = await loadBlocksUnder(docDir, kinds);
+  const errors = failures.map((f) => `${relative(docDir, f.file)} did not load: ${f.error}`);
+  const nodes: Array<{ rel: string; text: string }> = [];
+  for (const b of [...blocks.values()].sort((x, y) => x.file.localeCompare(y.file))) {
+    const path = b.file.replace(/\.ts$/, ".jsonld");
+    const rel = relative(docDir, path);
+    if (!existsSync(path)) {
+      errors.push(`${rel}: no KG node (run gen-block-jsonld.ts)`);
+      continue;
+    }
+    const text = readFileSync(path, "utf-8");
+    if (text !== serialiseNode(blockToJsonLd(b, slug, [], [], contributions))) errors.push(`${rel}: KG node is stale (run gen-block-jsonld.ts)`);
+    nodes.push({ rel, text });
+  }
+  return { nodes, errors };
+}
+
+/** Errors past this many are counted, not listed: one cause usually explains them all. */
+const GRAPH_ERRORS_LISTED = 20;
 
 export const LAZY_THRESHOLD = 200;
 export const LAZY_CHUNK = 40;
@@ -729,6 +776,7 @@ export async function buildDocumentSite(
   if (opts.landingLayout) layoutName(opts.landingLayout, "landing");
   const themed = opts.documentLayout === undefined ? undefined : layoutName(opts.documentLayout, "document");
   mkdirSync(outDir, { recursive: true });
+  const contributions = await loadContributions<FolioContribution, ContributionRegistry>(repoRoot, new ContributionRegistry());
   for (const d of docs) {
     const built = await buildDocumentMarkdown(d.path);
     for (const i of built.issues) if (i.level === "error") result.errors.push(`${d.slug}: ${i.message}`);
@@ -777,6 +825,15 @@ export async function buildDocumentSite(
     // A document's images live in `folio/<slug>/media/` and its blocks link
     // them as `media/<file>`, relative to the document's page, so they go
     // beside the page. Copied, so a figure in the preview is the figure in the folio.
+    const graph = await documentGraph(dirname(d.path), d.slug, contributions);
+    for (const e of graph.errors.slice(0, GRAPH_ERRORS_LISTED)) result.errors.push(`${d.slug}: ${e}`);
+    if (graph.errors.length > GRAPH_ERRORS_LISTED) result.errors.push(`${d.slug}: … and ${graph.errors.length - GRAPH_ERRORS_LISTED} more KG node errors`);
+    for (const n of graph.nodes) {
+      mkdirSync(dirname(join(data, "kg", n.rel)), { recursive: true });
+      writeFileSync(join(data, "kg", n.rel), n.text);
+    }
+    mkdirSync(data, { recursive: true });
+    writeFileSync(join(data, "graph.jsonld"), JSON.stringify({ "@graph": graph.nodes.map((n) => JSON.parse(n.text) as unknown) }) + "\n");
     const media = join(dirname(d.path), "media");
     if (existsSync(media)) cpSync(media, join(dir, "media"), { recursive: true });
     result.documents.push({ slug: d.slug, blocks: built.blockCount, page: documentPage(d.slug) });

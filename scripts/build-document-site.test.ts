@@ -5,7 +5,7 @@
  * workflow runs works on what that folio starts as.
  */
 import { afterEach, describe, expect, test } from "bun:test";
-import { appendFileSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync } from "node:fs";
+import { appendFileSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
@@ -44,6 +44,30 @@ describe("build-document-site", () => {
     const landing = readFileSync(join(out, "index.html"), "utf-8");
     expect(landing).toContain('href="en/handbook/index.html"');
     expect(landing).toContain('href="en/review/index.html"');
+  });
+
+  test("every block's KG node is published, one per block and as the document's graph", async () => {
+    const d = scaffold();
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out);
+    expect(r.errors).toEqual([]);
+    const node = JSON.parse(readFileSync(join(out, "handbook", "kg", "introduction", "overview.jsonld"), "utf-8")) as { label: string };
+    expect(node.label).toBe("prose:overview");
+    const graph = JSON.parse(readFileSync(join(out, "handbook", "graph.jsonld"), "utf-8")) as { "@graph": Array<{ label: string }> };
+    expect(graph["@graph"].map((n) => n.label)).toEqual(["prose:overview"]);
+  });
+
+  test("a block with no KG node, or a stale one, fails the build: the graph is never silently absent", async () => {
+    const d = scaffold();
+    const nodePath = join(d, "folio", "handbook", "introduction", "overview.jsonld");
+    const committed = readFileSync(nodePath, "utf-8");
+    rmSync(nodePath);
+    const missing = await buildDocumentSite(d, join(d, "_site"));
+    expect(missing.errors).toEqual(["handbook: introduction/overview.jsonld: no KG node (run gen-block-jsonld.ts)"]);
+
+    writeFileSync(nodePath, committed.replace('"Overview"', '"An older title"'));
+    const stale = await buildDocumentSite(d, join(d, "_site2"));
+    expect(stale.errors).toEqual(["handbook: introduction/overview.jsonld: KG node is stale (run gen-block-jsonld.ts)"]);
   });
 
   test("pages are under the locale, data is not, and the landing stays at the root (#2527)", async () => {
