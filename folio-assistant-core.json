@@ -334,5 +334,14 @@
       "rtlSupported": true,
       "notes": "Base content type. All other types inherit Markdown translation."
     }
-  ]
+  ],
+  "gateExemptions": {
+    "steps": [
+      {
+        "match": "cat-harness-tools/scripts/staging-changes.ts",
+        "kind": "covered-by",
+        "reason": "feature-staging.yml writes the preview's changes/ page (sources, the predicted cone, and the diff against the gh-pages root): a BUILD step, continue-on-error, not a check. Its logic is covered by cat-harness-tools/scripts/tests/staging-changes.test.ts in `bun test`. Declared here, not in cat-harness-tools, because the step is folio-assistant's and cat-harness-tools' standalone checkout has no such workflow."
+      }
+    ]
+  }
 }
