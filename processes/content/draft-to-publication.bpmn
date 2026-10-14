@@ -171,6 +171,7 @@
       <bpmn:documentation>Content reviewer, QC reviewer and technical officer review the draft as a whole — coherence, phase-gate criteria, breaking vs non-breaking change.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
+        <bootstrap.processes:skill ref="staging-review" />
       </bpmn:extensionElements>
       <bpmn:incoming>G10</bpmn:incoming>
       <bpmn:outgoing>G12</bpmn:outgoing>
@@ -179,6 +180,7 @@
       <bpmn:documentation>Domain sign-off: clinical SMEs for a guideline, subject-matter reviewers for a paper.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
+        <bootstrap.processes:skill ref="staging-review" />
       </bpmn:extensionElements>
       <bpmn:incoming>G11</bpmn:incoming>
       <bpmn:outgoing>G13</bpmn:outgoing>
