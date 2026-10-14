@@ -21,7 +21,7 @@
  */
 import { posix } from "node:path";
 
-import { PAGE_LOCALE } from "../../cat-harness-tools/scripts/viewer-declarations.ts";
+import { PAGE_LOCALE } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 
 export { PAGE_LOCALE };
 

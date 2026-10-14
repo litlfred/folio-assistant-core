@@ -12,8 +12,8 @@ import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { basename, join } from "node:path";
 
-import { workflowFile, workflowFiles } from "../../../cat-harness-tools/scripts/known-skills.js";
-import { loadProcessModel } from "../../../cat-harness-tools/src/workflow/process-model.ts";
+import { workflowFile, workflowFiles } from "@litlfred/cat-harness-tools/scripts/known-skills.js";
+import { loadProcessModel } from "@litlfred/cat-harness-tools/src/workflow/process-model.ts";
 
 describe("the process says whether running it is logged", () => {
   // Diagrams by NAME through the declared `processes` graphs (placement PR3, bean `63wl`).

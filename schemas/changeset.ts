@@ -63,9 +63,9 @@ import { remark } from "remark";
 import remarkHtml from "remark-html";
 import { z } from "zod";
 
-import { walkBlocks } from "../../cat-harness-tools/pipeline/qa-utils.js";
-import { parseManifestStringArray } from "../../cat-harness-tools/pipeline/qa-checkers-extended.js";
-import { maskStringsAndComments, parseStringField } from "../../cat-harness-tools/pipeline/uses-field.js";
+import { walkBlocks } from "@litlfred/cat-harness-tools/pipeline/qa-utils.js";
+import { parseManifestStringArray } from "@litlfred/cat-harness-tools/pipeline/qa-checkers-extended.js";
+import { maskStringsAndComments, parseStringField } from "@litlfred/cat-harness-tools/pipeline/uses-field.js";
 
 // ── Schema ──────────────────────────────────────────────────────
 

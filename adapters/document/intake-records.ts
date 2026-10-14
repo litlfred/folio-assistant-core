@@ -61,7 +61,7 @@
  * @module adapters/document/intake-records
  */
 import { DUBLIN_CORE_SCHEMA_TAG, DublinCoreRecordSchema, type DublinCoreRecord } from "../../schemas/dublin-core.js";
-import { INTAKE_SCHEMA_TAG, IntakeSchema, type Intake } from "../../../cat-harness/schemas/intake.js";
+import { INTAKE_SCHEMA_TAG, IntakeSchema, type Intake } from "@litlfred/cat-harness/schemas/intake.js";
 
 export interface UploadDescription {
   docId: string;

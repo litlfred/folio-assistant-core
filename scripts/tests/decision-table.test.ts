@@ -9,11 +9,11 @@
  */
 import { describe, expect, test } from "bun:test";
 import { resolve } from "path";
-import { drainSubprocess } from "../../../cat-harness-tools/scripts/tests/helpers";
-import { DecisionError, evaluate, loadDecisionTable } from "../../../cat-harness-tools/src/workflow/decision-table";
-import { loadProcessModel } from "../../../cat-harness-tools/src/workflow/process-model";
-import { complete, enabled, startInstance } from "../../../cat-harness-tools/src/workflow/instance";
-import { workflowFile } from "../../../cat-harness-tools/scripts/known-skills.ts";
+import { drainSubprocess } from "@litlfred/cat-harness-tools/scripts/tests/helpers.js";
+import { DecisionError, evaluate, loadDecisionTable } from "@litlfred/cat-harness-tools/src/workflow/decision-table.js";
+import { loadProcessModel } from "@litlfred/cat-harness-tools/src/workflow/process-model.js";
+import { complete, enabled, startInstance } from "@litlfred/cat-harness-tools/src/workflow/instance.js";
+import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
 
 /** This instance's root; its diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
 const HERE = resolve(import.meta.dir, "../..");

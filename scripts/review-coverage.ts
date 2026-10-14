@@ -47,9 +47,9 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 
-import { TODO_GRAPH_FILE, nodeOfKind, parseTodoGraph } from "../../cat-harness/schemas/todo-graph.js";
+import { TODO_GRAPH_FILE, nodeOfKind, parseTodoGraph } from "@litlfred/cat-harness/schemas/todo-graph.js";
 import { ReviewCommentsFileSchema } from "../schemas/review-comment.js";
-import { missedFiles, RenderedImpactSchema, RenderedMeasuredSchema } from "../../cat-harness/schemas/rendered-impact.js";
+import { missedFiles, RenderedImpactSchema, RenderedMeasuredSchema } from "@litlfred/cat-harness/schemas/rendered-impact.js";
 import {
   REVIEW_VERDICT_SCHEMA,
   ReviewVerdictSchema,

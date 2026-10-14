@@ -44,8 +44,8 @@ import { BLOCK_ACTIONS_CSS, compactActionsHtml, compactActionsScript, DEFAULT_TE
 import { changeSetRouting, commentRouting, type Routing, type RoutingFile, TWG_GROUPS } from "./public-comment-routing.js";
 import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage } from "./document-site-route.js";
-import { darkRules } from "../../cat-harness-tools/scripts/lib/scheme-css.ts";
-import { escapeForRaw } from "../../cat-harness-tools/scripts/lib/liquid-raw.ts";
+import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts";
+import { escapeForRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 import { scopeCss } from "./scope-css.js";
 
 /** `folio-staging.yml`'s slug rule, step `slug`. */

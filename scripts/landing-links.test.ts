@@ -3,9 +3,9 @@
  * the visualisations its instance declares, when they resolve.
  */
 import { describe, expect, test } from "bun:test";
-import type { CatHarnessDeclaration } from "../../cat-harness/schemas/cat-harness.js";
+import type { CatHarnessDeclaration } from "@litlfred/cat-harness/schemas/cat-harness.js";
 import { landingLinks, landingPage } from "./build-document-site.js";
-import { unescapeRaw } from "../../cat-harness-tools/scripts/lib/liquid-raw.ts";
+import { unescapeRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 
 const decl = (directories: unknown[]) => ({ name: "f", directories }) as unknown as CatHarnessDeclaration;
 const dir = (id: string, visualiser: unknown) => ({ id, path: `${id}/`, graphTypologies: ["archimate"], coverage: { visualiser } });

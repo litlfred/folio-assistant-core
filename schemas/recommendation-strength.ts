@@ -23,10 +23,10 @@
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, parse } from "node:path";
 
-import type { CheckerPaths, CheckerResult } from "../../cat-harness/schemas/block-qa.js";
-import { type CodeList, loadCodeLists } from "../../cat-harness/schemas/code-list.js";
-import type { CodeRef } from "../../cat-harness/schemas/types.js";
-import { maskStringsAndComments, parseStringField } from "../../cat-harness-tools/pipeline/uses-field.js";
+import type { CheckerPaths, CheckerResult } from "@litlfred/cat-harness/schemas/block-qa.js";
+import { type CodeList, loadCodeLists } from "@litlfred/cat-harness/schemas/code-list.js";
+import type { CodeRef } from "@litlfred/cat-harness/schemas/types.js";
+import { maskStringsAndComments, parseStringField } from "@litlfred/cat-harness-tools/pipeline/uses-field.js";
 
 /** Why a strength does not resolve, or `null` when it does (or is absent). */
 export function strengthFinding(strength: CodeRef | undefined, lists: ReadonlyMap<string, CodeList>): string | null {

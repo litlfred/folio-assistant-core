@@ -7,8 +7,8 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { loadCodeLists } from "../../cat-harness/schemas/code-list.js";
-import { recommendation } from "../../cat-harness/schemas/builders.js";
+import { loadCodeLists } from "@litlfred/cat-harness/schemas/code-list.js";
+import { recommendation } from "@litlfred/cat-harness/schemas/builders.js";
 import { checkRecommendationStrengthResolves, RECOMMENDATION_CHECKERS, strengthFinding, strengthOf } from "./recommendation-strength.js";
 
 const lists = loadCodeLists([join(import.meta.dir, "..", "code-lists")]);

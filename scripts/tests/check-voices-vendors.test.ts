@@ -8,7 +8,7 @@
 import { describe, expect, test } from "bun:test";
 
 import { vendorVoiceFindings } from "../check-voices.ts";
-import type { VoiceProfile } from "../../../cat-harness/schemas/voices";
+import type { VoiceProfile } from "@litlfred/cat-harness/schemas/voices.js";
 
 const voice = (id: string, base?: string): VoiceProfile =>
   ({ id, rules: [], sources: [], ...(base ? { extends: { voiceId: base } } : {}) }) as unknown as VoiceProfile;

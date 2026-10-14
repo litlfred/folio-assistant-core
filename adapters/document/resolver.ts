@@ -8,9 +8,9 @@
 
 import { existsSync, readFileSync } from "fs";
 import { join } from "path";
-import type { GitHelper } from "../../../cat-harness-tools/src/core/git.js";
-import type { FeedbackStore } from "../../../cat-harness-tools/src/core/feedback.js";
-import { TtlCache } from "../../../cat-harness-tools/src/core/cache.js";
+import type { GitHelper } from "@litlfred/cat-harness-tools/src/core/git.js";
+import type { FeedbackStore } from "@litlfred/cat-harness-tools/src/core/feedback.js";
+import { TtlCache } from "@litlfred/cat-harness-tools/src/core/cache.js";
 import type {
   FolioItem,
   ContentOutline,
@@ -21,14 +21,14 @@ import type {
   ResolvedDocument,
   ChapterDetail,
   SectionStub,
-} from "../../../cat-harness-tools/src/content-types.js";
-import { resolveFormalRef } from "../../../cat-harness/schemas/formal-ref.js";
-import type { Block, Chapter, Folio, Paper, Section } from "../../../cat-harness/schemas/types.js";
-import { leanStatusBucket } from "../../../cat-harness/schemas/types.js";
+} from "@litlfred/cat-harness-tools/src/content-types.js";
+import { resolveFormalRef } from "@litlfred/cat-harness/schemas/formal-ref.js";
+import type { Block, Chapter, Folio, Paper, Section } from "@litlfred/cat-harness/schemas/types.js";
+import { leanStatusBucket } from "@litlfred/cat-harness/schemas/types.js";
 import {
   blockCaption, blockExamples, blockLean, blockProofs, blockTex,
   isSectionRef, sectionBlockNames,
-} from "../../../cat-harness-tools/adapters/manifest-entries.js";
+} from "@litlfred/cat-harness-tools/adapters/manifest-entries.js";
 
 
 export class PaperResolver {
