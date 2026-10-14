@@ -66,6 +66,13 @@ export function libraryDirs(repoRoot: string): string[] {
 interface Anchors {
   $schema: string;
   library?: string;
+  /**
+   * What the library entry IS to this folio, appended to the folio's title on
+   * the entry page. Absent: "the version published for public comment", the
+   * case this was built for (litlfred/smart-ra). A folio seeded from something
+   * else says so, e.g. dth-hrh's "the TWG outline it was seeded from".
+   */
+  sourceLabel?: string;
   sections: { label: string; number?: string; title: string }[];
   blocks: { label: string; chapter: string; root: string; sections: string[] }[];
 }
@@ -94,7 +101,7 @@ export function materialisedEdits(repoRoot: string, id: string): EntryLinks["edi
 }
 
 /** The folio document an entry was materialised as: its title, and where each section went. */
-export function materialisation(repoRoot: string, id: string): { title?: string; editFor: NonNullable<EntryLinks["editFor"]> } | undefined {
+export function materialisation(repoRoot: string, id: string): { title?: string; sourceLabel?: string; editFor: NonNullable<EntryLinks["editFor"]> } | undefined {
   for (const f of anchorFiles(repoRoot)) {
     let a: Anchors;
     try {
@@ -127,6 +134,7 @@ export function materialisation(repoRoot: string, id: string): { title?: string;
     const title = existsSync(manifest) ? /\btitle:\s*["'`]([^"'`]+)["'`]/.exec(readFileSync(manifest, "utf-8"))?.[1] : undefined;
     return {
       ...(title ? { title } : {}),
+      ...(typeof a.sourceLabel === "string" && a.sourceLabel.trim() ? { sourceLabel: a.sourceLabel.trim() } : {}),
       editFor: (s) => (s.number ? byNumber.get(s.number) : undefined) ?? byTitle.get(norm(s.title)),
     };
   }
@@ -140,7 +148,7 @@ export function entryView(repoRoot: string, entryDir: string, repo?: string): Do
   const view = readEntryDocument(entryDir, id, {
     ...(repo ? { links: { repo, dir: posix(relative(repoRoot, entryDir)), ...(m ? { editFor: m.editFor } : {}) } } : {}),
   });
-  if (view && m?.title) view.title = `${m.title} — the version published for public comment`;
+  if (view && m?.title) view.title = `${m.title} — ${m.sourceLabel ?? "the version published for public comment"}`;
   return view;
 }
 
