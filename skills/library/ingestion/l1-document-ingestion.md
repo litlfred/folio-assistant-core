@@ -182,12 +182,27 @@ the recorded sha256 identify a rendering nobody published, so they take their
 own rung instead:
 
 ```sh
+bun run cat ingest uploads/FILE.md --text --library <lib>            # rung + l1-blocks, into ingest-staging/
+bun run cat ingest uploads/FILE.md --text --library <lib> --promote  # the L1 gate, then the entry and its KG nodes
+```
+
+`--text` is the CALLER's statement that the file is text: text has no magic
+bytes, so the extension is never read, and a binary handed in as text is
+refused as `undetermined`. Through `cat ingest` it takes the notebook's derived
+arm (`l1-blocks`), and `--promote` writes the entry's JSON-LD nodes, as for
+every rung. **Do not stop at the rung.** Run alone, `text-structure.ts` leaves
+an entry with no `manifest.jsonld` and no section or block nodes, which is how
+litlfred/dth-hrh's Markdown outline reached `library/` with no knowledge graph
+(2026-10-14). A source read at a commit, with its `upstream.json` and several
+files, still runs the rung directly:
+
+```sh
 bun run cat-harness-tools/scripts/text-structure.ts -o <library> --doc-id <slug> \
   --base <checkout> --upstream upstream.json [--title T] [--image F]... FILE...
 ```
 
-then `l1-blocks.ts -o <entry>` and `gen-library-jsonld.ts --entry <entry>`, as
-for a notebook. What it decides:
+and then, without fail, `l1-blocks.ts -o <entry>` and
+`gen-library-jsonld.ts --entry <entry>`, as for a notebook. What it decides:
 
 - **Divided by the author's headings, or not at all.** A Markdown file splits
   at its own ATX headings, outside fenced code. A `# comment` inside a
@@ -205,9 +220,32 @@ for a notebook. What it decides:
   listing, so `sha256sum -c` against a checkout verifies the entry without
   this code.
 
-It is not wired into `bun run cat ingest`. That command reads a dropped file from
-`uploads/`, and text has no magic bytes to route on, so it would have to guess
-from the extension. Routing a dropped `.md` is a separate decision.
+Routing a dropped `.md` was decided on 2026-10-14 (owner): by `--text`, never
+by the extension.
+
+## From a library entry to a folio document — seed it, and its graph comes with it
+
+A folio whose working document starts from a source (an outline, a draft, a
+report) is SEEDED from the library entry, not from the raw file:
+
+```sh
+bun run cat-harness-tools/scripts/seed-folio-from-library.ts \
+  --entry library/<doc-id> --slug <folio-doc> [--title T] [--author A]... [--force]
+```
+
+Any `structure.json` variant works. The top heading level becomes the
+chapters, deeper levels nest as sections, and a section's own text becomes
+one `prose` block. No kind is guessed: a persona or a requirement is the
+folio's own enrichment step. Every block carries `meta.source` (library,
+section, locator, `method: "library-seed"`), and the seed ENDS by writing each
+block's `.jsonld` with `gen-block-jsonld`'s own code. A folio-specific seed
+script that writes blocks must end the same way. The one litlfred/dth-hrh used
+did not, and its site published no graph. A seed is one-time: an existing
+document is refused unless `--force`, which discards hand edits.
+
+The original is never touched: the library entry and the folio's nodes are
+DERIVED, and both are checked (`gen-library-jsonld --check`,
+`gen-block-jsonld --check`) so neither can drift unseen.
 
 ## An inferred chapter tree is refused, not guessed
 
