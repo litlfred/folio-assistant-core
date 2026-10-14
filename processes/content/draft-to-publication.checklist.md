@@ -59,7 +59,7 @@ How the corpus becomes an officially published folio: a draft publication, its r
 ### 5. Circulate the draft (`Task_CirculateDraft`)
 
 - Who: the `Publication manager` lane (role `publication-manager`).
-- Skill: `content-review`.
+- Skill: `content-review`, `staging-review`.
 - What: The draft publication is circulated to the review team for formal review.
 - Record it: `workflow_complete` with `node: "Task_CirculateDraft"`.
 - next: → `Gateway_ReviewFork` (Draft under review)
