@@ -1,0 +1,44 @@
+/**
+ * This layer's skill contracts carry `stagingLinks`, copied inline from the
+ * canonical shape in cat-harness `schemas/staging-comparison.schema.json`
+ * (owner, 2026-10-14: every request for feedback carries its staging links).
+ * The canonical file is read from the cat-harness this checkout mounts; where
+ * none is mounted, the comparison is skipped and says so.
+ */
+import { describe, expect, test } from "bun:test";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { join, resolve } from "node:path";
+
+const HERE = import.meta.dir;
+const CANON = [resolve(HERE, "../../cat-harness/schemas/staging-comparison.schema.json")].find((p) => existsSync(p));
+
+function contracts(): { file: string; json: any }[] {
+  const root = join(HERE, "skills");
+  return readdirSync(root).flatMap((skill) =>
+    ["input.schema.json", "output.schema.json"]
+      .map((f) => join(root, skill, f))
+      .filter((f) => existsSync(f))
+      .map((file) => ({ file, json: JSON.parse(readFileSync(file, "utf-8")) })),
+  );
+}
+
+describe("staging links in this layer's skill contracts", () => {
+  test("every output contract carries stagingLinks", () => {
+    const without = contracts()
+      .filter((c) => c.file.endsWith("output.schema.json") && c.json?.properties?.stagingLinks === undefined)
+      .map((c) => c.file);
+    expect(without).toEqual([]);
+  });
+
+  test.skipIf(CANON === undefined)("every inline copy is cat-harness's canonical definition", () => {
+    const { $schema: _s, $id: _i, ...canon } = JSON.parse(readFileSync(CANON!, "utf-8"));
+    const drifted = contracts()
+      .filter((c) => c.json?.$defs?.stagingLinks !== undefined)
+      .filter((c) => {
+        const { $comment: _c, ...copy } = c.json.$defs.stagingLinks;
+        return JSON.stringify(copy) !== JSON.stringify(canon);
+      })
+      .map((c) => c.file);
+    expect(drifted).toEqual([]);
+  });
+});

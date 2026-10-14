@@ -147,6 +147,7 @@
       <bpmn:documentation>The reviewer this folio binds. authoring-document relaxes the base SME step precisely because no single lane fits every document.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
+        <bootstrap.processes:skill ref="staging-review" />
       </bpmn:extensionElements>
       <bpmn:incoming>D10</bpmn:incoming>
       <bpmn:outgoing>D11</bpmn:outgoing>
