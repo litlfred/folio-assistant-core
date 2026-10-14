@@ -43,8 +43,10 @@ import { Store } from "./public-comment.js";
 import { BLOCK_ACTIONS_CSS, compactActionsHtml, compactActionsScript, DEFAULT_TEMPLATE, readIssueForm, type BlockActionsConfig } from "./block-actions.js";
 import { changeSetRouting, commentRouting, type Routing, type RoutingFile, TWG_GROUPS } from "./public-comment-routing.js";
 import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
-import { documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage } from "./document-site-route.js";
+import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage } from "./document-site-route.js";
 import { darkRules } from "../../cat-harness-tools/scripts/lib/scheme-css.ts";
+import { escapeForRaw } from "../../cat-harness-tools/scripts/lib/liquid-raw.ts";
+import { scopeCss } from "./scope-css.js";
 
 /** `folio-staging.yml`'s slug rule, step `slug`. */
 export const stagingSlug = (branch: string) =>
@@ -642,7 +644,7 @@ export function overlaySnippet(rows: SiteComment[], opts: { repo?: string; issue
   const bar = document.createElement("div");
   bar.className = "pc-bar";
   bar.innerHTML = '<a href="' + esc(meta.dashboard) + '">Public comments</a>: ' + total + " shown in this document, " + open + " open";
-  const main = document.querySelector("main") || document.body;
+  const main = document.querySelector(".fa-doc") || document.querySelector("main") || document.body;
   main.prepend(bar);
 })();
 </script>
@@ -663,6 +665,26 @@ export function commentActions(repoRoot: string, cfg: { repo?: string; document:
     ...(cfg.site ? { siteUrl: cfg.site } : {}),
     ...(fields ? { template: DEFAULT_TEMPLATE, templateFields: fields } : {}),
   };
+}
+
+/**
+ * `html` with `snippet` added where the document page ends: before the
+ * closing body tag of a standalone page, else before the
+ * {@link DOCUMENT_END_MARKER} of a themed one (`--document-layout`), its
+ * styles scoped under the page class and the whole escaped for the Liquid raw
+ * block it lands in. A page with neither is an error, not a
+ * page written back without its notes.
+ */
+export function atDocumentEnd(html: string, snippet: string, what = "the document page"): string {
+  const body = html.lastIndexOf("</body>");
+  if (body >= 0) return html.slice(0, body) + snippet + html.slice(body);
+  const mark = html.lastIndexOf(DOCUMENT_END_MARKER);
+  if (mark >= 0) {
+    // Inside the layout, its rules go under the page class like the page's own.
+    const scoped = snippet.replace(/<style>([\s\S]*?)<\/style>/g, (_m, css: string) => `<style>\n${scopeCss(css, `.${DOC_CLASS}`)}</style>`);
+    return html.slice(0, mark) + escapeForRaw(scoped) + html.slice(mark);
+  }
+  throw new Error(`${what} has neither a closing body tag nor ${DOCUMENT_END_MARKER}: nowhere to add the comment notes`);
 }
 
 export function buildPublicCommentSite(repo: string, out: string, storeDir?: string) {
@@ -700,13 +722,8 @@ export function buildPublicCommentSite(repo: string, out: string, storeDir?: str
       writeFileSync(join(out, ...notes.split("/")), JSON.stringify(notesByTarget(rows)));
     }
     const fromDoc = documentPageDir(cfg.document);
-    writeFileSync(
-      f,
-      html.replace(
-        "</body>",
-        `${overlaySnippet(rows, { ...(cfg.repo ? { repo: cfg.repo } : {}), issues, dashboard: `${fromPageDir(fromDoc, pageRoute)}/index.html`, ...(lazy ? { notesUrl: fromPageDir(fromDoc, notes) } : {}) })}</body>`,
-      ),
-    );
+    const snippet = overlaySnippet(rows, { ...(cfg.repo ? { repo: cfg.repo } : {}), issues, dashboard: `${fromPageDir(fromDoc, pageRoute)}/index.html`, ...(lazy ? { notesUrl: fromPageDir(fromDoc, notes) } : {}) });
+    writeFileSync(f, atDocumentEnd(html, snippet, f));
   }
   const dash = join(out, ...pageRoute.split("/"));
   const data = join(out, ...route.split("/"));

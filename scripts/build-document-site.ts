@@ -73,19 +73,14 @@ import { buildDocumentMarkdown } from "../../cat-harness-tools/pipeline/render-m
 import { reviewPageHtml } from "../../cat-harness-tools/scripts/gen-review-page.js";
 import { darkRules } from "../../cat-harness-tools/scripts/lib/scheme-css.ts";
 import { visualiserNavDeclaration, type VisualiserNavEntry } from "../../cat-harness-tools/scripts/lib/navbar.js";
-import { documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
+import { wrapRaw } from "../../cat-harness-tools/scripts/lib/liquid-raw.ts";
+import { scopeCss } from "./scope-css.js";
+import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
-/** A readable page shell. Light and dark follow the reader's system setting. */
-function page(title: string, body: string, math?: MathOptions, tail = ""): string {
-  return `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(title)}</title>
-<style>
+/** The standalone page's own stylesheet. Light and dark follow the reader's system setting. */
+const PAGE_STYLE = `<style>
   :root { color-scheme: light dark; --fg: #1b1b1b; --bg: #fdfdfb; --muted: #5b5b5b; --link: #0b5cad; }
   ${darkRules(`:root { --fg: #e8e8e6; --bg: #161616; --muted: #a8a8a4; --link: #7db4ff; }`)}
   body { margin: 0; font: 1.05rem/1.6 system-ui, sans-serif; color: var(--fg); background: var(--bg); }
@@ -105,7 +100,17 @@ function page(title: string, body: string, math?: MathOptions, tail = ""): strin
   .cite { color: var(--muted); }
   .fa-blk:empty { min-height: 3rem; }
   .fa-one-page { font-size: .85rem; color: var(--muted); }
-</style>${math ? mathHead(math) : ""}
+</style>`;
+
+/** A readable page shell. Light and dark follow the reader's system setting. */
+function page(title: string, body: string, math?: MathOptions, tail = ""): string {
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(title)}</title>
+${PAGE_STYLE}${math ? mathHead(math) : ""}
 </head>
 <body>
 <main>
@@ -114,6 +119,88 @@ ${body}
 </body>
 </html>
 `;
+}
+
+// ── Themed pages: the document inside the site's layout (--document-layout) ─
+//
+// A standalone page wears only the injected rail. On a folio site that Jekyll
+// builds, the document page can instead name the site's layout, as the landing
+// can (`landingPage`), and wear the full chrome: top bar, search, sidebar.
+// Inside the layout the standalone page's stylesheet would restyle the theme
+// (`:root`, `body`, `main`, `a`, `table`), so a themed page carries its own,
+// every rule under {@link DOC_CLASS}, and inherits the theme's colours and
+// type. The page is built standalone first, so [edit]/[feedback] (which need
+// the head and body tags) go in the one way, and is then taken apart.
+
+export { DOC_CLASS };
+
+/** The themed page's own rules: what the standalone stylesheet does that the theme does not. */
+const THEMED_STYLE = `
+.${DOC_CLASS} :target { scroll-margin-top: 4rem; }
+.${DOC_CLASS} .katex-display { overflow-x: auto; overflow-y: hidden; }
+.${DOC_CLASS} dfn.defterm { font-style: normal; font-weight: 600; }
+.${DOC_CLASS} .cite { opacity: .72; }
+.${DOC_CLASS} .fa-blk:empty { min-height: 3rem; }
+.${DOC_CLASS} .fa-one-page { font-size: .85rem; opacity: .72; }
+.${DOC_CLASS} .pc-bar { position: static; background: none; }
+`;
+
+/** A layout name as front matter may carry it, or a throw. */
+function layoutName(layout: string, what: string): string {
+  if (!/^[A-Za-z0-9_-]+$/.test(layout)) throw new Error(`${what} layout ${JSON.stringify(layout)} is not a layout name`);
+  return layout;
+}
+
+/**
+ * Give each heading the assembly anchored an `id` of its own, `h-<label>`, so
+ * the theme's "On this page" (docs-ui.js, which lists `h2[id]`/`h3[id]`) has
+ * destinations. The anchor before the heading keeps its id, which every
+ * existing link uses. Unique against every id on the page; a heading that
+ * already has an id is left alone.
+ */
+export function headingIds(html: string): string {
+  const taken = new Set(idsIn(html));
+  return html.replace(/(<p><a id="([^"]+)"><\/a><\/p>\s*<(h[1-6]))(\s[^>]*)?>/g, (m, lead: string, label: string, _tag: string, attrs = "") => {
+    if (/\sid=/.test(attrs)) return m;
+    let id = `h-${label}`;
+    for (let n = 2; taken.has(id); n++) id = `h-${label}-${n}`;
+    taken.add(id);
+    return `${lead} id="${id}"${attrs}>`;
+  });
+}
+
+/**
+ * A standalone document page (from {@link page}, actions already injected) as
+ * a JEKYLL page in `layout`: front matter, then one Liquid raw block holding
+ * the scoped styles, the head's scripts and stylesheet links (KaTeX), the
+ * document in a `div.fa-doc`, the page's trailing scripts, and
+ * {@link DOCUMENT_END_MARKER} where a later step adds to the page. Out of
+ * search (`search_exclude`): the page is far larger than the index wants.
+ */
+export function themedDocumentPage(layout: string, title: string, html: string): string {
+  layoutName(layout, "document");
+  const h0 = html.indexOf("<head>\n");
+  const h1 = html.indexOf("</head>");
+  const b0 = html.indexOf("<body>\n<main>\n");
+  const b1 = html.lastIndexOf("</body>");
+  if (h0 < 0 || h1 < h0 || b0 < h1 || b1 < b0) throw new Error("themedDocumentPage: not a page this command built");
+  let head = html.slice(h0 + "<head>\n".length, h1);
+  if (!head.includes(PAGE_STYLE)) throw new Error("themedDocumentPage: the page's stylesheet is not the standalone one");
+  head = head.replace(PAGE_STYLE, "").replace(/<meta [^>]*>\n?/g, "").replace(/<title>[\s\S]*?<\/title>\n?/, "");
+  const styles: string[] = [];
+  head = head.replace(/<style>([\s\S]*?)<\/style>/g, (_m, css: string) => (styles.push(scopeCss(css, `.${DOC_CLASS}`)), ""));
+  const inner = html.slice(b0 + "<body>\n<main>\n".length, b1);
+  const end = inner.lastIndexOf("\n</main>");
+  if (end < 0) throw new Error("themedDocumentPage: the page has no main column");
+  const body = [
+    `<style>${THEMED_STYLE}${styles.join("")}</style>`,
+    ...(head.trim() ? [head.trim()] : []),
+    `<div class="${DOC_CLASS}">`,
+    inner.slice(0, end),
+    `</div>${inner.slice(end + "\n</main>".length).replace(/\n+$/, "")}`,
+    DOCUMENT_END_MARKER,
+  ].join("\n");
+  return [`---`, `layout: ${layout}`, `title: ${JSON.stringify(title)}`, `search_exclude: true`, `---`, ...wrapRaw(body), ``].join("\n");
 }
 
 /**
@@ -616,7 +703,19 @@ export interface SiteBuildResult {
 export async function buildDocumentSite(
   repoRoot: string,
   outDir: string,
-  opts: { math?: boolean; actions?: Partial<BlockActionsConfig> | false; lazy?: "auto" | "always" | "never" } = {},
+  opts: {
+    math?: boolean;
+    actions?: Partial<BlockActionsConfig> | false;
+    lazy?: "auto" | "always" | "never";
+    /** Write the landing as a Jekyll page in this layout ({@link landingPage}). */
+    landingLayout?: string;
+    /**
+     * Write each document's page as a Jekyll page in this layout
+     * ({@link themedDocumentPage}). The one-page `index.hydrated.html` of a
+     * lazy document stays standalone.
+     */
+    documentLayout?: string;
+  } = {},
 ): Promise<SiteBuildResult> {
   // Math defaults on only for a paper instance; see the note on renderDocumentHtml.
   const math = opts.math ?? readHarnessConfig(repoRoot)?.contentType === "paper";
@@ -627,6 +726,8 @@ export async function buildDocumentSite(
     result.errors.push(`no document manifest under ${folioDir(repoRoot)} (expected folio/<slug>/<slug>.ts)`);
     return result;
   }
+  if (opts.landingLayout) layoutName(opts.landingLayout, "landing");
+  const themed = opts.documentLayout === undefined ? undefined : layoutName(opts.documentLayout, "document");
   mkdirSync(outDir, { recursive: true });
   for (const d of docs) {
     const built = await buildDocumentMarkdown(d.path);
@@ -643,8 +744,12 @@ export async function buildDocumentSite(
     // [edit] and [feedback] on every block (REQ-17, bean uphx). Off only when asked.
     const withActions = (h: string, compact = false) => (cfg ? injectBlockActions(h, blocks, cfg, { compact }).html : h);
     const lazy = opts.lazy === "always" || ((opts.lazy ?? "auto") === "auto" && blocks.length >= LAZY_THRESHOLD);
+    const title = manifest.title ?? d.slug;
+    // Themed, the theme's sidebar is the page's index, built from heading ids;
+    // the rail's declared contents (pageContents) would be a second one.
     if (!lazy) {
-      writeFileSync(join(dir, "index.html"), withActions(page(manifest.title ?? d.slug, pageContents(html) + html, mathOpts)));
+      if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, headingIds(html), mathOpts))));
+      else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(html) + html, mathOpts)));
     } else {
       // The whole document on one page, for file://, no-JS readers and tools.
       writeFileSync(join(dir, "index.hydrated.html"), withActions(page(manifest.title ?? d.slug, pageContents(html) + html, mathOpts)));
@@ -665,7 +770,9 @@ export async function buildDocumentSite(
       lazyOf.set(d.slug, { hydrated: hydratedPage(d.slug), chunks: index.chunks, of: index.of });
       const shellHtml = await renderDocumentHtml(split.shell, { math });
       const note = `<p class="fa-one-page">The text loads as you read. <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
-      writeFileSync(join(dir, "index.html"), withActions(page(manifest.title ?? d.slug, pageContents(shellHtml) + note + shellHtml, mathOpts, lazyLoader(index, fromPageDir(documentPageDir(d.slug), `${documentDataDir(d.slug)}/blocks`))), true));
+      const loader = lazyLoader(index, fromPageDir(documentPageDir(d.slug), `${documentDataDir(d.slug)}/blocks`));
+      if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, note + headingIds(shellHtml), mathOpts, loader), true)));
+      else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(shellHtml) + note + shellHtml, mathOpts, loader), true));
     }
     // A document's images live in `folio/<slug>/media/` and its blocks link
     // them as `media/<file>`, relative to the document's page, so they go
@@ -688,15 +795,28 @@ export async function buildDocumentSite(
   mkdirSync(review, { recursive: true });
   writeFileSync(join(review, "index.html"), reviewPageHtml());
   const also = landingLinks(readDeclaration(repoRoot), (p) => existsSync(join(repoRoot, p)));
-  writeFileSync(
-    join(outDir, "index.html"),
-    page(
-      "Documents",
-      `<h1>Documents</h1>\n<p><a href="${esc(REVIEW_PAGE_DIR)}/index.html">What changed from main</a></p>\n<ul>\n${list}\n</ul>` +
-        (also.length ? `\n<h2>Also on this site</h2>\n<ul>\n${also.map((l) => `<li><a href="${esc(l.href)}">${esc(l.title)}</a></li>`).join("\n")}\n</ul>` : ""),
-    ),
-  );
+  const landing =
+    `<h1>Documents</h1>\n<p><a href="${esc(REVIEW_PAGE_DIR)}/index.html">What changed from main</a></p>\n<ul>\n${list}\n</ul>` +
+    (also.length ? `\n<h2>Also on this site</h2>\n<ul>\n${also.map((l) => `<li><a href="${esc(l.href)}">${esc(l.title)}</a></li>`).join("\n")}\n</ul>` : "");
+  if (opts.landingLayout) writeFileSync(join(outDir, "index.md"), landingPage(opts.landingLayout, "Documents", landing));
+  else writeFileSync(join(outDir, "index.html"), page("Documents", landing));
   return result;
+}
+
+/**
+ * The landing as a JEKYLL page, for a folio site whose source Jekyll builds
+ * (`build-instance-site.ts`): front matter naming `layout`, so the page wears
+ * the site's full chrome — top bar, search, sidebar with its Folders — rather
+ * than standing alone with the injected rail (owner, 2026-10-14: "what
+ * happened to rest of chrome? isnt there a default layout?").
+ *
+ * Use it or a `--home` page, not both: each is the site's `index.md`. The
+ * body is held `raw`: it is generated HTML, and a `{{` in a document title is
+ * text, not Liquid.
+ */
+export function landingPage(layout: string, title: string, body: string): string {
+  layoutName(layout, "landing");
+  return [`---`, `layout: ${layout}`, `title: ${JSON.stringify(title)}`, `nav_order: 1`, `---`, ``, ...wrapRaw(body), ``].join("\n");
 }
 
 /**
@@ -750,7 +870,9 @@ if (import.meta.main) {
     console.log(
       "usage: bun run folio-assistant-core/scripts/build-document-site.ts [--repo <folio repo root>] [--out _site] [--math | --no-math]\n" +
         "         [--github <owner/repo>] [--edit-branch main] [--issue-template block-feedback.yml] [--site-url <url>] [--no-block-actions]\n" +
-        "         [--lazy auto|always|never]   (auto: a document of " + LAZY_THRESHOLD + "+ blocks loads its text as data)",
+        "         [--lazy auto|always|never]   (auto: a document of " + LAZY_THRESHOLD + "+ blocks loads its text as data)\n" +
+        "         [--landing-layout <name>]   (write the landing as a Jekyll page in that layout, e.g. default)\n" +
+        "         [--document-layout <name>]  (write each document's page as a Jekyll page in that layout, e.g. default)",
     );
     process.exit(0);
   }
@@ -770,7 +892,15 @@ if (import.meta.main) {
     console.error(`✗ --lazy must be auto, always or never, not ${lazyOpt}`);
     process.exit(2);
   }
-  const r = await buildDocumentSite(repo, out, { math, actions, ...(lazyOpt ? { lazy: lazyOpt as "auto" | "always" | "never" } : {}) });
+  const landingLayout = opt("landing-layout");
+  const documentLayout = opt("document-layout");
+  const r = await buildDocumentSite(repo, out, {
+    math,
+    actions,
+    ...(lazyOpt ? { lazy: lazyOpt as "auto" | "always" | "never" } : {}),
+    ...(landingLayout ? { landingLayout } : {}),
+    ...(documentLayout ? { documentLayout } : {}),
+  });
   for (const d of r.documents) console.error(`  ${d.page}  ${d.blocks} block(s)`);
   if (r.errors.length > 0) {
     for (const e of r.errors) console.error(`✗ ${e}`);
