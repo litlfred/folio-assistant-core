@@ -72,6 +72,7 @@ import type { FormalTreeCache } from "@litlfred/cat-harness/schemas/formal-ref.j
 import type { Block, Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness/schemas/types.js";
 import { kindHeading } from "@litlfred/cat-harness/schemas/translation.js";
 import { resolveLiquidValues } from "@litlfred/cat-harness-tools/pipeline/liquid-values.js";
+import { bundleEditorProfiles, type SuggestProfile } from "@litlfred/cat-harness-tools/pipeline/editor-profiles.js";
 import { documentManifests, katexMacros, renderDocumentHtml } from "./build-document-site.js";
 import { blockLean, blockQaReport, configureFolioLeanPackages, loadLeanStatus, qaSummary, textHasSorry, type LeanStatusIndex } from "./folio-site-blocks.js";
 import { addToReport, emptyReport, imageExistsUnder, qaBlockHtml, type SiteQaReport } from "./folio-site-qa.js";
@@ -122,6 +123,12 @@ export interface SiteOutline {
   source?: { repository: string; ref: string };
   /** Whether Lean compile status was measured for this build, and how; absent when it was not. */
   leanStatus?: { measuredAt?: string; method?: string; toolchain?: string };
+  /**
+   * The ✍ suggest editor's profiles for this content type (editor-checker
+   * nodes, bundled by `bundleEditorProfiles`), each `module` relative to the
+   * route base; the viewer hands them, with `macros`, to the edit-links runtime.
+   */
+  suggest?: { profiles: SuggestProfile[] };
 }
 
 const isRef = (s: Section | SectionRef): s is SectionRef => !("blocks" in s);
@@ -397,6 +404,9 @@ export async function buildFolioSite(
   // The platform's one recipe for edit and feedback links (bean v433).
   writeFileSync(join(base, "assets", "edit-links.js"), editLinksAsset());
   writeFileSync(join(base, "assets", "kg-render.js"), kgRenderAsset());
+  // The ✍ suggest editor's checks and Crepe settings for this content type (bean 4dx7).
+  const contentType = readHarnessConfig(repoRoot)?.contentType;
+  const suggestProfiles = contentType ? await bundleEditorProfiles(repoRoot, contentType, join(base, "assets", "suggest"), "assets/suggest/") : [];
 
   result.leanPackages = await configureFolioLeanPackages(repoRoot, opts.leanPackages);
   const status: LeanStatusIndex = loadLeanStatus(opts.leanStatus);
@@ -417,6 +427,7 @@ export async function buildFolioSite(
       chapters: [],
       ...(sourceRepo ? { source: sourceRepo } : {}),
       ...(status.meta ? { leanStatus: status.meta } : {}),
+      ...(suggestProfiles.length ? { suggest: { profiles: suggestProfiles } } : {}),
     };
     // Paper-wide while building (a reference may cross chapters); written out per chapter.
     const labels: Record<string, string> = {};
