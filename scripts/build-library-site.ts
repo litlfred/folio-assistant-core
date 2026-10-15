@@ -220,7 +220,12 @@ loadDocument(${JSON.stringify(id)});
 }
 
 export interface LibrarySiteResult {
-  entries: { seg: string; id: string; title: string; pages: number; sections: number; editable: number }[];
+  /**
+   * `null` when the ingestion recorded no page count (cat-harness-tools
+   * `DocumentView.pages`: unknown is not zero), and the count is then left
+   * out of what is written rather than shown as "0 pages" or "null pages".
+   */
+  entries: { seg: string; id: string; title: string; pages: number | null; sections: number; editable: number }[];
 }
 
 export function buildLibrarySite(repoRoot: string, outDir: string, opts: { repo?: string } = {}): LibrarySiteResult {
@@ -248,7 +253,7 @@ export function buildLibrarySite(repoRoot: string, outDir: string, opts: { repo?
   }
   if (result.entries.length) {
     const rows = result.entries
-      .map((e) => `<li><a href="${esc(encodeURIComponent(e.id))}/">${esc(e.title)}</a> <span class="note">${e.pages} pages, ${e.sections} sections${e.editable ? `, ${e.editable} materialised in the folio` : ""}</span></li>`)
+      .map((e) => `<li><a href="${esc(encodeURIComponent(e.id))}/">${esc(e.title)}</a> <span class="note">${e.pages === null ? "" : `${e.pages} pages, `}${e.sections} sections${e.editable ? `, ${e.editable} materialised in the folio` : ""}</span></li>`)
       .join("\n");
     writeFileSync(join(outDir, ...localisedPage(`${HANDLER}/${result.entries[0]!.seg}`).split("/"), "index.html"), page("Library", `<h1>Library</h1>\n<p class="note">Frozen sources. Each opens on its table of contents.</p>\n<ul>\n${rows}\n</ul>`));
   }
@@ -276,5 +281,5 @@ if (import.meta.main) {
   const out = resolve(opt("out") ?? "_site");
   const r = buildLibrarySite(repoRoot, out, opt("github") ? { repo: opt("github") } : {});
   if (!r.entries.length) console.error("· no library entry with a structure.json — nothing to draw");
-  for (const e of r.entries) console.error(`✓ ${localisedPage(`${HANDLER}/${e.seg}/${e.id}`)}/: ${e.pages} pages, ${e.sections} sections, ${e.editable} with ✎ edit into the folio`);
+  for (const e of r.entries) console.error(`✓ ${localisedPage(`${HANDLER}/${e.seg}/${e.id}`)}/: ${e.pages === null ? "" : `${e.pages} pages, `}${e.sections} sections, ${e.editable} with ✎ edit into the folio`);
 }
