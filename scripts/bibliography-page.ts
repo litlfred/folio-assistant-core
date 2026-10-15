@@ -56,6 +56,7 @@ import { basename, dirname, join, relative, resolve } from "node:path";
 
 import { instanceDirectoryForGraph, instanceRootsIn, readDeclaration, repoRootFor, resolveDirectories } from "@litlfred/cat-harness/schemas/cat-harness.ts";
 import { declaredRoute } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
+import { siteTarget } from "@litlfred/cat-harness-tools/scripts/lib/site-target.ts";
 import { DublinCoreRecordSchema } from "../schemas/dublin-core.ts";
 import {
   ReferenceNodeSchema,
@@ -75,7 +76,9 @@ const REPO = repoRootFor(CORE);
 // declared-path-literal: the platform site the page publishes to, which is
 // cat-harness's `docs/`; core owns the page, the harness owns the site. The
 // glossary page publishes to the same place for the same reason.
-const SITE = join(REPO, "cat-harness", "docs");
+// `--site <dir>`: a site being built (a repository's own, `visualiser-writers.ts`)
+// gets the same route under it; its harness docs are a pinned mount.
+const SITE = siteTarget(join(REPO, "cat-harness", "docs"));
 /** The route of the visualiser core declares for its bibliography, from `folio-assistant-core.json`. */
 const ROUTE = declaredRoute(CORE, "bibliography-page") ?? "folio-assistant-core/bibliography";
 const ROOT = join(SITE, ...ROUTE.split("/"));
