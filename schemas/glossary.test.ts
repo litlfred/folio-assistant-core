@@ -11,6 +11,9 @@ import { GlossarySchema, licenceTerms, schemeIri, termIri, toSkos, type Glossary
 import {
   LETTER_PARTS,
   PAGE_KEYS,
+  authoredKeys,
+  pageKeysOf,
+  rowsOn,
   budgetOf,
   partOfLabel,
   collect,
@@ -165,11 +168,13 @@ describe("the glossary pages", () => {
   /** A type's term-holding pages: itself, or its parts when it is split. */
   const pagesOfType = (t: AssetType) => (LETTER_PARTS[t] ? LETTER_PARTS[t]!.map((r) => `${t}/${r}`) : [t]);
 
-  test("there is an index and one page per asset type, and each is an output", () => {
-    expect([...pages.keys()]).toEqual([...PAGE_KEYS]);
+  test("there is an index, one page per instance that owns an authored scheme, and one per asset type, and each is an output", () => {
+    expect([...pages.keys()]).toEqual(pageKeysOf(c));
+    expect(pageKeysOf(c)).toEqual(["index", ...authoredKeys(c), ...PAGE_KEYS.slice(1)]);
+    expect(authoredKeys(c) as string[]).toEqual([...new Set(c.glossaries.filter((s) => !s.extracted).map((s) => `@${s.instance}`))].sort());
     expect([...PAGE_KEYS] as string[]).toEqual(["index", ...ASSET_TYPES.flatMap((t) => [t, ...(LETTER_PARTS[t] ?? []).map((r) => `${t}/${r}`)])]);
     const out = outputs(c);
-    for (const k of PAGE_KEYS) expect(out.get(pagePath(k))).toBe(pages.get(k)!);
+    for (const k of pageKeysOf(c)) expect(out.get(pagePath(k))).toBe(pages.get(k)!);
     // `outputs` renders every page AND every SKOS file over the whole corpus:
     // the same budget, for the same reason, as the SKOS test above.
   }, 30_000);
@@ -188,11 +193,17 @@ describe("the glossary pages", () => {
     for (const { s, t } of all) expect(seen.get(idOf(s, t))).toBe(pageOfTerm(s, t));
   });
 
-  test("the index holds the authored terms only; each type's page holds that type's extracted terms only", () => {
+  test("the index holds no term; each instance's page holds its authored terms only; each type's page holds that type's extracted terms only", () => {
     const n = counts(c);
     const index = pages.get("index")!;
-    expect((index.match(/data-fa-state="extracted"/g) ?? []).length).toBe(0);
-    expect(idsOn(index).length).toBe(c.glossaries.filter((s) => !s.extracted).reduce((k, s) => k + s.glossary.terms.length, 0));
+    expect(idsOn(index)).toEqual([]);
+    for (const k of authoredKeys(c)) {
+      const page = pages.get(k)!;
+      expect((page.match(/data-fa-state="extracted"/g) ?? []).length).toBe(0);
+      expect(idsOn(page).length).toBe(c.glossaries.filter((s) => !s.extracted && s.instance === k.slice(1)).reduce((n, s) => n + s.glossary.terms.length, 0));
+      expect(index).toContain(`{{ '${permalinkOf(k)}' | relative_url }}`);
+      expect(page).toContain(`permalink: ${permalinkOf(k)}\n`);
+    }
     for (const t of ASSET_TYPES) {
       const page = pagesOfType(t).map((k) => pages.get(k as never)!).join("\n");
       const want = c.glossaries.filter((s) => s.extracted === t).reduce((k, s) => k + s.glossary.terms.length, 0);
@@ -260,10 +271,13 @@ describe("the glossary pages", () => {
     );
   });
 
-  test("every page keeps the text filter and the A–Z bar", () => {
+  test("every page keeps the text filter, and the A–Z bar wherever it lists terms A–Z", () => {
     for (const [k, page] of pages) {
       if (!idsOn(page).length) continue;
-      expect(`${k}: ${page.includes('id="fa-gloss-q"') && page.includes('<nav aria-label="Letters">')}`).toBe(`${k}: true`);
+      // A page whose every term is in an ordered scheme (bootstrap's) lists
+      // them in their own order: there is no A–Z list for a bar to jump in.
+      const az = idsOn(page).length > (page.match(/<span class="fa-gloss-n">/g) ?? []).length;
+      expect(`${k}: ${page.includes('id="fa-gloss-q"') && (!az || page.includes('<nav aria-label="Letters">'))}`).toBe(`${k}: true`);
     }
   });
 });
@@ -405,16 +419,16 @@ describe("extracted KG terms", () => {
     expect((all.match(/data-fa-state="extracted"/g) ?? []).length).toBe(n.extracted);
     expect((all.match(/data-fa-state="authored"/g) ?? []).length).toBe(n.authored);
     expect((all.match(/candidate, extracted<\/span>/g) ?? []).length).toBe(n.extracted);
-    const index = pages.get("index")!;
-    const ld = JSON.parse(/<script type="application\/ld\+json">\n([\s\S]*?)\n<\/script>/.exec(index)![1]!) as {
-      hasDefinedTerm: unknown[];
-    };
-    expect(ld.hasDefinedTerm.length).toBe(n.authored);
-    // Only the index carries the DefinedTermSet.
-    expect(all.match(/<script type="application\/ld\+json">/g)?.length).toBe(1);
+    // Each instance's authored page carries the DefinedTermSet of its own
+    // authored terms, and no other page carries one.
+    const ldOf = (page: string) =>
+      (JSON.parse(/<script type="application\/ld\+json">\n([\s\S]*?)\n<\/script>/.exec(page)![1]!) as { hasDefinedTerm: unknown[] }).hasDefinedTerm.length;
+    const authored = authoredKeys(c);
+    expect(authored.reduce((k, a) => k + ldOf(pages.get(a)!), 0)).toBe(n.authored);
+    expect(all.match(/<script type="application\/ld\+json">/g)?.length).toBe(authored.length);
     // Each page states its term count and size, which is how a reader learns
     // the load cost before scrolling.
-    expect(index).toMatch(new RegExp(`holds ${n.authored} terms and is [0-9.]+ (MB|KB) before compression`));
+    for (const a of authored) expect(pages.get(a)!).toMatch(new RegExp(`holds ${rowsOn(c, a).length} terms and is [0-9.]+ (MB|KB) before compression`));
     for (const t of ASSET_TYPES) {
       const k = extracted.filter((s) => s.extracted === t).reduce((m, s) => m + s.glossary.terms.length, 0);
       const parts = LETTER_PARTS[t];

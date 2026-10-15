@@ -513,20 +513,46 @@ export function partOfLabel(type: AssetType, label: string): string {
 
 /** One part of a split asset type's page: `<type>/<range>`. */
 export type PartKey = `${AssetType}/${string}`;
-/** Which page a term is on: `index` for an authored scheme's, else its asset type, or a part of it. */
-export type PageKey = "index" | AssetType | PartKey;
+/**
+ * One instance's authored terms: `@<instance>`.
+ *
+ * Owner, 2026-10-15 (option 1 of four): the authored terms leave the index
+ * for one page per OWNING instance. The index had held every authored term
+ * since 2026-09-24, and a folio's site composes its own glossary with its
+ * needs': dth-hrh's three schemes (177 terms) put the index at 224 KB against
+ * its 64 KB budget, so the writer refused it. The address is the owner, a
+ * fact of the scheme ({@link schemeOwner}), so a term's page moves only when
+ * its owner does — never because a scheme grew, which a size-triggered split
+ * would do.
+ */
+export type AuthoredKey = `@${string}`;
+/** Which page a term is on: its owning instance's for an authored scheme's, else its asset type, or a part of it. */
+export type PageKey = "index" | AuthoredKey | AssetType | PartKey;
+export function isAuthored(k: PageKey): k is AuthoredKey {
+  return k.startsWith("@");
+}
 export function isPart(k: PageKey): k is PartKey {
-  return k.includes("/");
+  return !isAuthored(k) && k.includes("/");
 }
 function splitPart(k: PartKey): [AssetType, string] {
   const i = k.indexOf("/");
   return [k.slice(0, i) as AssetType, k.slice(i + 1)];
 }
-/** Every page, index first, each split type followed by its parts. A page exists for every asset type even when it holds no term, so the index can link each one. */
+/** Every page that does not depend on what is collected: the index, then each asset type followed by its parts. A page exists for every asset type even when it holds no term, so the index can link each one. */
 export const PAGE_KEYS: readonly PageKey[] = [
   "index",
   ...ASSET_TYPES.flatMap((t): PageKey[] => [t, ...(LETTER_PARTS[t] ?? []).map((r) => `${t}/${r}` as PartKey)]),
 ];
+
+/** One page per instance that owns an authored scheme, by instance name. */
+export function authoredKeys(c: ReturnType<typeof collect>): AuthoredKey[] {
+  return [...new Set(c.glossaries.filter((s) => !s.extracted).map((s) => s.instance))].sort().map((i) => `@${i}` as const);
+}
+
+/** Every page: the index, each instance's authored terms, then {@link PAGE_KEYS}' asset types. */
+export function pageKeysOf(c: ReturnType<typeof collect>): PageKey[] {
+  return ["index", ...authoredKeys(c), ...PAGE_KEYS.slice(1)];
+}
 
 /**
  * The most a page may weigh before compression, in bytes. A budget, stated on
@@ -543,10 +569,13 @@ export function typeSlug(t: AssetType): string {
   return t.slice(EXTRACTED_PREFIX.length);
 }
 export function pageOf(s: GlossarySource): PageKey {
-  return s.extracted ?? "index";
+  return s.extracted ?? `@${s.instance}`;
 }
+/** The directory every instance's authored page sits under, so an instance name cannot meet an asset type's slug. */
+const AUTHORED_DIR = "authored";
 export function pagePath(k: PageKey): string {
   if (k === "index") return PAGE;
+  if (isAuthored(k)) return join(dirname(PAGE), AUTHORED_DIR, k.slice(1), "index.md");
   if (isPart(k)) {
     const [t, r] = splitPart(k);
     return join(dirname(PAGE), typeSlug(t), r, "index.md");
@@ -555,6 +584,7 @@ export function pagePath(k: PageKey): string {
 }
 export function permalinkOf(k: PageKey): string {
   if (k === "index") return `/${ROUTE}/`;
+  if (isAuthored(k)) return `/${ROUTE}/${AUTHORED_DIR}/${k.slice(1)}/`;
   if (isPart(k)) {
     const [t, r] = splitPart(k);
     return `/${ROUTE}/${typeSlug(t)}/${r}/`;
@@ -563,6 +593,7 @@ export function permalinkOf(k: PageKey): string {
 }
 export function pageTitle(k: PageKey): string {
   if (k === "index") return "Glossary";
+  if (isAuthored(k)) return `Glossary: ${k.slice(1)}`;
   if (isPart(k)) {
     const [t, r] = splitPart(k);
     return `Glossary: ${assetTypeTitle(t)}, ${r.toUpperCase().replace("-", "–")}`;
@@ -1028,15 +1059,20 @@ function termsBlock(rows: Row[], marks?: ReadonlyMap<string, string>): string {
   const anchor = (L: string) => (L === "#" ? "letter-0-9" : `letter-${L}`);
   const shown = (L: string) => (L === "#" ? "0–9" : L);
   if (!rows.length) return "<p>No terms on this page.</p>";
-  return `<label for="fa-gloss-q">Filter terms</label>
-<input id="fa-gloss-q" type="search" autocomplete="off" style="min-height:44px;width:100%;max-width:32rem">
-<p aria-live="polite"><span id="fa-gloss-n">${rows.length}</span> shown</p>
+  return `${filterBox(rows.length)}
 
 <nav aria-label="Letters">${letters.map((L) => `<a href="#${anchor(L)}">${shown(L)}</a>`).join(" ")}</nav>
 
 ${letters
   .map((L) => `<h2 id="${anchor(L)}">${shown(L)}</h2>\n<dl class="fa-gloss">\n${byLetter.get(L)!.map((r) => termEntry(r, marks)).join("\n")}\n</dl>`)
   .join("\n\n")}`;
+}
+
+/** The filter box over a page's terms, which {@link FILTER_SCRIPT} drives; `n` is how many it starts by showing. */
+function filterBox(n: number): string {
+  return `<label for="fa-gloss-q">Filter terms</label>
+<input id="fa-gloss-q" type="search" autocomplete="off" style="min-height:44px;width:100%;max-width:32rem">
+<p aria-live="polite"><span id="fa-gloss-n">${n}</span> shown</p>`;
 }
 
 const FILTER_SCRIPT = `<script>
@@ -1110,7 +1146,7 @@ ${GENERATED}
 
 # ${pageTitle(type)}
 
-Candidate terms extracted from ${assetTypeWhat(type)}. Each is the asset's own text, verbatim and not curated, and carries the badge "candidate, extracted". A person promotes one by authoring it. Authored terms, the counts and the sources are on the ${pageLink("index", "glossary index")}.
+Candidate terms extracted from ${assetTypeWhat(type)}. Each is the asset's own text, verbatim and not curated, and carries the badge "candidate, extracted". A person promotes one by authoring it. Authored terms are on their owning instance's page, and those pages, the counts and the sources are linked from the ${pageLink("index", "glossary index")}.
 
 From: ${from}.
 
@@ -1148,7 +1184,7 @@ ${GENERATED}
 
 # ${pageTitle(key)}
 
-Candidate terms extracted from ${assetTypeWhat(type)}. Each is the asset's own text, verbatim and not curated, and carries the badge "candidate, extracted". A person promotes one by authoring it. Authored terms, the counts and the sources are on the ${pageLink("index", "glossary index")}.
+Candidate terms extracted from ${assetTypeWhat(type)}. Each is the asset's own text, verbatim and not curated, and carries the badge "candidate, extracted". A person promotes one by authoring it. Authored terms are on their owning instance's page, and those pages, the counts and the sources are linked from the ${pageLink("index", "glossary index")}.
 
 From: ${from}.
 
@@ -1164,13 +1200,17 @@ ${FILTER_SCRIPT}
   );
 }
 
-/** The index: authored terms, the counts, the sources, and a link to every asset type's page. */
-export function renderIndex(c: ReturnType<typeof collect>, typePages: ReadonlyMap<AssetType | PartKey, string> = typePagesOf(c)): string {
-  const typeBytes = (t: AssetType) =>
-    [t, ...(LETTER_PARTS[t] ?? []).map((r) => `${t}/${r}` as PartKey)].reduce((n, k) => n + Buffer.byteLength(typePages.get(k) ?? "", "utf-8"), 0);
-  const rows = rowsOn(c, "index");
+/**
+ * One instance's authored terms: its ordered schemes in their own order, then
+ * every other term A–Z. The terms the index held until 2026-10-15
+ * ({@link AuthoredKey}), with the schema.org `DefinedTermSet` that went with them.
+ */
+export function renderAuthoredPage(c: ReturnType<typeof collect>, key: AuthoredKey): string {
+  const instance = key.slice(1);
+  const rows = rowsOn(c, key);
   // Ordered schemes are shown in their own order, ahead of the A–Z list.
-  const ordered = c.glossaries.filter((s) => pageOf(s) === "index" && s.glossary.ordered);
+  const ordered = c.glossaries.filter((s) => pageOf(s) === key && s.glossary.ordered);
+  const schemes = c.glossaries.filter((s) => pageOf(s) === key);
   // schema.org's DefinedTermSet carries the AUTHORED terms only. It is what a
   // search engine reads as "this site defines X", and an extracted candidate
   // is not a definition anybody curated. Every term, candidates included, is
@@ -1178,7 +1218,7 @@ export function renderIndex(c: ReturnType<typeof collect>, typePages: ReadonlyMa
   const ld = {
     "@context": "https://schema.org",
     "@type": "DefinedTermSet",
-    name: "Glossary",
+    name: pageTitle(key),
     hasDefinedTerm: rows
       .filter(({ t }) => t.status === "authored")
       .map(({ s, t, label }) => ({
@@ -1189,6 +1229,69 @@ export function renderIndex(c: ReturnType<typeof collect>, typePages: ReadonlyMa
         ...(t.notation ? { termCode: t.notation } : {}),
       })),
   };
+  return sized(
+    (size) => `---
+layout: default
+${GENERATED_FM}
+title: "${pageTitle(key)}"
+parent: Glossary
+nav_order: 0
+permalink: ${permalinkOf(key)}
+---
+${GENERATED}
+
+# ${pageTitle(key)}
+
+The glossaries **${esc(instance)}** owns: ${schemes.map((s) => `${esc(s.glossary.title)} (${s.glossary.terms.length} term${s.glossary.terms.length === 1 ? "" : "s"}, ${skosLink(s)})`).join(" · ")}. Every other instance's terms, the counts and the sources are on the ${pageLink("index", "glossary index")}.
+
+**Size:** this page holds ${rows.length} terms and is ${size} before compression, within its budget of ${sizeLabel(budgetOf(key))}. There is no search index: the filter below runs over this page, and the A–Z bar jumps within it.
+
+${(() => {
+  // An instance whose every scheme is ordered (bootstrap's) has no A–Z list;
+  // its page still gets the filter, over the ordered lists.
+  const az = rows.filter((r) => !r.s.glossary.ordered);
+  const lists = ordered.map(orderedBlock).join("\n\n");
+  if (!ordered.length) return termsBlock(az);
+  return az.length ? `${lists}\n\n### Every other term, A–Z\n\n${termsBlock(az)}` : `${filterBox(rows.length)}\n\n${lists}`;
+})()}
+
+<script type="application/ld+json">
+${JSON.stringify(ld, null, 1)}
+</script>
+${FILTER_SCRIPT}
+`,
+  );
+}
+
+/**
+ * The index's "Authored terms" section: where each instance's terms are. It
+ * keeps the headings the terms had here — each ordered scheme's, then "every
+ * other" — because each locale page mirrors this page's heading order and
+ * `translation-drift` compares it; each heading now says where its terms are.
+ */
+function authoredList(c: ReturnType<typeof collect>, keys: readonly AuthoredKey[], ordered: readonly GlossarySource[]): string {
+  const list = keys
+    .map((k) => {
+      const schemes = c.glossaries.filter((s) => pageOf(s) === k);
+      return `<li>${pageLink(k, k.slice(1))}: ${rowsOn(c, k).length} terms in ${schemes.map((s) => esc(s.glossary.title)).join(", ")}</li>`;
+    })
+    .join("\n");
+  const at = (s: GlossarySource) => `In its own order on ${pageLink(pageOf(s), s.instance)}.`;
+  if (!keys.length) return "<p>No instance owns an authored glossary.</p>";
+  return ordered.length
+    ? `${ordered.map((s) => `### ${esc(s.glossary.title)}\n\n${at(s)}`).join("\n\n")}\n\n### Every other authored term, A–Z\n\n<ul>\n${list}\n</ul>`
+    : `<ul>\n${list}\n</ul>`;
+}
+
+/** The index: the counts, the sources, and a link to every instance's authored page and every asset type's page. */
+export function renderIndex(
+  c: ReturnType<typeof collect>,
+  typePages: ReadonlyMap<AssetType | PartKey, string> = typePagesOf(c),
+  authoredPages: ReadonlyMap<AuthoredKey, string> = authoredPagesOf(c),
+): string {
+  const typeBytes = (t: AssetType) =>
+    [t, ...(LETTER_PARTS[t] ?? []).map((r) => `${t}/${r}` as PartKey)].reduce((n, k) => n + Buffer.byteLength(typePages.get(k) ?? "", "utf-8"), 0);
+  const ordered = c.glossaries.filter((s) => !s.extracted && s.glossary.ordered);
   const n = counts(c);
   const total = c.glossaries.reduce((k, s) => k + s.glossary.terms.length, 0);
   const authoredSchemes = c.glossaries.filter((s) => !s.extracted);
@@ -1199,7 +1302,11 @@ export function renderIndex(c: ReturnType<typeof collect>, typePages: ReadonlyMa
       `<div style="overflow-x:auto"><table>`,
       `<thead><tr><th>page</th><th>holds</th><th>terms</th><th>size</th></tr></thead>`,
       `<tbody>`,
-      `<tr><td>this page</td><td>authored terms, counts and sources</td><td>${rows.length}</td><td>${indexSize}</td></tr>`,
+      `<tr><td>this page</td><td>counts and sources</td><td>—</td><td>${indexSize}</td></tr>`,
+      ...[...authoredPages].map(
+        ([k, page]) =>
+          `<tr><td>${pageLink(k, k.slice(1))}</td><td>authored terms of ${esc(k.slice(1))}</td><td>${rowsOn(c, k).length}</td><td>${sizeLabel(Buffer.byteLength(page, "utf-8"))}</td></tr>`,
+      ),
       ...ASSET_TYPES.map(
         (t) =>
           `<tr><td>${pageLink(t, assetTypeTitle(t))}</td><td>candidates, extracted</td><td>${typeTotal(t)}</td><td>${sizeLabel(typeBytes(t))}</td></tr>`,
@@ -1252,7 +1359,7 @@ ${GENERATED}
 
 # Glossary
 
-Every term the instances in this repository define or carry, as W3C SKOS. Terms link to the external concepts they match rather than copying them. ${total} terms: **${n.authored} authored** in ${authoredSchemes.length} glossar${authoredSchemes.length === 1 ? "y" : "ies"}, on this page, and **${n.extracted} extracted** from knowledge-graph assets in ${extractedSchemes.length} generated schemes, one page per asset type, plus the sources below.
+Every term the instances in this repository define or carry, as W3C SKOS. Terms link to the external concepts they match rather than copying them. ${total} terms: **${n.authored} authored** in ${authoredSchemes.length} glossar${authoredSchemes.length === 1 ? "y" : "ies"}, one page per instance that owns them, and **${n.extracted} extracted** from knowledge-graph assets in ${extractedSchemes.length} generated schemes, one page per asset type, plus the sources below.
 
 <table>
 <thead><tr><th>state</th><th>what it means</th><th>terms</th></tr></thead>
@@ -1271,15 +1378,15 @@ ${mappingBlock(mappingStates(), [...new Set(c.glossaries.map((g) => g.glossary.i
 
 ## Pages
 
-Each term is on exactly one page. Extracted candidates are split by asset type, so that no page is fetched at the size of all of them (owner, 2026-09-24).
+Each term is on exactly one page. Authored terms are on the page of the instance that owns their scheme (owner, 2026-10-15), and extracted candidates are split by asset type (owner, 2026-09-24), so that no page is fetched at the size of all of them.
 
 ${pagesTable(size)}
 
-**Size:** this page holds ${rows.length} terms and is ${size} before compression, within its budget of ${sizeLabel(PAGE_BUDGET.index)}; each asset type's page has a budget of ${sizeLabel(PAGE_BUDGET.type)}. There is no search index: the filter on each page runs over that page, and its A–Z bar jumps within it. The SKOS files in the sources are the machine-readable form.
+**Size:** this page is ${size} before compression, within its budget of ${sizeLabel(PAGE_BUDGET.index)}; each instance's and each asset type's page has a budget of ${sizeLabel(PAGE_BUDGET.type)}. There is no search index: the filter on each page runs over that page, and its A–Z bar jumps within it. The SKOS files in the sources are the machine-readable form.
 
 ## Authored terms
 
-${ordered.length ? `${ordered.map(orderedBlock).join("\n\n")}\n\n### Every other authored term, A–Z\n\n` : ""}${termsBlock(rows.filter((r) => !r.s.glossary.ordered))}
+${authoredList(c, [...authoredPages.keys()], ordered)}
 
 ## Sources
 
@@ -1294,11 +1401,6 @@ ${sources.join("\n")}
 Generated by \`folio-assistant-core/scripts/glossary-extract.ts\` into \`${esc(relative(REPO, generatedDir()).split("\\").join("/"))}/<instance>/<type>.glossary.json\`, one scheme per asset type per instance, each term's IRI in the namespace of the instance that holds the asset. BPMN lanes and roles are not extracted again: the ${ledgerTerms} swimlane-role terms above already carry them, with every lane name as an alternative label.
 
 ${extractedTable}
-
-<script type="application/ld+json">
-${JSON.stringify(ld, null, 1)}
-</script>
-${FILTER_SCRIPT}
 `,
   );
 }
@@ -1504,10 +1606,16 @@ export function typePagesOf(c: ReturnType<typeof collect>): Map<AssetType | Part
   return new Map(PAGE_KEYS.filter((k): k is AssetType | PartKey => k !== "index").map((k) => [k, renderTypePage(c, k)] as const));
 }
 
-/** Every glossary page, keyed by page, index first. */
+/** Every instance's authored page, rendered. */
+export function authoredPagesOf(c: ReturnType<typeof collect>): Map<AuthoredKey, string> {
+  return new Map(authoredKeys(c).map((k) => [k, renderAuthoredPage(c, k)] as const));
+}
+
+/** Every glossary page, keyed by page, in {@link pageKeysOf}'s order. */
 export function renderPages(c: ReturnType<typeof collect>): Map<PageKey, string> {
   const types = typePagesOf(c);
-  return new Map<PageKey, string>([["index", renderIndex(c, types)], ...types]);
+  const authored = authoredPagesOf(c);
+  return new Map<PageKey, string>([["index", renderIndex(c, types, authored)], ...authored, ...types]);
 }
 /**
  * A scheme with every translated label and definition folded in as
@@ -1615,7 +1723,8 @@ if (import.meta.main) {
   const stale = [...files].filter(([p, s]) => !existsSync(p) || readFileSync(p, "utf-8") !== s).map(([p]) => p);
   const n = counts(c);
   const summary = `${n.authored} authored + ${n.extracted} extracted terms, ${c.glossaries.length} scheme(s), ${c.ledgers.length} swimlane ledger(s), ${c.external.length} external scheme(s)`;
-  const over = PAGE_KEYS.filter((k) => Buffer.byteLength(files.get(pagePath(k))!, "utf-8") > budgetOf(k));
+  const keys = pageKeysOf(c);
+  const over = keys.filter((k) => Buffer.byteLength(files.get(pagePath(k))!, "utf-8") > budgetOf(k));
   for (const k of over) {
     console.error(`✗ over budget: ${relative(REPO, pagePath(k))} is ${sizeLabel(Buffer.byteLength(files.get(pagePath(k))!, "utf-8"))}, budget ${sizeLabel(budgetOf(k))}. Split it further; do not raise the budget.`);
   }
@@ -1662,6 +1771,6 @@ if (import.meta.main) {
       writeFileSync(p, s);
     }
   }
-  const sizes = PAGE_KEYS.map((k) => `${relative(REPO, pagePath(k))} ${sizeLabel(Buffer.byteLength(files.get(pagePath(k))!, "utf-8"))}`).join(", ");
-  console.log(`Wrote ${PAGE_KEYS.length} page(s) (${sizes}), ${c.glossaries.length} SKOS file(s) and ${c.glossaries.filter((s) => s.extracted).length} extracted scheme(s): ${summary}.`);
+  const sizes = keys.map((k) => `${relative(REPO, pagePath(k))} ${sizeLabel(Buffer.byteLength(files.get(pagePath(k))!, "utf-8"))}`).join(", ");
+  console.log(`Wrote ${keys.length} page(s) (${sizes}), ${c.glossaries.length} SKOS file(s) and ${c.glossaries.filter((s) => s.extracted).length} extracted scheme(s): ${summary}.`);
 }
