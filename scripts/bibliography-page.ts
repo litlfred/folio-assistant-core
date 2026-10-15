@@ -49,7 +49,7 @@
  * Usage:  bun run folio-assistant-core/scripts/bibliography-page.ts [--check]
  *
  * @module folio-assistant-core/scripts/bibliography-page
- * @covers references, catalogue, docs: it reads every instance's references and catalogue directories
+ * @covers references, catalogue, docs — it reads every instance's references and catalogue directories
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
