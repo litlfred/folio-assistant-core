@@ -37,8 +37,14 @@
  *
  * Exports: {@link toCslJson}, {@link toBibtex}, {@link toRis}, {@link toJsonLdGraph}.
  *
+ * Its fields are CSL-JSON's (no external-schema record names CSL-JSON yet).
+ * The tag reader takes ONE spec id per line, so each is its own tag: the
+ * comma-separated form declared none of them.
+ *
  * @module folio-assistant-core/schemas/reference
- * @conformsTo csl-json, dcmi-terms
+ * @conformsTo dcmi-terms
+ * @conformsTo purl-bibo
+ * @conformsTo spar-fabio
  */
 import { z } from "zod";
 import { nodeKind } from "@litlfred/cat-harness/schemas/node-kind.ts";
