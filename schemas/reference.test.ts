@@ -204,7 +204,7 @@ describe("declared", () => {
     const v = JSON.parse(readFileSync(join(CORE, "validators", "reference.json"), "utf-8"));
     expect(Object.keys(kind.nodeSchemas)).toEqual([REFERENCE_SCHEMA_TAG]);
     expect(v.validates).toEqual({ kind: "references", family: REFERENCE_SCHEMA_TAG });
-    expect(v.schema).toBe("folio-assistant-core:schemas/reference.ts#ReferenceNodeSchema");
+    expect(v.schema).toBe("folio-assistant-core:schemas/reference.ts#ReferenceKind");
   });
 });
 
