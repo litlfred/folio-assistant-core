@@ -45,3 +45,14 @@ therefore the **same id in the cat-harness store**
 (`litlfred/folio-assistant`, branch `cat/cat-harness/beans`,
 `beans/defs/folio-assistant-f327--*.md`), which is open there. Work it there.
 This copy stays open as a pointer, and closes when that one does.
+
+## Built 2026-10-15 (session_0147GQWs8akum21vSh5XYURR)
+
+Worked from this pointer, on the owner's choice to build it now. Recorded here because the owning copy's store is not in this session's reach; copy it across when that copy is next touched.
+
+- **The DAK kinds were real, but the ChangeSet could not see them.** `snapshot` walked without the contributed builders, so a `persona({ … })` was not a block at all: dth-hrh's personas, scenarios and requirements were missing from every ChangeSet, and an edit to one read as nothing changed. `snapshot(root, builders)` and the CLI now load them as `gen-block-jsonld` does (dth-hrh: 270 → 321 blocks).
+- **The structured sides are published** as `changeset-structure.json` (`--structure-out`): a contributed kind's manifest fields on each side, read from the TEXT of its builder literal (`manifest-fields.ts`; nothing executed; a value it cannot read is kept as source).
+- **The renderer** `fields` (input `structure`, default `@structured`) is registered in cat-harness `diff-renderers.ts`; the review page draws it and stage-local publishes the file.
+- **Checked in Chromium** on dth-hrh's review page with a persona edit (title and personaType): the block opens on "Fields, before and after", two rows named "changed", five unchanged folded.
+
+All three Done-when boxes are met.
