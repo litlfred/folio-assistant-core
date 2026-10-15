@@ -37,6 +37,7 @@ export { declaredRoute, siteOwnerDir, visualiserPageDir, withRenderedBy, withRen
 // ── cat-harness: Tool nodes, for an instance's own `tools` graph ──────────
 export { defineTool, type ToolDefinition } from "@litlfred/cat-harness/schemas/tool.js";
 export { toolTypeIri } from "@litlfred/cat-harness/schemas/tool-types.js";
+export { toolFactory, toolsFromFolders } from "@litlfred/cat-harness/schemas/tool-folders.js";
 export { withRoutes } from "@litlfred/cat-harness-tools/scripts/mount-instance-docs.ts";
 export { libraryResolver } from "@litlfred/cat-harness-tools/scripts/lib/library-links.ts";
 export { withViewerNav } from "@litlfred/cat-harness-tools/scripts/viewer-page.ts";
