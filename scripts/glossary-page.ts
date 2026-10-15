@@ -61,7 +61,7 @@
  *   directory and links the harness's ledger without copying it
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
-import { dirname, join, relative, resolve } from "node:path";
+import { dirname, join, relative, resolve, sep } from "node:path";
 
 import {
   instanceDirectoryForGraph,
@@ -81,12 +81,23 @@ import { MAPPING_TARGETS } from "@litlfred/cat-harness/schemas/term-mapping.ts";
 import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, sourceText, templateName } from "./glossary-pot.ts";
 import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
 import { declaredRoute } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
+import { siteArg, siteTarget } from "@litlfred/cat-harness-tools/scripts/lib/site-target.ts";
 
 const CORE = resolve(import.meta.dir, "..");
 const REPO = repoRootFor(CORE);
 // declared-path-literal: the platform site the page publishes to, which is
 // cat-harness's `docs/`; core owns the page, the harness owns the site.
-const SITE = join(REPO, "cat-harness", "docs");
+// `--site <dir>`: a site being built (a repository's own, `visualiser-writers.ts`)
+// gets the same route under it; its harness docs are a pinned mount.
+const SITE = siteTarget(join(REPO, "cat-harness", "docs"));
+/**
+ * With `--site`, only what lies under that site is written: the extracted
+ * schemes under core's `glossary/generated/` are committed graph content, and
+ * a site build must leave a pinned mount as its lock pins it.
+ */
+const INTO_SITE = siteArg() !== undefined;
+const written = (files: Map<string, string>): Map<string, string> =>
+  INTO_SITE ? new Map([...files].filter(([p]) => p.startsWith(`${SITE}${sep}`))) : files;
 /**
  * The ROUTE of the visualiser core DECLARES for its glossary —
  * `folio-assistant-core/glossary` — from `folio-assistant-core.json`
@@ -1585,7 +1596,7 @@ if (import.meta.main) {
     process.exit(1);
   }
   const unresolved: string[] = [];
-  const files = outputs(c, undefined, undefined, unresolved);
+  const files = written(outputs(c, undefined, undefined, unresolved));
   // Reported, never fatal: a match the record cannot place is left out of the
   // SKOS rather than invented, and this says which and why.
   for (const u of unresolved) console.warn(`! automated match not published: ${u}`);
@@ -1599,7 +1610,7 @@ if (import.meta.main) {
   const localeDirs = readdirSync(SITE, { withFileTypes: true })
     .filter((e) => e.isDirectory() && existsSync(join(SITE, e.name, ...ROUTE.split("/"), "index.md")))
     .map((e) => join(SITE, e.name, ...ROUTE.split("/")));
-  const orphans = [...filesUnder(ASSETS), ...filesUnder(generatedDir()), ...filesUnder(dirname(PAGE)), ...localeDirs.flatMap(filesUnder)]
+  const orphans = [...filesUnder(ASSETS), ...(INTO_SITE ? [] : filesUnder(generatedDir())), ...filesUnder(dirname(PAGE)), ...localeDirs.flatMap(filesUnder)]
     .filter((p) => !files.has(p));
   const stale = [...files].filter(([p, s]) => !existsSync(p) || readFileSync(p, "utf-8") !== s).map(([p]) => p);
   const n = counts(c);
@@ -1639,7 +1650,7 @@ if (import.meta.main) {
   // again against what was written settles in one more pass; the bound turns
   // a generator that never settles into a loud failure rather than a loop.
   for (let pass = 2; ; pass++) {
-    const again = outputs(c);
+    const again = written(outputs(c));
     const moved = [...again].filter(([p, s]) => !existsSync(p) || readFileSync(p, "utf-8") !== s);
     if (!moved.length) break;
     if (pass > 3) {

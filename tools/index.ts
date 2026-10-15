@@ -327,6 +327,7 @@ export function tools(baseUrl?: string): ToolDefinition[] {
       io: {
         inputs: [
           { name: "check", schema: t("Flag"), required: false, arg: { flag: "--check" }, description: "Fail if a page is stale, instead of writing." },
+          { name: "site", schema: t("RepoPath"), required: false, arg: { flag: "--site" }, description: "A site being built: write the pages at their declared route under it instead of under cat-harness's docs, as a repository's own site build does (`visualiser-writers.ts`)." },
         ],
         outputs: [{ name: "pages", schema: t("RepoPath"), description: "The glossary pages, under the published site directory." }],
       },
@@ -347,6 +348,7 @@ export function tools(baseUrl?: string): ToolDefinition[] {
       io: {
         inputs: [
           { name: "check", schema: t("Flag"), required: false, arg: { flag: "--check" }, description: "Fail if a page or export is stale, instead of writing." },
+          { name: "site", schema: t("RepoPath"), required: false, arg: { flag: "--site" }, description: "A site being built: write the pages at their declared route under it instead of under cat-harness's docs, as a repository's own site build does (`visualiser-writers.ts`)." },
         ],
         outputs: [{ name: "pages", schema: t("RepoPath"), description: "The bibliography pages and their exports, under the published site directory." }],
       },
