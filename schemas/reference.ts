@@ -41,6 +41,7 @@
  * @conformsTo csl-json, dcmi-terms
  */
 import { z } from "zod";
+import { nodeKind } from "@litlfred/cat-harness/schemas/node-kind.ts";
 
 import { FOLIO_BASE, resolveReferenceKey } from "@litlfred/cat-harness/schemas/jsonld.ts";
 import { cslToBibtex } from "@litlfred/cat-harness-tools/pipeline/bibtex-format.ts";
@@ -104,6 +105,14 @@ export const ReferenceNodeSchema = z
   })
   .passthrough();
 export type ReferenceNode = z.infer<typeof ReferenceNodeSchema>;
+
+/**
+ * `folio-reference/v1` as a node kind (issue #2195), so `validators/reference.json`
+ * names a kind and `node-kinds:check` files the family under it. Unversioned: the family's tag is not SemVer, so the `$schema` literal stays a
+ * field of the shape rather than one `nodeKind()` generates.
+ * Not strict: unknown CSL fields pass, as {@link ReferenceNodeSchema} lets them.
+ */
+export const ReferenceKind = nodeKind("folio-reference", [], ReferenceNodeSchema.shape);
 
 /**
  * The fragment id of a reference on a bibliography page: `ref-<key>`, with any
