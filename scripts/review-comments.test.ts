@@ -8,7 +8,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 import { ReviewCommentsFileSchema, type PrComment } from "../schemas/review-comment";
-import { buildReviewComments, type BlocksFile } from "./review-comments";
+import { buildReviewComments, writeDecided, type BlocksFile } from "./review-comments";
 
 const pc = (id: number, body: string): PrComment => ({
   id,
@@ -43,6 +43,17 @@ describe("buildReviewComments", () => {
     expect(f.malformed.map((m) => m.commentId)).toEqual([4]);
     // A rebuild over its own output applies nothing twice.
     expect(buildReviewComments({ ...base, comments, existing: f }).comments).toEqual(f.comments);
+  });
+
+  it("writes each newly decided comment for the caller to commit, and nothing on a second run (423d)", () => {
+    const ed = (id: number, body: string): PrComment => ({ ...pc(id, body), user: "editor1", association: "OWNER", createdAt: "2026-09-23T07:10:00Z" });
+    const f = buildReviewComments({ ...base, comments: [pc(1, "block: prose:overview\nWhy?"), pc(5, "block: prose:overview\nAnd?"), ed(2, "resolve: review-pr7-c1\ndecision: addressed")] });
+    const dir = mkdtempSync(join(tmpdir(), "decided-"));
+    expect(writeDecided(f.comments, new Map(), dir)).toEqual(["review-pr7-c1"]);
+    const written = JSON.parse(readFileSync(join(dir, "review-pr7-c1.json"), "utf-8"));
+    expect([written.status, written.review.decisions]).toEqual(["addressed", [2]]);
+    const committed = new Map(f.comments.map((c) => [c.id, c] as const));
+    expect(writeDecided(f.comments, committed, dir)).toEqual([]);
   });
 
   it("ingests verdicts from the same comments, and does not count them as untagged (px0t)", () => {

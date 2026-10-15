@@ -358,15 +358,19 @@ The dose now matches table 3.
 
 The build (`folio-review-comments`, and `stage-local` for a `site.build`
 folio) applies the tags after ingestion, so the published file and the page
-show the decided status. The committed record is still the feature-branch
-todo: `folio-review-comment-move` commits it in the editor's session.
+show the decided status. With `--write-decided` the Tool also writes each
+newly decided comment into the todos graph's feedback directory, as
+`folio-review-comment-move` writes it; `stage-local` passes it and then runs
+`state:push` for a todos graph kept on its own state branch (dth-hrh's
+`cat/dth-hrh/todos`), so the decision is recorded without anyone running a
+command. A todos graph in the feature branch's tree is left for the editor
+to commit.
 
 ## Not yet decided
 
-- **Committing a page decision automatically.** A `resolve:` tag moves the
-  published status at the next build; committing the todo file to the
-  feature branch (or the folio's todos state branch) is still the editor's
-  `folio-review-comment-move`.
+- **Committing a page decision to an in-tree todos graph automatically.** A
+  branch-kept todos graph is pushed by `stage-local`; one in the feature
+  branch's tree is written but committed by the editor.
 - **A reviewer who edits a comment after ingest.** The edit is not re-read, so
   a record an editor has already acted on is not silently rewritten. Whether
   an edit should reopen the comment is open.
