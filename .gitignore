@@ -7,3 +7,10 @@
 # instance can hold it current.
 /ns/context/v1.jsonld
 # END built at publish
+
+# BEGIN index mounts (generated from index.config.json — do not edit)
+/cat-harness/
+/cat-harness-tools/
+/bootstrap/
+/bootstrap-tools/
+# END index mounts
