@@ -61,6 +61,7 @@ import {
   ReviewCommentsFileSchema,
   ingestPrComments,
   reanchorToBlocks,
+  applyDecisions,
   type BlockAnchor,
   type PrComment,
   type ReviewComment,
@@ -99,9 +100,12 @@ export async function fetchPrComments(repo: string, pr: number, token: string | 
       },
     });
     if (!res.ok) throw new Error(`GitHub answered ${res.status} for ${repo}#${pr} comments: ${await res.text()}`);
-    const batch = (await res.json()) as Array<{ id: number; body?: string; user?: { login?: string }; created_at: string; html_url: string }>;
+    const batch = (await res.json()) as Array<{ id: number; body?: string; user?: { login?: string }; created_at: string; html_url: string; author_association?: string }>;
     for (const c of batch) {
-      out.push({ id: c.id, body: c.body ?? "", user: c.user?.login ?? "ghost", createdAt: c.created_at, url: c.html_url });
+      out.push({
+        id: c.id, body: c.body ?? "", user: c.user?.login ?? "ghost", createdAt: c.created_at, url: c.html_url,
+        ...(c.author_association ? { association: c.author_association } : {}),
+      });
     }
     if (batch.length < 100) return out;
   }
@@ -130,7 +134,10 @@ export function buildReviewComments(o: RunOptions): ReviewCommentsFile {
   for (const [id, c] of committed) if (!previous.some((p) => p.id === id)) previous.push(c);
   const hashes = new Map(Object.entries(o.blocks).map(([label, b]) => [label, b.hash]));
   const r = ingestPrComments({ repo: o.repo, pr: o.pr, commit: o.commit, comments: o.comments, existing: previous, blocks: hashes });
-  const all = reanchorToBlocks([...previous, ...r.created], new Map(Object.entries(o.blocks)));
+  // Decisions (`resolve:` tags) move the comments last, so a decision made in
+  // the same PR as the comment it decides finds it (owner, 2026-10-15).
+  const decided = applyDecisions(reanchorToBlocks([...previous, ...r.created], new Map(Object.entries(o.blocks))), o.comments);
+  const all = decided.comments;
   // Verdicts: the same merge as comments (committed wins, nothing dropped),
   // then the PR's new ones. A verdict is never re-anchored: it is about the
   // version it names, and `computeCoverage` stops counting it once that
@@ -149,8 +156,8 @@ export function buildReviewComments(o: RunOptions): ReviewCommentsFile {
     commit: o.commit,
     generatedAt: o.now ?? new Date().toISOString(),
     comments: all,
-    malformed: [...r.malformed, ...vr.malformed],
-    untagged: r.untagged - verdictTagged,
+    malformed: [...r.malformed, ...vr.malformed, ...decided.refused],
+    untagged: r.untagged - verdictTagged - decided.tagged,
     verdicts: [...prevVerdicts, ...vr.created],
   });
 }
