@@ -328,12 +328,19 @@ export function collect(repo: string = REPO): {
   glossaries: GlossarySource[];
   ledgers: { instance: string; path: string; terms: number }[];
   external: { instance: string; id: string; url: string; title?: string }[];
+  /**
+   * Every instance that DECLARES a `glossary` directory of its own, whether or
+   * not it holds an authored scheme yet. Each gets its own page (owner,
+   * 2026-10-15, "3a"), because the instance's Glossary tile opens it.
+   */
+  declaring: string[];
   findings: Findings;
 } {
   const glossaries: GlossarySource[] = [];
   const ledgers: { instance: string; path: string; terms: number }[] = [];
   const external: { instance: string; id: string; url: string; title?: string }[] = [];
   const findings: Findings = { invalid: [] };
+  const declaring = new Set<string>();
   const owners = instanceOwners(repo);
   const nsOf = new Map(owners.map((o) => [o.name, o.ns] as const));
   // No two instances may resolve to one namespace: every IRI minted in it
@@ -351,6 +358,7 @@ export function collect(repo: string = REPO): {
       if (!existsSync(d.absPath)) continue;
       const kinds = d.graphTypologies ?? [];
       if (kinds.includes("glossary")) {
+        declaring.add(decl.name);
         for (const f of readdirSync(d.absPath).filter((f) => f.endsWith(".glossary.json")).sort()) {
           const p = join(d.absPath, f);
           const rel = relative(repo, p).split("\\").join("/");
@@ -439,7 +447,7 @@ export function collect(repo: string = REPO): {
   for (const [iri, files] of bySchemeIri) {
     if (files.length > 1) findings.invalid.push(`scheme IRI collision: ${files.join(", ")} all mint ${iri}`);
   }
-  return { glossaries, ledgers, external, findings };
+  return { glossaries, ledgers, external, declaring: [...declaring].sort(), findings };
 }
 
 // `{` too: the page is Jekyll source, and a `{{` or `{%` in an extracted
@@ -544,9 +552,17 @@ export const PAGE_KEYS: readonly PageKey[] = [
   ...ASSET_TYPES.flatMap((t): PageKey[] => [t, ...(LETTER_PARTS[t] ?? []).map((r) => `${t}/${r}` as PartKey)]),
 ];
 
-/** One page per instance that owns an authored scheme, by instance name. */
-export function authoredKeys(c: ReturnType<typeof collect>): AuthoredKey[] {
-  return [...new Set(c.glossaries.filter((s) => !s.extracted).map((s) => s.instance))].sort().map((i) => `@${i}` as const);
+/**
+ * One page per instance that owns an authored scheme OR declares a glossary
+ * directory, by instance name. The second half is what lets every instance's
+ * Glossary tile open a page of its own: the tile resolves
+ * `glossary/instance/<instance>/` from the declaration, so the page must exist
+ * for every instance the declaration covers, even before it authors a term.
+ */
+export function authoredKeys(c: Pick<ReturnType<typeof collect>, "glossaries"> & { declaring?: readonly string[] }): AuthoredKey[] {
+  return [...new Set([...c.glossaries.filter((s) => !s.extracted).map((s) => s.instance), ...(c.declaring ?? [])])]
+    .sort()
+    .map((i) => `@${i}` as const);
 }
 
 /** Every page: the index, each instance's authored terms, then {@link PAGE_KEYS}' asset types. */
@@ -571,8 +587,15 @@ export function typeSlug(t: AssetType): string {
 export function pageOf(s: GlossarySource): PageKey {
   return s.extracted ?? `@${s.instance}`;
 }
-/** The directory every instance's authored page sits under, so an instance name cannot meet an asset type's slug. */
-const AUTHORED_DIR = "authored";
+/**
+ * The directory every instance's page sits under, so an instance name cannot
+ * meet an asset type's slug (`skills/`, `tools/`, …). Owner, 2026-10-15
+ * ("3a"): `glossary/instance/<instance>/`, the sub-graph path the glossary
+ * visualiser declares (`subgraphUnder: { glossary: "instance" }` in
+ * `folio-assistant-core.json`), which `viewersOf` composes into each
+ * instance's tile. It was `authored/` for the same day it existed.
+ */
+export const AUTHORED_DIR = "instance";
 export function pagePath(k: PageKey): string {
   if (k === "index") return PAGE;
   if (isAuthored(k)) return join(dirname(PAGE), AUTHORED_DIR, k.slice(1), "index.md");
@@ -1251,7 +1274,19 @@ ${GENERATED}
 
 # ${pageTitle(key)}
 
-The glossaries **${esc(instance)}** owns: ${schemes.map((s) => `${esc(s.glossary.title)} (${s.glossary.terms.length} term${s.glossary.terms.length === 1 ? "" : "s"}, ${skosLink(s)})`).join(" · ")}. Every other instance's terms, the counts and the sources are on the ${pageLink("index", "glossary index")}.
+${
+  schemes.length > 0
+    ? `The glossaries **${esc(instance)}** owns: ${schemes.map((s) => `${esc(s.glossary.title)} (${s.glossary.terms.length} term${s.glossary.terms.length === 1 ? "" : "s"}, ${skosLink(s)})`).join(" · ")}.`
+    : `**${esc(instance)}** declares a glossary directory and owns no authored glossary yet.`
+}${(() => {
+  // The instance's EXTRACTED terms stay on their asset type's page (a term is
+  // on exactly one page); this page names them so it is the instance's whole
+  // glossary to a reader who arrived from its tile.
+  const ex = c.glossaries.filter((s) => s.extracted && s.instance === instance);
+  return ex.length > 0
+    ? ` Terms extracted from its assets: ${ex.map((s) => `${pageLink(s.extracted!, assetTypeTitle(s.extracted!))} (${s.glossary.terms.length})`).join(" · ")}.`
+    : "";
+})()} Every other instance's terms, the counts and the sources are on the ${pageLink("index", "glossary index")}.
 
 **Size:** this page holds ${rows.length} terms and is ${size} before compression, within its budget of ${sizeLabel(budgetOf(key))}. There is no search index: the filter below runs over this page${rows.some((r) => !r.s.glossary.ordered) ? ", and the A–Z bar jumps within it" : ""}.
 
