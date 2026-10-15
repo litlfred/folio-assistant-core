@@ -328,12 +328,45 @@ of change goes:
 | what the ingestion does | `folio-assistant-core/scripts/review-comments.ts` | the Tool node's `io` if a flag changes |
 | when it runs | `folio-staging.yml` and `init-folio`'s caller template | the trust notes above |
 
+## Deciding from the review page: a `resolve:` comment
+
+Owner, 2026-10-15: the page decides through the same channel it comments
+through. Under each open or addressed comment it shows the tag to post as a
+pull-request conversation comment, with the words that comment's status
+allows:
+
+```
+resolve: review-pr7-c123
+decision: resolved
+
+The dose now matches table 3.
+```
+
+- **The words** are transitions of the table above: `addressed` (address),
+  `reopened` (send-back), `resolved` (resolve), `adjudicated` (adjudicate),
+  `withdrawn` (withdraw). Anything the table refuses is refused here too.
+- **Who.** A repository owner, member or collaborator (GitHub's
+  `author_association`) decides; the comment's own author may withdraw it.
+  Anyone else's tag is refused, because a PR conversation is open to every
+  GitHub user and a status is what the coverage gate counts.
+- **The Decision** that closes a comment is the decision comment's URL.
+- **Once.** Each applied decision's comment id is kept in
+  `review.decisions`, so a rebuild, or a committed copy that already carries
+  it, applies nothing twice.
+- **Never dropped.** A tag that cannot be read or applied is listed under
+  "Tags that could not be read or applied", with its reason.
+
+The build (`folio-review-comments`, and `stage-local` for a `site.build`
+folio) applies the tags after ingestion, so the published file and the page
+show the decided status. The committed record is still the feature-branch
+todo: `folio-review-comment-move` commits it in the editor's session.
+
 ## Not yet decided
 
-- **Resolving from the review page itself.** The page shows statuses; a
-  decision is recorded with `folio-review-comment-move` in the editor's
-  session. A page button would need a write path from a static page, which
-  is the problem this whole design avoids.
+- **Committing a page decision automatically.** A `resolve:` tag moves the
+  published status at the next build; committing the todo file to the
+  feature branch (or the folio's todos state branch) is still the editor's
+  `folio-review-comment-move`.
 - **A reviewer who edits a comment after ingest.** The edit is not re-read, so
   a record an editor has already acted on is not silently rewritten. Whether
   an edit should reopen the comment is open.
