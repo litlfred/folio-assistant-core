@@ -37,6 +37,13 @@
       "role": "package-manifest",
       "title": "package.json",
       "description": "The npm pre-packaging source manifest declaring package identity, exports, dependencies, scripts, and tarball whitelist."
+    },
+    {
+      "id": "unkinded-baseline",
+      "src": "node-kinds.baseline.json",
+      "role": "unkinded-baseline",
+      "title": "Unkinded families — folio-assistant-core",
+      "description": "The families whose typology THIS instance declares (in its typologies/ graph) that predate node kinds and may stay unkinded; `node-kinds:check` fails on any other. Owner, 2026-10-15: split out of cat-harness's docs/_data/node-kinds.json, which spanned every layer and is now built at publish, so this layer's families are judged by its own commit. Written by `bun run cat node-kinds`, which only shrinks it; `--accept-unkinded` grows it deliberately."
     }
   ],
   "_stickies_comment": "ONE card, because the owner's ruling is one card per harness: \"not all stickies should be cat harness they should be outputs (as if) each init harness ran ... each own intiaization sticky note to show sucess\". This layer takes the knowledge-graph overview, which was cat-harness's third card — content is this layer's subject, so the card that explains the sub-graphs belongs to it rather than to the platform that operates on them.",
