@@ -657,9 +657,10 @@ function termEntry({ s, t, label }: Row, marks?: ReadonlyMap<string, string>): s
       : s.extracted
         ? `<p><em>The asset carries no description.</em></p>`
         : `<p><em>No definition yet.</em></p>`;
-  // The filter reads the visible text; this attribute carries only what is
-  // searchable and NOT shown (alternative labels, a code the row hides), so
-  // a page of a thousand terms does not say every label twice.
+  // The filter reads the term row and its definition ({@link FILTER_SCRIPT});
+  // this attribute carries only what is searchable and NOT shown (alternative
+  // labels, a code the row hides), so a page of a thousand terms does not say
+  // every label twice.
   const hidden = [...(t.altLabel ?? []), ...(t.notation && !code && t.notation !== label && t.notation !== frag ? [t.notation] : [])]
     .join(" ")
     .toLowerCase();
@@ -1075,11 +1076,19 @@ function filterBox(n: number): string {
 <p aria-live="polite"><span id="fa-gloss-n">${n}</span> shown</p>`;
 }
 
+/**
+ * The filter: a term matches on its row (label, code, state), its hidden
+ * alternative labels, and its definition, the `<dd>`'s first paragraph
+ * ({@link termEntry}). Not the scheme, IRI and source line under it: every
+ * term of one scheme shares those, so a query that names its source file
+ * (dth-hrh's `HWF_registry_DTH_Glossary_DRAFT.xlsx`, for "registry") matched
+ * all 177 terms and filtered nothing (owner, 2026-10-15).
+ */
 const FILTER_SCRIPT = `<script>
 (function(){var q=document.getElementById("fa-gloss-q"),n=document.getElementById("fa-gloss-n");if(!q)return;
 function run(){var v=q.value.trim().toLowerCase(),k=0;
-document.querySelectorAll("dt[data-fa-gloss]").forEach(function(dt){var dd=dt.nextElementSibling;
-var ok=!v||(dt.textContent+" "+dt.getAttribute("data-fa-gloss")+" "+(dd?dd.textContent:"")).toLowerCase().indexOf(v)>=0;
+document.querySelectorAll("dt[data-fa-gloss]").forEach(function(dt){var dd=dt.nextElementSibling,def=dd&&dd.firstElementChild;
+var ok=!v||(dt.textContent+" "+dt.getAttribute("data-fa-gloss")+" "+(def?def.textContent:"")).toLowerCase().indexOf(v)>=0;
 dt.hidden=!ok;if(dd)dd.hidden=!ok;if(ok)k++;});n.textContent=k;}
 q.addEventListener("input",run);})();
 </script>`;
@@ -1244,7 +1253,7 @@ ${GENERATED}
 
 The glossaries **${esc(instance)}** owns: ${schemes.map((s) => `${esc(s.glossary.title)} (${s.glossary.terms.length} term${s.glossary.terms.length === 1 ? "" : "s"}, ${skosLink(s)})`).join(" · ")}. Every other instance's terms, the counts and the sources are on the ${pageLink("index", "glossary index")}.
 
-**Size:** this page holds ${rows.length} terms and is ${size} before compression, within its budget of ${sizeLabel(budgetOf(key))}. There is no search index: the filter below runs over this page, and the A–Z bar jumps within it.
+**Size:** this page holds ${rows.length} terms and is ${size} before compression, within its budget of ${sizeLabel(budgetOf(key))}. There is no search index: the filter below runs over this page${rows.some((r) => !r.s.glossary.ordered) ? ", and the A–Z bar jumps within it" : ""}.
 
 ${(() => {
   // An instance whose every scheme is ordered (bootstrap's) has no A–Z list;
