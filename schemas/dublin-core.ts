@@ -4,7 +4,7 @@
  * @module schemas/dublin-core
  * @graphNode schema
  *
- * ## Why this is in the content layer and not in `who-iris/`
+ * ## Why this is in the content layer and not in the IRIS catalogue instance
  *
  * The owner, 2026-09-20: *"break up working bits (like .ts record for dublin
  * core) etc. fully worked for the three examples"*, and in the same breath
@@ -12,7 +12,7 @@
  * DSpace is a repository platform; neither is WHO's. What IS WHO's is how IRIS
  * *uses* them — three identifier systems, MeSH as the subject vocabulary, a
  * legacy handle kept alive after a server merge — and that lives in the
- * `who-iris` instance's skill, beside the three records themselves.
+ * IRIS catalogue instance's skill, beside the three records themselves.
  *
  * The line is the one {@link module:schemas/folio-graph-typology} already draws:
  * the layer that owns a vocabulary is the layer that can serve it to anybody.
@@ -197,7 +197,7 @@ export const DCTERMS_NS = "http://purl.org/dc/terms/";
  *
  * Under the content layer's published stem, because this is the layer that
  * owns the Dublin Core model — the same rule that put this module here rather
- * than in `who-iris/`.
+ * than in the IRIS catalogue instance.
  */
 export const DSPACE_NS = ownNamespace("folio-assistant-core-dspace");
 

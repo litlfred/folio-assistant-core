@@ -171,7 +171,7 @@ library viewer shows them on the entry's row. Write it by hand — there is no
 file to run `referenced-source.py` on — then `gen-library-jsonld.ts --entry`
 for the manifest. The licence follows the usual rule: `stated` only with a
 basis, else `unknown` with where you looked. First case:
-`smart-base/library/smart-trust/`, the WHO SMART Trust IG.
+the WHO SMART Trust IG's entry in the DAK layer's `library/`.
 
 ## A source published as text in a repository — read it at a commit (bean `y4uj`)
 
@@ -667,7 +667,7 @@ them as chips, green where a heading also names the term (`evidence:
 ["heading"]`) — the document saying it of itself. Withheld entries show them:
 they are derived terms, like captions, not the text.
 
-What the scoring does, each measured on the who-iris handbook (2026-10-06):
+What the scoring does, each measured on the IRIS catalogue's handbook (2026-10-06):
 
 - **Two-word phrases** from truly adjacent tokens said at least twice; a stop
   word, punctuation, or a line break before a capital (a table cell, a heading)
@@ -707,7 +707,7 @@ to show" looked exactly like "nothing was extracted". The owner's ruling
 **Withheld is READ, never inferred from emptiness.** The flag, the gates and the
 record come from `withheld.json` — `folio-withheld/v1` carries an optional
 structured `gates[]` and `record{id, page, uri}` beside the `reason` sentence,
-which the instance's generator writes from its own data (who-iris:
+which the instance's generator writes from its own data (the IRIS catalogue:
 `gen-iris-pages.ts`, from the catalogue's publication gates). A list that
 carries only the sentence still works: the row then says the sentence.
 

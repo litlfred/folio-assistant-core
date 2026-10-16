@@ -5,7 +5,7 @@
  * @module schemas/dublin-core-render
  * @graphNode schema
  *
- * Bean `7eak`, owner 2026-09-30: *"do we render the proper xml for dublin
+ * Bean `7eak`, owner 2026-09-30 (the second quote names the IRIS catalogue instance): *"do we render the proper xml for dublin
  * core? it should be in rendering ppiple as skill and tool … and then pushed
  * to gh-pages"* and *"(and who-iris should link to json and xml renderings)"*.
  * The skill that governs this is `skills/library/dublin-core-renderings.md`;

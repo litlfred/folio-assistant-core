@@ -7,10 +7,10 @@
  *
  * ## Generic, and so in core (bean `eayu`, 2026-09-30)
  *
- * This lived at `who-iris/scripts/`. The owner: *"dspace scripts generic in
+ * This lived in the IRIS catalogue instance's `scripts/`. The owner: *"dspace scripts generic in
  * folio-assistant"*. Nothing below is IRIS's — `CatalogueSchema`, Dublin Core
  * records, Handles, `localPath` and the publication gates are core vocabulary
- * any catalogue instance uses — and `who-iris/` is staged to become a CONTENT
+ * any catalogue instance uses — and the IRIS catalogue instance is staged to become a CONTENT
  * repository, which holds no code (kg-separation, bootstrap FR-7). So the
  * instance root is an argument, the same shape as `source-liveness.ts`.
  *
@@ -54,7 +54,7 @@ import { PUBLICATION_GATES } from "../schemas/materialization.js";
 
 const arg = process.argv[2];
 if (!arg || arg.startsWith("-")) {
-  console.error("usage: check-catalogue.ts <instance-root>   (e.g. who-iris)");
+  console.error("usage: check-catalogue.ts <instance-root>   (e.g. an IRIS mirror)");
   process.exit(2);
 }
 const INSTANCE = resolve(arg);

@@ -287,7 +287,7 @@ export async function documentGraph(
   slug: string,
   contributions?: ContributionRegistry,
 ): Promise<{ nodes: Array<{ rel: string; text: string }>; errors: string[] }> {
-  // A dependency's kinds (smart-base's personas, scenarios, requirements) are blocks too.
+  // A dependency's kinds (a DAK layer's personas, scenarios, requirements) are blocks too.
   const kinds = new Set(contributions?.contributedBuilders().values() ?? []);
   const { blocks, failures } = await loadBlocksUnder(docDir, kinds);
   const errors = failures.map((f) => `${relative(docDir, f.file)} did not load: ${f.error}`);
