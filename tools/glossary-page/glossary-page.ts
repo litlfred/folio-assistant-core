@@ -5,7 +5,8 @@ import { defineTool } from "@litlfred/cat-harness/schemas/tool.js";
 // `renderedBy` (owner, 2026-10-09: "Need harness to declare visualizer is
 // renderedBy"). `renders` is what it CAN draw; the harness declaration in
 // `folio-assistant-core.json` says what it DOES, and where:
-// `<base>/folio-assistant-core/glossary/`.
+// `<base>/en/folio-assistant-core/glossary/` (under the page locale since
+// 2026-10-16; the old address forwards there).
 export default toolFactory((t) =>
   defineTool({
     id: "glossary-page",
