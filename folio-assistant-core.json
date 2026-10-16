@@ -401,5 +401,12 @@
       "rtlSupported": true,
       "notes": "Base content type. All other types inherit Markdown translation."
     }
-  ]
+  ],
+  "_gateExemptions_comment": "Files of this instance that a gate below it admits, each with its reason, so the gate reads them here instead of naming this layer's files (owner, 2026-10-16, item 6b of the folio-assistant#2598 wrong-direction triage). `check:structure-accessor` (bean rkqp) refuses the quoted token \"structure.json\" outside the accessor in `cat-harness/schemas/document-structure.ts`; these two only test whether a library entry was ingested and never parse the file.",
+  "gateExemptions": {
+    "files": [
+      {"gate": "check:structure-accessor", "file": "schemas/library-ref.ts", "reason": "EXISTENCE only — whether an entry was ingested at all — and it never parses the file"},
+      {"gate": "check:structure-accessor", "file": "scripts/check-catalogue.ts", "reason": "EXISTENCE only — whether a catalogue item's libraryId was ingested — and it never parses the file"}
+    ]
+  }
 }
