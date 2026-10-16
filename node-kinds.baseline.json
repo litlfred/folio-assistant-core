@@ -14,6 +14,13 @@
       "family": "folio-dublin-core/v1"
     },
     {
+      "typology": "computation-witness"
+    },
+    {
+      "typology": "glossary",
+      "family": "folio-glossary/v1"
+    },
+    {
       "typology": "review-verdicts"
     }
   ]

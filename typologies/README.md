@@ -11,6 +11,8 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `folio-assistant
 | file | what it is | used by |
 |---|---|---|
 | [`catalogue.json`](catalogue.json) | Catalogue |  |
+| [`computation-witness.json`](computation-witness.json) | Computation witnesses |  |
+| [`glossary.json`](glossary.json) | Glossary |  |
 | [`public-comments.json`](public-comments.json) | Public comments |  |
 | [`references.json`](references.json) | References |  |
 | [`review-verdicts.json`](review-verdicts.json) | Review verdicts |  |
