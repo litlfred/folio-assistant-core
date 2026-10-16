@@ -51,7 +51,7 @@ import {
   repoRootFor,
   resolveDirectories,
 } from "@litlfred/cat-harness/schemas/cat-harness.ts";
-import { readRoleGraph, type RoleGraph } from "@litlfred/cat-harness/schemas/role-graph.js";
+import { isMechanicalRole, readRoleGraph, type RoleGraph } from "@litlfred/cat-harness/schemas/role-graph.js";
 
 const ROOT = resolve(import.meta.dir, "..");
 /** The checkout, one level out: a cross-instance citation is resolved against sibling instances. */
@@ -431,7 +431,7 @@ function main(): number {
   // graph no voice reaches is not this check's to grade.
   for (const [rolesRoot, ids] of addressed) {
     const unaddressed = (roleGraphOf(rolesRoot)?.roles ?? [])
-      .filter((r) => !r.actedUpon && r.persona !== undefined && !ids.has(r.id))
+      .filter((r) => !isMechanicalRole(r) && r.persona !== undefined && !ids.has(r.id))
       .map((r) => r.id);
     const name = readDeclaration(rolesRoot)?.name ?? relative(REPO_ROOT, rolesRoot);
     console.log(
