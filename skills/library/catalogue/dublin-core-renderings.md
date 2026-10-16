@@ -12,10 +12,10 @@ description: >
 
 # Dublin Core renderings
 
-Bean `7eak`. The owner, 2026-09-30 (the second quote names the IRIS catalogue
-instance): *"do we render the proper xml for dublin
+Bean `7eak`. The owner, 2026-09-30: *"do we render the proper xml for dublin
 core? it should be in rendering ppiple as skill and tool … and then pushed to
-gh-pages"*, and *"(and who-iris should link to json and xml renderings)"*.
+gh-pages"*; and, paraphrased, the owner asked that a catalogue instance above
+this layer link to its JSON and XML renderings.
 
 | piece | where |
 |---|---|
