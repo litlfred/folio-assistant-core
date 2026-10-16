@@ -17,7 +17,7 @@
  *
  * | instance | remote source | materialised locally | refresh today |
  * |---|---|---|---|
- * | `who-iris` | IRIS, 361.55 GB | three items under `library/` | nothing |
+ * | the IRIS catalogue instance | IRIS, 361.55 GB | three items under `library/` | nothing |
  * | `bootstrap` | a harness | the `cat-harness` checkout | `upstream-pins.json` + `check:upstream-pins` |
  *
  * The second row is the one that makes this a discovery rather than a design.
@@ -218,7 +218,7 @@ export const MaterializationSchema = z
      * WHERE THIS CAME FROM — see {@link SourceProvenanceSchema}.
      *
      * This replaced a single `of` on 2026-09-22. `of` meant "the remote thing"
-     * and 6 of the 9 who-iris records were using it for a local one, so the
+     * and 6 of the 9 IRIS catalogue records were using it for a local one, so the
      * split is a correction to the corpus as much as to the model.
      */
     provenance: SourceProvenanceSchema,
@@ -274,7 +274,7 @@ export const MaterializationSchema = z
         message:
           "a record with neither `provenance.upstream` nor `provenance.local` requires a `note`. " +
           "Knowing a thing came from somewhere and not knowing where is a real state — the " +
-          "who-iris item whose IRIS handle was never recorded is one — but it is only a state " +
+          "IRIS catalogue item whose handle was never recorded is one — but it is only a state " +
           "once somebody says so. Silent, it cannot be told from a field nobody filled in",
       });
     }

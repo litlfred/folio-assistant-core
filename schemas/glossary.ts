@@ -1,6 +1,6 @@
 /**
  * `folio-glossary/v1`: a glossary as W3C SKOS. Core's `glossary` graph typology
- * (`cat-harness/schemas/glossary-graph-typology.ts` registers the name).
+ * (`typologies/glossary.json` declares the kind, since folio-assistant#2598).
  *
  * Owner, 2026-09-23: *"put glossary into folio-assistant-core"*, *"it should be
  * part of general pracice w/ glossary/ page"*, and *"can glossary be

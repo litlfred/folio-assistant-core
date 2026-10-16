@@ -3,21 +3,21 @@
  *
  * @module folio-assistant-core/scripts/lib/bytes
  *
- * **Moved from `who-iris/scripts/lib/` on 2026-09-30 (bean `eayu`).** Owner:
+ * **Moved from the IRIS catalogue instance's `scripts/lib/` on 2026-09-30 (bean `eayu`).** Owner:
  * *"dspace scripts generic in folio-assistant"*. Nothing here is IRIS's: a
  * `localPath` is instance-relative for EVERY catalogue instance, so the
  * instance directory is now a parameter rather than `import.meta.dir/../..`,
- * which could only ever name who-iris.
+ * which could only ever name that one instance.
  *
  * **This was the `yl5w` workaround, and `yl5w` is settled.** Every `localPath`
- * on an ORIGINAL bitstream pointed at `who-iris/uploads/…` while the bytes sat
+ * on an ORIGINAL bitstream pointed at `<that instance>/uploads/…` while the bytes sat
  * in `cat-harness/uploads/` — #477 moved `library/` and left the sources
  * behind — so this module resolved the declared path first and fell back to
  * the real location. Two consumers needed it: the page generator, to emit a
  * link that works, and the cover renderer, to have something to render.
  *
  * 2026-09-21 the owner ruled that a folio's sources live in the folio. The
- * three PDFs were `git mv`-ed to `who-iris/uploads/<slug>/`, beside each item's
+ * three PDFs were `git mv`-ed to that instance's `uploads/<slug>/`, beside each item's
  * own `intake.json` and IRIS capture, and `check:catalogue` now verifies every
  * `localPath`. **So the fallback is gone rather than left in place**, and that
  * is what the old note promised: the declared path was already tried first, so

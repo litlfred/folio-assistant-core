@@ -3,7 +3,7 @@
  *
  * @module folio-assistant-core/scripts/lib/local-path
  *
- * Moved from `who-iris/scripts/lib/` on 2026-09-30 (bean `eayu`, owner:
+ * Moved from the IRIS catalogue instance's `scripts/lib/` on 2026-09-30 (bean `eayu`, owner:
  * *"dspace scripts generic in folio-assistant"*). It was already generic — it
  * takes the instance directory as a parameter — so only its home changed.
  *

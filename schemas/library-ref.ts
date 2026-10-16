@@ -20,7 +20,7 @@
  *
  * ## Why not a relative path
  *
- * `../who-iris/library/...` would work today and hardcodes a checkout layout
+ * `../<instance>/library/...` would work today and hardcodes a checkout layout
  * into content. It is the practice `AGENTS.md` opens by warning against, and
  * this repository has already paid for it twice **this week**: a `../`-prefixed
  * declaration that silently resolved outside the checkout, and a test carrying
@@ -130,22 +130,22 @@ export function libraryDirOf(instanceRoot: string): string | undefined {
   // THIS INSTANCE'S OWN, which is not "the first one declared".
   //
   // `cat-harness/harness.json` declares FOUR library entries: its own empty
-  // `library/`, plus `who-iris/library/`, `folio-assistant-sci/library/` and
-  // `agent-skills/library/` — all three `scope: "repository"`, declared there
+  // `library/`, plus the libraries of the IRIS catalogue instance, the
+  // science layer and `agent-skills/library/` — all three `scope: "repository"`, declared there
   // because the consumers that scan libraries run from the repository root.
   // `find` took whichever came first and `resolve(instanceRoot, path)` then
   // resolved a repository-scoped path against the INSTANCE, which is not
   // where it lives.
   //
   // Measured consequence, found by review 2026-09-20: a bare citation to a
-  // who-iris document could report "never brought through uploads/ ->
+  // document of the IRIS catalogue instance could report "never brought through uploads/ ->
   // library/" about a document that is ingested, and declared in the same
   // file that was just read.
   //
   // `scope` is the discriminator, not `own`: every one of those entries is
   // cat-harness's own declaration. A repository-scoped entry names where
   // ANOTHER instance keeps its corpus, and the caller asking
-  // `libraryDirOf(who-iris)` gets it from who-iris's own declaration.
+  // `libraryDirOf(<that instance>)` gets it from that instance's own declaration.
   const mine = dirs.filter(
     (d) => Array.isArray(d.graphTypologies) && d.graphTypologies.includes("library") && d.scope !== "repository",
   );

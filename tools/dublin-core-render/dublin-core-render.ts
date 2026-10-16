@@ -11,7 +11,7 @@ export default toolFactory((t) =>
     invoke: { shell: "bun run folio-assistant-core/scripts/dc-render.ts" },
     io: {
       inputs: [
-        { name: "instance", schema: t("RepoPath"), required: true, arg: { positional: 0 }, description: "The catalogue instance's root, e.g. `who-iris`. It must hold `catalogue/catalogue.json` and declare a directory with `instanceRoot: true`." },
+        { name: "instance", schema: t("RepoPath"), required: true, arg: { positional: 0 }, description: "The catalogue instance's root, e.g. an IRIS mirror's directory. It must hold `catalogue/catalogue.json` and declare a directory with `instanceRoot: true`." },
         { name: "check", schema: t("Flag"), required: false, arg: { flag: "--check" }, description: "Write nothing. Exit 1 if any rendering is missing, stale or orphaned." },
       ],
       outputs: [

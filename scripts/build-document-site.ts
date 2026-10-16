@@ -76,6 +76,7 @@ import type { Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness/
 import { buildDocumentMarkdown } from "@litlfred/cat-harness-tools/pipeline/render-markdown.js";
 import { loadBlocksUnder } from "@litlfred/cat-harness-tools/pipeline/block-module.js";
 import { blockToJsonLd, serialise as serialiseNode } from "@litlfred/cat-harness-tools/pipeline/gen-block-jsonld.js";
+import { atInstanceContext } from "@litlfred/cat-harness-tools/pipeline/instance-document-context.js";
 import { writeValuesJsonLd } from "@litlfred/cat-harness-tools/pipeline/gen-values-jsonld.js";
 import { bundleEditorProfiles } from "@litlfred/cat-harness-tools/pipeline/editor-profiles.js";
 import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness/schemas/contributions.js";
@@ -287,7 +288,7 @@ export async function documentGraph(
   slug: string,
   contributions?: ContributionRegistry,
 ): Promise<{ nodes: Array<{ rel: string; text: string }>; errors: string[] }> {
-  // A dependency's kinds (smart-base's personas, scenarios, requirements) are blocks too.
+  // A dependency's kinds (a DAK layer's personas, scenarios, requirements) are blocks too.
   const kinds = new Set(contributions?.contributedBuilders().values() ?? []);
   const { blocks, failures } = await loadBlocksUnder(docDir, kinds);
   const errors = failures.map((f) => `${relative(docDir, f.file)} did not load: ${f.error}`);
@@ -300,7 +301,9 @@ export async function documentGraph(
       continue;
     }
     const text = readFileSync(path, "utf-8");
-    if (text !== serialiseNode(blockToJsonLd(b, slug, [], [], contributions))) errors.push(`${rel}: KG node is stale (run gen-block-jsonld.ts)`);
+    // The generator names the context of the instance the file sits in
+    // (`atInstanceContext`, bean folio-assistant-63q4), so compare with that.
+    if (text !== serialiseNode(atInstanceContext(blockToJsonLd(b, slug, [], [], contributions), path))) errors.push(`${rel}: KG node is stale (run gen-block-jsonld.ts)`);
     nodes.push({ rel, text });
   }
   return { nodes, errors };

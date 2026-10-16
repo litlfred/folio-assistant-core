@@ -38,7 +38,7 @@
  *
  * ## It backfills FILES only
  *
- * Three of the records without a digest are directories — who-iris's items
+ * Three of the records without a digest are directories — the IRIS catalogue's items
  * point at `library/<id>` while their bitstreams point at
  * `uploads/<id>/<file>`. A file digest does not apply to a directory, and
  * those items are already covered by their parts, which the checker reports as

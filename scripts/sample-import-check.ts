@@ -22,7 +22,7 @@
  *      bytes, because a recorded digest nobody re-checks is decoration.
  *
  * The store here is a `folio-catalogue/v1` directory (`nodes/`, `records/`),
- * which is what an instance like `who-iris` declares. Nothing here names one.
+ * which is what a catalogue instance (an IRIS mirror, say) declares. Nothing here names one.
  *
  * @module folio-assistant-core/scripts/sample-import-check
  */

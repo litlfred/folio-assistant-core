@@ -14,7 +14,8 @@ description: >
 
 Bean `7eak`. The owner, 2026-09-30: *"do we render the proper xml for dublin
 core? it should be in rendering ppiple as skill and tool … and then pushed to
-gh-pages"*, and *"(and who-iris should link to json and xml renderings)"*.
+gh-pages"*; and, paraphrased, the owner asked that a catalogue instance above
+this layer link to its JSON and XML renderings.
 
 | piece | where |
 |---|---|
@@ -40,8 +41,8 @@ next to.
 `<published root>/dublin-core/<stem>.dc.xml` and `<stem>.dc.jsonld`.
 
 - The **published root** is the directory the instance declares with
-  `instanceRoot: true`. For who-iris that is `site/`, which is served at
-  `/who-iris/`. The mount copies that directory whole, so the renderings are
+  `instanceRoot: true`. For an IRIS mirror that is `site/`, which is served at
+  `/<instance>/`. The mount copies that directory whole, so the renderings are
   published next to the item pages with no extra pipeline step.
 - `<stem>` is the record's own filename without `.dc.json`.
 - An instance that declares no published root is **refused**, not given a

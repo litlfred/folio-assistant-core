@@ -19,7 +19,7 @@
  *   becomes a reference node keyed `<slug>` (`dublinCoreToReference`), with
  *   `provenance: catalogue` and `derivedFrom` its record.
  *
- * One node type for both, so a who-iris item and a qou citation are listed,
+ * One node type for both, so an IRIS catalogue item and a qou citation are listed,
  * filtered and exported the same way.
  *
  * ## What it writes, at the declared route
