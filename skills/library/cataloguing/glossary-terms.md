@@ -122,16 +122,21 @@ dereferenced says so.
 
 ## Then
 
-`bun run cat glossary:page` writes the index, `docs/glossary/index.md` (the
+`bun run cat glossary:page` writes the index,
+`docs/en/folio-assistant-core/glossary/index.md` (the
 authored terms with A–Z and a filter box, the counts, the sources, schema.org
 `DefinedTermSet` JSON-LD, and a link to every asset type's page), one page per
-asset type at `docs/glossary/<type>/index.md` (skills, tools, bpmn-activities,
+asset type at `docs/en/folio-assistant-core/glossary/<type>/index.md` (skills, tools, bpmn-activities,
 dmn-decisions, schema-fields: that type's extracted terms, with A–Z and a
 filter box), and one SKOS JSON-LD file per scheme under
 `docs/assets/glossary/`. Each term is on exactly one page. `bun run
 check:glossary` is the gate: it fails on a document that does not validate, on
 a stale page, and on a page over its size budget (64 KB for the index, 1 MB
 for an asset type's page).
+
+The English pages sit under `en/`, like each locale's pages and every other
+visualiser's; their old address, `folio-assistant-core/glossary/`, is a
+forwarding page that `compose-docs.ts` writes.
 
 **A page over budget is split further, never given a bigger budget.** The
 owner chose *"Split per asset type"* (2026-09-24) when extraction took the
@@ -214,7 +219,7 @@ glossary:page` reads every such file (`readGlossaryTranslations`, through
 `glossary-pot.ts`'s own `potPath`, so the reader and the writer cannot
 disagree about where it is) and produces two things:
 
-- **a page per locale**, `docs/<locale>/glossary/index.md`, listing every
+- **a page per locale**, `docs/<locale>/folio-assistant-core/glossary/index.md`, listing every
   authored term with its translated label, alternative labels and
   definition. An entry with no translation shows the **source text marked
   _(untranslated)_** — never silently English, never dropped — and the page

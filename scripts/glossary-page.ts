@@ -80,7 +80,7 @@ import { perScheme, run as runTermMapping, termState, type SchemeState, type Ter
 import { MAPPING_TARGETS } from "@litlfred/cat-harness/schemas/term-mapping.ts";
 import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, sourceText, templateName } from "./glossary-pot.ts";
 import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
-import { declaredRoute } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
+import { PAGE_LOCALE, declaredRoute } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 import { siteArg, siteTarget } from "@litlfred/cat-harness-tools/scripts/lib/site-target.ts";
 
 const CORE = resolve(import.meta.dir, "..");
@@ -107,7 +107,14 @@ const written = (files: Map<string, string>): Map<string, string> =>
  * declared ALIAS, composed as a redirect.
  */
 const ROUTE = declaredRoute(CORE, "glossary-page") ?? "folio-assistant-core/glossary";
-const PAGE = join(SITE, ...ROUTE.split("/"), "index.md");
+/**
+ * The English pages' route: `en/<ROUTE>`, under the source locale like every
+ * other locale's (`<locale>/<ROUTE>`, {@link localePagePath}) and like every
+ * other visualiser's pages (`pageParts`, bean `t4xb`). `ROUTE` itself is the
+ * old address, where `compose-docs.ts` writes the forwarding page.
+ */
+const EN_ROUTE = `${PAGE_LOCALE}/${ROUTE}`;
+const PAGE = join(SITE, ...EN_ROUTE.split("/"), "index.md");
 const ASSETS = join(SITE, "assets", "glossary");
 /**
  * Where extracted schemes are written: `generated/` inside core's own
@@ -606,13 +613,13 @@ export function pagePath(k: PageKey): string {
   return join(dirname(PAGE), typeSlug(k), "index.md");
 }
 export function permalinkOf(k: PageKey): string {
-  if (k === "index") return `/${ROUTE}/`;
-  if (isAuthored(k)) return `/${ROUTE}/${AUTHORED_DIR}/${k.slice(1)}/`;
+  if (k === "index") return `/${EN_ROUTE}/`;
+  if (isAuthored(k)) return `/${EN_ROUTE}/${AUTHORED_DIR}/${k.slice(1)}/`;
   if (isPart(k)) {
     const [t, r] = splitPart(k);
-    return `/${ROUTE}/${typeSlug(t)}/${r}/`;
+    return `/${EN_ROUTE}/${typeSlug(t)}/${r}/`;
   }
-  return `/${ROUTE}/${typeSlug(k)}/`;
+  return `/${EN_ROUTE}/${typeSlug(k)}/`;
 }
 export function pageTitle(k: PageKey): string {
   if (k === "index") return "Glossary";
@@ -1397,7 +1404,7 @@ ${GENERATED_FM}
 title: Glossary
 nav_order: 90
 has_children: true
-permalink: /${ROUTE}/
+permalink: /${EN_ROUTE}/
 ---
 ${GENERATED}
 
@@ -1597,7 +1604,7 @@ export function renderLocalePage(
     "nav_exclude: true",
     GENERATED_FM,
     "translation_status: unverified",
-    `translation_source: ${ROUTE}/index.md`,
+    `translation_source: ${EN_ROUTE}/index.md`,
     `available_locales: [${["en", ...locales].map((l) => `"${l}"`).join(", ")}]`,
     `description: "${locale}: ${translated}/${terms} — ${u("fullyTranslated").text.replace(/"/g, "'")}"`,
     "---",
@@ -1622,7 +1629,7 @@ export function renderLocalePage(
     "",
     `## ${mark(u("pages"))}`,
     "",
-    `${mark(u("pagesNote"))} [${mark(u("sourcePage"))}]({{ '/${ROUTE}/' | relative_url }}).`,
+    `${mark(u("pagesNote"))} [${mark(u("sourcePage"))}]({{ '/${EN_ROUTE}/' | relative_url }}).`,
     "",
     `## ${mark(u("authored"))}`,
     "",
@@ -1635,7 +1642,7 @@ export function renderLocalePage(
     "",
     `### ${mark(u("sourcesExtracted"))}`,
     "",
-    `[${mark(u("sourcePage"))}]({{ '/${ROUTE}/' | relative_url }})`,
+    `[${mark(u("sourcePage"))}]({{ '/${EN_ROUTE}/' | relative_url }})`,
     "",
   ];
   return L.join("\n") + "\n";
@@ -1762,7 +1769,11 @@ if (import.meta.main) {
   const localeDirs = readdirSync(SITE, { withFileTypes: true })
     .filter((e) => e.isDirectory() && existsSync(join(SITE, e.name, ...ROUTE.split("/"), "index.md")))
     .map((e) => join(SITE, e.name, ...ROUTE.split("/")));
-  const orphans = [...filesUnder(ASSETS), ...(INTO_SITE ? [] : filesUnder(generatedDir())), ...filesUnder(dirname(PAGE)), ...localeDirs.flatMap(filesUnder)]
+  // The English pages' old address, `<ROUTE>/`, from before they moved under
+  // `en/`: only the `.md` pages this generator wrote there are its own; the
+  // forwarding page `compose-docs.ts` writes there is not.
+  const legacyPages = filesUnder(join(SITE, ...ROUTE.split("/"))).filter((p) => p.endsWith(".md"));
+  const orphans = [...filesUnder(ASSETS), ...(INTO_SITE ? [] : filesUnder(generatedDir())), ...filesUnder(dirname(PAGE)), ...localeDirs.flatMap(filesUnder), ...legacyPages]
     .filter((p) => !files.has(p));
   const stale = [...files].filter(([p, s]) => !existsSync(p) || readFileSync(p, "utf-8") !== s).map(([p]) => p);
   const n = counts(c);
