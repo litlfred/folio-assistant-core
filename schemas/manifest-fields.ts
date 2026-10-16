@@ -20,6 +20,7 @@
  * cannot read is said as source, never dropped and never guessed.
  *
  * @module folio-assistant-core/schemas/manifest-fields
+ * @graphNode none — a text parser for block manifests' fields: it defines no schema
  */
 
 /** A field path (`meta.source.file`, `uses[0]`) → its value as a reader sees it. */
