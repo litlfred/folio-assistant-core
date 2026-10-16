@@ -8,7 +8,7 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 import { ReviewCommentsFileSchema, type PrComment } from "../schemas/review-comment";
-import { buildReviewComments, type BlocksFile } from "./review-comments";
+import { buildReviewComments, writeDecided, type BlocksFile } from "./review-comments";
 
 const pc = (id: number, body: string): PrComment => ({
   id,
@@ -26,6 +26,34 @@ describe("buildReviewComments", () => {
     expect(f.comments.map((c) => c.$schema)).toEqual(["review-comment/1.0.0"]);
     expect(f.untagged).toBe(1);
     expect(f.malformed).toHaveLength(1);
+  });
+
+  it("applies `resolve:` decisions in the same build, once, and does not count them as conversation (423d)", () => {
+    const ed = (id: number, body: string, at: string): PrComment => ({ ...pc(id, body), user: "editor1", association: "COLLABORATOR", createdAt: at });
+    const comments = [
+      pc(1, "block: prose:overview\nkind: defect\n\nDose contradicts table 3."),
+      ed(2, "resolve: review-pr7-c1\ndecision: addressed", "2026-09-23T07:10:00Z"),
+      ed(3, "resolve: review-pr7-c1\ndecision: resolved\n\nNow matches.", "2026-09-23T07:20:00Z"),
+      pc(4, "resolve: review-pr7-c1\ndecision: reopened"),
+    ];
+    const f = buildReviewComments({ ...base, comments });
+    expect(f.comments.map((c) => [c.id, c.status, c.review.decision])).toEqual([["review-pr7-c1", "resolved", "https://github.com/o/r/pull/7#issuecomment-3"]]);
+    expect(f.untagged).toBe(0);
+    // The stranger's reopen (sme1, no association) is refused and said.
+    expect(f.malformed.map((m) => m.commentId)).toEqual([4]);
+    // A rebuild over its own output applies nothing twice.
+    expect(buildReviewComments({ ...base, comments, existing: f }).comments).toEqual(f.comments);
+  });
+
+  it("writes each newly decided comment for the caller to commit, and nothing on a second run (423d)", () => {
+    const ed = (id: number, body: string): PrComment => ({ ...pc(id, body), user: "editor1", association: "OWNER", createdAt: "2026-09-23T07:10:00Z" });
+    const f = buildReviewComments({ ...base, comments: [pc(1, "block: prose:overview\nWhy?"), pc(5, "block: prose:overview\nAnd?"), ed(2, "resolve: review-pr7-c1\ndecision: addressed")] });
+    const dir = mkdtempSync(join(tmpdir(), "decided-"));
+    expect(writeDecided(f.comments, new Map(), dir)).toEqual(["review-pr7-c1"]);
+    const written = JSON.parse(readFileSync(join(dir, "review-pr7-c1.json"), "utf-8"));
+    expect([written.status, written.review.decisions]).toEqual(["addressed", [2]]);
+    const committed = new Map(f.comments.map((c) => [c.id, c] as const));
+    expect(writeDecided(f.comments, committed, dir)).toEqual([]);
   });
 
   it("ingests verdicts from the same comments, and does not count them as untagged (px0t)", () => {

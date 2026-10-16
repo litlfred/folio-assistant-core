@@ -37,6 +37,13 @@
       "role": "package-manifest",
       "title": "package.json",
       "description": "The npm pre-packaging source manifest declaring package identity, exports, dependencies, scripts, and tarball whitelist."
+    },
+    {
+      "id": "unkinded-baseline",
+      "src": "node-kinds.baseline.json",
+      "role": "unkinded-baseline",
+      "title": "Unkinded families — folio-assistant-core",
+      "description": "The families whose typology THIS instance declares (in its typologies/ graph) that predate node kinds and may stay unkinded; `node-kinds:check` fails on any other. Owner, 2026-10-15: split out of cat-harness's docs/_data/node-kinds.json, which spanned every layer and is now built at publish, so this layer's families are judged by its own commit. Written by `bun run cat node-kinds`, which only shrinks it; `--accept-unkinded` grows it deliberately."
     }
   ],
   "_stickies_comment": "ONE card, because the owner's ruling is one card per harness: \"not all stickies should be cat harness they should be outputs (as if) each init harness ran ... each own intiaization sticky note to show sucess\". This layer takes the knowledge-graph overview, which was cat-harness's third card — content is this layer's subject, so the card that explains the sub-graphs belongs to it rather than to the platform that operates on them.",
@@ -307,9 +314,9 @@
       }
     }
   ],
-  "_visualisers_comment": "THE VISUALISERS THIS HARNESS DECLARES, at its own level (owner, 2026-10-09: \"I still want the harness to be where specific visualizers/pages are declared for the harness at the level … Need harness to declare visualizer is renderedBy\"). Until then the glossary directory named its page (`coverage.visualiser: cat-harness/docs/glossary/index.md`) — a page in another layer's tree at a URL nothing derived. The page is now at <base>/folio-assistant-core/glossary/, computed by visualiserRoute from this entry, drawn by the `glossary-page` Tool (scripts/glossary-page.ts), with <base>/glossary/ kept as its declared alias so no existing link breaks.",
+  "_visualisers_comment": "THE VISUALISERS THIS HARNESS DECLARES, at its own level (owner, 2026-10-09: \"I still want the harness to be where specific visualizers/pages are declared for the harness at the level … Need harness to declare visualizer is renderedBy\"). Until then the glossary directory named its page (`coverage.visualiser: cat-harness/docs/glossary/index.md`) — a page in another layer's tree at a URL nothing derived. The page is now at <base>/folio-assistant-core/glossary/, computed by visualiserRoute from this entry, drawn by the `glossary-page` Tool (scripts/glossary-page.ts), with <base>/glossary/ kept as its declared alias so no existing link breaks. It covers the glossary KIND rather than this instance's directory by id (bean folio-assistant-1nu0, owner 2026-10-15): the page already reads every instance's glossary directory, so who-iris's glossary row opens it rather than reading \"no viewer yet\". Since owner choice \"3a\" (2026-10-15) each instance's tile opens ITS OWN page, <base>/folio-assistant-core/glossary/instance/<instance>/ — `subgraphs: \"instance\"` nested under the declared `subgraphUnder` path `instance/`, so a sub-graph page cannot collide with the per-asset-type pages (glossary/skills/, glossary/tools/, …); the shared page stays the index.",
   "visualisers": [
-    {"id": "glossary", "renderedBy": "glossary-page", "covers": ["glossary"], "title": "Glossary", "alias": "glossary"},
+    {"id": "glossary", "renderedBy": "glossary-page", "coversKinds": ["glossary"], "subgraphs": "instance", "subgraphUnder": {"glossary": "instance"}, "title": "Glossary", "alias": "glossary"},
     {"id": "bibliography", "renderedBy": "bibliography-page", "coversKinds": ["references", "catalogue"], "subgraphs": "directory", "title": "Bibliography"}
   ],
   "_needs_comment": "The layer this instance sits on. Owner, 2026-09-20: \"So bootsteap, cat harness, fa-core, f-a, from bottom to top.\" Declared rather than hardcoded in the navbar, so the ordering is a fact of the repository and not of whichever consumer needed it first. `cat-harness-tools` added 2026-10-01 on owner ruling C1 (epic 7x5n, bean rmi6): the tool implementation layer sits BELOW this one, so core may use it and it may never use core.",

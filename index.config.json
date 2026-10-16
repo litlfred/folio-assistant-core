@@ -14,7 +14,26 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "f7efa39c9731b5f26bcec147cf7a49b9193dba0b"
+          "ref": "5463bf121d472bbda817c6e0a4a73a2945793164",
+          "overrides": {
+            "cat-harness": {
+              "whole": true
+            },
+            "bootstrap": {
+              "skip": true
+            },
+            "bootstrap-tools": {
+              "skip": true
+            }
+          },
+          "trust": {
+            "consent": {
+              "by": "litlfred",
+              "on": "2026-10-15",
+              "ref": "5463bf121d472bbda817c6e0a4a73a2945793164",
+              "evidence": "Owner litlfred, 2026-10-15 (17:30Z): 'merge and repin for next 3 hrs. keep draining'"
+            }
+          }
         }
       }
     },
@@ -23,9 +42,75 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "bb68cda61d80e7278d97a5c9444054dfe8a1b7d4"
+          "ref": "cd70935594e77f50dc59224806592c07b839b316",
+          "overrides": {
+            "cat-harness-tools": {
+              "whole": true
+            },
+            "cat-harness": {
+              "skip": true
+            }
+          },
+          "trust": {
+            "consent": {
+              "by": "litlfred",
+              "on": "2026-10-15",
+              "ref": "cd70935594e77f50dc59224806592c07b839b316",
+              "evidence": "Owner litlfred, 2026-10-15 (17:30Z): 'merge and repin for next 3 hrs. keep draining'"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "bootstrap",
+      "source": {
+        "remote": {
+          "repository": "litlfred/bootstrap",
+          "ref": "9ecfb729b38b9196063fee76c6f7932f92502353",
+          "overrides": {
+            "bootstrap": {
+              "whole": true
+            }
+          },
+          "trust": {
+            "consent": {
+              "by": "litlfred",
+              "on": "2026-10-15",
+              "ref": "9ecfb729b38b9196063fee76c6f7932f92502353",
+              "evidence": "Owner litlfred, 2026-10-15 (17:30Z): 'merge and repin for next 3 hrs. keep draining'"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "bootstrap-tools",
+      "source": {
+        "remote": {
+          "repository": "litlfred/bootstrap-tools",
+          "ref": "7dc55773590bbc3158c877a3d61222aa7864006c",
+          "overrides": {
+            "bootstrap-tools": {
+              "whole": true
+            },
+            "bootstrap": {
+              "skip": true
+            }
+          },
+          "trust": {
+            "consent": {
+              "by": "litlfred",
+              "on": "2026-10-15",
+              "ref": "7dc55773590bbc3158c877a3d61222aa7864006c",
+              "evidence": "Owner litlfred, 2026-10-15 (17:30Z): 'merge and repin for next 3 hrs. keep draining'"
+            }
+          }
         }
       }
     }
-  ]
+  ],
+  "site": {
+    "landing": "folio-assistant-core"
+  }
 }
