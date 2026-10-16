@@ -54,6 +54,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 
 import { snapshot } from "../schemas/changeset.js";
+import { loadContributions } from "@litlfred/cat-harness/schemas/harness-config.ts";
+import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness/schemas/contributions.ts";
 import { feedbackDir, readCommitted } from "./review-comment-move.js";
 import { pinMaps, readCommittedVerdicts, renderedFacts, verdictsDir } from "./review-coverage.js";
 import {
@@ -73,9 +75,9 @@ import { ingestVerdicts, parseVerdictTag, type RenderedFacts, type ReviewVerdict
 export type BlocksFile = Record<string, BlockAnchor>;
 
 /** The head's blocks, from the folio's manifests. The hash is the prose if there is any, else the manifest. */
-export function blocksOf(folioDir: string): BlocksFile {
+export function blocksOf(folioDir: string, builders?: ReadonlyMap<string, string>): BlocksFile {
   const out: BlocksFile = {};
-  for (const [label, s] of snapshot(folioDir)) {
+  for (const [label, s] of snapshot(folioDir, builders)) {
     out[label] = { hash: s.proseHash ?? s.manifestHash, renamedFrom: s.renamedFrom, ...(s.section ? { section: s.section } : {}) };
   }
   return out;
@@ -220,7 +222,11 @@ if (import.meta.main) {
       console.error(`✗ --folio ${dir} does not exist, so no block can be anchored`);
       process.exit(1);
     }
-    blocks = blocksOf(dir);
+    // The checkout's contributed builders, as changeset.ts loads them, so a
+    // comment on a DAK block (a persona, a requirement) anchors to it rather
+    // than being orphaned.
+    const contributions = await loadContributions<FolioContribution, ContributionRegistry>(process.cwd(), new ContributionRegistry());
+    blocks = blocksOf(dir, contributions.contributedBuilders());
     if (opt("blocks-out")) writeJson(opt("blocks-out")!, blocks);
   } else {
     blocks = readJson<BlocksFile>(opt("blocks")!);
