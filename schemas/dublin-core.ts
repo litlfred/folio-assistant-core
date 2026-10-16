@@ -57,7 +57,7 @@
  */
 import { z } from "zod";
 
-import { ownNamespace } from "@litlfred/cat-harness/schemas/namespaces.js";
+import { DSPACE_NAMESPACE } from "./own-namespace.js";
 
 /** The `$schema` tag a record declares itself with. Extension is a coincidence; a declaration inside the file is the contract. */
 export const DUBLIN_CORE_SCHEMA_TAG = "folio-dublin-core/v1";
@@ -199,7 +199,7 @@ export const DCTERMS_NS = "http://purl.org/dc/terms/";
  * owns the Dublin Core model — the same rule that put this module here rather
  * than in `who-iris/`.
  */
-export const DSPACE_NS = ownNamespace("folio-assistant-core-dspace");
+export const DSPACE_NS = DSPACE_NAMESPACE;
 
 /** The fifteen. A qualifier on any of them is a refinement, not one of these. Exported for the renderer's dumb-down (`dublin-core-render.ts`). */
 export const SIMPLE_ELEMENTS: ReadonlySet<string> = new Set([
