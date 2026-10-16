@@ -29,6 +29,9 @@ import {
   permalinkOf,
   renderPages,
   linkTermCodes,
+  ROUTE,
+  LEGACY_ROUTE,
+  localePagePath,
 } from "../scripts/glossary-page.ts";
 import {
   ASSET_TYPES,
@@ -43,6 +46,21 @@ import { instanceRootsIn, readDeclaration } from "@litlfred/cat-harness/schemas/
 const REPO_ROOT_FOR_NS = resolve(import.meta.dir, "../..");
 import { parseFrontMatter } from "@litlfred/cat-harness/schemas/front-matter.ts";
 import { discoverTools } from "@litlfred/cat-harness-tools/tools/discover.ts";
+
+// Owner, 2026-10-16 ("c"): the English pages sit under the page locale like
+// every other visualiser's, `en/<harness>/<visualiser>/`, computed by the
+// shared route helpers; the address without `en/` is only forwarded.
+describe("the glossary's route", () => {
+  test("the English pages are under `en/`, the translations under their own locale", () => {
+    expect(ROUTE).toBe("en/folio-assistant-core/glossary");
+    expect(LEGACY_ROUTE).toBe("folio-assistant-core/glossary");
+    expect(permalinkOf("index")).toBe("/en/folio-assistant-core/glossary/");
+    expect(permalinkOf("@cat-harness")).toBe("/en/folio-assistant-core/glossary/instance/cat-harness/");
+    expect(pagePath("index").split("\\").join("/")).toMatch(/\/en\/folio-assistant-core\/glossary\/index\.md$/);
+    expect(pagePath("@who-iris").split("\\").join("/")).toMatch(/\/en\/folio-assistant-core\/glossary\/instance\/who-iris\/index\.md$/);
+    expect(localePagePath("fr").split("\\").join("/")).toMatch(/\/fr\/folio-assistant-core\/glossary\/index\.md$/);
+  });
+});
 
 const NS = "https://example.org/x/ns#";
 function g(over: Record<string, unknown> = {}): unknown {

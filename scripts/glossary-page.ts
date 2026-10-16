@@ -80,7 +80,8 @@ import { perScheme, run as runTermMapping, termState, type SchemeState, type Ter
 import { MAPPING_TARGETS } from "@litlfred/cat-harness/schemas/term-mapping.ts";
 import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, sourceText, templateName } from "./glossary-pot.ts";
 import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
-import { declaredRoute } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
+import { forwardingParts, pageParts, visualiserFor, visualiserPageDir } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
+import { ROUTE_SEGMENT, visualiserRoute, type VisualiserRouteParts } from "@litlfred/cat-harness/schemas/visualiser-route.ts";
 import { siteArg, siteTarget } from "@litlfred/cat-harness-tools/scripts/lib/site-target.ts";
 
 const CORE = resolve(import.meta.dir, "..");
@@ -99,15 +100,32 @@ const INTO_SITE = siteArg() !== undefined;
 const written = (files: Map<string, string>): Map<string, string> =>
   INTO_SITE ? new Map([...files].filter(([p]) => p.startsWith(`${SITE}${sep}`))) : files;
 /**
- * The ROUTE of the visualiser core DECLARES for its glossary —
- * `folio-assistant-core/glossary` — from `folio-assistant-core.json`
- * `visualisers` (owner, 2026-10-09: *"Need harness to declare visualizer is
- * renderedBy"*), computed by `visualiserRoute` and never spelled here. The
- * page used to sit at `/glossary/`, a URL nothing derived; that is now the
- * declared ALIAS, composed as a redirect.
+ * The visualiser core DECLARES for its glossary — `folio-assistant-core/glossary`
+ * in `folio-assistant-core.json` `visualisers` (owner, 2026-10-09: *"Need
+ * harness to declare visualizer is renderedBy"*) — as route parts, never
+ * spelled here. The page used to sit at `/glossary/`, a URL nothing derived;
+ * that is now the declared ALIAS, composed as a redirect.
  */
-const ROUTE = declaredRoute(CORE, "glossary-page") ?? "folio-assistant-core/glossary";
-const PAGE = join(SITE, ...ROUTE.split("/"), "index.md");
+const PARTS: VisualiserRouteParts = (() => {
+  try {
+    const v = visualiserFor(CORE, "glossary-page");
+    return { harness: v.harness, visualiser: v.id };
+  } catch {
+    return { harness: "folio-assistant-core", visualiser: "glossary" };
+  }
+})();
+/**
+ * The English page's ROUTE, under the page locale like every other
+ * visualiser (`pageParts`): `en/folio-assistant-core/glossary` (owner,
+ * 2026-10-16, "c"). It was written without the `en/` until then; that old
+ * address, {@link LEGACY_ROUTE}, now holds only the forwarding pages
+ * `compose-docs.ts` writes for every visualiser, and `site-coverage`
+ * accepts it as `legacyRoute`.
+ */
+export const ROUTE = visualiserRoute(pageParts(PARTS)).replace(/\/$/, "");
+/** The address the English page had before the locale segment: `folio-assistant-core/glossary`. */
+export const LEGACY_ROUTE = visualiserRoute(forwardingParts(PARTS)).replace(/\/$/, "");
+const PAGE = join(visualiserPageDir(SITE, pageParts(PARTS)), "index.md");
 const ASSETS = join(SITE, "assets", "glossary");
 /**
  * Where extracted schemes are written: `generated/` inside core's own
@@ -1497,7 +1515,7 @@ export function readGlossaryTranslations(dirs: readonly string[] = allTranslatio
 
 /** Where a locale's glossary page is written. */
 export function localePagePath(locale: string): string {
-  return join(SITE, locale, ...ROUTE.split("/"), "index.md");
+  return join(visualiserPageDir(SITE, pageParts({ ...PARTS, locale })), "index.md");
 }
 
 /** The text in a locale, or the source marked untranslated. */
@@ -1760,9 +1778,13 @@ if (import.meta.main) {
   // Each locale's glossary directory is this generator's own too (bean c592):
   // a locale whose last .po is removed leaves an orphan page.
   const localeDirs = readdirSync(SITE, { withFileTypes: true })
-    .filter((e) => e.isDirectory() && existsSync(join(SITE, e.name, ...ROUTE.split("/"), "index.md")))
-    .map((e) => join(SITE, e.name, ...ROUTE.split("/")));
-  const orphans = [...filesUnder(ASSETS), ...(INTO_SITE ? [] : filesUnder(generatedDir())), ...filesUnder(dirname(PAGE)), ...localeDirs.flatMap(filesUnder)]
+    .map((e) => (e.isDirectory() && ROUTE_SEGMENT.test(e.name) ? dirname(localePagePath(e.name)) : undefined))
+    .filter((d): d is string => d !== undefined && existsSync(join(d, "index.md")));
+  // The pages this generator wrote at the address before the `en/` segment
+  // (owner, 2026-10-16, "c") are its own orphans now: the move deletes them,
+  // and the composed site forwards that address to the page under `en/`.
+  const legacyDir = visualiserPageDir(SITE, forwardingParts(PARTS));
+  const orphans = [...filesUnder(ASSETS), ...(INTO_SITE ? [] : filesUnder(generatedDir())), ...filesUnder(dirname(PAGE)), ...localeDirs.flatMap(filesUnder), ...filesUnder(legacyDir)]
     .filter((p) => !files.has(p));
   const stale = [...files].filter(([p, s]) => !existsSync(p) || readFileSync(p, "utf-8") !== s).map(([p]) => p);
   const n = counts(c);
