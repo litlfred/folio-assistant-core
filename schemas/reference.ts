@@ -28,7 +28,7 @@
  * One node type for every source, said by {@link ReferenceProvenance}:
  * - `authored`: a folio's own bibliography entry (qou's `references.ts`, then its per-entry files);
  * - `catalogue`: projected from a catalogue's Dublin Core record ({@link dublinCoreToReference}),
- *   e.g. a who-iris item;
+ *   e.g. an item of the IRIS catalogue instance;
  * - `library`: a library asset's own manifest;
  * - `extracted`: one entry of a paper's reference list, split out of its references section.
  *

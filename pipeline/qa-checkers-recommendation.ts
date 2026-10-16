@@ -7,7 +7,7 @@
  * Here and not in `schemas/` because a checker a layer CONTRIBUTES is named by
  * its `qa-checkers/` node and loaded through the harness's `imports`
  * input-site, which admits `<instance>/pipeline/qa-checkers-*.ts` only — the
- * place sci's cost checkers and smart-base's DAK checkers already are.
+ * place the science layer's cost checkers and the DAK layer's checkers already are.
  *
  * @module folio-assistant-core/pipeline/qa-checkers-recommendation
  */

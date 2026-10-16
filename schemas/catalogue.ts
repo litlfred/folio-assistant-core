@@ -29,7 +29,7 @@
  *
  * The IRIS-specific reading — that a DSpace UUID, a Handle and a WHO govdoc
  * number are three identifier systems with different authority behind them —
- * is in the `who-iris` instance's `iris-dspace` skill, where it can be argued
+ * is in the IRIS catalogue instance's `iris-dspace` skill, where it can be argued
  * with. It is not in this schema, which would make it look like a property of
  * catalogues in general.
  *
@@ -309,7 +309,7 @@ export const CatalogueSchema = z
      * bitstreams into bundles and an item carries several, so the two differ
      * by a factor a catalogue cannot derive: measured on WHO IRIS, 273,559
      * items against 1,057,223 files, a ratio of 3.86. Feeding the file count
-     * into this field — which who-iris did, with a note saying so — makes
+     * into this field — which the IRIS catalogue instance did, with a note saying so — makes
      * every completeness fraction read low by that factor.
      */
     totalItemsUpstream: z.number().int().nonnegative().optional(),

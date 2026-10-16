@@ -7,10 +7,10 @@
  *
  * ## Generic, and so in core (bean `eayu`, 2026-09-30)
  *
- * Moved from `who-iris/scripts/`. Owner: *"dspace scripts generic in
+ * Moved from the IRIS catalogue instance's `scripts/`. Owner: *"dspace scripts generic in
  * folio-assistant"*. `THUMBNAIL` is a DSpace bundle, not an IRIS one, and the
  * node shape is core's `CatalogueNode`, so this renders covers for ANY
- * catalogue instance — the instance root is the first argument. who-iris was
+ * catalogue instance — the instance root is the first argument. The IRIS catalogue was
  * the first to ask for them, which is why the owner's words below are IRIS's.
  *
  * Owner, 2026-09-20: *"do the needed things like extract cover avatar igf
@@ -49,7 +49,7 @@
  * pixel dimensions. A claim this script makes is a claim this script checks.
  *
  * Usage:
- *   bun run folio-assistant-core/scripts/gen-covers.ts <instance-root>   (e.g. who-iris)
+ *   bun run folio-assistant-core/scripts/gen-covers.ts <instance-root>   (e.g. an IRIS mirror)
  *   bun run folio-assistant-core/scripts/gen-covers.ts <instance-root> --check
  */
 import { createHash } from "crypto";
@@ -277,7 +277,7 @@ function main(): number {
   const check = process.argv.includes("--check");
   const arg = process.argv.slice(2).find((a) => !a.startsWith("-"));
   if (!arg) {
-    console.error("usage: gen-covers.ts <instance-root> [--check]   (e.g. who-iris)");
+    console.error("usage: gen-covers.ts <instance-root> [--check]   (e.g. an IRIS mirror)");
     return 2;
   }
   const instanceDir = resolve(arg);

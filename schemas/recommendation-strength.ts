@@ -24,7 +24,7 @@
  * tooling, and lives in `pipeline/qa-checkers-recommendation.ts`, where
  * the harness's `imports` input-site for a contributed checker looks
  * (`<instance>/pipeline/qa-checkers-*.ts`), as sci's cost checkers and
- * smart-base's DAK checkers do.
+ * the DAK layer's checkers do.
  */
 import type { CodeList } from "@litlfred/cat-harness/schemas/code-list.js";
 import type { CodeRef } from "@litlfred/cat-harness/schemas/types.js";
