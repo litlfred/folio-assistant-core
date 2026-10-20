@@ -1,10 +1,10 @@
 ---
 # folio-core-urat
 title: Migrate folio-tabular-records/v1 to folio-tabular-csvw/v1, measured on real tabular sources
-status: todo
+status: in-progress
 type: task
 created_at: 2026-10-10T16:33:03Z
-updated_at: 2026-10-20T15:12:52Z
+updated_at: 2026-10-20T15:36:34Z
 parent: folio-assistant-slw1
 ---
 
@@ -132,3 +132,28 @@ the newer extractors."* Next steps:
 
 Queued behind cat-tools-bbnd (the translation drawer), which the owner asked
 for in the same session.
+
+## Design 2026-10-20 (lane C): "up into core" through a pipeline-plugin slot
+
+tools may neither import core nor name it by path (`check:reference-direction`).
+So "core's ingest step" cannot be tools calling core's script. The legal
+mechanism already exists: **a pipeline-plugin slot** (`pipeline/pipeline-plugins.ts`),
+which a higher layer fills and generic code calls at run time.
+
+1. **tools** declares a `tabular-csvw` slot: given a source file, return a
+   `folio-tabular-csvw/v1` record, or `null` when the file is not tabular.
+2. **core** fills it with `tabular-csv.ts` and `tabular-xlsx.ts`, plus
+   `tabular-dak.ts`, which routes by content. It does this through its own
+   `pipeline-plugins` graph node.
+3. **tools `ingest-document.ts`**: the tabular rung's step runs a tools-side
+   runner that calls `pipelinePlugin("tabular-csvw")` and writes
+   `tabular.csvw.jsonld`. When nothing fills the slot it refuses with the slot
+   error, which names what is missing. It never falls back to v1. Fixed-width
+   stays on `tabular-records.py` / `codata-ingest`.
+4. **`check:l1-complete`** accepts csvw for delimited and workbook MIME types,
+   and v1 only for `format: fixed-width`.
+5. **`folio-tabular-records/v1`** refuses `format: csv|xlsx|ods` in new records.
+   The committed records (`test/results/tabular-real-sources/`) are re-emitted
+   as csvw.
+
+Order: 1 and 3 in tools, 2 in core, then a repin, then 4 and 5.
