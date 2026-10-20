@@ -1,10 +1,10 @@
 ---
 # folio-core-2mb0
 title: Adjudicate the 68 round-trip findings on who-iris's catalogues (66 warn, 2 fail)
-status: todo
+status: completed
 type: task
 created_at: 2026-10-10T17:25:53Z
-updated_at: 2026-10-20T18:30:00Z
+updated_at: 2026-10-20T18:55:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -144,3 +144,7 @@ Done when, re-measured:
 - [x] lffo's 580/580 is annotated as superseded (`supersedes_note` in the report)
 
 Closes when who-iris#77 merges.
+
+## Completed 2026-10-20
+
+who-iris#77 merged (2301d83): all 34 fixed, 600/600 pass.
