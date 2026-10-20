@@ -278,6 +278,7 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
       <bpmn:documentation>Only now does the change become corpus content, together with its QA sidecars. Subject to the commit-hygiene requirement.</bpmn:documentation>
       <bpmn:extensionElements>
         <cat-harness.processes:policy relaxable="false" />
+        <cat-harness.processes:no-skill reason="A mechanical actor runs this — the corpus is a versioned store, and the commit is a git operation. There is no instruction body an agent could be handed; the commit-hygiene requirement is what holds it."/>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_25</bpmn:incoming>
       <bpmn:outgoing>Flow_26</bpmn:outgoing>

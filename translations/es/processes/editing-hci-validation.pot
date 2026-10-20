@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: editing-hci-validation\n"
-"POT-Creation-Date: 2026-10-07T18:45:27.390Z\n"
+"POT-Creation-Date: 2026-10-16T16:44:54.304Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: es\n"
@@ -24,7 +24,7 @@ msgstr ""
 msgid "A review agent judges what no checker can: accuracy, voice, exposition, whether the change says what the editor meant."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:324
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:325
 #. Diagram label
 msgid "accept"
 msgstr ""
@@ -69,7 +69,7 @@ msgstr ""
 msgid "Change discarded"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:294
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:295
 #. Diagram label
 msgid "Change is in the corpus"
 msgstr ""
@@ -104,7 +104,7 @@ msgstr ""
 msgid "Describe the intended change"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:323
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:324
 #. Diagram label
 msgid "discard"
 msgstr ""
@@ -194,7 +194,7 @@ msgstr ""
 msgid "Log findings on the bean [todo-manager]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:303
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:304
 #. Diagram label
 msgid "mechanical"
 msgstr ""
@@ -209,12 +209,12 @@ msgstr ""
 msgid "Mechanical validation (system)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:307
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:308
 #. Diagram label
 msgid "no"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:306
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:307
 #. Diagram label
 msgid "non-mechanical"
 msgstr ""
@@ -249,7 +249,7 @@ msgstr ""
 msgid "Proposed change ready"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:322
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:323
 #. Diagram label
 msgid "re-validate"
 msgstr ""
@@ -264,12 +264,12 @@ msgstr ""
 msgid "Record the decision and its audit note [decision-audit]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:285
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:286
 #. Diagram label
 msgid "Resolve or re-open the bean [todo-manager]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:286
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:287
 #. Diagram element documentation
 msgid "Resolved when the change landed clean; left open with the residue when it did not."
 msgstr ""
@@ -279,7 +279,7 @@ msgstr ""
 msgid "Review the findings"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:321
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:322
 #. Diagram label
 msgid "revise"
 msgstr ""
@@ -354,7 +354,7 @@ msgstr ""
 msgid "Work plan — beans (shared by humans and agents)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:308
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:309
 #. Diagram label
 msgid "yes"
 msgstr ""

@@ -133,6 +133,7 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       <bpmn:documentation>Each candidate is resolved against the standard API of the body that publishes it, so that 'authoritative' is a RESOLVED FACT rather than an assertion in the citation. What is checked: that the identifier resolves at the publisher; that the retrieved record matches what the citation claims; that the version and date are the ones cited; and that the publisher is one this folio has declared trusted. STRAWPERSON: the concrete registry list and endpoints are not settled here -- see the cat-harness.processes:policy note.</bpmn:documentation>
       <bpmn:extensionElements>
         <cat-harness.processes:policy enforcement="strict" />
+        <cat-harness.processes:no-skill reason="An external party answers this — the publishing registry or observatory resolves the identifier through its own API. There is no instruction body an agent could be handed, and a skill here would describe somebody else&apos;s behaviour."/>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_10</bpmn:incoming>
       <bpmn:outgoing>Flow_11</bpmn:outgoing>
