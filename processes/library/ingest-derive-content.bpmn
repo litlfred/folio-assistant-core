@@ -19,6 +19,8 @@
                   id="Definitions_DeriveContent"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/0.1.0/processes/ns#" location="https://litlfred.github.io/bootstrap/0.1.0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:resource id="ingestion-agent" name="Ingestion engine"/>
   <bpmn:collaboration id="Collaboration_DeriveContent">
     <bpmn:participant id="Participant_DeriveContent" name="Ingestion subprocess — derive content from the assets" processRef="Process_DeriveContent" />
   </bpmn:collaboration>
@@ -36,9 +38,8 @@
       <cat-harness.processes:policy enforcement="advisory" />
     </bpmn:extensionElements>
     <bpmn:laneSet id="Process_DeriveContent_LaneSet">
-      <bpmn:lane id="Lane_0" name="Ingestion Engine (agent, runs unattended)">
+      <bpmn:lane id="Lane_0" name="Ingestion Engine (agent, runs unattended)" partitionElementRef="ingestion-agent">
         <bpmn:documentation>The only lane in this subprocess, so nothing produced here is checked by a different party before it reaches the L1 graph. Five of these six tasks carry their own NOT IMPLEMENTED note; Task_Provenance does not, and its citation of who or what wrote each narrative is what is meant to stand between a generated description and its being treated as source material.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="ingestion-agent"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>StartEvent_Assets</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Fan</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Archive</bpmn:flowNodeRef>

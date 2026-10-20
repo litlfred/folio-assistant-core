@@ -19,6 +19,14 @@
                   id="Definitions_PublicComment"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/0.1.0/processes/ns#" location="https://litlfred.github.io/bootstrap/0.1.0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:resource id="author" name="Author"/>
+  <bpmn:resource id="build-pipeline" name="Build pipeline"/>
+  <bpmn:resource id="editor" name="Editor"/>
+  <bpmn:resource id="feedback-provider" name="Feedback provider"/>
+  <bpmn:resource id="ingestion-agent" name="Ingestion engine"/>
+  <bpmn:resource id="review-coordinator" name="Review coordinator"/>
+  <bpmn:resource id="reviewer" name="Reviewer / SME"/>
 
   <bpmn:import namespace="https://litlfred.github.io/folio-assistant/workflows" location="content-change-review.bpmn" importType="http://www.omg.org/spec/BPMN/20100524/MODEL" />
   <bpmn:collaboration id="Collaboration_PublicComment">
@@ -39,50 +47,43 @@
       <cat-harness.processes:policy enforcement="strict" />
     </bpmn:extensionElements>
     <bpmn:laneSet id="Process_PublicComment_LaneSet">
-      <bpmn:lane id="Lane_Commenter" name="Public commenter">
+      <bpmn:lane id="Lane_Commenter" name="Public commenter" partitionElementRef="feedback-provider">
         <bpmn:documentation>Outside the folio: returns comments on the review version through a matrix, a form or a letter, and may withdraw one at any time. Never moves a comment past received; everything after that is the review's.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="feedback-provider"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>StartEvent_CommentsReturned</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_BlockFeedback</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_WithdrawRequested</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Withdraw</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Withdrawn</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Intake" name="Intake agent">
+      <bpmn:lane id="Lane_Intake" name="Intake agent" partitionElementRef="ingestion-agent">
         <bpmn:documentation>Turns each returned row, form response or cited passage into one comment and resolves its anchor through the review version's page/line map. A citation that resolves to nothing is kept as unplaced, never dropped.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="ingestion-agent"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_Ingest</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ProposeChangeSets</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Coordinator" name="Review coordinator">
+      <bpmn:lane id="Lane_Coordinator" name="Review coordinator" partitionElementRef="review-coordinator">
         <bpmn:documentation>Owns triage: confirms or moves each anchor, sets type and priority, closes duplicates, routes plain editorial points straight to the editor, and assigns the rest to committee members.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="review-coordinator"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_Triage</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Triage</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Duplicate</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Assign</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Committee" name="Review committee">
+      <bpmn:lane id="Lane_Committee" name="Review committee" partitionElementRef="reviewer">
         <bpmn:documentation>Recommends, does not decide: each member records one recommendation with a rationale, on GitHub or through the tool, and a later one replaces their earlier one. The editor weighs them.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="reviewer"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_GroupChangeSets</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_CommitteeRecommends</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Editor" name="Editor">
+      <bpmn:lane id="Lane_Editor" name="Editor" partitionElementRef="editor">
         <bpmn:documentation>The one lane that decides. Every decision carries one of five codes and, for every code but accepted, a reason the commenter is owed. A decision that does not change the document ends here.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="editor"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_EditorDecides</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ChangesDocument</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Decided</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Author" name="Author (human or agentic)">
+      <bpmn:lane id="Lane_Author" name="Author (human or agentic)" partitionElementRef="author">
         <bpmn:documentation>Once the editor has dispensed a comment with a decision that changes the document, an author makes the edit: a person, or an agent acting in the author role. The edit is made on a feature branch, which may carry the edits for several comments, and recorded on each comment it answers, so a comment shows where its change is being made while it is made.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="author"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_AuthorEdits</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Pipeline" name="Change set — feature branch and staging">
+      <bpmn:lane id="Lane_Pipeline" name="Change set — feature branch and staging" partitionElementRef="build-pipeline">
         <bpmn:documentation>Where the author's edit is reviewed and lands: the feature branch's staging preview gives before/after deep links to each comment's anchor, the change set is reviewed as any content change, and each comment it answers is marked incorporated when it merges.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="build-pipeline"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>CallActivity_ChangeSet</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Incorporate</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Incorporated</bpmn:flowNodeRef>

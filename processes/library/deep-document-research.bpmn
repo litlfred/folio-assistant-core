@@ -7,6 +7,8 @@
                   xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/0.1.0/processes/ns#"
                   id="Definitions_DeepDocumentResearch"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows">
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/0.1.0/processes/ns#" location="https://litlfred.github.io/bootstrap/0.1.0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:resource id="deep-researcher" name="Deep researcher"/>
 
   <!-- ═══════════════════════════════════════════════════════════
        Deep document research — folio-assistant-core
@@ -43,11 +45,10 @@ ADVISORY at the process level. The judgement it contains is which granularity fi
     </bpmn:extensionElements>
 
     <bpmn:laneSet id="LaneSet_DeepDocumentResearch">
-      <bpmn:lane id="Lane_DeepResearcher" name="Deep researcher">
+      <bpmn:lane id="Lane_DeepResearcher" name="Deep researcher" partitionElementRef="deep-researcher">
         <bpmn:documentation>One lane for all four of the paper's agents, because they are one accountability: somebody stands behind the synthesis and its citations. Splitting them into four swimlanes would say that the party who chose the granularity is answerable separately from the party who reported the answer, which is not true and which no diagram here should assert.
 
 The role admits person and agent. Every step is drawn as a plain task rather than a userTask for that reason — an agent performing this is legitimate, and a userTask would assert a person the model does not require.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="deep-researcher"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Start_Question</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>GW_Held</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>End_NotHeld</bpmn:flowNodeRef>

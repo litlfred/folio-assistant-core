@@ -5,7 +5,7 @@
     "id": "Process_L1DocumentIngestion",
     "path": "processes/library/l1-document-ingestion.bpmn"
   },
-  "source_hash": "sha256:8d11cf5663a14833772068d07805dd76afaf1fadf1244e4fc2ca3e3e79976063",
+  "source_hash": "sha256:3a3d605a901d624bf564eb36a0878971718e34e5163f45a598b0bca3f818446a",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -72,6 +72,14 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
       "result": "pass",
       "findings": []
@@ -131,7 +139,7 @@
     }
   },
   "totals": {
-    "pass": 15,
+    "pass": 17,
     "fail": 1,
     "n/a": 9,
     "unknown": 0
