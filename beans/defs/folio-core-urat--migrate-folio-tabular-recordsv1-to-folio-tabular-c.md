@@ -4,7 +4,7 @@ title: Migrate folio-tabular-records/v1 to folio-tabular-csvw/v1, measured on re
 status: in-progress
 type: task
 created_at: 2026-10-10T16:33:03Z
-updated_at: 2026-10-20T16:20:00Z
+updated_at: 2026-10-20T17:25:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -208,3 +208,19 @@ carries `source`, and leaves the CSVW export untouched.
 - Steps 3 and 4 follow as one tools PR:
   - the runner fills `source` through `_tech_meta`, and `narrative` as `not-authored`;
   - `KIND_SIDECAR` and `tabular-records` accept `tabular.csvw.json`.
+
+## Progress 2026-10-20 (lane C): steps 3–4 up; step 5 measured
+
+- Step 3 and 4 are up as cat-harness-tools#474, stacked on #468. Both wait on
+  folio-assistant#2611 re-pinning cat-harness and core.
+- **Step 5 is smaller than planned.** I searched the whole mounted checkout
+  (all 11 layers) for committed tabular records. The only v1 `tabular.jsonld`
+  is `folio-assistant-sci/library/codata-2022/`, which is `format: fixed-width`
+  and stays on v1 by the ruling. core's `test/results/tabular-real-sources/`
+  records are already CSVW. So **nothing needs re-emitting**.
+- Step 5 is therefore two edits, after #474 lands:
+  - v1 `TabularRecordsSchema` refuses `csv | xlsx`, and `tabular-records.py`
+    refuses them too, keeping `ods` and `fixed-width`;
+  - the csvw `source` and `narrative` fields become required. This needs the
+    three `tabular-real-sources` csvw fixtures to gain a `source`, or to be
+    marked as fixtures.
