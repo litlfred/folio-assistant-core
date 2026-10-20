@@ -4,7 +4,7 @@ title: Migrate folio-tabular-records/v1 to folio-tabular-csvw/v1, measured on re
 status: todo
 type: task
 created_at: 2026-10-10T16:33:03Z
-updated_at: 2026-10-11T06:40:00Z
+updated_at: 2026-10-20T15:07:01Z
 parent: folio-assistant-slw1
 ---
 
@@ -81,5 +81,38 @@ fixed-width record. The retirement itself is cat-harness and tools work:
    source NIST publishes.
 4. Retire v1 now and drop CODATA's tabular record. The entry keeps
    `values.json`.
+
+**Default if no answer: 1.**
+
+
+## 2026-10-20 (lane C): the ruling is option 1, and retiring v1 for delimited sources is not a schema edit
+
+The owner ruled option 1 (keep v1 for fixed-width only). What that leaves,
+measured on tools main `8408cbc` and core main:
+
+- **v1 is still the live writer for every CSV and workbook.** tools
+  `scripts/ingest-document.ts:790,816` runs `scripts/tabular-records.py`, which
+  writes `folio-tabular-records/v1` with `format: csv|xlsx|ods`.
+  `check-l1-complete.ts:869` asks for exactly that file.
+- **The CSVW extractors that replace it are core's** (`scripts/tabular-csv.ts`,
+  `scripts/tabular-xlsx.ts`, `scripts/tabular-dak.ts`). tools may not import
+  core, because core sits above tools (C1, epic `7x5n`). So tools' ingest cannot
+  simply call them.
+
+Either way it is a cross-layer move, not a leaf. The schema half (refusing
+`format: csv|xlsx|ods` in v1) has to wait for the move, or it would refuse
+what ingest writes today.
+
+## Owner decision (2026-10-20): where the CSVW tabular rung lives
+
+1. **(Recommended) Move the tabular rung of ingest up into core.** Core's
+   ingest step writes `folio-tabular-csvw/v1` with the extractors already
+   there. `check:l1-complete` then accepts csvw for delimited and workbook
+   files, and v1 only for fixed-width. This fits "core owns content
+   vocabulary": what a table holds is content.
+2. **Move the CSVW extractors down into tools**, beside `tabular-records.py`.
+   Ingest stays in tools, and core loses three scripts it owns today.
+3. **Leave both writers.** v1 stays live for delimited sources too, and v1 is
+   never retired. This is option 1 of the earlier ruling, frozen as it is now.
 
 **Default if no answer: 1.**
