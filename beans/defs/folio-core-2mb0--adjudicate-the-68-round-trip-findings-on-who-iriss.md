@@ -4,7 +4,7 @@ title: Adjudicate the 68 round-trip findings on who-iris's catalogues (66 warn, 
 status: todo
 type: task
 created_at: 2026-10-10T17:25:53Z
-updated_at: 2026-10-11T08:10:00Z
+updated_at: 2026-10-20T17:55:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -87,3 +87,41 @@ and no ruling covers it.
   'INGESTED' → 'IMPORTED';
 - fr 'item' → «document»;
 - the remaining minor warnings, which are listed per entry in the report.
+
+## The 34 still open, grouped (measured 2026-10-20, who-iris @ eff3ac8)
+
+Read from `test/results/translation-roundtrip/iris-catalogues.qa-results.json`:
+33 minor and 1 major, 0 fail. The "ru #12 'INGESTED'" line above is out of date. The
+report has no ru #12 now. The INGESTED banner that still warns is zh #12.
+
+| group | entries | what came back |
+|---|---|---|
+| A. 'ingested' | ru 9, 13, 20, 54, 80; zh 9, 12, 13, 20, 54, 80 (11) | ru 'imported', zh 'included' |
+| B. fr DSpace 'item' | fr 16, 19, 41 (3) | «document» |
+| C. zh 'directory' | zh 22 (1, **major**) | 'catalogue', which is a distinct defined object here |
+| D. 'kind' | fr 22, ru 22 (2) | 'type', which loses the graph-typology term in the addressing rule |
+| E. fixed state names | ru 92, zh 92 ('referenced'); es 102 ('State') (3) | a phrase, or 'Status', instead of the fixed name |
+| F. 'captured' | zh 70, 78 (2) | 'harvested', which is the OAI-PMH term of art |
+| G. small sense drifts | ar 11, 39, 76, 80, 91; es 23, 95; fr 100; ru 25, 26, 76, 101 (12) | a near-synonym, or a change of mood |
+
+C, D, E and F collide with a term this product or DSpace defines. That is the same
+shape as 'CDN node' and ru «запись», which were both ruled real. A, B and G
+keep the meaning a reader needs, which is the same shape as 'held', ruled spurious.
+
+## Owner decision
+
+1. **(Recommended) Fix C, D, E and F (8 entries). Rule A, B and G spurious (26).**
+   The 8 fixes give each locale's translator note the defined term: zh
+   'directory' is not 'catalogue', 'kind' is not 'type', state names are
+   rendered as names, and 'captured' is not 'harvested'. The round trip is then
+   re-run on those 8 strings only, as before. If they pass, 2mb0 closes at
+   600/600 adjudicated, and lffo's 580/580 is annotated as superseded.
+2. **As 1, and also fix A.** 'ingest' becomes a glossary term with one fixed
+   rendering per locale (the translator proposes it, the owner accepts or
+   changes it). 19 strings change.
+3. **Fix all 34.** B and G change as well. This is the most churn, and it
+   mostly swaps one near-synonym for another.
+4. **Rule all 34 spurious and close 2mb0.** No PO change. C stays wrong in zh.
+
+**Default if no answer:** option 1. The 8 strings it changes are in who-iris's
+PO files, and the change is reversible.
