@@ -163,12 +163,20 @@
       ]
     },
     {
+      "id": "core-pipeline-plugins",
+      "path": "pipeline-plugins/",
+      "description": "The generic pipeline slots this layer fills, one `folio-pipeline-plugin/v1` node per slot, naming `PIPELINE_IMPLEMENTATIONS` in `pipeline/plugin-slots.ts`, registered for a folio through its dependency tree by `loadContributions`. One today: `tabular-csvw` (bean `urat`, owner ruling 2026-10-20), through which cat-harness-tools' `ingest-document.ts` reaches this layer's CSVW extractors (`scripts/tabular-csv.ts`, `scripts/tabular-xlsx.ts`) without naming this layer.",
+      "graphTypologies": [
+        "pipeline-plugins"
+      ]
+    },
+    {
       "id": "core-pipeline",
       "path": "pipeline/",
       "graphTypologies": [
         "code"
       ],
-      "description": "`pipeline/qa-checkers-recommendation.ts`, the automated checker `qa-checkers/recommendation-strength-resolves.json` names (`RECOMMENDATION_CHECKERS`). Under `pipeline/` because that is where the harness's `imports` input-site looks for a contributed checker, as the science layer's cost checkers and the DAK layer's checkers are; it was `content/pipeline/` until every layer's pipeline moved to `pipeline/` (owner, 2026-10-14)."
+      "description": "`pipeline/qa-checkers-recommendation.ts`, the automated checker `qa-checkers/recommendation-strength-resolves.json` names (`RECOMMENDATION_CHECKERS`), and `pipeline/plugin-slots.ts`, the table `pipeline-plugins/tabular-csvw.json` names (`PIPELINE_IMPLEMENTATIONS`, bean `urat`). Under `pipeline/` because that is where the harness's `imports` input-site looks for a contributed checker, as the science layer's cost checkers and the DAK layer's checkers are; it was `content/pipeline/` until every layer's pipeline moved to `pipeline/` (owner, 2026-10-14)."
     },
     {
       "id": "folio-assistant-core-typologies",
