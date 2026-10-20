@@ -4,7 +4,7 @@ title: Adjudicate the 68 round-trip findings on who-iris's catalogues (66 warn, 
 status: todo
 type: task
 created_at: 2026-10-10T17:25:53Z
-updated_at: 2026-10-20T17:55:00Z
+updated_at: 2026-10-20T18:30:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -125,3 +125,22 @@ keep the meaning a reader needs, which is the same shape as 'held', ruled spurio
 
 **Default if no answer:** option 1. The 8 strings it changes are in who-iris's
 PO files, and the change is reversible.
+
+## Owner ruling 2026-10-20: fix all 34 (option 3), applied in who-iris#77
+
+The owner answered "1", then "2", then "3". Asked which one stood, they chose
+"3: fix all 34".
+
+- **Fixes:** all 34 `msgstr` values in the five site PO files. The renderings
+  are listed in who-iris#77, and the adjudicator was given them as a glossary.
+- **Round trip, re-run on those 34 strings only, same two-agent protocol:**
+  33 passed the first time. ar 80 warned ("none recorded" came back as
+  "unregistered"); it was corrected, re-run, and passed.
+- **Totals: 600 pass / 0 warn / 0 fail** (from 532/66/2 at the start).
+
+Done when, re-measured:
+- [x] each flagged entry has a recorded outcome
+- [x] the real ones are fixed and re-run on the changed strings only
+- [x] lffo's 580/580 is annotated as superseded (`supersedes_note` in the report)
+
+Closes when who-iris#77 merges.
