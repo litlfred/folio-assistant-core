@@ -4,7 +4,7 @@ title: Migrate folio-tabular-records/v1 to folio-tabular-csvw/v1, measured on re
 status: todo
 type: task
 created_at: 2026-10-10T16:33:03Z
-updated_at: 2026-10-20T15:07:01Z
+updated_at: 2026-10-20T15:12:52Z
 parent: folio-assistant-slw1
 ---
 
@@ -116,3 +116,19 @@ what ingest writes today.
    never retired. This is option 1 of the earlier ruling, frozen as it is now.
 
 **Default if no answer: 1.**
+
+## Owner ruling 2026-10-20: option 1
+
+The owner, verbatim: *"(Recommended) Move that ingest step up into core, next to
+the newer extractors."* Next steps:
+- [ ] Core's ingest writes `folio-tabular-csvw/v1` for delimited and workbook
+  sources, using `tabular-csv.ts`, `tabular-xlsx.ts` and `tabular-dak.ts`.
+- [ ] tools `ingest-document.ts` stops running `tabular-records.py` for those
+  files. It keeps the fixed-width path, which is the only one left for v1.
+- [ ] `check:l1-complete` accepts csvw for delimited and workbook MIME types, and
+  v1 only for fixed-width.
+- [ ] `folio-tabular-records/v1` refuses `format: csv|xlsx|ods` in new records.
+  Records already committed are listed or migrated.
+
+Queued behind cat-tools-bbnd (the translation drawer), which the owner asked
+for in the same session.
