@@ -1,12 +1,12 @@
 ---
 # folio-core-shsz
 title: Translation info drawer on every translation warning (pointer → cat-tools-bbnd)
-status: todo
+status: completed
 type: feature
 tags:
     - rehomed
 created_at: 2026-10-10T17:26:40Z
-updated_at: 2026-10-20T15:32:54Z
+updated_at: 2026-10-20T17:20:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -35,3 +35,12 @@ on core main:
   library-site change, not a data hook.
 
 Stays open for the library half. It closes when `cat-tools-bbnd` does, as filed.
+
+## Completed 2026-10-20 (lane C), with `cat-tools-bbnd`
+
+- Document pages already have the drawer through the theme. Core changes nothing.
+- The library half is moot, not open. `build-library-site.ts` publishes only
+  under `en/`, and a library entry is a frozen source that nothing translates.
+  A library page shows no translation warning, so there is nothing for a drawer
+  to open from.
+- If the library is ever translated, that is a new bean.
