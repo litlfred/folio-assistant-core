@@ -4,7 +4,7 @@ title: Migrate folio-tabular-records/v1 to folio-tabular-csvw/v1, measured on re
 status: in-progress
 type: task
 created_at: 2026-10-10T16:33:03Z
-updated_at: 2026-10-20T16:10:00Z
+updated_at: 2026-10-20T16:20:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -199,3 +199,12 @@ That is a schema question, and the schema is cat-harness's, so it is not mine to
 
 **Default if no answer: option 1.** It keeps one record per table, matches how every other rung
 carries `source`, and leaves the CSVW export untouched.
+
+## Owner ruling 2026-10-20: option 1
+
+*"(Recommended) Add source and narrative to the CSVW record."*
+
+- cat-harness#378 carries the schema change.
+- Steps 3 and 4 follow as one tools PR:
+  - the runner fills `source` through `_tech_meta`, and `narrative` as `not-authored`;
+  - `KIND_SIDECAR` and `tabular-records` accept `tabular.csvw.json`.
