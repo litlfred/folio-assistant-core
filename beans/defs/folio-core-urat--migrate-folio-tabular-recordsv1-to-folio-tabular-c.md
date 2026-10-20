@@ -4,7 +4,7 @@ title: Migrate folio-tabular-records/v1 to folio-tabular-csvw/v1, measured on re
 status: in-progress
 type: task
 created_at: 2026-10-10T16:33:03Z
-updated_at: 2026-10-20T15:36:34Z
+updated_at: 2026-10-20T16:20:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -157,3 +157,54 @@ which a higher layer fills and generic code calls at run time.
    as csvw.
 
 Order: 1 and 3 in tools, 2 in core, then a repin, then 4 and 5.
+
+## Progress 2026-10-20 (lane C): steps 1 and 2 are up; step 3 needs a ruling
+
+- Step 1: cat-harness-tools#468 declares the `tabular-csvw` slot. It is required, with no v1 fallback.
+- Step 2: folio-assistant-core#160 fills it with `extractCsv` and `extractXlsx`. ODS returns `null` because core has no CSVW reader for it.
+
+**What stops step 3, measured on tools main.** The v1 record carries two things the
+CSVW record does not:
+- **`source`**: the technical-metadata block every sidecar carries (`file`, `sha256`,
+  `mimetype_sniffed`, publisher).
+- **`narrative`**: the `ju0u` state machine.
+
+Three consumers read them:
+- `check-l1-complete` reads `source` through `sourceBlockOf`, for the
+  technical-metadata and mimetype-scoped requirements.
+- `check-library-qa` reads `source.file` and `source.publisher` for its
+  bibliographic fields.
+- `narratives.ts` reads `narrative`, for its review queue.
+
+`TabularCsvwSchema` is `{ $schema, doc_id, tables }` and nothing else. So a csvw-only entry
+would fail L1 for want of `source`, and its narrative would drop out of the review queue.
+That is a schema question, and the schema is cat-harness's, so it is not mine to settle in passing.
+
+## Owner decision (2026-10-20): where a CSVW entry's provenance lives
+
+1. **(Recommended) Add `source` and `narrative` to `folio-tabular-csvw/v1`**, as the same
+   blocks v1 carries: `source: record`, `narrative: NarrativeSchema`.
+   - They are optional in the schema until the committed records are re-emitted, then required.
+   - The record stays plain JSON (bean `792y`). `toCsvw` already emits only CSVW keys, so the
+     derived CSVW document is unchanged.
+   - The runner fills `source` from `_tech_meta`, the same call every rung makes.
+   - `KIND_SIDECAR` gains `tabular.csvw.json`, and `sourceBlockOf` then finds it with no other change.
+   - Cost: one cat-harness schema PR, then tools steps 3 and 4 in one PR.
+2. **A separate `source.json` sidecar**, written beside whatever record a rung writes.
+   - It is cleaner in principle, but it touches every rung and `sourceBlockOf`, not just the
+     tabular one, so it is much wider than this bean.
+3. **Write both**: csvw for the tables, and v1 `tabular.jsonld` kept for `source` and `narrative`.
+   - It is the smallest diff, but it contradicts the ruling ("never falls back to v1"), and
+     there would be two records of one table that can drift.
+
+**Default if no answer: option 1.** It keeps one record per table, matches how every other rung
+carries `source`, and leaves the CSVW export untouched.
+
+## Owner ruling 2026-10-20: option 1
+
+*"(Recommended) Add source and narrative to the CSVW record."*
+
+- cat-harness#378 carries the schema change.
+- Steps 3 and 4 follow as one tools PR:
+  - the runner fills `source` through `_tech_meta`, and `narrative` as `not-authored`;
+  - `KIND_SIDECAR` and `tabular-records` accept `tabular.csvw.json`.
