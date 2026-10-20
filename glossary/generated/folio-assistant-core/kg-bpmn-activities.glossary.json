@@ -7,6 +7,14 @@
   "source": "BPMN activities of folio-assistant-core",
   "terms": [
     {
+      "id": "globaltask.gt_seedworkplan",
+      "prefLabel": "Seed the work plan [todo-manager]",
+      "definition": "The plan becomes beans, so a resumed session or a sibling agent can pick it up. From here on, beans/ is the shared answer to 'what is done, what is next' — for humans and agents alike.",
+      "notation": "GT_SeedWorkPlan",
+      "source": "folio-assistant-core/processes/folio-assistant-core-global-tasks.bpmn#GT_SeedWorkPlan",
+      "status": "candidate"
+    },
+    {
       "id": "process_boardopenclose.a_close",
       "prefLabel": "Close the window back to its avatar",
       "definition": "[x] closes the window back to its avatar. Only a person's [x] does this; a zoom-out never closes a window, or [x] and zooming become indistinguishable to the reader.",
@@ -545,7 +553,7 @@
     {
       "id": "process_documentauthoring.task_seedplan",
       "prefLabel": "2 · Seed the work plan [todo-manager]",
-      "definition": "The plan becomes beans, so a resumed session or a sibling agent can pick it up.",
+      "definition": "The plan becomes beans, so a resumed session or a sibling agent can pick it up. From here on, beans/ is the shared answer to 'what is done, what is next' — for humans and agents alike.",
       "notation": "Task_SeedPlan",
       "source": "folio-assistant-core/processes/content/authoring-a-document.bpmn#Task_SeedPlan",
       "status": "candidate"
@@ -849,7 +857,7 @@
     {
       "id": "process_gettingstarted.task_pagesbootstrap",
       "prefLabel": "Start the Pages build and derive the URL",
-      "definition": "scripts/pages-bootstrap.ts: check the gh-pages branch first (absent is `unprovisioned`), derive the site URL from the git remote or <name>.config.json, report whether a publish workflow exists and the Pages source it needs, and optionally probe until the site answers.",
+      "definition": "scripts/pages-bootstrap.ts: check the gh-pages branch first (absent is `unprovisioned`), derive the site URL from the git remote or the instance's config (its index.config.json entry), report whether a publish workflow exists and the Pages source it needs, and optionally probe until the site answers.",
       "notation": "Task_PagesBootstrap",
       "source": "folio-assistant-core/processes/conduct/getting-started.bpmn#Task_PagesBootstrap",
       "status": "candidate"
@@ -865,7 +873,7 @@
     {
       "id": "process_gettingstarted.task_readfacts",
       "prefLabel": "Read the repository facts",
-      "definition": "Mechanical, read-only: does a `<name>.config.json` declare a contentType, does the working tree hold somebody's existing project, and what has the user actually said. These are the three inputs to folio-intent.dmn. Non-relaxable: scaffolding without looking first is how a folio gets written over somebody's project.",
+      "definition": "Mechanical, read-only: does the instance's config (its `index.config.json` entry; a legacy `<name>.config.json` only as a fallback) declare a contentType, does the working tree hold somebody's existing project, and what has the user actually said. These are the three inputs to folio-intent.dmn. Non-relaxable: scaffolding without looking first is how a folio gets written over somebody's project.",
       "notation": "Task_ReadFacts",
       "source": "folio-assistant-core/processes/conduct/getting-started.bpmn#Task_ReadFacts",
       "status": "candidate"
@@ -897,7 +905,7 @@
     {
       "id": "process_gettingstarted.task_scaffold",
       "prefLabel": "Scaffold the folio (folio_init)",
-      "definition": "content/, uploads/, library/, the first manifests, <slug>.json and <slug>.config.json, the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store. Refuses rather than overwrites when a folio is already present.",
+      "definition": "content/, uploads/, library/, the first manifests, <slug>.json and index.config.json (the instance's config inline in its entry; no <slug>.config.json, bean ymvt), the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store. Refuses rather than overwrites when a folio is already present.",
       "notation": "Task_Scaffold",
       "source": "folio-assistant-core/processes/conduct/getting-started.bpmn#Task_Scaffold",
       "status": "candidate"
@@ -1097,7 +1105,7 @@
     {
       "id": "process_lifecycle.task_seedbeans",
       "prefLabel": "Seed the work plan [todo-manager]",
-      "definition": "The plan becomes beans. From here on, beans/ is the shared answer to 'what is done, what is next' — for humans and agents alike.",
+      "definition": "The plan becomes beans, so a resumed session or a sibling agent can pick it up. From here on, beans/ is the shared answer to 'what is done, what is next' — for humans and agents alike.",
       "notation": "Task_SeedBeans",
       "source": "folio-assistant-core/processes/content/content-lifecycle.bpmn#Task_SeedBeans",
       "status": "candidate"
