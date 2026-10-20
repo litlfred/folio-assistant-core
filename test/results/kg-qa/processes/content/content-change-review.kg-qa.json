@@ -5,7 +5,7 @@
     "id": "Process_ContentChangeReview",
     "path": "processes/content/content-change-review.bpmn"
   },
-  "source_hash": "sha256:bb5ea40144228d1de18f010e9ef467aaa2e30372988f4c16a244be3d6f229b5c",
+  "source_hash": "sha256:abafd86e7ed8b3cdc9376799671e2be27fd914026153574ed4daed8551fb8012",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -120,6 +120,14 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
       "result": "pass",
       "findings": []
@@ -183,7 +191,7 @@
     }
   },
   "totals": {
-    "pass": 16,
+    "pass": 18,
     "fail": 1,
     "n/a": 8,
     "unknown": 0

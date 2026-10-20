@@ -5,7 +5,7 @@
     "id": "Process_Editing",
     "path": "processes/content/editing-hci-validation.bpmn"
   },
-  "source_hash": "sha256:857fa62be930bf9b50ee9ec302ce492bb7c76275cf260de3fa496251346cd775",
+  "source_hash": "sha256:6c0e7cc6db7707373a96227c9c5fd3b206a9c73864d6f55b581de817d5e0ba35",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -57,6 +57,10 @@
         {
           "where": "Task_ReviseEdit",
           "detail": "names skill \"before-after-preview\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_Commit",
+          "detail": "names skill \"corpus-commit-contract\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
         }
       ]
     },
@@ -84,14 +88,17 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
-      "result": "fail",
-      "findings": [
-        {
-          "where": "Task_Commit",
-          "detail": "\"Commit into the corpus\" names no skill. Give it <bootstrap.processes:skill ref=\"…\"/>, or, if none could exist, declare <cat-harness.processes:no-skill reason=\"…\"/> saying why."
-        }
-      ]
+      "result": "pass",
+      "findings": []
     },
     "activity-fulfilment-kind": {
       "result": "n/a",
@@ -144,8 +151,8 @@
     }
   },
   "totals": {
-    "pass": 14,
-    "fail": 2,
+    "pass": 17,
+    "fail": 1,
     "n/a": 9,
     "unknown": 0
   }

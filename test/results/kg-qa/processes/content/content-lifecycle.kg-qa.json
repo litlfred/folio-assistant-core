@@ -5,7 +5,7 @@
     "id": "Process_Lifecycle",
     "path": "processes/content/content-lifecycle.bpmn"
   },
-  "source_hash": "sha256:4091726d7118af5bb4848c027383fac8261c81194e4f4379fe25b45f7fa1b6c9",
+  "source_hash": "sha256:cf05d4e6421d438599554658890aded665e5ee913b1cddc0838a9d029bd76e83",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -92,6 +92,14 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
       "result": "pass",
       "findings": []
@@ -142,7 +150,7 @@
     }
   },
   "totals": {
-    "pass": 15,
+    "pass": 17,
     "fail": 1,
     "n/a": 9,
     "unknown": 0

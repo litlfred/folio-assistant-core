@@ -5,7 +5,7 @@
     "id": "Process_DeepDocumentResearch",
     "path": "processes/library/deep-document-research.bpmn"
   },
-  "source_hash": "sha256:8f4ef112803914d89b695bd1441946af50ebc26e15eb2d9cb6ec0be033dc4567",
+  "source_hash": "sha256:93ceaec3a4a10669fe3f0af0d3f5237fd778442f55c2abd7b7a8e19b08913398",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -76,6 +76,14 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
       "result": "pass",
       "findings": []
@@ -126,7 +134,7 @@
     }
   },
   "totals": {
-    "pass": 14,
+    "pass": 16,
     "fail": 1,
     "n/a": 10,
     "unknown": 0

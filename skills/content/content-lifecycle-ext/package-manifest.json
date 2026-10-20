@@ -1,10 +1,12 @@
 {
   "name": "content-lifecycle-ext",
   "version": "0.1.0",
-  "description": "Core refinements of the harness's generic content lifecycle: quality control across a folio's QA checks (placement PR1, #1702), and reviewer comments on a folio's edit-set (moved down from cat-harness, bean lthi).",
+  "description": "Core refinements of the harness's generic content lifecycle: quality control across a folio's QA checks (placement PR1, #1702), and reviewer comments on a folio's edit-set (moved down from cat-harness, bean lthi); and the contracts two lower roles are held to in this layer's diagrams: the corpus when an accepted edit is committed, and an external registry when a source's authority is checked.",
   "skills": [
     "quality-control",
-    "review-comments"
+    "review-comments",
+    "corpus-commit-contract",
+    "registry-authority-contract"
   ],
   "lifecycleStages": [
     "validate",

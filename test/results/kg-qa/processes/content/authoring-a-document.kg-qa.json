@@ -5,7 +5,7 @@
     "id": "Process_DocumentAuthoring",
     "path": "processes/content/authoring-a-document.bpmn"
   },
-  "source_hash": "sha256:f0f4e87a63754ecad2e99fa955c0ceb28a2f0d48b8c79a0eb31bc48b14fe2822",
+  "source_hash": "sha256:083adf86a38bd2dc26103227e0fdd05f8b37d09993664a2a7231f1ba8af6f627",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -88,6 +88,14 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
       "result": "pass",
       "findings": []
@@ -138,7 +146,7 @@
     }
   },
   "totals": {
-    "pass": 14,
+    "pass": 16,
     "fail": 1,
     "n/a": 10,
     "unknown": 0

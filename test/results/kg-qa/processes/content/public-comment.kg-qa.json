@@ -5,7 +5,7 @@
     "id": "Process_PublicComment",
     "path": "processes/content/public-comment.bpmn"
   },
-  "source_hash": "sha256:b1cf46e00435e5a8c91414f86b4740d6680ea24c477acd9c52f82b62b388eb86",
+  "source_hash": "sha256:99b9be9a52937ea2731aa4c97c27571c7207f3f5202effab034b9d6240debf9d",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -100,6 +100,14 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
       "result": "pass",
       "findings": []
@@ -159,7 +167,7 @@
     }
   },
   "totals": {
-    "pass": 14,
+    "pass": 16,
     "fail": 2,
     "n/a": 9,
     "unknown": 0
