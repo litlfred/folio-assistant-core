@@ -250,3 +250,45 @@ paths and fixtures: `pipeline/tabular-nodes.ts` (`SHEETED_FORMATS`),
 `tabular-records.py`'s own tests. Refusing those formats in the schema means
 moving those fixtures to `fixed-width`/`ods` and retiring the dead
 `csv`/`xlsx` reader paths, so it is its own PR.
+
+## Progress 2026-10-21 (lane C): 5a, 5b and 5c-i are merged; 5c-ii measured
+
+Merged: cat-harness#399 (5a), tools#524 and core#170 (5b), tools#525 and
+tools#533 (test prep), cat-harness#401 (5c-i: `source` and `narrative`
+required on `folio-tabular-csvw/v1`).
+
+**5c-ii, measured on tools main d2b17cc:**
+- `tabular-records.py` writes only `xlsx` or `csv`. It has no ODS or
+  fixed-width path; CODATA's fixed-width record is written by
+  folio-assistant-sci's `codata-ingest.ts`.
+- Ingest no longer calls it for CSV or xlsx (tools#474). It calls it only
+  for **ODS**, and on ODS it writes nothing: `records()` raises `sniffed
+  application/vnd.oasis.opendocument.spreadsheet — not a CSV or spreadsheet`
+  and exits 1 (reproduced on a minimal ODS). So the ODS route has never
+  produced a record; ODS is in practice unread already.
+- So v1 has no working writer left. Retiring the writer means deleting its
+  xlsx/csv parser and most of `tests/tabular-records.test.ts` (366 lines,
+  bean `p67i`'s fixtures), and routing ODS through the `tabular-csvw` slot,
+  where core returns `null` and ingest SKIPs honestly.
+- **What could not be measured:** whether any folio outside this index
+  commits a v1 `tabular.jsonld` with `format: csv|xlsx`. The test file itself
+  says "folio repositories hold those". folio-test and smart-ra hold none;
+  other folios are not visible from here. A schema-level refusal would turn
+  such a folio's gates red.
+
+## Owner decision (2026-10-21): how far 5c-ii goes
+
+1. **(Recommended) Retire the writer; keep the schema reading old records.**
+   `tabular-records.py` refuses `csv`/`xlsx` (pointing at the CSVW rung), its
+   dead parser and writer tests go, and ODS routes through the
+   `tabular-csvw` slot. `folio-tabular-records/v1` keeps accepting
+   `csv|xlsx` so a folio's committed records still validate, and its
+   description marks those formats legacy. Nothing new can be written as
+   v1 except fixed-width. One tools PR; no folio can break.
+2. **Option 1, plus the schema refuses `csv|xlsx|ods`.** The full ruling as
+   written. It needs each folio checked for committed v1 `csv`/`xlsx`
+   records, and those migrated, first.
+3. **Fix ODS only.** Route ODS through the CSVW slot so the route stops
+   failing, and leave the v1 writer and schema as they are.
+
+**Default if no answer: 1.**
