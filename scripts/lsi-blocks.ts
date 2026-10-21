@@ -53,6 +53,7 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 
 import { declaredGraphs, instanceRootsIn } from "@litlfred/cat-harness/schemas/cat-harness.js";
+import { narrativeFor, type NarrativeSlot } from "@litlfred/cat-harness/schemas/narrative.js";
 import { buildLsi, neighboursOf, query, type LsiUnit } from "@litlfred/cat-harness-tools/pipeline/lsi.ts";
 
 /** A block node as the corpus writes it — only the fields a block's text is read from. */
@@ -62,7 +63,8 @@ interface BlockNode {
   title?: string;
   label?: string;
   text?: string;
-  narrative?: { text?: string };
+  /** One narrative, or one per language (bean `cat-tools-e1lo`, stage 3). */
+  narrative?: { text?: string | null; lang?: string } | Array<{ text?: string | null; lang?: string }>;
   headers?: unknown;
 }
 
@@ -85,7 +87,10 @@ export function blockText(block: BlockNode, blockFile: string): { text: string }
       return { text: [heading, readFileSync(file, "utf8")].filter(Boolean).join("\n\n") };
     }
     case "figure": {
-      const narrative = block.narrative?.text;
+      // A slot may hold one narrative or one per language; a single-text
+      // reader takes the one `narrativeFor` picks (locale match, else first).
+      const slot = block.narrative;
+      const narrative = slot && (!Array.isArray(slot) || slot.length > 0) ? narrativeFor(slot as NarrativeSlot).text : undefined;
       if (!heading && !narrative) return { reason: "a figure with no title, label or narrative" };
       return { text: [heading, narrative].filter(Boolean).join("\n\n") };
     }
