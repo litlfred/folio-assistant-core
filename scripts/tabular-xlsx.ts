@@ -64,7 +64,7 @@ import { inflateRawSync } from "node:zlib";
 
 import { XMLParser, XMLValidator } from "fast-xml-parser";
 
-import { TABULAR_CSVW_SCHEMA_ID, type TabularCsvw, TabularCsvwSchema } from "@litlfred/cat-harness/schemas/tabular-csvw.js";
+import { TABULAR_CSVW_SCHEMA_ID, type TabularCsvwTables, TabularCsvwTablesSchema } from "@litlfred/cat-harness/schemas/tabular-csvw.js";
 import { classifyColumn, columnNames, firstRowIsHeader } from "./tabular-columns.js";
 import { NotATableError } from "./tabular-csv.js";
 import { readDecisionTable } from "./tabular-dak.js";
@@ -264,7 +264,7 @@ export function splitAtDecisionIds(b: Block, cells: ReadonlyMap<string, string>)
 }
 
 /** The record for one workbook. Pure: no filesystem. */
-export function extractXlsx(buf: Buffer, opts: { url: string; docId: string }): TabularCsvw {
+export function extractXlsx(buf: Buffer, opts: { url: string; docId: string }): TabularCsvwTables {
   if (buf.length < 4 || buf.readUInt32LE(0) !== 0x04034b50) throw new NotATableError("no ZIP signature, so not a workbook");
   const zip = readZip(buf);
   // A malformed part is refused, not half-read: the parser is lenient, and a
@@ -283,7 +283,7 @@ export function extractXlsx(buf: Buffer, opts: { url: string; docId: string }): 
   const shared = list(xml.parse(text("xl/sharedStrings.xml") ?? "").sst?.si).map(richText);
   const isDate = dateStyles(text("xl/styles.xml"));
 
-  const tables: TabularCsvw["tables"] = [];
+  const tables: TabularCsvwTables["tables"] = [];
   for (const sheet of list(xml.parse(workbook).workbook?.sheets?.sheet)) {
     const name = String(sheet["@name"]);
     const target = rels.get(sheet["@id"]);
@@ -333,7 +333,7 @@ export function extractXlsx(buf: Buffer, opts: { url: string; docId: string }): 
       });
     }
   }
-  return TabularCsvwSchema.parse({ $schema: TABULAR_CSVW_SCHEMA_ID, doc_id: opts.docId, tables });
+  return TabularCsvwTablesSchema.parse({ $schema: TABULAR_CSVW_SCHEMA_ID, doc_id: opts.docId, tables });
 }
 
 function main(argv: string[]): number {
@@ -344,7 +344,7 @@ function main(argv: string[]): number {
   }
   const flag = (f: string) => (argv.includes(f) ? argv[argv.indexOf(f) + 1] : undefined);
   const url = basename(file);
-  let record: TabularCsvw;
+  let record: TabularCsvwTables;
   try {
     record = extractXlsx(readFileSync(file), { url, docId: flag("--doc-id") ?? url.replace(/\.[^.]+$/, "") });
   } catch (e) {
