@@ -1,6 +1,6 @@
 /**
  * The generic pipeline slots folio-assistant-core fills, as one typed table,
- * the same shape as folio-assistant-sci's. Each `pipeline-plugins/<slot>.json`
+ * the same shape a content layer's own table takes. Each `pipeline-plugins/<slot>.json`
  * node names this table and its slot; this table is what `tsc` checks against
  * the generic side's contract (`PipelinePlugins`).
  *
