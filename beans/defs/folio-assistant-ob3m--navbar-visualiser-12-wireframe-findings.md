@@ -32,7 +32,7 @@ Related: `folio-assistant-603s`, `folio-assistant-1le7`, `folio-assistant-z1ug`
 
 When fixed, re-draw `cat-harness/docs/wireframes/navbar/` and re-run `bun run cat wireframe:check` and `bun run cat check:wireframes`.
 
-**New notes on this bean go in [`beans/notes/`](../notes/README.md), not here** (bean `m61r`, issue #1853): `bun run cat beans:note folio-assistant-ob3m --title "…"` writes one file per pull request, so sibling pull requests stop conflicting on this file. The dated sections below were appended before that convention and stay where they are.
+**New notes on this bean go in [`beans/notes/`](../notes/), not here** (bean `m61r`, issue #1853): `bun run cat beans:note folio-assistant-ob3m --title "…"` writes one file per pull request, so sibling pull requests stop conflicting on this file. The dated sections below were appended before that convention and stay where they are.
 
 ## Re-verified 2026-09-29 on `main` 35402147f
 

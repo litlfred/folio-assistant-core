@@ -5,7 +5,7 @@
     "id": "Process_L1Gate",
     "path": "processes/library/ingest-l1-completeness-gate.bpmn"
   },
-  "source_hash": "sha256:80fb429056edb9b2bfe6085b46de3d22fce9cd6bee648481e7a7569cbda2851a",
+  "source_hash": "sha256:8ac8a6051751c4e4c04d92165d879767cd9d853093fe95d498d34a48ff072278",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -35,6 +35,10 @@
       "result": "fail",
       "findings": [
         {
+          "where": "Task_RoundTrip",
+          "detail": "names skill \"untainted-verification\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
           "where": "Task_FlagDrift",
           "detail": "names skill \"adjudication\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
         }
@@ -61,6 +65,14 @@
       "findings": []
     },
     "role-carries-activity-skill": {
+      "result": "pass",
+      "findings": []
+    },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
       "result": "pass",
       "findings": []
     },
@@ -119,7 +131,7 @@
     }
   },
   "totals": {
-    "pass": 15,
+    "pass": 17,
     "fail": 1,
     "n/a": 9,
     "unknown": 0

@@ -1,7 +1,7 @@
 {
   "$schema": "folio-block-kind/v1",
   "kind": "equation",
-  "adapter": "paper",
+  "adapter": "document",
   "profile": "document",
   "labelPrefix": "eq",
   "folioType": "folio-assistant-core:Equation",

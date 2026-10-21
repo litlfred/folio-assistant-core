@@ -28,6 +28,8 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-schemas`, 
 | [`masked-region.test.ts`](masked-region.test.ts) | a file |  |
 | [`materialization-compiled.test.ts`](materialization-compiled.test.ts) | a file |  |
 | [`materialization.ts`](materialization.ts) | a file |  |
+| [`own-namespace.test.ts`](own-namespace.test.ts) | a file |  |
+| [`own-namespace.ts`](own-namespace.ts) | a file |  |
 | [`public-comment.ts`](public-comment.ts) | a file |  |
 | [`remote-content.test.ts`](remote-content.test.ts) | a file |  |
 | [`review-comment.test.ts`](review-comment.test.ts) | a file |  |
@@ -35,4 +37,5 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-schemas`, 
 | [`review-verdict.test.ts`](review-verdict.test.ts) | a file |  |
 | [`review-verdict.ts`](review-verdict.ts) | a file |  |
 | [`skills/`](skills/) | _nothing declares what this holds_ | |
+
 <!-- kg:subgraph:end -->

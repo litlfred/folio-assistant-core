@@ -1,6 +1,6 @@
 /**
  * `folio-glossary/v1`: a glossary as W3C SKOS. Core's `glossary` graph typology
- * (`cat-harness/schemas/glossary-graph-typology.ts` registers the name).
+ * (`typologies/glossary.json` declares the kind, since folio-assistant#2598).
  *
  * Owner, 2026-09-23: *"put glossary into folio-assistant-core"*, *"it should be
  * part of general pracice w/ glossary/ page"*, and *"can glossary be
@@ -29,9 +29,9 @@
  */
 import { z } from "zod";
 
-import { PROV_CONTEXT } from "../../cat-harness/schemas/prov.ts";
-import { STANDARD_PREFIXES } from "../../cat-harness/schemas/vocab-mapping-fhir.ts";
-import { applyVocabMapping, contextBindings, vocabMapping, type VocabMapping } from "../../cat-harness/schemas/vocab-mapping.ts";
+import { PROV_CONTEXT } from "@litlfred/cat-harness/schemas/prov.ts";
+import { STANDARD_PREFIXES } from "@litlfred/cat-harness/schemas/vocab-mapping-fhir.ts";
+import { applyVocabMapping, contextBindings, vocabMapping, type VocabMapping } from "@litlfred/cat-harness/schemas/vocab-mapping.ts";
 import { fileURLToPath } from "node:url";
 
 export const GLOSSARY_SCHEMA_ID = "folio-glossary/v1" as const;

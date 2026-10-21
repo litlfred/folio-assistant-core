@@ -1,7 +1,7 @@
 ---
 # folio-assistant-qbfm
 title: 'tools visualiser: 6 wireframe findings'
-status: todo
+status: completed
 type: task
 priority: normal
 tags:
@@ -9,7 +9,7 @@ tags:
     - ui
     - visualiser-tools
 created_at: 2026-09-23T10:36:15Z
-updated_at: 2026-09-30T16:12:47Z
+updated_at: 2026-10-10T16:35:03Z
 parent: folio-assistant-4ccr
 ---
 
@@ -45,3 +45,28 @@ Each finding re-measured on a local build of that commit (`preview-site.sh`, ser
 - **STILL-PRESENT** — Mobile: 5-column table in 358px column, off-screen columns, no scroll cue: At 390×844 the page scrollWidth is 390, and .table-wrapper has scrollWidth 570 vs clientWidth 362. The headers are at x invoked 263, satisfies 370, i/o 477 (the last two off-screen). The wrapper has mask-image none. The 'what it does' column is 138px, and the tallest row is now 788px (was 536). (D/p_tools.js, D/p_tw.js)
 - **STILL-PRESENT** — '▾ Folio' handle overlaps top of content column: At 1280 the handle rect is (594,0,93×28) and #main-content starts at y=140, so there is no overlap with content. At 390 the rect is (154,0,82×25), over a.site-title 'C@T Harness' (0,2,244×49) in the top bar. (D/p_tools.js, D/p_handle.js)
 - **STILL-PRESENT** — 'On this page' (4 entries) only in the opened sidebar: details.fa-doc-index (4 links). At 390 the summary is visible at rest (y=96, hit-test true). At 1280 the summary is at (0,299,55×58) in the collapsed strip and fails the hit-test. (D/p_tools.js)
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-tools-viz.ts` in cat-harness-tools. Some findings are fixed (`tools-viewer.test.ts`). Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on verified evidence. The
+fixes were made and recorded on this bean's cat-harness-store copy (closed
+2026-10-09). This copy was checked separately to confirm they reached the
+default branches:
+- fix commit `dd43f9fc` is an ancestor of cat-harness `main` (`b675555e`);
+- the change is present on current `main`, where the generator now lives:
+  cat-harness-tools `scripts/gen-tools-viz.ts:302-303` (stat links).

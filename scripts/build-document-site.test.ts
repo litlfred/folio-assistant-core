@@ -5,13 +5,13 @@
  * workflow runs works on what that folio starts as.
  */
 import { afterEach, describe, expect, test } from "bun:test";
-import { appendFileSync, existsSync, mkdtempSync, readFileSync, rmSync, symlinkSync } from "node:fs";
+import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
 import { buildDocumentSite, citationsToHtml, documentManifests, katexMacros, renderDocumentHtml, splitBlocks, type Outline } from "./build-document-site.js";
 import { readPositions } from "../schemas/changeset.js";
-import { initFolio } from "../../cat-harness/scripts/init-folio.js";
+import { initFolio } from "@litlfred/cat-harness-tools/scripts/init-folio.js";
 
 const REPO_ROOT = resolve(import.meta.dir, "../..");
 
@@ -37,11 +37,85 @@ describe("build-document-site", () => {
     expect(r.errors).toEqual([]);
     expect(r.documents.map((x) => x.slug)).toEqual(["handbook"]);
     expect(existsSync(join(out, "index.html"))).toBe(true);
-    const html = readFileSync(join(out, "handbook", "index.html"), "utf-8");
+    const html = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
     // The anchors the review page and the ChangeSet link to, by label.
     expect(html).toContain('<a id="prose:overview"></a>');
     expect(html).toContain('<a id="chap:introduction"></a>');
-    expect(readFileSync(join(out, "index.html"), "utf-8")).toContain('href="handbook/index.html"');
+    const landing = readFileSync(join(out, "index.html"), "utf-8");
+    expect(landing).toContain('href="en/handbook/index.html"');
+    expect(landing).toContain('href="en/review/index.html"');
+  });
+
+  test("every block's KG node is published, one per block and as the document's graph", async () => {
+    const d = scaffold();
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out);
+    expect(r.errors).toEqual([]);
+    const node = JSON.parse(readFileSync(join(out, "handbook", "kg", "introduction", "overview.jsonld"), "utf-8")) as { label: string };
+    expect(node.label).toBe("prose:overview");
+    const graph = JSON.parse(readFileSync(join(out, "handbook", "graph.jsonld"), "utf-8")) as { "@graph": Array<{ label: string }> };
+    expect(graph["@graph"].map((n) => n.label)).toEqual(["prose:overview"]);
+  });
+
+  test("a one-page document carries the edit-links runtime (✍ suggest) and the site its values.jsonld", async () => {
+    const d = scaffold();
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out, { actions: { repo: "o/r" } });
+    expect(r.errors).toEqual([]);
+    const html = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
+    expect(html).toContain('id="fa-edit-cfg"');
+    expect(html).toContain('"values":"../../values.jsonld"');
+    expect(html).toContain("fa-suggest");
+    const values = JSON.parse(readFileSync(join(out, "values.jsonld"), "utf-8")) as { "@graph": unknown[] };
+    expect(values["@graph"]).toEqual([]);
+  });
+
+  test("an editor-checker profile for the content type is bundled, and the page config names it and the graph", async () => {
+    const d = scaffold();
+    // An instance beside the folio declaring a ✍ suggest profile for documents (bean 4dx7).
+    const prof = join(d, "prof");
+    mkdirSync(join(prof, "editor-checkers"), { recursive: true });
+    writeFileSync(join(prof, "prof.json"), JSON.stringify({ name: "prof", directories: [{ id: "prof-editor-checkers", path: "editor-checkers/", graphTypologies: ["editor-checkers"] }] }));
+    writeFileSync(join(prof, "check.ts"), "export function checkIt(before: string, after: string) { return []; }\n");
+    writeFileSync(join(prof, "editor-checkers", "doc.json"), JSON.stringify({ $schema: "folio-editor-checker/v1", id: "doc-check", contentType: "document", check: "check.ts#checkIt" }));
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out, { actions: { repo: "o/r" } });
+    expect(r.errors).toEqual([]);
+    expect(existsSync(join(out, "assets", "suggest", "doc-check.js"))).toBe(true);
+    const html = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
+    expect(html).toContain('"graph":"../../handbook/graph.jsonld"');
+    expect(html).toContain('"profiles":[{"id":"doc-check","module":"../../assets/suggest/doc-check.js"}]');
+  });
+
+  test("a block with no KG node, or a stale one, fails the build: the graph is never silently absent", async () => {
+    const d = scaffold();
+    const nodePath = join(d, "folio", "handbook", "introduction", "overview.jsonld");
+    const committed = readFileSync(nodePath, "utf-8");
+    rmSync(nodePath);
+    const missing = await buildDocumentSite(d, join(d, "_site"));
+    expect(missing.errors).toEqual(["handbook: introduction/overview.jsonld: no KG node (run gen-block-jsonld.ts)"]);
+
+    writeFileSync(nodePath, committed.replace('"Overview"', '"An older title"'));
+    const stale = await buildDocumentSite(d, join(d, "_site2"));
+    expect(stale.errors).toEqual(["handbook: introduction/overview.jsonld: KG node is stale (run gen-block-jsonld.ts)"]);
+  });
+
+  test("pages are under the locale, data is not, and the landing stays at the root (#2527)", async () => {
+    const d = scaffold();
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out, { lazy: "always" });
+    expect(r.documents.map((x) => x.page)).toEqual(["en/handbook/index.html"]);
+    for (const page of ["en/handbook/index.html", "en/handbook/index.hydrated.html", "en/review/index.html", "index.html"]) expect(existsSync(join(out, page))).toBe(true);
+    // The old addresses hold no page: nothing at them forwards, and nothing is left behind.
+    for (const gone of ["handbook/index.html", "handbook/index.hydrated.html", "review/index.html"]) expect(existsSync(join(out, gone))).toBe(false);
+    // Data stays where it was.
+    expect(existsSync(join(out, "handbook", "blocks", "000.json"))).toBe(true);
+    expect(existsSync(join(out, "outline.json"))).toBe(true);
+    const outline = JSON.parse(readFileSync(join(out, "outline.json"), "utf-8")) as Outline;
+    expect(outline.documents[0]!.page).toBe("en/handbook/index.html");
+    // The shell fetches its chunks from where they are, relative to itself.
+    const shell = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
+    expect(shell).toContain('fetch("../../handbook/blocks/" + String(n)');
   });
 
   test("a Markdown table in a block renders as a <table>, not raw pipes (fz39)", async () => {
@@ -49,7 +123,7 @@ describe("build-document-site", () => {
     appendFileSync(join(d, "folio", "handbook", "introduction", "overview.md"), "\n\n| Role | who |\n|---|---|\n| Bootstrapping Agent | you |\n");
     const out = join(d, "_site");
     await buildDocumentSite(d, out);
-    const html = readFileSync(join(out, "handbook", "index.html"), "utf-8");
+    const html = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
     expect(html).toContain("<table>");
     expect(html).toContain("<td>Bootstrapping Agent</td>");
     expect(html).not.toContain("| Bootstrapping Agent |");
@@ -86,7 +160,7 @@ describe("the harness rail lands in the page, not in its stylesheet (owner, 2026
     const d = scaffold();
     const out = join(d, "_site");
     await buildDocumentSite(d, out);
-    for (const f of [join(out, "index.html"), join(out, "handbook", "index.html"), join(out, "review", "index.html")]) {
+    for (const f of [join(out, "index.html"), join(out, "en", "handbook", "index.html"), join(out, "en", "review", "index.html")]) {
       const html = readFileSync(f, "utf-8");
       const styleEnd = html.indexOf("</style>");
       expect({ f, body: html.indexOf("<body") > styleEnd, main: html.indexOf("<main") > styleEnd }).toEqual({ f, body: true, main: true });
@@ -126,6 +200,25 @@ describe("paper content: math, glossary directives and citations (owner, 2026-10
     expect(out).toContain("\\cite{c}");
   });
 
+  test("given a bibliography, each cited key links to its entry there (bean 63q4)", () => {
+    const url = "https://litlfred.github.io/folio-assistant/folio-assistant-core/bibliography/";
+    const out = citationsToHtml("As in \\cite[p.~3]{garoufalidis2004, a:b}.", { bibliographyUrl: url });
+    expect(out).toContain('data-keys="garoufalidis2004 a:b"');
+    expect(out).toContain(`<a href="${url}#ref-garoufalidis2004">garoufalidis2004</a>`);
+    // The anchor is the one the bibliography page draws: referenceAnchor, so `a:b` → `ref-a-b`.
+    expect(out).toContain(`<a href="${url}#ref-a-b">a:b</a>`);
+    expect(out).toContain("</a>, p. 3]</span>");
+  });
+
+  test("without a bibliography, citations stay unlinked labels", () => {
+    expect(citationsToHtml("\\cite{x}")).toBe('<span class="cite" data-keys="x">[x]</span>');
+  });
+
+  test("renderDocumentHtml passes the bibliography through", async () => {
+    const html = await renderDocumentHtml("See \\cite{x}.", { math: false, bibliographyUrl: "/bib/" });
+    expect(html).toContain('<a href="/bib/#ref-x">x</a>');
+  });
+
   test("the macro table is the viewer's: \\name -> tex from the paper manifest", () => {
     expect(katexMacros({ qou: { tex: "\\mathbf{Q}" } })["\\qou"]).toBe("\\mathbf{Q}");
     expect(katexMacros(undefined)["\\bigbowtie"]).toBe("\\bowtie");
@@ -155,7 +248,7 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     const out = join(d, "_site");
     const r = await buildDocumentSite(d, out, { lazy: "always", actions: { repo: "o/r" } });
     expect(r.errors).toEqual([]);
-    const shell = readFileSync(join(out, "handbook", "index.html"), "utf-8");
+    const shell = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
     expect(shell).toContain('<a id="prose:overview"></a>');
     expect(shell).toContain('<div class="fa-blk" data-blk="prose:overview"></div>');
     expect(shell).not.toContain("<td>Bootstrapping Agent</td>");
@@ -165,7 +258,7 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     expect(shell).toContain('data-src="folio/handbook/introduction/overview.md"');
     const chunk = JSON.parse(readFileSync(join(out, "handbook", "blocks", "000.json"), "utf-8")) as Record<string, string>;
     expect(chunk["prose:overview"]).toContain("<td>Bootstrapping Agent</td>");
-    const full = readFileSync(join(out, "handbook", "index.hydrated.html"), "utf-8");
+    const full = readFileSync(join(out, "en", "handbook", "index.hydrated.html"), "utf-8");
     expect(full).toContain("<td>Bootstrapping Agent</td>");
     expect(full).toContain("https://github.com/o/r/edit/main/folio/handbook/introduction/overview.md");
     // Feedback is coded with the document's slug, on both pages (owner, 2026-10-06).
@@ -173,7 +266,7 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     expect(shell).toContain('"content":"handbook"');
     // The outline says the page is lazy and where each block's text is (rendered impact, bean bnjs).
     const outline = JSON.parse(readFileSync(join(out, "outline.json"), "utf-8"));
-    expect(outline.documents[0].lazy).toMatchObject({ hydrated: "handbook/index.hydrated.html", chunks: 1 });
+    expect(outline.documents[0].lazy).toMatchObject({ hydrated: "en/handbook/index.hydrated.html", chunks: 1 });
     expect(outline.documents[0].lazy.of["prose:overview"]).toBe(0);
   });
 
@@ -181,7 +274,7 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     const d = scaffold();
     const out = join(d, "_site");
     await buildDocumentSite(d, out);
-    expect(existsSync(join(out, "handbook", "index.hydrated.html"))).toBe(false);
+    expect(existsSync(join(out, "en", "handbook", "index.hydrated.html"))).toBe(false);
     expect(existsSync(join(out, "handbook", "blocks"))).toBe(false);
   });
 });

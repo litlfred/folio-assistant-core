@@ -63,9 +63,12 @@ import { remark } from "remark";
 import remarkHtml from "remark-html";
 import { z } from "zod";
 
-import { walkBlocks } from "../../cat-harness/content/pipeline/qa-utils.js";
-import { parseManifestStringArray } from "../../cat-harness/content/pipeline/qa-checkers-extended.js";
-import { maskStringsAndComments, parseStringField } from "../../cat-harness/content/pipeline/uses-field.js";
+import { walkBlocks } from "@litlfred/cat-harness-tools/pipeline/qa-utils.js";
+import { parseManifestStringArray } from "@litlfred/cat-harness-tools/pipeline/qa-checkers-extended.js";
+import { maskStringsAndComments, parseStringField } from "@litlfred/cat-harness-tools/pipeline/uses-field.js";
+import { manifestFields, type ManifestFields } from "./manifest-fields.js";
+import { loadContributions } from "@litlfred/cat-harness/schemas/harness-config.ts";
+import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness/schemas/contributions.ts";
 
 // ── Schema ──────────────────────────────────────────────────────
 
@@ -144,6 +147,8 @@ interface Snap extends BlockAt {
   /** Absolute path of the prose sidecar, when there is one. Never serialised. */
   mdPath?: string;
   renamedFrom: string[];
+  /** A contributed (structured) kind's manifest fields, read as text (bean f327). Never serialised. */
+  fields?: ManifestFields;
 }
 
 const sha = (s: string) => createHash("sha256").update(s).digest("hex");
@@ -223,12 +228,22 @@ export function readPositions(root: string): Map<string, { section: string; inde
   return pos;
 }
 
-/** Every block under `root`, by label. Reads text only; executes nothing. */
-export function snapshot(root: string): Map<string, Snap> {
+/**
+ * Every block under `root`, by label. Reads text only; executes nothing.
+ *
+ * `builders` are the contributed builders (`ContributionRegistry
+ * .contributedBuilders()`: builder name → kind), as `gen-block-jsonld` and the
+ * document site pass them. Without them a DAK block (`persona({ … })`) is not
+ * a block to the walker at all, and a pull request that edits a persona read
+ * as changing nothing (dth-hrh, 2026-10-15). A block of a contributed kind
+ * also carries its manifest's fields, for the field-level diff (bean f327).
+ */
+export function snapshot(root: string, builders?: ReadonlyMap<string, string>): Map<string, Snap> {
   const out = new Map<string, Snap>();
   if (!existsSync(root)) return out;
   const positions = readPositions(root);
-  for (const b of walkBlocks(root, { verify: false, includeUnlabelled: true, onLoadFailure: () => {} })) {
+  const structured = new Set(builders?.values() ?? []);
+  for (const b of walkBlocks(root, { verify: false, includeUnlabelled: true, onLoadFailure: () => {}, ...(builders ? { contributedBuilders: builders } : {}) })) {
     const src = readFileSync(b.ts, "utf-8");
     const file = relative(root, b.ts);
     const at = positions.get(file);
@@ -241,6 +256,7 @@ export function snapshot(root: string): Map<string, Snap> {
       proseHash: b.md && existsSync(b.md) ? sha(readFileSync(b.md, "utf-8")) : undefined,
       mdPath: b.md && existsSync(b.md) ? b.md : undefined,
       renamedFrom: parseManifestStringArray(src, "renamedFrom"),
+      ...(structured.has(b.kind) ? { fields: manifestFields(src) ?? {} } : {}),
     });
   }
   return out;
@@ -397,6 +413,8 @@ export interface ComputeOptions {
   base?: string;
   /** A ref, or {@link WORKTREE} (the default) for the files on disk. */
   head?: string;
+  /** The contributed builders, so contributed (DAK) blocks are blocks too. See {@link snapshot}. */
+  builders?: ReadonlyMap<string, string>;
 }
 
 /**
@@ -451,6 +469,31 @@ export const ChangeSetTextSchema = z.object({
 });
 export type ChangeSetText = z.infer<typeof ChangeSetTextSchema>;
 
+// ── The fields of what changed, for the field-level renderer (bean f327) ──
+
+export const CHANGESET_STRUCTURE_SCHEMA = "folio-changeset-structure/v1" as const;
+
+/**
+ * `changeset-structure.json`: for every block the ChangeSet lists whose kind
+ * is a contributed, structured one (a DAK persona, requirement, data element),
+ * its manifest fields on each side that has them, flattened to `path → value`
+ * (`manifest-fields.ts`). Keyed like `changeset-text.json`: the head label, or
+ * the base label for a removed block, a renamed block's base filed under its
+ * new label. A prose block has no entry: its diff is its text.
+ */
+export const ChangeSetStructureSchema = z.object({
+  $schema: z.literal(CHANGESET_STRUCTURE_SCHEMA),
+  blocks: z.record(
+    z.string(),
+    z.object({
+      kind: z.string(),
+      base: z.record(z.string(), z.string()).optional(),
+      head: z.record(z.string(), z.string()).optional(),
+    }),
+  ),
+});
+export type ChangeSetStructure = z.infer<typeof ChangeSetStructureSchema>;
+
 const renderProse = (md: string): string => String(remark().use(remarkHtml, { sanitize: false }).processSync(md));
 
 function sideText(s: Snap | undefined): z.infer<typeof BlockSideTextSchema> | undefined {
@@ -460,7 +503,11 @@ function sideText(s: Snap | undefined): z.infer<typeof BlockSideTextSchema> | un
 }
 
 /** Both documents from ONE pair of materialised trees, so the text matches the ChangeSet exactly. */
-export function computeWithText(opts: ComputeOptions, withText: boolean): { changeset: ChangeSet; text?: ChangeSetText } {
+export function computeWithText(
+  opts: ComputeOptions,
+  withText: boolean,
+  withStructure = false,
+): { changeset: ChangeSet; text?: ChangeSetText; structure?: ChangeSetStructure } {
   const repoRoot = resolve(opts.repoRoot);
   const folio = opts.folio.replace(/\/+$/, "") || ".";
   const baseRef = opts.base ?? "origin/main";
@@ -471,8 +518,8 @@ export function computeWithText(opts: ComputeOptions, withText: boolean): { chan
   const b = materialise(repoRoot, baseCommit, folio);
   const h = headRef === WORKTREE ? { dir: join(repoRoot, folio), cleanup: () => {} } : materialise(repoRoot, headCommit!, folio);
   try {
-    const baseSnap = snapshot(b.dir);
-    const headSnap = snapshot(h.dir);
+    const baseSnap = snapshot(b.dir, opts.builders);
+    const headSnap = snapshot(h.dir, opts.builders);
     const { summary, changes } = compareSnapshots(baseSnap, headSnap);
     const changeset = ChangeSetSchema.parse({
       $schema: CHANGESET_SCHEMA,
@@ -482,15 +529,29 @@ export function computeWithText(opts: ComputeOptions, withText: boolean): { chan
       summary,
       changes,
     });
-    if (!withText) return { changeset };
+    const sides = (c: (typeof changes)[number]) => ({
+      base: c.change === "added" ? undefined : baseSnap.get(c.change === "changed" ? (c.from ?? c.label) : c.label),
+      head: c.change === "removed" ? undefined : headSnap.get(c.label),
+    });
+    let structure: ChangeSetStructure | undefined;
+    if (withStructure) {
+      const blocks: ChangeSetStructure["blocks"] = {};
+      for (const c of changes) {
+        const { base, head } = sides(c);
+        if (!base?.fields && !head?.fields) continue;
+        blocks[c.label] = { kind: (head ?? base)!.kind, ...(base?.fields ? { base: base.fields } : {}), ...(head?.fields ? { head: head.fields } : {}) };
+      }
+      structure = ChangeSetStructureSchema.parse({ $schema: CHANGESET_STRUCTURE_SCHEMA, blocks });
+    }
+    if (!withText) return { changeset, ...(structure ? { structure } : {}) };
     // Read now, while both trees exist: the base tree is removed below.
     const blocks: ChangeSetText["blocks"] = {};
     for (const c of changes) {
-      const base = c.change === "added" ? undefined : sideText(baseSnap.get(c.change === "changed" ? (c.from ?? c.label) : c.label));
-      const head = c.change === "removed" ? undefined : sideText(headSnap.get(c.label));
+      const base = sideText(sides(c).base);
+      const head = sideText(sides(c).head);
       if (base || head) blocks[c.label] = { ...(base ? { base } : {}), ...(head ? { head } : {}) };
     }
-    return { changeset, text: ChangeSetTextSchema.parse({ $schema: CHANGESET_TEXT_SCHEMA, blocks }) };
+    return { changeset, text: ChangeSetTextSchema.parse({ $schema: CHANGESET_TEXT_SCHEMA, blocks }), ...(structure ? { structure } : {}) };
   } finally {
     b.cleanup();
     h.cleanup();
@@ -508,22 +569,29 @@ if (import.meta.main) {
   if (args.includes("--help") || !opt("folio")) {
     console.log(
       "usage: bun run folio-assistant-core/schemas/changeset.ts --folio <path> " +
-        "[--repo <dir>] [--base origin/main] [--head <ref>|worktree] [--out <file>] [--text-out <file>]",
+        "[--repo <dir>] [--base origin/main] [--head <ref>|worktree] [--out <file>] [--text-out <file>] [--structure-out <file>]",
     );
     process.exit(args.includes("--help") ? 0 : 2);
   }
   const repoRoot = resolve(opt("repo") ?? process.cwd());
   const textOut = opt("text-out");
-  const { changeset: cs, text } = computeWithText(
+  const structureOut = opt("structure-out");
+  // The checkout's contributed builders, loaded as gen-block-jsonld loads
+  // them, so a DAK block is a block on both sides.
+  const contributions = await loadContributions<FolioContribution, ContributionRegistry>(repoRoot, new ContributionRegistry());
+  const { changeset: cs, text, structure } = computeWithText(
     {
       repoRoot,
       folio: relative(repoRoot, resolve(repoRoot, opt("folio")!)) || ".",
       base: opt("base"),
       head: opt("head"),
+      builders: contributions.contributedBuilders(),
     },
     textOut !== undefined,
+    structureOut !== undefined,
   );
   if (textOut && text) writeFileSync(textOut, JSON.stringify(text) + "\n");
+  if (structureOut && structure) writeFileSync(structureOut, JSON.stringify(structure) + "\n");
   const json = JSON.stringify(cs, null, 2) + "\n";
   const out = opt("out");
   if (out) writeFileSync(out, json);

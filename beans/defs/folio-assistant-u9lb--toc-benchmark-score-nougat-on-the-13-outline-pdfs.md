@@ -1,11 +1,13 @@
 ---
 # folio-assistant-u9lb
 title: 'TOC benchmark: score Nougat on the 13 outline PDFs (needs huggingface.co) (#2302)'
-status: todo
+status: completed
 type: task
 priority: normal
+tags:
+    - rehomed
 created_at: 2026-10-06T18:05:01Z
-updated_at: 2026-10-07T10:57:08Z
+updated_at: 2026-10-14T13:55:00Z
 parent: folio-assistant-cp3v
 ---
 
@@ -23,3 +25,30 @@ Branch from claude/compassionate-johnson-rzv00r and open a PR INTO that branch (
 
 ## Done when
 The report carries measured Nougat numbers next to layout's 0.86 title F1, with the run conditions stated, or says exactly what prevented the run.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The benchmark is `scripts/toc-benchmark.py` in cat-harness-tools, and running it needs huggingface.co on the network allowlist. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## Rehomed 2026-10-10: this copy is now a pointer
+
+By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a
+pointer here), this bean is re-filed in the store of the repository whose code
+it changes: **`litlfred/cat-harness-tools` bean `cat-tools-e8vg`** (cat-harness-tools
+PR #68). Work it there. This copy stays open as a pointer, and closes when
+`cat-tools-e8vg` does.
+
+## Summary of Changes
+
+Rehomed: the work moved to litlfred/cat-harness-tools as cat-tools-e8vg, which is completed there. This copy closes as a pointer to it, so the two stores agree (bean drain, 2026-10-14, session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs).

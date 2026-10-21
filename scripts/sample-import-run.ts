@@ -5,7 +5,7 @@
  *
  * Usage:
  *   bun run folio-assistant-core/scripts/sample-import-run.ts \
- *     --root . --instance who-iris --item item/<uuid> --subject <slug> [--bean <id>] [--bundles ORIGINAL,...]
+ *     --root . --instance <catalogue-instance> --item item/<uuid> --subject <slug> [--bean <id>] [--bundles ORIGINAL,...]
  *
  * Bean `xlg2`: the diagram had never executed. This goes through
  * `workflow_start` and `workflow_complete` as registered — the same handlers the
@@ -36,11 +36,11 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 
-import { registerWorkflowTools } from "../../cat-harness-tools/src/tools/workflow.ts";
-import { fshGutsDirectory } from "../../cat-harness/schemas/fsh-guts.ts";
-import { contentAt } from "../../cat-harness/scripts/branch-store.ts";
-import { positionOf } from "../../cat-harness/src/workflow/instance.ts";
-import { WORKFLOW_DIR, instanceId, loadInstance } from "../../cat-harness/src/workflow/store.ts";
+import { registerWorkflowTools } from "@litlfred/cat-harness-tools/src/tools/workflow.ts";
+import { fshGutsDirectory } from "@litlfred/cat-harness/schemas/fsh-guts.ts";
+import { contentAt } from "@litlfred/cat-harness-tools/scripts/branch-store.ts";
+import { positionOf } from "@litlfred/cat-harness-tools/src/workflow/instance.ts";
+import { WORKFLOW_DIR, instanceId, loadInstance } from "@litlfred/cat-harness-tools/src/workflow/store.ts";
 import { CatalogueNodeSchema, type CatalogueNode } from "../schemas/catalogue.js";
 import { PUBLICATION_GATES } from "../schemas/materialization.js";
 import { checkSampleImport, describeImportCheck } from "./sample-import-check.ts";
@@ -52,7 +52,7 @@ export type Handler = (args: Record<string, unknown>) => Promise<{ content: { te
 export interface RunOptions {
   /** The repository root: where `beans/workflows/` and `fsh-guts/` live. */
   root: string;
-  /** The instance directory holding the store, relative to `root`, e.g. `who-iris`. */
+  /** The instance directory holding the store, relative to `root`, e.g. an IRIS mirror's directory. */
   instance: string;
   item: string;
   subject: string;

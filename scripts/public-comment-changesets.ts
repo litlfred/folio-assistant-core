@@ -57,7 +57,7 @@
  *   github --event e.json [--dry-run]   one issue, comment or PR event (the workflow)
  *   install [--assistant folio-assistant] [--force]
  *                                write the issue forms and the two workflows into the
- *                                folio's .github/, from cat-harness/templates/public-comment/
+ *                                folio's .github/, from cat-harness-tools/templates/public-comment/
  *
  * Every command accepts `--repo <folio root>` and `--store <dir>`. Network
  * calls use `GITHUB_TOKEN` and `GITHUB_REPOSITORY` (or `repo` in config.json);
@@ -67,7 +67,8 @@ import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSy
 import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { dashboardRoute } from "./public-comment-route.js";
+import { dashboardPageRoute } from "./public-comment-route.js";
+import { documentPageDir } from "./document-site-route.js";
 import {
   CHANGE_SET_SCHEMA,
   CHANGING_DECISIONS,
@@ -233,13 +234,13 @@ export function discussUrl(repo: string, cs: Pick<ChangeSet, "id" | "title">): s
 export function renderSection(cs: ChangeSet, store: Store): string {
   const cfg = store.config();
   const site = (cfg.site ?? "").replace(/\/$/, "");
-  const dash = `${site}/${dashboardRoute(store.repo, cfg.document)}/`;
+  const dash = `${site}/${dashboardPageRoute(store.repo, cfg.document)}/`;
   const byRef = new Map(store.all().map((c) => [c.public.ref, c]));
   const rows = cs.refs.map((ref) => {
     const c = byRef.get(ref);
     if (!c) return `| ${ref} | | (not in the store) | | |`;
     const label = c.public.anchor.targetLabel;
-    const where = label ? (site ? `[${cell(clip(c.public.citation.raw || label, 40))}](${site}/${cfg.document}/#${label})` : cell(label)) : "whole document";
+    const where = label ? (site ? `[${cell(clip(c.public.citation.raw || label, 40))}](${site}/${documentPageDir(cfg.document)}/#${label})` : cell(label)) : "whole document";
     const refLink = site ? `[${ref}](${dash}#${ref})` : ref;
     const state = c.public.decision ? `${c.status}: **${c.public.decision.code}**` : c.status;
     return `| ${refLink} | ${where} | ${state} | ${cell(clip(c.public.text, 200))} | ${cell(clip(c.public.suggestedRevision ?? "", 140))} |`;
@@ -1012,7 +1013,7 @@ async function reconcile(store: Store, api: GithubApi, by: string, now: string):
  * The issue forms and workflows a folio running a public review needs. Not a
  * content profile, so `folio_init` does not write them: a folio opts in.
  */
-export const TEMPLATE_DIR = fileURLToPath(new URL("../../cat-harness/templates/public-comment/github", import.meta.url));
+export const TEMPLATE_DIR = fileURLToPath(new URL("../../cat-harness-tools/templates/public-comment/github", import.meta.url));
 
 export function installTemplates(repo: string, o: { assistant: string; force?: boolean }): { written: string[]; kept: string[] } {
   const walk = (d: string): string[] => readdirSync(d).flatMap((n) => (statSync(join(d, n)).isDirectory() ? walk(join(d, n)) : [join(d, n)]));

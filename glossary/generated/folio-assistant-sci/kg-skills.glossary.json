@@ -211,6 +211,14 @@
       "status": "candidate"
     },
     {
+      "id": "lean-html-docs",
+      "prefLabel": "lean-html-docs",
+      "definition": "Build and publish the visualiser of a folio's declared `lean` directory: the package's doc-gen4 HTML render, staged under the folio's site and wrapped in the harness navbar and rail. Use when a folio's Lean docs are missing, stale, or published without the harness chrome, or when declaring a `lean` directory and its `coverage.visualiser`.",
+      "notation": "lean-html-docs",
+      "source": "folio-assistant-sci/skills/lean/lean-html-docs.md",
+      "status": "candidate"
+    },
+    {
       "id": "lean-mathlibext-curator",
       "prefLabel": "lean-mathlibext-curator",
       "definition": "Curate `<Paper>/MathlibExt.lean` — the staging area for upstream- candidate lemmas (List/sort plumbing, Foldl/foldr at Monoid level, Real-function bridges). Decide what lives in `MathlibExt` vs inline, and tag candidates with `-- TODO upstream: …`.",

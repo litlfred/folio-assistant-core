@@ -17,7 +17,7 @@
  *
  * | instance | remote source | materialised locally | refresh today |
  * |---|---|---|---|
- * | `who-iris` | IRIS, 361.55 GB | three items under `library/` | nothing |
+ * | the IRIS catalogue instance | IRIS, 361.55 GB | three items under `library/` | nothing |
  * | `bootstrap` | a harness | the `cat-harness` checkout | `upstream-pins.json` + `check:upstream-pins` |
  *
  * The second row is the one that makes this a discovery rather than a design.
@@ -100,7 +100,7 @@ import {
   SourceProvenanceSchema,
   type Signature,
   type SourceProvenance,
-} from "../../cat-harness/schemas/source-provenance.ts";
+} from "@litlfred/cat-harness/schemas/source-provenance.ts";
 
 // Re-exported because this module was their home and consumers name it.
 export { SignatureSchema, SourceProvenanceSchema };
@@ -113,7 +113,7 @@ import {
   MATERIALIZATION_STATES,
   type Fixity,
   type MaterializationState,
-} from "../../cat-harness/schemas/materialization-state.ts";
+} from "@litlfred/cat-harness/schemas/materialization-state.ts";
 export { FixitySchema, MATERIALIZATION_STATES };
 export type { Fixity, MaterializationState };
 
@@ -218,7 +218,7 @@ export const MaterializationSchema = z
      * WHERE THIS CAME FROM — see {@link SourceProvenanceSchema}.
      *
      * This replaced a single `of` on 2026-09-22. `of` meant "the remote thing"
-     * and 6 of the 9 who-iris records were using it for a local one, so the
+     * and 6 of the 9 IRIS catalogue records were using it for a local one, so the
      * split is a correction to the corpus as much as to the model.
      */
     provenance: SourceProvenanceSchema,
@@ -249,6 +249,12 @@ export const MaterializationSchema = z
      */
     expiresAt: z.string().min(1).optional(),
     /**
+     * When this copy was last read. Absent means 'not recorded'.
+     *
+     * Recorded by readers or explicit touch helpers (bean 7wgs).
+     */
+    lastReadAt: z.string().min(1).optional(),
+    /**
      * Why the record cannot say more than it does.
      *
      * Two jobs, and both are the same discipline. Why the state is `unknown`,
@@ -268,7 +274,7 @@ export const MaterializationSchema = z
         message:
           "a record with neither `provenance.upstream` nor `provenance.local` requires a `note`. " +
           "Knowing a thing came from somewhere and not knowing where is a real state — the " +
-          "who-iris item whose IRIS handle was never recorded is one — but it is only a state " +
+          "IRIS catalogue item whose handle was never recorded is one — but it is only a state " +
           "once somebody says so. Silent, it cannot be told from a field nobody filled in",
       });
     }
@@ -448,3 +454,23 @@ export function publicationBlockers(g: Gates | undefined): Array<(typeof PUBLICA
 export function refusedGates(g: Gates): Array<keyof Gates> {
   return (Object.keys(g) as Array<keyof Gates>).filter((k) => g[k].verdict === "refused");
 }
+
+/**
+ * Record when a materialized copy was last read (bean 7wgs).
+ *
+ * Who records a read: explicit touch by a caller or reader helper (e.g. MCP node
+ * access, skill_fetch, or renderer). Access time on files is disabled on many
+ * mounts (noatime) and reset by a git checkout, so an explicit timestamp in the
+ * record is the only reliable signal.
+ */
+export function recordMaterializationRead(record: Materialization, at?: Date): Materialization {
+  const updated: Materialization = {
+    ...record,
+    lastReadAt: (at ?? new Date()).toISOString(),
+  };
+  return MaterializationSchema.parse(updated);
+}
+
+/** Alias for recordMaterializationRead. */
+export const touchMaterializedRead = recordMaterializationRead;
+

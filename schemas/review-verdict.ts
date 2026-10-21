@@ -42,7 +42,7 @@
  * place. The same tag takes them:
  *
  * ```
- * page: dpi-h-ra/index.html ast/artifact/PlanDefinition-X.html
+ * page: en/dpi-h-ra/index.html ast/artifact/PlanDefinition-X.html
  * verdict: ok
  * ```
  *

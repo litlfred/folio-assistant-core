@@ -20,7 +20,7 @@
  * (the `sync-remote-skills` precedent), so every held byte is verified by the
  * gate that already exists. The part's own record is a DIRECTORY record for a
  * subgraph — that gate reports it `covered-by-parts` — and carries a tree
- * digest (`treeDigest` in `cat-harness/scripts/kg-subscribe.ts`), which is
+ * digest (`treeDigest` in `cat-harness-tools/scripts/kg-subscribe.ts`), which is
  * what catches a file ADDED under the tree, the one edit a per-file check
  * cannot see. `kg:materialize:check` holds that digest.
  *
@@ -36,9 +36,9 @@
  */
 import { z } from "zod";
 
-import { KG_NODES_RECORD_SCHEMA, KG_PART_RECORD_SCHEMA } from "../../cat-harness/schemas/substrate-snapshot.ts";
-import { RepoFullNameSchema } from "../../cat-harness/schemas/repo-full-name.ts";
-import { SUBGRAPH_HYDRATED_FILE } from "../../cat-harness/schemas/subgraph-manifest.ts";
+import { KG_NODES_RECORD_SCHEMA, KG_PART_RECORD_SCHEMA } from "@litlfred/cat-harness/schemas/substrate-snapshot.ts";
+import { RepoFullNameSchema } from "@litlfred/cat-harness/schemas/repo-full-name.ts";
+import { SUBGRAPH_HYDRATED_FILE } from "@litlfred/cat-harness/schemas/subgraph-manifest.ts";
 import { FixitySchema, GateSchema, GatesSchema, MaterializationSchema } from "./materialization.ts";
 
 export { KG_NODES_RECORD_SCHEMA, KG_PART_RECORD_SCHEMA };

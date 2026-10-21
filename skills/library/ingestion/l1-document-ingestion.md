@@ -80,9 +80,13 @@ index mistaken for a page number.
 2026-09-19 over the four entries in `library/`:
 
 - `toc_source: outline` → `pdf-structure` (`9789241548960-eng`, 250 sections)
-- `toc_source: none`, `source.text_source: embedded` → `pdf-pages` (`milnorlink`,
-  `wpr-rdo-2020-003-eng`) — since 2026-10-07 `pdf-structure` makes this split
-  itself, below
+- `toc_source: none`, `source.text_source: embedded` → `pdf-structure`, which
+  keeps its inferred contents only when they pass the trust tests and otherwise
+  writes pages (`wpr-rdo-2020-003-eng` lands on pages that way). The router
+  sent this case to `pdf-pages` until 2026-10-07 (bean `mffs`), so #2388's tests
+  never ran from `bun run cat ingest`
+- a junk outline (`milnorlink`, bean `8shg`) → `pdf-pages`: `pdf-structure`
+  would read the outline it found rather than infer one
 - `toc_source: none`, `source.text_source: ocr` → `pdf-ocr` then `pdf-pages --from-ocr`
   (`who-pub-tps-931`)
 
@@ -116,7 +120,7 @@ and nothing supports that weighting.
 **Two copies of one deck? Compare before you choose which to ingest:**
 
 ```sh
-python3 cat-harness/scripts/slides-structure.py --a11y-only DECK.pptx DECK.odp
+python3 cat-harness-tools/scripts/slides-structure.py --a11y-only DECK.pptx DECK.odp
 ```
 
 On #1614 the two were Google Slides exports with identical image bytes. The PPTX
@@ -167,7 +171,7 @@ library viewer shows them on the entry's row. Write it by hand — there is no
 file to run `referenced-source.py` on — then `gen-library-jsonld.ts --entry`
 for the manifest. The licence follows the usual rule: `stated` only with a
 basis, else `unknown` with where you looked. First case:
-`smart-base/library/smart-trust/`, the WHO SMART Trust IG.
+the WHO SMART Trust IG's entry in the DAK layer's `library/`.
 
 ## A source published as text in a repository — read it at a commit (bean `y4uj`)
 
@@ -178,12 +182,27 @@ the recorded sha256 identify a rendering nobody published, so they take their
 own rung instead:
 
 ```sh
-bun run cat-harness/scripts/text-structure.ts -o <library> --doc-id <slug> \
+bun run cat ingest uploads/FILE.md --text --library <lib>            # rung + l1-blocks, into ingest-staging/
+bun run cat ingest uploads/FILE.md --text --library <lib> --promote  # the L1 gate, then the entry and its KG nodes
+```
+
+`--text` is the CALLER's statement that the file is text: text has no magic
+bytes, so the extension is never read, and a binary handed in as text is
+refused as `undetermined`. Through `cat ingest` it takes the notebook's derived
+arm (`l1-blocks`), and `--promote` writes the entry's JSON-LD nodes, as for
+every rung. **Do not stop at the rung.** Run alone, `text-structure.ts` leaves
+an entry with no `manifest.jsonld` and no section or block nodes, which is how
+litlfred/dth-hrh's Markdown outline reached `library/` with no knowledge graph
+(2026-10-14). A source read at a commit, with its `upstream.json` and several
+files, still runs the rung directly:
+
+```sh
+bun run cat-harness-tools/scripts/text-structure.ts -o <library> --doc-id <slug> \
   --base <checkout> --upstream upstream.json [--title T] [--image F]... FILE...
 ```
 
-then `l1-blocks.ts -o <entry>` and `gen-library-jsonld.ts --entry <entry>`, as
-for a notebook. What it decides:
+and then, without fail, `l1-blocks.ts -o <entry>` and
+`gen-library-jsonld.ts --entry <entry>`, as for a notebook. What it decides:
 
 - **Divided by the author's headings, or not at all.** A Markdown file splits
   at its own ATX headings, outside fenced code. A `# comment` inside a
@@ -201,9 +220,32 @@ for a notebook. What it decides:
   listing, so `sha256sum -c` against a checkout verifies the entry without
   this code.
 
-It is not wired into `bun run cat ingest`. That command reads a dropped file from
-`uploads/`, and text has no magic bytes to route on, so it would have to guess
-from the extension. Routing a dropped `.md` is a separate decision.
+Routing a dropped `.md` was decided on 2026-10-14 (owner): by `--text`, never
+by the extension.
+
+## From a library entry to a folio document — seed it, and its graph comes with it
+
+A folio whose working document starts from a source (an outline, a draft, a
+report) is SEEDED from the library entry, not from the raw file:
+
+```sh
+bun run cat-harness-tools/scripts/seed-folio-from-library.ts \
+  --entry library/<doc-id> --slug <folio-doc> [--title T] [--author A]... [--force]
+```
+
+Any `structure.json` variant works. The top heading level becomes the
+chapters, deeper levels nest as sections, and a section's own text becomes
+one `prose` block. No kind is guessed: a persona or a requirement is the
+folio's own enrichment step. Every block carries `meta.source` (library,
+section, locator, `method: "library-seed"`), and the seed ENDS by writing each
+block's `.jsonld` with `gen-block-jsonld`'s own code. A folio-specific seed
+script that writes blocks must end the same way. The one litlfred/dth-hrh used
+did not, and its site published no graph. A seed is one-time: an existing
+document is refused unless `--force`, which discards hand edits.
+
+The original is never touched: the library entry and the folio's nodes are
+DERIVED, and both are checked (`gen-library-jsonld --check`,
+`gen-block-jsonld --check`) so neither can drift unseen.
 
 ## An inferred chapter tree is refused, not guessed
 
@@ -323,10 +365,10 @@ because a cataloguer's choice is not a program's default.
 **Record the Info dictionary at ingest.** `pdf-structure.py` writes
 `metadata.docinfo`. `pdf-pages.py` did not until #1794, which left 20
 page-granular entries with no `/Title` to read. Backfill an older entry with
-`python3 cat-harness/scripts/pdf-pages.py --docinfo-into <entry> <pdf>`. It
+`python3 cat-harness-tools/scripts/pdf-pages.py --docinfo-into <entry> <pdf>`. It
 refuses unless the PDF's sha256 is the one the entry recorded.
 
-One resolver, `cat-harness/content/pipeline/library-title.ts`
+One resolver, `cat-harness-tools/pipeline/library-title.ts`
 (`resolveLibraryTitle`, `TITLE_AUTHORITY`), is used by both
 `gen-library-jsonld.ts` and `check-library-qa.ts`. The manifest records
 `meta.title_source` and `meta.title_from`, and the QA check re-derives the
@@ -596,7 +638,7 @@ or source that is not there.
 
 Every entry carrying a `structure.json` gets a **Document** panel in the
 library viewer, built from the ingestion schema by
-`cat-harness/scripts/lib/library-document.ts` and published as
+`cat-harness-tools/scripts/lib/library-document.ts` and published as
 `assets/library/entries/<id>.doc.json` (`folio-library-document/v1`) by
 `bun run cat library:viz`. Tabs: **Contents** (the TOC as a tree, collapsed below
 the first level that branches, each inferred entry's confidence, linking to its
@@ -617,7 +659,7 @@ and omits only section body extracts.
 (`folio-keywords/v1`) for every entry of every declared library: up to 12 for
 the document and up to 8 per section, fewer for a short section (one per ~20
 content tokens, at least 3). They are read from the **same** log-entropy matrix
-the LSI index is built from (`keywordsOf` in `content/pipeline/lsi.ts`), so a
+the LSI index is built from (`keywordsOf` in `pipeline/lsi.ts`), so a
 keyword means "frequent here, rare across this library" exactly as the index
 does — no second vocabulary. `library:keywords:check` fails on a stale file;
 re-run it after ingesting or re-splitting an entry. The Document panel shows
@@ -625,7 +667,7 @@ them as chips, green where a heading also names the term (`evidence:
 ["heading"]`) — the document saying it of itself. Withheld entries show them:
 they are derived terms, like captions, not the text.
 
-What the scoring does, each measured on the who-iris handbook (2026-10-06):
+What the scoring does, each measured on the IRIS catalogue's handbook (2026-10-06):
 
 - **Two-word phrases** from truly adjacent tokens said at least twice; a stop
   word, punctuation, or a line break before a capital (a table cell, a heading)
@@ -665,7 +707,7 @@ to show" looked exactly like "nothing was extracted". The owner's ruling
 **Withheld is READ, never inferred from emptiness.** The flag, the gates and the
 record come from `withheld.json` — `folio-withheld/v1` carries an optional
 structured `gates[]` and `record{id, page, uri}` beside the `reason` sentence,
-which the instance's generator writes from its own data (who-iris:
+which the instance's generator writes from its own data (the IRIS catalogue:
 `gen-iris-pages.ts`, from the catalogue's publication gates). A list that
 carries only the sentence still works: the row then says the sentence.
 

@@ -4,8 +4,10 @@ title: 'INGEST: narrative description per image, localized, including images ext
 status: todo
 type: task
 priority: normal
+tags:
+    - rehomed
 created_at: 2026-09-16T06:43:50Z
-updated_at: 2026-10-06T06:36:50Z
+updated_at: 2026-10-10T16:34:20Z
 parent: folio-assistant-slw1
 ---
 
@@ -278,3 +280,26 @@ After the content split, in this order:
 4. Each draft goes to the review queue for human confirmation.
 
 The work lands in folio-assistant-core.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). Every figure block has an agent draft narrative: 274 in total across the cat-harness, core, sci and who-iris libraries. What's left is a narrative per language and human confirmation through the review queue. The mechanism is `pdf-images.py` and `narratives.ts` in cat-harness-tools. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## Rehomed 2026-10-10: this copy is now a pointer
+
+By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a
+pointer here), this bean is re-filed in the store of the repository whose code
+it changes: **`litlfred/cat-harness-tools` bean `cat-tools-e1lo`** (cat-harness-tools
+PR #68). Work it there. This copy stays open as a pointer, and closes when
+`cat-tools-e1lo` does.

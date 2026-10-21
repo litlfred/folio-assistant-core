@@ -11,4 +11,5 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-tools`, ho
 | file | what it is | used by |
 |---|---|---|
 | [`index.ts`](index.ts) | a file |  |
+
 <!-- kg:subgraph:end -->

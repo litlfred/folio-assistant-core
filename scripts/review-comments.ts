@@ -51,9 +51,11 @@
  */
 import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
-import { dirname, resolve } from "node:path";
+import { dirname, join, resolve } from "node:path";
 
 import { snapshot } from "../schemas/changeset.js";
+import { loadContributions } from "@litlfred/cat-harness/schemas/harness-config.ts";
+import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness/schemas/contributions.ts";
 import { feedbackDir, readCommitted } from "./review-comment-move.js";
 import { pinMaps, readCommittedVerdicts, renderedFacts, verdictsDir } from "./review-coverage.js";
 import {
@@ -61,6 +63,7 @@ import {
   ReviewCommentsFileSchema,
   ingestPrComments,
   reanchorToBlocks,
+  applyDecisions,
   type BlockAnchor,
   type PrComment,
   type ReviewComment,
@@ -72,9 +75,9 @@ import { ingestVerdicts, parseVerdictTag, type RenderedFacts, type ReviewVerdict
 export type BlocksFile = Record<string, BlockAnchor>;
 
 /** The head's blocks, from the folio's manifests. The hash is the prose if there is any, else the manifest. */
-export function blocksOf(folioDir: string): BlocksFile {
+export function blocksOf(folioDir: string, builders?: ReadonlyMap<string, string>): BlocksFile {
   const out: BlocksFile = {};
-  for (const [label, s] of snapshot(folioDir)) {
+  for (const [label, s] of snapshot(folioDir, builders)) {
     out[label] = { hash: s.proseHash ?? s.manifestHash, renamedFrom: s.renamedFrom, ...(s.section ? { section: s.section } : {}) };
   }
   return out;
@@ -99,9 +102,12 @@ export async function fetchPrComments(repo: string, pr: number, token: string | 
       },
     });
     if (!res.ok) throw new Error(`GitHub answered ${res.status} for ${repo}#${pr} comments: ${await res.text()}`);
-    const batch = (await res.json()) as Array<{ id: number; body?: string; user?: { login?: string }; created_at: string; html_url: string }>;
+    const batch = (await res.json()) as Array<{ id: number; body?: string; user?: { login?: string }; created_at: string; html_url: string; author_association?: string }>;
     for (const c of batch) {
-      out.push({ id: c.id, body: c.body ?? "", user: c.user?.login ?? "ghost", createdAt: c.created_at, url: c.html_url });
+      out.push({
+        id: c.id, body: c.body ?? "", user: c.user?.login ?? "ghost", createdAt: c.created_at, url: c.html_url,
+        ...(c.author_association ? { association: c.author_association } : {}),
+      });
     }
     if (batch.length < 100) return out;
   }
@@ -130,7 +136,10 @@ export function buildReviewComments(o: RunOptions): ReviewCommentsFile {
   for (const [id, c] of committed) if (!previous.some((p) => p.id === id)) previous.push(c);
   const hashes = new Map(Object.entries(o.blocks).map(([label, b]) => [label, b.hash]));
   const r = ingestPrComments({ repo: o.repo, pr: o.pr, commit: o.commit, comments: o.comments, existing: previous, blocks: hashes });
-  const all = reanchorToBlocks([...previous, ...r.created], new Map(Object.entries(o.blocks)));
+  // Decisions (`resolve:` tags) move the comments last, so a decision made in
+  // the same PR as the comment it decides finds it (owner, 2026-10-15).
+  const decided = applyDecisions(reanchorToBlocks([...previous, ...r.created], new Map(Object.entries(o.blocks))), o.comments);
+  const all = decided.comments;
   // Verdicts: the same merge as comments (committed wins, nothing dropped),
   // then the PR's new ones. A verdict is never re-anchored: it is about the
   // version it names, and `computeCoverage` stops counting it once that
@@ -149,10 +158,28 @@ export function buildReviewComments(o: RunOptions): ReviewCommentsFile {
     commit: o.commit,
     generatedAt: o.now ?? new Date().toISOString(),
     comments: all,
-    malformed: [...r.malformed, ...vr.malformed],
-    untagged: r.untagged - verdictTagged,
+    malformed: [...r.malformed, ...vr.malformed, ...decided.refused],
+    untagged: r.untagged - verdictTagged - decided.tagged,
     verdicts: [...prevVerdicts, ...vr.created],
   });
+}
+
+/**
+ * Write each comment whose applied decisions (`review.decisions`) are not
+ * already in its committed copy into `dir` as `<id>.json`. Returns the ids
+ * written. Idempotent: a second run over its own output writes nothing.
+ */
+export function writeDecided(comments: readonly ReviewComment[], committed: ReadonlyMap<string, ReviewComment>, dir: string): string[] {
+  const out: string[] = [];
+  for (const c of comments) {
+    if (!c.review.decisions.length) continue;
+    const had = committed.get(c.id)?.review.decisions ?? [];
+    if (had.length === c.review.decisions.length && had.every((d, i) => d === c.review.decisions[i])) continue;
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(join(dir, `${c.id}.json`), JSON.stringify({ ...c, updatedAt: new Date().toISOString() }, null, 2) + "\n");
+    out.push(c.id);
+  }
+  return out;
 }
 
 const readJson = <T>(p: string): T => JSON.parse(readFileSync(p, "utf-8")) as T;
@@ -166,6 +193,8 @@ const USAGE = `usage: bun run folio-assistant-core/scripts/review-comments.ts
   (--folio <dir> [--blocks-out <blocks.json>] | --blocks <blocks.json>)
   [--existing <previous review-comments.json>] [--commit <sha>]
   [--todos <todos graph root>]  statuses committed on the feature branch win
+  [--write-decided]          with --todos: write each comment a \`resolve:\` tag moved
+                             into the graph's feedback directory, for the caller to commit
   [--comments <file.json>]   read comments from a file instead of GitHub (offline, tests)
   [--rendered <rendered-impact.json> [--measured <rendered-measured.json>]]
                              what a \`page:\` or \`input:\` verdict may name, with its pin
@@ -193,7 +222,11 @@ if (import.meta.main) {
       console.error(`✗ --folio ${dir} does not exist, so no block can be anchored`);
       process.exit(1);
     }
-    blocks = blocksOf(dir);
+    // The checkout's contributed builders, as changeset.ts loads them, so a
+    // comment on a DAK block (a persona, a requirement) anchors to it rather
+    // than being orphaned.
+    const contributions = await loadContributions<FolioContribution, ContributionRegistry>(process.cwd(), new ContributionRegistry());
+    blocks = blocksOf(dir, contributions.contributedBuilders());
     if (opt("blocks-out")) writeJson(opt("blocks-out")!, blocks);
   } else {
     blocks = readJson<BlocksFile>(opt("blocks")!);
@@ -244,6 +277,20 @@ if (import.meta.main) {
       : undefined;
   const file = buildReviewComments({ repo, pr, commit, comments, blocks, existing, committed, committedVerdicts, rendered });
   writeJson(out, file);
+  // A decision made from the page is RECORDED, not only published (owner,
+  // 2026-10-15): each comment whose applied decisions differ from its
+  // committed copy is written into the feedback directory, as
+  // `folio-review-comment-move` writes it. Committing is the caller's: the
+  // directory may be on the feature branch or on the folio's todos state branch.
+  if (args.includes("--write-decided")) {
+    if (!opt("todos")) {
+      console.error("✗ --write-decided needs --todos <todos graph root>");
+      process.exit(2);
+    }
+    const dir = feedbackDir(opt("todos")!);
+    const written = writeDecided(file.comments, committed ?? new Map(), dir);
+    console.error(written.length ? `✓ ${written.length} decided review comment(s) written to ${dir}: ${written.join(", ")}` : "· no new decision to record");
+  }
   const orphaned = file.comments.filter((c) => c.review.orphaned).length;
   console.error(
     `✓ ${file.comments.length} review comment(s) (${orphaned} orphaned), ${file.verdicts.length} verdict(s) → ${out}; ` +

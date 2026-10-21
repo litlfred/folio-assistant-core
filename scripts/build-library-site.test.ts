@@ -5,7 +5,7 @@
  * library, edit -> materialized version in folio/'s edit").
  */
 import { describe, expect, test } from "bun:test";
-import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
@@ -15,7 +15,7 @@ const ENTRY = "review-v1";
 const FIXTURE = join(import.meta.dir, "test-fixtures", "library-structure.json");
 
 /** A folio with a library entry (a trimmed DPI-H structure) and the document made from it. */
-function scaffold(): string {
+function scaffold(anchorsExtra: Record<string, unknown> = {}): string {
   const d = mkdtempSync(join(tmpdir(), "libsite-"));
   writeFileSync(
     join(d, "doc.json"),
@@ -34,6 +34,7 @@ function scaffold(): string {
       $schema: "folio-review-anchors/v1",
       document: "doc",
       library: ENTRY,
+      ...anchorsExtra,
       sections: [
         { label: "sec:1-1", number: "1.1", title: "About" },
         { label: "sec:1-1-1", number: "1.1.1", title: "What is a reference architecture" },
@@ -48,6 +49,13 @@ function scaffold(): string {
 }
 
 describe("build-library-site (bean zcak)", () => {
+  test("the entry title says what the source is: public comment by default, the folio's own label when it gives one", () => {
+    const plain = scaffold();
+    expect(entryView(plain, join(plain, "library", ENTRY))!.title).toBe("The Handbook — the version published for public comment");
+    const labelled = scaffold({ sourceLabel: "the TWG outline it was seeded from" });
+    expect(entryView(labelled, join(labelled, "library", ENTRY))!.title).toBe("The Handbook — the TWG outline it was seeded from");
+  });
+
   test("a section maps to the first folio block of the section with its number; one with no counterpart maps to nothing", () => {
     const d = scaffold();
     const editFor = materialisedEdits(d, ENTRY)!;
@@ -69,10 +77,16 @@ describe("build-library-site (bean zcak)", () => {
     expect(view.links).toEqual({ repo: "o/r", branch: "main", dir: `library/${ENTRY}` });
     const edits = view.sections.map((s: { edit?: { path: string } }) => s.edit?.path ?? null);
     expect(edits).toEqual(["folio/doc/ch1/p-1-1.md", "folio/doc/ch1/p-1-1-1.md", null]);
-    const html = readFileSync(join(at, "index.html"), "utf-8");
+    // The page is under the locale and its data is not (#2527): the page
+    // reads the data where it is, and nothing is left at the old address.
+    const html = readFileSync(join(out, "en", HANDLER, "library", ENTRY, "index.html"), "utf-8");
     expect(html).toContain("function faBlockUrls");
     expect(html).toContain("loadDocument(");
-    expect(readFileSync(join(out, HANDLER, "library", "index.html"), "utf-8")).toContain(`href="${ENTRY}/"`);
+    expect(html).toContain(`new URL("../../../../${HANDLER}/library/${ENTRY}/index.json", location.href)`);
+    expect(html).toContain(`href="../../../../${HANDLER}/library/${ENTRY}/entries/${ENTRY}.doc.json"`);
+    expect(existsSync(join(at, "index.html"))).toBe(false);
+    expect(readFileSync(join(out, "en", HANDLER, "library", "index.html"), "utf-8")).toContain(`href="${ENTRY}/"`);
+    expect(existsSync(join(out, HANDLER, "library", "index.html"))).toBe(false);
   });
 
   test("it says what it reads: the library and the folio", () => {
@@ -88,6 +102,6 @@ describe("build-library-site (bean zcak)", () => {
     expect(json.length).toBeGreaterThanOrEqual(1);
     expect(json[0].href).toMatch(/^#sec-/);
     buildLibrarySite(d, join(d, "_s"), { repo: "o/r" });
-    expect(readFileSync(join(d, "_s", HANDLER, "library", ENTRY, "index.html"), "utf-8")).toContain("data-fa-visualiser-nav");
+    expect(readFileSync(join(d, "_s", "en", HANDLER, "library", ENTRY, "index.html"), "utf-8")).toContain("data-fa-visualiser-nav");
   });
 });

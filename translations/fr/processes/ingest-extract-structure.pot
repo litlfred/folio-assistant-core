@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ingest-extract-structure\n"
-"POT-Creation-Date: 2026-10-07T18:45:27.403Z\n"
+"POT-Creation-Date: 2026-10-20T09:54:46.807Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: fr\n"
@@ -14,102 +14,102 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:71
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:72
 #. Diagram element documentation
-msgid "A document ingested this way keeps its text in ocr/ and only a stub in sections/, which the documented sections/ grep cannot see. That asymmetry is why the corpus-grep checklist has a fourth tier."
+msgid "A document ingested this way keeps its text in ocr/ and only a stub in sections/, which the documented sections/ grep cannot see. That asymmetry is why the corpus-grep checklist has a fourth tier. The run also records WHICH SOFTWARE made the pages, in ocr/run-context.json: a folio-run-context/v1 (cat-harness schemas/run-context.ts, the record test runs and QA reports use for the same question), naming the OCR engine, the rasteriser and each language model with its version and the sha256 of the bytes that ran. Two OCRs of one scan can read differently (\"Manual\" and \"Manval\", bean turh), and without it neither could be told from the other or reproduced."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:52
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:53
 #. Diagram label
 msgid "Binary in hand"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:98
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:99
 #. Diagram element documentation
 msgid "candidates.json holds extracted theorems and definitions. Proposals only -- never adjudicated verdicts."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:80
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:81
 #. Diagram element documentation
 msgid "Contextual retrieval: a chunk in isolation loses what makes it mean anything, so each section carries the document brief."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:57
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:58
 #. Diagram element documentation
 msgid "Does the binary carry an embedded text layer? `yes` extracts it; `no — scanned` runs OCR into ocr/page-*.txt."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:55
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:56
 #. Diagram label
 msgid "Embedded text layer?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:97
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:98
 #. Diagram label
 msgid "Extract claim candidates"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:26
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:28
 #. Diagram element documentation
 msgid "Extract the structure of an uploaded source: its text layer, OCR where it has none, sections, structure and claim candidates. folio-assistant — Ingestion subprocess — extract structure. Source of truth: this file. Open it in bpmn.io, Camunda Modeler, or any other BPMN 2.0 tool. The SVG under docs/assets/img/workflows/ is generated from it by `bun run cat render:bpmn` — never hand-edit the SVG. The <bootstrap.processes:skill> extension on an activity names the folio-assistant skill that implements it; <cat-harness.processes:bean> marks a step that reads or writes the shared work plan in beans/."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:62
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:63
 #. Diagram label
 msgid "Extract the text layer"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:39
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:41
 #. Diagram label
 msgid "Ingestion Engine (agent, runs unattended)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:23
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:25
 #. Diagram label
 msgid "Ingestion subprocess — extract structure"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:110
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:111
 #. Diagram label
 msgid "no — scanned"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:70
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:71
 #. Diagram label
 msgid "OCR to ocr/page-*.txt"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:78
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:79
 #. Diagram label
 msgid "Split into sections/*.md with doc_brief front-matter"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:105
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:106
 #. Diagram label
 msgid "Structured"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:63
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:64
 #. Diagram element documentation
 msgid "The document has a text layer: extract it with pdf-extract (pdfminer.six, then a zero-dependency content-stream reader). Exit 2 means no text layer — a scan — and routes to OCR; it is not an empty document."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:40
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:42
 #. Diagram element documentation
 msgid "Two provenance paths converge on the same Task_Sections output — an embedded text layer extracted directly, or OCR that leaves the fuller text in ocr/ with only a stub in sections/ — and which branch this lane took is invisible downstream except to a grep that knows to check the fourth tier. Task_Candidates is the last step and it stays a proposal: theorems and definitions extracted here are never adjudicated verdicts, so nothing downstream may treat this lane's output as settled."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:90
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:91
 #. Diagram element documentation
-msgid "Write structure.json (pdf-structure/v1): doc id, TOC from the PDF outline or inferred from headings, page ranges, metadata, and source{} with the sha256 and a mimetype sniffed from the bytes, never the extension. A structure that could not be determined says so in structure_note rather than being rendered as one."
+msgid "Write structure.json (pdf-structure/v1): doc id, TOC from the PDF outline or inferred from headings, page ranges, metadata, and source{} with the sha256 and a mimetype sniffed from the bytes, never the extension. A structure that could not be determined says so in structure_note rather than being rendered as one. For OCR'd text, source.runContext cites the OCR step's run context by sha256. A title already known for the document (the catalogue's dc.title, or one given with --title) is passed through as the raw title, so the sections' doc_title does not carry a scan's misreading (bean turh)."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:88
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:89
 #. Diagram label
 msgid "Write structure.json (TOC, page ranges, metadata)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:109
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:110
 #. Diagram label
 msgid "yes"
 msgstr ""

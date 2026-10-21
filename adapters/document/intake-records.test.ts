@@ -4,7 +4,7 @@
 import { describe, expect, test } from "bun:test";
 
 import { DublinCoreRecordSchema, dcValues } from "../../schemas/dublin-core.js";
-import { IntakeSchema } from "../../../cat-harness/schemas/intake.js";
+import { IntakeSchema } from "@litlfred/cat-harness/schemas/intake.js";
 import { recordFileName, uploadRecords } from "./intake-records.js";
 
 const base = {

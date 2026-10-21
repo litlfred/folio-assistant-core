@@ -7,10 +7,10 @@
  *
  * ## Generic, and so in core (bean `eayu`, 2026-09-30)
  *
- * Moved from `who-iris/scripts/`. Owner: *"dspace scripts generic in
+ * Moved from the IRIS catalogue instance's `scripts/`. Owner: *"dspace scripts generic in
  * folio-assistant"*. `THUMBNAIL` is a DSpace bundle, not an IRIS one, and the
  * node shape is core's `CatalogueNode`, so this renders covers for ANY
- * catalogue instance — the instance root is the first argument. who-iris was
+ * catalogue instance — the instance root is the first argument. The IRIS catalogue was
  * the first to ask for them, which is why the owner's words below are IRIS's.
  *
  * Owner, 2026-09-20: *"do the needed things like extract cover avatar igf
@@ -22,7 +22,7 @@
  * DSpace generates a `THUMBNAIL` bundle of its own. **These are not those.**
  * `iris.who.int` is egress-blocked from this environment, so nothing upstream
  * was fetched; each cover is page 1 of a PDF we already hold, rasterised by
- * `cat-harness/scripts/pdf-cover.py`. A node recording one of these without
+ * `cat-harness-tools/scripts/pdf-cover.py`. A node recording one of these without
  * recording the derivation would assert that this repository holds a
  * bitstream IRIS produced, which is false — so this script REFUSES to write a
  * cover for a node whose THUMBNAIL bitstream does not declare it (see
@@ -49,7 +49,7 @@
  * pixel dimensions. A claim this script makes is a claim this script checks.
  *
  * Usage:
- *   bun run folio-assistant-core/scripts/gen-covers.ts <instance-root>   (e.g. who-iris)
+ *   bun run folio-assistant-core/scripts/gen-covers.ts <instance-root>   (e.g. an IRIS mirror)
  *   bun run folio-assistant-core/scripts/gen-covers.ts <instance-root> --check
  */
 import { createHash } from "crypto";
@@ -58,11 +58,11 @@ import { dirname, join, relative, resolve } from "path";
 
 import type { CatalogueNode, MaskedRegion } from "../schemas/catalogue.js";
 import { bytesFor } from "./lib/bytes.js";
-import { inputSiteReached } from "../../cat-harness/scripts/input-trace.ts";
+import { inputSiteReached } from "@litlfred/cat-harness/schemas/input-trace.ts";
 
 /** The platform checkout — where the renderer and the render cache live, never the instance. */
 const REPO = resolve(import.meta.dir, "..", "..");
-const RENDERER = join(REPO, "cat-harness", "scripts", "pdf-cover.py");
+const RENDERER = join(REPO, "cat-harness-tools", "scripts", "pdf-cover.py");
 
 /** The listing width. One number, because every cover shares a column. */
 export const COVER_WIDTH = 300;
@@ -277,7 +277,7 @@ function main(): number {
   const check = process.argv.includes("--check");
   const arg = process.argv.slice(2).find((a) => !a.startsWith("-"));
   if (!arg) {
-    console.error("usage: gen-covers.ts <instance-root> [--check]   (e.g. who-iris)");
+    console.error("usage: gen-covers.ts <instance-root> [--check]   (e.g. an IRIS mirror)");
     return 2;
   }
   const instanceDir = resolve(arg);

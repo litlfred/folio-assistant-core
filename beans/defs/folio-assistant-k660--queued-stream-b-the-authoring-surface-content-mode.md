@@ -1,11 +1,11 @@
 ---
 # folio-assistant-k660
 title: 'QUEUED STREAM B: the authoring surface — content model, memory and voice (0lmb + 8jt6 + 2upx, 16 open beans)'
-status: todo
+status: scrapped
 type: task
 priority: normal
 created_at: 2026-09-22T18:29:28Z
-updated_at: 2026-09-22T18:29:28Z
+updated_at: 2026-10-10T15:52:43Z
 parent: folio-assistant-0lmb
 ---
 
@@ -72,3 +72,17 @@ FHIR timeline would be fabricating a schedule for somebody else.
 - [ ] `y1w9` + `3025`: every skill either reaches an agent through a role or
       process, or is recorded as deliberately unreachable with a reason
 - [ ] `55ao` decided by the owner, not by an agent reading two contradictory docs
+
+
+## Reasons for Scrapping
+
+Scrapped 2026-10-10 by the bean-backlog drain (lane C). This is a queue entry
+from the 2026-09-22 three-GOAL split, and the repo separation overtook it:
+- **Done:** `bqrg`, `lqo9`, `06e3` and `6xaz` are completed.
+- **Decided:** `55ao` is owner-ruled (Q1–Q3) and tracked on its own.
+- **Blocked upstream:** `cz17`, on WHO's Logical Model.
+- **In no bean store any more:** `y1w9`, `3025`, `h32d`, `7sf1`, `xeer` and
+  `88mg`. The skill-reachability question they carried is a harness concern
+  (roles, processes), so it belongs to the cat-harness stores.
+
+The parent epic `0lmb` stays open over the real remaining children.

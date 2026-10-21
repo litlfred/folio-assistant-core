@@ -5,7 +5,7 @@
     "id": "Process_BuildL1Kg",
     "path": "processes/library/ingest-build-l1-kg.bpmn"
   },
-  "source_hash": "sha256:04a608ee63dc8b7ddb736bbaaeed683bf9872e5fe728940c79c7c6d46f378191",
+  "source_hash": "sha256:943ca4da4a7786e1d10b0a6cc809b6bb6c383d600e12fcb0d031d41b38b7d834",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -59,6 +59,14 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
       "result": "pass",
       "findings": []
@@ -109,7 +117,7 @@
     }
   },
   "totals": {
-    "pass": 13,
+    "pass": 15,
     "fail": 0,
     "n/a": 12,
     "unknown": 0

@@ -22,14 +22,21 @@
  *
  * ## Output
  *
- *   <out>/index.html          every document in the folio, linked
- *   <out>/<slug>/index.html   one page per document, block anchors intact
- *   <out>/<slug>/media/       the document's images, copied from folio/<slug>/media/
- *   <out>/review/index.html   what changed from main, read from the preview's
- *                             changeset.json when opened (bean txut)
- *   <out>/outline.json        every document's chapters, sections and blocks
- *                             in manifest order, for the review page's
- *                             outline and minimap (bean eb4l)
+ *   <out>/index.html             every document in the folio, linked
+ *   <out>/en/<slug>/index.html   one page per document, block anchors intact
+ *   <out>/en/<slug>/media/       the document's images, copied from folio/<slug>/media/
+ *   <out>/en/review/index.html   what changed from main, read from the preview's
+ *                                changeset.json when opened (bean txut)
+ *   <out>/outline.json           every document's chapters, sections and blocks
+ *                                in manifest order, for the review page's
+ *                                outline and minimap (bean eb4l)
+ *   <out>/<slug>/blocks/         a lazy document's block text, as data (bean v433)
+ *   <out>/<slug>/kg/             every block's knowledge-graph node, as committed
+ *   <out>/<slug>/graph.jsonld    the document's graph: every node in one file
+ *   <out>/values.jsonld          every {{ … }} value the text refers to, as KG nodes
+ *
+ * Pages are under the page locale and data is not (issue #2527): see
+ * `document-site-route.ts`, which says where each one goes.
  *
  * ## The outline's section keys are the ChangeSet's
  *
@@ -43,7 +50,8 @@
  * ## Failure is loud
  *
  * A folio with no document, or a document whose assembly reports an error,
- * exits non-zero. A site that silently omitted a document would be a preview
+ * exits non-zero. So does a block with no `.jsonld` node, or a stale one
+ * ({@link documentGraph}). A site that silently omitted a document would be a preview
  * that reads "that document was deleted" to a reviewer.
  *
  * Raw HTML in the assembled Markdown is kept (`sanitize: false`), because the
@@ -51,7 +59,7 @@
  * the folio's own workflow, which is the same trust the build command already
  * has.
  */
-import { cpSync, existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 import { remark } from "remark";
 import remarkDirective from "remark-directive";
@@ -60,27 +68,30 @@ import remarkHtml from "remark-html";
 import remarkMath from "remark-math";
 import { visit } from "unist-util-visit";
 
-import { folioDir } from "../../cat-harness/schemas/cat-harness.js";
-import { readHarnessConfig } from "../../cat-harness/schemas/harness-config.js";
-import { detectRepoUrl, ownerRepo } from "../../cat-harness/src/core/git-refs.js";
-import { DEFAULT_TEMPLATE, injectBlockActions, readIssueForm, type BlockActionsConfig, type BlockContext } from "./block-actions.js";
-import type { Chapter, Paper, Section, SectionRef } from "../../cat-harness/schemas/types.js";
-import { buildDocumentMarkdown } from "../../cat-harness/content/pipeline/render-markdown.js";
-import { reviewPageHtml } from "../../cat-harness/scripts/gen-review-page.js";
-import { darkRules } from "../../cat-harness/scripts/lib/scheme-css.ts";
-import { visualiserNavDeclaration, type VisualiserNavEntry } from "../../cat-harness/scripts/lib/navbar.js";
+import { folioDir, readDeclaration, visualisationResolves, visualisationsOf, type CatHarnessDeclaration } from "@litlfred/cat-harness/schemas/cat-harness.js";
+import { loadContributions, readHarnessConfig } from "@litlfred/cat-harness/schemas/harness-config.js";
+import { detectRepoUrl, ownerRepo } from "@litlfred/cat-harness-tools/src/core/git-refs.js";
+import { DEFAULT_TEMPLATE, compactActionsScript, injectBlockActions, readIssueForm, type BlockActionsConfig, type BlockContext } from "./block-actions.js";
+import type { Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness/schemas/types.js";
+import { buildDocumentMarkdown } from "@litlfred/cat-harness-tools/pipeline/render-markdown.js";
+import { loadBlocksUnder } from "@litlfred/cat-harness-tools/pipeline/block-module.js";
+import { blockToJsonLd, serialise as serialiseNode } from "@litlfred/cat-harness-tools/pipeline/gen-block-jsonld.js";
+import { atInstanceContext } from "@litlfred/cat-harness-tools/pipeline/instance-document-context.js";
+import { writeValuesJsonLd } from "@litlfred/cat-harness-tools/pipeline/gen-values-jsonld.js";
+import { bundleEditorProfiles } from "@litlfred/cat-harness-tools/pipeline/editor-profiles.js";
+import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness/schemas/contributions.js";
+import { reviewPageHtml } from "@litlfred/cat-harness-tools/scripts/gen-review-page.js";
+import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts";
+import { visualiserNavDeclaration, type VisualiserNavEntry } from "@litlfred/cat-harness-tools/scripts/lib/navbar.js";
+import { wrapRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
+import { scopeCss } from "./scope-css.js";
+import { referenceAnchor } from "../schemas/reference.ts";
+import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
-/** A readable page shell. Light and dark follow the reader's system setting. */
-function page(title: string, body: string, math?: MathOptions, tail = ""): string {
-  return `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>${esc(title)}</title>
-<style>
+/** The standalone page's own stylesheet. Light and dark follow the reader's system setting. */
+const PAGE_STYLE = `<style>
   :root { color-scheme: light dark; --fg: #1b1b1b; --bg: #fdfdfb; --muted: #5b5b5b; --link: #0b5cad; }
   ${darkRules(`:root { --fg: #e8e8e6; --bg: #161616; --muted: #a8a8a4; --link: #7db4ff; }`)}
   body { margin: 0; font: 1.05rem/1.6 system-ui, sans-serif; color: var(--fg); background: var(--bg); }
@@ -100,7 +111,17 @@ function page(title: string, body: string, math?: MathOptions, tail = ""): strin
   .cite { color: var(--muted); }
   .fa-blk:empty { min-height: 3rem; }
   .fa-one-page { font-size: .85rem; color: var(--muted); }
-</style>${math ? mathHead(math) : ""}
+</style>`;
+
+/** A readable page shell. Light and dark follow the reader's system setting. */
+function page(title: string, body: string, math?: MathOptions, tail = ""): string {
+  return `<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(title)}</title>
+${PAGE_STYLE}${math ? mathHead(math) : ""}
 </head>
 <body>
 <main>
@@ -109,6 +130,88 @@ ${body}
 </body>
 </html>
 `;
+}
+
+// ── Themed pages: the document inside the site's layout (--document-layout) ─
+//
+// A standalone page wears only the injected rail. On a folio site that Jekyll
+// builds, the document page can instead name the site's layout, as the landing
+// can (`landingPage`), and wear the full chrome: top bar, search, sidebar.
+// Inside the layout the standalone page's stylesheet would restyle the theme
+// (`:root`, `body`, `main`, `a`, `table`), so a themed page carries its own,
+// every rule under {@link DOC_CLASS}, and inherits the theme's colours and
+// type. The page is built standalone first, so [edit]/[feedback] (which need
+// the head and body tags) go in the one way, and is then taken apart.
+
+export { DOC_CLASS };
+
+/** The themed page's own rules: what the standalone stylesheet does that the theme does not. */
+const THEMED_STYLE = `
+.${DOC_CLASS} :target { scroll-margin-top: 4rem; }
+.${DOC_CLASS} .katex-display { overflow-x: auto; overflow-y: hidden; }
+.${DOC_CLASS} dfn.defterm { font-style: normal; font-weight: 600; }
+.${DOC_CLASS} .cite { opacity: .72; }
+.${DOC_CLASS} .fa-blk:empty { min-height: 3rem; }
+.${DOC_CLASS} .fa-one-page { font-size: .85rem; opacity: .72; }
+.${DOC_CLASS} .pc-bar { position: static; background: none; }
+`;
+
+/** A layout name as front matter may carry it, or a throw. */
+function layoutName(layout: string, what: string): string {
+  if (!/^[A-Za-z0-9_-]+$/.test(layout)) throw new Error(`${what} layout ${JSON.stringify(layout)} is not a layout name`);
+  return layout;
+}
+
+/**
+ * Give each heading the assembly anchored an `id` of its own, `h-<label>`, so
+ * the theme's "On this page" (docs-ui.js, which lists `h2[id]`/`h3[id]`) has
+ * destinations. The anchor before the heading keeps its id, which every
+ * existing link uses. Unique against every id on the page; a heading that
+ * already has an id is left alone.
+ */
+export function headingIds(html: string): string {
+  const taken = new Set(idsIn(html));
+  return html.replace(/(<p><a id="([^"]+)"><\/a><\/p>\s*<(h[1-6]))(\s[^>]*)?>/g, (m, lead: string, label: string, _tag: string, attrs = "") => {
+    if (/\sid=/.test(attrs)) return m;
+    let id = `h-${label}`;
+    for (let n = 2; taken.has(id); n++) id = `h-${label}-${n}`;
+    taken.add(id);
+    return `${lead} id="${id}"${attrs}>`;
+  });
+}
+
+/**
+ * A standalone document page (from {@link page}, actions already injected) as
+ * a JEKYLL page in `layout`: front matter, then one Liquid raw block holding
+ * the scoped styles, the head's scripts and stylesheet links (KaTeX), the
+ * document in a `div.fa-doc`, the page's trailing scripts, and
+ * {@link DOCUMENT_END_MARKER} where a later step adds to the page. Out of
+ * search (`search_exclude`): the page is far larger than the index wants.
+ */
+export function themedDocumentPage(layout: string, title: string, html: string): string {
+  layoutName(layout, "document");
+  const h0 = html.indexOf("<head>\n");
+  const h1 = html.indexOf("</head>");
+  const b0 = html.indexOf("<body>\n<main>\n");
+  const b1 = html.lastIndexOf("</body>");
+  if (h0 < 0 || h1 < h0 || b0 < h1 || b1 < b0) throw new Error("themedDocumentPage: not a page this command built");
+  let head = html.slice(h0 + "<head>\n".length, h1);
+  if (!head.includes(PAGE_STYLE)) throw new Error("themedDocumentPage: the page's stylesheet is not the standalone one");
+  head = head.replace(PAGE_STYLE, "").replace(/<meta [^>]*>\n?/g, "").replace(/<title>[\s\S]*?<\/title>\n?/, "");
+  const styles: string[] = [];
+  head = head.replace(/<style>([\s\S]*?)<\/style>/g, (_m, css: string) => (styles.push(scopeCss(css, `.${DOC_CLASS}`)), ""));
+  const inner = html.slice(b0 + "<body>\n<main>\n".length, b1);
+  const end = inner.lastIndexOf("\n</main>");
+  if (end < 0) throw new Error("themedDocumentPage: the page has no main column");
+  const body = [
+    `<style>${THEMED_STYLE}${styles.join("")}</style>`,
+    ...(head.trim() ? [head.trim()] : []),
+    `<div class="${DOC_CLASS}">`,
+    inner.slice(0, end),
+    `</div>${inner.slice(end + "\n</main>".length).replace(/\n+$/, "")}`,
+    DOCUMENT_END_MARKER,
+  ].join("\n");
+  return [`---`, `layout: ${layout}`, `title: ${JSON.stringify(title)}`, `search_exclude: true`, `---`, ...wrapRaw(body), ``].join("\n");
 }
 
 /**
@@ -165,6 +268,54 @@ export function pageContents(html: string): string {
 // nothing to save, and one file is simpler to read and to test. Searching the
 // comments is the dashboard's job (owner: "only the visualizer search for the
 // PCs"), so nothing here needs the text in the page to be findable at once.
+
+// ── The knowledge graph, published (owner 2026-10-14) ───────────────────────
+//
+// Every block is a KG node: its `<block>.jsonld`, written by
+// `gen-block-jsonld.ts` and committed beside it. Bean v433 was asked for a
+// *"dynamic JS load of KG"* and published rendered HTML only, and this
+// builder never read a node, so a document folio's site carried no graph at
+// all, and a folio that had never generated one looked no different
+// (litlfred/dth-hrh, found 2026-10-14). The nodes are now published as data,
+// one per block under `kg/` and all together in `graph.jsonld`, and a node
+// that is missing, or that differs from what the generator would write now,
+// fails the build: a site whose graph is silently absent or out of date is
+// the failure this replaces.
+
+/** A document's block nodes, as committed, and what is wrong with them. */
+export async function documentGraph(
+  docDir: string,
+  slug: string,
+  contributions?: ContributionRegistry,
+): Promise<{ nodes: Array<{ rel: string; text: string }>; errors: string[] }> {
+  // A dependency's kinds (a DAK layer's personas, scenarios, requirements) are blocks too.
+  const kinds = new Set(contributions?.contributedBuilders().values() ?? []);
+  const { blocks, failures } = await loadBlocksUnder(docDir, kinds);
+  const errors = failures.map((f) => `${relative(docDir, f.file)} did not load: ${f.error}`);
+  const nodes: Array<{ rel: string; text: string }> = [];
+  for (const b of [...blocks.values()].sort((x, y) => x.file.localeCompare(y.file))) {
+    const path = b.file.replace(/\.ts$/, ".jsonld");
+    const rel = relative(docDir, path);
+    if (!existsSync(path)) {
+      errors.push(`${rel}: no KG node (run gen-block-jsonld.ts)`);
+      continue;
+    }
+    const text = readFileSync(path, "utf-8");
+    // The generator names the context of the instance the file sits in
+    // (`atInstanceContext`, bean folio-assistant-63q4), so compare with that.
+    if (text !== serialiseNode(atInstanceContext(blockToJsonLd(b, slug, [], [], contributions), path))) errors.push(`${rel}: KG node is stale (run gen-block-jsonld.ts)`);
+    nodes.push({ rel, text });
+  }
+  return { nodes, errors };
+}
+
+/** Errors past this many are counted, not listed: one cause usually explains them all. */
+const GRAPH_ERRORS_LISTED = 20;
+
+/** The site's variable values (`gen-values-jsonld`), at the site root. */
+export const VALUES_FILE = "values.jsonld";
+/** Where the ✍ suggest editor's profile bundles are published, from the site root. */
+export const SUGGEST_DIR = "assets/suggest";
 
 export const LAZY_THRESHOLD = 200;
 export const LAZY_CHUNK = 40;
@@ -223,9 +374,14 @@ export function splitBlocks(markdown: string, labels: Set<string>): BlockSplit {
 /** Every `id="…"` in a block's HTML, so a link to a term inside an unloaded block finds its chunk. */
 const idsIn = (html: string) => [...html.matchAll(/\sid="([^"]+)"/g)].map((m) => m[1]!);
 
-/** The loader a lazy page runs. Index: label and inner id -> chunk number. */
-function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Record<string, number> }): string {
+/**
+ * The loader a lazy page runs. Index: label and inner id -> chunk number.
+ * `blocks` is the chunks' directory relative to the page: the page is under
+ * the locale and its data is not (`document-site-route.ts`).
+ */
+function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Record<string, number> }, blocks: string): string {
   const json = JSON.stringify(index).replace(/</g, "\\u003c");
+  const dir = JSON.stringify(`${blocks}/`).replace(/</g, "\\u003c");
   return `
 <script type="application/json" id="fa-blocks">${json}</script>
 <script>
@@ -245,7 +401,7 @@ function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Re
   // Fetch fails when the page is opened from disk: the whole document is one
   // page away, so go there rather than show empty blocks.
   const load = (n) => {
-    if (!pending.has(n)) pending.set(n, fetch("blocks/" + String(n).padStart(3, "0") + ".json")
+    if (!pending.has(n)) pending.set(n, fetch(${dir} + String(n).padStart(3, "0") + ".json")
       .then((r) => (r.ok ? r.json() : Promise.reject(r.status)))
       .then(fill)
       .catch(() => { if (!failed) { failed = true; location.replace("index.hydrated.html" + location.search + location.hash); } }));
@@ -296,9 +452,11 @@ function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Re
 // they are unambiguous: a `:defterm` becomes a `dfn` with its slug as the id, a
 // `:refterm` links to that id, and a directive of any OTHER name is put back
 // as the text it was written as (prose like "note:x" must not vanish).
-// `\cite{a,b}` becomes a muted `[a, b]` carrying the keys; linking it to a
-// bibliography needs the folio's reference registry, which this command does
-// not load.
+// `\cite{a,b}` becomes a muted `[a, b]` carrying the keys. Given
+// `--bibliography-url` (the published bibliography page, e.g. the platform's
+// `<base>/folio-assistant-core/bibliography/`), each key links to its entry
+// there; without it the keys are not links, because a page has no way to know
+// where the bibliography is published.
 
 export interface MathOptions {
   /** `\name` -> TeX, as KaTeX's `macros` option takes it. */
@@ -336,7 +494,7 @@ addEventListener("DOMContentLoaded", () => {
 </script>`;
 }
 
-/** The viewer's macro table (`buildKatexMacros` in cat-harness/viewer/index.html), from a paper manifest. */
+/** The viewer's macro table (`buildKatexMacros` in cat-harness-tools/viewer/index.html), from a paper manifest. */
 export function katexMacros(paperMacros: Record<string, { tex: string }> | undefined): Record<string, string> {
   const m: Record<string, string> = { "\\bigbowtie": "\\bowtie", "\\smallmatrix": "\\begin{smallmatrix}", "\\qed": "\\square" };
   for (const [name, def] of Object.entries(paperMacros ?? {})) m["\\" + name] = def.tex;
@@ -344,7 +502,7 @@ export function katexMacros(paperMacros: Record<string, { tex: string }> | undef
 }
 
 /** `\cite{a,b}` -> a muted `[a, b]`, outside fenced code. */
-export function citationsToHtml(markdown: string): string {
+export function citationsToHtml(markdown: string, opts: { bibliographyUrl?: string } = {}): string {
   // Per fenced/unfenced run rather than per line: a `\cite{a,\n b}` wrapped by
   // the author's line breaks is one citation (qou notation-collisions, found
   // by the rendered-content QA as visible raw TeX).
@@ -368,9 +526,16 @@ export function citationsToHtml(markdown: string): string {
     .join("\n");
 
   function cite(text: string): string {
-    return text.replace(/\\cite[pt]?\{([^}]+)\}/g, (_m, keys: string) => {
+    // `\cite[p.~3]{k}`: the optional note is shown after the keys, `~` as a space.
+    return text.replace(/\\cite[pt]?(?:\[([^\]]*)\])?\{([^}]+)\}/g, (_m, note: string | undefined, keys: string) => {
       const list = keys.split(",").map((k) => k.trim()).filter(Boolean);
-      return `<span class="cite" data-keys="${esc(list.join(" "))}">[${esc(list.join(", "))}]</span>`;
+      // With a bibliography to point at, each key links to its entry there
+      // (bean 63q4): `<url>#ref-<key>`, the anchor the bibliography page draws.
+      const shown = opts.bibliographyUrl
+        ? list.map((k) => `<a href="${esc(opts.bibliographyUrl!)}#${esc(referenceAnchor(k))}">${esc(k)}</a>`).join(", ")
+        : esc(list.join(", "));
+      const after = note?.trim() ? `, ${esc(note.trim().replace(/~/g, " "))}` : "";
+      return `<span class="cite" data-keys="${esc(list.join(" "))}">[${shown}${after}]</span>`;
     });
   }
 }
@@ -462,8 +627,8 @@ export function texInMarkdown(markdown: string): string {
 }
 
 /** One document's Markdown to HTML. */
-export async function renderDocumentHtml(markdown: string, opts: { math: boolean }): Promise<string> {
-  const source = citationsToHtml(opts.math ? texInMarkdown(displayMathLines(markdown)) : markdown);
+export async function renderDocumentHtml(markdown: string, opts: { math: boolean; bibliographyUrl?: string }): Promise<string> {
+  const source = citationsToHtml(opts.math ? texInMarkdown(displayMathLines(markdown)) : markdown, { bibliographyUrl: opts.bibliographyUrl });
   const base = opts.math ? remark().use(remarkMath) : remark();
   const proc = base.use(remarkGfm).use(remarkDirective).use(glossaryDirectives(source)).use(remarkHtml, { sanitize: false });
   return String(await proc.process(source));
@@ -493,12 +658,12 @@ export interface OutlineSection {
 export interface OutlineDocument {
   slug: string;
   title: string;
-  /** The document's page, relative to the site root. */
+  /** The document's page, relative to the site root: `en/<slug>/index.html` (`document-site-route.ts`). */
   page: string;
   chapters: Array<{ title: string; label?: string; sections: OutlineSection[] }>;
   /**
    * Present when the page is lazy (bean v433): `page` is then a shell, the
-   * text is in `blocks/NNN.json` and the whole document in `hydrated`. `of`
+   * text is in `<slug>/blocks/NNN.json` and the whole document in `hydrated`. `of`
    * maps each block to its chunk, so a change can name the file it alters
    * (rendered impact, bean `bnjs`).
    */
@@ -515,7 +680,7 @@ const isRef = (s: Section | SectionRef): s is SectionRef => !("blocks" in s);
 export async function documentOutline(manifestPath: string, folioRoot: string, slug: string): Promise<OutlineDocument> {
   const docDir = dirname(manifestPath);
   const paper = (await import(manifestPath)).default as Paper;
-  const doc: OutlineDocument = { slug, title: paper.title ?? slug, page: `${slug}/index.html`, chapters: [] };
+  const doc: OutlineDocument = { slug, title: paper.title ?? slug, page: documentPage(slug), chapters: [] };
   for (const chRef of paper.chapters) {
     const chDir = join(docDir, chRef.dir);
     const chPath = join(chDir, `${chRef.dir}.ts`);
@@ -567,7 +732,7 @@ export async function documentBlocks(manifestPath: string, repoRoot: string, slu
           const b = (await import(ts)).default as { label?: string };
           if (!b.label) continue;
           const md = join(chDir, `${root}.md`);
-          out.push({ label: b.label, source: relative(repoRoot, existsSync(md) ? md : ts), section: sec.title, page: `${slug}/index.html` });
+          out.push({ label: b.label, source: relative(repoRoot, existsSync(md) ? md : ts), section: sec.title, page: documentPage(slug) });
         }
         if (sec.subsections) await walk(sec.subsections);
       }
@@ -595,6 +760,9 @@ export function defaultBlockActions(repoRoot: string, over: Partial<BlockActions
     ...(over.labels ? { labels: over.labels } : {}),
     ...(over.siteUrl ? { siteUrl: over.siteUrl } : {}),
     ...(over.content ? { content: over.content } : {}),
+    ...(over.values ? { values: over.values } : {}),
+    ...(over.graph ? { graph: over.graph } : {}),
+    ...(over.suggest ? { suggest: over.suggest } : {}),
   };
 }
 
@@ -606,7 +774,21 @@ export interface SiteBuildResult {
 export async function buildDocumentSite(
   repoRoot: string,
   outDir: string,
-  opts: { math?: boolean; actions?: Partial<BlockActionsConfig> | false; lazy?: "auto" | "always" | "never" } = {},
+  opts: {
+    math?: boolean;
+    actions?: Partial<BlockActionsConfig> | false;
+    lazy?: "auto" | "always" | "never";
+    /** Write the landing as a Jekyll page in this layout ({@link landingPage}). */
+    landingLayout?: string;
+    /**
+     * Write each document's page as a Jekyll page in this layout
+     * ({@link themedDocumentPage}). The one-page `index.hydrated.html` of a
+     * lazy document stays standalone.
+     */
+    documentLayout?: string;
+    /** The published bibliography page each `\cite` key links into (`<url>#ref-<key>`). Absent: citations are not links. */
+    bibliographyUrl?: string;
+  } = {},
 ): Promise<SiteBuildResult> {
   // Math defaults on only for a paper instance; see the note on renderDocumentHtml.
   const math = opts.math ?? readHarnessConfig(repoRoot)?.contentType === "paper";
@@ -617,50 +799,94 @@ export async function buildDocumentSite(
     result.errors.push(`no document manifest under ${folioDir(repoRoot)} (expected folio/<slug>/<slug>.ts)`);
     return result;
   }
+  if (opts.landingLayout) layoutName(opts.landingLayout, "landing");
+  const themed = opts.documentLayout === undefined ? undefined : layoutName(opts.documentLayout, "document");
   mkdirSync(outDir, { recursive: true });
+  const contributions = await loadContributions<FolioContribution, ContributionRegistry>(repoRoot, new ContributionRegistry());
+  // The ✍ suggest editor's checks and Crepe settings for this content type
+  // (editor-checker nodes, bean 4dx7), bundled once for every document.
+  const contentType = readHarnessConfig(repoRoot)?.contentType;
+  const suggestProfiles = contentType ? await bundleEditorProfiles(repoRoot, contentType, join(outDir, ...SUGGEST_DIR.split("/")), "") : [];
   for (const d of docs) {
     const built = await buildDocumentMarkdown(d.path);
     for (const i of built.issues) if (i.level === "error") result.errors.push(`${d.slug}: ${i.message}`);
-    const html = await renderDocumentHtml(built.markdown, { math });
+    const html = await renderDocumentHtml(built.markdown, { math, bibliographyUrl: opts.bibliographyUrl });
     const manifest = (await import(d.path)).default as Paper;
-    const dir = join(outDir, d.slug);
+    // The page under the locale, its data where it was (document-site-route.ts).
+    const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
+    const data = join(outDir, ...documentDataDir(d.slug).split("/"));
     mkdirSync(dir, { recursive: true });
     const mathOpts = math ? { macros: katexMacros(manifest.macros) } : undefined;
     const blocks = await documentBlocks(d.path, repoRoot, d.slug);
-    const cfg = opts.actions === false ? undefined : defaultBlockActions(repoRoot, { content: d.slug, ...(opts.actions ?? {}) });
+    // `values`: where the ✍ suggest editor reads each variable's current value,
+    // `graph` the labels and keys its checks warn against, `suggest` its profiles;
+    // all relative to this page.
+    const pageDir = documentPageDir(d.slug);
+    const suggest = suggestProfiles.length
+      ? { katexMacros: mathOpts?.macros ?? {}, profiles: suggestProfiles.map((p) => ({ ...p, module: fromPageDir(pageDir, `${SUGGEST_DIR}/${p.module}`) })) }
+      : undefined;
+    const cfg = opts.actions === false ? undefined : defaultBlockActions(repoRoot, {
+      content: d.slug,
+      values: fromPageDir(pageDir, VALUES_FILE),
+      graph: fromPageDir(pageDir, `${documentDataDir(d.slug)}/graph.jsonld`),
+      ...(suggest ? { suggest } : {}),
+      ...(opts.actions ?? {}),
+    });
     // [edit] and [feedback] on every block (REQ-17, bean uphx). Off only when asked.
-    const withActions = (h: string, compact = false) => (cfg ? injectBlockActions(h, blocks, cfg, { compact }).html : h);
+    // The compact form brings the runtime with it. The full form (a small,
+    // one-page document) gets it too: the runtime is what adds ✍ suggest beside
+    // every ✎ edit, and a document is not less editable for being short.
+    const withActions = (h: string, compact = false) => {
+      if (!cfg) return h;
+      const r = injectBlockActions(h, blocks, cfg, { compact });
+      return compact || r.inserted === 0 ? r.html : r.html.replace("</body>", `${compactActionsScript(cfg, documentPage(d.slug))}</body>`);
+    };
     const lazy = opts.lazy === "always" || ((opts.lazy ?? "auto") === "auto" && blocks.length >= LAZY_THRESHOLD);
+    const title = manifest.title ?? d.slug;
+    // Themed, the theme's sidebar is the page's index, built from heading ids;
+    // the rail's declared contents (pageContents) would be a second one.
     if (!lazy) {
-      writeFileSync(join(dir, "index.html"), withActions(page(manifest.title ?? d.slug, pageContents(html) + html, mathOpts)));
+      if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, headingIds(html), mathOpts))));
+      else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(html) + html, mathOpts)));
     } else {
       // The whole document on one page, for file://, no-JS readers and tools.
       writeFileSync(join(dir, "index.hydrated.html"), withActions(page(manifest.title ?? d.slug, pageContents(html) + html, mathOpts)));
       const split = splitBlocks(built.markdown, new Set(blocks.map((b) => b.label)));
       const index = { chunks: 0, of: {} as Record<string, number>, ids: {} as Record<string, number> };
-      mkdirSync(join(dir, "blocks"), { recursive: true });
+      mkdirSync(join(data, "blocks"), { recursive: true });
       for (let i = 0; i < split.blocks.length; i += LAZY_CHUNK) {
         const n = index.chunks++;
         const chunk: Record<string, string> = {};
         for (const b of split.blocks.slice(i, i + LAZY_CHUNK)) {
-          const h = await renderDocumentHtml(b.markdown, { math });
+          const h = await renderDocumentHtml(b.markdown, { math, bibliographyUrl: opts.bibliographyUrl });
           chunk[b.label] = h;
           index.of[b.label] = n;
           for (const id of idsIn(h)) index.ids[id] ??= n;
         }
-        writeFileSync(join(dir, "blocks", `${String(n).padStart(3, "0")}.json`), JSON.stringify(chunk));
+        writeFileSync(join(data, "blocks", `${String(n).padStart(3, "0")}.json`), JSON.stringify(chunk));
       }
-      lazyOf.set(d.slug, { hydrated: `${d.slug}/index.hydrated.html`, chunks: index.chunks, of: index.of });
-      const shellHtml = await renderDocumentHtml(split.shell, { math });
+      lazyOf.set(d.slug, { hydrated: hydratedPage(d.slug), chunks: index.chunks, of: index.of });
+      const shellHtml = await renderDocumentHtml(split.shell, { math, bibliographyUrl: opts.bibliographyUrl });
       const note = `<p class="fa-one-page">The text loads as you read. <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
-      writeFileSync(join(dir, "index.html"), withActions(page(manifest.title ?? d.slug, pageContents(shellHtml) + note + shellHtml, mathOpts, lazyLoader(index)), true));
+      const loader = lazyLoader(index, fromPageDir(documentPageDir(d.slug), `${documentDataDir(d.slug)}/blocks`));
+      if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, note + headingIds(shellHtml), mathOpts, loader), true)));
+      else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(shellHtml) + note + shellHtml, mathOpts, loader), true));
     }
     // A document's images live in `folio/<slug>/media/` and its blocks link
-    // them as `media/<file>`, relative to the document's page. Copied, so a
-    // figure in the preview is the figure in the folio.
+    // them as `media/<file>`, relative to the document's page, so they go
+    // beside the page. Copied, so a figure in the preview is the figure in the folio.
+    const graph = await documentGraph(dirname(d.path), d.slug, contributions);
+    for (const e of graph.errors.slice(0, GRAPH_ERRORS_LISTED)) result.errors.push(`${d.slug}: ${e}`);
+    if (graph.errors.length > GRAPH_ERRORS_LISTED) result.errors.push(`${d.slug}: … and ${graph.errors.length - GRAPH_ERRORS_LISTED} more KG node errors`);
+    for (const n of graph.nodes) {
+      mkdirSync(dirname(join(data, "kg", n.rel)), { recursive: true });
+      writeFileSync(join(data, "kg", n.rel), n.text);
+    }
+    mkdirSync(data, { recursive: true });
+    writeFileSync(join(data, "graph.jsonld"), JSON.stringify({ "@graph": graph.nodes.map((n) => JSON.parse(n.text) as unknown) }) + "\n");
     const media = join(dirname(d.path), "media");
     if (existsSync(media)) cpSync(media, join(dir, "media"), { recursive: true });
-    result.documents.push({ slug: d.slug, blocks: built.blockCount, page: `${d.slug}/index.html` });
+    result.documents.push({ slug: d.slug, blocks: built.blockCount, page: documentPage(d.slug) });
   }
   const list = result.documents
     .map((d) => `<li><a href="${esc(d.page)}">${esc(d.slug)}</a> (${d.blocks} blocks)</li>`)
@@ -672,13 +898,65 @@ export async function buildDocumentSite(
     outline.documents.push(lz ? { ...o, lazy: lz } : o);
   }
   writeFileSync(join(outDir, "outline.json"), JSON.stringify(outline) + "\n");
-  mkdirSync(join(outDir, "review"), { recursive: true });
-  writeFileSync(join(outDir, "review", "index.html"), reviewPageHtml());
-  writeFileSync(
-    join(outDir, "index.html"),
-    page("Documents", `<h1>Documents</h1>\n<p><a href="review/index.html">What changed from main</a></p>\n<ul>\n${list}\n</ul>`),
-  );
+  // The values the text refers to, as KG nodes, beside the outline: what the
+  // ✍ suggest editor shows a variable's current value from (gen-values-jsonld).
+  writeValuesJsonLd(repoRoot, outDir);
+  const review = join(outDir, ...REVIEW_PAGE_DIR.split("/"));
+  mkdirSync(review, { recursive: true });
+  writeFileSync(join(review, "index.html"), reviewPageHtml());
+  const also = landingLinks(readDeclaration(repoRoot), (p) => existsSync(join(repoRoot, p)));
+  const landing =
+    `<h1>Documents</h1>\n<p><a href="${esc(REVIEW_PAGE_DIR)}/index.html">What changed from main</a></p>\n<ul>\n${list}\n</ul>` +
+    (also.length ? `\n<h2>Also on this site</h2>\n<ul>\n${also.map((l) => `<li><a href="${esc(l.href)}">${esc(l.title)}</a></li>`).join("\n")}\n</ul>` : "");
+  if (opts.landingLayout) writeFileSync(join(outDir, "index.md"), landingPage(opts.landingLayout, "Documents", landing));
+  else writeFileSync(join(outDir, "index.html"), page("Documents", landing));
   return result;
+}
+
+/**
+ * The landing as a JEKYLL page, for a folio site whose source Jekyll builds
+ * (`build-instance-site.ts`): front matter naming `layout`, so the page wears
+ * the site's full chrome — top bar, search, sidebar with its Folders — rather
+ * than standing alone with the injected rail (owner, 2026-10-14: "what
+ * happened to rest of chrome? isnt there a default layout?").
+ *
+ * Use it or a `--home` page, not both: each is the site's `index.md`. The
+ * body is held `raw`: it is generated HTML, and a `{{` in a document title is
+ * text, not Liquid.
+ */
+export function landingPage(layout: string, title: string, body: string): string {
+  layoutName(layout, "landing");
+  return [`---`, `layout: ${layout}`, `title: ${JSON.stringify(title)}`, `nav_order: 1`, `---`, ``, ...wrapRaw(body), ``].join("\n");
+}
+
+/**
+ * The other pages this folio's site publishes, for its landing page: every
+ * visualisation the instance DECLARES (`coverage.visualiser`) whose page
+ * resolves — on disk, or built at publish by a declared `writer` whose scripts
+ * exist (`visualisationResolves`, the one rule tiles and coverage also use).
+ *
+ * Until this, a folio's landing listed its documents and nothing else, so a
+ * graph the build also renders — smart-ra's ArchiMate models at `/archimate/`
+ * (2026-10-09, owner: "how is archimate visualizer integrated into smart-ra
+ * landing page") — was reachable only by typing its address. The navbar's
+ * tiles do not help a folio: on a foreign site they come from the PLATFORM's
+ * `harness.json`, where a folio's instance is not listed.
+ *
+ * A `ref` is repository-relative, and a folio's site is built from its root,
+ * so the ref IS the site path; `index.html` becomes its directory, the form
+ * every other link here uses. A staging-only page is left off, since this
+ * landing is also main's; so is any ref that is absolute or climbs out.
+ */
+export function landingLinks(decl: CatHarnessDeclaration | undefined, exists: (repoRelative: string) => boolean): { title: string; href: string }[] {
+  const out: { title: string; href: string }[] = [];
+  for (const d of decl?.directories ?? []) {
+    for (const v of visualisationsOf(d.coverage, d.id)) {
+      if (v.publish !== undefined || v.ref.startsWith("/") || v.ref.split("/").includes("..")) continue;
+      if (!visualisationResolves(v, exists)) continue;
+      out.push({ title: v.title, href: v.ref.replace(/(^|\/)index\.(html|md)$/, "$1").replace(/\.md$/, ".html") || "./" });
+    }
+  }
+  return out;
 }
 
 /**
@@ -702,7 +980,10 @@ if (import.meta.main) {
     console.log(
       "usage: bun run folio-assistant-core/scripts/build-document-site.ts [--repo <folio repo root>] [--out _site] [--math | --no-math]\n" +
         "         [--github <owner/repo>] [--edit-branch main] [--issue-template block-feedback.yml] [--site-url <url>] [--no-block-actions]\n" +
-        "         [--lazy auto|always|never]   (auto: a document of " + LAZY_THRESHOLD + "+ blocks loads its text as data)",
+        "         [--lazy auto|always|never]   (auto: a document of " + LAZY_THRESHOLD + "+ blocks loads its text as data)\n" +
+        "         [--landing-layout <name>]   (write the landing as a Jekyll page in that layout, e.g. default)\n" +
+        "         [--document-layout <name>]  (write each document's page as a Jekyll page in that layout, e.g. default)\n" +
+        "         [--bibliography-url <url>]  (link each \\cite key to its entry on this published bibliography page)",
     );
     process.exit(0);
   }
@@ -722,7 +1003,17 @@ if (import.meta.main) {
     console.error(`✗ --lazy must be auto, always or never, not ${lazyOpt}`);
     process.exit(2);
   }
-  const r = await buildDocumentSite(repo, out, { math, actions, ...(lazyOpt ? { lazy: lazyOpt as "auto" | "always" | "never" } : {}) });
+  const landingLayout = opt("landing-layout");
+  const documentLayout = opt("document-layout");
+  const bibliographyUrl = opt("bibliography-url");
+  const r = await buildDocumentSite(repo, out, {
+    math,
+    actions,
+    ...(lazyOpt ? { lazy: lazyOpt as "auto" | "always" | "never" } : {}),
+    ...(landingLayout ? { landingLayout } : {}),
+    ...(documentLayout ? { documentLayout } : {}),
+    ...(bibliographyUrl ? { bibliographyUrl } : {}),
+  });
   for (const d of r.documents) console.error(`  ${d.page}  ${d.blocks} block(s)`);
   if (r.errors.length > 0) {
     for (const e of r.errors) console.error(`✗ ${e}`);

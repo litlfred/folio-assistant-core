@@ -27,20 +27,25 @@
  *
  *   bun run folio-assistant-core/scripts/build-library-site.ts [--repo <folio root>] --out _site
  *
- * Writes, under `<out>/<handler>/<library dir>/` (the route rule every
- * viewer follows: `<base>/<handler>/<kind>/<subject>`, handler = this
- * instance, folio-assistant-core), `index.html` and per entry with a
- * structure `<id>/index.html` and `<id>/entries/<id>.doc.json`.
+ * Writes, at `<handler>/<library dir>/` (the route rule every viewer
+ * follows: `<base>/<handler>/<kind>/<subject>`, handler = this instance,
+ * folio-assistant-core), the PAGES under the page locale and the DATA
+ * where it was (issue #2527, `document-site-route.ts`):
+ *
+ *   <out>/en/<handler>/<library dir>/index.html          the library
+ *   <out>/en/<handler>/<library dir>/<id>/index.html     an entry's Document view
+ *   <out>/<handler>/<library dir>/<id>/entries/<id>.doc.json   what it draws
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
 
-import { folioDir, readDeclaration } from "../../cat-harness/schemas/cat-harness.js";
-import { readEntryDocument, DOCUMENT_VIEW_JS, type DocumentView, type EntryLinks } from "../../cat-harness/scripts/lib/library-document.ts";
-import { VIEWER_CSS } from "../../cat-harness/scripts/gen-library-viz.ts";
-import { EDIT_LINKS_RUNTIME } from "../../cat-harness/src/core/edit-links.js";
-import { visualiserNavDeclaration, type VisualiserNavEntry } from "../../cat-harness/scripts/lib/navbar.js";
+import { folioDir, readDeclaration } from "@litlfred/cat-harness/schemas/cat-harness.js";
+import { readEntryDocument, DOCUMENT_VIEW_JS, type DocumentView, type EntryLinks } from "@litlfred/cat-harness-tools/scripts/lib/library-document.ts";
+import { VIEWER_CSS } from "@litlfred/cat-harness-tools/scripts/gen-library-viz.ts";
+import { EDIT_LINKS_RUNTIME } from "@litlfred/cat-harness-tools/src/core/edit-links.js";
+import { visualiserNavDeclaration, type VisualiserNavEntry } from "@litlfred/cat-harness-tools/scripts/lib/navbar.js";
 import { defaultBlockActions } from "./build-document-site.js";
+import { fromPageDir, localisedPage } from "./document-site-route.js";
 
 /** This instance: the HANDLER segment of every page it publishes. */
 export const HANDLER = (readDeclaration(join(import.meta.dir, "..")) as { name?: string } | undefined)?.name ?? "folio-assistant-core";
@@ -61,6 +66,13 @@ export function libraryDirs(repoRoot: string): string[] {
 interface Anchors {
   $schema: string;
   library?: string;
+  /**
+   * What the library entry IS to this folio, appended to the folio's title on
+   * the entry page. Absent: "the version published for public comment", the
+   * case this was built for (litlfred/smart-ra). A folio seeded from something
+   * else says so, e.g. dth-hrh's "the TWG outline it was seeded from".
+   */
+  sourceLabel?: string;
   sections: { label: string; number?: string; title: string }[];
   blocks: { label: string; chapter: string; root: string; sections: string[] }[];
 }
@@ -89,7 +101,7 @@ export function materialisedEdits(repoRoot: string, id: string): EntryLinks["edi
 }
 
 /** The folio document an entry was materialised as: its title, and where each section went. */
-export function materialisation(repoRoot: string, id: string): { title?: string; editFor: NonNullable<EntryLinks["editFor"]> } | undefined {
+export function materialisation(repoRoot: string, id: string): { title?: string; sourceLabel?: string; editFor: NonNullable<EntryLinks["editFor"]> } | undefined {
   for (const f of anchorFiles(repoRoot)) {
     let a: Anchors;
     try {
@@ -122,6 +134,7 @@ export function materialisation(repoRoot: string, id: string): { title?: string;
     const title = existsSync(manifest) ? /\btitle:\s*["'`]([^"'`]+)["'`]/.exec(readFileSync(manifest, "utf-8"))?.[1] : undefined;
     return {
       ...(title ? { title } : {}),
+      ...(typeof a.sourceLabel === "string" && a.sourceLabel.trim() ? { sourceLabel: a.sourceLabel.trim() } : {}),
       editFor: (s) => (s.number ? byNumber.get(s.number) : undefined) ?? byTitle.get(norm(s.title)),
     };
   }
@@ -135,7 +148,7 @@ export function entryView(repoRoot: string, entryDir: string, repo?: string): Do
   const view = readEntryDocument(entryDir, id, {
     ...(repo ? { links: { repo, dir: posix(relative(repoRoot, entryDir)), ...(m ? { editFor: m.editFor } : {}) } } : {}),
   });
-  if (view && m?.title) view.title = `${m.title} — the version published for public comment`;
+  if (view && m?.title) view.title = `${m.title} — ${m.sourceLabel ?? "the version published for public comment"}`;
   return view;
 }
 
@@ -179,12 +192,18 @@ export function entryContents(view: DocumentView): string {
   return entries.length < 2 ? "" : visualiserNavDeclaration(entries);
 }
 
-/** The entry page: the Document view, loaded from its JSON beside the page. */
-function entryPage(id: string, title: string, contents = ""): string {
+/**
+ * The entry page: the Document view, loaded from its JSON. `data` is the
+ * entry's data directory relative to the page (`./` when they are together):
+ * the page is under the locale and its data is not. The view reads only the
+ * directory of `DATA_HREF` (`docHref`), so `index.json` there need not exist.
+ */
+function entryPage(id: string, title: string, contents = "", data = "."): string {
+  const dir = data.replace(/\/+$/, "").split("/").map((seg) => (seg === "." || seg === ".." ? seg : encodeURIComponent(seg))).join("/");
   const js = `
 function $(i){ return document.getElementById(i); }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"']/g,function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]; }); }
-var DATA_HREF = new URL("./index.json", location.href).href;
+var DATA_HREF = new URL(${JSON.stringify(`${dir}/index.json`).replace(/</g, "\\u003c")}, location.href).href;
 ${EDIT_LINKS_RUNTIME}
 ${DOCUMENT_VIEW_JS}
 loadDocument(${JSON.stringify(id)});
@@ -195,13 +214,18 @@ loadDocument(${JSON.stringify(id)});
 <h1>${esc(title)}</h1>
 <p class="note">A frozen source: the library keeps it exactly as published. Edits are made in the folio, and each section's ✎ edit opens the folio block made from it.</p>
 <section id="document"><p class="note">Loading the document…</p></section>${contents}
-<noscript><p>This page draws the document from <a href="entries/${esc(encodeURIComponent(id))}.doc.json">its JSON</a>; it needs JavaScript.</p></noscript>`,
+<noscript><p>This page draws the document from <a href="${esc(dir)}/entries/${esc(encodeURIComponent(id))}.doc.json">its JSON</a>; it needs JavaScript.</p></noscript>`,
     `<script>${js}</script>`,
   );
 }
 
 export interface LibrarySiteResult {
-  entries: { seg: string; id: string; title: string; pages: number; sections: number; editable: number }[];
+  /**
+   * `null` when the ingestion recorded no page count (cat-harness-tools
+   * `DocumentView.pages`: unknown is not zero), and the count is then left
+   * out of what is written rather than shown as "0 pages" or "null pages".
+   */
+  entries: { seg: string; id: string; title: string; pages: number | null; sections: number; editable: number }[];
 }
 
 export function buildLibrarySite(repoRoot: string, outDir: string, opts: { repo?: string } = {}): LibrarySiteResult {
@@ -214,18 +238,24 @@ export function buildLibrarySite(repoRoot: string, outDir: string, opts: { repo?
       const view = entryView(repoRoot, dir, repo);
       if (!view) continue;
       const title = view.title ?? name;
-      const at = join(outDir, HANDLER, basename(lib), name);
+      // An entry's name is a library directory (`arxiv-0706.2213v3`), not a
+      // route segment, so it is joined, not validated as one.
+      const dataRoute = `${HANDLER}/${basename(lib)}/${name}`;
+      const pageRoute = localisedPage(dataRoute);
+      const at = join(outDir, ...dataRoute.split("/"));
+      const pageAt = join(outDir, ...pageRoute.split("/"));
       mkdirSync(join(at, "entries"), { recursive: true });
+      mkdirSync(pageAt, { recursive: true });
       writeFileSync(join(at, "entries", `${name}.doc.json`), JSON.stringify(view) + "\n");
-      writeFileSync(join(at, "index.html"), entryPage(name, title, entryContents(view)));
+      writeFileSync(join(pageAt, "index.html"), entryPage(name, title, entryContents(view), fromPageDir(pageRoute, dataRoute)));
       result.entries.push({ seg: basename(lib), id: name, title, pages: view.pages, sections: view.sections.length, editable: view.sections.filter((s) => s.edit).length });
     }
   }
   if (result.entries.length) {
     const rows = result.entries
-      .map((e) => `<li><a href="${esc(encodeURIComponent(e.id))}/">${esc(e.title)}</a> <span class="note">${e.pages} pages, ${e.sections} sections${e.editable ? `, ${e.editable} materialised in the folio` : ""}</span></li>`)
+      .map((e) => `<li><a href="${esc(encodeURIComponent(e.id))}/">${esc(e.title)}</a> <span class="note">${e.pages === null ? "" : `${e.pages} pages, `}${e.sections} sections${e.editable ? `, ${e.editable} materialised in the folio` : ""}</span></li>`)
       .join("\n");
-    writeFileSync(join(outDir, HANDLER, result.entries[0]!.seg, "index.html"), page("Library", `<h1>Library</h1>\n<p class="note">Frozen sources. Each opens on its table of contents.</p>\n<ul>\n${rows}\n</ul>`));
+    writeFileSync(join(outDir, ...localisedPage(`${HANDLER}/${result.entries[0]!.seg}`).split("/"), "index.html"), page("Library", `<h1>Library</h1>\n<p class="note">Frozen sources. Each opens on its table of contents.</p>\n<ul>\n${rows}\n</ul>`));
   }
   return result;
 }
@@ -251,5 +281,5 @@ if (import.meta.main) {
   const out = resolve(opt("out") ?? "_site");
   const r = buildLibrarySite(repoRoot, out, opt("github") ? { repo: opt("github") } : {});
   if (!r.entries.length) console.error("· no library entry with a structure.json — nothing to draw");
-  for (const e of r.entries) console.error(`✓ ${HANDLER}/${e.seg}/${e.id}/: ${e.pages} pages, ${e.sections} sections, ${e.editable} with ✎ edit into the folio`);
+  for (const e of r.entries) console.error(`✓ ${localisedPage(`${HANDLER}/${e.seg}/${e.id}`)}/: ${e.pages === null ? "" : `${e.pages} pages, `}${e.sections} sections, ${e.editable} with ✎ edit into the folio`);
 }

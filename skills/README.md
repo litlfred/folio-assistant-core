@@ -16,4 +16,5 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-skills`, h
 | [`library/`](library/) | _nothing declares what this holds_ | |
 | [`skill-definitions/`](skill-definitions/) | _nothing declares what this holds_ | |
 | [`voices/`](voices/README.md) | described in its own README | |
+
 <!-- kg:subgraph:end -->

@@ -4,8 +4,10 @@ title: 'URL SPACE: rendered assets mirror the instantiation structure — <baseu
 status: todo
 type: feature
 priority: normal
+tags:
+    - rehomed
 created_at: 2026-09-20T18:30:55Z
-updated_at: 2026-09-20T20:03:22Z
+updated_at: 2026-10-10T16:34:20Z
 parent: folio-assistant-yj32
 ---
 
@@ -406,3 +408,49 @@ Five artefacts, one ruling:
 `blv9` — an `@id` must move with the file that carries it — is unchanged by any
 of this and is still the thing to gate whichever reading wins. **Nothing was
 moved**: the generators compose no path, so a change is one line per generator.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The three-case ruling
+covers per-instance artefacts. Five artefacts span instances and still have no
+place: the schema viewer, the library viewer, the repository KG, its viewer,
+and their `.json` aliases. Whichever option is chosen, `blv9` still gates the
+move (an `@id` moves with its file), and each generator change is one line.
+
+1. **(Recommended) Keep them at the site root as a declared exception.** Their
+   subject is the repository, and `<base>/` is the repository's own path.
+   `artefactStub` already documents that.
+2. Put them under `<base>/cat-harness/<kind>/`, owned by the harness that
+   renders them.
+3. Split each into per-instance pages under `<base>/<instance>/<kind>/`, plus a
+   thin root index.
+
+**Default if no answer:** option 1.
+
+
+## Owner ruling 2026-10-10, answered directly in the lane C session (https://claude.ai/code/session_018NFVUeJjQJdrEU32AS1Mco): the cross-instance artefacts stay at the site root, as a declared exception
+
+Option 1 chosen. The schema viewer, library viewer, repository KG, its viewer
+and their `.json` aliases keep `<base>/…`: their subject is the repository,
+and `artefactStub` already documents `<base>/` as the repository's own path.
+The exception is to be DECLARED, not left implicit, with `blv9` still gating
+any move. Every open question on this bean is now answered.
+
+What remains is harness work in cat-harness-tools and cat-harness:
+- the `enabled` field;
+- the one resolver every consumer goes through;
+- the workflow layout and its test;
+- the bootstrap `.jsonld` path.
+
+By the owner's ruling on the rehome decision, the bean is re-filed in the
+cat-harness-tools store, and this copy stays as a pointer.
+
+
+## Rehomed 2026-10-10: this copy is now a pointer
+
+By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a
+pointer here), this bean is re-filed in the store of the repository whose code
+it changes: **`litlfred/cat-harness-tools` bean `cat-tools-sthf`** (cat-harness-tools
+PR #68). Work it there. This copy stays open as a pointer, and closes when
+`cat-tools-sthf` does.

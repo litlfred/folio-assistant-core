@@ -18,7 +18,7 @@
  *
  * ## Why editing in place is a defect rather than a mess
  *
- * A `materialized` node is a copy of somebody else's artefact. who-iris's
+ * A `materialized` node is a copy of somebody else's artefact. The IRIS
  * catalogue asserts *this is what IRIS holds*. Edit one of those bytes in
  * place and the assertion is false for that item while
  * `materialization.state` still reads `materialized` — a claim that outlives
@@ -70,10 +70,10 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 
-import { declarationPathIn } from "../../cat-harness/schemas/cat-harness.js";
-import { isFrozenSubtree } from "../../cat-harness/schemas/fsh-guts.js";
-import { KG_PART_RECORD_SCHEMA } from "../../cat-harness/schemas/substrate-snapshot.js";
-import { PART_RECORD_FILE, PART_TREE } from "../../cat-harness/scripts/kg-subscribe.js";
+import { declarationPathIn } from "@litlfred/cat-harness/schemas/cat-harness.js";
+import { isFrozenSubtree } from "@litlfred/cat-harness/schemas/fsh-guts.js";
+import { KG_PART_RECORD_SCHEMA } from "@litlfred/cat-harness/schemas/substrate-snapshot.js";
+import { PART_RECORD_FILE, PART_TREE } from "@litlfred/cat-harness-tools/scripts/kg-subscribe.js";
 
 const REPO = resolve(import.meta.dir, "..", "..");
 
@@ -111,7 +111,7 @@ export type Verdict =
   /**
    * A DIRECTORY whose contents are individually materialized and verified.
    *
-   * who-iris records a materialization on an item (`library/<id>`, a
+   * The IRIS catalogue records a materialization on an item (`library/<id>`, a
    * directory) AND on each bitstream beneath it. A file digest does not apply
    * to a directory, so the item-level record looked "unverifiable" while every
    * byte under it was in fact verified by its parts.
@@ -189,7 +189,7 @@ function jsonFilesUnder(dir: string, depth = 0): string[] {
  * Pull every materialization record out of a parsed JSON document.
  *
  * Walks rather than reading a fixed path, because a materialization is not
- * always in the same place: who-iris carries one per node AND one per
+ * always in the same place: the IRIS catalogue carries one per node AND one per
  * bitstream beneath it, and a folio's `structure.json` carries its own. A
  * reader that knew only the shapes it had seen would silently stop finding
  * them the first time a new one appeared — and silently finding nothing is
@@ -287,7 +287,7 @@ export function verify(rec: MaterializedRecord, all: readonly MaterializedRecord
     // PARTS ARE FOUND BY NODE, NOT BY PATH PREFIX — and the first version of
     // this used the prefix, which found nothing.
     //
-    // who-iris's item records `library/<id>` (the ingested form) while its
+    // The IRIS catalogue's item records `library/<id>` (the ingested form) while its
     // bitstreams record `uploads/<id>/<file>` (the original capture). Two
     // different trees describing one item, so "beneath this directory" is
     // simply the wrong question. What relates them is the document they are
@@ -304,7 +304,7 @@ export function verify(rec: MaterializedRecord, all: readonly MaterializedRecord
   // EXISTENCE IS ASKED BEFORE FIXITY, and the order is the point.
   //
   // It was the other way round, and that masked a strictly worse fact with a
-  // milder one: two smart-immunizations artefacts are declared `materialized`
+  // milder one: two artefacts of an immunizations DAK IG are declared `materialized`
   // with no file behind them at all, and because they also carried no digest
   // they were reported as "no fixity digest recorded" — filed beside 217
   // artefacts that are merely unverified.

@@ -3,8 +3,11 @@
 title: 'HARNESS CARDS BECOME TODOS: outstanding work, a next-action recommendation from initialisation state, and health badges'
 status: todo
 type: task
+priority: normal
+tags:
+    - rehomed
 created_at: 2026-09-20T15:07:23Z
-updated_at: 2026-09-20T15:07:23Z
+updated_at: 2026-10-10T16:34:20Z
 parent: folio-assistant-yj32
 ---
 
@@ -120,3 +123,27 @@ without any new mechanism.
 
 Recorded rather than left, because a blocker stated more broadly than the
 evidence supports is one the next agent takes as impassable.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). Harness cards and next-action recommendations are harness-side. The `beans/workflows/` instances it reads no longer exist in any clone. Design it together with `v49e`. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## Rehomed 2026-10-10: this copy is now a pointer
+
+By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a
+pointer here). The code this bean changes is in cat-harness. Its owning copy is
+therefore the **same id in the cat-harness store**
+(`litlfred/folio-assistant`, branch `cat/cat-harness/beans`,
+`beans/defs/folio-assistant-supn--*.md`), which is open there. Work it there.
+This copy stays open as a pointer, and closes when that one does.

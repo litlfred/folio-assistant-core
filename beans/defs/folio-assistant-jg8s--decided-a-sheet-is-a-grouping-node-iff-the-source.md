@@ -1,11 +1,11 @@
 ---
 # folio-assistant-jg8s
 title: 'DECIDED: a sheet is a grouping node IFF the source has sheets — model reality, do not force conformance'
-status: todo
+status: completed
 type: task
 priority: normal
 created_at: 2026-09-20T13:05:11Z
-updated_at: 2026-09-20T13:05:11Z
+updated_at: 2026-10-10T15:52:42Z
 parent: folio-assistant-0lmb
 blocking:
     - folio-assistant-p67i
@@ -85,3 +85,26 @@ The limit on this, which is not a contradiction of it: a special case still has
 to be a special case of something TRUE. Flattening a workbook because
 single-sheet is common would not be special-casing, it would be the forced
 conformance this bean rejects, wearing the licence as cover.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on evidence, checked against `litlfred/cat-harness-tools` @ `80e46e7` and `litlfred/cat-harness` (shallow main clones). Nothing was changed in this repository.
+
+The decision is implemented and every Done-when item holds:
+- [x] **Sheet level IFF the source has sheets.**
+  `cat-harness-tools/content/pipeline/gen-library-jsonld.ts` (lines 28, 548, 676
+  cite this bean) emits it only then.
+- [x] **Both shapes tested from fixtures, workbook AND CSV.**
+  `content/pipeline/tabular-nodes.test.ts` covers both. So does
+  `scripts/tests/document-image.test.ts:418`, which checks that no sheet is
+  invented for a CSV.
+- [x] **A consumer that walks `contains` handles both.** Shown in
+  `tabular-nodes.test.ts`.
+- [x] **The rule is in the skill.** It is in core at
+  `skills/library/ingestion/tabular-metadata.md`, the skill's current path; the
+  bean named `library-core/`.
+- [x] **`p67i` is completed.**
+
+Still true, as the bean said: the corpus holds no real tabular source, so this
+is fixture-tested.

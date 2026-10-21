@@ -229,7 +229,7 @@ bibliography (PDF + HTML) via the `annotation` field in
     annotation = {[Verified+Fixed] 18 fixes by <reviewer> 2026-05-19},
   }
 
-`content/pipeline/export-bibtex.ts` reads
+`pipeline/export-bibtex.ts` reads
 `content/bib-qa-verifications.json` at export time and injects a
 short status marker per entry. Format:
 

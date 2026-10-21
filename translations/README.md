@@ -15,4 +15,5 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `folio-assistant
 | [`fr/`](fr/) | _nothing declares what this holds_ | |
 | [`ru/`](ru/) | _nothing declares what this holds_ | |
 | [`zh/`](zh/) | _nothing declares what this holds_ | |
+
 <!-- kg:subgraph:end -->

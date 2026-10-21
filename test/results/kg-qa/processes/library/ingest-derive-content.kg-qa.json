@@ -5,7 +5,7 @@
     "id": "Process_DeriveContent",
     "path": "processes/library/ingest-derive-content.bpmn"
   },
-  "source_hash": "sha256:82d2d2a2580135dd507af187b2d6f78353edda73a8778f3c479e770f82cf66d4",
+  "source_hash": "sha256:4aef3d0c192b363df8965beaf1b01f49acaba6c2bc4f5ab4582d8ab43f873874",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -59,6 +59,14 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
       "result": "pass",
       "findings": []
@@ -109,7 +117,7 @@
     }
   },
   "totals": {
-    "pass": 13,
+    "pass": 15,
     "fail": 0,
     "n/a": 12,
     "unknown": 0

@@ -1,0 +1,17 @@
+# folio-assistant-core's checks on every pull request (owner, 2026-10-14: every
+# harnessed layer is judged by ONE reusable workflow the harness owns, and
+# "there shouldnt be copying of code"). Everything is decided there.
+name: PR checks
+on:
+  pull_request:
+  # main's own run keeps main's answer, the gate seconds and the cone records
+  # in caches every PR can read (cat-harness-tools#406, #411); a run on a PR
+  # can only read caches saved from its own PR or from main.
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  checks:
+    uses: litlfred/cat-harness-tools/.github/workflows/layer-pr-checks.yml@main

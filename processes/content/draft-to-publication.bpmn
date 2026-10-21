@@ -19,6 +19,15 @@
                   id="Definitions_FolioPublication"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/0.1.0/processes/ns#" location="https://litlfred.github.io/bootstrap/0.1.0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:resource id="build-pipeline" name="Build pipeline"/>
+  <bpmn:resource id="clinical-sme" name="Clinical / scientific SME"/>
+  <bpmn:resource id="editor" name="Editor"/>
+  <bpmn:resource id="programme-manager" name="Programme manager"/>
+  <bpmn:resource id="publication-manager" name="Publication manager"/>
+  <bpmn:resource id="review-coordinator" name="Review coordinator"/>
+  <bpmn:resource id="reviewer" name="Reviewer / SME"/>
+  <bpmn:resource id="work-plan" name="Work plan (beans)"/>
 
   <bpmn:import namespace="https://litlfred.github.io/folio-assistant/workflows" location="editing-hci-validation.bpmn" importType="http://www.omg.org/spec/BPMN/20100524/MODEL" />
   <bpmn:import namespace="https://litlfred.github.io/folio-assistant/workflows" location="public-comment.bpmn" importType="http://www.omg.org/spec/BPMN/20100524/MODEL" />
@@ -39,55 +48,47 @@
       <cat-harness.processes:policy enforcement="strict" />
     </bpmn:extensionElements>
     <bpmn:laneSet id="Process_Publication_LaneSet">
-      <bpmn:lane id="Lane_Editors" name="Editors + authoring agents">
+      <bpmn:lane id="Lane_Editors" name="Editors + authoring agents" partitionElementRef="editor">
         <bpmn:documentation>The one call activity both rejection paths loop back to — a red QA gate directly, and a review rejection only once Lane_WorkPlan has turned each finding into a bean — so a fix here never needs to know which failure sent it back.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="editor"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>CallActivity_Editing</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_WorkPlan" name="Work plan — beans (shared by humans and agents)">
+      <bpmn:lane id="Lane_WorkPlan" name="Work plan — beans (shared by humans and agents)" partitionElementRef="work-plan">
         <bpmn:documentation>Carries the release's own state across the cycle: the release bean opened at the start says what is in the draft and who holds it, a rejected review becomes one change bean per finding before the loop back to editing, and only this lane's close marks a release actually done rather than merely built.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="work-plan"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_OpenReleaseBean</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_OpenChangeBeans</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_CloseReleaseBeans</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Build" name="Corpus + build pipeline (system)">
+      <bpmn:lane id="Lane_Build" name="Corpus + build pipeline (system)" partitionElementRef="build-pipeline">
         <bpmn:documentation>Owns the one gate that decides whether the draft is fit to be circulated: Task_BuildDraft turns the corpus into a draft and the DMN-backed Gateway_QaGreen decides whether Task_CirculateDraft ever runs, so a red result here is caught before Lane_ReviewTeam or Lane_Sme spend time on a draft that was never fit to review.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="build-pipeline"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>StartEvent_CorpusUpdated</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_BuildMerge</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_BuildDraft</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_PublicationQa</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_QaGreen</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_PubMgr" name="Publication manager">
+      <bpmn:lane id="Lane_PubMgr" name="Publication manager" partitionElementRef="publication-manager">
         <bpmn:documentation>Fans the QA-gated draft out to review and SME sign-off in parallel, then — once the programme manager authorises — is the only lane that actually presses publish, so both the review verdict and the release authority pass through this one hand before anything goes live.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="publication-manager"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_CirculateDraft</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ReviewFork</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ReviewJoin</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_PublishRelease</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Published</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_ReviewTeam" name="Review team (content · QC · technical officer)">
+      <bpmn:lane id="Lane_ReviewTeam" name="Review team (content · QC · technical officer)" partitionElementRef="reviewer">
         <bpmn:documentation>Owns the single approved/not-approved gateway the whole review rests on: it fires only after Lane_Sme's sign-off has also reached the join, but the call is this lane's alone, and a rejection here is what turns into the change beans Lane_WorkPlan opens next.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="reviewer"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_ReviewDraft</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ReviewOutcome</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_PublicReview" name="Public review (commenters, review committee, editor)">
+      <bpmn:lane id="Lane_PublicReview" name="Public review (commenters, review committee, editor)" partitionElementRef="review-coordinator">
         <bpmn:documentation>Runs in parallel with the review team and the SMEs when a draft goes out for PUBLIC comment: the circulated draft is the frozen, line-numbered review version, and every comment that comes back is placed, triaged, weighed and decided in Process_PublicComment. Like Lane_Sme it feeds the join and does not own the approve/reject gateway; an accepted comment reaches the document through its own change set, not through this gateway.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="review-coordinator"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>CallActivity_PublicComment</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Sme" name="Clinical / scientific SMEs">
+      <bpmn:lane id="Lane_Sme" name="Clinical / scientific SMEs" partitionElementRef="clinical-sme">
         <bpmn:documentation>Runs in parallel with Lane_ReviewTeam, not after it — Gateway_ReviewJoin waits on both — but does not own the approve/reject gateway that follows: sign-off here is necessary for the join to complete and nothing more, which keeps a clinical judgement from also becoming the phase-gate call.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="clinical-sme"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_SmeSignoff</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_ProgMgr" name="Programme manager (release authority)">
+      <bpmn:lane id="Lane_ProgMgr" name="Programme manager (release authority)" partitionElementRef="programme-manager">
         <bpmn:documentation>Sits between review's approval and the actual publish — a second, distinct gate on an already-approved draft, because content being right and a release being authorised to ship are two different questions, and only this lane answers the second one.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="programme-manager"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_AuthorizeRelease</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
@@ -149,6 +150,7 @@
       <bpmn:documentation>The draft publication is circulated to the review team for formal review.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
+        <bootstrap.processes:skill ref="staging-review" />
       </bpmn:extensionElements>
       <bpmn:incoming>G08</bpmn:incoming>
       <bpmn:outgoing>G09</bpmn:outgoing>
@@ -171,6 +173,7 @@
       <bpmn:documentation>Content reviewer, QC reviewer and technical officer review the draft as a whole — coherence, phase-gate criteria, breaking vs non-breaking change.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
+        <bootstrap.processes:skill ref="staging-review" />
       </bpmn:extensionElements>
       <bpmn:incoming>G10</bpmn:incoming>
       <bpmn:outgoing>G12</bpmn:outgoing>
@@ -179,6 +182,7 @@
       <bpmn:documentation>Domain sign-off: clinical SMEs for a guideline, subject-matter reviewers for a paper.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
+        <bootstrap.processes:skill ref="staging-review" />
       </bpmn:extensionElements>
       <bpmn:incoming>G11</bpmn:incoming>
       <bpmn:outgoing>G13</bpmn:outgoing>

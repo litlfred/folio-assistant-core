@@ -9,7 +9,7 @@
     {
       "id": "dak-l1-library",
       "prefLabel": "dak-l1-library",
-      "definition": "Build a DAK's library from the L1 sources its Component 1 cites, and the L1 knowledge graph that records them. Read when starting or extending a DAK library, when a DAK's guidance changes, and before writing any L1 graph for a DAK. Covers fetching a cited WHO IRIS item, ingesting it, extracting the Component 1 graph, and the two validators it must pass.",
+      "definition": "Build a DAK's library from the L1 sources its Component 1 cites, and the L1 knowledge graph that records them. Read when starting or extending a DAK library, when a DAK's guidance changes, and before writing any L1 graph for a DAK. Covers fetching a cited WHO IRIS item, ingesting it, deciding whether it is L1 (declared > context > inferred), extracting the Component 1 graph, the L1 graph of each L1 source as a specialisation of its library entry, and the layering rule: the library is upstream of L1.",
       "notation": "dak-l1-library",
       "source": "smart-base/skills/content/authoring-who-smart-guidelines/dak-l1-library.md",
       "status": "candidate"
@@ -50,6 +50,14 @@
       "prefLabel": "l2-dak-authoring",
       "notation": "l2-dak-authoring",
       "source": "smart-base/skills/content/authoring-who-smart-guidelines/l2-dak-authoring.md",
+      "status": "candidate"
+    },
+    {
+      "id": "recommendation-extraction",
+      "prefLabel": "recommendation-extraction",
+      "definition": "Extract the recommendations of an L1 source as L1 3.0 recommendation and remark nodes, then describe each one's scenario: the persona (role) who acts on it, the business process they act in, and the user story, as smart-kg L2 user-scenario candidates that reuse the target guide's own vocabulary. Read before extracting recommendations from a WHO guideline or position paper with no printed \"Recommendation N\" labels, before linking a recommendation to a DAK persona or process, and whenever a recommendation has to say who does it and where. Covers the hybrid extraction (mechanical candidates, agent structuring, verbatim and 100 % coverage gates), the reuse-first precedence for personas and processes, the WARNING format, and sign-off.",
+      "notation": "recommendation-extraction",
+      "source": "smart-base/skills/content/authoring-who-smart-guidelines/recommendation-extraction.md",
       "status": "candidate"
     },
     {

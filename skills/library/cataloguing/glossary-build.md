@@ -19,11 +19,11 @@ instance that holds the paper. Core's glossary page reads it through
 `collect()`, so the paper's terms are on the page, in the instance's
 namespace, beside every other scheme. The rules (status by provenance,
 verbatim definitions, the slug as `notation`) are in
-[`glossary-terms`](../../../../cat-harness/skills/library/library-core/glossary-terms.md).
+[`glossary-terms`](glossary-terms.md).
 
 The paper's scheme is **unordered**: its terms are shown A–Z. A glossary whose
 terms must be read in a logical order declares `ordered: true` and gives each
-term `requires`; see [`glossary-terms`](../../../../cat-harness/skills/library/library-core/glossary-terms.md) §"Ordered
+term `requires`; see [`glossary-terms`](glossary-terms.md) §"Ordered
 glossaries" — do not sort one of those.
 
 `--check` also fails when the scheme is stale, when two slugs would mint
@@ -137,10 +137,10 @@ first backfill batch lands, to avoid an avalanche of
 ## See also
 
 - `content-validation` — full authoring contract and agent-facing rules
-- `content/pipeline/validate-defterm.ts` — validator implementation
+- `pipeline/validate-defterm.ts` — validator implementation
 - `folio-assistant-core/scripts/build-glossary.ts` — builder implementation
 - `folio-assistant-core/scripts/codemod-refterm.ts` — backfill codemod
-- `content/pipeline/glossary-candidates.ts` — Phase C proposer
-- `content/pipeline/apply-glossary-curation.ts` — Phase C applier
+- `pipeline/glossary-candidates.ts` — Phase C proposer
+- `pipeline/apply-glossary-curation.ts` — Phase C applier
 - `ui/glossary-curator.html` — curator web UI
 - `src/routes/glossary.ts` — curator API routes

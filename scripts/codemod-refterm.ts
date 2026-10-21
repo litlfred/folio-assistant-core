@@ -48,8 +48,8 @@ import type { PhrasingContent, Text } from "mdast";
 // `PhrasingContent` and every node built below needs a cast.
 import type {} from "mdast-util-directive";
 import type {} from "mdast-util-math";
-import type { Block, Chapter, Paper, Section } from "../../cat-harness/schemas/types";
-import { ChapterSchema, PaperSchema } from "../../cat-harness/schemas/constraints";
+import type { Block, Chapter, Paper, Section } from "@litlfred/cat-harness/schemas/types.js";
+import { ChapterSchema, PaperSchema } from "@litlfred/cat-harness/schemas/constraints.js";
 import { buildGlossary } from "./build-glossary";
 
 // Round-trip parser/serializer with directive support. Must mirror
@@ -252,7 +252,7 @@ if (import.meta.main) {
   // otherwise careful about everywhere.
   //
   // Two scripts, one defect, fixed eight days apart: this pair moved together
-  // out of `cat-harness/content/pipeline/` (bean `yj6r`), and the move is what
+  // out of `cat-harness-tools/pipeline/` (bean `yj6r`), and the move is what
   // put them side by side for long enough to notice the second.
   if (positional.length === 0) {
     console.error(`Usage: codemod-refterm.ts <paper-or-chapter-dir> [--write]`);

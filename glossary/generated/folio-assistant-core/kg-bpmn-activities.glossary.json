@@ -489,7 +489,7 @@
     {
       "id": "process_documentauthoring.task_authorblocks",
       "prefLabel": "4 · Author blocks [document-authoring]",
-      "definition": "Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn. A normative statement goes through normative-statements.",
+      "definition": "Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn. A normative statement is a `recommendation` block (bean 55ao), drafted through normative-statements: one statement per block, a folio-chosen label, and its strength as a code in a declared code list, so a reviewer signs off each one individually.",
       "notation": "Task_AuthorBlocks",
       "source": "folio-assistant-core/processes/content/authoring-a-document.bpmn#Task_AuthorBlocks",
       "status": "candidate"
@@ -793,7 +793,7 @@
     {
       "id": "process_extractstructure.task_ocr",
       "prefLabel": "OCR to ocr/page-*.txt",
-      "definition": "A document ingested this way keeps its text in ocr/ and only a stub in sections/, which the documented sections/ grep cannot see. That asymmetry is why the corpus-grep checklist has a fourth tier.",
+      "definition": "A document ingested this way keeps its text in ocr/ and only a stub in sections/, which the documented sections/ grep cannot see. That asymmetry is why the corpus-grep checklist has a fourth tier. The run also records WHICH SOFTWARE made the pages, in ocr/run-context.json: a folio-run-context/v1 (cat-harness schemas/run-context.ts, the record test runs and QA reports use for the same question), naming the OCR engine, the rasteriser and each language model with its version and the sha256 of the bytes that ran. Two OCRs of one scan can read differently (\"Manual\" and \"Manval\", bean turh), and without it neither could be told from the other or reproduced.",
       "notation": "Task_Ocr",
       "source": "folio-assistant-core/processes/library/ingest-extract-structure.bpmn#Task_Ocr",
       "status": "candidate"
@@ -809,7 +809,7 @@
     {
       "id": "process_extractstructure.task_structure",
       "prefLabel": "Write structure.json (TOC, page ranges, metadata)",
-      "definition": "Write structure.json (pdf-structure/v1): doc id, TOC from the PDF outline or inferred from headings, page ranges, metadata, and source{} with the sha256 and a mimetype sniffed from the bytes, never the extension. A structure that could not be determined says so in structure_note rather than being rendered as one.",
+      "definition": "Write structure.json (pdf-structure/v1): doc id, TOC from the PDF outline or inferred from headings, page ranges, metadata, and source{} with the sha256 and a mimetype sniffed from the bytes, never the extension. A structure that could not be determined says so in structure_note rather than being rendered as one. For OCR'd text, source.runContext cites the OCR step's run context by sha256. A title already known for the document (the catalogue's dc.title, or one given with --title) is passed through as the raw title, so the sections' doc_title does not carry a scan's misreading (bean turh).",
       "notation": "Task_Structure",
       "source": "folio-assistant-core/processes/library/ingest-extract-structure.bpmn#Task_Structure",
       "status": "candidate"
@@ -1033,7 +1033,7 @@
     {
       "id": "process_l1gate.task_roundtrip",
       "prefLabel": "Round-trip translation QA",
-      "definition": "NOT IMPLEMENTED. Tracked as a bean; see docs/document-ingestion.md. Back-translate each localized narrative into its source language and compare meaning, to catch semantic drift and bad terminology that a forward-only check cannot see.",
+      "definition": "Back-translate each localized narrative into its source language and compare the meaning, to catch semantic drift and bad terminology that a forward-only check cannot see. Agentic, by the owner's ruling of 2026-10-06 (bean ktt2). Two parties are kept apart under untainted-verification: a back-translator that sees ONLY the target-language text, and an adjudicator that sees the original and the back-translation and rules. The verdict is recorded per block, under criterion `translation-semantic-roundtrip` in the block's `<block>.<locale>.translation-qa.json` sidecar, by the `translation-roundtrip-record` Tool (translation-manager §5). A terminology miss is a different criterion, `translation-terms-preserved` (acronyms, numbers, URLs that must survive), so Gateway_Drift can tell the two apart. Never close this step by reversing the PO's msgid→msgstr map: that returns the source exactly and scores 1.0 always. An empty `translation-semantic-roundtrip` entry list means \"not yet run\", which is never a pass.",
       "notation": "Task_RoundTrip",
       "source": "folio-assistant-core/processes/library/ingest-l1-completeness-gate.bpmn#Task_RoundTrip",
       "status": "candidate"

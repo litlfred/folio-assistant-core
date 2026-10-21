@@ -1,11 +1,11 @@
 ---
 # folio-assistant-4kj4
 title: 'AVATARS: per-kind avatar, in and out of trash, both schemes, with a QA axis for coverage'
-status: todo
+status: completed
 type: task
 priority: normal
 created_at: 2026-09-19T11:08:23Z
-updated_at: 2026-09-29T18:14:49Z
+updated_at: 2026-10-10T16:35:03Z
 parent: folio-assistant-o3xy
 ---
 
@@ -257,3 +257,28 @@ is a rule this repository already applies elsewhere:
 ## Claim released 2026-09-29
 
 Released `in-progress` → `todo` on the owner's instruction (review session https://claude.ai/code/session_014Qj8wncQhqV52QGN1yZDnj). No git change to this bean since before 2026-09-26, and no holder recorded; the sessions that held theme C (rendered site) work stopped on the 2026-09-25 weekly usage limit. Nothing in the body was changed: re-claim with `bun run cat beans:claim <id>`.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The fan, cycle and reduced-motion work is built (`test/kind-fan.e2e.ts`), and the blank avatar is done for the navbar and typology rows. What's left is the blank avatar on landing stickies and the KG viewer, and a 'blank' state in `check-avatar-coverage.ts`. All of it is in cat-harness-tools and cat-harness `docs-ui.js`. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on verified evidence. The
+fixes were made and recorded on this bean's cat-harness-store copy (closed
+2026-10-09). This copy was checked separately to confirm they reached the
+default branches:
+- fix commit `cf3d7d69` is an ancestor of cat-harness `main` (`b675555e`);
+- the change is present on current `main`, where the generator now lives:
+  cat-harness `schemas/avatars.ts:54,650` (`BLANK_AVATAR`, `avatarOrBlank`); cat-harness-tools `scripts/harness-tiles.ts:1219`, `scripts/tests/avatars-blank.test.ts`.

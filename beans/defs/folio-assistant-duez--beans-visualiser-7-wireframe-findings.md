@@ -1,7 +1,7 @@
 ---
 # folio-assistant-duez
 title: 'beans visualiser: 7 wireframe findings'
-status: todo
+status: completed
 type: task
 priority: normal
 tags:
@@ -9,7 +9,7 @@ tags:
     - ui
     - visualiser-beans
 created_at: 2026-09-23T10:36:14Z
-updated_at: 2026-09-30T16:12:46Z
+updated_at: 2026-10-10T16:35:03Z
 parent: folio-assistant-4ccr
 ---
 
@@ -48,3 +48,28 @@ Each finding re-measured on a local build of that commit (`preview-site.sh`, ser
 - **STILL-PRESENT** — The heading order skips a level: The visible headings are H1 'beans' → H3 'Beans — the agent work plan' → H3 'What is stuck' → H2 'State graphs this harness declares' → H2 per card. (rv-beans.mjs)
 - **STILL-PRESENT** — The state-graph tag runs into the name as text: .sv-item h2 innerText is 'beansLIVE', 'healthDECLARED', 'issue-marksDECLARED', 'qaLIVE'. The markup is <span class=sv-here>beans</span><span class='sv-tag is-live'>live</span>, with no separator. (rv-beans2.mjs)
 - **STILL-PRESENT** — The page is dark by default and has no scheme control: With prefers-color-scheme: light and nothing saved, body is rgb(13,13,13) and data-fa-scheme is null. A saved fa-color-scheme=light gives rgb(249,249,247). There is still no scheme button on the page. — 805bbd1ba (scheme.mjs, rv-beans3.mjs)
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `state-visualizer.ts` in cat-harness-tools. Nothing there cites a fix yet. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on verified evidence. The
+fixes were made and recorded on this bean's cat-harness-store copy (closed
+2026-10-09). This copy was checked separately to confirm they reached the
+default branches:
+- fix commit `33ecb788` is an ancestor of cat-harness `main` (`b675555e`);
+- the change is present on current `main`, where the generator now lives:
+  cat-harness `docs/assets/css/work-plan.css:286`; cat-harness-tools `scripts/lib/scheme-css.ts:87` (scheme control).

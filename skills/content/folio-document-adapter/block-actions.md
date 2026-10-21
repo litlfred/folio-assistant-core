@@ -87,7 +87,7 @@ them off for a build that should have none.
   equal to `editUrl` and `feedbackUrl` by `block-actions.test.ts`; change both
   together or the test fails.
 
-The recipe lives in the harness, `cat-harness/src/core/edit-links.ts`, so
+The recipe lives in the harness, `cat-harness-tools/src/core/edit-links.ts`, so
 every layer can use it; this package re-exports it. It is published once as
 `assets/js/edit-links.js` (held equal to the code by a test). On a page, mark
 a link `data-fa-link="edit|source|feedback"` and either give its host the
@@ -113,7 +113,7 @@ across all harness/visualizers to be dynamic"*).
 A library entry is a frozen source: the version published for public comment
 stays in `library/` exactly as circulated, and the changes the review asks
 for are made in `folio/` (owner, 2026-10-07). So the library's Document view
-(`cat-harness/scripts/lib/library-document.ts`, drawn by the platform viewer
+(`cat-harness-tools/scripts/lib/library-document.ts`, drawn by the platform viewer
 and by `build-library-site.ts` on a folio's site) shows:
 
 | link | on | opens |

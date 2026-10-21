@@ -41,7 +41,7 @@ import {
   unionRules,
   voicesPresent,
   type VoiceProfile,
-} from "../../cat-harness/schemas/voices";
+} from "@litlfred/cat-harness/schemas/voices.js";
 import {
   declaresInstance,
   defaultGraphTypologies,
@@ -50,8 +50,8 @@ import {
   readDeclaration,
   repoRootFor,
   resolveDirectories,
-} from "../../cat-harness/schemas/cat-harness.ts";
-import { readRoleGraph, type RoleGraph } from "../../cat-harness/schemas/role-graph";
+} from "@litlfred/cat-harness/schemas/cat-harness.ts";
+import { isMechanicalRole, readRoleGraph, type RoleGraph } from "@litlfred/cat-harness/schemas/role-graph.js";
 
 const ROOT = resolve(import.meta.dir, "..");
 /** The checkout, one level out: a cross-instance citation is resolved against sibling instances. */
@@ -126,7 +126,7 @@ function resolveCitation(
 ): { ok: true; path: string } | { ok: false; why: string } {
   // The CITING instance, not always `cat-harness`. A BARE citation resolves
   // against whoever wrote it, so hardcoding one root would have answered a
-  // who-iris voice's bare reference out of the platform's library —
+  // catalogue instance's voice's bare reference out of the platform's library —
   // the wrong corpus, reported as a confident resolution.
   const r = resolveLibraryRef(src, citingRoot, REPO_ROOT);
   return r.ok ? { ok: true, path: r.path } : { ok: false, why: explainFailure(r.failure) };
@@ -280,7 +280,7 @@ function main(): number {
    * A voice's `sources[]` is where it says what it was derived from. A rule's
    * `source` says which of those, and where in it. Making every rule restate
    * the instance would put one fact in two places and let them disagree: a
-   * voice pointing at `who-iris` with a rule pointing at `folio-assistant-sci` is
+   * voice pointing at one instance with a rule pointing at another is
    * representable, meaningless, and nothing would catch it.
    *
    * This became load-bearing with bean `frs5`, which moved the corpus out of
@@ -333,7 +333,7 @@ function main(): number {
       // invisible while every path happened to be instance-local: a voice
       // citing a file in another instance could not pass however correctly it
       // declared where that file was. It surfaced the moment `milnor` moved to
-      // folio-assistant-sci carrying one rule that cites a cat-harness module
+      // the science layer carrying one rule that cites a cat-harness module
       // — the rule was right, the checker was not.
       const citedRoot = instanceRootFor(citedInstance, rootOf.get(voice)!);
       if (citedRoot === undefined) {
@@ -361,7 +361,7 @@ function main(): number {
       }
       // Against the DECLARING instance: a `path` is a node of the voice's own
       // knowledge graph, so looking for it under the platform would report a
-      // who-iris voice's own node as missing.
+      // catalogue instance's voice's own node as missing.
       // Through the NAMED instance when the source names one, exactly as a
       // rule's `path` is resolved above: a voice addressing a role cites the
       // role graph that declares it, which is the dependency's, not its own.
@@ -431,7 +431,7 @@ function main(): number {
   // graph no voice reaches is not this check's to grade.
   for (const [rolesRoot, ids] of addressed) {
     const unaddressed = (roleGraphOf(rolesRoot)?.roles ?? [])
-      .filter((r) => !r.actedUpon && r.persona !== undefined && !ids.has(r.id))
+      .filter((r) => !isMechanicalRole(r) && r.persona !== undefined && !ids.has(r.id))
       .map((r) => r.id);
     const name = readDeclaration(rolesRoot)?.name ?? relative(REPO_ROOT, rolesRoot);
     console.log(

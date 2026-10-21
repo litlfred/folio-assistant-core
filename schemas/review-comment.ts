@@ -42,8 +42,8 @@
  */
 import { z } from "zod";
 
-import { nodeKind } from "../../cat-harness/schemas/node-kind.js";
-import { TodoNodeKind } from "../../cat-harness/schemas/todo.js";
+import { nodeKind } from "@litlfred/cat-harness/schemas/node-kind.js";
+import { TodoNodeKind } from "@litlfred/cat-harness/schemas/todo.js";
 import { ReviewVerdictSchema } from "./review-verdict.js";
 
 export const REVIEW_COMMENT_SCHEMA = "review-comment/1.0.0" as const;
@@ -187,6 +187,12 @@ export const ReviewFieldsSchema = z.object({
   anchoredFrom: z.array(z.string()).default([]),
   /** The 9gyz Decision that closed it. Required once resolved or adjudicated. */
   decision: z.string().min(1).optional(),
+  /**
+   * The PR conversation comments whose `resolve:` tag has moved this comment
+   * ({@link applyDecisions}), in the order applied. A rebuild applies each
+   * one once: the record, not the build count, says what has been decided.
+   */
+  decisions: z.array(z.number().int().positive()).default([]),
 });
 export type ReviewFields = z.infer<typeof ReviewFieldsSchema>;
 
@@ -310,6 +316,8 @@ export interface PrComment {
   user: string;
   createdAt: string;
   url: string;
+  /** GitHub's `author_association`: OWNER, MEMBER, COLLABORATOR, CONTRIBUTOR, NONE… Absent when not known. */
+  association?: string;
 }
 
 export interface IngestResult {
@@ -521,3 +529,120 @@ export const ReviewCommentsFileSchema = z.object({
   verdicts: z.array(ReviewVerdictSchema).default([]),
 });
 export type ReviewCommentsFile = z.infer<typeof ReviewCommentsFileSchema>;
+
+// ── Deciding from the page: a tagged comment that moves one ──────
+
+/**
+ * The tag that decides a review comment, written as a PR conversation comment
+ * like the one that opened it (owner, 2026-10-15: resolving from the static
+ * review page goes through the same channel as commenting).
+ *
+ *     resolve: review-pr7-c123
+ *     decision: resolved
+ *
+ *     The dose now matches table 3.
+ *
+ * `resolve:` names the review comment by id. `decision:` names where it goes,
+ * and each word is one transition of {@link REVIEW_TRANSITIONS}, so the
+ * table still refuses any move it does not hold:
+ */
+export const DECISION_WORDS = {
+  addressed: "address",
+  reopened: "send-back",
+  resolved: "resolve",
+  adjudicated: "adjudicate",
+  withdrawn: "withdraw",
+} as const;
+export type DecisionWord = keyof typeof DECISION_WORDS;
+
+export interface DecisionTag {
+  /** The review comment's id. */
+  target: string;
+  decision: DecisionWord;
+  /** Everything after the header, trimmed: the reason. */
+  text: string;
+}
+
+export function parseDecisionTag(body: string): DecisionTag | { error: string } | null {
+  const lines = body.replace(/\r\n/g, "\n").split("\n");
+  const header: Record<string, string> = {};
+  let i = 0;
+  while (i < lines.length && lines[i].trim() === "") i++;
+  for (; i < lines.length; i++) {
+    const m = /^\s*(resolve|decision):\s*(.*?)\s*$/i.exec(lines[i]);
+    if (!m) break;
+    header[m[1].toLowerCase()] = m[2];
+  }
+  if (!("resolve" in header)) return null;
+  if (!/^review-pr\d+-c\d+$/.test(header.resolve)) return { error: `\`resolve:\` names a review comment id (review-pr<N>-c<M>), got "${header.resolve}"` };
+  const word = (header.decision ?? "").toLowerCase();
+  if (!(word in DECISION_WORDS)) return { error: `\`decision:\` is one of ${Object.keys(DECISION_WORDS).join(", ")}, got "${header.decision ?? ""}"` };
+  return { target: header.resolve, decision: word as DecisionWord, text: lines.slice(i).join("\n").trim() };
+}
+
+/** The associations that may decide: the repository's own people, the editor's lane. */
+export const DECIDING_ASSOCIATIONS: readonly string[] = ["OWNER", "MEMBER", "COLLABORATOR"];
+
+export interface DecisionResult {
+  comments: ReviewComment[];
+  /** Decisions applied by this run, as `<decision comment id> → <review comment id>: <status>`. */
+  applied: string[];
+  /** A decision tag that could not be applied, and why: said, never silently dropped. */
+  refused: Array<{ commentId: number; url: string; error: string }>;
+  /** How many PR comments carried a decision tag, so they are not counted as conversation. */
+  tagged: number;
+}
+
+/**
+ * Apply every decision tag in `prComments`, oldest first, through
+ * {@link transition}.
+ *
+ * - **Who.** A repository owner, member or collaborator decides any move. The
+ *   review comment's own author may withdraw it. Anyone else is refused: a
+ *   PR conversation is open to every GitHub user, and a status is what the
+ *   coverage gate counts.
+ * - **Once.** A decision already in the comment's `review.decisions` is
+ *   skipped, so a rebuild, or a committed copy that already carries it, is a
+ *   no-op.
+ * - **The Decision.** A move that closes a comment names the decision
+ *   comment's URL as the Decision that closed it.
+ * - **Never dropped.** A decision on an unknown id, an unauthorised one, or a
+ *   move the table refuses is listed in `refused` with its reason.
+ */
+export function applyDecisions(comments: readonly ReviewComment[], prComments: readonly PrComment[]): DecisionResult {
+  const byId = new Map(comments.map((c) => [c.id, c] as const));
+  const out: DecisionResult = { comments: [], applied: [], refused: [], tagged: 0 };
+  const ordered = [...prComments].sort((a, b) => a.createdAt.localeCompare(b.createdAt) || a.id - b.id);
+  for (const pc of ordered) {
+    const tag = parseDecisionTag(pc.body);
+    if (tag === null) continue;
+    out.tagged++;
+    const refuse = (error: string) => out.refused.push({ commentId: pc.id, url: pc.url, error });
+    if ("error" in tag) {
+      refuse(tag.error);
+      continue;
+    }
+    const c = byId.get(tag.target);
+    if (!c) {
+      refuse(`no review comment \`${tag.target}\` on this pull request`);
+      continue;
+    }
+    if (c.review.decisions.includes(pc.id)) continue;
+    const name = DECISION_WORDS[tag.decision];
+    const may = DECIDING_ASSOCIATIONS.includes(pc.association ?? "") || (name === "withdraw" && pc.user === c.review.reviewer);
+    if (!may) {
+      refuse(`${pc.user} (${pc.association ?? "association unknown"}) may not decide \`${tag.target}\`: a repository owner, member or collaborator decides${name === "withdraw" ? ", or the comment's own author withdraws" : ""}`);
+      continue;
+    }
+    const t = REVIEW_TRANSITIONS.find((x) => x.name === name)!;
+    try {
+      const moved = transition(c, t.to, t.by, t.needsDecision ? { decision: pc.url } : {});
+      byId.set(c.id, ReviewCommentSchema.parse({ ...moved, review: { ...moved.review, decisions: [...c.review.decisions, pc.id] } }));
+      out.applied.push(`${pc.id} → ${c.id}: ${t.to}`);
+    } catch (e) {
+      refuse((e as Error).message);
+    }
+  }
+  out.comments = comments.map((c) => byId.get(c.id)!);
+  return out;
+}

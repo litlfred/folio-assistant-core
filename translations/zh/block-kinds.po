@@ -43,6 +43,11 @@ msgctxt "block-kind:figure"
 msgid "Figure"
 msgstr "图"
 
+#: folio-assistant-core/block-kinds/recommendation.json
+msgctxt "block-kind:recommendation"
+msgid "Recommendation"
+msgstr "建议"
+
 #: folio-assistant-core/block-kinds/remark.json
 msgctxt "block-kind:remark"
 msgid "Remark"

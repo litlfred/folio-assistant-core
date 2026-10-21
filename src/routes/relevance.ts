@@ -15,7 +15,8 @@
  * ## The join happens here
  *
  * The ledger stores no bibliographic metadata — only a reference `id`.  These
- * handlers read `content/schema/references.ts` and join title/authors/year
+ * handlers read the folio's bibliography (its per-entry files and `references.ts`,
+ * through cat-harness-tools `reference-entries.ts`) and join title/authors/year
  * onto each row at request time.  That is the whole point of the split: one
  * writer for metadata, many readers.  Do not cache the joined shape back into
  * the ledger.
@@ -31,20 +32,20 @@
  * @module folio-assistant/routes/relevance
  */
 
-import { folioDir } from "../../../cat-harness/schemas/cat-harness.js";
-import { existsSync, readFileSync } from "fs";
+import { existsSync } from "fs";
 
-import { readSourceLedger, writeSourceLedger } from "../../../cat-harness/schemas/bib-attestations.js";
+import { readSourceLedger, writeSourceLedger } from "@litlfred/cat-harness/schemas/bib-attestations.js";
 import { join } from "path";
 
-import { allows, forbidden, principalOf } from "../../../cat-harness-tools/src/core/rbac.js";
-import { log } from "../../../cat-harness/src/core/logging.js";
-import type { MountedRoute, RouteDeps } from "../../../cat-harness-tools/src/route-groups.js";
+import { allows, forbidden, principalOf } from "@litlfred/cat-harness-tools/src/core/rbac.js";
+import { log } from "@litlfred/cat-harness-tools/src/core/logging.js";
+import { authorNames, entryUrl, issuedYear, referenceEntries, stringField } from "@litlfred/cat-harness-tools/pipeline/reference-entries.ts";
+import type { MountedRoute, RouteDeps } from "@litlfred/cat-harness-tools/src/route-groups.js";
 import type {
   LedgerEntry,
   RelevanceVerdict,
   SourceLedger,
-} from "../../../cat-harness/schemas/bib-verification.js";
+} from "@litlfred/cat-harness/schemas/bib-verification.js";
 
 const CORS = { "Access-Control-Allow-Origin": "*" };
 
@@ -69,41 +70,23 @@ function readLedger(repoRoot: string): SourceLedger {
 }
 
 /**
- * Read `references.ts` for the facts the ledger deliberately does not store.
- *
- * A regex read rather than an import: `references.ts` is a 470-entry
- * TypeScript module, and the route needs four strings per entry, not the
- * validated CSL objects.  It is also never executed this way.
+ * The facts the ledger deliberately does not store, from the folio's
+ * bibliography: its per-entry files and any `ref({…})` left in
+ * `references.ts`, read through cat-harness-tools `reference-entries.ts`
+ * (qou keeps one file per entry since bean qou-l7pj). Read, never executed:
+ * the route needs four strings per entry, not the validated CSL objects.
  */
-function readRefFacts(repoRoot: string): Map<string, RefFacts> {
-  const p = join(folioDir(repoRoot),  "schema", "references.ts");
+export function readRefFacts(repoRoot: string): Map<string, RefFacts> {
   const out = new Map<string, RefFacts>();
-  if (!existsSync(p)) return out;
-  const src = readFileSync(p, "utf-8");
-
-  for (const m of src.matchAll(/ref\(\{(.*?)\n\s*\}\)/gs)) {
-    const body = m[1];
-    const id = body.match(/\bid:\s*"([^"]+)"/)?.[1];
-    if (!id) continue;
-
-    const title = body.match(/\n\s*title:\s*"((?:[^"\\]|\\.)*)"/)?.[1] ?? null;
-    const year = body.match(/"date-parts":\s*\[\[\s*(\d{4})/)?.[1] ?? null;
-    const url =
-      body.match(/\bURL:\s*"([^"]+)"/)?.[1] ??
-      (body.match(/\bDOI:\s*"([^"]+)"/)?.[1]
-        ? `https://doi.org/${body.match(/\bDOI:\s*"([^"]+)"/)?.[1]}`
-        : null);
-
-    const families = [...body.matchAll(/\bfamily:\s*"((?:[^"\\]|\\.)*)"/g)].map((f) => f[1]);
-    const literals = [...body.matchAll(/\bliteral:\s*"((?:[^"\\]|\\.)*)"/g)].map((f) => f[1]);
-    const names = families.length ? families : literals;
-    const authors = names.length
-      ? names.length > 3
-        ? `${names[0]} et al.`
-        : names.join(", ")
-      : null;
-
-    out.set(id, { title: title?.replace(/\\"/g, '"') ?? null, authors, year, url });
+  for (const e of referenceEntries(repoRoot)) {
+    const names = authorNames(e);
+    const authors = names.length ? (names.length > 3 ? `${names[0]} et al.` : names.join(", ")) : null;
+    out.set(e.id, {
+      title: stringField(e, "title") ?? null,
+      authors,
+      year: issuedYear(e) ?? null,
+      url: entryUrl(e) ?? null,
+    });
   }
   return out;
 }

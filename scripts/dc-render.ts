@@ -22,7 +22,7 @@
  *
  * `<published root>/dublin-core/<stem>.dc.xml` and `.dc.jsonld`, where the
  * published root is the directory the instance DECLARES `instanceRoot: true`
- * (who-iris: `site/`, served at `/who-iris/`) and `<stem>` is the record's own
+ * (for an IRIS mirror: `site/`, served at `/<instance>/`) and `<stem>` is the record's own
  * filename less `.dc.json`. The mount copies that directory whole
  * (`mount-instance-docs.ts`), so the renderings publish beside the item pages
  * with no pipeline change — the two files ARE the rendering pipeline's output.
@@ -35,13 +35,13 @@
  * the item it described is gone, and a reader would still find it).
  *
  * Usage:
- *   bun run folio-assistant-core/scripts/dc-render.ts <instance-root>          (e.g. who-iris)
+ *   bun run folio-assistant-core/scripts/dc-render.ts <instance-root>          (e.g. an IRIS mirror)
  *   bun run folio-assistant-core/scripts/dc-render.ts <instance-root> --check
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "fs";
 import { basename, join, relative, resolve } from "path";
 
-import { resolveDirectories } from "../../cat-harness/schemas/cat-harness.js";
+import { resolveDirectories } from "@litlfred/cat-harness/schemas/cat-harness.js";
 import { CatalogueNodeSchema, CatalogueSchema, type CatalogueNode } from "../schemas/catalogue.js";
 import { DublinCoreRecordSchema } from "../schemas/dublin-core.js";
 import { DC_JSONLD_SUFFIX, DC_XML_SUFFIX, renderDcJsonLd, renderDcXml } from "../schemas/dublin-core-render.js";
@@ -104,7 +104,7 @@ export function plannedRenderings(instance: string): Map<string, string> {
 function main(argv: string[]): number {
   const arg = argv.find((a) => !a.startsWith("-"));
   if (!arg) {
-    console.error("usage: dc-render.ts <instance-root> [--check]   (e.g. who-iris)");
+    console.error("usage: dc-render.ts <instance-root> [--check]   (e.g. an IRIS mirror)");
     return 2;
   }
   const instance = resolve(arg);

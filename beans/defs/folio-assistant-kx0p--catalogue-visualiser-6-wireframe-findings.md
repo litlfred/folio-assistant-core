@@ -1,7 +1,7 @@
 ---
 # folio-assistant-kx0p
 title: 'catalogue visualiser: 6 wireframe findings'
-status: todo
+status: completed
 type: task
 priority: normal
 tags:
@@ -9,7 +9,7 @@ tags:
     - ui
     - visualiser-catalogue
 created_at: 2026-09-23T10:36:14Z
-updated_at: 2026-09-30T16:12:47Z
+updated_at: 2026-10-11T05:44:47Z
 parent: folio-assistant-4ccr
 ---
 
@@ -45,3 +45,59 @@ Each finding re-measured on a local build of that commit (`preview-site.sh`, ser
 - **STILL-PRESENT** — The node list is not filterable or sortable, and puts referenced ahead of materialized: There is no input/select/button in the tables and no th[aria-sort]. The #1592 filter is not on this page. The rows are still 10 REFERENCED then 3 MATERIALIZED. The first materialized row is at y=1889 at 1280 and y=4217 at 390. (rv-cat.mjs, filt.mjs)
 - **STILL-PRESENT** — About the first 280 px is replica chrome before the h1: The h1 'The catalogue, as a graph' still starts at y=319 at 1280 and y=615 at 390. (rv-cat.mjs)
 - **STILL-PRESENT** — The gate verdict counts have no label: The gates rows still read 'copyright PERMITTED 2 REFUSED 4', 'restrictions PERMITTED 2 REFUSED 4', 'retention PERMITTED 6', as bare numbers after state spans. (rv-cat.mjs)
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-iris-pages.ts` in who-iris. `gen-iris-pages.test.ts` cites fixes for several findings. who-iris has no bean store yet, so option 1 means creating one there or using cat-harness-tools'. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/who-iris`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/who-iris`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## 2026-10-10: the closure did NOT land (bean-backlog drain, lane C)
+
+The cat-harness-store copy was closed on 2026-10-09 citing who-iris commit
+`6d4c623` on branch `claude/kx0p-catalogue-viz`. That commit is **not on
+who-iris `main`** (`308ee35`). Main's `scripts/gen-iris-pages.ts` has no
+`ic-filter`, no `verdict-count` and no materialized-first sort, so findings 4
+and 6 are still present. The cat-harness half (`d09d0a84`) is on main, but the
+page it regenerated moved to `docs/who-iris/catalogue/index.html`, which
+carries neither fix.
+
+**This copy stays open and is the owning one:** who-iris has no bean store.
+Next step: merge or re-apply `claude/kx0p-catalogue-viz` in who-iris,
+regenerate, and re-measure findings 4 and 6. The cat-harness-store copy
+should be reopened.
+
+
+## Correction 2026-10-11: it DID land, by a different implementation
+
+The 2026-10-10 note above is wrong, and is withdrawn. It checked whether
+branch `claude/kx0p-catalogue-viz` (`6d4c623`) was merged, and grepped
+who-iris main for that branch's own strings (`ic-filter`, `verdict-count`).
+The branch was never merged, but **the fixes reached main another way**
+(checked at who-iris `ec377dc`):
+- **Finding 4:** materialized rows first. `STATE_ORDER` in
+  `scripts/gen-iris-pages.ts:1836` and the stable rank at `:1874` both cite
+  this bean.
+- **Finding 6:** each gate count now sits inside its pill and says what it
+  counts ("permitted: 3 of 6"). See `verdictBadge` at `:1796`, citing this bean.
+- **Test:** `scripts/tests/gen-iris-pages.test.ts:719`, "the catalogue page
+  (bean kx0p)".
+- **The filter half of finding 4** is covered by the site-wide table filter
+  (cat-harness `docs-ui.js` `mountTableFilters`). The owner chose one
+  site-wide filter on 2026-09-30, and it mounts on tables over 25 rows. The
+  catalogue holds 13 nodes, so the old branch's hand-written filter would have
+  contradicted that ruling.
+
+## Summary of Changes
+
+Closed 2026-10-11 on that evidence. The cat-harness-store copy's 2026-10-09
+closure stands. The request to reopen it is withdrawn.

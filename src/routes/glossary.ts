@@ -11,19 +11,19 @@
  * The candidates JSON is regenerated on every GET (cheap walk; ~1s on a
  * typical paper). Decisions are persisted to
  * `<repo>/content/<paper>/glossary-curation.json`. A separate apply
- * script (`bun run pipeline/apply-glossary-curation.ts`) writes the
+ * script (`bun run cat-harness-tools/pipeline/apply-glossary-curation.ts`) writes the
  * `defines: [...]` fields into the chosen blocks' `.ts` files.
  *
  * @module folio-assistant/routes/glossary
  */
 
-import { folioDir } from "../../../cat-harness/schemas/cat-harness.js";
+import { folioDir } from "@litlfred/cat-harness/schemas/cat-harness.js";
 import { existsSync, readFileSync, writeFileSync } from "fs";
 import { join, resolve } from "path";
 
-import { allows, forbidden } from "../../../cat-harness-tools/src/core/rbac.js";
-import { log } from "../../../cat-harness/src/core/logging.js";
-import type { MountedRoute, RouteDeps } from "../../../cat-harness-tools/src/route-groups.js";
+import { allows, forbidden } from "@litlfred/cat-harness-tools/src/core/rbac.js";
+import { log } from "@litlfred/cat-harness-tools/src/core/logging.js";
+import type { MountedRoute, RouteDeps } from "@litlfred/cat-harness-tools/src/route-groups.js";
 
 const CORS = { "Access-Control-Allow-Origin": "*" };
 

@@ -43,8 +43,9 @@ If you find yourself wanting a `theorem`, you want one of two things:
 - a **normative statement** — a recommendation, a requirement, a rule. See
   `normative-statements` for how to carry one in this profile, and read it
   before reaching for a math kind.
-- an actual theorem — in which case this folio is a paper. Change
-  `<name>.config.json` to `"contentType": "paper"` deliberately, and know that
+- an actual theorem — in which case this folio is a paper. Change the
+  instance's `index.config.json` entry to `"contentType": "paper"`
+  deliberately (the index is the one config, bean `ymvt`), and know that
   you are taking on Lean and TeX as dependencies.
 
 ## Adding a block

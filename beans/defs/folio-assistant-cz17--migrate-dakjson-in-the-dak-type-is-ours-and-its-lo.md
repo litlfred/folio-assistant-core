@@ -4,8 +4,10 @@ title: 'Migrate dak.json in: the DAK type is ours, and its Logical Model is pend
 status: todo
 type: task
 priority: normal
+tags:
+    - rehomed
 created_at: 2026-09-18T21:36:56Z
-updated_at: 2026-10-06T06:33:19Z
+updated_at: 2026-10-10T16:34:20Z
 parent: folio-assistant-0lmb
 ---
 
@@ -99,3 +101,27 @@ WORTH LIFTING WHENEVER THIS IS PICKED UP, independent of the IRI decision: input
 ## Handover 2026-10-06 — PAUSED until the repo separation lands (Session F, GOAL 5)
 
 Owner ruling, relayed by the coordinating session (session_012qoycyCSGidZqW245vXhze): repo separation is the primary goal, content authoring/review/publication goes to folio-assistant-core while cat-harness keeps the methods, and that 'needs to be done before F'. This bean resumes AFTER the split. **The code it touches may have moved to folio-assistant-core by then — re-locate it before editing, and re-measure.** Open questions on it are being put to the owner by the coordinating session, one at a time; the answer will be recorded here, not assumed.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The DAK schemas now live in smart-base `schemas/dak-blocks.ts`, and `dak.json` was renamed `dak.config.json`. It is still blocked upstream on WHO's DAK Logical Model, and its re-ask date (2026-09-29) has passed: the Logical Model status should be re-asked whichever option is chosen. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/smart-base`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/smart-base`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## Rehomed 2026-10-10: this copy is now a pointer
+
+By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a
+pointer here). The code this bean changes is in smart-base, which has no bean store. Its owning copy is
+therefore the **same id in the cat-harness store**
+(`litlfred/folio-assistant`, branch `cat/cat-harness/beans`,
+`beans/defs/folio-assistant-cz17--*.md`), which is open there. Work it there.
+This copy stays open as a pointer, and closes when that one does.

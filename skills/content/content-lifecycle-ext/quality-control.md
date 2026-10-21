@@ -5,11 +5,10 @@ output: schemas/skills/quality-control/output.schema.json
 
 # quality-control
 
-> Skill id: `quality-control` · Package: `authoring-who-smart-guidelines` ·
-> Named by `l3-fhir-pipeline.bpmn` (**QC gates**, `QC reviewer` lane),
-> `ig-incremental-build.bpmn` (**QC gates on the aggregate QA**, `PR reviewer /
-> QC reviewer` lane) and `content-change-review.bpmn` (**Run publication QA
-> gates**, `Corpus + build pipeline` lane).
+> Skill id: `quality-control` · Package: `content-lifecycle-ext` ·
+> Named by `draft-to-publication.bpmn` here, and by the QC gates of processes
+> in the layers built on this one — which bind it from above, so this skill
+> names none of them.
 
 Apply the publication quality gates to an aggregate of QA output, and decide
 whether it clears.
@@ -64,6 +63,7 @@ cleared, and a QC gate is the last place that should be blurred.
 ## What to run
 
 `qa_sweep` for content, `bun run cat kg:audit` for the process/role/skill graph,
-`fhir-validation` for FHIR conformance. `checklistSections` narrows the pass;
+and the content type's own conformance validator where its layer provides one
+(for a FHIR IG, that layer's validation skill). `checklistSections` narrows the pass;
 `findings` and `checklistResults` are what the reviewer reads — not
 `overallResult` alone, which is a summary of them rather than a substitute.

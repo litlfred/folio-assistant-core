@@ -5,7 +5,7 @@
     "id": "Process_BoardOpenClose",
     "path": "processes/ui/board-open-close.bpmn"
   },
-  "source_hash": "sha256:48a4bc71a88831b097b22624c410f59d9d167f1247e23a4e772bbd9473a99c63",
+  "source_hash": "sha256:a1250fda0e31fcfdb457867505c8ff3a6e1d0b3749ac53f0f918d086aeff7c23",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -88,6 +88,14 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
       "result": "pass",
       "findings": []
@@ -138,7 +146,7 @@
     }
   },
   "totals": {
-    "pass": 14,
+    "pass": 16,
     "fail": 1,
     "n/a": 10,
     "unknown": 0

@@ -19,6 +19,13 @@
                   id="Definitions_FolioEditing"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/0.1.0/processes/ns#" location="https://litlfred.github.io/bootstrap/0.1.0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:resource id="author" name="Author"/>
+  <bpmn:resource id="authoring-agent" name="Authoring agent"/>
+  <bpmn:resource id="corpus" name="Corpus"/>
+  <bpmn:resource id="reviewer" name="Reviewer / SME"/>
+  <bpmn:resource id="validation-pipeline" name="Validation pipeline"/>
+  <bpmn:resource id="work-plan" name="Work plan (beans)"/>
 
   <bpmn:collaboration id="Collaboration_FolioEditing">
     <bpmn:participant id="Participant_FolioEditing" name="Folio editing — one proposed change to a content block" processRef="Process_Editing" />
@@ -41,9 +48,8 @@
       <cat-harness.processes:log capture="on" />
     </bpmn:extensionElements>
     <bpmn:laneSet id="Process_Editing_LaneSet">
-      <bpmn:lane id="Lane_Editor" name="Editor / author (person)">
+      <bpmn:lane id="Lane_Editor" name="Editor / author (person)" partitionElementRef="author">
         <bpmn:documentation>Every act the requesting party performs personally rather than through the agent lands here: stating the change, retrieving its evidence, and — once every validation path has reported — ruling on it. The gate sits at Task_ReviewFindings rather than earlier because a decision taken before the findings exist would not be a decision about the change that was actually built.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="author"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>StartEvent_EditRequested</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_DescribeChange</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReviewFindings</bpmn:flowNodeRef>
@@ -52,46 +58,40 @@
         <bpmn:flowNodeRef>EndEvent_Discarded</bpmn:flowNodeRef>
               <bpmn:flowNodeRef>CallActivity_Evidence</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_WorkPlan" name="Work plan — beans (shared by humans and agents)">
+      <bpmn:lane id="Lane_WorkPlan" name="Work plan — beans (shared by humans and agents)" partitionElementRef="work-plan">
         <bpmn:documentation>Claims the edit as a bean before drafting starts, so a re-entry cannot silently duplicate the same request, carries the findings onto it before the editor ever sees them, and closes or reopens it against whether the change actually landed. That record is independent of the audit note Task_RecordDecision writes for the decision itself — one tracks the edit's course, the other its outcome.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="work-plan"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_ClaimBean</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_LogFindings</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ResolveBean</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Agent" name="Authoring agent (system)">
+      <bpmn:lane id="Lane_Agent" name="Authoring agent (system)" partitionElementRef="authoring-agent">
         <bpmn:documentation>Produces the proposed change and, once findings exist, weighs the options for it — accept, revise, discard — but stops short of choosing: Call_OptionsAnalysis records that the options were weighed, Task_RecordDecision in the editor's lane records what was chosen, and collapsing the two would let the same party both analyse and decide.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="authoring-agent"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_DraftEdit</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ProposalReady</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReviseEdit</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Call_OptionsAnalysis</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Pipeline" name="HCI validation pipeline (system)">
+      <bpmn:lane id="Lane_Pipeline" name="HCI validation pipeline (system)" partitionElementRef="validation-pipeline">
         <bpmn:documentation>Forks validation into its four parallel paths and, once every one reports, collates mechanical results and review findings into a single report. It is the aggregation point rather than a checker itself — its only job is making sure none of the four is missing before the editor sees anything.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="validation-pipeline"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Gateway_ValidationFork</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ValidationJoin</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_CollateFindings</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Mechanical" name="Mechanical validation (system)">
+      <bpmn:lane id="Lane_Mechanical" name="Mechanical validation (system)" partitionElementRef="validation-pipeline">
         <bpmn:documentation>Runs the three checks that need no judgement call — schema and constraints, syntax and link resolution, build and QA gates — in parallel with the non-mechanical review rather than gating on it, so a spelling error is never held up behind a pending SME review, or the reverse.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="validation-pipeline"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_SchemaValidate</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_SyntaxSpell</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_BuildGates</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_NonMechanical" name="Non-mechanical validation (review agent or SME)">
+      <bpmn:lane id="Lane_NonMechanical" name="Non-mechanical validation (review agent or SME)" partitionElementRef="reviewer">
         <bpmn:documentation>Supplies the half of validation no checker can perform: whether the change says what the editor meant. Gateway_ReviewerKind escalates from agent review to a human SME specifically when the judgement needed turns clinical or scientific rather than editorial.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="reviewer"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Gateway_ReviewerKind</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_AgentReview</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_SmeReview</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ReviewerJoin</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Corpus" name="Corpus (versioned store)">
+      <bpmn:lane id="Lane_Corpus" name="Corpus (versioned store)" partitionElementRef="corpus">
         <bpmn:documentation>Receives the write only after Gateway_EditorDecision resolves to accept. The one activity here is irreversible in a way nothing upstream is, which is why it is subject to the commit-hygiene requirement and reachable from no path except acceptance.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="corpus"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_Commit</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_InCorpus</bpmn:flowNodeRef>
       </bpmn:lane>
@@ -278,6 +278,7 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
       <bpmn:documentation>Only now does the change become corpus content, together with its QA sidecars. Subject to the commit-hygiene requirement.</bpmn:documentation>
       <bpmn:extensionElements>
         <cat-harness.processes:policy relaxable="false" />
+        <bootstrap.processes:skill ref="corpus-commit-contract" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_25</bpmn:incoming>
       <bpmn:outgoing>Flow_26</bpmn:outgoing>

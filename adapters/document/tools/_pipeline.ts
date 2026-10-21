@@ -11,7 +11,7 @@
  * @module adapters/paper/tools/_pipeline
  */
 
-import { folioDir } from "../../../../cat-harness/schemas/cat-harness.js";
+import { folioDir } from "@litlfred/cat-harness/schemas/cat-harness.js";
 import { spawnSync } from "child_process";
 import { existsSync, readdirSync } from "fs";
 import { join, resolve } from "path";
@@ -31,7 +31,7 @@ export interface PipelineResult {
 }
 
 /**
- * The platform's own `content/pipeline/`.
+ * The platform's own `pipeline/` (`cat-harness-tools/pipeline/`).
  *
  * `adapters/document/tools/` -> platform root. Computed rather than passed so
  * that a tool never has to know where it is installed.
@@ -44,7 +44,12 @@ function platformPipelineDir(): string {
   // rewrite could see this break; `resolvePipelineScript("qa-sweep")` returning
   // undefined in `pipeline-resolution.test.ts` is what caught it, which is why
   // those tests moved WITH their subject.
-  return resolve(import.meta.dir, "..", "..", "..", "..", "cat-harness", "content", "pipeline");
+  //
+  // `pipeline/` since rnfl (tools#146): `content/pipeline/` is the transitional
+  // symlink, kept only while a tools pin older than the move is still mounted.
+  const tools = resolve(import.meta.dir, "..", "..", "..", "..", "cat-harness-tools");
+  const moved = join(tools, "pipeline");
+  return existsSync(moved) ? moved : join(tools, "content", "pipeline");
 }
 
 /**

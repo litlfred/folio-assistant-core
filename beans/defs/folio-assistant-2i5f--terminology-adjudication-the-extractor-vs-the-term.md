@@ -17,8 +17,8 @@ solved here.
    *content* decision — change the prose, author a local term with its reason,
    or record that the vocabulary is wrong for this domain. Nothing covers this.
 2. **Two judges disagree about a mapping.** Already
-   [`adjudication`](../../cat-harness/skills/sdlc/sdlc-core/adjudication.md) plus
-   [`untainted-verification`](../../cat-harness/skills/sdlc/sdlc-core/untainted-verification.md).
+   [`adjudication`](../../../cat-harness/skills/sdlc/sdlc-core/adjudication.md) plus
+   [`untainted-verification`](../../../cat-harness/skills/sdlc/sdlc-core/untainted-verification.md).
    This must **call** them, never restate them: `adjudication.md` already
    defines the entry condition (*"entries for ONE criterion disagree"*) and
    consensus (*"entries of different kinds agree on one criterion"*), and
@@ -125,7 +125,7 @@ Owner, 2026-10-02 (issue #1836): *"split: build LEG 1 now as a SKILL + an
 OUTCOME SCHEMA … Leg 2 (two judges disagree about a mapping) stays waiting —
 do not build it."*
 
-- Skill [`term-disagreement`](../../cat-harness/skills/library/library-core/term-disagreement.md)
+- Skill [`term-disagreement`](../../../cat-harness/skills/library/library-core/term-disagreement.md)
   (library-core): which `exact`/`concept` rows are disagreements at all (the
   concept-only pair always; a miss only where the authority is MEANT to cover
   the word; `undetermined` never), the three questions that choose an

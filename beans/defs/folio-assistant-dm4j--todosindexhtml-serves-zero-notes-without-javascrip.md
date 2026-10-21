@@ -1,11 +1,13 @@
 ---
 # folio-assistant-dm4j
 title: todos/index.html serves ZERO notes without JavaScript — the one page most about notes is the only one with no linear floor
-status: todo
+status: completed
 type: task
 priority: normal
+tags:
+    - rehomed
 created_at: 2026-10-02T17:41:46Z
-updated_at: 2026-10-02T18:08:07Z
+updated_at: 2026-10-14T13:55:00Z
 parent: folio-assistant-o3xy
 ---
 
@@ -157,3 +159,52 @@ all. Not in this bean's scope; recorded so it is not re-discovered.
       total (R6: a count that is not the panel's own cardinality is a number
       somebody will act on)
 - [ ] coordinated with #1886, since `footer_custom.html` is its phase C
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The original three Done-when items are met (`linear-floor.e2e.ts`, `todo-listing.test.ts`). The revised item, a per-page listing by `targetLabel`, is `gen-docs-pages.ts` in cat-harness-tools. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## 2026-10-10: half landed, half not (bean-backlog drain, lane C)
+
+The cat-harness-store copy was closed on 2026-10-09 with commit `eaccedc8`,
+which is on cat-harness `main`. It covers the `todos/index.html` case:
+`todo-listing.test.ts:168`, `linear-floor.e2e.ts:168,206`, and
+`footer_custom.html:40`.
+
+**Four of the revised Done-when items were not addressed and are still
+unchecked:**
+- a per-page `renderTodoListing` holding only that page's todos;
+- no listing markup on a page with no todo;
+- each page's own count, never the global total;
+- coordination with #1886.
+
+The listing is still global (cat-harness-tools `gen-docs-pages.ts`). By the
+owner's 2026-10-10 rehome ruling, that residue is re-filed in the
+cat-harness-tools store (see the pointer below), and this copy stays open as a
+pointer.
+
+**Pointer:** the residue is `litlfred/cat-harness-tools` bean **`cat-tools-lwjc`**
+(cat-harness-tools PR #68). This copy closes when that one does.
+
+## Rehomed 2026-10-11: this copy is now a pointer
+
+By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a
+pointer here), this bean is re-filed in the store of the repository whose code
+it changes: **`litlfred/cat-harness-tools` bean `cat-tools-rt0l`** (cat-harness-tools
+PR #114). Work it there. This copy stays open as a pointer, and closes when
+`cat-tools-rt0l` does.
+
+## Summary of Changes
+
+Rehomed: the work moved to litlfred/cat-harness-tools as cat-tools-rt0l and cat-tools-lwjc (its residue), which is completed there. This copy closes as a pointer to it, so the two stores agree (bean drain, 2026-10-14, session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs).

@@ -7,8 +7,8 @@ import { describe, expect, it } from "bun:test";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { TodoNodeSchema } from "../../cat-harness/schemas/todo";
-import { workflowFile } from "../../cat-harness/scripts/known-skills";
+import { TodoNodeSchema } from "@litlfred/cat-harness/schemas/todo.js";
+import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.js";
 import {
   REVIEW_TRANSITIONS,
   ReviewCommentKind,
@@ -18,6 +18,8 @@ import {
   reanchor,
   reanchorToBlocks,
   transition,
+  applyDecisions,
+  parseDecisionTag,
   type PrComment,
 } from "./review-comment";
 
@@ -181,5 +183,62 @@ describe("re-anchoring against the head's blocks (renamedFrom)", () => {
   it("returns every comment, and an anchored one unchanged", () => {
     const c = ingestOne();
     expect(reanchorToBlocks([c], blocks([["prose:overview", []]]))).toEqual([c]);
+  });
+});
+
+describe("deciding from the page: a `resolve:` tag (owner, 2026-10-15)", () => {
+  const decide = (id: number, body: string, user = "editor1", association = "COLLABORATOR", createdAt = "2026-09-24T08:00:00Z"): PrComment => ({
+    id, body, user, association, createdAt, url: `https://github.com/o/r/pull/7#issuecomment-${id}`,
+  });
+  const target = "review-pr7-c101";
+
+  it("parses the tag; anything without `resolve:` is not one", () => {
+    expect(parseDecisionTag(`resolve: ${target}\ndecision: Resolved\n\nFixed in table 3.`)).toEqual({ target, decision: "resolved", text: "Fixed in table 3." });
+    expect(parseDecisionTag("block: prose:overview\n\nhi")).toBeNull();
+    expect(parseDecisionTag("just talk")).toBeNull();
+    expect(parseDecisionTag(`resolve: ${target}\ndecision: done`)).toEqual({ error: expect.stringContaining("`decision:` is one of") });
+    expect(parseDecisionTag("resolve: prose:overview\ndecision: resolved")).toEqual({ error: expect.stringContaining("review comment id") });
+  });
+
+  it("an editor moves a comment through the table: addressed, then resolved, naming the decision comment", () => {
+    const c = ingestOne();
+    const r = applyDecisions([c], [
+      decide(201, `resolve: ${target}\ndecision: addressed`),
+      decide(202, `resolve: ${target}\ndecision: resolved\n\nAgreed.`, "editor1", "OWNER", "2026-09-24T09:00:00Z"),
+    ]);
+    expect(r.refused).toEqual([]);
+    expect(r.tagged).toBe(2);
+    const d = r.comments[0]!;
+    expect(d.status).toBe("resolved");
+    expect(d.review.decision).toBe("https://github.com/o/r/pull/7#issuecomment-202");
+    expect(d.review.decisions).toEqual([201, 202]);
+  });
+
+  it("applies each decision once: a rebuild over its own output changes nothing", () => {
+    const once = applyDecisions([ingestOne()], [decide(201, `resolve: ${target}\ndecision: addressed`)]);
+    const twice = applyDecisions(once.comments, [decide(201, `resolve: ${target}\ndecision: addressed`)]);
+    expect(twice.refused).toEqual([]);
+    expect(twice.applied).toEqual([]);
+    expect(twice.comments).toEqual(once.comments);
+  });
+
+  it("refuses a move the table does not hold, and says why", () => {
+    const r = applyDecisions([ingestOne()], [decide(201, `resolve: ${target}\ndecision: resolved`)]);
+    expect(r.comments[0]!.status).toBe("open");
+    expect(r.refused[0]!.error).toMatch(/open → resolved is not a move/);
+  });
+
+  it("only the repository's people decide; the comment's own author may withdraw it", () => {
+    const stranger = applyDecisions([ingestOne()], [decide(201, `resolve: ${target}\ndecision: addressed`, "drive-by", "NONE")]);
+    expect(stranger.comments[0]!.status).toBe("open");
+    expect(stranger.refused[0]!.error).toMatch(/may not decide/);
+    const own = applyDecisions([ingestOne()], [decide(201, `resolve: ${target}\ndecision: withdrawn`, "sme1", "CONTRIBUTOR")]);
+    expect(own.refused).toEqual([]);
+    expect(own.comments[0]!.status).toBe("withdrawn");
+  });
+
+  it("a decision on an unknown comment is refused, not dropped", () => {
+    const r = applyDecisions([ingestOne()], [decide(201, "resolve: review-pr7-c999\ndecision: addressed")]);
+    expect(r.refused[0]!.error).toMatch(/no review comment `review-pr7-c999`/);
   });
 });

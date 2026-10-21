@@ -46,6 +46,22 @@
       "status": "candidate"
     },
     {
+      "id": "agent-permissions",
+      "prefLabel": "agent-permissions",
+      "definition": "Securing what a coding agent may do without asking, from the person who can grant it: the `secure-agent-permissions` sub-process, run at session start and on demand when an action is denied. Vendor-neutral: the coding agent is a Tool (Claude Code is one; Gemini CLI, Cursor, Copilot and Codex are others), and each Tool's own config format belongs to its adapter, not here. Covers the permissions the harness's processes need, least privilege, how each one is explained before it is granted, how a grant is recorded, and the rules that no grant relaxes: never self-granted, generated projections are CI's, and merging to main is never a standing permission.",
+      "notation": "agent-permissions",
+      "source": "cat-harness/skills/conduct/conduct-core/agent-permissions.md",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate-models",
+      "prefLabel": "archimate-models",
+      "definition": "ArchiMate models as knowledge-graph content: how an instance declares the Archi models it holds, what the `archimate` subgraph gives every model, view, element and relationship (an IRI, a thin page, and every view drawn as SVG from the model's own diagram), how to version the models, how to wire them into a folio's staging build and navbar, and why no Java, no Archi CLI and no Archi HTML report is ever part of the pipeline. Read before adding, publishing or rendering an `.archimate` file, before citing an ArchiMate element from prose, and before reaching for Archi's own tooling in CI.",
+      "notation": "archimate-models",
+      "source": "cat-harness/skills/ui/ui-core/archimate-models.md",
+      "status": "candidate"
+    },
+    {
       "id": "artefact-reachability",
       "prefLabel": "artefact-reachability",
       "definition": "Which declared executable artefacts can be reached — decision tables, BPMN diagrams, self-declared entry points. Read before trusting that a .dmn works because it loads, before concluding a script has a caller, and before building any reachability report: load is not evaluability, a test is not a caller, and where a grep fails in both directions the subject has to be narrowed rather than the signals.",
@@ -107,6 +123,14 @@
       "definition": "Make a reviewer-facing BEFORE/AFTER preview of a change to anything that is rendered — a docs site, a paper's PDF, a FHIR IG, a slide deck, a website — and put it where the review and feedback processes expect it. Covers one build with one variable, stable capture, pairing every picture with a measured count and its method, the viewports and colour schemes to shoot, an honest status line, publishing with alt text, a section per content type naming this repository's own build and render tools, and how reviewer feedback on the preview becomes beans. Use before asking anyone to review a rendered change, at the HCI validation gate, and whenever a reviewer asks \"what did it look like before\".",
       "notation": "before-after-preview",
       "source": "cat-harness/skills/sdlc/sdlc-core/before-after-preview.md",
+      "status": "candidate"
+    },
+    {
+      "id": "benchmarking-mode",
+      "prefLabel": "benchmarking-mode",
+      "definition": "Benchmarking output is a synthesized report across models and configurations, deliberately excluded from declared knowledge-graph typologies. Contrast with QA review mode, where reports land (build/benchmarks/ or reports/), and path guards preventing benchmark data from polluting the knowledge graph.",
+      "notation": "benchmarking-mode",
+      "source": "cat-harness/skills/sdlc/sdlc-core/benchmarking-mode.md",
       "status": "candidate"
     },
     {
@@ -515,6 +539,14 @@
       "status": "candidate"
     },
     {
+      "id": "deployment-awareness",
+      "prefLabel": "deployment-awareness",
+      "definition": "The agent must know its UI surface — gh-pages, local server, with/without MCP, or chat discussion only — because deployment surfaces are declared architectural facts that decide which tools apply, forbid request-time assumptions, and require graceful degradation to chat.",
+      "notation": "deployment-awareness",
+      "source": "cat-harness/skills/ui/ui-core/deployment-awareness.md",
+      "status": "candidate"
+    },
+    {
       "id": "detangler-integration-watcher",
       "prefLabel": "detangler-integration-watcher",
       "definition": "Structural-QA integration watcher — watches the default branch + open active PRs + newly-opened PRs for organisational changes (paper / chapter manifest edits, new blocks, edited `uses[]` / `kind` / `label` / `interprets` / `defines` / `tags`, block renames) and runs the editor's detanglement skill suite (`content-graph`, `chapter-complexity-review`, `block-density`, `critical-path-analysis`) on every detected change. Queues findings, auto-discharges mechanical fixes (table extraction), routes block reorderings through narrative review before applying them, and escalates section splits / merges / cross-chapter moves / new sections to the author. Inherits shared mechanics from `local/integration-watcher`.",
@@ -631,6 +663,14 @@
       "status": "candidate"
     },
     {
+      "id": "finding-software",
+      "prefLabel": "finding-software",
+      "definition": "A script needs a program or module the container does not have (tesseract, pdftoppm, PyMuPDF, a CLI from a GitHub release). Get it: `bun run cat software:ensure`, which tries apt, pip, then a pinned and checksummed GitHub release, from the declared table `scripts/software.json`. Do not route around a missing tool with a cache, a weaker backend or a skipped step, and do not report \"not installed\" as if it were a finding about the work.",
+      "notation": "finding-software",
+      "source": "cat-harness/skills/sdlc/sdlc-core/finding-software.md",
+      "status": "candidate"
+    },
+    {
       "id": "flushable-containers",
       "prefLabel": "flushable-containers",
       "definition": "A flushable container is a named store that accumulates by design — a trash you can recover from, a review preview, a console log. It declares a buffer limit, badges when over it, and offers three flush actions: flush all, trim to limit, and select to prune. What \"flush\" means, and which end of the order is expendable, are declared per container and differ.",
@@ -671,14 +711,6 @@
       "status": "candidate"
     },
     {
-      "id": "glossary-terms",
-      "prefLabel": "glossary-terms",
-      "definition": "Add terms to an instance's glossary: local SKOS terms (folio-glossary/v1) with a definition, a code and links to external SKOS concepts, and references to whole external schemes. Rendered on the glossary/ page; gated by check:glossary. Authored terms go to gettext (.pot) for translation; a paper's glossary is one more scheme.",
-      "notation": "glossary-terms",
-      "source": "cat-harness/skills/library/library-core/glossary-terms.md",
-      "status": "candidate"
-    },
-    {
       "id": "goal-review",
       "prefLabel": "goal-review",
       "definition": "Cold start, then review a time window of activity — sibling sessions, the work plan, issues, change proposals, branches, CI — and prioritise what it finds against goals stated in the owner's words. Inputs are the window, the goals, the scope and the axes; the output is a synopsis (closed, open, needs doing, with effort), a priority queue per goal with selectable next actions, and the instruction gaps met on the way, each recorded as a work item. Use when asked \"what happened\", \"what is stalled\", \"what should we do next for X\", or at the start of a session that inherits parallel work.",
@@ -708,6 +740,14 @@
       "definition": "Write a handover report: a templated snapshot of an agent's current state, committed as a bean note, so that a session or subagent that stalls, runs out of context, or loses its container can be picked up by another agent without re-deriving anything. Use it when you are told a stall is likely, at the end of every long arc, before a risky or long-running step, and whenever a steward asks for one. Its reader is `stalled-agent-triage`.",
       "notation": "handover-report",
       "source": "cat-harness/skills/sdlc/sdlc-core/handover-report.md",
+      "status": "candidate"
+    },
+    {
+      "id": "harness-projections",
+      "prefLabel": "harness-projections",
+      "definition": "Who may write under `.claude/`, and when. The generated projections of the knowledge graph (`.claude/commands/*.md` from `skill:commands`, the assembled agent memory under `.claude/agents/` and `.claude/agent-memory/`) are written by CI, which commits them to the PR branch, and never by an agent. A hand-edited `.claude/` file (`settings.json`, its hooks, a hand-written command or agent definition) changes only with the owner's explicit consent to that change: the agent shows the exact diff and the reason, asks first, and records the consent. Read before staging any path under `.claude/`.",
+      "notation": "harness-projections",
+      "source": "cat-harness/skills/conduct/conduct-core/harness-projections.md",
       "status": "candidate"
     },
     {
@@ -856,9 +896,17 @@
     {
       "id": "kg-separation",
       "prefLabel": "kg-separation",
-      "definition": "Separate a Knowledge Graph into its own repository — as a CONTENT repository (files to read, no code) and a TOOLS repository (the code that writes and checks it) — once it is too large, or its consumers or cadence differ. The end-to-end method: the signals that trigger it, the preconditions, eleven stages each with the command that gates it, the owner's decision points, how identifiers, QA and publication move, how the parent consumes the result, and rollback. graph-detanglement owns stages 1–3; this skill owns the rest. Bootstrap + bootstrap-tools is the worked example; cat-harness + cat-harness-tools is next.",
+      "definition": "Separate a Knowledge Graph into its own repository — as a CONTENT repository (files to read, no code) and a TOOLS repository (the code that writes and checks it) — once it is too large, or its consumers or cadence differ. The end-to-end method: the signals that trigger it, the preconditions, eleven stages each with the command that gates it, the owner's decision points, how identifiers, QA and publication move, how the parent consumes the result, rollback, and the post-move sweep that a move between the pair owes before the parent re-pins. graph-detanglement owns stages 1–3; this skill owns the rest. Bootstrap + bootstrap-tools is the worked example; cat-harness + cat-harness-tools is next.",
       "notation": "kg-separation",
       "source": "cat-harness/skills/kg/graph-management/kg-separation.md",
+      "status": "candidate"
+    },
+    {
+      "id": "kg-subgraph-layout",
+      "prefLabel": "kg-subgraph-layout",
+      "definition": "Lay out one declared sub-graph of a knowledge graph (a harness's schema overview, one named sub-graph, a declaration's kinds) as a single Graphviz diagram in the i2ce Form Documentor's convention, and show it on the site laid out in the reader's browser by Graphviz in WebAssembly, with pan, zoom, find, keyboard control and draggable nodes. The DOT is a third rendering of the model the PlantUML and Mermaid already draw, coloured from the same stylesheet. Tool `uml-overview`.",
+      "notation": "kg-subgraph-layout",
+      "source": "cat-harness/skills/kg/graph-management/kg-subgraph-layout.md",
       "status": "candidate"
     },
     {
@@ -985,6 +1033,14 @@
       "definition": "Order the ready PRs and land them as a train: read each PR's live facts, let the reprioritisation table place it, merge the members together, run the gate set on the combination, and on red attribute and eject the culprit rather than reject the train. Every merge goes through `merge:guard`. Use for \"merge the ready PRs\", \"land this PR\", \"what lands next\", \"run a merge train\", \"why was my PR ejected\", \"move this PR up\", and when tuning the train's order or size.",
       "notation": "merge-queue",
       "source": "cat-harness/skills/sdlc/sdlc-core/merge-queue.md",
+      "status": "candidate"
+    },
+    {
+      "id": "merge-to-main",
+      "prefLabel": "merge-to-main",
+      "definition": "Merging to `main` is its own step with its own gate: the `merge-to-main` sub-process, which every process that lands work CALLS rather than inlines. Covers the evidence read live on the head (CI per owed job, mergeability, review state, Claude Approvals where the repository runs it), why a repository with no CI is never green, who may authorise a merge and what does NOT count as authorisation (\"fix all issues until green\" does not), how the authorisation is recorded, and the post-merge steps: base green, downstream re-pins, bean and issue. Use for \"merge it\", \"land this PR\", \"merge the green PRs\", and before any write to a default branch in any repository.",
+      "notation": "merge-to-main",
+      "source": "cat-harness/skills/sdlc/sdlc-core/merge-to-main.md",
       "status": "candidate"
     },
     {
@@ -1149,7 +1205,7 @@
     {
       "id": "prepare-merge-auto",
       "prefLabel": "prepare-merge-auto",
-      "definition": "Full autonomous prepare-merge → resolve → merge pipeline. Coordinates with sibling PRs, resolves review comments, asks structured questions only when blocked, then merges.",
+      "definition": "Full prepare-merge → resolve → merge pipeline. Coordinates with sibling PRs, resolves review comments, asks structured questions only when blocked, then hands the merge to the merge-to-main sub-process, which merges only on the owner's authorisation.",
       "notation": "prepare-merge-auto",
       "source": "cat-harness/skills/sdlc/sdlc-core/prepare-merge-auto.md",
       "status": "candidate"
@@ -1306,7 +1362,7 @@
     {
       "id": "repo-conversion",
       "prefLabel": "repo-conversion",
-      "definition": "Lay folio-assistant over a repository that already exists, without losing or silently moving what is in it. Scans the tree read-only, classifies candidate files into library (external source) and content (authored here) with an explicit third bucket for what it cannot classify, puts the three questions the scan cannot answer to the author as selections, and hands ingestion to one agent or a small swarm. Use when a user wants an existing repo converted to a folio, asks to import what is already there, or asks whether their PDFs/notes/drafts can come along.",
+      "definition": "Lay folio-assistant over a repository that already exists, without losing or silently moving what is in it. Scans the tree read-only, classifies candidate files into library (external source) and content (authored here) with an explicit third bucket for what it cannot classify, scans outside the content tree for mathematical evidence and refutations, puts the three questions the scan cannot answer to the author as selections, and hands ingestion to one agent or a small swarm. Use when a user wants an existing repo converted to a folio, asks to import what is already there, or asks whether their PDFs/notes/drafts can come along.",
       "notation": "repo-conversion",
       "source": "cat-harness/skills/conduct/conduct-core/repo-conversion.md",
       "status": "candidate"
@@ -1317,14 +1373,6 @@
       "definition": "Every error gets a falling-off retry rate — each wait doubles, with jitter. Read before writing any call that can fail transiently, and before deciding that a failure is worth retrying at all. Exhausting the retries does not change the verdict.",
       "notation": "retry-backoff",
       "source": "cat-harness/skills/conduct/conduct-core/retry-backoff.md",
-      "status": "candidate"
-    },
-    {
-      "id": "review-comments",
-      "prefLabel": "review-comments",
-      "definition": "Reviewer comments on a folio's edit-set, from a tagged pull-request comment to a structured todo on the review page. Covers the tag a reviewer types, how the comments are ingested into `review-comment/1.0.0` todos, where the published `review-comments.json` comes from and when it refreshes, how a comment follows a renamed block and survives a removed one, who may change a comment's status, and how to change this process. Use when a reviewer asks how to comment on a block, when the review page shows no comments or a wrong one, when editing the ingestion, or when a folio's staging workflow is set up.",
-      "notation": "review-comments",
-      "source": "cat-harness/skills/authoring/authoring-core/review-comments.md",
       "status": "candidate"
     },
     {
@@ -1364,6 +1412,14 @@
       "prefLabel": "scientific-accuracy",
       "notation": "scientific-accuracy",
       "source": "cat-harness/skills/authoring/authoring-core/scientific-accuracy.md",
+      "status": "candidate"
+    },
+    {
+      "id": "secrets",
+      "prefLabel": "secrets",
+      "definition": "Adding, rotating and revoking the credentials the harness's automation needs, one mechanism at a time, with the exact GitHub UI path for each step. Every step that touches a value is a person's; an agent drafts the steps, checks names and expiry dates, and records what was done. Leads with the GitHub App on a personal account, the recommended mechanism (owner ruling D1=A).",
+      "notation": "secrets",
+      "source": "cat-harness/skills/sdlc/sdlc-core/secrets.md",
       "status": "candidate"
     },
     {
@@ -1459,6 +1515,14 @@
       "definition": "When a diagram already says what the process is, the model should not be planning it. The two gaps between this repository's engine and a compiled control plane — typed node contracts and per-node context scope — what to do before either exists, and the three things not to adopt with the method.",
       "notation": "specification-compiled-agents",
       "source": "cat-harness/skills/process/workflow/specification-compiled-agents.md",
+      "status": "candidate"
+    },
+    {
+      "id": "specification-management",
+      "prefLabel": "specification-management",
+      "definition": "Governs the lifecycle, syntax, and traceability of specifications and requirements across the harness. Connects spec-kit and CRDM tracks to the 6-part bootstrap Requirement definition, enforces EARS and ISO 29148 statement quality, and defines how requirements project to open standards (ReqIF, OSLC-RM) while keeping bootstrap strictly decoupled.",
+      "notation": "specification-management",
+      "source": "cat-harness/skills/sdlc/sdlc-core/specification-management.md",
       "status": "candidate"
     },
     {

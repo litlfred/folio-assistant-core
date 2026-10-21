@@ -7,6 +7,188 @@
   "source": "Schema fields of cat-harness",
   "terms": [
     {
+      "id": "adversarial-checklist.adversarialchecklistitem.defaultcategory",
+      "prefLabel": "AdversarialChecklistItem.defaultCategory",
+      "definition": "Default red-flag category if a blocking finding is raised.",
+      "source": "cat-harness/schemas/adversarial-checklist.ts#AdversarialChecklistItem.defaultCategory",
+      "status": "candidate"
+    },
+    {
+      "id": "adversarial-checklist.adversarialchecklistitem.defaultseverity",
+      "prefLabel": "AdversarialChecklistItem.defaultSeverity",
+      "definition": "Default severity for findings under this check.",
+      "source": "cat-harness/schemas/adversarial-checklist.ts#AdversarialChecklistItem.defaultSeverity",
+      "status": "candidate"
+    },
+    {
+      "id": "adversarial-checklist.adversarialchecklistitem.extendssource",
+      "prefLabel": "AdversarialChecklistItem.extendsSource",
+      "definition": "Which skill or discipline this check extends.",
+      "source": "cat-harness/schemas/adversarial-checklist.ts#AdversarialChecklistItem.extendsSource",
+      "status": "candidate"
+    },
+    {
+      "id": "adversarial-checklist.adversarialchecklistitem.guidance",
+      "prefLabel": "AdversarialChecklistItem.guidance",
+      "definition": "Detailed guidance on how to evaluate this question adversarially.",
+      "source": "cat-harness/schemas/adversarial-checklist.ts#AdversarialChecklistItem.guidance",
+      "status": "candidate"
+    },
+    {
+      "id": "adversarial-checklist.adversarialchecklistitem.id",
+      "prefLabel": "AdversarialChecklistItem.id",
+      "definition": "Unique stable identifier for the checklist question.",
+      "source": "cat-harness/schemas/adversarial-checklist.ts#AdversarialChecklistItem.id",
+      "status": "candidate"
+    },
+    {
+      "id": "adversarial-checklist.adversarialchecklistitem.kind",
+      "prefLabel": "AdversarialChecklistItem.kind",
+      "definition": "Content block kind this check applies to.",
+      "source": "cat-harness/schemas/adversarial-checklist.ts#AdversarialChecklistItem.kind",
+      "status": "candidate"
+    },
+    {
+      "id": "adversarial-checklist.adversarialchecklistitem.question",
+      "prefLabel": "AdversarialChecklistItem.question",
+      "definition": "The adversarial hypothesis/question to test against the subject.",
+      "source": "cat-harness/schemas/adversarial-checklist.ts#AdversarialChecklistItem.question",
+      "status": "candidate"
+    },
+    {
+      "id": "adversarial-checklist.adversarialchecklistitem.references",
+      "prefLabel": "AdversarialChecklistItem.references",
+      "definition": "The rules supporting this check, BY NAME — `skill:<name>` or `schema:<module>` — never by path. Code, which is addressed by path on purpose, is `code:<layer>/<module path>`. Paths went stale as skills moved between packages (two named a skill that no longer exists); a name is found wherever the declaration puts it (`check:declared-paths`, bean `rmi6` follow-up). `adversarial-checklist.test.ts` resolves every one.",
+      "source": "cat-harness/schemas/adversarial-checklist.ts#AdversarialChecklistItem.references",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigmodelschema.description",
+      "prefLabel": "ArchimateConfigModelSchema.description",
+      "definition": "One sentence on what this model is and why the instance holds it.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateConfigModelSchema.description",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigmodelschema.file",
+      "prefLabel": "ArchimateConfigModelSchema.file",
+      "definition": "The `.archimate` file, relative to the declared directory.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateConfigModelSchema.file",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigmodelschema.id",
+      "prefLabel": "ArchimateConfigModelSchema.id",
+      "definition": "The model's id: its page directory and its IRI segment. A version (`0.2.0`) is a good one.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateConfigModelSchema.id",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigmodelschema.title",
+      "prefLabel": "ArchimateConfigModelSchema.title",
+      "definition": "What a reader calls it. Absent, the model's own name is used.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateConfigModelSchema.title",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigschema.directory",
+      "prefLabel": "ArchimateConfigSchema.directory",
+      "definition": "The `<instance>.json` directory id of graph typology `archimate` the models are held in.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateConfigSchema.directory",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateelement.folder",
+      "prefLabel": "ArchimateElement.folder",
+      "definition": "The folder path it is filed under in the model tree.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateElement.folder",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateelement.type",
+      "prefLabel": "ArchimateElement.type",
+      "definition": "The ArchiMate type without Archi's prefix: `ApplicationComponent`.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateElement.type",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimatemodel.archiversion",
+      "prefLabel": "ArchimateModel.archiVersion",
+      "definition": "Archi's model `version` attribute — the tool's file version, not the model's.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateModel.archiVersion",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimaterelationship.accesstype",
+      "prefLabel": "ArchimateRelationship.accessType",
+      "definition": "Access only: `write` (Archi's default), `read`, `access` or `readwrite`.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateRelationship.accessType",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimaterelationship.directed",
+      "prefLabel": "ArchimateRelationship.directed",
+      "definition": "Association only.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateRelationship.directed",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimaterelationship.strength",
+      "prefLabel": "ArchimateRelationship.strength",
+      "definition": "Influence only: the strength, e.g. `+` or `--`.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateRelationship.strength",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimaterelationship.type",
+      "prefLabel": "ArchimateRelationship.type",
+      "definition": "The relationship type without prefix or suffix: `Composition`, `Serving`.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateRelationship.type",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateviewconnection.bendpoints",
+      "prefLabel": "ArchimateViewConnection.bendpoints",
+      "definition": "Archi's relative bendpoints: offsets from the source's and the target's centres.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateViewConnection.bendpoints",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateviewconnection.relationship",
+      "prefLabel": "ArchimateViewConnection.relationship",
+      "definition": "The relationship it shows; absent for a plain line between a note and a box.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateViewConnection.relationship",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateviewnode.alternate",
+      "prefLabel": "ArchimateViewNode.alternate",
+      "definition": "Archi's `type=\"1\"`: the element drawn as its figure's alternate.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateViewNode.alternate",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateviewnode.parent",
+      "prefLabel": "ArchimateViewNode.parent",
+      "definition": "The diagram object it is drawn inside, if any.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateViewNode.parent",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateviewnode.ref",
+      "prefLabel": "ArchimateViewNode.ref",
+      "definition": "The element it shows (`element`), or the view it refers to (`view-ref`).",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateViewNode.ref",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateviewnode.text",
+      "prefLabel": "ArchimateViewNode.text",
+      "definition": "A group's label, or a note's text.",
+      "source": "cat-harness/archimate/schemas/archimate.ts#ArchimateViewNode.text",
+      "status": "candidate"
+    },
+    {
       "id": "archive-contents.archivecontentsschema.archive",
       "prefLabel": "ArchiveContentsSchema.archive",
       "definition": "The archive file's own `_tech_meta` block.",
@@ -872,6 +1054,13 @@
       "prefLabel": "Avatar.tone",
       "definition": "Hue angle in degrees, 0–359.",
       "source": "cat-harness/schemas/avatars.ts#Avatar.tone",
+      "status": "candidate"
+    },
+    {
+      "id": "bean-graph.beanfrontmatterschema.issue",
+      "prefLabel": "BeanFrontMatterSchema.issue",
+      "definition": "GitHub issue number or reference (e.g. 730, \"#730\", or issue URL). Queryable field linking a bean to its external human adjudication/tracking issue.",
+      "source": "cat-harness/schemas/bean-graph.ts#BeanFrontMatterSchema.issue",
       "status": "candidate"
     },
     {
@@ -1981,6 +2170,48 @@
       "status": "candidate"
     },
     {
+      "id": "built-at-publish.builtatpublishschema.because",
+      "prefLabel": "BuiltAtPublishSchema.because",
+      "definition": "Which half of the rule it fails.",
+      "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.because",
+      "status": "candidate"
+    },
+    {
+      "id": "built-at-publish.builtatpublishschema.directory",
+      "prefLabel": "BuiltAtPublishSchema.directory",
+      "definition": "The declared directory id this path fills, when it is one (so presence checks do not expect it on disk).",
+      "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.directory",
+      "status": "candidate"
+    },
+    {
+      "id": "built-at-publish.builtatpublishschema.from",
+      "prefLabel": "BuiltAtPublishSchema.from",
+      "definition": "`state` only: the declared directory ids of the branch-kept graphs it is computed from.",
+      "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.from",
+      "status": "candidate"
+    },
+    {
+      "id": "built-at-publish.builtatpublishschema.path",
+      "prefLabel": "BuiltAtPublishSchema.path",
+      "definition": "Instance-relative; a directory ends in `/`.",
+      "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.path",
+      "status": "candidate"
+    },
+    {
+      "id": "built-at-publish.builtatpublishschema.reason",
+      "prefLabel": "BuiltAtPublishSchema.reason",
+      "definition": "One sentence a reviewer can check: what makes it pin- or state-dependent.",
+      "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.reason",
+      "status": "candidate"
+    },
+    {
+      "id": "built-at-publish.builtatpublishschema.writer",
+      "prefLabel": "BuiltAtPublishSchema.writer",
+      "definition": "Package scripts that write it, in order — run as `bun run cat <script>`.",
+      "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.writer",
+      "status": "candidate"
+    },
+    {
       "id": "carried-note.artefactrefschema.id",
       "prefLabel": "ArtefactRefSchema.id",
       "definition": "Its identifier within the provider: `203`, a SHA, a run id.",
@@ -2275,6 +2506,13 @@
       "status": "candidate"
     },
     {
+      "id": "cat-harness.catharnessdeclaration.builtatpublish",
+      "prefLabel": "CatHarnessDeclaration.builtAtPublish",
+      "definition": "Artefacts this instance serves and must never commit, each built at publish by the package scripts it names — {@link BuiltAtPublish}. Owner, 2026-10-14 (\"B1\"): a page computed over the checkout's other instances, or from a branch-kept graph, cannot be current in a commit of this one.",
+      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.builtAtPublish",
+      "status": "candidate"
+    },
+    {
       "id": "cat-harness.catharnessdeclaration.canonicalurl",
       "prefLabel": "CatHarnessDeclaration.canonicalUrl",
       "definition": "Where this instance's artefacts are published — the base every `@id` in the exported graph is minted against.",
@@ -2303,9 +2541,16 @@
       "status": "candidate"
     },
     {
+      "id": "cat-harness.catharnessdeclaration.dollar-schema",
+      "prefLabel": "CatHarnessDeclaration.$schema",
+      "definition": "`cat-harness-declaration/1.0.0` — see {@link CAT_HARNESS_DECLARATION_SCHEMA_TAG} (bean `ujiv`).",
+      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.$schema",
+      "status": "candidate"
+    },
+    {
       "id": "cat-harness.catharnessdeclaration.gateexemptions",
       "prefLabel": "CatHarnessDeclaration.gateExemptions",
-      "definition": "The CI steps and check scripts of THIS instance that the local gate set deliberately does not run, each with its reason — the rows `cat-harness/scripts/gates.ts` holds as `STEP_EXEMPTIONS` and `SCRIPT_EXEMPTIONS` for the harness's own. Same contract: a reason is required, a step `match` is a substring of the workflow command, a script name is matched exactly. Declared by the owner so the harness need not name a layer above itself (bean `0r7u` step 0).",
+      "definition": "The CI steps and check scripts of THIS instance that the local gate set deliberately does not run, each with its reason — the rows `cat-harness-tools/scripts/gates.ts` holds as `STEP_EXEMPTIONS` and `SCRIPT_EXEMPTIONS` for the harness's own. Same contract: a reason is required, a step `match` is a substring of the workflow command, a script name is matched exactly. Declared by the owner so the harness need not name a layer above itself (bean `0r7u` step 0).",
       "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.gateExemptions",
       "status": "candidate"
     },
@@ -2450,6 +2695,13 @@
       "status": "candidate"
     },
     {
+      "id": "cat-harness.catharnessdeclaration.skillprefix",
+      "prefLabel": "CatHarnessDeclaration.skillPrefix",
+      "definition": "The prefix this harness's skills get when installed into an agent host — see {@link CatHarnessDeclarationSchema}'s `skillPrefix` (bean `x4mt`).",
+      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.skillPrefix",
+      "status": "candidate"
+    },
+    {
       "id": "cat-harness.catharnessdeclaration.source",
       "prefLabel": "CatHarnessDeclaration.source",
       "definition": "Where this whole instance gets its upstream/source material (e.g. an IG source in Git). Bean `bamf`, owner ruling 2026-10-07: declare IG source in instance declaration.",
@@ -2480,7 +2732,7 @@
     {
       "id": "cat-harness.catharnessdeclaration.taskio",
       "prefLabel": "CatHarnessDeclaration.taskIo",
-      "definition": "What this instance's own package tasks read and write, keyed by task name — the same {@link ScriptIO}-shaped facts `cat-harness/scripts/task-io.ts` holds for the harness's own tasks: `outputs: []` (measured to write nothing, so it may run in the pool) and `inputs` (what can change the answer, so `regen` may skip it on an unchanged tree; `\"{tracked}\"` is the whole working tree). `because` keeps the measurement that justified it.",
+      "definition": "What this instance's own package tasks read and write, keyed by task name — the same {@link ScriptIO}-shaped facts `cat-harness-tools/scripts/task-io.ts` holds for the harness's own tasks: `outputs: []` (measured to write nothing, so it may run in the pool) and `inputs` (what can change the answer, so `regen` may skip it on an unchanged tree; `\"{tracked}\"` is the whole working tree). `because` keeps the measurement that justified it.",
       "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.taskIo",
       "status": "candidate"
     },
@@ -2499,171 +2751,17 @@
       "status": "candidate"
     },
     {
-      "id": "cat-harness.catharnessdeclarationschema.alsowritten",
-      "prefLabel": "CatHarnessDeclarationSchema.alsoWritten",
-      "definition": "Other ways the instance's name is written, shown on the landing as a small \"also written\" list rather than run into the description as one line. Owner's choice, 2026-10-01: keep the spellings visible, as a list.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.alsoWritten",
+      "id": "cat-harness.catharnessdeclaration.visualisers",
+      "prefLabel": "CatHarnessDeclaration.visualisers",
+      "definition": "The visualisers this harness declares, each at `<base>/<name>/<id>/` — {@link HarnessVisualiser}. Owner, 2026-10-09.",
+      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.visualisers",
       "status": "candidate"
     },
     {
-      "id": "cat-harness.catharnessdeclarationschema.assets",
-      "prefLabel": "CatHarnessDeclarationSchema.assets",
-      "definition": "Declared non-image artefacts — `AGENTS.md` first among them.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.assets",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.associatedharnesses",
-      "prefLabel": "CatHarnessDeclarationSchema.associatedHarnesses",
-      "definition": "Harnesses this one is associated with — see {@link AssociatedHarness}. `.optional()`, not `.default([])`: absent is \"has not said\", and a default would make the field required in the output type of every declaration. Names are unique, never also in `needs`, and never a harness in this checkout (that would be local, not associated) — refined below.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.associatedHarnesses",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.avatar",
-      "prefLabel": "CatHarnessDeclarationSchema.avatar",
-      "definition": "The instance's mark — the same shape a kind node carries (bean sod4 #4). It sat in `schemas/avatars.ts`'s AVATARS beside the kinds' until 2026-10-05, so a new instance needed an edit to cat-harness to get a face; declared here, it brings its own. `avatarFor(name)` reads it.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.avatar",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.contentadapters",
-      "prefLabel": "CatHarnessDeclarationSchema.contentAdapters",
-      "definition": "The content adapters this instance ships — see {@link ContentAdapterDeclaration}.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.contentAdapters",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.glassstrip",
-      "prefLabel": "CatHarnessDeclarationSchema.glassStrip",
-      "definition": "Which tiles the glass's bottom strip pins, in order — see {@link GlassStripSchema}. Same three states as `navbarIcons`: absent inherits, `[]` pins nothing, a list is this instance's own answer.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.glassStrip",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.id",
-      "prefLabel": "CatHarnessDeclarationSchema.id",
-      "definition": "The package identity an EXTERNAL consumer depends on — reverse-DNS.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.id",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.iribase",
-      "prefLabel": "CatHarnessDeclarationSchema.iriBase",
-      "definition": "The address this instance's IRIs are minted under, BEFORE the version — bootstrap's `iriBase` (see `graph.ts`), and the one place a fork edits.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.iriBase",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.knownsubstrates",
-      "prefLabel": "CatHarnessDeclarationSchema.knownSubstrates",
-      "definition": "See {@link KnownSubstrate}. Names are unique.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.knownSubstrates",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.liquid",
-      "prefLabel": "CatHarnessDeclarationSchema.liquid",
-      "definition": "See {@link CatHarnessDeclaration.liquid}.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.liquid",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.mountapprovers",
-      "prefLabel": "CatHarnessDeclarationSchema.mountApprovers",
-      "definition": "The people whose consent may authorise a remote mount of this instance's `remoteMounts` (roast `1ygp` L4.2). Declared: a `trust.consent.by` not on the list is refused. Absent: consent still mounts, but every such mount is reported as `unverified-approver`, never as clean.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.mountApprovers",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.mountdefaults",
-      "prefLabel": "CatHarnessDeclarationSchema.mountDefaults",
-      "definition": "What a DOWNSTREAM mounts of this instance by default, and where — see `schemas/remote-mount.ts` (bean `0mpw`). Owner, 2026-10-06: the defaults live in the harness's own declaration, so a downstream names only the harness and its pin and never restates the paths. Absent is the stated default (home path, every in-checkout directory), not \"unmountable\".",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.mountDefaults",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.navbaricons",
-      "prefLabel": "CatHarnessDeclarationSchema.navbarIcons",
-      "definition": "Which icons this instance's navbar row shows.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.navbarIcons",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.needs",
-      "prefLabel": "CatHarnessDeclarationSchema.needs",
-      "definition": "The instances this one is BUILT ON — its layer stack, foundation first.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.needs",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.nodeschemas",
-      "prefLabel": "CatHarnessDeclarationSchema.nodeSchemas",
-      "definition": "The instance's Node Kinds, declared: each `$schema` tag its files may carry → the JSON Schema that defines it (an IRI, or a path relative to the declaration). Bootstrap's field (`graph.ts`, owner 2026-09-29: the schema-reference table \"should be in bootstrap\"), inherited here because this declaration is a Subkind of bootstrap's. The graph-typology registry's `nodeSchemas` keeps the harness's TypeScript-backed forms (`validator`, `shape`); this one names only published schemas, which is all a reader with nothing installed can follow.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.nodeSchemas",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.remotegraphs",
-      "prefLabel": "CatHarnessDeclarationSchema.remoteGraphs",
-      "definition": "Graphs this instance knows about and does not hold — see {@link RemoteGraph}. A SEPARATE array from `directories`, not a variant of one, because a remote graph has no directory.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.remoteGraphs",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.remotemounts",
-      "prefLabel": "CatHarnessDeclarationSchema.remoteMounts",
-      "definition": "Harnesses this instance REMOTE-MOUNTS — each a repository and a 40-char pin, resolved transitively through the harness's `needs` (bean `0mpw`). Not a submodule and not `.deps/`: the mounted directories are declared, locked by tree digest, and checked by `mount:remote:check`.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.remoteMounts",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.seedswith",
-      "prefLabel": "CatHarnessDeclarationSchema.seedsWith",
-      "definition": "Instances this one is SEEDED TOGETHER with: the same seeding step creates both repositories, so neither ever stands alone in a checkout (bean `smbc` seeds `cat-harness` and `cat-harness-tools` at once).",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.seedsWith",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.separation",
-      "prefLabel": "CatHarnessDeclarationSchema.separation",
-      "definition": "Which half of a kg-separation pair this instance's planned `repository` is: `content` (files to read — no code, bootstrap FR-7) or `tools` (the code that writes and checks a content repository).",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.separation",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.source",
-      "prefLabel": "CatHarnessDeclarationSchema.source",
-      "definition": "Where this whole instance gets its upstream/source material (e.g. an IG source in Git). Bean `bamf`, owner ruling 2026-10-07: declare IG source in instance declaration.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.source",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.subscriptions",
-      "prefLabel": "CatHarnessDeclarationSchema.subscriptions",
-      "definition": "External Knowledge Graphs this one subscribes to — see {@link Subscription}. `.optional()` for the reason `associatedHarnesses` is. Ids are unique, and never also in `needs` or `associatedHarnesses` — refined below.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.subscriptions",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.summary",
-      "prefLabel": "CatHarnessDeclarationSchema.summary",
-      "definition": "One line for a READER, where `description` is written for an author.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.summary",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.taskio",
-      "prefLabel": "CatHarnessDeclarationSchema.taskIo",
-      "definition": "What this instance's own package tasks read and write, keyed by task name — the same {@link ScriptIO}-shaped facts `cat-harness/scripts/task-io.ts` holds for the harness's own tasks: `outputs: []` (measured to write nothing, so it may run in the pool) and `inputs` (what can change the answer, so `regen` may skip it on an unchanged tree; `\"{tracked}\"` is the whole working tree). `because` keeps the measurement that justified it.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.taskIo",
-      "status": "candidate"
-    },
-    {
-      "id": "cat-harness.catharnessdeclarationschema.version",
-      "prefLabel": "CatHarnessDeclarationSchema.version",
-      "definition": "The version — an exact semver triple, `current` or `dev`. Never a range.",
-      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.version",
+      "id": "cat-harness.catharnessdeclarationschema.dollar-schema",
+      "prefLabel": "CatHarnessDeclarationSchema.$schema",
+      "definition": "What this file is: {@link CAT_HARNESS_DECLARATION_SCHEMA_TAG}, or an earlier minor/patch of its major. Optional here so a declaration read before it was tagged still parses; `declarations:retag:check` is what fails an untagged one. Declared so a parse-and-write KEEPS it — an undeclared key is dropped by the parse, which is how a tag is lost.",
+      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclarationSchema.$schema",
       "status": "candidate"
     },
     {
@@ -3028,6 +3126,55 @@
       "prefLabel": "GraphNodeDirectoryShape.subgraph",
       "definition": "This entry is an instance SUBGRAPH, not a part of its parent's graph.",
       "source": "cat-harness/schemas/cat-harness.ts#GraphNodeDirectoryShape.subgraph",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.alias",
+      "prefLabel": "HarnessVisualiserSchema.alias",
+      "definition": "Opt-in `<base>/<alias>/` redirect to the canonical route (bean `t4xb`).",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.alias",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.covers",
+      "prefLabel": "HarnessVisualiserSchema.covers",
+      "definition": "This instance's directory ids it covers.",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.covers",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.coverskinds",
+      "prefLabel": "HarnessVisualiserSchema.coversKinds",
+      "definition": "Graph typologies it covers, over every declared directory of them in the checkout.",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.coversKinds",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.id",
+      "prefLabel": "HarnessVisualiserSchema.id",
+      "definition": "The URL segment under `<base>/<harness>/`, unique within this harness.",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.id",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.renderedby",
+      "prefLabel": "HarnessVisualiserSchema.renderedBy",
+      "definition": "The Tool node that draws it.",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.renderedBy",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.subgraphs",
+      "prefLabel": "HarnessVisualiserSchema.subgraphs",
+      "definition": "What a `<sub-graph>` segment names, when the visualiser draws per-sub-graph views.",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.subgraphs",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.subgraphunder",
+      "prefLabel": "HarnessVisualiserSchema.subgraphUnder",
+      "definition": "For `subgraphs: \"directory\"`: the sub-graph PATH a covered kind's directories sit under, by kind — `{ \"skills\": \"index/skills\" }` puts the `core-skills` directory's view at `<harness>/<id>/index/skills/core-skills/`. Absent for a kind: the directory id alone. Declared because the nesting is the visualiser's own declared structure (auto-docs' `auto-docs.json`), not something a reader may infer from the pages.",
+      "source": "cat-harness/schemas/cat-harness.ts#HarnessVisualiserSchema.subgraphUnder",
       "status": "candidate"
     },
     {
@@ -3458,6 +3605,13 @@
       "status": "candidate"
     },
     {
+      "id": "cat-harness.visualisationschema.alias",
+      "prefLabel": "VisualisationSchema.alias",
+      "definition": "Opt-in top-level route alias: `<base>/<alias>/` (bean folio-assistant-t4xb). Canonical route is always `<base>/<harness>/<visualizer>/`. When true, uses the visualizer's name as the alias; when string, uses the specified alias. Refused if it collides with another alias, a harness route, or a reserved site route.",
+      "source": "cat-harness/schemas/cat-harness.ts#VisualisationSchema.alias",
+      "status": "candidate"
+    },
+    {
       "id": "cat-harness.visualisationschema.hidden",
       "prefLabel": "VisualisationSchema.hidden",
       "definition": "Whether this tile starts out of frame. Absent means shown.",
@@ -3831,7 +3985,7 @@
     {
       "id": "contribution-nodes.pipelinepluginnodeschema.slot",
       "prefLabel": "PipelinePluginNodeSchema.slot",
-      "definition": "The generic pipeline slot this fills (`content/pipeline/pipeline-plugins.ts`); the key into the table.",
+      "definition": "The generic pipeline slot this fills (`pipeline/pipeline-plugins.ts`); the key into the table.",
       "source": "cat-harness/schemas/contribution-nodes.ts#PipelinePluginNodeSchema.slot",
       "status": "candidate"
     },
@@ -3950,7 +4104,7 @@
     {
       "id": "contributions.pipelineplugincontribution.implementation",
       "prefLabel": "PipelinePluginContribution.implementation",
-      "definition": "What fills it. Shape is fixed per kind by `content/pipeline/pipeline-plugins.ts`.",
+      "definition": "What fills it. Shape is fixed per kind by `pipeline/pipeline-plugins.ts`.",
       "source": "cat-harness/schemas/contributions.ts#PipelinePluginContribution.implementation",
       "status": "candidate"
     },
@@ -6643,13 +6797,6 @@
       "status": "candidate"
     },
     {
-      "id": "harness-config.harnessconfig.contributes",
-      "prefLabel": "HarnessConfig.contributes",
-      "definition": "Module this instance contributes from when it is loaded as a DEPENDENCY.",
-      "source": "cat-harness/schemas/harness-config.ts#HarnessConfig.contributes",
-      "status": "candidate"
-    },
-    {
       "id": "harness-config.harnessconfig.dependencies",
       "prefLabel": "HarnessConfig.dependencies",
       "definition": "Cross-folio dependencies.",
@@ -6867,6 +7014,48 @@
       "status": "candidate"
     },
     {
+      "id": "health-report.pagesservingobservationschema.observedat",
+      "prefLabel": "PagesServingObservationSchema.observedAt",
+      "definition": "ISO 8601, when the CI job fetched the site.",
+      "source": "cat-harness/schemas/health-report.ts#PagesServingObservationSchema.observedAt",
+      "status": "candidate"
+    },
+    {
+      "id": "health-report.pagesservingobservationschema.run",
+      "prefLabel": "PagesServingObservationSchema.run",
+      "definition": "The workflow run that made the observation, for a reader to open.",
+      "source": "cat-harness/schemas/health-report.ts#PagesServingObservationSchema.run",
+      "status": "candidate"
+    },
+    {
+      "id": "health-report.pagesservingobservationschema.site",
+      "prefLabel": "PagesServingObservationSchema.site",
+      "definition": "The published site's root URL.",
+      "source": "cat-harness/schemas/health-report.ts#PagesServingObservationSchema.site",
+      "status": "candidate"
+    },
+    {
+      "id": "health-report.pagesservingurlschema.bytes",
+      "prefLabel": "PagesServingUrlSchema.bytes",
+      "definition": "Bytes in the response body.",
+      "source": "cat-harness/schemas/health-report.ts#PagesServingUrlSchema.bytes",
+      "status": "candidate"
+    },
+    {
+      "id": "health-report.pagesservingurlschema.expectedpage",
+      "prefLabel": "PagesServingUrlSchema.expectedPage",
+      "definition": "Whether the body is the page asked for, rather than Pages' own 404.",
+      "source": "cat-harness/schemas/health-report.ts#PagesServingUrlSchema.expectedPage",
+      "status": "candidate"
+    },
+    {
+      "id": "health-report.pagesservingurlschema.status",
+      "prefLabel": "PagesServingUrlSchema.status",
+      "definition": "HTTP status of the final response.",
+      "source": "cat-harness/schemas/health-report.ts#PagesServingUrlSchema.status",
+      "status": "candidate"
+    },
+    {
       "id": "id-lookup.identry.id",
       "prefLabel": "IdEntry.id",
       "definition": "`kind/local`, lower-case, as the catalogue names the node.",
@@ -6920,6 +7109,20 @@
       "prefLabel": "DeclaredMounts.from",
       "definition": "Where they were read from: the index, the declaration's `remoteMounts` (no index), or nowhere.",
       "source": "cat-harness/schemas/index-config.ts#DeclaredMounts.from",
+      "status": "candidate"
+    },
+    {
+      "id": "index-config.indexconfigschema.description",
+      "prefLabel": "IndexConfigSchema.description",
+      "definition": "One paragraph under that title, saying what the checkout is for.",
+      "source": "cat-harness/schemas/index-config.ts#IndexConfigSchema.description",
+      "status": "candidate"
+    },
+    {
+      "id": "index-config.indexconfigschema.title",
+      "prefLabel": "IndexConfigSchema.title",
+      "definition": "What this CHECKOUT is called. The index declares no instance of its own (owner, 2026-10-08), so nothing else names it; `index:render` titles the root `README.md` and `AGENTS.md` with it (owner, 2026-10-09: those two are rendered files). Absent, they are titled generically.",
+      "source": "cat-harness/schemas/index-config.ts#IndexConfigSchema.title",
       "status": "candidate"
     },
     {
@@ -6986,6 +7189,20 @@
       "status": "candidate"
     },
     {
+      "id": "intake.intakeclassificationschema.basis",
+      "prefLabel": "IntakeClassificationSchema.basis",
+      "definition": "Why — the rule, the person's words, or the process step. Required: an unexplained classification is a guess.",
+      "source": "cat-harness/schemas/intake.ts#IntakeClassificationSchema.basis",
+      "status": "candidate"
+    },
+    {
+      "id": "intake.intakeclassificationschema.properties",
+      "prefLabel": "IntakeClassificationSchema.properties",
+      "definition": "Qualifiers the scheme defines, e.g. `{ publicationType: \"implementation-guidance\" }`.",
+      "source": "cat-harness/schemas/intake.ts#IntakeClassificationSchema.properties",
+      "status": "candidate"
+    },
+    {
       "id": "intake.intakefileschema.role",
       "prefLabel": "IntakeFileSchema.role",
       "definition": "What it is FOR here: `original-bitstream`, `metadata-source`, `webpage-theme-source`, `none`.",
@@ -7004,6 +7221,13 @@
       "prefLabel": "IntakeSchema._comment",
       "definition": "Authored context for a person reading the file.",
       "source": "cat-harness/schemas/intake.ts#IntakeSchema._comment",
+      "status": "candidate"
+    },
+    {
+      "id": "intake.intakeschema.classifications",
+      "prefLabel": "IntakeSchema.classifications",
+      "definition": "Classifications of the captured item ({@link IntakeClassificationSchema}).",
+      "source": "cat-harness/schemas/intake.ts#IntakeSchema.classifications",
       "status": "candidate"
     },
     {
@@ -7182,6 +7406,13 @@
       "status": "candidate"
     },
     {
+      "id": "kg-node.kgimage.ground",
+      "prefLabel": "KgImage.ground",
+      "definition": "What the navbar draws BEHIND this image when it is an avatar: `tone` (the default), the instance's hue square, which a card-art crop covers; or `none`, the image on the rail itself, for a mark that is transparent around its shape (issue #46, gap 5).",
+      "source": "cat-harness/schemas/kg-node.ts#KgImage.ground",
+      "status": "candidate"
+    },
+    {
       "id": "kg-node.kgimage.height",
       "prefLabel": "KgImage.height",
       "definition": "Intrinsic height in pixels.",
@@ -7228,6 +7459,13 @@
       "prefLabel": "KgImage.width",
       "definition": "Intrinsic width in pixels, so a renderer can reserve space.",
       "source": "cat-harness/schemas/kg-node.ts#KgImage.width",
+      "status": "candidate"
+    },
+    {
+      "id": "kg-node.kgimageschema.ground",
+      "prefLabel": "KgImageSchema.ground",
+      "definition": "{@link KgImage.ground}.",
+      "source": "cat-harness/schemas/kg-node.ts#KgImageSchema.ground",
       "status": "candidate"
     },
     {
@@ -7707,6 +7945,27 @@
       "status": "candidate"
     },
     {
+      "id": "merge-queue.agenticpromotioncriteriaschema.maximumfalsepositiverate",
+      "prefLabel": "AgenticPromotionCriteriaSchema.maximumFalsePositiveRate",
+      "definition": "Maximum allowed empirical false-positive rate (default 0.05 / 5%).",
+      "source": "cat-harness/schemas/merge-queue.ts#AgenticPromotionCriteriaSchema.maximumFalsePositiveRate",
+      "status": "candidate"
+    },
+    {
+      "id": "merge-queue.agenticpromotioncriteriaschema.minimumprwindow",
+      "prefLabel": "AgenticPromotionCriteriaSchema.minimumPrWindow",
+      "definition": "Minimum number of PRs evaluated under warn-only mode (default 50).",
+      "source": "cat-harness/schemas/merge-queue.ts#AgenticPromotionCriteriaSchema.minimumPrWindow",
+      "status": "candidate"
+    },
+    {
+      "id": "merge-queue.agenticpromotioncriteriaschema.minimumreviewcoverage",
+      "prefLabel": "AgenticPromotionCriteriaSchema.minimumReviewCoverage",
+      "definition": "Minimum share of findings with conclusive (non-unknown) human adjudication (default 0.80 / 80%).",
+      "source": "cat-harness/schemas/merge-queue.ts#AgenticPromotionCriteriaSchema.minimumReviewCoverage",
+      "status": "candidate"
+    },
+    {
       "id": "merge-queue.ejectionschema.evidenceurl",
       "prefLabel": "EjectionSchema.evidenceUrl",
       "definition": "The run, comment or log that shows it.",
@@ -7896,6 +8155,41 @@
       "status": "candidate"
     },
     {
+      "id": "model-capabilities.modelcapabilitiesschema.capabilities",
+      "prefLabel": "ModelCapabilitiesSchema.capabilities",
+      "definition": "Specific named capabilities (e.g. \"code_execution\", \"json_schema\").",
+      "source": "cat-harness/schemas/model-capabilities.ts#ModelCapabilitiesSchema.capabilities",
+      "status": "candidate"
+    },
+    {
+      "id": "model-capabilities.modelcapabilitiesschema.context_window",
+      "prefLabel": "ModelCapabilitiesSchema.context_window",
+      "definition": "Minimum context window size in tokens.",
+      "source": "cat-harness/schemas/model-capabilities.ts#ModelCapabilitiesSchema.context_window",
+      "status": "candidate"
+    },
+    {
+      "id": "model-capabilities.modelcapabilitiesschema.multimodal",
+      "prefLabel": "ModelCapabilitiesSchema.multimodal",
+      "definition": "Whether multimodal input (images, diagrams) is required.",
+      "source": "cat-harness/schemas/model-capabilities.ts#ModelCapabilitiesSchema.multimodal",
+      "status": "candidate"
+    },
+    {
+      "id": "model-capabilities.modelcapabilitiesschema.reasoning_tier",
+      "prefLabel": "ModelCapabilitiesSchema.reasoning_tier",
+      "definition": "Minimum reasoning tier required.",
+      "source": "cat-harness/schemas/model-capabilities.ts#ModelCapabilitiesSchema.reasoning_tier",
+      "status": "candidate"
+    },
+    {
+      "id": "model-capabilities.modelcapabilitiesschema.tool_use",
+      "prefLabel": "ModelCapabilitiesSchema.tool_use",
+      "definition": "Whether function calling / tool invocation is required.",
+      "source": "cat-harness/schemas/model-capabilities.ts#ModelCapabilitiesSchema.tool_use",
+      "status": "candidate"
+    },
+    {
       "id": "mount-trust.mountconsentschema.by",
       "prefLabel": "MountConsentSchema.by",
       "definition": "Who consented: a person, by the identity they act under here.",
@@ -7959,10 +8253,24 @@
       "status": "candidate"
     },
     {
+      "id": "node-kind-index.namerulekind.file",
+      "prefLabel": "NameRuleKind.file",
+      "definition": "Absolute path of the module holding the export.",
+      "source": "cat-harness/schemas/node-kind-index.ts#NameRuleKind.file",
+      "status": "candidate"
+    },
+    {
       "id": "node-kind-index.nodekindentry.declaredby",
       "prefLabel": "NodeKindEntry.declaredBy",
       "definition": "The instance that declares it: the one whose code holds the `nodeKind()`. Absent for a kind reached only as an ANCESTOR (a mixin such as `themed`): no typology names it, so nothing here says where it lives, and guessing from a child would file it under whichever child was read first.",
       "source": "cat-harness/schemas/node-kind-index.ts#NodeKindEntry.declaredBy",
+      "status": "candidate"
+    },
+    {
+      "id": "node-kind-index.nodekindentry.foundby",
+      "prefLabel": "NodeKindEntry.foundBy",
+      "definition": "How its nodes are found when no typology holds them: by a NAME RULE ({@link NAME_RULE_KINDS}). `instance-declaration` is each instance's own `<instance>.json`, which sits at an instance root rather than in a declared directory, so no typology can name it. Absent: found through `holdings`.",
+      "source": "cat-harness/schemas/node-kind-index.ts#NodeKindEntry.foundBy",
       "status": "candidate"
     },
     {
@@ -8197,6 +8505,20 @@
       "status": "candidate"
     },
     {
+      "id": "openapi.openapiconfigschema.documents",
+      "prefLabel": "OpenApiConfigSchema.documents",
+      "definition": "Documents read from a repository (`openapi-ingest-source`).",
+      "source": "cat-harness/openapi/schemas/openapi.ts#OpenApiConfigSchema.documents",
+      "status": "candidate"
+    },
+    {
+      "id": "openapi.openapiconfigschema.rendered",
+      "prefLabel": "OpenApiConfigSchema.rendered",
+      "definition": "Documents read from a published spec URL (`openapi-ingest-rendered`).",
+      "source": "cat-harness/openapi/schemas/openapi.ts#OpenApiConfigSchema.rendered",
+      "status": "candidate"
+    },
+    {
       "id": "openapi.openapioperation.declaredid",
       "prefLabel": "OpenApiOperation.declaredId",
       "definition": "Whether {@link id} is the document's own `operationId`.",
@@ -8236,6 +8558,13 @@
       "prefLabel": "OpenApiProvenanceSchema.operations",
       "definition": "How many operations it holds — every one of which gets a page.",
       "source": "cat-harness/openapi/schemas/openapi.ts#OpenApiProvenanceSchema.operations",
+      "status": "candidate"
+    },
+    {
+      "id": "openapi.openapirenderedsourceschema.url",
+      "prefLabel": "OpenApiRenderedSourceSchema.url",
+      "definition": "The published spec's URL: an OpenAPI 3 JSON document, served over https.",
+      "source": "cat-harness/openapi/schemas/openapi.ts#OpenApiRenderedSourceSchema.url",
       "status": "candidate"
     },
     {
@@ -8288,6 +8617,13 @@
       "status": "candidate"
     },
     {
+      "id": "pdf-structure.pdfdiagnosticsschema.latex_overlay",
+      "prefLabel": "PdfDiagnosticsSchema.latex_overlay",
+      "definition": "What `latex-math-overlay.py` did: the main `.tex` file it read, how many sections it found there and how many PDF sections took their text from it, the three gates it applied, and a per-section record of each match.",
+      "source": "cat-harness/schemas/pdf-structure.ts#PdfDiagnosticsSchema.latex_overlay",
+      "status": "candidate"
+    },
+    {
       "id": "pdf-structure.pdfdiagnosticsschema.page_label_conflicts",
       "prefLabel": "PdfDiagnosticsSchema.page_label_conflicts",
       "definition": "Pages where label sources disagree, e.g. /PageLabels \"3\" against a printed \"iii\".",
@@ -8318,7 +8654,7 @@
     {
       "id": "pdf-structure.pdfdiagnosticsschema.toc_inferred_method",
       "prefLabel": "PdfDiagnosticsSchema.toc_inferred_method",
-      "definition": "Which inference produced an inferred TOC (issue #2302): a printed contents page, heading styles read from font metrics, or the text-pattern heuristic that OCR'd text falls back to.",
+      "definition": "Which inference produced an inferred TOC (issue #2302): a printed contents page, heading styles read from font metrics, the text-pattern heuristic that OCR'd text falls back to, or `latex`: the `\\section` commands of the paper's own LaTeX source, each placed on its PDF page (cat-harness-tools `_latex_headings.py`).",
       "source": "cat-harness/schemas/pdf-structure.ts#PdfDiagnosticsSchema.toc_inferred_method",
       "status": "candidate"
     },
@@ -8362,6 +8698,27 @@
       "prefLabel": "PdfSectionSchema.label_start",
       "definition": "Printed labels of page_start / page_end, where known (issue #2302).",
       "source": "cat-harness/schemas/pdf-structure.ts#PdfSectionSchema.label_start",
+      "status": "candidate"
+    },
+    {
+      "id": "pdf-structure.pdfsourceschema.math_source",
+      "prefLabel": "PdfSourceSchema.math_source",
+      "definition": "Where the entry's MATHEMATICS comes from, written by `latex-math-overlay.py`: `latex` when at least one section's text was replaced by the paper's own LaTeX, `text-layer` when the overlay ran and none passed its gates. Absent when the overlay never ran.",
+      "source": "cat-harness/schemas/pdf-structure.ts#PdfSourceSchema.math_source",
+      "status": "candidate"
+    },
+    {
+      "id": "pdf-structure.pdfsourceschema.runcontext",
+      "prefLabel": "PdfSourceSchema.runContext",
+      "definition": "WHICH SOFTWARE produced the text, cited by digest: the `folio-run-context/v1` of the run that wrote it (`schemas/run-context.ts`), reused rather than restated — the one optional `runContext: { sha256 }` reference that `docs/proposals/tool-releases-2026-10-07.md` gives every run and report record (owner, C1 = a).",
+      "source": "cat-harness/schemas/pdf-structure.ts#PdfSourceSchema.runContext",
+      "status": "candidate"
+    },
+    {
+      "id": "pdf-structure.pdfstructureschema.duplicate_of",
+      "prefLabel": "PdfStructureSchema.duplicate_of",
+      "definition": "The library holds some works more than once (a preprint beside its published version, one PDF under two names). The duplicate copy names the entry to prefer in `duplicate_of` and says why in `duplicate_note`; the preferred entry lists its copies in `duplicate_copies`. Adjudicated in qou `docs/audits/library-duplicate-ledger.json`.",
+      "source": "cat-harness/schemas/pdf-structure.ts#PdfStructureSchema.duplicate_of",
       "status": "candidate"
     },
     {
@@ -8558,6 +8915,188 @@
       "prefLabel": "PairAttestationSchema.by",
       "definition": "`baseline` counts as a judgement (owner, 2026-10-01): it records the state the drift is measured from.",
       "source": "cat-harness/schemas/qa-attestations.ts#PairAttestationSchema.by",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.lsioptions.k",
+      "prefLabel": "LsiOptions.k",
+      "definition": "Requested rank. Capped at `min(terms, units) - 1`. Default 100 — the literature's working range for small collections is 50–300, and `k` is reported with the variance it retains so a reader can judge it.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#LsiOptions.k",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.lsioptions.maxdfshare",
+      "prefLabel": "LsiOptions.maxDfShare",
+      "definition": "Drop terms in more than this share of units. Default 0.5.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#LsiOptions.maxDfShare",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.lsioptions.mindf",
+      "prefLabel": "LsiOptions.minDf",
+      "definition": "A term must occur in at least this many units to be kept. A term in one unit can create no co-occurrence and only adds a row. Default 2.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#LsiOptions.minDf",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.lsioptions.poweriterations",
+      "prefLabel": "LsiOptions.powerIterations",
+      "definition": "Power iterations for the randomized range finder. Default 4.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#LsiOptions.powerIterations",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qaresult.families",
+      "prefLabel": "QaResult.families",
+      "definition": "Finding families, keyed by name.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaResult.families",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qaresult.producer",
+      "prefLabel": "QaResult.producer",
+      "definition": "What produced this, so a finding can be traced to the code that made it.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaResult.producer",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qaresult.subject",
+      "prefLabel": "QaResult.subject",
+      "definition": "The artefact the findings are ABOUT — not an authored subject.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaResult.subject",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qaresult.total",
+      "prefLabel": "QaResult.total",
+      "definition": "Total findings across every family, so \"clean\" is one read.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaResult.total",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qaresultfamily.count",
+      "prefLabel": "QaResultFamily.count",
+      "definition": "How many findings — `0` is a determined empty, not an absent answer.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaResultFamily.count",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qaresultfamily.entries",
+      "prefLabel": "QaResultFamily.entries",
+      "definition": "The findings themselves, in whatever shape the producer records.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaResultFamily.entries",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qaresultfamily.summary",
+      "prefLabel": "QaResultFamily.summary",
+      "definition": "What this family means, for a reader who has only the file.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaResultFamily.summary",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qawitness.at",
+      "prefLabel": "QaWitness.at",
+      "definition": "When the review ran (ISO-8601), or absent when the sidecar records none.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaWitness.at",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qawitness.changed",
+      "prefLabel": "QaWitness.changed",
+      "definition": "On `stale`, the subject files whose hash moved. On `unknown`, why the comparison could not be made, one phrase per unresolved input.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaWitness.changed",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qawitness.depshash",
+      "prefLabel": "QaWitness.depsHash",
+      "definition": "Hash of every extra input the checker consulted beyond the subject.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaWitness.depsHash",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qawitness.freshness",
+      "prefLabel": "QaWitness.freshness",
+      "definition": "Whether the verdict still holds for the files on disk.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaWitness.freshness",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qawitness.id",
+      "prefLabel": "QaWitness.id",
+      "definition": "Script path, model + skill, or GitHub login.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaWitness.id",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qawitness.kind",
+      "prefLabel": "QaWitness.kind",
+      "definition": "`script` — a deterministic checker. `agent` — an LLM. `human` — a person.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaWitness.kind",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qawitness.method",
+      "prefLabel": "QaWitness.method",
+      "definition": "How the verdict was measured, where the checker records it.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaWitness.method",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qawitness.model",
+      "prefLabel": "QaWitness.model",
+      "definition": "Agent provenance.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaWitness.model",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qawitness.notcompared",
+      "prefLabel": "QaWitness.notCompared",
+      "definition": "On `partial`, the derived inputs that were not re-computed.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaWitness.notCompared",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qawitness.scripthash",
+      "prefLabel": "QaWitness.scriptHash",
+      "definition": "Hash of the checker's own source, and the commit it was last changed in.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaWitness.scriptHash",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qawitness.sha",
+      "prefLabel": "QaWitness.sha",
+      "definition": "Repo HEAD at review time.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#QaWitness.sha",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.translationblockqareport.block",
+      "prefLabel": "TranslationBlockQaReport.block",
+      "definition": "The content block this translates, by ITS label — a different identity.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#TranslationBlockQaReport.block",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.translationblockqareport.label",
+      "prefLabel": "TranslationBlockQaReport.label",
+      "definition": "`trans:<locale>/<stem>`, the convention `schemas/translation.ts` fixes.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#TranslationBlockQaReport.label",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.translationblockqareport.paths",
+      "prefLabel": "TranslationBlockQaReport.paths",
+      "definition": "Repo-relative paths of the block's files.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#TranslationBlockQaReport.paths",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.translationblockqareport.po",
+      "prefLabel": "TranslationBlockQaReport.po",
+      "definition": "The PO this verdict was measured against, repo-relative.",
+      "source": "cat-harness/schemas/qa-record-shapes.ts#TranslationBlockQaReport.po",
       "status": "candidate"
     },
     {
@@ -8775,6 +9314,20 @@
       "prefLabel": "ReaderFilter.properties",
       "definition": "Kind properties to keep, keyed by property name — the owner's *\"filter out by kind properties\"*. OR within a property's values, AND across properties.",
       "source": "cat-harness/schemas/reader-filter.ts#ReaderFilter.properties",
+      "status": "candidate"
+    },
+    {
+      "id": "red-flag.redflagcategorydefinition.definition",
+      "prefLabel": "RedFlagCategoryDefinition.definition",
+      "definition": "What this category means and what kind of defect it covers.",
+      "source": "cat-harness/schemas/red-flag.ts#RedFlagCategoryDefinition.definition",
+      "status": "candidate"
+    },
+    {
+      "id": "red-flag.redflagcategorydefinition.historicalexample",
+      "prefLabel": "RedFlagCategoryDefinition.historicalExample",
+      "definition": "Concrete historical example drawn from this repository's history.",
+      "source": "cat-harness/schemas/red-flag.ts#RedFlagCategoryDefinition.historicalExample",
       "status": "candidate"
     },
     {
@@ -9478,6 +10031,13 @@
       "status": "candidate"
     },
     {
+      "id": "role-graph.roledef.requiredcapabilities",
+      "prefLabel": "RoleDef.requiredCapabilities",
+      "definition": "Minimum model capabilities required by this role when performed by an agent/model. If a single model lacks these capabilities, the workflow refuses rather than degrades.",
+      "source": "cat-harness/schemas/role-graph.ts#RoleDef.requiredCapabilities",
+      "status": "candidate"
+    },
+    {
       "id": "role-graph.roledef.skills",
       "prefLabel": "RoleDef.skills",
       "definition": "Skills available to an actor in this role, before inheritance.",
@@ -9886,7 +10446,7 @@
     {
       "id": "site-indexes.beanindexitemschema.file",
       "prefLabel": "BeanIndexItemSchema.file",
-      "definition": "Repository-relative path of the bean file.",
+      "definition": "Path of the bean file ON {@link BeanIndexSchema} `fileRef` — the branch that keeps the store. Equal to the checkout path while the store is on `main`; since the state cutover it is a path on `cat/cat-harness/beans`.",
       "source": "cat-harness/schemas/site-indexes.ts#BeanIndexItemSchema.file",
       "status": "candidate"
     },
@@ -9909,6 +10469,13 @@
       "prefLabel": "BeanIndexSchema.edges",
       "definition": "The block graph as ONE edge set, `blocker → blocked`, over both front-matter declarations (`blocking:` on the blocker, `blocked_by:` on the blocked), deduplicated — `blockEdges` in `scripts/beans.ts`, bean `vhqq`. An end may name no bean in `items`: that edge is kept here and reported as a `blocking-unknown` finding, never dropped.",
       "source": "cat-harness/schemas/site-indexes.ts#BeanIndexSchema.edges",
+      "status": "candidate"
+    },
+    {
+      "id": "site-indexes.beanindexschema.fileweb",
+      "prefLabel": "BeanIndexSchema.fileWeb",
+      "definition": "The repository and branch every item's `file` is a path on. A board that composes `<repoWeb>/blob/main/<file>` sends every bean to a 404 once the store is kept on its own branch (owner, 2026-10-13). Optional so a projection written before these keys still parses; absent means `repoWeb` at `main`.",
+      "source": "cat-harness/schemas/site-indexes.ts#BeanIndexSchema.fileWeb",
       "status": "candidate"
     },
     {
@@ -10430,6 +10997,41 @@
       "status": "candidate"
     },
     {
+      "id": "state-manifest.routemanifestschema.gate",
+      "prefLabel": "RouteManifestSchema.gate",
+      "definition": "The command that checks the generator's output.",
+      "source": "cat-harness/schemas/state-manifest.ts#RouteManifestSchema.gate",
+      "status": "candidate"
+    },
+    {
+      "id": "state-manifest.routemanifestschema.writer",
+      "prefLabel": "RouteManifestSchema.writer",
+      "definition": "The ONE generator that writes it.",
+      "source": "cat-harness/schemas/state-manifest.ts#RouteManifestSchema.writer",
+      "status": "candidate"
+    },
+    {
+      "id": "state-manifest.tipmanifestschema.authoritative",
+      "prefLabel": "TipManifestSchema.authoritative",
+      "definition": "True when THIS branch, not `main`, is where readers must look.",
+      "source": "cat-harness/schemas/state-manifest.ts#TipManifestSchema.authoritative",
+      "status": "candidate"
+    },
+    {
+      "id": "state-manifest.tipmanifestschema.source",
+      "prefLabel": "TipManifestSchema.source",
+      "definition": "The commit the content was seeded from.",
+      "source": "cat-harness/schemas/state-manifest.ts#TipManifestSchema.source",
+      "status": "candidate"
+    },
+    {
+      "id": "state-manifest.tipmanifestschema.subgraph",
+      "prefLabel": "TipManifestSchema.subgraph",
+      "definition": "The subgraph it holds. Absent only on the retired multi-graph `state` branch.",
+      "source": "cat-harness/schemas/state-manifest.ts#TipManifestSchema.subgraph",
+      "status": "candidate"
+    },
+    {
       "id": "sticky-contribution.declaredcontribution.alsowritten",
       "prefLabel": "DeclaredContribution.alsoWritten",
       "definition": "The declaring instance's `alsoWritten`, for `bodyFrom: \"summary\"`.",
@@ -10455,6 +11057,13 @@
       "prefLabel": "DeclaredContribution.description",
       "definition": "The declaring instance's `description`, for `bodyFrom: \"description\"`.",
       "source": "cat-harness/schemas/sticky-contribution.ts#DeclaredContribution.description",
+      "status": "candidate"
+    },
+    {
+      "id": "sticky-contribution.declaredcontribution.instanceroot",
+      "prefLabel": "DeclaredContribution.instanceRoot",
+      "definition": "The declaring instance's root path on disk, when known.",
+      "source": "cat-harness/schemas/sticky-contribution.ts#DeclaredContribution.instanceRoot",
       "status": "candidate"
     },
     {
@@ -10633,6 +11242,41 @@
       "status": "candidate"
     },
     {
+      "id": "subgraph-source.npmsourceschema.integrity",
+      "prefLabel": "NpmSourceSchema.integrity",
+      "definition": "Integrity SRI string (sha256 or sha512) for fixity verification.",
+      "source": "cat-harness/schemas/subgraph-source.ts#NpmSourceSchema.integrity",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-source.npmsourceschema.package",
+      "prefLabel": "NpmSourceSchema.package",
+      "definition": "Scoped or unscoped package name (e.g. `@litlfred/cat-harness`).",
+      "source": "cat-harness/schemas/subgraph-source.ts#NpmSourceSchema.package",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-source.npmsourceschema.tool",
+      "prefLabel": "NpmSourceSchema.tool",
+      "definition": "Declared Tool that retrieves/mounts the package. Default: 'npm'.",
+      "source": "cat-harness/schemas/subgraph-source.ts#NpmSourceSchema.tool",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-source.npmsourceschema.upstreampath",
+      "prefLabel": "NpmSourceSchema.upstreamPath",
+      "definition": "Upstream path inside the extracted package tarball.",
+      "source": "cat-harness/schemas/subgraph-source.ts#NpmSourceSchema.upstreamPath",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-source.npmsourceschema.version",
+      "prefLabel": "NpmSourceSchema.version",
+      "definition": "Exact semver version triple (no ranges).",
+      "source": "cat-harness/schemas/subgraph-source.ts#NpmSourceSchema.version",
+      "status": "candidate"
+    },
+    {
       "id": "subgraph-source.sourcedentry.storage",
       "prefLabel": "SourcedEntry.storage",
       "definition": "#1764's field, if a declaration carries it. Read only to map it.",
@@ -10682,6 +11326,41 @@
       "status": "candidate"
     },
     {
+      "id": "sweep-mark.sweepmarkschema.by",
+      "prefLabel": "SweepMarkSchema.by",
+      "definition": "Who ran it, so a reader can ask: a session URL or id. Absent when the runner did not know.",
+      "source": "cat-harness/schemas/sweep-mark.ts#SweepMarkSchema.by",
+      "status": "candidate"
+    },
+    {
+      "id": "sweep-mark.sweepmarkschema.check",
+      "prefLabel": "SweepMarkSchema.check",
+      "definition": "The check this marks, by its `cat` command name — `session-staleness`. Also the file's stem.",
+      "source": "cat-harness/schemas/sweep-mark.ts#SweepMarkSchema.check",
+      "status": "candidate"
+    },
+    {
+      "id": "sweep-mark.sweepmarkschema.checkedat",
+      "prefLabel": "SweepMarkSchema.checkedAt",
+      "definition": "When the check last read its input, ISO-8601 with a zone.",
+      "source": "cat-harness/schemas/sweep-mark.ts#SweepMarkSchema.checkedAt",
+      "status": "candidate"
+    },
+    {
+      "id": "sweep-mark.sweepmarkschema.findings",
+      "prefLabel": "SweepMarkSchema.findings",
+      "definition": "How many findings it reported.",
+      "source": "cat-harness/schemas/sweep-mark.ts#SweepMarkSchema.findings",
+      "status": "candidate"
+    },
+    {
+      "id": "sweep-mark.sweepmarkschema.read",
+      "prefLabel": "SweepMarkSchema.read",
+      "definition": "How many subjects the run read — sessions, for `session-staleness`. Zero is a real answer.",
+      "source": "cat-harness/schemas/sweep-mark.ts#SweepMarkSchema.read",
+      "status": "candidate"
+    },
+    {
       "id": "tabular-csvw.csvwcolumnschema.datatype",
       "prefLabel": "CsvwColumnSchema.datatype",
       "definition": "A CSVW datatype name. `any` is CSVW's own top type.",
@@ -10689,10 +11368,38 @@
       "status": "candidate"
     },
     {
+      "id": "tabular-csvw.csvwcolumnschema.fac-group",
+      "prefLabel": "CsvwColumnSchema.fac:group",
+      "definition": "The upper row of a two-row header: the label spanning this column, e.g. a decision table's `Inputs` or `Output`. Absent for a one-row header. CSVW has no column groups, so `toCsvw` drops it (bean folio-core-scn4).",
+      "source": "cat-harness/schemas/tabular-csvw.ts#CsvwColumnSchema.fac:group",
+      "status": "candidate"
+    },
+    {
+      "id": "tabular-csvw.csvwtableschema.fac-merged",
+      "prefLabel": "CsvwTableSchema.fac:merged",
+      "definition": "Merged cell ranges inside the table, A1 notation, e.g. `K8:K25`.",
+      "source": "cat-harness/schemas/tabular-csvw.ts#CsvwTableSchema.fac:merged",
+      "status": "candidate"
+    },
+    {
+      "id": "tabular-csvw.csvwtableschema.fac-preamble",
+      "prefLabel": "CsvwTableSchema.fac:preamble",
+      "definition": "Key/value rows ABOVE the header that describe the table rather than belong to it, in sheet order: a DAK decision table's `Decision ID`, `Business rule`, `Trigger`. Not CSVW `notes`, whose objects are JSON-LD annotations a standard reader interprets; these are the source's own labels, verbatim (bean folio-core-scn4).",
+      "source": "cat-harness/schemas/tabular-csvw.ts#CsvwTableSchema.fac:preamble",
+      "status": "candidate"
+    },
+    {
       "id": "tabular-csvw.csvwtableschema.fac-stub",
       "prefLabel": "CsvwTableSchema.fac:stub",
       "definition": "Present iff no extractor produced this.",
       "source": "cat-harness/schemas/tabular-csvw.ts#CsvwTableSchema.fac:stub",
+      "status": "candidate"
+    },
+    {
+      "id": "tabular-csvw.csvwtableschema.fac-wildcard",
+      "prefLabel": "CsvwTableSchema.fac:wildcard",
+      "definition": "The cell values meaning \"any value matches\" — a decision table's don't-care. A list: the WHO IMMZ workbook writes `–` and `-`, and 18 of its 86 decision tables use both. A wildcard is a rule, not data: it is not evidence for a column's datatype, and it is not CSVW `null` (absent), which would read a don't-care as a missing value.",
+      "source": "cat-harness/schemas/tabular-csvw.ts#CsvwTableSchema.fac:wildcard",
       "status": "candidate"
     },
     {
@@ -12292,6 +12999,20 @@
       "status": "candidate"
     },
     {
+      "id": "types.coderef.code",
+      "prefLabel": "CodeRef.code",
+      "definition": "One of that list's `codes[].code`.",
+      "source": "cat-harness/schemas/types.ts#CodeRef.code",
+      "status": "candidate"
+    },
+    {
+      "id": "types.coderef.list",
+      "prefLabel": "CodeRef.list",
+      "definition": "The code list's `id`, e.g. `grade-recommendation-strength`.",
+      "source": "cat-harness/schemas/types.ts#CodeRef.list",
+      "status": "candidate"
+    },
+    {
       "id": "types.companions.lean",
       "prefLabel": "Companions.lean",
       "definition": "Lean formalization file (relative to lean/ dir, or sibling).",
@@ -12765,6 +13486,20 @@
       "prefLabel": "ProvableBase.proofs",
       "definition": "Labels of proof blocks for this result (like examples[]).",
       "source": "cat-harness/schemas/types.ts#ProvableBase.proofs",
+      "status": "candidate"
+    },
+    {
+      "id": "types.recommendationblock.about",
+      "prefLabel": "RecommendationBlock.about",
+      "definition": "Labels of the health interventions (DAK adapter) this recommendation is about.",
+      "source": "cat-harness/schemas/types.ts#RecommendationBlock.about",
+      "status": "candidate"
+    },
+    {
+      "id": "types.recommendationblock.strength",
+      "prefLabel": "RecommendationBlock.strength",
+      "definition": "Its strength or requirement level, as a code in a declared list.",
+      "source": "cat-harness/schemas/types.ts#RecommendationBlock.strength",
       "status": "candidate"
     },
     {
@@ -13318,6 +14053,62 @@
       "prefLabel": "ViewerNavQaSchema.root",
       "definition": "The published docs root the audit walked, repo-relative.",
       "source": "cat-harness/schemas/viewer-nav-qa.ts#ViewerNavQaSchema.root",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.routeclaim.by",
+      "prefLabel": "RouteClaim.by",
+      "definition": "Who claims it, for the message: `cat-harness.visualisers[library]`, `alias of …`, `site: processes/`.",
+      "source": "cat-harness/schemas/visualiser-route.ts#RouteClaim.by",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.routeclaim.route",
+      "prefLabel": "RouteClaim.route",
+      "definition": "Site-relative route, trailing slash for a directory.",
+      "source": "cat-harness/schemas/visualiser-route.ts#RouteClaim.route",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.routecollision.kind",
+      "prefLabel": "RouteCollision.kind",
+      "definition": "`same` — one route claimed twice; `nested` — a claim inside another's subtree.",
+      "source": "cat-harness/schemas/visualiser-route.ts#RouteCollision.kind",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.visualiserrouteparts.asset",
+      "prefLabel": "VisualiserRouteParts.asset",
+      "definition": "A path below the (sub-graph's) view, `/`-separated, no leading slash.",
+      "source": "cat-harness/schemas/visualiser-route.ts#VisualiserRouteParts.asset",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.visualiserrouteparts.harness",
+      "prefLabel": "VisualiserRouteParts.harness",
+      "definition": "The declaring harness's `name`.",
+      "source": "cat-harness/schemas/visualiser-route.ts#VisualiserRouteParts.harness",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.visualiserrouteparts.locale",
+      "prefLabel": "VisualiserRouteParts.locale",
+      "definition": "The locale the page is rendered in (`en`), the route's first segment. Absent for the unlocalised route the t4xb rule keeps working.",
+      "source": "cat-harness/schemas/visualiser-route.ts#VisualiserRouteParts.locale",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.visualiserrouteparts.subgraph",
+      "prefLabel": "VisualiserRouteParts.subgraph",
+      "definition": "A sub-graph of what the visualiser covers — absent for the full KG. One segment, or a `/`-separated path of segments when the visualiser declares its sub-graphs nested (auto-docs' `index/skills/core-skills`, owner 2026-10-03: *\"auto-docs is one declared subgraph, with declared sub-sub-graphs per writer\"*).",
+      "source": "cat-harness/schemas/visualiser-route.ts#VisualiserRouteParts.subgraph",
+      "status": "candidate"
+    },
+    {
+      "id": "visualiser-route.visualiserrouteparts.visualiser",
+      "prefLabel": "VisualiserRouteParts.visualiser",
+      "definition": "The visualiser's declared `id`.",
+      "source": "cat-harness/schemas/visualiser-route.ts#VisualiserRouteParts.visualiser",
       "status": "candidate"
     },
     {
