@@ -224,3 +224,29 @@ carries `source`, and leaves the CSVW export untouched.
   - the csvw `source` and `narrative` fields become required. This needs the
     three `tabular-real-sources` csvw fixtures to gain a `source`, or to be
     marked as fixtures.
+
+## Progress 2026-10-21 (lane C): step 5 split in three, in merge order
+
+Steps 3–4 (tools#474) and the slot (tools#468) are on tools main. Step 5 needs
+a third, tables-only type first, because the extractors never see the file's
+technical metadata and so cannot return a record that requires `source`.
+
+| step | PR | what | merges |
+|---|---|---|---|
+| 5a | cat-harness#399 (merged, d345b97) | `TabularCsvwTablesSchema` = the record without `source`/`narrative`; `stubsIn`, `toCsvw` take it | done |
+| 5b | tools#524 | the `tabular-csvw` slot returns `TabularCsvwTables` | any time |
+| 5b | core#170 | `extractCsv`/`extractXlsx` typed against it | any time |
+| 5c prep | tools#525 | `tabular-csvw.test.ts`: helpers on the tables schema, stub fixtures carry provenance | any time |
+| 5c-i | cat-harness#401 | `source` and `narrative` **required** on the record | after #525 and #170 |
+| 5c-ii | not yet opened | v1 refuses `csv | xlsx`; `tabular-records.py` stops writing them | after 5c-i |
+
+Measured with both fields required in the composed index: every tools suite
+that builds a CSVW record passes once #525 lands, and no `tabular.csvw.json`
+is committed anywhere in the 11 layers.
+
+**5c-ii is wider than "two edits".** Readers still carry `csv`/`xlsx` v1 code
+paths and fixtures: `pipeline/tabular-nodes.ts` (`SHEETED_FORMATS`),
+`gen-library-jsonld`, `narratives`, `check-l1-complete`, and
+`tabular-records.py`'s own tests. Refusing those formats in the schema means
+moving those fixtures to `fixed-width`/`ods` and retiring the dead
+`csv`/`xlsx` reader paths, so it is its own PR.
