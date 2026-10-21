@@ -15,16 +15,19 @@
   "file": "../images/img-p011-5.png",
   "pageStart": 11,
   "pageEnd": 11,
-  "narrative": {
-    "text": "A page from a CVSource (投中信息) Chinese-language investment-research report headed \"全球中企IPO募资金额创一年新低\" (fundraising by Chinese companies hits a one-year low). A combined bar-and-line chart covers 2024-02 to 2025-02, with a table beneath giving February 2025 IPO counts and amounts by exchange board.",
-    "state": "draft",
-    "drafted_by": {
-      "kind": "agent",
-      "id": "claude",
-      "model": "claude-opus-5"
-    },
-    "drafted_at": "2026-09-24"
-  },
+  "narrative": [
+    {
+      "text": "A page from a CVSource (投中信息) Chinese-language investment-research report headed \"全球中企IPO募资金额创一年新低\" (fundraising by Chinese companies hits a one-year low). A combined bar-and-line chart covers 2024-02 to 2025-02, with a table beneath giving February 2025 IPO counts and amounts by exchange board.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude",
+        "model": "claude-opus-5"
+      },
+      "drafted_at": "2026-09-24",
+      "lang": "en"
+    }
+  ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",
   "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/arxiv-2510.21603v1/manifest.jsonld",
   "provenance": "ingested"
