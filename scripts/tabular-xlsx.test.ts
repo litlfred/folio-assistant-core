@@ -8,7 +8,7 @@
 import { describe, expect, it } from "bun:test";
 import { crc32, deflateRawSync } from "node:zlib";
 
-import { TabularCsvwSchema, toCsvw } from "@litlfred/cat-harness/schemas/tabular-csvw.js";
+import { TabularCsvwTablesSchema, toCsvw } from "@litlfred/cat-harness/schemas/tabular-csvw.js";
 import { NotATableError } from "./tabular-csv.js";
 import { readDecisionTable } from "./tabular-dak.js";
 import { extractXlsx, findBlocks, isDateFormat, parseRef, readZip, serialToIso, toRef } from "./tabular-xlsx.js";
@@ -159,7 +159,7 @@ describe("findBlocks", () => {
 describe("extractXlsx", () => {
   it("a comments sheet: shared and inline strings, booleans, and dates read as dates, not integers", () => {
     const r = extractXlsx(workbook({ Comments: COMMENTS }, { shared: ["id", "comment", "submitted"] }), opts);
-    expect(TabularCsvwSchema.safeParse(r).success).toBe(true);
+    expect(TabularCsvwTablesSchema.safeParse(r).success).toBe(true);
     const t = r.tables[0]!;
     expect(t.tableSchema.columns.map((c) => [c.name, c.datatype])).toEqual([
       ["id", "integer"],
