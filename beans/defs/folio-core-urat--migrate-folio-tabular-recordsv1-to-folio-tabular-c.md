@@ -293,20 +293,23 @@ required on `folio-tabular-csvw/v1`).
 
 **Default if no answer: 1.**
 
-## Progress 2026-10-22 (lane C): 5c-ii, option 1 (the stated default, unanswered)
+## Progress 2026-10-22 (lane C): 5c-ii, option 1, ruled by the owner
 
-No answer to the 2026-10-21 decision in ~22 h, so the default is built. If the
-owner picks 2 or 3, both PRs change before merge.
+The owner ruled option 1 on 2026-10-22 ("Retire writer, keep reading"), in
+session https://claude.ai/code/session_018NFVUeJjQJdrEU32AS1Mco and in the
+coordinator's session https://claude.ai/code/session_01BiusQ9uAZiHP6TUhfwZ2h6.
+Both PRs are merged.
 
-- cat-harness-tools#550: `tabular-records.py` keeps `is_tabular_text` and
+- cat-harness-tools#550 (merged, 788f345): `tabular-records.py` keeps `is_tabular_text` and
   stops writing v1 (the command refuses and names `tabular-csvw.ts`); ODS goes
   through the `tabular-csvw` slot, where core answers `null`, the step exits 2,
   and `tableNotTaken()` lets ingest stage the entry with its tabular record
   unmet instead of stopping. Tests that built v1 records now use one as the
   writer last wrote it.
-- cat-harness#412: the v1 schema says `csv`/`xlsx`/`ods` are legacy (comments
+- cat-harness#412 (merged, ea3b1b6): the v1 schema says `csv`/`xlsx`/`ods` are legacy (comments
   only; the enum is unchanged, so committed records keep validating).
 
-Left after both merge: re-pin the index; then the third done-when box
+Left: the index re-pin, folio-assistant#2626 (tools 0eb0564, cat-harness
+ea3b1b6). Then the third done-when box
 ("v1 retired from the schema graph") is option 2's, not 1's — under option 1
 the schema stays, and that box is answered "kept, as ruled".
