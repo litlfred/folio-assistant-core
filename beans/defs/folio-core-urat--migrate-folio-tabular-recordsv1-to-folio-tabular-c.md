@@ -292,3 +292,21 @@ required on `folio-tabular-csvw/v1`).
    failing, and leave the v1 writer and schema as they are.
 
 **Default if no answer: 1.**
+
+## Progress 2026-10-22 (lane C): 5c-ii, option 1 (the stated default, unanswered)
+
+No answer to the 2026-10-21 decision in ~22 h, so the default is built. If the
+owner picks 2 or 3, both PRs change before merge.
+
+- cat-harness-tools#550: `tabular-records.py` keeps `is_tabular_text` and
+  stops writing v1 (the command refuses and names `tabular-csvw.ts`); ODS goes
+  through the `tabular-csvw` slot, where core answers `null`, the step exits 2,
+  and `tableNotTaken()` lets ingest stage the entry with its tabular record
+  unmet instead of stopping. Tests that built v1 records now use one as the
+  writer last wrote it.
+- cat-harness#412: the v1 schema says `csv`/`xlsx`/`ods` are legacy (comments
+  only; the enum is unchanged, so committed records keep validating).
+
+Left after both merge: re-pin the index; then the third done-when box
+("v1 retired from the schema graph") is option 2's, not 1's — under option 1
+the schema stays, and that box is answered "kept, as ruled".
