@@ -1,5 +1,6 @@
 ---
 # folio-core-shsz
+$schema: bean/1.0.0
 title: Translation info drawer on every translation warning (pointer → cat-tools-bbnd)
 status: completed
 type: feature

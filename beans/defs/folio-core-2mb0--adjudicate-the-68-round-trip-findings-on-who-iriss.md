@@ -1,5 +1,6 @@
 ---
 # folio-core-2mb0
+$schema: bean/1.0.0
 title: Adjudicate the 68 round-trip findings on who-iris's catalogues (66 warn, 2 fail)
 status: completed
 type: task

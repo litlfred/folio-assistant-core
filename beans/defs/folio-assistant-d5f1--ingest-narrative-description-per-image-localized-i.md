@@ -1,13 +1,12 @@
 ---
 # folio-assistant-d5f1
+$schema: bean/1.0.0
 title: 'INGEST: narrative description per image, localized, including images extracted from PDFs'
 status: todo
 type: task
 priority: normal
-tags:
-    - rehomed
 created_at: 2026-09-16T06:43:50Z
-updated_at: 2026-10-10T16:34:20Z
+updated_at: 2026-10-21T19:42:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -281,25 +280,26 @@ After the content split, in this order:
 
 The work lands in folio-assistant-core.
 
+## Progress from `cat-tools-e1lo` (2026-10-21)
 
-## Owner decision
+Every figure block has an agent draft narrative: 274 in total across the `cat-harness`, `folio-assistant-core`, `folio-assistant-sci` and `who-iris` libraries. What remains is a narrative per language and human confirmation through the review queue.
 
-Asked 2026-10-10 by the bean-backlog drain (lane C). Every figure block has an agent draft narrative: 274 in total across the cat-harness, core, sci and who-iris libraries. What's left is a narrative per language and human confirmation through the review queue. The mechanism is `pdf-images.py` and `narratives.ts` in cat-harness-tools. None of it lives in
-folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
-the harness owns the harness") puts it outside this store's reach.
+### Owner ruling 2026-10-21: a display shows the reader's language, else the first
 
-1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
-   there with this body, and this copy is scrapped with a pointer to the new id.
-2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
-3. Scrap it. The finding no longer matters after the separation.
+Asked in the `cat-harness-tools` drain session: when a slot holds several languages, which entry does a single-text display show? The owner chose **"Locale match, else first"**. Stage 3 is split so no layer's typecheck breaks when the slot types widen:
 
-**Default if no answer:** option 1.
+- [x] **1–2**: PDF image extraction + 274 agent draft narratives across the 4 library instances
+- [x] **3a**, `cat-harness#396`: `narrativeFor(slot, lang?)` (matches exact `lang`, then primary subtag, then falls back to first entry)
+- [x] **3b**, `cat-harness-tools` + `folio-assistant-core#169` (`lsi-blocks.ts:88`) + `smart-base#117`
+- [x] **3c**, `cat-harness#400`: the six slot schemas switch to `NarrativeSlotSchema`, and `block-summary` / `figure-description` read through it
+- [x] **3d**: stored narratives migrated to one-entry lists tagged `lang: "en"` across `cat-harness` (#405, #407: 609), `folio-assistant-core` (#173: 50), `folio-assistant-sci` (#48: 50), `who-iris` (#78: 418), `smart-base` (#118) and `smart-immunizations` (#67), plus `cat-harness-tools` #537, #539, #540
 
+### Stage 4 — owner ruled `"1A 2A 3A"` on 2026-10-22 (`cat-tools-e1lo`, `cat-harness-tools#548` merged `85a3446e6f`; `cat-harness#413` open)
+- [ ] Stage 4: make `lang` required on every written narrative and keep the bare object only as the empty `NOT_AUTHORED` slot (owner ruled `"1A 2A 3A"` on 2026-10-22; tools readiness merged in `cat-harness-tools#548` `85a3446e6f`, schema PR open at `cat-harness#413`):
+  1. **1A**: `NOT_AUTHORED` (`{ text: null, state: "not-authored" }`) kept as the one single-form value with no `lang`,
+  2. **2A**: `superseded` history in block summaries requires `lang` too (0 entries exist today),
+  3. **3A**: `FigureSchema.narrative` on authored paper figure blocks becomes a `NarrativeSlotSchema` slot like every other (0 authored figure blocks carry a narrative today).
 
-## Rehomed 2026-10-10: this copy is now a pointer
+## Rehomed 2026-10-10: this copy is a pointer
 
-By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a
-pointer here), this bean is re-filed in the store of the repository whose code
-it changes: **`litlfred/cat-harness-tools` bean `cat-tools-e1lo`** (cat-harness-tools
-PR #68). Work it there. This copy stays open as a pointer, and closes when
-`cat-tools-e1lo` does.
+By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a pointer here), this bean is re-filed in the store of the repository whose code it changes: **`litlfred/cat-harness-tools` bean `cat-tools-e1lo`** (cat-harness-tools PR #68). Work it there. This copy stays open as a pointer, and closes when `cat-tools-e1lo` does.
