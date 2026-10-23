@@ -9,9 +9,9 @@
   defined here once and each process calls it with a callActivity whose
   calledElement is the global task's bare id (b1). The calling lane names the
   Role; the global task names the Skill. Shared within this layer only (c1):
-  cat-harness keeps its own in its own global-tasks file. Each layer's file is
-  named after the layer, because diagrams are found by basename across the
-  composition and two `global-tasks.bpmn` would collide.
+  cat-harness keeps its own in its own processes/global-tasks.bpmn. Every layer
+  uses that plain name: a diagram's identity is its instance plus its path, and
+  its IRIs carry the instance, so two layers' files do not collide.
 -->
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                   xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/0.1.0/processes/ns#"
