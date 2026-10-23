@@ -1,5 +1,6 @@
 ---
 # folio-assistant-cz17
+$schema: bean/1.0.0
 title: 'Migrate dak.json in: the DAK type is ours, and its Logical Model is pending upstream'
 status: todo
 type: task
@@ -68,8 +69,8 @@ element shape when the LM lands; do not invent it early.
 1. **Fill in the element shape** once the LM is final, replacing `unknown` and
    turning the passthrough from a safety net into a narrowing choice.
 2. **Wire `dak` into the type registry** so a repo carrying `dak.json` is
-   recognised as a DAK instance — blocked on bean `79t3`'s two open questions
-   (the marker naming convention, and precedence when two markers disagree).
+   recognised as a DAK instance — not blocked on bean `79t3`'s two open questions
+   any more (both were answered on 2026-09-20 in the cat-harness store, and `dak` is registered in `schemas/content-types-base.ts`).
 3. **Formalise `sushi` and `ig`** as the other two content types a
    `smart-*` repo declares. `ig` is half-there: `l3-fhir` exists as a
    translation content type with `fsh` and `fhir-json` formats, but nothing
