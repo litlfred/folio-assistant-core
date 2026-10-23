@@ -24,6 +24,7 @@
       "@type": "@id"
     },
     "kind": "cat-harness:kind",
+    "label": "cat-harness:label",
     "meta": {
       "@id": "cat-harness:blockMeta",
       "@type": "@json"
