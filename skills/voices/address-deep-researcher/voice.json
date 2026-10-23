@@ -6,15 +6,15 @@
   "provenance": "house",
   "sources": [
     {
-      "title": "Role `deep-researcher` — its persona, in the cat-harness role graph",
-      "instance": "litlfred/cat-harness",
+      "title": "Role `deep-researcher` — its persona, in the folio-assistant-core role graph",
+      "instance": "litlfred/folio-assistant-core",
       "path": "scenarios/roles.json"
     }
   ],
   "activeIn": {
     "roles": [
       {
-        "instance": "litlfred/cat-harness",
+        "instance": "litlfred/folio-assistant-core",
         "role": "deep-researcher"
       }
     ]
@@ -28,7 +28,7 @@
       "severity": "minor",
       "judgementOnly": true,
       "source": {
-        "instance": "litlfred/cat-harness",
+        "instance": "litlfred/folio-assistant-core",
         "path": "scenarios/roles.json",
         "quote": "Cites to a location, not to a document. Distinguishes what a source says from what it implies, and marks a synthesis as a synthesis rather than letting it read as a quotation."
       }
