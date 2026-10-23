@@ -19,6 +19,8 @@
                   id="Definitions_ExtractStructure"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/0.1.0/processes/ns#" location="https://litlfred.github.io/bootstrap/0.1.0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:resource id="ingestion-agent" name="Ingestion engine"/>
   <bpmn:collaboration id="Collaboration_ExtractStructure">
     <bpmn:participant id="Participant_ExtractStructure" name="Ingestion subprocess — extract structure" processRef="Process_ExtractStructure" />
   </bpmn:collaboration>
@@ -36,9 +38,8 @@
       <cat-harness.processes:policy enforcement="advisory" />
     </bpmn:extensionElements>
     <bpmn:laneSet id="Process_ExtractStructure_LaneSet">
-      <bpmn:lane id="Lane_0" name="Ingestion Engine (agent, runs unattended)">
+      <bpmn:lane id="Lane_0" name="Ingestion Engine (agent, runs unattended)" partitionElementRef="ingestion-agent">
         <bpmn:documentation>Two provenance paths converge on the same Task_Sections output — an embedded text layer extracted directly, or OCR that leaves the fuller text in ocr/ with only a stub in sections/ — and which branch this lane took is invisible downstream except to a grep that knows to check the fourth tier. Task_Candidates is the last step and it stays a proposal: theorems and definitions extracted here are never adjudicated verdicts, so nothing downstream may treat this lane's output as settled.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="ingestion-agent"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>StartEvent_Binary</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_HasText</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ExtractText</bpmn:flowNodeRef>

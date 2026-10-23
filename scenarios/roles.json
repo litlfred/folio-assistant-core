@@ -63,7 +63,14 @@
     {
       "role": "corpus",
       "skills": [
-        "document-intake"
+        "document-intake",
+        "corpus-commit-contract"
+      ]
+    },
+    {
+      "role": "external-registry",
+      "skills": [
+        "registry-authority-contract"
       ]
     },
     {

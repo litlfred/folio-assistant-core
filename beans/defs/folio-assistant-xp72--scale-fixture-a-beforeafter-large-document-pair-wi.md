@@ -1,14 +1,13 @@
 ---
 # folio-assistant-xp72
+$schema: bean/1.0.0
 title: 'SCALE FIXTURE: a before/after large-document pair with a golden ChangeSet and a measured performance budget'
 status: todo
 type: task
 priority: normal
 created_at: 2026-09-22T21:02:55Z
-updated_at: 2026-10-11T07:10:00Z
+updated_at: 2026-10-21T21:32:00Z
 parent: folio-assistant-q4jm
-blocked_by:
-    - folio-assistant-jwox
 ---
 
 **Why.** Every child can pass on a ten-block fixture and fall over on a real
@@ -31,8 +30,8 @@ performance budget. Proposed budget: the review page is interactive in under
 measured, not a fact.
 
 ## Done when
-- [x] the fixture is committed, with its expected ChangeSet as a golden file
-- [x] the budget is measured and recorded, then enforced in the browser gate
+- [x] the fixture is committed, with its expected ChangeSet as a golden file (`folio-assistant-core/scripts/test-fixtures/scale-pair.ts` + `scale-pair.changeset.json` + `schemas/changeset-scale.test.ts`)
+- [x] the budget is measured and recorded, then enforced in the browser gate (`cat-harness-tools#104`, `test/review-budget.e2e.ts` + `gen-review-page.ts` `content-visibility: auto`)
 - [ ] the lx2s committee scenario has been walked through the review page, with screenshots on the PR
 
 
@@ -64,14 +63,6 @@ run.
 **Measured:** `computeChangeSet` over the 2,000-block pair takes **550–713 ms**
 in this container (3 runs). It is logged, not gated. It is the one number
 below the page budget, and it leaves most of the proposed 2 s for the page.
-
-**Still open, so the bean stays `todo`:**
-- Done-when 2: measure the review page's time-to-interactive at 2,000 blocks
-  and enforce it in the browser gate. The page and the gate are harness code
-  (cat-harness-tools `gen-review-page`, Playwright). The fixture is ready to
-  feed them.
-- Done-when 3: walk the lx2s committee scenario through the review page, with
-  screenshots on the PR.
 
 ## 2026-10-11: budget measured and enforced (cat-harness-tools#104, merged)
 
@@ -122,3 +113,5 @@ immunization-schedule before/after pair exists in any checkout.
 4. Drop Done-when 3 from this bean. lx2s owns the end-to-end walk.
 
 **Default if no answer: 1.**
+
+_2026-10-15T16:49Z_ — Block lifted: `jwox` is completed (PRs #981, #982, #992 merged). The edge was the work plan's "Block never lifted" finding (owner, 2026-10-15). Session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs.

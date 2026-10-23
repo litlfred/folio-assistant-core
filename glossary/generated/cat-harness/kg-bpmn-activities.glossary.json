@@ -7,78 +7,6 @@
   "source": "BPMN activities of cat-harness",
   "terms": [
     {
-      "id": "globaltask.gt_authoriseextraction",
-      "prefLabel": "Authorise the extraction",
-      "definition": "A repository cut changes the substrate every other process's lanes bind to, and that is a person's decision.",
-      "notation": "GT_AuthoriseExtraction",
-      "source": "cat-harness/processes/cat-harness-global-tasks.bpmn#GT_AuthoriseExtraction",
-      "status": "candidate"
-    },
-    {
-      "id": "globaltask.gt_briefandclaim",
-      "prefLabel": "Brief, and claim the bean",
-      "definition": "What the work is and why, what is already measured with its provenance, how it will be done, and what would falsify the approach. Claim the bean so a sibling session sees the work.",
-      "notation": "GT_BriefAndClaim",
-      "source": "cat-harness/processes/cat-harness-global-tasks.bpmn#GT_BriefAndClaim",
-      "status": "candidate"
-    },
-    {
-      "id": "globaltask.gt_closetrackingissue",
-      "prefLabel": "Close the tracking issue",
-      "definition": "Clean: close the open issue carrying the tracking label (the `label` input), if any, saying why the verdict is clean. Runs only on a clean verdict — on unknown the issue is left untouched and the job fails instead, because could-not-check is never rendered as clean.",
-      "notation": "GT_CloseTrackingIssue",
-      "source": "cat-harness/processes/cat-harness-global-tasks.bpmn#GT_CloseTrackingIssue",
-      "status": "candidate"
-    },
-    {
-      "id": "globaltask.gt_drain",
-      "prefLabel": "Drain: land, close or re-target the open PRs",
-      "definition": "Work the PRs `seed:ready` named until the source settles: land or close the heavy movers and the next layer's PRs, bring the layer's open PRs to five or fewer, and finish any move in flight. Fix a red rehearsal or a discovery miss where it is. Nothing is seeded from here; it goes back to the gateway, which re-asks.",
-      "notation": "GT_Drain",
-      "source": "cat-harness/processes/cat-harness-global-tasks.bpmn#GT_Drain",
-      "status": "candidate"
-    },
-    {
-      "id": "globaltask.gt_ensuretrackinglabel",
-      "prefLabel": "Ensure the tracking label exists",
-      "definition": "Create the tracking label (the `label` input) with --force so it exists before either issue path runs — the close path filters on it too, and on a repository that has never had a finding it would not exist yet. Skipped on an unknown verdict.",
-      "notation": "GT_EnsureTrackingLabel",
-      "source": "cat-harness/processes/cat-harness-global-tasks.bpmn#GT_EnsureTrackingLabel",
-      "status": "candidate"
-    },
-    {
-      "id": "globaltask.gt_logretained",
-      "prefLabel": "Append `retained` with the reason",
-      "definition": "The entry that makes the log worth reading. A removal was considered and refused, or a preview still stands because a signal fired; without an entry that leaves no trace, and the next person asking \"why is this preview still up\" has nothing to consult. A reason is REQUIRED — the tool refuses without one.",
-      "notation": "GT_LogRetained",
-      "source": "cat-harness/processes/cat-harness-global-tasks.bpmn#GT_LogRetained",
-      "status": "candidate"
-    },
-    {
-      "id": "globaltask.gt_recordsignoff",
-      "prefLabel": "Record the sign-off as a requirement-signoff attestation",
-      "definition": "THE RECORD, and not relaxable: a judgement nobody wrote down is indistinguishable from one never made (`adjudication`, A_RecordEntry). Append one `requirement-signoff` record to `test/attestations/requirement-signoff/<set slug>.attestations.json` — who (kind, id, actor), at, scope (the set or one member), the outcome from the requirement-set code list, the stage it moves the set to, the reason, and the permalink to the issue comment where it was decided — and set the set's `stage` to match. Issue #2405 FR-011 / FR-012. GW_SignoffRecorded after this reads the record back, so this step cannot be skipped by completing it: a sign-off that left no attestation loops here again.",
-      "notation": "GT_RecordSignoff",
-      "source": "cat-harness/processes/cat-harness-global-tasks.bpmn#GT_RecordSignoff",
-      "status": "candidate"
-    },
-    {
-      "id": "globaltask.gt_reportwhatmoves",
-      "prefLabel": "Report what would move — sizes, and what breaks",
-      "definition": "The agent reports and waits: what would move, how large, what in the parent breaks, and the rollback. `deletion-requires-confirmation` is not a courtesy to waive: an agent never removes or relocates a durable artefact on its own initiative.",
-      "notation": "GT_ReportWhatMoves",
-      "source": "cat-harness/processes/cat-harness-global-tasks.bpmn#GT_ReportWhatMoves",
-      "status": "candidate"
-    },
-    {
-      "id": "globaltask.gt_trackissue",
-      "prefLabel": "Open or EDIT the one tracking issue",
-      "definition": "Findings: EDIT the one open issue carrying the tracking label (the `label` input) if there is one, otherwise create it, with the report as the body. One issue edited in place, never a new issue or a comment per run, so the tracking issue never becomes a feed.",
-      "notation": "GT_TrackIssue",
-      "source": "cat-harness/processes/cat-harness-global-tasks.bpmn#GT_TrackIssue",
-      "status": "candidate"
-    },
-    {
       "id": "process_activitylog.a_dowork",
       "prefLabel": "Do the work",
       "definition": "The task itself. This diagram says nothing about how it is done; it only brackets it, so that a reader of the log can tell where one run of work began and ended.",
@@ -289,7 +217,7 @@
     {
       "id": "process_cihealth.task_close",
       "prefLabel": "Close the tracking issue",
-      "definition": "Clean: close the open issue carrying the tracking label (the `label` input), if any, saying why the verdict is clean. Runs only on a clean verdict — on unknown the issue is left untouched and the job fails instead, because could-not-check is never rendered as clean. Clean here means main is clean.",
+      "definition": "Clean: close the open ci-health issue, if any, saying why (main is clean). Runs only on a clean verdict — on unknown the issue is left untouched and the job fails instead, because could-not-check is never rendered as clean.",
       "notation": "Task_Close",
       "source": "cat-harness/processes/sdlc/ci-health-watch.bpmn#Task_Close",
       "status": "candidate"
@@ -297,7 +225,7 @@
     {
       "id": "process_cihealth.task_label",
       "prefLabel": "Ensure the tracking label exists",
-      "definition": "Create the tracking label (the `label` input) with --force so it exists before either issue path runs — the close path filters on it too, and on a repository that has never had a finding it would not exist yet. Skipped on an unknown verdict.",
+      "definition": "Create the ci-health label with --force so it exists before either issue path runs — the close path filters on it too, and on a repository that has never had a finding it would not exist yet. Skipped on an unknown verdict.",
       "notation": "Task_Label",
       "source": "cat-harness/processes/sdlc/ci-health-watch.bpmn#Task_Label",
       "status": "candidate"
@@ -305,7 +233,7 @@
     {
       "id": "process_cihealth.task_track",
       "prefLabel": "Open or EDIT the one tracking issue",
-      "definition": "Findings: EDIT the one open issue carrying the tracking label (the `label` input) if there is one, otherwise create it, with the report as the body. One issue edited in place, never a new issue or a comment per run, so the tracking issue never becomes a feed.",
+      "definition": "Findings: EDIT the one open issue labelled ci-health if there is one, otherwise create it, with the report as the body. One issue edited in place, never a new issue or a comment per run, so the tracking issue never becomes a feed.",
       "notation": "Task_Track",
       "source": "cat-harness/processes/sdlc/ci-health-watch.bpmn#Task_Track",
       "status": "candidate"
@@ -761,7 +689,7 @@
     {
       "id": "process_crdm_deliver.a_implement",
       "prefLabel": "Phase 6: Implement (feature branch + PR)",
-      "definition": "Inner loop: agent claims a bean, implements on feature branch, opens PR, posts summary to the issue. When the requirement changes a rendered surface, implement against the wireframe candidate the requester or BA chose in Phases 3–4 (Process_WireframeDesignReview, called from Process_CRDM_Requirements), not against a fresh design; and the delivery summary links the chosen candidate beside the after-screenshot, so the reviewer can see the build matches what was approved.",
+      "definition": "Inner loop: agent claims a bean, implements on feature branch, opens PR, posts summary to the issue.",
       "notation": "A_Implement",
       "source": "cat-harness/processes/process/crdm-deliver.bpmn#A_Implement",
       "status": "candidate"
@@ -769,7 +697,7 @@
     {
       "id": "process_crdm_deliver.a_summary",
       "prefLabel": "Post summary to issue",
-      "definition": "What was accomplished, what remains, and the staging links: one deep link per changed page on the preview, with the same page on main (staging-review, \"The deep-link rule\").",
+      "definition": "What was accomplished, what remains, and links to the updated content for review.",
       "notation": "A_Summary",
       "source": "cat-harness/processes/process/crdm-deliver.bpmn#A_Summary",
       "status": "candidate"
@@ -881,7 +809,7 @@
     {
       "id": "process_crdm_requirements.a_compareoptions",
       "prefLabel": "Phase 4a: Compare the viable options",
-      "definition": "Phase 4 often ends with a CHOICE rather than a plan, and this is the step that hands it over. Per option: what it does, its pro, its con, what it changes DOWNSTREAM, and how reversible it is — laid out where the rows can be read against each other, then one recommendation and a stated default. A step of its own rather than a line inside A_DefineReqs, because it has a different output and a different reader: the impact analysis is for the record, the comparison is the thing the BA answers from. Folding it in is how it gets skipped — the analysis feels finished, so the options go over as a list of names. When Call_Wireframe ran, its wireframe candidates are among the options: one row per candidate, with a link to its web and mobile screenshots. Skipped legitimately when the analysis yields ONE viable approach. Do not manufacture alternatives to fill a table.",
+      "definition": "Phase 4 often ends with a CHOICE rather than a plan, and this is the step that hands it over. Per option: what it does, its pro, its con, what it changes DOWNSTREAM, and how reversible it is — laid out where the rows can be read against each other, then one recommendation and a stated default. A step of its own rather than a line inside A_DefineReqs, because it has a different output and a different reader: the impact analysis is for the record, the comparison is the thing the BA answers from. Folding it in is how it gets skipped — the analysis feels finished, so the options go over as a list of names. Skipped legitimately when the analysis yields ONE viable approach. Do not manufacture alternatives to fill a table.",
       "notation": "A_CompareOptions",
       "source": "cat-harness/processes/process/crdm-requirements-definition.bpmn#A_CompareOptions",
       "status": "candidate"
@@ -905,17 +833,9 @@
     {
       "id": "process_crdm_requirements.ba_reviewreqs",
       "prefLabel": "Review requirements and impact analysis",
-      "definition": "The BA reviews the formal requirements and the impact analysis the agent produced. When a requirement changes a rendered surface, the BA (or the requester) also reviews the wireframe candidates, web and mobile, shown wherever the requester will look (the conversation, the issue, the pull request, or several) with staging deep links and screenshots, and chooses one before implementation starts. The agent records the choice; it never makes it.",
+      "definition": "The BA reviews the formal requirements and the impact analysis the agent produced.",
       "notation": "BA_ReviewReqs",
       "source": "cat-harness/processes/process/crdm-requirements-definition.bpmn#BA_ReviewReqs",
-      "status": "candidate"
-    },
-    {
-      "id": "process_crdm_requirements.call_wireframe",
-      "prefLabel": "Wireframe candidates (web + mobile)",
-      "definition": "Design use of wireframe-design-review, before implementation: a written design intent, at least two mid-fidelity candidates each with a web and a mobile layout, the mechanical checks, and a blind review. The candidates are committed as assets of the request's proposal, under docs/proposals/<slug>/wireframes/ beside docs/proposals/<slug>.md, on the feature branch so feature-staging publishes them, and shown where the requester will look, chosen from context — the conversation, the issue the request came from, the pull request, or several of these — each place carrying the same staging deep links and screenshots (staging-review, the deep-link rule, point 5: where it goes is a judgement). The requester or BA is the human reviewer and chooses one at BA_ReviewReqs. The owner asked for this on 2026-09-23 (methodologies/wiregen.md): a wireframe is part of the design process for adjudication. The candidates ARE the options A_CompareOptions lays out, so this merges into it rather than producing a second comparison.",
-      "notation": "Call_Wireframe",
-      "source": "cat-harness/processes/process/crdm-requirements-definition.bpmn#Call_Wireframe",
       "status": "candidate"
     },
     {
@@ -1129,7 +1049,7 @@
     {
       "id": "process_featurestaging.task_logretained",
       "prefLabel": "Append `retained`, with why it stays",
-      "definition": "The entry that makes the log worth reading. A removal was considered and refused, or a preview still stands because a signal fired; without an entry that leaves no trace, and the next person asking \"why is this preview still up\" has nothing to consult. A reason is REQUIRED — the tool refuses without one.",
+      "definition": "The event that makes the log worth reading. A removal was CONSIDERED and refused; without an entry that leaves no trace on the branch at all, and the next person asking *\"why is this preview still up\"* has only a comment on a pull request that may itself be closed.",
       "notation": "Task_LogRetained",
       "source": "cat-harness/processes/sdlc/feature-staging.bpmn#Task_LogRetained",
       "status": "candidate"
@@ -1185,7 +1105,7 @@
     {
       "id": "process_graphdetanglement.task_authorise",
       "prefLabel": "Authorise the extraction",
-      "definition": "A repository cut changes the substrate every other process's lanes bind to, and that is a person's decision. The one step no package may relax.",
+      "definition": "The one step no package may relax. A repository cut changes the substrate every other diagram's lanes bind to, and that is a person's decision.",
       "notation": "Task_Authorise",
       "source": "cat-harness/processes/kg/graph-detanglement.bpmn#Task_Authorise",
       "status": "candidate"
@@ -1241,7 +1161,7 @@
     {
       "id": "process_graphdetanglement.task_propose",
       "prefLabel": "Report what would move — sizes, and what breaks",
-      "definition": "The agent reports and waits: what would move, how large, what in the parent breaks, and the rollback. `deletion-requires-confirmation` is not a courtesy to waive: an agent never removes or relocates a durable artefact on its own initiative.",
+      "definition": "The agent reports and waits. `deletion-requires-confirmation` is not a courtesy to waive: an agent never removes or relocates a durable artefact on its own initiative.",
       "notation": "Task_Propose",
       "source": "cat-harness/processes/kg/graph-detanglement.bpmn#Task_Propose",
       "status": "candidate"
@@ -1297,7 +1217,7 @@
     {
       "id": "process_humantranslation.task_prepareglossary",
       "prefLabel": "Prepare domain glossary",
-      "definition": "Generates or retrieves the domain glossary for the target locale. Sources: 1. Root folio's translations/ glossary 2. Folio-assistant dependency translations (depth-first walk) 3. WHO standard terminology (from the WHO SMART Base IG) 4. Previous translations of related content",
+      "definition": "Generates or retrieves the domain glossary for the target locale. Sources: 1. Root folio's translations/ glossary 2. Folio-assistant dependency translations (depth-first walk) 3. WHO standard terminology (from smart-base) 4. Previous translations of related content",
       "notation": "Task_PrepareGlossary",
       "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_PrepareGlossary",
       "status": "candidate"
@@ -1457,7 +1377,7 @@
     {
       "id": "process_kgseparation.task_authorise",
       "prefLabel": "9 · Authorise the extraction",
-      "definition": "A repository cut changes the substrate every other process's lanes bind to, and that is a person's decision. Declining leaves the graph declared, detangled, isolated and split in place.",
+      "definition": "A repository cut changes the substrate every other process binds to; that is a person's decision. Declining leaves the graph declared, detangled, isolated and split in place.",
       "notation": "Task_Authorise",
       "source": "cat-harness/processes/kg/kg-separation.bpmn#Task_Authorise",
       "status": "candidate"
@@ -1465,7 +1385,7 @@
     {
       "id": "process_kgseparation.task_brief",
       "prefLabel": "Brief, and claim the bean",
-      "definition": "What the work is and why, what is already measured with its provenance, how it will be done, and what would falsify the approach. Claim the bean so a sibling session sees the work. Here the work is a separation: what is separating, and why.",
+      "definition": "What is separating and why, what is already measured with its provenance, how it will be done, and what would falsify the approach. Claim the bean so a sibling session sees the work.",
       "notation": "Task_Brief",
       "source": "cat-harness/processes/kg/kg-separation.bpmn#Task_Brief",
       "status": "candidate"
@@ -1561,7 +1481,7 @@
     {
       "id": "process_kgseparation.task_propose",
       "prefLabel": "Report what moves — sizes, what breaks",
-      "definition": "The agent reports and waits: what would move, how large, what in the parent breaks, and the rollback. `deletion-requires-confirmation` is not a courtesy to waive: an agent never removes or relocates a durable artefact on its own initiative.",
+      "definition": "The agent reports and waits: what moves, how large, what in the parent breaks, and the rollback. It never relocates a durable artefact on its own initiative.",
       "notation": "Task_Propose",
       "source": "cat-harness/processes/kg/kg-separation.bpmn#Task_Propose",
       "status": "candidate"
@@ -1681,7 +1601,7 @@
     {
       "id": "process_kgtoportal.s_sign",
       "prefLabel": "Sign the package and/or each asset",
-      "definition": "THE TRUST ANCHOR IS GDHCN, SPECIFIED BY THE WHO SMART TRUST IG (owner, 2026-09-20, paraphrased: proposal signing is GDHCN, as the WHO SMART Trust IG specifies). READ OFF THAT IG rather than from general knowledge: a GDHCN trustlist distributes KEY MATERIAL as W3C DID documents, and says nothing about what you wrap your bytes in — the health-certificate envelope is a separate specification in the same IG, and a document package is not a health certificate. So what is settled is where a verifier GETS THE KEY, not what it verifies. A portal that can fetch the bytes but not reach the trustlist cannot verify, which is `unknown` and not a failure — air-gapped is a declared deployment value, so that case is answered rather than assumed away. Still OPEN and unread: the rotation and revocation model, and whether a document-package signature can be expressed for a GDHCN-aware verifier at all. Two schemes with different properties remain to choose between, and the trustlist does not choose between them. A PACKAGE signature over the manifest verifies the SET — nothing added, removed or altered — and must be reissued whenever any file changes. A PER-ASSET signature verifies one file independently, which is what an edge cache serving one asset can actually check, and it cannot detect a removal because there is nothing left to verify. They compose; composing them is the safer and more expensive default, and it is the deployment's choice rather than the pipeline's.",
+      "definition": "THE TRUST ANCHOR IS GDHCN, SPECIFIED BY THE WHO SMART TRUST IG (owner, 2026-09-20: `propsal signing = GDHCN`, then `smart-trust`). READ OFF THAT IG rather than from general knowledge: a GDHCN trustlist distributes KEY MATERIAL as W3C DID documents, and says nothing about what you wrap your bytes in — the health-certificate envelope is a separate specification in the same IG, and a document package is not a health certificate. So what is settled is where a verifier GETS THE KEY, not what it verifies. A portal that can fetch the bytes but not reach the trustlist cannot verify, which is `unknown` and not a failure — air-gapped is a declared deployment value, so that case is answered rather than assumed away. Still OPEN and unread: the rotation and revocation model, and whether a document-package signature can be expressed for a GDHCN-aware verifier at all. Two schemes with different properties remain to choose between, and the trustlist does not choose between them. A PACKAGE signature over the manifest verifies the SET — nothing added, removed or altered — and must be reissued whenever any file changes. A PER-ASSET signature verifies one file independently, which is what an edge cache serving one asset can actually check, and it cannot detect a removal because there is nothing left to verify. They compose; composing them is the safer and more expensive default, and it is the deployment's choice rather than the pipeline's.",
       "notation": "S_Sign",
       "source": "cat-harness/processes/kg/kg-to-portal.bpmn#S_Sign",
       "status": "candidate"
@@ -2516,7 +2436,7 @@
     {
       "id": "process_prcheckspresent.task_close",
       "prefLabel": "Close the tracking issue",
-      "definition": "Clean: close the open issue carrying the tracking label (the `label` input), if any, saying why the verdict is clean. Runs only on a clean verdict — on unknown the issue is left untouched and the job fails instead, because could-not-check is never rendered as clean. Clean here means every open pull request's head now has a CI run.",
+      "definition": "Clean: close the open pr-no-checks issue, if any, saying why (every open pull request's head now has a CI run). Runs only on a clean verdict — on unknown the issue is left untouched and the job fails instead, because could-not-check is never rendered as clean.",
       "notation": "Task_Close",
       "source": "cat-harness/processes/sdlc/pr-checks-present.bpmn#Task_Close",
       "status": "candidate"
@@ -2532,7 +2452,7 @@
     {
       "id": "process_prcheckspresent.task_label",
       "prefLabel": "Ensure the tracking label exists",
-      "definition": "Create the tracking label (the `label` input) with --force so it exists before either issue path runs — the close path filters on it too, and on a repository that has never had a finding it would not exist yet. Skipped on an unknown verdict.",
+      "definition": "Create the pr-no-checks label with --force so it exists before either issue path runs — the close path filters on it too, and on a repository that has never had a finding it would not exist yet. Skipped on an unknown verdict.",
       "notation": "Task_Label",
       "source": "cat-harness/processes/sdlc/pr-checks-present.bpmn#Task_Label",
       "status": "candidate"
@@ -2548,7 +2468,7 @@
     {
       "id": "process_prcheckspresent.task_track",
       "prefLabel": "Open or EDIT the one tracking issue",
-      "definition": "Findings: EDIT the one open issue carrying the tracking label (the `label` input) if there is one, otherwise create it, with the report as the body. One issue edited in place, never a new issue or a comment per run, so the tracking issue never becomes a feed. The body is the sweep's report.",
+      "definition": "Findings: EDIT the one open issue labelled pr-no-checks if there is one, otherwise create it, with the sweep's report as the body. One issue edited in place, never a new issue or a comment per run, so the tracking issue never becomes a feed.",
       "notation": "Task_Track",
       "source": "cat-harness/processes/sdlc/pr-checks-present.bpmn#Task_Track",
       "status": "candidate"
@@ -2851,7 +2771,7 @@
     {
       "id": "process_renderlog.a_logretained",
       "prefLabel": "Append `retained` with the reason",
-      "definition": "The entry that makes the log worth reading. A removal was considered and refused, or a preview still stands because a signal fired; without an entry that leaves no trace, and the next person asking \"why is this preview still up\" has nothing to consult. A reason is REQUIRED — the tool refuses without one.",
+      "definition": "THE ENTRY THAT MAKES THE LOG WORTH READING. A preview still standing because a signal fired leaves no trace otherwise, and the next person asking \"why is this still up\" has nothing to consult. A reason is REQUIRED — the tool refuses without one.",
       "notation": "A_LogRetained",
       "source": "cat-harness/processes/ui/staging-render-log.bpmn#A_LogRetained",
       "status": "candidate"
@@ -2883,7 +2803,7 @@
     {
       "id": "process_repohealth.task_close",
       "prefLabel": "Close the tracking issue",
-      "definition": "Clean: close the open issue carrying the tracking label (the `label` input), if any, saying why the verdict is clean. Runs only on a clean verdict — on unknown the issue is left untouched and the job fails instead, because could-not-check is never rendered as clean. Clean here means every check ran and none had anything to report.",
+      "definition": "Clean: close the open repo-health issue, if any, saying why (every check ran and none had anything to report). Runs only on a clean verdict — on unknown the issue is left untouched and the job fails instead, because could-not-check is never rendered as clean.",
       "notation": "Task_Close",
       "source": "cat-harness/processes/sdlc/repository-health-watch.bpmn#Task_Close",
       "status": "candidate"
@@ -2891,7 +2811,7 @@
     {
       "id": "process_repohealth.task_label",
       "prefLabel": "Ensure the tracking label exists",
-      "definition": "Create the tracking label (the `label` input) with --force so it exists before either issue path runs — the close path filters on it too, and on a repository that has never had a finding it would not exist yet. Skipped on an unknown verdict.",
+      "definition": "Create the repo-health label with --force so it exists before either issue path runs — the close path filters on it too, and on a repository that has never had a finding it would not exist yet. Skipped on an unknown verdict.",
       "notation": "Task_Label",
       "source": "cat-harness/processes/sdlc/repository-health-watch.bpmn#Task_Label",
       "status": "candidate"
@@ -2899,7 +2819,7 @@
     {
       "id": "process_repohealth.task_track",
       "prefLabel": "Open or EDIT the one tracking issue",
-      "definition": "Findings: EDIT the one open issue carrying the tracking label (the `label` input) if there is one, otherwise create it, with the report as the body. One issue edited in place, never a new issue or a comment per run, so the tracking issue never becomes a feed. The body states that nothing in it has been acted on.",
+      "definition": "Findings: EDIT the one open issue labelled repo-health if there is one, otherwise create it, with the report as the body. One issue edited in place, never a new issue or a comment per run, so the tracking issue never becomes a feed. The body states that nothing in it has been acted on.",
       "notation": "Task_Track",
       "source": "cat-harness/processes/sdlc/repository-health-watch.bpmn#Task_Track",
       "status": "candidate"
@@ -2931,7 +2851,7 @@
     {
       "id": "process_review.task_classifychange",
       "prefLabel": "Classify what changed",
-      "definition": "Prose, code nodes, or both. This is the only decision the generic lane makes on its own: everything after it is made inside a subprocess by the role that lane binds. Binds `content-review`, the same skill as Task_Consolidate in this lane, since placement PR3 (bean `63wl`): it named `semantic-review-scoping`, a paper skill the science layer owns, which this harness diagram cannot reach. A paper process that wants semantic scoping adds it by calling this process.",
+      "definition": "Prose, code nodes, or both. This is the only decision the generic lane makes on its own: everything after it is made inside a subprocess by the role that lane binds. Binds `content-review`, the same skill as Task_Consolidate in this lane, since placement PR3 (bean `63wl`): it named `semantic-review-scoping`, a paper skill folio-assistant-sci owns, which this harness diagram cannot reach. A paper process that wants semantic scoping adds it by calling this process.",
       "notation": "Task_ClassifyChange",
       "source": "cat-harness/processes/content/review-task.bpmn#Task_ClassifyChange",
       "status": "candidate"
@@ -3226,7 +3146,7 @@
     {
       "id": "process_subkglifecycle.task_brief",
       "prefLabel": "Brief, and claim the bean",
-      "definition": "What the work is and why, what is already measured with its provenance, how it will be done, and what would falsify the approach. Claim the bean so a sibling session sees the work. Here the work is a sub-KG: what it is, and why it is staged here rather than in a repository of its own.",
+      "definition": "What the sub-KG is and why it is staged here rather than in a repository of its own, what is already measured, and what would falsify the plan. Claim the bean so a sibling session sees the work.",
       "notation": "Task_Brief",
       "source": "cat-harness/processes/kg/sub-kg-lifecycle.bpmn#Task_Brief",
       "status": "candidate"
@@ -3282,7 +3202,7 @@
     {
       "id": "process_subkglifecycle.task_drain",
       "prefLabel": "Drain: land, close or re-target the open PRs",
-      "definition": "Work the PRs `seed:ready` named until the source settles: land or close the heavy movers and the next layer's PRs, bring the layer's open PRs to five or fewer, and finish any move in flight. Fix a red rehearsal or a discovery miss where it is. Nothing is seeded from here; it goes back to the gateway, which re-asks.",
+      "definition": "Work the pull requests seed:ready named until the source settles, then ask again.",
       "notation": "Task_Drain",
       "source": "cat-harness/processes/kg/sub-kg-lifecycle.bpmn#Task_Drain",
       "status": "candidate"
@@ -3690,7 +3610,7 @@
     {
       "id": "process_translation.task_translate",
       "prefLabel": "Produce translation (PO file)",
-      "definition": "Translation of .pot → .po by one of: 1. Existing PO from the WHO SMART Base IG (Weblate/Crowdin/Launchpad) 2. FHIR/translation-utils po-translate CLI (DeepL/Google, tagged #fuzzy) 3. Agent (LLM) translation 4. Human translator Result: <locale>/block.po with msgid/msgstr pairs.",
+      "definition": "Translation of .pot → .po by one of: 1. Existing PO from smart-base (Weblate/Crowdin/Launchpad) 2. FHIR/translation-utils po-translate CLI (DeepL/Google, tagged #fuzzy) 3. Agent (LLM) translation 4. Human translator Result: <locale>/block.po with msgid/msgstr pairs.",
       "notation": "Task_Translate",
       "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_Translate",
       "status": "candidate"

@@ -24,15 +24,19 @@
                   id="Definitions_EvidenceRetrieval"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/0.1.0/processes/ns#" location="https://litlfred.github.io/bootstrap/0.1.0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:resource id="author" name="Author"/>
+  <bpmn:resource id="evidence-agent" name="Evidence agent"/>
+  <bpmn:resource id="external-registry" name="External registry"/>
+  <bpmn:resource id="work-plan" name="Work plan (beans)"/>
   <bpmn:collaboration id="Collaboration_EvidenceRetrieval">
     <bpmn:participant id="Participant_EvidenceRetrieval" name="Editing subprocess — evidence for a recommendation" processRef="Process_EvidenceRetrieval" />
   </bpmn:collaboration>
   <bpmn:process id="Process_EvidenceRetrieval" name="Evidence for a recommendation" isExecutable="false">
     <bpmn:documentation>Frame a question for a recommendation, retrieve and appraise evidence from trusted sources, and either attach it or record the gap. The author reviews the guidance already in their content, frames the question as PICO, retrieves candidate evidence across three classes (trusted L1 sources, trusted L2/L3 content, data repositories), verifies each candidate's authority against the publishing body's own API, grades the body of evidence, and either attaches it to the recommendation or records the gap. STRAWPERSON: registries, grading system and API bindings are not fixed here.</bpmn:documentation>
     <bpmn:laneSet id="LaneSet_EvidenceRetrieval">
-      <bpmn:lane id="Lane_Author" name="Author / guideline developer (person)">
+      <bpmn:lane id="Lane_Author" name="Author / guideline developer (person)" partitionElementRef="author">
         <bpmn:documentation>Brackets the machine work rather than doing it: frames the PICO before Lane_Agent fans out across evidence classes, then is the only lane that grades what comes back and decides whether it is sufficient for a recommendation — retrieval and authority-checking are delegated, but the judgement that turns evidence into a claim never leaves this lane.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="author"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>StartEvent_Recommendation</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReviewExisting</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_FramePico</bpmn:flowNodeRef>
@@ -41,24 +45,21 @@
         <bpmn:flowNodeRef>Task_AttachEvidence</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_EvidenceAttached</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Agent" name="Evidence agent (system)">
+      <bpmn:lane id="Lane_Agent" name="Evidence agent (system)" partitionElementRef="evidence-agent">
         <bpmn:documentation>The appraisal in the role's own description happens elsewhere in this diagram: this lane only fans out in parallel across the three evidence classes and joins the candidates, while grading is Lane_Author's call and authority is Lane_Trusted's — so what it owns here is coverage, not judgement.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="evidence-agent"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Gateway_RetrievalFork</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_L1Sources</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_L2L3Content</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_DataRepos</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_RetrievalJoin</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Trusted" name="Trusted registries and observatories (external)">
+      <bpmn:lane id="Lane_Trusted" name="Trusted registries and observatories (external)" partitionElementRef="external-registry">
         <bpmn:documentation>Task_VerifyAuthority and its gateway sit here rather than with Lane_Agent because the decision is not this instance's call — it is a readout of what the external API returns, and the moment that answer is uncertain or absent, Lane_WorkPlan opens a bean rather than this lane inventing a verdict.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="external-registry"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_VerifyAuthority</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Authoritative</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_WorkPlan" name="Work plan — beans (shared)">
+      <bpmn:lane id="Lane_WorkPlan" name="Work plan — beans (shared)" partitionElementRef="work-plan">
         <bpmn:documentation>Catches two different shortfalls at two different severities: an unverified citation is noted but the process continues into grading, while an insufficient body of evidence ends the process at its own event — so only the second is fatal, and both stay visible in the work plan rather than one being silently absorbed into the other.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="work-plan"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_RecordUnverified</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_RecordGap</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_GapRecorded</bpmn:flowNodeRef>
@@ -133,7 +134,7 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       <bpmn:documentation>Each candidate is resolved against the standard API of the body that publishes it, so that 'authoritative' is a RESOLVED FACT rather than an assertion in the citation. What is checked: that the identifier resolves at the publisher; that the retrieved record matches what the citation claims; that the version and date are the ones cited; and that the publisher is one this folio has declared trusted. STRAWPERSON: the concrete registry list and endpoints are not settled here -- see the cat-harness.processes:policy note.</bpmn:documentation>
       <bpmn:extensionElements>
         <cat-harness.processes:policy enforcement="strict" />
-        <cat-harness.processes:no-skill reason="An external party answers this — the publishing registry or observatory resolves the identifier through its own API. There is no instruction body an agent could be handed, and a skill here would describe somebody else&apos;s behaviour."/>
+        <bootstrap.processes:skill ref="registry-authority-contract" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_10</bpmn:incoming>
       <bpmn:outgoing>Flow_11</bpmn:outgoing>

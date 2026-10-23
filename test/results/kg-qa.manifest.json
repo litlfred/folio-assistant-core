@@ -2,7 +2,7 @@
   "$schema": "kg-qa-manifest/v1",
   "auditor": {
     "script": "scripts/kg-audit.ts",
-    "script_hash": "sha256:41b7161691f1d00b60a24a9b43ba29116114142f83a52a69bf31706425172430",
+    "script_hash": "sha256:566f9b4c95e48d1eb9e6977cbe7464c33069845b5540ac1b23bc118a3105f692",
     "engine_version": "1"
   }
 }

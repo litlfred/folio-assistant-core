@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ingest-build-l1-kg\n"
-"POT-Creation-Date: 2026-10-07T18:45:27.400Z\n"
+"POT-Creation-Date: 2026-10-20T09:54:46.804Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ru\n"
@@ -14,92 +14,92 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:104
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:105
 #. Diagram element documentation
 msgid "Anything in library/ is L1 source content. A knowledge-graph reference from any artefact -- paper, L2, L3 -- resolves to it through library/."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:88
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:89
 #. Diagram label
 msgid "Bind the folder name to the bibliography slug"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:90
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:91
 #. Diagram element documentation
 msgid "Bind the folder name to the document's bibliography slug, so library/<bib-slug>/ and its citation key are the same string: a citation resolves to a directory without a lookup table between them."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:26
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:29
 #. Diagram element documentation
 msgid "Build the L1 knowledge graph from what ingestion derived: Dublin Core, the manifest, the assets, their binding and their links. folio-assistant — Ingestion subprocess — build the L1 knowledge graph. Source of truth: this file. Open it in bpmn.io, Camunda Modeler, or any other BPMN 2.0 tool. The SVG under docs/assets/img/workflows/ is generated from it by `bun run cat render:bpmn` — never hand-edit the SVG. The <bootstrap.processes:skill> extension on an activity names the folio-assistant skill that implements it; <cat-harness.processes:bean> marks a step that reads or writes the shared work plan in beans/."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:48
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:50
 #. Diagram label
 msgid "Corpus — L1 source knowledge graph"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:55
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:56
 #. Diagram label
 msgid "Derived content ready"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:39
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:42
 #. Diagram label
 msgid "Ingestion Engine (agent, runs unattended)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:23
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:26
 #. Diagram label
 msgid "Ingestion subprocess — build the L1 knowledge graph"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:84
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:85
 #. Diagram element documentation
 msgid "kind / role / url-or-path / checksum / retrieved. A SIBLING of library:, never inside it: LibraryRef is regenerated from the tree, so an authored URL placed there is dropped on the next sync."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:108
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:109
 #. Diagram label
 msgid "L1 graph built"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:98
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:99
 #. Diagram label
 msgid "Link L1 nodes into the corpus graph"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:64
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:65
 #. Diagram element documentation
 msgid "One standalone Dublin Core record per folder. dcterms is already this corpus's JSON-LD vocabulary, so this extends a live context rather than introducing one."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:78
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:79
 #. Diagram label
 msgid "Record assets[] — local path or remote URL"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:49
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:51
 #. Diagram element documentation
 msgid "The single moment the four records Lane_0 wrote become reachable by reference rather than just present on disk: Task_Link is what a knowledge-graph reference in a paper, an L2 or an L3 artefact actually resolves through, and until it runs, dublin-core.jsonld and its siblings are files in library/ that nothing in the graph points to yet."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:58
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:59
 #. Diagram label
 msgid "Write dublin-core.jsonld (the record of truth)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:70
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:71
 #. Diagram element documentation
 msgid "Write manifest.jsonld for the folder: its @id, @type folio:SourceDocument, what it contains and its provenance, referencing the standalone dublin-core.jsonld as the record of truth rather than copying its fields."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:68
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:69
 #. Diagram label
 msgid "Write manifest.jsonld referencing it"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:40
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:43
 #. Diagram element documentation
 msgid "Writes four records in a fixed order and touches the corpus graph in none of them — dublin-core as the record of truth, a manifest that references it, assets[] kept as a SIBLING of library: because that tree is regenerated and would drop anything written inside it, and finally the slug binding Task_Link depends on. Getting the order or the placement wrong here is invisible until the next sync silently drops it."
 msgstr ""

@@ -5,7 +5,7 @@
     "id": "Process_BoardPlaceNote",
     "path": "processes/ui/board-place-note.bpmn"
   },
-  "source_hash": "sha256:b9d4e6fbc268eb557d3ad4f2c134581aecc9556056f326bf2800e1759adc59be",
+  "source_hash": "sha256:f5a0397295ad2b9260d43519cc58175d1aa1635d972e778648bcb189d78fcc73",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -72,6 +72,14 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
       "result": "pass",
       "findings": []
@@ -122,7 +130,7 @@
     }
   },
   "totals": {
-    "pass": 14,
+    "pass": 16,
     "fail": 1,
     "n/a": 10,
     "unknown": 0

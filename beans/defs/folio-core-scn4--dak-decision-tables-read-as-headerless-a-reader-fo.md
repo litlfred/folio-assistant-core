@@ -1,5 +1,6 @@
 ---
 # folio-core-scn4
+$schema: bean/1.0.0
 title: 'DAK decision tables read as headerless: a reader for the preamble + two-row header shape'
 status: completed
 type: task
