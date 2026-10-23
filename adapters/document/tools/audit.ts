@@ -46,11 +46,13 @@ import { runPipeline, asToolText, autoPaper } from "./_pipeline.js";
 type AuditProfile = "document" | "paper";
 
 /** Uniform read-only audits: no required args (optionally `--json`). */
-const AUDITS: { tool: string; script: string; json?: boolean; profile: AuditProfile; desc: string }[] = [
+const AUDITS: { tool: string; script: string; json?: boolean; args?: readonly string[]; profile: AuditProfile; desc: string }[] = [
   { tool: "latex_overfull", script: "latex-overfull-report", json: true,
     profile: "paper",
     desc: "Report overfull \\hbox (table/math/identifier spills) in the rendered LaTeX. Read-only." },
-  { tool: "qa_staleness", script: "qa-staleness", json: true,
+  // `--against main` (bean `8wj1`): the sidecars are read from the qa-reports
+  // branch at main, so the answer does not depend on this working copy.
+  { tool: "qa_staleness", script: "qa-staleness", json: true, args: ["--against", "main"],
     profile: "document",
     desc: "List QA-sidecar findings that are stale relative to current content. Read-only." },
   { tool: "tex_source_audit", script: "audit-tex-source",
@@ -95,7 +97,7 @@ function registerUniform(server: McpServer, profile: AuditProfile): void {
   for (const a of AUDITS) {
     if (a.profile !== profile) continue;
     server.tool(a.tool, a.desc, {}, async () =>
-      asToolText(a.tool, runPipeline(a.script, a.json ? ["--json"] : [])),
+      asToolText(a.tool, runPipeline(a.script, [...(a.json ? ["--json"] : []), ...(a.args ?? [])])),
     );
   }
 }
