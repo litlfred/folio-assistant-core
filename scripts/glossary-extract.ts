@@ -283,6 +283,15 @@ function toolsOfRepo(repo: string, own: ReturnType<typeof owners>): Raw[] {
 /** Task-like BPMN elements. None nests another, so an element's body holds only its own documentation. */
 const ACTIVITY = /<(?:bpmn:)?(task|userTask|serviceTask|scriptTask|manualTask|businessRuleTask|sendTask|receiveTask|callActivity)\b([^>]*?)(\/?)>/g;
 
+/**
+ * BPMN 2.0's global tasks: a layer's shared steps, defined once in the one
+ * `.bpmn` that holds no process and called by bare id (owner, 2026-10-20,
+ * "a1"/"b1"). They are terms in their own right, and a call to one carries
+ * the shared definition — without this the glossary would show the shared
+ * steps' entries as undefined, which is the half of the term a reader needs.
+ */
+const GLOBAL_TASK = /<(?:bpmn:)?(globalTask|globalUserTask|globalScriptTask|globalManualTask|globalBusinessRuleTask)\b([^>]*?)(\/?)>/g;
+
 function attr(attrs: string, name: string): string | undefined {
   const m = new RegExp(`\\s${name}="([^"]*)"`).exec(attrs);
   return m?.[1];
@@ -296,9 +305,42 @@ function childText(xml: string, from: string, tag: string): string | undefined {
   return text || undefined;
 }
 
+/** The body of `m`'s element, where `m` matched its opening tag in `xml`. */
+function elementBody(xml: string, m: RegExpMatchArray): string {
+  if (m[3] === "/") return "";
+  const start = m.index! + m[0].length;
+  const close = new RegExp(`</(?:bpmn:)?${m[1]}>`).exec(xml.slice(start));
+  return close ? xml.slice(start, start + close.index) : "";
+}
+
 function bpmn(repo: string, own: ReturnType<typeof owners>): Raw[] {
   const out: Raw[] = [];
   for (const dir of ownDirectories(repo, "processes")) {
+    // This directory's global tasks first: a call activity below resolves its
+    // shared definition from here. Sharing is within one layer (c1), so one
+    // pass over the same directory is the whole scope.
+    const shared = new Map<string, { name: string; definition?: string }>();
+    for (const f of walk(dir, (n) => n.endsWith(".bpmn"))) {
+      const xml = readFileSync(f, "utf-8");
+      for (const m of xml.matchAll(GLOBAL_TASK)) {
+        const id = attr(m[2]!, "id");
+        const name = attr(m[2]!, "name");
+        if (!id || !name) continue;
+        const definition = childText(xml, elementBody(xml, m), "documentation");
+        shared.set(id, { name: fold(decodeXml(name)), ...(definition ? { definition } : {}) });
+        const instance = ownerOf(f, own);
+        if (!instance) continue;
+        out.push({
+          instance,
+          type: "kg-bpmn-activities",
+          key: `globalTask.${id}`,
+          prefLabel: fold(decodeXml(name)),
+          ...(definition ? { definition } : {}),
+          notation: id,
+          source: `${posix(relative(repo, f))}#${id}`,
+        });
+      }
+    }
     for (const f of walk(dir, (n) => n.endsWith(".bpmn"))) {
       const instance = ownerOf(f, own);
       if (!instance) continue;
@@ -309,13 +351,12 @@ function bpmn(repo: string, own: ReturnType<typeof owners>): Raw[] {
         const id = attr(m[2]!, "id");
         const name = attr(m[2]!, "name");
         if (!id || !name) continue;
-        let definition: string | undefined;
-        if (m[3] !== "/") {
-          const start = m.index! + m[0].length;
-          const close = new RegExp(`</(?:bpmn:)?${m[1]}>`).exec(xml.slice(start));
-          const body = close ? xml.slice(start, start + close.index) : "";
-          definition = childText(xml, body, "documentation");
-        }
+        let definition = childText(xml, elementBody(xml, m), "documentation");
+        // A call to one of this layer's global tasks reads as the step it
+        // shares: the shared text first, then this call's own, which is how
+        // `loadProcessModel` composes the step's documentation.
+        const g = m[1] === "callActivity" ? shared.get(attr(m[2]!, "calledElement") ?? "") : undefined;
+        if (g) definition = [g.definition, definition].filter(Boolean).join(" ") || undefined;
         out.push({
           instance,
           type: "kg-bpmn-activities",

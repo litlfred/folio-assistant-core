@@ -25,6 +25,7 @@ How a document folio — structured prose and policy guidance, with no Lean and 
 - Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
 - Skill: `todo-manager`.
 - What: The plan becomes beans, so a resumed session or a sibling agent can pick it up.
+- Shared step `GT_SeedWorkPlan`.
 - Record it: `workflow_complete` with `node: "Task_SeedPlan"`.
 - next: → `Task_Scaffold` (3 · Scaffold the folio [folio_init])
 
