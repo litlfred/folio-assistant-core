@@ -189,7 +189,9 @@ describe("the glossary pages", () => {
   test("there is an index, one page per instance that owns an authored scheme, and one per asset type, and each is an output", () => {
     expect([...pages.keys()]).toEqual(pageKeysOf(c));
     expect(pageKeysOf(c)).toEqual(["index", ...authoredKeys(c), ...PAGE_KEYS.slice(1)]);
-    expect(authoredKeys(c) as string[]).toEqual([...new Set(c.glossaries.filter((s) => !s.extracted).map((s) => `@${s.instance}`))].sort());
+    expect(authoredKeys(c) as string[]).toEqual(
+      [...new Set([...c.glossaries.filter((s) => !s.extracted).map((s) => s.instance), ...(c.declaring ?? [])])].sort().map((i) => `@${i}`),
+    );
     expect([...PAGE_KEYS] as string[]).toEqual(["index", ...ASSET_TYPES.flatMap((t) => [t, ...(LETTER_PARTS[t] ?? []).map((r) => `${t}/${r}`)])]);
     const out = outputs(c);
     for (const k of pageKeysOf(c)) expect(out.get(pagePath(k))).toBe(pages.get(k)!);
@@ -460,11 +462,14 @@ describe("extracted KG terms", () => {
     }
   });
 
-  test("extracted schemes are written under core's glossary directory, never over an authored file", () => {
+  test("extracted schemes are written under a declared glossary directory's generated/, never over an authored file", () => {
     const files = [...outputs(c).keys()].map((p) => relative(REPO, p).split("\\").join("/"));
     const gen = files.filter((p) => p.endsWith(".glossary.json"));
     expect(gen.length).toBe(extracted.length);
-    for (const p of gen) expect(p.startsWith("folio-assistant-core/glossary/generated/")).toBe(true);
+    for (const p of gen) {
+      expect(p).toMatch(/\/glossary\/generated\/[^/]+\/[^/]+\.glossary\.json$/);
+      expect(c.declaring).toContain(p.split("/")[0]!);
+    }
     for (const s of c.glossaries.filter((x) => !x.extracted)) expect(gen).not.toContain(s.file);
     // `outputs` over the whole corpus: measured 5.3-5.8 s on 2026-10-09,
     // over bun's 5 s default. A corpus budget, as above, not a hang guard.
