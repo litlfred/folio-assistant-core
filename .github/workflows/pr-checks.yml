@@ -4,6 +4,9 @@
 name: PR checks
 on:
   pull_request:
+    # Draft PRs run only the fast tier (bean dft1, cat-harness-tools#616);
+    # ready_for_review re-runs the full tier the moment a PR is marked ready.
+    types: [opened, synchronize, reopened, ready_for_review]
   # main's own run keeps main's answer, the gate seconds and the cone records
   # in caches every PR can read (cat-harness-tools#406, #411); a run on a PR
   # can only read caches saved from its own PR or from main.
@@ -15,3 +18,6 @@ permissions:
 jobs:
   checks:
     uses: litlfred/cat-harness-tools/.github/workflows/layer-pr-checks.yml@main
+    with:
+      # On a draft PR: prepare and typecheck only; the full tier runs on ready_for_review.
+      draft-fast-tier: true
