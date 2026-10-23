@@ -1,7 +1,56 @@
 {
   "_comment": "Role EXTENSIONS by id (placement PR0b; PR1, bean ybwt). Each entry adds this instance's skills to a role the harness declares, so the edge points DOWN: the harness's scenarios/roles.json names no skill that lives above it. An extension adds skills and nothing else; a role this instance owns outright would go in `roles` (placement PR4 moves whole roles). Schema: cat-harness/schemas/role-graph.ts (RoleExtensionSchema); overlay: cat-harness/schemas/scenario-overlay.ts.",
   "name": "folio-assistant-core",
-  "roles": [],
+  "roles": [
+    {
+      "id": "deep-researcher",
+      "title": "Deep researcher",
+      "description": "Answers a question FROM a corpus already held, and is answerable for the answer. Distinct from `librarian`, which decides what to capture, and from `ingestion-agent`, which derives structure from what was captured: both produce the corpus, and this role consumes it. Added 2026-09-23 with the `doc-researcher` methodology, because the accountability it names — somebody who must stand behind a synthesis and its citations — belonged to no declared role. THE LANE IT BINDS IS DRAWN IN ANOTHER INSTANCE — the `Deep researcher` lane of `folio-assistant-core/processes/library/deep-document-research.bpmn`, which names this role with `<folio:role ref>`. It carried a `lanes[]` here for about an hour on 2026-09-23 before #1168 landed and inverted the relation: a lane names its role, and a role does not list its lanes, because a general node never names its users. The binding is therefore stated once, on the lane, and this role says nothing about where it is drawn.",
+      "actorKinds": [
+        "person",
+        "agent"
+      ],
+      "skills": [
+        "deep-document-research"
+      ],
+      "persona": "Stops on a stated condition rather than on a feeling of having read enough. Treats 'I did not find it' and 'it is not there' as different answers, and says which one it has.",
+      "requiredCapabilities": {
+        "reasoning_tier": "high",
+        "tool_use": true,
+        "context_window": 64000
+      }
+    },
+    {
+      "id": "evidence-agent",
+      "title": "Evidence agent",
+      "description": "Retrieves and appraises external evidence for a guideline claim.",
+      "actorKinds": [
+        "agent"
+      ],
+      "skills": [
+        "document-intake"
+      ],
+      "persona": "Searches trusted sources and appraises what comes back. Its value is in what it REJECTS, so it must be able to say why a source was not used."
+    },
+    {
+      "id": "onboarding-agent",
+      "title": "Onboarding agent",
+      "description": "The authoring agent acting before there is a folio: clarifying what the user means by \"create a folio\", scanning an existing repo, and scaffolding.",
+      "actorKinds": [
+        "agent"
+      ],
+      "inherits": [
+        "authoring-agent"
+      ],
+      "skills": [
+        "getting-started",
+        "interaction-modality",
+        "repo-conversion",
+        "document-intake"
+      ],
+      "persona": "Meets a repository it has never seen and must orient before acting. Will follow the first plausible convention it finds, so the earliest instruction it reads matters most."
+    }
+  ],
   "extensions": [
     {
       "role": "reviewer",
@@ -24,12 +73,6 @@
       ]
     },
     {
-      "role": "onboarding-agent",
-      "skills": [
-        "document-intake"
-      ]
-    },
-    {
       "role": "ingestion-agent",
       "skills": [
         "document-intake",
@@ -45,12 +88,6 @@
         "archiving-arxiv",
         "l1-document-ingestion",
         "dublin-core-renderings"
-      ]
-    },
-    {
-      "role": "evidence-agent",
-      "skills": [
-        "document-intake"
       ]
     },
     {
