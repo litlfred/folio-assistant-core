@@ -70,7 +70,7 @@
         },
         {
           "label": "Processes",
-          "href": "/process/publication-workflow.html",
+          "href": "/folio-assistant-core/process/publication-workflow.html",
           "note": "The BPMN diagrams, which are the source of truth rather than a picture of it."
         },
         {
@@ -80,7 +80,7 @@
         },
         {
           "label": "Acquisition",
-          "href": "/guides/document-ingestion.html",
+          "href": "/folio-assistant-core/guides/document-ingestion.html",
           "note": "How a source gets from uploads/ into library/."
         },
         {
