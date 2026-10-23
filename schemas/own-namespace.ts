@@ -4,7 +4,7 @@
  * Until folio-assistant#2598 (owner, 2026-10-16, "2a" and "1a") the harness
  * listed them in its `own-namespaces` code list and named this layer to do it.
  * A lower layer may not name a higher one, so the content layer registers its
- * own: `<iriBase><version>/ns#` from `folio-assistant-core.json`, by the one
+ * own: `<iriBase>v<major>/ns#` from `folio-assistant-core.json`, by the one
  * rule every instance's namespace follows (`instanceNamespaceOf` in the
  * harness's `schemas/namespaces.ts`). The IRIs are byte-identical to the ones
  * the code list held, which `own-namespace.test.ts` pins.

@@ -150,7 +150,7 @@ describe("this repository", () => {
     // read through it, as every other instance's is below.
     const decl = readDeclaration(join(REPO_ROOT_FOR_NS, "folio-assistant-core"))!;
     expect(core.ns).toBe(instanceNs(decl.name, decl.stub, decl));
-    expect(core.ns).toBe("https://litlfred.github.io/folio-assistant-core/0.1.0/ns#");
+    expect(core.ns).toBe("https://litlfred.github.io/folio-assistant-core/v0/ns#");
   });
 
   test("the page lists every term once, and SKOS is published for every scheme", () => {
