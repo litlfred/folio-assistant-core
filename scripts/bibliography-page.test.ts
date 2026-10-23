@@ -116,11 +116,51 @@ describe("pages and exports", () => {
   const files = outputs(c);
   const paths = [...files.keys()].map((p) => p.split("/").slice(-3).join("/"));
 
-  test("one page with four exports for the whole KG, and for each sub-graph", () => {
+  test("one page with five exports for the whole KG, and for each sub-graph", () => {
     for (const where of ["bibliography", "folio-x-references", "iris-x-catalogue"]) {
       for (const f of ["index.md", ...EXPORTS.map(([n]) => n)]) expect(paths.some((p) => p.endsWith(`${where}/${f}`))).toBe(true);
     }
-    expect(files.size).toBe(3 * 5);
+    expect(EXPORTS.map(([n]) => n)).toEqual([
+      "references.bib",
+      "references.csl.json",
+      "references.ris",
+      "references.dc.xml",
+      "references.jsonld",
+    ]);
+    expect(files.size).toBe(3 * (1 + EXPORTS.length));
+  });
+
+  test("per-asset route (<route>/<sub-graph>/<asset>/) exports a library item and references extracted from it", () => {
+    const withLib = collect(
+      checkout((root) => {
+        put(join(root, "iris-x"), "library/knot-paper/manifest.jsonld", {
+          docId: "knot-paper",
+          title: "A Knot Paper in the Library",
+          sourceUrl: "https://arxiv.org/abs/2401.00001",
+          ingestedAt: "2024-01-15T00:00:00Z",
+        });
+        put(join(root, "folio-x"), "references/extracted1999.json", {
+          $schema: "folio-reference/v1",
+          id: "extracted1999",
+          type: "article-journal",
+          title: "An Extracted Citation",
+          author: [{ family: "Thurston", given: "William" }],
+          issued: { "date-parts": [[1999]] },
+          provenance: "extracted",
+          derivedFrom: "iris-x/library/knot-paper/sections/references.md",
+        });
+      }),
+    );
+    expect(withLib.assets.map((a) => [a.subgraph, a.asset, a.entries.map((e) => e.ref.id)])).toEqual([
+      ["iris-x-library", "knot-paper", ["knot-paper", "extracted1999"]],
+    ]);
+    const libFiles = outputs(withLib);
+    const assetPage = [...libFiles].find(([p]) => p.endsWith("iris-x-library/knot-paper/index.md"))?.[1];
+    const assetDcXml = [...libFiles].find(([p]) => p.endsWith("iris-x-library/knot-paper/references.dc.xml"))?.[1];
+    expect(assetPage).toContain("A Knot Paper in the Library");
+    expect(assetPage).toContain("An Extracted Citation");
+    expect(assetDcXml).toContain("A Knot Paper in the Library");
+    expect(assetDcXml).toContain("An Extracted Citation");
   });
 
   test("a sub-graph page holds its sub-graph's references only, and its exports match", () => {

@@ -61,10 +61,12 @@ import { DublinCoreRecordSchema } from "../schemas/dublin-core.ts";
 import {
   ReferenceNodeSchema,
   dublinCoreToReference,
+  libraryItemToReference,
   nameText,
   referenceAnchor,
   toBibtex,
   toCslJson,
+  toDublinCoreXml,
   toJsonLdGraph,
   toRis,
   yearOf,
@@ -98,10 +100,25 @@ export interface Entry {
   file: string;
 }
 
+export interface AssetView {
+  /** The sub-graph id (`<route>/<subgraph>/<asset>/`). */
+  subgraph: string;
+  /** The asset slug within the sub-graph. */
+  asset: string;
+  /** Instance name. */
+  instance: string;
+  /** Repo-relative path of the asset directory or file. */
+  path: string;
+  /** The asset's own reference (when any) plus references derived from or extracted from it. */
+  entries: Entry[];
+}
+
 export interface Collected {
   entries: Entry[];
   /** Every sub-graph that was scanned, with its instance, so an empty one is still listed. */
-  subgraphs: { id: string; instance: string; kind: "references" | "catalogue"; path: string }[];
+  subgraphs: { id: string; instance: string; kind: "references" | "catalogue" | "library"; path: string }[];
+  /** Per-asset bibliography views (`<route>/<sub-graph>/<asset>/`). */
+  assets: AssetView[];
   invalid: string[];
 }
 
@@ -130,15 +147,28 @@ export function heldCopies(instanceRoot: string, catalogueDir: string): Map<stri
 
 /** Every reference in the checkout. */
 export function collect(repo: string = REPO): Collected {
-  const out: Collected = { entries: [], subgraphs: [], invalid: [] };
+  const out: Collected = { entries: [], subgraphs: [], assets: [], invalid: [] };
+  const rawLibraryAssets: { subgraph: string; asset: string; instance: string; path: string; ownEntry: Entry }[] = [];
   for (const root of instanceRootsIn(repo)) {
     const decl = readDeclaration(root);
     if (!decl) continue;
     const dirs = resolveDirectories([{ name: decl.name, root, own: true }]).filter((d) => d.own);
+    const heldByCatalogue = new Set<string>();
+    for (const d of dirs) {
+      if (existsSync(d.absPath) && (d.graphTypologies ?? []).includes("catalogue")) {
+        for (const heldPath of heldCopies(root, d.absPath).values()) {
+          heldByCatalogue.add(heldPath);
+        }
+      }
+    }
     for (const d of dirs) {
       if (!existsSync(d.absPath)) continue;
       const kinds = d.graphTypologies ?? [];
-      const push = (ref: ReferenceNode, file: string) => out.entries.push({ ref, instance: decl.name, subgraph: d.id, file });
+      const push = (ref: ReferenceNode, file: string): Entry => {
+        const entry: Entry = { ref, instance: decl.name, subgraph: d.id, file };
+        out.entries.push(entry);
+        return entry;
+      };
       if (kinds.includes("references")) {
         out.subgraphs.push({ id: d.id, instance: decl.name, kind: "references", path: rel(repo, d.absPath) });
         for (const f of readdirSync(d.absPath).filter((f) => f.endsWith(".json")).sort()) {
@@ -187,6 +217,31 @@ export function collect(repo: string = REPO): Collected {
           }
         }
       }
+      if (kinds.includes("library")) {
+        const subdirs = readdirSync(d.absPath, { withFileTypes: true })
+          .filter((e) => e.isDirectory())
+          .map((e) => e.name)
+          .sort();
+        const standaloneAssets = subdirs.filter((slug) => {
+          const assetDir = join(d.absPath, slug);
+          return existsSync(join(assetDir, "manifest.jsonld")) && !heldByCatalogue.has(assetDir);
+        });
+        if (standaloneAssets.length > 0) {
+          out.subgraphs.push({ id: d.id, instance: decl.name, kind: "library", path: rel(repo, d.absPath) });
+          for (const slug of standaloneAssets) {
+            const assetDir = join(d.absPath, slug);
+            const manifestRel = rel(repo, join(assetDir, "manifest.jsonld"));
+            const assetRel = rel(repo, assetDir);
+            try {
+              const ref = libraryItemToReference(assetDir, { key: slug, derivedFrom: manifestRel, heldAt: assetRel });
+              const ownEntry = push(ref, manifestRel);
+              rawLibraryAssets.push({ subgraph: d.id, asset: slug, instance: decl.name, path: assetRel, ownEntry });
+            } catch (e) {
+              out.invalid.push(`${manifestRel}: ${e instanceof Error ? e.message : String(e)}`);
+            }
+          }
+        }
+      }
     }
   }
   // A key is the citation's whole identity within its sub-graph.
@@ -199,6 +254,27 @@ export function collect(repo: string = REPO): Collected {
   }
   out.entries.sort(byCitation);
   out.subgraphs.sort((a, b) => a.id.localeCompare(b.id, "en"));
+
+  // Build per-asset bibliography views (`<route>/<sub-graph>/<asset>/`):
+  // each standalone library asset holds its own reference plus any references
+  // extracted or derived from that asset.
+  for (const la of rawLibraryAssets) {
+    const extracted = out.entries.filter(
+      (e) =>
+        e !== la.ownEntry &&
+        ((e.ref.derivedFrom !== undefined && (e.ref.derivedFrom === la.path || e.ref.derivedFrom.startsWith(`${la.path}/`))) ||
+          (e.ref.heldAt !== undefined && (e.ref.heldAt === la.path || e.ref.heldAt.startsWith(`${la.path}/`)))),
+    );
+    const assetEntries = [la.ownEntry, ...extracted].sort(byCitation);
+    out.assets.push({
+      subgraph: la.subgraph,
+      asset: la.asset,
+      instance: la.instance,
+      path: la.path,
+      entries: assetEntries,
+    });
+  }
+  out.assets.sort((a, b) => a.subgraph.localeCompare(b.subgraph, "en") || a.asset.localeCompare(b.asset, "en"));
   return out;
 }
 
@@ -260,7 +336,7 @@ export function entryHtml(e: Entry): string {
   return `<li id="${id}" data-fa-bib="${esc([r.id, r.title ?? "", ...(r.author ?? []).map(nameText), yearOf(r) ?? ""].join(" "))}">
 ${citationHtml(r)}<br>
 <small><a href="#${id}"><code>${esc(r.id)}</code></a> · ${esc(r.provenance ?? "authored")} · ${linksHtml(e)}<br>
-export: ${dl("BibTeX", toBibtex([r]), "application/x-bibtex", "bib")} · ${dl("RIS", toRis([r]), "application/x-research-info-systems", "ris")} · ${dl("CSL-JSON", toCslJson([r]), "application/vnd.citationstyles.csl+json", "csl.json")}</small>
+export: ${dl("BibTeX", toBibtex([r]), "application/x-bibtex", "bib")} · ${dl("RIS", toRis([r]), "application/x-research-info-systems", "ris")} · ${dl("CSL-JSON", toCslJson([r]), "application/vnd.citationstyles.csl+json", "csl.json")} · ${dl("DC XML", toDublinCoreXml([r]), "application/xml", "dc.xml")}</small>
 </li>`;
 }
 
@@ -276,6 +352,7 @@ export const EXPORTS = [
   ["references.bib", "BibTeX", toBibtex],
   ["references.csl.json", "CSL-JSON", toCslJson],
   ["references.ris", "RIS", toRis],
+  ["references.dc.xml", "Dublin Core XML", toDublinCoreXml],
   ["references.jsonld", "Dublin Core / BIBO JSON-LD", toJsonLdGraph],
 ] as const;
 
@@ -330,7 +407,7 @@ export function outputs(c: Collected): Map<string, string> {
       title: "Bibliography",
       permalink: `/${ROUTE}/`,
       intro:
-        "Every reference in the knowledge graph: the bibliographies folios declare (`references` directories, one `folio-reference/v1` node each) and the Dublin Core records of catalogues (`catalogue` directories), as one list. Each reference sits at `references/<key>`, the IRI a `\\cite{key}` resolves to.",
+        "Every reference in the knowledge graph: the bibliographies folios declare (`references` directories, one `folio-reference/v1` node each), the Dublin Core records of catalogues (`catalogue` directories), and the ingested items of libraries (`library` directories), as one list. Each reference sits at `references/<key>`, the IRI a `\\cite{key}` resolves to.",
       entries: c.entries,
       nav,
     }),
@@ -338,6 +415,10 @@ export function outputs(c: Collected): Map<string, string> {
   );
   for (const s of c.subgraphs) {
     const entries = c.entries.filter((e) => e.subgraph === s.id);
+    const subAssets = (c.assets ?? []).filter((a) => a.subgraph === s.id);
+    const assetNav = subAssets.length
+      ? `**By asset:** ${subAssets.map((a) => `<a href="${a.asset}/">${a.asset}</a> (${a.entries.length})`).join(" · ")}`
+      : undefined;
     write(
       join(ROOT, s.id),
       renderPage({
@@ -345,8 +426,21 @@ export function outputs(c: Collected): Map<string, string> {
         permalink: `/${ROUTE}/${s.id}/`,
         intro: `The references of \`${s.path}/\` (${s.instance}, a \`${s.kind}\` directory). [All references](../).`,
         entries,
+        nav: assetNav,
       }),
       entries,
+    );
+  }
+  for (const a of c.assets ?? []) {
+    write(
+      join(ROOT, a.subgraph, a.asset),
+      renderPage({
+        title: `Bibliography: ${a.subgraph}/${a.asset}`,
+        permalink: `/${ROUTE}/${a.subgraph}/${a.asset}/`,
+        intro: `The reference for \`${a.path}\` (${a.instance}) and any references extracted from it. [${a.subgraph}](../) · [All references](../../).`,
+        entries: a.entries,
+      }),
+      a.entries,
     );
   }
   return out;

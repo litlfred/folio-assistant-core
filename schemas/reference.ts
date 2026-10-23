@@ -46,12 +46,31 @@
  * @conformsTo purl-bibo
  * @conformsTo spar-fabio
  */
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { basename, join } from "node:path";
 import { z } from "zod";
 import { nodeKind } from "@litlfred/cat-harness/schemas/node-kind.ts";
-
+import { readStructure } from "@litlfred/cat-harness/schemas/document-structure.ts";
 import { FOLIO_BASE, resolveReferenceKey } from "@litlfred/cat-harness/schemas/jsonld.ts";
 import { cslToBibtex } from "@litlfred/cat-harness-tools/pipeline/bibtex-format.ts";
-import { dcValues, type DublinCoreRecord } from "./dublin-core.ts";
+import {
+  authorNames,
+  issuedYear,
+  referenceDirs,
+  referenceEntries,
+  stringField,
+  type ReferenceEntry,
+} from "@litlfred/cat-harness-tools/pipeline/reference-entries.ts";
+import {
+  DC_ELEMENTS_NS,
+  DCTERMS_NS,
+  DSPACE_NS,
+  DUBLIN_CORE_SCHEMA_TAG,
+  dcValues,
+  type DcField,
+  type DublinCoreRecord,
+} from "./dublin-core.ts";
+import { XSI_NS, renderDcXml } from "./dublin-core-render.ts";
 
 export const REFERENCE_SCHEMA_TAG = "folio-reference/v1" as const;
 
@@ -373,4 +392,294 @@ export function toJsonLdGraph(refs: readonly ReferenceNode[]): string {
     return rest;
   });
   return `${JSON.stringify({ "@context": REFERENCE_CONTEXT, "@graph": graph }, null, 2)}\n`;
+}
+
+// ── Reference → Dublin Core XML (via 7eak's renderDcXml) ─────────────────────
+
+/**
+ * Convert a {@link ReferenceNode} to a {@link DublinCoreRecord} so it can be
+ * rendered through `7eak`'s {@link renderDcXml}.
+ */
+export function referenceToDublinCoreRecord(ref: ReferenceNode): DublinCoreRecord {
+  const fields: DcField[] = [];
+  const lang = ref.language;
+  const push = (element: string, qualifier: string | undefined, values: (string | undefined)[], tagged = false) => {
+    const clean = values.map((v) => v?.trim()).filter((v): v is string => !!v);
+    if (!clean.length) return;
+    fields.push({
+      schema: "dc",
+      element,
+      ...(qualifier ? { qualifier } : {}),
+      values: clean.map((value) => (tagged && lang ? { value, language: lang } : { value })),
+    });
+  };
+  push("title", undefined, [ref.title ?? ref.id], true);
+  push("contributor", "author", (ref.author ?? []).map(nameText));
+  push("contributor", undefined, (ref.editor ?? []).map(nameText));
+  push("date", "issued", [dateText(ref)]);
+  push("publisher", undefined, [ref.publisher]);
+  push("relation", undefined, [ref["container-title"]]);
+  push("identifier", "doi", [ref.DOI]);
+  push("identifier", "isbn", [ref.ISBN]);
+  push("identifier", "uri", [ref.URL ?? (ref.DOI ? `https://doi.org/${ref.DOI}` : undefined)]);
+  push("language", "iso", [ref.language]);
+  push("description", "abstract", [ref.abstract], true);
+  push("type", undefined, [ref.type]);
+  return {
+    $schema: DUBLIN_CORE_SCHEMA_TAG,
+    id: ref.id,
+    fields,
+    provenance: {
+      source: ref.derivedFrom ?? referenceIri(ref.id),
+      retrievedAt: dateText(ref) ?? "1970-01-01",
+      method: ref.provenance ?? "authored",
+    },
+  };
+}
+
+/**
+ * Dublin Core XML export (`references.dc.xml`), reusing `7eak`'s
+ * {@link renderDcXml}. A single reference renders as one `<metadata>` document;
+ * multiple references render as `<records>` wrapping each record's `<metadata>`.
+ */
+export function toDublinCoreXml(refs: readonly ReferenceNode[]): string {
+  if (refs.length === 1) return renderDcXml(referenceToDublinCoreRecord(refs[0]!));
+  const body = refs
+    .map((r) => {
+      const xml = renderDcXml(referenceToDublinCoreRecord(r))
+        .replace(/^<\?xml[^?]*\?>\n/, "")
+        .trimEnd();
+      return xml
+        .split("\n")
+        .map((line) => `  ${line}`)
+        .join("\n");
+    })
+    .join("\n");
+  const head = [
+    `<?xml version="1.0" encoding="UTF-8"?>`,
+    `<records xmlns="${DSPACE_NS}"`,
+    `    xmlns:dc="${DC_ELEMENTS_NS}"`,
+    `    xmlns:dcterms="${DCTERMS_NS}"`,
+    `    xmlns:xsi="${XSI_NS}">`,
+  ];
+  return `${[...head, ...(body ? [body] : []), "</records>"].join("\n")}\n`;
+}
+
+// ── Library items → Reference nodes ──────────────────────────────────────────
+
+const ORG_KEYWORDS = /\b(organization|organisation|institute|university|consortium|commission|committee|ministry|department|agency|association|council|society|group|collaboration|foundation|press|bureau|center|centre)\b/i;
+
+function oneAuthorToCslName(part: string): CslName {
+  const s = part.trim().replace(/\s+/g, " ");
+  if (!s) return { literal: s };
+  if (ORG_KEYWORDS.test(s)) return { literal: s };
+  if (s.includes(",")) return dcCreatorToName(s);
+  const tokens = s.split(" ");
+  if (tokens.length === 1) return { family: tokens[0]! };
+  const family = tokens[tokens.length - 1]!;
+  const given = tokens.slice(0, -1).join(" ");
+  return { family, given };
+}
+
+/**
+ * Parse an `authors_raw` string (from library document structure or PDF
+ * `docinfo.Author`) into CSL-JSON author objects.
+ */
+export function authorsRawToNames(raw: string): CslName[] {
+  const cleaned = raw.trim();
+  if (!cleaned) return [];
+  if (ORG_KEYWORDS.test(cleaned) && !cleaned.includes(";") && !/\band\b/i.test(cleaned)) {
+    return [{ literal: cleaned }];
+  }
+  const chunks = cleaned.includes(";")
+    ? cleaned.split(";")
+    : /,/.test(cleaned) && !/\band\b/i.test(cleaned) && cleaned.split(",").length > 2
+      ? cleaned.split(",")
+      : cleaned.split(/\s*,?\s+\band\b\s+|\s*&\s*/i);
+  const out: CslName[] = [];
+  for (const chunk of chunks) {
+    // Handle "A. Einstein, B. Podolsky" before the final "and N. Rosen"
+    if (!cleaned.includes(";") && chunk.includes(",") && /\b[A-Z]\.\s*[A-Z]/.test(chunk)) {
+      for (const sub of chunk.split(",")) {
+        const t = sub.trim();
+        if (t) out.push(oneAuthorToCslName(t));
+      }
+    } else {
+      const t = chunk.trim();
+      if (t) out.push(oneAuthorToCslName(t));
+    }
+  }
+  return out;
+}
+
+/**
+ * Project a library item directory (`library/<slug>/manifest.jsonld` +
+ * document structure metadata) to a {@link ReferenceNode} with
+ * `provenance: "library"`.
+ */
+export function libraryItemToReference(
+  entryDir: string,
+  opts: { key?: string; derivedFrom?: string; heldAt?: string } = {},
+): ReferenceNode {
+  const manifestPath = join(entryDir, "manifest.jsonld");
+  let manifest: Record<string, unknown> = {};
+  if (existsSync(manifestPath)) {
+    try {
+      manifest = JSON.parse(readFileSync(manifestPath, "utf-8")) as Record<string, unknown>;
+    } catch {
+      manifest = {};
+    }
+  }
+  const structRes = readStructure(entryDir);
+  const structure = "reason" in structRes ? undefined : structRes;
+  const meta = (structure?.raw.metadata ?? {}) as {
+    title?: string | null;
+    title_correction?: { title?: string };
+    authors_raw?: string | null;
+    abstract?: string | null;
+    doi?: string | null;
+    arxiv?: string | { id?: string | null; date?: string | null } | null;
+    docinfo?: Record<string, unknown>;
+  };
+  const docinfo = (meta.docinfo ?? {}) as Record<string, unknown>;
+  const docinfoStr = (k: string): string | undefined =>
+    typeof docinfo[k] === "string" && (docinfo[k] as string).trim() ? (docinfo[k] as string).trim() : undefined;
+
+  const rawKey =
+    opts.key ??
+    (typeof manifest.docId === "string" && manifest.docId.trim()
+      ? manifest.docId.trim()
+      : structure?.doc_id?.trim() || basename(entryDir));
+  const key = rawKey.replace(/[^A-Za-z0-9._:+-]/g, "-").replace(/^[^A-Za-z0-9]+/, "") || "library-item";
+
+  const title =
+    (meta.title_correction?.title?.trim() || undefined) ??
+    (structure?.title?.trim() || undefined) ??
+    (typeof manifest.title === "string" && manifest.title.trim() ? manifest.title.trim() : undefined) ??
+    (typeof manifest["dcterms:title"] === "string" && (manifest["dcterms:title"] as string).trim()
+      ? (manifest["dcterms:title"] as string).trim()
+      : undefined) ??
+    docinfoStr("Title");
+
+  const authorsRaw = (typeof meta.authors_raw === "string" ? meta.authors_raw.trim() : "") || docinfoStr("Author") || "";
+  const author = authorsRaw ? authorsRawToNames(authorsRaw) : undefined;
+
+  const doi = typeof meta.doi === "string" && meta.doi.trim() ? meta.doi.trim() : undefined;
+  const arxivObj = meta.arxiv;
+  const arxivId =
+    typeof arxivObj === "string"
+      ? arxivObj.trim() || undefined
+      : typeof arxivObj?.id === "string" && arxivObj.id.trim()
+        ? arxivObj.id.trim()
+        : undefined;
+  const arxivDate =
+    typeof arxivObj === "object" && arxivObj !== null && typeof arxivObj.date === "string" && arxivObj.date.trim()
+      ? arxivObj.date.trim()
+      : undefined;
+  const sourceUrl =
+    (typeof manifest.sourceUrl === "string" && manifest.sourceUrl.trim() ? manifest.sourceUrl.trim() : undefined) ??
+    (arxivId ? `https://arxiv.org/abs/${arxivId}` : undefined) ??
+    (doi ? `https://doi.org/${doi}` : undefined);
+
+  const dateCandidate =
+    arxivDate ||
+    docinfoStr("CreationDate")?.slice(0, 10) ||
+    (typeof manifest.ingestedAt === "string" ? manifest.ingestedAt.slice(0, 10) : undefined) ||
+    (/\b((?:19|20)\d{2})\b/.exec(key)?.[1] ?? undefined);
+
+  const ref: ReferenceNode = {
+    $schema: REFERENCE_SCHEMA_TAG,
+    id: key,
+    type: arxivId || doi ? "article-journal" : "document",
+    provenance: "library",
+  };
+  if (title) ref.title = title;
+  if (author?.length) ref.author = author;
+  if (dateCandidate) ref.issued = dcDateToCsl(dateCandidate);
+  if (doi) ref.DOI = doi;
+  if (sourceUrl) ref.URL = sourceUrl;
+  if (typeof meta.abstract === "string" && meta.abstract.trim()) ref.abstract = meta.abstract.trim();
+  if (arxivId) (ref as Record<string, unknown>).note = `arXiv:${arxivId}`;
+  if (opts.derivedFrom) ref.derivedFrom = opts.derivedFrom;
+  if (opts.heldAt) ref.heldAt = opts.heldAt;
+  return ReferenceNodeSchema.parse(ref);
+}
+
+// ── gen-reference-jsonld: CSL-JSON → references/<key>.jsonld ─────────────────
+
+/**
+ * Convert a {@link ReferenceEntry} (from a `.json` file or `schema/references.ts`
+ * `ref({…})` call) to a validated {@link ReferenceNode}.
+ */
+export function referenceEntryToNode(entry: ReferenceEntry): ReferenceNode {
+  if (entry.kind === "file") {
+    const raw = { ...entry.data };
+    if (!raw.$schema) raw.$schema = REFERENCE_SCHEMA_TAG;
+    if (!raw.type) raw.type = "document";
+    return ReferenceNodeSchema.parse(raw);
+  }
+  const type = stringField(entry, "type") ?? "article";
+  const title = stringField(entry, "title");
+  const containerTitle = stringField(entry, "container-title");
+  const publisher = stringField(entry, "publisher");
+  const volume = stringField(entry, "volume");
+  const issue = stringField(entry, "issue");
+  const page = stringField(entry, "page");
+  const DOI = stringField(entry, "DOI");
+  const ISBN = stringField(entry, "ISBN");
+  const URL = stringField(entry, "URL");
+  const note = stringField(entry, "note");
+  const year = issuedYear(entry);
+  const fams = authorNames(entry);
+  const ref: Record<string, unknown> = {
+    $schema: REFERENCE_SCHEMA_TAG,
+    id: entry.id,
+    type,
+    provenance: "authored",
+  };
+  if (title) ref.title = title;
+  if (fams.length) ref.author = fams.map((f) => ({ family: f }));
+  if (year) ref.issued = { "date-parts": [[Number(year)]] };
+  if (containerTitle) ref["container-title"] = containerTitle;
+  if (publisher) ref.publisher = publisher;
+  if (volume) ref.volume = volume;
+  if (issue) ref.issue = issue;
+  if (page) ref.page = page;
+  if (DOI) ref.DOI = DOI;
+  if (ISBN) ref.ISBN = ISBN;
+  if (URL) ref.URL = URL;
+  if (note) ref.note = note;
+  return ReferenceNodeSchema.parse(ref);
+}
+
+/**
+ * Generate (or check with `{ check: true }`) `references/<key>.jsonld` files
+ * from a folio's CSL-JSON bibliography (per-entry `references/<key>.json` files
+ * and/or `<folio>/schema/references.ts`).
+ */
+export function genReferenceJsonLd(
+  repoRoot: string,
+  opts: { outDir?: string; check?: boolean } = {},
+): { written: string[]; stale: string[] } {
+  const entries = referenceEntries(repoRoot).filter((e) => !e.file.endsWith(".jsonld"));
+  const targetDir = opts.outDir ?? referenceDirs(repoRoot)[0] ?? join(repoRoot, "references");
+  const written: string[] = [];
+  const stale: string[] = [];
+  if (!opts.check && entries.length > 0) {
+    mkdirSync(targetDir, { recursive: true });
+  }
+  for (const e of entries) {
+    const node = referenceEntryToNode(e);
+    const jsonld = `${JSON.stringify(referenceToJsonLd(node), null, 2)}\n`;
+    const outPath = join(targetDir, `${node.id}.jsonld`);
+    if (opts.check) {
+      if (!existsSync(outPath) || readFileSync(outPath, "utf-8") !== jsonld) {
+        stale.push(outPath);
+      }
+    } else {
+      writeFileSync(outPath, jsonld);
+      written.push(outPath);
+    }
+  }
+  return { written, stale };
 }

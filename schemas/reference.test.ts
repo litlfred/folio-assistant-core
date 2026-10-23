@@ -7,23 +7,29 @@
  * the projection reads; the CSL fixtures are entries of qou's `references.ts`.
  */
 import { describe, expect, test } from "bun:test";
-import { readFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { FOLIO_BASE } from "@litlfred/cat-harness/schemas/jsonld.ts";
+import { STRUCTURE_FILENAME } from "@litlfred/cat-harness/schemas/document-structure.ts";
 import { DublinCoreRecordSchema } from "./dublin-core.ts";
 import {
   REFERENCE_CONTEXT,
   REFERENCE_SCHEMA_TAG,
   ReferenceNodeSchema,
+  authorsRawToNames,
   dcCreatorToName,
   dcDateToCsl,
   dublinCoreToReference,
+  genReferenceJsonLd,
+  libraryItemToReference,
   referenceIri,
   referenceToJsonLd,
   toBibtex,
   toCslItem,
   toCslJson,
+  toDublinCoreXml,
   toJsonLdGraph,
   toRis,
   yearOf,
@@ -191,10 +197,109 @@ describe("exports", () => {
     expect(g["@graph"].every((n) => !("@context" in n))).toBe(true);
   });
 
+  test("Dublin Core XML: reuses 7eak renderDcXml for single and multi-record sets", () => {
+    const singleXml = toDublinCoreXml([garoufalidis2004]);
+    expect(singleXml).toContain("<dcterms:title>On the characteristic and deformation varieties of a knot</dcterms:title>");
+    expect(singleXml).toContain("<dcterms:creator>Garoufalidis, Stavros</dcterms:creator>");
+    expect(singleXml).toContain("10.2140/gtm.2004.7.291");
+
+    const multiXml = toDublinCoreXml(refs);
+    expect(multiXml).toContain("<records ");
+    expect(multiXml).toContain("WHO handbook for guideline development");
+    expect(multiXml).toContain("On the characteristic and deformation varieties of a knot");
+  });
+
   test("an empty set exports empty", () => {
     expect(toBibtex([])).toBe("");
     expect(toRis([])).toBe("");
     expect(JSON.parse(toCslJson([]))).toEqual([]);
+    expect(toDublinCoreXml([])).toContain("</records>");
+  });
+});
+
+describe("library items and genReferenceJsonLd", () => {
+  test("authorsRawToNames parses authors_raw strings into CSL names", () => {
+    expect(authorsRawToNames("Stavros Garoufalidis and Thang T. Q. Lê")).toEqual([
+      { family: "Garoufalidis", given: "Stavros" },
+      { family: "Lê", given: "Thang T. Q." },
+    ]);
+    expect(authorsRawToNames("World Health Organization")).toEqual([{ literal: "World Health Organization" }]);
+  });
+
+  test("libraryItemToReference projects manifest.jsonld + structure metadata into a library ReferenceNode", () => {
+    const tmp = mkdtempSync(join(tmpdir(), "lib-ref-"));
+    try {
+      const entryDir = join(tmp, "garoufalidis2004");
+      mkdirSync(entryDir, { recursive: true });
+      writeFileSync(
+        join(entryDir, "manifest.jsonld"),
+        JSON.stringify({
+          docId: "garoufalidis2004",
+          title: "Fallback title",
+          sourceUrl: "https://arxiv.org/abs/math/0306230",
+          ingestedAt: "2026-10-01T00:00:00Z",
+        }),
+      );
+      writeFileSync(
+        join(entryDir, STRUCTURE_FILENAME),
+        JSON.stringify({
+          _schema: "pdf-structure/v1",
+          doc_id: "garoufalidis2004",
+          source: {
+            file: "paper.pdf",
+            sha256: "a".repeat(64),
+            bytes: 12345,
+            mtime: "2026-10-01T00:00:00Z",
+            mimetype_sniffed: "application/pdf",
+            mimetype_source: "magic-bytes",
+            pages: 19,
+          },
+          metadata: {
+            title: "On the characteristic and deformation varieties of a knot",
+            docinfo: {},
+            authors_raw: "Stavros Garoufalidis",
+            abstract: "We study the characteristic variety of a knot.",
+            arxiv: { id: "math/0306230", category: "math.GT", date: "2004" },
+            doi: "10.2140/gtm.2004.7.291",
+          },
+          toc_source: "outline",
+          sections: [],
+        }),
+      );
+      const ref = libraryItemToReference(entryDir, {
+        derivedFrom: "library/garoufalidis2004/manifest.jsonld",
+        heldAt: "library/garoufalidis2004",
+      });
+      expect(ref.id).toBe("garoufalidis2004");
+      expect(ref.provenance).toBe("library");
+      expect(ref.title).toBe("On the characteristic and deformation varieties of a knot");
+      expect(ref.author).toEqual([{ family: "Garoufalidis", given: "Stavros" }]);
+      expect(ref.DOI).toBe("10.2140/gtm.2004.7.291");
+      expect(ref.URL).toBe("https://arxiv.org/abs/math/0306230");
+      expect(yearOf(ref)).toBe("2004");
+      expect(ref.derivedFrom).toBe("library/garoufalidis2004/manifest.jsonld");
+      expect(ref.heldAt).toBe("library/garoufalidis2004");
+    } finally {
+      rmSync(tmp, { recursive: true, force: true });
+    }
+  });
+
+  test("genReferenceJsonLd writes and checks references/<key>.jsonld from CSL-JSON entries", () => {
+    const tmp = mkdtempSync(join(tmpdir(), "gen-jsonld-"));
+    try {
+      const refsDir = join(tmp, "folio", "references");
+      mkdirSync(refsDir, { recursive: true });
+      writeFileSync(join(refsDir, "garoufalidis2004.json"), JSON.stringify(garoufalidis2004, null, 2));
+      expect(genReferenceJsonLd(tmp, { check: true }).stale).toHaveLength(1);
+      const res = genReferenceJsonLd(tmp);
+      expect(res.written).toEqual([join(refsDir, "garoufalidis2004.jsonld")]);
+      expect(genReferenceJsonLd(tmp, { check: true }).stale).toEqual([]);
+      const writtenLd = JSON.parse(readFileSync(join(refsDir, "garoufalidis2004.jsonld"), "utf-8")) as Record<string, unknown>;
+      expect(writtenLd["@id"]).toBe("references/garoufalidis2004");
+      expect(writtenLd["dcterms:title"]).toBe("On the characteristic and deformation varieties of a knot");
+    } finally {
+      rmSync(tmp, { recursive: true, force: true });
+    }
   });
 });
 
