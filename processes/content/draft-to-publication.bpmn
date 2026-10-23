@@ -57,6 +57,7 @@
         <bpmn:flowNodeRef>Task_OpenReleaseBean</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_OpenChangeBeans</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_CloseReleaseBeans</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_ArchiveReleaseBean</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Build" name="Corpus + build pipeline (system)" partitionElementRef="build-pipeline">
         <bpmn:documentation>Owns the one gate that decides whether the draft is fit to be circulated: Task_BuildDraft turns the corpus into a draft and the DMN-backed Gateway_QaGreen decides whether Task_CirculateDraft ever runs, so a red result here is caught before Lane_ReviewTeam or Lane_Sme spend time on a draft that was never fit to review.</bpmn:documentation>
@@ -239,8 +240,17 @@
       <bpmn:incoming>G19</bpmn:incoming>
       <bpmn:outgoing>G20</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:endEvent id="EndEvent_Published" name="Published officially">
+    <bpmn:task id="Task_ArchiveReleaseBean" name="Archive the release bean&#10;[todo-manager]">
+      <bpmn:documentation>Move the bean, now completed, into the archive, with a line saying which process closed it. A bean still open stays where it is with a note saying why: only a completed or scrapped bean may be archived (check:bean-archive). The periodic sweep still archives anything this step leaves.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <bootstrap.processes:skill ref="todo-manager"/>
+        <cat-harness.processes:bean op="archive"/>
+      </bpmn:extensionElements>
       <bpmn:incoming>G20</bpmn:incoming>
+      <bpmn:outgoing>G_Archive</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:endEvent id="EndEvent_Published" name="Published officially">
+      <bpmn:incoming>G_Archive</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:sequenceFlow id="G01" sourceRef="StartEvent_CorpusUpdated" targetRef="Task_OpenReleaseBean" />
     <bpmn:sequenceFlow id="G02" sourceRef="Task_OpenReleaseBean" targetRef="Gateway_BuildMerge" />
@@ -263,33 +273,34 @@
     <bpmn:sequenceFlow id="G17" sourceRef="Task_OpenChangeBeans" targetRef="CallActivity_Editing" />
     <bpmn:sequenceFlow id="G18" sourceRef="Task_AuthorizeRelease" targetRef="Task_PublishRelease" />
     <bpmn:sequenceFlow id="G19" sourceRef="Task_PublishRelease" targetRef="Task_CloseReleaseBeans" />
-    <bpmn:sequenceFlow id="G20" sourceRef="Task_CloseReleaseBeans" targetRef="EndEvent_Published" />
+    <bpmn:sequenceFlow id="G20" sourceRef="Task_CloseReleaseBeans" targetRef="Task_ArchiveReleaseBean" />
+    <bpmn:sequenceFlow id="G_Archive" sourceRef="Task_ArchiveReleaseBean" targetRef="EndEvent_Published"/>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_FolioPublication">
       <bpmndi:BPMNShape id="Participant_FolioPublication_di" bpmnElement="Participant_FolioPublication" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="2480" height="1200" />
+        <dc:Bounds x="160" y="80" width="2690" height="1200" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Editors_di" bpmnElement="Lane_Editors" isHorizontal="true">
-        <dc:Bounds x="190" y="80" width="2450" height="150" />
+        <dc:Bounds x="190" y="80" width="2660" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_WorkPlan_di" bpmnElement="Lane_WorkPlan" isHorizontal="true">
-        <dc:Bounds x="190" y="230" width="2450" height="150" />
+        <dc:Bounds x="190" y="230" width="2660" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Build_di" bpmnElement="Lane_Build" isHorizontal="true">
-        <dc:Bounds x="190" y="380" width="2450" height="150" />
+        <dc:Bounds x="190" y="380" width="2660" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_PubMgr_di" bpmnElement="Lane_PubMgr" isHorizontal="true">
-        <dc:Bounds x="190" y="530" width="2450" height="150" />
+        <dc:Bounds x="190" y="530" width="2660" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_ReviewTeam_di" bpmnElement="Lane_ReviewTeam" isHorizontal="true">
-        <dc:Bounds x="190" y="680" width="2450" height="150" />
+        <dc:Bounds x="190" y="680" width="2660" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Sme_di" bpmnElement="Lane_Sme" isHorizontal="true">
-        <dc:Bounds x="190" y="830" width="2450" height="150" />
+        <dc:Bounds x="190" y="830" width="2660" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_PublicReview_di" bpmnElement="Lane_PublicReview" isHorizontal="true">
-        <dc:Bounds x="190" y="980" width="2450" height="150" />
+        <dc:Bounds x="190" y="980" width="2660" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_PublicComment_di" bpmnElement="CallActivity_PublicComment">
         <dc:Bounds x="1495" y="1010" width="130" height="90" />
@@ -305,7 +316,7 @@
         <di:waypoint x="1720" y="630" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Lane_ProgMgr_di" bpmnElement="Lane_ProgMgr" isHorizontal="true">
-        <dc:Bounds x="190" y="1130" width="2450" height="150" />
+        <dc:Bounds x="190" y="1130" width="2660" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_CorpusUpdated_di" bpmnElement="StartEvent_CorpusUpdated">
         <dc:Bounds x="262" y="437" width="36" height="36" />
@@ -371,10 +382,13 @@
         <dc:Bounds x="2295" y="260" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Published_di" bpmnElement="EndEvent_Published">
-        <dc:Bounds x="2502" y="587" width="36" height="36" />
+        <dc:Bounds x="2712" y="587" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="2465" y="627" width="110" height="30" />
+          <dc:Bounds x="2675" y="627" width="110" height="30" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_ArchiveReleaseBean" bpmnElement="Task_ArchiveReleaseBean">
+        <dc:Bounds x="2505" y="260" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="G01_di" bpmnElement="G01">
         <di:waypoint x="298" y="455" />
@@ -483,8 +497,12 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="G20_di" bpmnElement="G20">
         <di:waypoint x="2425" y="305" />
-        <di:waypoint x="2520" y="305" />
-        <di:waypoint x="2520" y="587" />
+        <di:waypoint x="2505" y="305" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="G_Archive_di" bpmnElement="G_Archive">
+        <di:waypoint x="2635" y="305" />
+        <di:waypoint x="2730" y="305" />
+        <di:waypoint x="2730" y="587" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

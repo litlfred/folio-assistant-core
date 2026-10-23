@@ -135,6 +135,14 @@ How the corpus becomes an officially published folio: a draft publication, its r
 - Skill: `todo-manager`.
 - What: What shipped is resolved; what slipped stays open and carries into the next cycle.
 - Record it: `workflow_complete` with `node: "Task_CloseReleaseBeans"`.
+- next: → `Task_ArchiveReleaseBean` (Archive the release bean)
+
+### 13. Archive the release bean (`Task_ArchiveReleaseBean`)
+
+- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Skill: `todo-manager`.
+- What: Move the bean, now completed, into the archive, with a line saying which process closed it.
+- Record it: `workflow_complete` with `node: "Task_ArchiveReleaseBean"`.
 - next: → `EndEvent_Published` (Published officially)
 
 ## Done — Published officially (`EndEvent_Published`)
