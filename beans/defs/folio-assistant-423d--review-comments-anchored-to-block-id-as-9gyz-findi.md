@@ -1,15 +1,13 @@
 ---
 # folio-assistant-423d
+$schema: bean/1.0.0
 title: 'REVIEW COMMENTS: anchored to block id as 9gyz Findings, surviving moves — and the write path a static page lacks'
 status: todo
 type: task
 priority: normal
 created_at: 2026-09-22T21:02:55Z
-updated_at: 2026-09-29T18:14:49Z
+updated_at: 2026-10-21T17:10:00Z
 parent: folio-assistant-q4jm
-blocked_by:
-    - folio-assistant-jwox
-    - folio-assistant-a1lq
 ---
 
 Owner: *"and then manage review comments etc."*
@@ -241,8 +239,12 @@ which is owed with `ojcx`.
 
 Released `in-progress` → `todo` on the owner's instruction (review session https://claude.ai/code/session_014Qj8wncQhqV52QGN1yZDnj). No git change to this bean since before 2026-09-26, and no holder recorded; the sessions that held theme C (rendered site) work stopped on the 2026-09-25 weekly usage limit. Nothing in the body was changed: re-claim with `bun run cat beans:claim <id>`.
 
+_2026-10-15T16:49Z_ — Block lifted: `jwox` is completed (PRs #981, #982, #992 merged). The edge was the work plan's "Block never lifted" finding (owner, 2026-10-15). Session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs.
+
 ## Built 2026-10-15 (session_0147GQWs8akum21vSh5XYURR): a locally staged preview ingests its PR's comments
 
-A `site.build` folio (dth-hrh) is staged by `stage-local.ts`, not by the workflow, and its preview never ran `folio-review-comments`: `stage-local` passed `--pr n/a`, so the review page said "No comment data on this build". cat-harness-tools#341: `stageDeclared` looks up the open PR whose head is the branch (`openPrFor`), and `previewData` runs the Tool as the workflow's `stage` job does — `blocks.json`, `review-comments.json`, `--todos` when the folio declares a todos graph — and the banner names the PR. A branch with no open PR is said in the log and gets no comments.
+A `site.build` folio (dth-hrh) is staged by `stage-local.ts`, not by the workflow, and its preview never ran `folio-review-comments`: `stage-local` passed `--pr n/a`, so the review page said "No comment data on this build". `cat-harness-tools#341`: `stageDeclared` looks up the open PR whose head is the branch (`openPrFor`), and `previewData` runs the Tool as the workflow's `stage` job does — `blocks.json`, `review-comments.json`, `--todos` when the folio declares a todos graph — and the banner names the PR. A branch with no open PR is said in the log and gets no comments.
 
 **Still left here:** resolving a comment from the page (the second Done-when). It needs a write path from a static page, which is the owner's decision; the ruled channel for writing is a tagged PR conversation comment, so the natural candidate is a tagged comment that names the comment and the decision, turned into a committed `transition()` by the review process's task.
+
+_2026-10-21T17:10Z_ — Block lifted: `folio-assistant-a1lq` is completed and archived (`beans/defs/archive/folio-assistant-a1lq--multiple-inheritance-one-resolve-then-walk-rule-fo.md`).

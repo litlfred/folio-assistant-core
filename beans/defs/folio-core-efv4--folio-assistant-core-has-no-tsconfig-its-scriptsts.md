@@ -1,5 +1,6 @@
 ---
 # folio-core-efv4
+$schema: bean/1.0.0
 title: 'folio-assistant-core has no tsconfig: its scripts/*.ts are typechecked by nobody'
 status: completed
 type: bug

@@ -1,11 +1,12 @@
 ---
 # folio-assistant-q2wm
+$schema: bean/1.0.0
 title: 'RENDER SAFETY: declared XSS hints on tools and skills, lazy loading, and dynamic render from the graph'
-status: in-progress
+status: todo
 type: task
 priority: high
 created_at: 2026-09-20T21:47:28Z
-updated_at: 2026-10-01T09:06:55Z
+updated_at: 2026-10-16T10:30:00Z
 parent: folio-assistant-6lb8
 ---
 
@@ -33,8 +34,10 @@ and in `folio-todo-index/v1`. A restriction nothing can read is not a restrictio
 
 ## Done when
 
-- [~] a declared XSS/render restriction on Tool and skill nodes — STILL NOT BUILT, for the
-      reason recorded below, which has not changed. The `Url` case IS built:
+- [x] a declared XSS/render restriction on Tool and skill nodes — built on
+      2026-10-01 (`schemas/tool.ts` `render?: ...` on `ToolOutputSchema` and
+      `schemas/render-output.ts` `renderToolOutput`, 7 tests in
+      `render-output.test.ts`, per owner instruction below). The `Url` case is
       `schemas/safe-url.ts`, default-deny.
 - [x] a renderer that ignores the check fails a test rather than shipping —
       `scripts/tests/href-safety.test.ts` reads the source and requires every `href` site
@@ -176,3 +179,5 @@ So the vocabulary is the one this bean already proposed, and it is held to an im
 - Declared on the 6 Url/Markdown outputs in `tools/index.ts`, each with its reason.
 
 **Still true, and the reason this is not "done":** no page calls `renderToolOutput` yet, because no page renders a tool's output. The day one does, it calls this. Lazy window fetch still has no subject (every fetch loads a whole index once).
+
+_2026-10-16T10:30:00Z_ — Back to `todo`: nobody is holding this; its last note says it is parked (waiting on a trigger, a ruling or a deferred row), and an untouched `in-progress` claim misleads sibling sessions (owner choice, https://claude.ai/code/session_01NUrhvvMEwU5MmPW4L2w9jP).

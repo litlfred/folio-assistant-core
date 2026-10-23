@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from "bun:test";
 
-import { TabularCsvwSchema, toCsvw } from "@litlfred/cat-harness/schemas/tabular-csvw.js";
+import { TabularCsvwTablesSchema, toCsvw } from "@litlfred/cat-harness/schemas/tabular-csvw.js";
 import { classifyColumn, columnNames, firstRowIsHeader } from "./tabular-columns.js";
 import { extractCsv, NotATableError, parseDelimited, sniffDelimiter } from "./tabular-csv.js";
 
@@ -98,7 +98,7 @@ describe("header and names", () => {
 describe("extractCsv", () => {
   it("reads a public-comment export into a valid record", () => {
     const r = extractCsv(COMMENTS, opts);
-    expect(TabularCsvwSchema.safeParse(r).success).toBe(true);
+    expect(TabularCsvwTablesSchema.safeParse(r).success).toBe(true);
     const t = r.tables[0]!;
     expect(t.tableSchema.columns.map((c) => [c.name, c.datatype, c.datatypeSource])).toEqual([
       ["id", "integer", "measured"],

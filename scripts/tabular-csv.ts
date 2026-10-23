@@ -11,7 +11,7 @@
  * ```
  *
  * Writes the record to `--out`, or to stdout. The record is validated against
- * `TabularCsvwSchema` before it is written, so nothing invalid reaches disk.
+ * `TabularCsvwTablesSchema` before it is written, so nothing invalid reaches disk.
  *
  * ## Routing is a content question, never an extension guess
  *
@@ -45,7 +45,7 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { basename } from "node:path";
 
-import { TABULAR_CSVW_SCHEMA_ID, type TabularCsvw, TabularCsvwSchema } from "@litlfred/cat-harness/schemas/tabular-csvw.js";
+import { TABULAR_CSVW_SCHEMA_ID, type TabularCsvwTables, TabularCsvwTablesSchema } from "@litlfred/cat-harness/schemas/tabular-csvw.js";
 import { classifyColumn, columnNames, firstRowIsHeader } from "./tabular-columns.js";
 
 export const DELIMITERS = [",", ";", "\t", "|"] as const;
@@ -103,7 +103,7 @@ export function sniffDelimiter(text: string, probe = 20): string {
 }
 
 /** The record for one delimited text. Pure: no filesystem. */
-export function extractCsv(text: string, opts: { url: string; docId: string }): TabularCsvw {
+export function extractCsv(text: string, opts: { url: string; docId: string }): TabularCsvwTables {
   const delimiter = sniffDelimiter(text);
   const rows = parseDelimited(text, delimiter);
   const width = Math.max(...rows.map((r) => r.length));
@@ -112,7 +112,7 @@ export function extractCsv(text: string, opts: { url: string; docId: string }): 
   const data = header ? rows.slice(1) : rows;
   const titles = header ? rows[0]! : Array.from({ length: width }, () => "");
   const names = columnNames(Array.from({ length: width }, (_, i) => titles[i] ?? ""));
-  const record: TabularCsvw = {
+  const record: TabularCsvwTables = {
     $schema: TABULAR_CSVW_SCHEMA_ID,
     doc_id: opts.docId,
     tables: [
@@ -133,7 +133,7 @@ export function extractCsv(text: string, opts: { url: string; docId: string }): 
       },
     ],
   };
-  return TabularCsvwSchema.parse(record);
+  return TabularCsvwTablesSchema.parse(record);
 }
 
 function main(argv: string[]): number {
@@ -145,7 +145,7 @@ function main(argv: string[]): number {
   const flag = (f: string) => (argv.includes(f) ? argv[argv.indexOf(f) + 1] : undefined);
   const url = basename(file);
   const docId = flag("--doc-id") ?? url.replace(/\.[^.]+$/, "");
-  let record: TabularCsvw;
+  let record: TabularCsvwTables;
   try {
     record = extractCsv(readFileSync(file, "utf-8"), { url, docId });
   } catch (e) {

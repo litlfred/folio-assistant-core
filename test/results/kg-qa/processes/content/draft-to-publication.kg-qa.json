@@ -5,7 +5,7 @@
     "id": "Process_Publication",
     "path": "processes/content/draft-to-publication.bpmn"
   },
-  "source_hash": "sha256:2fd02c9e2e4985f357dd03be147e0e54fccb15ec18a1713a648b8c05d20d8164",
+  "source_hash": "sha256:f07644e6d0332fcf2c7a4e31067264e8123025109b75b453d690500b09c9487a",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -100,6 +100,14 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
       "result": "pass",
       "findings": []
@@ -150,7 +158,7 @@
     }
   },
   "totals": {
-    "pass": 16,
+    "pass": 18,
     "fail": 1,
     "n/a": 8,
     "unknown": 0

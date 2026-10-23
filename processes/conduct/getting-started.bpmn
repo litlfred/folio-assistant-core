@@ -52,6 +52,11 @@
                   id="Definitions_GettingStarted"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/0.1.0/processes/ns#" location="https://litlfred.github.io/bootstrap/0.1.0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:resource id="onboarding-agent" name="Onboarding agent"/>
+  <bpmn:resource id="publish-target" name="Publish target"/>
+  <bpmn:resource id="user" name="User"/>
+  <bpmn:resource id="work-plan" name="Work plan (beans)"/>
   <bpmn:collaboration id="Collaboration_GettingStarted">
     <bpmn:participant id="Participant_GettingStarted" name="Getting started — &quot;create a folio&quot; to a live site" processRef="Process_GettingStarted" />
   </bpmn:collaboration>
@@ -69,16 +74,14 @@
       <cat-harness.processes:policy enforcement="strict" />
     </bpmn:extensionElements>
     <bpmn:laneSet id="Process_GettingStarted_LaneSet">
-      <bpmn:lane id="Lane_User" name="User (person)">
+      <bpmn:lane id="Lane_User" name="User (person)" partitionElementRef="user">
         <bpmn:documentation>Answers the one question Gateway_Intent cannot compute for itself — "ask" is one of five outcomes decisions/folio-intent.dmn can return — and, only on the overlay path, three further questions a repo scan cannot answer on its own: what to import, where it goes, and who does the importing.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="user"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>StartEvent_AskToStart</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_AskIntent</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ConfirmImport</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Agent" name="Onboarding agent (system)">
+      <bpmn:lane id="Lane_Agent" name="Onboarding agent (system)" partitionElementRef="onboarding-agent">
         <bpmn:documentation>Every write in this diagram belongs to this lane, and each sits behind the non-relaxable read-first gate: nothing is created or scaffolded until Gateway_Intent has classified what was actually asked for, which is what stands between this lane and writing over somebody's existing project.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="onboarding-agent"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_DetectModality</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReadFacts</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Intent</bpmn:flowNodeRef>
@@ -87,14 +90,12 @@
         <bpmn:flowNodeRef>EndEvent_HandOff</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Scaffold</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_WorkPlan" name="Work plan (beans)">
+      <bpmn:lane id="Lane_WorkPlan" name="Work plan (beans)" partitionElementRef="work-plan">
         <bpmn:documentation>Seeds one bean per top-level content object the author named, positioned after scaffolding but before the Pages probe — a work plan exists for a folio whose publication status is not yet known, rather than waiting on that answer.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="work-plan"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_SeedPlan</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Publish" name="Publish — GitHub Pages">
+      <bpmn:lane id="Lane_Publish" name="Publish — GitHub Pages" partitionElementRef="publish-target">
         <bpmn:documentation>Provisions the gh-pages branch before Pages is switched on (Task_ProvisionGhPages, #2417), derives the URL, and holds the report that follows it: "unprovisioned" routes back to provisioning, and "live", "not-yet" and "unknown" are reached by exclusive branches of one DMN-computed gateway, and this lane is what keeps a failed probe from being reported as the softer "not-yet" it would be tempting to default to.</bpmn:documentation>
-        <bpmn:extensionElements><bootstrap.processes:role ref="publish-target"/></bpmn:extensionElements>
         <bpmn:flowNodeRef>Task_ProvisionGhPages</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_PagesBootstrap</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Live</bpmn:flowNodeRef>

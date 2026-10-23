@@ -5,7 +5,7 @@
     "id": "Process_ExtractStructure",
     "path": "processes/library/ingest-extract-structure.bpmn"
   },
-  "source_hash": "sha256:be59dc9678a78ff37f56f64ba51901559f2346d7f95f5454ec7bd99653af24a3",
+  "source_hash": "sha256:096bd587260d805ff999f35e8b32e9465851f9e04c9d41b8d8de063c8c645896",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -59,6 +59,14 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
       "result": "pass",
       "findings": []
@@ -109,7 +117,7 @@
     }
   },
   "totals": {
-    "pass": 15,
+    "pass": 17,
     "fail": 0,
     "n/a": 10,
     "unknown": 0

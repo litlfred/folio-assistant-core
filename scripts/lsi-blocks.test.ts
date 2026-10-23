@@ -35,6 +35,11 @@ describe("blockText", () => {
     expect(blockText({ kind: "figure", title: "Fig 1", narrative: { text: "A flow of doses." } }, "/x")).toEqual({ text: "Fig 1\n\nA flow of doses." });
   });
 
+  test("a figure whose narrative slot is a list reads its first entry, the single-text default", () => {
+    const narrative = [{ text: "Doses over time.", lang: "en" }, { text: "Doses dans le temps.", lang: "fr" }];
+    expect(blockText({ kind: "figure", title: "Fig 2", narrative }, "/x")).toEqual({ text: "Fig 2\n\nDoses over time." });
+  });
+
   test("an unknown kind or a missing section is a REASON, never empty text", () => {
     expect("reason" in blockText({ kind: "equation" }, "/x")).toBe(true);
     expect("reason" in blockText({ kind: "prose", text: "../sections/gone.md" }, "/nowhere/blocks/b.jsonld")).toBe(true);

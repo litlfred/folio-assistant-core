@@ -1,13 +1,12 @@
 ---
 # folio-assistant-o7eq
+$schema: bean/1.0.0
 title: 'URL SPACE: rendered assets mirror the instantiation structure — <baseurl>/ for the root, <baseurl>/<instance>/<path> for every enabled harness'
-status: todo
+status: in-progress
 type: feature
 priority: normal
-tags:
-    - rehomed
 created_at: 2026-09-20T18:30:55Z
-updated_at: 2026-10-10T16:34:20Z
+updated_at: 2026-10-21T21:32:00Z
 parent: folio-assistant-yj32
 ---
 
@@ -65,16 +64,16 @@ existence"* — this says where that artefact is served from.
 
 ## Done when
 
-- [ ] `enabled` is a declared field with a default of enabled, and a disabled
-      instance is a declaration rather than an absence
-- [ ] The three questions above are answered by the owner
-- [ ] One resolver composes an instance's published URL, and every consumer
-      goes through it — no site path composed by hand
+- [x] `enabled` is a declared field with a default of enabled, and a disabled
+      instance is a declaration rather than an absence (`nbal`, `cat-harness#376` `1ef09a59`)
+- [x] The three questions above are answered by the owner
+- [x] One resolver composes an instance's published URL, and every consumer
+      goes through it — no site path composed by hand (`cat-harness-tools#493` `5045230`)
 - [ ] `docs-site.yml` and `feature-staging.yml` publish each enabled instance
       under its own segment, and a test asserts the layout for at least two
       instances
 - [ ] The bootstrap `.jsonld` / `.json` resolves at its instance path, which
-      is the example the owner named
+      is the example the owner named (tools half merged in `cat-harness-tools#549` `e009a873ff`; index half open at `folio-assistant#2617`)
 
 Related: `yj32` (harness as interface), `hfkl` (bootstrap's json/jsonld is its
 existence), `x4a6` (declare `docs/` as the renderable graph), `ohx6`
@@ -136,14 +135,14 @@ links:
 
 - [x] The URL segment is the instance's `name` — ruled
 - [x] The declared graph is a path segment rather than elided — ruled
-- [ ] The root instance's exception is chosen (1 or 2 above)
-- [ ] `enabled` is a declared field defaulting to enabled, so "not rendered"
-      is a declaration and not an absence
-- [ ] One resolver composes an instance's published URL and every consumer
-      goes through it
+- [x] The root instance's exception is chosen (1 or 2 above)
+- [x] `enabled` is a declared field defaulting to enabled, so "not rendered"
+      is a declaration and not an absence (`nbal`, `cat-harness#376` `1ef09a59`)
+- [x] One resolver composes an instance's published URL and every consumer
+      goes through it (`cat-harness-tools#493` `5045230`)
 - [ ] `docs-site.yml` and `feature-staging.yml` publish each enabled instance
       under its own segment, with a test asserting the layout for at least two
-- [ ] The bootstrap `.jsonld` / `.json` resolves at its instance path
+- [ ] The bootstrap `.jsonld` / `.json` resolves at its instance path (tools half merged in `cat-harness-tools#549` `e009a873ff`; index half open at `folio-assistant#2617`)
 
 
 ## OWNER, 2026-09-20 — question 3 answered: the root's docs are INSTALLED
@@ -410,25 +409,6 @@ of this and is still the thing to gate whichever reading wins. **Nothing was
 moved**: the generators compose no path, so a change is one line per generator.
 
 
-## Owner decision
-
-Asked 2026-10-10 by the bean-backlog drain (lane C). The three-case ruling
-covers per-instance artefacts. Five artefacts span instances and still have no
-place: the schema viewer, the library viewer, the repository KG, its viewer,
-and their `.json` aliases. Whichever option is chosen, `blv9` still gates the
-move (an `@id` moves with its file), and each generator change is one line.
-
-1. **(Recommended) Keep them at the site root as a declared exception.** Their
-   subject is the repository, and `<base>/` is the repository's own path.
-   `artefactStub` already documents that.
-2. Put them under `<base>/cat-harness/<kind>/`, owned by the harness that
-   renders them.
-3. Split each into per-instance pages under `<base>/<instance>/<kind>/`, plus a
-   thin root index.
-
-**Default if no answer:** option 1.
-
-
 ## Owner ruling 2026-10-10, answered directly in the lane C session (https://claude.ai/code/session_018NFVUeJjQJdrEU32AS1Mco): the cross-instance artefacts stay at the site root, as a declared exception
 
 Option 1 chosen. The schema viewer, library viewer, repository KG, its viewer
@@ -437,20 +417,17 @@ and `artefactStub` already documents `<base>/` as the repository's own path.
 The exception is to be DECLARED, not left implicit, with `blv9` still gating
 any move. Every open question on this bean is now answered.
 
-What remains is harness work in cat-harness-tools and cat-harness:
-- the `enabled` field;
-- the one resolver every consumer goes through;
-- the workflow layout and its test;
-- the bootstrap `.jsonld` path.
+## Progress from `cat-tools-sthf` (2026-10-20)
 
-By the owner's ruling on the rehome decision, the bean is re-filed in the
-cat-harness-tools store, and this copy stays as a pointer.
+- [x] the root instance's exception: settled by the rulings above
+- [x] `enabled` is a declared field defaulting to enabled (`nbal`), and the
+      plan and the root index honour it
+- [x] one resolver composes an instance's published URL, and every consumer in
+      `cat-harness-tools` goes through it (including `mount-instance-docs.ts` in `cat-harness-tools#493`, merge `5045230`; repository-wide artefacts stay at the root per `site-links.ts`)
+- [ ] `docs-site.yml` / `feature-staging.yml` publish each enabled instance through `publishedPath`/`isPublished` and skip `enabled: false`
+- [ ] the `cat-harness` stub / KG-viewer collision: `_site/cat-harness/index.html` takes case 2's `<base>/cat-harness/`
+- [ ] the bootstrap `.jsonld`/`.json` resolves at its instance path from the resolver
 
+## Rehomed 2026-10-10: this copy is a pointer
 
-## Rehomed 2026-10-10: this copy is now a pointer
-
-By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a
-pointer here), this bean is re-filed in the store of the repository whose code
-it changes: **`litlfred/cat-harness-tools` bean `cat-tools-sthf`** (cat-harness-tools
-PR #68). Work it there. This copy stays open as a pointer, and closes when
-`cat-tools-sthf` does.
+By the owner's ruling of 2026-10-10 (move to the code's repo, and keep a pointer here), this bean is re-filed in the store of the repository whose code it changes: **`litlfred/cat-harness-tools` bean `cat-tools-sthf`** (cat-harness-tools PR #68). Work it there. This copy stays open as a pointer, and closes when `cat-tools-sthf` does.

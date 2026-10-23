@@ -5,7 +5,7 @@
     "id": "Process_EvidenceRetrieval",
     "path": "processes/content/evidence-retrieval.bpmn"
   },
-  "source_hash": "sha256:db4a9611baa36af7dd19fb724035ebff679331db744380502da269262a23d5b2",
+  "source_hash": "sha256:a7879bc7d6749a3e7740b332f987ee887b3d1bdd64b11cd7cf58d7a3473e4119",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -43,6 +43,10 @@
           "detail": "names skill \"content-author\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
         },
         {
+          "where": "Task_VerifyAuthority",
+          "detail": "names skill \"registry-authority-contract\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
           "where": "Task_AppraiseGrade",
           "detail": "names skill \"evidence-appraisal\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
         },
@@ -76,14 +80,17 @@
       "result": "pass",
       "findings": []
     },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
     "activity-names-skill": {
-      "result": "fail",
-      "findings": [
-        {
-          "where": "Task_VerifyAuthority",
-          "detail": "\"Verify authority against the observatory / registry API\" names no skill. Give it <bootstrap.processes:skill ref=\"…\"/>, or, if none could exist, declare <cat-harness.processes:no-skill reason=\"…\"/> saying why."
-        }
-      ]
+      "result": "pass",
+      "findings": []
     },
     "activity-fulfilment-kind": {
       "result": "n/a",
@@ -131,8 +138,8 @@
     }
   },
   "totals": {
-    "pass": 13,
-    "fail": 2,
+    "pass": 16,
+    "fail": 1,
     "n/a": 10,
     "unknown": 0
   }

@@ -65,6 +65,7 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 ### 6. Verify authority against the observatory / registry API (`Task_VerifyAuthority`)
 
 - Who: the `Trusted registries and observatories (external)` lane (role `external-registry`).
+- Skill: `registry-authority-contract`.
 - What: Each candidate is resolved against the standard API of the body that publishes it, so that 'authoritative' is a RESOLVED FACT rather than an assertion in the citation.
 - Record it: `workflow_complete` with `node: "Task_VerifyAuthority"`.
 - next: → `Gateway_Authoritative` (Authority confirmed?)
