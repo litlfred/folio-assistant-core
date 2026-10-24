@@ -26,6 +26,18 @@
       },
       "drafted_at": "2026-09-24",
       "lang": "en"
+    },
+    {
+      "text": "Une section de page web intitulée « Internship Timeline » pour le MSc in Digital Financial Technology de la NUS. Un rectangle rouge entoure un tableau à en-tête orange du FinTech Capstone Project : caractéristiques clés, période de stage, fenêtres de dépôt et de candidature, dates limites des offres et délai de grâce pour l'acceptation par l'étudiant. Suivent des instructions pour publier une offre sur NUS TalentConnect.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "fr"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

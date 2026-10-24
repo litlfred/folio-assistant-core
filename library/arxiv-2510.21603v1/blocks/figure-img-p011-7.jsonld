@@ -26,6 +26,18 @@
       },
       "drafted_at": "2026-09-24",
       "lang": "en"
+    },
+    {
+      "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « 全球中企港股IPO表现最突出 » (les introductions à Hong Kong se distinguent) pour mai 2025. Un rectangle rouge encadre le paragraphe d'ouverture (18 entreprises, nombre en hausse de 38,46 % sur un an, S$500亿元 levés) et un second rectangle rouge encadre le tableau par compartiment sous le graphique barres et courbe.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "fr"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

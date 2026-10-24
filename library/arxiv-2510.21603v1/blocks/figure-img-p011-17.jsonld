@@ -26,6 +26,18 @@
       },
       "drafted_at": "2026-09-24",
       "lang": "en"
+    },
+    {
+      "text": "Une page web intitulée « Master of Technology in Enterprise Business Analytics » de la NUS-ISS. Un rectangle rouge entoure le tableau de présentation (prochaine rentrée, durée, calendrier de candidature, test d'entrée et modalités du GRE), au-dessus de paragraphes descriptifs et d'une liste de ce que les diplômés sauront faire.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "fr"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",
