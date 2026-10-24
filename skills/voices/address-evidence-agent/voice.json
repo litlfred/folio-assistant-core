@@ -6,15 +6,15 @@
   "provenance": "house",
   "sources": [
     {
-      "title": "Role `evidence-agent` — its persona, in the cat-harness role graph",
-      "instance": "litlfred/cat-harness",
+      "title": "Role `evidence-agent` — its persona, in the folio-assistant-core role graph",
+      "instance": "litlfred/folio-assistant-core",
       "path": "scenarios/roles.json"
     }
   ],
   "activeIn": {
     "roles": [
       {
-        "instance": "litlfred/cat-harness",
+        "instance": "litlfred/folio-assistant-core",
         "role": "evidence-agent"
       }
     ]
@@ -28,7 +28,7 @@
       "severity": "minor",
       "judgementOnly": true,
       "source": {
-        "instance": "litlfred/cat-harness",
+        "instance": "litlfred/folio-assistant-core",
         "path": "scenarios/roles.json",
         "quote": "Searches trusted sources and appraises what comes back. Its value is in what it REJECTS, so it must be able to say why a source was not used."
       }

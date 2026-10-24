@@ -17,7 +17,6 @@ Part of [Folio Assistant Core](../../README.md) 0.1.0, declared as `voices`, hol
 | [`address-business-analyst/`](address-business-analyst/) | _nothing declares what this holds_ | |
 | [`address-clinical-sme/`](address-clinical-sme/) | _nothing declares what this holds_ | |
 | [`address-code-reviewer/`](address-code-reviewer/) | _nothing declares what this holds_ | |
-| [`address-compute-authoring-agent/`](address-compute-authoring-agent/) | _nothing declares what this holds_ | |
 | [`address-deep-researcher/`](address-deep-researcher/) | _nothing declares what this holds_ | |
 | [`address-docs-authoring-agent/`](address-docs-authoring-agent/) | _nothing declares what this holds_ | |
 | [`address-editor/`](address-editor/) | _nothing declares what this holds_ | |
@@ -27,13 +26,11 @@ Part of [Folio Assistant Core](../../README.md) 0.1.0, declared as `voices`, hol
 | [`address-fhir-modeller/`](address-fhir-modeller/) | _nothing declares what this holds_ | |
 | [`address-ingestion-agent/`](address-ingestion-agent/) | _nothing declares what this holds_ | |
 | [`address-integration-watcher/`](address-integration-watcher/) | _nothing declares what this holds_ | |
-| [`address-lean-authoring-agent/`](address-lean-authoring-agent/) | _nothing declares what this holds_ | |
 | [`address-librarian/`](address-librarian/) | _nothing declares what this holds_ | |
 | [`address-narrative-reviewer/`](address-narrative-reviewer/) | _nothing declares what this holds_ | |
 | [`address-onboarding-agent/`](address-onboarding-agent/) | _nothing declares what this holds_ | |
 | [`address-platform-authoring-agent/`](address-platform-authoring-agent/) | _nothing declares what this holds_ | |
 | [`address-programme-manager/`](address-programme-manager/) | _nothing declares what this holds_ | |
-| [`address-proof-review-agent/`](address-proof-review-agent/) | _nothing declares what this holds_ | |
 | [`address-publication-manager/`](address-publication-manager/) | _nothing declares what this holds_ | |
 | [`address-qc-reviewer/`](address-qc-reviewer/) | _nothing declares what this holds_ | |
 | [`address-review-coordinator/`](address-review-coordinator/) | _nothing declares what this holds_ | |
