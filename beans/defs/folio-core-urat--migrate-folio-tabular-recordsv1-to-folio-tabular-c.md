@@ -4,7 +4,7 @@ title: Migrate folio-tabular-records/v1 to folio-tabular-csvw/v1, measured on re
 status: in-progress
 type: task
 created_at: 2026-10-10T16:33:03Z
-updated_at: 2026-10-20T17:25:00Z
+updated_at: 2026-10-24T14:05:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -313,3 +313,7 @@ Left: the index re-pin, folio-assistant#2626 (tools 0eb0564, cat-harness
 ea3b1b6). Then the third done-when box
 ("v1 retired from the schema graph") is option 2's, not 1's — under option 1
 the schema stays, and that box is answered "kept, as ruled".
+
+## Claim 2026-10-24 (Drain folio-assistant-core beans thread)
+
+Claimed by Claude, session https://claude.ai/code/session_01MK9nZ3Gmon4cDBRLSURizU, to close on evidence.
