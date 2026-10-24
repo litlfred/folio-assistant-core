@@ -870,6 +870,8 @@ export interface TermKey {
   /** The entry's anchor, which keys its mark. */
   anchor: string;
   scheme: string;
+  /** The scheme's glossary file, which the record keys rows by too (bean `wvzp`). */
+  file?: string;
   term: string;
 }
 
@@ -925,21 +927,21 @@ export function perTermMapping(
   const said: string[] = [];
   const seen = new Set<string>();
   const shared = new Set<string>();
+  const keyOf = (k: TermKey) => `${k.file ?? ""}\0${k.scheme}\0${k.term}`;
   for (const k of terms) {
-    const key = `${k.scheme}\0${k.term}`;
+    const key = keyOf(k);
     if (seen.has(key)) shared.add(key);
     seen.add(key);
   }
   for (const target of targets) {
-    // The record keys a term by (scheme, id) and not by instance, because a
+    // The record keys a row by (scheme, file) since bean `wvzp`, because a
     // scheme id such as `kg-tools` is shared by every instance's extraction.
-    // Ids do not collide today (0 of 2876 checked when this was written), but
-    // if two entries on one page ever share a key, the record cannot say
-    // which of them it meant, so both are `unknown` rather than both badged.
+    // Two entries on one page that still share file, scheme and id cannot be
+    // told apart, so both are `unknown` rather than both badged.
     const answers = terms.map((k): TermStateAnswer =>
-      shared.has(`${k.scheme}\0${k.term}`)
+      shared.has(keyOf(k))
         ? { state: "unknown", why: `two entries share the id \`${k.term}\` in scheme \`${k.scheme}\`` }
-        : termState(states, k.scheme, target, k.term),
+        : termState(states, k.scheme, target, k.term, k.file),
     );
     const rest = new Set(answers.filter((a) => a.state !== "mapped").map((a) => a.state));
     const only = rest.size === 1 ? [...rest][0] : undefined;
@@ -1247,7 +1249,7 @@ export function renderTypePage(c: ReturnType<typeof collect>, key: AssetType | P
   const states = mappingStates();
   const perTerm = perTermMapping(
     states,
-    rows.map((r) => ({ anchor: anchorOf(r.s, r.t.id), scheme: r.s.glossary.id, term: r.t.id })),
+    rows.map((r) => ({ anchor: anchorOf(r.s, r.t.id), scheme: r.s.glossary.id, file: r.s.file, term: r.t.id })),
   );
   return sized(
     (size) => `---
