@@ -70,7 +70,7 @@
         },
         {
           "label": "Processes",
-          "href": "/process/publication-workflow.html",
+          "href": "/folio-assistant-core/process/publication-workflow.html",
           "note": "The BPMN diagrams, which are the source of truth rather than a picture of it."
         },
         {
@@ -80,7 +80,7 @@
         },
         {
           "label": "Acquisition",
-          "href": "/guides/document-ingestion.html",
+          "href": "/folio-assistant-core/guides/document-ingestion.html",
           "note": "How a source gets from uploads/ into library/."
         },
         {
@@ -245,6 +245,14 @@
       ]
     },
     {
+      "id": "core-templates",
+      "path": "templates/",
+      "description": "Files this layer's tools WRITE INTO a folio that opts in, kept as real files rather than strings inside a script. `public-comment/github/` holds the issue forms and the two workflows that `scripts/public-comment-changesets.ts install` copies into a folio's `.github/` (`TEMPLATE_DIR`). They moved up here from the tools layer's `templates/public-comment/` (move M10, folio-assistant#2598), because this layer is the only one that installs them.",
+      "graphTypologies": [
+        "code"
+      ]
+    },
+    {
       "id": "core-library",
       "path": "library/",
       "description": "L1 source content this LAYER owns — the publications core's own vocabulary is derived FROM, one `<bib-slug>/` per ingested document. Declared 2026-09-23 on the owner's ruling that Doc-Researcher (arXiv:2510.21603v1) is part of the f-a-c subgraph, and declared rather than borrowed for the reason `methodology-adoption` §4 gives: a method is placed by OWNERSHIP so that extraction is literal, and a paper core's methodology cites from another instance's library would not lift out with it. `ingest-document.ts` refuses to guess a destination when several are declared, which is what surfaced the absence. `dependents: skip` because these are THIS layer's sources; a downstream folio's library is its own and reproducing these would hand it somebody else's corpus.",
@@ -278,6 +286,14 @@
       "graphTypologies": [
         "processes"
       ]
+    },
+    {
+      "id": "scenarios",
+      "path": "scenarios/",
+      "graphTypologies": [
+        "scenarios"
+      ],
+      "description": "Scenarios: the roles an actor takes on, in `roles.json`, the user stories told as them, in `stories.json`, and the actors in `actors/`. The deep-researcher, evidence-agent and onboarding-agent roles moved here from cat-harness in M4 (cat-harness#443), and this layer's `address-*` voices point at them. The files arrived without this declaration, so `check:voices` found no role graph here."
     },
     {
       "id": "qa",

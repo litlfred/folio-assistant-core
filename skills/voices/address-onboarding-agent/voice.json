@@ -6,15 +6,15 @@
   "provenance": "house",
   "sources": [
     {
-      "title": "Role `onboarding-agent` — its persona, in the cat-harness role graph",
-      "instance": "litlfred/cat-harness",
+      "title": "Role `onboarding-agent` — its persona, in the folio-assistant-core role graph",
+      "instance": "litlfred/folio-assistant-core",
       "path": "scenarios/roles.json"
     }
   ],
   "activeIn": {
     "roles": [
       {
-        "instance": "litlfred/cat-harness",
+        "instance": "litlfred/folio-assistant-core",
         "role": "onboarding-agent"
       }
     ]
@@ -28,7 +28,7 @@
       "severity": "minor",
       "judgementOnly": true,
       "source": {
-        "instance": "litlfred/cat-harness",
+        "instance": "litlfred/folio-assistant-core",
         "path": "scenarios/roles.json",
         "quote": "Meets a repository it has never seen and must orient before acting. Will follow the first plausible convention it finds, so the earliest instruction it reads matters most."
       }

@@ -1473,7 +1473,7 @@
     {
       "id": "process_kgseparation.task_plan",
       "prefLabel": "7 · Plan publication",
-      "definition": "Every identifier the content mints is a file some step publishes: /<version>/ for what programs read, kept for every version; /v<major>/ for pages people read. Name collisions between published files are resolved here.",
+      "definition": "Every identifier the content mints is a file some step publishes: /v<major>/, for what programs read and pages people read alike; the exact release is the pin's. Name collisions between published files are resolved here.",
       "notation": "Task_Plan",
       "source": "cat-harness/processes/kg/kg-separation.bpmn#Task_Plan",
       "status": "candidate"
@@ -1497,7 +1497,7 @@
     {
       "id": "process_kgseparation.task_release",
       "prefLabel": "12 · First release",
-      "definition": "Tag each repository, publish /<version>/ and /v<major>/. From here the two are versioned independently; a tools release lists the content majors it supports.",
+      "definition": "Tag each repository, publish /v<major>/. From here the two are versioned independently; a tools release lists the content majors it supports.",
       "notation": "Task_Release",
       "source": "cat-harness/processes/kg/kg-separation.bpmn#Task_Release",
       "status": "candidate"

@@ -19,12 +19,12 @@
                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
                   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/0.1.0/processes/ns#"
-                  xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/0.1.0/processes/ns#"
+                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns#"
+                  xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/v0/processes/ns#"
                   id="Definitions_DocumentAuthoring"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
-  <bpmn:import namespace="https://litlfred.github.io/bootstrap/0.1.0/processes/ns#" location="https://litlfred.github.io/bootstrap/0.1.0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns#" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
   <bpmn:resource id="author" name="Author"/>
   <bpmn:resource id="authoring-agent" name="Authoring agent"/>
   <bpmn:resource id="build-pipeline" name="Build pipeline"/>
@@ -86,15 +86,10 @@
       <bpmn:incoming>D01</bpmn:incoming>
       <bpmn:outgoing>D02</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:task id="Task_SeedPlan" name="2 · Seed the work plan&#10;[todo-manager]">
-      <bpmn:documentation>The plan becomes beans, so a resumed session or a sibling agent can pick it up.</bpmn:documentation>
-      <bpmn:extensionElements>
-        <bootstrap.processes:skill ref="todo-manager" />
-        <cat-harness.processes:bean op="claim" />
-      </bpmn:extensionElements>
+    <bpmn:callActivity id="Task_SeedPlan" name="2 · Seed the work plan&#10;[todo-manager]" calledElement="GT_SeedWorkPlan">
       <bpmn:incoming>D02</bpmn:incoming>
       <bpmn:outgoing>D03</bpmn:outgoing>
-    </bpmn:task>
+    </bpmn:callActivity>
     <bpmn:serviceTask id="Task_Scaffold" name="3 · Scaffold the folio&#10;[folio_init]">
       <bpmn:documentation>folio_init writes content/, uploads/, library/, the manifests, the builder shim and AGENTS.md. Skipped when the folio already exists.</bpmn:documentation>
       <bpmn:extensionElements>

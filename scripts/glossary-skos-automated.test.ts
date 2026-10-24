@@ -26,8 +26,8 @@ const REPO = resolve(import.meta.dir, "..", "..");
 const SKOS = "http://www.w3.org/2004/02/skos/core#";
 const PROV = "http://www.w3.org/ns/prov#";
 const RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";
-const NS_A = "https://example.org/a/0.1.0/ns#";
-const NS_B = "https://example.org/b/0.1.0/ns#";
+const NS_A = "https://example.org/a/v0/ns#";
+const NS_B = "https://example.org/b/v0/ns#";
 const ODRL = "http://www.w3.org/ns/odrl/2/Policy";
 
 const glossary = (id: string, terms: unknown[]): Glossary =>
@@ -70,7 +70,7 @@ const states: SchemeState[] = [
   row("fhir", [{ term: "book", exact: false, concepts: ["http://example.org/cs#book"], exactConcepts: [] }]),
 ];
 
-const AGENT = "https://example.org/a/0.1.0/scenarios/actors/ci-pipeline";
+const AGENT = "https://example.org/a/v0/scenarios/actors/ci-pipeline";
 const { bySource, unresolved } = automatedMatches(states, sources);
 const doc = toSkos(tools.glossary, tools.ns, { matches: bySource.get(sourceKey(tools))!, agent: AGENT });
 

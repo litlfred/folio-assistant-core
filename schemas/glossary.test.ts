@@ -150,7 +150,7 @@ describe("this repository", () => {
     // read through it, as every other instance's is below.
     const decl = readDeclaration(join(REPO_ROOT_FOR_NS, "folio-assistant-core"))!;
     expect(core.ns).toBe(instanceNs(decl.name, decl.stub, decl));
-    expect(core.ns).toBe("https://litlfred.github.io/folio-assistant-core/0.1.0/ns#");
+    expect(core.ns).toBe("https://litlfred.github.io/folio-assistant-core/v0/ns#");
   });
 
   test("the page lists every term once, and SKOS is published for every scheme", () => {
@@ -378,7 +378,24 @@ describe("extracted KG terms", () => {
       }
       const p = pathOf(t.source!);
       if (!cache.has(p)) cache.set(p, asRead(p));
-      return !cache.get(p)!.includes(d);
+      if (cache.get(p)!.includes(d)) return false;
+      // A callActivity naming one of its layer's global tasks takes the global
+      // task's definition first (checked verbatim against its own asset via the
+      // `globaltask.*` term) and the call's own documentation after.
+      if (s.extracted === "kg-bpmn-activities" && !t.id.startsWith("globaltask.")) {
+        const gts = s.glossary.terms
+          .filter((g) => g.id.startsWith("globaltask."))
+          .map((g) => g.definition)
+          .filter((gd): gd is string => typeof gd === "string" && gd.length > 0);
+        if (
+          gts.some(
+            (gd) => d === gd || (d.startsWith(`${gd} `) && cache.get(p)!.includes(d.slice(gd.length + 1))),
+          )
+        ) {
+          return false;
+        }
+      }
+      return true;
     });
     expect(bad.map(({ t }) => `${t.source}: ${t.definition}`)).toEqual([]);
   });

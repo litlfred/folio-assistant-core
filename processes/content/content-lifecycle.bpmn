@@ -14,12 +14,12 @@
                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
                   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/0.1.0/processes/ns#"
-                  xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/0.1.0/processes/ns#"
+                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns#"
+                  xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/v0/processes/ns#"
                   id="Definitions_FolioLifecycle"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
-  <bpmn:import namespace="https://litlfred.github.io/bootstrap/0.1.0/processes/ns#" location="https://litlfred.github.io/bootstrap/0.1.0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns#" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
   <bpmn:resource id="editor" name="Editor"/>
   <bpmn:resource id="programme-manager" name="Programme manager"/>
   <bpmn:resource id="publication-manager" name="Publication manager"/>
@@ -90,15 +90,10 @@
       <bpmn:incoming>H01</bpmn:incoming>
       <bpmn:outgoing>H02</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:task id="Task_SeedBeans" name="Seed the work plan&#10;[todo-manager]">
-      <bpmn:documentation>The plan becomes beans. From here on, beans/ is the shared answer to 'what is done, what is next' — for humans and agents alike.</bpmn:documentation>
-      <bpmn:extensionElements>
-        <bootstrap.processes:skill ref="todo-manager" />
-        <cat-harness.processes:bean op="claim" />
-      </bpmn:extensionElements>
+    <bpmn:callActivity id="Task_SeedBeans" name="Seed the work plan&#10;[todo-manager]" calledElement="GT_SeedWorkPlan">
       <bpmn:incoming>H02</bpmn:incoming>
       <bpmn:outgoing>H03</bpmn:outgoing>
-    </bpmn:task>
+    </bpmn:callActivity>
     <bpmn:callActivity id="CallActivity_Editing" name="Editing and HCI validation&#10;[content-author]" calledElement="Process_Editing">
       <bpmn:documentation>See editing-hci-validation.bpmn. Runs once per proposed change, not once per cycle.</bpmn:documentation>
       <bpmn:extensionElements>

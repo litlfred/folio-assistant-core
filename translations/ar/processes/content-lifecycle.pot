@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: content-lifecycle\n"
-"POT-Creation-Date: 2026-10-20T09:54:46.768Z\n"
+"POT-Creation-Date: 2026-10-23T08:44:34.391Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ar\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:149
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:144
 #. Diagram element documentation
 msgid "Asked after feedback is filed as beans: is there more content to write for this folio? `yes` returns to editing and HCI validation; `no` retires or archives it."
 msgstr ""
@@ -24,17 +24,17 @@ msgstr ""
 msgid "Content lifecycle"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:114
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:109
 #. Diagram element documentation
 msgid "Corpus-wide checks that a single-block gate cannot make: cross-references, build green, proof status, QA axes across the whole folio."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:121
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:116
 #. Diagram label
 msgid "Draft, review and publish [content-publish]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:102
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:97
 #. Diagram label
 msgid "Editing and HCI validation [content-author]"
 msgstr ""
@@ -44,7 +44,7 @@ msgstr ""
 msgid "Editors + authoring agents"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:138
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:133
 #. Diagram label
 msgid "File feedback as beans [todo-manager]"
 msgstr ""
@@ -59,32 +59,32 @@ msgstr ""
 msgid "Folio lifecycle — one cycle, plan to retire"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:162
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:157
 #. Diagram label
 msgid "Folio retired"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:131
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:126
 #. Diagram element documentation
 msgid "Implementer and reader feedback on the published folio, triaged by severity and scope."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:113
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:108
 #. Diagram label
 msgid "Integration test and QA sweep [content-test]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:148
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:143
 #. Diagram label
 msgid "More content?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:174
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:169
 #. Diagram label
 msgid "no"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:155
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:150
 #. Diagram element documentation
 msgid "No more content is planned: deprecate the folio. Post a deprecation notice and timeline, update its status metadata, archive it, point references at any successor, and remove it from active publication. The programme manager decides; retirement archives rather than deletes."
 msgstr ""
@@ -114,7 +114,7 @@ msgstr ""
 msgid "Publication manager"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:154
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:149
 #. Diagram label
 msgid "Retire or archive [content-retire]"
 msgstr ""
@@ -129,12 +129,12 @@ msgstr ""
 msgid "Scope the work, identify artifacts and actors, form the team, set the timeline."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:122
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:117
 #. Diagram element documentation
 msgid "See draft-to-publication.bpmn."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:103
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:98
 #. Diagram element documentation
 msgid "See editing-hci-validation.bpmn. Runs once per proposed change, not once per cycle."
 msgstr ""
@@ -154,11 +154,6 @@ msgstr ""
 msgid "The only reviewing this lane does happens AFTER publication, not before it: Task_Feedback triages what implementers and readers report on the LIVE folio, by severity and scope, and that triage — not a fresh review — is what Task_FeedbackBeans turns into the next cycle's work."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:94
-#. Diagram element documentation
-msgid "The plan becomes beans. From here on, beans/ is the shared answer to 'what is done, what is next' — for humans and agents alike."
-msgstr ""
-
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:78
 #. Diagram element documentation
 msgid "The single point in the cycle where the corpus becomes public: reached only after Task_Test has cleared the whole folio, and its own outcome is what Task_Feedback then collects reactions to — so whatever this lane calls out to in draft-to-publication.bpmn is the last gate before readers see anything."
@@ -174,12 +169,12 @@ msgstr ""
 msgid "Touched twice, not once: Task_SeedBeans converts the programme manager's plan into trackable work at the start, and Task_FeedbackBeans converts triaged reader feedback into more of it at the end, immediately before Gateway_NextCycle asks whether to go around again — so this lane is what makes the lifecycle a LOOP rather than a line, carrying what closed one cycle into what opens the next."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:130
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:125
 #. Diagram label
 msgid "Triage published feedback [content-feedback]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:139
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:134
 #. Diagram element documentation
 msgid "Triaged feedback re-enters the work plan as beans, which is how the next cycle knows what it is for."
 msgstr ""
@@ -194,7 +189,7 @@ msgstr ""
 msgid "Work plan — beans (shared by humans and agents)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:173
+#: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:168
 #. Diagram label
 msgid "yes"
 msgstr ""

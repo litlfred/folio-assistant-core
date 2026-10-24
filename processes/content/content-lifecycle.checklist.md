@@ -24,7 +24,8 @@ One cycle of a folio from plan to retirement, calling editing and the draft-to-p
 
 - Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
 - Skill: `todo-manager`.
-- What: The plan becomes beans.
+- What: The plan becomes beans, so a resumed session or a sibling agent can pick it up.
+- Shared step `GT_SeedWorkPlan`.
 - Record it: `workflow_complete` with `node: "Task_SeedBeans"`.
 - next: → `CallActivity_Editing` (Editing and HCI validation)
 
