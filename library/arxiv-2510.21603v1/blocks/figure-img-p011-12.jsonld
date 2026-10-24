@@ -50,6 +50,42 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "es"
+    },
+    {
+      "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"4月VC/PE机构背景企业IPO一览表\" (أبريل: طروحات الشركات المدعومة من VC/PE). يسرد جدول من عمودين سبع شركات مقابل مؤسساتها المستثمرة، مع حاشية برتقالية تذكر أن ضيق المساحة قصر القائمة على المؤسسات التي لم تتخارج بعد.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"4月VC/PE机构背景企业IPO一览表\" (апрель: IPO компаний при поддержке VC/PE). Таблица из двух столбцов перечисляет семь компаний и их инвесторов; оранжевая сноска поясняет, что из-за нехватки места в списке указаны только инвесторы, ещё не вышедшие из капитала.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"4月VC/PE机构背景企业IPO一览表\"。一张两列表格列出七家企业及其投资机构，橙色脚注说明因篇幅所限，仅列出尚未退出的机构。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

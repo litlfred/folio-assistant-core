@@ -50,6 +50,42 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "es"
+    },
+    {
+      "text": "أيقونة بخطوط سوداء لثلاث صفحات فوق كفّ مفتوحة متّجهة إلى الأعلى، وكل صفحة متصلة بالكفّ بسهم يشير إلى الأسفل. تشير إلى تسليم المستندات إلى القارئ.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Чёрный контурный значок трёх страниц над раскрытой ладонью, обращённой вверх; каждая страница соединена с ладонью стрелкой, направленной вниз. Он обозначает передачу документов читателю.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "一只掌心向上张开的手上方有三个页面符号的黑色线条图标，每个页面都有一支向下的箭头连到手上。它标示文档被交付给读者。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-002",

@@ -50,6 +50,42 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "es"
+    },
+    {
+      "text": "أيقونة بالأبيض والأسود لنافذة متصفّح: شريط عنوان داكن بثلاث نقاط، وتحته الحروف WWW، وثلاثة خطوط تمثّل النص، ومؤشر سهم في الأسفل يمينًا. تمثّل صفحات الويب بين أنواع المُدخلات في المخطط.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Чёрно-белый значок окна браузера: тёмная строка заголовка с тремя точками, под ней буквы WWW, три линии, обозначающие текст, и курсор-стрелка справа внизу. Он представляет веб-страницы среди входных типов на схеме.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "一个浏览器窗口的黑白图标：深色标题栏上有三个圆点，下方是字母 WWW，三条横线代表文字，右下角有一个箭头光标。它代表图中输入类型里的网页。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-002",

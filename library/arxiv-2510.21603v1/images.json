@@ -52,6 +52,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة بخطوط سوداء لشخص: دائرة للرأس فوق جذع مستدير. تشير إلى دور الإنسان في المثال المشروح في هذه الصفحة، حيث يطرح مستخدم سؤالًا عن كتيّب تأمين.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрный контурный значок человека: круг-голова над округлым торсом. Он обозначает реплику человека в разобранном на этой странице примере, где пользователь задаёт вопрос о страховой брошюре.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一个黑色线条人物图标：圆形的头部位于圆润的躯干之上。它标示本页示例对话中人类的发言轮次，示例中用户就一份保险宣传册提问。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -277,6 +313,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من كتيّب Prudential Singapore بعنوان \"PRUShield Premier and PRUExtra Supplementary Plans: Coverage for private hospital not under Prudential's Panel and Non-Panel listings\". تعرض حالة واحدة — جناح بسرير واحد في مستشفى خاص، وفاتورة إجمالية قدرها S$80,000 — فتبيّن ما يغطيه PRUShield Premier (S$68,850، ويدفع John مبلغ S$11,150)، ثم أربعة خيارات تكميلية تحته، لكل منها قسطه اليومي وما سيظل John يدفعه: PRUExtra Premier CoPay (S$5,900، مع شريط تقدّم في المستويات يرفعه إلى المستوى 4)، وPRUExtra Preferred CoPay (S$11,150)، وPRUExtra Premier Lite CoPay (S$7,325).",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница брошюры Prudential Singapore с заголовком \"PRUShield Premier and PRUExtra Supplementary Plans: Coverage for private hospital not under Prudential's Panel and Non-Panel listings\". На ней разобран один случай — одноместная палата частной больницы, общий счёт S$80,000: показано, что покрывает PRUShield Premier (S$68,850, Джон доплачивает S$11,150), а ниже — четыре дополнительных варианта, для каждого указаны дневная премия и сумма, которую Джон всё равно заплатит: PRUExtra Premier CoPay (S$5,900, со шкалой уровней, переводящей его на уровень 4), PRUExtra Preferred CoPay (S$11,150) и PRUExtra Premier Lite CoPay (S$7,325).",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "Prudential Singapore 宣传册中的一页，标题为 \"PRUShield Premier and PRUExtra Supplementary Plans: Coverage for private hospital not under Prudential's Panel and Non-Panel listings\"。页面推演一个情景——私立医院单人病房，账单总额 S$80,000——先列出 PRUShield Premier 的赔付额（S$68,850，John 自付 S$11,150），再在下方列出四个附加选项，各自标明每日保费及 John 仍需自付的金额：PRUExtra Premier CoPay（S$5,900，附一条把他推进到第 4 级的级别进度条）、PRUExtra Preferred CoPay（S$11,150）和 PRUExtra Premier Lite CoPay（S$7,325）。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -330,6 +402,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "شريط من خليتين مأخوذ من جدول المقارنة في الكتيّب. في الخلية اليسرى: \"PRUShield's deductible amount for claims not under panel providers (Per policy year)\"، وفي اليمنى: \"Covers 95% of deductible amount that is above S$2,000, you pay S$2,000 and 5% of the remaining deductible amount\". وهذا هو الصف الذي تُستمد منه إجابة المثال المشروح.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Полоса из двух ячеек, взятая из сравнительной таблицы брошюры. В левой ячейке написано \"PRUShield's deductible amount for claims not under panel providers (Per policy year)\", в правой — \"Covers 95% of deductible amount that is above S$2,000, you pay S$2,000 and 5% of the remaining deductible amount\". Именно из этой строки взят ответ в разобранном примере.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "从宣传册对比表中截取的两格横条。左格写着 \"PRUShield's deductible amount for claims not under panel providers (Per policy year)\"；右格写着 \"Covers 95% of deductible amount that is above S$2,000, you pay S$2,000 and 5% of the remaining deductible amount\"。示例中的答案正是取自这一行。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -383,6 +491,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة كاملة من الكتيّب بعنوان \"A little extra goes a long way\"، تضم جدول مقارنة كثيفًا لخمس خطط تكميلية عبر مستويين من PRUShield: PRUExtra Premier CoPay وPreferred CoPay وPremier Lite CoPay وPlus CoPay وPlus Lite CoPay. تتناول الصفوف أنواع المستشفيات والأجنحة، والعلاج الدوائي للسرطان وخدماته، ومعالجة مبلغ التحمّل داخل شبكة مقدّمي الخدمة وخارجها، والتأمين المشترك، وحدّ الخسارة، وتسعير الأقساط وفق سجل المطالبات، والخدمات ذات القيمة المضافة، وأقساط شخص في الثلاثين من عمره (من S$832.80 إلى S$158.00)، وشروط الأهلية. وتحت الجدول عشر حواشٍ مرقّمة.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Полная страница брошюры с заголовком \"A little extra goes a long way\" и плотной сравнительной таблицей пяти дополнительных планов для двух уровней PRUShield — PRUExtra Premier CoPay, Preferred CoPay, Premier Lite CoPay, Plus CoPay и Plus Lite CoPay. Строки охватывают типы больниц и палат, лекарственное лечение и услуги при раке, порядок применения франшизы у поставщиков из списка и вне его, сострахование, ограничение убытков, ценообразование премий по истории выплат, дополнительные услуги, премии для 30-летнего (от S$832.80 до S$158.00) и условия участия. Под таблицей — десять пронумерованных сносок.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "宣传册的一整页，标题为 \"A little extra goes a long way\"，载有一张密集的对比表，比较两个 PRUShield 等级下的五个附加计划——PRUExtra Premier CoPay、Preferred CoPay、Premier Lite CoPay、Plus CoPay 和 Plus Lite CoPay。各行涵盖医院与病房类型、癌症药物治疗与服务、指定与非指定医疗机构下的免赔额处理、共付比例、止损上限、按理赔记录定价的保费、增值服务、30 岁投保人的保费（从 S$832.80 到 S$158.00）以及投保资格。表下列有十条编号脚注。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -436,6 +580,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة بخطوط سوداء لرأس روبوت: وجه مربّع مستدير الزوايا بعينين نقطيتين وفم مبتسم ولوحتين جانبيتين وهوائي واحد ينتهي بدائرة. تشير إلى دور النظام في المثال المشروح في هذه الصفحة.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрный контурный значок головы робота: квадратное лицо со скруглёнными углами, два глаза-точки, улыбающийся рот, боковые панели и одна антенна с кружком на конце. Он обозначает реплику системы в разобранном на этой странице примере.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一个黑色线条机器人头部图标：圆角方形的脸、两个圆点眼睛、微笑的嘴、两侧面板，以及一根顶端带圆圈的天线。它标示本页示例对话中系统的发言轮次。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -536,6 +716,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة Microsoft Word: شكل مستند أزرق عليه حرف W كبير أبيض، ويُظهر جزؤه الأيمن خطوطًا أفقية زرقاء على خلفية بيضاء. وهي أحد أنواع المستندات المُدخلة التي يُظهرها مخطط البنية وهي تدخل مرحلة التحليل.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Значок Microsoft Word: синяя фигура документа с белой заглавной W; в правой части — синие горизонтальные линии на белом фоне. Один из типов входных документов, которые на схеме архитектуры поступают на этап разбора.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "Microsoft Word 图标：蓝色文档形状上有白色大写字母 W，右侧部分为白底上的蓝色横线。它是架构图中进入解析阶段的输入文档类型之一。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -589,6 +805,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة Microsoft PowerPoint: شكل مستند برتقالي عليه حرف P كبير أبيض، ويُظهر جزؤه الأيمن رمز مخطط دائري فوق خطين أفقيين. وهي أحد أنواع المستندات المُدخلة في مخطط البنية.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Значок Microsoft PowerPoint: оранжевая фигура документа с белой заглавной P; в правой части — круговая диаграмма над двумя горизонтальными линиями. Один из типов входных документов на схеме архитектуры.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "Microsoft PowerPoint 图标：橙色文档形状上有白色大写字母 P，右侧部分为两条横线上方的一个饼图符号。它是架构图中的输入文档类型之一。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -642,6 +894,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة Microsoft Excel: شكل مستند أخضر عليه حرف X أبيض، ويُظهر جزؤه الأيمن صفوفًا من أشرطة خضراء قصيرة في عمودين. وهي أحد أنواع المستندات المُدخلة في مخطط البنية.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Значок Microsoft Excel: зелёная фигура документа с белой X; в правой части — ряды коротких зелёных полос в два столбца. Один из типов входных документов на схеме архитектуры.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "Microsoft Excel 图标：绿色文档形状上有白色字母 X，右侧部分为两列成行的绿色短条。它是架构图中的输入文档类型之一。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -695,6 +983,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة عامة لملف PDF: صفحة رمادية فاتحة مطويّة الزاوية العليا اليمنى، يعلوها مستطيل أحمر يحمل الحروف البيضاء PDF. وهي أحد أنواع المستندات المُدخلة في مخطط البنية.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Обычный значок файла PDF: бледно-серая страница с загнутым правым верхним углом, поверх которой красный прямоугольник с белыми буквами PDF. Один из типов входных документов на схеме архитектуры.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "通用 PDF 文件图标：一张右上角折起的浅灰色页面，上面叠有一个印着白色字母 PDF 的红色矩形。它是架构图中的输入文档类型之一。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -748,6 +1072,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة ملوّنة لصحيفة مطويّة: ترويسة صفراء مكتوب عليها NEWS، وكتلة صورة وردية في الأسفل يسارًا، وخطوط رمادية تمثّل النص. تمثّل المستندات الإخبارية بين أنواع المُدخلات في المخطط.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Цветной значок сложенной газеты: жёлтая шапка с надписью NEWS, розовый блок изображения слева внизу и серые линии, обозначающие текст. Он представляет новостные документы среди входных типов на схеме.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一份折叠报纸的彩色图标：黄色报头写着 NEWS，左下方是粉色图片块，灰色横线代表正文。它代表图中输入类型里的新闻文档。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -801,6 +1161,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة بخطوط سوداء لدفتر بسلك حلزوني مكتوب في أعلاه MANUAL، وتحته خمسة خطوط أفقية تمثّل النص. تمثّل الأدلة والكتيّبات بين أنواع المُدخلات في المخطط.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрный контурный значок блокнота на спирали с надписью MANUAL сверху и пятью горизонтальными линиями ниже, обозначающими текст. Он представляет руководства и справочники среди входных типов на схеме.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一本螺旋装订笔记本的黑色线条图标，顶部写着 MANUAL，下方五条横线代表文字。它代表图中输入类型里的手册与指南。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -981,6 +1377,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "شعار ويكيبيديا على هيئة كرة الأحجية بالأبيض والأسود: كرة مركّبة من قطع أحجية تحمل كل منها رمزًا من نظام كتابة مختلف، مع قطع ناقصة في أعلاها. تمثّل مصادر الويب الموسوعية بين مُدخلات المخطط.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрно-белый знак Википедии в виде глобуса-головоломки: шар, собранный из кусочков пазла, на каждом из которых символ другой письменности; сверху кусочков не хватает. Он представляет энциклопедические веб-источники среди входных данных на схеме.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "黑白的维基百科拼图地球标志：由拼图块拼成的球体，每块上带有一种不同文字的字符，顶部缺了几块。它代表图中输入里的百科类网络来源。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -1161,6 +1593,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة بالأبيض والأسود لنافذة متصفّح: شريط عنوان داكن بثلاث نقاط، وتحته الحروف WWW، وثلاثة خطوط تمثّل النص، ومؤشر سهم في الأسفل يمينًا. تمثّل صفحات الويب بين أنواع المُدخلات في المخطط.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрно-белый значок окна браузера: тёмная строка заголовка с тремя точками, под ней буквы WWW, три линии, обозначающие текст, и курсор-стрелка справа внизу. Он представляет веб-страницы среди входных типов на схеме.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一个浏览器窗口的黑白图标：深色标题栏上有三个圆点，下方是字母 WWW，三条横线代表文字，右下角有一个箭头光标。它代表图中输入类型里的网页。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -1341,6 +1809,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة بخطوط سوداء لصفحة عمودية تحمل حرف T كبيرًا مُذيّلًا بجانب ثلاثة خطوط قصيرة، وتحتها خطّان أطول. تمثّل محتوى النص العادي داخل مرحلة التحليل.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрный контурный значок вертикальной страницы с заглавной T с засечками рядом с тремя короткими линиями и двумя более длинными линиями ниже. Он обозначает обычный текст на этапе разбора.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一张竖版页面的黑色线条图标：一个带衬线的大写字母 T 旁有三条短线，下方有两条较长的线。它代表解析阶段中的纯文本内容。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -1521,6 +2025,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة بخطوط سوداء لصورة مؤطّرة: مربّع مستدير الزوايا فيه دائرة في الأعلى يسارًا وقمّتا جبل في الأسفل. تمثّل الصور بوصفها نوعًا من العناصر المُحلَّلة.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрный контурный значок картинки в рамке: квадрат со скруглёнными углами, в нём круг слева вверху и две горные вершины внизу. Он обозначает изображения как тип разбираемого элемента.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一幅带框图片的黑色线条图标：圆角方形内左上方有一个圆，下方有两座山峰。它代表作为解析元素类型的图像。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -1701,6 +2241,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة بخطوط سوداء لجدول: مستطيل مستدير الزوايا فيه شريط رأس فارغ فوق شبكة من ثلاث في أربع خلايا. تمثّل الجداول بوصفها نوعًا من العناصر المُحلَّلة.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрный контурный значок таблицы: прямоугольник со скруглёнными углами, пустая полоса заголовка над сеткой из трёх на четыре ячейки. Он обозначает таблицы как тип разбираемого элемента.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一张表格的黑色线条图标：圆角矩形内，一条空白表头带位于三乘四的单元格网格之上。它代表作为解析元素类型的表格。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -1881,6 +2457,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة بخطوط سوداء لتعبير رياضي: علامة جذر تربيعي فوق x مرفوعة إلى الأس 2، محاطة بقوسين منحنيين طويلين. تمثّل المعادلات بوصفها نوعًا من العناصر المُحلَّلة.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрный контурный значок математического выражения: знак квадратного корня над x с верхним индексом 2, заключённый в высокие фигурные скобки. Он обозначает формулы как тип разбираемого элемента.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一个数学表达式的黑色线条图标：平方根号下是带上标 2 的 x，外面围着高高的弧形括号。它代表作为解析元素类型的公式。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -2061,6 +2673,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة ملوّنة لأربع قطع أحجية متشابكة تشكّل مربّعًا: خضراء في الأعلى يسارًا، وزرقاء في الأعلى يمينًا، وصفراء في الأسفل يسارًا، وحمراء في الأسفل يمينًا. تشير إلى المرحلة التي تُجمَّع فيها العناصر المُحلَّلة.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Цветной значок из четырёх сцепленных кусочков пазла, образующих квадрат: зелёный слева вверху, синий справа вверху, жёлтый слева внизу, красный справа внизу. Он обозначает этап, на котором собираются разобранные элементы.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "四块相互咬合、拼成正方形的拼图彩色图标——左上绿色、右上蓝色、左下黄色、右下红色。它标示解析出的元素被组装的阶段。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -2114,6 +2762,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة ملوّنة لعنقود قواعد بيانات: أسطوانة كبيرة زرقاء فاتحة في الوسط تتصل بخطوط قائمة الزوايا بست أسطوانات أصغر باللون الأخضر والأصفر والأزرق. تشير إلى المخزن المُفهرَس الذي يُكتب فيه المحتوى المُحلَّل.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Цветной значок кластера баз данных: большой бледно-голубой цилиндр в центре, соединённый прямоугольными линиями с шестью меньшими цилиндрами зелёного, жёлтого и синего цвета. Он обозначает индексированное хранилище, в которое записывается разобранное содержимое.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一个数据库集群的彩色图标：中央一个大的浅蓝色圆柱，通过直角连线连接六个较小的绿色、黄色和蓝色圆柱。它标示解析内容写入的索引存储。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -2167,6 +2851,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة ملوّنة لصورة قيد التحديد: رسم لشمس صفراء وجبال رمادية في سماء سماوية، يحيط بها أربعة مقابض في الزوايا. تشير إلى العناصر المرئية التي تُختار لتحويلها.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Цветной значок выделенного изображения: рисунок жёлтого солнца и серых гор на голубом небе в рамке из четырёх угловых маркеров. Он обозначает визуальные элементы, отбираемые для преобразования.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一幅处于选中状态的图片的彩色图标：青色天空下的黄色太阳和灰色山峦，四角带有选择手柄。它标示被选出以待转换的视觉元素。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -2220,6 +2940,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة ملوّنة لدماغ على رقاقة إلكترونية: دماغ بخط فاتح داخل رقاقة مربّعة بلون أزرق مخضرّ، تمتد منها أطراف توصيل إلى نقاط صغيرة على الجوانب الأربعة. تشير إلى خطوات خط المعالجة التي يقودها النموذج.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Цветной значок мозга на микросхеме: бледный контур мозга внутри квадратного бирюзового чипа, от которого во все четыре стороны расходятся выводы с маленькими точками. Он обозначает шаги конвейера, выполняемые моделью.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一个芯片上的大脑的彩色图标：浅色轮廓的大脑位于青绿色方形芯片内，四边伸出引脚，末端是小圆点。它标示流水线中由模型驱动的步骤。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -2285,6 +3041,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة بخطوط سوداء لرأس روبوت بهوائيين ولوحتين جانبيتين، رُسمت حافته السفلى على هيئة ذيل فقاعة كلام. تشير إلى الوكيل المُجيب في مخطط البنية.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрный контурный значок головы робота с двумя антеннами и боковыми панелями; нижний край нарисован как хвостик облачка реплики. Он обозначает отвечающего агента на схеме архитектуры.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一个带两根天线和两侧面板的机器人头部黑色线条图标，其下边缘画成对话气泡的尾巴。它标示架构图中负责回答的智能体。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -2465,6 +3257,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة بخطوط سوداء لثلاث فقاعات كلام مستطيلة، في كل منها ثلاث نقاط، مجمّعة بشكل غير منتظم. تشير إلى التبادل متعدد الأدوار الذي يدعمه النظام.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрный контурный значок трёх прямоугольных облачек реплик с тремя точками в каждом, свободно сгруппированных. Он обозначает многоходовой диалог, который поддерживает система.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "三个矩形对话气泡的黑色线条图标，每个气泡内有三个圆点，松散地排在一起。它标示系统所支持的多轮对话。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -2645,6 +3473,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة بخطوط سوداء لثلاث صفحات فوق كفّ مفتوحة متّجهة إلى الأعلى، وكل صفحة متصلة بالكفّ بسهم يشير إلى الأسفل. تشير إلى تسليم المستندات إلى القارئ.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрный контурный значок трёх страниц над раскрытой ладонью, обращённой вверх; каждая страница соединена с ладонью стрелкой, направленной вниз. Он обозначает передачу документов читателю.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一只掌心向上张开的手上方有三个页面符号的黑色线条图标，每个页面都有一支向下的箭头连到手上。它标示文档被交付给读者。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -2825,6 +3689,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة بخطوط سوداء لقائمة تحقق: صفحة بنود مُعلَّمة بالتناوب بعلامات صح وخطأ، وقلم رصاص ممدود فوقها، وصفحة ثانية خلفها، وشارة دائرية تحمل علامة صح في الأعلى يمينًا. تشير إلى مرحلة التقييم.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрный контурный значок контрольного списка: страница с пунктами, помеченными попеременно галочками и крестиками, поверх неё карандаш, за ней вторая страница, а справа вверху круглый значок с галочкой. Он обозначает этап оценки.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一张检查清单的黑色线条图标：页面上的条目交替标着对勾和叉号，一支铅笔横放其上，后面还有一页，右上角是一个带对勾的圆形徽章。它标示评估阶段。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -3005,6 +3905,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "أيقونة بخطوط سوداء لتخطيط صفحة: مربّع صغير مُصمَت وخطوط في الأعلى، وشريط مؤطّر في الوسط مكتوب عليه CONTEXT، وتحته خطوط أخرى وثلاثة مربّعات صغيرة. تشير إلى السياق المُجمَّع الذي يُمرَّر إلى النموذج.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Чёрный контурный значок макета страницы: небольшой закрашенный квадрат и линии сверху, рамка посередине со словом CONTEXT, ниже ещё линии и три маленьких прямоугольника. Он обозначает собранный контекст, передаваемый модели.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "一个页面版式的黑色线条图标：顶部有一个小的实心方块和几条横线，中间一条带边框的横带写着 CONTEXT，下方还有横线和三个小方框。它标示组装好并传给模型的上下文。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -3185,6 +4121,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"A轮交易占市场近半数 广东投资数量荣登榜首\" (صفقات الجولة A تقارب نصف السوق؛ وقوانغدونغ تتصدّر في عدد الصفقات). يقارن مخططان حلقيان عدد الصفقات وحجمها حسب الجولة في النصف الأول من عام 2024، وتحتهما مخطط أشرطة أفقية يرتّب أفضل عشر مناطق: قوانغدونغ 647 صفقة مقابل 5967.1، وجيانغسو 646، وشنغهاي 493، وتشجيانغ 417، وبكين 388.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"A轮交易占市场近半数 广东投资数量荣登榜首\" (сделки раунда A — почти половина рынка; Гуандун лидирует по числу сделок). Две кольцевые диаграммы сравнивают число и объём сделок по раундам за первое полугодие 2024 года, а ниже горизонтальная столбчатая диаграмма ранжирует десять ведущих регионов: Гуандун — 647 сделок при 5967.1, Цзянсу — 646, Шанхай — 493, Чжэцзян — 417, Пекин — 388.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"A轮交易占市场近半数 广东投资数量荣登榜首\"。两张环形图比较 2024 年上半年各轮次的交易数量和交易规模，下方的横向条形图列出前十个地区——广东 647 笔、金额 5967.1，江苏 646 笔，上海 493 笔，浙江 417 笔，北京 388 笔。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3238,6 +4210,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"全球：中企IPO首日破发率43.75%\" (عالميًا: 43.75% من الطروحات الأولية للشركات الصينية هبطت دون سعر الطرح في اليوم الأول). يعرض جدولان مرتّبان أكبر خمسة ارتفاعات وانخفاضات في اليوم الأول لشهر أبريل 2024، وتحتهما مخطط أشرطة أفقية يبيّن توزّع تحرّكات اليوم الأول على فئات من -60%,-30% إلى 240%,270%.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"全球：中企IPO首日破发率43.75%\" (в мире: 43.75 % IPO китайских компаний в первый день опустились ниже цены размещения). Две ранжированные таблицы приводят пять крупнейших ростов и падений первого дня за апрель 2024 года, а ниже горизонтальная столбчатая диаграмма показывает распределение изменений первого дня по интервалам от -60%,-30% до 240%,270%.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"全球：中企IPO首日破发率43.75%\"。两张排名表列出 2024 年 4 月首日涨幅和跌幅前五名，下方的横向条形图显示首日涨跌幅在从 -60%,-30% 到 240%,270% 各区间的分布。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3291,6 +4299,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"全球：IPO数量及金额呈下降趋势\" (عالميًا: عدد الطروحات الأولية ومبالغها في اتجاه هابط). يتتبّع مخطط مركّب من أشرطة وخط حصيلة الطروحات الشهرية وعدد الشركات من 2023-04 إلى 2024-04، وتحته جدول يفصّل أبريل 2024 حسب لوحة التداول في أسواق أسهم A وهونغ كونغ والولايات المتحدة.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"全球：IPO数量及金额呈下降趋势\" (в мире: число и объём IPO снижаются). Комбинированная столбчато-линейная диаграмма отслеживает ежемесячный объём привлечённых средств и число компаний с 2023-04 по 2024-04, а таблица ниже разбивает апрель 2024 года по площадкам рынков акций A, Гонконга и США.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"全球：IPO数量及金额呈下降趋势\"。一张柱线组合图追踪 2023-04 至 2024-04 每月的 IPO 募资额和企业数量，下方的表格按交易板块拆分 2024 年 4 月 A 股、港股和美股市场的数据。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3344,6 +4388,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"A股：制度建设期的IPO放缓\" (أسهم A: تباطؤ الطروحات الأولية في مرحلة بناء الأطر التنظيمية). يمتد مخطط مركّب من أشرطة وخط من 2023-04 إلى 2024-04، وتحته جدول يسرد أكبر خمس عمليات جمع أموال في أسهم A لشهر أبريل 2024 حسب الشركة والرمز والنشاط والمبلغ.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"A股：制度建设期的IPO放缓\" (акции A: IPO замедляются в период формирования регулирования). Комбинированная столбчато-линейная диаграмма охватывает период с 2023-04 по 2024-04, а таблица ниже перечисляет пять крупнейших размещений акций A за апрель 2024 года по компании, биржевому коду, виду деятельности и сумме.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"A股：制度建设期的IPO放缓\"。一张柱线组合图覆盖 2023-04 至 2024-04，下方表格按公司、股票代码、业务和金额列出 2024 年 4 月 A 股募资额前五名。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3397,6 +4477,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"全球中企IPO募资金额创一年新低\" (حصيلة الشركات الصينية من الطروحات تبلغ أدنى مستوى في عام). يغطي مخطط مركّب من أشرطة وخط الفترة من 2024-02 إلى 2025-02، وتحته جدول يعرض عدد الطروحات ومبالغها في فبراير 2025 حسب لوحة التداول.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"全球中企IPO募资金额创一年新低\" (объём средств, привлечённых китайскими компаниями, — минимум за год). Комбинированная столбчато-линейная диаграмма охватывает период с 2024-02 по 2025-02, а таблица ниже приводит число и объём IPO за февраль 2025 года по площадкам.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"全球中企IPO募资金额创一年新低\"。一张柱线组合图覆盖 2024-02 至 2025-02，下方表格按交易板块给出 2025 年 2 月的 IPO 数量和金额。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3450,6 +4566,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"港交所IPO数量与募资金额居首位\" (بورصة هونغ كونغ تتصدّر في عدد الطروحات ومبالغها) للنصف الأول من عام 2025. يحدّد مستطيل أحمر الفقرة التي تحمل الأرقام التي تُستمد منها إجابة سؤال المثال، وتحتها جدول يعرض عدد الطروحات ومبالغها في إحدى عشرة لوحة تداول.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"港交所IPO数量与募资金额居首位\" (Гонконгская биржа лидирует и по числу, и по объёму IPO) за первое полугодие 2025 года. Красный прямоугольник выделяет абзац с цифрами, из которых берётся ответ на вопрос примера, а ниже таблица приводит число и объём IPO по одиннадцати площадкам.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"港交所IPO数量与募资金额居首位\"，针对 2025 年上半年。一个红色矩形框出了示例问题的答案所依据的数字所在段落，下方表格给出十一个交易板块的 IPO 数量和金额。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3503,6 +4655,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"全球中企港股IPO表现最突出\" (إدراجات هونغ كونغ الأبرز) لشهر مايو 2025. يحدّد مستطيل أحمر الفقرة الافتتاحية — 18 شركة، بزيادة في العدد قدرها 38.46% على أساس سنوي، وجمع S$500亿元 — ويحدّد مستطيل أحمر ثانٍ جدول لوحات التداول أسفل مخطط الأشرطة والخط.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"全球中企港股IPO表现最突出\" (размещения в Гонконге — самые заметные) за май 2025 года. Красный прямоугольник выделяет вводный абзац — 18 компаний, рост числа на 38.46 % год к году, привлечено S$500亿元, — а второй красный прямоугольник выделяет таблицу по площадкам под столбчато-линейной диаграммой.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"全球中企港股IPO表现最突出\"，针对 2025 年 5 月。一个红色矩形框出开头段落——18 家企业，数量同比增长 38.46%，募资 S$500亿元——另一个红色矩形框出柱线组合图下方的交易板块表格。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3556,6 +4744,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"A股IPO回归常态 港美IPO持续活跃\" (طروحات أسهم A تعود إلى طبيعتها؛ وهونغ كونغ والولايات المتحدة تبقيان نشطتين) لشهر أبريل 2025. يحدّد مستطيل أحمر الفقرة الافتتاحية — 24 شركة، بزيادة في العدد قدرها 50%، وجمع 146亿元 — ويحدّد آخر جدول لوحات التداول أسفل المخطط.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"A股IPO回归常态 港美IPO持续活跃\" (IPO акций A возвращаются к норме; Гонконг и США остаются активными) за апрель 2025 года. Красный прямоугольник выделяет вводный абзац — 24 компании, рост числа на 50 %, привлечено 146亿元, — а другой выделяет таблицу по площадкам под диаграммой.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"A股IPO回归常态 港美IPO持续活跃\"，针对 2025 年 4 月。一个红色矩形框出开头段落——24 家企业，数量增长 50%，募资 146亿元——另一个框出图表下方的交易板块表格。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3609,6 +4833,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"港主板退出回报高 先进制造获投数量多\" (عوائد التخارج في اللوحة الرئيسية لهونغ كونغ مرتفعة؛ والتصنيع المتقدّم يجتذب أكبر عدد من الصفقات). يحدّد مستطيل أحمر الفقرة الافتتاحية وجدول تحليل التخارج الذي يليها؛ ويفصّل جدول ثانٍ في الأسفل عوائد تخارج VC/PE حسب القطاع.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"港主板退出回报高 先进制造获投数量多\" (доходность выхода на основной площадке Гонконга высока; передовое производство привлекает больше всего сделок). Красный прямоугольник выделяет вводный абзац и следующую за ним таблицу анализа выходов; вторая таблица ниже разбивает доходность выходов VC/PE по отраслям.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"港主板退出回报高 先进制造获投数量多\"。一个红色矩形框出开头段落及其下方的退出分析表；再下方的第二张表格按行业拆分 VC/PE 退出回报。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3662,6 +4922,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"港交所主板账面退出回报最高\" (اللوحة الرئيسية لبورصة هونغ كونغ تحقق أعلى عائد تخارج دفتري). يغطي مستطيل أحمر الفقرة الافتتاحية وجدول تحليل التخارج؛ وتحتهما مخطط أشرطة وخط يتتبّع نسبة حضور VC/PE في الطروحات من 2024-04 إلى 2025-04.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"港交所主板账面退出回报最高\" (у основной площадки Гонконгской биржи самая высокая балансовая доходность выхода). Красный прямоугольник охватывает вводный абзац и таблицу анализа выходов; ниже столбчато-линейная диаграмма отслеживает долю IPO с участием VC/PE с 2024-04 по 2025-04.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"港交所主板账面退出回报最高\"。一个红色矩形覆盖开头段落和退出分析表；下方的柱线组合图追踪 2024-04 至 2025-04 VC/PE 在 IPO 中的渗透率。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3715,6 +5011,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) تحمل العنوان نفسه \"港交所主板账面退出回报最高\"، لشهر مايو 2025. يغطي مستطيل أحمر الفقرة الافتتاحية وجدول تحليل التخارج؛ ويمتد مخطط الأشرطة والخط في الأسفل من 2024-05 إلى 2025-05. وهي الصفحة الشقيقة المباشرة لصفحة أبريل، وتختلف عنها في الأرقام لا في التخطيط.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с тем же заголовком \"港交所主板账面退出回报最高\", за май 2025 года. Красный прямоугольник охватывает вводный абзац и таблицу анализа выходов; столбчато-линейная диаграмма ниже охватывает период с 2024-05 по 2025-05. Это ближайшая соседка апрельской страницы и отличается от неё цифрами, а не вёрсткой.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "投中信息（CVSource）中文投资研究报告中的一页，标题同为 \"港交所主板账面退出回报最高\"，针对 2025 年 5 月。一个红色矩形覆盖开头段落和退出分析表；下方的柱线组合图覆盖 2024-05 至 2025-05。它与 4 月那一页紧邻，区别在于数字而非版式。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3768,6 +5100,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"4月VC/PE机构背景企业IPO一览表\" (أبريل: طروحات الشركات المدعومة من VC/PE). يسرد جدول من عمودين سبع شركات مقابل مؤسساتها المستثمرة، مع حاشية برتقالية تذكر أن ضيق المساحة قصر القائمة على المؤسسات التي لم تتخارج بعد.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"4月VC/PE机构背景企业IPO一览表\" (апрель: IPO компаний при поддержке VC/PE). Таблица из двух столбцов перечисляет семь компаний и их инвесторов; оранжевая сноска поясняет, что из-за нехватки места в списке указаны только инвесторы, ещё не вышедшие из капитала.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"4月VC/PE机构背景企业IPO一览表\"。一张两列表格列出七家企业及其投资机构，橙色脚注说明因篇幅所限，仅列出尚未退出的机构。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3821,6 +5189,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة ويب من جامعة سنغافورة الوطنية بعنوان \"MComp in AI: Frequently Asked Questions\"، تبدأ بملاحظة عن NUS Master's Degree by Coursework Enhanced Tuition Fee Rebate. وتحت Requirements تتناول الأسئلة والأجوبة الخلفيات الدراسية، والخبرة العملية في تقنية المعلومات، ومواعيد تقديم المستندات، وما إذا كانت درجات TOEFL/IELTS وGRE/GMAT مطلوبة.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Веб-страница Национального университета Сингапура с заголовком \"MComp in AI: Frequently Asked Questions\", открывающаяся заметкой о NUS Master's Degree by Coursework Enhanced Tuition Fee Rebate. В разделе Requirements вопросы и ответы касаются базового образования, опыта работы в ИТ, сроков подачи документов и того, нужны ли баллы TOEFL/IELTS и GRE/GMAT.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "新加坡国立大学的一个网页，标题为 \"MComp in AI: Frequently Asked Questions\"，开头是关于 NUS Master's Degree by Coursework Enhanced Tuition Fee Rebate 的说明。在 Requirements 部分，问答涉及学历背景、IT 工作经验、材料截止日期，以及是否需要 TOEFL/IELTS 和 GRE/GMAT 成绩。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3874,6 +5278,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "لقطة شاشة ضيقة لصفحة من NUS بعنوان \"Master of Computing (Computer Science Specialisation) (Coursework)\"، فيها لافتة برتقالية \"Explore Our Programmes\" في الأعلى، وصورة رئيسية تقنية باللون الأزرق الداكن في الوسط، وزرّا دعوة إلى الإجراء برتقاليان (\"More Info\" و\"Apply Now\")، وتحتهما نص Faculty والوصف.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Узкий снимок экрана страницы NUS с заголовком \"Master of Computing (Computer Science Specialisation) (Coursework)\": оранжевый баннер \"Explore Our Programmes\" вверху, тёмно-синее технологичное главное изображение посередине, две оранжевые кнопки призыва к действию (\"More Info\", \"Apply Now\") и ниже текст Faculty и описания.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "NUS 一个页面的窄幅截图，标题为 \"Master of Computing (Computer Science Specialisation) (Coursework)\"：顶部是橙色的 \"Explore Our Programmes\" 横幅，中间是深蓝色科技主图，下面是两个橙色行动按钮（\"More Info\"、\"Apply Now\"），再往下是 Faculty 和简介文字。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3927,6 +5367,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة من كتيّب برنامج NUS MTech in Artificial Intelligence Systems. يتناول النصف العلوي إتقان اللغة الإنجليزية (حدود TOEFL وIELTS في جدول صغير) واختبار القبول GRE/NUS-ISS، مع إطار \"How to Apply\". ويضم النصف السفلي جدول البرنامج في شبكتين ملوّنتين — الدوام الكامل على فصلين دراسيين والدوام الجزئي على أربعة — تليهما ملاحظات عن Practice Module وStackable Graduate Certificate Programme.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница брошюры программы NUS MTech in Artificial Intelligence Systems. Верхняя половина посвящена владению английским языком (пороговые баллы TOEFL и IELTS в небольшой таблице) и вступительному тесту GRE/NUS-ISS, с блоком \"How to Apply\". В нижней половине — расписание программы в виде двух цветных сеток (очная форма за два семестра, заочная за четыре), а затем примечания о Practice Module и Stackable Graduate Certificate Programme.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "NUS MTech in Artificial Intelligence Systems 项目宣传册中的一页。上半部分介绍英语能力要求（小表格中列出 TOEFL 和 IELTS 分数线）和 GRE/NUS-ISS 入学考试，并附 \"How to Apply\" 栏。下半部分以两张彩色网格列出课程安排——全日制两个学期、非全日制四个学期——随后是关于 Practice Module 和 Stackable Graduate Certificate Programme 的说明。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -3980,6 +5456,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "كتيّب كامل من صفحة واحدة لبرنامج NUS Master of Science in Quantitative Finance، بلوني الجامعة الأزرق والبرتقالي. تتناول الأطر Overview وFaculty وCareer Opportunities وProgramme Structure and Candidature وAdmission Requirements وHow to Apply وشهادتين لطالبين. يحدّد مستطيل أحمر فقرة مدة الدراسة: برنامج من 40 وحدة يضم خمسة مقررات أساسية وخمسة اختيارية، ويمكن إكماله في سنة إلى سنتين بدوام كامل أو سنتين إلى أربع سنوات بدوام جزئي.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Полная одностраничная брошюра программы NUS Master of Science in Quantitative Finance в синих и оранжевых цветах университета. Блоки посвящены Overview, Faculty, Career Opportunities, Programme Structure and Candidature, Admission Requirements, How to Apply и двум отзывам студентов. Красный прямоугольник выделяет абзац о сроках обучения: программа на 40 кредитов из пяти обязательных и пяти факультативных курсов, которую можно пройти за 1–2 года очно или за 2–4 года заочно.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "NUS Master of Science in Quantitative Finance 的整页宣传册，采用学校的蓝橙配色。各栏涵盖 Overview、Faculty、Career Opportunities、Programme Structure and Candidature、Admission Requirements、How to Apply 以及两段学生感言。一个红色矩形框出修读年限段落——40 学分的课程，含五门核心课和五门选修课，全日制 1 至 2 年、非全日制 2 至 4 年可完成。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -4033,6 +5545,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة ويب من NUS-ISS بعنوان \"Master of Technology in Enterprise Business Analytics\". يحيط مستطيل أحمر بجدول Overview — الدفعة التالية، والمدة، والجدول الزمني للتقديم، واختبار القبول، وترتيبات GRE — فوق فقرات وصفية وقائمة بما سيتمكّن الخرّيجون من فعله.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Веб-страница NUS-ISS с заголовком \"Master of Technology in Enterprise Business Analytics\". Красный прямоугольник охватывает таблицу Overview — ближайший набор, продолжительность, сроки подачи заявок, вступительный тест и условия GRE — над описательными абзацами и списком того, что смогут делать выпускники.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "NUS-ISS 的一个网页，标题为 \"Master of Technology in Enterprise Business Analytics\"。一个红色矩形框出 Overview 表格——下一期招生、学制、申请时间表、入学考试和 GRE 安排——其下是说明段落和毕业生将具备的能力列表。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -4086,6 +5634,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة مُولَّدة من ملف markdown، يقول ترويستها \"27.nus-ba.md\" و\"2025-07-26\"، عن برنامج NUS Master of Science in Business Analytics. يحيط مستطيل أحمر بجدول Commitment and Candidature — الدوام الكامل 14 شهرًا في المتوسط و24 حدًّا أقصى، والدوام الجزئي 24 و48 — وتحته الفئة المستهدفة ومعايير القبول.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница, отрисованная из файла markdown, с заголовком \"27.nus-ba.md\" и \"2025-07-26\", о программе NUS Master of Science in Business Analytics. Красный прямоугольник охватывает таблицу Commitment and Candidature — очно в среднем 14 месяцев и не более 24, заочно 24 и 48, — а ниже указаны целевая аудитория и критерии приёма.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "由 markdown 文件渲染的一页，页眉写着 \"27.nus-ba.md\" 和 \"2025-07-26\"，介绍 NUS Master of Science in Business Analytics。一个红色矩形框出 Commitment and Candidature 表格——全日制平均 14 个月、最长 24 个月，非全日制 24 和 48 个月——下方是目标人群和录取标准。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -4139,6 +5723,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "قسم من صفحة ويب لبرنامج NUS MSc in Digital Financial Technology. يحيط مستطيل أحمر بجدول Commitment and Candidature — الدوام الكامل 1.5 سنة في المتوسط و3 سنوات حدًّا أقصى، والدوام الجزئي 2.5 و3 — وفوقه Scholarships، وتحته Target Audience وGeneral Admission Criteria (GMAT 650/800، TOEFL 90/120، IELTS 6.0/9).",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Раздел веб-страницы программы NUS MSc in Digital Financial Technology. Красный прямоугольник охватывает таблицу Commitment and Candidature — очно в среднем 1.5 года и не более 3 лет, заочно 2.5 и 3, — выше раздел Scholarships, а ниже Target Audience и General Admission Criteria (GMAT 650/800, TOEFL 90/120, IELTS 6.0/9).",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "NUS MSc in Digital Financial Technology 的一个网页片段。一个红色矩形框出 Commitment and Candidature 表格——全日制平均 1.5 年、最长 3 年，非全日制 2.5 年和 3 年——上方是 Scholarships，下方是 Target Audience 和 General Admission Criteria（GMAT 650/800、TOEFL 90/120、IELTS 6.0/9）。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -4192,6 +5812,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "قسم من صفحة ويب بعنوان \"Capstone Project & Internships\" لبرنامج NUS MTech EBAC. يحيط مستطيل أحمر بالفقرة التي تصف وحدة المشروع: خمسة أشهر بدوام كامل، ومن 7 إلى 12 شهرًا بدوام جزئي، و30 يوم عمل لكل عضو في الفريق، ودورة إلزامية مدتها أربعة أيام. تليها الأهداف ونتائج التعلّم وجدول Timetable & Exams لطلاب الدوام الكامل.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Раздел веб-страницы с заголовком \"Capstone Project & Internships\" программы NUS MTech EBAC. Красный прямоугольник охватывает абзац с описанием проектного модуля: пять месяцев очно, от 7 до 12 месяцев заочно, 30 человеко-дней на каждого участника команды и обязательный четырёхдневный курс. Далее следуют цели, результаты обучения и таблица Timetable & Exams для студентов очной формы.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "NUS MTech EBAC 项目网页中标题为 \"Capstone Project & Internships\" 的片段。一个红色矩形框出描述项目模块的段落——全日制五个月，非全日制 7 至 12 个月，每名团队成员 30 人日，外加一门必修的四天课程。随后是目标、学习成果，以及面向全日制学生的 Timetable & Exams 表格。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -4245,6 +5901,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "قسم من صفحة ويب بعنوان \"Internship Timeline\" لبرنامج NUS MSc in Digital Financial Technology. يحيط مستطيل أحمر بجدول برتقالي الرأس عن FinTech Capstone Project: السمات الرئيسية، وفترة التدريب، ونوافذ التقديم والطلب، ومواعيد العروض النهائية، وفترة السماح لقبول الطالب. تليه تعليمات نشر وظيفة على NUS TalentConnect.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Раздел веб-страницы с заголовком \"Internship Timeline\" программы NUS MSc in Digital Financial Technology. Красный прямоугольник охватывает таблицу с оранжевой шапкой о FinTech Capstone Project: основные характеристики, период стажировки, сроки подачи материалов и заявок, крайние сроки предложений и льготный период для согласия студента. Далее — инструкции по размещению вакансии в NUS TalentConnect.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "NUS MSc in Digital Financial Technology 网页中标题为 \"Internship Timeline\" 的片段。一个红色矩形框出一张橙色表头的 FinTech Capstone Project 表格——主要特点、实习期、提交和申请时段、录用截止日期以及学生接受的宽限期。随后是在 NUS TalentConnect 上发布职位的说明。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -4298,6 +5990,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "صفحة ويب لبرنامج MSAI في NUS، مرتّبة على هيئة عناوين أكورديون زرقاء متراصّة — Admission Requirements وProgramme Structure & Duration وCurriculum وCareer Prospects وAdditional Information — وجميعها مفتوحة. يضم أولها جدولًا صغيرًا بالمستندات المطلوبة، ويذكر آخرها رسومًا دراسية قدرها S$63,220 للعام الأكاديمي 2025/26 وما بعده.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Веб-страница программы MSAI в NUS, оформленная как стопка синих раскрывающихся заголовков — Admission Requirements, Programme Structure & Duration, Curriculum, Career Prospects и Additional Information, — все развёрнуты. В первом — небольшая таблица требуемых документов; в последнем указана плата за обучение S$63,220 на 2025/26 учебный год и далее.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "NUS 一个 MSAI 项目的网页，由一组堆叠的蓝色折叠标题构成——Admission Requirements、Programme Structure & Duration、Curriculum、Career Prospects 和 Additional Information——均已展开。第一个包含一张所需材料的小表格；最后一个给出 2025/26 学年及以后的学费 S$63,220。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     },
@@ -4351,6 +6079,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "الصفحة 3 من الورقة \"Actions Speak Louder than Words: Trillion-Parameter Sequential Transducers for Generative Recommendations\"، مُستنسَخة كما هي. تحمل الشكل 2 (مقارنة بين السمات وإجراءات التدريب في DLRM وGenerative Recommenders)، وعمودين من النص تحت العنوانين 2.2 و2.3، والجدول 1. وهي مُدخل المحلّل، معروضة قبل أي تحليل للتخطيط.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Страница 3 статьи \"Actions Speak Louder than Words: Trillion-Parameter Sequential Transducers for Generative Recommendations\", воспроизведённая как есть. На ней рисунок 2 (сравнение признаков и процедур обучения DLRM и Generative Recommenders), две колонки основного текста под заголовками 2.2 и 2.3 и таблица 1. Это вход парсера, показанный до какого-либо анализа вёрстки.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "论文 \"Actions Speak Louder than Words: Trillion-Parameter Sequential Transducers for Generative Recommendations\" 的第 3 页，按原样复制。页面包含图 2（DLRM 与 Generative Recommenders 的特征和训练流程对比）、标题 2.2 和 2.3 下的两栏正文以及表 1。这是解析器的输入，展示于任何版面分析之前。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ],
       "placements": [
@@ -4426,6 +6190,42 @@
           },
           "drafted_at": "2026-10-24",
           "lang": "es"
+        },
+        {
+          "text": "الصفحة نفسها من \"Actions Speak Louder than Words\"، وقد رُكِّب عليها تحليل التخطيط الذي أجراه المحلّل. خمس عشرة منطقة ملوّنة ومرقّمة من 1 إلى 15 — الأخضر للشكل، والأزرق للتعليق وعناوين الأقسام، والوردي لفقرات النص، والأصفر للجدول — بحيث يمكن قراءة كل عنصر مُكتشَف وترتيب قراءته مباشرة. وهي النظير المُخرَج للصفحة غير المُعلَّمة المجاورة لها.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ar"
+        },
+        {
+          "text": "Та же страница \"Actions Speak Louder than Words\" с наложенным результатом анализа вёрстки, выполненного парсером. Пятнадцать областей подкрашены и пронумерованы от 1 до 15 — зелёным рисунок, синим подпись и заголовки разделов, розовым абзацы основного текста, жёлтым таблица, — так что каждый найденный элемент и порядок чтения видны сразу. Это выходной двойник неразмеченной страницы рядом.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "ru"
+        },
+        {
+          "text": "同一页 \"Actions Speak Louder than Words\"，叠加了解析器的版面分析结果。十五个区域被着色并编号为 1 至 15——绿色为图，蓝色为图注和章节标题，粉色为正文段落，黄色为表格——因此每个检测到的元素及其阅读顺序都能直接读出。它是旁边那张未标注页面对应的输出。",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "zh"
         }
       ]
     }

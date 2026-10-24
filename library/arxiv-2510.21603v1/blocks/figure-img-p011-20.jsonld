@@ -50,6 +50,42 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "es"
+    },
+    {
+      "text": "قسم من صفحة ويب بعنوان \"Capstone Project & Internships\" لبرنامج NUS MTech EBAC. يحيط مستطيل أحمر بالفقرة التي تصف وحدة المشروع: خمسة أشهر بدوام كامل، ومن 7 إلى 12 شهرًا بدوام جزئي، و30 يوم عمل لكل عضو في الفريق، ودورة إلزامية مدتها أربعة أيام. تليها الأهداف ونتائج التعلّم وجدول Timetable & Exams لطلاب الدوام الكامل.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Раздел веб-страницы с заголовком \"Capstone Project & Internships\" программы NUS MTech EBAC. Красный прямоугольник охватывает абзац с описанием проектного модуля: пять месяцев очно, от 7 до 12 месяцев заочно, 30 человеко-дней на каждого участника команды и обязательный четырёхдневный курс. Далее следуют цели, результаты обучения и таблица Timetable & Exams для студентов очной формы.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "NUS MTech EBAC 项目网页中标题为 \"Capstone Project & Internships\" 的片段。一个红色矩形框出描述项目模块的段落——全日制五个月，非全日制 7 至 12 个月，每名团队成员 30 人日，外加一门必修的四天课程。随后是目标、学习成果，以及面向全日制学生的 Timetable & Exams 表格。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",
