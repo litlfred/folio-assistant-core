@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Un folleto completo de una página del NUS Master of Science in Quantitative Finance, en el azul y naranja de la universidad. Los recuadros tratan Overview, Faculty, Career Opportunities, Programme Structure and Candidature, Admission Requirements, How to Apply y dos testimonios de estudiantes. Un rectángulo rojo señala el párrafo sobre la duración: un programa de 40 créditos con cinco asignaturas obligatorias y cinco optativas, que puede completarse en 1 a 2 años a tiempo completo o en 2 a 4 a tiempo parcial.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

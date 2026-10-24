@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Una página de un informe de análisis de inversiones en chino de CVSource (投中信息) titulada \"全球中企IPO募资金额创一年新低\" (la captación de las empresas chinas marca su mínimo en un año). Un gráfico combinado de barras y líneas abarca de 2024-02 a 2025-02, con una tabla debajo que recoge el número y el importe de las salidas a bolsa de febrero de 2025 por segmento bursátil.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

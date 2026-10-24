@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Una página de un informe de análisis de inversiones en chino de CVSource (投中信息) titulada \"港交所主板账面退出回报最高\" (el mercado principal de la Bolsa de Hong Kong tiene la mayor rentabilidad contable de salida). Un rectángulo rojo cubre el párrafo inicial y la tabla de análisis de salidas; debajo, un gráfico de barras y líneas sigue la penetración de VC/PE en las salidas a bolsa de 2024-04 a 2025-04.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

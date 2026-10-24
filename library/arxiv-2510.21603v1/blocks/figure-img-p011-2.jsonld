@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Una página de un informe de análisis de inversiones en chino de CVSource (投中信息) titulada \"全球：中企IPO首日破发率43.75%\" (global: el 43.75 % de las salidas a bolsa de empresas chinas cayó por debajo del precio de emisión el primer día). Dos tablas clasificadas recogen las cinco mayores subidas y caídas del primer día en abril de 2024, y debajo un gráfico de barras horizontales muestra la distribución de las variaciones del primer día en tramos que van de -60%,-30% a 240%,270%.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

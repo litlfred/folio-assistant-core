@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "La misma página de \"Actions Speak Louder than Words\", con el análisis de maquetación del analizador superpuesto. Quince regiones están coloreadas y numeradas del 1 al 15 (verde para la figura, azul para el pie y los epígrafes, rosa para los párrafos de texto, amarillo para la tabla), de modo que cada elemento detectado y su orden de lectura pueden leerse directamente. Es la contrapartida de salida de la página sin anotar que tiene al lado.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

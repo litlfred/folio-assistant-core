@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Una página de un informe de análisis de inversiones en chino de CVSource (投中信息) titulada \"全球中企港股IPO表现最突出\" (las salidas a bolsa en Hong Kong, las más destacadas) para mayo de 2025. Un rectángulo rojo señala el párrafo inicial (18 empresas, un número un 38.46 % superior al del año anterior, S$500亿元 captados) y un segundo rectángulo rojo señala la tabla por segmento bursátil bajo el gráfico de barras y líneas.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

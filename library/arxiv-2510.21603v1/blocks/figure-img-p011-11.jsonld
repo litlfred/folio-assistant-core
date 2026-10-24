@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Una página de un informe de análisis de inversiones en chino de CVSource (投中信息) con el mismo título, \"港交所主板账面退出回报最高\", para mayo de 2025. Un rectángulo rojo cubre el párrafo inicial y la tabla de análisis de salidas; el gráfico de barras y líneas de debajo abarca de 2024-05 a 2025-05. Es la página hermana inmediata de la de abril y se diferencia de ella en las cifras, no en la maquetación.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

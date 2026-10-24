@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Una página de un folleto de Prudential Singapore titulada \"PRUShield Premier and PRUExtra Supplementary Plans: Coverage for private hospital not under Prudential's Panel and Non-Panel listings\". Desarrolla un único caso (habitación individual en un hospital privado, factura total de S$80,000) y muestra lo que cubre PRUShield Premier (S$68,850; John paga S$11,150) y, debajo, cuatro opciones complementarias, cada una con su prima diaria y lo que John seguiría pagando: PRUExtra Premier CoPay (S$5,900, con una barra de progresión de niveles que lo lleva al nivel 4), PRUExtra Preferred CoPay (S$11,150) y PRUExtra Premier Lite CoPay (S$7,325).",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-001",
