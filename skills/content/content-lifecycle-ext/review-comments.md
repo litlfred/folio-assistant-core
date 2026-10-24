@@ -303,7 +303,11 @@ Nothing refreshes on a comment when there is no preview yet (no
 `changeset.json`, at the preview's root, when it is opened:
 
 - each changed block lists its comments: kind, status, reviewer and role,
-  the first line, and a link to the PR comment;
+  the first line, a link to the PR comment, the `resolve: <id>` tag for an
+  open or addressed comment, and the recorded `decision` for a closed one;
+- a comment filter (`Show comments`) filters the listed comments by status
+  (`open`, `addressed`, `resolved`, `adjudicated`, `withdrawn`, or `open and
+  addressed`) or kind (`defect`, `question`, `suggestion`, `editorial`);
 - a comment on a block this PR did not change is listed separately, since
   a review of a whole document comments on unchanged text too;
 - **orphaned** comments are listed under their own heading, with the label
