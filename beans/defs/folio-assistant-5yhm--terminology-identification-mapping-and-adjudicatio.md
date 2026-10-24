@@ -2,11 +2,11 @@
 # folio-assistant-5yhm
 $schema: bean/1.0.0
 title: 'TERMINOLOGY: identification, mapping and adjudication — a glossary term is CHECKED against an existing terminology, never only minted'
-status: in-progress
+status: completed
 type: feature
 priority: normal
 created_at: 2026-09-25T04:51:06Z
-updated_at: 2026-10-02T08:01:23Z
+updated_at: 2026-10-24T08:35:00Z
 parent: folio-assistant-0lmb
 ---
 

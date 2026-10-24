@@ -2,13 +2,13 @@
 # folio-assistant-cz17
 $schema: bean/1.0.0
 title: 'Migrate dak.json in: the DAK type is ours, and its Logical Model is pending upstream'
-status: todo
+status: in-progress
 type: task
 priority: normal
 tags:
     - rehomed
 created_at: 2026-09-18T21:36:56Z
-updated_at: 2026-10-10T16:34:20Z
+updated_at: 2026-10-24T08:30:35Z
 parent: folio-assistant-0lmb
 ---
 
