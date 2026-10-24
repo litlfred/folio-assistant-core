@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Un icono en color de un cerebro sobre un microchip: un cerebro de contorno pálido dentro de un chip cuadrado verde azulado, con patillas que irradian hacia pequeños puntos en los cuatro lados. Marca los pasos de la cadena de procesamiento que dirige el modelo.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-002",

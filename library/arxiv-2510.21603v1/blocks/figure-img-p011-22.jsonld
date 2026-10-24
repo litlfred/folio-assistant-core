@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Una página web de un programa MSAI de la NUS, organizada como encabezados de acordeón azules apilados (Admission Requirements, Programme Structure & Duration, Curriculum, Career Prospects y Additional Information), todos desplegados. El primero contiene una pequeña tabla de documentos exigidos; el último indica una matrícula de S$63,220 para el curso académico 2025/26 y siguientes.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

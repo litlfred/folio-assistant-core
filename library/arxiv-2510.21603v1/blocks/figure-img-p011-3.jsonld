@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Una página de un informe de análisis de inversiones en chino de CVSource (投中信息) titulada \"全球：IPO数量及金额呈下降趋势\" (global: el número y el importe de las salidas a bolsa tienden a la baja). Un gráfico combinado de barras y líneas sigue la captación mensual y el número de empresas entre 2023-04 y 2024-04, y debajo una tabla desglosa abril de 2024 por segmento bursátil en los mercados de acciones A, Hong Kong y Estados Unidos.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

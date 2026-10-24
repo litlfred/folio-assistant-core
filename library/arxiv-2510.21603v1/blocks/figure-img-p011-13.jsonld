@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Una página web de la Universidad Nacional de Singapur titulada \"MComp in AI: Frequently Asked Questions\", que se abre con una nota sobre el NUS Master's Degree by Coursework Enhanced Tuition Fee Rebate. En el apartado Requirements, preguntas y respuestas tratan la formación previa, la experiencia laboral en TI, los plazos de entrega de documentos y si se exigen las puntuaciones de TOEFL/IELTS y GRE/GMAT.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

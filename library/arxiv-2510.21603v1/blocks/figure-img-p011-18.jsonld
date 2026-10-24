@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Una página generada a partir de un archivo markdown, cuyo encabezado dice \"27.nus-ba.md\" y \"2025-07-26\", sobre el NUS Master of Science in Business Analytics. Un rectángulo rojo encierra la tabla Commitment and Candidature (a tiempo completo, 14 meses de media y 24 como máximo; a tiempo parcial, 24 y 48), con el público destinatario y los criterios de admisión debajo.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

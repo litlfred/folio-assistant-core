@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Una página de un informe de análisis de inversiones en chino de CVSource (投中信息) titulada \"A股：制度建设期的IPO放缓\" (acciones A: las salidas a bolsa se ralentizan durante un periodo de desarrollo normativo). Un gráfico combinado de barras y líneas abarca de 2023-04 a 2024-04, y debajo una tabla enumera las cinco mayores captaciones en acciones A de abril de 2024 por empresa, código bursátil, actividad e importe.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

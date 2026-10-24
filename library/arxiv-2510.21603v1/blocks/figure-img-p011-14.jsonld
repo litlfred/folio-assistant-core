@@ -38,6 +38,18 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Una captura de pantalla estrecha de una página de la NUS titulada \"Master of Computing (Computer Science Specialisation) (Coursework)\", con un banner naranja \"Explore Our Programmes\" en la parte superior, una imagen principal tecnológica en azul oscuro en el centro, dos botones naranjas de llamada a la acción (\"More Info\", \"Apply Now\") y, debajo, el texto de Faculty y de la descripción.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",
