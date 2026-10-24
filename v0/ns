@@ -5,8 +5,8 @@
     "owl": "http://www.w3.org/2002/07/owl#",
     "skos": "http://www.w3.org/2004/02/skos/core#",
     "dcterms": "http://purl.org/dc/terms/",
-    "bootstrap": "https://litlfred.github.io/bootstrap/0.1.0/ns#",
-    "cat-harness": "https://litlfred.github.io/cat-harness/0.1.0/ns#",
+    "bootstrap": "https://litlfred.github.io/bootstrap/v0/ns#",
+    "cat-harness": "https://litlfred.github.io/cat-harness/v0/ns#",
     "folio-assistant-core": "https://litlfred.github.io/folio-assistant-core/v0/ns#",
     "folio-assistant-sci": "https://litlfred.github.io/folio-assistant-sci/v0/ns#",
     "smart-base": "https://litlfred.github.io/smart-base/v0/ns#",
@@ -40,7 +40,7 @@
       "@id": "dcterms:isReplacedBy",
       "@type": "@id"
     },
-    "layer": "https://litlfred.github.io/cat-harness/0.1.0/ns#layer"
+    "layer": "https://litlfred.github.io/cat-harness/v0/ns#layer"
   },
   "@id": "https://litlfred.github.io/folio-assistant-core/v0/ns",
   "@type": [
