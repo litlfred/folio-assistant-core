@@ -51,6 +51,7 @@ const tools = source("a", NS_A, glossary("kg-tools", [
 const sources = [platformA, platformB, tools];
 
 const row = (target: string, mappedTerms: SchemeState["mappedTerms"]): SchemeState => ({
+  instance: "a",
   scheme: "kg-tools",
   target,
   mapped: mappedTerms.length,
@@ -101,8 +102,16 @@ describe("automatedMatches — the record, resolved to links or left out", () =>
     expect(unresolved.some((u) => u.includes("platform:actor") && u.includes("2 authored terms"))).toBe(true);
   });
 
-  test("a candidate key two schemes share cannot be placed, so it is reported, never published twice", () => {
-    const twin = source("b", NS_B, glossary("kg-tools", [{ id: "policy", prefLabel: "Policy", status: "candidate" }]));
+  test("the same scheme and term id in another instance is another key: the row goes to its own instance only (bean q3n9)", () => {
+    const other = source("b", NS_B, glossary("kg-tools", [{ id: "policy", prefLabel: "Policy", status: "candidate" }]));
+    const r = automatedMatches(states, [...sources, other]);
+    expect(r.bySource.get(sourceKey(tools))!.some((m) => m.term === "policy")).toBe(true);
+    expect(r.bySource.has(sourceKey(other))).toBe(false);
+    expect(r.unresolved.some((u) => u.includes("candidate entries"))).toBe(false);
+  });
+
+  test("a candidate key two schemes of ONE instance share cannot be placed, so it is reported, never published twice", () => {
+    const twin = { ...source("a", NS_A, glossary("kg-tools", [{ id: "policy", prefLabel: "Policy", status: "candidate" }])), file: "twin.json" };
     const r = automatedMatches(states, [...sources, twin]);
     expect([...r.bySource.values()].flat().some((m) => m.term === "policy")).toBe(false);
     expect(r.unresolved.some((u) => u.includes("`policy`") && u.includes("2 candidate entries"))).toBe(true);
