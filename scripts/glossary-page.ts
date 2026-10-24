@@ -83,6 +83,13 @@ import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
 import { forwardingParts, pageParts, visualiserFor, visualiserPageDir } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 import { ROUTE_SEGMENT, visualiserRoute, type VisualiserRouteParts } from "@litlfred/cat-harness/schemas/visualiser-route.ts";
 import { siteArg, siteTarget } from "@litlfred/cat-harness-tools/scripts/lib/site-target.ts";
+import {
+  ownerOfPath as sharedOwnerOfPath,
+  repoPathOf as sharedRepoPathOf,
+  schemeOwner as sharedSchemeOwner,
+  type InstanceRoot,
+  type OwnedScheme,
+} from "@litlfred/cat-harness-tools/scripts/lib/scheme-owner.ts";
 
 const CORE = resolve(import.meta.dir, "..");
 const REPO = repoRootFor(CORE);
@@ -217,9 +224,7 @@ export function instanceNs(name: string, stub?: string, decl?: { iriBase?: strin
  * cat-harness"), and a sentence is held by no instance.
  */
 export function repoPathOf(src: string | undefined, repo: string = REPO): string | undefined {
-  if (!src || /^[a-z][a-z0-9+.-]*:\/\//i.test(src)) return undefined;
-  const path = src.split("#", 2)[0]!;
-  return path && existsSync(resolve(repo, path)) ? path : undefined;
+  return sharedRepoPathOf(src, repo);
 }
 
 /** Every instance root, longest first, so a path resolves to the MOST specific instance holding it. The repository root's instance comes last. */
@@ -233,50 +238,23 @@ export function instanceOwners(repo: string = REPO): Array<{ root: string; name:
 }
 
 /** The instance whose root holds a repository path. */
-export function ownerOfPath(repo: string, path: string, owners = instanceOwners(repo)): string | undefined {
-  const p = resolve(repo, path);
-  return owners.find((o) => p === o.root || p.startsWith(`${o.root}/`) || p.startsWith(`${o.root}\\`))?.name;
+export function ownerOfPath(repo: string, path: string, owners: readonly InstanceRoot[] = instanceOwners(repo)): string | undefined {
+  return sharedOwnerOfPath(repo, path, owners);
 }
 
 /**
- * The instance that owns an authored scheme.
- *
- * 1. The scheme's own `source`, when it is a repository path: the instance
- *    that DEFINES the scheme. A code list extended by several packages is the
- *    defining instance's, and each term's `source` still names the package
- *    that contributed it.
- * 2. Otherwise the one instance whose root holds every term's `source`.
- * 3. No repository source at all: the instance whose directory holds the file.
- *
- * Terms sourced in several instances with no defining `source` have no one
- * owner, and that is an error rather than a guess: split the scheme per
- * instance, or name the instance that defines it.
+ * The instance that owns a scheme: `cat-harness-tools/scripts/lib/scheme-owner.ts`,
+ * the one rule the term-mapping record keys by too (bean `q3n9`, owner ruling
+ * A, 2026-10-24). Re-exported here, with this checkout's instances as the
+ * default, for the callers that already import it from the page.
  */
 export function schemeOwner(
   repo: string,
-  g: Glossary,
+  g: OwnedScheme,
   declaredBy: string,
-  owners = instanceOwners(repo),
+  owners: readonly InstanceRoot[] = instanceOwners(repo),
 ): { owner: string } | { error: string } {
-  const defining = repoPathOf(g.source, repo);
-  if (defining) {
-    const o = ownerOfPath(repo, defining, owners);
-    return o ? { owner: o } : { error: `its source ${defining} is in no instance` };
-  }
-  const held = new Set<string>();
-  for (const t of g.terms) {
-    const path = repoPathOf(t.source, repo);
-    if (!path) continue;
-    const o = ownerOfPath(repo, path, owners);
-    if (!o) return { error: `term "${t.id}" has source ${path}, which is in no instance` };
-    held.add(o);
-  }
-  if (held.size > 1) {
-    return {
-      error: `its terms are sourced in ${held.size} instances (${[...held].sort().join(", ")}) and the scheme names no defining source; split it per instance, or set the scheme's source to the instance that defines it`,
-    };
-  }
-  return { owner: [...held][0] ?? declaredBy };
+  return sharedSchemeOwner(repo, g, declaredBy, owners);
 }
 
 /**
@@ -869,6 +847,8 @@ export function mappingBlock(states: SchemeState[] | undefined, schemes: readonl
 export interface TermKey {
   /** The entry's anchor, which keys its mark. */
   anchor: string;
+  /** The instance that owns the scheme: with `scheme`, the key the record's rows have too (bean `q3n9`). */
+  instance: string;
   scheme: string;
   term: string;
 }
@@ -925,21 +905,21 @@ export function perTermMapping(
   const said: string[] = [];
   const seen = new Set<string>();
   const shared = new Set<string>();
+  const keyOf = (k: TermKey) => `${k.instance}\0${k.scheme}\0${k.term}`;
   for (const k of terms) {
-    const key = `${k.scheme}\0${k.term}`;
+    const key = keyOf(k);
     if (seen.has(key)) shared.add(key);
     seen.add(key);
   }
   for (const target of targets) {
-    // The record keys a term by (scheme, id) and not by instance, because a
-    // scheme id such as `kg-tools` is shared by every instance's extraction.
-    // Ids do not collide today (0 of 2876 checked when this was written), but
-    // if two entries on one page ever share a key, the record cannot say
-    // which of them it meant, so both are `unknown` rather than both badged.
+    // The record keys a row by (instance, scheme) (beans `wvzp`, `q3n9`),
+    // because a scheme id such as `kg-tools` is shared by every instance's
+    // extraction. Two entries on one page that still share instance, scheme
+    // and id cannot be told apart, so both are `unknown` rather than both badged.
     const answers = terms.map((k): TermStateAnswer =>
-      shared.has(`${k.scheme}\0${k.term}`)
+      shared.has(keyOf(k))
         ? { state: "unknown", why: `two entries share the id \`${k.term}\` in scheme \`${k.scheme}\`` }
-        : termState(states, k.scheme, target, k.term),
+        : termState(states, k, target, k.term),
     );
     const rest = new Set(answers.filter((a) => a.state !== "mapped").map((a) => a.state));
     const only = rest.size === 1 ? [...rest][0] : undefined;
@@ -972,7 +952,7 @@ export function perTermMapping(
 export const MATCHING_AGENT = "ci-pipeline";
 
 /** `scheme\0term`, the key the mapping record uses. */
-const recordKey = (scheme: string, term: string) => `${scheme}\0${term}`;
+const recordKey = (instance: string, scheme: string, term: string) => `${instance}\0${scheme}\0${term}`;
 /** `instance\0scheme`, the key one SKOS document is written under. */
 export const sourceKey = (s: Pick<GlossarySource, "instance" | "glossary">) => `${s.instance}\0${s.glossary.id}`;
 
@@ -989,7 +969,8 @@ export const sourceKey = (s: Pick<GlossarySource, "instance" | "glossary">) => `
  * (`ld-link-is-the-node-release-address`).
  *
  * The same holds for the candidate itself. The record keys it by
- * (scheme, id) and not by instance, so a key held by two extracted schemes
+ * (instance, scheme, id) (bean `q3n9`), so the same id in two instances'
+ * schemes is two keys. A key that two schemes of ONE instance still share
  * cannot be placed. It is reported, never published into both.
  *
  * `exactMatch` goes only to the record's `exactConcepts`. Every other
@@ -1011,7 +992,7 @@ export function automatedMatches(
         const k = `${s.glossary.id}:${t.id}`;
         authoredIri.set(k, [...(authoredIri.get(k) ?? []), t.iri ?? termIri(s.ns, s.glossary, t.id)]);
       } else {
-        const k = recordKey(s.glossary.id, t.id);
+        const k = recordKey(s.instance, s.glossary.id, t.id);
         candidatesAt.set(k, [...(candidatesAt.get(k) ?? []), s]);
       }
     }
@@ -1031,8 +1012,8 @@ export function automatedMatches(
   const merged = new Map<string, { source: GlossarySource; m: AutomatedMatch }>();
   for (const row of states) {
     for (const mt of row.mappedTerms) {
-      const where = `\`${row.scheme}\`/\`${mt.term}\` on \`${row.target}\``;
-      const sources = candidatesAt.get(recordKey(row.scheme, mt.term)) ?? [];
+      const where = `\`${row.instance}\` \`${row.scheme}\`/\`${mt.term}\` on \`${row.target}\``;
+      const sources = candidatesAt.get(recordKey(row.instance, row.scheme, mt.term)) ?? [];
       if (sources.length !== 1) {
         unresolved.push(`${where}: ${sources.length} candidate entries carry this key, so the record cannot place it`);
         continue;
@@ -1247,7 +1228,7 @@ export function renderTypePage(c: ReturnType<typeof collect>, key: AssetType | P
   const states = mappingStates();
   const perTerm = perTermMapping(
     states,
-    rows.map((r) => ({ anchor: anchorOf(r.s, r.t.id), scheme: r.s.glossary.id, term: r.t.id })),
+    rows.map((r) => ({ anchor: anchorOf(r.s, r.t.id), instance: r.s.instance, scheme: r.s.glossary.id, term: r.t.id })),
   );
   return sized(
     (size) => `---
