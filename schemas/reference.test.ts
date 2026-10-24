@@ -19,11 +19,15 @@ import {
   REFERENCE_SCHEMA_TAG,
   ReferenceNodeSchema,
   authorsRawToNames,
+  buildStandaloneReference,
   dcCreatorToName,
   dcDateToCsl,
   dublinCoreToReference,
   genReferenceJsonLd,
+  jsonLdToReferenceNode,
   libraryItemToReference,
+  newReferenceUrl,
+  parseBibtexOrCsl,
   referenceIri,
   referenceToJsonLd,
   toBibtex,
@@ -300,6 +304,69 @@ describe("library items and genReferenceJsonLd", () => {
     } finally {
       rmSync(tmp, { recursive: true, force: true });
     }
+  });
+
+  test("buildStandaloneReference builds a schema-valid folio-reference/v1 standalone node from fields or BibTeX", () => {
+    const built = buildStandaloneReference({
+      id: "smith2024",
+      type: "article-journal",
+      title: "Standalone Reference Nodes in Knowledge Graphs",
+      authors: "Smith, Jane; Doe, John",
+      issued: "2024-05-12",
+      containerTitle: "Journal of Graph Viewers",
+      DOI: "10.1000/jgv.2024.1",
+      arXiv: "2405.12345",
+      abstract: "A standalone reference node.",
+    });
+    expect(ReferenceNodeSchema.parse(built.node).id).toBe("smith2024");
+    const parsedJsonLd = JSON.parse(built.jsonld) as Record<string, unknown>;
+    expect(ReferenceNodeSchema.parse(parsedJsonLd).id).toBe("smith2024");
+    expect(parsedJsonLd["@id"]).toBe("references/smith2024");
+    expect(parsedJsonLd["dcterms:title"]).toBe("Standalone Reference Nodes in Knowledge Graphs");
+    expect(built.path).toBe("references/smith2024.jsonld");
+    expect(built.csl.id).toBe("smith2024");
+    expect("$schema" in built.csl).toBe(false);
+    expect("@context" in built.csl).toBe(false);
+
+    const fromBib = buildStandaloneReference({
+      raw: `@article{euler1736,
+        title = {Solutio problematis ad geometriam situs pertinentis},
+        author = {Euler, Leonhard},
+        journal = {Commentarii academiae scientiarum Petropolitanae},
+        year = {1736},
+        volume = {8},
+        pages = {128--140}
+      }`,
+    });
+    expect(ReferenceNodeSchema.parse(fromBib.node)).toMatchObject({
+      $schema: "folio-reference/v1",
+      id: "euler1736",
+      type: "article-journal",
+      title: "Solutio problematis ad geometriam situs pertinentis",
+      "container-title": "Commentarii academiae scientiarum Petropolitanae",
+      page: "128-140",
+    });
+    expect(jsonLdToReferenceNode(JSON.parse(fromBib.jsonld) as Record<string, unknown>).id).toBe("euler1736");
+    expect(parseBibtexOrCsl(fromBib.cslJson).id).toBe("euler1736");
+  });
+
+  test("buildStandaloneReference and newReferenceUrl enforce safeHref on URLs", () => {
+    const unsafe = buildStandaloneReference({
+      id: "badurl2024",
+      title: "Unsafe URL Test",
+      URL: "javascript:alert(1)",
+    });
+    expect(unsafe.node.URL).toBeUndefined();
+
+    const safe = newReferenceUrl({
+      repoUrl: "https://github.com/litlfred/folio-assistant",
+      branch: "main",
+      dir: "folio/references",
+      key: "smith2024",
+    });
+    expect(safe).toBe("https://github.com/litlfred/folio-assistant/new/main/folio/references?filename=smith2024.jsonld");
+    expect(newReferenceUrl({ repoUrl: "javascript:alert(1)", key: "smith2024" })).toBeUndefined();
+    expect(newReferenceUrl({ repoUrl: "//evil.example/repo", key: "smith2024" })).toBeUndefined();
   });
 });
 

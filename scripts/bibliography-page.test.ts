@@ -9,7 +9,22 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { writeDeclaration } from "../../cat-harness-tools/test/support/instance-fixture.ts";
-import { EXPORTS, anchorOf, byCitation, citationHtml, collect, entryHtml, outputs, renderPage } from "./bibliography-page.ts";
+import { leakingLinesIn } from "../../cat-harness-tools/scripts/check-escaped-markup.ts";
+import { ReferenceNodeSchema } from "../schemas/reference.ts";
+import {
+  EXPORTS,
+  addReferenceHtml,
+  anchorOf,
+  buildStandaloneReference,
+  byCitation,
+  citationHtml,
+  collect,
+  entryHtml,
+  linksHtml,
+  newReferenceUrl,
+  outputs,
+  renderPage,
+} from "./bibliography-page.ts";
 
 const made: string[] = [];
 afterAll(() => made.forEach((d) => rmSync(d, { recursive: true, force: true })));
@@ -210,5 +225,70 @@ describe("rendering", () => {
   test("order: first author, then year", () => {
     const [a, b] = [c.entries[0]!, c.entries[1]!];
     expect(byCitation(a, b)).toBeLessThan(0);
+  });
+
+  test("includes the ✍ + Add reference standalone node form controls and passes safeHref and escaped-markup checks", () => {
+    const html = addReferenceHtml({ targetDir: "folio-x/references" });
+    expect(html).toContain("✍ + Add reference (standalone node)");
+    expect(html).toContain('id="fa-bib-add-form"');
+    expect(html).toContain('id="fa-bib-add-key"');
+    expect(html).toContain('id="fa-bib-add-type"');
+    expect(html).toContain('id="fa-bib-add-title"');
+    expect(html).toContain('id="fa-bib-add-authors"');
+    expect(html).toContain('id="fa-bib-add-issued"');
+    expect(html).toContain('id="fa-bib-add-container"');
+    expect(html).toContain('id="fa-bib-add-doi"');
+    expect(html).toContain('id="fa-bib-add-url"');
+    expect(html).toContain('id="fa-bib-add-arxiv"');
+    expect(html).toContain('id="fa-bib-add-abstract"');
+    expect(html).toContain('id="fa-bib-add-raw"');
+    expect(html).toContain('id="fa-bib-add-dl-jsonld"');
+    expect(html).toContain('id="fa-bib-add-dl-csl"');
+    expect(html).toContain('id="fa-bib-add-gh"');
+    expect(html).toContain("folio-x/references/reference.jsonld");
+
+    // Unsafe repoUrl is refused by safeHref and never reaches an <a href>
+    const unsafeForm = addReferenceHtml({ repoUrl: "javascript:alert(1)" });
+    expect(unsafeForm).not.toContain('id="fa-bib-add-gh"');
+    expect(unsafeForm).not.toContain("javascript:alert(1)");
+    expect(newReferenceUrl({ repoUrl: "javascript:alert(1)", key: "x" })).toBeUndefined();
+
+    // Unsafe reference URL is rendered as code text, never as an <a href>
+    const unsafeEntry = linksHtml({
+      ...g,
+      ref: { ...g.ref, DOI: undefined, URL: "javascript:alert(1)" },
+    });
+    expect(unsafeEntry).not.toContain("<a ");
+    expect(unsafeEntry).toContain("<code>javascript:alert(1)</code>");
+
+    // Standalone .jsonld node built by buildStandaloneReference is collected from a references/ directory
+    const withStandalone = collect(
+      checkout((root) => {
+        const built = buildStandaloneReference({
+          id: "standalone2026",
+          type: "report",
+          title: "Standalone Node Added From Viewer",
+          authors: "World Health Organization",
+          issued: "2026",
+          URL: "https://example.org/standalone",
+        });
+        expect(ReferenceNodeSchema.parse(built.node).id).toBe("standalone2026");
+        put(join(root, "folio-x"), "references/standalone2026.jsonld", built.jsonld);
+        // Also an authorless/yearless entry whose citationHtml starts with <cite>
+        put(join(root, "folio-x"), "references/titleonly.json", {
+          $schema: "folio-reference/v1",
+          id: "titleonly",
+          type: "document",
+          title: "Title With No Author Or Year",
+        });
+      }),
+    );
+    expect(withStandalone.invalid).toEqual([]);
+    expect(withStandalone.entries.some((e) => e.ref.id === "standalone2026")).toBe(true);
+    for (const [p, content] of outputs(withStandalone)) {
+      if (p.endsWith(".md")) {
+        expect(leakingLinesIn(p, content)).toEqual([]);
+      }
+    }
   });
 });

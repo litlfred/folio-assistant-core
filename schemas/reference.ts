@@ -52,6 +52,7 @@ import { z } from "zod";
 import { nodeKind } from "@litlfred/cat-harness/schemas/node-kind.ts";
 import { readStructure } from "@litlfred/cat-harness/schemas/document-structure.ts";
 import { FOLIO_BASE, resolveReferenceKey } from "@litlfred/cat-harness/schemas/jsonld.ts";
+import { safeHref } from "@litlfred/cat-harness/schemas/safe-url.ts";
 import { cslToBibtex } from "@litlfred/cat-harness-tools/pipeline/bibtex-format.ts";
 import {
   authorNames,
@@ -150,11 +151,24 @@ export const referenceAnchor = (key: string): string => `ref-${key.replace(/[^A-
 export const referenceIri = (key: string): string => resolveReferenceKey(key);
 
 /** The fields that are the node's and not CSL's. Dropped from a CSL-JSON export. */
-const NODE_FIELDS = new Set(["$schema", "provenance", "derivedFrom", "heldAt", "library", "_comment", "_generated"]);
+const NODE_FIELDS = new Set([
+  "$schema",
+  "@context",
+  "@id",
+  "@type",
+  "provenance",
+  "derivedFrom",
+  "heldAt",
+  "library",
+  "_comment",
+  "_generated",
+]);
 
 /** The CSL-JSON item a node carries, as a citation processor reads it. */
 export function toCslItem(ref: ReferenceNode): Record<string, unknown> {
-  return Object.fromEntries(Object.entries(ref).filter(([k]) => !NODE_FIELDS.has(k)));
+  return Object.fromEntries(
+    Object.entries(ref).filter(([k]) => !NODE_FIELDS.has(k) && !k.startsWith("@") && !/^(dcterms|bibo|fabio):/.test(k)),
+  );
 }
 
 // ── Reading a name and a date ────────────────────────────────────────────────
@@ -682,4 +696,352 @@ export function genReferenceJsonLd(
     }
   }
   return { written, stale };
+}
+
+// ── Standalone reference creation from the bibliography viewer (✍) ──────────
+
+/** Input fields for creating a standalone reference node (`references/<key>.jsonld`) from the viewer. */
+export interface StandaloneReferenceInput {
+  id?: string;
+  key?: string;
+  title?: string;
+  type?: string;
+  authors?: string | readonly (string | CslName)[];
+  issued?: string | number | NonNullable<ReferenceNode["issued"]>;
+  DOI?: string;
+  URL?: string;
+  ISBN?: string;
+  arXiv?: string;
+  containerTitle?: string;
+  "container-title"?: string;
+  publisher?: string;
+  volume?: string | number;
+  issue?: string | number;
+  page?: string;
+  language?: string;
+  abstract?: string;
+  note?: string;
+  provenance?: ReferenceProvenance;
+  /** Optional raw BibTeX or CSL-JSON / JSON-LD text to parse before applying explicit fields. */
+  raw?: string;
+}
+
+const BIBTEX_TYPE_TO_CSL: Readonly<Record<string, string>> = {
+  article: "article-journal",
+  book: "book",
+  booklet: "book",
+  inbook: "chapter",
+  incollection: "chapter",
+  inproceedings: "paper-conference",
+  conference: "paper-conference",
+  proceedings: "book",
+  techreport: "report",
+  report: "report",
+  mastersthesis: "thesis",
+  phdthesis: "thesis",
+  thesis: "thesis",
+  unpublished: "manuscript",
+  manual: "report",
+  online: "webpage",
+  electronic: "webpage",
+  webpage: "webpage",
+  misc: "document",
+};
+
+const BIBO_TO_CSL_TYPE: Readonly<Record<string, string>> = {
+  "bibo:AcademicArticle": "article-journal",
+  "bibo:Article": "article",
+  "bibo:Book": "book",
+  "bibo:Chapter": "chapter",
+  "bibo:Report": "report",
+  "bibo:Thesis": "thesis",
+  "bibo:Webpage": "webpage",
+  "bibo:Manuscript": "manuscript",
+  "bibo:Standard": "standard",
+  "bibo:Legislation": "legislation",
+};
+
+/**
+ * Normalise a standalone `.jsonld` reference object (whether pure JSON-LD from
+ * {@link referenceToJsonLd} or a combined `folio-reference/v1` + JSON-LD node
+ * from {@link buildStandaloneReference}) into a validated {@link ReferenceNode}.
+ */
+export function jsonLdToReferenceNode(raw: Record<string, unknown>): ReferenceNode {
+  const out: Record<string, unknown> = { ...raw, $schema: REFERENCE_SCHEMA_TAG };
+  if (typeof out.id !== "string" && typeof raw["@id"] === "string") {
+    out.id = (raw["@id"] as string).replace(/^references\//, "");
+  }
+  if (typeof out.type !== "string") {
+    const types = Array.isArray(raw["@type"]) ? (raw["@type"] as unknown[]) : typeof raw["@type"] === "string" ? [raw["@type"]] : [];
+    const bibo = types.find((t): t is string => typeof t === "string" && t in BIBO_TO_CSL_TYPE);
+    out.type = (bibo ? BIBO_TO_CSL_TYPE[bibo] : undefined) ?? "document";
+  }
+  if (typeof out.title !== "string" && typeof raw["dcterms:title"] === "string") {
+    out.title = raw["dcterms:title"];
+  }
+  if (!Array.isArray(out.author) && Array.isArray(raw["dcterms:creator"])) {
+    out.author = (raw["dcterms:creator"] as unknown[])
+      .filter((c): c is string => typeof c === "string")
+      .map(dcCreatorToName);
+  }
+  if (out.issued === undefined && typeof raw["dcterms:issued"] === "string") {
+    out.issued = dcDateToCsl(raw["dcterms:issued"] as string);
+  }
+  if (typeof out["container-title"] !== "string" && typeof raw["dcterms:isPartOf"] === "string") {
+    out["container-title"] = raw["dcterms:isPartOf"];
+  }
+  if (typeof out.publisher !== "string" && typeof raw["dcterms:publisher"] === "string") {
+    out.publisher = raw["dcterms:publisher"];
+  }
+  if (out.volume === undefined && typeof raw["bibo:volume"] === "string") {
+    out.volume = raw["bibo:volume"];
+  }
+  if (out.issue === undefined && typeof raw["bibo:issue"] === "string") {
+    out.issue = raw["bibo:issue"];
+  }
+  if (typeof out.page !== "string" && typeof raw["bibo:pages"] === "string") {
+    out.page = raw["bibo:pages"];
+  }
+  if (typeof out.DOI !== "string" && typeof raw["bibo:doi"] === "string") {
+    out.DOI = raw["bibo:doi"];
+  }
+  if (typeof out.ISBN !== "string" && typeof raw["bibo:isbn"] === "string") {
+    out.ISBN = raw["bibo:isbn"];
+  }
+  if (typeof out.URL !== "string" && typeof raw["dcterms:identifier"] === "string") {
+    const safe = safeHref(raw["dcterms:identifier"] as string);
+    if (safe) out.URL = safe;
+  }
+  if (typeof out.language !== "string" && typeof raw["dcterms:language"] === "string") {
+    out.language = raw["dcterms:language"];
+  }
+  if (typeof out.abstract !== "string" && typeof raw["dcterms:abstract"] === "string") {
+    out.abstract = raw["dcterms:abstract"];
+  }
+  if (typeof out.derivedFrom !== "string" && typeof raw["dcterms:source"] === "string") {
+    out.derivedFrom = raw["dcterms:source"];
+  }
+  if (typeof out.heldAt !== "string" && typeof raw["dcterms:hasVersion"] === "string") {
+    out.heldAt = raw["dcterms:hasVersion"];
+  }
+  return ReferenceNodeSchema.parse(out);
+}
+
+/**
+ * Parse a BibTeX entry or CSL-JSON / JSON-LD string into {@link StandaloneReferenceInput} fields.
+ */
+export function parseBibtexOrCsl(raw: string): Partial<StandaloneReferenceInput> {
+  const trimmed = raw.trim();
+  if (!trimmed) return {};
+  if (trimmed.startsWith("{") || trimmed.startsWith("[")) {
+    const parsed = JSON.parse(trimmed) as unknown;
+    const item = (Array.isArray(parsed) ? parsed[0] : parsed) as Record<string, unknown> | undefined;
+    if (!item || typeof item !== "object") return {};
+    const out: Partial<StandaloneReferenceInput> = {};
+    const id = typeof item.id === "string" ? item.id : typeof item["@id"] === "string" ? (item["@id"] as string).replace(/^references\//, "") : undefined;
+    if (id) out.id = id;
+    if (typeof item.type === "string") out.type = item.type;
+    const title = typeof item.title === "string" ? item.title : typeof item["dcterms:title"] === "string" ? (item["dcterms:title"] as string) : undefined;
+    if (title) out.title = title;
+    if (Array.isArray(item.author)) out.authors = item.author as CslName[];
+    else if (typeof item.author === "string") out.authors = item.author;
+    else if (Array.isArray(item["dcterms:creator"])) out.authors = (item["dcterms:creator"] as unknown[]).filter((x): x is string => typeof x === "string");
+    if (item.issued && typeof item.issued === "object") out.issued = item.issued as NonNullable<ReferenceNode["issued"]>;
+    else if (typeof item.issued === "string" || typeof item.issued === "number") out.issued = item.issued;
+    else if (typeof item["dcterms:issued"] === "string") out.issued = item["dcterms:issued"] as string;
+    const container =
+      typeof item["container-title"] === "string"
+        ? (item["container-title"] as string)
+        : typeof item.containerTitle === "string"
+          ? (item.containerTitle as string)
+          : typeof item["dcterms:isPartOf"] === "string"
+            ? (item["dcterms:isPartOf"] as string)
+            : undefined;
+    if (container) out.containerTitle = container;
+    if (typeof item.publisher === "string") out.publisher = item.publisher;
+    if (typeof item.volume === "string" || typeof item.volume === "number") out.volume = item.volume;
+    if (typeof item.issue === "string" || typeof item.issue === "number") out.issue = item.issue;
+    if (typeof item.page === "string") out.page = item.page;
+    const doi = typeof item.DOI === "string" ? item.DOI : typeof item["bibo:doi"] === "string" ? (item["bibo:doi"] as string) : undefined;
+    if (doi) out.DOI = doi;
+    const isbn = typeof item.ISBN === "string" ? item.ISBN : typeof item["bibo:isbn"] === "string" ? (item["bibo:isbn"] as string) : undefined;
+    if (isbn) out.ISBN = isbn;
+    const url = typeof item.URL === "string" ? item.URL : typeof item["dcterms:identifier"] === "string" ? (item["dcterms:identifier"] as string) : undefined;
+    if (url) out.URL = url;
+    if (typeof item.arXiv === "string") out.arXiv = item.arXiv;
+    if (typeof item.abstract === "string") out.abstract = item.abstract;
+    if (typeof item.note === "string") out.note = item.note;
+    return out;
+  }
+  const head = /^@([A-Za-z]+)\s*\{\s*([^,\s]+)\s*,([\s\S]*)\}\s*$/.exec(trimmed);
+  if (!head) return {};
+  const [, rawType, rawKey, body] = head;
+  const out: Partial<StandaloneReferenceInput> = {
+    id: rawKey!.trim(),
+    type: BIBTEX_TYPE_TO_CSL[rawType!.toLowerCase()] ?? "document",
+  };
+  const fields = new Map<string, string>();
+  const fieldRe = /([A-Za-z_][A-Za-z0-9_-]*)\s*=\s*(\{(?:[^{}]|\{[^{}]*\})*\}|"[^"]*"|[^,\n}]+)/g;
+  for (const m of body!.matchAll(fieldRe)) {
+    const k = m[1]!.toLowerCase();
+    const v = m[2]!.trim().replace(/^\{([\s\S]*)\}$|^"([\s\S]*)"$/, "$1$2").replace(/[{}]/g, "").replace(/\s+/g, " ").trim();
+    if (v) fields.set(k, v);
+  }
+  if (fields.get("title")) out.title = fields.get("title");
+  if (fields.get("author")) out.authors = fields.get("author");
+  const yr = fields.get("year") ?? fields.get("date");
+  if (yr) out.issued = yr;
+  const venue = fields.get("journal") ?? fields.get("booktitle") ?? fields.get("series");
+  if (venue) out.containerTitle = venue;
+  if (fields.get("publisher") ?? fields.get("institution") ?? fields.get("school")) {
+    out.publisher = fields.get("publisher") ?? fields.get("institution") ?? fields.get("school");
+  }
+  if (fields.get("volume")) out.volume = fields.get("volume");
+  if (fields.get("number") ?? fields.get("issue")) out.issue = fields.get("number") ?? fields.get("issue");
+  if (fields.get("pages")) out.page = fields.get("pages")!.replace(/--/g, "-");
+  if (fields.get("doi")) out.DOI = fields.get("doi");
+  if (fields.get("isbn")) out.ISBN = fields.get("isbn");
+  if (fields.get("url")) out.URL = fields.get("url");
+  if (fields.get("eprint") ?? fields.get("arxiv")) out.arXiv = fields.get("eprint") ?? fields.get("arxiv");
+  if (fields.get("abstract")) out.abstract = fields.get("abstract");
+  if (fields.get("note")) out.note = fields.get("note");
+  return out;
+}
+
+function sanitiseReferenceKey(candidate: string): string {
+  const cleaned = candidate.trim().replace(/[^A-Za-z0-9._:+-]+/g, "-").replace(/^[^A-Za-z0-9]+/, "").replace(/-+$/, "");
+  return cleaned || "ref-item";
+}
+
+/**
+ * Build a validated standalone `folio-reference/v1` node (`references/<key>.jsonld`)
+ * and its CSL-JSON / BibTeX representations from viewer form fields or pasted
+ * BibTeX/CSL-JSON. Any URL is checked with {@link safeHref} before inclusion.
+ */
+export function buildStandaloneReference(input: StandaloneReferenceInput): {
+  node: ReferenceNode;
+  jsonldNode: ReferenceNode & Record<string, unknown>;
+  json: string;
+  jsonld: string;
+  csl: Record<string, unknown>;
+  cslJson: string;
+  bibtex: string;
+  path: string;
+  jsonPath: string;
+} {
+  const base = input.raw ? parseBibtexOrCsl(input.raw) : {};
+  const merged: StandaloneReferenceInput = { ...base };
+  for (const [k, v] of Object.entries(input)) {
+    if (k !== "raw" && v !== undefined && v !== "") {
+      (merged as Record<string, unknown>)[k] = v;
+    }
+  }
+
+  let authors: CslName[] | undefined;
+  if (typeof merged.authors === "string" && merged.authors.trim()) {
+    authors = authorsRawToNames(merged.authors);
+  } else if (Array.isArray(merged.authors) && merged.authors.length) {
+    authors = merged.authors.flatMap((a) => (typeof a === "string" ? authorsRawToNames(a) : [a]));
+  }
+
+  let issued: ReferenceNode["issued"] | undefined;
+  if (typeof merged.issued === "number") {
+    issued = { "date-parts": [[merged.issued]] };
+  } else if (typeof merged.issued === "string" && merged.issued.trim()) {
+    issued = dcDateToCsl(merged.issued.trim());
+  } else if (merged.issued && typeof merged.issued === "object") {
+    issued = merged.issued;
+  }
+
+  const rawKey = (merged.id ?? merged.key ?? "").trim();
+  const fallbackKey = (() => {
+    const fam = (authors?.[0]?.family ?? authors?.[0]?.literal ?? "ref").split(/\s+/)[0]!.toLowerCase();
+    const yr = issued ? yearOf({ issued }) ?? "" : "";
+    const word = (merged.title ?? "").trim().split(/\s+/)[0]?.toLowerCase() ?? "";
+    return sanitiseReferenceKey([fam, yr, word].filter(Boolean).join("") || "ref-item");
+  })();
+  const id = ReferenceKeySchema.safeParse(rawKey).success ? rawKey : sanitiseReferenceKey(rawKey || fallbackKey);
+  const type = (merged.type ?? "article-journal").trim() || "article-journal";
+  const title = merged.title?.trim() || undefined;
+  const containerTitle = (merged.containerTitle ?? merged["container-title"])?.trim() || undefined;
+  const publisher = merged.publisher?.trim() || undefined;
+  const doi = merged.DOI?.trim().replace(/^https?:\/\/(?:dx\.)?doi\.org\//i, "") || undefined;
+  const isbn = merged.ISBN?.trim() || undefined;
+  const arxiv = merged.arXiv?.trim().replace(/^arxiv:/i, "") || undefined;
+  const candidateUrl =
+    merged.URL?.trim() ||
+    (arxiv ? `https://arxiv.org/abs/${arxiv}` : undefined) ||
+    (doi ? `https://doi.org/${doi}` : undefined);
+  const safeUrl = safeHref(candidateUrl);
+  const abstract = merged.abstract?.trim() || undefined;
+  const noteParts = [merged.note?.trim(), arxiv && !(merged.note ?? "").includes(arxiv) ? `arXiv:${arxiv}` : undefined].filter(
+    (x): x is string => !!x,
+  );
+  const note = noteParts.length ? noteParts.join("; ") : undefined;
+
+  const rawNode: Record<string, unknown> = {
+    $schema: REFERENCE_SCHEMA_TAG,
+    id,
+    type,
+    provenance: merged.provenance ?? "authored",
+  };
+  if (title) rawNode.title = title;
+  if (authors?.length) rawNode.author = authors;
+  if (issued) rawNode.issued = issued;
+  if (containerTitle) rawNode["container-title"] = containerTitle;
+  if (publisher) rawNode.publisher = publisher;
+  if (merged.volume !== undefined && String(merged.volume).trim() !== "") rawNode.volume = merged.volume;
+  if (merged.issue !== undefined && String(merged.issue).trim() !== "") rawNode.issue = merged.issue;
+  if (merged.page?.trim()) rawNode.page = merged.page.trim();
+  if (doi) rawNode.DOI = doi;
+  if (isbn) rawNode.ISBN = isbn;
+  if (safeUrl) rawNode.URL = safeUrl;
+  if (merged.language?.trim()) rawNode.language = merged.language.trim();
+  if (abstract) rawNode.abstract = abstract;
+  if (note) rawNode.note = note;
+
+  const node = ReferenceNodeSchema.parse(rawNode);
+  const jsonldNode = ReferenceNodeSchema.parse({
+    ...referenceToJsonLd(node),
+    ...node,
+  }) as ReferenceNode & Record<string, unknown>;
+
+  return {
+    node,
+    jsonldNode,
+    json: `${JSON.stringify(node, null, 2)}\n`,
+    jsonld: `${JSON.stringify(jsonldNode, null, 2)}\n`,
+    csl: toCslItem(node),
+    cslJson: toCslJson([node]),
+    bibtex: toBibtex([node]),
+    path: `references/${node.id}.jsonld`,
+    jsonPath: `references/${node.id}.json`,
+  };
+}
+
+/**
+ * Build a `safeHref`-checked GitHub new-file URL for creating a standalone
+ * reference node at `<dir>/<key>.jsonld` (default `references/<key>.jsonld`).
+ * Returns `undefined` when the repository URL is refused by `safeHref`.
+ */
+export function newReferenceUrl(opts: {
+  repoUrl?: string;
+  repo?: string;
+  branch?: string;
+  dir?: string;
+  key: string;
+  value?: string;
+}): string | undefined {
+  const base = (opts.repoUrl ?? (opts.repo ? `https://github.com/${opts.repo}` : "https://github.com/litlfred/folio-assistant")).replace(
+    /\/+$/,
+    "",
+  );
+  if (safeHref(base) === undefined) return undefined;
+  const branch = (opts.branch ?? "main").trim() || "main";
+  const dir = (opts.dir ?? "references").replace(/^\/+|\/+$/g, "") || "references";
+  const key = ReferenceKeySchema.safeParse(opts.key).success ? opts.key : sanitiseReferenceKey(opts.key);
+  const encodedDir = dir.split("/").map(encodeURIComponent).join("/");
+  const q = new URLSearchParams({ filename: `${key}.jsonld` });
+  if (opts.value) q.set("value", opts.value);
+  return safeHref(`${base}/new/${encodeURIComponent(branch)}/${encodedDir}?${q.toString()}`);
 }
