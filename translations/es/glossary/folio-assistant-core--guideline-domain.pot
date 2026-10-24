@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: folio-assistant-core--guideline-domain\n"
-"POT-Creation-Date: 2026-10-20T16:46:44.421Z\n"
+"POT-Creation-Date: 2026-10-24T00:20:23.829Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: es\n"
