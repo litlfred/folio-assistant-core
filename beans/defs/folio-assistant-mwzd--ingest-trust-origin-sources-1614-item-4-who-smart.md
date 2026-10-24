@@ -2,11 +2,11 @@
 # folio-assistant-mwzd
 $schema: bean/1.0.0
 title: 'INGEST trust + origin sources (#1614 item 4): WHO SMART Trust IG, C2PA spec, DSpace 7 REST contract'
-status: in-progress
+status: completed
 type: task
 priority: normal
 created_at: 2026-10-01T06:42:36Z
-updated_at: 2026-10-21T17:56:00Z
+updated_at: 2026-10-24T07:20:00Z
 parent: folio-assistant-scfh
 ---
 

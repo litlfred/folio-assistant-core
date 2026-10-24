@@ -2,11 +2,11 @@
 # folio-assistant-o7eq
 $schema: bean/1.0.0
 title: 'URL SPACE: rendered assets mirror the instantiation structure — <baseurl>/ for the root, <baseurl>/<instance>/<path> for every enabled harness'
-status: in-progress
+status: completed
 type: feature
 priority: normal
 created_at: 2026-09-20T18:30:55Z
-updated_at: 2026-10-21T21:32:00Z
+updated_at: 2026-10-23T09:26:00Z
 parent: folio-assistant-yj32
 ---
 

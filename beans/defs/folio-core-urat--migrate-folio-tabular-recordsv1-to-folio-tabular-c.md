@@ -1,10 +1,10 @@
 ---
 # folio-core-urat
 title: Migrate folio-tabular-records/v1 to folio-tabular-csvw/v1, measured on real tabular sources
-status: in-progress
+status: completed
 type: task
 created_at: 2026-10-10T16:33:03Z
-updated_at: 2026-10-20T17:25:00Z
+updated_at: 2026-10-24T14:05:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -21,7 +21,7 @@ Neither is in a folio-assistant-core checkout yet, so the first step is fetching
 ## Done when
 - [x] every `folio-tabular-records/v1` record is migrated, or listed with a reason (one record, listed below)
 - [x] both extractors are run on one real CSV and one real DAK workbook, with the records committed
-- [ ] `folio-tabular-records/v1` is retired from the schema graph
+- [x] `folio-tabular-records/v1` is retired from the schema graph (answered "kept for fixed-width, csv/xlsx/ods legacy", as ruled under option 1 on 2026-10-22)
 
 ## Progress 2026-10-11 (lane C): measured on real sources; retirement needs a ruling
 
@@ -313,3 +313,21 @@ Left: the index re-pin, folio-assistant#2626 (tools 0eb0564, cat-harness
 ea3b1b6). Then the third done-when box
 ("v1 retired from the schema graph") is option 2's, not 1's — under option 1
 the schema stays, and that box is answered "kept, as ruled".
+
+## Claim 2026-10-24 (Drain folio-assistant-core beans thread)
+
+Claimed by Claude, session https://claude.ai/code/session_01MK9nZ3Gmon4cDBRLSURizU, to close on evidence.
+
+## Completed 2026-10-24
+
+The last step, the index re-pin folio-assistant#2626 (tools 0eb0564, cat-harness
+ea3b1b6), merged on 2026-10-23 07:36Z. Every step of the owner's rulings is on main:
+
+- the `tabular-csvw` slot and its runner (tools#468, #474, #524, #525, #533);
+- core fills the slot (core#160, #170);
+- `source` and `narrative` required on `folio-tabular-csvw/v1` (cat-harness#399, #401);
+- v1 has no writer left, and its schema keeps reading committed records (tools#550, cat-harness#412).
+
+The third done-when box is answered as ruled: under option 1 the v1 schema stays
+for fixed-width sources, with `csv`/`xlsx`/`ods` marked legacy. Full retirement
+was option 2, which the owner did not choose.

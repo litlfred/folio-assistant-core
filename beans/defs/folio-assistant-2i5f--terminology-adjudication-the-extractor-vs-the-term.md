@@ -2,11 +2,11 @@
 # folio-assistant-2i5f
 $schema: bean/1.0.0
 title: 'TERMINOLOGY / adjudication: the extractor vs the terminology, and judge vs judge — call the existing process, restate nothing'
-status: in-progress
+status: completed
 type: task
 priority: normal
 created_at: 2026-09-25T04:51:47Z
-updated_at: 2026-10-02T08:01:23Z
+updated_at: 2026-10-24T08:35:00Z
 parent: folio-assistant-5yhm
 ---
 
