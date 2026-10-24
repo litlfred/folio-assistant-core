@@ -55,21 +55,33 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import { basename, dirname, join, relative, resolve } from "node:path";
 
 import { instanceDirectoryForGraph, instanceRootsIn, readDeclaration, repoRootFor, resolveDirectories } from "@litlfred/cat-harness/schemas/cat-harness.ts";
+import { safeHref } from "@litlfred/cat-harness/schemas/safe-url.ts";
 import { declaredRoute } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 import { siteTarget } from "@litlfred/cat-harness-tools/scripts/lib/site-target.ts";
 import { DublinCoreRecordSchema } from "../schemas/dublin-core.ts";
 import {
+  REFERENCE_CONTEXT,
+  REFERENCE_SCHEMA_TAG,
   ReferenceNodeSchema,
+  buildStandaloneReference,
   dublinCoreToReference,
+  jsonLdToReferenceNode,
+  libraryItemToReference,
   nameText,
+  newReferenceUrl,
+  parseBibtexOrCsl,
   referenceAnchor,
   toBibtex,
   toCslJson,
+  toDublinCoreXml,
   toJsonLdGraph,
   toRis,
   yearOf,
   type ReferenceNode,
+  type StandaloneReferenceInput,
 } from "../schemas/reference.ts";
+
+export { buildStandaloneReference, newReferenceUrl, parseBibtexOrCsl, type StandaloneReferenceInput };
 
 const CORE = resolve(import.meta.dir, "..");
 const REPO = repoRootFor(CORE);
@@ -98,10 +110,25 @@ export interface Entry {
   file: string;
 }
 
+export interface AssetView {
+  /** The sub-graph id (`<route>/<subgraph>/<asset>/`). */
+  subgraph: string;
+  /** The asset slug within the sub-graph. */
+  asset: string;
+  /** Instance name. */
+  instance: string;
+  /** Repo-relative path of the asset directory or file. */
+  path: string;
+  /** The asset's own reference (when any) plus references derived from or extracted from it. */
+  entries: Entry[];
+}
+
 export interface Collected {
   entries: Entry[];
   /** Every sub-graph that was scanned, with its instance, so an empty one is still listed. */
-  subgraphs: { id: string; instance: string; kind: "references" | "catalogue"; path: string }[];
+  subgraphs: { id: string; instance: string; kind: "references" | "catalogue" | "library"; path: string }[];
+  /** Per-asset bibliography views (`<route>/<sub-graph>/<asset>/`). */
+  assets: AssetView[];
   invalid: string[];
 }
 
@@ -130,18 +157,33 @@ export function heldCopies(instanceRoot: string, catalogueDir: string): Map<stri
 
 /** Every reference in the checkout. */
 export function collect(repo: string = REPO): Collected {
-  const out: Collected = { entries: [], subgraphs: [], invalid: [] };
+  const out: Collected = { entries: [], subgraphs: [], assets: [], invalid: [] };
+  const rawLibraryAssets: { subgraph: string; asset: string; instance: string; path: string; ownEntry: Entry }[] = [];
   for (const root of instanceRootsIn(repo)) {
     const decl = readDeclaration(root);
     if (!decl) continue;
     const dirs = resolveDirectories([{ name: decl.name, root, own: true }]).filter((d) => d.own);
+    const heldByCatalogue = new Set<string>();
+    for (const d of dirs) {
+      if (existsSync(d.absPath) && (d.graphTypologies ?? []).includes("catalogue")) {
+        for (const heldPath of heldCopies(root, d.absPath).values()) {
+          heldByCatalogue.add(heldPath);
+        }
+      }
+    }
     for (const d of dirs) {
       if (!existsSync(d.absPath)) continue;
       const kinds = d.graphTypologies ?? [];
-      const push = (ref: ReferenceNode, file: string) => out.entries.push({ ref, instance: decl.name, subgraph: d.id, file });
+      const push = (ref: ReferenceNode, file: string): Entry => {
+        const entry: Entry = { ref, instance: decl.name, subgraph: d.id, file };
+        out.entries.push(entry);
+        return entry;
+      };
       if (kinds.includes("references")) {
         out.subgraphs.push({ id: d.id, instance: decl.name, kind: "references", path: rel(repo, d.absPath) });
-        for (const f of readdirSync(d.absPath).filter((f) => f.endsWith(".json")).sort()) {
+        const jsonFiles = readdirSync(d.absPath).filter((f) => f.endsWith(".json")).sort();
+        const jsonBases = new Set(jsonFiles.map((f) => f.slice(0, -5)));
+        for (const f of jsonFiles) {
           const p = join(d.absPath, f);
           let raw: unknown;
           try {
@@ -160,6 +202,35 @@ export function collect(repo: string = REPO): Collected {
             continue;
           }
           push(r.data, rel(repo, p));
+        }
+        const jsonldFiles = readdirSync(d.absPath)
+          .filter((f) => f.endsWith(".jsonld") && !jsonBases.has(f.slice(0, -7)))
+          .sort();
+        for (const f of jsonldFiles) {
+          const p = join(d.absPath, f);
+          let raw: unknown;
+          try {
+            raw = JSON.parse(readFileSync(p, "utf-8"));
+          } catch (e) {
+            out.invalid.push(`${rel(repo, p)}: not valid JSON (${e instanceof Error ? e.message : String(e)})`);
+            continue;
+          }
+          if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
+            out.invalid.push(`${rel(repo, p)}: expected a JSON-LD object`);
+            continue;
+          }
+          let node: ReferenceNode;
+          try {
+            node = jsonLdToReferenceNode(raw as Record<string, unknown>);
+          } catch (e) {
+            out.invalid.push(`${rel(repo, p)}: ${e instanceof Error ? e.message : String(e)}`);
+            continue;
+          }
+          if (`${node.id}.jsonld` !== f) {
+            out.invalid.push(`${rel(repo, p)}: the file is named for "${f.slice(0, -7)}" but its key is "${node.id}"`);
+            continue;
+          }
+          push(node, rel(repo, p));
         }
       }
       if (kinds.includes("catalogue")) {
@@ -187,6 +258,31 @@ export function collect(repo: string = REPO): Collected {
           }
         }
       }
+      if (kinds.includes("library")) {
+        const subdirs = readdirSync(d.absPath, { withFileTypes: true })
+          .filter((e) => e.isDirectory())
+          .map((e) => e.name)
+          .sort();
+        const standaloneAssets = subdirs.filter((slug) => {
+          const assetDir = join(d.absPath, slug);
+          return existsSync(join(assetDir, "manifest.jsonld")) && !heldByCatalogue.has(assetDir);
+        });
+        if (standaloneAssets.length > 0) {
+          out.subgraphs.push({ id: d.id, instance: decl.name, kind: "library", path: rel(repo, d.absPath) });
+          for (const slug of standaloneAssets) {
+            const assetDir = join(d.absPath, slug);
+            const manifestRel = rel(repo, join(assetDir, "manifest.jsonld"));
+            const assetRel = rel(repo, assetDir);
+            try {
+              const ref = libraryItemToReference(assetDir, { key: slug, derivedFrom: manifestRel, heldAt: assetRel });
+              const ownEntry = push(ref, manifestRel);
+              rawLibraryAssets.push({ subgraph: d.id, asset: slug, instance: decl.name, path: assetRel, ownEntry });
+            } catch (e) {
+              out.invalid.push(`${manifestRel}: ${e instanceof Error ? e.message : String(e)}`);
+            }
+          }
+        }
+      }
     }
   }
   // A key is the citation's whole identity within its sub-graph.
@@ -199,6 +295,27 @@ export function collect(repo: string = REPO): Collected {
   }
   out.entries.sort(byCitation);
   out.subgraphs.sort((a, b) => a.id.localeCompare(b.id, "en"));
+
+  // Build per-asset bibliography views (`<route>/<sub-graph>/<asset>/`):
+  // each standalone library asset holds its own reference plus any references
+  // extracted or derived from that asset.
+  for (const la of rawLibraryAssets) {
+    const extracted = out.entries.filter(
+      (e) =>
+        e !== la.ownEntry &&
+        ((e.ref.derivedFrom !== undefined && (e.ref.derivedFrom === la.path || e.ref.derivedFrom.startsWith(`${la.path}/`))) ||
+          (e.ref.heldAt !== undefined && (e.ref.heldAt === la.path || e.ref.heldAt.startsWith(`${la.path}/`)))),
+    );
+    const assetEntries = [la.ownEntry, ...extracted].sort(byCitation);
+    out.assets.push({
+      subgraph: la.subgraph,
+      asset: la.asset,
+      instance: la.instance,
+      path: la.path,
+      entries: assetEntries,
+    });
+  }
+  out.assets.sort((a, b) => a.subgraph.localeCompare(b.subgraph, "en") || a.asset.localeCompare(b.asset, "en"));
   return out;
 }
 
@@ -215,7 +332,13 @@ export function byCitation(a: Entry, b: Entry): number {
 
 // ── Rendering ────────────────────────────────────────────────────────────────
 
-const esc = (s: string) => s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const esc = (s: string) =>
+  s
+    .replace(/\s*\r?\n\s*/g, " ")
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;");
 
 /** The anchor of one reference on its page (`referenceAnchor`, shared with the links to it). */
 export const anchorOf = referenceAnchor;
@@ -239,12 +362,20 @@ export function citationHtml(r: ReferenceNode): string {
   return `${s}.`;
 }
 
-/** The links an entry carries: DOI, URL, its source, the library copy. */
-function linksHtml(e: Entry): string {
+/** The links an entry carries: DOI, URL (checked via `safeHref`), its source, the library copy. */
+export function linksHtml(e: Entry): string {
   const r = e.ref;
   const l: string[] = [];
-  if (r.DOI) l.push(`<a href="https://doi.org/${esc(r.DOI)}">doi:${esc(r.DOI)}</a>`);
-  if (r.URL && !(r.DOI && r.URL.includes(r.DOI))) l.push(`<a href="${esc(r.URL)}">link</a>`);
+  if (r.DOI) {
+    const doiHref = safeHref(`https://doi.org/${r.DOI}`);
+    if (doiHref) l.push(`<a href="${esc(doiHref)}">doi:${esc(r.DOI)}</a>`);
+    else l.push(`doi:${esc(r.DOI)}`);
+  }
+  if (r.URL && !(r.DOI && r.URL.includes(r.DOI))) {
+    const urlHref = safeHref(r.URL);
+    if (urlHref) l.push(`<a href="${esc(urlHref)}">link</a>`);
+    else l.push(`<code>${esc(r.URL)}</code>`);
+  }
   if (r.ISBN) l.push(`ISBN ${esc(r.ISBN)}`);
   l.push(`source: <code>${esc(e.file)}</code>`);
   if (r.heldAt) l.push(`held: <code>${esc(r.heldAt)}</code>`);
@@ -258,17 +389,104 @@ export function entryHtml(e: Entry): string {
   const dl = (fmt: string, text: string, mime: string, ext: string) =>
     `<a download="${esc(r.id)}.${ext}" href="data:${mime};charset=utf-8,${encodeURIComponent(text)}">${fmt}</a>`;
   return `<li id="${id}" data-fa-bib="${esc([r.id, r.title ?? "", ...(r.author ?? []).map(nameText), yearOf(r) ?? ""].join(" "))}">
-${citationHtml(r)}<br>
-<small><a href="#${id}"><code>${esc(r.id)}</code></a> · ${esc(r.provenance ?? "authored")} · ${linksHtml(e)}<br>
-export: ${dl("BibTeX", toBibtex([r]), "application/x-bibtex", "bib")} · ${dl("RIS", toRis([r]), "application/x-research-info-systems", "ris")} · ${dl("CSL-JSON", toCslJson([r]), "application/vnd.citationstyles.csl+json", "csl.json")}</small>
+  ${citationHtml(r)}<br>
+  <small><a href="#${id}"><code>${esc(r.id)}</code></a> · ${esc(r.provenance ?? "authored")} · ${linksHtml(e)}<br>
+  export: ${dl("BibTeX", toBibtex([r]), "application/x-bibtex", "bib")} · ${dl("RIS", toRis([r]), "application/x-research-info-systems", "ris")} · ${dl("CSL-JSON", toCslJson([r]), "application/vnd.citationstyles.csl+json", "csl.json")} · ${dl("DC XML", toDublinCoreXml([r]), "application/xml", "dc.xml")}</small>
 </li>`;
 }
 
+/**
+ * The `✍ + Add reference` panel on a bibliography page: lets a reader or author
+ * enter reference fields (`id`/`key`, `title`, `type`, `authors`, `issued`,
+ * `containerTitle`, `DOI`, `URL`, `arXiv`, `abstract`) or paste BibTeX/CSL-JSON,
+ * builds a standalone `folio-reference/v1` JSON-LD node (`references/<key>.jsonld`)
+ * and CSL-JSON entry, and offers both download/copy and `safeHref`-checked
+ * creation at `<targetDir>/<key>.jsonld` (bean folio-assistant-63q4).
+ */
+export function addReferenceHtml(opts: { targetDir?: string; repoUrl?: string; branch?: string } = {}): string {
+  const targetDir = (opts.targetDir ?? "references").replace(/^\/+|\/+$/g, "") || "references";
+  const repoUrl = (opts.repoUrl ?? "https://github.com/litlfred/folio-assistant").replace(/\/+$/, "");
+  const branch = opts.branch ?? "main";
+  const ghHref = safeHref(newReferenceUrl({ repoUrl, branch, dir: targetDir, key: "reference" }));
+  const ghLink = ghHref
+    ? `<a id="fa-bib-add-gh" href="${esc(ghHref)}" target="_blank" rel="noopener">✍ Create standalone node on GitHub</a>`
+    : `<span id="fa-bib-add-gh-disabled">✍ Create standalone node on GitHub (unavailable)</span>`;
+  return `<details id="fa-bib-add" class="fa-bib-add">
+<summary class="fa-bib-add-toggle">✍ + Add reference (standalone node)</summary>
+<form id="fa-bib-add-form" class="fa-bib-add-form" data-target-dir="${esc(targetDir)}" data-repo-url="${esc(safeHref(repoUrl) ?? "")}" data-branch="${esc(branch)}" autocomplete="off">
+<p>Build a standalone <code>${esc(REFERENCE_SCHEMA_TAG)}</code> node at <code id="fa-bib-add-path">${esc(targetDir)}/reference.jsonld</code> from fields or pasted BibTeX / CSL-JSON.</p>
+<div class="fa-bib-add-paste">
+  <label for="fa-bib-add-raw">Paste BibTeX or CSL-JSON (optional)</label><br>
+  <textarea id="fa-bib-add-raw" name="raw" rows="3" style="width:100%;max-width:40rem" placeholder="@article{smith2024, title={...}, author={Smith, Jane}, year={2024}, doi={10.1000/xyz}}"></textarea><br>
+  <button type="button" id="fa-bib-add-parse">Parse BibTeX / CSL-JSON</button>
+</div>
+<div class="fa-bib-add-grid">
+  <label for="fa-bib-add-key">Key (<code>id</code>)</label>
+  <input id="fa-bib-add-key" name="id" type="text" required pattern="[A-Za-z0-9][A-Za-z0-9._:+-]*" placeholder="smith2024">
+  <label for="fa-bib-add-type">Type</label>
+  <select id="fa-bib-add-type" name="type"><option value="article-journal">article-journal</option><option value="book">book</option><option value="report">report</option><option value="webpage">webpage</option><option value="paper-conference">paper-conference</option><option value="chapter">chapter</option><option value="thesis">thesis</option><option value="manuscript">manuscript</option><option value="standard">standard</option><option value="document">document</option></select>
+  <label for="fa-bib-add-title">Title</label>
+  <input id="fa-bib-add-title" name="title" type="text" placeholder="Title of the work">
+  <label for="fa-bib-add-authors">Authors</label>
+  <input id="fa-bib-add-authors" name="authors" type="text" placeholder="Family, Given; Second, Author">
+  <label for="fa-bib-add-issued">Issued (year or YYYY-MM-DD)</label>
+  <input id="fa-bib-add-issued" name="issued" type="text" placeholder="2024">
+  <label for="fa-bib-add-container">Container title</label>
+  <input id="fa-bib-add-container" name="containerTitle" type="text" placeholder="Journal, book or proceedings">
+  <label for="fa-bib-add-doi">DOI</label>
+  <input id="fa-bib-add-doi" name="DOI" type="text" placeholder="10.1000/xyz">
+  <label for="fa-bib-add-url">URL</label>
+  <input id="fa-bib-add-url" name="URL" type="url" placeholder="https://example.org/paper">
+  <label for="fa-bib-add-arxiv">arXiv</label>
+  <input id="fa-bib-add-arxiv" name="arXiv" type="text" placeholder="2401.00001">
+  <label for="fa-bib-add-abstract">Abstract</label>
+  <textarea id="fa-bib-add-abstract" name="abstract" rows="2" style="width:100%;max-width:40rem" placeholder="Abstract or summary"></textarea>
+</div>
+<p class="fa-bib-add-actions">
+  <button type="submit" id="fa-bib-add-submit">✍ Add reference</button> ·
+  ${ghLink} ·
+  <a id="fa-bib-add-dl-jsonld" download="reference.jsonld" href="data:application/ld+json;charset=utf-8,%7B%7D">Download .jsonld</a> ·
+  <a id="fa-bib-add-dl-csl" download="reference.csl.json" href="data:application/vnd.citationstyles.csl+json;charset=utf-8,%5B%5D">Download .csl.json</a> ·
+  <button type="button" id="fa-bib-add-copy">Copy .jsonld</button>
+  <span id="fa-bib-add-status" aria-live="polite"></span>
+</p>
+<pre id="fa-bib-add-preview"><code id="fa-bib-add-code"></code></pre>
+</form>
+</details>`;
+}
+
 const FILTER_SCRIPT = `<script>
-(function(){var q=document.getElementById("fa-bib-q"),n=document.getElementById("fa-bib-n");if(!q)return;
+(function(){var q=document.getElementById("fa-bib-q"),n=document.getElementById("fa-bib-n");if(q){
 function run(){var v=q.value.trim().toLowerCase(),k=0;
 document.querySelectorAll("li[data-fa-bib]").forEach(function(li){var ok=!v||(li.textContent+" "+li.getAttribute("data-fa-bib")).toLowerCase().indexOf(v)>=0;li.hidden=!ok;if(ok)k++;});n.textContent=k;}
-q.addEventListener("input",run);})();
+q.addEventListener("input",run);}
+var ALLOWED_URL_SCHEMES=["http:","https:","mailto:","tel:"];
+function safeHref(u){if(!u)return undefined;var s=String(u).replace(/[\\u0009\\u000A\\u000D]/g,"").trim();if(!s||s.indexOf("//")===0)return undefined;if(/^[#?./]/.test(s)||!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(s))return s;var sc=s.slice(0,s.indexOf(":")+1).toLowerCase();return ALLOWED_URL_SCHEMES.indexOf(sc)>=0?s:undefined;}
+var form=document.getElementById("fa-bib-add-form");if(!form)return;
+var val=function(id){var el=document.getElementById(id);return el?el.value.trim():"";};
+var setVal=function(id,v){var el=document.getElementById(id);if(el&&v!==undefined)el.value=v;};
+function parseAuthors(s){if(!s)return undefined;return s.split(/;|\\s+and\\s+/i).map(function(p){p=p.trim();if(!p)return null;var i=p.indexOf(",");if(i>=0)return{family:p.slice(0,i).trim(),given:p.slice(i+1).trim()};var t=p.split(/\\s+/);return t.length>1?{family:t[t.length-1],given:t.slice(0,-1).join(" ")}:{literal:p};}).filter(Boolean);}
+function parseRaw(){var raw=val("fa-bib-add-raw");if(!raw)return;if(raw[0]==="{"||raw[0]==="["){try{var j=JSON.parse(raw);var it=Array.isArray(j)?j[0]:j;if(!it)return;setVal("fa-bib-add-key",it.id||(it["@id"]||"").replace(/^references\\//,""));setVal("fa-bib-add-type",it.type||"article-journal");setVal("fa-bib-add-title",it.title||it["dcterms:title"]||"");if(Array.isArray(it.author))setVal("fa-bib-add-authors",it.author.map(function(a){return a.literal||[a.family,a.given].filter(Boolean).join(", ");}).join("; "));if(it.issued&&it.issued["date-parts"]&&it.issued["date-parts"][0])setVal("fa-bib-add-issued",it.issued["date-parts"][0].join("-"));setVal("fa-bib-add-container",it["container-title"]||it.containerTitle||"");setVal("fa-bib-add-doi",it.DOI||"");setVal("fa-bib-add-url",it.URL||"");setVal("fa-bib-add-abstract",it.abstract||"");}catch(_e){}return;}
+var m=/^@([A-Za-z]+)\\s*\\{\\s*([^,\\s]+)\\s*,([\\s\\S]*)\\}\\s*$/.exec(raw);if(!m)return;setVal("fa-bib-add-key",m[2]);var tm={article:"article-journal",book:"book",techreport:"report",report:"report",inproceedings:"paper-conference",phdthesis:"thesis",mastersthesis:"thesis",online:"webpage",webpage:"webpage"};setVal("fa-bib-add-type",tm[m[1].toLowerCase()]||"document");var re=/([A-Za-z_][A-Za-z0-9_-]*)\\s*=\\s*(\\{(?:[^{}]|\\{[^{}]*\\})*\\}|"[^"]*"|[^,\\n}]+)/g,fm;while((fm=re.exec(m[3]))!==null){var fk=fm[1].toLowerCase(),fv=fm[2].trim().replace(/^\\{([\\s\\S]*)\\}$|^"([\\s\\S]*)"$/,"$1$2").replace(/[{}]/g,"").trim();if(fk==="title")setVal("fa-bib-add-title",fv);else if(fk==="author")setVal("fa-bib-add-authors",fv);else if(fk==="year"||fk==="date")setVal("fa-bib-add-issued",fv);else if(fk==="journal"||fk==="booktitle")setVal("fa-bib-add-container",fv);else if(fk==="doi")setVal("fa-bib-add-doi",fv);else if(fk==="url")setVal("fa-bib-add-url",fv);else if(fk==="eprint"||fk==="arxiv")setVal("fa-bib-add-arxiv",fv);else if(fk==="abstract")setVal("fa-bib-add-abstract",fv);}}
+function build(){var rawKey=val("fa-bib-add-key").replace(/[^A-Za-z0-9._:+-]+/g,"-").replace(/^[^A-Za-z0-9]+/,"")||"reference";var tp=val("fa-bib-add-type")||"article-journal";var ti=val("fa-bib-add-title");var au=parseAuthors(val("fa-bib-add-authors"));var is=val("fa-bib-add-issued");var ct=val("fa-bib-add-container");var doi=val("fa-bib-add-doi").replace(/^https?:\\/\\/(?:dx\\.)?doi\\.org\\//i,"");var arx=val("fa-bib-add-arxiv").replace(/^arxiv:/i,"");var u=safeHref(val("fa-bib-add-url")||(arx?"https://arxiv.org/abs/"+arx:doi?"https://doi.org/"+doi:undefined));var ab=val("fa-bib-add-abstract");
+var bibo={book:"bibo:Book",report:"bibo:Report",webpage:"bibo:Webpage",thesis:"bibo:Thesis",chapter:"bibo:Chapter",manuscript:"bibo:Manuscript",standard:"bibo:Standard"}[tp]||"bibo:AcademicArticle";
+var node={"@context":${JSON.stringify(REFERENCE_CONTEXT)},"@id":"references/"+rawKey,"@type":["fabio:Work",bibo],$schema:"folio-reference/v1",id:rawKey,type:tp,provenance:"authored"};
+if(ti){node["dcterms:title"]=ti;node.title=ti;}if(au&&au.length){node["dcterms:creator"]=au.map(function(a){return a.literal||[a.family,a.given].filter(Boolean).join(", ");});node.author=au;}if(is){var ym=/^(\\d{4})(?:-(\\d{2})(?:-(\\d{2}))?)?/.exec(is);node.issued=ym?{"date-parts":[[ym[1],ym[2],ym[3]].filter(Boolean).map(Number)]}:{raw:is};node["dcterms:issued"]=is;}if(ct){node["dcterms:isPartOf"]=ct;node["container-title"]=ct;}if(doi){node["bibo:doi"]=doi;node.DOI=doi;}if(u){node["dcterms:identifier"]=u;node.URL=u;}if(ab){node["dcterms:abstract"]=ab;node.abstract=ab;}if(arx)node.note="arXiv:"+arx;
+var csl={id:rawKey,type:tp};if(ti)csl.title=ti;if(au&&au.length)csl.author=au;if(node.issued)csl.issued=node.issued;if(ct)csl["container-title"]=ct;if(doi)csl.DOI=doi;if(u)csl.URL=u;if(ab)csl.abstract=ab;if(arx)csl.note="arXiv:"+arx;
+var dir=form.getAttribute("data-target-dir")||"references";var pathEl=document.getElementById("fa-bib-add-path");if(pathEl)pathEl.textContent=dir+"/"+rawKey+".jsonld";
+var jsonldText=JSON.stringify(node,null,2)+"\\n",cslText=JSON.stringify([csl],null,2)+"\\n";
+var codeEl=document.getElementById("fa-bib-add-code");if(codeEl)codeEl.textContent=jsonldText;
+var dlLd=document.getElementById("fa-bib-add-dl-jsonld");if(dlLd){dlLd.setAttribute("download",rawKey+".jsonld");dlLd.setAttribute("href","data:application/ld+json;charset=utf-8,"+encodeURIComponent(jsonldText));}
+var dlCsl=document.getElementById("fa-bib-add-dl-csl");if(dlCsl){dlCsl.setAttribute("download",rawKey+".csl.json");dlCsl.setAttribute("href","data:application/vnd.citationstyles.csl+json;charset=utf-8,"+encodeURIComponent(cslText));}
+var repoUrl=safeHref(form.getAttribute("data-repo-url")||"https://github.com/litlfred/folio-assistant");var branch=form.getAttribute("data-branch")||"main";
+var ghUrl=repoUrl?safeHref(repoUrl+"/new/"+encodeURIComponent(branch)+"/"+dir.split("/").map(encodeURIComponent).join("/")+"?filename="+encodeURIComponent(rawKey+".jsonld")+"&value="+encodeURIComponent(jsonldText)):undefined;
+var ghEl=document.getElementById("fa-bib-add-gh");if(ghEl&&ghUrl)ghEl.setAttribute("href",ghUrl);
+return{key:rawKey,dir:dir,node:node,jsonldText:jsonldText,ghUrl:ghUrl};}
+var pb=document.getElementById("fa-bib-add-parse");if(pb)pb.addEventListener("click",function(){parseRaw();build();});
+form.addEventListener("input",build);
+var cb=document.getElementById("fa-bib-add-copy");if(cb)cb.addEventListener("click",function(){var b=build();if(navigator.clipboard)navigator.clipboard.writeText(b.jsonldText);var st=document.getElementById("fa-bib-add-status");if(st)st.textContent="Copied "+b.dir+"/"+b.key+".jsonld";});
+form.addEventListener("submit",function(ev){ev.preventDefault();var b=build();var st=document.getElementById("fa-bib-add-status");if(b.ghUrl)window.open(b.ghUrl,"_blank","noopener");if(st)st.textContent="Ready at "+b.dir+"/"+b.key+".jsonld";});
+build();})();
 </script>`;
 
 /** The export files beside a page, by name. */
@@ -276,13 +494,15 @@ export const EXPORTS = [
   ["references.bib", "BibTeX", toBibtex],
   ["references.csl.json", "CSL-JSON", toCslJson],
   ["references.ris", "RIS", toRis],
+  ["references.dc.xml", "Dublin Core XML", toDublinCoreXml],
   ["references.jsonld", "Dublin Core / BIBO JSON-LD", toJsonLdGraph],
 ] as const;
 
-/** A page: front matter, what it holds, its exports, the filter and the list. */
-export function renderPage(opts: { title: string; permalink: string; intro: string; entries: Entry[]; nav?: string }): string {
-  const { title, permalink, intro, entries, nav } = opts;
+/** A page: front matter, what it holds, its exports, the `+ Add reference` panel, the filter and the list. */
+export function renderPage(opts: { title: string; permalink: string; intro: string; entries: Entry[]; nav?: string; targetDir?: string }): string {
+  const { title, permalink, intro, entries, nav, targetDir } = opts;
   const exports = EXPORTS.map(([f, label]) => `<a href="${f}">${label}</a>`).join(" · ");
+  const addPanel = addReferenceHtml({ targetDir });
   const list = entries.length
     ? `<label for="fa-bib-q">Filter references</label>
 <input id="fa-bib-q" type="search" autocomplete="off" style="min-height:44px;width:100%;max-width:32rem">
@@ -290,9 +510,7 @@ export function renderPage(opts: { title: string; permalink: string; intro: stri
 
 <ol class="fa-bib">
 ${entries.map(entryHtml).join("\n")}
-</ol>
-
-${FILTER_SCRIPT}`
+</ol>`
     : "<p>No references here yet.</p>";
   return `---
 title: "${title.replace(/"/g, '\\"')}"
@@ -307,7 +525,11 @@ ${intro}
 
 **Export these ${entries.length} reference${entries.length === 1 ? "" : "s"}:** ${exports}
 ${nav ? `\n${nav}\n` : ""}
+${addPanel}
+
 ${list}
+
+${FILTER_SCRIPT}
 `;
 }
 
@@ -324,20 +546,26 @@ export function outputs(c: Collected): Map<string, string> {
         .map((s) => `<a href="${s.id}/">${s.id}</a> (${c.entries.filter((e) => e.subgraph === s.id).length})`)
         .join(" · ")}`
     : undefined;
+  const defaultTargetDir = c.subgraphs.find((s) => s.kind === "references")?.path ?? "references";
   write(
     ROOT,
     renderPage({
       title: "Bibliography",
       permalink: `/${ROUTE}/`,
       intro:
-        "Every reference in the knowledge graph: the bibliographies folios declare (`references` directories, one `folio-reference/v1` node each) and the Dublin Core records of catalogues (`catalogue` directories), as one list. Each reference sits at `references/<key>`, the IRI a `\\cite{key}` resolves to.",
+        "Every reference in the knowledge graph: the bibliographies folios declare (`references` directories, one `folio-reference/v1` node each), the Dublin Core records of catalogues (`catalogue` directories), and the ingested items of libraries (`library` directories), as one list. Each reference sits at `references/<key>`, the IRI a `\\cite{key}` resolves to.",
       entries: c.entries,
       nav,
+      targetDir: defaultTargetDir,
     }),
     c.entries,
   );
   for (const s of c.subgraphs) {
     const entries = c.entries.filter((e) => e.subgraph === s.id);
+    const subAssets = (c.assets ?? []).filter((a) => a.subgraph === s.id);
+    const assetNav = subAssets.length
+      ? `**By asset:** ${subAssets.map((a) => `<a href="${a.asset}/">${a.asset}</a> (${a.entries.length})`).join(" · ")}`
+      : undefined;
     write(
       join(ROOT, s.id),
       renderPage({
@@ -345,8 +573,22 @@ export function outputs(c: Collected): Map<string, string> {
         permalink: `/${ROUTE}/${s.id}/`,
         intro: `The references of \`${s.path}/\` (${s.instance}, a \`${s.kind}\` directory). [All references](../).`,
         entries,
+        nav: assetNav,
+        targetDir: s.kind === "references" ? s.path : defaultTargetDir,
       }),
       entries,
+    );
+  }
+  for (const a of c.assets ?? []) {
+    write(
+      join(ROOT, a.subgraph, a.asset),
+      renderPage({
+        title: `Bibliography: ${a.subgraph}/${a.asset}`,
+        permalink: `/${ROUTE}/${a.subgraph}/${a.asset}/`,
+        intro: `The reference for \`${a.path}\` (${a.instance}) and any references extracted from it. [${a.subgraph}](../) · [All references](../../).`,
+        entries: a.entries,
+      }),
+      a.entries,
     );
   }
   return out;
