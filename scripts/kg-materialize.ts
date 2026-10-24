@@ -129,8 +129,20 @@
  * and this is more of the same layer. The path must lie under a directory the
  * snapshot declares.
  *
+ * ## A nested subgraph: chosen by its parent, materialised by its path
+ *
+ * Owner, 2026-10-24 (cat-harness-tools#744, ruling 4). `<subgraph>` may be a
+ * PATH (`skills/voices`) under a directory the snapshot declares. The part is
+ * judged by that PARENT: its id must be chosen, because the snapshot holds the
+ * root declaration only and cannot vouch for a nested id offline, and the
+ * snapshot schema is not widened to carry the nested declarations. The bytes
+ * are the nested path's, through the same five gates; the record says
+ * `nested: true` with the parent's `id`, and it is held under `nested/<path>/`
+ * (`partDirOf`), apart from the parent's part.
+ *
  * Usage:
  *   bun run cat kg:materialize <subscription> <subgraph> [--decisions <file.json>] [--instance <dir>] [--dry-run]
+ *   bun run cat kg:materialize <subscription> <parent-path>/<nested-path> [...]   # a nested subgraph, its parent chosen
  *   bun run cat kg:materialize <subscription> --asset <path> [--decisions <file.json>] [--instance <dir>] [--dry-run]
  *   bun run cat kg:materialize --nodes <subscription> <subgraph-path> [--max-bytes <n>] [--instance <dir>] [--dry-run]
  *   bun run cat kg:materialize:check
@@ -240,6 +252,30 @@ export function resolveRequest(opts: { instance?: string; subscription: string; 
   if ((opts.subgraph === undefined) === (opts.asset === undefined)) {
     return { ok: false, reason: "name exactly one part: a subgraph id, or `--asset <path>`" };
   }
+  if (opts.subgraph !== undefined && opts.subgraph.includes("/") && !dirs.some((d) => d.id === opts.subgraph)) {
+    // A nested subgraph, named by its path: judged by the declared directory it lies under.
+    const p = safeRelPath(opts.subgraph);
+    if (!p.ok) return { ok: false, reason: `subgraph path ${p.why}` };
+    const exact = dirs.find((d) => d.path === p.path);
+    const parent = exact ? undefined : dirs.filter((d) => p.path.startsWith(`${d.path}/`)).sort((a, b) => b.path.length - a.path.length)[0];
+    if (!exact && !parent) {
+      return {
+        ok: false,
+        reason: `\`${p.path}\` lies under no directory the cached snapshot of ${sub.repository}@${sub.ref.slice(0, 12)} declares (${dirs.map((d) => `\`${d.path}/\``).join(", ") || "none"}), so no chosen subgraph holds it`,
+      };
+    }
+    const owner = exact ?? parent!;
+    if (!(sub.subgraphs ?? []).includes(owner.id)) {
+      return {
+        ok: false,
+        reason:
+          `\`${p.path}\` lies under subgraph \`${owner.id}\`, which subscription \`${sub.id}\` does not choose (chosen: ${(sub.subgraphs ?? []).map((g) => `\`${g}\``).join(", ") || "none"}). ` +
+          `A nested part is chosen by its parent: add \`${owner.id}\` to \`subscriptions[].subgraphs\` first`,
+      };
+    }
+    const part: KgPartRecord = exact ? { kind: "subgraph", id: owner.id, path: owner.path } : { kind: "subgraph", id: owner.id, path: p.path, nested: true };
+    return { ok: true, r: { instanceRoot, snapshotDir, sub, snap, part, partDir: partDirOf(snapshotDir, sub.id, part) } };
+  }
   if (opts.subgraph !== undefined) {
     const id = opts.subgraph;
     const chosen = (sub.subgraphs ?? []).includes(id);
@@ -347,7 +383,7 @@ export async function materialize(opts: MaterializeOptions): Promise<Materialize
   const { instanceRoot, sub, part, partDir } = res.r;
   const at = (opts.now ?? new Date()).toISOString();
   const recordFile = join(partDir, PART_RECORD_FILE);
-  const label = part.kind === "subgraph" ? `subgraph \`${part.id}\`` : `asset \`${part.path}\``;
+  const label = part.kind === "subgraph" ? (part.nested ? `nested subgraph \`${part.path}\` (chosen by \`${part.id}\`)` : `subgraph \`${part.id}\``) : `asset \`${part.path}\``;
 
   const existing = readExisting(partDir);
   if (existing && existing.materialization.state === "materialized" && existing.ref !== sub.ref) {
@@ -436,7 +472,8 @@ export async function materialize(opts: MaterializeOptions): Promise<Materialize
     const local = (p: string): string => relative(instanceRoot, p).split("\\").join("/");
     const upstreamFile = (f: string): string => (part.kind === "subgraph" ? `${part.path}/${f}` : part.path);
     const fileRecords = files.map((f, i) => ({
-      id: `${sub.id}/${part.kind === "subgraph" ? part.id : "asset"}/${f}`,
+      // A nested part's files are named by its path, so they never share an id with the same file held in its parent's copy.
+      id: `${sub.id}/${part.kind === "subgraph" ? (part.nested ? `nested/${part.path}` : part.id) : "asset"}/${f}`,
       name: f,
       materialization: {
         state: "materialized" as const,
@@ -864,7 +901,7 @@ export function checkMaterializations(instanceRoot: string): CheckReport {
       const held = r.materialization.state === "materialized";
       if (held) report.held++;
       else report.stayedReferenced++;
-      if (r.part.kind === "subgraph") heldSubgraphs.add(r.part.id);
+      if (r.part.kind === "subgraph" && !r.part.nested) heldSubgraphs.add(r.part.id);
       if (r.subscription !== s.id || r.repository !== s.repository) out.push(`${where}: the record says it belongs to \`${r.subscription}\` (${r.repository})`);
       if (r.ref !== s.ref) out.push(`${where}: ${held ? "held" : "decided"} at ${r.ref.slice(0, 12)}, and the subscription pins ${s.ref.slice(0, 12)} — refresh it (\`refresh-materialized\`)`);
       if (resolve(partDirOf(snapshotDir, s.id, r.part)) !== resolve(p.dir)) out.push(`${where}: the record describes ${r.part.kind} \`${r.part.kind === "subgraph" ? r.part.id : r.part.path}\`, which the layout puts elsewhere`);
@@ -872,7 +909,9 @@ export function checkMaterializations(instanceRoot: string): CheckReport {
         if (!(s.subgraphs ?? []).includes(r.part.id)) out.push(`${where}: subgraph \`${r.part.id}\` is ${held ? "held" : "recorded"} but no longer chosen`);
         const decl = dirs?.find((x) => x.id === (r.part as { id: string }).id);
         if (dirs && !decl) out.push(`${where}: subgraph \`${r.part.id}\` is not declared by the snapshot`);
-        else if (decl && decl.path !== r.part.path) out.push(`${where}: subgraph \`${r.part.id}\` was copied from \`${r.part.path}\`, and the snapshot declares it at \`${decl.path}\``);
+        else if (decl && r.part.nested && !r.part.path.startsWith(`${decl.path}/`)) {
+          out.push(`${where}: nested subgraph \`${r.part.path}\` is recorded under \`${r.part.id}\`, which the snapshot declares at \`${decl.path}\` — not its parent`);
+        } else if (decl && !r.part.nested && decl.path !== r.part.path) out.push(`${where}: subgraph \`${r.part.id}\` was copied from \`${r.part.path}\`, and the snapshot declares it at \`${decl.path}\``);
       } else {
         const policy = s.assets?.policy ?? "none";
         if (held && policy !== "on-demand" && policy !== "all") out.push(`${where}: an asset is held under asset policy \`${policy}\``);
@@ -981,6 +1020,7 @@ if (import.meta.main) {
   if (!subscription || (subgraph === undefined) === (asset === undefined)) {
     console.error(
       "usage: bun run cat kg:materialize <subscription> <subgraph> [--decisions <file.json>] [--instance <dir>] [--dry-run]\n" +
+        "       bun run cat kg:materialize <subscription> <nested-subgraph-path> [...]   (its parent chosen)\n" +
         "       bun run cat kg:materialize <subscription> --asset <path> [--decisions <file.json>] [--instance <dir>] [--dry-run]\n" +
         "       bun run cat kg:materialize --nodes <subscription> <subgraph-path> [--max-bytes <n>] [--instance <dir>] [--dry-run]",
     );

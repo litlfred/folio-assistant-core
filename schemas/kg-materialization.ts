@@ -50,9 +50,18 @@ const RelPathSchema = z
     message: "a repository-relative POSIX path, with no empty, `.`/`..` or dot-prefixed segment",
   });
 
-/** Which part of the substrate this is. A subgraph is named by the substrate's own `directories[].id`. */
+/**
+ * Which part of the substrate this is. A subgraph is named by the substrate's own `directories[].id`.
+ *
+ * `nested: true` is a subgraph declared FROM WITHIN that directory
+ * (`skills/voices` in `skills/skills.json`): `id` is then the PARENT's id —
+ * the choice the snapshot can check offline — and `path` the nested part's
+ * own path, under the parent's. Owner, 2026-10-24 (cat-harness-tools#744,
+ * ruling 4): chosen by the parent's id, materialised by path, with no change
+ * to the snapshot and no re-subscribe.
+ */
 export const KgPartSchema = z.discriminatedUnion("kind", [
-  z.object({ kind: z.literal("subgraph"), id: z.string().min(1), path: RelPathSchema }).strict(),
+  z.object({ kind: z.literal("subgraph"), id: z.string().min(1), path: RelPathSchema, nested: z.literal(true).optional() }).strict(),
   z.object({ kind: z.literal("asset"), path: RelPathSchema }).strict(),
 ]);
 export type KgPartRecord = z.infer<typeof KgPartSchema>;
