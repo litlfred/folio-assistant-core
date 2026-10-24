@@ -26,6 +26,18 @@
       },
       "drafted_at": "2026-09-24",
       "lang": "en"
+    },
+    {
+      "text": "Une section de page web consacrée au MSc in Digital Financial Technology de la NUS. Un rectangle rouge entoure le tableau Commitment and Candidature (temps plein : 1,5 an en moyenne et 3 ans au maximum ; temps partiel : 2,5 et 3), avec les bourses au-dessus, et le public visé et les critères généraux d'admission (GMAT 650/800, TOEFL 90/120, IELTS 6.0/9) en dessous.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "fr"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

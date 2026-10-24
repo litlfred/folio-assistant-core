@@ -26,6 +26,18 @@
       },
       "drafted_at": "2026-09-24",
       "lang": "en"
+    },
+    {
+      "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « 港主板退出回报高 先进制造获投数量多 » (les sorties sur le marché principal de Hong Kong rapportent beaucoup ; l'industrie de pointe attire le plus d'opérations). Un rectangle rouge encadre le paragraphe d'ouverture et le tableau d'analyse des sorties en dessous ; un second tableau plus bas détaille les rendements de sortie du capital-risque et du capital-investissement par secteur.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "fr"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",
