@@ -10,8 +10,9 @@
  * result is neither.
  */
 import { describe, expect, test } from "bun:test";
+import { existsSync } from "node:fs";
 
-import { codeSpans, mappingBlock, mappingStates, perTermMapping } from "./glossary-page.ts";
+import { codeSpans, collect, mappingBlock, mappingStates, perTermMapping } from "./glossary-page.ts";
 
 describe("codeSpans — bean `mylx`, no raw backticks on a rendered page", () => {
   test("backticks become code spans", () => {
@@ -141,10 +142,39 @@ describe("the third state at the PAGE level — nobody asked", () => {
   });
 });
 
+describe("the page and the record key a scheme the same way (bean q3n9, owner ruling A)", () => {
+  // The page places a scheme under its owning instance; the record keys its
+  // rows by (instance, scheme). If the two ever derive the owner differently,
+  // a term on the page reads another instance's row, or none. Over the real
+  // checkout, in both directions.
+  const states = mappingStates() ?? [];
+  const page = collect().glossaries.filter((s) => s.file.endsWith(".glossary.json") && existsSync(s.file));
+  const onPage = new Set(page.map((s) => `${s.instance}\0${s.glossary.id}`));
+  const inRecord = new Set(states.map((r) => `${r.instance}\0${r.scheme}`));
+
+  test("the record has rows to compare", () => {
+    expect(states.length).toBeGreaterThan(0);
+  });
+
+  test("every row's (instance, scheme) is a scheme the page shows under that instance", () => {
+    const stray = [...inRecord].filter((k) => !onPage.has(k)).map((k) => k.replace("\0", " / "));
+    expect(stray).toEqual([]);
+  });
+
+  test("every scheme on the page with a candidate term has a row under the page's owner", () => {
+    const missing = page
+      .filter((s) => s.glossary.terms.some((t) => t.status !== "authored"))
+      .map((s) => `${s.instance}\0${s.glossary.id}`)
+      .filter((k) => !inRecord.has(k))
+      .map((k) => k.replace("\0", " / "));
+    expect(missing).toEqual([]);
+  });
+});
+
 describe("per term — bean `5yhm`, every term's state, none of them graded", () => {
   const row = (over: Record<string, unknown> = {}) =>
-    ({ scheme: "s", target: "skos", mapped: 0, unmapped: 3, undetermined: 0, mappedTerms: [], ...over }) as never;
-  const keys = ["a", "b", "c"].map((t) => ({ anchor: `x--s--${t}`, scheme: "s", term: t }));
+    ({ instance: "i", scheme: "s", target: "skos", mapped: 0, unmapped: 3, undetermined: 0, mappedTerms: [], ...over }) as never;
+  const keys = ["a", "b", "c"].map((t) => ({ anchor: `x--s--${t}`, instance: "i", scheme: "s", term: t }));
 
   test("all unmapped: one stated default, no marks", () => {
     const { note, marks } = perTermMapping([row()], keys);
@@ -203,8 +233,8 @@ describe("per term — bean `5yhm`, every term's state, none of them graded", ()
 
   test("two entries sharing a key are both `unknown`, never both badged", () => {
     const dup = [
-      { anchor: "i1--s--a", scheme: "s", term: "a" },
-      { anchor: "i2--s--a", scheme: "s", term: "a" },
+      { anchor: "i1--s--a", instance: "i", scheme: "s", term: "a" },
+      { anchor: "i2--s--a", instance: "i", scheme: "s", term: "a" },
     ];
     const { marks } = perTermMapping(
       [row({ mapped: 1, unmapped: 0, mappedTerms: [{ term: "a", exact: true, concepts: [] }] })],
@@ -212,6 +242,22 @@ describe("per term — bean `5yhm`, every term's state, none of them graded", ()
     );
     expect(marks.get("i1--s--a")).toContain("two entries share the id");
     expect(marks.get("i2--s--a")).toContain("two entries share the id");
+  });
+
+  test("one scheme id and term id in two instances: each reads its own row, neither is unknown", () => {
+    const two = [
+      { anchor: "ch--s--a", instance: "cat-harness", scheme: "s", term: "a" },
+      { anchor: "fh--s--a", instance: "fhir-harness", scheme: "s", term: "a" },
+    ];
+    const { marks } = perTermMapping(
+      [
+        row({ instance: "cat-harness", mapped: 1, unmapped: 0, mappedTerms: [{ term: "a", exact: true, concepts: ["http://ex/a"] }] }),
+        row({ instance: "fhir-harness", mapped: 0, unmapped: 1 }),
+      ],
+      two,
+    );
+    expect(marks.get("ch--s--a")).toContain("mapped, exact");
+    expect(marks.get("fh--s--a") ?? "").not.toContain("cannot be told");
   });
 
   test("no committed result: no note and no marks — the table already says Not checked", () => {
