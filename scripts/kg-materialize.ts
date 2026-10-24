@@ -78,8 +78,20 @@
  *   subscribed repository, at the pin. `<docs>` is the snapshot's declared
  *   `docs` directory and `<HARNESS>` the snapshot's declaration name — read
  *   from the cached declaration, the way `gen-subgraph-jsonld` reads its own,
- *   never spelled. Fetched through the same injectable {@link PartFetcher}, so
+ *   never spelled, and joined by cat-harness's `publishedSubgraphDir`, the
+ *   function a hydrated mount and `gen-subgraph-jsonld`'s layout use (bean
+ *   `mo75` G3). Fetched through the same injectable {@link PartFetcher}, so
  *   the pin check (`FETCH_HEAD` must be the pinned SHA) is the same code.
+ * - **Not in the tree: the pin's package.** A harness that builds
+ *   `<docs>/subgraph/` at publish (`builtAtPublish` — every litlfred harness)
+ *   commits no hydrated file, so a tree miss asks the pin's subgraph index
+ *   package (bean `mo75` G2b, cat-harness-tools `fetchSubgraphIndex`), which
+ *   verifies its record, digest and manifest before anything is read. The
+ *   record's `file.upstream` then names the tarball and member. A package
+ *   that could not be fetched is `could-not-determine`, never "not published".
+ * - **Any depth.** The path may name a nested subgraph (`skills/sdlc`,
+ *   `skills/voices`), declared at the top level or from within: the request
+ *   is by path, and the hydrated file at that path is the answer.
  * - **The root is refused, by design.** A harness root publishes
  *   `index.jsonld` only: a deep hydrated file there is the monolith `f233`
  *   forbids. A root request is REFUSED with a pointer at `index.jsonld`; it is
@@ -128,7 +140,8 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, 
 import { basename, dirname, join, relative, resolve } from "node:path";
 
 import { findDeclarationFile, instanceRootsIn, repoRootFor, type Subscription } from "@litlfred/cat-harness/schemas/cat-harness.ts";
-import { SUBGRAPH_HYDRATED_FILE, SUBGRAPH_INDEX_FILE, SubgraphHydratedSchema, type SubgraphHydratedNode } from "@litlfred/cat-harness/schemas/subgraph-manifest.ts";
+import { publishedSubgraphDir, SUBGRAPH_HYDRATED_FILE, SUBGRAPH_INDEX_FILE, SubgraphHydratedSchema, type SubgraphHydratedNode } from "@litlfred/cat-harness/schemas/subgraph-manifest.ts";
+import { fetchSubgraphIndex, type SubgraphIndexFetch } from "@litlfred/cat-harness-tools/scripts/subgraph-index-package.ts";
 import { SubstrateSnapshotSchema, type SubstrateSnapshot } from "@litlfred/cat-harness/schemas/substrate-snapshot.ts";
 import {
   NODES_RECORD_FILE,
@@ -536,7 +549,15 @@ export function nodesLocation(
   if (!docs) {
     return { ok: false, reason: `the snapshot of ${snap.repository}@${snap.ref.slice(0, 12)} declares no \`docs\` directory, so the substrate publishes no subgraph files to fetch` };
   }
-  const up = safeRelPath(`${docs.path}/subgraph/${harness}/${p.path}/${SUBGRAPH_HYDRATED_FILE}`);
+  // The same function `gen-subgraph-jsonld`'s layout and a hydrated mount
+  // read it through, so the three cannot spell `<docs>/subgraph/<HARNESS>/<path>` apart.
+  let published: string;
+  try {
+    published = publishedSubgraphDir(docs.path, harness, p.path);
+  } catch (e) {
+    return { ok: false, reason: `the hydrated file's upstream path: ${e instanceof Error ? e.message : String(e)}` };
+  }
+  const up = safeRelPath(`${published}/${SUBGRAPH_HYDRATED_FILE}`);
   if (!up.ok) return { ok: false, reason: `the hydrated file's upstream path ${up.why}` };
   return { ok: true, path: p.path, upstreamPath: up.path, iriSuffix: `/subgraph/${harness}/${p.path}/`, harness };
 }
@@ -555,6 +576,12 @@ export interface NodesOptions {
   /** The size cap. Absent: {@link DEFAULT_MAX_BYTES}. */
   maxBytes?: number;
   fetch?: PartFetcher;
+  /**
+   * The pin's subgraph index PACKAGE (bean `mo75` G2b), asked only when the
+   * pin's git tree holds no hydrated file — every harness that builds
+   * `<docs>/subgraph/` at publish. Absent: cat-harness-tools' `fetchSubgraphIndex`.
+   */
+  indexPackage?: (a: { repository: string; ref: string; harness: string }) => SubgraphIndexFetch;
   now?: Date;
   dryRun?: boolean;
 }
@@ -620,13 +647,38 @@ export async function materializeNodes(opts: NodesOptions): Promise<NodesResult>
   } catch (e) {
     return { state: "could-not-determine", reason: `\`${loc.upstreamPath}\` of ${sub.repository} at ${sub.ref.slice(0, 12)} was not read: ${e instanceof Error ? e.message : String(e)}` };
   }
+  // Not in the tree: the pin's subgraph index PACKAGE, where a harness that
+  // builds its subgraph files at publish puts them (bean `mo75` G2b) — the
+  // same fallback, and the same verification, a hydrated mount uses.
+  let upstream = `https://github.com/${sub.repository}/blob/${sub.ref}/${loc.upstreamPath}`;
+  let release: (() => void) | undefined;
   if (!fetched) {
-    return {
-      state: "refused",
-      reason:
-        `${sub.repository} at ${sub.ref.slice(0, 12)} publishes no \`${loc.upstreamPath}\`: either \`${loc.path}\` is not a subgraph there, ` +
-        `or the substrate did not publish its subgraph files at that commit (\`bun run cat subgraph:jsonld\`)`,
-    };
+    let pkg: SubgraphIndexFetch;
+    try {
+      pkg = (opts.indexPackage ?? fetchSubgraphIndex)({ repository: sub.repository, ref: sub.ref, harness: loc.harness });
+    } catch (e) {
+      return { state: "could-not-determine", reason: `\`${loc.upstreamPath}\` is not in ${sub.repository}'s tree at ${sub.ref.slice(0, 12)}, and the pin's subgraph index package was not read: ${e instanceof Error ? e.message : String(e)}` };
+    }
+    const entry = pkg.state === "ok" ? pkg.hydrated.get(loc.path) : undefined;
+    if (pkg.state === "ok" && entry) {
+      const file = join(pkg.root, ...entry.path.split("/"));
+      fetched = { kind: "blob", root: pkg.root, part: dirname(file) };
+      upstream = `${pkg.pkg.tarballUrl}#${entry.path}`;
+      release = pkg.close;
+    } else {
+      if (pkg.state === "ok") pkg.close();
+      // A package that failed to fetch, or failed its checks, is never "not published".
+      if (pkg.state === "could-not-determine") {
+        return { state: "could-not-determine", reason: `\`${loc.upstreamPath}\` is not in ${sub.repository}'s tree at ${sub.ref.slice(0, 12)}, and the pin's subgraph index package was not read: ${pkg.detail}` };
+      }
+      const where = pkg.state === "ok" ? "holds no file for it" : `${pkg.state} — ${pkg.detail}`;
+      return {
+        state: "refused",
+        reason:
+          `${sub.repository} at ${sub.ref.slice(0, 12)} publishes no \`${loc.upstreamPath}\`: either \`${loc.path}\` is not a subgraph there, ` +
+          `or the substrate did not publish its subgraph files at that commit (\`bun run cat subgraph:jsonld\`); the pin's subgraph index package ${where}`,
+      };
+    }
   }
   try {
     if (fetched.kind !== "blob") {
@@ -635,7 +687,6 @@ export async function materializeNodes(opts: NodesOptions): Promise<NodesResult>
     const src = join(fetched.part, SUBGRAPH_HYDRATED_FILE);
     if (!existsSync(src)) return { state: "could-not-determine", reason: `the fetcher reported \`${loc.upstreamPath}\` and left no \`${SUBGRAPH_HYDRATED_FILE}\` to read` };
     const bytes = readFileSync(src);
-    const upstream = `https://github.com/${sub.repository}/blob/${sub.ref}/${loc.upstreamPath}`;
     const base = { $schema: KG_NODES_RECORD_SCHEMA, subscription: sub.id, repository: sub.repository, ref: sub.ref } as const;
 
     // The safety cap is measured BEFORE the bytes are parsed.
@@ -691,7 +742,8 @@ export async function materializeNodes(opts: NodesOptions): Promise<NodesResult>
     }
     return { state: "materialized", record, recordFile, file: heldFile, changed: true };
   } finally {
-    rmSync(fetched.root, { recursive: true, force: true });
+    if (release) release();
+    else rmSync(fetched.root, { recursive: true, force: true });
   }
 }
 
