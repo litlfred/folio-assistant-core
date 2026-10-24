@@ -21,6 +21,7 @@ import { KgMaterializationRecordSchema, KgNodesRecordSchema, type KgDecisions } 
 import { MaterializationSchema } from "../schemas/materialization.ts";
 import { run as fixityRun } from "./check-materialized-fixity.ts";
 import { checkMaterializations, materialize, materializeNodes, sizeGate, type FetchedPart, type PartFetcher } from "./kg-materialize.ts";
+import { fetchSubgraphIndex, packSubgraphIndex, type SubgraphIndexFetch } from "@litlfred/cat-harness-tools/scripts/subgraph-index-package.ts";
 
 const SHA = "0123456789abcdef0123456789abcdef01234567";
 const SHA2 = "89abcdef0123456789abcdef0123456789abcdef";
@@ -484,6 +485,8 @@ const NODES_UPSTREAM: Record<string, string> = {
 };
 const nodesCheckout = (opts: { snapshotRef?: string } = {}) =>
   checkout({ id: "cat", subgraphs: [] }, { ...opts, substrate: { file: "cat-harness.json", raw: NODES_UPSTREAM["cat-harness.json"]! } });
+/** No package is published for the pin — the 404 answer, so a test never reaches the network. */
+const noPackage = (): SubgraphIndexFetch => ({ state: "absent", pkg: { name: "", version: "", tag: "", tarball: "", record: "", tarballUrl: "", recordUrl: "" }, detail: "nothing published (test)" });
 /** A fetcher that records which paths it was asked for. */
 function nodesFixture(files: Record<string, string> = NODES_UPSTREAM): PartFetcher & { calls: number; paths: string[] } {
   const inner = fixture(files);
@@ -543,9 +546,78 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
 
   test("a missing file is refused, and nothing is written", async () => {
     const { inst, snapDir } = nodesCheckout();
-    const r = await materializeNodes({ instance: inst, subscription: "cat", path: "skills/nope", fetch: nodesFixture() });
+    const r = await materializeNodes({ instance: inst, subscription: "cat", path: "skills/nope", fetch: nodesFixture(), indexPackage: noPackage });
     expect(r.state).toBe("refused");
     expect(r.state === "refused" && r.reason).toMatch(/publishes no `docs\/subgraph\/cat-harness\/skills\/nope\/index\.hydrated\.jsonld`/);
+    expect(r.state === "refused" && r.reason).toContain("the pin's subgraph index package absent");
+    expect(existsSync(join(snapDir, "cat"))).toBe(false);
+  });
+
+  // ── Not in the tree: the pin's subgraph index PACKAGE (bean `mo75` G2b/G3) ──
+  //
+  // Every litlfred harness builds `<docs>/subgraph/` at publish, so no pin's
+  // tree carries the file; a hydrated mount reads it from the pin's package,
+  // and `--nodes` now does too, through the same fetch and verification.
+
+  /** Pack `files` (under docs/subgraph/cat-harness/) as the pin's package; a fetch served from it over file://. */
+  function servedPackage(files: Record<string, string>): (a: { repository: string; ref: string; harness: string }) => SubgraphIndexFetch {
+    const root = tmp("kg-mat-pkg-src-");
+    writeFileSync(join(root, "cat-harness.json"), NODES_UPSTREAM["cat-harness.json"]!);
+    for (const [rel, body] of Object.entries(files)) {
+      mkdirSync(dirname(join(root, rel)), { recursive: true });
+      writeFileSync(join(root, rel), body);
+    }
+    const out = tmp("kg-mat-pkg-out-");
+    packSubgraphIndex({ root, repository: "litlfred/ihris-kb", ref: SHA, outDir: out });
+    return (a) => fetchSubgraphIndex({ ...a, urlFor: (url) => `file://${join(out, url.split("/").pop()!)}` });
+  }
+
+  test("a nested subgraph the tree does not carry is read from the pin's package, verified, and recorded as from there", async () => {
+    const { inst, snapDir } = nodesCheckout();
+    const { [SDLC_HYDRATED_PATH]: _inTree, ...withoutFile } = NODES_UPSTREAM;
+    const r = await materializeNodes({
+      instance: inst,
+      subscription: "cat",
+      path: "skills/sdlc",
+      fetch: nodesFixture(withoutFile),
+      indexPackage: servedPackage({ [SDLC_HYDRATED_PATH]: SDLC_HYDRATED }),
+      now: NOW,
+    });
+    expect(r.state).toBe("materialized");
+    const dir = join(snapDir, "cat", "nodes", "skills", "sdlc");
+    expect(readFileSync(join(dir, "index.hydrated.jsonld"), "utf8")).toBe(SDLC_HYDRATED);
+    const rec = KgNodesRecordSchema.parse(JSON.parse(readFileSync(join(dir, "nodes.json"), "utf8")));
+    expect(rec.file!.upstream).toMatch(new RegExp(`/cat-harness-subgraph-index-.*\\.tgz#${SDLC_HYDRATED_PATH.replace(/\./g, "\\.")}$`));
+    expect(checkMaterializations(inst).findings).toEqual([]);
+  });
+
+  test("a package that holds another subgraph is not an answer: refused, saying where else it looked", async () => {
+    const { inst, snapDir } = nodesCheckout();
+    const { [SDLC_HYDRATED_PATH]: _inTree, ...withoutFile } = NODES_UPSTREAM;
+    const r = await materializeNodes({
+      instance: inst,
+      subscription: "cat",
+      path: "skills/sdlc",
+      fetch: nodesFixture(withoutFile),
+      indexPackage: servedPackage({ "docs/subgraph/cat-harness/skills/other/index.hydrated.jsonld": SDLC_HYDRATED }),
+    });
+    expect(r.state).toBe("refused");
+    expect(r.state === "refused" && r.reason).toContain("the pin's subgraph index package holds no file for it");
+    expect(existsSync(join(snapDir, "cat"))).toBe(false);
+  });
+
+  test("a package that could not be fetched is could-not-determine, never 'not published'", async () => {
+    const { inst, snapDir } = nodesCheckout();
+    const { [SDLC_HYDRATED_PATH]: _inTree, ...withoutFile } = NODES_UPSTREAM;
+    const r = await materializeNodes({
+      instance: inst,
+      subscription: "cat",
+      path: "skills/sdlc",
+      fetch: nodesFixture(withoutFile),
+      indexPackage: (a) => ({ state: "could-not-determine", pkg: { name: "", version: "", tag: "", tarball: "", record: "", tarballUrl: "", recordUrl: "" }, detail: `offline (${a.harness})` }),
+    });
+    expect(r.state).toBe("could-not-determine");
+    expect(r.state === "could-not-determine" && r.reason).toContain("offline (cat-harness)");
     expect(existsSync(join(snapDir, "cat"))).toBe(false);
   });
 
