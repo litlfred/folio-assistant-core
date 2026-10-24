@@ -128,14 +128,41 @@ export const LEGACY_ROUTE = visualiserRoute(forwardingParts(PARTS)).replace(/\/$
 const PAGE = join(visualiserPageDir(SITE, pageParts(PARTS)), "index.md");
 const ASSETS = join(SITE, "assets", "glossary");
 /**
- * Where extracted schemes are written: `generated/` inside core's own
- * `glossary` directory, the convention `schemas/generated/` set. Resolved from
- * the declaration, never spelled as a path.
+ * Where extracted schemes are written by default: `generated/` inside core's
+ * own `glossary` directory, the convention `schemas/generated/` set. Resolved
+ * from the declaration, never spelled as a path.
  */
 function generatedDir(): string {
   const dir = instanceDirectoryForGraph(CORE, "glossary");
   if (dir === undefined) throw new Error("folio-assistant-core declares no glossary directory to write extracted schemes into");
   return join(dir, "generated");
+}
+/**
+ * Where an instance's extracted schemes are written: `generated/` inside the
+ * instance's own declared `glossary` directory when it holds `generated/` (or
+ * core's `glossary/generated/` does not host `<instance>/`), else core's
+ * `glossary/generated/`. Resolved from the declarations, never by naming a
+ * higher layer's path here (bean rfev, owner 2026-10-20).
+ */
+function generatedDirFor(instance: string, repo: string = REPO): string {
+  const coreGen = generatedDir();
+  const root = instanceRootsIn(repo).find((r) => readDeclaration(r)?.name === instance);
+  if (root !== undefined) {
+    const own = instanceDirectoryForGraph(root, "glossary");
+    if (own !== undefined && (existsSync(join(own, "generated")) || !existsSync(join(coreGen, instance)))) {
+      return join(own, "generated");
+    }
+  }
+  return coreGen;
+}
+/** Every `glossary/generated/` directory this generator owns across the checkout. */
+function allGeneratedDirs(repo: string = REPO): string[] {
+  const out = new Set<string>([generatedDir()]);
+  for (const root of instanceRootsIn(repo)) {
+    const own = instanceDirectoryForGraph(root, "glossary");
+    if (own !== undefined && existsSync(join(own, "generated"))) out.add(join(own, "generated"));
+  }
+  return [...out];
 }
 /** Where a reader follows a `source` to. The forge the repository is published on; the same base `gen-auto-docs.ts` links with. */
 const FORGE = "https://github.com/litlfred/folio-assistant";
@@ -446,8 +473,8 @@ export function collect(repo: string = REPO): {
   // all three against it.
   const ex = extract(repo);
   findings.invalid.push(...ex.collisions.map((c) => `extracted IRI collision: ${c}`));
-  const gen = relative(repo, generatedDir()).split("\\").join("/");
   for (const s of ex.schemes) {
+    const gen = relative(repo, generatedDirFor(s.instance, repo)).split("\\").join("/");
     glossaries.push({
       instance: s.instance,
       ns: nsOf.get(s.instance) ?? instanceNs(s.instance),
@@ -482,7 +509,7 @@ export function skosAsset(s: GlossarySource): string {
 
 /** The generated scheme file an extracted scheme is written to. */
 export function extractedFile(s: GlossarySource): string {
-  return join(generatedDir(), s.instance, `${s.glossary.id}.glossary.json`);
+  return join(generatedDirFor(s.instance), s.instance, `${s.glossary.id}.glossary.json`);
 }
 
 /** Terms by state, for the page's counts. `extracted` is every term of an extracted scheme. */
@@ -1784,7 +1811,7 @@ if (import.meta.main) {
   // (owner, 2026-10-16, "c") are its own orphans now: the move deletes them,
   // and the composed site forwards that address to the page under `en/`.
   const legacyDir = visualiserPageDir(SITE, forwardingParts(PARTS));
-  const orphans = [...filesUnder(ASSETS), ...(INTO_SITE ? [] : filesUnder(generatedDir())), ...filesUnder(dirname(PAGE)), ...localeDirs.flatMap(filesUnder), ...filesUnder(legacyDir)]
+  const orphans = [...new Set([...filesUnder(ASSETS), ...(INTO_SITE ? [] : allGeneratedDirs().flatMap(filesUnder)), ...filesUnder(dirname(PAGE)), ...localeDirs.flatMap(filesUnder), ...filesUnder(legacyDir)])]
     .filter((p) => !files.has(p));
   const stale = [...files].filter(([p, s]) => !existsSync(p) || readFileSync(p, "utf-8") !== s).map(([p]) => p);
   const n = counts(c);

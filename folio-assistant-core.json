@@ -358,6 +358,10 @@
     {"path": "ns/context/v1.jsonld", "writer": ["jsonld:contexts"], "because": "checkout", "reason": "the prefixes its documents use, flattened with the jsonldPrefixes of cat-harness and the layers below it at the checkout's pins"}
   ],
   "_contentAdapters_comment": "Declared HERE, by the instance that ships the adapter, so cat-harness's composition root (`src/builtin-adapters.ts`) finds it by reading declarations instead of holding a `../folio-assistant-core/adapters/document/index.ts` path into the layer above it. That path was the last upward import out of cat-harness, and a variable one no static gate could see (bean p11x, `check:import-direction`).",
+  "_lsiUnitProviders_comment": "Declared HERE, by the instance that ships the provider, so `lsi:near` in cat-harness-tools finds it by reading declarations instead of importing a layer above it (bean ec2a step 3, owner decision A: one list per graph).",
+  "lsiUnitProviders": [
+    { "graphKind": "blocks", "module": "scripts/lsi-blocks.ts", "export": "lsiNearUnits" }
+  ],
   "contentAdapters": [
     {
       "contentType": "document",

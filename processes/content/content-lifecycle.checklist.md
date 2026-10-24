@@ -18,9 +18,24 @@ One cycle of a folio from plan to retirement, calling editing and the draft-to-p
 - Skill: `content-plan`.
 - What: Scope the work, identify artifacts and actors, form the team, set the timeline.
 - Record it: `workflow_complete` with `node: "Task_Plan"`.
-- next: → `Task_SeedBeans` (Seed the work plan)
+- next: → `Call_BeanOpen` (Open the bean)
 
-### 2. Seed the work plan (`Task_SeedBeans`)
+### 2. Open the bean (`Call_BeanOpen`)
+
+- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Skill: `bean-coordination`.
+- What: Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's.
+- A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `GW_BeanYours` (Bean claimed?)
+
+### Decide — Bean claimed? (`GW_BeanYours`)
+
+- Reads which end Process_BeanOpen reached.
+- Call `workflow_complete` with `node: "GW_BeanYours"` and `outcome` set to the label that holds:
+  - «claimed» → `Task_SeedBeans` (Seed the work plan)
+  - «not yours» → `End_BeanNotYours` (Not yours — left alone)
+
+### 3. Seed the work plan (`Task_SeedBeans`)
 
 - Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
 - Skill: `todo-manager`.
@@ -29,7 +44,11 @@ One cycle of a folio from plan to retirement, calling editing and the draft-to-p
 - Record it: `workflow_complete` with `node: "Task_SeedBeans"`.
 - next: → `CallActivity_Editing` (Editing and HCI validation)
 
-### 3. Editing and HCI validation (`CallActivity_Editing`)
+## Done — Not yours — left alone (`End_BeanNotYours`)
+
+- The instance completes here: Someone else holds the bean; this run stops without touching it. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+
+### 4. Editing and HCI validation (`CallActivity_Editing`)
 
 - Who: the `Editors + authoring agents` lane (role `editor`).
 - Skill: `content-author`, `content-validate`, `content-review`.
@@ -37,7 +56,7 @@ One cycle of a folio from plan to retirement, calling editing and the draft-to-p
 - A subprocess (`Process_Editing`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Task_Test` (Integration test and QA sweep)
 
-### 4. Integration test and QA sweep (`Task_Test`)
+### 5. Integration test and QA sweep (`Task_Test`)
 
 - Who: the `Validation and QA (mechanical + agents)` lane (role `validation-pipeline`).
 - Skill: `content-test`.
@@ -45,7 +64,7 @@ One cycle of a folio from plan to retirement, calling editing and the draft-to-p
 - Record it: `workflow_complete` with `node: "Task_Test"`.
 - next: → `CallActivity_Publication` (Draft, review and publish)
 
-### 5. Draft, review and publish (`CallActivity_Publication`)
+### 6. Draft, review and publish (`CallActivity_Publication`)
 
 - Who: the `Publication manager` lane (role `publication-manager`).
 - Skill: `content-review`, `content-publish`.
@@ -53,7 +72,7 @@ One cycle of a folio from plan to retirement, calling editing and the draft-to-p
 - A subprocess (`Process_Publication`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Task_Feedback` (Triage published feedback)
 
-### 6. Triage published feedback (`Task_Feedback`)
+### 7. Triage published feedback (`Task_Feedback`)
 
 - Who: the `Review team and SMEs` lane (role `reviewer`).
 - Skill: `content-feedback`.
@@ -61,7 +80,7 @@ One cycle of a folio from plan to retirement, calling editing and the draft-to-p
 - Record it: `workflow_complete` with `node: "Task_Feedback"`.
 - next: → `Task_FeedbackBeans` (File feedback as beans)
 
-### 7. File feedback as beans (`Task_FeedbackBeans`)
+### 8. File feedback as beans (`Task_FeedbackBeans`)
 
 - Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
 - Skill: `todo-manager`, `content-feedback`.
@@ -76,12 +95,20 @@ One cycle of a folio from plan to retirement, calling editing and the draft-to-p
   - «yes» → `CallActivity_Editing` (Editing and HCI validation)
   - «no» → `Task_Retire` (Retire or archive)
 
-### 8. Retire or archive (`Task_Retire`)
+### 9. Retire or archive (`Task_Retire`)
 
 - Who: the `Programme manager` lane (role `programme-manager`).
 - Skill: `content-retire`.
 - What: No more content is planned: deprecate the folio.
 - Record it: `workflow_complete` with `node: "Task_Retire"`.
+- next: → `Call_BeanClose` (Close the bean)
+
+### 10. Close the bean (`Call_BeanClose`)
+
+- Who: the `Programme manager` lane (role `programme-manager`).
+- Skill: `todo-manager`.
+- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
+- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `EndEvent_Retired` (Folio retired)
 
 ## Done — Folio retired (`EndEvent_Retired`)

@@ -56,10 +56,14 @@
         <bpmn:flowNodeRef>Gateway_NextCycle</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Retire</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Retired</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Call_BeanClose</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_WorkPlan" name="Work plan — beans (shared by humans and agents)" partitionElementRef="work-plan">
         <bpmn:documentation>Touched twice, not once: Task_SeedBeans converts the programme manager's plan into trackable work at the start, and Task_FeedbackBeans converts triaged reader feedback into more of it at the end, immediately before Gateway_NextCycle asks whether to go around again — so this lane is what makes the lifecycle a LOOP rather than a line, carrying what closed one cycle into what opens the next.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_SeedBeans</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Call_BeanOpen</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_BeanYours</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_BeanNotYours</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_FeedbackBeans</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Editors" name="Editors + authoring agents" partitionElementRef="editor">
@@ -91,8 +95,8 @@
       <bpmn:outgoing>H02</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:callActivity id="Task_SeedBeans" name="Seed the work plan&#10;[todo-manager]" calledElement="GT_SeedWorkPlan">
-      <bpmn:incoming>H02</bpmn:incoming>
       <bpmn:outgoing>H03</bpmn:outgoing>
+      <bpmn:incoming>SF_Bean_1</bpmn:incoming>
     </bpmn:callActivity>
     <bpmn:callActivity id="CallActivity_Editing" name="Editing and HCI validation&#10;[content-author]" calledElement="Process_Editing">
       <bpmn:documentation>See editing-hci-validation.bpmn. Runs once per proposed change, not once per cycle.</bpmn:documentation>
@@ -155,10 +159,32 @@
       <bpmn:outgoing>H11</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:endEvent id="EndEvent_Retired" name="Folio retired">
-      <bpmn:incoming>H11</bpmn:incoming>
+      <bpmn:incoming>SF_Bean_4</bpmn:incoming>
     </bpmn:endEvent>
+    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean&#10;[bean-open]" calledElement="Process_BeanOpen">
+      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
+      <bpmn:incoming>H02</bpmn:incoming>
+      <bpmn:outgoing>SF_Bean_2</bpmn:outgoing>
+    </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="GW_BeanYours" name="Bean claimed?">
+      <bpmn:documentation>Reads which end Process_BeanOpen reached. `claimed`: the bean is in progress and this process works it. `not yours`: a sibling session or a human holds it, nothing was written to it, and this process stops here rather than work a bean it does not own (bean-coordination).</bpmn:documentation>
+      <bpmn:outgoing>SF_Bean_1</bpmn:outgoing>
+      <bpmn:incoming>SF_Bean_2</bpmn:incoming>
+      <bpmn:outgoing>SF_Bean_3</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="End_BeanNotYours" name="Not yours —&#10;left alone">
+      <bpmn:documentation>Someone else holds the bean; this run stops without touching it.</bpmn:documentation>
+      <bpmn:incoming>SF_Bean_3</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:callActivity id="Call_BeanClose" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
+      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
+      <bpmn:incoming>H11</bpmn:incoming>
+      <bpmn:outgoing>SF_Bean_4</bpmn:outgoing>
+    </bpmn:callActivity>
     <bpmn:sequenceFlow id="H01" sourceRef="StartEvent_Initiative" targetRef="Task_Plan" />
-    <bpmn:sequenceFlow id="H02" sourceRef="Task_Plan" targetRef="Task_SeedBeans" />
+    <bpmn:sequenceFlow id="H02" sourceRef="Task_Plan" targetRef="Call_BeanOpen" />
     <bpmn:sequenceFlow id="H03" sourceRef="Task_SeedBeans" targetRef="CallActivity_Editing" />
     <bpmn:sequenceFlow id="H04" sourceRef="CallActivity_Editing" targetRef="Task_Test" />
     <bpmn:sequenceFlow id="H05" sourceRef="Task_Test" targetRef="CallActivity_Publication" />
@@ -167,30 +193,34 @@
     <bpmn:sequenceFlow id="H08" sourceRef="Task_FeedbackBeans" targetRef="Gateway_NextCycle" />
     <bpmn:sequenceFlow id="H09" name="yes" sourceRef="Gateway_NextCycle" targetRef="CallActivity_Editing" />
     <bpmn:sequenceFlow id="H10" name="no" sourceRef="Gateway_NextCycle" targetRef="Task_Retire" />
-    <bpmn:sequenceFlow id="H11" sourceRef="Task_Retire" targetRef="EndEvent_Retired" />
+    <bpmn:sequenceFlow id="H11" sourceRef="Task_Retire" targetRef="Call_BeanClose" />
+    <bpmn:sequenceFlow id="SF_Bean_1" name="claimed" sourceRef="GW_BeanYours" targetRef="Task_SeedBeans"/>
+    <bpmn:sequenceFlow id="SF_Bean_2" sourceRef="Call_BeanOpen" targetRef="GW_BeanYours"/>
+    <bpmn:sequenceFlow id="SF_Bean_3" name="not yours" sourceRef="GW_BeanYours" targetRef="End_BeanNotYours"/>
+    <bpmn:sequenceFlow id="SF_Bean_4" sourceRef="Call_BeanClose" targetRef="EndEvent_Retired"/>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_FolioLifecycle">
       <bpmndi:BPMNShape id="Participant_FolioLifecycle_di" bpmnElement="Participant_FolioLifecycle" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="1840" height="900" />
+        <dc:Bounds x="160" y="80" width="2000" height="1180" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_ProgMgr_di" bpmnElement="Lane_ProgMgr" isHorizontal="true">
-        <dc:Bounds x="190" y="80" width="1810" height="150" />
+        <dc:Bounds x="190" y="80" width="1970" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_WorkPlan_di" bpmnElement="Lane_WorkPlan" isHorizontal="true">
-        <dc:Bounds x="190" y="230" width="1810" height="150" />
+        <dc:Bounds x="190" y="230" width="1970" height="430" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Editors_di" bpmnElement="Lane_Editors" isHorizontal="true">
-        <dc:Bounds x="190" y="380" width="1810" height="150" />
+        <dc:Bounds x="190" y="660" width="1970" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Qa_di" bpmnElement="Lane_Qa" isHorizontal="true">
-        <dc:Bounds x="190" y="530" width="1810" height="150" />
+        <dc:Bounds x="190" y="810" width="1970" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Review_di" bpmnElement="Lane_Review" isHorizontal="true">
-        <dc:Bounds x="190" y="680" width="1810" height="150" />
+        <dc:Bounds x="190" y="960" width="1970" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_PubMgr_di" bpmnElement="Lane_PubMgr" isHorizontal="true">
-        <dc:Bounds x="190" y="830" width="1810" height="150" />
+        <dc:Bounds x="190" y="1110" width="1970" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_Initiative_di" bpmnElement="StartEvent_Initiative">
         <dc:Bounds x="262" y="137" width="36" height="36" />
@@ -202,22 +232,22 @@
         <dc:Bounds x="375" y="110" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_SeedBeans_di" bpmnElement="Task_SeedBeans">
-        <dc:Bounds x="535" y="260" width="130" height="90" />
+        <dc:Bounds x="535" y="540" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_Editing_di" bpmnElement="CallActivity_Editing">
-        <dc:Bounds x="695" y="410" width="130" height="90" />
+        <dc:Bounds x="695" y="690" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Test_di" bpmnElement="Task_Test">
-        <dc:Bounds x="855" y="560" width="130" height="90" />
+        <dc:Bounds x="855" y="840" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_Publication_di" bpmnElement="CallActivity_Publication">
-        <dc:Bounds x="1015" y="860" width="130" height="90" />
+        <dc:Bounds x="1015" y="1140" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Feedback_di" bpmnElement="Task_Feedback">
-        <dc:Bounds x="1175" y="710" width="130" height="90" />
+        <dc:Bounds x="1175" y="990" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_FeedbackBeans_di" bpmnElement="Task_FeedbackBeans">
-        <dc:Bounds x="1335" y="260" width="130" height="90" />
+        <dc:Bounds x="1335" y="540" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_NextCycle_di" bpmnElement="Gateway_NextCycle" isMarkerVisible="true">
         <dc:Bounds x="1535" y="130" width="50" height="50" />
@@ -229,48 +259,44 @@
         <dc:Bounds x="1655" y="110" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Retired_di" bpmnElement="EndEvent_Retired">
-        <dc:Bounds x="1862" y="137" width="36" height="36" />
+        <dc:Bounds x="2022" y="137" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1825" y="177" width="110" height="30" />
+          <dc:Bounds x="1985" y="177" width="110" height="30" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="H01_di" bpmnElement="H01">
         <di:waypoint x="298" y="155" />
         <di:waypoint x="375" y="155" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="H02_di" bpmnElement="H02">
-        <di:waypoint x="505" y="155" />
-        <di:waypoint x="600" y="155" />
-        <di:waypoint x="600" y="260" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="H02_di" bpmnElement="H02"><di:waypoint x="505" y="155"/><di:waypoint x="600" y="155"/><di:waypoint x="600" y="260"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="H03_di" bpmnElement="H03">
-        <di:waypoint x="665" y="305" />
-        <di:waypoint x="760" y="305" />
-        <di:waypoint x="760" y="410" />
+        <di:waypoint x="665" y="585" />
+        <di:waypoint x="760" y="585" />
+        <di:waypoint x="760" y="690" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="H04_di" bpmnElement="H04">
-        <di:waypoint x="825" y="455" />
-        <di:waypoint x="920" y="455" />
-        <di:waypoint x="920" y="560" />
+        <di:waypoint x="825" y="735" />
+        <di:waypoint x="920" y="735" />
+        <di:waypoint x="920" y="840" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="H05_di" bpmnElement="H05">
-        <di:waypoint x="985" y="605" />
-        <di:waypoint x="1080" y="605" />
-        <di:waypoint x="1080" y="860" />
+        <di:waypoint x="985" y="885" />
+        <di:waypoint x="1080" y="885" />
+        <di:waypoint x="1080" y="1140" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="H06_di" bpmnElement="H06">
-        <di:waypoint x="1145" y="905" />
-        <di:waypoint x="1240" y="905" />
-        <di:waypoint x="1240" y="800" />
+        <di:waypoint x="1145" y="1185" />
+        <di:waypoint x="1240" y="1185" />
+        <di:waypoint x="1240" y="1080" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="H07_di" bpmnElement="H07">
-        <di:waypoint x="1305" y="755" />
-        <di:waypoint x="1400" y="755" />
-        <di:waypoint x="1400" y="350" />
+        <di:waypoint x="1305" y="1035" />
+        <di:waypoint x="1400" y="1035" />
+        <di:waypoint x="1400" y="630" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="H08_di" bpmnElement="H08">
-        <di:waypoint x="1465" y="305" />
-        <di:waypoint x="1560" y="305" />
+        <di:waypoint x="1465" y="585" />
+        <di:waypoint x="1560" y="585" />
         <di:waypoint x="1560" y="180" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="H09_di" bpmnElement="H09">
@@ -278,7 +304,7 @@
         <di:waypoint x="1500" y="155" />
         <di:waypoint x="1500" y="100" />
         <di:waypoint x="790" y="100" />
-        <di:waypoint x="790" y="410" />
+        <di:waypoint x="790" y="690" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1506" y="158" width="25" height="27" />
         </bpmndi:BPMNLabel>
@@ -290,10 +316,15 @@
           <dc:Bounds x="1592" y="122" width="25" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="H11_di" bpmnElement="H11">
-        <di:waypoint x="1785" y="155" />
-        <di:waypoint x="1862" y="155" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="H11_di" bpmnElement="H11"><di:waypoint x="1785" y="155"/><di:waypoint x="1862" y="155"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Call_BeanOpen_di" bpmnElement="Call_BeanOpen"><dc:Bounds x="540" y="260" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SF_Bean_1_di" bpmnElement="SF_Bean_1"><di:waypoint x="600" y="420"/><di:waypoint x="600" y="540"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="GW_BeanYours_di" bpmnElement="GW_BeanYours" isMarkerVisible="true"><dc:Bounds x="575" y="370" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_BeanNotYours_di" bpmnElement="End_BeanNotYours"><dc:Bounds x="655" y="377" width="36" height="36"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SF_Bean_2_di" bpmnElement="SF_Bean_2"><di:waypoint x="600" y="340"/><di:waypoint x="600" y="370"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_Bean_3_di" bpmnElement="SF_Bean_3"><di:waypoint x="625" y="395"/><di:waypoint x="655" y="395"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Call_BeanClose_di" bpmnElement="Call_BeanClose"><dc:Bounds x="1862" y="115" width="120" height="80"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SF_Bean_4_di" bpmnElement="SF_Bean_4"><di:waypoint x="1982" y="155"/><di:waypoint x="2022" y="155"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

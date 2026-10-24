@@ -26,6 +26,66 @@
       },
       "drafted_at": "2026-09-24",
       "lang": "en"
+    },
+    {
+      "text": "Une icône au trait noir d'une page en format portrait portant un T majuscule à empattements à côté de trois lignes courtes, avec deux lignes plus longues en dessous. Elle représente le contenu textuel brut dans l'étape d'analyse.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "fr"
+    },
+    {
+      "text": "Un icono de trazo negro de una página vertical con una T mayúscula con serifa junto a tres líneas cortas y, debajo, dos líneas más largas. Representa el contenido de texto plano dentro de la etapa de análisis.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
+    },
+    {
+      "text": "أيقونة بخطوط سوداء لصفحة عمودية تحمل حرف T كبيرًا مُذيّلًا بجانب ثلاثة خطوط قصيرة، وتحتها خطّان أطول. تمثّل محتوى النص العادي داخل مرحلة التحليل.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Чёрный контурный значок вертикальной страницы с заглавной T с засечками рядом с тремя короткими линиями и двумя более длинными линиями ниже. Он обозначает обычный текст на этапе разбора.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "一张竖版页面的黑色线条图标：一个带衬线的大写字母 T 旁有三条短线，下方有两条较长的线。它代表解析阶段中的纯文本内容。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-002",
