@@ -50,6 +50,42 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "es"
+    },
+    {
+      "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"全球：IPO数量及金额呈下降趋势\" (عالميًا: عدد الطروحات الأولية ومبالغها في اتجاه هابط). يتتبّع مخطط مركّب من أشرطة وخط حصيلة الطروحات الشهرية وعدد الشركات من 2023-04 إلى 2024-04، وتحته جدول يفصّل أبريل 2024 حسب لوحة التداول في أسواق أسهم A وهونغ كونغ والولايات المتحدة.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"全球：IPO数量及金额呈下降趋势\" (в мире: число и объём IPO снижаются). Комбинированная столбчато-линейная диаграмма отслеживает ежемесячный объём привлечённых средств и число компаний с 2023-04 по 2024-04, а таблица ниже разбивает апрель 2024 года по площадкам рынков акций A, Гонконга и США.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"全球：IPO数量及金额呈下降趋势\"。一张柱线组合图追踪 2023-04 至 2024-04 每月的 IPO 募资额和企业数量，下方的表格按交易板块拆分 2024 年 4 月 A 股、港股和美股市场的数据。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

@@ -50,6 +50,42 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "es"
+    },
+    {
+      "text": "أيقونة ملوّنة لدماغ على رقاقة إلكترونية: دماغ بخط فاتح داخل رقاقة مربّعة بلون أزرق مخضرّ، تمتد منها أطراف توصيل إلى نقاط صغيرة على الجوانب الأربعة. تشير إلى خطوات خط المعالجة التي يقودها النموذج.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Цветной значок мозга на микросхеме: бледный контур мозга внутри квадратного бирюзового чипа, от которого во все четыре стороны расходятся выводы с маленькими точками. Он обозначает шаги конвейера, выполняемые моделью.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "一个芯片上的大脑的彩色图标：浅色轮廓的大脑位于青绿色方形芯片内，四边伸出引脚，末端是小圆点。它标示流水线中由模型驱动的步骤。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-002",

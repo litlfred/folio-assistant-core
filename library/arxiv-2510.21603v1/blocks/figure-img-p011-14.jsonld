@@ -50,6 +50,42 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "es"
+    },
+    {
+      "text": "لقطة شاشة ضيقة لصفحة من NUS بعنوان \"Master of Computing (Computer Science Specialisation) (Coursework)\"، فيها لافتة برتقالية \"Explore Our Programmes\" في الأعلى، وصورة رئيسية تقنية باللون الأزرق الداكن في الوسط، وزرّا دعوة إلى الإجراء برتقاليان (\"More Info\" و\"Apply Now\")، وتحتهما نص Faculty والوصف.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Узкий снимок экрана страницы NUS с заголовком \"Master of Computing (Computer Science Specialisation) (Coursework)\": оранжевый баннер \"Explore Our Programmes\" вверху, тёмно-синее технологичное главное изображение посередине, две оранжевые кнопки призыва к действию (\"More Info\", \"Apply Now\") и ниже текст Faculty и описания.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "NUS 一个页面的窄幅截图，标题为 \"Master of Computing (Computer Science Specialisation) (Coursework)\"：顶部是橙色的 \"Explore Our Programmes\" 横幅，中间是深蓝色科技主图，下面是两个橙色行动按钮（\"More Info\"、\"Apply Now\"），再往下是 Faculty 和简介文字。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

@@ -50,6 +50,42 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "es"
+    },
+    {
+      "text": "أيقونة عامة لملف PDF: صفحة رمادية فاتحة مطويّة الزاوية العليا اليمنى، يعلوها مستطيل أحمر يحمل الحروف البيضاء PDF. وهي أحد أنواع المستندات المُدخلة في مخطط البنية.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Обычный значок файла PDF: бледно-серая страница с загнутым правым верхним углом, поверх которой красный прямоугольник с белыми буквами PDF. Один из типов входных документов на схеме архитектуры.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "通用 PDF 文件图标：一张右上角折起的浅灰色页面，上面叠有一个印着白色字母 PDF 的红色矩形。它是架构图中的输入文档类型之一。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-002",

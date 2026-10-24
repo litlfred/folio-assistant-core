@@ -50,6 +50,42 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "es"
+    },
+    {
+      "text": "صفحة كاملة من الكتيّب بعنوان \"A little extra goes a long way\"، تضم جدول مقارنة كثيفًا لخمس خطط تكميلية عبر مستويين من PRUShield: PRUExtra Premier CoPay وPreferred CoPay وPremier Lite CoPay وPlus CoPay وPlus Lite CoPay. تتناول الصفوف أنواع المستشفيات والأجنحة، والعلاج الدوائي للسرطان وخدماته، ومعالجة مبلغ التحمّل داخل شبكة مقدّمي الخدمة وخارجها، والتأمين المشترك، وحدّ الخسارة، وتسعير الأقساط وفق سجل المطالبات، والخدمات ذات القيمة المضافة، وأقساط شخص في الثلاثين من عمره (من S$832.80 إلى S$158.00)، وشروط الأهلية. وتحت الجدول عشر حواشٍ مرقّمة.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Полная страница брошюры с заголовком \"A little extra goes a long way\" и плотной сравнительной таблицей пяти дополнительных планов для двух уровней PRUShield — PRUExtra Premier CoPay, Preferred CoPay, Premier Lite CoPay, Plus CoPay и Plus Lite CoPay. Строки охватывают типы больниц и палат, лекарственное лечение и услуги при раке, порядок применения франшизы у поставщиков из списка и вне его, сострахование, ограничение убытков, ценообразование премий по истории выплат, дополнительные услуги, премии для 30-летнего (от S$832.80 до S$158.00) и условия участия. Под таблицей — десять пронумерованных сносок.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "宣传册的一整页，标题为 \"A little extra goes a long way\"，载有一张密集的对比表，比较两个 PRUShield 等级下的五个附加计划——PRUExtra Premier CoPay、Preferred CoPay、Premier Lite CoPay、Plus CoPay 和 Plus Lite CoPay。各行涵盖医院与病房类型、癌症药物治疗与服务、指定与非指定医疗机构下的免赔额处理、共付比例、止损上限、按理赔记录定价的保费、增值服务、30 岁投保人的保费（从 S$832.80 到 S$158.00）以及投保资格。表下列有十条编号脚注。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-001",

@@ -50,6 +50,42 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "es"
+    },
+    {
+      "text": "صفحة ويب من جامعة سنغافورة الوطنية بعنوان \"MComp in AI: Frequently Asked Questions\"، تبدأ بملاحظة عن NUS Master's Degree by Coursework Enhanced Tuition Fee Rebate. وتحت Requirements تتناول الأسئلة والأجوبة الخلفيات الدراسية، والخبرة العملية في تقنية المعلومات، ومواعيد تقديم المستندات، وما إذا كانت درجات TOEFL/IELTS وGRE/GMAT مطلوبة.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Веб-страница Национального университета Сингапура с заголовком \"MComp in AI: Frequently Asked Questions\", открывающаяся заметкой о NUS Master's Degree by Coursework Enhanced Tuition Fee Rebate. В разделе Requirements вопросы и ответы касаются базового образования, опыта работы в ИТ, сроков подачи документов и того, нужны ли баллы TOEFL/IELTS и GRE/GMAT.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "新加坡国立大学的一个网页，标题为 \"MComp in AI: Frequently Asked Questions\"，开头是关于 NUS Master's Degree by Coursework Enhanced Tuition Fee Rebate 的说明。在 Requirements 部分，问答涉及学历背景、IT 工作经验、材料截止日期，以及是否需要 TOEFL/IELTS 和 GRE/GMAT 成绩。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

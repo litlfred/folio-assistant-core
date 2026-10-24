@@ -50,6 +50,42 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "es"
+    },
+    {
+      "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"A股IPO回归常态 港美IPO持续活跃\" (طروحات أسهم A تعود إلى طبيعتها؛ وهونغ كونغ والولايات المتحدة تبقيان نشطتين) لشهر أبريل 2025. يحدّد مستطيل أحمر الفقرة الافتتاحية — 24 شركة، بزيادة في العدد قدرها 50%، وجمع 146亿元 — ويحدّد آخر جدول لوحات التداول أسفل المخطط.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"A股IPO回归常态 港美IPO持续活跃\" (IPO акций A возвращаются к норме; Гонконг и США остаются активными) за апрель 2025 года. Красный прямоугольник выделяет вводный абзац — 24 компании, рост числа на 50 %, привлечено 146亿元, — а другой выделяет таблицу по площадкам под диаграммой.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"A股IPO回归常态 港美IPO持续活跃\"，针对 2025 年 4 月。一个红色矩形框出开头段落——24 家企业，数量增长 50%，募资 146亿元——另一个框出图表下方的交易板块表格。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",
