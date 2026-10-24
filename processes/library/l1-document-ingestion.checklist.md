@@ -10,9 +10,24 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 
 - Begin here: A document whose text and structure are wanted as L1 source content.
 - Call `workflow_start` with `process: "Process_L1DocumentIngestion"` and the subject this run is about; keep the instance id it returns.
-- next: → `CallActivity_Basic` (Basic ingestion (harness))
+- next: → `Call_BeanOpen` (Open the bean)
 
-### 1. Basic ingestion (harness) (`CallActivity_Basic`)
+### 1. Open the bean (`Call_BeanOpen`)
+
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
+- Skill: `bean-coordination`.
+- What: Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's.
+- A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `GW_BeanYours` (Bean claimed?)
+
+### Decide — Bean claimed? (`GW_BeanYours`)
+
+- Reads which end Process_BeanOpen reached.
+- Call `workflow_complete` with `node: "GW_BeanYours"` and `outcome` set to the label that holds:
+  - «claimed» → `CallActivity_Basic` (Basic ingestion (harness))
+  - «not yours» → `End_BeanNotYours` (Not yours — left alone)
+
+### 2. Basic ingestion (harness) (`CallActivity_Basic`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `library-ingestion`.
@@ -20,7 +35,11 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 - A subprocess (`Process_Ingestion`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Task_Detect` (Detect media type and mint a doc id)
 
-### 2. Detect media type and mint a doc id (`Task_Detect`)
+## Done — Not yours — left alone (`End_BeanNotYours`)
+
+- The instance completes here: Someone else holds the bean; this run stops without touching it. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+
+### 3. Detect media type and mint a doc id (`Task_Detect`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
@@ -28,7 +47,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 - Record it: `workflow_complete` with `node: "Task_Detect"`.
 - next: → `Task_Licence` (Establish the licence from the upload alone)
 
-### 3. Establish the licence from the upload alone (`Task_Licence`)
+### 4. Establish the licence from the upload alone (`Task_Licence`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
@@ -36,7 +55,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 - Record it: `workflow_complete` with `node: "Task_Licence"`.
 - next: → `CallActivity_Extract` (Extract structure)
 
-### 4. Extract structure (`CallActivity_Extract`)
+### 5. Extract structure (`CallActivity_Extract`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
@@ -44,7 +63,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 - A subprocess (`Process_ExtractStructure`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `CallActivity_Derive` (Derive content from the assets)
 
-### 5. Derive content from the assets (`CallActivity_Derive`)
+### 6. Derive content from the assets (`CallActivity_Derive`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
@@ -59,7 +78,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
   - «yes» → `CallActivity_IngestTheme` (Ingest the theme)
   - «no» → `CallActivity_BuildKg` (Build the L1 knowledge graph)
 
-### 6. Ingest the theme (`CallActivity_IngestTheme`)
+### 7. Ingest the theme (`CallActivity_IngestTheme`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `theme-art-intake`.
@@ -67,7 +86,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 - A subprocess (`Process_IngestTheme`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `CallActivity_BuildKg` (Build the L1 knowledge graph)
 
-### 7. Build the L1 knowledge graph (`CallActivity_BuildKg`)
+### 8. Build the L1 knowledge graph (`CallActivity_BuildKg`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
@@ -75,7 +94,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 - A subprocess (`Process_BuildL1Kg`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `CallActivity_Gate` (L1 completeness gate)
 
-### 8. L1 completeness gate (`CallActivity_Gate`)
+### 9. L1 completeness gate (`CallActivity_Gate`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `l1-document-ingestion`.
@@ -90,7 +109,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
   - «gap» → `Task_OpenBean` (Record the gap as a bean)
   - «complete» → `Task_Promote` (Move into library/<bib-slug>/)
 
-### 9. Record the gap as a bean (`Task_OpenBean`)
+### 10. Record the gap as a bean (`Task_OpenBean`)
 
 - Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
 - Skill: `todo-manager`.
@@ -98,7 +117,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 - Record it: `workflow_complete` with `node: "Task_OpenBean"`.
 - next: → `CallActivity_Derive` (Derive content from the assets)
 
-### 10. Move into library/<bib-slug>/ (`Task_Promote`)
+### 11. Move into library/<bib-slug>/ (`Task_Promote`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
@@ -106,7 +125,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 - Record it: `workflow_complete` with `node: "Task_Promote"`.
 - next: → `Task_SummaryQueue` (Prose blocks enter the summary queue)
 
-### 11. Prose blocks enter the summary queue (`Task_SummaryQueue`)
+### 12. Prose blocks enter the summary queue (`Task_SummaryQueue`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `l1-document-ingestion`.
@@ -114,12 +133,20 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 - Record it: `workflow_complete` with `node: "Task_SummaryQueue"`.
 - next: → `Task_Citeable` (Available to cite as an L1 source)
 
-### 12. Available to cite as an L1 source (`Task_Citeable`)
+### 13. Available to cite as an L1 source (`Task_Citeable`)
 
 - Who: the `Corpus — L1 source knowledge graph` lane (role `corpus`).
 - Skill: `document-intake`.
 - What: Every knowledge-graph reference to this source now resolves through library/.
 - Record it: `workflow_complete` with `node: "Task_Citeable"`.
+- next: → `Call_BeanClose` (Close the bean)
+
+### 14. Close the bean (`Call_BeanClose`)
+
+- Who: the `Corpus — L1 source knowledge graph` lane (role `corpus`).
+- Skill: `todo-manager`.
+- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
+- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `EndEvent_Ingested` (Ingested)
 
 ## Done — Ingested (`EndEvent_Ingested`)

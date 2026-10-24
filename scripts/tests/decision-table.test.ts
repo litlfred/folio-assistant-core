@@ -40,7 +40,9 @@ describe("computed gateways in a running process", () => {
     const model = await loadProcessModel(workflowFile(HERE, "editing-hci-validation.bpmn"));
     const state = startInstance(model, { id: "d2", subject: "def:x" });
     complete(model, state, "Task_DescribeChange");
-    complete(model, state, "Task_ClaimBean");
+    // Process_BeanOpen (bean `m8gz`), then its `claimed` branch.
+    drainSubprocess(model, state, "Task_ClaimBean");
+    complete(model, state, "GW_BeanYours", { outcome: "claimed" });
     drainSubprocess(model, state, "CallActivity_Evidence");
     complete(model, state, "Task_DraftEdit");
     const judgement = enabled(model, state).find((e) => e.node === "Gateway_ReviewerKind");

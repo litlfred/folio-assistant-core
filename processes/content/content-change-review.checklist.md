@@ -106,7 +106,7 @@ Getting a change to a folio's CONTENT from a request into a published rendering:
 - Skill: `feature-staging`, `rendered-impact`.
 - What: Bot comments or updates the staging URL on the PR.
 - Record it: `workflow_complete` with `node: "Task_CommentPR"`.
-- next: → `Task_WatchBranchCI` (Open the branch-watch bean)
+- next: → `Call_BeanOpen` (Open the bean)
 
 ### 11. Edit deterministic logic (if needed) (`Task_EditLogic`)
 
@@ -124,13 +124,13 @@ Getting a change to a folio's CONTENT from a request into a published rendering:
 - A subprocess (`Process_Review`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `GW_Withdraw` (A comment withdrawn?)
 
-### 13. Open the branch-watch bean (`Task_WatchBranchCI`)
+### 13. Open the bean (`Call_BeanOpen`)
 
 - Who: the `CI/CD Pipeline` lane (role `build-pipeline`).
-- Skill: `watch`, `todo-manager`.
-- What: First dispatch point for a CI watcher: the feature branch has changed and a staging build now exists to watch.
-- Record it: `workflow_complete` with `node: "Task_WatchBranchCI"`.
-- next: → `Task_ReviewStaging` (Review staged rendering)
+- Skill: `bean-coordination`.
+- What: Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's.
+- A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `GW_BeanYours` (Bean claimed?)
 
 ### 14. Assess downstream impact (`Task_AssessImpact`)
 
@@ -147,22 +147,21 @@ Getting a change to a folio's CONTENT from a request into a published rendering:
   - «Yes» → `Task_WithdrawComment` (Withdraw a review comment)
   - «No» → `GW_Disputed` (A finding disputed?)
 
-### 15. Review staged rendering (`Task_ReviewStaging`)
+### Decide — Bean claimed? (`GW_BeanYours`)
 
-- Who: the `Content Author` lane (role `author`).
-- Skill: `staging-review`.
-- What: Author reviews the rendered feature branch at <pages-url>/STAGING/<branch-slug>/ and compares against the main site.
-- Record it: `workflow_complete` with `node: "Task_ReviewStaging"`.
-- next: → `GW_AuthorSatisfied` (Satisfied with changes?)
+- Reads which end Process_BeanOpen reached.
+- Call `workflow_complete` with `node: "GW_BeanYours"` and `outcome` set to the label that holds:
+  - «claimed» → `Task_WatchBranchCI` (Open the branch-watch bean)
+  - «not yours» → `End_BeanNotYours` (Not yours — left alone)
 
-### 16. Options analysis how to absorb the impact (`Call_OptionsAnalysis`)
+### 15. Options analysis how to absorb the impact (`Call_OptionsAnalysis`)
 
 - Who: the `Folio-Assistant Agent` lane (role `authoring-agent`).
 - What: On the edge OUT of `Task_AssessImpact` and before `Task_CommitPush`, because the impact assessment is the evidence the options are weighed against.
 - A subprocess (`Process_OptionsAnalysis`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Task_CommitPush` (Commit, push, update PR)
 
-### 17. Withdraw a review comment (`Task_WithdrawComment`)
+### 16. Withdraw a review comment (`Task_WithdrawComment`)
 
 - Who: the `Review Committee` lane (role `reviewer`).
 - Skill: `review-comments`.
@@ -177,12 +176,17 @@ Getting a change to a folio's CONTENT from a request into a published rendering:
   - «Yes» → `Call_Adjudication` (Adjudicate the disagreement)
   - «No» → `GW_Covered` (Every changed block and page reviewed?)
 
-### Decide — Satisfied with changes? (`GW_AuthorSatisfied`)
+### 17. Open the branch-watch bean (`Task_WatchBranchCI`)
 
-- The author's own call after looking at the staged rendering.
-- Call `workflow_complete` with `node: "GW_AuthorSatisfied"` and `outcome` set to the label that holds:
-  - «No» → `Task_RequestRevision` (Request further revisions)
-  - «Yes» → `Task_SubmitForReview` (Submit to review committee)
+- Who: the `CI/CD Pipeline` lane (role `build-pipeline`).
+- Skill: `watch`, `todo-manager`.
+- What: First dispatch point for a CI watcher: the feature branch has changed and a staging build now exists to watch.
+- Record it: `workflow_complete` with `node: "Task_WatchBranchCI"`.
+- next: → `Task_ReviewStaging` (Review staged rendering)
+
+## Done — Not yours — left alone (`End_BeanNotYours`)
+
+- The instance completes here: Someone else holds the bean; this run stops without touching it. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
 ### 18. Commit, push, update PR (`Task_CommitPush`)
 
@@ -207,23 +211,15 @@ Getting a change to a folio's CONTENT from a request into a published rendering:
   - «no» → `Task_SliceAndAssign` (Slice the change and assign reviewers)
   - «yes» → `Task_ReviewUses` (Review the editorial dependencies)
 
-### 20. Request further revisions (`Task_RequestRevision`)
+### 20. Review staged rendering (`Task_ReviewStaging`)
 
 - Who: the `Content Author` lane (role `author`).
 - Skill: `staging-review`.
-- What: Author provides feedback on what needs adjustment.
-- Record it: `workflow_complete` with `node: "Task_RequestRevision"`.
-- next: → `Task_Iterate` (Iterate on author feedback)
+- What: Author reviews the rendered feature branch at <pages-url>/STAGING/<branch-slug>/ and compares against the main site.
+- Record it: `workflow_complete` with `node: "Task_ReviewStaging"`.
+- next: → `GW_AuthorSatisfied` (Satisfied with changes?)
 
-### 21. Submit to review committee (`Task_SubmitForReview`)
-
-- Who: the `Content Author` lane (role `author`).
-- Skill: `staging-review`.
-- What: Author submits the PR for formal review by the guidance review committee.
-- Record it: `workflow_complete` with `node: "Task_SubmitForReview"`.
-- next: → `End_Author` (Change submitted), → `Start_Reviewer` (PR submitted for review)
-
-### 22. Review the editorial dependencies (`Task_ReviewUses`)
+### 21. Review the editorial dependencies (`Task_ReviewUses`)
 
 - Who: the `Review Committee` lane (role `reviewer`).
 - Skill: `uses-editorial-review`.
@@ -231,19 +227,14 @@ Getting a change to a folio's CONTENT from a request into a published rendering:
 - Record it: `workflow_complete` with `node: "Task_ReviewUses"`.
 - next: → `Task_ReviewImpact` (Review impact assessment)
 
-### 23. Iterate on author feedback (`Task_Iterate`)
+### Decide — Satisfied with changes? (`GW_AuthorSatisfied`)
 
-- Who: the `Folio-Assistant Agent` lane (role `authoring-agent`).
-- Skill: `content-author`, `before-after-preview`.
-- What: Agent receives revision requests from the author and applies changes.
-- Record it: `workflow_complete` with `node: "Task_Iterate"`.
-- next: → `End_Agent` (Feature branch ready), → `Start_Pipeline` (Push to feature branch)
+- The author's own call after looking at the staged rendering.
+- Call `workflow_complete` with `node: "GW_AuthorSatisfied"` and `outcome` set to the label that holds:
+  - «No» → `Task_RequestRevision` (Request further revisions)
+  - «Yes» → `Task_SubmitForReview` (Submit to review committee)
 
-## Done — Change submitted (`End_Author`)
-
-- The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
-
-### 24. Review impact assessment (`Task_ReviewImpact`)
+### 22. Review impact assessment (`Task_ReviewImpact`)
 
 - Who: the `Review Committee` lane (role `reviewer`).
 - Skill: `content-review`.
@@ -251,9 +242,21 @@ Getting a change to a folio's CONTENT from a request into a published rendering:
 - Record it: `workflow_complete` with `node: "Task_ReviewImpact"`.
 - next: → `GW_Approved` (Changes approved?)
 
-## Done — Feature branch ready (`End_Agent`)
+### 23. Request further revisions (`Task_RequestRevision`)
 
-- The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+- Who: the `Content Author` lane (role `author`).
+- Skill: `staging-review`.
+- What: Author provides feedback on what needs adjustment.
+- Record it: `workflow_complete` with `node: "Task_RequestRevision"`.
+- next: → `Task_Iterate` (Iterate on author feedback)
+
+### 24. Submit to review committee (`Task_SubmitForReview`)
+
+- Who: the `Content Author` lane (role `author`).
+- Skill: `staging-review`.
+- What: Author submits the PR for formal review by the guidance review committee.
+- Record it: `workflow_complete` with `node: "Task_SubmitForReview"`.
+- next: → `Call_BeanClose_2` (Close the bean), → `Start_Reviewer` (PR submitted for review)
 
 ### Decide — Changes approved? (`GW_Approved`)
 
@@ -262,7 +265,23 @@ Getting a change to a folio's CONTENT from a request into a published rendering:
   - «No» → `Task_RequestChanges` (Request changes)
   - «Yes» → `Task_Approve` (Approve)
 
-### 25. Request changes (`Task_RequestChanges`)
+### 25. Iterate on author feedback (`Task_Iterate`)
+
+- Who: the `Folio-Assistant Agent` lane (role `authoring-agent`).
+- Skill: `content-author`, `before-after-preview`.
+- What: Agent receives revision requests from the author and applies changes.
+- Record it: `workflow_complete` with `node: "Task_Iterate"`.
+- next: → `Call_BeanClose` (Close the bean), → `Start_Pipeline` (Push to feature branch)
+
+### 26. Close the bean (`Call_BeanClose_2`)
+
+- Who: the `Content Author` lane (role `author`).
+- Skill: `todo-manager`.
+- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
+- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `End_Author` (Change submitted)
+
+### 27. Request changes (`Task_RequestChanges`)
 
 - Who: the `Review Committee` lane (role `reviewer`).
 - Skill: `content-review`, `content-review`.
@@ -270,7 +289,7 @@ Getting a change to a folio's CONTENT from a request into a published rendering:
 - Record it: `workflow_complete` with `node: "Task_RequestChanges"`.
 - next: → `Task_Iterate` (Iterate on author feedback)
 
-### 26. Approve (`Task_Approve`)
+### 28. Approve (`Task_Approve`)
 
 - Who: the `Review Committee` lane (role `reviewer`).
 - Skill: `decision-audit`.
@@ -278,26 +297,50 @@ Getting a change to a folio's CONTENT from a request into a published rendering:
 - Record it: `workflow_complete` with `node: "Task_Approve"`.
 - next: → `Task_Merge` (Merge, on explicit confirmation)
 
-### 27. Merge, on explicit confirmation (`Task_Merge`)
+### 29. Close the bean (`Call_BeanClose`)
+
+- Who: the `Folio-Assistant Agent` lane (role `authoring-agent`).
+- Skill: `todo-manager`.
+- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
+- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `End_Agent` (Feature branch ready)
+
+## Done — Change submitted (`End_Author`)
+
+- The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+
+### 30. Merge, on explicit confirmation (`Task_Merge`)
 
 - Who: the `Review Committee` lane (role `reviewer`).
 - Skill: `prepare-merge`.
 - What: The owner says "merge it", and only then is the branch merged.
 - Record it: `workflow_complete` with `node: "Task_Merge"`.
-- next: → `End_Reviewer` (Change accepted), → `GW_Merged` (PR merged?)
+- next: → `Call_BeanClose_5` (Close the bean), → `GW_Merged` (PR merged?)
 
-## Done — Change accepted (`End_Reviewer`)
+## Done — Feature branch ready (`End_Agent`)
 
 - The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+
+### 31. Close the bean (`Call_BeanClose_5`)
+
+- Who: the `Review Committee` lane (role `reviewer`).
+- Skill: `todo-manager`.
+- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
+- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `End_Reviewer` (Change accepted)
 
 ### Decide — PR merged? (`GW_Merged`)
 
 - Was the PR merged?
 - Call `workflow_complete` with `node: "GW_Merged"` and `outcome` set to the label that holds:
   - «Yes» → `Task_CleanupStaging` (Remove STAGING/<slug>/)
-  - «No» → `End_NotMerged` (Not merged: preview kept)
+  - «No» → `Call_BeanClose_3` (Close the bean)
 
-### 28. Remove STAGING/<slug>/ (`Task_CleanupStaging`)
+## Done — Change accepted (`End_Reviewer`)
+
+- The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+
+### 32. Remove STAGING/<slug>/ (`Task_CleanupStaging`)
 
 - Who: the `CI/CD Pipeline` lane (role `build-pipeline`).
 - Skill: `feature-staging`.
@@ -305,11 +348,15 @@ Getting a change to a folio's CONTENT from a request into a published rendering:
 - Record it: `workflow_complete` with `node: "Task_CleanupStaging"`.
 - next: → `Task_RebuildMain` (Rebuild main site)
 
-## Done — Not merged: preview kept (`End_NotMerged`)
+### 33. Close the bean (`Call_BeanClose_3`)
 
-- The instance completes here: The approval did not end in a merge. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+- Who: the `CI/CD Pipeline` lane (role `build-pipeline`).
+- Skill: `todo-manager`.
+- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
+- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `End_NotMerged` (Not merged: preview kept)
 
-### 29. Rebuild main site (`Task_RebuildMain`)
+### 34. Rebuild main site (`Task_RebuildMain`)
 
 - Who: the `CI/CD Pipeline` lane (role `build-pipeline`).
 - Skill: `content-publish`.
@@ -317,12 +364,24 @@ Getting a change to a folio's CONTENT from a request into a published rendering:
 - Record it: `workflow_complete` with `node: "Task_RebuildMain"`.
 - next: → `Task_WatchMainCI` (Note the main-branch watch)
 
-### 30. Note the main-branch watch (`Task_WatchMainCI`)
+## Done — Not merged: preview kept (`End_NotMerged`)
+
+- The instance completes here: The approval did not end in a merge. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+
+### 35. Note the main-branch watch (`Task_WatchMainCI`)
 
 - Who: the `CI/CD Pipeline` lane (role `build-pipeline`).
 - Skill: `watch`, `todo-manager`.
 - What: Second dispatch point: the change was approved and merged, and the root of the site has been rebuilt from main.
 - Record it: `workflow_complete` with `node: "Task_WatchMainCI"`.
+- next: → `Call_BeanClose_4` (Close the bean)
+
+### 36. Close the bean (`Call_BeanClose_4`)
+
+- Who: the `CI/CD Pipeline` lane (role `build-pipeline`).
+- Skill: `todo-manager`.
+- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
+- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `End_Pipeline` (Deployment complete)
 
 ## Done — Deployment complete (`End_Pipeline`)

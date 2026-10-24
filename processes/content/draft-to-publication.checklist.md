@@ -10,20 +10,31 @@ How the corpus becomes an officially published folio: a draft publication, its r
 
 - Begin here: One or more content blocks have landed in the corpus through the editing process.
 - Call `workflow_start` with `process: "Process_Publication"` and the subject this run is about; keep the instance id it returns.
-- next: → `Task_OpenReleaseBean` (Open or claim the release bean)
+- next: → `Task_OpenReleaseBean` (Open the bean)
 
-### 1. Open or claim the release bean (`Task_OpenReleaseBean`)
+### 1. Open the bean (`Task_OpenReleaseBean`)
 
 - Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
-- Skill: `todo-manager`.
-- What: The release itself is a bean: it carries what is in this draft, what is outstanding, and who is holding it.
-- Record it: `workflow_complete` with `node: "Task_OpenReleaseBean"`.
-- next: → `Gateway_BuildMerge`
+- Skill: `bean-coordination`.
+- What: Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's.
+- A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `GW_BeanYours` (Bean claimed?)
+
+### Decide — Bean claimed? (`GW_BeanYours`)
+
+- Reads which end Process_BeanOpen reached.
+- Call `workflow_complete` with `node: "GW_BeanYours"` and `outcome` set to the label that holds:
+  - «claimed» → `Gateway_BuildMerge`
+  - «not yours» → `End_BeanNotYours` (Not yours — left alone)
 
 ### Merge — `Gateway_BuildMerge`
 
 - Nothing to do or decide: the paths meet here and the engine passes through.
 - next: → `Task_BuildDraft` (Build the draft publication)
+
+## Done — Not yours — left alone (`End_BeanNotYours`)
+
+- The instance completes here: Someone else holds the bean; this run stops without touching it. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
 ### 2. Build the draft publication (`Task_BuildDraft`)
 
@@ -135,14 +146,14 @@ How the corpus becomes an officially published folio: a draft publication, its r
 - Skill: `todo-manager`.
 - What: What shipped is resolved; what slipped stays open and carries into the next cycle.
 - Record it: `workflow_complete` with `node: "Task_CloseReleaseBeans"`.
-- next: → `Task_ArchiveReleaseBean` (Archive the release bean)
+- next: → `Task_ArchiveReleaseBean` (Close the bean)
 
-### 13. Archive the release bean (`Task_ArchiveReleaseBean`)
+### 13. Close the bean (`Task_ArchiveReleaseBean`)
 
 - Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
 - Skill: `todo-manager`.
-- What: Move the bean, now completed, into the archive, with a line saying which process closed it.
-- Record it: `workflow_complete` with `node: "Task_ArchiveReleaseBean"`.
+- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
+- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `EndEvent_Published` (Published officially)
 
 ## Done — Published officially (`EndEvent_Published`)

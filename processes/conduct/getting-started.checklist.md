@@ -72,7 +72,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 - Skill: `getting-started`.
 - What: content/, uploads/, library/, the first manifests, <slug>.json and index.config.json (the instance's config inline in its entry; no <slug>.config.json, bean ymvt), the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store.
 - Record it: `workflow_complete` with `node: "Task_Scaffold"`.
-- next: → `Task_SeedPlan` (Seed the work plan)
+- next: → `Call_BeanOpen` (Open the bean)
 
 ### 7. Import what, where, and who does it (`Task_ConfirmImport`)
 
@@ -82,7 +82,22 @@ Somebody said "create a folio": work out which request they meant, with the bran
 - Record it: `workflow_complete` with `node: "Task_ConfirmImport"`.
 - next: → `Task_Scaffold` (Scaffold the folio (folio_init))
 
-### 8. Seed the work plan (`Task_SeedPlan`)
+### 8. Open the bean (`Call_BeanOpen`)
+
+- Who: the `Work plan (beans)` lane (role `work-plan`).
+- Skill: `bean-coordination`.
+- What: Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's.
+- A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `GW_BeanYours` (Bean claimed?)
+
+### Decide — Bean claimed? (`GW_BeanYours`)
+
+- Reads which end Process_BeanOpen reached.
+- Call `workflow_complete` with `node: "GW_BeanYours"` and `outcome` set to the label that holds:
+  - «claimed» → `Task_SeedPlan` (Seed the work plan)
+  - «not yours» → `End_BeanNotYours` (Not yours — left alone)
+
+### 9. Seed the work plan (`Task_SeedPlan`)
 
 - Who: the `Work plan (beans)` lane (role `work-plan`).
 - Skill: `todo-manager`.
@@ -90,7 +105,11 @@ Somebody said "create a folio": work out which request they meant, with the bran
 - Record it: `workflow_complete` with `node: "Task_SeedPlan"`.
 - next: → `Task_ProvisionGhPages` (Provision gh-pages)
 
-### 9. Provision gh-pages (`Task_ProvisionGhPages`)
+## Done — Not yours — left alone (`End_BeanNotYours`)
+
+- The instance completes here: Someone else holds the bean; this run stops without touching it. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+
+### 10. Provision gh-pages (`Task_ProvisionGhPages`)
 
 - Who: the `Publish — GitHub Pages` lane (role `publish-target`).
 - Skill: `getting-started`.
@@ -98,7 +117,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 - Record it: `workflow_complete` with `node: "Task_ProvisionGhPages"`.
 - next: → `Task_PagesBootstrap` (Start the Pages build and derive the URL)
 
-### 10. Start the Pages build and derive the URL (`Task_PagesBootstrap`)
+### 11. Start the Pages build and derive the URL (`Task_PagesBootstrap`)
 
 - Who: the `Publish — GitHub Pages` lane (role `publish-target`).
 - Skill: `getting-started`.
@@ -115,28 +134,36 @@ Somebody said "create a folio": work out which request they meant, with the bran
   - «unknown» → `Task_ReportUnknown` (Say it could not be confirmed)
   - «unprovisioned» → `Task_ProvisionGhPages` (Provision gh-pages)
 
-### 11. Hand over the live link (`Task_ReportUrl`)
+### 12. Hand over the live link (`Task_ReportUrl`)
 
 - Who: the `Publish — GitHub Pages` lane (role `publish-target`).
 - Skill: `getting-started`.
 - What: Confirmed live.
 - Record it: `workflow_complete` with `node: "Task_ReportUrl"`.
-- next: → `EndEvent_Ready` (Ready to author)
+- next: → `Call_BeanClose` (Close the bean)
 
-### 12. Say where it will be (`Task_ReportPending`)
+### 13. Say where it will be (`Task_ReportPending`)
 
 - Who: the `Publish — GitHub Pages` lane (role `publish-target`).
 - Skill: `getting-started`.
 - What: A measured 404.
 - Record it: `workflow_complete` with `node: "Task_ReportPending"`.
-- next: → `EndEvent_Ready` (Ready to author)
+- next: → `Call_BeanClose` (Close the bean)
 
-### 13. Say it could not be confirmed (`Task_ReportUnknown`)
+### 14. Say it could not be confirmed (`Task_ReportUnknown`)
 
 - Who: the `Publish — GitHub Pages` lane (role `publish-target`).
 - Skill: `getting-started`.
 - What: No URL, no probe, or a failed request.
 - Record it: `workflow_complete` with `node: "Task_ReportUnknown"`.
+- next: → `Call_BeanClose` (Close the bean)
+
+### 15. Close the bean (`Call_BeanClose`)
+
+- Who: the `Publish — GitHub Pages` lane (role `publish-target`).
+- Skill: `todo-manager`.
+- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
+- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `EndEvent_Ready` (Ready to author)
 
 ## Done — Ready to author (`EndEvent_Ready`)
