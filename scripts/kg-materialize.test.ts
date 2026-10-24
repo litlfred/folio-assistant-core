@@ -706,7 +706,7 @@ describe("a nested subgraph: chosen by its parent, materialised by its path (own
     const r = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb/nested", decisions: DECISIONS, fetch: fixture(), now: NOW });
     expect(r.state).toBe("materialized");
     if (r.state !== "materialized") return;
-    expect(r.record.part).toEqual({ kind: "subgraph", id: "kb", path: "kb/nested", nested: true });
+    expect(r.record.part as unknown).toEqual({ kind: "subgraph", id: "kb", path: "kb/nested", nested: true });
     const dir = join(snapDir, "ihris-kb", "nested", "kb", "nested");
     expect(readFileSync(join(dir, "tree", "deep.md"), "utf8")).toBe("deep\n");
     expect(r.record.materialization.provenance.upstream).toBe(`https://github.com/litlfred/ihris-kb/tree/${SHA}/kb/nested`);
@@ -718,7 +718,7 @@ describe("a nested subgraph: chosen by its parent, materialised by its path (own
     expect(report.findings).toEqual([]);
     expect(report.held).toBe(2);
     expect(report.chosenNotHeld).toBe(0);
-    expect(partRecordsIn(snapDir, "ihris-kb").parts.map((p) => p.slot)).toEqual([
+    expect(partRecordsIn(snapDir, "ihris-kb").parts.map((p) => p.slot) as unknown[]).toEqual([
       { kind: "nested", path: "kb/nested" },
       { kind: "subgraph", id: "kb" },
     ]);
