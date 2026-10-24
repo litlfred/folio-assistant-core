@@ -67,7 +67,9 @@ describe("a declared relaxation permits a step, and is attributed", () => {
     const model = await editing();
     const state = startInstance(model, { id: "g3", subject: "def:x" });
     complete(model, state, "Task_DescribeChange");
-    complete(model, state, "Task_ClaimBean");
+    // Process_BeanOpen (bean `m8gz`), then its `claimed` branch.
+    drainSubprocess(model, state, "Task_ClaimBean");
+    complete(model, state, "GW_BeanYours", { outcome: "claimed" });
     drainSubprocess(model, state, "CallActivity_Evidence");
     complete(model, state, "Task_DraftEdit");
     complete(model, state, "Gateway_ReviewerKind", { outcome: "no" });

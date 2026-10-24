@@ -17,15 +17,22 @@ What happens to one proposed change to one content block: drafted, validated mec
 - Who: the `Editor / author (person)` lane (role `author`).
 - What: The editor states the change in natural language; no content has moved yet.
 - Record it: `workflow_complete` with `node: "Task_DescribeChange"`.
-- next: → `Task_ClaimBean` (Claim or open the bean)
+- next: → `Task_ClaimBean` (Open the bean)
 
-### 2. Claim or open the bean (`Task_ClaimBean`)
+### 2. Open the bean (`Task_ClaimBean`)
 
 - Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
-- Skill: `todo-manager`.
-- What: Every edit is tracked as a bean in beans/.
-- Record it: `workflow_complete` with `node: "Task_ClaimBean"`.
-- next: → `CallActivity_Evidence` (Gather and verify the evidence)
+- Skill: `bean-coordination`.
+- What: Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's.
+- A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `GW_BeanYours` (Bean claimed?)
+
+### Decide — Bean claimed? (`GW_BeanYours`)
+
+- Reads which end Process_BeanOpen reached.
+- Call `workflow_complete` with `node: "GW_BeanYours"` and `outcome` set to the label that holds:
+  - «claimed» → `CallActivity_Evidence` (Gather and verify the evidence)
+  - «not yours» → `End_BeanNotYours` (Not yours — left alone)
 
 ### 3. Gather and verify the evidence (`CallActivity_Evidence`)
 
@@ -33,6 +40,10 @@ What happens to one proposed change to one content block: drafted, validated mec
 - What: Before anything is drafted: the author reads the guidance ALREADY in this content, frames the question as PICO, retrieves candidates across the three evidence classes, and has each candidate's authority resolved against its publisher's own API.
 - A subprocess (`Process_EvidenceRetrieval`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Task_DraftEdit` (Draft the block edit)
+
+## Done — Not yours — left alone (`End_BeanNotYours`)
+
+- The instance completes here: Someone else holds the bean; this run stops without touching it. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
 ### 4. Draft the block edit (`Task_DraftEdit`)
 
@@ -153,7 +164,7 @@ What happens to one proposed change to one content block: drafted, validated mec
 - The editor's recorded decision, with its audit note.
 - Call `workflow_complete` with `node: "Gateway_EditorDecision"` and `outcome` set to the label that holds:
   - «revise» → `Task_ReviseEdit` (Revise the proposed change)
-  - «discard» → `EndEvent_Discarded` (Change discarded)
+  - «discard» → `Call_BeanClose` (Close the bean)
   - «accept» → `Task_Commit` (Commit into the corpus)
 
 ### 15. Revise the proposed change (`Task_ReviseEdit`)
@@ -164,24 +175,32 @@ What happens to one proposed change to one content block: drafted, validated mec
 - Record it: `workflow_complete` with `node: "Task_ReviseEdit"`.
 - next: → `Gateway_ProposalReady` (Proposed change ready)
 
-## Done — Change discarded (`EndEvent_Discarded`)
+### 16. Close the bean (`Call_BeanClose`)
 
-- The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+- Who: the `Editor / author (person)` lane (role `author`).
+- Skill: `todo-manager`.
+- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
+- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `EndEvent_Discarded` (Change discarded)
 
-### 16. Commit into the corpus (`Task_Commit`)
+### 17. Commit into the corpus (`Task_Commit`)
 
 - Who: the `Corpus (versioned store)` lane (role `corpus`).
 - Skill: `corpus-commit-contract`.
 - What: Only now does the change become corpus content, together with its QA sidecars.
 - Record it: `workflow_complete` with `node: "Task_Commit"`.
-- next: → `Task_ResolveBean` (Resolve or re-open the bean)
+- next: → `Task_ResolveBean` (Close the bean)
 
-### 17. Resolve or re-open the bean (`Task_ResolveBean`)
+## Done — Change discarded (`EndEvent_Discarded`)
+
+- The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+
+### 18. Close the bean (`Task_ResolveBean`)
 
 - Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
 - Skill: `todo-manager`.
-- What: Resolved when the change landed clean; left open with the residue when it did not.
-- Record it: `workflow_complete` with `node: "Task_ResolveBean"`.
+- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
+- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `EndEvent_InCorpus` (Change is in the corpus)
 
 ## Done — Change is in the corpus (`EndEvent_InCorpus`)

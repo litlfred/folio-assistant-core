@@ -75,7 +75,9 @@ const authorise = async (label: string, decision = "accept"): Promise<void> => {
   // recommendation gathers its evidence BEFORE the change is written. It is a
   // whole SUBPROCESS, so a walk of the process has to walk that too.
   complete(model, state, "Task_DescribeChange");
-  complete(model, state, "Task_ClaimBean");
+  // Process_BeanOpen (bean `m8gz`), then its `claimed` branch.
+  drainSubprocess(model, state, "Task_ClaimBean");
+  complete(model, state, "GW_BeanYours", { outcome: "claimed" });
   drainSubprocess(model, state, "CallActivity_Evidence");
   for (const n of ["Task_DraftEdit", "Task_SchemaValidate", "Task_SyntaxSpell", "Task_BuildGates"]) {
     complete(model, state, n);

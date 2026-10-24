@@ -18,9 +18,24 @@ How a document folio — structured prose and policy guidance, with no Lean and 
 - Skill: `content-plan`.
 - What: Scope it: chapters, the blocks each needs, which statements are normative.
 - Record it: `workflow_complete` with `node: "Task_Plan"`.
-- next: → `Task_SeedPlan` (2 · Seed the work plan)
+- next: → `Call_BeanOpen` (Open the bean)
 
-### 2. 2 · Seed the work plan (`Task_SeedPlan`)
+### 2. Open the bean (`Call_BeanOpen`)
+
+- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Skill: `bean-coordination`.
+- What: Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's.
+- A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `GW_BeanYours` (Bean claimed?)
+
+### Decide — Bean claimed? (`GW_BeanYours`)
+
+- Reads which end Process_BeanOpen reached.
+- Call `workflow_complete` with `node: "GW_BeanYours"` and `outcome` set to the label that holds:
+  - «claimed» → `Task_SeedPlan` (2 · Seed the work plan)
+  - «not yours» → `End_BeanNotYours` (Not yours — left alone)
+
+### 3. 2 · Seed the work plan (`Task_SeedPlan`)
 
 - Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
 - Skill: `todo-manager`.
@@ -29,7 +44,11 @@ How a document folio — structured prose and policy guidance, with no Lean and 
 - Record it: `workflow_complete` with `node: "Task_SeedPlan"`.
 - next: → `Task_Scaffold` (3 · Scaffold the folio [folio_init])
 
-### 3. 3 · Scaffold the folio [folio_init] (`Task_Scaffold`)
+## Done — Not yours — left alone (`End_BeanNotYours`)
+
+- The instance completes here: Someone else holds the bean; this run stops without touching it. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+
+### 4. 3 · Scaffold the folio [folio_init] (`Task_Scaffold`)
 
 - Who: the `Authoring agent (system)` lane (role `authoring-agent`).
 - Skill: `document-structure`.
@@ -37,7 +56,7 @@ How a document folio — structured prose and policy guidance, with no Lean and 
 - Record it: `workflow_complete` with `node: "Task_Scaffold"`.
 - next: → `Task_AuthorBlocks` (4 · Author blocks)
 
-### 4. 4 · Author blocks (`Task_AuthorBlocks`)
+### 5. 4 · Author blocks (`Task_AuthorBlocks`)
 
 - Who: the `Authoring agent (system)` lane (role `authoring-agent`).
 - Skill: `document-authoring`, `normative-statements`.
@@ -45,7 +64,7 @@ How a document folio — structured prose and policy guidance, with no Lean and 
 - Record it: `workflow_complete` with `node: "Task_AuthorBlocks"`.
 - next: → `Task_ProfileCheck` (5 · Check the profile)
 
-### 5. 5 · Check the profile (`Task_ProfileCheck`)
+### 6. 5 · Check the profile (`Task_ProfileCheck`)
 
 - Who: the `Build pipeline — validate · render · publish` lane (role `build-pipeline`).
 - Skill: `content-validate`.
@@ -60,7 +79,7 @@ How a document folio — structured prose and policy guidance, with no Lean and 
   - «violations» → `Task_AuthorBlocks` (4 · Author blocks)
   - «clean» → `Task_Validate` (6 · Validate)
 
-### 6. 6 · Validate (`Task_Validate`)
+### 7. 6 · Validate (`Task_Validate`)
 
 - Who: the `Build pipeline — validate · render · publish` lane (role `build-pipeline`).
 - Skill: `content-validate`.
@@ -68,7 +87,7 @@ How a document folio — structured prose and policy guidance, with no Lean and 
 - Record it: `workflow_complete` with `node: "Task_Validate"`.
 - next: → `Task_Render` (7 · Render MD / HTML / PDF)
 
-### 7. 7 · Render MD / HTML / PDF (`Task_Render`)
+### 8. 7 · Render MD / HTML / PDF (`Task_Render`)
 
 - Who: the `Build pipeline — validate · render · publish` lane (role `build-pipeline`).
 - Skill: `document-publishing`.
@@ -76,7 +95,7 @@ How a document folio — structured prose and policy guidance, with no Lean and 
 - Record it: `workflow_complete` with `node: "Task_Render"`.
 - next: → `Task_Review` (8 · Review and feedback)
 
-### 8. 8 · Review and feedback (`Task_Review`)
+### 9. 8 · Review and feedback (`Task_Review`)
 
 - Who: the `Reviewer / subject-matter expert` lane (role `reviewer`).
 - Skill: `content-review`, `staging-review`.
@@ -91,12 +110,20 @@ How a document folio — structured prose and policy guidance, with no Lean and 
   - «iterate» → `Task_AuthorBlocks` (4 · Author blocks)
   - «approved» → `Task_Publish` (9 · Publish)
 
-### 9. 9 · Publish (`Task_Publish`)
+### 10. 9 · Publish (`Task_Publish`)
 
 - Who: the `Build pipeline — validate · render · publish` lane (role `build-pipeline`).
 - Skill: `content-publish`.
 - What: See draft-to-publication.bpmn for the review and release path this expands into.
 - Record it: `workflow_complete` with `node: "Task_Publish"`.
+- next: → `Call_BeanClose` (Close the bean)
+
+### 11. Close the bean (`Call_BeanClose`)
+
+- Who: the `Build pipeline — validate · render · publish` lane (role `build-pipeline`).
+- Skill: `todo-manager`.
+- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
+- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `EndEvent_Published` (Document published)
 
 ## Done — Document published (`EndEvent_Published`)
