@@ -26,6 +26,18 @@
       },
       "drafted_at": "2026-09-24",
       "lang": "en"
+    },
+    {
+      "text": "Une icône en couleur d'une grappe de bases de données : un grand cylindre bleu pâle au centre, relié par des lignes à angle droit à six cylindres plus petits, verts, jaunes et bleus. Elle marque l'entrepôt indexé dans lequel le contenu analysé est écrit.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "fr"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-002",

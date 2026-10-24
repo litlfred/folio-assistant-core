@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: folio-assistant-core/glossary/guideline-domain.glossary.json:29
+#: folio-assistant-core/glossary/guideline-domain.glossary.json:37
 #. Glossary term definition: https://litlfred.github.io/folio-assistant-core/v0/ns#glossary/guideline-domain/health-system-strengthening
 msgid "A guideline whose recommendations address how the health system itself is organised and resourced — service delivery, health workforce, health information systems, access to medical products, financing, and leadership and governance — rather than a particular condition or population intervention."
 msgstr ""
@@ -24,7 +24,7 @@ msgstr ""
 msgid "A guideline whose recommendations address the care of individual patients by health workers: assessment, diagnosis, treatment and management of a condition in a person."
 msgstr ""
 
-#: folio-assistant-core/glossary/guideline-domain.glossary.json:20
+#: folio-assistant-core/glossary/guideline-domain.glossary.json:24
 #. Glossary term definition: https://litlfred.github.io/folio-assistant-core/v0/ns#glossary/guideline-domain/public-health
 msgid "A guideline whose recommendations address the health of populations rather than of an individual patient: prevention, health promotion, immunization and screening programmes, surveillance, and policy or environmental measures."
 msgstr ""
@@ -44,27 +44,27 @@ msgstr ""
 msgid "clinical health"
 msgstr ""
 
-#: folio-assistant-core/glossary/guideline-domain.glossary.json:29
+#: folio-assistant-core/glossary/guideline-domain.glossary.json:37
 #. Glossary term label: https://litlfred.github.io/folio-assistant-core/v0/ns#glossary/guideline-domain/health-system-strengthening
 msgid "health system strengthening"
 msgstr ""
 
-#: folio-assistant-core/glossary/guideline-domain.glossary.json:29
+#: folio-assistant-core/glossary/guideline-domain.glossary.json:37
 #. Glossary term alternative label: https://litlfred.github.io/folio-assistant-core/v0/ns#glossary/guideline-domain/health-system-strengthening
 msgid "health systems strengthening"
 msgstr ""
 
-#: folio-assistant-core/glossary/guideline-domain.glossary.json:29
+#: folio-assistant-core/glossary/guideline-domain.glossary.json:37
 #. Glossary term alternative label: https://litlfred.github.io/folio-assistant-core/v0/ns#glossary/guideline-domain/health-system-strengthening
 msgid "HSS"
 msgstr ""
 
-#: folio-assistant-core/glossary/guideline-domain.glossary.json:20
+#: folio-assistant-core/glossary/guideline-domain.glossary.json:24
 #. Glossary term label: https://litlfred.github.io/folio-assistant-core/v0/ns#glossary/guideline-domain/public-health
 msgid "public health"
 msgstr ""
 
-#: folio-assistant-core/glossary/guideline-domain.glossary.json:20
+#: folio-assistant-core/glossary/guideline-domain.glossary.json:24
 #. Glossary term alternative label: https://litlfred.github.io/folio-assistant-core/v0/ns#glossary/guideline-domain/public-health
 msgid "public health guideline"
 msgstr ""

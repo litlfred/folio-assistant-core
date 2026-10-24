@@ -26,6 +26,18 @@
       },
       "drafted_at": "2026-09-24",
       "lang": "en"
+    },
+    {
+      "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « 4月VC/PE机构背景企业IPO一览表 » (avril : introductions en bourse d'entreprises soutenues par le capital-risque ou le capital-investissement). Un tableau à deux colonnes associe sept entreprises à leurs investisseurs, avec une note en orange précisant que, faute de place, seuls les investisseurs n'étant pas encore sortis sont listés.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "fr"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

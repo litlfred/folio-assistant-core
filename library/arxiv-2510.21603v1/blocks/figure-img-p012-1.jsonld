@@ -26,6 +26,18 @@
       },
       "drafted_at": "2026-09-24",
       "lang": "en"
+    },
+    {
+      "text": "La page 3 de l'article « Actions Speak Louder than Words: Trillion-Parameter Sequential Transducers for Generative Recommendations », reproduite telle quelle. Elle porte la figure 2 (une comparaison des caractéristiques et des procédures d'entraînement des DLRM et des Generative Recommenders), deux colonnes de texte sous les intertitres 2.2 et 2.3, et le tableau 1. C'est l'entrée de l'analyseur, montrée avant toute analyse de mise en page.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "fr"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

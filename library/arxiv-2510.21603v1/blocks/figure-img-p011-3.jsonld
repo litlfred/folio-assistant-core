@@ -26,6 +26,18 @@
       },
       "drafted_at": "2026-09-24",
       "lang": "en"
+    },
+    {
+      "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « 全球：IPO数量及金额呈下降趋势 » (monde : le nombre et le montant des introductions en bourse sont en baisse). Un graphique combiné barres et courbe suit chaque mois les fonds levés et le nombre d'entreprises introduites, d'avril 2023 à avril 2024, et un tableau en dessous détaille avril 2024 par compartiment de bourse sur les marchés des actions A, de Hong Kong et des États-Unis.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "fr"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

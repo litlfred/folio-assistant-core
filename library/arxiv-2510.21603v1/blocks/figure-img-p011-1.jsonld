@@ -26,6 +26,18 @@
       },
       "drafted_at": "2026-09-24",
       "lang": "en"
+    },
+    {
+      "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « A轮交易占市场近半数 广东投资数量荣登榜首 » (les opérations de série A représentent près de la moitié du marché ; le Guangdong arrive en tête pour le nombre d'opérations). Deux graphiques en anneau comparent le nombre et le montant des opérations par tour pour le premier semestre 2024, et un diagramme en barres horizontales en dessous classe les dix premières régions : Guangdong 647 opérations pour 5967,1, Jiangsu 646, Shanghai 493, Zhejiang 417, Pékin 388.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "fr"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",
