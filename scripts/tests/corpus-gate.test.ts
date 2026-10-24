@@ -60,8 +60,8 @@ const block = (slug: string, label: string): string => {
   const p = join(dir, `${slug}.ts`);
   writeFileSync(
     p,
-    `import { proposition } from ${BUILDERS};\n` +
-      `export default proposition({ label: ${JSON.stringify(label)}, title: "T", statement: "s" });\n`,
+    `import { remark } from ${BUILDERS};\n` +
+      `export default remark({ label: ${JSON.stringify(label)}, title: "T", statement: "s" });\n`,
   );
   writeFileSync(join(dir, `${slug}.md`), "Prose.\n");
   return `folio/paper/ch/${slug}.ts`;
@@ -110,7 +110,7 @@ describe("what the gate ignores", () => {
   });
 
   test("a .qa.json is machine-written by the sweep and is not a corpus write", async () => {
-    block("x", "prop:x");
+    block("x", "rem:x");
     // Gating these would make every qa-sweep look like an unauthorised edit.
     expect(await check(["folio/paper/ch/x.qa.json"])).toEqual([]);
   });
@@ -124,22 +124,22 @@ describe("what the gate ignores", () => {
 
 describe("refusing by default", () => {
   test("a block with no instance is refused, and told how to start one", async () => {
-    const f = block("carbon", "prop:carbon");
+    const f = block("carbon", "rem:carbon");
     const [finding] = await check([f]);
     expect(finding.allowed).toBe(false);
-    expect(finding.label).toBe("prop:carbon");
+    expect(finding.label).toBe("rem:carbon");
     expect(finding.reason).toContain("no workflow instance");
     expect(finding.reason).toContain("workflow_start");
   });
 
   test("an instance that has not reached the editor's decision is refused", async () => {
-    const f = block("carbon", "prop:carbon");
+    const f = block("carbon", "rem:carbon");
     const model = await loadProcessModel(
       workflowFile(CORE, "editing-hci-validation.bpmn"),
     );
     const state = startInstance(model, {
-      id: instanceId(model.id, "prop:carbon"),
-      subject: "prop:carbon",
+      id: instanceId(model.id, "rem:carbon"),
+      subject: "rem:carbon",
     });
     complete(model, state, "Task_DescribeChange");
     saveInstance(repo, state);
@@ -150,8 +150,8 @@ describe("refusing by default", () => {
   });
 
   test("a discarded change never authorises a write", async () => {
-    const f = block("carbon", "prop:carbon");
-    await authorise("prop:carbon", "discard");
+    const f = block("carbon", "rem:carbon");
+    await authorise("rem:carbon", "discard");
     // The instance completed — but through the discard end event, so the commit
     // step was never enabled and never taken.
     const [finding] = await check([f]);
@@ -161,22 +161,22 @@ describe("refusing by default", () => {
 
 describe("allowing what the process authorised", () => {
   test("a block whose editor accepted the change is allowed", async () => {
-    const f = block("carbon", "prop:carbon");
-    await authorise("prop:carbon");
+    const f = block("carbon", "rem:carbon");
+    await authorise("rem:carbon");
     const [finding] = await check([f]);
     expect(finding.allowed).toBe(true);
-    expect(finding.instance).toBe("editing--prop-carbon");
+    expect(finding.instance).toBe("editing--rem-carbon");
   });
 
   test("a block already committed in an earlier round stays allowed", async () => {
-    const f = block("carbon", "prop:carbon");
+    const f = block("carbon", "rem:carbon");
     const model = await loadProcessModel(
       workflowFile(CORE, "editing-hci-validation.bpmn"),
     );
-    await authorise("prop:carbon");
+    await authorise("rem:carbon");
     const state = (await import("@litlfred/cat-harness-tools/src/workflow/store.js")).loadInstance(
       repo,
-      instanceId(model.id, "prop:carbon"),
+      instanceId(model.id, "rem:carbon"),
     )!;
     complete(model, state, COMMIT_ACTIVITY);
     saveInstance(repo, state);
@@ -187,8 +187,8 @@ describe("allowing what the process authorised", () => {
   });
 
   test("a sibling .md is checked against its block, and reported once", async () => {
-    block("carbon", "prop:carbon");
-    await authorise("prop:carbon");
+    block("carbon", "rem:carbon");
+    await authorise("rem:carbon");
     // One block's worth of work, not two problems.
     const findings = await check(["folio/paper/ch/carbon.ts", "folio/paper/ch/carbon.md"]);
     expect(findings).toHaveLength(1);
@@ -201,11 +201,11 @@ describe("it does not fail open", () => {
     const dir = join(repo, "folio", "paper", "ch");
     mkdirSync(dir, { recursive: true });
     // Reads as a manifest textually, but the module throws on import: the
-    // builder rejects a theorem label on a proposition.
+    // builder rejects a theorem label on a remark.
     writeFileSync(
       join(dir, "bad.ts"),
-      `import { proposition } from ${BUILDERS};\n` +
-        `export default proposition({ label: "theorem:x", title: "T", statement: "s" });\n`,
+      `import { remark } from ${BUILDERS};\n` +
+        `export default remark({ label: "theorem:x", title: "T", statement: "s" });\n`,
     );
     const [finding] = await check(["folio/paper/ch/bad.ts"]);
     expect(finding.allowed).toBe(false);
