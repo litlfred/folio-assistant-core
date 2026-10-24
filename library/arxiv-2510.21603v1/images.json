@@ -28,6 +28,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône au trait noir représentant une personne : un cercle pour la tête au-dessus d'un buste arrondi. Elle marque le tour de parole de l'humain dans l'exemple de cette page, où un utilisateur pose une question sur une brochure d'assurance.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -229,6 +241,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page d'une brochure de Prudential Singapore intitulée « PRUShield Premier and PRUExtra Supplementary Plans: Coverage for private hospital not under Prudential's Panel and Non-Panel listings ». Elle déroule un scénario, une chambre individuelle dans un hôpital privé pour une facture totale de 80 000 S$, en montrant ce que couvre PRUShield Premier (68 850 S$, John paie 11 150 S$), puis, en dessous, des options complémentaires avec leur prime journalière et ce que John paierait encore : PRUExtra Premier CoPay (5 900 S$, avec une barre de progression qui le fait passer au niveau 4), PRUExtra Preferred CoPay (11 150 S$) et PRUExtra Premier Lite CoPay (7 325 S$).",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -258,6 +282,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une bande de deux cellules tirée du tableau comparatif de la brochure. La cellule de gauche indique « PRUShield's deductible amount for claims not under panel providers (Per policy year) » ; celle de droite indique « Covers 95% of deductible amount that is above S$2,000, you pay S$2,000 and 5% of the remaining deductible amount ». C'est la ligne dont est tirée la réponse de l'exemple.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -287,6 +323,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page entière de brochure intitulée « A little extra goes a long way », portant un tableau comparatif dense de cinq plans complémentaires sur deux niveaux de PRUShield : PRUExtra Premier CoPay, Preferred CoPay, Premier Lite CoPay, Plus CoPay et Plus Lite CoPay. Les lignes couvrent les types d'hôpital et de chambre, les traitements et services anticancéreux, la franchise selon que le prestataire est conventionné ou non, la coassurance, le plafond de dépenses (stop-loss), la tarification selon les sinistres, les services à valeur ajoutée, les primes pour une personne de 30 ans (de 832,80 S$ à 158,00 S$) et l'éligibilité. Dix notes numérotées figurent en dessous.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -316,6 +364,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône au trait noir représentant une tête de robot : un visage carré aux angles arrondis avec deux yeux en points, une bouche souriante, des panneaux latéraux et une seule antenne terminée par un cercle. Elle marque le tour de parole du système dans l'exemple de cette page.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -392,6 +452,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "L'icône de Microsoft Word : une forme de document bleue portant un W majuscule blanc, sa partie droite montrant des lignes horizontales bleues sur fond blanc. C'est l'un des types de documents d'entrée que la figure d'architecture montre entrant dans l'étape d'analyse.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -421,6 +493,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "L'icône de Microsoft PowerPoint : une forme de document orange portant un P majuscule blanc, sa partie droite montrant un pictogramme de diagramme circulaire au-dessus de deux lignes horizontales. C'est l'un des types de documents d'entrée de la figure d'architecture.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -450,6 +534,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "L'icône de Microsoft Excel : une forme de document verte portant un X blanc, sa partie droite montrant des rangées de courtes barres vertes sur deux colonnes. C'est l'un des types de documents d'entrée de la figure d'architecture.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -479,6 +575,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône générique de fichier PDF : une page gris pâle au coin supérieur droit replié, recouverte d'un rectangle rouge portant les lettres blanches PDF. C'est l'un des types de documents d'entrée de la figure d'architecture.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -508,6 +616,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône en couleur d'un journal plié : un bandeau de titre jaune portant le mot NEWS, un bloc d'image rose en bas à gauche et des lignes grises figurant le texte. Elle représente les articles de presse parmi les types d'entrée de la figure.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -537,6 +657,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône au trait noir d'un carnet à spirale portant le mot MANUAL en haut, avec cinq lignes horizontales en dessous figurant du texte. Elle représente les manuels et guides parmi les types d'entrée de la figure.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -693,6 +825,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Le logo de Wikipédia, le globe en puzzle, en noir et blanc : une sphère faite de pièces de puzzle portant chacune un caractère d'un système d'écriture différent, avec des pièces manquantes en haut. Il représente les sources web encyclopédiques parmi les entrées de la figure.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -849,6 +993,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône en noir et blanc d'une fenêtre de navigateur : une barre de titre sombre avec trois points, les lettres WWW en dessous, trois lignes figurant du texte et un curseur en flèche en bas à droite. Elle représente les pages web parmi les types d'entrée de la figure.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -1005,6 +1161,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône au trait noir d'une page en format portrait portant un T majuscule à empattements à côté de trois lignes courtes, avec deux lignes plus longues en dessous. Elle représente le contenu textuel brut dans l'étape d'analyse.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -1161,6 +1329,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône au trait noir d'une image encadrée : un carré aux angles arrondis contenant un cercle en haut à gauche et deux sommets de montagne en dessous. Elle représente les images comme type d'élément analysé.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -1317,6 +1497,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône au trait noir d'un tableau : un rectangle aux angles arrondis avec une bande d'en-tête vide au-dessus d'une grille de trois cellules sur quatre. Elle représente les tableaux comme type d'élément analysé.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -1473,6 +1665,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône au trait noir d'une expression mathématique : un signe racine carrée sur un x portant un exposant 2, entouré de hautes parenthèses courbes. Elle représente les équations comme type d'élément analysé.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -1629,6 +1833,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône en couleur de quatre pièces de puzzle imbriquées formant un carré : verte en haut à gauche, bleue en haut à droite, jaune en bas à gauche, rouge en bas à droite. Elle marque l'étape où les éléments analysés sont assemblés.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -1658,6 +1874,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône en couleur d'une grappe de bases de données : un grand cylindre bleu pâle au centre, relié par des lignes à angle droit à six cylindres plus petits, verts, jaunes et bleus. Elle marque l'entrepôt indexé dans lequel le contenu analysé est écrit.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -1687,6 +1915,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône en couleur d'une image en cours de sélection : un soleil jaune et des montagnes grises sur un ciel cyan, encadrés par quatre poignées d'angle. Elle marque la sélection des éléments visuels à convertir.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -1716,6 +1956,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône en couleur d'un cerveau sur une puce électronique : le contour pâle d'un cerveau dans une puce carrée bleu-vert, avec des broches rayonnant vers de petits points sur les quatre côtés. Elle marque les étapes du pipeline pilotées par un modèle.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -1757,6 +2009,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône au trait noir d'une tête de robot avec deux antennes et des panneaux latéraux, son bord inférieur dessiné comme la pointe d'une bulle de dialogue. Elle marque l'agent qui répond dans la figure d'architecture.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -1913,6 +2177,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône au trait noir de trois bulles de dialogue rectangulaires, chacune contenant trois points, disposées en groupe lâche. Elle marque l'échange en plusieurs tours que le système prend en charge.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -2069,6 +2345,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône au trait noir de trois pictogrammes de page au-dessus d'une main ouverte tournée vers le haut, chaque page reliée à la main par une flèche descendante. Elle marque la remise des documents au lecteur.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -2225,6 +2513,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône au trait noir d'une liste de contrôle : une page d'éléments réglés marqués tour à tour de coches et de croix, un crayon posé en travers, une seconde page derrière et un badge circulaire portant une coche en haut à droite. Elle marque l'étape d'évaluation.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -2381,6 +2681,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une icône au trait noir d'une mise en page : un petit carré plein et des lignes en haut, une bande encadrée au milieu portant le mot CONTEXT, puis d'autres lignes et trois petites cases en dessous. Elle marque le contexte assemblé transmis au modèle.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -2537,6 +2849,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « A轮交易占市场近半数 广东投资数量荣登榜首 » (les opérations de série A représentent près de la moitié du marché ; le Guangdong arrive en tête pour le nombre d'opérations). Deux graphiques en anneau comparent le nombre et le montant des opérations par tour pour le premier semestre 2024, et un diagramme en barres horizontales en dessous classe les dix premières régions : Guangdong 647 opérations pour 5967,1, Jiangsu 646, Shanghai 493, Zhejiang 417, Pékin 388.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2566,6 +2890,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « 全球：中企IPO首日破发率43.75% » (monde : 43,75 % des introductions en bourse d'entreprises chinoises passent sous leur prix d'émission le premier jour). Deux tableaux classés donnent les cinq plus fortes hausses et baisses du premier jour pour avril 2024, et un diagramme en barres horizontales en dessous montre la répartition des variations du premier jour par tranches, de -60 %,-30 % jusqu'à 240 %,270 %.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2595,6 +2931,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « 全球：IPO数量及金额呈下降趋势 » (monde : le nombre et le montant des introductions en bourse sont en baisse). Un graphique combiné barres et courbe suit chaque mois les fonds levés et le nombre d'entreprises introduites, d'avril 2023 à avril 2024, et un tableau en dessous détaille avril 2024 par compartiment de bourse sur les marchés des actions A, de Hong Kong et des États-Unis.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2624,6 +2972,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « A股：制度建设期的IPO放缓 » (actions A : les introductions en bourse ralentissent pendant une période de construction réglementaire). Un graphique combiné barres et courbe couvre avril 2023 à avril 2024, et un tableau en dessous liste les cinq plus grosses levées de fonds en actions A d'avril 2024, avec l'entreprise, le code boursier, l'activité et le montant.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2653,6 +3013,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « 全球中企IPO募资金额创一年新低 » (les fonds levés par les entreprises chinoises atteignent leur plus bas niveau sur un an). Un graphique combiné barres et courbe couvre février 2024 à février 2025, avec en dessous un tableau du nombre et du montant des introductions de février 2025 par compartiment de bourse.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2682,6 +3054,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « 港交所IPO数量与募资金额居首位 » (la bourse de Hong Kong est en tête pour le nombre et le montant des introductions) pour le premier semestre 2025. Un rectangle rouge encadre le paragraphe portant les chiffres dont est tirée la réponse à la question d'exemple, et un tableau en dessous donne le nombre et le montant des introductions pour onze compartiments de bourse.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2711,6 +3095,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « 全球中企港股IPO表现最突出 » (les introductions à Hong Kong se distinguent) pour mai 2025. Un rectangle rouge encadre le paragraphe d'ouverture (18 entreprises, nombre en hausse de 38,46 % sur un an, S$500亿元 levés) et un second rectangle rouge encadre le tableau par compartiment sous le graphique barres et courbe.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2740,6 +3136,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « A股IPO回归常态 港美IPO持续活跃 » (les introductions en actions A reviennent à la normale ; Hong Kong et les États-Unis restent actifs) pour avril 2025. Un rectangle rouge encadre le paragraphe d'ouverture (24 entreprises, nombre en hausse de 50 %, 146亿元 levés) et un autre encadre le tableau par compartiment sous le graphique.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2769,6 +3177,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « 港主板退出回报高 先进制造获投数量多 » (les sorties sur le marché principal de Hong Kong rapportent beaucoup ; l'industrie de pointe attire le plus d'opérations). Un rectangle rouge encadre le paragraphe d'ouverture et le tableau d'analyse des sorties en dessous ; un second tableau plus bas détaille les rendements de sortie du capital-risque et du capital-investissement par secteur.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2798,6 +3218,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « 港交所主板账面退出回报最高 » (le marché principal de la bourse de Hong Kong offre le meilleur rendement comptable de sortie). Un rectangle rouge couvre le paragraphe d'ouverture et le tableau d'analyse des sorties ; un graphique barres et courbe en dessous suit la part des introductions soutenues par le capital-risque et le capital-investissement, d'avril 2024 à avril 2025.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2827,6 +3259,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) portant le même titre, « 港交所主板账面退出回报最高 », pour mai 2025. Un rectangle rouge couvre le paragraphe d'ouverture et le tableau d'analyse des sorties ; le graphique barres et courbe en dessous couvre mai 2024 à mai 2025. C'est la page jumelle de celle d'avril : elle en diffère par ses chiffres, pas par sa mise en page.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2856,6 +3300,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page d'un rapport chinois de recherche en investissement de CVSource (投中信息) intitulée « 4月VC/PE机构背景企业IPO一览表 » (avril : introductions en bourse d'entreprises soutenues par le capital-risque ou le capital-investissement). Un tableau à deux colonnes associe sept entreprises à leurs investisseurs, avec une note en orange précisant que, faute de place, seuls les investisseurs n'étant pas encore sortis sont listés.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2885,6 +3341,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page web de l'Université nationale de Singapour (NUS) intitulée « MComp in AI: Frequently Asked Questions », qui s'ouvre sur une note concernant la remise sur les frais de scolarité des masters par cours de la NUS. Sous Requirements, des questions-réponses traitent des formations antérieures, de l'expérience professionnelle en informatique, des dates limites de dépôt des documents et de l'exigence ou non des scores TOEFL/IELTS et GRE/GMAT.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2914,6 +3382,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une capture étroite d'une page de la NUS intitulée « Master of Computing (Computer Science Specialisation) (Coursework) », avec une bannière orange « Explore Our Programmes » en haut, une image d'illustration technologique bleu foncé au milieu, deux boutons d'action orange (« More Info », « Apply Now ») et, en dessous, un texte sur la faculté et le programme.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2943,6 +3423,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page de brochure du MTech in Artificial Intelligence Systems de la NUS. La moitié supérieure traite de la maîtrise de l'anglais (seuils TOEFL et IELTS dans un petit tableau) et du GRE ou du test d'entrée NUS-ISS, avec un encadré « How to Apply ». La moitié inférieure présente le calendrier du programme sous forme de deux grilles en couleur (temps plein sur deux semestres, temps partiel sur quatre), suivies de notes sur le Practice Module et le Stackable Graduate Certificate Programme.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -2972,6 +3464,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une brochure complète d'une page pour le Master of Science in Quantitative Finance de la NUS, aux couleurs bleu et orange de l'université. Des encadrés couvrent la présentation, le corps enseignant, les débouchés, la structure du programme et la durée des études, les conditions d'admission, la candidature et deux témoignages d'étudiants. Un rectangle rouge encadre le paragraphe sur la durée des études : un programme de 40 unités, cinq cours obligatoires et cinq optionnels, réalisable en 1 à 2 ans à temps plein ou en 2 à 4 ans à temps partiel.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -3001,6 +3505,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page web intitulée « Master of Technology in Enterprise Business Analytics » de la NUS-ISS. Un rectangle rouge entoure le tableau de présentation (prochaine rentrée, durée, calendrier de candidature, test d'entrée et modalités du GRE), au-dessus de paragraphes descriptifs et d'une liste de ce que les diplômés sauront faire.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -3030,6 +3546,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page générée à partir d'un fichier markdown, dont l'en-tête indique « 27.nus-ba.md » et « 2025-07-26 », consacrée au Master of Science in Business Analytics de la NUS. Un rectangle rouge entoure le tableau Commitment and Candidature (temps plein : 14 mois en moyenne et 24 au maximum ; temps partiel : 24 et 48), avec en dessous le public visé et les critères d'admission.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -3059,6 +3587,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une section de page web consacrée au MSc in Digital Financial Technology de la NUS. Un rectangle rouge entoure le tableau Commitment and Candidature (temps plein : 1,5 an en moyenne et 3 ans au maximum ; temps partiel : 2,5 et 3), avec les bourses au-dessus, et le public visé et les critères généraux d'admission (GMAT 650/800, TOEFL 90/120, IELTS 6.0/9) en dessous.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -3088,6 +3628,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une section de page web intitulée « Capstone Project & Internships » pour le programme MTech EBAC de la NUS. Un rectangle rouge entoure le paragraphe décrivant le module de projet : cinq mois à temps plein, 7 à 12 mois à temps partiel, 30 jours-homme par membre d'équipe et une formation obligatoire de quatre jours. Suivent les objectifs, les acquis d'apprentissage et un tableau Timetable & Exams pour les étudiants à temps plein.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -3117,6 +3669,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une section de page web intitulée « Internship Timeline » pour le MSc in Digital Financial Technology de la NUS. Un rectangle rouge entoure un tableau à en-tête orange du FinTech Capstone Project : caractéristiques clés, période de stage, fenêtres de dépôt et de candidature, dates limites des offres et délai de grâce pour l'acceptation par l'étudiant. Suivent des instructions pour publier une offre sur NUS TalentConnect.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -3146,6 +3710,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "Une page web d'un programme MSAI de la NUS, organisée en en-têtes accordéon bleus empilés (Admission Requirements, Programme Structure & Duration, Curriculum, Career Prospects et Additional Information), tous dépliés. Le premier contient un petit tableau des documents exigés ; le dernier indique des frais de scolarité de 63 220 S$ pour l'année universitaire 2025/26 et au-delà.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     },
@@ -3175,6 +3751,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "La page 3 de l'article « Actions Speak Louder than Words: Trillion-Parameter Sequential Transducers for Generative Recommendations », reproduite telle quelle. Elle porte la figure 2 (une comparaison des caractéristiques et des procédures d'entraînement des DLRM et des Generative Recommenders), deux colonnes de texte sous les intertitres 2.2 et 2.3, et le tableau 1. C'est l'entrée de l'analyseur, montrée avant toute analyse de mise en page.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ],
       "placements": [
@@ -3226,6 +3814,18 @@
           },
           "drafted_at": "2026-09-24",
           "lang": "en"
+        },
+        {
+          "text": "La même page de « Actions Speak Louder than Words », recouverte de l'analyse de mise en page produite par l'analyseur. Quinze zones sont teintées et numérotées de 1 à 15 (vert pour la figure, bleu pour la légende et les intertitres, rose pour les paragraphes de texte, jaune pour le tableau), de sorte que chaque élément détecté et son ordre de lecture se lisent directement. C'est le pendant, en sortie, de la page non annotée qui l'accompagne.",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+          },
+          "drafted_at": "2026-10-24",
+          "lang": "fr"
         }
       ]
     }

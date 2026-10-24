@@ -26,6 +26,18 @@
       },
       "drafted_at": "2026-09-24",
       "lang": "en"
+    },
+    {
+      "text": "Une page entière de brochure intitulée « A little extra goes a long way », portant un tableau comparatif dense de cinq plans complémentaires sur deux niveaux de PRUShield : PRUExtra Premier CoPay, Preferred CoPay, Premier Lite CoPay, Plus CoPay et Plus Lite CoPay. Les lignes couvrent les types d'hôpital et de chambre, les traitements et services anticancéreux, la franchise selon que le prestataire est conventionné ou non, la coassurance, le plafond de dépenses (stop-loss), la tarification selon les sinistres, les services à valeur ajoutée, les primes pour une personne de 30 ans (de 832,80 S$ à 158,00 S$) et l'éligibilité. Dix notes numérotées figurent en dessous.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "fr"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-001",

@@ -26,6 +26,18 @@
       },
       "drafted_at": "2026-09-24",
       "lang": "en"
+    },
+    {
+      "text": "Une brochure complète d'une page pour le Master of Science in Quantitative Finance de la NUS, aux couleurs bleu et orange de l'université. Des encadrés couvrent la présentation, le corps enseignant, les débouchés, la structure du programme et la durée des études, les conditions d'admission, la candidature et deux témoignages d'étudiants. Un rectangle rouge encadre le paragraphe sur la durée des études : un programme de 40 unités, cinq cours obligatoires et cinq optionnels, réalisable en 1 à 2 ans à temps plein ou en 2 à 4 ans à temps partiel.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "fr"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",
