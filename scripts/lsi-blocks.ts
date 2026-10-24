@@ -155,6 +155,31 @@ export function declaredLibraries(repoRoot: string): string[] {
   return [...dirs].sort();
 }
 
+/** The index options this script builds with, shared with the `lsi:near` provider so both index the same way. */
+export const BLOCK_INDEX_OPTIONS = { k: 100, weighting: "log-entropy", minDf: 2, maxDfShare: 0.5, powerIterations: 4, seed: 1990 } as const;
+
+/**
+ * The `lsiUnitProviders` entry `blocks` (bean `ec2a` step 3): every block of
+ * every declared library, for cross-graph `lsi:near` in cat-harness-tools
+ * (`pipeline/lsi-near-across.ts`, which owns the contract). `ctx.roots`, from
+ * `--root blocks=<dir>`, replaces the declared libraries when given.
+ *
+ * A block's `@id` is its own explicit reference: a query that writes it out
+ * names the block, unscored.
+ */
+export function lsiNearUnits(ctx: { checkoutRoot: string; roots: string[] }): {
+  units: LsiUnit[];
+  unreadable: Array<{ file: string; reason: string }>;
+  notSearched?: string;
+  buildOptions?: typeof BLOCK_INDEX_OPTIONS;
+  refKeys?: Array<[string, string]>;
+} {
+  const libraries = ctx.roots.length ? ctx.roots.map((r) => resolve(r)) : declaredLibraries(ctx.checkoutRoot);
+  if (libraries.length === 0) return { units: [], unreadable: [], notSearched: "no library is declared in this checkout" };
+  const b = blockUnits(libraries);
+  return { units: b.units, unreadable: b.unreadable, buildOptions: BLOCK_INDEX_OPTIONS, refKeys: b.units.map((u) => [u.id, u.id]) };
+}
+
 if (import.meta.main) {
   const argv = process.argv.slice(2);
   const libs = argv.flatMap((a, i) => (argv[i - 1] === "--library" ? [resolve(a)] : []));
@@ -165,7 +190,7 @@ if (import.meta.main) {
     console.error(`UNKNOWN — no block could be read from ${libraries.length} library director(ies); nothing to index.`);
     process.exit(2);
   }
-  const ix = buildLsi(b.units, { k: 100, weighting: "log-entropy", minDf: 2, maxDfShare: 0.5, powerIterations: 4, seed: 1990 });
+  const ix = buildLsi(b.units, BLOCK_INDEX_OPTIONS);
   const at = argv.indexOf("--near");
   const top = argv.includes("--top") ? Number(argv[argv.indexOf("--top") + 1]) : 10;
   if (at >= 0) {
