@@ -699,3 +699,47 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     expect(findings.some((x) => /nodes\/skills\/sdlc\/extra\.txt` is in the subscription's directory with no record/.test(x))).toBe(true);
   });
 });
+
+describe("a nested subgraph: chosen by its parent, materialised by its path (owner, 2026-10-24, ruling 4)", () => {
+  test("its parent chosen, the nested path is held apart from the parent's part, and both checks pass", async () => {
+    const { repo, inst, snapDir } = checkout({ subgraphs: ["kb"] });
+    const r = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb/nested", decisions: DECISIONS, fetch: fixture(), now: NOW });
+    expect(r.state).toBe("materialized");
+    if (r.state !== "materialized") return;
+    expect(r.record.part as unknown).toEqual({ kind: "subgraph", id: "kb", path: "kb/nested", nested: true });
+    const dir = join(snapDir, "ihris-kb", "nested", "kb", "nested");
+    expect(readFileSync(join(dir, "tree", "deep.md"), "utf8")).toBe("deep\n");
+    expect(r.record.materialization.provenance.upstream).toBe(`https://github.com/litlfred/ihris-kb/tree/${SHA}/kb/nested`);
+    expect(r.record.files?.map((f) => f.id)).toEqual(["ihris-kb/nested/kb/nested/deep.md"]);
+    // The parent's own copy afterwards neither moves nor removes the child's.
+    await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture(), now: NOW });
+    expect(existsSync(join(dir, "tree", "deep.md"))).toBe(true);
+    const report = checkMaterializations(inst);
+    expect(report.findings).toEqual([]);
+    expect(report.held).toBe(2);
+    expect(report.chosenNotHeld).toBe(0);
+    expect(partRecordsIn(snapDir, "ihris-kb").parts.map((p) => p.slot) as unknown[]).toEqual([
+      { kind: "nested", path: "kb/nested" },
+      { kind: "subgraph", id: "kb" },
+    ]);
+    expect(fixityRun(repo).every((v) => v.kind === "verified" || v.kind === "covered-by-parts")).toBe(true);
+  });
+
+  test("a nested part alone does not count its parent as held", async () => {
+    const { inst } = checkout({ subgraphs: ["kb"] });
+    await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb/nested", decisions: DECISIONS, fetch: fixture(), now: NOW });
+    expect(checkMaterializations(inst).chosenNotHeld).toBe(1);
+  });
+
+  test("refused when its parent is not chosen, or when no declared directory holds the path", async () => {
+    const { inst } = checkout({ subgraphs: ["kb-skills"] });
+    const f = fixture();
+    const unchosen = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb/nested", decisions: DECISIONS, fetch: f });
+    expect(unchosen.state).toBe("refused");
+    if (unchosen.state === "refused") expect(unchosen.reason).toContain("A nested part is chosen by its parent: add `kb`");
+    const outside = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "outside/x", decisions: DECISIONS, fetch: f });
+    expect(outside.state).toBe("refused");
+    if (outside.state === "refused") expect(outside.reason).toContain("lies under no directory the cached snapshot");
+    expect(f.calls).toBe(0);
+  });
+});
