@@ -15,6 +15,14 @@
       "status": "candidate"
     },
     {
+      "id": "github-pages",
+      "prefLabel": "github-pages",
+      "definition": "The contract GitHub Pages keeps as the host of a rendered Knowledge Graph: serve the gh-pages branch at the publication root URL, exactly as committed, and answer 404 for what is not there. A mechanical Actor plays this Role; this is what it must do, and what it is tested against.",
+      "notation": "github-pages",
+      "source": "bootstrap-tools/skills/github-pages.md",
+      "status": "candidate"
+    },
+    {
       "id": "render-kg-to-github-pages",
       "prefLabel": "render-kg-to-github-pages",
       "definition": "Render a Knowledge Graph, or a list of its Subgraphs, to GitHub Pages at a publication root URL, and report the push: a status (pushed, not pushed, could not determine) and one message carrying the deployed commit and the QA result. The same steps for a staging preview and for a release; only the root URL differs.",

@@ -23,7 +23,7 @@
     {
       "id": "fhir-artifact-index.fhirartifactindexschema.id",
       "prefLabel": "FhirArtifactIndexSchema.id",
-      "definition": "Instance id — the directory this index lives in, e.g. `smart-trust`.",
+      "definition": "Instance id — the directory this index lives in, e.g. `<ig>`.",
       "source": "fhir-harness/schemas/fhir-artifact-index.ts#FhirArtifactIndexSchema.id",
       "status": "candidate"
     },
@@ -235,6 +235,27 @@
       "prefLabel": "UnboundSidecarSchema.title",
       "definition": "Its title, as the enumeration gives it — usually the only human handle on what was missed.",
       "source": "fhir-harness/schemas/fhir-artifact-index.ts#UnboundSidecarSchema.title",
+      "status": "candidate"
+    },
+    {
+      "id": "ig-annexes.igannexrecordschema.columns",
+      "prefLabel": "IgAnnexRecordSchema.columns",
+      "definition": "Column keys shown before a row is opened. Default: the first six.",
+      "source": "fhir-harness/schemas/ig-annexes.ts#IgAnnexRecordSchema.columns",
+      "status": "candidate"
+    },
+    {
+      "id": "ig-annexes.igannexrecordschema.file",
+      "prefLabel": "IgAnnexRecordSchema.file",
+      "definition": "The annex, relative to the directory that holds this declaration.",
+      "source": "fhir-harness/schemas/ig-annexes.ts#IgAnnexRecordSchema.file",
+      "status": "candidate"
+    },
+    {
+      "id": "ig-annexes.igannexrecordschema.page",
+      "prefLabel": "IgAnnexRecordSchema.page",
+      "definition": "The page file under `input/pagecontent/`, e.g. `dictionary.md`.",
+      "source": "fhir-harness/schemas/ig-annexes.ts#IgAnnexRecordSchema.page",
       "status": "candidate"
     },
     {

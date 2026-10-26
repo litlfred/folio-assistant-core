@@ -9,7 +9,7 @@
     {
       "id": "globaltask.gt_seedworkplan",
       "prefLabel": "Seed the work plan [todo-manager]",
-      "definition": "The plan becomes beans, so a resumed session or a sibling agent can pick it up. From here on, beans/ is the shared answer to 'what is done, what is next' — for humans and agents alike.",
+      "definition": "The plan becomes beans, so a resumed session or a sibling agent can pick it up. The run's own bean was claimed by the Process_BeanOpen call before this step (bean m8gz), so this step only notes the seeded plan on it; the beans themselves are written with the agent's own `beans create`, which no engine op performs. From here on, beans/ is the shared answer to 'what is done, what is next' — for humans and agents alike.",
       "notation": "GT_SeedWorkPlan",
       "source": "folio-assistant-core/processes/global-tasks.bpmn#GT_SeedWorkPlan",
       "status": "candidate"
@@ -180,6 +180,54 @@
       "definition": "adjudication.bpmn. When the editor and a reviewer, or two reviewers, disagree about a finding, an adjudicator settles it and records why; the review comment moves to `adjudicated` with the Decision that closed it. Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is right and the author addresses it; `withdrawn` — the finding is wrong and the comment closes. Recorded on the comment, not branched: either way the flow goes on to the coverage check.",
       "notation": "Call_Adjudication",
       "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_Adjudication",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereview.call_beanclose",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Call_BeanClose",
+      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_BeanClose",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereview.call_beanclose_2",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Call_BeanClose_2",
+      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_BeanClose_2",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereview.call_beanclose_3",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Call_BeanClose_3",
+      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_BeanClose_3",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereview.call_beanclose_4",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Call_BeanClose_4",
+      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_BeanClose_4",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereview.call_beanclose_5",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Call_BeanClose_5",
+      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_BeanClose_5",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereview.call_beanopen",
+      "prefLabel": "Open the bean [bean-open]",
+      "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
+      "notation": "Call_BeanOpen",
+      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_BeanOpen",
       "status": "candidate"
     },
     {
@@ -495,6 +543,22 @@
       "status": "candidate"
     },
     {
+      "id": "process_documentauthoring.call_beanclose",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Call_BeanClose",
+      "source": "folio-assistant-core/processes/content/authoring-a-document.bpmn#Call_BeanClose",
+      "status": "candidate"
+    },
+    {
+      "id": "process_documentauthoring.call_beanopen",
+      "prefLabel": "Open the bean [bean-open]",
+      "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
+      "notation": "Call_BeanOpen",
+      "source": "folio-assistant-core/processes/content/authoring-a-document.bpmn#Call_BeanOpen",
+      "status": "candidate"
+    },
+    {
       "id": "process_documentauthoring.task_authorblocks",
       "prefLabel": "4 · Author blocks [document-authoring]",
       "definition": "Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn. A normative statement is a `recommendation` block (bean 55ao), drafted through normative-statements: one statement per block, a folio-chosen label, and its strength as a code in a declared code list, so a reviewer signs off each one individually.",
@@ -553,7 +617,7 @@
     {
       "id": "process_documentauthoring.task_seedplan",
       "prefLabel": "2 · Seed the work plan [todo-manager]",
-      "definition": "The plan becomes beans, so a resumed session or a sibling agent can pick it up. From here on, beans/ is the shared answer to 'what is done, what is next' — for humans and agents alike.",
+      "definition": "The plan becomes beans, so a resumed session or a sibling agent can pick it up. The run's own bean was claimed by the Process_BeanOpen call before this step (bean m8gz), so this step only notes the seeded plan on it; the beans themselves are written with the agent's own `beans create`, which no engine op performs. From here on, beans/ is the shared answer to 'what is done, what is next' — for humans and agents alike.",
       "notation": "Task_SeedPlan",
       "source": "folio-assistant-core/processes/content/authoring-a-document.bpmn#Task_SeedPlan",
       "status": "candidate"
@@ -564,6 +628,14 @@
       "definition": "Schema and constraint checks over every block.",
       "notation": "Task_Validate",
       "source": "folio-assistant-core/processes/content/authoring-a-document.bpmn#Task_Validate",
+      "status": "candidate"
+    },
+    {
+      "id": "process_editing.call_beanclose",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Call_BeanClose",
+      "source": "folio-assistant-core/processes/content/editing-hci-validation.bpmn#Call_BeanClose",
       "status": "candidate"
     },
     {
@@ -600,8 +672,8 @@
     },
     {
       "id": "process_editing.task_claimbean",
-      "prefLabel": "Claim or open the bean [todo-manager]",
-      "definition": "Every edit is tracked as a bean in beans/. Check for an existing bean by exact title first; claim it (status in-progress) rather than minting a duplicate.",
+      "prefLabel": "Open the bean [bean-open]",
+      "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
       "notation": "Task_ClaimBean",
       "source": "folio-assistant-core/processes/content/editing-hci-validation.bpmn#Task_ClaimBean",
       "status": "candidate"
@@ -656,8 +728,8 @@
     },
     {
       "id": "process_editing.task_resolvebean",
-      "prefLabel": "Resolve or re-open the bean [todo-manager]",
-      "definition": "Resolved when the change landed clean; left open with the residue when it did not.",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Task_ResolveBean",
       "source": "folio-assistant-core/processes/content/editing-hci-validation.bpmn#Task_ResolveBean",
       "status": "candidate"
@@ -823,6 +895,22 @@
       "status": "candidate"
     },
     {
+      "id": "process_gettingstarted.call_beanclose",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Call_BeanClose",
+      "source": "folio-assistant-core/processes/conduct/getting-started.bpmn#Call_BeanClose",
+      "status": "candidate"
+    },
+    {
+      "id": "process_gettingstarted.call_beanopen",
+      "prefLabel": "Open the bean [bean-open]",
+      "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
+      "notation": "Call_BeanOpen",
+      "source": "folio-assistant-core/processes/conduct/getting-started.bpmn#Call_BeanOpen",
+      "status": "candidate"
+    },
+    {
       "id": "process_gettingstarted.task_askintent",
       "prefLabel": "Choose from the offered options",
       "definition": "The question is presented as a short list of selectable options, never as free prose, and the list names the top-level content types the agent knows about. The answer becomes the statedIntent fact and the table is evaluated again — the user's answer is read as evidence, like any other fact.",
@@ -924,6 +1012,22 @@
       "definition": "The first beans: what the author said they want to get started on, one bean per top-level content object they named.",
       "notation": "Task_SeedPlan",
       "source": "folio-assistant-core/processes/conduct/getting-started.bpmn#Task_SeedPlan",
+      "status": "candidate"
+    },
+    {
+      "id": "process_l1documentingestion.call_beanclose",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Call_BeanClose",
+      "source": "folio-assistant-core/processes/library/l1-document-ingestion.bpmn#Call_BeanClose",
+      "status": "candidate"
+    },
+    {
+      "id": "process_l1documentingestion.call_beanopen",
+      "prefLabel": "Open the bean [bean-open]",
+      "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
+      "notation": "Call_BeanOpen",
+      "source": "folio-assistant-core/processes/library/l1-document-ingestion.bpmn#Call_BeanOpen",
       "status": "candidate"
     },
     {
@@ -1055,6 +1159,22 @@
       "status": "candidate"
     },
     {
+      "id": "process_lifecycle.call_beanclose",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Call_BeanClose",
+      "source": "folio-assistant-core/processes/content/content-lifecycle.bpmn#Call_BeanClose",
+      "status": "candidate"
+    },
+    {
+      "id": "process_lifecycle.call_beanopen",
+      "prefLabel": "Open the bean [bean-open]",
+      "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
+      "notation": "Call_BeanOpen",
+      "source": "folio-assistant-core/processes/content/content-lifecycle.bpmn#Call_BeanOpen",
+      "status": "candidate"
+    },
+    {
       "id": "process_lifecycle.callactivity_editing",
       "prefLabel": "Editing and HCI validation [content-author]",
       "definition": "See editing-hci-validation.bpmn. Runs once per proposed change, not once per cycle.",
@@ -1105,7 +1225,7 @@
     {
       "id": "process_lifecycle.task_seedbeans",
       "prefLabel": "Seed the work plan [todo-manager]",
-      "definition": "The plan becomes beans, so a resumed session or a sibling agent can pick it up. From here on, beans/ is the shared answer to 'what is done, what is next' — for humans and agents alike.",
+      "definition": "The plan becomes beans, so a resumed session or a sibling agent can pick it up. The run's own bean was claimed by the Process_BeanOpen call before this step (bean m8gz), so this step only notes the seeded plan on it; the beans themselves are written with the agent's own `beans create`, which no engine op performs. From here on, beans/ is the shared answer to 'what is done, what is next' — for humans and agents alike.",
       "notation": "Task_SeedBeans",
       "source": "folio-assistant-core/processes/content/content-lifecycle.bpmn#Task_SeedBeans",
       "status": "candidate"
@@ -1132,6 +1252,14 @@
       "definition": "When the draft is released for public comment: comments returned on the frozen, line-numbered review version are placed, triaged, recommended on by the review committee and decided by the editor (public-comment.bpmn). Bean v26p, issue #197.",
       "notation": "CallActivity_PublicComment",
       "source": "folio-assistant-core/processes/content/draft-to-publication.bpmn#CallActivity_PublicComment",
+      "status": "candidate"
+    },
+    {
+      "id": "process_publication.task_archivereleasebean",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Task_ArchiveReleaseBean",
+      "source": "folio-assistant-core/processes/content/draft-to-publication.bpmn#Task_ArchiveReleaseBean",
       "status": "candidate"
     },
     {
@@ -1176,8 +1304,8 @@
     },
     {
       "id": "process_publication.task_openreleasebean",
-      "prefLabel": "Open or claim the release bean [todo-manager]",
-      "definition": "The release itself is a bean: it carries what is in this draft, what is outstanding, and who is holding it.",
+      "prefLabel": "Open the bean [bean-open]",
+      "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
       "notation": "Task_OpenReleaseBean",
       "source": "folio-assistant-core/processes/content/draft-to-publication.bpmn#Task_OpenReleaseBean",
       "status": "candidate"
