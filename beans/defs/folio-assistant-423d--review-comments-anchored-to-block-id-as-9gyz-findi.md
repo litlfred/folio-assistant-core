@@ -39,8 +39,8 @@ shown as "orphaned", never dropped.
 
 ## Done when
 - [x] the owner has chosen the write path, recorded here with the reasons against the others (ruling below)
-- [ ] comments are stored as Findings and survive a block move (test)
-- [ ] the review page lists, filters and resolves comments, and resolution records a Decision
+- [x] comments are stored as Findings and survive a block move (test)
+- [x] the review page lists, filters and resolves comments, and resolution records a Decision
 
 
 ## Roast correction 2026-09-22 (epic q4jm, R2, R4)
