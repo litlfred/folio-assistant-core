@@ -2,13 +2,13 @@
 # folio-assistant-ckej
 $schema: bean/1.0.0
 title: 'CONJECTURE REGISTER: a register node per open problem, and a formal|identification field on conjecture() (folio-assistant-sci)'
-status: todo
+status: completed
 type: feature
 priority: normal
 tags:
     - rehomed
 created_at: 2026-10-04T15:10:08Z
-updated_at: 2026-10-10T16:34:20Z
+updated_at: 2026-10-24T11:26:00Z
 parent: folio-assistant-0lmb
 ---
 

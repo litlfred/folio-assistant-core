@@ -78,8 +78,20 @@
  *   subscribed repository, at the pin. `<docs>` is the snapshot's declared
  *   `docs` directory and `<HARNESS>` the snapshot's declaration name — read
  *   from the cached declaration, the way `gen-subgraph-jsonld` reads its own,
- *   never spelled. Fetched through the same injectable {@link PartFetcher}, so
+ *   never spelled, and joined by cat-harness's `publishedSubgraphDir`, the
+ *   function a hydrated mount and `gen-subgraph-jsonld`'s layout use (bean
+ *   `mo75` G3). Fetched through the same injectable {@link PartFetcher}, so
  *   the pin check (`FETCH_HEAD` must be the pinned SHA) is the same code.
+ * - **Not in the tree: the pin's package.** A harness that builds
+ *   `<docs>/subgraph/` at publish (`builtAtPublish` — every litlfred harness)
+ *   commits no hydrated file, so a tree miss asks the pin's subgraph index
+ *   package (bean `mo75` G2b, cat-harness-tools `fetchSubgraphIndex`), which
+ *   verifies its record, digest and manifest before anything is read. The
+ *   record's `file.upstream` then names the tarball and member. A package
+ *   that could not be fetched is `could-not-determine`, never "not published".
+ * - **Any depth.** The path may name a nested subgraph (`skills/sdlc`,
+ *   `skills/voices`), declared at the top level or from within: the request
+ *   is by path, and the hydrated file at that path is the answer.
  * - **The root is refused, by design.** A harness root publishes
  *   `index.jsonld` only: a deep hydrated file there is the monolith `f233`
  *   forbids. A root request is REFUSED with a pointer at `index.jsonld`; it is
@@ -117,8 +129,20 @@
  * and this is more of the same layer. The path must lie under a directory the
  * snapshot declares.
  *
+ * ## A nested subgraph: chosen by its parent, materialised by its path
+ *
+ * Owner, 2026-10-24 (cat-harness-tools#744, ruling 4). `<subgraph>` may be a
+ * PATH (`skills/voices`) under a directory the snapshot declares. The part is
+ * judged by that PARENT: its id must be chosen, because the snapshot holds the
+ * root declaration only and cannot vouch for a nested id offline, and the
+ * snapshot schema is not widened to carry the nested declarations. The bytes
+ * are the nested path's, through the same five gates; the record says
+ * `nested: true` with the parent's `id`, and it is held under `nested/<path>/`
+ * (`partDirOf`), apart from the parent's part.
+ *
  * Usage:
  *   bun run cat kg:materialize <subscription> <subgraph> [--decisions <file.json>] [--instance <dir>] [--dry-run]
+ *   bun run cat kg:materialize <subscription> <parent-path>/<nested-path> [...]   # a nested subgraph, its parent chosen
  *   bun run cat kg:materialize <subscription> --asset <path> [--decisions <file.json>] [--instance <dir>] [--dry-run]
  *   bun run cat kg:materialize --nodes <subscription> <subgraph-path> [--max-bytes <n>] [--instance <dir>] [--dry-run]
  *   bun run cat kg:materialize:check
@@ -128,7 +152,8 @@ import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, 
 import { basename, dirname, join, relative, resolve } from "node:path";
 
 import { findDeclarationFile, instanceRootsIn, repoRootFor, type Subscription } from "@litlfred/cat-harness/schemas/cat-harness.ts";
-import { SUBGRAPH_HYDRATED_FILE, SUBGRAPH_INDEX_FILE, SubgraphHydratedSchema, type SubgraphHydratedNode } from "@litlfred/cat-harness/schemas/subgraph-manifest.ts";
+import { publishedSubgraphDir, SUBGRAPH_HYDRATED_FILE, SUBGRAPH_INDEX_FILE, SubgraphHydratedSchema, type SubgraphHydratedNode } from "@litlfred/cat-harness/schemas/subgraph-manifest.ts";
+import { fetchSubgraphIndex, type SubgraphIndexFetch } from "@litlfred/cat-harness-tools/scripts/subgraph-index-package.ts";
 import { SubstrateSnapshotSchema, type SubstrateSnapshot } from "@litlfred/cat-harness/schemas/substrate-snapshot.ts";
 import {
   NODES_RECORD_FILE,
@@ -226,6 +251,30 @@ export function resolveRequest(opts: { instance?: string; subscription: string; 
 
   if ((opts.subgraph === undefined) === (opts.asset === undefined)) {
     return { ok: false, reason: "name exactly one part: a subgraph id, or `--asset <path>`" };
+  }
+  if (opts.subgraph !== undefined && opts.subgraph.includes("/") && !dirs.some((d) => d.id === opts.subgraph)) {
+    // A nested subgraph, named by its path: judged by the declared directory it lies under.
+    const p = safeRelPath(opts.subgraph);
+    if (!p.ok) return { ok: false, reason: `subgraph path ${p.why}` };
+    const exact = dirs.find((d) => d.path === p.path);
+    const parent = exact ? undefined : dirs.filter((d) => p.path.startsWith(`${d.path}/`)).sort((a, b) => b.path.length - a.path.length)[0];
+    if (!exact && !parent) {
+      return {
+        ok: false,
+        reason: `\`${p.path}\` lies under no directory the cached snapshot of ${sub.repository}@${sub.ref.slice(0, 12)} declares (${dirs.map((d) => `\`${d.path}/\``).join(", ") || "none"}), so no chosen subgraph holds it`,
+      };
+    }
+    const owner = exact ?? parent!;
+    if (!(sub.subgraphs ?? []).includes(owner.id)) {
+      return {
+        ok: false,
+        reason:
+          `\`${p.path}\` lies under subgraph \`${owner.id}\`, which subscription \`${sub.id}\` does not choose (chosen: ${(sub.subgraphs ?? []).map((g) => `\`${g}\``).join(", ") || "none"}). ` +
+          `A nested part is chosen by its parent: add \`${owner.id}\` to \`subscriptions[].subgraphs\` first`,
+      };
+    }
+    const part: KgPartRecord = exact ? { kind: "subgraph", id: owner.id, path: owner.path } : { kind: "subgraph", id: owner.id, path: p.path, nested: true };
+    return { ok: true, r: { instanceRoot, snapshotDir, sub, snap, part, partDir: partDirOf(snapshotDir, sub.id, part) } };
   }
   if (opts.subgraph !== undefined) {
     const id = opts.subgraph;
@@ -334,7 +383,7 @@ export async function materialize(opts: MaterializeOptions): Promise<Materialize
   const { instanceRoot, sub, part, partDir } = res.r;
   const at = (opts.now ?? new Date()).toISOString();
   const recordFile = join(partDir, PART_RECORD_FILE);
-  const label = part.kind === "subgraph" ? `subgraph \`${part.id}\`` : `asset \`${part.path}\``;
+  const label = part.kind === "subgraph" ? (part.nested ? `nested subgraph \`${part.path}\` (chosen by \`${part.id}\`)` : `subgraph \`${part.id}\``) : `asset \`${part.path}\``;
 
   const existing = readExisting(partDir);
   if (existing && existing.materialization.state === "materialized" && existing.ref !== sub.ref) {
@@ -423,7 +472,8 @@ export async function materialize(opts: MaterializeOptions): Promise<Materialize
     const local = (p: string): string => relative(instanceRoot, p).split("\\").join("/");
     const upstreamFile = (f: string): string => (part.kind === "subgraph" ? `${part.path}/${f}` : part.path);
     const fileRecords = files.map((f, i) => ({
-      id: `${sub.id}/${part.kind === "subgraph" ? part.id : "asset"}/${f}`,
+      // A nested part's files are named by its path, so they never share an id with the same file held in its parent's copy.
+      id: `${sub.id}/${part.kind === "subgraph" ? (part.nested ? `nested/${part.path}` : part.id) : "asset"}/${f}`,
       name: f,
       materialization: {
         state: "materialized" as const,
@@ -536,7 +586,15 @@ export function nodesLocation(
   if (!docs) {
     return { ok: false, reason: `the snapshot of ${snap.repository}@${snap.ref.slice(0, 12)} declares no \`docs\` directory, so the substrate publishes no subgraph files to fetch` };
   }
-  const up = safeRelPath(`${docs.path}/subgraph/${harness}/${p.path}/${SUBGRAPH_HYDRATED_FILE}`);
+  // The same function `gen-subgraph-jsonld`'s layout and a hydrated mount
+  // read it through, so the three cannot spell `<docs>/subgraph/<HARNESS>/<path>` apart.
+  let published: string;
+  try {
+    published = publishedSubgraphDir(docs.path, harness, p.path);
+  } catch (e) {
+    return { ok: false, reason: `the hydrated file's upstream path: ${e instanceof Error ? e.message : String(e)}` };
+  }
+  const up = safeRelPath(`${published}/${SUBGRAPH_HYDRATED_FILE}`);
   if (!up.ok) return { ok: false, reason: `the hydrated file's upstream path ${up.why}` };
   return { ok: true, path: p.path, upstreamPath: up.path, iriSuffix: `/subgraph/${harness}/${p.path}/`, harness };
 }
@@ -555,6 +613,12 @@ export interface NodesOptions {
   /** The size cap. Absent: {@link DEFAULT_MAX_BYTES}. */
   maxBytes?: number;
   fetch?: PartFetcher;
+  /**
+   * The pin's subgraph index PACKAGE (bean `mo75` G2b), asked only when the
+   * pin's git tree holds no hydrated file — every harness that builds
+   * `<docs>/subgraph/` at publish. Absent: cat-harness-tools' `fetchSubgraphIndex`.
+   */
+  indexPackage?: (a: { repository: string; ref: string; harness: string }) => SubgraphIndexFetch;
   now?: Date;
   dryRun?: boolean;
 }
@@ -620,13 +684,38 @@ export async function materializeNodes(opts: NodesOptions): Promise<NodesResult>
   } catch (e) {
     return { state: "could-not-determine", reason: `\`${loc.upstreamPath}\` of ${sub.repository} at ${sub.ref.slice(0, 12)} was not read: ${e instanceof Error ? e.message : String(e)}` };
   }
+  // Not in the tree: the pin's subgraph index PACKAGE, where a harness that
+  // builds its subgraph files at publish puts them (bean `mo75` G2b) — the
+  // same fallback, and the same verification, a hydrated mount uses.
+  let upstream = `https://github.com/${sub.repository}/blob/${sub.ref}/${loc.upstreamPath}`;
+  let release: (() => void) | undefined;
   if (!fetched) {
-    return {
-      state: "refused",
-      reason:
-        `${sub.repository} at ${sub.ref.slice(0, 12)} publishes no \`${loc.upstreamPath}\`: either \`${loc.path}\` is not a subgraph there, ` +
-        `or the substrate did not publish its subgraph files at that commit (\`bun run cat subgraph:jsonld\`)`,
-    };
+    let pkg: SubgraphIndexFetch;
+    try {
+      pkg = (opts.indexPackage ?? fetchSubgraphIndex)({ repository: sub.repository, ref: sub.ref, harness: loc.harness });
+    } catch (e) {
+      return { state: "could-not-determine", reason: `\`${loc.upstreamPath}\` is not in ${sub.repository}'s tree at ${sub.ref.slice(0, 12)}, and the pin's subgraph index package was not read: ${e instanceof Error ? e.message : String(e)}` };
+    }
+    const entry = pkg.state === "ok" ? pkg.hydrated.get(loc.path) : undefined;
+    if (pkg.state === "ok" && entry) {
+      const file = join(pkg.root, ...entry.path.split("/"));
+      fetched = { kind: "blob", root: pkg.root, part: dirname(file) };
+      upstream = `${pkg.pkg.tarballUrl}#${entry.path}`;
+      release = pkg.close;
+    } else {
+      if (pkg.state === "ok") pkg.close();
+      // A package that failed to fetch, or failed its checks, is never "not published".
+      if (pkg.state === "could-not-determine") {
+        return { state: "could-not-determine", reason: `\`${loc.upstreamPath}\` is not in ${sub.repository}'s tree at ${sub.ref.slice(0, 12)}, and the pin's subgraph index package was not read: ${pkg.detail}` };
+      }
+      const where = pkg.state === "ok" ? "holds no file for it" : `${pkg.state} — ${pkg.detail}`;
+      return {
+        state: "refused",
+        reason:
+          `${sub.repository} at ${sub.ref.slice(0, 12)} publishes no \`${loc.upstreamPath}\`: either \`${loc.path}\` is not a subgraph there, ` +
+          `or the substrate did not publish its subgraph files at that commit (\`bun run cat subgraph:jsonld\`); the pin's subgraph index package ${where}`,
+      };
+    }
   }
   try {
     if (fetched.kind !== "blob") {
@@ -635,7 +724,6 @@ export async function materializeNodes(opts: NodesOptions): Promise<NodesResult>
     const src = join(fetched.part, SUBGRAPH_HYDRATED_FILE);
     if (!existsSync(src)) return { state: "could-not-determine", reason: `the fetcher reported \`${loc.upstreamPath}\` and left no \`${SUBGRAPH_HYDRATED_FILE}\` to read` };
     const bytes = readFileSync(src);
-    const upstream = `https://github.com/${sub.repository}/blob/${sub.ref}/${loc.upstreamPath}`;
     const base = { $schema: KG_NODES_RECORD_SCHEMA, subscription: sub.id, repository: sub.repository, ref: sub.ref } as const;
 
     // The safety cap is measured BEFORE the bytes are parsed.
@@ -691,7 +779,8 @@ export async function materializeNodes(opts: NodesOptions): Promise<NodesResult>
     }
     return { state: "materialized", record, recordFile, file: heldFile, changed: true };
   } finally {
-    rmSync(fetched.root, { recursive: true, force: true });
+    if (release) release();
+    else rmSync(fetched.root, { recursive: true, force: true });
   }
 }
 
@@ -812,7 +901,7 @@ export function checkMaterializations(instanceRoot: string): CheckReport {
       const held = r.materialization.state === "materialized";
       if (held) report.held++;
       else report.stayedReferenced++;
-      if (r.part.kind === "subgraph") heldSubgraphs.add(r.part.id);
+      if (r.part.kind === "subgraph" && !r.part.nested) heldSubgraphs.add(r.part.id);
       if (r.subscription !== s.id || r.repository !== s.repository) out.push(`${where}: the record says it belongs to \`${r.subscription}\` (${r.repository})`);
       if (r.ref !== s.ref) out.push(`${where}: ${held ? "held" : "decided"} at ${r.ref.slice(0, 12)}, and the subscription pins ${s.ref.slice(0, 12)} — refresh it (\`refresh-materialized\`)`);
       if (resolve(partDirOf(snapshotDir, s.id, r.part)) !== resolve(p.dir)) out.push(`${where}: the record describes ${r.part.kind} \`${r.part.kind === "subgraph" ? r.part.id : r.part.path}\`, which the layout puts elsewhere`);
@@ -820,7 +909,9 @@ export function checkMaterializations(instanceRoot: string): CheckReport {
         if (!(s.subgraphs ?? []).includes(r.part.id)) out.push(`${where}: subgraph \`${r.part.id}\` is ${held ? "held" : "recorded"} but no longer chosen`);
         const decl = dirs?.find((x) => x.id === (r.part as { id: string }).id);
         if (dirs && !decl) out.push(`${where}: subgraph \`${r.part.id}\` is not declared by the snapshot`);
-        else if (decl && decl.path !== r.part.path) out.push(`${where}: subgraph \`${r.part.id}\` was copied from \`${r.part.path}\`, and the snapshot declares it at \`${decl.path}\``);
+        else if (decl && r.part.nested && !r.part.path.startsWith(`${decl.path}/`)) {
+          out.push(`${where}: nested subgraph \`${r.part.path}\` is recorded under \`${r.part.id}\`, which the snapshot declares at \`${decl.path}\` — not its parent`);
+        } else if (decl && !r.part.nested && decl.path !== r.part.path) out.push(`${where}: subgraph \`${r.part.id}\` was copied from \`${r.part.path}\`, and the snapshot declares it at \`${decl.path}\``);
       } else {
         const policy = s.assets?.policy ?? "none";
         if (held && policy !== "on-demand" && policy !== "all") out.push(`${where}: an asset is held under asset policy \`${policy}\``);
@@ -929,6 +1020,7 @@ if (import.meta.main) {
   if (!subscription || (subgraph === undefined) === (asset === undefined)) {
     console.error(
       "usage: bun run cat kg:materialize <subscription> <subgraph> [--decisions <file.json>] [--instance <dir>] [--dry-run]\n" +
+        "       bun run cat kg:materialize <subscription> <nested-subgraph-path> [...]   (its parent chosen)\n" +
         "       bun run cat kg:materialize <subscription> --asset <path> [--decisions <file.json>] [--instance <dir>] [--dry-run]\n" +
         "       bun run cat kg:materialize --nodes <subscription> <subgraph-path> [--max-bytes <n>] [--instance <dir>] [--dry-run]",
     );
