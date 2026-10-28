@@ -11,7 +11,7 @@
       "prefLabel": "IRIS replica and catalogue pages",
       "definition": "Render who-iris's replica of the IRIS site, its docs pages, and the catalogue visualiser who-iris declares — what the catalogue knows and what it records that it does not know — at that visualiser's declared route.",
       "notation": "iris-pages",
-      "source": "who-iris/tools/index.ts#iris-pages",
+      "source": "who-iris/tools/iris-pages/iris-pages.ts#iris-pages",
       "status": "candidate"
     }
   ]

@@ -55,6 +55,14 @@
       "status": "candidate"
     },
     {
+      "id": "compute-integration-watcher",
+      "prefLabel": "compute-integration-watcher",
+      "definition": "Cross-layer wiring auditor — watches for newly-landed formal/analytic improvements (proofs, propositions, lemmas, axiom→theorem upgrades, witness data) on the default branch AND on open PRs, and checks whether each one has been wired into the production compute chain. Complements `local/compute-audit` (which scans for performance/correctness antipatterns inside scripts). Runs in two modes: REACTIVE (watch new commits / PR events) and IDLE-SWEEP (walk all existing content blocks and audit wiring).",
+      "notation": "compute-integration-watcher",
+      "source": "folio-assistant-sci/skills/content/folio-paper-adapter/compute-integration-watcher.md",
+      "status": "candidate"
+    },
+    {
       "id": "content-block-review",
       "prefLabel": "content-block-review",
       "definition": "Reviews existing content blocks for adherence to all requirements — structural integrity, Lean proof rules, cross-reference consistency, status accuracy, and naming conventions. Flags violations with actionable diagnostics.",
@@ -86,11 +94,43 @@
       "status": "candidate"
     },
     {
+      "id": "detangler-integration-watcher",
+      "prefLabel": "detangler-integration-watcher",
+      "definition": "Structural-QA integration watcher — watches the default branch + open active PRs + newly-opened PRs for organisational changes (paper / chapter manifest edits, new blocks, edited `uses[]` / `kind` / `label` / `interprets` / `defines` / `tags`, block renames) and runs the editor's detanglement skill suite (`content-graph`, `chapter-complexity-review`, `block-density`, `critical-path-analysis`) on every detected change. Queues findings, auto-discharges mechanical fixes (table extraction), routes block reorderings through narrative review before applying them, and escalates section splits / merges / cross-chapter moves / new sections to the author. Inherits shared mechanics from `local/integration-watcher`.",
+      "notation": "detangler-integration-watcher",
+      "source": "folio-assistant-sci/skills/content/folio-paper-adapter/detangler-integration-watcher.md",
+      "status": "candidate"
+    },
+    {
+      "id": "devils-advocate-paper",
+      "prefLabel": "devils-advocate-paper",
+      "definition": "What the harness's devils-advocate-watcher means for a paper folio: its claim-bearing kinds and formal tree, the Lean vacuity shapes the Formalist lens looks for, and the paper watchers the adversary sits beside.",
+      "notation": "devils-advocate-paper",
+      "source": "folio-assistant-sci/skills/content/folio-paper-adapter/devils-advocate-paper.md",
+      "status": "candidate"
+    },
+    {
       "id": "ffi-roundtrip-audit",
       "prefLabel": "ffi-roundtrip-audit",
       "definition": "Audit compute scripts for script ↔ native ping-pong patterns — loops that cross the FFI / subprocess boundary per iteration, instead of one boundary crossing for the whole pipeline. Each occurrence forfeits a meaningful fraction of wall time to marshalling + script-side combine overhead. Performance-only — no correctness change.",
       "notation": "ffi-roundtrip-audit",
       "source": "folio-assistant-sci/skills/content/folio-paper-adapter/ffi-roundtrip-audit.md",
+      "status": "candidate"
+    },
+    {
+      "id": "formal-accuracy",
+      "prefLabel": "formal-accuracy",
+      "definition": "The accuracy checks a content type with a formal-proof layer adds to the harness's scientific-accuracy review: the consequence-versus-axiom audit, formal cross-references, and validation across the .ts / .md / formal triple.",
+      "notation": "formal-accuracy",
+      "source": "folio-assistant-sci/skills/content/authoring-math/formal-accuracy.md",
+      "status": "candidate"
+    },
+    {
+      "id": "formal-layer-editing",
+      "prefLabel": "formal-layer-editing",
+      "definition": "The formal-layer half of the harness's editor: the heavy-proof discipline, the routing rows for formal requests, the proof-block workflow and the pre-merge formal audits, for a paper folio with a Lean layer.",
+      "notation": "formal-layer-editing",
+      "source": "folio-assistant-sci/skills/content/authoring-math/formal-layer-editing.md",
       "status": "candidate"
     },
     {
@@ -169,6 +209,14 @@
       "definition": "Audit Lean formalization completeness across all papers: verify Lake project setup, check import coverage, identify missing .lean files for content blocks that require them, report formalization gaps, and detect stale witnesses.",
       "notation": "lean-completeness-audit",
       "source": "folio-assistant-sci/skills/content/folio-paper-adapter/lean-completeness-audit.md",
+      "status": "candidate"
+    },
+    {
+      "id": "lean-content-test",
+      "prefLabel": "lean-content-test",
+      "definition": "The paper-folio half of the harness's content-test: run Lean proof verification and LaTeX compilation, dispatch the repo's Lean CI, and check how much of the corpus a Lake build reaches before reading its numbers.",
+      "notation": "lean-content-test",
+      "source": "folio-assistant-sci/skills/content/folio-paper-adapter/lean-content-test.md",
       "status": "candidate"
     },
     {
@@ -251,11 +299,51 @@
       "status": "candidate"
     },
     {
+      "id": "lean-toolchain-contract",
+      "prefLabel": "lean-toolchain-contract",
+      "definition": "The contract the `lean-toolchain` role is held to: what a Lean toolchain must answer when a paper folio's formal half is built, and what it must not be asked. A mechanical role's skill is a contract to test against, not instructions to read.",
+      "notation": "lean-toolchain-contract",
+      "source": "folio-assistant-sci/skills/content/authoring-math/lean-toolchain-contract.md",
+      "status": "candidate"
+    },
+    {
       "id": "lean-witness-audit",
       "prefLabel": "lean-witness-audit",
       "definition": "Audit computation scripts (typically Python) that produce witness statements for Lean formalization. Verify witnesses are complete, self-documenting, use paper notation, link to a content block, and emit Lean-compatible declarations. Detects staleness via script content hash and git commit SHA.",
       "notation": "lean-witness-audit",
       "source": "folio-assistant-sci/skills/content/folio-paper-adapter/lean-witness-audit.md",
+      "status": "candidate"
+    },
+    {
+      "id": "math-md-authoring",
+      "prefLabel": "math-md-authoring",
+      "definition": "The math half of the harness's md-authoring: display and inline math, KaTeX limits, math in titles and table cells, and what the LaTeX pipeline does with tables, for a paper folio's .md blocks.",
+      "notation": "math-md-authoring",
+      "source": "folio-assistant-sci/skills/content/authoring-math/math-md-authoring.md",
+      "status": "candidate"
+    },
+    {
+      "id": "math-readability-editing",
+      "prefLabel": "math-readability-editing",
+      "definition": "The math half of the harness's readability-editing: math-specific style checks, the blueprint and formal-proof index cross-checks, and the mandatory TeX snippet validation after editing a paper folio's blocks.",
+      "notation": "math-readability-editing",
+      "source": "folio-assistant-sci/skills/content/authoring-math/math-readability-editing.md",
+      "status": "candidate"
+    },
+    {
+      "id": "math-render-check",
+      "prefLabel": "math-render-check",
+      "definition": "The math half of the harness's markdown-render-check: grep checks for display math, KaTeX and LaTeX patterns that GitHub's renderer breaks, and the fix recipe for multi-line display equations.",
+      "notation": "math-render-check",
+      "source": "folio-assistant-sci/skills/content/folio-paper-adapter/math-render-check.md",
+      "status": "candidate"
+    },
+    {
+      "id": "milnor-exposition-standard",
+      "prefLabel": "milnor-exposition-standard",
+      "definition": "The eight hallmarks of mathematical exposition, scored 0-2 with sixteen the only passing total, derived from John Milnor's \"Link Groups\" (1954). The author-facing half of the `expo-milnor-clarity` strict gate; three of its findings contradict the general house voice and say so.",
+      "notation": "milnor-exposition-standard",
+      "source": "folio-assistant-sci/skills/content/authoring-math/milnor-exposition-standard.md",
       "status": "candidate"
     },
     {
@@ -430,6 +518,14 @@
       "definition": "Audit simulator content objects against the formal mathematics they visualise — formulas and physical constants must be derived from the paper's canonical sources, never hardcoded in the visualisation.",
       "notation": "simulator-math-audit",
       "source": "folio-assistant-sci/skills/content/folio-paper-adapter/simulator-math-audit.md",
+      "status": "candidate"
+    },
+    {
+      "id": "uses-formal-comparison",
+      "prefLabel": "uses-formal-comparison",
+      "definition": "How a paper folio's formal dependency graph (from Lean) relates to the editorial `uses[]` relation the harness's uses-editorial-review audits: why they diverge, why `uses[]` is never populated from Lean, and how to read the advisory `uses-formal-coverage` finding.",
+      "notation": "uses-formal-comparison",
+      "source": "folio-assistant-sci/skills/content/folio-paper-adapter/uses-formal-comparison.md",
       "status": "candidate"
     },
     {

@@ -31,6 +31,22 @@
       "status": "candidate"
     },
     {
+      "id": "process_paperauthoring.call_beanclose",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Call_BeanClose",
+      "source": "folio-assistant-sci/processes/content/authoring-a-paper.bpmn#Call_BeanClose",
+      "status": "candidate"
+    },
+    {
+      "id": "process_paperauthoring.call_beanopen",
+      "prefLabel": "Open the bean [bean-open]",
+      "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
+      "notation": "Call_BeanOpen",
+      "source": "folio-assistant-sci/processes/content/authoring-a-paper.bpmn#Call_BeanOpen",
+      "status": "candidate"
+    },
+    {
       "id": "process_paperauthoring.task_authorblocks",
       "prefLabel": "4 · Author blocks [content-author]",
       "definition": "Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn.",

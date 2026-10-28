@@ -17,7 +17,7 @@
     {
       "id": "bootstrap-graph-publication",
       "prefLabel": "bootstrap-graph-publication",
-      "definition": "Where bootstrap's Knowledge Graph file is published, why its `@id` must be exactly that address, why a `.json` copy sits beside the `.jsonld`, and why the file is not kept in the repository.",
+      "definition": "Where bootstrap's Knowledge Graph file is published, why its `@id` must be exactly that address, why a `.json` copy sits beside the `.jsonld`, and why the file is not kept in the repository. Also what each subject in it is named: a path under the Harness's address, never a `#fragment` of the file.",
       "notation": "bootstrap-graph-publication",
       "source": "bootstrap/skills/bootstrap-graph-publication.md",
       "status": "candidate"
@@ -62,11 +62,27 @@
       "status": "candidate"
     },
     {
+      "id": "knowledge-graph-data-store",
+      "prefLabel": "knowledge-graph-data-store",
+      "definition": "The contract a Knowledge Graph Data Store keeps: serve a declaration, its graph and its instructions exactly as committed, say plainly when a file is absent, and keep a new instance's declaration once it is written. A mechanical Actor plays this Role; this is what it must do, and what it can be tested against.",
+      "notation": "knowledge-graph-data-store",
+      "source": "bootstrap/skills/knowledge-graph-data-store.md",
+      "status": "candidate"
+    },
+    {
       "id": "log-message",
       "prefLabel": "log-message",
       "definition": "Say what you are doing, to the Logger, in a form a reader can act on. Five required fields and one optional body; an incomplete message is not logged. Callable from any task in any process, and required by some.",
       "notation": "log-message",
       "source": "bootstrap/skills/log-message.md",
+      "status": "candidate"
+    },
+    {
+      "id": "logger",
+      "prefLabel": "logger",
+      "definition": "The contract a Logger keeps: accept a complete log message, record it unchanged where a person can read it, attributed to the actor the message names. A mechanical Actor plays this Role; this is what it must do, and what it can be tested against.",
+      "notation": "logger",
+      "source": "bootstrap/skills/logger.md",
       "status": "candidate"
     },
     {
