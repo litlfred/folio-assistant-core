@@ -241,4 +241,25 @@ describe("deciding from the page: a `resolve:` tag (owner, 2026-10-15)", () => {
     const r = applyDecisions([ingestOne()], [decide(201, "resolve: review-pr7-c999\ndecision: addressed")]);
     expect(r.refused[0]!.error).toMatch(/no review comment `review-pr7-c999`/);
   });
+
+  it("survives a block move/rename and records the closing Decision on resolution (423d)", () => {
+    const c = ingestOne();
+    const [moved] = reanchorToBlocks([c], new Map([["prose:summary", { hash: "h2", renamedFrom: ["prose:overview"] }]]));
+    expect(moved!.targetLabel).toBe("prose:summary");
+    expect(moved!.review.anchoredFrom).toEqual(["prose:overview"]);
+    const r = applyDecisions([moved!], [
+      decide(201, `resolve: ${target}\ndecision: addressed`),
+      decide(202, `resolve: ${target}\ndecision: resolved\n\nConfirmed after move.`, "editor1", "OWNER", "2026-09-24T09:00:00Z"),
+    ]);
+    expect(r.refused).toEqual([]);
+    expect(r.comments[0]).toMatchObject({
+      targetLabel: "prose:summary",
+      status: "resolved",
+      review: {
+        anchoredFrom: ["prose:overview"],
+        decision: "https://github.com/o/r/pull/7#issuecomment-202",
+        decisions: [201, 202],
+      },
+    });
+  });
 });

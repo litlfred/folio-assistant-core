@@ -55,27 +55,38 @@ const bpmn = (stem: string): string => workflowFile(CORE, `${stem}.bpmn`);
  * rather than looping or silently asserting less. Nothing is skipped — the
  * property each test pins is unchanged, and only the walk to the subject is.
  */
+/**
+ * The decisions the walk may take, each NAMED rather than taken as
+ * outcomes[0]: the basic flow's "Materialized?" (a document whose text is
+ * about to be read is held), and the bean opened at the start (bean `m8gz`:
+ * Process_BeanOpen finds no bean and creates one, and the caller takes its
+ * `claimed` branch). Any other decision is refused.
+ */
+const PREFIX_DECISIONS: Record<string, string> = {
+  Gateway_Materialized: "materialized",
+  Open_Exists: "no",
+  GW_BeanYours: "claimed",
+};
+
 function toExtract(model: ProcessModel, state: InstanceState): void {
   for (let guard = 0; !state.tokens.includes("CallActivity_Extract"); guard++) {
-    if (guard > 10) {
+    if (guard > 20) {
       throw new Error(
-        "l1-document-ingestion did not reach CallActivity_Extract within 10 steps of its start " +
+        "l1-document-ingestion did not reach CallActivity_Extract within 20 steps of its start " +
           `event; enabled now: ${enabled(model, state).map((e) => e.node).join(", ")}`,
       );
     }
     const step = enabled(model, state)[0];
     if (!step) throw new Error("l1-document-ingestion enabled nothing before CallActivity_Extract");
     if (step.kind === "decision") {
-      // ONE decision is expected on the way: the basic flow's "Materialized?".
-      // A document whose text is about to be read is held, so the branch is
-      // named rather than taken as outcomes[0]. Any other decision is refused.
-      if (step.node !== "Gateway_Materialized" || !step.outcomes.includes("materialized")) {
+      const outcome = PREFIX_DECISIONS[step.node];
+      if (outcome === undefined || !step.outcomes.includes(outcome)) {
         throw new Error(
           `${step.node} is a decision on the way to CallActivity_Extract; these tests walk a ` +
             "linear prefix and must not choose a branch on the diagram's behalf",
         );
       }
-      complete(model, state, step.node, { outcome: "materialized" });
+      complete(model, state, step.node, { outcome });
       continue;
     }
     complete(model, state, step.node);

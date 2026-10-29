@@ -38,6 +38,54 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Una página de un informe de análisis de inversiones en chino de CVSource (投中信息) titulada \"A股：制度建设期的IPO放缓\" (acciones A: las salidas a bolsa se ralentizan durante un periodo de desarrollo normativo). Un gráfico combinado de barras y líneas abarca de 2023-04 a 2024-04, y debajo una tabla enumera las cinco mayores captaciones en acciones A de abril de 2024 por empresa, código bursátil, actividad e importe.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
+    },
+    {
+      "text": "صفحة من تقرير بحثي استثماري باللغة الصينية صادر عن CVSource (投中信息) بعنوان \"A股：制度建设期的IPO放缓\" (أسهم A: تباطؤ الطروحات الأولية في مرحلة بناء الأطر التنظيمية). يمتد مخطط مركّب من أشرطة وخط من 2023-04 إلى 2024-04، وتحته جدول يسرد أكبر خمس عمليات جمع أموال في أسهم A لشهر أبريل 2024 حسب الشركة والرمز والنشاط والمبلغ.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Страница китайскоязычного инвестиционно-аналитического отчёта CVSource (投中信息) с заголовком \"A股：制度建设期的IPO放缓\" (акции A: IPO замедляются в период формирования регулирования). Комбинированная столбчато-линейная диаграмма охватывает период с 2023-04 по 2024-04, а таблица ниже перечисляет пять крупнейших размещений акций A за апрель 2024 года по компании, биржевому коду, виду деятельности и сумме.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "投中信息（CVSource）中文投资研究报告中的一页，标题为 \"A股：制度建设期的IPO放缓\"。一张柱线组合图覆盖 2023-04 至 2024-04，下方表格按公司、股票代码、业务和金额列出 2024 年 4 月 A 股募资额前五名。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-020",

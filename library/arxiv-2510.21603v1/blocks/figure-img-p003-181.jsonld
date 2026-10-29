@@ -38,6 +38,54 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Un icono en color de cuatro piezas de rompecabezas encajadas formando un cuadrado: verde arriba a la izquierda, azul arriba a la derecha, amarilla abajo a la izquierda y roja abajo a la derecha. Marca la etapa en la que se ensamblan los elementos analizados.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
+    },
+    {
+      "text": "أيقونة ملوّنة لأربع قطع أحجية متشابكة تشكّل مربّعًا: خضراء في الأعلى يسارًا، وزرقاء في الأعلى يمينًا، وصفراء في الأسفل يسارًا، وحمراء في الأسفل يمينًا. تشير إلى المرحلة التي تُجمَّع فيها العناصر المُحلَّلة.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Цветной значок из четырёх сцепленных кусочков пазла, образующих квадрат: зелёный слева вверху, синий справа вверху, жёлтый слева внизу, красный справа внизу. Он обозначает этап, на котором собираются разобранные элементы.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "四块相互咬合、拼成正方形的拼图彩色图标——左上绿色、右上蓝色、左下黄色、右下红色。它标示解析出的元素被组装的阶段。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-002",

@@ -30,6 +30,14 @@
       "status": "candidate"
     },
     {
+      "id": "adversarial-code-review",
+      "prefLabel": "adversarial-code-review",
+      "definition": "Review a pull request an agent touched by building the strongest case that it is wrong, unsafe, or not what it claims, and record the verdict where the merge gate reads it: one `merge-review/v1` file per head, on the `merge-reviews` state branch, never in the pull request itself. Covers who may review, what the whole-diff scope is, the RED FLAG categories and their evidence rule, the one rebuttal round, overrides, and how a per-head verdict composes with a merge train.",
+      "notation": "adversarial-code-review",
+      "source": "cat-harness/skills/sdlc/sdlc-core/adversarial-code-review.md",
+      "status": "candidate"
+    },
+    {
       "id": "agent-handoff",
       "prefLabel": "agent-handoff",
       "definition": "Governs handing ONE task to an agent in another environment — a local agent with network the cloud session lacks, a sibling on a different machine, anything that cannot read the coordinator's context and that a person may relay to. States who writes which bean, where the receiver reports, what the person pastes (one sentence: bean, branch, repository) and the brief the bean opens with (second person, to the executor), what the receiver checks before acting, who closes, who may grant an exception, and how to recognise and answer the five ways an executor fails. Use when writing a bean for another agent to execute, and as the receiver before acting on one. Triggers on: hand off, handoff, local agent, agy, mac agent, needs network, executor failed, agent went silent, re-hand, \"give me a branch and bean for them\", relay, the other agent.",
@@ -67,6 +75,14 @@
       "definition": "Which declared executable artefacts can be reached — decision tables, BPMN diagrams, self-declared entry points. Read before trusting that a .dmn works because it loads, before concluding a script has a caller, and before building any reachability report: load is not evaluability, a test is not a caller, and where a grep fails in both directions the subject has to be narrowed rather than the signals.",
       "notation": "artefact-reachability",
       "source": "cat-harness/skills/kg/kg-core/artefact-reachability.md",
+      "status": "candidate"
+    },
+    {
+      "id": "ask-the-person",
+      "prefLabel": "ask-the-person",
+      "definition": "Put one question or decision to a person: the full question, context and every option written in the chat FIRST, then the same options as a tappable card. Use before every AskUserQuestion, request_decision / Decision card, button card, or any ask that hands a choice to the owner. Input is the composed question; output is the answer, or the default taken.",
+      "notation": "ask-the-person",
+      "source": "cat-harness/skills/conduct/conduct-core/ask-the-person.md",
       "status": "candidate"
     },
     {
@@ -115,6 +131,14 @@
       "definition": "Pointer to the bean-based session work-plan system (the `beans` CLI flat-file issue tracker, data under `beans/`). Operational usage lives in todo-manager.md / session-intent.md; the generic coordinator/orchestrator logic is owned by the folio-assistant platform.",
       "notation": "bean-coordination",
       "source": "cat-harness/skills/sdlc/sdlc-core/bean-coordination.md",
+      "status": "candidate"
+    },
+    {
+      "id": "bean-drain",
+      "prefLabel": "bean-drain",
+      "definition": "Drain open beans (stories, bugs, features) with several agents at once, as part of the SDLC: build the queue, group it by owner, check and claim each bean on every bean copy before any work, open the PR at the first commit, ask the owner through ask-the-person, close, and refill. Use when a thread or agent is asked to drain beans, when a coordinator spawns drain threads, or when an idle agent pulls from a shared queue next to other agents.",
+      "notation": "bean-drain",
+      "source": "cat-harness/skills/sdlc/sdlc-core/bean-drain.md",
       "status": "candidate"
     },
     {
@@ -277,14 +301,6 @@
       "status": "candidate"
     },
     {
-      "id": "compute-integration-watcher",
-      "prefLabel": "compute-integration-watcher",
-      "definition": "Cross-layer wiring auditor — watches for newly-landed formal/analytic improvements (proofs, propositions, lemmas, axiom→theorem upgrades, witness data) on the default branch AND on open PRs, and checks whether each one has been wired into the production compute chain. Complements `local/compute-audit` (which scans for performance/correctness antipatterns inside scripts). Runs in two modes: REACTIVE (watch new commits / PR events) and IDLE-SWEEP (walk all existing content blocks and audit wiring).",
-      "notation": "compute-integration-watcher",
-      "source": "cat-harness/skills/authoring/authoring-core/compute-integration-watcher.md",
-      "status": "candidate"
-    },
-    {
       "id": "confirmation-waiver",
       "prefLabel": "confirmation-waiver",
       "definition": "A human may waive a confirmation they are owed — for a session, for a process run, or until a stated time. Covers what a waiver is made of, where it is recorded (the context graph, never the work plan), the gates that can be waived and the rules that cannot, why every waiver carries an expiry, and the one thing an agent may never do: grant itself one.",
@@ -417,7 +433,7 @@
       "prefLabel": "covered-is-not-reachable",
       "definition": "A skill can be satisfied by the neighbours of its mechanism while the mechanism is reachable from no Tool node. Read before concluding from check:tools that a command is reachable, and before adding a Tool node or a `maintains` claim.",
       "notation": "covered-is-not-reachable",
-      "source": "cat-harness/skills/folio-core/covered-is-not-reachable.md",
+      "source": "cat-harness/skills/tools/folio-core/covered-is-not-reachable.md",
       "status": "candidate"
     },
     {
@@ -547,14 +563,6 @@
       "status": "candidate"
     },
     {
-      "id": "detangler-integration-watcher",
-      "prefLabel": "detangler-integration-watcher",
-      "definition": "Structural-QA integration watcher — watches the default branch + open active PRs + newly-opened PRs for organisational changes (paper / chapter manifest edits, new blocks, edited `uses[]` / `kind` / `label` / `interprets` / `defines` / `tags`, block renames) and runs the editor's detanglement skill suite (`content-graph`, `chapter-complexity-review`, `block-density`, `critical-path-analysis`) on every detected change. Queues findings, auto-discharges mechanical fixes (table extraction), routes block reorderings through narrative review before applying them, and escalates section splits / merges / cross-chapter moves / new sections to the author. Inherits shared mechanics from `local/integration-watcher`.",
-      "notation": "detangler-integration-watcher",
-      "source": "cat-harness/skills/authoring/authoring-core/detangler-integration-watcher.md",
-      "status": "candidate"
-    },
-    {
       "id": "deterministic-and-agentic",
       "prefLabel": "deterministic-and-agentic",
       "definition": "Workflow processing is a SPECTRUM, not a switch. The four mechanisms this repository already uses to sit at different points on it, the four axes an answer has to name, what is measured today, and the three research questions — which are open, and marked as open.",
@@ -655,6 +663,14 @@
       "status": "candidate"
     },
     {
+      "id": "external-registry-contract",
+      "prefLabel": "external-registry-contract",
+      "definition": "The contract the `external-registry` role is held to: what a trusted registry outside this instance must provide for a portal to verify what it received, and what the verifier does when it cannot. The narrowest contract the diagrams require. A mechanical role's skill is a contract to test against, not instructions to read.",
+      "notation": "external-registry-contract",
+      "source": "cat-harness/skills/kg/kg-core/external-registry-contract.md",
+      "status": "candidate"
+    },
+    {
       "id": "feature-staging",
       "prefLabel": "feature-staging",
       "definition": "Manages feature-branch staging deployments under gh-pages/STAGING/<branch-slug>/ for before/after publication review comparison. Handles branch creation, staging deployment, commit SHA stamping, and cleanup.",
@@ -676,6 +692,14 @@
       "definition": "A flushable container is a named store that accumulates by design — a trash you can recover from, a review preview, a console log. It declares a buffer limit, badges when over it, and offers three flush actions: flush all, trim to limit, and select to prune. What \"flush\" means, and which end of the order is expendable, are declared per container and differ.",
       "notation": "flushable-containers",
       "source": "cat-harness/skills/kg/kg-core/flushable-containers.md",
+      "status": "candidate"
+    },
+    {
+      "id": "folio-init",
+      "prefLabel": "folio-init",
+      "definition": "Scaffold a new folio instance from the harness — the instantiate affordance of the knowledge graph. Covers when to run folio-init vs remote-mount, what the scaffold writes, the builder shim, state branch seeding, write capability requirements, and --dry-run degradation. Bean dp1j.",
+      "notation": "folio-init",
+      "source": "cat-harness/skills/kg/kg-core/folio-init.md",
       "status": "candidate"
     },
     {
@@ -729,7 +753,7 @@
     {
       "id": "graph-rendering",
       "prefLabel": "graph-rendering",
-      "definition": "Draw any graph in a harness (schemas, processes, a paper's block graph, a Lean proof's dependencies, a detangle partition) so the picture is derived, checkable and readable. Ten rules learned on the UML overview, which engine to lay a graph out with and why, and how each graph typology here applies them.",
+      "definition": "Draw any graph in a harness (schemas, processes, a folio's block graph and any formal relation its content type adds, a detangle partition) so the picture is derived, checkable and readable. Ten rules learned on the UML overview, which engine to lay a graph out with and why, and how each graph typology here applies them.",
       "notation": "graph-rendering",
       "source": "cat-harness/skills/kg/graph-management/graph-rendering.md",
       "status": "candidate"
@@ -782,6 +806,14 @@
       "status": "candidate"
     },
     {
+      "id": "ig-publisher-service-contract",
+      "prefLabel": "ig-publisher-service-contract",
+      "definition": "The contract the `ig-publisher-service` role is held to: what the JVM services an IG build shells out to must produce, and how a caller tells a pass from a run that never happened. A mechanical role's skill is a contract to test against, not instructions to read.",
+      "notation": "ig-publisher-service-contract",
+      "source": "cat-harness/skills/authoring/content-lifecycle/ig-publisher-service-contract.md",
+      "status": "candidate"
+    },
+    {
       "id": "incremental-render",
       "prefLabel": "incremental-render",
       "definition": "Rendering only what changed — seeding a build from a previous render, the two edges that decide what must re-run, why a step declares GRAPH TYPOLOGIES rather than paths, and the rule that could-not-determine always re-renders rather than serving a stale page.",
@@ -792,7 +824,7 @@
     {
       "id": "index-config",
       "prefLabel": "index-config",
-      "definition": "`index.config.json` at an instantiation root says which harnesses the checkout instantiates, where each one comes from (local, or a remote mount pinned to a SHA), how its `<name>.config.json` is imported and overridden, and which harness `/` is. Covers instantiated against declared, landing resolution and its error case, `index.lock.json` and its legacy fallback, the reserved `index` stem, the generated `.gitignore` block and its gate, and `index-config:migrate` for separated repositories.",
+      "definition": "`index.config.json` at an instantiation root says which harnesses the checkout instantiates, where each one comes from (local, or a remote mount pinned to a SHA), each instance's config INLINE in its entry (a legacy `<name>.config.json` is only imported until `--inline` retires it), and which harness `/` is. Covers instantiated against declared, landing resolution and its error case, `index.lock.json` and its legacy fallback, the reserved `index` stem, the generated `.gitignore` block and its gate, and `index-config:migrate` (with `--inline`) for separated repositories.",
       "notation": "index-config",
       "source": "cat-harness/skills/kg/kg-core/index-config.md",
       "status": "candidate"
@@ -840,7 +872,7 @@
     {
       "id": "integration-watch",
       "prefLabel": "integration-watch",
-      "definition": "Dispatcher for the `/integration-watch` slash command. Routes to one or more of the concrete integration watchers / audits (proof, canonical, compute, detangler, one-voice, consolidation, bibliography, devils-advocate, …). With no argument, lists the available watchers and asks the user which to invoke. With arguments, dispatches the named watchers in parallel (each gets its own Monitor, queue, ledger, and PR-subscription set).",
+      "definition": "Dispatcher for the `/integration-watch` slash command. Routes to one or more of the concrete integration watchers / audits (canonical, one-voice, consolidation, bibliography, devils-advocate, and those a content type's layer adds, …). With no argument, lists the available watchers and asks the user which to invoke. With arguments, dispatches the named watchers in parallel (each gets its own Monitor, queue, ledger, and PR-subscription set).",
       "notation": "integration-watch",
       "source": "cat-harness/skills/sdlc/sdlc-core/integration-watch.md",
       "status": "candidate"
@@ -870,6 +902,14 @@
       "status": "candidate"
     },
     {
+      "id": "kg-affordances",
+      "prefLabel": "kg-affordances",
+      "definition": "The four affordances of a conformant knowledge graph — browse, materialise, instantiate and copy-into-folio — which capabilities each requires, how each writing verb degrades cleanly when no write capability is available, and how copying an asset stamps KgAsset.source provenance. Bean dp1j.",
+      "notation": "kg-affordances",
+      "source": "cat-harness/skills/kg/kg-core/kg-affordances.md",
+      "status": "candidate"
+    },
+    {
       "id": "kg-contribution-offer",
       "prefLabel": "kg-contribution-offer",
       "definition": "Ask whether agreed requirements should become knowledge-graph content, and as what — in a form the person can answer by selecting. Use at the end of CRDM sign-off, or whenever a body of agreed work could become a skill, a process, a schema or a bean and nobody has been asked. Offers \"none\" as a first-class answer.",
@@ -880,7 +920,7 @@
     {
       "id": "kg-export",
       "prefLabel": "kg-export",
-      "definition": "Serialize an instance's knowledge graph to one JSON document, for publication and inspection. Read when asked to visualize, audit or share the KG, and before adding a node type to the export.",
+      "definition": "Serialize an instance's knowledge graph to one JSON document, for publication and inspection. Read when asked to visualize, audit or share the KG, before adding a node type to the export, and before minting or authoring any subject IRI — subjects are `<doc dir>/<kind>/<id>`, never `#fragments`.",
       "notation": "kg-export",
       "source": "cat-harness/skills/kg/kg-core/kg-export.md",
       "status": "candidate"
@@ -896,7 +936,7 @@
     {
       "id": "kg-separation",
       "prefLabel": "kg-separation",
-      "definition": "Separate a Knowledge Graph into its own repository — as a CONTENT repository (files to read, no code) and a TOOLS repository (the code that writes and checks it) — once it is too large, or its consumers or cadence differ. The end-to-end method: the signals that trigger it, the preconditions, eleven stages each with the command that gates it, the owner's decision points, how identifiers, QA and publication move, how the parent consumes the result, rollback, and the post-move sweep that a move between the pair owes before the parent re-pins. graph-detanglement owns stages 1–3; this skill owns the rest. Bootstrap + bootstrap-tools is the worked example; cat-harness + cat-harness-tools is next.",
+      "definition": "Separate a Knowledge Graph into its own repository — as a CONTENT repository (files to read, no code) and a TOOLS repository (the code that writes and checks it) — once it is too large, or its consumers or cadence differ. The end-to-end method: the signals that trigger it, the preconditions, eleven stages each with the command that gates it, the owner's decision points, how identifiers, QA and publication move, how the parent consumes the result, rollback, and the post-move sweep that a move between the pair owes before the parent re-pins. graph-detanglement owns stages 1–3; this skill owns the rest. Bootstrap + bootstrap-tools is the worked example; cat-harness + the tools layer is next.",
       "notation": "kg-separation",
       "source": "cat-harness/skills/kg/graph-management/kg-separation.md",
       "status": "candidate"
@@ -993,7 +1033,7 @@
       "prefLabel": "mcp-assembly",
       "definition": "Compose several Tool nodes into one MCP service — naming, collisions, grouping and versioning. Read when a service will expose more than one tool, or when two instances' tools land in the same namespace.",
       "notation": "mcp-assembly",
-      "source": "cat-harness/skills/folio-core/mcp-assembly.md",
+      "source": "cat-harness/skills/tools/folio-core/mcp-assembly.md",
       "status": "candidate"
     },
     {
@@ -1001,7 +1041,7 @@
       "prefLabel": "mcp-contract",
       "definition": "Verify an MCP service's tools against the Tool nodes and skill declarations they came from — I/O equivalence in both directions. Read before shipping a projected server, and when a tool call fails with an argument the schema said was fine.",
       "notation": "mcp-contract",
-      "source": "cat-harness/skills/folio-core/mcp-contract.md",
+      "source": "cat-harness/skills/tools/folio-core/mcp-contract.md",
       "status": "candidate"
     },
     {
@@ -1009,7 +1049,7 @@
       "prefLabel": "mcp-projection",
       "definition": "Generate an MCP server from Tool nodes — the mapping from this harness's skill/Tool vocabulary onto the current MCP standard. Read before exposing a CLI tool over MCP, or when asked how an agent stands a service up.",
       "notation": "mcp-projection",
-      "source": "cat-harness/skills/folio-core/mcp-projection.md",
+      "source": "cat-harness/skills/tools/folio-core/mcp-projection.md",
       "status": "candidate"
     },
     {
@@ -1052,11 +1092,11 @@
       "status": "candidate"
     },
     {
-      "id": "milnor-exposition-standard",
-      "prefLabel": "milnor-exposition-standard",
-      "definition": "The eight hallmarks of mathematical exposition, scored 0-2 with sixteen the only passing total, derived from John Milnor's \"Link Groups\" (1954). The author-facing half of the `expo-milnor-clarity` strict gate; three of its findings contradict the general house voice and say so.",
-      "notation": "milnor-exposition-standard",
-      "source": "cat-harness/skills/authoring/authoring-core/milnor-exposition-standard.md",
+      "id": "minimal-change",
+      "prefLabel": "minimal-change",
+      "definition": "Three rules for any edit to a repository: make the smallest change that does the job and keep the diff minimal; read the repository's code-style files before writing code; and write Markdown without HTML tags. Use before writing a change and again when reviewing its diff.",
+      "notation": "minimal-change",
+      "source": "cat-harness/skills/sdlc/sdlc-core/minimal-change.md",
       "status": "candidate"
     },
     {
@@ -1490,7 +1530,7 @@
       "prefLabel": "skills-and-tools",
       "definition": "A skill states a capability generically; a Tool node carries the concrete mechanism. Read before writing or editing any skill, and whenever a skill is about to name a vendor, a CLI, a binary or an API endpoint.",
       "notation": "skills-and-tools",
-      "source": "cat-harness/skills/folio-core/skills-and-tools.md",
+      "source": "cat-harness/skills/tools/folio-core/skills-and-tools.md",
       "status": "candidate"
     },
     {
@@ -1613,6 +1653,14 @@
       "status": "candidate"
     },
     {
+      "id": "test-data-sets",
+      "prefLabel": "test-data-sets",
+      "definition": "Curating fixed (committed, cited, SME-reviewed) and generated (template + params + seed recipe, never stored materialised) test data sets in separately declared graph directories, with per-content-type specialisation as a called subprocess and attributable SME review of decision support and indicator definitions.",
+      "notation": "test-data-sets",
+      "source": "cat-harness/skills/sdlc/sdlc-core/test-data-sets.md",
+      "status": "candidate"
+    },
+    {
       "id": "test-engineer",
       "prefLabel": "test-engineer",
       "notation": "test-engineer",
@@ -1704,7 +1752,7 @@
       "prefLabel": "tool-authoring",
       "definition": "How concrete Tools are authored, structured, packaged, and registered across the separated multi-repository platform: defining Knowledge Graph Tool nodes, implementing TypeScript handlers in the tools repository, registering MCP tools, isolating toolchain dependencies, and validating tool-to-skill alignment.",
       "notation": "tool-authoring",
-      "source": "cat-harness/skills/folio-core/tool-authoring.md",
+      "source": "cat-harness/skills/tools/folio-core/tool-authoring.md",
       "status": "candidate"
     },
     {
@@ -1877,9 +1925,17 @@
     {
       "id": "wireframe-design-review",
       "prefLabel": "wireframe-design-review",
-      "definition": "Design a user interface (a page, a visualiser, a navbar) by the WireGen methodology: a written design intent, at least two mid-fidelity HTML candidates, each with a web AND a mobile layout, mechanical checks at both viewports, a blind per-criterion review, adjudication where reviewers disagree, and a recorded choice. Also how an EXISTING visualiser is wireframed as-is, so that every declared visualiser has a wireframe with a QA sidecar. Process: processes/ui/wireframe-design-review.bpmn.",
+      "definition": "Design a user interface (a page, a visualiser, a navbar) by the WireGen methodology: a written design intent, at least two mid-fidelity HTML candidates, each with a web AND a mobile layout, mechanical checks at both viewports, a blind per-criterion review, adjudication where reviewers disagree, and a recorded choice. Also how an EXISTING visualiser is wireframed as-is, so that every declared visualiser has a wireframe with a QA sidecar. Process: processes/ui/wireframe-design-review.bpmn. Called for Design use from CRDM (Process_CRDM_Requirements, Call_Wireframe) whenever a requirement changes a rendered surface, before anything is built.",
       "notation": "wireframe-design-review",
       "source": "cat-harness/skills/ui/ui-core/wireframe-design-review.md",
+      "status": "candidate"
+    },
+    {
+      "id": "wireframe-viewport-check",
+      "prefLabel": "wireframe-viewport-check",
+      "definition": "Render wireframe candidates at a web viewport (1280x800) and a mobile viewport (390x844), and record, per candidate and viewport, a pass or fail entry with a note for each mechanical criterion: renders, no-overflow, no-placeholder. Writes a screenshot per viewport beside the report. The mechanical step (step 3) of wireframe-design-review; a fail sends the candidate back to that skill's step 2.",
+      "notation": "wireframe-viewport-check",
+      "source": "cat-harness/skills/ui/ui-core/wireframe-viewport-check.md",
       "status": "candidate"
     },
     {

@@ -280,6 +280,13 @@
       "status": "candidate"
     },
     {
+      "id": "changeset.computeoptions.builders",
+      "prefLabel": "ComputeOptions.builders",
+      "definition": "The contributed builders, so contributed (DAK) blocks are blocks too. See {@link snapshot}.",
+      "source": "folio-assistant-core/schemas/changeset.ts#ComputeOptions.builders",
+      "status": "candidate"
+    },
+    {
       "id": "changeset.computeoptions.folio",
       "prefLabel": "ComputeOptions.folio",
       "definition": "Folio root, relative to `repoRoot`.",
@@ -312,6 +319,13 @@
       "prefLabel": "RefSchema.ref",
       "definition": "What was asked for — `origin/main`, a branch, or `worktree`.",
       "source": "folio-assistant-core/schemas/changeset.ts#RefSchema.ref",
+      "status": "candidate"
+    },
+    {
+      "id": "changeset.snap.fields",
+      "prefLabel": "Snap.fields",
+      "definition": "A contributed (structured) kind's manifest fields, read as text (bean f327). Never serialised.",
+      "source": "folio-assistant-core/schemas/changeset.ts#Snap.fields",
       "status": "candidate"
     },
     {
@@ -882,10 +896,73 @@
       "status": "candidate"
     },
     {
+      "id": "reference.referencenodeschema.derivedfrom",
+      "prefLabel": "ReferenceNodeSchema.derivedFrom",
+      "definition": "The asset it was taken from: a DC record, a library manifest, a paper's references section. Repo-relative path or IRI.",
+      "source": "folio-assistant-core/schemas/reference.ts#ReferenceNodeSchema.derivedFrom",
+      "status": "candidate"
+    },
+    {
+      "id": "reference.referencenodeschema.heldat",
+      "prefLabel": "ReferenceNodeSchema.heldAt",
+      "definition": "The library asset that holds a copy of the work, when one is held. Repo-relative path or IRI.",
+      "source": "folio-assistant-core/schemas/reference.ts#ReferenceNodeSchema.heldAt",
+      "status": "candidate"
+    },
+    {
+      "id": "reference.referencenodeschema.provenance",
+      "prefLabel": "ReferenceNodeSchema.provenance",
+      "definition": "Where the reference came from. Absent means `authored`.",
+      "source": "folio-assistant-core/schemas/reference.ts#ReferenceNodeSchema.provenance",
+      "status": "candidate"
+    },
+    {
+      "id": "reference.standalonereferenceinput.raw",
+      "prefLabel": "StandaloneReferenceInput.raw",
+      "definition": "Optional raw BibTeX or CSL-JSON / JSON-LD text to parse before applying explicit fields.",
+      "source": "folio-assistant-core/schemas/reference.ts#StandaloneReferenceInput.raw",
+      "status": "candidate"
+    },
+    {
       "id": "review-comment.blockanchor.section",
       "prefLabel": "BlockAnchor.section",
       "definition": "The section listing the block (the ChangeSet's form). The heat map's row for its comments (bean `qbfi`).",
       "source": "folio-assistant-core/schemas/review-comment.ts#BlockAnchor.section",
+      "status": "candidate"
+    },
+    {
+      "id": "review-comment.decisionresult.applied",
+      "prefLabel": "DecisionResult.applied",
+      "definition": "Decisions applied by this run, as `<decision comment id> → <review comment id>: <status>`.",
+      "source": "folio-assistant-core/schemas/review-comment.ts#DecisionResult.applied",
+      "status": "candidate"
+    },
+    {
+      "id": "review-comment.decisionresult.refused",
+      "prefLabel": "DecisionResult.refused",
+      "definition": "A decision tag that could not be applied, and why: said, never silently dropped.",
+      "source": "folio-assistant-core/schemas/review-comment.ts#DecisionResult.refused",
+      "status": "candidate"
+    },
+    {
+      "id": "review-comment.decisionresult.tagged",
+      "prefLabel": "DecisionResult.tagged",
+      "definition": "How many PR comments carried a decision tag, so they are not counted as conversation.",
+      "source": "folio-assistant-core/schemas/review-comment.ts#DecisionResult.tagged",
+      "status": "candidate"
+    },
+    {
+      "id": "review-comment.decisiontag.target",
+      "prefLabel": "DecisionTag.target",
+      "definition": "The review comment's id.",
+      "source": "folio-assistant-core/schemas/review-comment.ts#DecisionTag.target",
+      "status": "candidate"
+    },
+    {
+      "id": "review-comment.decisiontag.text",
+      "prefLabel": "DecisionTag.text",
+      "definition": "Everything after the header, trimmed: the reason.",
+      "source": "folio-assistant-core/schemas/review-comment.ts#DecisionTag.text",
       "status": "candidate"
     },
     {
@@ -907,6 +984,13 @@
       "prefLabel": "IngestResult.untagged",
       "definition": "No tag: ordinary conversation. Counted so \"nothing ingested\" is explained.",
       "source": "folio-assistant-core/schemas/review-comment.ts#IngestResult.untagged",
+      "status": "candidate"
+    },
+    {
+      "id": "review-comment.prcomment.association",
+      "prefLabel": "PrComment.association",
+      "definition": "GitHub's `author_association`: OWNER, MEMBER, COLLABORATOR, CONTRIBUTOR, NONE… Absent when not known.",
+      "source": "folio-assistant-core/schemas/review-comment.ts#PrComment.association",
       "status": "candidate"
     },
     {
@@ -970,6 +1054,13 @@
       "prefLabel": "ReviewFieldsSchema.decision",
       "definition": "The 9gyz Decision that closed it. Required once resolved or adjudicated.",
       "source": "folio-assistant-core/schemas/review-comment.ts#ReviewFieldsSchema.decision",
+      "status": "candidate"
+    },
+    {
+      "id": "review-comment.reviewfieldsschema.decisions",
+      "prefLabel": "ReviewFieldsSchema.decisions",
+      "definition": "The PR conversation comments whose `resolve:` tag has moved this comment ({@link applyDecisions}), in the order applied. A rebuild applies each one once: the record, not the build count, says what has been decided.",
+      "source": "folio-assistant-core/schemas/review-comment.ts#ReviewFieldsSchema.decisions",
       "status": "candidate"
     },
     {

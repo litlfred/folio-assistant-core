@@ -38,6 +38,54 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Un icono en color de una imagen seleccionada: un dibujo de un sol amarillo y montañas grises sobre un cielo cian, enmarcado por cuatro tiradores en las esquinas. Marca los elementos visuales que se seleccionan para su conversión.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
+    },
+    {
+      "text": "أيقونة ملوّنة لصورة قيد التحديد: رسم لشمس صفراء وجبال رمادية في سماء سماوية، يحيط بها أربعة مقابض في الزوايا. تشير إلى العناصر المرئية التي تُختار لتحويلها.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Цветной значок выделенного изображения: рисунок жёлтого солнца и серых гор на голубом небе в рамке из четырёх угловых маркеров. Он обозначает визуальные элементы, отбираемые для преобразования.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "一幅处于选中状态的图片的彩色图标：青色天空下的黄色太阳和灰色山峦，四角带有选择手柄。它标示被选出以待转换的视觉元素。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-002",

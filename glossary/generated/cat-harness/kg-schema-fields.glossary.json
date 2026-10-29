@@ -1493,7 +1493,7 @@
     {
       "id": "binary-release.releaseoriginrefschema.repository",
       "prefLabel": "ReleaseOriginRefSchema.repository",
-      "definition": "The repository or registry, e.g. `WorldHealthOrganization/smart-trust`.",
+      "definition": "The repository or registry, e.g. `<owner>/<ig-repository>`.",
       "source": "cat-harness/schemas/binary-release.ts#ReleaseOriginRefSchema.repository",
       "status": "candidate"
     },
@@ -1614,6 +1614,13 @@
       "prefLabel": "BlockQaReport.paths",
       "definition": "Paths to source files, relative to repo root.",
       "source": "cat-harness/schemas/block-qa.ts#BlockQaReport.paths",
+      "status": "candidate"
+    },
+    {
+      "id": "block-qa.blockqareport.runcontext",
+      "prefLabel": "BlockQaReport.runContext",
+      "definition": "Content-addressed reference to the `folio-run-context/v1` record of the run that wrote this report (`docs/proposals/tool-releases-2026-10-07.md`, owner C1 = a).",
+      "source": "cat-harness/schemas/block-qa.ts#BlockQaReport.runContext",
       "status": "candidate"
     },
     {
@@ -2074,7 +2081,7 @@
     {
       "id": "block-summary.blocksummaryschema.narrative",
       "prefLabel": "BlockSummarySchema.narrative",
-      "definition": "The summary itself, with its state and its author.",
+      "definition": "The summary itself, with its state and its author: one narrative, or one per language (bean `cat-tools-e1lo`, stage 3).",
       "source": "cat-harness/schemas/block-summary.ts#BlockSummarySchema.narrative",
       "status": "candidate"
     },
@@ -2195,6 +2202,13 @@
       "prefLabel": "BuiltAtPublishSchema.path",
       "definition": "Instance-relative; a directory ends in `/`.",
       "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.path",
+      "status": "candidate"
+    },
+    {
+      "id": "built-at-publish.builtatpublishschema.reads",
+      "prefLabel": "BuiltAtPublishSchema.reads",
+      "definition": "The graph typologies (directory kinds) whose directories, in OTHER instances, this entry's writers read: the declared READ EDGE that orders them (see \"Writer order\" above). `derive:publish` runs these writers after the writers of every other instance's entry that fills (`directory`) a directory of one of these kinds. Kinds, never instance names: a lower layer reading what the layers above it build cannot name them.",
+      "source": "cat-harness/schemas/built-at-publish.ts#BuiltAtPublishSchema.reads",
       "status": "candidate"
     },
     {
@@ -2548,6 +2562,13 @@
       "status": "candidate"
     },
     {
+      "id": "cat-harness.catharnessdeclaration.enabled",
+      "prefLabel": "CatHarnessDeclaration.enabled",
+      "definition": "Whether this instance is published on the site. Defaults to enabled; only `false` disables it. Read through `isPublished` (`schemas/url-space.ts`, bean `nbal`).",
+      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.enabled",
+      "status": "candidate"
+    },
+    {
       "id": "cat-harness.catharnessdeclaration.gateexemptions",
       "prefLabel": "CatHarnessDeclaration.gateExemptions",
       "definition": "The CI steps and check scripts of THIS instance that the local gate set deliberately does not run, each with its reason — the rows `cat-harness-tools/scripts/gates.ts` holds as `STEP_EXEMPTIONS` and `SCRIPT_EXEMPTIONS` for the harness's own. Same contract: a reason is required, a step `match` is a substring of the workflow command, a script name is matched exactly. Declared by the owner so the harness need not name a layer above itself (bean `0r7u` step 0).",
@@ -2583,6 +2604,13 @@
       "status": "candidate"
     },
     {
+      "id": "cat-harness.catharnessdeclaration.jsonldprefixes",
+      "prefLabel": "CatHarnessDeclaration.jsonldPrefixes",
+      "definition": "The external vocabularies this instance's JSON-LD speaks, prefix → namespace IRI — {@link JsonldPrefixTable}. Owner, 2026-10-14 (bean 63q4): the published context is generated from what documents use, flattened over `needs`, so a vocabulary is declared by the layer that owns it.",
+      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.jsonldPrefixes",
+      "status": "candidate"
+    },
+    {
       "id": "cat-harness.catharnessdeclaration.knownsubstrates",
       "prefLabel": "CatHarnessDeclaration.knownSubstrates",
       "definition": "Substrates known to exist or planned that NO declaration here names — {@link KnownSubstrate}. Issue #1719.",
@@ -2601,6 +2629,13 @@
       "prefLabel": "CatHarnessDeclaration.livesAt",
       "definition": "Where the instance lives TODAY when that is not the root of {@link repository} — the host repository and the directory within it. Absent means it already lives at the root of its own repository.",
       "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.livesAt",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.catharnessdeclaration.lsiunitproviders",
+      "prefLabel": "CatHarnessDeclaration.lsiUnitProviders",
+      "definition": "The LSI unit providers this instance SHIPS, which `lsi:near` discovers rather than names. See {@link LsiUnitProviderDeclaration}.",
+      "source": "cat-harness/schemas/cat-harness.ts#CatHarnessDeclaration.lsiUnitProviders",
       "status": "candidate"
     },
     {
@@ -3245,6 +3280,27 @@
       "prefLabel": "LiquidPrefix.prefix",
       "definition": "The first path segment(s); default the instance's `name`.",
       "source": "cat-harness/schemas/cat-harness.ts#LiquidPrefix.prefix",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.lsiunitproviderdeclaration.export",
+      "prefLabel": "LsiUnitProviderDeclaration.export",
+      "definition": "The exported provider function.",
+      "source": "cat-harness/schemas/cat-harness.ts#LsiUnitProviderDeclaration.export",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.lsiunitproviderdeclaration.graphkind",
+      "prefLabel": "LsiUnitProviderDeclaration.graphKind",
+      "definition": "The graph's name in `lsi:near` output and in `--graphs`.",
+      "source": "cat-harness/schemas/cat-harness.ts#LsiUnitProviderDeclaration.graphKind",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.lsiunitproviderdeclaration.module",
+      "prefLabel": "LsiUnitProviderDeclaration.module",
+      "definition": "Instance-relative module path.",
+      "source": "cat-harness/schemas/cat-harness.ts#LsiUnitProviderDeclaration.module",
       "status": "candidate"
     },
     {
@@ -3901,7 +3957,7 @@
     {
       "id": "content-adapter-node.contentadapternodeschema.vocabulary",
       "prefLabel": "ContentAdapterNodeSchema.vocabulary",
-      "definition": "The vocabulary's own module, `path.ts`, relative to the declaring instance — for an untyped vocabulary, the code that defines its blocks.",
+      "definition": "The vocabulary's own module, `path.ts`, relative to the declaring instance: the code that defines its blocks. For a TYPED vocabulary it exports the kinds' schemas (`blockSchemas`), and may export `constraintRules` and `builders` — the contract and its loader are `vocabulary-modules.ts`. So a layer above cat-harness types its own kinds, and a composition that does not mount it neither discovers nor types them.",
       "source": "cat-harness/schemas/content-adapter-node.ts#ContentAdapterNodeSchema.vocabulary",
       "status": "candidate"
     },
@@ -3943,7 +3999,7 @@
     {
       "id": "content-type.contenttypemembership.marker",
       "prefLabel": "ContentTypeMembership.marker",
-      "definition": "The marker file that made the assertion, repo-relative.",
+      "definition": "The marker that made the assertion: a repo-relative file, or `index.config.json#contentTypes.<id>` for an {@link IndexSectionMarker}.",
       "source": "cat-harness/schemas/content-type.ts#ContentTypeMembership.marker",
       "status": "candidate"
     },
@@ -4557,6 +4613,167 @@
       "status": "candidate"
     },
     {
+      "id": "deployment-description.deploymentdescription.topology",
+      "prefLabel": "DeploymentDescription.topology",
+      "definition": "The aggregate over the placements, unchanged.",
+      "source": "cat-harness/schemas/deployment-description.ts#DeploymentDescription.topology",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-description.deploymentproblem.actor",
+      "prefLabel": "DeploymentProblem.actor",
+      "definition": "The placement's actor, where the problem is in a placement.",
+      "source": "cat-harness/schemas/deployment-description.ts#DeploymentProblem.actor",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-description.jurisdiction.publicationbase",
+      "prefLabel": "Jurisdiction.publicationBase",
+      "definition": "Where artefacts may be served.",
+      "source": "cat-harness/schemas/deployment-description.ts#Jurisdiction.publicationBase",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-description.jurisdiction.residency",
+      "prefLabel": "Jurisdiction.residency",
+      "definition": "Where bytes may live.",
+      "source": "cat-harness/schemas/deployment-description.ts#Jurisdiction.residency",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-description.jurisdiction.retention",
+      "prefLabel": "Jurisdiction.retention",
+      "definition": "How long artefacts are kept, as the jurisdiction states it.",
+      "source": "cat-harness/schemas/deployment-description.ts#Jurisdiction.retention",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-description.placement.actor",
+      "prefLabel": "Placement.actor",
+      "definition": "An actor id in `scenarios/actors/`. Never a new actor.",
+      "source": "cat-harness/schemas/deployment-description.ts#Placement.actor",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-description.placement.credentials",
+      "prefLabel": "Placement.credentials",
+      "definition": "Each credential need, mapped to the NAME of the mechanism or secret that supplies it. Never a value: an agent reads names only.",
+      "source": "cat-harness/schemas/deployment-description.ts#Placement.credentials",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-description.placement.identity",
+      "prefLabel": "Placement.identity",
+      "definition": "The identity provider, as `identity.ts` names providers (github, gitlab, google).",
+      "source": "cat-harness/schemas/deployment-description.ts#Placement.identity",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-description.placement.reach",
+      "prefLabel": "Placement.reach",
+      "definition": "Absent is unknown, never the deployment's value.",
+      "source": "cat-harness/schemas/deployment-description.ts#Placement.reach",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.deploymentreport.undetermined",
+      "prefLabel": "DeploymentReport.undetermined",
+      "definition": "Tasks whose only possible runners wait on a fact no placement declares. Kept apart from `unrunnable`: could not determine is neither yes nor no.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#DeploymentReport.undetermined",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.deploymentreport.unrunnable",
+      "prefLabel": "DeploymentReport.unrunnable",
+      "definition": "The report's own headline: tasks no placement can run. Reported, never a failure.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#DeploymentReport.unrunnable",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.placementverdict.judgement",
+      "prefLabel": "PlacementVerdict.judgement",
+      "definition": "Needed skills no Tool satisfies: the actor exercises them, so they hold nothing up.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#PlacementVerdict.judgement",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.placementverdict.placement",
+      "prefLabel": "PlacementVerdict.placement",
+      "definition": "Index into the description's `placements`, since one actor may be placed twice.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#PlacementVerdict.placement",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.placementverdict.runnable",
+      "prefLabel": "PlacementVerdict.runnable",
+      "definition": "Every needed skill that has Tools has one that works here.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#PlacementVerdict.runnable",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.placementverdict.skills",
+      "prefLabel": "PlacementVerdict.skills",
+      "definition": "One entry per needed skill that has Tools, with each Tool satisfying it.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#PlacementVerdict.skills",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.placementverdict.undetermined",
+      "prefLabel": "PlacementVerdict.undetermined",
+      "definition": "Not runnable, but every failing skill has a Tool whose fit could not be determined. So it is not known to be blocked either.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#PlacementVerdict.undetermined",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.resolvertask.kinds",
+      "prefLabel": "ResolverTask.kinds",
+      "definition": "Kinds that may fulfil it (`fulfilmentKindsForBpmnType`). Absent is unconstrained.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#ResolverTask.kinds",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.resolvertask.role",
+      "prefLabel": "ResolverTask.role",
+      "definition": "The lane's role id. Absent means the lane names no role.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#ResolverTask.role",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.resolvertask.skills",
+      "prefLabel": "ResolverTask.skills",
+      "definition": "Skills the task needs. Empty or absent: no Tool is needed.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#ResolverTask.skills",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.taskverdict.candidates",
+      "prefLabel": "TaskVerdict.candidates",
+      "definition": "Placements whose actor may take the lane's role and is of an allowed kind.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#TaskVerdict.candidates",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.taskverdict.undetermined",
+      "prefLabel": "TaskVerdict.undetermined",
+      "definition": "No candidate is known to run it, and at least one might: an OS or runtime nobody declared.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#TaskVerdict.undetermined",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.taskverdict.unrunnable",
+      "prefLabel": "TaskVerdict.unrunnable",
+      "definition": "No candidate can run it: no one may take the role, or no Tool works for any who may.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#TaskVerdict.unrunnable",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-resolver.toolverdict.reason",
+      "prefLabel": "ToolVerdict.reason",
+      "definition": "Why, when it is not `works`.",
+      "source": "cat-harness/schemas/deployment-resolver.ts#ToolVerdict.reason",
+      "status": "candidate"
+    },
+    {
       "id": "detangle-sidecar.detanglesidecar.cohesion",
       "prefLabel": "DetangleSidecar.cohesion",
       "definition": "`internal / (internal + inbound + outbound)`, rounded — see {@link COHESION_DP}.",
@@ -4811,7 +5028,7 @@
     {
       "id": "diff-renderers.diffrendererschema.defaultfor",
       "prefLabel": "DiffRendererSchema.defaultFor",
-      "definition": "Block kinds this renderer is the DEFAULT for, from `BLOCK_KINDS`. `*` is the fallback, and exactly one renderer carries it. Two renderers may list the same kind: order is preference, and the page takes the first one that can run on the block. A test holds every other entry to a kind that exists, so a renamed kind cannot silently lose its default.",
+      "definition": "Block kinds this renderer is the DEFAULT for, from `BLOCK_KINDS`. `*` is the fallback, and exactly one renderer carries it. {@link STRUCTURED} is any block with structured sides, and comes before its kind. Two renderers may list the same kind: order is preference, and the page takes the first one that can run on the block. A test holds every other entry to a kind that exists, so a renamed kind cannot silently lose its default.",
       "source": "cat-harness/schemas/diff-renderers.ts#DiffRendererSchema.defaultFor",
       "status": "candidate"
     },
@@ -6475,6 +6692,13 @@
       "status": "candidate"
     },
     {
+      "id": "graph-typology-node.graphtypologynodeschema.shownonpublishedpages",
+      "prefLabel": "GraphTypologyNodeSchema.shownOnPublishedPages",
+      "definition": "Its markdown is shown on a published page (an IG annex appended to its page), so its links address that page.",
+      "source": "cat-harness/schemas/graph-typology-node.ts#GraphTypologyNodeSchema.shownOnPublishedPages",
+      "status": "candidate"
+    },
+    {
       "id": "graph-typology-node.graphtypologynodeschema.skillbearing",
       "prefLabel": "GraphTypologyNodeSchema.skillBearing",
       "definition": "The directory may be scanned for skill bodies (sod4 #5).",
@@ -6486,6 +6710,20 @@
       "prefLabel": "GraphTypologyNodeSchema.tileIcon",
       "definition": "The navbar tile icon (an icon name, as `graph-tiles.ts` spells it).",
       "source": "cat-harness/schemas/graph-typology-node.ts#GraphTypologyNodeSchema.tileIcon",
+      "status": "candidate"
+    },
+    {
+      "id": "graph-typology-registry.declaringinstance.namespace",
+      "prefLabel": "DeclaringInstance.namespace",
+      "definition": "`<iriBase>v<major>/ns#` — {@link instanceNamespaceOf}.",
+      "source": "cat-harness/schemas/graph-typology-registry.ts#DeclaringInstance.namespace",
+      "status": "candidate"
+    },
+    {
+      "id": "graph-typology-registry.declaringinstance.prefix",
+      "prefLabel": "DeclaringInstance.prefix",
+      "definition": "The declaration's `stub`, else its `name`: the prefix its terms are written with.",
+      "source": "cat-harness/schemas/graph-typology-registry.ts#DeclaringInstance.prefix",
       "status": "candidate"
     },
     {
@@ -6540,7 +6778,7 @@
     {
       "id": "graph-typology-registry.graphtypologydef.layer",
       "prefLabel": "GraphTypologyDef.layer",
-      "definition": "Whose namespace the kind is named in, when it is not the harness's: `core` for the folio's own furniture (`voices`, `library`, `todos`, …). A kind bootstrap defines is bootstrap's whatever this says (`BOOTSTRAP_GRAPH_TYPOLOGIES`). The kind IS its individual, `<ns>graphTypology/<name>` ({@link graphTypologyIri}); there is no class per kind. Owner, 2026-09-30 (bean `3r47`): \"Drop per-kind classes\" — bootstrap names a kind as one `GraphTypology` individual, and the harness now does the same.",
+      "definition": "Whose namespace the kind is named in, when it is not the harness's: `core` for a kind the content layer above the harness declares as a node in its own `typologies/` graph, named in THAT instance's namespace ({@link graphTypologyIri}, {@link DECLARED_BY}). The harness registers no `core` kind in code since folio-assistant#2598 (owner, 2026-10-16, \"1a\"): the ones it uses itself (`todos`, `library`, `uploads`, `voices`, `folio`, …) are its own. A kind bootstrap defines is bootstrap's whatever this says (`BOOTSTRAP_GRAPH_TYPOLOGIES`). The kind IS its individual, `<ns>graphTypology/<name>` ({@link graphTypologyIri}); there is no class per kind. Owner, 2026-09-30 (bean `3r47`): \"Drop per-kind classes\" — bootstrap names a kind as one `GraphTypology` individual, and the harness now does the same.",
       "source": "cat-harness/schemas/graph-typology-registry.ts#GraphTypologyDef.layer",
       "status": "candidate"
     },
@@ -6598,6 +6836,13 @@
       "prefLabel": "GraphTypologyDef.schema",
       "definition": "Where the shape of a node in this graph is defined — a repo-relative module path, or a `$schema` tag the files themselves carry.",
       "source": "cat-harness/schemas/graph-typology-registry.ts#GraphTypologyDef.schema",
+      "status": "candidate"
+    },
+    {
+      "id": "graph-typology-registry.graphtypologydef.shownonpublishedpages",
+      "prefLabel": "GraphTypologyDef.shownOnPublishedPages",
+      "definition": "Is a graph of this kind's markdown SHOWN ON a published page, though the kind is not renderable itself?",
+      "source": "cat-harness/schemas/graph-typology-registry.ts#GraphTypologyDef.shownOnPublishedPages",
       "status": "candidate"
     },
     {
@@ -6722,7 +6967,7 @@
     {
       "id": "harness-config.folioassistantdependency.name",
       "prefLabel": "FolioAssistantDependency.name",
-      "definition": "Display name of the dependency (e.g. \"smart-base\", \"qou-platform\").",
+      "definition": "Display name of the dependency (e.g. \"qou-platform\").",
       "source": "cat-harness/schemas/harness-config.ts#FolioAssistantDependency.name",
       "status": "candidate"
     },
@@ -6979,6 +7224,13 @@
       "status": "candidate"
     },
     {
+      "id": "health-report.healthreportschema.runcontext",
+      "prefLabel": "HealthReportSchema.runContext",
+      "definition": "Content-addressed reference to the `folio-run-context/v1` record of the run that wrote this report (`docs/proposals/tool-releases-2026-10-07.md`, owner C1 = a).",
+      "source": "cat-harness/schemas/health-report.ts#HealthReportSchema.runContext",
+      "status": "candidate"
+    },
+    {
       "id": "health-report.healththresholdschema.basis",
       "prefLabel": "HealthThresholdSchema.basis",
       "definition": "Why this number and not another. Required; see above.",
@@ -7112,10 +7364,24 @@
       "status": "candidate"
     },
     {
+      "id": "index-config.indexconfigschema.contenttypes",
+      "prefLabel": "IndexConfigSchema.contentTypes",
+      "definition": "Sections that registered CONTENT TYPES declare about this repository, keyed by the type's id: `\"contentTypes\": { \"dak\": { ... } }`.",
+      "source": "cat-harness/schemas/index-config.ts#IndexConfigSchema.contentTypes",
+      "status": "candidate"
+    },
+    {
       "id": "index-config.indexconfigschema.description",
       "prefLabel": "IndexConfigSchema.description",
       "definition": "One paragraph under that title, saying what the checkout is for.",
       "source": "cat-harness/schemas/index-config.ts#IndexConfigSchema.description",
+      "status": "candidate"
+    },
+    {
+      "id": "index-config.indexconfigschema.gateexemptions",
+      "prefLabel": "IndexConfigSchema.gateExemptions",
+      "definition": "The steps of THIS checkout's own workflows that CI runs and the local gate set does not, each with its reason ({@link GateExemptionsSchema}). The index owns `.github/workflows/`, so it declares their exemptions, in the same change as the step — never ahead of it in a layer.",
+      "source": "cat-harness/schemas/index-config.ts#IndexConfigSchema.gateExemptions",
       "status": "candidate"
     },
     {
@@ -7137,6 +7403,13 @@
       "prefLabel": "IndexMigration.movedFrom",
       "definition": "The declaration file whose `remoteMounts` moved into the index, when any did.",
       "source": "cat-harness/schemas/index-config.ts#IndexMigration.movedFrom",
+      "status": "candidate"
+    },
+    {
+      "id": "index-config.indexsiteschema.agentrun",
+      "prefLabel": "IndexSiteSchema.agentRun",
+      "definition": "This repository is AGENT-RUN: an agent builds and publishes its site (`stage-local.ts`), and its publish workflows keep only `workflow_dispatch`, as documentation of what the agent path must match rather than something to dispatch (owner, 2026-10-10, bean `n3h9`; the `feature-staging` skill, \"Agent-run repositories\").",
+      "source": "cat-harness/schemas/index-config.ts#IndexSiteSchema.agentRun",
       "status": "candidate"
     },
     {
@@ -7539,10 +7812,24 @@
       "status": "candidate"
     },
     {
+      "id": "kg-qa.kgqamanifest.runcontext",
+      "prefLabel": "KgQaManifest.runContext",
+      "definition": "Content-addressed reference to the `folio-run-context/v1` record of the run that wrote this manifest (`docs/proposals/tool-releases-2026-10-07.md`, owner C1 = a).",
+      "source": "cat-harness/schemas/kg-qa.ts#KgQaManifest.runContext",
+      "status": "candidate"
+    },
+    {
       "id": "kg-qa.kgqareport.criteria",
       "prefLabel": "KgQaReport.criteria",
       "definition": "Criterion id → entry. Criteria not applying to this kind are omitted.",
       "source": "cat-harness/schemas/kg-qa.ts#KgQaReport.criteria",
+      "status": "candidate"
+    },
+    {
+      "id": "kg-qa.kgqareport.runcontext",
+      "prefLabel": "KgQaReport.runContext",
+      "definition": "Content-addressed reference to the `folio-run-context/v1` record of the run that wrote this report (`docs/proposals/tool-releases-2026-10-07.md`, owner C1 = a).",
+      "source": "cat-harness/schemas/kg-qa.ts#KgQaReport.runContext",
       "status": "candidate"
     },
     {
@@ -8101,7 +8388,7 @@
     {
       "id": "merge-queue.memberfactsschema.touchesharness",
       "prefLabel": "MemberFactsSchema.touchesHarness",
-      "definition": "An authored path under `cat-harness/` or `cat-harness-tools/`. The raw measurement behind input (a) — NOT input (a) itself: measured 2026-10-02, it was true for 11 of the 11 PRs in that day's queue.",
+      "definition": "An authored path under `cat-harness/` or its tools layer's directory. The raw measurement behind input (a) — NOT input (a) itself: measured 2026-10-02, it was true for 11 of the 11 PRs in that day's queue.",
       "source": "cat-harness/schemas/merge-queue.ts#MemberFactsSchema.touchesHarness",
       "status": "candidate"
     },
@@ -8190,6 +8477,13 @@
       "status": "candidate"
     },
     {
+      "id": "mount-trust.consentgrant.standing",
+      "prefLabel": "ConsentGrant.standing",
+      "definition": "Set when the grant is a standing rule's, not a person's at this pin ({@link withStandingConsent}).",
+      "source": "cat-harness/schemas/mount-trust.ts#ConsentGrant.standing",
+      "status": "candidate"
+    },
+    {
       "id": "mount-trust.mountconsentschema.by",
       "prefLabel": "MountConsentSchema.by",
       "definition": "Who consented: a person, by the identity they act under here.",
@@ -8211,6 +8505,13 @@
       "status": "candidate"
     },
     {
+      "id": "mount-trust.mountconsentschema.standing",
+      "prefLabel": "MountConsentSchema.standing",
+      "definition": "Present when this pin's consent was written under a STANDING consent (`trust.standing`), by the repin tool rather than by the person at this pin. It holds only while that rule is still declared, unchanged.",
+      "source": "cat-harness/schemas/mount-trust.ts#MountConsentSchema.standing",
+      "status": "candidate"
+    },
+    {
       "id": "mount-trust.mountsignatureschema.network",
       "prefLabel": "MountSignatureSchema.network",
       "definition": "The trust network the key is listed in, e.g. `gdhcn`.",
@@ -8222,6 +8523,62 @@
       "prefLabel": "MountSignatureSchema.signedDigest",
       "definition": "What was signed: the pinned declaration's sha256, as the lock records it.",
       "source": "cat-harness/schemas/mount-trust.ts#MountSignatureSchema.signedDigest",
+      "status": "candidate"
+    },
+    {
+      "id": "mount-trust.mounttrustschema.standing",
+      "prefLabel": "MountTrustSchema.standing",
+      "definition": "A standing consent for this instance: see \"Standing consent\" above.",
+      "source": "cat-harness/schemas/mount-trust.ts#MountTrustSchema.standing",
+      "status": "candidate"
+    },
+    {
+      "id": "mount-trust.standingcandidate.branch",
+      "prefLabel": "StandingCandidate.branch",
+      "definition": "The branch the commit was resolved from — it must be the one the rule follows.",
+      "source": "cat-harness/schemas/mount-trust.ts#StandingCandidate.branch",
+      "status": "candidate"
+    },
+    {
+      "id": "mount-trust.standingcandidate.verdict",
+      "prefLabel": "StandingCandidate.verdict",
+      "definition": "The commit's own combined status / checks: `green` only when every one concluded successfully.",
+      "source": "cat-harness/schemas/mount-trust.ts#StandingCandidate.verdict",
+      "status": "candidate"
+    },
+    {
+      "id": "mount-trust.standingconsentschema.consentat",
+      "prefLabel": "StandingConsentSchema.consentAt",
+      "definition": "When it was given. Part of the rule's identity: a re-given rule re-asks every pin under the old one.",
+      "source": "cat-harness/schemas/mount-trust.ts#StandingConsentSchema.consentAt",
+      "status": "candidate"
+    },
+    {
+      "id": "mount-trust.standingconsentschema.consentby",
+      "prefLabel": "StandingConsentSchema.consentBy",
+      "definition": "Who gave the standing consent — recorded as `consent.by` on every pin it covers.",
+      "source": "cat-harness/schemas/mount-trust.ts#StandingConsentSchema.consentBy",
+      "status": "candidate"
+    },
+    {
+      "id": "mount-trust.standingconsentschema.evidence",
+      "prefLabel": "StandingConsentSchema.evidence",
+      "definition": "Where it was given, so it can be read. Optional: `consentBy` and `consentAt` are the record.",
+      "source": "cat-harness/schemas/mount-trust.ts#StandingConsentSchema.evidence",
+      "status": "candidate"
+    },
+    {
+      "id": "mount-trust.standingconsentschema.follows",
+      "prefLabel": "StandingConsentSchema.follows",
+      "definition": "The upstream branch whose newest commit the pin follows.",
+      "source": "cat-harness/schemas/mount-trust.ts#StandingConsentSchema.follows",
+      "status": "candidate"
+    },
+    {
+      "id": "mount-trust.standingconsentschema.require",
+      "prefLabel": "StandingConsentSchema.require",
+      "definition": "`green`: only a commit whose own combined status / checks are green. Absent: the branch head.",
+      "source": "cat-harness/schemas/mount-trust.ts#StandingConsentSchema.require",
       "status": "candidate"
     },
     {
@@ -8239,6 +8596,13 @@
       "status": "candidate"
     },
     {
+      "id": "narrative.narrativeschema.lang",
+      "prefLabel": "NarrativeSchema.lang",
+      "definition": "The language of `text`, as a BCP 47 tag. Required on every narrative that has text; the empty `not-authored` slot claims no language (owner ruling 2026-10-22, 1A).",
+      "source": "cat-harness/schemas/narrative.ts#NarrativeSchema.lang",
+      "status": "candidate"
+    },
+    {
       "id": "narrative.narrativeschema.rejection_reason",
       "prefLabel": "NarrativeSchema.rejection_reason",
       "definition": "Why it was turned down. Required when rejected, and never empty.",
@@ -8250,6 +8614,34 @@
       "prefLabel": "NarrativeSchema.text",
       "definition": "The narrative itself, or null when nobody has written one.",
       "source": "cat-harness/schemas/narrative.ts#NarrativeSchema.text",
+      "status": "candidate"
+    },
+    {
+      "id": "node-kind-index.layerratchet.foreign",
+      "prefLabel": "LayerRatchet.foreign",
+      "definition": "In the baseline and unkinded, but OWNED by another instance: a baseline may name only its own.",
+      "source": "cat-harness/schemas/node-kind-index.ts#LayerRatchet.foreign",
+      "status": "candidate"
+    },
+    {
+      "id": "node-kind-index.layerratchet.fresh",
+      "prefLabel": "LayerRatchet.fresh",
+      "definition": "Unkinded now, owned here, and not in the baseline: the gate's finding.",
+      "source": "cat-harness/schemas/node-kind-index.ts#LayerRatchet.fresh",
+      "status": "candidate"
+    },
+    {
+      "id": "node-kind-index.layerratchet.gone",
+      "prefLabel": "LayerRatchet.gone",
+      "definition": "In the baseline and no longer an unkinded family here: a stale baseline, shrunk by the writer.",
+      "source": "cat-harness/schemas/node-kind-index.ts#LayerRatchet.gone",
+      "status": "candidate"
+    },
+    {
+      "id": "node-kind-index.layerratchet.keep",
+      "prefLabel": "LayerRatchet.keep",
+      "definition": "What the writer leaves in the baseline (what it held and still owns unkinded, plus `fresh` when accepted).",
+      "source": "cat-harness/schemas/node-kind-index.ts#LayerRatchet.keep",
       "status": "candidate"
     },
     {
@@ -8589,6 +8981,34 @@
       "status": "candidate"
     },
     {
+      "id": "outside-software.outsidesoftwarecoreschema.digest",
+      "prefLabel": "OutsideSoftwareCoreSchema.digest",
+      "definition": "The digest of the bytes. Required: a record with no digest gives nothing to compare a download against.",
+      "source": "cat-harness/schemas/outside-software.ts#OutsideSoftwareCoreSchema.digest",
+      "status": "candidate"
+    },
+    {
+      "id": "outside-software.outsidesoftwarecoreschema.licence",
+      "prefLabel": "OutsideSoftwareCoreSchema.licence",
+      "definition": "An SPDX licence expression, one line. Checked against the pinned list by {@link outsideSoftwareLicenceProblem}.",
+      "source": "cat-harness/schemas/outside-software.ts#OutsideSoftwareCoreSchema.licence",
+      "status": "candidate"
+    },
+    {
+      "id": "outside-software.outsidesoftwarecoreschema.licencesource",
+      "prefLabel": "OutsideSoftwareCoreSchema.licenceSource",
+      "definition": "Where the licence was read from — the jar's own `-license`, the archive's `legal/`, the package's own `package.json`.",
+      "source": "cat-harness/schemas/outside-software.ts#OutsideSoftwareCoreSchema.licenceSource",
+      "status": "candidate"
+    },
+    {
+      "id": "outside-software.outsidesoftwarecoreschema.name",
+      "prefLabel": "OutsideSoftwareCoreSchema.name",
+      "definition": "The software's name. Each kind narrows it to its own naming rule.",
+      "source": "cat-harness/schemas/outside-software.ts#OutsideSoftwareCoreSchema.name",
+      "status": "candidate"
+    },
+    {
       "id": "panel-chrome.panelcontrol.because",
       "prefLabel": "PanelControl.because",
       "definition": "Why this control exists, for whoever is deciding whether to keep it.",
@@ -8715,6 +9135,13 @@
       "status": "candidate"
     },
     {
+      "id": "pdf-structure.pdfstructureschema.container",
+      "prefLabel": "PdfStructureSchema.container",
+      "definition": "A bound volume split into its papers by qou's `split-bound-volume.py`: the volume keeps `container: true`, names the per-paper entries in `container_children` and says why in `container_note`. Ranking and the library index skip a container, so its pages are not counted twice.",
+      "source": "cat-harness/schemas/pdf-structure.ts#PdfStructureSchema.container",
+      "status": "candidate"
+    },
+    {
       "id": "pdf-structure.pdfstructureschema.duplicate_of",
       "prefLabel": "PdfStructureSchema.duplicate_of",
       "definition": "The library holds some works more than once (a preprint beside its published version, one PDF under two names). The duplicate copy names the entry to prefer in `duplicate_of` and says why in `duplicate_note`; the preferred entry lists its copies in `duplicate_copies`. Adjudicated in qou `docs/audits/library-duplicate-ledger.json`.",
@@ -8747,6 +9174,20 @@
       "prefLabel": "PdfStructureSchema.structure_note",
       "definition": "What a rung did NOT claim. Required by check-l1-complete when there are no sections.",
       "source": "cat-harness/schemas/pdf-structure.ts#PdfStructureSchema.structure_note",
+      "status": "candidate"
+    },
+    {
+      "id": "pdf-structure.pdfstructureschema.text_extraction",
+      "prefLabel": "PdfStructureSchema.text_extraction",
+      "definition": "How the text was obtained when it was done by hand, outside the producer: the route, why, which engine and settings, and how far the result can be trusted. Written for scans OCR'd before `source.runContext` existed; a producer run records `source.runContext` instead.",
+      "source": "cat-harness/schemas/pdf-structure.ts#PdfStructureSchema.text_extraction",
+      "status": "candidate"
+    },
+    {
+      "id": "pdf-structure.pdfstructureschema.toc_note",
+      "prefLabel": "PdfStructureSchema.toc_note",
+      "definition": "Where the headings came from when a person supplied them, not the producer.",
+      "source": "cat-harness/schemas/pdf-structure.ts#PdfStructureSchema.toc_note",
       "status": "candidate"
     },
     {
@@ -9121,6 +9562,13 @@
       "status": "candidate"
     },
     {
+      "id": "qa-report.qareportschema.runcontext",
+      "prefLabel": "QaReportSchema.runContext",
+      "definition": "Content-addressed reference to the `folio-run-context/v1` record of the run that produced this report (`docs/proposals/tool-releases-2026-10-07.md`, owner C1 = a). When present, `toolchain` is a projection of it via `toolchainFromRunContext`.",
+      "source": "cat-harness/schemas/qa-report.ts#QaReportSchema.runContext",
+      "status": "candidate"
+    },
+    {
       "id": "qa-report.qareportsourceschema.commit",
       "prefLabel": "QaReportSourceSchema.commit",
       "definition": "The commit under test, if known.",
@@ -9314,6 +9762,13 @@
       "prefLabel": "ReaderFilter.properties",
       "definition": "Kind properties to keep, keyed by property name — the owner's *\"filter out by kind properties\"*. OR within a property's values, AND across properties.",
       "source": "cat-harness/schemas/reader-filter.ts#ReaderFilter.properties",
+      "status": "candidate"
+    },
+    {
+      "id": "red-flag.mergereviewschema.repository",
+      "prefLabel": "MergeReviewSchema.repository",
+      "definition": "The repository `pr` is in, `owner/repo`. Optional, as `pr` is: the gate looks a verdict up by its head sha, but a reader of the store cannot link a pull request number without it. A reader links only an `owner/repo` spelling, so a malformed one costs the link, never the verdict.",
+      "source": "cat-harness/schemas/red-flag.ts#MergeReviewSchema.repository",
       "status": "candidate"
     },
     {
@@ -9548,6 +10003,13 @@
       "status": "candidate"
     },
     {
+      "id": "remote-mount.lockeddirectoryschema.package",
+      "prefLabel": "LockedDirectorySchema.package",
+      "definition": "A hydrated directory whose `index.hydrated.jsonld` came from the pin's subgraph index PACKAGE rather than its git tree (bean `mo75` G2b; the contract is `subgraphIndexPackage` in `subgraph-manifest.ts`): the tarball's URL and sha256, and the file's path inside the package, so a replay fetches the same bytes and refuses any others.",
+      "source": "cat-harness/schemas/remote-mount.ts#LockedDirectorySchema.package",
+      "status": "candidate"
+    },
+    {
       "id": "remote-mount.lockeddirectoryschema.path",
       "prefLabel": "LockedDirectorySchema.path",
       "definition": "Relative to the downstream instance's root, no trailing slash.",
@@ -9573,6 +10035,13 @@
       "prefLabel": "LockedInstanceSchema.assets",
       "definition": "The instance's DECLARED ASSETS (`assets[].src` — its README and AGENTS.md), each a single file the declaration names and the mount lays down beside the declaration. Bean `hupw`: a mount without them left every declared asset of a mounted instance a dangling reference. Only instance-scoped assets inside the instance are taken; a declared asset the pinned tree lacks makes the instance `missing`.",
       "source": "cat-harness/schemas/remote-mount.ts#LockedInstanceSchema.assets",
+      "status": "candidate"
+    },
+    {
+      "id": "remote-mount.lockedinstanceschema.hydrated",
+      "prefLabel": "LockedInstanceSchema.hydrated",
+      "definition": "Mounted as hydrated metadata (bean `mo75` G2): each directory holds one `index.hydrated.jsonld`, read from the `upstreamPath` directory the instance publishes it in, and the declaration is recorded (it fixed those paths) but NOT laid down — so nothing discovers a code-less instance there.",
+      "source": "cat-harness/schemas/remote-mount.ts#LockedInstanceSchema.hydrated",
       "status": "candidate"
     },
     {
@@ -9639,6 +10108,20 @@
       "status": "candidate"
     },
     {
+      "id": "remote-mount.mountoverrideschema.hydrated",
+      "prefLabel": "MountOverrideSchema.hydrated",
+      "definition": "Mount this instance's directories as their published `index.hydrated.jsonld` only — metadata, no files (bean `mo75` G2). Overrides the mount entry's own `hydrated` either way. `directories` still chooses which subgraphs; `whole` and `hydrated` together are refused at plan time, since one asks for every file and the other for none.",
+      "source": "cat-harness/schemas/remote-mount.ts#MountOverrideSchema.hydrated",
+      "status": "candidate"
+    },
+    {
+      "id": "remote-mount.mountoverrideschema.tools",
+      "prefLabel": "MountOverrideSchema.tools",
+      "definition": "Tool ids THIS instance declares, each mounted runnable: its definition, its implementation and their import closure, as the declared directories that closure touches (module note, §\"Tools\"). An id the instance does not declare at the pin is refused at plan time, never dropped. Not with `hydrated` (metadata brings no code) or `skip`.",
+      "source": "cat-harness/schemas/remote-mount.ts#MountOverrideSchema.tools",
+      "status": "candidate"
+    },
+    {
       "id": "remote-mount.mountoverrideschema.trust",
       "prefLabel": "MountOverrideSchema.trust",
       "definition": "Consent for THIS instance at its own pin. Required for an instance reached through a GITLINK: that is another repository at another commit, and the parent mount's consent does not cover it (roast `1ygp` L4.2). Ignored for the declared harness and same-tree instances, which the mount's own `trust` covers.",
@@ -9657,6 +10140,13 @@
       "prefLabel": "RemoteMountSchema.harness",
       "definition": "The harness's instance name, as its own declaration states it.",
       "source": "cat-harness/schemas/remote-mount.ts#RemoteMountSchema.harness",
+      "status": "candidate"
+    },
+    {
+      "id": "remote-mount.remotemountschema.hydrated",
+      "prefLabel": "RemoteMountSchema.hydrated",
+      "definition": "Mount every instance this entry reaches as hydrated metadata ({@link MountOverrideSchema}`.hydrated`), unless its override says `hydrated: false`. Bean `mo75` G2.",
+      "source": "cat-harness/schemas/remote-mount.ts#RemoteMountSchema.hydrated",
       "status": "candidate"
     },
     {
@@ -9919,6 +10409,34 @@
       "status": "candidate"
     },
     {
+      "id": "role-graph.laneroleread.performervaries",
+      "prefLabel": "LaneRoleRead.performerVaries",
+      "definition": "`<bootstrap.processes:role variable=\"true\"/>`: the performer is whoever invoked the process.",
+      "source": "cat-harness/schemas/role-graph.ts#LaneRoleRead.performerVaries",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.laneroleread.ref",
+      "prefLabel": "LaneRoleRead.ref",
+      "definition": "The role id the lane names, when it names one.",
+      "source": "cat-harness/schemas/role-graph.ts#LaneRoleRead.ref",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.laneroleread.source",
+      "prefLabel": "LaneRoleRead.source",
+      "definition": "Which declaration supplied {@link ref}.",
+      "source": "cat-harness/schemas/role-graph.ts#LaneRoleRead.source",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.laneroleread.warning",
+      "prefLabel": "LaneRoleRead.warning",
+      "definition": "Set when the lane still uses the deprecated binding, or carries two that disagree.",
+      "source": "cat-harness/schemas/role-graph.ts#LaneRoleRead.warning",
+      "status": "candidate"
+    },
+    {
       "id": "role-graph.loadedactor.capabilities",
       "prefLabel": "LoadedActor.capabilities",
       "definition": "Capability ids the actor claims — an environment probe it needs, not a skill. Carried here because nothing resolved them: `fhir-validator` was claimed by three actors and declared nowhere.",
@@ -9975,13 +10493,6 @@
       "status": "candidate"
     },
     {
-      "id": "role-graph.roledef.actedupon",
-      "prefLabel": "RoleDef.actedUpon",
-      "definition": "This lane is **acted upon**, not performed by anybody.",
-      "source": "cat-harness/schemas/role-graph.ts#RoleDef.actedUpon",
-      "status": "candidate"
-    },
-    {
       "id": "role-graph.roledef.actorkinds",
       "prefLabel": "RoleDef.actorKinds",
       "definition": "Which kinds of actor may take this role on. `external` marks a participant outside the instance's control (a registry, a third-party service).",
@@ -9998,7 +10509,7 @@
     {
       "id": "role-graph.roledef.id",
       "prefLabel": "RoleDef.id",
-      "definition": "Stable id. Referenced by `<bootstrap.processes:role ref>` and by `inherits`.",
+      "definition": "Stable id. It is the `id` of the `<bpmn:resource>` a lane's `partitionElementRef` points at, verbatim, and what `inherits` names.",
       "source": "cat-harness/schemas/role-graph.ts#RoleDef.id",
       "status": "candidate"
     },
@@ -10047,7 +10558,7 @@
     {
       "id": "role-graph.roledef.title",
       "prefLabel": "RoleDef.title",
-      "definition": "Display text. Not used for matching: a lane binds by `<bootstrap.processes:role ref>`.",
+      "definition": "Display text, and the `name` of that `<bpmn:resource>`. Not used for matching: a lane binds by id.",
       "source": "cat-harness/schemas/role-graph.ts#RoleDef.title",
       "status": "candidate"
     },
@@ -10203,6 +10714,13 @@
       "prefLabel": "ScriptQaReport.references",
       "definition": "**Proper-metadata references** the script declares to propositions, definitions, theorems, glossary entries, or bibliographic keys. Mirrors the content-block convention of `uses: [...]` / `meta.cites: [...]` arrays in `.ts` manifests.",
       "source": "cat-harness/schemas/script-qa.ts#ScriptQaReport.references",
+      "status": "candidate"
+    },
+    {
+      "id": "script-qa.scriptqareport.runcontext",
+      "prefLabel": "ScriptQaReport.runContext",
+      "definition": "Content-addressed reference to the `folio-run-context/v1` record of the run that wrote this report (`docs/proposals/tool-releases-2026-10-07.md`, owner C1 = a).",
+      "source": "cat-harness/schemas/script-qa.ts#ScriptQaReport.runContext",
       "status": "candidate"
     },
     {
@@ -10493,6 +11011,27 @@
       "status": "candidate"
     },
     {
+      "id": "site-indexes.librarydocumentviewschema.pages",
+      "prefLabel": "LibraryDocumentViewSchema.pages",
+      "definition": "Unknown is not zero: an older ingestion records no page count.",
+      "source": "cat-harness/schemas/site-indexes.ts#LibraryDocumentViewSchema.pages",
+      "status": "candidate"
+    },
+    {
+      "id": "site-indexes.librarydocumentviewschema.pagescovered",
+      "prefLabel": "LibraryDocumentViewSchema.pagesCovered",
+      "definition": "When `pages` is unknown, the last page a section reaches.",
+      "source": "cat-harness/schemas/site-indexes.ts#LibraryDocumentViewSchema.pagesCovered",
+      "status": "candidate"
+    },
+    {
+      "id": "site-indexes.librarydocumentviewschema.variant",
+      "prefLabel": "LibraryDocumentViewSchema.variant",
+      "definition": "Which structure variant: only a PDF has pages and a TOC (library-document.ts).",
+      "source": "cat-harness/schemas/site-indexes.ts#LibraryDocumentViewSchema.variant",
+      "status": "candidate"
+    },
+    {
       "id": "site-indexes.libraryindexentryschema.extractedtitle",
       "prefLabel": "LibraryIndexEntrySchema.extractedTitle",
       "definition": "The manifest's extracted title, only when a catalogue title replaced it (bean `gnqa`).",
@@ -10502,7 +11041,7 @@
     {
       "id": "site-indexes.libraryindexentryschema.links",
       "prefLabel": "LibraryIndexEntrySchema.links",
-      "definition": "Where else to go for a `referenced` entry — an absolute URL, or a site-root path with a leading `/` that the viewer composes against its own base (owner, 2026-10-02: the smart-trust IG as an external reference).",
+      "definition": "Where else to go for a `referenced` entry — an absolute URL, or a site-root path with a leading `/` that the viewer composes against its own base (owner, 2026-10-02: a trust IG as an external reference).",
       "source": "cat-harness/schemas/site-indexes.ts#LibraryIndexEntrySchema.links",
       "status": "candidate"
     },
@@ -10518,6 +11057,13 @@
       "prefLabel": "LibraryIndexEntrySchema.view",
       "definition": "The page that RENDERS this entry, site-root path with a leading `/` and no base (the avatar's convention): another instance's declared root for a referenced entry it renders, else the entry's own library page. GENERATED by `gen-library-viz`, never stored in the asset (#1881).",
       "source": "cat-harness/schemas/site-indexes.ts#LibraryIndexEntrySchema.view",
+      "status": "candidate"
+    },
+    {
+      "id": "site-indexes.libraryindexentryschema.viewable",
+      "prefLabel": "LibraryIndexEntrySchema.viewable",
+      "definition": "The kind of viewer the entry's held source opens in, set only when the page at `view` draws a view panel for it; the folio glass shows its eye from it (owner, 2026-10-16). GENERATED by `gen-library-viz`. Absent means no viewer, or nobody derived it.",
+      "source": "cat-harness/schemas/site-indexes.ts#LibraryIndexEntrySchema.viewable",
       "status": "candidate"
     },
     {
@@ -10581,6 +11127,13 @@
       "prefLabel": "TranslationStatusSchema.instances",
       "definition": "Every OTHER instance's declared `translation-sources` directory, each measured on its own (issue #2228). Optional: an index written before the field existed is still a valid index.",
       "source": "cat-harness/schemas/site-indexes.ts#TranslationStatusSchema.instances",
+      "status": "candidate"
+    },
+    {
+      "id": "site-indexes.translationstatusschema.page",
+      "prefLabel": "TranslationStatusSchema.page",
+      "definition": "The status page, site-relative, which the translation drawer links as \"Full translation status\" (bean `cat-tools-bbnd`). Optional: an index written before the drawer existed has none.",
+      "source": "cat-harness/schemas/site-indexes.ts#TranslationStatusSchema.page",
       "status": "candidate"
     },
     {
@@ -10665,6 +11218,13 @@
       "prefLabel": "SkillTopicsSchema.directories",
       "definition": "One node, two lists: the instance directories declared from within.",
       "source": "cat-harness/schemas/skill-topics.ts#SkillTopicsSchema.directories",
+      "status": "candidate"
+    },
+    {
+      "id": "software-library.vendoredschema.path",
+      "prefLabel": "VendoredSchema.path",
+      "definition": "The bundle's directory, layer-relative (`scripts/assets/vendor/jquery/3.6.0`).",
+      "source": "cat-harness/schemas/software-library.ts#VendoredSchema.path",
       "status": "candidate"
     },
     {
@@ -10938,6 +11498,13 @@
       "prefLabel": "StagingComparison.mainBaseUrl",
       "definition": "Base URL for the main site.",
       "source": "cat-harness/schemas/staging.ts#StagingComparison.mainBaseUrl",
+      "status": "candidate"
+    },
+    {
+      "id": "staging.stagingcomparison.missing",
+      "prefLabel": "StagingComparison.missing",
+      "definition": "What could not be linked, said rather than hidden: no preview yet, no page list computed, or a changed page the publish ref does not hold.",
+      "source": "cat-harness/schemas/staging.ts#StagingComparison.missing",
       "status": "candidate"
     },
     {
@@ -11221,6 +11788,69 @@
       "status": "candidate"
     },
     {
+      "id": "subgraph-manifest.subgraphindexfileschema.path",
+      "prefLabel": "SubgraphIndexFileSchema.path",
+      "definition": "Package-relative and instance-relative: `<docs>/subgraph/<harness>/<subgraph>/<file>`.",
+      "source": "cat-harness/schemas/subgraph-manifest.ts#SubgraphIndexFileSchema.path",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-manifest.subgraphindexfileschema.subgraph",
+      "prefLabel": "SubgraphIndexFileSchema.subgraph",
+      "definition": "The subgraph's instance-relative path, no trailing slash; `\"\"` is the harness root (index only).",
+      "source": "cat-harness/schemas/subgraph-manifest.ts#SubgraphIndexFileSchema.subgraph",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-manifest.subgraphindexmanifestschema.builtin",
+      "prefLabel": "SubgraphIndexManifestSchema.builtIn",
+      "definition": "What the files were built in — they are computed over a checkout's instances, so the checkout is provenance.",
+      "source": "cat-harness/schemas/subgraph-manifest.ts#SubgraphIndexManifestSchema.builtIn",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-manifest.subgraphindexmanifestschema.docs",
+      "prefLabel": "SubgraphIndexManifestSchema.docs",
+      "definition": "The instance's declared `docs` directory, no trailing slash.",
+      "source": "cat-harness/schemas/subgraph-manifest.ts#SubgraphIndexManifestSchema.docs",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-manifest.subgraphindexpackageref.name",
+      "prefLabel": "SubgraphIndexPackageRef.name",
+      "definition": "npm package name.",
+      "source": "cat-harness/schemas/subgraph-manifest.ts#SubgraphIndexPackageRef.name",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-manifest.subgraphindexpackageref.record",
+      "prefLabel": "SubgraphIndexPackageRef.record",
+      "definition": "Its `folio-binary-release/v1` record.",
+      "source": "cat-harness/schemas/subgraph-manifest.ts#SubgraphIndexPackageRef.record",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-manifest.subgraphindexpackageref.tag",
+      "prefLabel": "SubgraphIndexPackageRef.tag",
+      "definition": "The GitHub release tag holding it.",
+      "source": "cat-harness/schemas/subgraph-manifest.ts#SubgraphIndexPackageRef.tag",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-manifest.subgraphindexpackageref.tarball",
+      "prefLabel": "SubgraphIndexPackageRef.tarball",
+      "definition": "The `.tgz` asset — `bun pm pack`'s name for `name@version`.",
+      "source": "cat-harness/schemas/subgraph-manifest.ts#SubgraphIndexPackageRef.tarball",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-manifest.subgraphindexpackageref.version",
+      "prefLabel": "SubgraphIndexPackageRef.version",
+      "definition": "npm version: `0.0.0-pin.<sha>`.",
+      "source": "cat-harness/schemas/subgraph-manifest.ts#SubgraphIndexPackageRef.version",
+      "status": "candidate"
+    },
+    {
       "id": "subgraph-manifest.subgraphnodebase.holdsgraph",
       "prefLabel": "SubgraphNodeBase.holdsGraph",
       "definition": "Links to the GraphTypology nodes this subgraph holds.",
@@ -11239,6 +11869,20 @@
       "prefLabel": "FamilySourceSchema.repository",
       "definition": "Where the family is: absent = this repository (materialised locally); `owner/repo` = read from that remote.",
       "source": "cat-harness/schemas/subgraph-source.ts#FamilySourceSchema.repository",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-source.hydratedsourceschema.harness",
+      "prefLabel": "HydratedSourceSchema.harness",
+      "definition": "The upstream instance's name — the `<HARNESS>` segment of the subgraph IRI.",
+      "source": "cat-harness/schemas/subgraph-source.ts#HydratedSourceSchema.harness",
+      "status": "candidate"
+    },
+    {
+      "id": "subgraph-source.hydratedsourceschema.subgraph",
+      "prefLabel": "HydratedSourceSchema.subgraph",
+      "definition": "The subgraph's path in that instance, e.g. `tools` or `skills/sdlc`; never the root.",
+      "source": "cat-harness/schemas/subgraph-source.ts#HydratedSourceSchema.subgraph",
       "status": "candidate"
     },
     {
@@ -11410,6 +12054,20 @@
       "status": "candidate"
     },
     {
+      "id": "tabular-csvw.tabularcsvwschema.narrative",
+      "prefLabel": "TabularCsvwSchema.narrative",
+      "definition": "What the data is about, under bean `ju0u`'s state machine, the same record v1 carries. Required on the same terms as `source`.",
+      "source": "cat-harness/schemas/tabular-csvw.ts#TabularCsvwSchema.narrative",
+      "status": "candidate"
+    },
+    {
+      "id": "tabular-csvw.tabularcsvwschema.source",
+      "prefLabel": "TabularCsvwSchema.source",
+      "definition": "The technical-metadata block every ingest sidecar carries (`file`, `sha256`, `mimetype_sniffed`, ...), the same record `folio-tabular-records/v1` holds as `source` — bean `urat`. It is how `check-l1-complete` (`sourceBlockOf`) and `check-library-qa` learn what the entry was made from. Required (urat step 5): no committed record predates it, and an extractor's output, which has none, is {@link TabularCsvwTablesSchema}. Not a CSVW key: {@link toCsvw} never emits it.",
+      "source": "cat-harness/schemas/tabular-csvw.ts#TabularCsvwSchema.source",
+      "status": "candidate"
+    },
+    {
       "id": "tabular-csvw.tabularcsvwschema.tables",
       "prefLabel": "TabularCsvwSchema.tables",
       "definition": "One per sheet. A CSV has exactly one; a workbook is a `csvw:TableGroup`.",
@@ -11550,6 +12208,13 @@
       "status": "candidate"
     },
     {
+      "id": "term-mapping.termmappingschema.instance",
+      "prefLabel": "TermMappingSchema.instance",
+      "definition": "The instance that owns the scheme. A scheme id such as `kg-tools` is shared by every instance's extraction, so a scheme is keyed by (instance, scheme): bean `q3n9`, owner ruling A, 2026-10-24. The instance is derived from the scheme's source, never from where its glossary file sits, so a file that moves keeps its key.",
+      "source": "cat-harness/schemas/term-mapping.ts#TermMappingSchema.instance",
+      "status": "candidate"
+    },
+    {
       "id": "term-mapping.termmappingschema.matches",
       "prefLabel": "TermMappingSchema.matches",
       "definition": "Present when either state is `mapped`; the concepts that matched.",
@@ -11582,6 +12247,153 @@
       "prefLabel": "TermMappingsFileSchema.scope",
       "definition": "One entry per target, always both, so a reader sees what was NOT asked.",
       "source": "cat-harness/schemas/term-mapping.ts#TermMappingsFileSchema.scope",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.decisionsupportworkedcaseschema.decisionlogicref",
+      "prefLabel": "DecisionSupportWorkedCaseSchema.decisionLogicRef",
+      "definition": "Decision table, rule, or logic under review.",
+      "source": "cat-harness/schemas/test-data.ts#DecisionSupportWorkedCaseSchema.decisionLogicRef",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.decisionsupportworkedcaseschema.expectedguidance",
+      "prefLabel": "DecisionSupportWorkedCaseSchema.expectedGuidance",
+      "definition": "Expected domain guidance or action as stated by the SME or source guideline.",
+      "source": "cat-harness/schemas/test-data.ts#DecisionSupportWorkedCaseSchema.expectedGuidance",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.decisionsupportworkedcaseschema.id",
+      "prefLabel": "DecisionSupportWorkedCaseSchema.id",
+      "definition": "Case id within the fixed test data set.",
+      "source": "cat-harness/schemas/test-data.ts#DecisionSupportWorkedCaseSchema.id",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.decisionsupportworkedcaseschema.input",
+      "prefLabel": "DecisionSupportWorkedCaseSchema.input",
+      "definition": "Structured case input (subject state, observations, context).",
+      "source": "cat-harness/schemas/test-data.ts#DecisionSupportWorkedCaseSchema.input",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.decisionsupportworkedcaseschema.summary",
+      "prefLabel": "DecisionSupportWorkedCaseSchema.summary",
+      "definition": "Domain narrative summary of the worked scenario.",
+      "source": "cat-harness/schemas/test-data.ts#DecisionSupportWorkedCaseSchema.summary",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.decisionsupportworkedcaseschema.systemoutput",
+      "prefLabel": "DecisionSupportWorkedCaseSchema.systemOutput",
+      "definition": "Output produced by the decision logic under review.",
+      "source": "cat-harness/schemas/test-data.ts#DecisionSupportWorkedCaseSchema.systemOutput",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.indicatorcohortcaseschema.computedvalue",
+      "prefLabel": "IndicatorCohortCaseSchema.computedValue",
+      "definition": "Indicator value computed by the definition under review.",
+      "source": "cat-harness/schemas/test-data.ts#IndicatorCohortCaseSchema.computedValue",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.indicatorcohortcaseschema.denominator",
+      "prefLabel": "IndicatorCohortCaseSchema.denominator",
+      "definition": "Optional expected/observed denominator for ratio or proportion indicators.",
+      "source": "cat-harness/schemas/test-data.ts#IndicatorCohortCaseSchema.denominator",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.indicatorcohortcaseschema.expectedvalue",
+      "prefLabel": "IndicatorCohortCaseSchema.expectedValue",
+      "definition": "Expected indicator value determined by SME domain judgement.",
+      "source": "cat-harness/schemas/test-data.ts#IndicatorCohortCaseSchema.expectedValue",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.indicatorcohortcaseschema.id",
+      "prefLabel": "IndicatorCohortCaseSchema.id",
+      "definition": "Cohort id within the fixed test data set.",
+      "source": "cat-harness/schemas/test-data.ts#IndicatorCohortCaseSchema.id",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.indicatorcohortcaseschema.indicatorref",
+      "prefLabel": "IndicatorCohortCaseSchema.indicatorRef",
+      "definition": "Indicator definition under review.",
+      "source": "cat-harness/schemas/test-data.ts#IndicatorCohortCaseSchema.indicatorRef",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.indicatorcohortcaseschema.inputs",
+      "prefLabel": "IndicatorCohortCaseSchema.inputs",
+      "definition": "Cohort member records or stratified aggregate inputs.",
+      "source": "cat-harness/schemas/test-data.ts#IndicatorCohortCaseSchema.inputs",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.indicatorcohortcaseschema.numerator",
+      "prefLabel": "IndicatorCohortCaseSchema.numerator",
+      "definition": "Optional expected/observed numerator for ratio or proportion indicators.",
+      "source": "cat-harness/schemas/test-data.ts#IndicatorCohortCaseSchema.numerator",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.indicatorcohortcaseschema.period",
+      "prefLabel": "IndicatorCohortCaseSchema.period",
+      "definition": "Optional reporting period (e.g. `\"2026-Q1\"` or ISO interval).",
+      "source": "cat-harness/schemas/test-data.ts#IndicatorCohortCaseSchema.period",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.indicatorcohortcaseschema.populationsize",
+      "prefLabel": "IndicatorCohortCaseSchema.populationSize",
+      "definition": "Number of subjects / records in the cohort (`>= 1`).",
+      "source": "cat-harness/schemas/test-data.ts#IndicatorCohortCaseSchema.populationSize",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.indicatorcohortcaseschema.summary",
+      "prefLabel": "IndicatorCohortCaseSchema.summary",
+      "definition": "Domain summary of the cohort and measurement window.",
+      "source": "cat-harness/schemas/test-data.ts#IndicatorCohortCaseSchema.summary",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.smerevieweridentityschema.actor",
+      "prefLabel": "SmeReviewerIdentitySchema.actor",
+      "definition": "Optional declared actor id from `scenarios/actors/`.",
+      "source": "cat-harness/schemas/test-data.ts#SmeReviewerIdentitySchema.actor",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.smerevieweridentityschema.displayname",
+      "prefLabel": "SmeReviewerIdentitySchema.displayName",
+      "definition": "Optional human-readable display name.",
+      "source": "cat-harness/schemas/test-data.ts#SmeReviewerIdentitySchema.displayName",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.smerevieweridentityschema.handle",
+      "prefLabel": "SmeReviewerIdentitySchema.handle",
+      "definition": "Attributable account handle or identifier at `provider`.",
+      "source": "cat-harness/schemas/test-data.ts#SmeReviewerIdentitySchema.handle",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.smerevieweridentityschema.provider",
+      "prefLabel": "SmeReviewerIdentitySchema.provider",
+      "definition": "Identity authority, e.g. `\"github\"`, `\"orcid\"`, `\"institutional-sso\"`.",
+      "source": "cat-harness/schemas/test-data.ts#SmeReviewerIdentitySchema.provider",
+      "status": "candidate"
+    },
+    {
+      "id": "test-data.smerevieweridentityschema.role",
+      "prefLabel": "SmeReviewerIdentitySchema.role",
+      "definition": "Role under which the SME reviewed the case/cohort (e.g. `\"clinical-sme\"`).",
+      "source": "cat-harness/schemas/test-data.ts#SmeReviewerIdentitySchema.role",
       "status": "candidate"
     },
     {
@@ -11739,6 +12551,13 @@
       "status": "candidate"
     },
     {
+      "id": "test-report.testreportschema.runcontext",
+      "prefLabel": "TestReportSchema.runContext",
+      "definition": "Content-addressed reference to the `folio-run-context/v1` record of the run that produced this report (`docs/proposals/tool-releases-2026-10-07.md`, owner C1 = a).",
+      "source": "cat-harness/schemas/test-report.ts#TestReportSchema.runContext",
+      "status": "candidate"
+    },
+    {
       "id": "test-report.testreviewerschema.actor",
       "prefLabel": "TestReviewerSchema.actor",
       "definition": "On whose authority — an id under `scenarios/actors/`. Absent is unresolved, not permitted.",
@@ -11827,6 +12646,13 @@
       "prefLabel": "TestRunSchema.requirements",
       "definition": "WHICH REQUIREMENTS THIS RUN CHECKS — owner, 2026-09-23 (issue #1164): *\"put requirements in Test schema as array\"*, as REFERENCES (`req:<slug>` or `req:<slug>#<statement-key>`), never copies: the requirement's text lives in one place, and a copy in every run is a copy free to disagree with it.",
       "source": "cat-harness/schemas/test-run.ts#TestRunSchema.requirements",
+      "status": "candidate"
+    },
+    {
+      "id": "test-run.testrunschema.runcontext",
+      "prefLabel": "TestRunSchema.runContext",
+      "definition": "Content-addressed reference to the `folio-run-context/v1` record of this test run (`docs/proposals/tool-releases-2026-10-07.md`, owner C1 = a).",
+      "source": "cat-harness/schemas/test-run.ts#TestRunSchema.runContext",
       "status": "candidate"
     },
     {
@@ -12322,22 +13148,15 @@
     {
       "id": "tool-release.toolreleaseschema.digest",
       "prefLabel": "ToolReleaseSchema.digest",
-      "definition": "Required: the resolver's one refusal is a mismatch against this.",
+      "definition": "Required, and narrowed from the core to sha256: the resolver's one refusal is a mismatch against this.",
       "source": "cat-harness/schemas/tool-release.ts#ToolReleaseSchema.digest",
       "status": "candidate"
     },
     {
-      "id": "tool-release.toolreleaseschema.licence",
-      "prefLabel": "ToolReleaseSchema.licence",
-      "definition": "An SPDX licence expression, one line. Checked against the pinned list by {@link toolReleaseLicenceProblem}.",
-      "source": "cat-harness/schemas/tool-release.ts#ToolReleaseSchema.licence",
-      "status": "candidate"
-    },
-    {
-      "id": "tool-release.toolreleaseschema.licencesource",
-      "prefLabel": "ToolReleaseSchema.licenceSource",
-      "definition": "Where the licence was read from — the jar's own `-license`, the archive's `legal/`, the repository's `LICENSE`.",
-      "source": "cat-harness/schemas/tool-release.ts#ToolReleaseSchema.licenceSource",
+      "id": "tool-release.toolreleaseschema.name",
+      "prefLabel": "ToolReleaseSchema.name",
+      "definition": "Narrowed from the core: a tool name, with no `@`.",
+      "source": "cat-harness/schemas/tool-release.ts#ToolReleaseSchema.name",
       "status": "candidate"
     },
     {
@@ -12366,6 +13185,20 @@
       "prefLabel": "ToolRunRecordSchema.inputFingerprint",
       "definition": "The tool's own fingerprint of the inputs the run read, or `unknown` when the run failed before it could compute one. `unknown` matches nothing.",
       "source": "cat-harness/schemas/tool-run.ts#ToolRunRecordSchema.inputFingerprint",
+      "status": "candidate"
+    },
+    {
+      "id": "tool-run.toolrunrecordschema.releases",
+      "prefLabel": "ToolRunRecordSchema.releases",
+      "definition": "Tool releases and runtimes resolved for this invocation (`folio-run-context/v1`, issue #2481, bean `3sbm`).",
+      "source": "cat-harness/schemas/tool-run.ts#ToolRunRecordSchema.releases",
+      "status": "candidate"
+    },
+    {
+      "id": "tool-run.toolrunrecordschema.runcontext",
+      "prefLabel": "ToolRunRecordSchema.runContext",
+      "definition": "Content-addressed reference to the `folio-run-context/v1` record of the run that executed this tool (`docs/proposals/tool-releases-2026-10-07.md`, owner C1 = a: referenced by sha256, never inlined).",
+      "source": "cat-harness/schemas/tool-run.ts#ToolRunRecordSchema.runContext",
       "status": "candidate"
     },
     {
@@ -12520,6 +13353,13 @@
       "prefLabel": "ToolInvokeSchema.manual",
       "definition": "The tool is performed by a person following the skill, with no command. `beans-manual` is the case: editing a bean's front matter by hand is a real mechanism with equal standing to the CLI, and modelling it as an absent `shell` would have made it indistinguishable from an unfinished record.",
       "source": "cat-harness/schemas/tool.ts#ToolInvokeSchema.manual",
+      "status": "candidate"
+    },
+    {
+      "id": "tool.toolinvokeschema.shell",
+      "prefLabel": "ToolInvokeSchema.shell",
+      "definition": "The command a caller types, from the repository root.",
+      "source": "cat-harness/schemas/tool.ts#ToolInvokeSchema.shell",
       "status": "candidate"
     },
     {
@@ -13181,27 +14021,6 @@
       "status": "candidate"
     },
     {
-      "id": "types.conjectureblock.lean",
-      "prefLabel": "ConjectureBlock.lean",
-      "definition": "Optional Lean stub for the conjecture statement.",
-      "source": "cat-harness/schemas/types.ts#ConjectureBlock.lean",
-      "status": "candidate"
-    },
-    {
-      "id": "types.definitionblock.examples",
-      "prefLabel": "DefinitionBlock.examples",
-      "definition": "Labels of example blocks illustrating this definition.",
-      "source": "cat-harness/schemas/types.ts#DefinitionBlock.examples",
-      "status": "candidate"
-    },
-    {
-      "id": "types.definitionblock.lean",
-      "prefLabel": "DefinitionBlock.lean",
-      "definition": "Required: every definition must be formalized.",
-      "source": "cat-harness/schemas/types.ts#DefinitionBlock.lean",
-      "status": "candidate"
-    },
-    {
       "id": "types.diagramblock.caption",
       "prefLabel": "DiagramBlock.caption",
       "definition": "Caption text (rendered below diagram in LaTeX).",
@@ -13288,7 +14107,7 @@
     {
       "id": "types.figureblock.narrative",
       "prefLabel": "FigureBlock.narrative",
-      "definition": "The authored description and its state. See `schemas/narrative.ts`.",
+      "definition": "The authored description per language, or the empty slot. See `schemas/narrative.ts`.",
       "source": "cat-harness/schemas/types.ts#FigureBlock.narrative",
       "status": "candidate"
     },
@@ -13437,27 +14256,6 @@
       "prefLabel": "PaperRef.url",
       "definition": "Folio viewer URL for this paper. Used for: - Cross-paper dependency resolution (qualified `uses` refs) - BibTeX `folio-url` field for folio-hosted citations - Read-only import of external papers for commenting/referencing",
       "source": "cat-harness/schemas/types.ts#PaperRef.url",
-      "status": "candidate"
-    },
-    {
-      "id": "types.proofblock.computation",
-      "prefLabel": "ProofBlock.computation",
-      "definition": "Optional computational verification (Python/SnapPea/sympy/etc.).",
-      "source": "cat-harness/schemas/types.ts#ProofBlock.computation",
-      "status": "candidate"
-    },
-    {
-      "id": "types.proofblock.lean",
-      "prefLabel": "ProofBlock.lean",
-      "definition": "Optional Lean formalization of the proof.",
-      "source": "cat-harness/schemas/types.ts#ProofBlock.lean",
-      "status": "candidate"
-    },
-    {
-      "id": "types.proofblock.of",
-      "prefLabel": "ProofBlock.of",
-      "definition": "Label of the provable block this proof establishes (reverse link of `ProvableBase.proofs[]`). Canonical field name — use in preference to `proves`.",
-      "source": "cat-harness/schemas/types.ts#ProofBlock.of",
       "status": "candidate"
     },
     {
@@ -14023,7 +14821,7 @@
     {
       "id": "viewer-nav-qa.viewernavpageschema.path",
       "prefLabel": "ViewerNavPageSchema.path",
-      "definition": "The page's published path, e.g. `/cat-harness/library/who-iris/`.",
+      "definition": "The page's published path, e.g. `/cat-harness/library/<instance>/`.",
       "source": "cat-harness/schemas/viewer-nav-qa.ts#ViewerNavPageSchema.path",
       "status": "candidate"
     },

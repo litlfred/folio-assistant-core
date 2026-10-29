@@ -6,7 +6,7 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { blockText, blockUnits } from "./lsi-blocks.ts";
+import { BLOCK_INDEX_OPTIONS, blockText, blockUnits, lsiNearUnits } from "./lsi-blocks.ts";
 
 const dirs: string[] = [];
 afterEach(() => {
@@ -71,5 +71,24 @@ describe("blockUnits", () => {
     const u = blockUnits([lib]);
     expect(u.units).toHaveLength(1);
     expect(u.unreadable[0]!.reason).toContain("already used");
+  });
+});
+
+describe("lsiNearUnits (the `blocks` provider for cross-graph lsi:near)", () => {
+  test("with --root it reads that library, and each block's @id is its own explicit reference", () => {
+    const lib = library({ a: { "@id": "library/doc/blocks/a", kind: "figure", narrative: { text: "Doses over time." } } });
+    const r = lsiNearUnits({ checkoutRoot: "/nowhere", roots: [lib] });
+    expect(r.units.map((u) => u.id)).toEqual(["library/doc/blocks/a"]);
+    expect(r.refKeys).toEqual([["library/doc/blocks/a", "library/doc/blocks/a"]]);
+    expect(r.buildOptions).toBe(BLOCK_INDEX_OPTIONS);
+    expect(r.notSearched).toBeUndefined();
+  });
+
+  test("with no library declared it is not searched, never an empty index", () => {
+    const empty = mkdtempSync(join(tmpdir(), "lsi-blocks-empty-"));
+    dirs.push(empty);
+    const r = lsiNearUnits({ checkoutRoot: empty, roots: [] });
+    expect(r.notSearched).toBe("no library is declared in this checkout");
+    expect(r.units).toEqual([]);
   });
 });

@@ -38,6 +38,54 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Un icono de trazo negro de una cabeza de robot: una cara cuadrada de esquinas redondeadas con dos ojos de punto, una boca sonriente, paneles laterales y una única antena terminada en un círculo. Marca el turno del sistema en el ejemplo práctico de esta página.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
+    },
+    {
+      "text": "أيقونة بخطوط سوداء لرأس روبوت: وجه مربّع مستدير الزوايا بعينين نقطيتين وفم مبتسم ولوحتين جانبيتين وهوائي واحد ينتهي بدائرة. تشير إلى دور النظام في المثال المشروح في هذه الصفحة.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Чёрный контурный значок головы робота: квадратное лицо со скруглёнными углами, два глаза-точки, улыбающийся рот, боковые панели и одна антенна с кружком на конце. Он обозначает реплику системы в разобранном на этой странице примере.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "一个黑色线条机器人头部图标：圆角方形的脸、两个圆点眼睛、微笑的嘴、两侧面板，以及一根顶端带圆圈的天线。它标示本页示例对话中系统的发言轮次。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-001",

@@ -38,6 +38,54 @@
       },
       "drafted_at": "2026-10-24",
       "lang": "fr"
+    },
+    {
+      "text": "Un icono de trazo negro de una expresión matemática: un signo de raíz cuadrada sobre una x con superíndice 2, encerrado entre altos corchetes curvos. Representa las ecuaciones como tipo de elemento analizado.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "es"
+    },
+    {
+      "text": "أيقونة بخطوط سوداء لتعبير رياضي: علامة جذر تربيعي فوق x مرفوعة إلى الأس 2، محاطة بقوسين منحنيين طويلين. تمثّل المعادلات بوصفها نوعًا من العناصر المُحلَّلة.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ar"
+    },
+    {
+      "text": "Чёрный контурный значок математического выражения: знак квадратного корня над x с верхним индексом 2, заключённый в высокие фигурные скобки. Он обозначает формулы как тип разбираемого элемента.",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "ru"
+    },
+    {
+      "text": "一个数学表达式的黑色线条图标：平方根号下是带上标 2 的 x，外面围着高高的弧形括号。它代表作为解析元素类型的公式。",
+      "state": "draft",
+      "drafted_by": {
+        "kind": "agent",
+        "id": "claude-code",
+        "model": "not-disclosed",
+        "session": "https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU"
+      },
+      "drafted_at": "2026-10-24",
+      "lang": "zh"
     }
   ],
   "derivedFrom": "library/arxiv-2510.21603v1/sections/sec-002",

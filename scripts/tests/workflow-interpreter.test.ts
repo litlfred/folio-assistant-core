@@ -34,6 +34,12 @@ const bpmn = (stem: string): string => workflowFile(CORE, `${stem}.bpmn`);
 const names = (model: ProcessModel, ids: string[]): string[] =>
   ids.map((id) => model.nodes.get(id)!.name).sort();
 
+/** Walk Process_BeanOpen (bean `m8gz`) and take its `claimed` branch. */
+function openBean(model: Awaited<ReturnType<typeof loadProcessModel>>, state: Parameters<typeof complete>[1]): void {
+  drainSubprocess(model, state, "Task_ClaimBean");
+  complete(model, state, "GW_BeanYours", { outcome: "claimed" });
+}
+
 describe("the model carries what the diagram already knew", () => {
   test("skills and work-plan marks come off the folio: extensions", async () => {
     const model = await loadProcessModel(bpmn("editing-hci-validation"));
@@ -44,8 +50,10 @@ describe("the model carries what the diagram already knew", () => {
     // extension and trims the name back to the activity.
     expect(draft.name).toBe("Draft the block edit");
 
-    const bean = model.nodes.get("Task_ClaimBean")!;
-    expect(bean.touchesWorkPlan).toBe(true);
+    // The claim is Process_BeanOpen's now (bean `m8gz`); the step that drew it
+    // is a call into it, and the `note` ops stay on the work.
+    expect(model.nodes.get("Task_ClaimBean")!.calledElement).toBe("Process_BeanOpen");
+    expect(model.nodes.get("Task_LogFindings")!.touchesWorkPlan).toBe(true);
   });
 
   test("a call activity reports the process it expands into", async () => {
@@ -79,7 +87,7 @@ describe("the HCI validation gate holds", () => {
     const step = (n: string, outcome?: string) => complete(model, state, n, { outcome });
 
     step("Task_DescribeChange");
-    step("Task_ClaimBean");
+    openBean(model, state);
     drainSubprocess(model, state, "CallActivity_Evidence");
     step("Task_DraftEdit");
 
@@ -115,7 +123,7 @@ describe("the HCI validation gate holds", () => {
       const state = startInstance(model, { id: `t-${decision}`, subject: "def:x" });
       const step = (n: string, outcome?: string) => complete(model, state, n, { outcome });
       step("Task_DescribeChange");
-      step("Task_ClaimBean");
+      openBean(model, state);
       drainSubprocess(model, state, "CallActivity_Evidence");
       step("Task_DraftEdit");
       step("Task_SchemaValidate");
@@ -140,6 +148,8 @@ describe("the HCI validation gate holds", () => {
     );
 
     const discarded = await run("discard");
+    // A discard still closes the bean (Process_BeanClose) before its end.
+    drainSubprocess(discarded.model, discarded.state, "Call_BeanClose", { Close_Outcome: "not wanted" });
     // The end event consumed the only token: nothing left, and no commit.
     expect(enabled(discarded.model, discarded.state)).toEqual([]);
     expect(discarded.state.status).toBe("completed");
@@ -151,7 +161,7 @@ describe("the HCI validation gate holds", () => {
     const state = startInstance(model, { id: "t5", subject: "def:x" });
     const step = (n: string, outcome?: string) => complete(model, state, n, { outcome });
     step("Task_DescribeChange");
-    step("Task_ClaimBean");
+    openBean(model, state);
     drainSubprocess(model, state, "CallActivity_Evidence");
     step("Task_DraftEdit");
     step("Task_SchemaValidate");
@@ -185,7 +195,7 @@ describe("decisions are asked for, not guessed", () => {
     const model = await loadProcessModel(bpmn("editing-hci-validation"));
     const state = startInstance(model, { id: "t6", subject: "def:x" });
     complete(model, state, "Task_DescribeChange");
-    complete(model, state, "Task_ClaimBean");
+    openBean(model, state);
     drainSubprocess(model, state, "CallActivity_Evidence");
     complete(model, state, "Task_DraftEdit");
 
@@ -213,7 +223,8 @@ describe("instance state survives the process it was made in", () => {
     const back = loadInstance(repo, id)!;
     expect(back.bean).toBe("fq0b");
     expect(back.tokens).toEqual(state.tokens);
-    expect(enabled(model, back).map((e) => e.node)).toEqual(["Task_ClaimBean"]);
+    // Inside Process_BeanOpen, whose first step is what is enabled.
+    expect(enabled(model, back).map((e) => e.node)).toEqual(["Open_CheckExists"]);
     rmSync(repo, { recursive: true, force: true });
   });
 });
