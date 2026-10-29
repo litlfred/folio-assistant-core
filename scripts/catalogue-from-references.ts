@@ -62,6 +62,8 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, join, relative, resolve } from "node:path";
 
+import { readStructure, STRUCTURE_FILENAME } from "@litlfred/cat-harness/schemas/content/document-structure.js";
+
 import { CATALOGUE_NODE_SCHEMA_TAG, CATALOGUE_SCHEMA_TAG, CatalogueNodeSchema, CatalogueSchema } from "../schemas/catalogue.ts";
 import { DublinCoreRecordSchema, type DublinCoreRecord } from "../schemas/dublin-core.ts";
 import { referenceEntryToNode, referenceToDublinCoreRecord, type ReferenceNode } from "../schemas/reference.ts";
@@ -342,9 +344,10 @@ async function main(argv: string[]): Promise<number> {
     ...((e as { source_sha?: string }).source_sha ? { sha256: (e as { source_sha?: string }).source_sha } : {}),
   }));
   const library: LibraryEntry[] = readdirSync(libraryDir, { withFileTypes: true })
-    .filter((d) => d.isDirectory() && existsSync(join(libraryDir, d.name, "structure.json")))
+    .filter((d) => d.isDirectory() && existsSync(join(libraryDir, d.name, STRUCTURE_FILENAME)))
     .map((d) => {
-      const src = (readJson(join(libraryDir, d.name, "structure.json"))?.source ?? {}) as { file?: string; sha256?: string };
+      const structure = readStructure(join(libraryDir, d.name));
+      const src = ("reason" in structure ? {} : ((structure.raw as { source?: unknown }).source ?? {})) as { file?: string; sha256?: string };
       return { slug: d.name, sourceFile: src.file, sha256: src.sha256 };
     });
 
