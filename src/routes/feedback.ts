@@ -15,6 +15,15 @@ import {
   FeedbackStore, INVALID_ENUM, parseTodoPriority, parseTodoStatus,
   TODO_PRIORITIES, TODO_STATUSES,
 } from "@litlfred/cat-harness-tools/src/core/feedback.js";
+import {
+  EMPTY_NOTE_TAGS,
+  NoteTagsSchema,
+  type ArtefactRef,
+  type ExternalIdentity,
+  type KgRef,
+  type NoteTags,
+  type TaskRef,
+} from "@litlfred/cat-harness/schemas/carried-note.js";
 import type { FeedbackItem } from "@litlfred/cat-harness/schemas/types.js";
 import type { ContentAdapter } from "@litlfred/cat-harness-tools/src/types.js";
 import { getUserName, getUserEmail, allows, forbidden } from "@litlfred/cat-harness-tools/src/core/rbac.js";
@@ -22,6 +31,90 @@ import { log } from "@litlfred/cat-harness-tools/src/core/logging.js";
 import type { MountedRoute, RouteDeps } from "@litlfred/cat-harness-tools/src/route-groups.js";
 
 const CORS = { "Access-Control-Allow-Origin": "*" };
+
+export type TaggedFeedbackItem = FeedbackItem & { tags?: NoteTags };
+
+function parseIdentityEntry(
+  entry: string | ExternalIdentity,
+  actor?: string,
+  displayName?: string,
+): ExternalIdentity | undefined {
+  const validDisplay = displayName && displayName !== "anonymous" ? displayName : undefined;
+  if (typeof entry !== "string") {
+    return {
+      ...entry,
+      ...(entry.displayName === undefined && validDisplay ? { displayName: validDisplay } : {}),
+      ...(entry.actor === undefined && actor ? { actor } : {}),
+    };
+  }
+  const idx = entry.indexOf(":");
+  if (idx <= 0 || idx === entry.length - 1) return undefined;
+  return {
+    provider: entry.slice(0, idx),
+    id: entry.slice(idx + 1),
+    ...(validDisplay ? { displayName: validDisplay } : {}),
+    ...(actor ? { actor } : {}),
+  };
+}
+
+function buildSubmissionTags(input: {
+  author?: string;
+  authorEmail?: string;
+  actor?: string;
+  identities?: ReadonlyArray<string | ExternalIdentity>;
+  roles?: readonly string[];
+  processes?: readonly string[];
+  tasks?: readonly TaskRef[];
+  targetLabel?: string;
+  references?: readonly KgRef[];
+  artefacts?: readonly ArtefactRef[];
+}): NoteTags {
+  const identities: ExternalIdentity[] = [];
+  for (const raw of input.identities ?? []) {
+    const parsed = parseIdentityEntry(raw, input.actor, input.author);
+    if (parsed) identities.push(parsed);
+  }
+  if (identities.length === 0) {
+    const cleanAuthor = input.author?.trim();
+    const cleanEmail = input.authorEmail?.trim();
+    const fromColon =
+      cleanAuthor && cleanAuthor !== "anonymous"
+        ? parseIdentityEntry(cleanAuthor, input.actor)
+        : undefined;
+    if (fromColon) {
+      identities.push(fromColon);
+    } else if (cleanEmail) {
+      identities.push({
+        provider: "email",
+        id: cleanEmail,
+        ...(cleanAuthor && cleanAuthor !== "anonymous" ? { displayName: cleanAuthor } : {}),
+        ...(input.actor ? { actor: input.actor } : {}),
+      });
+    } else if (cleanAuthor && cleanAuthor !== "anonymous") {
+      identities.push({
+        provider: "github",
+        id: cleanAuthor,
+        displayName: cleanAuthor,
+        ...(input.actor ? { actor: input.actor } : {}),
+      });
+    }
+  }
+
+  const references: KgRef[] = [...(input.references ?? [])];
+  if (input.targetLabel && !references.some((r) => r.kind === "block" && r.id === input.targetLabel)) {
+    references.push({ kind: "block", id: input.targetLabel });
+  }
+
+  return NoteTagsSchema.parse({
+    ...EMPTY_NOTE_TAGS,
+    roles: [...(input.roles ?? [])],
+    processes: [...(input.processes ?? [])],
+    tasks: [...(input.tasks ?? [])],
+    identities,
+    references,
+    artefacts: [...(input.artefacts ?? [])],
+  });
+}
 
 export function handleFeedbackGet(url: URL, feedbackStore: FeedbackStore): Response | null {
   const path = url.pathname;
@@ -62,6 +155,16 @@ export async function handleFeedbackPost(
         comment: string;
         priority: string;
         assignee: string;
+        author?: string;
+        authorEmail?: string;
+        targetLabel?: string;
+        actor?: string;
+        identities?: Array<string | ExternalIdentity>;
+        roles?: string[];
+        processes?: string[];
+        tasks?: TaskRef[];
+        references?: KgRef[];
+        artefacts?: ArtefactRef[];
       };
       const itemId = body.itemId || body.paperId || "";
 
@@ -72,17 +175,36 @@ export async function handleFeedbackPost(
         }, { status: 400 });
       }
 
-      const todo: FeedbackItem = {
+      const reqUser = getUserName(req);
+      const author = reqUser && reqUser !== "anonymous" ? reqUser : (body.author || reqUser);
+      const authorEmail = getUserEmail(req) || body.authorEmail || "";
+      const targetLabel = body.targetLabel || body.rootName;
+      const tags = buildSubmissionTags({
+        author,
+        authorEmail,
+        actor: body.actor,
+        identities: body.identities,
+        roles: body.roles,
+        processes: body.processes,
+        tasks: body.tasks,
+        targetLabel,
+        references: body.references,
+        artefacts: body.artefacts,
+      });
+
+      const todo: TaggedFeedbackItem = {
         id: FeedbackStore.makeId(),
         summary: body.summary,
         comment: body.comment,
         status: "open",
         priority: priority ?? "medium",
         origin: "human",
-        author: getUserName(req),
-        authorEmail: getUserEmail(req),
+        targetLabel,
+        author,
+        authorEmail,
         assignee: body.assignee || "editor-agent",
         createdAt: new Date().toISOString(),
+        tags,
       };
 
       const todos = feedbackStore.read(itemId, body.rootName);
