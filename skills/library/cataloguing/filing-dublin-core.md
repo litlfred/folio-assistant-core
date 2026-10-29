@@ -102,3 +102,16 @@ The slug under `library/` is **ours** and is a different kind of name: it is
 how this corpus addresses the item, and every knowledge-graph reference
 resolves through it. Do not derive one from the other silently — the mapping
 is a fact worth recording, not a transformation worth repeating.
+
+## A folio whose bibliography is CSL-JSON
+
+A folio that cites its sources as CSL-JSON (`references/<key>.json` or
+`<folio>/schema/references.ts`) and joins uploads to references in its source
+ledger already holds the bibliographic facts. Do not re-type them into
+records by hand: declare a `catalogue` directory and run the
+`catalogue-from-references` Tool
+(`bun run cat catalogue:from-references <instance> --apply`). It writes one
+record and one item node per entry the ledger joins to exactly one reference,
+leaves every other entry alone, and judges no licence (every gate stays
+`unknown`). The reference stays the source of truth: change it and re-run,
+never edit the generated record.
