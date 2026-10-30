@@ -1,0 +1,185 @@
+import { describe, expect, it } from "bun:test";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { GraphTypologyNodeSchema } from "@litlfred/cat-harness/schemas/kg/graph-typology-node.js";
+import { resolveNodeSchemas } from "@litlfred/cat-harness/schemas/kg/kind-validator.js";
+import {
+  DEFAULT_DSA_FIXTURE_DIR,
+  computeSha256Hex,
+  verifyDsaDirectory,
+  verifyDsaVersion,
+} from "./check-dsa-hash.ts";
+
+const CORE_ROOT = join(import.meta.dir, "..");
+
+function loadWorkedVersion(ver: "v1" | "v2") {
+  const dir = join(DEFAULT_DSA_FIXTURE_DIR, ver);
+  return {
+    legalText: readFileSync(join(dir, "agreement.md")),
+    dcat: JSON.parse(readFileSync(join(dir, "dcat.jsonld"), "utf-8")) as Record<string, unknown>,
+    agreement: JSON.parse(readFileSync(join(dir, "agreement.jsonld"), "utf-8")) as Record<string, unknown>,
+  };
+}
+
+describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
+  it("declares typologies/dsa.json with external nodeSchemas only (ODRL 2.2, DCAT 3, dcterms:source)", async () => {
+    const raw = JSON.parse(readFileSync(join(CORE_ROOT, "typologies", "dsa.json"), "utf-8")) as unknown;
+    const node = GraphTypologyNodeSchema.parse(raw);
+    expect(node.kind).toBe("dsa");
+    expect(node.schema).toBeUndefined();
+    expect(node.validator).toBeUndefined();
+    expect(node.nodeSchemas).toBeDefined();
+
+    const resolved = await resolveNodeSchemas("dsa", CORE_ROOT);
+    expect(resolved.length).toBeGreaterThanOrEqual(4);
+    for (const entry of resolved) {
+      expect(entry.state).toBe("external");
+    }
+    const tags = new Set(resolved.map((r) => r.tag));
+    expect(tags.has("odrl:Agreement")).toBe(true);
+    expect(tags.has("dcat:Resource")).toBe(true);
+    expect(tags.has("dcat:Distribution")).toBe(true);
+    expect(tags.has("dcterms:source")).toBe(true);
+  });
+
+  it("passes on the worked example and gives a new version a new hash", () => {
+    const dirResult = verifyDsaDirectory(DEFAULT_DSA_FIXTURE_DIR);
+    expect(dirResult.ok).toBe(true);
+    expect(dirResult.errors).toEqual([]);
+
+    const v1 = dirResult.versions["v1"];
+    const v2 = dirResult.versions["v2"];
+    expect(v1?.ok).toBe(true);
+    expect(v2?.ok).toBe(true);
+    expect(v1?.computedSha256).toBeDefined();
+    expect(v2?.computedSha256).toBeDefined();
+    expect(v1?.computedSha256).not.toBe(v2?.computedSha256);
+    expect(v2?.previousVersion).toBe(v1?.resourceId);
+  });
+
+  it("fails on a one-byte change to the legal text", () => {
+    const v1 = loadWorkedVersion("v1");
+    const tampered = Buffer.from(v1.legalText);
+    tampered[0] = tampered[0] === 0x23 ? 0x24 : 0x23;
+
+    const res = verifyDsaVersion({
+      legalText: tampered,
+      dcat: v1.dcat,
+      agreement: v1.agreement,
+    });
+    expect(res.ok).toBe(false);
+    expect(res.errors.some((e) => e.includes("SHA-256 mismatch"))).toBe(true);
+  });
+
+  it("requires the Agreement's dcterms:source to name the same distribution whose spdx:checksum is checked", () => {
+    const v1 = loadWorkedVersion("v1");
+
+    const wrongSourceAgreement = {
+      ...v1.agreement,
+      "dcterms:source": "https://example.org/dsa/042/v1/other-file.md",
+    };
+    const resWrong = verifyDsaVersion({
+      legalText: v1.legalText,
+      dcat: v1.dcat,
+      agreement: wrongSourceAgreement,
+    });
+    expect(resWrong.ok).toBe(false);
+    expect(resWrong.errors.some((e) => e.includes("dcterms:source"))).toBe(true);
+
+    const missingSourceAgreement = { ...v1.agreement };
+    delete missingSourceAgreement["dcterms:source"];
+    const resMissing = verifyDsaVersion({
+      legalText: v1.legalText,
+      dcat: v1.dcat,
+      agreement: missingSourceAgreement,
+    });
+    expect(resMissing.ok).toBe(false);
+    expect(resMissing.errors.some((e) => e.includes("dcterms:source"))).toBe(true);
+  });
+
+  it("rejects any field that is not in ODRL 2.2, DCAT 3 or DCMI Terms", () => {
+    const v1 = loadWorkedVersion("v1");
+
+    const customInAgreement = {
+      ...v1.agreement,
+      customDsaField: "not-in-odrl-dcat-or-dcterms",
+    };
+    const resAgreement = verifyDsaVersion({
+      legalText: v1.legalText,
+      dcat: v1.dcat,
+      agreement: customInAgreement,
+    });
+    expect(resAgreement.ok).toBe(false);
+    expect(
+      resAgreement.errors.some((e) =>
+        e.includes('property "customDsaField" is not defined in ODRL 2.2, DCAT 3 or DCMI Terms'),
+      ),
+    ).toBe(true);
+
+    const customInDcat = {
+      ...v1.dcat,
+      "ex:inventedProperty": "forbidden",
+    };
+    const resDcat = verifyDsaVersion({
+      legalText: v1.legalText,
+      dcat: customInDcat,
+      agreement: v1.agreement,
+    });
+    expect(resDcat.ok).toBe(false);
+    expect(
+      resDcat.errors.some((e) =>
+        e.includes('property "ex:inventedProperty" is not defined in ODRL 2.2, DCAT 3 or DCMI Terms'),
+      ),
+    ).toBe(true);
+  });
+
+  it("fails if a new version does not get a new hash", () => {
+    const tmp = mkdtempSync(join(tmpdir(), "dsa-hash-test-"));
+    try {
+      const v1 = loadWorkedVersion("v1");
+      const textHash = computeSha256Hex(v1.legalText);
+
+      mkdirSync(join(tmp, "v1"), { recursive: true });
+      mkdirSync(join(tmp, "v2"), { recursive: true });
+
+      writeFileSync(join(tmp, "v1", "agreement.md"), v1.legalText);
+      writeFileSync(join(tmp, "v1", "dcat.jsonld"), JSON.stringify(v1.dcat, null, 2));
+      writeFileSync(join(tmp, "v1", "agreement.jsonld"), JSON.stringify(v1.agreement, null, 2));
+
+      // v2 has identical text and hash to v1
+      const v2Dcat = {
+        ...v1.dcat,
+        "@id": "https://example.org/dsa/042/v2",
+        "dcat:version": "2.0",
+        "dcat:previousVersion": { "@id": "https://example.org/dsa/042/v1" },
+        "dcat:distribution": [
+          {
+            "@type": "dcat:Distribution",
+            "@id": "https://example.org/dsa/042/v2/agreement.md",
+            "dcat:downloadURL": "https://example.org/dsa/042/v2/agreement.md",
+            "spdx:checksum": {
+              "@type": "spdx:Checksum",
+              "spdx:algorithm": { "@id": "http://spdx.org/rdf/terms#checksumAlgorithm_sha256" },
+              "spdx:checksumValue": textHash,
+            },
+          },
+        ],
+      };
+      const v2Agreement = {
+        ...v1.agreement,
+        uid: "https://example.org/dsa/042/v2/odrl",
+        "dcterms:source": "https://example.org/dsa/042/v2/agreement.md",
+      };
+      writeFileSync(join(tmp, "v2", "agreement.md"), v1.legalText);
+      writeFileSync(join(tmp, "v2", "dcat.jsonld"), JSON.stringify(v2Dcat, null, 2));
+      writeFileSync(join(tmp, "v2", "agreement.jsonld"), JSON.stringify(v2Agreement, null, 2));
+
+      const res = verifyDsaDirectory(tmp);
+      expect(res.ok).toBe(false);
+      expect(res.errors.some((e) => e.includes("versioned DSA must get a new hash"))).toBe(true);
+    } finally {
+      rmSync(tmp, { recursive: true, force: true });
+    }
+  });
+});

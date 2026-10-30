@@ -108,6 +108,38 @@
       "status": "candidate"
     },
     {
+      "id": "dsa-catalogue-status",
+      "prefLabel": "dsa-catalogue-status",
+      "definition": "Set the life-cycle status (`adms:status`, W3C DCAT 3 §6.4.30) on a Data Sharing Agreement's DCAT 3 catalogue record when the agreement is amended, renewed, terminated, or expires, while keeping all published versions readable at their immutable URLs (DSA building block B3, process step P14.5 `Task_SetStatus`).",
+      "notation": "dsa-catalogue-status",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/dsa-catalogue-status.md",
+      "status": "candidate"
+    },
+    {
+      "id": "dsa-checksum",
+      "prefLabel": "dsa-checksum",
+      "definition": "Compute and record the SHA-256 cryptographic digest of a signed Data Sharing Agreement's legal text as a W3C DCAT 3 `spdx:checksum` (`spdx:Checksum` with `spdx:checksumAlgorithm_sha256` and 64-character lowercase hex `spdx:checksumValue`), verified by `check:dsa-hash` (DSA building block B3, process step P2.2 `Task_Hash`).",
+      "notation": "dsa-checksum",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/dsa-checksum.md",
+      "status": "candidate"
+    },
+    {
+      "id": "dsa-dcat-record",
+      "prefLabel": "dsa-dcat-record",
+      "definition": "Write the W3C DCAT 3 `dcat:Resource` and `dcat:Distribution` catalogue record for a Data Sharing Agreement (`dcat:downloadURL`, `spdx:checksum`, `odrl:hasPolicy`) and link versions with `dcat:version` and `dcat:previousVersion` (DSA building block B3, process step P2.4–5 `Task_Catalogue`).",
+      "notation": "dsa-dcat-record",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/dsa-dcat-record.md",
+      "status": "candidate"
+    },
+    {
+      "id": "dsa-odrl-source",
+      "prefLabel": "dsa-odrl-source",
+      "definition": "Bind a computable Data Sharing Agreement's W3C ODRL 2.2 `Agreement` to its signed legal text distribution using DCMI Metadata Terms `dcterms:source`, naming the exact `dcat:Distribution` whose `spdx:checksum` is checked (DSA building block B3, process step P2.3 `Task_OdrlCitesText`).",
+      "notation": "dsa-odrl-source",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/dsa-odrl-source.md",
+      "status": "candidate"
+    },
+    {
       "id": "dublin-core-renderings",
       "prefLabel": "dublin-core-renderings",
       "definition": "Render a catalogue's Dublin Core records in the two standard forms an outside reader can use: Dublin Core XML, which a harvester reads, and JSON-LD bound to DCMI Metadata Terms. Each rendering is published beside the item's page. Covers which records get one, which XML form is used and why, how every field maps from the record's own data (never composed), what cannot be expressed and how that is reported, and the gate. Read this before changing the mapping, adding a catalogue instance, or linking a rendering from a page.",

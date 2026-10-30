@@ -227,9 +227,9 @@
       <bpmn:incoming>F22</bpmn:incoming>
       <bpmn:outgoing>F23</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_Hash" name="P2.2 · Record the SHA-256 of each file">
-      <bpmn:documentation>Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one. Written as an SRI string or an RFC 6920 ni URI.</bpmn:documentation>
-      <bpmn:extensionElements><cat-harness.processes:no-skill reason="Gap: no skill or check yet computes and verifies the agreement hash. DSA building block B3 adds that check to the dsa kind; until then it is done by hand."/></bpmn:extensionElements>
+    <bpmn:userTask id="Task_Hash" name="P2.2 · Record the SHA-256 of each file&#10;[dsa-checksum]">
+      <bpmn:documentation>Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one, recorded as DCAT 3 spdx:checksum and verified by check:dsa-hash.</bpmn:documentation>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="dsa-checksum"/></bpmn:extensionElements>
       <bpmn:incoming>F23</bpmn:incoming>
       <bpmn:outgoing>F24</bpmn:outgoing>
     </bpmn:userTask>
@@ -239,9 +239,9 @@
       <bpmn:outgoing>F25</bpmn:outgoing>
       <bpmn:outgoing>F26</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="Task_OdrlCitesText" name="P2.3 · Make the ODRL cite the text by URL and hash">
-      <bpmn:documentation>The ODRL policy names the signed text with dcterms:source (DCMI Terms), pointing at the immutable URL whose checksum was just recorded.</bpmn:documentation>
-      <bpmn:extensionElements><cat-harness.processes:no-skill reason="Gap: no skill yet for linking an ODRL policy to its text with dcterms:source. Done by hand until DSA building block B3 adds the check."/></bpmn:extensionElements>
+    <bpmn:userTask id="Task_OdrlCitesText" name="P2.3 · Make the ODRL cite the text by URL and hash&#10;[dsa-odrl-source]">
+      <bpmn:documentation>The ODRL policy names the signed text distribution with dcterms:source (DCMI Terms), pointing at the immutable URL whose spdx:checksum was just recorded.</bpmn:documentation>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="dsa-odrl-source"/></bpmn:extensionElements>
       <bpmn:incoming>F25</bpmn:incoming>
       <bpmn:outgoing>F27</bpmn:outgoing>
     </bpmn:userTask>
@@ -257,9 +257,9 @@
       <bpmn:incoming>F28</bpmn:incoming>
       <bpmn:outgoing>F29</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Task_Catalogue" name="P2.4–5 · Write the DCAT 3 record and link versions">
+    <bpmn:userTask id="Task_Catalogue" name="P2.4–5 · Write the DCAT 3 record and link versions&#10;[dsa-dcat-record]">
       <bpmn:documentation>One DCAT 3 record: the agreement as a catalogued resource, each file a dcat:Distribution with dcat:downloadURL and spdx:checksum; datasets it covers carry odrl:hasPolicy. Versions are linked with DCAT 3 versioning (previous version, version, current version).</bpmn:documentation>
-      <bpmn:extensionElements><cat-harness.processes:no-skill reason="Gap: no skill yet writes a DCAT 3 record for an agreement. filing-dublin-core covers dcterms on library sources, not DCAT distributions and checksums. Done by hand until DSA building block B3."/></bpmn:extensionElements>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="dsa-dcat-record"/></bpmn:extensionElements>
       <bpmn:incoming>F29</bpmn:incoming>
       <bpmn:outgoing>F30</bpmn:outgoing>
     </bpmn:userTask>
@@ -316,9 +316,9 @@
       <bpmn:incoming>F45</bpmn:incoming>
       <bpmn:outgoing>F48</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_SetStatus" name="P14.5 · Set the catalogue status to ended">
+    <bpmn:userTask id="Task_SetStatus" name="P14.5 · Set the catalogue status to ended&#10;[dsa-catalogue-status]">
       <bpmn:documentation>Set the life-cycle status of the agreement's DCAT 3 record (DCAT 3 §6.4.30). The published versions stay readable at their URLs.</bpmn:documentation>
-      <bpmn:extensionElements><cat-harness.processes:no-skill reason="Gap: no skill yet for an agreement's DCAT 3 catalogue record, its status included. Done by hand until DSA building block B3."/></bpmn:extensionElements>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="dsa-catalogue-status"/></bpmn:extensionElements>
       <bpmn:incoming>F47</bpmn:incoming>
       <bpmn:outgoing>F49</bpmn:outgoing>
     </bpmn:userTask>

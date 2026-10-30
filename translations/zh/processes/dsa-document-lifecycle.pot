@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dsa-document-lifecycle\n"
-"POT-Creation-Date: 2026-10-30T15:02:30.066Z\n"
+"POT-Creation-Date: 2026-10-30T16:18:05.184Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: zh\n"
@@ -86,7 +86,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:231
 #. Diagram element documentation
-msgid "Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one. Written as an SRI string or an RFC 6920 ni URI."
+msgid "Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one, recorded as DCAT 3 spdx:checksum and verified by check:dsa-hash."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:113
@@ -261,7 +261,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:319
 #. Diagram label
-msgid "P14.5 · Set the catalogue status to ended"
+msgid "P14.5 · Set the catalogue status to ended [dsa-catalogue-status]"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:224
@@ -271,17 +271,17 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:230
 #. Diagram label
-msgid "P2.2 · Record the SHA-256 of each file"
+msgid "P2.2 · Record the SHA-256 of each file [dsa-checksum]"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:242
 #. Diagram label
-msgid "P2.3 · Make the ODRL cite the text by URL and hash"
+msgid "P2.3 · Make the ODRL cite the text by URL and hash [dsa-odrl-source]"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:260
 #. Diagram label
-msgid "P2.4–5 · Write the DCAT 3 record and link versions"
+msgid "P2.4–5 · Write the DCAT 3 record and link versions [dsa-dcat-record]"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:51
@@ -421,7 +421,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:243
 #. Diagram element documentation
-msgid "The ODRL policy names the signed text with dcterms:source (DCMI Terms), pointing at the immutable URL whose checksum was just recorded."
+msgid "The ODRL policy names the signed text distribution with dcterms:source (DCMI Terms), pointing at the immutable URL whose spdx:checksum was just recorded."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:134
