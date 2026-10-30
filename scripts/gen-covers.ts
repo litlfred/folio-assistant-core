@@ -82,7 +82,7 @@ type Cover = {
   /**
    * The ORIGINAL bitstream the cover is rendered from, or undefined when the
    * ORIGINAL is `referenced`: the PDF was fetched once, rendered, and not
-   * kept (who-iris covers for items whose bytes wait for the IRIS CDN). Such a
+   * kept (IRIS catalogue covers for items whose bytes wait for the IRIS CDN). Such a
    * cover is verified against its recorded digest, bytes and dimensions, and
    * never re-rendered here.
    */
