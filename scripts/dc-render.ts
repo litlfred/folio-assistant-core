@@ -41,7 +41,7 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "fs";
 import { basename, join, relative, resolve } from "path";
 
-import { resolveDirectories } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
+import { resolveDirectories } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { CatalogueNodeSchema, CatalogueSchema, type CatalogueNode } from "../schemas/catalogue.js";
 import { DublinCoreRecordSchema } from "../schemas/dublin-core.js";
 import { DC_JSONLD_SUFFIX, DC_XML_SUFFIX, renderDcJsonLd, renderDcXml } from "../schemas/dublin-core-render.js";

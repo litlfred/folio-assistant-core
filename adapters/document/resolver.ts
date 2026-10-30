@@ -22,9 +22,9 @@ import type {
   ChapterDetail,
   SectionStub,
 } from "@litlfred/cat-harness-tools/src/content-types.js";
-import { resolveFormalRef } from "@litlfred/cat-harness/schemas/formal-ref.js";
-import type { Block, Chapter, Folio, Paper, Section } from "@litlfred/cat-harness/schemas/types.js";
-import { leanStatusBucket } from "@litlfred/cat-harness/schemas/types.js";
+import { resolveFormalRef } from "@litlfred/cat-harness-tools/schemas/formal-ref.js";
+import type { Block, Chapter, Folio, Paper, Section } from "@litlfred/cat-harness-tools/schemas/types.js";
+import { leanStatusBucket } from "@litlfred/cat-harness-tools/schemas/types.js";
 import {
   blockCaption, blockExamples, blockLean, blockProofs, blockTex,
   isSectionRef, sectionBlockNames,

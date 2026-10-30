@@ -34,7 +34,7 @@
 
 import { existsSync } from "fs";
 
-import { readSourceLedger, writeSourceLedger } from "@litlfred/cat-harness/schemas/library/bib-attestations.js";
+import { readSourceLedger, writeSourceLedger } from "@litlfred/cat-harness-tools/schemas/library/bib-attestations.js";
 import { join } from "path";
 
 import { allows, forbidden, principalOf } from "@litlfred/cat-harness-tools/src/core/rbac.js";
@@ -45,7 +45,7 @@ import type {
   LedgerEntry,
   RelevanceVerdict,
   SourceLedger,
-} from "@litlfred/cat-harness/schemas/library/bib-verification.js";
+} from "@litlfred/cat-harness-tools/schemas/library/bib-verification.js";
 
 const CORS = { "Access-Control-Allow-Origin": "*" };
 

@@ -3,7 +3,7 @@
  * the visualisations its instance declares, when they resolve.
  */
 import { describe, expect, test } from "bun:test";
-import type { CatHarnessDeclaration } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
+import type { CatHarnessDeclaration } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { landingLinks, landingPage } from "./build-document-site.js";
 import { unescapeRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 

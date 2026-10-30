@@ -5,8 +5,8 @@
 import { describe, expect, it } from "bun:test";
 import { join } from "node:path";
 
-import { loadCodeLists } from "@litlfred/cat-harness/schemas/library/code-list.js";
-import { recommendation } from "@litlfred/cat-harness/schemas/builders.js";
+import { loadCodeLists } from "@litlfred/cat-harness-tools/schemas/library/code-list.js";
+import { recommendation } from "@litlfred/cat-harness-tools/schemas/builders.js";
 import { strengthFinding } from "./recommendation-strength.js";
 
 const lists = loadCodeLists([join(import.meta.dir, "..", "code-lists")]);

@@ -182,7 +182,7 @@ export function dcElement(rec: DublinCoreRecord, element: string): DcField[] {
 export const DC_ELEMENTS_NS = "http://purl.org/dc/elements/1.1/";
 
 /**
- * DCMI Metadata Terms. Duplicated from `cat-harness/schemas/jsonld.ts`, which
+ * DCMI Metadata Terms. Duplicated from `cat-harness-tools/schemas/kg/jsonld.ts`, which
  * needs it for the block context and cannot import content-layer modules.
  *
  * An unavoidable duplicate is fine; an UNCHECKED one is not — so

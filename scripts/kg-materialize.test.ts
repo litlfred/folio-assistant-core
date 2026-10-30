@@ -16,7 +16,7 @@ import { dirname, join } from "node:path";
 
 import { judgeDeclaration, partRecordsIn, SNAPSHOT_SUFFIX, treeDigest } from "@litlfred/cat-harness-tools/scripts/kg-subscribe.ts";
 import { partState, render, subscriptionCards } from "@litlfred/cat-harness-tools/scripts/subscriptions-viz.ts";
-import { SUBSTRATE_SNAPSHOT_SCHEMA } from "@litlfred/cat-harness/schemas/kg/substrate-snapshot.ts";
+import { SUBSTRATE_SNAPSHOT_SCHEMA } from "@litlfred/cat-harness-tools/schemas/kg/substrate-snapshot.ts";
 import { KgMaterializationRecordSchema, KgNodesRecordSchema, type KgDecisions } from "../schemas/kg-materialization.ts";
 import { MaterializationSchema } from "../schemas/materialization.ts";
 import { run as fixityRun } from "./check-materialized-fixity.ts";

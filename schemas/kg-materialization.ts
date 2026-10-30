@@ -36,9 +36,9 @@
  */
 import { z } from "zod";
 
-import { KG_NODES_RECORD_SCHEMA, KG_PART_RECORD_SCHEMA } from "@litlfred/cat-harness/schemas/kg/substrate-snapshot.ts";
-import { RepoFullNameSchema } from "@litlfred/cat-harness/schemas/kg/repo-full-name.ts";
-import { SUBGRAPH_HYDRATED_FILE } from "@litlfred/cat-harness/schemas/kg/subgraph-manifest.ts";
+import { KG_NODES_RECORD_SCHEMA, KG_PART_RECORD_SCHEMA } from "@litlfred/cat-harness-tools/schemas/kg/substrate-snapshot.ts";
+import { RepoFullNameSchema } from "@litlfred/cat-harness-tools/schemas/kg/repo-full-name.ts";
+import { SUBGRAPH_HYDRATED_FILE } from "@litlfred/cat-harness-tools/schemas/kg/subgraph-manifest.ts";
 import { FixitySchema, GateSchema, GatesSchema, MaterializationSchema } from "./materialization.ts";
 
 export { KG_NODES_RECORD_SCHEMA, KG_PART_RECORD_SCHEMA };

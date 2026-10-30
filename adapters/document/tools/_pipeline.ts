@@ -11,7 +11,7 @@
  * @module adapters/paper/tools/_pipeline
  */
 
-import { folioDir } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
+import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { spawnSync } from "child_process";
 import { existsSync, readdirSync } from "fs";
 import { join, resolve } from "path";

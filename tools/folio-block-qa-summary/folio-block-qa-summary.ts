@@ -1,5 +1,5 @@
-import { toolFactory } from "@litlfred/cat-harness/schemas/tools/tool-folders.js";
-import { defineTool } from "@litlfred/cat-harness/schemas/tools/tool.js";
+import { toolFactory } from "@litlfred/cat-harness-tools/schemas/tools/tool-folders.js";
+import { defineTool } from "@litlfred/cat-harness-tools/schemas/tools/tool.js";
 
 // ── The one tool an agent has before it has any tooling.
 //

@@ -1,4 +1,4 @@
-import { prose } from "@litlfred/cat-harness/schemas/builders.ts";
+import { prose } from "@litlfred/cat-harness-tools/schemas/builders.ts";
 
 export default prose({
   label: "sec:guides-writing-a-document-moving-between-content-types",

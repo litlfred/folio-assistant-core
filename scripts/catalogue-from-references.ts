@@ -62,7 +62,7 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, join, relative, resolve } from "node:path";
 
-import { readStructure, STRUCTURE_FILENAME } from "@litlfred/cat-harness/schemas/content/document-structure.js";
+import { readStructure, STRUCTURE_FILENAME } from "@litlfred/cat-harness-tools/schemas/content/document-structure.js";
 
 import { CATALOGUE_NODE_SCHEMA_TAG, CATALOGUE_SCHEMA_TAG, CatalogueNodeSchema, CatalogueSchema } from "../schemas/catalogue.ts";
 import { DublinCoreRecordSchema, type DublinCoreRecord } from "../schemas/dublin-core.ts";
@@ -313,9 +313,9 @@ async function main(argv: string[]): Promise<number> {
     return 2;
   }
   const root = resolve(rootArg);
-  const { instanceDirectoryForGraph, repoRootFor } = await import("@litlfred/cat-harness/schemas/kg/cat-harness.ts");
-  const { readSourceLedger } = await import("@litlfred/cat-harness/schemas/library/bib-attestations.ts");
-  const { ledgerLocalFile } = await import("@litlfred/cat-harness/schemas/library/bib-verification.ts");
+  const { instanceDirectoryForGraph, repoRootFor } = await import("@litlfred/cat-harness-tools/schemas/kg/cat-harness.ts");
+  const { readSourceLedger } = await import("@litlfred/cat-harness-tools/schemas/library/bib-attestations.ts");
+  const { ledgerLocalFile } = await import("@litlfred/cat-harness-tools/schemas/library/bib-verification.ts");
   const { referenceEntries } = await import("@litlfred/cat-harness-tools/pipeline/reference-entries.ts");
 
   const catalogueDir = instanceDirectoryForGraph(root, "catalogue");

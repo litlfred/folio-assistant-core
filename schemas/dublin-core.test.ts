@@ -49,14 +49,14 @@ function listOf(doc: Record<string, unknown>, predicate: string): unknown[] | un
 }
 
 describe("the duplicated DCTERMS namespace stays in step with the platform's", () => {
-  it("is byte-identical to `cat-harness/schemas/kg/jsonld.ts`", () => {
+  it("is byte-identical to `cat-harness-tools/schemas/kg/jsonld.ts`", () => {
     // An unavoidable duplicate is fine; an unchecked one is not. If the
     // platform ever respells its DCTERMS_NS, this fails here rather than
     // producing two namespaces that look the same in a diff and join with
     // nothing. Read as TEXT rather than imported, because importing the
     // platform's block context from a content-layer test would create the
     // cross-layer dependency this duplicate exists to avoid.
-    const src = readFileSync(join(REPO, "cat-harness", "schemas", "kg", "jsonld.ts"), "utf-8");
+    const src = readFileSync(join(REPO, "cat-harness-tools", "schemas", "kg", "jsonld.ts"), "utf-8");
     const m = src.match(/export const DCTERMS_NS = "([^"]+)"/);
     expect(m).not.toBeNull();
     expect(m![1]).toBe(DCTERMS_NS);
