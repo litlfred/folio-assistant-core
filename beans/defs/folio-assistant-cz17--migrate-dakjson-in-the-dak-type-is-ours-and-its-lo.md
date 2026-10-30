@@ -8,7 +8,7 @@ priority: normal
 tags:
     - rehomed
 created_at: 2026-09-18T21:36:56Z
-updated_at: 2026-10-30T13:30:00Z
+updated_at: 2026-10-30T13:10:50Z
 parent: folio-assistant-0lmb
 ---
 
@@ -171,3 +171,10 @@ Follow-ups:
 - (c) Nothing imports `ig-content-type.ts` (or `dak-content-type.ts`) outside tests yet, so the default registry learns `ig` only when the module is loaded.
 
 Item 4 is still open. Report: litlfred/aai-programme#26.
+
+_2026-10-30T13:10:50Z_: **Follow-ups (a) and (c) are done.** Merged:
+- litlfred/fhir-harness#198 (`a67dc4d6`): the new `scripts/ig-read-scope.ts` turns `contentTypes.ig` into the check each IG reader runs before it touches a path. These readers are gated: `build-ig-indexes`, `ig-repo-site` (`compose` copies only the `include` entries), `build-ig-site` (`stageIgSite` stages from a declared copy), `fsh-cone`, `ingest-ig-menu`, `ingest-ig-chrome`, `ig-api-hub`, `ig-site-data`, `ig-review-data` and `measure-logic-layer-edges`. An IG with no section is read as before, as a legacy IG, and gets one warning per run that names the missing declaration. smart-ra, smart-immunizations, smart-trust and smart-hiv declare none today. A section with no usable `include` is refused. The input digest in `ig-ast.ts` is not gated, because it must match the Java exporter. `pipeline/plugin-slots.ts`, the module `loadContributions` requires for every dependent, now imports `ig-content-type.ts`. Tests: 12 new; suite 699 pass, 2 fail, and the same 2 fail on main.
+- litlfred/smart-base#210 (`5435bfbd`): `pipeline/qa-checkers-dak.ts`, smart-base's contribution module, imports `dak-content-type.ts`, so `dak` and `sushi` are registered at load time. As a result, `dak-*` verdicts read as stale until the next sweep.
+- litlfred/smart-base#212 (`f2401a0e`): smart-base re-pins fhir-harness to `a67dc4d6` (with consent, evidence "A. ig section in index.config"), so its own site build reads only its `include`.
+
+Content types are still registered by import side effect from each layer's contribution module. A declared `content-types` contribution kind in cat-harness would make that explicit, and it is not done. Still open: (b), declaring `contentTypes.ig` in the other litlfred smart-* IGs, and item 4. Report: litlfred/aai-programme#26.
