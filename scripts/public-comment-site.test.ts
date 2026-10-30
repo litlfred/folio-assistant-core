@@ -45,7 +45,7 @@ describe("public-comment-site", () => {
   });
 
   test("before, after and PR links point at the anchor", () => {
-    const [r] = siteComments([comment()], anchors, { slug: "doc", site: "https://o.github.io/r/", repo: "o/r", storeDir: "review/public-comment" });
+    const [r] = siteComments([comment()], anchors, { slug: "doc", site: "https://o.github.io/r/", repo: "o/r", storeDir: "review/public-comment", openPrs: new Set([7]) });
     expect(r.phase).toBe("editing");
     expect(r.section).toBe("1.1");
     expect(r.links).toMatchObject({
@@ -66,11 +66,19 @@ describe("public-comment-site", () => {
     const c = comment();
     const noPr = PublicCommentSchema.parse({ ...c, status: "triaged", public: { ...c.public, decision: undefined } });
     const cs = { id: "CS-001", title: "t", requirements: "r", refs: ["PC-0001"], status: "editing", issues: [], pr: { number: 9, branch: "claude/cs-1" } } as unknown as ChangeSet;
-    const rows = siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r", repo: "o/r", changeSets: [cs] });
+    const open = new Set([9]);
+    const rows = siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r", repo: "o/r", changeSets: [cs], openPrs: open });
     expect(rows[0]!.links.review).toBe("https://o.github.io/r/STAGING/claude-cs-1/en/review/");
-    const html = dashboardHtml(rows, { title: "T", slug: "doc", generated: "g", repo: "o/r", site: "https://o.github.io/r", changeSets: [cs] });
+    const html = dashboardHtml(rows, { title: "T", slug: "doc", generated: "g", repo: "o/r", site: "https://o.github.io/r", changeSets: [cs], openPrs: open });
     expect(html).toContain('<a href="https://github.com/o/r/pull/9">#9</a> <a class="review" href="https://o.github.io/r/STAGING/claude-cs-1/en/review/">review (staging)</a>');
     expect(html).toContain('<a href="https://o.github.io/r/STAGING/claude-cs-1/en/review/">review (staging)</a>');
+    // A merged PR has no preview: no review link, in the rows or the change-set table (owner, 2026-10-30).
+    const merged = siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r", repo: "o/r", changeSets: [cs], openPrs: new Set([12]) });
+    expect(merged[0]!.links.review).toBeUndefined();
+    expect(merged[0]!.changeSets[0]!.review).toBeUndefined();
+    expect(dashboardHtml(merged, { title: "T", slug: "doc", generated: "g", repo: "o/r", site: "https://o.github.io/r", changeSets: [cs], openPrs: new Set([12]) })).not.toContain("review (staging)");
+    // Open PRs unknown (GitHub not read): no review link rather than a dead one.
+    expect(siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r", changeSets: [cs] })[0]!.links.review).toBeUndefined();
     // No PR anywhere: no review link.
     expect(siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r" })[0]!.links.review).toBeUndefined();
   });
