@@ -8,7 +8,7 @@ priority: normal
 tags:
     - rehomed
 created_at: 2026-09-18T21:36:56Z
-updated_at: 2026-10-30T13:10:50Z
+updated_at: 2026-10-30T17:50:00Z
 parent: folio-assistant-0lmb
 ---
 
@@ -198,3 +198,12 @@ SUSHI needed `hl7.fhir.uv.tools.r4#latest`, which was served from fhir-package-m
 **New finding, not fixed:** cat-harness-tools ≥ `9326f5d7` renders workflow pages that link `<site>/cat-harness/state.jsonld` (render stage 3, `dynamic-state-export.ts`). Only `render-pipeline.ts` writes that file; `build-instance-site.ts` does not. A folio site build with those pins (smart-ra `stage-local --dry-run`) therefore fails its link gate on 1 unresolved link (`en/cat-harness/beans/cat-harness-tools/workflows/crdm-detect-evaluation-r-…/index.html`) and refuses to publish. smart-ra main now pins cat-harness-tools `f5349b5`, which is past `9326f5d7`.
 
 Still open: item 2, and dropping `dak.json` in smart-trust, which still has one. Report: litlfred/aai-programme#26.
+
+_2026-10-30T17:50:00Z_: **smart-trust has dropped `dak.json`.** The owner chose by card at 16:56Z: "A. Do both now". Merged litlfred/smart-trust#84 (`6a638759`), following smart-immunizations#89:
+- `dak.json` moved unchanged into `index.config.json` `contentTypes.dak` (`smart.who.int.trust`), and the file is deleted. Nothing in the repository read it. In the mounted layers, smart-base's readers take `contentTypes.dak` first, and the cat-harness-tools translation fallback needs a `translations` block, which this file never had.
+- `.github/workflows/fhirbuild.yml` calls `litlfred/smart-base/.github/workflows/fhirbuild.yml@main`, not WorldHealthOrganization's. Neither side has inputs or secrets. smart-trust has no `ghbuild.yml`, and no other workflow read `dak.json`.
+- `contentTypes.ig.include` (#82, 15 entries) is unchanged. #84 made no re-pins: it was branched on the #89 set, and main had meanwhile been re-pinned by #85 (re-pin wave, `1e3dd34`), which merged cleanly with it.
+- SUSHI 3.16.5 reported 0 errors and 28 warnings. `readIgDakMetadata` reads `index.config.json#contentTypes.dak`, at both pin sets. `check:ig-annex-links` found no annex declared. `check:subgraphs` exited 1, and main fails the same way. At the #89 pins, 2 links break, inside folio-assistant-core `e332458` (fixed on its main, but that re-pin brings 105 commits). At #85's pins, 83 links break: 49 in cat-harness-tools-tests, 22 in skills, 8 in schemas, 3 in cat-harness-tools-scripts and 1 in core-skills. They come from that re-pin, not from this change. The PR's CI passed prepare and typecheck; the test shards were still queued at merge, under "merge all ready".
+- litlfred/smart-trust#77 (the earlier attempt, opened before #82) is now superseded and still open. Merging it would roll smart-base and cat-harness back to `e61ef9c` / `6f7f10a`.
+
+No litlfred smart-* IG carries `dak.json` any more: smart-hiv and smart-ra have none on main. Still open: item 2. Report: litlfred/aai-programme#26.
