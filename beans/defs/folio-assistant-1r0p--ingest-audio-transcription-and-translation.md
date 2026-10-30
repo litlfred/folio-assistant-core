@@ -2,11 +2,11 @@
 # folio-assistant-1r0p
 $schema: bean/1.0.0
 title: 'INGEST: audio — transcription and translation'
-status: in-progress
+status: completed
 type: task
 priority: normal
 created_at: 2026-09-16T06:43:50Z
-updated_at: 2026-10-30T12:10:00Z
+updated_at: 2026-10-30T23:45:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -420,3 +420,13 @@ Executed the commands above on the connected machine and opened [`litlfred/smart
 - **Agreed terms:** `CRDM` (`0:12`), `change sets` (`2:21`, `2:26`), `CS-001` / `CS-164` (`2:28`, `3:34`), `Saroop` (`3:45`), `Copilot` (`4:18`), `reviewed by the editorial team in terms of WHO` (`7:53`), `WHO` / `WHO IRIS` (`15:43`, `16:28`).
 - **Corrections by `whisper.cpp`:** `"filters"` (`14:14`, where Teams wrote `"philtres"`), plus final 5.3 seconds (`17:03–17:09`).
 - **Names needing glossary/prompting:** `Carl Leitner` (both `"Carl Lightner"` at `0:05`), `Chinni Eyetan` (`"Chinni Eyetan"` / `"Tini"` / `"Jiun"` in Teams vs `"Ginny Aie turn"` / `"Ginny"` in `whisper.cpp`), `DPI-F` (`"DPIF"` vs `"DPI F"` at `2:45`), `Swarupu` / `Saroop` (`14:49`).
+
+## 2026-10-30: English confirmed by the owner; bean complete
+
+The owner chose, on a decision card at 2026-10-30T19:39:44Z, to fix the misheard names and confirm `en`. [`litlfred/smart-ra#115`](https://github.com/litlfred/smart-ra/pull/115) (merged as `7aad6bb`, issue smart-ra#114) changes:
+- "Carl Lightner" to Carl Leitner, and "DPI F" to DPI-F.
+- "Ginny Aie turn" and "Ginny" to "[the chief editor]" and "[Chief editor]", so no spelling is guessed. `recording.json` names the speaker "EYETAN, Chinemerem Chika".
+- `en` is now `confirmed` (`confirmed_by: human litlfred`).
+- The five translations get the same fixes. Their `translated_from.segments_sha256` now points at the corrected source (`72fccad3…`), and they stay `draft`, because no reviewer here reads all five languages.
+
+`check:l1-complete` meets every requirement. Done-when holds, so the bean is complete. Session https://claude.ai/code/session_01Qmmkt7H9zdiexgtnNwV1d8.
