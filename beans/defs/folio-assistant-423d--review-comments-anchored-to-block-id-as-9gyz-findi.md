@@ -2,11 +2,11 @@
 # folio-assistant-423d
 $schema: bean/1.0.0
 title: 'REVIEW COMMENTS: anchored to block id as 9gyz Findings, surviving moves — and the write path a static page lacks'
-status: todo
+status: completed
 type: task
 priority: normal
 created_at: 2026-09-22T21:02:55Z
-updated_at: 2026-10-21T17:10:00Z
+updated_at: 2026-10-26T14:03:00Z
 parent: folio-assistant-q4jm
 ---
 
@@ -248,3 +248,61 @@ A `site.build` folio (dth-hrh) is staged by `stage-local.ts`, not by the workflo
 **Still left here:** resolving a comment from the page (the second Done-when). It needs a write path from a static page, which is the owner's decision; the ruled channel for writing is a tagged PR conversation comment, so the natural candidate is a tagged comment that names the comment and the decision, turned into a committed `transition()` by the review process's task.
 
 _2026-10-21T17:10Z_ — Block lifted: `folio-assistant-a1lq` is completed and archived (`beans/defs/archive/folio-assistant-a1lq--multiple-inheritance-one-resolve-then-walk-rule-fo.md`).
+
+
+_2026-10-15T16:49Z_ — Block lifted: `jwox` is completed (PRs #981, #982, #992 merged). The edge was the work plan's "Block never lifted" finding (owner, 2026-10-15). Session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs.
+
+## Built 2026-10-15 (session_0147GQWs8akum21vSh5XYURR): a locally staged preview ingests its PR's comments
+
+A `site.build` folio (dth-hrh) is staged by `stage-local.ts`, not by the workflow, and its preview never ran `folio-review-comments`: `stage-local` passed `--pr n/a`, so the review page said "No comment data on this build". `cat-harness-tools#341`: `stageDeclared` looks up the open PR whose head is the branch (`openPrFor`), and `previewData` runs the Tool as the workflow's `stage` job does — `blocks.json`, `review-comments.json`, `--todos` when the folio declares a todos graph — and the banner names the PR. A branch with no open PR is said in the log and gets no comments.
+
+**Still left here:** resolving a comment from the page (the second Done-when). It needs a write path from a static page, which is the owner's decision; the ruled channel for writing is a tagged PR conversation comment, so the natural candidate is a tagged comment that names the comment and the decision, turned into a committed `transition()` by the review process's task.
+
+_2026-10-21T17:10Z_ — Block lifted: `folio-assistant-a1lq` is completed and archived (`beans/defs/archive/folio-assistant-a1lq--multiple-inheritance-one-resolve-then-walk-rule-fo.md`).
+
+## Progress 2026-10-24: cat-harness-tools#697 + folio-assistant-core#205
+- `litlfred/cat-harness-tools#697` (`9d5d6b18`, merged `90b0e201`): Added `<select id="comment-filter">` (`Show comments`) and `matchesCommentFilter(status, kind, filter)` in `scripts/gen-review-page.ts` so the review page filters comments by status (`open-addressed`, `open`, `addressed`, `resolved`, `adjudicated`, `withdrawn`) or kind (`defect`, `question`, `suggestion`, `editorial`), and displays the recorded `review.decision` link/id on resolved and adjudicated comments.
+- `litlfred/folio-assistant-core#205` (`f6701737`, merged `5d698b8f`): Added end-to-end block-move (`reanchorToBlocks`) + `applyDecisions` (`resolve: <id>` + `decision: ...`) unit test in `schemas/review-comment.test.ts` and updated `skills/content/content-lifecycle-ext/review-comments.md`.
+
+
+_2026-10-15T16:49Z_ — Block lifted: `jwox` is completed (PRs #981, #982, #992 merged). The edge was the work plan's "Block never lifted" finding (owner, 2026-10-15). Session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs.
+
+## Built 2026-10-15 (session_0147GQWs8akum21vSh5XYURR): a locally staged preview ingests its PR's comments
+
+A `site.build` folio (dth-hrh) is staged by `stage-local.ts`, not by the workflow, and its preview never ran `folio-review-comments`: `stage-local` passed `--pr n/a`, so the review page said "No comment data on this build". `cat-harness-tools#341`: `stageDeclared` looks up the open PR whose head is the branch (`openPrFor`), and `previewData` runs the Tool as the workflow's `stage` job does — `blocks.json`, `review-comments.json`, `--todos` when the folio declares a todos graph — and the banner names the PR. A branch with no open PR is said in the log and gets no comments.
+
+**Still left here:** resolving a comment from the page (the second Done-when). It needs a write path from a static page, which is the owner's decision; the ruled channel for writing is a tagged PR conversation comment, so the natural candidate is a tagged comment that names the comment and the decision, turned into a committed `transition()` by the review process's task.
+
+_2026-10-21T17:10Z_ — Block lifted: `folio-assistant-a1lq` is completed and archived (`beans/defs/archive/folio-assistant-a1lq--multiple-inheritance-one-resolve-then-walk-rule-fo.md`).
+
+## Progress 2026-10-24: cat-harness-tools#697 + folio-assistant-core#205
+- `litlfred/cat-harness-tools#697` (`9d5d6b18`): Added `<select id="comment-filter">` (`Show comments`) and `matchesCommentFilter(status, kind, filter)` in `scripts/gen-review-page.ts` so the review page filters comments by status (`open-addressed`, `open`, `addressed`, `resolved`, `adjudicated`, `withdrawn`) or kind (`defect`, `question`, `suggestion`, `editorial`), and displays the recorded `review.decision` link/id on resolved and adjudicated comments.
+- `litlfred/folio-assistant-core#205` (`f6701737`): Added end-to-end block-move (`reanchorToBlocks`) + `applyDecisions` (`resolve: <id>` + `decision: ...`) unit test in `schemas/review-comment.test.ts` and updated `skills/content/content-lifecycle-ext/review-comments.md`.
+
+## Merged from the folio-assistant copy (bean dedupe, 2026-10-30)
+
+These lines differed from the kept copy and could not be merged automatically (cat-harness-tools#459). They are kept here so nothing is lost.
+
+Where: (three-way hunk)
+
+```text
+- [x] comments are stored as Findings and survive a block move (test) (`folio-review-comment/v1` `TodoNodeSchema` subtype with `9gyz` `Decision` link + `reanchorToBlocks` survival test in `folio-assistant-core#205` @ `f6701737`)
+- [x] the review page lists, filters and resolves comments, and resolution records a Decision (`cat-harness-tools#697` @ `9d5d6b18`, `folio-assistant-core#205` @ `f6701737`)
+```
+
+## Merged from the cat-harness copy (bean dedupe, 2026-10-30)
+
+These lines differed from the kept copy and could not be merged automatically (cat-harness-tools#459). They are kept here so nothing is lost.
+
+Where: (three-way hunk)
+
+```text
+status: in-progress
+```
+
+Where: (three-way hunk)
+
+```text
+- [x] comments are stored as Findings and survive a block move (test) (`folio-review-comment/v1` `TodoNodeSchema` subtype with `9gyz` `Decision` link + `reanchorToBlocks` survival test in `folio-assistant-core#205` @ `f6701737`)
+- [x] the review page lists, filters and resolves comments, and resolution records a Decision (`cat-harness-tools#697` @ `9d5d6b18`, `folio-assistant-core#205` @ `f6701737`)
+```

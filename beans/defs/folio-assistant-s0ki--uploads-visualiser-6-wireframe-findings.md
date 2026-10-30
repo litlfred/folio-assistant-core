@@ -73,3 +73,51 @@ default branches:
 - fix commit `af614551` is an ancestor of cat-harness `main` (`b675555e`);
 - the change is present on current `main`, where the generator now lives:
   cat-harness-tools `scripts/gen-uploads-viz.ts:189`, `:217`.
+
+
+## Closed 2026-10-09
+
+- Branch: `claude/s0ki-uploads-viz`
+- Commit: `af614551` ("fix(ui): uploads visualiser wireframe fixes (folio-assistant-s0ki)")
+- PR branch pushed to origin: `git push -u origin claude/s0ki-uploads-viz`
+
+All 6 findings resolved:
+1. **Finding 1 (Default sort):** In `scripts/gen-uploads-viz.ts`, sorting by `state` ascending prioritizes `waiting` (rank 0) before `ingested` (rank 1), so all active queue items requiring action lead the list above the fold rather than being buried under dozens of ingested rows.
+2. **Finding 2 (Horizontal scroll):** Previously fixed in commit `76b34f8ec`.
+3. **Finding 3 (Keyboard and accessible sorting):** Table headers (`<th>`) contain `<button type="button" data-k="...">` with `aria-sort` ("ascending"|"descending"|"none") and `:focus-visible` outline, enabling full keyboard and screen-reader accessibility.
+4. **Finding 4 (Badge emphasis):** Lead badge is distinguished beyond colour alone with a thicker border (`2px solid var(--wait)`), background (`var(--waitbg)`), semantic icon (`⏳`), and semantic tag (`action needed`).
+5. **Finding 5 (Size wrapping):** Size column styled with `white-space: nowrap; min-width: 6rem;` on `.size`, `td.size`, `th.size`, and non-breaking space `\u00a0` in `size()`, preventing mid-token line breaks like "646 / KB".
+6. **Finding 6 (Grouping / unhelpful filenames):** Raw screenshot/UUID captures are detected via `isRawCapture()`, tagged with `<span class="capture-tag">raw capture</span>`, styled with `.capture-name` (italic, dimmed). The table is structured into `<tbody>` groups with `<tr class="group-row">` header rows (`Waiting to be ingested`, `Ingested into library/`). Within waiting rows, named sources sort before raw captures.
+
+Verification:
+- `bun test scripts/tests/uploads-viz.test.ts`: 12 pass, 0 fail
+- `bun test scripts/tests/gen-uploads-viz.test.ts`: 20 pass, 0 fail
+- `bun run scripts/gen-uploads-viz.ts --check`: 0 stale artefacts
+- `bun run typecheck`: exit 0 (tsc clean)
+
+
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-uploads-viz.ts` in cat-harness-tools. `uploads-viz.test.ts` cites fixes for findings 1, 3, 4, 5 and 6, so a re-verify is likely to close it. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on verified evidence. The
+fixes were made and recorded on this bean's cat-harness-store copy (closed
+2026-10-09). This copy was checked separately to confirm they reached the
+default branches:
+- fix commit `af614551` is an ancestor of cat-harness `main` (`b675555e`);
+- the change is present on current `main`, where the generator now lives:
+  cat-harness-tools `scripts/gen-uploads-viz.ts:189`, `:217`.

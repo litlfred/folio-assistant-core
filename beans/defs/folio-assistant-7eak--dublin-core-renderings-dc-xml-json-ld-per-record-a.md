@@ -4,8 +4,9 @@ $schema: bean/1.0.0
 title: 'Dublin Core renderings: DC XML + JSON(-LD) per record, as a skill and tool in the rendering pipeline, published to gh-pages; who-iris links to both'
 status: completed
 type: task
+priority: normal
 created_at: 2026-09-30T08:54:51Z
-updated_at: 2026-10-09T09:00:00Z
+updated_at: 2026-10-09T19:30:00Z
 parent: folio-assistant-7deg
 ---
 
@@ -60,3 +61,25 @@ Closed on **evidence, not authorship** (`bean-coordination` §"Closing a bean wh
 4. **Publication and Linking:**
    - Renderings generated in `who-iris/site/dublin-core/` (`*.dc.xml` and `*.dc.jsonld`).
    - `who-iris` item pages link to Dublin Core XML and JSON-LD across all 6 locales (en, ru, zh, ar, fr, es).
+
+
+
+## Closed 2026-10-09 on landed evidence (session https://claude.ai/code/session_01BJNRo4kh8U15HZVFDhYNJL; evidence, not authorship)
+Every Done-when item is in the repositories today:
+1. Skill: `folio-assistant-core/skills/library/catalogue/dublin-core-renderings.md` (folio-assistant-core after the split, not cat-harness).
+2. Tool + script with `--check`: Tool node `dublin-core-render` in `folio-assistant-core/tools/index.ts`; `folio-assistant-core/scripts/dc-render.ts` (qualified DC XML + DCMI-Terms JSON-LD, deterministic).
+3. Published: litlfred/who-iris `site/dublin-core/<stem>.dc.xml|.dc.jsonld`, beside the item pages, which the mount copies whole.
+4. who-iris links both: item pages carry `href="dublin-core/<stem>.dc.xml"` and `.dc.jsonld` (e.g. item-item-63e14c27… → 9789241548960-eng).
+5. Gate: `bun run cat dc:render:check` in folio-assistant's code-quality-gates.yml.
+The 2026-09-30 claim (branch claude/dublin-core-renderings, still on the remote) was not released by its holder; the work it announced has landed, so the claim is moot.
+
+
+## Completed 2026-10-09 — each done-when checked on evidence, not on a PR landing (session https://claude.ai/code/session_017fFnGmbJcfqqrHXz9oqxdG)
+
+The claim above (`claude/dublin-core-renderings`) was last touched 2026-10-02 and the work it names is on main in both repositories; this closes it on what is true today, item by item:
+
+- [x] **skill** — `folio-assistant-core/skills/.../dublin-core-renderings.md`: which records get a rendering (exactly those an item names through `metadataRef`), which XML form and why, the field mapping from the record's own data, and the gate.
+- [x] **Tool node + script, deterministic, with `--check`** — `dublin-core-render` in `folio-assistant-core/tools/index.ts`; `scripts/dc-render.ts`.
+- [x] **published beside the record's page** — measured on a local build of who-iris's own site (the publish Routine's steps 3–7): `/who-iris/dublin-core/<stem>.dc.xml` and `.dc.jsonld` for all 3 records.
+- [x] **who-iris links each record to both** — every item page carries `href="dublin-core/<stem>.dc.xml"` and `.dc.jsonld` (6 links over 3 pages); a whole-site link check finds 0 unresolved hrefs.
+- [x] **a gate fails on a missing or stale rendering** — watched: with `who-pub-tps-931.dc.xml` removed, `bun run dc:render:check` in who-iris exits 1 ("1 problem(s)"); restored, it reports "3 record(s), 6 rendering(s) current, no orphans". In the separated who-iris the gate runs as step 3 of the publish Routine (no GitHub Actions, owner's rule), not in `code-quality-gates.yml` as the skill's table still says — that row is monorepo-era.

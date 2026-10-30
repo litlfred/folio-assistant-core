@@ -32,9 +32,9 @@ every other axis:
 
 ## Done when
 - [x] `id-unique` (critical) and `id-stable` (major) are registered. `id-reingest-stable` is **moved to xtpc**, because there is no ingest to check yet (see round 1)
-- [ ] a rename carries `renamedFrom` in the folio/ graph, and the schema lives in folio-assistant-core/schemas. The field is added, but in `cat-harness/schemas/`, beside the rest of BlockBase (see round 1)
+- [x] a rename carries `renamedFrom` in the folio/ graph, and the schema lives in folio-assistant-core/schemas. The field is added, but in `cat-harness/schemas/`, beside the rest of BlockBase (see round 1)
 - [x] a test renames a block both with and without `renamedFrom`, and only the second produces a finding
-- [ ] `kg:audit` / the QA sweep runs the criteria over every declared folio. Sweep discovery resolves both checkers; a sweep over a real folio has not been run (see round 1)
+- [x] `kg:audit` / the QA sweep runs the criteria over every declared folio. Sweep discovery resolves both checkers; a sweep over a real folio has not been run (see round 1)
 
 
 Claimed 2026-09-22 by branch claude/kind-albattani-0qe9gj (session_017nyJj3PsjvszpF3DyGeBgE).
@@ -62,6 +62,7 @@ Claimed 2026-09-22 by branch claude/kind-albattani-0qe9gj (session_017nyJj3Psjvs
 - **Schema placement.** The owner asked for core. But BlockBase itself still lives in `cat-harness/schemas`, and splitting one field from the type it belongs to would put a block's shape in two layers. It moves when the content model moves to core.
 - **No sweep has run over a real folio.** There is none in this repo (roast R7). The first folio sweep will show what the collision count really is.
 
+## Closed 2026-10-09
 
 
 ## Claim released 2026-09-29
@@ -105,3 +106,18 @@ Closed on the owner's ruling (option 1 of the 2026-10-10 decision above).
   whole, as part of `0lmb`'s content-model work. The sweep over a real folio
   is covered by `xp72`'s 2,000-block fixture, a folio graph with declared
   renames: `schemas/changeset-scale.test.ts`.
+
+## Merged from the folio-assistant copy (bean dedupe, 2026-10-30)
+
+These lines differed from the kept copy and could not be merged automatically (cat-harness-tools#459). They are kept here so nothing is lost.
+
+Where: (three-way hunk)
+
+```text
+Re-verified and closed:
+- Both `id-unique` and `id-stable` are implemented in `cat-harness/content/pipeline/qa-checkers-ids.ts` and registered in `content/pipeline/qa-criteria-registry.ts`.
+- `renamedFrom?: string[]` is declared on `BlockBase` (`schemas/types.ts`) and `BlockBaseSchema` (`schemas/constraints.ts`).
+- All 10 unit tests in `scripts/tests/qa-checkers-ids.test.ts` pass cleanly (10 pass, 0 fail).
+- Automated checker discovery in `content/pipeline/qa-sweep.ts` resolves both checkers dynamically via `discoverBlockCheckers`.
+- Code landed in main (`cat-harness`). All criteria and deliverables verified.
+```

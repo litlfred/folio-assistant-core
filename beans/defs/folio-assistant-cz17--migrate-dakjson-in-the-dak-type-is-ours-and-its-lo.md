@@ -8,7 +8,7 @@ priority: normal
 tags:
     - rehomed
 created_at: 2026-09-18T21:36:56Z
-updated_at: 2026-10-24T08:30:35Z
+updated_at: 2026-10-30T12:30:00Z
 parent: folio-assistant-0lmb
 ---
 
@@ -126,3 +126,34 @@ therefore the **same id in the cat-harness store**
 (`litlfred/folio-assistant`, branch `cat/cat-harness/beans`,
 `beans/defs/folio-assistant-cz17--*.md`), which is open there. Work it there.
 This copy stays open as a pointer, and closes when that one does.
+
+
+## Claimed 2026-10-24 (FHIR beans thread, session_01Bye99WLJxQpyCxh2eMgW19)
+
+Re-measured: `DAK.fsh` and every `<Name>Source` in `DAKComponentSources.fsh` are `#active` on litlfred/smart-base main. Item 1 drafted as smart-base#151 (issue #150): the url / canonical / instance wrapper is typed, and the inline instance stays `unknown`. Scope (wrapper only, all nine models, or keep blocked) is on the owner's decision card.
+
+_2026-10-24T08:30:35Z_ — Owner chose **A** (type the source wrapper only; card, 08:27Z) and OK'd the merge (08:30Z). smart-base#151 merged as eb3f9b5: each of the nine formalized components takes WHO's url / canonical / instance wrapper, exactly one; the inline instance stays `unknown` by that choice. Item 1 is done to the agreed scope. Still open: items 2 to 4 (type registry, the `sushi`/`ig` content types, migrating the real repos).
+
+_2026-10-26T10:39:18Z_ — `litlfred/cat-harness#521` merged (`65e1673b`: `index.config.json` content-type sections as markers and `directory-conventions.md` updated for `contentTypes.dak`); `litlfred/smart-base#156` ("Move the DAK declaration into index.config.json (contentTypes.dak)") is open.
+
+_2026-10-29T07:35:00Z_ — smart-base#156 (e61ef9c) merged: the DAK declaration lives in index.config.json `contentTypes.dak`; IGs still on dak.json keep building with a warning. Still open: items 2 to 4 (type registry, `sushi`/`ig` content types, migrating the other smart-* repos; WHO repos only with the owner's OK). Session https://claude.ai/code/session_01Qmmkt87nxnLXyraNsmmpKH (Drain FHIR and smart layer work).
+
+
+## Claimed 2026-10-24 (FHIR beans thread, session_01Bye99WLJxQpyCxh2eMgW19)
+
+Re-measured: `DAK.fsh` and every `<Name>Source` in `DAKComponentSources.fsh` are `#active` on litlfred/smart-base main. Item 1 drafted as smart-base#151 (issue #150): the url / canonical / instance wrapper is typed, and the inline instance stays `unknown`. Scope (wrapper only, all nine models, or keep blocked) is on the owner's decision card.
+
+_2026-10-24T08:30:35Z_ — Owner chose **A** (type the source wrapper only; card, 08:27Z) and OK'd the merge (08:30Z). smart-base#151 merged as eb3f9b5: each of the nine formalized components takes WHO's url / canonical / instance wrapper, exactly one; the inline instance stays `unknown` by that choice. Item 1 is done to the agreed scope. Still open: items 2 to 4 (type registry, the `sushi`/`ig` content types, migrating the real repos).
+
+## Merged from the folio-assistant copy (bean dedupe, 2026-10-30)
+
+These lines differed from the kept copy and could not be merged automatically (cat-harness-tools#459). They are kept here so nothing is lost.
+
+Where: (three-way hunk)
+
+```text
+   recognised as a DAK instance. No longer blocked: `79t3` closed 2026-10-24
+   (owner, "Close it as done"). The marker convention is settled as
+   `contentTypes.dak` in `index.config.json` (cat-harness#521), and two
+   markers that disagree are reported, not silently resolved (79t3's Done when).
+```

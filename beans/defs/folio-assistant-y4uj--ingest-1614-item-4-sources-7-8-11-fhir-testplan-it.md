@@ -6,7 +6,7 @@ status: completed
 type: task
 priority: normal
 created_at: 2026-10-01T06:38:12Z
-updated_at: 2026-10-21T17:56:00Z
+updated_at: 2026-10-23T13:45:00Z
 parent: folio-assistant-scfh
 ---
 
@@ -44,3 +44,8 @@ _2026-10-01_ — Now feeds arc `3fva` (issue #1763, `cat-harness/docs/proposals/
 Library placement is decided by apcg (library/<group>/<slug>/, owner ruling 2026-09-30). Moving sources now would move them twice.
 
 _2026-10-16T06:30:00Z_ — Block lifted: `apcg` is completed in every store. Owner ruling 2026-10-16 (item 1): lift the stale blocks on claimed beans whose blocker is closed; the claim itself is untouched. Session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs.
+
+
+_2026-10-16T06:30:00Z_ — Block lifted: `apcg` is completed in every store. Owner ruling 2026-10-16 (item 1): lift the stale blocks on claimed beans whose blocker is closed; the claim itself is untouched. Session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs.
+
+_2026-10-23T13:45:00Z_ — Status synced from `in-progress` to `completed` to match the folio-assistant copy of this bean, which is newer and records the work as done there. Only the status changed; the body here is kept as it was. Owner OK in thread "FHIR beans and WHO migration" (https://claude.ai/code/session_01Bye99WLJxQpyCxh2eMgW19).

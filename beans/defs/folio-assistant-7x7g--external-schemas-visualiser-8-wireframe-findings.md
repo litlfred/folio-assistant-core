@@ -77,3 +77,48 @@ default branches:
 - fix commit `7ebab233` is an ancestor of cat-harness `main` (`b675555e`);
 - the change is present on current `main`, where the generator now lives:
   cat-harness-tools `scripts/gen-external-schemas-viz.ts:127` (scroll-margin), `:137` (scroll cue), `:393` (operative descriptions).
+
+
+## Closed 2026-10-09
+
+Fixed on branch `claude/7x7g-external-schemas-viz` (commit `7ebab233`):
+
+1. **Operative terms descriptions (Finding 1):** Authored concrete operative descriptions for all 22 DCMI terms and 21 BPMN terms in `external-schemas/dcmi-terms.json` and `external-schemas/omg-bpmn-2.0.json`. Qualified the stat grid to show described terms vs pending (`N described, M pending`), and display `*(pending description)*` for any undescribed term instead of repeating identical 80-character sentences.
+2. **0 dependents that no longer resolve (Finding 2):** Already verified fixed on 2026-09-29 (`1b2d10c7e`); dependents read from using files.
+3. **Namespace check / DCMI & SKOS (Finding 3):** Broadened namespace usage detection in `scripts/gen-external-schemas-viz.ts` to include `jsonLdNamespacesInUse` and source mentions via `namespaceMentions(unreg)`. DCMI and SKOS are recognized as in-use and no longer falsely flagged as unused.
+4. **"Resolves" dependents linkable (Finding 4):** Already verified fixed on 2026-09-30 (PR #1592); code path cells link to GitHub source.
+5. **Section anchor scroll margins (Finding 5):** Added `h2, h3 { scroll-margin-top: 2rem; }` to styles in `scripts/gen-external-schemas-viz.ts`, ensuring target headings clear fixed headers and handles on anchor jumps at both desktop and mobile viewports.
+6. **State tag dark contrast (Finding 6):** Added dark mode color overrides `.xs-ok { color: #34d399; } .xs-na { color: #a1a1aa; } .xs-missing { color: #f87171; }` achieving 7.8:1, 5.8:1, and 5.4:1 contrast ratios over dark background `#27262b` (all exceeding the 4.5:1 WCAG AA threshold).
+7. **Mobile spec table scroll cue (Finding 7):** Added `.table-wrapper` mask-image fade gradient and `.xs-scroll-cue` mobile scroll indicator to hint horizontal scrollability on narrow viewports.
+8. **Long all-caps notes paragraphs (Finding 8):** Refactored all-caps emphasis blocks in `external-schemas/dcmi-terms.json` and `external-schemas/omg-bpmn-2.0.json` to clean sentence-case multi-paragraph markdown; updated `gen-external-schemas-viz.ts` to split and render multiple note paragraphs.
+
+### Verification
+- `bun test scripts/tests/external-schemas-viz.test.ts`: 7 pass, 0 fail (covering findings 1, 3, 5, 6, 7, 8, and anchor integrity).
+- `bun run scripts/gen-external-schemas-viz.ts --check`: clean pass (24 specifications current).
+- `bun run typecheck`: clean pass (0 errors).
+
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-external-schemas-viz.ts` in cat-harness-tools. Tests there now cite fixes for findings 1, 3, 5, 6, 7 and 8 (`external-schemas-viz.test.ts`), so a re-verify is likely to close it. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on verified evidence. The
+fixes were made and recorded on this bean's cat-harness-store copy (closed
+2026-10-09). This copy was checked separately to confirm they reached the
+default branches:
+- fix commit `7ebab233` is an ancestor of cat-harness `main` (`b675555e`);
+- the change is present on current `main`, where the generator now lives:
+  cat-harness-tools `scripts/gen-external-schemas-viz.ts:127` (scroll-margin), `:137` (scroll cue), `:393` (operative descriptions).

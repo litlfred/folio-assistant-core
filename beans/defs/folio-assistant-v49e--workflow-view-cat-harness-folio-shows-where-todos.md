@@ -2,13 +2,13 @@
 # folio-assistant-v49e
 $schema: bean/1.0.0
 title: 'WORKFLOW VIEW: cat-harness folio shows where todos and beans sit in the BPMN/DMN, and where a process is breaking down'
-status: in-progress
+status: completed
 type: task
 priority: normal
 tags:
     - rehomed
 created_at: 2026-09-20T14:01:05Z
-updated_at: 2026-10-24T08:20:00Z
+updated_at: 2026-10-29T08:00:00Z
 parent: folio-assistant-yj32
 ---
 
@@ -68,14 +68,14 @@ bolted on — the owner asked for both in the same breath.
 
 ## Done when
 
-- [ ] For a running instance: the diagram, the current position, and the beans
+- [x] For a running instance: the diagram, the current position, and the beans
       and todos its steps name, together.
-- [ ] Stuck states are VISIBLE as states rather than inferred from a tidy
+- [x] Stuck states are VISIBLE as states rather than inferred from a tidy
       picture — at minimum: enabled-and-not-taken, blocked-without-expiry, and
       a refused gate.
-- [ ] For a task: the working context/memory its dependency tree implies, and
+- [x] For a task: the working context/memory its dependency tree implies, and
       its associated logs.
-- [ ] It reads committed state only, so a sibling session's view agrees.
+- [x] It reads committed state only, so a sibling session's view agrees.
 
 ## Not started
 
@@ -143,3 +143,45 @@ therefore the **same id in the cat-harness store**
 (`litlfred/folio-assistant`, branch `cat/cat-harness/beans`,
 `beans/defs/folio-assistant-v49e--*.md`), which is open there. Work it there.
 This copy stays open as a pointer, and closes when that one does.
+
+
+_2026-10-24T08:20:00Z_ — **Claimed** (owner said "start v49e", 2026-10-24). PR 1: cat-harness-tools#684 (per-instance view, stuck states, processes links) and cat-harness#510 (home-page link). Item 3 (memory/logs by dependency tree) follows. Session https://claude.ai/code/session_01UbCbH19GrhqDNakmbgQTF3.
+
+_2026-10-24T11:10:00Z_ — PR 1 merged: cat-harness-tools#684 as 99bbe26 and cat-harness#510 as 4506916. Item 3 (working memory and logs by dependency tree, gate refusals) still open; stays in-progress.
+
+_2026-10-29T08:10:00Z_ — **Claimed** for PR 2 by the Lane B drain thread: item 3 (working context by the task's role and its `inherits` closure, and the committed history as its log) and refused gates recorded on the instance, so `refused-gate` becomes a real state. Session https://claude.ai/code/session_01Qmmkt7rXCDPexdBbNqeJqU.
+
+## Closed 2026-10-29
+
+All four boxes met. PR 1: cat-harness-tools#684 and cat-harness#510 (instance pages, stuck states, committed state only). PR 2: cat-harness-tools#802 (refused steps recorded so `refused-gate` is a state; each step's working context and the memory its role reaches; the history as the committed log), merged 2026-10-29 as 362e21d. The pages show on the site once the tools layer is re-pinned in folio-assistant. (Lane B drain thread.)
+
+
+_2026-10-24T08:20:00Z_ — **Claimed** (owner said "start v49e", 2026-10-24). PR 1: cat-harness-tools#684 (per-instance view, stuck states, processes links) and cat-harness#510 (home-page link). Item 3 (memory/logs by dependency tree) follows. Session https://claude.ai/code/session_01UbCbH19GrhqDNakmbgQTF3.
+
+_2026-10-24T11:10:00Z_ — PR 1 merged: cat-harness-tools#684 as 99bbe26 and cat-harness#510 as 4506916. Item 3 (working memory and logs by dependency tree, gate refusals) still open; stays in-progress.
+
+_2026-10-29T08:10:00Z_ — **Claimed** for PR 2 by the Lane B drain thread: item 3 (working context by the task's role and its `inherits` closure, and the committed history as its log) and refused gates recorded on the instance, so `refused-gate` becomes a real state. Session https://claude.ai/code/session_01Qmmkt7rXCDPexdBbNqeJqU.
+
+## Closed 2026-10-29
+
+All four boxes met. PR 1: cat-harness-tools#684 and cat-harness#510 (instance pages, stuck states, committed state only). PR 2: cat-harness-tools#802 (refused steps recorded so `refused-gate` is a state; each step's working context and the memory its role reaches; the history as the committed log), merged 2026-10-29 as 362e21d. The pages show on the site once the tools layer is re-pinned in folio-assistant. (Lane B drain thread.)
+
+## Merged from the folio-assistant copy (bean dedupe, 2026-10-30)
+
+These lines differed from the kept copy and could not be merged automatically (cat-harness-tools#459). They are kept here so nothing is lost.
+
+Where: (three-way hunk)
+
+```text
+status: completed
+```
+
+## Merged from the cat-harness copy (bean dedupe, 2026-10-30)
+
+These lines differed from the kept copy and could not be merged automatically (cat-harness-tools#459). They are kept here so nothing is lost.
+
+Where: (three-way hunk)
+
+```text
+status: completed
+```

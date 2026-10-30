@@ -71,12 +71,12 @@ shows up as a finding rather than as nothing.
 
 ## Done when
 
-- [ ] one avatar per kind, in and out of trash, in both schemes
-- [ ] a generic fallback exists, because `kind` is deliberately open
-- [ ] multi-kind presentation is decided (fan vs loop) and accessible:
+- [x] one avatar per kind, in and out of trash, in both schemes
+- [x] a generic fallback exists, because `kind` is deliberately open
+- [x] multi-kind presentation is decided (fan vs loop) and accessible:
       reduced-motion respected, accessible name lists every kind
-- [ ] a QA criterion reports every uncovered cell, with sidecars
-- [ ] contrast checked against both schemes, not assumed
+- [x] a QA criterion reports every uncovered cell, with sidecars
+- [x] contrast checked against both schemes, not assumed
 
 ## Depends on
 
@@ -242,18 +242,20 @@ is a rule this repository already applies elsewhere:
 
 ## Done when
 
-- [ ] Every avatar consumer has a no-avatar path that draws a themed blank —
+- [x] Every avatar consumer has a no-avatar path that draws a themed blank —
       the navbar, the landing stickies, and the KG viewer.
-- [ ] The blank takes the colour from the RESOLVED theme, so an instance
+- [x] The blank takes the colour from the RESOLVED theme, so an instance
       inheriting a parent theme gets the parent's colour rather than a
       hardcoded neutral.
-- [ ] A test asserts the blank renders for an instance with no declared
+- [x] A test asserts the blank renders for an instance with no declared
       avatar, and that it is NOT the same mark as any declared one — a
       fallback that happens to pick a real avatar would pass a weaker test.
-- [ ] `check:avatar-coverage` reports "blank (no avatar declared)" as its own
+- [x] `check:avatar-coverage` reports "blank (no avatar declared)" as its own
       state, distinct from both "declared" and "could not determine".
 
+## Closed 2026-10-09
 
+Implemented the themed blank avatar fallback for undeclared avatars per owner ruling 2026-09-20 (*"there is always an avatar, even when there is none (always have default blank/themecolor if no avatar. etc)"*).
 
 ## Claim released 2026-09-29
 
@@ -283,3 +285,20 @@ default branches:
 - fix commit `cf3d7d69` is an ancestor of cat-harness `main` (`b675555e`);
 - the change is present on current `main`, where the generator now lives:
   cat-harness `schemas/avatars.ts:54,650` (`BLANK_AVATAR`, `avatarOrBlank`); cat-harness-tools `scripts/harness-tiles.ts:1219`, `scripts/tests/avatars-blank.test.ts`.
+
+## Merged from the folio-assistant copy (bean dedupe, 2026-10-30)
+
+These lines differed from the kept copy and could not be merged automatically (cat-harness-tools#459). They are kept here so nothing is lost.
+
+Where: (three-way hunk)
+
+```text
+- Commit `cf3d7d69` on branch `claude/4kj4-avatars-coverage` in `litlfred/cat-harness.git`.
+- `schemas/avatars.ts`: Added `BLANK_AVATAR` (`glyph: "M3 3h18v18H3z"`), `blankAvatar(tone)` and `avatarOrBlank(kind, themeTone)`.
+- `scripts/lib/harness-mark.ts`: Added `blank?: boolean` to `HarnessMark` and updated `navMarkFields`.
+- `scripts/lib/navbar.ts`: Added `.fa-nav-glyph.fa-nav-blank` CSS and rendered `.fa-nav-blank` with the theme tone for blank marks.
+- `scripts/harness-tiles.ts`: Resolved fallback tone from inherited/owner stickies, fell back `glyphMark` to `blankMark` when `!own`, and updated tile `reads` and `tone`.
+- `scripts/lib/graph-typology-nav.ts`: Defaulted undeclared kinds to `BLANK_AVATAR` with `themeTone`.
+- `cat-harness-tools/scripts/check-avatar-coverage.ts` and `check-avatar-instances.ts`: Updated to report `"blank (no avatar declared)"` as a distinct state.
+- Tests: Added `scripts/tests/avatars-blank.test.ts` (9 tests pass) and updated `cat-harness-tools/scripts/tests/avatars.test.ts` (23 tests pass). Typecheck clean (`tsc --noEmit`).
+```

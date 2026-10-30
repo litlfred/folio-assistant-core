@@ -6,7 +6,7 @@ status: completed
 type: task
 priority: normal
 created_at: 2026-09-22T18:29:28Z
-updated_at: 2026-10-10T15:52:43Z
+updated_at: 2026-10-10T16:40:52Z
 parent: folio-assistant-slw1
 ---
 
@@ -119,6 +119,21 @@ which wait on the owner.
 ## Claim released 2026-09-29
 
 Released `in-progress` → `todo` on the owner's instruction (review session https://claude.ai/code/session_014Qj8wncQhqV52QGN1yZDnj). No git change to this bean since before 2026-09-26, no holder recorded, and no open branch touches it; the sessions that held theme D (content folios, SMART/FHIR stack, ingest) work stopped on the 2026-09-25 weekly usage limit. Nothing in the body was changed: re-claim with `bun run cat beans:claim <id>`.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C). This is a queue/tracker
+entry, not work in itself. Its last open Done-when item was `apui`'s single
+documented path, and `apui` is completed. The stream's still-open beans
+(`d5f1`, `1r0p`, `eief`, `ktt2`, `r96p`) are tracked on their own under
+`slw1`, which stays open, so closing the queue entry loses no work.
+
+
+## Summary of Changes
+
+Mirror copy. Owned by litlfred/folio-assistant-core's store, where drain lane C closed it (folio-assistant-core#28; its last item, apui, is done). Closed here so no lane repeats it.
+
 
 
 ## Summary of Changes

@@ -10,7 +10,7 @@ tags:
     - ui
     - visualiser-catalogue
 created_at: 2026-09-23T10:36:14Z
-updated_at: 2026-10-11T05:44:47Z
+updated_at: 2026-10-16T06:30:00Z
 parent: folio-assistant-4ccr
 ---
 
@@ -102,3 +102,74 @@ The branch was never merged, but **the fixes reached main another way**
 
 Closed 2026-10-11 on that evidence. The cat-harness-store copy's 2026-10-09
 closure stands. The request to reopen it is withdrawn.
+
+
+## Closed 2026-10-09
+
+All 6 wireframe findings resolved and verified:
+1. **Horizontal scroll at phone width**: Verified fixed in 76b34f8ec; table scrolls in container (`overflow-x: auto`), `documentElement.scrollWidth` is 390px.
+2. **The menu and breadcrumb look like links and are not**: Resolved by 2026-10-07 conversion to themed Jekyll page (`catalogueViewer`), where replica menu/crumb were removed; page uses site navigation and default layout without inert replica chrome.
+3. **No row leads anywhere**: Verified fixed in PR #1592; titles and held-as cells link to library viewer and replica item/collection pages.
+4. **The node list is not filterable or sortable, and puts referenced ahead of materialized**:
+   - In `cataloguePage` in `who-iris/scripts/gen-iris-pages.ts`, sorted `all` nodes so `materialized` items come first, followed by `referenced` collections/communities, then `unknown`.
+   - Added client-side filter input `<input type="search" id="ic-filter" placeholder="Filter nodes..." aria-label="Filter nodes" autocomplete="off" spellcheck="false">`, live row count `<span id="ic-filter-count" class="ic-filter-count" aria-live="polite">`, `<thead>`/`<tbody>`, and filtering JS logic.
+5. **About the first 280 px is replica chrome before the h1**: Resolved by 2026-10-07 conversion to themed Jekyll page; replica chrome was removed and `h1#ic-title` starts directly below front matter.
+6. **The gate verdict counts have no label**: In `gateRows` in `who-iris/scripts/gen-iris-pages.ts`, wrapped each count with `<span class="verdict-count">: ${n}</span>` so each count clearly belongs to its preceding verdict badge.
+
+Commits and branches:
+- `who-iris`: branch `claude/kx0p-catalogue-viz`, commit `6d4c623` (`fix(ui): catalogue visualiser wireframe fixes (folio-assistant-kx0p)`)
+- `cat-harness`: branch `claude/kx0p-catalogue-page`, commit `d09d0a84` (`docs(catalogue): regenerate catalogue page with wireframe fixes (folio-assistant-kx0p)`)
+
+Verification evidence:
+- Unit tests: `bun test who-iris/scripts/tests/catalogue-links.test.ts` passed 4/4 clean:
+  - links every replica page it names, and each is a page this repository writes
+  - links a held-as library id to the viewer page, which exists
+  - is on the default layout, not a standalone document
+  - styles nothing outside its own wrapper, and carries no rail
+
+## Reopened (2026-10-10, drain ml9h)
+
+Closed 2026-10-09 without the fix on main: who-iris commit 6d4c623 on branch claude/kx0p-catalogue-viz was never merged; findings 4 and 6 are still present (found by drain lane C).
+
+## Re-closed (2026-10-11)
+
+Lane C corrected itself: both findings did reach who-iris main by another route (STATE_ORDER at gen-iris-pages.ts:1836 and labelled counts in verdictBadge at :1796, tested at gen-iris-pages.test.ts:719). The 2026-10-09 closure stands; core#46 closed core's copy.
+
+
+
+## 2026-10-09 — re-measured on who-iris's OWN site, three fixed (session https://claude.ai/code/session_017fFnGmbJcfqqrHXz9oqxdG)
+
+First finding of the day: **who-iris's own site published no catalogue page at all** — the harness is a remote mount there, so the generator (rightly) wrote nothing into it, and nothing else wrote it. who-iris `76ea282` adds `gen-iris-pages --catalogue-into <site-source>`, which writes only that page into the Jekyll source the site build composes, at the conventional route.
+
+Re-measured on a local build (Routine steps 3–7):
+- 1 (phone scroll) — fixed earlier.
+- 2 (inert menu/crumb), 5 (replica chrome before h1) — **gone**: the page wears the site layout since 2026-10-07.
+- 3 (rows lead nowhere) — node titles link the replica pages; "held as" opens the library viewer only where the site builds one (who-iris's does not; it would have been a dead link).
+- 4 — **fixed for order** (materialized, referenced, unknown); **not done: sortable/filterable** columns.
+- 6 — **fixed**: each count inside its pill, labelled ("permitted: 3 of 6").
+- cat-harness `6ff2f1b3`: a `kindRouteRedirect` whose kind has no viewer in this build is "not owed" (printed) instead of failing the mount — it stopped who-iris's publish.
+- Remaining: sortable/filterable; re-draw `cat-harness/docs/wireframes/catalogue/` and re-run `wireframe:check`; who-iris's site has no library viewer at all (task: build-instance-site).
+
+## 2026-10-09 — live on who-iris's own site
+
+Published: gh-pages `9255288` carries `cat-harness/catalogue/who-iris/index.html` (held rows first, labelled gate counts, no dead library-viewer links; Pages run 37977615950 success). Still open: sortable/filterable columns; re-draw `cat-harness/docs/wireframes/catalogue/` and re-run `wireframe:check`; a library viewer for who-iris's own site.
+
+## 2026-10-11 — finding 4 closed: filter and sort (session https://claude.ai/code/session_017fFnGmbJcfqqrHXz9oqxdG)
+- who-iris#40 (merged, ced6dff) adds to the "Every node" table:
+  - a state select and a title/id search, with a live "n of N shown";
+  - a sort button in every header, with aria-sort;
+  - held-first order on open;
+  - controls hidden without scripts.
+- Tests: 55 pass, and iris:pages:check is 0. Driven in Chromium at 390×844 (filter, search, both sort directions, no errors).
+- cat-harness#153 (merged, c3d513c) regenerates cat-harness's copy of the page. The diff is that change alone.
+- Still open:
+  - re-draw `cat-harness/docs/wireframes/catalogue/` and re-run `wireframe:check`;
+  - a library viewer on who-iris's own site;
+  - who-iris's site is not yet republished with this.
+
+## 2026-10-11 — live, wireframe re-drawn
+- who-iris's site was republished from ced6dff: gh-pages 402af64, 57 pages, 0 unresolved links, Pages run 38139255901 succeeded. `catalogue/` now carries the filter and sort.
+- cat-harness#157 (merged, 0a79e9c) re-draws `docs/wireframes/catalogue/` as the page is now. intent.md records the state of all six findings: each is fixed or gone. `wireframe:check` passes at both viewports.
+- The one thing left on this bean is a library viewer on who-iris's own site, so that "held as" can link somewhere. That is turh's work, and the bean can close with it.
+
+_2026-10-16T06:30:00Z_ — Store reconciliation: status `in-progress` → `completed` (Owner ruling 2026-10-16, item 9: "based on semantic content"; the copies said folio-assistant: completed, cat-harness: in-progress). Evidence: closed in the folio-assistant store copy (2026-10-11); commit d09d0a84 is on cat-harness main. Session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs.

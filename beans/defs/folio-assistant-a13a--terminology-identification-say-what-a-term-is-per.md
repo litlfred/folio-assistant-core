@@ -39,3 +39,13 @@ and what stops the drift" carries the answer.
 Nothing here is lost. The live remainder of the terminology ask is `7wou`
 (the check against an external authority), `2i5f` (adjudication) and `ejug`
 (a terminology service as a Tool), all under `5yhm`.
+
+## Merged from the folio-assistant copy (bean dedupe, 2026-10-30)
+
+These lines differed from the kept copy and could not be merged automatically (cat-harness-tools#459). They are kept here so nothing is lost.
+
+Where: (three-way hunk)
+
+```text
+any more. `glossary-terms` (now `folio-assistant-core/skills/library/cataloguing/glossary-terms.md`)
+```

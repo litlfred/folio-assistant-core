@@ -6,7 +6,7 @@ status: completed
 type: task
 priority: normal
 created_at: 2026-09-16T06:43:50Z
-updated_at: 2026-10-10T17:25:53Z
+updated_at: 2026-10-10T17:29:35Z
 parent: folio-assistant-slw1
 ---
 
@@ -109,6 +109,71 @@ Asked in https://claude.ai/code/session_012qoycyCSGidZqW245vXhze. **The owner ch
 Both are recorded, and they are governed by the `untainted-verification` skill (`UntaintedDispatch`, `mergeUntainted`). `translation-manager.md` §5 documents the criterion. This bean's 2026-09-19 entry predates that code, which is why it read as unbuilt.
 
 **What is left:** run it over the translations that now exist (who-iris in the six UN languages, #2229), and wire the L1 completeness gate's `Task_RoundTrip` to it. Then close this bean on that evidence. This waits until after the content split.
+
+
+## 2026-10-10: gate wired; the run is still open (bean-backlog drain, lane C)
+
+**Done:** the first of the two items the 2026-10-06 ruling left. The
+completeness gate's `Task_RoundTrip`
+(`processes/library/ingest-l1-completeness-gate.bpmn`) no longer reads "NOT
+IMPLEMENTED" and no longer points at `document-intake`. It now names:
+- the two skills that govern the round trip: `translation-manager` (§5) and
+  `untainted-verification`;
+- the Tool that records it: `translation-roundtrip-record`;
+- the criterion it writes: `translation-semantic-roundtrip`;
+- the separate terminology criterion: `translation-terms-preserved`;
+- the rule that an empty entry list is "not yet run", never a pass;
+- the PO-reversal prohibition from 2026-09-19.
+
+The step's derived strings were updated with it: the 5 `.pot` templates under
+`translations/*/processes/` (line refs shifted, sorted as pot-extract sorts)
+and the generated `kg-bpmn-activities` glossary entry.
+
+**Still open, so the bean stays `todo`:** running the agentic round trip over
+the translations that exist (who-iris in the six UN languages, #2229), and
+adjudicating what it flags. That run belongs in the who-iris instance and
+needs dispatched back-translator and adjudicator agents. Close this bean on
+that run's sidecars.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 on the owner's instruction ("ktt2: do so"), with both items
+of the 2026-10-06 ruling done:
+
+1. **Gate wired** (core PR #31): `Task_RoundTrip` names the agentic round trip,
+   its criterion and the separate terminology criterion.
+2. **Run over the translations that exist** (who-iris PR #35, merged). This
+   covered 600 strings: `site/iris-site.po` and `glossary/who-iris--who-terms.po`
+   in ar, es, fr, ru and zh.
+   - Each string was back-translated by an agent that saw **only the
+     `msgstr`**. It was limited to one Read and one Write, and recorded
+     `TOOLS_USED: Read,Write`.
+   - A separate adjudicator saw **only the `msgid`, its note and the
+     back-translation**, and tagged each finding `[term]` or `[sense]`.
+     That tagging is the terminology-versus-semantic distinction the Done-when
+     asks for.
+   - **Result: 532 pass, 66 warn, 2 fail.** By locale: ar 113/7/0, es 113/7/0,
+     fr 112/8/0, ru 90/28/2, zh 104/16/0.
+   - The earlier 580/580 (bean `lffo`) was self-checked by the translating
+     agent. This independent run is the measurement that one could not be.
+   - The report is `qa-results/v1`, derived by
+     `who-iris/scripts/translation-roundtrip-report.ts` from the committed agent
+     outputs. It goes stale when a catalogue changes, and `--check` and a test
+     guard it.
+
+**Mismatches become reviewer-adjudicated findings:** the 68 flagged entries are
+queued for a reviewer as `folio-core-2mb0`. Nothing was auto-corrected.
+
+**Stated limit:** the bean was written for *localized narratives*. None exist
+yet: figure narratives are English drafts (`d5f1`, now `cat-tools-e1lo`). The
+same mechanism applies to them unchanged when they are translated.
+
+
+## Summary of Changes
+
+Mirror copy. Completed in folio-assistant-core's store by drain lane C: who-iris#35 ran an untainted round trip over 600 who-iris strings (ar, es, fr, ru, zh): 532 pass, 66 warn, 2 fail, superseding lffo's self-checked 580/580. Follow-ups: folio-core-2mb0 (reviewer queue for the 68 findings), folio-core-shsz → cat-tools-bbnd (translation info drawer).
+
 
 
 ## 2026-10-10: gate wired; the run is still open (bean-backlog drain, lane C)

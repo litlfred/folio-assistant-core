@@ -70,3 +70,47 @@ default branches:
 - fix commit `5d91f9ab` is an ancestor of cat-harness `main` (`b675555e`);
 - the change is present on current `main`, where the generator now lives:
   cat-harness-tools `scripts/gen-schema-viz.ts:493`, `:606`.
+
+
+## Closed 2026-10-09
+
+Fixed in `cat-harness` commit `5d91f9ab07ad7440b7538fe2908eb72f0dd7085d` on branch `claude/nnpk-schemas-viz`:
+
+1. **Phone selection scrolls into view and focuses #detail**: Added `tabindex="-1"` to `<section id="detail">`. In `select(id)`, when executed on small viewports (`window.innerWidth <= 640`) or when `#detail` is below the viewport fold, smooth-scrolls and focuses into `#detail`.
+2. **Compact list height on phone**: Added responsive CSS rule `@media (max-width: 640px) { #items { max-height: 35vh; } }` so the declaration list takes ~35% viewport height instead of ~70%, preventing touch scroll traps.
+3. **Diagram caption direction and empty height**: Corrected instruction to `"Pick a <b>module</b> in the filter below and the diagram for it appears here."`, and added `#ov-svg:empty { display: none; }` to collapse the empty 150px SVG block when no diagram is drawn.
+4. **Identifier mid-token wrapping**: Replaced `word-break: break-word` with `word-break: normal; overflow-wrap: anywhere;` on `td code` and `#detail table td code`, and added `#detail table td:first-child code { white-space: nowrap; }` with `#detail { overflow-x: auto; }` so field names (e.g. `n_entries`, `uncompressed_bytes`) stay contiguous.
+5. **UML box field type truncation on desktop**: In `uml(d)`, made `maxChars` and `maxTypeChars` responsive to viewport width (76 and 64 respectively on >=640px viewports), ensuring types like `literal(ARCHIVE_CONTENTS_SCHEMA_ID)` and `number().int().nonnegative()` are not prematurely cut off on desktop displays.
+
+Evidence:
+- Created unit tests in `scripts/tests/gen-schema-viz.test.ts` asserting all 5 findings (5 pass, 0 fail).
+- `bun run scripts/gen-schema-viz.ts` regenerated artifacts and cleaned stale files.
+- `bun run scripts/gen-schema-viz.ts --check` verified clean projection and pages (exit 0).
+- `bun run typecheck` verified TypeScript type checking passes clean (exit 0).
+
+
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-schema-viz.ts` in cat-harness-tools. `gen-schema-viz.test.ts` cites fixes for findings 1–5, so a re-verify is likely to close it. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on verified evidence. The
+fixes were made and recorded on this bean's cat-harness-store copy (closed
+2026-10-09). This copy was checked separately to confirm they reached the
+default branches:
+- fix commit `5d91f9ab` is an ancestor of cat-harness `main` (`b675555e`);
+- the change is present on current `main`, where the generator now lives:
+  cat-harness-tools `scripts/gen-schema-viz.ts:493`, `:606`.

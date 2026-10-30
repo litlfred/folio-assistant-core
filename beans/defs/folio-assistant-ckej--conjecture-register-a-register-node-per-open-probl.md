@@ -37,3 +37,19 @@ therefore the **same id in the cat-harness store**
 (`litlfred/folio-assistant`, branch `cat/cat-harness/beans`,
 `beans/defs/folio-assistant-ckej--*.md`), which is open there. Work it there.
 This copy stays open as a pointer, and closes when that one does.
+
+
+## Done when
+- [x] `formal | identification` classification field (`conjectureKind?: "formal" | "identification"` / `formality` alias) on `ConjectureBlock` and `conjecture()` (`litlfred/folio-assistant-sci#66` @ `262e764`)
+- [x] `conjectures` graph typology (`holds: "state"`, `typologies/conjectures.json`), `ConjectureRegisterNodeSchema` (`folio-conjecture-register/v1`), validator (`validators/conjecture-register.json`), and `folio-assistant-sci.json` directory declaration (`litlfred/folio-assistant-sci#66` @ `262e764`)
+- [x] DMN status lifecycle (`schemas/conjecture-status-lifecycle.dmn`: `open -> attempted -> proved | disproved | superseded`), `computeAssumedBy` reverse-edge computation over `lean-formal-graph`, and unit tests (`litlfred/folio-assistant-sci#66` @ `262e764`)
+
+_2026-10-24T11:26:00Z_: Completed. litlfred/folio-assistant-sci#66 merged as f82372f, on the owner's "merge" at 11:25Z (Q6 A, merge when green). All done-when boxes were already ticked. Session https://claude.ai/code/session_01FABZmtqnNeBaTcHsXrtyK7.
+
+
+## Done when
+- [x] `formal | identification` classification field (`conjectureKind?: "formal" | "identification"` / `formality` alias) on `ConjectureBlock` and `conjecture()` (`litlfred/folio-assistant-sci#66` @ `262e764`)
+- [x] `conjectures` graph typology (`holds: "state"`, `typologies/conjectures.json`), `ConjectureRegisterNodeSchema` (`folio-conjecture-register/v1`), validator (`validators/conjecture-register.json`), and `folio-assistant-sci.json` directory declaration (`litlfred/folio-assistant-sci#66` @ `262e764`)
+- [x] DMN status lifecycle (`schemas/conjecture-status-lifecycle.dmn`: `open -> attempted -> proved | disproved | superseded`), `computeAssumedBy` reverse-edge computation over `lean-formal-graph`, and unit tests (`litlfred/folio-assistant-sci#66` @ `262e764`)
+
+_2026-10-24T11:26:00Z_: Completed. litlfred/folio-assistant-sci#66 merged as f82372f, on the owner's "merge" at 11:25Z (Q6 A, merge when green). All done-when boxes were already ticked. Session https://claude.ai/code/session_01FABZmtqnNeBaTcHsXrtyK7.

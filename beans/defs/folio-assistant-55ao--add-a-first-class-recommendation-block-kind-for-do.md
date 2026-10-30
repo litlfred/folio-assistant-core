@@ -6,7 +6,7 @@ status: completed
 type: task
 priority: normal
 created_at: 2026-08-28T15:04:51Z
-updated_at: 2026-10-10T16:48:33Z
+updated_at: 2026-10-10T17:04:26Z
 parent: folio-assistant-0lmb
 ---
 
@@ -115,6 +115,102 @@ Asked in https://claude.ai/code/session_012qoycyCSGidZqW245vXhze, with three opt
 - `recommendation` (document adapter, folio-assistant-core) and `health-intervention` (DAK adapter, smart-*) stay **two kinds**, joined by an optional edge from a recommendation to the health-intervention it is about.
 - Each layer keeps its own vocabulary, and nothing in core depends on the DAK adapter.
 - The block resolves. **The build waits until the content split across repos is done**, per the owner (2026-10-06: *"that needs to be done before F"*). It then lands in folio-assistant-core.
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). Q1–Q3 are all ruled and
+the content split has landed, so the build is unblocked. It spans two
+repositories, re-measured today:
+
+- **core:**
+  - a `block-kinds/recommendation.json` node (`folio-block-kind/v1`,
+    `adapter: paper`, `profile: document`, `prefixEnforced: false` per Q1);
+  - the SKOS strength scheme (Q2);
+  - the authoring skill and BPMN step;
+  - `content-profiles.md`.
+- **cat-harness:** a paper-adapter kind is still TYPED there.
+  `schemas/types.ts` needs a `RecommendationBlock` member of the `Block` union
+  (with the optional edge to a `health-intervention`, per Q3),
+  `schemas/builders.ts` needs a `recommendation()` builder, and
+  `schemas/constraints.ts` needs its Zod schema and the `strength` reference.
+  A core kind node with no cat-harness type would break the discovery-vs-type
+  agreement.
+
+1. **(Recommended) Build it in two PRs: the cat-harness typing first, left for
+   review, then the core node, scheme, skill and BPMN step on top.** This
+   needs the session to be given push access to `litlfred/cat-harness`.
+2. Build only the core half now (the scheme, the skill, the BPMN step against
+   the interim `prose` carrier), and add the kind when cat-harness typing
+   lands.
+3. Keep waiting for a real L1 folio whose authors hit the gap (the bean's
+   original "do not start speculatively").
+
+**Default if no answer:** option 2. It changes nothing outside core, and
+everything it writes carries over.
+
+
+## Owner ruling 2026-10-10, answered directly in the lane C session (https://claude.ai/code/session_018NFVUeJjQJdrEU32AS1Mco): option 1, build both halves
+
+The owner chose to build both halves, noting the session has cat-harness
+access. Order, per the decision above: the cat-harness typing PR first
+(`RecommendationBlock`, builder, Zod schema with the `strength` reference
+and the optional `health-intervention` edge), then the core node, the SKOS
+strength scheme, the skill and the BPMN step.
+
+
+## Summary of Changes
+
+Built 2026-10-10 by the bean-backlog drain (lane C), in all three layers, on
+the owner's rulings (Q1–Q3, and "build both halves" on 2026-10-10).
+
+- **cat-harness** (litlfred/cat-harness#109, merged):
+  - `RecommendationBlock` and `CodeRef` in `types.ts`;
+  - `RecommendationSchema` and `CodeRefSchema` in `constraints.ts`, in
+    `BlockSchema` and in `md-exists`;
+  - the `recommendation()` builder;
+  - inline as its default diff renderer.
+- **cat-harness-tools** (litlfred/cat-harness-tools#73): the viewer-registry
+  entry, and a LaTeX arm. The arm is a run-in `\paragraph{Recommendation.
+  <title>}`, not a theorem-like environment. 3 tests.
+- **core** (this PR):
+  - `block-kinds/recommendation.json`: adapter `paper`, profile `document`,
+    `labelPrefix: rec`, `prefixEnforced: false` (Q1);
+  - a `Recommendation` heading in the five `block-kinds` catalogues, marked
+    UNOFFICIAL as those catalogues already are;
+  - a new declared `code-lists/` directory with
+    `grade-recommendation-strength` (strong, conditional; WHO handbook for
+    guideline development, 2nd ed.) and `rfc2119-requirement-level` (BCP 14)
+    (Q2);
+  - `schemas/recommendation-strength.ts` with `strengthFinding`, the
+    "resolves in the scheme" check, and 8 tests;
+  - the `normative-statements` skill rewritten for the kind, with
+    conversion from the interim `prose` carrier, and its input and output
+    schemas;
+  - `document-intake`'s superseded note and the skill definition updated;
+  - `Task_AuthorBlocks` in `authoring-a-document.bpmn` now drafts a
+    `recommendation` block, with its `.pot` templates and generated glossary
+    entry;
+  - the memory note "there is no `recommendation` block kind" archived.
+- **Q3:** `about[]` holds health-intervention labels: a link, never a merge.
+
+**Verified:**
+- In a `.git`-free workspace laid out as CI mounts it, cat-harness's
+  `block-kind-nodes.test.ts` passes 11/11 with the node present (it failed
+  only on `recommendation` without it). Its full suite shows the same 7
+  failures as main.
+- Core: `bun run typecheck` exits 0, and `bun test` shows the same 72 failures
+  as main plus 8 new passes.
+
+**Not done:** wiring `strengthFinding` into `content_validate` (cat-harness-tools
+`validate.ts`), so an unresolvable strength fails a folio build. It is pure and
+tested, ready for that call site.
+
+
+## Summary of Changes
+
+Mirror copy. Completed by drain lane C across three repos: cat-harness#109 (RecommendationBlock type, Zod schema, builder), cat-harness-tools#73 (viewer registry entry, LaTeX render), folio-assistant-core#41 (kind node, GRADE and RFC 2119 strength code lists, strengthFinding check, skill, BPMN step).
+
 
 
 ## Owner decision
