@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 import type { ReviewAnchors } from "./docx-to-folio.js";
 import { type ChangeSet, PublicCommentSchema } from "../schemas/public-comment.js";
-import { dashboardHtml, overlaySnippet, siteComments, stagingSlug } from "./public-comment-site.js";
+import { dashboardHtml, overlaySnippet, siteComments, stagingReviewUrl, stagingSlug } from "./public-comment-site.js";
 import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
 
 const anchors: ReviewAnchors = {
@@ -53,8 +53,26 @@ describe("public-comment-site", () => {
       before: "https://o.github.io/r/en/doc/index.html#prose%3A1-1-abc",
       after: "https://o.github.io/r/STAGING/pc-1.1-definitions/en/doc/index.html#prose%3A1-1-abc",
       pr: "https://github.com/o/r/pull/7",
+      review: "https://o.github.io/r/STAGING/pc-1.1-definitions/en/review/",
       record: "https://github.com/o/r/blob/main/review/public-comment/comments/PC-0001.json",
     });
+  });
+
+  test("a comment or change-set with a pull request links its staging review page (owner, 2026-10-30)", () => {
+    expect(stagingReviewUrl("https://o.github.io/r/", "claude/x y")).toBe("https://o.github.io/r/STAGING/claude-x-y/en/review/");
+    expect(stagingReviewUrl(undefined, "b", "https://p.example/STAGING/b/")).toBe("https://p.example/STAGING/b/en/review/");
+    expect(stagingReviewUrl(undefined, "b")).toBeUndefined();
+    // A comment whose own change has no PR takes the review page of a change-set it is in that has one.
+    const c = comment();
+    const noPr = PublicCommentSchema.parse({ ...c, status: "triaged", public: { ...c.public, decision: undefined } });
+    const cs = { id: "CS-001", title: "t", requirements: "r", refs: ["PC-0001"], status: "editing", issues: [], pr: { number: 9, branch: "claude/cs-1" } } as unknown as ChangeSet;
+    const rows = siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r", repo: "o/r", changeSets: [cs] });
+    expect(rows[0]!.links.review).toBe("https://o.github.io/r/STAGING/claude-cs-1/en/review/");
+    const html = dashboardHtml(rows, { title: "T", slug: "doc", generated: "g", repo: "o/r", site: "https://o.github.io/r", changeSets: [cs] });
+    expect(html).toContain('<a href="https://github.com/o/r/pull/9">#9</a> <a class="review" href="https://o.github.io/r/STAGING/claude-cs-1/en/review/">review (staging)</a>');
+    expect(html).toContain('<a href="https://o.github.io/r/STAGING/claude-cs-1/en/review/">review (staging)</a>');
+    // No PR anywhere: no review link.
+    expect(siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r" })[0]!.links.review).toBeUndefined();
   });
 
   test("the dashboard's page is under the locale and reads its records where they stay (#2527)", () => {
