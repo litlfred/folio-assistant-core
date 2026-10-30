@@ -217,7 +217,7 @@
       "prefLabel": "branch-freshness",
       "definition": "Periodically rebase or merge main into the feature branch, detect what changed upstream, and re-analyse the session workplan. Prevents stale assumptions, merge conflicts, and duplicated work — especially after session restarts, long idle periods, or heavy sibling activity on main.",
       "notation": "branch-freshness",
-      "source": "cat-harness/skills/process/workflow/branch-freshness.md",
+      "source": "cat-harness/skills/sdlc/sdlc-core/branch-freshness.md",
       "status": "candidate"
     },
     {
@@ -281,7 +281,7 @@
       "prefLabel": "code-review-process",
       "definition": "Where code review sits in the release lifecycle. Review types, who reviews what, how feedback maps to beans, and the path from review to approval to release. Works with prepare-merge-auto for mechanics and release-lifecycle for the broader flow.",
       "notation": "code-review-process",
-      "source": "cat-harness/skills/process/workflow/code-review-process.md",
+      "source": "cat-harness/skills/sdlc/sdlc-core/code-review-process.md",
       "status": "candidate"
     },
     {
@@ -551,7 +551,7 @@
       "id": "deployment-auth",
       "prefLabel": "deployment-auth",
       "notation": "deployment-auth",
-      "source": "cat-harness/skills/sdlc/sdlc-core/deployment-auth.md",
+      "source": "cat-harness/skills/tools/folio-core/deployment-auth.md",
       "status": "candidate"
     },
     {
@@ -803,14 +803,6 @@
       "definition": "While idle or waiting on a long-running async task (a build, a long compute script, a CI run, a background agent), pull the applicable backlog in priority order and work non-conflicting items instead of stalling. Generalises AGENTS.md's 5-minute idle trigger into a reusable skill. Use whenever blocked on an async wait with no substantive output to produce.",
       "notation": "idle-backlog",
       "source": "cat-harness/skills/sdlc/sdlc-core/idle-backlog.md",
-      "status": "candidate"
-    },
-    {
-      "id": "ig-publisher-service-contract",
-      "prefLabel": "ig-publisher-service-contract",
-      "definition": "The contract the `ig-publisher-service` role is held to: what the JVM services an IG build shells out to must produce, and how a caller tells a pass from a run that never happened. A mechanical role's skill is a contract to test against, not instructions to read.",
-      "notation": "ig-publisher-service-contract",
-      "source": "cat-harness/skills/authoring/content-lifecycle/ig-publisher-service-contract.md",
       "status": "candidate"
     },
     {
@@ -1078,7 +1070,7 @@
     {
       "id": "merge-to-main",
       "prefLabel": "merge-to-main",
-      "definition": "Merging to `main` is its own step with its own gate: the `merge-to-main` sub-process, which every process that lands work CALLS rather than inlines. Covers the evidence read live on the head (CI per owed job, mergeability, review state, Claude Approvals where the repository runs it), why a repository with no CI is never green, who may authorise a merge and what does NOT count as authorisation (\"fix all issues until green\" does not), how the authorisation is recorded, and the post-merge steps: base green, downstream re-pins, bean and issue. Use for \"merge it\", \"land this PR\", \"merge the green PRs\", and before any write to a default branch in any repository.",
+      "definition": "Merging to `main` is its own step with its own gate: the `merge-to-main` sub-process, which every process that lands work CALLS rather than inlines. Covers the evidence read live on the head (CI per owed job, mergeability, review state, Claude Approvals where the repository runs it), why a repository with no CI is never green, who may authorise a merge and what does NOT count as authorisation (\"fix all issues until green\" does not), how the authorisation is recorded, and the post-merge steps: base green, site republished, downstream re-pins, bean and issue. Use for \"merge it\", \"land this PR\", \"merge the green PRs\", and before any write to a default branch in any repository.",
       "notation": "merge-to-main",
       "source": "cat-harness/skills/sdlc/sdlc-core/merge-to-main.md",
       "status": "candidate"
@@ -1341,7 +1333,7 @@
       "prefLabel": "release-epic-planning",
       "definition": "Plan and track releases using bean epics. Covers epic creation, story/task decomposition, release readiness tracking, and the relationship between epics and GitHub milestones. Applies to code releases, paper publications, and project milestones.",
       "notation": "release-epic-planning",
-      "source": "cat-harness/skills/process/workflow/release-epic-planning.md",
+      "source": "cat-harness/skills/sdlc/sdlc-core/release-epic-planning.md",
       "status": "candidate"
     },
     {
@@ -1349,7 +1341,7 @@
       "prefLabel": "release-lifecycle",
       "definition": "Governs the release lifecycle: semver policy, draft/named releases, changelogs, release gating, and the relationship between feature branches, PRs, beans, and releases. Applies to code releases, paper publications, and project milestones. Complements package-release (which handles the mechanics of cutting a release) with the process and policy layer.",
       "notation": "release-lifecycle",
-      "source": "cat-harness/skills/process/workflow/release-lifecycle.md",
+      "source": "cat-harness/skills/sdlc/sdlc-core/release-lifecycle.md",
       "status": "candidate"
     },
     {
@@ -1402,7 +1394,7 @@
     {
       "id": "repo-conversion",
       "prefLabel": "repo-conversion",
-      "definition": "Lay folio-assistant over a repository that already exists, without losing or silently moving what is in it. Scans the tree read-only, classifies candidate files into library (external source) and content (authored here) with an explicit third bucket for what it cannot classify, scans outside the content tree for mathematical evidence and refutations, puts the three questions the scan cannot answer to the author as selections, and hands ingestion to one agent or a small swarm. Use when a user wants an existing repo converted to a folio, asks to import what is already there, or asks whether their PDFs/notes/drafts can come along.",
+      "definition": "Lay folio-assistant over a repository that already exists, without losing or silently moving what is in it. Scans the tree read-only, classifies candidate files into library (external source) and content (authored here) with an explicit third bucket for what it cannot classify, scans outside the content tree for mathematical evidence and refutations, lists the content markers (an IG, a DAK, processes, beans, library, Lean, folio manifests) the harness could declare and declares only the ones the person picks, puts the three questions the scan cannot answer to the author as selections, and hands ingestion to one agent or a small swarm. Use when a user wants an existing repo converted to a folio, asks to import what is already there, asks whether their PDFs/notes/drafts can come along, or asks what else in a repository an existing harness could declare.",
       "notation": "repo-conversion",
       "source": "cat-harness/skills/conduct/conduct-core/repo-conversion.md",
       "status": "candidate"
@@ -1499,6 +1491,14 @@
       "definition": "An agent PLAYING a state machine rather than an engine executing one. Where the non-determinism actually lives, why the diagram stays strict, the `cat-harness.processes:judgement` marker that makes a judgement point countable, and what the machine must never do on the actor's behalf.",
       "notation": "session-state-machine",
       "source": "cat-harness/skills/process/workflow/session-state-machine.md",
+      "status": "candidate"
+    },
+    {
+      "id": "signing",
+      "prefLabel": "signing",
+      "definition": "What any signature in the harness must answer, whatever it covers: who signs, what bytes are signed, which signature suites are accepted and who decides that, where the key is kept, which route signs (API or person, by reach), and what a verifier must check and record. Suites are named by the identifiers the standards already define. Signing is done by the parties' own systems; the harness verifies. Read before you add a signature slot, a trust anchor, a verifier, or a process that signs anything.",
+      "notation": "signing",
+      "source": "cat-harness/skills/sdlc/sdlc-core/signing.md",
       "status": "candidate"
     },
     {

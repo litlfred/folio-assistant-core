@@ -287,6 +287,62 @@
       "status": "candidate"
     },
     {
+      "id": "process_beandrain.drain_buildqueue",
+      "prefLabel": "Build the queue, grouped by owner",
+      "definition": "Read every bean copy, not only the one this checkout mounts; where copies disagree the newest `updated_at` wins and the disagreement is listed. Leave out goals and epics, blocked beans, closed or draft ones, owner-held or parked ones, and beans the drainers cannot reach — each with its reason, so nothing vanishes silently. Group the rest by owner in priority order, mark beans other agents hold as skip, and write one shared queue file. The `drain-queue` Tool (bean n7x7) builds this; until it is defined, the step is the skill's.",
+      "notation": "Drain_BuildQueue",
+      "source": "cat-harness/processes/sdlc/bean-drain.bpmn#Drain_BuildQueue",
+      "status": "candidate"
+    },
+    {
+      "id": "process_beandrain.drain_close",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose on the bean just worked: complete and archive it on evidence, scrap it with its reasons, or record its blocker and hand it back to `todo`. On every bean copy. More of the drain follows, so on the drain's own bean the engine notes rather than resolves (see the process comment); then the drainer takes the next bean.",
+      "notation": "Drain_Close",
+      "source": "cat-harness/processes/sdlc/bean-drain.bpmn#Drain_Close",
+      "status": "candidate"
+    },
+    {
+      "id": "process_beandrain.drain_open",
+      "prefLabel": "Open the bean [bean-open]",
+      "definition": "Process_BeanOpen on the bean just taken: check it, find out whose it is, and claim it — or leave it alone when another agent holds it. OPEN's check is where the drain's claim check runs (the `bean-claim-check` Tool, bean n7x7): recent commits on every bean copy and any open PR naming the bean, before the claim. The gateway after this reads which end OPEN reached.",
+      "notation": "Drain_Open",
+      "source": "cat-harness/processes/sdlc/bean-drain.bpmn#Drain_Open",
+      "status": "candidate"
+    },
+    {
+      "id": "process_beandrain.drain_refill",
+      "prefLabel": "Refill from the deepest queue",
+      "definition": "Refresh the queue file from every bean copy — beans closed, claimed or unblocked since it was built change it — and move beans from the deepest owner's list to the drainer that ran dry. The `drain-queue` Tool (bean n7x7) rebuilds the queue; until it is defined, the step is the skill's.",
+      "notation": "Drain_Refill",
+      "source": "cat-harness/processes/sdlc/bean-drain.bpmn#Drain_Refill",
+      "status": "candidate"
+    },
+    {
+      "id": "process_beandrain.drain_skip",
+      "prefLabel": "Mark it skip on the queue",
+      "definition": "Record on the queue file that the bean is held elsewhere, and by whom, so no other drainer takes it next. The bean itself is not touched: closing or noting on someone else's bean is how a sibling loses work it had not finished reporting.",
+      "notation": "Drain_Skip",
+      "source": "cat-harness/processes/sdlc/bean-drain.bpmn#Drain_Skip",
+      "status": "candidate"
+    },
+    {
+      "id": "process_beandrain.drain_takenext",
+      "prefLabel": "Take the next bean",
+      "definition": "The highest-priority bean on this drainer's list that is not marked skip. Taking it is not claiming it: the queue is advisory, so the bean still goes through OPEN's check before any work, including reading code for it.",
+      "notation": "Drain_TakeNext",
+      "source": "cat-harness/processes/sdlc/bean-drain.bpmn#Drain_TakeNext",
+      "status": "candidate"
+    },
+    {
+      "id": "process_beandrain.drain_work",
+      "prefLabel": "Work the bean (PR at the first commit)",
+      "definition": "Work only the bean OPEN claimed. Open the PR at the first commit with `Closes-bean: <id>` in its body — the open PR is the claim every other agent can see without the bean branch — and add its link to the bean on every copy. A cause found inside the bean that is separate work becomes a new bean, checked and claimed in its own right. A bean that waits on the owner is asked through `ask-the-person`, keeps its claim while the question is open, and goes to CLOSE as blocked if it will wait long.",
+      "notation": "Drain_Work",
+      "source": "cat-harness/processes/sdlc/bean-drain.bpmn#Drain_Work",
+      "status": "candidate"
+    },
+    {
       "id": "process_beanlifecycle.call_beanclose",
       "prefLabel": "Close the bean [bean-close]",
       "definition": "End the bean in a state that says why: done is completed and archived, not wanted is scrapped with its reasons and archived, blocked records what it waits on and goes back to `todo`. Process_BeanClose is the one place resolve and archive are drawn.",
@@ -665,7 +721,7 @@
     {
       "id": "process_copyintofolio.task_stampassetsource",
       "prefLabel": "Stamp KgAsset.source { instance, path, ref }",
-      "definition": "Populate `source: { instance, path, ref }` (`AssetSourceSchema` in `schemas/kg-node.ts`) on the new `KgAsset` entry in the same change. Because `source` absent is a third state meaning \"authored locally in this instance\", omitting `source` on a copied asset is forbidden.",
+      "definition": "Populate `source: { instance, path, ref }` (`AssetSourceSchema` in `schemas/kg/kg-node.ts`) on the new `KgAsset` entry in the same change. Because `source` absent is a third state meaning \"authored locally in this instance\", omitting `source` on a copied asset is forbidden.",
       "notation": "Task_StampAssetSource",
       "source": "cat-harness/processes/kg/copy-into-folio.bpmn#Task_StampAssetSource",
       "status": "candidate"
@@ -1569,7 +1625,7 @@
     {
       "id": "process_ingestion.task_extractmetadata",
       "prefLabel": "Extract its metadata into the KG [asset-extraction]",
-      "definition": "THE METADATA STEP. What enters the knowledge graph is the asset's INDEX — what it is, how big, what type, when it says it was written — and, for a container, what is in it; its contents do not go in unless somebody asks, with a reason. Owner, 2026-09-20: \"make sure you have zip ingestion skills to extract metadata of assets into KG. don't extract contents unless explict ask by user.\" The tool is `cat-harness-tools/scripts/extract-assets.ts`, writing a `folio-extraction/v1` record (`schemas/extraction.ts`, moved down to this layer in placement PR5). The media type is sniffed from the leading bytes, never taken from the extension.",
+      "definition": "THE METADATA STEP. What enters the knowledge graph is the asset's INDEX — what it is, how big, what type, when it says it was written — and, for a container, what is in it; its contents do not go in unless somebody asks, with a reason. Owner, 2026-09-20: \"make sure you have zip ingestion skills to extract metadata of assets into KG. don't extract contents unless explict ask by user.\" The tool is `cat-harness-tools/scripts/extract-assets.ts`, writing a `folio-extraction/v1` record (`schemas/content/extraction.ts`, moved down to this layer in placement PR5). The media type is sniffed from the leading bytes, never taken from the extension.",
       "notation": "Task_ExtractMetadata",
       "source": "cat-harness/processes/library/document-ingestion.bpmn#Task_ExtractMetadata",
       "status": "candidate"
@@ -1617,7 +1673,7 @@
     {
       "id": "process_ingesttheme.task_readstylesheet",
       "prefLabel": "Read the served stylesheet's declarations",
-      "definition": "Read the ROLE, never the prettiest value. Bootstrap's --blue is a scale entry and --primary is the role; DSpace sets them differently, and taking the brand-looking one is the hardcoding schemas/theme.ts exists to end. Column widths come from declared columns, never from breakpoints: a breakpoint is a viewport.",
+      "definition": "Read the ROLE, never the prettiest value. Bootstrap's --blue is a scale entry and --primary is the role; DSpace sets them differently, and taking the brand-looking one is the hardcoding schemas/ui/theme.ts exists to end. Column widths come from declared columns, never from breakpoints: a breakpoint is a viewport.",
       "notation": "Task_ReadStylesheet",
       "source": "cat-harness/processes/ui/ingest-theme.bpmn#Task_ReadStylesheet",
       "status": "candidate"
@@ -1945,7 +2001,7 @@
     {
       "id": "process_materializeremote.task_enumerate",
       "prefLabel": "ENUMERATE + SUBSET against the source descriptor",
-      "definition": "Resolve the request against the source's descriptor (one per corpus, in the declared sources/ of the instance that owns it, e.g. who-iris/sources/), read against cat-harness/schemas/source-descriptor.ts BEFORE any gate. Three things come from it and none may be guessed. (1) Which subset strategies the source supports — supportsSubset(). (2) Whether a subset stands on its own: when subsetIsSelfContained is false (mathlib), the request is closed over its dependencies here, and every gate after this one is asked about the CLOSURE, because a subset that omits what its members depend on is not a smaller corpus, it is one that does not build. (3) What enumerating the whole costs — enumerationCost(), which is undefined when the descriptor has no measured denominator; SIZE then refuses rather than estimates. A source with no descriptor is not an error here: it is an unknown, and SIZE refuses on it. Bean w5bn: the descriptor is CALLED here rather than restated.",
+      "definition": "Resolve the request against the source's descriptor (one per corpus, in the declared sources/ of the instance that owns it, e.g. who-iris/sources/), read against cat-harness/schemas/library/source-descriptor.ts BEFORE any gate. Three things come from it and none may be guessed. (1) Which subset strategies the source supports — supportsSubset(). (2) Whether a subset stands on its own: when subsetIsSelfContained is false (mathlib), the request is closed over its dependencies here, and every gate after this one is asked about the CLOSURE, because a subset that omits what its members depend on is not a smaller corpus, it is one that does not build. (3) What enumerating the whole costs — enumerationCost(), which is undefined when the descriptor has no measured denominator; SIZE then refuses rather than estimates. A source with no descriptor is not an error here: it is an unknown, and SIZE refuses on it. Bean w5bn: the descriptor is CALLED here rather than restated.",
       "notation": "Task_Enumerate",
       "source": "cat-harness/processes/library/materialize-remote.bpmn#Task_Enumerate",
       "status": "candidate"
@@ -2245,7 +2301,7 @@
     {
       "id": "process_mergetomain.task_recordauthorisation",
       "prefLabel": "Record who authorised, when, and the quote",
-      "definition": "Before the merge, in the shape of `ReleaseSchema` (schemas/merge-queue.ts): verdict, decidedBy (the person), decidedAt, authority (explicit, standing ruling with its date, or waiver id), the quote verbatim with its source, releasedSha (the head approved; a later push voids it) and capturedBy (this session). Where the merge queue exists, `merge:queue:decide` writes and validates it; elsewhere it is a `merge-authorised:` comment on the PR and a note on the bean, with the CI state (green, or none with the local gate commands). A paraphrase is not evidence.",
+      "definition": "Before the merge, in the shape of `ReleaseSchema` (schemas/sdlc/merge-queue.ts): verdict, decidedBy (the person), decidedAt, authority (explicit, standing ruling with its date, or waiver id), the quote verbatim with its source, releasedSha (the head approved; a later push voids it) and capturedBy (this session). Where the merge queue exists, `merge:queue:decide` writes and validates it; elsewhere it is a `merge-authorised:` comment on the PR and a note on the bean, with the CI state (green, or none with the local gate commands). A paraphrase is not evidence.",
       "notation": "Task_RecordAuthorisation",
       "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_RecordAuthorisation",
       "status": "candidate"
@@ -2261,7 +2317,7 @@
     {
       "id": "process_mergetomain.task_repin",
       "prefLabel": "Re-pin downstream mounts, as PRs",
-      "definition": "For each instance whose index.config.json mounts this repository: a PR moving `ref` to the merge commit, with a trust.consent whose evidence quotes the owner's consent to that pin, and the lock regenerated by `mount:remote`. Each re-pin PR is itself a merge to main and runs this process again. None found is recorded with where it looked.",
+      "definition": "For each instance whose index.config.json mounts this repository: a PR moving `ref` to the merge commit, with a trust.consent whose evidence quotes the owner's consent to that pin, and the lock regenerated by `mount:remote`. Each re-pin PR is itself a merge to main and runs this process again. When the re-pin moves a layer whose `software-library` nodes are derived at the pin (bootstrap-tools, whose nodes cat-harness-tools holds in `libraries/held/`), the same PR runs `bun run cat libraries:derive`, and `libraries:check` fails until it does (owner, 2026-10-30, bootstrap-tools#44). None found is recorded with where it looked.",
       "notation": "Task_Repin",
       "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_Repin",
       "status": "candidate"
@@ -2272,6 +2328,14 @@
       "definition": "The merge SHA and the authorisation block on the bean; a round summary on the issue (issue-working). The issue is not closed here: in CRDM, crdm-close closes it after this process returns, on the BA's authorisation.",
       "notation": "Task_Report",
       "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_Report",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergetomain.task_republish",
+      "prefLabel": "Rebuild and republish the repository's site",
+      "definition": "A merge that changes what a published site shows is not done until the site shows it (owner, 2026-10-30: \"merged PRs by agent should trigger page rebuild in process\"). When the merged repository declares `site.build` in its `index.config.json`, the merging session rebuilds the site from the merge commit and publishes it: `bun run cat-harness-tools/scripts/build-instance-site.ts --root . --instance <name> --publish --remote <repository>`. It is agent-run, never a GitHub Actions workflow (owner). The build's own gates stay in force: an unresolved link refuses the publish, and the refusal is reported on the issue and fixed forward, never published over. A repository whose site is published by its own workflow (docs-site-publish) needs nothing here. A repository that declares no `site.build` records \"no site to republish\".",
+      "notation": "Task_Republish",
+      "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Task_Republish",
       "status": "candidate"
     },
     {
@@ -2540,7 +2604,7 @@
     {
       "id": "process_mountsubgraph.task_retrievenpmpackage",
       "prefLabel": "Retrieve the npm package or tarball",
-      "definition": "An `npm` source (`schemas/subgraph-source.ts`, `npm-kg-distribution`): an npm package specifier or tarball path (`.tgz`). `kg-retrieve-npm` or `npm` fetches and unpacks the package contents into the declared path.",
+      "definition": "An `npm` source (`schemas/kg/subgraph-source.ts`, `npm-kg-distribution`): an npm package specifier or tarball path (`.tgz`). `kg-retrieve-npm` or `npm` fetches and unpacks the package contents into the declared path.",
       "notation": "Task_RetrieveNpmPackage",
       "source": "cat-harness/processes/kg/mount-subgraph.bpmn#Task_RetrieveNpmPackage",
       "status": "candidate"
@@ -2956,7 +3020,7 @@
     {
       "id": "process_qareportsigning.task_resolvereach",
       "prefLabel": "Resolve the performer's reach [effectiveReach + signing-api probe]",
-      "definition": "Compute the two facts the gateway reads: effectiveReach(deployment, actor) from schemas/actor-reach.ts, and whether the signing-api capability is configured. Undeclared reach resolves to \"unknown\" rather than to the deployment's value — an aggregate does not determine a member.",
+      "definition": "Compute the two facts the gateway reads: effectiveReach(deployment, actor) from schemas/process/actor-reach.ts, and whether the signing-api capability is configured. Undeclared reach resolves to \"unknown\" rather than to the deployment's value — an aggregate does not determine a member.",
       "notation": "Task_ResolveReach",
       "source": "cat-harness/processes/sdlc/qa-report-signing.bpmn#Task_ResolveReach",
       "status": "candidate"
@@ -3563,7 +3627,7 @@
     {
       "id": "process_smetestdatareview.task_recordcaseverdict",
       "prefLabel": "Record sme-case-verdict/1.0.0 with SME identity, date, verdict and rationale",
-      "definition": "Write the `sme-case-verdict/1.0.0` node (`SmeCaseVerdictKind` in `schemas/test-data.ts`) recording `dataSetRef`, `subjectKind`, the worked `case` or `cohort`, `verdict`, `rationale`, the SME's attributable human identity (`reviewer: { kind: \"human\", provider, handle, role }`), and `reviewedAt` (ISO-8601 date/timestamp).",
+      "definition": "Write the `sme-case-verdict/1.0.0` node (`SmeCaseVerdictKind` in `schemas/sdlc/test-data.ts`) recording `dataSetRef`, `subjectKind`, the worked `case` or `cohort`, `verdict`, `rationale`, the SME's attributable human identity (`reviewer: { kind: \"human\", provider, handle, role }`), and `reviewedAt` (ISO-8601 date/timestamp).",
       "notation": "Task_RecordCaseVerdict",
       "source": "cat-harness/processes/sdlc/sme-test-data-review.bpmn#Task_RecordCaseVerdict",
       "status": "candidate"
@@ -4002,7 +4066,7 @@
     {
       "id": "process_testdatacuration.call_contenttypespecialisation",
       "prefLabel": "Synthesise recipe via content-type specialisation [its own subprocess]",
-      "definition": "BOUND BY THE CONTENT TYPE (`contentType` and `specialisation` in `schemas/test-data.ts`), so no single content-type `calledElement` is hardcoded here: the activity names `test-data-sets`, and each content-type adapter supplies its own specialisation subprocess. `fhir-templating` (`FHIR_TEMPLATING_SPECIALISATION`) is one named specialisation for FHIR IG / DAK content (MeasureReport cohorts, questionnaire responses, bundle templates) — named as such, not the platform design; document folios (`markdown-fixture`), proof folios (`lean-counterexample`), and tabular cohorts (`tabular-cohort`) supply their own.",
+      "definition": "BOUND BY THE CONTENT TYPE (`contentType` and `specialisation` in `schemas/sdlc/test-data.ts`), so no single content-type `calledElement` is hardcoded here: the activity names `test-data-sets`, and each content-type adapter supplies its own specialisation subprocess. `fhir-templating` (`FHIR_TEMPLATING_SPECIALISATION`) is one named specialisation for FHIR IG / DAK content (MeasureReport cohorts, questionnaire responses, bundle templates) — named as such, not the platform design; document folios (`markdown-fixture`), proof folios (`lean-counterexample`), and tabular cohorts (`tabular-cohort`) supply their own.",
       "notation": "Call_ContentTypeSpecialisation",
       "source": "cat-harness/processes/sdlc/test-data-curation.bpmn#Call_ContentTypeSpecialisation",
       "status": "candidate"
@@ -4026,7 +4090,7 @@
     {
       "id": "process_testdatacuration.task_curatefixed",
       "prefLabel": "Author fixed set in test-data-fixed/ with $schema test-data-fixed/1.0.0",
-      "definition": "Write the curated `records` and optional `citations` with `$schema: \"test-data-fixed/1.0.0\"` and `kind: \"fixed\"` into the instance's declared `test-data-fixed` directory (`schemas/test-data.ts`). Recipe fields (`template`, `params`, `seed`) are refused by the strict schema.",
+      "definition": "Write the curated `records` and optional `citations` with `$schema: \"test-data-fixed/1.0.0\"` and `kind: \"fixed\"` into the instance's declared `test-data-fixed` directory (`schemas/sdlc/test-data.ts`). Recipe fields (`template`, `params`, `seed`) are refused by the strict schema.",
       "notation": "Task_CurateFixed",
       "source": "cat-harness/processes/sdlc/test-data-curation.bpmn#Task_CurateFixed",
       "status": "candidate"
@@ -4034,7 +4098,7 @@
     {
       "id": "process_testdatacuration.task_verifyselfidentifying",
       "prefLabel": "Verify file self-identifies by $schema and kind and bind into test plan",
-      "definition": "Parse the file with `discriminateTestDataSet` (`schemas/test-data.ts`) to confirm a consumer can tell fixed from generated from the file content alone (never the path), verify `verifyGeneratedSetDigest` on generated sets, and bind the resulting `TestDataRef` (`toTestDataRef`) into the `test-plan/v1` case.",
+      "definition": "Parse the file with `discriminateTestDataSet` (`schemas/sdlc/test-data.ts`) to confirm a consumer can tell fixed from generated from the file content alone (never the path), verify `verifyGeneratedSetDigest` on generated sets, and bind the resulting `TestDataRef` (`toTestDataRef`) into the `test-plan/v1` case.",
       "notation": "Task_VerifySelfIdentifying",
       "source": "cat-harness/processes/sdlc/test-data-curation.bpmn#Task_VerifySelfIdentifying",
       "status": "candidate"
