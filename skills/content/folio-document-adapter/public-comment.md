@@ -121,6 +121,13 @@ The agent reads **every** Review column whose header starts with "Suggested
 revision". It does not read a fixed column letter. A board adds its column
 beside the others and renames `(initials)` to its own.
 
+**Moving columns.** People may reorder the Review tab. By Change Set finds
+its columns by header name (`MATCH` on Review's first row, and every header
+starting "Suggested revision"), so a move does not break it. A renamed
+header that it looks up by name (No., Section no., Comment / issue, Status,
+Disposition / rationale, Ready for agent) does, and the formula must be
+updated with the new name. Never write a fixed column number into a view.
+
 **How the views update.** Change Sets and By Change Set are `FILTER`, `SORT`,
 `VLOOKUP` and `BYROW` formulas over Review and Agent. Setting Ready for agent
 to Yes, editing a revision, or the agent writing an Agent row shows in them at
