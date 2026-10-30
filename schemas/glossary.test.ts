@@ -287,7 +287,7 @@ describe("the glossary pages", () => {
       glossary: { id: "g", terms: [{ id: "a", prefLabel: "alpha" }, { id: "z", prefLabel: "zeta" }] },
     } as unknown as Parameters<typeof linkTermCodes>[0];
     expect(linkTermCodes(s, "a", "<code>z</code>")).toBe(
-      `<a href="{{ '${permalinkOf("kg-schema-fields/s-z" as never)}' | relative_url }}#i--g--z"><code>z</code></a>`,
+      `<a href="{{ '${permalinkOf("kg-schema-fields/t-z" as never)}' | relative_url }}#i--g--z"><code>z</code></a>`,
     );
   });
 

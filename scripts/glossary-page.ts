@@ -524,9 +524,15 @@ function sizeLabel(bytes: number): string {
  * holds 1,613 of 1,841 terms. The ranges are FIXED rather than balanced, so
  * a term's URL does not move when other terms are added. The type's own URL
  * stays and becomes a landing page linking its parts.
+ *
+ * Measured 2026-10-30, at cat-harness-tools cbcc5b0: `s-z` was 1.0 MB and
+ * over budget, refusing the smart-ra staging publish, with `a-e` (1,010,094 B)
+ * and `m-r` (1,034,911 B) one PR behind it. Split again, to 7 ranges, each
+ * 300-730 KB. The parts' addresses move once here; a range is never split
+ * again for less than a refusal.
  */
 export const LETTER_PARTS: Readonly<Partial<Record<AssetType, readonly string[]>>> = {
-  "kg-schema-fields": ["a-e", "f-l", "m-r", "s-z"],
+  "kg-schema-fields": ["a-c", "d-e", "f-l", "m-o", "p-r", "s", "t-z"],
 };
 
 /** A label's first letter, upper-case, or `#` for a label that starts with no letter. */
