@@ -15,7 +15,7 @@
  */
 import { join, relative } from "node:path";
 
-import { folioDir, readDeclaration } from "@litlfred/cat-harness/schemas/cat-harness.js";
+import { folioDir, readDeclaration } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
 import { localisedPage } from "./document-site-route.js";
 
 /** This instance's declared name: the handler segment. */

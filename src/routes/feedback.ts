@@ -23,7 +23,7 @@ import {
   type KgRef,
   type NoteTags,
   type TaskRef,
-} from "@litlfred/cat-harness/schemas/carried-note.js";
+} from "@litlfred/cat-harness/schemas/kg/carried-note.js";
 import type { FeedbackItem } from "@litlfred/cat-harness/schemas/types.js";
 import type { ContentAdapter } from "@litlfred/cat-harness-tools/src/types.js";
 import { getUserName, getUserEmail, allows, forbidden } from "@litlfred/cat-harness-tools/src/core/rbac.js";

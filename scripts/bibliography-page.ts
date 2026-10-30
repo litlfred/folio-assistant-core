@@ -54,8 +54,8 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
 
-import { instanceDirectoryForGraph, instanceRootsIn, readDeclaration, repoRootFor, resolveDirectories } from "@litlfred/cat-harness/schemas/cat-harness.ts";
-import { safeHref } from "@litlfred/cat-harness/schemas/safe-url.ts";
+import { instanceDirectoryForGraph, instanceRootsIn, readDeclaration, repoRootFor, resolveDirectories } from "@litlfred/cat-harness/schemas/kg/cat-harness.ts";
+import { safeHref } from "@litlfred/cat-harness/schemas/ui/safe-url.ts";
 import { declaredPageRoute } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 import { siteTarget } from "@litlfred/cat-harness-tools/scripts/lib/site-target.ts";
 import { DublinCoreRecordSchema } from "../schemas/dublin-core.ts";

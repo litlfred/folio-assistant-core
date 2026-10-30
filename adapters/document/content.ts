@@ -46,7 +46,7 @@ import { log } from "@litlfred/cat-harness-tools/src/core/logging.js";
 import { getAnthropic } from "@litlfred/cat-harness-tools/src/core/anthropic.js";
 import { guardUntrusted, oneLineLabel } from "@litlfred/cat-harness-tools/src/core/handover-screen.js";
 import { PaperResolver } from "./resolver.js";
-import { directoryForGraph, folioDir } from "@litlfred/cat-harness/schemas/cat-harness.js";
+import { directoryForGraph, folioDir } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
 
 /**
  * What a content operation behind a route returns: the data, or why not and

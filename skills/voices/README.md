@@ -23,7 +23,6 @@ Part of [Folio Assistant Core](../../README.md) 0.1.0, declared as `voices`, hol
 | [`address-editorial-authoring-agent/`](address-editorial-authoring-agent/) | _nothing declares what this holds_ | |
 | [`address-evidence-agent/`](address-evidence-agent/) | _nothing declares what this holds_ | |
 | [`address-feedback-provider/`](address-feedback-provider/) | _nothing declares what this holds_ | |
-| [`address-fhir-modeller/`](address-fhir-modeller/) | _nothing declares what this holds_ | |
 | [`address-ingestion-agent/`](address-ingestion-agent/) | _nothing declares what this holds_ | |
 | [`address-integration-watcher/`](address-integration-watcher/) | _nothing declares what this holds_ | |
 | [`address-librarian/`](address-librarian/) | _nothing declares what this holds_ | |

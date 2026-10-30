@@ -178,3 +178,12 @@ _2026-10-30T13:10:50Z_: **Follow-ups (a) and (c) are done.** Merged:
 - litlfred/smart-base#212 (`f2401a0e`): smart-base re-pins fhir-harness to `a67dc4d6` (with consent, evidence "A. ig section in index.config"), so its own site build reads only its `include`.
 
 Content types are still registered by import side effect from each layer's contribution module. A declared `content-types` contribution kind in cat-harness would make that explicit, and it is not done. Still open: (b), declaring `contentTypes.ig` in the other litlfred smart-* IGs, and item 4. Report: litlfred/aai-programme#26.
+
+_2026-10-30T16:25:00Z_: **Item 4, smart-immunizations, is done.** The owner chose by card at 15:38Z ("Choose when smart-immunizations drops dak.json"): "B. Use litlfred workflow now". Merged litlfred/smart-immunizations#89 (`23f6bba0`):
+- `.github/workflows/fhirbuild.yml` calls `litlfred/smart-base/.github/workflows/fhirbuild.yml@main`, not WorldHealthOrganization's. Neither side has inputs or secrets. The repository now drifts from WHO's workflow, as the card said.
+- `dak.json` moved unchanged into `index.config.json` `contentTypes.dak`, and the file is deleted. Nothing in the repository read it. In the mounted layers, smart-base reads `contentTypes.dak` first, and cat-harness-tools' translation scripts fall back to `dak.json` only for a `translations` block this file never had.
+- `contentTypes.ig.include` lists `sushi-config.yaml`, `ig.ini`, every entry under `input/` (25 entries) and `fsh-generated/`. The legacy warning from fhir-harness#198 no longer applies to this repo.
+- Re-pinned with consent: smart-base `c89c2057`, fhir-harness `d45d9917`, and cat-harness `ecc231a4`, cat-harness-tools `9326f5d7`, bootstrap `3ce2b5d6`, bootstrap-tools `fdceeca3` (smart-base's own set).
+- SUSHI 3.16.5 reports 0 errors. `check:ig-annex-links` and `check:subgraphs` pass.
+
+Both called `fhirbuild.yml` files are only the HL7 autobuild trigger. The `dak.json` reading that smart-base#156 changed is in `ghbuild.yml`, which smart-immunizations does not call. Still open: the same move for smart-trust, smart-hiv and smart-ra (follow-up (b)), and item 2. Report: litlfred/aai-programme#26.

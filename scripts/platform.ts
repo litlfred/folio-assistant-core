@@ -21,7 +21,7 @@
  */
 
 // ── cat-harness: declarations and site layout ─────────────────────────────
-export { readDeclaration, repoRootFor, siteDirFor } from "@litlfred/cat-harness/schemas/cat-harness.js";
+export { readDeclaration, repoRootFor, siteDirFor } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
 
 // ── cat-harness: page chrome and mounting ─────────────────────────────────
 export { fragment } from "@litlfred/cat-harness-tools/scripts/folio-mount.ts";
@@ -31,18 +31,18 @@ export { subjectPage } from "@litlfred/cat-harness-tools/scripts/harness-tiles.j
 // ── cat-harness: declared visualisers and their routes (owner, 2026-10-09) ─
 // A harness declares each visualiser in its own `<instance>.json`
 // `visualisers`; its URL is `visualiserRoute`'s, never composed by a page.
-export { visualiserRoute, siteRootFrom } from "@litlfred/cat-harness/schemas/visualiser-route.js";
+export { visualiserRoute, siteRootFrom } from "@litlfred/cat-harness/schemas/kg/visualiser-route.js";
 export { declaredRoute, siteOwnerDir, visualiserPageDir, withRenderedBy, withRenderedByFrontMatter } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.js";
 
 // ── cat-harness: Tool nodes, for an instance's own `tools` graph ──────────
-export { defineTool, type ToolDefinition } from "@litlfred/cat-harness/schemas/tool.js";
-export { toolTypeIri } from "@litlfred/cat-harness/schemas/tool-types.js";
-export { toolFactory, toolsFromFolders } from "@litlfred/cat-harness/schemas/tool-folders.js";
+export { defineTool, type ToolDefinition } from "@litlfred/cat-harness/schemas/tools/tool.js";
+export { toolTypeIri } from "@litlfred/cat-harness/schemas/tools/tool-types.js";
+export { toolFactory, toolsFromFolders } from "@litlfred/cat-harness/schemas/tools/tool-folders.js";
 export { withRoutes } from "@litlfred/cat-harness-tools/scripts/mount-instance-docs.ts";
 export { libraryResolver } from "@litlfred/cat-harness-tools/scripts/lib/library-links.ts";
 export { withViewerNav } from "@litlfred/cat-harness-tools/scripts/viewer-page.ts";
 export { themedPage } from "@litlfred/cat-harness-tools/scripts/lib/themed-page.ts";
-export { withInlineCode } from "@litlfred/cat-harness/schemas/inline-code.ts";
+export { withInlineCode } from "@litlfred/cat-harness/schemas/content/inline-code.ts";
 
 // ── cat-harness: gettext ──────────────────────────────────────────────────
 export { formatPot, type PotEntry } from "@litlfred/cat-harness-tools/pipeline/pot-extract.js";
@@ -58,5 +58,5 @@ export {
   themeKey,
   type ResolvedTheme,
   type Theme,
-} from "@litlfred/cat-harness/schemas/theme.js";
-export { DEFAULT_THEME_ID, themeById } from "@litlfred/cat-harness/schemas/themes.js";
+} from "@litlfred/cat-harness/schemas/ui/theme.js";
+export { DEFAULT_THEME_ID, themeById } from "@litlfred/cat-harness/schemas/ui/themes.js";

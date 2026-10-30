@@ -52,8 +52,8 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 
-import { declaredGraphs, instanceRootsIn } from "@litlfred/cat-harness/schemas/cat-harness.js";
-import { narrativeFor, type NarrativeSlot } from "@litlfred/cat-harness/schemas/narrative.js";
+import { declaredGraphs, instanceRootsIn } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
+import { narrativeFor, type NarrativeSlot } from "@litlfred/cat-harness/schemas/content/narrative.js";
 import { buildLsi, neighboursOf, query, type LsiUnit } from "@litlfred/cat-harness-tools/pipeline/lsi.ts";
 
 /** A block node as the corpus writes it — only the fields a block's text is read from. */

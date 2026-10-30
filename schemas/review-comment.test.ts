@@ -7,7 +7,7 @@ import { describe, expect, it } from "bun:test";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
-import { TodoNodeSchema } from "@litlfred/cat-harness/schemas/todo.js";
+import { TodoNodeSchema } from "@litlfred/cat-harness/schemas/sdlc/todo.js";
 import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.js";
 import {
   REVIEW_TRANSITIONS,

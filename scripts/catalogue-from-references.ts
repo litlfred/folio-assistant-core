@@ -313,9 +313,9 @@ async function main(argv: string[]): Promise<number> {
     return 2;
   }
   const root = resolve(rootArg);
-  const { instanceDirectoryForGraph, repoRootFor } = await import("@litlfred/cat-harness/schemas/cat-harness.ts");
-  const { readSourceLedger } = await import("@litlfred/cat-harness/schemas/bib-attestations.ts");
-  const { ledgerLocalFile } = await import("@litlfred/cat-harness/schemas/bib-verification.ts");
+  const { instanceDirectoryForGraph, repoRootFor } = await import("@litlfred/cat-harness/schemas/kg/cat-harness.ts");
+  const { readSourceLedger } = await import("@litlfred/cat-harness/schemas/library/bib-attestations.ts");
+  const { ledgerLocalFile } = await import("@litlfred/cat-harness/schemas/library/bib-verification.ts");
   const { referenceEntries } = await import("@litlfred/cat-harness-tools/pipeline/reference-entries.ts");
 
   const catalogueDir = instanceDirectoryForGraph(root, "catalogue");

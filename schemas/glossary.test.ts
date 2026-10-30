@@ -41,10 +41,10 @@ import {
   localId,
   type AssetType,
 } from "../scripts/glossary-extract.ts";
-import { instanceRootsIn, readDeclaration } from "@litlfred/cat-harness/schemas/cat-harness.ts";
+import { instanceRootsIn, readDeclaration } from "@litlfred/cat-harness/schemas/kg/cat-harness.ts";
 
 const REPO_ROOT_FOR_NS = resolve(import.meta.dir, "../..");
-import { parseFrontMatter } from "@litlfred/cat-harness/schemas/front-matter.ts";
+import { parseFrontMatter } from "@litlfred/cat-harness/schemas/kg/front-matter.ts";
 import { discoverTools } from "@litlfred/cat-harness-tools/tools/discover.ts";
 
 // Owner, 2026-10-16 ("c"): the English pages sit under the page locale like

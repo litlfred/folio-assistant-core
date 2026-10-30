@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import {
+  ChangeSetSchema,
   parseCaptionRef,
   parseLines,
   parseSection,
@@ -31,6 +32,7 @@ import {
   parseCommands,
   reconcilePlan,
   renderSection,
+  rerouteChangeSet,
   saveChangeSet,
   seed,
   spliceBody,
@@ -631,5 +633,105 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(checkChangeSets(s).warnings.join("\n")).toContain("CS-002");
     expect(reconcilePlan(s)).toEqual([{ kind: "create", cs: "CS-002", notes: [expect.stringContaining("PC-0003")] }]);
     expect(changeSets(s)).toHaveLength(2);
+  });
+
+  test("a person in the committee or editor lane can re-route a change-set to another committee with a reason; the move survives re-ingest, and agents cannot make it (bean se3i, issue #197)", async () => {
+    const s = store();
+    // Seed routing.json so CS-001's derived plurality committee is "Core architects".
+    writeFileSync(
+      join(s.dir, "routing.json"),
+      JSON.stringify({
+        $schema: "twg-routing/0.1",
+        taxonomy: "DPI-H",
+        routings: {
+          "PC-0001": { category: "Core architects", by: "claude-agent" },
+          "PC-0002": { category: "Core architects", by: "claude-agent" },
+        },
+      }),
+    );
+    const f = fake();
+    await run(s, opened(60, "x", "cs: CS-001"), f);
+
+    // 1. Committee member moves CS-001 from Core architects -> Clinical with a reason.
+    const r1 = await run(s, comment(60, "cm", "cs-committee: Clinical — Clinical workflow question, not architecture"), f);
+    expect(r1.log.join("\n")).toContain("CS-001: committee Core architects → Clinical (Clinical workflow question, not architecture)");
+    const after1 = getChangeSet(s, "CS-001");
+    expect(after1.committee).toBe("Clinical");
+    expect(after1.committeeMoves).toEqual([
+      {
+        who: "cm",
+        when: at,
+        from: "Core architects",
+        to: "Clinical",
+        why: "Clinical workflow question, not architecture",
+        url: `${url(60)}#c`,
+      },
+    ]);
+    expect(f.issues.get(60)!.body).toContain("### Committee\n\n**Clinical**");
+    expect(f.issues.get(60)!.body).toContain("Core architects → **Clinical** by @cm");
+
+    // 2. Editor moves CS-001 again (Clinical -> WHO), using the CLI/programmatic helper.
+    const after2 = rerouteChangeSet(s, "CS-001", {
+      to: "WHO",
+      why: "Cross-cutting WHO governance policy.",
+      by: "ed",
+      at: "2026-10-07T09:00:00Z",
+    });
+    expect(after2.committee).toBe("WHO");
+    expect(after2.committeeMoves).toHaveLength(2);
+    expect(after2.committeeMoves[1]).toEqual({
+      who: "ed",
+      when: "2026-10-07T09:00:00Z",
+      from: "Clinical",
+      to: "WHO",
+      why: "Cross-cutting WHO governance policy.",
+    });
+
+    // 3. Re-ingesting the comment log leaves the change-set's committee and move history untouched.
+    importRows(
+      s,
+      [
+        { row: 1, reviewer: { name: "A" }, citation: { section: "1.1.2", page: "20", lines: "42" }, text: "Comment 1" },
+        { row: 8, reviewer: { name: "B" }, citation: { section: "1.1.2", page: "20", lines: "42" }, text: "New row 8" },
+      ],
+      { channel: "comment-matrix", batch: "b-reingest", sha256: "h2" },
+      "2026-10-08T00:00:00Z",
+    );
+    const afterReingest = getChangeSet(s, "CS-001");
+    expect(afterReingest.committee).toBe("WHO");
+    expect(afterReingest.committeeMoves).toHaveLength(2);
+
+    // 4. Reasonless moves, unknown committees, and non-committee users are refused.
+    const noReason = await run(s, comment(60, "cm", "cs-committee: Editorial"), f);
+    expect(noReason.log.join("\n")).toContain("needs a reason");
+    const badGroup = await run(s, comment(60, "cm", "cs-committee: NotACommittee — because"), f);
+    expect(badGroup.log.join("\n")).toContain("is not a TWG committee");
+    const outsider = await run(s, comment(60, "stranger", "cs-committee: Editorial — typo only"), f);
+    expect(outsider.log.join("\n")).toContain("not on the committee");
+    expect(getChangeSet(s, "CS-001").committee).toBe("WHO");
+
+    // 5. Agents cannot make the move on their own ( CLI, GitHub command, or schema ).
+    expect(() =>
+      rerouteChangeSet(s, "CS-001", { to: "Editorial", why: "Automated guess", by: "claude-agent", at }),
+    ).toThrow(/person-only step/);
+    expect(() =>
+      rerouteChangeSet(s, "CS-001", { to: "Editorial", why: "Automated guess", by: "agent", at }),
+    ).toThrow(/person-only step/);
+    writeFileSync(join(s.dir, "config.json"), JSON.stringify({ document: "doc", editors: ["ed"], committee: ["cm", "claude-agent"] }));
+    const agentTry = await run(s, comment(60, "claude-agent", "cs-committee: Editorial — agent trying"), f);
+    expect(agentTry.log.join("\n")).toContain("person-only step");
+    expect(getChangeSet(s, "CS-001").committee).toBe("WHO");
+    expect(
+      ChangeSetSchema.safeParse({
+        ...getChangeSet(s, "CS-001"),
+        committee: "Editorial",
+        committeeMoves: [{ who: "claude-agent", when: at, from: "WHO", to: "Editorial", why: "Agent move" }],
+      }).success,
+    ).toBe(false);
+
+    // 6. Task_RerouteChangeSet in public-comment.bpmn is a person-only userTask.
+    const bpmn = readFileSync(join(import.meta.dir, "..", "processes", "content", "public-comment.bpmn"), "utf-8");
+    expect(bpmn).toMatch(/<bpmn:userTask\s+id="Task_RerouteChangeSet"/);
+    expect(bpmn).not.toMatch(/<bpmn:(?:task|serviceTask)\s+id="Task_RerouteChangeSet"/);
   });
 });

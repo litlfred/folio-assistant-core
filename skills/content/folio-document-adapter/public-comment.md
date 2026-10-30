@@ -249,10 +249,19 @@ answered with why it changed nothing.
 | `cs-remove: PC-0107` | remove a comment |
 | `cs-title: …` | rename |
 | `cs-requirements:` then the text on the following lines | replace the requirements |
+| `cs-committee: <TWG> — <reason>` | re-route the change-set to another TWG review committee, with a reason (`Task_RerouteChangeSet`, person-only; also `reroute <CS-012> --to <TWG> --why "reason" --by <login>`) |
 | `cs-merge: CS-087` | fold CS-087 in; its issue is linked, and closed with a pointer (or adopted, if this one had none) |
 | `cs-split: PC-0311, PC-0312 as New title` | move those comments into a new change-set, which gets its own issue |
 | `cs-close: reason` | no change is needed |
 | `cs-new: Title` with a `pc:` line | a new change-set (the dashboard's *New change-set from the selected comments* opens the form for it) |
+
+A change-set's committee is rolled up from its comments' TWG routing unless a
+person in the committee or editor lane re-routes it by hand (`cs-committee:
+<TWG> — <reason>` or `public-comment-changesets.ts reroute`). Each move is
+recorded on the change-set (`who`, `when`, `from`, `to`, `why`) so re-ingesting
+comments never resets it, and the dashboard shows the new committee and the move
+history. Agents cannot re-route a change-set on their own (`Task_RerouteChangeSet`
+is a `userTask` in `public-comment.bpmn`).
 
 `cs: CS-012` names the change-set where a thread discusses several. In a
 change-set's issue a bare `decide: accepted` (or `recommend: …`) applies to all

@@ -26,7 +26,7 @@
  * (`<instance>/pipeline/qa-checkers-*.ts`), as sci's cost checkers and
  * the DAK layer's checkers do.
  */
-import type { CodeList } from "@litlfred/cat-harness/schemas/code-list.js";
+import type { CodeList } from "@litlfred/cat-harness/schemas/library/code-list.js";
 import type { CodeRef } from "@litlfred/cat-harness/schemas/types.js";
 
 /** Why a strength does not resolve, or `null` when it does (or is absent). */

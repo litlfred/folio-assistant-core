@@ -64,7 +64,7 @@ import { inflateRawSync } from "node:zlib";
 
 import { XMLParser, XMLValidator } from "fast-xml-parser";
 
-import { TABULAR_CSVW_SCHEMA_ID, type TabularCsvwTables, TabularCsvwTablesSchema } from "@litlfred/cat-harness/schemas/tabular-csvw.js";
+import { TABULAR_CSVW_SCHEMA_ID, type TabularCsvwTables, TabularCsvwTablesSchema } from "@litlfred/cat-harness/schemas/library/tabular-csvw.js";
 import { classifyColumn, columnNames, firstRowIsHeader } from "./tabular-columns.js";
 import { NotATableError } from "./tabular-csv.js";
 import { readDecisionTable } from "./tabular-dak.js";

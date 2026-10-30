@@ -151,10 +151,10 @@ import { createHash } from "node:crypto";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, renameSync, rmSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
 
-import { findDeclarationFile, instanceRootsIn, repoRootFor, type Subscription } from "@litlfred/cat-harness/schemas/cat-harness.ts";
-import { publishedSubgraphDir, SUBGRAPH_HYDRATED_FILE, SUBGRAPH_INDEX_FILE, SubgraphHydratedSchema, type SubgraphHydratedNode } from "@litlfred/cat-harness/schemas/subgraph-manifest.ts";
+import { findDeclarationFile, instanceRootsIn, repoRootFor, type Subscription } from "@litlfred/cat-harness/schemas/kg/cat-harness.ts";
+import { publishedSubgraphDir, SUBGRAPH_HYDRATED_FILE, SUBGRAPH_INDEX_FILE, SubgraphHydratedSchema, type SubgraphHydratedNode } from "@litlfred/cat-harness/schemas/kg/subgraph-manifest.ts";
 import { fetchSubgraphIndex, type SubgraphIndexFetch } from "@litlfred/cat-harness-tools/scripts/subgraph-index-package.ts";
-import { SubstrateSnapshotSchema, type SubstrateSnapshot } from "@litlfred/cat-harness/schemas/substrate-snapshot.ts";
+import { SubstrateSnapshotSchema, type SubstrateSnapshot } from "@litlfred/cat-harness/schemas/kg/substrate-snapshot.ts";
 import {
   NODES_RECORD_FILE,
   nodesDirOf,
