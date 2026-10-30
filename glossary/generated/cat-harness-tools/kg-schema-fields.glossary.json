@@ -9338,6 +9338,13 @@
       "status": "candidate"
     },
     {
+      "id": "prov-jsonld.owned.file",
+      "prefLabel": "Owned.file",
+      "definition": "The file itself, absolute (plans only).",
+      "source": "cat-harness-tools/schemas/kg/prov-jsonld.ts#Owned.file",
+      "status": "candidate"
+    },
+    {
       "id": "prov-jsonld.owned.path",
       "prefLabel": "Owned.path",
       "definition": "Path inside the instance, without extension, `/`-separated.",
