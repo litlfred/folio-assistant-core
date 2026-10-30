@@ -208,6 +208,21 @@ Contributor Feedback row with a Change-set:
 Title stays the contributors': the agent never writes it (in public-comment
 mode, by contrast, Review Change Sets' Title is agent-derived and green).
 
+**Feedback from the site.** A folio with
+`.github/ISSUE_TEMPLATE/block-feedback.yml` (copy the shared
+`templates/issue-forms/block-feedback.yml`) gets 📣 feedback links that open
+that form with Content, Section, Block, page and Source prefilled; the
+contributor picks a Type and writes Comment and Proposed change. On each
+sync the agent lists open issues labelled `feedback` that no Agent row
+names, and for each appends a Contributor Feedback row from
+`tools/review-sheet-sync/feedback-issue.ts` (`feedbackRow`): Sections the
+block's TOC entry, Title a draft (`<section>: <first sentence>`, which
+people may rewrite), Contributor Feedback `@login (Type): comment` plus
+`Proposed: …`. The script then gives it a CS id, and the agent writes the
+issue's URL into that change set's Agent row: the feedback issue *is* the
+change set's issue, so step 2 above opens none. A comment added to the
+issue later is added to the row's next empty Contributor Feedback cell.
+
 **Linked templates.** Each mode keeps one template sheet in the
 informatics.avengers Drive, laid out as above, script installed, no rows.
 A new document starts from its "make a copy" link

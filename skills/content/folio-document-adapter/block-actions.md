@@ -51,7 +51,9 @@ block, which section, the source link and the block's address on the site. It
 works on day one.
 
 A folio that wants structured feedback adds a GitHub issue form at
-`.github/ISSUE_TEMPLATE/block-feedback.yml` (another name with
+`.github/ISSUE_TEMPLATE/block-feedback.yml` (start from the shared
+`templates/issue-forms/block-feedback.yml`, whose answers the drafting review
+sheet imports: skill `review-sheet-script`) (another name with
 `--issue-template`). The link then names the form and prefills **only the
 fields the form declares**, matched by `id`:
 
