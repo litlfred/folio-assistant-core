@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from "bun:test";
 
-import { TabularCsvwTablesSchema, toCsvw } from "@litlfred/cat-harness/schemas/tabular-csvw.js";
+import { TabularCsvwTablesSchema, toCsvw } from "@litlfred/cat-harness/schemas/library/tabular-csvw.js";
 import { classifyColumn, columnNames, firstRowIsHeader } from "./tabular-columns.js";
 import { extractCsv, NotATableError, parseDelimited, sniffDelimiter } from "./tabular-csv.js";
 

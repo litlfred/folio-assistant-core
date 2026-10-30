@@ -1,5 +1,5 @@
-import { toolFactory } from "@litlfred/cat-harness/schemas/tool-folders.js";
-import { defineTool } from "@litlfred/cat-harness/schemas/tool.js";
+import { toolFactory } from "@litlfred/cat-harness/schemas/tools/tool-folders.js";
+import { defineTool } from "@litlfred/cat-harness/schemas/tools/tool.js";
 
 // Moved here from cat-harness/tools/index.ts on 2026-10-06 (bean `0r7u`
 // step 0): its command runs `folio-assistant-core/scripts/build-glossary.ts`,

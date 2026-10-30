@@ -68,8 +68,8 @@ import remarkHtml from "remark-html";
 import remarkMath from "remark-math";
 import { visit } from "unist-util-visit";
 
-import { folioDir, readDeclaration, visualisationResolves, visualisationsOf, type CatHarnessDeclaration } from "@litlfred/cat-harness/schemas/cat-harness.js";
-import { loadContributions, readHarnessConfig } from "@litlfred/cat-harness/schemas/harness-config.js";
+import { folioDir, readDeclaration, visualisationResolves, visualisationsOf, type CatHarnessDeclaration } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
+import { loadContributions, readHarnessConfig } from "@litlfred/cat-harness/schemas/kg/harness-config.js";
 import { detectRepoUrl, ownerRepo } from "@litlfred/cat-harness-tools/src/core/git-refs.js";
 import { DEFAULT_TEMPLATE, compactActionsScript, injectBlockActions, readIssueForm, type BlockActionsConfig, type BlockContext } from "./block-actions.js";
 import type { Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness/schemas/types.js";
@@ -79,7 +79,7 @@ import { blockToJsonLd, serialise as serialiseNode } from "@litlfred/cat-harness
 import { atInstanceContext } from "@litlfred/cat-harness-tools/pipeline/instance-document-context.js";
 import { writeValuesJsonLd } from "@litlfred/cat-harness-tools/pipeline/gen-values-jsonld.js";
 import { bundleEditorProfiles } from "@litlfred/cat-harness-tools/pipeline/editor-profiles.js";
-import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness/schemas/contributions.js";
+import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness/schemas/content/contributions.js";
 import { reviewPageHtml } from "@litlfred/cat-harness-tools/scripts/gen-review-page.js";
 import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts";
 import { visualiserNavDeclaration, type VisualiserNavEntry } from "@litlfred/cat-harness-tools/scripts/lib/navbar.js";

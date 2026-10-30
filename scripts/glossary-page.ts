@@ -70,18 +70,18 @@ import {
   repoRootFor,
   resolveDirectories,
   forgeLocation,
-} from "@litlfred/cat-harness/schemas/cat-harness.ts";
-import { withInlineCode } from "@litlfred/cat-harness/schemas/inline-code.ts";
-import { instanceNamespace } from "@litlfred/cat-harness/schemas/instance-repositories.ts";
+} from "@litlfred/cat-harness/schemas/kg/cat-harness.ts";
+import { withInlineCode } from "@litlfred/cat-harness/schemas/content/inline-code.ts";
+import { instanceNamespace } from "@litlfred/cat-harness/schemas/kg/instance-repositories.ts";
 import { GlossarySchema, schemeIri, toSkos, termIri, type AutomatedMatch, type Glossary, type LangText } from "../schemas/glossary.ts";
-import { addressBook } from "@litlfred/cat-harness/schemas/prov-jsonld.ts";
+import { addressBook } from "@litlfred/cat-harness/schemas/kg/prov-jsonld.ts";
 import { ASSET_TYPES, EXTRACTED_PREFIX, assetTypeTitle, assetTypeWhat, extract, type AssetType } from "./glossary-extract.ts";
 import { perScheme, run as runTermMapping, termState, type SchemeState, type TermStateAnswer } from "@litlfred/cat-harness-tools/scripts/check-term-mapping.ts";
-import { MAPPING_TARGETS } from "@litlfred/cat-harness/schemas/term-mapping.ts";
+import { MAPPING_TARGETS } from "@litlfred/cat-harness/schemas/content/term-mapping.ts";
 import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, sourceText, templateName } from "./glossary-pot.ts";
 import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
 import { forwardingParts, pageParts, visualiserFor, visualiserPageDir } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
-import { ROUTE_SEGMENT, visualiserRoute, type VisualiserRouteParts } from "@litlfred/cat-harness/schemas/visualiser-route.ts";
+import { ROUTE_SEGMENT, visualiserRoute, type VisualiserRouteParts } from "@litlfred/cat-harness/schemas/kg/visualiser-route.ts";
 import { siteArg, siteTarget } from "@litlfred/cat-harness-tools/scripts/lib/site-target.ts";
 import {
   ownerOfPath as sharedOwnerOfPath,

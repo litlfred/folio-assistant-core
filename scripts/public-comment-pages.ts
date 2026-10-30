@@ -14,7 +14,7 @@
  * - the change-set dashboard says how many comments are in no open change-set;
  * - a comment's page lists the change-sets it is in.
  */
-import type { KindNode } from "@litlfred/cat-harness/schemas/node-kind-nodes.ts";
+import type { KindNode } from "@litlfred/cat-harness/schemas/kg/node-kind-nodes.ts";
 import { CHANGING_DECISIONS, type DecisionCode } from "../schemas/public-comment.ts";
 import { esc, type KindPages, type KindPagesContext, type PageSection } from "@litlfred/cat-harness-tools/scripts/gen-node-kind-pages.ts";
 

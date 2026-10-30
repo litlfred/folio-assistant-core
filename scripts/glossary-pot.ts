@@ -45,9 +45,9 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 
-import { directoryForGraph, repoRootFor } from "@litlfred/cat-harness/schemas/cat-harness.ts";
-import { declaredDirectories } from "@litlfred/cat-harness/schemas/declared-nodes.ts";
-import { findDeclarationFile, instanceRootsIn } from "@litlfred/cat-harness/schemas/instance-roots.ts";
+import { directoryForGraph, repoRootFor } from "@litlfred/cat-harness/schemas/kg/cat-harness.ts";
+import { declaredDirectories } from "@litlfred/cat-harness/schemas/kg/declared-nodes.ts";
+import { findDeclarationFile, instanceRootsIn } from "@litlfred/cat-harness/schemas/kg/instance-roots.ts";
 import { formatPot, potWithoutTimestamp, type PotEntry } from "@litlfred/cat-harness-tools/pipeline/pot-extract.ts";
 import { termIri, type LangText } from "../schemas/glossary.ts";
 import { LOCALE_PAGE_STRINGS, LOCALE_PAGE_TEMPLATE, collect, type GlossarySource } from "./glossary-page.ts";

@@ -48,7 +48,7 @@ import {
   instanceDirectoryForGraph,
   readDeclaration,
   siblingScopeFor,
-} from "@litlfred/cat-harness/schemas/cat-harness.js";
+} from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
 import {
   GLOSSARY_SCHEMA_ID,
   GlossarySchema,

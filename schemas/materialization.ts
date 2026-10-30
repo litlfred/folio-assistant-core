@@ -100,7 +100,7 @@ import {
   SourceProvenanceSchema,
   type Signature,
   type SourceProvenance,
-} from "@litlfred/cat-harness/schemas/source-provenance.ts";
+} from "@litlfred/cat-harness/schemas/library/source-provenance.ts";
 
 // Re-exported because this module was their home and consumers name it.
 export { SignatureSchema, SourceProvenanceSchema };
@@ -113,7 +113,7 @@ import {
   MATERIALIZATION_STATES,
   type Fixity,
   type MaterializationState,
-} from "@litlfred/cat-harness/schemas/materialization-state.ts";
+} from "@litlfred/cat-harness/schemas/kg/materialization-state.ts";
 export { FixitySchema, MATERIALIZATION_STATES };
 export type { Fixity, MaterializationState };
 
