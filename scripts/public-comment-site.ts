@@ -205,9 +205,25 @@ export function dashboardHtml(
   const unroutedLabel = "not routed";
   const committeeOf = (r: SiteComment) => r.committee?.group ?? (r.committee ? "unmapped" : unroutedLabel);
   const csCommittee = (c: ChangeSet) => {
-    const x = changeSetRouting(c.refs, byRef);
-    const rest = x.counts.slice(1).map((k) => `<span class="chip muted">${esc(k.group)} ${k.n}</span>`).join("");
+    const x = changeSetRouting(c.refs, byRef, c.committee);
     const gaps = [x.unmapped && `${x.unmapped} need a ruling`, x.total - x.routed - x.unmapped && `${x.total - x.routed - x.unmapped} not routed`].filter(Boolean).join(", ");
+    if (c.committee) {
+      const counts = x.counts.map((k) => `<span class="chip muted">${esc(k.group)} ${k.n}</span>`).join("");
+      const moves = c.committeeMoves ?? [];
+      const history = moves.length
+        ? `<details class="cs-moves"><summary class="muted">move history (${moves.length})</summary><ul class="cs-move-list">${moves
+            .map(
+              (m) =>
+                `<li>${esc(m.from ?? unroutedLabel)} → <b>${esc(m.to)}</b> · <span class="muted">${m.url ? `<a href="${esc(m.url)}">${esc(m.who)}</a>` : esc(m.who)}, ${esc(m.when.slice(0, 10))}</span> — ${esc(m.why)}</li>`,
+            )
+            .join("")}</ul></details>`
+        : "";
+      return {
+        group: c.committee,
+        cell: `<b>${esc(c.committee)}</b> <span class="chip">rerouted</span>${counts || gaps ? `<br>${counts}${gaps ? `<span class="muted">${esc(gaps)}</span>` : ""}` : ""}${history}`,
+      };
+    }
+    const rest = x.counts.slice(1).map((k) => `<span class="chip muted">${esc(k.group)} ${k.n}</span>`).join("");
     return {
       group: x.group ?? unroutedLabel,
       cell: x.group
