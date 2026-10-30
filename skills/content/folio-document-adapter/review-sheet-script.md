@@ -213,5 +213,15 @@ informatics.avengers Drive, laid out as above, script installed, no rows.
 A new document starts from its "make a copy" link
 (`https://docs.google.com/spreadsheets/d/<template id>/copy`); then replace
 the config block of Code.gs with the new folio's build and run
-installTriggers. The template ids are listed in the `public-comment` skill
-(public-comment mode) and here (drafting mode) once made.
+installTriggers.
+
+| mode | template (owned by informatics.avengers) | make a copy |
+|---|---|---|
+| public-comment | Folio Assistant - Public Comment Review Template, `14PtLd2U_tBQV5OHoEEVRJK1EKfsbZEBPP_MIqo2E3o4` | https://docs.google.com/spreadsheets/d/14PtLd2U_tBQV5OHoEEVRJK1EKfsbZEBPP_MIqo2E3o4/copy |
+| drafting | Folio Assistant - Contributor Template, `1PtcNJgLQIA1BjapU51pAQzqQjGylBHYNKlCPzZkwVag` | https://docs.google.com/spreadsheets/d/1PtcNJgLQIA1BjapU51pAQzqQjGylBHYNKlCPzZkwVag/copy |
+
+A copy keeps tabs, colours, dropdowns and formulas. It does not keep
+protected ranges (re-add them: Agent whole tab; the grey and green
+columns), and its TOC tab is empty until the script's first refresh. A
+document's own sheet is named in its `sheet-sync.json` as `sheet` (the
+spreadsheet id), so the agent's sync knows where to read and write.
