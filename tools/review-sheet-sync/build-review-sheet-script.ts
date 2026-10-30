@@ -15,7 +15,7 @@
  *   bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts \
  *     --repo . [--config review/public-comment/sheet-sync.json] [--out Code.gs]
  *
- * Skill: `public-comment`, "The review sheet's Apps Script".
+ * Skill: `review-sheet-script`.
  */
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
@@ -50,12 +50,18 @@ export const DEFAULT_COLUMNS = {
     no: "No.", sections: "Sections", page: "Page", lines: "Line no(s) / Table / Figure",
     comment: "Comment / issue", revision: "Suggested revision",
     feedback: "Architect Feedback (initials)", disposition: "Disposition", status: "Status",
+    agentic: "Agentic status",
   },
   rcs: {
     cs: "Change-set", sections: "Sections", pages: "Pages", comments: "Public Comments",
     revisions: "Suggested Revisions", feedback: "PC Architect Feedback", dispositions: "Dispositions",
+    agentic: "Agentic status",
   },
-  agent: { no: "No.", pc: "Comment ref", cs: "Change-sets" },
+  agent: {
+    no: "No.", pc: "Comment ref", agentic: "Agentic status", cs: "Change-sets",
+    csId: "Change-set", prs: "Pull request (change set)", changes: "What the PRs changed (change set)",
+    done: "Agent completed (UTC, change set)",
+  },
 };
 
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9 ]/g, "");
@@ -173,7 +179,7 @@ if (import.meta.main) {
   const repo = resolve(arg("--repo") ?? ".");
   const cfg = arg("--config") ?? "review/public-comment/sheet-sync.json";
   if (!existsSync(join(repo, cfg))) {
-    console.error(`no ${cfg} in ${repo}: write one first (skill public-comment, "The review sheet's Apps Script")`);
+    console.error(`no ${cfg} in ${repo}: write one first (skill review-sheet-script)`);
     process.exit(2);
   }
   const out = buildScript(repo, cfg);

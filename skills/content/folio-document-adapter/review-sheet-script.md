@@ -32,8 +32,10 @@ move them.
 | Review Public Comments | No. | a link to the comment's page (`commentUrl` + its ref from Agent's *Comment ref*) |
 | Review Public Comments | Sections | each section number, appendix, named section or chapter links to its first page in the draft |
 | Review Public Comments | Page | each printed page or range links to that page |
+| Review Public Comments | Agentic status | one line per pull request of the PC's change-sets (Agent's *Pull request (change set)*), `PR #n (status, completed) · what it changed`: the PR linked; the PC's Agentic status and the matching line of *Agent completed (UTC, change set)* in bold; then the matching line of *What the PRs changed (change set)*. A PC in several change-sets lists all of their PRs, each once. With no PR, the status alone |
 | Review Public Comments | Line no(s) / Table / Figure | each `p.N` and each `line(s) N–M` / `L N` links to its page. Draft line numbers restart, so a line is placed on the page, near the row's own pages, whose numbered lines hold it |
 | Review Change Sets | Sections, Pages | the union over the change-set's comments, sorted by page, each linked |
+| Review Change Sets | Agentic status | the same, per change-set; the status is its PCs' Agentic statuses, each once |
 | Review Change Sets | Public Comments | `No. n (Status) · comment`, status in bold, joined by a blank line |
 | Review Change Sets | Suggested Revisions, PC Architect Feedback, Dispositions | `No. n · text`, one per comment |
 
@@ -108,6 +110,15 @@ names a document. Give the new folio:
    read from the line map.
 4. A sheet with the tabs above, Agent's *No.*, *Comment ref* and
    *Change-sets* columns filled, then build and install as above.
+
+**Test it without a sheet.** `bun test folio-assistant-core/tools/review-sheet-sync/review-sheet.test.ts`
+builds the script for a small fake folio and runs it against a fake of the
+Apps Script services over the three tabs. It checks every link and join in
+the table above, the Agentic status lines, and the edit-and-timer refresh. It
+proves the template and the builder agree with this skill. It does not prove
+a given sheet has the script installed or current: that is **How to tell it
+works**. Change the template, the builder or this table only together with
+that test.
 
 **Rebuild and paste again** when the review anchors change, the draft link
 moves, or a tab or a header the script reads is renamed. Renaming a header

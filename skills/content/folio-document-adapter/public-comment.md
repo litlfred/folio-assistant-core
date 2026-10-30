@@ -116,9 +116,9 @@ Columns are named here by header, never by letter: people move them.
 | tab | who writes it | holds |
 |---|---|---|
 | **Public Comment Source** | people (locked) | No., date received, channel, reviewer name, organisation, country / region, stakeholder type. Reviewers' names and emails stay here and never enter the repository |
-| **Review Public Comments** | people, plus formulas and the Apps Script | one row per PC. Grey, mechanical: No. (a link to the comment's page), Sections, Page, Line no(s) / Table / Figure (each linked to the draft page), Comment / issue, the PC's own Suggested revision. Green, derived: Change Set (a link to its Review Change Sets row) and TWG (agent). Blue, people: TWG (human) (a multi-select dropdown), Comment type, any number of `Architect Feedback (<initials>)` columns, Disposition, Status. Green, from Agent: Agentic status, Staging review page, Pull request (both by the PC's change-set) |
-| **Agent** | **the agent, and only the agent** | one row per No.: No., Comment ref (the PC id), agentic status, action taken, applied in, handled by, date actioned, pull request, staging review page, Change-sets. Then one row per change-set: id, title, status from the record, **pull request**, **staging review page**. A PR belongs to a change-set, not to a PC (owner, 2026-10-30) |
-| **Review Change Sets** | people, plus formulas and the Apps Script | one row per CS. Grey: Change-set, Title, and the Apps Script's Sections and Pages (each linked) and joins: Public Comments (`No. n (Status) · comment`, status in bold), Suggested Revisions, PC Architect Feedback and Dispositions (`No. n · text`), each `No. n` linking to its row. Green: TWG (PCs), the PCs' TWG (human), else TWG (agent) marked "(AI)". Blue, people: TWG (CS) (multi-select), `Architect Feedback (<initials>)` on the CS. Orange: **Ready for agent** and **Ready for merge** (Yes/No, editors). Green, from Agent: Agentic status, Pull request, Staging review page |
+| **Review Public Comments** | people, plus formulas and the Apps Script | one row per PC. Grey, mechanical: No. (a link to the comment's page), Sections, Page, Line no(s) / Table / Figure (each linked to the draft page), Comment / issue, the PC's own Suggested revision. Green, derived: Change Set (a link to its Review Change Sets row) and TWG (agent). Blue, people: TWG (human) (a multi-select dropdown), Comment type, any number of `Architect Feedback (<initials>)` columns, Disposition, Status. Grey, from Agent by the Apps Script: **Agentic status**, one line per pull request of the PC's change-sets, `PR #n (status, completed) · what it changed` with the PR linked and the status and completion time bold, or the status alone when there is no PR. Green, from Agent: Staging review page (by the PC's change-set) |
+| **Agent** | **the agent, and only the agent** | A–H, one row per No.: No., Comment ref (the PC id), Agentic status, Agentic action taken, Agentic applied in, Agentic handled by, Agentic date actioned (a UTC time, `YYYY-MM-DD HH:MMZ`, when the agent last finished work on the PC; D–G are the agent's log of what it did on that PC; no view reads them), Change-sets. I–N, one row per change-set: Change-set, Title, **Pull request (change set)** (any number of PR URLs, one per line), **Staging review page (change set)**, **What the PRs changed (change set)** (one line per PR, in the same order: what that PR changes in the document), **Agent completed (UTC, change set)** (one line per PR, in the same order: when the agent last finished work on it, `YYYY-MM-DD HH:MMZ`). A change-set may have several PRs, and a PC in several change-sets shows all of theirs. A PR belongs to a change-set, not to a PC (owner, 2026-10-30) |
+| **Review Change Sets** | people, plus formulas and the Apps Script | one row per CS. Grey: Change-set, Title, and the Apps Script's Sections and Pages (each linked) and joins: Public Comments (`No. n (Status) · comment`, status in bold), Suggested Revisions, PC Architect Feedback and Dispositions (`No. n · text`), each `No. n` linking to its row. Green: TWG (PCs), the PCs' TWG (human), else TWG (agent) marked "(AI)". Blue, people: TWG (CS) (multi-select), `Architect Feedback (<initials>)` on the CS. Orange: **Ready for agent** and **Ready for merge** (Yes/No, editors). Grey, from Agent by the Apps Script: **Agentic status**, as on Review Public Comments: one line per PR of the change-set, `PR #n (status) · what it changed`, the status being the change-set's PCs' agentic statuses. Green, from Agent: Staging review page |
 | **RCS joins (live)** | formulas (hidden) | live joins over Review Public Comments and Agent, kept for checking the Apps Script's output |
 
 **Colour key** (owner, 2026-10-30). Blue: people decide. Orange: a release
@@ -134,8 +134,8 @@ editor's Yes makes the agent merge.
 
 **Why the CS inputs can sit beside formulas.** A typed cell beside a spilled
 formula stays with its row only while the rows never move. Review Change Sets'
-rows come from Agent L–N, which lists change-sets in id order and only gains
-rows at the end. So the agent appends new change-sets at the end of Agent L–P
+rows come from Agent I–J, which lists change-sets in id order and only gains
+rows at the end. So the agent appends new change-sets at the end of Agent I–N
 and never reorders or deletes them. A sorted or filtered view of PCs cannot
 hold inputs, which is why the per-PC regrouping of the earlier sheet carried
 none. The owner's account, which is also the account the agent's connector
@@ -159,8 +159,8 @@ agent, adding feedback, or the agent writing an Agent row shows at once.
 Nothing is run to refresh them. Two things are not automatic:
 
 - **A new or retitled change-set** reaches the sheet only when the agent
-  rewrites Agent L–N from `review/public-comment/changesets/`.
-- **A PC's change-set** (Agent J) is the change-set whose `refs` hold the
+  rewrites Agent I–J from `review/public-comment/changesets/`.
+- **A PC's change-set** (Agent H) is the change-set whose `refs` hold the
   comment. The agent rewrites it when a comment is moved between change-sets.
 
 **What the agent watches.** Feedback arrives two ways, and the agent reads
@@ -196,13 +196,13 @@ CS's agentic status.
 
 Each sync does the steps below, in this order.
 
-1. **Reconcile.** For every change-set with a pull request (Agent O), read the PR's
+1. **Reconcile.** For every change-set with a pull request (Agent K), read each PR's
    state from GitHub. Open: *PR open*, with its staging review page. Merged:
    *Change merged*, and clear the staging link, because a merged branch's
    preview is gone and its link 404s. Closed unmerged: back to *Not
    started*, and say so in "agentic action taken". Write the status on every
-   PC row of the change-set. Rewrite L–N and J from the change-set
-   records as above, keeping each change-set's row and its O–P.
+   PC row of the change-set. Rewrite I–J and H from the change-set
+   records as above, keeping each change-set's row and its K–N.
 2. **Work the ready change-sets.** For each Review Change Sets row with **Ready
    for agent = Yes** whose PCs' agentic status is *Not started* or *Needs
    human*, or that has new feedback since its PR was opened:
@@ -227,16 +227,18 @@ Each sync does the steps below, in this order.
    5. Write the Agent rows, and nothing anywhere else in the sheet: status
       (*Working*, *PR open*, *Ready for review*, *Change merged*), what was
       done, the blocks or sections changed, who acted (the agent and its
-      session) and the date on each PC's row, and the PR and
-      `STAGING/<slug>/en/review/` on the change-set's row (Agent O–P). The
+      session) and the completion time (UTC, `YYYY-MM-DD HH:MMZ`) on each PC's row, and the PR and
+      `STAGING/<slug>/en/review/` on the change-set's row (Agent K–L), and in Agent M one line saying what
+      the PR changes in the document and in N the completion time, each on
+      the same line as its URL in K. The
       PR body names the feedback it answered by tab, row and column header,
       never by a reviewer's name.
 
-3. **Merge the released PRs.** For each change-set with an open PR (Agent O)
+3. **Merge the released PRs.** For each change-set with an open PR (Agent K)
    whose Review Change Sets row has **Ready for merge = Yes**, merge it (owner,
    2026-10-30). Any editor may set it. Only a PR in the folio's own repository is
    merged, never one on a WHO repository. After the merge, set every PC row of
-   the change-set to *Change merged*, clear its staging link (Agent P), and comment on the
+   the change-set to *Change merged*, clear its staging link (Agent L), and comment on the
    PR's issue. If the merge is refused (a session safety check, a conflict, a
    required review), set the rows to *Merge blocked*, write why in "agentic
    action taken", and say so in the run's summary. Do not route around a
