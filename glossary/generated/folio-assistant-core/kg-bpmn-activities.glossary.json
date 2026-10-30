@@ -631,6 +631,182 @@
       "status": "candidate"
     },
     {
+      "id": "process_dsadocumentlifecycle.call_beancloseended",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Call_BeanCloseEnded",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Call_BeanCloseEnded",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.call_beanclosepublished",
+      "prefLabel": "Close the bean [bean-close]",
+      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
+      "notation": "Call_BeanClosePublished",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Call_BeanClosePublished",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.call_beanopen",
+      "prefLabel": "Open the bean [bean-open]",
+      "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
+      "notation": "Call_BeanOpen",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Call_BeanOpen",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.call_beanopenchange",
+      "prefLabel": "Open the bean [bean-open]",
+      "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
+      "notation": "Call_BeanOpenChange",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Call_BeanOpenChange",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.call_publiccomment",
+      "prefLabel": "Public comment on the template [public-comment]",
+      "definition": "Comments on the frozen, line-numbered review version of the public template are placed, triaged, weighed and decided (public-comment.bpmn). Private annexes are never circulated.",
+      "notation": "Call_PublicComment",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Call_PublicComment",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_agreeterms",
+      "prefLabel": "P1.1 · Agree purpose, datasets, period, duties and trust anchors",
+      "definition": "The parties agree the purpose, the datasets, the period, the conditions and duties, and which trust anchors each side accepts. This sets what the text must say; it is a negotiation between people.",
+      "notation": "Task_AgreeTerms",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_AgreeTerms",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_assignversion",
+      "prefLabel": "P2.1 · Assign the version and its immutable URL [content-publish]",
+      "definition": "Each signed version gets its own immutable URL (for example /dsa/42/v3). A 'latest' URL may exist; nothing cites it. A new version never overwrites an old one.",
+      "notation": "Task_AssignVersion",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_AssignVersion",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_catalogue",
+      "prefLabel": "P2.4–5 · Write the DCAT 3 record and link versions",
+      "definition": "One DCAT 3 record: the agreement as a catalogued resource, each file a dcat:Distribution with dcat:downloadURL and spdx:checksum; datasets it covers carry odrl:hasPolicy. Versions are linked with DCAT 3 versioning (previous version, version, current version).",
+      "notation": "Task_Catalogue",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_Catalogue",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_checkodrl",
+      "prefLabel": "P1.4 · Check the ODRL against the text [content-review]",
+      "definition": "Computable only. A person checks that the ODRL says what the text says, and signs it off. A program can check the ODRL is well formed; it cannot check that it matches the text.",
+      "notation": "Task_CheckOdrl",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_CheckOdrl",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_decidechange",
+      "prefLabel": "Decide: amend, renew or end",
+      "definition": "The parties decide what happens to the agreement. Deciding to amend or terminate is human; expiry of a computable agreement is already enforced by its ODRL dateTime constraint.",
+      "notation": "Task_DecideChange",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_DecideChange",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_decidegrants",
+      "prefLabel": "P14.2 · Decide what happens to existing grants",
+      "definition": "Existing grants keep citing the old hash. The parties decide, per agreement: they stay valid until expiry, or they are revoked and reissued against the new version (in smart-trust). The old version stays readable.",
+      "notation": "Task_DecideGrants",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_DecideGrants",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_deriveodrl",
+      "prefLabel": "P1.3 · Derive the ODRL 2.2 Agreement",
+      "definition": "Computable only. One assigner and one assignee (ODRL 2.2 §2.1.3), permissions and prohibitions with target assets (§2.2), constraints (§2.5.1) and duties (§2.6.3), written as JSON-LD. Purposes from HL7 PurposeOfUse.",
+      "notation": "Task_DeriveOdrl",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_DeriveOdrl",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_endduties",
+      "prefLabel": "Revoke grants and start end-of-agreement duties",
+      "definition": "All grants are revoked (P13) and the end-of-agreement duties start: return or delete the data, then check them (P12). Those are server processes in smart-trust; this step records that the parties started them.",
+      "notation": "Task_EndDuties",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_EndDuties",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_hash",
+      "prefLabel": "P2.2 · Record the SHA-256 of each file",
+      "definition": "Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one. Written as an SRI string or an RFC 6920 ni URI.",
+      "notation": "Task_Hash",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_Hash",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_odrlcitestext",
+      "prefLabel": "P2.3 · Make the ODRL cite the text by URL and hash",
+      "definition": "The ODRL policy names the signed text with dcterms:source (DCMI Terms), pointing at the immutable URL whose checksum was just recorded.",
+      "notation": "Task_OdrlCitesText",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_OdrlCitesText",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_publish",
+      "prefLabel": "Publish the version at its URL [content-publish]",
+      "definition": "Publish the files at the version's immutable URL. If the parties' names are sensitive, publish only the template and the hash of the signed instance.",
+      "notation": "Task_Publish",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_Publish",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_render",
+      "prefLabel": "Render the text to HTML / PDF [document-publishing]",
+      "definition": "Render the agreed text to the form that will be signed (HTML and PDF), without a TeX installation.",
+      "notation": "Task_Render",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_Render",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_review",
+      "prefLabel": "Review the draft agreement [content-review]",
+      "definition": "Legal and policy review of the whole draft. Reviewers comment on blocks through review-comments; review says which review skill answers which question.",
+      "notation": "Task_Review",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_Review",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_setstatus",
+      "prefLabel": "P14.5 · Set the catalogue status to ended",
+      "definition": "Set the life-cycle status of the agreement's DCAT 3 record (DCAT 3 §6.4.30). The published versions stay readable at their URLs.",
+      "notation": "Task_SetStatus",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_SetStatus",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_sign",
+      "prefLabel": "P1.6 · Sign",
+      "definition": "The signatories sign: wet ink, or an electronic signature under national law. Technically a detached JWS (RFC 7515) or CMS (RFC 5652); PAdES for a signed PDF needs the owner's approval.",
+      "notation": "Task_Sign",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_Sign",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_splitannexes",
+      "prefLabel": "P1.5 · Split public terms from private annexes",
+      "definition": "Split the agreement into a public template and private annexes (security controls, named staff). Only the hash of a private annex is ever published.",
+      "notation": "Task_SplitAnnexes",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_SplitAnnexes",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_writetext",
+      "prefLabel": "P1.2 · Write the legal text [document-authoring]",
+      "definition": "Write the agreement as a document folio: one normative statement per clause the parties must keep, through normative-statements. The text says which governs if it and a machine-readable form disagree (suggested: the text).",
+      "notation": "Task_WriteText",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_WriteText",
+      "status": "candidate"
+    },
+    {
       "id": "process_editing.call_beanclose",
       "prefLabel": "Close the bean [bean-close]",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
