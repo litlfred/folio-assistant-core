@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 import type { ReviewAnchors } from "./docx-to-folio.js";
 import { type ChangeSet, PublicCommentSchema } from "../schemas/public-comment.js";
-import { dashboardHtml, overlaySnippet, siteComments, stagingSlug } from "./public-comment-site.js";
+import { dashboardHtml, overlaySnippet, siteComments, stagingReviewUrl, stagingSlug } from "./public-comment-site.js";
 import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
 
 const anchors: ReviewAnchors = {
@@ -45,7 +45,7 @@ describe("public-comment-site", () => {
   });
 
   test("before, after and PR links point at the anchor", () => {
-    const [r] = siteComments([comment()], anchors, { slug: "doc", site: "https://o.github.io/r/", repo: "o/r", storeDir: "review/public-comment" });
+    const [r] = siteComments([comment()], anchors, { slug: "doc", site: "https://o.github.io/r/", repo: "o/r", storeDir: "review/public-comment", openPrs: new Set([7]) });
     expect(r.phase).toBe("editing");
     expect(r.section).toBe("1.1");
     expect(r.links).toMatchObject({
@@ -53,8 +53,34 @@ describe("public-comment-site", () => {
       before: "https://o.github.io/r/en/doc/index.html#prose%3A1-1-abc",
       after: "https://o.github.io/r/STAGING/pc-1.1-definitions/en/doc/index.html#prose%3A1-1-abc",
       pr: "https://github.com/o/r/pull/7",
+      review: "https://o.github.io/r/STAGING/pc-1.1-definitions/en/review/",
       record: "https://github.com/o/r/blob/main/review/public-comment/comments/PC-0001.json",
     });
+  });
+
+  test("a comment or change-set with a pull request links its staging review page (owner, 2026-10-30)", () => {
+    expect(stagingReviewUrl("https://o.github.io/r/", "claude/x y")).toBe("https://o.github.io/r/STAGING/claude-x-y/en/review/");
+    expect(stagingReviewUrl(undefined, "b", "https://p.example/STAGING/b/")).toBe("https://p.example/STAGING/b/en/review/");
+    expect(stagingReviewUrl(undefined, "b")).toBeUndefined();
+    // A comment whose own change has no PR takes the review page of a change-set it is in that has one.
+    const c = comment();
+    const noPr = PublicCommentSchema.parse({ ...c, status: "triaged", public: { ...c.public, decision: undefined } });
+    const cs = { id: "CS-001", title: "t", requirements: "r", refs: ["PC-0001"], status: "editing", issues: [], pr: { number: 9, branch: "claude/cs-1" } } as unknown as ChangeSet;
+    const open = new Set([9]);
+    const rows = siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r", repo: "o/r", changeSets: [cs], openPrs: open });
+    expect(rows[0]!.links.review).toBe("https://o.github.io/r/STAGING/claude-cs-1/en/review/");
+    const html = dashboardHtml(rows, { title: "T", slug: "doc", generated: "g", repo: "o/r", site: "https://o.github.io/r", changeSets: [cs], openPrs: open });
+    expect(html).toContain('<a href="https://github.com/o/r/pull/9">#9</a> <a class="review" href="https://o.github.io/r/STAGING/claude-cs-1/en/review/">review (staging)</a>');
+    expect(html).toContain('<a href="https://o.github.io/r/STAGING/claude-cs-1/en/review/">review (staging)</a>');
+    // A merged PR has no preview: no review link, in the rows or the change-set table (owner, 2026-10-30).
+    const merged = siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r", repo: "o/r", changeSets: [cs], openPrs: new Set([12]) });
+    expect(merged[0]!.links.review).toBeUndefined();
+    expect(merged[0]!.changeSets[0]!.review).toBeUndefined();
+    expect(dashboardHtml(merged, { title: "T", slug: "doc", generated: "g", repo: "o/r", site: "https://o.github.io/r", changeSets: [cs], openPrs: new Set([12]) })).not.toContain("review (staging)");
+    // Open PRs unknown (GitHub not read): no review link rather than a dead one.
+    expect(siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r", changeSets: [cs] })[0]!.links.review).toBeUndefined();
+    // No PR anywhere: no review link.
+    expect(siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r" })[0]!.links.review).toBeUndefined();
   });
 
   test("the dashboard's page is under the locale and reads its records where they stay (#2527)", () => {
@@ -103,6 +129,40 @@ describe("public-comment-site", () => {
     expect(html).toContain("1 not routed");
     expect(html).toContain('<label>Committee<select id="f-committee">');
     expect(html).toMatch(/<tr id="PC-0003"[^>]*data-committee="Core architects"/);
+  });
+  test("a manually re-routed change-set shows the new committee and its move history on the dashboard (bean se3i, issue #197)", () => {
+    const routed = (ref: string, cat: string) => {
+      const c = comment();
+      return PublicCommentSchema.parse({ ...c, id: ref.toLowerCase(), public: { ...c.public, ref, labels: { "TWG consideration? AI categorisation": cat } } });
+    };
+    const rows = siteComments([routed("PC-0001", "Core architects"), routed("PC-0002", "Core architects")], anchors, { slug: "doc" });
+    const cs = {
+      id: "CS-001",
+      title: "Workflow alignment",
+      requirements: "Align workflow.",
+      refs: ["PC-0001", "PC-0002"],
+      status: "discussing",
+      issue: 12,
+      issues: [12],
+      committee: "Clinical",
+      committeeMoves: [
+        {
+          who: "chine",
+          when: "2026-10-16T10:00:00Z",
+          from: "Core architects",
+          to: "Clinical",
+          why: "This is about clinical workflow, not core architecture.",
+          url: "https://github.com/o/r/issues/12#issuecomment-1",
+        },
+      ],
+    } as unknown as ChangeSet;
+    const html = dashboardHtml(rows, { title: "T", slug: "doc", generated: "g", changeSets: [cs] });
+    expect(html).toContain('<tr id="CS-001" data-cs-status="discussing" data-committee="Clinical">');
+    expect(html).toContain('<b>Clinical</b> <span class="chip">rerouted</span>');
+    expect(html).toContain("move history (1)");
+    expect(html).toContain('Core architects → <b>Clinical</b> · <span class="muted"><a href="https://github.com/o/r/issues/12#issuecomment-1">chine</a>, 2026-10-16</span> — This is about clinical workflow, not core architecture.');
+    // The Committee filter dropdown includes Clinical even though no individual comment is routed to Clinical.
+    expect(html).toContain("<option>Clinical</option>");
   });
   test("every comment has [edit] and [feedback], built in the page from its record (owner, 2026-10-13)", () => {
     const rows = siteComments([comment()], anchors, { slug: "doc", repo: "o/r", storeDir: "review/public-comment" });

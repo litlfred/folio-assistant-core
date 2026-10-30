@@ -742,6 +742,13 @@
       "status": "candidate"
     },
     {
+      "id": "public-comment.changesetcommitteemoveschema.url",
+      "prefLabel": "ChangeSetCommitteeMoveSchema.url",
+      "definition": "The GitHub comment or issue it came from, when moved on GitHub.",
+      "source": "folio-assistant-core/schemas/public-comment.ts#ChangeSetCommitteeMoveSchema.url",
+      "status": "candidate"
+    },
+    {
       "id": "public-comment.changesethistoryschema.url",
       "prefLabel": "ChangeSetHistorySchema.url",
       "definition": "The GitHub comment, issue or PR it came from.",

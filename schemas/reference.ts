@@ -49,10 +49,10 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, join } from "node:path";
 import { z } from "zod";
-import { nodeKind } from "@litlfred/cat-harness/schemas/kg/node-kind.ts";
-import { readStructure } from "@litlfred/cat-harness/schemas/content/document-structure.ts";
-import { FOLIO_BASE, resolveReferenceKey } from "@litlfred/cat-harness/schemas/kg/jsonld.ts";
-import { safeHref } from "@litlfred/cat-harness/schemas/ui/safe-url.ts";
+import { nodeKind } from "@litlfred/cat-harness-tools/schemas/kg/node-kind.ts";
+import { readStructure } from "@litlfred/cat-harness-tools/schemas/content/document-structure.ts";
+import { FOLIO_BASE, resolveReferenceKey } from "@litlfred/cat-harness-tools/schemas/kg/jsonld.ts";
+import { safeHref } from "@litlfred/cat-harness-tools/schemas/ui/safe-url.ts";
 import { cslToBibtex } from "@litlfred/cat-harness-tools/pipeline/bibtex-format.ts";
 import {
   authorNames,

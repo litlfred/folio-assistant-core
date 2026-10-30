@@ -182,7 +182,7 @@ export function dcElement(rec: DublinCoreRecord, element: string): DcField[] {
 export const DC_ELEMENTS_NS = "http://purl.org/dc/elements/1.1/";
 
 /**
- * DCMI Metadata Terms. Duplicated from `cat-harness/schemas/jsonld.ts`, which
+ * DCMI Metadata Terms. Duplicated from `cat-harness-tools/schemas/kg/jsonld.ts`, which
  * needs it for the block context and cannot import content-layer modules.
  *
  * An unavoidable duplicate is fine; an UNCHECKED one is not — so
@@ -249,7 +249,7 @@ function projectValue(v: DcValue): DcJsonLdValue {
   // sometimes another makes every consumer branch, and the consumer that
   // forgets to branch is the one that loses data.
   const literal: { "@value": string; "@language"?: string } = { "@value": v.value };
-  if (v.language !== undefined) literal["@language"] = v.language;
+  if (v.language !== undefined) literal["@language"] = bcp47(v.language);
 
   if (v.authority === undefined) return literal;
 
@@ -262,6 +262,19 @@ function projectValue(v: DcValue): DcJsonLdValue {
     "rdf:value": literal,
     [`${DSPACE_NS}authority`]: v.authority,
   };
+}
+
+/**
+ * A record's language as a BCP 47 tag, for RDF and XML.
+ *
+ * DSpace stores a POSIX locale (`en_US`). The record keeps it verbatim, because
+ * that is what the source says. RDF and `xml:lang` need BCP 47, whose subtags
+ * are joined by `-`. Emitted as is, `en_US` makes an N-Quads language tag that
+ * no parser accepts (`"20 p"@en_us`), so the conversion is made here, where the
+ * record becomes RDF.
+ */
+export function bcp47(language: string): string {
+  return language.replace(/_/g, "-");
 }
 
 /**

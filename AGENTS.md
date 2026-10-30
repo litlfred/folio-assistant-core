@@ -27,7 +27,7 @@ exception to the rule above: they live in `cat-harness/schemas/materialization-s
 
 <!-- skills:index:begin -->
 
-_34 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
+_42 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
 
 **`skills/`** (1)
 
@@ -35,16 +35,17 @@ _34 skills in 8 directories, generated from each skill's front matter. `bun run 
 |---|---|
 | [`deep-document-research`](skills/deep-document-research.md) | Answer a question from a corpus this folio already holds, iteratively, and stop on a stated condition. |
 
-**`skills/content/content-lifecycle-ext/`** (4)
+**`skills/content/content-lifecycle-ext/`** (5)
 
 | Skill | What it is for |
 |---|---|
+| [`block-change-summary`](skills/content/content-lifecycle-ext/block-change-summary.md) | Post-delivery content block change summary for a folio edit-set: extract changed block labels across `.md`, `.ts` and content-type sibling files, present a per-chapter table with `.md`-first GitHub… |
 | [`corpus-commit-contract`](skills/content/content-lifecycle-ext/corpus-commit-contract.md) | The contract the `corpus` role is held to when an accepted edit is committed into it: take the write only on the editor's acceptance, as one change with its QA sidecars, under the commit-hygiene… |
 | [`quality-control`](skills/content/content-lifecycle-ext/quality-control.md) | Apply the publication quality gates to an aggregate of QA output, and decide whether it clears. |
 | [`registry-authority-contract`](skills/content/content-lifecycle-ext/registry-authority-contract.md) | The contract the `external-registry` role is held to when a candidate source is checked against the body that publishes it: resolve the identifier through its own API and return the record, so… |
 | [`review-comments`](skills/content/content-lifecycle-ext/review-comments.md) | Reviewer comments on a folio's edit-set, from a tagged pull-request comment to a structured todo on the review page. |
 
-**`skills/content/folio-document-adapter/`** (10)
+**`skills/content/folio-document-adapter/`** (17)
 
 | Skill | What it is for |
 |---|---|
@@ -56,6 +57,13 @@ _34 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`dsa-checksum`](skills/content/folio-document-adapter/dsa-checksum.md) | Compute and record the SHA-256 cryptographic digest of a signed Data Sharing Agreement's legal text as a W3C DCAT 3 `spdx:checksum` (`spdx:Checksum` with `spdx:checksumAlgorithm_sha256` and… |
 | [`dsa-dcat-record`](skills/content/folio-document-adapter/dsa-dcat-record.md) | Write the W3C DCAT 3 `dcat:Resource` and `dcat:Distribution` catalogue record for a Data Sharing Agreement (`dcat:downloadURL`, `spdx:checksum`, `odrl:hasPolicy`) and link versions with… |
 | [`dsa-odrl-source`](skills/content/folio-document-adapter/dsa-odrl-source.md) | Bind a computable Data Sharing Agreement's W3C ODRL 2.2 `Agreement` to its signed legal text distribution using DCMI Metadata Terms `dcterms:source`, naming the exact `dcat:Distribution` whose… |
+| [`folio-board-diagram-interchange`](skills/content/folio-document-adapter/folio-board-diagram-interchange.md) | The content-folio half of the harness's board-diagram-interchange skill: binds processes/ui/board-place-note.bpmn and board-relocate.bpmn, folio board filters over pages and block kinds, and… |
+| [`folio-board-windows`](skills/content/folio-document-adapter/folio-board-windows.md) | The content-folio half of the harness's board-windows skill: binds processes/ui/board-open-close.bpmn, folio-glass pinning (todo/<id> and landing/<slot>), and content-type card chrome ([x],… |
+| [`folio-content-lifecycle`](skills/content/folio-document-adapter/folio-content-lifecycle.md) | The content-folio half of the harness's content-lifecycle skills (content-author, content-feedback, content-plan, content-publish, content-review, content-test, content-validate,… |
+| [`folio-content-profiles`](skills/content/folio-document-adapter/folio-content-profiles.md) | The content-folio half of the harness's content-profiles skill: how a document folio is structured prose and how a paper folio extends it, block-kind discovery across block-kinds/ graphs,… |
+| [`folio-editorial-workflow`](skills/content/folio-document-adapter/folio-editorial-workflow.md) | The content-folio half of the harness's editor, content-graph, md-authoring, canonical-watcher, and uses-editorial-review skills: routes glossary and notation work to ontologist and glossary-build,… |
+| [`folio-getting-started`](skills/content/folio-document-adapter/folio-getting-started.md) | The content-folio half of the harness's getting-started skill: binds processes/conduct/getting-started.bpmn and decisions/folio-intent.dmn, interprets describeRepository() content-type markers… |
+| [`folio-repo-conversion`](skills/content/folio-document-adapter/folio-repo-conversion.md) | The content-folio half of the harness's repo-conversion skill: outside-content evidence and refutation candidate scanning, content-type marker declarations, and dispatching library and content… |
 | [`normative-statements`](skills/content/folio-document-adapter/normative-statements.md) | Carry a **recommendation, requirement or rule** in a document folio — the thing an L1 health-policy guidance note, a standard, or a terms-of-reference document exists to state. |
 | [`public-comment`](skills/content/folio-document-adapter/public-comment.md) | Run a **public review** of a document folio. |
 

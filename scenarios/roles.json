@@ -46,7 +46,9 @@
         "getting-started",
         "interaction-modality",
         "repo-conversion",
-        "document-intake"
+        "document-intake",
+        "folio-getting-started",
+        "folio-repo-conversion"
       ],
       "persona": "Meets a repository it has never seen and must orient before acting. Will follow the first plausible convention it finds, so the earliest instruction it reads matters most."
     }
@@ -67,6 +69,7 @@
     {
       "role": "authoring-agent",
       "skills": [
+        "block-change-summary",
         "document-authoring",
         "document-structure",
         "normative-statements",
@@ -119,7 +122,10 @@
       "skills": [
         "ontologist",
         "bib-human-review",
-        "bib-qa"
+        "bib-qa",
+        "folio-content-lifecycle",
+        "folio-content-profiles",
+        "folio-editorial-workflow"
       ]
     },
     {
@@ -153,6 +159,13 @@
         "dsa-catalogue-status",
         "dsa-checksum",
         "dsa-dcat-record"
+      ]
+    },
+    {
+      "role": "board-renderer",
+      "skills": [
+        "folio-board-diagram-interchange",
+        "folio-board-windows"
       ]
     }
   ]

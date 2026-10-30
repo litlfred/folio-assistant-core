@@ -74,9 +74,9 @@
 import { createHash } from "node:crypto";
 import { z } from "zod";
 
-import { nodeKind } from "@litlfred/cat-harness/schemas/kg/node-kind.js";
-import { RenderedImpactSchema } from "@litlfred/cat-harness/schemas/ui/rendered-impact.js";
-import { TodoNodeKind } from "@litlfred/cat-harness/schemas/sdlc/todo.js";
+import { nodeKind } from "@litlfred/cat-harness-tools/schemas/kg/node-kind.js";
+import { RenderedImpactSchema } from "@litlfred/cat-harness-tools/schemas/ui/rendered-impact.js";
+import { TodoNodeKind } from "@litlfred/cat-harness-tools/schemas/sdlc/todo.js";
 
 export const PUBLIC_COMMENT_SCHEMA = "public-comment/1.0.0" as const;
 
@@ -451,6 +451,38 @@ export const formatRef = (n: number) => `PC-${String(n).padStart(4, "0")}`;
 
 export const CHANGE_SET_SCHEMA = "changeset/1.0.0" as const;
 
+/** The fixed TWG review committees (DPI-H §4/§10), most specific first: the tie-break order. */
+export const TWG_GROUPS = [
+  "Metadata registries",
+  "Supply chain",
+  "Financial systems",
+  "Clinical",
+  "WHO",
+  "Core architects",
+  "Editorial",
+  "No",
+] as const;
+export type TwgGroup = (typeof TWG_GROUPS)[number];
+
+/** An agent wrote it; anything else is a person's override. */
+export const isAgent = (by: string) => /(^|-)agent$|^claude/i.test(by);
+
+/**
+ * One manual re-route of a change-set to another committee (bean `se3i`,
+ * issue #197). `Task_RerouteChangeSet` in `public-comment.bpmn` is a
+ * person-only `userTask`, so `who` is never an agent.
+ */
+export const ChangeSetCommitteeMoveSchema = z.object({
+  who: z.string().min(1),
+  when: z.string().min(1),
+  from: z.enum(TWG_GROUPS).nullable(),
+  to: z.enum(TWG_GROUPS),
+  why: z.string().min(1),
+  /** The GitHub comment or issue it came from, when moved on GitHub. */
+  url: z.string().url().optional(),
+});
+export type ChangeSetCommitteeMove = z.infer<typeof ChangeSetCommitteeMoveSchema>;
+
 /**
  * Where a change-set is. `proposed`: drafted, nobody has engaged, so it has no
  * issue. `discussing`: it has a primary issue. `editing`: a PR names it.
@@ -511,6 +543,15 @@ const ChangeSetFields = {
   pr: z.object({ number: z.number().int().positive(), branch: z.string().min(1) }).optional(),
   /** For `merged`: the change-set it was folded into. */
   mergedInto: z.string().regex(/^CS-\d{3,}$/).optional(),
+  /**
+   * The review committee (TWG sub-group) a person routed this change-set to by
+   * hand (bean `se3i`, issue #197), overriding the plurality rolled up from its
+   * comments. Stored on the change-set record so re-ingesting comments never
+   * resets it.
+   */
+  committee: z.enum(TWG_GROUPS).optional(),
+  /** Every manual committee re-route (`who`, `when`, `from`, `to`, `why`), oldest first. */
+  committeeMoves: z.array(ChangeSetCommitteeMoveSchema).default([]),
   proposedBy: z.string().min(1),
   proposedAt: z.string().min(1),
   history: z.array(ChangeSetHistorySchema).default([]),
@@ -530,5 +571,21 @@ const ChangeSetFields = {
  * is generated from the versioned id, so the schema below has ONE source.
  */
 export const ChangeSetKind = nodeKind(CHANGE_SET_SCHEMA, [], ChangeSetFields);
-export const ChangeSetSchema = ChangeSetKind.schema;
+export const ChangeSetSchema = ChangeSetKind.schema.superRefine((cs, ctx) => {
+  const last = cs.committeeMoves.at(-1);
+  if (cs.committee && !last) {
+    ctx.addIssue({ code: "custom", path: ["committeeMoves"], message: "a manually routed change-set records the move (who, when, from, to, why)" });
+  }
+  if (last && cs.committee !== last.to) {
+    ctx.addIssue({ code: "custom", path: ["committee"], message: `committee must match the latest move's destination (${last.to})` });
+  }
+  cs.committeeMoves.forEach((m, i) => {
+    if (!m.why.trim()) {
+      ctx.addIssue({ code: "custom", path: ["committeeMoves", i, "why"], message: "moving a change-set to another committee needs a reason" });
+    }
+    if (isAgent(m.who)) {
+      ctx.addIssue({ code: "custom", path: ["committeeMoves", i, "who"], message: "re-routing a change-set to another committee is a person-only step; agents cannot make the move" });
+    }
+  });
+});
 export type ChangeSet = z.infer<typeof ChangeSetSchema>;

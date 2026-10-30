@@ -38,6 +38,7 @@
  *   cs-remove: PC-0107           remove a comment
  *   cs-title: …                  rename
  *   cs-requirements: …           replace the requirements (the lines that follow)
+ *   cs-committee: <TWG> — <why>  re-route to another committee, with a reason (person-only)
  *   cs-merge: CS-087             fold CS-087 into this change-set
  *   cs-split: PC-0311, PC-0312 as New title
  *   cs-close: reason             no change is needed
@@ -51,6 +52,8 @@
  *   list                         every change-set, its status and issue
  *   body <CS-012>                its rendered issue section
  *   adopt <CS-012> --issue N     make an existing issue its primary one
+ *   reroute <CS-012> --to <TWG> --why "reason" --by <login>
+ *                                move a change-set to another committee (person-only)
  *   reopen <CS-012> --note "why"  back to discussing (closed or incorporated)
  *   check                        the records agree with each other (CI; no network)
  *   reconcile [--dry-run]        every issue agrees with its record (GITHUB_TOKEN)
@@ -68,6 +71,7 @@ import { dirname, join, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { dashboardPageRoute } from "./public-comment-route.js";
+import { changeSetRouting, commentRouting, type RoutingFile, TWG_GROUPS, twgGroup, type TwgGroup } from "./public-comment-routing.js";
 import { documentPageDir } from "./document-site-route.js";
 import {
   CHANGE_SET_SCHEMA,
@@ -77,6 +81,7 @@ import {
   type ChangeSetStatus,
   DECISION_CODES,
   formatRef,
+  isAgent,
   OPEN_STATUSES,
   type PublicComment,
   transition,
@@ -193,6 +198,7 @@ export function addChangeSet(store: Store, p: { title: string; requirements: str
       ...(p.anchor ? { anchor: p.anchor } : {}),
       status: "proposed",
       issues: [],
+      committeeMoves: [],
       proposedBy: p.by,
       proposedAt: p.at,
       history: [],
@@ -204,6 +210,49 @@ export function addChangeSet(store: Store, p: { title: string; requirements: str
   );
   saveChangeSet(store, cs);
   return cs;
+}
+
+/** The plurality committee rolled up from `refs` in `store` (before any manual override). */
+export function derivedCommitteeOf(store: Store, refs: string[]): TwgGroup | null {
+  const rf = join(store.dir, "routing.json");
+  const routing = existsSync(rf) ? (JSON.parse(readFileSync(rf, "utf-8")) as RoutingFile) : undefined;
+  const byRef = new Map(store.all().map((c) => [c.public.ref, commentRouting(c.public.labels, routing?.routings[c.public.ref])]));
+  return changeSetRouting(refs, byRef).derived ?? null;
+}
+
+/**
+ * Re-route a change-set to another review committee by hand (`Task_RerouteChangeSet`,
+ * bean `se3i`, issue #197). Person-only: agents cannot make the move on their own.
+ */
+export function rerouteChangeSet(
+  store: Store,
+  csOrId: ChangeSet | string,
+  p: { to: string; why: string; by: string; at: string; url?: string },
+): ChangeSet {
+  const who = p.by.trim();
+  if (!who || isAgent(who)) {
+    throw new Error("re-routing a change-set to another committee is a person-only step (Task_RerouteChangeSet); agents cannot make the move");
+  }
+  const group = twgGroup(p.to);
+  if (!group) {
+    throw new Error(`"${p.to}" is not a TWG committee; choose one of: ${TWG_GROUPS.join(", ")}`);
+  }
+  const why = p.why.trim();
+  if (!why) {
+    throw new Error("moving a change-set to another committee needs a reason");
+  }
+  const cs = typeof csOrId === "string" ? getChangeSet(store, csOrId) : csOrId;
+  const from = cs.committee ?? derivedCommitteeOf(store, cs.refs);
+  const move = { who, when: p.at, from, to: group, why, ...(p.url ? { url: p.url } : {}) };
+  const next = noted(
+    { ...cs, committee: group, committeeMoves: [...(cs.committeeMoves ?? []), move] },
+    who,
+    p.at,
+    `rerouted committee ${from ?? "not routed"} → ${group}: ${why}`,
+    p.url,
+  );
+  saveChangeSet(store, next);
+  return next;
 }
 
 // ── The issue section ────────────────────────────────────────────
@@ -246,15 +295,30 @@ export function renderSection(cs: ChangeSet, store: Store): string {
     return `| ${refLink} | ${where} | ${state} | ${cell(clip(c.public.text, 200))} | ${cell(clip(c.public.suggestedRevision ?? "", 140))} |`;
   });
   const others = cs.issues.filter((n) => n !== cs.issue);
+  const moves = cs.committeeMoves ?? [];
   return [
     sectionStart(cs.id),
-    `> **Change-set ${cs.id}** · ${cs.status} · ${cs.refs.length} comment(s)${site ? ` · [dashboard](${dash}#${cs.id})` : ""}`,
+    `> **Change-set ${cs.id}** · ${cs.status}${cs.committee ? ` · **${cs.committee}**` : ""} · ${cs.refs.length} comment(s)${site ? ` · [dashboard](${dash}#${cs.id})` : ""}`,
     "> This section is written from the change-set's record, so an edit to it here is replaced. Change it with the commands below; discuss it anywhere in this issue.",
     "",
     "### Requirements",
     "",
     cs.requirements,
     "",
+    ...(cs.committee
+      ? [
+          "### Committee",
+          "",
+          `**${cs.committee}**`,
+          ...(moves.length
+            ? [
+                "",
+                ...moves.map((m) => `- ${m.from ?? "not routed"} → **${m.to}** by @${m.who} (${m.when.slice(0, 10)}): ${m.why}`),
+              ]
+            : []),
+          "",
+        ]
+      : []),
     `### Comments (${cs.refs.length})`,
     "",
     `pc: ${cs.refs.join(", ")}`,
@@ -269,7 +333,7 @@ export function renderSection(cs: ChangeSet, store: Store): string {
     "",
     "- **Agree the requirements** in this thread.",
     "- **Recommend or decide** all its comments at once: a comment `decide: accepted` (or `recommend: …`), then the reason. Name some with `pc: PC-0042` first. Codes: " + DECISION_CODES.join(", ") + ".",
-    "- **Change it** (committee and editor), in a comment: `cs-add: PC-…`, `cs-remove: PC-…`, `cs-title: …`, `cs-requirements:` and the new text on the lines below, `cs-merge: CS-…`, `cs-split: PC-…, PC-… as New title`, `cs-close: reason`.",
+    "- **Change it** (committee and editor), in a comment: `cs-add: PC-…`, `cs-remove: PC-…`, `cs-title: …`, `cs-requirements:` and the new text on the lines below, `cs-committee: <TWG> — <reason>`, `cs-merge: CS-…`, `cs-split: PC-…, PC-… as New title`, `cs-close: reason`.",
     "- **Make the change** on a branch, in a PR whose body says `Closes #<this issue>`. Its staging preview is where the change is reviewed and approved.",
     "",
     "</details>",
@@ -338,11 +402,30 @@ export function canonicalText(body: string): string {
 // ── Commands ─────────────────────────────────────────────────────
 
 export interface Command {
-  cmd: "add" | "remove" | "title" | "requirements" | "merge" | "split" | "close" | "new";
+  cmd: "add" | "remove" | "title" | "requirements" | "committee" | "merge" | "split" | "close" | "new";
   arg: string;
 }
 
-const CMD_RE = /^\s*cs-(add|remove|title|requirements|merge|split|close|new):\s*(.*)$/i;
+const CMD_RE = /^\s*cs-(add|remove|title|requirements|committee|merge|split|close|new):\s*(.*)$/i;
+const TAG_LINE_RE = /^\s*(cs|pc|recommend|decide):\s*/i;
+
+function splitCommitteeLine(line: string): { to: string; why: string } {
+  const m = /^(.+?)(?:\s+(?:[—–|]|--+|-)\s+|:\s+|\s+because\s+)(.+)$/i.exec(line);
+  if (m) return { to: m[1]!.trim(), why: m[2]!.trim() };
+  return { to: line.trim(), why: "" };
+}
+
+export function splitCommitteeArg(raw: string): { to: string; why: string } {
+  const trimmed = raw.trim();
+  const nl = trimmed.indexOf("\n");
+  if (nl >= 0) {
+    const first = trimmed.slice(0, nl).trim();
+    const rest = trimmed.slice(nl + 1).trim();
+    const inline = splitCommitteeLine(first);
+    return { to: inline.to, why: [inline.why, rest].filter(Boolean).join("\n").trim() };
+  }
+  return splitCommitteeLine(trimmed);
+}
 
 export function parseCommands(text: string): Command[] {
   const lines = text.replace(/\r\n/g, "\n").split("\n");
@@ -358,6 +441,12 @@ export function parseCommands(text: string): Command[] {
       const more: string[] = [];
       while (i + 1 < lines.length && !CMD_RE.test(lines[i + 1]!)) more.push(lines[++i]!);
       arg = [arg, ...more].join("\n").trim();
+    } else if (cmd === "committee" && !splitCommitteeLine(arg).why) {
+      // When the reason is written on the lines after `cs-committee: <TWG>`,
+      // collect them up to the next command or tag line.
+      const more: string[] = [];
+      while (i + 1 < lines.length && !CMD_RE.test(lines[i + 1]!) && !TAG_LINE_RE.test(lines[i + 1]!)) more.push(lines[++i]!);
+      if (more.join("\n").trim()) arg = [arg, ...more].join("\n").trim();
     }
     out.push({ cmd, arg });
   }
@@ -526,6 +615,33 @@ function applyCommands(x: Ctx, cmds: Command[], text: string, n: number, opts: {
         cs = noted({ ...cs, requirements: c.arg }, by, x.at, "requirements replaced", x.url);
         x.out.log.push(`✓ ${cs.id}: requirements replaced`);
         break;
+      case "committee": {
+        if (isAgent(by)) {
+          x.out.log.push("✗ `cs-committee`: re-routing a change-set to another committee is a person-only step (Task_RerouteChangeSet); agents cannot make the move");
+          break;
+        }
+        const { to, why } = splitCommitteeArg(c.arg);
+        const group = twgGroup(to);
+        if (!group) {
+          x.out.log.push(`✗ \`cs-committee\`: "${to}" is not a TWG committee (choose one of: ${TWG_GROUPS.join(", ")})`);
+          break;
+        }
+        if (!why) {
+          x.out.log.push(`✗ \`cs-committee\`: moving ${cs.id} to ${group} needs a reason (e.g. \`cs-committee: ${group} — why\`)`);
+          break;
+        }
+        const from = cs.committee ?? derivedCommitteeOf(x.store, cs.refs);
+        const move = { who: by, when: x.at, from, to: group, why, ...(x.url ? { url: x.url } : {}) };
+        cs = noted(
+          { ...cs, committee: group, committeeMoves: [...(cs.committeeMoves ?? []), move] },
+          by,
+          x.at,
+          `rerouted committee ${from ?? "not routed"} → ${group}: ${why}`,
+          x.url,
+        );
+        x.out.log.push(`✓ ${cs.id}: committee ${from ?? "not routed"} → ${group} (${why})`);
+        break;
+      }
       case "merge": {
         for (const id of csIn(c.arg)) {
           const src = current(x, id);
@@ -1095,6 +1211,17 @@ if (import.meta.main) {
         if (!REOPENABLE.includes(cs.status)) throw new Error(`${cs.id} is ${cs.status}; only ${REOPENABLE.join(" or ")} reopens`);
         saveChangeSet(store, noted({ ...cs, status: "discussing" }, by, at, opt("note") ?? "reopened"));
         console.error(`✓ ${cs.id}: discussing again`);
+        break;
+      }
+      case "reroute":
+      case "committee": {
+        const to = opt("to") ?? opt("committee");
+        const why = opt("why") ?? opt("reason") ?? opt("note");
+        const who = opt("by") ?? process.env.GITHUB_ACTOR ?? "";
+        if (!positional || !to) throw new Error('reroute <CS-012> --to <committee> --why "reason" --by <login>');
+        const cs = rerouteChangeSet(store, positional, { to, why: why ?? "", by: who, at });
+        const last = cs.committeeMoves.at(-1)!;
+        console.error(`✓ ${cs.id}: committee ${last.from ?? "not routed"} → ${last.to} (${last.why})`);
         break;
       }
       case "check": {

@@ -14,7 +14,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "5463bf121d472bbda817c6e0a4a73a2945793164",
+          "ref": "6dff1e1a31e47a56c935b33aee010f54d34dbc6e",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -29,9 +29,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-10-15",
-              "ref": "5463bf121d472bbda817c6e0a4a73a2945793164",
-              "evidence": "Owner litlfred, 2026-10-15 (17:30Z): 'merge and repin for next 3 hrs. keep draining'"
+              "on": "2026-10-30",
+              "ref": "6dff1e1a31e47a56c935b33aee010f54d34dbc6e",
+              "evidence": "Owner litlfred, 2026-10-30: card 'A. One coordinated move' (bean 8lcl), merge window to 19:38Z"
             }
           }
         }
@@ -42,7 +42,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "cd70935594e77f50dc59224806592c07b839b316",
+          "ref": "c98abe5569f94df167173def9239a8128dd2cd0e",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -54,9 +54,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-10-15",
-              "ref": "cd70935594e77f50dc59224806592c07b839b316",
-              "evidence": "Owner litlfred, 2026-10-15 (17:30Z): 'merge and repin for next 3 hrs. keep draining'"
+              "on": "2026-10-30",
+              "ref": "c98abe5569f94df167173def9239a8128dd2cd0e",
+              "evidence": "Owner litlfred, 2026-10-30: card 'A. One coordinated move' (bean 8lcl), merge window to 19:38Z"
             }
           }
         }

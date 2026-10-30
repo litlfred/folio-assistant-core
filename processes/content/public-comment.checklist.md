@@ -85,7 +85,7 @@ A frozen, line-numbered draft went out for public review.
 - Skill: `public-comment`.
 - What: A change-set gets its primary GitHub issue the first time somebody engages with it (the Discuss form, a recommendation or decision on one of its comments, a mention, a PR), opened by the folio's public-comment workflow; any number of other issues may discuss it and are linked.
 - Record it: `workflow_complete` with `node: "Task_GroupChangeSets"`.
-- next: → `Task_Assign` (Assign to committee members)
+- next: → `Task_RerouteChangeSet` (Re-route a change-set to another committee, with a reason)
 
 ### Decide — Does the decision change the document? (`Gateway_ChangesDocument`)
 
@@ -93,13 +93,13 @@ A frozen, line-numbered draft went out for public review.
   - «no: not accepted, noted, deferred» → `EndEvent_Decided` (Decided, answer recorded)
   - «yes: accepted» → `Task_AuthorEdits` (Edit the document as decided, on a feature branch)
 
-### 7. Assign to committee members (`Task_Assign`)
+### 7. Re-route a change-set to another committee, with a reason (`Task_RerouteChangeSet`)
 
-- Who: the `Review coordinator` lane (role `review-coordinator`).
+- Who: the `Review committee` lane (role `reviewer`).
 - Skill: `public-comment`.
-- What: public-comment assign: by GitHub login.
-- Record it: `workflow_complete` with `node: "Task_Assign"`.
-- next: → `Task_CommitteeRecommends` (Recommend a decision, with a rationale)
+- What: public-comment-changesets reroute, or cs-committee: <TWG> — <why> on GitHub from a person in the committee or editor lane (bean se3i, issue #197).
+- Record it: `workflow_complete` with `node: "Task_RerouteChangeSet"`.
+- next: → `Task_Assign` (Assign to committee members)
 
 ## Done — Decided, answer recorded (`EndEvent_Decided`)
 
@@ -113,13 +113,13 @@ A frozen, line-numbered draft went out for public review.
 - Record it: `workflow_complete` with `node: "Task_AuthorEdits"`.
 - next: → `CallActivity_ChangeSet` (Review the change set on its staging preview)
 
-### 9. Recommend a decision, with a rationale (`Task_CommitteeRecommends`)
+### 9. Assign to committee members (`Task_Assign`)
 
-- Who: the `Review committee` lane (role `reviewer`).
+- Who: the `Review coordinator` lane (role `review-coordinator`).
 - Skill: `public-comment`.
-- What: A GitHub comment tagged pc: PC-0042 / recommend: code, from a login in config.json committee, or public-comment recommend.
-- Record it: `workflow_complete` with `node: "Task_CommitteeRecommends"`.
-- next: → `Task_EditorDecides` (Decide, weighing the recommendations)
+- What: public-comment assign: by GitHub login.
+- Record it: `workflow_complete` with `node: "Task_Assign"`.
+- next: → `Task_CommitteeRecommends` (Recommend a decision, with a rationale)
 
 ### 10. Review the change set on its staging preview (`CallActivity_ChangeSet`)
 
@@ -129,7 +129,15 @@ A frozen, line-numbered draft went out for public review.
 - A subprocess (`Process_ContentChangeReview`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Task_Incorporate` (Mark incorporated when the change set merges)
 
-### 11. Mark incorporated when the change set merges (`Task_Incorporate`)
+### 11. Recommend a decision, with a rationale (`Task_CommitteeRecommends`)
+
+- Who: the `Review committee` lane (role `reviewer`).
+- Skill: `public-comment`.
+- What: A GitHub comment tagged pc: PC-0042 / recommend: code, from a login in config.json committee, or public-comment recommend.
+- Record it: `workflow_complete` with `node: "Task_CommitteeRecommends"`.
+- next: → `Task_EditorDecides` (Decide, weighing the recommendations)
+
+### 12. Mark incorporated when the change set merges (`Task_Incorporate`)
 
 - Who: the `Change set — feature branch and staging` lane (role `build-pipeline`).
 - Skill: `public-comment`.

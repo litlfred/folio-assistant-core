@@ -7,7 +7,7 @@ import { describe, expect, it } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { TABULAR_CSVW_SCHEMA_ID } from "@litlfred/cat-harness/schemas/library/tabular-csvw.js";
+import { TABULAR_CSVW_SCHEMA_ID } from "@litlfred/cat-harness-tools/schemas/library/tabular-csvw.js";
 import * as slots from "./plugin-slots.ts";
 
 const { extract } = slots.PIPELINE_IMPLEMENTATIONS["tabular-csvw"];

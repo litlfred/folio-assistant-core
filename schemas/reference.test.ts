@@ -11,8 +11,8 @@ import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "nod
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { FOLIO_BASE } from "@litlfred/cat-harness/schemas/kg/jsonld.ts";
-import { STRUCTURE_FILENAME } from "@litlfred/cat-harness/schemas/content/document-structure.ts";
+import { FOLIO_BASE } from "@litlfred/cat-harness-tools/schemas/kg/jsonld.ts";
+import { STRUCTURE_FILENAME } from "@litlfred/cat-harness-tools/schemas/content/document-structure.ts";
 import { DublinCoreRecordSchema } from "./dublin-core.ts";
 import {
   REFERENCE_CONTEXT,
