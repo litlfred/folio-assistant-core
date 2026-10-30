@@ -133,12 +133,15 @@ once. Nothing is run to refresh them. Two things are not automatic:
 - **Manual.** Anyone asks for it ("sync the sheet", "work the ready rows") in
   a project thread, or presses *Run now* on the scheduled task. A thread may
   also fire the scheduled task itself.
-- **Active mode.** While a board is working the sheet live, the owner asks
-  for active mode and the scheduled task's schedule is changed to hourly,
-  every day, which is the shortest interval a scheduled task allows. When the
-  session is over, the owner asks for it back. Nothing pushes an edit of
-  "Ready for agent" to an agent the moment it is made: a sheet change cannot
-  start a run by itself, so active mode is frequent polling, not a watch.
+- **Active mode.** On demand only, and it lasts **two hours** (owner,
+  2026-10-30). The owner asks for it in a project thread ("active mode on").
+  That thread then checks the sheet about every ten minutes, waking itself
+  with reminders rather than a loop. It compares Review's "Ready for agent"
+  and Suggested revision columns with what it saw last, and runs a sheet
+  sync, or fires the scheduled task, when a row has newly turned Yes. Two
+  hours after it was switched on, it stops and says so in one line. The
+  regular schedule keeps running throughout. A sheet edit cannot wake an
+  agent by itself, so active mode is frequent checking, not a push.
 
 Each sync does both halves below, in this order.
 
