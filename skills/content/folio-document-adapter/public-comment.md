@@ -116,13 +116,14 @@ Sets.
 | **Source Comments** | people | No., date received, channel, reviewer, organisation, country, stakeholder type |
 | **Review Public Comments** | people, plus formula columns | one row per PC: No., section, page, line, comment, comment type, theme, the two TWG categorisations, the PC's own `Suggested revision` (locked), any number of `Architect Feedback (<initials>)` columns, status, disposition; then formula columns read from Agent: agentic status (linked to its change-set's PR when there is one), staging review page and pull request (both by the PC's change-set), PC link, CS link, and a link to the page in the frozen review draft |
 | **Agent** | **the agent, and only the agent** | A–J, one row per No.: No., comment ref, agentic status, agentic action taken, agentic applied in (section / version), agentic handled by, agentic date actioned, pull request, staging review page, change-set (H and I are no longer read by any view). L–P, one row per change-set: id, title, status from the record, **pull request**, **staging review page**. A PR belongs to a change-set, not to a PC (owner, 2026-10-30) |
-| **Review Change Sets** | people (D–I), formulas | one row per CS. A–C spill from Agent L–N (id, title, status). Inputs: **TWG categorisation (change set)** (D, a TWG dropdown), `Architect Feedback (<initials>)` on the CS (E–G), **Ready for agent** (H, Yes/No, editors) and **Ready for merge** (I, Yes/No, owner only). Then formulas: agentic status, pull request and staging page (Agent O–P), comment count, sections, the PCs' TWG categorisations, the PCs' comments, one `PCs: <header>` column per Suggested revision or Architect Feedback column of Review Public Comments, one column joining all of them, comment statuses, dispositions, a public-comments page link, and the PC Nos. one per cell, each linked to that PC. Each joined line reads `No. <n> · <text>` |
+| **Review Change Sets** | people (D–I), formulas | one row per CS. A–C spill from Agent L–N (id, title, status). Inputs: **TWG categorisation (change set)** (D, a TWG dropdown), `Architect Feedback (<initials>)` on the CS (E–G), **Ready for agent** (H, Yes/No) and **Ready for merge** (I, Yes/No), both editors. Then formulas: agentic status, pull request and staging page (Agent O–P), comment count, sections, the PCs' TWG categorisations, the PCs' comments, one `PCs: <header>` column per Suggested revision or Architect Feedback column of Review Public Comments, comment statuses, dispositions, a public-comments page link, and the PC Nos. one per cell, each linked to that PC. Each joined line reads `No. <n> · <text>` |
 
 **Locks** (owner, 2026-10-30). On Review Public Comments, editors may change
 the comment type, theme, both TWG categorisations and the Architect Feedback
 cells (not their headers). The PC's own Suggested revision is the commenter's
-text and is locked. On Review Change Sets, editors may change D–H. Ready for
-merge (I) is owner only, because a Yes makes the agent merge. Everything else,
+text and is locked. On Review Change Sets, editors may change D–I. Ready for
+merge (I) is open to editors too (owner, 2026-10-30, 20:34Z), so an editor's
+Yes makes the agent merge. Everything else,
 including every formula column and header, is protected.
 
 **Why the CS inputs can sit beside formulas.** A typed cell beside a spilled
@@ -226,7 +227,7 @@ Each sync does the steps below, in this order.
 
 3. **Merge the released PRs.** For each change-set with an open PR (Agent O)
    whose Review Change Sets row has **Ready for merge = Yes**, merge it (owner,
-   2026-10-30). The column is protected, so only the owner can set it. Only a PR in the folio's own repository is
+   2026-10-30). Any editor may set it. Only a PR in the folio's own repository is
    merged, never one on a WHO repository. After the merge, set every PC row of
    the change-set to *Change merged*, clear its staging link (Agent P), and comment on the
    PR's issue. If the merge is refused (a session safety check, a conflict, a
