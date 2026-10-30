@@ -43,7 +43,7 @@
  * `--check` writes nothing, and fails when a node does not validate, a key
  * is claimed twice in one sub-graph, or the output on disk is stale. The pages
  * are built at publish, never committed (cat-harness `builtAtPublish`, entry
- * `docs/folio-assistant-core/`), so the gate is `check:bibliography`:
+ * `docs/en/folio-assistant-core/bibliography/`), so the gate is `check:bibliography`:
  * `publish-check.ts bibliography:page` builds them and then runs this check.
  *
  * Usage:  bun run folio-assistant-core/scripts/bibliography-page.ts [--check]
@@ -56,7 +56,7 @@ import { basename, dirname, join, relative, resolve } from "node:path";
 
 import { instanceDirectoryForGraph, instanceRootsIn, readDeclaration, repoRootFor, resolveDirectories } from "@litlfred/cat-harness/schemas/cat-harness.ts";
 import { safeHref } from "@litlfred/cat-harness/schemas/safe-url.ts";
-import { declaredRoute } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
+import { declaredPageRoute } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 import { siteTarget } from "@litlfred/cat-harness-tools/scripts/lib/site-target.ts";
 import { DublinCoreRecordSchema } from "../schemas/dublin-core.ts";
 import {
@@ -92,7 +92,7 @@ const REPO = repoRootFor(CORE);
 // gets the same route under it; its harness docs are a pinned mount.
 const SITE = siteTarget(join(REPO, "cat-harness", "docs"));
 /** The route of the visualiser core declares for its bibliography, from `folio-assistant-core.json`. */
-const ROUTE = declaredRoute(CORE, "bibliography-page") ?? "folio-assistant-core/bibliography";
+const ROUTE = declaredPageRoute(CORE, "bibliography-page") ?? "en/folio-assistant-core/bibliography";
 const ROOT = join(SITE, ...ROUTE.split("/"));
 
 const GENERATED_BY = "folio-assistant-core/scripts/bibliography-page.ts";
