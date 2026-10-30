@@ -100,7 +100,7 @@
       <bpmn:outgoing>Flow_BlockFeedbackToIngest</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:task id="Task_Ingest" name="Ingest and place each comment">
-      <bpmn:documentation>public-comment import / import-narrative: one record per row or cited passage, anchored through review-anchors.json. Status: received.</bpmn:documentation>
+      <bpmn:documentation>public-comment import / import-narrative: one record per row or cited passage, anchored through review-anchors.json. Status: received. When the review is also kept in a shared Google Sheet, build its Apps Script with Tool review-sheet-sync (from review/public-comment/sheet-sync.json) and have the sheet's owner install it once (Extensions, Apps Script, run installTriggers): the sheet then keeps its page, section, line and comment links and its change-set joins current by itself.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToIngest</bpmn:incoming>
       <bpmn:incoming>Flow_BlockFeedbackToIngest</bpmn:incoming>

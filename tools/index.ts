@@ -41,6 +41,14 @@
  * as common core functionality (2026-10-06), so the document build draws the
  * links and this Tool hands them to an agent.
  *
+ * ## `review-sheet-sync` — owner, 2026-10-30
+ *
+ * Builds the Google Apps Script that keeps a public-comment review sheet's
+ * links and joins current, from the folio's `sheet-sync.json`, its review
+ * anchors and the draft's line map. Asked for *"in Tools … part of skills and
+ * processes"*, reusable for any document's public comment; the skill is
+ * `public-comment`, "The review sheet's Apps Script".
+ *
  * ## One Tool per folder — bean `tdir`
  *
  * Each Tool is declared in `<id>/<id>.ts` beside this file, with its scripts
