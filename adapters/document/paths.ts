@@ -9,7 +9,7 @@
  */
 
 import { resolve } from "path";
-import { directoryForGraph, folioDir, folioDirDeferred } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
+import { directoryForGraph, folioDir, folioDirDeferred } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 
 // Default: assume folio-assistant/adapters/paper/ is inside the repo
 let _repoRoot = resolve(import.meta.dir, "../../..");

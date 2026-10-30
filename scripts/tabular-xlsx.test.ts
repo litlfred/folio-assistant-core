@@ -8,7 +8,7 @@
 import { describe, expect, it } from "bun:test";
 import { crc32, deflateRawSync } from "node:zlib";
 
-import { TabularCsvwTablesSchema, toCsvw } from "@litlfred/cat-harness/schemas/library/tabular-csvw.js";
+import { TabularCsvwTablesSchema, toCsvw } from "@litlfred/cat-harness-tools/schemas/library/tabular-csvw.js";
 import { NotATableError } from "./tabular-csv.js";
 import { readDecisionTable } from "./tabular-dak.js";
 import { extractXlsx, findBlocks, isDateFormat, parseRef, readZip, serialToIso, toRef } from "./tabular-xlsx.js";

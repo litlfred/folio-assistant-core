@@ -55,7 +55,7 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { IntakeSchema, INTAKE_SCHEMA_TAG, type Intake } from "@litlfred/cat-harness/schemas/library/intake.ts";
+import { IntakeSchema, INTAKE_SCHEMA_TAG, type Intake } from "@litlfred/cat-harness-tools/schemas/library/intake.ts";
 import { DUBLIN_CORE_SCHEMA_TAG, DublinCoreRecordSchema, type DcField, type DublinCoreRecord } from "../schemas/dublin-core.ts";
 
 const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];

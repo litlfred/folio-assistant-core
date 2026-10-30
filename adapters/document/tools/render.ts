@@ -19,15 +19,15 @@
  * @module folio-assistant/adapters/document/tools/render
  */
 
-import { folioDir } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
+import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { z } from "zod";
 import { execSync, spawnSync } from "child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
 import { join, resolve, dirname } from "path";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import type { Paper } from "@litlfred/cat-harness/schemas/types.js";
+import type { Paper } from "@litlfred/cat-harness-tools/schemas/types.js";
 import { REPO_ROOT, BUILD_DIR, MAIN_TEX, CHAPTERS_DIR } from "../paths.js";
-import { expectedInstanceConfigPath } from "@litlfred/cat-harness/schemas/kg/harness-config.js";
+import { expectedInstanceConfigPath } from "@litlfred/cat-harness-tools/schemas/kg/harness-config.js";
 // Note: paths are resolved from the paper adapter's paths module.
 
 /** Check if a command is available on PATH. */
