@@ -70,9 +70,9 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync, statSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 
-import { declarationPathIn } from "@litlfred/cat-harness/schemas/cat-harness.js";
-import { isFrozenSubtree } from "@litlfred/cat-harness/schemas/fsh-guts.js";
-import { KG_PART_RECORD_SCHEMA } from "@litlfred/cat-harness/schemas/substrate-snapshot.js";
+import { declarationPathIn } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
+import { isFrozenSubtree } from "@litlfred/cat-harness/schemas/kg/fsh-guts.js";
+import { KG_PART_RECORD_SCHEMA } from "@litlfred/cat-harness/schemas/kg/substrate-snapshot.js";
 import { PART_RECORD_FILE, PART_TREE } from "@litlfred/cat-harness-tools/scripts/kg-subscribe.js";
 
 const REPO = resolve(import.meta.dir, "..", "..");

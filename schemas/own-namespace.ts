@@ -13,7 +13,7 @@
  * @graphNode none — two IRI constants, not a schema
  */
 import { readFileSync } from "node:fs";
-import { instanceNamespaceOf } from "@litlfred/cat-harness/schemas/namespaces.js";
+import { instanceNamespaceOf } from "@litlfred/cat-harness/schemas/kg/namespaces.js";
 
 const declaration = JSON.parse(readFileSync(new URL("../folio-assistant-core.json", import.meta.url), "utf-8")) as {
   name: string;

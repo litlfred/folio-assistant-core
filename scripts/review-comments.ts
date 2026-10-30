@@ -54,8 +54,8 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 
 import { snapshot } from "../schemas/changeset.js";
-import { loadContributions } from "@litlfred/cat-harness/schemas/harness-config.ts";
-import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness/schemas/contributions.ts";
+import { loadContributions } from "@litlfred/cat-harness/schemas/kg/harness-config.ts";
+import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness/schemas/content/contributions.ts";
 import { feedbackDir, readCommitted } from "./review-comment-move.js";
 import { pinMaps, readCommittedVerdicts, renderedFacts, verdictsDir } from "./review-coverage.js";
 import {

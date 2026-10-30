@@ -14,8 +14,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { dirname, join, parse } from "node:path";
 
-import type { CheckerPaths, CheckerResult } from "@litlfred/cat-harness/schemas/block-qa.js";
-import { loadCodeLists } from "@litlfred/cat-harness/schemas/code-list.js";
+import type { CheckerPaths, CheckerResult } from "@litlfred/cat-harness/schemas/sdlc/block-qa.js";
+import { loadCodeLists } from "@litlfred/cat-harness/schemas/library/code-list.js";
 import { maskStringsAndComments, parseStringField } from "@litlfred/cat-harness-tools/pipeline/uses-field.js";
 import { strengthFinding } from "../schemas/recommendation-strength.js";
 
