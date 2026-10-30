@@ -94,47 +94,87 @@ Rules that are not negotiable:
   emails. Record the batch, and keep the file in the review owner's private
   store.
 
-### The live review sheet: "Ready for agent" and the Agentic Status tab
+### The live review sheet: "Ready for agent" and the Agent tab
 
 A secretariat may keep working in the log after the import, as a shared Google
-Sheet (owner, 2026-10-30, smart-ra). The master log is then split into three
-tabs, joined by the log's own row number, **No.**:
+Sheet (owner, 2026-10-30, smart-ra). The master log is then split into tabs,
+joined by the log's own row number, **No.** Exactly one tab is written by the
+agent. Every other agent-facing column is a formula over it, so the views stay
+current without anyone, person or agent, refreshing them.
 
 | tab | who writes it | holds |
 |---|---|---|
 | **Source Comments** | people | No., date received, channel, reviewer, organisation, country, stakeholder type |
-| **Review** | people | No., section, page, line, comment type, theme, the two TWG categorisations, comment, every **Suggested revision** column, status, disposition, **Ready for agent** (Yes/No), and two columns that read the Agentic Status tab by No.: its status and a link to the staging review page |
-| **Agentic Status** | **the agent, and only the agent** | No., comment ref, agentic status, agentic action taken, agentic applied in (section / version), agentic handled by, agentic date actioned, pull request, staging review page, change-sets |
+| **Review** | people, plus formula columns | No., section, page, line, comment type, theme, the two TWG categorisations, comment, `Suggested revision (call notes)` and any number of `Suggested revision (<initials>)` columns, status, disposition, **Ready for agent** (Yes/No); then formula columns read from Agent by No.: agentic status, staging review page, public comment (PC) link, change-set (CS) link, pull request link, and a link to the page in the frozen review draft |
+| **Agent** | **the agent, and only the agent** | A–J, one row per No.: No., comment ref, agentic status, agentic action taken, agentic applied in (section / version), agentic handled by, agentic date actioned, pull request, staging review page, change-set. L–N: the change-set list (id, title, status from the record) |
+| **Change Sets** | formulas only | one row per change-set from Agent L–N, with its comment count, its comment Nos., how many are Ready for agent, and a link to the public-comments page |
+| **By Change Set** | formulas only | the Review tab regrouped: one row per comment, sorted by change-set then No., carrying every Suggested revision column, status, disposition, Ready for agent and agentic status. Its headers are Review's own, so renaming a Suggested revision header there renames it here |
 
-A board may add its own revision columns beside the first, one per reviewer or
-architecture board, headed `Suggested revision (<initials>)`. The agent reads
-**every** column whose header starts with "Suggested revision". It does not
-read a fixed column letter.
+The agent reads **every** Review column whose header starts with "Suggested
+revision". It does not read a fixed column letter. A board adds its column
+beside the others and renames `(initials)` to its own.
 
-The agent's turn, for each Review row with **Ready for agent = Yes** whose
-agentic status is *Not started* or *Needs human*:
+**How the views update.** Change Sets and By Change Set are `FILTER`, `SORT`,
+`VLOOKUP` and `BYROW` formulas over Review and Agent. Setting Ready for agent
+to Yes, editing a revision, or the agent writing an Agent row shows in them at
+once. Nothing is run to refresh them. Two things are not automatic:
 
-1. Find the comment by No.: the record whose `public.source` names the log's
-   sheet and that `entry`. A row with no record is set to *Not in comment
-   record*, and the agent goes no further with it.
-2. Read the suggested revision(s) and the comment, and propose the change the
-   way every change is proposed: in its change-set (see **Change-sets**
-   below), on a branch, with a PR. "Ready for agent" says the row is ready to
-   draft. It is not the editor's decision, and the comment's status still
-   moves only through this tool. Where the revisions conflict, or one asks for
-   something the document cannot say without a decision, set *Needs human*
-   and write what is needed in "agentic action taken".
-3. Publish the branch's staging preview (`STAGING/<slug>/`).
-4. Write the row on **Agentic Status**, and nothing anywhere else in the sheet:
-   status (*Working*, *PR open*, *Ready for review*, *Change merged*), what was
-   done, the blocks or sections changed, who acted (the agent and its
-   session), the date, the PR, and `STAGING/<slug>/en/review/`. The Review tab
-   picks the status and the link up by No.
+- **A new or retitled change-set** reaches the sheet only when the agent
+  rewrites Agent L–N from `review/public-comment/changesets/`.
+- **A comment's change-set** (Agent J) is the change-set whose `refs` hold the
+  comment. The agent rewrites it when a comment is moved between change-sets.
 
-The agent never writes the Review or Source Comments tabs, never sets
-"Ready for agent", and never copies a reviewer's name or email from Source
-Comments into the repository. The sheet is reached through the session's
-Google Sheets connector. No credential for it is committed.
+**When the agent runs.** It does not watch the sheet. It runs a *sheet sync*
+when asked ("work the ready rows", "sync the sheet"), or on a schedule the
+owner sets up as a routine. Each sync does both halves below, in this order.
+
+1. **Reconcile.** For every Agent row with a pull request, read the PR's
+   state from GitHub. Open: *PR open*, with its staging review page. Merged:
+   *Change merged*, and clear the staging link, because a merged branch's
+   preview is gone and its link 404s. Closed unmerged: back to *Not
+   started*, and say so in "agentic action taken". Rewrite L–N and J from the
+   change-set records as above.
+2. **Work the ready rows.** For each Review row with **Ready for agent = Yes**
+   whose agentic status is *Not started* or *Needs human*:
+   1. Find the comment by No.: the record whose `public.source` names the
+      log's sheet and that `entry`. A row with no record is set to *Not in
+      comment record*, and the agent goes no further with it.
+   2. Read the suggested revision(s) and the comment, and propose the change
+      the way every change is proposed: in its change-set (see
+      **Change-sets** below), on a branch, with a PR. "Ready for agent" says
+      the row is ready to draft. It is not the editor's decision, and the
+      comment's status still moves only through this tool. Where the
+      revisions conflict, or one asks for something the document cannot say
+      without a decision, set *Needs human* and write what is needed in
+      "agentic action taken".
+   3. Publish the branch's staging preview (`STAGING/<slug>/`).
+   4. Write the Agent row, and nothing anywhere else in the sheet: status
+      (*Working*, *PR open*, *Ready for review*, *Change merged*), what was
+      done, the blocks or sections changed, who acted (the agent and its
+      session), the date, the PR, and `STAGING/<slug>/en/review/`. A PR that
+      covers a whole change-set is written on every row of that change-set.
+
+**Which PR counts.** Only a PR that edits the document for the comment. A
+change-set record's `pr` can name the PR that *proposed* the change-set, long
+merged (smart-ra #9 and #16 proposed and triaged 288 change-sets). That is not
+a change PR. Read the PR's diff or body before writing it to a row. The
+dashboard draws a staging link only for a PR that is open now, for the same
+reason (`openPullRequests` in `scripts/public-comment-site.ts`).
+
+**Page links.** The Review tab's page link opens the frozen review version in
+the site's library viewer,
+`<site>/assets/vendor/pdfjs/web/viewer.html?src=<raw PDF URL>#page=<n>`. The
+log cites printed page numbers. The PDF page is the printed page plus the
+front matter, read from the library entry's `pdf-line-map.json` (`pages.<pdf
+page>.printed`). In the DPI-H review draft it is printed + 11 for pages 1–243.
+The formula takes the first number in the Page cell.
+
+The agent never writes the Review, Source Comments, Change Sets or By Change
+Set tabs. It never sets "Ready for agent", and it never copies a reviewer's
+name or email from Source Comments into the repository. The sheet is reached
+through the session's Google Sheets connector. No credential for it is
+committed. Google cannot stop the owner's own account editing any tab, so the
+one-writer rule is kept by the agent, not enforced by the sheet.
 
 ## Placing a comment: how much to trust the anchor
 
