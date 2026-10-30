@@ -46,7 +46,9 @@
         "getting-started",
         "interaction-modality",
         "repo-conversion",
-        "document-intake"
+        "document-intake",
+        "folio-getting-started",
+        "folio-repo-conversion"
       ],
       "persona": "Meets a repository it has never seen and must orient before acting. Will follow the first plausible convention it finds, so the earliest instruction it reads matters most."
     }
@@ -116,7 +118,10 @@
       "skills": [
         "ontologist",
         "bib-human-review",
-        "bib-qa"
+        "bib-qa",
+        "folio-content-lifecycle",
+        "folio-content-profiles",
+        "folio-editorial-workflow"
       ]
     },
     {
@@ -136,6 +141,13 @@
       "role": "integration-watcher",
       "skills": [
         "bib-photo-ingestion-watcher"
+      ]
+    },
+    {
+      "role": "board-renderer",
+      "skills": [
+        "folio-board-diagram-interchange",
+        "folio-board-windows"
       ]
     }
   ]

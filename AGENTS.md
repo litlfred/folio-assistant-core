@@ -27,7 +27,7 @@ exception to the rule above: they live in `cat-harness/schemas/materialization-s
 
 <!-- skills:index:begin -->
 
-_31 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
+_38 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
 
 **`skills/`** (1)
 
@@ -45,7 +45,7 @@ _31 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`registry-authority-contract`](skills/content/content-lifecycle-ext/registry-authority-contract.md) | The contract the `external-registry` role is held to when a candidate source is checked against the body that publishes it: resolve the identifier through its own API and return the record, so… |
 | [`review-comments`](skills/content/content-lifecycle-ext/review-comments.md) | Reviewer comments on a folio's edit-set, from a tagged pull-request comment to a structured todo on the review page. |
 
-**`skills/content/folio-document-adapter/`** (6)
+**`skills/content/folio-document-adapter/`** (13)
 
 | Skill | What it is for |
 |---|---|
@@ -53,6 +53,13 @@ _31 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`document-authoring`](skills/content/folio-document-adapter/document-authoring.md) | Author a **document** folio: policy guidance, a standard, a report, a handbook — anything whose content is structured prose rather than machine- checked mathematics. |
 | [`document-publishing`](skills/content/folio-document-adapter/document-publishing.md) | Take a document folio from corpus to published artifact — without a TeX installation. |
 | [`document-structure`](skills/content/folio-document-adapter/document-structure.md) | Decide and maintain the chapter/section skeleton of a document folio. |
+| [`folio-board-diagram-interchange`](skills/content/folio-document-adapter/folio-board-diagram-interchange.md) | The content-folio half of the harness's board-diagram-interchange skill: binds processes/ui/board-place-note.bpmn and board-relocate.bpmn, folio board filters over pages and block kinds, and… |
+| [`folio-board-windows`](skills/content/folio-document-adapter/folio-board-windows.md) | The content-folio half of the harness's board-windows skill: binds processes/ui/board-open-close.bpmn, folio-glass pinning (todo/<id> and landing/<slot>), and content-type card chrome ([x],… |
+| [`folio-content-lifecycle`](skills/content/folio-document-adapter/folio-content-lifecycle.md) | The content-folio half of the harness's content-lifecycle skills (content-author, content-feedback, content-plan, content-publish, content-review, content-test, content-validate,… |
+| [`folio-content-profiles`](skills/content/folio-document-adapter/folio-content-profiles.md) | The content-folio half of the harness's content-profiles skill: how a document folio is structured prose and how a paper folio extends it, block-kind discovery across block-kinds/ graphs,… |
+| [`folio-editorial-workflow`](skills/content/folio-document-adapter/folio-editorial-workflow.md) | The content-folio half of the harness's editor, content-graph, md-authoring, canonical-watcher, and uses-editorial-review skills: routes glossary and notation work to ontologist and glossary-build,… |
+| [`folio-getting-started`](skills/content/folio-document-adapter/folio-getting-started.md) | The content-folio half of the harness's getting-started skill: binds processes/conduct/getting-started.bpmn and decisions/folio-intent.dmn, interprets describeRepository() content-type markers… |
+| [`folio-repo-conversion`](skills/content/folio-document-adapter/folio-repo-conversion.md) | The content-folio half of the harness's repo-conversion skill: outside-content evidence and refutation candidate scanning, content-type marker declarations, and dispatching library and content… |
 | [`normative-statements`](skills/content/folio-document-adapter/normative-statements.md) | Carry a **recommendation, requirement or rule** in a document folio — the thing an L1 health-policy guidance note, a standard, or a terms-of-reference document exists to state. |
 | [`public-comment`](skills/content/folio-document-adapter/public-comment.md) | Run a **public review** of a document folio. |
 
