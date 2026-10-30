@@ -1,12 +1,14 @@
 ---
 name: review-sheet-script
 description: >
-  Build, install and reuse the Google Apps Script that keeps a public-comment
-  review sheet's links and joined columns current (Tool `review-sheet-sync`):
-  comment numbers, sections, pages and lines link into the frozen review
-  draft, and Review Change Sets joins its comments. Use when setting up the
-  review sheet for a document's public comment, when its links are missing or
-  stale, or after a tab, header, anchor or draft link changes.
+  Build, install and reuse the Google Apps Script that keeps a review sheet's
+  links and joined columns current (Tool `review-sheet-sync`). Public-comment
+  mode: comment numbers, sections, pages and lines link into the frozen review
+  draft, and Review Change Sets joins its comments. Drafting mode: one
+  Contributor Feedback tab where each row is a change set with its own GitHub
+  issue, and Sections pick from the document's table of contents. Use when
+  setting up either sheet for a document, when its links are missing or stale,
+  or after a tab, header, anchor or draft link changes.
 ---
 
 # The review sheet's Apps Script
@@ -124,3 +126,70 @@ that test.
 moves, or a tab or a header the script reads is renamed. Renaming a header
 the script reads, without rebuilding, leaves that column unlinked; it fails
 nothing.
+
+## Drafting mode: editors' and contributors' feedback
+
+Before a document goes to public comment, editors and contributors give
+feedback on the working draft (owner, 2026-10-30, for dth-hrh). That needs a
+simpler sheet: no Public Comment Source, no Review Public Comments, no TWGs.
+Each row of feedback *is* a change set (CS: a list of related comments on one
+topic), and each change set gets a GitHub issue.
+
+**Tabs.**
+
+| tab | who writes | columns |
+|---|---|---|
+| **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Sections** (a multi-select dropdown of the document's table of contents; the script links each choice to its place on the document page), any number of **Contributor Feedback** columns (each contributor signs with initials). Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Green, from Agent by the script: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`) |
+| **Agent** | the agent only | one row per change set: Change-set, Issue (URL), Agentic status, Pull request (change set), What the PRs changed (change set), Agent completed (UTC, change set) |
+| **TOC** (hidden) | the script | the Sections dropdown's list and each entry's link. Rewritten on every refresh, so it follows the document |
+
+Colours as in public-comment mode: grey mechanical, blue human, orange
+editor gates, green agent-derived.
+
+**Table of contents.** Built from the folio's `review-anchors.json`: each
+chapter (`Ch 3 Digital Transformation Approach`), each numbered section
+(`3.1 DIIG alignment`) and each unnumbered section, prefixed by its chapter
+(`Ch 3 · Objectives and key messages`). A multi-select cell joins its choices
+with `, `, so commas in titles become `;`. Each links to
+`sectionUrl` + the anchor (`sec:3-1`, `chap:<dir>`), which the document page
+carries as element ids.
+
+**Config**, `review/drafting/sheet-sync.json`:
+
+```json
+{
+  "mode": "drafting",
+  "anchors": "folio/<doc>/review-anchors.json",
+  "sectionUrl": "https://<site>/en/<doc>/#"
+}
+```
+
+`tabs` and `columns` (`draft`, `draftAgent`) override the headers as in
+public-comment mode. Build with `--config review/drafting/sheet-sync.json`
+and install as above. The Sections dropdown is a data validation "dropdown
+from a range" on `TOC!A2:A` with **Allow multiple selections** ticked; set it
+once in the template (the Sheets API cannot tick that box), and copies keep it.
+
+**The agent's part: every change set has an issue.** On each sync, for every
+Contributor Feedback row with a Change-set:
+
+1. If the Agent tab has no row for it, add one (Change-set, Agentic status
+   `Not started`).
+2. If that row has no Issue, open a GitHub issue in the folio's repository:
+   title `CS-nnn: <Title>` (or the first feedback line while Title is
+   empty), body the linked sections, every Contributor Feedback cell
+   verbatim, and a link back to the sheet row. Write its URL into Issue.
+3. When feedback is added to a row later, comment the new text on its issue.
+4. Work a change set only when **Ready for agent** is Yes; its PRs say
+   `Closes #n` for the change set's issue, and go to Agent's PR columns.
+
+Title stays the contributors': the agent never writes it (in public-comment
+mode, by contrast, Review Change Sets' Title is agent-derived and green).
+
+**Linked templates.** Each mode keeps one template sheet in the
+informatics.avengers Drive, laid out as above, script installed, no rows.
+A new document starts from its "make a copy" link
+(`https://docs.google.com/spreadsheets/d/<template id>/copy`); then replace
+the config block of Code.gs with the new folio's build and run
+installTriggers. The template ids are listed in the `public-comment` skill
+(public-comment mode) and here (drafting mode) once made.

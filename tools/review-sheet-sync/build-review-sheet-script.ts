@@ -25,24 +25,74 @@ type Section = { label: string; title?: string; number?: string; page?: number }
 type Chapter = { dir: string; title: string; number?: number };
 type Block = { page?: number; printedPage?: string; sections: string[] };
 type Anchors = { chapters: Chapter[]; sections: Section[]; blocks: Block[] };
+type DraftSection = Section & { chapter?: string };
 type LineMap = { pages: Record<string, { printed: string | null; lines?: Record<string, string> }> };
 
 export type SheetSyncConfig = {
+  /**
+   * `public-comment` (default): the RPC/RCS/Agent tabs over a frozen review
+   * PDF. `drafting`: one Contributor Feedback tab, each row one change set,
+   * whose Sections pick from the live document's table of contents.
+   */
+  mode?: "public-comment" | "drafting";
   /** Review anchors, repository-relative. */
   anchors: string;
-  /** The frozen review draft's pdf-line-map.json, repository-relative. */
-  lineMap: string;
-  /** Prefix a PDF page number is appended to, e.g. `<site>/draft/#page=`. */
-  draftUrl: string;
-  /** Prefix a comment ref (`PC-0002`) is appended to. */
-  commentUrl: string;
+  /** The frozen review draft's pdf-line-map.json, repository-relative (public-comment). */
+  lineMap?: string;
+  /** Prefix a PDF page number is appended to, e.g. `<site>/draft/#page=` (public-comment). */
+  draftUrl?: string;
+  /** Prefix a comment ref (`PC-0002`) is appended to (public-comment). */
+  commentUrl?: string;
+  /** Prefix a section's anchor (`sec:1-1`, `chap:<dir>`) is appended to, e.g. `<site>/en/<doc>/#` (drafting). */
+  sectionUrl?: string;
   /** Sections cited by name: abbreviation -> section title. */
   namedSections?: Record<string, string>;
   /** Other names for front-matter chapters: alias -> chapter title. */
   aliases?: Record<string, string>;
-  tabs?: Partial<{ RPC: string; RCS: string; AGENT: string }>;
-  columns?: Partial<{ rpc: Record<string, string>; rcs: Record<string, string>; agent: Record<string, string> }>;
+  tabs?: Partial<{ RPC: string; RCS: string; AGENT: string; FEEDBACK: string; TOC: string }>;
+  columns?: Partial<{ rpc: Record<string, string>; rcs: Record<string, string>; agent: Record<string, string>; draft: Record<string, string>; draftAgent: Record<string, string> }>;
 };
+
+/** Drafting mode's tabs and headers. */
+export const DRAFT_TABS = { FEEDBACK: "Contributor Feedback", AGENT: "Agent", TOC: "TOC" };
+export const DRAFT_COLUMNS = {
+  draft: {
+    cs: "Change-set", title: "Title", sections: "Sections", feedback: "Contributor Feedback",
+    issue: "Issue", agentic: "Agentic status",
+  },
+  draftAgent: {
+    csId: "Change-set", issue: "Issue", agentic: "Agentic status", prs: "Pull request (change set)",
+    changes: "What the PRs changed (change set)", done: "Agent completed (UTC, change set)",
+  },
+};
+
+/**
+ * The document's table of contents as dropdown entries: [name, anchor].
+ * Names carry no commas, because a multi-select dropdown cell joins its
+ * choices with ", ".
+ */
+export function buildToc(a: { chapters: Chapter[]; sections: DraftSection[] }): [string, string][] {
+  const clean = (s: string) => s.replace(/,/g, ";").replace(/\s+/g, " ").trim();
+  const out: [string, string][] = [];
+  const seen = new Set<string>();
+  const add = (name: string, anchor: string) => {
+    name = clean(name);
+    if (!name || seen.has(name)) return;
+    seen.add(name);
+    out.push([name, anchor]);
+  };
+  for (const c of a.chapters) {
+    const bare = c.title.replace(/^Chapter\s+\d+\.?\s*/i, "");
+    const head = c.number != null ? `Ch ${c.number}` : c.title;
+    add(c.number != null ? `${head} ${bare}` : c.title, `chap:${c.dir}`);
+    for (const s of a.sections.filter((x) => x.chapter === c.dir)) {
+      const t = s.title ?? s.label;
+      if (s.number) add(t, s.label);
+      else if (t.toLowerCase() !== c.title.toLowerCase()) add(`${head} · ${t}`, s.label);
+    }
+  }
+  return out;
+}
 
 export const DEFAULT_TABS = { RPC: "Review Public Comments", RCS: "Review Change Sets", AGENT: "Agent" };
 export const DEFAULT_COLUMNS = {
@@ -154,21 +204,35 @@ export function buildData(a: Anchors, m: LineMap, cfg: SheetSyncConfig) {
 export function buildScript(repo: string, cfgPath: string): string {
   const cfg: SheetSyncConfig = JSON.parse(readFileSync(join(repo, cfgPath), "utf8"));
   const a: Anchors = JSON.parse(readFileSync(join(repo, cfg.anchors), "utf8"));
-  const m: LineMap = JSON.parse(readFileSync(join(repo, cfg.lineMap), "utf8"));
-  const data = buildData(a, m, cfg);
-  const CFG = { ...DEFAULT_TABS, ...cfg.tabs, DRAFT: cfg.draftUrl, PC_PAGE: cfg.commentUrl };
-  const COLS = {
-    rpc: { ...DEFAULT_COLUMNS.rpc, ...cfg.columns?.rpc },
-    rcs: { ...DEFAULT_COLUMNS.rcs, ...cfg.columns?.rcs },
-    agent: { ...DEFAULT_COLUMNS.agent, ...cfg.columns?.agent },
-  };
+  let CFG: Record<string, string>, COLS: Record<string, Record<string, string>>, data: unknown;
+  if (cfg.mode === "drafting") {
+    if (!cfg.sectionUrl) throw new Error(`${cfgPath}: drafting mode needs sectionUrl`);
+    CFG = { MODE: "drafting", ...DRAFT_TABS, ...cfg.tabs, SECTION_URL: cfg.sectionUrl };
+    COLS = {
+      draft: { ...DRAFT_COLUMNS.draft, ...cfg.columns?.draft },
+      draftAgent: { ...DRAFT_COLUMNS.draftAgent, ...cfg.columns?.draftAgent },
+    };
+    data = { TOC: buildToc(a as Anchors & { sections: DraftSection[] }) };
+  } else {
+    for (const k of ["lineMap", "draftUrl", "commentUrl"] as const) if (!cfg[k]) throw new Error(`${cfgPath}: needs ${k}`);
+    const m: LineMap = JSON.parse(readFileSync(join(repo, cfg.lineMap as string), "utf8"));
+    data = buildData(a, m, cfg);
+    CFG = { MODE: "public-comment", ...DEFAULT_TABS, ...cfg.tabs, DRAFT: cfg.draftUrl as string, PC_PAGE: cfg.commentUrl as string };
+    COLS = {
+      rpc: { ...DEFAULT_COLUMNS.rpc, ...cfg.columns?.rpc },
+      rcs: { ...DEFAULT_COLUMNS.rcs, ...cfg.columns?.rcs },
+      agent: { ...DEFAULT_COLUMNS.agent, ...cfg.columns?.agent },
+    };
+  }
   const here = dirname(fileURLToPath(import.meta.url));
   const template = readFileSync(join(here, "review-sheet.gs"), "utf8");
   const block = [
     `// Built from ${cfgPath}.`,
     `const CFG = ${JSON.stringify(CFG, null, 2)};`,
     `const COLS = ${JSON.stringify(COLS, null, 2)};`,
-    "// Section key -> [label, PDF page]; abbreviations; PDF page -> [page, first line, last line].",
+    cfg.mode === "drafting"
+      ? "// Table of contents: [dropdown name, anchor on the document page]."
+      : "// Section key -> [label, PDF page]; abbreviations; PDF page -> [page, first line, last line].",
     `const DATA = ${JSON.stringify(data)};`,
   ].join("\n");
   return template.replace("/*@@CONFIG@@*/", block);
