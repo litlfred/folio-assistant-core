@@ -170,3 +170,39 @@ describe("the check keeps its teeth where PyMuPDF is not installed", () => {
     }
   });
 });
+
+describe("a cover can outlive a PDF the repository does not hold", () => {
+  // who-iris renders covers for `referenced` items on a runner that fetches the
+  // PDF, checks its sha256 and throws it away. The cover is then verified from
+  // its own bytes; a missing PDF is only a problem when the node claims to hold it.
+  const thumb = {
+    name: "x-cover.png",
+    bundle: "THUMBNAIL",
+    pixelWidth: 300,
+    pixelHeight: 425,
+    materialization: { state: "materialized", localPath: "library/x-cover.png", note: `${DERIVED_MARKER} of x.pdf` },
+  };
+  const node = (state: string, localPath?: string) =>
+    ({
+      id: "item/x",
+      kind: "item",
+      title: "x",
+      bitstreams: [
+        { name: "x.pdf", bundle: "ORIGINAL", mediaType: "application/pdf", materialization: { state, ...(localPath ? { localPath } : {}) } },
+        thumb,
+      ],
+    }) as never;
+
+  it("a referenced ORIGINAL gives a cover with no source, and no problem", () => {
+    const { covers, problems } = coversWanted([node("referenced")], INSTANCE);
+    expect(problems).toEqual([]);
+    expect(covers.length).toBe(1);
+    expect(covers[0]!.sourcePdf).toBeUndefined();
+  });
+
+  it("a materialized ORIGINAL with no bytes is still a problem (yl5w)", () => {
+    const { covers, problems } = coversWanted([node("materialized", "uploads/x/missing.pdf")], INSTANCE);
+    expect(covers.length).toBe(0);
+    expect(problems.length).toBe(1);
+  });
+});
