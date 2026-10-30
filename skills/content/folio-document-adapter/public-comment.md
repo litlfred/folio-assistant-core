@@ -105,15 +105,15 @@ current without anyone, person or agent, refreshing them.
 | tab | who writes it | holds |
 |---|---|---|
 | **Source Comments** | people | No., date received, channel, reviewer, organisation, country, stakeholder type |
-| **Review** | people, plus formula columns | No., section, page, line, comment type, theme, the two TWG categorisations, comment, `Suggested revision (call notes)` and any number of `Suggested revision (<initials>)` columns, status, disposition, **Ready for agent** (Yes/No), **Ready for merge** (Yes/No, set by the owner only); then formula columns read from Agent by No.: agentic status (a link to its PR when it has one), staging review page, public comment (PC) link, change-set (CS) link, pull request link, and a link to the page in the frozen review draft |
+| **Review Public Comments** | people, plus formula columns | No., section, page, line, comment type, theme, the two TWG categorisations, comment, `Suggested revision (call notes)` and any number of `Suggested revision (<initials>)` columns, status, disposition, **Ready for agent** (Yes/No), **Ready for merge** (Yes/No, set by the owner only); then formula columns read from Agent by No.: agentic status (a link to its PR when it has one), staging review page, public comment (PC) link, change-set (CS) link, pull request link, and a link to the page in the frozen review draft |
 | **Agent** | **the agent, and only the agent** | A–J, one row per No.: No., comment ref, agentic status, agentic action taken, agentic applied in (section / version), agentic handled by, agentic date actioned, pull request, staging review page, change-set. L–N: the change-set list (id, title, status from the record) |
-| **Change Sets** | formulas only | one row per change-set from Agent L–N, with its comment count, its comment Nos., how many are Ready for agent, and a link to the public-comments page |
-| **By Change Set** | formulas only | the Review tab regrouped: one row per comment, sorted by change-set then No., carrying every Suggested revision column, status, disposition, Ready for agent and agentic status. Its headers are Review's own, so renaming a Suggested revision header there renames it here |
+| **Change Sets** | formulas only | one row per change-set from Agent L–N, with its comment count, how many are Ready for agent, a link to the public-comments page, and its comment Nos. one per cell, each linked to that comment on the public-comments page |
+| **Review Change Sets** | formulas only | the Review Public Comments tab regrouped: one row per comment, sorted by change-set then No., carrying every Suggested revision column, status, disposition, Ready for agent and agentic status. Its headers are Review Public Comments' own, so renaming a Suggested revision header there renames it here |
 
 **Locks** (owner, 2026-10-30). Protected ranges leave editors only the
 comment type, theme, both TWG categorisations, Suggested revision and
 "Ready for agent" cells (not their headers) on the
-Review tab. "Ready for merge" is protected too: only the owner sets it, because
+Review Public Comments tab. "Ready for merge" is protected too: only the owner sets it, because
 a Yes makes the agent merge. Every other Review column and every other tab is
 protected. The
 owner's account, which is also the account the agent's connector uses, can
@@ -123,14 +123,14 @@ The agent reads **every** Review column whose header starts with "Suggested
 revision". It does not read a fixed column letter. A board adds its column
 beside the others and renames `(initials)` to its own.
 
-**Moving columns.** People may reorder the Review tab. By Change Set finds
-its columns by header name (`MATCH` on Review's first row, and every header
+**Moving columns.** People may reorder the Review Public Comments tab. Review Change Sets finds
+its columns by header name (`MATCH` on Review Public Comments' first row, and every header
 starting "Suggested revision"), so a move does not break it. A renamed
 header that it looks up by name (No., Section no., Comment / issue, Status,
 Disposition / rationale, Ready for agent) does, and the formula must be
 updated with the new name. Never write a fixed column number into a view.
 
-**How the views update.** Change Sets and By Change Set are `FILTER`, `SORT`,
+**How the views update.** Change Sets and Review Change Sets are `FILTER`, `SORT`,
 `VLOOKUP` and `BYROW` formulas over Review and Agent. Setting Ready for agent
 to Yes, editing a revision, or the agent writing an Agent row shows in them at
 once. Nothing is run to refresh them. Two things are not automatic:
@@ -152,7 +152,7 @@ once. Nothing is run to refresh them. Two things are not automatic:
 - **Active mode.** On demand only, and it lasts **two hours** (owner,
   2026-10-30). The owner asks for it in a project thread ("active mode on").
   That thread then checks the sheet about every ten minutes, waking itself
-  with reminders rather than a loop. It compares Review's "Ready for agent"
+  with reminders rather than a loop. It compares Review Public Comments' "Ready for agent"
   and Suggested revision columns with what it saw last, and runs a sheet
   sync, or fires the scheduled task, when a row has newly turned Yes. Two
   hours after it was switched on, it stops and says so in one line. The
@@ -205,7 +205,7 @@ a change PR. Read the PR's diff or body before writing it to a row. The
 dashboard draws a staging link only for a PR that is open now, for the same
 reason (`openPullRequests` in `scripts/public-comment-site.ts`).
 
-**Page links.** The Review tab's page link opens the frozen review version in
+**Page links.** The Review Public Comments tab's page link opens the frozen review version in
 the site's library viewer,
 `<site>/assets/vendor/pdfjs/web/viewer.html?src=<raw PDF URL>#page=<n>`. The
 log cites printed page numbers. The PDF page is the printed page plus the
