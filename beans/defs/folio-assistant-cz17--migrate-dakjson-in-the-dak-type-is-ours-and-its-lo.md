@@ -2,13 +2,13 @@
 # folio-assistant-cz17
 $schema: bean/1.0.0
 title: 'Migrate dak.json in: the DAK type is ours, and its Logical Model is pending upstream'
-status: in-progress
+status: completed
 type: task
 priority: normal
 tags:
     - rehomed
 created_at: 2026-09-18T21:36:56Z
-updated_at: 2026-10-30T17:50:00Z
+updated_at: 2026-10-30T19:56:00Z
 parent: folio-assistant-0lmb
 ---
 
@@ -207,3 +207,11 @@ _2026-10-30T17:50:00Z_: **smart-trust has dropped `dak.json`.** The owner chose 
 - litlfred/smart-trust#77 (the earlier attempt, opened before #82) is now superseded and still open. Merging it would roll smart-base and cat-harness back to `e61ef9c` / `6f7f10a`.
 
 No litlfred smart-* IG carries `dak.json` any more: smart-hiv and smart-ra have none on main. Still open: item 2. Report: litlfred/aai-programme#26.
+
+_2026-10-30T19:56:00Z_: **Completed.** Every item is done to the agreed scope:
+- Item 1: the source wrapper is typed (smart-base#151, owner card A, 2026-10-24); the inline instance stays `unknown` by that choice.
+- Item 2: `dak` and `sushi` are registered by smart-base `schemas/dak-content-type.ts` (`indexSection: contentTypes.dak`), loaded by smart-base#210, so a repository declaring `contentTypes.dak` is described as a DAK instance (`content-types-stack.test.ts`).
+- Item 3: `ig` (fhir-harness#194, #198; smart-base#209).
+- Item 4: no litlfred smart-* IG carries `dak.json` (smart-immunizations#89, smart-trust#84); `directory-conventions.md` updated (cat-harness#521); smart-base#211 (`625ab83`, merged 19:3xZ) renames the `dak-config-from-sushi` tool and docs to `contentTypes.dak`.
+
+Superseded and closed unmerged: smart-immunizations#88 (replaced by #89) and folio-assistant-core#239 (its log lines are covered by the entries above). smart-trust#77 is also superseded (see 17:50Z) and should be closed. WHO repos are untouched. Thread "Finish IG and DAK beans", session https://claude.ai/code/session_01Qmmkt9C9fukFK42vgZRrKc.
