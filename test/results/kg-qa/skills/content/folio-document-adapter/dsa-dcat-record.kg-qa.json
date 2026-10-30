@@ -5,7 +5,7 @@
     "id": "dsa-dcat-record",
     "path": "skills/content/folio-document-adapter/dsa-dcat-record.md"
   },
-  "source_hash": "a52dea1cbbd5",
+  "source_hash": "a512eb7f26cb",
   "criteria": {
     "skill-is-a-stub": {
       "result": "pass",

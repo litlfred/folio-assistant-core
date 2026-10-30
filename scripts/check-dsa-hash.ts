@@ -368,6 +368,20 @@ export function verifyDsaVersion(input: DsaVersionCheckInput): DsaVersionCheckRe
   }
   const previousVersion = extractIri(dcatObj["dcat:previousVersion"]);
 
+  // Consent rule 2 (dsa-document-lifecycle.bpmn P2.1, P2.3): the ODRL policy
+  // uid is the version's fixed-version URL, the dcat:Resource @id, which is
+  // the URL a Consent cites; the record's odrl:hasPolicy names that policy.
+  const policyUid = extractIri(odrlObj["uid"] ?? odrlObj["odrl:uid"]);
+  if (!policyUid) {
+    errors.push("agreement: ODRL 2.2 Agreement requires uid");
+  } else if (resourceId && policyUid !== resourceId) {
+    errors.push(`agreement: uid must be the version's fixed-version URL, the dcat:Resource @id ("${resourceId}"), got "${policyUid}"`);
+  }
+  const hasPolicy = extractIri(dcatObj["odrl:hasPolicy"]);
+  if (hasPolicy !== undefined && policyUid && hasPolicy !== policyUid) {
+    errors.push(`dcat: odrl:hasPolicy must name the Agreement's uid ("${policyUid}"), got "${hasPolicy}"`);
+  }
+
   const rawDistributions = dcatObj["dcat:distribution"];
   const distributions = Array.isArray(rawDistributions)
     ? rawDistributions

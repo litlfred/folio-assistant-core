@@ -41,9 +41,15 @@ bytes:
 2. If `dcterms:source` names a URL or IRI that does not match the
    `dcat:Distribution` (`@id` or `dcat:downloadURL`) carrying the legal text's
    `spdx:checksum`, verification fails.
-3. When the agreement is amended (`v2`), the new ODRL `Agreement` must update
-   `uid` and `dcterms:source` to name the new version's legal text
-   distribution.
+3. The `Agreement`'s `uid` is the version's fixed-version URL: the
+   `dcat:Resource` `@id` of that version (for example
+   `https://example.org/dsa/042/v1`), never a 'latest' URL. It is the URL a
+   Consent cites in `Consent.policy.uri` (consent rule 2 in
+   `dsa-document-lifecycle.bpmn`), and the DCAT record's `odrl:hasPolicy`
+   names it. `check:dsa-hash` fails when either differs.
+4. When the agreement is amended (`v2`), the new ODRL `Agreement` must update
+   `uid` to the new fixed-version URL and `dcterms:source` to name the new
+   version's legal text distribution.
 
 ## Example (`agreement.jsonld`)
 
@@ -57,7 +63,7 @@ bytes:
     }
   ],
   "@type": "Agreement",
-  "uid": "https://example.org/dsa/042/v1/odrl",
+  "uid": "https://example.org/dsa/042/v1",
   "assigner": "https://example.org/org/fnphi",
   "assignee": "https://example.org/org/frec",
   "dcterms:source": "https://example.org/dsa/042/v1/agreement.md",

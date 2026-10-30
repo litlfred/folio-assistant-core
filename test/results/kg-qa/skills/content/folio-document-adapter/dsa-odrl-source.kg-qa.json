@@ -5,7 +5,7 @@
     "id": "dsa-odrl-source",
     "path": "skills/content/folio-document-adapter/dsa-odrl-source.md"
   },
-  "source_hash": "1af7187f5189",
+  "source_hash": "022e5272725a",
   "criteria": {
     "skill-is-a-stub": {
       "result": "pass",

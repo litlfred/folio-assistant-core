@@ -37,7 +37,8 @@ normative SPDX checksum terms in §6.8.12 and ADMS status terms in §6.4.30),
   - `adms:status` — life-cycle status IRI (DCAT 3 §6.4.30; see
     [`dsa-catalogue-status`](dsa-catalogue-status.md)).
   - `odrl:hasPolicy` — `{ "@id": "<odrl-agreement-uid>" }` when the version
-    carries a computable ODRL 2.2 `Agreement`.
+    carries a computable ODRL 2.2 `Agreement`; that uid is this record's own
+    `@id`, the fixed-version URL (see [`dsa-odrl-source`](dsa-odrl-source.md)).
   - `dcat:distribution` — array of `dcat:Distribution` nodes.
 - **Distribution (`@type: "dcat:Distribution"`):**
   - `@id` and `dcat:downloadURL` — immutable URL of the signed legal text file
@@ -54,7 +55,11 @@ normative SPDX checksum terms in §6.8.12 and ADMS status terms in §6.4.30),
    changed text creates a new version directory (for example, `v2/`) with a
    new `@id`, a new `dcat:version`, a new `dcat:downloadURL`, and a newly
    computed `spdx:checksumValue`.
-2. **Explicit version chain:** `v2`'s `dcat:previousVersion` must point to
-   `v1`'s `dcat:Resource` `@id`.
+2. **Explicit version chain:** the record of an amended version MUST carry
+   `dcat:previousVersion` naming the fixed-version URL of the version it
+   amends, that is, the prior version's `dcat:Resource` `@id` (`v2` points
+   to `v1`). Consent processing walks this chain to carry older Consents
+   across a narrowing amendment (fhir-harness#228), so a missing or wrong
+   link fails `check:dsa-hash`.
 3. **No custom properties:** `check:dsa-hash` rejects any property not defined
    in ODRL 2.2, DCAT 3, or DCMI Terms.

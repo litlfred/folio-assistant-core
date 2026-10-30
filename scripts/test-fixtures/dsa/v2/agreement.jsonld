@@ -7,7 +7,7 @@
     }
   ],
   "@type": "Agreement",
-  "uid": "https://example.org/dsa/042/v2/odrl",
+  "uid": "https://example.org/dsa/042/v2",
   "assigner": "https://example.org/org/fnphi",
   "assignee": "https://example.org/org/frec",
   "dcterms:source": "https://example.org/dsa/042/v2/agreement.md",

@@ -72,6 +72,37 @@ describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
     expect(res.errors.some((e) => e.includes("SHA-256 mismatch"))).toBe(true);
   });
 
+  it("requires the Agreement's uid to be the version's fixed-version URL (consent rule 2)", () => {
+    const v1 = loadWorkedVersion("v1");
+    const res = verifyDsaVersion({
+      legalText: v1.legalText,
+      dcat: v1.dcat,
+      agreement: { ...v1.agreement, uid: "https://example.org/dsa/042/latest" },
+    });
+    expect(res.ok).toBe(false);
+    expect(res.errors.some((e) => e.includes("fixed-version URL"))).toBe(true);
+  });
+
+  it("fails when an amended version does not name the version it amends in dcat:previousVersion", () => {
+    const tmp = mkdtempSync(join(tmpdir(), "dsa-prev-"));
+    try {
+      for (const ver of ["v1", "v2"] as const) {
+        const w = loadWorkedVersion(ver);
+        mkdirSync(join(tmp, ver));
+        writeFileSync(join(tmp, ver, "agreement.md"), w.legalText);
+        writeFileSync(join(tmp, ver, "agreement.jsonld"), JSON.stringify(w.agreement, null, 2));
+        const dcat = { ...w.dcat };
+        if (ver === "v2") delete dcat["dcat:previousVersion"];
+        writeFileSync(join(tmp, ver, "dcat.jsonld"), JSON.stringify(dcat, null, 2));
+      }
+      const res = verifyDsaDirectory(tmp);
+      expect(res.ok).toBe(false);
+      expect(res.errors.some((e) => e.includes("dcat:previousVersion"))).toBe(true);
+    } finally {
+      rmSync(tmp, { recursive: true, force: true });
+    }
+  });
+
   it("requires the Agreement's dcterms:source to name the same distribution whose spdx:checksum is checked", () => {
     const v1 = loadWorkedVersion("v1");
 
@@ -168,7 +199,7 @@ describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
       };
       const v2Agreement = {
         ...v1.agreement,
-        uid: "https://example.org/dsa/042/v2/odrl",
+        uid: "https://example.org/dsa/042/v2",
         "dcterms:source": "https://example.org/dsa/042/v2/agreement.md",
       };
       writeFileSync(join(tmp, "v2", "agreement.md"), v1.legalText);

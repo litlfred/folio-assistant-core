@@ -19,7 +19,7 @@
     "@id": "http://purl.org/adms/status/Completed"
   },
   "odrl:hasPolicy": {
-    "@id": "https://example.org/dsa/042/v2/odrl"
+    "@id": "https://example.org/dsa/042/v2"
   },
   "dcat:distribution": [
     {
