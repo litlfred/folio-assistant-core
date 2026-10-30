@@ -111,20 +111,26 @@ A reviewer may also change which working group (TWG) a CS goes to. "Ready for
 agent" and "Ready for merge" belong to a CS, so they are only on Review Change
 Sets.
 
+Columns are named here by header, never by letter: people move them.
+
 | tab | who writes it | holds |
 |---|---|---|
-| **Source Comments** | people | No., date received, channel, reviewer, organisation, country, stakeholder type |
-| **Review Public Comments** | people, plus formula columns | one row per PC: No., section, page, line, comment, comment type, theme, the two TWG categorisations, the PC's own `Suggested revision` (locked), any number of `Architect Feedback (<initials>)` columns, status, disposition; then formula columns read from Agent: agentic status (linked to its change-set's PR when there is one), staging review page and pull request (both by the PC's change-set), PC link, CS link, and a link to the page in the frozen review draft |
-| **Agent** | **the agent, and only the agent** | A–J, one row per No.: No., comment ref, agentic status, agentic action taken, agentic applied in (section / version), agentic handled by, agentic date actioned, pull request, staging review page, change-set (H and I are no longer read by any view). L–P, one row per change-set: id, title, status from the record, **pull request**, **staging review page**. A PR belongs to a change-set, not to a PC (owner, 2026-10-30) |
-| **Review Change Sets** | people (D–I), formulas | one row per CS. A–C spill from Agent L–N (id, title, status). Inputs: **TWG categorisation (change set)** (D, a TWG dropdown), `Architect Feedback (<initials>)` on the CS (E–G), **Ready for agent** (H, Yes/No) and **Ready for merge** (I, Yes/No), both editors. Then formulas: agentic status, pull request and staging page (Agent O–P), comment count, sections, the PCs' TWG categorisations, the PCs' comments, one `PCs: <header>` column per Suggested revision or Architect Feedback column of Review Public Comments, comment statuses, dispositions, a public-comments page link, and the PC Nos. one per cell, each linked to that PC. Each joined line reads `No. <n> · <text>` |
+| **Public Comment Source** | people (locked) | No., date received, channel, reviewer name, organisation, country / region, stakeholder type. Reviewers' names and emails stay here and never enter the repository |
+| **Review Public Comments** | people, plus formulas and the Apps Script | one row per PC. Grey, mechanical: No. (a link to the comment's page), Sections, Page, Line no(s) / Table / Figure (each linked to the draft page), Comment / issue, the PC's own Suggested revision. Green, derived: Change Set (a link to its Review Change Sets row) and TWG (agent). Blue, people: TWG (human) (a multi-select dropdown), Comment type, any number of `Architect Feedback (<initials>)` columns, Disposition, Status. Green, from Agent: Agentic status, Staging review page, Pull request (both by the PC's change-set) |
+| **Agent** | **the agent, and only the agent** | one row per No.: No., Comment ref (the PC id), agentic status, action taken, applied in, handled by, date actioned, pull request, staging review page, Change-sets. Then one row per change-set: id, title, status from the record, **pull request**, **staging review page**. A PR belongs to a change-set, not to a PC (owner, 2026-10-30) |
+| **Review Change Sets** | people, plus formulas and the Apps Script | one row per CS. Grey: Change-set, Title, and the Apps Script's Sections and Pages (each linked) and joins: Public Comments (`No. n (Status) · comment`, status in bold), Suggested Revisions, PC Architect Feedback and Dispositions (`No. n · text`), each `No. n` linking to its row. Green: TWG (PCs), the PCs' TWG (human), else TWG (agent) marked "(AI)". Blue, people: TWG (CS) (multi-select), `Architect Feedback (<initials>)` on the CS. Orange: **Ready for agent** and **Ready for merge** (Yes/No, editors). Green, from Agent: Agentic status, Pull request, Staging review page |
+| **RCS joins (live)** | formulas (hidden) | live joins over Review Public Comments and Agent, kept for checking the Apps Script's output |
 
-**Locks** (owner, 2026-10-30). On Review Public Comments, editors may change
-the comment type, theme, both TWG categorisations and the Architect Feedback
-cells (not their headers). The PC's own Suggested revision is the commenter's
-text and is locked. On Review Change Sets, editors may change D–I. Ready for
-merge (I) is open to editors too (owner, 2026-10-30, 20:34Z), so an editor's
-Yes makes the agent merge. Everything else,
-including every formula column and header, is protected.
+**Colour key** (owner, 2026-10-30). Blue: people decide. Orange: a release
+an editor gives (Ready for agent, Ready for merge). Grey: fixed, mechanical,
+or from the knowledge graph. Green: derived or written by the agent. Every
+green header is the same green; a header does not say "from Agent".
+
+**Locks** (owner, 2026-10-30). Grey and green columns, and every header, are
+protected; only the owner's account (which the agent's connector and the
+Apps Script run as) may edit them. Editors may change the blue and orange
+cells. Ready for merge is open to editors (owner, 2026-10-30, 20:34Z), so an
+editor's Yes makes the agent merge.
 
 **Why the CS inputs can sit beside formulas.** A typed cell beside a spilled
 formula stays with its row only while the rows never move. Review Change Sets'
@@ -142,8 +148,9 @@ header starts with `Architect Feedback`. A board adds its column beside the
 others and puts its own initials in the header. Never write a fixed column
 letter into a view. People may reorder the Review Public Comments tab, because
 Review Change Sets finds columns by name (`MATCH` on the first row). A renamed
-header that is looked up by name (No., Section no., Comment / issue, Status,
-Disposition / rationale, Page) does break the view, and its formula must be
+header that is looked up by name (No., Sections, Page, Comment / issue,
+Suggested revision, Status, Disposition, TWG (agent), TWG (human)) does break
+the view, and its formula, or the Apps Script's `sheet-sync.json`, must be
 updated with the new name.
 
 **How the views update.** The formula columns are `FILTER`, `VLOOKUP`,
