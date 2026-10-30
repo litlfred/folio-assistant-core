@@ -19,7 +19,8 @@
     "folio-getting-started",
     "folio-repo-conversion",
     "normative-statements",
-    "public-comment"
+    "public-comment",
+    "review-sheet-script"
   ],
   "docker": {
     "baseImage": "ubuntu:24.04",
