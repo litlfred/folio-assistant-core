@@ -60,7 +60,7 @@ make if the licence was written down at intake.
 ### The set a submitter chooses from
 
 The submitter picks one, certifies they may grant it, and **cannot change it
-afterwards**. Recorded as a [`source-licence`](../../../../cat-harness/schemas/source-licence.ts)
+afterwards**. Recorded as a [`source-licence`](../../../../cat-harness-tools/schemas/library/source-licence.ts)
 record — the same one a library manifest carries in `meta.licence` and an
 upload carries in `intake.json`, because bean `7bg9` settled that there is one
 licence vocabulary rather than one per pipeline.
