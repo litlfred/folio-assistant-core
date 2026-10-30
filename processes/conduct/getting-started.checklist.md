@@ -52,7 +52,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 - Skill: `repo-conversion`, `document-intake`.
 - What: Read-only.
 - Record it: `workflow_complete` with `node: "Task_ScanRepo"`.
-- next: → `Task_ConfirmImport` (Import what, where, and who does it)
+- next: → `Task_ChooseHarnessed` (Choose what the harness reads)
 
 ### 5. Create the repository (`Task_CreateRepo`)
 
@@ -74,13 +74,13 @@ Somebody said "create a folio": work out which request they meant, with the bran
 - Record it: `workflow_complete` with `node: "Task_Scaffold"`.
 - next: → `Call_BeanOpen` (Open the bean)
 
-### 7. Import what, where, and who does it (`Task_ConfirmImport`)
+### 7. Choose what the harness reads (`Task_ChooseHarnessed`)
 
 - Who: the `User (person)` lane (role `user`).
-- Skill: `repo-conversion`, `dispatch-agent`.
-- What: Three questions the scan cannot answer: import these or not; library or content for each group; leave the files where they are or reorganize to declutter.
-- Record it: `workflow_complete` with `node: "Task_ConfirmImport"`.
-- next: → `Task_Scaffold` (Scaffold the folio (folio_init))
+- Skill: `repo-conversion`, `interaction-modality`.
+- What: The person picks which of the content markers the scan found the harness declares in index.config.json, and nothing is declared unpicked.
+- A subprocess (`Process_AskThePerson`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `Task_ConfirmImport` (Import what, where, and who does it)
 
 ### 8. Open the bean (`Call_BeanOpen`)
 
@@ -90,6 +90,14 @@ Somebody said "create a folio": work out which request they meant, with the bran
 - A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `GW_BeanYours` (Bean claimed?)
 
+### 9. Import what, where, and who does it (`Task_ConfirmImport`)
+
+- Who: the `User (person)` lane (role `user`).
+- Skill: `repo-conversion`, `dispatch-agent`.
+- What: Three questions the scan cannot answer: import these or not; library or content for each group; leave the files where they are or reorganize to declutter.
+- Record it: `workflow_complete` with `node: "Task_ConfirmImport"`.
+- next: → `Task_Scaffold` (Scaffold the folio (folio_init))
+
 ### Decide — Bean claimed? (`GW_BeanYours`)
 
 - Reads which end Process_BeanOpen reached.
@@ -97,7 +105,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
   - «claimed» → `Task_SeedPlan` (Seed the work plan)
   - «not yours» → `End_BeanNotYours` (Not yours — left alone)
 
-### 9. Seed the work plan (`Task_SeedPlan`)
+### 10. Seed the work plan (`Task_SeedPlan`)
 
 - Who: the `Work plan (beans)` lane (role `work-plan`).
 - Skill: `todo-manager`.
@@ -109,7 +117,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 
 - The instance completes here: Someone else holds the bean; this run stops without touching it. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
-### 10. Provision gh-pages (`Task_ProvisionGhPages`)
+### 11. Provision gh-pages (`Task_ProvisionGhPages`)
 
 - Who: the `Publish — GitHub Pages` lane (role `publish-target`).
 - Skill: `getting-started`.
@@ -117,7 +125,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 - Record it: `workflow_complete` with `node: "Task_ProvisionGhPages"`.
 - next: → `Task_PagesBootstrap` (Start the Pages build and derive the URL)
 
-### 11. Start the Pages build and derive the URL (`Task_PagesBootstrap`)
+### 12. Start the Pages build and derive the URL (`Task_PagesBootstrap`)
 
 - Who: the `Publish — GitHub Pages` lane (role `publish-target`).
 - Skill: `getting-started`.
@@ -134,7 +142,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
   - «unknown» → `Task_ReportUnknown` (Say it could not be confirmed)
   - «unprovisioned» → `Task_ProvisionGhPages` (Provision gh-pages)
 
-### 12. Hand over the live link (`Task_ReportUrl`)
+### 13. Hand over the live link (`Task_ReportUrl`)
 
 - Who: the `Publish — GitHub Pages` lane (role `publish-target`).
 - Skill: `getting-started`.
@@ -142,7 +150,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 - Record it: `workflow_complete` with `node: "Task_ReportUrl"`.
 - next: → `Call_BeanClose` (Close the bean)
 
-### 13. Say where it will be (`Task_ReportPending`)
+### 14. Say where it will be (`Task_ReportPending`)
 
 - Who: the `Publish — GitHub Pages` lane (role `publish-target`).
 - Skill: `getting-started`.
@@ -150,7 +158,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 - Record it: `workflow_complete` with `node: "Task_ReportPending"`.
 - next: → `Call_BeanClose` (Close the bean)
 
-### 14. Say it could not be confirmed (`Task_ReportUnknown`)
+### 15. Say it could not be confirmed (`Task_ReportUnknown`)
 
 - Who: the `Publish — GitHub Pages` lane (role `publish-target`).
 - Skill: `getting-started`.
@@ -158,7 +166,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 - Record it: `workflow_complete` with `node: "Task_ReportUnknown"`.
 - next: → `Call_BeanClose` (Close the bean)
 
-### 15. Close the bean (`Call_BeanClose`)
+### 16. Close the bean (`Call_BeanClose`)
 
 - Who: the `Publish — GitHub Pages` lane (role `publish-target`).
 - Skill: `todo-manager`.
