@@ -111,7 +111,8 @@ current without anyone, person or agent, refreshing them.
 | **By Change Set** | formulas only | the Review tab regrouped: one row per comment, sorted by change-set then No., carrying every Suggested revision column, status, disposition, Ready for agent and agentic status. Its headers are Review's own, so renaming a Suggested revision header there renames it here |
 
 **Locks** (owner, 2026-10-30). Protected ranges leave editors only the
-Suggested revision cells (not their headers) and "Ready for agent" on the
+comment type, theme, both TWG categorisations, Suggested revision and
+"Ready for agent" cells (not their headers) on the
 Review tab. Every other Review column and every other tab is protected. The
 owner's account, which is also the account the agent's connector uses, can
 still edit everything: Google always lets the owner through.
