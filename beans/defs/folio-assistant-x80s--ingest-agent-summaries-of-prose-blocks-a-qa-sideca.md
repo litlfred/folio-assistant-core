@@ -6,7 +6,7 @@ status: todo
 type: task
 priority: normal
 created_at: 2026-09-24T05:54:04Z
-updated_at: 2026-10-30T12:10:30Z
+updated_at: 2026-10-30T14:22:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -59,9 +59,6 @@ Released `in-progress` → `todo` on the owner's instruction (review session htt
 - [ ] a person reviews the drafts (bun run cat narratives)
 
 _2026-09-30T08:24:12Z_ — Claimed by claude/brave-hawking-511rrx — pushed to main so sibling sessions see it before this branch has a PR (bean 35nj).
-
-_2026-10-16T10:30:00Z_ — Back to `todo`: nobody is holding this; its last note says it is parked (waiting on a trigger, a ruling or a deferred row), and an untouched `in-progress` claim misleads sibling sessions (owner choice, https://claude.ai/code/session_01NUrhvvMEwU5MmPW4L2w9jP).
-
 
 _2026-10-16T10:30:00Z_ — Back to `todo`: nobody is holding this; its last note says it is parked (waiting on a trigger, a ruling or a deferred row), and an untouched `in-progress` claim misleads sibling sessions (owner choice, https://claude.ai/code/session_01NUrhvvMEwU5MmPW4L2w9jP).
 
@@ -228,60 +225,11 @@ _2026-10-30T12:09:30Z_ — batch 64 opened as `litlfred/smart-base#208` (`c597cd
 
 _2026-10-30T12:10:30Z_ — batch 65 opened as `litlfred/smart-immunizations#87` (`d2c324ea`): 48 English draft summaries across `smart-immunizations/library/monitoring-metrics-related-to-the-global-covid-19-vaccinatio` (all 7 prose blocks: `prose-page-001` through `prose-page-007`, covering the July 2022 update of *Monitoring Metrics Related to the Global Covid-19 Vaccination Strategy in a Changing World*, including Table 1 country- and global-level metrics 1–10 and KPIs 1–3 and 7 under Strategic Goals 1 and 2, reporting mechanisms, and Table 2 metadata and ILOStat/WHO/UN/OCHA/eJRF/ICTRP/UNICEF/World Bank data sources) and `smart-immunizations/library/who-2019-ncov-digital-certificates-vaccination-20211-eng` (all 41 prose blocks: `prose-sec-front-matter` and `prose-sec-000` through `prose-sec-039`, covering the WHO interim guidance *Digital Documentation of COVID-19 Certificates: Vaccination Status (DDCC:VS) — Technical Specifications and Implementation Guidance*, 27 August 2021, across the Front matter and Executive Summary, Section 1 *Introduction*, Section 2 *Ethical considerations and data protection principles*, Section 3 *Continuity of Care scenario* UC001–UC003 and `DDCC.FXNREQ.001`–`036`, Section 4 *Proof of Vaccination scenario* UC004–UC007 and `DDCC.FXNREQ.037`–`061`, Section 5 *DDCC:VS core data set* Tables 10–12, Section 6 *National Trust Architecture* and PKI signing/verification, Section 7 *National governance considerations*, Section 8 *Implementation considerations* and Table 13 cost categories, References, and Annexes 1–6 including A6 card examples, BPMN symbols, WHO-FIC/ICD-11 mapping principles, PKI primer, `DDCC.NFXNREQ.001`–`064` non-functional requirements, and the OpenHIE architectural blueprint); `drafted_by.model` is `not-disclosed` with session `conversation://471661a6-34dc-46e5-8346-afccbb441c25`. Backlog in `smart-immunizations/library/` 48 → 0 of 152 non-empty prose blocks when combined with `#85` and `#86` (152 → 104 against `main` alone; 152 drafts await human confirmation across `#85`, `#86`, and `#87`; 0 blocks remain across `smart-immunizations/library/`).
 
-
-_2026-10-16T10:30:00Z_ — Back to `todo`: nobody is holding this; its last note says it is parked (waiting on a trigger, a ruling or a deferred row), and an untouched `in-progress` claim misleads sibling sessions (owner choice, https://claude.ai/code/session_01NUrhvvMEwU5MmPW4L2w9jP).
-
-## 2026-10-24 — drain batch
-- 13 drafts for `cat-harness/library/kg-folio-asst-2026-09-30` (the scfh deck), in `litlfred/cat-harness#493`. `drafted_by.model` is `not-disclosed` with the session URL.
-- Measured with `bun run cat summaries` at the folio-assistant lock: 2848 of 3267 prose blocks awaited a summary before this batch, so 2835 after it. 419 drafts (432 after) await a person; 0 confirmed.
-Session https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU.
-
-_2026-10-24T08:16:00Z_ — Claimed by the cloud drain thread "Drain content model and ingest beans" (session https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU). Open work: summary batches, litlfred/cat-harness#493.
-
-_2026-10-24T09:27:19Z_ — litlfred/cat-harness#493 merged (40254023): 13 kg-deck drafts are on main and wait for a person in `bun run cat narratives`. More batches still to drain.
-
-_2026-10-24T10:55:29Z_ — Claim released by the cloud drain thread; the next batch is open to anyone.
-
-_2026-10-24T10:56:06Z_ — Re-claimed by the cloud drain thread "Drain content model and ingest beans" (owner extended the window to ~13:48Z; session https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU).
-
-_2026-10-24T13:37:00Z_ — litlfred/cat-harness#543 merged (e8e4cb0f): 15 English drafts for Halko–Martinsson–Tropp (arxiv-0909.4061v2, pages 1–15) are on main and wait for a person. Claim released; later batches are open to anyone.
-
-_2026-10-24T13:42:00Z_ — Re-claimed by the cloud drain thread "Drain content model and ingest beans" (owner window to ~16:48Z; session https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU).
-
-_2026-10-24T14:14:00Z_ — litlfred/folio-assistant-core#217 merged (231045cd): 22 English drafts for Doc-Researcher (arxiv-2510.21603v1, every prose block) are on main and wait for a person.
-
-_2026-10-24T14:27Z_ — cat-harness#585 merged (summaries batch).
-
-_2026-10-24T14:45Z_ — batch 5 opened as cat-harness#587: 18 blocks in arxiv-2504.21474v1, sammut-bonnici-galea-2015-swot-analysis.
-
-_2026-10-24T14:41Z_ — cat-harness#587 merged (batch 5, 18 blocks).
-
-_2026-10-24T15:05Z_ — batch 6 opened as cat-harness#589: 25 blocks in arxiv-2508.05192v2, gurel-tat-2017-swot-analysis.
-
-_2026-10-24T14:53Z_ — cat-harness#589 merged (batch 6, 25 blocks).
-
-_2026-10-24T14:56Z_ — batch 7 opened as cat-harness#591: 35 blocks in arxiv-2605.03537v1, arxiv-2505.10399v1.
-
-_2026-10-24T15:10Z_ — cat-harness#591 merged (batch 7, 35 blocks of arxiv-2605.03537v1 and arxiv-2505.10399v1).
-
-_2026-10-24T15:22Z_ — cat-harness#593 merged (batch 8, 19 blocks of arxiv-2504.07199v3).
-
-_2026-10-24T15:24Z_ — cat-harness#594 merged (batch 9, 19 blocks of arxiv-2601.04544v1).
-
-_2026-10-24T15:45Z_ — cat-harness#596 merged (batch 10, 20 blocks of arxiv-2202.02427v1).
-
-_2026-10-24T15:48Z_ — cat-harness#598 merged (batch 11, 26 blocks of arxiv-2504.19675v2).
-
-_2026-10-24T16:00Z_ — cat-harness#600 merged (batch 12, 32 blocks of arxiv-2405.14766v2).
-
-_2026-10-24T16:03Z_ — cat-harness#601 merged (batch 13, 31 blocks of arxiv-2507.23348v1).
-
-_2026-10-24T16:03Z_ — cat-harness#602 merged (batch 14, 31 blocks of arxiv-2402.02172v5).
-
-_2026-10-24T16:13Z_ — cat-harness#603 merged (batch 15, 20 blocks of arxiv-2508.21620v2).
-
-_2026-10-24T16:21Z_ — cat-harness#605 merged (batch 17, 24 blocks of arxiv-2606.04382v1).
-
-_2026-10-24T16:24Z_ — cat-harness#604 merged (batch 16, 21 blocks of arxiv-2404.04834v4).
-
-_2026-10-24T16:24Z_ — Window wrap-up: cat-harness#583 and #585–#605 merged; all drafts are on main and wait for a person. Claim released; later batches are open to anyone.
+_2026-10-30T14:22:00Z_ — Canonical store sync after `cat-harness-tools#459` (`24c1e20` here / `d7e9d84405` on `cat/cat-harness/beans`): removed the duplicate 2026-10-16..2026-10-24 hunk appended at the tail by the three-way merge so the chronological Batches 18–65 record stands cleanly at the end of this canonical `folio-assistant-core` bean file. Summary across the 6 declared libraries through Batch 65:
+- `cat-harness/library/`: batches 18–37 (`litlfred/cat-harness#617`, `#621`, `#624`, `#628`–`#636`, `#641`–`#643`, `#646`, `#648`, `#651`, `#653`, `#655`) plus `#715` (40 blocks of `arxiv-2505.06046v4`) and `#716` (43 blocks of `arxiv-2606.21008v3`) merged on `main` (0 backlog across those summarized entries; per the `2026-10-30T12:05:00Z` note above, `arxiv-0909.4061v2` pages 16+ (59 blocks) and `arxiv-2607.20636v1` (141 blocks) remain on `cat-harness` `main` alongside held `ietf-2024-rfc9562-uuid`).
+- `folio-assistant-core/library/`: 0 backlog (`arxiv-2510.21603v1`, 22/22 drafted and merged in `litlfred/folio-assistant-core#217`).
+- `folio-assistant-sci/library/`: 134/134 drafted and merged on `main` across batches 38–40 (`litlfred/folio-assistant-sci#99`, `#101`, `#102`; 0 backlog).
+- `who-iris/library/`: 397/397 drafted on `main` (`2fef5ed`; 0 backlog).
+- `smart-base/library/`: 1,074/1,074 drafted across batches 41–56, 58–61, and 63–64 (`litlfred/smart-base#173`, `#175`, `#176`, `#177`, `#179`, `#181`, `#187`, `#191`, `#193` merged on `main`; `#194`, `#196`, `#197`, `#199`, `#200`, `#201`, `#202`, `#203`, `#204`, `#205`, `#206`, `#207`, `#208` open; 0 backlog across `main` + open PRs).
+- `smart-immunizations/library/`: 152/152 drafted across batches 57, 62, and 65 (`litlfred/smart-immunizations#85`, `#86`, `#87` open; 0 backlog across open PRs).
+All drafted summaries await human confirmation via `bun run cat narratives`.
