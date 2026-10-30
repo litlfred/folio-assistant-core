@@ -1,4 +1,6 @@
 /**
+ * @OnlyCurrentDoc
+ *
  * Review sheet: keeps its links and joins current. Two modes, set by the
  * build: public-comment (Review Public Comments, Review Change Sets, Agent)
  * and drafting (Contributor Feedback, Agent; one row is one change set).
@@ -13,6 +15,11 @@
  * then reload the sheet. A "Review links" menu appears. An edit marks the
  * sheet dirty and a 5-minute trigger rebuilds; "Refresh now" rebuilds at once.
  * Columns are found by their header text, so they may be moved freely.
+ *
+ * Trust: @OnlyCurrentDoc limits the script to this spreadsheet. It reads and
+ * writes this sheet and its document properties only; it fetches no URL and
+ * sends nothing anywhere. To check a copy, rebuild from the commit named below
+ * and compare (skill review-sheet-script, "Trusting the script").
  */
 /*@@CONFIG@@*/
 

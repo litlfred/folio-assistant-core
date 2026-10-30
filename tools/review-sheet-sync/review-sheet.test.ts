@@ -141,6 +141,9 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
 
   test("the built script has no template placeholder left", () => {
     expect(code).not.toContain("/*@@CONFIG@@*/");
+    expect(code).toContain("@OnlyCurrentDoc");
+    expect(code).toMatch(/at ([0-9a-f]{40}|unknown)/);
+    expect(code).not.toMatch(/UrlFetchApp|MailApp|GmailApp|DriveApp/);
   });
 
   test("RPC No. links to the comment's page, and stays a number", () => {
