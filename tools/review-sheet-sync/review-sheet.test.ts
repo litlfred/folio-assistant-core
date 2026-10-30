@@ -181,10 +181,10 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
 
   test("Agentic status, on both tabs, is each PR linked, its status and completion time bold, and what it changed", () => {
     for (const cell of [rcs["Agentic status"][0][0], rpc["Agentic status"][0][0]] as Rich[]) {
-      expect(cell.text).toBe("PR #97 (PR open, 2026-10-30 22:30Z) · Adds the scope\nPR #130 (PR open) · Fixes a typo");
+      expect(cell.text).toBe("r#97 (PR open, 2026-10-30 22:30Z) · Adds the scope\nr#130 (PR open) · Fixes a typo");
       expect(cell.links.map((l) => [slice(cell, l), l[2]])).toEqual([
-        ["PR #97", "https://github.com/o/r/pull/97"],
-        ["PR #130", "https://github.com/o/r/pull/130"],
+        ["r#97", "https://github.com/o/r/pull/97"],
+        ["r#130", "https://github.com/o/r/pull/130"],
       ]);
       expect(cell.bold.map(([a, z]) => cell.text.slice(a, z))).toEqual(["(PR open, 2026-10-30 22:30Z)", "(PR open)"]);
     }
