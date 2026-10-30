@@ -23,6 +23,14 @@
       "status": "candidate"
     },
     {
+      "id": "catalogue-from-references",
+      "prefLabel": "Catalogue a library from its bibliography",
+      "definition": "Write one `folio-dublin-core/v1` record and one `folio-catalogue-node/v1` item per library entry that the source ledger joins to a CSL-JSON reference, into the folio's declared `catalogue` directory, so `gen-library-jsonld` reads the title from the catalogue's `dc.title` instead of falling to the PDF or the slug. The join is exact: a ledger row naming the entry's `structure.json` source file, one reference id, and the same sha256 where both record one. Unjoined entries are reported and left alone. Never touches a node it did not write (folio-assistant-core#72).",
+      "notation": "catalogue-from-references",
+      "source": "folio-assistant-core/tools/catalogue-from-references/catalogue-from-references.ts#catalogue-from-references",
+      "status": "candidate"
+    },
+    {
       "id": "dublin-core-render",
       "prefLabel": "Dublin Core renderings",
       "definition": "Render every `folio-dublin-core/v1` record a catalogue item names as Dublin Core XML (qualified DC, per DCMI's XML guidelines) and as JSON-LD bound to DCMI Metadata Terms. Both are written into the instance's published root (`<instanceRoot>/dublin-core/<stem>.dc.xml` and `.dc.jsonld`), so the site mount publishes them beside the item pages. Deterministic. `--check` fails on a missing, stale or orphaned rendering. Governed by the `dublin-core-renderings` skill (bean `7eak`).",

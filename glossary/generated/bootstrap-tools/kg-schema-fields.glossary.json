@@ -7,6 +7,13 @@
   "source": "Schema fields of bootstrap-tools",
   "terms": [
     {
+      "id": "graph-export.graphexportschema.at-graph",
+      "prefLabel": "GraphExportSchema.@graph",
+      "definition": "Subjects, and for one release a tombstone per pre-#958 `#fragment` (litlfred/cat-harness-tools#958).",
+      "source": "bootstrap-tools/schemas/graph-export.ts#GraphExportSchema.@graph",
+      "status": "candidate"
+    },
+    {
       "id": "graph-export.graphexportschema.comment",
       "prefLabel": "GraphExportSchema.comment",
       "definition": "Says it is generated, and by what (owner, 2026-09-30).",

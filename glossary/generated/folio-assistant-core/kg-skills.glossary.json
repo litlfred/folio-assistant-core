@@ -63,6 +63,14 @@
       "status": "candidate"
     },
     {
+      "id": "block-change-summary",
+      "prefLabel": "block-change-summary",
+      "definition": "Post-delivery content block change summary for a folio edit-set: extract changed block labels across `.md`, `.ts` and content-type sibling files, present a per-chapter table with `.md`-first GitHub blob links, modified sibling links, local viewer anchors, and change categories. Refines `delivery-summary` for content folios.",
+      "notation": "block-change-summary",
+      "source": "folio-assistant-core/skills/content/content-lifecycle-ext/block-change-summary.md",
+      "status": "candidate"
+    },
+    {
       "id": "corpus-commit-contract",
       "prefLabel": "corpus-commit-contract",
       "definition": "The contract the `corpus` role is held to when an accepted edit is committed into it: take the write only on the editor's acceptance, as one change with its QA sidecars, under the commit-hygiene requirement and with no relaxing of that policy. The narrowest contract the editing diagram requires. A mechanical role's skill is a contract to test against, not instructions to read.",
@@ -153,6 +161,62 @@
       "definition": "Cataloguing a source as it arrives — which facts are `dcterms`, which are this project's own, and why the line is drawn by the vocabulary rather than by convenience. The bibliographic layer only; the derived layer belongs to ingestion.",
       "notation": "filing-dublin-core",
       "source": "folio-assistant-core/skills/library/cataloguing/filing-dublin-core.md",
+      "status": "candidate"
+    },
+    {
+      "id": "folio-board-diagram-interchange",
+      "prefLabel": "folio-board-diagram-interchange",
+      "definition": "The content-folio half of the harness's board-diagram-interchange skill: binds processes/ui/board-place-note.bpmn and board-relocate.bpmn, folio board filters over pages and block kinds, and note-to-board arrow direction.",
+      "notation": "folio-board-diagram-interchange",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/folio-board-diagram-interchange.md",
+      "status": "candidate"
+    },
+    {
+      "id": "folio-board-windows",
+      "prefLabel": "folio-board-windows",
+      "definition": "The content-folio half of the harness's board-windows skill: binds processes/ui/board-open-close.bpmn, folio-glass pinning (todo/<id> and landing/<slot>), and content-type card chrome ([x], [linksrc], [edit]).",
+      "notation": "folio-board-windows",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/folio-board-windows.md",
+      "status": "candidate"
+    },
+    {
+      "id": "folio-content-lifecycle",
+      "prefLabel": "folio-content-lifecycle",
+      "definition": "The content-folio half of the harness's content-lifecycle skills (content-author, content-feedback, content-plan, content-publish, content-review, content-test, content-validate, evidence-appraisal): binds core lifecycle diagrams, quality-control and review-comments gates, and empirical vs. formal evidence rules.",
+      "notation": "folio-content-lifecycle",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/folio-content-lifecycle.md",
+      "status": "candidate"
+    },
+    {
+      "id": "folio-content-profiles",
+      "prefLabel": "folio-content-profiles",
+      "definition": "The content-folio half of the harness's content-profiles skill: how a document folio is structured prose and how a paper folio extends it, block-kind discovery across block-kinds/ graphs, profile-check enforcement, and the TeX-free document render path.",
+      "notation": "folio-content-profiles",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/folio-content-profiles.md",
+      "status": "candidate"
+    },
+    {
+      "id": "folio-editorial-workflow",
+      "prefLabel": "folio-editorial-workflow",
+      "definition": "The content-folio half of the harness's editor, content-graph, md-authoring, canonical-watcher, and uses-editorial-review skills: routes glossary and notation work to ontologist and glossary-build, bibliography audits to bib-qa, and term-ordering checks to glossary-terms.",
+      "notation": "folio-editorial-workflow",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/folio-editorial-workflow.md",
+      "status": "candidate"
+    },
+    {
+      "id": "folio-getting-started",
+      "prefLabel": "folio-getting-started",
+      "definition": "The content-folio half of the harness's getting-started skill: binds processes/conduct/getting-started.bpmn and decisions/folio-intent.dmn, interprets describeRepository() content-type markers (folio, harness, dak, sushi), and routes new-content and specialised IG/DAK creation requests.",
+      "notation": "folio-getting-started",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/folio-getting-started.md",
+      "status": "candidate"
+    },
+    {
+      "id": "folio-repo-conversion",
+      "prefLabel": "folio-repo-conversion",
+      "definition": "The content-folio half of the harness's repo-conversion skill: outside-content evidence and refutation candidate scanning, content-type marker declarations, and dispatching library and content buckets to document-intake and folio authoring.",
+      "notation": "folio-repo-conversion",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/folio-repo-conversion.md",
       "status": "candidate"
     },
     {
