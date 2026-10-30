@@ -20,6 +20,18 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
+import { execFileSync } from "node:child_process";
+
+/** The folio-assistant-core commit this template comes from, for the header stamp. */
+function templateCommit(dir: string): string {
+  try {
+    const sha = execFileSync("git", ["-C", dir, "rev-parse", "HEAD"], { encoding: "utf8" }).trim();
+    const dirty = execFileSync("git", ["-C", dir, "status", "--porcelain", "--", "."], { encoding: "utf8" }).trim();
+    return sha + (dirty ? " (with local changes)" : "");
+  } catch {
+    return "unknown";
+  }
+}
 
 type Section = { label: string; title?: string; number?: string; page?: number };
 type Chapter = { dir: string; title: string; number?: number };
@@ -227,7 +239,7 @@ export function buildScript(repo: string, cfgPath: string): string {
   const here = dirname(fileURLToPath(import.meta.url));
   const template = readFileSync(join(here, "review-sheet.gs"), "utf8");
   const block = [
-    `// Built from ${cfgPath}.`,
+    `// Built from ${cfgPath} with folio-assistant-core tools/review-sheet-sync at ${templateCommit(here)}.`,
     `const CFG = ${JSON.stringify(CFG, null, 2)};`,
     `const COLS = ${JSON.stringify(COLS, null, 2)};`,
     cfg.mode === "drafting"

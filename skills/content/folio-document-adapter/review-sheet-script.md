@@ -127,6 +127,28 @@ moves, or a tab or a header the script reads is renamed. Renaming a header
 the script reads, without rebuilding, leaves that column unlinked; it fails
 nothing.
 
+## Trusting the script
+
+A copy of a sheet carries its Apps Script, so anyone starting from a
+template, us or someone else, should know what they are running.
+
+- **Nothing runs until the sheet's owner allows it.** Editors of the sheet
+  never run it. The owner runs `installTriggers`; Google then shows the
+  scopes and the triggers run as the owner.
+- **This sheet only.** The template starts with `@OnlyCurrentDoc`, so the
+  consent screen asks for "this spreadsheet", not all of the owner's
+  spreadsheets. The script uses only SpreadsheetApp, PropertiesService,
+  LockService and ScriptApp: no UrlFetchApp, mail or Drive, so it sends
+  nothing out. The test fails if one of those appears.
+- **Check a copy against its source.** The header names the
+  folio-assistant-core commit it was built from. Build again at that
+  commit with the folio's config and compare; or ignore the copied script
+  and paste one you built yourself.
+- **"Google hasn't verified this app."** Bound scripts are unverified, so
+  the owner clicks Advanced to continue. Publishing as a verified Workspace
+  add-on would remove the warning; not done while the users are our own
+  sheets.
+
 ## Drafting mode: editors' and contributors' feedback
 
 Before a document goes to public comment, editors and contributors give
