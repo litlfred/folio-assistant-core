@@ -38,8 +38,8 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { IntakeSchema, type Intake } from "@litlfred/cat-harness/schemas/intake.ts";
-import type { SourceLicence } from "@litlfred/cat-harness/schemas/source-licence.ts";
+import { IntakeSchema, type Intake } from "@litlfred/cat-harness/schemas/library/intake.ts";
+import type { SourceLicence } from "@litlfred/cat-harness/schemas/library/source-licence.ts";
 import { handleFromUrl } from "../schemas/catalogue.ts";
 import { DUBLIN_CORE_SCHEMA_TAG, DublinCoreRecordSchema, type DcField, type DublinCoreRecord } from "../schemas/dublin-core.ts";
 

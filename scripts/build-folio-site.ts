@@ -66,11 +66,11 @@ import { createHash } from "node:crypto";
 import { copyFileSync, cpSync, existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
 
-import { readHarnessConfig } from "@litlfred/cat-harness/schemas/harness-config.js";
-import { CONFIG_SUFFIX, isReservedIndexFile } from "@litlfred/cat-harness/schemas/instance-roots.js";
+import { readHarnessConfig } from "@litlfred/cat-harness/schemas/kg/harness-config.js";
+import { CONFIG_SUFFIX, isReservedIndexFile } from "@litlfred/cat-harness/schemas/kg/instance-roots.js";
 import type { FormalTreeCache } from "@litlfred/cat-harness/schemas/formal-ref.js";
 import type { Block, Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness/schemas/types.js";
-import { kindHeading } from "@litlfred/cat-harness/schemas/translation.js";
+import { kindHeading } from "@litlfred/cat-harness/schemas/content/translation.js";
 import { resolveLiquidValues } from "@litlfred/cat-harness-tools/pipeline/liquid-values.js";
 import { bundleEditorProfiles, type SuggestProfile } from "@litlfred/cat-harness-tools/pipeline/editor-profiles.js";
 import { documentManifests, katexMacros, renderDocumentHtml } from "./build-document-site.js";

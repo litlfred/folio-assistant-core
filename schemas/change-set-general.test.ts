@@ -5,7 +5,7 @@
  */
 import { describe, expect, test } from "bun:test";
 
-import { RENDERED_IMPACT_TAG } from "@litlfred/cat-harness/schemas/rendered-impact.js";
+import { RENDERED_IMPACT_TAG } from "@litlfred/cat-harness/schemas/ui/rendered-impact.js";
 import { CHANGE_SET_SCHEMA, ChangeSetSchema } from "./public-comment.js";
 
 const base = {

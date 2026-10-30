@@ -23,7 +23,7 @@ import {
   type AdjudicationOutcome,
   type AdjudicationRequest,
 } from "./adjudication.js";
-import { ACTOR_KINDS } from "@litlfred/cat-harness/schemas/role-graph.js";
+import { ACTOR_KINDS } from "@litlfred/cat-harness/schemas/process/role-graph.js";
 
 const REQUEST: AdjudicationRequest = {
   $schema: ADJUDICATION_SCHEMA_TAG,
