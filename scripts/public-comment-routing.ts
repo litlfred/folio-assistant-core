@@ -17,23 +17,15 @@
  * secondary group (REQ-04).
  *
  * A change-set's committee is the plurality of its routed comments' primary
- * groups. Ties go to the more specific domain group (REQ-03's rule, e.g. a
- * terminology point inside a financing section resolves to Metadata
- * registries), which is `TWG_GROUPS`' order.
+ * groups, unless a person in the editor or committee lane has re-routed the
+ * change-set to another committee by hand (`cs.committee`, bean `se3i`). Ties
+ * go to the more specific domain group (REQ-03's rule, e.g. a terminology
+ * point inside a financing section resolves to Metadata registries), which is
+ * `TWG_GROUPS`' order.
  */
+import { isAgent, TWG_GROUPS, type TwgGroup } from "../schemas/public-comment.js";
 
-/** The fixed categories, most specific first: the tie-break order. */
-export const TWG_GROUPS = [
-  "Metadata registries",
-  "Supply chain",
-  "Financial systems",
-  "Clinical",
-  "WHO",
-  "Core architects",
-  "Editorial",
-  "No",
-] as const;
-export type TwgGroup = (typeof TWG_GROUPS)[number];
+export { isAgent, TWG_GROUPS, type TwgGroup };
 
 /** Spellings found in the returned logs that name a category unambiguously. */
 const ALIASES: Record<string, TwgGroup> = {
@@ -79,9 +71,6 @@ export interface RoutingFile {
   routings: Record<string, RoutingEntry>;
 }
 
-/** An agent wrote it; anything else is a person's override. */
-export const isAgent = (by: string) => /(^|-)agent$|^claude/i.test(by);
-
 function fromEntry(e: RoutingEntry): Routing {
   const group = twgGroup(e.category);
   return {
@@ -122,8 +111,10 @@ export function commentRouting(labels: Record<string, string> | undefined, entry
 }
 
 export interface ChangeSetRouting {
-  /** The plurality group of its routed comments; absent when none is routed. */
+  /** The effective committee: `override` when a person re-routed the change-set, else `derived`. */
   group?: TwgGroup;
+  /** The plurality group of its routed comments; absent when none is routed. */
+  derived?: TwgGroup;
   /** Comments routed to each group, most first. */
   counts: Array<{ group: TwgGroup; n: number }>;
   routed: number;
@@ -132,7 +123,7 @@ export interface ChangeSetRouting {
   total: number;
 }
 
-export function changeSetRouting(refs: string[], byRef: Map<string, Routing | undefined>): ChangeSetRouting {
+export function changeSetRouting(refs: string[], byRef: Map<string, Routing | undefined>, override?: TwgGroup): ChangeSetRouting {
   const n = new Map<TwgGroup, number>();
   let unmapped = 0;
   for (const r of refs) {
@@ -143,8 +134,11 @@ export function changeSetRouting(refs: string[], byRef: Map<string, Routing | un
   }
   const counts = [...n].map(([group, k]) => ({ group, n: k }))
     .sort((a, b) => b.n - a.n || TWG_GROUPS.indexOf(a.group) - TWG_GROUPS.indexOf(b.group));
+  const derived = counts[0]?.group;
+  const group = override ?? derived;
   return {
-    ...(counts[0] ? { group: counts[0].group } : {}),
+    ...(group ? { group } : {}),
+    ...(derived ? { derived } : {}),
     counts,
     routed: counts.reduce((s, c) => s + c.n, 0),
     unmapped,

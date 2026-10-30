@@ -70,6 +70,7 @@
       <bpmn:lane id="Lane_Committee" name="Review committee" partitionElementRef="reviewer">
         <bpmn:documentation>Recommends, does not decide: each member records one recommendation with a rationale, on GitHub or through the tool, and a later one replaces their earlier one. The editor weighs them.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_GroupChangeSets</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RerouteChangeSet</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_CommitteeRecommends</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Editor" name="Editor" partitionElementRef="editor">
@@ -127,11 +128,17 @@
       <bpmn:outgoing>Flow_ToGroup</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Task_GroupChangeSets" name="Agree each change-set's requirements on its issue">
-      <bpmn:documentation>A change-set gets its primary GitHub issue the first time somebody engages with it (the Discuss form, a recommendation or decision on one of its comments, a mention, a PR), opened by the folio's public-comment workflow; any number of other issues may discuss it and are linked. People agree the requirements there, and the committee or editor changes the record with cs-add / cs-remove / cs-title / cs-requirements / cs-merge / cs-split / cs-close / cs-new. The issue's change-set section is rendered from the record and put back if hand-edited; the nightly reconcile keeps every issue in line. The issue is for requirements; the PR that closes it is for preview, review and approval.</bpmn:documentation>
+      <bpmn:documentation>A change-set gets its primary GitHub issue the first time somebody engages with it (the Discuss form, a recommendation or decision on one of its comments, a mention, a PR), opened by the folio's public-comment workflow; any number of other issues may discuss it and are linked. People agree the requirements there, and the committee or editor changes the record with cs-add / cs-remove / cs-title / cs-requirements / cs-committee / cs-merge / cs-split / cs-close / cs-new. The issue's change-set section is rendered from the record and put back if hand-edited; the nightly reconcile keeps every issue in line. The issue is for requirements; the PR that closes it is for preview, review and approval.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToGroup</bpmn:incoming>
-      <bpmn:outgoing>Flow_GroupedToAssign</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ToReroute</bpmn:outgoing>
     </bpmn:task>
+    <bpmn:userTask id="Task_RerouteChangeSet" name="Re-route a change-set to another committee, with a reason">
+      <bpmn:documentation>public-comment-changesets reroute, or cs-committee: &lt;TWG&gt; — &lt;why&gt; on GitHub from a person in the committee or editor lane (bean se3i, issue #197). Moves the change-set to another TWG review committee and records who, when, from, to and why on the change-set record, so re-ingesting comments never resets it. Person-only (userTask): agents cannot re-route a change-set on their own.</bpmn:documentation>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
+      <bpmn:incoming>Flow_ToReroute</bpmn:incoming>
+      <bpmn:outgoing>Flow_GroupedToAssign</bpmn:outgoing>
+    </bpmn:userTask>
     <bpmn:task id="Task_Assign" name="Assign to committee members">
       <bpmn:documentation>public-comment assign: by GitHub login. A committee member who recommends on an unassigned comment is assigned it as they do.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
@@ -204,7 +211,8 @@
     <bpmn:sequenceFlow id="Flow_Duplicate" name="duplicate" sourceRef="Gateway_Triage" targetRef="EndEvent_Duplicate" />
     <bpmn:sequenceFlow id="Flow_ToAssign" name="to be weighed" sourceRef="Gateway_Triage" targetRef="Task_ProposeChangeSets" />
     <bpmn:sequenceFlow id="Flow_ToGroup" sourceRef="Task_ProposeChangeSets" targetRef="Task_GroupChangeSets" />
-    <bpmn:sequenceFlow id="Flow_GroupedToAssign" sourceRef="Task_GroupChangeSets" targetRef="Task_Assign" />
+    <bpmn:sequenceFlow id="Flow_ToReroute" sourceRef="Task_GroupChangeSets" targetRef="Task_RerouteChangeSet" />
+    <bpmn:sequenceFlow id="Flow_GroupedToAssign" sourceRef="Task_RerouteChangeSet" targetRef="Task_Assign" />
     <bpmn:sequenceFlow id="Flow_EditorialDirect" name="plain editorial" sourceRef="Gateway_Triage" targetRef="Task_EditorDecides" />
     <bpmn:sequenceFlow id="Flow_ToRecommend" sourceRef="Task_Assign" targetRef="Task_CommitteeRecommends" />
     <bpmn:sequenceFlow id="Flow_ToDecide" sourceRef="Task_CommitteeRecommends" targetRef="Task_EditorDecides" />
@@ -269,10 +277,13 @@
         <dc:Bounds x="730" y="215" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_GroupChangeSets_di" bpmnElement="Task_GroupChangeSets">
-        <dc:Bounds x="820" y="475" width="120" height="80" />
+        <dc:Bounds x="730" y="475" width="110" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_RerouteChangeSet_di" bpmnElement="Task_RerouteChangeSet">
+        <dc:Bounds x="860" y="475" width="110" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Assign_di" bpmnElement="Task_Assign">
-        <dc:Bounds x="820" y="345" width="120" height="80" />
+        <dc:Bounds x="860" y="345" width="110" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CommitteeRecommends_di" bpmnElement="Task_CommitteeRecommends">
         <dc:Bounds x="1000" y="475" width="120" height="80" />
@@ -342,13 +353,16 @@
         <bpmndi:BPMNLabel><dc:Bounds x="690" y="392" width="70" height="14" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToGroup_di" bpmnElement="Flow_ToGroup">
-        <di:waypoint x="800" y="295" />
-        <di:waypoint x="800" y="515" />
-        <di:waypoint x="820" y="515" />
+        <di:waypoint x="790" y="295" />
+        <di:waypoint x="790" y="475" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ToReroute_di" bpmnElement="Flow_ToReroute">
+        <di:waypoint x="840" y="515" />
+        <di:waypoint x="860" y="515" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_GroupedToAssign_di" bpmnElement="Flow_GroupedToAssign">
-        <di:waypoint x="880" y="475" />
-        <di:waypoint x="880" y="425" />
+        <di:waypoint x="915" y="475" />
+        <di:waypoint x="915" y="425" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_EditorialDirect_di" bpmnElement="Flow_EditorialDirect">
         <di:waypoint x="665" y="410" />
@@ -358,9 +372,9 @@
         <bpmndi:BPMNLabel><dc:Bounds x="820" y="680" width="70" height="14" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToRecommend_di" bpmnElement="Flow_ToRecommend">
-        <di:waypoint x="940" y="385" />
         <di:waypoint x="970" y="385" />
-        <di:waypoint x="970" y="515" />
+        <di:waypoint x="985" y="385" />
+        <di:waypoint x="985" y="515" />
         <di:waypoint x="1000" y="515" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToDecide_di" bpmnElement="Flow_ToDecide">

@@ -104,6 +104,40 @@ describe("public-comment-site", () => {
     expect(html).toContain('<label>Committee<select id="f-committee">');
     expect(html).toMatch(/<tr id="PC-0003"[^>]*data-committee="Core architects"/);
   });
+  test("a manually re-routed change-set shows the new committee and its move history on the dashboard (bean se3i, issue #197)", () => {
+    const routed = (ref: string, cat: string) => {
+      const c = comment();
+      return PublicCommentSchema.parse({ ...c, id: ref.toLowerCase(), public: { ...c.public, ref, labels: { "TWG consideration? AI categorisation": cat } } });
+    };
+    const rows = siteComments([routed("PC-0001", "Core architects"), routed("PC-0002", "Core architects")], anchors, { slug: "doc" });
+    const cs = {
+      id: "CS-001",
+      title: "Workflow alignment",
+      requirements: "Align workflow.",
+      refs: ["PC-0001", "PC-0002"],
+      status: "discussing",
+      issue: 12,
+      issues: [12],
+      committee: "Clinical",
+      committeeMoves: [
+        {
+          who: "chine",
+          when: "2026-10-16T10:00:00Z",
+          from: "Core architects",
+          to: "Clinical",
+          why: "This is about clinical workflow, not core architecture.",
+          url: "https://github.com/o/r/issues/12#issuecomment-1",
+        },
+      ],
+    } as unknown as ChangeSet;
+    const html = dashboardHtml(rows, { title: "T", slug: "doc", generated: "g", changeSets: [cs] });
+    expect(html).toContain('<tr id="CS-001" data-cs-status="discussing" data-committee="Clinical">');
+    expect(html).toContain('<b>Clinical</b> <span class="chip">rerouted</span>');
+    expect(html).toContain("move history (1)");
+    expect(html).toContain('Core architects → <b>Clinical</b> · <span class="muted"><a href="https://github.com/o/r/issues/12#issuecomment-1">chine</a>, 2026-10-16</span> — This is about clinical workflow, not core architecture.');
+    // The Committee filter dropdown includes Clinical even though no individual comment is routed to Clinical.
+    expect(html).toContain("<option>Clinical</option>");
+  });
   test("every comment has [edit] and [feedback], built in the page from its record (owner, 2026-10-13)", () => {
     const rows = siteComments([comment()], anchors, { slug: "doc", repo: "o/r", storeDir: "review/public-comment" });
     expect(rows[0]!.source).toBe("review/public-comment/comments/PC-0001.json");

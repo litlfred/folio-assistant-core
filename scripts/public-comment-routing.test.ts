@@ -35,8 +35,13 @@ describe("public-comment-routing", () => {
     ]);
     const x = changeSetRouting(["a", "b", "c", "d"], by);
     expect(x.group).toBe("Financial systems");
+    expect(x.derived).toBe("Financial systems");
     expect(x).toMatchObject({ routed: 2, unmapped: 1, total: 4 });
     expect(changeSetRouting(["d"], by).group).toBeUndefined();
+    // A person's manual override sets the change-set's committee while keeping the derived plurality.
+    const overridden = changeSetRouting(["a", "b", "c", "d"], by, "Clinical");
+    expect(overridden.group).toBe("Clinical");
+    expect(overridden.derived).toBe("Financial systems");
   });
   test("routing.json fills what the log left uncategorised; a person's entry beats the log's AI column", () => {
     const agent = { category: "Supply chain", by: "claude-agent", confidence: "medium" as const, rationale: "Product Registry." };

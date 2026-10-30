@@ -1385,7 +1385,7 @@
     {
       "id": "process_publiccomment.task_groupchangesets",
       "prefLabel": "Agree each change-set's requirements on its issue",
-      "definition": "A change-set gets its primary GitHub issue the first time somebody engages with it (the Discuss form, a recommendation or decision on one of its comments, a mention, a PR), opened by the folio's public-comment workflow; any number of other issues may discuss it and are linked. People agree the requirements there, and the committee or editor changes the record with cs-add / cs-remove / cs-title / cs-requirements / cs-merge / cs-split / cs-close / cs-new. The issue's change-set section is rendered from the record and put back if hand-edited; the nightly reconcile keeps every issue in line. The issue is for requirements; the PR that closes it is for preview, review and approval.",
+      "definition": "A change-set gets its primary GitHub issue the first time somebody engages with it (the Discuss form, a recommendation or decision on one of its comments, a mention, a PR), opened by the folio's public-comment workflow; any number of other issues may discuss it and are linked. People agree the requirements there, and the committee or editor changes the record with cs-add / cs-remove / cs-title / cs-requirements / cs-committee / cs-merge / cs-split / cs-close / cs-new. The issue's change-set section is rendered from the record and put back if hand-edited; the nightly reconcile keeps every issue in line. The issue is for requirements; the PR that closes it is for preview, review and approval.",
       "notation": "Task_GroupChangeSets",
       "source": "folio-assistant-core/processes/content/public-comment.bpmn#Task_GroupChangeSets",
       "status": "candidate"
@@ -1412,6 +1412,14 @@
       "definition": "public-comment-changesets seed / propose: the agent groups the comments to be weighed into change-sets, one per change the document may need, each a record under changesets/ with its requirements and members. A PROPOSAL: nothing is decided, no GitHub issue is opened, and a comment may sit in zero, one or several change-sets. The record is the only one; everything shown about a change-set is rendered from it.",
       "notation": "Task_ProposeChangeSets",
       "source": "folio-assistant-core/processes/content/public-comment.bpmn#Task_ProposeChangeSets",
+      "status": "candidate"
+    },
+    {
+      "id": "process_publiccomment.task_reroutechangeset",
+      "prefLabel": "Re-route a change-set to another committee, with a reason",
+      "definition": "public-comment-changesets reroute, or cs-committee: <TWG> — <why> on GitHub from a person in the committee or editor lane (bean se3i, issue #197). Moves the change-set to another TWG review committee and records who, when, from, to and why on the change-set record, so re-ingesting comments never resets it. Person-only (userTask): agents cannot re-route a change-set on their own.",
+      "notation": "Task_RerouteChangeSet",
+      "source": "folio-assistant-core/processes/content/public-comment.bpmn#Task_RerouteChangeSet",
       "status": "candidate"
     },
     {
