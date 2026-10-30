@@ -39,6 +39,6 @@ available_locales: ["ar", "zh", "en", "fr", "ru", "es"]
 
 无论内容类型为何，生命周期阶段都是相同的——不同之处在于每种类型所产生的*创作*（authoring）技能和*制品*（artifacts）。有关技能的完整列表以及驱动它们的角色，请参阅**[技能与角色]({{ '/docs/cat-harness/concepts/zh/skills.html' | relative_url }})**。
 
-八个阶段名称隐藏了两件事，而流程图将其清晰呈现：`author`（创作）与 `validate`（验证）并非先后继起的阶段，而是一个*循环*——每次提议的变更都会运行人机交互（HCI）验证关卡，编辑器在提交任何内容之前都会看到发现的问题——并且 `review`（审阅）会发生两次，一次针对每次变更，另一次针对组装后的草稿。这两者都在**[发布工作流]({{ '/docs/cat-harness/process/zh/publication-workflow.html' | relative_url }})**页面上展开为各自独立的图表。
+八个阶段名称隐藏了两件事，而流程图将其清晰呈现：`author`（创作）与 `validate`（验证）并非先后继起的阶段，而是一个*循环*——每次提议的变更都会运行人机交互（HCI）验证关卡，编辑器在提交任何内容之前都会看到发现的问题——并且 `review`（审阅）会发生两次，一次针对每次变更，另一次针对组装后的草稿。这两者都在**[发布工作流]({{ '/folio-assistant-core/process/zh/publication-workflow.html' | relative_url }})**页面上展开为各自独立的图表。
 
 ---

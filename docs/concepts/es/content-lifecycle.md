@@ -47,6 +47,6 @@ Dos cosas que los ocho nombres de etapa ocultan, y el diagrama no: `author` y
 por la compuerta de validación de HCI, y el editor ve los hallazgos antes de que se
 confirme nada—, y `review` ocurre dos veces, una por cambio y otra sobre el
 borrador ensamblado. Ambos se amplían en sus propios diagramas en la página del
-**[flujo de publicación]({{ '/docs/cat-harness/process/es/publication-workflow.html' | relative_url }})**.
+**[flujo de publicación]({{ '/folio-assistant-core/process/es/publication-workflow.html' | relative_url }})**.
 
 ---

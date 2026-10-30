@@ -44,7 +44,7 @@ concrète à affiner.
 [✎ Edit](https://github.com/litlfred/folio-assistant/edit/main/content/docs/evidence/why-this-is-a-subprocess.md){: .fa-node-edit title="Edit content/docs/evidence/why-this-is-a-subprocess.md" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" data-qa-family="block" data-qa-key="why-this-is-a-subprocess.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/evidence/why-this-is-a-subprocess.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/evidence/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <span class="fa-qa-badge fa-qa-unswept fa-qa-fam-translation" title="Translation QA: not swept — no sidecar for this block" aria-label="Translation QA: not swept — no sidecar for this block"><span class="fa-qa-tag">TR</span></span></span>
 
 Il s'exécute à l'intérieur de la boucle d'édition, entre la réservation du bean et la rédaction de la
-modification — voir [Édition et porte de validation IHM]({{ '/docs/cat-harness/process/fr/publication-workflow.html#editing-and-the-hci-validation-gate' | relative_url }}). Cet
+modification — voir [Édition et porte de validation IHM]({{ '/folio-assistant-core/process/fr/publication-workflow.html#editing-and-the-hci-validation-gate' | relative_url }}). Cet
 emplacement est précisément tout l'intérêt : **les preuves sont recueillies avant que la phrase ne soit
 écrite, et non rassemblées après coup pour en appuyer une.**
 
@@ -129,7 +129,7 @@ l'arborescence `sections/*.md` et, lorsqu'un document a été scanné, `ocr/page
 > `pdf-structure.py` n'a qu'un bouchon (stub) dans `sections/`, de sorte qu'une recherche limitée à sections
 > le manque entièrement. Mesuré : **26** arborescences `library/*/ocr/` contre **11**
 > `structure.json` enregistrant `"text_source": "ocr"`. Voir [Ingestion de
-> documents]({{ '/docs/cat-harness/guides/fr/document-ingestion.html' | relative_url }}).
+> documents]({{ '/folio-assistant-core/guides/fr/document-ingestion.html' | relative_url }}).
 
 **Contenu de confiance — DAK L2, IG L3.** Directives déjà arbitrées : Kits
 d'adaptation numérique SMART de l'OMS au niveau L2, Guides d'implémentation FHIR au niveau L3. Une recommandation

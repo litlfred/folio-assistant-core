@@ -37,7 +37,7 @@ _本页面生成自 [`content/docs/evidence/`](https://github.com/litlfred/folio
 
 [✎ Edit](https://github.com/litlfred/folio-assistant/edit/main/content/docs/evidence/why-this-is-a-subprocess.md){: .fa-node-edit title="Edit content/docs/evidence/why-this-is-a-subprocess.md" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" data-qa-family="block" data-qa-key="why-this-is-a-subprocess.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/evidence/why-this-is-a-subprocess.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/evidence/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <span class="fa-qa-badge fa-qa-unswept fa-qa-fam-translation" title="Translation QA: not swept — no sidecar for this block" aria-label="Translation QA: not swept — no sidecar for this block"><span class="fa-qa-tag">TR</span></span></span>
 
-它在编辑循环内部运行，位于认领 bean 与起草变更之间——参见[编辑与 HCI 验证关卡]({{ '/docs/cat-harness/process/zh/publication-workflow.html#editing-and-the-hci-validation-gate' | relative_url }})。处于这一位置正是其核心要义所在：**证据是在撰写语句之前收集的，而不是在事后拼凑以支持该语句。**
+它在编辑循环内部运行，位于认领 bean 与起草变更之间——参见[编辑与 HCI 验证关卡]({{ '/folio-assistant-core/process/zh/publication-workflow.html#editing-and-the-hci-validation-gate' | relative_url }})。处于这一位置正是其核心要义所在：**证据是在撰写语句之前收集的，而不是在事后拼凑以支持该语句。**
 
 先起草推荐意见、后寻找证据的做法，不过是为了寻求证实的文献检索。而正是步骤的先后顺序使其避免沦为这种做法。
 
@@ -98,7 +98,7 @@ PICO 会保留在推荐意见上，而不是在检索结束后就被丢弃。后
 
 **受信任的来源 — L1。** `library/` 下已摄入的原始文献：`sections/*.md` 目录树，以及扫描文档对应的 `ocr/page-NNN.txt`。
 
-> **已知盲点。** 经过 OCR 处理但从未通过 `pdf-structure.py` 重新运行的文档在 `sections/` 中只有一个存根（stub），因此仅针对 sections 的检索会完全漏掉它。实测数据：**26** 个 `library/*/ocr/` 树，而记录 `"text_source": "ocr"` 的 `structure.json` 仅有 **11** 个。参见[文档摄入]({{ '/docs/cat-harness/guides/zh/document-ingestion.html' | relative_url }})。
+> **已知盲点。** 经过 OCR 处理但从未通过 `pdf-structure.py` 重新运行的文档在 `sections/` 中只有一个存根（stub），因此仅针对 sections 的检索会完全漏掉它。实测数据：**26** 个 `library/*/ocr/` 树，而记录 `"text_source": "ocr"` 的 `structure.json` 仅有 **11** 个。参见[文档摄入]({{ '/folio-assistant-core/guides/zh/document-ingestion.html' | relative_url }})。
 
 **受信任的内容 — L2 DAK、L3 IG。** 已经过裁定的指南：L2 的 WHO SMART 数字化适应包（DAK），以及 L3 的 FHIR 实施指南（IG）。在已发布的 DAK 中采用的推荐意见**属于另一种不同类型的证据**，不同于一手原始研究——它是一项*先验决定*（prior decision），拥有其自身的溯源与分级——且必须作为此类决定予以引用。将其洗白包装为一手证据，正是这一区分旨在防止的失效模式。
 

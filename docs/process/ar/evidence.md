@@ -43,7 +43,7 @@ _تم توليد هذه الصفحة من [`content/docs/evidence/`](https://git
 [✎ Edit](https://github.com/litlfred/folio-assistant/edit/main/content/docs/evidence/why-this-is-a-subprocess.md){: .fa-node-edit title="Edit content/docs/evidence/why-this-is-a-subprocess.md" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" data-qa-family="block" data-qa-key="why-this-is-a-subprocess.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/evidence/why-this-is-a-subprocess.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/evidence/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <span class="fa-qa-badge fa-qa-unswept fa-qa-fam-translation" title="Translation QA: not swept — no sidecar for this block" aria-label="Translation QA: not swept — no sidecar for this block"><span class="fa-qa-tag">TR</span></span></span>
 
 تعمل هذه العملية داخل حلقة التحرير، بين حجز الـ bean وصياغة
-التغيير — انظر [التحرير وبوابة التحقق من التفاعل البشري الحاسوبي (HCI)]({{ '/docs/cat-harness/process/ar/publication-workflow.html#editing-and-the-hci-validation-gate' | relative_url }}). وهذا
+التغيير — انظر [التحرير وبوابة التحقق من التفاعل البشري الحاسوبي (HCI)]({{ '/folio-assistant-core/process/ar/publication-workflow.html#editing-and-the-hci-validation-gate' | relative_url }}). وهذا
 الموضع هو جوهر الأمر برمته: **يتم جمع الأدلة قبل كتابة الجملة،
 لا تجميعها لاحقًا لدعم ما كُتب.**
 
@@ -128,7 +128,7 @@ _تم توليد هذه الصفحة من [`content/docs/evidence/`](https://git
 > `pdf-structure.py` يمتلك فقط عنصرًا بدائيًا في `sections/`، وبالتالي فإن البحث المقتصر على sections
 > سيتجاهله تمامًا. المقاس فعليًا: **26** شجرة `library/*/ocr/` مقابل **11**
 > ملف `structure.json` يسجل `"text_source": "ocr"`. انظر [استيعاب
-> المستندات]({{ '/docs/cat-harness/guides/ar/document-ingestion.html' | relative_url }}).
+> المستندات]({{ '/folio-assistant-core/guides/ar/document-ingestion.html' | relative_url }}).
 
 **محتوى موثوق — L2 DAKs، L3 IGs.** توجيهات تم البت فيها مسبقًا: مجموعات التكييف
 الرقمي SMART Digital Adaptation Kits التابعة لمنظمة الصحة العالمية في المستوى L2، وأدلة تطبيق FHIR Implementation Guides في المستوى L3. إن أي توصية
