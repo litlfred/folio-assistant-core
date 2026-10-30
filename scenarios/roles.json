@@ -67,6 +67,7 @@
     {
       "role": "authoring-agent",
       "skills": [
+        "block-change-summary",
         "document-authoring",
         "document-structure",
         "normative-statements"
