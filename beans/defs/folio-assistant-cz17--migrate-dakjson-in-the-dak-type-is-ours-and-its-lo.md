@@ -8,7 +8,7 @@ priority: normal
 tags:
     - rehomed
 created_at: 2026-09-18T21:36:56Z
-updated_at: 2026-10-30T12:30:00Z
+updated_at: 2026-10-30T13:30:00Z
 parent: folio-assistant-0lmb
 ---
 
@@ -157,3 +157,17 @@ Where: (three-way hunk)
    `contentTypes.dak` in `index.config.json` (cat-harness#521), and two
    markers that disagree are reported, not silently resolved (79t3's Done when).
 ```
+
+_2026-10-30T13:30:00Z_: **Item 3, `ig`, is done.** The owner chose the form by card at 12:40Z: "A. ig section in index.config", not `sushi-config.yaml` as the marker. At 12:41Z the owner added a principle: "a harness can point to a repo, but doesnt want to automatically slurpo up all content in a repo. harness desclares what it it pays attention to in the repo." Merged:
+- litlfred/fhir-harness#194 (`3c3efa17`): `schemas/ig-content-type.ts` registers `ig` as `{ indexSection: "ig" }`. The section carries `include`, the repository paths the harness reads. `igDeclares` and `assertIgDeclares` refuse any other path, and an empty or missing list declares nothing. It has 8 tests, and the type IRI is `…/ns/ig-ast#IgRepository`.
+- litlfred/cat-harness#720 (`ecc231a4`): `directory-conventions.md` gains a markers-table row for `contentTypes.ig`, and the principle as its own subsection.
+- litlfred/smart-base#209 (`b89284d4`): smart-base declares `contentTypes.ig` with its include list. With consent, fhir-harness and cat-harness are re-pinned to the commits above, and cat-harness-tools, bootstrap-tools and bootstrap to their mains, which the new cat-harness needs.
+
+`sushi` is unchanged: `sushi-config.yaml` stays SUSHI's marker, registered in smart-base's `dak-content-type.ts`.
+
+Follow-ups:
+- (a) Gate fhir-harness's existing IG readers (`build-ig-indexes.ts`, `ig-repo-site.ts`, `build-ig-site.ts`, `fsh-cone.ts` and others) on `include`. An IG that does not declare the section yet must be treated as legacy, not broken.
+- (b) Declare `contentTypes.ig` in the other litlfred smart-* IGs.
+- (c) Nothing imports `ig-content-type.ts` (or `dak-content-type.ts`) outside tests yet, so the default registry learns `ig` only when the module is loaded.
+
+Item 4 is still open. Report: litlfred/aai-programme#26.
