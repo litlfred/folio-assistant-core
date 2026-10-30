@@ -57,9 +57,15 @@ async function expand(doc: object): Promise<Record<string, unknown>> {
 }
 
 describe("the corpus this runs over", () => {
-  it("is the three catalogue items that name a record", () => {
-    // If this changes, the expectation is the thing to re-read, not to bump.
-    expect(CASES.map((c) => c.node.handle).sort()).toEqual(["10665/145714", "10665/332098", "10665/36842"]);
+  it("holds the three worked examples among the catalogue items that name a record", () => {
+    // Not an exact list. Since 2026-10-30 who-iris is the one home for every
+    // IRIS item the harness layers had ingested (the owner's "pre-CDN
+    // preview"), so the corpus grows as items move in. The three worked
+    // examples carry the hand-transcribed records these tests were written
+    // against, and they must stay in it.
+    expect(CASES.map((c) => c.node.handle)).toEqual(
+      expect.arrayContaining(["10665/145714", "10665/332098", "10665/36842"]),
+    );
   });
 });
 
