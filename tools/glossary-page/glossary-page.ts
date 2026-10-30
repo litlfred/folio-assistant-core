@@ -1,5 +1,5 @@
-import { toolFactory } from "@litlfred/cat-harness/schemas/tools/tool-folders.js";
-import { defineTool } from "@litlfred/cat-harness/schemas/tools/tool.js";
+import { toolFactory } from "@litlfred/cat-harness-tools/schemas/tools/tool-folders.js";
+import { defineTool } from "@litlfred/cat-harness-tools/schemas/tools/tool.js";
 
 // The glossary page, as the Tool core's `glossary` VISUALISER is
 // `renderedBy` (owner, 2026-10-09: "Need harness to declare visualizer is

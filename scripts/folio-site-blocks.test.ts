@@ -8,8 +8,8 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { configureFormalRefResolver, formalRefResolverConfigured } from "@litlfred/cat-harness/schemas/formal-ref.js";
-import { configureLeanPackages, leanPackageByName, LEAN_REF_PATTERN, parseLeanRef } from "@litlfred/cat-harness/schemas/lean-packages.js";
+import { configureFormalRefResolver, formalRefResolverConfigured } from "@litlfred/cat-harness-tools/schemas/formal-ref.js";
+import { configureLeanPackages, leanPackageByName, LEAN_REF_PATTERN, parseLeanRef } from "@litlfred/cat-harness-tools/schemas/lean-packages.js";
 import { blockLean, blockQaReport, criterionGroup, latestEntryIndex, loadLeanStatus, qaSummary } from "./folio-site-blocks.js";
 
 const h12 = (s: string) => createHash("sha256").update(s).digest("hex").slice(0, 12);

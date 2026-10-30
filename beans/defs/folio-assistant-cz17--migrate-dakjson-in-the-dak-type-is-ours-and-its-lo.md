@@ -2,13 +2,13 @@
 # folio-assistant-cz17
 $schema: bean/1.0.0
 title: 'Migrate dak.json in: the DAK type is ours, and its Logical Model is pending upstream'
-status: in-progress
+status: completed
 type: task
 priority: normal
 tags:
     - rehomed
 created_at: 2026-09-18T21:36:56Z
-updated_at: 2026-10-30T13:10:50Z
+updated_at: 2026-10-30T19:56:00Z
 parent: folio-assistant-0lmb
 ---
 
@@ -187,3 +187,31 @@ _2026-10-30T16:25:00Z_: **Item 4, smart-immunizations, is done.** The owner chos
 - SUSHI 3.16.5 reports 0 errors. `check:ig-annex-links` and `check:subgraphs` pass.
 
 Both called `fhirbuild.yml` files are only the HL7 autobuild trigger. The `dak.json` reading that smart-base#156 changed is in `ghbuild.yml`, which smart-immunizations does not call. Still open: the same move for smart-trust, smart-hiv and smart-ra (follow-up (b)), and item 2. Report: litlfred/aai-programme#26.
+
+_2026-10-30T16:55:00Z_: **Follow-up (b) is done.** smart-trust, smart-hiv and smart-ra now declare `contentTypes.ig.include`, following the smart-immunizations#89 model. Evidence: owner card 2026-10-30T12:40Z, "A. ig section in index.config", merge window to 18:13Z. Merged:
+- litlfred/smart-trust#82 (`8652594e`). The list holds `sushi-config.yaml`, `ig.ini`, `local-template/`, every entry under `input/` (11) and `fsh-generated/`. `local-template/` is the template `ig.ini` names (`template = #local-template`); `build-ig-site`'s `localTemplateIncludes` renders its `includes/`, and `stageIgSite` copies only declared paths. Re-pinned with consent to the #89 set: smart-base `c89c2057`, fhir-harness `d45d9917`, cat-harness `ecc231a4`, cat-harness-tools `9326f5d7`, bootstrap `3ce2b5d6`, bootstrap-tools `fdceeca3`. SUSHI reports 0 errors. `check:subgraphs` reports 2 broken links, both inside the unchanged folio-assistant-core pin `e332458` (`archiving-arxiv.md` and `filing-dublin-core.md` → `../../../../cat-harness/docs/source/…`). The PR's CI ("Harness PR checks") was still queued at merge time, and the PR was merged under "merge all ready".
+- litlfred/smart-hiv#21 (`89bac6ba`). The list holds `sushi-config.yaml`, `ig.ini`, `local-template/`, `templates/` (sushi-config's `path-liquid` is `templates/liquid`), every entry under `input/` (18) and `fsh-generated/`. Re-pinned to the same set. SUSHI reports 0 errors, and `check:subgraphs` exits 0.
+- litlfred/smart-ra#104 (`bae605d7`). The list holds `sushi-config.yaml`, `ig.ini`, every entry under `input/` (24) and `fsh-generated/`; the folio is the `dpi-h-ra` document instance's and is not listed. There was no re-pin: smart-ra#102 had just pinned fhir-harness `c11cc79`, which is past #198. SUSHI reports 0 errors, and `check:subgraphs` exits 0.
+
+SUSHI needed `hl7.fhir.uv.tools.r4#latest`, which was served from fhir-package-mirror (`7bd59336…`) as a localhost registry (`FPL_REGISTRY`) and resolved to 1.3.0. Without it, smart-hiv shows the 12 `logical-target` errors that `fhir-validation` documents.
+
+**New finding, not fixed:** cat-harness-tools ≥ `9326f5d7` renders workflow pages that link `<site>/cat-harness/state.jsonld` (render stage 3, `dynamic-state-export.ts`). Only `render-pipeline.ts` writes that file; `build-instance-site.ts` does not. A folio site build with those pins (smart-ra `stage-local --dry-run`) therefore fails its link gate on 1 unresolved link (`en/cat-harness/beans/cat-harness-tools/workflows/crdm-detect-evaluation-r-…/index.html`) and refuses to publish. smart-ra main now pins cat-harness-tools `f5349b5`, which is past `9326f5d7`.
+
+Still open: item 2, and dropping `dak.json` in smart-trust, which still has one. Report: litlfred/aai-programme#26.
+
+_2026-10-30T17:50:00Z_: **smart-trust has dropped `dak.json`.** The owner chose by card at 16:56Z: "A. Do both now". Merged litlfred/smart-trust#84 (`6a638759`), following smart-immunizations#89:
+- `dak.json` moved unchanged into `index.config.json` `contentTypes.dak` (`smart.who.int.trust`), and the file is deleted. Nothing in the repository read it. In the mounted layers, smart-base's readers take `contentTypes.dak` first, and the cat-harness-tools translation fallback needs a `translations` block, which this file never had.
+- `.github/workflows/fhirbuild.yml` calls `litlfred/smart-base/.github/workflows/fhirbuild.yml@main`, not WorldHealthOrganization's. Neither side has inputs or secrets. smart-trust has no `ghbuild.yml`, and no other workflow read `dak.json`.
+- `contentTypes.ig.include` (#82, 15 entries) is unchanged. #84 made no re-pins: it was branched on the #89 set, and main had meanwhile been re-pinned by #85 (re-pin wave, `1e3dd34`), which merged cleanly with it.
+- SUSHI 3.16.5 reported 0 errors and 28 warnings. `readIgDakMetadata` reads `index.config.json#contentTypes.dak`, at both pin sets. `check:ig-annex-links` found no annex declared. `check:subgraphs` exited 1, and main fails the same way. At the #89 pins, 2 links break, inside folio-assistant-core `e332458` (fixed on its main, but that re-pin brings 105 commits). At #85's pins, 83 links break: 49 in cat-harness-tools-tests, 22 in skills, 8 in schemas, 3 in cat-harness-tools-scripts and 1 in core-skills. They come from that re-pin, not from this change. The PR's CI passed prepare and typecheck; the test shards were still queued at merge, under "merge all ready".
+- litlfred/smart-trust#77 (the earlier attempt, opened before #82) is now superseded and still open. Merging it would roll smart-base and cat-harness back to `e61ef9c` / `6f7f10a`.
+
+No litlfred smart-* IG carries `dak.json` any more: smart-hiv and smart-ra have none on main. Still open: item 2. Report: litlfred/aai-programme#26.
+
+_2026-10-30T19:56:00Z_: **Completed.** Every item is done to the agreed scope:
+- Item 1: the source wrapper is typed (smart-base#151, owner card A, 2026-10-24); the inline instance stays `unknown` by that choice.
+- Item 2: `dak` and `sushi` are registered by smart-base `schemas/dak-content-type.ts` (`indexSection: contentTypes.dak`), loaded by smart-base#210, so a repository declaring `contentTypes.dak` is described as a DAK instance (`content-types-stack.test.ts`).
+- Item 3: `ig` (fhir-harness#194, #198; smart-base#209).
+- Item 4: no litlfred smart-* IG carries `dak.json` (smart-immunizations#89, smart-trust#84); `directory-conventions.md` updated (cat-harness#521); smart-base#211 (`625ab83`, merged 19:3xZ) renames the `dak-config-from-sushi` tool and docs to `contentTypes.dak`.
+
+Superseded and closed unmerged: smart-immunizations#88 (replaced by #89) and folio-assistant-core#239 (its log lines are covered by the entries above). smart-trust#77 is also superseded (see 17:50Z) and should be closed. WHO repos are untouched. Thread "Finish IG and DAK beans", session https://claude.ai/code/session_01Qmmkt9C9fukFK42vgZRrKc.

@@ -48,8 +48,8 @@ import type { PhrasingContent, Text } from "mdast";
 // `PhrasingContent` and every node built below needs a cast.
 import type {} from "mdast-util-directive";
 import type {} from "mdast-util-math";
-import type { Block, Chapter, Paper, Section } from "@litlfred/cat-harness/schemas/types.js";
-import { ChapterSchema, PaperSchema } from "@litlfred/cat-harness/schemas/constraints.js";
+import type { Block, Chapter, Paper, Section } from "@litlfred/cat-harness-tools/schemas/types.js";
+import { ChapterSchema, PaperSchema } from "@litlfred/cat-harness-tools/schemas/constraints.js";
 import { buildGlossary } from "./build-glossary";
 
 // Round-trip parser/serializer with directive support. Must mirror

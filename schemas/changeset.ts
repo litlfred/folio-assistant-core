@@ -67,8 +67,8 @@ import { walkBlocks } from "@litlfred/cat-harness-tools/pipeline/qa-utils.js";
 import { parseManifestStringArray } from "@litlfred/cat-harness-tools/pipeline/qa-checkers-extended.js";
 import { maskStringsAndComments, parseStringField } from "@litlfred/cat-harness-tools/pipeline/uses-field.js";
 import { manifestFields, type ManifestFields } from "./manifest-fields.js";
-import { loadContributions } from "@litlfred/cat-harness/schemas/kg/harness-config.ts";
-import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness/schemas/content/contributions.ts";
+import { loadContributions } from "@litlfred/cat-harness-tools/schemas/kg/harness-config.ts";
+import { ContributionRegistry, type FolioContribution } from "@litlfred/cat-harness-tools/schemas/content/contributions.ts";
 
 // ── Schema ──────────────────────────────────────────────────────
 

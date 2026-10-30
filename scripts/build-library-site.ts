@@ -39,7 +39,7 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
 
-import { folioDir, readDeclaration } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
+import { folioDir, readDeclaration } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { readEntryDocument, DOCUMENT_VIEW_JS, type DocumentView, type EntryLinks } from "@litlfred/cat-harness-tools/scripts/lib/library-document.ts";
 import { VIEWER_CSS } from "@litlfred/cat-harness-tools/scripts/gen-library-viz.ts";
 import { EDIT_LINKS_RUNTIME } from "@litlfred/cat-harness-tools/src/core/edit-links.js";

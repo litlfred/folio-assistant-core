@@ -8,7 +8,7 @@ priority: normal
 tags:
     - rehomed
 created_at: 2026-09-20T15:07:23Z
-updated_at: 2026-10-30T12:00:00Z
+updated_at: 2026-10-30T17:55:00Z
 parent: folio-assistant-yj32
 ---
 
@@ -84,8 +84,8 @@ happen; it may not decide that it happens.
 
 ## Done when
 
-- [ ] Initialisation position is recorded per harness and readable
-- [ ] A per-harness health notion exists, distinct from repository health
+- [x] Initialisation position is recorded per harness and readable
+- [x] A per-harness health notion exists, distinct from repository health
 - [ ] The harness card is a todo sticky carrying outstanding work, a
       next-action recommendation, and health badges — and recommends without
       acting
@@ -212,3 +212,5 @@ First run on the composed index: every harness reports, and several layers have 
 ## Progress 2026-10-29
 
 cat-harness-tools#766 (harness:state, boxes 1-2) merged 2026-10-29. Left: the cat-harness Tool definition and the folio-assistant site-build line; box 3 stays paused with todos/stickies. (Lane B drain thread.)
+
+_2026-10-30T17:55:00Z_ — Boxes 1 and 2 done: [litlfred/cat-harness#711](https://github.com/litlfred/cat-harness/pull/711) (the `harness:state` Tool) merged 12:41Z, and [litlfred/folio-assistant#2724](https://github.com/litlfred/folio-assistant/pull/2724) (the site-build line) merged 12:46Z. Box 3 stays paused by the owner's 2026-10-24 ruling (todos and stickies, `95sk` R29), so this bean stays in progress with nothing to do until that pause lifts. (Thread "Fix publish failure and orphan beans", https://claude.ai/code/session_01Qmmkt5bHqcmhAXH3s3z4s5)

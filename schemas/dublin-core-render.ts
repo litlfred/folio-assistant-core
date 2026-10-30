@@ -67,6 +67,7 @@
  * @conformsTo w3c-xsd11-structures
  */
 import {
+  bcp47,
   DC_ELEMENTS_NS,
   DCTERMS_NS,
   DSPACE_NS,
@@ -201,6 +202,7 @@ export function dcJsonLdContext(base?: string): Record<string, unknown> {
 
 type Literal = { "@value": string; "@language"?: string; "@type"?: string };
 
+
 function literal(v: DcValue, ses: string | undefined): Literal {
   const out: Literal = { "@value": v.value };
   const s = sesApplies(ses, v);
@@ -208,7 +210,7 @@ function literal(v: DcValue, ses: string | undefined): Literal {
   // value object. A scheme the field name asserts wins, because it says what
   // the string IS; the language tag on an ISO date says nothing about it.
   if (s !== undefined) out["@type"] = `${DCTERMS_NS}${s}`;
-  else if (v.language !== undefined) out["@language"] = v.language;
+  else if (v.language !== undefined) out["@language"] = bcp47(v.language);
   return out;
 }
 
@@ -306,7 +308,7 @@ export function renderDcXml(rec: DublinCoreRecord): string {
       const attrs: string[] = [];
       const s = sesApplies(m?.ses, v) ?? m?.ves;
       if (s !== undefined) attrs.push(`xsi:type="dcterms:${s}"`);
-      if (v.language !== undefined) attrs.push(`xml:lang="${xmlEsc(v.language)}"`);
+      if (v.language !== undefined) attrs.push(`xml:lang="${xmlEsc(bcp47(v.language))}"`);
       const a = attrs.length ? ` ${attrs.join(" ")}` : "";
       lines.push(`  <${el}${a}>${xmlEsc(v.value)}</${el}>${note}`);
     }

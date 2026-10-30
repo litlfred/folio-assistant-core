@@ -33,6 +33,7 @@
  * Nothing here decides anything. It renders the store, and the store is moved
  * only by `public-comment.ts`.
  */
+import { spawnSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 
@@ -43,7 +44,7 @@ import { Store } from "./public-comment.js";
 import { BLOCK_ACTIONS_CSS, compactActionsHtml, compactActionsScript, DEFAULT_TEMPLATE, readIssueForm, type BlockActionsConfig } from "./block-actions.js";
 import { changeSetRouting, commentRouting, type Routing, type RoutingFile, TWG_GROUPS } from "./public-comment-routing.js";
 import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
-import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage } from "./document-site-route.js";
+import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts";
 import { escapeForRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 import { scopeCss } from "./scope-css.js";
@@ -51,6 +52,37 @@ import { scopeCss } from "./scope-css.js";
 /** `folio-staging.yml`'s slug rule, step `slug`. */
 export const stagingSlug = (branch: string) =>
   branch.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+
+/**
+ * The change-set review page of a branch's staging preview:
+ * `<site>/STAGING/<slug>/en/review/` (owner, 2026-10-30: a comment or
+ * change-set with a pull request links its staging review page). With a
+ * recorded `stagingUrl`, that preview's own review page.
+ */
+export const stagingReviewUrl = (site: string | undefined, branch: string, stagingUrl?: string): string | undefined => {
+  const base = stagingUrl ? stagingUrl.replace(/\/$/, "") : site ? `${site.replace(/\/$/, "")}/STAGING/${stagingSlug(branch)}` : undefined;
+  return base === undefined ? undefined : `${base}/${REVIEW_PAGE_DIR}/`;
+};
+
+/**
+ * The repository's open pull requests, read from GitHub when the site is
+ * built. A staging preview exists only while its pull request is open, so a
+ * staging link is drawn only for these (owner, 2026-10-30: links to merged
+ * PRs' previews 404). A change-set's `pr` can also name the pull request
+ * that PROPOSED it, long merged. Undefined when GitHub cannot be read: then
+ * no staging link is drawn rather than a dead one.
+ */
+export function openPullRequests(repo: string): ReadonlySet<number> | undefined {
+  const r = spawnSync("gh", ["api", "--paginate", `repos/${repo}/pulls?state=open&per_page=100`, "--jq", ".[].number"], { encoding: "utf-8" });
+  if (r.status !== 0) {
+    console.warn(`public-comment-site: open pull requests of ${repo} not read (${(r.stderr || r.error?.message || "").trim().split("\n")[0]}); no staging links drawn`);
+    return undefined;
+  }
+  return new Set(r.stdout.split("\n").filter(Boolean).map(Number));
+}
+
+/** Whether a pull request's staging preview can be linked: only while it is open. */
+const isOpen = (openPrs: ReadonlySet<number> | undefined, n: number | undefined): boolean => n !== undefined && openPrs !== undefined && openPrs.has(n);
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
@@ -76,19 +108,22 @@ export interface SiteComment {
   source?: string;
   decision?: { code: string; label: string; reason: string; by: string };
   /** The change-sets it is in (issue #2183), derived from the change-set records. */
-  changeSets: Array<{ id: string; title: string; status: string; issue?: number }>;
-  links: { document?: string; before?: string; after?: string; pr?: string; discussion?: string; search?: string; record?: string };
+  changeSets: Array<{ id: string; title: string; status: string; issue?: number; pr?: number; review?: string }>;
+  links: { document?: string; before?: string; after?: string; pr?: string; review?: string; discussion?: string; search?: string; record?: string };
 }
 
 export function siteComments(
   all: PublicComment[],
   anchors: ReviewAnchors,
-  opts: { slug: string; site?: string; repo?: string; storeDir?: string; changeSets?: ChangeSet[]; toRoot?: string; routing?: RoutingFile },
+  opts: { slug: string; site?: string; repo?: string; storeDir?: string; changeSets?: ChangeSet[]; toRoot?: string; routing?: RoutingFile; openPrs?: ReadonlySet<number> },
 ): SiteComment[] {
   const toRoot = opts.toRoot ?? "../";
   const inSets = new Map<string, SiteComment["changeSets"]>();
   for (const cs of opts.changeSets ?? [])
-    if (cs.status !== "merged") for (const r of cs.refs) (inSets.get(r) ?? inSets.set(r, []).get(r)!).push({ id: cs.id, title: cs.title, status: cs.status, ...(cs.issue ? { issue: cs.issue } : {}) });
+    if (cs.status !== "merged") {
+      const review = cs.pr && isOpen(opts.openPrs, cs.pr.number) ? stagingReviewUrl(opts.site, cs.pr.branch) : undefined;
+      for (const r of cs.refs) (inSets.get(r) ?? inSets.set(r, []).get(r)!).push({ id: cs.id, title: cs.title, status: cs.status, ...(cs.issue ? { issue: cs.issue } : {}), ...(cs.pr ? { pr: cs.pr.number } : {}), ...(review ? { review } : {}) });
+    }
   const blocks = new Map(anchors.blocks.map((b) => [b.label, b]));
   const sections = new Map(anchors.sections.map((s) => [s.label, s]));
   return all.map((c) => {
@@ -131,6 +166,11 @@ export function siteComments(
         ...(site && c.targetLabel && cs ? { before: `${site}/${documentPage(opts.slug)}${frag}` } : {}),
         ...(cs ? { after: cs.stagingUrl ? `${cs.stagingUrl.replace(/\/$/, "")}/${documentPage(opts.slug)}${frag}` : site ? `${site}/STAGING/${stagingSlug(cs.branch)}/${documentPage(opts.slug)}${frag}` : undefined } : {}),
         ...(cs?.pr && opts.repo ? { pr: `https://github.com/${opts.repo}/pull/${cs.pr}` } : {}),
+        // The staging review page: the comment's own change's, else that of
+        // the first change-set it is in that has a pull request.
+        ...((review) => (review ? { review } : {}))(
+          (cs?.pr && isOpen(opts.openPrs, cs.pr) ? stagingReviewUrl(site, cs.branch, cs.stagingUrl) : undefined) ?? (inSets.get(p.ref) ?? []).find((x) => x.review)?.review,
+        ),
         ...(p.discussion ? { discussion: p.discussion } : {}),
         ...(opts.repo ? { search: `https://github.com/${opts.repo}/search?type=issues&q=${encodeURIComponent(`"${p.ref}"`)}` } : {}),
         ...(opts.repo && opts.storeDir ? { record: `https://github.com/${opts.repo}/blob/main/${opts.storeDir}/comments/${p.ref}.json` } : {}),
@@ -183,6 +223,10 @@ export function dashboardHtml(
   rows: SiteComment[],
   meta: {
     title: string; slug: string; generated: string; repo?: string; changeSets?: ChangeSet[]; toRoot?: string; records?: string;
+    /** The published site, for each change-set's staging review page. */
+    site?: string;
+    /** The open pull requests: only their staging previews are linked. */
+    openPrs?: ReadonlySet<number>;
     /** [edit] and [feedback] on every comment, the platform's block recipe (edit-links.ts). Absent: none. */
     actions?: BlockActionsConfig;
     /** The dashboard's own route, so a feedback issue links back to the comment. */
@@ -235,7 +279,8 @@ export function dashboardHtml(
     .map(
       (c) => `<tr id="${esc(c.id)}" data-cs-status="${esc(c.status)}" data-committee="${esc(csCommittee(c).group)}"><td>${esc(c.id)}</td><td>${esc(c.title)}<details><summary class="muted">requirements</summary><p>${esc(c.requirements).replace(/\n/g, "<br>")}</p></details><details class="cs-pcs" data-refs="${esc(c.refs.join(" "))}"><summary class="muted">its ${c.refs.length} comment${c.refs.length === 1 ? "" : "s"}, in full</summary></details></td><td class="cs-committee">${csCommittee(c).cell}</td><td>${esc(c.status)}</td><td class="cs-n">${c.refs.length}</td>` +
         `<td>${c.issue ? issueLink(c.issue) + (c.issues.length > 1 ? ` <span class="muted">+${c.issues.length - 1} more</span>` : "") : meta.repo ? `<a class="discuss" href="${esc(discussUrl(meta.repo, c))}">Discuss</a>` : "—"}</td>` +
-        `<td>${c.pr && meta.repo ? `<a href="https://github.com/${esc(meta.repo)}/pull/${c.pr.number}">#${c.pr.number}</a>` : ""}</td>` +
+        `<td>${c.pr && meta.repo ? `<a href="https://github.com/${esc(meta.repo)}/pull/${c.pr.number}">#${c.pr.number}</a>` : ""}` +
+        `${((u) => (u ? ` <a class="review" href="${esc(u)}">review (staging)</a>` : ""))(c.pr && isOpen(meta.openPrs, c.pr.number) ? stagingReviewUrl(meta.site, c.pr.branch) : undefined)}</td>` +
         `<td><a href="#" class="show-cs" data-refs="${esc(c.refs.join(" "))}">show its comments</a></td></tr>`,
     )
     .join("\n");
@@ -252,6 +297,7 @@ export function dashboardHtml(
       r.links.before && `<a href="${esc(r.links.before)}">before</a>`,
       r.links.after && `<a href="${esc(r.links.after)}">after (staging)</a>`,
       r.links.pr && `<a href="${esc(r.links.pr)}">change set PR</a>`,
+      r.links.review && `<a href="${esc(r.links.review)}">review (staging)</a>`,
       r.links.discussion && `<a href="${esc(r.links.discussion)}">discussion</a>`,
       r.links.search && `<a href="${esc(r.links.search)}">all mentions on GitHub</a>`,
       r.links.record && `<a href="${esc(r.links.record)}">record</a>`,
@@ -711,8 +757,10 @@ export function buildPublicCommentSite(repo: string, out: string, storeDir?: str
   const route = dashboardRoute(repo, cfg.document);
   const pageRoute = dashboardPageRoute(repo, cfg.document);
   const toRoot = toSiteRoot(pageRoute);
+  const openPrs = cfg.repo ? openPullRequests(cfg.repo) : undefined;
   const rows = siteComments(store.all(), anchors, {
     changeSets: sets,
+    ...(openPrs ? { openPrs } : {}),
     toRoot,
     slug: cfg.document,
     site: cfg.site,
@@ -750,6 +798,8 @@ export function buildPublicCommentSite(repo: string, out: string, storeDir?: str
     dashboardHtml(rows, {
       title: cfg.title ?? cfg.document,
       slug: cfg.document,
+      ...(cfg.site ? { site: cfg.site } : {}),
+      ...(openPrs ? { openPrs } : {}),
       toRoot,
       records: fromPageDir(pageRoute, `${route}/comments.json`),
       ...(cfg.repo ? { repo: cfg.repo } : {}),
