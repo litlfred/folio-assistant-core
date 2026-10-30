@@ -75,32 +75,12 @@
           "detail": "names skill \"content-publish\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
         },
         {
-          "where": "Task_Hash",
-          "detail": "names skill \"dsa-checksum\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
-        },
-        {
-          "where": "Task_HashSummary",
-          "detail": "names skill \"dsa-checksum\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
-        },
-        {
           "where": "Task_ConsentCitation",
           "detail": "names skill \"content-publish\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
         },
         {
-          "where": "Task_OdrlCitesText",
-          "detail": "names skill \"dsa-odrl-source\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
-        },
-        {
           "where": "Task_Publish",
           "detail": "names skill \"content-publish\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
-        },
-        {
-          "where": "Task_Catalogue",
-          "detail": "names skill \"dsa-dcat-record\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
-        },
-        {
-          "where": "Task_SetStatus",
-          "detail": "names skill \"dsa-catalogue-status\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
         }
       ]
     },

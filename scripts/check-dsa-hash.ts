@@ -53,146 +53,168 @@ export const JSONLD_KEYWORDS: ReadonlySet<string> = new Set([
   "@language",
 ]);
 
-/** W3C ODRL 2.2 Information Model & Common Vocabulary terms (bare and `odrl:`-prefixed). */
-const ODRL_BARE_TERMS = [
-  "Policy",
-  "Set",
-  "Offer",
-  "Agreement",
-  "Rule",
-  "Permission",
-  "Prohibition",
-  "Duty",
-  "Constraint",
-  "LogicalConstraint",
-  "Asset",
-  "AssetCollection",
-  "Party",
-  "PartyCollection",
-  "Action",
-  "uid",
-  "profile",
-  "inheritFrom",
-  "conflict",
-  "permission",
-  "prohibition",
-  "obligation",
-  "duty",
-  "consequence",
-  "remedy",
-  "assigner",
-  "assignee",
-  "target",
-  "action",
-  "constraint",
-  "refinement",
-  "leftOperand",
-  "operator",
-  "rightOperand",
-  "rightOperandReference",
-  "dataType",
-  "unit",
-  "status",
-  "and",
-  "or",
-  "xone",
-  "andSequence",
-  "hasPolicy",
-  "partOf",
-  "source",
-  "relation",
-  "function",
-  "failure",
-  "includedIn",
-  "implies",
-  "attributedParty",
-  "attributingParty",
-  "compensatedParty",
-  "compensatingParty",
-  "consentedParty",
-  "consentingParty",
-  "contractedParty",
-  "contractingParty",
-  "informedParty",
-  "informingParty",
-  "trackedParty",
-  "trackingParty",
-] as const;
+export interface PinnedContextEntry {
+  file: string;
+  specification: string;
+  sourceUrl: string;
+  sha256: string;
+  bytes: number;
+  retrievedAt: string;
+}
 
-export const ODRL_22_TERMS: ReadonlySet<string> = new Set([
-  ...ODRL_BARE_TERMS,
-  ...ODRL_BARE_TERMS.map((t) => `odrl:${t}`),
-]);
+export const OFFICIAL_CONTEXTS_DIR = join(import.meta.dir, "test-fixtures", "dsa-contexts");
 
 /**
- * W3C DCAT 3 vocabulary terms, including the normative SPDX checksum terms
- * (DCAT 3 §6.8.12 `spdx:checksum`) and ADMS status terms (DCAT 3 §6.4.30
- * `adms:status`).
+ * Load and SHA-256-verify the vendored official W3C ODRL 2.2, W3C DCAT 3,
+ * SPDX 2.2.2, and DCMI Metadata Terms context/vocabulary files, and extract
+ * their defined terms. Never falls back to a hand-written list.
  */
-export const DCAT_3_TERMS: ReadonlySet<string> = new Set([
-  "dcat:Resource",
-  "dcat:Dataset",
-  "dcat:Distribution",
-  "dcat:Catalog",
-  "dcat:CatalogRecord",
-  "dcat:DataService",
-  "dcat:DatasetSeries",
-  "dcat:distribution",
-  "dcat:downloadURL",
-  "dcat:accessURL",
-  "dcat:accessService",
-  "dcat:mediaType",
-  "dcat:byteSize",
-  "dcat:compressFormat",
-  "dcat:packageFormat",
-  "dcat:version",
-  "dcat:previousVersion",
-  "dcat:hasVersion",
-  "dcat:hasCurrentVersion",
-  "dcat:inSeries",
-  "dcat:landingPage",
-  "dcat:theme",
-  "dcat:keyword",
-  "dcat:contactPoint",
-  "dcat:endpointURL",
-  "dcat:servesDataset",
-  "spdx:checksum",
-  "spdx:Checksum",
-  "spdx:algorithm",
-  "spdx:checksumValue",
-  "spdx:checksumAlgorithm_sha256",
-  "adms:status",
-]);
+export function loadPinnedContexts(contextsDir: string = OFFICIAL_CONTEXTS_DIR): {
+  odrl22Terms: Set<string>;
+  dcat3Terms: Set<string>;
+  dctermsTerms: Set<string>;
+  provenance: PinnedContextEntry[];
+} {
+  const provPath = join(contextsDir, "provenance.json");
+  if (!existsSync(provPath)) {
+    throw new Error(`Missing official context provenance manifest at ${provPath}`);
+  }
+  const provDoc = JSON.parse(readFileSync(provPath, "utf-8")) as {
+    contexts?: PinnedContextEntry[];
+  };
+  if (!Array.isArray(provDoc.contexts) || provDoc.contexts.length === 0) {
+    throw new Error(`Invalid official context provenance manifest at ${provPath}`);
+  }
 
-/** DCMI Metadata Terms (`dcterms:*`). */
-export const DCTERMS_TERMS: ReadonlySet<string> = new Set([
-  "dcterms:source",
-  "dcterms:title",
-  "dcterms:description",
-  "dcterms:issued",
-  "dcterms:modified",
-  "dcterms:created",
-  "dcterms:creator",
-  "dcterms:publisher",
-  "dcterms:identifier",
-  "dcterms:language",
-  "dcterms:license",
-  "dcterms:rights",
-  "dcterms:accessRights",
-  "dcterms:conformsTo",
-  "dcterms:format",
-  "dcterms:type",
-  "dcterms:relation",
-  "dcterms:references",
-  "dcterms:isReferencedBy",
-  "dcterms:isVersionOf",
-  "dcterms:hasVersion",
-  "dcterms:replaces",
-  "dcterms:isReplacedBy",
-  "dcterms:temporal",
-  "dcterms:spatial",
-  "dcterms:accrualPeriodicity",
-]);
+  const rawByFile = new Map<string, Buffer>();
+  for (const entry of provDoc.contexts) {
+    const filePath = join(contextsDir, entry.file);
+    if (!existsSync(filePath)) {
+      throw new Error(`Missing pinned official context file ${entry.file} (${entry.sourceUrl})`);
+    }
+    const bytes = readFileSync(filePath);
+    const actualSha = createHash("sha256").update(bytes).digest("hex");
+    if (actualSha !== entry.sha256) {
+      throw new Error(
+        `SHA-256 mismatch for official context ${entry.file} (${entry.sourceUrl}): expected ${entry.sha256}, got ${actualSha}`,
+      );
+    }
+    rawByFile.set(entry.file, bytes);
+  }
+
+  const readJson = (file: string): Record<string, unknown> => {
+    const buf = rawByFile.get(file);
+    if (!buf) throw new Error(`Pinned context ${file} is not listed in provenance.json`);
+    return JSON.parse(buf.toString("utf-8")) as Record<string, unknown>;
+  };
+
+  // 1. W3C ODRL 2.2 official JSON-LD context (https://www.w3.org/ns/odrl.jsonld)
+  const odrlDoc = readJson("odrl-2.2.context.json");
+  const odrlCtx = odrlDoc["@context"];
+  if (!odrlCtx || typeof odrlCtx !== "object" || Array.isArray(odrlCtx)) {
+    throw new Error("odrl-2.2.context.json is missing a JSON-LD @context object");
+  }
+  const odrl22Terms = new Set<string>();
+  for (const [key, val] of Object.entries(odrlCtx as Record<string, unknown>)) {
+    if (key.startsWith("@")) continue;
+    if (typeof val === "string" && (val.endsWith("/") || val.endsWith("#"))) continue;
+    odrl22Terms.add(key);
+    odrl22Terms.add(`odrl:${key}`);
+    if (val && typeof val === "object" && !Array.isArray(val)) {
+      const mappedId = (val as Record<string, unknown>)["@id"];
+      if (typeof mappedId === "string" && mappedId.startsWith("odrl:")) {
+        odrl22Terms.add(mappedId);
+        odrl22Terms.add(mappedId.slice("odrl:".length));
+      }
+    }
+  }
+
+  // 2. W3C DCAT 3 vocabulary & context (https://www.w3.org/ns/dcat3.jsonld),
+  //    DCAT 3 external alignments (https://www.w3.org/ns/dcat3-external.jsonld),
+  //    and SPDX 2.2.2 ontology context (referenced by DCAT 3 §6.8.12).
+  const dcat3Terms = new Set<string>();
+  const dcatDoc = readJson("dcat-3.vocab.json");
+  const dcatGraph = Array.isArray(dcatDoc["@graph"]) ? dcatDoc["@graph"] : [];
+  for (const node of dcatGraph) {
+    if (node && typeof node === "object") {
+      const id = (node as Record<string, unknown>)["@id"];
+      if (typeof id === "string" && /^dcat:[A-Za-z0-9_]+$/.test(id)) {
+        dcat3Terms.add(id);
+      }
+    }
+  }
+
+  const dcatExtDoc = readJson("dcat-3-external.vocab.json");
+  const dcatExtGraph = Array.isArray(dcatExtDoc["@graph"]) ? dcatExtDoc["@graph"] : [];
+  for (const node of dcatExtGraph) {
+    if (node && typeof node === "object") {
+      const id = (node as Record<string, unknown>)["@id"];
+      if (typeof id === "string" && /^(adms|spdx):[A-Za-z0-9_]+$/.test(id)) {
+        dcat3Terms.add(id);
+      }
+    }
+  }
+
+  const spdxDoc = readJson("spdx-ontology.context.json");
+  const spdxCtx = spdxDoc["@context"];
+  if (!spdxCtx || typeof spdxCtx !== "object" || Array.isArray(spdxCtx)) {
+    throw new Error("spdx-ontology.context.json is missing a JSON-LD @context object");
+  }
+  for (const [key, val] of Object.entries(spdxCtx as Record<string, unknown>)) {
+    if (key.startsWith("@")) continue;
+    const targetIri =
+      typeof val === "string"
+        ? val
+        : val && typeof val === "object" && !Array.isArray(val)
+          ? ((val as Record<string, unknown>)["@id"] as string | undefined)
+          : undefined;
+    if (typeof targetIri === "string") {
+      if (targetIri.startsWith("spdx:") && /^spdx:[A-Za-z0-9_]+$/.test(targetIri)) {
+        dcat3Terms.add(targetIri);
+      } else if (targetIri.startsWith(SPDX_NS) && targetIri.length > SPDX_NS.length) {
+        const local = targetIri.slice(SPDX_NS.length);
+        if (/^[A-Za-z0-9_]+$/.test(local)) {
+          dcat3Terms.add(`spdx:${local}`);
+        }
+      }
+    }
+  }
+
+  // 3. DCMI Metadata Terms Turtle vocabulary (http://purl.org/dc/terms/)
+  const dctermsBuf = rawByFile.get("dublin_core_terms.ttl");
+  if (!dctermsBuf) {
+    throw new Error("Pinned context dublin_core_terms.ttl is not listed in provenance.json");
+  }
+  const dctermsTtl = dctermsBuf.toString("utf-8");
+  const dctermsTerms = new Set<string>();
+  for (const match of dctermsTtl.matchAll(/^dcterms:([A-Za-z0-9_]+)\b/gm)) {
+    dctermsTerms.add(`dcterms:${match[1]}`);
+  }
+
+  return {
+    odrl22Terms,
+    dcat3Terms,
+    dctermsTerms,
+    provenance: provDoc.contexts,
+  };
+}
+
+const LOADED_OFFICIAL_CONTEXTS = loadPinnedContexts();
+
+/** W3C ODRL 2.2 terms parsed from the pinned official `https://www.w3.org/ns/odrl.jsonld` context. */
+export const ODRL_22_TERMS: ReadonlySet<string> = LOADED_OFFICIAL_CONTEXTS.odrl22Terms;
+
+/**
+ * W3C DCAT 3 terms parsed from the pinned official `https://www.w3.org/ns/dcat3.jsonld`,
+ * `https://www.w3.org/ns/dcat3-external.jsonld`, and SPDX 2.2.2 ontology context files.
+ */
+export const DCAT_3_TERMS: ReadonlySet<string> = LOADED_OFFICIAL_CONTEXTS.dcat3Terms;
+
+/** DCMI Metadata Terms (`dcterms:*`) parsed from the pinned official DCMI Turtle vocabulary. */
+export const DCTERMS_TERMS: ReadonlySet<string> = LOADED_OFFICIAL_CONTEXTS.dctermsTerms;
+
+/** Provenance and SHA-256 pins of the official context/vocabulary files. */
+export const OFFICIAL_CONTEXT_PROVENANCE: readonly PinnedContextEntry[] = LOADED_OFFICIAL_CONTEXTS.provenance;
 
 export const ALLOWED_DSA_TERMS: ReadonlySet<string> = new Set([
   ...JSONLD_KEYWORDS,

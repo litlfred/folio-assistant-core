@@ -32,19 +32,14 @@
       "findings": []
     },
     "skill-voice-review-current": {
-      "result": "unknown",
-      "findings": [
-        {
-          "where": "voice.active",
-          "detail": "the harness config could not be read, so which voices judge skills is undetermined"
-        }
-      ]
+      "result": "pass",
+      "findings": []
     }
   },
   "totals": {
-    "pass": 4,
+    "pass": 5,
     "fail": 0,
     "n/a": 2,
-    "unknown": 1
+    "unknown": 0
   }
 }
