@@ -45,7 +45,7 @@ para que haya algo concreto que refinar.
 
 Se ejecuta dentro del bucle de edición, entre reclamar el bean y redactar el
 cambio — consulta [Edición y la compuerta de validación de
-HCI]({{ '/docs/cat-harness/process/es/publication-workflow.html#editing-and-the-hci-validation-gate' | relative_url }}). Esa
+HCI]({{ '/folio-assistant-core/process/es/publication-workflow.html#editing-and-the-hci-validation-gate' | relative_url }}). Esa
 posición es la clave de todo: **la evidencia se recopila antes de escribir la
 oración, no se reúne después para respaldarla.**
 
@@ -136,7 +136,7 @@ mantenerlas separadas es el propósito de la compuerta paralela:
 > provisional (stub) en `sections/`, por lo que una búsqueda exclusiva en
 > sections se lo pierde por completo. Medición: **26** árboles `library/*/ocr/`
 > frente a **11** `structure.json` que registran `"text_source": "ocr"`.
-> Consulta [Ingesta de documentos]({{ '/docs/cat-harness/guides/es/document-ingestion.html' | relative_url }}).
+> Consulta [Ingesta de documentos]({{ '/folio-assistant-core/guides/es/document-ingestion.html' | relative_url }}).
 
 **Contenido de confianza — DAK L2, IG L3.** Directrices ya adjudicadas: Kits de
 Adaptación Digital SMART de la OMS en L2, Guías de Implementación FHIR en L3. Una

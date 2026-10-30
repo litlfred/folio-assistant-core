@@ -74,7 +74,7 @@ _Эта страница сгенерирована из [`content/docs/document
 
 **Каждый подпроцесс вынесен в отдельный файл**, вызывается через `bpmn:callActivity` и объявляется через `bpmn:import`. Любой из них можно открыть отдельно в bpmn.io; родительский процесс остается легко читаемым, поскольку не включает их в себя целиком.
 
-**Конец процесса — это точка, где начинается авторская работа.** Состояние «Доступно для цитирования как источник L1» служит передачей в [процесс публикации]({{ '/docs/cat-harness/process/ru/publication-workflow.html' | relative_url }}) — в тот самый корпус, который автор редактирует, а рецензент проверяет.
+**Конец процесса — это точка, где начинается авторская работа.** Состояние «Доступно для цитирования как источник L1» служит передачей в [процесс публикации]({{ '/folio-assistant-core/process/ru/publication-workflow.html' | relative_url }}) — в тот самый корпус, который автор редактирует, а рецензент проверяет.
 
 ### Извлечение структуры
 {: #extract-structure data-fa-label="sec:document-ingestion-extract-structure" }
@@ -204,6 +204,6 @@ _Эта страница сгенерирована из [`content/docs/document
 
 [✎ Edit](https://github.com/litlfred/folio-assistant/edit/main/content/docs/document-ingestion/editing-an-ingested-source.md){: .fa-node-edit title="Edit content/docs/document-ingestion/editing-an-ingested-source.md" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" data-qa-family="block" data-qa-key="editing-an-ingested-source.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/document-ingestion/editing-an-ingested-source.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/document-ingestion/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <span class="fa-qa-badge fa-qa-unswept fa-qa-fam-translation" title="Translation QA: not swept — no sidecar for this block" aria-label="Translation QA: not swept — no sidecar for this block"><span class="fa-qa-tag">TR</span></span></span>
 
-Процесс загрузки никогда не редактирует контент корпуса. Он создает записи L1; авторская работа и рецензирование используют их через обычный поток [процесса публикации]({{ '/docs/cat-harness/process/ru/publication-workflow.html' | relative_url }}), где изменение блока контента проходит валидацию, регистрацию замечаний и решение редактора.
+Процесс загрузки никогда не редактирует контент корпуса. Он создает записи L1; авторская работа и рецензирование используют их через обычный поток [процесса публикации]({{ '/folio-assistant-core/process/ru/publication-workflow.html' | relative_url }}), где изменение блока контента проходит валидацию, регистрацию замечаний и решение редактора.
 
 Единственная взаимосвязь, которую стоит отметить: добавление файла в `uploads/` **во время** сессии редактирования запускает загрузку в фоновом режиме. Редактор не блокируется, а новый источник становится доступным для цитирования после прохождения шлюза — не раньше.

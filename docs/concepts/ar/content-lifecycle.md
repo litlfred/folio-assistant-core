@@ -47,6 +47,6 @@ available_locales: ["ar", "zh", "en", "fr", "ru", "es"]
 بوابة التحقق من التفاعل البشري الحاسوبي (HCI)، ويرى المحرر النتائج قبل
 تثبيت أي شيء — وتتم مرحلة `review` مرتين، مرة لكل تغيير ومرة على
 المسودة المجمعة ككل. ويتوسع كلاهما في مخططاتهما الخاصة على صفحة
-**[مسار عمل النشر]({{ '/docs/cat-harness/process/ar/publication-workflow.html' | relative_url }})**.
+**[مسار عمل النشر]({{ '/folio-assistant-core/process/ar/publication-workflow.html' | relative_url }})**.
 
 ---

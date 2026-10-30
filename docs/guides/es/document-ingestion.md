@@ -97,7 +97,7 @@ declarado con `bpmn:import`. Abre cualquiera de ellos por separado en bpmn.io; e
 proceso padre se mantiene legible porque no los incluye en línea.
 
 **El final es donde comienza la autoría.** «Disponible para citar como fuente L1»
-es el traspaso hacia [el flujo de publicación]({{ '/docs/cat-harness/process/es/publication-workflow.html' | relative_url }}) —el
+es el traspaso hacia [el flujo de publicación]({{ '/folio-assistant-core/process/es/publication-workflow.html' | relative_url }}) —el
 mismo corpus que un autor edita y un revisor revisa.
 
 ### Extraer estructura
@@ -292,7 +292,7 @@ las especificaciones publicadas en lugar de fiarse de la memoria.
 
 La ingestión nunca edita el contenido del corpus. Produce registros L1; la autoría y
 la revisión los consumen a través del flujo habitual en
-[el flujo de publicación]({{ '/docs/cat-harness/process/es/publication-workflow.html' | relative_url }}), donde un cambio en un bloque de
+[el flujo de publicación]({{ '/folio-assistant-core/process/es/publication-workflow.html' | relative_url }}), donde un cambio en un bloque de
 contenido pasa por validación, hallazgos y la decisión de un editor.
 
 El único acoplamiento que vale la pena destacar: depositar un archivo en `uploads/`

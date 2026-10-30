@@ -96,7 +96,7 @@ déclaré avec `bpmn:import`. Ouvrez n'importe lequel d'entre eux individuelleme
 reste lisible car il ne les intègre pas en ligne.
 
 **La fin est le point de départ de la rédaction.** « Disponible pour être cité comme source L1 » est
-le passage de relais vers [le flux de publication]({{ '/docs/cat-harness/process/fr/publication-workflow.html' | relative_url }}) — le
+le passage de relais vers [le flux de publication]({{ '/folio-assistant-core/process/fr/publication-workflow.html' | relative_url }}) — le
 même corpus qu'un auteur édite et qu'un réviseur relit.
 
 ### Extraire la structure
@@ -280,7 +280,7 @@ et devra être établi au vu des spécifications publiées plutôt que de mémoi
 
 L'ingestion ne modifie jamais le contenu du corpus. Elle produit des notices L1 ; la rédaction et
 la révision les consomment à travers le flux habituel dans
-[le flux de publication]({{ '/docs/cat-harness/process/fr/publication-workflow.html' | relative_url }}), où une modification apportée à un
+[le flux de publication]({{ '/folio-assistant-core/process/fr/publication-workflow.html' | relative_url }}), où une modification apportée à un
 bloc de contenu passe par la validation, les constats et la décision d'un éditeur.
 
 Le seul couplage méritant d'être précisé : un dépôt dans `uploads/` **pendant** une

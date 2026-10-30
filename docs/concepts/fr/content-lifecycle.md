@@ -47,6 +47,6 @@ Deux choses que les noms des huit étapes dissimulent, contrairement au diagramm
 la porte de validation IHM, et l'éditeur voit les conclusions avant que quoi que ce soit ne soit
 validé — et `review` intervient deux fois, une fois par modification et une fois sur le
 brouillon assemblé. Les deux se développent dans leurs propres diagrammes sur la
-page du **[flux de publication]({{ '/docs/cat-harness/process/fr/publication-workflow.html' | relative_url }})**.
+page du **[flux de publication]({{ '/folio-assistant-core/process/fr/publication-workflow.html' | relative_url }})**.
 
 ---

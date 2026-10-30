@@ -92,7 +92,7 @@ url-or-path / checksum / retrieved — **وليس** داخل `library:`، لأن
 الأصل قابلاً للقراءة لأنه لا يضمّنها بشكل مباشر.
 
 **النهاية هي المكان الذي يبدأ منه التأليف.** "متاح للاستشهاد كمصدر L1" هي
-نقطة التسليم إلى [مسار عمل النشر]({{ '/docs/cat-harness/process/ar/publication-workflow.html' | relative_url }}) — مجموعة المحتوى نفسها
+نقطة التسليم إلى [مسار عمل النشر]({{ '/folio-assistant-core/process/ar/publication-workflow.html' | relative_url }}) — مجموعة المحتوى نفسها
 التي يحررها مؤلف ويراجعها مراجع.
 
 ### استخراج البنية
@@ -276,7 +276,7 @@ url-or-path / checksum / retrieved — **وليس** داخل `library:`، لأن
 
 لا يقوم الاستيعاب بتحرير محتوى مجموعة المحتوى أبدًا. بل ينتج سجلات L1؛
 بينما يستهلكها التأليف والمراجعة عبر المسار المعتاد في
-[مسار عمل النشر]({{ '/docs/cat-harness/process/ar/publication-workflow.html' | relative_url }})، حيث يمر التغيير على
+[مسار عمل النشر]({{ '/folio-assistant-core/process/ar/publication-workflow.html' | relative_url }})، حيث يمر التغيير على
 كتلة المحتوى بالتحقق، والنتائج، وقرار المحرر.
 
 والارتباط الوحيد الجدير بالذكر: أن إفلات ملف في `uploads/` **أثناء** جلسة

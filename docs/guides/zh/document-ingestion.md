@@ -74,7 +74,7 @@ _本页面生成自 [`content/docs/document-ingestion/`](https://github.com/litl
 
 **每个子流程都是独立的文件**，使用 `bpmn:callActivity` 进行调用，并使用 `bpmn:import` 进行声明。在 bpmn.io 中单独打开其中的任何一个；父流程因未内联它们而保持良好的可读性。
 
-**终点即是创作的起点。** “可作为 L1 来源进行引用”是向[发布工作流]({{ '/docs/cat-harness/process/zh/publication-workflow.html' | relative_url }})的交接点 —— 也就是作者进行编辑和审阅者进行审阅的同一个语料库。
+**终点即是创作的起点。** “可作为 L1 来源进行引用”是向[发布工作流]({{ '/folio-assistant-core/process/zh/publication-workflow.html' | relative_url }})的交接点 —— 也就是作者进行编辑和审阅者进行审阅的同一个语料库。
 
 ### 提取结构
 {: #extract-structure data-fa-label="sec:document-ingestion-extract-structure" }
@@ -204,6 +204,6 @@ _本页面生成自 [`content/docs/document-ingestion/`](https://github.com/litl
 
 [✎ Edit](https://github.com/litlfred/folio-assistant/edit/main/content/docs/document-ingestion/editing-an-ingested-source.md){: .fa-node-edit title="Edit content/docs/document-ingestion/editing-an-ingested-source.md" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" data-qa-family="block" data-qa-key="editing-an-ingested-source.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/document-ingestion/editing-an-ingested-source.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/document-ingestion/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <span class="fa-qa-badge fa-qa-unswept fa-qa-fam-translation" title="Translation QA: not swept — no sidecar for this block" aria-label="Translation QA: not swept — no sidecar for this block"><span class="fa-qa-tag">TR</span></span></span>
 
-摄取绝不会编辑语料库内容。它产出 L1 记录；创作和审阅通过[发布工作流]({{ '/docs/cat-harness/process/zh/publication-workflow.html' | relative_url }})中的常规流程来消费它们，其中对内容块的修改会经历验证、问题发现以及编辑者的决策。
+摄取绝不会编辑语料库内容。它产出 L1 记录；创作和审阅通过[发布工作流]({{ '/folio-assistant-core/process/zh/publication-workflow.html' | relative_url }})中的常规流程来消费它们，其中对内容块的修改会经历验证、问题发现以及编辑者的决策。
 
 值得说明的一项耦合是：在编辑会话**期间**向 `uploads/` 放入文件会在后台启动摄取。编辑者不会被阻塞，而新来源在关卡通过时即可被引用 —— 绝不会在此之前。
