@@ -8,7 +8,8 @@ import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { configureLeanPackages } from "@litlfred/cat-harness-tools/pipeline/lean-formal-ref.js";
+import { configureFormalRefResolver, formalRefResolverConfigured } from "@litlfred/cat-harness/schemas/formal-ref.js";
+import { configureLeanPackages, leanPackageByName, LEAN_REF_PATTERN, parseLeanRef } from "@litlfred/cat-harness/schemas/lean-packages.js";
 import { blockLean, blockQaReport, criterionGroup, latestEntryIndex, loadLeanStatus, qaSummary } from "./folio-site-blocks.js";
 
 const h12 = (s: string) => createHash("sha256").update(s).digest("hex").slice(0, 12);
@@ -111,6 +112,34 @@ describe("Lean", () => {
     mkdirSync(join(d, "folio", "p", "lean", "P"), { recursive: true });
     writeFileSync(join(d, "folio", "p", "lean", "P", "Foo.lean"), "namespace P.Foo\ntheorem bar : True := trivial\nend P.Foo\n");
     configureLeanPackages([{ name: "pp", paperDir: "p", lakeRoot: "folio/p/lean", lib: "P" }]);
+    if (!formalRefResolverConfigured()) {
+      configureFormalRefResolver({
+        refPattern: LEAN_REF_PATTERN,
+        resolve(ref: string) {
+          try {
+            const parsed = parseLeanRef(ref);
+            const pkg = leanPackageByName(parsed.package);
+            const basename = `${parsed.name}.lean`;
+            if (!pkg) return { candidatePaths: [], declName: parsed.name, basename };
+            const modulePath = `${pkg.lakeRoot}/${parsed.module.replace(/\./g, "/")}.lean`;
+            return { candidatePaths: [modulePath], declName: parsed.name, basename, treeRoot: pkg.lakeRoot };
+          } catch {
+            return undefined;
+          }
+        },
+        resolveCanonical(ref: string, repoRoot: string) {
+          try {
+            const parsed = parseLeanRef(ref);
+            const pkg = leanPackageByName(parsed.package);
+            if (!pkg) return undefined;
+            const p = join(repoRoot, pkg.lakeRoot, `${parsed.module.replace(/\./g, "/")}.lean`);
+            return p;
+          } catch {
+            return undefined;
+          }
+        },
+      });
+    }
     const hit = blockLean({ kind: "theorem", ref: "pp:P.Foo.bar", sibling: join(d, "none.lean"), repoRoot: d, status: none });
     expect(hit).toMatchObject({ via: "ref", path: "folio/p/lean/P/Foo.lean", compiles: "unchecked" });
     const miss = blockLean({ kind: "theorem", ref: "pp:P.Nope.baz", sibling: join(d, "none.lean"), repoRoot: d, status: none });

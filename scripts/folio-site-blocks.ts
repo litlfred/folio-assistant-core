@@ -37,8 +37,9 @@ import { existsSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 import { readWitnessDoc, type QaWitness } from "@litlfred/cat-harness-tools/pipeline/qa-witness.js";
-import { resolveCanonicalFormal, type FormalTreeCache } from "@litlfred/cat-harness/schemas/formal-ref.js";
-import { configureLeanPackages, leanPackagesConfigured, type LeanPackage } from "@litlfred/cat-harness-tools/pipeline/lean-formal-ref.js";
+import { formalRefResolverConfigured, resolveCanonicalFormal, type FormalTreeCache } from "@litlfred/cat-harness/schemas/formal-ref.js";
+import { configureLeanPackages, leanPackagesConfigured, type LeanPackage } from "@litlfred/cat-harness/schemas/lean-packages.js";
+import { optionalPipelinePlugin } from "@litlfred/cat-harness-tools/pipeline/pipeline-plugins.js";
 
 // ── QA ──────────────────────────────────────────────────────────
 
@@ -268,6 +269,13 @@ export function blockLean(
   } else if (opts.ref) {
     if (!leanPackagesConfigured()) out.refState = "no-resolver";
     else {
+      if (!formalRefResolverConfigured()) {
+        try {
+          optionalPipelinePlugin("lean-lexer");
+        } catch {
+          /* no contribution root available */
+        }
+      }
       abs = resolveCanonicalFormal(opts.ref, opts.repoRoot, opts.cache);
       if (abs && existsSync(abs)) out.via = "ref";
       else {
