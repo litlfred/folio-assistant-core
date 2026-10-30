@@ -94,7 +94,7 @@ Rules that are not negotiable:
   emails. Record the batch, and keep the file in the review owner's private
   store.
 
-### The live review sheet: "Ready for agent" and the Agent tab
+### The live review sheet: change-sets, "Ready for agent" and the Agent tab
 
 A secretariat may keep working in the log after the import, as a shared Google
 Sheet (owner, 2026-10-30, smart-ra). The master log is then split into tabs,
@@ -105,17 +105,23 @@ current without anyone, person or agent, refreshing them.
 | tab | who writes it | holds |
 |---|---|---|
 | **Source Comments** | people | No., date received, channel, reviewer, organisation, country, stakeholder type |
-| **Review Public Comments** | people, plus formula columns | No., section, page, line, comment type, theme, the two TWG categorisations, comment, `Suggested revision (call notes)` and any number of `Suggested revision (<initials>)` columns, status, disposition, **Ready for agent** (Yes/No), **Ready for merge** (Yes/No, set by the owner only); then formula columns read from Agent by No.: agentic status (a link to its PR when it has one), staging review page, public comment (PC) link, change-set (CS) link, pull request link, and a link to the page in the frozen review draft |
-| **Agent** | **the agent, and only the agent** | A–J, one row per No.: No., comment ref, agentic status, agentic action taken, agentic applied in (section / version), agentic handled by, agentic date actioned, pull request, staging review page, change-set. L–N: the change-set list (id, title, status from the record) |
-| **Change Sets** | formulas only | one row per change-set from Agent L–N, with its comment count, how many are Ready for agent, a link to the public-comments page, and its comment Nos. one per cell, each linked to that comment on the public-comments page |
-| **Review Change Sets** | formulas only | the Review Public Comments tab regrouped: one row per comment, sorted by change-set then No., carrying every Suggested revision column, status, disposition, Ready for agent and agentic status. Its headers are Review Public Comments' own, so renaming a Suggested revision header there renames it here. Its last column, "All suggested revisions in this change set", joins every comment's suggested revisions for the change-set into one cell, each line `No. <n> · <reviewer label>: <text>`, shown on the change-set's first row |
+| **Review Public Comments** | people, plus formula columns | No., section, page, line, comment type, theme, the two TWG categorisations, comment, `Suggested revision (call notes)` and any number of `Suggested revision (<initials>)` columns, status, disposition; then formula columns read from Agent: agentic status (by No., linked to its change-set's PR when there is one), staging review page and pull request (both by the comment's change-set), public comment (PC) link, change-set (CS) link, and a link to the page in the frozen review draft. It has no Ready columns: those are per change-set |
+| **Agent** | **the agent, and only the agent** | A–J, one row per No.: No., comment ref, agentic status, agentic action taken, agentic applied in (section / version), agentic handled by, agentic date actioned, pull request, staging review page, change-set (H and I are no longer read by any view). L–P, one row per change-set: id, title, status from the record, **pull request**, **staging review page**. A PR belongs to a change-set, not to a comment (owner, 2026-10-30) |
+| **Change Sets** | people (D, E), formulas | one row per change-set from Agent L–N (A–C), then **Ready for agent** (D, Yes/No, editors) and **Ready for merge** (E, Yes/No, owner only), its pull request and staging page from Agent O–P, its comment count, a link to the public-comments page, and its comment Nos. one per cell, each linked to that comment on the public-comments page |
+| **Review Change Sets** | formulas only | the Review Public Comments tab regrouped: one row per comment, sorted by change-set then No., carrying every Suggested revision column, status, disposition, the change-set's Ready for agent and Ready for merge (read from Change Sets), agentic status, staging page, PC, CS, pull request and page links. Its headers are Review Public Comments' own, so renaming a Suggested revision header there renames it here. Its column "All suggested revisions in this change set", left of Status, joins every comment's suggested revisions for the change-set into one cell, each line `No. <n> · <reviewer label>: <text>`, shown on the change-set's first row. The tab is unlocked, but it is one spilled formula: typing inside it breaks the view until the typed cell is cleared |
 
 **Locks** (owner, 2026-10-30). Protected ranges leave editors only the
-comment type, theme, both TWG categorisations, Suggested revision and
-"Ready for agent" cells (not their headers) on the
-Review Public Comments tab. "Ready for merge" is protected too: only the owner sets it, because
-a Yes makes the agent merge. Every other Review column and every other tab is
-protected. The
+comment type, theme, both TWG categorisations and Suggested revision cells
+(not their headers) on the Review Public Comments tab, and the "Ready for
+agent" cells on Change Sets. "Ready for merge" on Change Sets is protected:
+only the owner sets it, because a Yes makes the agent merge. Review Change
+Sets is unlocked (owner, 2026-10-30). Everything else is protected.
+
+**Why the Ready columns live on Change Sets.** Review Change Sets is rebuilt
+by a sorted formula, so a typed cell there would not stay with its row when
+a comment joins a change-set. Change Sets lists change-sets in id order and
+only gains rows at the end, so a Yes stays with its change-set. The agent
+appends new change-sets at the end of Agent L–P and never reorders them. The
 owner's account, which is also the account the agent's connector uses, can
 still edit everything: Google always lets the owner through.
 
@@ -127,11 +133,11 @@ beside the others and renames `(initials)` to its own.
 its columns by header name (`MATCH` on Review Public Comments' first row, and every header
 starting "Suggested revision"), so a move does not break it. A renamed
 header that it looks up by name (No., Section no., Comment / issue, Status,
-Disposition / rationale, Ready for agent) does, and the formula must be
+Disposition / rationale, Page) does, and the formula must be
 updated with the new name. Never write a fixed column number into a view.
 
 **How the views update.** Change Sets and Review Change Sets are `FILTER`, `SORT`,
-`VLOOKUP` and `BYROW` formulas over Review and Agent. Setting Ready for agent
+`VLOOKUP` and `BYROW` formulas over Review, Change Sets and Agent. Setting Ready for agent
 to Yes, editing a revision, or the agent writing an Agent row shows in them at
 once. Nothing is run to refresh them. Two things are not automatic:
 
@@ -152,8 +158,8 @@ once. Nothing is run to refresh them. Two things are not automatic:
 - **Active mode.** On demand only, and it lasts **two hours** (owner,
   2026-10-30). The owner asks for it in a project thread ("active mode on").
   That thread then checks the sheet about every ten minutes, waking itself
-  with reminders rather than a loop. It compares Review Public Comments' "Ready for agent"
-  and Suggested revision columns with what it saw last, and runs a sheet
+  with reminders rather than a loop. It compares Change Sets' "Ready for agent"
+  and Review Public Comments' Suggested revision columns with what it saw last, and runs a sheet
   sync, or fires the scheduled task, when a row has newly turned Yes. Two
   hours after it was switched on, it stops and says so in one line. The
   regular schedule keeps running throughout. A sheet edit cannot wake an
@@ -161,14 +167,16 @@ once. Nothing is run to refresh them. Two things are not automatic:
 
 Each sync does the steps below, in this order.
 
-1. **Reconcile.** For every Agent row with a pull request, read the PR's
+1. **Reconcile.** For every change-set with a pull request (Agent O), read the PR's
    state from GitHub. Open: *PR open*, with its staging review page. Merged:
    *Change merged*, and clear the staging link, because a merged branch's
    preview is gone and its link 404s. Closed unmerged: back to *Not
-   started*, and say so in "agentic action taken". Rewrite L–N and J from the
-   change-set records as above.
-2. **Work the ready rows.** For each Review row with **Ready for agent = Yes**
-   whose agentic status is *Not started* or *Needs human*:
+   started*, and say so in "agentic action taken". Write the status on every
+   comment row of the change-set. Rewrite L–N and J from the change-set
+   records as above, keeping each change-set's row and its O–P.
+2. **Work the ready change-sets.** For each Change Sets row with **Ready for
+   agent = Yes** whose comments' agentic status is *Not started* or *Needs
+   human*, take each comment of the change-set:
    1. Find the comment by No.: the record whose `public.source` names the
       log's sheet and that `entry`. A row with no record is set to *Not in
       comment record*, and the agent goes no further with it.
@@ -184,15 +192,14 @@ Each sync does the steps below, in this order.
    4. Write the Agent row, and nothing anywhere else in the sheet: status
       (*Working*, *PR open*, *Ready for review*, *Change merged*), what was
       done, the blocks or sections changed, who acted (the agent and its
-      session), the date, the PR, and `STAGING/<slug>/en/review/`. A PR that
-      covers a whole change-set is written on every row of that change-set.
+      session) and the date on each comment's row, and the PR and
+      `STAGING/<slug>/en/review/` on the change-set's row (Agent O–P).
 
-3. **Merge the released PRs.** For each open PR named on an Agent row whose
-   Review row has **Ready for merge = Yes**, merge it (owner, 2026-10-30). One
-   Yes on any row that names the PR is enough: the column is protected, so
-   only the owner can set it. Only a PR in the folio's own repository is
-   merged, never one on a WHO repository. After the merge, set every row that
-   names it to *Change merged*, clear its staging link, and comment on the
+3. **Merge the released PRs.** For each change-set with an open PR (Agent O)
+   whose Change Sets row has **Ready for merge = Yes**, merge it (owner,
+   2026-10-30). The column is protected, so only the owner can set it. Only a PR in the folio's own repository is
+   merged, never one on a WHO repository. After the merge, set every comment row of
+   the change-set to *Change merged*, clear its staging link (Agent P), and comment on the
    PR's issue. If the merge is refused (a session safety check, a conflict, a
    required review), set the rows to *Merge blocked*, write why in "agentic
    action taken", and say so in the run's summary. Do not route around a
@@ -213,13 +220,13 @@ front matter, read from the library entry's `pdf-line-map.json` (`pages.<pdf
 page>.printed`). In the DPI-H review draft it is printed + 11 for pages 1–243.
 The formula takes the first number in the Page cell.
 
-A row whose comment already has an agent PR has **Ready for agent = Yes**, so
-the sheet never shows agent work on a row nobody released. When the owner
-releases rows that way, it is the owner's call, written on the owner's
-instruction (smart-ra #97's eight CS-004 rows, owner, 2026-10-30).
+A change-set that already has an agent PR has **Ready for agent = Yes**, so
+the sheet never shows agent work nobody released. When the owner releases a
+change-set that way, it is the owner's call, written on the owner's
+instruction (smart-ra #97, CS-004, owner, 2026-10-30).
 
-The agent never writes the Review, Source Comments, Change Sets or By Change
-Set tabs except on the owner's explicit instruction, as above. It never sets
+The agent never writes the Review Public Comments, Source Comments, Change
+Sets or Review Change Sets tabs except on the owner's explicit instruction, as above. It never sets
 "Ready for agent" or "Ready for merge" on its own, and it never copies a reviewer's
 name or email from Source Comments into the repository. The sheet is reached
 through the session's Google Sheets connector. No credential for it is
