@@ -124,9 +124,23 @@ once. Nothing is run to refresh them. Two things are not automatic:
 - **A comment's change-set** (Agent J) is the change-set whose `refs` hold the
   comment. The agent rewrites it when a comment is moved between change-sets.
 
-**When the agent runs.** It does not watch the sheet. It runs a *sheet sync*
-when asked ("work the ready rows", "sync the sheet"), or on a schedule the
-owner sets up as a routine. Each sync does both halves below, in this order.
+**When the agent runs.** A *sheet sync* runs three ways:
+
+- **Scheduled.** A scheduled task in the project runs it (for smart-ra:
+  "DPI-H review sheet sync", every 2 hours on weekdays; owner, 2026-10-30).
+  Each run is a fresh thread with no memory of earlier ones, so everything it
+  needs is in the sheet, the records and this section.
+- **Manual.** Anyone asks for it ("sync the sheet", "work the ready rows") in
+  a project thread, or presses *Run now* on the scheduled task. A thread may
+  also fire the scheduled task itself.
+- **Active mode.** While a board is working the sheet live, the owner asks
+  for active mode and the scheduled task's schedule is changed to hourly,
+  every day, which is the shortest interval a scheduled task allows. When the
+  session is over, the owner asks for it back. Nothing pushes an edit of
+  "Ready for agent" to an agent the moment it is made: a sheet change cannot
+  start a run by itself, so active mode is frequent polling, not a watch.
+
+Each sync does both halves below, in this order.
 
 1. **Reconcile.** For every Agent row with a pull request, read the PR's
    state from GitHub. Open: *PR open*, with its staging review page. Merged:
@@ -169,8 +183,14 @@ front matter, read from the library entry's `pdf-line-map.json` (`pages.<pdf
 page>.printed`). In the DPI-H review draft it is printed + 11 for pages 1–243.
 The formula takes the first number in the Page cell.
 
+A row whose comment already has an agent PR has **Ready for agent = Yes**, so
+the sheet never shows agent work on a row nobody released. When the owner
+releases rows that way, it is the owner's call, written on the owner's
+instruction (smart-ra #97's eight CS-004 rows, owner, 2026-10-30).
+
 The agent never writes the Review, Source Comments, Change Sets or By Change
-Set tabs. It never sets "Ready for agent", and it never copies a reviewer's
+Set tabs except on the owner's explicit instruction, as above. It never sets
+"Ready for agent" on its own, and it never copies a reviewer's
 name or email from Source Comments into the repository. The sheet is reached
 through the session's Google Sheets connector. No credential for it is
 committed. Google cannot stop the owner's own account editing any tab, so the
