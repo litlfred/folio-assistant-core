@@ -2,8 +2,8 @@ import { describe, expect, it } from "bun:test";
 import { mkdtempSync, readFileSync, rmSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { GraphTypologyNodeSchema } from "@litlfred/cat-harness/schemas/kg/graph-typology-node.js";
-import { resolveNodeSchemas } from "@litlfred/cat-harness/schemas/kg/kind-validator.js";
+import { GraphTypologyNodeSchema } from "@litlfred/cat-harness-tools/schemas/kg/graph-typology-node.js";
+import { resolveNodeSchemas } from "@litlfred/cat-harness-tools/schemas/kg/kind-validator.js";
 import {
   DEFAULT_DSA_FIXTURE_DIR,
   computeSha256Hex,
