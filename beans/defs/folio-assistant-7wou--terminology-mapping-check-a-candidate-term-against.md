@@ -149,3 +149,13 @@ reason cannot smuggle markup onto the page.
 ## Evidence of completion (2026-10-07)
 - Landed in PR #1633 (merge commit `468724ce3418`): Terminology mapping checking against SKOS and FHIR terminologies implemented and passing.
 - Re-derived independently on 2026-10-07: Terminology checking tools active in pipeline.
+
+## Merged from the folio-assistant copy (bean dedupe, 2026-10-30)
+
+These lines differed from the kept copy and could not be merged automatically (cat-harness-tools#459). They are kept here so nothing is lost.
+
+Where: (three-way hunk)
+
+```text
+`glossary-terms` (now `folio-assistant-core/skills/library/cataloguing/glossary-terms.md`) already
+```

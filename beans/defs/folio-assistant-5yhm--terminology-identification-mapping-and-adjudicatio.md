@@ -136,3 +136,37 @@ Claimed by claude/terminology-followups (session https://claude.ai/code/session_
       wrote. `exactMatch` targets only the record's new `exactConcepts`; an
       in-repo `<scheme>:<id>` that names two authored terms is left out and
       reported. Today 0 terms map, so no committed SKOS file changes.
+
+## 2026-10-24 — re-measured
+`bun run cat check:term-mapping` at the folio-assistant lock: 3751 candidates, **0 mapped** on both `skos` and `fhir`, 0 adjudication files. So `2i5f` leg 2's entry condition is still unmet. The open slices are unchanged: key the record by instance as well as scheme id (buildable now), and 7wou's FHIR collections (needs OCL). Session https://claude.ai/code/session_01TkFVzHu3LN6P5Nj2psquPU.
+
+## OWNER, 2026-10-24: close for what is built (structured question Q7, 08:29Z: "A + B")
+
+Identification, vocabulary authority, mapping (`7wou`), leg 1 of adjudication and publishing automated matches into SKOS are built. The open slices move out:
+- `2i5f` leg 2 goes to `nvhg` (waits on non-zero `mapped`).
+- `7wou`'s last item, FHIR collections in scope once OCL is reachable, goes to `q7ds`. The connected agent runs the FHIR target against OCL with ordinary internet, because cloud sessions are refused `api.openconceptlab.org`.
+- Keying the per-scheme record by instance as well as scheme id goes to `wvzp`. It isn't blocked.
+
+Session https://claude.ai/code/session_01FABZmtqnNeBaTcHsXrtyK7.
+
+## Merged from the folio-assistant copy (bean dedupe, 2026-10-30)
+
+These lines differed from the kept copy and could not be merged automatically (cat-harness-tools#459). They are kept here so nothing is lost.
+
+Where: (three-way hunk)
+
+```text
+| **identification** — what IS a term | `glossary-extract.ts` + `glossary-terms` (now `folio-assistant-core/skills/library/cataloguing/glossary-terms.md`) §"Extracted terms": per asset type, one `kg-` scheme each, `candidate` status, and a stated exclusion (BPMN lanes and roles go to the swimlane ledger) | **no** — `a13a` is scrapped |
+| **which vocabulary owns a fact** | [`vocabulary-authority`](../../cat-harness/skills/kg/kg-core/vocabulary-authority.md): SKOS authoritative for meaning, DC for resources, FHIR for clinical codes, DCAT for a release, with `exactMatch`/`closeMatch`/`broadMatch`/`relatedMatch` as the declared mapping | **no** |
+```
+
+## Merged from the cat-harness copy (bean dedupe, 2026-10-30)
+
+These lines differed from the kept copy and could not be merged automatically (cat-harness-tools#459). They are kept here so nothing is lost.
+
+Where: (three-way hunk)
+
+```text
+| **identification** — what IS a term | `glossary-extract.ts` + `glossary-terms` (now `folio-assistant-core/skills/library/cataloguing/glossary-terms.md`) §"Extracted terms": per asset type, one `kg-` scheme each, `candidate` status, and a stated exclusion (BPMN lanes and roles go to the swimlane ledger) | **no** — `a13a` is scrapped |
+| **which vocabulary owns a fact** | [`vocabulary-authority`](../../cat-harness/skills/kg/kg-core/vocabulary-authority.md): SKOS authoritative for meaning, DC for resources, FHIR for clinical codes, DCAT for a release, with `exactMatch`/`closeMatch`/`broadMatch`/`relatedMatch` as the declared mapping | **no** |
+```

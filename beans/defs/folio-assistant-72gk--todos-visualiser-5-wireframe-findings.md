@@ -10,7 +10,7 @@ tags:
     - ui
     - visualiser-todos
 created_at: 2026-09-23T10:36:15Z
-updated_at: 2026-10-09T12:52:00Z
+updated_at: 2026-10-16T06:30:00Z
 parent: folio-assistant-4ccr
 ---
 
@@ -58,3 +58,6 @@ Closed on landed evidence in `main`.
   4. Retired: Run-together card tags / h3 panel removed from `/todos/`.
   5. Fixed: Themed Jekyll layout with navbar, home links, and color-scheme support.
 - Tests: `cat-harness/test/todos-page-board.e2e.ts`.
+
+
+_2026-10-16T06:30:00Z_ — Store reconciliation: status `in-progress` → `completed` (Owner ruling 2026-10-16, item 9: "based on semantic content"; the copies said folio-assistant: completed, cat-harness: in-progress). Evidence: closed in the folio-assistant store copy (2026-10-09); commit 138ec60d is on folio-assistant main, commit 739f5da9 is on folio-assistant main. Session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs.

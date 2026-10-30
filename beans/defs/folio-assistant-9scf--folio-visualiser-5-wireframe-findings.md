@@ -70,3 +70,47 @@ default branches:
 - fix commit `62795040` is an ancestor of cat-harness `main` (`b675555e`);
 - the change is present on current `main`, where the generator now lives:
   cat-harness-tools `scripts/gen-folio-viz.ts:280` (table headings), `:241` (link pills).
+
+
+## Closed 2026-10-09
+
+Fixed remaining findings 4 and 5 in `cat-harness/scripts/gen-folio-viz.ts` and locked in via `scripts/tests/folio-viz.test.ts`.
+
+- **Finding 4 (Long cells stretch the rows): FIXED** — Link cells rendered as compact flex lists with inline pills (`.fo-page .links` with `max-height: 4.8rem`, `overflow-y: auto`, and `.fo-page .link-pill`). Long link collections wrap cleanly and scroll within the cell, capping cell height at ~75-85px instead of stretching the row to 245px at 1280 and 427px at 390.
+- **Finding 5 (Tables have no caption or heading): FIXED** — Both tables now feature accessible names, `<caption>` elements, and preceding `<h2>` headings:
+  - Declared directories table: Preceding `<h2 id="fo-dirs-head">Declared folio directories</h2>`, `<table aria-label="Declared folio directories" aria-labelledby="fo-dirs-head">`, and `<caption>Declared folio directories</caption>`.
+  - Folio nodes table: Preceding `<h2 id="fo-nodes-head">Folio nodes</h2>`, `<table aria-label="Folio nodes" aria-labelledby="fo-nodes-head">`, and `<caption>Folio nodes</caption>`.
+- **Findings 1, 2, 3: VERIFIED INTACT** — Horizontal overflow scrolling contained, mount handle clear of titles, and link resolution preserved (`a[href]` tags with resolved paths).
+
+Branch: `claude/9scf-folio-viz`
+Commit SHA: `62795040d5c10c89fd59179f2a7e3362123835e7`
+Evidence:
+- `bun test scripts/tests/folio-viz.test.ts`: 17 pass, 0 fail
+- `bun run scripts/gen-folio-viz.ts --check`: 0 errors (clean)
+- `bun run typecheck`: clean (0 errors)
+
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-folio-viz.ts` in cat-harness-tools. It now emits table captions and aria-labels (finding 5). Finding 4, long cells stretching rows, is unverified. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on verified evidence. The
+fixes were made and recorded on this bean's cat-harness-store copy (closed
+2026-10-09). This copy was checked separately to confirm they reached the
+default branches:
+- fix commit `62795040` is an ancestor of cat-harness `main` (`b675555e`);
+- the change is present on current `main`, where the generator now lives:
+  cat-harness-tools `scripts/gen-folio-viz.ts:280` (table headings), `:241` (link pills).

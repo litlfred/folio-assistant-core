@@ -77,3 +77,45 @@ default branches:
 - fix commit `815d55ee` is an ancestor of cat-harness `main` (`b675555e`);
 - the change is present on current `main`, where the generator now lives:
   cat-harness-tools `scripts/gen-methodologies-viz.ts:205` (scroll hint).
+
+
+## Closed 2026-10-09
+
+Fixed in `cat-harness` commit `815d55ee24b4d120436a921d05c8a40a20c2db1a` on branch `claude/db80-methodologies-viz`:
+- **Finding 1 (DIIG)**: Upstream `main` resolved the contradiction (`smart-base/methodologies/diig.md` has `evidence: [library/9789240010567-eng]`, renders as `.mv-ingested` "source held", links to viewer, and contains no "No ingested source" text).
+- **Finding 2 ('applies when' truncated)**: Render full `cell(r.appliesWhen)` in the "Choosing one" table; improve `short()` with word-boundary truncation and balanced formatting delimiters.
+- **Finding 5 (Section anchors below headings)**: Render heading with inline anchor attribute `### ${cell(r.title)} {#${r.name}}` instead of detached `<p><a id="..."></a></p>` anchor, ensuring section navigation does not place the heading above the viewport.
+- **Finding 7 (Mobile scroll cue)**: Added `.mv-scroll-hint` indicator for mobile viewports and `.table-wrapper` horizontal scroll fade mask with CSS animation driven by inline scroll offset.
+- **Finding 8 (WireGen origin)**: Moved "Section numbers below are the paper's." from front-matter `origin:` to body under `## What the method says (rendered faithfully)` in `methodologies/wiregen.md`; generator also defensively strips this note from Origin text.
+- Also fixed worktree path resolution in `scripts/gen-methodologies-viz.ts` using `readDeclaration(instanceRoot)?.name` so worktree names do not leak into `renders:` front-matter or `instanceOf()` output.
+
+Verification evidence:
+- `bun test scripts/tests/methodologies-viz.test.ts`: 11 pass, 0 fail (16 expect calls)
+- `bun run scripts/gen-methodologies-viz.ts --check`: `✓ methodologies viewer is current — 22 methodolog(ies)`
+- `bun run typecheck`: clean exit 0 (`tsc --noEmit -p tsconfig.json`)
+
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `scripts/gen-methodologies-viz.ts` in cat-harness-tools. Nothing there cites a fix yet. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on verified evidence. The
+fixes were made and recorded on this bean's cat-harness-store copy (closed
+2026-10-09). This copy was checked separately to confirm they reached the
+default branches:
+- fix commit `815d55ee` is an ancestor of cat-harness `main` (`b675555e`);
+- the change is present on current `main`, where the generator now lives:
+  cat-harness-tools `scripts/gen-methodologies-viz.ts:205` (scroll hint).

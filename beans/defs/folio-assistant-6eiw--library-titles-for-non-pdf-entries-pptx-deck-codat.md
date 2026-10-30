@@ -4,6 +4,7 @@ $schema: bean/1.0.0
 title: Library titles for non-PDF entries (pptx deck, CODATA table)
 status: completed
 type: task
+priority: normal
 tags:
     - rehomed
     - ui
@@ -85,3 +86,114 @@ PR #114). Work it there. This copy stays open as a pointer, and closes when
 ## Summary of Changes
 
 Rehomed: the work moved to litlfred/cat-harness-tools as cat-tools-v8wg, which is completed there. This copy closes as a pointer to it, so the two stores agree (bean drain, 2026-10-14, session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs).
+
+## Merged from the folio-assistant copy (bean dedupe, 2026-10-30)
+
+These lines differed from the kept copy and could not be merged automatically (cat-harness-tools#459). They are kept here so nothing is lost.
+
+Where: (three-way hunk)
+
+````text
+- [x] Both entries show a title that is verified or editorially corrected, and the source is recorded beside it.
+- [x] A non-PDF entry with no title source is reported as such rather than shown under its file name.
+
+## Closed 2026-10-09
+
+Closed on evidence following `skills/sdlc/sdlc-core/bean-coordination.md`.
+
+### 1. Editorial Corrections Applied
+
+1. **`cat-harness/library/kg-folio-asst-2026-09-30`**:
+   - `structure.json`: added `title_correction` under `metadata`:
+     - Title: "WHO SMART Guidelines: Architecture & Knowledge Content Platform"
+     - Basis: "Slide 1 title 'WHO SMART Guidelines' and deck content introducing the computable asset acquisition, adjudication and agentic test tool harness for the WHO SMART Guidelines architecture"
+     - Corrected on: 2026-10-09
+     - Bean: `folio-assistant-6eiw`
+   - `manifest.jsonld`: set `title: "WHO SMART Guidelines: Architecture & Knowledge Content Platform"`, `meta.title_source: "editorial"`, `meta.title_from: "structure.json metadata.title_correction.title"`, `meta.title_verified: true`, and added `meta.title_correction`.
+   - Committed and pushed to `litlfred/cat-harness` branch `main`: commit `3f8a5236`.
+
+2. **`folio-assistant-sci/library/codata-2022`**:
+   - `manifest.jsonld`: set `title: "CODATA 2022 Recommended Values of the Fundamental Physical Constants"`, `meta.title_source: "editorial"`, `meta.title_from: "tabular.jsonld source.edition and sheet name"`, `meta.title_verified: true`, and added `meta.title_correction`:
+     - Title: "CODATA 2022 Recommended Values of the Fundamental Physical Constants"
+     - Basis: "NIST Standard Reference Data table allascii.txt edition 'CODATA 2022' embedded in SciPy scipy.constants._codata txt2022 block"
+     - Corrected on: 2026-10-09
+     - Bean: `folio-assistant-6eiw`
+   - Committed and pushed to `litlfred/folio-assistant-sci` branch `main`: commit `f5641f5`.
+
+### 2. Verification
+
+Running `bun .claude/worktrees/cat-harness-tools-seed/scripts/check-library-qa.ts` from coordinator root:
+```
+Library entry QA  (55 entries)
+  · bibliographic-missing: 53
+  ✓ block-no-content: 0
+  ✓ could-not-determine: 0
+  · summary-backlog: 52
+  · title-implausible: 1
+  · title-missing: 2
+  · title-self-declared: 32
+```
+`title-missing` dropped from 3 to 2: `kg-folio-asst-2026-09-30` is now resolved, leaving only the two arXiv papers (`arxiv-2203.02010v1`, `arxiv-260327124v1`) in cat-harness.
+Running `check-library-qa.ts --check` succeeds with exit code 0 (`OK — no finding the gate fails on`).
+
+## Reopened (2026-10-10, drain ml9h)
+
+Closed 2026-10-09, but sci regen 99d054e reverted the CODATA title (found by drain lane C).
+
+## Rehomed (2026-10-11)
+
+Owned now by litlfred/cat-harness-tools' store as cat-tools-v8wg (lane C, tools#114; core#55 turned core's copy into a pointer). This copy stays open as a pointer until cat-tools-v8wg closes.
+
+## Completed 2026-10-12 (mirror of cat-tools-v8wg)
+Done in lane B: cat-harness-tools#142 and folio-assistant-sci#14 are merged, and cat-tools-v8wg is completed in the cat-harness-tools store.
+````
+
+## Merged from the cat-harness copy (bean dedupe, 2026-10-30)
+
+These lines differed from the kept copy and could not be merged automatically (cat-harness-tools#459). They are kept here so nothing is lost.
+
+Where: (three-way hunk)
+
+````text
+- [x] Both entries show a title that is verified or editorially corrected, and the source is recorded beside it.
+- [x] A non-PDF entry with no title source is reported as such rather than shown under its file name.
+
+## Closed 2026-10-09
+
+Closed on evidence following `skills/sdlc/sdlc-core/bean-coordination.md`.
+
+### 1. Editorial Corrections Applied
+
+1. **`cat-harness/library/kg-folio-asst-2026-09-30`**:
+   - `structure.json`: added `title_correction` under `metadata`:
+     - Title: "WHO SMART Guidelines: Architecture & Knowledge Content Platform"
+     - Basis: "Slide 1 title 'WHO SMART Guidelines' and deck content introducing the computable asset acquisition, adjudication and agentic test tool harness for the WHO SMART Guidelines architecture"
+     - Corrected on: 2026-10-09
+     - Bean: `folio-assistant-6eiw`
+   - `manifest.jsonld`: set `title: "WHO SMART Guidelines: Architecture & Knowledge Content Platform"`, `meta.title_source: "editorial"`, `meta.title_from: "structure.json metadata.title_correction.title"`, `meta.title_verified: true`, and added `meta.title_correction`.
+   - Committed and pushed to `litlfred/cat-harness` branch `main`: commit `3f8a5236`.
+
+2. **`folio-assistant-sci/library/codata-2022`**:
+   - `manifest.jsonld`: set `title: "CODATA 2022 Recommended Values of the Fundamental Physical Constants"`, `meta.title_source: "editorial"`, `meta.title_from: "tabular.jsonld source.edition and sheet name"`, `meta.title_verified: true`, and added `meta.title_correction`:
+     - Title: "CODATA 2022 Recommended Values of the Fundamental Physical Constants"
+     - Basis: "NIST Standard Reference Data table allascii.txt edition 'CODATA 2022' embedded in SciPy scipy.constants._codata txt2022 block"
+     - Corrected on: 2026-10-09
+     - Bean: `folio-assistant-6eiw`
+   - Committed and pushed to `litlfred/folio-assistant-sci` branch `main`: commit `f5641f5`.
+
+### 2. Verification
+
+Running `bun .claude/worktrees/cat-harness-tools-seed/scripts/check-library-qa.ts` from coordinator root:
+```
+Library entry QA  (55 entries)
+  · bibliographic-missing: 53
+  ✓ block-no-content: 0
+  ✓ could-not-determine: 0
+  · summary-backlog: 52
+  · title-implausible: 1
+  · title-missing: 2
+  · title-self-declared: 32
+```
+`title-missing` dropped from 3 to 2: `kg-folio-asst-2026-09-30` is now resolved, leaving only the two arXiv papers (`arxiv-2203.02010v1`, `arxiv-260327124v1`) in cat-harness.
+Running `check-library-qa.ts --check` succeeds with exit code 0 (`OK — no finding the gate fails on`).
+````

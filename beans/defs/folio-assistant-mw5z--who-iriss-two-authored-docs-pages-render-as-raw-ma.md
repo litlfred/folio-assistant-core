@@ -67,11 +67,11 @@ stop claiming a complete list it does not have.
 
 ## Done when
 
-- [ ] who-iris's two authored pages are reachable as RENDERED pages, or the
+- [x] who-iris's two authored pages are reachable as RENDERED pages, or the
       decision not to render them is recorded with its reason
-- [ ] `docs/who-iris/index.html`'s "Pages" section no longer under-reports its
+- [x] `docs/who-iris/index.html`'s "Pages" section no longer under-reports its
       own directory
-- [ ] at least one page links them — measured by grepping the BUILT site, not
+- [x] at least one page links them — measured by grepping the BUILT site, not
       the source
 
 
@@ -93,3 +93,37 @@ separation (checked at `ffdc049`). Nothing was changed in this repository.
       over who-iris `docs/` finds `index.html` → both pages and the two pages
       linking each other. (`docs/` is committed generator output, guarded by
       `iris:pages:check`.)
+
+
+
+2026-10-09: item 2 done — https://github.com/litlfred/who-iris/pull/20 merged (32c5909): the landing page derives its authored pages (`authoredDocs`) and lists style-guide.md and style-guide-agents.md as markdown source. Items 1 and 3 wait on the owner's choice of option 1/2/3 (render, move, or leave-and-say). (session https://claude.ai/code/session_01BJNRo4kh8U15HZVFDhYNJL)
+
+
+## 2026-10-09: owner chose option 1
+Owner: "go", on the recommendation put to them: option 1 — pre-render the two authored pages in who-iris's generator, as its three generated docs pages are, keeping the mount's rule that everything in docs/ is already HTML. **Claimed** by session https://claude.ai/code/session_01BJNRo4kh8U15HZVFDhYNJL (branch claude/lucid-wright-fc2ctd on litlfred/who-iris).
+
+
+## Closed 2026-10-09 (session https://claude.ai/code/session_01BJNRo4kh8U15HZVFDhYNJL)
+Option 1 landed: https://github.com/litlfred/who-iris/pull/21 merged (d43634e). `renderAuthored()` (remark + GFM, declared in who-iris's own package.json) writes `style-guide.html`, `style-guide-agents.html` and `oxigraph-pipeline-requirements.html`; their names are generator-owned (derived), so `--check` and the orphan sweep cover them. Item 3: the docs mount copies `docs/` verbatim, so the generated `docs/index.html` IS the built landing page — it links all three renderings (and no `.md`). Checked: `--check` 49 pages current, who-iris tests 64 pass; rendered style guide has 2 tables and clean UTF-8 em-dashes.
+Not verified: the pages' relative links into `../library/`, `../glossary/`, `../skills/voices/` are kept as authored; whether they resolve on the mounted site is unmeasured.
+
+
+
+## 2026-10-09 — fixed in two halves, waiting on the pin (session https://claude.ai/code/session_017fFnGmbJcfqqrHXz9oqxdG)
+
+- **cat-harness** (branch `claude/mount-render-md`, lands after pxtk and the docs-source move): `mount-instance-docs` renders each mounted `x.md` that has no `x.html` (`renderMountedMarkdown`, sharing `publish-instance-files`' renderer). Links are resolved for where the page is PUBLISHED: one leaving the mounted directory, or naming a directory with no page, becomes `https://github.com/<repository>/{blob,tree}/HEAD/<path>` from the declaration's `repository`; one climbing out of the instance fails the mount. Front-matter (Jekyll) pages are left alone.
+- **who-iris** (`14ff17d`): the docs landing's "Pages" list is read off `docs/*.md` (option 3's clause: it no longer under-reports); two links that still climbed to the monorepo root are fixed.
+- Measured on a local build of who-iris's site (the Routine's steps 3–7, isolated tree): `/docs/who-iris/style-guide.html` renders (screenshot), all four authored pages are linked from the landing, and a whole-site link check finds **0** unresolved hrefs.
+- Remaining: merge both, then move who-iris's cat-harness pin (owner consent, H8) and publish.
+
+## Completed 2026-10-09 — measured on the LIVE site (session https://claude.ai/code/session_017fFnGmbJcfqqrHXz9oqxdG)
+
+Two sessions worked this bean the same day; both halves landed and coexist:
+- the owner ruled **option 1** in session_01BJNRo4kh8U15HZVFDhYNJL: who-iris pre-renders its authored pages in `gen-iris-pages` (litlfred/who-iris #20, #21);
+- litlfred/who-iris #22 made those pages' links to files outside `docs/` cite the repository (6 had been published dead) and fixed two links that climbed to the monorepo root;
+- litlfred/cat-harness #65 renders any OTHER mounted `.md` (an instance without a generator); it never overwrites an existing `.html`, so for who-iris the generator's pages win.
+
+Done-when, on gh-pages `9255288` (who-iris `2e127e7`, Pages run https://github.com/litlfred/who-iris/actions/runs/37977615950 — success):
+- [x] the authored pages are reachable as RENDERED pages: `docs/who-iris/style-guide.html`, `style-guide-agents.html`, `oxigraph-pipeline-requirements.html` are on gh-pages (screenshot of the style guide checked on the local build);
+- [x] `docs/who-iris/index.html`'s Pages section lists the authored pages;
+- [x] linked from a page, measured on the BUILT site: the docs landing links each, and a whole-site link check over 1,420 files finds 0 unresolved hrefs.

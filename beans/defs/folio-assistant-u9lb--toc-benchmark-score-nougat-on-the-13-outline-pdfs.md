@@ -8,7 +8,7 @@ priority: normal
 tags:
     - rehomed
 created_at: 2026-10-06T18:05:01Z
-updated_at: 2026-10-14T13:55:00Z
+updated_at: 2026-10-16T06:30:00Z
 parent: folio-assistant-cp3v
 ---
 
@@ -53,3 +53,10 @@ PR #68). Work it there. This copy stays open as a pointer, and closes when
 ## Summary of Changes
 
 Rehomed: the work moved to litlfred/cat-harness-tools as cat-tools-e8vg, which is completed there. This copy closes as a pointer to it, so the two stores agree (bean drain, 2026-10-14, session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs).
+
+
+## Completed 2026-10-12 (mirror of cat-tools-e8vg, lane B)
+cat-harness#168 (merged) reports Nougat-small, measured on CPU over 10 of the 13 outline PDFs: title F1 is 0.81, against layout's 0.87. The weights came from GitHub releases, so huggingface.co was not needed.
+
+
+_2026-10-16T06:30:00Z_ — Store reconciliation: status `todo` → `completed` (Owner ruling 2026-10-16, item 9: "based on semantic content"; the copies said folio-assistant: completed, cat-harness: todo). Evidence: closed in the folio-assistant store copy (2026-10-12); cat-harness#168 merged 2026-10-12. Session https://claude.ai/code/session_01Pc8vSeXCwp5Ckvmz56cMDs.

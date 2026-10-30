@@ -71,3 +71,48 @@ default branches:
 - fix commit `40d06f6c` is an ancestor of cat-harness `main` (`b675555e`);
 - the change is present on current `main`, where the generator now lives:
   cat-harness-tools `scripts/gen-auto-docs.ts:1030,1173` (the table filter, whose threshold was later raised to 25 rows).
+
+
+## Closed 2026-10-09
+
+Resolved on branch `claude/krmw-docs-index-viz` in `cat-harness` commit `40d06f6c`.
+
+All 6 wireframe findings addressed:
+- Finding 2: Excluded non-pages (`_includes/*.html`, partials, wireframes, generated UML overview pages, generated visualisers, redirect stubs) via `isNonPage()` in `gen-auto-docs.ts`. Authored documentation pages down from 217+ noise to 126 authentic pages.
+- Finding 3: Extracted real page titles from front matter, HTML `<title>`, or Markdown `# heading`, and disambiguated colliding names with parent directory / section (e.g. `Architecture (concepts)`).
+- Finding 4: Stripped literal surrounding quotes from descriptions in `frontMatterDescription()` and `firstSentence()`.
+- Finding 5: Added active, responsive table filter box (`.fa-table-filter`) when table has >= 10 rows (`TABLE_FILTER_MIN = 10`), with live count and text matching across name and description.
+- Finding 6: Desktop sets `max-width: 40%` on first column (`td:first-child`). Mobile `@media (max-width: 799.98px)` stacks cells as full-width blocks (`width: 100% !important; max-width: 100%`) with header hidden and row borders separating items.
+
+Verification evidence:
+- `cat-harness-tools/scripts/tests/gen-auto-docs.test.ts`: 54 passed, 0 failed.
+- Worktree `tsc --noEmit -p tsconfig.json`: clean exit 0.
+- `cat-harness/scripts/wireframe-check.mjs`: all 6 viewports pass (web/renders=pass web/no-overflow=pass web/no-placeholder=pass mobile/renders=pass mobile/no-overflow=pass mobile/no-placeholder=pass).
+- Re-drawn `docs/wireframes/docs-index/as-is.html`, `intent.md`, `checks/report.json`, screenshots, and updated `docs/wireframes/index.json`.
+
+
+
+
+## Owner decision
+
+Asked 2026-10-10 by the bean-backlog drain (lane C). The page generator is `autoDocPage` in cat-harness-tools `scripts/gen-auto-docs.ts`. Nothing there cites a fix yet. Re-verifying a visualiser means rebuilding and re-measuring the page, and that happens where the generator is. None of it lives in
+folio-assistant-core, and AGENTS.md's one rule ("core owns content vocabulary;
+the harness owns the harness") puts it outside this store's reach.
+
+1. **(Recommended) Rehome to `litlfred/cat-harness-tools`'s bean store.** The bean is re-created
+   there with this body, and this copy is scrapped with a pointer to the new id.
+2. Keep it here as a pointer, and do the work from this store against `litlfred/cat-harness-tools`.
+3. Scrap it. The finding no longer matters after the separation.
+
+**Default if no answer:** option 1.
+
+
+## Summary of Changes
+
+Closed 2026-10-10 by the bean-backlog drain (lane C) on verified evidence. The
+fixes were made and recorded on this bean's cat-harness-store copy (closed
+2026-10-09). This copy was checked separately to confirm they reached the
+default branches:
+- fix commit `40d06f6c` is an ancestor of cat-harness `main` (`b675555e`);
+- the change is present on current `main`, where the generator now lives:
+  cat-harness-tools `scripts/gen-auto-docs.ts:1030,1173` (the table filter, whose threshold was later raised to 25 rows).
