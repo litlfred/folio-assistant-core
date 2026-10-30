@@ -52,6 +52,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
   const sheet = (name: string) => {
     const t = tabs[name];
     return {
+      hideSheet: () => ((t as { hidden?: boolean }).hidden = true),
       getName: () => name,
       getSheetId: () => t.id,
       getLastRow: () => t.rows.length,
@@ -60,6 +61,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
         getDisplayValues: () => t.rows.slice(r - 1, r - 1 + nr).map((row) => row.slice(c - 1, c - 1 + nc)),
         setValues: (v: unknown[][]) => ((written[name] ??= {})[t.rows[0][c - 1]] = v),
         setRichTextValues: (v: unknown[][]) => ((written[name] ??= {})[t.rows[0][c - 1]] = v),
+        clearContent: () => {},
       }),
     };
   };
@@ -75,7 +77,10 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
   };
   const g = {
     SpreadsheetApp: {
-      getActive: () => ({ getSheetByName: sheet }),
+      getActive: () => ({
+        getSheetByName: (n: string) => (tabs[n] ? sheet(n) : null),
+        insertSheet: (n: string) => ((tabs[n] = { id: 99, rows: [["Section", "Link"]] }), sheet(n)),
+      }),
       newRichTextValue: builder,
       newTextStyle: () => ({ setBold: () => ({ build: () => ({ bold: true }) }) }),
     },
@@ -205,5 +210,95 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     s.refreshIfDirty();
     expect(rt2.props.dirty).toBeUndefined();
     expect(rt2.written["Review Change Sets"]).toBeDefined();
+  });
+});
+
+/** A fake drafting folio: two chapters, one numbered section, one with a comma. */
+function draftFolio(): string {
+  const repo = mkdtempSync(join(tmpdir(), "review-sheet-draft-"));
+  mkdirSync(join(repo, "review/drafting"), { recursive: true });
+  writeFileSync(join(repo, "anchors.json"), JSON.stringify({
+    chapters: [
+      { dir: "about", title: "About this draft" },
+      { dir: "ch01-why", title: "Chapter 1. Why it matters", number: 1 },
+      { dir: "ch12-privacy", title: "Chapter 12. Privacy, Security and Trust", number: 12 },
+    ],
+    sections: [
+      { label: "sec:about-lead", title: "About this draft", chapter: "about" },
+      { label: "sec:about-questions", title: "Questions for the TWG", chapter: "about" },
+      { label: "sec:ch01-lead", title: "Objectives and key messages", chapter: "ch01-why" },
+      { label: "sec:1-1", number: "1.1", title: "1.1 Global challenges", chapter: "ch01-why" },
+    ],
+    blocks: [],
+  }));
+  writeFileSync(join(repo, "review/drafting/sheet-sync.json"), JSON.stringify({
+    mode: "drafting",
+    anchors: "anchors.json",
+    sectionUrl: "S#",
+  }));
+  return repo;
+}
+
+const draftTabs = () => ({
+  "Contributor Feedback": {
+    id: 1,
+    rows: [
+      ["Change-set", "Title", "Sections", "Contributor Feedback", "Contributor Feedback", "Issue", "Agentic status"],
+      ["CS-004", "Define registry", "Ch 1 Why it matters, 1.1 Global challenges", "AB: needs a definition", "", "", ""],
+      ["", "Privacy wording", "Ch 12 Privacy; Security and Trust, Somewhere else", "", "CD: tighten", "", ""],
+      ["", "", "", "", "", "", ""],
+    ],
+  },
+  Agent: {
+    id: 2,
+    rows: [
+      ["Change-set", "Issue", "Agentic status", "Pull request (change set)", "What the PRs changed (change set)", "Agent completed (UTC, change set)"],
+      ["CS-004", "https://github.com/o/dth/issues/12", "PR open", "https://github.com/o/dth/pull/40", "Adds the definition", "2026-10-30 23:40Z"],
+    ],
+  },
+});
+
+describe("review-sheet.gs in drafting mode", () => {
+  const code = buildScript(draftFolio(), "review/drafting/sheet-sync.json");
+  const tabs = draftTabs() as Record<string, { id: number; rows: string[][]; hidden?: boolean }>;
+  const rt = runtime(tabs);
+  load(code, rt.g).refreshAll();
+  const fb = rt.written["Contributor Feedback"];
+
+  test("the TOC has chapters and sections, without commas, each with its anchor", () => {
+    expect(code).toContain('"MODE": "drafting"');
+    const toc = rt.written.TOC.Section as string[][];
+    expect(toc.map((r) => r[0])).toEqual([
+      "Section", "About this draft", "About this draft · Questions for the TWG", "Ch 1 Why it matters",
+      "Ch 1 · Objectives and key messages", "1.1 Global challenges", "Ch 12 Privacy; Security and Trust",
+    ]);
+    expect(toc[4][1]).toBe('=HYPERLINK("S#sec:ch01-lead","open")');
+    expect(tabs.TOC.hidden).toBe(true);
+  });
+
+  test("a used row without a Change-set gets the next id; an empty row does not", () => {
+    expect(fb["Change-set"]).toEqual([["CS-004"], ["CS-005"], [""]]);
+  });
+
+  test("each picked section links to its anchor; unknown text stays plain", () => {
+    const r = fb.Sections[0][0] as Rich;
+    expect(r.links.map((l) => [slice(r, l), l[2]])).toEqual([["Ch 1 Why it matters", "S#chap:ch01-why"], ["1.1 Global challenges", "S#sec:1-1"]]);
+    const r2 = fb.Sections[1][0] as Rich;
+    expect(r2.links.map((l) => [slice(r2, l), l[2]])).toEqual([["Ch 12 Privacy; Security and Trust", "S#chap:ch12-privacy"]]);
+  });
+
+  test("Issue and Agentic status come from the Agent tab by change set", () => {
+    const i = fb.Issue[0][0] as Rich;
+    expect(i.text).toBe("dth#12");
+    expect(i.links).toEqual([[0, 6, "https://github.com/o/dth/issues/12"]]);
+    expect((fb["Agentic status"][0][0] as Rich).text).toBe("dth#40 (PR open, 2026-10-30 23:40Z) · Adds the definition");
+    expect((fb.Issue[1][0] as Rich).text).toBe("");
+  });
+
+  test("only Contributor Feedback and Agent edits mark the sheet dirty", () => {
+    const rt2 = runtime(draftTabs() as Record<string, { id: number; rows: string[][] }>);
+    const s = load(code, rt2.g);
+    s.markDirty({ range: { getSheet: () => rt2.sheet("Agent") } });
+    expect(rt2.props.dirty).toBe("1");
   });
 });
