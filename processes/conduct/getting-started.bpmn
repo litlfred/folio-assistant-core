@@ -40,10 +40,10 @@
     Task_ConfirmImport   nobody's files are moved or imported on inference
     Task_ChooseHarnessed nothing in the repository is declared to the harness
                          on inference: the scan suggests, the person picks
-                         (owner, 2026-10-30: "a harness can point to a repo,
-                         but doesnt want to automatically slurp up all content
-                         in a repo. harness declares what it pays attention
-                         to in the repo.")
+                         (owner, 2026-10-30T12:41Z: "a harness can point to a
+                         repo, but doesnt want to automatically slurpo up all
+                         content in a repo. harness desclares what it it pays
+                         attention to in the repo.")
 
   The <bootstrap.processes:skill> extension on an activity names the folio-assistant skill
   that implements it; <cat-harness.processes:bean> marks a step that reads or writes the shared
