@@ -10,8 +10,8 @@
   P2 (publish: version, hash, catalogue) and P14 (amend, renew, terminate,
   expire) of the DSA process catalogue. The server, wallet and consent
   processes (P3 to P13, P15) are real-world business processes between
-  organisations, not harness work, and belong in smart-trust and its
-  siblings (owner's option B13-B, 2026-10-30).
+  organisations, not harness work, and belong in the trust IG layer
+  (https://github.com/litlfred/smart-trust) and its siblings (owner's option B13-B, 2026-10-30).
 
   A step no skill covers yet is a user task with a
   <cat-harness.processes:no-skill reason="Gap: …"/>. No skill was invented.
