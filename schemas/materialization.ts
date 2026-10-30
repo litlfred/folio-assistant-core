@@ -29,7 +29,7 @@
  * ## Three states — the vocabulary lives in the harness
  *
  * `referenced`, `materialized` and `unknown`, and {@link FixitySchema}, are
- * defined in `cat-harness/schemas/materialization-state.ts` and re-exported
+ * defined in `cat-harness-tools/schemas/kg/materialization-state.ts` and re-exported
  * here. Bean `tlat` (placement PR5, owner ruling 2, 2026-09-30, option A) moved
  * only that VOCABULARY down; the gates, the purposes and the record that binds
  * them stay in this module, because each gate is a decision about CONTENT. The
