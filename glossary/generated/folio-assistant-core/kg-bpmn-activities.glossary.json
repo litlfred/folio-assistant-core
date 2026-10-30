@@ -1095,6 +1095,14 @@
       "status": "candidate"
     },
     {
+      "id": "process_gettingstarted.task_chooseharnessed",
+      "prefLabel": "Choose what the harness reads",
+      "definition": "The person picks which of the content markers the scan found the harness declares in index.config.json, and nothing is declared unpicked. A PERSON'S STEP: the scan's `markers` that are not yet declared are offered as selectable options — one per marker, each with its paths and what declaring it means, plus \"none of these\" — and the person picks which parts of the repository to load into the KG. A tap card where the host has one; otherwise a numbered pick-list with a stated default. Never a typed reply. The default declares NOTHING: a harness that declared every marker it found would be slurping the repository, which is what this step exists to prevent. Only the picks reach Task_Scaffold, which declares exactly those in index.config.json. With no undeclared marker found, nothing is asked. The same question is put after setup by running the scan with `--markers` (repo-conversion §2a).",
+      "notation": "Task_ChooseHarnessed",
+      "source": "folio-assistant-core/processes/conduct/getting-started.bpmn#Task_ChooseHarnessed",
+      "status": "candidate"
+    },
+    {
       "id": "process_gettingstarted.task_confirmimport",
       "prefLabel": "Import what, where, and who does it",
       "definition": "Three questions the scan cannot answer: import these or not; library or content for each group; leave the files where they are or reorganize to declutter. Plus whether to dispatch one ingestion agent or a small swarm. Non-relaxable: nobody's files are moved or imported on inference.",
@@ -1169,7 +1177,7 @@
     {
       "id": "process_gettingstarted.task_scaffold",
       "prefLabel": "Scaffold the folio (folio_init)",
-      "definition": "content/, uploads/, library/, the first manifests, <slug>.json and index.config.json (the instance's config inline in its entry; no <slug>.config.json, bean ymvt), the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store. Refuses rather than overwrites when a folio is already present.",
+      "definition": "content/, uploads/, library/, the first manifests, <slug>.json and index.config.json (the instance's config inline in its entry; no <slug>.config.json, bean ymvt), the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store. On the overlay path it declares in index.config.json exactly the markers picked at Task_ChooseHarnessed, and none it was not given. Refuses rather than overwrites when a folio is already present.",
       "notation": "Task_Scaffold",
       "source": "folio-assistant-core/processes/conduct/getting-started.bpmn#Task_Scaffold",
       "status": "candidate"
@@ -1177,7 +1185,7 @@
     {
       "id": "process_gettingstarted.task_scanrepo",
       "prefLabel": "Scan the repo for content worth importing",
-      "definition": "Read-only. Classifies candidates into library/ (external source) and content/ (authored here), and reports what it could not classify as its own bucket rather than forcing every file into one of the two.",
+      "definition": "Read-only. Classifies candidates into library/ (external source) and content/ (authored here), and reports what it could not classify as its own bucket rather than forcing every file into one of the two. Its fourth section, `markers`, lists the content markers it found — sushi-config.yaml, a legacy dak.json, .bpmn processes, a beans store, library/, Lean, folio manifests — each with its paths, whether index.config.json already declares it (declared, not-declared, or unknown), and the snippet that would. `bun run cat-harness-tools/scripts/scan-repo-content.ts --json`, a plain command any agent host can run.",
       "notation": "Task_ScanRepo",
       "source": "folio-assistant-core/processes/conduct/getting-started.bpmn#Task_ScanRepo",
       "status": "candidate"
