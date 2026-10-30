@@ -33,9 +33,8 @@ Processes:
   and profile validation, aggregate block and KG QA witnesses through
   [`quality-control`](../content-lifecycle-ext/quality-control.md) to evaluate
   publication quality gates. Domain layers stacked on core add their own
-  validators (for example Lean proof compilation in `folio-assistant-sci`, or
-  SUSHI / IG Publisher / terminology validation in `fhir-harness` and
-  `smart-base`).
+  validators (for example Lean proof compilation in the sci layer, or
+  SUSHI / IG Publisher / terminology validation in the FHIR and DAK layers).
 - **Review and comment resolution (`content-review`, `content-feedback`):**
   track reviewer observations and phase-gate sign-offs through
   [`review-comments`](../content-lifecycle-ext/review-comments.md) and commit
@@ -43,8 +42,8 @@ Processes:
   [`corpus-commit-contract`](../content-lifecycle-ext/corpus-commit-contract.md).
 - **Publication (`content-publish`):** document folios publish via
   [`document-publishing`](document-publishing.md);
-  higher layers add their own target artifacts (such as PDF/arXiv in `sci` or
-  `publication-request.json` and IG bundles in `fhir-harness`).
+  higher layers add their own target artifacts (such as PDF/arXiv in the sci
+  layer or `publication-request.json` and IG bundles in the FHIR layer).
 
 ## 2. Evidence appraisal in content folios (`evidence-appraisal`)
 
