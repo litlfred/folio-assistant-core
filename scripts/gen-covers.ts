@@ -79,8 +79,14 @@ export const DERIVED_MARKER = "rendered here from page 1";
 
 type Cover = {
   node: CatalogueNode;
-  /** The ORIGINAL bitstream the cover is rendered from. */
-  sourcePdf: string;
+  /**
+   * The ORIGINAL bitstream the cover is rendered from, or undefined when the
+   * ORIGINAL is `referenced`: the PDF was fetched once, rendered, and not
+   * kept (who-iris covers for items whose bytes wait for the IRIS CDN). Such a
+   * cover is verified against its recorded digest, bytes and dimensions, and
+   * never re-rendered here.
+   */
+  sourcePdf: string | undefined;
   /** The declared THUMBNAIL bitstream, instance-relative. */
   outPath: string;
   declaredSha: string | undefined;
@@ -149,7 +155,10 @@ export function coversWanted(all: CatalogueNode[], instanceDir: string): { cover
       continue;
     }
     const pdf = bytesFor(instanceDir, orig.materialization?.localPath, orig.name);
-    if (!pdf) {
+    // A `referenced` ORIGINAL is one this repository says it does not hold, so
+    // no bytes is the expected answer, not a broken claim. Only a claim of
+    // holding the PDF that resolves to nothing is a problem (bean yl5w).
+    if (!pdf && orig.materialization?.state !== "referenced") {
       problems.push(`${n.id}: the ORIGINAL "${orig.name}" resolves to no bytes — see bean yl5w`);
       continue;
     }
@@ -309,9 +318,17 @@ function main(): number {
   let wrote = 0;
   let stale = 0;
   let verified = 0;
+  let notHeld = 0;
 
   for (const c of covers) {
     const abs = join(instanceDir, c.outPath);
+
+    if (!c.sourcePdf) {
+      // Nothing to render from. The committed bytes are still checked against
+      // every claim the node makes about them.
+      if (verifyWithoutRender(c, abs, problems)) notHeld++;
+      continue;
+    }
 
     if (!backend) {
       // Four of the five claims, checked against the committed file itself.
@@ -319,7 +336,7 @@ function main(): number {
       continue;
     }
 
-    const { png, facts } = render(c);
+    const { png, facts } = render(c as Cover & { sourcePdf: string });
     const sha = createHash("sha256").update(png).digest("hex");
 
     // The claims the node makes about these bytes, checked against the bytes.
@@ -364,6 +381,9 @@ function main(): number {
     // or not the re-render happened, and the two are different assurances:
     // with the backend, these bytes ARE what that PDF renders to; without it,
     // they are the bytes the catalogue says it holds.
+    if (notHeld) {
+      console.log(`gen-covers --check: ${notHeld} cover(s) of referenced items verified against the catalogue — bytes, sha256 and PNG dimensions match; not re-rendered, the PDF is not held.`);
+    }
     console.log(
       backend
         ? `gen-covers --check: ${verified} cover(s) up to date — re-rendered and compared, digests and dimensions match.`
@@ -372,7 +392,7 @@ function main(): number {
     );
     return 0;
   }
-  console.log(`\n${wrote} written, ${covers.length - wrote} already current.`);
+  console.log(`\n${wrote} written, ${covers.length - wrote - notHeld} already current${notHeld ? `, ${notHeld} of referenced items verified only (PDF not held)` : ""}.`);
   return 0;
 }
 
