@@ -19,7 +19,7 @@ export default toolFactory((t) =>
         { name: "script", schema: t("RepoPath"), description: "Code.gs, ready to paste into the sheet's Apps Script editor. Never committed to the folio: it is rebuilt from the config." },
       ],
     },
-    satisfies: ["public-comment"],
+    satisfies: ["review-sheet-script"],
     requires: { runtime: ["bun"], network: false },
     selection: {
       when:
