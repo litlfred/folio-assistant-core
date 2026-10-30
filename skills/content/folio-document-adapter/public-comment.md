@@ -110,6 +110,12 @@ current without anyone, person or agent, refreshing them.
 | **Change Sets** | formulas only | one row per change-set from Agent L–N, with its comment count, its comment Nos., how many are Ready for agent, and a link to the public-comments page |
 | **By Change Set** | formulas only | the Review tab regrouped: one row per comment, sorted by change-set then No., carrying every Suggested revision column, status, disposition, Ready for agent and agentic status. Its headers are Review's own, so renaming a Suggested revision header there renames it here |
 
+**Locks** (owner, 2026-10-30). Protected ranges leave editors only the
+Suggested revision cells (not their headers) and "Ready for agent" on the
+Review tab. Every other Review column and every other tab is protected. The
+owner's account, which is also the account the agent's connector uses, can
+still edit everything: Google always lets the owner through.
+
 The agent reads **every** Review column whose header starts with "Suggested
 revision". It does not read a fixed column letter. A board adds its column
 beside the others and renames `(initials)` to its own.
