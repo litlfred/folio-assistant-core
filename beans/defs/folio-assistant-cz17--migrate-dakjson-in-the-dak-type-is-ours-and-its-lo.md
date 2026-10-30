@@ -8,7 +8,7 @@ priority: normal
 tags:
     - rehomed
 created_at: 2026-09-18T21:36:56Z
-updated_at: 2026-10-30T13:10:50Z
+updated_at: 2026-10-30T13:14:00Z
 parent: folio-assistant-0lmb
 ---
 
@@ -178,3 +178,9 @@ _2026-10-30T13:10:50Z_: **Follow-ups (a) and (c) are done.** Merged:
 - litlfred/smart-base#212 (`f2401a0e`): smart-base re-pins fhir-harness to `a67dc4d6` (with consent, evidence "A. ig section in index.config"), so its own site build reads only its `include`.
 
 Content types are still registered by import side effect from each layer's contribution module. A declared `content-types` contribution kind in cat-harness would make that explicit, and it is not done. Still open: (b), declaring `contentTypes.ig` in the other litlfred smart-* IGs, and item 4. Report: litlfred/aai-programme#26.
+
+_2026-10-30T13:14:00Z_: **Item 4 (`dak.json` → `index.config.json` `contentTypes.dak` in `litlfred/smart-*` repos) PRs opened:**
+- `litlfred/smart-immunizations#88`: moves root `dak.json` into `index.config.json` `contentTypes.dak`, removes `dak.json`, and re-pins `smart-base` to `e61ef9c0dfdf6a14c4a8747eb049e6b9a521f211` (`smart-base#156`). Note: `.github/workflows/fhirbuild.yml` in `smart-immunizations` and `smart-trust` is only the 28-line HL7 FHIR Autobuild curl trigger (`ig-commit-trigger`) and never reads `dak.json`; their harness PR checks, AST refresh, and site publisher run through `litlfred/fhir-harness` and the locked `litlfred/smart-base` mount.
+- `litlfred/smart-trust#77`: moves root `dak.json` into `index.config.json` `contentTypes.dak`, removes `dak.json`, and re-pins `cat-harness` to `6f7f10a5711f0b838cb4d9ff016f4457e85e2794` (`cat-harness#521`) and `smart-base` to `e61ef9c0dfdf6a14c4a8747eb049e6b9a521f211` (`smart-base#156`).
+- `litlfred/smart-base#211`: updates `smart-base/tools/dak-config-from-sushi/dak-config-from-sushi.ts` (and regenerates `smart-base/glossary/generated/smart-base/kg-tools.glossary.json`) plus `dak-kinds.ts` and `toolchain-ownership.md` from the interim `dak.config.json` spelling to `index.config.json` (`contentTypes.dak`).
+- Audit of remaining `litlfred/smart-*` repositories: `litlfred/smart-ra` has never carried `dak.json` in its git history (it is a `document` folio `dpi-h-ra` and SUSHI IG, not a DAK); `smart-base-clinical`, `smart-immunizations-uganda`, and `smart-hiv` carry no `dak.json`. `WorldHealthOrganization/*` repositories untouched.
