@@ -21,6 +21,7 @@ import {
   DublinCoreRecordSchema,
   dcPredicate,
   dublinCoreToJsonLd,
+  bcp47,
   type DublinCoreRecord,
 } from "./dublin-core.js";
 
@@ -226,5 +227,12 @@ describe("the context defines every prefix the projection actually emits", () =>
         expect(bound.some((ns) => p.startsWith(ns))).toBe(true);
       }
     }
+  });
+});
+
+describe("a DSpace locale becomes a BCP 47 tag", () => {
+  it("renders `en_US` as `en-US`, which N-Quads and xml:lang accept", () => {
+    expect(bcp47("en_US")).toBe("en-US");
+    expect(bcp47("en")).toBe("en");
   });
 });
