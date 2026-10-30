@@ -105,6 +105,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 ### 7. P14.5 · Set the catalogue status to ended (`Task_SetStatus`)
 
 - Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
+- Skill: `dsa-catalogue-status`.
 - What: Set the life-cycle status of the agreement's DCAT 3 record (DCAT 3 §6.4.30).
 - Record it: `workflow_complete` with `node: "Task_SetStatus"`.
 - next: → `Task_EndDuties` (Revoke grants and start end-of-agreement duties)
@@ -271,7 +272,8 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 ### 21. P2.2 · Record the SHA-256 of each file (`Task_Hash`)
 
 - Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
-- What: Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one.
+- Skill: `dsa-checksum`.
+- What: Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one, recorded as DCAT 3 spdx:checksum and verified by check:dsa-hash.
 - Record it: `workflow_complete` with `node: "Task_Hash"`.
 - next: → `GW_ConsentPublish` (Consent-based agreement?)
 
@@ -285,6 +287,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 ### 22. P2.2a · Hash the plain-language summary with the agreement (`Task_HashSummary`)
 
 - Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
+- Skill: `dsa-checksum`.
 - What: Consent-based only.
 - Record it: `workflow_complete` with `node: "Task_HashSummary"`.
 - next: → `Task_ConsentCitation` (P2.2b · State the fixed-version URL and hash a Consent cites)
@@ -312,7 +315,8 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 ### 24. P2.3 · Make the ODRL cite the text by URL and hash (`Task_OdrlCitesText`)
 
 - Who: the `Author and policy author` lane (role `author`).
-- What: The ODRL policy names the signed text with dcterms:source (DCMI Terms), pointing at the immutable URL whose checksum was just recorded.
+- Skill: `dsa-odrl-source`.
+- What: The ODRL policy names the signed text distribution with dcterms:source (DCMI Terms), pointing at the immutable URL whose spdx:checksum was just recorded.
 - Record it: `workflow_complete` with `node: "Task_OdrlCitesText"`.
 - next: → `GW_CiteJoin`
 
@@ -332,6 +336,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 ### 26. P2.4–5 · Write the DCAT 3 record and link versions (`Task_Catalogue`)
 
 - Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
+- Skill: `dsa-dcat-record`.
 - What: One DCAT 3 record: the agreement as a catalogued resource, each file a dcat:Distribution with dcat:downloadURL and spdx:checksum; datasets it covers carry odrl:hasPolicy.
 - Record it: `workflow_complete` with `node: "Task_Catalogue"`.
 - next: → `Call_BeanClosePublished` (Close the bean)

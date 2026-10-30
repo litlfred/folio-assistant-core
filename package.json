@@ -75,7 +75,8 @@
     "glossary:pot:check": "bun run folio-assistant-core/scripts/glossary-pot.ts --check",
     "sources:liveness": "bun run folio-assistant-core/scripts/source-liveness.ts",
     "kg:materialize": "bun run folio-assistant-core/scripts/kg-materialize.ts",
-    "kg:materialize:check": "bun run folio-assistant-core/scripts/kg-materialize.ts --check"
+    "kg:materialize:check": "bun run folio-assistant-core/scripts/kg-materialize.ts --check",
+    "check:dsa-hash": "bun run folio-assistant-core/scripts/check-dsa-hash.ts"
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json"

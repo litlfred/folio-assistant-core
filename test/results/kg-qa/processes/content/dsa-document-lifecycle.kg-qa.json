@@ -5,7 +5,7 @@
     "id": "Process_DsaDocumentLifecycle",
     "path": "processes/content/dsa-document-lifecycle.bpmn"
   },
-  "source_hash": "sha256:46128a6dd232da0c8a9183952c42325f70c8ff7fa998de711c46ca2431df9813",
+  "source_hash": "sha256:e419bc95fd6bace0a2cf6cb8a2e568fb3fba485471c5d3a4c8a97860af5fdeb0",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -75,12 +75,32 @@
           "detail": "names skill \"content-publish\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
         },
         {
+          "where": "Task_Hash",
+          "detail": "names skill \"dsa-checksum\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_HashSummary",
+          "detail": "names skill \"dsa-checksum\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
           "where": "Task_ConsentCitation",
           "detail": "names skill \"content-publish\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
         },
         {
+          "where": "Task_OdrlCitesText",
+          "detail": "names skill \"dsa-odrl-source\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
           "where": "Task_Publish",
           "detail": "names skill \"content-publish\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_Catalogue",
+          "detail": "names skill \"dsa-dcat-record\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_SetStatus",
+          "detail": "names skill \"dsa-catalogue-status\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
         }
       ]
     },

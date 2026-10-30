@@ -416,6 +416,11 @@
     "kg:materialize:check": {
       "outputs": [],
       "because": "`checkMaterializations` is offline and reads — measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning instance 2026-10-06 (bean 0r7u)"
+    },
+    "check:dsa-hash": {
+      "inputs": ["{tracked}"],
+      "outputs": [],
+      "because": "verifies DSA legal text SHA-256 against DCAT 3 spdx:checksum and ODRL 2.2 dcterms:source (bean folio-assistant-2z1t)"
     }
   },
   "contentTranslations": [

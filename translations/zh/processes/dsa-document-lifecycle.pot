@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dsa-document-lifecycle\n"
-"POT-Creation-Date: 2026-10-30T19:41:26.533Z\n"
+"POT-Creation-Date: 2026-10-30T20:01:28.959Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: zh\n"
@@ -86,7 +86,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:267
 #. Diagram element documentation
-msgid "Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one. Written as an SRI string or an RFC 6920 ni URI."
+msgid "Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one, recorded as DCAT 3 spdx:checksum and verified by check:dsa-hash."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:429
@@ -221,7 +221,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:393
 #. Diagram element documentation
-msgid "Merge: with or without new consent, the new version is written and published again (P1, P2)."
+msgid "Merge: with or without new consent, the new version is written and published again (P1, P2). Its DCAT 3 record carries dcat:previousVersion naming the fixed-version URL of the version it amends (P2.4–5, dsa-dcat-record); older Consents are carried across a narrowing amendment along that chain."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:237
@@ -341,7 +341,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:399
 #. Diagram label
-msgid "P14.5 · Set the catalogue status to ended"
+msgid "P14.5 · Set the catalogue status to ended [dsa-catalogue-status]"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:260
@@ -351,12 +351,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:266
 #. Diagram label
-msgid "P2.2 · Record the SHA-256 of each file"
+msgid "P2.2 · Record the SHA-256 of each file [dsa-checksum]"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:278
 #. Diagram label
-msgid "P2.2a · Hash the plain-language summary with the agreement"
+msgid "P2.2a · Hash the plain-language summary with the agreement [dsa-checksum]"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:284
@@ -366,12 +366,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:302
 #. Diagram label
-msgid "P2.3 · Make the ODRL cite the text by URL and hash"
+msgid "P2.3 · Make the ODRL cite the text by URL and hash [dsa-odrl-source]"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:320
 #. Diagram label
-msgid "P2.4–5 · Write the DCAT 3 record and link versions"
+msgid "P2.4–5 · Write the DCAT 3 record and link versions [dsa-dcat-record]"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:52
@@ -526,7 +526,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:303
 #. Diagram element documentation
-msgid "The ODRL policy names the signed text with dcterms:source (DCMI Terms), pointing at the immutable URL whose checksum was just recorded. Its uid is that same fixed-version URL, the URL a Consent cites in Consent.policy.uri (consent rule 2)."
+msgid "The ODRL policy names the signed text distribution with dcterms:source (DCMI Terms), pointing at the immutable URL whose spdx:checksum was just recorded. Its uid is that same fixed-version URL, the URL a Consent cites in Consent.policy.uri (consent rule 2)."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:146

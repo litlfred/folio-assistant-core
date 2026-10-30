@@ -688,7 +688,7 @@
     },
     {
       "id": "process_dsadocumentlifecycle.task_catalogue",
-      "prefLabel": "P2.4–5 · Write the DCAT 3 record and link versions",
+      "prefLabel": "P2.4–5 · Write the DCAT 3 record and link versions [dsa-dcat-record]",
       "definition": "One DCAT 3 record: the agreement as a catalogued resource, each file a dcat:Distribution with dcat:downloadURL and spdx:checksum; datasets it covers carry odrl:hasPolicy. Versions are linked with DCAT 3 versioning (previous version, version, current version).",
       "notation": "Task_Catalogue",
       "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_Catalogue",
@@ -744,15 +744,15 @@
     },
     {
       "id": "process_dsadocumentlifecycle.task_hash",
-      "prefLabel": "P2.2 · Record the SHA-256 of each file",
-      "definition": "Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one. Written as an SRI string or an RFC 6920 ni URI.",
+      "prefLabel": "P2.2 · Record the SHA-256 of each file [dsa-checksum]",
+      "definition": "Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one, recorded as DCAT 3 spdx:checksum and verified by check:dsa-hash.",
       "notation": "Task_Hash",
       "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_Hash",
       "status": "candidate"
     },
     {
       "id": "process_dsadocumentlifecycle.task_hashsummary",
-      "prefLabel": "P2.2a · Hash the plain-language summary with the agreement",
+      "prefLabel": "P2.2a · Hash the plain-language summary with the agreement [dsa-checksum]",
       "definition": "Consent-based only. Record the SHA-256 of the plain-language summary beside the agreement's, in the same version (consent rule 3). The summary a person consented to can then be checked against the agreement it summarises; a changed summary is a new version.",
       "notation": "Task_HashSummary",
       "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_HashSummary",
@@ -768,8 +768,8 @@
     },
     {
       "id": "process_dsadocumentlifecycle.task_odrlcitestext",
-      "prefLabel": "P2.3 · Make the ODRL cite the text by URL and hash",
-      "definition": "The ODRL policy names the signed text with dcterms:source (DCMI Terms), pointing at the immutable URL whose checksum was just recorded. Its uid is that same fixed-version URL, the URL a Consent cites in Consent.policy.uri (consent rule 2).",
+      "prefLabel": "P2.3 · Make the ODRL cite the text by URL and hash [dsa-odrl-source]",
+      "definition": "The ODRL policy names the signed text distribution with dcterms:source (DCMI Terms), pointing at the immutable URL whose spdx:checksum was just recorded. Its uid is that same fixed-version URL, the URL a Consent cites in Consent.policy.uri (consent rule 2).",
       "notation": "Task_OdrlCitesText",
       "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_OdrlCitesText",
       "status": "candidate"
@@ -816,7 +816,7 @@
     },
     {
       "id": "process_dsadocumentlifecycle.task_setstatus",
-      "prefLabel": "P14.5 · Set the catalogue status to ended",
+      "prefLabel": "P14.5 · Set the catalogue status to ended [dsa-catalogue-status]",
       "definition": "Set the life-cycle status of the agreement's DCAT 3 record (DCAT 3 §6.4.30). The published versions stay readable at their URLs.",
       "notation": "Task_SetStatus",
       "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_SetStatus",

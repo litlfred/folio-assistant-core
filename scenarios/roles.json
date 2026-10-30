@@ -72,7 +72,11 @@
         "block-change-summary",
         "document-authoring",
         "document-structure",
-        "normative-statements"
+        "normative-statements",
+        "dsa-catalogue-status",
+        "dsa-checksum",
+        "dsa-dcat-record",
+        "dsa-odrl-source"
       ]
     },
     {
@@ -141,6 +145,20 @@
       "role": "integration-watcher",
       "skills": [
         "bib-photo-ingestion-watcher"
+      ]
+    },
+    {
+      "role": "author",
+      "skills": [
+        "dsa-odrl-source"
+      ]
+    },
+    {
+      "role": "publication-manager",
+      "skills": [
+        "dsa-catalogue-status",
+        "dsa-checksum",
+        "dsa-dcat-record"
       ]
     },
     {
