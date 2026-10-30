@@ -37,7 +37,7 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, writeFileSync } from 
 import { join, relative, resolve } from "node:path";
 
 import { registerWorkflowTools } from "@litlfred/cat-harness-tools/src/tools/workflow.ts";
-import { fshGutsDirectory } from "@litlfred/cat-harness/schemas/kg/fsh-guts.ts";
+import { fshGutsDirectory } from "@litlfred/cat-harness-tools/schemas/kg/fsh-guts.ts";
 import { contentAt } from "@litlfred/cat-harness-tools/scripts/branch-store.ts";
 import { positionOf } from "@litlfred/cat-harness-tools/src/workflow/instance.ts";
 import { WORKFLOW_DIR, instanceId, loadInstance } from "@litlfred/cat-harness-tools/src/workflow/store.ts";

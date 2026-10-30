@@ -1,5 +1,5 @@
-import { toolFactory } from "@litlfred/cat-harness/schemas/tools/tool-folders.js";
-import { defineTool } from "@litlfred/cat-harness/schemas/tools/tool.js";
+import { toolFactory } from "@litlfred/cat-harness-tools/schemas/tools/tool-folders.js";
+import { defineTool } from "@litlfred/cat-harness-tools/schemas/tools/tool.js";
 
 // The bibliography page, as the Tool core's `bibliography` VISUALISER is
 // `renderedBy` (bean folio-assistant-63q4). Like the glossary: every

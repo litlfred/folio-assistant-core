@@ -62,8 +62,8 @@ import {
   instanceRootsIn,
   readDeclaration,
   resolveDirectories,
-} from "@litlfred/cat-harness/schemas/kg/cat-harness.ts";
-import { parseFrontMatter, scalar } from "@litlfred/cat-harness/schemas/kg/front-matter.ts";
+} from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.ts";
+import { parseFrontMatter, scalar } from "@litlfred/cat-harness-tools/schemas/kg/front-matter.ts";
 import { isSkillMd, skillMdDirs, unpublishedSkills } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
 import { readSchemaGraph } from "@litlfred/cat-harness-tools/scripts/schema-graph.ts";
 import { discoverTools } from "@litlfred/cat-harness-tools/tools/discover.ts";

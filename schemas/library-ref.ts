@@ -55,7 +55,7 @@ import { join, resolve } from "path";
 // partition rules call core reading harness DOWNWARD -- so this is the
 // declared dependency being used, not a new one being created. Owner ruling,
 // 2026-09-21, bean `jijc`.
-import { declarationPathIn } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
+import { declarationPathIn } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 
 /** A citation into L1 content. `instance` absent means *this* instance. */
 export interface LibraryRef {

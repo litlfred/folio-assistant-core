@@ -39,14 +39,14 @@ import type {
   ContentSource } from "@litlfred/cat-harness-tools/src/content-types.js";
 // The REAL feedback type, straight from the schema that validates it (bean
 // `jcmx`): this adapter is core, so importing the schema is core -> core.
-import type { FeedbackItem } from "@litlfred/cat-harness/schemas/types.js";
+import type { FeedbackItem } from "@litlfred/cat-harness-tools/schemas/types.js";
 import type { GitHelper } from "@litlfred/cat-harness-tools/src/core/git.js";
 import { FeedbackStore } from "@litlfred/cat-harness-tools/src/core/feedback.js";
 import { log } from "@litlfred/cat-harness-tools/src/core/logging.js";
 import { getAnthropic } from "@litlfred/cat-harness-tools/src/core/anthropic.js";
 import { guardUntrusted, oneLineLabel } from "@litlfred/cat-harness-tools/src/core/handover-screen.js";
 import { PaperResolver } from "./resolver.js";
-import { directoryForGraph, folioDir } from "@litlfred/cat-harness/schemas/kg/cat-harness.js";
+import { directoryForGraph, folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 
 /**
  * What a content operation behind a route returns: the data, or why not and

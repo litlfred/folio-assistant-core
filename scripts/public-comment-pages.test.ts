@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import type { KindNode } from "@litlfred/cat-harness/schemas/kg/node-kind-nodes.ts";
+import type { KindNode } from "@litlfred/cat-harness-tools/schemas/kg/node-kind-nodes.ts";
 import type { KindPagesContext } from "@litlfred/cat-harness-tools/scripts/gen-node-kind-pages.ts";
 import { ChangeSetPages, PublicCommentPages } from "./public-comment-pages.ts";
 
