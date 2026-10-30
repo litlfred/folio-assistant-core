@@ -5,7 +5,7 @@
     "id": "Process_DsaDocumentLifecycle",
     "path": "processes/content/dsa-document-lifecycle.bpmn"
   },
-  "source_hash": "sha256:58aae27ec6851788d334cd67e993f827f19f783d84ed0a054a5e8edea7b9ee19",
+  "source_hash": "sha256:e419bc95fd6bace0a2cf6cb8a2e568fb3fba485471c5d3a4c8a97860af5fdeb0",
   "criteria": {
     "raci-role-resolves": {
       "result": "n/a",
@@ -47,6 +47,14 @@
           "detail": "names skill \"document-structure\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
         },
         {
+          "where": "Task_RecordLegalBasis",
+          "detail": "names skill \"normative-statements\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_PlainSummary",
+          "detail": "names skill \"document-authoring\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
           "where": "Task_CheckOdrl",
           "detail": "names skill \"content-review\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
         },
@@ -69,6 +77,14 @@
         {
           "where": "Task_Hash",
           "detail": "names skill \"dsa-checksum\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_HashSummary",
+          "detail": "names skill \"dsa-checksum\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_ConsentCitation",
+          "detail": "names skill \"content-publish\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
         },
         {
           "where": "Task_OdrlCitesText",
@@ -154,7 +170,7 @@
       "findings": [
         {
           "where": "Process_DsaDocumentLifecycle",
-          "detail": "no rendered diagram at dsa-document-lifecycle.svg — run `bun run cat render:bpmn`."
+          "detail": "dsa-document-lifecycle.svg is rendered but no docs page shows it — run `bun run cat processes:viz`."
         }
       ]
     },

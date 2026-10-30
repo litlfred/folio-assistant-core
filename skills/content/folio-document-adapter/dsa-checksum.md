@@ -5,7 +5,7 @@ description: >
   Agreement's legal text as a W3C DCAT 3 `spdx:checksum` (`spdx:Checksum` with
   `spdx:checksumAlgorithm_sha256` and 64-character lowercase hex
   `spdx:checksumValue`), verified by `check:dsa-hash` (DSA building block B3,
-  process step P2.2 `Task_Hash`).
+  process steps P2.2 `Task_Hash` and P2.2a `Task_HashSummary`).
 ---
 
 # `dsa-checksum` — Compute and record the SHA-256 of the legal text (P2.2)
@@ -67,3 +67,12 @@ property (`http://spdx.org/rdf/terms#checksum`):
    The check recomputes SHA-256 over the legal text bytes, verifies that
    `spdx:checksumValue` matches, and verifies that a new version never reuses a
    previous version's hash.
+
+## The plain-language summary (P2.2a, `Task_HashSummary`)
+
+A consent-based agreement also publishes a plain-language summary (consent
+rule 3). Record it the same way: one more `dcat:Distribution` in the same
+version's `dcat.jsonld`, with its own `dcat:downloadURL` and its own
+`spdx:checksum` over the summary's bytes. A changed summary is a new version,
+like a changed text. `check:dsa-hash` verifies the legal text's checksum only;
+check the summary's by recomputing it as in step 2.

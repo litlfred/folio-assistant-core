@@ -5,7 +5,7 @@
     "id": "dsa-checksum",
     "path": "skills/content/folio-document-adapter/dsa-checksum.md"
   },
-  "source_hash": "e98fbf605e28",
+  "source_hash": "f05d6077a040",
   "criteria": {
     "skill-is-a-stub": {
       "result": "pass",
