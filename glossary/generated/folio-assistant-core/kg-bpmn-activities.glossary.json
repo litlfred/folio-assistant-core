@@ -673,7 +673,7 @@
     {
       "id": "process_dsadocumentlifecycle.task_agreeterms",
       "prefLabel": "P1.1 · Agree purpose, datasets, period, duties and trust anchors",
-      "definition": "The parties agree the purpose, the datasets, the period, the conditions and duties, and which trust anchors each side accepts. This sets what the text must say; it is a negotiation between people.",
+      "definition": "The parties agree the purpose, the datasets, the period, the conditions and duties, which trust anchors each side accepts, and the legal basis the sharing rests on (consent, treatment, public-health law or a research waiver). This sets what the text must say; it is a negotiation between people.",
       "notation": "Task_AgreeTerms",
       "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_AgreeTerms",
       "status": "candidate"
@@ -681,7 +681,7 @@
     {
       "id": "process_dsadocumentlifecycle.task_assignversion",
       "prefLabel": "P2.1 · Assign the version and its immutable URL [content-publish]",
-      "definition": "Each signed version gets its own immutable URL (for example /dsa/42/v3). A 'latest' URL may exist; nothing cites it. A new version never overwrites an old one.",
+      "definition": "Each signed version gets its own immutable URL (for example /dsa/42/v3). A 'latest' URL may exist; nothing cites it. A new version never overwrites an old one. This fixed-version URL is the one a Consent cites (consent rule 2), and a computable agreement's ODRL policy uid is set to it (P2.3).",
       "notation": "Task_AssignVersion",
       "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_AssignVersion",
       "status": "candidate"
@@ -697,9 +697,17 @@
     {
       "id": "process_dsadocumentlifecycle.task_checkodrl",
       "prefLabel": "P1.4 · Check the ODRL against the text [content-review]",
-      "definition": "Computable only. A person checks that the ODRL says what the text says, and signs it off. A program can check the ODRL is well formed; it cannot check that it matches the text.",
+      "definition": "Computable only. A person checks that the ODRL says what the text says, and signs it off. A program can check the ODRL is well formed; it cannot check that it matches the text. The check includes the consent duty: present when the legal basis is consent, absent otherwise (consent rule 1).",
       "notation": "Task_CheckOdrl",
       "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_CheckOdrl",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_consentcitation",
+      "prefLabel": "P2.2b · State the fixed-version URL and hash a Consent cites [content-publish]",
+      "definition": "Consent-based only. The version's publication metadata states the fixed-version URL (P2.1) and the hash (P2.2) that a Consent cites in FHIR R4 Consent.policy.uri (consent rule 2), never the 'latest' URL. For a computable agreement that URL is also the ODRL policy uid (P2.3): a Consent counts only when its Consent.policy.uri equals the agreement's ODRL policy uid, so the two are the same string.",
+      "notation": "Task_ConsentCitation",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_ConsentCitation",
       "status": "candidate"
     },
     {
@@ -721,7 +729,7 @@
     {
       "id": "process_dsadocumentlifecycle.task_deriveodrl",
       "prefLabel": "P1.3 · Derive the ODRL 2.2 Agreement",
-      "definition": "Computable only. One assigner and one assignee (ODRL 2.2 §2.1.3), permissions and prohibitions with target assets (§2.2), constraints (§2.5.1) and duties (§2.6.3), written as JSON-LD. Purposes from HL7 PurposeOfUse.",
+      "definition": "Computable only. One assigner and one assignee (ODRL 2.2 §2.1.3), permissions and prohibitions with target assets (§2.2), constraints (§2.5.1) and duties (§2.6.3), written as JSON-LD. Purposes from HL7 PurposeOfUse. Consent rule 1: the Agreement carries the odrl:obtainConsent duty only when the legal basis recorded in P1.2a is consent.",
       "notation": "Task_DeriveOdrl",
       "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_DeriveOdrl",
       "status": "candidate"
@@ -743,25 +751,57 @@
       "status": "candidate"
     },
     {
+      "id": "process_dsadocumentlifecycle.task_hashsummary",
+      "prefLabel": "P2.2a · Hash the plain-language summary with the agreement",
+      "definition": "Consent-based only. Record the SHA-256 of the plain-language summary beside the agreement's, in the same version (consent rule 3). The summary a person consented to can then be checked against the agreement it summarises; a changed summary is a new version.",
+      "notation": "Task_HashSummary",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_HashSummary",
+      "status": "candidate"
+    },
+    {
+      "id": "process_dsadocumentlifecycle.task_newconsentneeded",
+      "prefLabel": "P14.3 · Record that new consent is needed",
+      "definition": "The amendment widens use, so a Consent citing the old version's URL and hash does not cover the new version (consent rule 2). Record on the bean, and in the new version's text, that new consent is needed; the new version gets its own plain-language summary (P1.2b). Asking each person again is the trust layer's.",
+      "notation": "Task_NewConsentNeeded",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_NewConsentNeeded",
+      "status": "candidate"
+    },
+    {
       "id": "process_dsadocumentlifecycle.task_odrlcitestext",
       "prefLabel": "P2.3 · Make the ODRL cite the text by URL and hash",
-      "definition": "The ODRL policy names the signed text with dcterms:source (DCMI Terms), pointing at the immutable URL whose checksum was just recorded.",
+      "definition": "The ODRL policy names the signed text with dcterms:source (DCMI Terms), pointing at the immutable URL whose checksum was just recorded. Its uid is that same fixed-version URL, the URL a Consent cites in Consent.policy.uri (consent rule 2).",
       "notation": "Task_OdrlCitesText",
       "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_OdrlCitesText",
       "status": "candidate"
     },
     {
+      "id": "process_dsadocumentlifecycle.task_plainsummary",
+      "prefLabel": "P1.2b · Draft the plain-language summary [document-authoring]",
+      "definition": "Consent-based only. Write a plain-language summary of the agreement in the same document folio: what it lets the recipient do with the person's data, in words the person can read. Consent rule 3: every agreement that needs consent publishes this summary, hashed with the agreement (P2.2a), and the summary is what the person consents to. It is reviewed, rendered and versioned with the text.",
+      "notation": "Task_PlainSummary",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_PlainSummary",
+      "status": "candidate"
+    },
+    {
       "id": "process_dsadocumentlifecycle.task_publish",
       "prefLabel": "Publish the version at its URL [content-publish]",
-      "definition": "Publish the files at the version's immutable URL. If the parties' names are sensitive, publish only the template and the hash of the signed instance.",
+      "definition": "Publish the files at the version's immutable URL. If the parties' names are sensitive, publish only the template and the hash of the signed instance. A consent-based agreement publishes its plain-language summary and its hash with the text (consent rule 3). Check before publishing (consent rule 2): a computable agreement's ODRL policy uid equals this version's fixed-version URL, the URL a Consent cites; if they differ, the version is not published.",
       "notation": "Task_Publish",
       "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_Publish",
       "status": "candidate"
     },
     {
+      "id": "process_dsadocumentlifecycle.task_recordlegalbasis",
+      "prefLabel": "P1.2a · Record the legal basis [normative-statements]",
+      "definition": "The text states the legal basis the parties agreed in P1.1 as a normative statement: consent, treatment, public-health law, or a research waiver. Consent rule 1: only an agreement whose legal basis is consent carries the odrl:obtainConsent duty; treatment, public-health law and research waivers do not rest on consent. The gateway that follows, the ODRL and the reviewers all read the basis from this statement.",
+      "notation": "Task_RecordLegalBasis",
+      "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_RecordLegalBasis",
+      "status": "candidate"
+    },
+    {
       "id": "process_dsadocumentlifecycle.task_render",
       "prefLabel": "Render the text to HTML / PDF [document-publishing]",
-      "definition": "Render the agreed text to the form that will be signed (HTML and PDF), without a TeX installation.",
+      "definition": "Render the agreed text to the form that will be signed (HTML and PDF), without a TeX installation. A consent-based agreement's plain-language summary is rendered with it.",
       "notation": "Task_Render",
       "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_Render",
       "status": "candidate"
@@ -769,7 +809,7 @@
     {
       "id": "process_dsadocumentlifecycle.task_review",
       "prefLabel": "Review the draft agreement [content-review]",
-      "definition": "Legal and policy review of the whole draft. Reviewers comment on blocks through review-comments; review says which review skill answers which question.",
+      "definition": "Legal and policy review of the whole draft. Reviewers comment on blocks through review-comments; review says which review skill answers which question. For a consent-based agreement the reviewers also check that the plain-language summary says what the text says, since it is what the person consents to (consent rule 3).",
       "notation": "Task_Review",
       "source": "folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn#Task_Review",
       "status": "candidate"

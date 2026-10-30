@@ -55,7 +55,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 ### 3. P1.1 · Agree purpose, datasets, period, duties and trust anchors (`Task_AgreeTerms`)
 
 - Who: the `Parties and signatories (provider, recipient)` lane (role `stakeholder`).
-- What: The parties agree the purpose, the datasets, the period, the conditions and duties, and which trust anchors each side accepts.
+- What: The parties agree the purpose, the datasets, the period, the conditions and duties, which trust anchors each side accepts, and the legal basis the sharing rests on (consent, treatment, public-health law or a research waiver).
 - Record it: `workflow_complete` with `node: "Task_AgreeTerms"`.
 - next: → `GW_DraftMerge`
 
@@ -89,14 +89,14 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Skill: `document-authoring`, `normative-statements`, `document-structure`.
 - What: Write the agreement as a document folio: one normative statement per clause the parties must keep, through normative-statements.
 - Record it: `workflow_complete` with `node: "Task_WriteText"`.
-- next: → `GW_Computable` (Computable agreement?)
+- next: → `Task_RecordLegalBasis` (P1.2a · Record the legal basis)
 
 ### 6. P14.2 · Decide what happens to existing grants (`Task_DecideGrants`)
 
 - Who: the `Parties and signatories (provider, recipient)` lane (role `stakeholder`).
 - What: Existing grants keep citing the old hash.
 - Record it: `workflow_complete` with `node: "Task_DecideGrants"`.
-- next: → `GW_DraftMerge`
+- next: → `GW_WidensUse` (Consent-based: does the amendment widen use?)
 
 ## Done — Renewed by a new grant (`End_RenewedByGrant`)
 
@@ -109,6 +109,73 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Record it: `workflow_complete` with `node: "Task_SetStatus"`.
 - next: → `Task_EndDuties` (Revoke grants and start end-of-agreement duties)
 
+### 8. P1.2a · Record the legal basis (`Task_RecordLegalBasis`)
+
+- Who: the `Author and policy author` lane (role `author`).
+- Skill: `normative-statements`.
+- What: The text states the legal basis the parties agreed in P1.1 as a normative statement: consent, treatment, public-health law, or a research waiver.
+- Record it: `workflow_complete` with `node: "Task_RecordLegalBasis"`.
+- next: → `GW_ConsentBasis` (Consent the legal basis?)
+
+### Decide — Consent-based: does the amendment widen use? (`GW_WidensUse`)
+
+- Consent rule 2, for a new version only.
+- Call `workflow_complete` with `node: "GW_WidensUse"` and `outcome` set to the label that holds:
+  - «widens use» → `Task_NewConsentNeeded` (P14.3 · Record that new consent is needed)
+  - «narrows use» → `GW_WidensJoin`
+  - «not consent-based» → `GW_WidensJoin`
+
+### 9. Revoke grants and start end-of-agreement duties (`Task_EndDuties`)
+
+- Who: the `Parties and signatories (provider, recipient)` lane (role `stakeholder`).
+- What: All grants are revoked (P13) and the end-of-agreement duties start: return or delete the data, then check them (P12).
+- Record it: `workflow_complete` with `node: "Task_EndDuties"`.
+- next: → `Call_BeanCloseEnded` (Close the bean)
+
+### Decide — Consent the legal basis? (`GW_ConsentBasis`)
+
+- Reads the legal basis recorded in P1.2a.
+- Call `workflow_complete` with `node: "GW_ConsentBasis"` and `outcome` set to the label that holds:
+  - «consent» → `Task_PlainSummary` (P1.2b · Draft the plain-language summary)
+  - «treatment, law or waiver» → `GW_ConsentBasisJoin`
+
+### 10. P14.3 · Record that new consent is needed (`Task_NewConsentNeeded`)
+
+- Who: the `Parties and signatories (provider, recipient)` lane (role `stakeholder`).
+- What: The amendment widens use, so a Consent citing the old version's URL and hash does not cover the new version (consent rule 2).
+- Record it: `workflow_complete` with `node: "Task_NewConsentNeeded"`.
+- next: → `GW_WidensJoin`
+
+### Merge — `GW_WidensJoin`
+
+- Nothing to do or decide: the paths meet here and the engine passes through.
+- next: → `GW_DraftMerge`
+
+### 11. Close the bean (`Call_BeanCloseEnded`)
+
+- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Skill: `todo-manager`.
+- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
+- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `End_Ended` (Agreement ended)
+
+### 12. P1.2b · Draft the plain-language summary (`Task_PlainSummary`)
+
+- Who: the `Author and policy author` lane (role `author`).
+- Skill: `document-authoring`.
+- What: Consent-based only.
+- Record it: `workflow_complete` with `node: "Task_PlainSummary"`.
+- next: → `GW_ConsentBasisJoin`
+
+### Merge — `GW_ConsentBasisJoin`
+
+- Nothing to do or decide: the paths meet here and the engine passes through.
+- next: → `GW_Computable` (Computable agreement?)
+
+## Done — Agreement ended (`End_Ended`)
+
+- The instance completes here: The agreement has expired or been terminated, its catalogue status says so, and its versions stay readable. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+
 ### Decide — Computable agreement? (`GW_Computable`)
 
 - Does this agreement carry a machine-readable ODRL 2.2 Agreement beside its text?
@@ -116,14 +183,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
   - «yes» → `Task_DeriveOdrl` (P1.3 · Derive the ODRL 2.2 Agreement)
   - «document only» → `GW_ComputableJoin`
 
-### 8. Revoke grants and start end-of-agreement duties (`Task_EndDuties`)
-
-- Who: the `Parties and signatories (provider, recipient)` lane (role `stakeholder`).
-- What: All grants are revoked (P13) and the end-of-agreement duties start: return or delete the data, then check them (P12).
-- Record it: `workflow_complete` with `node: "Task_EndDuties"`.
-- next: → `Call_BeanCloseEnded` (Close the bean)
-
-### 9. P1.3 · Derive the ODRL 2.2 Agreement (`Task_DeriveOdrl`)
+### 13. P1.3 · Derive the ODRL 2.2 Agreement (`Task_DeriveOdrl`)
 
 - Who: the `Author and policy author` lane (role `author`).
 - What: Computable only.
@@ -135,15 +195,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Nothing to do or decide: the paths meet here and the engine passes through.
 - next: → `Task_SplitAnnexes` (P1.5 · Split public terms from private annexes)
 
-### 10. Close the bean (`Call_BeanCloseEnded`)
-
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
-- Skill: `todo-manager`.
-- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
-- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
-- next: → `End_Ended` (Agreement ended)
-
-### 11. P1.4 · Check the ODRL against the text (`Task_CheckOdrl`)
+### 14. P1.4 · Check the ODRL against the text (`Task_CheckOdrl`)
 
 - Who: the `Reviewer (legal, policy)` lane (role `reviewer`).
 - Skill: `content-review`.
@@ -151,18 +203,14 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Record it: `workflow_complete` with `node: "Task_CheckOdrl"`.
 - next: → `GW_ComputableJoin`
 
-### 12. P1.5 · Split public terms from private annexes (`Task_SplitAnnexes`)
+### 15. P1.5 · Split public terms from private annexes (`Task_SplitAnnexes`)
 
 - Who: the `Author and policy author` lane (role `author`).
 - What: Split the agreement into a public template and private annexes (security controls, named staff).
 - Record it: `workflow_complete` with `node: "Task_SplitAnnexes"`.
 - next: → `Task_Review` (Review the draft agreement)
 
-## Done — Agreement ended (`End_Ended`)
-
-- The instance completes here: The agreement has expired or been terminated, its catalogue status says so, and its versions stay readable. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
-
-### 13. Review the draft agreement (`Task_Review`)
+### 16. Review the draft agreement (`Task_Review`)
 
 - Who: the `Reviewer (legal, policy)` lane (role `reviewer`).
 - Skill: `content-review`, `review-comments`.
@@ -177,7 +225,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
   - «yes» → `Call_PublicComment` (Public comment on the template)
   - «no» → `GW_CommentJoin`
 
-### 14. Public comment on the template (`Call_PublicComment`)
+### 17. Public comment on the template (`Call_PublicComment`)
 
 - Who: the `Public review (commenters, review committee, editor)` lane (role `review-coordinator`).
 - Skill: `public-comment`.
@@ -197,7 +245,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
   - «changes needed» → `GW_DraftMerge`
   - «ready» → `Task_Render` (Render the text to HTML / PDF)
 
-### 15. Render the text to HTML / PDF (`Task_Render`)
+### 18. Render the text to HTML / PDF (`Task_Render`)
 
 - Who: the `Build pipeline (system)` lane (role `build-pipeline`).
 - Skill: `document-publishing`.
@@ -205,14 +253,14 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Record it: `workflow_complete` with `node: "Task_Render"`.
 - next: → `Task_Sign` (P1.6 · Sign)
 
-### 16. P1.6 · Sign (`Task_Sign`)
+### 19. P1.6 · Sign (`Task_Sign`)
 
 - Who: the `Parties and signatories (provider, recipient)` lane (role `stakeholder`).
 - What: The signatories sign: wet ink, or an electronic signature under national law.
 - Record it: `workflow_complete` with `node: "Task_Sign"`.
 - next: → `Task_AssignVersion` (P2.1 · Assign the version and its immutable URL)
 
-### 17. P2.1 · Assign the version and its immutable URL (`Task_AssignVersion`)
+### 20. P2.1 · Assign the version and its immutable URL (`Task_AssignVersion`)
 
 - Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
 - Skill: `content-publish`, `package-release`.
@@ -220,12 +268,39 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Record it: `workflow_complete` with `node: "Task_AssignVersion"`.
 - next: → `Task_Hash` (P2.2 · Record the SHA-256 of each file)
 
-### 18. P2.2 · Record the SHA-256 of each file (`Task_Hash`)
+### 21. P2.2 · Record the SHA-256 of each file (`Task_Hash`)
 
 - Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
 - What: Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one.
 - Record it: `workflow_complete` with `node: "Task_Hash"`.
+- next: → `GW_ConsentPublish` (Consent-based agreement?)
+
+### Decide — Consent-based agreement? (`GW_ConsentPublish`)
+
+- The legal basis recorded in P1.2a.
+- Call `workflow_complete` with `node: "GW_ConsentPublish"` and `outcome` set to the label that holds:
+  - «consent» → `Task_HashSummary` (P2.2a · Hash the plain-language summary with the agreement)
+  - «not consent-based» → `GW_ConsentPublishJoin`
+
+### 22. P2.2a · Hash the plain-language summary with the agreement (`Task_HashSummary`)
+
+- Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
+- What: Consent-based only.
+- Record it: `workflow_complete` with `node: "Task_HashSummary"`.
+- next: → `Task_ConsentCitation` (P2.2b · State the fixed-version URL and hash a Consent cites)
+
+### Merge — `GW_ConsentPublishJoin`
+
+- Nothing to do or decide: the paths meet here and the engine passes through.
 - next: → `GW_CiteComputable` (ODRL to update?)
+
+### 23. P2.2b · State the fixed-version URL and hash a Consent cites (`Task_ConsentCitation`)
+
+- Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
+- Skill: `content-publish`.
+- What: Consent-based only.
+- Record it: `workflow_complete` with `node: "Task_ConsentCitation"`.
+- next: → `GW_ConsentPublishJoin`
 
 ### Decide — ODRL to update? (`GW_CiteComputable`)
 
@@ -234,7 +309,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
   - «yes» → `Task_OdrlCitesText` (P2.3 · Make the ODRL cite the text by URL and hash)
   - «document only» → `GW_CiteJoin`
 
-### 19. P2.3 · Make the ODRL cite the text by URL and hash (`Task_OdrlCitesText`)
+### 24. P2.3 · Make the ODRL cite the text by URL and hash (`Task_OdrlCitesText`)
 
 - Who: the `Author and policy author` lane (role `author`).
 - What: The ODRL policy names the signed text with dcterms:source (DCMI Terms), pointing at the immutable URL whose checksum was just recorded.
@@ -246,7 +321,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Nothing to do or decide: the paths meet here and the engine passes through.
 - next: → `Task_Publish` (Publish the version at its URL)
 
-### 20. Publish the version at its URL (`Task_Publish`)
+### 25. Publish the version at its URL (`Task_Publish`)
 
 - Who: the `Build pipeline (system)` lane (role `build-pipeline`).
 - Skill: `content-publish`.
@@ -254,14 +329,14 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Record it: `workflow_complete` with `node: "Task_Publish"`.
 - next: → `Task_Catalogue` (P2.4–5 · Write the DCAT 3 record and link versions)
 
-### 21. P2.4–5 · Write the DCAT 3 record and link versions (`Task_Catalogue`)
+### 26. P2.4–5 · Write the DCAT 3 record and link versions (`Task_Catalogue`)
 
 - Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
 - What: One DCAT 3 record: the agreement as a catalogued resource, each file a dcat:Distribution with dcat:downloadURL and spdx:checksum; datasets it covers carry odrl:hasPolicy.
 - Record it: `workflow_complete` with `node: "Task_Catalogue"`.
 - next: → `Call_BeanClosePublished` (Close the bean)
 
-### 22. Close the bean (`Call_BeanClosePublished`)
+### 27. Close the bean (`Call_BeanClosePublished`)
 
 - Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
 - Skill: `todo-manager`.
