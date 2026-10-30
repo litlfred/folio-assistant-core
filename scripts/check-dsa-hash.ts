@@ -102,7 +102,7 @@ const ODRL_BARE_TERMS = [
   "source",
   "relation",
   "function",
-  " failure",
+  "failure",
   "includedIn",
   "implies",
   "attributedParty",
