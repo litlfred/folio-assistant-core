@@ -130,17 +130,20 @@ const prUrl = line => (line.match(/https:\/\/github\.com\/[^\s,;]+\/pull\/\d+/) 
 
 /**
  * Agentic status with its pull requests, one line per PR, like the joined
- * Public Comments column: "PR #97 (PR open, 2026-10-30 22:30Z) · what it
+ * Public Comments column: "smart-ra#97 (PR open, 2026-10-30 22:30Z) · what it
  * changed", the PR linked and the status and the agent's completion time
  * bold. With no PR, the status alone.
  */
 function agenticCell(status, prs) {
   if (!prs.length) return rich([{ t: status }]);
   return rich(prs.flatMap((p, i) => (i ? [{ t: '\n' }] : []).concat(
-    [{ t: 'PR #' + p.url.match(/(\d+)$/)[1], url: p.url }],
+    [{ t: prLabel(p.url), url: p.url }],
     status || p.done ? [{ t: ' ' }, { t: '(' + [status, p.done].filter(Boolean).join(', ') + ')', bold: true }] : [],
     p.desc ? [{ t: ' · ' + p.desc }] : [])));
 }
+
+/** "smart-ra#97": the repository and number, since Sheets' link popup cuts the URL short. */
+const prLabel = url => { const m = url.match(/\/([^/]+)\/pull\/(\d+)$/); return m[1] + '#' + m[2]; };
 
 /** The PRs of some change-sets, each once, in order. */
 function prsOfAll(css, prOf) {
