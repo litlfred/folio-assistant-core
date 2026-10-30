@@ -1,0 +1,60 @@
+import { describe, expect, test } from "bun:test";
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { feedbackRow, parseFeedbackIssue } from "./feedback-issue.js";
+
+const anchors = {
+  chapters: [{ dir: "ch01-why", title: "Chapter 1. Why it matters", number: 1 }],
+  sections: [
+    { label: "sec:ch01-lead", title: "Objectives and key messages", chapter: "ch01-why" },
+    { label: "sec:1-1", number: "1.1", title: "1.1 Global challenges", chapter: "ch01-why" },
+  ],
+  blocks: [{ label: "prose:ch01-global-challenges", sections: ["sec:1-1"] }],
+};
+
+const formBody = [
+  "### Content", "", "dth-hrh", "", "### Section", "", "1.1 Global challenges", "",
+  "### Block", "", "prose:ch01-global-challenges", "", "### On the site", "", "https://x/#prose%3Ach01", "",
+  "### Source", "", "_No response_", "", "### Type", "", "Technical", "",
+  "### Comment", "", "Add shortage numbers. They matter.", "", "### Proposed change", "", "_No response_",
+].join("\n");
+
+// The plain body the site's link writes when the folio has no form.
+const plainBody = [
+  "**Content:** `dth-hrh`", "**Block:** `prose:ch01-global-challenges`", "**Section:** 1.1 Global challenges",
+  "**Source:** https://github.com/o/r/blob/main/x.md", "**On the site:** https://x/#p", "",
+  "**Type:** general | technical | editorial", "", "**Comment:**", "Too vague.", "", "**Proposed change:**", "Say 10 million.", "",
+].join("\n");
+
+describe("feedback issues become Contributor Feedback rows", () => {
+  test("an issue-form body parses by label; empty fields are dropped", () => {
+    expect(parseFeedbackIssue(formBody)).toEqual({
+      content: "dth-hrh", section: "1.1 Global challenges", block: "prose:ch01-global-challenges",
+      url: "https://x/#prose%3Ach01", type: "Technical", comment: "Add shortage numbers. They matter.",
+    });
+  });
+
+  test("a plain body parses too, ignoring the unfilled Type prompt", () => {
+    const f = parseFeedbackIssue(plainBody);
+    expect(f.block).toBe("prose:ch01-global-challenges");
+    expect(f.type).toBeUndefined();
+    expect(f.comment).toBe("Too vague.");
+    expect(f.proposed).toBe("Say 10 million.");
+  });
+
+  test("the row: Sections from the block's anchor, a draft Title, feedback signed by login", () => {
+    expect(feedbackRow({ body: formBody, url: "https://github.com/o/r/issues/7", login: "ana" }, anchors)).toEqual({
+      title: "1.1 Global challenges: Add shortage numbers.",
+      sections: "1.1 Global challenges",
+      feedback: "@ana (Technical): Add shortage numbers. They matter.",
+      issue: "https://github.com/o/r/issues/7",
+    });
+    expect(feedbackRow({ body: plainBody, url: "u", login: "bo" }, anchors).feedback).toBe("@bo: Too vague.\nProposed: Say 10 million.");
+  });
+
+  test("the shared form declares every id the site's link prefills and the parser reads", () => {
+    const yml = readFileSync(join(import.meta.dir, "../../templates/issue-forms/block-feedback.yml"), "utf8");
+    const ids = [...yml.matchAll(/^\s+id:\s*(\S+)\s*$/gm)].map((m) => m[1]);
+    expect(ids).toEqual(["content", "section", "block", "url", "source", "type", "comment", "proposed"]);
+  });
+});
