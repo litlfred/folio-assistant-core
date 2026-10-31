@@ -13,7 +13,7 @@ function folio() {
     sections: [{ label: "sec:1-1", number: "1.1", title: "1.1 One", chapter: "ch01" }],
     blocks: [],
   }));
-  writeFileSync(join(repo, "review/drafting/sheet-sync.json"), JSON.stringify({ mode: "drafting", anchors: "anchors.json", sectionUrl: "S#", sheet: "SHEETID" }));
+  writeFileSync(join(repo, "review/drafting/sheet-sync.json"), JSON.stringify({ mode: "drafting", anchors: "anchors.json", sectionUrl: "https://x.example/S#", sheet: "SHEETID" }));
   return repo;
 }
 
