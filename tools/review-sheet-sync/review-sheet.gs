@@ -31,7 +31,7 @@
 /*@@VERSION@@*/
 
 const CONFIG_TAB = 'Config';
-let CFG = null, COLS = null, DATA = null, DRAFTING = false, WATCHED = [], EDITORS = null;
+let CFG = null, COLS = null, DATA = null, DRAFTING = false, WATCHED = [], EDITORS = null, EDITORS_SKIPPED = [];
 
 /**
  * Read CFG, COLS and DATA from the Config tab: column A a key, column B its
@@ -62,8 +62,11 @@ function loadConfig(ss) {
   [['K', 'SECTIONS'], ['ABBR', 'ABBREVIATIONS'], ['LP', 'PAGE_LINES'], ['OFFSET', 'PAGE_OFFSET'], ['MAX', 'LAST_PAGE']]
     .forEach(([o, n]) => { if (DATA[n] === undefined && DATA[o] !== undefined) DATA[n] = DATA[o]; });
   // EDITORS: plain emails, kept by a person. No row: leave the Ready columns alone.
-  EDITORS = parts.EDITORS === undefined ? null :
-    parts.EDITORS.split(/[\s,;]+/).filter(x => /^[^@\s]+@[^@\s]+$/.test(x));
+  // Anything else in the cell (a name, a typo) is left out and reported by
+  // applyEditors, never silently dropped.
+  const words = parts.EDITORS === undefined ? [] : parts.EDITORS.split(/[\s,;]+/).filter(Boolean);
+  EDITORS = parts.EDITORS === undefined ? null : words.filter(x => /^[^@\s]+@[^@\s]+$/.test(x));
+  EDITORS_SKIPPED = words.filter(x => !/^[^@\s]+@[^@\s]+$/.test(x));
   DRAFTING = CFG.MODE === 'drafting';
   // Public comment: the agent's per-comment rows on CFG.AGENT and, since
   // 2026-10-31 (owner), its per-change-set rows on their own tab, CFG.AGENT_CS.
@@ -133,6 +136,12 @@ function applyEditors(ss) {
     p.removeEditors(p.getEditors());
     if (EDITORS.length) p.addEditors(EDITORS);
   });
+  if (EDITORS_SKIPPED.length) {
+    try {
+      ss.toast('Not an email, so left out: ' + EDITORS_SKIPPED.join(', ') +
+        '. Write each editor as a plain email, one per line (e.g. ana@example.org).', 'Config EDITORS', 20);
+    } catch (e) { /* a toast is a courtesy */ }
+  }
 }
 
 /**
