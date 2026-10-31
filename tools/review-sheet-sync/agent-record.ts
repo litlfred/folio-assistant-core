@@ -177,7 +177,10 @@ export function push(head: string, expectMinutes: number, now = new Date()): Rec
 
 /** Agent completed alone: acted on Ready for agent, but no new commit, so no restage. */
 export function done(now = new Date()): Record<string, string> {
-  return { "Agent completed (UTC, change set)": now.toISOString().slice(0, 16).replace("T", " ") + "Z" };
+  const t = now.toISOString().slice(0, 16).replace("T", " ") + "Z";
+  // The pass is over, so the step says so too: a row left on an old step, or
+  // with Agent completed before the Ready time, reads as waiting for ever.
+  return { "Agent completed (UTC, change set)": t, "Agent step (change set)": `idle ${t}` };
 }
 
 /** Agent step (change set): the step the agent starts now, from the sheet's own list. */

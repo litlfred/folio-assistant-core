@@ -225,9 +225,52 @@ function checkDropdown(ss) {
   try {
     ss.toast('Selected Sections is ' + (had ? 'a dropdown' : 'now a dropdown of the document\'s sections') +
       '. One step only a person can take: select the "' + COLS.draft.sections +
-      '" column, choose Data, then Data validation, open its rule, tick Allow multiple selections, and press Done. ' +
+      '" column, choose Data, then Data validation, open its rule, set Advanced options > Display style to Chip, then tick Allow multiple selections (greyed out until the style is Chip), and press Done. ' +
       'The same steps are on the Config tab.', 'Finish the dropdown', 30);
   } catch (e) { /* a toast is a courtesy */ }
+}
+
+/**
+ * Data rows look like data rows (owner, 2026-10-31: "why row 3 bold", "review
+ * styling on PR Feedback and apply to Contrib Feedback"). A row inserted just
+ * under the header takes the header's look (bold, dark fill, centred), so the
+ * first change set of a new log read as a second header. Any data row whose
+ * cells are bold or centred at cell level gets its format back from the last
+ * row of the tab, which nobody types in, before the script writes its own
+ * rich text (which carries its own bold spans).
+ */
+function normalizeRows(sh) {
+  if (!sh) return 0;
+  const s = readSheet(sh), n = sh.getLastRow() - s.top + 1;
+  if (n <= 0) return 0;
+  const width = sh.getLastColumn(), last = sh.getMaxRows();
+  if (last < s.top + n) return 0;
+  const range = sh.getRange(s.top, 1, n, width);
+  const weights = range.getFontWeights(), valign = range.getVerticalAlignments();
+  let fixed = 0;
+  for (let k = 0; k < n; k++) {
+    // Column A (the id, always plain) and the alignment: the script's own rich
+    // text has bold spans, which must not read as a header row.
+    const off = weights[k][0] === 'bold' || valign[k].some(v => /middle|center/i.test(String(v)));
+    if (!off) continue;
+    sh.getRange(last, 1, 1, width).copyTo(sh.getRange(s.top + k, 1, 1, width), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+    fixed++;
+  }
+  return fixed;
+}
+
+/**
+ * Move column `name` to sit immediately left of column `before`, by header.
+ * Only ever called inside the locked run (memory: never move columns
+ * mid-refresh). Returns true when it moved something.
+ */
+function placeBefore(sh, name, before) {
+  if (!sh) return false;
+  const s = readSheet(sh), a = s.header.indexOf(name), b = s.header.indexOf(before);
+  if (a < 0 || b < 0 || a === b - 1) return false;
+  // moveColumns' destination is the index BEFORE the move, 1-based.
+  sh.moveColumns(sh.getRange(1, a + 1, 1, 1), b + 1);
+  return true;
 }
 
 /** True when some cell holds two or more sections from the list, which only a multi-select rule allows. */
@@ -443,6 +486,7 @@ function refreshLocked() {
     // column position this changes (memory: never move columns mid-refresh).
     try { ensureConfirmedColumn(ss); } catch (err) { /* the refresh still runs */ }
     try { ensureAgentStepColumn(ss.getSheetByName(CFG.AGENT_CS || CFG.AGENT)); } catch (err) { /* the refresh still runs */ }
+    [CFG.RPC, CFG.RCS].forEach(n => { try { normalizeRows(ss.getSheetByName(n)); } catch (err) { /* cosmetic only */ } });
     const rpc = readSheet(ss.getSheetByName(CFG.RPC));
     const agent = readSheet(ss.getSheetByName(CFG.AGENT));
     const agentCs = CFG.AGENT_CS ? readSheet(ss.getSheetByName(CFG.AGENT_CS)) : agent;
@@ -497,6 +541,9 @@ function refreshLocked() {
     refreshRcs(rcs, rpc, csOf, stOf, prOf, readyAt, builtOf);
     const cCol = col(rcs, CONFIRMED), confirmedOf = {};
     if (cCol >= 0) rcs.rows.forEach(r => { const cs = String(r[csCol]).trim(); if (cs) confirmedOf[cs] = confirmedNos(r[cCol], csOf[cs] || []); });
+    // A ticked comment on Review Public Comments counts as well (option A).
+    const ticked = tickedNos(rpc);
+    Object.keys(csOf).forEach(cs => { confirmedOf[cs] = [...new Set((confirmedOf[cs] || []).concat((csOf[cs] || []).map(String).filter(n => ticked[n])))]; });
     writeRows(rcs, col(rcs, COLS.rcs.dispositionsAgent || DISPOSITIONS_AGENT), null, r => {
       const cs = String(r[csCol]).trim();
       return dispositionCell(dispOf[cs], csOf[cs], humanDisp, confirmedOf[cs]);
@@ -590,7 +637,8 @@ const HEADER_NOTES = {
   'TWG (PCs)': 'The working groups of these comments. Kept by the script.',
   'TWG (CS)': 'The working group that owns this change set. You fill this in.',
   'Ready for agent': 'Yes: the direction is agreed and the agent may edit. No: wait. Completed: the agent has finished and the preview is current (set by the script). Any change in feedback sets it back to No. Set by an Editor.',
-  'Dispositions confirmed': 'Yes: the committee confirms every disposition the agent gave in this change set. To differ on one comment, set that comment\'s own Disposition on Review Public Comments. The agent will not merge until every comment is confirmed here or has its own Disposition. Set by an Editor.',
+  'Dispositions confirmed': 'Yes: the committee confirms every disposition the agent gave in this change set. To confirm one comment at a time, tick it in Confirmed (committee) on Review Public Comments. The agent will not merge until every comment is confirmed or has its own Disposition. Set by an Editor.',
+  'rpc|Confirmed (committee)': 'Tick to confirm the agent\'s disposition of this one comment, when the change set as a whole is not yet confirmed. Set by an Editor.',
   'Ready for merge': 'Yes: merge the pull request. The agent merges only once the QA gate has passed for the current version. Set by an Editor.',
   'Disposition (agent)': 'The decisions made so far (oldest first, never removed), then one disposition per comment number. "No disposition yet" lists the numbers still missing one. From the agent, read only.',
   'Change Set Feedback (agent)': 'The status on top, then the agent\'s current proposal and any question it needs answered, with options and a recommendation.',
@@ -1035,6 +1083,23 @@ const AGENT_STEPS = {
   proposed: 'proposal ready',
   idle: '',
 };
+/**
+ * When the agent last finished a pass: its latest Agent completed, or a later
+ * "idle" or "proposed" step, which also says it stopped (owner, 2026-10-31:
+ * "make sure process works … so it doesnt fail again"). NaN when neither.
+ */
+function lastFinished(prs, stepCell) {
+  const t = (prs || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
+  const m = String(stepCell || '').trim().match(/^(idle|proposed)\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}Z)$/i);
+  if (m) t.push(utcMs(m[2]));
+  return t.length ? Math.max.apply(null, t) : NaN;
+}
+/** Minutes after Ready for agent with no step before the row warns that no agent has it. */
+const PICKUP_MIN = 20;
+function unpicked(readyAt, now) {
+  const age = Math.round(((now || Date.now()) - utcMs(readyAt)) / 60000);
+  return age > PICKUP_MIN ? '; \u26a0 no agent has picked this up for ' + age + ' min: ask in the project chat' : '';
+}
 /** "editing 2026-10-31 17:20Z" -> { name, text, at }, or null. */
 function agentStep(cell) {
   const m = String(cell || '').trim().match(/^([a-z-]+)\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}Z)$/i);
@@ -1157,6 +1222,19 @@ const DISPOSITION_WORDS = ['Accepted', 'Partially accepted', 'Not accepted', 'No
  * cell ("No. 327") still confirm just those comments.
  */
 const CONFIRMED = 'Dispositions confirmed', CONFIRM_CHOICES = ['Yes', 'No'];
+/**
+ * One comment at a time (owner, 2026-10-31, option A "a checkbox per
+ * comment"): an Orange checkbox column on Review Public Comments, right of the
+ * people's Disposition. A ticked box confirms that comment's agent disposition,
+ * whatever its change set's Yes/No says.
+ */
+const CONFIRMED_PC = 'Confirmed (committee)';
+function tickedNos(rpc) {
+  const no = col(rpc, (COLS && COLS.rpc && COLS.rpc.no) || 'No.'), c = col(rpc, CONFIRMED_PC), out = {};
+  if (no < 0 || c < 0) return out;
+  rpc.rows.forEach(r => { const n = String(r[no]).trim(); if (n && (r[c] === true || /^(true|yes)$/i.test(String(r[c]).trim()))) out[n] = true; });
+  return out;
+}
 function confirmedNos(value, nos) {
   const v = String(value || '').trim();
   if (/^(yes|all)$/i.test(v) || /(^|,)\s*all\s*(,|$)/i.test(v)) return (nos || []).map(String);
@@ -1185,6 +1263,30 @@ function ensureConfirmedColumn(ss) {
   const vals = rule ? rule.getCriteriaValues() : [];
   if (!rule || rule.getCriteriaType() !== SpreadsheetApp.DataValidationCriteria.VALUE_IN_LIST || String(vals[0]) !== String(CONFIRM_CHOICES))
     cells.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(CONFIRM_CHOICES, true).setAllowInvalid(true).build());
+  ensureConfirmedPcColumn(ss, sh.getRange(s.top - 1, c + 1));
+}
+/** The per-comment checkbox column on Review Public Comments, inside the locked run. */
+function ensureConfirmedPcColumn(ss, orangeHead) {
+  const sh = ss.getSheetByName(CFG.RPC);
+  if (!sh) return;
+  const s = readSheet(sh);
+  let c = s.header.indexOf(CONFIRMED_PC);
+  const rows = sh.getMaxRows() - s.top + 1;
+  if (c < 0) {
+    const d = s.header.indexOf(COLS.rpc.disposition || 'Disposition');
+    if (d < 0) return;
+    sh.insertColumnAfter(d + 1);
+    sh.getRange(s.top - 1, d + 1, rows + 1, 1).copyTo(sh.getRange(s.top - 1, d + 2, rows + 1, 1), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+    sh.getRange(s.top, d + 2, rows, 1).clearDataValidations();
+    const head = sh.getRange(s.top - 1, d + 2);
+    head.setValue(CONFIRMED_PC);
+    if (orangeHead) head.setBackground(orangeHead.getBackground());
+    sh.setColumnWidth(d + 2, 110);
+    c = d + 1;
+  }
+  const cells = sh.getRange(s.top, c + 1, rows, 1);
+  const rule = cells.getCell(1, 1).getDataValidation();
+  if (!rule || rule.getCriteriaType() !== SpreadsheetApp.DataValidationCriteria.CHECKBOX) cells.insertCheckboxes();
 }
 function dispositionProblems(text, nos, human, confirmed) {
   const want = (nos || []).map(String), seen = {}, out = [];
@@ -1281,10 +1383,9 @@ function progressLine(o) {
     return PROGRESS + 'Ready for merge set: ' + (!wait.length ? 'the agent will merge ' + label + '.'
       : 'the agent will not merge ' + label + ' until ' + wait.join(' and ') + '.');
   }
-  const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
-  const last = done.length ? Math.max.apply(null, done) : NaN;
+  const last = lastFinished(prs, o.built && o.built.step);
   if (o.readyAt && !/working/i.test(o.status || '') && (isNaN(last) || utcMs(o.readyAt) > last))
-    return PROGRESS + 'Ready for agent set ' + o.readyAt + ': the agent will act on this and rewrite it.';
+    return PROGRESS + 'Ready for agent set ' + o.readyAt + ': the agent will act on this and rewrite it' + unpicked(o.readyAt, o.now) + '.';
   if (/working/i.test(o.status || '')) return PROGRESS + 'The agent is working on ' + (label || 'the pull request') + '.';
   if (!active) return '';
   const w = stagingWarning(o.staging, o.built, prs, o.readyAt);
@@ -1419,8 +1520,8 @@ function completeReady(s, csCol, prOf, stagingOf, builtOf, readyAt) {
     const cs = String(r[csCol]).trim();
     if (!cs || !readyAt[cs] || !/^yes$/i.test(String(r[ready]).trim())) return;
     const prs = prOf[cs] || [];
-    const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
-    if (!done.length || Math.max.apply(null, done) <= utcMs(readyAt[cs])) return;
+    const last = lastFinished(prs, (builtOf[cs] || {}).step);
+    if (isNaN(last) || last <= utcMs(readyAt[cs])) return;
     if (!stagingOf[cs] || stagingWarning(stagingOf[cs], builtOf[cs], prs, '')) return;
     s.sh.getRange(k + s.top, ready + 1, 1, 1).setValues([['Completed']]);
     r[ready] = 'Completed';
@@ -1495,15 +1596,14 @@ const prUrl = line => (line.match(/https:\/\/github\.com\/[^\s,;]+\/pull\/\d+/) 
  */
 function agenticCell(status, prs, o) {
   o = o || {};
-  const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
-  const last = done.length ? Math.max.apply(null, done) : NaN;
+  const last = lastFinished(prs, o.step);
   const queued = o.readyAt && !/working/i.test(status) && (isNaN(last) || utcMs(o.readyAt) > last);
   // Once the agent records a step after Ready for agent, say what it is doing
   // rather than that it is waited on (owner, 2026-10-31: "not sure what agent is doing").
   const step = agentStep(o.step);
   const stepped = step && step.name !== 'proposed' && (isNaN(last) || utcMs(step.at) >= last) && (!o.readyAt || utcMs(step.at) >= utcMs(o.readyAt));
   const head = stepped ? [{ t: stepLine(step).replace(PROGRESS, ''), bold: true }]
-    : queued ? [{ t: 'Waiting on the agent since ' + o.readyAt + ' (Ready for agent set); it has not recorded a step yet', bold: true }]
+    : queued ? [{ t: 'Waiting on the agent since ' + o.readyAt + ' (Ready for agent set); it has not recorded a step yet' + unpicked(o.readyAt, o.now), bold: true }]
     : /working/i.test(status) && o.talk ? [{ t: 'An agent is working on it: ', bold: true }, { t: 'conversation', url: o.talk }]
     : /needs human/i.test(status) ? [{ t: NEEDS_YOU + ': it is under "Decision needed" in the agent\'s feedback column. Write your answer (the letter) in your Blue feedback column, then an Editor sets Ready for agent to Yes.', bold: true }] : [];
   const body = agenticParts(status, prs);
@@ -1804,6 +1904,10 @@ function refreshDraft(rows) {
   const ss = SpreadsheetApp.getActive();
   try { ensureAgentStepColumn(ss.getSheetByName(CFG.AGENT)); } catch (err) { /* the refresh still runs */ }
   const props = docProps_();
+  try { normalizeRows(ss.getSheetByName(CFG.FEEDBACK)); } catch (err) { /* cosmetic only */ }
+  // Agentic status sits just left of its filter column (owner, 2026-10-31).
+  // Moved here, inside the locked run, before any column is read by position.
+  try { placeBefore(ss.getSheetByName(CFG.FEEDBACK), COLS.draft.agentic || 'Agentic status', COLS.draft.status || 'Agentic status (filter)'); } catch (err) { /* the refresh still runs */ }
   const fb = readSheet(ss.getSheetByName(CFG.FEEDBACK));
   const agentSh = ss.getSheetByName(CFG.AGENT);
   const agent = agentSh ? readSheet(agentSh) : { header: [], rows: [] };

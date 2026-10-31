@@ -1101,7 +1101,12 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
     expect(fns.progressLine(o)).toBe("\u23f3 dth-hrh#7 open, updated 2026-10-31 08:10Z; preview current (built 2026-10-31 08:15Z).");
     expect(fns.progressLine({ ...o, staging: "" })).toBe("\u23f3 dth-hrh#7 open, updated 2026-10-31 08:10Z; no preview yet.");
     // An Editor's Orange change is noted, not marked stale.
-    expect(fns.progressLine({ ...o, readyAt: "2026-10-31 11:30Z" })).toBe("\u23f3 Ready for agent set 2026-10-31 11:30Z: the agent will act on this and rewrite it.");
+    const soon = Date.parse("2026-10-31T11:40:00Z"), late = Date.parse("2026-10-31T12:30:00Z");
+    expect(fns.progressLine({ ...o, readyAt: "2026-10-31 11:30Z", now: soon })).toBe("\u23f3 Ready for agent set 2026-10-31 11:30Z: the agent will act on this and rewrite it.");
+    // Nobody picked it up: the row says so, rather than waiting quietly for ever.
+    expect(fns.progressLine({ ...o, readyAt: "2026-10-31 11:30Z", now: late })).toBe("\u23f3 Ready for agent set 2026-10-31 11:30Z: the agent will act on this and rewrite it; \u26a0 no agent has picked this up for 60 min: ask in the project chat.");
+    // An idle (or proposed) step after the Ready time says the agent finished its pass.
+    expect(fns.progressLine({ ...o, readyAt: "2026-10-31 11:30Z", now: late, built: { ...(o as { built?: object }).built, step: "idle 2026-10-31 11:50Z" } })).not.toMatch(/Ready for agent set/);
     expect(fns.progressLine({ ...o, merge: true, built: { ...built, gate: "Passed b20534f: dispositions match" } })).toBe("\u23f3 Ready for merge set: the agent will merge dth-hrh#7.");
     expect(fns.progressLine({ ...o, merge: true })).toBe("\u23f3 Ready for merge set: the agent will not merge dth-hrh#7 until the QA gate passes (QA gate: no independent review yet: not ready for merge).");
     expect(fns.progressLine({ ...o, status: "Working" })).toBe("\u23f3 The agent is working on dth-hrh#7.");
@@ -1119,7 +1124,7 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
   });
 
   test("Agentic status says the row is queued, then who has it", () => {
-    const q = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z" });
+    const q = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z", now: Date.parse("2026-10-31T11:40:00Z") });
     expect(q.text.split("\n")[0]).toBe("Waiting on the agent since 2026-10-31 11:30Z (Ready for agent set); it has not recorded a step yet");
     // A step recorded after Ready for agent says what the agent is doing instead.
     const st = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z", step: "editing 2026-10-31 11:47Z" });
@@ -1416,10 +1421,19 @@ describe("unconfirmed dispositions are flagged and block the merge (owner, 2026-
 });
 
 describe("Dispositions confirmed, an Editor's multi-select (owner, 2026-10-31)", () => {
-  const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems, confirmedNos };`)({}) as {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems, confirmedNos, tickedNos };`)({}) as {
     dispositionProblems: (t: string, n: string[], h?: Record<string, string>, c?: string[]) => string;
     confirmedNos: (v: string, n: string[]) => string[];
+    tickedNos: (s: { header: string[]; rows: unknown[][] }) => Record<string, boolean>;
   };
+  test("a ticked Confirmed (committee) box confirms that one comment (option A)", () => {
+    const rpc = { header: ["No.", "Disposition", "Confirmed (committee)"], rows: [["326", "Pending", true], ["327", "Pending", false], ["328", "", "TRUE"]] };
+    expect(fns.tickedNos(rpc)).toEqual({ "326": true, "328": true });
+    const text = "No. 326: Accepted. Done.\nNo. 327: Accepted. Done.";
+    const p = fns.dispositionProblems(text, ["326", "327"], { "326": "Pending", "327": "Pending" }, Object.keys(fns.tickedNos(rpc)));
+    expect(p).toMatch(/Not confirmed[^\n]*No\. 327/);
+    expect(p).not.toMatch(/326/);
+  });
   test("Yes (or All) confirms every comment; No none; typed numbers confirm those", () => {
     expect(fns.confirmedNos("All", ["1", "2"])).toEqual(["1", "2"]);
     expect(fns.confirmedNos("Yes", ["1", "2"])).toEqual(["1", "2"]);
@@ -1479,5 +1493,46 @@ describe("the status line comes back after the agent rewrites its cell (owner, 2
   test("a drafted proposal says to set Ready for agent", () => {
     const pr = { url: "https://github.com/o/r/pull/1", head: "abc1234", done: "2026-10-31 15:26Z" };
     expect(fns.progressLine({ prs: [pr], built: { step: "proposed 2026-10-31 17:30Z" } })).toMatch(/^⏳ Proposal ready \((today|yesterday|\d+ days ago, 2026-10-31) 17:30Z\): set Ready for agent to Yes/);
+  });
+});
+
+describe("data rows look like data rows (owner, 2026-10-31: \"why row 3 bold\")", () => {
+  test("a row that took the header's look gets the last row's format back; plain rows are left", () => {
+    const copies: Array<[number, number]> = [];
+    // Row 1 instructions, row 2 header, rows 3-4 data; row 3 inherited the header's bold.
+    const values = [["Instructions", ""], ["Change-set", "Title"], ["CS-001", "FDA"], ["CS-002", "Other"]];
+    const weights = [["bold", "bold"], ["normal", "bold"]];
+    const sh = {
+      getLastRow: () => 4, getLastColumn: () => 2, getMaxRows: () => 500,
+      getRange: (r: number, _c: number, n?: number) => ({
+        getDisplayValues: () => values.slice(r - 1, r - 1 + (n ?? 1)),
+        getFontWeights: () => weights, getVerticalAlignments: () => [["middle", "middle"], ["top", "top"]],
+        copyTo: (dest: { row: number }) => { copies.push([r, dest.row]); },
+        row: r,
+      }),
+    };
+    const SpreadsheetApp = { CopyPasteType: { PASTE_FORMAT: "f" } };
+    const normalizeRows = new Function("SpreadsheetApp", `${code}\nreturn normalizeRows;`)(SpreadsheetApp);
+    expect(normalizeRows(sh)).toBe(1);
+    expect(copies).toEqual([[500, 3]]);
+  });
+});
+
+describe("Agentic status sits left of its filter column (owner, 2026-10-31)", () => {
+  const placeBefore = new Function("SpreadsheetApp", `${code}\nreturn placeBefore;`)({});
+  const sheetWith = (header: string[], moves: Array<[number, number]>) => ({
+    getLastRow: () => 2, getLastColumn: () => header.length,
+    getRange: (r: number, c: number) => ({ getDisplayValues: () => [["Instructions", ...header.slice(1).map(() => "")], header], col: c }),
+    moveColumns: (range: { col: number }, to: number) => moves.push([range.col, to]),
+  });
+  test("moves it from after Issue to just before the filter", () => {
+    const moves: Array<[number, number]> = [];
+    expect(placeBefore(sheetWith(["Change-set", "Agentic status (filter)", "Issue", "Agentic status"], moves), "Agentic status", "Agentic status (filter)")).toBe(true);
+    expect(moves).toEqual([[4, 2]]);
+  });
+  test("leaves it when it is already there", () => {
+    const moves: Array<[number, number]> = [];
+    expect(placeBefore(sheetWith(["Change-set", "Agentic status", "Agentic status (filter)"], moves), "Agentic status", "Agentic status (filter)")).toBe(false);
+    expect(moves).toEqual([]);
   });
 });

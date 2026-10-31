@@ -469,6 +469,30 @@ review). An Editor sets **Yes** again to send the row back to the agent. A
 row that turns stale goes back to **No** from Yes or Completed, as before.
 The agent never writes the Orange columns.
 
+**Every pass ends with a finish stamp after the Ready time** (owner,
+2026-10-31: "make sure process works … so it doesnt fail again"). On DTH-HRH
+CS-001 the agent pushed at 12:49Z, Ready for agent was set (again) at 12:57Z,
+and no agent ran after that: the row read "the agent will act on this" for
+seven hours and never reached Completed. So:
+
+- The agent ends EVERY pass with a stamp from the tool: `push --head <sha>`
+  when it committed, else `done`, which writes Agent completed and the step
+  `idle` together. A proposal that waits for the Editor ends with
+  `step proposed`. The script counts a later `idle` or `proposed` step as
+  the end of the pass, the same as Agent completed.
+- Before stopping, the agent re-reads Ready for agent: if it was set after
+  the pass began, the pass is not over; act on it (or `done` if there is
+  nothing new).
+- A Ready for agent with no step recorded after it for 20 minutes shows
+  "⚠ no agent has picked this up for N min: ask in the project chat" on the
+  ⏳ line and in Agentic status, so a row with no agent never looks like
+  quiet work.
+- Every log needs a watcher: the setup is not complete until an agent
+  thread is watching the sheet. A thread acts only when something wakes it,
+  so the watcher needs a scheduled wake: an hourly scheduled task, plus a
+  chain of 20-minute delayed wakes (`send_later`) that each pass renews.
+  Without one, a Ready for agent waits until somebody happens to ask.
+
 ## One agent column, status on top (owner, 2026-10-31, option A)
 
 "why Change Set Feedback (agent) and Agentic status not consolidated to one?"
@@ -552,6 +576,12 @@ numbers typed in the cell ("No. 327") confirm just those; a number outside
 the change set is flagged. The script adds the column itself, inside its
 locked run (so no other refresh writes by a shifted position), and keeps its
 Yes/No dropdown.
+
+To confirm **one comment at a time** (owner, 2026-10-31, option A "a
+checkbox per comment"), an Editor ticks the Orange **Confirmed (committee)**
+checkbox on Review Public Comments, right of Disposition. A ticked comment
+counts as confirmed whatever its change set's Yes/No says. The script adds
+this column too, inside the same locked run, with its checkboxes.
 
 ## Where the agent is: Agent step (owner, 2026-10-31)
 
@@ -878,13 +908,21 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    - choose Data, then Data validation;
    - open the rule for that column (the sidebar lists it by its range, such
      as `'Contributor Feedback'!E2:E1000`, as "Dropdown (from a range)");
+   - under Advanced options, check that Display style is **Chip**;
    - tick **Allow multiple selections**;
    - press Done.
 
-   The Chip display style needs nothing: the dropdown rule (in the template,
-   and as written through the Sheets API) already carries it (owner,
-   2026-10-31: "chip style was preselected on dth-pc log"). Neither Apps
-   Script nor the Sheets API can read or set the multiple-selections tick, so installTriggers cannot check them directly. It shows the
+   **The tick is greyed out unless the style is Chip** (owner, 2026-10-31,
+   DTH-PC: "cant multiselct ... why ... fix process error"). A rule that
+   Apps Script writes (`requireValueInRange`) gets the **Arrow** style, and
+   Apps Script cannot change it, so a log whose dropdown the script had to
+   add could not be ticked. The agent therefore sets the style through the
+   Sheets API at setup, and whenever a log's rule reads `customUiMode: ARROW`:
+   `setDataValidation` with the same `ONE_OF_RANGE` condition and
+   `"showCustomUi": true, "customUiMode": "CHIP", "strict": false`. The API
+   reads the tick (`condition.allowMultipleSelections`) but sets it only for
+   `ONE_OF_LIST` rules, so ticking it on the range rule stays the person's
+   step. installTriggers cannot check either directly. It shows the
    steps in a 30-second toast unless it has evidence they are done: a cell
    already holding two sections from the list (or `dropdownDone`, set by the
    older dialog). It is a toast, never a dialog: a dialog waits for an answer
