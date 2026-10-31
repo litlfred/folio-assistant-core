@@ -125,7 +125,11 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
 
   for (const { f, g } of here.docs) {
     for (const t of g.terms) {
-      if (opts.capitalized && !/^[A-Z]/.test(t.prefLabel)) errors.push(`${f}: ${t.id} prefLabel "${t.prefLabel}" is not Capitalized`);
+      // prefLabel is a string or a language map; every label must be Capitalized.
+      const labels = typeof t.prefLabel === "string" ? [t.prefLabel] : Object.values(t.prefLabel);
+      for (const l of labels) {
+        if (opts.capitalized && !/^[A-Z]/.test(l)) errors.push(`${f}: ${t.id} prefLabel "${l}" is not Capitalized`);
+      }
       for (const b of t.broader ?? []) checkRef(`${f}: ${t.id} broader`, b);
       for (const r of t.related ?? []) checkRef(`${f}: ${t.id} related`, r);
       for (const m of MATCHES) for (const r of t[m] ?? []) checkRef(`${f}: ${t.id} ${m}`, r);
