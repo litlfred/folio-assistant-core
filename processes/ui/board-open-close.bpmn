@@ -192,6 +192,7 @@ The rule the diagram exists to hold is the one about the way back: an action who
 
       <bpmndi:BPMNShape id="Shape_Start_Board" bpmnElement="Start_Board">
         <dc:Bounds x="220" y="122" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="260" y="82" width="90" height="36" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_GW_Act" bpmnElement="GW_Act" isMarkerVisible="true">
         <dc:Bounds x="480" y="115" width="50" height="50"/>
@@ -241,6 +242,7 @@ The rule the diagram exists to hold is the one about the way back: an action who
         <di:waypoint x="530" y="140"/>
         <di:waypoint x="820" y="140"/>
         <di:waypoint x="820" y="230"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="630" y="143" width="90" height="53" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_DoClose" bpmnElement="F_DoClose">
         <di:waypoint x="505" y="165"/>
@@ -248,18 +250,21 @@ The rule the diagram exists to hold is the one about the way back: an action who
         <di:waypoint x="545" y="180"/>
         <di:waypoint x="545" y="400"/>
         <di:waypoint x="590" y="400"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="451" y="281" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_DoZoom" bpmnElement="F_DoZoom">
         <di:waypoint x="480" y="140"/>
         <di:waypoint x="270" y="140"/>
         <di:waypoint x="270" y="520"/>
         <di:waypoint x="560" y="520"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="330" y="143" width="90" height="35" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Leave" bpmnElement="F_Leave">
         <di:waypoint x="505" y="115"/>
         <di:waypoint x="505" y="100"/>
         <di:waypoint x="1008" y="100"/>
         <di:waypoint x="1008" y="122"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="711.5" y="80" width="90" height="17" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Opened" bpmnElement="F_Opened">
         <di:waypoint x="710" y="270"/>

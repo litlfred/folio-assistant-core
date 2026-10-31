@@ -514,8 +514,8 @@
       <bpmndi:BPMNShape id="Task_Publish_di" bpmnElement="Task_Publish"><dc:Bounds x="4690" y="1010" width="130" height="90" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Catalogue_di" bpmnElement="Task_Catalogue"><dc:Bounds x="4870" y="860" width="130" height="90" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Call_BeanClosePublished_di" bpmnElement="Call_BeanClosePublished"><dc:Bounds x="5050" y="260" width="130" height="90" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="End_InForce_di" bpmnElement="End_InForce"><dc:Bounds x="5232" y="287" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="5185" y="327" width="130" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Start_Change_di" bpmnElement="Start_Change"><dc:Bounds x="5372" y="137" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="5325" y="177" width="130" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_InForce_di" bpmnElement="End_InForce"><dc:Bounds x="5232" y="287" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="5272" y="269.5" width="130" height="71" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Start_Change_di" bpmnElement="Start_Change"><dc:Bounds x="5372" y="137" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="5236.25" y="128" width="131.75" height="54" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Call_BeanOpenChange_di" bpmnElement="Call_BeanOpenChange"><dc:Bounds x="5450" y="260" width="130" height="90" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_BeanYoursChange_di" bpmnElement="GW_BeanYoursChange" isMarkerVisible="true"><dc:Bounds x="5630" y="280" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="5590" y="334" width="130" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_BeanNotYoursChange_di" bpmnElement="End_BeanNotYoursChange"><dc:Bounds x="5637" y="238" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="5677" y="238" width="130" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
@@ -531,7 +531,7 @@
       <bpmndi:BPMNShape id="GW_ConsentBasis_di" bpmnElement="GW_ConsentBasis" isMarkerVisible="true"><dc:Bounds x="1250" y="430" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="1210" y="484" width="130" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_PlainSummary_di" bpmnElement="Task_PlainSummary"><dc:Bounds x="1350" y="410" width="130" height="90" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_ConsentBasisJoin_di" bpmnElement="GW_ConsentBasisJoin" isMarkerVisible="true"><dc:Bounds x="1530" y="430" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="1490" y="484" width="130" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="GW_ConsentPublish_di" bpmnElement="GW_ConsentPublish" isMarkerVisible="true"><dc:Bounds x="3750" y="880" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="3710" y="934" width="130" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_ConsentPublish_di" bpmnElement="GW_ConsentPublish" isMarkerVisible="true"><dc:Bounds x="3750" y="880" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="3710" y="840" width="130" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_HashSummary_di" bpmnElement="Task_HashSummary"><dc:Bounds x="3850" y="860" width="130" height="90" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ConsentCitation_di" bpmnElement="Task_ConsentCitation"><dc:Bounds x="4030" y="860" width="130" height="90" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_ConsentPublishJoin_di" bpmnElement="GW_ConsentPublishJoin" isMarkerVisible="true"><dc:Bounds x="4210" y="880" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="4170" y="934" width="130" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
@@ -541,29 +541,43 @@
       <bpmndi:BPMNEdge id="F01_di" bpmnElement="F01"><di:waypoint x="288" y="155" /><di:waypoint x="309" y="155" /><di:waypoint x="309" y="305" /><di:waypoint x="330" y="305" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F02_di" bpmnElement="F02"><di:waypoint x="460" y="305" /><di:waypoint x="510" y="305" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F03_di" bpmnElement="F03"><di:waypoint x="535" y="280" /><di:waypoint x="535" y="274" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="F04_di" bpmnElement="F04"><di:waypoint x="560" y="305" /><di:waypoint x="585" y="305" /><di:waypoint x="585" y="155" /><di:waypoint x="610" y="155" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F04_di" bpmnElement="F04"><di:waypoint x="560" y="305" /><di:waypoint x="585" y="305" /><di:waypoint x="585" y="155" /><di:waypoint x="610" y="155" />
+        <bpmndi:BPMNLabel><dc:Bounds x="491" y="184" width="90" height="17" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F05_di" bpmnElement="F05"><di:waypoint x="740" y="155" /><di:waypoint x="770" y="155" /><di:waypoint x="770" y="455" /><di:waypoint x="800" y="455" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F06_di" bpmnElement="F06"><di:waypoint x="850" y="455" /><di:waypoint x="890" y="455" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F07_di" bpmnElement="F07"><di:waypoint x="1020" y="455" /><di:waypoint x="1070" y="455" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F08_di" bpmnElement="F08"><di:waypoint x="1680" y="455" /><di:waypoint x="1730" y="455" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="F09_di" bpmnElement="F09"><di:waypoint x="1655" y="430" /><di:waypoint x="1655" y="392" /><di:waypoint x="2115" y="392" /><di:waypoint x="2115" y="430" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F09_di" bpmnElement="F09"><di:waypoint x="1655" y="430" /><di:waypoint x="1655" y="392" /><di:waypoint x="2115" y="392" /><di:waypoint x="2115" y="430" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1955" y="395" width="90" height="36" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F10_di" bpmnElement="F10"><di:waypoint x="1860" y="455" /><di:waypoint x="1885" y="455" /><di:waypoint x="1885" y="605" /><di:waypoint x="1910" y="605" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F11_di" bpmnElement="F11"><di:waypoint x="2040" y="605" /><di:waypoint x="2115" y="605" /><di:waypoint x="2115" y="480" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F12_di" bpmnElement="F12"><di:waypoint x="2140" y="455" /><di:waypoint x="2190" y="455" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F13_di" bpmnElement="F13"><di:waypoint x="2320" y="455" /><di:waypoint x="2345" y="455" /><di:waypoint x="2345" y="605" /><di:waypoint x="2370" y="605" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F14_di" bpmnElement="F14"><di:waypoint x="2500" y="605" /><di:waypoint x="2550" y="605" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="F15_di" bpmnElement="F15"><di:waypoint x="2600" y="605" /><di:waypoint x="2625" y="605" /><di:waypoint x="2625" y="755" /><di:waypoint x="2650" y="755" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F15_di" bpmnElement="F15"><di:waypoint x="2600" y="605" /><di:waypoint x="2625" y="605" /><di:waypoint x="2625" y="755" /><di:waypoint x="2650" y="755" />
+        <bpmndi:BPMNLabel><dc:Bounds x="2606" y="584" width="90" height="18" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F16_di" bpmnElement="F16"><di:waypoint x="2600" y="605" /><di:waypoint x="2830" y="605" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F17_di" bpmnElement="F17"><di:waypoint x="2780" y="755" /><di:waypoint x="2855" y="755" /><di:waypoint x="2855" y="630" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F18_di" bpmnElement="F18"><di:waypoint x="2880" y="605" /><di:waypoint x="2930" y="605" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="F19_di" bpmnElement="F19"><di:waypoint x="2955" y="580" /><di:waypoint x="2955" y="542" /><di:waypoint x="825" y="542" /><di:waypoint x="825" y="480" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="F20_di" bpmnElement="F20"><di:waypoint x="2980" y="605" /><di:waypoint x="3005" y="605" /><di:waypoint x="3005" y="1055" /><di:waypoint x="3030" y="1055" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F19_di" bpmnElement="F19"><di:waypoint x="2955" y="580" /><di:waypoint x="2955" y="542" /><di:waypoint x="825" y="542" /><di:waypoint x="825" y="480" />
+        <bpmndi:BPMNLabel><dc:Bounds x="2959" y="543.5" width="90" height="35" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F20_di" bpmnElement="F20"><di:waypoint x="2980" y="605" /><di:waypoint x="3005" y="605" /><di:waypoint x="3005" y="1055" /><di:waypoint x="3030" y="1055" />
+        <bpmndi:BPMNLabel><dc:Bounds x="2986" y="584" width="90" height="18" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F21_di" bpmnElement="F21"><di:waypoint x="3160" y="1055" /><di:waypoint x="3185" y="1055" /><di:waypoint x="3185" y="155" /><di:waypoint x="3210" y="155" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F22_di" bpmnElement="F22"><di:waypoint x="3340" y="155" /><di:waypoint x="3365" y="155" /><di:waypoint x="3365" y="905" /><di:waypoint x="3390" y="905" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F23_di" bpmnElement="F23"><di:waypoint x="3520" y="905" /><di:waypoint x="3570" y="905" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F24_di" bpmnElement="F24"><di:waypoint x="3700" y="905" /><di:waypoint x="3750" y="905" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="F25_di" bpmnElement="F25"><di:waypoint x="4360" y="905" /><di:waypoint x="4385" y="905" /><di:waypoint x="4385" y="455" /><di:waypoint x="4410" y="455" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="F26_di" bpmnElement="F26"><di:waypoint x="4360" y="905" /><di:waypoint x="4590" y="905" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F25_di" bpmnElement="F25"><di:waypoint x="4360" y="905" /><di:waypoint x="4385" y="905" /><di:waypoint x="4385" y="455" /><di:waypoint x="4410" y="455" />
+        <bpmndi:BPMNLabel><dc:Bounds x="4389" y="783.5" width="90" height="18" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F26_di" bpmnElement="F26"><di:waypoint x="4360" y="905" /><di:waypoint x="4590" y="905" />
+        <bpmndi:BPMNLabel><dc:Bounds x="4430" y="866" width="90" height="36" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F27_di" bpmnElement="F27"><di:waypoint x="4540" y="455" /><di:waypoint x="4615" y="455" /><di:waypoint x="4615" y="880" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F28_di" bpmnElement="F28"><di:waypoint x="4640" y="905" /><di:waypoint x="4665" y="905" /><di:waypoint x="4665" y="1055" /><di:waypoint x="4690" y="1055" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F29_di" bpmnElement="F29"><di:waypoint x="4820" y="1055" /><di:waypoint x="4845" y="1055" /><di:waypoint x="4845" y="905" /><di:waypoint x="4870" y="905" /></bpmndi:BPMNEdge>
@@ -572,7 +586,9 @@
       <bpmndi:BPMNEdge id="F40_di" bpmnElement="F40"><di:waypoint x="5408" y="155" /><di:waypoint x="5429" y="155" /><di:waypoint x="5429" y="305" /><di:waypoint x="5450" y="305" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F41_di" bpmnElement="F41"><di:waypoint x="5580" y="305" /><di:waypoint x="5630" y="305" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F42_di" bpmnElement="F42"><di:waypoint x="5655" y="280" /><di:waypoint x="5655" y="274" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="F43_di" bpmnElement="F43"><di:waypoint x="5680" y="305" /><di:waypoint x="5705" y="305" /><di:waypoint x="5705" y="155" /><di:waypoint x="5730" y="155" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F43_di" bpmnElement="F43"><di:waypoint x="5680" y="305" /><di:waypoint x="5705" y="305" /><di:waypoint x="5705" y="155" /><di:waypoint x="5730" y="155" />
+        <bpmndi:BPMNLabel><dc:Bounds x="5611" y="184" width="90" height="17" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F44_di" bpmnElement="F44"><di:waypoint x="5860" y="155" /><di:waypoint x="5910" y="155" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F45_di" bpmnElement="F45"><di:waypoint x="5960" y="155" /><di:waypoint x="6010" y="155" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F46_di" bpmnElement="F46"><di:waypoint x="5935" y="130" /><di:waypoint x="5935" y="122" /></bpmndi:BPMNEdge>
@@ -583,7 +599,9 @@
       <bpmndi:BPMNEdge id="F51_di" bpmnElement="F51"><di:waypoint x="6950" y="305" /><di:waypoint x="7002" y="305" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F60_di" bpmnElement="F60"><di:waypoint x="1200" y="455" /><di:waypoint x="1250" y="455" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F61_di" bpmnElement="F61"><di:waypoint x="1300" y="455" /><di:waypoint x="1350" y="455" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="F62_di" bpmnElement="F62"><di:waypoint x="1275" y="430" /><di:waypoint x="1275" y="392" /><di:waypoint x="1555" y="392" /><di:waypoint x="1555" y="430" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="F62_di" bpmnElement="F62"><di:waypoint x="1275" y="430" /><di:waypoint x="1275" y="392" /><di:waypoint x="1555" y="392" /><di:waypoint x="1555" y="430" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1559" y="393.5" width="90" height="35" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F63_di" bpmnElement="F63"><di:waypoint x="1480" y="455" /><di:waypoint x="1530" y="455" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F64_di" bpmnElement="F64"><di:waypoint x="1580" y="455" /><di:waypoint x="1630" y="455" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="F65_di" bpmnElement="F65"><di:waypoint x="3800" y="905" /><di:waypoint x="3850" y="905" /></bpmndi:BPMNEdge>
