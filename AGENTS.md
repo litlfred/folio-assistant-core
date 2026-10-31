@@ -27,7 +27,7 @@ exception to the rule above: they live in `cat-harness-tools/schemas/kg/material
 
 <!-- skills:index:begin -->
 
-_43 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
+_44 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
 
 **`skills/`** (1)
 
@@ -96,12 +96,13 @@ _43 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`glossary-terms`](skills/library/cataloguing/glossary-terms.md) | Add terms to an instance's glossary: local SKOS terms (folio-glossary/v1) with a definition, a code and links to external SKOS concepts, and references to whole external schemes. |
 | [`ontologist`](skills/library/cataloguing/ontologist.md) | Semantic Ontologist — scans narrative text for ambiguous terms, generates a formal glossary/registry, and produces a mapping linking narrative strings to formal identifiers. |
 
-**`skills/library/ingestion/`** (5)
+**`skills/library/ingestion/`** (6)
 
 | Skill | What it is for |
 |---|---|
 | [`audio-transcription`](skills/library/ingestion/audio-transcription.md) | Turn recorded speech (a meeting recording, a video with audio, an interview) into a transcript the library can cite, and choose WHICH open-source recogniser to run for the job: whisper.cpp by… |
 | [`document-intake`](skills/library/ingestion/document-intake.md) | Process uploaded documents (PDFs, scans, LaTeX, structured/normative guidelines, etc.) from uploads/ into structured content objects. |
+| [`figure-rebuild`](skills/library/ingestion/figure-rebuild.md) | Turn a source publication's figures into computable diagrams when a folio is built from its L1 entry. |
 | [`l1-coverage`](skills/library/ingestion/l1-coverage.md) | Check that an L1 extraction accounted for every normative sentence in its source publication — captured as a node, or excluded for a fixed-list reason a person signed off. |
 | [`l1-document-ingestion`](skills/library/ingestion/l1-document-ingestion.md) | The detailed method for turning a DOCUMENT in `uploads/` into a complete L1 entry in `library/<bib-slug>/` — which rung reads it and why, what a complete L1 entry holds, why an inferred structure is… |
 | [`tabular-metadata`](skills/library/ingestion/tabular-metadata.md) | Extract tabular metadata from a CSV or spreadsheet as CSVW — tables, rows, headers, columns, datatypes and location on sheet — recording every field as determined or explicitly undetermined. |

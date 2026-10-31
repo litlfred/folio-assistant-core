@@ -3,7 +3,7 @@
  * Write a document folio's `review-anchors.json` from the working document.
  *
  *   bun run folio-assistant-core/scripts/review-anchors-from-folio.ts \
- *     --document <id> --library <entry> --source <file> --source-label <text> \
+ *     --document <id> [--library <entry> --source <file> --source-label <text>] \
  *     [--repo <dir>] [--check]
  *
  * A document under public review has a frozen version, and `docx-to-folio.ts`
@@ -18,7 +18,9 @@
  *
  * `--library` names the library entry the document was seeded from, and
  * `--source` the file in it that stands as the source of record until a
- * frozen version exists. Re-run after a structural change (a block added,
+ * frozen version exists. All three are optional: a document authored from
+ * scratch (dth-pc, dth-sc) has no seed file, and its anchors simply name no
+ * library entry, so no library page claims it. Re-run after a structural change (a block added,
  * moved or relabelled); `--check` fails when the committed file is stale.
  *
  * Moved here from dth-hrh's `scripts/review/review-anchors.ts` so that every
@@ -37,9 +39,10 @@ type Sec = { title: string; label?: string; blocks: string[]; subsections?: Sec[
 export type FolioAnchorsOptions = {
   repo: string;
   document: string;
-  library: string;
-  source: string;
-  sourceLabel: string;
+  /** The library entry it was seeded from; absent for a document authored from scratch. */
+  library?: string;
+  source?: string;
+  sourceLabel?: string;
 };
 
 const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
@@ -88,15 +91,19 @@ export async function folioAnchors(o: FolioAnchorsOptions): Promise<string> {
   const anchors = {
     $schema: ANCHORS_SCHEMA,
     document: o.document,
-    library: o.library,
+    ...(o.library ? { library: o.library } : {}),
     // What the library entry is to this folio (shown on its library page).
-    sourceLabel: o.sourceLabel,
-    source: {
-      // No frozen review version yet: the working document is the review text,
-      // and the file it was seeded from stands as the source of record.
-      docx: { file: o.source, sha256: createHash("sha256").update(readFileSync(join(o.repo, o.source))).digest("hex") },
-      pdf: { file: "", sha256: "", pages: 0 },
-    },
+    ...(o.sourceLabel ? { sourceLabel: o.sourceLabel } : {}),
+    // No frozen review version yet: the working document is the review text,
+    // and the file it was seeded from (if any) stands as the source of record.
+    ...(o.source
+      ? {
+          source: {
+            docx: { file: o.source, sha256: createHash("sha256").update(readFileSync(join(o.repo, o.source))).digest("hex") },
+            pdf: { file: "", sha256: "", pages: 0 },
+          },
+        }
+      : {}),
     note: "Generated from the working document by folio-assistant-core/scripts/review-anchors-from-folio.ts (no frozen review version yet).",
     chapters,
     sections,
@@ -115,8 +122,8 @@ if (import.meta.main) {
   const library = arg("library");
   const source = arg("source");
   const sourceLabel = arg("source-label");
-  if (!document || !library || !source || !sourceLabel) {
-    console.error("usage: review-anchors-from-folio.ts --document <id> --library <entry> --source <file> --source-label <text> [--repo <dir>] [--check]");
+  if (!document || (source && !sourceLabel)) {
+    console.error("usage: review-anchors-from-folio.ts --document <id> [--library <entry> --source <file> --source-label <text>] [--repo <dir>] [--check]");
     process.exit(2);
   }
   const repo = resolve(arg("repo") ?? ".");

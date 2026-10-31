@@ -45,6 +45,15 @@ nobody will re-order.
 3. Add `{ dir: "<chapter-dir>" }` to the document manifest's `chapters[]`, in
    the position it should be read.
 4. `content_validate`.
+5. `bun run review:anchors`, so the review sheet's Selected Sections list
+   and every comment's placement see the new chapter.
+
+**Every document folio declares `review:anchors` and `check:review-anchors`
+from its first commit** (`review-anchors-from-folio.ts --document <doc>`;
+the `--library`/`--source` flags only when it was seeded from a library
+file). The section list is what a review sheet's dropdown reads; a folio
+without it leaves a linked sheet empty (owner, 2026-10-31, DTH-PC). See
+`review-sheet-script`, "Linking a sheet to a repository".
 
 The directory name is the chapter's slug; it appears in build output and in
 every path a reviewer sees, so name it for what the chapter is about rather
@@ -56,7 +65,7 @@ time something moves.
 Move the entry in `chapters[]` — nothing else. Do **not** rename directories
 to encode order: labels, `uses[]` targets, feedback records and QA sidecars
 all key on names, and a rename breaks every one of them for a change that the
-manifest already expresses.
+manifest already expresses. Then `bun run review:anchors`, as after adding one.
 
 After any reorder, re-read `uses[]` across the moved chapter: an editorial
 edge that pointed backwards may now point forwards, which is a real finding
