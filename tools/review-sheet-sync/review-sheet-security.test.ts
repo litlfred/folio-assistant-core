@@ -29,7 +29,7 @@ describe("review-sheet.gs security", () => {
     }
   });
 
-  test("the manifest asks for this sheet, triggers and a menu, and nothing else", () => {
+  test("the recorded scopes are this sheet, triggers and a menu, and nothing else", () => {
     expect(manifest.oauthScopes).toEqual([
       "https://www.googleapis.com/auth/spreadsheets.currentonly",
       "https://www.googleapis.com/auth/script.scriptapp",

@@ -70,9 +70,8 @@ file is committed: both are rebuilt.
 account, because Google asks the owner to authorise the script:
 
 1. Open the sheet, then **Extensions → Apps Script**.
-2. Replace everything in `Code.gs` with the built file. In Project
-   Settings tick "Show appsscript.json", replace it with
-   `tools/review-sheet-sync/appsscript.json`, and save.
+2. Replace everything in `Code.gs` with the built file, and save. Code.gs
+   is the only file to paste: leave the project's manifest as it is.
 3. In the function list beside **Run** and **Debug**, pick
    **installTriggers** (not `onOpen`, which only adds the menu), and press
    **Run**. Allow access when asked.
@@ -141,6 +140,18 @@ moves, or a tab or a header the script reads is renamed. Re-paste Code.gs
 only when the script itself changes. Renaming a header the script reads,
 without rewriting Config, leaves that column unlinked; it fails nothing.
 
+## Published with the document's site
+
+`scripts/review-sheet-site.ts --out <site>` (package script
+`site:review-sheet` in a folio, a `sourceSteps` entry of its site build)
+writes `<site>/review-sheet/`: the generic `Code.gs`,
+each `review/<mode>/sheet-sync.json` as `<mode>.config-rows.json`,
+`review-sheet.jsonld` (the script as `schema:SoftwareSourceCode` with its
+SHA-256 and commit; each document's settings as a `schema:Dataset` linked
+to its sheet and to the Tool), and an `index.html` with the setup steps and
+the SHA-256 to check a pasted copy against. Point people there rather than
+sending the file.
+
 ## Trusting the script
 
 A copy of a sheet carries its Apps Script, so anyone starting from a
@@ -155,10 +166,13 @@ template, us or someone else, should know what they are running.
   LockService and ScriptApp: no UrlFetchApp, mail or Drive, so it sends
   nothing out. `review-sheet-security.test.ts` fails if one of those, or
   `eval`/`new Function`, appears.
-- **Pinned scopes.** Paste `tools/review-sheet-sync/appsscript.json` as the
-  project's manifest (Project Settings > Show "appsscript.json"). It names
-  exactly three scopes: this spreadsheet, the script's own triggers, and its
-  menu. The security test fails if the list changes.
+- **Three permissions, one file** (owner, 2026-10-31: "why do we need two
+  files?"). Google works out a script's permissions from its code, and
+  `@OnlyCurrentDoc` narrows the spreadsheet one to this sheet. So the consent
+  screen asks for exactly three: this spreadsheet, the script's own
+  triggers, and its menu. `tools/review-sheet-sync/appsscript.json` records
+  those three for the security test, which fails if the code would need
+  more. It is a record, not a file to paste.
 - **Plain ASCII.** The built script escapes every non-ASCII character, so a
   paste cannot mangle it. The build prints its SHA-256; compare it with the
   pasted copy.
@@ -284,9 +298,8 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    this range" > Custom > add each editor's email > Done. Only they and the
    owner can then set Ready for agent and Ready for merge.
 5. **Install the script.** Extensions > Apps Script. Replace all of
-   `Code.gs` with the published generic file; in Project Settings tick
-   "Show appsscript.json" and replace it with
-   `tools/review-sheet-sync/appsscript.json`; save. Pick **installTriggers**
+   `Code.gs` with the published generic file and save (the only file to
+   paste). Pick **installTriggers**
    in the function list and press Run; allow access (Advanced > continue,
    since bound scripts are unverified). Reload the sheet: a **Review links**
    menu appears. A copy of the template already holds the script, so this
