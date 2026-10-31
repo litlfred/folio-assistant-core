@@ -373,10 +373,10 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
   ];
   // Steps 3 to 6, the same on every change-set tab.
   const changeSet = [
-    "   3. An Editor sets Ready for agent to Yes (orange) once the direction is agreed.",
-    `   4. The agent edits the document in one pull request for the row. Agentic status says where it is; ${staging} opens what changed.`,
-    "   5. Reviewers answer in blue. A change marks the proposal stale and sets Ready for agent back to No; an Editor sets Yes again to have the agent update the pull request.",
-    "   6. An Editor sets Ready for merge to Yes, and the agent merges.",
+    "   3. An Editor sets Ready for agent (Orange) to Yes once the direction is agreed.",
+    `   4. The agent edits the document in one pull request for the row. Agentic status (Green) says where it is; ${staging} opens what changed.`,
+    "   5. Reviewers answer in Blue. A change marks the proposal stale and sets Ready for agent (Orange) back to No; an Editor sets Yes again to have the agent update the pull request.",
+    "   6. An Editor sets Ready for merge (Orange) to Yes, and the agent merges.",
   ];
   const out: Record<string, string> = {
     [CONFIG_TAB]: `The script's settings. Work happens on ${people}; nothing here needs you unless you install the script. Do not edit this tab: the agent writes it, except EDITORS, which only the owner edits.`,
@@ -387,8 +387,8 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
     out[t.FEEDBACK] = [
       colours,
       "This tab has one row per change set:",
-      `   1. Contributors start a row: a title, the Selected Sections, and feedback in the blue ${fb} columns. The script gives it a Change-set id.`,
-      `   2. The agent proposes a direction in ${fb} (agent), in green.`,
+      `   1. Contributors start a row: a title, the Selected Sections, and feedback in the Blue ${fb} columns. The script gives it a Change-set id.`,
+      `   2. The agent proposes a direction in ${fb} (agent), in Green.`,
       ...changeSet,
       ...footer,
     ].join("\n");
@@ -396,17 +396,17 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
     out["Public Comment Source"] = `The public comments as received, one row per comment. Do not edit: a correction goes in a blue column on ${t.RPC}.`;
     out[t.RPC] = [
       colours,
-      "This tab has one row per public comment, as received (grey):",
-      "   1. The Feedback Review Committee reads the comment and adds its feedback in the blue columns, with the TWG, comment type, disposition and status.",
-      `   2. The agent puts each comment in a change set (green Change Set, linked to its row on ${t.RCS}) and suggests a TWG.`,
-      `   3. Decisions to edit are made per change set, on ${t.RCS}. Agentic status and ${staging} here follow the comment's change set.`,
+      "This tab has one row per public comment, as received (Grey):",
+      "   1. The Feedback Review Committee reads the comment and adds its feedback in the Blue columns, with the TWG, comment type, disposition and status.",
+      `   2. The agent puts each comment in a change set (Green Change Set, linked to its row on ${t.RCS}) and suggests a TWG.`,
+      `   3. Decisions to edit are made per change set, on ${t.RCS} (its Orange Ready columns). Agentic status and ${staging} here follow the comment's change set.`,
       ...footer,
     ].join("\n");
     out[t.RCS] = [
       colours,
       `This tab has one row per change set, joining its public comments from ${t.RPC}:`,
-      "   1. The Feedback Review Committee gives feedback on the change set in blue and picks its TWG.",
-      "   2. The agent proposes a direction in the green (agent) column.",
+      "   1. The Feedback Review Committee gives feedback on the change set in Blue and picks its TWG.",
+      "   2. The agent proposes a direction in the Green (agent) column.",
       ...changeSet,
       ...footer,
     ].join("\n");

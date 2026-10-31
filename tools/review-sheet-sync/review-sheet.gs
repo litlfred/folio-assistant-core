@@ -388,17 +388,23 @@ function hashOf(text) {
  * tree mark the script adds is no change. feedback-issue.ts feedbackBasis
  * computes the same hash for the agent, which keeps it in the Agent tab's
  * Feedback basis (change set).
+ *
+ * Empty cells are left out, so adding an empty column (a new reviewer's
+ * initials) changes no row's basis. Returns that hash first, then the older
+ * one that kept empty cells, so a basis an agent wrote before the change still
+ * matches until it next writes one.
  */
 function basisOf(header, row, exact, prefix) {
-  const parts = [];
+  const parts = [], legacy = [];
   header.forEach((h, i) => {
     let v = String(row[i] == null ? '' : row[i]).trim();
     if (h === 'Selected Sections') v = v.split(',').map(bareName).filter(Boolean).join(',');
     if (exact.indexOf(h) >= 0 || ((h === prefix || h.indexOf(prefix + ' (') === 0) && h !== prefix + ' (agent)')) {
-      parts.push(h + '=' + v);
+      legacy.push(h + '=' + v);
+      if (v) parts.push(h + '=' + v);
     }
   });
-  return hashOf(parts.join('\n'));
+  return [hashOf(parts.join('\n')), hashOf(legacy.join('\n'))];
 }
 
 /** "2026-10-30 22:30Z" (or ISO) -> ms, or NaN. */
@@ -453,9 +459,11 @@ const STALE = '\u26a0 Stale: the row changed since this proposal; the agent will
  * text, or null when nothing changes.
  */
 function staleText(text, basis, written) {
+  // basis: the row's hash, or the list basisOf gives (current, then legacy).
+  const ok = [].concat(basis).indexOf(written) >= 0;
   const bare = String(text).indexOf(STALE + '\n') === 0 ? String(text).slice(STALE.length + 1) : String(text);
   if (!bare.trim() || !written) return bare === String(text) ? null : bare;
-  const want = basis === written ? bare : STALE + '\n' + bare;
+  const want = ok ? bare : STALE + '\n' + bare;
   return want === String(text) ? null : want;
 }
 

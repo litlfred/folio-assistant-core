@@ -455,7 +455,9 @@ worded for the mode by `colourKey()`:
 - **Orange**: workflow, set by an Editor (the `Ready for ...` columns);
 - **Grey**: mechanical, kept by the script or the source.
 
-Then come the steps for that tab, one per line. On a change-set tab they are
+Then come the steps for that tab, one per line. Each colour word in the text
+is capitalised (Blue, Green, Orange, Grey), and the sheet shows that word,
+and only that word, bold in its colour (owner, 2026-10-31). On a change-set tab they are
 the human-to-agent workflow, worded by process role: people write in blue, the
 agent proposes in green, an Editor sets Ready for agent, the agent opens one
 pull request for the row whose `Staging review` opens the preview's
