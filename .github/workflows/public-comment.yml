@@ -66,11 +66,11 @@ jobs:
       (github.event_name == 'pull_request_target' && (contains(github.event.pull_request.body, '#') || contains(github.event.pull_request.body, 'cs-'))))
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.event.repository.default_branch }}
 
-      - uses: litlfred/cat-harness-tools/.github/actions/mount-layers@main
+      - uses: litlfred/cat-harness-tools/.github/actions/mount-layers@45b0894620099663f17abb584f376502d702422a # main
 
       - name: Record the event, and bring the issues into line
         # The event's text is untrusted. The tool reads it from the event FILE,
