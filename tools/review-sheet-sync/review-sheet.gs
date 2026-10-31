@@ -380,7 +380,8 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
  * One row of Contributor Feedback is one change set. The script:
  * - gives a row with a Title, Sections or feedback but no Change-set the next
  *   id (CS-001, CS-002, ...), once; the id then stays with the row;
- * - links each picked section to its anchor on the document page;
+ * - writes Section links: each picked section, linked to its anchor on the
+ *   document page, one per line (Sections itself stays the plain dropdown);
  * - fills Issue, Agentic status and Staging review page from the Agent tab,
  *   by change set;
  * - keeps the hidden TOC tab, the Sections dropdown's list, current.
@@ -435,17 +436,12 @@ function refreshDraft() {
 
   const tocUrl = {};
   DATA.TOC.forEach(([name, anchor]) => (tocUrl[name] = CFG.SECTION_URL + anchor));
-  writeRich(fb, c.sections, fb.rows.map(r => {
-    const t = String(r[c.sections]);
-    const links = [];
-    let at = 0;
-    t.split(', ').forEach(part => {
-      const name = part.trim();
-      const a0 = t.indexOf(name, at);
-      if (name && tocUrl[name] && a0 >= 0) links.push({ a: a0, z: a0 + name.length, url: tocUrl[name] });
-      at = a0 >= 0 ? a0 + name.length : at;
-    });
-    return linked(t, links);
+  // Sections is the people's multi-select dropdown, so it stays plain text (a
+  // dropdown chip cannot carry a link, and rich text there fights the
+  // validation). Section links is green: one linked line per picked section.
+  writeRich(fb, c.sectionLinks, fb.rows.map(r => {
+    const names = String(r[c.sections]).split(', ').map(x => x.trim()).filter(x => tocUrl[x]);
+    return rich(names.flatMap((n, i) => (i ? [{ t: '\n' }] : []).concat([{ t: n, url: tocUrl[n] }])));
   }));
   writeRich(fb, c.issue, fb.rows.map(r => {
     const urls = issuesOf[String(r[c.cs]).trim()] || [];

@@ -246,10 +246,10 @@ const draftTabs = () => ({
   "Contributor Feedback": {
     id: 1,
     rows: [
-      ["Change-set", "Title", "Sections", "Contributor Feedback (CL)", "Contributor Feedback (initials/name)", "Issue", "Agentic status", "Staging review page"],
-      ["CS-004", "Define registry", "Ch 1 Why it matters, 1.1 Global challenges", "AB: needs a definition", "", "", "", ""],
-      ["", "Privacy wording", "Ch 12 Privacy; Security and Trust, Somewhere else", "", "CD: tighten", "", "", ""],
-      ["", "", "", "", "", "", "", ""],
+      ["Change-set", "Title", "Sections", "Section links", "Contributor Feedback (CL)", "Contributor Feedback (initials/name)", "Issue", "Agentic status", "Staging review page"],
+      ["CS-004", "Define registry", "Ch 1 Why it matters, 1.1 Global challenges", "", "AB: needs a definition", "", "", "", ""],
+      ["", "Privacy wording", "Ch 12 Privacy; Security and Trust, Somewhere else", "", "", "CD: tighten", "", "", ""],
+      ["", "", "", "", "", "", "", "", ""],
     ],
   },
   Agent: {
@@ -283,11 +283,13 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(fb["Change-set"]).toEqual([["CS-004"], ["CS-005"], [""]]);
   });
 
-  test("each picked section links to its anchor; unknown text stays plain", () => {
-    const r = fb.Sections[0][0] as Rich;
+  test("Section links has each picked section linked, one per line; unknown picks are left out; Sections is not rewritten", () => {
+    const r = fb["Section links"][0][0] as Rich;
+    expect(r.text).toBe("Ch 1 Why it matters\n1.1 Global challenges");
     expect(r.links.map((l) => [slice(r, l), l[2]])).toEqual([["Ch 1 Why it matters", "S#chap:ch01-why"], ["1.1 Global challenges", "S#sec:1-1"]]);
-    const r2 = fb.Sections[1][0] as Rich;
+    const r2 = fb["Section links"][1][0] as Rich;
     expect(r2.links.map((l) => [slice(r2, l), l[2]])).toEqual([["Ch 12 Privacy; Security and Trust", "S#chap:ch12-privacy"]]);
+    expect(fb.Sections).toBeUndefined();
   });
 
   test("Issue and Agentic status come from the Agent tab by change set", () => {
