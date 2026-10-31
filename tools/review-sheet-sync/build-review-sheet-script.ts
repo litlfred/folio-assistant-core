@@ -86,6 +86,7 @@ export const DRAFT_COLUMNS = {
     built: "Staging built (UTC, change set)",
     head: "PR head (change set)", builtFrom: "Staging built from (change set)", deploy: "Staging deploy (change set)",
     conversation: "Agent conversation (change set)",
+    dispositions: "Disposition (change set)",
   },
 };
 
@@ -159,6 +160,7 @@ export const DEFAULT_COLUMNS = {
     done: "Agent completed (UTC, change set)", basis: "Feedback basis (change set)",
     staging: "Staging review page (change set)", built: "Staging built (UTC, change set)",
     head: "PR head (change set)", builtFrom: "Staging built from (change set)", deploy: "Staging deploy (change set)",
+    dispositions: "Disposition (change set)",
   },
 };
 

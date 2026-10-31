@@ -527,7 +527,16 @@ what they mention.
    to *editing*, with the branch and PR. Comments not yet decided, or decided
    `not-accepted`/`noted`/`deferred`, do not move.
 3. Edit the folio's blocks. An agent in the `author` role edits only what the
-   decisions and the issue's requirements say.
+   decisions and the issue's requirements say. Before the preview is staged,
+   it writes the change set's **Disposition (change set)** on the review
+   sheet's Agent tab, below the change set's decision history (which is only
+   ever added to): one blurb describing every disposition in the change
+   set, one line per comment (`No. 136: Accepted. <what was done>`, after an
+   optional `Overall:` line), starting from each comment's Blue Disposition
+   on Review Public Comments; the review sheet checks that every comment
+   number in the change set has one (`review-sheet-script`). Once an Editor sets Ready for merge to
+   Yes, that blurb is the summary: in the merge commit and as the closing
+   comment on the change set's issue (owner, 2026-10-31).
 4. The staging preview is published to `STAGING/<branch>/`. The dashboard links
    each comment's anchor on `main` (before) and on the preview (after). See
    [`staging-review`](../../../../cat-harness/skills/sdlc/sdlc-core/staging-review.md).

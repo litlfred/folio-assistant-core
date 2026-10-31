@@ -199,8 +199,9 @@ function applyEditors(ss) {
  * added; an existing one is left alone, since writing it again would clear
  * its "Allow multiple selections" tick. Neither Apps Script nor the Sheets
  * API can read that tick, so the box is skipped only on
- * evidence: a cell already holding two sections from the list, or the person
- * having said it is done (Yes). The same steps are in the Config tab's Instructions row.
+ * evidence: a cell already holding two sections from the list (or, on a sheet
+ * installed before 2026-10-31, the person having said it is done). The same
+ * steps are in the Config tab's Instructions row.
  */
 function checkDropdown(ss) {
   if (!ss) throw new Error(RUN_THIS);
@@ -217,20 +218,16 @@ function checkDropdown(ss) {
   }
   const props = docProps_();
   if (had && (props.getProperty('dropdownDone') || multiPicked(cells))) return;
-  const range = "'" + sh.getName() + "'!" + cells.getA1Notation();
-  const ui = SpreadsheetApp.getUi();
-  const answer = ui.alert('Finish the Selected Sections dropdown',
-    (had ? 'Selected Sections is a dropdown' : 'Selected Sections is now a dropdown of the document\'s sections') +
-    ', but one setting only a person can make:\n\n' +
-    '\u2022 Click the column letter above "' + COLS.draft.sections + '" to select the column\n' +
-    '\u2022 Choose Data, then Data validation\n' +
-    '\u2022 Open the rule for ' + range + ' (it says "Dropdown (from a range)")\n' +
-    '\u2022 Tick Allow multiple selections\n' +
-    '\u2022 Press Done\n\n' +
-    'The script keeps the list and every pick current after that. These steps are also on the Config tab.\n\n' +
-    'Is this done already? Yes stops this message; No shows it again next time.',
-    ui.ButtonSet.YES_NO);
-  if (answer === ui.Button.YES) props.setProperty('dropdownDone', '1');
+  // A toast, never a dialog: a dialog waits for an answer in the sheet, and
+  // when Install is run from the Apps Script editor nobody sees it, so the
+  // run hangs until Apps Script stops it after 6 minutes (owner, 2026-10-31:
+  // "Exceeded maximum execution time" on the DTH-SC log).
+  try {
+    ss.toast('Selected Sections is ' + (had ? 'a dropdown' : 'now a dropdown of the document\'s sections') +
+      '. One step only a person can take: select the "' + COLS.draft.sections +
+      '" column, choose Data, then Data validation, open its rule, tick Allow multiple selections, and press Done. ' +
+      'The same steps are on the Config tab.', 'Finish the dropdown', 30);
+  } catch (e) { /* a toast is a courtesy */ }
 }
 
 /** True when some cell holds two or more sections from the list, which only a multi-select rule allows. */
@@ -268,6 +265,14 @@ function markDirty(e) {
   try { loadConfig(SpreadsheetApp.getActive()); } catch (err) { return; }
   if (!WATCHED.includes(name)) return;
   const props = docProps_();
+  // An Editor's Ready for agent edit is timed now, not on the next refresh,
+  // so the agent's feedback says "Ready for agent set" at once (owner,
+  // 2026-10-31: "i expected to see change to Change Set Feedback (agent) b/c
+  // i said ready for agent").
+  let readyNow = {};
+  if (name === (DRAFTING ? CFG.FEEDBACK : CFG.RCS)) {
+    try { readyNow = noteReady_(e, props, DRAFTING ? COLS.draft.cs : 'Change-set'); } catch (err) { /* the refresh still runs */ }
+  }
   if (DRAFTING) {
     // Incremental: remember which Contributor Feedback rows the edit touched
     // and rebuild only those, at once. An edit of the header row, or of the
@@ -298,11 +303,35 @@ function markDirty(e) {
   // A slow sheet waits for the timer, but a proposal an edit makes stale is
   // flagged at once: it reads only two tabs (owner, 2026-10-31: "made
   // feedback change in RefArch Log but no warning on stale").
-  if (name === CFG.RCS) { try { staleNow(); } catch (err) { /* the timer still runs */ } }
+  if (name === CFG.RCS) { try { staleNow(readyNow); } catch (err) { /* the timer still runs */ } }
+}
+
+/**
+ * Record when an edit set Ready for agent to Yes ("ready:CS-001" = now), or
+ * clear it on No. Returns { cs: time } for the rows turned Yes.
+ */
+function noteReady_(e, props, csHeader) {
+  const r = e.range;
+  if (!r.getColumn) return {};
+  const s = readSheet(r.getSheet());
+  const rc = col(s, 'Ready for agent'), cc = col(s, csHeader);
+  const c0 = r.getColumn(), nc = r.getNumColumns ? r.getNumColumns() : 1;
+  if (rc < 0 || cc < 0 || rc + 1 < c0 || rc + 1 >= c0 + nc) return {};
+  const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z', out = {};
+  const r0 = r.getRow(), n = Math.min(r.getNumRows(), MAX_ROWS);
+  for (let row = r0; row < r0 + n; row++) {
+    const v = s.rows[row - s.top];
+    if (!v) continue;
+    const cs = String(v[cc]).trim();
+    if (!cs) continue;
+    if (/^yes$/i.test(String(v[rc]).trim())) { props.setProperty('ready:' + cs, now); out[cs] = now; }
+    else props.deleteProperty('ready:' + cs);
+  }
+  return out;
 }
 
 /** Public comment: flag stale proposals on Review Change Sets, without a full rebuild. */
-function staleNow() {
+function staleNow(readyNow) {
   const ss = SpreadsheetApp.getActive();
   const agentCs = readSheet(ss.getSheetByName(CFG.AGENT_CS || CFG.AGENT));
   const rcs = readSheet(ss.getSheetByName(CFG.RCS));
@@ -310,7 +339,11 @@ function staleNow() {
   if (aId < 0 || aBasis < 0) return;
   const basisOfCs = {};
   agentCs.rows.forEach(r => { const id = String(r[aId]).trim(); if (id) basisOfCs[id] = String(r[aBasis]).trim(); });
-  markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)');
+  // Only the rows an Editor just set to Yes get their progress line here;
+  // the rest keep theirs until the timer's full refresh.
+  const lineOf = {};
+  Object.keys(readyNow || {}).forEach(cs => { lineOf[cs] = progressLine({ readyAt: readyNow[cs] }); });
+  markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)', lineOf);
 }
 
 const FAST_MS = 5000;
@@ -415,6 +448,7 @@ function refreshLocked() {
     const aHead = col(agentCs, COLS.agent.head || 'PR head (change set)');
     const aFrom = col(agentCs, COLS.agent.builtFrom || 'Staging built from (change set)');
     const aDeploy = col(agentCs, COLS.agent.deploy || 'Staging deploy (change set)');
+    const aDisp = col(agentCs, COLS.agent.dispositions || DISPOSITIONS_CS), dispOf = {};
     agent.rows.forEach(r => {
       const n = String(r[aNo]).trim();
       if (n) {
@@ -433,6 +467,7 @@ function refreshLocked() {
       if (id && aBasis >= 0) basisOfCs[id] = String(r[aBasis]).trim();
       if (id && aStaging >= 0) stagingOf[id] = (String(r[aStaging]).match(/https:\/\/\S+/) || [''])[0];
       if (id) builtOf[id] = builtInfo(r, aBuilt, aFrom, aDeploy);
+      if (id && aDisp >= 0) dispOf[id] = String(r[aDisp]);
       if (id && aPrs >= 0) {
         const descs = aCh >= 0 ? String(r[aCh]).split('\n').map(x => x.trim()) : [];
         const dones = aDone >= 0 ? String(r[aDone]).split('\n').map(x => x.trim()) : [];
@@ -443,14 +478,26 @@ function refreshLocked() {
       }
     });
     refreshRpc(rpc, pcOf, csOfNo, stOf, prOf);
-    refreshRcs(rcs, rpc, csOf, stOf, prOf);
-    markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)');
+    const csCol = col(rcs, 'Change-set'), all = () => true;
+    const humanDisp = {}, hNo = col(rpc, COLS.rpc.no), hD = col(rpc, COLS.rpc.disposition || 'Disposition');
+    if (hNo >= 0 && hD >= 0) rpc.rows.forEach(r => { const n = String(r[hNo]).trim(); if (n) humanDisp[n] = String(r[hD]).trim(); });
+    const readyAt = readyTimes(rcs, csCol, prOf, all, docProps_()), lineOf = {};
+    refreshRcs(rcs, rpc, csOf, stOf, prOf, readyAt);
+    writeRows(rcs, col(rcs, COLS.rcs.dispositionsAgent || DISPOSITIONS_AGENT), null, r => {
+      const cs = String(r[csCol]).trim();
+      return dispositionCell(dispOf[cs], csOf[cs], humanDisp);
+    });
+    rcs.rows.forEach(r => {
+      const cs = String(r[csCol]).trim();
+      if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)), prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] });
+    });
+    markStale(rcs, csCol, basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)', lineOf);
     // Staging review page, from Agent: only where Agent names a preview, so a
     // sheet whose agent writes the cell directly keeps it.
     const rSt = COLS.rcs.staging ? col(rcs, COLS.rcs.staging) : -1, rCs = col(rcs, COLS.rcs.cs);
     if (rSt >= 0 && rCs >= 0) rcs.rows.forEach((r, k) => {
       const id = String(r[rCs]).trim();
-      if (stagingOf[id] || awaitsPreview(prOf[id])) rcs.sh.getRange(k + rcs.top, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id])]]);
+      if (stagingOf[id] || awaitsPreview(prOf[id])) rcs.sh.getRange(k + rcs.top, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id], readyAt[id])]]);
     });
   }
 }
@@ -705,12 +752,14 @@ function stagingWarning(url, built, prs, readyAt) {
   if (!url) return active ? '\u26a0 no preview yet: not ready for merge' : '';
   const deploy = String(b.deploy || '').toLowerCase();
   if (/fail|error/.test(deploy)) return '\u26a0 deploy failed';
+  const stage = deployStage(deploy);
   if (active && b.from) {
     const n = Math.min(active.head.length, b.from.length, 40);
     if (n >= 7 && active.head.slice(0, n).toLowerCase() !== b.from.slice(0, n).toLowerCase())
-      return '\u26a0 stale: built from ' + b.from.slice(0, 7) + ', PR now at ' + active.head.slice(0, 7);
+      return '\u26a0 stale: built from ' + b.from.slice(0, 7) + ', PR now at ' + active.head.slice(0, 7) +
+        (stage ? '; restaging: ' + stage : '');
   }
-  if (/pend|queue|progress|build/.test(deploy)) return '\u26a0 deploy in progress';
+  if (stage) return '\u26a0 restaging: ' + stage;
   const at = utcMs(b.at);
   // An Editor sent the row back to the agent after this preview was built:
   // the PR is about to change, so the preview no longer shows the agreed text.
@@ -721,6 +770,25 @@ function stagingWarning(url, built, prs, readyAt) {
     return '\u26a0 stale: built ' + String(b.at).trim() + ', PR changed since';
   return '';
 }
+/**
+ * Where a restage is, from the agent's Staging deploy value (owner,
+ * 2026-10-31: "update stages of gh-pages deployment (merge to gh-pages,
+ * waiting for deploy, deployed)"). The agent records each stage as it
+ * happens: building, pushed (on gh-pages), deploying, deployed or failed;
+ * "pending" is read as deploying. '' when deployed or unknown.
+ */
+function deployStage(deploy) {
+  const d = String(deploy || '').toLowerCase();
+  // The agent may add when it expects the preview live, from recent runs
+  // (owner, 2026-10-31: "also expected time of gh-page deployment"):
+  // "building, expected 2026-10-31 15:20Z".
+  const e = String(deploy || '').match(/expected[^0-9]*((?:\d{4}-\d\d-\d\d )?\d\d:\d\dZ)/i);
+  const by = e ? ', expected live ' + e[1].toUpperCase() : '';
+  if (/build/.test(d)) return 'building the preview' + by;
+  if (/push|gh-pages|merged|queue|wait/.test(d)) return 'on gh-pages, waiting for Pages to deploy' + by;
+  if (/pend|progress|deploying/.test(d)) return 'Pages is deploying it' + by;
+  return '';
+}
 /** A change set with a PR whose head the agent recorded, and so owes a preview. */
 function awaitsPreview(prs) { return (prs || []).some(p => p.head); }
 function builtInfo(r, at, from, deploy) {
@@ -729,16 +797,137 @@ function builtInfo(r, at, from, deploy) {
 }
 
 /** Flag the agent's proposal (column `agentName`) of each row whose basis moved on. */
-function markStale(s, csCol, basisOfCs, exact, prefix, agentName) {
+function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) {
   const ag = col(s, agentName);
   if (ag < 0 || csCol < 0) return;
   s.rows.forEach((r, k) => {
-    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[String(r[csCol]).trim()]);
-    if (t !== null) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(t)]]);
+    if (want && !want(k)) return;
+    const cs = String(r[csCol]).trim();
+    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[cs]);
+    const cur = t === null ? String(r[ag]) : t;
+    const fin = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? withProgress(cur, lineOf[cs]) : cur;
+    if (fin !== String(r[ag])) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(fin)]]);
     unready(s, r, k, r[ag], t);
-    markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), t === null ? r[ag] : t);
+    markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), fin);
   });
 }
+
+/**
+ * Where the change set is, as one line the script keeps at the top of the
+ * agent's feedback (below a stale mark), starting with PROGRESS (owner,
+ * 2026-10-31: "agent feedback should also try to say where it is in
+ * producing PR / staging", and an Editor's Orange change adds a note rather
+ * than marking the proposal stale). The agent never writes this line.
+ */
+const PROGRESS = '\u23f3 ';
+/**
+ * The change set's Dispositions: one blurb, written by the agent on the Agent
+ * tab before the preview is staged, describing every disposition in the
+ * change set. It is the summary used once Ready for merge is Yes: in the
+ * merge and when the change set's issue is closed (owner, 2026-10-31). The
+ * script shows it, read-only, wherever the people's tab has the column.
+ */
+const DISPOSITIONS_CS = 'Disposition (change set)', DISPOSITIONS_AGENT = 'Disposition (agent)';
+/**
+ * The record's structure (owner, 2026-10-31: "enforce more structured
+ * Disposition (change set), so each PC is given a disposition"; "can also
+ * be an overall disposition statement without reference to a PC"). Lines:
+ *   Decided (Q1, 2026-10-31): A, by the Editor; <what it means>
+ *   Overall: <a statement for the whole change set>        (optional)
+ *   No. 136: Accepted. <what was done>
+ *   Nos. 127 to 135, 138 and 139: Not accepted. <why>
+ * Each comment of the change set needs exactly one disposition, from
+ * DISPOSITION_WORDS. Returns the problems, one line each ('' when none).
+ */
+const DISPOSITION_WORDS = ['Accepted', 'Partially accepted', 'Not accepted', 'Noted', 'Deferred', 'Duplicate', 'Out of scope', 'Withdrawn'];
+function dispositionProblems(text, nos, human) {
+  const want = (nos || []).map(String), seen = {}, out = [];
+  const words = new RegExp('^(' + DISPOSITION_WORDS.join('|') + ')\\b', 'i');
+  String(text || '').split('\n').forEach(line => {
+    const m = line.match(/^\s*Nos?\.\s*([^:]+):\s*(.*)$/);
+    if (!m) return;
+    const got = [];
+    m[1].replace(/(\d+)\s*(?:to|-|\u2013)\s*(\d+)|(\d+)/g, (_, a, z, one) => {
+      if (one) got.push(one);
+      else for (let n = +a; n <= +z && n - +a < 1000; n++) got.push(String(n));
+      return '';
+    });
+    const w = m[2].match(words);
+    if (!w) out.push('\u26a0 No. ' + got.join(', ') + ': start with one of ' + DISPOSITION_WORDS.join(', '));
+    got.forEach(n => {
+      // The agent drafts from the people's Blue Disposition (owner,
+      // 2026-10-31: "agent should draw from human blue dispositions"); a
+      // different word is shown, never corrected.
+      const h = String((human || {})[n] || '').trim();
+      if (w && h && !/^pending$/i.test(h) && h.toLowerCase() !== w[1].toLowerCase())
+        out.push('\u26a0 No. ' + n + ': ' + w[1] + ' here, ' + h + ' in the people\'s Disposition');
+      if (want.length && want.indexOf(n) < 0) out.push('\u26a0 No. ' + n + ' is not in this change set');
+      else if (seen[n]) out.push('\u26a0 No. ' + n + ' has two dispositions');
+      seen[n] = true;
+    });
+  });
+  const missing = want.filter(n => !seen[n]).sort((x, y) => x - y);
+  if (missing.length) out.unshift('\u26a0 No disposition yet for No. ' + missing.join(', '));
+  return out.join('\n');
+}
+/** The Disposition (agent) cell: the problems in bold above the agent's record. */
+function dispositionCell(text, nos, human) {
+  if (!String(text || '').trim()) return rich([{ t: '' }]);
+  const p = dispositionProblems(text, nos, human);
+  return rich(p ? [{ t: p, bold: true }, { t: '\n' + text }] : [{ t: text }]);
+}
+function progressLine(o) {
+  const prs = o.prs || [];
+  const active = prs.slice(-1)[0];
+  const label = active ? prLabel(active.url) : '';
+  if (/merged/i.test(o.status || '')) return '';
+  if (o.merge && active) return PROGRESS + 'Ready for merge set: the agent will merge ' + label + '.';
+  const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
+  const last = done.length ? Math.max.apply(null, done) : NaN;
+  if (o.readyAt && !/working/i.test(o.status || '') && (isNaN(last) || utcMs(o.readyAt) > last))
+    return PROGRESS + 'Ready for agent set ' + o.readyAt + ': the agent will act on this and rewrite it.';
+  if (/working/i.test(o.status || '')) return PROGRESS + 'The agent is working on ' + (label || 'the pull request') + '.';
+  if (!active) return '';
+  const w = stagingWarning(o.staging, o.built, prs, o.readyAt);
+  const preview = !o.staging ? 'no preview yet' : w ? 'preview ' + w.replace(/^\u26a0\s*/, '') : 'preview current' + (o.built && o.built.at ? ' (built ' + o.built.at + ')' : '');
+  return PROGRESS + label + ' open' + (active.done ? ', updated ' + active.done : '') + '; ' + preview + '.';
+}
+
+/** The text with its progress line replaced (or removed when line is ''). */
+function withProgress(text, line) {
+  const t = String(text);
+  if (!t.trim()) return t;
+  const lines = t.split('\n');
+  const stale = lines[0] === STALE ? [lines.shift()] : [];
+  while (lines.length && lines[0].indexOf(PROGRESS) === 0) lines.shift();
+  return stale.concat(line ? [line] : [], lines).join('\n');
+}
+
+/**
+ * When each row's Ready for agent turned Yes (owner, 2026-10-31: "i just set
+ * Ready for agent to Y ... expected Staging review to get a stale warning").
+ * Kept per change set as "ready:CS-001" = the time, cleared on No. A Yes the
+ * script first sees on a row the agent has already worked (the script was
+ * just installed or re-pasted) counts from the agent's last completion.
+ */
+function readyTimes(s, csCol, prOf, want, props) {
+  const readyCol = col(s, 'Ready for agent'), readyAt = {};
+  if (readyCol < 0 || csCol < 0) return readyAt;
+  const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
+  s.rows.forEach((r, k) => {
+    const cs = String(r[csCol]).trim();
+    if (!cs) return;
+    const key = 'ready:' + cs, was = props.getProperty(key);
+    if (/^yes$/i.test(String(r[readyCol]).trim())) {
+      const done = (prOf[cs] || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
+      const first = done.length ? new Date(Math.max.apply(null, done)).toISOString().slice(0, 16).replace('T', ' ') + 'Z' : now;
+      if (!was && want(k)) props.setProperty(key, first);
+      readyAt[cs] = was || (want(k) ? first : '');
+    } else if (was && want(k)) props.deleteProperty(key);
+  });
+  return readyAt;
+}
+const isYes = (s, r, h) => { const c = col(s, h); return c >= 0 && /^yes$/i.test(String(r[c]).trim()); };
 
 /**
  * The agent's "Decision needed" block in bold, so a reader sees at once
@@ -753,6 +942,14 @@ function decisionSpans(text) {
   while ((m = re.exec(t))) {
     const end = t.indexOf('\n\n', m.index);
     spans.push([m.index, end < 0 ? t.length : end]);
+  }
+  // The script's ⏳ status line is bold too, so it reads as the row's state
+  // (owner, 2026-10-31: "not bold").
+  const i = t.indexOf('\n' + PROGRESS);
+  const p = t.indexOf(PROGRESS) === 0 ? 0 : i < 0 ? -1 : i + 1;
+  if (p >= 0) {
+    const e = t.indexOf('\n', p);
+    spans.push([p, e < 0 ? t.length : e]);
   }
   return spans;
 }
@@ -1002,7 +1199,7 @@ function refreshRpc(s, pcOf, csOfNo, stOf, prOf) {
 
 // ---------- Review Change Sets ----------
 
-function refreshRcs(s, rpc, csOf, stOf, prOf) {
+function refreshRcs(s, rpc, csOf, stOf, prOf, readyAt) {
   const c = {};
   Object.entries(COLS.rcs).forEach(([k, h]) => (c[k] = col(s, h)));
   const p = {};
@@ -1030,7 +1227,7 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
   s.rows.forEach(r => {
     const cs = String(r[c.cs]).trim();
     const sts = [...new Set((csOf[cs] || []).map(n => stOf[n]).filter(Boolean))].join(', ');
-    out.agentic.push(agenticCell(sts, prOf[cs] || []));
+    out.agentic.push(agenticCell(sts, prOf[cs] || [], { readyAt: (readyAt || {})[cs] }));
     status.push([asText(csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)))]);
     const nos = (csOf[cs] || []).filter(n => rowOf[n]).sort((a, b) => a - b);
 
@@ -1135,7 +1332,7 @@ function refreshDraft(rows) {
   Object.entries(COLS.draftAgent).forEach(([k, h]) => (a[k] = col(agent, h)));
   // Columns added after a sheet's Config was written are found by their default names.
   [['head', 'PR head (change set)'], ['builtFrom', 'Staging built from (change set)'], ['deploy', 'Staging deploy (change set)'],
-    ['conversation', 'Agent conversation (change set)']]
+    ['conversation', 'Agent conversation (change set)'], ['dispositions', DISPOSITIONS_CS]]
     .forEach(([k, h]) => { if (a[k] === undefined) a[k] = col(agent, h); });
 
   // Rows whose change set's Agent row changed since the last run.
@@ -1186,10 +1383,11 @@ function refreshDraft(rows) {
     }
   }
 
-  const prOf = {}, stOf = {}, issuesOf = {}, stagingOf = {}, basisOfCs = {}, builtOf = {}, talkOf = {};
+  const prOf = {}, stOf = {}, issuesOf = {}, stagingOf = {}, basisOfCs = {}, builtOf = {}, talkOf = {}, dispOf = {};
   agent.rows.forEach(r => {
     const id = a.csId >= 0 ? String(r[a.csId]).trim() : '';
     if (!id) return;
+    if (a.dispositions >= 0) dispOf[id] = String(r[a.dispositions]);
     if (a.conversation >= 0) talkOf[id] = (String(r[a.conversation]).match(/https:\/\/\S+/) || [''])[0];
     if (a.agentic >= 0) stOf[id] = String(r[a.agentic]).trim();
     if (a.issue >= 0) issuesOf[id] = String(r[a.issue]).split('\n').map(issueUrl).filter(Boolean);
@@ -1252,34 +1450,14 @@ function refreshDraft(rows) {
     const urls = issuesOf[String(r[c.cs]).trim()] || [];
     return rich(urls.flatMap((u, i) => (i ? [{ t: '\n' }] : []).concat([{ t: issueLabel(u), url: u }])));
   });
-  // When each row's Ready for agent turned Yes (owner, 2026-10-31: "i just
-  // set Ready for agent to Y ... expected Staging review to get a stale
-  // warning"). Kept per change set as "ready:CS-001" = the time, cleared on
-  // No.
-  const readyCol = col(fb, 'Ready for agent'), readyAt = {};
-  if (readyCol >= 0) {
-    const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
-    fb.rows.forEach((r, k) => {
-      const cs = String(r[c.cs]).trim();
-      if (!cs) return;
-      const key = 'ready:' + cs, was = props.getProperty(key);
-      if (/^yes$/i.test(String(r[readyCol]).trim())) {
-        // A Yes the script first sees on a row the agent has already worked
-        // (the script was just installed or re-pasted) counts from the
-        // agent's last completion, not from now: it may already be answered.
-        const done = (prOf[cs] || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
-        const first = done.length ? new Date(Math.max.apply(null, done)).toISOString().slice(0, 16).replace('T', ' ') + 'Z' : now;
-        if (!was && want(k)) props.setProperty(key, first);
-        readyAt[cs] = was || (want(k) ? first : '');
-      } else if (was && want(k)) props.deleteProperty(key);
-    });
-  }
+  const readyAt = readyTimes(fb, c.cs, prOf, want, props);
   writeRows(fb, c.agentic, only, r => {
     const cs = String(r[c.cs]).trim();
     return agenticCell(stOf[cs] || '', prOf[cs] || [], { readyAt: readyAt[cs], talk: talkOf[cs] });
   });
   // The same status as one plain value, for a filter (owner, 2026-10-31).
   if (c.status >= 0) writeRows(fb, c.status, only, r => rich([{ t: shownStatus(stOf[String(r[c.cs]).trim()] || '') }]));
+  writeRows(fb, col(fb, DISPOSITIONS_AGENT), only, r => rich([{ t: dispOf[String(r[c.cs]).trim()] || '' }]));
   // Staging review page: the change set's preview while its PR is open.
   writeRows(fb, c.staging, only, r => {
     const cs = String(r[c.cs]).trim();
@@ -1287,17 +1465,12 @@ function refreshDraft(rows) {
   });
   // Feedback (agent): flagged stale while the row's blue cells differ from
   // what the proposal was written against.
-  const ag = col(fb, COLS.draft.agentFeedback || 'Feedback (agent)');
-  if (ag >= 0) {
-    fb.rows.forEach((r, k) => {
-      if (!want(k)) return;
-      const cs = String(r[c.cs]).trim();
-      const t = staleText(r[ag], basisOf(fb.header, r, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback), basisOfCs[cs]);
-      if (t !== null) fb.sh.getRange(k + fb.top, ag + 1, 1, 1).setValues([[asText(t)]]);
-      unready(fb, r, k, r[ag], t);
-      markDecision(fb.sh.getRange(k + fb.top, ag + 1, 1, 1), t === null ? r[ag] : t);
-    });
-  }
+  const lineOf = {};
+  fb.rows.forEach(r => {
+    const cs = String(r[c.cs]).trim();
+    if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(fb, r, 'Ready for merge'), status: stOf[cs] || '', prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] });
+  });
+  markStale(fb, c.cs, basisOfCs, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback, COLS.draft.agentFeedback || 'Feedback (agent)', lineOf, want);
 }
 /** A dropdown name without its indent (U+2800 blanks; old "\u2514 "/"\u2502 " marks) or spaces. */
 const bareName = n => String(n).replace(/^[\s\u2800\u2502\u2514]+/, '').trim();
