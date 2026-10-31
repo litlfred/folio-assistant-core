@@ -513,6 +513,16 @@ set, even with Ready for merge = Yes. `agent-record.ts dispositions` does not
 stop on this line, because confirming is the committee's step, not a fault
 in the agent's record.
 
+An Editor confirms in bulk in the Orange **Dispositions confirmed** column,
+left of Ready for merge ("make orange column that contains list multiselect
+of the PCs", "put to left of ready for merge"): pick All, or the comment
+numbers. A comment counts as confirmed when it is picked there or its own
+Disposition is no longer Pending; a picked number outside the change set is
+flagged. The script adds the column itself, inside its locked run (so no
+other refresh writes by a shifted position), and keeps its list on a hidden
+Lists tab ("All", then "No. n"). Allow multiple selections is the one step
+only a person can take, as for Selected Sections.
+
 ## Structured cells and column hover text (owner, 2026-10-31)
 
 "Several of the cols could be a bit more structured": a list is never run

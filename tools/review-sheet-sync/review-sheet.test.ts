@@ -1404,3 +1404,20 @@ describe("unconfirmed dispositions are flagged and block the merge (owner, 2026-
     expect(l).toMatch(/will not merge r#1 until every disposition is complete and confirmed by the committee\.$/);
   });
 });
+
+describe("Dispositions confirmed, an Editor's multi-select (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems, confirmedNos };`)({}) as {
+    dispositionProblems: (t: string, n: string[], h?: Record<string, string>, c?: string[]) => string;
+    confirmedNos: (v: string, n: string[]) => string[];
+  };
+  test("All confirms every comment; picked numbers confirm those", () => {
+    expect(fns.confirmedNos("All", ["1", "2"])).toEqual(["1", "2"]);
+    expect(fns.confirmedNos("No. 1, No. 3", ["1", "2"])).toEqual(["1", "3"]);
+  });
+  test("confirmed comments are no longer flagged; a stray number is", () => {
+    const t = "No. 1: Accepted. x\nNo. 2: Noted. y";
+    expect(fns.dispositionProblems(t, ["1", "2"], { "1": "Pending", "2": "Pending" }, ["1", "2"])).toBe("");
+    expect(fns.dispositionProblems(t, ["1", "2"], { "1": "Pending", "2": "Pending" }, ["1", "9"]))
+      .toBe("⚠ Not confirmed by the committee (Disposition still Pending): No. 2\n⚠ No. 9 is confirmed but is not in this change set");
+  });
+});
