@@ -76,7 +76,7 @@ export const DRAFT_TABS = { FEEDBACK: "Contributor Feedback", AGENT: "Agent", TO
 export const DRAFT_COLUMNS = {
   draft: {
     cs: "Change-set", title: "Title", sections: "Selected Sections", sectionLinks: "Section links", feedback: "Contributor Feedback",
-    issue: "Issue", agentic: "Agentic status", staging: "Staging review page", status: "Agentic status (filter)",
+    issue: "Issue", agentic: "Agentic status", staging: "Staging review", status: "Agentic status (filter)",
   },
   draftAgent: {
     csId: "Change-set", issue: "Issue", agentic: "Agentic status", prs: "Pull request (change set)",
@@ -140,7 +140,7 @@ export const DEFAULT_COLUMNS = {
   rcs: {
     cs: "Change-set", sections: "Sections", pages: "Pages", comments: "Public Comments",
     revisions: "Suggested Revisions", feedback: "PC Architect Feedback", dispositions: "Dispositions",
-    agentic: "Agentic status", staging: "Staging review page", status: "Agentic status (filter)",
+    agentic: "Agentic status", staging: "Staging review", status: "Agentic status (filter)",
   },
   agent: {
     no: "No.", pc: "Comment ref", agentic: "Agentic status", cs: "Change-sets",

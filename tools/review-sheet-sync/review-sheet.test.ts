@@ -315,7 +315,7 @@ const draftTabs = () => ({
   "Contributor Feedback": {
     id: 1,
     rows: [
-      ["Change-set", "Title", "Selected Sections", "Section links", "Contributor Feedback (CL)", "Contributor Feedback (initials/name)", "Issue", "Agentic status", "Staging review page"],
+      ["Change-set", "Title", "Selected Sections", "Section links", "Contributor Feedback (CL)", "Contributor Feedback (initials/name)", "Issue", "Agentic status", "Staging review"],
       ["CS-004", "Define registry", "Ch 1 Why it matters,\u2800\u2800\u28001.1 Global challenges", "", "AB: needs a definition", "", "", "", ""],
       ["", "Privacy wording", "Ch 12 Privacy; Security and Trust, Somewhere else, 1.1 Global challenges", "", "", "CD: tighten", "", "", ""],
       ["", "", "", "", "", "", "", "", ""],
@@ -498,12 +498,12 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     const s = load(code, rt2.g);
     s.refreshAll();
-    const st = rt2.written["Contributor Feedback"]["Staging review page"][0][0] as Rich;
+    const st = rt2.written["Contributor Feedback"]["Staging review"][0][0] as Rich;
     expect(st.text).toBe("review \u26a0 stale: built 2026-10-30 23:00Z, PR changed since");
     expect(st.links).toEqual([[0, 6, "https://o.github.io/dth/STAGING/cs-004/en/review/"]]);
     t.Agent.rows[1][7] = "2026-10-30 23:50Z";
     s.refreshAll();
-    expect((rt2.written["Contributor Feedback"]["Staging review page"][0][0] as Rich).text).toBe("review");
+    expect((rt2.written["Contributor Feedback"]["Staging review"][0][0] as Rich).text).toBe("review");
   });
 
   test("security: text a person or the agent typed is never written back as a formula", () => {
@@ -548,9 +548,9 @@ describe("review-sheet.gs in drafting mode", () => {
     expect((fb.Issue[1][0] as Rich).text).toBe("");
   });
 
-  test("Staging review page links the change set's preview, from the Agent tab", () => {
-    expect(fb["Staging review page"][0][0]).toEqual({ text: "review", links: [[0, 6, "https://o.github.io/dth/STAGING/cs-004/en/review/"]], bold: [] });
-    expect((fb["Staging review page"][1][0] as Rich).text).toBe("");
+  test("Staging review links the change set's preview, from the Agent tab", () => {
+    expect(fb["Staging review"][0][0]).toEqual({ text: "review", links: [[0, 6, "https://o.github.io/dth/STAGING/cs-004/en/review/"]], bold: [] });
+    expect((fb["Staging review"][1][0] as Rich).text).toBe("");
   });
 
   test("an edit to Contributor Feedback or Agent refreshes at once; another tab's does not", () => {
