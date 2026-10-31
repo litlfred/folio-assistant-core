@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 a75ed9ef2e024bd5.
+// folio-assistant-core tools/review-sheet-sync at template sha256 81491eed64bb9153.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 a75ed9ef2e024bd5';
+const SCRIPT_VERSION = 'template sha256 81491eed64bb9153';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -747,12 +747,14 @@ function stagingWarning(url, built, prs, readyAt) {
   if (!url) return active ? '\u26a0 no preview yet: not ready for merge' : '';
   const deploy = String(b.deploy || '').toLowerCase();
   if (/fail|error/.test(deploy)) return '\u26a0 deploy failed';
+  const stage = deployStage(deploy);
   if (active && b.from) {
     const n = Math.min(active.head.length, b.from.length, 40);
     if (n >= 7 && active.head.slice(0, n).toLowerCase() !== b.from.slice(0, n).toLowerCase())
-      return '\u26a0 stale: built from ' + b.from.slice(0, 7) + ', PR now at ' + active.head.slice(0, 7);
+      return '\u26a0 stale: built from ' + b.from.slice(0, 7) + ', PR now at ' + active.head.slice(0, 7) +
+        (stage ? '; restaging: ' + stage : '');
   }
-  if (/pend|queue|progress|build/.test(deploy)) return '\u26a0 deploy in progress';
+  if (stage) return '\u26a0 restaging: ' + stage;
   const at = utcMs(b.at);
   // An Editor sent the row back to the agent after this preview was built:
   // the PR is about to change, so the preview no longer shows the agreed text.
@@ -761,6 +763,20 @@ function stagingWarning(url, built, prs, readyAt) {
   const done = (prs || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
   if (!isNaN(at) && !(active && b.from) && done.some(x => x > at))
     return '\u26a0 stale: built ' + String(b.at).trim() + ', PR changed since';
+  return '';
+}
+/**
+ * Where a restage is, from the agent's Staging deploy value (owner,
+ * 2026-10-31: "update stages of gh-pages deployment (merge to gh-pages,
+ * waiting for deploy, deployed)"). The agent records each stage as it
+ * happens: building, pushed (on gh-pages), deploying, deployed or failed;
+ * "pending" is read as deploying. '' when deployed or unknown.
+ */
+function deployStage(deploy) {
+  const d = String(deploy || '').toLowerCase();
+  if (/build/.test(d)) return 'building the preview';
+  if (/push|gh-pages|merged|queue|wait/.test(d)) return 'on gh-pages, waiting for Pages to deploy';
+  if (/pend|progress|deploying/.test(d)) return 'Pages is deploying it';
   return '';
 }
 /** A change set with a PR whose head the agent recorded, and so owes a preview. */

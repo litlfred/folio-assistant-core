@@ -747,12 +747,14 @@ function stagingWarning(url, built, prs, readyAt) {
   if (!url) return active ? '\u26a0 no preview yet: not ready for merge' : '';
   const deploy = String(b.deploy || '').toLowerCase();
   if (/fail|error/.test(deploy)) return '\u26a0 deploy failed';
+  const stage = deployStage(deploy);
   if (active && b.from) {
     const n = Math.min(active.head.length, b.from.length, 40);
     if (n >= 7 && active.head.slice(0, n).toLowerCase() !== b.from.slice(0, n).toLowerCase())
-      return '\u26a0 stale: built from ' + b.from.slice(0, 7) + ', PR now at ' + active.head.slice(0, 7);
+      return '\u26a0 stale: built from ' + b.from.slice(0, 7) + ', PR now at ' + active.head.slice(0, 7) +
+        (stage ? '; restaging: ' + stage : '');
   }
-  if (/pend|queue|progress|build/.test(deploy)) return '\u26a0 deploy in progress';
+  if (stage) return '\u26a0 restaging: ' + stage;
   const at = utcMs(b.at);
   // An Editor sent the row back to the agent after this preview was built:
   // the PR is about to change, so the preview no longer shows the agreed text.
@@ -761,6 +763,20 @@ function stagingWarning(url, built, prs, readyAt) {
   const done = (prs || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
   if (!isNaN(at) && !(active && b.from) && done.some(x => x > at))
     return '\u26a0 stale: built ' + String(b.at).trim() + ', PR changed since';
+  return '';
+}
+/**
+ * Where a restage is, from the agent's Staging deploy value (owner,
+ * 2026-10-31: "update stages of gh-pages deployment (merge to gh-pages,
+ * waiting for deploy, deployed)"). The agent records each stage as it
+ * happens: building, pushed (on gh-pages), deploying, deployed or failed;
+ * "pending" is read as deploying. '' when deployed or unknown.
+ */
+function deployStage(deploy) {
+  const d = String(deploy || '').toLowerCase();
+  if (/build/.test(d)) return 'building the preview';
+  if (/push|gh-pages|merged|queue|wait/.test(d)) return 'on gh-pages, waiting for Pages to deploy';
+  if (/pend|progress|deploying/.test(d)) return 'Pages is deploying it';
   return '';
 }
 /** A change set with a PR whose head the agent recorded, and so owes a preview. */

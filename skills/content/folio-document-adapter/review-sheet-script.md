@@ -216,19 +216,26 @@ records, on each pass over a change set with an open PR:
 |---|---|---|
 | **PR head (change set)** | each PR's latest commit, one per line, in the PR order | the PR (`gh pr view --json headRefOid`) |
 | **Staging built from (change set)** | the commit the preview was built from | the newest gh-pages commit touching `STAGING/<slug>/`. Its message is `staging(<slug>): from <sha>` when an agent staged it (`stage-local.ts`), or `Publish <site> <sha8> preview of <branch>` when the site-publish workflow did; both forms are accepted |
-| **Staging deploy (change set)** | `deployed`, `pending` or `failed` | the Pages deployment of that gh-pages commit: `gh api repos/<o>/<r>/pages/builds/latest`, or, where that endpoint is blocked, the conclusion of the "pages build and deployment" run in `actions/runs?head_sha=<gh-pages commit>` |
+| **Staging deploy (change set)** | the restage's stage, updated as it moves: `building` (the site is being built), `pushed` (on gh-pages, waiting for Pages), `deploying` (Pages is deploying it; `pending` reads the same), `deployed`, or `failed` | the Pages deployment of that gh-pages commit: `gh api repos/<o>/<r>/pages/builds/latest`, or, where that endpoint is blocked, the conclusion of the "pages build and deployment" run in `actions/runs?head_sha=<gh-pages commit>` |
 
 **On every push, in the same pass** (owner, 2026-10-31: "preview review
 should say stale if started but not done"): write the new **PR head**, set
-**Staging deploy** to `pending`, set each comment's status, and stamp
+**Staging deploy** to `building`, set each comment's status, and stamp
 **Agent completed** with the clock (`date -u '+%Y-%m-%d %H:%MZ'`), never an
 estimate. A push recorded only in prose leaves the sheet saying the old
-preview is current and the row is "Not started".
+preview is current and the row is "Not started". Then, as the restage moves
+(owner, 2026-10-31: "update stages of gh-pages deployment (merge to
+gh-pages, waiting for deploy, deployed)"): on the gh-pages push, write
+**Staging built from** and **Staging built** and set `pushed`; when the
+Pages run starts, `deploying`; when it succeeds, `deployed`. The sheet shows
+each stage in Staging review and the ⏳ line.
 
 The script compares only; it stays `@OnlyCurrentDoc` with no internet access. Short and full shas both work: it compares the common prefix, at least 7 characters.
 It reads the active PR as the last one listed (one branch, one active PR per
 row) and writes, in this order of precedence: `⚠ deploy failed`;
-`⚠ stale: built from <sha>, PR now at <sha>`; `⚠ deploy in progress`. A
+`⚠ stale: built from <sha>, PR now at <sha>` (with `; restaging: <stage>`
+while one runs); `⚠ restaging: building the preview | on gh-pages, waiting
+for Pages to deploy | Pages is deploying it`. A
 change set with a recorded PR head but no preview link shows `⚠ no preview
 yet: not ready for merge`. A change set is never ready for merge without a
 preview to review (owner, 2026-10-31: "how can it be ready for merge when
