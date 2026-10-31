@@ -298,7 +298,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(toc.map((r) => r[0])).toEqual([
       "Section", "About this draft", "About this draft · Questions for the TWG", "Ch 1 Why it matters",
       "Ch 1 · Objectives and key messages", "1.1 Global challenges", "Ch 12 Privacy; Security and Trust",
-    ]);
+    ].map((n) => (/^(Section|About this draft$|Ch \d+ [^·])/.test(n) ? n : `\u2003\u2003${n}`)));
     expect(toc[4][1]).toBe('=HYPERLINK("S#sec:ch01-lead","open")');
     expect(tabs.TOC.hidden).toBe(true);
   });

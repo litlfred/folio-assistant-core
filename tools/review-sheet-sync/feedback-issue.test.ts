@@ -45,7 +45,7 @@ describe("feedback issues become Contributor Feedback rows", () => {
   test("the row: Sections from the block's anchor, a draft Title, feedback signed by login", () => {
     expect(feedbackRow({ body: formBody, url: "https://github.com/o/r/issues/7", login: "ana" }, anchors)).toEqual({
       title: "1.1 Global challenges: Add shortage numbers.",
-      sections: "1.1 Global challenges",
+      sections: "\u2003\u20031.1 Global challenges",
       feedback: "@ana (Technical): Add shortage numbers. They matter.",
       issue: "https://github.com/o/r/issues/7",
     });

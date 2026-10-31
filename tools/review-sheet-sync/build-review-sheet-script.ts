@@ -90,15 +90,23 @@ export const DRAFT_COLUMNS = {
  * Names carry no commas, because a multi-select dropdown cell joins its
  * choices with ", ".
  */
+/**
+ * The dropdown is a flat list, so a section is indented under its chapter by
+ * two em spaces per level (owner, 2026-10-31, "Indent sub-sections"). An em
+ * space is not trimmed by Sheets; the script compares names trimmed, so a
+ * value picked before the indent still links.
+ */
+export const INDENT = "\u2003\u2003";
+
 export function buildToc(a: { chapters: Chapter[]; sections: DraftSection[] }): [string, string][] {
   const clean = (s: string) => s.replace(/,/g, ";").replace(/\s+/g, " ").trim();
   const out: [string, string][] = [];
   const seen = new Set<string>();
-  const add = (name: string, anchor: string) => {
+  const add = (name: string, anchor: string, depth = 0) => {
     name = clean(name);
     if (!name || seen.has(name)) return;
     seen.add(name);
-    out.push([name, anchor]);
+    out.push([INDENT.repeat(depth) + name, anchor]);
   };
   for (const c of a.chapters) {
     const bare = c.title.replace(/^Chapter\s+\d+\.?\s*/i, "");
@@ -106,8 +114,8 @@ export function buildToc(a: { chapters: Chapter[]; sections: DraftSection[] }): 
     add(c.number != null ? `${head} ${bare}` : c.title, `chap:${c.dir}`);
     for (const s of a.sections.filter((x) => x.chapter === c.dir)) {
       const t = s.title ?? s.label;
-      if (s.number) add(t, s.label);
-      else if (t.toLowerCase() !== c.title.toLowerCase()) add(`${head} · ${t}`, s.label);
+      if (s.number) add(t, s.label, String(s.number).split(".").length - 1 || 1);
+      else if (t.toLowerCase() !== c.title.toLowerCase()) add(`${head} · ${t}`, s.label, 1);
     }
   }
   return out;

@@ -494,7 +494,8 @@ function refreshDraft() {
   });
 
   const tocUrl = {};
-  DATA.TOC.forEach(([name, anchor]) => (tocUrl[name] = CFG.SECTION_URL + anchor));
+  // Names are compared trimmed: the dropdown indents sections under their chapter.
+  DATA.TOC.forEach(([name, anchor]) => (tocUrl[String(name).trim()] = CFG.SECTION_URL + anchor));
   // Sections is the people's multi-select dropdown, so it stays plain text (a
   // dropdown chip cannot carry a link, and rich text there fights the
   // validation). Section links is green: one linked line per picked section.
