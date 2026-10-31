@@ -41,6 +41,14 @@ move them.
 | Review Change Sets | Public Comments | `No. n (Status) · comment`, status in bold, joined by a blank line |
 | Review Change Sets | Suggested Revisions, PC Architect Feedback, Dispositions | `No. n · text`, one per comment |
 
+**Architect Feedback (agent)** (Review Change Sets, green, right of Ready for
+merge; owner, 2026-10-31). The agentic architect role writes its proposed
+direction for resolving the change set here, so the architects and editor
+react to a proposal rather than drafting from nothing. The script does not
+touch it. It is a proposal, never a person's feedback: a tool that collects
+the people's `Architect Feedback (…)` columns by header must leave out
+`(agent)`, or show it apart, and it decides nothing.
+
 Every `No. n` in Review Change Sets links to `#gid=<Review Public Comments>&range=A<row>`.
 Do not link to a named range by `#rangeid=`: Sheets shows "Invalid range"
 for a named range whose id was set through the API.
