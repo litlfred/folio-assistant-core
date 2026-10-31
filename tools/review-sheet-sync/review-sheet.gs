@@ -428,7 +428,21 @@ function markStale(s, csCol, basisOfCs, exact, prefix) {
   s.rows.forEach((r, k) => {
     const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[String(r[csCol]).trim()]);
     if (t !== null) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(t)]]);
+    unready(s, r, k, r[ag], t);
   });
+}
+
+/**
+ * When a proposal turns stale, set the row's Ready for agent back to No, so
+ * an Editor decides again: setting it to Yes tells the agent to update the
+ * row's PR (owner, 2026-10-31). Only on the turn, so a Yes set while the row
+ * is stale stays.
+ */
+function unready(s, r, k, before, after) {
+  const ready = col(s, 'Ready for agent');
+  if (ready < 0 || after === null || String(after).indexOf(STALE + '\n') !== 0) return;
+  if (String(before).indexOf(STALE + '\n') === 0) return;
+  if (/^yes$/i.test(String(r[ready]).trim())) s.sh.getRange(k + s.top, ready + 1, 1, 1).setValues([['No']]);
 }
 
 const STALE = '\u26a0 Stale: the row changed since this proposal; the agent will propose again.';
@@ -895,6 +909,7 @@ function refreshDraft(rows) {
       const cs = String(r[c.cs]).trim();
       const t = staleText(r[ag], basisOf(fb.header, r, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback), basisOfCs[cs]);
       if (t !== null) fb.sh.getRange(k + fb.top, ag + 1, 1, 1).setValues([[asText(t)]]);
+      unready(fb, r, k, r[ag], t);
     });
   }
 }

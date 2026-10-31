@@ -551,6 +551,31 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]).toBe("Define it in 1.1");
   });
 
+  test("a proposal turning stale sets Ready for agent back to No, once, so an Editor's new Yes stays", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const f = t["Contributor Feedback"].rows;
+    f[0].push("Contributor Feedback (agent)", "Ready for agent");
+    f.forEach((x, i) => i && x.push("", ""));
+    const ag = f[0].indexOf("Contributor Feedback (agent)"), rd = f[0].indexOf("Ready for agent");
+    f[1][ag] = "Define it in 1.1";
+    f[1][rd] = "Yes";
+    t.Agent.rows[0].push("Feedback basis (change set)");
+    t.Agent.rows[1].push(feedbackBasis(f[0].slice(0, ag + 1), f[1].slice(0, ag + 1)));
+    const rt2 = runtime(t);
+    const s = load(code, rt2.g);
+    s.refreshAll();
+    expect(rt2.written["Contributor Feedback"]?.["Ready for agent"]).toBeUndefined();
+    f[1][1] = "Define registry and register";
+    s.refreshAll();
+    expect(rt2.written["Contributor Feedback"]["Ready for agent"][0][0]).toBe("No");
+    // Still stale, and an Editor sets Yes again: it stays.
+    f[1][ag] = rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0] as string;
+    f[1][rd] = "Yes";
+    delete rt2.written["Contributor Feedback"]["Ready for agent"];
+    s.refreshAll();
+    expect(rt2.written["Contributor Feedback"]["Ready for agent"]).toBeUndefined();
+  });
+
   test("the staging review link is marked stale when a PR changed after the preview was built", () => {
     const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
     t.Agent.rows[0].push("Staging built (UTC, change set)");

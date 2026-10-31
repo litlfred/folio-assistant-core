@@ -367,7 +367,7 @@ export function guideSteps(c: SheetConfig): string[] {
   steps.push(
     "   3. An Editor sets Ready for agent to Yes (orange) once the direction is agreed.",
     `   4. The agent edits the document on its own branch and opens a pull request. Agentic status says where it is, and ${staging} opens the "what changed" page of that branch's preview.`,
-    `   5. Reviewers read the preview and answer in blue. If a blue cell changes after the agent wrote, its proposal is marked stale and it looks again.`,
+    `   5. Reviewers read the preview and answer in blue. If a blue cell changes after the agent wrote, its proposal is marked stale and Ready for agent goes back to No. An Editor sets it to Yes again when the agent should update the row's pull request.`,
     "   6. An Editor sets Ready for merge to Yes. The agent merges, and Agentic status says merged.",
     "Finding your rows (filter views work for viewers and commenters too, and change nothing for anyone else):",
     "   • Data, then Filter views, then pick a view, such as Needs human or Stale",
