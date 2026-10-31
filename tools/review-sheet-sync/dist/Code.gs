@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 211bdfe0c32be609.
+// folio-assistant-core tools/review-sheet-sync at template sha256 17a271e7e0dd6496.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -74,7 +74,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 211bdfe0c32be609';
+const SCRIPT_VERSION = 'template sha256 17a271e7e0dd6496';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -705,7 +705,33 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName) {
     const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[String(r[csCol]).trim()]);
     if (t !== null) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(t)]]);
     unready(s, r, k, r[ag], t);
+    markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), t === null ? r[ag] : t);
   });
+}
+
+/**
+ * The agent's "Decision needed" block, bold and red, so a reader sees at once
+ * that the row waits on them (owner, 2026-10-31: "decision needed should be
+ * bold highlighted in change set feedback so clear"). The block runs to the
+ * next blank line. Cells without one are left as they are.
+ */
+const DECISION_RED = '#cc0000';
+function decisionSpans(text) {
+  const t = String(text), spans = [], re = /Decision needed/g;
+  let m;
+  while ((m = re.exec(t))) {
+    const end = t.indexOf('\n\n', m.index);
+    spans.push([m.index, end < 0 ? t.length : end]);
+  }
+  return spans;
+}
+function markDecision(range, text) {
+  const spans = decisionSpans(text);
+  if (!spans.length) return;
+  const b = SpreadsheetApp.newRichTextValue().setText(String(text));
+  const st = SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(DECISION_RED).build();
+  spans.forEach(([a, z]) => b.setTextStyle(a, z, st));
+  range.setRichTextValue(b.build());
 }
 
 /**
@@ -1238,6 +1264,7 @@ function refreshDraft(rows) {
       const t = staleText(r[ag], basisOf(fb.header, r, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback), basisOfCs[cs]);
       if (t !== null) fb.sh.getRange(k + fb.top, ag + 1, 1, 1).setValues([[asText(t)]]);
       unready(fb, r, k, r[ag], t);
+      markDecision(fb.sh.getRange(k + fb.top, ag + 1, 1, 1), t === null ? r[ag] : t);
     });
   }
 }

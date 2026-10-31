@@ -57,7 +57,9 @@ Answer in your Blue column, or ask an Editor to set Ready for agent.
 ```
 
 and sets the row's Agentic status to `Needs human` on the Agent tab. The
-sheet never shows those words (owner, 2026-10-31: "unclear: needs human to do
+script shows the whole "Decision needed" block, up to the next blank line,
+bold and red in the agent's feedback cell (owner, 2026-10-31: "decision needed
+should be bold highlighted ... so clear"). The sheet never shows those words (owner, 2026-10-31: "unclear: needs human to do
 what?"): Agentic status opens with **Needs you: answer the agent's question**,
 saying where the question is and what to do, and Agentic status (filter)
 reads `Needs you: answer the agent's question`, so the "Needs you" filter view
