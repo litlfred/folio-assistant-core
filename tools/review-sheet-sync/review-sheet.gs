@@ -768,7 +768,7 @@ function stagingWarning(url, built, prs, readyAt) {
   // An Editor sent the row back to the agent after this preview was built:
   // the PR is about to change, so the preview no longer shows the agreed text.
   if (readyAt && !isNaN(at) && utcMs(readyAt) > at)
-    return '\u26a0 stale: Ready for agent set ' + readyAt + ', the agent will update the PR';
+    return '\u26a0 missing feedback from ' + readyAt;
   const done = (prs || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
   if (!isNaN(at) && !(active && b.from) && done.some(x => x > at))
     return '\u26a0 stale: built ' + String(b.at).trim() + ', PR changed since';
@@ -871,7 +871,7 @@ function agenticCell(status, prs, o) {
   const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
   const last = done.length ? Math.max.apply(null, done) : NaN;
   const queued = o.readyAt && !/working/i.test(status) && (isNaN(last) || utcMs(o.readyAt) > last);
-  const head = queued ? [{ t: 'Queued for the agent (Ready for agent set ' + o.readyAt + ')', bold: true }]
+  const head = queued ? [{ t: 'Waiting on the agent since ' + o.readyAt + ' (Ready for agent set)', bold: true }]
     : /working/i.test(status) && o.talk ? [{ t: 'An agent is working on it: ', bold: true }, { t: 'conversation', url: o.talk }] : [];
   const body = agenticParts(status, prs);
   return rich(head.length ? head.concat(body.length && body[0].t ? [{ t: '\n' }].concat(body) : []) : body);
@@ -1277,7 +1277,7 @@ function refreshDraft(rows) {
   // When each row's Ready for agent turned Yes (owner, 2026-10-31: "i just
   // set Ready for agent to Y ... expected Staging review to get a stale
   // warning"). Kept per change set as "ready:CS-001" = the time, cleared on
-  // No; a Yes first seen by the script counts from then.
+  // No.
   const readyCol = col(fb, 'Ready for agent'), readyAt = {};
   if (readyCol >= 0) {
     const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
@@ -1286,8 +1286,13 @@ function refreshDraft(rows) {
       if (!cs) return;
       const key = 'ready:' + cs, was = props.getProperty(key);
       if (/^yes$/i.test(String(r[readyCol]).trim())) {
-        if (!was && want(k)) props.setProperty(key, now);
-        readyAt[cs] = was || (want(k) ? now : '');
+        // A Yes the script first sees on a row the agent has already worked
+        // (the script was just installed or re-pasted) counts from the
+        // agent's last completion, not from now: it may already be answered.
+        const done = (prOf[cs] || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
+        const first = done.length ? new Date(Math.max.apply(null, done)).toISOString().slice(0, 16).replace('T', ' ') + 'Z' : now;
+        if (!was && want(k)) props.setProperty(key, first);
+        readyAt[cs] = was || (want(k) ? first : '');
       } else if (was && want(k)) props.deleteProperty(key);
     });
   }
