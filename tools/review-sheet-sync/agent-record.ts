@@ -10,6 +10,9 @@
  *   push --head <sha> [--expect <minutes>]   the cells to write on every push
  *   done                        Agent completed alone, when the agent acted
  *                               with no new commit (nothing to restage)
+ *   step <name>                 Agent step (change set): what the agent is doing
+ *                               now, with the time (reading, proposing, editing,
+ *                               pushing, staging, deploying, qa-review, merging, idle)
  *
  * dispositions reads which comments are in the change set and the people's
  * Blue Disposition from the sheet's own values (as read, header row
@@ -149,6 +152,13 @@ export function done(now = new Date()): Record<string, string> {
   return { "Agent completed (UTC, change set)": now.toISOString().slice(0, 16).replace("T", " ") + "Z" };
 }
 
+/** Agent step (change set): the step the agent starts now, from the sheet's own list. */
+export const STEPS = ["reading", "proposing", "editing", "pushing", "staging", "deploying", "qa-review", "merging", "idle"];
+export function step(name: string, now = new Date()): Record<string, string> {
+  if (!STEPS.includes(name)) throw new Error(`step is one of ${STEPS.join(", ")}`);
+  return { "Agent step (change set)": `${name} ${now.toISOString().slice(0, 16).replace("T", " ")}Z` };
+}
+
 if (import.meta.main) {
   const [cmd, ...rest] = process.argv.slice(2);
   const flag = (f: string) => { const i = rest.indexOf(f); return i >= 0 ? rest[i + 1] : undefined; };
@@ -165,8 +175,10 @@ if (import.meta.main) {
     console.log(JSON.stringify(push(flag("--head")!, Number(flag("--expect") ?? 20)), null, 2));
   } else if (cmd === "done") {
     console.log(JSON.stringify(done(), null, 2));
+  } else if (cmd === "step" && rest[0]) {
+    console.log(JSON.stringify(step(rest[0]), null, 2));
   } else {
-    console.error("usage: agent-record.ts dispositions <input.json> | brief <input.json> [--look <text>] | push --head <full sha> [--expect <minutes>] | done");
+    console.error("usage: agent-record.ts dispositions <input.json> | brief <input.json> [--look <text>] | push --head <full sha> [--expect <minutes>] | done | step <name>");
     process.exit(2);
   }
 }

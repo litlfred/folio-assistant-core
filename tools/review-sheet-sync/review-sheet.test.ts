@@ -1436,3 +1436,25 @@ describe("rows on the people's tabs are at most 10 lines high (owner, 2026-10-31
     expect(fns.runs([9, 3, 4, 5])).toEqual([[3, 3], [9, 1]]);
   });
 });
+
+describe("the ⏳ line says where the agent is (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { progressLine, agentStep, AGENT_STEPS };`)({}) as {
+    progressLine: (o: object) => string; agentStep: (c: string) => { name: string } | null; AGENT_STEPS: Record<string, string>;
+  };
+  const pr = { url: "https://github.com/o/r/pull/1", head: "abc1234", done: "2026-10-31 15:26Z" };
+  test("a step newer than the last push shows, with its time", () => {
+    expect(fns.progressLine({ prs: [pr], built: { step: "editing 2026-10-31 17:20Z" } })).toMatch(/^⏳ Agent: editing the document \(since 17:20Z/);
+  });
+  test("idle, an older step, or an unknown word shows nothing new", () => {
+    expect(fns.agentStep("idle 2026-10-31 17:20Z")).toBeNull();
+    expect(fns.agentStep("thinking 2026-10-31 17:20Z")).toBeNull();
+    expect(fns.progressLine({ prs: [pr], staging: "", built: { step: "editing 2026-10-31 15:00Z" } })).not.toMatch(/Agent:/);
+  });
+  test("a question for a person comes first", () => {
+    expect(fns.progressLine({ status: "Needs human", prs: [pr], built: { step: "proposing 2026-10-31 17:20Z" } })).toMatch(/^⏳ Needs you: answer the Decision needed/);
+  });
+  test("every step the tool writes is one the sheet knows", async () => {
+    const { STEPS } = await import("./agent-record.ts");
+    for (const s of STEPS) expect(s in fns.AGENT_STEPS).toBe(true);
+  });
+});

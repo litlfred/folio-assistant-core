@@ -524,6 +524,33 @@ the change set is flagged. The script adds the column itself, inside its
 locked run (so no other refresh writes by a shifted position), and keeps its
 Yes/No dropdown.
 
+## Where the agent is: Agent step (owner, 2026-10-31)
+
+"I don't see a state change indication on where agent is in process
+(thinking? writing PR? trying to render? what?)". At every move the agent
+writes **Agent step (change set)** on its change-set tab, with
+`agent-record.ts step <name>` so the time comes from the clock. The script
+shows it on the ⏳ line for as long as it holds, e.g. "⏳ Agent: editing the
+document (since 17:20Z)", and adds "⚠ no update for N min" after 30 minutes.
+A question for a person ("Needs you: answer the Decision needed below, then
+set Ready for agent to Yes") always comes first. The script adds the column,
+at the end of the tab, inside its locked run.
+
+| step | when the agent writes it | BPMN task |
+|---|---|---|
+| `reading` | it starts on new feedback or a Ready for agent | (start of `Task_Propose` / `Task_EditInPullRequest`; public comment: `Task_AuthorEdits`) |
+| `proposing` | it writes or rewrites its proposal | `Task_Propose` (public comment: `Task_ProposeChangeSets`) |
+| `editing` | it edits the document on the branch | `Task_EditInPullRequest` (`Task_AuthorEdits`) |
+| `pushing` | it commits and pushes | end of the edit task, with `push` |
+| `staging` | the preview is building | the staging step of the edit task |
+| `deploying` | Pages is publishing the preview | as above |
+| `qa-review` | it waits for the independent reviewer | `Task_QaGate` |
+| `merging` | it merges after Ready for merge | `Task_Merge` (`Task_Incorporate`) |
+| `idle` | it stops: done, or waiting on a person | — |
+
+Write `idle` (or the next step) before leaving a change set; a step left
+behind turns into the "no update" warning, which is the point.
+
 ## Rows at most 10 lines high (owner, 2026-10-31)
 
 "Make rows of human input tabs no more than 10 lines high on a laptop", "so

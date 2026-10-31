@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 01f5f991c6cda2de.
+// folio-assistant-core tools/review-sheet-sync at template sha256 6a8aaea184616d0a.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 01f5f991c6cda2de';
+const SCRIPT_VERSION = 'template sha256 6a8aaea184616d0a';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -442,6 +442,7 @@ function refreshLocked() {
     // Added inside the run, under its lock, so no other refresh writes by a
     // column position this changes (memory: never move columns mid-refresh).
     try { ensureConfirmedColumn(ss); } catch (err) { /* the refresh still runs */ }
+    try { ensureAgentStepColumn(ss.getSheetByName(CFG.AGENT_CS || CFG.AGENT)); } catch (err) { /* the refresh still runs */ }
     const rpc = readSheet(ss.getSheetByName(CFG.RPC));
     const agent = readSheet(ss.getSheetByName(CFG.AGENT));
     const agentCs = CFG.AGENT_CS ? readSheet(ss.getSheetByName(CFG.AGENT_CS)) : agent;
@@ -459,7 +460,7 @@ function refreshLocked() {
     const aFrom = col(agentCs, COLS.agent.builtFrom || 'Staging built from (change set)');
     const aDeploy = col(agentCs, COLS.agent.deploy || 'Staging deploy (change set)');
     const aDisp = col(agentCs, COLS.agent.dispositions || DISPOSITIONS_CS), dispOf = {};
-    const aGate = col(agentCs, COLS.agent.gate || QA_GATE), aQa = col(agentCs, COLS.agent.qa || QA_REPORT);
+    const aGate = col(agentCs, COLS.agent.gate || QA_GATE), aQa = col(agentCs, COLS.agent.qa || QA_REPORT), aStep = col(agentCs, AGENT_STEP);
     agent.rows.forEach(r => {
       const n = String(r[aNo]).trim();
       if (n) {
@@ -477,7 +478,7 @@ function refreshLocked() {
       const id = aId >= 0 ? String(r[aId]).trim() : '';
       if (id && aBasis >= 0) basisOfCs[id] = String(r[aBasis]).trim();
       if (id && aStaging >= 0) stagingOf[id] = (String(r[aStaging]).match(/https:\/\/\S+/) || [''])[0];
-      if (id) builtOf[id] = builtInfo(r, aBuilt, aFrom, aDeploy, aGate, aQa);
+      if (id) builtOf[id] = builtInfo(r, aBuilt, aFrom, aDeploy, aGate, aQa, aStep);
       if (id && aDisp >= 0) dispOf[id] = String(r[aDisp]);
       if (id && aPrs >= 0) {
         const descs = aCh >= 0 ? prDescs(r[aCh]) : [];
@@ -624,6 +625,7 @@ const HEADER_NOTES = {
   'Staging deploy (change set)': 'Where the preview deploy is: building, pushed, deploying, deployed or failed, with the expected live time. Written by the agent.',
   'Disposition (change set)': 'The decisions so far, then one disposition per comment. Shown on the review tab as Disposition (agent). Written by the agent with its record tool.',
   'QA gate (change set)': '"Passed" or "Failed" for one version of the pull request. No merge until it passed for the current one. Written only by an independent reviewer, never the authoring agent.',
+  'Agent step (change set)': 'What the agent is doing now and since when, e.g. "editing 2026-10-31 17:20Z": reading, proposing, editing, pushing, staging, deploying, qa-review, merging or idle. Shown on the status line. Written by the agent with its record tool.',
   'QA report (change set)': 'The QA results for the current version of the pull request. Written by the agent.',
   'Agent conversation (change set)': 'The agent session working on this change set. Written by the agent.',
 };
@@ -988,9 +990,53 @@ function deployStage(deploy) {
 }
 /** A change set with a PR whose head the agent recorded, and so owes a preview. */
 function awaitsPreview(prs) { return (prs || []).some(p => p.head); }
-function builtInfo(r, at, from, deploy, gate, qa) {
-  const v = c => (c >= 0 ? String(r[c]).trim() : '');
-  return { at: v(at), from: v(from), deploy: v(deploy), gate: v(gate), qa: (v(qa).match(/https:\/\/\S+/) || [''])[0] };
+function builtInfo(r, at, from, deploy, gate, qa, step) {
+  const v = c => (c >= 0 && c !== undefined ? String(r[c]).trim() : '');
+  return { at: v(at), from: v(from), deploy: v(deploy), gate: v(gate), qa: (v(qa).match(/https:\/\/\S+/) || [''])[0], step: v(step) };
+}
+
+/**
+ * Where the agent is, kept on the \u23f3 line for as long as it is there (owner,
+ * 2026-10-31: "i dont see a state change indication on where agent is in
+ * process (thinking? writing PR? trying to render? what?)"). The agent writes
+ * "Agent step (change set)" at every move, with `agent-record.ts step <name>`
+ * so the time comes from the clock: "<step> <YYYY-MM-DD HH:MMZ>". The steps
+ * are a fixed list, one per task of contributor-feedback.bpmn and
+ * public-comment.bpmn the agent performs.
+ */
+const AGENT_STEP = 'Agent step (change set)';
+const AGENT_STEPS = {
+  reading: 'reading the feedback',
+  proposing: 'writing its proposal',
+  editing: 'editing the document',
+  pushing: 'pushing the pull request',
+  staging: 'building the preview',
+  deploying: 'waiting for the preview to go live',
+  'qa-review': 'waiting for the independent QA review',
+  merging: 'merging the pull request',
+  idle: '',
+};
+/** "editing 2026-10-31 17:20Z" -> { name, text, at }, or null. */
+function agentStep(cell) {
+  const m = String(cell || '').trim().match(/^([a-z-]+)\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}Z)$/i);
+  if (!m || !(m[1].toLowerCase() in AGENT_STEPS) || !AGENT_STEPS[m[1].toLowerCase()]) return null;
+  return { name: m[1].toLowerCase(), text: AGENT_STEPS[m[1].toLowerCase()], at: m[2] };
+}
+/** The step line: "Agent: editing the document (since 17:20Z)", with a warning once it has gone quiet. */
+function stepLine(step, now) {
+  const age = Math.round(((now || Date.now()) - utcMs(step.at)) / 60000);
+  return PROGRESS + 'Agent: ' + step.text + ' (since ' + step.at.slice(11) +
+    (age > 30 ? '; \u26a0 no update for ' + age + ' min' : '') + ').';
+}
+/** Add the Agent step column at the END of the agent's change-set tab, inside the locked run. */
+function ensureAgentStepColumn(sh) {
+  if (!sh) return;
+  const s = readSheet(sh);
+  if (s.header.indexOf(AGENT_STEP) >= 0) return;
+  const c = s.header.length + 1;
+  if (sh.getMaxColumns() < c) sh.insertColumnAfter(c - 1);
+  sh.getRange(s.top - 1, c - 1).copyTo(sh.getRange(s.top - 1, c), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+  sh.getRange(s.top - 1, c).setValue(AGENT_STEP);
 }
 
 /**
@@ -1190,6 +1236,14 @@ function progressLine(o) {
   const active = prs.slice(-1)[0];
   const label = active ? prLabel(active.url) : '';
   if (/merged/i.test(o.status || '')) return '';
+  // A question for a person comes first: nothing moves until it is answered.
+  if (/needs/i.test(o.status || '')) return PROGRESS + 'Needs you: answer the Decision needed below, then set Ready for agent to Yes.';
+  const step = agentStep(o.built && o.built.step);
+  if (step && (step.name === 'merging' || !o.merge)) {
+    const dones = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
+    const lastDone = dones.length ? Math.max.apply(null, dones) : -Infinity;
+    if (utcMs(step.at) >= lastDone && (!o.readyAt || utcMs(step.at) >= utcMs(o.readyAt))) return stepLine(step);
+  }
   if (o.merge && active) {
     const g = qaGate(o.built, prs);
     const wait = [g.ok || !g.text ? '' : 'the QA gate passes (' + g.text.replace(/^\u26a0\s*/, '') + ')',
@@ -1713,6 +1767,7 @@ function csStatus(sts) {
  */
 function refreshDraft(rows) {
   const ss = SpreadsheetApp.getActive();
+  try { ensureAgentStepColumn(ss.getSheetByName(CFG.AGENT)); } catch (err) { /* the refresh still runs */ }
   const props = docProps_();
   const fb = readSheet(ss.getSheetByName(CFG.FEEDBACK));
   const agentSh = ss.getSheetByName(CFG.AGENT);
@@ -1793,7 +1848,7 @@ function refreshDraft(rows) {
     if (a.agentic >= 0) stOf[id] = String(r[a.agentic]).trim();
     if (a.issue >= 0) issuesOf[id] = String(r[a.issue]).split('\n').map(issueUrl).filter(Boolean);
     if (a.staging >= 0) stagingOf[id] = (String(r[a.staging]).match(/https:\/\/\S+/) || [''])[0];
-    builtOf[id] = builtInfo(r, a.built, a.builtFrom, a.deploy, a.gate, a.qa);
+    builtOf[id] = builtInfo(r, a.built, a.builtFrom, a.deploy, a.gate, a.qa, col(agent, AGENT_STEP));
     if (a.basis >= 0) basisOfCs[id] = String(r[a.basis]).trim();
     if (a.prs >= 0) {
       const descs = a.changes >= 0 ? prDescs(r[a.changes]) : [];
