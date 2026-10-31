@@ -15,7 +15,7 @@ import { join } from "node:path";
 
 import { buildConfig, buildScript, chunks, CODE_GS_RAW, CODE_GS_URL, LIBRARY_ID, STUB_GS_URL, configRows, draftingSheetSync, linkLines, readable, repoOfSite, sheetIdOf, tabInstructions, tocRows } from "./build-review-sheet-script.js";
 import { readFileSync as readText } from "node:fs";
-import { feedbackBasis, hashOf } from "./feedback-issue.js";
+import { feedbackBasis, hashOf, PC_BASIS_GREY } from "./feedback-issue.js";
 
 const code = buildScript();
 /** A fake Apps Script TextStyle builder: every setter chains; build() keeps bold. */
@@ -1005,6 +1005,39 @@ describe("the Watch tab: which change sets need the agent, worked out by the scr
     delete rt.written.Watch;
     s.refreshIfDirty();
     expect(rt.written.Watch).toBeDefined();
+  });
+  test("public comment: a \"2:\" basis also goes stale when the grey content changes; an old basis and the agent's own columns do not", () => {
+    const pcRows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
+    const t = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][]; hidden?: boolean }>;
+    const r = t["Review Change Sets"].rows;
+    r[0].push("Title", "TWG (PCs)", "TWG (CS)", "Architect Feedback (AB)", "Architect Feedback (agent)");
+    r[1].push("Fix scope", "Editorial", "", "", "Proposed direction: accept");
+    r[2].push("Other", "WHO", "", "", "Proposed direction: partly accept");
+    const exact = ["Title", "TWG (CS)"];
+    t["Agent - Change Sets"].rows[0].push("Feedback basis (change set)");
+    t["Agent - Change Sets"].rows[1].push(feedbackBasis(r[0], r[1], exact, "Architect Feedback"));
+    t["Agent - Change Sets"].rows[2].push(feedbackBasis(r[0], r[2], exact, "Architect Feedback", PC_BASIS_GREY));
+    expect(t["Agent - Change Sets"].rows[2][5]).toMatch(/^2:/);
+    const rt = runtime(t);
+    const s = load(code, rt.g);
+    s.refreshAll();
+    expect(listOf(rt)).toEqual([]);
+    // A suggested revision changes on Review Public Comments, so the joined grey cells change.
+    r[1][4] = r[2][4] = "No. 1 \u00b7 Lengthen it, and add an example";
+    r[1][9] = r[2][9] = "Editorial, Core architects";
+    s.refreshAll();
+    expect(listOf(rt)).toEqual([["CS-002", "proposal"]]);
+    // The agent's own columns (Agentic status, the proposal's stale mark) are not part of it.
+    r[1][4] = r[2][4] = "";
+    r[1][9] = "Editorial";
+    r[2][9] = "WHO";
+    r[1][7] = r[2][7] = "PR open";
+    s.refreshAll();
+    expect(listOf(rt)).toEqual([]);
+    // A blue cell still counts for both forms.
+    r[1][11] = r[2][11] = "AB: also define the term";
+    s.refreshAll();
+    expect(listOf(rt)).toEqual([["CS-001", "proposal"], ["CS-002", "proposal"]]);
   });
 });
 

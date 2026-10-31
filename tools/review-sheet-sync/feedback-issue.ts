@@ -86,7 +86,9 @@ export function hashOf(text: string): string {
  * row's blue cells, by header, the same hash the Apps Script's basisOf takes.
  * Drafting: Title, Selected Sections and every person's Contributor Feedback
  * column (`exact` Title and Selected Sections, `prefix` Contributor Feedback).
- * Public comment: `exact` Title and TWG (CS), `prefix` Committee Feedback (the columns were Architect Feedback until 2026-10-31; the script reads both).
+ * Public comment: `exact` Title and TWG (CS), `prefix` Committee Feedback (the columns were Architect Feedback until 2026-10-31; the script reads both),
+ * and `grey` PC_BASIS_GREY (a "2:" basis, which also covers the joined grey
+ * content).
  * The agent keeps it in the Agent tab's `Feedback basis (change set)`. While
  * the row's basis differs, the script marks the proposal stale; the agent's
  * next sync proposes again and writes the new basis. Picks are compared bare,
@@ -94,12 +96,21 @@ export function hashOf(text: string): string {
  * out, so a new empty column (another reviewer's initials) changes no row's
  * basis; the script still accepts a basis written the older way.
  */
-export function feedbackBasis(header: string[], row: string[], exact = ["Title", "Selected Sections"], prefix = "Contributor Feedback"): string {
+export function feedbackBasis(header: string[], row: string[], exact = ["Title", "Selected Sections"], prefix = "Contributor Feedback", grey?: string[]): string {
+  if (grey) exact = exact.concat(grey);
   const parts: string[] = [];
   header.forEach((h, i) => {
     let v = String(row[i] ?? "").trim();
     if (h === "Selected Sections") v = v.split(",").map(bareName).filter(Boolean).join(",");
-    if (exact.includes(h) || ((h === prefix || h.startsWith(`${prefix} (`)) && h !== `${prefix} (agent)`) && v) parts.push(`${h}=${v}`);
+    if ((exact.includes(h) || ((h === prefix || h.startsWith(`${prefix} (`)) && h !== `${prefix} (agent)`)) && v) parts.push(`${h}=${v}`);
   });
-  return hashOf(parts.join("\n"));
+  return (grey ? "2:" : "") + hashOf(parts.join("\n"));
 }
+
+/**
+ * The grey content columns a public-comment proposal also rests on, the
+ * script's basisGrey with the default headers. Pass them as `grey` to write a
+ * "2:" basis, which also goes stale when the comments a change set joins
+ * change (owner, 2026-10-31).
+ */
+export const PC_BASIS_GREY = ["Sections", "Pages", "Public Comments", "Suggested Revisions", "PC Architect Feedback", "Dispositions", "TWG (PCs)"];
