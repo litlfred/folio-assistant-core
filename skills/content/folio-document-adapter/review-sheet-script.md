@@ -107,7 +107,10 @@ account, because Google asks the owner to authorise the script:
 
 `installTriggers` runs a full refresh, then installs two triggers: every edit
 of the three tabs marks the sheet dirty, and every five minutes a dirty sheet
-is rebuilt. A drafting sheet rebuilds **incrementally** (owner,
+is rebuilt. A public-comment sheet is also rebuilt on the timer when its
+Agent tab changed since the last rebuild, because the agent writes Agent
+through the API, which fires no edit (found 2026-10-31: CS-001 read Not
+started on Review Change Sets after its PR was open on Agent). A drafting sheet rebuilds **incrementally** (owner,
 2026-10-31): an edit rebuilds only the rows it touched, at once, so a pick
 shows its link and a new row its Change-set within seconds, however large
 the sheet. The 5-minute trigger rebuilds only the rows whose change set's

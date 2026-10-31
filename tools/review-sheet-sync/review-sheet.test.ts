@@ -331,6 +331,20 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     expect(rt2.props.dirty).toBeUndefined();
     expect(rt2.written["Review Change Sets"]).toBeDefined();
   });
+
+  test("the agent's API writes to Agent fire no edit, so the timer rebuilds when Agent changed, and only then", () => {
+    const t = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][] }>;
+    const rt2 = runtime(t);
+    const s = load(code, rt2.g);
+    s.refreshIfDirty();
+    expect(rt2.written["Review Change Sets"]).toBeDefined();
+    delete rt2.written["Review Change Sets"];
+    s.refreshIfDirty();
+    expect(rt2.written["Review Change Sets"]).toBeUndefined();
+    t.Agent.rows[3][2] = "PR open";
+    s.refreshIfDirty();
+    expect(rt2.written["Review Change Sets"]).toBeDefined();
+  });
 });
 
 /** A fake drafting folio: two chapters, one numbered section, one with a comma. */
