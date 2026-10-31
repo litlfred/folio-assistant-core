@@ -312,7 +312,7 @@ export function buildConfig(repo: string, cfgPath: string): SheetConfig {
 const CHUNK = 40_000;
 
 /**
- * The setup steps a person takes, written at the top of the Config tab so
+ * The setup steps a person takes, written in one cell at the top of the Config tab so
  * they stay with the sheet (owner, 2026-10-31: "so people don't lose the
  * info"). The skill review-sheet-script says the same; the drafting script's
  * installTriggers box shows the dropdown steps with the exact range.
@@ -324,6 +324,7 @@ export function setupSteps(c: SheetConfig): string[] {
     "2. Pick installTriggers in the function list and press Run. Allow access (Advanced, then continue).",
     "3. Reload the sheet. A Review links menu appears; Review links, then Refresh now, checks it.",
   ];
+  steps.push("EDITORS (the row above): the emails, one per line, of the people who may set Ready for agent and Ready for merge. The owner may edit it; Review links, then Refresh now, applies it. Empty: anyone who can edit the sheet.");
   if (c.CFG.MODE === "drafting") {
     const col = c.COLS.draft?.sections ?? "Selected Sections";
     steps.push(
@@ -346,8 +347,14 @@ export function setupSteps(c: SheetConfig): string[] {
  * value continued on the next rows under the same key.
  */
 export function configRows(c: SheetConfig): string[][] {
-  const rows: string[][] = [["Key", "Value (written by the agent from sheet-sync.json; do not edit)"]];
-  for (const line of setupSteps(c)) rows.push(["SETUP", line]);
+  // EDITORS is the one row a person keeps: the agent writes it empty here
+  // and keeps the sheet's value when it rewrites the tab. Emails never go
+  // into sheet-sync.json, which is committed.
+  const rows: string[][] = [
+    ["Key", "Value (written by the agent from sheet-sync.json; do not edit, except EDITORS)"],
+    ["EDITORS", ""],
+    ["SETUP", setupSteps(c).join("\n")],
+  ];
   for (const key of ["CFG", "COLS", "DATA"] as const) {
     // Indented only where a person might edit by hand (CFG: URLs, tab names;
     // COLS: column headers). DATA is generated from the folio, so it stays

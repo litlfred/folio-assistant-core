@@ -422,8 +422,23 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    already holding two sections from the list, or a Yes to the box's "Is this
    done already?" (kept as the document property `dropdownDone`). Copies made
    after the template has them keep them. The same steps are written at the
-   top of the Config tab, as `SETUP` rows, so they stay with the sheet
-   (owner, 2026-10-31); the script ignores those rows.
+   top of the Config tab, in one `SETUP` row, so they stay with the sheet
+   (owner, 2026-10-31); the script ignores that row.
+
+**Who may set the Ready columns: the `EDITORS` row** (owner, 2026-10-31).
+Everyone who works in a log is shared as Editor; protected ranges decide what
+each can change. Blue columns are open to all of them. The orange **Ready for
+agent** and **Ready for merge** columns are for editors only, and the owner
+names them in the Config tab's `EDITORS` row: plain emails, one per line (or
+separated by commas). installTriggers and Review links > Refresh now lock each
+`Ready for ...` column to the owner plus those emails, under a protection the
+script owns and rebuilds each time (other protections are left alone). An
+empty row leaves the columns open to anyone who can edit; a Config with no
+`EDITORS` row leaves them as they are. `EDITORS` is the one Config row a person
+keeps: the agent writes it empty and keeps the sheet's value whenever it
+rewrites the tab, and the emails never go into `sheet-sync.json`, which is
+committed. To delegate who decides, the owner can add a delegate to the Config
+tab's protection, or send the agent the list.
 
 **Filter views** (owner, 2026-10-31). Each template carries saved filter
 views, which copy with it. Use Data > Filter views, never a plain filter: a
