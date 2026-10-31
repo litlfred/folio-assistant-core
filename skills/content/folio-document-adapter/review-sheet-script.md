@@ -300,7 +300,12 @@ cells, and the agent runs the sheet's own check before writing.
   "<where to look>"` prints the same Overall and per-comment lines as
   Markdown between `<!-- review-brief -->` and `<!-- /review-brief -->`. Put
   it in the PR body: the staging review page's "What to expect in this
-  review" pane shows only that section (cat-harness-tools#1153).
+  review" pane shows only that section (cat-harness-tools#1153). Add
+  `--pcs <public-comment dashboard url>` (on smart-ra,
+  `https://litlfred.github.io/smart-ra/en/folio-assistant-core/public-comments/folio/dpi-h-ra/`)
+  and every comment number links to its row there (`#PC-0127`), so the
+  reviewer can open the comment itself. A run such as "127 to 131" is
+  spelled out, so no comment hides behind a range.
 
 Drafting sheets have no comment numbers: pass `"nos": []` and items without
 numbers are not needed; the tool then only keeps the history.

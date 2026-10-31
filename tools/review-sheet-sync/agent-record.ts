@@ -6,7 +6,9 @@
  * change set, and an Agent completed time left behind after acting.
  *
  *   dispositions <input.json>   the change set's Disposition (change set) cell
- *   brief <input.json> [--look <text>]   the PR body's review brief, the same lines
+ *   brief <input.json> [--look <text>] [--pcs <dashboard url>]   the PR body's
+ *                               review brief, the same lines; --pcs links each
+ *                               comment number to its row on the dashboard
  *   push --head <sha> [--expect <minutes>]   the cells to write on every push
  *   done                        Agent completed alone, when the agent acted
  *                               with no new commit (nothing to restage)
@@ -130,11 +132,28 @@ export function dispositions(input: DispositionInput): { text: string; problems:
  * between these markers (cat-harness-tools#1153). The same Overall line and
  * per-comment lines as the Disposition, as Markdown, plus where to look.
  */
-export function brief(input: DispositionInput, look?: string): string {
+export function brief(input: DispositionInput, look?: string, pcs?: string): string {
   const { text } = dispositions(input);
   const lines = text.split("\n").filter((l) => l && !/^Decided\b/.test(l));
-  const md = lines.map((l) => l.replace(/^(Overall|Nos?\. [^:]+):/, (_, h) => `- **${h}:**`));
+  const md = lines.map((l) => l.replace(/^(Overall|Nos?\. [^:]+):/, (_, h) => `- **${pcs && h !== "Overall" ? linkNos(h, pcs) : h}:**`));
   return ["<!-- review-brief -->", ...md, ...(look ? [`- **Where to look:** ${look}`] : []), "<!-- /review-brief -->"].join("\n");
+}
+
+/**
+ * "Nos. 127 to 129 and 134" with each comment linked to its row on the
+ * public-comment dashboard (`<dashboard>#PC-0127`), so a reader of the review
+ * page can open the comment itself. A run is spelled out, since a link to
+ * "127 to 129" would hide 128.
+ */
+export function linkNos(label: string, dashboard: string): string {
+  const base = dashboard.replace(/#.*$/, "");
+  const link = (n: string) => `[${n}](${base}#PC-${n.padStart(4, "0")})`;
+  const expanded = label.replace(/(\d+) to (\d+)/g, (_, a, b) => {
+    const out: number[] = [];
+    for (let i = Number(a); i <= Number(b); i++) out.push(i);
+    return out.join(", ");
+  });
+  return expanded.replace(/\d+/g, link);
 }
 
 /** The cells to write on every push, with the time from the clock, never typed. */
@@ -171,7 +190,7 @@ if (import.meta.main) {
     const input = JSON.parse(readFileSync(rest[0], "utf8"));
     const { problems } = dispositions(input);
     if (problems) { console.error(problems); process.exit(1); }
-    console.log(brief(input, flag("--look")));
+    console.log(brief(input, flag("--look"), flag("--pcs")));
   } else if (cmd === "push" && flag("--head")) {
     console.log(JSON.stringify(push(flag("--head")!, Number(flag("--expect") ?? 20)), null, 2));
   } else if (cmd === "done") {
@@ -179,7 +198,7 @@ if (import.meta.main) {
   } else if (cmd === "step" && rest[0]) {
     console.log(JSON.stringify(step(rest[0]), null, 2));
   } else {
-    console.error("usage: agent-record.ts dispositions <input.json> | brief <input.json> [--look <text>] | push --head <full sha> [--expect <minutes>] | done | step <name>");
+    console.error("usage: agent-record.ts dispositions <input.json> | brief <input.json> [--look <text>] [--pcs <dashboard url>] | push --head <full sha> [--expect <minutes>] | done | step <name>");
     process.exit(2);
   }
 }
