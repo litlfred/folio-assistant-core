@@ -432,7 +432,7 @@ export function setupSteps(c: SheetConfig): string[] {
   const steps = [
     "Once per sheet, by the sheet's owner (the skill review-sheet-script has the detail):",
     "1. Get the latest Code.gs: ask the agent, or open review-sheet/Code.gs on the document's site. Select all of it and copy",
-    "2. Here, choose Extensions, then Apps Script. The script editor opens in a new tab.",
+    "2. Here, choose Extensions, then Apps Script. The script editor opens in a new tab",
     "   • \"Unable to open the file\"? You are signed in to several Google accounts. Use a private window signed in to the owner's account only",
     "3. Name the project after this spreadsheet: click \"Untitled project\" at the top left and type the sheet's own name (e.g. \"DTH-PC Contributor Log\"), then Rename. The same name makes it easy to find in script.google.com",
     "4. Click Code.gs in the Files list. Select all (Ctrl+A, or Cmd+A on a Mac), delete it, paste the copied script, and save (Ctrl+S or Cmd+S, or the disk icon)",
