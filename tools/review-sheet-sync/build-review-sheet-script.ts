@@ -403,7 +403,7 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
       colours,
       "This tab has one row per change set:",
       `   1. The Authoring Committee starts a row: a title, the Selected Sections, and feedback in the Blue ${fb} columns. The script gives it a Change-set id.`,
-      `   2. The agent proposes a direction in ${c.COLS.draft?.agentFeedback || "Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says Needs human.`,
+      `   2. The agent proposes a direction in ${c.COLS.draft?.agentFeedback || "Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says \"Needs you: answer the agent's question\".`,
       ...changeSet,
       ...footer,
     ].join("\n");
@@ -421,7 +421,7 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
       colours,
       `This tab has one row per change set, joining its public comments from ${t.RPC}:`,
       "   1. The Feedback Review Committee gives feedback on the change set in Blue and picks its TWG.",
-      `   2. The agent proposes a direction in ${c.COLS.rcs?.agentFeedback || "Change Set Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says Needs human.`,
+      `   2. The agent proposes a direction in ${c.COLS.rcs?.agentFeedback || "Change Set Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says \"Needs you: answer the agent's question\".`,
       ...changeSet,
       ...footer,
     ].join("\n");
