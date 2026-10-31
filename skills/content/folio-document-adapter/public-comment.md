@@ -224,7 +224,10 @@ Each sync does the steps below, in this order.
       document cannot say without a decision, set *Needs human* and write
       what is needed in "agentic action taken".
    4. Publish the branch's staging preview (`STAGING/<slug>/`).
-   5. Write the Agent rows, and nothing anywhere else in the sheet: status
+   5. Write the Agent rows (skill
+      [`review-sheet-agent-columns`](review-sheet-agent-columns.md), which
+      applies to any work on a change set, in a sync or not), and nothing
+      anywhere else in the sheet: status
       (*Working*, *PR open*, *Ready for review*, *Change merged*), what was
       done, the blocks or sections changed, who acted (the agent and its
       session) and the completion time (UTC, `YYYY-MM-DD HH:MMZ`) on each PC's row, and the PR and

@@ -27,7 +27,7 @@ exception to the rule above: they live in `cat-harness-tools/schemas/kg/material
 
 <!-- skills:index:begin -->
 
-_43 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
+_44 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
 
 **`skills/`** (1)
 
@@ -45,7 +45,7 @@ _43 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`registry-authority-contract`](skills/content/content-lifecycle-ext/registry-authority-contract.md) | The contract the `external-registry` role is held to when a candidate source is checked against the body that publishes it: resolve the identifier through its own API and return the record, so… |
 | [`review-comments`](skills/content/content-lifecycle-ext/review-comments.md) | Reviewer comments on a folio's edit-set, from a tagged pull-request comment to a structured todo on the review page. |
 
-**`skills/content/folio-document-adapter/`** (18)
+**`skills/content/folio-document-adapter/`** (19)
 
 | Skill | What it is for |
 |---|---|
@@ -66,7 +66,8 @@ _43 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`folio-repo-conversion`](skills/content/folio-document-adapter/folio-repo-conversion.md) | The content-folio half of the harness's repo-conversion skill: outside-content evidence and refutation candidate scanning, content-type marker declarations, and dispatching library and content… |
 | [`normative-statements`](skills/content/folio-document-adapter/normative-statements.md) | Carry a **recommendation, requirement or rule** in a document folio — the thing an L1 health-policy guidance note, a standard, or a terms-of-reference document exists to state. |
 | [`public-comment`](skills/content/folio-document-adapter/public-comment.md) | Run a **public review** of a document folio. |
-| [`review-sheet-script`](skills/content/folio-document-adapter/review-sheet-script.md) | Build, install and reuse the Google Apps Script that keeps a public-comment review sheet's links and joined columns current (Tool `review-sheet-sync`): comment numbers, sections, pages and lines… |
+| [`review-sheet-agent-columns`](skills/content/folio-document-adapter/review-sheet-agent-columns.md) | Whenever an agent works on a change set of a folio whose review sheet is kept by the Tool `review-sheet-sync`, it writes the Agent tab's columns for that change set and its comments as it goes:… |
+| [`review-sheet-script`](skills/content/folio-document-adapter/review-sheet-script.md) | Build, install and reuse the Google Apps Script that keeps a review sheet's links and joined columns current (Tool `review-sheet-sync`). |
 
 **`skills/content/requirements-planning/`** (2)
 
