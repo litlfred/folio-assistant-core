@@ -261,10 +261,29 @@ const CHUNK = 40_000;
 export function configRows(c: SheetConfig): string[][] {
   const rows: string[][] = [["Key", "Value (JSON, written by the agent from sheet-sync.json; do not edit)"]];
   for (const key of ["CFG", "COLS", "DATA"] as const) {
-    const json = JSON.stringify(c[key]);
-    for (let i = 0; i === 0 || i < json.length; i += CHUNK) rows.push([key, "|" + json.slice(i, i + CHUNK)]);
+    for (const chunk of chunks(JSON.stringify(c[key], null, 2))) rows.push([key, "|" + chunk]);
   }
   return rows;
+}
+
+/**
+ * Indented JSON in cells of at most CHUNK characters, cut between lines so a
+ * person can read each cell (owner, 2026-10-31). Every cut falls between two
+ * JSON tokens, so the script's plain concatenation still parses; only a single
+ * line longer than a cell is cut inside it.
+ */
+export function chunks(json: string): string[] {
+  const out: string[] = [];
+  let cur = "";
+  for (const line of json.split("\n")) {
+    const add = cur ? `${cur}\n${line}` : line;
+    if (add.length <= CHUNK) { cur = add; continue; }
+    if (cur) out.push(cur);
+    cur = line;
+    while (cur.length > CHUNK) { out.push(cur.slice(0, CHUNK)); cur = cur.slice(CHUNK); }
+  }
+  out.push(cur);
+  return out;
 }
 
 /** The one script every review sheet runs: the template, stamped with its commit. */

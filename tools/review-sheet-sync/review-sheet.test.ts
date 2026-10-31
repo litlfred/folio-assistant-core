@@ -13,7 +13,7 @@ import { mkdtempSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { buildConfig, buildScript, configRows } from "./build-review-sheet-script.js";
+import { buildConfig, buildScript, chunks, configRows } from "./build-review-sheet-script.js";
 
 const code = buildScript();
 const withConfig = <T extends object>(t: T, rows: string[][]) => ({ ...t, Config: { id: 50, rows } });
@@ -334,5 +334,32 @@ describe("review-sheet.gs in drafting mode", () => {
     const s = load(code, rt2.g);
     s.markDirty({ range: { getSheet: () => rt2.sheet("Agent") } });
     expect(rt2.props.dirty).toBe("1");
+  });
+});
+
+describe("the Config tab's rows", () => {
+  const c = buildConfig(draftFolio(), "review/drafting/sheet-sync.json");
+  const rows = configRows(c);
+  const joined = (k: string) => rows.filter((r) => r[0] === k).map((r) => r[1].replace(/^\|/, "")).join("");
+
+  test("are indented JSON a person can read, and read back the same", () => {
+    expect(rows.find((r) => r[0] === "CFG")?.[1]).toContain('\n  "MODE": "drafting"');
+    for (const k of ["CFG", "COLS", "DATA"] as const) expect(JSON.parse(joined(k))).toEqual(JSON.parse(JSON.stringify(c[k])));
+  });
+
+  test("a long value is cut between lines, and every cell fits", () => {
+    const big = JSON.stringify({ xs: Array.from({ length: 6000 }, (_, i) => `section ${i} ${"x".repeat(10)}`) }, null, 2);
+    const parts = chunks(big);
+    expect(parts.length).toBeGreaterThan(1);
+    expect(parts.every((p) => p.length <= 40_000)).toBe(true);
+    expect(parts.slice(1).every((p) => p.startsWith("    \"section"))).toBe(true);
+    expect(JSON.parse(parts.join(""))).toEqual(JSON.parse(big));
+  });
+
+  test("a single line longer than a cell is still cut and still parses", () => {
+    const one = JSON.stringify({ s: "y".repeat(90_000) });
+    const parts = chunks(one);
+    expect(parts.length).toBe(3);
+    expect(JSON.parse(parts.join(""))).toEqual(JSON.parse(one));
   });
 });

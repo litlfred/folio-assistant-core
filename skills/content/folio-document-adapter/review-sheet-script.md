@@ -63,7 +63,10 @@ bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.t
 
 The agent writes `config-rows.json` into the Config tab (A1 down, columns A
 and B, clearing rows below) with the Sheets connector, which runs as the
-owner, and keeps the tab protected so only the owner can edit it. Neither
+owner, and keeps the tab protected so only the owner can edit it. Each value
+is indented JSON, cut into cells between lines, and column B wraps, so a
+person can read it (owner, 2026-10-31); the script joins a key's cells and
+parses them, and JSON ignores the line breaks. Neither
 file is committed: both are rebuilt.
 
 **Install it, once per sheet.** A person does this, from the sheet owner's
@@ -302,11 +305,39 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    paste). Pick **installTriggers**
    in the function list and press Run; allow access (Advanced > continue,
    since bound scripts are unverified). Reload the sheet: a **Review links**
-   menu appears. A copy of the template already holds the script, so this
-   step is needed only when the script changes.
+   menu appears. A copy of the template already holds the script, so the
+   paste is needed only when the script changes; **installTriggers is needed
+   in every copy**, because triggers and the owner's permission do not copy.
+   Paste the script into the template itself once, so every copy starts with
+   it. A copy keeps the version it was made with: when Code.gs changes,
+   paste it again into each sheet in use.
 6. **Drafting only: allow multiple sections.** Select the Sections column >
    Data > Data validation > the dropdown rule > tick **Allow multiple
    selections** > Done. Copies made after the template has it ticked keep it.
+
+**Filter views** (owner, 2026-10-31). Each template carries saved filter
+views, which copy with it. Use Data > Filter views, never a plain filter: a
+plain filter changes the view for everyone, a filter view only for whoever
+opens it.
+
+| sheet | view | shows |
+|---|---|---|
+| drafting: Contributor Feedback | Open | rows with a Title, Ready for merge not Yes |
+| | Ready for editor | rows with a Title, Ready for agent not Yes |
+| | Decided | Ready for merge is Yes |
+| public comment: Review Change Sets | Change sets: Open / Ready for editor / Decided | the same three, on its Ready columns |
+| public comment: Review Public Comments | Comments: Open | a No., Disposition empty |
+| | Comments: Decided | Disposition filled |
+
+A filter view covers the rows the tab had when the view was made; when rows
+are added past that, widen its range (Data > Filter views > the view >
+Options > Update range).
+
+**Sections shows "Invalid".** Two causes. The cell holds several sections
+but the rule does not allow multiple selections: tick it (step 6). Or the
+cell carries links: Sections must be plain text, the links belong in Section
+links. Older scripts linked Sections; clear its formatting (Format > Clear
+formatting) and the current script keeps it plain.
 
 **Check it.** Review links > Refresh now. In drafting mode a row with a
 Title gets a CS id and its picked sections appear, linked, in Section links;
