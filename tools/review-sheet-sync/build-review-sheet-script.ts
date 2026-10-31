@@ -21,7 +21,7 @@
  * Skill: `review-sheet-script`.
  */
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
@@ -57,11 +57,11 @@ export type SheetSyncConfig = {
   anchors: string;
   /** The frozen review draft's pdf-line-map.json, repository-relative (public-comment). */
   lineMap?: string;
-  /** Prefix a PDF page number is appended to, e.g. `<site>/draft/#page=` (public-comment). */
+  /** Prefix a PDF page number is appended to, e.g. `draft/#page=` (public-comment). Relative URLs resolve against the folio's iriBase. */
   draftUrl?: string;
   /** Prefix a comment ref (`PC-0002`) is appended to (public-comment). */
   commentUrl?: string;
-  /** Prefix a section's anchor (`sec:1-1`, `chap:<dir>`) is appended to, e.g. `<site>/en/<doc>/#` (drafting). */
+  /** Prefix a section's anchor (`sec:1-1`, `chap:<dir>`) is appended to, e.g. `en/<doc>/#` (drafting), relative to the folio's iriBase. */
   sectionUrl?: string;
   /** Sections cited by name: abbreviation -> section title. */
   namedSections?: Record<string, string>;
@@ -75,13 +75,14 @@ export type SheetSyncConfig = {
 export const DRAFT_TABS = { FEEDBACK: "Contributor Feedback", AGENT: "Agent", TOC: "TOC" };
 export const DRAFT_COLUMNS = {
   draft: {
-    cs: "Change-set", title: "Title", sections: "Sections", sectionLinks: "Section links", feedback: "Contributor Feedback",
+    cs: "Change-set", title: "Title", sections: "Selected Sections", sectionLinks: "Section links", feedback: "Contributor Feedback",
     issue: "Issue", agentic: "Agentic status", staging: "Staging review page",
   },
   draftAgent: {
     csId: "Change-set", issue: "Issue", agentic: "Agentic status", prs: "Pull request (change set)",
     changes: "What the PRs changed (change set)", done: "Agent completed (UTC, change set)",
-    staging: "Staging review page (change set)",
+    staging: "Staging review page (change set)", basis: "Feedback basis (change set)",
+    built: "Staging built (UTC, change set)",
   },
 };
 
@@ -90,15 +91,30 @@ export const DRAFT_COLUMNS = {
  * Names carry no commas, because a multi-select dropdown cell joins its
  * choices with ", ".
  */
+/**
+ * The dropdown is a flat list, so a section is indented under its chapter
+ * (owner, 2026-10-31, "Indent sub-sections"; the "└ " mark tried first was
+ * "too cluttered", so plain indent). The indent is three U+2800 (Braille
+ * pattern blank) per level, which shows as blank space but is not whitespace:
+ * Sheets stores a multi-select cell trimmed, so a first chip that began with
+ * real spaces lost them and no longer matched the list ("Invalid"). The
+ * script and the feedback-issue reader compare names with the indent
+ * stripped (`bareName`), also the old "└ "/"│ " marks, so a value picked
+ * before still links and the script rewrites it to the current name.
+ */
+export const INDENT = "\u2800\u2800\u2800";
+export const treeMark = (depth: number) => (depth > 0 ? INDENT.repeat(depth) : "");
+export const bareName = (n: string) => n.replace(/^[\s\u2800\u2502\u2514]+/, "").trim();
+
 export function buildToc(a: { chapters: Chapter[]; sections: DraftSection[] }): [string, string][] {
   const clean = (s: string) => s.replace(/,/g, ";").replace(/\s+/g, " ").trim();
   const out: [string, string][] = [];
   const seen = new Set<string>();
-  const add = (name: string, anchor: string) => {
+  const add = (name: string, anchor: string, depth = 0) => {
     name = clean(name);
     if (!name || seen.has(name)) return;
     seen.add(name);
-    out.push([name, anchor]);
+    out.push([treeMark(depth) + name, anchor]);
   };
   for (const c of a.chapters) {
     const bare = c.title.replace(/^Chapter\s+\d+\.?\s*/i, "");
@@ -106,8 +122,8 @@ export function buildToc(a: { chapters: Chapter[]; sections: DraftSection[] }): 
     add(c.number != null ? `${head} ${bare}` : c.title, `chap:${c.dir}`);
     for (const s of a.sections.filter((x) => x.chapter === c.dir)) {
       const t = s.title ?? s.label;
-      if (s.number) add(t, s.label);
-      else if (t.toLowerCase() !== c.title.toLowerCase()) add(`${head} · ${t}`, s.label);
+      if (s.number) add(t, s.label, String(s.number).split(".").length - 1 || 1);
+      else if (t.toLowerCase() !== c.title.toLowerCase()) add(`${head} · ${t}`, s.label, 1);
     }
   }
   return out;
@@ -124,12 +140,13 @@ export const DEFAULT_COLUMNS = {
   rcs: {
     cs: "Change-set", sections: "Sections", pages: "Pages", comments: "Public Comments",
     revisions: "Suggested Revisions", feedback: "PC Architect Feedback", dispositions: "Dispositions",
-    agentic: "Agentic status",
+    agentic: "Agentic status", staging: "Staging review page",
   },
   agent: {
     no: "No.", pc: "Comment ref", agentic: "Agentic status", cs: "Change-sets",
     csId: "Change-set", prs: "Pull request (change set)", changes: "What the PRs changed (change set)",
-    done: "Agent completed (UTC, change set)",
+    done: "Agent completed (UTC, change set)", basis: "Feedback basis (change set)",
+    staging: "Staging review page (change set)", built: "Staging built (UTC, change set)",
   },
 };
 
@@ -217,14 +234,52 @@ export function buildData(a: Anchors, m: LineMap, cfg: SheetSyncConfig) {
     const ls = Object.keys(d.lines ?? {}).filter((x) => /^\d+$/.test(x)).map(Number);
     if (ls.length) LP.push([+p, Math.min(...ls), Math.max(...ls)]);
   }
-  return { K, ABBR, LP, OFFSET: offset, MAX: max };
+  // Readable names (owner, 2026-10-31: "explain 'K'"). The script also reads
+  // the old short names, so a Config written before this still works.
+  return {
+    ABOUT: {
+      SECTIONS: "each section the comments can name: key -> [name shown, PDF page]",
+      ABBREVIATIONS: "short names reviewers use (e.g. HWR) -> the section key they stand for",
+      PAGE_LINES: "for each PDF page with numbered lines: [page, first line, last line]",
+      PAGE_OFFSET: "PDF page = printed page + this",
+      LAST_PAGE: "the last printed page, so a larger number is not read as a page",
+    },
+    SECTIONS: K, ABBREVIATIONS: ABBR, PAGE_LINES: LP, PAGE_OFFSET: offset, LAST_PAGE: max,
+  };
 }
 
 /** One document's settings for the generic script: what its Config tab holds. */
 export type SheetConfig = { CFG: Record<string, string>; COLS: Record<string, Record<string, string>>; DATA: unknown };
 
+/**
+ * The folio's own site address: `iriBase` of the instance declaration at the
+ * repository root (`<instance>.json`), e.g. `https://litlfred.github.io/dth-hrh/`.
+ */
+export function siteBase(repo: string): string | undefined {
+  for (const f of readdirSync(repo).filter((x) => x.endsWith(".json")).sort()) {
+    try {
+      const j = JSON.parse(readFileSync(join(repo, f), "utf8"));
+      if (typeof j?.iriBase === "string" && /^https:\/\//.test(j.iriBase)) return j.iriBase.replace(/\/?$/, "/");
+    } catch { /* not JSON we read */ }
+  }
+  return undefined;
+}
+
+/**
+ * A sheet-sync URL: absolute as written, or relative to the folio's site
+ * (owner, 2026-10-31: a folio moving org, e.g. to WHO, changes one iriBase,
+ * not every sheet-sync.json). `draft/#page=` -> `<iriBase>draft/#page=`.
+ */
+export function siteUrl(u: string, base: string | undefined, what: string): string {
+  if (/^https?:\/\//.test(u)) return u;
+  if (!base) throw new Error(`${what} "${u}" is relative, but the folio declares no iriBase in its <instance>.json`);
+  return base + u.replace(/^\.?\//, "");
+}
+
 export function buildConfig(repo: string, cfgPath: string): SheetConfig {
   const cfg: SheetSyncConfig = JSON.parse(readFileSync(join(repo, cfgPath), "utf8"));
+  const base = siteBase(repo);
+  for (const k of ["draftUrl", "commentUrl", "sectionUrl"] as const) if (cfg[k]) cfg[k] = siteUrl(cfg[k] as string, base, `${cfgPath}: ${k}`);
   const a: Anchors = JSON.parse(readFileSync(join(repo, cfg.anchors), "utf8"));
   let CFG: Record<string, string>, COLS: Record<string, Record<string, string>>, data: unknown;
   if (cfg.mode === "drafting") {
@@ -234,7 +289,10 @@ export function buildConfig(repo: string, cfgPath: string): SheetConfig {
       draft: { ...DRAFT_COLUMNS.draft, ...cfg.columns?.draft },
       draftAgent: { ...DRAFT_COLUMNS.draftAgent, ...cfg.columns?.draftAgent },
     };
-    data = { TOC: buildToc(a as Anchors & { sections: DraftSection[] }) };
+    data = {
+      ABOUT: { TOC: "the Selected Sections dropdown: [name shown, anchor on the document page]" },
+      TOC: buildToc(a as Anchors & { sections: DraftSection[] }),
+    };
   } else {
     for (const k of ["lineMap", "draftUrl", "commentUrl"] as const) if (!cfg[k]) throw new Error(`${cfgPath}: needs ${k}`);
     const m: LineMap = JSON.parse(readFileSync(join(repo, cfg.lineMap as string), "utf8"));
@@ -261,10 +319,58 @@ const CHUNK = 40_000;
 export function configRows(c: SheetConfig): string[][] {
   const rows: string[][] = [["Key", "Value (JSON, written by the agent from sheet-sync.json; do not edit)"]];
   for (const key of ["CFG", "COLS", "DATA"] as const) {
-    const json = JSON.stringify(c[key]);
-    for (let i = 0; i === 0 || i < json.length; i += CHUNK) rows.push([key, "|" + json.slice(i, i + CHUNK)]);
+    // Indented only where a person might edit by hand (CFG: URLs, tab names;
+    // COLS: column headers). DATA is generated from the folio, so it stays
+    // compact (owner, 2026-10-31: "only what might be hand fiddled").
+    for (const chunk of chunks(key === "DATA" ? JSON.stringify(c[key]) : readable(c[key]))) rows.push([key, "|" + chunk]);
   }
   return rows;
+}
+
+/** A cell of the Config tab holds at most this many lines, so a row stays a readable height. */
+const LINES = 40;
+
+/**
+ * Indented JSON for a person to read: an object or a long array takes one
+ * line per entry; a short array of plain values (a TOC pair, a column list)
+ * stays on one line.
+ */
+export function readable(v: unknown, ind = ""): string {
+  const inner = `${ind}  `;
+  if (Array.isArray(v)) {
+    const flat = JSON.stringify(v);
+    if (v.every((x) => x === null || typeof x !== "object" || (Array.isArray(x) && x.every((y) => y === null || typeof y !== "object"))) && flat.length <= 160) return flat;
+    if (!v.length) return "[]";
+    return `[\n${v.map((x) => inner + readable(x, inner)).join(",\n")}\n${ind}]`;
+  }
+  if (v && typeof v === "object") {
+    const es = Object.entries(v as Record<string, unknown>).filter(([, x]) => x !== undefined);
+    if (!es.length) return "{}";
+    return `{\n${es.map(([k, x]) => `${inner}${JSON.stringify(k)}: ${readable(x, inner)}`).join(",\n")}\n${ind}}`;
+  }
+  return JSON.stringify(v);
+}
+
+/**
+ * Indented JSON in cells of at most LINES lines and CHUNK characters, cut
+ * between lines so a person can read each cell (owner, 2026-10-31). Every cut
+ * falls between two JSON tokens, so the script's plain concatenation still
+ * parses; only a single line longer than a cell is cut inside it.
+ */
+export function chunks(json: string): string[] {
+  const out: string[] = [];
+  let cur = "";
+  let n = 0;
+  for (const line of json.split("\n")) {
+    const add = cur ? `${cur}\n${line}` : line;
+    if (add.length <= CHUNK && n < LINES) { cur = add; n++; continue; }
+    if (cur) out.push(cur);
+    cur = line;
+    n = 1;
+    while (cur.length > CHUNK) { out.push(cur.slice(0, CHUNK)); cur = cur.slice(CHUNK); }
+  }
+  out.push(cur);
+  return out;
 }
 
 /** The one script every review sheet runs: the template, stamped with its commit. */
