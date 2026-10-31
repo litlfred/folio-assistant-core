@@ -776,7 +776,7 @@ function stagingWarning(url, built, prs, readyAt) {
       return '\u26a0 stale: built from ' + b.from.slice(0, 7) + ', PR now at ' + active.head.slice(0, 7) +
         (stage ? '; restaging: ' + stage : '');
   }
-  if (stage) return '\u26a0 restaging: ' + stage;
+  if (stage) return '\u26a0 stale, restaging: ' + stage;
   const at = utcMs(b.at);
   // An Editor sent the row back to the agent after this preview was built:
   // the PR is about to change, so the preview no longer shows the agreed text.

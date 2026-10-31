@@ -805,13 +805,13 @@ describe("review-sheet.gs in drafting mode", () => {
     t.Agent.rows[1][at("Staging built from (change set)")] = "1234567";
     t.Agent.rows[1][at("Staging deploy (change set)")] = "pending";
     s.refreshAll();
-    expect(text()).toBe("review \u26a0 restaging: Pages is deploying it");
+    expect(text()).toBe("review \u26a0 stale, restaging: Pages is deploying it");
     t.Agent.rows[1][at("Staging deploy (change set)")] = "deploying, expected 2026-10-31 15:20Z";
     s.refreshAll();
-    expect(text()).toBe("review \u26a0 restaging: Pages is deploying it, expected live 2026-10-31 15:20Z");
+    expect(text()).toBe("review \u26a0 stale, restaging: Pages is deploying it, expected live 2026-10-31 15:20Z");
     t.Agent.rows[1][at("Staging deploy (change set)")] = "pushed";
     s.refreshAll();
-    expect(text()).toBe("review \u26a0 restaging: on gh-pages, waiting for Pages to deploy");
+    expect(text()).toBe("review \u26a0 stale, restaging: on gh-pages, waiting for Pages to deploy");
     t.Agent.rows[1][at("Staging built from (change set)")] = "abcdef1";
     t.Agent.rows[1][at("Staging deploy (change set)")] = "building";
     s.refreshAll();
