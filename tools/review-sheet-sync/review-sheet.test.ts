@@ -176,6 +176,7 @@ const tabs = () => ({
   },
 });
 
+const pcTabs = tabs;
 const slice = (r: Rich, [a, z]: [number, number, ...unknown[]]) => r.text.slice(a, z);
 
 describe("review-sheet.gs, built and run against a fake sheet", () => {
@@ -729,6 +730,22 @@ describe("review-sheet.gs in drafting mode", () => {
     t.Agent.rows[1][at("Staging review page (change set)")] = "";
     s.refreshAll();
     expect(text()).toBe("\u26a0 no preview yet");
+  });
+
+  test("a public-comment edit is kept for the next tick when the rebuild cannot start", () => {
+    const pc = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
+    const rt3 = runtime(withConfig(pcTabs(), pc));
+    let free = false;
+    rt3.g.LockService = { getDocumentLock: () => ({ tryLock: () => free, releaseLock: () => {} }) };
+    const s = load(code, rt3.g);
+    rt3.props.dirty = "1";
+    s.refreshIfDirty();
+    expect(rt3.props.dirty).toBe("1");
+    expect(rt3.written["Review Change Sets"]).toBeUndefined();
+    free = true;
+    s.refreshIfDirty();
+    expect(rt3.props.dirty).toBeUndefined();
+    expect(rt3.written["Review Change Sets"]).toBeDefined();
   });
 
   test("security: text a person or the agent typed is never written back as a formula", () => {

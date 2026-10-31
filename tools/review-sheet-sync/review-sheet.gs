@@ -240,9 +240,16 @@ function refreshIfDirty() {
     })));
     const moved = seen !== (props.getProperty('agentHash') || '');
     if (props.getProperty('dirty') !== '1' && !moved) return;
+    // Cleared before the run, so an edit made during it marks it dirty
+    // again; put back when the run could not start or failed, so the edit is
+    // not lost but retried on the next tick.
     props.deleteProperty('dirty');
-    props.setProperty('agentHash', seen);
-    return refreshAll();
+    let ok = false;
+    try { ok = refreshAll() === true; } finally {
+      if (ok) props.setProperty('agentHash', seen);
+      else props.setProperty('dirty', '1');
+    }
+    return;
   }
   const lock = LockService.getDocumentLock();
   if (!lock.tryLock(10000)) return;
@@ -260,14 +267,16 @@ function refreshIfDirty() {
   }
 }
 
+/** Rebuild everything. True when it ran; false when another run held the lock. */
 function refreshAll() {
   const lock = LockService.getDocumentLock();
-  if (!lock.tryLock(1000)) return;
+  if (!lock.tryLock(1000)) return false;
   const t0 = Date.now();
   try {
     refreshLocked();
     applyEditors(SpreadsheetApp.getActive());
     try { colourInstructions(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
+    return true;
   } finally {
     PropertiesService.getDocumentProperties().setProperty('lastMs', String(Date.now() - t0));
     lock.releaseLock();
