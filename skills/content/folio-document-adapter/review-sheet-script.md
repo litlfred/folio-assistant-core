@@ -503,17 +503,18 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
 6. **Drafting only: finish the Selected Sections dropdown.** installTriggers
    checks the dropdown: it adds the rule (a dropdown from `TOC!A2:A`) when
    the column has none, and leaves an existing one alone (a rewrite would
-   clear its tick). Two settings are a person's, once per sheet:
+   clear its tick). One setting is a person's, once per sheet:
    - click the column letter above "Selected Sections" to select the column;
    - choose Data, then Data validation;
    - open the rule for that column (the sidebar lists it by its range, such
      as `'Contributor Feedback'!E2:E1000`, as "Dropdown (from a range)");
    - tick **Allow multiple selections**;
-   - open Advanced options and set Display style to **Chip**;
    - press Done.
 
-   Neither Apps Script nor the Sheets API can read or set these two
-   settings, so installTriggers cannot check them directly. It shows the
+   The Chip display style needs nothing: the dropdown rule (in the template,
+   and as written through the Sheets API) already carries it (owner,
+   2026-10-31: "chip style was preselected on dth-pc log"). Neither Apps
+   Script nor the Sheets API can read or set the multiple-selections tick, so installTriggers cannot check them directly. It shows the
    steps, with the exact range, unless it has evidence they are done: a cell
    already holding two sections from the list, or a Yes to the box's "Is this
    done already?" (kept as the document property `dropdownDone`). Copies made

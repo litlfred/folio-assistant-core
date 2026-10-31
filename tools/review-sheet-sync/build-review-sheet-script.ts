@@ -449,10 +449,10 @@ export function dropdownSteps(c: SheetConfig): string[] | undefined {
   if (c.CFG.MODE !== "drafting") return undefined;
   const col = c.COLS.draft?.sections ?? "Selected Sections";
   return [
-    `Once per sheet, after installing the script: finish the ${col} dropdown (neither the script nor the Sheets API can):`,
+    `Once per sheet, after installing the script: allow several sections in the ${col} dropdown (neither the script nor the Sheets API can):`,
     `   • Click the column letter above "${col}", then Data, then Data validation`,
-    `   • Open the rule (it says "Dropdown (from a range)") and tick Allow multiple selections`,
-    "   • Open Advanced options, set Display style to Chip, and press Done",
+    `   • Open the rule (it says "Dropdown (from a range)"), tick Allow multiple selections, and press Done`,
+    "   • The Chip display style is already set; leave it",
   ];
 }
 
