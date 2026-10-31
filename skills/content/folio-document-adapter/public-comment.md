@@ -190,7 +190,12 @@ A changed TWG categorisation on a CS is a re-routing, not an edit. The agent
 records it in the change-set's record through the tool, and says so in the
 CS's agentic status.
 
-**When the agent runs.** A *sheet sync* runs three ways:
+**When the agent runs.** Every review sheet now has a **watcher thread**
+that wakes every three minutes and checks the script's Watch tab
+mechanically ([`review-sheet-script`](review-sheet-script.md) §"The
+watcher"; owner, 2026-10-31). It runs the sync below for the change sets the
+Watch tab lists. The ways below remain for a sheet without a watcher.
+A *sheet sync* runs three ways:
 
 - **Scheduled.** A scheduled task in the project runs it (for smart-ra:
   "DPI-H review sheet sync", every 2 hours on weekdays; owner, 2026-10-30).

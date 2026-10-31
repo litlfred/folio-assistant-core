@@ -20,7 +20,9 @@
  * menu appears. In a drafting sheet an edit rebuilds at once; in a
  * public-comment sheet it marks the sheet dirty and a 1-minute trigger
  * rebuilds. "Refresh now" rebuilds at once. Columns are found by their header
- * text, so they may be moved freely.
+ * text, so they may be moved freely. After each rebuild, and on the 5-minute
+ * timer, a hidden Watch tab lists the change sets that need the agent, so a
+ * watching agent checks one small range instead of the whole log.
  *
  * Trust: @OnlyCurrentDoc limits the script to this spreadsheet. It reads and
  * writes this sheet and its document properties only; it fetches no URL and
@@ -348,7 +350,7 @@ function refreshIfDirty() {
       return a ? a.getRange(1, 1, Math.max(a.getLastRow(), 1), Math.max(a.getLastColumn(), 1)).getDisplayValues() : [];
     })));
     const moved = seen !== (props.getProperty('agentHash') || '');
-    if (props.getProperty('dirty') !== '1' && !moved) return;
+    if (props.getProperty('dirty') !== '1' && !moved) return writeWatch(SpreadsheetApp.getActive());
     // Cleared before the run, so an edit made during it marks it dirty
     // again; put back when the run could not start or failed, so the edit is
     // not lost but retried on the next tick.
@@ -370,6 +372,7 @@ function refreshIfDirty() {
     props.deleteProperty('rows');
     checkSheet(SpreadsheetApp.getActive());
     refreshDraft(full ? null : rows);
+    writeWatch(SpreadsheetApp.getActive());
   } finally {
     props.setProperty('lastMs', String(Date.now() - t0));
     lock.releaseLock();
@@ -397,7 +400,10 @@ function refreshLocked() {
   {
     loadConfig(SpreadsheetApp.getActive());
     checkSheet(SpreadsheetApp.getActive());
-    if (DRAFTING) return refreshDraft();
+    if (DRAFTING) {
+      refreshDraft();
+      return writeWatch(SpreadsheetApp.getActive());
+    }
     const ss = SpreadsheetApp.getActive();
     const rpc = readSheet(ss.getSheetByName(CFG.RPC));
     const agent = readSheet(ss.getSheetByName(CFG.AGENT));
@@ -452,6 +458,106 @@ function refreshLocked() {
       const id = String(r[rCs]).trim();
       if (stagingOf[id] || awaitsPreview(prOf[id])) rcs.sh.getRange(k + rcs.top, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id])]]);
     });
+    writeWatch(ss);
+  }
+}
+
+// ---------- Watch: the rows the agent has to look at ----------
+
+const WATCH_TAB = 'Watch';
+
+/**
+ * The change sets the agent has to act on, worked out mechanically from the
+ * sheet, so a watching agent reads one small tab instead of the whole log
+ * (owner, 2026-10-31: "can we make it mostly mechanical to see if row(s)
+ * changed?"). Each entry is [change set, what it needs]:
+ * - proposal: the green `(agent)` proposal is empty, or the row's blue cells
+ *   changed since it was written (its basis differs from Agent's Feedback
+ *   basis). Drafting: only rows a person has written feedback on.
+ * - issue (drafting): the change set has no issue on the Agent tab yet.
+ * - ready: Ready for agent is Yes and its work has not started.
+ * - merge: Ready for merge is Yes and its PR is still open.
+ */
+function watchList(ss) {
+  const agentSh = ss.getSheetByName(CFG.AGENT);
+  const agent = agentSh ? readSheet(agentSh) : { header: [], rows: [] };
+  const agentCsSh = !DRAFTING && CFG.AGENT_CS ? ss.getSheetByName(CFG.AGENT_CS) : null;
+  const agentCs = agentCsSh ? readSheet(agentCsSh) : agent;
+  const A = DRAFTING ? COLS.draftAgent : COLS.agent;
+  const aId = col(agentCs, A.csId), aSt = col(agent, A.agentic);
+  const aBasis = A.basis ? col(agentCs, A.basis) : -1;
+  const aIssue = DRAFTING && A.issue ? col(agentCs, A.issue) : -1;
+  const aNo = DRAFTING ? -1 : col(agent, COLS.agent.no), aCs = DRAFTING ? -1 : col(agent, COLS.agent.cs);
+  const basisOfCs = {}, issueOfCs = {}, stOfCs = {};
+  agentCs.rows.forEach(r => {
+    const id = aId >= 0 ? String(r[aId]).trim() : '';
+    if (id) {
+      if (aBasis >= 0) basisOfCs[id] = String(r[aBasis]).trim();
+      if (aIssue >= 0) issueOfCs[id] = String(r[aIssue]).trim();
+      if (DRAFTING && aSt >= 0) stOfCs[id] = [String(r[aSt]).trim()];
+    }
+  });
+  agent.rows.forEach(r => {
+    // Public comment: a change set's status is its comments' statuses.
+    if (aNo >= 0 && aCs >= 0 && String(r[aNo]).trim()) {
+      const st = aSt >= 0 ? String(r[aSt]).trim() : '';
+      String(r[aCs]).split(/[,\s]+/).filter(Boolean).forEach(cs => (stOfCs[cs] = stOfCs[cs] || []).push(st));
+    }
+  });
+  const s = readSheet(ss.getSheetByName(DRAFTING ? CFG.FEEDBACK : CFG.RCS));
+  const exact = DRAFTING ? [COLS.draft.title, COLS.draft.sections] : ['Title', 'TWG (CS)'];
+  const prefix = DRAFTING ? COLS.draft.feedback : 'Architect Feedback';
+  const csCol = col(s, DRAFTING ? COLS.draft.cs : COLS.rcs.cs);
+  const ag = col(s, prefix + ' (agent)'), people = colsLike(s, prefix);
+  const rfa = col(s, 'Ready for agent'), rfm = col(s, 'Ready for merge');
+  const yes = (r, c) => c >= 0 && /^yes$/i.test(String(r[c]).trim());
+  const out = [];
+  if (csCol < 0) return out;
+  s.rows.forEach(r => {
+    const id = String(r[csCol]).trim();
+    if (!id) return;
+    const sts = stOfCs[id] || [];
+    const needs = [];
+    if (ag >= 0 && (!DRAFTING || people.some(i => String(r[i]).trim()))) {
+      const bare = String(r[ag]).replace(STALE + '\n', '').trim();
+      if (!bare || [].concat(basisOf(s.header, r, exact, prefix)).indexOf(basisOfCs[id]) < 0) needs.push('proposal');
+    }
+    if (DRAFTING && !issueOfCs[id]) needs.push('issue');
+    if (yes(r, rfa) && sts.every(x => !x || x === 'Not started')) needs.push('ready');
+    if (yes(r, rfm) && sts.some(x => x === 'PR open' || x === 'Ready for review')) needs.push('merge');
+    if (needs.length) out.push([id, needs.join(', ')]);
+  });
+  return out;
+}
+
+/**
+ * Write the Watch tab (hidden; the script's own): A1 "Signature", B1 a hash
+ * of the list, C1 "Checked (UTC)", D1 when; row 2 the headers; then one row
+ * per change set that needs the agent. The watching agent reads A1:D1 and
+ * reads on only when the list is not empty. The list is rewritten only when
+ * it changes; the time on every run, so a stopped script shows.
+ */
+function writeWatch(ss) {
+  try {
+    const list = watchList(ss);
+    let sh = ss.getSheetByName(WATCH_TAB);
+    if (!sh) {
+      sh = ss.insertSheet(WATCH_TAB);
+      sh.hideSheet();
+    }
+    const sig = hashOf(JSON.stringify(list));
+    const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
+    const old = sh.getLastRow() >= 1 ? String(sh.getRange(1, 2, 1, 1).getDisplayValues()[0][0]).trim() : '';
+    if (old !== sig) {
+      sh.getRange(1, 1, Math.max(sh.getLastRow(), 2 + list.length), 4).clearContent();
+      sh.getRange(1, 1, 2 + list.length, 4).setValues(
+        [['Signature', sig, 'Checked (UTC)', now], ['Change-set', 'Needs', '', '']]
+          .concat(list.map(([id, n]) => [asText(id), n, '', ''])));
+    } else {
+      sh.getRange(1, 4, 1, 1).setValues([[now]]);
+    }
+  } catch (err) {
+    // A Watch tab that cannot be written must never stop the refresh.
   }
 }
 // ---------- sheet helpers ----------
