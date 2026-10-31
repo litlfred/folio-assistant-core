@@ -5,5 +5,5 @@
     "kind": "uploads",
     "family": "folio-intake/v1"
   },
-  "schema": "schemas/intake.ts#IntakeSchema"
+  "schema": "cat-harness-tools:schemas/library/intake.ts#IntakeSchema"
 }
