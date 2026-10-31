@@ -584,6 +584,7 @@ export function buildScript(opts: { stamp?: "commit" | "content" } = {}): string
  * when it is stale.
  */
 export const CODE_GS_URL = "https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs";
+export const STUB_GS_URL = "https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Stub.gs";
 export const CODE_GS_RAW = "https://raw.githubusercontent.com/litlfred/folio-assistant-core/main/tools/review-sheet-sync/dist/Code.gs";
 export const INSTALL_GUIDE_URL = "https://github.com/litlfred/folio-assistant-core/blob/main/skills/content/folio-document-adapter/review-sheet-script.md#installing-the-script-step-by-step";
 
@@ -603,6 +604,8 @@ if (import.meta.main) {
     mkdirSync(join(here, "dist"), { recursive: true });
     writeFileSync(join(here, "dist", "Code.gs"), buildScript({ stamp: "content" }));
     console.error("wrote dist/Code.gs");
+    writeFileSync(join(here, "dist", "Stub.gs"), readFileSync(join(here, "stub.gs"), "utf8"));
+    console.error("wrote dist/Stub.gs");
   }
   const script = arg("--script");
   if (script) {

@@ -34,6 +34,15 @@ describe("glossary term links", () => {
     expect(hrefs(await render('<a id="b"></a>\nRegistry entries vary.'))).toEqual([]);
   });
 
+  test("a link to a term's IRI points at its entry, and the term is not linked again in that section", async () => {
+    const withIri: TermLink[] = [...links, { label: "Stakeholder", href: "g/#stakeholder", iri: "https://x/ns#stakeholder", prose: false }];
+    const html = await renderDocumentHtml("**Concepts:** [Stakeholder](https://x/ns#stakeholder), [NPC](https://x/ns#npc)\n\nA Stakeholder uses the NPC.", {
+      math: false,
+      termLinks: withIri,
+    });
+    expect(hrefs(html)).toEqual(["g/#stakeholder", "https://x/ns#npc", "g/#npc"]);
+  });
+
   test("without links the output is unchanged", async () => {
     const md = "A Trade Item.";
     expect(await renderDocumentHtml(md, { math: false })).toBe(await renderDocumentHtml(md, { math: false, termLinks: [] }));
