@@ -259,9 +259,46 @@ installTriggers. The script in the template needs no change.
 **Locks in a template and its copies** (owner, 2026-10-31): every cell is
 locked to the owner except the blue, human-controlled columns. That covers
 the headers, the grey mechanical and green agent-derived columns, the
-Config tab and the hidden TOC. The owner adds editors to the orange
-Ready-for-agent and Ready-for-merge columns of a copy when the document has
-editors.
+Config tab, the Agent tab and the hidden TOC. The orange Ready-for-agent and
+Ready-for-merge columns have a lock of their own, **"Ready columns:
+editors"**, which starts with only the owner; the owner adds each document
+editor to it in each copy (step 4 below).
+
+### Setting up a sheet for a new document
+
+The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
+
+1. **Copy the template.** Open the "make a copy" link for the mode (table
+   above), name the copy "<document> Contributor Log" or "<document> Public
+   Comment Log", and keep it in the informatics.avengers Drive. A file copy
+   keeps tabs, colours, dropdowns, locks and the script.
+2. **Share it.** Share > add contributors or reviewers as **Editor**. The
+   locks still keep them to the blue columns.
+3. **Write the Config tab (agent).** Give the agent the copy's URL. It adds
+   `"sheet": "<id>"` to the folio's `review/<mode>/sheet-sync.json`, builds
+   the rows (`--config … --out config-rows.json`) and writes them into
+   Config with the Sheets connector. For drafting it also fills the hidden
+   TOC by the first refresh.
+4. **Add editors to the Ready columns.** Data > Protect sheets and ranges >
+   "Ready columns: editors" > Change permissions > "Restrict who can edit
+   this range" > Custom > add each editor's email > Done. Only they and the
+   owner can then set Ready for agent and Ready for merge.
+5. **Install the script.** Extensions > Apps Script. Replace all of
+   `Code.gs` with the published generic file; in Project Settings tick
+   "Show appsscript.json" and replace it with
+   `tools/review-sheet-sync/appsscript.json`; save. Pick **installTriggers**
+   in the function list and press Run; allow access (Advanced > continue,
+   since bound scripts are unverified). Reload the sheet: a **Review links**
+   menu appears. A copy of the template already holds the script, so this
+   step is needed only when the script changes.
+6. **Drafting only: allow multiple sections.** Select the Sections column >
+   Data > Data validation > the dropdown rule > tick **Allow multiple
+   selections** > Done. Copies made after the template has it ticked keep it.
+
+**Check it.** Review links > Refresh now. In drafting mode a row with a
+Title gets a CS id and its picked sections appear, linked, in Section links;
+in public-comment mode each No. becomes a link. An error names what is
+missing: no Config tab, a Config row, or a tab the Config names.
 
 | mode | template (owned by informatics.avengers) | make a copy |
 |---|---|---|
