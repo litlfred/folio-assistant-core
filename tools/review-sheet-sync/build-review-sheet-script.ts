@@ -390,7 +390,7 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
   // Steps 3 to 6, the same on every change-set tab.
   const changeSet = [
     "   3. An Editor sets Ready for agent (Orange) to Yes once the direction is agreed.",
-    `   4. The agent edits the document in one pull request for the row. Agentic status (Green) says where it is; ${staging} opens what changed.`,
+    `   4. The agent edits the document in one pull request for the row. Agentic status (Green) says where it is; ${staging} opens what changed. Once the agent has finished and its preview is live, the script sets Ready for agent to Completed.`,
     "   5. Reviewers answer in Blue. A change marks the proposal stale and sets Ready for agent (Orange) back to No; an Editor sets Yes again to have the agent update the pull request.",
     "   6. A reviewer who did not write the change checks every disposition against the Blue Disposition and the pull request, and reads the QA report (the QA gate). Once it passes, an Editor sets Ready for merge (Orange) to Yes, and the agent merges.",
   ];

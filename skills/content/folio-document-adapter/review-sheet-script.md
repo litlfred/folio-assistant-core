@@ -430,6 +430,16 @@ moves, or a tab or a header the script reads is renamed. Re-paste Code.gs
 only when the script itself changes. Renaming a header the script reads,
 without rewriting Config, leaves that column unlinked; it fails nothing.
 
+## Ready for agent: Yes, No, Completed (owner, 2026-10-31)
+
+"preview is now live, so nothing more for agent to do. so no longer ready
+for agent ... like Yes, No, Completed". The script sets Ready for agent from
+**Yes** to **Completed** once the agent's last push is later than the time
+Yes was set and the preview of it is live and current (no ⚠ in Staging
+review). An Editor sets **Yes** again to send the row back to the agent. A
+row that turns stale goes back to **No** from Yes or Completed, as before.
+The agent never writes the Orange columns.
+
 ## One agent column, status on top (owner, 2026-10-31, option A)
 
 "why Change Set Feedback (agent) and Agentic status not consolidated to one?"
