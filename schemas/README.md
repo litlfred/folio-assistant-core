@@ -20,6 +20,8 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-schemas`, 
 | [`dublin-core-render.ts`](dublin-core-render.ts) | a file |  |
 | [`dublin-core.test.ts`](dublin-core.test.ts) | a file |  |
 | [`dublin-core.ts`](dublin-core.ts) | a file |  |
+| [`figure-data.test.ts`](figure-data.test.ts) | a file |  |
+| [`figure-data.ts`](figure-data.ts) | a file |  |
 | [`glossary.test.ts`](glossary.test.ts) | a file |  |
 | [`glossary.ts`](glossary.ts) | a file |  |
 | [`kg-materialization.ts`](kg-materialization.ts) | a file |  |
