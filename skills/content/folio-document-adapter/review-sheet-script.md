@@ -177,10 +177,10 @@ records, on each pass over a change set with an open PR:
 | Agent tab column | what the agent writes | where it reads it |
 |---|---|---|
 | **PR head (change set)** | each PR's latest commit, one per line, in the PR order | the PR (`gh pr view --json headRefOid`) |
-| **Staging built from (change set)** | the commit the preview was built from | the newest gh-pages commit touching `STAGING/<slug>/`, whose message is `staging(<slug>): from <sha>` (`stage-local.ts`) |
-| **Staging deploy (change set)** | `deployed`, `pending` or `failed` | the Pages deployment of that gh-pages commit (`gh api repos/<o>/<r>/pages/builds/latest`, or the deployments API) |
+| **Staging built from (change set)** | the commit the preview was built from | the newest gh-pages commit touching `STAGING/<slug>/`. Its message is `staging(<slug>): from <sha>` when an agent staged it (`stage-local.ts`), or `Publish <site> <sha8> preview of <branch>` when the site-publish workflow did; both forms are accepted |
+| **Staging deploy (change set)** | `deployed`, `pending` or `failed` | the Pages deployment of that gh-pages commit: `gh api repos/<o>/<r>/pages/builds/latest`, or, where that endpoint is blocked, the conclusion of the "pages build and deployment" run in `actions/runs?head_sha=<gh-pages commit>` |
 
-The script compares only; it stays `@OnlyCurrentDoc` with no internet access.
+The script compares only; it stays `@OnlyCurrentDoc` with no internet access. Short and full shas both work: it compares the common prefix, at least 7 characters.
 It reads the active PR as the last one listed (one branch, one active PR per
 row) and writes, in this order of precedence: `⚠ deploy failed`;
 `⚠ stale: built from <sha>, PR now at <sha>`; `⚠ deploy in progress`. A
