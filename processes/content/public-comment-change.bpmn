@@ -154,9 +154,7 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_ChangeMerged_di" bpmnElement="EndEvent_ChangeMerged">
         <dc:Bounds x="1182" y="267" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1155" y="307" width="90" height="54" />
-        </bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel><dc:Bounds x="1132.5" y="307" width="135" height="36" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_ToAuthor_di" bpmnElement="Flow_ToAuthor">
         <di:waypoint x="298" y="145" />

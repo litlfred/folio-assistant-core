@@ -192,7 +192,7 @@ A figure description an agent drafted is NOT reported as what the figure shows. 
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_GW_Sufficient" bpmnElement="GW_Sufficient" isMarkerVisible="true">
         <dc:Bounds x="1100" y="175" width="50" height="50"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="1070" y="130" width="112" height="40"/></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel><dc:Bounds x="1128.58" y="121.5" width="112" height="35" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_Report" bpmnElement="A_Report">
         <dc:Bounds x="1220" y="160" width="200" height="80"/>

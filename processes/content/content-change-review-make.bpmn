@@ -152,10 +152,10 @@ On the trigger: reaching this call is not the same as running the whole of it. `
   <bpmndi:BPMNDiagram id="BPMNDiagram_ContentChangeReviewMake">
     <bpmndi:BPMNPlane id="BPMNPlane_ContentChangeReviewMake" bpmnElement="Collaboration_ContentChangeReviewMake">
       <bpmndi:BPMNShape id="Participant_ContentChangeReviewMake_di" bpmnElement="Participant_ContentChangeReviewMake" isHorizontal="true">
-        <dc:Bounds x="100" y="80" width="1760" height="150" />
+        <dc:Bounds x="100" y="80" width="1780" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Agent_di" bpmnElement="Lane_Agent" isHorizontal="true">
-        <dc:Bounds x="130" y="80" width="1730" height="150" />
+        <dc:Bounds x="130" y="80" width="1750" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Start_Agent_di" bpmnElement="Start_Agent">
         <dc:Bounds x="242" y="137" width="36" height="36" />
@@ -176,13 +176,13 @@ On the trigger: reaching this call is not the same as running the whole of it. `
         <dc:Bounds x="1050" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Call_OptionsAnalysis_di" bpmnElement="Call_OptionsAnalysis">
-        <dc:Bounds x="1220" y="115" width="120" height="80" />
+        <dc:Bounds x="1210" y="108.5" width="160" height="93" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CommitPush_di" bpmnElement="Task_CommitPush">
-        <dc:Bounds x="1390" y="115" width="120" height="80" />
+        <dc:Bounds x="1410" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_Agent_di" bpmnElement="End_Agent">
-        <dc:Bounds x="1602" y="137" width="36" height="36" />
+        <dc:Bounds x="1622" y="137" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="a1_di" bpmnElement="a1">
         <di:waypoint x="278" y="155" />
@@ -206,15 +206,15 @@ On the trigger: reaching this call is not the same as running the whole of it. `
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="a6_di" bpmnElement="a6">
         <di:waypoint x="1170" y="155" />
-        <di:waypoint x="1220" y="155" />
+        <di:waypoint x="1210" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="a6b_di" bpmnElement="a6b">
-        <di:waypoint x="1340" y="155" />
-        <di:waypoint x="1390" y="155" />
+        <di:waypoint x="1370" y="155" />
+        <di:waypoint x="1410" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="a7_di" bpmnElement="a7">
-        <di:waypoint x="1510" y="155" />
-        <di:waypoint x="1602" y="155" />
+        <di:waypoint x="1530" y="155" />
+        <di:waypoint x="1622" y="155" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
