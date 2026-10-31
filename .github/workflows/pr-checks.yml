@@ -17,10 +17,16 @@ permissions:
   contents: read
 jobs:
   checks:
-    uses: litlfred/cat-harness-tools/.github/workflows/layer-pr-checks.yml@45b0894620099663f17abb584f376502d702422a # main
+    uses: litlfred/cat-harness-tools/.github/workflows/layer-pr-checks.yml@9eed85000ffd4dd81301f289225563a86a5a5c89 # claude/quick-lane-pr-checks (cat-harness-tools PR)
     with:
       # On a draft PR: prepare and typecheck only; the full tier runs on ready_for_review.
       draft-fast-tier: true
+      # A PR that touches only the review-sheet tool runs only its tests,
+      # about 2 minutes instead of ~30 (owner 2026-10-31, Q-CI1 A).
+      quick-paths: >-
+        tools/review-sheet-sync/
+        skills/content/folio-document-adapter/review-sheet-script.md
+      quick-test: tools/review-sheet-sync
   # Post-merge QA of main (owner, 2026-10-30, "Both"): the push run above
   # judged main's whole gate set; this keeps one `main-red` issue open while
   # main is red and closes it when main is green. See
