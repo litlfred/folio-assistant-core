@@ -1,0 +1,10 @@
+{
+  "$schema": "folio-validator/v1",
+  "id": "smart-guidelines-approach-figure",
+  "validates": {
+    "kind": "library",
+    "family": "smart-guidelines-approach-figure/v1"
+  },
+  "schema": "folio-assistant-core:schemas/figure-data.ts#SmartApproachFigureKind",
+  "rationale": "fa#2781. The SMART Guidelines approach chart's data on a who-iris library entry, drawn by scripts/smart-approach-svg.ts. The registry routes the family under `library` and leaves its shape to the generator's layer."
+}

@@ -1,0 +1,10 @@
+{
+  "$schema": "folio-validator/v1",
+  "id": "diig-phases-figure",
+  "validates": {
+    "kind": "library",
+    "family": "diig-phases-figure/v1"
+  },
+  "schema": "folio-assistant-core:schemas/figure-data.ts#DiigPhasesFigureKind",
+  "rationale": "fa#2781. The DIIG phases chart's data on a who-iris library entry, drawn by scripts/diig-phases-svg.ts. The registry routes the family under `library` and leaves its shape to the generator's layer."
+}
