@@ -50,7 +50,7 @@
     "remark-html": "^16.0.1",
     "remark-math": "^6.0.0",
     "unist-util-visit": "^5.1.0",
-    "zod": "^4.6.5"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/jsonld": "^1.5.15",
@@ -76,9 +76,16 @@
     "sources:liveness": "bun run folio-assistant-core/scripts/source-liveness.ts",
     "kg:materialize": "bun run folio-assistant-core/scripts/kg-materialize.ts",
     "kg:materialize:check": "bun run folio-assistant-core/scripts/kg-materialize.ts --check",
-    "check:dsa-hash": "bun run folio-assistant-core/scripts/check-dsa-hash.ts"
+    "check:dsa-hash": "bun run folio-assistant-core/scripts/check-dsa-hash.ts",
+    "check:core-security-gate": "bun run folio-assistant-core/scripts/check-security-gate.ts"
   },
   "scripts": {
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "check:core-security-gate": "bun run scripts/check-security-gate.ts",
+    "security:gate": "bun run scripts/check-security-gate.ts"
+  },
+  "overrides": {
+    "undici": "^6.29.1",
+    "minimatch": "^11.0.1"
   }
 }

@@ -13,15 +13,16 @@
 import { z } from "zod";
 import { spawnSync, type SpawnSyncReturns } from "child_process";
 import { existsSync, readdirSync } from "fs";
-import { join, basename } from "path";
+import { join, basename, resolve } from "path";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { REPO_ROOT, folioDirOf } from "../paths.js";
+import { safeSegment, writableWithin } from "@litlfred/cat-harness-tools/src/core/safe-path.js";
+import { REPO_ROOT, folioDirOf, get } from "../paths.js";
 import { checkFolioProfile, formatProfileCheck } from "@litlfred/cat-harness-tools/pipeline/profile-check.js";
 import {
   readBlockManifest,
   readUnlabelledBlockManifest,
 } from "@litlfred/cat-harness-tools/pipeline/qa-utils.js";
-import { resolvePipelineScript } from "./_pipeline.js";
+import { refuseTool, resolvePipelineScript } from "./_pipeline.js";
 // Note: paths are resolved from the document adapter's paths module.
 
 /** Find all paper directories under folio/. */
@@ -110,6 +111,12 @@ export function registerValidateTools(server: McpServer): void {
     },
     async ({ paper, chapter }) => {
       try {
+        if (paper !== undefined && safeSegment(paper) === undefined) {
+          return refuseTool("content_validate", `invalid paper segment '${paper}'`);
+        }
+        if (chapter !== undefined && safeSegment(chapter) === undefined) {
+          return refuseTool("content_validate", `invalid chapter segment '${chapter}'`);
+        }
         const papers = discoverPapers();
         if (papers.length === 0) {
           return {
@@ -221,6 +228,9 @@ export function registerValidateTools(server: McpServer): void {
     },
     async ({ document }) => {
       try {
+        if (document !== undefined && safeSegment(document) === undefined) {
+          return refuseTool("content_profile_check", `invalid document segment '${document}'`);
+        }
         const scope = document ? join(folioDirOf(), document) : folioDirOf();
         if (document && !existsSync(scope)) {
           return { content: [{ type: "text" as const, text: `Document not found: ${scope}` }] };
@@ -247,6 +257,9 @@ export function registerValidateTools(server: McpServer): void {
     },
     async ({ paper }) => {
       try {
+        if (paper !== undefined && safeSegment(paper) === undefined) {
+          return refuseTool("content_list", `invalid paper segment '${paper}'`);
+        }
         const papers = paper ? [paper] : discoverPapers();
         const lines: string[] = [];
 
@@ -330,6 +343,20 @@ export function registerPaperBuildTools(server: McpServer): void {
     },
     async ({ paper, output_dir }) => {
       try {
+        if (paper !== undefined && safeSegment(paper) === undefined) {
+          return refuseTool("content_build", `invalid paper segment '${paper}'`);
+        }
+        const root = get.REPO_ROOT();
+        let resolvedOutDir = join(root, "chapters");
+        if (output_dir !== undefined) {
+          if (output_dir.includes("\0")) {
+            return refuseTool("content_build", "output_dir contains NUL byte");
+          }
+          resolvedOutDir = resolve(root, output_dir);
+          if (!writableWithin(root, resolvedOutDir)) {
+            return refuseTool("content_build", `output_dir '${output_dir}' escapes repository root`);
+          }
+        }
         const papers = discoverPapers();
         const paperName = paper || papers[0];
         if (!paperName) {
@@ -340,7 +367,7 @@ export function registerPaperBuildTools(server: McpServer): void {
 
         const paperDir = join(folioDirOf(), paperName);
         const docTs = join(paperDir, `${paperName}.ts`);
-        const outDir = output_dir || join(REPO_ROOT, "chapters");
+        const outDir = resolvedOutDir;
 
         if (!existsSync(docTs)) {
           return {

@@ -20,6 +20,7 @@
  */
 
 import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+import { realPathWithin, resolveWithin, safeSegment } from "@litlfred/cat-harness-tools/src/core/safe-path.js";
 import { z } from "zod";
 import { execSync, spawnSync } from "child_process";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "fs";
@@ -71,6 +72,12 @@ export function registerLatexRenderTools(server: McpServer): void {
         .describe("Override Drive destination folder (default: from <name>.config.json googleDrive.folderPath)"),
     },
     async ({ scope, target, engine, clean, print_mode, upload_drive, drive_folder }) => {
+      if (target !== undefined && safeSegment(target) === undefined) {
+        return {
+          content: [{ type: "text" as const, text: `Error: Refused: invalid target segment '${target}'` }],
+          isError: true,
+        };
+      }
       // Check deps
       if (!hasCommand("latexmk")) {
         return {
@@ -308,6 +315,12 @@ export function registerLatexRenderTools(server: McpServer): void {
         .describe("Math rendering engine for HTML output"),
     },
     async ({ scope, target, math_renderer }) => {
+      if (target !== undefined && safeSegment(target) === undefined) {
+        return {
+          content: [{ type: "text" as const, text: `Error: Refused: invalid target segment '${target}'` }],
+          isError: true,
+        };
+      }
       if (!hasCommand("pandoc")) {
         return {
           content: [{
@@ -391,6 +404,20 @@ export function registerLatexRenderTools(server: McpServer): void {
         .describe("Output resolution in DPI"),
     },
     async ({ latex, display_math, packages, dpi }) => {
+      for (const pkg of packages) {
+        if (!/^[A-Za-z0-9._-]+$/.test(pkg) || safeSegment(pkg) === undefined) {
+          return {
+            content: [{ type: "text" as const, text: `Error: Refused: invalid LaTeX package name '${pkg}'` }],
+            isError: true,
+          };
+        }
+      }
+      if (/\\(?:input|include|openin|openout|read|write18|immediate|verbatiminput|lstinputlisting|catcode)\b/.test(latex)) {
+        return {
+          content: [{ type: "text" as const, text: "Error: Refused: dangerous LaTeX file/shell primitive in formula" }],
+          isError: true,
+        };
+      }
       if (!hasCommand("pdflatex")) {
         return {
           content: [{
@@ -420,6 +447,7 @@ ${body}
 
         // Compile to PDF
         const pdfResult = spawnSync("pdflatex", [
+          "-no-shell-escape",
           "-interaction=nonstopmode",
           "-halt-on-error",
           `-output-directory=${BUILD_DIR}`,
@@ -484,7 +512,24 @@ const HTML_PDF_ENGINES = ["weasyprint", "prince", "wkhtmltopdf"] as const;
  * document and the caller named none: rendering the wrong one produces a
  * plausible artifact, which is worse than an error.
  */
+function resolveStyleSheet(css: string): { path: string } | { error: string } {
+  if (css.startsWith("/") || css.startsWith("\\") || css.includes("\0")) {
+    return { error: `Error: Refused: stylesheet path '${css}' must be relative to the repository root` };
+  }
+  const resolved = resolveWithin(REPO_ROOT, css);
+  if (resolved === undefined) {
+    return { error: `Error: Refused: stylesheet path '${css}' escapes repository root` };
+  }
+  if (existsSync(resolved) && realPathWithin(REPO_ROOT, resolved) === undefined) {
+    return { error: `Error: Refused: stylesheet symlink '${css}' escapes repository root` };
+  }
+  return { path: resolved };
+}
+
 function resolveDocumentManifest(name?: string): { path: string; slug: string } | string {
+  if (name !== undefined && safeSegment(name) === undefined) {
+    return `Error: Refused: invalid document segment '${name}'`;
+  }
   const folioRoot = folioDir(REPO_ROOT);
   if (!existsSync(folioRoot)) {
     return `Error: no folio/ directory at ${REPO_ROOT}. Run folio_init first, or point --repo at your folio.`;
@@ -544,7 +589,7 @@ export function registerDocumentRenderTools(server: McpServer): void {
     async ({ document }) => {
       const resolved = resolveDocumentManifest(document);
       if (typeof resolved === "string") {
-        return { content: [{ type: "text" as const, text: resolved }] };
+        return { content: [{ type: "text" as const, text: resolved }], isError: true };
       }
       try {
         const { buildDocumentMarkdown } = await import("@litlfred/cat-harness-tools/pipeline/render-markdown.js");
@@ -584,6 +629,19 @@ export function registerDocumentRenderTools(server: McpServer): void {
         .describe("Math rendering engine. 'none' leaves $…$ untouched — correct for a document with no mathematics."),
     },
     async ({ document, toc, css, math_renderer }) => {
+      if (document !== undefined && safeSegment(document) === undefined) {
+        return {
+          content: [{ type: "text" as const, text: `Error: Refused: invalid document segment '${document}'` }],
+          isError: true,
+        };
+      }
+      const checkedCss = css !== undefined ? resolveStyleSheet(css) : undefined;
+      if (checkedCss && "error" in checkedCss) {
+        return {
+          content: [{ type: "text" as const, text: checkedCss.error }],
+          isError: true,
+        };
+      }
       if (!hasCommand("pandoc")) {
         return {
           content: [{
@@ -594,7 +652,7 @@ export function registerDocumentRenderTools(server: McpServer): void {
       }
       const resolved = resolveDocumentManifest(document);
       if (typeof resolved === "string") {
-        return { content: [{ type: "text" as const, text: resolved }] };
+        return { content: [{ type: "text" as const, text: resolved }], isError: true };
       }
       try {
         const { buildDocumentMarkdown } = await import("@litlfred/cat-harness-tools/pipeline/render-markdown.js");
@@ -608,8 +666,8 @@ export function registerDocumentRenderTools(server: McpServer): void {
         if (toc) args.push("--toc", "--number-sections");
         if (math_renderer === "katex") args.push("--katex");
         else if (math_renderer === "mathjax") args.push("--mathjax");
-        if (css) {
-          const cssPath = resolve(REPO_ROOT, css);
+        if (checkedCss) {
+          const cssPath = checkedCss.path;
           if (!existsSync(cssPath)) {
             return { content: [{ type: "text" as const, text: `Error: stylesheet not found: ${cssPath}` }] };
           }
@@ -657,6 +715,19 @@ export function registerDocumentRenderTools(server: McpServer): void {
         .describe("Path to a print stylesheet, relative to the repo root"),
     },
     async ({ document, engine, css }) => {
+      if (document !== undefined && safeSegment(document) === undefined) {
+        return {
+          content: [{ type: "text" as const, text: `Error: Refused: invalid document segment '${document}'` }],
+          isError: true,
+        };
+      }
+      const checkedCss = css !== undefined ? resolveStyleSheet(css) : undefined;
+      if (checkedCss && "error" in checkedCss) {
+        return {
+          content: [{ type: "text" as const, text: checkedCss.error }],
+          isError: true,
+        };
+      }
       if (!hasCommand("pandoc")) {
         return { content: [{ type: "text" as const, text: "Error: pandoc not installed. Install: apt install pandoc." }] };
       }
@@ -683,7 +754,7 @@ export function registerDocumentRenderTools(server: McpServer): void {
 
       const resolved = resolveDocumentManifest(document);
       if (typeof resolved === "string") {
-        return { content: [{ type: "text" as const, text: resolved }] };
+        return { content: [{ type: "text" as const, text: resolved }], isError: true };
       }
       try {
         const { buildDocumentMarkdown } = await import("@litlfred/cat-harness-tools/pipeline/render-markdown.js");
@@ -695,8 +766,8 @@ export function registerDocumentRenderTools(server: McpServer): void {
         const outPath = join(BUILD_DIR, `${resolved.slug}.pdf`);
         const args = [mdPath, "-o", outPath, "--from", "gfm+raw_html",
           `--pdf-engine=${chosen}`, "--toc", "--number-sections"];
-        if (css) {
-          const cssPath = resolve(REPO_ROOT, css);
+        if (checkedCss) {
+          const cssPath = checkedCss.path;
           if (!existsSync(cssPath)) {
             return { content: [{ type: "text" as const, text: `Error: stylesheet not found: ${cssPath}` }] };
           }
