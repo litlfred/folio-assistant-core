@@ -480,8 +480,12 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    `Code.gs` with the published generic file and save (the only file to
    paste). The Config tab's `Instructions - Install script` row has these
    steps click by click. Pick **installTriggers**
-   in the function list and press Run; allow access (Advanced > continue,
-   since bound scripts are unverified). Reload the sheet: a **Review links**
+   in the function list and press Run; allow access. Google shows "Google
+   hasn't verified this app. The app is requesting access to sensitive info
+   in your Google Account." This is expected for a sheet's own bound script,
+   which Google never verifies: choose Advanced, then "Go to <project>
+   (unsafe)", then Allow ([Google's explanation](https://support.google.com/cloud/answer/7454865);
+   owner, 2026-10-31: "explain they will see ... and provide link to info"). Reload the sheet: a **Review links**
    menu appears. A copy of the template already holds the script, so the
    paste is needed only when the script changes; **installTriggers is needed
    in every copy**, because triggers and the owner's permission do not copy.
