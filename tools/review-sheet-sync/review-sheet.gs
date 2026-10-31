@@ -31,7 +31,7 @@
 /*@@VERSION@@*/
 
 const CONFIG_TAB = 'Config';
-let CFG = null, COLS = null, DATA = null, DRAFTING = false, WATCHED = [];
+let CFG = null, COLS = null, DATA = null, DRAFTING = false, WATCHED = [], EDITORS = null;
 
 /**
  * Read CFG, COLS and DATA from the Config tab: column A a key, column B its
@@ -60,6 +60,9 @@ function loadConfig(ss) {
   // Old short names, from a Config written before 2026-10-31.
   [['K', 'SECTIONS'], ['ABBR', 'ABBREVIATIONS'], ['LP', 'PAGE_LINES'], ['OFFSET', 'PAGE_OFFSET'], ['MAX', 'LAST_PAGE']]
     .forEach(([o, n]) => { if (DATA[n] === undefined && DATA[o] !== undefined) DATA[n] = DATA[o]; });
+  // EDITORS: plain emails, kept by a person. No row: leave the Ready columns alone.
+  EDITORS = parts.EDITORS === undefined ? null :
+    parts.EDITORS.split(/[\s,;]+/).filter(x => /^[^@\s]+@[^@\s]+$/.test(x));
   DRAFTING = CFG.MODE === 'drafting';
   WATCHED = DRAFTING ? [CFG.FEEDBACK, CFG.AGENT] : [CFG.RPC, CFG.AGENT, CFG.RCS];
 }
@@ -81,7 +84,31 @@ function installTriggers() {
   ScriptApp.newTrigger('markDirty').forSpreadsheet(ss).onEdit().create();
   ScriptApp.newTrigger('refreshIfDirty').timeBased().everyMinutes(5).create();
   refreshAll();
+  applyEditors(ss);
   if (DRAFTING) checkDropdown(ss);
+}
+
+const READY_DESC = 'Ready columns: who may set them is the Config tab\'s EDITORS row (the script keeps this).';
+
+/**
+ * Lock the "Ready for ..." columns to the owner and the Config tab's EDITORS,
+ * so the owner can delegate who decides without touching protections. The
+ * script's own protection is rebuilt each time; others are left alone. An
+ * empty EDITORS row leaves the columns open to anyone who can edit; no row
+ * leaves them as they are.
+ */
+function applyEditors(ss) {
+  if (EDITORS === null) return;
+  const sh = ss.getSheetByName(DRAFTING ? CFG.FEEDBACK : CFG.RCS);
+  const cols = readSheet(sh).header.map((h, i) => /^Ready for /.test(h) ? i : -1).filter(i => i >= 0);
+  sh.getProtections(SpreadsheetApp.ProtectionType.RANGE)
+    .filter(p => p.getDescription() === READY_DESC).forEach(p => p.remove());
+  if (!EDITORS.length) return;
+  cols.forEach(c => {
+    const p = sh.getRange(2, c + 1, sh.getMaxRows() - 1, 1).protect().setDescription(READY_DESC);
+    p.removeEditors(p.getEditors());
+    p.addEditors(EDITORS);
+  });
 }
 
 /**
@@ -224,6 +251,7 @@ function refreshAll() {
   const t0 = Date.now();
   try {
     refreshLocked();
+    applyEditors(SpreadsheetApp.getActive());
   } finally {
     PropertiesService.getDocumentProperties().setProperty('lastMs', String(Date.now() - t0));
     lock.releaseLock();

@@ -19,6 +19,7 @@ import { feedbackBasis } from "./feedback-issue.js";
 const code = buildScript();
 const withConfig = <T extends object>(t: T, rows: string[][]) => ({ ...t, Config: { id: 50, rows } });
 
+type Prot = { col: string; desc: string; editors: string[]; removed: boolean; api?: { getDescription(): string; remove(): void } };
 type Rich = { text: string; links: [number, number, string][]; bold: [number, number][] };
 
 /** A fake folio: a draft with printed pages 1–3 on PDF pages 12–14 (offset 11). */
@@ -69,7 +70,23 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
       getSheetId: () => t.id,
       getLastRow: () => t.rows.length,
       getLastColumn: () => t.rows[0].length,
+      getMaxRows: () => 500,
+      getProtections: () => ((t as { prot?: Prot[] }).prot ??= []).filter((p) => !p.removed).map((p) => p.api!),
       getRange: (r: number, c: number, nr: number, nc: number) => ({
+        protect: () => {
+          const p: Prot = { col: t.rows[0][c - 1], desc: "", editors: ["owner@x.example"], removed: false };
+          ((t as { prot?: Prot[] }).prot ??= []).push(p);
+          const api = {
+            setDescription: (d: string) => ((p.desc = d), api),
+            getDescription: () => p.desc,
+            getEditors: () => p.editors.slice(),
+            removeEditors: (es: string[]) => ((p.editors = p.editors.filter((e) => e === "owner@x.example" || !es.includes(e))), api),
+            addEditors: (es: string[]) => ((p.editors = [...new Set([...p.editors, ...es])]), api),
+            remove: () => { p.removed = true; },
+          };
+          p.api = api;
+          return api;
+        },
         getDisplayValues: () => t.rows.slice(r - 1, r - 1 + nr).map((row) => row.slice(c - 1, c - 1 + nc)),
         setValues: (v: unknown[][]) => put(name, t.rows[0][c - 1], r, v),
         setRichTextValues: (v: unknown[][]) => put(name, t.rows[0][c - 1], r, v),
@@ -94,6 +111,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
         insertSheet: (n: string) => ((tabs[n] = { id: 99, rows: [["Section", "Link"]] }), sheet(n)),
       }),
       newRichTextValue: builder,
+      ProtectionType: { RANGE: "RANGE" },
       newTextStyle: () => ({ setBold: () => ({ build: () => ({ bold: true }) }) }),
     },
     LockService: { getDocumentLock: () => ({ tryLock: () => true, releaseLock: () => {} }) },
@@ -332,9 +350,11 @@ describe("review-sheet.gs in drafting mode", () => {
   test("the script is the same for every document: nothing of the folio is in it", () => {
     expect(code).not.toContain("https://x.example/S#");
     expect(code).not.toContain("Global challenges");
-    expect(dRows.find((r) => r[0] !== "SETUP" && r[0] !== "Key")?.[0]).toBe("CFG");
-    expect(dRows.filter((r) => r[0] === "SETUP").map((r) => r[1]).join("\n")).toContain("Allow multiple selections");
-    expect(dRows.every((r, i) => i === 0 || r[0] === "SETUP" || r[1].startsWith("|"))).toBe(true);
+    expect(dRows.find((r) => !["SETUP", "Key", "EDITORS"].includes(r[0]))?.[0]).toBe("CFG");
+    expect(dRows.filter((r) => r[0] === "SETUP")).toHaveLength(1);
+    expect(dRows.find((r) => r[0] === "SETUP")![1]).toContain("Allow multiple selections");
+    expect(dRows.find((r) => r[0] === "EDITORS")![1]).toBe("");
+    expect(dRows.every((r, i) => i === 0 || ["SETUP", "EDITORS"].includes(r[0]) || r[1].startsWith("|"))).toBe(true);
     expect(JSON.parse(dRows.find((r) => r[0] === "CFG")![1].slice(1)).MODE).toBe("drafting");
   });
 
@@ -391,6 +411,24 @@ describe("review-sheet.gs in drafting mode", () => {
     const f = rt2.written["Contributor Feedback"];
     expect(f["Selected Sections"][0][0]).toBe("\u2800\u2800\u28001.1 Global challenges");
     expect((f["Section links"][0][0] as Rich).text).toBe("1.1 Global challenges");
+  });
+
+  test("EDITORS locks each Ready column to the owner and those emails; empty opens it again", () => {
+    const rows = dRows.map((r) => (r[0] === "EDITORS" ? ["EDITORS", "a@x.example\nb@x.example, not-an-email"] : r));
+    const t = withConfig(draftTabs(), rows) as Record<string, { id: number; rows: string[][]; prot?: Prot[] }>;
+    const fbRows = t["Contributor Feedback"].rows;
+    fbRows[0].push("Ready for agent", "Ready for merge");
+    fbRows.forEach((r, i) => i && r.push("", ""));
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    const live = () => (t["Contributor Feedback"].prot ?? []).filter((p) => !p.removed);
+    expect(live().map((p) => p.col)).toEqual(["Ready for agent", "Ready for merge"]);
+    expect(live()[0].editors).toEqual(["owner@x.example", "a@x.example", "b@x.example"]);
+    load(code, rt2.g).refreshAll();
+    expect(live()).toHaveLength(2);
+    t.Config.rows = t.Config.rows.map((r) => (r[0] === "EDITORS" ? ["EDITORS", ""] : r));
+    load(code, rt2.g).refreshAll();
+    expect(live()).toHaveLength(0);
   });
 
   test("any filled row gets a Change-set; one holding only No does not", () => {
