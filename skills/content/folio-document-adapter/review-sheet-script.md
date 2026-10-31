@@ -445,16 +445,27 @@ views, which copy with it. Use Data > Filter views, never a plain filter: a
 plain filter changes the view for everyone, a filter view only for whoever
 opens it.
 
-| sheet | view | shows |
-|---|---|---|
-| drafting: Contributor Feedback | By agentic status | every row; pick values in the Agentic status (filter) column's filter (a plain copy of the change set's Agent status, owner 2026-10-31) |
-| | Open | rows with a Title, Ready for merge not Yes |
-| | Ready for editor | rows with a Title, Ready for agent not Yes |
-| | Decided | Ready for merge is Yes |
-| public comment: Review Change Sets | Change sets: Open / Ready for editor / Decided | the same three, on its Ready columns |
-| | Change sets: by agentic status | every change set; pick values in the Agentic status (filter) column's filter |
-| public comment: Review Public Comments | Comments: Open | a No., Disposition empty |
-| | Comments: Decided | Disposition filled |
+Each view is named for who uses it and what it shows (owner, 2026-10-31: "review the views and filters ... can we improve?").
+
+| sheet | view | who | shows |
+|---|---|---|---|
+| drafting: Contributor Feedback | Open | everyone | rows with a Title, Ready for merge not Yes |
+| | Needs contributor feedback | contributors | rows with a Title and every Contributor Feedback column empty |
+| | Waiting for editor (Ready for agent not Yes) | editors | rows with a Title, Ready for agent not Yes |
+| | Merge decision due (PR open, not merged) | editors | Agentic status (filter) is PR open, Ready for merge not Yes |
+| | Needs human | editors, owner | Agentic status (filter) is Needs human |
+| | Stale (agent proposal or staging out of date) | owner | the agent proposal starts with ⚠, or the staging link says stale |
+| | Decided (Ready for merge Yes) | everyone | Ready for merge is Yes |
+| | By agentic status (pick values) | everyone | every row; pick values in the Agentic status (filter) column's filter (a plain copy of the change set's Agent status) |
+| public comment: Review Change Sets | Change sets: the same eight | as above | on its own columns; "Needs architect feedback" checks the three Architect Feedback (initials) columns |
+| public comment: Review Public Comments | Comments: Open (no Disposition) | everyone | a No., Disposition empty |
+| | Comments: No change set yet | review coordinator | a No., Change Set empty |
+| | Comments: Needs architect feedback | architects | a No., every Architect Feedback (initials) column empty |
+| | Comments: Decided (Disposition set) | everyone | Disposition filled |
+
+The "needs feedback" and "stale" views use a custom formula that names
+columns by letter, so a column move breaks them: after moving columns, the
+agent checks each view's formula against the headers.
 
 A filter view covers the rows the tab had when the view was made; when rows
 are added past that, widen its range (Data > Filter views > the view >
