@@ -140,6 +140,26 @@ moves, or a tab or a header the script reads is renamed. Re-paste Code.gs
 only when the script itself changes. Renaming a header the script reads,
 without rewriting Config, leaves that column unlinked; it fails nothing.
 
+## Sheet conventions (any agent-written Google Sheet)
+
+These hold for every Google Sheet an agent writes or keeps current, not only
+the review sheets (owner, 2026-10-31):
+
+| colour | who controls it | lock |
+|---|---|---|
+| grey | mechanical: ids, headers, copied source text | owner only |
+| blue | people: the human-controlled columns | open to the sheet's editors |
+| orange | editor gates (Ready for agent, Ready for merge) | its own lock, owner plus the named editors |
+| green | agent-derived: links, joins, status | owner only |
+
+- **Templates** are locked to the owner except the blue columns; the orange
+  gates carry their own lock that starts with the owner alone.
+- **The Config tab** is visible, never hidden, and locked to the owner: the
+  agent writes it, people can read what the sheet is set up for.
+- **Which template** depends on the document's authoring stage: the
+  Contributor template while it is being drafted and authored, the Public
+  Comment Review template once public comment opens.
+
 ## Published with the document's site
 
 `scripts/review-sheet-site.ts --out <site>` (package script
