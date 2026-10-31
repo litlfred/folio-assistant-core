@@ -492,6 +492,15 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(rt2.written["Contributor Feedback"]["Change-set"]).toEqual([["CS-004"], ["CS-005"], [""]]);
   });
 
+  test("Agentic status (filter) holds the change set's plain status, for a filter view", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    t["Contributor Feedback"].rows[0].push("Agentic status (filter)");
+    t["Contributor Feedback"].rows.slice(1).forEach((r) => r.push(""));
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    expect((rt2.written["Contributor Feedback"]["Agentic status (filter)"] as Rich[][]).map((r) => r[0].text)).toEqual(["PR open", "", ""]);
+  });
+
   test("Issue and Agentic status come from the Agent tab by change set", () => {
     const i = fb.Issue[0][0] as Rich;
     expect(i.text).toBe("dth#12");

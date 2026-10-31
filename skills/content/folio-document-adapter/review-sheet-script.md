@@ -421,7 +421,8 @@ opens it.
 
 | sheet | view | shows |
 |---|---|---|
-| drafting: Contributor Feedback | Open | rows with a Title, Ready for merge not Yes |
+| drafting: Contributor Feedback | By agentic status | every row; pick values in the Agentic status (filter) column's filter (a plain copy of the change set's Agent status, owner 2026-10-31) |
+| | Open | rows with a Title, Ready for merge not Yes |
 | | Ready for editor | rows with a Title, Ready for agent not Yes |
 | | Decided | Ready for merge is Yes |
 | public comment: Review Change Sets | Change sets: Open / Ready for editor / Decided | the same three, on its Ready columns |

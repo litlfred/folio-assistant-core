@@ -76,7 +76,7 @@ export const DRAFT_TABS = { FEEDBACK: "Contributor Feedback", AGENT: "Agent", TO
 export const DRAFT_COLUMNS = {
   draft: {
     cs: "Change-set", title: "Title", sections: "Selected Sections", sectionLinks: "Section links", feedback: "Contributor Feedback",
-    issue: "Issue", agentic: "Agentic status", staging: "Staging review page",
+    issue: "Issue", agentic: "Agentic status", staging: "Staging review page", status: "Agentic status (filter)",
   },
   draftAgent: {
     csId: "Change-set", issue: "Issue", agentic: "Agentic status", prs: "Pull request (change set)",
