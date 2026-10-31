@@ -45,20 +45,34 @@ Every `No. n` in Review Change Sets links to `#gid=<Review Public Comments>&rang
 Do not link to a named range by `#rangeid=`: Sheets shows "Invalid range"
 for a named range whose id was set through the API.
 
-**Build it.** From the folio's repository root, with the platform mounted:
+**One script, one Config tab per sheet** (owner, 2026-10-31, option C).
+`Code.gs` is the same file for every document: `review-sheet.gs`, stamped
+with its commit and made plain ASCII. Nothing about a document is in it.
+What differs per document lives in the sheet's **Config** tab: visible,
+locked to the sheet's owner, columns Key and Value, rows `CFG`, `COLS` and
+`DATA`, each JSON with a leading `|` (so Sheets never reads it as a number
+or formula), a long value continued on the next rows under the same key.
 
 ```sh
-bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts --repo . --out Code.gs
+# the script, once per platform version
+bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts --script Code.gs
+# one document's Config rows, from the folio's repository root
+bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts \
+  --repo . --config review/public-comment/sheet-sync.json --out config-rows.json
 ```
 
-`Code.gs` is not committed. It is rebuilt from the config, so attach it to
-the thread or hand it over directly.
+The agent writes `config-rows.json` into the Config tab (A1 down, columns A
+and B, clearing rows below) with the Sheets connector, which runs as the
+owner, and keeps the tab protected so only the owner can edit it. Neither
+file is committed: both are rebuilt.
 
 **Install it, once per sheet.** A person does this, from the sheet owner's
 account, because Google asks the owner to authorise the script:
 
 1. Open the sheet, then **Extensions → Apps Script**.
-2. Replace everything in `Code.gs` with the built file, and save.
+2. Replace everything in `Code.gs` with the built file. In Project
+   Settings tick "Show appsscript.json", replace it with
+   `tools/review-sheet-sync/appsscript.json`, and save.
 3. In the function list beside **Run** and **Debug**, pick
    **installTriggers** (not `onOpen`, which only adds the menu), and press
    **Run**. Allow access when asked.
@@ -122,10 +136,10 @@ a given sheet has the script installed or current: that is **How to tell it
 works**. Change the template, the builder or this table only together with
 that test.
 
-**Rebuild and paste again** when the review anchors change, the draft link
-moves, or a tab or a header the script reads is renamed. Renaming a header
-the script reads, without rebuilding, leaves that column unlinked; it fails
-nothing.
+**Rewrite the Config tab** when the review anchors change, the draft link
+moves, or a tab or a header the script reads is renamed. Re-paste Code.gs
+only when the script itself changes. Renaming a header the script reads,
+without rewriting Config, leaves that column unlinked; it fails nothing.
 
 ## Trusting the script
 
@@ -150,7 +164,8 @@ template, us or someone else, should know what they are running.
   pasted copy.
 - **Wrong sheet.** Pasted into a sheet it was not built for, it stops with a
   message naming the config and tab it expected, before installing triggers.
-- **Check a copy against its source.** The header names the
+- **Check a copy against its source.** The script is the same for every
+  document, so one review covers all copies. Its header names the
   folio-assistant-core commit it was built from. Build again at that
   commit with the folio's config and compare; or ignore the copied script
   and paste one you built yourself.
@@ -197,7 +212,7 @@ carries as element ids.
 ```
 
 `tabs` and `columns` (`draft`, `draftAgent`) override the headers as in
-public-comment mode. Build with `--config review/drafting/sheet-sync.json`
+public-comment mode. Write its Config with `--config review/drafting/sheet-sync.json`
 and install as above. The Sections dropdown is a data validation "dropdown
 from a range" on `TOC!A2:A` with **Allow multiple selections** ticked; set it
 once in the template (the Sheets API cannot tick that box), and copies keep it.
@@ -238,9 +253,15 @@ issue later is added to the row's next empty Contributor Feedback cell.
 **Linked templates.** Each mode keeps one template sheet in the
 informatics.avengers Drive, laid out as above, script installed, no rows.
 A new document starts from its "make a copy" link
-(`https://docs.google.com/spreadsheets/d/<template id>/copy`); then replace
-the config block of Code.gs with the new folio's build and run
-installTriggers.
+(`https://docs.google.com/spreadsheets/d/<template id>/copy`); then the agent writes the new document's Config tab, and the owner runs
+installTriggers. The script in the template needs no change.
+
+**Locks in a template and its copies** (owner, 2026-10-31): every cell is
+locked to the owner except the blue, human-controlled columns. That covers
+the headers, the grey mechanical and green agent-derived columns, the
+Config tab and the hidden TOC. The owner adds editors to the orange
+Ready-for-agent and Ready-for-merge columns of a copy when the document has
+editors.
 
 | mode | template (owned by informatics.avengers) | make a copy |
 |---|---|---|

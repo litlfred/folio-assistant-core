@@ -1,8 +1,11 @@
 /**
- * Build a public-comment review sheet's Apps Script (`Code.gs`) for one folio.
+ * The review sheet's Apps Script, and one document's Config tab for it.
  *
- * The template, `review-sheet.gs`, is the same for every review. What differs
- * is read here from the folio and written into the script as data:
+ * Owner, 2026-10-31 (option C): ONE generic script for every document. It is
+ * `review-sheet.gs` as is, stamped with its commit and made plain ASCII
+ * (`--script`). What differs per document is written into the sheet's Config
+ * tab, visible and locked to the owner, as rows of JSON (`--config`), read
+ * here from the folio:
  *
  * - `review/public-comment/sheet-sync.json`, the folio's settings (tab and
  *   column names, the draft-PDF and comment-page link prefixes, the named
@@ -13,7 +16,7 @@
  *   page, and the printed-to-PDF page offset.
  *
  *   bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts \
- *     --repo . [--config review/public-comment/sheet-sync.json] [--out Code.gs]
+ *     [--script Code.gs] [--repo . --config review/public-comment/sheet-sync.json --out config-rows.json]
  *
  * Skill: `review-sheet-script`.
  */
@@ -217,7 +220,10 @@ export function buildData(a: Anchors, m: LineMap, cfg: SheetSyncConfig) {
   return { K, ABBR, LP, OFFSET: offset, MAX: max };
 }
 
-export function buildScript(repo: string, cfgPath: string): string {
+/** One document's settings for the generic script: what its Config tab holds. */
+export type SheetConfig = { CFG: Record<string, string>; COLS: Record<string, Record<string, string>>; DATA: unknown };
+
+export function buildConfig(repo: string, cfgPath: string): SheetConfig {
   const cfg: SheetSyncConfig = JSON.parse(readFileSync(join(repo, cfgPath), "utf8"));
   const a: Anchors = JSON.parse(readFileSync(join(repo, cfg.anchors), "utf8"));
   let CFG: Record<string, string>, COLS: Record<string, Record<string, string>>, data: unknown;
@@ -241,18 +247,31 @@ export function buildScript(repo: string, cfgPath: string): string {
     };
   }
   CFG = { SOURCE: cfgPath, ...(cfg.sheet ? { SHEET: cfg.sheet } : {}), ...CFG };
+  return { CFG, COLS, DATA: data };
+}
+
+/** A Sheets cell holds at most 50,000 characters; stay well under. */
+const CHUNK = 40_000;
+
+/**
+ * The Config tab's rows: a header, then CFG, COLS and DATA, each as JSON with
+ * a leading "|" so a sheet never reads it as a number or formula, a long
+ * value continued on the next rows under the same key.
+ */
+export function configRows(c: SheetConfig): string[][] {
+  const rows: string[][] = [["Key", "Value (JSON, written by the agent from sheet-sync.json; do not edit)"]];
+  for (const key of ["CFG", "COLS", "DATA"] as const) {
+    const json = JSON.stringify(c[key]);
+    for (let i = 0; i === 0 || i < json.length; i += CHUNK) rows.push([key, "|" + json.slice(i, i + CHUNK)]);
+  }
+  return rows;
+}
+
+/** The one script every review sheet runs: the template, stamped with its commit. */
+export function buildScript(): string {
   const here = dirname(fileURLToPath(import.meta.url));
   const template = readFileSync(join(here, "review-sheet.gs"), "utf8");
-  const block = [
-    `// Built from ${cfgPath} with folio-assistant-core tools/review-sheet-sync at ${templateCommit(here)}.`,
-    `const CFG = ${JSON.stringify(CFG, null, 2)};`,
-    `const COLS = ${JSON.stringify(COLS, null, 2)};`,
-    cfg.mode === "drafting"
-      ? "// Table of contents: [dropdown name, anchor on the document page]."
-      : "// Section key -> [label, PDF page]; abbreviations; PDF page -> [page, first line, last line].",
-    `const DATA = ${JSON.stringify(data)};`,
-  ].join("\n");
-  return asciiOnly(template.replace("/*@@CONFIG@@*/", block));
+  return asciiOnly(template.replace("/*@@VERSION@@*/", `// folio-assistant-core tools/review-sheet-sync at ${templateCommit(here)}.`));
 }
 
 /**
@@ -265,14 +284,27 @@ export const asciiOnly = (s: string) =>
 
 if (import.meta.main) {
   const arg = (f: string) => { const i = process.argv.indexOf(f); return i > 0 ? process.argv[i + 1] : undefined; };
-  const repo = resolve(arg("--repo") ?? ".");
-  const cfg = arg("--config") ?? "review/public-comment/sheet-sync.json";
-  if (!existsSync(join(repo, cfg))) {
-    console.error(`no ${cfg} in ${repo}: write one first (skill review-sheet-script)`);
+  const sha = (x: string) => createHash("sha256").update(x).digest("hex");
+  const script = arg("--script");
+  if (script) {
+    const out = buildScript();
+    writeFileSync(script, out);
+    console.error(`wrote ${script} (${out.length} bytes, sha256 ${sha(out)})`);
+  }
+  const cfg = arg("--config");
+  if (cfg) {
+    const repo = resolve(arg("--repo") ?? ".");
+    if (!existsSync(join(repo, cfg))) {
+      console.error(`no ${cfg} in ${repo}: write one first (skill review-sheet-script)`);
+      process.exit(2);
+    }
+    const rows = `${JSON.stringify(configRows(buildConfig(repo, cfg)), null, 1)}\n`;
+    const to = arg("--out");
+    if (to) { writeFileSync(to, rows); console.error(`wrote ${to}: the Config tab's rows`); }
+    else process.stdout.write(rows);
+  }
+  if (!script && !cfg) {
+    console.error("usage: build-review-sheet-script.ts [--script Code.gs] [--repo <folio>] [--config review/<mode>/sheet-sync.json] [--out config-rows.json]");
     process.exit(2);
   }
-  const out = buildScript(repo, cfg);
-  const to = arg("--out");
-  if (to) { writeFileSync(to, out); console.error(`wrote ${to} (${out.length} bytes, sha256 ${createHash("sha256").update(out).digest("hex")})`); }
-  else process.stdout.write(out);
 }
