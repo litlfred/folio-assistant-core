@@ -197,7 +197,10 @@ made before 2026-10-31 gains the three columns at the right of the Agent
 for agent to Y ... i expected Staging review to get a stale warning"). The PR
 has not changed yet when an Editor sends a row back, so the commit check above
 passes. The script records, as a document property `ready:<CS>`, the time it
-first sees a row's Ready for agent at Yes (cleared on No). When that time is
+first sees a row's Ready for agent at Yes (cleared on No). A Yes it first sees
+on a row the agent has already completed counts from that completion instead,
+since the script cannot know when it was set: a freshly pasted script would
+otherwise flag work the agent had already done (2026-10-31, CS-001). When that time is
 later than **Staging built**, after the deploy checks, it writes `⚠ missing
 feedback from <time>`: the preview still shows the PR, but not the feedback an
 Editor has just sent to the agent (owner, 2026-10-31: "requested from whom?

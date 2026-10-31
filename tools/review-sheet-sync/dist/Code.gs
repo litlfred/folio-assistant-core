@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 f0c4c07970cc16d9.
+// folio-assistant-core tools/review-sheet-sync at template sha256 f65f698be171fc5d.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -54,7 +54,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 f0c4c07970cc16d9';
+const SCRIPT_VERSION = 'template sha256 f65f698be171fc5d';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
   'in the function list (next to Run and Debug), then press Run.';
@@ -1171,7 +1171,7 @@ function refreshDraft(rows) {
   // When each row's Ready for agent turned Yes (owner, 2026-10-31: "i just
   // set Ready for agent to Y ... expected Staging review to get a stale
   // warning"). Kept per change set as "ready:CS-001" = the time, cleared on
-  // No; a Yes first seen by the script counts from then.
+  // No.
   const readyCol = col(fb, 'Ready for agent'), readyAt = {};
   if (readyCol >= 0) {
     const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
@@ -1180,8 +1180,13 @@ function refreshDraft(rows) {
       if (!cs) return;
       const key = 'ready:' + cs, was = props.getProperty(key);
       if (/^yes$/i.test(String(r[readyCol]).trim())) {
-        if (!was && want(k)) props.setProperty(key, now);
-        readyAt[cs] = was || (want(k) ? now : '');
+        // A Yes the script first sees on a row the agent has already worked
+        // (the script was just installed or re-pasted) counts from the
+        // agent's last completion, not from now: it may already be answered.
+        const done = (prOf[cs] || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
+        const first = done.length ? new Date(Math.max.apply(null, done)).toISOString().slice(0, 16).replace('T', ' ') + 'Z' : now;
+        if (!was && want(k)) props.setProperty(key, first);
+        readyAt[cs] = was || (want(k) ? first : '');
       } else if (was && want(k)) props.deleteProperty(key);
     });
   }

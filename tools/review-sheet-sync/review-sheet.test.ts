@@ -564,6 +564,17 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(live()[0].editors).toEqual(["owner@x.example"]);
   });
 
+  test("a Yes first seen on a row the agent already completed counts from that completion", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const fbRows = t["Contributor Feedback"].rows;
+    fbRows[0].push("Ready for agent");
+    fbRows.forEach((r, i) => i && r.push(i === 1 ? "Yes" : ""));
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    expect(rt2.props["ready:CS-004"]).toBe("2026-10-30 23:40Z");
+    expect((rt2.written["Contributor Feedback"]["Agentic status"][0][0] as Rich).text.startsWith("Waiting")).toBe(false);
+  });
+
   test("any filled row gets a Change-set; one holding only No does not", () => {
     const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
     const fbRows = t["Contributor Feedback"].rows;
