@@ -56,10 +56,10 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
   const props: Record<string, string> = {};
   // A write lands at its rows: a whole column is the array of its rows from
   // row 2; a one-row write fills only its place.
-  // A legend row ("Colour key ...") above the header moves the data down.
+  // A legend row ("Instructions", or the older "Colour key") above the header moves the data down.
   const hdr = (name: string) => {
     let h = 0;
-    while (h < tabs[name].rows.length - 1 && /^colou?r key/i.test(tabs[name].rows[h][0])) h++;
+    while (h < tabs[name].rows.length - 1 && /^(instructions|colou?r key)/i.test(tabs[name].rows[h][0])) h++;
     return h;
   };
   const put = (name: string, h: string, r: number, v: unknown[][]) => {
@@ -475,7 +475,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(rt2.written["Contributor Feedback"]["Change-set"]).toEqual([["CS-004"], ["CS-005"], [""], ["CS-006"]]);
   });
 
-  test("a Colour key row above the header changes nothing the script writes, and edits and locks start below it", () => {
+  test("an Instructions row above the header changes nothing the script writes, and edits and locks start below it", () => {
     const rows = dRows.map((r) => (r[0] === "EDITORS" ? ["EDITORS", "a@x.example"] : r));
     const plain = withConfig(draftTabs(), rows) as Record<string, { id: number; rows: string[][]; prot?: Prot[] }>;
     const keyed = withConfig(draftTabs(), rows) as Record<string, { id: number; rows: string[][]; prot?: Prot[] }>;
@@ -484,7 +484,7 @@ describe("review-sheet.gs in drafting mode", () => {
       t["Contributor Feedback"].rows.forEach((r, i) => i && r.push(""));
     }
     const fbRows = keyed["Contributor Feedback"].rows;
-    fbRows.unshift(["Colour key: Blue = you, Green = agent", ...fbRows[0].slice(1).map(() => "")]);
+    fbRows.unshift(["Instructions", ...fbRows[0].slice(1).map(() => "")]);
     const a = runtime(plain), b = runtime(keyed);
     load(code, a.g).refreshAll();
     load(code, b.g).refreshAll();

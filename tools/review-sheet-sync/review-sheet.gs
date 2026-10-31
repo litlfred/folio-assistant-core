@@ -318,11 +318,12 @@ function refreshLocked() {
 // ---------- sheet helpers ----------
 
 /**
- * Rows above the header whose first cell starts "Colour key" are a legend for
- * people: the header is the first row after them, and `top` is the sheet row
- * of the first data row (2 with no legend). Every write goes through `top`.
+ * Rows above the header whose first cell starts "Instructions" (or, before
+ * 2026-10-31 09:30Z, "Colour key") are for people: the header is the first row
+ * after them, and `top` is the sheet row of the first data row (2 with none).
+ * Every write goes through `top`.
  */
-const LEGEND_RE = /^colou?r key\b/i;
+const LEGEND_RE = /^(instructions|colou?r key)\b/i;
 function legendCount(firstCells) {
   let h = 0;
   while (h < firstCells.length - 1 && LEGEND_RE.test(String(firstCells[h]).trim())) h++;

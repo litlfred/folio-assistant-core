@@ -318,9 +318,9 @@ const CHUNK = 40_000;
  * installTriggers box shows the dropdown steps with the exact range.
  */
 /**
- * The colour key, one line per colour, worded for the sheet's mode. The legend
- * row above each tab's header (first cell "Colour key") carries the same words
- * over its columns; the script skips that row (owner, 2026-10-31).
+ * The colour key, one line per colour, worded for the sheet's mode. The
+ * Instructions row above each tab's header carries the same words; the script
+ * skips that row (owner, 2026-10-31).
  */
 export function colourKey(c: SheetConfig): { blue: string; green: string; orange: string; grey: string } {
   // Process roles, not job titles: who sits on the committee is the sheet's business (owner, 2026-10-31).
@@ -346,7 +346,7 @@ export function guideSteps(c: SheetConfig): string[] {
   const staging = (drafting ? c.COLS.draft?.staging : c.COLS.rcs?.staging) ?? "Staging review";
   const steps = [
     "How this sheet works (for everyone):",
-    "Colours, shown in the Colour key row above each tab's header:",
+    "Colours, shown in the Instructions row above each tab's header:",
     `   • ${k.blue}`,
     `   • ${k.green}`,
     `   • ${k.orange}`,

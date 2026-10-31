@@ -440,9 +440,9 @@ rewrites the tab, and the emails never go into `sheet-sync.json`, which is
 committed. To delegate who decides, the owner can add a delegate to the Config
 tab's protection, or send the agent the list.
 
-**The colour key row and the GUIDE row** (owner, 2026-10-31). A row above
-the header of each people's tab (RPC, RCS, Contributor Feedback) says what the
-colours mean, worded for the mode by `colourKey()` in the builder:
+**The Instructions row and the GUIDE row** (owner, 2026-10-31). A row above
+the header of each people's tab (RPC, RCS, Contributor Feedback), frozen with
+it and grey like it, says what the colours mean and how the workflow runs, worded for the mode by `colourKey()` in the builder:
 
 - **Blue**: input by people, named by their process role: the Feedback Review
   Committee in public-comment mode (the DPI-H RA's architects hold it, but the
@@ -451,9 +451,10 @@ colours mean, worded for the mode by `colourKey()` in the builder:
 - **Orange**: workflow, set by an Editor (the `Ready for ...` columns);
 - **Grey**: mechanical, kept by the script or the source.
 
-Its first cell starts `Colour key`, and each label sits over its colour's
-columns, filled with that colour. The script reads any leading rows whose first
-cell starts `Colour key` as a legend: the header is the row after them, and
+Its first cell reads `Instructions`, and the text is one merged cell across the
+rest of the row, the colour names in their colours. The script reads any leading
+rows whose first cell starts `Instructions` (or `Colour key`, the first name) as
+for people: the header is the row after them, and
 every write, lock and edit range starts below the header. Insert the row only
 after the sheet runs a Code.gs that knows it; an older script reads the legend
 as the header and finds no columns. Filter views and protections start at the
