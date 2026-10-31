@@ -377,10 +377,12 @@ be confirmed">
       <bpmndi:BPMNShape id="Task_ConfirmImport_di" bpmnElement="Task_ConfirmImport"><dc:Bounds x="1160" y="115" width="150" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_DetectModality_di" bpmnElement="Task_DetectModality"><dc:Bounds x="330" y="260" width="150" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReadFacts_di" bpmnElement="Task_ReadFacts"><dc:Bounds x="520" y="260" width="150" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_Intent_di" bpmnElement="Gateway_Intent" isMarkerVisible="true"><dc:Bounds x="730" y="275" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="600" y="345" width="140" height="27" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_Intent_di" bpmnElement="Gateway_Intent" isMarkerVisible="true"><dc:Bounds x="730" y="275" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="784" y="235" width="140" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ScanRepo_di" bpmnElement="Task_ScanRepo"><dc:Bounds x="880" y="350" width="150" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CreateRepo_di" bpmnElement="Task_CreateRepo"><dc:Bounds x="880" y="440" width="150" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_HandOff_di" bpmnElement="EndEvent_HandOff"><dc:Bounds x="900" y="537" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_HandOff_di" bpmnElement="EndEvent_HandOff"><dc:Bounds x="900" y="537" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="940" y="528" width="90" height="54" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Scaffold_di" bpmnElement="Task_Scaffold"><dc:Bounds x="1320" y="260" width="150" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_SeedPlan_di" bpmnElement="Task_SeedPlan"><dc:Bounds x="1320" y="885" width="150" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ProvisionGhPages_di" bpmnElement="Task_ProvisionGhPages"><dc:Bounds x="1320" y="1000" width="150" height="80" /></bpmndi:BPMNShape>
@@ -394,7 +396,7 @@ be confirmed">
       <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1"><di:waypoint x="276" y="155" /><di:waypoint x="405" y="155" /><di:waypoint x="405" y="260" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2"><di:waypoint x="480" y="300" /><di:waypoint x="520" y="300" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3"><di:waypoint x="670" y="300" /><di:waypoint x="730" y="300" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_ask_di" bpmnElement="Flow_ask"><di:waypoint x="755" y="275" /><di:waypoint x="755" y="155" /><di:waypoint x="790" y="155" /><bpmndi:BPMNLabel><dc:Bounds x="765" y="212" width="30" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ask_di" bpmnElement="Flow_ask"><di:waypoint x="755" y="275" /><di:waypoint x="755" y="155" /><di:waypoint x="790" y="155" /><bpmndi:BPMNLabel><dc:Bounds x="759" y="206.5" width="30" height="17" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_answer_di" bpmnElement="Flow_answer"><di:waypoint x="865" y="195" /><di:waypoint x="865" y="225" /><di:waypoint x="595" y="225" /><di:waypoint x="595" y="260" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_overlay_di" bpmnElement="Flow_overlay"><di:waypoint x="755" y="325" /><di:waypoint x="755" y="390" /><di:waypoint x="880" y="390" /><bpmndi:BPMNLabel><dc:Bounds x="650" y="372" width="55" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_newrepo_di" bpmnElement="Flow_newrepo"><di:waypoint x="755" y="325" /><di:waypoint x="755" y="480" /><di:waypoint x="880" y="480" /><bpmndi:BPMNLabel><dc:Bounds x="645" y="462" width="65" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
@@ -416,8 +418,12 @@ be confirmed">
       <bpmndi:BPMNEdge id="Flow_done2_di" bpmnElement="Flow_done2"><di:waypoint x="2050" y="1150"/><di:waypoint x="2120" y="1150"/><di:waypoint x="2120" y="1040"/><di:waypoint x="2180" y="1040"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_done3_di" bpmnElement="Flow_done3"><di:waypoint x="2050" y="1260"/><di:waypoint x="2150" y="1260"/><di:waypoint x="2150" y="1040"/><di:waypoint x="2180" y="1040"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Call_BeanOpen_di" bpmnElement="Call_BeanOpen"><dc:Bounds x="1335" y="605" width="120" height="80"/></bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SF_Bean_1_di" bpmnElement="SF_Bean_1"><di:waypoint x="1395" y="765"/><di:waypoint x="1395" y="885"/></bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="GW_BeanYours_di" bpmnElement="GW_BeanYours" isMarkerVisible="true"><dc:Bounds x="1370" y="715" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SF_Bean_1_di" bpmnElement="SF_Bean_1"><di:waypoint x="1395" y="765"/><di:waypoint x="1395" y="885"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1399" y="816.5" width="90" height="17" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="GW_BeanYours_di" bpmnElement="GW_BeanYours" isMarkerVisible="true"><dc:Bounds x="1370" y="715" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1276" y="722.5" width="90" height="35" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_BeanNotYours_di" bpmnElement="End_BeanNotYours"><dc:Bounds x="1450" y="722" width="36" height="36"/></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SF_Bean_2_di" bpmnElement="SF_Bean_2"><di:waypoint x="1395" y="685"/><di:waypoint x="1395" y="715"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SF_Bean_3_di" bpmnElement="SF_Bean_3"><di:waypoint x="1420" y="740"/><di:waypoint x="1450" y="740"/></bpmndi:BPMNEdge>

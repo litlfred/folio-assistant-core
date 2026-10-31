@@ -168,12 +168,14 @@ The order of the two writes is the content of the diagram. The CONTENT relocates
 
       <bpmndi:BPMNShape id="Shape_Start_Fishbone" bpmnElement="Start_Fishbone">
         <dc:Bounds x="220" y="122" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="260" y="113" width="90" height="54" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_GW_Confirmed" bpmnElement="GW_Confirmed" isMarkerVisible="true">
         <dc:Bounds x="480" y="115" width="50" height="50"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_End_Unchanged" bpmnElement="End_Unchanged">
         <dc:Bounds x="1000" y="122" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1040" y="113.5" width="90" height="53" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_AskConfirm" bpmnElement="A_AskConfirm">
         <dc:Bounds x="300" y="250" width="140" height="80"/>
@@ -209,6 +211,7 @@ The order of the two writes is the content of the diagram. The CONTENT relocates
         <di:waypoint x="505" y="165"/>
         <di:waypoint x="505" y="430"/>
         <di:waypoint x="560" y="430"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="509" y="288.5" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_No" bpmnElement="F_No">
         <di:waypoint x="530" y="140"/>

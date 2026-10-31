@@ -162,6 +162,7 @@ The rule the diagram holds is in the first activity's own wording: the note goes
         <di:waypoint x="345" y="205"/>
         <di:waypoint x="345" y="380"/>
         <di:waypoint x="620" y="380"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="349" y="300.25" width="90" height="72" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Created" bpmnElement="F_Created">
         <di:waypoint x="570" y="180"/>

@@ -241,13 +241,13 @@ Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is r
   <bpmndi:BPMNDiagram id="BPMNDiagram_ContentChangeReviewCommittee">
     <bpmndi:BPMNPlane id="BPMNPlane_ContentChangeReviewCommittee" bpmnElement="Collaboration_ContentChangeReviewCommittee">
       <bpmndi:BPMNShape id="Participant_ContentChangeReviewCommittee_di" bpmnElement="Participant_ContentChangeReviewCommittee" isHorizontal="true">
-        <dc:Bounds x="100" y="80" width="2440" height="430" />
+        <dc:Bounds x="100" y="80" width="2480" height="430" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Reviewer_di" bpmnElement="Lane_Reviewer" isHorizontal="true">
-        <dc:Bounds x="130" y="80" width="2410" height="280" />
+        <dc:Bounds x="130" y="80" width="2450" height="280" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Coordinator_di" bpmnElement="Lane_Coordinator" isHorizontal="true">
-        <dc:Bounds x="130" y="360" width="2410" height="150" />
+        <dc:Bounds x="130" y="360" width="2450" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Start_Reviewer_di" bpmnElement="Start_Reviewer">
         <dc:Bounds x="242" y="137" width="36" height="36" />
@@ -256,49 +256,52 @@ Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is r
         <dc:Bounds x="370" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_IngestComments_di" bpmnElement="Task_IngestComments">
-        <dc:Bounds x="540" y="395" width="120" height="80" />
+        <dc:Bounds x="530" y="395" width="160" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_SliceAndAssign_di" bpmnElement="Task_SliceAndAssign">
-        <dc:Bounds x="710" y="395" width="120" height="80" />
+        <dc:Bounds x="730" y="395" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Call_ReviewSlices_di" bpmnElement="Call_ReviewSlices">
-        <dc:Bounds x="880" y="115" width="120" height="80" />
+        <dc:Bounds x="900" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Withdraw_di" bpmnElement="GW_Withdraw">
-        <dc:Bounds x="1085" y="130" width="50" height="50" />
+        <dc:Bounds x="1115" y="130" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1095" y="91" width="90" height="35" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_WithdrawComment_di" bpmnElement="Task_WithdrawComment">
-        <dc:Bounds x="1050" y="245" width="120" height="80" />
+        <dc:Bounds x="1060" y="245" width="160" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Disputed_di" bpmnElement="GW_Disputed">
-        <dc:Bounds x="1255" y="130" width="50" height="50" />
+        <dc:Bounds x="1295" y="130" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1275" y="90" width="90" height="36" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Call_Adjudication_di" bpmnElement="Call_Adjudication">
-        <dc:Bounds x="1220" y="245" width="120" height="80" />
+        <dc:Bounds x="1260" y="245" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Covered_di" bpmnElement="GW_Covered">
-        <dc:Bounds x="1425" y="410" width="50" height="50" />
+        <dc:Bounds x="1465" y="410" width="50" height="50" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReviewUses_di" bpmnElement="Task_ReviewUses">
-        <dc:Bounds x="1560" y="115" width="120" height="80" />
+        <dc:Bounds x="1600" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReviewImpact_di" bpmnElement="Task_ReviewImpact">
-        <dc:Bounds x="1730" y="115" width="120" height="80" />
+        <dc:Bounds x="1770" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Approved_di" bpmnElement="GW_Approved">
-        <dc:Bounds x="1935" y="130" width="50" height="50" />
+        <dc:Bounds x="1975" y="130" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1955" y="90" width="90" height="36" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_RequestChanges_di" bpmnElement="Task_RequestChanges">
-        <dc:Bounds x="1900" y="245" width="120" height="80" />
+        <dc:Bounds x="1940" y="245" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_ChangesRequested_di" bpmnElement="End_ChangesRequested">
-        <dc:Bounds x="2112" y="267" width="36" height="36" />
+        <dc:Bounds x="2152" y="267" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Approve_di" bpmnElement="Task_Approve">
-        <dc:Bounds x="2070" y="115" width="120" height="80" />
+        <dc:Bounds x="2110" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_Reviewer_di" bpmnElement="End_Reviewer">
-        <dc:Bounds x="2282" y="137" width="36" height="36" />
+        <dc:Bounds x="2322" y="137" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="r1_di" bpmnElement="r1">
         <di:waypoint x="278" y="155" />
@@ -308,85 +311,85 @@ Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is r
         <di:waypoint x="490" y="155" />
         <di:waypoint x="515" y="155" />
         <di:waypoint x="515" y="435" />
-        <di:waypoint x="540" y="435" />
+        <di:waypoint x="530" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c1_di" bpmnElement="c1">
-        <di:waypoint x="660" y="435" />
-        <di:waypoint x="710" y="435" />
+        <di:waypoint x="690" y="435" />
+        <di:waypoint x="730" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c2_di" bpmnElement="c2">
-        <di:waypoint x="830" y="435" />
-        <di:waypoint x="855" y="435" />
-        <di:waypoint x="855" y="155" />
-        <di:waypoint x="880" y="155" />
+        <di:waypoint x="850" y="435" />
+        <di:waypoint x="875" y="435" />
+        <di:waypoint x="875" y="155" />
+        <di:waypoint x="900" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c3_di" bpmnElement="c3">
-        <di:waypoint x="1000" y="155" />
-        <di:waypoint x="1085" y="155" />
+        <di:waypoint x="1020" y="155" />
+        <di:waypoint x="1115" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c4_di" bpmnElement="c4">
-        <di:waypoint x="1110" y="180" />
-        <di:waypoint x="1110" y="245" />
+        <di:waypoint x="1140" y="180" />
+        <di:waypoint x="1140" y="245" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c5_di" bpmnElement="c5">
-        <di:waypoint x="1135" y="155" />
-        <di:waypoint x="1255" y="155" />
+        <di:waypoint x="1165" y="155" />
+        <di:waypoint x="1295" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c6_di" bpmnElement="c6">
-        <di:waypoint x="1170" y="285" />
-        <di:waypoint x="1212" y="285" />
-        <di:waypoint x="1212" y="155" />
-        <di:waypoint x="1255" y="155" />
+        <di:waypoint x="1220" y="285" />
+        <di:waypoint x="1257.5" y="285" />
+        <di:waypoint x="1257.5" y="155" />
+        <di:waypoint x="1295" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c7_di" bpmnElement="c7">
-        <di:waypoint x="1280" y="180" />
-        <di:waypoint x="1280" y="245" />
+        <di:waypoint x="1320" y="180" />
+        <di:waypoint x="1320" y="245" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c9_di" bpmnElement="c9">
-        <di:waypoint x="1305" y="155" />
-        <di:waypoint x="1450" y="155" />
-        <di:waypoint x="1450" y="410" />
+        <di:waypoint x="1345" y="155" />
+        <di:waypoint x="1490" y="155" />
+        <di:waypoint x="1490" y="410" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c10_di" bpmnElement="c10">
-        <di:waypoint x="1280" y="325" />
-        <di:waypoint x="1280" y="435" />
-        <di:waypoint x="1425" y="435" />
+        <di:waypoint x="1320" y="325" />
+        <di:waypoint x="1320" y="435" />
+        <di:waypoint x="1465" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c8_di" bpmnElement="c8">
-        <di:waypoint x="1450" y="460" />
-        <di:waypoint x="1450" y="498" />
-        <di:waypoint x="770" y="498" />
-        <di:waypoint x="770" y="475" />
+        <di:waypoint x="1490" y="460" />
+        <di:waypoint x="1490" y="498" />
+        <di:waypoint x="790" y="498" />
+        <di:waypoint x="790" y="475" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c11_di" bpmnElement="c11">
-        <di:waypoint x="1475" y="435" />
-        <di:waypoint x="1517" y="435" />
-        <di:waypoint x="1517" y="155" />
-        <di:waypoint x="1560" y="155" />
+        <di:waypoint x="1515" y="435" />
+        <di:waypoint x="1557" y="435" />
+        <di:waypoint x="1557" y="155" />
+        <di:waypoint x="1600" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c11b_di" bpmnElement="c11b">
-        <di:waypoint x="1680" y="155" />
-        <di:waypoint x="1730" y="155" />
+        <di:waypoint x="1720" y="155" />
+        <di:waypoint x="1770" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="r3_di" bpmnElement="r3">
-        <di:waypoint x="1850" y="155" />
-        <di:waypoint x="1935" y="155" />
+        <di:waypoint x="1890" y="155" />
+        <di:waypoint x="1975" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="r4_di" bpmnElement="r4">
-        <di:waypoint x="1960" y="180" />
-        <di:waypoint x="1960" y="245" />
+        <di:waypoint x="2000" y="180" />
+        <di:waypoint x="2000" y="245" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="r5_di" bpmnElement="r5">
-        <di:waypoint x="2020" y="285" />
-        <di:waypoint x="2112" y="285" />
+        <di:waypoint x="2060" y="285" />
+        <di:waypoint x="2152" y="285" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="r6_di" bpmnElement="r6">
-        <di:waypoint x="1985" y="155" />
-        <di:waypoint x="2070" y="155" />
+        <di:waypoint x="2025" y="155" />
+        <di:waypoint x="2110" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="r8_di" bpmnElement="r8">
-        <di:waypoint x="2190" y="155" />
-        <di:waypoint x="2282" y="155" />
+        <di:waypoint x="2230" y="155" />
+        <di:waypoint x="2322" y="155" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
