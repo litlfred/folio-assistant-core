@@ -983,13 +983,13 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
 
   test("Staging review warns when Ready for agent was set after the build", () => {
     expect(fns.stagingWarning("u", built, [pr])).toBe("");
-    expect(fns.stagingWarning("u", built, [pr], "2026-10-31 11:30Z")).toContain("update requested 2026-10-31 11:30Z");
+    expect(fns.stagingWarning("u", built, [pr], "2026-10-31 11:30Z")).toBe("\u26a0 missing feedback from 2026-10-31 11:30Z");
     expect(fns.stagingWarning("u", built, [pr], "2026-10-31 08:00Z")).toBe("");
   });
 
   test("Agentic status says the row is queued, then who has it", () => {
     const q = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z" });
-    expect(q.text.split("\n")[0]).toBe("Queued for the agent (Ready for agent set 2026-10-31 11:30Z)");
+    expect(q.text.split("\n")[0]).toBe("Waiting on the agent since 2026-10-31 11:30Z (Ready for agent set)");
     expect(q.text).toContain("dth-hrh#7");
     const w = fns.agenticCell("Working", [pr], { readyAt: "2026-10-31 11:30Z", talk: "https://claude.ai/code/x" });
     expect(w.text.startsWith("An agent is working on it: conversation\n")).toBe(true);
