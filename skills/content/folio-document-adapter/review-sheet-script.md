@@ -607,6 +607,43 @@ Google.
 Screenshots of each step are to be added from the owner's DTH-PC install
 (the agent cannot sign in to Google to take them).
 
+### One library, a stub in each sheet (owner, 2026-10-31)
+
+Pasting Code.gs into every sheet on every change was "annoying"; the owner
+chose **a library at its latest code (HEAD)**. The code lives once, in a
+standalone Apps Script project, **Folio Review Library**, owned by the sheets'
+owner. Each sheet keeps only
+[`dist/Stub.gs`](../../../tools/review-sheet-sync/dist/Stub.gs), which never
+changes.
+
+Setting the library up, once:
+
+1. At script.google.com, **New project**; name it `Folio Review Library`.
+2. Replace its code with [`dist/Code.gs`](../../../tools/review-sheet-sync/dist/Code.gs); save.
+3. **Project settings** (the gear): copy the **Script ID**.
+
+Each sheet, once (templates first, so copies inherit it):
+
+1. Extensions, then Apps Script. Replace Code.gs with `dist/Stub.gs`; save.
+2. **Libraries +**: paste the Script ID, **Look up**, Version **HEAD
+   (Development mode)**, Identifier `Review`, **Add**.
+3. In the sheet, **Review links > Install**.
+
+An update is one paste of the new `dist/Code.gs` into the library. Every sheet
+runs it from its next open, edit or timer. "Which version is this?" reports the
+library's stamp.
+
+Why the stub hands its services over (`Review.init`): a library has no
+spreadsheet of its own, so its document properties, document lock and
+triggers would not be the sheet's. The stub passes its own
+`PropertiesService`, `LockService` and `ScriptApp`, and the triggers it
+installs name the stub's functions. Pasted straight into a sheet, Code.gs still
+works alone: without `init` it uses the sheet's services.
+
+HEAD runs only for people with edit access to the library. The triggers run as
+the owner who installed them, so that is the owner alone; an editor who uses
+**Refresh now** by hand needs the library shared with them as an editor.
+
 ### Linking a sheet to a repository
 
 A copied sheet knows nothing about its document until the agent links it

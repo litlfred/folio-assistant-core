@@ -1008,3 +1008,19 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
     expect(fns.agenticCell("Done", [pr]).text.startsWith("dth-hrh#7")).toBe(true);
   });
 });
+
+describe("the library stub each sheet keeps (owner, 2026-10-31: library, latest code)", () => {
+  const stub = readText(join(import.meta.dir, "dist", "Stub.gs"), "utf8");
+  const stubFns = [...stub.matchAll(/^function (\w+)\(/gm)].map((m) => m[1]);
+  test("every library function the stub calls exists in Code.gs", () => {
+    for (const [, f] of stub.matchAll(/Review\.(\w+)\(/g)) expect(code).toMatch(new RegExp(`^function ${f}\\(`, "m"));
+  });
+  test("every menu item and trigger handler names a stub function", () => {
+    const named = [...code.matchAll(/addItem\('[^']*', '(\w+)'\)/g), ...code.matchAll(/newTrigger\('(\w+)'\)/g)].map((m) => m[1]);
+    expect(named.length).toBeGreaterThan(3);
+    for (const f of named) expect(stubFns).toContain(f);
+  });
+  test("dist/Stub.gs is current", () => {
+    expect(stub).toBe(readText(join(import.meta.dir, "stub.gs"), "utf8"));
+  });
+});
