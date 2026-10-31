@@ -175,51 +175,11 @@
       "status": "candidate"
     },
     {
-      "id": "process_contentchangereview.call_adjudication",
-      "prefLabel": "Adjudicate the disagreement [adjudication]",
-      "definition": "adjudication.bpmn. When the editor and a reviewer, or two reviewers, disagree about a finding, an adjudicator settles it and records why; the review comment moves to `adjudicated` with the Decision that closed it. Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is right and the author addresses it; `withdrawn` — the finding is wrong and the comment closes. Recorded on the comment, not branched: either way the flow goes on to the coverage check.",
-      "notation": "Call_Adjudication",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_Adjudication",
-      "status": "candidate"
-    },
-    {
       "id": "process_contentchangereview.call_beanclose",
       "prefLabel": "Close the bean [bean-close]",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose",
       "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_BeanClose",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.call_beanclose_2",
-      "prefLabel": "Close the bean [bean-close]",
-      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
-      "notation": "Call_BeanClose_2",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_BeanClose_2",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.call_beanclose_3",
-      "prefLabel": "Close the bean [bean-close]",
-      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
-      "notation": "Call_BeanClose_3",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_BeanClose_3",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.call_beanclose_4",
-      "prefLabel": "Close the bean [bean-close]",
-      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
-      "notation": "Call_BeanClose_4",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_BeanClose_4",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.call_beanclose_5",
-      "prefLabel": "Close the bean [bean-close]",
-      "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
-      "notation": "Call_BeanClose_5",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_BeanClose_5",
       "status": "candidate"
     },
     {
@@ -231,91 +191,35 @@
       "status": "candidate"
     },
     {
-      "id": "process_contentchangereview.call_optionsanalysis",
-      "prefLabel": "Options analysis how to absorb the impact",
-      "definition": "On the edge OUT of `Task_AssessImpact` and before `Task_CommitPush`, because the impact assessment is the evidence the options are weighed against. An analysis before it would compare ways of absorbing a downstream effect nobody has measured yet; one after the commit would be a rationalisation of a choice already pushed. NOT between `Task_AssessImpact` and `Task_ReviewImpact`, although that is the handoff the work-plan named. Those two tasks are in DIFFERENT LANES with no sequence flow between them — the agent's assessment reaches the committee through `Task_CompareBeforeAfter`, not directly — so there was no edge there to interpose on. The conceptual handoff is real; the edge was not. In the Agent lane, matching `upstream-version-adoption`: this step produces the options and their trade-offs, and `GW_Approved` in the Review Committee lane is where a decision is taken. A subprocess in the reviewer's lane would read as the committee analysing its own options, which is a different process. On the trigger: reaching this call is not the same as running the whole of it. `Process_OptionsAnalysis` opens with `A_Frame`, whose trigger is `opening-brief`'s — irreversibility and surprise, not size — and leaving at that first activity is a correct outcome rather than a skipped step. A copy-edit exits immediately; a logic change that moves an indicator does not, and this is the diagram where that distinction has teeth, since `Task_EditLogic` feeds straight into the assessment.",
-      "notation": "Call_OptionsAnalysis",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_OptionsAnalysis",
+      "id": "process_contentchangereview.call_committeereview",
+      "prefLabel": "Review the change",
+      "definition": "content-change-review-committee.bpmn: compare staged against main, slice the change and review each slice, settle withdrawals and disputes, gate on coverage, review the impact, and either approve or request changes. The one judgement inside it is Call_Adjudication, whose `stands` / `withdrawn` this call accepts; public-comment, which calls this whole process, reaches it through here.",
+      "notation": "Call_CommitteeReview",
+      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_CommitteeReview",
       "status": "candidate"
     },
     {
-      "id": "process_contentchangereview.call_reviewslices",
-      "prefLabel": "Review each slice [review-task]",
-      "definition": "review-task.bpmn, once per slice, in parallel lanes by role. What kind of thing changed decides which review the slice descends into; the reviewer takes on that inner lane's role for the call only. Each reviewer gives the slice's blocks a verdict, and comments on the pull request with the `block:` tag where something needs saying.",
-      "notation": "Call_ReviewSlices",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_ReviewSlices",
+      "id": "process_contentchangereview.call_makechange",
+      "prefLabel": "Make the change",
+      "definition": "content-change-review-make.bpmn: scope the change, branch, edit content and logic, assess and absorb the downstream impact, and push.",
+      "notation": "Call_MakeChange",
+      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_MakeChange",
       "status": "candidate"
     },
     {
-      "id": "process_contentchangereview.task_approve",
-      "prefLabel": "Approve",
-      "definition": "The committee approves the change: the judgement, recorded with the evidence it rests on. Approving is not merging. They were one task (\"Approve and merge\") until bean en2d split them, because a self-authored change cannot be approved through GitHub's own review (the approver may not be the PR's author), and a merge needs the owner's explicit confirmation whoever approved.",
-      "notation": "Task_Approve",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_Approve",
+      "id": "process_contentchangereview.call_publish",
+      "prefLabel": "Merge and publish",
+      "definition": "content-change-review-publish.bpmn: merge on the owner's explicit confirmation, then remove the staging preview, rebuild main and watch it. An unmerged change keeps its preview.",
+      "notation": "Call_Publish",
+      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_Publish",
       "status": "candidate"
     },
     {
-      "id": "process_contentchangereview.task_assessimpact",
-      "prefLabel": "Assess downstream impact",
-      "definition": "Agent reviews downstream implications: - Will indicators need adjustment? - Will referral/follow-up for next visit be impacted? - Are translations affected (re-extract POT)? - Do Lean proofs still hold? skill: integration-watcher, translation-manager",
-      "notation": "Task_AssessImpact",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_AssessImpact",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_buildstaging",
-      "prefLabel": "Build staging site",
-      "definition": "feature-staging.yml triggers: 1. Regenerate docs (schema, skills, content-backed pages) 2. Render BPMN diagrams 3. Stamp build with commit SHA + timestamp + branch 4. Build Jekyll site with STAGING/ baseurl 5. Inject yellow staging banner into every HTML page",
-      "notation": "Task_BuildStaging",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_BuildStaging",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_cleanupstaging",
-      "prefLabel": "Remove STAGING/<slug>/",
-      "definition": "When the PR is merged or closed, the cleanup job removes the STAGING/<slug>/ directory from gh-pages so stale previews don't accumulate.",
-      "notation": "Task_CleanupStaging",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_CleanupStaging",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_commentpr",
-      "prefLabel": "Comment staging URL on PR",
-      "definition": "Bot comments or updates the staging URL on the PR. Includes commit SHA, branch name, and build log link, and the review list of rendered files the change alters (skill rendered-impact), each linked on the preview and on main, with any input the renderer could not place named as not known.",
-      "notation": "Task_CommentPR",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_CommentPR",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_commitpush",
-      "prefLabel": "Commit, push, update PR",
-      "definition": "Agent commits all changes to the feature branch and pushes. The feature-staging.yml workflow automatically deploys to STAGING/<branch-slug>/ and comments the URL on the PR. For a rendered change the agent also produces the before/after preview (skill before-after-preview) and links it in the PR body.",
-      "notation": "Task_CommitPush",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_CommitPush",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_comparebeforeafter",
-      "prefLabel": "Compare main vs staging",
-      "definition": "The review starts from the Change Set's RENDERED list (skill rendered-impact): every rendered file the change alters, predicted from each renderer's dependency cone and checked against the build. The reviewer opens every content page on it, not only the pages the author mentions; index files are listed but not reviewed. An input the renderer could not place is shown as not known, never as no change. Review committee opens both URLs side by side: - Main site: <pages-url>/ (current published state) - Staging: <pages-url>/STAGING/<branch-slug>/ The staging banner shows the commit SHA so they can verify what they are reviewing matches the PR. A changed figure, diagram or table is also pictured before and after on the review page, with the share of changed pixels in words (skill visual-diff, Tool folio-block-screenshots). Anything the staging job cannot picture (page chrome, scroll behaviour, a PDF page, an IG page) is in the agent's before/after preview (skill before-after-preview).",
-      "notation": "Task_CompareBeforeAfter",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_CompareBeforeAfter",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_createbranch",
-      "prefLabel": "Create feature branch",
-      "definition": "Agent creates a feature branch from main. Branch naming: feature/<short-description> Opens a PR immediately (AGENTS.md: \"open the PR at the first commit\").",
-      "notation": "Task_CreateBranch",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_CreateBranch",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_deploystaging",
-      "prefLabel": "Deploy to STAGING/<slug>/",
-      "definition": "peaceiris/actions-gh-pages deploys to gh-pages branch under STAGING/<branch-slug>/ with keep_files: true so other staging deployments and the main site are preserved.",
-      "notation": "Task_DeployStaging",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_DeployStaging",
+      "id": "process_contentchangereview.call_stagechange",
+      "prefLabel": "Stage the change",
+      "definition": "content-change-review-stage.bpmn: build and deploy the branch to its staging preview, link it on the pull request, and watch the branch's CI. Runs once per push.",
+      "notation": "Call_StageChange",
+      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Call_StageChange",
       "status": "candidate"
     },
     {
@@ -327,67 +231,11 @@
       "status": "candidate"
     },
     {
-      "id": "process_contentchangereview.task_detectscope",
-      "prefLabel": "Detect change scope & impact",
-      "definition": "Agent analyses the requested change: - Which content blocks are affected? - Are there downstream implications (indicators, referral logic, visit schedules)? - Will deterministic logic (CQL/DMN) need updating? skill: content-graph, integration-watcher",
-      "notation": "Task_DetectScope",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_DetectScope",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_editcontent",
-      "prefLabel": "Edit narrative content blocks",
-      "definition": "Agent modifies the relevant content blocks (.md files, block manifests). Validates each edit against the schema (content_validate). skill: content editing, block builders",
-      "notation": "Task_EditContent",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_EditContent",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_editlogic",
-      "prefLabel": "Edit deterministic logic (if needed)",
-      "definition": "If the content change affects decision logic, indicators, or workflows: - Update CQL expressions - Update DMN decision tables - Adjust indicator definitions skill: dak-authoring, fhir-pipeline",
-      "notation": "Task_EditLogic",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_EditLogic",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_ingestcomments",
-      "prefLabel": "Ingest tagged review comments [folio-review-comments]",
-      "definition": "Every PR conversation comment that starts with `block: <label>` becomes a `review-comment/1.0.0` todo (open), idempotently, and is published with the preview as `review-comments.json`. The staging workflow runs this on every push and on every tagged comment; the coordinator owns that it has run before slicing, because the slices are cut around what reviewers have already said. This is the `ingest` transition of REVIEW_TRANSITIONS.",
-      "notation": "Task_IngestComments",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_IngestComments",
-      "status": "candidate"
-    },
-    {
       "id": "process_contentchangereview.task_iterate",
       "prefLabel": "Iterate on author feedback",
       "definition": "Agent receives revision requests from the author and applies changes. Each push triggers a new staging deployment with updated SHA stamp. A revision push does not pass through Task_CommitPush, so for a rendered change the agent refreshes the before/after preview here (skill before-after-preview), and the next review round never reads a stale one.",
       "notation": "Task_Iterate",
       "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_Iterate",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_merge",
-      "prefLabel": "Merge, on explicit confirmation",
-      "definition": "The owner says \"merge it\", and only then is the branch merged. Merge to main triggers: 1. the main site rebuilds with the changes; 2. the staging preview's cleanup runs; 3. the review comments committed on the feature branch land on main, as the review record.",
-      "notation": "Task_Merge",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_Merge",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_rebuildmain",
-      "prefLabel": "Rebuild main site",
-      "definition": "docs-site.yml triggers on the merge commit to main, rebuilding the root of gh-pages with the accepted changes. The build SHA stamp now reflects the merged state.",
-      "notation": "Task_RebuildMain",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_RebuildMain",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_requestchanges",
-      "prefLabel": "Request changes",
-      "definition": "Committee provides feedback. PR stays open. Author and agent iterate further.",
-      "notation": "Task_RequestChanges",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_RequestChanges",
       "status": "candidate"
     },
     {
@@ -399,35 +247,11 @@
       "status": "candidate"
     },
     {
-      "id": "process_contentchangereview.task_reviewimpact",
-      "prefLabel": "Review impact assessment",
-      "definition": "Committee reviews the agent's impact assessment: - Were all downstream effects identified? - Are the indicator changes acceptable? - Does the logic change match the narrative intent?",
-      "notation": "Task_ReviewImpact",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_ReviewImpact",
-      "status": "candidate"
-    },
-    {
       "id": "process_contentchangereview.task_reviewstaging",
       "prefLabel": "Review staged rendering",
       "definition": "Author reviews the rendered feature branch at <pages-url>/STAGING/<branch-slug>/ and compares against the main site. The staging banner shows the commit SHA. The agent's before/after preview (skill before-after-preview) sits beside the URLs, with its counts and status line.",
       "notation": "Task_ReviewStaging",
       "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_ReviewStaging",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_reviewuses",
-      "prefLabel": "Review the editorial dependencies",
-      "definition": "`uses[]` is what a READER must have read to follow the block — never populated from the formal dependency graph. Once every changed block is covered, the committee checks the editorial dependencies of the change as a whole before judging its impact. Moved here from the harness's `review-narrative` by placement PR3 (bean `63wl`): reading order is a property of folio content, so the step belongs to the content process, which reaches the harness's review by calling DOWN into `review-task`.",
-      "notation": "Task_ReviewUses",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_ReviewUses",
-      "status": "candidate"
-    },
-    {
-      "id": "process_contentchangereview.task_sliceandassign",
-      "prefLabel": "Slice the change and assign reviewers",
-      "definition": "From the ChangeSet, its rendered list (skill rendered-impact: each changed rendered page is assigned like a changed block) and the heat map on the review page: cut the change into slices a reviewer can hold (usually a section, or a run of sections where the heat map clusters), and assign each slice to a review lane by what it contains — clinical content to a clinical SME, a decision table to a QC reviewer, prose to a narrative reviewer. A block that needs no review (a pure rename, say) is WAIVED here with a written reason, which is what the coverage gate counts. Re-entered from GW_Covered when coverage is incomplete: the uncovered blocks become new slices.",
-      "notation": "Task_SliceAndAssign",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_SliceAndAssign",
       "status": "candidate"
     },
     {
@@ -439,27 +263,203 @@
       "status": "candidate"
     },
     {
-      "id": "process_contentchangereview.task_watchbranchci",
-      "prefLabel": "Open the branch-watch bean [watch]",
-      "definition": "First dispatch point for a CI watcher: the feature branch has changed and a staging build now exists to watch. The watcher is DISPATCHED BY OPENING A BEAN, not by a workflow_dispatch -- per the owner on bean 29ij, this is a task/workflow initiation. That is the whole reason it is an activity rather than a line of prose. A bean makes the watch durable past the session that opened it: the container is reclaimed, and what survives is the claim. Starting the watcher and recording that it is running are ONE declared step, so the two cannot disagree about whether anything is watching. Claim rather than note: the watch is work in progress, and it is idempotent, so re-entering on a subsequent push does not duplicate it.",
-      "notation": "Task_WatchBranchCI",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_WatchBranchCI",
+      "id": "process_contentchangereviewcommittee.call_adjudication",
+      "prefLabel": "Adjudicate the disagreement [adjudication]",
+      "definition": "adjudication.bpmn. When the editor and a reviewer, or two reviewers, disagree about a finding, an adjudicator settles it and records why; the review comment moves to `adjudicated` with the Decision that closed it. Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is right and the author addresses it; `withdrawn` — the finding is wrong and the comment closes. Recorded on the comment, not branched: either way the flow goes on to the coverage check.",
+      "notation": "Call_Adjudication",
+      "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Call_Adjudication",
       "status": "candidate"
     },
     {
-      "id": "process_contentchangereview.task_watchmainci",
-      "prefLabel": "Note the main-branch watch [watch]",
-      "definition": "Second dispatch point: the change was approved and merged, and the root of the site has been rebuilt from main. This is the moment docs-site.yml failed all 30 times over two months (bean xom7) while looking exactly like a green run from inside the repo. `note` rather than `claim`, and the difference is not cosmetic. By here the branch-watch bean already exists, and whether the publish SUCCEEDED is a judgement this step cannot make -- the build reports its own exit code, and xom7 is the record of that being believed. AGENTS.md: a bean is not closed on someone else's say-so. So the step records what it observed and leaves the verdict to the watcher.",
-      "notation": "Task_WatchMainCI",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_WatchMainCI",
+      "id": "process_contentchangereviewcommittee.call_reviewslices",
+      "prefLabel": "Review each slice [review-task]",
+      "definition": "review-task.bpmn, once per slice, in parallel lanes by role. What kind of thing changed decides which review the slice descends into; the reviewer takes on that inner lane's role for the call only. Each reviewer gives the slice's blocks a verdict, and comments on the pull request with the `block:` tag where something needs saying.",
+      "notation": "Call_ReviewSlices",
+      "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Call_ReviewSlices",
       "status": "candidate"
     },
     {
-      "id": "process_contentchangereview.task_withdrawcomment",
+      "id": "process_contentchangereviewcommittee.task_approve",
+      "prefLabel": "Approve",
+      "definition": "The committee approves the change: the judgement, recorded with the evidence it rests on. Approving is not merging. They were one task (\"Approve and merge\") until bean en2d split them, because a self-authored change cannot be approved through GitHub's own review (the approver may not be the PR's author), and a merge needs the owner's explicit confirmation whoever approved.",
+      "notation": "Task_Approve",
+      "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Task_Approve",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewcommittee.task_comparebeforeafter",
+      "prefLabel": "Compare main vs staging",
+      "definition": "The review starts from the Change Set's RENDERED list (skill rendered-impact): every rendered file the change alters, predicted from each renderer's dependency cone and checked against the build. The reviewer opens every content page on it, not only the pages the author mentions; index files are listed but not reviewed. An input the renderer could not place is shown as not known, never as no change. Review committee opens both URLs side by side: - Main site: <pages-url>/ (current published state) - Staging: <pages-url>/STAGING/<branch-slug>/ The staging banner shows the commit SHA so they can verify what they are reviewing matches the PR. A changed figure, diagram or table is also pictured before and after on the review page, with the share of changed pixels in words (skill visual-diff, Tool folio-block-screenshots). Anything the staging job cannot picture (page chrome, scroll behaviour, a PDF page, an IG page) is in the agent's before/after preview (skill before-after-preview).",
+      "notation": "Task_CompareBeforeAfter",
+      "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Task_CompareBeforeAfter",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewcommittee.task_ingestcomments",
+      "prefLabel": "Ingest tagged review comments [folio-review-comments]",
+      "definition": "Every PR conversation comment that starts with `block: <label>` becomes a `review-comment/1.0.0` todo (open), idempotently, and is published with the preview as `review-comments.json`. The staging workflow runs this on every push and on every tagged comment; the coordinator owns that it has run before slicing, because the slices are cut around what reviewers have already said. This is the `ingest` transition of REVIEW_TRANSITIONS.",
+      "notation": "Task_IngestComments",
+      "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Task_IngestComments",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewcommittee.task_requestchanges",
+      "prefLabel": "Request changes",
+      "definition": "Committee provides feedback. PR stays open. Author and agent iterate further.",
+      "notation": "Task_RequestChanges",
+      "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Task_RequestChanges",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewcommittee.task_reviewimpact",
+      "prefLabel": "Review impact assessment",
+      "definition": "Committee reviews the agent's impact assessment: - Were all downstream effects identified? - Are the indicator changes acceptable? - Does the logic change match the narrative intent?",
+      "notation": "Task_ReviewImpact",
+      "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Task_ReviewImpact",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewcommittee.task_reviewuses",
+      "prefLabel": "Review the editorial dependencies",
+      "definition": "`uses[]` is what a READER must have read to follow the block — never populated from the formal dependency graph. Once every changed block is covered, the committee checks the editorial dependencies of the change as a whole before judging its impact. Moved here from the harness's `review-narrative` by placement PR3 (bean `63wl`): reading order is a property of folio content, so the step belongs to the content process, which reaches the harness's review by calling DOWN into `review-task`.",
+      "notation": "Task_ReviewUses",
+      "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Task_ReviewUses",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewcommittee.task_sliceandassign",
+      "prefLabel": "Slice the change and assign reviewers",
+      "definition": "From the ChangeSet, its rendered list (skill rendered-impact: each changed rendered page is assigned like a changed block) and the heat map on the review page: cut the change into slices a reviewer can hold (usually a section, or a run of sections where the heat map clusters), and assign each slice to a review lane by what it contains — clinical content to a clinical SME, a decision table to a QC reviewer, prose to a narrative reviewer. A block that needs no review (a pure rename, say) is WAIVED here with a written reason, which is what the coverage gate counts. Re-entered from GW_Covered when coverage is incomplete: the uncovered blocks become new slices.",
+      "notation": "Task_SliceAndAssign",
+      "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Task_SliceAndAssign",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewcommittee.task_withdrawcomment",
       "prefLabel": "Withdraw a review comment [folio-review-comment-move]",
       "definition": "The reviewer who made a comment takes it back (it was a misreading, or a later slice answered it). Recorded with `folio-review-comment-move --to withdrawn`, committed to the edit-set's feature branch like every status change. This is the `withdraw` transition of REVIEW_TRANSITIONS.",
       "notation": "Task_WithdrawComment",
-      "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_WithdrawComment",
+      "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Task_WithdrawComment",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewmake.call_optionsanalysis",
+      "prefLabel": "Options analysis how to absorb the impact",
+      "definition": "On the edge OUT of `Task_AssessImpact` and before `Task_CommitPush`, because the impact assessment is the evidence the options are weighed against. An analysis before it would compare ways of absorbing a downstream effect nobody has measured yet; one after the commit would be a rationalisation of a choice already pushed. NOT between `Task_AssessImpact` and `Task_ReviewImpact`, although that is the handoff the work-plan named. Those two tasks are in DIFFERENT LANES with no sequence flow between them — the agent's assessment reaches the committee through `Task_CompareBeforeAfter`, not directly — so there was no edge there to interpose on. The conceptual handoff is real; the edge was not. In the Agent lane, matching `upstream-version-adoption`: this step produces the options and their trade-offs, and `GW_Approved` in the Review Committee lane is where a decision is taken. A subprocess in the reviewer's lane would read as the committee analysing its own options, which is a different process. On the trigger: reaching this call is not the same as running the whole of it. `Process_OptionsAnalysis` opens with `A_Frame`, whose trigger is `opening-brief`'s — irreversibility and surprise, not size — and leaving at that first activity is a correct outcome rather than a skipped step. A copy-edit exits immediately; a logic change that moves an indicator does not, and this is the diagram where that distinction has teeth, since `Task_EditLogic` feeds straight into the assessment.",
+      "notation": "Call_OptionsAnalysis",
+      "source": "folio-assistant-core/processes/content/content-change-review-make.bpmn#Call_OptionsAnalysis",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewmake.task_assessimpact",
+      "prefLabel": "Assess downstream impact",
+      "definition": "Agent reviews downstream implications: - Will indicators need adjustment? - Will referral/follow-up for next visit be impacted? - Are translations affected (re-extract POT)? - Do Lean proofs still hold? skill: integration-watcher, translation-manager",
+      "notation": "Task_AssessImpact",
+      "source": "folio-assistant-core/processes/content/content-change-review-make.bpmn#Task_AssessImpact",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewmake.task_commitpush",
+      "prefLabel": "Commit, push, update PR",
+      "definition": "Agent commits all changes to the feature branch and pushes. The feature-staging.yml workflow automatically deploys to STAGING/<branch-slug>/ and comments the URL on the PR. For a rendered change the agent also produces the before/after preview (skill before-after-preview) and links it in the PR body.",
+      "notation": "Task_CommitPush",
+      "source": "folio-assistant-core/processes/content/content-change-review-make.bpmn#Task_CommitPush",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewmake.task_createbranch",
+      "prefLabel": "Create feature branch",
+      "definition": "Agent creates a feature branch from main. Branch naming: feature/<short-description> Opens a PR immediately (AGENTS.md: \"open the PR at the first commit\").",
+      "notation": "Task_CreateBranch",
+      "source": "folio-assistant-core/processes/content/content-change-review-make.bpmn#Task_CreateBranch",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewmake.task_detectscope",
+      "prefLabel": "Detect change scope & impact",
+      "definition": "Agent analyses the requested change: - Which content blocks are affected? - Are there downstream implications (indicators, referral logic, visit schedules)? - Will deterministic logic (CQL/DMN) need updating? skill: content-graph, integration-watcher",
+      "notation": "Task_DetectScope",
+      "source": "folio-assistant-core/processes/content/content-change-review-make.bpmn#Task_DetectScope",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewmake.task_editcontent",
+      "prefLabel": "Edit narrative content blocks",
+      "definition": "Agent modifies the relevant content blocks (.md files, block manifests). Validates each edit against the schema (content_validate). skill: content editing, block builders",
+      "notation": "Task_EditContent",
+      "source": "folio-assistant-core/processes/content/content-change-review-make.bpmn#Task_EditContent",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewmake.task_editlogic",
+      "prefLabel": "Edit deterministic logic (if needed)",
+      "definition": "If the content change affects decision logic, indicators, or workflows: - Update CQL expressions - Update DMN decision tables - Adjust indicator definitions skill: dak-authoring, fhir-pipeline",
+      "notation": "Task_EditLogic",
+      "source": "folio-assistant-core/processes/content/content-change-review-make.bpmn#Task_EditLogic",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewpublish.task_cleanupstaging",
+      "prefLabel": "Remove STAGING/<slug>/",
+      "definition": "When the PR is merged or closed, the cleanup job removes the STAGING/<slug>/ directory from gh-pages so stale previews don't accumulate.",
+      "notation": "Task_CleanupStaging",
+      "source": "folio-assistant-core/processes/content/content-change-review-publish.bpmn#Task_CleanupStaging",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewpublish.task_merge",
+      "prefLabel": "Merge, on explicit confirmation",
+      "definition": "The owner says \"merge it\", and only then is the branch merged. Merge to main triggers: 1. the main site rebuilds with the changes; 2. the staging preview's cleanup runs; 3. the review comments committed on the feature branch land on main, as the review record.",
+      "notation": "Task_Merge",
+      "source": "folio-assistant-core/processes/content/content-change-review-publish.bpmn#Task_Merge",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewpublish.task_rebuildmain",
+      "prefLabel": "Rebuild main site",
+      "definition": "docs-site.yml triggers on the merge commit to main, rebuilding the root of gh-pages with the accepted changes. The build SHA stamp now reflects the merged state.",
+      "notation": "Task_RebuildMain",
+      "source": "folio-assistant-core/processes/content/content-change-review-publish.bpmn#Task_RebuildMain",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewpublish.task_watchmainci",
+      "prefLabel": "Note the main-branch watch [watch]",
+      "definition": "Second dispatch point: the change was approved and merged, and the root of the site has been rebuilt from main. This is the moment docs-site.yml failed all 30 times over two months (bean xom7) while looking exactly like a green run from inside the repo. `note` rather than `claim`, and the difference is not cosmetic. By here the branch-watch bean already exists, and whether the publish SUCCEEDED is a judgement this step cannot make -- the build reports its own exit code, and xom7 is the record of that being believed. AGENTS.md: a bean is not closed on someone else's say-so. So the step records what it observed and leaves the verdict to the watcher.",
+      "notation": "Task_WatchMainCI",
+      "source": "folio-assistant-core/processes/content/content-change-review-publish.bpmn#Task_WatchMainCI",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewstage.task_buildstaging",
+      "prefLabel": "Build staging site",
+      "definition": "feature-staging.yml triggers: 1. Regenerate docs (schema, skills, content-backed pages) 2. Render BPMN diagrams 3. Stamp build with commit SHA + timestamp + branch 4. Build Jekyll site with STAGING/ baseurl 5. Inject yellow staging banner into every HTML page",
+      "notation": "Task_BuildStaging",
+      "source": "folio-assistant-core/processes/content/content-change-review-stage.bpmn#Task_BuildStaging",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewstage.task_commentpr",
+      "prefLabel": "Comment staging URL on PR",
+      "definition": "Bot comments or updates the staging URL on the PR. Includes commit SHA, branch name, and build log link, and the review list of rendered files the change alters (skill rendered-impact), each linked on the preview and on main, with any input the renderer could not place named as not known.",
+      "notation": "Task_CommentPR",
+      "source": "folio-assistant-core/processes/content/content-change-review-stage.bpmn#Task_CommentPR",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewstage.task_deploystaging",
+      "prefLabel": "Deploy to STAGING/<slug>/",
+      "definition": "peaceiris/actions-gh-pages deploys to gh-pages branch under STAGING/<branch-slug>/ with keep_files: true so other staging deployments and the main site are preserved.",
+      "notation": "Task_DeployStaging",
+      "source": "folio-assistant-core/processes/content/content-change-review-stage.bpmn#Task_DeployStaging",
+      "status": "candidate"
+    },
+    {
+      "id": "process_contentchangereviewstage.task_watchbranchci",
+      "prefLabel": "Open the branch-watch bean [watch]",
+      "definition": "First dispatch point for a CI watcher: the feature branch has changed and a staging build now exists to watch. The watcher is DISPATCHED BY OPENING A BEAN, not by a workflow_dispatch -- per the owner on bean 29ij, this is a task/workflow initiation. That is the whole reason it is an activity rather than a line of prose. A bean makes the watch durable past the session that opened it: the container is reclaimed, and what survives is the claim. Starting the watcher and recording that it is running are ONE declared step, so the two cannot disagree about whether anything is watching. Claim rather than note: the watch is work in progress, and it is idempotent, so re-entering on a subsequent push does not duplicate it.",
+      "notation": "Task_WatchBranchCI",
+      "source": "folio-assistant-core/processes/content/content-change-review-stage.bpmn#Task_WatchBranchCI",
       "status": "candidate"
     },
     {

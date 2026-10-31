@@ -93,7 +93,9 @@ export interface ReviewTransition {
  * "Accept, or send back" in `review-task.bpmn`, and the adjudicator's
  * recorded entry in `criterion-adjudication.bpmn`. Ingestion and withdrawal are
  * the reviewer and coordinator steps bean `en2d` added to
- * `content-change-review.bpmn`, the process a change is reviewed in. A
+ * `content-change-review.bpmn` (its committee phase,
+ * `content-change-review-committee.bpmn`, since 2026-10-31), the process a
+ * change is reviewed in. A
  * separate large-document diagram was the plan until the owner ruled
  * (2026-09-23) to extend the existing one rather than fork it.
  *
@@ -108,7 +110,7 @@ export const REVIEW_TRANSITIONS: readonly ReviewTransition[] = [
     name: "ingest",
     from: [null],
     to: "open",
-    by: { file: "content-change-review.bpmn", process: "Process_ContentChangeReview", task: "Task_IngestComments" },
+    by: { file: "content-change-review-committee.bpmn", process: "Process_ContentChangeReviewCommittee", task: "Task_IngestComments" },
   },
   {
     name: "address",
@@ -150,7 +152,7 @@ export const REVIEW_TRANSITIONS: readonly ReviewTransition[] = [
     name: "withdraw",
     from: ["open", "addressed"],
     to: "withdrawn",
-    by: { file: "content-change-review.bpmn", process: "Process_ContentChangeReview", task: "Task_WithdrawComment" },
+    by: { file: "content-change-review-committee.bpmn", process: "Process_ContentChangeReviewCommittee", task: "Task_WithdrawComment" },
   },
 ];
 
