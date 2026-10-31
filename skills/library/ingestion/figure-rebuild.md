@@ -49,7 +49,7 @@ Two separate failures sat behind that question:
    | a decision or a transition rule | **DMN 1.3** | `processes/decisions/` |
    | classes, attributes, cardinalities | **FHIR logical models** (FSH), drawn as a UML class diagram generated from them | the upstream IG (e.g. smart-pcmt), else a litlfred FSH repo |
    | a graph of named boxes and arrows | find what the boxes ARE (processes, actors, systems) and model it as **ArchiMate** elements and relationships | the reference architecture |
-   | phases, layers, nested shapes, a tree, a staircase | an **SVG generated from data**: a data file plus a generator script, like dth-hrh `scripts/folio/diig_phases_hrh.py` | the folio's `media/` with the generator beside it |
+   | phases, layers, nested shapes, a tree, a staircase | an **SVG generated from data**: a data file plus a generator Tool. The DIIG phases chart is the worked example: `who-iris/diig-phases-figure/v1` data on the who-iris library entry of each publication that prints it, drawn by Tool `diig-phases-svg` | the data on the source's who-iris library entry; the folio commits the SVG, and adds only its own tiles in a `diig-phases-adaptation/v1` file |
    | a table of values drawn as a picture | a **table** block | the block |
    | a country example, a photograph, a screenshot, a third-party figure | **keep the cited picture** (`scope: "rebuild"` exclusion, signed off) | unchanged |
 
@@ -137,14 +137,25 @@ Product, Trade Item, Regulated Trade Item) is a data model.
 Charts such as the SMART Guidelines L1–L5 layers, the DIIG phases, nested
 strategies or a cost tree are not graphs. Write their content as a data file:
 layers, boxes, their text, and which feeds which. Then generate the SVG with a
-script (precedent: dth-hrh `scripts/folio/diig_phases_hrh.py`).
+Tool. The DIIG phases chart is the worked example (owner, 2026-10-31, "B in
+who-iris"):
+
+- Each published version is transcribed once, as `who-iris/diig-phases-figure/v1`
+  data on that publication's who-iris library entry, under `figure-data/`.
+  DIIG Fig. 1.1.1 lives on `9789240010567-eng`, and the product catalogue
+  handbook's Fig. 4 lives on `9789240116191-eng`.
+- A folio that adds its own tiles (dth-hrh) writes only those tiles in a
+  `diig-phases-adaptation/v1` file that `adapts` the published version.
+- Tool `diig-phases-svg` (`bun run figure:diig-phases`) draws either one. The
+  folio commits the SVG and records the data file in `meta.source.generated`.
 
 - Labels are SVG `<text>`, never pixels, so they can be searched,
   translated and read aloud.
 - A label that names a glossary concept (L1 Narrative, Digital adaptation
   kit, Localisation) links to the SKOS term, an `<a href>` around the text.
-- A chart that appears in several publications is generated once, in the
-  shared layer.
+- A chart that appears in several publications is transcribed once per
+  published version, on its library entry. Each version is never copied
+  into a folio.
 
 ### Mermaid is a rendering, never a source
 
