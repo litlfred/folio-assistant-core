@@ -194,6 +194,13 @@ records, on each pass over a change set with an open PR:
 | **Staging built from (change set)** | the commit the preview was built from | the newest gh-pages commit touching `STAGING/<slug>/`. Its message is `staging(<slug>): from <sha>` when an agent staged it (`stage-local.ts`), or `Publish <site> <sha8> preview of <branch>` when the site-publish workflow did; both forms are accepted |
 | **Staging deploy (change set)** | `deployed`, `pending` or `failed` | the Pages deployment of that gh-pages commit: `gh api repos/<o>/<r>/pages/builds/latest`, or, where that endpoint is blocked, the conclusion of the "pages build and deployment" run in `actions/runs?head_sha=<gh-pages commit>` |
 
+**On every push, in the same pass** (owner, 2026-10-31: "preview review
+should say stale if started but not done"): write the new **PR head**, set
+**Staging deploy** to `pending`, set each comment's status, and stamp
+**Agent completed** with the clock (`date -u '+%Y-%m-%d %H:%MZ'`), never an
+estimate. A push recorded only in prose leaves the sheet saying the old
+preview is current and the row is "Not started".
+
 The script compares only; it stays `@OnlyCurrentDoc` with no internet access. Short and full shas both work: it compares the common prefix, at least 7 characters.
 It reads the active PR as the last one listed (one branch, one active PR per
 row) and writes, in this order of precedence: `⚠ deploy failed`;
