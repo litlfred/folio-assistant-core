@@ -225,9 +225,38 @@ function checkDropdown(ss) {
   try {
     ss.toast('Selected Sections is ' + (had ? 'a dropdown' : 'now a dropdown of the document\'s sections') +
       '. One step only a person can take: select the "' + COLS.draft.sections +
-      '" column, choose Data, then Data validation, open its rule, tick Allow multiple selections, and press Done. ' +
+      '" column, choose Data, then Data validation, open its rule, set Advanced options > Display style to Chip, then tick Allow multiple selections (greyed out until the style is Chip), and press Done. ' +
       'The same steps are on the Config tab.', 'Finish the dropdown', 30);
   } catch (e) { /* a toast is a courtesy */ }
+}
+
+/**
+ * Data rows look like data rows (owner, 2026-10-31: "why row 3 bold", "review
+ * styling on PR Feedback and apply to Contrib Feedback"). A row inserted just
+ * under the header takes the header's look (bold, dark fill, centred), so the
+ * first change set of a new log read as a second header. Any data row whose
+ * cells are bold or centred at cell level gets its format back from the last
+ * row of the tab, which nobody types in, before the script writes its own
+ * rich text (which carries its own bold spans).
+ */
+function normalizeRows(sh) {
+  if (!sh) return 0;
+  const s = readSheet(sh), n = sh.getLastRow() - s.top + 1;
+  if (n <= 0) return 0;
+  const width = sh.getLastColumn(), last = sh.getMaxRows();
+  if (last < s.top + n) return 0;
+  const range = sh.getRange(s.top, 1, n, width);
+  const weights = range.getFontWeights(), valign = range.getVerticalAlignments();
+  let fixed = 0;
+  for (let k = 0; k < n; k++) {
+    // Column A (the id, always plain) and the alignment: the script's own rich
+    // text has bold spans, which must not read as a header row.
+    const off = weights[k][0] === 'bold' || valign[k].some(v => /middle|center/i.test(String(v)));
+    if (!off) continue;
+    sh.getRange(last, 1, 1, width).copyTo(sh.getRange(s.top + k, 1, 1, width), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+    fixed++;
+  }
+  return fixed;
 }
 
 /** True when some cell holds two or more sections from the list, which only a multi-select rule allows. */
@@ -443,6 +472,7 @@ function refreshLocked() {
     // column position this changes (memory: never move columns mid-refresh).
     try { ensureConfirmedColumn(ss); } catch (err) { /* the refresh still runs */ }
     try { ensureAgentStepColumn(ss.getSheetByName(CFG.AGENT_CS || CFG.AGENT)); } catch (err) { /* the refresh still runs */ }
+    [CFG.RPC, CFG.RCS].forEach(n => { try { normalizeRows(ss.getSheetByName(n)); } catch (err) { /* cosmetic only */ } });
     const rpc = readSheet(ss.getSheetByName(CFG.RPC));
     const agent = readSheet(ss.getSheetByName(CFG.AGENT));
     const agentCs = CFG.AGENT_CS ? readSheet(ss.getSheetByName(CFG.AGENT_CS)) : agent;
@@ -1860,6 +1890,7 @@ function refreshDraft(rows) {
   const ss = SpreadsheetApp.getActive();
   try { ensureAgentStepColumn(ss.getSheetByName(CFG.AGENT)); } catch (err) { /* the refresh still runs */ }
   const props = docProps_();
+  try { normalizeRows(ss.getSheetByName(CFG.FEEDBACK)); } catch (err) { /* cosmetic only */ }
   const fb = readSheet(ss.getSheetByName(CFG.FEEDBACK));
   const agentSh = ss.getSheetByName(CFG.AGENT);
   const agent = agentSh ? readSheet(agentSh) : { header: [], rows: [] };

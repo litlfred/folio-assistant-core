@@ -908,13 +908,21 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    - choose Data, then Data validation;
    - open the rule for that column (the sidebar lists it by its range, such
      as `'Contributor Feedback'!E2:E1000`, as "Dropdown (from a range)");
+   - under Advanced options, check that Display style is **Chip**;
    - tick **Allow multiple selections**;
    - press Done.
 
-   The Chip display style needs nothing: the dropdown rule (in the template,
-   and as written through the Sheets API) already carries it (owner,
-   2026-10-31: "chip style was preselected on dth-pc log"). Neither Apps
-   Script nor the Sheets API can read or set the multiple-selections tick, so installTriggers cannot check them directly. It shows the
+   **The tick is greyed out unless the style is Chip** (owner, 2026-10-31,
+   DTH-PC: "cant multiselct ... why ... fix process error"). A rule that
+   Apps Script writes (`requireValueInRange`) gets the **Arrow** style, and
+   Apps Script cannot change it, so a log whose dropdown the script had to
+   add could not be ticked. The agent therefore sets the style through the
+   Sheets API at setup, and whenever a log's rule reads `customUiMode: ARROW`:
+   `setDataValidation` with the same `ONE_OF_RANGE` condition and
+   `"showCustomUi": true, "customUiMode": "CHIP", "strict": false`. The API
+   reads the tick (`condition.allowMultipleSelections`) but sets it only for
+   `ONE_OF_LIST` rules, so ticking it on the range rule stays the person's
+   step. installTriggers cannot check either directly. It shows the
    steps in a 30-second toast unless it has evidence they are done: a cell
    already holding two sections from the list (or `dropdownDone`, set by the
    older dialog). It is a toast, never a dialog: a dialog waits for an answer

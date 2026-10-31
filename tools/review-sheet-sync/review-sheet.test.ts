@@ -1495,3 +1495,25 @@ describe("the status line comes back after the agent rewrites its cell (owner, 2
     expect(fns.progressLine({ prs: [pr], built: { step: "proposed 2026-10-31 17:30Z" } })).toMatch(/^⏳ Proposal ready \((today|yesterday|\d+ days ago, 2026-10-31) 17:30Z\): set Ready for agent to Yes/);
   });
 });
+
+describe("data rows look like data rows (owner, 2026-10-31: \"why row 3 bold\")", () => {
+  test("a row that took the header's look gets the last row's format back; plain rows are left", () => {
+    const copies: Array<[number, number]> = [];
+    // Row 1 instructions, row 2 header, rows 3-4 data; row 3 inherited the header's bold.
+    const values = [["Instructions", ""], ["Change-set", "Title"], ["CS-001", "FDA"], ["CS-002", "Other"]];
+    const weights = [["bold", "bold"], ["normal", "bold"]];
+    const sh = {
+      getLastRow: () => 4, getLastColumn: () => 2, getMaxRows: () => 500,
+      getRange: (r: number, _c: number, n?: number) => ({
+        getDisplayValues: () => values.slice(r - 1, r - 1 + (n ?? 1)),
+        getFontWeights: () => weights, getVerticalAlignments: () => [["middle", "middle"], ["top", "top"]],
+        copyTo: (dest: { row: number }) => { copies.push([r, dest.row]); },
+        row: r,
+      }),
+    };
+    const SpreadsheetApp = { CopyPasteType: { PASTE_FORMAT: "f" } };
+    const normalizeRows = new Function("SpreadsheetApp", `${code}\nreturn normalizeRows;`)(SpreadsheetApp);
+    expect(normalizeRows(sh)).toBe(1);
+    expect(copies).toEqual([[500, 3]]);
+  });
+});

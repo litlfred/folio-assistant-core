@@ -447,15 +447,15 @@ export function setupSteps(_c: SheetConfig): string[] {
   return steps;
 }
 
-/** Drafting only: the two dropdown settings neither the script nor the Sheets API can set. */
+/** Drafting only: the dropdown settings a person sets (the agent sets the Chip style through the Sheets API; the tick only a person can set on a range rule). */
 export function dropdownSteps(c: SheetConfig): string[] | undefined {
   if (c.CFG.MODE !== "drafting") return undefined;
   const col = c.COLS.draft?.sections ?? "Selected Sections";
   return [
-    `Once per sheet, after installing the script: allow several sections in the ${col} dropdown (neither the script nor the Sheets API can):`,
+    `Once per sheet, after installing the script: allow several sections in the ${col} dropdown (the script cannot):`,
     `   • Click the column letter above "${col}", then Data, then Data validation`,
-    `   • Open the rule (it says "Dropdown (from a range)"), tick Allow multiple selections, and press Done`,
-    "   • The Chip display style is already set; leave it",
+    `   • Open the rule (it says "Dropdown (from a range)"), open Advanced options and set Display style to Chip`,
+    "   • Then tick Allow multiple selections (it is greyed out until the style is Chip) and press Done",
   ];
 }
 
