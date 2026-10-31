@@ -305,6 +305,7 @@ function refreshAll() {
     refreshLocked();
     applyEditors(SpreadsheetApp.getActive());
     try { colourInstructions(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
+    try { styleConfig(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
     return true;
   } finally {
     PropertiesService.getDocumentProperties().setProperty('lastMs', String(Date.now() - t0));
@@ -415,6 +416,32 @@ function keyRuns(text) {
   while ((m = KEY_WORD_RE.exec(text))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
   return runs;
 }
+/**
+ * The Config tab's colours, kept by every refresh so a row the agent wrote
+ * with the Sheets connector (which writes values, not colours) still reads
+ * right (owner, 2026-10-31: "key cfg and COLS need to be grey"). The Key
+ * row is a Grey header; EDITORS, the one row a person keeps, is Orange; every
+ * other row below the Instructions (CFG, COLS, DATA and their continuation
+ * rows) is Grey, written by the agent. The Instructions rows are left as
+ * they are.
+ */
+const CONFIG_COLOURS = { header: '#b7b7b7', person: '#f4b26b', agent: '#efefef' };
+function styleConfig(ss) {
+  const sh = ss.getSheetByName(CONFIG_TAB);
+  if (!sh) return;
+  const n = sh.getLastRow();
+  if (n < 1) return;
+  const keys = sh.getRange(1, 1, n, 1).getDisplayValues().map(r => String(r[0]).trim());
+  const start = keys.indexOf('Key');
+  if (start < 0) return;
+  keys.forEach((k, i) => {
+    if (i < start || /^Instructions/.test(k)) return;
+    const bg = k === 'Key' ? CONFIG_COLOURS.header : k === 'EDITORS' ? CONFIG_COLOURS.person : CONFIG_COLOURS.agent;
+    const row = sh.getRange(i + 1, 1, 1, 2).setBackground(bg).setVerticalAlignment('top');
+    if (k === 'Key' || k === 'EDITORS') row.setFontWeight('bold');
+  });
+}
+
 function colourInstructions(ss) {
   ss.getSheets().forEach(sh => {
     const n = Math.min(5, sh.getLastRow());

@@ -100,6 +100,9 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
         setValues: (v: unknown[][]) => put(name, t.rows[r === 1 ? 0 : hdr(name)][c - 1], r, v),
         setRichTextValues: (v: unknown[][]) => put(name, t.rows[r === 1 ? 0 : hdr(name)][c - 1], r, v),
         clearContent: () => {},
+        setBackground(bg: string) { ((t as { bg?: Record<number, string> }).bg ??= {})[r] = bg; return this; },
+        setVerticalAlignment() { return this; },
+        setFontWeight() { return this; },
       }),
     };
   };
@@ -908,5 +911,19 @@ describe("a copy that is not linked to a repository yet", () => {
     const t = { ...tabs(), Config: { id: 900, rows: [["Key", "Value"], ["EDITORS", ""]] } };
     const rt = runtime(t);
     expect(() => load(code, rt.g).refreshAll()).toThrow(/not linked to a document repository yet.*copy-sheet-id/);
+  });
+});
+
+describe("the Config tab's colours", () => {
+  test("Key is a Grey header, EDITORS Orange, and the agent's rows (CFG, COLS, DATA) Grey", () => {
+    const rows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
+    const t = withConfig(tabs(), rows) as Record<string, { id: number; rows: string[][]; bg?: Record<number, string> }>;
+    load(code, runtime(t).g).refreshAll();
+    const bg = t.Config.bg!;
+    const at = (k: string) => t.Config.rows.findIndex((r) => r[0] === k) + 1;
+    expect(bg[at("Key")]).toBe("#b7b7b7");
+    expect(bg[at("EDITORS")]).toBe("#f4b26b");
+    for (const k of ["CFG", "COLS", "DATA"]) expect(bg[at(k)]).toBe("#efefef");
+    expect(bg[at("Instructions")]).toBeUndefined();
   });
 });
