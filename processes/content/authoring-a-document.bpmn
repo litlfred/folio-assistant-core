@@ -27,10 +27,12 @@
   <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns#" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
   <bpmn:resource id="author" name="Author"/>
   <bpmn:resource id="authoring-agent" name="Authoring agent"/>
+  <bpmn:resource id="authoring-committee" name="Authoring Committee"/>
   <bpmn:resource id="build-pipeline" name="Build pipeline"/>
   <bpmn:resource id="reviewer" name="Reviewer / SME"/>
   <bpmn:resource id="work-plan" name="Work plan (beans)"/>
 
+  <bpmn:import namespace="https://litlfred.github.io/folio-assistant/workflows" location="contributor-feedback.bpmn" importType="http://www.omg.org/spec/BPMN/20100524/MODEL" />
   <bpmn:collaboration id="Collaboration_DocumentAuthoring">
     <bpmn:participant id="Participant_DocumentAuthoring" name="Authoring a document — plan to published" processRef="Process_DocumentAuthoring" />
   </bpmn:collaboration>
@@ -77,6 +79,10 @@
         <bpmn:documentation>Owns the one gate that decides publish or iterate, and is deliberately unspecialised: this process relaxes the paper process's clinical-SME lane into whichever reviewer a given document actually binds, because no single expertise fits every document the way it does a guideline.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_Review</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ReviewOutcome</bpmn:flowNodeRef>
+      </bpmn:lane>
+      <bpmn:lane id="Lane_Committee" name="Authoring Committee" partitionElementRef="authoring-committee">
+        <bpmn:documentation>The people writing the document with the editor. While it is a working draft they give feedback through the Contributor Feedback sheet, one change set per row, and each row runs Process_ContributorFeedback.</bpmn:documentation>
+        <bpmn:flowNodeRef>Call_ContributorFeedback</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:startEvent id="StartEvent_NewDocument" name="New document">
@@ -133,6 +139,7 @@
         <bootstrap.processes:skill ref="content-validate" />
       </bpmn:extensionElements>
       <bpmn:incoming>D08</bpmn:incoming>
+      <bpmn:incoming>D16</bpmn:incoming>
       <bpmn:outgoing>D09</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_Render" name="7 · Render MD / HTML / PDF&#10;[document-publishing]">
@@ -153,10 +160,11 @@
       <bpmn:outgoing>D11</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:exclusiveGateway id="Gateway_ReviewOutcome" name="Ready to publish?">
-      <bpmn:documentation>The reviewer's call after step 8. `iterate` returns to authoring with the feedback; `approved` goes to publish.</bpmn:documentation>
+      <bpmn:documentation>The reviewer's call after step 8. `iterate` returns to authoring with the feedback; `Authoring Committee feedback` sends a working draft to the committee through the Contributor Feedback sheet (Process_ContributorFeedback), and comes back to validation once its changes are merged; `approved` goes to publish.</bpmn:documentation>
       <bpmn:incoming>D11</bpmn:incoming>
       <bpmn:outgoing>D12</bpmn:outgoing>
       <bpmn:outgoing>D13</bpmn:outgoing>
+      <bpmn:outgoing>D15</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:serviceTask id="Task_Publish" name="9 · Publish&#10;[content-publish]">
       <bpmn:documentation>See draft-to-publication.bpmn for the review and release path this expands into. Release authorisation is not relaxable.</bpmn:documentation>
@@ -191,6 +199,12 @@
       <bpmn:incoming>D14</bpmn:incoming>
       <bpmn:outgoing>SF_Bean_4</bpmn:outgoing>
     </bpmn:callActivity>
+    <bpmn:callActivity id="Call_ContributorFeedback" name="Contributor feedback&#10;[review-sheet-script]" calledElement="Process_ContributorFeedback">
+      <bpmn:documentation>Process_ContributorFeedback: while the document is a working draft, the Authoring Committee gives feedback through the Contributor Feedback sheet, and each change set is edited and merged in its own pull request. When its changes are merged, the document is validated and rendered again (owner, 2026-10-31).</bpmn:documentation>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
+      <bpmn:incoming>D15</bpmn:incoming>
+      <bpmn:outgoing>D16</bpmn:outgoing>
+    </bpmn:callActivity>
     <bpmn:sequenceFlow id="D01" sourceRef="StartEvent_NewDocument" targetRef="Task_Plan" />
     <bpmn:sequenceFlow id="D02" sourceRef="Task_Plan" targetRef="Call_BeanOpen" />
     <bpmn:sequenceFlow id="D03" sourceRef="Task_SeedPlan" targetRef="Task_Scaffold" />
@@ -205,6 +219,8 @@
     <bpmn:sequenceFlow id="D12" name="iterate" sourceRef="Gateway_ReviewOutcome" targetRef="Task_AuthorBlocks" />
     <bpmn:sequenceFlow id="D13" name="approved" sourceRef="Gateway_ReviewOutcome" targetRef="Task_Publish" />
     <bpmn:sequenceFlow id="D14" sourceRef="Task_Publish" targetRef="Call_BeanClose" />
+    <bpmn:sequenceFlow id="D15" name="Authoring Committee feedback" sourceRef="Gateway_ReviewOutcome" targetRef="Call_ContributorFeedback" />
+    <bpmn:sequenceFlow id="D16" sourceRef="Call_ContributorFeedback" targetRef="Task_Validate" />
     <bpmn:sequenceFlow id="SF_Bean_1" name="claimed" sourceRef="GW_BeanYours" targetRef="Task_SeedPlan"/>
     <bpmn:sequenceFlow id="SF_Bean_2" sourceRef="Call_BeanOpen" targetRef="GW_BeanYours"/>
     <bpmn:sequenceFlow id="SF_Bean_3" name="not yours" sourceRef="GW_BeanYours" targetRef="End_BeanNotYours"/>
@@ -213,7 +229,7 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_DocumentAuthoring">
       <bpmndi:BPMNShape id="Participant_DocumentAuthoring_di" bpmnElement="Participant_DocumentAuthoring" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="2680" height="830" />
+        <dc:Bounds x="160" y="80" width="2680" height="980" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Author_di" bpmnElement="Lane_Author" isHorizontal="true">
         <dc:Bounds x="190" y="80" width="2650" height="150" />
@@ -230,6 +246,15 @@
       <bpmndi:BPMNShape id="Lane_Reviewer_di" bpmnElement="Lane_Reviewer" isHorizontal="true">
         <dc:Bounds x="190" y="680" width="2650" height="230" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Committee_di" bpmnElement="Lane_Committee" isHorizontal="true">
+        <dc:Bounds x="190" y="910" width="2650" height="150" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Call_ContributorFeedback_di" bpmnElement="Call_ContributorFeedback">
+        <dc:Bounds x="2065" y="940" width="130" height="90" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="D15_di" bpmnElement="D15"><di:waypoint x="2265" y="780"/><di:waypoint x="2265" y="985"/><di:waypoint x="2195" y="985"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="2275" y="880" width="120" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="D16_di" bpmnElement="D16"><di:waypoint x="2065" y="985"/><di:waypoint x="1770" y="985"/><di:waypoint x="1770" y="650"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="StartEvent_NewDocument_di" bpmnElement="StartEvent_NewDocument">
         <dc:Bounds x="262" y="137" width="36" height="36" />
         <bpmndi:BPMNLabel>

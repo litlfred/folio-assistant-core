@@ -2,8 +2,7 @@ import { describe, expect, it } from "bun:test";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import type { FigureTarget } from "@litlfred/cat-harness-tools/archimate/scripts/gen-archimate-pages.js";
-import { liveFiguresFor, withLiveFigures } from "./live-figures.ts";
+import { liveFiguresFor, withLiveFigures, type FigureTarget } from "./live-figures.ts";
 
 const target: FigureTarget = {
   block: "folio/doc/ch1/f-1.md",

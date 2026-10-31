@@ -7,7 +7,7 @@
  *
  * Skill: `review-sheet-script`, "Feedback from the site".
  */
-import { buildToc } from "./build-review-sheet-script.js";
+import { bareName, buildToc } from "./build-review-sheet-script.js";
 
 export type Feedback = {
   content?: string; section?: string; block?: string; url?: string; source?: string;
@@ -60,14 +60,46 @@ export function feedbackRow(issue: { body: string; url: string; login: string },
   const toc = buildToc(anchors);
   const byAnchor = new Map(toc.map(([n, a]) => [a, n]));
   const sec = f.block ? anchors.blocks?.find((b) => b.label === f.block)?.sections[0] : undefined;
-  const name = (sec && byAnchor.get(sec)) ?? toc.find(([n]) => f.section && n === f.section.replace(/,/g, ";"))?.[0] ?? "";
+  const name = (sec && byAnchor.get(sec)) ?? toc.find(([n]) => f.section && bareName(n) === f.section.replace(/,/g, ";"))?.[0] ?? "";
   const first = (f.comment ?? "").split(/(?<=[.!?])\s|\n/)[0].trim();
   const short = first.length > 80 ? first.slice(0, 79).trimEnd() + "…" : first;
-  const where = name || f.section || "";
+  // `name` is the dropdown value, marked under its chapter; the title takes it bare.
+  const where = bareName(name) || f.section || "";
   return {
     title: [where, short].filter(Boolean).join(": "),
     sections: name,
     feedback: `@${issue.login}${f.type ? ` (${f.type})` : ""}: ${f.comment ?? ""}${f.proposed ? `\nProposed: ${f.proposed}` : ""}`,
     issue: issue.url,
   };
+}
+
+/** The Apps Script's hashOf (djb2, base 36), so the agent and the sheet agree on a basis. */
+export function hashOf(text: string): string {
+  let h = 5381;
+  for (let i = 0; i < text.length; i++) h = (Math.imul(h, 33) ^ text.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+
+/**
+ * What an agent proposal (`Feedback (agent)`, or `Change Set
+ * Feedback (agent)` on Review Change Sets) was written against: a hash of the
+ * row's blue cells, by header, the same hash the Apps Script's basisOf takes.
+ * Drafting: Title, Selected Sections and every person's Contributor Feedback
+ * column (`exact` Title and Selected Sections, `prefix` Contributor Feedback).
+ * Public comment: `exact` Title and TWG (CS), `prefix` Committee Feedback (the columns were Architect Feedback until 2026-10-31; the script reads both).
+ * The agent keeps it in the Agent tab's `Feedback basis (change set)`. While
+ * the row's basis differs, the script marks the proposal stale; the agent's
+ * next sync proposes again and writes the new basis. Picks are compared bare,
+ * so the script's repair of a tree mark is no change. Empty cells are left
+ * out, so a new empty column (another reviewer's initials) changes no row's
+ * basis; the script still accepts a basis written the older way.
+ */
+export function feedbackBasis(header: string[], row: string[], exact = ["Title", "Selected Sections"], prefix = "Contributor Feedback"): string {
+  const parts: string[] = [];
+  header.forEach((h, i) => {
+    let v = String(row[i] ?? "").trim();
+    if (h === "Selected Sections") v = v.split(",").map(bareName).filter(Boolean).join(",");
+    if (exact.includes(h) || ((h === prefix || h.startsWith(`${prefix} (`)) && h !== `${prefix} (agent)`) && v) parts.push(`${h}=${v}`);
+  });
+  return hashOf(parts.join("\n"));
 }

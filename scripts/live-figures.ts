@@ -14,9 +14,85 @@
  * @module folio-assistant-core/scripts/live-figures
  */
 import { existsSync, readFileSync } from "node:fs";
-import { join } from "node:path";
-import { figureTargets, type FigureTarget } from "@litlfred/cat-harness-tools/archimate/scripts/gen-archimate-pages.js";
+import { createRequire } from "node:module";
+import { join, posix } from "node:path";
+import { findDeclarationFile } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+import { TOOLS_ROOT } from "@litlfred/cat-harness-tools/scripts/lib/roots.js";
 import { fromPageDir } from "./document-site-route.js";
+
+/** A document figure the config maps to a view, with where the site holds its drawing and its page. */
+export interface FigureTarget {
+  /** The block holding the figure, relative to the instance root (`figures[].block`). */
+  block: string;
+  label: string;
+  model: string;
+  view: string;
+  /** The view's name in the model. */
+  viewName: string;
+  /** Site-relative: the view drawn as SVG, which `archimate-pages --out` writes. */
+  svg: string;
+  /** Site-relative, with a trailing slash: the view's page, at the declared route. */
+  page: string;
+}
+
+const req = createRequire(import.meta.url);
+
+/**
+ * Every figure the instance's config maps to a view (`figures`), with the site
+ * paths `archimate-pages --out` writes for it. Delegates to `gen-archimate-pages`
+ * when `figureTargets` is exported there (cat-harness-tools#1077), and computes
+ * the same paths from the tools layer's ArchiMate modules otherwise.
+ */
+export function figureTargets(instanceRoot: string): FigureTarget[] {
+  const pages = req(join(TOOLS_ROOT, "archimate/scripts/gen-archimate-pages.ts")) as {
+    figureTargets?: (root: string) => FigureTarget[];
+    declaredPageRoot: (decl: unknown, directory: string) => string;
+  };
+  if (typeof pages.figureTargets === "function") return pages.figureTargets(instanceRoot);
+  const check = req(join(TOOLS_ROOT, "archimate/scripts/check-archimate.ts")) as {
+    configPath: (root: string) => string | undefined;
+    readConfig: (root: string) => {
+      directory: string;
+      models: Array<{ id: string; file: string }>;
+      figures?: Array<{ block: string; label: string; model: string; view: string }>;
+    };
+    archimateDir: (root: string, config: unknown) => string;
+    localDirOf: (root: string, dir: string) => string;
+  };
+  if (check.configPath(instanceRoot) === undefined) return [];
+  const config = check.readConfig(instanceRoot);
+  const figures = config.figures ?? [];
+  if (figures.length === 0) return [];
+  const dir = check.archimateDir(instanceRoot, config);
+  const declFile = findDeclarationFile(instanceRoot)!;
+  const decl = JSON.parse(readFileSync(join(instanceRoot, declFile), "utf8"));
+  const graphPath = check.localDirOf(instanceRoot, dir).replace(/\/$/, "");
+  const pageRoot = pages.declaredPageRoot(decl, config.directory);
+  const { readArchimate } = req(join(TOOLS_ROOT, "archimate/schemas/archimate.ts")) as {
+    readArchimate: (buf: Buffer) => { views: Array<{ id: string; name: string }> };
+  };
+  const { planSlugs } = req(join(TOOLS_ROOT, "archimate/schemas/slugs.ts")) as {
+    planSlugs: (model: unknown) => Map<string, string>;
+  };
+  const out: FigureTarget[] = [];
+  for (const cm of config.models) {
+    const mine = figures.filter((f) => f.model === cm.id);
+    if (mine.length === 0) continue;
+    const model = readArchimate(readFileSync(join(dir, cm.file)));
+    const slugOf = planSlugs(model);
+    for (const f of mine) {
+      const v = model.views.find((x) => x.id === f.view);
+      if (v === undefined) continue;
+      out.push({
+        ...f,
+        viewName: v.name,
+        svg: posix.join(graphPath, cm.id, "views", `${v.id}.svg`),
+        page: `${posix.join(pageRoot, cm.id, "views", slugOf.get(v.id) ?? v.id)}/`,
+      });
+    }
+  }
+  return out;
+}
 
 /** One image the document links (`media/…`), and the view that replaces it, as links from the document page. */
 export interface LiveFigure {

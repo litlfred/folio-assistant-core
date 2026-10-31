@@ -2,7 +2,6 @@
   "id": "content-validate",
   "name": "Content Validation",
   "description": "Validate authored content against schemas, standards, and clinical accuracy.",
-  "roles": ["qc-reviewer", "fhir-modeller", "terminologist", "clinical-sme", "admin"],
   "requiredCapabilities": [
     { "capabilityId": "python3", "degradation": "warn" }
   ],

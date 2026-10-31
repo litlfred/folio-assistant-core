@@ -2,7 +2,6 @@
   "id": "content-review",
   "name": "Content Review",
   "description": "Formal content review and approval workflow with phase gates (L2→L3, L3→publish).",
-  "roles": ["content-reviewer", "clinical-sme", "technical-officer", "admin"],
   "requiredCapabilities": [
     { "capabilityId": "git-push", "degradation": "warn" }
   ],

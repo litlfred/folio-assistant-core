@@ -109,6 +109,7 @@ How a document folio — structured prose and policy guidance, with no Lean and 
 - Call `workflow_complete` with `node: "Gateway_ReviewOutcome"` and `outcome` set to the label that holds:
   - «iterate» → `Task_AuthorBlocks` (4 · Author blocks)
   - «approved» → `Task_Publish` (9 · Publish)
+  - «Authoring Committee feedback» → `Call_ContributorFeedback` (Contributor feedback)
 
 ### 10. 9 · Publish (`Task_Publish`)
 
@@ -118,7 +119,15 @@ How a document folio — structured prose and policy guidance, with no Lean and 
 - Record it: `workflow_complete` with `node: "Task_Publish"`.
 - next: → `Call_BeanClose` (Close the bean)
 
-### 11. Close the bean (`Call_BeanClose`)
+### 11. Contributor feedback (`Call_ContributorFeedback`)
+
+- Who: the `Authoring Committee` lane (role `authoring-committee`).
+- Skill: `review-sheet-script`.
+- What: Process_ContributorFeedback: while the document is a working draft, the Authoring Committee gives feedback through the Contributor Feedback sheet, and each change set is edited and merged in its own pull request.
+- A subprocess (`Process_ContributorFeedback`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `Task_Validate` (6 · Validate)
+
+### 12. Close the bean (`Call_BeanClose`)
 
 - Who: the `Build pipeline — validate · render · publish` lane (role `build-pipeline`).
 - Skill: `todo-manager`.

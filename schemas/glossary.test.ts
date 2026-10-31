@@ -579,19 +579,19 @@ describe("every term in the namespace of the instance that owns its source", () 
     const g = (over: Record<string, unknown>) => GlossarySchema.parse({ $schema: "folio-glossary/v1", id: "x", title: "X", ...over });
     const mixed = g({
       terms: [
-        { id: "a", prefLabel: "a", status: "candidate", source: "cat-harness/schemas/odrl.ts" },
+        { id: "a", prefLabel: "a", status: "candidate", source: "cat-harness-tools/schemas/content/odrl.ts" },
         { id: "b", prefLabel: "b", status: "candidate", source: "folio-assistant-core/schemas/glossary.ts" },
       ],
     });
     expect("error" in schemeOwner(REPO, mixed, "folio-assistant-core", owners)).toBe(true);
     // The code-list case: the scheme names the instance that DEFINES it.
-    expect(schemeOwner(REPO, { ...mixed, source: "cat-harness/schemas/odrl.ts" }, "folio-assistant-core", owners)).toEqual({ owner: "cat-harness" });
+    expect(schemeOwner(REPO, { ...mixed, source: "cat-harness-tools/schemas/content/odrl.ts" }, "folio-assistant-core", owners)).toEqual({ owner: "cat-harness-tools" });
     // One instance holds every source: that instance, not the declaring one.
-    expect(schemeOwner(REPO, g({ terms: [mixed.terms[0]] }), "folio-assistant-core", owners)).toEqual({ owner: "cat-harness" });
+    expect(schemeOwner(REPO, g({ terms: [mixed.terms[0]] }), "folio-assistant-core", owners)).toEqual({ owner: "cat-harness-tools" });
     // No repository source at all: the instance whose directory holds the file.
     expect(schemeOwner(REPO, g({ terms: [] }), "folio-assistant-core", owners)).toEqual({ owner: "folio-assistant-core" });
     // A sub-instance, never the root, holds a path inside it.
-    expect(ownerOfPath(REPO, "cat-harness/schemas/odrl.ts", owners)).toBe("cat-harness");
+    expect(ownerOfPath(REPO, "cat-harness-tools/schemas/content/odrl.ts", owners)).toBe("cat-harness-tools");
     // A path at the index root is held by NO instance. This read
     // `.toBe("folio-assistant")` while the root declared that instance; the
     // separation removed the declaration (folio-assistant@3d4caf6e0f) and
@@ -600,7 +600,7 @@ describe("every term in the namespace of the instance that owns its source", () 
     expect(ownerOfPath(REPO, "package.json", owners)).toBeUndefined();
     expect(repoPathOf("https://example.org/x#y", REPO)).toBeUndefined();
     expect(repoPathOf("Skills of cat-harness", REPO)).toBeUndefined();
-    expect(repoPathOf("cat-harness/schemas/odrl.ts#Policy", REPO)).toBe("cat-harness/schemas/odrl.ts");
+    expect(repoPathOf("cat-harness-tools/schemas/content/odrl.ts#Policy", REPO)).toBe("cat-harness-tools/schemas/content/odrl.ts");
   });
 });
 
