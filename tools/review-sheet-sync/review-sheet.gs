@@ -801,7 +801,7 @@ const PROGRESS = '\u23f3 ';
  * merge and when the change set's issue is closed (owner, 2026-10-31). The
  * script shows it, read-only, wherever the people's tab has the column.
  */
-const DISPOSITIONS_CS = 'Dispositions (change set)', DISPOSITIONS_AGENT = 'Dispositions (agent)';
+const DISPOSITIONS_CS = 'Disposition (change set)', DISPOSITIONS_AGENT = 'Disposition (agent)';
 function progressLine(o) {
   const prs = o.prs || [];
   const active = prs.slice(-1)[0];

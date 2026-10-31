@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 44f813a62f1e82be.
+// folio-assistant-core tools/review-sheet-sync at template sha256 a75ed9ef2e024bd5.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 44f813a62f1e82be';
+const SCRIPT_VERSION = 'template sha256 a75ed9ef2e024bd5';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -801,7 +801,7 @@ const PROGRESS = '\u23f3 ';
  * merge and when the change set's issue is closed (owner, 2026-10-31). The
  * script shows it, read-only, wherever the people's tab has the column.
  */
-const DISPOSITIONS_CS = 'Dispositions (change set)', DISPOSITIONS_AGENT = 'Dispositions (agent)';
+const DISPOSITIONS_CS = 'Disposition (change set)', DISPOSITIONS_AGENT = 'Disposition (agent)';
 function progressLine(o) {
   const prs = o.prs || [];
   const active = prs.slice(-1)[0];

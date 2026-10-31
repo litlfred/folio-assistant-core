@@ -75,7 +75,7 @@
       <bpmn:outgoing>CF02</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:serviceTask id="Task_Propose" name="Propose a direction">
-      <bpmn:documentation>Reads: the row (Title, Selected Sections, the Contributor Feedback columns, Disposition) and the sections it names. Writes: a proposed direction in Feedback (agent) (Green), and the row's feedback basis on the Agent tab, so the script can tell when the feedback has moved on. A question for people goes in Feedback (agent) as a Decision needed block with options and a recommendation, and the row's Agentic status becomes Needs human; a chat card may repeat it, but the sheet is the record. A rewrite keeps every earlier decision ("Decided (Q1): A, by the Editor, 2026-10-31"): history is appended to, never removed (owner, 2026-10-31).</bpmn:documentation>
+      <bpmn:documentation>Reads: the row (Title, Selected Sections, the Contributor Feedback columns, Disposition) and the sections it names. Writes: a proposed direction in Feedback (agent) (Green), and the row's feedback basis on the Agent tab, so the script can tell when the feedback has moved on. A question for people goes in Feedback (agent) as a Decision needed block with options and a recommendation, and the row's Agentic status becomes Needs human; a chat card may repeat it, but the sheet is the record. An answered question leaves the feedback: its decision is added to the change set's Disposition (change set) on the Agent tab, shown in Disposition (agent), whose decision history is appended to and never removed (owner, 2026-10-31).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF02</bpmn:incoming>
       <bpmn:incoming>CF07</bpmn:incoming>
@@ -88,7 +88,7 @@
       <bpmn:outgoing>CF04</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:serviceTask id="Task_EditInPullRequest" name="Edit the document in the row's pull request">
-      <bpmn:documentation>One row, one branch, one active pull request (owner, 2026-10-31): the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again. A closed pull request the committee wants back is reopened, or replaced by a new one on the same branch; earlier ones stay listed in Agentic status. Agentic status (Green) says where it is, and Staging review opens the preview's what-changed page. Before the preview is staged, the agent writes the change set's Dispositions (change set) on the Agent tab: one blurb describing every disposition in the change set, which the sheet shows in Dispositions (agent) (owner, 2026-10-31).</bpmn:documentation>
+      <bpmn:documentation>One row, one branch, one active pull request (owner, 2026-10-31): the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again. A closed pull request the committee wants back is reopened, or replaced by a new one on the same branch; earlier ones stay listed in Agentic status. Agentic status (Green) says where it is, and Staging review opens the preview's what-changed page. Before the preview is staged, the agent writes the change set's Disposition (change set) on the Agent tab: one blurb describing every disposition in the change set, which the sheet shows in Disposition (agent) (owner, 2026-10-31).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF04</bpmn:incoming>
       <bpmn:outgoing>CF05</bpmn:outgoing>
