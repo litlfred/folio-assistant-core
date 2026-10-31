@@ -92,16 +92,19 @@ export const DRAFT_COLUMNS = {
  * choices with ", ".
  */
 /**
- * The dropdown is a flat list, so a section is marked under its chapter with
- * a tree mark, "\u2514 " ("└ "), and "\u2502 " ("│ ") per further level (owner,
- * 2026-10-31, "Indent sub-sections"). Not leading spaces: a multi-select cell
- * is stored trimmed, so a first chip that began with spaces lost them and no
- * longer matched the list ("Invalid"). The script and the feedback-issue
- * reader compare names with the mark stripped (`bareName`), so a value picked
- * before the mark still links.
+ * The dropdown is a flat list, so a section is indented under its chapter
+ * (owner, 2026-10-31, "Indent sub-sections"; the "└ " mark tried first was
+ * "too cluttered", so plain indent). The indent is three U+2800 (Braille
+ * pattern blank) per level, which shows as blank space but is not whitespace:
+ * Sheets stores a multi-select cell trimmed, so a first chip that began with
+ * real spaces lost them and no longer matched the list ("Invalid"). The
+ * script and the feedback-issue reader compare names with the indent
+ * stripped (`bareName`), also the old "└ "/"│ " marks, so a value picked
+ * before still links and the script rewrites it to the current name.
  */
-export const treeMark = (depth: number) => (depth > 0 ? "\u2502\u2002".repeat(depth - 1) + "\u2514\u2002" : "");
-export const bareName = (n: string) => n.replace(/^[\s\u2502\u2514]+/, "").trim();
+export const INDENT = "\u2800\u2800\u2800";
+export const treeMark = (depth: number) => (depth > 0 ? INDENT.repeat(depth) : "");
+export const bareName = (n: string) => n.replace(/^[\s\u2800\u2502\u2514]+/, "").trim();
 
 export function buildToc(a: { chapters: Chapter[]; sections: DraftSection[] }): [string, string][] {
   const clean = (s: string) => s.replace(/,/g, ";").replace(/\s+/g, " ").trim();

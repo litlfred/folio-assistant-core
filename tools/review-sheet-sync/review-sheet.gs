@@ -803,8 +803,8 @@ function refreshDraft(rows) {
     });
   }
 }
-/** A dropdown name without its tree mark ("\u2514 ", "\u2502 ") or spaces. */
-const bareName = n => String(n).replace(/^[\s\u2502\u2514]+/, '').trim();
+/** A dropdown name without its indent (U+2800 blanks; old "\u2514 "/"\u2502 " marks) or spaces. */
+const bareName = n => String(n).replace(/^[\s\u2800\u2502\u2514]+/, '').trim();
 const issueUrl = line => (String(line).match(/https:\/\/github\.com\/[^\s,;]+\/issues\/\d+/) || [''])[0];
 const issueLabel = url => { const m = url.match(/\/([^/]+)\/issues\/(\d+)$/); return m[1] + '#' + m[2]; };
 
