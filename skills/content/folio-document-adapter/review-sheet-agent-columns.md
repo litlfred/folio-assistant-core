@@ -13,7 +13,7 @@ description: >
 The owner's rule, 2026-10-31: "if agent works on a CS via google sheet Tool
 is enabled for PC, then it updates the necessary columns". It is part of the
 process, not a courtesy at the end. The sheet's views (Agentic status and
-Staging review page on Review Public Comments and Review Change Sets) are
+Staging review on Review Public Comments and Review Change Sets) are
 built from the Agent tab, so a change set worked without writing Agent shows
 reviewers nothing.
 
