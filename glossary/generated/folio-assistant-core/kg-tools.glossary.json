@@ -111,6 +111,14 @@
       "status": "candidate"
     },
     {
+      "id": "review-sheet-sync",
+      "prefLabel": "Build the review sheet's Apps Script",
+      "definition": "Builds `Code.gs`, the Google Apps Script that keeps a public-comment review sheet's links and joins current: each comment No. links to its comment page, Sections, Page and Line no(s) link to the page of the frozen review draft, Review Change Sets joins its comments, suggested revisions, feedback and dispositions with each `No. n` linking to its row, and on both tabs Agentic status lists each pull request of the change-set, linked, with its status and what it changed, from the Agent tab. The script is the same for every review (`review-sheet.gs`); this Tool fills in one folio's data from its `review/public-comment/sheet-sync.json`, its review anchors and the draft's `pdf-line-map.json`. A person pastes the output into the sheet once (Extensions > Apps Script) and runs `installTriggers`; from then on the sheet rebuilds itself within five minutes of an edit, with no agent. With `\"mode\": \"drafting\"` in the config it builds the simpler drafting sheet instead: one Contributor Feedback tab where each row is a change set (ids assigned by the script), Sections picked from the document's table of contents and linked to it, and Issue and Agentic status from the Agent tab.",
+      "notation": "review-sheet-sync",
+      "source": "folio-assistant-core/tools/review-sheet-sync/review-sheet-sync.ts#review-sheet-sync",
+      "status": "candidate"
+    },
+    {
       "id": "tabular-csv",
       "prefLabel": "CSV tabular metadata",
       "definition": "Read a delimited text file into a `folio-tabular-csvw/v1` record: one table, its columns and their CSVW datatypes, each measured or explicitly undetermined. Routing is by content, never by extension: the first rows must agree on one field count of two or more, under exactly one of `,` `;` TAB `|`. A CSV's `fac:anchor` sheet and cell are a determined null. Governed by the `tabular-metadata` skill (bean `eief`).",
