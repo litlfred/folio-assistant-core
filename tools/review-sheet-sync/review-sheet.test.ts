@@ -195,6 +195,10 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
 
   test("the built script has no template placeholder left", () => {
     expect(code).not.toContain("/*@@CONFIG@@*/");
+    expect(code).not.toContain("@@STAMP@@");
+    // A sheet can say which build it runs, and where the latest is (owner, 2026-10-31).
+    expect(code).toMatch(/const SCRIPT_VERSION = '(\S+|template sha256 [0-9a-f]{16}|[0-9a-f]{40}.*)';/);
+    expect(code).toContain("'Which version is this?', 'showVersion'");
     expect(code).toContain("@OnlyCurrentDoc");
     expect(code).toMatch(/at ([0-9a-f]{40}|unknown)/);
     expect(code).not.toMatch(/UrlFetchApp|MailApp|GmailApp|DriveApp/);

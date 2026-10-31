@@ -567,7 +567,12 @@ Install script` row carries the same steps and links here.
    Selected Sections dropdown (Data, then Data validation, open the rule).
 
 **Updating later:** steps 1, 2 and 4, then Review links, then Refresh now;
-the automatic refresh stays installed.
+the automatic refresh stays installed. Sheets drift, and that is accepted
+(owner, 2026-10-31: "sheets likely to drift anyways ... they need to know
+where to see latest published"): **Review links, then Which version is
+this?** shows the build the sheet runs (`SCRIPT_VERSION`, the stamp on the
+script's header line) and the link to the latest `dist/Code.gs`, whose
+header carries its own stamp to compare.
 
 **A copy of the template needs none of this** (owner, 2026-10-31, option
 A): the script came with the file. Reload the copy, choose **Review links**,

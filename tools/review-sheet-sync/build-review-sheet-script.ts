@@ -570,7 +570,9 @@ export function buildScript(opts: { stamp?: "commit" | "content" } = {}): string
   const at = opts.stamp === "content"
     ? `template sha256 ${createHash("sha256").update(template).digest("hex").slice(0, 16)}`
     : templateCommit(here);
-  return asciiOnly(template.replace("/*@@VERSION@@*/", `// folio-assistant-core tools/review-sheet-sync at ${at}.`));
+  return asciiOnly(template
+    .replace("/*@@VERSION@@*/", `// folio-assistant-core tools/review-sheet-sync at ${at}.`)
+    .replace("@@STAMP@@", at.replace(/'/g, "")));
 }
 
 /**

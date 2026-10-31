@@ -51,6 +51,11 @@ function installTriggers() {
 }
 
 const CONFIG_TAB = 'Config';
+// Which build this is, and where the latest is published (owner, 2026-10-31:
+// "sheets likely to drift anyways ... they need to know where to see latest
+// published"). The build stamps SCRIPT_VERSION; the script never fetches.
+const SCRIPT_VERSION = '@@STAMP@@';
+const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
   'in the function list (next to Run and Debug), then press Run.';
 let CFG = null, COLS = null, DATA = null, DRAFTING = false, WATCHED = [], EDITORS = null, EDITORS_SKIPPED = [];
@@ -109,10 +114,20 @@ function notLinked(ss) {
     'there and writes this Config tab (skill review-sheet-script, "Linking a sheet to a repository").';
 }
 
+function showVersion() {
+  SpreadsheetApp.getUi().alert('Review sheet script',
+    'This sheet runs: ' + SCRIPT_VERSION + '\n\n' +
+    'The latest published script: ' + LATEST_URL + '\n' +
+    'Its stamp is near the top ("at ..."). If it differs, update: copy it, then Extensions, then Apps Script, ' +
+    'replace Code.gs, save, and choose Review links, then Refresh now.',
+    SpreadsheetApp.getUi().ButtonSet.OK);
+}
+
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('Review links')
     .addItem('Refresh now', 'refreshAll')
     .addItem('Install (first time, or after pasting a new Code.gs)', 'installTriggers')
+    .addItem('Which version is this?', 'showVersion')
     .addToUi();
   try {
     const ss = SpreadsheetApp.getActive();
