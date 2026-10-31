@@ -40,7 +40,7 @@ A document is still being written, and the Authoring Committee gives feedback on
 
 - Who: the `Authoring agent` lane (role `authoring-agent`).
 - Skill: `review-sheet-script`.
-- What: One row, one pull request: the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again.
+- What: One row, one branch, one active pull request (owner, 2026-10-31): the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again.
 - Record it: `workflow_complete` with `node: "Task_EditInPullRequest"`.
 - next: → `Task_AnswerPreview` (Review the preview and answer)
 
@@ -63,7 +63,7 @@ A document is still being written, and the Authoring Committee gives feedback on
 
 - Who: the `Editor` lane (role `editor`).
 - Skill: `review-sheet-script`.
-- What: An Editor sets the row's Ready for merge (Orange) to Yes, and may record its Disposition.
+- What: An Editor sets the row's Ready for merge (Orange) to Yes.
 - Record it: `workflow_complete` with `node: "Task_ReadyForMerge"`.
 - next: → `Task_Merge` (Merge the pull request)
 
