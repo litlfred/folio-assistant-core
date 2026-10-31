@@ -51,6 +51,7 @@
         <bpmn:documentation>Outside the folio: returns comments on the review version through a matrix, a form or a letter, and may withdraw one at any time. Never moves a comment past received; everything after that is the review's.</bpmn:documentation>
         <bpmn:flowNodeRef>StartEvent_CommentsReturned</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_BlockFeedback</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>SubProcess_Withdraw</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_WithdrawRequested</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Withdraw</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Withdrawn</bpmn:flowNodeRef>
@@ -190,18 +191,29 @@
       <bpmn:incoming>Flow_ToIncorporated</bpmn:incoming>
     </bpmn:endEvent>
 
-    <bpmn:startEvent id="StartEvent_WithdrawRequested" name="Commenter withdraws a comment">
-      <bpmn:outgoing>Flow_ToWithdraw</bpmn:outgoing>
-    </bpmn:startEvent>
-    <bpmn:task id="Task_Withdraw" name="Record the withdrawal">
-      <bpmn:documentation>public-comment withdraw, from any open status.</bpmn:documentation>
-      <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
-      <bpmn:incoming>Flow_ToWithdraw</bpmn:incoming>
-      <bpmn:outgoing>Flow_ToWithdrawn</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:endEvent id="EndEvent_Withdrawn" name="Withdrawn">
-      <bpmn:incoming>Flow_ToWithdrawn</bpmn:incoming>
-    </bpmn:endEvent>
+    <!-- Withdrawal can happen at ANY open status, so it is an event
+         subprocess with an interrupting start: whichever step the comment
+         is at stops, and the comment ends withdrawn. As a second top-level
+         start it hung unconnected, and the diagram did not say what it
+         stopped (owner, 2026-10-31: "why record withdrawal not connected"). -->
+    <bpmn:subProcess id="SubProcess_Withdraw" name="Withdrawal, at any open status" triggeredByEvent="true">
+      <bpmn:documentation>The commenter may withdraw a comment at any time before it is resolved. The withdrawal interrupts the comment wherever it is (triage, committee, editor, author or change set) and closes it as withdrawn.</bpmn:documentation>
+      <bpmn:startEvent id="StartEvent_WithdrawRequested" name="Commenter withdraws a comment" isInterrupting="true">
+        <bpmn:outgoing>Flow_ToWithdraw</bpmn:outgoing>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_Withdraw" />
+      </bpmn:startEvent>
+      <bpmn:task id="Task_Withdraw" name="Record the withdrawal">
+        <bpmn:documentation>public-comment withdraw, from any open status.</bpmn:documentation>
+        <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
+        <bpmn:incoming>Flow_ToWithdraw</bpmn:incoming>
+        <bpmn:outgoing>Flow_ToWithdrawn</bpmn:outgoing>
+      </bpmn:task>
+      <bpmn:endEvent id="EndEvent_Withdrawn" name="Withdrawn">
+        <bpmn:incoming>Flow_ToWithdrawn</bpmn:incoming>
+      </bpmn:endEvent>
+      <bpmn:sequenceFlow id="Flow_ToWithdraw" sourceRef="StartEvent_WithdrawRequested" targetRef="Task_Withdraw" />
+      <bpmn:sequenceFlow id="Flow_ToWithdrawn" sourceRef="Task_Withdraw" targetRef="EndEvent_Withdrawn" />
+    </bpmn:subProcess>
 
     <bpmn:sequenceFlow id="Flow_ToIngest" sourceRef="StartEvent_CommentsReturned" targetRef="Task_Ingest" />
     <bpmn:sequenceFlow id="Flow_BlockFeedbackToIngest" sourceRef="StartEvent_BlockFeedback" targetRef="Task_Ingest" />
@@ -221,8 +233,6 @@
     <bpmn:sequenceFlow id="Flow_ToChangeSet" sourceRef="Task_AuthorEdits" targetRef="CallActivity_ChangeSet" />
     <bpmn:sequenceFlow id="Flow_ToIncorporate" sourceRef="CallActivity_ChangeSet" targetRef="Task_Incorporate" />
     <bpmn:sequenceFlow id="Flow_ToIncorporated" sourceRef="Task_Incorporate" targetRef="EndEvent_Incorporated" />
-    <bpmn:sequenceFlow id="Flow_ToWithdraw" sourceRef="StartEvent_WithdrawRequested" targetRef="Task_Withdraw" />
-    <bpmn:sequenceFlow id="Flow_ToWithdrawn" sourceRef="Task_Withdraw" targetRef="EndEvent_Withdrawn" />
   </bpmn:process>
 
   <bpmndi:BPMNDiagram id="BPMNDiagram_PublicComment">
@@ -269,8 +279,8 @@
         <bpmndi:BPMNLabel><dc:Bounds x="578" y="412" width="84" height="40" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Duplicate_di" bpmnElement="EndEvent_Duplicate">
-        <dc:Bounds x="704" y="326" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="744" y="328" width="72" height="27" /></bpmndi:BPMNLabel>
+        <dc:Bounds x="716" y="367" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="698" y="406" width="72" height="27" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ProposeChangeSets_di" bpmnElement="Task_ProposeChangeSets">
         <dc:Bounds x="730" y="215" width="120" height="80" />
@@ -309,14 +319,18 @@
       <bpmndi:BPMNShape id="EndEvent_Incorporated_di" bpmnElement="EndEvent_Incorporated">
         <dc:Bounds x="2010" y="887" width="36" height="36" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="SubProcess_Withdraw_di" bpmnElement="SubProcess_Withdraw" isExpanded="true">
+        <dc:Bounds x="975" y="64" width="345" height="122" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_WithdrawRequested_di" bpmnElement="StartEvent_WithdrawRequested">
-        <dc:Bounds x="1000" y="107" width="36" height="36" />
+        <dc:Bounds x="1000" y="117" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="977" y="157" width="124" height="27" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Withdraw_di" bpmnElement="Task_Withdraw">
-        <dc:Bounds x="1080" y="85" width="120" height="80" />
+        <dc:Bounds x="1110" y="95" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Withdrawn_di" bpmnElement="EndEvent_Withdrawn">
-        <dc:Bounds x="1260" y="107" width="36" height="36" />
+        <dc:Bounds x="1272" y="117" width="36" height="36" />
       </bpmndi:BPMNShape>
 
       <bpmndi:BPMNEdge id="Flow_BlockFeedbackToIngest_di" bpmnElement="Flow_BlockFeedbackToIngest">
@@ -340,16 +354,16 @@
         <di:waypoint x="640" y="385" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Duplicate_di" bpmnElement="Flow_Duplicate">
-        <di:waypoint x="665" y="360" />
-        <di:waypoint x="665" y="344" />
-        <di:waypoint x="704" y="344" />
-        <bpmndi:BPMNLabel><dc:Bounds x="612" y="326" width="48" height="14" /></bpmndi:BPMNLabel>
+        <di:waypoint x="690" y="385" />
+        <di:waypoint x="716" y="385" />
+        <bpmndi:BPMNLabel><dc:Bounds x="694" y="349" width="48" height="14" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToAssign_di" bpmnElement="Flow_ToAssign">
-        <di:waypoint x="690" y="385" />
-        <di:waypoint x="760" y="385" />
+        <di:waypoint x="665" y="360" />
+        <di:waypoint x="665" y="332" />
+        <di:waypoint x="760" y="332" />
         <di:waypoint x="760" y="295" />
-        <bpmndi:BPMNLabel><dc:Bounds x="690" y="392" width="70" height="14" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel><dc:Bounds x="584" y="322" width="70" height="14" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToGroup_di" bpmnElement="Flow_ToGroup">
         <di:waypoint x="790" y="295" />
@@ -412,12 +426,12 @@
         <di:waypoint x="2010" y="905" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToWithdraw_di" bpmnElement="Flow_ToWithdraw">
-        <di:waypoint x="1036" y="125" />
-        <di:waypoint x="1080" y="125" />
+        <di:waypoint x="1036" y="135" />
+        <di:waypoint x="1110" y="135" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToWithdrawn_di" bpmnElement="Flow_ToWithdrawn">
-        <di:waypoint x="1200" y="125" />
-        <di:waypoint x="1260" y="125" />
+        <di:waypoint x="1230" y="135" />
+        <di:waypoint x="1272" y="135" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
