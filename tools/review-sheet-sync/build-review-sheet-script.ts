@@ -430,15 +430,15 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
 
 export function setupSteps(c: SheetConfig): string[] {
   const steps = [
-    `Once per sheet, by the sheet's owner. The same steps, in detail: ${INSTALL_GUIDE_URL}`,
+    `Once per sheet, by the sheet's owner. Made with File, then Make a copy, of the template? The script is already inside: choose Review links, then Install, and allow it (step 6), and you are done. Otherwise, or to update the script (details: ${INSTALL_GUIDE_URL}):`,
     `1. Get the latest Code.gs: open ${CODE_GS_URL} and press "Copy raw file" (the two-squares button at the top right of the code). Or open ${CODE_GS_RAW}, select all and copy`,
     "2. Here, choose Extensions, then Apps Script. The script editor opens in a new tab",
     "   • \"Unable to open the file\"? You are signed in to several Google accounts. Use a private window signed in to the owner's account only",
     "3. Name the project after this spreadsheet: click \"Untitled project\" at the top left and type the sheet's own name (e.g. \"DTH-PC Contributor Log\"), then Rename. The same name makes it easy to find in script.google.com",
     "4. Click Code.gs in the Files list. Select all (Ctrl+A, or Cmd+A on a Mac), delete it, paste the copied script, and save (Ctrl+S or Cmd+S, or the disk icon)",
-    "5. In the toolbar's function list (next to Run and Debug), check that installTriggers is selected (it is the default), then press Run",
-    "6. Allow it, once: Review permissions, pick the owner's account. Google then shows \"Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.\" That is expected: this is the sheet's own script, which Google never reviews. Choose Advanced, then Go to <project name> (unsafe), then Allow. Why: https://support.google.com/cloud/answer/7454865",
-    "7. Wait for \"Execution completed\" in the log, return to the sheet tab and reload it. A Review links menu appears; Review links, then Refresh now, checks it",
+    "5. Reload the sheet and choose Review links, then Install. (Or, in the editor, press Run with installTriggers selected; it is the default)",
+    "6. Allow it, once: Google asks for authorization; press Continue (or Review permissions) and pick the owner's account. Google then shows \"Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.\" That is expected: this is the sheet's own script, which Google never reviews. Choose Advanced, then Go to <project name> (unsafe), then Allow. Why: https://support.google.com/cloud/answer/7454865",
+    "7. Review links, then Refresh now, checks it",
     "   • Updating later: repeat 1, 2 and 4, then Review links, then Refresh now. The automatic refresh stays installed",
   ];
   return steps;
@@ -570,7 +570,9 @@ export function buildScript(opts: { stamp?: "commit" | "content" } = {}): string
   const at = opts.stamp === "content"
     ? `template sha256 ${createHash("sha256").update(template).digest("hex").slice(0, 16)}`
     : templateCommit(here);
-  return asciiOnly(template.replace("/*@@VERSION@@*/", `// folio-assistant-core tools/review-sheet-sync at ${at}.`));
+  return asciiOnly(template
+    .replace("/*@@VERSION@@*/", `// folio-assistant-core tools/review-sheet-sync at ${at}.`)
+    .replace("@@STAMP@@", at.replace(/'/g, "")));
 }
 
 /**
