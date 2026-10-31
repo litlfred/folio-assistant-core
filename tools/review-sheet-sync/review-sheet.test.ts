@@ -380,6 +380,8 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(cf).toContain("Blue = your input, by Contributors");
     expect(cf).toContain("Ready for agent back to No");
     expect(cf).toContain("Filter views");
+    // Colour words are capitalised, so the sheet can bold and colour each one.
+    expect(cf).not.toMatch(/\b(blue|green|orange|grey)\b/);
     expect(cf).toContain("/en/cat-harness/processes/content-change-review.html");
     const p = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
     expect(p["Review Public Comments"]).toContain("one row per public comment");
