@@ -439,13 +439,17 @@ describe("review-sheet.gs in drafting mode", () => {
   });
 
   test("each tab's Instructions say how that tab works, in the sheet's own words, and the Config tab's are short rows", () => {
-    expect(dRows.slice(0, 4).map((r) => r[0])).toEqual(["Instructions", "Instructions - Setup", "Instructions - Editors", "Key"]);
+    expect(dRows.slice(0, 5).map((r) => r[0])).toEqual(["Instructions", "Instructions - Install script", "Instructions - Dropdown", "Instructions - Editors", "Key"]);
     expect(dRows[0][1]).toContain("only the owner edits");
-    expect(dRows[1][1]).toContain("Allow multiple selections");
-    expect(dRows[2][1]).toContain("EDITORS");
-    expect(dRows[2][1]).toMatch(/Format: plain emails[\s\S]*Example[\s\S]*ana@example\.org\n\s+ben@example\.org/);
+    // Installing Code.gs, step by step, with the project named after the sheet (owner, 2026-10-31).
+    expect(dRows[1][1]).toMatch(/Extensions, then Apps Script[\s\S]*Name the project after this spreadsheet[\s\S]*installTriggers[\s\S]*Advanced/);
+    expect(dRows[2][1]).toContain("Allow multiple selections");
+    expect(dRows[3][1]).toContain("EDITORS");
+    expect(dRows[3][1]).toMatch(/Format: plain emails[\s\S]*Example[\s\S]*ana@example\.org\n\s+ben@example\.org/);
     // No Config row is taller than a window.
-    expect(Math.max(...dRows.slice(0, 3).map((r) => r[1].split("\n").length))).toBeLessThanOrEqual(10);
+    expect(Math.max(...dRows.slice(0, 4).map((r) => r[1].split("\n").length))).toBeLessThanOrEqual(10);
+    // A public-comment sheet has no dropdown row.
+    expect(configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json")).map((r) => r[0])).not.toContain("Instructions - Dropdown");
     const d = tabInstructions(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
     const cf = d["Contributor Feedback"];
     expect(cf).toContain("Blue = your input, by the Authoring Committee");
@@ -468,7 +472,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(dRows.find((r) => !(/^Instructions/.test(r[0]) || ["Key", "EDITORS"].includes(r[0])))?.[0]).toBe("CFG");
     expect(dRows.filter((r) => ["GUIDE", "SETUP"].includes(r[0]))).toHaveLength(0);
     expect(dRows.find((r) => r[0] === "EDITORS")![1]).toBe("");
-    expect(dRows.every((r, i) => i <= 3 || r[0] === "EDITORS" || r[1].startsWith("|"))).toBe(true);
+    expect(dRows.every((r, i) => /^Instructions|^Key$/.test(r[0]) || r[0] === "EDITORS" || r[1].startsWith("|"))).toBe(true);
     expect(JSON.parse(dRows.find((r) => r[0] === "CFG")![1].slice(1)).MODE).toBe("drafting");
   });
 
