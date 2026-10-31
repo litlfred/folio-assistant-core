@@ -197,7 +197,7 @@
          start it hung unconnected, and the diagram did not say what it
          stopped (owner, 2026-10-31: "why record withdrawal not connected"). -->
     <bpmn:subProcess id="SubProcess_Withdraw" name="Withdrawal, at any open status" triggeredByEvent="true">
-      <bpmn:documentation>The commenter may withdraw a comment at any time before it is resolved. The withdrawal interrupts the comment wherever it is (triage, committee, editor, author or change set) and closes it as withdrawn.</bpmn:documentation>
+      <bpmn:documentation>The commenter may withdraw a comment at any time before it is resolved. The withdrawal interrupts the comment wherever it is (triage, committee, editor, author or change set) and closes it as withdrawn, telling the coordinator and any assigned committee members.</bpmn:documentation>
       <bpmn:startEvent id="StartEvent_WithdrawRequested" name="Commenter withdraws a comment" isInterrupting="true">
         <bpmn:outgoing>Flow_ToWithdraw</bpmn:outgoing>
         <bpmn:messageEventDefinition id="MessageEventDefinition_Withdraw" />
@@ -208,8 +208,10 @@
         <bpmn:incoming>Flow_ToWithdraw</bpmn:incoming>
         <bpmn:outgoing>Flow_ToWithdrawn</bpmn:outgoing>
       </bpmn:task>
-      <bpmn:endEvent id="EndEvent_Withdrawn" name="Withdrawn">
+      <bpmn:endEvent id="EndEvent_Withdrawn" name="Withdrawn, coordinator and committee told">
+        <bpmn:documentation>A message end: the review coordinator and any committee members assigned to the comment are told it is withdrawn, so nobody keeps working on it. The interruption has already closed its open tasks.</bpmn:documentation>
         <bpmn:incoming>Flow_ToWithdrawn</bpmn:incoming>
+        <bpmn:messageEventDefinition id="MessageEventDefinition_Withdrawn" />
       </bpmn:endEvent>
       <bpmn:sequenceFlow id="Flow_ToWithdraw" sourceRef="StartEvent_WithdrawRequested" targetRef="Task_Withdraw" />
       <bpmn:sequenceFlow id="Flow_ToWithdrawn" sourceRef="Task_Withdraw" targetRef="EndEvent_Withdrawn" />
@@ -323,7 +325,7 @@
         <dc:Bounds x="2040" y="887" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_Withdraw_di" bpmnElement="SubProcess_Withdraw" isExpanded="true">
-        <dc:Bounds x="975" y="64" width="345" height="122" />
+        <dc:Bounds x="975" y="64" width="410" height="122" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_WithdrawRequested_di" bpmnElement="StartEvent_WithdrawRequested">
         <dc:Bounds x="1000" y="117" width="36" height="36" />
@@ -333,7 +335,8 @@
         <dc:Bounds x="1110" y="95" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Withdrawn_di" bpmnElement="EndEvent_Withdrawn">
-        <dc:Bounds x="1272" y="117" width="36" height="36" />
+        <dc:Bounds x="1290" y="117" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1240" y="157" width="140" height="27" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
 
       <bpmndi:BPMNEdge id="Flow_BlockFeedbackToIngest_di" bpmnElement="Flow_BlockFeedbackToIngest">
@@ -435,7 +438,7 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToWithdrawn_di" bpmnElement="Flow_ToWithdrawn">
         <di:waypoint x="1230" y="135" />
-        <di:waypoint x="1272" y="135" />
+        <di:waypoint x="1290" y="135" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
