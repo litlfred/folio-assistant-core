@@ -476,7 +476,7 @@ function refreshLocked() {
       if (id) builtOf[id] = builtInfo(r, aBuilt, aFrom, aDeploy, aGate, aQa);
       if (id && aDisp >= 0) dispOf[id] = String(r[aDisp]);
       if (id && aPrs >= 0) {
-        const descs = aCh >= 0 ? String(r[aCh]).split('\n').map(x => x.trim()) : [];
+        const descs = aCh >= 0 ? prDescs(r[aCh]) : [];
         const dones = aDone >= 0 ? String(r[aDone]).split('\n').map(x => x.trim()) : [];
         const heads = aHead >= 0 ? String(r[aHead]).split('\n').map(x => x.trim()) : [];
         prOf[id] = String(r[aPrs]).split('\n').map(x => x.trim()).filter(Boolean)
@@ -1308,9 +1308,27 @@ function agenticParts(status, prs) {
  * " · "; several ("a; b; c", or one per line) read one bullet per line
  * (owner, 2026-10-31: "several of the cols could be a bit more structured").
  */
+/**
+ * "What the PRs changed" holds one entry per pull request, in the order of
+ * the Pull request column. An entry may run over several lines (owner,
+ * 2026-10-31, "more structured"): a line that starts with a bullet, or
+ * follows a label line ending in ":", continues the entry above it. With one
+ * pull request the whole cell is its entry.
+ */
+function prDescs(text) {
+  const out = [];
+  String(text).split('\n').map(x => x.trim()).forEach(line => {
+    const prev = out.length ? out[out.length - 1] : null;
+    if (prev !== null && line && (/^[\u2022*-]\s/.test(line) || /:$/.test(prev.split('\n').pop()))) out[out.length - 1] = prev + '\n' + line;
+    else if (line || prev === null || out[out.length - 1] !== '') out.push(line);
+  });
+  return out.filter((x, i) => x || i < out.length - 1);
+}
 function descText(desc) {
   const items = String(desc).split(/;\s+|\n+/).map(x => x.replace(/^[\u2022*-]\s*/, '').trim()).filter(Boolean);
-  return items.length > 1 ? items.map(x => '\n  \u2022 ' + x).join('') : ' \u00b7 ' + (items[0] || '');
+  // A label line ("What the PRs changed:") heads the list rather than being an item.
+  const label = items.length > 1 && /:$/.test(items[0]) ? ' \u00b7 ' + items.shift() : '';
+  return items.length > 1 ? label + items.map(x => '\n  \u2022 ' + x).join('') : (label || ' \u00b7') + ' ' + (items[0] || '');
 }
 
 /** "smart-ra#97": the repository and number, since Sheets' link popup cuts the URL short. */
@@ -1654,7 +1672,7 @@ function refreshDraft(rows) {
     builtOf[id] = builtInfo(r, a.built, a.builtFrom, a.deploy, a.gate, a.qa);
     if (a.basis >= 0) basisOfCs[id] = String(r[a.basis]).trim();
     if (a.prs >= 0) {
-      const descs = a.changes >= 0 ? String(r[a.changes]).split('\n').map(x => x.trim()) : [];
+      const descs = a.changes >= 0 ? prDescs(r[a.changes]) : [];
       const dones = a.done >= 0 ? String(r[a.done]).split('\n').map(x => x.trim()) : [];
       const heads = a.head >= 0 ? String(r[a.head]).split('\n').map(x => x.trim()) : [];
       prOf[id] = String(r[a.prs]).split('\n').map(x => x.trim()).filter(Boolean)

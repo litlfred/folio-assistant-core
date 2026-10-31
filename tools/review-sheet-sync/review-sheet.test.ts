@@ -1365,3 +1365,17 @@ describe("hover text on every column head (owner, 2026-10-31)", () => {
     expect(written![0][2]).toBe("");
   });
 });
+
+describe("a PR's change list may run over several lines (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { prDescs, descText };`)({}) as {
+    prDescs: (t: string) => string[]; descText: (d: string) => string;
+  };
+  test("bullets and a label line stay with their PR", () => {
+    expect(fns.prDescs("What the PRs changed:\n• a (No. 1)\n• b")).toEqual(["What the PRs changed:\n• a (No. 1)\n• b"]);
+    expect(fns.prDescs("first PR\nsecond PR")).toEqual(["first PR", "second PR"]);
+    expect(fns.prDescs("one\n• x\ntwo")).toEqual(["one\n• x", "two"]);
+  });
+  test("the label heads the bullets", () => {
+    expect(fns.descText("What the PRs changed:\n• a (No. 1)\n• b")).toBe(" · What the PRs changed:\n  • a (No. 1)\n  • b");
+  });
+});
