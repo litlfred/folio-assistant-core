@@ -378,7 +378,7 @@ describe("review-sheet.gs in drafting mode", () => {
     const d = tabInstructions(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
     const cf = d["Contributor Feedback"];
     expect(cf).toContain("Blue = your input, by Contributors");
-    expect(cf).toContain("Ready for agent back to No");
+    expect(cf).toContain("Ready for agent (Orange) back to No");
     expect(cf).toContain("Filter views");
     // Colour words are capitalised, so the sheet can bold and colour each one.
     expect(cf).not.toMatch(/\b(blue|green|orange|grey)\b/);
