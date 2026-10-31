@@ -84,6 +84,7 @@ export const DRAFT_COLUMNS = {
     changes: "What the PRs changed (change set)", done: "Agent completed (UTC, change set)",
     staging: "Staging review page (change set)", basis: "Feedback basis (change set)",
     built: "Staging built (UTC, change set)",
+    head: "PR head (change set)", builtFrom: "Staging built from (change set)", deploy: "Staging deploy (change set)",
   },
 };
 
@@ -156,6 +157,7 @@ export const DEFAULT_COLUMNS = {
     csId: "Change-set", prs: "Pull request (change set)", changes: "What the PRs changed (change set)",
     done: "Agent completed (UTC, change set)", basis: "Feedback basis (change set)",
     staging: "Staging review page (change set)", built: "Staging built (UTC, change set)",
+    head: "PR head (change set)", builtFrom: "Staging built from (change set)", deploy: "Staging deploy (change set)",
   },
 };
 

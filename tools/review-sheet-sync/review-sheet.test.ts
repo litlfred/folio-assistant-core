@@ -704,6 +704,33 @@ describe("review-sheet.gs in drafting mode", () => {
     expect((rt2.written["Contributor Feedback"]["Staging review"][0][0] as Rich).text).toBe("review");
   });
 
+  test("the staging review link compares commits when the agent records them", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const h = t.Agent.rows[0];
+    h.push("Staging built (UTC, change set)", "PR head (change set)", "Staging built from (change set)", "Staging deploy (change set)");
+    t.Agent.rows[1].push("2026-10-30 23:00Z", "abcdef1234567890", "abcdef1", "deployed");
+    const at = (n: string) => h.indexOf(n);
+    const rt2 = runtime(t);
+    const s = load(code, rt2.g);
+    const text = () => (rt2.written["Contributor Feedback"]["Staging review"][0][0] as Rich).text;
+    // Same commit: no warning, even though Agent completed is later than Staging built.
+    s.refreshAll();
+    expect(text()).toBe("review");
+    t.Agent.rows[1][at("PR head (change set)")] = "1234567aaaa";
+    s.refreshAll();
+    expect(text()).toBe("review \u26a0 stale: built from abcdef1, PR now at 1234567");
+    t.Agent.rows[1][at("Staging built from (change set)")] = "1234567";
+    t.Agent.rows[1][at("Staging deploy (change set)")] = "pending";
+    s.refreshAll();
+    expect(text()).toBe("review \u26a0 deploy in progress");
+    t.Agent.rows[1][at("Staging deploy (change set)")] = "failed";
+    s.refreshAll();
+    expect(text()).toBe("review \u26a0 deploy failed");
+    t.Agent.rows[1][at("Staging review page (change set)")] = "";
+    s.refreshAll();
+    expect(text()).toBe("\u26a0 no preview yet");
+  });
+
   test("security: text a person or the agent typed is never written back as a formula", () => {
     const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
     const f = t["Contributor Feedback"].rows;
