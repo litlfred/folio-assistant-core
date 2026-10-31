@@ -13,7 +13,15 @@
  * @OnlyCurrentDoc
  */
 function installTriggers() { use_(); Review.installTriggers(); }
-function onOpen() { use_(); Review.onOpen(); }
+function onOpen() {
+  // The menu is built here, so it shows even when the library cannot run
+  // before the script is allowed (a simple trigger cannot ask for that).
+  SpreadsheetApp.getUi().createMenu('Review links')
+    .addItem('Refresh now', 'refreshAll')
+    .addItem('Install (first time)', 'installTriggers')
+    .addItem('Which version is this?', 'showVersion')
+    .addToUi();
+}
 function refreshAll() { use_(); Review.refreshAll(); }
 function markDirty(e) { use_(); Review.markDirty(e); }
 function refreshIfDirty() { use_(); Review.refreshIfDirty(); }
