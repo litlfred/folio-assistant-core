@@ -710,12 +710,12 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName) {
 }
 
 /**
- * The agent's "Decision needed" block, bold and red, so a reader sees at once
+ * The agent's "Decision needed" block in bold, so a reader sees at once
  * that the row waits on them (owner, 2026-10-31: "decision needed should be
  * bold highlighted in change set feedback so clear"). The block runs to the
  * next blank line. Cells without one are left as they are.
  */
-const DECISION_RED = '#cc0000';
+const DECISION_INK = '#000000';
 function decisionSpans(text) {
   const t = String(text), spans = [], re = /Decision needed/g;
   let m;
@@ -729,7 +729,7 @@ function markDecision(range, text) {
   const spans = decisionSpans(text);
   if (!spans.length) return;
   const b = SpreadsheetApp.newRichTextValue().setText(String(text));
-  const st = SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(DECISION_RED).build();
+  const st = SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(DECISION_INK).build();
   spans.forEach(([a, z]) => b.setTextStyle(a, z, st));
   range.setRichTextValue(b.build());
 }
