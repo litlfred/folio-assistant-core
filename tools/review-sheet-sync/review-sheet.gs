@@ -1044,9 +1044,9 @@ function agentStep(cell) {
 /** The step line: "Agent: editing the document (since 17:20Z)", with a warning once it has gone quiet. */
 function stepLine(step, now) {
   if (step.name === 'proposed')
-    return PROGRESS + 'Proposal ready (' + step.at.slice(11) + '): set Ready for agent to Yes to start, or answer in your feedback.';
+    return PROGRESS + 'Proposal ready (' + step.at + '): set Ready for agent to Yes to start, or answer in your feedback.';
   const age = Math.round(((now || Date.now()) - utcMs(step.at)) / 60000);
-  return PROGRESS + 'Agent: ' + step.text + ' (since ' + step.at.slice(11) +
+  return PROGRESS + 'Agent: ' + step.text + ' (since ' + step.at +
     (age > 30 ? '; \u26a0 no update for ' + age + ' min' : '') + ').';
 }
 /** Add the Agent step column at the END of the agent's change-set tab, inside the locked run. */
