@@ -170,6 +170,25 @@ Agent tab's Staging review page (change set) where it names one). Without a
 build time it claims nothing. The preview page shows its own live banner too
 (the site's staging build, cat-harness-tools).
 
+**Checked by commit** (owner, 2026-10-31, option A: "agent checks shas, sheet
+shows"). Times can agree while the preview is still wrong, so the agent also
+records, on each pass over a change set with an open PR:
+
+| Agent tab column | what the agent writes | where it reads it |
+|---|---|---|
+| **PR head (change set)** | each PR's latest commit, one per line, in the PR order | the PR (`gh pr view --json headRefOid`) |
+| **Staging built from (change set)** | the commit the preview was built from | the newest gh-pages commit touching `STAGING/<slug>/`, whose message is `staging(<slug>): from <sha>` (`stage-local.ts`) |
+| **Staging deploy (change set)** | `deployed`, `pending` or `failed` | the Pages deployment of that gh-pages commit (`gh api repos/<o>/<r>/pages/builds/latest`, or the deployments API) |
+
+The script compares only; it stays `@OnlyCurrentDoc` with no internet access.
+It reads the active PR as the last one listed (one branch, one active PR per
+row) and writes, in this order of precedence: `⚠ deploy failed`;
+`⚠ stale: built from <sha>, PR now at <sha>`; `⚠ deploy in progress`. A
+change set with a recorded PR head but no preview link shows `⚠ no preview
+yet`. Without these columns it falls back to the time check above. A sheet
+made before 2026-10-31 gains the three columns at the right of the Agent
+(change sets) tab; the script finds them by header.
+
 **Stale agent proposals.** `Feedback (agent)` (drafting) and
 `Change Set Feedback (agent)` (Review Change Sets) carry the agent's proposal.
 The agent records what it wrote against in the Agent tab's **Feedback basis

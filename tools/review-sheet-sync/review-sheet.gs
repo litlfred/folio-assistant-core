@@ -293,6 +293,9 @@ function refreshLocked() {
     const basisOfCs = {}, stagingOf = {}, builtOf = {};
     const aStaging = COLS.agent.staging ? col(agentCs, COLS.agent.staging) : -1;
     const aBuilt = COLS.agent.built ? col(agentCs, COLS.agent.built) : -1;
+    const aHead = col(agentCs, COLS.agent.head || 'PR head (change set)');
+    const aFrom = col(agentCs, COLS.agent.builtFrom || 'Staging built from (change set)');
+    const aDeploy = col(agentCs, COLS.agent.deploy || 'Staging deploy (change set)');
     agent.rows.forEach(r => {
       const n = String(r[aNo]).trim();
       if (n) {
@@ -310,12 +313,13 @@ function refreshLocked() {
       const id = aId >= 0 ? String(r[aId]).trim() : '';
       if (id && aBasis >= 0) basisOfCs[id] = String(r[aBasis]).trim();
       if (id && aStaging >= 0) stagingOf[id] = (String(r[aStaging]).match(/https:\/\/\S+/) || [''])[0];
-      if (id && aBuilt >= 0) builtOf[id] = String(r[aBuilt]).trim();
+      if (id) builtOf[id] = builtInfo(r, aBuilt, aFrom, aDeploy);
       if (id && aPrs >= 0) {
         const descs = aCh >= 0 ? String(r[aCh]).split('\n').map(x => x.trim()) : [];
         const dones = aDone >= 0 ? String(r[aDone]).split('\n').map(x => x.trim()) : [];
+        const heads = aHead >= 0 ? String(r[aHead]).split('\n').map(x => x.trim()) : [];
         prOf[id] = String(r[aPrs]).split('\n').map(x => x.trim()).filter(Boolean)
-          .map((line, i) => ({ url: prUrl(line), desc: descs[i] || '', done: dones[i] || '' }))
+          .map((line, i) => ({ url: prUrl(line), desc: descs[i] || '', done: dones[i] || '', head: heads[i] || '' }))
           .filter(x => x.url);
       }
     });
@@ -327,7 +331,7 @@ function refreshLocked() {
     const rSt = COLS.rcs.staging ? col(rcs, COLS.rcs.staging) : -1, rCs = col(rcs, COLS.rcs.cs);
     if (rSt >= 0 && rCs >= 0) rcs.rows.forEach((r, k) => {
       const id = String(r[rCs]).trim();
-      if (stagingOf[id]) rcs.sh.getRange(k + rcs.top, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id])]]);
+      if (stagingOf[id] || awaitsPreview(prOf[id])) rcs.sh.getRange(k + rcs.top, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id])]]);
     });
   }
 }
@@ -526,12 +530,48 @@ function utcMs(t) {
  * nothing is claimed either way.
  */
 function stagingCell(url, built, prs) {
-  if (!url) return rich([]);
-  const b = utcMs(built);
+  const w = stagingWarning(url, built, prs);
+  if (!url) return rich(w ? [{ t: w, bold: true }] : []);
+  return rich([{ t: 'review', url: url }].concat(w ? [{ t: ' ' + w, bold: true }] : []));
+}
+
+/**
+ * Why the preview cannot be trusted, or '' (owner, 2026-10-31: "Staging
+ * Review column should show warning when stale"). The agent checks GitHub and
+ * writes what it found on the Agent tab; the script only compares, so it
+ * needs no internet access:
+ *   - PR head (change set): each PR's latest commit, one per line;
+ *   - Staging built from (change set): the commit the preview was built from,
+ *     as its gh-pages commit records it ("staging(slug): from <sha>");
+ *   - Staging deploy (change set): the Pages deploy of that commit, deployed,
+ *     pending or failed.
+ * The active PR is the last one listed (one branch, one active PR per row).
+ * Without those columns it falls back to times: Agent completed later than
+ * Staging built.
+ */
+function stagingWarning(url, built, prs) {
+  const b = built || {};
+  const active = (prs || []).filter(p => p.head).slice(-1)[0];
+  if (!url) return active ? '\u26a0 no preview yet' : '';
+  const deploy = String(b.deploy || '').toLowerCase();
+  if (/fail|error/.test(deploy)) return '\u26a0 deploy failed';
+  if (active && b.from) {
+    const n = Math.min(active.head.length, b.from.length, 40);
+    if (n >= 7 && active.head.slice(0, n).toLowerCase() !== b.from.slice(0, n).toLowerCase())
+      return '\u26a0 stale: built from ' + b.from.slice(0, 7) + ', PR now at ' + active.head.slice(0, 7);
+  }
+  if (/pend|queue|progress|build/.test(deploy)) return '\u26a0 deploy in progress';
+  const at = utcMs(b.at);
   const done = (prs || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
-  const stale = !isNaN(b) && done.some(x => x > b);
-  return rich([{ t: 'review', url: url }].concat(stale ?
-    [{ t: ' \u26a0 stale: built ' + String(built).trim() + ', PR changed since', bold: true }] : []));
+  if (!isNaN(at) && !(active && b.from) && done.some(x => x > at))
+    return '\u26a0 stale: built ' + String(b.at).trim() + ', PR changed since';
+  return '';
+}
+/** A change set with a PR whose head the agent recorded, and so owes a preview. */
+function awaitsPreview(prs) { return (prs || []).some(p => p.head); }
+function builtInfo(r, at, from, deploy) {
+  const v = c => (c >= 0 ? String(r[c]).trim() : '');
+  return { at: v(at), from: v(from), deploy: v(deploy) };
 }
 
 /** Flag the agent's proposal (column `agentName`) of each row whose basis moved on. */
@@ -891,6 +931,9 @@ function refreshDraft(rows) {
   const fbCols = colsLike(fb, COLS.draft.feedback);
   const a = {};
   Object.entries(COLS.draftAgent).forEach(([k, h]) => (a[k] = col(agent, h)));
+  // Columns added after a sheet's Config was written are found by their default names.
+  [['head', 'PR head (change set)'], ['builtFrom', 'Staging built from (change set)'], ['deploy', 'Staging deploy (change set)']]
+    .forEach(([k, h]) => { if (a[k] === undefined) a[k] = col(agent, h); });
 
   // Rows whose change set's Agent row changed since the last run.
   // One property per change set ("a:CS-001"), never one large JSON value,
@@ -947,13 +990,14 @@ function refreshDraft(rows) {
     if (a.agentic >= 0) stOf[id] = String(r[a.agentic]).trim();
     if (a.issue >= 0) issuesOf[id] = String(r[a.issue]).split('\n').map(issueUrl).filter(Boolean);
     if (a.staging >= 0) stagingOf[id] = (String(r[a.staging]).match(/https:\/\/\S+/) || [''])[0];
-    if (a.built >= 0) builtOf[id] = String(r[a.built]).trim();
+    builtOf[id] = builtInfo(r, a.built, a.builtFrom, a.deploy);
     if (a.basis >= 0) basisOfCs[id] = String(r[a.basis]).trim();
     if (a.prs >= 0) {
       const descs = a.changes >= 0 ? String(r[a.changes]).split('\n').map(x => x.trim()) : [];
       const dones = a.done >= 0 ? String(r[a.done]).split('\n').map(x => x.trim()) : [];
+      const heads = a.head >= 0 ? String(r[a.head]).split('\n').map(x => x.trim()) : [];
       prOf[id] = String(r[a.prs]).split('\n').map(x => x.trim()).filter(Boolean)
-        .map((line, i) => ({ url: prUrl(line), desc: descs[i] || '', done: dones[i] || '' }))
+        .map((line, i) => ({ url: prUrl(line), desc: descs[i] || '', done: dones[i] || '', head: heads[i] || '' }))
         .filter(x => x.url);
     }
   });
