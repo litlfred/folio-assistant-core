@@ -443,6 +443,8 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(dRows[0][1]).toContain("only the owner edits");
     // Installing Code.gs, step by step, with the project named after the sheet (owner, 2026-10-31).
     expect(dRows[1][1]).toMatch(/Extensions, then Apps Script[\s\S]*Name the project after this spreadsheet[\s\S]*installTriggers[\s\S]*Advanced/);
+    expect(dRows[1][1]).toContain("Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.");
+    expect(dRows[1][1]).toContain("https://support.google.com/cloud/answer/7454865");
     expect(dRows[2][1]).toContain("Allow multiple selections");
     expect(dRows[3][1]).toContain("EDITORS");
     expect(dRows[3][1]).toMatch(/Format: plain emails[\s\S]*Example[\s\S]*ana@example\.org\n\s+ben@example\.org/);
