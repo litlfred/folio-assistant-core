@@ -83,11 +83,26 @@ status, on Review Change Sets or Contributor Feedback. It holds:
    answered, the decision moves here, and the question leaves the feedback
    cell. Change Set Feedback (agent) holds only the current proposal and any
    open question.
-2. **The dispositions blurb**: what is done with every comment or feedback
-   item in the change set, with their numbers ("Accepted: Nos. 136, 326, 327,
-   edited in the executive summary and glossary. Not changed: Nos. 126 to
-   135, 137 to 139, already addressed."). It is written before the staging
-   preview is made, and kept current with each push.
+2. **One disposition per comment** (owner, 2026-10-31: "enforce more
+   structured Disposition (change set), so each PC is given a disposition"),
+   after an optional overall statement ("can also be an overall disposition
+   statement without reference to a PC"):
+
+   ```
+   Overall: <a statement for the whole change set>
+   No. 136: Accepted. DPI-F defined at first use, with a glossary entry.
+   Nos. 127 to 135, 138 and 139: Not accepted. Already addressed.
+   No. 326: Partially accepted. <what was done, and what was not>
+   ```
+
+   A disposition is one of Accepted, Partially accepted, Not accepted,
+   Noted, Deferred, Duplicate, Out of scope or Withdrawn, first after the
+   colon. Every comment of the change set gets exactly one. The script checks
+   this (`dispositionProblems`) and puts any problem, in bold, at the top of
+   Disposition (agent): `⚠ No disposition yet for No. 140, 141`, `⚠ No. 9
+   is not in this change set`, `⚠ No. 136 has two dispositions`, or a line
+   whose word is not a disposition. It never edits the Agent tab. Written
+   before the staging preview is made, and kept current with each push.
 
 Once an Editor sets Ready for merge to Yes, the record as it stands is the
 summary: the agent puts it in the merge commit and posts it as the closing

@@ -481,7 +481,10 @@ function refreshLocked() {
     const csCol = col(rcs, 'Change-set'), all = () => true;
     const readyAt = readyTimes(rcs, csCol, prOf, all, docProps_()), lineOf = {};
     refreshRcs(rcs, rpc, csOf, stOf, prOf, readyAt);
-    writeRows(rcs, col(rcs, COLS.rcs.dispositionsAgent || DISPOSITIONS_AGENT), null, r => rich([{ t: dispOf[String(r[csCol]).trim()] || '' }]));
+    writeRows(rcs, col(rcs, COLS.rcs.dispositionsAgent || DISPOSITIONS_AGENT), null, r => {
+      const cs = String(r[csCol]).trim();
+      return dispositionCell(dispOf[cs], csOf[cs]);
+    });
     rcs.rows.forEach(r => {
       const cs = String(r[csCol]).trim();
       if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)), prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] });
@@ -818,6 +821,47 @@ const PROGRESS = '\u23f3 ';
  * script shows it, read-only, wherever the people's tab has the column.
  */
 const DISPOSITIONS_CS = 'Disposition (change set)', DISPOSITIONS_AGENT = 'Disposition (agent)';
+/**
+ * The record's structure (owner, 2026-10-31: "enforce more structured
+ * Disposition (change set), so each PC is given a disposition"; "can also
+ * be an overall disposition statement without reference to a PC"). Lines:
+ *   Decided (Q1, 2026-10-31): A, by the Editor; <what it means>
+ *   Overall: <a statement for the whole change set>        (optional)
+ *   No. 136: Accepted. <what was done>
+ *   Nos. 127 to 135, 138 and 139: Not accepted. <why>
+ * Each comment of the change set needs exactly one disposition, from
+ * DISPOSITION_WORDS. Returns the problems, one line each ('' when none).
+ */
+const DISPOSITION_WORDS = ['Accepted', 'Partially accepted', 'Not accepted', 'Noted', 'Deferred', 'Duplicate', 'Out of scope', 'Withdrawn'];
+function dispositionProblems(text, nos) {
+  const want = (nos || []).map(String), seen = {}, out = [];
+  const words = new RegExp('^(' + DISPOSITION_WORDS.join('|') + ')\\b', 'i');
+  String(text || '').split('\n').forEach(line => {
+    const m = line.match(/^\s*Nos?\.\s*([^:]+):\s*(.*)$/);
+    if (!m) return;
+    const got = [];
+    m[1].replace(/(\d+)\s*(?:to|-|\u2013)\s*(\d+)|(\d+)/g, (_, a, z, one) => {
+      if (one) got.push(one);
+      else for (let n = +a; n <= +z && n - +a < 1000; n++) got.push(String(n));
+      return '';
+    });
+    if (!words.test(m[2])) out.push('\u26a0 No. ' + got.join(', ') + ': start with one of ' + DISPOSITION_WORDS.join(', '));
+    got.forEach(n => {
+      if (want.length && want.indexOf(n) < 0) out.push('\u26a0 No. ' + n + ' is not in this change set');
+      else if (seen[n]) out.push('\u26a0 No. ' + n + ' has two dispositions');
+      seen[n] = true;
+    });
+  });
+  const missing = want.filter(n => !seen[n]).sort((x, y) => x - y);
+  if (missing.length) out.unshift('\u26a0 No disposition yet for No. ' + missing.join(', '));
+  return out.join('\n');
+}
+/** The Disposition (agent) cell: the problems in bold above the agent's record. */
+function dispositionCell(text, nos) {
+  if (!String(text || '').trim()) return rich([{ t: '' }]);
+  const p = dispositionProblems(text, nos);
+  return rich(p ? [{ t: p, bold: true }, { t: '\n' + text }] : [{ t: text }]);
+}
 function progressLine(o) {
   const prs = o.prs || [];
   const active = prs.slice(-1)[0];

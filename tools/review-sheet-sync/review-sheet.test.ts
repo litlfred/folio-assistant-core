@@ -849,6 +849,15 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(T(rt2.written["Contributor Feedback"]["Disposition (agent)"][0][0])).toBe("Accepted: define registry in 1.1. Noted: style of 1.2.");
   });
 
+  test("each comment of the change set needs one disposition; an overall statement is allowed (owner, 2026-10-31)", () => {
+    const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems };`)({}) as { dispositionProblems: (t: string, n: string[]) => string };
+    const ok = "Decided (Q1, 2026-10-31): A, by the Editor; gloss it.\nOverall: partly accepted as editorial.\nNo. 136: Accepted. Defined at first use.\nNos. 127 to 129 and 131: Not accepted. Already addressed.\nNo. 130: Noted.";
+    expect(fns.dispositionProblems(ok, ["127", "128", "129", "130", "131", "136"])).toBe("");
+    expect(fns.dispositionProblems(ok, ["127", "128", "129", "130", "131", "136", "140", "141"])).toBe("\u26a0 No disposition yet for No. 140, 141");
+    expect(fns.dispositionProblems("No. 136: Fixed it.", ["136"])).toMatch(/^\u26a0 No. 136: start with one of Accepted/);
+    expect(fns.dispositionProblems("No. 9: Noted.\nNo. 136: Accepted.\nNo. 136: Noted.", ["136"])).toBe("\u26a0 No. 9 is not in this change set\n\u26a0 No. 136 has two dispositions");
+  });
+
   test("security: text a person or the agent typed is never written back as a formula", () => {
     const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
     const f = t["Contributor Feedback"].rows;
