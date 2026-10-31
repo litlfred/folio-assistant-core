@@ -376,6 +376,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(g).toContain("Filter views");
     const pc = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json")).find((r) => r[0] === "GUIDE")![1];
     expect(pc).toContain("Feedback Review Committee");
+    expect(pc).not.toMatch(/architect/i);
   });
 
   test("the script is the same for every document: nothing of the folio is in it", () => {
