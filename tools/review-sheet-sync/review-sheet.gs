@@ -941,7 +941,20 @@ function dispositionCell(text, nos, human) {
   if (!String(text || '').trim())
     return rich((nos || []).length ? [{ t: '\u26a0 No disposition yet for ' + nosText(nos), bold: true }] : [{ t: '' }]);
   const p = dispositionProblems(text, nos, human);
-  return rich(p ? [{ t: p, bold: true }, { t: '\n' + text }] : [{ t: text }]);
+  // Comment numbers in bold, as elsewhere on the sheet (owner, 2026-10-31:
+  // "Nos of PCs should be bolded like in other parts of sheet").
+  const body = [];
+  String(text).split('\n').forEach((line, i) => {
+    if (i) body.push({ t: '\n' });
+    // The structure stands out: the label, then the disposition word.
+    const m = line.match(/^(\s*(?:Nos?\.\s*[^:]+|Overall|Decided\s*\([^)]*\)):)(.*)$/);
+    if (!m) { body.push({ t: line }); return; }
+    body.push({ t: m[1], bold: true });
+    const w = m[2].match(new RegExp('^(\\s*)(' + DISPOSITION_WORDS.join('|') + ')\\b(.*)$', 'i'));
+    if (w && !/^\s*Decided/.test(m[1])) body.push({ t: w[1] }, { t: w[2], bold: true }, { t: w[3] });
+    else body.push({ t: m[2] });
+  });
+  return rich(p ? [{ t: p, bold: true }, { t: '\n' }].concat(body) : body);
 }
 function progressLine(o) {
   const prs = o.prs || [];

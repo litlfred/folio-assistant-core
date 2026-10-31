@@ -1296,3 +1296,21 @@ describe("Ready for agent: Yes, No, Completed (owner, 2026-10-31)", () => {
     }
   });
 });
+
+describe("Disposition (agent) shows its structure (owner, 2026-10-31)", () => {
+  const spans: [number, number][] = [];
+  const fake = {
+    newRichTextValue: () => {
+      const v = { text: "" };
+      const r = { setText: (t: string) => ((v.text = t), r), setLinkUrl: () => r, setTextStyle: (a: number, z: number) => (spans.push([a, z]), r), build: () => v };
+      return r;
+    },
+    newTextStyle: () => ({ setBold: () => ({ build: () => ({}) }) }),
+  };
+  const { dispositionCell } = new Function("SpreadsheetApp", code + "\nreturn { dispositionCell };")(fake) as { dispositionCell: (t: string, n: string[], h: object) => { text: string } };
+  test("labels and disposition words are bold", () => {
+    const text = "Decided (No. 1, d): A.\n\nOverall: All.\nNos. 1 and 2: Partially accepted. Done.";
+    const c = dispositionCell(text, ["1", "2"], {});
+    expect(spans.map(([a, z]) => c.text.slice(a, z))).toEqual(["Decided (No. 1, d):", "Overall:", "Nos. 1 and 2:", "Partially accepted"]);
+  });
+});

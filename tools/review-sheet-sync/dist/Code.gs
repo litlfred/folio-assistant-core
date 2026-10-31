@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 65ff16bfc7290164.
+// folio-assistant-core tools/review-sheet-sync at template sha256 9b36f4905bdf47b7.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 65ff16bfc7290164';
+const SCRIPT_VERSION = 'template sha256 9b36f4905bdf47b7';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -941,7 +941,20 @@ function dispositionCell(text, nos, human) {
   if (!String(text || '').trim())
     return rich((nos || []).length ? [{ t: '\u26a0 No disposition yet for ' + nosText(nos), bold: true }] : [{ t: '' }]);
   const p = dispositionProblems(text, nos, human);
-  return rich(p ? [{ t: p, bold: true }, { t: '\n' + text }] : [{ t: text }]);
+  // Comment numbers in bold, as elsewhere on the sheet (owner, 2026-10-31:
+  // "Nos of PCs should be bolded like in other parts of sheet").
+  const body = [];
+  String(text).split('\n').forEach((line, i) => {
+    if (i) body.push({ t: '\n' });
+    // The structure stands out: the label, then the disposition word.
+    const m = line.match(/^(\s*(?:Nos?\.\s*[^:]+|Overall|Decided\s*\([^)]*\)):)(.*)$/);
+    if (!m) { body.push({ t: line }); return; }
+    body.push({ t: m[1], bold: true });
+    const w = m[2].match(new RegExp('^(\\s*)(' + DISPOSITION_WORDS.join('|') + ')\\b(.*)$', 'i'));
+    if (w && !/^\s*Decided/.test(m[1])) body.push({ t: w[1] }, { t: w[2], bold: true }, { t: w[3] });
+    else body.push({ t: m[2] });
+  });
+  return rich(p ? [{ t: p, bold: true }, { t: '\n' }].concat(body) : body);
 }
 function progressLine(o) {
   const prs = o.prs || [];
