@@ -236,6 +236,16 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     expect(JSON.stringify(b.written)).toBe(JSON.stringify(a.written));
   });
 
+  test("Agentic status (filter) holds one plain status per change set, for a filter view", () => {
+    const t = tabs();
+    t["Review Change Sets"].rows[0].push("Agentic status (filter)");
+    t["Review Change Sets"].rows.slice(1).forEach((r) => r.push(""));
+    t.Agent.rows[2][2] = "Needs human";
+    const rt2 = runtime(withConfig(t, pcRows));
+    load(code, rt2.g).refreshAll();
+    expect(rt2.written["Review Change Sets"]["Agentic status (filter)"]).toEqual([["Needs human"], ["Not started"]]);
+  });
+
   test("an edit rebuilds at once while a rebuild is quick", () => {
     const rt2 = runtime(withConfig(tabs(), pcRows));
     load(code, rt2.g).markDirty({ range: { getSheet: () => rt2.sheet("Agent") } });
