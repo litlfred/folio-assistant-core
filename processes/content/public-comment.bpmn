@@ -52,6 +52,9 @@
         <bpmn:flowNodeRef>StartEvent_CommentsReturned</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>StartEvent_BlockFeedback</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>SubProcess_Withdraw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>StartEvent_WithdrawRequested</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Withdraw</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_Withdrawn</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Intake" name="Intake agent" partitionElementRef="ingestion-agent">
         <bpmn:documentation>Turns each returned row, form response or cited passage into one comment and resolves its anchor through the review version's page/line map. A citation that resolves to nothing is kept as unplaced, never dropped.</bpmn:documentation>
