@@ -69,7 +69,7 @@
       <bpmn:outgoing>Flow_AgreeReleaseDate_To_BuildPcRelease</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Task_BuildPcRelease" name="Build the public comment release">
-      <bpmn:documentation>Freeze the draft as &quot;Draft for Public Comment Release vX&quot;: a PDF with fixed line numbers and a site copy under a permanent PC/&lt;version&gt;/ path (not STAGING, never deleted on merge). Every channel cites this release's pages, lines and block ids. Skill: document-publishing.</bpmn:documentation>
+      <bpmn:documentation>Freeze the draft as &quot;Draft for Public Comment Release vX&quot;: a PDF with fixed line numbers and a site copy under a permanent PC/&lt;version&gt;/ path (not STAGING, never deleted on merge). Every channel cites this release's pages, lines and block ids. Line numbers run continuously through the document. Run `bun run cat pc:pdf` for the line-numbered PDF and its line map, then `bun run cat pc:release freeze` for the write-once copy under PC/&lt;version&gt;/. Skill: document-publishing.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="document-publishing"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_AgreeReleaseDate_To_BuildPcRelease</bpmn:incoming>
       <bpmn:outgoing>Flow_BuildPcRelease_To_SetUpChannels</bpmn:outgoing>
@@ -99,7 +99,7 @@
       <bpmn:outgoing>Flow_PublicComment_To_ArchiveRelease</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:task id="Task_ArchiveRelease" name="Archive the release with the review">
-      <bpmn:documentation>When comment closes, the release (PDF, PC/&lt;version&gt; site and the channel exports) is archived with the review record, so every comment's citation can still be followed. Skill: document-publishing.</bpmn:documentation>
+      <bpmn:documentation>When comment closes, the release (PDF, PC/&lt;version&gt; site and the channel exports) is archived with the review record, so every comment's citation can still be followed. Run `bun run cat pc:release close`, which changes only the release's release.json; the frozen copy is never rewritten. Skill: document-publishing.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="document-publishing"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_PublicComment_To_ArchiveRelease</bpmn:incoming>
       <bpmn:outgoing>Flow_ArchiveRelease_To_Closed</bpmn:outgoing>
