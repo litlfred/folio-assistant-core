@@ -48,6 +48,8 @@ export type SheetSyncConfig = {
    * whose Sections pick from the live document's table of contents.
    */
   mode?: "public-comment" | "drafting";
+  /** The Google Sheet's id. When set, the script refuses to run in any other spreadsheet. */
+  sheet?: string;
   /** Review anchors, repository-relative. */
   anchors: string;
   /** The frozen review draft's pdf-line-map.json, repository-relative (public-comment). */
