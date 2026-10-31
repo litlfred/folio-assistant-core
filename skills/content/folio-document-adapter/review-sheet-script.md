@@ -232,6 +232,10 @@ account, because Google asks the owner to authorise the script:
    **installTriggers** (not `onOpen`, which only adds the menu), and press
    **Run**. Allow access when asked.
 4. Reload the sheet. A **Review links** menu appears.
+5. **Ask the agent to watch it.** In the project chat: "watch the <name>
+   log" with the sheet's URL. Installing the script is not finished until a
+   watcher thread is running for the sheet (owner, 2026-10-31), in either
+   mode: see §"The watcher" at the end.
 
 `installTriggers` runs a full refresh, then installs two triggers: every edit
 of the three tabs marks the sheet dirty, and every minute a dirty sheet
@@ -837,22 +841,9 @@ proposal cell is empty, or it has a cell comment newer than the proposal.
 Each sync proposes for every new or changed row (step 4 above), then works
 the rows with Ready for agent = Yes (step 5).
 
-**When it runs.** The three ways of public-comment mode, per sheet:
-
-- **Scheduled.** A scheduled task in the project, one per contributor log,
-  named `<DOC> contributor log sync` (as "DPI-H review sheet sync" is for
-  smart-ra's public-comment sheet). Its prompt names the sheet id, the
-  folio's repository and this section. Each run is a fresh thread, so all
-  it needs is in the sheet, the Agent tab and this skill.
-- **Manual.** Anyone asks in a project thread ("populate Contributor
-  Feedback (agent)", "sync the contributor log"), or runs the scheduled task
-  now.
-- **Active mode.** On the owner's request, for two hours: the thread checks
-  the sheet about every ten minutes by reminders, and syncs when a row is
-  new or changed.
-
-A sheet edit cannot wake an agent; the Apps Script only marks a proposal
-stale. So "whenever the row changes" means at the next sync.
+**When it runs.** By the watcher (§"The watcher", every
+three minutes), or manually when anyone asks in a project thread ("populate
+Contributor Feedback (agent)", "sync the contributor log").
 
 **Writing a proposal.** One proposal per row, in the green Contributor
 Feedback (agent) cell; Agent's Feedback basis (change set) gets the basis it
@@ -1000,6 +991,11 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    after the template has them keep them. The same steps are written at the
    top of the Config tab, in its `Instructions - Dropdown` row, so they stay with
    the sheet (owner, 2026-10-31); the script ignores that row.
+
+
+7. **Ask the agent to watch it.** In the project chat: "watch the
+   <document> log" with the copy's URL. The coordinator starts the sheet's
+   watcher thread (§"The watcher"). Setup is not finished without it.
 
 ### Installing the script, step by step
 
@@ -1255,6 +1251,7 @@ reopens it, or opens a new PR on the same branch when it cannot be reopened.
 It never starts a second branch for the row. Each earlier PR stays listed in
 the row's Agentic status, one line per PR, so the history is read in the sheet.
 
+
 **Filter views** (owner, 2026-10-31). Each template carries saved filter
 views, which copy with it. Use Data > Filter views, never a plain filter: a
 plain filter changes the view for everyone, a filter view only for whoever
@@ -1333,3 +1330,52 @@ protected ranges (re-add them: Agent whole tab; the grey and green
 columns), and its TOC tab is empty until the script's first refresh. A
 document's own sheet is named in its `sheet-sync.json` as `sheet` (the
 spreadsheet id), so the agent's sync knows where to read and write.
+
+## The watcher: one thread per log
+
+Every review sheet, drafting or public comment, has its own **watcher
+thread** in the project (owner, 2026-10-31: "every 3 minutes as a watching
+agent in a specialised thread for each log file"), named `Watch <log name>`.
+The coordinator starts it when the owner asks the agent to watch a newly
+installed sheet (install step 5). It replaces a scheduled sync and active mode
+for that sheet.
+
+**The Watch tab: the change check is mechanical.** The Apps Script works out
+which change sets need the agent and keeps the list on a hidden **Watch** tab,
+after every rebuild and on its 5-minute timer (so the agent's own API writes
+are seen too): A1 `Signature`, B1 a hash of the list, C1 `Checked (UTC)`, D1
+the time of the script's last check; from row 3, one row per change set,
+Change-set and Needs, where Needs is one or more of:
+
+| needs | when (worked out by the script) |
+|---|---|
+| `proposal` | the green `(agent)` proposal is empty, or the row's blue cells changed since the proposal was written (its basis differs from Agent's Feedback basis). Drafting: only rows with people's feedback |
+| `issue` | drafting: the change set has no issue on the Agent tab |
+| `ready` | Ready for agent is Yes and its work has not started |
+| `merge` | Ready for merge is Yes and its PR is still open |
+
+**Each wake** (every three minutes, the thread waking itself with a
+one-shot reminder before it ends each turn; a sleep or a loop inside a turn
+holds the thread and does nothing):
+
+1. Read `Watch!A1:D1` and the spreadsheet's cell comments. That is the whole
+   mechanical check.
+2. If the list is empty and there is no cell comment newer than the last
+   wake, end the turn silently, with no message to anyone.
+3. Otherwise read `Watch!A3:B` and only those rows of the log and the Agent
+   tab, and do what each needs: write the proposal and its basis (§"Writing
+   a proposal"), open the issue, work the ready change set, or merge the
+   released PR, as the mode's sync says ([`public-comment`](public-comment.md)
+   §"Each sync", or §"Drafting mode" steps 1 to 5). A cell comment is feedback on
+   its row's change set: treat that row as needing a `proposal`.
+4. Post to the thread only for a result a person needs (a PR up, a merge, a
+   blocker). Routine proposals go on the thread's checklist.
+
+If D1 is more than 15 minutes old, the script has stopped (its triggers were
+removed, or Code.gs needs re-pasting): say so once in the thread and fall
+back to reading the log itself until it runs again. A sheet without a Watch
+tab runs an older Code.gs: re-paste the current one.
+
+The watcher writes only the green agent cells and the Agent tab. It never
+writes a blue cell or an orange gate, and never the Watch tab (the
+script's own).

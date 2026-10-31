@@ -940,6 +940,74 @@ describe("review-sheet.gs in drafting mode", () => {
   });
 });
 
+describe("the Watch tab: which change sets need the agent, worked out by the script", () => {
+  const watch = (rt: ReturnType<typeof runtime>) => rt.written.Watch.Section as string[][];
+  const listOf = (rt: ReturnType<typeof runtime>) => watch(rt).slice(2).map((r) => [r[0], r[1]]);
+
+  test("drafting: an empty or stale proposal, a missing issue and the editor gates are listed; nothing once handled", () => {
+    const dRows = configRows(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][]; hidden?: boolean }>;
+    const f = t["Contributor Feedback"].rows;
+    f[0].push("Ready for agent", "Ready for merge", "Contributor Feedback (agent)");
+    f.slice(1).forEach((x) => x.push("No", "No", ""));
+    t.Agent.rows[0].push("Feedback basis (change set)");
+    t.Agent.rows[1].push("");
+    const rt = runtime(t);
+    const s = load(code, rt.g);
+    s.refreshAll();
+    expect(t.Watch.hidden).toBe(true);
+    expect(watch(rt)[0][0]).toBe("Signature");
+    expect(watch(rt)[1].slice(0, 2)).toEqual(["Change-set", "Needs"]);
+    expect(listOf(rt)).toEqual([["CS-004", "proposal"]]);
+    // The agent proposes and records its basis: nothing left.
+    f[1][11] = "Proposed direction: define it in 1.1";
+    t.Agent.rows[1][7] = feedbackBasis(f[0], f[1]);
+    s.refreshAll();
+    expect(listOf(rt)).toEqual([]);
+    // A person edits the feedback, and releases the PR for merge.
+    f[1][4] = "AB: needs a definition, and an example";
+    f[1][10] = "Yes";
+    s.refreshAll();
+    expect(listOf(rt)).toEqual([["CS-004", "proposal, merge"]]);
+    // A change set without an issue, released to the agent.
+    f[2][0] = "CS-005";
+    f[2][9] = "Yes";
+    s.refreshAll();
+    expect(listOf(rt)).toEqual([["CS-004", "proposal, merge"], ["CS-005", "proposal, issue, ready"]]);
+  });
+
+  test("an unchanged list keeps its rows and only the checked time is rewritten", () => {
+    const dRows = configRows(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][]; hidden?: boolean }>;
+    const rt = runtime(t);
+    const s = load(code, rt.g);
+    s.refreshAll();
+    const sig = watch(rt)[0][1];
+    // The fake files a write under its column's header: here the old time.
+    t.Watch.rows = [["Signature", sig, "Checked (UTC)", "2026-10-31 00:00Z"]];
+    delete rt.written.Watch;
+    s.refreshAll();
+    expect(Object.keys(rt.written.Watch)).toEqual(["2026-10-31 00:00Z"]);
+  });
+
+  test("public comment: a change set released to the agent whose comments have not started is listed, also on the timer", () => {
+    const pcRows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
+    const t = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][]; hidden?: boolean }>;
+    const r = t["Review Change Sets"].rows;
+    r[0].push("Ready for agent", "Ready for merge");
+    r[1].push("No", "Yes");
+    r[2].push("Yes", "No");
+    const rt = runtime(t);
+    const s = load(code, rt.g);
+    s.refreshAll();
+    expect(listOf(rt)).toEqual([["CS-001", "merge"], ["CS-002", "ready"]]);
+    // Nothing dirty: the 5-minute timer still checks.
+    delete rt.written.Watch;
+    s.refreshIfDirty();
+    expect(rt.written.Watch).toBeDefined();
+  });
+});
+
 describe("sheet-sync URLs relative to the folio's site", () => {
   test("resolve against the instance's iriBase, so a move to another org changes one line", () => {
     const repo = draftFolio();
