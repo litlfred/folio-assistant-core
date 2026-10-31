@@ -45,4 +45,12 @@ describe("review anchors from the working document", () => {
     const o = { repo, document: "doc", library: "outline", source: "library/outline.md", sourceLabel: "the outline" };
     expect(await folioAnchors(o)).toBe(await folioAnchors(o));
   });
+
+  test("a document authored from scratch needs no seed file", async () => {
+    const repo = fixture();
+    const a = JSON.parse(await folioAnchors({ repo, document: "doc" }));
+    expect(a.library).toBeUndefined();
+    expect(a.source).toBeUndefined();
+    expect(a.sections.length).toBe(3);
+  });
 });

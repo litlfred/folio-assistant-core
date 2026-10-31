@@ -26,6 +26,42 @@ sheet keeps them itself, with a Google Apps Script bound to it (owner,
 agent: it costs about 30 kB of tool output per 30 rows, and the next edit
 undoes it.
 
+## Inputs and outputs (owner, 2026-10-31: "make sure I/O on tools/skills well defined")
+
+Every actor on a review sheet reads and writes only what this table says.
+Columns are named by header, never by letter. "People's tab" is Contributor
+Feedback (drafting) or Review Public Comments and Review Change Sets (public
+comment).
+
+| actor | reads | writes | never writes |
+|---|---|---|---|
+| People (Authoring Committee, Feedback Review Committee) | the whole sheet | Blue columns on the people's tabs; cell comments | Green, Grey, Orange, Agent tabs, Config |
+| Editor (the Config EDITORS list) | the whole sheet | Orange `Ready for agent`, `Ready for merge` | Green, Grey, Agent tabs, Config |
+| Owner | the whole sheet | Config `EDITORS` | anything the agent or script writes |
+| Apps Script (`review-sheet.gs`, built by Tool `review-sheet-sync`) | Config (CFG, COLS, DATA, EDITORS); the people's tabs; the Agent tab(s) | Grey columns (ids, links, joins); Green columns copied from the Agent tab(s); the STALE mark on the agent column; `Ready for agent` back to No once, on the turn to stale; the Watch tab; protections on the Ready columns | Blue columns' contents; Orange except the stale reset; the Agent tab(s) |
+| Agent (sync or watcher) | the whole sheet; the folio's repository | the Agent tab(s) (one row per change set, and in public comment one row per comment on Agent - Comments); the agent column, `Feedback (agent)` (drafting) or `Change Set Feedback (agent)` (public comment); Config rows other than EDITORS | Blue, Orange, Grey; the Title on a drafting sheet |
+| Tool `review-sheet-sync` | the folio's `review/*/sheet-sync.json`, anchors, line map | `Code.gs` (generic); the Config rows for one sheet (`--config ... --out rows`); a drafting sheet's TOC rows (`--toc-out rows`) | the sheet itself |
+| Script `review-anchors-from-folio.ts` | the folio's document manifests and block prose; optionally the library file it was seeded from | `folio/<doc>/review-anchors.json` (`--check` compares) | the sheet |
+
+**A question to people goes in the sheet, not only in chat** (owner,
+2026-10-31: "how would the editor / feedback committee / review committee
+know if there was a card ... should be there and in the agent column").
+When the agent needs a person to decide something about a change set, it
+writes the question into that row's agent column, under its proposal, as
+
+```
+Decision needed: <the question>
+  A. <option> (recommended)
+  B. <option>
+Answer in your Blue column, or ask an Editor to set Ready for agent.
+```
+
+and sets the row's Agentic status to `Needs human`, so the "Needs human"
+filter view finds it. A card in the agent's chat may carry the same
+question for the owner, but the sheet is the record people see. When the
+question is answered, the agent replaces the block with the decision and who
+made it.
+
 **What it keeps current.** Columns are found by header text, so people may
 move them.
 
@@ -40,15 +76,25 @@ move them.
 | Review Change Sets | Agentic status | the same, per change-set; the status is its PCs' Agentic statuses, each once |
 | Review Change Sets | Agentic status (filter) | one plain value per change set, for a filter view (owner, 2026-10-31): "Needs human" if any of its comments needs a person, else the least advanced of its comments' Agentic statuses (Not started, Working, PR open, Ready for review, Change merged); "Not in comment record" only when all are |
 | Review Change Sets | Public Comments | `No. n (Status) · comment`, status in bold, joined by a blank line |
-| Review Change Sets | Suggested Revisions, PC Architect Feedback, Dispositions | `No. n · text`, one per comment |
+| Review Change Sets | Suggested Revisions, PC Committee Feedback, Dispositions | `No. n · text`, one per comment |
 
-**Architect Feedback (agent)** (Review Change Sets, green, right of Ready for
-merge; owner, 2026-10-31). The agentic architect role writes its proposed
-direction for resolving the change set here, so the architects and editor
-react to a proposal rather than drafting from nothing. The script does not
-touch it. It is a proposal, never a person's feedback: a tool that collects
-the people's `Architect Feedback (…)` columns by header must leave out
-`(agent)`, or show it apart, and it decides nothing.
+**Change Set Feedback (agent)** (Review Change Sets, green, right of Ready for
+merge; owner, 2026-10-31). The agent writes its proposed direction for
+resolving the change set here, so the Feedback Review Committee and the
+Editor react to a proposal rather than drafting from nothing. Any question
+for people is written here too (§"Inputs and outputs"). The script only
+marks it stale. It is a proposal, never a person's feedback: a tool that
+collects the people's `Committee Feedback (…)` columns by header must leave
+it out, or show it apart, and it decides nothing.
+
+Names (owner, 2026-10-31). The people's columns were `Architect Feedback …`
+and are `Committee Feedback …`, for the process role. The agent's columns
+are `Change Set Feedback (agent)` (public comment; it was `Architect
+Feedback (agent)`) and `Feedback (agent)` (drafting; it was `Contributor
+Feedback (agent)`). Their names live in Config COLS (`rcs.agentFeedback`,
+`draft.agentFeedback`). The script finds each column under any of its names
+(`aliasOf`, `SAME_COLUMN`), and a feedback basis written under the old names
+still matches, so renaming marks no proposal stale.
 
 Every `No. n` in Review Change Sets links to `#gid=<Review Public Comments>&range=A<row>`.
 Do not link to a named range by `#rangeid=`: Sheets shows "Invalid range"
@@ -76,6 +122,9 @@ bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.t
 # one document's Config rows, from the folio's repository root
 bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts \
   --repo . --config review/public-comment/sheet-sync.json --out config-rows.json
+# a drafting sheet also gets its TOC tab (the Selected Sections dropdown)
+bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts \
+  --repo . --config review/drafting/sheet-sync.json --out config-rows.json --toc-out toc-rows.json
 ```
 
 The agent writes `config-rows.json` into the Config tab (A1 down, columns A
@@ -101,7 +150,10 @@ account, because Google asks the owner to authorise the script:
 
 `installTriggers` runs a full refresh, then installs two triggers: every edit
 of the three tabs marks the sheet dirty, and every five minutes a dirty sheet
-is rebuilt. A drafting sheet rebuilds **incrementally** (owner,
+is rebuilt. A public-comment sheet is also rebuilt on the timer when its
+Agent tab changed since the last rebuild, because the agent writes Agent
+through the API, which fires no edit (found 2026-10-31: CS-001 read Not
+started on Review Change Sets after its PR was open on Agent). A drafting sheet rebuilds **incrementally** (owner,
 2026-10-31): an edit rebuilds only the rows it touched, at once, so a pick
 shows its link and a new row its Change-set within seconds, however large
 the sheet. The 5-minute trigger rebuilds only the rows whose change set's
@@ -116,18 +168,53 @@ the 5-minute trigger. **Review links → Refresh now** rebuilds at once.
 The agent records when it built a change set's preview in the Agent tab's
 **Staging built (UTC, change set)**, beside **Agent completed (UTC, change
 set)**. When a PR of the change set was completed after the build, the
-script writes the Staging review page cell as `review ⚠ stale: built <time>,
+script writes the Staging review cell as `review ⚠ stale: built <time>,
 PR changed since`, in both modes (Review Change Sets takes the link from the
 Agent tab's Staging review page (change set) where it names one). Without a
 build time it claims nothing. The preview page shows its own live banner too
 (the site's staging build, cat-harness-tools).
 
-**Stale agent proposals.** `Contributor Feedback (agent)` (drafting) and
-`Architect Feedback (agent)` (Review Change Sets) carry the agent's proposal.
+**Checked by commit** (owner, 2026-10-31, option A: "agent checks shas, sheet
+shows"). Times can agree while the preview is still wrong, so the agent also
+records, on each pass over a change set with an open PR:
+
+| Agent tab column | what the agent writes | where it reads it |
+|---|---|---|
+| **PR head (change set)** | each PR's latest commit, one per line, in the PR order | the PR (`gh pr view --json headRefOid`) |
+| **Staging built from (change set)** | the commit the preview was built from | the newest gh-pages commit touching `STAGING/<slug>/`. Its message is `staging(<slug>): from <sha>` when an agent staged it (`stage-local.ts`), or `Publish <site> <sha8> preview of <branch>` when the site-publish workflow did; both forms are accepted |
+| **Staging deploy (change set)** | `deployed`, `pending` or `failed` | the Pages deployment of that gh-pages commit: `gh api repos/<o>/<r>/pages/builds/latest`, or, where that endpoint is blocked, the conclusion of the "pages build and deployment" run in `actions/runs?head_sha=<gh-pages commit>` |
+
+The script compares only; it stays `@OnlyCurrentDoc` with no internet access. Short and full shas both work: it compares the common prefix, at least 7 characters.
+It reads the active PR as the last one listed (one branch, one active PR per
+row) and writes, in this order of precedence: `⚠ deploy failed`;
+`⚠ stale: built from <sha>, PR now at <sha>`; `⚠ deploy in progress`. A
+change set with a recorded PR head but no preview link shows `⚠ no preview
+yet`. Without these columns it falls back to the time check above. A sheet
+made before 2026-10-31 gains the three columns at the right of the Agent
+(change sets) tab; the script finds them by header.
+
+**Ready for agent after the preview** (owner, 2026-10-31: "i just set Ready
+for agent to Y ... i expected Staging review to get a stale warning"). The PR
+has not changed yet when an Editor sends a row back, so the commit check above
+passes. The script records, as a document property `ready:<CS>`, the time it
+first sees a row's Ready for agent at Yes (cleared on No). A Yes it first sees
+on a row the agent has already completed counts from that completion instead,
+since the script cannot know when it was set: a freshly pasted script would
+otherwise flag work the agent had already done (2026-10-31, CS-001). When that time is
+later than **Staging built**, after the deploy checks, it writes `⚠ missing
+feedback from <time>`: the preview still shows the PR, but not the feedback an
+Editor has just sent to the agent (owner, 2026-10-31: "requested from whom?
+what are we waiting on?"). The review page cannot know the sheet, so only the
+sheet says so. The same time makes **Agentic status** open with **Waiting on
+the agent since <time> (Ready for agent set)**, until the agent records a later
+completion or sets the status to Working.
+
+**Stale agent proposals.** `Feedback (agent)` (drafting) and
+`Change Set Feedback (agent)` (Review Change Sets) carry the agent's proposal.
 The agent records what it wrote against in the Agent tab's **Feedback basis
 (change set)**: `feedbackBasis()` in `tools/review-sheet-sync/feedback-issue.ts`,
 a hash of the row's blue cells (drafting: Title, Selected Sections, people's
-Contributor Feedback; public comment: Title, TWG (CS), people's Architect
+Contributor Feedback; public comment: Title, TWG (CS), people's Committee
 Feedback). The script computes the same hash; while they differ it puts
 "⚠ Stale: the row changed since this proposal; the agent will propose
 again." on the proposal's first line, and takes it off if the row changes
@@ -208,6 +295,13 @@ the review sheets (owner, 2026-10-31):
   gates carry their own lock that starts with the owner alone.
 - **The Config tab** is visible, never hidden, and locked to the owner: the
   agent writes it, people can read what the sheet is set up for.
+- **The colour key is shown in its colours** (owner, 2026-10-31: "no color
+  coded instructions"). In each tab's Instructions text the key on the first
+  line ("Blue = your input ...") is coloured segment by segment, and every
+  later Blue, Green, Orange or Grey word is coloured by itself, bold, in a
+  darker shade of its column colour. The script's `colourInstructions` does
+  it on every refresh, so text the agent rewrites through the API, which drops
+  the colours, gets them back within five minutes.
 - **Which template** depends on the document's authoring stage: the
   Contributor template while it is being drafted and authored, the Public
   Comment Review template once public comment opens.
@@ -281,7 +375,7 @@ topic), and each change set gets a GitHub issue.
 
 | tab | who writes | columns |
 |---|---|---|
-| **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Selected Sections** (a multi-select dropdown of the document's table of contents, each section indented under its chapter by three U+2800 blanks per level, since a dropdown cannot nest (owner, 2026-10-31; a "└ " mark was tried first and found too cluttered); not real spaces, because Sheets trims a multi-select cell and the first chip would lose them and read as Invalid; it stays plain, because a dropdown chip cannot carry a link), any number of **Contributor Feedback (…)** columns, one per contributor, with their initials or name in the brackets (e.g. `Contributor Feedback (CL)`); the script reads every column whose header is `Contributor Feedback` or starts `Contributor Feedback (`. Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Grey, mechanical, by the script (owner, 2026-10-31): **Section links** (each selected section on its own line, linked to its place on the document page, like the Sections column of the public-comment log; it is mechanical, a copy of Selected Sections with links, so grey, not green). Green, by the agent: **Contributor Feedback (agent)**, right of Ready for merge (owner, 2026-10-31): the agent's proposed direction for resolving the change set, so people react to a proposal rather than draft from nothing; it is not a person's feedback, the script leaves it out of the Contributor Feedback columns, and it decides nothing. Green, by the script from Agent: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`), **Staging review page** (a "review" link to the change set's preview while its PR is open), **Agentic status (filter)** (the change set's status as one plain value, for the "By agentic status" filter view; green like the other columns the script copies from Agent, owner 2026-10-31) |
+| **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Selected Sections** (a multi-select dropdown of the document's table of contents, each section indented under its chapter by three U+2800 blanks per level, since a dropdown cannot nest (owner, 2026-10-31; a "└ " mark was tried first and found too cluttered); not real spaces, because Sheets trims a multi-select cell and the first chip would lose them and read as Invalid; it stays plain, because a dropdown chip cannot carry a link), any number of **Contributor Feedback (…)** columns, one per contributor, with their initials or name in the brackets (e.g. `Contributor Feedback (CL)`); the script reads every column whose header is `Contributor Feedback` or starts `Contributor Feedback (`; **Disposition** (a dropdown: Pending, Accepted, Partially accepted, Not accepted, Noted, Duplicate, Out of scope; owner, 2026-10-31), the committee's verdict on the row. Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Grey, mechanical, by the script (owner, 2026-10-31): **Section links** (each selected section on its own line, linked to its place on the document page, like the Sections column of the public-comment log; it is mechanical, a copy of Selected Sections with links, so grey, not green). Green, by the agent: **Feedback (agent)**, right of Ready for merge (owner, 2026-10-31): the agent's proposed direction for resolving the change set, so people react to a proposal rather than draft from nothing; it is not a person's feedback, the script leaves it out of the Contributor Feedback columns, and it decides nothing. Green, by the script from Agent: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`), **Staging review** (a "review" link to the change set's review page on its staging preview, `STAGING/<branch>/en/review/`, while its PR is open; the column was "Staging review page" until 2026-10-31, owner), **Agentic status (filter)** (the change set's status as one plain value, for the "By agentic status" filter view; green like the other columns the script copies from Agent, owner 2026-10-31) |
 | **Agent** | the agent only | one row per change set: Change-set, Issue (URL), Agentic status, Pull request (change set), What the PRs changed (change set), Agent completed (UTC, change set), Staging review page (change set), Feedback basis (change set). The agent writes it as each step completes, by the steps of the `review-sheet-agent-columns` skill (core#315, not yet merged); a drafting sheet has no per-comment rows, so only its change-set columns apply |
 | **TOC** (hidden) | the script | the Sections dropdown's list and each entry's link. Rewritten on every refresh, so it follows the document |
 
@@ -331,8 +425,10 @@ Contributor Feedback row with a Change-set:
    empty), body the linked sections, every Contributor Feedback (…) cell
    verbatim, and a link back to the sheet row. Write its URL into Issue.
 3. When feedback is added to a row later, comment the new text on its issue.
-4. Propose a direction in **Contributor Feedback (agent)** whenever the
-   row changes, whoever changed it, a person or an agent. On each sync
+4. Propose a direction in **Feedback (agent)** whenever the
+   row changes, whoever changed it, a person or an agent. A question for
+   people goes there too, as a `Decision needed:` block (§"Inputs and
+   outputs"). On each sync
    compute `feedbackBasis(header, row)` (`tools/review-sheet-sync/feedback-issue.ts`:
    a short hash of Title, Selected Sections and the people's Contributor
    Feedback columns). Where it differs from the Agent tab's **Feedback
@@ -341,6 +437,13 @@ Contributor Feedback row with a Change-set:
    script's own writes (ids, links, tree marks) do not change the basis.
 5. Work a change set only when **Ready for agent** is Yes; its PRs say
    `Closes #n` for the change set's issue, and go to Agent's PR columns.
+6. When you pick a row up, say so first (owner, 2026-10-31: "agentic
+   status to update saying that an agent has it (w/ link to discussion)"):
+   set its Agent status to `Working` and put the URL of your conversation
+   (the session, thread or PR discussion) in **Agent conversation (change
+   set)**. Agentic status then opens with **An agent is working on it:
+   conversation**, linked. A sheet made before 2026-10-31 gains that column
+   at the right of the Agent (change sets) tab; the script finds it by header.
 
 Title stays the contributors': the agent never writes it (in public-comment
 mode, by contrast, Review Change Sets' Title is agent-derived and green).
@@ -381,65 +484,284 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
 1. **Copy the template.** Open the "make a copy" link for the mode (table
    above), name the copy "<document> Contributor Log" or "<document> Public
    Comment Log", and keep it in the informatics.avengers Drive. A file copy
-   keeps tabs, colours, dropdowns, locks and the script.
+   keeps tabs, colours, dropdowns, locks and the script. **Always copy the
+   file** (File, then Make a copy); never build a log by copying tabs into
+   a blank spreadsheet, which leaves the script behind (owner, 2026-10-31,
+   option A, after DTH-PC and DTH-SC were built tab by tab and needed a
+   paste). The owner keeps the latest `dist/Code.gs` pasted into both
+   templates, so a copy starts current.
 2. **Share it.** Share > add contributors or reviewers as **Editor**. The
    locks still keep them to the blue columns.
-3. **Write the Config tab (agent).** Give the agent the copy's URL. It adds
-   `"sheet": "<id>"` to the folio's `review/<mode>/sheet-sync.json`, builds
-   the rows (`--config … --out config-rows.json`) and writes them into
-   Config with the Sheets connector. For drafting it also fills the hidden
-   TOC by the first refresh.
-4. **Add editors to the Ready columns.** Data > Protect sheets and ranges >
-   "Ready columns: editors" > Change permissions > "Restrict who can edit
-   this range" > Custom > add each editor's email > Done. Only they and the
-   owner can then set Ready for agent and Ready for merge.
-5. **Install the script.** Extensions > Apps Script. Replace all of
+3. **Link it to the repository (agent).** Give the agent the copy's URL and
+   the document's repository. The agent follows "Linking a sheet to a
+   repository" below. Until it does, Config holds only its Instructions,
+   Key and EDITORS rows, the Selected Sections dropdown is empty, and the
+   script says "not linked to a document repository yet" with the sheet's
+   ID when the sheet opens and on every run.
+4. **Name the editors (owner).** Type their emails in Config's orange
+   `EDITORS` row, or leave it empty so only the owner can set the Ready
+   columns (below).
+5. **Install the script.** Extensions > Apps Script. **Rename the project
+   to the spreadsheet's own name** ("Untitled project" at the top left), so
+   it is found by name in script.google.com, where bound projects are listed
+   apart from their sheets. Replace all of
    `Code.gs` with the published generic file and save (the only file to
-   paste). Pick **installTriggers**
-   in the function list and press Run; allow access (Advanced > continue,
-   since bound scripts are unverified). Reload the sheet: a **Review links**
+   paste). The Config tab's `Instructions - Install script` row has these
+   steps click by click. Pick **installTriggers**
+   in the function list and press Run; allow access. Google shows "Google
+   hasn't verified this app. The app is requesting access to sensitive info
+   in your Google Account." This is expected for a sheet's own bound script,
+   which Google never verifies: choose Advanced, then "Go to <project>
+   (unsafe)", then Allow ([Google's explanation](https://support.google.com/cloud/answer/7454865);
+   owner, 2026-10-31: "explain they will see ... and provide link to info"). Reload the sheet: a **Review links**
    menu appears. A copy of the template already holds the script, so the
    paste is needed only when the script changes; **installTriggers is needed
    in every copy**, because triggers and the owner's permission do not copy.
    Paste the script into the template itself once, so every copy starts with
    it. A copy keeps the version it was made with: when Code.gs changes,
    paste it again into each sheet in use.
+
+   **"Sorry, unable to open the file at this time"** (in German, "Datei kann
+   derzeit nicht geöffnet werden") when Apps Script opens means the browser
+   is signed in to several Google accounts and Apps Script opened under the
+   default one (`/u/0/`), which cannot see the sheet (owner, 2026-10-31,
+   DTH-PC). Open the sheet in a private window signed in to the owner's
+   account only, or change `/u/0/` in the failing address to `/u/1/`,
+   `/u/2/`, and so on.
 6. **Drafting only: finish the Selected Sections dropdown.** installTriggers
    checks the dropdown: it adds the rule (a dropdown from `TOC!A2:A`) when
    the column has none, and leaves an existing one alone (a rewrite would
-   clear its tick). Two settings are a person's, once per sheet:
+   clear its tick). One setting is a person's, once per sheet:
    - click the column letter above "Selected Sections" to select the column;
    - choose Data, then Data validation;
    - open the rule for that column (the sidebar lists it by its range, such
      as `'Contributor Feedback'!E2:E1000`, as "Dropdown (from a range)");
    - tick **Allow multiple selections**;
-   - open Advanced options and set Display style to **Chip**;
    - press Done.
 
-   Neither Apps Script nor the Sheets API can read or set these two
-   settings, so installTriggers cannot check them directly. It shows the
+   The Chip display style needs nothing: the dropdown rule (in the template,
+   and as written through the Sheets API) already carries it (owner,
+   2026-10-31: "chip style was preselected on dth-pc log"). Neither Apps
+   Script nor the Sheets API can read or set the multiple-selections tick, so installTriggers cannot check them directly. It shows the
    steps, with the exact range, unless it has evidence they are done: a cell
    already holding two sections from the list, or a Yes to the box's "Is this
    done already?" (kept as the document property `dropdownDone`). Copies made
    after the template has them keep them. The same steps are written at the
-   top of the Config tab, as `SETUP` rows, so they stay with the sheet
-   (owner, 2026-10-31); the script ignores those rows.
+   top of the Config tab, in its `Instructions - Dropdown` row, so they stay with
+   the sheet (owner, 2026-10-31); the script ignores that row.
+
+### Installing the script, step by step
+
+For the sheet's owner, once per sheet (owner, 2026-10-31: "where to click
+exactly ... a Tool for humans to use"). The Config tab's `Instructions -
+Install script` row carries the same steps and links here.
+
+1. **Get the latest Code.gs.** Open
+   [`dist/Code.gs` on GitHub](https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs)
+   and press **Copy raw file** (the two-squares button at the top right of
+   the code), or open the
+   [raw file](https://raw.githubusercontent.com/litlfred/folio-assistant-core/main/tools/review-sheet-sync/dist/Code.gs),
+   select all and copy. It is the build of `review-sheet.gs` on core's main,
+   rewritten by `build-review-sheet-script.ts --dist`; a test fails when it
+   is stale, so it is always the current script.
+2. **Open the editor.** In the sheet: **Extensions**, then **Apps Script**.
+   It opens in a new tab. "Unable to open the file at this time" means
+   several Google accounts are signed in: use a private window with only the
+   owner's account.
+3. **Name the project after the sheet.** Click **Untitled project** at the
+   top left, type the spreadsheet's own name (e.g. "DTH-PC Contributor
+   Log"), and press **Rename**.
+4. **Paste.** Click **Code.gs** in the Files list on the left. Select all
+   (Ctrl+A, or Cmd+A on a Mac), delete, paste, and save (Ctrl+S or Cmd+S,
+   or the disk icon).
+5. **Run installTriggers.** Reload the sheet and choose **Review links**,
+   then **Install**. Or, in the editor, the function list next to **Run**
+   and **Debug** shows **installTriggers** (it is the first function, so the
+   default); press **Run**.
+6. **Allow it.** **Review permissions**, pick the owner's account. Google
+   shows "Google hasn't verified this app. The app is requesting access to
+   sensitive info in your Google Account." That is expected for a sheet's
+   own script: press **Advanced**, then **Go to <project name> (unsafe)**,
+   then **Allow** ([why](https://support.google.com/cloud/answer/7454865)).
+7. **Check it.** The log shows "Execution completed". Back in the sheet tab,
+   reload: a **Review links** menu appears; **Review links**, then
+   **Refresh now**, checks it.
+8. **Drafting sheets only:** tick **Allow multiple selections** on the
+   Selected Sections dropdown (Data, then Data validation, open the rule).
+
+**Updating later:** steps 1, 2 and 4, then Review links, then Refresh now;
+the automatic refresh stays installed. Sheets drift, and that is accepted
+(owner, 2026-10-31: "sheets likely to drift anyways ... they need to know
+where to see latest published"): **Review links, then Which version is
+this?** shows the build the sheet runs (`SCRIPT_VERSION`, the stamp on the
+script's header line) and the link to the latest `dist/Code.gs`, whose
+header carries its own stamp to compare.
+
+**A copy of the template needs none of this** (owner, 2026-10-31, option
+A): the script came with the file. Reload the copy, choose **Review links**,
+then **Install**, and allow it as in step 6. The menu runs installTriggers,
+so the editor is never opened. Only renaming the bound project (step 3) is
+left, and it is optional: a copied project is named "Copy of ..." by
+Google.
+
+Screenshots of each step are to be added from the owner's DTH-PC install
+(the agent cannot sign in to Google to take them).
+
+### Linking a sheet to a repository
+
+A copied sheet knows nothing about its document until the agent links it
+(owner, 2026-10-31: DTH-PC's copy opened with an empty Config and an empty
+dropdown, and nothing said why). Linking is repository work first and sheet
+work second, in this order:
+
+1. **The folio has a section list.** A drafting sheet's dropdown is the
+   document's chapters and sections, read from
+   `folio/<doc>/review-anchors.json`. The folio's `package.json` declares
+   `review:anchors` and `check:review-anchors`, both running
+   `folio-assistant-core/scripts/review-anchors-from-folio.ts --document <doc>`.
+   A document seeded from a library file adds `--library <entry> --source
+   <file> --source-label <text>`; one authored from scratch (dth-pc, dth-sc)
+   leaves all three out. Run `review:anchors` and commit the file. A new
+   document folio declares both scripts from its first commit, so no sheet
+   ever waits on them.
+2. **The folio names the sheet.** `review/<mode>/sheet-sync.json`:
+   `{"mode":"drafting","anchors":"folio/<doc>/review-anchors.json","sectionUrl":"en/<doc>/#","sheet":"<spreadsheet id>"}`.
+3. **The agent writes the sheet.** From the folio's root:
+   `bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts --config review/<mode>/sheet-sync.json --out config-rows.json --toc-out toc-rows.json`,
+   then, with the Sheets connector, the CFG, COLS and DATA rows into Config
+   below EDITORS (keep the sheet's EDITORS value), and for drafting the TOC
+   rows into the TOC tab from A1. The connector writes values, not colours,
+   so the agent also colours Config: the Key row a Grey header (`#b7b7b7`,
+   bold), EDITORS Orange (`#f4b26b`), and CFG, COLS, DATA and their
+   continuation rows Grey (`#efefef`), and fits the Instructions rows'
+   heights to their text (a Sheets API `autoResizeDimensions`; an inserted
+   row otherwise inherits its neighbour's height). Every refresh re-applies
+   these (`styleConfig`), so a sheet the script runs in heals on its own. The TOC rows are exactly what the script's
+   refresh writes, so the dropdown works before anyone pastes the script.
+4. **The agent says what is left for a person:** paste Code.gs and run
+   installTriggers (step 5 above), and tick Allow multiple selections
+   (step 6).
+
+When the branch carrying the folio is not merged yet, the agent may run steps
+1 and 3 from that branch without pushing to it, and write the sheet; the
+branch's owner commits the anchors and sheet-sync.json. Re-run step 3 after
+any structural change to the document (a section added, moved or renamed).
+
+**Who may set the Ready columns: the `EDITORS` row** (owner, 2026-10-31).
+Everyone who works in a log is shared as Editor; protected ranges decide what
+each can change. Blue columns are open to all of them. The orange **Ready for
+agent** and **Ready for merge** columns are for editors only, and the owner
+names them in the Config tab's `EDITORS` row, column B: plain emails, no
+names, one per line (Ctrl+Enter or Cmd+Enter starts a line inside a cell),
+or separated by commas or semicolons. The cell's format is spelled out, with
+an example, in the `Instructions - Editors` row and in a note on the cell
+itself (owner, 2026-10-31: "no instructions on how editors row should look
+like, how separated"). Anything that is not an email is left out, and the
+refresh names it in a toast rather than dropping it silently. installTriggers and Review links > Refresh now lock each
+`Ready for ...` column to the owner plus those emails, under a protection the
+script owns and rebuilds each time (other protections are left alone). An
+empty row locks them to the owner alone, which is how every new sheet starts
+(owner, 2026-10-31: "should start w/ empty list (owner is default editor)");
+a Config with no `EDITORS` row leaves them as they are. Both templates carry
+the Orange `EDITORS` row, empty, so a copy has it from the start. `EDITORS` is the one Config row a person
+keeps: the agent writes it empty and keeps the sheet's value whenever it
+rewrites the tab, and the emails never go into `sheet-sync.json`, which is
+committed. To delegate who decides, the owner can add a delegate to the Config
+tab's protection, or send the agent the list.
+
+**The Instructions rows** (owner, 2026-10-31). Every visible tab opens with an
+`Instructions` row that says what that tab is for and how it works, in that
+tab's own terms ("make 'how this sheet works' specific to each tab").
+`tabInstructions()` in the builder writes the text for each tab. On a people's
+tab (RPC, RCS, Contributor Feedback) the row is frozen with the header and grey
+like it, a lighter grey than the header. Its first line is the colour key,
+worded for the mode by `colourKey()`:
+
+- **Blue**: input by people, named by their process role: the Feedback Review
+  Committee in public-comment mode (the DPI-H RA's architects hold it, but the
+  sheet names the role, not the job), the Authoring Committee in drafting mode;
+- **Green**: written by the agent;
+- **Orange**: workflow, set by an Editor (the `Ready for ...` columns);
+- **Grey**: mechanical, kept by the script or the source.
+
+Then come the steps for that tab, one per line. Each colour word in the text
+is capitalised (Blue, Green, Orange, Grey), and the sheet shows that word,
+and only that word, bold in its colour (owner, 2026-10-31). On a change-set tab they are
+the human-to-agent workflow, worded by process role: people write in blue, the
+agent proposes in green, an Editor sets Ready for agent, the agent opens one
+pull request for the row whose `Staging review` opens the preview's
+what-changed page, reviewers answer in blue, and an Editor sets Ready for merge
+and the agent merges. On Review Public Comments the steps say that decisions
+are made per change set. Last come the filter views, and a link to the
+harness's page for the process the sheet runs, where every step and role is in
+full: `public-comment.html` for public comment and `contributor-feedback.html`
+for drafting, under `en/cat-harness/processes/` on the folio-assistant site
+(`processPage()`; `CFG.PROCESS` overrides it).
+
+The first cell reads `Instructions`, and the text is one merged cell across the
+rest of the row, the colour names in their colours. The script reads any leading
+rows whose first cell starts `Instructions` (or `Colour key`, the first name) as
+for people: the header is the row after them, and every write, lock and edit
+range starts below the header. Insert the row only after the sheet runs a
+Code.gs that knows it; an older script reads the legend as the header and finds
+no columns. Filter views and protections start at the header row, so shift them
+down by one row when the row is inserted. A filter view's custom formula does
+not move when a column is inserted, so rewrite it.
+
+The Config tab keeps its Instructions short, one subject per row, so no row is
+taller than the window (owner, 2026-10-31): `Instructions` (the tab's purpose:
+nothing here needs you unless you install the script), `Instructions - Install script`
+(`setupSteps()`: copy Code.gs, Extensions > Apps Script, name the project after
+the spreadsheet, paste and save, run installTriggers, allow it, reload; owner,
+2026-10-31: "explain in instructions how to install code.gs ... name of
+AppScript project to match google sheet name"), on a drafting sheet
+`Instructions - Dropdown` (`dropdownSteps()`), and `Instructions - Editors`
+(`editorSteps()`), then the
+`Key | Value` header. Its rows are not frozen. The EDITORS row is Orange, like the Ready columns it controls, because a person keeps it (owner, 2026-10-31); the rows the agent writes stay grey. The script reads Config keys by
+name, so it ignores these rows.
+
+**A stale proposal hands control back to an Editor** (owner, 2026-10-31).
+When a row's proposal turns stale (a blue cell changed since the agent wrote
+it), the script sets that row's `Ready for agent` from Yes to No, once, on the
+turn. The agent does not act on the row until an Editor sets Yes again, which
+is the signal to update the row's pull request. A Yes set while the row is
+still stale stays.
+
+**One row, one branch, one active pull request** (owner, 2026-10-31, option A).
+A change-set row keeps one branch for its whole life, and at most one pull
+request is open on it. Every later agent run pushes to that branch and updates
+that PR, so the row's `Staging review` link stays the same. If the PR is
+closed and the committee or contributors want the work back, the agent
+reopens it, or opens a new PR on the same branch when it cannot be reopened.
+It never starts a second branch for the row. Each earlier PR stays listed in
+the row's Agentic status, one line per PR, so the history is read in the sheet.
 
 **Filter views** (owner, 2026-10-31). Each template carries saved filter
 views, which copy with it. Use Data > Filter views, never a plain filter: a
 plain filter changes the view for everyone, a filter view only for whoever
 opens it.
 
-| sheet | view | shows |
-|---|---|---|
-| drafting: Contributor Feedback | By agentic status | every row; pick values in the Agentic status (filter) column's filter (a plain copy of the change set's Agent status, owner 2026-10-31) |
-| | Open | rows with a Title, Ready for merge not Yes |
-| | Ready for editor | rows with a Title, Ready for agent not Yes |
-| | Decided | Ready for merge is Yes |
-| public comment: Review Change Sets | Change sets: Open / Ready for editor / Decided | the same three, on its Ready columns |
-| | Change sets: by agentic status | every change set; pick values in the Agentic status (filter) column's filter |
-| public comment: Review Public Comments | Comments: Open | a No., Disposition empty |
-| | Comments: Decided | Disposition filled |
+Each view is named for who uses it and what it shows (owner, 2026-10-31: "review the views and filters ... can we improve?").
+
+| sheet | view | who | shows |
+|---|---|---|---|
+| drafting: Contributor Feedback | Open | everyone | rows with a Title, Ready for merge not Yes |
+| | Needs contributor feedback | contributors | rows with a Title and every Contributor Feedback column empty |
+| | Waiting for editor (Ready for agent not Yes) | editors | rows with a Title, Ready for agent not Yes |
+| | Merge decision due (PR open, not merged) | editors | Agentic status (filter) is PR open, Ready for merge not Yes |
+| | Needs human | editors, owner | Agentic status (filter) is Needs human |
+| | Stale (agent proposal or staging out of date) | owner | the agent proposal starts with ⚠, or the staging link says stale |
+| | Decided (Ready for merge Yes) | everyone | Ready for merge is Yes |
+| | By agentic status (pick values) | everyone | every row; pick values in the Agentic status (filter) column's filter (a plain copy of the change set's Agent status) |
+| public comment: Review Change Sets | Change sets: the same eight | as above | on its own columns; "Needs architect feedback" checks the three Architect Feedback (initials) columns |
+| public comment: Review Public Comments | Comments: Open (no Disposition) | everyone | a No., Disposition empty |
+| | Comments: No change set yet | review coordinator | a No., Change Set empty |
+| | Comments: Needs architect feedback | architects | a No., every Architect Feedback (initials) column empty |
+| | Comments: Decided (Disposition set) | everyone | Disposition filled |
+
+The "needs feedback" and "stale" views use a custom formula that names
+columns by letter, so a column move breaks them: after moving columns, the
+agent checks each view's formula against the headers.
 
 A filter view covers the rows the tab had when the view was made; when rows
 are added past that, widen its range (Data > Filter views > the view >

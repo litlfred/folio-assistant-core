@@ -105,7 +105,7 @@ current without anyone, person or agent, refreshing them.
 **The model** (owner, 2026-10-30 20:26Z). There are two things to review:
 **public comments (PCs)** and **change-sets (CSs)**. A PC brings its own
 `Comment / issue` and `Suggested revision`, which are the commenter's words.
-Reviewers give feedback on either one, in **Architect Feedback (initials)**
+Reviewers give feedback on either one, in **Committee Feedback (initials)**
 columns: on a PC in Review Public Comments, and on a CS in Review Change Sets.
 A reviewer may also change which working group (TWG) a CS goes to. "Ready for
 agent" and "Ready for merge" belong to a CS, so they are only on Review Change
@@ -116,10 +116,25 @@ Columns are named here by header, never by letter: people move them.
 | tab | who writes it | holds |
 |---|---|---|
 | **Public Comment Source** | people (locked) | No., date received, channel, reviewer name, organisation, country / region, stakeholder type. Reviewers' names and emails stay here and never enter the repository |
-| **Review Public Comments** | people, plus formulas and the Apps Script | one row per PC. Grey, mechanical: No. (a link to the comment's page), Sections, Page, Line no(s) / Table / Figure (each linked to the draft page), Comment / issue, the PC's own Suggested revision. Green, derived: Change Set (a link to its Review Change Sets row) and TWG (agent). Blue, people: TWG (human) (a multi-select dropdown), Comment type, any number of `Architect Feedback (<initials>)` columns, Disposition, Status. Green, from Agent by the Apps Script (derived agentic content, owner 2026-10-30): **Agentic status**, one line per pull request of the PC's change-sets, `<repo>#n (status, completed) · what it changed` (the repository in the link text, because Sheets' link popup cuts the URL short) with the PR linked and the status and completion time bold, or the status alone when there is no PR. Green, from Agent: Staging review page (by the PC's change-set) |
-| **Agent** | **the agent, and only the agent** | A–H, one row per No.: No., Comment ref (the PC id), Agentic status, Agentic action taken, Agentic applied in, Agentic handled by, Agentic date actioned (a UTC time, `YYYY-MM-DD HH:MMZ`, when the agent last finished work on the PC; D–G are the agent's log of what it did on that PC; no view reads them), Change-sets. I–N, one row per change-set: Change-set, Title, **Pull request (change set)** (any number of PR URLs, one per line), **Staging review page (change set)**, **What the PRs changed (change set)** (one line per PR, in the same order: what that PR changes in the document), **Agent completed (UTC, change set)** (one line per PR, in the same order: when the agent last finished work on it, `YYYY-MM-DD HH:MMZ`). A change-set may have several PRs, and a PC in several change-sets shows all of theirs. A PR belongs to a change-set, not to a PC (owner, 2026-10-30) |
-| **Review Change Sets** | people, plus formulas and the Apps Script | one row per CS. Green, agent-derived: Title, the change-set's title from its record (owner, 2026-10-30). Grey: Change-set, and the Apps Script's Sections and Pages (each linked) and joins: Public Comments (`No. n (Status) · comment`, status in bold), Suggested Revisions, PC Architect Feedback and Dispositions (`No. n · text`), each `No. n` linking to its row. Green: TWG (PCs), the PCs' TWG (human), else TWG (agent) marked "(AI)". Blue, people: TWG (CS) (multi-select), `Architect Feedback (<initials>)` on the CS. Orange: **Ready for agent** and **Ready for merge** (Yes/No, editors). Green, from Agent by the Apps Script (derived agentic content, owner 2026-10-30): **Agentic status**, as on Review Public Comments: one line per PR of the change-set, `<repo>#n (status, completed) · what it changed`, the status being the change-set's PCs' agentic statuses. Green, from Agent: Staging review page |
+| **Review Public Comments** | people, plus formulas and the Apps Script | one row per PC. Grey, mechanical: No. (a link to the comment's page), Sections, Page, Line no(s) / Table / Figure (each linked to the draft page), Comment / issue, the PC's own Suggested revision. Green, derived: Change Set (a link to its Review Change Sets row) and TWG (agent). Blue, people: TWG (human) (a multi-select dropdown), Comment type, any number of `Committee Feedback (<initials>)` columns, Disposition, Status. Green, from Agent by the Apps Script (derived agentic content, owner 2026-10-30): **Agentic status**, one line per pull request of the PC's change-sets, `<repo>#n (status, completed) · what it changed` (the repository in the link text, because Sheets' link popup cuts the URL short) with the PR linked and the status and completion time bold, or the status alone when there is no PR. Green, from Agent: Staging review page (by the PC's change-set) |
+| **Agent - Comments** | **the agent, and only the agent** | one row per No.: No., Comment ref (the PC id), Agentic status, Agentic action taken, Agentic applied in, Agentic handled by, Agentic date actioned (a UTC time, `YYYY-MM-DD HH:MMZ`, when the agent last finished work on the PC; the four Agentic columns after the status are the agent's log of what it did on that PC; no view reads them), Change-sets (the change set or sets this comment belongs to) |
+| **Agent - Change Sets** | **the agent, and only the agent** | one row per change-set: Change-set, Title, **Pull request (change set)** (any number of PR URLs, one per line), **Staging review page (change set)**, **What the PRs changed (change set)** (one line per PR, in the same order: what that PR changes in the document), **Agent completed (UTC, change set)** (one line per PR, in the same order: when the agent last finished work on it, `YYYY-MM-DD HH:MMZ`), Feedback basis (change set), Staging built (UTC, change set), **PR head (change set)**, **Staging built from (change set)**, **Staging deploy (change set)** (what the agent found on GitHub, so the script can flag a stale preview; skill `review-sheet-script`, "Checked by commit"). A change-set may have several PRs, and a PC in several change-sets shows all of theirs. A PR belongs to a change-set, not to a PC (owner, 2026-10-30). The two tabs were one `Agent` tab, comments in A–H and change sets from I, until the owner split them on 2026-10-31: a row held a comment and an unrelated change set side by side. The script still reads that layout when the Config sets `AGENT_CS` empty |
+| **Review Change Sets** | people, plus formulas and the Apps Script | one row per CS. Green, agent-derived: Title, the change-set's title from its record (owner, 2026-10-30). Grey: Change-set, and the Apps Script's Sections and Pages (each linked) and joins: Public Comments (`No. n (Status) · comment`, status in bold), Suggested Revisions, PC Committee Feedback and Dispositions (`No. n · text`), each `No. n` linking to its row. Green: TWG (PCs), the PCs' TWG (human), else TWG (agent) marked "(AI)". Blue, people: TWG (CS) (multi-select), `Committee Feedback (<initials>)` on the CS. Orange: **Ready for agent** and **Ready for merge** (Yes/No, editors). Green, from Agent by the Apps Script (derived agentic content, owner 2026-10-30): **Agentic status**, as on Review Public Comments: one line per PR of the change-set, `<repo>#n (status, completed) · what it changed`, the status being the change-set's PCs' agentic statuses. Green, from Agent: Staging review page |
 | **RCS joins (live)** | formulas (hidden) | live joins over Review Public Comments and Agent, kept for checking the Apps Script's output |
+
+**Splitting an older sheet's one Agent tab.** Duplicate it, delete A–H on the
+copy and the change-set columns on the original, rename them, set `AGENT` and
+`AGENT_CS` in the Config, and give each an Instructions row. Then, in the same
+step, repoint every formula that read the old tab's change-set columns: they
+become `#REF!` when those columns are deleted (2026-10-31, the DPI-H sheet).
+They are Review Change Sets A3 (`FILTER('Agent - Change Sets'!A3:B, ...)`, the
+Change-set and Title), the Staging review column of Review Public Comments
+(its lookup range becomes `'Agent - Change Sets'!A:D`), and A2 of the hidden
+`RCS joins (live)` tab. Also unmerge row 1 on the copy: the Instructions cell
+was merged across B1 to the last column, so deleting A–H shifts that merge
+onto A1 and hides B1 (a write to B1 then lands in the hidden part and seems to
+vanish). Merge B1 across the new width again. Read row 3 of each tab for
+`#REF!` before saying it is done.
 
 **Colour key** (owner, 2026-10-30). Blue: people decide. Orange: a release
 an editor gives (Ready for agent, Ready for merge). Grey: fixed, mechanical,
@@ -143,8 +158,8 @@ uses, can still edit everything: Google always lets the owner through.
 
 **Feedback columns are found by header.** The agent and the views read
 **every** Review Public Comments column whose header starts with `Suggested
-revision` or `Architect Feedback`, and every Review Change Sets column whose
-header starts with `Architect Feedback`. A board adds its column beside the
+revision` or `Committee Feedback`, and every Review Change Sets column whose
+header starts with `Committee Feedback`. A board adds its column beside the
 others and puts its own initials in the header. Never write a fixed column
 letter into a view. People may reorder the Review Public Comments tab, because
 Review Change Sets finds columns by name (`MATCH` on the first row). A renamed
@@ -166,7 +181,7 @@ Nothing is run to refresh them. Two things are not automatic:
 **What the agent watches.** Feedback arrives two ways, and the agent reads
 both on Review Public Comments and Review Change Sets:
 
-- the Architect Feedback cells and Review Change Sets' TWG categorisation;
+- the Committee Feedback cells and Review Change Sets' TWG categorisation;
 - **cell comments** (Google's Insert > Comment) anywhere on those two tabs,
   read with the spreadsheet's comments included. A cell comment on a PC row is
   feedback on that PC. One on a CS row is feedback on that CS.
@@ -211,8 +226,8 @@ Each sync does the steps below, in this order.
       comment record*, and the agent goes no further with it.
    2. **Review all of it before drafting** (owner, 2026-10-30): every PC in
       the change-set, with its Comment / issue and its own Suggested revision;
-      every Architect Feedback cell and cell comment on those PCs; and every
-      Architect Feedback cell, cell comment and the TWG categorisation on the
+      every Committee Feedback cell and cell comment on those PCs; and every
+      Committee Feedback cell, cell comment and the TWG categorisation on the
       CS itself. Feedback on the CS weighs on the whole change; feedback on a
       PC weighs on that PC's part of it.
    3. Propose the change the way every change is proposed: in its change-set

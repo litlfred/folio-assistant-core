@@ -52,6 +52,8 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`fetch-dspace-item.ts`](fetch-dspace-item.ts) | a file |  |
 | [`fetch-who-publication.test.ts`](fetch-who-publication.test.ts) | a file |  |
 | [`fetch-who-publication.ts`](fetch-who-publication.ts) | a file |  |
+| [`figure-coverage.test.ts`](figure-coverage.test.ts) | a file |  |
+| [`figure-coverage.ts`](figure-coverage.ts) | a file |  |
 | [`folio-site-blocks.test.ts`](folio-site-blocks.test.ts) | a file |  |
 | [`folio-site-blocks.ts`](folio-site-blocks.ts) | a file |  |
 | [`folio-site-chrome-check.ts`](folio-site-chrome-check.ts) | a file |  |
