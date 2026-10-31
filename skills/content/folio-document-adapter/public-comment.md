@@ -444,8 +444,8 @@ answered with why it changed nothing.
 | `cs-new: Title` with a `pc:` line | a new change-set (the dashboard's *New change-set from the selected comments* opens the form for it) |
 
 A change-set's committee is rolled up from its comments' TWG routing unless a
-person in the committee or editor lane re-routes it by hand (`cs-committee:
-<TWG> — <reason>` or `public-comment-changesets.ts reroute`). Each move is
+person in the committee or editor lane re-routes it by hand
+(`cs-committee: <TWG> — <reason>` or `public-comment-changesets.ts reroute`). Each move is
 recorded on the change-set (`who`, `when`, `from`, `to`, `why`) so re-ingesting
 comments never resets it, and the dashboard shows the new committee and the move
 history. Agents cannot re-route a change-set on their own (`Task_RerouteChangeSet`
