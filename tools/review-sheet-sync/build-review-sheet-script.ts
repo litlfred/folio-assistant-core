@@ -269,7 +269,9 @@ const CHUNK = 40_000;
 export function configRows(c: SheetConfig): string[][] {
   const rows: string[][] = [["Key", "Value (JSON, written by the agent from sheet-sync.json; do not edit)"]];
   for (const key of ["CFG", "COLS", "DATA"] as const) {
-    for (const chunk of chunks(readable(c[key]))) rows.push([key, "|" + chunk]);
+    // An em space (the TOC's indent) is written as its escape, so a person
+    // reading the tab sees it; JSON.parse reads either form.
+    for (const chunk of chunks(readable(c[key]).replace(/\u2003/g, "\\u2003"))) rows.push([key, "|" + chunk]);
   }
   return rows;
 }
