@@ -305,9 +305,7 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_ReviewOutcome_di" bpmnElement="Gateway_ReviewOutcome" isMarkerVisible="true">
         <dc:Bounds x="1215" y="745" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1268" y="800" width="90" height="40" />
-        </bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel><dc:Bounds x="1269" y="799" width="90" height="36" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Publish_di" bpmnElement="Task_Publish">
         <dc:Bounds x="1180" y="570" width="120" height="90" />
