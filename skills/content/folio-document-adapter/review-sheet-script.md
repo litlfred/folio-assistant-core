@@ -67,7 +67,25 @@ reads `Needs you: answer the agent's question`, so the "Needs you" filter view
 finds it. A card in the agent's chat may carry the same
 question for the owner, but the sheet is the record people see. When the
 question is answered, the agent replaces the block with the decision and who
-made it.
+made it, as `Decided (Q1): A, by <role>, <date>`.
+
+**The agent keeps its history** (owner, 2026-10-31: "agent should NOT remove
+historical decisions"). Every rewrite of the agent's feedback keeps every
+earlier `Decided (…)` line, in order, below the current proposal; a new
+proposal or question is added, never put in their place. Only the script's
+⏳ line and the ⚠ Stale mark are replaced.
+
+**Dispositions** (owner, 2026-10-31). The agent writes one blurb per change
+set in the Agent tab's **Dispositions (change set)**: what is done with
+every comment or feedback item in it, with their numbers ("Accepted: Nos.
+136, 326, 327, edited in the executive summary and glossary. Not changed:
+Nos. 126 to 135, 137 to 139, already addressed."). It is written before the
+staging preview is made, and kept current with each push. The script shows
+it, read-only, in **Dispositions (agent)** (Green) on Review Change Sets or
+Contributor Feedback, wherever that column exists. Once an Editor sets
+Ready for merge to Yes, the blurb as it stands is the summary: the agent
+puts it in the merge commit and posts it as the closing comment on the
+change set's issue.
 
 **What it keeps current.** Columns are found by header text, so people may
 move them.

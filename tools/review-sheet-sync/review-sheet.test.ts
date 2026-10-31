@@ -828,6 +828,19 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(rt3.written["Review Change Sets"]).toBeDefined();
   });
 
+  test("the change set's Dispositions blurb is shown from the Agent tab (owner, 2026-10-31)", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const f = t["Contributor Feedback"].rows;
+    f[0].push("Dispositions (agent)");
+    f.forEach((x, i) => i && x.push(""));
+    t.Agent.rows[0].push("Dispositions (change set)");
+    t.Agent.rows[1].push("Accepted: define registry in 1.1. Noted: style of 1.2.");
+    t.Agent.rows.slice(2).forEach((x) => x.push(""));
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    expect(T(rt2.written["Contributor Feedback"]["Dispositions (agent)"][0][0])).toBe("Accepted: define registry in 1.1. Noted: style of 1.2.");
+  });
+
   test("security: text a person or the agent typed is never written back as a formula", () => {
     const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
     const f = t["Contributor Feedback"].rows;

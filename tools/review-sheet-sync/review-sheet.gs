@@ -448,6 +448,7 @@ function refreshLocked() {
     const aHead = col(agentCs, COLS.agent.head || 'PR head (change set)');
     const aFrom = col(agentCs, COLS.agent.builtFrom || 'Staging built from (change set)');
     const aDeploy = col(agentCs, COLS.agent.deploy || 'Staging deploy (change set)');
+    const aDisp = col(agentCs, COLS.agent.dispositions || DISPOSITIONS_CS), dispOf = {};
     agent.rows.forEach(r => {
       const n = String(r[aNo]).trim();
       if (n) {
@@ -466,6 +467,7 @@ function refreshLocked() {
       if (id && aBasis >= 0) basisOfCs[id] = String(r[aBasis]).trim();
       if (id && aStaging >= 0) stagingOf[id] = (String(r[aStaging]).match(/https:\/\/\S+/) || [''])[0];
       if (id) builtOf[id] = builtInfo(r, aBuilt, aFrom, aDeploy);
+      if (id && aDisp >= 0) dispOf[id] = String(r[aDisp]);
       if (id && aPrs >= 0) {
         const descs = aCh >= 0 ? String(r[aCh]).split('\n').map(x => x.trim()) : [];
         const dones = aDone >= 0 ? String(r[aDone]).split('\n').map(x => x.trim()) : [];
@@ -479,6 +481,7 @@ function refreshLocked() {
     const csCol = col(rcs, 'Change-set'), all = () => true;
     const readyAt = readyTimes(rcs, csCol, prOf, all, docProps_()), lineOf = {};
     refreshRcs(rcs, rpc, csOf, stOf, prOf, readyAt);
+    writeRows(rcs, col(rcs, COLS.rcs.dispositionsAgent || DISPOSITIONS_AGENT), null, r => rich([{ t: dispOf[String(r[csCol]).trim()] || '' }]));
     rcs.rows.forEach(r => {
       const cs = String(r[csCol]).trim();
       if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)), prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] });
@@ -791,6 +794,14 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) 
  * than marking the proposal stale). The agent never writes this line.
  */
 const PROGRESS = '\u23f3 ';
+/**
+ * The change set's Dispositions: one blurb, written by the agent on the Agent
+ * tab before the preview is staged, describing every disposition in the
+ * change set. It is the summary used once Ready for merge is Yes: in the
+ * merge and when the change set's issue is closed (owner, 2026-10-31). The
+ * script shows it, read-only, wherever the people's tab has the column.
+ */
+const DISPOSITIONS_CS = 'Dispositions (change set)', DISPOSITIONS_AGENT = 'Dispositions (agent)';
 function progressLine(o) {
   const prs = o.prs || [];
   const active = prs.slice(-1)[0];
@@ -1247,7 +1258,7 @@ function refreshDraft(rows) {
   Object.entries(COLS.draftAgent).forEach(([k, h]) => (a[k] = col(agent, h)));
   // Columns added after a sheet's Config was written are found by their default names.
   [['head', 'PR head (change set)'], ['builtFrom', 'Staging built from (change set)'], ['deploy', 'Staging deploy (change set)'],
-    ['conversation', 'Agent conversation (change set)']]
+    ['conversation', 'Agent conversation (change set)'], ['dispositions', DISPOSITIONS_CS]]
     .forEach(([k, h]) => { if (a[k] === undefined) a[k] = col(agent, h); });
 
   // Rows whose change set's Agent row changed since the last run.
@@ -1298,10 +1309,11 @@ function refreshDraft(rows) {
     }
   }
 
-  const prOf = {}, stOf = {}, issuesOf = {}, stagingOf = {}, basisOfCs = {}, builtOf = {}, talkOf = {};
+  const prOf = {}, stOf = {}, issuesOf = {}, stagingOf = {}, basisOfCs = {}, builtOf = {}, talkOf = {}, dispOf = {};
   agent.rows.forEach(r => {
     const id = a.csId >= 0 ? String(r[a.csId]).trim() : '';
     if (!id) return;
+    if (a.dispositions >= 0) dispOf[id] = String(r[a.dispositions]);
     if (a.conversation >= 0) talkOf[id] = (String(r[a.conversation]).match(/https:\/\/\S+/) || [''])[0];
     if (a.agentic >= 0) stOf[id] = String(r[a.agentic]).trim();
     if (a.issue >= 0) issuesOf[id] = String(r[a.issue]).split('\n').map(issueUrl).filter(Boolean);
@@ -1371,6 +1383,7 @@ function refreshDraft(rows) {
   });
   // The same status as one plain value, for a filter (owner, 2026-10-31).
   if (c.status >= 0) writeRows(fb, c.status, only, r => rich([{ t: shownStatus(stOf[String(r[c.cs]).trim()] || '') }]));
+  writeRows(fb, col(fb, DISPOSITIONS_AGENT), only, r => rich([{ t: dispOf[String(r[c.cs]).trim()] || '' }]));
   // Staging review page: the change set's preview while its PR is open.
   writeRows(fb, c.staging, only, r => {
     const cs = String(r[c.cs]).trim();

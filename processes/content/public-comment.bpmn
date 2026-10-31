@@ -168,7 +168,7 @@
       <bpmn:incoming>Flow_NoChange</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:task id="Task_AuthorEdits" name="Edit the document as decided, on a feature branch">
-      <bpmn:documentation>public-comment edit --branch: the author (human, or an agent in the author role) edits the folio's blocks as the decision says, on a feature branch for one change-set. Its PR says Closes #N for the change-set issue, and opening it moves that issue's accepted comments to editing.</bpmn:documentation>
+      <bpmn:documentation>public-comment edit --branch: the author (human, or an agent in the author role) edits the folio's blocks as the decision says, on a feature branch for one change-set. Its PR says Closes #N for the change-set issue, and opening it moves that issue's accepted comments to editing. Before its preview is staged, the author writes the change set's Dispositions (change set) on the Agent tab: one blurb describing every disposition in the change set (owner, 2026-10-31).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToAuthorEdits</bpmn:incoming>
       <bpmn:outgoing>Flow_ToChangeSet</bpmn:outgoing>
@@ -182,7 +182,7 @@
       <bpmn:outgoing>Flow_ToIncorporate</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:task id="Task_Incorporate" name="Mark incorporated when the change set merges">
-      <bpmn:documentation>public-comment incorporate, naming the branch, PR and staging URL; done by the folio's workflow when the PR that closes a change-set issue merges. A PR closed unmerged moves nothing.</bpmn:documentation>
+      <bpmn:documentation>public-comment incorporate, naming the branch, PR and staging URL; done by the folio's workflow when the PR that closes a change-set issue merges. A PR closed unmerged moves nothing. The change set's Dispositions blurb, as it stands when Ready for merge is set to Yes, is the summary that closes its issue (owner, 2026-10-31).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToIncorporate</bpmn:incoming>
       <bpmn:outgoing>Flow_ToIncorporated</bpmn:outgoing>
