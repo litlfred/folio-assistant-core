@@ -136,6 +136,20 @@ Feedback). The script computes the same hash; while they differ it puts
 again." on the proposal's first line, and takes it off if the row changes
 back. The agent's next sync replaces the proposal and the basis.
 
+In a public-comment sheet the agent writes a **`2:` basis**:
+`feedbackBasis(header, row, ["Title", "TWG (CS)"], "Architect Feedback",
+PC_BASIS_GREY)`. It also covers the grey content Review Change Sets joins from
+the change set's comments (Sections, Pages, Public Comments, Suggested
+Revisions, PC Architect Feedback, Dispositions, TWG (PCs)), so a proposal goes
+stale when a comment it rests on changes, not only when a blue cell on its own
+row does (owner, 2026-10-31: "changed blue human (or mechanical grey)
+content"). The agent's own columns (Agentic status, Staging review page, the
+proposal) are never part of it, so the agent's writes never make its own
+proposals stale. The stored basis says which hash to compare with: a basis
+without `2:` is still compared with the blue-only hash, so a sheet moves over
+one row at a time, as the agent rewrites each basis, with no burst of stale
+marks.
+
 **How to tell it works.** The first run of `installTriggers` takes about 20
 seconds for 800 rows and its execution log ends "Execution completed" (a
 one-second run means `onOpen` was picked). Then No. is a blue link, and
@@ -528,7 +542,7 @@ Change-set and Needs, where Needs is one or more of:
 
 | needs | when (worked out by the script) |
 |---|---|
-| `proposal` | the green `(agent)` proposal is empty, or the row's blue cells changed since the proposal was written (its basis differs from Agent's Feedback basis). Drafting: only rows with people's feedback |
+| `proposal` | the green `(agent)` proposal is empty, or the row's blue cells changed since the proposal was written (its basis differs from Agent's Feedback basis); with a `2:` basis (public comment), also the grey content it joins from its comments. Drafting: only rows with people's feedback |
 | `issue` | drafting: the change set has no issue on the Agent tab |
 | `ready` | Ready for agent is Yes and its work has not started |
 | `merge` | Ready for merge is Yes and its PR is still open |

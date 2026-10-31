@@ -280,8 +280,8 @@ const WATCH_TAB = 'Watch';
  * (owner, 2026-10-31: "can we make it mostly mechanical to see if row(s)
  * changed?"). Each entry is [change set, what it needs]:
  * - proposal: the green `(agent)` proposal is empty, or the row's blue cells
- *   changed since it was written (its basis differs from Agent's Feedback
- *   basis). Drafting: only rows a person has written feedback on.
+ *   (and, for a "2:" basis, its grey content) changed since it was written
+ *   (its basis differs from Agent's Feedback basis). Drafting: only rows a person has written feedback on.
  * - issue (drafting): the change set has no issue on the Agent tab yet.
  * - ready: Ready for agent is Yes and its work has not started.
  * - merge: Ready for merge is Yes and its PR is still open.
@@ -324,7 +324,7 @@ function watchList(ss) {
     const needs = [];
     if (ag >= 0 && (!DRAFTING || people.some(i => String(r[i]).trim()))) {
       const bare = String(r[ag]).replace(STALE + '\n', '').trim();
-      if (!bare || basisOf(s.header, r, exact, prefix) !== basisOfCs[id]) needs.push('proposal');
+      if (!bare || basisOf(s.header, r, exact, prefix, basisOfCs[id]) !== basisOfCs[id]) needs.push('proposal');
     }
     if (DRAFTING && !issueOfCs[id]) needs.push('issue');
     if (yes(r, rfa) && sts.every(x => !x || x === 'Not started')) needs.push('ready');
@@ -419,8 +419,16 @@ function hashOf(text) {
  * tree mark the script adds is no change. feedback-issue.ts feedbackBasis
  * computes the same hash for the agent, which keeps it in the Agent tab's
  * Feedback basis (change set).
+ *
+ * A basis written as "2:<hash>" also covers the row's grey content columns
+ * (basisGrey), so a change to the comments a change set joins marks its
+ * proposal stale too (owner, 2026-10-31: "changed blue human (or mechanical
+ * grey) content"). `written` is the stored basis: its form says which hash
+ * to compare with, so old bases keep matching until the agent rewrites them.
  */
-function basisOf(header, row, exact, prefix) {
+function basisOf(header, row, exact, prefix, written) {
+  const v2 = /^2:/.test(String(written || ''));
+  if (v2) exact = exact.concat(basisGrey());
   const parts = [];
   header.forEach((h, i) => {
     let v = String(row[i] == null ? '' : row[i]).trim();
@@ -429,7 +437,19 @@ function basisOf(header, row, exact, prefix) {
       parts.push(h + '=' + v);
     }
   });
-  return hashOf(parts.join('\n'));
+  return (v2 ? '2:' : '') + hashOf(parts.join('\n'));
+}
+
+/**
+ * The grey (mechanical) content columns a proposal also rests on: in a
+ * public-comment sheet, what Review Change Sets joins from its comments.
+ * Not the agent's own columns (Agentic status, Staging review page), so the
+ * agent's writes never make its proposals stale.
+ */
+function basisGrey() {
+  if (DRAFTING) return [];
+  const c = COLS.rcs;
+  return [c.sections, c.pages, c.comments, c.revisions, c.feedback, c.dispositions, 'TWG (PCs)'].filter(Boolean);
 }
 
 /** "2026-10-30 22:30Z" (or ISO) -> ms, or NaN. */
@@ -457,7 +477,8 @@ function markStale(s, csCol, basisOfCs, exact, prefix) {
   const ag = col(s, prefix + ' (agent)');
   if (ag < 0 || csCol < 0) return;
   s.rows.forEach((r, k) => {
-    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[String(r[csCol]).trim()]);
+    const w = basisOfCs[String(r[csCol]).trim()];
+    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix, w), w);
     if (t !== null) s.sh.getRange(k + 2, ag + 1, 1, 1).setValues([[asText(t)]]);
   });
 }
@@ -900,7 +921,7 @@ function refreshDraft(rows) {
     fb.rows.forEach((r, k) => {
       if (!want(k)) return;
       const cs = String(r[c.cs]).trim();
-      const t = staleText(r[ag], basisOf(fb.header, r, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback), basisOfCs[cs]);
+      const t = staleText(r[ag], basisOf(fb.header, r, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback, basisOfCs[cs]), basisOfCs[cs]);
       if (t !== null) fb.sh.getRange(k + 2, ag + 1, 1, 1).setValues([[asText(t)]]);
     });
   }
