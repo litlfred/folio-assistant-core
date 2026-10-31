@@ -90,9 +90,27 @@ account, because Google asks the owner to authorise the script:
 
 `installTriggers` runs a full refresh, then installs two triggers: every edit
 of the three tabs marks the sheet dirty, and every five minutes a dirty sheet
-is rebuilt. A drafting sheet is small, so there an edit rebuilds at once
-(a pick shows its link, a new row its Change-set, within seconds; owner,
-2026-10-31). **Review links → Refresh now** rebuilds at once.
+is rebuilt. A drafting sheet rebuilds **incrementally** (owner,
+2026-10-31): an edit rebuilds only the rows it touched, at once, so a pick
+shows its link and a new row its Change-set within seconds, however large
+the sheet. The 5-minute trigger rebuilds only the rows whose change set's
+Agent row changed (the agent writes through the API, which fires no edit;
+the script keeps a short hash per change set to notice). A new table of
+contents in Config, an edit of the header row, or Refresh now rebuilds
+everything. A public-comment sheet rebuilds whole, since a comment feeds its
+change sets: at once while a rebuild takes under 5 s, otherwise gathered for
+the 5-minute trigger. **Review links → Refresh now** rebuilds at once.
+
+**Stale agent proposals.** `Contributor Feedback (agent)` (drafting) and
+`Architect Feedback (agent)` (Review Change Sets) carry the agent's proposal.
+The agent records what it wrote against in the Agent tab's **Feedback basis
+(change set)**: `feedbackBasis()` in `tools/review-sheet-sync/feedback-issue.ts`,
+a hash of the row's blue cells (drafting: Title, Selected Sections, people's
+Contributor Feedback; public comment: Title, TWG (CS), people's Architect
+Feedback). The script computes the same hash; while they differ it puts
+"⚠ Stale: the row changed since this proposal; the agent will propose
+again." on the proposal's first line, and takes it off if the row changes
+back. The agent's next sync replaces the proposal and the basis.
 
 **How to tell it works.** The first run of `installTriggers` takes about 20
 seconds for 800 rows and its execution log ends "Execution completed" (a

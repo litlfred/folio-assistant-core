@@ -14,6 +14,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { buildConfig, buildScript, chunks, configRows, readable } from "./build-review-sheet-script.js";
+import { feedbackBasis } from "./feedback-issue.js";
 
 const code = buildScript();
 const withConfig = <T extends object>(t: T, rows: string[][]) => ({ ...t, Config: { id: 50, rows } });
@@ -52,6 +53,14 @@ function folio(): string {
 function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
   const written: Record<string, Record<string, unknown[][]>> = {};
   const props: Record<string, string> = {};
+  // A write lands at its rows: a whole column is the array of its rows from
+  // row 2; a one-row write fills only its place.
+  const put = (name: string, h: string, r: number, v: unknown[][]) => {
+    const tab = (written[name] ??= {});
+    if (r === 1 || (r === 2 && v.length > 1)) return void (tab[h] = v);
+    const arr = (tab[h] ??= []);
+    v.forEach((x, i) => (arr[r - 2 + i] = x));
+  };
   const sheet = (name: string) => {
     const t = tabs[name];
     return {
@@ -62,8 +71,8 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
       getLastColumn: () => t.rows[0].length,
       getRange: (r: number, c: number, nr: number, nc: number) => ({
         getDisplayValues: () => t.rows.slice(r - 1, r - 1 + nr).map((row) => row.slice(c - 1, c - 1 + nc)),
-        setValues: (v: unknown[][]) => ((written[name] ??= {})[t.rows[0][c - 1]] = v),
-        setRichTextValues: (v: unknown[][]) => ((written[name] ??= {})[t.rows[0][c - 1]] = v),
+        setValues: (v: unknown[][]) => put(name, t.rows[0][c - 1], r, v),
+        setRichTextValues: (v: unknown[][]) => put(name, t.rows[0][c - 1], r, v),
         clearContent: () => {},
       }),
     };
@@ -206,8 +215,16 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     expect((rpc["Agentic status"][2][0] as Rich)).toEqual({ text: "Not started", links: [], bold: [] });
   });
 
-  test("an edit on a watched tab marks the sheet dirty, and the timer rebuilds once", () => {
+  test("an edit rebuilds at once while a rebuild is quick", () => {
     const rt2 = runtime(withConfig(tabs(), pcRows));
+    load(code, rt2.g).markDirty({ range: { getSheet: () => rt2.sheet("Agent") } });
+    expect(rt2.props.dirty).toBeUndefined();
+    expect(rt2.written["Review Change Sets"]).toBeDefined();
+  });
+
+  test("once a rebuild is slow, an edit marks the sheet dirty, and the timer rebuilds once", () => {
+    const rt2 = runtime(withConfig(tabs(), pcRows));
+    rt2.props.lastMs = "20000";
     const s = load(code, rt2.g);
     s.markDirty({ range: { getSheet: () => rt2.sheet("Public Comment Source") } });
     expect(rt2.props.dirty).toBeUndefined();
@@ -346,6 +363,54 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     load(code, rt2.g).refreshAll();
     expect(rt2.written["Contributor Feedback"]["Change-set"]).toEqual([["CS-004"], ["CS-005"], [""], ["CS-006"]]);
+  });
+
+  test("an edit rebuilds only its rows; an Agent change reaches its change set's row on the timer", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const rt2 = runtime(t);
+    const s = load(code, rt2.g);
+    s.refreshAll();
+    // A person picks a section in row 3 (index 1): only that row is rebuilt.
+    t["Contributor Feedback"].rows[2][2] = "1.1 Global challenges";
+    delete rt2.written["Contributor Feedback"];
+    s.markDirty({ range: { getSheet: () => rt2.sheet("Contributor Feedback"), getRow: () => 3, getNumRows: () => 1 } });
+    const w = rt2.written["Contributor Feedback"];
+    expect(w["Selected Sections"][1]).toEqual(["\u2514\u20021.1 Global challenges"]);
+    expect((w["Section links"][1][0] as Rich).text).toBe("1.1 Global challenges");
+    expect(w["Section links"][0]).toBeUndefined();
+    expect(rt2.written.TOC).toBeDefined(); // from the first full refresh only
+    // Nothing changed: the timer writes nothing.
+    delete rt2.written["Contributor Feedback"];
+    s.refreshIfDirty();
+    expect(rt2.written["Contributor Feedback"]).toBeUndefined();
+    // The agent writes CS-004's Agent row through the API (no edit fires): the timer rebuilds row 2 only.
+    t.Agent.rows[1][2] = "PR merged";
+    s.refreshIfDirty();
+    const w2 = rt2.written["Contributor Feedback"];
+    expect((w2["Agentic status"][0][0] as Rich).text).toContain("PR merged");
+    expect(w2["Agentic status"][1]).toBeUndefined();
+  });
+
+  test("the agent's proposal is flagged stale once a blue cell changes, and unflagged when it matches again", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const f = t["Contributor Feedback"].rows;
+    f[0].push("Contributor Feedback (agent)");
+    f.forEach((x, i) => i && x.push(""));
+    f[1][9] = "Define it in 1.1";
+    t.Agent.rows[0].push("Feedback basis (change set)");
+    t.Agent.rows[1].push(feedbackBasis(f[0], f[1]));
+    const rt2 = runtime(t);
+    const s = load(code, rt2.g);
+    s.refreshAll();
+    expect(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"]).toBeUndefined();
+    f[1][1] = "Define registry and register";
+    s.refreshAll();
+    const stale = rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0] as string;
+    expect(stale).toMatch(/^\u26a0 Stale: .*\nDefine it in 1\.1$/);
+    f[1][1] = "Define registry";
+    f[1][9] = stale;
+    s.refreshAll();
+    expect(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]).toBe("Define it in 1.1");
   });
 
   test("Issue and Agentic status come from the Agent tab by change set", () => {

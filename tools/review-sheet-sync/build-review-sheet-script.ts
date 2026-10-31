@@ -81,7 +81,7 @@ export const DRAFT_COLUMNS = {
   draftAgent: {
     csId: "Change-set", issue: "Issue", agentic: "Agentic status", prs: "Pull request (change set)",
     changes: "What the PRs changed (change set)", done: "Agent completed (UTC, change set)",
-    staging: "Staging review page (change set)",
+    staging: "Staging review page (change set)", basis: "Feedback basis (change set)",
   },
 };
 
@@ -141,7 +141,7 @@ export const DEFAULT_COLUMNS = {
   agent: {
     no: "No.", pc: "Comment ref", agentic: "Agentic status", cs: "Change-sets",
     csId: "Change-set", prs: "Pull request (change set)", changes: "What the PRs changed (change set)",
-    done: "Agent completed (UTC, change set)",
+    done: "Agent completed (UTC, change set)", basis: "Feedback basis (change set)",
   },
 };
 

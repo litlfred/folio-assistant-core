@@ -7,7 +7,6 @@
  *
  * Skill: `review-sheet-script`, "Feedback from the site".
  */
-import { createHash } from "node:crypto";
 import { bareName, buildToc } from "./build-review-sheet-script.js";
 
 export type Feedback = {
@@ -74,22 +73,31 @@ export function feedbackRow(issue: { body: string; url: string; login: string },
   };
 }
 
+/** The Apps Script's hashOf (djb2, base 36), so the agent and the sheet agree on a basis. */
+export function hashOf(text: string): string {
+  let h = 5381;
+  for (let i = 0; i < text.length; i++) h = (Math.imul(h, 33) ^ text.charCodeAt(i)) >>> 0;
+  return h.toString(36);
+}
+
 /**
- * What the agent's proposal (the `Contributor Feedback (agent)` column) was
- * written against: a short hash of the row's people cells, Title, Selected
- * Sections and every person's Contributor Feedback column, by header. The
- * agent keeps it in the Agent tab's `Feedback basis (change set)`; on each
- * sync a row whose basis differs, whoever changed it, a person or an agent,
- * gets a fresh proposal, and so does a row whose proposal a person cleared.
- * Picks are compared bare, so the script's repair of a tree mark is no change.
+ * What an agent proposal (`Contributor Feedback (agent)`, or `Architect
+ * Feedback (agent)` on Review Change Sets) was written against: a hash of the
+ * row's blue cells, by header, the same hash the Apps Script's basisOf takes.
+ * Drafting: Title, Selected Sections and every person's Contributor Feedback
+ * column (`exact` Title and Selected Sections, `prefix` Contributor Feedback).
+ * Public comment: `exact` Title and TWG (CS), `prefix` Architect Feedback.
+ * The agent keeps it in the Agent tab's `Feedback basis (change set)`. While
+ * the row's basis differs, the script marks the proposal stale; the agent's
+ * next sync proposes again and writes the new basis. Picks are compared bare,
+ * so the script's repair of a tree mark is no change.
  */
-export function feedbackBasis(header: string[], row: string[], names = { title: "Title", sections: "Selected Sections", feedback: "Contributor Feedback" }): string {
+export function feedbackBasis(header: string[], row: string[], exact = ["Title", "Selected Sections"], prefix = "Contributor Feedback"): string {
   const parts: string[] = [];
   header.forEach((h, i) => {
-    const v = String(row[i] ?? "").trim();
-    if (h === names.title) parts.push(`${h}=${v}`);
-    else if (h === names.sections) parts.push(`${h}=${v.split(",").map(bareName).filter(Boolean).join(",")}`);
-    else if ((h === names.feedback || h.startsWith(`${names.feedback} (`)) && h !== `${names.feedback} (agent)`) parts.push(`${h}=${v}`);
+    let v = String(row[i] ?? "").trim();
+    if (h === "Selected Sections") v = v.split(",").map(bareName).filter(Boolean).join(",");
+    if (exact.includes(h) || ((h === prefix || h.startsWith(`${prefix} (`)) && h !== `${prefix} (agent)`)) parts.push(`${h}=${v}`);
   });
-  return createHash("sha256").update(parts.join("\n")).digest("hex").slice(0, 12);
+  return hashOf(parts.join("\n"));
 }
