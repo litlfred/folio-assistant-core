@@ -101,6 +101,16 @@ everything. A public-comment sheet rebuilds whole, since a comment feeds its
 change sets: at once while a rebuild takes under 5 s, otherwise gathered for
 the 5-minute trigger. **Review links → Refresh now** rebuilds at once.
 
+**Stale staging previews** (owner, 2026-10-31, option C: sheet and page).
+The agent records when it built a change set's preview in the Agent tab's
+**Staging built (UTC, change set)**, beside **Agent completed (UTC, change
+set)**. When a PR of the change set was completed after the build, the
+script writes the Staging review page cell as `review ⚠ stale: built <time>,
+PR changed since`, in both modes (Review Change Sets takes the link from the
+Agent tab's Staging review page (change set) where it names one). Without a
+build time it claims nothing. The preview page shows its own live banner too
+(the site's staging build, cat-harness-tools).
+
 **Stale agent proposals.** `Contributor Feedback (agent)` (drafting) and
 `Architect Feedback (agent)` (Review Change Sets) carry the agent's proposal.
 The agent records what it wrote against in the Agent tab's **Feedback basis

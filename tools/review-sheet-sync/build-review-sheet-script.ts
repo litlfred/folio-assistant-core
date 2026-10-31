@@ -82,6 +82,7 @@ export const DRAFT_COLUMNS = {
     csId: "Change-set", issue: "Issue", agentic: "Agentic status", prs: "Pull request (change set)",
     changes: "What the PRs changed (change set)", done: "Agent completed (UTC, change set)",
     staging: "Staging review page (change set)", basis: "Feedback basis (change set)",
+    built: "Staging built (UTC, change set)",
   },
 };
 
@@ -136,12 +137,13 @@ export const DEFAULT_COLUMNS = {
   rcs: {
     cs: "Change-set", sections: "Sections", pages: "Pages", comments: "Public Comments",
     revisions: "Suggested Revisions", feedback: "PC Architect Feedback", dispositions: "Dispositions",
-    agentic: "Agentic status",
+    agentic: "Agentic status", staging: "Staging review page",
   },
   agent: {
     no: "No.", pc: "Comment ref", agentic: "Agentic status", cs: "Change-sets",
     csId: "Change-set", prs: "Pull request (change set)", changes: "What the PRs changed (change set)",
     done: "Agent completed (UTC, change set)", basis: "Feedback basis (change set)",
+    staging: "Staging review page (change set)", built: "Staging built (UTC, change set)",
   },
 };
 

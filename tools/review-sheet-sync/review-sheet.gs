@@ -214,7 +214,9 @@ function refreshLocked() {
     const aId = col(agent, COLS.agent.csId), aPrs = col(agent, COLS.agent.prs), aCh = col(agent, COLS.agent.changes);
     const aDone = col(agent, COLS.agent.done);
     const aBasis = COLS.agent.basis ? col(agent, COLS.agent.basis) : -1;
-    const basisOfCs = {};
+    const basisOfCs = {}, stagingOf = {}, builtOf = {};
+    const aStaging = COLS.agent.staging ? col(agent, COLS.agent.staging) : -1;
+    const aBuilt = COLS.agent.built ? col(agent, COLS.agent.built) : -1;
     agent.rows.forEach(r => {
       const n = String(r[aNo]).trim();
       if (n) {
@@ -229,6 +231,8 @@ function refreshLocked() {
       // on the same lines of the next column what each one changed.
       const id = aId >= 0 ? String(r[aId]).trim() : '';
       if (id && aBasis >= 0) basisOfCs[id] = String(r[aBasis]).trim();
+      if (id && aStaging >= 0) stagingOf[id] = (String(r[aStaging]).match(/https:\/\/\S+/) || [''])[0];
+      if (id && aBuilt >= 0) builtOf[id] = String(r[aBuilt]).trim();
       if (id && aPrs >= 0) {
         const descs = aCh >= 0 ? String(r[aCh]).split('\n').map(x => x.trim()) : [];
         const dones = aDone >= 0 ? String(r[aDone]).split('\n').map(x => x.trim()) : [];
@@ -240,6 +244,13 @@ function refreshLocked() {
     refreshRpc(rpc, pcOf, csOfNo, stOf, prOf);
     refreshRcs(rcs, rpc, csOf, stOf, prOf);
     markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Architect Feedback');
+    // Staging review page, from Agent: only where Agent names a preview, so a
+    // sheet whose agent writes the cell directly keeps it.
+    const rSt = COLS.rcs.staging ? col(rcs, COLS.rcs.staging) : -1, rCs = col(rcs, COLS.rcs.cs);
+    if (rSt >= 0 && rCs >= 0) rcs.rows.forEach((r, k) => {
+      const id = String(r[rCs]).trim();
+      if (stagingOf[id]) rcs.sh.getRange(k + 2, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id])]]);
+    });
   }
 }
 // ---------- sheet helpers ----------
@@ -294,6 +305,26 @@ function basisOf(header, row, exact, prefix) {
     }
   });
   return hashOf(parts.join('\n'));
+}
+
+/** "2026-10-30 22:30Z" (or ISO) -> ms, or NaN. */
+function utcMs(t) {
+  return Date.parse(String(t).trim().replace(' ', 'T').replace(/(\d)$/, '$1Z'));
+}
+
+/**
+ * The Staging review page cell: a "review" link to the change set's preview,
+ * marked stale when a PR of the change set was completed after the preview
+ * was built (Agent: Agent completed vs Staging built). Without a build time
+ * nothing is claimed either way.
+ */
+function stagingCell(url, built, prs) {
+  if (!url) return rich([]);
+  const b = utcMs(built);
+  const done = (prs || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
+  const stale = !isNaN(b) && done.some(x => x > b);
+  return rich([{ t: 'review', url: url }].concat(stale ?
+    [{ t: ' \u26a0 stale: built ' + String(built).trim() + ', PR changed since', bold: true }] : []));
 }
 
 /** Flag the `prefix (agent)` proposal of each row whose basis moved on. */
@@ -657,13 +688,14 @@ function refreshDraft(rows) {
     }
   }
 
-  const prOf = {}, stOf = {}, issuesOf = {}, stagingOf = {}, basisOfCs = {};
+  const prOf = {}, stOf = {}, issuesOf = {}, stagingOf = {}, basisOfCs = {}, builtOf = {};
   agent.rows.forEach(r => {
     const id = a.csId >= 0 ? String(r[a.csId]).trim() : '';
     if (!id) return;
     if (a.agentic >= 0) stOf[id] = String(r[a.agentic]).trim();
     if (a.issue >= 0) issuesOf[id] = String(r[a.issue]).split('\n').map(issueUrl).filter(Boolean);
     if (a.staging >= 0) stagingOf[id] = (String(r[a.staging]).match(/https:\/\/\S+/) || [''])[0];
+    if (a.built >= 0) builtOf[id] = String(r[a.built]).trim();
     if (a.basis >= 0) basisOfCs[id] = String(r[a.basis]).trim();
     if (a.prs >= 0) {
       const descs = a.changes >= 0 ? String(r[a.changes]).split('\n').map(x => x.trim()) : [];
@@ -726,8 +758,8 @@ function refreshDraft(rows) {
   });
   // Staging review page: the change set's preview while its PR is open.
   writeRows(fb, c.staging, only, r => {
-    const u = stagingOf[String(r[c.cs]).trim()];
-    return rich(u ? [{ t: 'review', url: u }] : []);
+    const cs = String(r[c.cs]).trim();
+    return stagingCell(stagingOf[cs], builtOf[cs], prOf[cs]);
   });
   // Contributor Feedback (agent): flagged stale while the row's blue cells
   // differ from what the proposal was written against.

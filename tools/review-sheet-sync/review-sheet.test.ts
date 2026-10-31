@@ -413,6 +413,21 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]).toBe("Define it in 1.1");
   });
 
+  test("the staging review link is marked stale when a PR changed after the preview was built", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    t.Agent.rows[0].push("Staging built (UTC, change set)");
+    t.Agent.rows[1].push("2026-10-30 23:00Z");
+    const rt2 = runtime(t);
+    const s = load(code, rt2.g);
+    s.refreshAll();
+    const st = rt2.written["Contributor Feedback"]["Staging review page"][0][0] as Rich;
+    expect(st.text).toBe("review \u26a0 stale: built 2026-10-30 23:00Z, PR changed since");
+    expect(st.links).toEqual([[0, 6, "https://o.github.io/dth/STAGING/cs-004/en/review/"]]);
+    t.Agent.rows[1][7] = "2026-10-30 23:50Z";
+    s.refreshAll();
+    expect((rt2.written["Contributor Feedback"]["Staging review page"][0][0] as Rich).text).toBe("review");
+  });
+
   test("Issue and Agentic status come from the Agent tab by change set", () => {
     const i = fb.Issue[0][0] as Rich;
     expect(i.text).toBe("dth#12");
