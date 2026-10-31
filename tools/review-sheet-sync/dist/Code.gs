@@ -30,7 +30,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 79089c9fca347c54.
+// folio-assistant-core tools/review-sheet-sync at template sha256 e3a5d03fa8017af7.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -42,21 +42,41 @@ function installTriggers() {
   const ss = SpreadsheetApp.getActive();
   loadConfig(ss);
   checkSheet(ss);
-  ScriptApp.getProjectTriggers()
+  host_().ScriptApp.getProjectTriggers()
     .filter(t => ['markDirty', 'refreshIfDirty'].includes(t.getHandlerFunction()))
-    .forEach(t => ScriptApp.deleteTrigger(t));
-  ScriptApp.newTrigger('markDirty').forSpreadsheet(ss).onEdit().create();
-  ScriptApp.newTrigger('refreshIfDirty').timeBased().everyMinutes(5).create();
+    .forEach(t => host_().ScriptApp.deleteTrigger(t));
+  host_().ScriptApp.newTrigger('markDirty').forSpreadsheet(ss).onEdit().create();
+  host_().ScriptApp.newTrigger('refreshIfDirty').timeBased().everyMinutes(5).create();
   refreshAll();
   applyEditors(ss);
   if (DRAFTING) checkDropdown(ss);
 }
 
+/**
+ * Library use (owner, 2026-10-31: "this is annoying. lets move to library
+ * script"). The same file serves as a library: each sheet holds a short stub
+ * (dist/Stub.gs) that calls init(...) with its own services, so the document
+ * properties, the lock and the triggers are the sheet's, not the library's.
+ * Pasted straight into a sheet, init is never called and the sheet's own
+ * services are used.
+ */
+let HOST_ = null;
+function init(services) { HOST_ = services || null; }
+function host_() {
+  return HOST_ || {
+    PropertiesService: typeof PropertiesService === 'undefined' ? undefined : PropertiesService,
+    LockService: typeof LockService === 'undefined' ? undefined : LockService,
+    ScriptApp: typeof ScriptApp === 'undefined' ? undefined : ScriptApp,
+  };
+}
+function docProps_() { return host_().PropertiesService.getDocumentProperties(); }
+function docLock_() { return host_().LockService.getDocumentLock(); }
+
 const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 79089c9fca347c54';
+const SCRIPT_VERSION = 'template sha256 e3a5d03fa8017af7';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
   'in the function list (next to Run and Debug), then press Run.';
@@ -194,7 +214,7 @@ function checkDropdown(ss) {
       .requireValueInRange(ss.getSheetByName(CFG.TOC).getRange('A2:A'), true)
       .setAllowInvalid(true).build());
   }
-  const props = PropertiesService.getDocumentProperties();
+  const props = docProps_();
   if (had && (props.getProperty('dropdownDone') || multiPicked(cells))) return;
   const range = "'" + sh.getName() + "'!" + cells.getA1Notation();
   const ui = SpreadsheetApp.getUi();
@@ -246,7 +266,7 @@ function markDirty(e) {
   if (!name || name === CONFIG_TAB) return;
   try { loadConfig(SpreadsheetApp.getActive()); } catch (err) { return; }
   if (!WATCHED.includes(name)) return;
-  const props = PropertiesService.getDocumentProperties();
+  const props = docProps_();
   if (DRAFTING) {
     // Incremental: remember which Contributor Feedback rows the edit touched
     // and rebuild only those, at once. An edit of the header row, or of the
@@ -286,7 +306,7 @@ const MAX_ROWS = 200;
  * its writes reach the sheet). Public comment: rebuild all, if dirty.
  */
 function refreshIfDirty() {
-  const props = PropertiesService.getDocumentProperties();
+  const props = docProps_();
   try { loadConfig(SpreadsheetApp.getActive()); } catch (err) { return; }
   try { colourInstructions(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
   if (!DRAFTING) {
@@ -309,7 +329,7 @@ function refreshIfDirty() {
     }
     return;
   }
-  const lock = LockService.getDocumentLock();
+  const lock = docLock_();
   if (!lock.tryLock(10000)) return;
   const t0 = Date.now();
   try {
@@ -328,7 +348,7 @@ function refreshIfDirty() {
 
 /** Rebuild everything. True when it ran; false when another run held the lock. */
 function refreshAll() {
-  const lock = LockService.getDocumentLock();
+  const lock = docLock_();
   if (!lock.tryLock(1000)) return false;
   const t0 = Date.now();
   try {
@@ -338,7 +358,7 @@ function refreshAll() {
     try { styleConfig(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
     return true;
   } finally {
-    PropertiesService.getDocumentProperties().setProperty('lastMs', String(Date.now() - t0));
+    docProps_().setProperty('lastMs', String(Date.now() - t0));
     lock.releaseLock();
   }
 }
@@ -1138,7 +1158,7 @@ function csStatus(sts) {
  */
 function refreshDraft(rows) {
   const ss = SpreadsheetApp.getActive();
-  const props = PropertiesService.getDocumentProperties();
+  const props = docProps_();
   const fb = readSheet(ss.getSheetByName(CFG.FEEDBACK));
   const agentSh = ss.getSheetByName(CFG.AGENT);
   const agent = agentSh ? readSheet(agentSh) : { header: [], rows: [] };
