@@ -332,9 +332,10 @@ describe("review-sheet.gs in drafting mode", () => {
   test("the script is the same for every document: nothing of the folio is in it", () => {
     expect(code).not.toContain("https://x.example/S#");
     expect(code).not.toContain("Global challenges");
-    expect(dRows[1][0]).toBe("CFG");
-    expect(dRows.every((r, i) => i === 0 || r[1].startsWith("|"))).toBe(true);
-    expect(JSON.parse(dRows[1][1].slice(1)).MODE).toBe("drafting");
+    expect(dRows.find((r) => r[0] !== "SETUP" && r[0] !== "Key")?.[0]).toBe("CFG");
+    expect(dRows.filter((r) => r[0] === "SETUP").map((r) => r[1]).join("\n")).toContain("Allow multiple selections");
+    expect(dRows.every((r, i) => i === 0 || r[0] === "SETUP" || r[1].startsWith("|"))).toBe(true);
+    expect(JSON.parse(dRows.find((r) => r[0] === "CFG")![1].slice(1)).MODE).toBe("drafting");
   });
 
   test("the built script is plain ASCII, so a paste cannot mangle it", () => {

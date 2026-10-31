@@ -312,12 +312,42 @@ export function buildConfig(repo: string, cfgPath: string): SheetConfig {
 const CHUNK = 40_000;
 
 /**
+ * The setup steps a person takes, written at the top of the Config tab so
+ * they stay with the sheet (owner, 2026-10-31: "so people don't lose the
+ * info"). The skill review-sheet-script says the same; the drafting script's
+ * installTriggers box shows the dropdown steps with the exact range.
+ */
+export function setupSteps(c: SheetConfig): string[] {
+  const steps = [
+    "Setup, once per sheet (the skill review-sheet-script has the detail):",
+    "1. Extensions, then Apps Script. Replace all of Code.gs with the published script and save.",
+    "2. Pick installTriggers in the function list and press Run. Allow access (Advanced, then continue).",
+    "3. Reload the sheet. A Review links menu appears; Review links, then Refresh now, checks it.",
+  ];
+  if (c.CFG.MODE === "drafting") {
+    const col = c.COLS.draft?.sections ?? "Selected Sections";
+    steps.push(
+      `4. Finish the ${col} dropdown. Neither the script nor the Sheets API can set these two settings:`,
+      `   • Click the column letter above "${col}" to select the column`,
+      "   • Choose Data, then Data validation",
+      `   • Open the rule for that column (it says "Dropdown (from a range)")`,
+      "   • Tick Allow multiple selections",
+      "   • Open Advanced options and set Display style to Chip",
+      "   • Press Done",
+    );
+  }
+  steps.push("Below: the script's settings. Ask the agent to change them; do not edit by hand.");
+  return steps;
+}
+
+/**
  * The Config tab's rows: a header, then CFG, COLS and DATA, each as JSON with
  * a leading "|" so a sheet never reads it as a number or formula, a long
  * value continued on the next rows under the same key.
  */
 export function configRows(c: SheetConfig): string[][] {
-  const rows: string[][] = [["Key", "Value (JSON, written by the agent from sheet-sync.json; do not edit)"]];
+  const rows: string[][] = [["Key", "Value (written by the agent from sheet-sync.json; do not edit)"]];
+  for (const line of setupSteps(c)) rows.push(["SETUP", line]);
   for (const key of ["CFG", "COLS", "DATA"] as const) {
     // Indented only where a person might edit by hand (CFG: URLs, tab names;
     // COLS: column headers). DATA is generated from the folio, so it stays

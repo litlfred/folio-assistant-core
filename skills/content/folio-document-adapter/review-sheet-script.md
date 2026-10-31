@@ -404,15 +404,26 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    Paste the script into the template itself once, so every copy starts with
    it. A copy keeps the version it was made with: when Code.gs changes,
    paste it again into each sheet in use.
-6. **Drafting only: allow multiple sections.** installTriggers checks the
-   Selected Sections dropdown: it adds the rule (a dropdown from
-   `TOC!A2:A`) when the column has none, leaves an existing one alone (a
-   rewrite would clear its tick), and then shows a box naming the one step
-   left. Select the Selected Sections column > Data > Data validation > the
-   dropdown rule > Display style **Chip** (Advanced options) > tick **Allow
-   multiple selections** > Done. Copies made after the template has it
-   ticked keep it. The tick is a person's step: neither the Sheets API nor
-   Apps Script can set it on a from-a-range rule.
+6. **Drafting only: finish the Selected Sections dropdown.** installTriggers
+   checks the dropdown: it adds the rule (a dropdown from `TOC!A2:A`) when
+   the column has none, and leaves an existing one alone (a rewrite would
+   clear its tick). Two settings are a person's, once per sheet:
+   - click the column letter above "Selected Sections" to select the column;
+   - choose Data, then Data validation;
+   - open the rule for that column (the sidebar lists it by its range, such
+     as `'Contributor Feedback'!E2:E1000`, as "Dropdown (from a range)");
+   - tick **Allow multiple selections**;
+   - open Advanced options and set Display style to **Chip**;
+   - press Done.
+
+   Neither Apps Script nor the Sheets API can read or set these two
+   settings, so installTriggers cannot check them directly. It shows the
+   steps, with the exact range, unless it has evidence they are done: a cell
+   already holding two sections from the list, or a Yes to the box's "Is this
+   done already?" (kept as the document property `dropdownDone`). Copies made
+   after the template has them keep them. The same steps are written at the
+   top of the Config tab, as `SETUP` rows, so they stay with the sheet
+   (owner, 2026-10-31); the script ignores those rows.
 
 **Filter views** (owner, 2026-10-31). Each template carries saved filter
 views, which copy with it. Use Data > Filter views, never a plain filter: a
