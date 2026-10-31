@@ -85,6 +85,7 @@ import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts
 import { visualiserNavDeclaration, type VisualiserNavEntry } from "@litlfred/cat-harness-tools/scripts/lib/navbar.js";
 import { wrapRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 import { scopeCss } from "./scope-css.js";
+import { linkTerms, termLinks as glossaryTermLinks, type TermLink } from "./glossary-term-links.ts";
 import { referenceAnchor } from "../schemas/reference.ts";
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 
@@ -627,10 +628,10 @@ export function texInMarkdown(markdown: string): string {
 }
 
 /** One document's Markdown to HTML. */
-export async function renderDocumentHtml(markdown: string, opts: { math: boolean; bibliographyUrl?: string }): Promise<string> {
+export async function renderDocumentHtml(markdown: string, opts: { math: boolean; bibliographyUrl?: string; termLinks?: readonly TermLink[] }): Promise<string> {
   const source = citationsToHtml(opts.math ? texInMarkdown(displayMathLines(markdown)) : markdown, { bibliographyUrl: opts.bibliographyUrl });
   const base = opts.math ? remark().use(remarkMath) : remark();
-  const proc = base.use(remarkGfm).use(remarkDirective).use(glossaryDirectives(source)).use(remarkHtml, { sanitize: false });
+  const proc = base.use(remarkGfm).use(remarkDirective).use(glossaryDirectives(source)).use(linkTerms(opts.termLinks ?? [])).use(remarkHtml, { sanitize: false });
   return String(await proc.process(source));
 }
 
@@ -788,6 +789,8 @@ export async function buildDocumentSite(
     documentLayout?: string;
     /** The published bibliography page each `\cite` key links into (`<url>#ref-<key>`). Absent: citations are not links. */
     bibliographyUrl?: string;
+    /** Link each Capitalized glossary term in prose to its glossary entry (`glossary-term-links.ts`). */
+    linkTerms?: boolean;
   } = {},
 ): Promise<SiteBuildResult> {
   // Math defaults on only for a paper instance; see the note on renderDocumentHtml.
@@ -810,7 +813,8 @@ export async function buildDocumentSite(
   for (const d of docs) {
     const built = await buildDocumentMarkdown(d.path);
     for (const i of built.issues) if (i.level === "error") result.errors.push(`${d.slug}: ${i.message}`);
-    const html = await renderDocumentHtml(built.markdown, { math, bibliographyUrl: opts.bibliographyUrl });
+    const termLinks = opts.linkTerms ? await glossaryTermLinks(repoRoot, documentPageDir(d.slug)) : undefined;
+    const html = await renderDocumentHtml(built.markdown, { math, bibliographyUrl: opts.bibliographyUrl, termLinks });
     const manifest = (await import(d.path)).default as Paper;
     // The page under the locale, its data where it was (document-site-route.ts).
     const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
@@ -858,7 +862,7 @@ export async function buildDocumentSite(
         const n = index.chunks++;
         const chunk: Record<string, string> = {};
         for (const b of split.blocks.slice(i, i + LAZY_CHUNK)) {
-          const h = await renderDocumentHtml(b.markdown, { math, bibliographyUrl: opts.bibliographyUrl });
+          const h = await renderDocumentHtml(b.markdown, { math, bibliographyUrl: opts.bibliographyUrl, termLinks });
           chunk[b.label] = h;
           index.of[b.label] = n;
           for (const id of idsIn(h)) index.ids[id] ??= n;
@@ -866,7 +870,7 @@ export async function buildDocumentSite(
         writeFileSync(join(data, "blocks", `${String(n).padStart(3, "0")}.json`), JSON.stringify(chunk));
       }
       lazyOf.set(d.slug, { hydrated: hydratedPage(d.slug), chunks: index.chunks, of: index.of });
-      const shellHtml = await renderDocumentHtml(split.shell, { math, bibliographyUrl: opts.bibliographyUrl });
+      const shellHtml = await renderDocumentHtml(split.shell, { math, bibliographyUrl: opts.bibliographyUrl, termLinks });
       const note = `<p class="fa-one-page">The text loads as you read. <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
       const loader = lazyLoader(index, fromPageDir(documentPageDir(d.slug), `${documentDataDir(d.slug)}/blocks`));
       if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, note + headingIds(shellHtml), mathOpts, loader), true)));
@@ -983,7 +987,8 @@ if (import.meta.main) {
         "         [--lazy auto|always|never]   (auto: a document of " + LAZY_THRESHOLD + "+ blocks loads its text as data)\n" +
         "         [--landing-layout <name>]   (write the landing as a Jekyll page in that layout, e.g. default)\n" +
         "         [--document-layout <name>]  (write each document's page as a Jekyll page in that layout, e.g. default)\n" +
-        "         [--bibliography-url <url>]  (link each \\cite key to its entry on this published bibliography page)",
+        "         [--bibliography-url <url>]  (link each \\cite key to its entry on this published bibliography page)\n" +
+        "         [--link-terms]              (link each Capitalized glossary term in prose to its glossary entry)",
     );
     process.exit(0);
   }
@@ -1013,6 +1018,7 @@ if (import.meta.main) {
     ...(landingLayout ? { landingLayout } : {}),
     ...(documentLayout ? { documentLayout } : {}),
     ...(bibliographyUrl ? { bibliographyUrl } : {}),
+    ...(args.includes("--link-terms") ? { linkTerms: true } : {}),
   });
   for (const d of r.documents) console.error(`  ${d.page}  ${d.blocks} block(s)`);
   if (r.errors.length > 0) {
