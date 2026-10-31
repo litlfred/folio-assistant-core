@@ -120,7 +120,7 @@ se sitúan *dentro* de `Draft the block edit` del nivel 3, y conviven con sus gu
 | `authoring-a-paper.bpmn` | Artículos científicos y libros | [Redacción de un artículo](https://litlfred.github.io/folio-assistant/folio-assistant-sci/guides/writing-a-paper.html#the-end-to-end-workflow) |
 | `l2-dak-authoring.bpmn` | DAK de directrices SMART de la OMS (L2) | [Autoría de un DAK SMART de la OMS](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-dak.html#the-l2-artifacts) |
 | `l3-fhir-pipeline.bpmn` | Guía de implementación SMART de la OMS (L3) | [Autoría de una IG SMART de la OMS](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-ig.html#the-l3-pipeline) |
-| `ig-incremental-build.bpmn` | IG SMART de la OMS (L3) —el carril de compilación, incremental por cono de dependencias (propuesto) | [Hacer la compilación incremental](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-ig.html#making-the-build-incremental) · [la descripción general]({{ site.baseurl }}/es/proposals/ig-incremental-build-overview.html) |
+| `ig-incremental-build.bpmn` | IG SMART de la OMS (L3) —el carril de compilación, incremental por cono de dependencias (propuesto) | [Hacer la compilación incremental](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-ig.html#making-the-build-incremental) · [la descripción general](https://github.com/litlfred/folio-assistant/issues/199) |
 
 **Proceso de agente** —cómo trabaja un agente, en lugar de cómo se crea el contenido.
 Estos se ejecutan junto a los procesos de contenido y no dentro de ellos:
@@ -331,7 +331,7 @@ del editor quede registrada, porque hasta entonces no hay ninguna señal (*token
 Eso es secuenciación, no imposición forzosa: nada impide aún que un agente invoque una
 herramienta de capacidad directamente. La justificación para hacerlo vinculante —y el argumento
 de que el límite de confirmación (*commit boundary*) es el lugar adecuado— se encuentra en la
-[Propuesta: orquestación de flujos de trabajo]({{ '/es/proposals/workflow-orchestration.html' | relative_url }}).
+[Propuesta: orquestación de flujos de trabajo](https://github.com/litlfred/folio-assistant/issues/200).
 
 ### Algunas decisiones se calculan, no se juzgan
 {: #some-decisions-are-computed-not-judged data-fa-label="sec:publication-workflow-some-decisions-are-computed-not-judged" }

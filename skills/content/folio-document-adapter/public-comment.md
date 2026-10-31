@@ -116,9 +116,9 @@ Columns are named here by header, never by letter: people move them.
 | tab | who writes it | holds |
 |---|---|---|
 | **Public Comment Source** | people (locked) | No., date received, channel, reviewer name, organisation, country / region, stakeholder type. Reviewers' names and emails stay here and never enter the repository |
-| **Review Public Comments** | people, plus formulas and the Apps Script | one row per PC. Grey, mechanical: No. (a link to the comment's page), Sections, Page, Line no(s) / Table / Figure (each linked to the draft page), Comment / issue, the PC's own Suggested revision. Green, derived: Change Set (a link to its Review Change Sets row) and TWG (agent). Blue, people: TWG (human) (a multi-select dropdown), Comment type, any number of `Architect Feedback (<initials>)` columns, Disposition, Status. Green, from Agent: Agentic status, Staging review page, Pull request (both by the PC's change-set) |
-| **Agent** | **the agent, and only the agent** | one row per No.: No., Comment ref (the PC id), agentic status, action taken, applied in, handled by, date actioned, pull request, staging review page, Change-sets. Then one row per change-set: id, title, status from the record, **pull request**, **staging review page**. A PR belongs to a change-set, not to a PC (owner, 2026-10-30) |
-| **Review Change Sets** | people, plus formulas and the Apps Script | one row per CS. Grey: Change-set, Title, and the Apps Script's Sections and Pages (each linked) and joins: Public Comments (`No. n (Status) · comment`, status in bold), Suggested Revisions, PC Architect Feedback and Dispositions (`No. n · text`), each `No. n` linking to its row. Green: TWG (PCs), the PCs' TWG (human), else TWG (agent) marked "(AI)". Blue, people: TWG (CS) (multi-select), `Architect Feedback (<initials>)` on the CS. Orange: **Ready for agent** and **Ready for merge** (Yes/No, editors). Green, from Agent: Agentic status, Pull request, Staging review page |
+| **Review Public Comments** | people, plus formulas and the Apps Script | one row per PC. Grey, mechanical: No. (a link to the comment's page), Sections, Page, Line no(s) / Table / Figure (each linked to the draft page), Comment / issue, the PC's own Suggested revision. Green, derived: Change Set (a link to its Review Change Sets row) and TWG (agent). Blue, people: TWG (human) (a multi-select dropdown), Comment type, any number of `Architect Feedback (<initials>)` columns, Disposition, Status. Green, from Agent by the Apps Script (derived agentic content, owner 2026-10-30): **Agentic status**, one line per pull request of the PC's change-sets, `<repo>#n (status, completed) · what it changed` (the repository in the link text, because Sheets' link popup cuts the URL short) with the PR linked and the status and completion time bold, or the status alone when there is no PR. Green, from Agent: Staging review page (by the PC's change-set) |
+| **Agent** | **the agent, and only the agent** | A–H, one row per No.: No., Comment ref (the PC id), Agentic status, Agentic action taken, Agentic applied in, Agentic handled by, Agentic date actioned (a UTC time, `YYYY-MM-DD HH:MMZ`, when the agent last finished work on the PC; D–G are the agent's log of what it did on that PC; no view reads them), Change-sets. I–N, one row per change-set: Change-set, Title, **Pull request (change set)** (any number of PR URLs, one per line), **Staging review page (change set)**, **What the PRs changed (change set)** (one line per PR, in the same order: what that PR changes in the document), **Agent completed (UTC, change set)** (one line per PR, in the same order: when the agent last finished work on it, `YYYY-MM-DD HH:MMZ`). A change-set may have several PRs, and a PC in several change-sets shows all of theirs. A PR belongs to a change-set, not to a PC (owner, 2026-10-30) |
+| **Review Change Sets** | people, plus formulas and the Apps Script | one row per CS. Green, agent-derived: Title, the change-set's title from its record (owner, 2026-10-30). Grey: Change-set, and the Apps Script's Sections and Pages (each linked) and joins: Public Comments (`No. n (Status) · comment`, status in bold), Suggested Revisions, PC Architect Feedback and Dispositions (`No. n · text`), each `No. n` linking to its row. Green: TWG (PCs), the PCs' TWG (human), else TWG (agent) marked "(AI)". Blue, people: TWG (CS) (multi-select), `Architect Feedback (<initials>)` on the CS. Orange: **Ready for agent** and **Ready for merge** (Yes/No, editors). Green, from Agent by the Apps Script (derived agentic content, owner 2026-10-30): **Agentic status**, as on Review Public Comments: one line per PR of the change-set, `<repo>#n (status, completed) · what it changed`, the status being the change-set's PCs' agentic statuses. Green, from Agent: Staging review page |
 | **RCS joins (live)** | formulas (hidden) | live joins over Review Public Comments and Agent, kept for checking the Apps Script's output |
 
 **Colour key** (owner, 2026-10-30). Blue: people decide. Orange: a release
@@ -134,8 +134,8 @@ editor's Yes makes the agent merge.
 
 **Why the CS inputs can sit beside formulas.** A typed cell beside a spilled
 formula stays with its row only while the rows never move. Review Change Sets'
-rows come from Agent L–N, which lists change-sets in id order and only gains
-rows at the end. So the agent appends new change-sets at the end of Agent L–P
+rows come from Agent I–J, which lists change-sets in id order and only gains
+rows at the end. So the agent appends new change-sets at the end of Agent I–N
 and never reorders or deletes them. A sorted or filtered view of PCs cannot
 hold inputs, which is why the per-PC regrouping of the earlier sheet carried
 none. The owner's account, which is also the account the agent's connector
@@ -159,8 +159,8 @@ agent, adding feedback, or the agent writing an Agent row shows at once.
 Nothing is run to refresh them. Two things are not automatic:
 
 - **A new or retitled change-set** reaches the sheet only when the agent
-  rewrites Agent L–N from `review/public-comment/changesets/`.
-- **A PC's change-set** (Agent J) is the change-set whose `refs` hold the
+  rewrites Agent I–J from `review/public-comment/changesets/`.
+- **A PC's change-set** (Agent H) is the change-set whose `refs` hold the
   comment. The agent rewrites it when a comment is moved between change-sets.
 
 **What the agent watches.** Feedback arrives two ways, and the agent reads
@@ -196,13 +196,13 @@ CS's agentic status.
 
 Each sync does the steps below, in this order.
 
-1. **Reconcile.** For every change-set with a pull request (Agent O), read the PR's
+1. **Reconcile.** For every change-set with a pull request (Agent K), read each PR's
    state from GitHub. Open: *PR open*, with its staging review page. Merged:
    *Change merged*, and clear the staging link, because a merged branch's
    preview is gone and its link 404s. Closed unmerged: back to *Not
    started*, and say so in "agentic action taken". Write the status on every
-   PC row of the change-set. Rewrite L–N and J from the change-set
-   records as above, keeping each change-set's row and its O–P.
+   PC row of the change-set. Rewrite I–J and H from the change-set
+   records as above, keeping each change-set's row and its K–N.
 2. **Work the ready change-sets.** For each Review Change Sets row with **Ready
    for agent = Yes** whose PCs' agentic status is *Not started* or *Needs
    human*, or that has new feedback since its PR was opened:
@@ -227,16 +227,18 @@ Each sync does the steps below, in this order.
    5. Write the Agent rows, and nothing anywhere else in the sheet: status
       (*Working*, *PR open*, *Ready for review*, *Change merged*), what was
       done, the blocks or sections changed, who acted (the agent and its
-      session) and the date on each PC's row, and the PR and
-      `STAGING/<slug>/en/review/` on the change-set's row (Agent O–P). The
+      session) and the completion time (UTC, `YYYY-MM-DD HH:MMZ`) on each PC's row, and the PR and
+      `STAGING/<slug>/en/review/` on the change-set's row (Agent K–L), and in Agent M one line saying what
+      the PR changes in the document and in N the completion time, each on
+      the same line as its URL in K. The
       PR body names the feedback it answered by tab, row and column header,
       never by a reviewer's name.
 
-3. **Merge the released PRs.** For each change-set with an open PR (Agent O)
+3. **Merge the released PRs.** For each change-set with an open PR (Agent K)
    whose Review Change Sets row has **Ready for merge = Yes**, merge it (owner,
    2026-10-30). Any editor may set it. Only a PR in the folio's own repository is
    merged, never one on a WHO repository. After the merge, set every PC row of
-   the change-set to *Change merged*, clear its staging link (Agent P), and comment on the
+   the change-set to *Change merged*, clear its staging link (Agent L), and comment on the
    PR's issue. If the merge is refused (a session safety check, a conflict, a
    required review), set the rows to *Merge blocked*, write why in "agentic
    action taken", and say so in the run's summary. Do not route around a
@@ -259,105 +261,13 @@ publishes a `draft/` redirect to its library viewer (smart-ra
 rather than the full `assets/vendor/pdfjs/web/viewer.html?src=…` address, and
 a cell with many links stays small.
 
-### The review sheet's Apps Script (Tool `review-sheet-sync`)
+### The review sheet's Apps Script
 
-Links inside a cell's text (a section, a page, a "No. n" in a joined column)
-cannot come from a formula: a formula makes at most one link per cell. They
-are rich text, and rich text goes stale the moment the sheet changes. So the
-sheet keeps them itself, with a Google Apps Script bound to it (owner,
-2026-10-30: "Apps Script in the sheet"). Never paste them by hand from an
-agent: it costs about 30 kB of tool output per 30 rows, and the next edit
-undoes it.
-
-**What it keeps current.** Columns are found by header text, so people may
-move them.
-
-| tab | column | becomes |
-|---|---|---|
-| Review Public Comments | No. | a link to the comment's page (`commentUrl` + its ref from Agent's *Comment ref*) |
-| Review Public Comments | Sections | each section number, appendix, named section or chapter links to its first page in the draft |
-| Review Public Comments | Page | each printed page or range links to that page |
-| Review Public Comments | Line no(s) / Table / Figure | each `p.N` and each `line(s) N–M` / `L N` links to its page. Draft line numbers restart, so a line is placed on the page, near the row's own pages, whose numbered lines hold it |
-| Review Change Sets | Sections, Pages | the union over the change-set's comments, sorted by page, each linked |
-| Review Change Sets | Public Comments | `No. n (Status) · comment`, status in bold, joined by a blank line |
-| Review Change Sets | Suggested Revisions, PC Architect Feedback, Dispositions | `No. n · text`, one per comment |
-
-Every `No. n` in Review Change Sets links to `#gid=<Review Public Comments>&range=A<row>`.
-Do not link to a named range by `#rangeid=`: Sheets shows "Invalid range"
-for a named range whose id was set through the API.
-
-**Build it.** From the folio's repository root, with the platform mounted:
-
-```sh
-bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts --repo . --out Code.gs
-```
-
-`Code.gs` is not committed. It is rebuilt from the config, so attach it to
-the thread or hand it over directly.
-
-**Install it, once per sheet.** A person does this, from the sheet owner's
-account, because Google asks the owner to authorise the script:
-
-1. Open the sheet, then **Extensions → Apps Script**.
-2. Replace everything in `Code.gs` with the built file, and save.
-3. In the function list beside **Run** and **Debug**, pick
-   **installTriggers** (not `onOpen`, which only adds the menu), and press
-   **Run**. Allow access when asked.
-4. Reload the sheet. A **Review links** menu appears.
-
-`installTriggers` runs a full refresh, then installs two triggers: every edit
-of the three tabs marks the sheet dirty, and every five minutes a dirty sheet
-is rebuilt. **Review links → Refresh now** rebuilds at once.
-
-**How to tell it works.** The first run of `installTriggers` takes about 20
-seconds for 800 rows and its execution log ends "Execution completed" (a
-one-second run means `onOpen` was picked). Then No. is a blue link, and
-hovering a `No. n` on Review Change Sets shows a row such as A327. Failed
-runs are listed with their error under **Executions** (the clock icon) in the
-Apps Script editor. An agent checks from outside by reading a No. cell's
-formula (`=HYPERLINK(…)`) and a joined cell's text-format runs.
-
-**Protected columns.** The script runs as the account that installed it, so
-it writes the grey and green columns even when they are protected, as long as
-that account is an editor of the protected ranges. Install it from the
-owner's account.
-
-**Reuse it for another document's public comment.** Nothing in the template
-names a document. Give the new folio:
-
-1. The frozen review version in `library/<slug>/`, with its
-   `pdf-line-map.json`, and the folio's `review-anchors.json` (the extraction
-   in **The one fact everything rests on** makes both).
-2. A `draft/` redirect on its site to the library viewer, or use the full
-   viewer address as `draftUrl`.
-3. `review/public-comment/sheet-sync.json`:
-
-   ```json
-   {
-     "anchors": "folio/<doc>/review-anchors.json",
-     "lineMap": "library/<slug>/pdf-line-map.json",
-     "draftUrl": "https://<site>/draft/#page=",
-     "commentUrl": "https://<site>/en/folio-assistant-core/public-comments/folio/<doc>/index.html#",
-     "namedSections": { "CR": "Client Registry" },
-     "aliases": { "how to use the guidance": "How to use this guidance" },
-     "tabs": { "RPC": "Review Public Comments" },
-     "columns": { "rpc": { "lines": "Line no(s) / Table / Figure" } }
-   }
-   ```
-
-   `namedSections` lists the unnumbered sections reviewers cite by name, and
-   their abbreviations, which are matched only in capitals. `aliases` gives
-   other names for front-matter chapters. `tabs` and `columns` override the
-   defaults in `build-review-sheet-script.ts` only where the new sheet's
-   headers differ. The printed-to-PDF offset and the last printed page are
-   read from the line map.
-4. A sheet with the tabs above, Agent's *No.*, *Comment ref* and
-   *Change-sets* columns filled, then build and install as above.
-
-**Rebuild and paste again** when the review anchors change, the draft link
-moves, or a tab or a header the script reads is renamed. Renaming a header
-the script reads, without rebuilding, leaves that column unlinked; it fails
-nothing.
+Links inside a cell's text (sections, pages, lines, each `No. n` in a joined
+column) are kept by a Google Apps Script bound to the sheet, built by the Tool
+`review-sheet-sync`. How to build it, install it, check it works, and reuse it
+for another document's public comment is the
+[`review-sheet-script`](review-sheet-script.md) skill.
 
 A change-set that already has an agent PR has **Ready for agent = Yes**, so
 the sheet never shows agent work nobody released. When the owner releases a

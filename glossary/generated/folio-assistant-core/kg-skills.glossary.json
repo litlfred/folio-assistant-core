@@ -328,6 +328,14 @@
       "status": "candidate"
     },
     {
+      "id": "review-sheet-script",
+      "prefLabel": "review-sheet-script",
+      "definition": "Build, install and reuse the Google Apps Script that keeps a review sheet's links and joined columns current (Tool `review-sheet-sync`). Public-comment mode: comment numbers, sections, pages and lines link into the frozen review draft, and Review Change Sets joins its comments. Drafting mode: one Contributor Feedback tab where each row is a change set with its own GitHub issue, and Sections pick from the document's table of contents. Use when setting up either sheet for a document, when its links are missing or stale, or after a tab, header, anchor or draft link changes.",
+      "notation": "review-sheet-script",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/review-sheet-script.md",
+      "status": "candidate"
+    },
+    {
       "id": "tabular-metadata",
       "prefLabel": "tabular-metadata",
       "definition": "Extract tabular metadata from a CSV or spreadsheet as CSVW — tables, rows, headers, columns, datatypes and location on sheet — recording every field as determined or explicitly undetermined. Read before touching a tabular ingest arm, adding a format, or deciding what a sheet is in the graph.",
