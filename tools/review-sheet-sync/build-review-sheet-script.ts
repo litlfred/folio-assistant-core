@@ -323,7 +323,8 @@ const CHUNK = 40_000;
  * over its columns; the script skips that row (owner, 2026-10-31).
  */
 export function colourKey(c: SheetConfig): { blue: string; green: string; orange: string; grey: string } {
-  const people = c.CFG.MODE === "drafting" ? "Contributors" : "the Feedback Review Committee (the architects)";
+  // Process roles, not job titles: who sits on the committee is the sheet's business (owner, 2026-10-31).
+  const people = c.CFG.MODE === "drafting" ? "Contributors" : "the Feedback Review Committee";
   return {
     blue: `Blue: your input, by ${people}`,
     green: "Green: written by the agent",
@@ -341,7 +342,7 @@ export function guideSteps(c: SheetConfig): string[] {
   const drafting = c.CFG.MODE === "drafting";
   const k = colourKey(c);
   const tab = drafting ? (c.CFG.FEEDBACK ?? "Contributor Feedback") : (c.CFG.RCS ?? "Review Change Sets");
-  const fb = drafting ? (c.COLS.draft?.feedback ?? "Contributor Feedback") : "Architect Feedback";
+  const fb = c.COLS.draft?.feedback ?? "Contributor Feedback";
   const staging = (drafting ? c.COLS.draft?.staging : c.COLS.rcs?.staging) ?? "Staging review";
   const steps = [
     "How this sheet works (for everyone):",
@@ -359,8 +360,8 @@ export function guideSteps(c: SheetConfig): string[] {
     );
   } else {
     steps.push(
-      "   1. Public comments arrive on Review Public Comments (grey). The architects add their feedback in the blue Architect Feedback columns, on a comment or on its change set.",
-      `   2. The agent groups comments into change sets on ${tab} and proposes a direction in ${fb} (agent), in green.`,
+      "   1. Public comments arrive on Review Public Comments (grey). The Feedback Review Committee adds its feedback in the blue columns, on a comment or on its change set.",
+      `   2. The agent groups comments into change sets on ${tab} and proposes a direction in the green (agent) column.`,
     );
   }
   steps.push(

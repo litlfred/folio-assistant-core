@@ -444,8 +444,9 @@ tab's protection, or send the agent the list.
 the header of each people's tab (RPC, RCS, Contributor Feedback) says what the
 colours mean, worded for the mode by `colourKey()` in the builder:
 
-- **Blue**: input by people: the Feedback Review Committee (the architects)
-  in public-comment mode, Contributors in drafting mode;
+- **Blue**: input by people, named by their process role: the Feedback Review
+  Committee in public-comment mode (the DPI-H RA's architects hold it, but the
+  sheet names the role, not the job), Contributors in drafting mode;
 - **Green**: written by the agent;
 - **Orange**: workflow, set by an Editor (the `Ready for ...` columns);
 - **Grey**: mechanical, kept by the script or the source.
@@ -460,7 +461,7 @@ header row, so shift them down by one row when the row is inserted.
 
 The Config tab's first row, `GUIDE`, is for everyone who opens the sheet,
 including people who may only comment or view: the colour key, the six-step
-human-to-agent workflow (people write in blue; the agent proposes in green; an
+human-to-agent workflow, worded by process role (people write in blue; the agent proposes in green; an
 Editor sets Ready for agent; the agent opens a pull request whose `Staging
 review` opens the preview's what-changed page; reviewers answer in blue, and a
 change marks the proposal stale; an Editor sets Ready for merge and the agent
