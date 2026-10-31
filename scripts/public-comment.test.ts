@@ -531,7 +531,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     const f = fake();
     await run(s, comment(50, "ed", "pc: PC-0001, PC-0002\ndecide: accepted\n\nYes."), f);
     expect(closedIssues("Closes #50, fixes #9")).toEqual([50, 9]);
-    const pr = (merged: boolean, state: string): GithubEvent => ({ action: merged || state === "closed" ? "closed" : "opened", sender: { login: "au" }, pull_request: { number: 12, body: "Closes #50", head: { ref: "cs-001" }, merged, state, html_url: "https://github.com/o/r/pull/12" } });
+    const pr = (merged: boolean, state: string): GithubEvent => ({ action: merged || state === "closed" ? "closed" : "opened", sender: { login: "au" }, pull_request: { number: 12, user: { login: "cm" }, body: "Closes #50", head: { ref: "cs-001" }, merged, state, html_url: "https://github.com/o/r/pull/12" } });
     await run(s, pr(false, "open"), f);
     expect(getChangeSet(s, "CS-001")).toMatchObject({ status: "editing", pr: { number: 12, branch: "cs-001" } });
     expect(s.get("PC-0001").status).toBe("editing");
@@ -548,13 +548,59 @@ describe("change-sets and their issues (issue #2183)", () => {
     const s = store();
     const f = fake();
     await run(s, comment(50, "ed", "pc: PC-0001\ndecide: accepted\n\nYes."), f);
-    const merged: GithubEvent = { action: "closed", sender: { login: "au" }, pull_request: { number: 12, body: "Closes #50", head: { ref: "cs-001" }, merged: true, state: "closed", html_url: "https://github.com/o/r/pull/12" } };
+    const merged: GithubEvent = { action: "closed", sender: { login: "au" }, pull_request: { number: 12, user: { login: "cm" }, body: "Closes #50", head: { ref: "cs-001" }, merged: true, state: "closed", html_url: "https://github.com/o/r/pull/12" } };
     const m = await run(s, merged, f);
     expect(s.get("PC-0001").status).toBe("incorporated");
     expect(s.get("PC-0002").status).not.toBe("incorporated");
     expect(getChangeSet(s, "CS-001").status).not.toBe("incorporated");
     expect(m.actions.filter((a) => a.kind === "state")).toEqual([]);
     expect(m.log.join("\n")).toContain("1 of 2 comment(s) are not decided");
+  });
+
+  test("a PR links change-sets only when its author is on the committee or an editor; a merge is allowed", async () => {
+    const s = store();
+    const f = fake();
+    await run(s, comment(50, "ed", "pc: PC-0001, PC-0002\ndecide: accepted\n\nYes."), f);
+    const pr = (author: string, sender: string, extra: Partial<NonNullable<GithubEvent["pull_request"]>> = {}): GithubEvent => ({
+      action: "opened",
+      sender: { login: sender },
+      pull_request: { number: 12, user: { login: author }, body: "Closes #50", head: { ref: "cs-001" }, merged: false, state: "open", html_url: "https://github.com/o/r/pull/12", ...extra },
+    });
+    // Not on the committee: nothing is linked and nothing moves, whoever sent the event.
+    const no = await run(s, pr("stranger", "cm", { author_association: "OWNER" }), f);
+    expect(no.log.join("\n")).toContain("PR #12: stranger is not on the committee or an editor");
+    expect(getChangeSet(s, "CS-001").pr).toBeUndefined();
+    expect(getChangeSet(s, "CS-001").status).not.toBe("editing");
+    expect(s.get("PC-0001").status).toBe("decided");
+    // With no committee list, the PR author's own association is judged.
+    const byRole = store();
+    writeFileSync(join(byRole.dir, "config.json"), JSON.stringify({ document: "doc", editors: ["ed"] }));
+    await run(byRole, comment(50, "ed", "pc: PC-0001\ndecide: accepted\n\nYes."));
+    expect((await run(byRole, pr("someone", "maint", { author_association: "NONE" }))).log.join("\n")).toContain("someone is not on the committee");
+    expect(getChangeSet(byRole, "CS-001").pr).toBeUndefined();
+    await run(byRole, pr("member", "member", { author_association: "MEMBER" }));
+    expect(getChangeSet(byRole, "CS-001").pr?.number).toBe(12);
+    // A committee author links the change-set and moves its decided comments.
+    await run(s, pr("cm", "cm"), f);
+    expect(getChangeSet(s, "CS-001")).toMatchObject({ status: "editing", pr: { number: 12, branch: "cs-001" } });
+    expect(s.get("PC-0001").status).toBe("editing");
+    // A merge is judged by the merger's write access, not the author's role.
+    await run(s, { ...pr("stranger", "ed", { merged: true, state: "closed" }), action: "closed" }, f);
+    expect(s.get("PC-0001").status).toBe("incorporated");
+    expect(getChangeSet(s, "CS-001").status).toBe("incorporated");
+  });
+
+  test("an issue edited by someone other than its author records nothing", async () => {
+    const s = store();
+    const before = "Context.";
+    const after = "pc: PC-0001\ndecide: accepted\n\nContext.";
+    const edit = (sender: string): GithubEvent => ({ action: "edited", sender: { login: sender }, changes: { body: { from: before } }, issue: { number: 60, body: after, user: { login: "ed" }, author_association: "OWNER", html_url: url(60) } });
+    const r = await run(s, edit("cm"));
+    expect(r.log.join("\n")).toContain("edited by cm, not its author ed");
+    expect(s.get("PC-0001").status).not.toBe("decided");
+    // The author's own edit is judged by the author.
+    await run(s, edit("ed"));
+    expect(s.get("PC-0001").status).toBe("decided");
   });
 
   test("only a keyword links a PR to a change-set; a prose mention does not (bean 6xdf)", () => {
@@ -567,10 +613,10 @@ describe("change-sets and their issues (issue #2183)", () => {
     const s = store();
     const f = fake();
     await run(s, comment(50, "ed", "pc: PC-0001, PC-0002\ndecide: accepted\n\nYes."), f);
-    await run(s, { action: "closed", sender: { login: "au" }, pull_request: { number: 12, body: "Closes #50", head: { ref: "cs-001" }, merged: true, state: "closed", html_url: "https://github.com/o/r/pull/12" } }, f);
+    await run(s, { action: "closed", sender: { login: "au" }, pull_request: { number: 12, user: { login: "cm" }, body: "Closes #50", head: { ref: "cs-001" }, merged: true, state: "closed", html_url: "https://github.com/o/r/pull/12" } }, f);
     expect(getChangeSet(s, "CS-001")).toMatchObject({ status: "incorporated", pr: { number: 12 } });
     for (const body of ["Pin bump; mentions CS-001 in prose.", "Closes CS-001", "Closes #50"]) {
-      const r = await run(s, { action: "opened", sender: { login: "au" }, pull_request: { number: 24, body, head: { ref: "pin" }, merged: false, state: "open", html_url: "https://github.com/o/r/pull/24" } }, f);
+      const r = await run(s, { action: "opened", sender: { login: "au" }, pull_request: { number: 24, user: { login: "cm" }, body, head: { ref: "pin" }, merged: false, state: "open", html_url: "https://github.com/o/r/pull/24" } }, f);
       expect(getChangeSet(s, "CS-001")).toMatchObject({ status: "incorporated", pr: { number: 12 } });
       expect(s.get("PC-0001").status).toBe("incorporated");
       if (body !== "Pin bump; mentions CS-001 in prose.") expect(r.log.join("\n")).toContain("does not re-link it");
@@ -591,7 +637,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     const s = store();
     const f = fake();
     await run(s, comment(50, "ed", "pc: PC-0001, PC-0002\ndecide: accepted\n\nYes."), f);
-    await run(s, { action: "closed", sender: { login: "au" }, pull_request: { number: 12, body: "Closes #50", head: { ref: "cs-001" }, merged: true, state: "closed", html_url: "https://github.com/o/r/pull/12" } }, f);
+    await run(s, { action: "closed", sender: { login: "au" }, pull_request: { number: 12, user: { login: "cm" }, body: "Closes #50", head: { ref: "cs-001" }, merged: true, state: "closed", html_url: "https://github.com/o/r/pull/12" } }, f);
     const cs = getChangeSet(s, "CS-001");
     expect(cs.status).toBe("incorporated");
     await run(s, { action: "reopened", sender: { login: "ed" }, issue: { number: cs.issue!, html_url: url(cs.issue!) } }, f);

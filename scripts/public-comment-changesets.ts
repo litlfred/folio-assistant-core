@@ -895,7 +895,7 @@ export interface GithubEvent {
   comment?: { body?: string; user?: GhUser; author_association?: string; html_url: string; created_at?: string; updated_at?: string };
   review?: unknown;
   issue?: { number: number; body?: string | null; user?: GhUser; author_association?: string; html_url: string; updated_at?: string; pull_request?: unknown };
-  pull_request?: { number: number; body?: string | null; user?: GhUser; html_url?: string; head?: { ref?: string }; merged?: boolean; state?: string };
+  pull_request?: { number: number; body?: string | null; user?: GhUser; author_association?: string; html_url?: string; head?: { ref?: string }; merged?: boolean; state?: string };
 }
 
 export function handleGithubEvent(store: Store, ev: GithubEvent, now: string): Outcome {
@@ -904,10 +904,26 @@ export function handleGithubEvent(store: Store, ev: GithubEvent, now: string): O
   const base = { store, at: now, out, all: changeSets(store), creating: new Set<string>() };
   if (ev.pull_request && !ev.comment && !ev.review) {
     const pr = ev.pull_request;
-    const x: Ctx = { ...base, login: ev.sender?.login ?? pr.user?.login ?? "github", url: pr.html_url ?? `#${pr.number}` };
+    const merged = Boolean(pr.merged);
+    const closed = pr.state === "closed";
     out.thread = pr.number;
     if (ev.action === "edited" && ev.changes && !("body" in ev.changes)) return out;
-    onPullRequest(x, { number: pr.number, body: pr.body ?? "", branch: pr.head?.ref ?? "", merged: Boolean(pr.merged), closed: pr.state === "closed" });
+    // Who is judged. A merge is the merger's act, and merging already needs
+    // write access, so it is allowed and recorded under the merger. A PR
+    // closed unmerged only undoes links this PR already holds. Anything else
+    // (opened, edited, reopened, synchronize) links change-sets named in the
+    // PR body and moves their comments, so it needs the PR AUTHOR to be on the
+    // committee or an editor, judged by the author's own login and
+    // association: the same standing comments and issue tags need.
+    const author = pr.user?.login ?? "";
+    const x: Ctx = merged
+      ? { ...base, login: ev.sender?.login || author || "github", url: pr.html_url ?? `#${pr.number}` }
+      : { ...base, login: author, association: pr.author_association, url: pr.html_url ?? `#${pr.number}` };
+    if (!merged && !closed && !committee(x)) {
+      out.log.push(`✗ PR #${pr.number}: ${author || "its author"} is not on the committee or an editor, so it links no change-set (a committee member can open the PR, or link it from the change-set's issue)`);
+      return out;
+    }
+    onPullRequest(x, { number: pr.number, body: pr.body ?? "", branch: pr.head?.ref ?? "", merged, closed });
     return out;
   }
   if (ev.issue && ev.comment) {
@@ -920,12 +936,19 @@ export function handleGithubEvent(store: Store, ev: GithubEvent, now: string): O
   if (ev.issue) {
     const is = ev.issue;
     const n = is.number;
-    const x: Ctx = { ...base, login: ev.sender?.login ?? is.user?.login ?? "", association: is.author_association, url: is.html_url, at: is.updated_at ?? now };
     out.thread = n;
     if (ev.action === "closed" || ev.action === "reopened") {
-      onIssueState(x, n, ev.action);
+      // Recorded under who closed or reopened it; no role is judged here.
+      onIssueState({ ...base, login: ev.sender?.login ?? is.user?.login ?? "", url: is.html_url, at: is.updated_at ?? now }, n, ev.action);
       return out;
     }
+    // The login and the association are the same person's: the issue author's.
+    // An edit by anyone else is judged by nobody's standing, so its text
+    // records nothing (the change-set section is still restored below).
+    const author = is.user?.login ?? "";
+    const editor = ev.sender?.login ?? author;
+    const byOther = ev.action === "edited" && editor !== author;
+    const x: Ctx = { ...base, login: author, association: is.author_association, url: is.html_url, at: is.updated_at ?? now };
     const now_ = splitBody(is.body);
     if (ev.action === "edited") {
       if (ev.changes && !("body" in ev.changes)) return out;
@@ -939,6 +962,10 @@ export function handleGithubEvent(store: Store, ev: GithubEvent, now: string): O
       }
       // Only what is NEW in the body counts: a tag already recorded is not recorded twice.
       if (now_.rest.trim() === before.rest.trim()) return out;
+      if (byOther) {
+        out.log.push(`✗ #${n} was edited by ${editor || "someone"}, not its author ${author || "(unknown)"}, so the edit records nothing; write tags and commands in a comment instead`);
+        return out;
+      }
     }
     // The body's own text, without the rendered section (which names every member).
     // An edit is a person's text and never re-adopts or re-runs commands.

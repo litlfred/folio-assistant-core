@@ -2,7 +2,7 @@ import { describe, expect, test } from "bun:test";
 
 import type { ReviewAnchors } from "./docx-to-folio.js";
 import { type ChangeSet, PublicCommentSchema } from "../schemas/public-comment.js";
-import { dashboardHtml, overlaySnippet, siteComments, stagingReviewUrl, stagingSlug } from "./public-comment-site.js";
+import { dashboardHtml, overlaySnippet, safeHref, siteComments, stagingReviewUrl, stagingSlug } from "./public-comment-site.js";
 import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
 
 const anchors: ReviewAnchors = {
@@ -99,6 +99,33 @@ describe("public-comment-site", () => {
     const rows = siteComments([comment({ summary: "</script><b>x" })], anchors, { slug: "doc" });
     expect(dashboardHtml(rows, { title: "T", slug: "doc", generated: "g" })).not.toContain("<the>");
     expect(overlaySnippet(rows, { dashboard: "../d/index.html" })).not.toContain("</script><b>");
+  });
+
+  test("only http(s), relative and fragment URLs from the record become links", () => {
+    expect(safeHref("https://github.com/o/r/issues/1")).toBe("https://github.com/o/r/issues/1");
+    expect(safeHref("HTTP://x.example/")).toBe("HTTP://x.example/");
+    expect(safeHref("../en/doc/index.html#a")).toBe("../en/doc/index.html#a");
+    expect(safeHref("#PC-0001")).toBe("#PC-0001");
+    expect(safeHref("javascript:void(0)")).toBeUndefined();
+    expect(safeHref(" Java\tScript:void(0)")).toBeUndefined();
+    expect(safeHref("data:text/plain,x")).toBeUndefined();
+    expect(safeHref(undefined)).toBeUndefined();
+    const rows = siteComments([comment()], anchors, { slug: "doc" });
+    rows[0]!.links.discussion = "javascript:void(0)";
+    rows[0]!.recommendations = [{ by: "cm", code: "accepted", rationale: "", url: "javascript:void(0)" } as (typeof rows)[0]["recommendations"][0]];
+    const cs = { id: "CS-001", title: "t", requirements: "r", refs: ["PC-0001"], status: "discussing", issues: [], committee: "Clinical", committeeMoves: [{ who: "chine", when: "2026-10-16T10:00:00Z", to: "Clinical", why: "w", url: "javascript:void(0)" }] } as unknown as ChangeSet;
+    const html = dashboardHtml(rows, { title: "T", slug: "doc", generated: "g", changeSets: [cs] });
+    expect(html).not.toContain('href="javascript:');
+    expect(html).toContain("discussion");
+    expect(html).toContain("cm: accepted");
+    expect(html).toContain('<span class="muted">chine, 2026-10-16</span>');
+  });
+
+  test("a comment's status and type are escaped when the dashboard script lists a change-set's comments", () => {
+    const html = dashboardHtml(siteComments([comment()], anchors, { slug: "doc" }), { title: "T", slug: "doc", generated: "g" });
+    expect(html).toContain("h(c[2].textContent)");
+    expect(html).toContain("h(c[3].textContent)");
+    expect(html).not.toMatch(/\+ c\[[23]\]\.textContent/);
   });
 
   test("the count tiles are toggles, and every row carries what they filter on (owner, 2026-10-05)", () => {

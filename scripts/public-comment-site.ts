@@ -86,6 +86,26 @@ const isOpen = (openPrs: ReadonlySet<number> | undefined, n: number | undefined)
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
+/**
+ * A URL from record data, or undefined when it may not be an href: only
+ * http(s), protocol-relative, relative and fragment URLs are linked. Browsers
+ * ignore control characters and spaces inside a scheme, so they are dropped
+ * before the scheme is read.
+ */
+export const safeHref = (url: string | undefined | null): string | undefined => {
+  if (!url) return undefined;
+  const bare = String(url).replace(/[\u0000-\u0020\u007f]/g, "");
+  if (/^https?:/i.test(bare)) return url;
+  if (/^[a-z][a-z0-9+.-]*:/i.test(bare)) return undefined;
+  return url;
+};
+
+/** A link to a URL from record data, or its text alone when the URL is refused. */
+const linkTo = (url: string | undefined | null, text: string): string => {
+  const u = safeHref(url);
+  return u ? `<a href="${esc(u)}">${esc(text)}</a>` : esc(text);
+};
+
 export interface SiteComment {
   ref: string;
   status: string;
@@ -258,7 +278,7 @@ export function dashboardHtml(
         ? `<details class="cs-moves"><summary class="muted">move history (${moves.length})</summary><ul class="cs-move-list">${moves
             .map(
               (m) =>
-                `<li>${esc(m.from ?? unroutedLabel)} → <b>${esc(m.to)}</b> · <span class="muted">${m.url ? `<a href="${esc(m.url)}">${esc(m.who)}</a>` : esc(m.who)}, ${esc(m.when.slice(0, 10))}</span> — ${esc(m.why)}</li>`,
+                `<li>${esc(m.from ?? unroutedLabel)} → <b>${esc(m.to)}</b> · <span class="muted">${linkTo(m.url, m.who)}, ${esc(m.when.slice(0, 10))}</span> — ${esc(m.why)}</li>`,
             )
             .join("")}</ul></details>`
         : "";
@@ -280,7 +300,7 @@ export function dashboardHtml(
       (c) => `<tr id="${esc(c.id)}" data-cs-status="${esc(c.status)}" data-committee="${esc(csCommittee(c).group)}"><td>${esc(c.id)}</td><td>${esc(c.title)}<details><summary class="muted">requirements</summary><p>${esc(c.requirements).replace(/\n/g, "<br>")}</p></details><details class="cs-pcs" data-refs="${esc(c.refs.join(" "))}"><summary class="muted">its ${c.refs.length} comment${c.refs.length === 1 ? "" : "s"}, in full</summary></details></td><td class="cs-committee">${csCommittee(c).cell}</td><td>${esc(c.status)}</td><td class="cs-n">${c.refs.length}</td>` +
         `<td>${c.issue ? issueLink(c.issue) + (c.issues.length > 1 ? ` <span class="muted">+${c.issues.length - 1} more</span>` : "") : meta.repo ? `<a class="discuss" href="${esc(discussUrl(meta.repo, c))}">Discuss</a>` : "—"}</td>` +
         `<td>${c.pr && meta.repo ? `<a href="https://github.com/${esc(meta.repo)}/pull/${c.pr.number}">#${c.pr.number}</a>` : ""}` +
-        `${((u) => (u ? ` <a class="review" href="${esc(u)}">review (staging)</a>` : ""))(c.pr && isOpen(meta.openPrs, c.pr.number) ? stagingReviewUrl(meta.site, c.pr.branch) : undefined)}</td>` +
+        `${((u) => (u ? ` <a class="review" href="${esc(u)}">review (staging)</a>` : ""))(safeHref(c.pr && isOpen(meta.openPrs, c.pr.number) ? stagingReviewUrl(meta.site, c.pr.branch) : undefined))}</td>` +
         `<td><a href="#" class="show-cs" data-refs="${esc(c.refs.join(" "))}">show its comments</a></td></tr>`,
     )
     .join("\n");
@@ -293,14 +313,14 @@ export function dashboardHtml(
     `<button type="button" class="tile" data-tile="${key}" aria-pressed="false" title="Show ${esc(label)}"><b>${n}</b>${esc(label)}</button>`;
   const linkList = (r: SiteComment) =>
     [
-      r.links.document && `<a href="${esc(r.links.document)}">in the document</a>`,
-      r.links.before && `<a href="${esc(r.links.before)}">before</a>`,
-      r.links.after && `<a href="${esc(r.links.after)}">after (staging)</a>`,
-      r.links.pr && `<a href="${esc(r.links.pr)}">change set PR</a>`,
-      r.links.review && `<a href="${esc(r.links.review)}">review (staging)</a>`,
-      r.links.discussion && `<a href="${esc(r.links.discussion)}">discussion</a>`,
-      r.links.search && `<a href="${esc(r.links.search)}">all mentions on GitHub</a>`,
-      r.links.record && `<a href="${esc(r.links.record)}">record</a>`,
+      r.links.document && linkTo(r.links.document, "in the document"),
+      r.links.before && linkTo(r.links.before, "before"),
+      r.links.after && linkTo(r.links.after, "after (staging)"),
+      r.links.pr && linkTo(r.links.pr, "change set PR"),
+      r.links.review && linkTo(r.links.review, "review (staging)"),
+      r.links.discussion && linkTo(r.links.discussion, "discussion"),
+      r.links.search && linkTo(r.links.search, "all mentions on GitHub"),
+      r.links.record && linkTo(r.links.record, "record"),
     ]
       .filter(Boolean)
       .join(" ");
@@ -324,7 +344,7 @@ export function dashboardHtml(
 <td>${r.committee ? `${r.committee.group ? `<b>${esc(r.committee.group)}</b>` : `<span class="chip" title="names no TWG category: needs a ruling">${esc(r.committee.raw)}</span>`}${r.committee.secondary.map((g) => ` <span class="chip muted">${esc(g)}</span>`).join("")}<br><span class="muted"${r.committee.rationale ? ` title="${esc(r.committee.rationale)}"` : ""}>${r.committee.source === "human" && r.committee.by ? esc(r.committee.by) : r.committee.source}${r.committee.confidence && r.committee.confidence !== "high" ? `, ${r.committee.confidence}` : ""}</span>` : `<span class="muted">${unroutedLabel}</span>`}</td>
 <td>${r.target ? `${esc(r.section)} ${esc(r.sectionTitle)}` : `<em>unplaced</em>`}<br><span class="muted">${esc(r.citation)}</span>${r.confidence !== "high" && r.target ? `<br><span class="chip" title="${esc(r.anchorNote)}">anchor: ${esc(r.confidence)}</span>` : ""}</td>
 <td><details><summary>${esc(r.summary)}</summary><p>${esc(r.text)}</p>${r.suggestion ? `<p><b>Suggested revision:</b> ${esc(r.suggestion)}</p>` : ""}<p class="muted">${esc(r.reviewer)}</p></details></td>
-<td>${r.recommendations.map((x) => `<span class="chip" title="${esc(x.rationale)}">${x.url ? `<a href="${esc(x.url)}">` : ""}${esc(x.by)}: ${esc(x.code)}${x.url ? "</a>" : ""}</span>`).join("") || `<span class="muted">none</span>`}</td>
+<td>${r.recommendations.map((x) => `<span class="chip" title="${esc(x.rationale)}">${linkTo(x.url, `${x.by}: ${x.code}`)}</span>`).join("") || `<span class="muted">none</span>`}</td>
 <td>${r.decision ? `<b>${esc(r.decision.label)}</b>${r.decision.reason ? `<br>${esc(r.decision.reason)}` : ""}<br><span class="muted">${esc(r.decision.by)}</span>` : `<span class="muted">not yet</span>`}</td>
 <td>${r.changeSets.map(csCell).join(" ") || `<span class="muted">none</span>`}</td>
 <td class="links">${linkList(r)}</td>
@@ -542,7 +562,7 @@ ${meta.actions?.repo ? compactActionsScript(meta.actions, meta.page) : ""}
     const c = tr.cells;
     // Cells: pick, ref, status, type, committee, where, comment, recommendations, decision.
     const body = [...(c[6].querySelector("details")?.children || [])].filter((x) => x.tagName !== "SUMMARY").map((x) => x.outerHTML).join("");
-    return "<li class=\\"cs-pc\\"><a href=\\"#" + h(ref) + "\\">" + h(ref) + "</a> · " + c[2].textContent + (c[3].textContent ? " · " + c[3].textContent : "") + " · " + h(tr.dataset.committee) +
+    return "<li class=\\"cs-pc\\"><a href=\\"#" + h(ref) + "\\">" + h(ref) + "</a> · " + h(c[2].textContent) + (c[3].textContent ? " · " + h(c[3].textContent) : "") + " · " + h(tr.dataset.committee) +
       "<div class=\\"muted\\">" + c[5].innerHTML + "</div>" + body + "<div class=\\"cs-pc-decision\\">" + c[8].innerHTML + "</div></li>";
   };
   document.addEventListener("toggle", async (e) => {

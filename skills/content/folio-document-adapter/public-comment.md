@@ -436,14 +436,15 @@ comments/provides feedback/dispensation information"*):
 | presses **Discuss** on the dashboard (the `change-set` issue form, prefilled with the id) | adopts that issue as the primary one and renders the record at its top; their text stays below |
 | recommends or decides on one of its comments, in any thread | records it, opens the primary issue, and quotes the tag there with a link back |
 | mentions it, or one of its comments, in any issue | links that issue, and opens the primary issue (at most five from one mention; past that it replies with Discuss links instead) |
-| opens a PR that links it by keyword (`Closes CS-012`, `fixes`/`resolves CS-012`, or a `cs: CS-012` line) or closes one of its issues | records the PR, opens the primary issue if there is none. A bare mention of `CS-012` in prose links nothing, and a change-set already *incorporated* or *closed* is never re-linked to another PR: reopen its issue first |
+| opens a PR that links it by keyword (`Closes CS-012`, `fixes`/`resolves CS-012`, or a `cs: CS-012` line) or closes one of its issues | records the PR, opens the primary issue if there is none, when the PR's author is on the committee or an editor (judged as for tags; a PR by anyone else links nothing, and a merge counts whoever wrote it). A bare mention of `CS-012` in prose links nothing, and a change-set already *incorporated* or *closed* is never re-linked to another PR: reopen its issue first |
 | decides through the CLI | nothing at once; the nightly reconcile opens the issue |
 
 **People are disorganised, and that is fine.** Any number of other issues may
 discuss a change-set: each is linked (the record's `issues`), listed under
 *Also discussed in* on the primary issue, and told where the primary one is.
 Nobody's own issue is rewritten, and a tag recorded in a linked issue counts
-exactly as one in the primary.
+exactly as one in the primary. An issue body is judged as its author's: an
+edit to it by anyone else records nothing, so tags and commands go in a comment.
 
 ### Changing a change-set on its issue
 
@@ -504,6 +505,9 @@ what they mention.
    with `Closes #<the primary issue>` (or any of its issues, or
    `Closes CS-012`, or a `cs: CS-012` line) in its body. Only those keywords
    link: a PR that mentions the id in passing, a pin bump say, does not.
+   The PR's author must be on the committee or an editor, judged by the
+   author's own login and association as tags are; merging it is allowed
+   whoever wrote it.
 2. Opening it moves the change-set to *editing* and its **accepted** comments
    to *editing*, with the branch and PR. Comments not yet decided, or decided
    `not-accepted`/`noted`/`deferred`, do not move.
