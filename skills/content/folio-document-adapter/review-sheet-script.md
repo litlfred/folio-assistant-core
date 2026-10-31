@@ -381,9 +381,9 @@ try to say where it is in producing PR / staging"). Below any stale mark, the
 script keeps one line starting with ⏳ at the top of the agent's proposal
 (`progressLine`, `withProgress`), and replaces it on every refresh:
 "Ready for merge set: the agent will merge dth-hrh#7."; "Ready for agent set
-<time>: the agent will act on this and rewrite it."; "The agent is working on
+`<time>`: the agent will act on this and rewrite it."; "The agent is working on
 dth-hrh#7."; or "dth-hrh#7 open; no preview yet | preview current (built
-<time>) | preview missing feedback from <time>." No pull request, a merged
+`<time>`) | preview missing feedback from `<time>`." No pull request, a merged
 one, or an empty proposal gets no line. The agent never writes this line and
 drops it when it rewrites the proposal; the next refresh (within a minute)
 puts it back. The line is bold, and an open PR's line carries the agent's
@@ -1022,7 +1022,7 @@ one click"). The library also holds
 from `main` and writes it over the library's Code.gs through the Apps Script
 API, leaving the library's other files alone. It refuses anything that is not
 the review-sheet script (an error page, the stub) and logs "Updated to
-<version>" or "Already current". There is no timer: an update runs when the
+`<version>`" or "Already current". There is no timer: an update runs when the
 owner runs it. Every sheet runs the new code from its next open, edit or timer.
 
 Adding the updater, once:
