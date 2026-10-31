@@ -63,6 +63,11 @@
         <bpmn:flowNodeRef>Task_ReadyForAgent</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReadyForMerge</bpmn:flowNodeRef>
       </bpmn:lane>
+      <bpmn:lane id="Lane_QaReviewer" name="QA reviewer (independent)" partitionElementRef="qc-reviewer">
+        <bpmn:documentation>Whoever runs the QA gate: an agent session that did not write the row's pull request, or a person. Never the authoring agent's own session (owner, 2026-10-31: "add review (agent-independent) before ready for merge"). Writes only QA gate (change set) on the Agent tab.</bpmn:documentation>
+        <bpmn:flowNodeRef>Task_QaGate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_QaPassed</bpmn:flowNodeRef>
+      </bpmn:lane>
     </bpmn:laneSet>
 
     <bpmn:startEvent id="StartEvent_Feedback" name="Feedback on the working draft">
@@ -91,6 +96,7 @@
       <bpmn:documentation>One row, one branch, one active pull request (owner, 2026-10-31): the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again. A closed pull request the committee wants back is reopened, or replaced by a new one on the same branch; earlier ones stay listed in Agentic status. Agentic status (Green) says where it is, and Staging review opens the preview's what-changed page. Before the preview is staged, the agent writes the change set's Disposition (change set) on the Agent tab: one line per feedback item, starting from the people's Blue Disposition, after an optional Overall statement; the sheet shows it in Disposition (agent) and flags any item without a disposition, or one that differs from the people's (owner, 2026-10-31).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF04</bpmn:incoming>
+      <bpmn:incoming>CF12</bpmn:incoming>
       <bpmn:outgoing>CF05</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:userTask id="Task_AnswerPreview" name="Review the preview and answer">
@@ -105,10 +111,21 @@
       <bpmn:outgoing>CF07</bpmn:outgoing>
       <bpmn:outgoing>CF08</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="Task_ReadyForMerge" name="Set Ready for merge to Yes">
-      <bpmn:documentation>An Editor sets the row's Ready for merge (Orange) to Yes. Person-only.</bpmn:documentation>
+    <bpmn:serviceTask id="Task_QaGate" name="QA gate: review dispositions against the people and the pull request">
+      <bpmn:documentation>Reads: the change set's Disposition (change set), the people's Blue Disposition and feedback, the pull request's diff at its head commit, and the staging QA report. Checks that every feedback item has one disposition; that each agrees with the people's Blue Disposition; that each Accepted or Partially accepted item has the change in the diff, and a Not accepted, Noted, Duplicate or Out of scope item has none; that the diff changes nothing no disposition accounts for; and that the QA report for the staged commit has no failing gate. Writes: QA gate (change set) on the Agent tab, first line "Passed &lt;head sha&gt;: …" or "Failed &lt;head sha&gt;: &lt;why&gt;", and QA report (change set), the report's link. The sheet shows the gate under Staging review; a pass for an older commit reads as stale (owner, 2026-10-31).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF08</bpmn:incoming>
+      <bpmn:outgoing>CF11</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:exclusiveGateway id="Gateway_QaPassed" name="QA gate passed for the PR's head?">
+      <bpmn:incoming>CF11</bpmn:incoming>
+      <bpmn:outgoing>CF12</bpmn:outgoing>
+      <bpmn:outgoing>CF13</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:userTask id="Task_ReadyForMerge" name="Set Ready for merge to Yes">
+      <bpmn:documentation>An Editor sets the row's Ready for merge (Orange) to Yes once the QA gate has passed for the pull request's head commit. Person-only. Set earlier, the agent does not merge until the gate passes, and its feedback says so.</bpmn:documentation>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
+      <bpmn:incoming>CF13</bpmn:incoming>
       <bpmn:outgoing>CF09</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:serviceTask id="Task_Merge" name="Merge the pull request">
@@ -128,7 +145,10 @@
     <bpmn:sequenceFlow id="CF05" sourceRef="Task_EditInPullRequest" targetRef="Task_AnswerPreview" />
     <bpmn:sequenceFlow id="CF06" sourceRef="Task_AnswerPreview" targetRef="Gateway_FeedbackChanged" />
     <bpmn:sequenceFlow id="CF07" name="changed" sourceRef="Gateway_FeedbackChanged" targetRef="Task_Propose" />
-    <bpmn:sequenceFlow id="CF08" name="agreed" sourceRef="Gateway_FeedbackChanged" targetRef="Task_ReadyForMerge" />
+    <bpmn:sequenceFlow id="CF08" name="agreed" sourceRef="Gateway_FeedbackChanged" targetRef="Task_QaGate" />
+    <bpmn:sequenceFlow id="CF11" sourceRef="Task_QaGate" targetRef="Gateway_QaPassed" />
+    <bpmn:sequenceFlow id="CF12" name="failed" sourceRef="Gateway_QaPassed" targetRef="Task_EditInPullRequest" />
+    <bpmn:sequenceFlow id="CF13" name="passed" sourceRef="Gateway_QaPassed" targetRef="Task_ReadyForMerge" />
     <bpmn:sequenceFlow id="CF09" sourceRef="Task_ReadyForMerge" targetRef="Task_Merge" />
     <bpmn:sequenceFlow id="CF10" sourceRef="Task_Merge" targetRef="EndEvent_Merged" />
   </bpmn:process>
@@ -136,16 +156,26 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_ContributorFeedback">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_ContributorFeedback">
       <bpmndi:BPMNShape id="Participant_ContributorFeedback_di" bpmnElement="Participant_ContributorFeedback" isHorizontal="true">
-        <dc:Bounds x="160" y="60" width="1620" height="500" />
+        <dc:Bounds x="160" y="60" width="1880" height="660" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Committee_di" bpmnElement="Lane_Committee" isHorizontal="true">
-        <dc:Bounds x="190" y="60" width="1590" height="180" />
+        <dc:Bounds x="190" y="60" width="1850" height="180" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Agent_di" bpmnElement="Lane_Agent" isHorizontal="true">
-        <dc:Bounds x="190" y="240" width="1590" height="160" />
+        <dc:Bounds x="190" y="240" width="1850" height="160" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Editor_di" bpmnElement="Lane_Editor" isHorizontal="true">
-        <dc:Bounds x="190" y="400" width="1590" height="160" />
+        <dc:Bounds x="190" y="400" width="1850" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_QaReviewer_di" bpmnElement="Lane_QaReviewer" isHorizontal="true">
+        <dc:Bounds x="190" y="560" width="1850" height="160" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_QaGate_di" bpmnElement="Task_QaGate">
+        <dc:Bounds x="1380" y="595" width="130" height="90" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_QaPassed_di" bpmnElement="Gateway_QaPassed" isMarkerVisible="true">
+        <dc:Bounds x="1550" y="615" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1610" y="660" width="130" height="30" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_Feedback_di" bpmnElement="StartEvent_Feedback">
         <dc:Bounds x="240" y="142" width="36" height="36" />
@@ -171,14 +201,14 @@
         <bpmndi:BPMNLabel><dc:Bounds x="1250" y="190" width="130" height="30" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReadyForMerge_di" bpmnElement="Task_ReadyForMerge">
-        <dc:Bounds x="1380" y="435" width="130" height="90" />
+        <dc:Bounds x="1640" y="435" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Merge_di" bpmnElement="Task_Merge">
-        <dc:Bounds x="1500" y="275" width="130" height="90" />
+        <dc:Bounds x="1780" y="275" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Merged_di" bpmnElement="EndEvent_Merged">
-        <dc:Bounds x="1690" y="302" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1663" y="342" width="90" height="20" /></bpmndi:BPMNLabel>
+        <dc:Bounds x="1960" y="302" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1933" y="342" width="90" height="20" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="CF01_di" bpmnElement="CF01"><di:waypoint x="276" y="160"/><di:waypoint x="320" y="160"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="CF02_di" bpmnElement="CF02"><di:waypoint x="450" y="160"/><di:waypoint x="485" y="160"/><di:waypoint x="485" y="320"/><di:waypoint x="520" y="320"/></bpmndi:BPMNEdge>
@@ -188,10 +218,15 @@
       <bpmndi:BPMNEdge id="CF06_di" bpmnElement="CF06"><di:waypoint x="1230" y="160"/><di:waypoint x="1290" y="160"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="CF07_di" bpmnElement="CF07"><di:waypoint x="1315" y="135"/><di:waypoint x="1315" y="90"/><di:waypoint x="585" y="90"/><di:waypoint x="585" y="275"/>
         <bpmndi:BPMNLabel><dc:Bounds x="900" y="72" width="60" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="CF08_di" bpmnElement="CF08"><di:waypoint x="1340" y="160"/><di:waypoint x="1445" y="160"/><di:waypoint x="1445" y="435"/>
+      <bpmndi:BPMNEdge id="CF08_di" bpmnElement="CF08"><di:waypoint x="1340" y="160"/><di:waypoint x="1360" y="160"/><di:waypoint x="1360" y="640"/><di:waypoint x="1380" y="640"/>
         <bpmndi:BPMNLabel><dc:Bounds x="1360" y="142" width="50" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="CF09_di" bpmnElement="CF09"><di:waypoint x="1510" y="480"/><di:waypoint x="1565" y="480"/><di:waypoint x="1565" y="365"/></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="CF10_di" bpmnElement="CF10"><di:waypoint x="1630" y="320"/><di:waypoint x="1690" y="320"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="CF09_di" bpmnElement="CF09"><di:waypoint x="1770" y="480"/><di:waypoint x="1845" y="480"/><di:waypoint x="1845" y="365"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="CF10_di" bpmnElement="CF10"><di:waypoint x="1910" y="320"/><di:waypoint x="1960" y="320"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="CF11_di" bpmnElement="CF11"><di:waypoint x="1510" y="640"/><di:waypoint x="1550" y="640"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="CF12_di" bpmnElement="CF12"><di:waypoint x="1575" y="665"/><di:waypoint x="1575" y="705"/><di:waypoint x="965" y="705"/><di:waypoint x="965" y="365"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1240" y="708" width="50" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="CF13_di" bpmnElement="CF13"><di:waypoint x="1600" y="640"/><di:waypoint x="1705" y="640"/><di:waypoint x="1705" y="525"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1620" y="622" width="50" height="14" /></bpmndi:BPMNLabel></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

@@ -40,6 +40,7 @@ comment).
 | Owner | the whole sheet | Config `EDITORS` | anything the agent or script writes |
 | Apps Script (`review-sheet.gs`, built by Tool `review-sheet-sync`) | Config (CFG, COLS, DATA, EDITORS); the people's tabs; the Agent tab(s) | Grey columns (ids, links, joins); Green columns copied from the Agent tab(s); the STALE mark on the agent column; `Ready for agent` back to No once, on the turn to stale; the Watch tab; protections on the Ready columns; the QC problems at the top of `Disposition (agent)` | Blue columns' contents; Orange except the stale reset; the Agent tab(s) |
 | Agent (sync or watcher) | the whole sheet, and above all the people's Blue `Disposition` of each comment, which its dispositions start from; the folio's repository | the Agent tab(s) (one row per change set, and in public comment one row per comment on Agent - Comments), including `Disposition (change set)` in the format below; the agent column, `Feedback (agent)` (drafting) or `Change Set Feedback (agent)` (public comment); Config rows other than EDITORS | Blue, Orange, Grey; the Title on a drafting sheet |
+| QA reviewer (independent: an agent session that did not write the PR, or a person) | the change set's `Disposition (change set)`, the people's Blue `Disposition` and feedback, the PR's diff at its head commit, the staging QA report | `QA gate (change set)` and `QA report (change set)` on the Agent tab, nothing else | everything else, and never a change set whose PR it wrote |
 | Tool `review-sheet-sync` | the folio's `review/*/sheet-sync.json`, anchors, line map | `Code.gs` (generic); the Config rows for one sheet (`--config ... --out rows`); a drafting sheet's TOC rows (`--toc-out rows`) | the sheet itself |
 | Script `review-anchors-from-folio.ts` | the folio's document manifests and block prose; optionally the library file it was seeded from | `folio/<doc>/review-anchors.json` (`--check` compares) | the sheet |
 
@@ -386,6 +387,46 @@ that test.
 moves, or a tab or a header the script reads is renamed. Re-paste Code.gs
 only when the script itself changes. Renaming a header the script reads,
 without rewriting Config, leaves that column unlinked; it fails nothing.
+
+## The QA gate, before Ready for merge (owner, 2026-10-31)
+
+"agent should make sure all dispositions are consistent with human and feature
+branch changes. add review (agent-independent) before ready for merge", then
+"QA gate. also sheets should link to QA reports for the staging".
+
+**Who.** A reviewer that did not write the change: another agent session, or
+a person. The authoring agent never gates its own pull request; one party
+doing both halves is not this check.
+
+**What it checks**, against the PR's head commit:
+
+1. every comment (drafting: every feedback item) of the change set has one
+   disposition (the script's `dispositionProblems` already flags gaps);
+2. each disposition agrees with the people's Blue `Disposition`, where one
+   is set;
+3. each **Accepted** or **Partially accepted** item has its change in the
+   PR's diff, and the change does what the line says;
+4. a **Not accepted**, **Noted**, **Deferred**, **Duplicate** or **Out of
+   scope** item has no change in the diff that contradicts it;
+5. the diff changes nothing that no disposition accounts for;
+6. the staging QA report for that commit has no failing gate.
+
+**What it writes**, on the Agent tab's change-set row and nowhere else:
+
+- `QA gate (change set)`: first line `Passed <head sha>: <one line>` or
+  `Failed <head sha>: <the first problem>`, then one line per problem;
+- `QA report (change set)`: the link to the QA report for the staged
+  commit, for example the folio's `qa-reports` tree at `pr/<n>/<sha>`.
+
+**What the sheet shows.** Staging review reads `review · QA report` (both
+links), then the gate: `✓ QA gate passed (b20534f)`, or in bold
+`⚠ QA gate: no independent review yet: not ready for merge`,
+`⚠ QA gate failed: <why>`, or `⚠ QA gate stale: reviewed 1234567, PR now at
+b20534f: not ready for merge` once the PR moves on (`qaGate`). If Ready for
+merge is set before the gate passes, the agent's ⏳ line says it will not
+merge until it does, and the agent does not merge. A failed gate sends the
+change set back to the author, who updates the PR and its dispositions; the
+gate then runs again on the new head.
 
 ## Sheet conventions (any agent-written Google Sheet)
 

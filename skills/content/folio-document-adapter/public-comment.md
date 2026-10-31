@@ -250,8 +250,11 @@ Each sync does the steps below, in this order.
       never by a reviewer's name.
 
 3. **Merge the released PRs.** For each change-set with an open PR (Agent K)
-   whose Review Change Sets row has **Ready for merge = Yes**, merge it (owner,
-   2026-10-30). Any editor may set it. Only a PR in the folio's own repository is
+   whose Review Change Sets row has **Ready for merge = Yes**, and whose **QA
+   gate** has passed for the PR's head commit, merge it (owner, 2026-10-30;
+   the gate 2026-10-31). The gate is run by a reviewer that did not write the
+   PR (`review-sheet-script`, "The QA gate"); without a pass for the current
+   head, the agent does not merge and its ⏳ line says why. Any editor may set it. Only a PR in the folio's own repository is
    merged, never one on a WHO repository. After the merge, set every PC row of
    the change-set to *Change merged*, clear its staging link (Agent L), and comment on the
    PR's issue. If the merge is refused (a session safety check, a conflict, a
@@ -534,7 +537,10 @@ what they mention.
    set, one line per comment (`No. 136: Accepted. <what was done>`, after an
    optional `Overall:` line), starting from each comment's Blue Disposition
    on Review Public Comments; the review sheet checks that every comment
-   number in the change set has one (`review-sheet-script`). Once an Editor sets Ready for merge to
+   number in the change set has one (`review-sheet-script`). Before Ready
+   for merge, an independent reviewer runs the QA gate: every disposition
+   against the people's Blue Disposition and the PR's diff, and the staging
+   QA report (`review-sheet-script`, "The QA gate"). Once an Editor sets Ready for merge to
    Yes, that blurb is the summary: in the merge commit and as the closing
    comment on the change set's issue (owner, 2026-10-31).
 4. The staging preview is published to `STAGING/<branch>/`. The dashboard links

@@ -87,6 +87,7 @@ export const DRAFT_COLUMNS = {
     head: "PR head (change set)", builtFrom: "Staging built from (change set)", deploy: "Staging deploy (change set)",
     conversation: "Agent conversation (change set)",
     dispositions: "Disposition (change set)",
+    gate: "QA gate (change set)", qa: "QA report (change set)",
   },
 };
 
@@ -161,6 +162,7 @@ export const DEFAULT_COLUMNS = {
     staging: "Staging review page (change set)", built: "Staging built (UTC, change set)",
     head: "PR head (change set)", builtFrom: "Staging built from (change set)", deploy: "Staging deploy (change set)",
     dispositions: "Disposition (change set)",
+    gate: "QA gate (change set)", qa: "QA report (change set)",
   },
 };
 
@@ -390,7 +392,7 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
     "   3. An Editor sets Ready for agent (Orange) to Yes once the direction is agreed.",
     `   4. The agent edits the document in one pull request for the row. Agentic status (Green) says where it is; ${staging} opens what changed.`,
     "   5. Reviewers answer in Blue. A change marks the proposal stale and sets Ready for agent (Orange) back to No; an Editor sets Yes again to have the agent update the pull request.",
-    "   6. An Editor sets Ready for merge (Orange) to Yes, and the agent merges.",
+    "   6. A reviewer who did not write the change checks every disposition against the Blue Disposition and the pull request, and reads the QA report (the QA gate). Once it passes, an Editor sets Ready for merge (Orange) to Yes, and the agent merges.",
   ];
   const out: Record<string, string> = {
     [CONFIG_TAB]: `The script's settings. Work happens on ${people}; nothing here needs you unless you install the script. Do not edit this tab: the agent writes it, except EDITORS, which only the owner edits.`,

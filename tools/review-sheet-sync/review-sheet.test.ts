@@ -793,7 +793,8 @@ describe("review-sheet.gs in drafting mode", () => {
     const at = (n: string) => h.indexOf(n);
     const rt2 = runtime(t);
     const s = load(code, rt2.g);
-    const text = () => (rt2.written["Contributor Feedback"]["Staging review"][0][0] as Rich).text;
+    // The first line: the QA gate, on the second, has its own test.
+    const text = () => (rt2.written["Contributor Feedback"]["Staging review"][0][0] as Rich).text.split("\n")[0];
     // Same commit: no warning, even though Agent completed is later than Staging built.
     s.refreshAll();
     expect(text()).toBe("review");
@@ -1095,7 +1096,8 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
     expect(fns.progressLine({ ...o, staging: "" })).toBe("\u23f3 dth-hrh#7 open, updated 2026-10-31 08:10Z; no preview yet.");
     // An Editor's Orange change is noted, not marked stale.
     expect(fns.progressLine({ ...o, readyAt: "2026-10-31 11:30Z" })).toBe("\u23f3 Ready for agent set 2026-10-31 11:30Z: the agent will act on this and rewrite it.");
-    expect(fns.progressLine({ ...o, merge: true })).toBe("\u23f3 Ready for merge set: the agent will merge dth-hrh#7.");
+    expect(fns.progressLine({ ...o, merge: true, built: { ...built, gate: "Passed b20534f: dispositions match" } })).toBe("\u23f3 Ready for merge set: the agent will merge dth-hrh#7.");
+    expect(fns.progressLine({ ...o, merge: true })).toBe("\u23f3 Ready for merge set: the agent will not merge dth-hrh#7 until the QA gate passes (QA gate: no independent review yet: not ready for merge).");
     expect(fns.progressLine({ ...o, status: "Working" })).toBe("\u23f3 The agent is working on dth-hrh#7.");
     expect(fns.progressLine({ ...o, status: "Merged" })).toBe("");
     expect(fns.progressLine({ prs: [] })).toBe("");
@@ -1134,6 +1136,38 @@ describe("the library stub each sheet keeps (owner, 2026-10-31: library, latest 
   });
   test("dist/Stub.gs is current", () => {
     expect(stub).toBe(readText(join(import.meta.dir, "stub.gs"), "utf8"));
+  });
+});
+
+describe("the QA gate before Ready for merge (owner, 2026-10-31)", () => {
+  const fake = {
+    newRichTextValue: () => {
+      const v = { text: "", links: [] as [number, number, string][] };
+      const r = { setText: (t: string) => ((v.text = t), r), setLinkUrl: (a: number, z: number, u: string) => (v.links.push([a, z, u]), r), setTextStyle: () => r, build: () => v };
+      return r;
+    },
+    newTextStyle: () => ({ setBold: () => ({ build: () => ({}) }) }),
+  };
+  const { qaGate, stagingCell } = new Function("SpreadsheetApp", code + "\nreturn { qaGate, stagingCell };")(fake) as {
+    qaGate: (b: object, p: object[]) => { ok: boolean; text: string };
+    stagingCell: (u: string, b: object, p: object[]) => { text: string; links: [number, number, string][] };
+  };
+  const prs = [{ url: "https://github.com/litlfred/dth-hrh/pull/7", head: "b20534f0aa", done: "2026-10-31 08:10Z" }];
+  const b = (gate: string, qa = "") => ({ at: "2026-10-31 08:15Z", from: "b20534f", deploy: "deployed", gate, qa });
+  test("a pass counts only for the PR's head commit", () => {
+    expect(qaGate(b("Passed b20534f: dispositions match Blue and the diff"), prs)).toEqual({ ok: true, text: "\u2713 QA gate passed (b20534f)" });
+    expect(qaGate(b("Passed 1234567"), prs).text).toBe("\u26a0 QA gate stale: reviewed 1234567, PR now at b20534f: not ready for merge");
+    expect(qaGate(b("Passed: looks fine"), prs).ok).toBe(false);
+    expect(qaGate(b("Failed b20534f: No. 136 Accepted but the PR does not change it"), prs).text)
+      .toBe("\u26a0 QA gate failed: No. 136 Accepted but the PR does not change it");
+    expect(qaGate(b(""), prs).text).toBe("\u26a0 QA gate: no independent review yet: not ready for merge");
+    expect(qaGate(b("ok"), prs).ok).toBe(false);
+    expect(qaGate(b(""), []).text).toBe("");
+  });
+  test("Staging review links the QA report and shows the gate", () => {
+    const c = stagingCell("https://p/", b("Passed b20534f", "https://github.com/litlfred/dth-hrh/tree/qa-reports/pr/7/b20534f"), prs);
+    expect(T(c)).toBe("review \u00b7 QA report\n\u2713 QA gate passed (b20534f)");
+    expect(c.links.map((l) => l[2])).toEqual(["https://p/", "https://github.com/litlfred/dth-hrh/tree/qa-reports/pr/7/b20534f"]);
   });
 });
 

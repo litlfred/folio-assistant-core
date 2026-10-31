@@ -449,6 +449,7 @@ function refreshLocked() {
     const aFrom = col(agentCs, COLS.agent.builtFrom || 'Staging built from (change set)');
     const aDeploy = col(agentCs, COLS.agent.deploy || 'Staging deploy (change set)');
     const aDisp = col(agentCs, COLS.agent.dispositions || DISPOSITIONS_CS), dispOf = {};
+    const aGate = col(agentCs, COLS.agent.gate || QA_GATE), aQa = col(agentCs, COLS.agent.qa || QA_REPORT);
     agent.rows.forEach(r => {
       const n = String(r[aNo]).trim();
       if (n) {
@@ -466,7 +467,7 @@ function refreshLocked() {
       const id = aId >= 0 ? String(r[aId]).trim() : '';
       if (id && aBasis >= 0) basisOfCs[id] = String(r[aBasis]).trim();
       if (id && aStaging >= 0) stagingOf[id] = (String(r[aStaging]).match(/https:\/\/\S+/) || [''])[0];
-      if (id) builtOf[id] = builtInfo(r, aBuilt, aFrom, aDeploy);
+      if (id) builtOf[id] = builtInfo(r, aBuilt, aFrom, aDeploy, aGate, aQa);
       if (id && aDisp >= 0) dispOf[id] = String(r[aDisp]);
       if (id && aPrs >= 0) {
         const descs = aCh >= 0 ? String(r[aCh]).split('\n').map(x => x.trim()) : [];
@@ -729,7 +730,12 @@ function utcMs(t) {
 function stagingCell(url, built, prs, readyAt) {
   const w = stagingWarning(url, built, prs, readyAt);
   if (!url) return rich(w ? [{ t: w, bold: true }] : []);
-  return rich([{ t: 'review', url: url }].concat(w ? [{ t: ' ' + w, bold: true }] : []));
+  // The staging QA report beside the preview (owner, 2026-10-31: "sheets
+  // should link to QA reports for the staging"), then the QA gate.
+  const qa = built && built.qa ? [{ t: ' \u00b7 ' }, { t: 'QA report', url: built.qa }] : [];
+  const gate = qaGate(built, prs).text;
+  return rich([{ t: 'review', url: url }].concat(qa, w ? [{ t: ' ' + w, bold: true }] : [],
+    gate ? [{ t: '\n' + gate, bold: !/^\u2713/.test(gate) }] : []));
 }
 
 /**
@@ -791,9 +797,39 @@ function deployStage(deploy) {
 }
 /** A change set with a PR whose head the agent recorded, and so owes a preview. */
 function awaitsPreview(prs) { return (prs || []).some(p => p.head); }
-function builtInfo(r, at, from, deploy) {
+function builtInfo(r, at, from, deploy, gate, qa) {
   const v = c => (c >= 0 ? String(r[c]).trim() : '');
-  return { at: v(at), from: v(from), deploy: v(deploy) };
+  return { at: v(at), from: v(from), deploy: v(deploy), gate: v(gate), qa: (v(qa).match(/https:\/\/\S+/) || [''])[0] };
+}
+
+/**
+ * The QA gate: an independent review of the change set before Ready for merge
+ * (owner, 2026-10-31: "agent should make sure all dispositions are consistent
+ * with human and feature branch changes. add review (agent-independent)
+ * before ready for merge", then "QA gate"). A reviewer that did not write the
+ * pull request (another agent session, or a person) checks every disposition
+ * line against the people's Blue Disposition and against the PR's diff, and
+ * reads the staging QA report, then writes QA gate (change set) on the Agent
+ * tab, first line "Passed <PR head sha>: …" or "Failed <PR head sha>: <why>".
+ * The script only compares: a pass for an older commit than the PR's head is
+ * stale. Returns { ok, text }; text is '' when there is no PR to gate.
+ */
+function qaGate(built, prs) {
+  const g = String((built || {}).gate || '').trim();
+  const active = (prs || []).filter(p => p.head).slice(-1)[0];
+  if (!active) return { ok: false, text: '' };
+  const not = ': not ready for merge';
+  if (!g) return { ok: false, text: '\u26a0 QA gate: no independent review yet' + not };
+  const first = g.split('\n')[0].trim();
+  const m = /^(pass|fail)\w*\s*:?\s*([0-9a-f]{7,40})?\b\s*:?\s*(.*)$/i.exec(first);
+  if (!m) return { ok: false, text: '\u26a0 QA gate unreadable ("' + first.slice(0, 40) + '")' + not };
+  const sha = (m[2] || '').toLowerCase(), head = active.head.toLowerCase();
+  if (/^fail/i.test(m[1])) return { ok: false, text: '\u26a0 QA gate failed' + (m[3] ? ': ' + m[3] : '') };
+  if (!sha) return { ok: false, text: '\u26a0 QA gate passed but names no commit' + not };
+  const n = Math.min(sha.length, head.length);
+  if (sha.slice(0, n) !== head.slice(0, n))
+    return { ok: false, text: '\u26a0 QA gate stale: reviewed ' + sha.slice(0, 7) + ', PR now at ' + head.slice(0, 7) + not };
+  return { ok: true, text: '\u2713 QA gate passed (' + sha.slice(0, 7) + ')' };
 }
 
 /** Flag the agent's proposal (column `agentName`) of each row whose basis moved on. */
@@ -827,6 +863,7 @@ const PROGRESS = '\u23f3 ';
  * merge and when the change set's issue is closed (owner, 2026-10-31). The
  * script shows it, read-only, wherever the people's tab has the column.
  */
+const QA_GATE = 'QA gate (change set)', QA_REPORT = 'QA report (change set)';
 const DISPOSITIONS_CS = 'Disposition (change set)', DISPOSITIONS_AGENT = 'Disposition (agent)';
 /**
  * The record's structure (owner, 2026-10-31: "enforce more structured
@@ -881,7 +918,11 @@ function progressLine(o) {
   const active = prs.slice(-1)[0];
   const label = active ? prLabel(active.url) : '';
   if (/merged/i.test(o.status || '')) return '';
-  if (o.merge && active) return PROGRESS + 'Ready for merge set: the agent will merge ' + label + '.';
+  if (o.merge && active) {
+    const g = qaGate(o.built, prs);
+    return PROGRESS + 'Ready for merge set: ' + (g.ok || !g.text ? 'the agent will merge ' + label + '.'
+      : 'the agent will not merge ' + label + ' until the QA gate passes (' + g.text.replace(/^\u26a0\s*/, '') + ').');
+  }
   const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
   const last = done.length ? Math.max.apply(null, done) : NaN;
   if (o.readyAt && !/working/i.test(o.status || '') && (isNaN(last) || utcMs(o.readyAt) > last))
@@ -1332,7 +1373,8 @@ function refreshDraft(rows) {
   Object.entries(COLS.draftAgent).forEach(([k, h]) => (a[k] = col(agent, h)));
   // Columns added after a sheet's Config was written are found by their default names.
   [['head', 'PR head (change set)'], ['builtFrom', 'Staging built from (change set)'], ['deploy', 'Staging deploy (change set)'],
-    ['conversation', 'Agent conversation (change set)'], ['dispositions', DISPOSITIONS_CS]]
+    ['conversation', 'Agent conversation (change set)'], ['dispositions', DISPOSITIONS_CS],
+    ['gate', QA_GATE], ['qa', QA_REPORT]]
     .forEach(([k, h]) => { if (a[k] === undefined) a[k] = col(agent, h); });
 
   // Rows whose change set's Agent row changed since the last run.
@@ -1392,7 +1434,7 @@ function refreshDraft(rows) {
     if (a.agentic >= 0) stOf[id] = String(r[a.agentic]).trim();
     if (a.issue >= 0) issuesOf[id] = String(r[a.issue]).split('\n').map(issueUrl).filter(Boolean);
     if (a.staging >= 0) stagingOf[id] = (String(r[a.staging]).match(/https:\/\/\S+/) || [''])[0];
-    builtOf[id] = builtInfo(r, a.built, a.builtFrom, a.deploy);
+    builtOf[id] = builtInfo(r, a.built, a.builtFrom, a.deploy, a.gate, a.qa);
     if (a.basis >= 0) basisOfCs[id] = String(r[a.basis]).trim();
     if (a.prs >= 0) {
       const descs = a.changes >= 0 ? String(r[a.changes]).split('\n').map(x => x.trim()) : [];
