@@ -258,8 +258,9 @@ most recent edition needs glossary / skos extracted for use."*
    not define is a `candidate` with no definition and a `scopeNote` saying so,
    not a definition we write.
 6. **Place the scheme with the source.** It lives beside the document's
-   library entry (for WHO publications, in who-iris), so every folio that cites
-   the source shares one scheme. Example: who-iris#136, NHWA handbook 2nd ed.
+   library entry (for WHO publications, in the WHO publications IG), so every
+   folio that cites the source shares one scheme. Example, NHWA handbook 2nd ed.:
+   https://github.com/litlfred/who-iris/pull/136
 7. **Use the source's words downstream.** Blocks, diagrams and ArchiMate names
    use the source's terms and link to their concepts, not a paraphrase.
 
