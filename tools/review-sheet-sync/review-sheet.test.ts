@@ -1458,3 +1458,16 @@ describe("the ⏳ line says where the agent is (owner, 2026-10-31)", () => {
     for (const s of STEPS) expect(s in fns.AGENT_STEPS).toBe(true);
   });
 });
+
+describe("the status line comes back after the agent rewrites its cell (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { ownText, progressLine };`)({}) as {
+    ownText: (v: string) => string; progressLine: (o: object) => string;
+  };
+  test("the script's own lines do not count as the agent's change", () => {
+    expect(fns.ownText("⏳ r#1 open.\n↳ r#1\n⚠ Stale: x\nWhat changed:\n• a")).toBe("What changed:\n• a");
+  });
+  test("a drafted proposal says to set Ready for agent", () => {
+    const pr = { url: "https://github.com/o/r/pull/1", head: "abc1234", done: "2026-10-31 15:26Z" };
+    expect(fns.progressLine({ prs: [pr], built: { step: "proposed 2026-10-31 17:30Z" } })).toMatch(/^⏳ Proposal ready \(17:30Z\): set Ready for agent to Yes/);
+  });
+});

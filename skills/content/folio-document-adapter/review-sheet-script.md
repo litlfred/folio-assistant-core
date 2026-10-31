@@ -546,7 +546,12 @@ at the end of the tab, inside its locked run.
 | `deploying` | Pages is publishing the preview | as above |
 | `qa-review` | it waits for the independent reviewer | `Task_QaGate` |
 | `merging` | it merges after Ready for merge | `Task_Merge` (`Task_Incorporate`) |
+| `proposed` | it has written a proposal and waits for Ready for agent = Yes; the ⏳ line says "Proposal ready: set Ready for agent to Yes" | end of `Task_Propose` |
 | `idle` | it stops: done, or waiting on a person | — |
+
+The agent writes its proposal straight into the feedback cell, which drops
+the ⏳ line; the timer watches that column (without the script's own lines),
+so the status comes back on the next tick without anyone pressing Refresh.
 
 Write `idle` (or the next step) before leaving a change set; a step left
 behind turns into the "no update" warning, which is the point.

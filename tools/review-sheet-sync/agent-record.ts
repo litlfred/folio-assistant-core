@@ -12,7 +12,8 @@
  *                               with no new commit (nothing to restage)
  *   step <name>                 Agent step (change set): what the agent is doing
  *                               now, with the time (reading, proposing, editing,
- *                               pushing, staging, deploying, qa-review, merging, idle)
+ *                               pushing, staging, deploying, qa-review, merging,
+ *                               proposed (waiting for Ready for agent), idle)
  *
  * dispositions reads which comments are in the change set and the people's
  * Blue Disposition from the sheet's own values (as read, header row
@@ -153,7 +154,7 @@ export function done(now = new Date()): Record<string, string> {
 }
 
 /** Agent step (change set): the step the agent starts now, from the sheet's own list. */
-export const STEPS = ["reading", "proposing", "editing", "pushing", "staging", "deploying", "qa-review", "merging", "idle"];
+export const STEPS = ["reading", "proposing", "editing", "pushing", "staging", "deploying", "qa-review", "merging", "proposed", "idle"];
 export function step(name: string, now = new Date()): Record<string, string> {
   if (!STEPS.includes(name)) throw new Error(`step is one of ${STEPS.join(", ")}`);
   return { "Agent step (change set)": `${name} ${now.toISOString().slice(0, 16).replace("T", " ")}Z` };

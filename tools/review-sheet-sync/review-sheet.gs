@@ -380,7 +380,7 @@ function refreshIfDirty() {
     const seen = hashOf(JSON.stringify([CFG.AGENT, CFG.AGENT_CS].filter(Boolean).map(n => {
       const a = SpreadsheetApp.getActive().getSheetByName(n);
       return a ? a.getRange(1, 1, Math.max(a.getLastRow(), 1), Math.max(a.getLastColumn(), 1)).getDisplayValues() : [];
-    })));
+    }).concat([agentColumnText()])));
     const moved = seen !== (props.getProperty('agentHash') || '');
     if (props.getProperty('dirty') !== '1' && !moved) return;
     // Cleared before the run, so an edit made during it marks it dirty
@@ -675,6 +675,24 @@ function runs(rows) {
     else out.push([r, 1]);
   });
   return out;
+}
+/**
+ * The agent also writes its proposal straight into Change Set Feedback (agent)
+ * on Review Change Sets, which fires no edit either, and that rewrite drops
+ * the script's ⏳ status line (owner, 2026-10-31: "i dont see status"). So the
+ * timer watches that column too, with the script's own lines taken out, so
+ * putting the status line back does not itself count as a change.
+ */
+function agentColumnText() {
+  const sh = SpreadsheetApp.getActive().getSheetByName(CFG.RCS);
+  if (!sh) return '';
+  const s = readSheet(sh), c = col(s, COLS.rcs.agentFeedback || 'Change Set Feedback (agent)');
+  if (c < 0) return '';
+  return s.rows.map(r => ownText(r[c])).join('\u0001');
+}
+/** The agent's own text: without the script's status, PR and stale lines. */
+function ownText(v) {
+  return String(v).split('\n').filter(l => !/^(\u23f3|\u21b3 |\u26a0 Stale)/.test(l)).join('\n');
 }
 function headerNoteFor(kind, h) {
   const own = HEADER_NOTES[kind + '|' + h] || HEADER_NOTES[h];
@@ -1014,6 +1032,7 @@ const AGENT_STEPS = {
   deploying: 'waiting for the preview to go live',
   'qa-review': 'waiting for the independent QA review',
   merging: 'merging the pull request',
+  proposed: 'proposal ready',
   idle: '',
 };
 /** "editing 2026-10-31 17:20Z" -> { name, text, at }, or null. */
@@ -1024,6 +1043,8 @@ function agentStep(cell) {
 }
 /** The step line: "Agent: editing the document (since 17:20Z)", with a warning once it has gone quiet. */
 function stepLine(step, now) {
+  if (step.name === 'proposed')
+    return PROGRESS + 'Proposal ready (' + step.at.slice(11) + '): set Ready for agent to Yes to start, or answer in your feedback.';
   const age = Math.round(((now || Date.now()) - utcMs(step.at)) / 60000);
   return PROGRESS + 'Agent: ' + step.text + ' (since ' + step.at.slice(11) +
     (age > 30 ? '; \u26a0 no update for ' + age + ' min' : '') + ').';

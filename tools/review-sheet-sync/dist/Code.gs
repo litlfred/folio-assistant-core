@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 6a8aaea184616d0a.
+// folio-assistant-core tools/review-sheet-sync at template sha256 2d6965c926d731f4.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 6a8aaea184616d0a';
+const SCRIPT_VERSION = 'template sha256 2d6965c926d731f4';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -380,7 +380,7 @@ function refreshIfDirty() {
     const seen = hashOf(JSON.stringify([CFG.AGENT, CFG.AGENT_CS].filter(Boolean).map(n => {
       const a = SpreadsheetApp.getActive().getSheetByName(n);
       return a ? a.getRange(1, 1, Math.max(a.getLastRow(), 1), Math.max(a.getLastColumn(), 1)).getDisplayValues() : [];
-    })));
+    }).concat([agentColumnText()])));
     const moved = seen !== (props.getProperty('agentHash') || '');
     if (props.getProperty('dirty') !== '1' && !moved) return;
     // Cleared before the run, so an edit made during it marks it dirty
@@ -675,6 +675,24 @@ function runs(rows) {
     else out.push([r, 1]);
   });
   return out;
+}
+/**
+ * The agent also writes its proposal straight into Change Set Feedback (agent)
+ * on Review Change Sets, which fires no edit either, and that rewrite drops
+ * the script's \u23f3 status line (owner, 2026-10-31: "i dont see status"). So the
+ * timer watches that column too, with the script's own lines taken out, so
+ * putting the status line back does not itself count as a change.
+ */
+function agentColumnText() {
+  const sh = SpreadsheetApp.getActive().getSheetByName(CFG.RCS);
+  if (!sh) return '';
+  const s = readSheet(sh), c = col(s, COLS.rcs.agentFeedback || 'Change Set Feedback (agent)');
+  if (c < 0) return '';
+  return s.rows.map(r => ownText(r[c])).join('\u0001');
+}
+/** The agent's own text: without the script's status, PR and stale lines. */
+function ownText(v) {
+  return String(v).split('\n').filter(l => !/^(\u23f3|\u21b3 |\u26a0 Stale)/.test(l)).join('\n');
 }
 function headerNoteFor(kind, h) {
   const own = HEADER_NOTES[kind + '|' + h] || HEADER_NOTES[h];
@@ -1014,6 +1032,7 @@ const AGENT_STEPS = {
   deploying: 'waiting for the preview to go live',
   'qa-review': 'waiting for the independent QA review',
   merging: 'merging the pull request',
+  proposed: 'proposal ready',
   idle: '',
 };
 /** "editing 2026-10-31 17:20Z" -> { name, text, at }, or null. */
@@ -1024,6 +1043,8 @@ function agentStep(cell) {
 }
 /** The step line: "Agent: editing the document (since 17:20Z)", with a warning once it has gone quiet. */
 function stepLine(step, now) {
+  if (step.name === 'proposed')
+    return PROGRESS + 'Proposal ready (' + step.at.slice(11) + '): set Ready for agent to Yes to start, or answer in your feedback.';
   const age = Math.round(((now || Date.now()) - utcMs(step.at)) / 60000);
   return PROGRESS + 'Agent: ' + step.text + ' (since ' + step.at.slice(11) +
     (age > 30 ? '; \u26a0 no update for ' + age + ' min' : '') + ').';
