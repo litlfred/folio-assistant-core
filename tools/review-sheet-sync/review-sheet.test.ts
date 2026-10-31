@@ -246,17 +246,17 @@ const draftTabs = () => ({
   "Contributor Feedback": {
     id: 1,
     rows: [
-      ["Change-set", "Title", "Sections", "Contributor Feedback", "Contributor Feedback", "Issue", "Agentic status"],
-      ["CS-004", "Define registry", "Ch 1 Why it matters, 1.1 Global challenges", "AB: needs a definition", "", "", ""],
-      ["", "Privacy wording", "Ch 12 Privacy; Security and Trust, Somewhere else", "", "CD: tighten", "", ""],
-      ["", "", "", "", "", "", ""],
+      ["Change-set", "Title", "Sections", "Contributor Feedback (CL)", "Contributor Feedback (initials/name)", "Issue", "Agentic status", "Staging review page"],
+      ["CS-004", "Define registry", "Ch 1 Why it matters, 1.1 Global challenges", "AB: needs a definition", "", "", "", ""],
+      ["", "Privacy wording", "Ch 12 Privacy; Security and Trust, Somewhere else", "", "CD: tighten", "", "", ""],
+      ["", "", "", "", "", "", "", ""],
     ],
   },
   Agent: {
     id: 2,
     rows: [
-      ["Change-set", "Issue", "Agentic status", "Pull request (change set)", "What the PRs changed (change set)", "Agent completed (UTC, change set)"],
-      ["CS-004", "https://github.com/o/dth/issues/12", "PR open", "https://github.com/o/dth/pull/40", "Adds the definition", "2026-10-30 23:40Z"],
+      ["Change-set", "Issue", "Agentic status", "Pull request (change set)", "What the PRs changed (change set)", "Agent completed (UTC, change set)", "Staging review page (change set)"],
+      ["CS-004", "https://github.com/o/dth/issues/12", "PR open", "https://github.com/o/dth/pull/40", "Adds the definition", "2026-10-30 23:40Z", "https://o.github.io/dth/STAGING/cs-004/en/review/"],
     ],
   },
 });
@@ -296,6 +296,11 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(i.links).toEqual([[0, 6, "https://github.com/o/dth/issues/12"]]);
     expect((fb["Agentic status"][0][0] as Rich).text).toBe("dth#40 (PR open, 2026-10-30 23:40Z) · Adds the definition");
     expect((fb.Issue[1][0] as Rich).text).toBe("");
+  });
+
+  test("Staging review page links the change set's preview, from the Agent tab", () => {
+    expect(fb["Staging review page"][0][0]).toEqual({ text: "review", links: [[0, 6, "https://o.github.io/dth/STAGING/cs-004/en/review/"]], bold: [] });
+    expect((fb["Staging review page"][1][0] as Rich).text).toBe("");
   });
 
   test("only Contributor Feedback and Agent edits mark the sheet dirty", () => {

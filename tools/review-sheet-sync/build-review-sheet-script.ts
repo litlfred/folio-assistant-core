@@ -70,11 +70,12 @@ export const DRAFT_TABS = { FEEDBACK: "Contributor Feedback", AGENT: "Agent", TO
 export const DRAFT_COLUMNS = {
   draft: {
     cs: "Change-set", title: "Title", sections: "Sections", feedback: "Contributor Feedback",
-    issue: "Issue", agentic: "Agentic status",
+    issue: "Issue", agentic: "Agentic status", staging: "Staging review page",
   },
   draftAgent: {
     csId: "Change-set", issue: "Issue", agentic: "Agentic status", prs: "Pull request (change set)",
     changes: "What the PRs changed (change set)", done: "Agent completed (UTC, change set)",
+    staging: "Staging review page (change set)",
   },
 };
 

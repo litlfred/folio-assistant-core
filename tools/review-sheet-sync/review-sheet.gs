@@ -108,6 +108,10 @@ function readSheet(sh) {
 }
 function col(s, name) { return s.header.indexOf(name); }
 function cols(s, name) { return s.header.map((h, i) => (h === name ? i : -1)).filter(i => i >= 0); }
+/** Columns whose header is `name` or `name (…)`, e.g. "Contributor Feedback (CL)". */
+function colsLike(s, name) {
+  return s.header.map((h, i) => (h === name || String(h).indexOf(name + ' (') === 0 ? i : -1)).filter(i => i >= 0);
+}
 
 function writeRich(s, c, rich) {
   if (c < 0 || !rich.length) return;
@@ -377,7 +381,8 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
  * - gives a row with a Title, Sections or feedback but no Change-set the next
  *   id (CS-001, CS-002, ...), once; the id then stays with the row;
  * - links each picked section to its anchor on the document page;
- * - fills Issue and Agentic status from the Agent tab, by change set;
+ * - fills Issue, Agentic status and Staging review page from the Agent tab,
+ *   by change set;
  * - keeps the hidden TOC tab, the Sections dropdown's list, current.
  */
 function refreshDraft() {
@@ -389,7 +394,7 @@ function refreshDraft() {
 
   const c = {};
   Object.entries(COLS.draft).forEach(([k, h]) => (c[k] = col(fb, h)));
-  const fbCols = cols(fb, COLS.draft.feedback);
+  const fbCols = colsLike(fb, COLS.draft.feedback);
   const a = {};
   Object.entries(COLS.draftAgent).forEach(([k, h]) => (a[k] = col(agent, h)));
 
@@ -412,12 +417,13 @@ function refreshDraft() {
     if (changed && ids.length) fb.sh.getRange(2, c.cs + 1, ids.length, 1).setValues(ids);
   }
 
-  const prOf = {}, stOf = {}, issuesOf = {};
+  const prOf = {}, stOf = {}, issuesOf = {}, stagingOf = {};
   agent.rows.forEach(r => {
     const id = a.csId >= 0 ? String(r[a.csId]).trim() : '';
     if (!id) return;
     if (a.agentic >= 0) stOf[id] = String(r[a.agentic]).trim();
     if (a.issue >= 0) issuesOf[id] = String(r[a.issue]).split('\n').map(issueUrl).filter(Boolean);
+    if (a.staging >= 0) stagingOf[id] = (String(r[a.staging]).match(/https:\/\/\S+/) || [''])[0];
     if (a.prs >= 0) {
       const descs = a.changes >= 0 ? String(r[a.changes]).split('\n').map(x => x.trim()) : [];
       const dones = a.done >= 0 ? String(r[a.done]).split('\n').map(x => x.trim()) : [];
@@ -448,6 +454,11 @@ function refreshDraft() {
   writeRich(fb, c.agentic, fb.rows.map(r => {
     const cs = String(r[c.cs]).trim();
     return agenticCell(stOf[cs] || '', prOf[cs] || []);
+  }));
+  // Staging review page: the change set's preview while its PR is open.
+  writeRich(fb, c.staging, fb.rows.map(r => {
+    const u = stagingOf[String(r[c.cs]).trim()];
+    return rich(u ? [{ t: 'review', url: u }] : []);
   }));
 }
 
