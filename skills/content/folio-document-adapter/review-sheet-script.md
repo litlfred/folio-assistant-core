@@ -234,6 +234,20 @@ Feedback). The script computes the same hash; while they differ it puts
 again." on the proposal's first line, and takes it off if the row changes
 back. The agent's next sync replaces the proposal and the basis.
 
+**Where the change set is** (owner, 2026-10-31: "agent feedback should also
+try to say where it is in producing PR / staging"). Below any stale mark, the
+script keeps one line starting with ⏳ at the top of the agent's proposal
+(`progressLine`, `withProgress`), and replaces it on every refresh:
+"Ready for merge set: the agent will merge dth-hrh#7."; "Ready for agent set
+<time>: the agent will act on this and rewrite it."; "The agent is working on
+dth-hrh#7."; or "dth-hrh#7 open; no preview yet | preview current (built
+<time>) | preview missing feedback from <time>." No pull request, a merged
+one, or an empty proposal gets no line. The agent never writes this line and
+drops it when it rewrites the proposal. An Editor's Orange change (a Ready
+column) is not part of the basis, so it never marks the proposal stale: it
+shows here as a note, and Ready stays as the Editor set it (owner's card,
+option A).
+
 **How to tell it works.** The first run of `installTriggers` takes about 20
 seconds for 800 rows and its execution log ends "Execution completed" (a
 one-second run means `onOpen` was picked). Then No. is a blue link, and

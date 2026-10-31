@@ -444,13 +444,19 @@ function refreshLocked() {
     });
     refreshRpc(rpc, pcOf, csOfNo, stOf, prOf);
     refreshRcs(rcs, rpc, csOf, stOf, prOf);
-    markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)');
+    const csCol = col(rcs, 'Change-set'), all = () => true;
+    const readyAt = readyTimes(rcs, csCol, prOf, all, docProps_()), lineOf = {};
+    rcs.rows.forEach(r => {
+      const cs = String(r[csCol]).trim();
+      if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)), prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] });
+    });
+    markStale(rcs, csCol, basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)', lineOf);
     // Staging review page, from Agent: only where Agent names a preview, so a
     // sheet whose agent writes the cell directly keeps it.
     const rSt = COLS.rcs.staging ? col(rcs, COLS.rcs.staging) : -1, rCs = col(rcs, COLS.rcs.cs);
     if (rSt >= 0 && rCs >= 0) rcs.rows.forEach((r, k) => {
       const id = String(r[rCs]).trim();
-      if (stagingOf[id] || awaitsPreview(prOf[id])) rcs.sh.getRange(k + rcs.top, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id])]]);
+      if (stagingOf[id] || awaitsPreview(prOf[id])) rcs.sh.getRange(k + rcs.top, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id], readyAt[id])]]);
     });
   }
 }
@@ -729,16 +735,81 @@ function builtInfo(r, at, from, deploy) {
 }
 
 /** Flag the agent's proposal (column `agentName`) of each row whose basis moved on. */
-function markStale(s, csCol, basisOfCs, exact, prefix, agentName) {
+function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) {
   const ag = col(s, agentName);
   if (ag < 0 || csCol < 0) return;
   s.rows.forEach((r, k) => {
-    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[String(r[csCol]).trim()]);
-    if (t !== null) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(t)]]);
+    if (want && !want(k)) return;
+    const cs = String(r[csCol]).trim();
+    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[cs]);
+    const cur = t === null ? String(r[ag]) : t;
+    const fin = lineOf ? withProgress(cur, lineOf[cs] || '') : cur;
+    if (fin !== String(r[ag])) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(fin)]]);
     unready(s, r, k, r[ag], t);
-    markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), t === null ? r[ag] : t);
+    markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), fin);
   });
 }
+
+/**
+ * Where the change set is, as one line the script keeps at the top of the
+ * agent's feedback (below a stale mark), starting with PROGRESS (owner,
+ * 2026-10-31: "agent feedback should also try to say where it is in
+ * producing PR / staging", and an Editor's Orange change adds a note rather
+ * than marking the proposal stale). The agent never writes this line.
+ */
+const PROGRESS = '\u23f3 ';
+function progressLine(o) {
+  const prs = o.prs || [];
+  const active = prs.slice(-1)[0];
+  const label = active ? prLabel(active.url) : '';
+  if (/merged/i.test(o.status || '')) return '';
+  if (o.merge && active) return PROGRESS + 'Ready for merge set: the agent will merge ' + label + '.';
+  const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
+  const last = done.length ? Math.max.apply(null, done) : NaN;
+  if (o.readyAt && !/working/i.test(o.status || '') && (isNaN(last) || utcMs(o.readyAt) > last))
+    return PROGRESS + 'Ready for agent set ' + o.readyAt + ': the agent will act on this and rewrite it.';
+  if (/working/i.test(o.status || '')) return PROGRESS + 'The agent is working on ' + (label || 'the pull request') + '.';
+  if (!active) return '';
+  const w = stagingWarning(o.staging, o.built, prs, o.readyAt);
+  const preview = !o.staging ? 'no preview yet' : w ? 'preview ' + w.replace(/^\u26a0\s*/, '') : 'preview current' + (o.built && o.built.at ? ' (built ' + o.built.at + ')' : '');
+  return PROGRESS + label + ' open; ' + preview + '.';
+}
+
+/** The text with its progress line replaced (or removed when line is ''). */
+function withProgress(text, line) {
+  const t = String(text);
+  if (!t.trim()) return t;
+  const lines = t.split('\n');
+  const stale = lines[0] === STALE ? [lines.shift()] : [];
+  while (lines.length && lines[0].indexOf(PROGRESS) === 0) lines.shift();
+  return stale.concat(line ? [line] : [], lines).join('\n');
+}
+
+/**
+ * When each row's Ready for agent turned Yes (owner, 2026-10-31: "i just set
+ * Ready for agent to Y ... expected Staging review to get a stale warning").
+ * Kept per change set as "ready:CS-001" = the time, cleared on No. A Yes the
+ * script first sees on a row the agent has already worked (the script was
+ * just installed or re-pasted) counts from the agent's last completion.
+ */
+function readyTimes(s, csCol, prOf, want, props) {
+  const readyCol = col(s, 'Ready for agent'), readyAt = {};
+  if (readyCol < 0 || csCol < 0) return readyAt;
+  const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
+  s.rows.forEach((r, k) => {
+    const cs = String(r[csCol]).trim();
+    if (!cs) return;
+    const key = 'ready:' + cs, was = props.getProperty(key);
+    if (/^yes$/i.test(String(r[readyCol]).trim())) {
+      const done = (prOf[cs] || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
+      const first = done.length ? new Date(Math.max.apply(null, done)).toISOString().slice(0, 16).replace('T', ' ') + 'Z' : now;
+      if (!was && want(k)) props.setProperty(key, first);
+      readyAt[cs] = was || (want(k) ? first : '');
+    } else if (was && want(k)) props.deleteProperty(key);
+  });
+  return readyAt;
+}
+const isYes = (s, r, h) => { const c = col(s, h); return c >= 0 && /^yes$/i.test(String(r[c]).trim()); };
 
 /**
  * The agent's "Decision needed" block in bold, so a reader sees at once
@@ -1252,28 +1323,7 @@ function refreshDraft(rows) {
     const urls = issuesOf[String(r[c.cs]).trim()] || [];
     return rich(urls.flatMap((u, i) => (i ? [{ t: '\n' }] : []).concat([{ t: issueLabel(u), url: u }])));
   });
-  // When each row's Ready for agent turned Yes (owner, 2026-10-31: "i just
-  // set Ready for agent to Y ... expected Staging review to get a stale
-  // warning"). Kept per change set as "ready:CS-001" = the time, cleared on
-  // No.
-  const readyCol = col(fb, 'Ready for agent'), readyAt = {};
-  if (readyCol >= 0) {
-    const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
-    fb.rows.forEach((r, k) => {
-      const cs = String(r[c.cs]).trim();
-      if (!cs) return;
-      const key = 'ready:' + cs, was = props.getProperty(key);
-      if (/^yes$/i.test(String(r[readyCol]).trim())) {
-        // A Yes the script first sees on a row the agent has already worked
-        // (the script was just installed or re-pasted) counts from the
-        // agent's last completion, not from now: it may already be answered.
-        const done = (prOf[cs] || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
-        const first = done.length ? new Date(Math.max.apply(null, done)).toISOString().slice(0, 16).replace('T', ' ') + 'Z' : now;
-        if (!was && want(k)) props.setProperty(key, first);
-        readyAt[cs] = was || (want(k) ? first : '');
-      } else if (was && want(k)) props.deleteProperty(key);
-    });
-  }
+  const readyAt = readyTimes(fb, c.cs, prOf, want, props);
   writeRows(fb, c.agentic, only, r => {
     const cs = String(r[c.cs]).trim();
     return agenticCell(stOf[cs] || '', prOf[cs] || [], { readyAt: readyAt[cs], talk: talkOf[cs] });
@@ -1287,17 +1337,12 @@ function refreshDraft(rows) {
   });
   // Feedback (agent): flagged stale while the row's blue cells differ from
   // what the proposal was written against.
-  const ag = col(fb, COLS.draft.agentFeedback || 'Feedback (agent)');
-  if (ag >= 0) {
-    fb.rows.forEach((r, k) => {
-      if (!want(k)) return;
-      const cs = String(r[c.cs]).trim();
-      const t = staleText(r[ag], basisOf(fb.header, r, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback), basisOfCs[cs]);
-      if (t !== null) fb.sh.getRange(k + fb.top, ag + 1, 1, 1).setValues([[asText(t)]]);
-      unready(fb, r, k, r[ag], t);
-      markDecision(fb.sh.getRange(k + fb.top, ag + 1, 1, 1), t === null ? r[ag] : t);
-    });
-  }
+  const lineOf = {};
+  fb.rows.forEach(r => {
+    const cs = String(r[c.cs]).trim();
+    if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(fb, r, 'Ready for merge'), status: stOf[cs] || '', prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] });
+  });
+  markStale(fb, c.cs, basisOfCs, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback, COLS.draft.agentFeedback || 'Feedback (agent)', lineOf, want);
 }
 /** A dropdown name without its indent (U+2800 blanks; old "\u2514 "/"\u2502 " marks) or spaces. */
 const bareName = n => String(n).replace(/^[\s\u2800\u2502\u2514]+/, '').trim();
