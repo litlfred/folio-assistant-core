@@ -55,6 +55,7 @@ function folio(tabs?: Record<string, string>): string {
 function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
   const written: Record<string, Record<string, unknown[][]>> = {};
   const props: Record<string, string> = {};
+  const toasts: string[] = [];
   // A write lands at its rows: a whole column is the array of its rows from
   // row 2; a one-row write fills only its place.
   // A legend row ("Instructions", or the older "Colour key") above the header moves the data down.
@@ -116,6 +117,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
     SpreadsheetApp: {
       getActive: () => ({
         getId: () => "copy-sheet-id",
+        toast: (msg: string) => toasts.push(msg),
         getSheetByName: (n: string) => (tabs[n] ? sheet(n) : null),
         insertSheet: (n: string) => ((tabs[n] = { id: 99, rows: [["Section", "Link"]] }), sheet(n)),
       }),
@@ -132,7 +134,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
       }),
     },
   };
-  return { g, written, props, sheet };
+  return { g, written, props, sheet, toasts };
 }
 
 function load(code: string, g: Record<string, unknown>) {
@@ -438,6 +440,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(dRows[0][1]).toContain("only the owner edits");
     expect(dRows[1][1]).toContain("Allow multiple selections");
     expect(dRows[2][1]).toContain("EDITORS");
+    expect(dRows[2][1]).toMatch(/Format: plain emails[\s\S]*Example[\s\S]*ana@example\.org\n\s+ben@example\.org/);
     // No Config row is taller than a window.
     expect(Math.max(...dRows.slice(0, 3).map((r) => r[1].split("\n").length))).toBeLessThanOrEqual(10);
     const d = tabInstructions(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
@@ -538,6 +541,7 @@ describe("review-sheet.gs in drafting mode", () => {
     const live = () => (t["Contributor Feedback"].prot ?? []).filter((p) => !p.removed);
     expect(live().map((p) => p.col)).toEqual(["Ready for agent", "Ready for merge"]);
     expect(live()[0].editors).toEqual(["owner@x.example", "a@x.example", "b@x.example"]);
+    expect(rt2.toasts.some((m) => /left out: not-an-email/.test(m))).toBe(true);
     load(code, rt2.g).refreshAll();
     expect(live()).toHaveLength(2);
     t.Config.rows = t.Config.rows.map((r) => (r[0] === "EDITORS" ? ["EDITORS", ""] : r));

@@ -543,8 +543,13 @@ any structural change to the document (a section added, moved or renamed).
 Everyone who works in a log is shared as Editor; protected ranges decide what
 each can change. Blue columns are open to all of them. The orange **Ready for
 agent** and **Ready for merge** columns are for editors only, and the owner
-names them in the Config tab's `EDITORS` row: plain emails, one per line (or
-separated by commas). installTriggers and Review links > Refresh now lock each
+names them in the Config tab's `EDITORS` row, column B: plain emails, no
+names, one per line (Ctrl+Enter or Cmd+Enter starts a line inside a cell),
+or separated by commas or semicolons. The cell's format is spelled out, with
+an example, in the `Instructions - Editors` row and in a note on the cell
+itself (owner, 2026-10-31: "no instructions on how editors row should look
+like, how separated"). Anything that is not an email is left out, and the
+refresh names it in a toast rather than dropping it silently. installTriggers and Review links > Refresh now lock each
 `Ready for ...` column to the owner plus those emails, under a protection the
 script owns and rebuilds each time (other protections are left alone). An
 empty row locks them to the owner alone, which is how every new sheet starts

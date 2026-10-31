@@ -450,9 +450,12 @@ export function setupSteps(c: SheetConfig): string[] {
 /** Who may set the Ready columns, and how the owner names them in the EDITORS row. */
 export function editorSteps(): string[] {
   return [
-    "Who may set Ready for agent and Ready for merge: the emails in the EDITORS row below, one per line.",
+    "Who may set Ready for agent and Ready for merge: the emails in the orange EDITORS cell below (column B).",
     "   • Share each of them as Editor first (Share button, pick Editor)",
     "   • Type their emails in the EDITORS cell; only the owner can change it",
+    "   • Format: plain emails only, no names; one per line (Ctrl+Enter, or Cmd+Enter on a Mac, starts a new line in a cell). Commas or semicolons also work",
+    "   • Example, for two editors:\n        ana@example.org\n        ben@example.org",
+    "   • Anything that is not an email is left out, and Refresh now says which",
     "   • Choose Review links, then Refresh now: the two Ready columns are locked to the owner plus them",
     "   • Leave it empty and only the owner can set them (the default)",
   ];
