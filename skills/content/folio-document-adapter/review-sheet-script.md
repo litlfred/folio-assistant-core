@@ -198,9 +198,18 @@ sending the file.
 A copy of a sheet carries its Apps Script, so anyone starting from a
 template, us or someone else, should know what they are running.
 
-- **Nothing runs until the sheet's owner allows it.** Editors of the sheet
-  never run it. The owner runs `installTriggers`; Google then shows the
-  scopes and the triggers run as the owner.
+- **Nothing runs until the sheet's owner allows it.** The owner runs
+  `installTriggers`; Google then shows the scopes, and the triggers run as
+  the owner, whoever's edit fires them. So an editor's edit makes owner
+  code read what they typed: the script therefore never writes typed text
+  as a formula (`asText`, `q`), and touches only this sheet.
+- **Security review.** [`tools/review-sheet-sync/security-review.md`](../../../tools/review-sheet-sync/security-review.md)
+  (2026-10-31) records the threat model and findings F1 to F10, each fixed
+  with a test or accepted with its reason. Re-review on any new write sink,
+  service, or editor-writable tab.
+- **The agent caps new issues** (finding F6): it opens a change set's
+  issue only for a row with a Title or feedback text, and asks a person
+  before opening more than 20 in one sync.
 - **This sheet only.** The template starts with `@OnlyCurrentDoc`, so the
   consent screen asks for "this spreadsheet", not all of the owner's
   spreadsheets. The script uses only SpreadsheetApp, PropertiesService,
