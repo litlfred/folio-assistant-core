@@ -58,9 +58,12 @@ Called from content-change-review after the first push and after every revision,
       </bpmn:extensionElements>
 
       <bpmn:documentation>
-        peaceiris/actions-gh-pages deploys to gh-pages branch
-        under STAGING/&lt;branch-slug&gt;/ with keep_files: true
-        so other staging deployments and the main site are preserved.
+        The stage job copies the built site into gh-pages under
+        STAGING/&lt;branch-slug&gt;/, then `staging-share.ts apply` keeps only
+        the files that differ from the live site (cat-harness-tools#1115).
+        The preview's staging-sw.js serves every other file from the live
+        site and puts the staging banner back on it. Other previews and the
+        main site are left as they are.
       </bpmn:documentation>
       <bpmn:incoming>p2</bpmn:incoming>
       <bpmn:outgoing>p3</bpmn:outgoing>

@@ -24,7 +24,7 @@ Putting one push of a content change where a person can look at it: build the st
 
 - Who: the `CI/CD Pipeline` lane (role `build-pipeline`).
 - Skill: `feature-staging`.
-- What: peaceiris/actions-gh-pages deploys to gh-pages branch under STAGING/<branch-slug>/ with keep_files: true so other staging deployments and the main site are preserved.
+- What: The stage job copies the built site into gh-pages under STAGING/<branch-slug>/, then `staging-share.ts apply` keeps only the files that differ from the live site (cat-harness-tools#1115).
 - Record it: `workflow_complete` with `node: "Task_DeployStaging"`.
 - next: → `Task_CommentPR` (Comment staging URL on PR)
 
