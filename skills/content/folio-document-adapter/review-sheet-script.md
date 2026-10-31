@@ -40,7 +40,8 @@ comment).
 | Owner | the whole sheet | Config `EDITORS` | anything the agent or script writes |
 | Apps Script (`review-sheet.gs`, built by Tool `review-sheet-sync`) | Config (CFG, COLS, DATA, EDITORS); the people's tabs; the Agent tab(s) | Grey columns (ids, links, joins); Green columns copied from the Agent tab(s); the STALE mark on the agent column; `Ready for agent` back to No once, on the turn to stale; the Watch tab; protections on the Ready columns | Blue columns' contents; Orange except the stale reset; the Agent tab(s) |
 | Agent (sync or watcher) | the whole sheet; the folio's repository | the Agent tab(s) (one row per change set, and in public comment one row per comment on Agent - Comments); the agent column, `Feedback (agent)` (drafting) or `Change Set Feedback (agent)` (public comment); Config rows other than EDITORS | Blue, Orange, Grey; the Title on a drafting sheet |
-| Tool `review-sheet-sync` | the folio's `review/*/sheet-sync.json`, anchors, line map | `Code.gs` (generic); the Config rows for one sheet (`--config ... --out rows`) | the sheet itself |
+| Tool `review-sheet-sync` | the folio's `review/*/sheet-sync.json`, anchors, line map | `Code.gs` (generic); the Config rows for one sheet (`--config ... --out rows`); a drafting sheet's TOC rows (`--toc-out rows`) | the sheet itself |
+| Script `review-anchors-from-folio.ts` | the folio's document manifests and block prose; optionally the library file it was seeded from | `folio/<doc>/review-anchors.json` (`--check` compares) | the sheet |
 
 **A question to people goes in the sheet, not only in chat** (owner,
 2026-10-31: "how would the editor / feedback committee / review committee
@@ -121,6 +122,9 @@ bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.t
 # one document's Config rows, from the folio's repository root
 bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts \
   --repo . --config review/public-comment/sheet-sync.json --out config-rows.json
+# a drafting sheet also gets its TOC tab (the Selected Sections dropdown)
+bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts \
+  --repo . --config review/drafting/sheet-sync.json --out config-rows.json --toc-out toc-rows.json
 ```
 
 The agent writes `config-rows.json` into the Config tab (A1 down, columns A
@@ -460,15 +464,15 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    keeps tabs, colours, dropdowns, locks and the script.
 2. **Share it.** Share > add contributors or reviewers as **Editor**. The
    locks still keep them to the blue columns.
-3. **Write the Config tab (agent).** Give the agent the copy's URL. It adds
-   `"sheet": "<id>"` to the folio's `review/<mode>/sheet-sync.json`, builds
-   the rows (`--config … --out config-rows.json`) and writes them into
-   Config with the Sheets connector. For drafting it also fills the hidden
-   TOC by the first refresh.
-4. **Add editors to the Ready columns.** Data > Protect sheets and ranges >
-   "Ready columns: editors" > Change permissions > "Restrict who can edit
-   this range" > Custom > add each editor's email > Done. Only they and the
-   owner can then set Ready for agent and Ready for merge.
+3. **Link it to the repository (agent).** Give the agent the copy's URL and
+   the document's repository. The agent follows "Linking a sheet to a
+   repository" below. Until it does, Config holds only its Instructions,
+   Key and EDITORS rows, the Selected Sections dropdown is empty, and the
+   script says "not linked to a document repository yet" with the sheet's
+   ID when the sheet opens and on every run.
+4. **Name the editors (owner).** Type their emails in Config's orange
+   `EDITORS` row, or leave it empty so only the owner can set the Ready
+   columns (below).
 5. **Install the script.** Extensions > Apps Script. Replace all of
    `Code.gs` with the published generic file and save (the only file to
    paste). Pick **installTriggers**
@@ -500,6 +504,40 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    after the template has them keep them. The same steps are written at the
    top of the Config tab, in its `Instructions - Setup` row, so they stay with
    the sheet (owner, 2026-10-31); the script ignores that row.
+
+### Linking a sheet to a repository
+
+A copied sheet knows nothing about its document until the agent links it
+(owner, 2026-10-31: DTH-PC's copy opened with an empty Config and an empty
+dropdown, and nothing said why). Linking is repository work first and sheet
+work second, in this order:
+
+1. **The folio has a section list.** A drafting sheet's dropdown is the
+   document's chapters and sections, read from
+   `folio/<doc>/review-anchors.json`. The folio's `package.json` declares
+   `review:anchors` and `check:review-anchors`, both running
+   `folio-assistant-core/scripts/review-anchors-from-folio.ts --document <doc>`.
+   A document seeded from a library file adds `--library <entry> --source
+   <file> --source-label <text>`; one authored from scratch (dth-pc, dth-sc)
+   leaves all three out. Run `review:anchors` and commit the file. A new
+   document folio declares both scripts from its first commit, so no sheet
+   ever waits on them.
+2. **The folio names the sheet.** `review/<mode>/sheet-sync.json`:
+   `{"mode":"drafting","anchors":"folio/<doc>/review-anchors.json","sectionUrl":"en/<doc>/#","sheet":"<spreadsheet id>"}`.
+3. **The agent writes the sheet.** From the folio's root:
+   `bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts --config review/<mode>/sheet-sync.json --out config-rows.json --toc-out toc-rows.json`,
+   then, with the Sheets connector, the CFG, COLS and DATA rows into Config
+   below EDITORS (keep the sheet's EDITORS value), and for drafting the TOC
+   rows into the TOC tab from A1. The TOC rows are exactly what the script's
+   refresh writes, so the dropdown works before anyone pastes the script.
+4. **The agent says what is left for a person:** paste Code.gs and run
+   installTriggers (step 5 above), and tick Allow multiple selections
+   (step 6).
+
+When the branch carrying the folio is not merged yet, the agent may run steps
+1 and 3 from that branch without pushing to it, and write the sheet; the
+branch's owner commits the anchors and sheet-sync.json. Re-run step 3 after
+any structural change to the document (a section added, moved or renamed).
 
 **Who may set the Ready columns: the `EDITORS` row** (owner, 2026-10-31).
 Everyone who works in a log is shared as Editor; protected ranges decide what
