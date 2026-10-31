@@ -2,8 +2,9 @@
  * Folio review sheet: the stub that stays in each sheet.
  *
  * The code itself lives once, in the Apps Script library "Folio Review
- * Library", added to this project under Libraries with the identifier Review
- * and version HEAD. Updating the library updates every sheet; this file never
+ * Library" (Script ID 1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ),
+ * added to this project under Libraries with the identifier Review and
+ * version HEAD. Updating the library updates every sheet; this file never
  * changes. Each function hands the library this sheet's own services, so its
  * settings, lock and triggers stay this sheet's.
  *

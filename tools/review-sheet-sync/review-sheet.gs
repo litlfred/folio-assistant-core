@@ -75,6 +75,7 @@ const CONFIG_TAB = 'Config';
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
 const SCRIPT_VERSION = '@@STAMP@@';
+const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
   'in the function list (next to Run and Debug), then press Run.';
@@ -138,8 +139,9 @@ function showVersion() {
   SpreadsheetApp.getUi().alert('Review sheet script',
     'This sheet runs: ' + SCRIPT_VERSION + '\n\n' +
     'The latest published script: ' + LATEST_URL + '\n' +
-    'Its stamp is near the top ("at ..."). If it differs, update: copy it, then Extensions, then Apps Script, ' +
-    'replace Code.gs, save, and choose Review links, then Refresh now.',
+    'Its stamp is near the top ("at ..."). If it differs, the owner pastes it once into the Folio Review Library ' +
+    '(' + LIBRARY_URL + '); every sheet that uses the library then runs it. A sheet with the whole script pasted in ' +
+    'instead: Extensions, then Apps Script, replace Code.gs, save, and Review links, then Refresh now.',
     SpreadsheetApp.getUi().ButtonSet.OK);
 }
 
