@@ -4,7 +4,7 @@ description: >
   Turn a source publication's figures into computable diagrams when a folio
   is built from its L1 entry. Every declared figure gets a block, and each one
   is rebuilt in the form its type calls for: an ArchiMate view, BPMN, DMN, a
-  class diagram, Mermaid, or an SVG generated from data. The PDF crop stays
+  FHIR logical model, or an SVG generated from data, always from one schema-backed source. The PDF crop stays
   beside the rebuild as the cited source. The figure-coverage check counts
   what is missing and what is still only a picture.
 graph-typologies:
@@ -47,15 +47,20 @@ Two separate failures sat behind that question:
    | actors, systems, components, layers of an architecture | an **ArchiMate view** | the reference architecture the folio mounts (e.g. smart-ra `tools/archimate-dth/`), linked from the block's `meta.figureViews` |
    | a workflow with tasks, gateways, lanes | **BPMN 2.0** | the folio's `processes/`, or the DAK it is adapted from |
    | a decision or a transition rule | **DMN 1.3** | `processes/decisions/` |
-   | classes, attributes, cardinalities | a **class diagram** (Mermaid `classDiagram`, or the ArchiMate data objects) | the block, or the information-model view |
-   | a graph of named boxes and arrows with no architecture semantics | **Mermaid** `flowchart` | the block |
+   | classes, attributes, cardinalities | **FHIR logical models** (FSH), drawn as a UML class diagram generated from them | the upstream IG (e.g. smart-pcmt), else a litlfred FSH repo |
+   | a graph of named boxes and arrows | find what the boxes ARE (processes, actors, systems) and model it as **ArchiMate** elements and relationships | the reference architecture |
    | phases, layers, nested shapes, a tree, a staircase | an **SVG generated from data**: a data file plus a generator script, like dth-hrh `scripts/folio/diig_phases_hrh.py` | the folio's `media/` with the generator beside it |
    | a table of values drawn as a picture | a **table** block | the block |
    | a country example, a photograph, a screenshot, a third-party figure | **keep the cited picture** (`scope: "rebuild"` exclusion, signed off) | unchanged |
 
-   One figure that appears in several publications (the DIIG phases chart,
-   the SMART Guidelines layers, the ANC workflow) is rebuilt **once**, in
-   the layer they all mount, and each folio points at it.
+   **One source, never a copy (owner, 2026-10-31: "dont want to duplicate
+   content").** Every rebuilt figure is generated from, or links to, ONE
+   schema-backed source: an ArchiMate model, a BPMN or DMN file, a FHIR
+   logical model, or a data file whose labels are glossary IRIs. A figure
+   that appears in several publications (the DIIG phases chart, the SMART
+   Guidelines layers, the ANC workflow) has one source in the layer they all
+   mount, and each folio points at it. Content that already lives upstream
+   (smart-pcmt's FHIR models for dth-pc) is linked, never re-typed.
 3. **Start from the drawing's own structure.** `pdf-vector-figures.py`
    already records, per render, the labelled boxes (`assembly.boxes`) and
    which open strokes join two of them. That is a draft node and edge list.
@@ -64,8 +69,8 @@ Two separate failures sat behind that question:
 4. **Keep the picture as evidence.** The rebuilt block cites the PDF page and
    keeps `meta.source.file` pointing at the crop, so a reviewer can compare.
    Record how it was made in `meta.source.method`: `archimate-view`, `bpmn`,
-   `dmn`, `mermaid`, `class-diagram`, `generated` or `redrawn`, plus
-   `generator` when a script draws it.
+   `dmn`, `fhir-logical-model`, `generated` or `redrawn`, plus `generator`
+   when a script draws it and the source's path or IRI.
 5. **Assert nothing the figure does not draw.** A rebuild is a transcription
    of the drawing. A relation the figure does not draw is not added, and
    counts, dates and country facts stay cited source content, never model
@@ -140,9 +145,17 @@ script (precedent: dth-hrh `scripts/folio/diig_phases_hrh.py`).
   kit, Localisation) links to the SKOS term, an `<a href>` around the text.
 - A chart that appears in several publications is generated once, in the
   shared layer.
-- A box-and-arrow graph with no layout meaning can use a Mermaid source
-  rendered to SVG at build time. Commit the source and the SVG, and run a
-  `--check` that fails when the SVG is stale.
+
+### Mermaid is a rendering, never a source
+
+Mermaid is a drawing language, not a schema. Nothing downstream consumes it:
+no KG import, no validator, and the document site does not render it. Its node
+names are local strings with no IRI, so they cannot link to a glossary term,
+an ArchiMate element or a FHIR model. A hand-written `.mmd` is therefore a
+second copy of content, which the one-source rule forbids. Mermaid may appear
+only as a view GENERATED from a schema-backed source, when it lays out better
+than the native renderer, and then the generated text and SVG are build
+output, not authored files.
 
 ### Drop the flattened figure text from the prose
 

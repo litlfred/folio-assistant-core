@@ -65,8 +65,7 @@ export const COMPUTABLE_METHODS = [
   "archimate-view",
   "bpmn",
   "dmn",
-  "mermaid",
-  "class-diagram",
+  "fhir-logical-model",
 ] as const;
 
 export const BLOCK_KINDS = ["figure", "diagram", "table"] as const;
