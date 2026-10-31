@@ -27,7 +27,7 @@ exception to the rule above: they live in `cat-harness-tools/schemas/kg/material
 
 <!-- skills:index:begin -->
 
-_44 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
+_46 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
 
 **`skills/`** (1)
 
@@ -45,7 +45,7 @@ _44 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`registry-authority-contract`](skills/content/content-lifecycle-ext/registry-authority-contract.md) | The contract the `external-registry` role is held to when a candidate source is checked against the body that publishes it: resolve the identifier through its own API and return the record, so… |
 | [`review-comments`](skills/content/content-lifecycle-ext/review-comments.md) | Reviewer comments on a folio's edit-set, from a tagged pull-request comment to a structured todo on the review page. |
 
-**`skills/content/folio-document-adapter/`** (19)
+**`skills/content/folio-document-adapter/`** (20)
 
 | Skill | What it is for |
 |---|---|
@@ -65,6 +65,7 @@ _44 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`folio-getting-started`](skills/content/folio-document-adapter/folio-getting-started.md) | The content-folio half of the harness's getting-started skill: binds processes/conduct/getting-started.bpmn and decisions/folio-intent.dmn, interprets describeRepository() content-type markers… |
 | [`folio-repo-conversion`](skills/content/folio-document-adapter/folio-repo-conversion.md) | The content-folio half of the harness's repo-conversion skill: outside-content evidence and refutation candidate scanning, content-type marker declarations, and dispatching library and content… |
 | [`normative-statements`](skills/content/folio-document-adapter/normative-statements.md) | Carry a **recommendation, requirement or rule** in a document folio — the thing an L1 health-policy guidance note, a standard, or a terms-of-reference document exists to state. |
+| [`public-comment-channels`](skills/content/folio-document-adapter/public-comment-channels.md) | Set up the channels a public-comment release goes out on (an offline Excel sheet, a Google Form, a GitHub issue form, and the review sheet), each limited to the release's fixed references, with the… |
 | [`public-comment`](skills/content/folio-document-adapter/public-comment.md) | Run a **public review** of a document folio. |
 | [`review-sheet-agent-columns`](skills/content/folio-document-adapter/review-sheet-agent-columns.md) | Whenever an agent works on a change set of a folio whose review sheet is kept by the Tool `review-sheet-sync`, it writes the Agent tab's columns for that change set and its comments as it goes:… |
 | [`review-sheet-script`](skills/content/folio-document-adapter/review-sheet-script.md) | Build, install and reuse the Google Apps Script that keeps a review sheet's links and joined columns current (Tool `review-sheet-sync`). |
@@ -97,12 +98,13 @@ _44 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`glossary-terms`](skills/library/cataloguing/glossary-terms.md) | Add terms to an instance's glossary: local SKOS terms (folio-glossary/v1) with a definition, a code and links to external SKOS concepts, and references to whole external schemes. |
 | [`ontologist`](skills/library/cataloguing/ontologist.md) | Semantic Ontologist — scans narrative text for ambiguous terms, generates a formal glossary/registry, and produces a mapping linking narrative strings to formal identifiers. |
 
-**`skills/library/ingestion/`** (5)
+**`skills/library/ingestion/`** (6)
 
 | Skill | What it is for |
 |---|---|
 | [`audio-transcription`](skills/library/ingestion/audio-transcription.md) | Turn recorded speech (a meeting recording, a video with audio, an interview) into a transcript the library can cite, and choose WHICH open-source recogniser to run for the job: whisper.cpp by… |
 | [`document-intake`](skills/library/ingestion/document-intake.md) | Process uploaded documents (PDFs, scans, LaTeX, structured/normative guidelines, etc.) from uploads/ into structured content objects. |
+| [`figure-rebuild`](skills/library/ingestion/figure-rebuild.md) | Turn a source publication's figures into computable diagrams when a folio is built from its L1 entry. |
 | [`l1-coverage`](skills/library/ingestion/l1-coverage.md) | Check that an L1 extraction accounted for every normative sentence in its source publication — captured as a node, or excluded for a fixed-list reason a person signed off. |
 | [`l1-document-ingestion`](skills/library/ingestion/l1-document-ingestion.md) | The detailed method for turning a DOCUMENT in `uploads/` into a complete L1 entry in `library/<bib-slug>/` — which rung reads it and why, what a complete L1 entry holds, why an inferred structure is… |
 | [`tabular-metadata`](skills/library/ingestion/tabular-metadata.md) | Extract tabular metadata from a CSV or spreadsheet as CSVW — tables, rows, headers, columns, datatypes and location on sheet — recording every field as determined or explicitly undetermined. |

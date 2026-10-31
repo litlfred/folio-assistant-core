@@ -30,7 +30,7 @@
   <bpmn:resource id="work-plan" name="Work plan (beans)"/>
 
   <bpmn:import namespace="https://litlfred.github.io/folio-assistant/workflows" location="editing-hci-validation.bpmn" importType="http://www.omg.org/spec/BPMN/20100524/MODEL" />
-  <bpmn:import namespace="https://litlfred.github.io/folio-assistant/workflows" location="public-comment.bpmn" importType="http://www.omg.org/spec/BPMN/20100524/MODEL" />
+  <bpmn:import namespace="https://litlfred.github.io/folio-assistant/workflows" location="public-comment-release.bpmn" importType="http://www.omg.org/spec/BPMN/20100524/MODEL" />
   <bpmn:collaboration id="Collaboration_FolioPublication">
     <bpmn:participant id="Participant_FolioPublication" name="Folio publication — one release of the folio" processRef="Process_Publication" />
   </bpmn:collaboration>
@@ -161,8 +161,8 @@
       <bpmn:outgoing>G11</bpmn:outgoing>
       <bpmn:outgoing>G21</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:callActivity id="CallActivity_PublicComment" name="Public comment on the review version" calledElement="Process_PublicComment">
-      <bpmn:documentation>When the draft is released for public comment: comments returned on the frozen, line-numbered review version are placed, triaged, recommended on by the review committee and decided by the editor (public-comment.bpmn). Bean v26p, issue #197.</bpmn:documentation>
+    <bpmn:callActivity id="CallActivity_PublicComment" name="Release for public comment" calledElement="Process_PublicCommentRelease">
+      <bpmn:documentation>When the draft goes out for public comment: the release date is agreed, the draft is frozen as a line-numbered public comment release, every channel is set up against it and announced, and the comments that come back are placed, triaged, recommended on by the review committee and decided by the editor (Process_PublicCommentRelease, which calls Process_PublicComment). Bean v26p, issue #197.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="public-comment" />
       </bpmn:extensionElements>

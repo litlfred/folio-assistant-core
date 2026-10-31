@@ -2,7 +2,6 @@
   "id": "content-publish",
   "name": "Content Publication",
   "description": "Package, version, and publish approved content.",
-  "roles": ["publication-manager", "programme-manager", "admin"],
   "requiredCapabilities": [
     { "capabilityId": "git-push", "degradation": "fail" }
   ],

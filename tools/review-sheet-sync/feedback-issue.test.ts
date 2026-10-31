@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { feedbackRow, parseFeedbackIssue } from "./feedback-issue.js";
+import { feedbackBasis, feedbackRow, parseFeedbackIssue } from "./feedback-issue.js";
 
 const anchors = {
   chapters: [{ dir: "ch01-why", title: "Chapter 1. Why it matters", number: 1 }],
@@ -45,7 +45,7 @@ describe("feedback issues become Contributor Feedback rows", () => {
   test("the row: Sections from the block's anchor, a draft Title, feedback signed by login", () => {
     expect(feedbackRow({ body: formBody, url: "https://github.com/o/r/issues/7", login: "ana" }, anchors)).toEqual({
       title: "1.1 Global challenges: Add shortage numbers.",
-      sections: "1.1 Global challenges",
+      sections: "\u2800\u2800\u28001.1 Global challenges",
       feedback: "@ana (Technical): Add shortage numbers. They matter.",
       issue: "https://github.com/o/r/issues/7",
     });
@@ -56,5 +56,19 @@ describe("feedback issues become Contributor Feedback rows", () => {
     const yml = readFileSync(join(import.meta.dir, "../../templates/issue-forms/block-feedback.yml"), "utf8");
     const ids = [...yml.matchAll(/^\s+id:\s*(\S+)\s*$/gm)].map((m) => m[1]);
     expect(ids).toEqual(["content", "section", "block", "url", "source", "type", "comment", "proposed"]);
+  });
+});
+
+describe("feedbackBasis", () => {
+  const header = ["Change-set", "Title", "Selected Sections", "Contributor Feedback (CL)", "Ready for merge", "Contributor Feedback (agent)", "Issue"];
+  const row = ["CS-001", "Define registry", "\u2800\u2800\u28001.1 Global challenges", "CL: needs a definition", "No", "Try X", "dth#1"];
+  const b = feedbackBasis(header, row);
+  test("changes when a person's cell changes", () => {
+    expect(feedbackBasis(header, row.map((v, i) => (i === 3 ? v + " more" : v)))).not.toBe(b);
+    expect(feedbackBasis(header, row.map((v, i) => (i === 1 ? "Other" : v)))).not.toBe(b);
+  });
+  test("ignores the agent's own proposal, the mechanical columns, Ready, and tree marks", () => {
+    expect(feedbackBasis(header, row.map((v, i) => (i === 5 ? "Try Y" : i === 6 ? "dth#2" : i === 4 ? "Yes" : v)))).toBe(b);
+    expect(feedbackBasis(header, row.map((v, i) => (i === 2 ? "1.1 Global challenges" : v)))).toBe(b);
   });
 });

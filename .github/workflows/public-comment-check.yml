@@ -40,8 +40,8 @@ jobs:
   check:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
-      - uses: litlfred/cat-harness-tools/.github/actions/mount-layers@main
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+      - uses: litlfred/cat-harness-tools/.github/actions/mount-layers@45b0894620099663f17abb584f376502d702422a # main
       - env:
           STORE: ${{ inputs.store }}
         run: bun run folio-assistant-core/scripts/public-comment-changesets.ts check --store "$STORE"
@@ -51,10 +51,10 @@ jobs:
     needs: check
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           ref: ${{ github.event.repository.default_branch }}
-      - uses: litlfred/cat-harness-tools/.github/actions/mount-layers@main
+      - uses: litlfred/cat-harness-tools/.github/actions/mount-layers@45b0894620099663f17abb584f376502d702422a # main
       - name: Bring every issue into line with its record
         env:
           GITHUB_TOKEN: ${{ github.token }}

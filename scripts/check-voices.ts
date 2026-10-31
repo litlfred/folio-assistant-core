@@ -293,10 +293,28 @@ function main(): number {
    * silently pick one.
    */
   const instanceOfSource = new Map<string, Map<string, string>>();
+  /**
+   * Sources HELD ELSEWHERE: the voice names an instance this checkout does not
+   * compose, and says where the document is held with a `url`. Owner, 2026-10-31
+   * (fa#2781): "report as held elsewhere". Such a citation is not checked here,
+   * since there is nothing here to check it against, and it is listed rather
+   * than failed. A source with no `url` stays a problem: then nothing says
+   * where it is, and an unknown instance is most likely a typo.
+   */
+  const heldElsewhere = new Map<string, Map<string, string>>(); // voice -> instance -> url
+  const elsewhere: string[] = [];
+  const isHeldElsewhere = (voice: string, instance: string | undefined): string | undefined => {
+    if (instance === undefined) return undefined;
+    const url = heldElsewhere.get(voice)?.get(instance);
+    return url !== undefined && instanceRootFor(instance, rootOf.get(voice)!) === undefined ? url : undefined;
+  };
   for (const v of voices) {
     const m = new Map<string, string>();
     for (const srcDecl of v.sources) {
       if (srcDecl.libraryId && srcDecl.instance) m.set(srcDecl.libraryId, srcDecl.instance);
+      if (srcDecl.instance && srcDecl.url) {
+        (heldElsewhere.get(v.id) ?? heldElsewhere.set(v.id, new Map()).get(v.id)!).set(srcDecl.instance, srcDecl.url);
+      }
     }
     instanceOfSource.set(v.id, m);
   }
@@ -313,7 +331,10 @@ function main(): number {
     if (src.quote.trim().length < MIN_QUOTE) {
       problems.push(`${where}: quote is ${src.quote.trim().length} chars — a citation that short cannot be checked`);
     }
-    if (src.libraryId && src.sectionId) {
+    const elsewhereUrl = isHeldElsewhere(voice, citedInstance);
+    if (elsewhereUrl !== undefined && (src.libraryId || src.path)) {
+      elsewhere.push(`${where}: cites ${citedInstance}:${src.libraryId ?? src.path}${src.sectionId ? `/${src.sectionId}` : ""}, held at ${elsewhereUrl}`);
+    } else if (src.libraryId && src.sectionId) {
       // The resolver's own explanation is used verbatim: it distinguishes four
       // failures this check cannot, and restating them here would make a fifth
       // wording of the same facts, free to drift from the four.
@@ -352,6 +373,11 @@ function main(): number {
   // library id nobody ingested is the `source: null` defect wearing an id.
   for (const v of voices) {
     for (const s of v.sources) {
+      const elsewhereUrl = isHeldElsewhere(v.id, s.instance);
+      if (elsewhereUrl !== undefined) {
+        elsewhere.push(`${v.id}: names source ${s.instance}:${s.libraryId ?? s.path}, held at ${elsewhereUrl}`);
+        continue;
+      }
       if (s.libraryId) {
         // Document-level: no sectionId, so the resolver checks `structure.json`
         // — "was this ingested at all", which is a different question from
@@ -440,6 +466,13 @@ function main(): number {
     );
   }
   if (addressed.size > 0) console.log();
+
+  // Listed, not failed: the denominator says how much was NOT checked here.
+  if (elsewhere.length > 0) {
+    console.log(`${elsewhere.length} citation(s) held elsewhere, not checked here (the instance is not in this checkout):`);
+    for (const e of elsewhere) console.log(`  ~ ${e}`);
+    console.log();
+  }
 
   if (problems.length > 0) {
     console.error(`${problems.length} problem(s):`);

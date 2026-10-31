@@ -60,6 +60,7 @@ import { existsSync, mkdtempSync, readFileSync, readdirSync, rmSync, statSync, w
 import { tmpdir } from "node:os";
 import { dirname, join, relative, resolve } from "node:path";
 import { remark } from "remark";
+import remarkGfm from "remark-gfm";
 import remarkHtml from "remark-html";
 import { z } from "zod";
 
@@ -494,7 +495,9 @@ export const ChangeSetStructureSchema = z.object({
 });
 export type ChangeSetStructure = z.infer<typeof ChangeSetStructureSchema>;
 
-const renderProse = (md: string): string => String(remark().use(remarkHtml, { sanitize: false }).processSync(md));
+// GFM, as the published site renders it: without it a table's pipes reach the
+// review page's "Inline, as rendered" view as text.
+const renderProse = (md: string): string => String(remark().use(remarkGfm).use(remarkHtml, { sanitize: false }).processSync(md));
 
 function sideText(s: Snap | undefined): z.infer<typeof BlockSideTextSchema> | undefined {
   if (!s?.mdPath) return undefined;
