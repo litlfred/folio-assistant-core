@@ -494,7 +494,7 @@ function refreshLocked() {
     const humanDisp = {}, hNo = col(rpc, COLS.rpc.no), hD = col(rpc, COLS.rpc.disposition || 'Disposition');
     if (hNo >= 0 && hD >= 0) rpc.rows.forEach(r => { const n = String(r[hNo]).trim(); if (n) humanDisp[n] = String(r[hD]).trim(); });
     const readyAt = readyTimes(rcs, csCol, prOf, all, docProps_()), lineOf = {};
-    refreshRcs(rcs, rpc, csOf, stOf, prOf, readyAt);
+    refreshRcs(rcs, rpc, csOf, stOf, prOf, readyAt, builtOf);
     const cCol = col(rcs, CONFIRMED), confirmedOf = {};
     if (cCol >= 0) rcs.rows.forEach(r => { const cs = String(r[csCol]).trim(); if (cs) confirmedOf[cs] = confirmedNos(r[cCol], csOf[cs] || []); });
     writeRows(rcs, col(rcs, COLS.rcs.dispositionsAgent || DISPOSITIONS_AGENT), null, r => {
@@ -1489,7 +1489,12 @@ function agenticCell(status, prs, o) {
   const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
   const last = done.length ? Math.max.apply(null, done) : NaN;
   const queued = o.readyAt && !/working/i.test(status) && (isNaN(last) || utcMs(o.readyAt) > last);
-  const head = queued ? [{ t: 'Waiting on the agent since ' + o.readyAt + ' (Ready for agent set)', bold: true }]
+  // Once the agent records a step after Ready for agent, say what it is doing
+  // rather than that it is waited on (owner, 2026-10-31: "not sure what agent is doing").
+  const step = agentStep(o.step);
+  const stepped = step && step.name !== 'proposed' && (isNaN(last) || utcMs(step.at) >= last) && (!o.readyAt || utcMs(step.at) >= utcMs(o.readyAt));
+  const head = stepped ? [{ t: stepLine(step).replace(PROGRESS, ''), bold: true }]
+    : queued ? [{ t: 'Waiting on the agent since ' + o.readyAt + ' (Ready for agent set); it has not recorded a step yet', bold: true }]
     : /working/i.test(status) && o.talk ? [{ t: 'An agent is working on it: ', bold: true }, { t: 'conversation', url: o.talk }]
     : /needs human/i.test(status) ? [{ t: NEEDS_YOU + ': it is under "Decision needed" in the agent\'s feedback column. Write your answer (the letter) in your Blue feedback column, then an Editor sets Ready for agent to Yes.', bold: true }] : [];
   const body = agenticParts(status, prs);
@@ -1674,7 +1679,7 @@ function refreshRpc(s, pcOf, csOfNo, stOf, prOf) {
 
 // ---------- Review Change Sets ----------
 
-function refreshRcs(s, rpc, csOf, stOf, prOf, readyAt) {
+function refreshRcs(s, rpc, csOf, stOf, prOf, readyAt, builtOf) {
   const c = {};
   Object.entries(COLS.rcs).forEach(([k, h]) => (c[k] = col(s, h)));
   const p = {};
@@ -1702,7 +1707,7 @@ function refreshRcs(s, rpc, csOf, stOf, prOf, readyAt) {
   s.rows.forEach(r => {
     const cs = String(r[c.cs]).trim();
     const sts = [...new Set((csOf[cs] || []).map(n => stOf[n]).filter(Boolean))].join(', ');
-    out.agentic.push(agenticCell(sts, prOf[cs] || [], { readyAt: (readyAt || {})[cs] }));
+    out.agentic.push(agenticCell(sts, prOf[cs] || [], { readyAt: (readyAt || {})[cs], step: ((builtOf || {})[cs] || {}).step }));
     status.push([asText(csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)))]);
     const nos = (csOf[cs] || []).filter(n => rowOf[n]).sort((a, b) => a - b);
 
@@ -1930,7 +1935,7 @@ function refreshDraft(rows) {
   const readyAt = readyTimes(fb, c.cs, prOf, want, props);
   writeRows(fb, c.agentic, only, r => {
     const cs = String(r[c.cs]).trim();
-    return agenticCell(stOf[cs] || '', prOf[cs] || [], { readyAt: readyAt[cs], talk: talkOf[cs] });
+    return agenticCell(stOf[cs] || '', prOf[cs] || [], { readyAt: readyAt[cs], talk: talkOf[cs], step: (builtOf[cs] || {}).step });
   });
   // The same status as one plain value, for a filter (owner, 2026-10-31).
   if (c.status >= 0) writeRows(fb, c.status, only, r => rich([{ t: shownStatus(stOf[String(r[c.cs]).trim()] || '') }]));

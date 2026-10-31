@@ -1119,7 +1119,12 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
 
   test("Agentic status says the row is queued, then who has it", () => {
     const q = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z" });
-    expect(q.text.split("\n")[0]).toBe("Waiting on the agent since 2026-10-31 11:30Z (Ready for agent set)");
+    expect(q.text.split("\n")[0]).toBe("Waiting on the agent since 2026-10-31 11:30Z (Ready for agent set); it has not recorded a step yet");
+    // A step recorded after Ready for agent says what the agent is doing instead.
+    const st = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z", step: "editing 2026-10-31 11:47Z" });
+    expect(st.text.split("\n")[0]).toMatch(/^Agent: .+ \(since 11:47Z/);
+    // A step older than Ready for agent is the last round's, so it still waits.
+    expect(fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z", step: "editing 2026-10-31 11:00Z" }).text).toMatch(/^Waiting on the agent/);
     expect(q.text).toContain("dth-hrh#7");
     const w = fns.agenticCell("Working", [pr], { readyAt: "2026-10-31 11:30Z", talk: "https://claude.ai/code/x" });
     expect(w.text.startsWith("An agent is working on it: conversation\n")).toBe(true);
