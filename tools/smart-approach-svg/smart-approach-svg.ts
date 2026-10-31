@@ -6,7 +6,7 @@ export default toolFactory((t) =>
     id: "smart-approach-svg",
     title: "WHO SMART Guidelines approach chart",
     description:
-      "Draw the WHO SMART Guidelines approach chart (knowledge layers L1–L5 with their products, and their country adaptations, between the research, localisation and impact bands) as SVG from `who-iris/smart-guidelines-approach-figure/v1` data on a who-iris library entry, such as the product catalogue handbook's Fig. 5. Every label comes from the data.",
+      "Draw the WHO SMART Guidelines approach chart (knowledge layers L1–L5 with their products, and their country adaptations, between the research, localisation and impact bands) as SVG from `smart-guidelines-approach-figure/v1` data on a who-iris library entry, such as the product catalogue handbook's Fig. 5. Every label comes from the data.",
     install: { none: true },
     invoke: { shell: "bun run folio-assistant-core/scripts/smart-approach-svg.ts" },
     io: {

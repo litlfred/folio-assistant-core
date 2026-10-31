@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { type SmartApproachFigure, loadFigure, renderSvg, wrap } from "./smart-approach-svg.ts";
 
 const fig: SmartApproachFigure = {
-  $schema: "who-iris/smart-guidelines-approach-figure/v1",
+  $schema: "smart-guidelines-approach-figure/v1",
   figure: { library: "lib-a", label: "fig:5", caption: "Approach", page: 1, file: "f.png" },
   style: { band: "#0D97D4", panel: "#EEF4FB", card: "#FFFFFF", ink: "#1F2854", arrow: "#8C94AC", loop: "#1F2854" },
   loop: "Evidence loop",

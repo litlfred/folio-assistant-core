@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { type DiigFigure, loadFigure, renderSvg, resourceHref } from "./diig-phases-svg.ts";
 
 const fig: DiigFigure = {
-  $schema: "who-iris/diig-phases-figure/v1",
+  $schema: "diig-phases-figure/v1",
   figure: { library: "lib-a", label: "Fig. 1", caption: "Phases", page: 1, file: "f.png" },
   legend: { d: "PDF for print" },
   phases: [

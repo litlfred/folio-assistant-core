@@ -34,7 +34,7 @@ export interface Resource {
 export interface Tile { resource: string; columns: [number, number]; rows: [number, number]; outlinePhase: string }
 export interface ThisDocument { resource: string; style: "dashed" | "filled"; color: string; fill: string; note?: string }
 export interface DiigFigure {
-  $schema: "who-iris/diig-phases-figure/v1";
+  $schema: "diig-phases-figure/v1";
   figure: { library: string; label: string; caption: string; page: number; file: string };
   legend: Record<string, string>;
   phases: Phase[];
@@ -63,7 +63,7 @@ export function loadFigure(path: string): DiigFigure {
     const columns = Math.max(base.layout.columns, ...tiles.map((t) => t.columns[1] + 1));
     return { ...base, resources, layout: { ...base.layout, columns, tiles }, thisDocument: a.thisDocument };
   }
-  if (data.$schema !== "who-iris/diig-phases-figure/v1") throw new Error(`${path}: not diig-phases-figure/v1 data`);
+  if (data.$schema !== "diig-phases-figure/v1") throw new Error(`${path}: not diig-phases-figure/v1 data`);
   return data as DiigFigure;
 }
 

@@ -6,7 +6,7 @@ export default toolFactory((t) =>
     id: "diig-phases-svg",
     title: "DIIG phases, steps and resources chart",
     description:
-      "Draw a DIIG \"phases, steps and resources\" chart as SVG from `who-iris/diig-phases-figure/v1` data on a who-iris library entry (DIIG Fig. 1.1.1, or a handbook's republished version such as the product catalogue handbook's Fig. 4), or from a folio's `diig-phases-adaptation/v1` file that adds its own tiles and marks itself \"(this document)\". Every label comes from the data; tiles link to their library entry or glossary concept.",
+      "Draw a DIIG \"phases, steps and resources\" chart as SVG from `diig-phases-figure/v1` data on a who-iris library entry (DIIG Fig. 1.1.1, or a handbook's republished version such as the product catalogue handbook's Fig. 4), or from a folio's `diig-phases-adaptation/v1` file that adds its own tiles and marks itself \"(this document)\". Every label comes from the data; tiles link to their library entry or glossary concept.",
     install: { none: true },
     invoke: { shell: "bun run folio-assistant-core/scripts/diig-phases-svg.ts" },
     io: {

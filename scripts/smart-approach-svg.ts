@@ -17,7 +17,7 @@ export interface Layer { level: number; knowledge: Cell; country: Cell }
 export interface Band { id: string; label: string }
 export interface Row { id: "knowledge" | "country"; label: string[]; from: string; to: string; chained: boolean }
 export interface SmartApproachFigure {
-  $schema: "who-iris/smart-guidelines-approach-figure/v1";
+  $schema: "smart-guidelines-approach-figure/v1";
   figure: { library: string; label: string; caption: string; page: number; file: string };
   link?: { glossary?: string; library?: string; url?: string };
   style: { band: string; panel: string; card: string; ink: string; arrow: string; loop: string };
@@ -29,7 +29,7 @@ export interface SmartApproachFigure {
 
 export function loadFigure(path: string): SmartApproachFigure {
   const data = JSON.parse(readFileSync(path, "utf8"));
-  if (data.$schema !== "who-iris/smart-guidelines-approach-figure/v1") {
+  if (data.$schema !== "smart-guidelines-approach-figure/v1") {
     throw new Error(`${path}: not smart-guidelines-approach-figure/v1 data`);
   }
   const fig = data as SmartApproachFigure;

@@ -49,7 +49,7 @@ Two separate failures sat behind that question:
    | a decision or a transition rule | **DMN 1.3** | `processes/decisions/` |
    | classes, attributes, cardinalities | **FHIR logical models** (FSH), drawn as a UML class diagram generated from them | the upstream IG (e.g. smart-pcmt), else a litlfred FSH repo |
    | a graph of named boxes and arrows | find what the boxes ARE (processes, actors, systems) and model it as **ArchiMate** elements and relationships | the reference architecture |
-   | phases, layers, nested shapes, a tree, a staircase | an **SVG generated from data**: a data file plus a generator Tool. The DIIG phases chart is the worked example: `who-iris/diig-phases-figure/v1` data on the who-iris library entry of each publication that prints it, drawn by Tool `diig-phases-svg` | the data on the source's who-iris library entry; the folio commits the SVG, and adds only its own tiles in a `diig-phases-adaptation/v1` file |
+   | phases, layers, nested shapes, a tree, a staircase | an **SVG generated from data**: a data file plus a generator Tool. The DIIG phases chart is the worked example: `diig-phases-figure/v1` data on the who-iris library entry of each publication that prints it, drawn by Tool `diig-phases-svg` | the data on the source's who-iris library entry; the folio commits the SVG, and adds only its own tiles in a `diig-phases-adaptation/v1` file |
    | a table of values drawn as a picture | a **table** block | the block |
    | a country example, a photograph, a screenshot, a third-party figure | **keep the cited picture** (`scope: "rebuild"` exclusion, signed off) | unchanged |
 
@@ -140,7 +140,7 @@ layers, boxes, their text, and which feeds which. Then generate the SVG with a
 Tool. The DIIG phases chart is the worked example (owner, 2026-10-31, "B in
 who-iris"):
 
-- Each published version is transcribed once, as `who-iris/diig-phases-figure/v1`
+- Each published version is transcribed once, as `diig-phases-figure/v1`
   data on that publication's who-iris library entry, under `figure-data/`.
   DIIG Fig. 1.1.1 lives on `9789240010567-eng`, and the product catalogue
   handbook's Fig. 4 lives on `9789240116191-eng`.
@@ -149,7 +149,7 @@ who-iris"):
 - Tool `diig-phases-svg` (`bun run figure:diig-phases`) draws either one. The
   folio commits the SVG and records the data file in `meta.source.generated`.
 - The SMART Guidelines approach chart (L1–L5 layers and their country
-  adaptations) follows the same pattern: `who-iris/smart-guidelines-approach-figure/v1`
+  adaptations) follows the same pattern: `smart-guidelines-approach-figure/v1`
   data (the product catalogue handbook's Fig. 5 is on `9789240116191-eng`),
   drawn by Tool `smart-approach-svg` (`bun run figure:smart-approach`).
 - A source's own wording stays as printed, typos included ("prioritise
