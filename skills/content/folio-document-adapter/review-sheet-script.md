@@ -582,9 +582,13 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    and as written through the Sheets API) already carries it (owner,
    2026-10-31: "chip style was preselected on dth-pc log"). Neither Apps
    Script nor the Sheets API can read or set the multiple-selections tick, so installTriggers cannot check them directly. It shows the
-   steps, with the exact range, unless it has evidence they are done: a cell
-   already holding two sections from the list, or a Yes to the box's "Is this
-   done already?" (kept as the document property `dropdownDone`). Copies made
+   steps in a 30-second toast unless it has evidence they are done: a cell
+   already holding two sections from the list (or `dropdownDone`, set by the
+   older dialog). It is a toast, never a dialog: a dialog waits for an answer
+   in the sheet, and an Install run from the Apps Script editor then hangs
+   until Apps Script stops it at 6 minutes (owner, 2026-10-31, DTH-SC log:
+   "Exceeded maximum execution time"). Only the menu's "Which version is
+   this?" opens a dialog. Copies made
    after the template has them keep them. The same steps are written at the
    top of the Config tab, in its `Instructions - Dropdown` row, so they stay with
    the sheet (owner, 2026-10-31); the script ignores that row.

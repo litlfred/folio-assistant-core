@@ -994,6 +994,12 @@ describe("the Config tab's colours", () => {
 });
 
 describe("running the script from the editor", () => {
+  test("Install never waits on a dialog, which hangs a run started from the editor (owner, 2026-10-31)", () => {
+    const fns = [...code.matchAll(/^function (\w+)\([^)]*\) \{[\s\S]*?^\}/gm)];
+    const withAlert = fns.filter((m) => /\.alert\(/.test(m[0])).map((m) => m[1]);
+    expect(withAlert).toEqual(["showVersion"]);
+  });
+
   test("installTriggers is the first function, so the editor's Run button picks it", () => {
     expect(code.match(/^function (\w+)/m)?.[1]).toBe("installTriggers");
   });

@@ -199,8 +199,9 @@ function applyEditors(ss) {
  * added; an existing one is left alone, since writing it again would clear
  * its "Allow multiple selections" tick. Neither Apps Script nor the Sheets
  * API can read that tick, so the box is skipped only on
- * evidence: a cell already holding two sections from the list, or the person
- * having said it is done (Yes). The same steps are in the Config tab's Instructions row.
+ * evidence: a cell already holding two sections from the list (or, on a sheet
+ * installed before 2026-10-31, the person having said it is done). The same
+ * steps are in the Config tab's Instructions row.
  */
 function checkDropdown(ss) {
   if (!ss) throw new Error(RUN_THIS);
@@ -217,20 +218,16 @@ function checkDropdown(ss) {
   }
   const props = docProps_();
   if (had && (props.getProperty('dropdownDone') || multiPicked(cells))) return;
-  const range = "'" + sh.getName() + "'!" + cells.getA1Notation();
-  const ui = SpreadsheetApp.getUi();
-  const answer = ui.alert('Finish the Selected Sections dropdown',
-    (had ? 'Selected Sections is a dropdown' : 'Selected Sections is now a dropdown of the document\'s sections') +
-    ', but one setting only a person can make:\n\n' +
-    '\u2022 Click the column letter above "' + COLS.draft.sections + '" to select the column\n' +
-    '\u2022 Choose Data, then Data validation\n' +
-    '\u2022 Open the rule for ' + range + ' (it says "Dropdown (from a range)")\n' +
-    '\u2022 Tick Allow multiple selections\n' +
-    '\u2022 Press Done\n\n' +
-    'The script keeps the list and every pick current after that. These steps are also on the Config tab.\n\n' +
-    'Is this done already? Yes stops this message; No shows it again next time.',
-    ui.ButtonSet.YES_NO);
-  if (answer === ui.Button.YES) props.setProperty('dropdownDone', '1');
+  // A toast, never a dialog: a dialog waits for an answer in the sheet, and
+  // when Install is run from the Apps Script editor nobody sees it, so the
+  // run hangs until Apps Script stops it after 6 minutes (owner, 2026-10-31:
+  // "Exceeded maximum execution time" on the DTH-SC log).
+  try {
+    ss.toast('Selected Sections is ' + (had ? 'a dropdown' : 'now a dropdown of the document\'s sections') +
+      '. One step only a person can take: select the "' + COLS.draft.sections +
+      '" column, choose Data, then Data validation, open its rule, tick Allow multiple selections, and press Done. ' +
+      'The same steps are on the Config tab.', 'Finish the dropdown', 30);
+  } catch (e) { /* a toast is a courtesy */ }
 }
 
 /** True when some cell holds two or more sections from the list, which only a multi-select rule allows. */
