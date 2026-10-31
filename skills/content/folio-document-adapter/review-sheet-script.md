@@ -161,7 +161,7 @@ topic), and each change set gets a GitHub issue.
 
 | tab | who writes | columns |
 |---|---|---|
-| **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Sections** (a multi-select dropdown of the document's table of contents; the script links each choice to its place on the document page), any number of **Contributor Feedback (…)** columns, one per contributor, with their initials or name in the brackets (e.g. `Contributor Feedback (CL)`); the script reads every column whose header is `Contributor Feedback` or starts `Contributor Feedback (`. Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Green, from Agent by the script: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`), **Staging review page** (a "review" link to the change set's preview while its PR is open) |
+| **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Sections** (a multi-select dropdown of the document's table of contents; it stays plain, because a dropdown chip cannot carry a link), any number of **Contributor Feedback (…)** columns, one per contributor, with their initials or name in the brackets (e.g. `Contributor Feedback (CL)`); the script reads every column whose header is `Contributor Feedback` or starts `Contributor Feedback (`. Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Green, by the script: **Section links** (each picked section on its own line, linked to its place on the document page, like the Sections column of the public-comment log), and from Agent: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`), **Staging review page** (a "review" link to the change set's preview while its PR is open) |
 | **Agent** | the agent only | one row per change set: Change-set, Issue (URL), Agentic status, Pull request (change set), What the PRs changed (change set), Agent completed (UTC, change set), Staging review page (change set). The agent writes it as each step completes, by the steps of [`review-sheet-agent-columns`](review-sheet-agent-columns.md); a drafting sheet has no per-comment rows, so only its change-set columns apply |
 | **TOC** (hidden) | the script | the Sections dropdown's list and each entry's link. Rewritten on every refresh, so it follows the document |
 
@@ -191,6 +191,8 @@ public-comment mode. Build with `--config review/drafting/sheet-sync.json`
 and install as above. The Sections dropdown is a data validation "dropdown
 from a range" on `TOC!A2:A` with **Allow multiple selections** ticked; set it
 once in the template (the Sheets API cannot tick that box), and copies keep it.
+Without the tick, a cell with two or more sections shows "Invalid: Input must
+fall within specified range".
 
 **The agent's part: every change set has an issue.** On each sync, for every
 Contributor Feedback row with a Change-set:
