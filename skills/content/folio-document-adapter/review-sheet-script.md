@@ -469,9 +469,18 @@ including people who may only comment or view: the colour key, the six-step
 human-to-agent workflow, worded by process role (people write in blue; the agent proposes in green; an
 Editor sets Ready for agent; the agent opens a pull request whose `Staging
 review` opens the preview's what-changed page; reviewers answer in blue, and a
-change marks the proposal stale; an Editor sets Ready for merge and the agent
+change marks the proposal stale and sets Ready for agent back to No, so an
+Editor sets it to Yes again to have the agent update the row's pull request;
+an Editor sets Ready for merge and the agent
 merges), and how to find rows with the saved filter views. `tabInstructions()`,
 `guideSteps()` and `setupSteps()` write it; the script ignores the row.
+
+**A stale proposal hands control back to an Editor** (owner, 2026-10-31).
+When a row's proposal turns stale (a blue cell changed since the agent wrote
+it), the script sets that row's `Ready for agent` from Yes to No, once, on the
+turn. The agent does not act on the row until an Editor sets Yes again, which
+is the signal to update the row's pull request. A Yes set while the row is
+still stale stays.
 
 **Filter views** (owner, 2026-10-31). Each template carries saved filter
 views, which copy with it. Use Data > Filter views, never a plain filter: a
