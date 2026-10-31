@@ -32,6 +32,7 @@ function onOpen() {
 
 function installTriggers() {
   const ss = SpreadsheetApp.getActive();
+  checkSheet(ss);
   ScriptApp.getProjectTriggers()
     .filter(t => ['markDirty', 'refreshIfDirty'].includes(t.getHandlerFunction()))
     .forEach(t => ScriptApp.deleteTrigger(t));
@@ -42,6 +43,25 @@ function installTriggers() {
 
 const DRAFTING = CFG.MODE === 'drafting';
 const WATCHED = DRAFTING ? [CFG.FEEDBACK, CFG.AGENT] : [CFG.RPC, CFG.AGENT, CFG.RCS];
+
+/**
+ * Stop with a plain message when this Code.gs was built for another sheet:
+ * a drafting script pasted into a public-comment log, or the reverse, would
+ * otherwise fail deep inside a refresh.
+ */
+function checkSheet(ss) {
+  const built = 'This Code.gs was built from ' + CFG.SOURCE + ' for a ' + CFG.MODE + ' sheet';
+  if (CFG.SHEET && ss.getId() !== CFG.SHEET) {
+    throw new Error(built + ' (spreadsheet ' + CFG.SHEET + '), not this one. Paste the Code.gs built for this spreadsheet.');
+  }
+  const need = DRAFTING ? [CFG.FEEDBACK] : [CFG.RPC, CFG.AGENT, CFG.RCS];
+  const missing = need.filter(n => !ss.getSheetByName(n));
+  if (missing.length) {
+    throw new Error(built + ', which needs the tab(s) ' + need.map(n => '"' + n + '"').join(', ') +
+      '. This spreadsheet has no ' + missing.map(n => '"' + n + '"').join(', ') +
+      '. Paste the Code.gs built for this spreadsheet, or rename the tab.');
+  }
+}
 
 function markDirty(e) {
   const name = e && e.range && e.range.getSheet().getName();
@@ -61,6 +81,7 @@ function refreshAll() {
   const lock = LockService.getDocumentLock();
   if (!lock.tryLock(1000)) return;
   try {
+    checkSheet(SpreadsheetApp.getActive());
     if (DRAFTING) return refreshDraft();
     const ss = SpreadsheetApp.getActive();
     const rpc = readSheet(ss.getSheetByName(CFG.RPC));

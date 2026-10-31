@@ -237,6 +237,7 @@ export function buildScript(repo: string, cfgPath: string): string {
       agent: { ...DEFAULT_COLUMNS.agent, ...cfg.columns?.agent },
     };
   }
+  CFG = { SOURCE: cfgPath, ...(cfg.sheet ? { SHEET: cfg.sheet } : {}), ...CFG };
   const here = dirname(fileURLToPath(import.meta.url));
   const template = readFileSync(join(here, "review-sheet.gs"), "utf8");
   const block = [
