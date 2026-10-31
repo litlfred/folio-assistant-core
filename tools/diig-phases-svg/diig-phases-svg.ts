@@ -11,7 +11,7 @@ export default toolFactory((t) =>
     invoke: { shell: "bun run folio-assistant-core/scripts/diig-phases-svg.ts" },
     io: {
       inputs: [
-        { name: "data", schema: t("RepoPath"), required: true, arg: { positional: 0 }, description: "A diig-phases-figure/v1 file, or a diig-phases-adaptation/v1 file whose `adapts` is a repository-root path to one." },
+        { name: "figure-or-adaptation", schema: t("RepoPath"), required: true, arg: { positional: 0 }, description: "A diig-phases-figure/v1 file, or a diig-phases-adaptation/v1 file whose `adapts` is a repository-root path to one." },
         { name: "out", schema: t("RepoPath"), required: false, arg: { flag: "--out" }, description: "Where to write the SVG; stdout when absent." },
       ],
       outputs: [
