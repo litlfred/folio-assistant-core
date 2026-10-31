@@ -64,7 +64,10 @@ function loadConfig(ss) {
   EDITORS = parts.EDITORS === undefined ? null :
     parts.EDITORS.split(/[\s,;]+/).filter(x => /^[^@\s]+@[^@\s]+$/.test(x));
   DRAFTING = CFG.MODE === 'drafting';
-  WATCHED = DRAFTING ? [CFG.FEEDBACK, CFG.AGENT] : [CFG.RPC, CFG.AGENT, CFG.RCS];
+  // Public comment: the agent's per-comment rows on CFG.AGENT and, since
+  // 2026-10-31 (owner), its per-change-set rows on their own tab, CFG.AGENT_CS.
+  // Without AGENT_CS both halves sit side by side on CFG.AGENT, as before.
+  WATCHED = DRAFTING ? [CFG.FEEDBACK, CFG.AGENT] : [CFG.RPC, CFG.AGENT, CFG.RCS].concat(CFG.AGENT_CS ? [CFG.AGENT_CS] : []);
 }
 
 function onOpen() {
@@ -171,7 +174,7 @@ function checkSheet(ss) {
   if (CFG.SHEET && ss.getId() !== CFG.SHEET) {
     throw new Error(built + ' (spreadsheet ' + CFG.SHEET + '), not this one. Ask the agent to write this sheet\'s Config.');
   }
-  const need = DRAFTING ? [CFG.FEEDBACK] : [CFG.RPC, CFG.AGENT, CFG.RCS];
+  const need = DRAFTING ? [CFG.FEEDBACK] : [CFG.RPC, CFG.AGENT, CFG.RCS].concat(CFG.AGENT_CS ? [CFG.AGENT_CS] : []);
   const missing = need.filter(n => !ss.getSheetByName(n));
   if (missing.length) {
     throw new Error(built + ', which needs the tab(s) ' + need.map(n => '"' + n + '"').join(', ') +
@@ -230,8 +233,10 @@ function refreshIfDirty() {
   if (!DRAFTING) {
     // The agent writes Agent through the API, which fires no edit, so the
     // timer also rebuilds when the Agent tab's contents have changed.
-    const agent = SpreadsheetApp.getActive().getSheetByName(CFG.AGENT);
-    const seen = agent ? hashOf(JSON.stringify(agent.getRange(1, 1, Math.max(agent.getLastRow(), 1), Math.max(agent.getLastColumn(), 1)).getDisplayValues())) : '';
+    const seen = hashOf(JSON.stringify([CFG.AGENT, CFG.AGENT_CS].filter(Boolean).map(n => {
+      const a = SpreadsheetApp.getActive().getSheetByName(n);
+      return a ? a.getRange(1, 1, Math.max(a.getLastRow(), 1), Math.max(a.getLastColumn(), 1)).getDisplayValues() : [];
+    })));
     const moved = seen !== (props.getProperty('agentHash') || '');
     if (props.getProperty('dirty') !== '1' && !moved) return;
     props.deleteProperty('dirty');
@@ -275,16 +280,17 @@ function refreshLocked() {
     const ss = SpreadsheetApp.getActive();
     const rpc = readSheet(ss.getSheetByName(CFG.RPC));
     const agent = readSheet(ss.getSheetByName(CFG.AGENT));
+    const agentCs = CFG.AGENT_CS ? readSheet(ss.getSheetByName(CFG.AGENT_CS)) : agent;
     const rcs = readSheet(ss.getSheetByName(CFG.RCS));
     const pcOf = {}, csOf = {}, csOfNo = {}, stOf = {}, prOf = {};
     const aNo = col(agent, COLS.agent.no), aPc = col(agent, COLS.agent.pc), aCs = col(agent, COLS.agent.cs);
     const aSt = col(agent, COLS.agent.agentic);
-    const aId = col(agent, COLS.agent.csId), aPrs = col(agent, COLS.agent.prs), aCh = col(agent, COLS.agent.changes);
-    const aDone = col(agent, COLS.agent.done);
-    const aBasis = COLS.agent.basis ? col(agent, COLS.agent.basis) : -1;
+    const aId = col(agentCs, COLS.agent.csId), aPrs = col(agentCs, COLS.agent.prs), aCh = col(agentCs, COLS.agent.changes);
+    const aDone = col(agentCs, COLS.agent.done);
+    const aBasis = COLS.agent.basis ? col(agentCs, COLS.agent.basis) : -1;
     const basisOfCs = {}, stagingOf = {}, builtOf = {};
-    const aStaging = COLS.agent.staging ? col(agent, COLS.agent.staging) : -1;
-    const aBuilt = COLS.agent.built ? col(agent, COLS.agent.built) : -1;
+    const aStaging = COLS.agent.staging ? col(agentCs, COLS.agent.staging) : -1;
+    const aBuilt = COLS.agent.built ? col(agentCs, COLS.agent.built) : -1;
     agent.rows.forEach(r => {
       const n = String(r[aNo]).trim();
       if (n) {
@@ -295,6 +301,8 @@ function refreshLocked() {
           (csOfNo[n] = csOfNo[n] || []).push(cs);
         });
       }
+    });
+    agentCs.rows.forEach(r => {
       // A change-set's pull requests: any number of URLs, one per line, and
       // on the same lines of the next column what each one changed.
       const id = aId >= 0 ? String(r[aId]).trim() : '';

