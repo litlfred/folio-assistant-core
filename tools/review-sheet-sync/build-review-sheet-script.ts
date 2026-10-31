@@ -324,7 +324,6 @@ export function setupSteps(c: SheetConfig): string[] {
     "2. Pick installTriggers in the function list and press Run. Allow access (Advanced, then continue).",
     "3. Reload the sheet. A Review links menu appears; Review links, then Refresh now, checks it.",
   ];
-  steps.push("EDITORS (the row above): the emails, one per line, of the people who may set Ready for agent and Ready for merge. The owner may edit it; Review links, then Refresh now, applies it. Empty: anyone who can edit the sheet.");
   if (c.CFG.MODE === "drafting") {
     const col = c.COLS.draft?.sections ?? "Selected Sections";
     steps.push(
@@ -337,7 +336,14 @@ export function setupSteps(c: SheetConfig): string[] {
       "   • Press Done",
     );
   }
-  steps.push("Below: the script's settings. Ask the agent to change them; do not edit by hand.");
+  steps.push(
+    "Editors (the EDITORS row below): the people who may set Ready for agent and Ready for merge, one email per line.",
+    "   • Share each of them as Editor first (Share button, pick Editor)",
+    "   • Type their emails in the EDITORS cell; only the owner can change it",
+    "   • Choose Review links, then Refresh now: the two Ready columns are locked to the owner plus them",
+    "   • Leave it empty to let anyone who can edit the sheet set them",
+    "Below EDITORS: the script's settings. Ask the agent to change them; do not edit by hand.",
+  );
   return steps;
 }
 
@@ -352,8 +358,8 @@ export function configRows(c: SheetConfig): string[][] {
   // into sheet-sync.json, which is committed.
   const rows: string[][] = [
     ["Key", "Value (written by the agent from sheet-sync.json; do not edit, except EDITORS)"],
-    ["EDITORS", ""],
     ["SETUP", setupSteps(c).join("\n")],
+    ["EDITORS", ""],
   ];
   for (const key of ["CFG", "COLS", "DATA"] as const) {
     // Indented only where a person might edit by hand (CFG: URLs, tab names;
