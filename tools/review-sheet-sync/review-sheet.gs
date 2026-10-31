@@ -718,7 +718,7 @@ function refreshDraft(rows) {
   // Change-set ids: mechanical, assigned once, never reused.
   // A row is used once any cell a person fills holds something; "No" (a
   // Yes/No dropdown's default) and the script's own columns do not count.
-  const mech = [c.cs, c.sectionLinks, c.issue, c.agentic, c.staging,
+  const mech = [c.cs, c.sectionLinks, c.issue, c.agentic, c.staging, c.status,
     col(fb, COLS.draft.feedback + ' (agent)')];
   if (c.cs >= 0) {
     let next = 1 + fb.rows.reduce((m, r) => {
@@ -808,6 +808,8 @@ function refreshDraft(rows) {
     const cs = String(r[c.cs]).trim();
     return agenticCell(stOf[cs] || '', prOf[cs] || []);
   });
+  // The same status as one plain value, for a filter (owner, 2026-10-31).
+  if (c.status >= 0) writeRows(fb, c.status, only, r => rich([{ t: stOf[String(r[c.cs]).trim()] || '' }]));
   // Staging review page: the change set's preview while its PR is open.
   writeRows(fb, c.staging, only, r => {
     const cs = String(r[c.cs]).trim();
