@@ -1270,3 +1270,29 @@ describe("one agent column, status on top (owner, 2026-10-31, option A)", () => 
     expect(nosText(["139", "127", "128", "129", "134"])).toBe("Nos. 127 to 129, 134 and 139");
   });
 });
+
+describe("Ready for agent: Yes, No, Completed (owner, 2026-10-31)", () => {
+  const { completeReady } = new Function(code + "\nreturn { completeReady };")() as {
+    completeReady: (s: object, csCol: number, prOf: object, stagingOf: object, builtOf: object, readyAt: object) => void;
+  };
+  const sheet = (ready: string) => {
+    const set: string[] = [];
+    const s = { header: ["Change-set", "Ready for agent"], rows: [["CS-001", ready]], top: 3,
+      sh: { getRange: () => ({ setValues: (v: string[][]) => set.push(v[0][0]) }) } };
+    return { s, set };
+  };
+  const prOf = { "CS-001": [{ url: "https://github.com/o/r/pull/1", head: "abcdef1", done: "2026-10-31 15:26Z" }] };
+  const live = { "CS-001": "https://p/" }, built = { "CS-001": { at: "2026-10-31 15:30Z", from: "abcdef1", deploy: "deployed" } };
+  test("Completed once the agent pushed after the Ready and the preview of it is live", () => {
+    const { s, set } = sheet("Yes");
+    completeReady(s, 0, prOf, live, built, { "CS-001": "2026-10-31 14:47Z" });
+    expect(set).toEqual(["Completed"]);
+  });
+  test("not while the preview is restaging, nor before the agent has acted", () => {
+    for (const [b, at] of [[{ ...built["CS-001"], deploy: "building" }, "2026-10-31 14:47Z"], [built["CS-001"], "2026-10-31 15:26Z"]] as const) {
+      const { s, set } = sheet("Yes");
+      completeReady(s, 0, prOf, live, { "CS-001": b }, { "CS-001": at });
+      expect(set).toEqual([]);
+    }
+  });
+});

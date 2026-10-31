@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 29f9696c12bea32d.
+// folio-assistant-core tools/review-sheet-sync at template sha256 e5279ce7284bffbd.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 29f9696c12bea32d';
+const SCRIPT_VERSION = 'template sha256 e5279ce7284bffbd';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -503,6 +503,7 @@ function refreshLocked() {
       else if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)), prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] });
     });
     markStale(rcs, csCol, basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)', lineOf);
+    completeReady(rcs, csCol, prOf, stagingOf, builtOf, readyAt);
     // Staging review page, from Agent: only where Agent names a preview, so a
     // sheet whose agent writes the cell directly keeps it.
     const rSt = COLS.rcs.staging ? col(rcs, COLS.rcs.staging) : -1, rCs = col(rcs, COLS.rcs.cs);
@@ -1068,7 +1069,28 @@ function unready(s, r, k, before, after) {
   const ready = col(s, 'Ready for agent');
   if (ready < 0 || after === null || String(after).indexOf(STALE + '\n') !== 0) return;
   if (String(before).indexOf(STALE + '\n') === 0) return;
-  if (/^yes$/i.test(String(r[ready]).trim())) s.sh.getRange(k + s.top, ready + 1, 1, 1).setValues([['No']]);
+  if (/^(yes|completed)$/i.test(String(r[ready]).trim())) s.sh.getRange(k + s.top, ready + 1, 1, 1).setValues([['No']]);
+}
+/**
+ * Ready for agent goes from Yes to Completed once the agent has finished what
+ * it was asked (its last push is after the Ready time) and the preview of it
+ * is live and current (owner, 2026-10-31: "preview is now live, so nothing
+ * more for agent to do ... like Yes, No, Completed"). Only the script sets
+ * Completed; an Editor sets Yes again to send the row back to the agent.
+ */
+function completeReady(s, csCol, prOf, stagingOf, builtOf, readyAt) {
+  const ready = col(s, 'Ready for agent');
+  if (ready < 0 || csCol < 0) return;
+  s.rows.forEach((r, k) => {
+    const cs = String(r[csCol]).trim();
+    if (!cs || !readyAt[cs] || !/^yes$/i.test(String(r[ready]).trim())) return;
+    const prs = prOf[cs] || [];
+    const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
+    if (!done.length || Math.max.apply(null, done) <= utcMs(readyAt[cs])) return;
+    if (!stagingOf[cs] || stagingWarning(stagingOf[cs], builtOf[cs], prs, '')) return;
+    s.sh.getRange(k + s.top, ready + 1, 1, 1).setValues([['Completed']]);
+    r[ready] = 'Completed';
+  });
 }
 
 const STALE = '\u26a0 Stale: the row changed since this proposal; the agent will propose again.';
@@ -1569,6 +1591,7 @@ function refreshDraft(rows) {
     if (cs) lineOf[cs] = c.agentic < 0 ? statusBlock(line, stOf[cs] || '', prOf[cs] || []) : line;
   });
   markStale(fb, c.cs, basisOfCs, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback, COLS.draft.agentFeedback || 'Feedback (agent)', lineOf, want);
+  completeReady(fb, c.cs, prOf, stagingOf, builtOf, readyAt);
 }
 /** A dropdown name without its indent (U+2800 blanks; old "\u2514 "/"\u2502 " marks) or spaces. */
 const bareName = n => String(n).replace(/^[\s\u2800\u2502\u2514]+/, '').trim();
