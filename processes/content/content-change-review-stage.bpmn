@@ -45,6 +45,9 @@ Called from content-change-review after the first push and after every revision,
         3. Stamp build with commit SHA + timestamp + branch
         4. Build Jekyll site with STAGING/ baseurl
         5. Inject yellow staging banner into every HTML page
+        A draft pull request is staged too, from its first push (owner,
+        2026-10-31, "drafts get previews"; folio-assistant#2836). A build
+        takes about 22 minutes, and GitHub Pages about 3 to 4 more.
       </bpmn:documentation>
       <bpmn:incoming>p1</bpmn:incoming>
       <bpmn:outgoing>p2</bpmn:outgoing>

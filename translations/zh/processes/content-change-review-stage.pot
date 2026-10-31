@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: content-change-review-stage\n"
-"POT-Creation-Date: 2026-10-31T10:06:51.395Z\n"
+"POT-Creation-Date: 2026-10-31T11:31:23.359Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: zh\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:71
+#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:74
 #. Diagram element documentation
 msgid "Bot comments or updates the staging URL on the PR. Includes commit SHA, branch name, and build log link, and the review list of rendered files the change alters (skill rendered-impact), each linked on the preview and on main, with any input the renderer could not place named as not known."
 msgstr ""
@@ -29,32 +29,32 @@ msgstr ""
 msgid "CI/CD Pipeline"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:65
+#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:68
 #. Diagram label
 msgid "Comment staging URL on PR"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:52
+#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:55
 #. Diagram label
 msgid "Deploy to STAGING/<slug>/"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:41
 #. Diagram element documentation
-msgid "feature-staging.yml triggers: 1. Regenerate docs (schema, skills, content-backed pages) 2. Render BPMN diagrams 3. Stamp build with commit SHA + timestamp + branch 4. Build Jekyll site with STAGING/ baseurl 5. Inject yellow staging banner into every HTML page"
+msgid "feature-staging.yml triggers: 1. Regenerate docs (schema, skills, content-backed pages) 2. Render BPMN diagrams 3. Stamp build with commit SHA + timestamp + branch 4. Build Jekyll site with STAGING/ baseurl 5. Inject yellow staging banner into every HTML page A draft pull request is staged too, from its first push (owner, 2026-10-31, \"drafts get previews\"; folio-assistant#2836). A build takes about 22 minutes, and GitHub Pages about 3 to 4 more."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:88
+#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:91
 #. Diagram element documentation
 msgid "First dispatch point for a CI watcher: the feature branch has changed and a staging build now exists to watch. The watcher is DISPATCHED BY OPENING A BEAN, not by a workflow_dispatch -- per the owner on bean 29ij, this is a task/workflow initiation. That is the whole reason it is an activity rather than a line of prose. A bean makes the watch durable past the session that opened it: the container is reclaimed, and what survives is the claim. Starting the watcher and recording that it is running are ONE declared step, so the two cannot disagree about whether anything is watching. Claim rather than note: the watch is work in progress, and it is idempotent, so re-entering on a subsequent push does not duplicate it."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:81
+#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:84
 #. Diagram label
 msgid "Open the branch-watch bean [watch]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:57
+#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:60
 #. Diagram element documentation
 msgid "peaceiris/actions-gh-pages deploys to gh-pages branch under STAGING/<branch-slug>/ with keep_files: true so other staging deployments and the main site are preserved."
 msgstr ""
@@ -79,7 +79,7 @@ msgstr ""
 msgid "Stage the content change"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:106
+#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:109
 #. Diagram label
 msgid "Staged for review"
 msgstr ""
