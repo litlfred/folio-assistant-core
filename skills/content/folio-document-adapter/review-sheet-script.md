@@ -203,7 +203,7 @@ topic), and each change set gets a GitHub issue.
 
 | tab | who writes | columns |
 |---|---|---|
-| **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Sections** (a multi-select dropdown of the document's table of contents; it stays plain, because a dropdown chip cannot carry a link), any number of **Contributor Feedback (…)** columns, one per contributor, with their initials or name in the brackets (e.g. `Contributor Feedback (CL)`); the script reads every column whose header is `Contributor Feedback` or starts `Contributor Feedback (`. Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Green, by the script: **Section links** (each picked section on its own line, linked to its place on the document page, like the Sections column of the public-comment log), and from Agent: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`), **Staging review page** (a "review" link to the change set's preview while its PR is open) |
+| **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Selected Sections** (a multi-select dropdown of the document's table of contents; it stays plain, because a dropdown chip cannot carry a link), any number of **Contributor Feedback (…)** columns, one per contributor, with their initials or name in the brackets (e.g. `Contributor Feedback (CL)`); the script reads every column whose header is `Contributor Feedback` or starts `Contributor Feedback (`. Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Grey, mechanical, by the script (owner, 2026-10-31): **Section links** (each selected section on its own line, linked to its place on the document page, like the Sections column of the public-comment log; it is mechanical, a copy of Selected Sections with links, so grey, not green). Green, by the script from Agent: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`), **Staging review page** (a "review" link to the change set's preview while its PR is open) |
 | **Agent** | the agent only | one row per change set: Change-set, Issue (URL), Agentic status, Pull request (change set), What the PRs changed (change set), Agent completed (UTC, change set), Staging review page (change set). The agent writes it as each step completes, by the steps of [`review-sheet-agent-columns`](review-sheet-agent-columns.md); a drafting sheet has no per-comment rows, so only its change-set columns apply |
 | **TOC** (hidden) | the script | the Sections dropdown's list and each entry's link. Rewritten on every refresh, so it follows the document |
 
@@ -311,7 +311,7 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    Paste the script into the template itself once, so every copy starts with
    it. A copy keeps the version it was made with: when Code.gs changes,
    paste it again into each sheet in use.
-6. **Drafting only: allow multiple sections.** Select the Sections column >
+6. **Drafting only: allow multiple sections.** Select the Selected Sections column >
    Data > Data validation > the dropdown rule > tick **Allow multiple
    selections** > Done. Copies made after the template has it ticked keep it.
 
@@ -333,10 +333,10 @@ A filter view covers the rows the tab had when the view was made; when rows
 are added past that, widen its range (Data > Filter views > the view >
 Options > Update range).
 
-**Sections shows "Invalid".** Two causes. The cell holds several sections
+**Selected Sections shows "Invalid".** Two causes. The cell holds several sections
 but the rule does not allow multiple selections: tick it (step 6). Or the
 cell carries links: Sections must be plain text, the links belong in Section
-links. Older scripts linked Sections; clear its formatting (Format > Clear
+links. Older scripts linked the column; clear its formatting (Format > Clear
 formatting) and the current script keeps it plain.
 
 **Check it.** Review links > Refresh now. In drafting mode a row with a
