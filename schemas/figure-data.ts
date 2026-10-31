@@ -16,6 +16,7 @@
  * same fields, and the tests parse the who-iris data with both.
  */
 import { z } from "zod";
+import { nodeKind } from "@litlfred/cat-harness-tools/schemas/kg/node-kind.ts";
 
 const Hex = z.string().regex(/^#[0-9A-Fa-f]{6}$/u, "a #RRGGBB colour");
 const Lines = z.array(z.string()).min(1);
@@ -122,6 +123,10 @@ export const SmartGuidelinesApproachFigureSchema = z.object({
     country: Cell,
   }).strict()).min(1),
 }).strict();
+
+/** The node kinds the writer's node-kinds gate reads for the two library families. */
+export const DiigPhasesFigureKind = nodeKind("diig-phases-figure", [], DiigPhasesFigureSchema.shape);
+export const SmartApproachFigureKind = nodeKind("smart-guidelines-approach-figure", [], SmartGuidelinesApproachFigureSchema.shape);
 
 export type DiigPhasesFigureData = z.infer<typeof DiigPhasesFigureSchema>;
 export type DiigPhasesAdaptationData = z.infer<typeof DiigPhasesAdaptationSchema>;
