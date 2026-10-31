@@ -85,6 +85,7 @@ export const DRAFT_COLUMNS = {
     staging: "Staging review page (change set)", basis: "Feedback basis (change set)",
     built: "Staging built (UTC, change set)",
     head: "PR head (change set)", builtFrom: "Staging built from (change set)", deploy: "Staging deploy (change set)",
+    conversation: "Agent conversation (change set)",
   },
 };
 
