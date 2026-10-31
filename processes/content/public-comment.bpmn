@@ -20,16 +20,13 @@
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
   <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns#" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
-  <bpmn:resource id="author" name="Author"/>
-  <bpmn:resource id="build-pipeline" name="Build pipeline"/>
   <bpmn:resource id="editor" name="Editor"/>
-  <bpmn:resource id="qc-reviewer" name="QA reviewer (independent)"/>
   <bpmn:resource id="feedback-provider" name="Feedback provider"/>
   <bpmn:resource id="ingestion-agent" name="Ingestion engine"/>
   <bpmn:resource id="review-coordinator" name="Review coordinator"/>
   <bpmn:resource id="reviewer" name="Reviewer / SME"/>
 
-  <bpmn:import namespace="https://litlfred.github.io/folio-assistant/workflows" location="content-change-review.bpmn" importType="http://www.omg.org/spec/BPMN/20100524/MODEL" />
+  <bpmn:import namespace="https://litlfred.github.io/folio-assistant/workflows" location="public-comment-change.bpmn" importType="http://www.omg.org/spec/BPMN/20100524/MODEL" />
   <bpmn:collaboration id="Collaboration_PublicComment">
     <bpmn:participant id="Participant_PublicComment" name="Public comment — one comment, from return to resolution" processRef="Process_PublicComment" />
   </bpmn:collaboration>
@@ -76,25 +73,12 @@
         <bpmn:flowNodeRef>Task_CommitteeRecommends</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Editor" name="Editor" partitionElementRef="editor">
-        <bpmn:documentation>The one lane that decides. Every decision carries one of five codes and, for every code but accepted, a reason the commenter is owed. A decision that does not change the document ends here.</bpmn:documentation>
+        <bpmn:documentation>The one lane that decides. Every decision carries one of five codes and, for every code but accepted, a reason the commenter is owed. A decision that does not change the document ends here; one that does goes on to the change phase.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_EditorDecides</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ChangesDocument</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Decided</bpmn:flowNodeRef>
-      </bpmn:lane>
-      <bpmn:lane id="Lane_Author" name="Author (human or agentic)" partitionElementRef="author">
-        <bpmn:documentation>Once the editor has dispensed a comment with a decision that changes the document, an author makes the edit: a person, or an agent acting in the author role. The edit is made on a feature branch, which may carry the edits for several comments, and recorded on each comment it answers, so a comment shows where its change is being made while it is made.</bpmn:documentation>
-        <bpmn:flowNodeRef>Task_AuthorEdits</bpmn:flowNodeRef>
-      </bpmn:lane>
-      <bpmn:lane id="Lane_Pipeline" name="Change set — feature branch and staging" partitionElementRef="build-pipeline">
-        <bpmn:documentation>Where the author's edit is reviewed and lands: the feature branch's staging preview gives before/after deep links to each comment's anchor, the change set is reviewed as any content change, and each comment it answers is marked incorporated when it merges.</bpmn:documentation>
-        <bpmn:flowNodeRef>CallActivity_ChangeSet</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_Incorporate</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CallActivity_MakeChange</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Incorporated</bpmn:flowNodeRef>
-      </bpmn:lane>
-      <bpmn:lane id="Lane_QaReviewer" name="QA reviewer (independent)" partitionElementRef="qc-reviewer">
-        <bpmn:documentation>Whoever runs the QA gate: an agent session that did not author the change set, or a person; never the author's own session (owner, 2026-10-31: "add review (agent-independent) before ready for merge"). Writes only QA gate (change set) and QA report (change set) on Agent - Change Sets.</bpmn:documentation>
-        <bpmn:flowNodeRef>Task_QaGate</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Gateway_QaPassed</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
 
@@ -161,50 +145,24 @@
     <bpmn:task id="Task_EditorDecides" name="Decide, weighing the recommendations">
       <bpmn:documentation>public-comment decide, or decide: code on GitHub from a login in config.json editors. accepted, accepted-modified, not-accepted, noted, deferred; a reason for all but accepted. Also reopens a decided comment.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
-      <bpmn:incoming>Flow_ToDecide</bpmn:incoming>
       <bpmn:incoming>Flow_EditorialDirect</bpmn:incoming>
+      <bpmn:incoming>Flow_ToDecide</bpmn:incoming>
       <bpmn:outgoing>Flow_ToChangesGateway</bpmn:outgoing>
     </bpmn:task>
     <bpmn:exclusiveGateway id="Gateway_ChangesDocument" name="Does the decision change the document?">
       <bpmn:incoming>Flow_ToChangesGateway</bpmn:incoming>
       <bpmn:outgoing>Flow_NoChange</bpmn:outgoing>
-      <bpmn:outgoing>Flow_ToAuthorEdits</bpmn:outgoing>
+      <bpmn:outgoing>Flow_ToMakeChange</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:endEvent id="EndEvent_Decided" name="Decided, answer recorded">
       <bpmn:incoming>Flow_NoChange</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:task id="Task_AuthorEdits" name="Edit the document as decided, on a feature branch">
-      <bpmn:documentation>public-comment edit --branch: the author (human, or an agent in the author role) edits the folio's blocks as the decision says, on a feature branch for one change-set. Its PR says Closes #N for the change-set issue, and opening it moves that issue's accepted comments to editing. Before its preview is staged, the author writes the change set's Disposition (change set) on the Agent tab: one line per comment (No. 136: Accepted. ...), starting from each comment's Blue Disposition on Review Public Comments, after an optional Overall statement. Quality check: every comment number in the change set has a disposition; the sheet flags gaps and words that differ from the people's (owner, 2026-10-31).</bpmn:documentation>
+    <bpmn:callActivity id="CallActivity_MakeChange" name="Make the change, check it and merge it" calledElement="Process_PublicCommentChange">
+      <bpmn:documentation>The second phase, drawn on its own page (public-comment-change.bpmn): an author edits the document as decided on a feature branch, the change set is reviewed on its staging preview, an independent QA gate checks the dispositions against the pull request, and each comment it answers is marked incorporated when it merges. A withdrawal still interrupts the comment while this runs.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
-      <bpmn:incoming>Flow_ToAuthorEdits</bpmn:incoming>
-      <bpmn:incoming>Flow_QaFailed</bpmn:incoming>
-      <bpmn:outgoing>Flow_ToChangeSet</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:callActivity id="CallActivity_ChangeSet" name="Review the change set on its staging preview" calledElement="Process_ContentChangeReview">
-      <bpmn:documentation>The existing content-change review, unchanged, of the author's branch: its PR lists the PC refs it answers, and its staging preview is the after side of every deep link. A change the reviewers send back returns to the author inside that process.</bpmn:documentation>
-      <bpmn:extensionElements>
-        <bootstrap.processes:skill ref="staging-review"/>
-      </bpmn:extensionElements>
-      <bpmn:incoming>Flow_ToChangeSet</bpmn:incoming>
-      <bpmn:outgoing>Flow_ToQaGate</bpmn:outgoing>
-    </bpmn:callActivity>
-    <bpmn:task id="Task_QaGate" name="QA gate: check dispositions against the people and the pull request">
-      <bpmn:documentation>Before Ready for merge. Reads: the change set's Disposition (change set), each comment's Blue Disposition on Review Public Comments, the PR's diff at its head commit, and the staging QA report. Checks that every comment number has one disposition; that each agrees with the people's Blue Disposition; that each Accepted or Partially accepted comment has its change in the diff, and a Not accepted, Noted, Deferred, Duplicate or Out of scope one has none; that the diff changes nothing no disposition accounts for; and that the QA report for the staged commit has no failing gate. Writes: QA gate (change set), first line "Passed &lt;head sha&gt;: …" or "Failed &lt;head sha&gt;: &lt;why&gt;", and QA report (change set), the report's link. The sheet shows both under Staging review; a pass for an older commit reads as stale (owner, 2026-10-31).</bpmn:documentation>
-      <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
-      <bpmn:incoming>Flow_ToQaGate</bpmn:incoming>
-      <bpmn:outgoing>Flow_ToQaGateway</bpmn:outgoing>
-    </bpmn:task>
-    <bpmn:exclusiveGateway id="Gateway_QaPassed" name="QA gate passed for the PR's head?">
-      <bpmn:incoming>Flow_ToQaGateway</bpmn:incoming>
-      <bpmn:outgoing>Flow_QaFailed</bpmn:outgoing>
-      <bpmn:outgoing>Flow_ToIncorporate</bpmn:outgoing>
-    </bpmn:exclusiveGateway>
-    <bpmn:task id="Task_Incorporate" name="Mark incorporated when the change set merges">
-      <bpmn:documentation>public-comment incorporate, naming the branch, PR and staging URL; done by the folio's workflow when the PR that closes a change-set issue merges. A PR closed unmerged moves nothing. Ready for merge is set only once the QA gate has passed for the PR's head commit; set earlier, the agent does not merge until it passes. The change set's Dispositions blurb, as it stands when Ready for merge is set to Yes, is the summary that closes its issue (owner, 2026-10-31).</bpmn:documentation>
-      <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
-      <bpmn:incoming>Flow_ToIncorporate</bpmn:incoming>
+      <bpmn:incoming>Flow_ToMakeChange</bpmn:incoming>
       <bpmn:outgoing>Flow_ToIncorporated</bpmn:outgoing>
-    </bpmn:task>
+    </bpmn:callActivity>
     <bpmn:endEvent id="EndEvent_Incorporated" name="Incorporated in the document">
       <bpmn:incoming>Flow_ToIncorporated</bpmn:incoming>
     </bpmn:endEvent>
@@ -249,242 +207,195 @@
     <bpmn:sequenceFlow id="Flow_ToDecide" sourceRef="Task_CommitteeRecommends" targetRef="Task_EditorDecides" />
     <bpmn:sequenceFlow id="Flow_ToChangesGateway" sourceRef="Task_EditorDecides" targetRef="Gateway_ChangesDocument" />
     <bpmn:sequenceFlow id="Flow_NoChange" name="no: not accepted, noted, deferred" sourceRef="Gateway_ChangesDocument" targetRef="EndEvent_Decided" />
-    <bpmn:sequenceFlow id="Flow_ToAuthorEdits" name="yes: accepted" sourceRef="Gateway_ChangesDocument" targetRef="Task_AuthorEdits" />
-    <bpmn:sequenceFlow id="Flow_ToChangeSet" sourceRef="Task_AuthorEdits" targetRef="CallActivity_ChangeSet" />
-    <bpmn:sequenceFlow id="Flow_ToQaGate" sourceRef="CallActivity_ChangeSet" targetRef="Task_QaGate" />
-    <bpmn:sequenceFlow id="Flow_ToQaGateway" sourceRef="Task_QaGate" targetRef="Gateway_QaPassed" />
-    <bpmn:sequenceFlow id="Flow_QaFailed" name="failed" sourceRef="Gateway_QaPassed" targetRef="Task_AuthorEdits" />
-    <bpmn:sequenceFlow id="Flow_ToIncorporate" name="passed" sourceRef="Gateway_QaPassed" targetRef="Task_Incorporate" />
-    <bpmn:sequenceFlow id="Flow_ToIncorporated" sourceRef="Task_Incorporate" targetRef="EndEvent_Incorporated" />
+    <bpmn:sequenceFlow id="Flow_ToMakeChange" name="yes: accepted" sourceRef="Gateway_ChangesDocument" targetRef="CallActivity_MakeChange" />
+    <bpmn:sequenceFlow id="Flow_ToIncorporated" sourceRef="CallActivity_MakeChange" targetRef="EndEvent_Incorporated" />
   </bpmn:process>
 
   <bpmndi:BPMNDiagram id="BPMNDiagram_PublicComment">
     <bpmndi:BPMNPlane id="BPMNPlane_PublicComment" bpmnElement="Collaboration_PublicComment">
       <bpmndi:BPMNShape id="Participant_PublicComment_di" bpmnElement="Participant_PublicComment" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="1360" height="1040" />
+        <dc:Bounds x="160" y="80" width="1360" height="760" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Commenter_di" bpmnElement="Lane_Commenter" isHorizontal="true">
-        <dc:Bounds x="190" y="80" width="1330" height="120" />
+        <dc:Bounds x="190" y="80" width="1330" height="140" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Intake_di" bpmnElement="Lane_Intake" isHorizontal="true">
-        <dc:Bounds x="190" y="200" width="1330" height="110" />
+        <dc:Bounds x="190" y="220" width="1330" height="110" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Coordinator_di" bpmnElement="Lane_Coordinator" isHorizontal="true">
-        <dc:Bounds x="190" y="310" width="1330" height="160" />
+        <dc:Bounds x="190" y="330" width="1330" height="160" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Committee_di" bpmnElement="Lane_Committee" isHorizontal="true">
-        <dc:Bounds x="190" y="470" width="1330" height="110" />
+        <dc:Bounds x="190" y="490" width="1330" height="110" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Editor_di" bpmnElement="Lane_Editor" isHorizontal="true">
-        <dc:Bounds x="190" y="580" width="1330" height="150" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_Author_di" bpmnElement="Lane_Author" isHorizontal="true">
-        <dc:Bounds x="190" y="730" width="1330" height="110" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_Pipeline_di" bpmnElement="Lane_Pipeline" isHorizontal="true">
-        <dc:Bounds x="190" y="840" width="1330" height="140" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_QaReviewer_di" bpmnElement="Lane_QaReviewer" isHorizontal="true">
-        <dc:Bounds x="190" y="980" width="1330" height="140" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_QaGate_di" bpmnElement="Task_QaGate">
-        <dc:Bounds x="1065" y="995" width="130" height="100" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Gateway_QaPassed_di" bpmnElement="Gateway_QaPassed" isMarkerVisible="true">
-        <dc:Bounds x="1255" y="1020" width="50" height="50" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1315" y="1018" width="110" height="54" /></bpmndi:BPMNLabel>
+        <dc:Bounds x="190" y="600" width="1330" height="240" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_CommentsReturned_di" bpmnElement="StartEvent_CommentsReturned">
-        <dc:Bounds x="272" y="154" width="36" height="36" />
+        <dc:Bounds x="272" y="170" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="245" y="82" width="90" height="70" />
+          <dc:Bounds x="245" y="98" width="90" height="70" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_BlockFeedback_di" bpmnElement="StartEvent_BlockFeedback">
-        <dc:Bounds x="342" y="154" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="382" y="118" width="90.91" height="72" /></bpmndi:BPMNLabel>
+        <dc:Bounds x="342" y="170" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="382" y="94" width="90.91" height="72" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_Withdraw_di" bpmnElement="SubProcess_Withdraw" isExpanded="true">
-        <dc:Bounds x="892" y="82" width="298" height="114" />
+        <dc:Bounds x="892" y="86" width="298" height="128" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_WithdrawRequested_di" bpmnElement="StartEvent_WithdrawRequested">
-        <dc:Bounds x="902" y="132" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="794" y="123" width="90" height="54" /></bpmndi:BPMNLabel>
+        <dc:Bounds x="902" y="142" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="794" y="133" width="90" height="54" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Withdraw_di" bpmnElement="Task_Withdraw">
-        <dc:Bounds x="975" y="110" width="130" height="80" />
+        <dc:Bounds x="975" y="125" width="130" height="70" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Withdrawn_di" bpmnElement="EndEvent_Withdrawn">
-        <dc:Bounds x="1147" y="132" width="36" height="36" />
+        <dc:Bounds x="1147" y="142" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1196" y="123" width="110" height="54" />
+          <dc:Bounds x="1196" y="133" width="110" height="54" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Ingest_di" bpmnElement="Task_Ingest">
-        <dc:Bounds x="260" y="210" width="130" height="90" />
+        <dc:Bounds x="260" y="230" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Triage_di" bpmnElement="Task_Triage">
-        <dc:Bounds x="260" y="325" width="130" height="90" />
+        <dc:Bounds x="260" y="345" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_Triage_di" bpmnElement="Gateway_Triage" isMarkerVisible="true">
-        <dc:Bounds x="425" y="345" width="50" height="50" />
-        <bpmndi:BPMNLabel><dc:Bounds x="479" y="399" width="110" height="54" /></bpmndi:BPMNLabel>
+        <dc:Bounds x="425" y="365" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="479" y="419" width="110" height="54" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Duplicate_di" bpmnElement="EndEvent_Duplicate">
-        <dc:Bounds x="572" y="352" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="612" y="352" width="90" height="36" /></bpmndi:BPMNLabel>
+        <dc:Bounds x="572" y="372" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="612" y="372" width="90" height="36" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ProposeChangeSets_di" bpmnElement="Task_ProposeChangeSets">
-        <dc:Bounds x="520" y="205" width="130" height="100" />
+        <dc:Bounds x="520" y="225" width="130" height="100" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_GroupChangeSets_di" bpmnElement="Task_GroupChangeSets">
-        <dc:Bounds x="640" y="475" width="130" height="100" />
+        <dc:Bounds x="640" y="495" width="130" height="100" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_RerouteChangeSet_di" bpmnElement="Task_RerouteChangeSet">
-        <dc:Bounds x="785" y="475" width="130" height="100" />
+        <dc:Bounds x="785" y="495" width="130" height="100" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Assign_di" bpmnElement="Task_Assign">
-        <dc:Bounds x="785" y="325" width="130" height="90" />
+        <dc:Bounds x="785" y="345" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CommitteeRecommends_di" bpmnElement="Task_CommitteeRecommends">
-        <dc:Bounds x="935" y="480" width="130" height="90" />
+        <dc:Bounds x="935" y="500" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_EditorDecides_di" bpmnElement="Task_EditorDecides">
-        <dc:Bounds x="925" y="613" width="150" height="90" />
+        <dc:Bounds x="925" y="635" width="150" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_ChangesDocument_di" bpmnElement="Gateway_ChangesDocument" isMarkerVisible="true">
-        <dc:Bounds x="1105" y="633" width="50" height="50" />
+        <dc:Bounds x="1105" y="655" width="50" height="50" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1160" y="583" width="130" height="72" />
+          <dc:Bounds x="1010" y="732" width="115" height="54" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Decided_di" bpmnElement="EndEvent_Decided">
-        <dc:Bounds x="1392" y="640" width="36" height="36" />
+        <dc:Bounds x="1432" y="762" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1432" y="631" width="80" height="54" />
+          <dc:Bounds x="1390" y="800" width="120" height="36" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_AuthorEdits_di" bpmnElement="Task_AuthorEdits">
-        <dc:Bounds x="1065" y="735" width="130" height="100" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_ChangeSet_di" bpmnElement="CallActivity_ChangeSet">
-        <dc:Bounds x="1065" y="855" width="130" height="110" />
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Incorporate_di" bpmnElement="Task_Incorporate">
-        <dc:Bounds x="1215" y="860" width="130" height="100" />
+      <bpmndi:BPMNShape id="CallActivity_MakeChange_di" bpmnElement="CallActivity_MakeChange">
+        <dc:Bounds x="1235" y="630" width="170" height="100" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Incorporated_di" bpmnElement="EndEvent_Incorporated">
-        <dc:Bounds x="1382" y="892" width="36" height="36" />
+        <dc:Bounds x="1432" y="662" width="36" height="36" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1422" y="883" width="90" height="54" />
+          <dc:Bounds x="1405" y="702" width="90" height="54" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_ToIngest_di" bpmnElement="Flow_ToIngest">
-        <di:waypoint x="290" y="190" />
-        <di:waypoint x="290" y="210" />
+        <di:waypoint x="290" y="206" />
+        <di:waypoint x="290" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_BlockFeedbackToIngest_di" bpmnElement="Flow_BlockFeedbackToIngest">
-        <di:waypoint x="360" y="190" />
-        <di:waypoint x="360" y="210" />
+        <di:waypoint x="360" y="206" />
+        <di:waypoint x="360" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToTriage_di" bpmnElement="Flow_ToTriage">
-        <di:waypoint x="325" y="300" />
-        <di:waypoint x="325" y="325" />
+        <di:waypoint x="325" y="320" />
+        <di:waypoint x="325" y="345" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToTriageGateway_di" bpmnElement="Flow_ToTriageGateway">
-        <di:waypoint x="390" y="370" />
-        <di:waypoint x="425" y="370" />
+        <di:waypoint x="390" y="390" />
+        <di:waypoint x="425" y="390" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Duplicate_di" bpmnElement="Flow_Duplicate">
-        <di:waypoint x="475" y="370" />
-        <di:waypoint x="572" y="370" />
+        <di:waypoint x="475" y="390" />
+        <di:waypoint x="572" y="390" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToAssign_di" bpmnElement="Flow_ToAssign">
-        <di:waypoint x="450" y="345" />
-        <di:waypoint x="450" y="255" />
-        <di:waypoint x="520" y="255" />
-        <bpmndi:BPMNLabel><dc:Bounds x="422.5" y="216" width="90" height="36" /></bpmndi:BPMNLabel>
+        <di:waypoint x="450" y="365" />
+        <di:waypoint x="450" y="275" />
+        <di:waypoint x="520" y="275" />
+        <bpmndi:BPMNLabel><dc:Bounds x="422.5" y="236" width="90" height="36" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_EditorialDirect_di" bpmnElement="Flow_EditorialDirect">
-        <di:waypoint x="450" y="395" />
-        <di:waypoint x="450" y="658" />
-        <di:waypoint x="925" y="658" />
-        <bpmndi:BPMNLabel><dc:Bounds x="454" y="517.5" width="90" height="18" /></bpmndi:BPMNLabel>
+        <di:waypoint x="450" y="415" />
+        <di:waypoint x="450" y="680" />
+        <di:waypoint x="925" y="680" />
+        <bpmndi:BPMNLabel><dc:Bounds x="454" y="538.5" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToGroup_di" bpmnElement="Flow_ToGroup">
-        <di:waypoint x="650" y="255" />
-        <di:waypoint x="705" y="255" />
-        <di:waypoint x="705" y="475" />
+        <di:waypoint x="650" y="275" />
+        <di:waypoint x="705" y="275" />
+        <di:waypoint x="705" y="495" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToReroute_di" bpmnElement="Flow_ToReroute">
-        <di:waypoint x="770" y="525" />
-        <di:waypoint x="785" y="525" />
+        <di:waypoint x="770" y="545" />
+        <di:waypoint x="785" y="545" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_GroupedToAssign_di" bpmnElement="Flow_GroupedToAssign">
-        <di:waypoint x="850" y="475" />
-        <di:waypoint x="850" y="415" />
+        <di:waypoint x="850" y="495" />
+        <di:waypoint x="850" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToRecommend_di" bpmnElement="Flow_ToRecommend">
-        <di:waypoint x="915" y="370" />
-        <di:waypoint x="1000" y="370" />
-        <di:waypoint x="1000" y="480" />
+        <di:waypoint x="915" y="390" />
+        <di:waypoint x="1000" y="390" />
+        <di:waypoint x="1000" y="500" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToDecide_di" bpmnElement="Flow_ToDecide">
-        <di:waypoint x="1000" y="570" />
-        <di:waypoint x="1000" y="613" />
+        <di:waypoint x="1000" y="590" />
+        <di:waypoint x="1000" y="635" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToChangesGateway_di" bpmnElement="Flow_ToChangesGateway">
-        <di:waypoint x="1075" y="658" />
-        <di:waypoint x="1105" y="658" />
+        <di:waypoint x="1075" y="680" />
+        <di:waypoint x="1105" y="680" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_NoChange_di" bpmnElement="Flow_NoChange">
-        <di:waypoint x="1155" y="658" />
-        <di:waypoint x="1392" y="658" />
+        <di:waypoint x="1130" y="705" />
+        <di:waypoint x="1130" y="780" />
+        <di:waypoint x="1432" y="780" />
         <bpmndi:BPMNLabel>
-          <dc:Bounds x="1220" y="662" width="130" height="36" />
+          <dc:Bounds x="1160" y="738" width="200" height="38" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_ToAuthorEdits_di" bpmnElement="Flow_ToAuthorEdits">
-        <di:waypoint x="1130" y="683" />
-        <di:waypoint x="1130" y="735" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1134" y="691" width="60.89" height="36" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_ToChangeSet_di" bpmnElement="Flow_ToChangeSet">
-        <di:waypoint x="1130" y="835" />
-        <di:waypoint x="1130" y="855" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_ToQaGate_di" bpmnElement="Flow_ToQaGate">
-        <di:waypoint x="1130" y="965" />
-        <di:waypoint x="1130" y="995" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_ToQaGateway_di" bpmnElement="Flow_ToQaGateway">
-        <di:waypoint x="1195" y="1045" />
-        <di:waypoint x="1255" y="1045" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_QaFailed_di" bpmnElement="Flow_QaFailed">
-        <di:waypoint x="1280" y="1070" />
-        <di:waypoint x="1280" y="1108" />
-        <di:waypoint x="1035" y="1108" />
-        <di:waypoint x="1035" y="785" />
-        <di:waypoint x="1065" y="785" />
-        <bpmndi:BPMNLabel><dc:Bounds x="980" y="1035" width="48" height="18" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_ToIncorporate_di" bpmnElement="Flow_ToIncorporate">
-        <di:waypoint x="1280" y="1020" />
-        <di:waypoint x="1280" y="960" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1286" y="990" width="50" height="18" /></bpmndi:BPMNLabel>
+      <bpmndi:BPMNEdge id="Flow_ToMakeChange_di" bpmnElement="Flow_ToMakeChange">
+        <di:waypoint x="1155" y="680" />
+        <di:waypoint x="1235" y="680" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1160" y="640" width="70" height="36" />
+        </bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToIncorporated_di" bpmnElement="Flow_ToIncorporated">
-        <di:waypoint x="1345" y="910" />
-        <di:waypoint x="1382" y="910" />
+        <di:waypoint x="1405" y="680" />
+        <di:waypoint x="1432" y="680" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToWithdraw_di" bpmnElement="Flow_ToWithdraw">
-        <di:waypoint x="938" y="150" />
-        <di:waypoint x="975" y="150" />
+        <di:waypoint x="938" y="160" />
+        <di:waypoint x="975" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToWithdrawn_di" bpmnElement="Flow_ToWithdrawn">
-        <di:waypoint x="1105" y="150" />
-        <di:waypoint x="1147" y="150" />
+        <di:waypoint x="1105" y="160" />
+        <di:waypoint x="1147" y="160" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

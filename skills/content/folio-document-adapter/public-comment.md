@@ -7,7 +7,8 @@ output: schemas/skills/public-comment/output.schema.json
 
 > Skill id: `public-comment` · Package: `folio-document-adapter` · Process:
 > `folio-assistant-core/processes/content/public-comment.bpmn`
-> (`Process_PublicComment`) · Tool: `folio-assistant-core/scripts/public-comment.ts`
+> (`Process_PublicComment`), which calls its change phase
+> `public-comment-change.bpmn` (`Process_PublicCommentChange`) · Tool: `folio-assistant-core/scripts/public-comment.ts`
 > · Schema: `folio-assistant-core/schemas/public-comment.ts` · Bean `v26p`,
 > issue #197.
 
@@ -347,7 +348,8 @@ trust it:
 ## The lifecycle, and who moves it
 
 `received → triaged → assigned → recommended → decided → editing → incorporated`, plus
-`duplicate` and `withdrawn`. Every move is a task in `public-comment.bpmn`.
+`duplicate` and `withdrawn`. Every move is a task in `public-comment.bpmn` or,
+for `edit` and `incorporate`, in its change phase `public-comment-change.bpmn`.
 `transition()` refuses any other move. Do not edit a comment's `status` by
 hand: the dashboard counts statuses, and a hand-closed comment reads as
 adjudicated when no one decided it.
