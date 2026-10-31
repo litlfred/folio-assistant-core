@@ -305,7 +305,7 @@ function refreshLocked() {
     });
     refreshRpc(rpc, pcOf, csOfNo, stOf, prOf);
     refreshRcs(rcs, rpc, csOf, stOf, prOf);
-    markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Architect Feedback');
+    markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback');
     // Staging review page, from Agent: only where Agent names a preview, so a
     // sheet whose agent writes the cell directly keeps it.
     const rSt = COLS.rcs.staging ? col(rcs, COLS.rcs.staging) : -1, rCs = col(rcs, COLS.rcs.cs);
@@ -341,16 +341,39 @@ function readSheet(sh) {
   const h = legendCount(values.map(r => r[0]));
   return { sh, top: h + 2, header: values[h].map(x => String(x).trim()), rows: values.slice(h + 1) };
 }
-function col(s, name) { return s.header.indexOf(name); }
-function cols(s, name) { return s.header.map((h, i) => (h === name ? i : -1)).filter(i => i >= 0); }
+/**
+ * Public comment's people's columns were "Architect Feedback ..." until
+ * 2026-10-31, when the owner had them named for the process role, "Committee
+ * Feedback ..." (the Feedback Review Committee). A header is found under
+ * either name, so a sheet works before and after its columns are renamed.
+ */
+const RENAMED = [['Committee Feedback', 'Architect Feedback']];
+function aliasOf(name) {
+  for (const [now, was] of RENAMED) {
+    if (String(name).indexOf(now) >= 0) return String(name).replace(now, was);
+    if (String(name).indexOf(was) >= 0) return String(name).replace(was, now);
+  }
+  return null;
+}
+function col(s, name) {
+  const i = s.header.indexOf(name);
+  const a = aliasOf(name);
+  return i >= 0 || a === null ? i : s.header.indexOf(a);
+}
+function cols(s, name) {
+  const a = aliasOf(name);
+  return s.header.map((h, i) => (h === name || (a !== null && h === a) ? i : -1)).filter(i => i >= 0);
+}
 /**
  * Columns whose header is `name` or `name (...)`, e.g. "Contributor Feedback
  * (CL)": the people's. `name (agent)` is the agent's proposal, not a
  * person's feedback, so it is left out.
  */
 function colsLike(s, name) {
-  return s.header.map((h, i) => ((h === name || String(h).indexOf(name + ' (') === 0) &&
-    h !== name + ' (agent)' ? i : -1)).filter(i => i >= 0);
+  const like = n => s.header.map((h, i) => ((h === n || String(h).indexOf(n + ' (') === 0) &&
+    h !== n + ' (agent)' ? i : -1)).filter(i => i >= 0);
+  const a = aliasOf(name);
+  return like(name).concat(a === null ? [] : like(a)).sort((x, y) => x - y);
 }
 
 /** Write f(row, k) into column c: every row, or only the rows in `only`. */
@@ -399,12 +422,16 @@ function basisOf(header, row, exact, prefix) {
   header.forEach((h, i) => {
     let v = String(row[i] == null ? '' : row[i]).trim();
     if (h === 'Selected Sections') v = v.split(',').map(bareName).filter(Boolean).join(',');
-    if (exact.indexOf(h) >= 0 || ((h === prefix || h.indexOf(prefix + ' (') === 0) && h !== prefix + ' (agent)')) {
+    const alt = aliasOf(prefix);
+    const isFb = p => p !== null && (h === p || h.indexOf(p + ' (') === 0) && h !== p + ' (agent)';
+    if (exact.indexOf(h) >= 0 || isFb(prefix) || isFb(alt)) {
       legacy.push(h + '=' + v);
       if (v) parts.push(h + '=' + v);
     }
   });
-  return [hashOf(parts.join('\n')), hashOf(legacy.join('\n'))];
+  // A basis written before a rename (RENAMED) names the columns the old way.
+  const was = t => t.map(x => { const a = aliasOf(x.split('=')[0]); return a === null || x.indexOf('Committee') !== 0 ? x : a + x.slice(x.indexOf('=')); });
+  return [hashOf(parts.join('\n')), hashOf(legacy.join('\n')), hashOf(was(parts).join('\n')), hashOf(was(legacy).join('\n'))];
 }
 
 /** "2026-10-30 22:30Z" (or ISO) -> ms, or NaN. */
@@ -430,6 +457,7 @@ function stagingCell(url, built, prs) {
 /** Flag the `prefix (agent)` proposal of each row whose basis moved on. */
 function markStale(s, csCol, basisOfCs, exact, prefix) {
   const ag = col(s, prefix + ' (agent)');
+  if (ag >= 0 && s.header[ag] !== prefix + ' (agent)') prefix = aliasOf(prefix);
   if (ag < 0 || csCol < 0) return;
   s.rows.forEach((r, k) => {
     const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[String(r[csCol]).trim()]);

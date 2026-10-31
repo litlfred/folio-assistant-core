@@ -81,12 +81,12 @@ export function hashOf(text: string): string {
 }
 
 /**
- * What an agent proposal (`Contributor Feedback (agent)`, or `Architect
+ * What an agent proposal (`Contributor Feedback (agent)`, or `Committee
  * Feedback (agent)` on Review Change Sets) was written against: a hash of the
  * row's blue cells, by header, the same hash the Apps Script's basisOf takes.
  * Drafting: Title, Selected Sections and every person's Contributor Feedback
  * column (`exact` Title and Selected Sections, `prefix` Contributor Feedback).
- * Public comment: `exact` Title and TWG (CS), `prefix` Architect Feedback.
+ * Public comment: `exact` Title and TWG (CS), `prefix` Committee Feedback (the columns were Architect Feedback until 2026-10-31; the script reads both).
  * The agent keeps it in the Agent tab's `Feedback basis (change set)`. While
  * the row's basis differs, the script marks the proposal stale; the agent's
  * next sync proposes again and writes the new basis. Picks are compared bare,

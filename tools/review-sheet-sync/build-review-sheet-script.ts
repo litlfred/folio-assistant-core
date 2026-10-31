@@ -134,12 +134,12 @@ export const DEFAULT_COLUMNS = {
   rpc: {
     no: "No.", sections: "Sections", page: "Page", lines: "Line no(s) / Table / Figure",
     comment: "Comment / issue", revision: "Suggested revision",
-    feedback: "Architect Feedback (initials)", disposition: "Disposition", status: "Status",
+    feedback: "Committee Feedback (initials)", disposition: "Disposition", status: "Status",
     agentic: "Agentic status",
   },
   rcs: {
     cs: "Change-set", sections: "Sections", pages: "Pages", comments: "Public Comments",
-    revisions: "Suggested Revisions", feedback: "PC Architect Feedback", dispositions: "Dispositions",
+    revisions: "Suggested Revisions", feedback: "PC Committee Feedback", dispositions: "Dispositions",
     agentic: "Agentic status", staging: "Staging review", status: "Agentic status (filter)",
   },
   agent: {
