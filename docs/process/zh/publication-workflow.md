@@ -79,7 +79,7 @@ _本页面生成自 [`content/docs/publication-workflow/`](https://github.com/li
 | `authoring-a-paper.bpmn` | 科学论文与专著 | [撰写论文](https://litlfred.github.io/folio-assistant/folio-assistant-sci/guides/writing-a-paper.html#the-end-to-end-workflow) |
 | `l2-dak-authoring.bpmn` | WHO SMART 指南 DAK (L2) | [创作 WHO SMART DAK](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-dak.html#the-l2-artifacts) |
 | `l3-fhir-pipeline.bpmn` | WHO SMART 实施指南 (L3) | [创作 WHO SMART IG](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-ig.html#the-l3-pipeline) |
-| `ig-incremental-build.bpmn` | WHO SMART IG (L3) — 构建泳道，按依赖锥增量构建（提议中） | [实现增量构建](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-ig.html#making-the-build-incremental) · [概览]({{ site.baseurl }}/zh/proposals/ig-incremental-build-overview.html) |
+| `ig-incremental-build.bpmn` | WHO SMART IG (L3) — 构建泳道，按依赖锥增量构建（提议中） | [实现增量构建](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-ig.html#making-the-build-incremental) · [概览](https://github.com/litlfred/folio-assistant/issues/199) |
 
 **智能体流程**——智能体如何工作，而非内容如何创作。这些流程与内容流程并行运行，而非嵌套在其中：
 
@@ -221,7 +221,7 @@ _本页面生成自 [`content/docs/publication-workflow/`](https://github.com/li
 
 自 bean `fq0b` 以来，这些文件不仅是图片。MCP 服务器对它们进行解释：`workflow_start` 为特定主体打开一个实例，`workflow_next` 报告*当前*启用了什么——包括执行它的泳道以及实现它的技能——而 `workflow_complete` 会拒绝流程尚未到达的步骤。在记录编辑的决定之前，`Commit into the corpus`（提交至语料库）不能报告为已完成，因为在此之前其上没有令牌。
 
-这是顺序约束，而非强制执行：目前还没有任何机制阻止智能体直接调用功能工具。关于使其具有约束力的论据——以及提交边界是合适切入点的论证——详见[提案：工作流编排]({{ '/zh/proposals/workflow-orchestration.html' | relative_url }})。
+这是顺序约束，而非强制执行：目前还没有任何机制阻止智能体直接调用功能工具。关于使其具有约束力的论据——以及提交边界是合适切入点的论证——详见[提案：工作流编排](https://github.com/litlfred/folio-assistant/issues/200)。
 
 ### 某些决策是经过计算的，而非人工裁决的
 {: #some-decisions-are-computed-not-judged data-fa-label="sec:publication-workflow-some-decisions-are-computed-not-judged" }

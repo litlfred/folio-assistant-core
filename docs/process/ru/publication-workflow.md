@@ -117,7 +117,7 @@ Bean `pve3` фиксирует этот выбор: **обе половины bo
 | `authoring-a-paper.bpmn` | Научные статьи и книги | [Написание статьи](https://litlfred.github.io/folio-assistant/folio-assistant-sci/guides/writing-a-paper.html#the-end-to-end-workflow) |
 | `l2-dak-authoring.bpmn` | Комплект цифровой адаптации ВОЗ (WHO SMART Guidelines DAK, L2) | [Создание WHO SMART DAK](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-dak.html#the-l2-artifacts) |
 | `l3-fhir-pipeline.bpmn` | Руководство по внедрению ВОЗ (WHO SMART Implementation Guide, L3) | [Создание WHO SMART IG](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-ig.html#the-l3-pipeline) |
-| `ig-incremental-build.bpmn` | WHO SMART IG (L3) — дорожка сборки, инкрементальная по конусу зависимостей (предложено) | [Инкрементальная сборка](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-ig.html#making-the-build-incremental) · [обзор]({{ site.baseurl }}/ru/proposals/ig-incremental-build-overview.html) |
+| `ig-incremental-build.bpmn` | WHO SMART IG (L3) — дорожка сборки, инкрементальная по конусу зависимостей (предложено) | [Инкрементальная сборка](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-ig.html#making-the-build-incremental) · [обзор](https://github.com/litlfred/folio-assistant/issues/199) |
 
 **Процессы агента** — как работает агент, в отличие от того, как создается контент.
 Они выполняются параллельно с процессами контента, а не внутри них:
@@ -329,7 +329,7 @@ Bean `pve3` фиксирует этот выбор: **обе половины bo
 Это упорядочивание, а не принудительное ограничение: пока ничто не мешает агенту вызвать инструмент
 напрямую. Обоснование того, почему эти правила должны стать обязательными — и аргумент в пользу того,
 что граница коммита является правильным местом для этого — изложены в
-[Предложение: оркестрация рабочих процессов]({{ '/ru/proposals/workflow-orchestration.html' | relative_url }}).
+[Предложение: оркестрация рабочих процессов](https://github.com/litlfred/folio-assistant/issues/200).
 
 ### Некоторые решения вычисляются, а не принимаются на основе суждения
 {: #some-decisions-are-computed-not-judged data-fa-label="sec:publication-workflow-some-decisions-are-computed-not-judged" }

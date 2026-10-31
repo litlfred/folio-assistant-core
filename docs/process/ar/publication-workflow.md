@@ -79,7 +79,7 @@ _تم توليد هذه الصفحة من [`content/docs/publication-workflow/`]
 | `authoring-a-paper.bpmn` | الأوراق العلمية والكتب | [كتابة ورقة بحثية](https://litlfred.github.io/folio-assistant/folio-assistant-sci/guides/writing-a-paper.html#the-end-to-end-workflow) |
 | `l2-dak-authoring.bpmn` | مجموعة أدوات التسريع الرقمي L2 DAK لإرشادات منظمة الصحة العالمية الذكية | [تأليف WHO SMART DAK](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-dak.html#the-l2-artifacts) |
 | `l3-fhir-pipeline.bpmn` | دليل تطبيق L3 FHIR لإرشادات منظمة الصحة العالمية الذكية | [تأليف WHO SMART IG](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-ig.html#the-l3-pipeline) |
-| `ig-incremental-build.bpmn` | WHO SMART IG (L3) — مسار البناء، تزايدي حسب مخروط التبعية (مقترح) | [جعل البناء تزايديًا](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-ig.html#making-the-build-incremental) · [نظرة عامة]({{ site.baseurl }}/ar/proposals/ig-incremental-build-overview.html) |
+| `ig-incremental-build.bpmn` | WHO SMART IG (L3) — مسار البناء، تزايدي حسب مخروط التبعية (مقترح) | [جعل البناء تزايديًا](https://litlfred.github.io/folio-assistant/smart-base/guides/who-smart-ig.html#making-the-build-incremental) · [نظرة عامة](https://github.com/litlfred/folio-assistant/issues/199) |
 
 **عملية الوكيل** — كيف يعمل الوكيل، بدلاً من كيفية تأليف المحتوى. تعمل هذه العمليات جنبًا إلى جنب مع عمليات المحتوى بدلاً من أن تكون بداخلها:
 
@@ -221,7 +221,7 @@ _تم توليد هذه الصفحة من [`content/docs/publication-workflow/`]
 
 منذ الـ bean `fq0b` لم تعد هذه الملفات مجرد صور. إذ يقوم خادم MCP بتفسيرها: تفتح `workflow_start` نسخة لموضوع ما، وتبلغ `workflow_next` عما هو مُمكَّن *الآن* — مع المسار الذي يؤديه والمهارة التي تنفذه — وترفض `workflow_complete` أي خطوة لم تصل إليها العملية بعد. ولا يمكن الإبلاغ عن إتمام مهمة `Commit into the corpus (الإيداع في مجموعة المحتوى)` قبل تسجيل قرار المحرر، لعدم وجود رمز (token) عليها حتى ذلك الحين.
 
-هذا مجرد ترتيب وليس إنفاذًا إلزاميًا: فلا شيء يمنع الوكيل حتى الآن من استدعاء أداة قدرات بشكل مباشر. ووجهة النظر الداعية لجعله ملزمًا — والحجة القائلة بأن حد الإيداع (commit boundary) هو المكان الصحيح — موجودة في [مقترح: تنسيق سير العمل]({{ '/ar/proposals/workflow-orchestration.html' | relative_url }}).
+هذا مجرد ترتيب وليس إنفاذًا إلزاميًا: فلا شيء يمنع الوكيل حتى الآن من استدعاء أداة قدرات بشكل مباشر. ووجهة النظر الداعية لجعله ملزمًا — والحجة القائلة بأن حد الإيداع (commit boundary) هو المكان الصحيح — موجودة في [مقترح: تنسيق سير العمل](https://github.com/litlfred/folio-assistant/issues/200).
 
 ### بعض القرارات محسوبة وليست تقديرية
 {: #some-decisions-are-computed-not-judged data-fa-label="sec:publication-workflow-some-decisions-are-computed-not-judged" }

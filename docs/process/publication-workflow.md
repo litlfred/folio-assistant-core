@@ -124,7 +124,7 @@ decision is recorded, because there is no token on it until then.
 That is ordering, not enforcement: nothing yet stops an agent calling a
 capability tool directly. The case for making it binding — and the argument
 that the commit boundary is the right place — is in
-[Proposal: workflow orchestration]({{ '/proposals/workflow-orchestration.html' | relative_url }}).
+[Proposal: workflow orchestration](https://github.com/litlfred/folio-assistant/issues/200).
 
 ### Some decisions are computed, not judged
 {: #some-decisions-are-computed-not-judged data-fa-label="sec:publication-workflow-some-decisions-are-computed-not-judged" }
