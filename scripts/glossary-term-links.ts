@@ -28,6 +28,12 @@
  *   paragraph is not a wall of links.
  * - Nothing inside a heading, a link, code, inline HTML or a directive is
  *   touched.
+ * - A Markdown link whose target is a term's SKOS IRI, such as a block's
+ *   "Concepts:" line (`[Stakeholder](https://…/ns#glossary/dpi-h-ra/stakeholder)`),
+ *   is pointed at the term's entry instead. The IRI is the identifier the
+ *   Markdown keeps; the page is where this build puts it (owner, 2026-10-31,
+ *   "Through the glossary"). Every term of the instances above resolves this
+ *   way, one-word or not.
  *
  * Opt-in: `build-document-site.ts --link-terms`.
  */
@@ -41,6 +47,10 @@ export interface TermLink {
   href: string;
   /** The term's definition, first sentence, for the link's title. */
   title?: string;
+  /** The term's SKOS IRI: a Markdown link to it is pointed at the entry instead. */
+  iri?: string;
+  /** `false`: resolve links to the IRI only, never match the label in prose. */
+  prose?: false;
 }
 
 type LangText = string | Record<string, string>;
@@ -61,9 +71,11 @@ export function neededInstances(repoRoot: string): Set<string> {
 /** The links for a document whose page is in `pageDir` (relative to the site root). */
 export async function termLinks(repoRoot: string, pageDir: string): Promise<TermLink[]> {
   const { collect, anchorOf, permalinkOf, pageOf } = await import("./glossary-page.ts");
+  const { termIri } = await import("../schemas/glossary.ts");
   const wanted = neededInstances(repoRoot);
   const self = [...wanted][0];
   const byLabel = new Map<string, TermLink>();
+  const byIri = new Map<string, TermLink>();
   for (const s of collect(repoRoot).glossaries) {
     // A scheme counts for the instance that declares it, so a term of dth-sc's is
     // dth-sc's even while the page credits it elsewhere (scheme-owner.ts).
@@ -71,14 +83,17 @@ export async function termLinks(repoRoot: string, pageDir: string): Promise<Term
     const page = permalinkOf(pageOf(s)).replace(/^\//, "");
     for (const t of s.glossary.terms) {
       const def = t.definition ? labelOf(t.definition as LangText).split(/(?<=\.)\s/)[0] : undefined;
+      const href = `${posix.relative(pageDir, page)}/#${anchorOf(s, t.id)}`;
+      const iri = t.iri ?? termIri(s.ns, s.glossary, t.id);
+      byIri.set(iri, { label: labelOf(t.prefLabel as LangText), href, iri, prose: false, ...(def ? { title: def } : {}) });
       for (const label of [labelOf(t.prefLabel as LangText), ...(t.altLabel ?? [])]) {
         if (!/^\p{Lu}/u.test(label) || label.length < 3 || byLabel.has(label)) continue;
         if (oneWord(label) && (s.declaredBy ?? s.instance) !== self) continue;
-        byLabel.set(label, { label, href: `${posix.relative(pageDir, page)}/#${anchorOf(s, t.id)}`, ...(def ? { title: def } : {}) });
+        byLabel.set(label, { label, href, ...(def ? { title: def } : {}) });
       }
     }
   }
-  return [...byLabel.values()].sort((a, b) => b.label.length - a.label.length || a.label.localeCompare(b.label));
+  return [...[...byLabel.values()].sort((a, b) => b.label.length - a.label.length || a.label.localeCompare(b.label)), ...byIri.values()];
 }
 
 interface MdNode {
@@ -108,8 +123,12 @@ function sentenceStart(text: string, at: number, before: readonly MdNode[]): boo
 /** A remark plugin: the first use of each term in each section becomes a link to its entry. */
 export function linkTerms(links: readonly TermLink[]) {
   if (links.length === 0) return () => () => undefined;
-  const byLabel = new Map(links.map((l) => [l.label, l]));
-  const re = new RegExp(`(?<![\\p{L}\\p{N}-])(${links.map((l) => escapeRe(l.label)).join("|")})(s?)(?![\\p{L}\\p{N}-])`, "gu");
+  const prose = links.filter((l) => l.prose !== false);
+  const byLabel = new Map(prose.map((l) => [l.label, l]));
+  const byIri = new Map(links.filter((l) => l.iri).map((l) => [l.iri!, l]));
+  const re = prose.length
+    ? new RegExp(`(?<![\\p{L}\\p{N}-])(${prose.map((l) => escapeRe(l.label)).join("|")})(s?)(?![\\p{L}\\p{N}-])`, "gu")
+    : /$^/gu;
   return () => (tree: MdNode) => {
     let seen = new Set<string>();
     const walk = (node: MdNode) => {
@@ -119,6 +138,12 @@ export function linkTerms(links: readonly TermLink[]) {
         if (child.type === "heading") {
           seen = new Set();
           out.push(child);
+          continue;
+        }
+        const target = child.type === "link" && child.url ? byIri.get(child.url) : undefined;
+        if (target) {
+          seen.add(target.href);
+          out.push({ ...child, url: target.href, title: target.title ?? null, data: { hProperties: { className: ["fa-term"] } } });
           continue;
         }
         if (SKIP.has(child.type)) {

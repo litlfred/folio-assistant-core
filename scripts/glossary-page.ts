@@ -79,6 +79,7 @@ import { ASSET_TYPES, EXTRACTED_PREFIX, assetTypeTitle, assetTypeWhat, extract, 
 import { perScheme, run as runTermMapping, termState, type SchemeState, type TermStateAnswer } from "@litlfred/cat-harness-tools/scripts/check-term-mapping.ts";
 import { MAPPING_TARGETS } from "@litlfred/cat-harness-tools/schemas/content/term-mapping.ts";
 import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, sourceText, templateName } from "./glossary-pot.ts";
+import { archimateDepictions, type Depiction } from "./glossary-archimate.ts";
 import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
 import { forwardingParts, pageParts, visualiserFor, visualiserPageDir } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 import { ROUTE_SEGMENT, visualiserRoute, type VisualiserRouteParts } from "@litlfred/cat-harness-tools/schemas/kg/visualiser-route.ts";
@@ -750,6 +751,34 @@ export function anchorOf(s: GlossarySource, id: string): string {
   return `${s.instance}--${s.glossary.id}--${id}`;
 }
 
+/**
+ * The ArchiMate elements and views that depict each term, keyed by anchor
+ * (`glossary-archimate.ts`). Set once by {@link loadDepictions} before the
+ * pages are rendered; empty, the entries say nothing about ArchiMate.
+ */
+let DEPICTIONS: ReadonlyMap<string, Depiction> = new Map();
+
+/** Read the depictions of every authored term in `c` from the mounted ArchiMate models. */
+export async function loadDepictions(repo: string, c: ReturnType<typeof collect>): Promise<ReadonlyMap<string, Depiction>> {
+  const terms = c.glossaries
+    .filter((s) => !s.extracted)
+    .flatMap((s) =>
+      s.glossary.terms.map((t) => ({ anchor: anchorOf(s, t.id), iri: t.iri ?? termIri(s.ns, s.glossary, t.id), scheme: s.glossary.id, id: t.id, label: first(t.prefLabel) })),
+    );
+  DEPICTIONS = await archimateDepictions(repo, terms);
+  return DEPICTIONS;
+}
+
+/** One entry's "Depicted in ArchiMate" line, or nothing. */
+function depictionLine(anchor: string): string[] {
+  const d = DEPICTIONS.get(anchor);
+  if (!d) return [];
+  const a = (x: { name: string; page: string }) => `<a href="{{ '${x.page}' | relative_url }}">${esc(x.name)}</a>`;
+  const els = d.elements.map((e) => `${a(e)} <span class="fa-gloss-meta">(${esc(e.type)})</span>`).join(", ");
+  const views = d.views.length ? `; views: ${d.views.map(a).join(", ")}` : "";
+  return [`<p class="fa-gloss-archimate">Depicted in ArchiMate ${esc(d.instance)} ${esc(d.model)}: ${els}${views}</p>`];
+}
+
 /** A note's text with its web addresses as links. */
 function noteHtml(note: string): string {
   return esc(note).replace(/https?:\/\/[^\s<>"]+[^\s<>".,;)]/g, (u) => `<a href="${u}">${u.replace(/^https?:\/\//, "")}</a>`);
@@ -830,6 +859,7 @@ function termEntry(row: Row, marks?: ReadonlyMap<string, string>): string {
       : []),
     `<p class="fa-gloss-meta">${meta}${t.isDefinedBy ? ` · defined by ${link(t.isDefinedBy)}` : ""}${t.source ? ` · source ${sourceLink(t.source)}` : ""}</p>`,
     ...(matches.length ? [`<ul class="fa-gloss-matches">${matches.join("")}</ul>`] : []),
+    ...depictionLine(anchorOf(s, t.id)),
     ...(marks?.has(anchorOf(s, t.id)) ? [marks.get(anchorOf(s, t.id))!] : []),
     `</dd>`,
   ].join("\n");
@@ -1870,6 +1900,7 @@ if (import.meta.main) {
     for (const f of c.findings.invalid) console.error(`  ${f}`);
     process.exit(1);
   }
+  await loadDepictions(REPO, c);
   const unresolved: string[] = [];
   const files = written(outputs(c, undefined, undefined, unresolved));
   // Reported, never fatal: a match the record cannot place is left out of the
