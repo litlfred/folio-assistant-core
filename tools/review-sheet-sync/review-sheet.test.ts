@@ -564,6 +564,17 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(live()[0].editors).toEqual(["owner@x.example"]);
   });
 
+  test("a Yes first seen on a row the agent already completed counts from that completion", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const fbRows = t["Contributor Feedback"].rows;
+    fbRows[0].push("Ready for agent");
+    fbRows.forEach((r, i) => i && r.push(i === 1 ? "Yes" : ""));
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    expect(rt2.props["ready:CS-004"]).toBe("2026-10-30 23:40Z");
+    expect((rt2.written["Contributor Feedback"]["Agentic status"][0][0] as Rich).text.startsWith("Waiting")).toBe(false);
+  });
+
   test("any filled row gets a Change-set; one holding only No does not", () => {
     const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
     const fbRows = t["Contributor Feedback"].rows;
@@ -957,5 +968,43 @@ describe("the committed Code.gs people copy", () => {
   test("the install steps link it", () => {
     const rows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
     expect(rows.find((r) => r[0] === "Instructions - Install script")![1]).toContain(CODE_GS_URL);
+  });
+});
+
+describe("Ready for agent after the preview was built (owner, 2026-10-31)", () => {
+  const sheets = {
+    newRichTextValue: () => {
+      const v = { text: "", links: [] as unknown[], bold: [] as unknown[] };
+      const b = {
+        setText: (t: string) => ((v.text = t), b),
+        setLinkUrl: (a: number, z: number, u: string) => (v.links.push([a, z, u]), b),
+        setTextStyle: (a: number, z: number) => (v.bold.push([a, z]), b),
+        build: () => v,
+      };
+      return b;
+    },
+    newTextStyle: () => ({ setBold: () => ({ build: () => ({}) }) }),
+  };
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { stagingWarning, agenticCell };`)(sheets) as {
+    stagingWarning: (u: string, b: object, p: object[], r?: string) => string;
+    agenticCell: (s: string, p: object[], o?: object) => { text: string; links: [number, number, string][] };
+  };
+  const pr = { url: "https://github.com/litlfred/dth-hrh/pull/7", head: "b20534f", done: "2026-10-31 08:10Z" };
+  const built = { at: "2026-10-31 08:15Z", from: "b20534f", deploy: "deployed" };
+
+  test("Staging review warns when Ready for agent was set after the build", () => {
+    expect(fns.stagingWarning("u", built, [pr])).toBe("");
+    expect(fns.stagingWarning("u", built, [pr], "2026-10-31 11:30Z")).toBe("\u26a0 missing feedback from 2026-10-31 11:30Z");
+    expect(fns.stagingWarning("u", built, [pr], "2026-10-31 08:00Z")).toBe("");
+  });
+
+  test("Agentic status says the row is queued, then who has it", () => {
+    const q = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z" });
+    expect(q.text.split("\n")[0]).toBe("Waiting on the agent since 2026-10-31 11:30Z (Ready for agent set)");
+    expect(q.text).toContain("dth-hrh#7");
+    const w = fns.agenticCell("Working", [pr], { readyAt: "2026-10-31 11:30Z", talk: "https://claude.ai/code/x" });
+    expect(w.text.startsWith("An agent is working on it: conversation\n")).toBe(true);
+    expect(w.links.some(([, , u]) => u === "https://claude.ai/code/x")).toBe(true);
+    expect(fns.agenticCell("Done", [pr]).text.startsWith("dth-hrh#7")).toBe(true);
   });
 });

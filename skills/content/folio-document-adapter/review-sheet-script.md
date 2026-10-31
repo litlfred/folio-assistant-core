@@ -193,6 +193,22 @@ yet`. Without these columns it falls back to the time check above. A sheet
 made before 2026-10-31 gains the three columns at the right of the Agent
 (change sets) tab; the script finds them by header.
 
+**Ready for agent after the preview** (owner, 2026-10-31: "i just set Ready
+for agent to Y ... i expected Staging review to get a stale warning"). The PR
+has not changed yet when an Editor sends a row back, so the commit check above
+passes. The script records, as a document property `ready:<CS>`, the time it
+first sees a row's Ready for agent at Yes (cleared on No). A Yes it first sees
+on a row the agent has already completed counts from that completion instead,
+since the script cannot know when it was set: a freshly pasted script would
+otherwise flag work the agent had already done (2026-10-31, CS-001). When that time is
+later than **Staging built**, after the deploy checks, it writes `⚠ missing
+feedback from <time>`: the preview still shows the PR, but not the feedback an
+Editor has just sent to the agent (owner, 2026-10-31: "requested from whom?
+what are we waiting on?"). The review page cannot know the sheet, so only the
+sheet says so. The same time makes **Agentic status** open with **Waiting on
+the agent since <time> (Ready for agent set)**, until the agent records a later
+completion or sets the status to Working.
+
 **Stale agent proposals.** `Feedback (agent)` (drafting) and
 `Change Set Feedback (agent)` (Review Change Sets) carry the agent's proposal.
 The agent records what it wrote against in the Agent tab's **Feedback basis
@@ -421,6 +437,13 @@ Contributor Feedback row with a Change-set:
    script's own writes (ids, links, tree marks) do not change the basis.
 5. Work a change set only when **Ready for agent** is Yes; its PRs say
    `Closes #n` for the change set's issue, and go to Agent's PR columns.
+6. When you pick a row up, say so first (owner, 2026-10-31: "agentic
+   status to update saying that an agent has it (w/ link to discussion)"):
+   set its Agent status to `Working` and put the URL of your conversation
+   (the session, thread or PR discussion) in **Agent conversation (change
+   set)**. Agentic status then opens with **An agent is working on it:
+   conversation**, linked. A sheet made before 2026-10-31 gains that column
+   at the right of the Agent (change sets) tab; the script finds it by header.
 
 Title stays the contributors': the agent never writes it (in public-comment
 mode, by contrast, Review Change Sets' Title is agent-derived and green).

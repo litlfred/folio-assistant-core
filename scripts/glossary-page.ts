@@ -746,7 +746,7 @@ const pageLink = (k: PageKey, text: string) =>
 const skosLink = (s: GlossarySource) => `<a href="{{ '/${skosAsset(s)}' | relative_url }}">SKOS</a>`;
 
 /** A term's anchor on its page, which is also its key for a per-term mapping mark. */
-function anchorOf(s: GlossarySource, id: string): string {
+export function anchorOf(s: GlossarySource, id: string): string {
   return `${s.instance}--${s.glossary.id}--${id}`;
 }
 
