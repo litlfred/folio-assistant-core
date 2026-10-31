@@ -250,8 +250,8 @@ const draftTabs = () => ({
     id: 1,
     rows: [
       ["Change-set", "Title", "Selected Sections", "Section links", "Contributor Feedback (CL)", "Contributor Feedback (initials/name)", "Issue", "Agentic status", "Staging review page"],
-      ["CS-004", "Define registry", "Ch 1 Why it matters, 1.1 Global challenges", "", "AB: needs a definition", "", "", "", ""],
-      ["", "Privacy wording", "Ch 12 Privacy; Security and Trust, Somewhere else", "", "", "CD: tighten", "", "", ""],
+      ["CS-004", "Define registry", "Ch 1 Why it matters,\u2514\u20021.1 Global challenges", "", "AB: needs a definition", "", "", "", ""],
+      ["", "Privacy wording", "Ch 12 Privacy; Security and Trust, Somewhere else, 1.1 Global challenges", "", "", "CD: tighten", "", "", ""],
       ["", "", "", "", "", "", "", "", ""],
     ],
   },
@@ -298,7 +298,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(toc.map((r) => r[0])).toEqual([
       "Section", "About this draft", "About this draft · Questions for the TWG", "Ch 1 Why it matters",
       "Ch 1 · Objectives and key messages", "1.1 Global challenges", "Ch 12 Privacy; Security and Trust",
-    ].map((n) => (/^(Section|About this draft$|Ch \d+ [^·])/.test(n) ? n : `\u2003\u2003${n}`)));
+    ].map((n) => (/^(Section|About this draft$|Ch \d+ [^·])/.test(n) ? n : `\u2514\u2002${n}`)));
     expect(toc[4][1]).toBe('=HYPERLINK("S#sec:ch01-lead","open")');
     expect(tabs.TOC.hidden).toBe(true);
   });
@@ -312,7 +312,8 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(r.text).toBe("Ch 1 Why it matters\n1.1 Global challenges");
     expect(r.links.map((l) => [slice(r, l), l[2]])).toEqual([["Ch 1 Why it matters", "S#chap:ch01-why"], ["1.1 Global challenges", "S#sec:1-1"]]);
     const r2 = fb["Section links"][1][0] as Rich;
-    expect(r2.links.map((l) => [slice(r2, l), l[2]])).toEqual([["Ch 12 Privacy; Security and Trust", "S#chap:ch12-privacy"]]);
+    // A marked pick ("\u2514 1.1 ...") and a bare one (an old value, or a first chip Sheets trimmed) both link.
+    expect(r2.links.map((l) => [slice(r2, l), l[2]])).toEqual([["Ch 12 Privacy; Security and Trust", "S#chap:ch12-privacy"], ["1.1 Global challenges", "S#sec:1-1"]]);
     expect(fb.Sections).toBeUndefined();
   });
 

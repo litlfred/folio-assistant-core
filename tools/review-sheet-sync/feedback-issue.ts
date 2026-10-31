@@ -7,7 +7,7 @@
  *
  * Skill: `review-sheet-script`, "Feedback from the site".
  */
-import { buildToc } from "./build-review-sheet-script.js";
+import { bareName, buildToc } from "./build-review-sheet-script.js";
 
 export type Feedback = {
   content?: string; section?: string; block?: string; url?: string; source?: string;
@@ -60,11 +60,11 @@ export function feedbackRow(issue: { body: string; url: string; login: string },
   const toc = buildToc(anchors);
   const byAnchor = new Map(toc.map(([n, a]) => [a, n]));
   const sec = f.block ? anchors.blocks?.find((b) => b.label === f.block)?.sections[0] : undefined;
-  const name = (sec && byAnchor.get(sec)) ?? toc.find(([n]) => f.section && n.trim() === f.section.replace(/,/g, ";"))?.[0] ?? "";
+  const name = (sec && byAnchor.get(sec)) ?? toc.find(([n]) => f.section && bareName(n) === f.section.replace(/,/g, ";"))?.[0] ?? "";
   const first = (f.comment ?? "").split(/(?<=[.!?])\s|\n/)[0].trim();
   const short = first.length > 80 ? first.slice(0, 79).trimEnd() + "…" : first;
-  // `name` is the dropdown value, indented under its chapter; the title takes it bare.
-  const where = name.trim() || f.section || "";
+  // `name` is the dropdown value, marked under its chapter; the title takes it bare.
+  const where = bareName(name) || f.section || "";
   return {
     title: [where, short].filter(Boolean).join(": "),
     sections: name,

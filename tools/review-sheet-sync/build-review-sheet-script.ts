@@ -91,12 +91,16 @@ export const DRAFT_COLUMNS = {
  * choices with ", ".
  */
 /**
- * The dropdown is a flat list, so a section is indented under its chapter by
- * two em spaces per level (owner, 2026-10-31, "Indent sub-sections"). An em
- * space is not trimmed by Sheets; the script compares names trimmed, so a
- * value picked before the indent still links.
+ * The dropdown is a flat list, so a section is marked under its chapter with
+ * a tree mark, "\u2514 " ("└ "), and "\u2502 " ("│ ") per further level (owner,
+ * 2026-10-31, "Indent sub-sections"). Not leading spaces: a multi-select cell
+ * is stored trimmed, so a first chip that began with spaces lost them and no
+ * longer matched the list ("Invalid"). The script and the feedback-issue
+ * reader compare names with the mark stripped (`bareName`), so a value picked
+ * before the mark still links.
  */
-export const INDENT = "\u2003\u2003";
+export const treeMark = (depth: number) => (depth > 0 ? "\u2502\u2002".repeat(depth - 1) + "\u2514\u2002" : "");
+export const bareName = (n: string) => n.replace(/^[\s\u2502\u2514]+/, "").trim();
 
 export function buildToc(a: { chapters: Chapter[]; sections: DraftSection[] }): [string, string][] {
   const clean = (s: string) => s.replace(/,/g, ";").replace(/\s+/g, " ").trim();
@@ -106,7 +110,7 @@ export function buildToc(a: { chapters: Chapter[]; sections: DraftSection[] }): 
     name = clean(name);
     if (!name || seen.has(name)) return;
     seen.add(name);
-    out.push([INDENT.repeat(depth) + name, anchor]);
+    out.push([treeMark(depth) + name, anchor]);
   };
   for (const c of a.chapters) {
     const bare = c.title.replace(/^Chapter\s+\d+\.?\s*/i, "");
@@ -269,9 +273,7 @@ const CHUNK = 40_000;
 export function configRows(c: SheetConfig): string[][] {
   const rows: string[][] = [["Key", "Value (JSON, written by the agent from sheet-sync.json; do not edit)"]];
   for (const key of ["CFG", "COLS", "DATA"] as const) {
-    // An em space (the TOC's indent) is written as its escape, so a person
-    // reading the tab sees it; JSON.parse reads either form.
-    for (const chunk of chunks(readable(c[key]).replace(/\u2003/g, "\\u2003"))) rows.push([key, "|" + chunk]);
+    for (const chunk of chunks(readable(c[key]))) rows.push([key, "|" + chunk]);
   }
   return rows;
 }

@@ -494,13 +494,13 @@ function refreshDraft() {
   });
 
   const tocUrl = {};
-  // Names are compared trimmed: the dropdown indents sections under their chapter.
-  DATA.TOC.forEach(([name, anchor]) => (tocUrl[String(name).trim()] = CFG.SECTION_URL + anchor));
+  // Names are compared bare: the dropdown marks sections under their chapter.
+  DATA.TOC.forEach(([name, anchor]) => (tocUrl[bareName(name)] = CFG.SECTION_URL + anchor));
   // Sections is the people's multi-select dropdown, so it stays plain text (a
   // dropdown chip cannot carry a link, and rich text there fights the
   // validation). Section links is green: one linked line per picked section.
   writeRich(fb, c.sectionLinks, fb.rows.map(r => {
-    const names = String(r[c.sections]).split(', ').map(x => x.trim()).filter(x => tocUrl[x]);
+    const names = String(r[c.sections]).split(',').map(bareName).filter(x => tocUrl[x]);
     return rich(names.flatMap((n, i) => (i ? [{ t: '\n' }] : []).concat([{ t: n, url: tocUrl[n] }])));
   }));
   writeRich(fb, c.issue, fb.rows.map(r => {
@@ -518,6 +518,8 @@ function refreshDraft() {
   }));
 }
 
+/** A dropdown name without its tree mark ("\u2514 ", "\u2502 ") or spaces. */
+const bareName = n => String(n).replace(/^[\s\u2502\u2514]+/, '').trim();
 const issueUrl = line => (String(line).match(/https:\/\/github\.com\/[^\s,;]+\/issues\/\d+/) || [''])[0];
 const issueLabel = url => { const m = url.match(/\/([^/]+)\/issues\/(\d+)$/); return m[1] + '#' + m[2]; };
 
