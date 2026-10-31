@@ -474,7 +474,6 @@
         <di:waypoint x="1280" y="960" />
         <bpmndi:BPMNLabel><dc:Bounds x="1286" y="990" width="50" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToIncorporated_di" bpmnElement="Flow_ToIncorporated">
         <di:waypoint x="1345" y="910" />
         <di:waypoint x="1382" y="910" />
