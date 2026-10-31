@@ -69,12 +69,17 @@ describe("over the real who-iris catalogue, with the network refused", () => {
     expect(exitCodeFor(r)).toBe(2);
   });
 
-  test("the items are probed through their Handle, the containers through their host URL", async () => {
+  test("a node is probed through its Handle when it carries one, else through its host URL", async () => {
     const r = await checkSourceLiveness(nodes, refuses);
     const items = r.filter((x) => x.kind === "item");
     expect(items.length).toBeGreaterThan(0);
     expect(items.every((x) => x.viaHandle && x.iri!.startsWith("https://hdl.handle.net/"))).toBe(true);
-    expect(r.filter((x) => x.kind === "container").every((x) => !x.viaHandle)).toBe(true);
+    // Containers too, since the catalogue records a Handle for collections
+    // and communities: the persistent identifier is preferred wherever it exists.
+    const handleOf = new Map(nodes.map((n) => [n.id, Boolean(n.handle)]));
+    for (const x of r.filter((x) => x.kind === "container")) {
+      expect({ id: x.id, viaHandle: x.viaHandle }).toEqual({ id: x.id, viaHandle: handleOf.get(x.id)! });
+    }
   });
 
   test("one gone node makes the run exit 1, whatever else is undetermined", async () => {

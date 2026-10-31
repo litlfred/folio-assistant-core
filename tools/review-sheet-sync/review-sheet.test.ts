@@ -236,6 +236,16 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     expect(JSON.stringify(b.written)).toBe(JSON.stringify(a.written));
   });
 
+  test("Agentic status (filter) holds one plain status per change set, for a filter view", () => {
+    const t = tabs();
+    t["Review Change Sets"].rows[0].push("Agentic status (filter)");
+    t["Review Change Sets"].rows.slice(1).forEach((r) => r.push(""));
+    t.Agent.rows[2][2] = "Needs human";
+    const rt2 = runtime(withConfig(t, pcRows));
+    load(code, rt2.g).refreshAll();
+    expect(rt2.written["Review Change Sets"]["Agentic status (filter)"]).toEqual([["Needs human"], ["Not started"]]);
+  });
+
   test("an edit rebuilds at once while a rebuild is quick", () => {
     const rt2 = runtime(withConfig(tabs(), pcRows));
     load(code, rt2.g).markDirty({ range: { getSheet: () => rt2.sheet("Agent") } });
@@ -288,7 +298,7 @@ const draftTabs = () => ({
     id: 1,
     rows: [
       ["Change-set", "Title", "Selected Sections", "Section links", "Contributor Feedback (CL)", "Contributor Feedback (initials/name)", "Issue", "Agentic status", "Staging review page"],
-      ["CS-004", "Define registry", "Ch 1 Why it matters,\u2514\u20021.1 Global challenges", "", "AB: needs a definition", "", "", "", ""],
+      ["CS-004", "Define registry", "Ch 1 Why it matters,\u2800\u2800\u28001.1 Global challenges", "", "AB: needs a definition", "", "", "", ""],
       ["", "Privacy wording", "Ch 12 Privacy; Security and Trust, Somewhere else, 1.1 Global challenges", "", "", "CD: tighten", "", "", ""],
       ["", "", "", "", "", "", "", "", ""],
     ],
@@ -322,9 +332,10 @@ describe("review-sheet.gs in drafting mode", () => {
   test("the script is the same for every document: nothing of the folio is in it", () => {
     expect(code).not.toContain("https://x.example/S#");
     expect(code).not.toContain("Global challenges");
-    expect(dRows[1][0]).toBe("CFG");
-    expect(dRows.every((r, i) => i === 0 || r[1].startsWith("|"))).toBe(true);
-    expect(JSON.parse(dRows[1][1].slice(1)).MODE).toBe("drafting");
+    expect(dRows.find((r) => r[0] !== "SETUP" && r[0] !== "Key")?.[0]).toBe("CFG");
+    expect(dRows.filter((r) => r[0] === "SETUP").map((r) => r[1]).join("\n")).toContain("Allow multiple selections");
+    expect(dRows.every((r, i) => i === 0 || r[0] === "SETUP" || r[1].startsWith("|"))).toBe(true);
+    expect(JSON.parse(dRows.find((r) => r[0] === "CFG")![1].slice(1)).MODE).toBe("drafting");
   });
 
   test("the built script is plain ASCII, so a paste cannot mangle it", () => {
@@ -336,7 +347,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(toc.map((r) => r[0])).toEqual([
       "Section", "About this draft", "About this draft · Questions for the TWG", "Ch 1 Why it matters",
       "Ch 1 · Objectives and key messages", "1.1 Global challenges", "Ch 12 Privacy; Security and Trust",
-    ].map((n) => (/^(Section|About this draft$|Ch \d+ [^·])/.test(n) ? n : `\u2514\u2002${n}`)));
+    ].map((n) => (/^(Section|About this draft$|Ch \d+ [^·])/.test(n) ? n : `\u2800\u2800\u2800${n}`)));
     expect(toc[4][1]).toBe('=HYPERLINK("https://x.example/S#sec:ch01-lead","open")');
     expect(tabs.TOC.hidden).toBe(true);
   });
@@ -356,21 +367,29 @@ describe("review-sheet.gs in drafting mode", () => {
   });
 
   test("Selected Sections is kept valid: a bare pick gets its mark, a gone one is flagged in Section links", () => {
-    expect(fb["Selected Sections"][1][0]).toBe("Ch 12 Privacy; Security and Trust, Somewhere else, \u2514\u20021.1 Global challenges");
+    expect(fb["Selected Sections"][1][0]).toBe("Ch 12 Privacy; Security and Trust, Somewhere else, \u2800\u2800\u28001.1 Global challenges");
     expect((fb["Section links"][1][0] as Rich).text).toBe(
       'Ch 12 Privacy; Security and Trust\n1.1 Global challenges\n\u26a0 "Somewhere else" is not in the document now: pick its section again');
     expect(tabs.TOC.rows.length).toBeGreaterThan(0);
-    expect((rt.written.TOC.Section as string[][])[5]).toEqual(["\u2514\u20021.1 Global challenges", '=HYPERLINK("https://x.example/S#sec:1-1","open")', "sec:1-1"]);
+    expect((rt.written.TOC.Section as string[][])[5]).toEqual(["\u2800\u2800\u28001.1 Global challenges", '=HYPERLINK("https://x.example/S#sec:1-1","open")', "sec:1-1"]);
+  });
+
+  test("a pick with the old \u2514 mark is rewritten to the indented name", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    t["Contributor Feedback"].rows[1][2] = "\u2514\u20021.1 Global challenges";
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    expect(rt2.written["Contributor Feedback"]["Selected Sections"][0][0]).toBe("\u2800\u2800\u28001.1 Global challenges");
   });
 
   test("a pick of a section renamed since follows it, by its anchor", () => {
     const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
-    t.TOC = { id: 9, rows: [["Section", "Link", "Anchor"], ["\u2514\u20021.1 Old challenges", "open", "sec:1-1"]] };
-    t["Contributor Feedback"].rows[1][2] = "\u2514\u20021.1 Old challenges";
+    t.TOC = { id: 9, rows: [["Section", "Link", "Anchor"], ["\u2800\u2800\u28001.1 Old challenges", "open", "sec:1-1"]] };
+    t["Contributor Feedback"].rows[1][2] = "\u2800\u2800\u28001.1 Old challenges";
     const rt2 = runtime(t);
     load(code, rt2.g).refreshAll();
     const f = rt2.written["Contributor Feedback"];
-    expect(f["Selected Sections"][0][0]).toBe("\u2514\u20021.1 Global challenges");
+    expect(f["Selected Sections"][0][0]).toBe("\u2800\u2800\u28001.1 Global challenges");
     expect((f["Section links"][0][0] as Rich).text).toBe("1.1 Global challenges");
   });
 
@@ -396,7 +415,7 @@ describe("review-sheet.gs in drafting mode", () => {
     delete rt2.written["Contributor Feedback"];
     s.markDirty({ range: { getSheet: () => rt2.sheet("Contributor Feedback"), getRow: () => 3, getNumRows: () => 1 } });
     const w = rt2.written["Contributor Feedback"];
-    expect(w["Selected Sections"][1]).toEqual(["\u2514\u20021.1 Global challenges"]);
+    expect(w["Selected Sections"][1]).toEqual(["\u2800\u2800\u28001.1 Global challenges"]);
     expect((w["Section links"][1][0] as Rich).text).toBe("1.1 Global challenges");
     expect(w["Section links"][0]).toBeUndefined();
     expect(rt2.written.TOC).toBeDefined(); // from the first full refresh only
@@ -472,6 +491,15 @@ describe("review-sheet.gs in drafting mode", () => {
     s.markDirty({ range: { getSheet: () => rt2.sheet("Contributor Feedback"), getRow: () => 2, getNumRows: () => 50000 } });
     expect(rt2.props.rows).toBeUndefined();
     expect(rt2.written["Contributor Feedback"]["Change-set"]).toEqual([["CS-004"], ["CS-005"], [""]]);
+  });
+
+  test("Agentic status (filter) holds the change set's plain status, for a filter view", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    t["Contributor Feedback"].rows[0].push("Agentic status (filter)");
+    t["Contributor Feedback"].rows.slice(1).forEach((r) => r.push(""));
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    expect((rt2.written["Contributor Feedback"]["Agentic status (filter)"] as Rich[][]).map((r) => r[0].text)).toEqual(["PR open", "", ""]);
   });
 
   test("Issue and Agentic status come from the Agent tab by change set", () => {

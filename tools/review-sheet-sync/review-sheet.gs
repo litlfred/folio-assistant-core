@@ -88,9 +88,12 @@ function installTriggers() {
 
 /**
  * Drafting: make sure Selected Sections is a dropdown of the hidden TOC tab,
- * and tell the person the one step a script cannot take. A missing dropdown
- * is added; an existing one is left alone, since writing it again would
- * clear its "Allow multiple selections" tick.
+ * and tell the person the steps a script cannot take. A missing dropdown is
+ * added; an existing one is left alone, since writing it again would clear
+ * its "Allow multiple selections" tick. Neither Apps Script nor the Sheets
+ * API can read the Chip style or that tick, so the box is skipped only on
+ * evidence: a cell already holding two sections from the list, or the person
+ * having said it is done (Yes). The same steps are on the Config tab (SETUP).
  */
 function checkDropdown(ss) {
   const sh = ss.getSheetByName(CFG.FEEDBACK);
@@ -103,14 +106,33 @@ function checkDropdown(ss) {
       .requireValueInRange(ss.getSheetByName(CFG.TOC).getRange('A2:A'), true)
       .setAllowInvalid(true).build());
   }
-  SpreadsheetApp.getUi().alert((had ? 'Selected Sections already has its dropdown. ' :
-      'Selected Sections now has a dropdown of the document\'s sections. ') +
-    'One step is yours, once per sheet: select the Selected Sections column, ' +
-    'Data > Data validation, open the rule, set Display style to Chip, tick ' +
-    '"Allow multiple selections", and press Done. The script keeps the list ' +
-    'and every pick current from then on.');
+  const props = PropertiesService.getDocumentProperties();
+  if (had && (props.getProperty('dropdownDone') || multiPicked(cells))) return;
+  const range = "'" + sh.getName() + "'!" + cells.getA1Notation();
+  const ui = SpreadsheetApp.getUi();
+  const answer = ui.alert('Finish the Selected Sections dropdown',
+    (had ? 'Selected Sections is a dropdown' : 'Selected Sections is now a dropdown of the document\'s sections') +
+    ', but two settings only a person can make:\n\n' +
+    '\u2022 Click the column letter above "' + COLS.draft.sections + '" to select the column\n' +
+    '\u2022 Choose Data, then Data validation\n' +
+    '\u2022 Open the rule for ' + range + ' (it says "Dropdown (from a range)")\n' +
+    '\u2022 Tick Allow multiple selections\n' +
+    '\u2022 Open Advanced options and set Display style to Chip\n' +
+    '\u2022 Press Done\n\n' +
+    'The script keeps the list and every pick current after that. These steps are also on the Config tab.\n\n' +
+    'Is this done already? Yes stops this message; No shows it again next time.',
+    ui.ButtonSet.YES_NO);
+  if (answer === ui.Button.YES) props.setProperty('dropdownDone', '1');
 }
 
+/** True when some cell holds two or more sections from the list, which only a multi-select rule allows. */
+function multiPicked(cells) {
+  const names = new Set(DATA.TOC.map(t => bareName(t[0])));
+  return cells.getDisplayValues().some(([v]) => {
+    const parts = String(v).split(',').map(x => x.trim()).filter(Boolean);
+    return parts.length > 1 && parts.every(x => names.has(bareName(x)));
+  });
+}
 
 /**
  * Stop with a plain message when the Config tab was written for another
@@ -690,10 +712,12 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
   };
 
   const out = { sections: [], pages: [], comments: [], revisions: [], feedback: [], dispositions: [], agentic: [] };
+  const status = [];
   s.rows.forEach(r => {
     const cs = String(r[c.cs]).trim();
     const sts = [...new Set((csOf[cs] || []).map(n => stOf[n]).filter(Boolean))].join(', ');
     out.agentic.push(agenticCell(sts, prOf[cs] || []));
+    status.push([asText(csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)))]);
     const nos = (csOf[cs] || []).filter(n => rowOf[n]).sort((a, b) => a - b);
 
     const keys = {}, raw = [];
@@ -734,6 +758,26 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
     }));
   });
   Object.keys(out).forEach(k => writeRich(s, c[k], out[k]));
+  // One plain status per change set, for filtering (owner, 2026-10-31).
+  const st = COLS.rcs.status ? col(s, COLS.rcs.status) : -1;
+  if (st >= 0 && status.length) s.sh.getRange(2, st + 1, status.length, 1).setValues(status);
+}
+
+/**
+ * The Agent tab's Agentic status values, in the order work moves through
+ * them. A change set's one status for filtering: "Needs human" if any of its
+ * comments needs a person, else the least advanced of them; "Not in comment
+ * record" only when every one is. A value not in the list is kept as is.
+ */
+const STATUS_ORDER = ['Not started', 'Working', 'PR open', 'Ready for review', 'Change merged'];
+function csStatus(sts) {
+  if (!sts.length) return '';
+  if (sts.indexOf('Needs human') >= 0) return 'Needs human';
+  const known = sts.filter(x => x !== 'Not in comment record');
+  if (!known.length) return 'Not in comment record';
+  const odd = known.filter(x => STATUS_ORDER.indexOf(x) < 0);
+  if (odd.length) return odd[0];
+  return STATUS_ORDER[Math.min.apply(null, known.map(x => STATUS_ORDER.indexOf(x)))];
 }
 
 // ---------- Drafting: Contributor Feedback ----------
@@ -798,7 +842,7 @@ function refreshDraft(rows) {
   // Change-set ids: mechanical, assigned once, never reused.
   // A row is used once any cell a person fills holds something; "No" (a
   // Yes/No dropdown's default) and the script's own columns do not count.
-  const mech = [c.cs, c.sectionLinks, c.issue, c.agentic, c.staging,
+  const mech = [c.cs, c.sectionLinks, c.issue, c.agentic, c.staging, c.status,
     col(fb, COLS.draft.feedback + ' (agent)')];
   if (c.cs >= 0) {
     let next = 1 + fb.rows.reduce((m, r) => {
@@ -888,6 +932,8 @@ function refreshDraft(rows) {
     const cs = String(r[c.cs]).trim();
     return agenticCell(stOf[cs] || '', prOf[cs] || []);
   });
+  // The same status as one plain value, for a filter (owner, 2026-10-31).
+  if (c.status >= 0) writeRows(fb, c.status, only, r => rich([{ t: stOf[String(r[c.cs]).trim()] || '' }]));
   // Staging review page: the change set's preview while its PR is open.
   writeRows(fb, c.staging, only, r => {
     const cs = String(r[c.cs]).trim();
@@ -905,8 +951,8 @@ function refreshDraft(rows) {
     });
   }
 }
-/** A dropdown name without its tree mark ("\u2514 ", "\u2502 ") or spaces. */
-const bareName = n => String(n).replace(/^[\s\u2502\u2514]+/, '').trim();
+/** A dropdown name without its indent (U+2800 blanks; old "\u2514 "/"\u2502 " marks) or spaces. */
+const bareName = n => String(n).replace(/^[\s\u2800\u2502\u2514]+/, '').trim();
 const issueUrl = line => (String(line).match(/https:\/\/github\.com\/[^\s,;]+\/issues\/\d+/) || [''])[0];
 const issueLabel = url => { const m = url.match(/\/([^/]+)\/issues\/(\d+)$/); return m[1] + '#' + m[2]; };
 

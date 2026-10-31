@@ -287,6 +287,25 @@ through the session's Google Sheets connector. No credential for it is
 committed. Google cannot stop the owner's own account editing any tab, so the
 one-writer rule is kept by the agent, not enforced by the sheet.
 
+### Editorial change-sets may be drafted without waiting
+
+A change-set is **editorial** when it changes only wording, numbering,
+cross-references, typos or house style, and no meaning: nothing a TWG or
+committee has to judge. The agent may draft an editorial change-set as a
+**draft PR with a staging preview** without waiting for Ready for agent
+(owner, 2026-10-31, standing rule after smart-ra CS-052, 060, 097, 194, 254,
+283). It records each step in the Agent tab as usual
+([`review-sheet-agent-columns`](review-sheet-agent-columns.md)), with
+"editorial draft" in its status.
+
+- It still never sets **Ready for merge**, and nothing merges without it.
+- A change-set that mixes editorial and substantive asks is split: the agent
+  drafts the editorial part, and the substantive part (a new definition, new
+  guidance, a rewrite) goes to *Needs human* (smart-ra CS-052).
+- A house-style choice the document has not made yet (a spelling convention,
+  say) is asked once with options, then followed; it is not guessed.
+- When unsure whether a change is editorial, it is not: wait for Ready for agent.
+
 ## Placing a comment: how much to trust the anchor
 
 `anchor.method` says how the place was found, and `confidence` says how far to
@@ -422,14 +441,15 @@ comments/provides feedback/dispensation information"*):
 | presses **Discuss** on the dashboard (the `change-set` issue form, prefilled with the id) | adopts that issue as the primary one and renders the record at its top; their text stays below |
 | recommends or decides on one of its comments, in any thread | records it, opens the primary issue, and quotes the tag there with a link back |
 | mentions it, or one of its comments, in any issue | links that issue, and opens the primary issue (at most five from one mention; past that it replies with Discuss links instead) |
-| opens a PR that links it by keyword (`Closes CS-012`, `fixes`/`resolves CS-012`, or a `cs: CS-012` line) or closes one of its issues | records the PR, opens the primary issue if there is none. A bare mention of `CS-012` in prose links nothing, and a change-set already *incorporated* or *closed* is never re-linked to another PR: reopen its issue first |
+| opens a PR that links it by keyword (`Closes CS-012`, `fixes`/`resolves CS-012`, or a `cs: CS-012` line) or closes one of its issues | records the PR, opens the primary issue if there is none, when the PR's author is on the committee or an editor (judged as for tags; a PR by anyone else links nothing, and a merge counts whoever wrote it). A bare mention of `CS-012` in prose links nothing, and a change-set already *incorporated* or *closed* is never re-linked to another PR: reopen its issue first |
 | decides through the CLI | nothing at once; the nightly reconcile opens the issue |
 
 **People are disorganised, and that is fine.** Any number of other issues may
 discuss a change-set: each is linked (the record's `issues`), listed under
 *Also discussed in* on the primary issue, and told where the primary one is.
 Nobody's own issue is rewritten, and a tag recorded in a linked issue counts
-exactly as one in the primary.
+exactly as one in the primary. An issue body is judged as its author's: an
+edit to it by anyone else records nothing, so tags and commands go in a comment.
 
 ### Changing a change-set on its issue
 
@@ -449,8 +469,8 @@ answered with why it changed nothing.
 | `cs-new: Title` with a `pc:` line | a new change-set (the dashboard's *New change-set from the selected comments* opens the form for it) |
 
 A change-set's committee is rolled up from its comments' TWG routing unless a
-person in the committee or editor lane re-routes it by hand (`cs-committee:
-<TWG> — <reason>` or `public-comment-changesets.ts reroute`). Each move is
+person in the committee or editor lane re-routes it by hand
+(`cs-committee: <TWG> — <reason>` or `public-comment-changesets.ts reroute`). Each move is
 recorded on the change-set (`who`, `when`, `from`, `to`, `why`) so re-ingesting
 comments never resets it, and the dashboard shows the new committee and the move
 history. Agents cannot re-route a change-set on their own (`Task_RerouteChangeSet`
@@ -490,6 +510,9 @@ what they mention.
    with `Closes #<the primary issue>` (or any of its issues, or
    `Closes CS-012`, or a `cs: CS-012` line) in its body. Only those keywords
    link: a PR that mentions the id in passing, a pin bump say, does not.
+   The PR's author must be on the committee or an editor, judged by the
+   author's own login and association as tags are; merging it is allowed
+   whoever wrote it.
 2. Opening it moves the change-set to *editing* and its **accepted** comments
    to *editing*, with the branch and PR. Comments not yet decided, or decided
    `not-accepted`/`noted`/`deferred`, do not move.

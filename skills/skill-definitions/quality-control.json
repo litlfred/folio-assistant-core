@@ -2,7 +2,6 @@
   "id": "quality-control",
   "name": "Quality Control",
   "description": "Run QA checks, review publication checklists, validate conformance, and test functionality.",
-  "roles": ["qc-reviewer", "admin"],
   "requiredCapabilities": [
     { "capabilityId": "ig-publisher", "degradation": "skip" }
   ],

@@ -234,6 +234,58 @@ IRI, `$schema`, `needs`) as written, and give each capitalised defined term
 ONE rendering per locale across every scheme — a term translated two ways
 reads as two concepts.
 
+## Source glossary first (owner, 2026-10-31)
+
+When a folio is written from a source document (a WHO handbook, say), its terms
+come from **that source's own glossary** before anyone writes one. Owner, on
+the NHWA view: *"dont need to use my words ... words already in nhwa handbook.
+most recent edition needs glossary / skos extracted for use."*
+
+1. **Latest edition.** Use the most recent edition in the library. If it
+   lacks something an older edition has, use the older one and say so on the
+   term.
+2. **Verbatim, as candidates.** Extract every glossary entry as a
+   `folio-glossary/v1` term, status `candidate`, the definition copied word
+   for word with its page. Keep the source's spelling as an `altLabel` when the
+   `prefLabel` is normalised.
+3. **Read the PDF when the ingest missed it.** A glossary the library entry
+   does not hold (a missed section, a missing indicator sheet) is read from the
+   PDF, and the scheme says so.
+4. **Structure the source gives is kept.** Modules, indicators and the like
+   become concepts too, linked (`broader`, `related`) to the glossary terms
+   they cite.
+5. **Record what the source never defines.** A term the source uses but does
+   not define is a `candidate` with no definition and a `scopeNote` saying so,
+   not a definition we write.
+6. **Place the scheme with the source.** It lives beside the document's
+   library entry (for WHO publications, in the WHO publications IG), so every
+   folio that cites the source shares one scheme. Example, NHWA handbook 2nd ed.:
+   https://github.com/litlfred/who-iris/pull/136
+7. **Use the source's words downstream.** Blocks, diagrams and ArchiMate names
+   use the source's terms and link to their concepts, not a paraphrase.
+
+A conflict between the source's definition and another scheme's is raised as
+an issue on the repository that owns the other scheme, quoting both. Neither
+is chosen by the agent.
+
+## Deprecating a term: a change set, decided later
+
+Replacing one term with another (dth-hrh CS-001: "Core Data Element" and
+"CDE-HRH" replace "MDS-HRH", because the old term causes confusion and is not
+precise) is **proposed, not applied**. The agent records a change set with the
+old term, the new term, the reason, and every place the old term appears. It
+changes no text and no glossary entry. Later an editor starts an agent review
+that decides it (owner, 2026-10-31: *"that is for later when editor kicks off
+agent review to decide"*). Once decided:
+
+- the old term stays in the scheme, so old links still resolve, with a
+  `scopeNote` saying it is deprecated and why, and `related` to the new term
+  (`folio-glossary/v1` has no deprecated status yet; adding one is a schema
+  change, not part of this rule);
+- the folio's own prose moves to the new term;
+- **quoted source text is never changed**: a quote keeps the term it was
+  published with.
+
 ## A paper's glossary (bean `lqo9`, ruling 2: converge on SKOS)
 
 The paper builder (`folio-assistant-core/scripts/build-glossary.ts`, skill
