@@ -246,7 +246,7 @@ const draftTabs = () => ({
   "Contributor Feedback": {
     id: 1,
     rows: [
-      ["Change-set", "Title", "Sections", "Contributor Feedback (initials/name)", "Contributor Feedback (initials/name)", "Issue", "Agentic status", "Staging review page"],
+      ["Change-set", "Title", "Sections", "Contributor Feedback (CL)", "Contributor Feedback (initials/name)", "Issue", "Agentic status", "Staging review page"],
       ["CS-004", "Define registry", "Ch 1 Why it matters, 1.1 Global challenges", "AB: needs a definition", "", "", "", ""],
       ["", "Privacy wording", "Ch 12 Privacy; Security and Trust, Somewhere else", "", "CD: tighten", "", "", ""],
       ["", "", "", "", "", "", "", ""],

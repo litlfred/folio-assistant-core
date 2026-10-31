@@ -108,6 +108,10 @@ function readSheet(sh) {
 }
 function col(s, name) { return s.header.indexOf(name); }
 function cols(s, name) { return s.header.map((h, i) => (h === name ? i : -1)).filter(i => i >= 0); }
+/** Columns whose header is `name` or `name (…)`, e.g. "Contributor Feedback (CL)". */
+function colsLike(s, name) {
+  return s.header.map((h, i) => (h === name || String(h).indexOf(name + ' (') === 0 ? i : -1)).filter(i => i >= 0);
+}
 
 function writeRich(s, c, rich) {
   if (c < 0 || !rich.length) return;
@@ -390,7 +394,7 @@ function refreshDraft() {
 
   const c = {};
   Object.entries(COLS.draft).forEach(([k, h]) => (c[k] = col(fb, h)));
-  const fbCols = cols(fb, COLS.draft.feedback);
+  const fbCols = colsLike(fb, COLS.draft.feedback);
   const a = {};
   Object.entries(COLS.draftAgent).forEach(([k, h]) => (a[k] = col(agent, h)));
 

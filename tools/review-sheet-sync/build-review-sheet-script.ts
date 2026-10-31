@@ -69,7 +69,7 @@ export type SheetSyncConfig = {
 export const DRAFT_TABS = { FEEDBACK: "Contributor Feedback", AGENT: "Agent", TOC: "TOC" };
 export const DRAFT_COLUMNS = {
   draft: {
-    cs: "Change-set", title: "Title", sections: "Sections", feedback: "Contributor Feedback (initials/name)",
+    cs: "Change-set", title: "Title", sections: "Sections", feedback: "Contributor Feedback",
     issue: "Issue", agentic: "Agentic status", staging: "Staging review page",
   },
   draftAgent: {
