@@ -959,3 +959,41 @@ describe("the committed Code.gs people copy", () => {
     expect(rows.find((r) => r[0] === "Instructions - Install script")![1]).toContain(CODE_GS_URL);
   });
 });
+
+describe("Ready for agent after the preview was built (owner, 2026-10-31)", () => {
+  const sheets = {
+    newRichTextValue: () => {
+      const v = { text: "", links: [] as unknown[], bold: [] as unknown[] };
+      const b = {
+        setText: (t: string) => ((v.text = t), b),
+        setLinkUrl: (a: number, z: number, u: string) => (v.links.push([a, z, u]), b),
+        setTextStyle: (a: number, z: number) => (v.bold.push([a, z]), b),
+        build: () => v,
+      };
+      return b;
+    },
+    newTextStyle: () => ({ setBold: () => ({ build: () => ({}) }) }),
+  };
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { stagingWarning, agenticCell };`)(sheets) as {
+    stagingWarning: (u: string, b: object, p: object[], r?: string) => string;
+    agenticCell: (s: string, p: object[], o?: object) => { text: string; links: [number, number, string][] };
+  };
+  const pr = { url: "https://github.com/litlfred/dth-hrh/pull/7", head: "b20534f", done: "2026-10-31 08:10Z" };
+  const built = { at: "2026-10-31 08:15Z", from: "b20534f", deploy: "deployed" };
+
+  test("Staging review warns when Ready for agent was set after the build", () => {
+    expect(fns.stagingWarning("u", built, [pr])).toBe("");
+    expect(fns.stagingWarning("u", built, [pr], "2026-10-31 11:30Z")).toContain("stale: Ready for agent set 2026-10-31 11:30Z");
+    expect(fns.stagingWarning("u", built, [pr], "2026-10-31 08:00Z")).toBe("");
+  });
+
+  test("Agentic status says the row is queued, then who has it", () => {
+    const q = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z" });
+    expect(q.text.split("\n")[0]).toBe("Queued for the agent (Ready for agent set 2026-10-31 11:30Z)");
+    expect(q.text).toContain("dth-hrh#7");
+    const w = fns.agenticCell("Working", [pr], { readyAt: "2026-10-31 11:30Z", talk: "https://claude.ai/code/x" });
+    expect(w.text.startsWith("An agent is working on it: conversation\n")).toBe(true);
+    expect(w.links.some(([, , u]) => u === "https://claude.ai/code/x")).toBe(true);
+    expect(fns.agenticCell("Done", [pr]).text.startsWith("dth-hrh#7")).toBe(true);
+  });
+});
