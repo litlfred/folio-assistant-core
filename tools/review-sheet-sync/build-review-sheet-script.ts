@@ -302,6 +302,9 @@ const LINES = 40;
  * line per entry; a short array of plain values (a TOC pair, a column list)
  * stays on one line.
  */
+/** Bulk lookup tables, kept on one line: nobody reads them entry by entry (owner, 2026-10-31). */
+const COMPACT = new Set(["SECTIONS", "PAGE_LINES", "TOC"]);
+
 export function readable(v: unknown, ind = ""): string {
   const inner = `${ind}  `;
   if (Array.isArray(v)) {
@@ -313,7 +316,7 @@ export function readable(v: unknown, ind = ""): string {
   if (v && typeof v === "object") {
     const es = Object.entries(v as Record<string, unknown>).filter(([, x]) => x !== undefined);
     if (!es.length) return "{}";
-    return `{\n${es.map(([k, x]) => `${inner}${JSON.stringify(k)}: ${readable(x, inner)}`).join(",\n")}\n${ind}}`;
+    return `{\n${es.map(([k, x]) => `${inner}${JSON.stringify(k)}: ${COMPACT.has(k) ? JSON.stringify(x) : readable(x, inner)}`).join(",\n")}\n${ind}}`;
   }
   return JSON.stringify(v);
 }
