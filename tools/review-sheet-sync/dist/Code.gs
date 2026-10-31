@@ -30,7 +30,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 02d7b68823ee0990.
+// folio-assistant-core tools/review-sheet-sync at template sha256 09dd96f39f3929e1.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -76,7 +76,8 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 02d7b68823ee0990';
+const SCRIPT_VERSION = 'template sha256 09dd96f39f3929e1';
+const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
   'in the function list (next to Run and Debug), then press Run.';
@@ -140,8 +141,9 @@ function showVersion() {
   SpreadsheetApp.getUi().alert('Review sheet script',
     'This sheet runs: ' + SCRIPT_VERSION + '\n\n' +
     'The latest published script: ' + LATEST_URL + '\n' +
-    'Its stamp is near the top ("at ..."). If it differs, update: copy it, then Extensions, then Apps Script, ' +
-    'replace Code.gs, save, and choose Review links, then Refresh now.',
+    'Its stamp is near the top ("at ..."). If it differs, the owner pastes it once into the Folio Review Library ' +
+    '(' + LIBRARY_URL + '); every sheet that uses the library then runs it. A sheet with the whole script pasted in ' +
+    'instead: Extensions, then Apps Script, replace Code.gs, save, and Review links, then Refresh now.',
     SpreadsheetApp.getUi().ButtonSet.OK);
 }
 
@@ -796,7 +798,7 @@ function stagingCell(url, built, prs, readyAt) {
 function stagingWarning(url, built, prs, readyAt) {
   const b = built || {};
   const active = (prs || []).filter(p => p.head).slice(-1)[0];
-  if (!url) return active ? '\u26a0 no preview yet' : '';
+  if (!url) return active ? '\u26a0 no preview yet: not ready for merge' : '';
   const deploy = String(b.deploy || '').toLowerCase();
   if (/fail|error/.test(deploy)) return '\u26a0 deploy failed';
   if (active && b.from) {
@@ -914,7 +916,8 @@ function agenticCell(status, prs, o) {
   const last = done.length ? Math.max.apply(null, done) : NaN;
   const queued = o.readyAt && !/working/i.test(status) && (isNaN(last) || utcMs(o.readyAt) > last);
   const head = queued ? [{ t: 'Waiting on the agent since ' + o.readyAt + ' (Ready for agent set)', bold: true }]
-    : /working/i.test(status) && o.talk ? [{ t: 'An agent is working on it: ', bold: true }, { t: 'conversation', url: o.talk }] : [];
+    : /working/i.test(status) && o.talk ? [{ t: 'An agent is working on it: ', bold: true }, { t: 'conversation', url: o.talk }]
+    : /needs human/i.test(status) ? [{ t: NEEDS_YOU + ': it is under "Decision needed" in the agent\'s feedback column. Write your answer (the letter) in your Blue feedback column, then an Editor sets Ready for agent to Yes.', bold: true }] : [];
   const body = agenticParts(status, prs);
   return rich(head.length ? head.concat(body.length && body[0].t ? [{ t: '\n' }].concat(body) : []) : body);
 }
@@ -1151,10 +1154,14 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
  * comments needs a person, else the least advanced of them; "Not in comment
  * record" only when every one is. A value not in the list is kept as is.
  */
+// What a person must do, said in the sheet instead of the agent's own
+// "Needs human" (owner, 2026-10-31: "unclear: needs human to do what?").
+const NEEDS_YOU = "Needs you: answer the agent's question";
+const shownStatus = st => (/^needs human$/i.test(String(st).trim()) ? NEEDS_YOU : st);
 const STATUS_ORDER = ['Not started', 'Working', 'PR open', 'Ready for review', 'Change merged'];
 function csStatus(sts) {
   if (!sts.length) return '';
-  if (sts.indexOf('Needs human') >= 0) return 'Needs human';
+  if (sts.indexOf('Needs human') >= 0) return NEEDS_YOU;
   const known = sts.filter(x => x !== 'Not in comment record');
   if (!known.length) return 'Not in comment record';
   const odd = known.filter(x => STATUS_ORDER.indexOf(x) < 0);
@@ -1343,7 +1350,7 @@ function refreshDraft(rows) {
     return agenticCell(stOf[cs] || '', prOf[cs] || [], { readyAt: readyAt[cs], talk: talkOf[cs] });
   });
   // The same status as one plain value, for a filter (owner, 2026-10-31).
-  if (c.status >= 0) writeRows(fb, c.status, only, r => rich([{ t: stOf[String(r[c.cs]).trim()] || '' }]));
+  if (c.status >= 0) writeRows(fb, c.status, only, r => rich([{ t: shownStatus(stOf[String(r[c.cs]).trim()] || '') }]));
   // Staging review page: the change set's preview while its PR is open.
   writeRows(fb, c.staging, only, r => {
     const cs = String(r[c.cs]).trim();

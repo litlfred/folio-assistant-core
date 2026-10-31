@@ -13,7 +13,7 @@ import { mkdtempSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { buildConfig, buildScript, chunks, CODE_GS_URL, configRows, readable, tabInstructions, tocRows } from "./build-review-sheet-script.js";
+import { buildConfig, buildScript, chunks, CODE_GS_URL, LIBRARY_ID, STUB_GS_URL, configRows, readable, tabInstructions, tocRows } from "./build-review-sheet-script.js";
 import { readFileSync as readText } from "node:fs";
 import { feedbackBasis, hashOf, PC_BASIS_GREY } from "./feedback-issue.js";
 
@@ -289,7 +289,7 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     t["Agent - Comments"].rows[2][2] = "Needs human";
     const rt2 = runtime(withConfig(t, pcRows));
     load(code, rt2.g).refreshAll();
-    expect(rt2.written["Review Change Sets"]["Agentic status (filter)"]).toEqual([["Needs human"], ["Not started"]]);
+    expect(rt2.written["Review Change Sets"]["Agentic status (filter)"]).toEqual([["Needs you: answer the agent's question"], ["Not started"]]);
   });
 
   test("a Colour key row above RPC's and RCS's headers changes nothing the script writes", () => {
@@ -447,7 +447,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(dRows.slice(0, 5).map((r) => r[0])).toEqual(["Instructions", "Instructions - Install script", "Instructions - Dropdown", "Instructions - Editors", "Key"]);
     expect(dRows[0][1]).toContain("only the owner edits");
     // Installing Code.gs, step by step, with the project named after the sheet (owner, 2026-10-31).
-    expect(dRows[1][1]).toMatch(/Extensions, then Apps Script[\s\S]*Name the project after this spreadsheet[\s\S]*installTriggers[\s\S]*Advanced/);
+    expect(dRows[1][1]).toMatch(/Extensions, then Apps Script[\s\S]*Name the project after this sheet[\s\S]*Libraries[\s\S]*HEAD[\s\S]*Review[\s\S]*Advanced/);
     expect(dRows[1][1]).toContain("Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.");
     expect(dRows[1][1]).toContain("https://support.google.com/cloud/answer/7454865");
     expect(dRows[2][1]).toContain("Allow multiple selections");
@@ -766,7 +766,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(text()).toBe("review \u26a0 deploy failed");
     t.Agent.rows[1][at("Staging review page (change set)")] = "";
     s.refreshAll();
-    expect(text()).toBe("\u26a0 no preview yet");
+    expect(text()).toBe("\u26a0 no preview yet: not ready for merge");
   });
 
   test("a public-comment edit is kept for the next tick when the rebuild cannot start", () => {
@@ -1066,9 +1066,12 @@ describe("the committed Code.gs people copy", () => {
     const committed = readText(join(import.meta.dir, "dist", "Code.gs"), "utf8");
     expect(committed).toBe(buildScript({ stamp: "content" }));
   });
-  test("the install steps link it", () => {
+  test("the install steps link the stub and the library, not the whole script", () => {
     const rows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
-    expect(rows.find((r) => r[0] === "Instructions - Install script")![1]).toContain(CODE_GS_URL);
+    const steps = rows.find((r) => r[0] === "Instructions - Install script")![1];
+    expect(steps).toContain(STUB_GS_URL);
+    expect(steps).toContain(LIBRARY_ID);
+    expect(steps).not.toContain(CODE_GS_URL);
   });
 });
 
@@ -1123,5 +1126,21 @@ describe("the library stub each sheet keeps (owner, 2026-10-31: library, latest 
   });
   test("dist/Stub.gs is current", () => {
     expect(stub).toBe(readText(join(import.meta.dir, "stub.gs"), "utf8"));
+  });
+});
+
+describe("Needs human says what the person must do (owner, 2026-10-31)", () => {
+  test("Agentic status opens with the ask", () => {
+    const sheets = {
+      newRichTextValue: () => {
+        const v = { text: "" };
+        const b = { setText: (t: string) => ((v.text = t), b), setLinkUrl: () => b, setTextStyle: () => b, build: () => v };
+        return b;
+      },
+      newTextStyle: () => ({ setBold: () => ({ build: () => ({}) }) }),
+    };
+    const agenticCell = new Function("SpreadsheetApp", `${code}\nreturn agenticCell;`)(sheets);
+    const t = agenticCell("Needs human", [{ url: "https://github.com/o/r/pull/1", done: "2026-10-31 10:00Z" }]).text;
+    expect(t.split("\n")[0]).toMatch(/^Needs you: answer the agent's question: .*Decision needed.*Ready for agent/);
   });
 });

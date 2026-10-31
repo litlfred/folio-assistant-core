@@ -403,7 +403,7 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
       colours,
       "This tab has one row per change set:",
       `   1. The Authoring Committee starts a row: a title, the Selected Sections, and feedback in the Blue ${fb} columns. The script gives it a Change-set id.`,
-      `   2. The agent proposes a direction in ${c.COLS.draft?.agentFeedback || "Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says Needs human.`,
+      `   2. The agent proposes a direction in ${c.COLS.draft?.agentFeedback || "Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says \"Needs you: answer the agent's question\".`,
       ...changeSet,
       ...footer,
     ].join("\n");
@@ -421,7 +421,7 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
       colours,
       `This tab has one row per change set, joining its public comments from ${t.RPC}:`,
       "   1. The Feedback Review Committee gives feedback on the change set in Blue and picks its TWG.",
-      `   2. The agent proposes a direction in ${c.COLS.rcs?.agentFeedback || "Change Set Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says Needs human.`,
+      `   2. The agent proposes a direction in ${c.COLS.rcs?.agentFeedback || "Change Set Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says \"Needs you: answer the agent's question\".`,
       ...changeSet,
       ...footer,
     ].join("\n");
@@ -431,16 +431,14 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
 
 export function setupSteps(c: SheetConfig): string[] {
   const steps = [
-    `Once per sheet, by the sheet's owner. Made with File, then Make a copy, of the template? The script is already inside: choose Review links, then Install, and allow it (step 6), and you are done. Otherwise, or to update the script (details: ${INSTALL_GUIDE_URL}):`,
-    `1. Get the latest Code.gs: open ${CODE_GS_URL} and press "Copy raw file" (the two-squares button at the top right of the code). Or open ${CODE_GS_RAW}, select all and copy`,
-    "2. Here, choose Extensions, then Apps Script. The script editor opens in a new tab",
-    "   • \"Unable to open the file\"? You are signed in to several Google accounts. Use a private window signed in to the owner's account only",
-    "3. Name the project after this spreadsheet: click \"Untitled project\" at the top left and type the sheet's own name (e.g. \"DTH-PC Contributor Log\"), then Rename. The same name makes it easy to find in script.google.com",
-    "4. Click Code.gs in the Files list. Select all (Ctrl+A, or Cmd+A on a Mac), delete it, paste the copied script, and save (Ctrl+S or Cmd+S, or the disk icon)",
-    "5. Reload the sheet and choose Review links, then Install. (Or, in the editor, press Run with installTriggers selected; it is the default)",
-    "6. Allow it, once: Google asks for authorization; press Continue (or Review permissions) and pick the owner's account. Google then shows \"Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.\" That is expected: this is the sheet's own script, which Google never reviews. Choose Advanced, then Go to <project name> (unsafe), then Allow. Why: https://support.google.com/cloud/answer/7454865",
-    "7. Review links, then Refresh now, checks it",
-    "   • Updating later: repeat 1, 2 and 4, then Review links, then Refresh now. The automatic refresh stays installed",
+    `Once per sheet, by the sheet's owner. Made with File, then Make a copy, of the template? It is already set up: choose Review links, then Install, allow it (step 5), and you are done. Otherwise (details: ${INSTALL_GUIDE_URL}):`,
+    `1. Get the short stub: open ${STUB_GS_URL} and press "Copy raw file" (the two-squares button at the top right of the code)`,
+    "2. Here, choose Extensions, then Apps Script. Name the project after this sheet (click \"Untitled project\"). \"Unable to open the file\"? Use a private window signed in to the owner's account only",
+    "3. Click Code.gs, select all, delete, paste the stub and save (Ctrl+S or Cmd+S)",
+    `4. Next to Libraries, press +, paste the Script ID ${LIBRARY_ID}, press Look up, choose Version HEAD (Development mode), set Identifier to Review, and press Add`,
+    "5. Reload the sheet and choose Review links, then Install. Google asks to allow it, then says \"Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.\" That is expected for a sheet's own script. Choose Advanced, then Go to <project name> (unsafe), then Allow. Why: https://support.google.com/cloud/answer/7454865",
+    "6. Review links, then Refresh now, checks it",
+    `   • Updates need nothing here: the code lives once in the Folio Review Library (${LIBRARY_URL}), and every sheet runs its latest version`,
   ];
   return steps;
 }
@@ -584,6 +582,9 @@ export function buildScript(opts: { stamp?: "commit" | "content" } = {}): string
  * when it is stale.
  */
 export const CODE_GS_URL = "https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs";
+/** The one Apps Script library every sheet's stub calls (owner, 2026-10-31). */
+export const LIBRARY_ID = "1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ";
+export const LIBRARY_URL = `https://script.google.com/home/projects/${LIBRARY_ID}/edit`;
 export const STUB_GS_URL = "https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Stub.gs";
 export const CODE_GS_RAW = "https://raw.githubusercontent.com/litlfred/folio-assistant-core/main/tools/review-sheet-sync/dist/Code.gs";
 export const INSTALL_GUIDE_URL = "https://github.com/litlfred/folio-assistant-core/blob/main/skills/content/folio-document-adapter/review-sheet-script.md#installing-the-script-step-by-step";
