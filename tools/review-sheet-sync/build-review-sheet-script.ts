@@ -16,12 +16,12 @@
  *   page, and the printed-to-PDF page offset.
  *
  *   bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts \
- *     [--script Code.gs] [--repo . --config review/public-comment/sheet-sync.json --out config-rows.json]
+ *     [--script Code.gs] [--repo . --config review/public-comment/sheet-sync.json --out config-rows.json [--toc-out toc-rows.json]]
  *
  * Skill: `review-sheet-script`.
  */
 import { createHash } from "node:crypto";
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
@@ -67,7 +67,7 @@ export type SheetSyncConfig = {
   namedSections?: Record<string, string>;
   /** Other names for front-matter chapters: alias -> chapter title. */
   aliases?: Record<string, string>;
-  tabs?: Partial<{ RPC: string; RCS: string; AGENT: string; FEEDBACK: string; TOC: string }>;
+  tabs?: Partial<{ RPC: string; RCS: string; AGENT: string; AGENT_CS: string; FEEDBACK: string; TOC: string }>;
   columns?: Partial<{ rpc: Record<string, string>; rcs: Record<string, string>; agent: Record<string, string>; draft: Record<string, string>; draftAgent: Record<string, string> }>;
 };
 
@@ -76,13 +76,16 @@ export const DRAFT_TABS = { FEEDBACK: "Contributor Feedback", AGENT: "Agent", TO
 export const DRAFT_COLUMNS = {
   draft: {
     cs: "Change-set", title: "Title", sections: "Selected Sections", sectionLinks: "Section links", feedback: "Contributor Feedback",
-    issue: "Issue", agentic: "Agentic status", staging: "Staging review page", status: "Agentic status (filter)",
+    agentFeedback: "Feedback (agent)",
+    issue: "Issue", agentic: "Agentic status", staging: "Staging review", status: "Agentic status (filter)",
   },
   draftAgent: {
     csId: "Change-set", issue: "Issue", agentic: "Agentic status", prs: "Pull request (change set)",
     changes: "What the PRs changed (change set)", done: "Agent completed (UTC, change set)",
     staging: "Staging review page (change set)", basis: "Feedback basis (change set)",
     built: "Staging built (UTC, change set)",
+    head: "PR head (change set)", builtFrom: "Staging built from (change set)", deploy: "Staging deploy (change set)",
+    conversation: "Agent conversation (change set)",
   },
 };
 
@@ -129,24 +132,33 @@ export function buildToc(a: { chapters: Chapter[]; sections: DraftSection[] }): 
   return out;
 }
 
-export const DEFAULT_TABS = { RPC: "Review Public Comments", RCS: "Review Change Sets", AGENT: "Agent" };
+/**
+ * Public comment keeps the agent's rows on two tabs (owner, 2026-10-31): one
+ * row per comment on AGENT, one row per change set on AGENT_CS. They were one
+ * "Agent" tab with the two tables side by side, which made a comment's change
+ * set and the unrelated change set on the same row look connected. A sheet
+ * still laid out that way sets `tabs: { AGENT: "Agent", AGENT_CS: "" }`.
+ */
+export const DEFAULT_TABS = { RPC: "Review Public Comments", RCS: "Review Change Sets", AGENT: "Agent - Comments", AGENT_CS: "Agent - Change Sets" };
 export const DEFAULT_COLUMNS = {
   rpc: {
     no: "No.", sections: "Sections", page: "Page", lines: "Line no(s) / Table / Figure",
     comment: "Comment / issue", revision: "Suggested revision",
-    feedback: "Architect Feedback (initials)", disposition: "Disposition", status: "Status",
+    feedback: "Committee Feedback (initials)", disposition: "Disposition", status: "Status",
     agentic: "Agentic status",
   },
   rcs: {
     cs: "Change-set", sections: "Sections", pages: "Pages", comments: "Public Comments",
-    revisions: "Suggested Revisions", feedback: "PC Architect Feedback", dispositions: "Dispositions",
-    agentic: "Agentic status", staging: "Staging review page", status: "Agentic status (filter)",
+    revisions: "Suggested Revisions", feedback: "PC Committee Feedback", dispositions: "Dispositions",
+    agentFeedback: "Change Set Feedback (agent)",
+    agentic: "Agentic status", staging: "Staging review", status: "Agentic status (filter)",
   },
   agent: {
     no: "No.", pc: "Comment ref", agentic: "Agentic status", cs: "Change-sets",
     csId: "Change-set", prs: "Pull request (change set)", changes: "What the PRs changed (change set)",
     done: "Agent completed (UTC, change set)", basis: "Feedback basis (change set)",
     staging: "Staging review page (change set)", built: "Staging built (UTC, change set)",
+    head: "PR head (change set)", builtFrom: "Staging built from (change set)", deploy: "Staging deploy (change set)",
   },
 };
 
@@ -312,32 +324,167 @@ export function buildConfig(repo: string, cfgPath: string): SheetConfig {
 const CHUNK = 40_000;
 
 /**
- * The setup steps a person takes, written at the top of the Config tab so
+ * The setup steps a person takes, written in one cell at the top of the Config tab so
  * they stay with the sheet (owner, 2026-10-31: "so people don't lose the
  * info"). The skill review-sheet-script says the same; the drafting script's
  * installTriggers box shows the dropdown steps with the exact range.
  */
+/**
+ * The colour key, one line per colour, worded for the sheet's mode. The
+ * Instructions row above each tab's header carries the same words; the script
+ * skips that row (owner, 2026-10-31).
+ */
+export function colourKey(c: SheetConfig): { blue: string; green: string; orange: string; grey: string } {
+  // Process roles, not job titles: who sits on the committee is the sheet's business (owner, 2026-10-31).
+  const people = c.CFG.MODE === "drafting" ? "the Authoring Committee" : "the Feedback Review Committee";
+  return {
+    blue: `Blue: your input, by ${people}`,
+    green: "Green: written by the agent",
+    orange: "Orange: workflow, set by an Editor",
+    grey: "Grey: mechanical, kept by the script or the source",
+  };
+}
+
+/**
+ * The harness's page for the process a sheet runs, where every step and role
+ * is set out in full (owner, 2026-10-31: "instructions should link back to the
+ * process page in the harness"). Public comment runs public-comment.bpmn; a
+ * drafting sheet runs contributor-feedback.bpmn. CFG.PROCESS overrides it.
+ */
+export const PROCESS_PAGES = {
+  "public-comment": "https://litlfred.github.io/folio-assistant/en/cat-harness/processes/public-comment.html",
+  drafting: "https://litlfred.github.io/folio-assistant/en/cat-harness/processes/contributor-feedback.html",
+} as const;
+
+export function processPage(c: SheetConfig): string {
+  return c.CFG.PROCESS || (c.CFG.MODE === "drafting" ? PROCESS_PAGES.drafting : PROCESS_PAGES["public-comment"]);
+}
+
+export const CONFIG_TAB = "Config";
+
+/**
+ * The Instructions text at the top of every visible tab: what the tab is for
+ * and how it works, in that tab's own terms (owner, 2026-10-31: "each tab
+ * should have an Instructions header with the purpose of the tab, even if to
+ * say don't do anything"; "make 'how this sheet works' specific to each
+ * tab"). A people's tab opens with the colour line, one line per step after
+ * it, and ends with the filter views and the harness's process page. Hidden
+ * helper tabs carry none, since the script writes them whole.
+ */
+export function tabInstructions(c: SheetConfig): Record<string, string> {
+  const drafting = c.CFG.MODE === "drafting";
+  const t = { ...(drafting ? DRAFT_TABS : DEFAULT_TABS), ...c.CFG } as Record<string, string>;
+  const k = colourKey(c);
+  const colours = [k.blue, k.green, k.orange, k.grey].map((x) => x.replace(": ", " = ")).join("     ");
+  const staging = (drafting ? c.COLS.draft?.staging : c.COLS.rcs?.staging) ?? "Staging review";
+  const fb = c.COLS.draft?.feedback ?? "Contributor Feedback";
+  const people = drafting ? t.FEEDBACK : `${t.RPC} and ${t.RCS}`;
+  const footer = [
+    "Find your rows: Data, then Filter views, then pick a view (works for viewers too, and changes nothing for anyone else). Comment without edit rights: Insert, then Comment.",
+    `Full process, every step and role: ${processPage(c)}`,
+  ];
+  // Steps 3 to 6, the same on every change-set tab.
+  const changeSet = [
+    "   3. An Editor sets Ready for agent (Orange) to Yes once the direction is agreed.",
+    `   4. The agent edits the document in one pull request for the row. Agentic status (Green) says where it is; ${staging} opens what changed.`,
+    "   5. Reviewers answer in Blue. A change marks the proposal stale and sets Ready for agent (Orange) back to No; an Editor sets Yes again to have the agent update the pull request.",
+    "   6. An Editor sets Ready for merge (Orange) to Yes, and the agent merges.",
+  ];
+  const out: Record<string, string> = {
+    [CONFIG_TAB]: `The script's settings. Work happens on ${people}; nothing here needs you unless you install the script. Do not edit this tab: the agent writes it, except EDITORS, which only the owner edits.`,
+    [t.AGENT]: drafting || !t.AGENT_CS
+      ? `Written only by the agent: one row per ${drafting ? "change set" : "comment or change set"}, with its status, pull request and preview. Do not edit. The script copies what it needs into the green columns of ${people}.`
+      : `Written only by the agent: one row per public comment, with its status, what was done and the change set it belongs to. Do not edit. The script copies what it needs into the green columns of ${t.RPC}.`,
+    ...(!drafting && t.AGENT_CS ? { [t.AGENT_CS]: `Written only by the agent: one row per change set, with its pull requests, what they changed and its staging preview. Do not edit. The script copies what it needs into the green columns of ${t.RCS} and ${t.RPC}.` } : {}),
+    Watch: "Kept by the agent's watcher: what changed since it last looked. Do not edit.",
+  };
+  if (drafting) {
+    out[t.FEEDBACK] = [
+      colours,
+      "This tab has one row per change set:",
+      `   1. The Authoring Committee starts a row: a title, the Selected Sections, and feedback in the Blue ${fb} columns. The script gives it a Change-set id.`,
+      `   2. The agent proposes a direction in ${c.COLS.draft?.agentFeedback || "Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says Needs human.`,
+      ...changeSet,
+      ...footer,
+    ].join("\n");
+  } else {
+    out["Public Comment Source"] = `The public comments as received, one row per comment. Do not edit: a correction goes in a blue column on ${t.RPC}.`;
+    out[t.RPC] = [
+      colours,
+      "This tab has one row per public comment, as received (Grey):",
+      "   1. The Feedback Review Committee reads the comment and adds its feedback in the Blue columns, with the TWG, comment type, disposition and status.",
+      `   2. The agent puts each comment in a change set (Green Change Set, linked to its row on ${t.RCS}) and suggests a TWG.`,
+      `   3. Decisions to edit are made per change set, on ${t.RCS} (its Orange Ready columns). Agentic status and ${staging} here follow the comment's change set.`,
+      ...footer,
+    ].join("\n");
+    out[t.RCS] = [
+      colours,
+      `This tab has one row per change set, joining its public comments from ${t.RPC}:`,
+      "   1. The Feedback Review Committee gives feedback on the change set in Blue and picks its TWG.",
+      `   2. The agent proposes a direction in ${c.COLS.rcs?.agentFeedback || "Change Set Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says Needs human.`,
+      ...changeSet,
+      ...footer,
+    ].join("\n");
+  }
+  return out;
+}
+
 export function setupSteps(c: SheetConfig): string[] {
   const steps = [
-    "Setup, once per sheet (the skill review-sheet-script has the detail):",
-    "1. Extensions, then Apps Script. Replace all of Code.gs with the published script and save.",
-    "2. Pick installTriggers in the function list and press Run. Allow access (Advanced, then continue).",
-    "3. Reload the sheet. A Review links menu appears; Review links, then Refresh now, checks it.",
+    `Once per sheet, by the sheet's owner. Made with File, then Make a copy, of the template? The script is already inside: choose Review links, then Install, and allow it (step 6), and you are done. Otherwise, or to update the script (details: ${INSTALL_GUIDE_URL}):`,
+    `1. Get the latest Code.gs: open ${CODE_GS_URL} and press "Copy raw file" (the two-squares button at the top right of the code). Or open ${CODE_GS_RAW}, select all and copy`,
+    "2. Here, choose Extensions, then Apps Script. The script editor opens in a new tab",
+    "   • \"Unable to open the file\"? You are signed in to several Google accounts. Use a private window signed in to the owner's account only",
+    "3. Name the project after this spreadsheet: click \"Untitled project\" at the top left and type the sheet's own name (e.g. \"DTH-PC Contributor Log\"), then Rename. The same name makes it easy to find in script.google.com",
+    "4. Click Code.gs in the Files list. Select all (Ctrl+A, or Cmd+A on a Mac), delete it, paste the copied script, and save (Ctrl+S or Cmd+S, or the disk icon)",
+    "5. Reload the sheet and choose Review links, then Install. (Or, in the editor, press Run with installTriggers selected; it is the default)",
+    "6. Allow it, once: Google asks for authorization; press Continue (or Review permissions) and pick the owner's account. Google then shows \"Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.\" That is expected: this is the sheet's own script, which Google never reviews. Choose Advanced, then Go to <project name> (unsafe), then Allow. Why: https://support.google.com/cloud/answer/7454865",
+    "7. Review links, then Refresh now, checks it",
+    "   • Updating later: repeat 1, 2 and 4, then Review links, then Refresh now. The automatic refresh stays installed",
   ];
-  if (c.CFG.MODE === "drafting") {
-    const col = c.COLS.draft?.sections ?? "Selected Sections";
-    steps.push(
-      `4. Finish the ${col} dropdown. Neither the script nor the Sheets API can set these two settings:`,
-      `   • Click the column letter above "${col}" to select the column`,
-      "   • Choose Data, then Data validation",
-      `   • Open the rule for that column (it says "Dropdown (from a range)")`,
-      "   • Tick Allow multiple selections",
-      "   • Open Advanced options and set Display style to Chip",
-      "   • Press Done",
-    );
-  }
-  steps.push("Below: the script's settings. Ask the agent to change them; do not edit by hand.");
   return steps;
+}
+
+/** Drafting only: the two dropdown settings neither the script nor the Sheets API can set. */
+export function dropdownSteps(c: SheetConfig): string[] | undefined {
+  if (c.CFG.MODE !== "drafting") return undefined;
+  const col = c.COLS.draft?.sections ?? "Selected Sections";
+  return [
+    `Once per sheet, after installing the script: allow several sections in the ${col} dropdown (neither the script nor the Sheets API can):`,
+    `   • Click the column letter above "${col}", then Data, then Data validation`,
+    `   • Open the rule (it says "Dropdown (from a range)"), tick Allow multiple selections, and press Done`,
+    "   • The Chip display style is already set; leave it",
+  ];
+}
+
+/** Who may set the Ready columns, and how the owner names them in the EDITORS row. */
+export function editorSteps(): string[] {
+  return [
+    "Who may set Ready for agent and Ready for merge: the emails in the orange EDITORS cell below (column B).",
+    "   • Share each of them as Editor first (Share button, pick Editor)",
+    "   • Type their emails in the EDITORS cell; only the owner can change it",
+    "   • Format: plain emails only, no names; one per line (Ctrl+Enter, or Cmd+Enter on a Mac, starts a new line in a cell). Commas or semicolons also work",
+    "   • Example, for two editors:\n        ana@example.org\n        ben@example.org",
+    "   • Anything that is not an email is left out, and Refresh now says which",
+    "   • Choose Review links, then Refresh now: the two Ready columns are locked to the owner plus them",
+    "   • Leave it empty and only the owner can set them (the default)",
+  ];
+}
+
+/**
+ * A drafting sheet's TOC tab, as the script's own refresh writes it: the
+ * Selected Sections dropdown reads column A. The agent writes these with the
+ * Config rows when it links a sheet, so the dropdown works before anyone has
+ * pasted the script (owner, 2026-10-31: a new copy showed an empty dropdown).
+ * `undefined` for a public-comment sheet, which has no TOC.
+ */
+export function tocRows(c: SheetConfig): string[][] | undefined {
+  const toc = (c.DATA as { TOC?: [string, string][] }).TOC;
+  if (!c.CFG.TOC || !toc) return undefined;
+  const q = (x: string) => x.replace(/"/g, '""');
+  return [["Section", "Link", "Anchor"]].concat(
+    toc.map(([name, anchor]) => [name, `=HYPERLINK("${q(c.CFG.SECTION_URL + anchor)}","open")`, anchor]),
+  );
 }
 
 /**
@@ -346,8 +493,19 @@ export function setupSteps(c: SheetConfig): string[] {
  * value continued on the next rows under the same key.
  */
 export function configRows(c: SheetConfig): string[][] {
-  const rows: string[][] = [["Key", "Value (written by the agent from sheet-sync.json; do not edit)"]];
-  for (const line of setupSteps(c)) rows.push(["SETUP", line]);
+  // EDITORS is the one row a person keeps: the agent writes it empty here
+  // and keeps the sheet's value when it rewrites the tab. Emails never go
+  // into sheet-sync.json, which is committed.
+  const rows: string[][] = [
+    // Short Instructions rows, one per subject, so no row is taller than the
+    // window (owner, 2026-10-31). The script reads keys by name and ignores these.
+    ["Instructions", tabInstructions(c)[CONFIG_TAB]],
+    ["Instructions - Install script", setupSteps(c).join("\n")],
+    ...(dropdownSteps(c) ? [["Instructions - Dropdown", dropdownSteps(c)!.join("\n")]] : []),
+    ["Instructions - Editors", editorSteps().join("\n")],
+    ["Key", "Value (written by the agent from sheet-sync.json; do not edit, except EDITORS)"],
+    ["EDITORS", ""],
+  ];
   for (const key of ["CFG", "COLS", "DATA"] as const) {
     // Indented only where a person might edit by hand (CFG: URLs, tab names;
     // COLS: column headers). DATA is generated from the folio, so it stays
@@ -404,11 +562,30 @@ export function chunks(json: string): string[] {
 }
 
 /** The one script every review sheet runs: the template, stamped with its commit. */
-export function buildScript(): string {
+export function buildScript(opts: { stamp?: "commit" | "content" } = {}): string {
   const here = dirname(fileURLToPath(import.meta.url));
   const template = readFileSync(join(here, "review-sheet.gs"), "utf8");
-  return asciiOnly(template.replace("/*@@VERSION@@*/", `// folio-assistant-core tools/review-sheet-sync at ${templateCommit(here)}.`));
+  // The committed copy (dist/Code.gs) is stamped by the template's content, not
+  // a commit: a file cannot name the commit it is in, and the check that it is
+  // current must not change with every commit.
+  const at = opts.stamp === "content"
+    ? `template sha256 ${createHash("sha256").update(template).digest("hex").slice(0, 16)}`
+    : templateCommit(here);
+  return asciiOnly(template
+    .replace("/*@@VERSION@@*/", `// folio-assistant-core tools/review-sheet-sync at ${at}.`)
+    .replace("@@STAMP@@", at.replace(/'/g, "")));
 }
+
+/**
+ * Where a person gets the latest Code.gs: the committed build on core's main,
+ * whose GitHub page has a "Copy raw file" button (owner, 2026-10-31: "where to
+ * get code.gs is not stated ... should link to instructions w/ DL link").
+ * `bun run …/build-review-sheet-script.ts --dist` rewrites it; a test fails
+ * when it is stale.
+ */
+export const CODE_GS_URL = "https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs";
+export const CODE_GS_RAW = "https://raw.githubusercontent.com/litlfred/folio-assistant-core/main/tools/review-sheet-sync/dist/Code.gs";
+export const INSTALL_GUIDE_URL = "https://github.com/litlfred/folio-assistant-core/blob/main/skills/content/folio-document-adapter/review-sheet-script.md#installing-the-script-step-by-step";
 
 /**
  * Every non-ASCII character as a \uXXXX escape. A paste into the Apps Script
@@ -421,6 +598,12 @@ export const asciiOnly = (s: string) =>
 if (import.meta.main) {
   const arg = (f: string) => { const i = process.argv.indexOf(f); return i > 0 ? process.argv[i + 1] : undefined; };
   const sha = (x: string) => createHash("sha256").update(x).digest("hex");
+  if (process.argv.includes("--dist")) {
+    const here = dirname(fileURLToPath(import.meta.url));
+    mkdirSync(join(here, "dist"), { recursive: true });
+    writeFileSync(join(here, "dist", "Code.gs"), buildScript({ stamp: "content" }));
+    console.error("wrote dist/Code.gs");
+  }
   const script = arg("--script");
   if (script) {
     const out = buildScript();
@@ -434,13 +617,21 @@ if (import.meta.main) {
       console.error(`no ${cfg} in ${repo}: write one first (skill review-sheet-script)`);
       process.exit(2);
     }
-    const rows = `${JSON.stringify(configRows(buildConfig(repo, cfg)), null, 1)}\n`;
+    const built = buildConfig(repo, cfg);
+    const rows = `${JSON.stringify(configRows(built), null, 1)}\n`;
     const to = arg("--out");
     if (to) { writeFileSync(to, rows); console.error(`wrote ${to}: the Config tab's rows`); }
     else process.stdout.write(rows);
+    const tocOut = arg("--toc-out");
+    if (tocOut) {
+      const toc = tocRows(built);
+      if (!toc) { console.error(`${cfg} is not a drafting sheet: it has no TOC tab`); process.exit(2); }
+      writeFileSync(tocOut, `${JSON.stringify(toc, null, 1)}\n`);
+      console.error(`wrote ${tocOut}: the TOC tab's rows (the Selected Sections dropdown)`);
+    }
   }
-  if (!script && !cfg) {
-    console.error("usage: build-review-sheet-script.ts [--script Code.gs] [--repo <folio>] [--config review/<mode>/sheet-sync.json] [--out config-rows.json]");
+  if (!script && !cfg && !process.argv.includes("--dist")) {
+    console.error("usage: build-review-sheet-script.ts [--script Code.gs] [--repo <folio>] [--config review/<mode>/sheet-sync.json] [--out config-rows.json] [--toc-out toc-rows.json] [--dist]");
     process.exit(2);
   }
 }
