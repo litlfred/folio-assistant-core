@@ -379,6 +379,27 @@ export function guideSteps(c: SheetConfig): string[] {
   return steps;
 }
 
+export const CONFIG_TAB = "Config";
+
+/**
+ * What each tab is for, in one or two sentences, for the Instructions row at
+ * the top of every visible tab (owner, 2026-10-31: "each tab should have an
+ * Instructions header with the purpose of the tab, even if to say don't do
+ * anything"). The people's tabs carry the colour key and workflow instead;
+ * hidden helper tabs carry none, since the script writes them whole.
+ */
+export function tabInstructions(c: SheetConfig): Record<string, string> {
+  const drafting = c.CFG.MODE === "drafting";
+  const t = { ...(drafting ? DRAFT_TABS : DEFAULT_TABS), ...c.CFG } as Record<string, string>;
+  const people = drafting ? t.FEEDBACK : `${t.RPC} and ${t.RCS}`;
+  return {
+    [CONFIG_TAB]: `The script's settings. GUIDE (below) explains how this sheet works, for everyone. SETUP is for whoever installs the script. EDITORS lists who may set the Ready columns: only the owner edits it. Do not edit anything else here: the agent writes it. Work happens on ${people}.`,
+    [t.AGENT]: `Written only by the agent: one row per comment or change set, with its status, pull request and preview. Do not edit. The script copies what it needs into the green columns of ${people}.`,
+    "Public Comment Source": `The public comments as received, one row per comment. Do not edit: a correction goes in a blue column on ${t.RPC ?? "Review Public Comments"}.`,
+    Watch: "Kept by the agent's watcher: what changed since it last looked. Do not edit.",
+  };
+}
+
 export function setupSteps(c: SheetConfig): string[] {
   const steps = [
     "Setup, once per sheet (the skill review-sheet-script has the detail):",
@@ -419,6 +440,7 @@ export function configRows(c: SheetConfig): string[][] {
   // and keeps the sheet's value when it rewrites the tab. Emails never go
   // into sheet-sync.json, which is committed.
   const rows: string[][] = [
+    ["Instructions", tabInstructions(c)[CONFIG_TAB]],
     ["Key", "Value (written by the agent from sheet-sync.json; do not edit, except EDITORS)"],
     ["GUIDE", guideSteps(c).join("\n")],
     ["SETUP", setupSteps(c).join("\n")],

@@ -370,7 +370,9 @@ describe("review-sheet.gs in drafting mode", () => {
 
   test("GUIDE, the first Config row, gives the colours, the workflow and the filter views in the sheet's own words", () => {
     const g = dRows.find((r) => r[0] === "GUIDE")![1];
-    expect(dRows[1][0]).toBe("GUIDE");
+    expect(dRows[0][0]).toBe("Instructions");
+    expect(dRows[0][1]).toContain("only the owner edits it");
+    expect(dRows[2][0]).toBe("GUIDE");
     expect(g).toContain("Blue: your input, by Contributors");
     expect(g).toContain("Ready for agent");
     expect(g).toContain("Filter views");
@@ -382,11 +384,11 @@ describe("review-sheet.gs in drafting mode", () => {
   test("the script is the same for every document: nothing of the folio is in it", () => {
     expect(code).not.toContain("https://x.example/S#");
     expect(code).not.toContain("Global challenges");
-    expect(dRows.find((r) => !["GUIDE", "SETUP", "Key", "EDITORS"].includes(r[0]))?.[0]).toBe("CFG");
+    expect(dRows.find((r) => !["Instructions", "GUIDE", "SETUP", "Key", "EDITORS"].includes(r[0]))?.[0]).toBe("CFG");
     expect(dRows.filter((r) => r[0] === "SETUP")).toHaveLength(1);
     expect(dRows.find((r) => r[0] === "SETUP")![1]).toContain("Allow multiple selections");
     expect(dRows.find((r) => r[0] === "EDITORS")![1]).toBe("");
-    expect(dRows.every((r, i) => i === 0 || ["GUIDE", "SETUP", "EDITORS"].includes(r[0]) || r[1].startsWith("|"))).toBe(true);
+    expect(dRows.every((r, i) => i <= 1 || ["GUIDE", "SETUP", "EDITORS"].includes(r[0]) || r[1].startsWith("|"))).toBe(true);
     expect(JSON.parse(dRows.find((r) => r[0] === "CFG")![1].slice(1)).MODE).toBe("drafting");
   });
 
