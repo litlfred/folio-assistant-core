@@ -31,7 +31,7 @@ The whole public comment cycle around the comments themselves.
 ### 3. Set up the comment channels, with instructions and links (`Task_SetUpChannels`)
 
 - Who: the `Editor` lane (role `editor`).
-- Skill: `public-comment`, `review-sheet-script`.
+- Skill: `public-comment-channels`, `public-comment`, `review-sheet-script`.
 - What: Before anything is sent, the editor sets up each channel the review will use: the review sheet, the GitHub issue forms, an offline Excel sheet and a Google Form, each constrained to the release's fixed references, with precise instructions, all links, and how submitters are recorded.
 - Record it: `workflow_complete` with `node: "Task_SetUpChannels"`.
 - next: → `Task_WriteAnnouncement` (Write the announcement, with links)
@@ -39,7 +39,7 @@ The whole public comment cycle around the comments themselves.
 ### 4. Write the announcement, with links (`Task_WriteAnnouncement`)
 
 - Who: the `Editor` lane (role `editor`).
-- Skill: `public-comment`.
+- Skill: `public-comment-channels`, `public-comment`.
 - What: A short communication for the public: what is under review, the comment period, a high-level description of the process, and links to the release, every channel and the published process.
 - Record it: `workflow_complete` with `node: "Task_WriteAnnouncement"`.
 - next: → `Task_Distribute` (Distribute to the public)

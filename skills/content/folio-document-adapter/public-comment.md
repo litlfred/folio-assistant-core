@@ -47,6 +47,11 @@ The `unaligned` rest are listed by method, not hidden.
 
 ## Intake: one store, four routes, nothing dropped
 
+The channels a release goes out on (an offline Excel sheet, a Google Form, a
+GitHub issue form), each limited to the release's fixed references, and the
+path each one takes back to these routes, are the
+[`public-comment-channels`](public-comment-channels.md) skill's.
+
 | route | command | anchor comes from |
 |---|---|---|
 | comment matrix (.xlsx) | `import <file>` | section, page, line or Table/Figure columns |
