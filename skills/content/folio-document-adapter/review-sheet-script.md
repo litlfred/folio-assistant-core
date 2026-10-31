@@ -288,8 +288,9 @@ cells, and the agent runs the sheet's own check before writing.
   prints PR head, Staging deploy (`building, expected <time>`) and Agent
   completed, the times from the clock. Write all three in one update.
 - **After acting on Ready for agent with no new commit** (the PR already
-  held the change), still run `push` with the current head, so Agent
-  completed is later than the Ready time and the ⏳ line moves on.
+  held the change), run `agent-record.ts done` and write the Agent
+  completed it prints, so it is later than the Ready time and the ⏳ line
+  moves on. Not `push`: nothing is restaged, so Staging deploy stays as it is.
 
 Drafting sheets have no comment numbers: pass `"nos": []` and items without
 numbers are not needed; the tool then only keeps the history.

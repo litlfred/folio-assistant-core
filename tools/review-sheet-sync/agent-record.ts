@@ -7,6 +7,8 @@
  *
  *   dispositions <input.json>   the change set's Disposition (change set) cell
  *   push --head <sha> [--expect <minutes>]   the cells to write on every push
+ *   done                        Agent completed alone, when the agent acted
+ *                               with no new commit (nothing to restage)
  *
  * dispositions reads which comments are in the change set and the people's
  * Blue Disposition from the sheet's own values (as read, header row
@@ -126,6 +128,11 @@ export function push(head: string, expectMinutes: number, now = new Date()): Rec
   };
 }
 
+/** Agent completed alone: acted on Ready for agent, but no new commit, so no restage. */
+export function done(now = new Date()): Record<string, string> {
+  return { "Agent completed (UTC, change set)": now.toISOString().slice(0, 16).replace("T", " ") + "Z" };
+}
+
 if (import.meta.main) {
   const [cmd, ...rest] = process.argv.slice(2);
   const flag = (f: string) => { const i = rest.indexOf(f); return i >= 0 ? rest[i + 1] : undefined; };
@@ -135,8 +142,10 @@ if (import.meta.main) {
     console.log(text);
   } else if (cmd === "push" && flag("--head")) {
     console.log(JSON.stringify(push(flag("--head")!, Number(flag("--expect") ?? 20)), null, 2));
+  } else if (cmd === "done") {
+    console.log(JSON.stringify(done(), null, 2));
   } else {
-    console.error("usage: agent-record.ts dispositions <input.json> | push --head <full sha> [--expect <minutes>]");
+    console.error("usage: agent-record.ts dispositions <input.json> | push --head <full sha> [--expect <minutes>] | done");
     process.exit(2);
   }
 }
