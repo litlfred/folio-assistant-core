@@ -500,6 +500,19 @@ merge until it does, and the agent does not merge. A failed gate sends the
 change set back to the author, who updates the PR and its dispositions; the
 gate then runs again on the new head.
 
+## Unconfirmed dispositions block the merge (owner, 2026-10-31, option A)
+
+The agent's disposition for a comment is a proposal until the committee
+records its own word in the people's Disposition column. While any comment
+of a change set is still Pending (or empty) there, Disposition (agent) shows
+"⚠ Not confirmed by the committee (Disposition still Pending): Nos. …".
+Staging review shows "⚠ dispositions not complete or not confirmed: not
+ready for merge", and the ⏳ line says the agent will not merge until every
+disposition is complete and confirmed. The agent never merges such a change
+set, even with Ready for merge = Yes. `agent-record.ts dispositions` does not
+stop on this line, because confirming is the committee's step, not a fault
+in the agent's record.
+
 ## Structured cells and column hover text (owner, 2026-10-31)
 
 "Several of the cols could be a bit more structured": a list is never run

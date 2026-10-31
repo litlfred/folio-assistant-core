@@ -864,9 +864,10 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(fns.dispositionProblems(ok, ["127", "128", "129", "130", "131", "136", "140", "141"])).toBe("\u26a0 No disposition yet for Nos. 140 and 141");
     expect(fns.dispositionProblems("No. 136: Fixed it.", ["136"])).toMatch(/^\u26a0 No. 136: start with one of Accepted/);
     expect(fns.dispositionProblems("No. 9: Noted.\nNo. 136: Accepted.\nNo. 136: Noted.", ["136"])).toBe("\u26a0 No. 9 is not in this change set\n\u26a0 No. 136 has two dispositions");
-    // Drawn from the people's Blue Disposition: a different word is flagged, Pending is not.
+    // Drawn from the people's Blue Disposition: a different word is flagged;
+    // Pending is not a mismatch, but is listed as not yet confirmed.
     expect(fns.dispositionProblems("No. 136: Accepted.\nNo. 137: Noted.", ["136", "137"], { "136": "Noted", "137": "Pending" }))
-      .toBe("\u26a0 No. 136: Accepted here, Noted in the people's Disposition");
+      .toBe("\u26a0 Not confirmed by the committee (Disposition still Pending): No. 137\n\u26a0 No. 136: Accepted here, Noted in the people's Disposition");
   });
 
   test("security: text a person or the agent typed is never written back as a formula", () => {
@@ -1385,5 +1386,21 @@ describe("a PR's change list may run over several lines (owner, 2026-10-31)", ()
   });
   test("the label heads the bullets", () => {
     expect(fns.descText("What the PRs changed:\n• a (No. 1)\n• b")).toBe(" · What the PRs changed:\n  • a (No. 1)\n  • b");
+  });
+});
+
+describe("unconfirmed dispositions are flagged and block the merge (owner, 2026-10-31, option A)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems, progressLine };`)({}) as {
+    dispositionProblems: (t: string, n: string[], h?: Record<string, string>) => string;
+    progressLine: (o: object) => string;
+  };
+  test("a comment whose committee Disposition is Pending or empty is listed", () => {
+    const p = fns.dispositionProblems("No. 1: Accepted. x\nNo. 2: Noted. y\nNo. 3: Accepted. z", ["1", "2", "3"], { "1": "Pending", "2": "Noted", "3": "" });
+    expect(p).toBe("⚠ Not confirmed by the committee (Disposition still Pending): Nos. 1 and 3");
+    expect(fns.dispositionProblems("No. 1: Accepted. x", ["1"], {})).toBe("");
+  });
+  test("Ready for merge waits for confirmed dispositions", () => {
+    const l = fns.progressLine({ merge: true, prs: [{ url: "https://github.com/o/r/pull/1", head: "abc1234" }], built: { gate: "Passed abc1234: ok" }, disp: "dispositions not complete or not confirmed" });
+    expect(l).toMatch(/will not merge r#1 until every disposition is complete and confirmed by the committee\.$/);
   });
 });

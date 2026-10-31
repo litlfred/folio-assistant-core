@@ -254,7 +254,7 @@ Each sync does the steps below, in this order.
    gate** has passed for the PR's head commit, merge it (owner, 2026-10-30;
    the gate 2026-10-31). The gate is run by a reviewer that did not write the
    PR (`review-sheet-script`, "The QA gate"); without a pass for the current
-   head, the agent does not merge and its ⏳ line says why. Any editor may set it. Only a PR in the folio's own repository is
+   head, the agent does not merge and its ⏳ line says why. Nor does it merge while any comment's committee Disposition is still Pending (`review-sheet-script`, "Unconfirmed dispositions block the merge"). Any editor may set it. Only a PR in the folio's own repository is
    merged, never one on a WHO repository. After the merge, set every PC row of
    the change-set to *Change merged*, clear its staging link (Agent L), and comment on the
    PR's issue. If the merge is refused (a session safety check, a conflict, a

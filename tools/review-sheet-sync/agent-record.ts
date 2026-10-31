@@ -115,7 +115,10 @@ export function dispositions(input: DispositionInput): { text: string; problems:
     ...(input.overall ? [`Overall: ${input.overall}`] : []),
     ...lines,
   ].join("\n");
-  return { text, problems: sheet.dispositionProblems(text, nos, human) };
+  // "Not confirmed by the committee" is the committee's step, not a fault in
+  // the agent's record, so it never stops the write.
+  const problems = sheet.dispositionProblems(text, nos, human).split("\n").filter((l) => l && !/^\u26a0 Not confirmed by the committee/.test(l)).join("\n");
+  return { text, problems };
 }
 
 /**

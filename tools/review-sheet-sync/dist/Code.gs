@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 280caf50182af3ab.
+// folio-assistant-core tools/review-sheet-sync at template sha256 dea2482dff11b229.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 280caf50182af3ab';
+const SCRIPT_VERSION = 'template sha256 dea2482dff11b229';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -497,11 +497,17 @@ function refreshLocked() {
     // No Agentic status column: the status sits on top of the agent's
     // feedback instead (owner, 2026-10-31, option A: "One column, status on top").
     const mergedRcs = col(rcs, COLS.rcs.agentic || 'Agentic status') < 0;
+    const dispBlock = {};
+    rcs.rows.forEach(r => {
+      const cs = String(r[csCol]).trim();
+      if (cs && (prOf[cs] || []).length && dispositionProblems(dispOf[cs] || '', csOf[cs] || [], humanDisp))
+        dispBlock[cs] = 'dispositions not complete or not confirmed';
+    });
     rcs.rows.forEach(r => {
       const cs = String(r[csCol]).trim();
       const st = csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean));
-      if (cs && mergedRcs) lineOf[cs] = statusBlock(progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: st, prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] }), st, prOf[cs] || []);
-      else if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)), prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] });
+      if (cs && mergedRcs) lineOf[cs] = statusBlock(progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: st, prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs], disp: dispBlock[cs] }), st, prOf[cs] || []);
+      else if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)), prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs], disp: dispBlock[cs] });
     });
     markStale(rcs, csCol, basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)', lineOf);
     completeReady(rcs, csCol, prOf, stagingOf, builtOf, readyAt);
@@ -510,7 +516,7 @@ function refreshLocked() {
     const rSt = COLS.rcs.staging ? col(rcs, COLS.rcs.staging) : -1, rCs = col(rcs, COLS.rcs.cs);
     if (rSt >= 0 && rCs >= 0) rcs.rows.forEach((r, k) => {
       const id = String(r[rCs]).trim();
-      if (stagingOf[id] || awaitsPreview(prOf[id])) rcs.sh.getRange(k + rcs.top, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id], readyAt[id])]]);
+      if (stagingOf[id] || awaitsPreview(prOf[id])) rcs.sh.getRange(k + rcs.top, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id], readyAt[id], dispBlock[id])]]);
     });
   }
 }
@@ -853,9 +859,10 @@ function utcMs(t) {
  * was built (Agent: Agent completed vs Staging built). Without a build time
  * nothing is claimed either way.
  */
-function stagingCell(url, built, prs, readyAt) {
+function stagingCell(url, built, prs, readyAt, disp) {
   const w = stagingWarning(url, built, prs, readyAt);
-  if (!url) return rich(w ? [{ t: w, bold: true }] : []);
+  const dl = disp ? [{ t: '\n\u26a0 ' + disp + ': not ready for merge', bold: true }] : [];
+  if (!url) return rich((w ? [{ t: w, bold: true }] : []).concat(w ? dl : []));
   // The staging QA report beside the preview (owner, 2026-10-31: "sheets
   // should link to QA reports for the staging"), then the QA gate.
   // "QA report" opens the viewer: the preview's review page, at its
@@ -866,7 +873,7 @@ function stagingCell(url, built, prs, readyAt) {
     : [{ t: ' \u00b7 ' }, { t: 'QA report', url: built.qa }]) : [];
   const gate = qaGate(built, prs).text;
   return rich([{ t: 'review', url: url }].concat(qa, w ? [{ t: ' ' + w, bold: true }] : [],
-    gate ? [{ t: '\n' + gate, bold: !/^\u2713/.test(gate) }] : []));
+    gate ? [{ t: '\n' + gate, bold: !/^\u2713/.test(gate) }] : [], dl));
 }
 
 /**
@@ -1038,6 +1045,11 @@ function dispositionProblems(text, nos, human) {
     });
   });
   const missing = want.filter(n => !seen[n]).sort((x, y) => x - y);
+  // The agent's word is a proposal until the committee records its own
+  // (owner, 2026-10-31, option A: "Flag and block merge").
+  const hasHuman = human && Object.keys(human).length > 0;
+  const unconfirmed = hasHuman ? want.filter(n => !/\S/.test(String(human[n] || '').replace(/^pending$/i, ''))) : [];
+  if (unconfirmed.length) out.unshift('\u26a0 Not confirmed by the committee (Disposition still Pending): ' + nosText(unconfirmed));
   if (missing.length) out.unshift('\u26a0 No disposition yet for ' + nosText(missing));
   return out.join('\n');
 }
@@ -1083,8 +1095,10 @@ function progressLine(o) {
   if (/merged/i.test(o.status || '')) return '';
   if (o.merge && active) {
     const g = qaGate(o.built, prs);
-    return PROGRESS + 'Ready for merge set: ' + (g.ok || !g.text ? 'the agent will merge ' + label + '.'
-      : 'the agent will not merge ' + label + ' until the QA gate passes (' + g.text.replace(/^\u26a0\s*/, '') + ').');
+    const wait = [g.ok || !g.text ? '' : 'the QA gate passes (' + g.text.replace(/^\u26a0\s*/, '') + ')',
+      o.disp ? 'every disposition is complete and confirmed by the committee' : ''].filter(Boolean);
+    return PROGRESS + 'Ready for merge set: ' + (!wait.length ? 'the agent will merge ' + label + '.'
+      : 'the agent will not merge ' + label + ' until ' + wait.join(' and ') + '.');
   }
   const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
   const last = done.length ? Math.max.apply(null, done) : NaN;
