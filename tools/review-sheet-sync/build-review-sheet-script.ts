@@ -317,6 +317,67 @@ const CHUNK = 40_000;
  * info"). The skill review-sheet-script says the same; the drafting script's
  * installTriggers box shows the dropdown steps with the exact range.
  */
+/**
+ * The colour key, one line per colour, worded for the sheet's mode. The legend
+ * row above each tab's header (first cell "Colour key") carries the same words
+ * over its columns; the script skips that row (owner, 2026-10-31).
+ */
+export function colourKey(c: SheetConfig): { blue: string; green: string; orange: string; grey: string } {
+  const people = c.CFG.MODE === "drafting" ? "Contributors" : "the Feedback Review Committee (the architects)";
+  return {
+    blue: `Blue: your input, by ${people}`,
+    green: "Green: written by the agent",
+    orange: "Orange: workflow, set by an Editor",
+    grey: "Grey: mechanical, kept by the script or the source",
+  };
+}
+
+/**
+ * How the sheet works, for everyone who opens it, including people who may
+ * only comment or view: the colours, the human-to-agent workflow, and how to
+ * use the saved filter views. The first row under the Config tab's header.
+ */
+export function guideSteps(c: SheetConfig): string[] {
+  const drafting = c.CFG.MODE === "drafting";
+  const k = colourKey(c);
+  const tab = drafting ? (c.CFG.FEEDBACK ?? "Contributor Feedback") : (c.CFG.RCS ?? "Review Change Sets");
+  const fb = drafting ? (c.COLS.draft?.feedback ?? "Contributor Feedback") : "Architect Feedback";
+  const staging = (drafting ? c.COLS.draft?.staging : c.COLS.rcs?.staging) ?? "Staging review";
+  const steps = [
+    "How this sheet works (for everyone):",
+    "Colours, shown in the Colour key row above each tab's header:",
+    `   • ${k.blue}`,
+    `   • ${k.green}`,
+    `   • ${k.orange}`,
+    `   • ${k.grey}`,
+    "The workflow, one row per change set:",
+  ];
+  if (drafting) {
+    steps.push(
+      `   1. Contributors start a row on ${tab}: a title, the Selected Sections, and their feedback in the blue ${fb} columns. The script gives the row its Change-set id.`,
+      `   2. The agent proposes a direction in ${fb} (agent), in green.`,
+    );
+  } else {
+    steps.push(
+      "   1. Public comments arrive on Review Public Comments (grey). The architects add their feedback in the blue Architect Feedback columns, on a comment or on its change set.",
+      `   2. The agent groups comments into change sets on ${tab} and proposes a direction in ${fb} (agent), in green.`,
+    );
+  }
+  steps.push(
+    "   3. An Editor sets Ready for agent to Yes (orange) once the direction is agreed.",
+    `   4. The agent edits the document on its own branch and opens a pull request. Agentic status says where it is, and ${staging} opens the "what changed" page of that branch's preview.`,
+    `   5. Reviewers read the preview and answer in blue. If a blue cell changes after the agent wrote, its proposal is marked stale and it looks again.`,
+    "   6. An Editor sets Ready for merge to Yes. The agent merges, and Agentic status says merged.",
+    "Finding your rows (filter views work for viewers and commenters too, and change nothing for anyone else):",
+    "   • Data, then Filter views, then pick a view, such as Needs human or Stale",
+    "   • Or click the filter icon in the Agentic status (filter) header and tick a status",
+    "   • A Section link or No. link opens that place in the document; a No. on a change set jumps to that comment's row",
+    "   • To leave a view, Data, then Filter views, then None",
+    "Comments without edit rights: select a cell, then Insert, then Comment.",
+  );
+  return steps;
+}
+
 export function setupSteps(c: SheetConfig): string[] {
   const steps = [
     "Setup, once per sheet (the skill review-sheet-script has the detail):",
@@ -358,6 +419,7 @@ export function configRows(c: SheetConfig): string[][] {
   // into sheet-sync.json, which is committed.
   const rows: string[][] = [
     ["Key", "Value (written by the agent from sheet-sync.json; do not edit, except EDITORS)"],
+    ["GUIDE", guideSteps(c).join("\n")],
     ["SETUP", setupSteps(c).join("\n")],
     ["EDITORS", ""],
   ];
