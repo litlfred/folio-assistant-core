@@ -197,15 +197,17 @@ made before 2026-10-31 gains the three columns at the right of the Agent
 for agent to Y ... i expected Staging review to get a stale warning"). The PR
 has not changed yet when an Editor sends a row back, so the commit check above
 passes. The script records, as a document property `ready:<CS>`, the time it
-first sees a row's Ready for agent at Yes (cleared on No). When that time is
-later than **Staging built**, after the deploy checks, it writes `⏳ update
-requested <time>: matches the PR, which the agent will now change`. It is not
-a ⚠: the preview still shows the PR exactly, and the review page cannot know
-the sheet (owner, 2026-10-31: "why not stale in first but stale in second?").
-The ⚠ stale mark is kept for a preview older than its PR. The same time makes
-**Agentic status** open with **Queued for the agent (Ready for agent set
-<time>)**, until the agent records a later completion or sets the status to
-Working.
+first sees a row's Ready for agent at Yes (cleared on No). A Yes it first sees
+on a row the agent has already completed counts from that completion instead,
+since the script cannot know when it was set: a freshly pasted script would
+otherwise flag work the agent had already done (2026-10-31, CS-001). When that time is
+later than **Staging built**, after the deploy checks, it writes `⚠ missing
+feedback from <time>`: the preview still shows the PR, but not the feedback an
+Editor has just sent to the agent (owner, 2026-10-31: "requested from whom?
+what are we waiting on?"). The review page cannot know the sheet, so only the
+sheet says so. The same time makes **Agentic status** open with **Waiting on
+the agent since <time> (Ready for agent set)**, until the agent records a later
+completion or sets the status to Working.
 
 **Stale agent proposals.** `Feedback (agent)` (drafting) and
 `Change Set Feedback (agent)` (Review Change Sets) carry the agent's proposal.
