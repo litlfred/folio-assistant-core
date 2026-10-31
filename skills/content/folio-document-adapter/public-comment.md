@@ -130,8 +130,11 @@ become `#REF!` when those columns are deleted (2026-10-31, the DPI-H sheet).
 They are Review Change Sets A3 (`FILTER('Agent - Change Sets'!A3:B, ...)`, the
 Change-set and Title), the Staging review column of Review Public Comments
 (its lookup range becomes `'Agent - Change Sets'!A:D`), and A2 of the hidden
-`RCS joins (live)` tab. Read row 3 of each tab for `#REF!` before saying it is
-done.
+`RCS joins (live)` tab. Also unmerge row 1 on the copy: the Instructions cell
+was merged across B1 to the last column, so deleting A–H shifts that merge
+onto A1 and hides B1 (a write to B1 then lands in the hidden part and seems to
+vanish). Merge B1 across the new width again. Read row 3 of each tab for
+`#REF!` before saying it is done.
 
 **Colour key** (owner, 2026-10-30). Blue: people decide. Orange: a release
 an editor gives (Ready for agent, Ready for merge). Grey: fixed, mechanical,
