@@ -141,6 +141,18 @@ moves, or a tab or a header the script reads is renamed. Re-paste Code.gs
 only when the script itself changes. Renaming a header the script reads,
 without rewriting Config, leaves that column unlinked; it fails nothing.
 
+## Published with the document's site
+
+`scripts/review-sheet-site.ts --out <site>` (package script
+`site:review-sheet` in a folio, a `sourceSteps` entry of its site build)
+writes `<site>/review-sheet/`: the generic `Code.gs`, `appsscript.json`,
+each `review/<mode>/sheet-sync.json` as `<mode>.config-rows.json`,
+`review-sheet.jsonld` (the script as `schema:SoftwareSourceCode` with its
+SHA-256 and commit; each document's settings as a `schema:Dataset` linked
+to its sheet and to the Tool), and an `index.html` with the setup steps and
+the SHA-256 to check a pasted copy against. Point people there rather than
+sending the file.
+
 ## Trusting the script
 
 A copy of a sheet carries its Apps Script, so anyone starting from a
