@@ -21,7 +21,7 @@
  * Skill: `review-sheet-script`.
  */
 import { createHash } from "node:crypto";
-import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
@@ -430,8 +430,8 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
 
 export function setupSteps(c: SheetConfig): string[] {
   const steps = [
-    "Once per sheet, by the sheet's owner (the skill review-sheet-script has the detail):",
-    "1. Get the latest Code.gs: ask the agent, or open review-sheet/Code.gs on the document's site. Select all of it and copy",
+    `Once per sheet, by the sheet's owner. The same steps, in detail: ${INSTALL_GUIDE_URL}`,
+    `1. Get the latest Code.gs: open ${CODE_GS_URL} and press "Copy raw file" (the two-squares button at the top right of the code). Or open ${CODE_GS_RAW}, select all and copy`,
     "2. Here, choose Extensions, then Apps Script. The script editor opens in a new tab",
     "   • \"Unable to open the file\"? You are signed in to several Google accounts. Use a private window signed in to the owner's account only",
     "3. Name the project after this spreadsheet: click \"Untitled project\" at the top left and type the sheet's own name (e.g. \"DTH-PC Contributor Log\"), then Rename. The same name makes it easy to find in script.google.com",
@@ -561,11 +561,28 @@ export function chunks(json: string): string[] {
 }
 
 /** The one script every review sheet runs: the template, stamped with its commit. */
-export function buildScript(): string {
+export function buildScript(opts: { stamp?: "commit" | "content" } = {}): string {
   const here = dirname(fileURLToPath(import.meta.url));
   const template = readFileSync(join(here, "review-sheet.gs"), "utf8");
-  return asciiOnly(template.replace("/*@@VERSION@@*/", `// folio-assistant-core tools/review-sheet-sync at ${templateCommit(here)}.`));
+  // The committed copy (dist/Code.gs) is stamped by the template's content, not
+  // a commit: a file cannot name the commit it is in, and the check that it is
+  // current must not change with every commit.
+  const at = opts.stamp === "content"
+    ? `template sha256 ${createHash("sha256").update(template).digest("hex").slice(0, 16)}`
+    : templateCommit(here);
+  return asciiOnly(template.replace("/*@@VERSION@@*/", `// folio-assistant-core tools/review-sheet-sync at ${at}.`));
 }
+
+/**
+ * Where a person gets the latest Code.gs: the committed build on core's main,
+ * whose GitHub page has a "Copy raw file" button (owner, 2026-10-31: "where to
+ * get code.gs is not stated ... should link to instructions w/ DL link").
+ * `bun run …/build-review-sheet-script.ts --dist` rewrites it; a test fails
+ * when it is stale.
+ */
+export const CODE_GS_URL = "https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs";
+export const CODE_GS_RAW = "https://raw.githubusercontent.com/litlfred/folio-assistant-core/main/tools/review-sheet-sync/dist/Code.gs";
+export const INSTALL_GUIDE_URL = "https://github.com/litlfred/folio-assistant-core/blob/main/skills/content/folio-document-adapter/review-sheet-script.md#installing-the-script-step-by-step";
 
 /**
  * Every non-ASCII character as a \uXXXX escape. A paste into the Apps Script
@@ -578,6 +595,12 @@ export const asciiOnly = (s: string) =>
 if (import.meta.main) {
   const arg = (f: string) => { const i = process.argv.indexOf(f); return i > 0 ? process.argv[i + 1] : undefined; };
   const sha = (x: string) => createHash("sha256").update(x).digest("hex");
+  if (process.argv.includes("--dist")) {
+    const here = dirname(fileURLToPath(import.meta.url));
+    mkdirSync(join(here, "dist"), { recursive: true });
+    writeFileSync(join(here, "dist", "Code.gs"), buildScript({ stamp: "content" }));
+    console.error("wrote dist/Code.gs");
+  }
   const script = arg("--script");
   if (script) {
     const out = buildScript();
@@ -604,8 +627,8 @@ if (import.meta.main) {
       console.error(`wrote ${tocOut}: the TOC tab's rows (the Selected Sections dropdown)`);
     }
   }
-  if (!script && !cfg) {
-    console.error("usage: build-review-sheet-script.ts [--script Code.gs] [--repo <folio>] [--config review/<mode>/sheet-sync.json] [--out config-rows.json] [--toc-out toc-rows.json]");
+  if (!script && !cfg && !process.argv.includes("--dist")) {
+    console.error("usage: build-review-sheet-script.ts [--script Code.gs] [--repo <folio>] [--config review/<mode>/sheet-sync.json] [--out config-rows.json] [--toc-out toc-rows.json] [--dist]");
     process.exit(2);
   }
 }

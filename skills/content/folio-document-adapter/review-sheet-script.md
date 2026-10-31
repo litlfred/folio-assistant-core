@@ -522,6 +522,50 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    top of the Config tab, in its `Instructions - Dropdown` row, so they stay with
    the sheet (owner, 2026-10-31); the script ignores that row.
 
+### Installing the script, step by step
+
+For the sheet's owner, once per sheet (owner, 2026-10-31: "where to click
+exactly ... a Tool for humans to use"). The Config tab's `Instructions -
+Install script` row carries the same steps and links here.
+
+1. **Get the latest Code.gs.** Open
+   [`dist/Code.gs` on GitHub](https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs)
+   and press **Copy raw file** (the two-squares button at the top right of
+   the code), or open the
+   [raw file](https://raw.githubusercontent.com/litlfred/folio-assistant-core/main/tools/review-sheet-sync/dist/Code.gs),
+   select all and copy. It is the build of `review-sheet.gs` on core's main,
+   rewritten by `build-review-sheet-script.ts --dist`; a test fails when it
+   is stale, so it is always the current script.
+2. **Open the editor.** In the sheet: **Extensions**, then **Apps Script**.
+   It opens in a new tab. "Unable to open the file at this time" means
+   several Google accounts are signed in: use a private window with only the
+   owner's account.
+3. **Name the project after the sheet.** Click **Untitled project** at the
+   top left, type the spreadsheet's own name (e.g. "DTH-PC Contributor
+   Log"), and press **Rename**.
+4. **Paste.** Click **Code.gs** in the Files list on the left. Select all
+   (Ctrl+A, or Cmd+A on a Mac), delete, paste, and save (Ctrl+S or Cmd+S,
+   or the disk icon).
+5. **Run installTriggers.** In the toolbar, the function list next to
+   **Run** and **Debug** shows **installTriggers** (it is the first function,
+   so the default). Press **Run**.
+6. **Allow it.** **Review permissions**, pick the owner's account. Google
+   shows "Google hasn't verified this app. The app is requesting access to
+   sensitive info in your Google Account." That is expected for a sheet's
+   own script: press **Advanced**, then **Go to <project name> (unsafe)**,
+   then **Allow** ([why](https://support.google.com/cloud/answer/7454865)).
+7. **Check it.** The log shows "Execution completed". Back in the sheet tab,
+   reload: a **Review links** menu appears; **Review links**, then
+   **Refresh now**, checks it.
+8. **Drafting sheets only:** tick **Allow multiple selections** on the
+   Selected Sections dropdown (Data, then Data validation, open the rule).
+
+**Updating later:** steps 1, 2 and 4, then Review links, then Refresh now;
+the automatic refresh stays installed.
+
+Screenshots of each step are to be added from the owner's DTH-PC install
+(the agent cannot sign in to Google to take them).
+
 ### Linking a sheet to a repository
 
 A copied sheet knows nothing about its document until the agent links it
@@ -548,8 +592,10 @@ work second, in this order:
    rows into the TOC tab from A1. The connector writes values, not colours,
    so the agent also colours Config: the Key row a Grey header (`#b7b7b7`,
    bold), EDITORS Orange (`#f4b26b`), and CFG, COLS, DATA and their
-   continuation rows Grey (`#efefef`). Every refresh re-applies these
-   (`styleConfig`), so a sheet the script runs in heals on its own. The TOC rows are exactly what the script's
+   continuation rows Grey (`#efefef`), and fits the Instructions rows'
+   heights to their text (a Sheets API `autoResizeDimensions`; an inserted
+   row otherwise inherits its neighbour's height). Every refresh re-applies
+   these (`styleConfig`), so a sheet the script runs in heals on its own. The TOC rows are exactly what the script's
    refresh writes, so the dropdown works before anyone pastes the script.
 4. **The agent says what is left for a person:** paste Code.gs and run
    installTriggers (step 5 above), and tick Allow multiple selections
