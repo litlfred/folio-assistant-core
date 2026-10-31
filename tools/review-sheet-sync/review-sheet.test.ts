@@ -13,7 +13,7 @@ import { mkdtempSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { buildConfig, buildScript, chunks, configRows, readable } from "./build-review-sheet-script.js";
+import { buildConfig, buildScript, chunks, configRows, readable, tabInstructions } from "./build-review-sheet-script.js";
 import { feedbackBasis } from "./feedback-issue.js";
 
 const code = buildScript();
@@ -368,31 +368,34 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(() => load(code, rt2.g).refreshAll()).toThrow(/no "Config" tab/);
   });
 
-  test("the Config tab's Instructions row gives its purpose, the colours, the workflow, the filter views and the setup, in the sheet's own words", () => {
-    const g = dRows[0][1];
-    expect(dRows[0][0]).toBe("Instructions");
-    expect(dRows[1][0]).toBe("Key");
-    expect(g).toContain("only the owner edits it");
-    expect(g).toContain("Allow multiple selections");
-    expect(g).toContain("Blue: your input, by Contributors");
-    expect(g).toContain("Ready for agent");
-    expect(g).toContain("Filter views");
-    const pc = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"))[0][1];
-    expect(pc).toContain("Feedback Review Committee");
-    expect(pc).not.toMatch(/architect/i);
-    expect(pc).not.toContain("Allow multiple selections");
-    // Each links the harness's page for its process.
-    expect(g).toContain("/en/cat-harness/processes/content-change-review.html");
-    expect(pc).toContain("/en/cat-harness/processes/public-comment.html");
+  test("each tab's Instructions say how that tab works, in the sheet's own words, and the Config tab's are short rows", () => {
+    expect(dRows.slice(0, 4).map((r) => r[0])).toEqual(["Instructions", "Instructions - Setup", "Instructions - Editors", "Key"]);
+    expect(dRows[0][1]).toContain("only the owner edits");
+    expect(dRows[1][1]).toContain("Allow multiple selections");
+    expect(dRows[2][1]).toContain("EDITORS");
+    // No Config row is taller than a window.
+    expect(Math.max(...dRows.slice(0, 3).map((r) => r[1].split("\n").length))).toBeLessThanOrEqual(10);
+    const d = tabInstructions(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
+    const cf = d["Contributor Feedback"];
+    expect(cf).toContain("Blue = your input, by Contributors");
+    expect(cf).toContain("Ready for agent back to No");
+    expect(cf).toContain("Filter views");
+    expect(cf).toContain("/en/cat-harness/processes/content-change-review.html");
+    const p = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
+    expect(p["Review Public Comments"]).toContain("one row per public comment");
+    expect(p["Review Change Sets"]).toContain("one row per change set");
+    expect(p["Review Change Sets"]).toContain("/en/cat-harness/processes/public-comment.html");
+    expect(Object.values(p).join("\n")).not.toMatch(/architect/i);
+    expect(configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"))[1][1]).not.toContain("Allow multiple selections");
   });
 
   test("the script is the same for every document: nothing of the folio is in it", () => {
     expect(code).not.toContain("https://x.example/S#");
     expect(code).not.toContain("Global challenges");
-    expect(dRows.find((r) => !["Instructions", "Key", "EDITORS"].includes(r[0]))?.[0]).toBe("CFG");
+    expect(dRows.find((r) => !(/^Instructions/.test(r[0]) || ["Key", "EDITORS"].includes(r[0])))?.[0]).toBe("CFG");
     expect(dRows.filter((r) => ["GUIDE", "SETUP"].includes(r[0]))).toHaveLength(0);
     expect(dRows.find((r) => r[0] === "EDITORS")![1]).toBe("");
-    expect(dRows.every((r, i) => i <= 1 || r[0] === "EDITORS" || r[1].startsWith("|"))).toBe(true);
+    expect(dRows.every((r, i) => i <= 3 || r[0] === "EDITORS" || r[1].startsWith("|"))).toBe(true);
     expect(JSON.parse(dRows.find((r) => r[0] === "CFG")![1].slice(1)).MODE).toBe("drafting");
   });
 

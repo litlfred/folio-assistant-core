@@ -422,8 +422,8 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    already holding two sections from the list, or a Yes to the box's "Is this
    done already?" (kept as the document property `dropdownDone`). Copies made
    after the template has them keep them. The same steps are written at the
-   top of the Config tab, in its `Instructions` row, so they stay with the
-   sheet (owner, 2026-10-31); the script ignores that row.
+   top of the Config tab, in its `Instructions - Setup` row, so they stay with
+   the sheet (owner, 2026-10-31); the script ignores that row.
 
 **Who may set the Ready columns: the `EDITORS` row** (owner, 2026-10-31).
 Everyone who works in a log is shared as Editor; protected ranges decide what
@@ -440,9 +440,13 @@ rewrites the tab, and the emails never go into `sheet-sync.json`, which is
 committed. To delegate who decides, the owner can add a delegate to the Config
 tab's protection, or send the agent the list.
 
-**The Instructions row** (owner, 2026-10-31). A row above
-the header of each people's tab (RPC, RCS, Contributor Feedback), frozen with
-it and grey like it, says what the colours mean and how the workflow runs, worded for the mode by `colourKey()` in the builder:
+**The Instructions rows** (owner, 2026-10-31). Every visible tab opens with an
+`Instructions` row that says what that tab is for and how it works, in that
+tab's own terms ("make 'how this sheet works' specific to each tab").
+`tabInstructions()` in the builder writes the text for each tab. On a people's
+tab (RPC, RCS, Contributor Feedback) the row is frozen with the header and grey
+like it, a lighter grey than the header. Its first line is the colour key,
+worded for the mode by `colourKey()`:
 
 - **Blue**: input by people, named by their process role: the Feedback Review
   Committee in public-comment mode (the DPI-H RA's architects hold it, but the
@@ -451,34 +455,34 @@ it and grey like it, says what the colours mean and how the workflow runs, worde
 - **Orange**: workflow, set by an Editor (the `Ready for ...` columns);
 - **Grey**: mechanical, kept by the script or the source.
 
-Its first cell reads `Instructions`, and the text is one merged cell across the
+Then come the steps for that tab, one per line. On a change-set tab they are
+the human-to-agent workflow, worded by process role: people write in blue, the
+agent proposes in green, an Editor sets Ready for agent, the agent opens one
+pull request for the row whose `Staging review` opens the preview's
+what-changed page, reviewers answer in blue, and an Editor sets Ready for merge
+and the agent merges. On Review Public Comments the steps say that decisions
+are made per change set. Last come the filter views, and a link to the
+harness's page for the process the sheet runs, where every step and role is in
+full: `public-comment.html` for public comment and `content-change-review.html`
+for drafting, under `en/cat-harness/processes/` on the folio-assistant site
+(`processPage()`; `CFG.PROCESS` overrides it).
+
+The first cell reads `Instructions`, and the text is one merged cell across the
 rest of the row, the colour names in their colours. The script reads any leading
 rows whose first cell starts `Instructions` (or `Colour key`, the first name) as
-for people: the header is the row after them, and
-every write, lock and edit range starts below the header. Insert the row only
-after the sheet runs a Code.gs that knows it; an older script reads the legend
-as the header and finds no columns. Filter views and protections start at the
-header row, so shift them down by one row when the row is inserted.
+for people: the header is the row after them, and every write, lock and edit
+range starts below the header. Insert the row only after the sheet runs a
+Code.gs that knows it; an older script reads the legend as the header and finds
+no columns. Filter views and protections start at the header row, so shift them
+down by one row when the row is inserted. A filter view's custom formula does
+not move when a column is inserted, so rewrite it.
 
-The Config tab has an `Instructions` row too, above its `Key | Value`
-header, and it holds the whole guide in one cell: the tab's purpose, then how
-the sheet works, then the setup steps (owner, 2026-10-31: "GUIDE / SETUP
-content should be in Config header instructions"; there are no separate
-`GUIDE` and `SETUP` rows). The how-it-works part is for everyone who opens the sheet,
-including people who may only comment or view: the colour key, the six-step
-human-to-agent workflow, worded by process role (people write in blue; the agent proposes in green; an
-Editor sets Ready for agent; the agent opens a pull request whose `Staging
-review` opens the preview's what-changed page; reviewers answer in blue, and a
-change marks the proposal stale and sets Ready for agent back to No, so an
-Editor sets it to Yes again to have the agent update the row's pull request;
-an Editor sets Ready for merge and the agent
-merges), and how to find rows with the saved filter views. It links the harness's page
-for the process the sheet runs, where every step and role is in full
-(`public-comment.html` for public comment, `content-change-review.html` for
-drafting, under `en/cat-harness/processes/` on the folio-assistant site;
-`CFG.PROCESS` overrides it), and the people's tabs' Instructions rows carry
-the same link. `tabInstructions()`,
-`guideSteps()` and `setupSteps()` write it; the script ignores the row.
+The Config tab keeps its Instructions short, one subject per row, so no row is
+taller than the window (owner, 2026-10-31): `Instructions` (the tab's purpose:
+nothing here needs you unless you install the script), `Instructions - Setup`
+(`setupSteps()`) and `Instructions - Editors` (`editorSteps()`), then the
+`Key | Value` header. Its rows are not frozen. The script reads Config keys by
+name, so it ignores these rows.
 
 **A stale proposal hands control back to an Editor** (owner, 2026-10-31).
 When a row's proposal turns stale (a blue cell changed since the agent wrote

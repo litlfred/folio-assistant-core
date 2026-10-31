@@ -30,7 +30,7 @@ describe("review-sheet-site", () => {
     const sha = createHash("sha256").update(code).digest("hex");
     expect(page).toContain(sha);
     const rows = JSON.parse(readFileSync(join(dir, "drafting.config-rows.json"), "utf8"));
-    expect(rows.find((r: string[]) => !["Instructions", "Key", "EDITORS"].includes(r[0]))?.[0]).toBe("CFG");
+    expect(rows.find((r: string[]) => !(/^Instructions/.test(r[0]) || ["Key", "EDITORS"].includes(r[0])))?.[0]).toBe("CFG");
     const g = JSON.parse(readFileSync(join(dir, "review-sheet.jsonld"), "utf8"))["@graph"];
     expect(g[0]["spdx:checksum"]["spdx:checksumValue"]).toBe(sha);
     expect(g[0]["schema:permissions"]).toHaveLength(3);
