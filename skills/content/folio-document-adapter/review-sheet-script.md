@@ -69,6 +69,28 @@ question for the owner, but the sheet is the record people see. When the
 question is answered, the agent replaces the block with the decision and who
 made it.
 
+**From a sibling agent** (owner, 2026-10-31: *"if other fedbcak mechanism in
+play like tools such as google sheets that can enage as well then should also
+be avialbe to use"*, folio-assistant-core#433). An agent that is not the one
+talking with the owner, such as a project thread or a subagent, also writes
+its question here when the sheet governs the work. It is the `review-sheet`
+channel of the harness skill `hand-back-to-discussion` (cat-harness
+`schemas/skills/hand-back-to-discussion/input.schema.json`):
+
+| channel field | on the sheet |
+|---|---|
+| `spreadsheetId` | the sheet, as the folio's `review/*/sheet-sync.json` names it |
+| `tab` | Review Change Sets, or Contributor Feedback on a drafting sheet |
+| `row` | the change set id or comment number, never a row index |
+| `column` | `Change Set Feedback (agent)` or `Feedback (agent)`, by header |
+
+The block, the Agentic status and the replacement on answer are the same as
+above. The sheet is an extra copy, never the only one: the sibling still hands
+the question back to the discussion agent, which asks the owner. A
+Blue-column answer counts as the answer in either place. The agent that takes
+it routes it to the other copy and marks that copy answered (the chat copy is
+struck through, with `[Edit: …]` added).
+
 **What it keeps current.** Columns are found by header text, so people may
 move them.
 
