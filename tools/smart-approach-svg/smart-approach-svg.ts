@@ -11,7 +11,7 @@ export default toolFactory((t) =>
     invoke: { shell: "bun run folio-assistant-core/scripts/smart-approach-svg.ts" },
     io: {
       inputs: [
-        { name: "data", schema: t("RepoPath"), required: true, arg: { positional: 0 }, description: "A smart-guidelines-approach-figure/v1 file." },
+        { name: "figure", schema: t("RepoPath"), required: true, arg: { positional: 0 }, description: "A smart-guidelines-approach-figure/v1 file." },
         { name: "out", schema: t("RepoPath"), required: false, arg: { flag: "--out" }, description: "Where to write the SVG; stdout when absent." },
       ],
       outputs: [
