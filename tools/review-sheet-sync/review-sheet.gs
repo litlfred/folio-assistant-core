@@ -479,9 +479,9 @@ function refreshLocked() {
       }
     });
     refreshRpc(rpc, pcOf, csOfNo, stOf, prOf);
-    refreshRcs(rcs, rpc, csOf, stOf, prOf);
     const csCol = col(rcs, 'Change-set'), all = () => true;
     const readyAt = readyTimes(rcs, csCol, prOf, all, docProps_()), lineOf = {};
+    refreshRcs(rcs, rpc, csOf, stOf, prOf, readyAt);
     rcs.rows.forEach(r => {
       const cs = String(r[csCol]).trim();
       if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)), prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] });
@@ -1109,7 +1109,7 @@ function refreshRpc(s, pcOf, csOfNo, stOf, prOf) {
 
 // ---------- Review Change Sets ----------
 
-function refreshRcs(s, rpc, csOf, stOf, prOf) {
+function refreshRcs(s, rpc, csOf, stOf, prOf, readyAt) {
   const c = {};
   Object.entries(COLS.rcs).forEach(([k, h]) => (c[k] = col(s, h)));
   const p = {};
@@ -1137,7 +1137,7 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
   s.rows.forEach(r => {
     const cs = String(r[c.cs]).trim();
     const sts = [...new Set((csOf[cs] || []).map(n => stOf[n]).filter(Boolean))].join(', ');
-    out.agentic.push(agenticCell(sts, prOf[cs] || []));
+    out.agentic.push(agenticCell(sts, prOf[cs] || [], { readyAt: (readyAt || {})[cs] }));
     status.push([asText(csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)))]);
     const nos = (csOf[cs] || []).filter(n => rowOf[n]).sort((a, b) => a - b);
 
