@@ -160,7 +160,7 @@ function applyEditors(ss) {
  * and tell the person the steps a script cannot take. A missing dropdown is
  * added; an existing one is left alone, since writing it again would clear
  * its "Allow multiple selections" tick. Neither Apps Script nor the Sheets
- * API can read the Chip style or that tick, so the box is skipped only on
+ * API can read that tick, so the box is skipped only on
  * evidence: a cell already holding two sections from the list, or the person
  * having said it is done (Yes). The same steps are in the Config tab's Instructions row.
  */
@@ -183,12 +183,11 @@ function checkDropdown(ss) {
   const ui = SpreadsheetApp.getUi();
   const answer = ui.alert('Finish the Selected Sections dropdown',
     (had ? 'Selected Sections is a dropdown' : 'Selected Sections is now a dropdown of the document\'s sections') +
-    ', but two settings only a person can make:\n\n' +
+    ', but one setting only a person can make:\n\n' +
     '\u2022 Click the column letter above "' + COLS.draft.sections + '" to select the column\n' +
     '\u2022 Choose Data, then Data validation\n' +
     '\u2022 Open the rule for ' + range + ' (it says "Dropdown (from a range)")\n' +
     '\u2022 Tick Allow multiple selections\n' +
-    '\u2022 Open Advanced options and set Display style to Chip\n' +
     '\u2022 Press Done\n\n' +
     'The script keeps the list and every pick current after that. These steps are also on the Config tab.\n\n' +
     'Is this done already? Yes stops this message; No shows it again next time.',
