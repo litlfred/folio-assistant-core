@@ -376,6 +376,20 @@ Feedback). The script computes the same hash; while they differ it puts
 again." on the proposal's first line, and takes it off if the row changes
 back. The agent's next sync replaces the proposal and the basis.
 
+In a public-comment sheet the agent writes a **`2:` basis**:
+`feedbackBasis(header, row, ["Title", "TWG (CS)"], "Committee Feedback",
+PC_BASIS_GREY)`. It also covers the grey content Review Change Sets joins from
+the change set's comments (Sections, Pages, Public Comments, Suggested
+Revisions, PC Committee Feedback, Dispositions, TWG (PCs)), so a proposal goes
+stale when a comment it rests on changes, not only when a blue cell on its own
+row does (owner, 2026-10-31: "changed blue human (or mechanical grey)
+content"). The agent's own columns (Agentic status, Staging review page, the
+proposal) are never part of it, so the agent's writes never make its own
+proposals stale. The stored basis says which hash to compare with: a basis
+without `2:` is still compared with the blue-only hash, so a sheet moves over
+one row at a time, as the agent rewrites each basis, with no burst of stale
+marks.
+
 **Where the change set is** (owner, 2026-10-31: "agent feedback should also
 try to say where it is in producing PR / staging"). Below any stale mark, the
 script keeps one line starting with ⏳ at the top of the agent's proposal

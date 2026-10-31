@@ -15,7 +15,7 @@ import { join } from "node:path";
 
 import { buildConfig, buildScript, chunks, CODE_GS_RAW, CODE_GS_URL, LIBRARY_ID, STUB_GS_URL, configRows, draftingSheetSync, linkLines, readable, repoOfSite, sheetIdOf, tabInstructions, tocRows } from "./build-review-sheet-script.js";
 import { readFileSync as readText } from "node:fs";
-import { feedbackBasis, hashOf } from "./feedback-issue.js";
+import { feedbackBasis, hashOf, PC_BASIS_GREY } from "./feedback-issue.js";
 
 const code = buildScript();
 /** A fake Apps Script TextStyle builder: every setter chains; build() keeps bold. */
@@ -937,6 +937,49 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     load(code, rt2.g).refreshAll();
     expect(rt2.written["Contributor Feedback"]["Change-set"]).toEqual([["CS-004"], ["CS-005"], [""]]);
+  });
+});
+
+describe("a \"2:\" basis: a proposal also goes stale on the grey content its comments join (#348)", () => {
+  const pcRows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
+  const exact = ["Title", "TWG (CS)"];
+  const hdr = ["Change-set", "Title", "TWG (CS)", "Suggested Revisions", "TWG (PCs)", "Agentic status", "Committee Feedback (CL)", "Change Set Feedback (agent)", "Ready for agent"];
+  const run = (row: string[], basis: string) => {
+    const t = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][] }>;
+    t["Review Change Sets"].rows = [hdr, row];
+    t["Agent - Change Sets"].rows[0].push("Feedback basis (change set)");
+    t["Agent - Change Sets"].rows[1].push(basis);
+    const rt = runtime(t);
+    load(code, rt.g).refreshAll();
+    const w = rt.written["Review Change Sets"]?.["Change Set Feedback (agent)"];
+    return w ? String(T(w[0][0])) : row[7];
+  };
+  const base = () => ["CS-001", "Fix scope", "TWG 1", "No. 1 · Lengthen it", "Editorial", "Working", "do it", "Proposal", "No"];
+
+  test("a 2: basis is stale when a joined grey cell changes, and not when it does not", () => {
+    const basis = feedbackBasis(hdr, base(), exact, "Committee Feedback", PC_BASIS_GREY);
+    expect(basis).toMatch(/^2:/);
+    expect(run(base(), basis)).not.toMatch(/⚠ Stale/);
+    const moved = base();
+    moved[3] = "No. 1 · Lengthen it, and add an example";
+    expect(run(moved, basis)).toMatch(/^⚠ Stale: /);
+  });
+
+  test("the agent's own columns are not part of it", () => {
+    const basis = feedbackBasis(hdr, base(), exact, "Committee Feedback", PC_BASIS_GREY);
+    const row = base();
+    row[5] = "PR open";
+    expect(run(row, basis)).not.toMatch(/⚠ Stale/);
+  });
+
+  test("an older basis (no 2:) ignores grey content, and still goes stale on a blue cell", () => {
+    const basis = feedbackBasis(hdr, base(), exact, "Committee Feedback");
+    const grey = base();
+    grey[3] = "changed";
+    expect(run(grey, basis)).not.toMatch(/⚠ Stale/);
+    const blue = base();
+    blue[6] = "do it differently";
+    expect(run(blue, basis)).toMatch(/^⚠ Stale: /);
   });
 });
 
