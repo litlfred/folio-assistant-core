@@ -381,6 +381,9 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(pc).toContain("Feedback Review Committee");
     expect(pc).not.toMatch(/architect/i);
     expect(pc).not.toContain("Allow multiple selections");
+    // Each links the harness's page for its process.
+    expect(g).toContain("/en/cat-harness/processes/content-change-review.html");
+    expect(pc).toContain("/en/cat-harness/processes/public-comment.html");
   });
 
   test("the script is the same for every document: nothing of the folio is in it", () => {

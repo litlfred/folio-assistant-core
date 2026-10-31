@@ -472,7 +472,12 @@ review` opens the preview's what-changed page; reviewers answer in blue, and a
 change marks the proposal stale and sets Ready for agent back to No, so an
 Editor sets it to Yes again to have the agent update the row's pull request;
 an Editor sets Ready for merge and the agent
-merges), and how to find rows with the saved filter views. `tabInstructions()`,
+merges), and how to find rows with the saved filter views. It links the harness's page
+for the process the sheet runs, where every step and role is in full
+(`public-comment.html` for public comment, `content-change-review.html` for
+drafting, under `en/cat-harness/processes/` on the folio-assistant site;
+`CFG.PROCESS` overrides it), and the people's tabs' Instructions rows carry
+the same link. `tabInstructions()`,
 `guideSteps()` and `setupSteps()` write it; the script ignores the row.
 
 **A stale proposal hands control back to an Editor** (owner, 2026-10-31).

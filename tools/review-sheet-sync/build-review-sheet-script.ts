@@ -338,6 +338,21 @@ export function colourKey(c: SheetConfig): { blue: string; green: string; orange
  * only comment or view: the colours, the human-to-agent workflow, and how to
  * use the saved filter views. Part of the Config tab's Instructions cell.
  */
+/**
+ * The harness's page for the process a sheet runs, where every step and role
+ * is set out in full (owner, 2026-10-31: "instructions should link back to the
+ * process page in the harness"). Public comment runs public-comment.bpmn; a
+ * drafting sheet runs content-change-review.bpmn. CFG.PROCESS overrides it.
+ */
+export const PROCESS_PAGES = {
+  "public-comment": "https://litlfred.github.io/folio-assistant/en/cat-harness/processes/public-comment.html",
+  drafting: "https://litlfred.github.io/folio-assistant/en/cat-harness/processes/content-change-review.html",
+} as const;
+
+export function processPage(c: SheetConfig): string {
+  return c.CFG.PROCESS || (c.CFG.MODE === "drafting" ? PROCESS_PAGES.drafting : PROCESS_PAGES["public-comment"]);
+}
+
 export function guideSteps(c: SheetConfig): string[] {
   const drafting = c.CFG.MODE === "drafting";
   const k = colourKey(c);
@@ -346,6 +361,7 @@ export function guideSteps(c: SheetConfig): string[] {
   const staging = (drafting ? c.COLS.draft?.staging : c.COLS.rcs?.staging) ?? "Staging review";
   const steps = [
     "How this sheet works (for everyone):",
+    `Full details of the process, every step and role: ${processPage(c)}`,
     "Colours, shown in the Instructions row above each tab's header:",
     `   • ${k.blue}`,
     `   • ${k.green}`,
