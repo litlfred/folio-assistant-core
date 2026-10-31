@@ -196,9 +196,11 @@ The rule the diagram exists to hold is the one about the way back: an action who
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_GW_Act" bpmnElement="GW_Act" isMarkerVisible="true">
         <dc:Bounds x="480" y="115" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="534" y="115" width="180" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_End_Board" bpmnElement="End_Board">
         <dc:Bounds x="990" y="122" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="940.5" y="162" width="135" height="36" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_RenderAvatars" bpmnElement="A_RenderAvatars">
         <dc:Bounds x="300" y="250" width="120" height="80"/>

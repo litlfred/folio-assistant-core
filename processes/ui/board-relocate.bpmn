@@ -172,6 +172,7 @@ The order of the two writes is the content of the diagram. The CONTENT relocates
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_GW_Confirmed" bpmnElement="GW_Confirmed" isMarkerVisible="true">
         <dc:Bounds x="480" y="115" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="415" y="93" width="180" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_End_Unchanged" bpmnElement="End_Unchanged">
         <dc:Bounds x="1000" y="122" width="36" height="36"/>
