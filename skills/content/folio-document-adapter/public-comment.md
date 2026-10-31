@@ -47,6 +47,11 @@ The `unaligned` rest are listed by method, not hidden.
 
 ## Intake: one store, four routes, nothing dropped
 
+The channels a release goes out on (an offline Excel sheet, a Google Form, a
+GitHub issue form), each limited to the release's fixed references, and the
+path each one takes back to these routes, are the
+[`public-comment-channels`](public-comment-channels.md) skill's.
+
 | route | command | anchor comes from |
 |---|---|---|
 | comment matrix (.xlsx) | `import <file>` | section, page, line or Table/Figure columns |
@@ -115,7 +120,7 @@ Columns are named here by header, never by letter: people move them.
 
 | tab | who writes it | holds |
 |---|---|---|
-| **Public Comment Source** | people (locked) | No., date received, channel, reviewer name, organisation, country / region, stakeholder type. Reviewers' names and emails stay here and never enter the repository |
+| **Public Comment Source** | intake, copied from what each channel returned (locked) | Every column Grey, header and cells: it is the external source, copied mechanically, and nobody edits it (owner, 2026-10-31). No., date received, channel, reviewer name, organisation, country / region, stakeholder type. Reviewers' names and emails stay here and never enter the repository |
 | **Review Public Comments** | people, plus formulas and the Apps Script | one row per PC. Grey, mechanical: No. (a link to the comment's page), Sections, Page, Line no(s) / Table / Figure (each linked to the draft page), Comment / issue, the PC's own Suggested revision. Green, derived: Change Set (a link to its Review Change Sets row) and TWG (agent). Blue, people: TWG (human) (a multi-select dropdown), Comment type, any number of `Committee Feedback (<initials>)` columns, Disposition, Status. Green, from Agent by the Apps Script (derived agentic content, owner 2026-10-30): **Agentic status**, one line per pull request of the PC's change-sets, `<repo>#n (status, completed) · what it changed` (the repository in the link text, because Sheets' link popup cuts the URL short) with the PR linked and the status and completion time bold, or the status alone when there is no PR. Green, from Agent: Staging review page (by the PC's change-set) |
 | **Agent - Comments** | **the agent, and only the agent** | one row per No.: No., Comment ref (the PC id), Agentic status, Agentic action taken, Agentic applied in, Agentic handled by, Agentic date actioned (a UTC time, `YYYY-MM-DD HH:MMZ`, when the agent last finished work on the PC; the four Agentic columns after the status are the agent's log of what it did on that PC; no view reads them), Change-sets (the change set or sets this comment belongs to) |
 | **Agent - Change Sets** | **the agent, and only the agent** | one row per change-set: Change-set, Title, **Pull request (change set)** (any number of PR URLs, one per line), **Staging review page (change set)**, **What the PRs changed (change set)** (one line per PR, in the same order: what that PR changes in the document), **Agent completed (UTC, change set)** (one line per PR, in the same order: when the agent last finished work on it, `YYYY-MM-DD HH:MMZ`), Feedback basis (change set), Staging built (UTC, change set), **PR head (change set)**, **Staging built from (change set)**, **Staging deploy (change set)** (what the agent found on GitHub, so the script can flag a stale preview; skill `review-sheet-script`, "Checked by commit"). A change-set may have several PRs, and a PC in several change-sets shows all of theirs. A PR belongs to a change-set, not to a PC (owner, 2026-10-30). The two tabs were one `Agent` tab, comments in A–H and change sets from I, until the owner split them on 2026-10-31: a row held a comment and an unrelated change set side by side. The script still reads that layout when the Config sets `AGENT_CS` empty |

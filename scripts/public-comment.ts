@@ -375,7 +375,7 @@ export interface IntakeRow {
 }
 
 /** The header cells that identify each column, by the words in them. */
-const HEADERS: Array<[keyof IntakeRow | "section" | "page" | "lines" | "name" | "organisation" | "country" | "email", RegExp]> = [
+const HEADERS: Array<[keyof IntakeRow | "section" | "page" | "lines" | "name" | "organisation" | "country" | "email" | "acknowledge", RegExp]> = [
   ["entry", /^\s*no\.?\s*$/i],
   ["section", /section/i],
   ["page", /^\s*page/i],
@@ -388,6 +388,9 @@ const HEADERS: Array<[keyof IntakeRow | "section" | "page" | "lines" | "name" | 
   ["disposition", /disposition|rationale/i],
   ["suggestedRevision", /suggest|revision|proposed/i],
   ["text", /comment|issue|feedback/i],
+  // A per-row consent column, as the public-comment channels write it
+  // ("Acknowledge by name"). Before name: "Name me ..." would read as a name.
+  ["acknowledge", /acknowledg|consent/i],
   ["name", /^\s*(reviewer\s*)?name/i],
   ["organisation", /organi[sz]ation|affiliation/i],
   ["country", /country|region/i],
@@ -423,7 +426,7 @@ export function consentByName(rows: Cell[][]): Map<string, boolean> | undefined 
 export const nameKey = (n: string) => n.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, " ").trim().split(/\s+/).sort().join(" ");
 
 /** Columns that are bookkeeping, not a categorisation of the comment. */
-const NOT_A_LABEL = /^\s*(date|handled by|transferred)/i;
+const NOT_A_LABEL = /^\s*(date|handled by|transferred|timestamp)/i;
 
 export function tableRows(rows: Cell[][], consent?: Map<string, boolean>): { rows: IntakeRow[]; skipped: Array<{ row: number; why: string }> } {
   const h = rows.findIndex((r) => r.some((c) => /comment|issue|feedback/i.test(str(c))) && r.some((c) => /section|page/i.test(str(c))));
@@ -469,6 +472,7 @@ export function tableRows(rows: Cell[][], consent?: Map<string, boolean>): { row
     }
     const reviewer: ReviewerInput = { ...sheetReviewer };
     for (const k2 of ["name", "organisation", "country", "email"] as const) if (get(k2)) reviewer[k2] = get(k2);
+    if (get("acknowledge")) reviewer.acknowledge = /^(y|true|x|\[x\])/i.test(get("acknowledge"));
     if (reviewer.acknowledge === undefined && reviewer.name && consent?.has(nameKey(reviewer.name))) {
       reviewer.acknowledge = consent.get(nameKey(reviewer.name));
     }
@@ -735,7 +739,7 @@ export function importRows(
   return { batch: src.batch, created, unplaced, skipped: src.skipped ?? [], known: skippedKnown, fromLog };
 }
 
-function readRows(file: string): Array<{ name: string; rows: Cell[][] }> {
+export function readRows(file: string): Array<{ name: string; rows: Cell[][] }> {
   const here = dirname(new URL(import.meta.url).pathname);
   const r = spawnSync("python3", [join(here, "intake-rows.py"), file], { encoding: "utf-8", maxBuffer: 256 << 20 });
   if (r.status !== 0) throw new Error(r.stderr || `intake-rows.py exited ${r.status}`);

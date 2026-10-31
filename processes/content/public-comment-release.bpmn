@@ -75,14 +75,14 @@
       <bpmn:outgoing>Flow_BuildPcRelease_To_SetUpChannels</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Task_SetUpChannels" name="Set up the comment channels, with instructions and links">
-      <bpmn:documentation>Before anything is sent, the editor sets up each channel the review will use: the review sheet, the GitHub issue forms, an offline Excel sheet and a Google Form, each constrained to the release's fixed references, with precise instructions, all links, and how submitters are recorded. Skills: public-comment, review-sheet-script.</bpmn:documentation>
-      <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
+      <bpmn:documentation>Before anything is sent, the editor sets up each channel the review will use: the review sheet, the GitHub issue forms, an offline Excel sheet and a Google Form, each constrained to the release's fixed references, with precise instructions, all links, and how submitters are recorded. Skills: public-comment-channels, public-comment, review-sheet-script.</bpmn:documentation>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment-channels"/><bootstrap.processes:skill ref="public-comment"/><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_BuildPcRelease_To_SetUpChannels</bpmn:incoming>
       <bpmn:outgoing>Flow_SetUpChannels_To_WriteAnnouncement</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Task_WriteAnnouncement" name="Write the announcement, with links">
-      <bpmn:documentation>A short communication for the public: what is under review, the comment period, a high-level description of the process, and links to the release, every channel and the published process. Skill: public-comment.</bpmn:documentation>
-      <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
+      <bpmn:documentation>A short communication for the public: what is under review, the comment period, a high-level description of the process, and links to the release, every channel and the published process. Skills: public-comment-channels, public-comment.</bpmn:documentation>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment-channels"/><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_SetUpChannels_To_WriteAnnouncement</bpmn:incoming>
       <bpmn:outgoing>Flow_WriteAnnouncement_To_Distribute</bpmn:outgoing>
     </bpmn:task>
