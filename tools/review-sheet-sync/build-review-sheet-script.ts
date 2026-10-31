@@ -324,7 +324,7 @@ const CHUNK = 40_000;
  */
 export function colourKey(c: SheetConfig): { blue: string; green: string; orange: string; grey: string } {
   // Process roles, not job titles: who sits on the committee is the sheet's business (owner, 2026-10-31).
-  const people = c.CFG.MODE === "drafting" ? "Contributors" : "the Feedback Review Committee";
+  const people = c.CFG.MODE === "drafting" ? "the Authoring Committee" : "the Feedback Review Committee";
   return {
     blue: `Blue: your input, by ${people}`,
     green: "Green: written by the agent",
@@ -337,11 +337,11 @@ export function colourKey(c: SheetConfig): { blue: string; green: string; orange
  * The harness's page for the process a sheet runs, where every step and role
  * is set out in full (owner, 2026-10-31: "instructions should link back to the
  * process page in the harness"). Public comment runs public-comment.bpmn; a
- * drafting sheet runs content-change-review.bpmn. CFG.PROCESS overrides it.
+ * drafting sheet runs contributor-feedback.bpmn. CFG.PROCESS overrides it.
  */
 export const PROCESS_PAGES = {
   "public-comment": "https://litlfred.github.io/folio-assistant/en/cat-harness/processes/public-comment.html",
-  drafting: "https://litlfred.github.io/folio-assistant/en/cat-harness/processes/content-change-review.html",
+  drafting: "https://litlfred.github.io/folio-assistant/en/cat-harness/processes/contributor-feedback.html",
 } as const;
 
 export function processPage(c: SheetConfig): string {
@@ -387,7 +387,7 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
     out[t.FEEDBACK] = [
       colours,
       "This tab has one row per change set:",
-      `   1. Contributors start a row: a title, the Selected Sections, and feedback in the Blue ${fb} columns. The script gives it a Change-set id.`,
+      `   1. The Authoring Committee starts a row: a title, the Selected Sections, and feedback in the Blue ${fb} columns. The script gives it a Change-set id.`,
       `   2. The agent proposes a direction in ${fb} (agent), in Green.`,
       ...changeSet,
       ...footer,
