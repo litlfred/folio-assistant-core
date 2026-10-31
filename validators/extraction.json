@@ -5,5 +5,5 @@
     "kind": "uploads",
     "family": "folio-extraction/v1"
   },
-  "schema": "schemas/extraction.ts#ExtractionSchema"
+  "schema": "cat-harness-tools:schemas/content/extraction.ts#ExtractionSchema"
 }
