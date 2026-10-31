@@ -13,7 +13,7 @@ import { mkdtempSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { buildConfig, buildScript, chunks, configRows } from "./build-review-sheet-script.js";
+import { buildConfig, buildScript, chunks, configRows, readable } from "./build-review-sheet-script.js";
 
 const code = buildScript();
 const withConfig = <T extends object>(t: T, rows: string[][]) => ({ ...t, Config: { id: 50, rows } });
@@ -353,7 +353,15 @@ describe("the Config tab's rows", () => {
     expect(parts.length).toBeGreaterThan(1);
     expect(parts.every((p) => p.length <= 40_000)).toBe(true);
     expect(parts.slice(1).every((p) => p.startsWith("    \"section"))).toBe(true);
+    expect(parts.every((p) => p.split("\n").length <= 40)).toBe(true);
     expect(JSON.parse(parts.join(""))).toEqual(JSON.parse(big));
+  });
+
+  test("readable() keeps short lists on one line and means the same as JSON", () => {
+    const v = { a: [["Ch 1", "#c1"], ["1.1", "#s1"]], b: { c: [1, 2], d: null }, e: [], f: {} };
+    expect(readable(v)).toContain('[["Ch 1","#c1"],["1.1","#s1"]]');
+    expect(JSON.parse(readable(v))).toEqual(v);
+    expect(JSON.parse(readable(c.DATA))).toEqual(JSON.parse(JSON.stringify(c.DATA)));
   });
 
   test("a single line longer than a cell is still cut and still parses", () => {

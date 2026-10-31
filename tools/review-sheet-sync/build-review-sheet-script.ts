@@ -261,25 +261,51 @@ const CHUNK = 40_000;
 export function configRows(c: SheetConfig): string[][] {
   const rows: string[][] = [["Key", "Value (JSON, written by the agent from sheet-sync.json; do not edit)"]];
   for (const key of ["CFG", "COLS", "DATA"] as const) {
-    for (const chunk of chunks(JSON.stringify(c[key], null, 2))) rows.push([key, "|" + chunk]);
+    for (const chunk of chunks(readable(c[key]))) rows.push([key, "|" + chunk]);
   }
   return rows;
 }
 
+/** A cell of the Config tab holds at most this many lines, so a row stays a readable height. */
+const LINES = 40;
+
 /**
- * Indented JSON in cells of at most CHUNK characters, cut between lines so a
- * person can read each cell (owner, 2026-10-31). Every cut falls between two
- * JSON tokens, so the script's plain concatenation still parses; only a single
- * line longer than a cell is cut inside it.
+ * Indented JSON for a person to read: an object or a long array takes one
+ * line per entry; a short array of plain values (a TOC pair, a column list)
+ * stays on one line.
+ */
+export function readable(v: unknown, ind = ""): string {
+  const inner = `${ind}  `;
+  if (Array.isArray(v)) {
+    const flat = JSON.stringify(v);
+    if (v.every((x) => x === null || typeof x !== "object" || (Array.isArray(x) && x.every((y) => y === null || typeof y !== "object"))) && flat.length <= 160) return flat;
+    if (!v.length) return "[]";
+    return `[\n${v.map((x) => inner + readable(x, inner)).join(",\n")}\n${ind}]`;
+  }
+  if (v && typeof v === "object") {
+    const es = Object.entries(v as Record<string, unknown>).filter(([, x]) => x !== undefined);
+    if (!es.length) return "{}";
+    return `{\n${es.map(([k, x]) => `${inner}${JSON.stringify(k)}: ${readable(x, inner)}`).join(",\n")}\n${ind}}`;
+  }
+  return JSON.stringify(v);
+}
+
+/**
+ * Indented JSON in cells of at most LINES lines and CHUNK characters, cut
+ * between lines so a person can read each cell (owner, 2026-10-31). Every cut
+ * falls between two JSON tokens, so the script's plain concatenation still
+ * parses; only a single line longer than a cell is cut inside it.
  */
 export function chunks(json: string): string[] {
   const out: string[] = [];
   let cur = "";
+  let n = 0;
   for (const line of json.split("\n")) {
     const add = cur ? `${cur}\n${line}` : line;
-    if (add.length <= CHUNK) { cur = add; continue; }
+    if (add.length <= CHUNK && n < LINES) { cur = add; n++; continue; }
     if (cur) out.push(cur);
     cur = line;
+    n = 1;
     while (cur.length > CHUNK) { out.push(cur.slice(0, CHUNK)); cur = cur.slice(CHUNK); }
   }
   out.push(cur);
