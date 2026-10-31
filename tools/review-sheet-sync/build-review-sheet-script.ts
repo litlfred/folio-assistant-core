@@ -76,6 +76,7 @@ export const DRAFT_TABS = { FEEDBACK: "Contributor Feedback", AGENT: "Agent", TO
 export const DRAFT_COLUMNS = {
   draft: {
     cs: "Change-set", title: "Title", sections: "Selected Sections", sectionLinks: "Section links", feedback: "Contributor Feedback",
+    agentFeedback: "Feedback (agent)",
     issue: "Issue", agentic: "Agentic status", staging: "Staging review", status: "Agentic status (filter)",
   },
   draftAgent: {
@@ -147,6 +148,7 @@ export const DEFAULT_COLUMNS = {
   rcs: {
     cs: "Change-set", sections: "Sections", pages: "Pages", comments: "Public Comments",
     revisions: "Suggested Revisions", feedback: "PC Committee Feedback", dispositions: "Dispositions",
+    agentFeedback: "Change Set Feedback (agent)",
     agentic: "Agentic status", staging: "Staging review", status: "Agentic status (filter)",
   },
   agent: {
@@ -398,7 +400,7 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
       colours,
       "This tab has one row per change set:",
       `   1. The Authoring Committee starts a row: a title, the Selected Sections, and feedback in the Blue ${fb} columns. The script gives it a Change-set id.`,
-      `   2. The agent proposes a direction in ${fb} (agent), in Green.`,
+      `   2. The agent proposes a direction in ${c.COLS.draft?.agentFeedback || "Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says Needs human.`,
       ...changeSet,
       ...footer,
     ].join("\n");
@@ -416,7 +418,7 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
       colours,
       `This tab has one row per change set, joining its public comments from ${t.RPC}:`,
       "   1. The Feedback Review Committee gives feedback on the change set in Blue and picks its TWG.",
-      "   2. The agent proposes a direction in the Green (agent) column.",
+      `   2. The agent proposes a direction in ${c.COLS.rcs?.agentFeedback || "Change Set Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says Needs human.`,
       ...changeSet,
       ...footer,
     ].join("\n");

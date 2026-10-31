@@ -24,7 +24,7 @@ A document is still being written, and the Authoring Committee gives feedback on
 
 - Who: the `Authoring agent` lane (role `authoring-agent`).
 - Skill: `review-sheet-script`.
-- What: The agent reads the row and the sections it names, writes a proposed direction in the Green (agent) column, and records the row's feedback basis on the Agent tab, so the script can tell when the feedback has moved on.
+- What: Reads: the row (Title, Selected Sections, the Contributor Feedback columns, Disposition) and the sections it names.
 - Record it: `workflow_complete` with `node: "Task_Propose"`.
 - next: → `Task_ReadyForAgent` (Set Ready for agent to Yes)
 

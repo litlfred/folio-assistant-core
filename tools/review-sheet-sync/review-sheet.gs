@@ -319,7 +319,7 @@ function refreshLocked() {
     });
     refreshRpc(rpc, pcOf, csOfNo, stOf, prOf);
     refreshRcs(rcs, rpc, csOf, stOf, prOf);
-    markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback');
+    markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)');
     // Staging review page, from Agent: only where Agent names a preview, so a
     // sheet whose agent writes the cell directly keeps it.
     const rSt = COLS.rcs.staging ? col(rcs, COLS.rcs.staging) : -1, rCs = col(rcs, COLS.rcs.cs);
@@ -369,10 +369,26 @@ function aliasOf(name) {
   }
   return null;
 }
+/**
+ * The agent's proposal columns, renamed by the owner on 2026-10-31:
+ * "Contributor Feedback (agent)" is "Feedback (agent)", and the public-comment
+ * "Architect Feedback (agent)" (briefly "Committee Feedback (agent)") is
+ * "Change Set Feedback (agent)". Each is found under any of its names.
+ */
+const SAME_COLUMN = [
+  ['Feedback (agent)', 'Contributor Feedback (agent)'],
+  ['Change Set Feedback (agent)', 'Committee Feedback (agent)', 'Architect Feedback (agent)'],
+];
 function col(s, name) {
   const i = s.header.indexOf(name);
+  if (i >= 0) return i;
+  const same = SAME_COLUMN.filter(g => g.indexOf(name) >= 0)[0];
+  if (same) {
+    for (const n of same) { const j = s.header.indexOf(n); if (j >= 0) return j; }
+    return -1;
+  }
   const a = aliasOf(name);
-  return i >= 0 || a === null ? i : s.header.indexOf(a);
+  return a === null ? -1 : s.header.indexOf(a);
 }
 function cols(s, name) {
   const a = aliasOf(name);
@@ -468,10 +484,9 @@ function stagingCell(url, built, prs) {
     [{ t: ' \u26a0 stale: built ' + String(built).trim() + ', PR changed since', bold: true }] : []));
 }
 
-/** Flag the `prefix (agent)` proposal of each row whose basis moved on. */
-function markStale(s, csCol, basisOfCs, exact, prefix) {
-  const ag = col(s, prefix + ' (agent)');
-  if (ag >= 0 && s.header[ag] !== prefix + ' (agent)') prefix = aliasOf(prefix);
+/** Flag the agent's proposal (column `agentName`) of each row whose basis moved on. */
+function markStale(s, csCol, basisOfCs, exact, prefix, agentName) {
+  const ag = col(s, agentName);
   if (ag < 0 || csCol < 0) return;
   s.rows.forEach((r, k) => {
     const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[String(r[csCol]).trim()]);
@@ -854,7 +869,7 @@ function refreshDraft(rows) {
   // A row is used once any cell a person fills holds something; "No" (a
   // Yes/No dropdown's default) and the script's own columns do not count.
   const mech = [c.cs, c.sectionLinks, c.issue, c.agentic, c.staging, c.status,
-    col(fb, COLS.draft.feedback + ' (agent)')];
+    col(fb, COLS.draft.agentFeedback || 'Feedback (agent)')];
   if (c.cs >= 0) {
     let next = 1 + fb.rows.reduce((m, r) => {
       const x = /^CS-(\d+)$/.exec(String(r[c.cs]).trim());
@@ -950,9 +965,9 @@ function refreshDraft(rows) {
     const cs = String(r[c.cs]).trim();
     return stagingCell(stagingOf[cs], builtOf[cs], prOf[cs]);
   });
-  // Contributor Feedback (agent): flagged stale while the row's blue cells
-  // differ from what the proposal was written against.
-  const ag = col(fb, COLS.draft.feedback + ' (agent)');
+  // Feedback (agent): flagged stale while the row's blue cells differ from
+  // what the proposal was written against.
+  const ag = col(fb, COLS.draft.agentFeedback || 'Feedback (agent)');
   if (ag >= 0) {
     fb.rows.forEach((r, k) => {
       if (!want(k)) return;

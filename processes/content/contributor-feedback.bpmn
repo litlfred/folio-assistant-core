@@ -75,7 +75,7 @@
       <bpmn:outgoing>CF02</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:serviceTask id="Task_Propose" name="Propose a direction">
-      <bpmn:documentation>The agent reads the row and the sections it names, writes a proposed direction in the Green (agent) column, and records the row's feedback basis on the Agent tab, so the script can tell when the feedback has moved on.</bpmn:documentation>
+      <bpmn:documentation>Reads: the row (Title, Selected Sections, the Contributor Feedback columns, Disposition) and the sections it names. Writes: a proposed direction in Feedback (agent) (Green), and the row's feedback basis on the Agent tab, so the script can tell when the feedback has moved on. A question for people goes in Feedback (agent) as a Decision needed block with options and a recommendation, and the row's Agentic status becomes Needs human; a chat card may repeat it, but the sheet is the record.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF02</bpmn:incoming>
       <bpmn:incoming>CF07</bpmn:incoming>
