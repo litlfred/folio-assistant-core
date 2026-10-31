@@ -2,7 +2,7 @@
 # folio-core-l8ny
 $schema: bean/1.0.0
 title: 'Core workflows run third-party and @main actions with write tokens'
-status: todo
+status: completed
 type: bug
 priority: high
 tags:
@@ -10,7 +10,7 @@ tags:
     - security-review-2026-10-31
     - red-flag-security
 created_at: 2026-10-31T04:01:25Z
-updated_at: 2026-10-31T04:01:25Z
+updated_at: 2026-10-31T04:22:00Z
 ---
 
 Found by the 2026-10-31 security and QA review of the folio-assistant layers (SOP: cat-harness `skills/conduct/security/`, the 16 rules of `skills/voices/secure-code-authoring/voice.json`, RED FLAG categories of cat-harness-tools `schemas/sdlc/red-flag.ts`). No fix PR yet: fixes wait for the owner's go-ahead.
@@ -30,5 +30,9 @@ Rule `scz-pin-third-party-by-full-sha`. Measured with cat-harness-tools `pin-act
 
 ## Done when
 
-- [ ] Every `uses:` in core's workflows is a full SHA with its `# <ref>` comment
-- [ ] The cat-harness-tools action and reusable workflows are pinned by SHA (and kept current by the repin process)
+- [x] Every `uses:` in core's workflows is a full SHA with its `# <ref>` comment
+- [x] The cat-harness-tools action and reusable workflows are pinned by SHA (and kept current by the repin process)
+
+## Summary of Changes
+
+Fixed in litlfred/folio-assistant-core#336 (merge `ac5cde9`): all 14 `uses:` lines pinned to full SHAs, cat-harness-tools refs pinned to main `45b0894`.
