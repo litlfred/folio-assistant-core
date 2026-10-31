@@ -6,6 +6,7 @@
  * change set, and an Agent completed time left behind after acting.
  *
  *   dispositions <input.json>   the change set's Disposition (change set) cell
+ *   brief <input.json> [--look <text>]   the PR body's review brief, the same lines
  *   push --head <sha> [--expect <minutes>]   the cells to write on every push
  *   done                        Agent completed alone, when the agent acted
  *                               with no new commit (nothing to restage)
@@ -117,6 +118,18 @@ export function dispositions(input: DispositionInput): { text: string; problems:
   return { text, problems: sheet.dispositionProblems(text, nos, human) };
 }
 
+/**
+ * The PR body's review brief: the staging review page shows only what sits
+ * between these markers (cat-harness-tools#1153). The same Overall line and
+ * per-comment lines as the Disposition, as Markdown, plus where to look.
+ */
+export function brief(input: DispositionInput, look?: string): string {
+  const { text } = dispositions(input);
+  const lines = text.split("\n").filter((l) => l && !/^Decided\b/.test(l));
+  const md = lines.map((l) => l.replace(/^(Overall|Nos?\. [^:]+):/, (_, h) => `- **${h}:**`));
+  return ["<!-- review-brief -->", ...md, ...(look ? [`- **Where to look:** ${look}`] : []), "<!-- /review-brief -->"].join("\n");
+}
+
 /** The cells to write on every push, with the time from the clock, never typed. */
 export function push(head: string, expectMinutes: number, now = new Date()): Record<string, string> {
   if (!/^[0-9a-f]{40}$/i.test(head)) throw new Error("--head takes the full 40-character commit sha (git rev-parse HEAD)");
@@ -140,12 +153,17 @@ if (import.meta.main) {
     const { text, problems } = dispositions(JSON.parse(readFileSync(rest[0], "utf8")));
     if (problems) { console.error(problems); console.error("\nNothing to write: fix the input and run again."); process.exit(1); }
     console.log(text);
+  } else if (cmd === "brief" && rest[0]) {
+    const input = JSON.parse(readFileSync(rest[0], "utf8"));
+    const { problems } = dispositions(input);
+    if (problems) { console.error(problems); process.exit(1); }
+    console.log(brief(input, flag("--look")));
   } else if (cmd === "push" && flag("--head")) {
     console.log(JSON.stringify(push(flag("--head")!, Number(flag("--expect") ?? 20)), null, 2));
   } else if (cmd === "done") {
     console.log(JSON.stringify(done(), null, 2));
   } else {
-    console.error("usage: agent-record.ts dispositions <input.json> | push --head <full sha> [--expect <minutes>] | done");
+    console.error("usage: agent-record.ts dispositions <input.json> | brief <input.json> [--look <text>] | push --head <full sha> [--expect <minutes>] | done");
     process.exit(2);
   }
 }

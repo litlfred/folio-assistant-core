@@ -296,6 +296,12 @@ cells, and the agent runs the sheet's own check before writing.
   completed it prints, so it is later than the Ready time and the ⏳ line
   moves on. Not `push`: nothing is restaged, so Staging deploy stays as it is.
 
+- **The PR's review brief.** `agent-record.ts brief <input.json> --look
+  "<where to look>"` prints the same Overall and per-comment lines as
+  Markdown between `<!-- review-brief -->` and `<!-- /review-brief -->`. Put
+  it in the PR body: the staging review page's "What to expect in this
+  review" pane shows only that section (cat-harness-tools#1153).
+
 Drafting sheets have no comment numbers: pass `"nos": []` and items without
 numbers are not needed; the tool then only keeps the history.
 

@@ -1,6 +1,6 @@
 /** agent-record: the Agent tab cells made by a tool, checked by the sheet's own check. */
 import { describe, expect, test } from "bun:test";
-import { dispositions, done, nosLabel, push } from "./agent-record.js";
+import { brief, dispositions, done, nosLabel, push } from "./agent-record.js";
 
 const comments = [["No.", "Change-sets"], ...["126", "127", "128", "129", "130", "131", "134", "135", "136", "137", "138", "139", "326"].map((n) => [n, "CS-001"]), ["132", "CS-003"], ["133", "CS-003"]];
 
@@ -37,5 +37,9 @@ describe("agent-record (owner, 2026-10-31, option C)", () => {
     });
     expect(() => push("e7b4094", 15)).toThrow(/full 40-character/);
     expect(done(new Date("2026-10-31T15:29:59Z"))).toEqual({ "Agent completed (UTC, change set)": "2026-10-31 15:29Z" });
+  });
+  test("the PR's review brief carries the same lines, without the decision history", () => {
+    expect(brief({ cs: "X", nos: [1, 2], previous: "Decided (No. 1, d): A.", overall: "All.", items: [{ nos: [1, 2], word: "Accepted", why: "Done." }] }, "3.1, second paragraph"))
+      .toBe("<!-- review-brief -->\n- **Overall:** All.\n- **Nos. 1 and 2:** Accepted. Done.\n- **Where to look:** 3.1, second paragraph\n<!-- /review-brief -->");
   });
 });
