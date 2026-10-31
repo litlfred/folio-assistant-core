@@ -139,7 +139,17 @@ template, us or someone else, should know what they are running.
   consent screen asks for "this spreadsheet", not all of the owner's
   spreadsheets. The script uses only SpreadsheetApp, PropertiesService,
   LockService and ScriptApp: no UrlFetchApp, mail or Drive, so it sends
-  nothing out. The test fails if one of those appears.
+  nothing out. `review-sheet-security.test.ts` fails if one of those, or
+  `eval`/`new Function`, appears.
+- **Pinned scopes.** Paste `tools/review-sheet-sync/appsscript.json` as the
+  project's manifest (Project Settings > Show "appsscript.json"). It names
+  exactly three scopes: this spreadsheet, the script's own triggers, and its
+  menu. The security test fails if the list changes.
+- **Plain ASCII.** The built script escapes every non-ASCII character, so a
+  paste cannot mangle it. The build prints its SHA-256; compare it with the
+  pasted copy.
+- **Wrong sheet.** Pasted into a sheet it was not built for, it stops with a
+  message naming the config and tab it expected, before installing triggers.
 - **Check a copy against its source.** The header names the
   folio-assistant-core commit it was built from. Build again at that
   commit with the folio's config and compare; or ignore the copied script

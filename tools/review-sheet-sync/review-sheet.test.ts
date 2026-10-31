@@ -268,6 +268,11 @@ describe("review-sheet.gs in drafting mode", () => {
   load(code, rt.g).refreshAll();
   const fb = rt.written["Contributor Feedback"];
 
+  test("in a sheet without its tabs it stops with a plain message", () => {
+    const rt2 = runtime({ "Review Public Comments": { id: 1, rows: [["No."]] } } as never);
+    expect(() => load(code, rt2.g).refreshAll()).toThrow(/built from review\/drafting\/sheet-sync.json for a drafting sheet.*no "Contributor Feedback"/);
+  });
+
   test("the built script is plain ASCII, so a paste cannot mangle it", () => {
     expect(/[^\x00-\x7f]/.test(code)).toBe(false);
     expect(code).toContain("\\u00b7");

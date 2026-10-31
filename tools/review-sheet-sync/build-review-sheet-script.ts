@@ -17,6 +17,7 @@
  *
  * Skill: `review-sheet-script`.
  */
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -47,6 +48,8 @@ export type SheetSyncConfig = {
    * whose Sections pick from the live document's table of contents.
    */
   mode?: "public-comment" | "drafting";
+  /** The Google Sheet's id. When set, the script refuses to run in any other spreadsheet. */
+  sheet?: string;
   /** Review anchors, repository-relative. */
   anchors: string;
   /** The frozen review draft's pdf-line-map.json, repository-relative (public-comment). */
@@ -237,6 +240,7 @@ export function buildScript(repo: string, cfgPath: string): string {
       agent: { ...DEFAULT_COLUMNS.agent, ...cfg.columns?.agent },
     };
   }
+  CFG = { SOURCE: cfgPath, ...(cfg.sheet ? { SHEET: cfg.sheet } : {}), ...CFG };
   const here = dirname(fileURLToPath(import.meta.url));
   const template = readFileSync(join(here, "review-sheet.gs"), "utf8");
   const block = [
@@ -269,6 +273,6 @@ if (import.meta.main) {
   }
   const out = buildScript(repo, cfg);
   const to = arg("--out");
-  if (to) { writeFileSync(to, out); console.error(`wrote ${to} (${out.length} bytes)`); }
+  if (to) { writeFileSync(to, out); console.error(`wrote ${to} (${out.length} bytes, sha256 ${createHash("sha256").update(out).digest("hex")})`); }
   else process.stdout.write(out);
 }
