@@ -336,7 +336,7 @@ export function colourKey(c: SheetConfig): { blue: string; green: string; orange
 /**
  * How the sheet works, for everyone who opens it, including people who may
  * only comment or view: the colours, the human-to-agent workflow, and how to
- * use the saved filter views. The first row under the Config tab's header.
+ * use the saved filter views. Part of the Config tab's Instructions cell.
  */
 export function guideSteps(c: SheetConfig): string[] {
   const drafting = c.CFG.MODE === "drafting";
@@ -393,7 +393,7 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
   const t = { ...(drafting ? DRAFT_TABS : DEFAULT_TABS), ...c.CFG } as Record<string, string>;
   const people = drafting ? t.FEEDBACK : `${t.RPC} and ${t.RCS}`;
   return {
-    [CONFIG_TAB]: `The script's settings. GUIDE (below) explains how this sheet works, for everyone. SETUP is for whoever installs the script. EDITORS lists who may set the Ready columns: only the owner edits it. Do not edit anything else here: the agent writes it. Work happens on ${people}.`,
+    [CONFIG_TAB]: `The script's settings. Work happens on ${people}; nothing here needs you unless you install the script. EDITORS (below) lists who may set the Ready columns: only the owner edits it. Do not edit anything else here: the agent writes it.`,
     [t.AGENT]: `Written only by the agent: one row per comment or change set, with its status, pull request and preview. Do not edit. The script copies what it needs into the green columns of ${people}.`,
     "Public Comment Source": `The public comments as received, one row per comment. Do not edit: a correction goes in a blue column on ${t.RPC ?? "Review Public Comments"}.`,
     Watch: "Kept by the agent's watcher: what changed since it last looked. Do not edit.",
@@ -440,10 +440,11 @@ export function configRows(c: SheetConfig): string[][] {
   // and keeps the sheet's value when it rewrites the tab. Emails never go
   // into sheet-sync.json, which is committed.
   const rows: string[][] = [
-    ["Instructions", tabInstructions(c)[CONFIG_TAB]],
+    // One Instructions cell holds the tab's purpose, how the sheet works and
+    // the setup steps (owner, 2026-10-31: "GUIDE / SETUP content should be in
+    // Config header instructions").
+    ["Instructions", [tabInstructions(c)[CONFIG_TAB], guideSteps(c).join("\n"), setupSteps(c).join("\n")].join("\n\n")],
     ["Key", "Value (written by the agent from sheet-sync.json; do not edit, except EDITORS)"],
-    ["GUIDE", guideSteps(c).join("\n")],
-    ["SETUP", setupSteps(c).join("\n")],
     ["EDITORS", ""],
   ];
   for (const key of ["CFG", "COLS", "DATA"] as const) {

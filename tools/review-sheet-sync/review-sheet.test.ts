@@ -368,27 +368,28 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(() => load(code, rt2.g).refreshAll()).toThrow(/no "Config" tab/);
   });
 
-  test("GUIDE, the first Config row, gives the colours, the workflow and the filter views in the sheet's own words", () => {
-    const g = dRows.find((r) => r[0] === "GUIDE")![1];
+  test("the Config tab's Instructions row gives its purpose, the colours, the workflow, the filter views and the setup, in the sheet's own words", () => {
+    const g = dRows[0][1];
     expect(dRows[0][0]).toBe("Instructions");
-    expect(dRows[0][1]).toContain("only the owner edits it");
-    expect(dRows[2][0]).toBe("GUIDE");
+    expect(dRows[1][0]).toBe("Key");
+    expect(g).toContain("only the owner edits it");
+    expect(g).toContain("Allow multiple selections");
     expect(g).toContain("Blue: your input, by Contributors");
     expect(g).toContain("Ready for agent");
     expect(g).toContain("Filter views");
-    const pc = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json")).find((r) => r[0] === "GUIDE")![1];
+    const pc = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"))[0][1];
     expect(pc).toContain("Feedback Review Committee");
     expect(pc).not.toMatch(/architect/i);
+    expect(pc).not.toContain("Allow multiple selections");
   });
 
   test("the script is the same for every document: nothing of the folio is in it", () => {
     expect(code).not.toContain("https://x.example/S#");
     expect(code).not.toContain("Global challenges");
-    expect(dRows.find((r) => !["Instructions", "GUIDE", "SETUP", "Key", "EDITORS"].includes(r[0]))?.[0]).toBe("CFG");
-    expect(dRows.filter((r) => r[0] === "SETUP")).toHaveLength(1);
-    expect(dRows.find((r) => r[0] === "SETUP")![1]).toContain("Allow multiple selections");
+    expect(dRows.find((r) => !["Instructions", "Key", "EDITORS"].includes(r[0]))?.[0]).toBe("CFG");
+    expect(dRows.filter((r) => ["GUIDE", "SETUP"].includes(r[0]))).toHaveLength(0);
     expect(dRows.find((r) => r[0] === "EDITORS")![1]).toBe("");
-    expect(dRows.every((r, i) => i <= 1 || ["GUIDE", "SETUP", "EDITORS"].includes(r[0]) || r[1].startsWith("|"))).toBe(true);
+    expect(dRows.every((r, i) => i <= 1 || r[0] === "EDITORS" || r[1].startsWith("|"))).toBe(true);
     expect(JSON.parse(dRows.find((r) => r[0] === "CFG")![1].slice(1)).MODE).toBe("drafting");
   });
 
