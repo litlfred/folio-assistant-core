@@ -447,6 +447,9 @@ function styleConfig(ss) {
   const keys = sh.getRange(1, 1, n, 1).getDisplayValues().map(r => String(r[0]).trim());
   const start = keys.indexOf('Key');
   if (start < 0) return;
+  // The Instructions rows fit their text: a row inserted next to a tall one
+  // inherits its height (owner, 2026-10-31: "row too high").
+  try { if (start > 0) sh.autoResizeRows(1, start); } catch (e) { /* cosmetic */ }
   keys.forEach((k, i) => {
     if (i < start || /^Instructions/.test(k)) return;
     const bg = k === 'Key' ? CONFIG_COLOURS.header : k === 'EDITORS' ? CONFIG_COLOURS.person : CONFIG_COLOURS.agent;

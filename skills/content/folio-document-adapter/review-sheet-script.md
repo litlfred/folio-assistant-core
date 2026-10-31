@@ -592,8 +592,10 @@ work second, in this order:
    rows into the TOC tab from A1. The connector writes values, not colours,
    so the agent also colours Config: the Key row a Grey header (`#b7b7b7`,
    bold), EDITORS Orange (`#f4b26b`), and CFG, COLS, DATA and their
-   continuation rows Grey (`#efefef`). Every refresh re-applies these
-   (`styleConfig`), so a sheet the script runs in heals on its own. The TOC rows are exactly what the script's
+   continuation rows Grey (`#efefef`), and fits the Instructions rows'
+   heights to their text (a Sheets API `autoResizeDimensions`; an inserted
+   row otherwise inherits its neighbour's height). Every refresh re-applies
+   these (`styleConfig`), so a sheet the script runs in heals on its own. The TOC rows are exactly what the script's
    refresh writes, so the dropdown works before anyone pastes the script.
 4. **The agent says what is left for a person:** paste Code.gs and run
    installTriggers (step 5 above), and tick Allow multiple selections
