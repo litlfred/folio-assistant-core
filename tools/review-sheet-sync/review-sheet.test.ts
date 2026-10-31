@@ -1423,3 +1423,16 @@ describe("Dispositions confirmed, an Editor's multi-select (owner, 2026-10-31)",
       .toBe("⚠ Not confirmed by the committee (Disposition still Pending): No. 2\n⚠ No. 9 is confirmed but is not in this change set");
   });
 });
+
+describe("rows on the people's tabs are at most 10 lines high (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { rowLines, runs };`)({}) as {
+    rowLines: (v: string[], w: number[]) => number; runs: (r: number[]) => [number, number][];
+  };
+  test("lines are estimated from the column width", () => {
+    expect(fns.rowLines(["a\nb\nc", "x".repeat(100)], [100, 78])).toBe(10);
+    expect(fns.rowLines(["short"], [200])).toBe(1);
+  });
+  test("consecutive rows are set in one call", () => {
+    expect(fns.runs([9, 3, 4, 5])).toEqual([[3, 3], [9, 1]]);
+  });
+});

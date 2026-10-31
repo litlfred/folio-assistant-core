@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 f6533c3742742af7.
+// folio-assistant-core tools/review-sheet-sync at template sha256 01f5f991c6cda2de.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 f6533c3742742af7';
+const SCRIPT_VERSION = 'template sha256 01f5f991c6cda2de';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -404,6 +404,7 @@ function refreshIfDirty() {
     props.deleteProperty('rows');
     checkSheet(SpreadsheetApp.getActive());
     refreshDraft(full ? null : rows);
+    try { capRows(SpreadsheetApp.getActive(), [CFG.FEEDBACK]); } catch (err) { /* cosmetic only */ }
   } finally {
     props.setProperty('lastMs', String(Date.now() - t0));
     lock.releaseLock();
@@ -516,6 +517,7 @@ function refreshLocked() {
     });
     markStale(rcs, csCol, basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)', lineOf);
     completeReady(rcs, csCol, prOf, stagingOf, builtOf, readyAt);
+    try { capRows(ss, [CFG.RPC, CFG.RCS]); } catch (err) { /* cosmetic only */ }
     // Staging review page, from Agent: only where Agent names a preview, so a
     // sheet whose agent writes the cell directly keeps it.
     const rSt = COLS.rcs.staging ? col(rcs, COLS.rcs.staging) : -1, rCs = col(rcs, COLS.rcs.cs);
@@ -627,6 +629,51 @@ const HEADER_NOTES = {
 };
 /** The head notes the script wrote before 2026-10-31 16:05Z ended in this. */
 const NOTE_MARK = '\n\n(Column note kept by the review sheet script.)';
+/**
+ * Rows on the people's tabs are at most about 10 lines high (owner,
+ * 2026-10-31: "make rows of human input tabs no more than 10 lines high on a
+ * laptop", "so scroll overflow"). Sheets has no scrolling inside a cell, so a
+ * longer row is fixed at 10 lines and the rest is clipped: clicking the cell
+ * shows the whole text in the formula bar, and double-clicking opens it
+ * scrollable. A row that fits is left to size itself. Lines are estimated
+ * from each column's width, the same way for every run, so a row is only
+ * rewritten when its estimate crosses the cap.
+ */
+const ROW_CAP_LINES = 10, LINE_PX = 17, CHAR_PX = 7;
+function rowLines(values, widths) {
+  return values.reduce((most, v, c) => {
+    const per = Math.max(1, Math.floor((widths[c] - 8) / CHAR_PX));
+    const n = String(v).split('\n').reduce((k, line) => k + Math.max(1, Math.ceil(line.length / per)), 0);
+    return Math.max(most, n);
+  }, 1);
+}
+function capRows(ss, names) {
+  const cap = ROW_CAP_LINES * LINE_PX + 4;
+  names.filter(Boolean).forEach(name => {
+    const sh = ss.getSheetByName(name);
+    if (!sh || sh.getLastRow() < 3) return;
+    const s = readSheet(sh);
+    const widths = s.header.map((_, c) => sh.getColumnWidth(c + 1));
+    const props = docProps_(), key = 'capped:' + sh.getSheetId();
+    const was = JSON.parse(props.getProperty(key) || '[]');
+    const now = [];
+    s.rows.forEach((r, k) => { if (rowLines(r, widths) > ROW_CAP_LINES) now.push(k + s.top); });
+    const add = now.filter(x => was.indexOf(x) < 0), drop = was.filter(x => now.indexOf(x) < 0);
+    runs(add).forEach(([a, n]) => sh.setRowHeightsForced(a, n, cap));
+    runs(drop).forEach(([a, n]) => sh.autoResizeRows(a, n));
+    if (add.length || drop.length) props.setProperty(key, JSON.stringify(now));
+  });
+}
+/** [3,4,5,9] -> [[3,3],[9,1]]: start row and count. */
+function runs(rows) {
+  const out = [];
+  rows.slice().sort((x, y) => x - y).forEach(r => {
+    const last = out[out.length - 1];
+    if (last && last[0] + last[1] === r) last[1]++;
+    else out.push([r, 1]);
+  });
+  return out;
+}
 function headerNoteFor(kind, h) {
   const own = HEADER_NOTES[kind + '|' + h] || HEADER_NOTES[h];
   if (own) return own;

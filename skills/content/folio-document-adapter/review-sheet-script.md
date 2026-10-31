@@ -524,6 +524,17 @@ the change set is flagged. The script adds the column itself, inside its
 locked run (so no other refresh writes by a shifted position), and keeps its
 Yes/No dropdown.
 
+## Rows at most 10 lines high (owner, 2026-10-31)
+
+"Make rows of human input tabs no more than 10 lines high on a laptop", "so
+scroll overflow". Sheets cannot scroll inside a cell, so on the people's tabs
+(Review Public Comments, Review Change Sets, Contributor Feedback) a row whose
+text would run past about 10 lines is fixed at that height and the rest is
+clipped. Clicking the cell shows the whole text in the formula bar, and
+double-clicking opens it scrollable. Rows that fit size themselves, and a row
+that shrinks back under the cap is released. The script estimates lines from
+column widths (`capRows`), so it needs no layout access.
+
 ## Structured cells and column hover text (owner, 2026-10-31)
 
 "Several of the cols could be a bit more structured": a list is never run
