@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 c7963e1eaed20809.
+// folio-assistant-core tools/review-sheet-sync at template sha256 374f930f2d8d516b.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 c7963e1eaed20809';
+const SCRIPT_VERSION = 'template sha256 374f930f2d8d516b';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -805,7 +805,7 @@ function progressLine(o) {
   if (!active) return '';
   const w = stagingWarning(o.staging, o.built, prs, o.readyAt);
   const preview = !o.staging ? 'no preview yet' : w ? 'preview ' + w.replace(/^\u26a0\s*/, '') : 'preview current' + (o.built && o.built.at ? ' (built ' + o.built.at + ')' : '');
-  return PROGRESS + label + ' open; ' + preview + '.';
+  return PROGRESS + label + ' open' + (active.done ? ', updated ' + active.done : '') + '; ' + preview + '.';
 }
 
 /** The text with its progress line replaced (or removed when line is ''). */
@@ -857,6 +857,14 @@ function decisionSpans(text) {
   while ((m = re.exec(t))) {
     const end = t.indexOf('\n\n', m.index);
     spans.push([m.index, end < 0 ? t.length : end]);
+  }
+  // The script's \u23f3 status line is bold too, so it reads as the row's state
+  // (owner, 2026-10-31: "not bold").
+  const i = t.indexOf('\n' + PROGRESS);
+  const p = t.indexOf(PROGRESS) === 0 ? 0 : i < 0 ? -1 : i + 1;
+  if (p >= 0) {
+    const e = t.indexOf('\n', p);
+    spans.push([p, e < 0 ? t.length : e]);
   }
   return spans;
 }

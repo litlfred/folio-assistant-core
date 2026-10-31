@@ -250,7 +250,13 @@ script keeps one line starting with ⏳ at the top of the agent's proposal
 dth-hrh#7."; or "dth-hrh#7 open; no preview yet | preview current (built
 <time>) | preview missing feedback from <time>." No pull request, a merged
 one, or an empty proposal gets no line. The agent never writes this line and
-drops it when it rewrites the proposal. An Editor's Orange change (a Ready
+drops it when it rewrites the proposal; the next refresh (within a minute)
+puts it back. The line is bold, and an open PR's line carries the agent's
+last completion time ("smart-ra#185 open, updated 2026-10-31 14:41Z;
+preview stale: built from 420acd3, PR now at e7b4094."). The agent writes no
+status line of its own ("Status (agent, …)"): it records the facts in the
+Agent tab (PR head, Staging deploy, Agent completed from `date -u`) and the
+sheet says them (owner, 2026-10-31: "lost time, not bold"). An Editor's Orange change (a Ready
 column) is not part of the basis, so it never marks the proposal stale: it
 shows here as a note, and Ready stays as the Editor set it (owner's card,
 option A).

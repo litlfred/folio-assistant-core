@@ -805,7 +805,7 @@ function progressLine(o) {
   if (!active) return '';
   const w = stagingWarning(o.staging, o.built, prs, o.readyAt);
   const preview = !o.staging ? 'no preview yet' : w ? 'preview ' + w.replace(/^\u26a0\s*/, '') : 'preview current' + (o.built && o.built.at ? ' (built ' + o.built.at + ')' : '');
-  return PROGRESS + label + ' open; ' + preview + '.';
+  return PROGRESS + label + ' open' + (active.done ? ', updated ' + active.done : '') + '; ' + preview + '.';
 }
 
 /** The text with its progress line replaced (or removed when line is ''). */
@@ -857,6 +857,14 @@ function decisionSpans(text) {
   while ((m = re.exec(t))) {
     const end = t.indexOf('\n\n', m.index);
     spans.push([m.index, end < 0 ? t.length : end]);
+  }
+  // The script's ⏳ status line is bold too, so it reads as the row's state
+  // (owner, 2026-10-31: "not bold").
+  const i = t.indexOf('\n' + PROGRESS);
+  const p = t.indexOf(PROGRESS) === 0 ? 0 : i < 0 ? -1 : i + 1;
+  if (p >= 0) {
+    const e = t.indexOf('\n', p);
+    spans.push([p, e < 0 ? t.length : e]);
   }
   return spans;
 }
