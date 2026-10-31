@@ -314,6 +314,9 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
 6. **Drafting only: allow multiple sections.** Select the Selected Sections column >
    Data > Data validation > the dropdown rule > tick **Allow multiple
    selections** > Done. Copies made after the template has it ticked keep it.
+   The box is greyed out unless the rule's display style is **Chip**
+   (Advanced options); the agent sets Chip (`customUiMode: CHIP`) when it
+   writes the rule, but the tick itself has no API and stays a person's step.
 
 **Filter views** (owner, 2026-10-31). Each template carries saved filter
 views, which copy with it. Use Data > Filter views, never a plain filter: a
