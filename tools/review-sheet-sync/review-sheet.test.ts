@@ -823,3 +823,26 @@ describe("the Config tab's rows", () => {
     expect(JSON.parse(parts.join(""))).toEqual(JSON.parse(one));
   });
 });
+
+describe("the colour key in Instructions text", () => {
+  const keyRuns = new Function("SpreadsheetApp", `${code}\nreturn keyRuns;`)({}) as (t: string) => [number, number, string][];
+  const text = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"))["Review Change Sets"];
+  const runs = keyRuns(text);
+  const words = runs.map(([a, z, c]) => [text.slice(a, z), c]);
+
+  test("each key segment on the first line is coloured whole, in its own colour", () => {
+    expect(words.slice(0, 4).map(([w]) => w.split(" = ")[0])).toEqual(["Blue", "Green", "Orange", "Grey"]);
+    expect(words[0][0]).toContain("your input");
+    expect(new Set(words.slice(0, 4).map(([, c]) => c)).size).toBe(4);
+  });
+
+  test("later colour words are coloured one by one, with the key's colour", () => {
+    const later = words.slice(4);
+    expect(later.length).toBeGreaterThan(3);
+    for (const [w, c] of later) expect(c).toBe(words.find(([k]) => k.toLowerCase().startsWith(w.toLowerCase()))![1]);
+  });
+
+  test("text without a colour word gets no runs", () => {
+    expect(keyRuns("Kept by the agent's watcher. Do not edit.")).toEqual([]);
+  });
+});
