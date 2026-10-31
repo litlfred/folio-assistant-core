@@ -36,7 +36,7 @@ describe("agent-record (owner, 2026-10-31, option C)", () => {
       "Agent completed (UTC, change set)": "2026-10-31 15:27Z",
     });
     expect(() => push("e7b4094", 15)).toThrow(/full 40-character/);
-    expect(done(new Date("2026-10-31T15:29:59Z"))).toEqual({ "Agent completed (UTC, change set)": "2026-10-31 15:29Z" });
+    expect(done(new Date("2026-10-31T15:29:59Z"))).toEqual({ "Agent completed (UTC, change set)": "2026-10-31 15:29Z", "Agent step (change set)": "idle 2026-10-31 15:29Z" });
   });
   test("the PR's review brief carries the same lines, without the decision history", () => {
     expect(brief({ cs: "X", nos: [1, 2], previous: "Decided (No. 1, d): A.", overall: "All.", items: [{ nos: [1, 2], word: "Accepted", why: "Done." }] }, "3.1, second paragraph"))

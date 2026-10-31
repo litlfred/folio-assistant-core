@@ -469,6 +469,28 @@ review). An Editor sets **Yes** again to send the row back to the agent. A
 row that turns stale goes back to **No** from Yes or Completed, as before.
 The agent never writes the Orange columns.
 
+**Every pass ends with a finish stamp after the Ready time** (owner,
+2026-10-31: "make sure process works … so it doesnt fail again"). On DTH-HRH
+CS-001 the agent pushed at 12:49Z, Ready for agent was set (again) at 12:57Z,
+and no agent ran after that: the row read "the agent will act on this" for
+seven hours and never reached Completed. So:
+
+- The agent ends EVERY pass with a stamp from the tool: `push --head <sha>`
+  when it committed, else `done`, which writes Agent completed and the step
+  `idle` together. A proposal that waits for the Editor ends with
+  `step proposed`. The script counts a later `idle` or `proposed` step as
+  the end of the pass, the same as Agent completed.
+- Before stopping, the agent re-reads Ready for agent: if it was set after
+  the pass began, the pass is not over; act on it (or `done` if there is
+  nothing new).
+- A Ready for agent with no step recorded after it for 20 minutes shows
+  "⚠ no agent has picked this up for N min: ask in the project chat" on the
+  ⏳ line and in Agentic status, so a row with no agent never looks like
+  quiet work.
+- Every log needs a watcher: the setup is not complete until an agent
+  thread is watching the sheet (memory: every review log gets its own
+  watcher thread).
+
 ## One agent column, status on top (owner, 2026-10-31, option A)
 
 "why Change Set Feedback (agent) and Agentic status not consolidated to one?"

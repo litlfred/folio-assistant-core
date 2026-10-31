@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 b41d008eeb5cb7bf.
+// folio-assistant-core tools/review-sheet-sync at template sha256 7f16504da2f15756.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 b41d008eeb5cb7bf';
+const SCRIPT_VERSION = 'template sha256 7f16504da2f15756';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -1035,6 +1035,23 @@ const AGENT_STEPS = {
   proposed: 'proposal ready',
   idle: '',
 };
+/**
+ * When the agent last finished a pass: its latest Agent completed, or a later
+ * "idle" or "proposed" step, which also says it stopped (owner, 2026-10-31:
+ * "make sure process works \u2026 so it doesnt fail again"). NaN when neither.
+ */
+function lastFinished(prs, stepCell) {
+  const t = (prs || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
+  const m = String(stepCell || '').trim().match(/^(idle|proposed)\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}Z)$/i);
+  if (m) t.push(utcMs(m[2]));
+  return t.length ? Math.max.apply(null, t) : NaN;
+}
+/** Minutes after Ready for agent with no step before the row warns that no agent has it. */
+const PICKUP_MIN = 20;
+function unpicked(readyAt, now) {
+  const age = Math.round(((now || Date.now()) - utcMs(readyAt)) / 60000);
+  return age > PICKUP_MIN ? '; \u26a0 no agent has picked this up for ' + age + ' min: ask in the project chat' : '';
+}
 /** "editing 2026-10-31 17:20Z" -> { name, text, at }, or null. */
 function agentStep(cell) {
   const m = String(cell || '').trim().match(/^([a-z-]+)\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}Z)$/i);
@@ -1281,10 +1298,9 @@ function progressLine(o) {
     return PROGRESS + 'Ready for merge set: ' + (!wait.length ? 'the agent will merge ' + label + '.'
       : 'the agent will not merge ' + label + ' until ' + wait.join(' and ') + '.');
   }
-  const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
-  const last = done.length ? Math.max.apply(null, done) : NaN;
+  const last = lastFinished(prs, o.built && o.built.step);
   if (o.readyAt && !/working/i.test(o.status || '') && (isNaN(last) || utcMs(o.readyAt) > last))
-    return PROGRESS + 'Ready for agent set ' + o.readyAt + ': the agent will act on this and rewrite it.';
+    return PROGRESS + 'Ready for agent set ' + o.readyAt + ': the agent will act on this and rewrite it' + unpicked(o.readyAt, o.now) + '.';
   if (/working/i.test(o.status || '')) return PROGRESS + 'The agent is working on ' + (label || 'the pull request') + '.';
   if (!active) return '';
   const w = stagingWarning(o.staging, o.built, prs, o.readyAt);
@@ -1419,8 +1435,8 @@ function completeReady(s, csCol, prOf, stagingOf, builtOf, readyAt) {
     const cs = String(r[csCol]).trim();
     if (!cs || !readyAt[cs] || !/^yes$/i.test(String(r[ready]).trim())) return;
     const prs = prOf[cs] || [];
-    const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
-    if (!done.length || Math.max.apply(null, done) <= utcMs(readyAt[cs])) return;
+    const last = lastFinished(prs, (builtOf[cs] || {}).step);
+    if (isNaN(last) || last <= utcMs(readyAt[cs])) return;
     if (!stagingOf[cs] || stagingWarning(stagingOf[cs], builtOf[cs], prs, '')) return;
     s.sh.getRange(k + s.top, ready + 1, 1, 1).setValues([['Completed']]);
     r[ready] = 'Completed';
@@ -1495,15 +1511,14 @@ const prUrl = line => (line.match(/https:\/\/github\.com\/[^\s,;]+\/pull\/\d+/) 
  */
 function agenticCell(status, prs, o) {
   o = o || {};
-  const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
-  const last = done.length ? Math.max.apply(null, done) : NaN;
+  const last = lastFinished(prs, o.step);
   const queued = o.readyAt && !/working/i.test(status) && (isNaN(last) || utcMs(o.readyAt) > last);
   // Once the agent records a step after Ready for agent, say what it is doing
   // rather than that it is waited on (owner, 2026-10-31: "not sure what agent is doing").
   const step = agentStep(o.step);
   const stepped = step && step.name !== 'proposed' && (isNaN(last) || utcMs(step.at) >= last) && (!o.readyAt || utcMs(step.at) >= utcMs(o.readyAt));
   const head = stepped ? [{ t: stepLine(step).replace(PROGRESS, ''), bold: true }]
-    : queued ? [{ t: 'Waiting on the agent since ' + o.readyAt + ' (Ready for agent set); it has not recorded a step yet', bold: true }]
+    : queued ? [{ t: 'Waiting on the agent since ' + o.readyAt + ' (Ready for agent set); it has not recorded a step yet' + unpicked(o.readyAt, o.now), bold: true }]
     : /working/i.test(status) && o.talk ? [{ t: 'An agent is working on it: ', bold: true }, { t: 'conversation', url: o.talk }]
     : /needs human/i.test(status) ? [{ t: NEEDS_YOU + ': it is under "Decision needed" in the agent\'s feedback column. Write your answer (the letter) in your Blue feedback column, then an Editor sets Ready for agent to Yes.', bold: true }] : [];
   const body = agenticParts(status, prs);

@@ -1101,7 +1101,12 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
     expect(fns.progressLine(o)).toBe("\u23f3 dth-hrh#7 open, updated 2026-10-31 08:10Z; preview current (built 2026-10-31 08:15Z).");
     expect(fns.progressLine({ ...o, staging: "" })).toBe("\u23f3 dth-hrh#7 open, updated 2026-10-31 08:10Z; no preview yet.");
     // An Editor's Orange change is noted, not marked stale.
-    expect(fns.progressLine({ ...o, readyAt: "2026-10-31 11:30Z" })).toBe("\u23f3 Ready for agent set 2026-10-31 11:30Z: the agent will act on this and rewrite it.");
+    const soon = Date.parse("2026-10-31T11:40:00Z"), late = Date.parse("2026-10-31T12:30:00Z");
+    expect(fns.progressLine({ ...o, readyAt: "2026-10-31 11:30Z", now: soon })).toBe("\u23f3 Ready for agent set 2026-10-31 11:30Z: the agent will act on this and rewrite it.");
+    // Nobody picked it up: the row says so, rather than waiting quietly for ever.
+    expect(fns.progressLine({ ...o, readyAt: "2026-10-31 11:30Z", now: late })).toBe("\u23f3 Ready for agent set 2026-10-31 11:30Z: the agent will act on this and rewrite it; \u26a0 no agent has picked this up for 60 min: ask in the project chat.");
+    // An idle (or proposed) step after the Ready time says the agent finished its pass.
+    expect(fns.progressLine({ ...o, readyAt: "2026-10-31 11:30Z", now: late, built: { ...(o as { built?: object }).built, step: "idle 2026-10-31 11:50Z" } })).not.toMatch(/Ready for agent set/);
     expect(fns.progressLine({ ...o, merge: true, built: { ...built, gate: "Passed b20534f: dispositions match" } })).toBe("\u23f3 Ready for merge set: the agent will merge dth-hrh#7.");
     expect(fns.progressLine({ ...o, merge: true })).toBe("\u23f3 Ready for merge set: the agent will not merge dth-hrh#7 until the QA gate passes (QA gate: no independent review yet: not ready for merge).");
     expect(fns.progressLine({ ...o, status: "Working" })).toBe("\u23f3 The agent is working on dth-hrh#7.");
@@ -1119,7 +1124,7 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
   });
 
   test("Agentic status says the row is queued, then who has it", () => {
-    const q = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z" });
+    const q = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z", now: Date.parse("2026-10-31T11:40:00Z") });
     expect(q.text.split("\n")[0]).toBe("Waiting on the agent since 2026-10-31 11:30Z (Ready for agent set); it has not recorded a step yet");
     // A step recorded after Ready for agent says what the agent is doing instead.
     const st = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z", step: "editing 2026-10-31 11:47Z" });
