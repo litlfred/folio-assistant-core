@@ -34,7 +34,7 @@ Once the release is built (Task_BuildPcRelease), make the one list every
 channel is generated from:
 
 ```sh
-bun run scripts/public-comment-channels.ts refs folio/<document>/review-anchors.json \
+bun run folio-assistant-core/scripts/public-comment-channels.ts refs folio/<document>/review-anchors.json \
   --release <release id> --title "<release title>" --draft-url <the release's draft link> \
   --out review/public-comment/release-references.json
 ```
@@ -148,7 +148,7 @@ because each returns a table whose headers are the importer's own. Before
 importing, check that every reference is in the release:
 
 ```sh
-bun run scripts/public-comment-channels.ts check <returned file> --refs review/public-comment/release-references.json
+bun run folio-assistant-core/scripts/public-comment-channels.ts check <returned file> --refs review/public-comment/release-references.json
 ```
 
 `check` lists each row that cites a section or page outside the release, or

@@ -17,12 +17,12 @@
  * release does not have.
  *
  * ```sh
- * bun run scripts/public-comment-channels.ts refs <review-anchors.json> --release <id> --title "<release title>" [--draft-url <url>] [--out release-references.json]
- * bun run scripts/public-comment-channels.ts xlsx <release-references.json> --out <comment-sheet.xlsx>
- * bun run scripts/public-comment-channels.ts google-form <release-references.json> --out <CreatePublicCommentForm.gs>
- * bun run scripts/public-comment-channels.ts issue-form <release-references.json> --out <.github/ISSUE_TEMPLATE/public-comment.yml>
- * bun run scripts/public-comment-channels.ts issues-csv <issues.json> --release <id> --out <github-issues.csv>
- * bun run scripts/public-comment-channels.ts check <returned.xlsx|.csv> --refs <release-references.json>
+ * bun run folio-assistant-core/scripts/public-comment-channels.ts refs <review-anchors.json> --release <id> --title "<release title>" [--draft-url <url>] [--out release-references.json]
+ * bun run folio-assistant-core/scripts/public-comment-channels.ts xlsx <release-references.json> --out <comment-sheet.xlsx>
+ * bun run folio-assistant-core/scripts/public-comment-channels.ts google-form <release-references.json> --out <CreatePublicCommentForm.gs>
+ * bun run folio-assistant-core/scripts/public-comment-channels.ts issue-form <release-references.json> --out <.github/ISSUE_TEMPLATE/public-comment.yml>
+ * bun run folio-assistant-core/scripts/public-comment-channels.ts issues-csv <issues.json> --release <id> --out <github-issues.csv>
+ * bun run folio-assistant-core/scripts/public-comment-channels.ts check <returned.xlsx|.csv> --refs <release-references.json>
  * ```
  *
  * ## Coming back in: one importer
