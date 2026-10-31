@@ -334,11 +334,6 @@ export function colourKey(c: SheetConfig): { blue: string; green: string; orange
 }
 
 /**
- * How the sheet works, for everyone who opens it, including people who may
- * only comment or view: the colours, the human-to-agent workflow, and how to
- * use the saved filter views. Part of the Config tab's Instructions cell.
- */
-/**
  * The harness's page for the process a sheet runs, where every step and role
  * is set out in full (owner, 2026-10-31: "instructions should link back to the
  * process page in the harness"). Public comment runs public-comment.bpmn; a
@@ -353,72 +348,75 @@ export function processPage(c: SheetConfig): string {
   return c.CFG.PROCESS || (c.CFG.MODE === "drafting" ? PROCESS_PAGES.drafting : PROCESS_PAGES["public-comment"]);
 }
 
-export function guideSteps(c: SheetConfig): string[] {
-  const drafting = c.CFG.MODE === "drafting";
-  const k = colourKey(c);
-  const tab = drafting ? (c.CFG.FEEDBACK ?? "Contributor Feedback") : (c.CFG.RCS ?? "Review Change Sets");
-  const fb = c.COLS.draft?.feedback ?? "Contributor Feedback";
-  const staging = (drafting ? c.COLS.draft?.staging : c.COLS.rcs?.staging) ?? "Staging review";
-  const steps = [
-    "How this sheet works (for everyone):",
-    `Full details of the process, every step and role: ${processPage(c)}`,
-    "Colours, shown in the Instructions row above each tab's header:",
-    `   • ${k.blue}`,
-    `   • ${k.green}`,
-    `   • ${k.orange}`,
-    `   • ${k.grey}`,
-    "The workflow, one row per change set:",
-  ];
-  if (drafting) {
-    steps.push(
-      `   1. Contributors start a row on ${tab}: a title, the Selected Sections, and their feedback in the blue ${fb} columns. The script gives the row its Change-set id.`,
-      `   2. The agent proposes a direction in ${fb} (agent), in green.`,
-    );
-  } else {
-    steps.push(
-      "   1. Public comments arrive on Review Public Comments (grey). The Feedback Review Committee adds its feedback in the blue columns, on a comment or on its change set.",
-      `   2. The agent groups comments into change sets on ${tab} and proposes a direction in the green (agent) column.`,
-    );
-  }
-  steps.push(
-    "   3. An Editor sets Ready for agent to Yes (orange) once the direction is agreed.",
-    `   4. The agent edits the document on its own branch and opens a pull request. Agentic status says where it is, and ${staging} opens the "what changed" page of that branch's preview.`,
-    `   5. Reviewers read the preview and answer in blue. If a blue cell changes after the agent wrote, its proposal is marked stale and Ready for agent goes back to No. An Editor sets it to Yes again when the agent should update the row's pull request.`,
-    "   6. An Editor sets Ready for merge to Yes. The agent merges, and Agentic status says merged.",
-    "Finding your rows (filter views work for viewers and commenters too, and change nothing for anyone else):",
-    "   • Data, then Filter views, then pick a view, such as Needs human or Stale",
-    "   • Or click the filter icon in the Agentic status (filter) header and tick a status",
-    "   • A Section link or No. link opens that place in the document; a No. on a change set jumps to that comment's row",
-    "   • To leave a view, Data, then Filter views, then None",
-    "Comments without edit rights: select a cell, then Insert, then Comment.",
-  );
-  return steps;
-}
-
 export const CONFIG_TAB = "Config";
 
 /**
- * What each tab is for, in one or two sentences, for the Instructions row at
- * the top of every visible tab (owner, 2026-10-31: "each tab should have an
- * Instructions header with the purpose of the tab, even if to say don't do
- * anything"). The people's tabs carry the colour key and workflow instead;
- * hidden helper tabs carry none, since the script writes them whole.
+ * The Instructions text at the top of every visible tab: what the tab is for
+ * and how it works, in that tab's own terms (owner, 2026-10-31: "each tab
+ * should have an Instructions header with the purpose of the tab, even if to
+ * say don't do anything"; "make 'how this sheet works' specific to each
+ * tab"). A people's tab opens with the colour line, one line per step after
+ * it, and ends with the filter views and the harness's process page. Hidden
+ * helper tabs carry none, since the script writes them whole.
  */
 export function tabInstructions(c: SheetConfig): Record<string, string> {
   const drafting = c.CFG.MODE === "drafting";
   const t = { ...(drafting ? DRAFT_TABS : DEFAULT_TABS), ...c.CFG } as Record<string, string>;
+  const k = colourKey(c);
+  const colours = [k.blue, k.green, k.orange, k.grey].map((x) => x.replace(": ", " = ")).join("     ");
+  const staging = (drafting ? c.COLS.draft?.staging : c.COLS.rcs?.staging) ?? "Staging review";
+  const fb = c.COLS.draft?.feedback ?? "Contributor Feedback";
   const people = drafting ? t.FEEDBACK : `${t.RPC} and ${t.RCS}`;
-  return {
-    [CONFIG_TAB]: `The script's settings. Work happens on ${people}; nothing here needs you unless you install the script. EDITORS (below) lists who may set the Ready columns: only the owner edits it. Do not edit anything else here: the agent writes it.`,
-    [t.AGENT]: `Written only by the agent: one row per comment or change set, with its status, pull request and preview. Do not edit. The script copies what it needs into the green columns of ${people}.`,
-    "Public Comment Source": `The public comments as received, one row per comment. Do not edit: a correction goes in a blue column on ${t.RPC ?? "Review Public Comments"}.`,
+  const footer = [
+    "Find your rows: Data, then Filter views, then pick a view (works for viewers too, and changes nothing for anyone else). Comment without edit rights: Insert, then Comment.",
+    `Full process, every step and role: ${processPage(c)}`,
+  ];
+  // Steps 3 to 6, the same on every change-set tab.
+  const changeSet = [
+    "   3. An Editor sets Ready for agent to Yes (orange) once the direction is agreed.",
+    `   4. The agent edits the document in one pull request for the row. Agentic status says where it is; ${staging} opens what changed.`,
+    "   5. Reviewers answer in blue. A change marks the proposal stale and sets Ready for agent back to No; an Editor sets Yes again to have the agent update the pull request.",
+    "   6. An Editor sets Ready for merge to Yes, and the agent merges.",
+  ];
+  const out: Record<string, string> = {
+    [CONFIG_TAB]: `The script's settings. Work happens on ${people}; nothing here needs you unless you install the script. Do not edit this tab: the agent writes it, except EDITORS, which only the owner edits.`,
+    [t.AGENT]: `Written only by the agent: one row per ${drafting ? "change set" : "comment or change set"}, with its status, pull request and preview. Do not edit. The script copies what it needs into the green columns of ${people}.`,
     Watch: "Kept by the agent's watcher: what changed since it last looked. Do not edit.",
   };
+  if (drafting) {
+    out[t.FEEDBACK] = [
+      colours,
+      "This tab has one row per change set:",
+      `   1. Contributors start a row: a title, the Selected Sections, and feedback in the blue ${fb} columns. The script gives it a Change-set id.`,
+      `   2. The agent proposes a direction in ${fb} (agent), in green.`,
+      ...changeSet,
+      ...footer,
+    ].join("\n");
+  } else {
+    out["Public Comment Source"] = `The public comments as received, one row per comment. Do not edit: a correction goes in a blue column on ${t.RPC}.`;
+    out[t.RPC] = [
+      colours,
+      "This tab has one row per public comment, as received (grey):",
+      "   1. The Feedback Review Committee reads the comment and adds its feedback in the blue columns, with the TWG, comment type, disposition and status.",
+      `   2. The agent puts each comment in a change set (green Change Set, linked to its row on ${t.RCS}) and suggests a TWG.`,
+      `   3. Decisions to edit are made per change set, on ${t.RCS}. Agentic status and ${staging} here follow the comment's change set.`,
+      ...footer,
+    ].join("\n");
+    out[t.RCS] = [
+      colours,
+      `This tab has one row per change set, joining its public comments from ${t.RPC}:`,
+      "   1. The Feedback Review Committee gives feedback on the change set in blue and picks its TWG.",
+      "   2. The agent proposes a direction in the green (agent) column.",
+      ...changeSet,
+      ...footer,
+    ].join("\n");
+  }
+  return out;
 }
 
 export function setupSteps(c: SheetConfig): string[] {
   const steps = [
-    "Setup, once per sheet (the skill review-sheet-script has the detail):",
+    "Once per sheet (the skill review-sheet-script has the detail):",
     "1. Extensions, then Apps Script. Replace all of Code.gs with the published script and save.",
     "2. Pick installTriggers in the function list and press Run. Allow access (Advanced, then continue).",
     "3. Reload the sheet. A Review links menu appears; Review links, then Refresh now, checks it.",
@@ -426,24 +424,24 @@ export function setupSteps(c: SheetConfig): string[] {
   if (c.CFG.MODE === "drafting") {
     const col = c.COLS.draft?.sections ?? "Selected Sections";
     steps.push(
-      `4. Finish the ${col} dropdown. Neither the script nor the Sheets API can set these two settings:`,
-      `   • Click the column letter above "${col}" to select the column`,
-      "   • Choose Data, then Data validation",
-      `   • Open the rule for that column (it says "Dropdown (from a range)")`,
-      "   • Tick Allow multiple selections",
-      "   • Open Advanced options and set Display style to Chip",
-      "   • Press Done",
+      `4. Finish the ${col} dropdown (neither the script nor the Sheets API can):`,
+      `   • Click the column letter above "${col}", then Data, then Data validation`,
+      `   • Open the rule (it says "Dropdown (from a range)") and tick Allow multiple selections`,
+      "   • Open Advanced options, set Display style to Chip, and press Done",
     );
   }
-  steps.push(
-    "Editors (the EDITORS row below): the people who may set Ready for agent and Ready for merge, one email per line.",
+  return steps;
+}
+
+/** Who may set the Ready columns, and how the owner names them in the EDITORS row. */
+export function editorSteps(): string[] {
+  return [
+    "Who may set Ready for agent and Ready for merge: the emails in the EDITORS row below, one per line.",
     "   • Share each of them as Editor first (Share button, pick Editor)",
     "   • Type their emails in the EDITORS cell; only the owner can change it",
     "   • Choose Review links, then Refresh now: the two Ready columns are locked to the owner plus them",
     "   • Leave it empty to let anyone who can edit the sheet set them",
-    "Below EDITORS: the script's settings. Ask the agent to change them; do not edit by hand.",
-  );
-  return steps;
+  ];
 }
 
 /**
@@ -456,10 +454,11 @@ export function configRows(c: SheetConfig): string[][] {
   // and keeps the sheet's value when it rewrites the tab. Emails never go
   // into sheet-sync.json, which is committed.
   const rows: string[][] = [
-    // One Instructions cell holds the tab's purpose, how the sheet works and
-    // the setup steps (owner, 2026-10-31: "GUIDE / SETUP content should be in
-    // Config header instructions").
-    ["Instructions", [tabInstructions(c)[CONFIG_TAB], guideSteps(c).join("\n"), setupSteps(c).join("\n")].join("\n\n")],
+    // Short Instructions rows, one per subject, so no row is taller than the
+    // window (owner, 2026-10-31). The script reads keys by name and ignores these.
+    ["Instructions", tabInstructions(c)[CONFIG_TAB]],
+    ["Instructions - Setup", setupSteps(c).join("\n")],
+    ["Instructions - Editors", editorSteps().join("\n")],
     ["Key", "Value (written by the agent from sheet-sync.json; do not edit, except EDITORS)"],
     ["EDITORS", ""],
   ];
