@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 8c5ba18fa6d05595.
+// folio-assistant-core tools/review-sheet-sync at template sha256 ebeac87f44eb73cb.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -112,7 +112,7 @@ function notLinked(ss) {
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('Review links')
     .addItem('Refresh now', 'refreshAll')
-    .addItem('Install automatic refresh', 'installTriggers')
+    .addItem('Install (first time, or after pasting a new Code.gs)', 'installTriggers')
     .addToUi();
   try {
     const ss = SpreadsheetApp.getActive();

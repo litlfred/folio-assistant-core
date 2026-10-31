@@ -461,7 +461,12 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
 1. **Copy the template.** Open the "make a copy" link for the mode (table
    above), name the copy "<document> Contributor Log" or "<document> Public
    Comment Log", and keep it in the informatics.avengers Drive. A file copy
-   keeps tabs, colours, dropdowns, locks and the script.
+   keeps tabs, colours, dropdowns, locks and the script. **Always copy the
+   file** (File, then Make a copy); never build a log by copying tabs into
+   a blank spreadsheet, which leaves the script behind (owner, 2026-10-31,
+   option A, after DTH-PC and DTH-SC were built tab by tab and needed a
+   paste). The owner keeps the latest `dist/Code.gs` pasted into both
+   templates, so a copy starts current.
 2. **Share it.** Share > add contributors or reviewers as **Editor**. The
    locks still keep them to the blue columns.
 3. **Link it to the repository (agent).** Give the agent the copy's URL and
@@ -546,9 +551,10 @@ Install script` row carries the same steps and links here.
 4. **Paste.** Click **Code.gs** in the Files list on the left. Select all
    (Ctrl+A, or Cmd+A on a Mac), delete, paste, and save (Ctrl+S or Cmd+S,
    or the disk icon).
-5. **Run installTriggers.** In the toolbar, the function list next to
-   **Run** and **Debug** shows **installTriggers** (it is the first function,
-   so the default). Press **Run**.
+5. **Run installTriggers.** Reload the sheet and choose **Review links**,
+   then **Install**. Or, in the editor, the function list next to **Run**
+   and **Debug** shows **installTriggers** (it is the first function, so the
+   default); press **Run**.
 6. **Allow it.** **Review permissions**, pick the owner's account. Google
    shows "Google hasn't verified this app. The app is requesting access to
    sensitive info in your Google Account." That is expected for a sheet's
@@ -562,6 +568,13 @@ Install script` row carries the same steps and links here.
 
 **Updating later:** steps 1, 2 and 4, then Review links, then Refresh now;
 the automatic refresh stays installed.
+
+**A copy of the template needs none of this** (owner, 2026-10-31, option
+A): the script came with the file. Reload the copy, choose **Review links**,
+then **Install**, and allow it as in step 6. The menu runs installTriggers,
+so the editor is never opened. Only renaming the bound project (step 3) is
+left, and it is optional: a copied project is named "Copy of ..." by
+Google.
 
 Screenshots of each step are to be added from the owner's DTH-PC install
 (the agent cannot sign in to Google to take them).

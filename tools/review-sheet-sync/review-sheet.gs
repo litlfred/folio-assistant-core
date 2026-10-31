@@ -112,7 +112,7 @@ function notLinked(ss) {
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('Review links')
     .addItem('Refresh now', 'refreshAll')
-    .addItem('Install automatic refresh', 'installTriggers')
+    .addItem('Install (first time, or after pasting a new Code.gs)', 'installTriggers')
     .addToUi();
   try {
     const ss = SpreadsheetApp.getActive();
