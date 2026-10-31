@@ -17,6 +17,7 @@
  *
  * Skill: `review-sheet-script`.
  */
+import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -270,6 +271,6 @@ if (import.meta.main) {
   }
   const out = buildScript(repo, cfg);
   const to = arg("--out");
-  if (to) { writeFileSync(to, out); console.error(`wrote ${to} (${out.length} bytes)`); }
+  if (to) { writeFileSync(to, out); console.error(`wrote ${to} (${out.length} bytes, sha256 ${createHash("sha256").update(out).digest("hex")})`); }
   else process.stdout.write(out);
 }
