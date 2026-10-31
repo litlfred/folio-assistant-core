@@ -248,8 +248,16 @@ export function buildScript(repo: string, cfgPath: string): string {
       : "// Section key -> [label, PDF page]; abbreviations; PDF page -> [page, first line, last line].",
     `const DATA = ${JSON.stringify(data)};`,
   ].join("\n");
-  return template.replace("/*@@CONFIG@@*/", block);
+  return asciiOnly(template.replace("/*@@CONFIG@@*/", block));
 }
+
+/**
+ * Every non-ASCII character as a \uXXXX escape. A paste into the Apps Script
+ * editor can lose them (an en dash showed as a box), and an escape means the
+ * same in a string, a regex and a comment.
+ */
+export const asciiOnly = (s: string) =>
+  s.replace(/[^\x00-\x7f]/g, (c) => "\\u" + c.charCodeAt(0).toString(16).padStart(4, "0"));
 
 if (import.meta.main) {
   const arg = (f: string) => { const i = process.argv.indexOf(f); return i > 0 ? process.argv[i + 1] : undefined; };

@@ -268,6 +268,11 @@ describe("review-sheet.gs in drafting mode", () => {
   load(code, rt.g).refreshAll();
   const fb = rt.written["Contributor Feedback"];
 
+  test("the built script is plain ASCII, so a paste cannot mangle it", () => {
+    expect(/[^\x00-\x7f]/.test(code)).toBe(false);
+    expect(code).toContain("\\u00b7");
+  });
+
   test("the TOC has chapters and sections, without commas, each with its anchor", () => {
     expect(code).toContain('"MODE": "drafting"');
     const toc = rt.written.TOC.Section as string[][];
