@@ -2,7 +2,7 @@
 # folio-core-xpsq
 $schema: bean/1.0.0
 title: 'Fetch scripts follow server-supplied links without a destination check'
-status: todo
+status: completed
 type: bug
 priority: low
 tags:
@@ -10,7 +10,7 @@ tags:
     - security-review-2026-10-31
     - red-flag-security
 created_at: 2026-10-31T04:01:25Z
-updated_at: 2026-10-31T04:01:25Z
+updated_at: 2026-10-31T08:30:00Z
 ---
 
 Found by the 2026-10-31 security and QA review of the folio-assistant layers (SOP: cat-harness `skills/conduct/security/`, the 16 rules of `skills/voices/secure-code-authoring/voice.json`, RED FLAG categories of cat-harness-tools `schemas/sdlc/red-flag.ts`). No fix PR yet: fixes wait for the owner's go-ahead.
@@ -27,4 +27,8 @@ These are CLI and CI scripts, so the impact is limited to where the runner can r
 
 ## Done when
 
-- [ ] Each fetch refuses non-https and unexpected hosts, including after redirects
+- [x] Each fetch refuses non-https and unexpected hosts, including after redirects
+
+## Summary of Changes
+
+Added `scripts/lib/safe-url.ts` (`assertHttpsHost`, `fetchChecked` with `redirect: "manual"` checking every hop) and updated `scripts/fetch-dspace-item.ts`, `scripts/fetch-who-publication.ts`, and `scripts/source-liveness.ts` so every initial request, server-supplied link, and redirect hop refuses non-`https:` schemes and unexpected hosts. Added tests in `scripts/fetch-dspace-item.test.ts`, `scripts/fetch-who-publication.test.ts`, and `scripts/source-liveness.test.ts`.
