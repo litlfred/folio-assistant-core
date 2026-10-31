@@ -13,7 +13,8 @@ import { mkdtempSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { buildConfig, buildScript, chunks, configRows, readable, tabInstructions, tocRows } from "./build-review-sheet-script.js";
+import { buildConfig, buildScript, chunks, CODE_GS_URL, configRows, readable, tabInstructions, tocRows } from "./build-review-sheet-script.js";
+import { readFileSync as readText } from "node:fs";
 import { feedbackBasis, hashOf } from "./feedback-issue.js";
 
 const code = buildScript();
@@ -941,5 +942,16 @@ describe("running the script from the editor", () => {
   test("a helper run by hand says which function to run instead", () => {
     const loadConfig = new Function("SpreadsheetApp", `${code}\nreturn loadConfig;`)({}) as () => void;
     expect(() => loadConfig()).toThrow(/pick installTriggers/);
+  });
+});
+
+describe("the committed Code.gs people copy", () => {
+  test("dist/Code.gs is current: run build-review-sheet-script.ts --dist after changing review-sheet.gs", () => {
+    const committed = readText(join(import.meta.dir, "dist", "Code.gs"), "utf8");
+    expect(committed).toBe(buildScript({ stamp: "content" }));
+  });
+  test("the install steps link it", () => {
+    const rows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
+    expect(rows.find((r) => r[0] === "Instructions - Install script")![1]).toContain(CODE_GS_URL);
   });
 });
