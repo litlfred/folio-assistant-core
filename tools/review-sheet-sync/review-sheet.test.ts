@@ -1314,3 +1314,54 @@ describe("Disposition (agent) shows its structure (owner, 2026-10-31)", () => {
     expect(spans.map(([a, z]) => c.text.slice(a, z))).toEqual(["Decided (No. 1, d):", "Overall:", "Nos. 1 and 2:", "Partially accepted"]);
   });
 });
+
+describe("structured overflow lines (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { descText, decisionSpans };`)({}) as {
+    descText: (d: string) => string; decisionSpans: (t: string) => [number, number][];
+  };
+  test("a; b; c becomes one bullet per line", () => {
+    expect(fns.descText("a (No. 326); b; c")).toBe("\n  • a (No. 326)\n  • b\n  • c");
+    expect(fns.descText("only one")).toBe(" · only one");
+  });
+  test("line-start labels and No. references are bold", () => {
+    const t = "What changed:\n  • x (No. 326)\nProposed direction: y, Nos. 1, 2 and 5.";
+    const bold = fns.decisionSpans(t).map(([a, z]) => t.slice(a, z));
+    expect(bold).toContain("What changed:");
+    expect(bold).toContain("Proposed direction:");
+    expect(bold).toContain("No. 326");
+    expect(bold).toContain("Nos. 1, 2 and 5");
+  });
+});
+
+describe("hover text on every column head (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { headerNoteFor, headerNotes, HEADER_NOTES, NOTE_MARK };`)({}) as {
+    headerNoteFor: (k: string, h: string) => string; headerNotes: (ss: unknown) => void; NOTE_MARK: string;
+  };
+  test("every column of the six sheets' known heads has a note", () => {
+    const heads: [string, string[]][] = [
+      ["rpc", ["No.", "Sections", "Page", "Line no(s) / Table / Figure", "Comment / issue", "Suggested revision", "Change Set", "TWG (agent)", "TWG (human)", "Comment type", "Committee Feedback (initials)", "Disposition", "Status", "Agentic status", "Staging review"]],
+      ["rcs", ["Change-set", "Title", "Sections", "Pages", "Public Comments", "Suggested Revisions", "PC Committee Feedback", "Dispositions", "TWG (PCs)", "TWG (CS)", "Committee Feedback (CL)", "Architect Feedback (AB)", "Ready for agent", "Ready for merge", "Disposition (agent)", "Change Set Feedback (agent)", "Agentic status", "Staging review", "Agentic status (filter)"]],
+      ["draft", ["Change-set", "Title", "Selected Sections", "Section links", "Contributor Feedback (initials/name)", "Disposition", "Ready for agent", "Ready for merge", "Disposition (agent)", "Feedback (agent)", "Agentic status (filter)", "Issue", "Agentic status", "Staging review"]],
+      ["agent", ["No.", "Comment ref", "Agentic status", "Agentic action taken", "Agentic applied in (section / version)", "Agentic handled by", "Agentic date actioned", "Change-sets", "Change-set", "Title", "Issue", "Pull request (change set)", "Staging review page (change set)", "What the PRs changed (change set)", "Agent completed (UTC, change set)", "Feedback basis (change set)", "Staging built (UTC, change set)", "PR head (change set)", "Staging built from (change set)", "Staging deploy (change set)", "Disposition (change set)", "QA gate (change set)", "QA report (change set)", "Agent conversation (change set)"]],
+    ];
+    for (const [k, hs] of heads) for (const h of hs) expect([k, h, fns.headerNoteFor(k, h).length > 10]).toEqual([k, h, true]);
+    expect(fns.headerNoteFor("rpc", "Disposition")).toMatch(/committee/);
+    expect(fns.headerNoteFor("draft", "Disposition")).not.toMatch(/committee/);
+  });
+  test("a person's own note is kept; only changed notes are written", () => {
+    let written: string[][] | null = null;
+    const sheet = {
+      getName: () => "Review Change Sets", getLastColumn: () => 3, getLastRow: () => 5,
+      getRange: (r: number, c: number, nr: number, nc: number) => ({
+        getDisplayValues: () => (nc === 1 ? [["Instructions"], ["Change-set"], ["CS-001"]] : [["Change-set", "Ready for agent", "Mine"]]),
+        getNotes: () => [["", "my own note", ""]],
+        setNotes: (n: string[][]) => { written = n; },
+      }),
+    };
+    const g = new Function("SpreadsheetApp", `${code}\nCFG = { RCS: "Review Change Sets" };\nreturn headerNotes;`)({}) as (ss: unknown) => void;
+    g({ getSheets: () => [sheet] });
+    expect(written![0][0]).toMatch(/change set id/);
+    expect(written![0][1]).toBe("my own note");
+    expect(written![0][2]).toBe("");
+  });
+});

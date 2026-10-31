@@ -373,6 +373,7 @@ function refreshIfDirty() {
   upgradeTimer_(props);
   try { loadConfig(SpreadsheetApp.getActive()); } catch (err) { return; }
   try { colourInstructions(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
+  try { headerNotes(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
   if (!DRAFTING) {
     // The agent writes Agent through the API, which fires no edit, so the
     // timer also rebuilds when the Agent tab's contents have changed.
@@ -537,6 +538,117 @@ function legendCount(firstCells) {
  * the API, which drops the colours, and the next refresh puts them back.
  * Links in the text are kept as links.
  */
+/**
+ * Hover text on every column head (owner, 2026-10-31: "can we add hover text
+ * to the column heads that describes what it is", all columns in the sheets).
+ * Each note says what the column holds and who writes it, by the colour key.
+ * Matched by header, first on "<tab kind>|<header>", then on the header
+ * alone; a header ending in "(...)" (a person's initials) also matches its
+ * "Name (*)" entry. A note a person wrote on a head is kept: only an empty
+ * note, or one ending in NOTE_MARK, is replaced. Unknown heads are left alone.
+ */
+const NOTE_MARK = '\n\n(Column note kept by the review sheet script.)';
+const HEADER_NOTES = {
+  // Review Public Comments
+  'rpc|No.': 'Grey. The public comment number, as received. Fixed; use it to cite a comment ("No. 132").',
+  'Sections': 'Grey. The document sections the comment or change set is about, linked to the draft.',
+  'Page': 'Grey. The page of the review draft the comment cites, linked to that page.',
+  'Line no(s) / Table / Figure': 'Grey. The lines, table or figure of the review draft the comment cites.',
+  'Comment / issue': 'Grey. The comment as the submitter wrote it. Never edited.',
+  'Suggested revision': 'Grey. The change the submitter proposed, as written. Never edited.',
+  'Change Set': 'Green. The change set the agent grouped this comment into, linked to its row on Review Change Sets.',
+  'TWG (agent)': 'Green. The technical working group the agent suggests for this comment.',
+  'TWG (human)': 'Blue. The technical working group a person assigns. Overrides the agent\'s suggestion.',
+  'Comment type': 'Blue. The kind of comment (for example editorial, technical, general).',
+  'Committee Feedback (*)': 'Blue. One reviewer\'s feedback. Put your initials in the head; one column per reviewer.',
+  'rpc|Disposition': 'Blue. The committee\'s decision on this comment: Accepted, Partially accepted, Not accepted, Noted, Deferred, Duplicate, Out of scope or Withdrawn. The agent starts its dispositions from this and never overrides it.',
+  'rpc|Status': 'Blue. Where the comment is in review (for example Open, In review, Closed).',
+  'rpc|Agentic status': 'Green. Where the agent is with this comment\'s change set (Working, PR open, Needs you, Completed). Follows the change set.',
+  'rpc|Staging review': 'Green. Link to the staging preview of the comment\'s change set, with a warning when it is stale or still building.',
+  // Review Change Sets
+  'Change-set': 'Grey. The change set id (CS-001, ...). One row per change set; it groups related comments or feedback into one pull request.',
+  'Title': 'Grey/Blue. A short name for the change set.',
+  'Pages': 'Grey. The review-draft pages the change set\'s comments cite.',
+  'Public Comments': 'Grey. The public comments in this change set, joined from Review Public Comments, with their numbers.',
+  'Suggested Revisions': 'Grey. The submitters\' suggested revisions for this change set\'s comments.',
+  'PC Committee Feedback': 'Grey. The committee\'s per-comment feedback, joined from Review Public Comments.',
+  'Dispositions': 'Grey. The per-comment dispositions people set on Review Public Comments, joined here.',
+  'TWG (PCs)': 'Grey. The working groups of the comments in this change set.',
+  'TWG (CS)': 'Blue. The working group that owns this change set.',
+  'Ready for agent': 'Orange. Set by an Editor. Yes: the direction is agreed, the agent may edit. No: wait. Completed: set by the script once the agent finished and the preview is current. A change in feedback resets it to No.',
+  'Ready for merge': 'Orange. Set by an Editor. Yes: merge the pull request once the QA gate has passed for its current head.',
+  'Disposition (agent)': 'Green, read only. The decision history (oldest first, never removed) and one disposition per comment number, written from the Agent tab. "No disposition yet" lists numbers still missing one.',
+  'Change Set Feedback (agent)': 'Green. The status line on top (bold), then the agent\'s current proposal and open questions, with options and a recommendation.',
+  'Feedback (agent)': 'Green. The status line on top (bold), then the agent\'s current proposal and open questions, with options and a recommendation.',
+  'Agentic status': 'Green. Where the agent is: Working, PR open, Needs you (a question for a person), Completed. Says what the agent is doing.',
+  'Staging review': 'Green. Link to the staging preview of the change, and its QA report and QA gate. Shows "stale" with a warning while the preview is being rebuilt.',
+  'Agentic status (filter)': 'Grey. A short copy of Agentic status for filter views. Not for reading.',
+  // Contributor Feedback (drafting)
+  'Selected Sections': 'Blue. The sections this row is about. Pick from the dropdown (several allowed).',
+  'Section links': 'Grey. Links to the selected sections in the current draft.',
+  'Contributor Feedback (*)': 'Blue. One contributor\'s feedback. Put your initials or name in the head; one column per contributor.',
+  'draft|Disposition': 'Blue. The decision a person records for this row.',
+  'Issue': 'Green. The GitHub issue that tracks this change set.',
+  // Agent tabs (written only by the agent)
+  'agent|No.': 'Green, agent only. The public comment number.',
+  'Comment ref': 'Green, agent only. The comment\'s id in the repository (PC-0001, ...).',
+  'Agentic action taken': 'Green, agent only. What the agent did for this comment.',
+  'Agentic applied in (section / version)': 'Green, agent only. Where the change landed: section and version.',
+  'Agentic handled by': 'Green, agent only. Which agent session handled it.',
+  'Agentic date actioned': 'Green, agent only. When the agent acted (UTC).',
+  'Change-sets': 'Green, agent only. The change set(s) this comment belongs to.',
+  'Pull request (change set)': 'Green, agent only. The pull request(s) carrying the change set\'s edits.',
+  'Staging review page (change set)': 'Green, agent only. The staging preview page for the change set.',
+  'What the PRs changed (change set)': 'Green, agent only. What the pull requests changed, one item per line with the comment numbers.',
+  'Agent completed (UTC, change set)': 'Green, agent only. When the agent last finished work on this change set (real UTC time, from the clock).',
+  'Feedback basis (change set)': 'Green, agent only. A fingerprint of the feedback the agent worked from; when feedback changes the proposal is marked stale.',
+  'Staging built (UTC, change set)': 'Green, agent only. When the staging preview was built.',
+  'PR head (change set)': 'Green, agent only. The pull request\'s current commit (full sha).',
+  'Staging built from (change set)': 'Green, agent only. The commit the preview was built from. Differs from PR head = the preview is stale.',
+  'Staging deploy (change set)': 'Green, agent only. Preview deploy stage: building, pushed, deploying, deployed or failed, with the expected live time.',
+  'Disposition (change set)': 'Green, agent only. Decision history plus one disposition per comment, written with the agent-record tool. Shown as Disposition (agent).',
+  'QA gate (change set)': 'Green, independent reviewer only. "Passed" or "Failed" for a given PR head. No merge until it passed for the current head.',
+  'QA report (change set)': 'Green, agent only. Link to the QA report for the current PR head.',
+  'Agent conversation (change set)': 'Green, agent only. Link to the agent session working on this change set.',
+};
+function headerNoteFor(kind, h) {
+  const own = HEADER_NOTES[kind + '|' + h] || HEADER_NOTES[h];
+  if (own) return own;
+  const m = /^(.+?) \([^)]*\)$/.exec(h);
+  if (m && HEADER_NOTES[m[1] + ' (*)']) return HEADER_NOTES[m[1] + ' (*)'];
+  const a = aliasOf(h);
+  return a ? headerNoteFor(kind, a) : '';
+}
+function tabKind(name) {
+  if (!CFG) return '';
+  if (name === CFG.RPC) return 'rpc';
+  if (name === CFG.RCS) return 'rcs';
+  if (name === CFG.FEEDBACK) return 'draft';
+  if (name === CFG.AGENT || name === CFG.AGENT_CS) return 'agent';
+  return '';
+}
+/** Set the head notes of every known tab. Cheap: only changed notes are written. */
+function headerNotes(ss) {
+  ss.getSheets().forEach(sh => {
+    const kind = tabKind(sh.getName());
+    if (!kind) return;
+    const width = sh.getLastColumn();
+    if (width < 1) return;
+    const row = topRow(sh) - 1;
+    const r = sh.getRange(row, 1, 1, width);
+    const heads = r.getDisplayValues()[0], notes = r.getNotes()[0];
+    let changed = false;
+    const out = heads.map((h, i) => {
+      const was = notes[i] || '';
+      if (was && was.slice(-NOTE_MARK.length) !== NOTE_MARK) return was;
+      const want = headerNoteFor(kind, String(h).trim());
+      const next = want ? want + NOTE_MARK : '';
+      if (next !== was) changed = true;
+      return next;
+    });
+    if (changed) r.setNotes([out]);
+  });
+}
 const KEY_COLOURS = { blue: '#1f5fa8', green: '#2e7d32', orange: '#c25e00', grey: '#666666' };
 const KEY_WORD_RE = /\b(blue|green|orange|grey)\b/gi;
 function keyRuns(text) {
@@ -990,7 +1102,7 @@ function statusBlock(line, status, prs) {
   if (/needs human/i.test(status || '')) parts.push({ t: STATUS_SUB + NEEDS_YOU + ': under "Decision needed" below. Write your answer (the letter) in your Blue feedback column, then an Editor sets Ready for agent to Yes.' });
   (prs || []).forEach(p => {
     parts.push({ t: STATUS_SUB }, { t: prLabel(p.url), url: p.url },
-      { t: ' (' + [status, p.done].filter(Boolean).join(', ') + ')' + (p.desc ? ' \u00b7 ' + p.desc : '') });
+      { t: ' (' + [status, p.done].filter(Boolean).join(', ') + ')' + (p.desc ? descText(p.desc) : '') });
   });
   let text = '';
   const links = [];
@@ -1054,6 +1166,12 @@ function decisionSpans(text) {
   }
   // The script's ⏳ status line is bold too, so it reads as the row's state
   // (owner, 2026-10-31: "not bold").
+  // Labels at the start of a line ("What changed:", "Proposed direction:")
+  // and comment numbers, so the structure reads at a glance.
+  const lab = /(^|\n)([A-Z][A-Za-z ()]{2,40}:)(?=\s)/g;
+  while ((m = lab.exec(t))) spans.push([m.index + m[1].length, m.index + m[1].length + m[2].length]);
+  const ref = /\bNos?\.\s*\d+(?:(?:,\s*|\s+and\s+|\s+to\s+)\d+)*/g;
+  while ((m = ref.exec(t))) spans.push([m.index, m.index + m[0].length]);
   const i = t.indexOf('\n' + PROGRESS);
   const p = t.indexOf(PROGRESS) === 0 ? 0 : i < 0 ? -1 : i + 1;
   if (p >= 0) {
@@ -1183,7 +1301,16 @@ function agenticParts(status, prs) {
   return prs.flatMap((p, i) => (i ? [{ t: '\n' }] : []).concat(
     [{ t: prLabel(p.url), url: p.url }],
     status || p.done ? [{ t: ' ' }, { t: '(' + [status, p.done].filter(Boolean).join(', ') + ')', bold: true }] : [],
-    p.desc ? [{ t: ' · ' + p.desc }] : []));
+    p.desc ? [{ t: descText(p.desc) }] : []));
+}
+/**
+ * What a PR changed, as the agent wrote it: one item reads inline after
+ * " · "; several ("a; b; c", or one per line) read one bullet per line
+ * (owner, 2026-10-31: "several of the cols could be a bit more structured").
+ */
+function descText(desc) {
+  const items = String(desc).split(/;\s+|\n+/).map(x => x.replace(/^[\u2022*-]\s*/, '').trim()).filter(Boolean);
+  return items.length > 1 ? items.map(x => '\n  \u2022 ' + x).join('') : ' \u00b7 ' + (items[0] || '');
 }
 
 /** "smart-ra#97": the repository and number, since Sheets' link popup cuts the URL short. */

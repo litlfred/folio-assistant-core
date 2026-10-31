@@ -500,6 +500,25 @@ merge until it does, and the agent does not merge. A failed gate sends the
 change set back to the author, who updates the PR and its dispositions; the
 gate then runs again on the new head.
 
+## Structured cells and column hover text (owner, 2026-10-31)
+
+"Several of the cols could be a bit more structured": a list is never run
+together with semicolons. Agents write "What changed" and "What the PRs
+changed (change set)" one item per line, as `• <item> (No. n)`, under a
+label line ending in a colon. The script splits any remaining `a; b; c` into
+bullet lines, and bolds line-start labels (`What changed:`, `Proposed
+direction:`) and comment references (`No. 326`, `Nos. 1, 2 and 5`).
+
+Every column head carries a hover note saying what the column holds and who
+writes it, by the colour key ("can we add hover text to the column heads",
+all columns). The notes are `HEADER_NOTES` in the script, keyed by header
+(or `<tab kind>|<header>` where one header means different things on
+different tabs); a head named `Name (initials)` uses its `Name (*)` entry.
+The timer refresh writes only notes that changed, and never replaces a note
+a person wrote on a head. A new column gets its note in the same change
+that adds its header; `review-sheet.test.ts` checks that every known head
+has one.
+
 ## Sheet conventions (any agent-written Google Sheet)
 
 These hold for every Google Sheet an agent writes or keeps current, not only
