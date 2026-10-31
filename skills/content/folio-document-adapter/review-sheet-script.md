@@ -493,6 +493,15 @@ turn. The agent does not act on the row until an Editor sets Yes again, which
 is the signal to update the row's pull request. A Yes set while the row is
 still stale stays.
 
+**One row, one branch, one active pull request** (owner, 2026-10-31, option A).
+A change-set row keeps one branch for its whole life, and at most one pull
+request is open on it. Every later agent run pushes to that branch and updates
+that PR, so the row's `Staging review` link stays the same. If the PR is
+closed and the committee or contributors want the work back, the agent
+reopens it, or opens a new PR on the same branch when it cannot be reopened.
+It never starts a second branch for the row. Each earlier PR stays listed in
+the row's Agentic status, one line per PR, so the history is read in the sheet.
+
 **Filter views** (owner, 2026-10-31). Each template carries saved filter
 views, which copy with it. Use Data > Filter views, never a plain filter: a
 plain filter changes the view for everyone, a filter view only for whoever
