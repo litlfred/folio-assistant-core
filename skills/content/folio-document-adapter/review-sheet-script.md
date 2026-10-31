@@ -255,7 +255,12 @@ preview is current and the row is "Not started". Then, as the restage moves
 gh-pages, waiting for deploy, deployed)"): on the gh-pages push, write
 **Staging built from** and **Staging built** and set `pushed`; when the
 Pages run starts, `deploying`; when it succeeds, `deployed`. The sheet shows
-each stage in Staging review and the ⏳ line.
+each stage in Staging review and the ⏳ line. With each stage before `deployed` the agent adds
+when it expects the preview live, from the clock and recent runs of the
+same site (`gh run list --workflow pages-build-deployment` and the build's
+own duration): `building, expected 2026-10-31 15:20Z`. The sheet shows
+"expected live <time>" after the stage (owner, 2026-10-31: "also expected
+time of gh-page deployment").
 
 The script compares only; it stays `@OnlyCurrentDoc` with no internet access. Short and full shas both work: it compares the common prefix, at least 7 characters.
 It reads the active PR as the last one listed (one branch, one active PR per

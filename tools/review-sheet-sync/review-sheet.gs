@@ -779,9 +779,14 @@ function stagingWarning(url, built, prs, readyAt) {
  */
 function deployStage(deploy) {
   const d = String(deploy || '').toLowerCase();
-  if (/build/.test(d)) return 'building the preview';
-  if (/push|gh-pages|merged|queue|wait/.test(d)) return 'on gh-pages, waiting for Pages to deploy';
-  if (/pend|progress|deploying/.test(d)) return 'Pages is deploying it';
+  // The agent may add when it expects the preview live, from recent runs
+  // (owner, 2026-10-31: "also expected time of gh-page deployment"):
+  // "building, expected 2026-10-31 15:20Z".
+  const e = String(deploy || '').match(/expected[^0-9]*((?:\d{4}-\d\d-\d\d )?\d\d:\d\dZ)/i);
+  const by = e ? ', expected live ' + e[1].toUpperCase() : '';
+  if (/build/.test(d)) return 'building the preview' + by;
+  if (/push|gh-pages|merged|queue|wait/.test(d)) return 'on gh-pages, waiting for Pages to deploy' + by;
+  if (/pend|progress|deploying/.test(d)) return 'Pages is deploying it' + by;
   return '';
 }
 /** A change set with a PR whose head the agent recorded, and so owes a preview. */
