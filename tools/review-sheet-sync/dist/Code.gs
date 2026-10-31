@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 e9f3e79361f9ef71.
+// folio-assistant-core tools/review-sheet-sync at template sha256 cccac3079f9ee5da.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -54,7 +54,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 e9f3e79361f9ef71';
+const SCRIPT_VERSION = 'template sha256 cccac3079f9ee5da';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
   'in the function list (next to Run and Debug), then press Run.';
@@ -662,7 +662,7 @@ function stagingWarning(url, built, prs, readyAt) {
   // An Editor sent the row back to the agent after this preview was built:
   // the PR is about to change, so the preview no longer shows the agreed text.
   if (readyAt && !isNaN(at) && utcMs(readyAt) > at)
-    return '\u26a0 stale: Ready for agent set ' + readyAt + ', the agent will update the PR';
+    return '\u23f3 update requested ' + readyAt + ': matches the PR, which the agent will now change';
   const done = (prs || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
   if (!isNaN(at) && !(active && b.from) && done.some(x => x > at))
     return '\u26a0 stale: built ' + String(b.at).trim() + ', PR changed since';

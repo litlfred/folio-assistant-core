@@ -662,7 +662,7 @@ function stagingWarning(url, built, prs, readyAt) {
   // An Editor sent the row back to the agent after this preview was built:
   // the PR is about to change, so the preview no longer shows the agreed text.
   if (readyAt && !isNaN(at) && utcMs(readyAt) > at)
-    return '\u26a0 stale: Ready for agent set ' + readyAt + ', the agent will update the PR';
+    return '\u23f3 update requested ' + readyAt + ': matches the PR, which the agent will now change';
   const done = (prs || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
   if (!isNaN(at) && !(active && b.from) && done.some(x => x > at))
     return '\u26a0 stale: built ' + String(b.at).trim() + ', PR changed since';
