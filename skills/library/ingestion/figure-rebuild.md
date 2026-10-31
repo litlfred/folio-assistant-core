@@ -182,6 +182,58 @@ Match names only on an exact glossary label or `altLabel`. A cell with no
 match stays plain text and is listed for review. A guessed link is worse
 than none.
 
+### Example data becomes FHIR example instances
+
+A figure or table that shows example records, such as products, packs or
+identifiers with quantities, is instance data and not a drawing. Examples are
+dth-pc Fig. 11 (packaging variations) and the NPC01101001 table. Write
+the records once as FSH `Instance:`s of the upstream logical model
+(`InstanceOf: Product`, `Usage: #example`) beside that model. The figure or
+table is then generated from the compiled instances. For dth-pc these instances
+are in litlfred/smart-pcmt (owner chose this place on 2026-10-31). The
+instances carry only what the source prints:
+
+- A value the model requires but the source omits gets
+  `data-absent-reason#unknown`, never a plausible guess.
+- Numbers that do not add up in the source are transcribed as printed, and
+  the mismatch is listed in the PR.
+- A column with no clean element is left out and listed, not forced.
+
+### A repeated activity header comes from the step records
+
+A bar that repeats over each activity, such as INPUTS / STEPS / RESOURCES /
+OUTPUTS in dth-pc, is a view of that activity's step-table record. Generate
+it from the record. Each input and output links the BPMN data object it
+names, and nothing is typed into the bar.
+
+## Reviewing the classification
+
+An agent proposes, and a person decides. The owner chose on 2026-10-31 that
+review can happen either in the folio's Contributor Log sheet or in a GitHub
+issue, and the result always lands in the folio's `figures.json` by a PR.
+
+1. **Propose.** An agent looks at each figure's render and vector-layer
+   structure. It proposes a route from the table in step 2 and an upstream
+   source to reuse, if one exists, and gives its evidence.
+2. **Review in the sheet.** Write one row per figure, or per batch, to the
+   Contributor Log's Agent tab, one row per change set. The script copies
+   the rows across, so the sheet needs no new columns:
+   - **Title:** `Fig N: route`
+   - **Selected Sections:** the section that holds the figure
+   - **Feedback:** `Decision needed: <question>`, followed by lettered options
+     with the recommendation marked
+   - **Agentic status:** `Needs human`
+
+   An Editor accepts the recommendation by setting Ready for agent to Yes, or
+   types another letter. The steps are in `review-sheet-script`, "A question
+   to people goes in the sheet".
+3. **Or review in an issue.** One issue per figure, labelled `figure-route`,
+   holding the same question. The row's Issue column and `feedback-issue.ts`
+   keep a sheet row and its issue linked, so either one can start the review
+   and the decision closes both.
+4. **Record.** Accepted routes are written to `figures.json` in a PR, with
+   who approved each one. `figure-coverage` then holds the folio to them.
+
 ## Reading the report
 
 | State | Meaning |
