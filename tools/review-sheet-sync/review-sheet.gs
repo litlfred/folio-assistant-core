@@ -97,8 +97,8 @@ const READY_DESC = 'Ready columns: who may set them is the Config tab\'s EDITORS
  * Lock the "Ready for ..." columns to the owner and the Config tab's EDITORS,
  * so the owner can delegate who decides without touching protections. The
  * script's own protection is rebuilt each time; others are left alone. An
- * empty EDITORS row leaves the columns open to anyone who can edit; no row
- * leaves them as they are.
+ * empty EDITORS row locks them to the owner alone; no row leaves them as
+ * they are.
  */
 function applyEditors(ss) {
   if (EDITORS === null) return;
@@ -107,11 +107,12 @@ function applyEditors(ss) {
   const cols = s.header.map((h, i) => /^Ready for /.test(h) ? i : -1).filter(i => i >= 0);
   sh.getProtections(SpreadsheetApp.ProtectionType.RANGE)
     .filter(p => p.getDescription() === READY_DESC).forEach(p => p.remove());
-  if (!EDITORS.length) return;
+  // An empty row means the owner alone (owner, 2026-10-31: "should start w/
+  // empty list (owner is default editor)").
   cols.forEach(c => {
     const p = sh.getRange(s.top, c + 1, sh.getMaxRows() - s.top + 1, 1).protect().setDescription(READY_DESC);
     p.removeEditors(p.getEditors());
-    p.addEditors(EDITORS);
+    if (EDITORS.length) p.addEditors(EDITORS);
   });
 }
 

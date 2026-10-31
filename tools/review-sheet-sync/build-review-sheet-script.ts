@@ -454,7 +454,7 @@ export function editorSteps(): string[] {
     "   • Share each of them as Editor first (Share button, pick Editor)",
     "   • Type their emails in the EDITORS cell; only the owner can change it",
     "   • Choose Review links, then Refresh now: the two Ready columns are locked to the owner plus them",
-    "   • Leave it empty to let anyone who can edit the sheet set them",
+    "   • Leave it empty and only the owner can set them (the default)",
   ];
 }
 
