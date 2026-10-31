@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: public-comment\n"
-"POT-Creation-Date: 2026-10-31T16:31:59.534Z\n"
+"POT-Creation-Date: 2026-10-31T19:50:58.809Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ru\n"
@@ -14,297 +14,332 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:132
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:138
 #. Diagram element documentation
 msgid "A change-set gets its primary GitHub issue the first time somebody engages with it (the Discuss form, a recommendation or decision on one of its comments, a mention, a PR), opened by the folio's public-comment workflow; any number of other issues may discuss it and are linked. People agree the requirements there, and the committee or editor changes the record with cs-add / cs-remove / cs-title / cs-requirements / cs-committee / cs-merge / cs-split / cs-close / cs-new. The issue's change-set section is rendered from the record and put back if hand-edited; the nightly reconcile keeps every issue in line. The issue is for requirements; the PR that closes it is for preview, review and approval."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:36
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:37
 #. Diagram element documentation
 msgid "A frozen, line-numbered draft went out for public review. This is what happens to ONE comment that comes back: placed on the block it cites, triaged, weighed by the review committee, decided by the editor and, if the decision changes the document, made on a feature branch whose staging preview shows the text before and after. The change set is reviewed by the same process as any content change (Process_ContentChangeReview); only the intake is new. Skill: public-comment."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:150
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:156
 #. Diagram element documentation
 msgid "A GitHub comment tagged pc: PC-0042 / recommend: code, from a login in config.json committee, or public-comment recommend."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:212
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:230
 #. Diagram element documentation
 msgid "A message end: the review coordinator and any committee members assigned to the comment are told it is withdrawn, so nobody keeps working on it. The interruption has already closed its open tasks."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:99
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:105
 #. Diagram element documentation
 msgid "A reader presses [feedback] on a block of the rendered document and opens a GitHub issue about that block, from the folio's block-feedback issue form when it has one (skill block-actions, REQ-17). The issue names the block, so it arrives already placed. Intake records it like any other comment; a reader who would rather propose the wording presses [edit], which is a pull request, reviewed as a content change."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:131
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:137
 #. Diagram label
 msgid "Agree each change-set's requirements on its issue"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:143
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:149
 #. Diagram label
 msgid "Assign to committee members"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:83
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:84
 #. Diagram label
 msgid "Author (human or agentic)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:87
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:192
+#. Diagram element documentation
+msgid "Before Ready for merge. Reads: the change set's Disposition (change set), each comment's Blue Disposition on Review Public Comments, the PR's diff at its head commit, and the staging QA report. Checks that every comment number has one disposition; that each agrees with the people's Blue Disposition; that each Accepted or Partially accepted comment has its change in the diff, and a Not accepted, Noted, Deferred, Duplicate or Out of scope one has none; that the diff changes nothing no disposition accounts for; and that the QA report for the staged commit has no failing gate. Writes: QA gate (change set), first line \"Passed <head sha>: …\" or \"Failed <head sha>: <why>\", and QA report (change set), the report's link. The sheet shows both under Staging review; a pass for an older commit reads as stale (owner, 2026-10-31)."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:88
 #. Diagram label
 msgid "Change set — feature branch and staging"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:122
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:128
 #. Diagram label
 msgid "Closed as a duplicate"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:201
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:219
 #. Diagram label
 msgid "Commenter withdraws a comment"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:95
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:101
 #. Diagram label
 msgid "Comments returned on the review version"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:155
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:161
 #. Diagram label
 msgid "Decide, weighing the recommendations"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:167
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:173
 #. Diagram label
 msgid "Decided, answer recorded"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:162
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:168
 #. Diagram label
 msgid "Does the decision change the document?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:224
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:242
 #. Diagram label
 msgid "duplicate"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:116
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:122
 #. Diagram label
 msgid "Duplicate, plain editorial, or to be weighed?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:170
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:176
 #. Diagram label
 msgid "Edit the document as decided, on a feature branch"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:77
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:78
 #. Diagram label
 msgid "Editor"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:98
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:256
+#. Diagram label
+msgid "failed"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:104
 #. Diagram label
 msgid "Feedback on one block ([feedback] link)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:190
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:208
 #. Diagram label
 msgid "Incorporated in the document"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:103
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:109
 #. Diagram label
 msgid "Ingest and place each comment"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:59
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:60
 #. Diagram label
 msgid "Intake agent"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:184
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:202
 #. Diagram label
 msgid "Mark incorporated when the change set merges"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:233
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:251
 #. Diagram label
 msgid "no: not accepted, noted, deferred"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:84
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:85
 #. Diagram element documentation
 msgid "Once the editor has dispensed a comment with a decision that changes the document, an author makes the edit: a person, or an agent acting in the author role. The edit is made on a feature branch, which may carry the edits for several comments, and recorded on each comment it answers, so a comment shows where its change is being made while it is made."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:51
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:52
 #. Diagram element documentation
 msgid "Outside the folio: returns comments on the review version through a matrix, a form or a letter, and may withdraw one at any time. Never moves a comment past received; everything after that is the review's."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:65
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:66
 #. Diagram element documentation
 msgid "Owns triage: confirms or moves each anchor, sets type and priority, closes duplicates, routes plain editorial points straight to the editor, and assigns the rest to committee members."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:229
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:257
+#. Diagram label
+msgid "passed"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:247
 #. Diagram label
 msgid "plain editorial"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:125
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:131
 #. Diagram label
 msgid "Propose change-sets, as records with no issue yet"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:33
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:34
 #. Diagram label
 msgid "Public comment — one comment, from return to resolution"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:35
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:36
 #. Diagram label
 msgid "Public comment on a review draft"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:50
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:51
 #. Diagram label
 msgid "Public commenter"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:144
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:150
 #. Diagram element documentation
 msgid "public-comment assign: by GitHub login. A committee member who recommends on an unassigned comment is assigned it as they do."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:156
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:162
 #. Diagram element documentation
 msgid "public-comment decide, or decide: code on GitHub from a login in config.json editors. accepted, accepted-modified, not-accepted, noted, deferred; a reason for all but accepted. Also reopens a decided comment."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:171
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:177
 #. Diagram element documentation
-msgid "public-comment edit --branch: the author (human, or an agent in the author role) edits the folio's blocks as the decision says, on a feature branch for one change-set. Its PR says Closes #N for the change-set issue, and opening it moves that issue's accepted comments to editing."
+msgid "public-comment edit --branch: the author (human, or an agent in the author role) edits the folio's blocks as the decision says, on a feature branch for one change-set. Its PR says Closes #N for the change-set issue, and opening it moves that issue's accepted comments to editing. Before its preview is staged, the author writes the change set's Disposition (change set) on the Agent tab: one line per comment (No. 136: Accepted. ...), starting from each comment's Blue Disposition on Review Public Comments, after an optional Overall statement. Quality check: every comment number in the change set has a disposition; the sheet flags gaps and words that differ from the people's (owner, 2026-10-31)."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:104
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:110
 #. Diagram element documentation
 msgid "public-comment import / import-narrative: one record per row or cited passage, anchored through review-anchors.json. Status: received. When the review is also kept in a shared Google Sheet, build its Apps Script with Tool review-sheet-sync (from review/public-comment/sheet-sync.json) and have the sheet's owner install it once (Extensions, Apps Script, run installTriggers): the sheet then keeps its page, section, line and comment links and its change-set joins current by itself."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:185
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:203
 #. Diagram element documentation
-msgid "public-comment incorporate, naming the branch, PR and staging URL; done by the folio's workflow when the PR that closes a change-set issue merges. A PR closed unmerged moves nothing."
+msgid "public-comment incorporate, naming the branch, PR and staging URL; done by the folio's workflow when the PR that closes a change-set issue merges. A PR closed unmerged moves nothing. Ready for merge is set only once the QA gate has passed for the PR's head commit; set earlier, the agent does not merge until it passes. The change set's Dispositions blurb, as it stands when Ready for merge is set to Yes, is the summary that closes its issue (owner, 2026-10-31)."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:111
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:117
 #. Diagram element documentation
 msgid "public-comment triage / reassign / duplicate. An unplaced or low-confidence anchor is placed here, by a person."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:206
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:224
 #. Diagram element documentation
 msgid "public-comment withdraw, from any open status."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:138
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:144
 #. Diagram element documentation
 msgid "public-comment-changesets reroute, or cs-committee: <TWG> — <why> on GitHub from a person in the committee or editor lane (bean se3i, issue #197). Moves the change-set to another TWG review committee and records who, when, from, to and why on the change-set record, so re-ingesting comments never resets it. Person-only (userTask): agents cannot re-route a change-set on their own."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:126
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:132
 #. Diagram element documentation
 msgid "public-comment-changesets seed / propose: the agent groups the comments to be weighed into change-sets, one per change the document may need, each a record under changesets/ with its requirements and members. A PROPOSAL: nothing is decided, no GitHub issue is opened, and a comment may sit in zero, one or several change-sets. The record is the only one; everything shown about a change-set is rendered from it."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:137
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:197
+#. Diagram label
+msgid "QA gate passed for the PR's head?"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:191
+#. Diagram label
+msgid "QA gate: check dispositions against the people and the pull request"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:94
+#. Diagram label
+msgid "QA reviewer (independent)"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:143
 #. Diagram label
 msgid "Re-route a change-set to another committee, with a reason"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:149
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:155
 #. Diagram label
 msgid "Recommend a decision, with a rationale"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:72
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:73
 #. Diagram element documentation
 msgid "Recommends, does not decide: each member records one recommendation with a rationale, on GitHub or through the tool, and a later one replaces their earlier one. The editor weighs them."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:205
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:223
 #. Diagram label
 msgid "Record the withdrawal"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:71
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:72
 #. Diagram label
 msgid "Review committee"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:64
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:65
 #. Diagram label
 msgid "Review coordinator"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:176
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:183
 #. Diagram label
 msgid "Review the change set on its staging preview"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:200
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:218
 #. Diagram element documentation
 msgid "The commenter may withdraw a comment at any time before it is resolved. The withdrawal interrupts the comment wherever it is (triage, committee, editor, author or change set) and closes it as withdrawn, telling the coordinator and any assigned committee members."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:177
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:184
 #. Diagram element documentation
 msgid "The existing content-change review, unchanged, of the author's branch: its PR lists the PC refs it answers, and its staging preview is the after side of every deep link. A change the reviewers send back returns to the author inside that process."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:78
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:79
 #. Diagram element documentation
 msgid "The one lane that decides. Every decision carries one of five codes and, for every code but accepted, a reason the commenter is owed. A decision that does not change the document ends here."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:225
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:243
 #. Diagram label
 msgid "to be weighed"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:110
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:116
 #. Diagram label
 msgid "Triage: confirm the anchor, type and priority"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:60
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:61
 #. Diagram element documentation
 msgid "Turns each returned row, form response or cited passage into one comment and resolves its anchor through the review version's page/line map. A citation that resolves to nothing is kept as unplaced, never dropped."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:88
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:89
 #. Diagram element documentation
 msgid "Where the author's edit is reviewed and lands: the feature branch's staging preview gives before/after deep links to each comment's anchor, the change set is reviewed as any content change, and each comment it answers is marked incorporated when it merges."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:199
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:95
+#. Diagram element documentation
+msgid "Whoever runs the QA gate: an agent session that did not author the change set, or a person; never the author's own session (owner, 2026-10-31: \"add review (agent-independent) before ready for merge\"). Writes only QA gate (change set) and QA report (change set) on Agent - Change Sets."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:217
 #. Diagram label
 msgid "Withdrawal, at any open status"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:211
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:229
 #. Diagram label
 msgid "Withdrawn, coordinator and committee told"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/public-comment.bpmn:234
+#: ../folio-assistant-core/processes/content/public-comment.bpmn:252
 #. Diagram label
 msgid "yes: accepted"
 msgstr ""

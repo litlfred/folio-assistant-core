@@ -1,8 +1,8 @@
 /**
  * The shapes of figure data held on a library entry's `figure-data/`: a
  * published chart transcribed as data, so a generator can redraw it and every
- * handbook that reprints it points at one file (owner, 2026-10-31, "B in
- * who-iris").
+ * handbook that reprints it points at one file (owner, 2026-10-31, option B:
+ * the data lives on the library entry of the publication that prints it).
  *
  * | family | drawn by |
  * |---|---|
@@ -13,7 +13,7 @@
  * The library typology routes the two figure families (cat-harness-tools
  * `graph-typology-registry.ts`); `validators/` names these schemas for them.
  * The generators keep their own TypeScript interfaces; these schemas check the
- * same fields, and the tests parse the who-iris data with both.
+ * same fields, and the tests check these schemas against small inline fixtures.
  */
 import { z } from "zod";
 import { nodeKind } from "@litlfred/cat-harness-tools/schemas/kg/node-kind.ts";
