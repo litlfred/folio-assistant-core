@@ -43,6 +43,7 @@ Write as each step completes, not once at the end:
 |---|---|---|
 | work starts | Agentic status *Working* | |
 | PR opened, or a push to it | *PR open*; action taken, applied in, handled by, date actioned | Pull request, Staging review page, What the PRs changed, Agent completed |
+| staging preview built | | Staging built |
 | blocked on a decision | *Needs human*, and what is needed in action taken | |
 | ready for review | *Ready for review* | Agent completed |
 | merged | *Change merged* | clear the staging page (a merged branch's preview 404s) |
@@ -65,6 +66,11 @@ Write as each step completes, not once at the end:
   changes in the document, in a reader's words); Agent completed (one UTC
   time per PR, same order). A change set may have several PRs, and a line in
   M or N always matches the line of its URL in K.
+- **Staging built** (`YYYY-MM-DD HH:MMZ`, UTC): when the preview in Staging
+  review page was last built, taken from the publish (the last commit
+  under `STAGING/<slug>/` on the pages branch). Write it with the staging
+  link, and again on every rebuild. The script compares it with Agent
+  completed: a preview built before the last push is flagged stale.
 - **Append, never reorder.** A change set new to Agent goes at the end of
   I–N. Review Change Sets' typed columns sit beside rows derived from I, so
   moving a row moves people's inputs onto the wrong change set.
