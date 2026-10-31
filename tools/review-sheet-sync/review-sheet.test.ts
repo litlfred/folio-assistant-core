@@ -622,6 +622,23 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]).toBe("Define it in 1.1");
   });
 
+  test("the agent column under its new name, Feedback (agent), is read the same, and never counts as a person's feedback", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const f = t["Contributor Feedback"].rows;
+    f[0].push("Feedback (agent)");
+    f.forEach((x, i) => i && x.push(""));
+    f[1][9] = "Question for the editor: A or B? Recommended: A";
+    t.Agent.rows[0].push("Feedback basis (change set)");
+    t.Agent.rows[1].push(feedbackBasis(f[0], f[1]));
+    const rt2 = runtime(t);
+    const s = load(code, rt2.g);
+    s.refreshAll();
+    expect(rt2.written["Contributor Feedback"]["Feedback (agent)"]).toBeUndefined();
+    f[1][1] = "A new title";
+    s.refreshAll();
+    expect(String(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0])).toMatch(/^\u26a0 Stale: .*\nQuestion for the editor/);
+  });
+
   test("a new empty feedback column marks nothing stale, and a basis written the older way still matches", () => {
     const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
     const f = t["Contributor Feedback"].rows;

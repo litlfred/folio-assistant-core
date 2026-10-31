@@ -81,7 +81,7 @@ export function hashOf(text: string): string {
 }
 
 /**
- * What an agent proposal (`Contributor Feedback (agent)`, or `Committee
+ * What an agent proposal (`Feedback (agent)`, or `Change Set
  * Feedback (agent)` on Review Change Sets) was written against: a hash of the
  * row's blue cells, by header, the same hash the Apps Script's basisOf takes.
  * Drafting: Title, Selected Sections and every person's Contributor Feedback

@@ -26,6 +26,41 @@ sheet keeps them itself, with a Google Apps Script bound to it (owner,
 agent: it costs about 30 kB of tool output per 30 rows, and the next edit
 undoes it.
 
+## Inputs and outputs (owner, 2026-10-31: "make sure I/O on tools/skills well defined")
+
+Every actor on a review sheet reads and writes only what this table says.
+Columns are named by header, never by letter. "People's tab" is Contributor
+Feedback (drafting) or Review Public Comments and Review Change Sets (public
+comment).
+
+| actor | reads | writes | never writes |
+|---|---|---|---|
+| People (Authoring Committee, Feedback Review Committee) | the whole sheet | Blue columns on the people's tabs; cell comments | Green, Grey, Orange, Agent tabs, Config |
+| Editor (the Config EDITORS list) | the whole sheet | Orange `Ready for agent`, `Ready for merge` | Green, Grey, Agent tabs, Config |
+| Owner | the whole sheet | Config `EDITORS` | anything the agent or script writes |
+| Apps Script (`review-sheet.gs`, built by Tool `review-sheet-sync`) | Config (CFG, COLS, DATA, EDITORS); the people's tabs; the Agent tab(s) | Grey columns (ids, links, joins); Green columns copied from the Agent tab(s); the STALE mark on the agent column; `Ready for agent` back to No once, on the turn to stale; the Watch tab; protections on the Ready columns | Blue columns' contents; Orange except the stale reset; the Agent tab(s) |
+| Agent (sync or watcher) | the whole sheet; the folio's repository | the Agent tab(s) (one row per change set, and in public comment one row per comment on Agent - Comments); the agent column, `Feedback (agent)` (drafting) or `Change Set Feedback (agent)` (public comment); Config rows other than EDITORS | Blue, Orange, Grey; the Title on a drafting sheet |
+| Tool `review-sheet-sync` | the folio's `review/*/sheet-sync.json`, anchors, line map | `Code.gs` (generic); the Config rows for one sheet (`--config ... --out rows`) | the sheet itself |
+
+**A question to people goes in the sheet, not only in chat** (owner,
+2026-10-31: "how would the editor / feedback committee / review committee
+know if there was a card ... should be there and in the agent column").
+When the agent needs a person to decide something about a change set, it
+writes the question into that row's agent column, under its proposal, as
+
+```
+Decision needed: <the question>
+  A. <option> (recommended)
+  B. <option>
+Answer in your Blue column, or ask an Editor to set Ready for agent.
+```
+
+and sets the row's Agentic status to `Needs human`, so the "Needs human"
+filter view finds it. A card in the agent's chat may carry the same
+question for the owner, but the sheet is the record people see. When the
+question is answered, the agent replaces the block with the decision and who
+made it.
+
 **What it keeps current.** Columns are found by header text, so people may
 move them.
 
@@ -42,19 +77,23 @@ move them.
 | Review Change Sets | Public Comments | `No. n (Status) · comment`, status in bold, joined by a blank line |
 | Review Change Sets | Suggested Revisions, PC Committee Feedback, Dispositions | `No. n · text`, one per comment |
 
-**Committee Feedback (agent)** (Review Change Sets, green, right of Ready for
+**Change Set Feedback (agent)** (Review Change Sets, green, right of Ready for
 merge; owner, 2026-10-31). The agent writes its proposed direction for
 resolving the change set here, so the Feedback Review Committee and the
-Editor react to a proposal rather than drafting from nothing. The script does not
-touch it. It is a proposal, never a person's feedback: a tool that collects
-the people's `Committee Feedback (…)` columns by header must leave out
-`(agent)`, or show it apart, and it decides nothing.
+Editor react to a proposal rather than drafting from nothing. Any question
+for people is written here too (§"Inputs and outputs"). The script only
+marks it stale. It is a proposal, never a person's feedback: a tool that
+collects the people's `Committee Feedback (…)` columns by header must leave
+it out, or show it apart, and it decides nothing.
 
-These columns were headed `Architect Feedback …` until 2026-10-31, when the
-owner had them named for the process role, the Feedback Review Committee.
-The script finds a header under either name (`aliasOf`), and a feedback
-basis written under the old names still matches after the rename, so
-renaming the columns marks no proposal stale.
+Names (owner, 2026-10-31). The people's columns were `Architect Feedback …`
+and are `Committee Feedback …`, for the process role. The agent's columns
+are `Change Set Feedback (agent)` (public comment; it was `Architect
+Feedback (agent)`) and `Feedback (agent)` (drafting; it was `Contributor
+Feedback (agent)`). Their names live in Config COLS (`rcs.agentFeedback`,
+`draft.agentFeedback`). The script finds each column under any of its names
+(`aliasOf`, `SAME_COLUMN`), and a feedback basis written under the old names
+still matches, so renaming marks no proposal stale.
 
 Every `No. n` in Review Change Sets links to `#gid=<Review Public Comments>&range=A<row>`.
 Do not link to a named range by `#rangeid=`: Sheets shows "Invalid range"
@@ -131,8 +170,8 @@ Agent tab's Staging review page (change set) where it names one). Without a
 build time it claims nothing. The preview page shows its own live banner too
 (the site's staging build, cat-harness-tools).
 
-**Stale agent proposals.** `Contributor Feedback (agent)` (drafting) and
-`Committee Feedback (agent)` (Review Change Sets) carry the agent's proposal.
+**Stale agent proposals.** `Feedback (agent)` (drafting) and
+`Change Set Feedback (agent)` (Review Change Sets) carry the agent's proposal.
 The agent records what it wrote against in the Agent tab's **Feedback basis
 (change set)**: `feedbackBasis()` in `tools/review-sheet-sync/feedback-issue.ts`,
 a hash of the row's blue cells (drafting: Title, Selected Sections, people's
@@ -290,7 +329,7 @@ topic), and each change set gets a GitHub issue.
 
 | tab | who writes | columns |
 |---|---|---|
-| **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Selected Sections** (a multi-select dropdown of the document's table of contents, each section indented under its chapter by three U+2800 blanks per level, since a dropdown cannot nest (owner, 2026-10-31; a "└ " mark was tried first and found too cluttered); not real spaces, because Sheets trims a multi-select cell and the first chip would lose them and read as Invalid; it stays plain, because a dropdown chip cannot carry a link), any number of **Contributor Feedback (…)** columns, one per contributor, with their initials or name in the brackets (e.g. `Contributor Feedback (CL)`); the script reads every column whose header is `Contributor Feedback` or starts `Contributor Feedback (`; **Disposition** (a dropdown: Pending, Accepted, Partially accepted, Not accepted, Noted, Duplicate, Out of scope; owner, 2026-10-31), the committee's verdict on the row. Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Grey, mechanical, by the script (owner, 2026-10-31): **Section links** (each selected section on its own line, linked to its place on the document page, like the Sections column of the public-comment log; it is mechanical, a copy of Selected Sections with links, so grey, not green). Green, by the agent: **Contributor Feedback (agent)**, right of Ready for merge (owner, 2026-10-31): the agent's proposed direction for resolving the change set, so people react to a proposal rather than draft from nothing; it is not a person's feedback, the script leaves it out of the Contributor Feedback columns, and it decides nothing. Green, by the script from Agent: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`), **Staging review** (a "review" link to the change set's review page on its staging preview, `STAGING/<branch>/en/review/`, while its PR is open; the column was "Staging review page" until 2026-10-31, owner), **Agentic status (filter)** (the change set's status as one plain value, for the "By agentic status" filter view; green like the other columns the script copies from Agent, owner 2026-10-31) |
+| **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Selected Sections** (a multi-select dropdown of the document's table of contents, each section indented under its chapter by three U+2800 blanks per level, since a dropdown cannot nest (owner, 2026-10-31; a "└ " mark was tried first and found too cluttered); not real spaces, because Sheets trims a multi-select cell and the first chip would lose them and read as Invalid; it stays plain, because a dropdown chip cannot carry a link), any number of **Contributor Feedback (…)** columns, one per contributor, with their initials or name in the brackets (e.g. `Contributor Feedback (CL)`); the script reads every column whose header is `Contributor Feedback` or starts `Contributor Feedback (`; **Disposition** (a dropdown: Pending, Accepted, Partially accepted, Not accepted, Noted, Duplicate, Out of scope; owner, 2026-10-31), the committee's verdict on the row. Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Grey, mechanical, by the script (owner, 2026-10-31): **Section links** (each selected section on its own line, linked to its place on the document page, like the Sections column of the public-comment log; it is mechanical, a copy of Selected Sections with links, so grey, not green). Green, by the agent: **Feedback (agent)**, right of Ready for merge (owner, 2026-10-31): the agent's proposed direction for resolving the change set, so people react to a proposal rather than draft from nothing; it is not a person's feedback, the script leaves it out of the Contributor Feedback columns, and it decides nothing. Green, by the script from Agent: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`), **Staging review** (a "review" link to the change set's review page on its staging preview, `STAGING/<branch>/en/review/`, while its PR is open; the column was "Staging review page" until 2026-10-31, owner), **Agentic status (filter)** (the change set's status as one plain value, for the "By agentic status" filter view; green like the other columns the script copies from Agent, owner 2026-10-31) |
 | **Agent** | the agent only | one row per change set: Change-set, Issue (URL), Agentic status, Pull request (change set), What the PRs changed (change set), Agent completed (UTC, change set), Staging review page (change set), Feedback basis (change set). The agent writes it as each step completes, by the steps of the `review-sheet-agent-columns` skill (core#315, not yet merged); a drafting sheet has no per-comment rows, so only its change-set columns apply |
 | **TOC** (hidden) | the script | the Sections dropdown's list and each entry's link. Rewritten on every refresh, so it follows the document |
 
@@ -340,8 +379,10 @@ Contributor Feedback row with a Change-set:
    empty), body the linked sections, every Contributor Feedback (…) cell
    verbatim, and a link back to the sheet row. Write its URL into Issue.
 3. When feedback is added to a row later, comment the new text on its issue.
-4. Propose a direction in **Contributor Feedback (agent)** whenever the
-   row changes, whoever changed it, a person or an agent. On each sync
+4. Propose a direction in **Feedback (agent)** whenever the
+   row changes, whoever changed it, a person or an agent. A question for
+   people goes there too, as a `Decision needed:` block (§"Inputs and
+   outputs"). On each sync
    compute `feedbackBasis(header, row)` (`tools/review-sheet-sync/feedback-issue.ts`:
    a short hash of Title, Selected Sections and the people's Contributor
    Feedback columns). Where it differs from the Agent tab's **Feedback
