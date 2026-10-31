@@ -198,8 +198,11 @@ for agent to Y ... i expected Staging review to get a stale warning"). The PR
 has not changed yet when an Editor sends a row back, so the commit check above
 passes. The script records, as a document property `ready:<CS>`, the time it
 first sees a row's Ready for agent at Yes (cleared on No). When that time is
-later than **Staging built**, after the deploy checks, it writes `⚠ stale:
-Ready for agent set <time>, the agent will update the PR`. The same time makes
+later than **Staging built**, after the deploy checks, it writes `⏳ update
+requested <time>: matches the PR, which the agent will now change`. It is not
+a ⚠: the preview still shows the PR exactly, and the review page cannot know
+the sheet (owner, 2026-10-31: "why not stale in first but stale in second?").
+The ⚠ stale mark is kept for a preview older than its PR. The same time makes
 **Agentic status** open with **Queued for the agent (Ready for agent set
 <time>)**, until the agent records a later completion or sets the status to
 Working.

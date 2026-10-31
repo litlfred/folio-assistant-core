@@ -983,7 +983,7 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
 
   test("Staging review warns when Ready for agent was set after the build", () => {
     expect(fns.stagingWarning("u", built, [pr])).toBe("");
-    expect(fns.stagingWarning("u", built, [pr], "2026-10-31 11:30Z")).toContain("stale: Ready for agent set 2026-10-31 11:30Z");
+    expect(fns.stagingWarning("u", built, [pr], "2026-10-31 11:30Z")).toContain("update requested 2026-10-31 11:30Z");
     expect(fns.stagingWarning("u", built, [pr], "2026-10-31 08:00Z")).toBe("");
   });
 
