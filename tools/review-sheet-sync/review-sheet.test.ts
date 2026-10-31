@@ -13,7 +13,10 @@ import { mkdtempSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { buildScript } from "./build-review-sheet-script.js";
+import { buildConfig, buildScript, configRows } from "./build-review-sheet-script.js";
+
+const code = buildScript();
+const withConfig = <T extends object>(t: T, rows: string[][]) => ({ ...t, Config: { id: 50, rows } });
 
 type Rich = { text: string; links: [number, number, string][]; bold: [number, number][] };
 
@@ -133,8 +136,8 @@ const tabs = () => ({
 const slice = (r: Rich, [a, z]: [number, number, ...unknown[]]) => r.text.slice(a, z);
 
 describe("review-sheet.gs, built and run against a fake sheet", () => {
-  const code = buildScript(folio(), "review/public-comment/sheet-sync.json");
-  const rt = runtime(tabs());
+  const pcRows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
+  const rt = runtime(withConfig(tabs(), pcRows));
   load(code, rt.g).refreshAll();
   const rpc = rt.written["Review Public Comments"];
   const rcs = rt.written["Review Change Sets"];
@@ -204,7 +207,7 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
   });
 
   test("an edit on a watched tab marks the sheet dirty, and the timer rebuilds once", () => {
-    const rt2 = runtime(tabs());
+    const rt2 = runtime(withConfig(tabs(), pcRows));
     const s = load(code, rt2.g);
     s.markDirty({ range: { getSheet: () => rt2.sheet("Public Comment Source") } });
     expect(rt2.props.dirty).toBeUndefined();
@@ -262,24 +265,35 @@ const draftTabs = () => ({
 });
 
 describe("review-sheet.gs in drafting mode", () => {
-  const code = buildScript(draftFolio(), "review/drafting/sheet-sync.json");
-  const tabs = draftTabs() as Record<string, { id: number; rows: string[][]; hidden?: boolean }>;
+  const dRows = configRows(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
+  const tabs = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][]; hidden?: boolean }>;
   const rt = runtime(tabs);
   load(code, rt.g).refreshAll();
   const fb = rt.written["Contributor Feedback"];
 
   test("in a sheet without its tabs it stops with a plain message", () => {
-    const rt2 = runtime({ "Review Public Comments": { id: 1, rows: [["No."]] } } as never);
-    expect(() => load(code, rt2.g).refreshAll()).toThrow(/built from review\/drafting\/sheet-sync.json for a drafting sheet.*no "Contributor Feedback"/);
+    const rt2 = runtime(withConfig({ "Review Public Comments": { id: 1, rows: [["No."]] } }, dRows) as never);
+    expect(() => load(code, rt2.g).refreshAll()).toThrow(/written from review\/drafting\/sheet-sync.json for a drafting sheet.*no "Contributor Feedback"/);
+  });
+
+  test("without a Config tab it says so", () => {
+    const rt2 = runtime(draftTabs() as never);
+    expect(() => load(code, rt2.g).refreshAll()).toThrow(/no "Config" tab/);
+  });
+
+  test("the script is the same for every document: nothing of the folio is in it", () => {
+    expect(code).not.toContain("S#");
+    expect(code).not.toContain("Global challenges");
+    expect(dRows[1][0]).toBe("CFG");
+    expect(dRows.every((r, i) => i === 0 || r[1].startsWith("|"))).toBe(true);
+    expect(JSON.parse(dRows[1][1].slice(1)).MODE).toBe("drafting");
   });
 
   test("the built script is plain ASCII, so a paste cannot mangle it", () => {
     expect(/[^\x00-\x7f]/.test(code)).toBe(false);
-    expect(code).toContain("\\u00b7");
   });
 
   test("the TOC has chapters and sections, without commas, each with its anchor", () => {
-    expect(code).toContain('"MODE": "drafting"');
     const toc = rt.written.TOC.Section as string[][];
     expect(toc.map((r) => r[0])).toEqual([
       "Section", "About this draft", "About this draft · Questions for the TWG", "Ch 1 Why it matters",
@@ -316,7 +330,7 @@ describe("review-sheet.gs in drafting mode", () => {
   });
 
   test("only Contributor Feedback and Agent edits mark the sheet dirty", () => {
-    const rt2 = runtime(draftTabs() as Record<string, { id: number; rows: string[][] }>);
+    const rt2 = runtime(withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>);
     const s = load(code, rt2.g);
     s.markDirty({ range: { getSheet: () => rt2.sheet("Agent") } });
     expect(rt2.props.dirty).toBe("1");
