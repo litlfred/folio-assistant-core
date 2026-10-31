@@ -119,7 +119,7 @@ function applyEditors(ss) {
  * its "Allow multiple selections" tick. Neither Apps Script nor the Sheets
  * API can read the Chip style or that tick, so the box is skipped only on
  * evidence: a cell already holding two sections from the list, or the person
- * having said it is done (Yes). The same steps are on the Config tab (SETUP).
+ * having said it is done (Yes). The same steps are in the Config tab's Instructions row.
  */
 function checkDropdown(ss) {
   const sh = ss.getSheetByName(CFG.FEEDBACK);

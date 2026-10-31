@@ -422,8 +422,8 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    already holding two sections from the list, or a Yes to the box's "Is this
    done already?" (kept as the document property `dropdownDone`). Copies made
    after the template has them keep them. The same steps are written at the
-   top of the Config tab, in one `SETUP` row, so they stay with the sheet
-   (owner, 2026-10-31); the script ignores that row.
+   top of the Config tab, in its `Instructions` row, so they stay with the
+   sheet (owner, 2026-10-31); the script ignores that row.
 
 **Who may set the Ready columns: the `EDITORS` row** (owner, 2026-10-31).
 Everyone who works in a log is shared as Editor; protected ranges decide what
@@ -440,7 +440,7 @@ rewrites the tab, and the emails never go into `sheet-sync.json`, which is
 committed. To delegate who decides, the owner can add a delegate to the Config
 tab's protection, or send the agent the list.
 
-**The Instructions row and the GUIDE row** (owner, 2026-10-31). A row above
+**The Instructions row** (owner, 2026-10-31). A row above
 the header of each people's tab (RPC, RCS, Contributor Feedback), frozen with
 it and grey like it, says what the colours mean and how the workflow runs, worded for the mode by `colourKey()` in the builder:
 
@@ -460,14 +460,18 @@ after the sheet runs a Code.gs that knows it; an older script reads the legend
 as the header and finds no columns. Filter views and protections start at the
 header row, so shift them down by one row when the row is inserted.
 
-The Config tab's first row, `GUIDE`, is for everyone who opens the sheet,
+The Config tab has an `Instructions` row too, above its `Key | Value`
+header, and it holds the whole guide in one cell: the tab's purpose, then how
+the sheet works, then the setup steps (owner, 2026-10-31: "GUIDE / SETUP
+content should be in Config header instructions"; there are no separate
+`GUIDE` and `SETUP` rows). The how-it-works part is for everyone who opens the sheet,
 including people who may only comment or view: the colour key, the six-step
 human-to-agent workflow, worded by process role (people write in blue; the agent proposes in green; an
 Editor sets Ready for agent; the agent opens a pull request whose `Staging
 review` opens the preview's what-changed page; reviewers answer in blue, and a
 change marks the proposal stale; an Editor sets Ready for merge and the agent
-merges), and how to find rows with the saved filter views. `guideSteps()` writes
-it; the script ignores the row.
+merges), and how to find rows with the saved filter views. `tabInstructions()`,
+`guideSteps()` and `setupSteps()` write it; the script ignores the row.
 
 **Filter views** (owner, 2026-10-31). Each template carries saved filter
 views, which copy with it. Use Data > Filter views, never a plain filter: a
