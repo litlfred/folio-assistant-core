@@ -520,7 +520,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect((f["Section links"][0][0] as Rich).text).toBe("1.1 Global challenges");
   });
 
-  test("EDITORS locks each Ready column to the owner and those emails; empty opens it again", () => {
+  test("EDITORS locks each Ready column to the owner and those emails; empty leaves the owner alone", () => {
     const rows = dRows.map((r) => (r[0] === "EDITORS" ? ["EDITORS", "a@x.example\nb@x.example, not-an-email"] : r));
     const t = withConfig(draftTabs(), rows) as Record<string, { id: number; rows: string[][]; prot?: Prot[] }>;
     const fbRows = t["Contributor Feedback"].rows;
@@ -535,7 +535,8 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(live()).toHaveLength(2);
     t.Config.rows = t.Config.rows.map((r) => (r[0] === "EDITORS" ? ["EDITORS", ""] : r));
     load(code, rt2.g).refreshAll();
-    expect(live()).toHaveLength(0);
+    expect(live()).toHaveLength(2);
+    expect(live()[0].editors).toEqual(["owner@x.example"]);
   });
 
   test("any filled row gets a Change-set; one holding only No does not", () => {

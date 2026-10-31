@@ -509,8 +509,10 @@ names them in the Config tab's `EDITORS` row: plain emails, one per line (or
 separated by commas). installTriggers and Review links > Refresh now lock each
 `Ready for ...` column to the owner plus those emails, under a protection the
 script owns and rebuilds each time (other protections are left alone). An
-empty row leaves the columns open to anyone who can edit; a Config with no
-`EDITORS` row leaves them as they are. `EDITORS` is the one Config row a person
+empty row locks them to the owner alone, which is how every new sheet starts
+(owner, 2026-10-31: "should start w/ empty list (owner is default editor)");
+a Config with no `EDITORS` row leaves them as they are. Both templates carry
+the Orange `EDITORS` row, empty, so a copy has it from the start. `EDITORS` is the one Config row a person
 keeps: the agent writes it empty and keeps the sheet's value whenever it
 rewrites the tab, and the emails never go into `sheet-sync.json`, which is
 committed. To delegate who decides, the owner can add a delegate to the Config
