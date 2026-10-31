@@ -489,7 +489,7 @@ The Config tab keeps its Instructions short, one subject per row, so no row is
 taller than the window (owner, 2026-10-31): `Instructions` (the tab's purpose:
 nothing here needs you unless you install the script), `Instructions - Setup`
 (`setupSteps()`) and `Instructions - Editors` (`editorSteps()`), then the
-`Key | Value` header. Its rows are not frozen. The script reads Config keys by
+`Key | Value` header. Its rows are not frozen. The EDITORS row is Orange, like the Ready columns it controls, because a person keeps it (owner, 2026-10-31); the rows the agent writes stay grey. The script reads Config keys by
 name, so it ignores these rows.
 
 **A stale proposal hands control back to an Editor** (owner, 2026-10-31).
