@@ -230,6 +230,7 @@ const MAX_ROWS = 200;
 function refreshIfDirty() {
   const props = PropertiesService.getDocumentProperties();
   try { loadConfig(SpreadsheetApp.getActive()); } catch (err) { return; }
+  try { colourInstructions(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
   if (!DRAFTING) {
     // The agent writes Agent through the API, which fires no edit, so the
     // timer also rebuilds when the Agent tab's contents have changed.
@@ -266,6 +267,7 @@ function refreshAll() {
   try {
     refreshLocked();
     applyEditors(SpreadsheetApp.getActive());
+    try { colourInstructions(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
   } finally {
     PropertiesService.getDocumentProperties().setProperty('lastMs', String(Date.now() - t0));
     lock.releaseLock();
@@ -342,6 +344,54 @@ function legendCount(firstCells) {
   let h = 0;
   while (h < firstCells.length - 1 && LEGEND_RE.test(String(firstCells[h]).trim())) h++;
   return h;
+}
+/**
+ * The colour words in each tab's Instructions text are shown in their own
+ * colour (owner, 2026-10-31: "no color coded instructions"). The key on the
+ * first line ("Blue = your input ...") is coloured segment by segment, and
+ * every later Blue, Green, Orange or Grey word by itself, bold. A cell is
+ * only rewritten when its first colour word is not yet coloured, so this is
+ * cheap enough to run on every refresh; the agent rewrites the text through
+ * the API, which drops the colours, and the next refresh puts them back.
+ * Links in the text are kept as links.
+ */
+const KEY_COLOURS = { blue: '#1f5fa8', green: '#2e7d32', orange: '#c25e00', grey: '#666666' };
+const KEY_WORD_RE = /\b(blue|green|orange|grey)\b/gi;
+function keyRuns(text) {
+  const runs = [];
+  const nl = text.indexOf('\n');
+  const first = nl < 0 ? text : text.slice(0, nl);
+  let keyEnd = 0;
+  if (/^(blue|green|orange|grey) = /i.test(first)) {
+    const seg = /(blue|green|orange|grey) = .*?(?=\s{3,}|$)/gi;
+    let m;
+    while ((m = seg.exec(first))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
+    keyEnd = first.length;
+  }
+  let m;
+  KEY_WORD_RE.lastIndex = keyEnd;
+  while ((m = KEY_WORD_RE.exec(text))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
+  return runs;
+}
+function colourInstructions(ss) {
+  ss.getSheets().forEach(sh => {
+    const n = Math.min(5, sh.getLastRow());
+    if (n < 2 || sh.getLastColumn() < 2) return;
+    const h = legendCount(sh.getRange(1, 1, n, 1).getDisplayValues().map(r => r[0]));
+    for (let r = 1; r <= h; r++) {
+      const cell = sh.getRange(r, 2);
+      const now = cell.getRichTextValue();
+      const text = now ? now.getText() : '';
+      const runs = keyRuns(text);
+      if (!runs.length || (now.getTextStyle(runs[0][0], runs[0][1]).getForegroundColor() || '').toLowerCase() === runs[0][2]) continue;
+      const b = SpreadsheetApp.newRichTextValue().setText(text);
+      runs.forEach(([a, z, c]) => b.setTextStyle(a, z, SpreadsheetApp.newTextStyle().setForegroundColor(c).setBold(true).build()));
+      const url = /https?:\/\/\S+/g;
+      let u;
+      while ((u = url.exec(text))) b.setLinkUrl(u.index, u.index + u[0].length, u[0]);
+      cell.setRichTextValue(b.build());
+    }
+  });
 }
 /** The sheet row of the first data row, reading only column A's top cells. */
 function topRow(sh) {

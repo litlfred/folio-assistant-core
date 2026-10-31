@@ -256,6 +256,13 @@ the review sheets (owner, 2026-10-31):
   gates carry their own lock that starts with the owner alone.
 - **The Config tab** is visible, never hidden, and locked to the owner: the
   agent writes it, people can read what the sheet is set up for.
+- **The colour key is shown in its colours** (owner, 2026-10-31: "no color
+  coded instructions"). In each tab's Instructions text the key on the first
+  line ("Blue = your input ...") is coloured segment by segment, and every
+  later Blue, Green, Orange or Grey word is coloured by itself, bold, in a
+  darker shade of its column colour. The script's `colourInstructions` does
+  it on every refresh, so text the agent rewrites through the API, which drops
+  the colours, gets them back within five minutes.
 - **Which template** depends on the document's authoring stage: the
   Contributor template while it is being drafted and authored, the Public
   Comment Review template once public comment opens.

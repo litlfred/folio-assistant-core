@@ -122,6 +122,17 @@ Columns are named here by header, never by letter: people move them.
 | **Review Change Sets** | people, plus formulas and the Apps Script | one row per CS. Green, agent-derived: Title, the change-set's title from its record (owner, 2026-10-30). Grey: Change-set, and the Apps Script's Sections and Pages (each linked) and joins: Public Comments (`No. n (Status) · comment`, status in bold), Suggested Revisions, PC Committee Feedback and Dispositions (`No. n · text`), each `No. n` linking to its row. Green: TWG (PCs), the PCs' TWG (human), else TWG (agent) marked "(AI)". Blue, people: TWG (CS) (multi-select), `Committee Feedback (<initials>)` on the CS. Orange: **Ready for agent** and **Ready for merge** (Yes/No, editors). Green, from Agent by the Apps Script (derived agentic content, owner 2026-10-30): **Agentic status**, as on Review Public Comments: one line per PR of the change-set, `<repo>#n (status, completed) · what it changed`, the status being the change-set's PCs' agentic statuses. Green, from Agent: Staging review page |
 | **RCS joins (live)** | formulas (hidden) | live joins over Review Public Comments and Agent, kept for checking the Apps Script's output |
 
+**Splitting an older sheet's one Agent tab.** Duplicate it, delete A–H on the
+copy and the change-set columns on the original, rename them, set `AGENT` and
+`AGENT_CS` in the Config, and give each an Instructions row. Then, in the same
+step, repoint every formula that read the old tab's change-set columns: they
+become `#REF!` when those columns are deleted (2026-10-31, the DPI-H sheet).
+They are Review Change Sets A3 (`FILTER('Agent - Change Sets'!A3:B, ...)`, the
+Change-set and Title), the Staging review column of Review Public Comments
+(its lookup range becomes `'Agent - Change Sets'!A:D`), and A2 of the hidden
+`RCS joins (live)` tab. Read row 3 of each tab for `#REF!` before saying it is
+done.
+
 **Colour key** (owner, 2026-10-30). Blue: people decide. Orange: a release
 an editor gives (Ready for agent, Ready for merge). Grey: fixed, mechanical,
 or from the knowledge graph. Green: derived or written by the agent. Every
