@@ -88,13 +88,13 @@
       <bpmn:outgoing>CF04</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:serviceTask id="Task_EditInPullRequest" name="Edit the document in the row's pull request">
-      <bpmn:documentation>One row, one pull request: the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again. Agentic status (Green) says where it is, and Staging review opens the preview's what-changed page.</bpmn:documentation>
+      <bpmn:documentation>One row, one branch, one active pull request (owner, 2026-10-31): the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again. A closed pull request the committee wants back is reopened, or replaced by a new one on the same branch; earlier ones stay listed in Agentic status. Agentic status (Green) says where it is, and Staging review opens the preview's what-changed page.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF04</bpmn:incoming>
       <bpmn:outgoing>CF05</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:userTask id="Task_AnswerPreview" name="Review the preview and answer">
-      <bpmn:documentation>Members read the preview and answer in their Blue columns, or leave them as they are when the change is right.</bpmn:documentation>
+      <bpmn:documentation>Members read the preview and answer in their Blue columns, or leave them as they are when the change is right. They record the row's Disposition (Blue): Pending, Accepted, Partially accepted, Not accepted, Noted, Duplicate or Out of scope.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF05</bpmn:incoming>
       <bpmn:outgoing>CF06</bpmn:outgoing>
@@ -106,7 +106,7 @@
       <bpmn:outgoing>CF08</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:userTask id="Task_ReadyForMerge" name="Set Ready for merge to Yes">
-      <bpmn:documentation>An Editor sets the row's Ready for merge (Orange) to Yes, and may record its Disposition. Person-only.</bpmn:documentation>
+      <bpmn:documentation>An Editor sets the row's Ready for merge (Orange) to Yes. Person-only.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF08</bpmn:incoming>
       <bpmn:outgoing>CF09</bpmn:outgoing>
