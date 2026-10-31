@@ -282,6 +282,25 @@ through the session's Google Sheets connector. No credential for it is
 committed. Google cannot stop the owner's own account editing any tab, so the
 one-writer rule is kept by the agent, not enforced by the sheet.
 
+### Editorial change-sets may be drafted without waiting
+
+A change-set is **editorial** when it changes only wording, numbering,
+cross-references, typos or house style, and no meaning: nothing a TWG or
+committee has to judge. The agent may draft an editorial change-set as a
+**draft PR with a staging preview** without waiting for Ready for agent
+(owner, 2026-10-31, standing rule after smart-ra CS-052, 060, 097, 194, 254,
+283). It records each step in the Agent tab as usual
+([`review-sheet-agent-columns`](review-sheet-agent-columns.md)), with
+"editorial draft" in its status.
+
+- It still never sets **Ready for merge**, and nothing merges without it.
+- A change-set that mixes editorial and substantive asks is split: the agent
+  drafts the editorial part, and the substantive part (a new definition, new
+  guidance, a rewrite) goes to *Needs human* (smart-ra CS-052).
+- A house-style choice the document has not made yet (a spelling convention,
+  say) is asked once with options, then followed; it is not guessed.
+- When unsure whether a change is editorial, it is not: wait for Ready for agent.
+
 ## Placing a comment: how much to trust the anchor
 
 `anchor.method` says how the place was found, and `confidence` says how far to
