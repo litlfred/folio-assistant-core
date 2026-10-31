@@ -47,6 +47,11 @@ The `unaligned` rest are listed by method, not hidden.
 
 ## Intake: one store, four routes, nothing dropped
 
+The channels a release goes out on (an offline Excel sheet, a Google Form, a
+GitHub issue form), each limited to the release's fixed references, and the
+path each one takes back to these routes, are the
+[`public-comment-channels`](public-comment-channels.md) skill's.
+
 | route | command | anchor comes from |
 |---|---|---|
 | comment matrix (.xlsx) | `import <file>` | section, page, line or Table/Figure columns |
@@ -115,7 +120,7 @@ Columns are named here by header, never by letter: people move them.
 
 | tab | who writes it | holds |
 |---|---|---|
-| **Public Comment Source** | people (locked) | No., date received, channel, reviewer name, organisation, country / region, stakeholder type. Reviewers' names and emails stay here and never enter the repository |
+| **Public Comment Source** | intake, copied from what each channel returned (locked) | Every column Grey, header and cells: it is the external source, copied mechanically, and nobody edits it (owner, 2026-10-31). No., date received, channel, reviewer name, organisation, country / region, stakeholder type. Reviewers' names and emails stay here and never enter the repository |
 | **Review Public Comments** | people, plus formulas and the Apps Script | one row per PC. Grey, mechanical: No. (a link to the comment's page), Sections, Page, Line no(s) / Table / Figure (each linked to the draft page), Comment / issue, the PC's own Suggested revision. Green, derived: Change Set (a link to its Review Change Sets row) and TWG (agent). Blue, people: TWG (human) (a multi-select dropdown), Comment type, any number of `Committee Feedback (<initials>)` columns, Disposition, Status. Green, from Agent by the Apps Script (derived agentic content, owner 2026-10-30): **Agentic status**, one line per pull request of the PC's change-sets, `<repo>#n (status, completed) · what it changed` (the repository in the link text, because Sheets' link popup cuts the URL short) with the PR linked and the status and completion time bold, or the status alone when there is no PR. Green, from Agent: Staging review page (by the PC's change-set) |
 | **Agent - Comments** | **the agent, and only the agent** | one row per No.: No., Comment ref (the PC id), Agentic status, Agentic action taken, Agentic applied in, Agentic handled by, Agentic date actioned (a UTC time, `YYYY-MM-DD HH:MMZ`, when the agent last finished work on the PC; the four Agentic columns after the status are the agent's log of what it did on that PC; no view reads them), Change-sets (the change set or sets this comment belongs to) |
 | **Agent - Change Sets** | **the agent, and only the agent** | one row per change-set: Change-set, Title, **Pull request (change set)** (any number of PR URLs, one per line), **Staging review page (change set)**, **What the PRs changed (change set)** (one line per PR, in the same order: what that PR changes in the document), **Agent completed (UTC, change set)** (one line per PR, in the same order: when the agent last finished work on it, `YYYY-MM-DD HH:MMZ`), Feedback basis (change set), Staging built (UTC, change set), **PR head (change set)**, **Staging built from (change set)**, **Staging deploy (change set)** (what the agent found on GitHub, so the script can flag a stale preview; skill `review-sheet-script`, "Checked by commit"). A change-set may have several PRs, and a PC in several change-sets shows all of theirs. A PR belongs to a change-set, not to a PC (owner, 2026-10-30). The two tabs were one `Agent` tab, comments in A–H and change sets from I, until the owner split them on 2026-10-31: a row held a comment and an unrelated change set side by side. The script still reads that layout when the Config sets `AGENT_CS` empty |
@@ -250,8 +255,11 @@ Each sync does the steps below, in this order.
       never by a reviewer's name.
 
 3. **Merge the released PRs.** For each change-set with an open PR (Agent K)
-   whose Review Change Sets row has **Ready for merge = Yes**, merge it (owner,
-   2026-10-30). Any editor may set it. Only a PR in the folio's own repository is
+   whose Review Change Sets row has **Ready for merge = Yes**, and whose **QA
+   gate** has passed for the PR's head commit, merge it (owner, 2026-10-30;
+   the gate 2026-10-31). The gate is run by a reviewer that did not write the
+   PR (`review-sheet-script`, "The QA gate"); without a pass for the current
+   head, the agent does not merge and its ⏳ line says why. Nor does it merge while any comment's committee Disposition is still Pending (`review-sheet-script`, "Unconfirmed dispositions block the merge"). Any editor may set it. Only a PR in the folio's own repository is
    merged, never one on a WHO repository. After the merge, set every PC row of
    the change-set to *Change merged*, clear its staging link (Agent L), and comment on the
    PR's issue. If the merge is refused (a session safety check, a conflict, a
@@ -305,7 +313,7 @@ committee has to judge. The agent may draft an editorial change-set as a
 **draft PR with a staging preview** without waiting for Ready for agent
 (owner, 2026-10-31, standing rule after smart-ra CS-052, 060, 097, 194, 254,
 283). It records each step in the Agent tab as usual
-([`review-sheet-agent-columns`](review-sheet-agent-columns.md)), with
+(`review-sheet-agent-columns`, core#315), with
 "editorial draft" in its status.
 
 - It still never sets **Ready for merge**, and nothing merges without it.
@@ -527,7 +535,19 @@ what they mention.
    to *editing*, with the branch and PR. Comments not yet decided, or decided
    `not-accepted`/`noted`/`deferred`, do not move.
 3. Edit the folio's blocks. An agent in the `author` role edits only what the
-   decisions and the issue's requirements say.
+   decisions and the issue's requirements say. Before the preview is staged,
+   it writes the change set's **Disposition (change set)** on the review
+   sheet's Agent tab, below the change set's decision history (which is only
+   ever added to): one blurb describing every disposition in the change
+   set, one line per comment (`No. 136: Accepted. <what was done>`, after an
+   optional `Overall:` line), starting from each comment's Blue Disposition
+   on Review Public Comments; the review sheet checks that every comment
+   number in the change set has one (`review-sheet-script`). Before Ready
+   for merge, an independent reviewer runs the QA gate: every disposition
+   against the people's Blue Disposition and the PR's diff, and the staging
+   QA report (`review-sheet-script`, "The QA gate"). Once an Editor sets Ready for merge to
+   Yes, that blurb is the summary: in the merge commit and as the closing
+   comment on the change set's issue (owner, 2026-10-31).
 4. The staging preview is published to `STAGING/<branch>/`. The dashboard links
    each comment's anchor on `main` (before) and on the preview (after). See
    [`staging-review`](../../../../cat-harness/skills/sdlc/sdlc-core/staging-review.md).

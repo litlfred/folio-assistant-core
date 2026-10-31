@@ -38,7 +38,7 @@ A frozen, line-numbered draft went out for public review.
 - Skill: `public-comment`.
 - What: public-comment withdraw, from any open status.
 - Record it: `workflow_complete` with `node: "Task_Withdraw"`.
-- next: → `EndEvent_Withdrawn` (Withdrawn)
+- next: → `EndEvent_Withdrawn` (Withdrawn, coordinator and committee told)
 
 ### 3. Triage: confirm the anchor, type and priority (`Task_Triage`)
 
@@ -48,9 +48,9 @@ A frozen, line-numbered draft went out for public review.
 - Record it: `workflow_complete` with `node: "Task_Triage"`.
 - next: → `Gateway_Triage` (Duplicate, plain editorial, or to be weighed?)
 
-## Done — Withdrawn (`EndEvent_Withdrawn`)
+## Done — Withdrawn, coordinator and committee told (`EndEvent_Withdrawn`)
 
-- The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+- The instance completes here: A message end: the review coordinator and any committee members assigned to the comment are told it is withdrawn, so nobody keeps working on it. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
 ### Decide — Duplicate, plain editorial, or to be weighed? (`Gateway_Triage`)
 

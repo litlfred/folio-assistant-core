@@ -570,6 +570,11 @@ function sizeLabel(bytes: number): string {
  */
 export const LETTER_PARTS: Readonly<Partial<Record<AssetType, readonly string[]>>> = {
   "kg-schema-fields": ["a-c", "d-e", "f-l", "m-o", "p-r", "s", "t-z"],
+  // Measured 2026-10-31 on dth-pc's staging build (cat-harness-tools 490ea15,
+  // core 1ca59c8): `kg-bpmn-activities` was 1.1 MB, over its 1 MB budget,
+  // refusing the publish. 1,140 labels: a-d 308 (with digits), e-q 327,
+  // r-z 363, so each part is about 0.35 MB.
+  "kg-bpmn-activities": ["a-d", "e-q", "r-z"],
 };
 
 /** A label's first letter, upper-case, or `#` for a label that starts with no letter. */
