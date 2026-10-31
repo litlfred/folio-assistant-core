@@ -14,7 +14,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 
 import { buildConfig, buildScript, chunks, configRows, readable, tabInstructions } from "./build-review-sheet-script.js";
-import { feedbackBasis } from "./feedback-issue.js";
+import { feedbackBasis, hashOf } from "./feedback-issue.js";
 
 const code = buildScript();
 const withConfig = <T extends object>(t: T, rows: string[][]) => ({ ...t, Config: { id: 50, rows } });
@@ -557,6 +557,31 @@ describe("review-sheet.gs in drafting mode", () => {
     f[1][9] = stale;
     s.refreshAll();
     expect(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]).toBe("Define it in 1.1");
+  });
+
+  test("a new empty feedback column marks nothing stale, and a basis written the older way still matches", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const f = t["Contributor Feedback"].rows;
+    f[0].push("Contributor Feedback (agent)");
+    f.forEach((x, i) => i && x.push(""));
+    const ag = f[0].indexOf("Contributor Feedback (agent)");
+    f[1][ag] = "Define it in 1.1";
+    // The older basis: every matching column, empty or not.
+    const legacy = hashOf(f[0].map((h, i) => [h, String(f[1][i] ?? "").trim()] as const)
+      .filter(([h]) => ["Title", "Selected Sections"].includes(h) || (h.startsWith("Contributor Feedback") && h !== "Contributor Feedback (agent)"))
+      .map(([h, v]) => `${h}=${h === "Selected Sections" ? v.split(",").map((x) => x.replace(/^[\s\u2800\u2502\u2514]+/, "").trim()).filter(Boolean).join(",") : v}`).join("\n"));
+    t.Agent.rows[0].push("Feedback basis (change set)");
+    t.Agent.rows[1].push(legacy);
+    const rt2 = runtime(t);
+    const s = load(code, rt2.g);
+    s.refreshAll();
+    expect(rt2.written["Contributor Feedback"]?.["Contributor Feedback (agent)"]).toBeUndefined();
+    // The agent writes the new basis; then a new reviewer's empty column appears.
+    t.Agent.rows[1][t.Agent.rows[0].indexOf("Feedback basis (change set)")] = feedbackBasis(f[0], f[1]);
+    f[0].splice(ag, 0, "Contributor Feedback (XY)");
+    f.slice(1).forEach((x) => x.splice(ag, 0, ""));
+    s.refreshAll();
+    expect(rt2.written["Contributor Feedback"]?.["Contributor Feedback (agent)"]).toBeUndefined();
   });
 
   test("a proposal turning stale sets Ready for agent back to No, once, so an Editor's new Yes stays", () => {

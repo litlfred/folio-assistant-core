@@ -90,14 +90,16 @@ export function hashOf(text: string): string {
  * The agent keeps it in the Agent tab's `Feedback basis (change set)`. While
  * the row's basis differs, the script marks the proposal stale; the agent's
  * next sync proposes again and writes the new basis. Picks are compared bare,
- * so the script's repair of a tree mark is no change.
+ * so the script's repair of a tree mark is no change. Empty cells are left
+ * out, so a new empty column (another reviewer's initials) changes no row's
+ * basis; the script still accepts a basis written the older way.
  */
 export function feedbackBasis(header: string[], row: string[], exact = ["Title", "Selected Sections"], prefix = "Contributor Feedback"): string {
   const parts: string[] = [];
   header.forEach((h, i) => {
     let v = String(row[i] ?? "").trim();
     if (h === "Selected Sections") v = v.split(",").map(bareName).filter(Boolean).join(",");
-    if (exact.includes(h) || ((h === prefix || h.startsWith(`${prefix} (`)) && h !== `${prefix} (agent)`)) parts.push(`${h}=${v}`);
+    if (exact.includes(h) || ((h === prefix || h.startsWith(`${prefix} (`)) && h !== `${prefix} (agent)`) && v) parts.push(`${h}=${v}`);
   });
   return hashOf(parts.join("\n"));
 }
