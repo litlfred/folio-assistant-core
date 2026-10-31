@@ -6,7 +6,7 @@ status: todo
 type: task
 priority: normal
 created_at: 2026-09-24T05:54:04Z
-updated_at: 2026-10-30T14:22:00Z
+updated_at: 2026-10-31T04:10:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -233,3 +233,8 @@ _2026-10-30T14:22:00Z_ — Canonical store sync after `cat-harness-tools#459` (`
 - `smart-base/library/`: 1,074/1,074 drafted across batches 41–56, 58–61, and 63–64 (`litlfred/smart-base#173`, `#175`, `#176`, `#177`, `#179`, `#181`, `#187`, `#191`, `#193` merged on `main`; `#194`, `#196`, `#197`, `#199`, `#200`, `#201`, `#202`, `#203`, `#204`, `#205`, `#206`, `#207`, `#208` open; 0 backlog across `main` + open PRs).
 - `smart-immunizations/library/`: 152/152 drafted across batches 57, 62, and 65 (`litlfred/smart-immunizations#85`, `#86`, `#87` open; 0 backlog across open PRs).
 All drafted summaries await human confirmation via `bun run cat narratives`.
+
+_2026-10-31T04:10:00Z_ — Batches 66 & 67 opened on `litlfred/cat-harness` to drain the remaining 200 prose blocks in `cat-harness/library/`:
+- **Batch 66 ([`litlfred/cat-harness#836`](https://github.com/litlfred/cat-harness/pull/836), `fix/x80s-ch-batch66`)**: 59 English `draft` summaries across `cat-harness/library/arxiv-0909.4061v2` (`prose-page-016` through `prose-page-074`; `74/74` prose blocks summarised, `0` backlog; `drafted_by.model: "not-disclosed"`, `session: "conversation://bff31c8b-00de-4342-bf75-fbff1f059feb"`).
+- **Batch 67 ([`litlfred/cat-harness#835`](https://github.com/litlfred/cat-harness/pull/835), `fix/x80s-ch-batch67`)**: 141 English `draft` summaries across `cat-harness/library/arxiv-2607.20636v1` (`prose-sec-front-matter` and `prose-sec-000` through `prose-sec-139`; `141/141` prose blocks summarised, `0` backlog; `drafted_by.model: "not-disclosed"`, `session: "conversation://071caabf-896c-4412-8e76-06e093b66f3d"`).
+Combined with `#835` and `#836`, `cat-harness/library/` reaches **0 prose block summary backlog** (`200 -> 0` remaining unsummarised blocks across non-held entries), and all 6 declared libraries across the corpus (`cat-harness`, `folio-assistant-core`, `folio-assistant-sci`, `who-iris`, `smart-base`, `smart-immunizations`) are at **0 draft backlog** across `main` + open PRs.
