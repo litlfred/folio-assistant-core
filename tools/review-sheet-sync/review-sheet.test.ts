@@ -1421,10 +1421,19 @@ describe("unconfirmed dispositions are flagged and block the merge (owner, 2026-
 });
 
 describe("Dispositions confirmed, an Editor's multi-select (owner, 2026-10-31)", () => {
-  const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems, confirmedNos };`)({}) as {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems, confirmedNos, tickedNos };`)({}) as {
     dispositionProblems: (t: string, n: string[], h?: Record<string, string>, c?: string[]) => string;
     confirmedNos: (v: string, n: string[]) => string[];
+    tickedNos: (s: { header: string[]; rows: unknown[][] }) => Record<string, boolean>;
   };
+  test("a ticked Confirmed (committee) box confirms that one comment (option A)", () => {
+    const rpc = { header: ["No.", "Disposition", "Confirmed (committee)"], rows: [["326", "Pending", true], ["327", "Pending", false], ["328", "", "TRUE"]] };
+    expect(fns.tickedNos(rpc)).toEqual({ "326": true, "328": true });
+    const text = "No. 326: Accepted. Done.\nNo. 327: Accepted. Done.";
+    const p = fns.dispositionProblems(text, ["326", "327"], { "326": "Pending", "327": "Pending" }, Object.keys(fns.tickedNos(rpc)));
+    expect(p).toMatch(/Not confirmed[^\n]*No\. 327/);
+    expect(p).not.toMatch(/326/);
+  });
   test("Yes (or All) confirms every comment; No none; typed numbers confirm those", () => {
     expect(fns.confirmedNos("All", ["1", "2"])).toEqual(["1", "2"]);
     expect(fns.confirmedNos("Yes", ["1", "2"])).toEqual(["1", "2"]);

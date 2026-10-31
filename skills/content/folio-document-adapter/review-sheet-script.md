@@ -577,6 +577,12 @@ the change set is flagged. The script adds the column itself, inside its
 locked run (so no other refresh writes by a shifted position), and keeps its
 Yes/No dropdown.
 
+To confirm **one comment at a time** (owner, 2026-10-31, option A "a
+checkbox per comment"), an Editor ticks the Orange **Confirmed (committee)**
+checkbox on Review Public Comments, right of Disposition. A ticked comment
+counts as confirmed whatever its change set's Yes/No says. The script adds
+this column too, inside the same locked run, with its checkboxes.
+
 ## Where the agent is: Agent step (owner, 2026-10-31)
 
 "I don't see a state change indication on where agent is in process

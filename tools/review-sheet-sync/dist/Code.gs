@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 7f16504da2f15756.
+// folio-assistant-core tools/review-sheet-sync at template sha256 1f5dd55c17f9f165.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 7f16504da2f15756';
+const SCRIPT_VERSION = 'template sha256 1f5dd55c17f9f165';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -497,6 +497,9 @@ function refreshLocked() {
     refreshRcs(rcs, rpc, csOf, stOf, prOf, readyAt, builtOf);
     const cCol = col(rcs, CONFIRMED), confirmedOf = {};
     if (cCol >= 0) rcs.rows.forEach(r => { const cs = String(r[csCol]).trim(); if (cs) confirmedOf[cs] = confirmedNos(r[cCol], csOf[cs] || []); });
+    // A ticked comment on Review Public Comments counts as well (option A).
+    const ticked = tickedNos(rpc);
+    Object.keys(csOf).forEach(cs => { confirmedOf[cs] = [...new Set((confirmedOf[cs] || []).concat((csOf[cs] || []).map(String).filter(n => ticked[n])))]; });
     writeRows(rcs, col(rcs, COLS.rcs.dispositionsAgent || DISPOSITIONS_AGENT), null, r => {
       const cs = String(r[csCol]).trim();
       return dispositionCell(dispOf[cs], csOf[cs], humanDisp, confirmedOf[cs]);
@@ -590,7 +593,8 @@ const HEADER_NOTES = {
   'TWG (PCs)': 'The working groups of these comments. Kept by the script.',
   'TWG (CS)': 'The working group that owns this change set. You fill this in.',
   'Ready for agent': 'Yes: the direction is agreed and the agent may edit. No: wait. Completed: the agent has finished and the preview is current (set by the script). Any change in feedback sets it back to No. Set by an Editor.',
-  'Dispositions confirmed': 'Yes: the committee confirms every disposition the agent gave in this change set. To differ on one comment, set that comment\'s own Disposition on Review Public Comments. The agent will not merge until every comment is confirmed here or has its own Disposition. Set by an Editor.',
+  'Dispositions confirmed': 'Yes: the committee confirms every disposition the agent gave in this change set. To confirm one comment at a time, tick it in Confirmed (committee) on Review Public Comments. The agent will not merge until every comment is confirmed or has its own Disposition. Set by an Editor.',
+  'rpc|Confirmed (committee)': 'Tick to confirm the agent\'s disposition of this one comment, when the change set as a whole is not yet confirmed. Set by an Editor.',
   'Ready for merge': 'Yes: merge the pull request. The agent merges only once the QA gate has passed for the current version. Set by an Editor.',
   'Disposition (agent)': 'The decisions made so far (oldest first, never removed), then one disposition per comment number. "No disposition yet" lists the numbers still missing one. From the agent, read only.',
   'Change Set Feedback (agent)': 'The status on top, then the agent\'s current proposal and any question it needs answered, with options and a recommendation.',
@@ -1174,6 +1178,19 @@ const DISPOSITION_WORDS = ['Accepted', 'Partially accepted', 'Not accepted', 'No
  * cell ("No. 327") still confirm just those comments.
  */
 const CONFIRMED = 'Dispositions confirmed', CONFIRM_CHOICES = ['Yes', 'No'];
+/**
+ * One comment at a time (owner, 2026-10-31, option A "a checkbox per
+ * comment"): an Orange checkbox column on Review Public Comments, right of the
+ * people's Disposition. A ticked box confirms that comment's agent disposition,
+ * whatever its change set's Yes/No says.
+ */
+const CONFIRMED_PC = 'Confirmed (committee)';
+function tickedNos(rpc) {
+  const no = col(rpc, (COLS && COLS.rpc && COLS.rpc.no) || 'No.'), c = col(rpc, CONFIRMED_PC), out = {};
+  if (no < 0 || c < 0) return out;
+  rpc.rows.forEach(r => { const n = String(r[no]).trim(); if (n && (r[c] === true || /^(true|yes)$/i.test(String(r[c]).trim()))) out[n] = true; });
+  return out;
+}
 function confirmedNos(value, nos) {
   const v = String(value || '').trim();
   if (/^(yes|all)$/i.test(v) || /(^|,)\s*all\s*(,|$)/i.test(v)) return (nos || []).map(String);
@@ -1202,6 +1219,30 @@ function ensureConfirmedColumn(ss) {
   const vals = rule ? rule.getCriteriaValues() : [];
   if (!rule || rule.getCriteriaType() !== SpreadsheetApp.DataValidationCriteria.VALUE_IN_LIST || String(vals[0]) !== String(CONFIRM_CHOICES))
     cells.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(CONFIRM_CHOICES, true).setAllowInvalid(true).build());
+  ensureConfirmedPcColumn(ss, sh.getRange(s.top - 1, c + 1));
+}
+/** The per-comment checkbox column on Review Public Comments, inside the locked run. */
+function ensureConfirmedPcColumn(ss, orangeHead) {
+  const sh = ss.getSheetByName(CFG.RPC);
+  if (!sh) return;
+  const s = readSheet(sh);
+  let c = s.header.indexOf(CONFIRMED_PC);
+  const rows = sh.getMaxRows() - s.top + 1;
+  if (c < 0) {
+    const d = s.header.indexOf(COLS.rpc.disposition || 'Disposition');
+    if (d < 0) return;
+    sh.insertColumnAfter(d + 1);
+    sh.getRange(s.top - 1, d + 1, rows + 1, 1).copyTo(sh.getRange(s.top - 1, d + 2, rows + 1, 1), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+    sh.getRange(s.top, d + 2, rows, 1).clearDataValidations();
+    const head = sh.getRange(s.top - 1, d + 2);
+    head.setValue(CONFIRMED_PC);
+    if (orangeHead) head.setBackground(orangeHead.getBackground());
+    sh.setColumnWidth(d + 2, 110);
+    c = d + 1;
+  }
+  const cells = sh.getRange(s.top, c + 1, rows, 1);
+  const rule = cells.getCell(1, 1).getDataValidation();
+  if (!rule || rule.getCriteriaType() !== SpreadsheetApp.DataValidationCriteria.CHECKBOX) cells.insertCheckboxes();
 }
 function dispositionProblems(text, nos, human, confirmed) {
   const want = (nos || []).map(String), seen = {}, out = [];
