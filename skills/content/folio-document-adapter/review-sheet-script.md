@@ -286,7 +286,7 @@ each stage in Staging review and the ⏳ line. With each stage before `deployed`
 when it expects the preview live, from the clock and recent runs of the
 same site (`gh run list --workflow pages-build-deployment` and the build's
 own duration): `building, expected 2026-10-31 15:20Z`. The sheet shows
-"expected live <time>" after the stage (owner, 2026-10-31: "also expected
+"expected live `<time>`" after the stage (owner, 2026-10-31: "also expected
 time of gh-page deployment").
 
 ### Writing the Agent tab with the tool (owner, 2026-10-31, option C)
@@ -362,7 +362,7 @@ feedback from <time>`: the preview still shows the PR, but not the feedback an
 Editor has just sent to the agent (owner, 2026-10-31: "requested from whom?
 what are we waiting on?"). The review page cannot know the sheet, so only the
 sheet says so. The same time makes **Agentic status** open with **Waiting on
-the agent since <time> (Ready for agent set)**, until the agent records a later
+the agent since `<time>` (Ready for agent set)**, until the agent records a later
 completion or sets the status to Working.
 
 **Stale agent proposals.** `Feedback (agent)` (drafting) and
@@ -381,9 +381,9 @@ try to say where it is in producing PR / staging"). Below any stale mark, the
 script keeps one line starting with ⏳ at the top of the agent's proposal
 (`progressLine`, `withProgress`), and replaces it on every refresh:
 "Ready for merge set: the agent will merge dth-hrh#7."; "Ready for agent set
-<time>: the agent will act on this and rewrite it."; "The agent is working on
+`<time>`: the agent will act on this and rewrite it."; "The agent is working on
 dth-hrh#7."; or "dth-hrh#7 open; no preview yet | preview current (built
-<time>) | preview missing feedback from <time>." No pull request, a merged
+`<time>`) | preview missing feedback from `<time>`." No pull request, a merged
 one, or an empty proposal gets no line. The agent never writes this line and
 drops it when it rewrites the proposal; the next refresh (within a minute)
 puts it back. The line is bold, and an open PR's line carries the agent's
@@ -824,7 +824,7 @@ editor to it in each copy (step 4 below).
 The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
 
 1. **Copy the template.** Open the "make a copy" link for the mode (table
-   above), name the copy "<document> Contributor Log" or "<document> Public
+   above), name the copy "`<document>` Contributor Log" or "`<document>` Public
    Comment Log", and keep it in the informatics.avengers Drive. A file copy
    keeps tabs, colours, dropdowns, locks and the script. **Always copy the
    file** (File, then Make a copy); never build a log by copying tabs into
@@ -853,7 +853,7 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    in the function list and press Run; allow access. Google shows "Google
    hasn't verified this app. The app is requesting access to sensitive info
    in your Google Account." This is expected for a sheet's own bound script,
-   which Google never verifies: choose Advanced, then "Go to <project>
+   which Google never verifies: choose Advanced, then "Go to `<project>`
    (unsafe)", then Allow ([Google's explanation](https://support.google.com/cloud/answer/7454865);
    owner, 2026-10-31: "explain they will see ... and provide link to info"). Reload the sheet: a **Review links**
    menu appears. A copy of the template already holds the script, so the
@@ -927,7 +927,7 @@ Install script` row carries the same steps and links here.
 6. **Allow it.** **Review permissions**, pick the owner's account. Google
    shows "Google hasn't verified this app. The app is requesting access to
    sensitive info in your Google Account." That is expected for a sheet's
-   own script: press **Advanced**, then **Go to <project name> (unsafe)**,
+   own script: press **Advanced**, then **Go to `<project name>` (unsafe)**,
    then **Allow** ([why](https://support.google.com/cloud/answer/7454865)).
 7. **Check it.** The log shows "Execution completed". Back in the sheet tab,
    reload: a **Review links** menu appears; **Review links**, then
@@ -984,7 +984,7 @@ one click"). The library also holds
 from `main` and writes it over the library's Code.gs through the Apps Script
 API, leaving the library's other files alone. It refuses anything that is not
 the review-sheet script (an error page, the stub) and logs "Updated to
-<version>" or "Already current". There is no timer: an update runs when the
+`<version>`" or "Already current". There is no timer: an update runs when the
 owner runs it. Every sheet runs the new code from its next open, edit or timer.
 
 Adding the updater, once:
@@ -1025,8 +1025,9 @@ work second, in this order:
    `folio/<doc>/review-anchors.json`. The folio's `package.json` declares
    `review:anchors` and `check:review-anchors`, both running
    `folio-assistant-core/scripts/review-anchors-from-folio.ts --document <doc>`.
-   A document seeded from a library file adds `--library <entry> --source
-   <file> --source-label <text>`; one authored from scratch (dth-pc, dth-sc)
+   A document seeded from a library file adds
+   `--library <entry> --source <file> --source-label <text>`; one authored from
+   scratch (dth-pc, dth-sc)
    leaves all three out. Run `review:anchors` and commit the file. A new
    document folio declares both scripts from its first commit, so no sheet
    ever waits on them.
@@ -1188,7 +1189,7 @@ Sections before anything else:
 |---|---|
 | a current section, with or without its indent (or the old "└ " mark) | rewrites it to the dropdown's name, indent included |
 | a section renamed or renumbered since it was picked | finds it by its anchor (the TOC tab's column C keeps the anchors of the names it offered before) and rewrites it to the new name |
-| a section no longer in the document | keeps it, so nothing a person chose is lost, and adds a line in Section links: ⚠ "<name>" is not in the document now: pick its section again |
+| a section no longer in the document | keeps it, so nothing a person chose is lost, and adds a line in Section links: ⚠ "`<name>`" is not in the document now: pick its section again |
 
 So "Invalid" after a document change clears by itself at the next refresh,
 except for a section that was removed, which a person repicks.
