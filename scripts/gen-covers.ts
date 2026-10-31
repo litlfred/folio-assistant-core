@@ -217,7 +217,7 @@ function backendAvailable(): boolean {
  * that runs where nothing has been installed, which is every fresh container
  * and every CI job here" — and the gate was registered anyway.
  */
-function render(c: Cover): { png: Buffer; facts: Record<string, unknown> } {
+function render(c: Cover & { sourcePdf: string }): { png: Buffer; facts: Record<string, unknown> } {
   const tmp = join(REPO, "node_modules", ".cache", "who-iris-covers", `${createHash("sha256").update(c.outPath).digest("hex").slice(0, 16)}.png`);
   mkdirSync(dirname(tmp), { recursive: true });
   // The masks go to the RENDERER, not applied afterwards here. `pdf-cover.py`
