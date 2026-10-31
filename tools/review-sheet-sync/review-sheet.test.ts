@@ -329,8 +329,9 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     t["Agent - Change Sets"].rows[0].push("Feedback basis (change set)");
     t["Agent - Change Sets"].rows[1].push(basis);
     const run = () => { const b = runtime(t); load(code, b.g).refreshAll(); return b.written["Review Change Sets"] ?? {}; };
-    // Only the progress line is added; the proposal is not flagged.
-    expect(T(run()["Committee Feedback (agent)"]?.[0]?.[0])).toBe("\u23f3 r#130 open; no preview yet.\nProposal");
+    // Only the status is added (this sheet has no Agentic status column, so
+    // the status block sits on top); the proposal is not flagged.
+    expect(T(run()["Committee Feedback (agent)"]?.[0]?.[0])).toBe("\u23f3 r#130 open; no preview yet.\n\u21b3 r#97 (PR open, 2026-10-30 22:30Z) \u00b7 Adds the scope\n\u21b3 r#130 (PR open) \u00b7 Fixes a typo\nProposal");
     expect(run()["Ready for agent"]).toBeUndefined();
     // Control: a real change is still caught under the new name.
     row[3] = "do it differently";
@@ -857,7 +858,7 @@ describe("review-sheet.gs in drafting mode", () => {
     const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems };`)({}) as { dispositionProblems: (t: string, n: string[], h?: Record<string, string>) => string };
     const ok = "Decided (Q1, 2026-10-31): A, by the Editor; gloss it.\nOverall: partly accepted as editorial.\nNo. 136: Accepted. Defined at first use.\nNos. 127 to 129 and 131: Not accepted. Already addressed.\nNo. 130: Noted.";
     expect(fns.dispositionProblems(ok, ["127", "128", "129", "130", "131", "136"])).toBe("");
-    expect(fns.dispositionProblems(ok, ["127", "128", "129", "130", "131", "136", "140", "141"])).toBe("\u26a0 No disposition yet for No. 140, 141");
+    expect(fns.dispositionProblems(ok, ["127", "128", "129", "130", "131", "136", "140", "141"])).toBe("\u26a0 No disposition yet for Nos. 140 and 141");
     expect(fns.dispositionProblems("No. 136: Fixed it.", ["136"])).toMatch(/^\u26a0 No. 136: start with one of Accepted/);
     expect(fns.dispositionProblems("No. 9: Noted.\nNo. 136: Accepted.\nNo. 136: Noted.", ["136"])).toBe("\u26a0 No. 9 is not in this change set\n\u26a0 No. 136 has two dispositions");
     // Drawn from the people's Blue Disposition: a different word is flagged, Pending is not.
@@ -1239,5 +1240,33 @@ describe("the timer runs every minute (owner, 2026-10-31)", () => {
     f.upgradeTimer_(p);
     expect(removed).toEqual(["refreshIfDirty"]);
     expect(made).toEqual([1]);
+  });
+});
+
+describe("one agent column, status on top (owner, 2026-10-31, option A)", () => {
+  const { statusBlock, withProgress, nosText, STALE } = new Function(code + "\nreturn { statusBlock, withProgress, nosText, STALE };")() as {
+    statusBlock: (l: string, s: string, p: object[]) => { text: string; links: [number, number, string][] };
+    withProgress: (t: string, l: unknown) => string;
+    nosText: (n: string[]) => string;
+    STALE: string;
+  };
+  const prs = [{ url: "https://github.com/litlfred/smart-ra/pull/185", done: "2026-10-31 15:26Z", desc: "DPI-F at first use" }];
+  test("the block is the ⏳ line and one linked line per PR", () => {
+    const b = statusBlock("⏳ smart-ra#185 open.", "PR open", prs);
+    expect(b.text).toBe("⏳ smart-ra#185 open.\n↳ smart-ra#185 (PR open, 2026-10-31 15:26Z) · DPI-F at first use");
+    expect(b.links).toEqual([[23, 35, prs[0].url]]);
+    expect(b.text.slice(23, 35)).toBe("smart-ra#185");
+  });
+  test("it replaces the old block and never stacks, under the stale mark", () => {
+    const b = statusBlock("⏳ new.", "PR open", prs);
+    const once = withProgress(STALE + "\n⏳ old.\n↳ old PR line\nProposal", b);
+    expect(once).toBe(STALE + "\n" + b.text + "\nProposal");
+    expect(withProgress(once, b)).toBe(once);
+  });
+  test("the people's ask shows when they must answer", () => {
+    expect(statusBlock("", "Needs human", []).text).toMatch(/^↳ Needs you: answer the agent's question/);
+  });
+  test("a missing disposition names the comments compactly", () => {
+    expect(nosText(["139", "127", "128", "129", "134"])).toBe("Nos. 127 to 129, 134 and 139");
   });
 });

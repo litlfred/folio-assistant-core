@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 f8ce747990983866.
+// folio-assistant-core tools/review-sheet-sync at template sha256 29f9696c12bea32d.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 f8ce747990983866';
+const SCRIPT_VERSION = 'template sha256 29f9696c12bea32d';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -493,9 +493,14 @@ function refreshLocked() {
       const cs = String(r[csCol]).trim();
       return dispositionCell(dispOf[cs], csOf[cs], humanDisp);
     });
+    // No Agentic status column: the status sits on top of the agent's
+    // feedback instead (owner, 2026-10-31, option A: "One column, status on top").
+    const mergedRcs = col(rcs, COLS.rcs.agentic || 'Agentic status') < 0;
     rcs.rows.forEach(r => {
       const cs = String(r[csCol]).trim();
-      if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)), prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] });
+      const st = csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean));
+      if (cs && mergedRcs) lineOf[cs] = statusBlock(progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: st, prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] }), st, prOf[cs] || []);
+      else if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)), prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] });
     });
     markStale(rcs, csCol, basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)', lineOf);
     // Staging review page, from Agent: only where Agent names a preview, so a
@@ -846,10 +851,13 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) 
     const cs = String(r[csCol]).trim();
     const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[cs]);
     const cur = t === null ? String(r[ag]) : t;
-    const fin = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? withProgress(cur, lineOf[cs]) : cur;
+    const L = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? lineOf[cs] : undefined;
+    const fin = L !== undefined ? withProgress(cur, L) : cur;
     if (fin !== String(r[ag])) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(fin)]]);
     unready(s, r, k, r[ag], t);
-    markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), fin);
+    const off = fin.indexOf(STALE + '\n') === 0 ? STALE.length + 1 : 0;
+    const links = L && typeof L === 'object' ? L.links.map(x => [x[0] + off, x[1] + off, x[2]]) : [];
+    markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), fin, links);
   });
 }
 
@@ -909,12 +917,28 @@ function dispositionProblems(text, nos, human) {
     });
   });
   const missing = want.filter(n => !seen[n]).sort((x, y) => x - y);
-  if (missing.length) out.unshift('\u26a0 No disposition yet for No. ' + missing.join(', '));
+  if (missing.length) out.unshift('\u26a0 No disposition yet for ' + nosText(missing));
   return out.join('\n');
 }
 /** The Disposition (agent) cell: the problems in bold above the agent's record. */
+/** "No. 136" or "Nos. 127 to 131, 134 and 135": the form the agent writes, too. */
+function nosText(nos) {
+  const n = nos.map(Number).filter(x => !isNaN(x)).sort((a, b) => a - b).filter((x, i, a) => !i || x !== a[i - 1]);
+  const parts = [];
+  for (let i = 0; i < n.length;) {
+    let j = i;
+    while (j + 1 < n.length && n[j + 1] === n[j] + 1) j++;
+    if (j - i >= 2) parts.push(n[i] + ' to ' + n[j]);
+    else for (let k = i; k <= j; k++) parts.push(String(n[k]));
+    i = j + 1;
+  }
+  return (n.length > 1 ? 'Nos. ' : 'No. ') + (parts.length > 1 ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : parts[0] || '');
+}
 function dispositionCell(text, nos, human) {
-  if (!String(text || '').trim()) return rich([{ t: '' }]);
+  // An empty cell still says which comments have no disposition (owner,
+  // 2026-10-31: "make sure ... mechanical 'this PC has no disposition' is shown").
+  if (!String(text || '').trim())
+    return rich((nos || []).length ? [{ t: '\u26a0 No disposition yet for ' + nosText(nos), bold: true }] : [{ t: '' }]);
   const p = dispositionProblems(text, nos, human);
   return rich(p ? [{ t: p, bold: true }, { t: '\n' + text }] : [{ t: text }]);
 }
@@ -939,14 +963,39 @@ function progressLine(o) {
   return PROGRESS + label + ' open' + (active.done ? ', updated ' + active.done : '') + '; ' + preview + '.';
 }
 
-/** The text with its progress line replaced (or removed when line is ''). */
+/**
+ * The status block on top of the agent's feedback when the sheet has no
+ * Agentic status column (owner, 2026-10-31: "One column, status on top"):
+ * the \u23f3 line, then one "\u21b3 " line per pull request, linked, and the ask when
+ * people must answer. Returns { text, links } with links relative to it.
+ */
+const STATUS_SUB = '\u21b3 ';
+function statusBlock(line, status, prs) {
+  const parts = [];
+  if (line) parts.push({ t: line });
+  if (/needs human/i.test(status || '')) parts.push({ t: STATUS_SUB + NEEDS_YOU + ': under "Decision needed" below. Write your answer (the letter) in your Blue feedback column, then an Editor sets Ready for agent to Yes.' });
+  (prs || []).forEach(p => {
+    parts.push({ t: STATUS_SUB }, { t: prLabel(p.url), url: p.url },
+      { t: ' (' + [status, p.done].filter(Boolean).join(', ') + ')' + (p.desc ? ' \u00b7 ' + p.desc : '') });
+  });
+  let text = '';
+  const links = [];
+  parts.forEach((p, i) => {
+    if (i && p.t.indexOf(STATUS_SUB) === 0 || i && p.t === STATUS_SUB) text += '\n';
+    if (p.url) links.push([text.length, text.length + p.t.length, p.url]);
+    text += p.t;
+  });
+  return { text: text, links: links };
+}
+/** The text with its status (progress line, or block) replaced, or removed when line is ''. */
 function withProgress(text, line) {
   const t = String(text);
-  if (!t.trim()) return t;
+  const l = line && typeof line === 'object' ? line.text : line;
+  if (!t.trim()) return l && typeof line === 'object' ? l : t;
   const lines = t.split('\n');
   const stale = lines[0] === STALE ? [lines.shift()] : [];
-  while (lines.length && lines[0].indexOf(PROGRESS) === 0) lines.shift();
-  return stale.concat(line ? [line] : [], lines).join('\n');
+  while (lines.length && (lines[0].indexOf(PROGRESS) === 0 || lines[0].indexOf(STATUS_SUB) === 0)) lines.shift();
+  return stale.concat(l ? [l] : [], lines).join('\n');
 }
 
 /**
@@ -999,12 +1048,13 @@ function decisionSpans(text) {
   }
   return spans;
 }
-function markDecision(range, text) {
+function markDecision(range, text, links) {
   const spans = decisionSpans(text);
-  if (!spans.length) return;
+  if (!spans.length && !(links || []).length) return;
   const b = SpreadsheetApp.newRichTextValue().setText(String(text));
   const st = SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(DECISION_INK).build();
   spans.forEach(([a, z]) => b.setTextStyle(a, z, st));
+  (links || []).forEach(([a, z, u]) => b.setLinkUrl(a, z, u));
   range.setRichTextValue(b.build());
 }
 
@@ -1504,7 +1554,7 @@ function refreshDraft(rows) {
   });
   // The same status as one plain value, for a filter (owner, 2026-10-31).
   if (c.status >= 0) writeRows(fb, c.status, only, r => rich([{ t: shownStatus(stOf[String(r[c.cs]).trim()] || '') }]));
-  writeRows(fb, col(fb, DISPOSITIONS_AGENT), only, r => rich([{ t: dispOf[String(r[c.cs]).trim()] || '' }]));
+  writeRows(fb, col(fb, DISPOSITIONS_AGENT), only, r => dispositionCell(dispOf[String(r[c.cs]).trim()] || '', [], {}));
   // Staging review page: the change set's preview while its PR is open.
   writeRows(fb, c.staging, only, r => {
     const cs = String(r[c.cs]).trim();
@@ -1515,7 +1565,8 @@ function refreshDraft(rows) {
   const lineOf = {};
   fb.rows.forEach(r => {
     const cs = String(r[c.cs]).trim();
-    if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(fb, r, 'Ready for merge'), status: stOf[cs] || '', prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] });
+    const line = cs ? progressLine({ readyAt: readyAt[cs], merge: isYes(fb, r, 'Ready for merge'), status: stOf[cs] || '', prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] }) : '';
+    if (cs) lineOf[cs] = c.agentic < 0 ? statusBlock(line, stOf[cs] || '', prOf[cs] || []) : line;
   });
   markStale(fb, c.cs, basisOfCs, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback, COLS.draft.agentFeedback || 'Feedback (agent)', lineOf, want);
 }

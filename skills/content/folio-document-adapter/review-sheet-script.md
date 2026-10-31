@@ -75,8 +75,12 @@ adds the decision, with who made it, to Disposition (agent) (below).
 in own column Disposition (agent), not in Change Set Feedback (agent)", "new
 col left of agentic status"). The agent keeps one record per change set in
 the Agent tab's **Disposition (change set)**, and the script shows it,
-read-only, in the Green **Disposition (agent)** column, just left of Agentic
-status, on Review Change Sets or Contributor Feedback. It holds:
+read-only, in the Green **Disposition (agent)** column, just right of Ready
+for merge (owner, 2026-10-31, moved from left of Agentic status), on Review
+Change Sets or Contributor Feedback. An empty one still reads, in bold,
+`⚠ No disposition yet for Nos. 127 to 131 and 134` when the change set has
+comments ("make sure ... mechanical 'this PC has no disposition' is shown").
+It holds:
 
 1. **The decision history**, oldest first, one line per decision, never
    removed or rewritten: `Decided (Q1, 2026-10-31): A, by the Editor; <what
@@ -419,6 +423,25 @@ that test.
 moves, or a tab or a header the script reads is renamed. Re-paste Code.gs
 only when the script itself changes. Renaming a header the script reads,
 without rewriting Config, leaves that column unlinked; it fails nothing.
+
+## One agent column, status on top (owner, 2026-10-31, option A)
+
+"why Change Set Feedback (agent) and Agentic status not consolidated to one?"
+A sheet without an **Agentic status** column gets the status on top of the
+agent column (`Change Set Feedback (agent)` or `Feedback (agent)`) instead:
+
+```
+⏳ smart-ra#185 open, updated 2026-10-31 15:26Z; preview current (built 15:19Z).
+↳ smart-ra#185 (PR open, 2026-10-31 15:26Z) · DPI-F at first use
+<the agent's proposal and any Decision needed question>
+```
+
+The ⏳ line and each `↳` line (one per pull request, linked; and the ask
+when people must answer) are the script's; it replaces them on every
+refresh and never stacks them. The agent writes only what is below them and
+never starts its own text with ⏳ or ↳. **Agentic status (filter)** stays,
+for the filter views. A sheet that keeps its Agentic status column keeps the
+old layout, so the change is made by deleting that column.
 
 ## The QA gate, before Ready for merge (owner, 2026-10-31)
 

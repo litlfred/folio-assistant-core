@@ -27,7 +27,7 @@ describe("agent-record (owner, 2026-10-31, option C)", () => {
   });
   test("a number outside the change set, or one left out, is a problem", () => {
     expect(dispositions({ cs: "CS-001", comments, items: [{ nos: [132], word: "Noted" }] }).problems).toContain("No. 132 is not in this change set");
-    expect(dispositions({ cs: "CS-001", comments, items: [{ nos: [136], word: "Accepted" }] }).problems).toMatch(/^⚠ No disposition yet for No\. 126/);
+    expect(dispositions({ cs: "CS-001", comments, items: [{ nos: [136], word: "Accepted" }] }).problems).toMatch(/^⚠ No disposition yet for Nos\. 126 to 131/);
   });
   test("push takes the time from the clock and the full sha", () => {
     expect(push("e7b4094fd22055f205b52ba3c6c980b11285e228", 15, new Date("2026-10-31T15:27:40Z"))).toEqual({
