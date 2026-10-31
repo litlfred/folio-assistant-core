@@ -416,7 +416,8 @@ doing both halves is not this check.
 - `QA gate (change set)`: first line `Passed <head sha>: <one line>` or
   `Failed <head sha>: <the first problem>`, then one line per problem;
 - `QA report (change set)`: the link to the QA report for the staged
-  commit, for example the folio's `qa-reports` tree at `pr/<n>/<sha>`.
+  commit: the tree `pr/<n>/<sha>` on the folio's QA reports branch (in
+  smart-ra, `cat/cat-harness/qa-reports`; check the branch name, it varies).
 
 **What the sheet shows.** Staging review reads `review · QA report` (both
 links), then the gate: `✓ QA gate passed (b20534f)`, or in bold
