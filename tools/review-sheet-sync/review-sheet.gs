@@ -100,12 +100,13 @@ const READY_DESC = 'Ready columns: who may set them is the Config tab\'s EDITORS
 function applyEditors(ss) {
   if (EDITORS === null) return;
   const sh = ss.getSheetByName(DRAFTING ? CFG.FEEDBACK : CFG.RCS);
-  const cols = readSheet(sh).header.map((h, i) => /^Ready for /.test(h) ? i : -1).filter(i => i >= 0);
+  const s = readSheet(sh);
+  const cols = s.header.map((h, i) => /^Ready for /.test(h) ? i : -1).filter(i => i >= 0);
   sh.getProtections(SpreadsheetApp.ProtectionType.RANGE)
     .filter(p => p.getDescription() === READY_DESC).forEach(p => p.remove());
   if (!EDITORS.length) return;
   cols.forEach(c => {
-    const p = sh.getRange(2, c + 1, sh.getMaxRows() - 1, 1).protect().setDescription(READY_DESC);
+    const p = sh.getRange(s.top, c + 1, sh.getMaxRows() - s.top + 1, 1).protect().setDescription(READY_DESC);
     p.removeEditors(p.getEditors());
     p.addEditors(EDITORS);
   });
@@ -122,9 +123,10 @@ function applyEditors(ss) {
  */
 function checkDropdown(ss) {
   const sh = ss.getSheetByName(CFG.FEEDBACK);
-  const at = readSheet(sh).header.indexOf(COLS.draft.sections);
+  const s = readSheet(sh);
+  const at = s.header.indexOf(COLS.draft.sections);
   if (at < 0) return;
-  const cells = sh.getRange(2, at + 1, sh.getMaxRows() - 1, 1);
+  const cells = sh.getRange(s.top, at + 1, sh.getMaxRows() - s.top + 1, 1);
   const had = cells.getDataValidation();
   if (!had) {
     cells.setDataValidation(SpreadsheetApp.newDataValidation()
@@ -189,10 +191,11 @@ function markDirty(e) {
     // and rebuild only those, at once. An edit of the header row, or of the
     // Agent tab by hand, rebuilds everything.
     const r0 = e.range.getRow ? e.range.getRow() : 1;
-    if (name === CFG.FEEDBACK && r0 > 1) {
+    const top = name === CFG.FEEDBACK ? topRow(e.range.getSheet()) : 2;
+    if (name === CFG.FEEDBACK && r0 >= top) {
       const rows = (props.getProperty('rows') || '').split(',').filter(Boolean);
       const n = e.range.getNumRows();
-      for (let r = r0; r < r0 + Math.min(n, MAX_ROWS + 1); r++) rows.push(String(r - 2));
+      for (let r = r0; r < r0 + Math.min(n, MAX_ROWS + 1); r++) rows.push(String(r - top));
       const uniq = rows.filter((x, i) => rows.indexOf(x) === i);
       // A large paste rebuilds everything: a long row list would overflow a
       // document property (9 kB) and stop the refresh (finding F4).
@@ -308,17 +311,34 @@ function refreshLocked() {
     const rSt = COLS.rcs.staging ? col(rcs, COLS.rcs.staging) : -1, rCs = col(rcs, COLS.rcs.cs);
     if (rSt >= 0 && rCs >= 0) rcs.rows.forEach((r, k) => {
       const id = String(r[rCs]).trim();
-      if (stagingOf[id]) rcs.sh.getRange(k + 2, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id])]]);
+      if (stagingOf[id]) rcs.sh.getRange(k + rcs.top, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id])]]);
     });
   }
 }
 // ---------- sheet helpers ----------
 
+/**
+ * Rows above the header whose first cell starts "Colour key" are a legend for
+ * people: the header is the first row after them, and `top` is the sheet row
+ * of the first data row (2 with no legend). Every write goes through `top`.
+ */
+const LEGEND_RE = /^colou?r key\b/i;
+function legendCount(firstCells) {
+  let h = 0;
+  while (h < firstCells.length - 1 && LEGEND_RE.test(String(firstCells[h]).trim())) h++;
+  return h;
+}
+/** The sheet row of the first data row, reading only column A's top cells. */
+function topRow(sh) {
+  const a = sh.getRange(1, 1, Math.min(5, Math.max(sh.getLastRow(), 1)), 1).getDisplayValues();
+  return legendCount(a.map(r => r[0])) + 2;
+}
 function readSheet(sh) {
   const last = sh.getLastRow();
   const width = sh.getLastColumn();
   const values = sh.getRange(1, 1, Math.max(last, 1), width).getDisplayValues();
-  return { sh, header: values[0].map(h => String(h).trim()), rows: values.slice(1) };
+  const h = legendCount(values.map(r => r[0]));
+  return { sh, top: h + 2, header: values[h].map(x => String(x).trim()), rows: values.slice(h + 1) };
 }
 function col(s, name) { return s.header.indexOf(name); }
 function cols(s, name) { return s.header.map((h, i) => (h === name ? i : -1)).filter(i => i >= 0); }
@@ -336,7 +356,7 @@ function colsLike(s, name) {
 function writeRows(s, c, only, f) {
   if (c < 0) return;
   if (!only) return writeRich(s, c, s.rows.map(f));
-  only.forEach(k => s.sh.getRange(k + 2, c + 1, 1, 1).setRichTextValues([[f(s.rows[k], k)]]));
+  only.forEach(k => s.sh.getRange(k + s.top, c + 1, 1, 1).setRichTextValues([[f(s.rows[k], k)]]));
 }
 
 /**
@@ -406,7 +426,7 @@ function markStale(s, csCol, basisOfCs, exact, prefix) {
   if (ag < 0 || csCol < 0) return;
   s.rows.forEach((r, k) => {
     const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[String(r[csCol]).trim()]);
-    if (t !== null) s.sh.getRange(k + 2, ag + 1, 1, 1).setValues([[asText(t)]]);
+    if (t !== null) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(t)]]);
   });
 }
 
@@ -426,7 +446,7 @@ function staleText(text, basis, written) {
 
 function writeRich(s, c, rich) {
   if (c < 0 || !rich.length) return;
-  s.sh.getRange(2, c + 1, rich.length, 1).setRichTextValues(rich.map(v => [v]));
+  s.sh.getRange(s.top, c + 1, rich.length, 1).setRichTextValues(rich.map(v => [v]));
 }
 
 /** parts: [{t, url?, bold?}] -> RichTextValue */
@@ -590,7 +610,7 @@ function refreshRpc(s, pcOf, csOfNo, stOf, prOf) {
       const pc = pcOf[n];
       return [pc ? '=HYPERLINK("' + q(CFG.PC_PAGE + pc) + '",' + (isNaN(+n) ? '"' + q(n) + '"' : +n) + ')' : (n === '' ? '' : isNaN(+n) ? asText(n) : +n)];
     });
-    if (f.length) s.sh.getRange(2, c.no + 1, f.length, 1).setValues(f);
+    if (f.length) s.sh.getRange(s.top, c.no + 1, f.length, 1).setValues(f);
   }
   const printedOf = r => (c.page >= 0 ? pageTokens(String(r[c.page])).map(t => t.from) : []);
   writeRich(s, c.sections, s.rows.map(r => {
@@ -622,7 +642,7 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
   const fb = cols(rpc, COLS.rpc.feedback);
   const gid = rpc.sh.getSheetId();
   const rowOf = {};
-  rpc.rows.forEach((r, i) => (rowOf[String(r[p.no]).trim()] = { r, at: i + 2 }));
+  rpc.rows.forEach((r, i) => (rowOf[String(r[p.no]).trim()] = { r, at: i + rpc.top }));
   const ref = n => ({ t: 'No. ' + n, url: '#gid=' + gid + '&range=A' + rowOf[n].at });
   const get = (n, k) => (p[k] >= 0 ? String(rowOf[n].r[p[k]]).trim() : '');
 
@@ -686,7 +706,7 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
   Object.keys(out).forEach(k => writeRich(s, c[k], out[k]));
   // One plain status per change set, for filtering (owner, 2026-10-31).
   const st = COLS.rcs.status ? col(s, COLS.rcs.status) : -1;
-  if (st >= 0 && status.length) s.sh.getRange(2, st + 1, status.length, 1).setValues(status);
+  if (st >= 0 && status.length) s.sh.getRange(s.top, st + 1, status.length, 1).setValues(status);
 }
 
 /**
@@ -784,9 +804,9 @@ function refreshDraft(rows) {
       given.push(k);
     });
     if (given.length && !only) {
-      fb.sh.getRange(2, c.cs + 1, fb.rows.length, 1).setValues(fb.rows.map(r => [asText(String(r[c.cs]).trim())]));
+      fb.sh.getRange(fb.top, c.cs + 1, fb.rows.length, 1).setValues(fb.rows.map(r => [asText(String(r[c.cs]).trim())]));
     } else {
-      given.forEach(k => fb.sh.getRange(k + 2, c.cs + 1, 1, 1).setValues([[fb.rows[k][c.cs]]]));
+      given.forEach(k => fb.sh.getRange(k + fb.top, c.cs + 1, 1, 1).setValues([[fb.rows[k][c.cs]]]));
     }
   }
 
@@ -838,7 +858,7 @@ function refreshDraft(rows) {
         r[c.sections] = now.join(', ');
       }
     });
-    fixed.forEach(k => fb.sh.getRange(k + 2, c.sections + 1, 1, 1).setValues([[asText(fb.rows[k][c.sections])]]));
+    fixed.forEach(k => fb.sh.getRange(k + fb.top, c.sections + 1, 1, 1).setValues([[asText(fb.rows[k][c.sections])]]));
   }
   // Selected Sections is the people's multi-select dropdown, so it stays plain
   // text (a dropdown chip cannot carry a link). Section links is grey: one
@@ -873,7 +893,7 @@ function refreshDraft(rows) {
       if (!want(k)) return;
       const cs = String(r[c.cs]).trim();
       const t = staleText(r[ag], basisOf(fb.header, r, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback), basisOfCs[cs]);
-      if (t !== null) fb.sh.getRange(k + 2, ag + 1, 1, 1).setValues([[asText(t)]]);
+      if (t !== null) fb.sh.getRange(k + fb.top, ag + 1, 1, 1).setValues([[asText(t)]]);
     });
   }
 }

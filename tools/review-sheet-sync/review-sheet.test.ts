@@ -19,7 +19,7 @@ import { feedbackBasis } from "./feedback-issue.js";
 const code = buildScript();
 const withConfig = <T extends object>(t: T, rows: string[][]) => ({ ...t, Config: { id: 50, rows } });
 
-type Prot = { col: string; desc: string; editors: string[]; removed: boolean; api?: { getDescription(): string; remove(): void } };
+type Prot = { col: string; from?: number; desc: string; editors: string[]; removed: boolean; api?: { getDescription(): string; remove(): void } };
 type Rich = { text: string; links: [number, number, string][]; bold: [number, number][] };
 
 /** A fake folio: a draft with printed pages 1–3 on PDF pages 12–14 (offset 11). */
@@ -56,11 +56,18 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
   const props: Record<string, string> = {};
   // A write lands at its rows: a whole column is the array of its rows from
   // row 2; a one-row write fills only its place.
+  // A legend row ("Colour key ...") above the header moves the data down.
+  const hdr = (name: string) => {
+    let h = 0;
+    while (h < tabs[name].rows.length - 1 && /^colou?r key/i.test(tabs[name].rows[h][0])) h++;
+    return h;
+  };
   const put = (name: string, h: string, r: number, v: unknown[][]) => {
     const tab = (written[name] ??= {});
-    if (r === 1 || (r === 2 && v.length > 1)) return void (tab[h] = v);
+    const top = hdr(name) + 2;
+    if (r === 1 || (r === top && v.length > 1)) return void (tab[h] = v);
     const arr = (tab[h] ??= []);
-    v.forEach((x, i) => (arr[r - 2 + i] = x));
+    v.forEach((x, i) => (arr[r - top + i] = x));
   };
   const sheet = (name: string) => {
     const t = tabs[name];
@@ -74,7 +81,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
       getProtections: () => ((t as { prot?: Prot[] }).prot ??= []).filter((p) => !p.removed).map((p) => p.api!),
       getRange: (r: number, c: number, nr: number, nc: number) => ({
         protect: () => {
-          const p: Prot = { col: t.rows[0][c - 1], desc: "", editors: ["owner@x.example"], removed: false };
+          const p: Prot = { col: t.rows[hdr(name)][c - 1], from: r, desc: "", editors: ["owner@x.example"], removed: false };
           ((t as { prot?: Prot[] }).prot ??= []).push(p);
           const api = {
             setDescription: (d: string) => ((p.desc = d), api),
@@ -88,8 +95,8 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
           return api;
         },
         getDisplayValues: () => t.rows.slice(r - 1, r - 1 + nr).map((row) => row.slice(c - 1, c - 1 + nc)),
-        setValues: (v: unknown[][]) => put(name, t.rows[0][c - 1], r, v),
-        setRichTextValues: (v: unknown[][]) => put(name, t.rows[0][c - 1], r, v),
+        setValues: (v: unknown[][]) => put(name, t.rows[r === 1 ? 0 : hdr(name)][c - 1], r, v),
+        setRichTextValues: (v: unknown[][]) => put(name, t.rows[r === 1 ? 0 : hdr(name)][c - 1], r, v),
         clearContent: () => {},
       }),
     };
@@ -264,6 +271,20 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     expect(rt2.written["Review Change Sets"]["Agentic status (filter)"]).toEqual([["Needs human"], ["Not started"]]);
   });
 
+  test("a Colour key row above RPC's and RCS's headers changes nothing the script writes", () => {
+    const keyed = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][] }>;
+    for (const n of ["Review Public Comments", "Review Change Sets"]) {
+      const r = keyed[n].rows;
+      r.unshift(["Colour key: Grey = mechanical", ...r[0].slice(1).map(() => "")]);
+    }
+    const b = runtime(keyed);
+    load(code, b.g).refreshAll();
+    expect(b.written["Review Public Comments"]).toEqual(rpc);
+    const rcsB = b.written["Review Change Sets"], rcsA = rt.written["Review Change Sets"];
+    // Links from RCS to an RPC row point one row lower.
+    expect(JSON.stringify(rcsB)).toBe(JSON.stringify(rcsA).replace(/range=A(\d+)/g, (_, n) => "range=A" + (+n + 1)));
+  });
+
   test("an edit rebuilds at once while a rebuild is quick", () => {
     const rt2 = runtime(withConfig(tabs(), pcRows));
     load(code, rt2.g).markDirty({ range: { getSheet: () => rt2.sheet("Agent") } });
@@ -347,14 +368,24 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(() => load(code, rt2.g).refreshAll()).toThrow(/no "Config" tab/);
   });
 
+  test("GUIDE, the first Config row, gives the colours, the workflow and the filter views in the sheet's own words", () => {
+    const g = dRows.find((r) => r[0] === "GUIDE")![1];
+    expect(dRows[1][0]).toBe("GUIDE");
+    expect(g).toContain("Blue: your input, by Contributors");
+    expect(g).toContain("Ready for agent");
+    expect(g).toContain("Filter views");
+    const pc = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json")).find((r) => r[0] === "GUIDE")![1];
+    expect(pc).toContain("Feedback Review Committee");
+  });
+
   test("the script is the same for every document: nothing of the folio is in it", () => {
     expect(code).not.toContain("https://x.example/S#");
     expect(code).not.toContain("Global challenges");
-    expect(dRows.find((r) => !["SETUP", "Key", "EDITORS"].includes(r[0]))?.[0]).toBe("CFG");
+    expect(dRows.find((r) => !["GUIDE", "SETUP", "Key", "EDITORS"].includes(r[0]))?.[0]).toBe("CFG");
     expect(dRows.filter((r) => r[0] === "SETUP")).toHaveLength(1);
     expect(dRows.find((r) => r[0] === "SETUP")![1]).toContain("Allow multiple selections");
     expect(dRows.find((r) => r[0] === "EDITORS")![1]).toBe("");
-    expect(dRows.every((r, i) => i === 0 || ["SETUP", "EDITORS"].includes(r[0]) || r[1].startsWith("|"))).toBe(true);
+    expect(dRows.every((r, i) => i === 0 || ["GUIDE", "SETUP", "EDITORS"].includes(r[0]) || r[1].startsWith("|"))).toBe(true);
     expect(JSON.parse(dRows.find((r) => r[0] === "CFG")![1].slice(1)).MODE).toBe("drafting");
   });
 
@@ -441,6 +472,31 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     load(code, rt2.g).refreshAll();
     expect(rt2.written["Contributor Feedback"]["Change-set"]).toEqual([["CS-004"], ["CS-005"], [""], ["CS-006"]]);
+  });
+
+  test("a Colour key row above the header changes nothing the script writes, and edits and locks start below it", () => {
+    const rows = dRows.map((r) => (r[0] === "EDITORS" ? ["EDITORS", "a@x.example"] : r));
+    const plain = withConfig(draftTabs(), rows) as Record<string, { id: number; rows: string[][]; prot?: Prot[] }>;
+    const keyed = withConfig(draftTabs(), rows) as Record<string, { id: number; rows: string[][]; prot?: Prot[] }>;
+    for (const t of [plain, keyed]) {
+      t["Contributor Feedback"].rows[0].push("Ready for agent");
+      t["Contributor Feedback"].rows.forEach((r, i) => i && r.push(""));
+    }
+    const fbRows = keyed["Contributor Feedback"].rows;
+    fbRows.unshift(["Colour key: Blue = you, Green = agent", ...fbRows[0].slice(1).map(() => "")]);
+    const a = runtime(plain), b = runtime(keyed);
+    load(code, a.g).refreshAll();
+    load(code, b.g).refreshAll();
+    expect(b.written["Contributor Feedback"]).toEqual(a.written["Contributor Feedback"]);
+    expect((keyed["Contributor Feedback"].prot ?? []).map((p) => [p.col, p.from])).toEqual([["Ready for agent", 3]]);
+    // An edit of the legend or header rebuilds everything; one below them, its row.
+    const s = load(code, b.g);
+    s.markDirty({ range: { getSheet: () => b.sheet("Contributor Feedback"), getRow: () => 2, getNumRows: () => 1 } });
+    expect(b.props.rows ?? "").toBe("");
+    fbRows[3][2] = "1.1 Global challenges";
+    delete b.written["Contributor Feedback"];
+    s.markDirty({ range: { getSheet: () => b.sheet("Contributor Feedback"), getRow: () => 4, getNumRows: () => 1 } });
+    expect(b.written["Contributor Feedback"]["Selected Sections"][1]).toEqual(["\u2800\u2800\u28001.1 Global challenges"]);
   });
 
   test("an edit rebuilds only its rows; an Agent change reaches its change set's row on the timer", () => {
