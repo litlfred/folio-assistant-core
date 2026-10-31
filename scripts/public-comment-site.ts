@@ -697,17 +697,30 @@ export function overlaySnippet(rows: SiteComment[], opts: { repo?: string; issue
   for (const [, h] of entries) { total += h.n; open += h.o; }
   const idle = window.requestIdleCallback || ((f) => setTimeout(() => f({ timeRemaining: () => 8 }), 1));
   let i = 0;
+  // A lazy document page keeps the reader's place as each batch lands
+  // (\`faKeepPlace\`, build-document-site.ts), so nothing is seen to move.
+  // Any other page jumps back to the target once, at the end, instantly:
+  // the theme's smooth scroll animated it (dth-hrh, 2026-10-31).
+  const keep = window.faKeepPlace || ((f) => f());
   const batch = (deadline) => {
-    do { if (i >= entries.length) break; note(entries[i][0], entries[i][1]); i++; } while (deadline.timeRemaining() > 2 || i % 40 !== 0);
+    keep(() => {
+      do { if (i >= entries.length) break; note(entries[i][0], entries[i][1]); i++; } while (deadline.timeRemaining() > 2 || i % 40 !== 0);
+    });
     if (i < entries.length) idle(batch);
-    else if (location.hash.length > 1) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
+    else if (!window.faKeepPlace && location.hash.length > 1) {
+      const t = document.getElementById(decodeURIComponent(location.hash.slice(1)));
+      const s = document.documentElement.style, was = s.scrollBehavior;
+      s.scrollBehavior = "auto";
+      t?.scrollIntoView();
+      s.scrollBehavior = was;
+    }
   };
   idle(batch);
   const bar = document.createElement("div");
   bar.className = "pc-bar";
   bar.innerHTML = '<a href="' + esc(meta.dashboard) + '">Public comments</a>: ' + total + " shown in this document, " + open + " open";
   const main = document.querySelector(".fa-doc") || document.querySelector("main") || document.body;
-  main.prepend(bar);
+  keep(() => main.prepend(bar));
 })();
 </script>
 `;

@@ -9,7 +9,7 @@ import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSyn
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-import { buildDocumentSite, citationsToHtml, documentManifests, katexMacros, renderDocumentHtml, splitBlocks, type Outline } from "./build-document-site.js";
+import { LAZY_OPEN, buildDocumentSite, citationsToHtml, documentManifests, katexMacros, renderDocumentHtml, splitBlocks, type Outline } from "./build-document-site.js";
 import { readPositions } from "../schemas/changeset.js";
 import { initFolio } from "@litlfred/cat-harness-tools/scripts/init-folio.js";
 
@@ -254,6 +254,13 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     expect(shell).not.toContain("<td>Bootstrapping Agent</td>");
     expect(shell).toContain('id="fa-blocks"');
     expect(shell).toContain('href="index.hydrated.html"');
+    // Opened at a link, it lands there at once and stays: the text above is
+    // folded, and every jump is instant (dth-hrh, owner 2026-10-31).
+    expect(shell.indexOf(LAZY_OPEN)).toBeGreaterThan(-1);
+    expect(shell.indexOf(LAZY_OPEN)).toBeLessThan(shell.indexOf('<div class="fa-blk"'));
+    expect(shell).toContain('setAttribute("hidden", "until-found")');
+    expect(shell).toContain("Show this chapter's text");
+    expect(shell).toContain('s.scrollBehavior = "auto"');
     // compact links on the shell, full links on the one-page version
     expect(shell).toContain('data-src="folio/handbook/introduction/overview.md"');
     const chunk = JSON.parse(readFileSync(join(out, "handbook", "blocks", "000.json"), "utf-8")) as Record<string, string>;
