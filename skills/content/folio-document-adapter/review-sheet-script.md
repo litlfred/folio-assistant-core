@@ -38,6 +38,7 @@ move them.
 | Review Public Comments | Line no(s) / Table / Figure | each `p.N` and each `line(s) N–M` / `L N` links to its page. Draft line numbers restart, so a line is placed on the page, near the row's own pages, whose numbered lines hold it |
 | Review Change Sets | Sections, Pages | the union over the change-set's comments, sorted by page, each linked |
 | Review Change Sets | Agentic status | the same, per change-set; the status is its PCs' Agentic statuses, each once |
+| Review Change Sets | Agentic status (filter) | one plain value per change set, for a filter view (owner, 2026-10-31): "Needs human" if any of its comments needs a person, else the least advanced of its comments' Agentic statuses (Not started, Working, PR open, Ready for review, Change merged); "Not in comment record" only when all are |
 | Review Change Sets | Public Comments | `No. n (Status) · comment`, status in bold, joined by a blank line |
 | Review Change Sets | Suggested Revisions, PC Architect Feedback, Dispositions | `No. n · text`, one per comment |
 
@@ -424,6 +425,7 @@ opens it.
 | | Ready for editor | rows with a Title, Ready for agent not Yes |
 | | Decided | Ready for merge is Yes |
 | public comment: Review Change Sets | Change sets: Open / Ready for editor / Decided | the same three, on its Ready columns |
+| | Change sets: by agentic status | every change set; pick values in the Agentic status (filter) column's filter |
 | public comment: Review Public Comments | Comments: Open | a No., Disposition empty |
 | | Comments: Decided | Disposition filled |
 

@@ -588,10 +588,12 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
   };
 
   const out = { sections: [], pages: [], comments: [], revisions: [], feedback: [], dispositions: [], agentic: [] };
+  const status = [];
   s.rows.forEach(r => {
     const cs = String(r[c.cs]).trim();
     const sts = [...new Set((csOf[cs] || []).map(n => stOf[n]).filter(Boolean))].join(', ');
     out.agentic.push(agenticCell(sts, prOf[cs] || []));
+    status.push([asText(csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)))]);
     const nos = (csOf[cs] || []).filter(n => rowOf[n]).sort((a, b) => a - b);
 
     const keys = {}, raw = [];
@@ -632,6 +634,26 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
     }));
   });
   Object.keys(out).forEach(k => writeRich(s, c[k], out[k]));
+  // One plain status per change set, for filtering (owner, 2026-10-31).
+  const st = COLS.rcs.status ? col(s, COLS.rcs.status) : -1;
+  if (st >= 0 && status.length) s.sh.getRange(2, st + 1, status.length, 1).setValues(status);
+}
+
+/**
+ * The Agent tab's Agentic status values, in the order work moves through
+ * them. A change set's one status for filtering: "Needs human" if any of its
+ * comments needs a person, else the least advanced of them; "Not in comment
+ * record" only when every one is. A value not in the list is kept as is.
+ */
+const STATUS_ORDER = ['Not started', 'Working', 'PR open', 'Ready for review', 'Change merged'];
+function csStatus(sts) {
+  if (!sts.length) return '';
+  if (sts.indexOf('Needs human') >= 0) return 'Needs human';
+  const known = sts.filter(x => x !== 'Not in comment record');
+  if (!known.length) return 'Not in comment record';
+  const odd = known.filter(x => STATUS_ORDER.indexOf(x) < 0);
+  if (odd.length) return odd[0];
+  return STATUS_ORDER[Math.min.apply(null, known.map(x => STATUS_ORDER.indexOf(x)))];
 }
 
 // ---------- Drafting: Contributor Feedback ----------

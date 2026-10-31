@@ -140,7 +140,7 @@ export const DEFAULT_COLUMNS = {
   rcs: {
     cs: "Change-set", sections: "Sections", pages: "Pages", comments: "Public Comments",
     revisions: "Suggested Revisions", feedback: "PC Architect Feedback", dispositions: "Dispositions",
-    agentic: "Agentic status", staging: "Staging review page",
+    agentic: "Agentic status", staging: "Staging review page", status: "Agentic status (filter)",
   },
   agent: {
     no: "No.", pc: "Comment ref", agentic: "Agentic status", cs: "Change-sets",
