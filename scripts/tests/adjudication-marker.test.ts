@@ -1,7 +1,7 @@
 /**
  * The callers of the shared adjudication half — moved here from
  * `cat-harness-tools/scripts/tests/adjudication-marker.test.ts` (bean `ho66`). Two
- * of the four callers (`ingest-l1-completeness-gate`, `content-change-review`)
+ * of the four callers (`ingest-l1-completeness-gate`, `content-change-review-committee`)
  * are this instance's diagrams, so standing alone cat-harness cannot read
  * them; the other two are cat-harness's own, reached here through the corpus
  * cat-harness serves, which includes this instance.
@@ -27,7 +27,8 @@ describe("the split — bean `bvuk`, the owner's shape", () => {
       ["refresh-materialized.bpmn", "Task_Adjudicate", ["defer", "local", "merge", "remote"]],
       ["translation-workflow.bpmn", "Task_Adjudicate", ["accept", "edit", "retranslate"]],
       ["ingest-l1-completeness-gate.bpmn", "Task_FlagDrift", ["real", "source-wrong", "spurious"]],
-      ["content-change-review.bpmn", "Call_Adjudication", ["stands", "withdrawn"]],
+      // In the committee phase since content-change-review was split (2026-10-31).
+      ["content-change-review-committee.bpmn", "Call_Adjudication", ["stands", "withdrawn"]],
     ] as const) {
       const m = await loadProcessModel(diagram(f));
       expect(m.nodes.get(id)!.calledElement, f).toBe("Process_Adjudication");
