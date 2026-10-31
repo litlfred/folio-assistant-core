@@ -148,6 +148,12 @@ who-iris"):
   `diig-phases-adaptation/v1` file that `adapts` the published version.
 - Tool `diig-phases-svg` (`bun run figure:diig-phases`) draws either one. The
   folio commits the SVG and records the data file in `meta.source.generated`.
+- The SMART Guidelines approach chart (L1–L5 layers and their country
+  adaptations) follows the same pattern: `who-iris/smart-guidelines-approach-figure/v1`
+  data (the product catalogue handbook's Fig. 5 is on `9789240116191-eng`),
+  drawn by Tool `smart-approach-svg` (`bun run figure:smart-approach`).
+- A source's own wording stays as printed, typos included ("prioritise
+  outcomes"); a correction is a review comment, not an edit to the data.
 
 - Labels are SVG `<text>`, never pixels, so they can be searched,
   translated and read aloud.
