@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 81286166512ec8f3.
+// folio-assistant-core tools/review-sheet-sync at template sha256 b41d008eeb5cb7bf.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 81286166512ec8f3';
+const SCRIPT_VERSION = 'template sha256 b41d008eeb5cb7bf';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -1041,12 +1041,21 @@ function agentStep(cell) {
   if (!m || !(m[1].toLowerCase() in AGENT_STEPS) || !AGENT_STEPS[m[1].toLowerCase()]) return null;
   return { name: m[1].toLowerCase(), text: AGENT_STEPS[m[1].toLowerCase()], at: m[2] };
 }
+/**
+ * "today 17:47Z", "yesterday 17:47Z", or "3 days ago, 2026-10-28 17:47Z"
+ * (owner, 2026-10-31: "today/yesterday > 1 days ago"). Days are UTC days.
+ */
+function whenLabel(at, now) {
+  const day = ms => Math.floor(ms / 86400000);
+  const n = day(now || Date.now()) - day(utcMs(at)), hm = String(at).slice(11);
+  return n <= 0 ? 'today ' + hm : n === 1 ? 'yesterday ' + hm : n + ' days ago, ' + at;
+}
 /** The step line: "Agent: editing the document (since 17:20Z)", with a warning once it has gone quiet. */
 function stepLine(step, now) {
   if (step.name === 'proposed')
-    return PROGRESS + 'Proposal ready (' + step.at + '): set Ready for agent to Yes to start, or answer in your feedback.';
+    return PROGRESS + 'Proposal ready (' + whenLabel(step.at, now) + '): set Ready for agent to Yes to start, or answer in your feedback.';
   const age = Math.round(((now || Date.now()) - utcMs(step.at)) / 60000);
-  return PROGRESS + 'Agent: ' + step.text + ' (since ' + step.at +
+  return PROGRESS + 'Agent: ' + step.text + ' (since ' + whenLabel(step.at, now) +
     (age > 30 ? '; \u26a0 no update for ' + age + ' min' : '') + ').';
 }
 /** Add the Agent step column at the END of the agent's change-set tab, inside the locked run. */

@@ -536,7 +536,7 @@ Yes/No dropdown.
 writes **Agent step (change set)** on its change-set tab, with
 `agent-record.ts step <name>` so the time comes from the clock. The script
 shows it on the ⏳ line for as long as it holds, e.g. "⏳ Agent: editing the
-document (since 2026-10-31 17:20Z)", and adds "⚠ no update for N min" after 30 minutes.
+document (since today 17:20Z)" (or "yesterday …", or "3 days ago, 2026-10-28 …"), and adds "⚠ no update for N min" after 30 minutes.
 A question for a person ("Needs you: answer the Decision needed below, then
 set Ready for agent to Yes") always comes first. The script adds the column,
 at the end of the tab, inside its locked run.

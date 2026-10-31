@@ -1080,9 +1080,10 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
     },
     newTextStyle: textStyle,
   };
-  const fns = new Function("SpreadsheetApp", `${code}\nreturn { stagingWarning, agenticCell, progressLine, withProgress };`)(sheets) as {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { stagingWarning, agenticCell, progressLine, withProgress, whenLabel };`)(sheets) as {
     progressLine: (o: object) => string;
     withProgress: (t: string, l: string) => string;
+    whenLabel: (at: string, now?: number) => string;
     stagingWarning: (u: string, b: object, p: object[], r?: string) => string;
     agenticCell: (s: string, p: object[], o?: object) => { text: string; links: [number, number, string][] };
   };
@@ -1122,7 +1123,11 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
     expect(q.text.split("\n")[0]).toBe("Waiting on the agent since 2026-10-31 11:30Z (Ready for agent set); it has not recorded a step yet");
     // A step recorded after Ready for agent says what the agent is doing instead.
     const st = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z", step: "editing 2026-10-31 11:47Z" });
-    expect(st.text.split("\n")[0]).toMatch(/^Agent: .+ \(since 2026-10-31 11:47Z/);
+    expect(st.text.split("\n")[0]).toMatch(/^Agent: .+ \(since (today|yesterday|\d+ days ago, 2026-10-31) 11:47Z/);
+    const now = Date.parse("2026-10-31T18:00:00Z");
+    expect(fns.whenLabel("2026-10-31 17:47Z", now)).toBe("today 17:47Z");
+    expect(fns.whenLabel("2026-10-30 23:10Z", now)).toBe("yesterday 23:10Z");
+    expect(fns.whenLabel("2026-10-28 09:05Z", now)).toBe("3 days ago, 2026-10-28 09:05Z");
     // A step older than Ready for agent is the last round's, so it still waits.
     expect(fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z", step: "editing 2026-10-31 11:00Z" }).text).toMatch(/^Waiting on the agent/);
     expect(q.text).toContain("dth-hrh#7");
@@ -1448,7 +1453,7 @@ describe("the ⏳ line says where the agent is (owner, 2026-10-31)", () => {
   };
   const pr = { url: "https://github.com/o/r/pull/1", head: "abc1234", done: "2026-10-31 15:26Z" };
   test("a step newer than the last push shows, with its time", () => {
-    expect(fns.progressLine({ prs: [pr], built: { step: "editing 2026-10-31 17:20Z" } })).toMatch(/^⏳ Agent: editing the document \(since 2026-10-31 17:20Z/);
+    expect(fns.progressLine({ prs: [pr], built: { step: "editing 2026-10-31 17:20Z" } })).toMatch(/^⏳ Agent: editing the document \(since (today|yesterday|\d+ days ago, 2026-10-31) 17:20Z/);
   });
   test("idle, an older step, or an unknown word shows nothing new", () => {
     expect(fns.agentStep("idle 2026-10-31 17:20Z")).toBeNull();
@@ -1473,6 +1478,6 @@ describe("the status line comes back after the agent rewrites its cell (owner, 2
   });
   test("a drafted proposal says to set Ready for agent", () => {
     const pr = { url: "https://github.com/o/r/pull/1", head: "abc1234", done: "2026-10-31 15:26Z" };
-    expect(fns.progressLine({ prs: [pr], built: { step: "proposed 2026-10-31 17:30Z" } })).toMatch(/^⏳ Proposal ready \(2026-10-31 17:30Z\): set Ready for agent to Yes/);
+    expect(fns.progressLine({ prs: [pr], built: { step: "proposed 2026-10-31 17:30Z" } })).toMatch(/^⏳ Proposal ready \((today|yesterday|\d+ days ago, 2026-10-31) 17:30Z\): set Ready for agent to Yes/);
   });
 });
