@@ -57,6 +57,9 @@ function loadConfig(ss) {
   CFG = json('CFG');
   COLS = json('COLS');
   DATA = json('DATA');
+  // Old short names, from a Config written before 2026-10-31.
+  [['K', 'SECTIONS'], ['ABBR', 'ABBREVIATIONS'], ['LP', 'PAGE_LINES'], ['OFFSET', 'PAGE_OFFSET'], ['MAX', 'LAST_PAGE']]
+    .forEach(([o, n]) => { if (DATA[n] === undefined && DATA[o] !== undefined) DATA[n] = DATA[o]; });
   DRAFTING = CFG.MODE === 'drafting';
   WATCHED = DRAFTING ? [CFG.FEEDBACK, CFG.AGENT] : [CFG.RPC, CFG.AGENT, CFG.RCS];
 }
@@ -426,36 +429,36 @@ function prsOfAll(css, prOf) {
   return css.flatMap(cs => prOf[cs] || []).filter(p => !seen[p.url] && (seen[p.url] = 1));
 }
 
-const pdfUrl = printed => CFG.DRAFT + (printed + DATA.OFFSET);
+const pdfUrl = printed => CFG.DRAFT + (printed + DATA.PAGE_OFFSET);
 
 // ---------- parsing ----------
 
 const esc = s => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-const keysWith = p => Object.keys(DATA.K || {}).filter(k => k.startsWith(p)).map(k => k.slice(2)).sort((a, b) => b.length - a.length);
+const keysWith = p => Object.keys(DATA.SECTIONS || {}).filter(k => k.startsWith(p)).map(k => k.slice(2)).sort((a, b) => b.length - a.length);
 const alt = xs => (xs.length ? xs.map(esc).join('|') : '(?!)');
 const SEC_RE = () => new RegExp(
   'Appendix\\s+([A-Z])\\b|\\b([A-Z]\\.\\d+(?:\\.\\d+)*)\\b|\\b(\\d+(?:\\.\\d+)+)\\b|(' + alt(keysWith('c:')) +
-  ')|\\b(' + alt(Object.keys(DATA.ABBR || {})) + ')\\b|(' + alt(keysWith('f:')) + ')|\\b(?:Chapter|Ch\\.?)\\s*(\\d+)\\b', 'gi');
+  ')|\\b(' + alt(Object.keys(DATA.ABBREVIATIONS || {})) + ')\\b|(' + alt(keysWith('f:')) + ')|\\b(?:Chapter|Ch\\.?)\\s*(\\d+)\\b', 'gi');
 
 function sectionKey(m) {
-  if (m[1]) return DATA.K[m[1].toUpperCase()] ? m[1].toUpperCase() : null;
+  if (m[1]) return DATA.SECTIONS[m[1].toUpperCase()] ? m[1].toUpperCase() : null;
   const num = m[2] || m[3];
   if (num) {
     const parts = num.toUpperCase().split('.');
     while (parts.length) {
       const k = parts.length === 1 && /^\d+$/.test(parts[0]) ? 'ch' + parts[0] : parts.join('.');
-      if (DATA.K[k]) return k;
+      if (DATA.SECTIONS[k]) return k;
       parts.pop();
     }
     return null;
   }
-  if (m[4]) return DATA.K['c:' + m[4].toLowerCase()] ? 'c:' + m[4].toLowerCase() : null;
-  if (m[5]) return m[5] === m[5].toUpperCase() && DATA.ABBR[m[5]] ? 'c:' + DATA.ABBR[m[5]] : null;
+  if (m[4]) return DATA.SECTIONS['c:' + m[4].toLowerCase()] ? 'c:' + m[4].toLowerCase() : null;
+  if (m[5]) return m[5] === m[5].toUpperCase() && DATA.ABBREVIATIONS[m[5]] ? 'c:' + DATA.ABBREVIATIONS[m[5]] : null;
   if (m[6]) {
     const k = 'f:' + m[6].toLowerCase();
-    return DATA.K[k] ? k : null;
+    return DATA.SECTIONS[k] ? k : null;
   }
-  if (m[7]) return DATA.K['ch' + m[7]] ? 'ch' + m[7] : null;
+  if (m[7]) return DATA.SECTIONS['ch' + m[7]] ? 'ch' + m[7] : null;
   return null;
 }
 
@@ -480,20 +483,20 @@ function pageTokens(text) {
   let m;
   while ((m = re.exec(text))) {
     const a = +m[1], b = m[2] ? +m[2] : a;
-    if (a >= 1 && a <= DATA.MAX && b >= a && b <= DATA.MAX && b - a < 30) out.push({ a: m.index, z: m.index + m[0].length, from: a, to: b });
+    if (a >= 1 && a <= DATA.LAST_PAGE && b >= a && b <= DATA.LAST_PAGE && b - a < 30) out.push({ a: m.index, z: m.index + m[0].length, from: a, to: b });
   }
   return out;
 }
 
 /** PDF page holding draft line `line`, preferring pages near the printed candidates */
 function pageOfLine(line, printedCands) {
-  const holds = DATA.LP.filter(([, lo, hi]) => line >= lo && line <= hi).map(([p]) => p);
+  const holds = DATA.PAGE_LINES.filter(([, lo, hi]) => line >= lo && line <= hi).map(([p]) => p);
   for (const q of printedCands) {
-    const pdf = q + DATA.OFFSET;
+    const pdf = q + DATA.PAGE_OFFSET;
     for (const d of [0, 1, -1, 2]) if (holds.includes(pdf + d)) return pdf + d;
   }
   if (holds.length === 1) return holds[0];
-  return printedCands.length ? printedCands[0] + DATA.OFFSET : null;
+  return printedCands.length ? printedCands[0] + DATA.PAGE_OFFSET : null;
 }
 
 /** links for the Line no(s) column: p.N and line references */
@@ -504,7 +507,7 @@ function lineLinks(text, rowPrinted) {
   let m;
   while ((m = pRe.exec(text))) {
     const n = +m[1];
-    if (n >= 1 && n <= DATA.MAX) {
+    if (n >= 1 && n <= DATA.LAST_PAGE) {
       links.push({ a: m.index, z: m.index + m[0].length, url: pdfUrl(n) });
       ctx.push([m.index, n]);
     }
@@ -542,7 +545,7 @@ function refreshRpc(s, pcOf, csOfNo, stOf, prOf) {
   const printedOf = r => (c.page >= 0 ? pageTokens(String(r[c.page])).map(t => t.from) : []);
   writeRich(s, c.sections, s.rows.map(r => {
     const t = String(r[c.sections]);
-    return linked(t, sections(t).map(x => ({ a: x.a, z: x.z, url: CFG.DRAFT + DATA.K[x.key][1] })));
+    return linked(t, sections(t).map(x => ({ a: x.a, z: x.z, url: CFG.DRAFT + DATA.SECTIONS[x.key][1] })));
   }));
   writeRich(s, c.page, s.rows.map(r => {
     const t = String(r[c.page]);
@@ -599,8 +602,8 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
       if (!found.length && t && !raw.some(x => x.toLowerCase() === t.toLowerCase())) raw.push(t);
     });
     const secParts = Object.keys(keys)
-      .sort((a, b) => DATA.K[a][1] - DATA.K[b][1] || a.localeCompare(b))
-      .map(k => ({ t: DATA.K[k][0], url: CFG.DRAFT + DATA.K[k][1] }))
+      .sort((a, b) => DATA.SECTIONS[a][1] - DATA.SECTIONS[b][1] || a.localeCompare(b))
+      .map(k => ({ t: DATA.SECTIONS[k][0], url: CFG.DRAFT + DATA.SECTIONS[k][1] }))
       .concat(raw.map(t => ({ t })));
     out.sections.push(rich(secParts.flatMap((x, i) => (i ? [{ t: ', ' }, x] : [x]))));
 

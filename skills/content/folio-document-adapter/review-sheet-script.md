@@ -60,6 +60,14 @@ What differs per document lives in the sheet's **Config** tab: visible,
 locked to the sheet's owner, columns Key and Value, rows `CFG`, `COLS` and
 `DATA`, each JSON with a leading `|` (so Sheets never reads it as a number
 or formula), a long value continued on the next rows under the same key.
+`DATA` explains itself in its `ABOUT` entry. In public-comment mode it holds
+`SECTIONS` (each section the comments can name: key → [name shown, PDF
+page]), `ABBREVIATIONS` (short names such as HWR → a section key),
+`PAGE_LINES` ([PDF page, first line, last line]), `PAGE_OFFSET` (PDF page =
+printed page + this) and `LAST_PAGE`. In drafting mode it holds `TOC` (the
+dropdown: [name shown, anchor]). A Config written before 2026-10-31 used the
+short names `K`, `ABBR`, `LP`, `OFFSET` and `MAX`; the script still reads
+them.
 
 ```sh
 # the script, once per platform version

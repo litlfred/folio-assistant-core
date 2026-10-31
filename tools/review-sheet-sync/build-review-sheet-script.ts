@@ -231,7 +231,18 @@ export function buildData(a: Anchors, m: LineMap, cfg: SheetSyncConfig) {
     const ls = Object.keys(d.lines ?? {}).filter((x) => /^\d+$/.test(x)).map(Number);
     if (ls.length) LP.push([+p, Math.min(...ls), Math.max(...ls)]);
   }
-  return { K, ABBR, LP, OFFSET: offset, MAX: max };
+  // Readable names (owner, 2026-10-31: "explain 'K'"). The script also reads
+  // the old short names, so a Config written before this still works.
+  return {
+    ABOUT: {
+      SECTIONS: "each section the comments can name: key -> [name shown, PDF page]",
+      ABBREVIATIONS: "short names reviewers use (e.g. HWR) -> the section key they stand for",
+      PAGE_LINES: "for each PDF page with numbered lines: [page, first line, last line]",
+      PAGE_OFFSET: "PDF page = printed page + this",
+      LAST_PAGE: "the last printed page, so a larger number is not read as a page",
+    },
+    SECTIONS: K, ABBREVIATIONS: ABBR, PAGE_LINES: LP, PAGE_OFFSET: offset, LAST_PAGE: max,
+  };
 }
 
 /** One document's settings for the generic script: what its Config tab holds. */
@@ -248,7 +259,10 @@ export function buildConfig(repo: string, cfgPath: string): SheetConfig {
       draft: { ...DRAFT_COLUMNS.draft, ...cfg.columns?.draft },
       draftAgent: { ...DRAFT_COLUMNS.draftAgent, ...cfg.columns?.draftAgent },
     };
-    data = { TOC: buildToc(a as Anchors & { sections: DraftSection[] }) };
+    data = {
+      ABOUT: { TOC: "the Selected Sections dropdown: [name shown, anchor on the document page]" },
+      TOC: buildToc(a as Anchors & { sections: DraftSection[] }),
+    };
   } else {
     for (const k of ["lineMap", "draftUrl", "commentUrl"] as const) if (!cfg[k]) throw new Error(`${cfgPath}: needs ${k}`);
     const m: LineMap = JSON.parse(readFileSync(join(repo, cfg.lineMap as string), "utf8"));
