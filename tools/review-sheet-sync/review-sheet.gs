@@ -228,8 +228,14 @@ function refreshIfDirty() {
   const props = PropertiesService.getDocumentProperties();
   try { loadConfig(SpreadsheetApp.getActive()); } catch (err) { return; }
   if (!DRAFTING) {
-    if (props.getProperty('dirty') !== '1') return;
+    // The agent writes Agent through the API, which fires no edit, so the
+    // timer also rebuilds when the Agent tab's contents have changed.
+    const agent = SpreadsheetApp.getActive().getSheetByName(CFG.AGENT);
+    const seen = agent ? hashOf(JSON.stringify(agent.getRange(1, 1, Math.max(agent.getLastRow(), 1), Math.max(agent.getLastColumn(), 1)).getDisplayValues())) : '';
+    const moved = seen !== (props.getProperty('agentHash') || '');
+    if (props.getProperty('dirty') !== '1' && !moved) return;
     props.deleteProperty('dirty');
+    props.setProperty('agentHash', seen);
     return refreshAll();
   }
   const lock = LockService.getDocumentLock();
