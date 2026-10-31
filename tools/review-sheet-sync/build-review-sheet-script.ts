@@ -430,21 +430,30 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
 
 export function setupSteps(c: SheetConfig): string[] {
   const steps = [
-    "Once per sheet (the skill review-sheet-script has the detail):",
-    "1. Extensions, then Apps Script. Replace all of Code.gs with the published script and save.",
-    "2. Pick installTriggers in the function list and press Run. Allow access (Advanced, then continue).",
-    "3. Reload the sheet. A Review links menu appears; Review links, then Refresh now, checks it.",
+    "Once per sheet, by the sheet's owner (the skill review-sheet-script has the detail):",
+    "1. Get the latest Code.gs: ask the agent, or open review-sheet/Code.gs on the document's site. Select all of it and copy",
+    "2. Here, choose Extensions, then Apps Script. The script editor opens in a new tab.",
+    "   • \"Unable to open the file\"? You are signed in to several Google accounts. Use a private window signed in to the owner's account only",
+    "3. Name the project after this spreadsheet: click \"Untitled project\" at the top left and type the sheet's own name (e.g. \"DTH-PC Contributor Log\"), then Rename. The same name makes it easy to find in script.google.com",
+    "4. Click Code.gs in the Files list. Select all (Ctrl+A, or Cmd+A on a Mac), delete it, paste the copied script, and save (Ctrl+S or Cmd+S, or the disk icon)",
+    "5. In the toolbar's function list (next to Run and Debug), pick installTriggers, then press Run",
+    "6. Allow it, once: Review permissions, pick the owner's account; at \"Google hasn't verified this app\" choose Advanced, then Go to <project name> (unsafe), then Allow. It is your own script, bound to this sheet only",
+    "7. Wait for \"Execution completed\" in the log, return to the sheet tab and reload it. A Review links menu appears; Review links, then Refresh now, checks it",
+    "   • Updating later: repeat 1, 2 and 4, then Review links, then Refresh now. The automatic refresh stays installed",
   ];
-  if (c.CFG.MODE === "drafting") {
-    const col = c.COLS.draft?.sections ?? "Selected Sections";
-    steps.push(
-      `4. Finish the ${col} dropdown (neither the script nor the Sheets API can):`,
-      `   • Click the column letter above "${col}", then Data, then Data validation`,
-      `   • Open the rule (it says "Dropdown (from a range)") and tick Allow multiple selections`,
-      "   • Open Advanced options, set Display style to Chip, and press Done",
-    );
-  }
   return steps;
+}
+
+/** Drafting only: the two dropdown settings neither the script nor the Sheets API can set. */
+export function dropdownSteps(c: SheetConfig): string[] | undefined {
+  if (c.CFG.MODE !== "drafting") return undefined;
+  const col = c.COLS.draft?.sections ?? "Selected Sections";
+  return [
+    `Once per sheet, after installing the script: finish the ${col} dropdown (neither the script nor the Sheets API can):`,
+    `   • Click the column letter above "${col}", then Data, then Data validation`,
+    `   • Open the rule (it says "Dropdown (from a range)") and tick Allow multiple selections`,
+    "   • Open Advanced options, set Display style to Chip, and press Done",
+  ];
 }
 
 /** Who may set the Ready columns, and how the owner names them in the EDITORS row. */
@@ -490,7 +499,8 @@ export function configRows(c: SheetConfig): string[][] {
     // Short Instructions rows, one per subject, so no row is taller than the
     // window (owner, 2026-10-31). The script reads keys by name and ignores these.
     ["Instructions", tabInstructions(c)[CONFIG_TAB]],
-    ["Instructions - Setup", setupSteps(c).join("\n")],
+    ["Instructions - Install script", setupSteps(c).join("\n")],
+    ...(dropdownSteps(c) ? [["Instructions - Dropdown", dropdownSteps(c)!.join("\n")]] : []),
     ["Instructions - Editors", editorSteps().join("\n")],
     ["Key", "Value (written by the agent from sheet-sync.json; do not edit, except EDITORS)"],
     ["EDITORS", ""],

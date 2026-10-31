@@ -473,9 +473,13 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
 4. **Name the editors (owner).** Type their emails in Config's orange
    `EDITORS` row, or leave it empty so only the owner can set the Ready
    columns (below).
-5. **Install the script.** Extensions > Apps Script. Replace all of
+5. **Install the script.** Extensions > Apps Script. **Rename the project
+   to the spreadsheet's own name** ("Untitled project" at the top left), so
+   it is found by name in script.google.com, where bound projects are listed
+   apart from their sheets. Replace all of
    `Code.gs` with the published generic file and save (the only file to
-   paste). Pick **installTriggers**
+   paste). The Config tab's `Instructions - Install script` row has these
+   steps click by click. Pick **installTriggers**
    in the function list and press Run; allow access (Advanced > continue,
    since bound scripts are unverified). Reload the sheet: a **Review links**
    menu appears. A copy of the template already holds the script, so the
@@ -510,7 +514,7 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    already holding two sections from the list, or a Yes to the box's "Is this
    done already?" (kept as the document property `dropdownDone`). Copies made
    after the template has them keep them. The same steps are written at the
-   top of the Config tab, in its `Instructions - Setup` row, so they stay with
+   top of the Config tab, in its `Instructions - Dropdown` row, so they stay with
    the sheet (owner, 2026-10-31); the script ignores that row.
 
 ### Linking a sheet to a repository
@@ -614,8 +618,13 @@ not move when a column is inserted, so rewrite it.
 
 The Config tab keeps its Instructions short, one subject per row, so no row is
 taller than the window (owner, 2026-10-31): `Instructions` (the tab's purpose:
-nothing here needs you unless you install the script), `Instructions - Setup`
-(`setupSteps()`) and `Instructions - Editors` (`editorSteps()`), then the
+nothing here needs you unless you install the script), `Instructions - Install script`
+(`setupSteps()`: copy Code.gs, Extensions > Apps Script, name the project after
+the spreadsheet, paste and save, run installTriggers, allow it, reload; owner,
+2026-10-31: "explain in instructions how to install code.gs ... name of
+AppScript project to match google sheet name"), on a drafting sheet
+`Instructions - Dropdown` (`dropdownSteps()`), and `Instructions - Editors`
+(`editorSteps()`), then the
 `Key | Value` header. Its rows are not frozen. The EDITORS row is Orange, like the Ready columns it controls, because a person keeps it (owner, 2026-10-31); the rows the agent writes stay grey. The script reads Config keys by
 name, so it ignores these rows.
 
