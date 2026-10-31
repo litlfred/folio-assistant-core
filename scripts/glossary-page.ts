@@ -83,6 +83,7 @@ import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
 import { forwardingParts, pageParts, visualiserFor, visualiserPageDir } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 import { ROUTE_SEGMENT, visualiserRoute, type VisualiserRouteParts } from "@litlfred/cat-harness-tools/schemas/kg/visualiser-route.ts";
 import { siteArg, siteTarget } from "@litlfred/cat-harness-tools/scripts/lib/site-target.ts";
+import { detectRepoUrl, ownerRepo } from "@litlfred/cat-harness-tools/src/core/git-refs.js";
 import {
   ownerOfPath as sharedOwnerOfPath,
   repoPathOf as sharedRepoPathOf,
@@ -104,8 +105,31 @@ const SITE = siteTarget(join(REPO, "cat-harness", "docs"));
  * a site build must leave a pinned mount as its lock pins it.
  */
 const INTO_SITE = siteArg() !== undefined;
+/**
+ * `--instance <name>` (with `--site`): write only that instance's page and its
+ * schemes' SKOS. A repository's own site carries its glossary this way, at the
+ * same route the platform site gives it, without the platform's other pages
+ * (cat-harness-tools#1038: dth-hrh's handbook glossary). Links to pages the
+ * site does not carry are left as text, so the publish link check passes.
+ */
+export const ONLY: string | undefined = (() => {
+  const i = process.argv.indexOf("--instance");
+  return i > 0 ? process.argv[i + 1] : undefined;
+})();
+if (ONLY !== undefined && !INTO_SITE) {
+  console.error("glossary-page.ts: --instance needs --site <dir>");
+  process.exit(2);
+}
 const written = (files: Map<string, string>): Map<string, string> =>
-  INTO_SITE ? new Map([...files].filter(([p]) => p.startsWith(`${SITE}${sep}`))) : files;
+  INTO_SITE
+    ? new Map(
+        [...files].filter(
+          ([p]) =>
+            p.startsWith(`${SITE}${sep}`) &&
+            (ONLY === undefined || p === pagePath(`@${ONLY}`) || (p.startsWith(`${ASSETS}${sep}`) && p.slice(ASSETS.length + 1).startsWith(`${ONLY}--`))),
+        ),
+      )
+    : files;
 /**
  * The visualiser core DECLARES for its glossary — `folio-assistant-core/glossary`
  * in `folio-assistant-core.json` `visualisers` (owner, 2026-10-09: *"Need
@@ -171,8 +195,20 @@ function allGeneratedDirs(repo: string = REPO): string[] {
   }
   return [...out];
 }
-/** Where a reader follows a `source` to. The forge the repository is published on; the same base `gen-auto-docs.ts` links with. */
-const FORGE = "https://github.com/litlfred/folio-assistant";
+/**
+ * Where a reader follows a `source` to. The forge the repository is published
+ * on; the same base `gen-auto-docs.ts` links with. Writing into a repository's
+ * own site (`--site`), it is that repository's: `GITHUB_REPOSITORY` in CI,
+ * else the checkout's `origin`, as `build-document-site.ts` finds it, so a
+ * folio's sources do not link into the platform's repository.
+ */
+const FORGE = (() => {
+  const platform = "https://github.com/litlfred/folio-assistant";
+  if (!INTO_SITE) return platform;
+  const origin = detectRepoUrl(REPO);
+  const repo = process.env.GITHUB_REPOSITORY ?? (origin?.includes("github.com") ? ownerRepo(origin) : undefined);
+  return repo ? `https://github.com/${repo}` : platform;
+})();
 /** A file's page on the forge — in its submodule's own repository when it sits in one. */
 const blobUrl = (path: string): string => {
   const at = forgeLocation(path, FORGE);
@@ -653,7 +689,34 @@ export function pageTitle(k: PageKey): string {
   return `Glossary: ${assetTypeTitle(k)}`;
 }
 
-type Row = { s: GlossarySource; t: Glossary["terms"][number]; label: string };
+type Row = { s: GlossarySource; t: Glossary["terms"][number]; label: string; related?: Row[] };
+
+/** Every term by its IRI, once per collection, so a `related` IRI resolves to the term it names. */
+const termsByIri = new WeakMap<readonly GlossarySource[], Map<string, Row>>();
+function termIndex(glossaries: readonly GlossarySource[]): Map<string, Row> {
+  let m = termsByIri.get(glossaries);
+  if (!m) {
+    m = new Map();
+    for (const s of glossaries) for (const t of s.glossary.terms) m.set(t.iri ?? termIri(s.ns, s.glossary, t.id), { s, t, label: first(t.prefLabel) });
+    termsByIri.set(glossaries, m);
+  }
+  return m;
+}
+
+/**
+ * The terms a term's `related` names, resolved: a local id in its own scheme,
+ * or an IRI of any collected term. One that names nothing collected is left
+ * out here; it is still in the SKOS.
+ */
+function relatedRows(glossaries: readonly GlossarySource[], s: GlossarySource, t: Glossary["terms"][number]): Row[] {
+  const index = termIndex(glossaries);
+  return (t.related ?? [])
+    .map((r) => {
+      const local = s.glossary.terms.find((x) => x.id === r);
+      return local ? { s, t: local, label: first(local.prefLabel) } : index.get(r);
+    })
+    .filter((r): r is Row => r !== undefined);
+}
 
 /** The terms on one page, sorted by label. */
 export function rowsOn(c: ReturnType<typeof collect>, k: PageKey): Row[] {
@@ -663,7 +726,7 @@ export function rowsOn(c: ReturnType<typeof collect>, k: PageKey): Row[] {
   }
   return c.glossaries
     .filter((s) => pageOf(s) === k)
-    .flatMap((s) => s.glossary.terms.map((t) => ({ s, t, label: first(t.prefLabel) })))
+    .flatMap((s) => s.glossary.terms.map((t) => ({ s, t, label: first(t.prefLabel), related: relatedRows(c.glossaries, s, t) })))
     .sort(
       (a, b) =>
         a.label.localeCompare(b.label, "en", { sensitivity: "base" }) ||
@@ -678,7 +741,8 @@ const sourceLink = (src: string) => {
   const path = src.split("#", 2)[0]!;
   return `<a href="${esc(blobUrl(path))}"><code>${esc(src)}</code></a>`;
 };
-const pageLink = (k: PageKey, text: string) => `<a href="{{ '${permalinkOf(k)}' | relative_url }}">${esc(text)}</a>`;
+const pageLink = (k: PageKey, text: string) =>
+  ONLY !== undefined && k !== `@${ONLY}` ? esc(text) : `<a href="{{ '${permalinkOf(k)}' | relative_url }}">${esc(text)}</a>`;
 const skosLink = (s: GlossarySource) => `<a href="{{ '/${skosAsset(s)}' | relative_url }}">SKOS</a>`;
 
 /** A term's anchor on its page, which is also its key for a per-term mapping mark. */
@@ -686,7 +750,33 @@ function anchorOf(s: GlossarySource, id: string): string {
   return `${s.instance}--${s.glossary.id}--${id}`;
 }
 
-function termEntry({ s, t, label }: Row, marks?: ReadonlyMap<string, string>): string {
+/** A note's text with its web addresses as links. */
+function noteHtml(note: string): string {
+  return esc(note).replace(/https?:\/\/[^\s<>"]+[^\s<>".,;)]/g, (u) => `<a href="${u}">${u.replace(/^https?:\/\//, "")}</a>`);
+}
+
+/**
+ * The terms a term is `skos:related` to, under it. A handbook's consolidated
+ * term relates to the candidate definitions a working group is choosing
+ * between, so those are listed with their sources, open until the term is
+ * authored (cat-harness-tools#1038; it was dth-hrh's own page until then).
+ */
+function relatedBlock({ t, related }: Row): string {
+  if (!related?.length) return "";
+  const candidates = related.every((r) => r.t.status === "candidate");
+  const items = related
+    .map(
+      (r) =>
+        `<li><a href="#${esc(anchorOf(r.s, r.t.id))}">${withInlineCode(r.label, esc)}</a>${r.s.glossary.title ? ` <span class="fa-gloss-meta">(${esc(r.s.glossary.title)})</span>` : ""}` +
+        `${r.t.definition ? `<p>${withInlineCode(first(r.t.definition), esc)}</p>` : ""}` +
+        `${r.t.scopeNote ? `<p class="fa-gloss-meta">${noteHtml(r.t.scopeNote)}</p>` : ""}</li>`,
+    )
+    .join("");
+  return `<details class="fa-gloss-related"${t.status === "authored" ? "" : " open"}><summary>${candidates ? "Candidate definitions" : "Related terms"} (${related.length})</summary><ol>${items}</ol></details>`;
+}
+
+function termEntry(row: Row, marks?: ReadonlyMap<string, string>): string {
+  const { s, t, label } = row;
   const iri = t.iri ?? termIri(s.ns, s.glossary, t.id);
   const matches = (["exactMatch", "closeMatch", "broadMatch", "narrowMatch"] as const).flatMap((m) =>
     (t[m] ?? []).map((u) => `<li>${m}: ${link(u)}</li>`),
@@ -729,6 +819,8 @@ function termEntry({ s, t, label }: Row, marks?: ReadonlyMap<string, string>): s
     `</dt>`,
     `<dd>`,
     definition,
+    ...(t.scopeNote && !s.extracted ? [`<p class="fa-gloss-note">${noteHtml(t.scopeNote)}</p>`] : []),
+    ...(row.related?.length ? [relatedBlock(row)] : []),
     ...(t.requires?.length
       ? [
           `<p class="fa-gloss-uses">Uses: ${t.requires
@@ -1298,8 +1390,7 @@ export function renderAuthoredPage(c: ReturnType<typeof collect>, key: AuthoredK
 layout: default
 ${GENERATED_FM}
 title: "${pageTitle(key)}"
-parent: Glossary
-nav_order: 0
+${ONLY === undefined ? "parent: Glossary\n" : ""}nav_order: 0
 permalink: ${permalinkOf(key)}
 ---
 ${GENERATED}
@@ -1803,7 +1894,7 @@ if (import.meta.main) {
   const stale = [...files].filter(([p, s]) => !existsSync(p) || readFileSync(p, "utf-8") !== s).map(([p]) => p);
   const n = counts(c);
   const summary = `${n.authored} authored + ${n.extracted} extracted terms, ${c.glossaries.length} scheme(s), ${c.ledgers.length} swimlane ledger(s), ${c.external.length} external scheme(s)`;
-  const keys = pageKeysOf(c);
+  const keys = pageKeysOf(c).filter((k) => files.has(pagePath(k)));
   const over = keys.filter((k) => Buffer.byteLength(files.get(pagePath(k))!, "utf-8") > budgetOf(k));
   for (const k of over) {
     console.error(`✗ over budget: ${relative(REPO, pagePath(k))} is ${sizeLabel(Buffer.byteLength(files.get(pagePath(k))!, "utf-8"))}, budget ${sizeLabel(budgetOf(k))}. Split it further; do not raise the budget.`);
