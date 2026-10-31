@@ -23,6 +23,7 @@
   <bpmn:resource id="author" name="Author"/>
   <bpmn:resource id="build-pipeline" name="Build pipeline"/>
   <bpmn:resource id="editor" name="Editor"/>
+  <bpmn:resource id="qc-reviewer" name="QA reviewer (independent)"/>
   <bpmn:resource id="feedback-provider" name="Feedback provider"/>
   <bpmn:resource id="ingestion-agent" name="Ingestion engine"/>
   <bpmn:resource id="review-coordinator" name="Review coordinator"/>

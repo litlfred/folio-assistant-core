@@ -24,6 +24,7 @@
   <bpmn:resource id="authoring-committee" name="Authoring Committee"/>
   <bpmn:resource id="authoring-agent" name="Authoring agent"/>
   <bpmn:resource id="editor" name="Editor"/>
+  <bpmn:resource id="qc-reviewer" name="QA reviewer (independent)"/>
 
   <bpmn:collaboration id="Collaboration_ContributorFeedback">
     <bpmn:participant id="Participant_ContributorFeedback" name="Contributor feedback — one change set, from a row to a merged pull request" processRef="Process_ContributorFeedback" />
