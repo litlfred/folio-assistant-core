@@ -75,6 +75,100 @@ Two separate failures sat behind that question:
    still a `picture` or only `linked`, so a folio can adopt it as a gate once
    the rebuilds are done.
 
+## Routes by figure type, in detail
+
+The owner asked for each of these on 2026-10-31 while reading dth-pc and
+dth-sc.
+
+### A workflow picture becomes BPMN XML
+
+A figure drawn in BPMN notation (lanes, events, gateways, tasks, groups,
+subprocesses), such as the ANC workflow in dth-pc Fig. 6 and dth-sc Fig. 7, is
+transcribed into a `.bpmn` file.
+
+1. **Look for the source's own BPMN first.** If the publication it is adapted
+   from (a DAK, a DTH, an IG) publishes the process as `.bpmn`, mount or cite
+   that file; never redraw it. WHO smart-anc, checked 2026-10-31, publishes no
+   `.bpmn` for its ANC workflow, only PlantUML pictures of other processes. So
+   that figure is transcribed.
+2. Transcribe exactly what is drawn. Keep the source's activity numbers and
+   names as task ids and names (`10.5 Nutrition supplementation`), the lanes,
+   the gateway labels on their flows, a group as `bpmn:group`, and a
+   subprocess as `bpmn:subProcess`. Include `bpmndi` coordinates taken from
+   the render, so the diagram looks like the source.
+3. **What the figure emphasises becomes data, not colour.** The purple
+   outline on "connections to the supply chain" becomes a marker on those
+   tasks, an extension element or a documented category, so a query can find
+   them.
+4. Shared processes live once, in the layer the folios mount (dth-sc for the
+   supply chain handbooks), and each folio's figure block points at that file.
+5. Validate with the cat-harness `bpmn-authoring` checks, then render the SVG
+   with the same tool the folio uses for its own processes.
+
+### A data model becomes FHIR logical models, rendered as UML
+
+A class diagram with attributes and cardinalities (dth-pc Fig. 9: Generic
+Product, Trade Item, Regulated Trade Item) is a data model.
+
+1. **Find the newer computable source first.** dth-pc's data model is carried
+   forward in smart-pcmt (owner, 2026-10-31): `Product` and
+   `ProductAuthorization` logical models. Link to those, cite the handbook
+   figure as the original, and list the differences rather than hiding them.
+   Read WHO and smart-* repositories; never change them.
+2. Only where no source exists, transcribe it as FSH `Logical:` models in a
+   litlfred repository. sushi must run without errors before the commit.
+3. Draw the figure as a UML class diagram generated from the
+   StructureDefinitions, never from the picture. Show each entity as an
+   IG-style structure tree, using fhir-harness `logical-model-schemas` and
+   `ig-ast-render`.
+4. In mapping tables, every FHIR path links to the spec page for its version
+   (`https://hl7.org/fhir/R5/<resource>-definitions.html#<Resource.path>`), and
+   every entity links to its logical model or profile. State the FHIR version
+   when the source and the mapping differ (smart-pcmt is 4.0.1; dth-pc maps to
+   R5, where `InventoryItem` first exists).
+
+### A layered or phased chart becomes an SVG generated from data
+
+Charts such as the SMART Guidelines L1–L5 layers, the DIIG phases, nested
+strategies or a cost tree are not graphs. Write their content as a data file:
+layers, boxes, their text, and which feeds which. Then generate the SVG with a
+script (precedent: dth-hrh `scripts/folio/diig_phases_hrh.py`).
+
+- Labels are SVG `<text>`, never pixels, so they can be searched,
+  translated and read aloud.
+- A label that names a glossary concept (L1 Narrative, Digital adaptation
+  kit, Localisation) links to the SKOS term, an `<a href>` around the text.
+- A chart that appears in several publications is generated once, in the
+  shared layer.
+- A box-and-arrow graph with no layout meaning can use a Mermaid source
+  rendered to SVG at build time. Commit the source and the SVG, and run a
+  `--check` that fails when the SVG is stale.
+
+### Drop the flattened figure text from the prose
+
+Page-level seeding puts a figure's text layer into the prose block of its page
+("Fig. 1: Product master data Product identifier, Name, ..."). That text is
+neither prose nor a figure. Once the figure has a block, remove its text from
+the prose, from the caption line to the end of the figure's labels. The labels
+live in `vector-labels.json` and, after a rebuild, in the computable source.
+The `l1-coverage` check is unaffected, because figure labels are not
+normative sentences.
+
+### Link table cells
+
+Tables seeded from a publication hold names that the folio already defines.
+Link them:
+
+- a chapter or section name links to its section anchor in the folio;
+- an organisation or role (Ministry of Health, National Regulatory Authority,
+  Central Medical Stores, Data officer) links to its glossary term, and
+  through that to the ArchiMate actor or role the term maps to;
+- a cross-reference to a figure or table ("Fig. 9") links to the block.
+
+Match names only on an exact glossary label or `altLabel`. A cell with no
+match stays plain text and is listed for review. A guessed link is worse
+than none.
+
 ## Reading the report
 
 | State | Meaning |
