@@ -620,7 +620,9 @@ Setting the library up, once:
 
 1. At script.google.com, **New project**; name it `Folio Review Library`.
 2. Replace its code with [`dist/Code.gs`](../../../tools/review-sheet-sync/dist/Code.gs); save.
-3. **Project settings** (the gear): copy the **Script ID**.
+3. **Project settings** (the gear): copy the **Script ID**. The library is
+   [`1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ`](https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit)
+   (owner, 2026-10-31); the Config tab's install steps and the stub name it.
 
 Each sheet, once (templates first, so copies inherit it):
 

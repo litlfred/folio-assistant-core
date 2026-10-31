@@ -13,7 +13,7 @@ import { mkdtempSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { buildConfig, buildScript, chunks, CODE_GS_URL, configRows, readable, tabInstructions, tocRows } from "./build-review-sheet-script.js";
+import { buildConfig, buildScript, chunks, CODE_GS_URL, LIBRARY_ID, STUB_GS_URL, configRows, readable, tabInstructions, tocRows } from "./build-review-sheet-script.js";
 import { readFileSync as readText } from "node:fs";
 import { feedbackBasis, hashOf } from "./feedback-issue.js";
 
@@ -447,7 +447,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(dRows.slice(0, 5).map((r) => r[0])).toEqual(["Instructions", "Instructions - Install script", "Instructions - Dropdown", "Instructions - Editors", "Key"]);
     expect(dRows[0][1]).toContain("only the owner edits");
     // Installing Code.gs, step by step, with the project named after the sheet (owner, 2026-10-31).
-    expect(dRows[1][1]).toMatch(/Extensions, then Apps Script[\s\S]*Name the project after this spreadsheet[\s\S]*installTriggers[\s\S]*Advanced/);
+    expect(dRows[1][1]).toMatch(/Extensions, then Apps Script[\s\S]*Name the project after this sheet[\s\S]*Libraries[\s\S]*HEAD[\s\S]*Review[\s\S]*Advanced/);
     expect(dRows[1][1]).toContain("Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.");
     expect(dRows[1][1]).toContain("https://support.google.com/cloud/answer/7454865");
     expect(dRows[2][1]).toContain("Allow multiple selections");
@@ -965,9 +965,12 @@ describe("the committed Code.gs people copy", () => {
     const committed = readText(join(import.meta.dir, "dist", "Code.gs"), "utf8");
     expect(committed).toBe(buildScript({ stamp: "content" }));
   });
-  test("the install steps link it", () => {
+  test("the install steps link the stub and the library, not the whole script", () => {
     const rows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
-    expect(rows.find((r) => r[0] === "Instructions - Install script")![1]).toContain(CODE_GS_URL);
+    const steps = rows.find((r) => r[0] === "Instructions - Install script")![1];
+    expect(steps).toContain(STUB_GS_URL);
+    expect(steps).toContain(LIBRARY_ID);
+    expect(steps).not.toContain(CODE_GS_URL);
   });
 });
 
