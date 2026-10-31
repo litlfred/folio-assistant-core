@@ -429,7 +429,7 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
   return out;
 }
 
-export function setupSteps(c: SheetConfig): string[] {
+export function setupSteps(_c: SheetConfig): string[] {
   const steps = [
     `Once per sheet, by the sheet's owner. Made with File, then Make a copy, of the template? It is already set up: choose Review links, then Install, allow it (step 5), and you are done. Otherwise (details: ${INSTALL_GUIDE_URL}):`,
     `1. Get the short stub: open ${STUB_GS_URL} and press "Copy raw file" (the two-squares button at the top right of the code)`,

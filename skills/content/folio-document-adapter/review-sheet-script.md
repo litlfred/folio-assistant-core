@@ -157,7 +157,10 @@ account, because Google asks the owner to authorise the script:
 
 `installTriggers` runs a full refresh, then installs two triggers: every edit
 of the three tabs marks the sheet dirty, and every five minutes a dirty sheet
-is rebuilt. A public-comment sheet is also rebuilt on the timer when its
+is rebuilt. On a public-comment sheet too slow to rebuild per edit, an edit of
+Review Change Sets still flags a stale proposal at once (`staleNow`, reading
+only that tab and the agent's change-set tab; owner, 2026-10-31: "made
+feedback change in RefArch Log but no warning on stale"). A public-comment sheet is also rebuilt on the timer when its
 Agent tab changed since the last rebuild, because the agent writes Agent
 through the API, which fires no edit (found 2026-10-31: CS-001 read Not
 started on Review Change Sets after its PR was open on Agent). A drafting sheet rebuilds **incrementally** (owner,

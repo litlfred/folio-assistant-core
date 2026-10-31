@@ -293,7 +293,23 @@ function markDirty(e) {
   // rebuild takes longer than FAST_MS (an 800-row log takes about 20 s),
   // edits are gathered and the 5-minute trigger rebuilds, so runs do not
   // pile up.
-  if (+(props.getProperty('lastMs') || 0) <= FAST_MS) refreshIfDirty();
+  if (+(props.getProperty('lastMs') || 0) <= FAST_MS) return refreshIfDirty();
+  // A slow sheet waits for the timer, but a proposal an edit makes stale is
+  // flagged at once: it reads only two tabs (owner, 2026-10-31: "made
+  // feedback change in RefArch Log but no warning on stale").
+  if (name === CFG.RCS) { try { staleNow(); } catch (err) { /* the timer still runs */ } }
+}
+
+/** Public comment: flag stale proposals on Review Change Sets, without a full rebuild. */
+function staleNow() {
+  const ss = SpreadsheetApp.getActive();
+  const agentCs = readSheet(ss.getSheetByName(CFG.AGENT_CS || CFG.AGENT));
+  const rcs = readSheet(ss.getSheetByName(CFG.RCS));
+  const aId = col(agentCs, COLS.agent.csId), aBasis = COLS.agent.basis ? col(agentCs, COLS.agent.basis) : -1;
+  if (aId < 0 || aBasis < 0) return;
+  const basisOfCs = {};
+  agentCs.rows.forEach(r => { const id = String(r[aId]).trim(); if (id) basisOfCs[id] = String(r[aBasis]).trim(); });
+  markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)');
 }
 
 const FAST_MS = 5000;

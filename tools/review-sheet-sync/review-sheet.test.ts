@@ -337,6 +337,22 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     expect(w["Ready for agent"][0][0]).toBe("No");
   });
 
+  test("on a slow sheet, an edit of Review Change Sets flags a stale proposal at once, before the timer", () => {
+    const hdr = ["Change-set", "Title", "TWG (CS)", "Committee Feedback (CL)", "Change Set Feedback (agent)", "Ready for agent"];
+    const row = ["CS-001", "Fix scope", "TWG 1", "do it", "Proposal", "Yes"];
+    const basis = feedbackBasis(hdr, row, ["Title", "TWG (CS)"], "Committee Feedback");
+    const t = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][] }>;
+    t["Review Change Sets"].rows = [hdr, row];
+    t["Agent - Change Sets"].rows[0].push("Feedback basis (change set)");
+    t["Agent - Change Sets"].rows[1].push(basis);
+    row[3] = "do it differently";
+    const rt2 = runtime(t);
+    rt2.props.lastMs = "20000";
+    load(code, rt2.g).markDirty({ range: { getSheet: () => rt2.sheet("Review Change Sets") } });
+    expect(rt2.props.dirty).toBe("1");
+    expect(String(rt2.written["Review Change Sets"]["Change Set Feedback (agent)"][0][0])).toMatch(/^\u26a0 Stale: /);
+  });
+
   test("a sheet with both agent tables on one Agent tab, as before 2026-10-31, works the same", () => {
     const oneRows = configRows(buildConfig(folio({ AGENT: "Agent", AGENT_CS: "" }), "review/public-comment/sheet-sync.json"));
     const t = withConfig(tabs(), oneRows) as Record<string, { id: number; rows: string[][] }>;
@@ -483,7 +499,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(dRows.find((r) => !(/^Instructions/.test(r[0]) || ["Key", "EDITORS"].includes(r[0])))?.[0]).toBe("CFG");
     expect(dRows.filter((r) => ["GUIDE", "SETUP"].includes(r[0]))).toHaveLength(0);
     expect(dRows.find((r) => r[0] === "EDITORS")![1]).toBe("");
-    expect(dRows.every((r, i) => /^Instructions|^Key$/.test(r[0]) || r[0] === "EDITORS" || r[1].startsWith("|"))).toBe(true);
+    expect(dRows.every((r) => /^Instructions|^Key$/.test(r[0]) || r[0] === "EDITORS" || r[1].startsWith("|"))).toBe(true);
     expect(JSON.parse(dRows.find((r) => r[0] === "CFG")![1].slice(1)).MODE).toBe("drafting");
   });
 
