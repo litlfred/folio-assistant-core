@@ -50,7 +50,7 @@ import { instanceId, saveInstance } from "@litlfred/cat-harness-tools/src/workfl
  */
 const INSTANCE_ROOT = resolve(import.meta.dir, "../../../cat-harness");
 const CORE = resolve(import.meta.dir, "../..");
-const BUILDERS = JSON.stringify(join(INSTANCE_ROOT, "schemas/builders.ts"));
+const BUILDERS = JSON.stringify(resolve(import.meta.dir, "../../../cat-harness-tools/schemas/builders.ts"));
 
 let repo: string;
 
