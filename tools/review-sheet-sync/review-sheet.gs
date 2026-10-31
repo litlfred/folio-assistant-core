@@ -18,7 +18,7 @@
  * only file to paste), save, pick installTriggers in the function
  * list, press Run and allow access, then reload the sheet. A "Review links"
  * menu appears. In a drafting sheet an edit rebuilds at once; in a
- * public-comment sheet it marks the sheet dirty and a 5-minute trigger
+ * public-comment sheet it marks the sheet dirty and a 1-minute trigger
  * rebuilds. "Refresh now" rebuilds at once. Columns are found by their header
  * text, so they may be moved freely. After each rebuild, and on the 5-minute
  * timer, a hidden Watch tab lists the change sets that need the agent, so a
@@ -46,7 +46,8 @@ function installTriggers() {
     .filter(t => ['markDirty', 'refreshIfDirty'].includes(t.getHandlerFunction()))
     .forEach(t => host_().ScriptApp.deleteTrigger(t));
   host_().ScriptApp.newTrigger('markDirty').forSpreadsheet(ss).onEdit().create();
-  host_().ScriptApp.newTrigger('refreshIfDirty').timeBased().everyMinutes(5).create();
+  host_().ScriptApp.newTrigger('refreshIfDirty').timeBased().everyMinutes(TIMER_MINUTES).create();
+  docProps_().setProperty('timerMinutes', String(TIMER_MINUTES));
   refreshAll();
   applyEditors(ss);
   if (DRAFTING) checkDropdown(ss);
@@ -293,22 +294,52 @@ function markDirty(e) {
   // Public-comment mode rebuilds the whole sheet, since a comment's row feeds
   // its change sets' rows. It does so at once while that is quick; once a
   // rebuild takes longer than FAST_MS (an 800-row log takes about 20 s),
-  // edits are gathered and the 5-minute trigger rebuilds, so runs do not
+  // edits are gathered and the timer rebuilds, so runs do not
   // pile up.
-  if (+(props.getProperty('lastMs') || 0) <= FAST_MS) refreshIfDirty();
+  if (+(props.getProperty('lastMs') || 0) <= FAST_MS) return refreshIfDirty();
+  // A slow sheet waits for the timer, but a proposal an edit makes stale is
+  // flagged at once: it reads only two tabs (owner, 2026-10-31: "made
+  // feedback change in RefArch Log but no warning on stale").
+  if (name === CFG.RCS) { try { staleNow(); } catch (err) { /* the timer still runs */ } }
+}
+
+/** Public comment: flag stale proposals on Review Change Sets, without a full rebuild. */
+function staleNow() {
+  const ss = SpreadsheetApp.getActive();
+  const agentCs = readSheet(ss.getSheetByName(CFG.AGENT_CS || CFG.AGENT));
+  const rcs = readSheet(ss.getSheetByName(CFG.RCS));
+  const aId = col(agentCs, COLS.agent.csId), aBasis = COLS.agent.basis ? col(agentCs, COLS.agent.basis) : -1;
+  if (aId < 0 || aBasis < 0) return;
+  const basisOfCs = {};
+  agentCs.rows.forEach(r => { const id = String(r[aId]).trim(); if (id) basisOfCs[id] = String(r[aBasis]).trim(); });
+  markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)');
 }
 
 const FAST_MS = 5000;
+// How often the timer runs (owner, 2026-10-31: "make it every minute"; it was
+// 5). A sheet installed with another interval moves to this one on its next
+// tick, so nobody has to run Install again.
+const TIMER_MINUTES = 1;
+function upgradeTimer_(props) {
+  if (props.getProperty('timerMinutes') === String(TIMER_MINUTES)) return;
+  try {
+    const app = host_().ScriptApp;
+    app.getProjectTriggers().filter(t => t.getHandlerFunction() === 'refreshIfDirty').forEach(t => app.deleteTrigger(t));
+    app.newTrigger('refreshIfDirty').timeBased().everyMinutes(TIMER_MINUTES).create();
+    props.setProperty('timerMinutes', String(TIMER_MINUTES));
+  } catch (err) { /* run by someone who cannot manage triggers: leave it */ }
+}
 const MAX_ROWS = 200;
 
 /**
- * The 5-minute trigger, and each edit. Drafting: rebuild the rows edited
+ * The timer (every minute), and each edit. Drafting: rebuild the rows edited
  * since the last run and the rows whose change set's Agent row changed (the
  * agent writes Agent through the API, which fires no edit, so this is how
  * its writes reach the sheet). Public comment: rebuild all, if dirty.
  */
 function refreshIfDirty() {
   const props = docProps_();
+  upgradeTimer_(props);
   try { loadConfig(SpreadsheetApp.getActive()); } catch (err) { return; }
   try { colourInstructions(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
   if (!DRAFTING) {

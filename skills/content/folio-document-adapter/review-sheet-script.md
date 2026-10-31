@@ -160,20 +160,23 @@ account, because Google asks the owner to authorise the script:
    mode: see §"The watcher" at the end.
 
 `installTriggers` runs a full refresh, then installs two triggers: every edit
-of the three tabs marks the sheet dirty, and every five minutes a dirty sheet
-is rebuilt. A public-comment sheet is also rebuilt on the timer when its
+of the three tabs marks the sheet dirty, and every minute a dirty sheet
+is rebuilt. On a public-comment sheet too slow to rebuild per edit, an edit of
+Review Change Sets still flags a stale proposal at once (`staleNow`, reading
+only that tab and the agent's change-set tab; owner, 2026-10-31: "made
+feedback change in RefArch Log but no warning on stale"). A public-comment sheet is also rebuilt on the timer when its
 Agent tab changed since the last rebuild, because the agent writes Agent
 through the API, which fires no edit (found 2026-10-31: CS-001 read Not
 started on Review Change Sets after its PR was open on Agent). A drafting sheet rebuilds **incrementally** (owner,
 2026-10-31): an edit rebuilds only the rows it touched, at once, so a pick
 shows its link and a new row its Change-set within seconds, however large
-the sheet. The 5-minute trigger rebuilds only the rows whose change set's
+the sheet. The timer rebuilds only the rows whose change set's
 Agent row changed (the agent writes through the API, which fires no edit;
 the script keeps a short hash per change set to notice). A new table of
 contents in Config, an edit of the header row, or Refresh now rebuilds
 everything. A public-comment sheet rebuilds whole, since a comment feeds its
 change sets: at once while a rebuild takes under 5 s, otherwise gathered for
-the 5-minute trigger. **Review links → Refresh now** rebuilds at once.
+the timer. **Review links → Refresh now** rebuilds at once.
 
 **Stale staging previews** (owner, 2026-10-31, option C: sheet and page).
 The agent records when it built a change set's preview in the Agent tab's
@@ -316,7 +319,7 @@ the review sheets (owner, 2026-10-31):
   later Blue, Green, Orange or Grey word is coloured by itself, bold, in a
   darker shade of its column colour. The script's `colourInstructions` does
   it on every refresh, so text the agent rewrites through the API, which drops
-  the colours, gets them back within five minutes.
+  the colours, gets them back within a minute.
 - **Which template** depends on the document's authoring stage: the
   Contributor template while it is being drafted and authored, the Public
   Comment Review template once public comment opens.
