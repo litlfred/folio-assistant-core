@@ -324,6 +324,63 @@ Contributor Feedback row with a Change-set:
 Title stays the contributors': the agent never writes it (in public-comment
 mode, by contrast, Review Change Sets' Title is agent-derived and green).
 
+**What the agent watches** (owner, 2026-10-31: "make part of agent watch
+skill like have for PC review"). A contributor log is watched the same way
+as a public-comment review sheet ([`public-comment`](public-comment.md)
+§"What the agent watches" and §"When the agent runs"). On Contributor
+Feedback the agent reads:
+
+- every blue cell: Title, Selected Sections and each people's
+  `Contributor Feedback (…)` column (never `(agent)`, its own);
+- **cell comments** (Insert > Comment) on any Contributor Feedback row, read
+  with the spreadsheet's comments included: feedback on that change set;
+- the orange gates, Ready for agent and Ready for merge;
+- open `feedback` issues no Agent row names (§"Feedback from the site").
+
+A row is **new or changed** when it has a Change-set and either its
+`feedbackBasis` differs from Agent's Feedback basis (change set), its
+proposal cell is empty, or it has a cell comment newer than the proposal.
+Each sync proposes for every new or changed row (step 4 above), then works
+the rows with Ready for agent = Yes (step 5).
+
+**When it runs.** The three ways of public-comment mode, per sheet:
+
+- **Scheduled.** A scheduled task in the project, one per contributor log,
+  named `<DOC> contributor log sync` (as "DPI-H review sheet sync" is for
+  smart-ra's public-comment sheet). Its prompt names the sheet id, the
+  folio's repository and this section. Each run is a fresh thread, so all
+  it needs is in the sheet, the Agent tab and this skill.
+- **Manual.** Anyone asks in a project thread ("populate Contributor
+  Feedback (agent)", "sync the contributor log"), or runs the scheduled task
+  now.
+- **Active mode.** On the owner's request, for two hours: the thread checks
+  the sheet about every ten minutes by reminders, and syncs when a row is
+  new or changed.
+
+A sheet edit cannot wake an agent; the Apps Script only marks a proposal
+stale. So "whenever the row changes" means at the next sync.
+
+**Writing a proposal.** One proposal per row, in the green Contributor
+Feedback (agent) cell; Agent's Feedback basis (change set) gets the basis it
+was written against, in the same sync.
+
+- Begin with `Proposed direction:`. It is a proposal for the editors and
+  contributors to react to, never a decision and never a person's feedback.
+- Read the folio text first, not only the selected sections: search the
+  whole document for the terms the feedback names, and say where the text
+  already covers the point or where the change reaches beyond the selected
+  sections (name those sections, so a person can add them).
+- Keep cited titles and quoted source text as published; propose wording
+  only for the handbook's own text.
+- No empirical claims. State nothing about the world (numbers, country
+  practice, standards' status) that the folio or a cited source in it does
+  not already say. A proposal that leans on an unchecked citation says the
+  citation needs checking first.
+- End with what is left for a person, lettered (a), (b), … when there is
+  more than one choice.
+- Write only the agent cell and the Agent tab. Blue cells are for explicit
+  human control: the agent never writes them, nor the orange gates.
+
 **Feedback from the site.** A folio with
 `.github/ISSUE_TEMPLATE/block-feedback.yml` (copy the shared
 `templates/issue-forms/block-feedback.yml`) gets 📣 feedback links that open
