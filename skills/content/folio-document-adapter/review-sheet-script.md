@@ -159,8 +159,8 @@ names a document. Give the new folio:
    {
      "anchors": "folio/<doc>/review-anchors.json",
      "lineMap": "library/<slug>/pdf-line-map.json",
-     "draftUrl": "https://<site>/draft/#page=",
-     "commentUrl": "https://<site>/en/folio-assistant-core/public-comments/folio/<doc>/index.html#",
+     "draftUrl": "draft/#page=",
+     "commentUrl": "en/folio-assistant-core/public-comments/folio/<doc>/index.html#",
      "namedSections": { "CR": "Client Registry" },
      "aliases": { "how to use the guidance": "How to use this guidance" },
      "tabs": { "RPC": "Review Public Comments" },
@@ -281,9 +281,16 @@ carries as element ids.
 {
   "mode": "drafting",
   "anchors": "folio/<doc>/review-anchors.json",
-  "sectionUrl": "https://<site>/en/<doc>/#"
+  "sectionUrl": "en/<doc>/#"
 }
 ```
+
+Write the URLs **relative to the folio's site**: the build resolves them
+against `iriBase` in the folio's `<instance>.json` (e.g.
+`https://litlfred.github.io/dth-hrh/`), so no organisation name is written
+in sheet-sync.json and a folio that moves (to WHO, say) changes one
+`iriBase` and rewrites its Config (owner, 2026-10-31). An absolute
+`https://` URL is still taken as written.
 
 `tabs` and `columns` (`draft`, `draftAgent`) override the headers as in
 public-comment mode. Write its Config with `--config review/drafting/sheet-sync.json`

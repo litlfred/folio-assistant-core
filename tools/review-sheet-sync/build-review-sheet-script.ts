@@ -21,7 +21,7 @@
  * Skill: `review-sheet-script`.
  */
 import { createHash } from "node:crypto";
-import { existsSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { execFileSync } from "node:child_process";
@@ -57,11 +57,11 @@ export type SheetSyncConfig = {
   anchors: string;
   /** The frozen review draft's pdf-line-map.json, repository-relative (public-comment). */
   lineMap?: string;
-  /** Prefix a PDF page number is appended to, e.g. `<site>/draft/#page=` (public-comment). */
+  /** Prefix a PDF page number is appended to, e.g. `draft/#page=` (public-comment). Relative URLs resolve against the folio's iriBase. */
   draftUrl?: string;
   /** Prefix a comment ref (`PC-0002`) is appended to (public-comment). */
   commentUrl?: string;
-  /** Prefix a section's anchor (`sec:1-1`, `chap:<dir>`) is appended to, e.g. `<site>/en/<doc>/#` (drafting). */
+  /** Prefix a section's anchor (`sec:1-1`, `chap:<dir>`) is appended to, e.g. `en/<doc>/#` (drafting), relative to the folio's iriBase. */
   sectionUrl?: string;
   /** Sections cited by name: abbreviation -> section title. */
   namedSections?: Record<string, string>;
@@ -248,8 +248,35 @@ export function buildData(a: Anchors, m: LineMap, cfg: SheetSyncConfig) {
 /** One document's settings for the generic script: what its Config tab holds. */
 export type SheetConfig = { CFG: Record<string, string>; COLS: Record<string, Record<string, string>>; DATA: unknown };
 
+/**
+ * The folio's own site address: `iriBase` of the instance declaration at the
+ * repository root (`<instance>.json`), e.g. `https://litlfred.github.io/dth-hrh/`.
+ */
+export function siteBase(repo: string): string | undefined {
+  for (const f of readdirSync(repo).filter((x) => x.endsWith(".json")).sort()) {
+    try {
+      const j = JSON.parse(readFileSync(join(repo, f), "utf8"));
+      if (typeof j?.iriBase === "string" && /^https:\/\//.test(j.iriBase)) return j.iriBase.replace(/\/?$/, "/");
+    } catch { /* not JSON we read */ }
+  }
+  return undefined;
+}
+
+/**
+ * A sheet-sync URL: absolute as written, or relative to the folio's site
+ * (owner, 2026-10-31: a folio moving org, e.g. to WHO, changes one iriBase,
+ * not every sheet-sync.json). `draft/#page=` -> `<iriBase>draft/#page=`.
+ */
+export function siteUrl(u: string, base: string | undefined, what: string): string {
+  if (/^https?:\/\//.test(u)) return u;
+  if (!base) throw new Error(`${what} "${u}" is relative, but the folio declares no iriBase in its <instance>.json`);
+  return base + u.replace(/^\.?\//, "");
+}
+
 export function buildConfig(repo: string, cfgPath: string): SheetConfig {
   const cfg: SheetSyncConfig = JSON.parse(readFileSync(join(repo, cfgPath), "utf8"));
+  const base = siteBase(repo);
+  for (const k of ["draftUrl", "commentUrl", "sectionUrl"] as const) if (cfg[k]) cfg[k] = siteUrl(cfg[k] as string, base, `${cfgPath}: ${k}`);
   const a: Anchors = JSON.parse(readFileSync(join(repo, cfg.anchors), "utf8"));
   let CFG: Record<string, string>, COLS: Record<string, Record<string, string>>, data: unknown;
   if (cfg.mode === "drafting") {

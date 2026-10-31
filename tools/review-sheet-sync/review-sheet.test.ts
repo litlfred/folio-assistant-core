@@ -43,8 +43,8 @@ function folio(): string {
   writeFileSync(join(repo, "review/public-comment/sheet-sync.json"), JSON.stringify({
     anchors: "anchors.json",
     lineMap: "lines.json",
-    draftUrl: "D#page=",
-    commentUrl: "C#",
+    draftUrl: "https://x.example/D#page=",
+    commentUrl: "https://x.example/C#",
   }));
   return repo;
 }
@@ -159,25 +159,25 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
   });
 
   test("RPC No. links to the comment's page, and stays a number", () => {
-    expect(rpc["No."]).toEqual([['=HYPERLINK("C#PC-0002",1)'], ['=HYPERLINK("C#PC-0003",2)'], ['=HYPERLINK("C#PC-0004",3)']]);
+    expect(rpc["No."]).toEqual([['=HYPERLINK("https://x.example/C#PC-0002",1)'], ['=HYPERLINK("https://x.example/C#PC-0003",2)'], ['=HYPERLINK("https://x.example/C#PC-0004",3)']]);
   });
 
   test("RPC Sections link each section and chapter to its first PDF page", () => {
     const r = rpc.Sections[0][0] as Rich;
-    expect(r.links.map((l) => [slice(r, l), l[2]])).toEqual([["1.2", "D#page=13"], ["Chapter 1", "D#page=12"]]);
+    expect(r.links.map((l) => [slice(r, l), l[2]])).toEqual([["1.2", "https://x.example/D#page=13"], ["Chapter 1", "https://x.example/D#page=12"]]);
     expect((rpc.Sections[1][0] as Rich).links).toEqual([]);
   });
 
   test("RPC Page links printed pages at the printed-to-PDF offset", () => {
-    expect((rpc.Page[0][0] as Rich).links).toEqual([[0, 1, "D#page=13"]]);
-    expect((rpc.Page[1][0] as Rich).links).toEqual([[0, 1, "D#page=14"]]);
+    expect((rpc.Page[0][0] as Rich).links).toEqual([[0, 1, "https://x.example/D#page=13"]]);
+    expect((rpc.Page[1][0] as Rich).links).toEqual([[0, 1, "https://x.example/D#page=14"]]);
   });
 
   test("RPC lines go to the page that holds them", () => {
     const r = rpc["Line no(s) / Table / Figure"][0][0] as Rich;
-    expect(r.links.map((l) => [slice(r, l), l[2]])).toEqual([["p.2", "D#page=13"], ["line 3", "D#page=13"]]);
+    expect(r.links.map((l) => [slice(r, l), l[2]])).toEqual([["p.2", "https://x.example/D#page=13"], ["line 3", "https://x.example/D#page=13"]]);
     const r2 = rpc["Line no(s) / Table / Figure"][1][0] as Rich;
-    expect(r2.links.map((l) => [slice(r2, l), l[2]])).toEqual([["L 5", "D#page=14"]]);
+    expect(r2.links.map((l) => [slice(r2, l), l[2]])).toEqual([["L 5", "https://x.example/D#page=14"]]);
   });
 
   test("RCS joins its comments, each No. n linking to its RPC row, status bold", () => {
@@ -193,10 +193,10 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
   test("RCS Sections and Pages are the union over its comments, linked", () => {
     const s = rcs.Sections[0][0] as Rich;
     expect(s.text).toBe("1, 1.2, nowhere");
-    expect(s.links.map((l) => l[2])).toEqual(["D#page=12", "D#page=13"]);
+    expect(s.links.map((l) => l[2])).toEqual(["https://x.example/D#page=12", "https://x.example/D#page=13"]);
     const p = rcs.Pages[0][0] as Rich;
     expect(p.text).toBe("2–3");
-    expect(p.links).toEqual([[0, 3, "D#page=13"]]);
+    expect(p.links).toEqual([[0, 3, "https://x.example/D#page=13"]]);
   });
 
   test("Agentic status, on both tabs, is each PR linked, its status and completion time bold, and what it changed", () => {
@@ -222,7 +222,7 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     const rt2 = runtime(withConfig(t, pcRows));
     load(code, rt2.g).refreshAll();
     const f = rt2.written["Review Public Comments"]["No."][0][0] as string;
-    expect(f).toBe('=HYPERLINK("C#PC-0002","x"",IMPORTXML(""https://evil.example"",""//a""),""")');
+    expect(f).toBe('=HYPERLINK("https://x.example/C#PC-0002","x"",IMPORTXML(""https://evil.example"",""//a""),""")');
   });
 
   test("a Config written with the old short DATA names (K, ABBR, LP, OFFSET, MAX) still works", () => {
@@ -278,7 +278,7 @@ function draftFolio(): string {
   writeFileSync(join(repo, "review/drafting/sheet-sync.json"), JSON.stringify({
     mode: "drafting",
     anchors: "anchors.json",
-    sectionUrl: "S#",
+    sectionUrl: "https://x.example/S#",
   }));
   return repo;
 }
@@ -320,7 +320,7 @@ describe("review-sheet.gs in drafting mode", () => {
   });
 
   test("the script is the same for every document: nothing of the folio is in it", () => {
-    expect(code).not.toContain("S#");
+    expect(code).not.toContain("https://x.example/S#");
     expect(code).not.toContain("Global challenges");
     expect(dRows[1][0]).toBe("CFG");
     expect(dRows.every((r, i) => i === 0 || r[1].startsWith("|"))).toBe(true);
@@ -337,7 +337,7 @@ describe("review-sheet.gs in drafting mode", () => {
       "Section", "About this draft", "About this draft · Questions for the TWG", "Ch 1 Why it matters",
       "Ch 1 · Objectives and key messages", "1.1 Global challenges", "Ch 12 Privacy; Security and Trust",
     ].map((n) => (/^(Section|About this draft$|Ch \d+ [^·])/.test(n) ? n : `\u2514\u2002${n}`)));
-    expect(toc[4][1]).toBe('=HYPERLINK("S#sec:ch01-lead","open")');
+    expect(toc[4][1]).toBe('=HYPERLINK("https://x.example/S#sec:ch01-lead","open")');
     expect(tabs.TOC.hidden).toBe(true);
   });
 
@@ -348,10 +348,10 @@ describe("review-sheet.gs in drafting mode", () => {
   test("Section links has each picked section linked, one per line; unknown picks are left out; Sections is not rewritten", () => {
     const r = fb["Section links"][0][0] as Rich;
     expect(r.text).toBe("Ch 1 Why it matters\n1.1 Global challenges");
-    expect(r.links.map((l) => [slice(r, l), l[2]])).toEqual([["Ch 1 Why it matters", "S#chap:ch01-why"], ["1.1 Global challenges", "S#sec:1-1"]]);
+    expect(r.links.map((l) => [slice(r, l), l[2]])).toEqual([["Ch 1 Why it matters", "https://x.example/S#chap:ch01-why"], ["1.1 Global challenges", "https://x.example/S#sec:1-1"]]);
     const r2 = fb["Section links"][1][0] as Rich;
     // A marked pick ("\u2514 1.1 ...") and a bare one (an old value, or a first chip Sheets trimmed) both link.
-    expect(r2.links.map((l) => [slice(r2, l), l[2]])).toEqual([["Ch 12 Privacy; Security and Trust", "S#chap:ch12-privacy"], ["1.1 Global challenges", "S#sec:1-1"]]);
+    expect(r2.links.map((l) => [slice(r2, l), l[2]])).toEqual([["Ch 12 Privacy; Security and Trust", "https://x.example/S#chap:ch12-privacy"], ["1.1 Global challenges", "https://x.example/S#sec:1-1"]]);
     expect(fb.Sections).toBeUndefined();
   });
 
@@ -360,7 +360,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect((fb["Section links"][1][0] as Rich).text).toBe(
       'Ch 12 Privacy; Security and Trust\n1.1 Global challenges\n\u26a0 "Somewhere else" is not in the document now: pick its section again');
     expect(tabs.TOC.rows.length).toBeGreaterThan(0);
-    expect((rt.written.TOC.Section as string[][])[5]).toEqual(["\u2514\u20021.1 Global challenges", '=HYPERLINK("S#sec:1-1","open")', "sec:1-1"]);
+    expect((rt.written.TOC.Section as string[][])[5]).toEqual(["\u2514\u20021.1 Global challenges", '=HYPERLINK("https://x.example/S#sec:1-1","open")', "sec:1-1"]);
   });
 
   test("a pick of a section renamed since follows it, by its anchor", () => {
@@ -506,6 +506,22 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     load(code, rt2.g).refreshAll();
     expect(rt2.written["Contributor Feedback"]["Change-set"]).toEqual([["CS-004"], ["CS-005"], [""]]);
+  });
+});
+
+describe("sheet-sync URLs relative to the folio's site", () => {
+  test("resolve against the instance's iriBase, so a move to another org changes one line", () => {
+    const repo = draftFolio();
+    writeFileSync(join(repo, "doc.json"), JSON.stringify({ instance: "doc", iriBase: "https://who.example/doc" }));
+    writeFileSync(join(repo, "review/drafting/sheet-sync.json"), JSON.stringify({ mode: "drafting", anchors: "anchors.json", sectionUrl: "en/doc/#" }));
+    expect(buildConfig(repo, "review/drafting/sheet-sync.json").CFG.SECTION_URL).toBe("https://who.example/doc/en/doc/#");
+  });
+
+  test("an absolute URL is kept; a relative one without an iriBase says what is missing", () => {
+    const repo = draftFolio();
+    expect(buildConfig(repo, "review/drafting/sheet-sync.json").CFG.SECTION_URL).toBe("https://x.example/S#");
+    writeFileSync(join(repo, "review/drafting/sheet-sync.json"), JSON.stringify({ mode: "drafting", anchors: "anchors.json", sectionUrl: "en/doc/#" }));
+    expect(() => buildConfig(repo, "review/drafting/sheet-sync.json")).toThrow(/declares no iriBase/);
   });
 });
 
