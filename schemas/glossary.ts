@@ -57,6 +57,37 @@ export const LangTextSchema = z.union([
 ]);
 export type LangText = z.infer<typeof LangTextSchema>;
 
+/**
+ * What a term's concept is ABOUT, when that is a thing in the world and not
+ * only a word: today, an organization (owner, 2026-10-31, option B: "SKOS +
+ * W3C ORG"). SKOS's own link for it is `foaf:focus`. The concept keeps the
+ * labels, the acronym (`notation`) and the definition. The organization keeps
+ * what is true of the organization: its type, homepage and parent. A concept
+ * is never also typed as the organization, because one is a word and the
+ * other is a body of people.
+ *
+ * - `type`: a W3C ORG class, `org:Organization` or one of its subclasses.
+ * - `iri`: the organization's IRI when someone else already mints one, such
+ *   as a ROR id. Without it, the organization is `<term IRI>/_focus`. A term
+ *   id cannot begin with `_`, so this never collides with a term.
+ * - `homepage`: `foaf:homepage`.
+ * - `subOrganizationOf`: `org:subOrganizationOf`. A local term id (its
+ *   organization is meant) or an absolute IRI of an organization.
+ * - `sameAs`: `owl:sameAs`, the same organization in another register, such
+ *   as Wikidata or ROR.
+ */
+export const ORG_TYPES = ["Organization", "FormalOrganization", "OrganizationalUnit", "OrganizationalCollaboration"] as const;
+export const FocusSchema = z
+  .object({
+    type: z.enum(ORG_TYPES),
+    iri: Iri.optional(),
+    homepage: Iri.optional(),
+    subOrganizationOf: z.array(z.string().min(1)).optional(),
+    sameAs: z.array(Iri).optional(),
+  })
+  .strict();
+export type Focus = z.infer<typeof FocusSchema>;
+
 export const TermSchema = z
   .object({
     id: z.string().regex(LOCAL_ID),
@@ -89,6 +120,8 @@ export const TermSchema = z
      * `<bootstrap>/ns#Node`, not also `…ns#glossary/terms/node`.
      */
     iri: Iri.optional(),
+    /** The thing the concept is about, such as an organization ({@link FocusSchema}): `foaf:focus`. */
+    focus: FocusSchema.optional(),
     /** Where the term came from: a repository path (with #anchor) or an IRI. */
     source: z.string().min(1).optional(),
     status: z.enum(TERM_STATUSES),
@@ -154,6 +187,18 @@ export const GlossarySchema = z
     });
     // A local reference must name a term here; anything else must be an IRI.
     g.terms.forEach((t, i) => {
+      (t.focus?.subOrganizationOf ?? []).forEach((ref, j) => {
+        const local = g.terms.find((u) => u.id === ref);
+        if (local ? !local.focus : !/^[a-z][a-z0-9+.-]*:\/\//i.test(ref)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["terms", i, "focus", "subOrganizationOf", j],
+            message: local
+              ? `"${ref}" is a term with no focus, so it names no organization`
+              : `"${ref}" is neither a term in this glossary nor an absolute IRI`,
+          });
+        }
+      });
       for (const field of ["broader", "related"] as const) {
         (t[field] ?? []).forEach((ref, j) => {
           if (!ids.has(ref) && !/^[a-z][a-z0-9+.-]*:\/\//i.test(ref)) {
@@ -176,6 +221,14 @@ export function schemeIri(ns: string, g: Pick<Glossary, "id">): string {
 export function termIri(ns: string, g: Pick<Glossary, "id">, termId: string): string {
   return `${schemeIri(ns, g)}/${termId}`;
 }
+/** The IRI of the thing a term is about: its own `iri`, else `<concept IRI>/_focus`. */
+export function focusIri(conceptIri: string, f: Pick<Focus, "iri">): string {
+  return f.iri ?? `${conceptIri}/_focus`;
+}
+
+export const FOAF_NS = "http://xmlns.com/foaf/0.1/" as const;
+export const ORG_NS = "http://www.w3.org/ns/org#" as const;
+export const OWL_NS = "http://www.w3.org/2002/07/owl#" as const;
 
 function langValues(t: LangText): Array<{ "@value": string; "@language"?: string }> {
   return typeof t === "string"
@@ -363,6 +416,24 @@ export function toSkos(
     if (t.source) node["dcterms:source"] = t.source;
     if (t.status !== "authored") node["skos:note"] = t.reason ? `${t.status}: ${t.reason}` : t.status;
     graph.push(node);
+    if (t.focus) {
+      const f = t.focus;
+      const fIri = focusIri(idOf(t.id), f);
+      node["foaf:focus"] = { "@id": fIri };
+      const orgRef = (r: string) => {
+        if (/^[a-z][a-z0-9+.-]*:\/\//i.test(r)) return { "@id": r };
+        const parent = g.terms.find((u) => u.id === r)!;
+        return { "@id": focusIri(idOf(r), parent.focus!) };
+      };
+      graph.push({
+        "@id": fIri,
+        "@type": `org:${f.type}`,
+        "rdfs:label": langValues(t.prefLabel),
+        ...(f.homepage ? { "foaf:homepage": { "@id": f.homepage } } : {}),
+        ...(f.subOrganizationOf?.length ? { "org:subOrganizationOf": f.subOrganizationOf.map(orgRef) } : {}),
+        ...(f.sameAs?.length ? { "owl:sameAs": f.sameAs.map((x) => ({ "@id": x })) } : {}),
+      });
+    }
   }
   if (g.ordered && g.terms.length) {
     // The order is part of what was said: a reader meets each term after the
@@ -383,7 +454,13 @@ export function toSkos(
       "skos:member": g.members.map((m) => ({ "@id": m })),
     });
   }
-  const context = { skos: SKOS_NS, dcterms: DCTERMS_NS, rdfs: "http://www.w3.org/2000/01/rdf-schema#" };
+  const hasFocus = g.terms.some((t) => t.focus);
+  const context = {
+    skos: SKOS_NS,
+    dcterms: DCTERMS_NS,
+    rdfs: "http://www.w3.org/2000/01/rdf-schema#",
+    ...(hasFocus ? { foaf: FOAF_NS, org: ORG_NS, owl: OWL_NS } : {}),
+  };
   const prov = automated ? automatedNodes(automatedGraphIri(ns, g), idOf, automated.matches, automated.agent) : [];
   if (!prov.length) return { "@context": context, "@graph": graph };
   // PROV-JSONLD's context comes FIRST and ours after it, so our prefixes win
