@@ -484,6 +484,14 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    Paste the script into the template itself once, so every copy starts with
    it. A copy keeps the version it was made with: when Code.gs changes,
    paste it again into each sheet in use.
+
+   **"Sorry, unable to open the file at this time"** (in German, "Datei kann
+   derzeit nicht geöffnet werden") when Apps Script opens means the browser
+   is signed in to several Google accounts and Apps Script opened under the
+   default one (`/u/0/`), which cannot see the sheet (owner, 2026-10-31,
+   DTH-PC). Open the sheet in a private window signed in to the owner's
+   account only, or change `/u/0/` in the failing address to `/u/1/`,
+   `/u/2/`, and so on.
 6. **Drafting only: finish the Selected Sections dropdown.** installTriggers
    checks the dropdown: it adds the rule (a dropdown from `TOC!A2:A`) when
    the column has none, and leaves an existing one alone (a rewrite would
