@@ -436,7 +436,7 @@ export function setupSteps(c: SheetConfig): string[] {
     "   • \"Unable to open the file\"? You are signed in to several Google accounts. Use a private window signed in to the owner's account only",
     "3. Name the project after this spreadsheet: click \"Untitled project\" at the top left and type the sheet's own name (e.g. \"DTH-PC Contributor Log\"), then Rename. The same name makes it easy to find in script.google.com",
     "4. Click Code.gs in the Files list. Select all (Ctrl+A, or Cmd+A on a Mac), delete it, paste the copied script, and save (Ctrl+S or Cmd+S, or the disk icon)",
-    "5. In the toolbar's function list (next to Run and Debug), pick installTriggers, then press Run",
+    "5. In the toolbar's function list (next to Run and Debug), check that installTriggers is selected (it is the default), then press Run",
     "6. Allow it, once: Review permissions, pick the owner's account. Google then shows \"Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.\" That is expected: this is the sheet's own script, which Google never reviews. Choose Advanced, then Go to <project name> (unsafe), then Allow. Why: https://support.google.com/cloud/answer/7454865",
     "7. Wait for \"Execution completed\" in the log, return to the sheet tab and reload it. A Review links menu appears; Review links, then Refresh now, checks it",
     "   • Updating later: repeat 1, 2 and 4, then Review links, then Refresh now. The automatic refresh stays installed",
