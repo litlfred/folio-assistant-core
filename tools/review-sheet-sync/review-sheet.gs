@@ -671,7 +671,7 @@ function stagingCell(url, built, prs, readyAt) {
 function stagingWarning(url, built, prs, readyAt) {
   const b = built || {};
   const active = (prs || []).filter(p => p.head).slice(-1)[0];
-  if (!url) return active ? '\u26a0 no preview yet' : '';
+  if (!url) return active ? '\u26a0 no preview yet: not ready for merge' : '';
   const deploy = String(b.deploy || '').toLowerCase();
   if (/fail|error/.test(deploy)) return '\u26a0 deploy failed';
   if (active && b.from) {

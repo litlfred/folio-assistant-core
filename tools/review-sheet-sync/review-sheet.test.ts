@@ -766,7 +766,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(text()).toBe("review \u26a0 deploy failed");
     t.Agent.rows[1][at("Staging review page (change set)")] = "";
     s.refreshAll();
-    expect(text()).toBe("\u26a0 no preview yet");
+    expect(text()).toBe("\u26a0 no preview yet: not ready for merge");
   });
 
   test("a public-comment edit is kept for the next tick when the rebuild cannot start", () => {

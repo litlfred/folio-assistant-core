@@ -193,7 +193,11 @@ It reads the active PR as the last one listed (one branch, one active PR per
 row) and writes, in this order of precedence: `⚠ deploy failed`;
 `⚠ stale: built from <sha>, PR now at <sha>`; `⚠ deploy in progress`. A
 change set with a recorded PR head but no preview link shows `⚠ no preview
-yet`. Without these columns it falls back to the time check above. A sheet
+yet: not ready for merge`. A change set is never ready for merge without a
+preview to review (owner, 2026-10-31: "how can it be ready for merge when
+there is no preview?"): the agent stages a preview for every PR it opens, and
+the "Merge decision due" filter view leaves out rows whose Staging review
+starts with ⚠. Without these columns it falls back to the time check above. A sheet
 made before 2026-10-31 gains the three columns at the right of the Agent
 (change sets) tab; the script finds them by header.
 

@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 91e1c2b943feabe7.
+// folio-assistant-core tools/review-sheet-sync at template sha256 211bdfe0c32be609.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -74,7 +74,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 91e1c2b943feabe7';
+const SCRIPT_VERSION = 'template sha256 211bdfe0c32be609';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -671,7 +671,7 @@ function stagingCell(url, built, prs, readyAt) {
 function stagingWarning(url, built, prs, readyAt) {
   const b = built || {};
   const active = (prs || []).filter(p => p.head).slice(-1)[0];
-  if (!url) return active ? '\u26a0 no preview yet' : '';
+  if (!url) return active ? '\u26a0 no preview yet: not ready for merge' : '';
   const deploy = String(b.deploy || '').toLowerCase();
   if (/fail|error/.test(deploy)) return '\u26a0 deploy failed';
   if (active && b.from) {
