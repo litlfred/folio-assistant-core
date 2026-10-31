@@ -113,24 +113,31 @@ published public-comment process>.
 Only the channels the editor set up are listed. The links are the ones
 recorded in §2. Nothing goes out until every link has been opened once.
 
-## 4. Who submitted: a Submitters record, comments carry an id
+## 4. Who submitted: the Public Comment Source tab
 
-A submitter's details (name, organisation, country or region, stakeholder
-type, email, consent to be named) are asked **once per submission**: at the
-top of the Excel sheet's Comments tab, in the Form's "About you" page, and
-from the GitHub login on an issue. They are kept in the review owner's
-private store, one row per person in a **Submitters** tab of the review
-sheet, and each comment carries only the submitter's id.
+Submitters are recorded the way the DPI-H Reference Architecture review
+records them (owner, 2026-10-31): in the review sheet's **Public Comment
+Source** tab, one row per public comment. The columns are No., date received,
+channel, reviewer name, organisation, country / region, stakeholder type,
+email, and "Acknowledge by name (Yes/No)". The tab is locked, and it is the
+only place a submitter's name and email are kept (the `public-comment`
+skill, §"The live review sheet").
 
-- The id is the importer's pseudonymous `r-<hash>`, from the email or else
-  the name (`reviewerId` in `schemas/public-comment.ts`), so a person who
-  comments through two channels with the same email is one submitter.
-- The repository gets only that id, the organisation and country, and the
-  name **only** when the submitter answered Yes to "Acknowledge by name". The
-  email never enters it. This is the importer's rule already (the
+- Each channel asks for the details **once per submission**: at the top of
+  the Excel sheet's Comments tab, on the Form's "About you" page, and from
+  the GitHub login on an issue. At intake, the submission's details are
+  copied onto every one of its comments' rows in Public Comment Source, with
+  the comment's No. and its channel.
+- A returning submitter is recognised by the importer's pseudonymous id
+  `r-<hash>`, which comes from the email or else the name (`reviewerId` in
+  `schemas/public-comment.ts`). Someone who comments through two channels
+  with the same email is therefore one reviewer.
+- The repository gets only that id, the organisation and the country. It
+  gets the name **only** when the submitter answered Yes to "Acknowledge by
+  name", and never the email. The importer already follows this rule (the
   `public-comment` skill, §"Privacy").
-- Submitter details are not configuration. They do not go in the Config tab,
-  which is the script's settings and is written by the agent.
+- Submitter details are not configuration, so they never go in the Config
+  tab. That tab holds the script's settings and is written by the agent.
 
 ## 5. Intake: each channel has one path back
 
