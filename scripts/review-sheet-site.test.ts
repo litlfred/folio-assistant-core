@@ -29,11 +29,11 @@ describe("review-sheet-site", () => {
     const code = readFileSync(join(dir, "Code.gs"), "utf8");
     const sha = createHash("sha256").update(code).digest("hex");
     expect(page).toContain(sha);
-    expect(JSON.parse(readFileSync(join(dir, "appsscript.json"), "utf8")).oauthScopes).toHaveLength(3);
     const rows = JSON.parse(readFileSync(join(dir, "drafting.config-rows.json"), "utf8"));
     expect(rows[1][0]).toBe("CFG");
     const g = JSON.parse(readFileSync(join(dir, "review-sheet.jsonld"), "utf8"))["@graph"];
     expect(g[0]["spdx:checksum"]["spdx:checksumValue"]).toBe(sha);
+    expect(g[0]["schema:permissions"]).toHaveLength(3);
     expect(g[1]["schema:isPartOf"]["@id"]).toBe("https://docs.google.com/spreadsheets/d/SHEETID/edit");
   });
 

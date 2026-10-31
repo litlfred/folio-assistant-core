@@ -14,8 +14,8 @@
  * owner. A copy of the template therefore works for any document once its
  * Config tab is filled.
  *
- * Install once: Extensions > Apps Script, paste this file as Code.gs and
- * appsscript.json as the manifest, save, pick installTriggers in the function
+ * Install once: Extensions > Apps Script, paste this file as Code.gs (the
+ * only file to paste), save, pick installTriggers in the function
  * list, press Run and allow access, then reload the sheet. A "Review links"
  * menu appears. An edit marks the sheet dirty and a 5-minute trigger
  * rebuilds; "Refresh now" rebuilds at once. Columns are found by their header

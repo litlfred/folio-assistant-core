@@ -6,8 +6,8 @@
  * For every `review/<mode>/sheet-sync.json` in the folio, writes under
  * `<out>/review-sheet/`:
  *
- * - `Code.gs` and `appsscript.json`: the one generic script every review
- *   sheet runs (owner, 2026-10-31, option C), and its pinned scopes;
+ * - `Code.gs`: the one generic script every review sheet runs (owner,
+ *   2026-10-31, option C), the only file a person pastes;
  * - `<mode>.config-rows.json`: that document's Config tab rows;
  * - `review-sheet.jsonld`: the graph of what is published here: the script
  *   (with its SHA-256 and the commit it was built from) and each document's
@@ -18,7 +18,7 @@
  * Skill: `review-sheet-script`. Tool: `review-sheet-sync`.
  */
 import { createHash } from "node:crypto";
-import { copyFileSync, existsSync, mkdirSync, readdirSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 import { buildConfig, buildScript, configRows } from "../tools/review-sheet-sync/build-review-sheet-script.ts";
@@ -50,7 +50,7 @@ export function buildReviewSheetSite(repo: string, out: string): { configs: numb
   const commit = (script.match(/tools\/review-sheet-sync at ([0-9a-f]{7,40}|[^.\s]+)/) ?? [])[1] ?? "unknown";
   writeFileSync(join(dir, "Code.gs"), script);
   const here = dirname(fileURLToPath(import.meta.url));
-  copyFileSync(join(here, "../tools/review-sheet-sync/appsscript.json"), join(dir, "appsscript.json"));
+  const scopes: string[] = JSON.parse(readFileSync(join(here, "../tools/review-sheet-sync/appsscript.json"), "utf8")).oauthScopes;
 
   const docs = configs.map((path) => {
     const c = buildConfig(repo, path);
@@ -71,7 +71,7 @@ export function buildReviewSheetSite(repo: string, out: string): { configs: numb
         "schema:codeRepository": TOOL,
         "schema:version": commit,
         "spdx:checksum": { "spdx:algorithm": "SHA-256", "spdx:checksumValue": scriptSha },
-        "dcterms:requires": { "@id": "appsscript.json" },
+        "schema:permissions": scopes,
         "prov:wasGeneratedBy": { "@id": `${TOOL}#review-sheet-sync` },
       },
       ...docs.map((d) => ({
@@ -100,7 +100,6 @@ export function buildReviewSheetSite(repo: string, out: string): { configs: numb
 <h2>Files</h2>
 <ul>
 <li><a href="Code.gs">Code.gs</a>: the script. SHA-256 <code>${scriptSha}</code>, built from folio-assistant-core at <code>${esc(commit)}</code>. It reads and writes only the sheet it is installed in.</li>
-<li><a href="appsscript.json">appsscript.json</a>: its manifest. It asks for three permissions only: this spreadsheet, the script's own triggers, and its menu.</li>
 <li><a href="review-sheet.jsonld">review-sheet.jsonld</a>: these files as linked data.</li>
 </ul>
 <h2>Settings for this document</h2>
@@ -112,7 +111,7 @@ ${rows}
 <li>Copy the template for the mode, name it, and share it with the contributors as Editor.</li>
 <li>Give the agent the copy's URL; it writes the Config tab.</li>
 <li>Data &gt; Protect sheets and ranges &gt; "Ready columns: editors" &gt; Change permissions &gt; Custom: add each editor.</li>
-<li>Extensions &gt; Apps Script: paste <a href="Code.gs">Code.gs</a>; in Project Settings show and replace appsscript.json; save; run <b>installTriggers</b>.</li>
+<li>Extensions &gt; Apps Script: paste <a href="Code.gs">Code.gs</a> (the only file to paste); save; run <b>installTriggers</b>. Google asks for three permissions: this spreadsheet, the script's own triggers, and its menu.</li>
 <li>Drafting only: on the Sections column, tick "Allow multiple selections" in its data validation.</li>
 </ol>
 <p>To check a pasted copy: compute the SHA-256 of its text and compare it with the one above. The full steps are in the <a href="${SKILL}">review-sheet-script skill</a>.</p>
