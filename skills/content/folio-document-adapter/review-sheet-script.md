@@ -79,10 +79,12 @@ bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.t
 
 The agent writes `config-rows.json` into the Config tab (A1 down, columns A
 and B, clearing rows below) with the Sheets connector, which runs as the
-owner, and keeps the tab protected so only the owner can edit it. Each value
-is indented JSON, cut into cells between lines, and column B wraps, so a
-person can read it (owner, 2026-10-31); the script joins a key's cells and
-parses them, and JSON ignores the line breaks. Neither
+owner, and keeps the tab protected so only the owner can edit it. CFG and
+COLS, which a person might edit by hand (a URL, a tab or column renamed),
+are indented JSON, cut into cells between lines, and column B wraps;
+DATA, generated from the folio and never edited by hand, stays compact
+(owner, 2026-10-31). The script joins a key's cells and parses them, and
+JSON ignores the line breaks. Neither
 file is committed: both are rebuilt.
 
 **Install it, once per sheet.** A person does this, from the sheet owner's
