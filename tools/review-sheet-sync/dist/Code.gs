@@ -30,7 +30,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 337a5ae89dfbd7e0.
+// folio-assistant-core tools/review-sheet-sync at template sha256 7433c5f88fc72053.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -77,7 +77,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 337a5ae89dfbd7e0';
+const SCRIPT_VERSION = 'template sha256 7433c5f88fc72053';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -472,8 +472,8 @@ const WATCH_TAB = 'Watch';
  * (owner, 2026-10-31: "can we make it mostly mechanical to see if row(s)
  * changed?"). Each entry is [change set, what it needs]:
  * - proposal: the green `(agent)` proposal is empty, or the row's blue cells
- *   changed since it was written (its basis differs from Agent's Feedback
- *   basis). Drafting: only rows a person has written feedback on.
+ *   (and, for a "2:" basis, its grey content) changed since it was written
+ *   (its basis differs from Agent's Feedback basis). Drafting: only rows a person has written feedback on.
  * - issue (drafting): the change set has no issue on the Agent tab yet.
  * - ready: Ready for agent is Yes and its work has not started.
  * - merge: Ready for merge is Yes and its PR is still open.
@@ -520,7 +520,7 @@ function watchList(ss) {
     const needs = [];
     if (ag >= 0 && (!DRAFTING || people.some(i => String(r[i]).trim()))) {
       const bare = String(r[ag]).replace(STALE + '\n', '').trim();
-      if (!bare || [].concat(basisOf(s.header, r, exact, prefix)).indexOf(basisOfCs[id]) < 0) needs.push('proposal');
+      if (!bare || [].concat(basisOf(s.header, r, exact, prefix, basisOfCs[id])).indexOf(basisOfCs[id]) < 0) needs.push('proposal');
     }
     if (DRAFTING && !issueOfCs[id]) needs.push('issue');
     if (yes(r, rfa) && sts.every(x => !x || x === 'Not started')) needs.push('ready');
@@ -756,8 +756,16 @@ function hashOf(text) {
  * initials) changes no row's basis. Returns that hash first, then the older
  * one that kept empty cells, so a basis an agent wrote before the change still
  * matches until it next writes one.
+ *
+ * A basis written as "2:<hash>" also covers the row's grey content columns
+ * (basisGrey), so a change to the comments a change set joins marks its
+ * proposal stale too (owner, 2026-10-31: "changed blue human (or mechanical
+ * grey) content"). `written` is the stored basis: its form says which hash
+ * to compare with, so old bases keep matching until the agent rewrites them.
  */
-function basisOf(header, row, exact, prefix) {
+function basisOf(header, row, exact, prefix, written) {
+  const v2 = /^2:/.test(String(written || ''));
+  if (v2) exact = exact.concat(basisGrey());
   const parts = [], legacy = [];
   header.forEach((h, i) => {
     let v = String(row[i] == null ? '' : row[i]).trim();
@@ -769,9 +777,22 @@ function basisOf(header, row, exact, prefix) {
       if (v) parts.push(h + '=' + v);
     }
   });
+  const pfx = v2 ? '2:' : '';
   // A basis written before a rename (RENAMED) names the columns the old way.
   const was = t => t.map(x => { const a = aliasOf(x.split('=')[0]); return a === null || x.indexOf('Committee') !== 0 ? x : a + x.slice(x.indexOf('=')); });
-  return [hashOf(parts.join('\n')), hashOf(legacy.join('\n')), hashOf(was(parts).join('\n')), hashOf(was(legacy).join('\n'))];
+  return [pfx + hashOf(parts.join('\n')), pfx + hashOf(legacy.join('\n')), pfx + hashOf(was(parts).join('\n')), pfx + hashOf(was(legacy).join('\n'))];
+}
+
+/**
+ * The grey (mechanical) content columns a proposal also rests on: in a
+ * public-comment sheet, what Review Change Sets joins from its comments.
+ * Not the agent's own columns (Agentic status, Staging review page), so the
+ * agent's writes never make its proposals stale.
+ */
+function basisGrey() {
+  if (DRAFTING) return [];
+  const c = COLS.rcs;
+  return [c.sections, c.pages, c.comments, c.revisions, c.feedback, c.dispositions, 'TWG (PCs)'].filter(Boolean);
 }
 
 /** "2026-10-30 22:30Z" (or ISO) -> ms, or NaN. */
@@ -839,7 +860,8 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName) {
   const ag = col(s, agentName);
   if (ag < 0 || csCol < 0) return;
   s.rows.forEach((r, k) => {
-    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[String(r[csCol]).trim()]);
+    const w = basisOfCs[String(r[csCol]).trim()];
+    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix, w), w);
     if (t !== null) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(t)]]);
     unready(s, r, k, r[ag], t);
     markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), t === null ? r[ag] : t);
@@ -1398,7 +1420,7 @@ function refreshDraft(rows) {
     fb.rows.forEach((r, k) => {
       if (!want(k)) return;
       const cs = String(r[c.cs]).trim();
-      const t = staleText(r[ag], basisOf(fb.header, r, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback), basisOfCs[cs]);
+      const t = staleText(r[ag], basisOf(fb.header, r, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback, basisOfCs[cs]), basisOfCs[cs]);
       if (t !== null) fb.sh.getRange(k + fb.top, ag + 1, 1, 1).setValues([[asText(t)]]);
       unready(fb, r, k, r[ag], t);
       markDecision(fb.sh.getRange(k + fb.top, ag + 1, 1, 1), t === null ? r[ag] : t);
