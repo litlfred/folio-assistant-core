@@ -119,7 +119,9 @@ Submitters are recorded the way the DPI-H Reference Architecture review
 records them (owner, 2026-10-31): in the review sheet's **Public Comment
 Source** tab, one row per public comment. The columns are No., date received,
 channel, reviewer name, organisation, country / region, stakeholder type,
-email, and "Acknowledge by name (Yes/No)". The tab is locked, and it is the
+email, and "Acknowledge by name (Yes/No)". Every column is **Grey**,
+because the tab is the external source, copied in mechanically (owner,
+2026-10-31). The tab is locked, and it is the
 only place a submitter's name and email are kept (the `public-comment`
 skill, §"The live review sheet").
 
