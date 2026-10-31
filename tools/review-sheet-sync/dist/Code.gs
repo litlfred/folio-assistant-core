@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 c35f8a93a9a21474.
+// folio-assistant-core tools/review-sheet-sync at template sha256 4d7f19c2d1b3fb83.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 c35f8a93a9a21474';
+const SCRIPT_VERSION = 'template sha256 4d7f19c2d1b3fb83';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -257,6 +257,20 @@ function normalizeRows(sh) {
     fixed++;
   }
   return fixed;
+}
+
+/**
+ * Move column `name` to sit immediately left of column `before`, by header.
+ * Only ever called inside the locked run (memory: never move columns
+ * mid-refresh). Returns true when it moved something.
+ */
+function placeBefore(sh, name, before) {
+  if (!sh) return false;
+  const s = readSheet(sh), a = s.header.indexOf(name), b = s.header.indexOf(before);
+  if (a < 0 || b < 0 || a === b - 1) return false;
+  // moveColumns' destination is the index BEFORE the move, 1-based.
+  sh.moveColumns(sh.getRange(1, a + 1, 1, 1), b + 1);
+  return true;
 }
 
 /** True when some cell holds two or more sections from the list, which only a multi-select rule allows. */
@@ -1891,6 +1905,9 @@ function refreshDraft(rows) {
   try { ensureAgentStepColumn(ss.getSheetByName(CFG.AGENT)); } catch (err) { /* the refresh still runs */ }
   const props = docProps_();
   try { normalizeRows(ss.getSheetByName(CFG.FEEDBACK)); } catch (err) { /* cosmetic only */ }
+  // Agentic status sits just left of its filter column (owner, 2026-10-31).
+  // Moved here, inside the locked run, before any column is read by position.
+  try { placeBefore(ss.getSheetByName(CFG.FEEDBACK), COLS.draft.agentic || 'Agentic status', COLS.draft.status || 'Agentic status (filter)'); } catch (err) { /* the refresh still runs */ }
   const fb = readSheet(ss.getSheetByName(CFG.FEEDBACK));
   const agentSh = ss.getSheetByName(CFG.AGENT);
   const agent = agentSh ? readSheet(agentSh) : { header: [], rows: [] };

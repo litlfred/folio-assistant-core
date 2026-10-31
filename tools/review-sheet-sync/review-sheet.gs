@@ -259,6 +259,20 @@ function normalizeRows(sh) {
   return fixed;
 }
 
+/**
+ * Move column `name` to sit immediately left of column `before`, by header.
+ * Only ever called inside the locked run (memory: never move columns
+ * mid-refresh). Returns true when it moved something.
+ */
+function placeBefore(sh, name, before) {
+  if (!sh) return false;
+  const s = readSheet(sh), a = s.header.indexOf(name), b = s.header.indexOf(before);
+  if (a < 0 || b < 0 || a === b - 1) return false;
+  // moveColumns' destination is the index BEFORE the move, 1-based.
+  sh.moveColumns(sh.getRange(1, a + 1, 1, 1), b + 1);
+  return true;
+}
+
 /** True when some cell holds two or more sections from the list, which only a multi-select rule allows. */
 function multiPicked(cells) {
   const names = new Set(DATA.TOC.map(t => bareName(t[0])));
@@ -1891,6 +1905,9 @@ function refreshDraft(rows) {
   try { ensureAgentStepColumn(ss.getSheetByName(CFG.AGENT)); } catch (err) { /* the refresh still runs */ }
   const props = docProps_();
   try { normalizeRows(ss.getSheetByName(CFG.FEEDBACK)); } catch (err) { /* cosmetic only */ }
+  // Agentic status sits just left of its filter column (owner, 2026-10-31).
+  // Moved here, inside the locked run, before any column is read by position.
+  try { placeBefore(ss.getSheetByName(CFG.FEEDBACK), COLS.draft.agentic || 'Agentic status', COLS.draft.status || 'Agentic status (filter)'); } catch (err) { /* the refresh still runs */ }
   const fb = readSheet(ss.getSheetByName(CFG.FEEDBACK));
   const agentSh = ss.getSheetByName(CFG.AGENT);
   const agent = agentSh ? readSheet(agentSh) : { header: [], rows: [] };

@@ -1517,3 +1517,22 @@ describe("data rows look like data rows (owner, 2026-10-31: \"why row 3 bold\")"
     expect(copies).toEqual([[500, 3]]);
   });
 });
+
+describe("Agentic status sits left of its filter column (owner, 2026-10-31)", () => {
+  const placeBefore = new Function("SpreadsheetApp", `${code}\nreturn placeBefore;`)({});
+  const sheetWith = (header: string[], moves: Array<[number, number]>) => ({
+    getLastRow: () => 2, getLastColumn: () => header.length,
+    getRange: (r: number, c: number) => ({ getDisplayValues: () => [["Instructions", ...header.slice(1).map(() => "")], header], col: c }),
+    moveColumns: (range: { col: number }, to: number) => moves.push([range.col, to]),
+  });
+  test("moves it from after Issue to just before the filter", () => {
+    const moves: Array<[number, number]> = [];
+    expect(placeBefore(sheetWith(["Change-set", "Agentic status (filter)", "Issue", "Agentic status"], moves), "Agentic status", "Agentic status (filter)")).toBe(true);
+    expect(moves).toEqual([[4, 2]]);
+  });
+  test("leaves it when it is already there", () => {
+    const moves: Array<[number, number]> = [];
+    expect(placeBefore(sheetWith(["Change-set", "Agentic status", "Agentic status (filter)"], moves), "Agentic status", "Agentic status (filter)")).toBe(false);
+    expect(moves).toEqual([]);
+  });
+});
