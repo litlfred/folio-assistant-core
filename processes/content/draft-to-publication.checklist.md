@@ -77,7 +77,7 @@ How the corpus becomes an officially published folio: a draft publication, its r
 
 ### Do all of — Draft under review (`Gateway_ReviewFork`)
 
-- Work every branch; none is optional. Branches: → `Task_ReviewDraft` (Review the draft publication), → `Task_SmeSignoff` (Clinical / scientific sign-off), → `CallActivity_PublicComment` (Public comment on the review version)
+- Work every branch; none is optional. Branches: → `Task_ReviewDraft` (Review the draft publication), → `Task_SmeSignoff` (Clinical / scientific sign-off), → `CallActivity_PublicComment` (Release for public comment)
 - The engine passes through this gateway itself; there is nothing to record here.
 
 ### 6. Review the draft publication (`Task_ReviewDraft`)
@@ -96,12 +96,12 @@ How the corpus becomes an officially published folio: a draft publication, its r
 - Record it: `workflow_complete` with `node: "Task_SmeSignoff"`.
 - next: → `Gateway_ReviewJoin`
 
-### 8. Public comment on the review version (`CallActivity_PublicComment`)
+### 8. Release for public comment (`CallActivity_PublicComment`)
 
 - Who: the `Public review (commenters, review committee, editor)` lane (role `review-coordinator`).
 - Skill: `public-comment`.
-- What: When the draft is released for public comment: comments returned on the frozen, line-numbered review version are placed, triaged, recommended on by the review committee and decided by the editor (public-comment.bpmn).
-- A subprocess (`Process_PublicComment`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- What: When the draft goes out for public comment: the release date is agreed, the draft is frozen as a line-numbered public comment release, every channel is set up against it and announced, and the comments that come back are placed, triaged, recommended on by the review committee and decided by the edit
+- A subprocess (`Process_PublicCommentRelease`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Gateway_ReviewJoin`
 
 ### Wait for all — `Gateway_ReviewJoin`
