@@ -450,7 +450,7 @@ worded for the mode by `colourKey()`:
 
 - **Blue**: input by people, named by their process role: the Feedback Review
   Committee in public-comment mode (the DPI-H RA's architects hold it, but the
-  sheet names the role, not the job), Contributors in drafting mode;
+  sheet names the role, not the job), the Authoring Committee in drafting mode;
 - **Green**: written by the agent;
 - **Orange**: workflow, set by an Editor (the `Ready for ...` columns);
 - **Grey**: mechanical, kept by the script or the source.
@@ -465,7 +465,7 @@ what-changed page, reviewers answer in blue, and an Editor sets Ready for merge
 and the agent merges. On Review Public Comments the steps say that decisions
 are made per change set. Last come the filter views, and a link to the
 harness's page for the process the sheet runs, where every step and role is in
-full: `public-comment.html` for public comment and `content-change-review.html`
+full: `public-comment.html` for public comment and `contributor-feedback.html`
 for drafting, under `en/cat-harness/processes/` on the folio-assistant site
 (`processPage()`; `CFG.PROCESS` overrides it).
 

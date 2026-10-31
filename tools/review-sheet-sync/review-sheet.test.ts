@@ -377,12 +377,12 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(Math.max(...dRows.slice(0, 3).map((r) => r[1].split("\n").length))).toBeLessThanOrEqual(10);
     const d = tabInstructions(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
     const cf = d["Contributor Feedback"];
-    expect(cf).toContain("Blue = your input, by Contributors");
+    expect(cf).toContain("Blue = your input, by the Authoring Committee");
     expect(cf).toContain("Ready for agent (Orange) back to No");
     expect(cf).toContain("Filter views");
     // Colour words are capitalised, so the sheet can bold and colour each one.
     expect(cf).not.toMatch(/\b(blue|green|orange|grey)\b/);
-    expect(cf).toContain("/en/cat-harness/processes/content-change-review.html");
+    expect(cf).toContain("/en/cat-harness/processes/contributor-feedback.html");
     const p = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
     expect(p["Review Public Comments"]).toContain("one row per public comment");
     expect(p["Review Change Sets"]).toContain("one row per change set");
