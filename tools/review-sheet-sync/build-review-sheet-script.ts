@@ -67,7 +67,7 @@ export type SheetSyncConfig = {
   namedSections?: Record<string, string>;
   /** Other names for front-matter chapters: alias -> chapter title. */
   aliases?: Record<string, string>;
-  tabs?: Partial<{ RPC: string; RCS: string; AGENT: string; FEEDBACK: string; TOC: string }>;
+  tabs?: Partial<{ RPC: string; RCS: string; AGENT: string; AGENT_CS: string; FEEDBACK: string; TOC: string }>;
   columns?: Partial<{ rpc: Record<string, string>; rcs: Record<string, string>; agent: Record<string, string>; draft: Record<string, string>; draftAgent: Record<string, string> }>;
 };
 
@@ -129,7 +129,14 @@ export function buildToc(a: { chapters: Chapter[]; sections: DraftSection[] }): 
   return out;
 }
 
-export const DEFAULT_TABS = { RPC: "Review Public Comments", RCS: "Review Change Sets", AGENT: "Agent" };
+/**
+ * Public comment keeps the agent's rows on two tabs (owner, 2026-10-31): one
+ * row per comment on AGENT, one row per change set on AGENT_CS. They were one
+ * "Agent" tab with the two tables side by side, which made a comment's change
+ * set and the unrelated change set on the same row look connected. A sheet
+ * still laid out that way sets `tabs: { AGENT: "Agent", AGENT_CS: "" }`.
+ */
+export const DEFAULT_TABS = { RPC: "Review Public Comments", RCS: "Review Change Sets", AGENT: "Agent - Comments", AGENT_CS: "Agent - Change Sets" };
 export const DEFAULT_COLUMNS = {
   rpc: {
     no: "No.", sections: "Sections", page: "Page", lines: "Line no(s) / Table / Figure",
@@ -380,7 +387,10 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
   ];
   const out: Record<string, string> = {
     [CONFIG_TAB]: `The script's settings. Work happens on ${people}; nothing here needs you unless you install the script. Do not edit this tab: the agent writes it, except EDITORS, which only the owner edits.`,
-    [t.AGENT]: `Written only by the agent: one row per ${drafting ? "change set" : "comment or change set"}, with its status, pull request and preview. Do not edit. The script copies what it needs into the green columns of ${people}.`,
+    [t.AGENT]: drafting || !t.AGENT_CS
+      ? `Written only by the agent: one row per ${drafting ? "change set" : "comment or change set"}, with its status, pull request and preview. Do not edit. The script copies what it needs into the green columns of ${people}.`
+      : `Written only by the agent: one row per public comment, with its status, what was done and the change set it belongs to. Do not edit. The script copies what it needs into the green columns of ${t.RPC}.`,
+    ...(!drafting && t.AGENT_CS ? { [t.AGENT_CS]: `Written only by the agent: one row per change set, with its pull requests, what they changed and its staging preview. Do not edit. The script copies what it needs into the green columns of ${t.RCS} and ${t.RPC}.` } : {}),
     Watch: "Kept by the agent's watcher: what changed since it last looked. Do not edit.",
   };
   if (drafting) {
