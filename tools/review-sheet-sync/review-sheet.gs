@@ -30,7 +30,29 @@
  */
 /*@@VERSION@@*/
 
+/**
+ * Run this one, once, from the editor (or Review links, then Install automatic
+ * refresh): it is first in the file so the editor's Run button picks it by
+ * default (owner, 2026-10-31: Run picked loadConfig and failed). Every other
+ * function here is called by it, the menu or a trigger, never run by hand.
+ */
+function installTriggers() {
+  const ss = SpreadsheetApp.getActive();
+  loadConfig(ss);
+  checkSheet(ss);
+  ScriptApp.getProjectTriggers()
+    .filter(t => ['markDirty', 'refreshIfDirty'].includes(t.getHandlerFunction()))
+    .forEach(t => ScriptApp.deleteTrigger(t));
+  ScriptApp.newTrigger('markDirty').forSpreadsheet(ss).onEdit().create();
+  ScriptApp.newTrigger('refreshIfDirty').timeBased().everyMinutes(5).create();
+  refreshAll();
+  applyEditors(ss);
+  if (DRAFTING) checkDropdown(ss);
+}
+
 const CONFIG_TAB = 'Config';
+const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
+  'in the function list (next to Run and Debug), then press Run.';
 let CFG = null, COLS = null, DATA = null, DRAFTING = false, WATCHED = [], EDITORS = null, EDITORS_SKIPPED = [];
 
 /**
@@ -40,6 +62,7 @@ let CFG = null, COLS = null, DATA = null, DRAFTING = false, WATCHED = [], EDITOR
  */
 function loadConfig(ss) {
   if (CFG) return;
+  if (!ss) throw new Error(RUN_THIS);
   const sh = ss.getSheetByName(CONFIG_TAB);
   if (!sh) {
     throw new Error('This sheet has no "' + CONFIG_TAB + '" tab, so the script does not know which document it reviews. ' +
@@ -99,19 +122,6 @@ function onOpen() {
   } catch (e) { /* a toast is a courtesy; never block the menu */ }
 }
 
-function installTriggers() {
-  const ss = SpreadsheetApp.getActive();
-  loadConfig(ss);
-  checkSheet(ss);
-  ScriptApp.getProjectTriggers()
-    .filter(t => ['markDirty', 'refreshIfDirty'].includes(t.getHandlerFunction()))
-    .forEach(t => ScriptApp.deleteTrigger(t));
-  ScriptApp.newTrigger('markDirty').forSpreadsheet(ss).onEdit().create();
-  ScriptApp.newTrigger('refreshIfDirty').timeBased().everyMinutes(5).create();
-  refreshAll();
-  applyEditors(ss);
-  if (DRAFTING) checkDropdown(ss);
-}
 
 const READY_DESC = 'Ready columns: who may set them is the Config tab\'s EDITORS row (the script keeps this).';
 
@@ -123,6 +133,7 @@ const READY_DESC = 'Ready columns: who may set them is the Config tab\'s EDITORS
  * they are.
  */
 function applyEditors(ss) {
+  if (!ss) throw new Error(RUN_THIS);
   if (EDITORS === null) return;
   const sh = ss.getSheetByName(DRAFTING ? CFG.FEEDBACK : CFG.RCS);
   const s = readSheet(sh);
@@ -154,6 +165,7 @@ function applyEditors(ss) {
  * having said it is done (Yes). The same steps are in the Config tab's Instructions row.
  */
 function checkDropdown(ss) {
+  if (!ss) throw new Error(RUN_THIS);
   const sh = ss.getSheetByName(CFG.FEEDBACK);
   const s = readSheet(sh);
   const at = s.header.indexOf(COLS.draft.sections);
@@ -199,6 +211,7 @@ function multiPicked(cells) {
  * fail deep inside, on a missing tab.
  */
 function checkSheet(ss) {
+  if (!ss) throw new Error(RUN_THIS);
   const built = 'The Config tab was written from ' + CFG.SOURCE + ' for a ' + CFG.MODE + ' sheet';
   if (CFG.SHEET && ss.getId() !== CFG.SHEET) {
     throw new Error(built + ' (spreadsheet ' + CFG.SHEET + '), not this one. Ask the agent to write this sheet\'s Config.');
@@ -427,6 +440,7 @@ function keyRuns(text) {
  */
 const CONFIG_COLOURS = { header: '#b7b7b7', person: '#f4b26b', agent: '#efefef' };
 function styleConfig(ss) {
+  if (!ss) throw new Error(RUN_THIS);
   const sh = ss.getSheetByName(CONFIG_TAB);
   if (!sh) return;
   const n = sh.getLastRow();
@@ -443,6 +457,7 @@ function styleConfig(ss) {
 }
 
 function colourInstructions(ss) {
+  if (!ss) throw new Error(RUN_THIS);
   ss.getSheets().forEach(sh => {
     const n = Math.min(5, sh.getLastRow());
     if (n < 2 || sh.getLastColumn() < 2) return;
@@ -1144,6 +1159,7 @@ const issueLabel = url => { const m = url.match(/\/([^/]+)\/issues\/(\d+)$/); re
 
 /** The hidden TOC tab: column A the dropdown names, column B each linked. */
 function writeToc(ss) {
+  if (!ss) throw new Error(RUN_THIS);
   let sh = ss.getSheetByName(CFG.TOC);
   if (!sh) {
     sh = ss.insertSheet(CFG.TOC);

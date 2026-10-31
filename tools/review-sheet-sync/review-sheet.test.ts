@@ -933,3 +933,13 @@ describe("the Config tab's colours", () => {
     expect(bg[at("Instructions")]).toBeUndefined();
   });
 });
+
+describe("running the script from the editor", () => {
+  test("installTriggers is the first function, so the editor's Run button picks it", () => {
+    expect(code.match(/^function (\w+)/m)?.[1]).toBe("installTriggers");
+  });
+  test("a helper run by hand says which function to run instead", () => {
+    const loadConfig = new Function("SpreadsheetApp", `${code}\nreturn loadConfig;`)({}) as () => void;
+    expect(() => loadConfig()).toThrow(/pick installTriggers/);
+  });
+});
