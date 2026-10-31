@@ -311,12 +311,15 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    Paste the script into the template itself once, so every copy starts with
    it. A copy keeps the version it was made with: when Code.gs changes,
    paste it again into each sheet in use.
-6. **Drafting only: allow multiple sections.** Select the Selected Sections column >
-   Data > Data validation > the dropdown rule > tick **Allow multiple
-   selections** > Done. Copies made after the template has it ticked keep it.
-   The box is greyed out unless the rule's display style is **Chip**
-   (Advanced options); the agent sets Chip (`customUiMode: CHIP`) when it
-   writes the rule, but the tick itself is a person's step: the Sheets API refuses `allowMultipleSelections` on a from-a-range rule.
+6. **Drafting only: allow multiple sections.** installTriggers checks the
+   Selected Sections dropdown: it adds the rule (a dropdown from
+   `TOC!A2:A`) when the column has none, leaves an existing one alone (a
+   rewrite would clear its tick), and then shows a box naming the one step
+   left. Select the Selected Sections column > Data > Data validation > the
+   dropdown rule > Display style **Chip** (Advanced options) > tick **Allow
+   multiple selections** > Done. Copies made after the template has it
+   ticked keep it. The tick is a person's step: neither the Sheets API nor
+   Apps Script can set it on a from-a-range rule.
 
 **Filter views** (owner, 2026-10-31). Each template carries saved filter
 views, which copy with it. Use Data > Filter views, never a plain filter: a
@@ -336,14 +339,40 @@ A filter view covers the rows the tab had when the view was made; when rows
 are added past that, widen its range (Data > Filter views > the view >
 Options > Update range).
 
-**Selected Sections shows "Invalid".** Two causes. The cell holds several sections
+**Keeping the section list current (agent).** The dropdown's list is the
+hidden TOC tab, and the script writes it from `DATA.TOC` in the Config tab
+on every refresh. So when the document's chapters or sections change (any PR
+that changes `review-anchors.json`, the same moment `review:anchors` runs),
+the agent rebuilds the Config rows (`--config review/drafting/sheet-sync.json
+--out config-rows.json`) and writes them into each drafting sheet the folio
+names, in the same change. Nobody edits the TOC tab by hand.
+
+**How picks stay valid.** On each refresh the script repairs Selected
+Sections before anything else:
+
+| the pick | what the script does |
+|---|---|
+| a current section, with or without its "└ " mark | rewrites it to the dropdown's name, mark included |
+| a section renamed or renumbered since it was picked | finds it by its anchor (the TOC tab's column C keeps the anchors of the names it offered before) and rewrites it to the new name |
+| a section no longer in the document | keeps it, so nothing a person chose is lost, and adds a line in Section links: ⚠ "<name>" is not in the document now: pick its section again |
+
+So "Invalid" after a document change clears by itself at the next refresh,
+except for a section that was removed, which a person repicks.
+
+**Change-set ids.** Any row a person has filled in gets the next `CS-nnn`
+at the next refresh, whichever column they started in (owner,
+2026-10-31). A cell holding only "No" (a Yes/No dropdown's default) and the
+script's own columns do not count.
+
+**Selected Sections shows "Invalid".** Three causes. A pick of a section
+removed from the document: Section links flags it; pick again. Otherwise: The cell holds several sections
 but the rule does not allow multiple selections: tick it (step 6). Or the
 cell carries links: Sections must be plain text, the links belong in Section
 links. Older scripts linked the column; clear its formatting (Format > Clear
 formatting) and the current script keeps it plain.
 
-**Check it.** Review links > Refresh now. In drafting mode a row with a
-Title gets a CS id and its picked sections appear, linked, in Section links;
+**Check it.** Review links > Refresh now. In drafting mode a filled-in row
+gets a CS id and its picked sections appear, linked, in Section links;
 in public-comment mode each No. becomes a link. An error names what is
 missing: no Config tab, a Config row, or a tab the Config names.
 

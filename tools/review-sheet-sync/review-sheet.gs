@@ -77,6 +77,32 @@ function installTriggers() {
   ScriptApp.newTrigger('markDirty').forSpreadsheet(ss).onEdit().create();
   ScriptApp.newTrigger('refreshIfDirty').timeBased().everyMinutes(5).create();
   refreshAll();
+  if (DRAFTING) checkDropdown(ss);
+}
+
+/**
+ * Drafting: make sure Selected Sections is a dropdown of the hidden TOC tab,
+ * and tell the person the one step a script cannot take. A missing dropdown
+ * is added; an existing one is left alone, since writing it again would
+ * clear its "Allow multiple selections" tick.
+ */
+function checkDropdown(ss) {
+  const sh = ss.getSheetByName(CFG.FEEDBACK);
+  const at = readSheet(sh).header.indexOf(COLS.draft.sections);
+  if (at < 0) return;
+  const cells = sh.getRange(2, at + 1, sh.getMaxRows() - 1, 1);
+  const had = cells.getDataValidation();
+  if (!had) {
+    cells.setDataValidation(SpreadsheetApp.newDataValidation()
+      .requireValueInRange(ss.getSheetByName(CFG.TOC).getRange('A2:A'), true)
+      .setAllowInvalid(true).build());
+  }
+  SpreadsheetApp.getUi().alert((had ? 'Selected Sections already has its dropdown. ' :
+      'Selected Sections now has a dropdown of the document\'s sections. ') +
+    'One step is yours, once per sheet: select the Selected Sections column, ' +
+    'Data > Data validation, open the rule, set Display style to Chip, tick ' +
+    '"Allow multiple selections", and press Done. The script keeps the list ' +
+    'and every pick current from then on.');
 }
 
 
@@ -437,8 +463,12 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
 
 /**
  * One row of Contributor Feedback is one change set. The script:
- * - gives a row with a Title, Sections or feedback but no Change-set the next
- *   id (CS-001, CS-002, ...), once; the id then stays with the row;
+ * - gives any row a person has filled in (other than "No") but with no
+ *   Change-set the next id (CS-001, CS-002, ...), once; it stays with the row;
+ * - keeps Selected Sections valid when the document changes: a pick is
+ *   rewritten to the section's current name (found by its anchor, so a
+ *   renamed or renumbered section follows), and a pick whose section is gone
+ *   is kept and flagged in Section links, for a person to pick again;
  * - writes Section links: each picked section, linked to its anchor on the
  *   document page, one per line (Sections itself stays the plain dropdown);
  * - fills Issue, Agentic status and Staging review page from the Agent tab,
@@ -450,7 +480,7 @@ function refreshDraft() {
   const fb = readSheet(ss.getSheetByName(CFG.FEEDBACK));
   const agentSh = ss.getSheetByName(CFG.AGENT);
   const agent = agentSh ? readSheet(agentSh) : { header: [], rows: [] };
-  writeToc(ss);
+  const prev = writeToc(ss);
 
   const c = {};
   Object.entries(COLS.draft).forEach(([k, h]) => (c[k] = col(fb, h)));
@@ -459,6 +489,9 @@ function refreshDraft() {
   Object.entries(COLS.draftAgent).forEach(([k, h]) => (a[k] = col(agent, h)));
 
   // Change-set ids: mechanical, assigned once, never reused.
+  // A row is used once any cell a person fills holds something; "No" (a
+  // Yes/No dropdown's default) and the script's own columns do not count.
+  const mech = [c.cs, c.sectionLinks, c.issue, c.agentic, c.staging];
   if (c.cs >= 0) {
     let next = 1 + fb.rows.reduce((m, r) => {
       const x = /^CS-(\d+)$/.exec(String(r[c.cs]).trim());
@@ -467,7 +500,7 @@ function refreshDraft() {
     let changed = false;
     const ids = fb.rows.map(r => {
       const cur = String(r[c.cs]).trim();
-      const used = [c.title, c.sections].concat(fbCols).some(i => i >= 0 && String(r[i]).trim());
+      const used = r.some((v, i) => !mech.includes(i) && !/^(no)?$/i.test(String(v).trim()));
       if (cur || !used) return [cur];
       changed = true;
       const id = 'CS-' + String(next++).padStart(3, '0');
@@ -493,15 +526,46 @@ function refreshDraft() {
     }
   });
 
-  const tocUrl = {};
+  const tocUrl = {}, marked = {}, nameOf = {};
   // Names are compared bare: the dropdown marks sections under their chapter.
-  DATA.TOC.forEach(([name, anchor]) => (tocUrl[bareName(name)] = CFG.SECTION_URL + anchor));
-  // Sections is the people's multi-select dropdown, so it stays plain text (a
-  // dropdown chip cannot carry a link, and rich text there fights the
-  // validation). Section links is green: one linked line per picked section.
-  writeRich(fb, c.sectionLinks, fb.rows.map(r => {
+  DATA.TOC.forEach(([name, anchor]) => {
+    tocUrl[bareName(name)] = CFG.SECTION_URL + anchor;
+    marked[bareName(name)] = name;
+    nameOf[anchor] = name;
+  });
+  // Keep every pick valid: its current dropdown name (with its tree mark),
+  // or, for a section renamed since, the new name of the same anchor. A pick
+  // whose section is gone stays, and Section links flags it.
+  const gone = [];
+  if (c.sections >= 0) {
+    let fixed = false;
+    const vals = fb.rows.map((r, k) => {
+      const was = String(r[c.sections]).split(',').map(x => x.trim()).filter(Boolean);
+      const now = [];
+      gone[k] = [];
+      was.forEach(p => {
+        const b = bareName(p);
+        const n = marked[b] || nameOf[prev[b]] || p;
+        if (!marked[bareName(n)]) gone[k].push(b);
+        if (!now.includes(n)) now.push(n);
+      });
+      if (now.join('\n') !== was.join('\n')) {
+        fixed = true;
+        r[c.sections] = now.join(', ');
+      }
+      return [String(r[c.sections])];
+    });
+    if (fixed && vals.length) fb.sh.getRange(2, c.sections + 1, vals.length, 1).setValues(vals);
+  }
+  // Selected Sections is the people's multi-select dropdown, so it stays plain
+  // text (a dropdown chip cannot carry a link). Section links is grey: one
+  // linked line per picked section, then a flag for each pick no longer in
+  // the document.
+  writeRich(fb, c.sectionLinks, fb.rows.map((r, k) => {
     const names = String(r[c.sections]).split(',').map(bareName).filter(x => tocUrl[x]);
-    return rich(names.flatMap((n, i) => (i ? [{ t: '\n' }] : []).concat([{ t: n, url: tocUrl[n] }])));
+    const parts = names.map(n => [{ t: n, url: tocUrl[n] }])
+      .concat((gone[k] || []).map(n => [{ t: '\u26a0 "' + n + '" is not in the document now: pick its section again' }]));
+    return rich(parts.flatMap((p, i) => (i ? [{ t: '\n' }] : []).concat(p)));
   }));
   writeRich(fb, c.issue, fb.rows.map(r => {
     const urls = issuesOf[String(r[c.cs]).trim()] || [];
@@ -530,9 +594,18 @@ function writeToc(ss) {
     sh = ss.insertSheet(CFG.TOC);
     sh.hideSheet();
   }
-  const rows = [['Section', 'Link']].concat(DATA.TOC.map(([name, anchor]) =>
-    [name, '=HYPERLINK("' + CFG.SECTION_URL + anchor + '","open")']));
-  sh.getRange(1, 1, rows.length, 2).setValues(rows);
-  const extra = sh.getLastRow() - rows.length;
-  if (extra > 0) sh.getRange(rows.length + 1, 1, extra, 2).clearContent();
+  // The names the dropdown offered until now, by anchor (column C), so a pick
+  // of a section since renamed can follow it.
+  const prev = {};
+  const last = sh.getLastRow();
+  if (last > 1 && sh.getLastColumn() >= 3) {
+    sh.getRange(2, 1, last - 1, 3).getDisplayValues()
+      .forEach(([name, , anchor]) => { if (name && anchor) prev[bareName(name)] = anchor; });
+  }
+  const rows = [['Section', 'Link', 'Anchor']].concat(DATA.TOC.map(([name, anchor]) =>
+    [name, '=HYPERLINK("' + CFG.SECTION_URL + anchor + '","open")', anchor]));
+  sh.getRange(1, 1, rows.length, 3).setValues(rows);
+  const extra = last - rows.length;
+  if (extra > 0) sh.getRange(rows.length + 1, 1, extra, 3).clearContent();
+  return prev;
 }

@@ -317,6 +317,37 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(fb.Sections).toBeUndefined();
   });
 
+  test("Selected Sections is kept valid: a bare pick gets its mark, a gone one is flagged in Section links", () => {
+    expect(fb["Selected Sections"][1][0]).toBe("Ch 12 Privacy; Security and Trust, Somewhere else, \u2514\u20021.1 Global challenges");
+    expect((fb["Section links"][1][0] as Rich).text).toBe(
+      'Ch 12 Privacy; Security and Trust\n1.1 Global challenges\n\u26a0 "Somewhere else" is not in the document now: pick its section again');
+    expect(tabs.TOC.rows.length).toBeGreaterThan(0);
+    expect((rt.written.TOC.Section as string[][])[5]).toEqual(["\u2514\u20021.1 Global challenges", '=HYPERLINK("S#sec:1-1","open")', "sec:1-1"]);
+  });
+
+  test("a pick of a section renamed since follows it, by its anchor", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    t.TOC = { id: 9, rows: [["Section", "Link", "Anchor"], ["\u2514\u20021.1 Old challenges", "open", "sec:1-1"]] };
+    t["Contributor Feedback"].rows[1][2] = "\u2514\u20021.1 Old challenges";
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    const f = rt2.written["Contributor Feedback"];
+    expect(f["Selected Sections"][0][0]).toBe("\u2514\u20021.1 Global challenges");
+    expect((f["Section links"][0][0] as Rich).text).toBe("1.1 Global challenges");
+  });
+
+  test("any filled row gets a Change-set; one holding only No does not", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const fbRows = t["Contributor Feedback"].rows;
+    fbRows[0].push("Ready for agent");
+    fbRows.forEach((r, i) => i && r.push(""));
+    fbRows[3][9] = "No";
+    fbRows.push(["", "", "", "", "", "", "", "", "", "Yes"]);
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    expect(rt2.written["Contributor Feedback"]["Change-set"]).toEqual([["CS-004"], ["CS-005"], [""], ["CS-006"]]);
+  });
+
   test("Issue and Agentic status come from the Agent tab by change set", () => {
     const i = fb.Issue[0][0] as Rich;
     expect(i.text).toBe("dth#12");
