@@ -310,7 +310,7 @@ committee has to judge. The agent may draft an editorial change-set as a
 **draft PR with a staging preview** without waiting for Ready for agent
 (owner, 2026-10-31, standing rule after smart-ra CS-052, 060, 097, 194, 254,
 283). It records each step in the Agent tab as usual
-([`review-sheet-agent-columns`](review-sheet-agent-columns.md)), with
+(`review-sheet-agent-columns`, core#315), with
 "editorial draft" in its status.
 
 - It still never sets **Ready for merge**, and nothing merges without it.
