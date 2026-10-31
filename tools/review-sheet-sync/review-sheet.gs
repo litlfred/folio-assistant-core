@@ -626,8 +626,8 @@ function utcMs(t) {
  * was built (Agent: Agent completed vs Staging built). Without a build time
  * nothing is claimed either way.
  */
-function stagingCell(url, built, prs) {
-  const w = stagingWarning(url, built, prs);
+function stagingCell(url, built, prs, readyAt) {
+  const w = stagingWarning(url, built, prs, readyAt);
   if (!url) return rich(w ? [{ t: w, bold: true }] : []);
   return rich([{ t: 'review', url: url }].concat(w ? [{ t: ' ' + w, bold: true }] : []));
 }
@@ -646,7 +646,7 @@ function stagingCell(url, built, prs) {
  * Without those columns it falls back to times: Agent completed later than
  * Staging built.
  */
-function stagingWarning(url, built, prs) {
+function stagingWarning(url, built, prs, readyAt) {
   const b = built || {};
   const active = (prs || []).filter(p => p.head).slice(-1)[0];
   if (!url) return active ? '\u26a0 no preview yet' : '';
@@ -659,6 +659,10 @@ function stagingWarning(url, built, prs) {
   }
   if (/pend|queue|progress|build/.test(deploy)) return '\u26a0 deploy in progress';
   const at = utcMs(b.at);
+  // An Editor sent the row back to the agent after this preview was built:
+  // the PR is about to change, so the preview no longer shows the agreed text.
+  if (readyAt && !isNaN(at) && utcMs(readyAt) > at)
+    return '\u26a0 stale: Ready for agent set ' + readyAt + ', the agent will update the PR';
   const done = (prs || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
   if (!isNaN(at) && !(active && b.from) && done.some(x => x > at))
     return '\u26a0 stale: built ' + String(b.at).trim() + ', PR changed since';
@@ -749,12 +753,29 @@ const prUrl = line => (line.match(/https:\/\/github\.com\/[^\s,;]+\/pull\/\d+/) 
  * changed", the PR linked and the status and the agent's completion time
  * bold. With no PR, the status alone.
  */
-function agenticCell(status, prs) {
-  if (!prs.length) return rich([{ t: status }]);
-  return rich(prs.flatMap((p, i) => (i ? [{ t: '\n' }] : []).concat(
+/**
+ * Agentic status: the agent's status and its PRs, preceded by who has the
+ * row now (owner, 2026-10-31: "agentic status to update saying that an agent
+ * has it (w/ link to discussion/conversation)"). Ready for agent set after
+ * the agent's last completion reads "Queued for the agent" until the agent
+ * records Working; Working links its conversation when the agent gave one.
+ */
+function agenticCell(status, prs, o) {
+  o = o || {};
+  const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
+  const last = done.length ? Math.max.apply(null, done) : NaN;
+  const queued = o.readyAt && !/working/i.test(status) && (isNaN(last) || utcMs(o.readyAt) > last);
+  const head = queued ? [{ t: 'Queued for the agent (Ready for agent set ' + o.readyAt + ')', bold: true }]
+    : /working/i.test(status) && o.talk ? [{ t: 'An agent is working on it: ', bold: true }, { t: 'conversation', url: o.talk }] : [];
+  const body = agenticParts(status, prs);
+  return rich(head.length ? head.concat(body.length && body[0].t ? [{ t: '\n' }].concat(body) : []) : body);
+}
+function agenticParts(status, prs) {
+  if (!prs.length) return [{ t: status }];
+  return prs.flatMap((p, i) => (i ? [{ t: '\n' }] : []).concat(
     [{ t: prLabel(p.url), url: p.url }],
     status || p.done ? [{ t: ' ' }, { t: '(' + [status, p.done].filter(Boolean).join(', ') + ')', bold: true }] : [],
-    p.desc ? [{ t: ' · ' + p.desc }] : [])));
+    p.desc ? [{ t: ' · ' + p.desc }] : []));
 }
 
 /** "smart-ra#97": the repository and number, since Sheets' link popup cuts the URL short. */
@@ -1029,7 +1050,8 @@ function refreshDraft(rows) {
   const a = {};
   Object.entries(COLS.draftAgent).forEach(([k, h]) => (a[k] = col(agent, h)));
   // Columns added after a sheet's Config was written are found by their default names.
-  [['head', 'PR head (change set)'], ['builtFrom', 'Staging built from (change set)'], ['deploy', 'Staging deploy (change set)']]
+  [['head', 'PR head (change set)'], ['builtFrom', 'Staging built from (change set)'], ['deploy', 'Staging deploy (change set)'],
+    ['conversation', 'Agent conversation (change set)']]
     .forEach(([k, h]) => { if (a[k] === undefined) a[k] = col(agent, h); });
 
   // Rows whose change set's Agent row changed since the last run.
@@ -1080,10 +1102,11 @@ function refreshDraft(rows) {
     }
   }
 
-  const prOf = {}, stOf = {}, issuesOf = {}, stagingOf = {}, basisOfCs = {}, builtOf = {};
+  const prOf = {}, stOf = {}, issuesOf = {}, stagingOf = {}, basisOfCs = {}, builtOf = {}, talkOf = {};
   agent.rows.forEach(r => {
     const id = a.csId >= 0 ? String(r[a.csId]).trim() : '';
     if (!id) return;
+    if (a.conversation >= 0) talkOf[id] = (String(r[a.conversation]).match(/https:\/\/\S+/) || [''])[0];
     if (a.agentic >= 0) stOf[id] = String(r[a.agentic]).trim();
     if (a.issue >= 0) issuesOf[id] = String(r[a.issue]).split('\n').map(issueUrl).filter(Boolean);
     if (a.staging >= 0) stagingOf[id] = (String(r[a.staging]).match(/https:\/\/\S+/) || [''])[0];
@@ -1145,16 +1168,33 @@ function refreshDraft(rows) {
     const urls = issuesOf[String(r[c.cs]).trim()] || [];
     return rich(urls.flatMap((u, i) => (i ? [{ t: '\n' }] : []).concat([{ t: issueLabel(u), url: u }])));
   });
+  // When each row's Ready for agent turned Yes (owner, 2026-10-31: "i just
+  // set Ready for agent to Y ... expected Staging review to get a stale
+  // warning"). Kept per change set as "ready:CS-001" = the time, cleared on
+  // No; a Yes first seen by the script counts from then.
+  const readyCol = col(fb, 'Ready for agent'), readyAt = {};
+  if (readyCol >= 0) {
+    const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
+    fb.rows.forEach((r, k) => {
+      const cs = String(r[c.cs]).trim();
+      if (!cs) return;
+      const key = 'ready:' + cs, was = props.getProperty(key);
+      if (/^yes$/i.test(String(r[readyCol]).trim())) {
+        if (!was && want(k)) props.setProperty(key, now);
+        readyAt[cs] = was || (want(k) ? now : '');
+      } else if (was && want(k)) props.deleteProperty(key);
+    });
+  }
   writeRows(fb, c.agentic, only, r => {
     const cs = String(r[c.cs]).trim();
-    return agenticCell(stOf[cs] || '', prOf[cs] || []);
+    return agenticCell(stOf[cs] || '', prOf[cs] || [], { readyAt: readyAt[cs], talk: talkOf[cs] });
   });
   // The same status as one plain value, for a filter (owner, 2026-10-31).
   if (c.status >= 0) writeRows(fb, c.status, only, r => rich([{ t: stOf[String(r[c.cs]).trim()] || '' }]));
   // Staging review page: the change set's preview while its PR is open.
   writeRows(fb, c.staging, only, r => {
     const cs = String(r[c.cs]).trim();
-    return stagingCell(stagingOf[cs], builtOf[cs], prOf[cs]);
+    return stagingCell(stagingOf[cs], builtOf[cs], prOf[cs], readyAt[cs]);
   });
   // Feedback (agent): flagged stale while the row's blue cells differ from
   // what the proposal was written against.
