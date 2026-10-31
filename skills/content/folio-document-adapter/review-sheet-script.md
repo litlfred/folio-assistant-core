@@ -743,8 +743,29 @@ Each sheet, once (templates first, so copies inherit it):
    (Development mode)**, Identifier `Review`, **Add**.
 3. In the sheet, **Review links > Install**.
 
-An update is one paste of the new `dist/Code.gs` into the library. Every sheet
-runs it from its next open, edit or timer. "Which version is this?" reports the
+An update needs no paste (owner, 2026-10-31, option B: "Update from GitHub,
+one click"). The library also holds
+[`dist/Updater.gs`](../../../tools/review-sheet-sync/dist/Updater.gs);
+**`updateFromGitHub`**, run from the library's editor, fetches `dist/Code.gs`
+from `main` and writes it over the library's Code.gs through the Apps Script
+API, leaving the library's other files alone. It refuses anything that is not
+the review-sheet script (an error page, the stub) and logs "Updated to
+<version>" or "Already current". There is no timer: an update runs when the
+owner runs it. Every sheet runs the new code from its next open, edit or timer.
+
+Adding the updater, once:
+
+1. Turn on the Apps Script API at <https://script.google.com/home/usersettings>.
+2. In the library, **Files +**, Script, name it `Updater`; paste `dist/Updater.gs`; save.
+3. **Project settings**: tick "Show appsscript.json manifest file in editor",
+   then replace `appsscript.json` with
+   [`dist/library-appsscript.json`](../../../tools/review-sheet-sync/dist/library-appsscript.json)
+   (it adds the `script.projects` and `script.external_request` scopes); save.
+4. Pick `updateFromGitHub` in the function list, **Run**, and allow it.
+
+After that an update is step 4 alone. Without the updater, an update is one
+paste of the new `dist/Code.gs` into the library; a page with a Copy button
+holds the current one. "Which version is this?" reports the
 library's stamp.
 
 Why the stub hands its services over (`Review.init`): a library has no

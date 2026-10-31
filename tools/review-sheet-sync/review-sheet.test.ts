@@ -13,7 +13,7 @@ import { mkdtempSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { buildConfig, buildScript, chunks, CODE_GS_URL, LIBRARY_ID, STUB_GS_URL, configRows, readable, tabInstructions, tocRows } from "./build-review-sheet-script.js";
+import { buildConfig, buildScript, chunks, CODE_GS_RAW, CODE_GS_URL, LIBRARY_ID, STUB_GS_URL, configRows, readable, tabInstructions, tocRows } from "./build-review-sheet-script.js";
 import { readFileSync as readText } from "node:fs";
 import { feedbackBasis, hashOf } from "./feedback-issue.js";
 
@@ -1134,6 +1134,27 @@ describe("the library stub each sheet keeps (owner, 2026-10-31: library, latest 
   });
   test("dist/Stub.gs is current", () => {
     expect(stub).toBe(readText(join(import.meta.dir, "stub.gs"), "utf8"));
+  });
+});
+
+describe("the library's Update from GitHub (owner, 2026-10-31, option B)", () => {
+  const upd = readText(join(import.meta.dir, "updater.gs"), "utf8");
+  const isCode = new Function(upd + "\nreturn isReviewSheetCode_;")() as (t: string) => boolean;
+  test("dist/Updater.gs and dist/library-appsscript.json are current", () => {
+    expect(readText(join(import.meta.dir, "dist", "Updater.gs"), "utf8")).toBe(upd);
+    expect(readText(join(import.meta.dir, "dist", "library-appsscript.json"), "utf8"))
+      .toBe(readText(join(import.meta.dir, "library-appsscript.json"), "utf8"));
+  });
+  test("it recognises the published Code.gs, and nothing else", () => {
+    expect(isCode(readText(join(import.meta.dir, "dist", "Code.gs"), "utf8"))).toBe(true);
+    expect(isCode("<!DOCTYPE html><title>404</title>")).toBe(false);
+    expect(isCode(readText(join(import.meta.dir, "dist", "Stub.gs"), "utf8"))).toBe(false);
+  });
+  test("it fetches the file it was built beside, and the manifest grants what it calls", () => {
+    expect(upd).toContain("'" + CODE_GS_RAW + "'");
+    const scopes = JSON.parse(readText(join(import.meta.dir, "library-appsscript.json"), "utf8")).oauthScopes;
+    expect(scopes).toContain("https://www.googleapis.com/auth/script.projects");
+    expect(scopes).toContain("https://www.googleapis.com/auth/script.external_request");
   });
 });
 

@@ -609,6 +609,9 @@ if (import.meta.main) {
     console.error("wrote dist/Code.gs");
     writeFileSync(join(here, "dist", "Stub.gs"), readFileSync(join(here, "stub.gs"), "utf8"));
     console.error("wrote dist/Stub.gs");
+    writeFileSync(join(here, "dist", "Updater.gs"), readFileSync(join(here, "updater.gs"), "utf8"));
+    writeFileSync(join(here, "dist", "library-appsscript.json"), readFileSync(join(here, "library-appsscript.json"), "utf8"));
+    console.error("wrote dist/Updater.gs and dist/library-appsscript.json");
   }
   const script = arg("--script");
   if (script) {
