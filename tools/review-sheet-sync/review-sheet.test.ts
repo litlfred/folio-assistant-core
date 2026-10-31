@@ -100,6 +100,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
         getDisplayValues: () => t.rows.slice(r - 1, r - 1 + nr).map((row) => row.slice(c - 1, c - 1 + nc)),
         setValues: (v: unknown[][]) => put(name, t.rows[r === 1 ? 0 : hdr(name)][c - 1], r, v),
         setRichTextValues: (v: unknown[][]) => put(name, t.rows[r === 1 ? 0 : hdr(name)][c - 1], r, v),
+        setRichTextValue: (v: unknown) => put(name, t.rows[r === 1 ? 0 : hdr(name)][c - 1], r, [[v]]),
         clearContent: () => {},
         setBackground(bg: string) { ((t as { bg?: Record<number, string> }).bg ??= {})[r] = bg; return this; },
         setVerticalAlignment() { return this; },
@@ -127,7 +128,10 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
       }),
       newRichTextValue: builder,
       ProtectionType: { RANGE: "RANGE" },
-      newTextStyle: () => ({ setBold: () => ({ build: () => ({ bold: true }) }) }),
+      newTextStyle: () => {
+        const st = { setBold: () => st, setForegroundColor: () => st, build: () => ({ bold: true }) };
+        return st;
+      },
     },
     LockService: { getDocumentLock: () => ({ tryLock: () => true, releaseLock: () => {} }) },
     PropertiesService: {
@@ -1109,5 +1113,17 @@ describe("Needs human says what the person must do (owner, 2026-10-31)", () => {
     const agenticCell = new Function("SpreadsheetApp", `${code}\nreturn agenticCell;`)(sheets);
     const t = agenticCell("Needs human", [{ url: "https://github.com/o/r/pull/1", done: "2026-10-31 10:00Z" }]).text;
     expect(t.split("\n")[0]).toMatch(/^Needs you: answer the agent's question: .*Decision needed.*Ready for agent/);
+  });
+});
+
+describe("Decision needed stands out in the agent's feedback (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { decisionSpans };`)({}) as { decisionSpans: (t: string) => [number, number][] };
+  test("the block runs from Decision needed to the next blank line", () => {
+    const t = "Proposed direction: x.\n\nDecision needed (No. 1): y?\nA. Yes\nB. No\n\nDecided (Q1): A.";
+    const [[a, z]] = fns.decisionSpans(t);
+    expect(t.slice(a, z)).toBe("Decision needed (No. 1): y?\nA. Yes\nB. No");
+  });
+  test("no block, no spans", () => {
+    expect(fns.decisionSpans("Decided (Q1): A.")).toEqual([]);
   });
 });
