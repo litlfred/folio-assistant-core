@@ -56,8 +56,12 @@ Decision needed: <the question>
 Answer in your Blue column, or ask an Editor to set Ready for agent.
 ```
 
-and sets the row's Agentic status to `Needs human`, so the "Needs human"
-filter view finds it. A card in the agent's chat may carry the same
+and sets the row's Agentic status to `Needs human` on the Agent tab. The
+sheet never shows those words (owner, 2026-10-31: "unclear: needs human to do
+what?"): Agentic status opens with **Needs you: answer the agent's question**,
+saying where the question is and what to do, and Agentic status (filter)
+reads `Needs you: answer the agent's question`, so the "Needs you" filter view
+finds it. A card in the agent's chat may carry the same
 question for the owner, but the sheet is the record people see. When the
 question is answered, the agent replaces the block with the decision and who
 made it.
@@ -74,7 +78,7 @@ move them.
 | Review Public Comments | Line no(s) / Table / Figure | each `p.N` and each `line(s) N–M` / `L N` links to its page. Draft line numbers restart, so a line is placed on the page, near the row's own pages, whose numbered lines hold it |
 | Review Change Sets | Sections, Pages | the union over the change-set's comments, sorted by page, each linked |
 | Review Change Sets | Agentic status | the same, per change-set; the status is its PCs' Agentic statuses, each once |
-| Review Change Sets | Agentic status (filter) | one plain value per change set, for a filter view (owner, 2026-10-31): "Needs human" if any of its comments needs a person, else the least advanced of its comments' Agentic statuses (Not started, Working, PR open, Ready for review, Change merged); "Not in comment record" only when all are |
+| Review Change Sets | Agentic status (filter) | one plain value per change set, for a filter view (owner, 2026-10-31): "Needs you: answer the agent's question" if any of its comments needs a person, else the least advanced of its comments' Agentic statuses (Not started, Working, PR open, Ready for review, Change merged); "Not in comment record" only when all are |
 | Review Change Sets | Public Comments | `No. n (Status) · comment`, status in bold, joined by a blank line |
 | Review Change Sets | Suggested Revisions, PC Committee Feedback, Dispositions | `No. n · text`, one per comment |
 
@@ -189,7 +193,11 @@ It reads the active PR as the last one listed (one branch, one active PR per
 row) and writes, in this order of precedence: `⚠ deploy failed`;
 `⚠ stale: built from <sha>, PR now at <sha>`; `⚠ deploy in progress`. A
 change set with a recorded PR head but no preview link shows `⚠ no preview
-yet`. Without these columns it falls back to the time check above. A sheet
+yet: not ready for merge`. A change set is never ready for merge without a
+preview to review (owner, 2026-10-31: "how can it be ready for merge when
+there is no preview?"): the agent stages a preview for every PR it opens, and
+the "Merge decision due" filter view leaves out rows whose Staging review
+starts with ⚠. Without these columns it falls back to the time check above. A sheet
 made before 2026-10-31 gains the three columns at the right of the Agent
 (change sets) tab; the script finds them by header.
 
@@ -788,7 +796,7 @@ Each view is named for who uses it and what it shows (owner, 2026-10-31: "review
 | | Needs contributor feedback | contributors | rows with a Title and every Contributor Feedback column empty |
 | | Waiting for editor (Ready for agent not Yes) | editors | rows with a Title, Ready for agent not Yes |
 | | Merge decision due (PR open, not merged) | editors | Agentic status (filter) is PR open, Ready for merge not Yes |
-| | Needs human | editors, owner | Agentic status (filter) is Needs human |
+| | Needs you (answer the agent's question) | editors, owner | Agentic status (filter) starts with "Needs you" |
 | | Stale (agent proposal or staging out of date) | owner | the agent proposal starts with ⚠, or the staging link says stale |
 | | Decided (Ready for merge Yes) | everyone | Ready for merge is Yes |
 | | By agentic status (pick values) | everyone | every row; pick values in the Agentic status (filter) column's filter (a plain copy of the change set's Agent status) |

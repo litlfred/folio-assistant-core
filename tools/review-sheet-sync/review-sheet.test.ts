@@ -289,7 +289,7 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     t["Agent - Comments"].rows[2][2] = "Needs human";
     const rt2 = runtime(withConfig(t, pcRows));
     load(code, rt2.g).refreshAll();
-    expect(rt2.written["Review Change Sets"]["Agentic status (filter)"]).toEqual([["Needs human"], ["Not started"]]);
+    expect(rt2.written["Review Change Sets"]["Agentic status (filter)"]).toEqual([["Needs you: answer the agent's question"], ["Not started"]]);
   });
 
   test("a Colour key row above RPC's and RCS's headers changes nothing the script writes", () => {
@@ -766,7 +766,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(text()).toBe("review \u26a0 deploy failed");
     t.Agent.rows[1][at("Staging review page (change set)")] = "";
     s.refreshAll();
-    expect(text()).toBe("\u26a0 no preview yet");
+    expect(text()).toBe("\u26a0 no preview yet: not ready for merge");
   });
 
   test("a public-comment edit is kept for the next tick when the rebuild cannot start", () => {
@@ -1025,5 +1025,21 @@ describe("the library stub each sheet keeps (owner, 2026-10-31: library, latest 
   });
   test("dist/Stub.gs is current", () => {
     expect(stub).toBe(readText(join(import.meta.dir, "stub.gs"), "utf8"));
+  });
+});
+
+describe("Needs human says what the person must do (owner, 2026-10-31)", () => {
+  test("Agentic status opens with the ask", () => {
+    const sheets = {
+      newRichTextValue: () => {
+        const v = { text: "" };
+        const b = { setText: (t: string) => ((v.text = t), b), setLinkUrl: () => b, setTextStyle: () => b, build: () => v };
+        return b;
+      },
+      newTextStyle: () => ({ setBold: () => ({ build: () => ({}) }) }),
+    };
+    const agenticCell = new Function("SpreadsheetApp", `${code}\nreturn agenticCell;`)(sheets);
+    const t = agenticCell("Needs human", [{ url: "https://github.com/o/r/pull/1", done: "2026-10-31 10:00Z" }]).text;
+    expect(t.split("\n")[0]).toMatch(/^Needs you: answer the agent's question: .*Decision needed.*Ready for agent/);
   });
 });
