@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 b7f675f43f09dc9d.
+// folio-assistant-core tools/review-sheet-sync at template sha256 f8ce747990983866.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 b7f675f43f09dc9d';
+const SCRIPT_VERSION = 'template sha256 f8ce747990983866';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -412,7 +412,12 @@ function refreshIfDirty() {
 /** Rebuild everything. True when it ran; false when another run held the lock. */
 function refreshAll() {
   const lock = docLock_();
-  if (!lock.tryLock(1000)) return false;
+  if (!lock.tryLock(1000)) {
+    // Refresh now pressed while a timer refresh runs: say so rather than do
+    // nothing in silence (owner, 2026-10-31: "what does Refresh now do exactly?").
+    try { SpreadsheetApp.getActive().toast('Another refresh is running. Try again in a minute.', 'Review links', 5); } catch (err) { /* no UI on a timer */ }
+    return false;
+  }
   const t0 = Date.now();
   try {
     refreshLocked();

@@ -412,7 +412,12 @@ function refreshIfDirty() {
 /** Rebuild everything. True when it ran; false when another run held the lock. */
 function refreshAll() {
   const lock = docLock_();
-  if (!lock.tryLock(1000)) return false;
+  if (!lock.tryLock(1000)) {
+    // Refresh now pressed while a timer refresh runs: say so rather than do
+    // nothing in silence (owner, 2026-10-31: "what does Refresh now do exactly?").
+    try { SpreadsheetApp.getActive().toast('Another refresh is running. Try again in a minute.', 'Review links', 5); } catch (err) { /* no UI on a timer */ }
+    return false;
+  }
   const t0 = Date.now();
   try {
     refreshLocked();

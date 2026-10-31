@@ -263,6 +263,37 @@ own duration): `building, expected 2026-10-31 15:20Z`. The sheet shows
 "expected live <time>" after the stage (owner, 2026-10-31: "also expected
 time of gh-page deployment").
 
+### Writing the Agent tab with the tool (owner, 2026-10-31, option C)
+
+The agent does not type numbers or times into the Agent tab. On 2026-10-31
+two typed slips reached a sheet: `Nos. 127 to 135` took in two comments of
+another change set, and an Agent completed time was left behind after the
+agent acted. The owner chose "A, and agent self-check": a tool makes the
+cells, and the agent runs the sheet's own check before writing.
+
+- **Dispositions.** Read Agent - Comments (`No.`, `Change-sets`) and Review
+  Public Comments (`No.`, `Disposition`) with their header rows, and the
+  change set's current Disposition (change set) cell. Put them in an input
+  file with the items (which numbers, which word, why; `rest` for "every
+  other comment of the change set"), and run
+  `bun run folio-assistant-core/tools/review-sheet-sync/agent-record.ts dispositions <input.json>`.
+  The tool takes the change set's numbers from the sheet, groups them
+  (`Nos. 127 to 131, 134, 135, 138 and 139`), uses the people's Blue word
+  where an item names none, keeps every earlier `Decided` line, and runs
+  `dispositionProblems` from the same review-sheet.gs the sheet runs. If
+  anything would show a ⚠, it prints the problems, exits 1 and writes
+  nothing: fix the input and run it again. Write its output, unchanged, to
+  Disposition (change set).
+- **On every push.** `agent-record.ts push --head <full sha> --expect <minutes>`
+  prints PR head, Staging deploy (`building, expected <time>`) and Agent
+  completed, the times from the clock. Write all three in one update.
+- **After acting on Ready for agent with no new commit** (the PR already
+  held the change), still run `push` with the current head, so Agent
+  completed is later than the Ready time and the ⏳ line moves on.
+
+Drafting sheets have no comment numbers: pass `"nos": []` and items without
+numbers are not needed; the tool then only keeps the history.
+
 The script compares only; it stays `@OnlyCurrentDoc` with no internet access. Short and full shas both work: it compares the common prefix, at least 7 characters.
 It reads the active PR as the last one listed (one branch, one active PR per
 row) and writes, in this order of precedence: `⚠ deploy failed`;
