@@ -18,6 +18,12 @@ import { readFileSync as readText } from "node:fs";
 import { feedbackBasis, hashOf } from "./feedback-issue.js";
 
 const code = buildScript();
+/** A fake Apps Script TextStyle builder: every setter chains; build() keeps bold. */
+const textStyle = () => {
+  const st: { bold?: boolean } = {};
+  const c: Record<string, unknown> = new Proxy({}, { get: (_t, k) => (k === "build" ? () => ({ ...st }) : (v: unknown) => { if (k === "setBold") st.bold = !!v; return c; }) });
+  return c;
+};
 const withConfig = <T extends object>(t: T, rows: string[][]) => ({ ...t, Config: { id: 50, rows } });
 
 type Prot = { col: string; from?: number; desc: string; editors: string[]; removed: boolean; api?: { getDescription(): string; remove(): void } };
@@ -113,7 +119,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
     const b = {
       setText: (s: string) => ((r.text = s), b),
       setLinkUrl: (a: number, z: number, u: string) => (r.links.push([a, z, u]), b),
-      setTextStyle: (a: number, z: number) => (r.bold.push([a, z]), b),
+      setTextStyle: (a: number, z: number, st?: { bold?: boolean }) => (st?.bold && r.bold.push([a, z]), b),
       build: () => r,
     };
     return b;
@@ -128,10 +134,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
       }),
       newRichTextValue: builder,
       ProtectionType: { RANGE: "RANGE" },
-      newTextStyle: () => {
-        const st = { setBold: () => st, setForegroundColor: () => st, build: () => ({ bold: true }) };
-        return st;
-      },
+      newTextStyle: textStyle,
     },
     LockService: { getDocumentLock: () => ({ tryLock: () => true, releaseLock: () => {} }) },
     PropertiesService: {
@@ -1069,12 +1072,12 @@ describe("Ready for agent after the preview was built (owner, 2026-10-31)", () =
       const b = {
         setText: (t: string) => ((v.text = t), b),
         setLinkUrl: (a: number, z: number, u: string) => (v.links.push([a, z, u]), b),
-        setTextStyle: (a: number, z: number) => (v.bold.push([a, z]), b),
+        setTextStyle: (a: number, z: number, st?: { bold?: boolean }) => (st?.bold && v.bold.push([a, z]), b),
         build: () => v,
       };
       return b;
     },
-    newTextStyle: () => ({ setBold: () => ({ build: () => ({}) }) }),
+    newTextStyle: textStyle,
   };
   const fns = new Function("SpreadsheetApp", `${code}\nreturn { stagingWarning, agenticCell, progressLine, withProgress };`)(sheets) as {
     progressLine: (o: object) => string;
@@ -1147,7 +1150,7 @@ describe("the QA gate before Ready for merge (owner, 2026-10-31)", () => {
       const r = { setText: (t: string) => ((v.text = t), r), setLinkUrl: (a: number, z: number, u: string) => (v.links.push([a, z, u]), r), setTextStyle: () => r, build: () => v };
       return r;
     },
-    newTextStyle: () => ({ setBold: () => ({ build: () => ({}) }) }),
+    newTextStyle: textStyle,
   };
   const { qaGate, stagingCell } = new Function("SpreadsheetApp", code + "\nreturn { qaGate, stagingCell };")(fake) as {
     qaGate: (b: object, p: object[]) => { ok: boolean; text: string };
@@ -1201,7 +1204,7 @@ describe("Needs human says what the person must do (owner, 2026-10-31)", () => {
         const b = { setText: (t: string) => ((v.text = t), b), setLinkUrl: () => b, setTextStyle: () => b, build: () => v };
         return b;
       },
-      newTextStyle: () => ({ setBold: () => ({ build: () => ({}) }) }),
+      newTextStyle: textStyle,
     };
     const agenticCell = new Function("SpreadsheetApp", `${code}\nreturn agenticCell;`)(sheets);
     const t = agenticCell("Needs human", [{ url: "https://github.com/o/r/pull/1", done: "2026-10-31 10:00Z" }]).text;
@@ -1302,10 +1305,10 @@ describe("Disposition (agent) shows its structure (owner, 2026-10-31)", () => {
   const fake = {
     newRichTextValue: () => {
       const v = { text: "" };
-      const r = { setText: (t: string) => ((v.text = t), r), setLinkUrl: () => r, setTextStyle: (a: number, z: number) => (spans.push([a, z]), r), build: () => v };
+      const r = { setText: (t: string) => ((v.text = t), r), setLinkUrl: () => r, setTextStyle: (a: number, z: number, st?: { bold?: boolean }) => (st?.bold && spans.push([a, z]), r), build: () => v };
       return r;
     },
-    newTextStyle: () => ({ setBold: () => ({ build: () => ({}) }) }),
+    newTextStyle: textStyle,
   };
   const { dispositionCell } = new Function("SpreadsheetApp", code + "\nreturn { dispositionCell };")(fake) as { dispositionCell: (t: string, n: string[], h: object) => { text: string } };
   test("labels and disposition words are bold", () => {
@@ -1348,21 +1351,26 @@ describe("hover text on every column head (owner, 2026-10-31)", () => {
     expect(fns.headerNoteFor("rpc", "Disposition")).toMatch(/committee/);
     expect(fns.headerNoteFor("draft", "Disposition")).not.toMatch(/committee/);
   });
-  test("a person's own note is kept; only changed notes are written", () => {
+  test("no note names a colour", () => {
+    const notes = new Function("SpreadsheetApp", `${code}\nreturn HEADER_NOTES;`)({}) as Record<string, string>;
+    for (const [h, n] of Object.entries(notes)) expect([h, /\b(Blue|Green|Orange|Grey)\b/.test(n)]).toEqual([h, false]);
+  });
+  test("known heads get their note; an unknown head keeps its own, and loses an old script note", () => {
     let written: string[][] | null = null;
     const sheet = {
-      getName: () => "Review Change Sets", getLastColumn: () => 3, getLastRow: () => 5,
-      getRange: (r: number, c: number, nr: number, nc: number) => ({
-        getDisplayValues: () => (nc === 1 ? [["Instructions"], ["Change-set"], ["CS-001"]] : [["Change-set", "Ready for agent", "Mine"]]),
-        getNotes: () => [["", "my own note", ""]],
+      getName: () => "Review Change Sets", getLastColumn: () => 4, getLastRow: () => 5,
+      getRange: (_r: number, _c: number, _nr: number, nc: number) => ({
+        getDisplayValues: () => (nc === 1 ? [["Instructions"], ["Change-set"], ["CS-001"]] : [["Change-set", "Ready for agent", "Mine", "Old"]]),
+        getNotes: () => [["", "an old note", "my own note", "x" + fns.NOTE_MARK]],
         setNotes: (n: string[][]) => { written = n; },
       }),
     };
     const g = new Function("SpreadsheetApp", `${code}\nCFG = { RCS: "Review Change Sets" };\nreturn headerNotes;`)({}) as (ss: unknown) => void;
     g({ getSheets: () => [sheet] });
     expect(written![0][0]).toMatch(/change set id/);
-    expect(written![0][1]).toBe("my own note");
-    expect(written![0][2]).toBe("");
+    expect(written![0][1]).toMatch(/^Yes: the direction is agreed/);
+    expect(written![0][2]).toBe("my own note");
+    expect(written![0][3]).toBe("");
   });
 });
 

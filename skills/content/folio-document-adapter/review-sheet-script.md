@@ -510,14 +510,20 @@ bullet lines, and bolds line-start labels (`What changed:`, `Proposed
 direction:`) and comment references (`No. 326`, `Nos. 1, 2 and 5`).
 
 Every column head carries a hover note saying what the column holds and who
-writes it, by the colour key ("can we add hover text to the column heads",
-all columns). The notes are `HEADER_NOTES` in the script, keyed by header
-(or `<tab kind>|<header>` where one header means different things on
-different tabs); a head named `Name (initials)` uses its `Name (*)` entry.
-The timer refresh writes only notes that changed, and never replaces a note
-a person wrote on a head. A new column gets its note in the same change
-that adds its header; `review-sheet.test.ts` checks that every known head
-has one.
+fills it in ("can we add hover text to the column heads", all columns). The
+note does not name the colour ("don't need to name the color in the
+tooltip"). The notes are `HEADER_NOTES` in the script, keyed by header (or
+`<tab kind>|<header>` where one header means different things on different
+tabs); a head named `Name (initials)` uses its `Name (*)` entry. The script
+owns the note on every head it knows and writes only notes that changed; a
+head it does not know keeps its own. A new column gets its note in the same
+change that adds its header; `review-sheet.test.ts` checks that every known
+head has one and that none names a colour.
+
+The QA report link opens the viewer, the preview review page's per-section
+QA table (`<review page>#heat`), with the raw qa-reports entry beside it as
+"files". Text in a cell that is not a link is written plain, so it never
+inherits a link's blue underline.
 
 ## Sheet conventions (any agent-written Google Sheet)
 
