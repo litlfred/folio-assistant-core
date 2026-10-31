@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 0a8c3eed2ca9b4eb.
+// folio-assistant-core tools/review-sheet-sync at template sha256 f6533c3742742af7.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 0a8c3eed2ca9b4eb';
+const SCRIPT_VERSION = 'template sha256 f6533c3742742af7';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -587,7 +587,7 @@ const HEADER_NOTES = {
   'TWG (PCs)': 'The working groups of these comments. Kept by the script.',
   'TWG (CS)': 'The working group that owns this change set. You fill this in.',
   'Ready for agent': 'Yes: the direction is agreed and the agent may edit. No: wait. Completed: the agent has finished and the preview is current (set by the script). Any change in feedback sets it back to No. Set by an Editor.',
-  'Dispositions confirmed': 'The comments whose agent disposition the committee confirms: pick All, or the numbers. Until every comment of the change set is confirmed here or has its own Disposition, the agent will not merge. Set by an Editor.',
+  'Dispositions confirmed': 'Yes: the committee confirms every disposition the agent gave in this change set. To differ on one comment, set that comment\'s own Disposition on Review Public Comments. The agent will not merge until every comment is confirmed here or has its own Disposition. Set by an Editor.',
   'Ready for merge': 'Yes: merge the pull request. The agent merges only once the QA gate has passed for the current version. Set by an Editor.',
   'Disposition (agent)': 'The decisions made so far (oldest first, never removed), then one disposition per comment number. "No disposition yet" lists the numbers still missing one. From the agent, read only.',
   'Change Set Feedback (agent)': 'The status on top, then the agent\'s current proposal and any question it needs answered, with options and a recommendation.',
@@ -1026,44 +1026,42 @@ const DISPOSITIONS_CS = 'Disposition (change set)', DISPOSITIONS_AGENT = 'Dispos
 const DISPOSITION_WORDS = ['Accepted', 'Partially accepted', 'Not accepted', 'Noted', 'Deferred', 'Duplicate', 'Out of scope', 'Withdrawn'];
 /**
  * "Dispositions confirmed" on Review Change Sets (owner, 2026-10-31: "make
- * orange column that contains list multiselect of the PCs", "put to left of
- * ready for merge"). An Editor picks All, or the comment numbers whose agent
- * disposition the committee confirms. Its dropdown reads the hidden Lists
- * tab: "All", then "No. n" for every public comment.
+ * orange column ... of the PCs", "put to left of ready for merge"). Multi-select
+ * over every comment number was greyed out (the list is too long), so the
+ * owner chose option A: Yes or No per change set. Yes confirms every agent
+ * disposition in the set; to differ on one comment, the committee sets that
+ * comment's own Disposition, and a mismatch is flagged. Numbers typed in the
+ * cell ("No. 327") still confirm just those comments.
  */
-const CONFIRMED = 'Dispositions confirmed', LISTS = 'Lists';
+const CONFIRMED = 'Dispositions confirmed', CONFIRM_CHOICES = ['Yes', 'No'];
 function confirmedNos(value, nos) {
-  const v = String(value || '');
-  if (/(^|,)\s*all\s*(,|$)/i.test(v)) return (nos || []).map(String);
+  const v = String(value || '').trim();
+  if (/^(yes|all)$/i.test(v) || /(^|,)\s*all\s*(,|$)/i.test(v)) return (nos || []).map(String);
   return (v.match(/\d+/g) || []).map(String);
 }
 function ensureConfirmedColumn(ss) {
-  const sh = ss.getSheetByName(CFG.RCS), rpcSh = ss.getSheetByName(CFG.RPC);
-  if (!sh || !rpcSh) return;
-  const rpc = readSheet(rpcSh), hNo = col(rpc, COLS.rpc.no);
-  const want = [['All']].concat(rpc.rows.map(r => String(r[hNo] || '').trim()).filter(Boolean).map(n => ['No. ' + n]));
-  let lists = ss.getSheetByName(LISTS);
-  if (!lists) { lists = ss.insertSheet(LISTS); lists.hideSheet(); }
-  const have = lists.getLastRow() ? lists.getRange(1, 1, lists.getLastRow(), 1).getDisplayValues() : [];
-  if (JSON.stringify(have) !== JSON.stringify(want)) {
-    lists.clearContents();
-    lists.getRange(1, 1, want.length, 1).setValues(want);
-  }
+  const sh = ss.getSheetByName(CFG.RCS);
+  if (!sh) return;
+  // The first version kept a long list on a hidden Lists tab: no longer used.
+  const old = ss.getSheetByName('Lists');
+  if (old && old.isSheetHidden()) ss.deleteSheet(old);
   const s = readSheet(sh);
-  if (s.header.indexOf(CONFIRMED) >= 0) return;
-  const m = s.header.indexOf('Ready for merge');
-  if (m < 0) return;
-  sh.insertColumnBefore(m + 1);
-  const rows = sh.getMaxRows() - s.top + 2;
-  sh.getRange(s.top - 1, m + 2, rows, 1).copyTo(sh.getRange(s.top - 1, m + 1, rows, 1), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
-  sh.getRange(s.top - 1, m + 1).setValue(CONFIRMED);
-  sh.setColumnWidth(m + 1, 170);
-  sh.getRange(s.top, m + 1, rows - 1, 1).setDataValidation(SpreadsheetApp.newDataValidation()
-    .requireValueInRange(lists.getRange('A1:A'), true).setAllowInvalid(true).build());
-  try {
-    ss.toast('Added "' + CONFIRMED + '" left of Ready for merge. One step only a person can take: select that column, choose Data, ' +
-      'then Data validation, open its rule, tick Allow multiple selections, and press Done.', 'New column', 30);
-  } catch (e) { /* a toast is a courtesy */ }
+  let c = s.header.indexOf(CONFIRMED);
+  const rows = sh.getMaxRows() - s.top + 1;
+  if (c < 0) {
+    const m = s.header.indexOf('Ready for merge');
+    if (m < 0) return;
+    sh.insertColumnBefore(m + 1);
+    sh.getRange(s.top - 1, m + 2, rows + 1, 1).copyTo(sh.getRange(s.top - 1, m + 1, rows + 1, 1), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+    sh.getRange(s.top - 1, m + 1).setValue(CONFIRMED);
+    sh.setColumnWidth(m + 1, 120);
+    c = m;
+  }
+  const cells = sh.getRange(s.top, c + 1, rows, 1);
+  const rule = cells.getCell(1, 1).getDataValidation();
+  const vals = rule ? rule.getCriteriaValues() : [];
+  if (!rule || rule.getCriteriaType() !== SpreadsheetApp.DataValidationCriteria.VALUE_IN_LIST || String(vals[0]) !== String(CONFIRM_CHOICES))
+    cells.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(CONFIRM_CHOICES, true).setAllowInvalid(true).build());
 }
 function dispositionProblems(text, nos, human, confirmed) {
   const want = (nos || []).map(String), seen = {}, out = [];

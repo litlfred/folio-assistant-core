@@ -1410,8 +1410,10 @@ describe("Dispositions confirmed, an Editor's multi-select (owner, 2026-10-31)",
     dispositionProblems: (t: string, n: string[], h?: Record<string, string>, c?: string[]) => string;
     confirmedNos: (v: string, n: string[]) => string[];
   };
-  test("All confirms every comment; picked numbers confirm those", () => {
+  test("Yes (or All) confirms every comment; No none; typed numbers confirm those", () => {
     expect(fns.confirmedNos("All", ["1", "2"])).toEqual(["1", "2"]);
+    expect(fns.confirmedNos("Yes", ["1", "2"])).toEqual(["1", "2"]);
+    expect(fns.confirmedNos("No", ["1", "2"])).toEqual([]);
     expect(fns.confirmedNos("No. 1, No. 3", ["1", "2"])).toEqual(["1", "3"]);
   });
   test("confirmed comments are no longer flagged; a stray number is", () => {
