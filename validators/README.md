@@ -13,6 +13,7 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `folio-assistant
 | [`catalogue-dublin-core-record.json`](catalogue-dublin-core-record.json) | data |  |
 | [`catalogue-node.json`](catalogue-node.json) | data |  |
 | [`catalogue.json`](catalogue.json) | data |  |
+| [`diig-phases-figure.json`](diig-phases-figure.json) | data |  |
 | [`extraction.json`](extraction.json) | data |  |
 | [`glossary.json`](glossary.json) | data |  |
 | [`intake.json`](intake.json) | data |  |
@@ -20,6 +21,7 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `folio-assistant
 | [`public-comment.json`](public-comment.json) | data |  |
 | [`reference.json`](reference.json) | data |  |
 | [`review-verdict.json`](review-verdict.json) | data |  |
+| [`smart-guidelines-approach-figure.json`](smart-guidelines-approach-figure.json) | data |  |
 | [`uploads-dublin-core-record.json`](uploads-dublin-core-record.json) | data |  |
 
 <!-- kg:subgraph:end -->
