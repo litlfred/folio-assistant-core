@@ -142,7 +142,7 @@ const tabs = () => ({
   "Review Public Comments": {
     id: 1,
     rows: [
-      ["No.", "Sections", "Page", "Line no(s) / Table / Figure", "Comment / issue", "Suggested revision", "Architect Feedback (initials)", "Disposition", "Status", "Agentic status"],
+      ["No.", "Sections", "Page", "Line no(s) / Table / Figure", "Comment / issue", "Suggested revision", "Committee Feedback (initials)", "Disposition", "Status", "Agentic status"],
       ["1", "1.2 and Chapter 1", "2", "p.2 line 3", "Too short", "Lengthen it", "AB agrees", "", "Pending", ""],
       ["2", "nowhere", "3", "L 5", "Typo", "", "", "Accepted", "", ""],
       ["3", "", "", "", "Off topic", "", "", "", "", ""],
@@ -160,7 +160,7 @@ const tabs = () => ({
   "Review Change Sets": {
     id: 3,
     rows: [
-      ["Change-set", "Sections", "Pages", "Public Comments", "Suggested Revisions", "PC Architect Feedback", "Dispositions", "Agentic status"],
+      ["Change-set", "Sections", "Pages", "Public Comments", "Suggested Revisions", "PC Committee Feedback", "Dispositions", "Agentic status"],
       ["CS-001", "", "", "", "", "", "", ""],
       ["CS-002", "", "", "", "", "", "", ""],
     ],
@@ -211,7 +211,7 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     expect(c.links.map((l) => [slice(c, l), l[2]])).toEqual([["No. 1", "#gid=1&range=A2"], ["No. 2", "#gid=1&range=A3"]]);
     expect(c.bold.map(([a, z]) => c.text.slice(a, z))).toEqual(["(Pending)"]);
     expect((rcs["Suggested Revisions"][0][0] as Rich).text).toBe("No. 1 · Lengthen it");
-    expect((rcs["PC Architect Feedback"][0][0] as Rich).text).toBe("No. 1 · AB agrees");
+    expect((rcs["PC Committee Feedback"][0][0] as Rich).text).toBe("No. 1 · AB agrees");
     expect((rcs.Dispositions[0][0] as Rich).text).toBe("No. 2 · Accepted");
   });
 
@@ -283,6 +283,33 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     const rcsB = b.written["Review Change Sets"], rcsA = rt.written["Review Change Sets"];
     // Links from RCS to an RPC row point one row lower.
     expect(JSON.stringify(rcsB)).toBe(JSON.stringify(rcsA).replace(/range=A(\d+)/g, (_, n) => "range=A" + (+n + 1)));
+  });
+
+  test("a sheet still headed Architect Feedback (the name before 2026-10-31) works the same", () => {
+    const old = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][] }>;
+    for (const n of ["Review Public Comments", "Review Change Sets"])
+      old[n].rows[0] = old[n].rows[0].map((h) => h.replace("Committee Feedback", "Architect Feedback"));
+    const b = runtime(old);
+    load(code, b.g).refreshAll();
+    expect((b.written["Review Change Sets"]["PC Architect Feedback"][0][0] as Rich).text).toBe("No. 1 · AB agrees");
+  });
+
+  test("renaming Architect Feedback to Committee Feedback marks no proposal stale", () => {
+    const oldHdr = ["Change-set", "Title", "TWG (CS)", "Architect Feedback (CL)", "Architect Feedback (agent)", "Ready for agent"];
+    const row = ["CS-001", "Fix scope", "TWG 1", "do it", "Proposal", "Yes"];
+    const basis = feedbackBasis(oldHdr, row, ["Title", "TWG (CS)"], "Architect Feedback");
+    const t = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][] }>;
+    t["Review Change Sets"].rows = [oldHdr.map((h) => h.replace("Architect", "Committee")), row];
+    t.Agent.rows[0].push("Feedback basis (change set)");
+    t.Agent.rows[1].push(basis);
+    const run = () => { const b = runtime(t); load(code, b.g).refreshAll(); return b.written["Review Change Sets"] ?? {}; };
+    expect(run()["Committee Feedback (agent)"]).toBeUndefined();
+    expect(run()["Ready for agent"]).toBeUndefined();
+    // Control: a real change is still caught under the new name.
+    row[3] = "do it differently";
+    const w = run();
+    expect(String(w["Committee Feedback (agent)"][0][0])).toMatch(/^\u26a0 Stale: /);
+    expect(w["Ready for agent"][0][0]).toBe("No");
   });
 
   test("an edit rebuilds at once while a rebuild is quick", () => {

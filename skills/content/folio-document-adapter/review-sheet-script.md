@@ -40,15 +40,21 @@ move them.
 | Review Change Sets | Agentic status | the same, per change-set; the status is its PCs' Agentic statuses, each once |
 | Review Change Sets | Agentic status (filter) | one plain value per change set, for a filter view (owner, 2026-10-31): "Needs human" if any of its comments needs a person, else the least advanced of its comments' Agentic statuses (Not started, Working, PR open, Ready for review, Change merged); "Not in comment record" only when all are |
 | Review Change Sets | Public Comments | `No. n (Status) · comment`, status in bold, joined by a blank line |
-| Review Change Sets | Suggested Revisions, PC Architect Feedback, Dispositions | `No. n · text`, one per comment |
+| Review Change Sets | Suggested Revisions, PC Committee Feedback, Dispositions | `No. n · text`, one per comment |
 
-**Architect Feedback (agent)** (Review Change Sets, green, right of Ready for
-merge; owner, 2026-10-31). The agentic architect role writes its proposed
-direction for resolving the change set here, so the architects and editor
-react to a proposal rather than drafting from nothing. The script does not
+**Committee Feedback (agent)** (Review Change Sets, green, right of Ready for
+merge; owner, 2026-10-31). The agent writes its proposed direction for
+resolving the change set here, so the Feedback Review Committee and the
+Editor react to a proposal rather than drafting from nothing. The script does not
 touch it. It is a proposal, never a person's feedback: a tool that collects
-the people's `Architect Feedback (…)` columns by header must leave out
+the people's `Committee Feedback (…)` columns by header must leave out
 `(agent)`, or show it apart, and it decides nothing.
+
+These columns were headed `Architect Feedback …` until 2026-10-31, when the
+owner had them named for the process role, the Feedback Review Committee.
+The script finds a header under either name (`aliasOf`), and a feedback
+basis written under the old names still matches after the rename, so
+renaming the columns marks no proposal stale.
 
 Every `No. n` in Review Change Sets links to `#gid=<Review Public Comments>&range=A<row>`.
 Do not link to a named range by `#rangeid=`: Sheets shows "Invalid range"
@@ -123,11 +129,11 @@ build time it claims nothing. The preview page shows its own live banner too
 (the site's staging build, cat-harness-tools).
 
 **Stale agent proposals.** `Contributor Feedback (agent)` (drafting) and
-`Architect Feedback (agent)` (Review Change Sets) carry the agent's proposal.
+`Committee Feedback (agent)` (Review Change Sets) carry the agent's proposal.
 The agent records what it wrote against in the Agent tab's **Feedback basis
 (change set)**: `feedbackBasis()` in `tools/review-sheet-sync/feedback-issue.ts`,
 a hash of the row's blue cells (drafting: Title, Selected Sections, people's
-Contributor Feedback; public comment: Title, TWG (CS), people's Architect
+Contributor Feedback; public comment: Title, TWG (CS), people's Committee
 Feedback). The script computes the same hash; while they differ it puts
 "⚠ Stale: the row changed since this proposal; the agent will propose
 again." on the proposal's first line, and takes it off if the row changes
@@ -483,7 +489,7 @@ The Config tab keeps its Instructions short, one subject per row, so no row is
 taller than the window (owner, 2026-10-31): `Instructions` (the tab's purpose:
 nothing here needs you unless you install the script), `Instructions - Setup`
 (`setupSteps()`) and `Instructions - Editors` (`editorSteps()`), then the
-`Key | Value` header. Its rows are not frozen. The script reads Config keys by
+`Key | Value` header. Its rows are not frozen. The EDITORS row is Orange, like the Ready columns it controls, because a person keeps it (owner, 2026-10-31); the rows the agent writes stay grey. The script reads Config keys by
 name, so it ignores these rows.
 
 **A stale proposal hands control back to an Editor** (owner, 2026-10-31).
