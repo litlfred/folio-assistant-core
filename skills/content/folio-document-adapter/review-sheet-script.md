@@ -90,7 +90,9 @@ account, because Google asks the owner to authorise the script:
 
 `installTriggers` runs a full refresh, then installs two triggers: every edit
 of the three tabs marks the sheet dirty, and every five minutes a dirty sheet
-is rebuilt. **Review links → Refresh now** rebuilds at once.
+is rebuilt. A drafting sheet is small, so there an edit rebuilds at once
+(a pick shows its link, a new row its Change-set, within seconds; owner,
+2026-10-31). **Review links → Refresh now** rebuilds at once.
 
 **How to tell it works.** The first run of `installTriggers` takes about 20
 seconds for 800 rows and its execution log ends "Execution completed" (a
@@ -211,8 +213,8 @@ topic), and each change set gets a GitHub issue.
 
 | tab | who writes | columns |
 |---|---|---|
-| **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Selected Sections** (a multi-select dropdown of the document's table of contents, each section marked under its chapter with "└ " (and "│ " per further level), since a dropdown cannot nest (owner, 2026-10-31); not leading spaces, because Sheets trims a multi-select cell and the first chip would lose them and read as Invalid; it stays plain, because a dropdown chip cannot carry a link), any number of **Contributor Feedback (…)** columns, one per contributor, with their initials or name in the brackets (e.g. `Contributor Feedback (CL)`); the script reads every column whose header is `Contributor Feedback` or starts `Contributor Feedback (`. Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Grey, mechanical, by the script (owner, 2026-10-31): **Section links** (each selected section on its own line, linked to its place on the document page, like the Sections column of the public-comment log; it is mechanical, a copy of Selected Sections with links, so grey, not green). Green, by the script from Agent: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`), **Staging review page** (a "review" link to the change set's preview while its PR is open) |
-| **Agent** | the agent only | one row per change set: Change-set, Issue (URL), Agentic status, Pull request (change set), What the PRs changed (change set), Agent completed (UTC, change set), Staging review page (change set). The agent writes it as each step completes, by the steps of the `review-sheet-agent-columns` skill (core#315, not yet merged); a drafting sheet has no per-comment rows, so only its change-set columns apply |
+| **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Selected Sections** (a multi-select dropdown of the document's table of contents, each section marked under its chapter with "└ " (and "│ " per further level), since a dropdown cannot nest (owner, 2026-10-31); not leading spaces, because Sheets trims a multi-select cell and the first chip would lose them and read as Invalid; it stays plain, because a dropdown chip cannot carry a link), any number of **Contributor Feedback (…)** columns, one per contributor, with their initials or name in the brackets (e.g. `Contributor Feedback (CL)`); the script reads every column whose header is `Contributor Feedback` or starts `Contributor Feedback (`. Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Grey, mechanical, by the script (owner, 2026-10-31): **Section links** (each selected section on its own line, linked to its place on the document page, like the Sections column of the public-comment log; it is mechanical, a copy of Selected Sections with links, so grey, not green). Green, by the agent: **Contributor Feedback (agent)**, right of Ready for merge (owner, 2026-10-31): the agent's proposed direction for resolving the change set, so people react to a proposal rather than draft from nothing; it is not a person's feedback, the script leaves it out of the Contributor Feedback columns, and it decides nothing. Green, by the script from Agent: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`), **Staging review page** (a "review" link to the change set's preview while its PR is open) |
+| **Agent** | the agent only | one row per change set: Change-set, Issue (URL), Agentic status, Pull request (change set), What the PRs changed (change set), Agent completed (UTC, change set), Staging review page (change set), Feedback basis (change set). The agent writes it as each step completes, by the steps of the `review-sheet-agent-columns` skill (core#315, not yet merged); a drafting sheet has no per-comment rows, so only its change-set columns apply |
 | **TOC** (hidden) | the script | the Sections dropdown's list and each entry's link. Rewritten on every refresh, so it follows the document |
 
 Colours as in public-comment mode: grey mechanical, blue human, orange
@@ -254,7 +256,15 @@ Contributor Feedback row with a Change-set:
    empty), body the linked sections, every Contributor Feedback (…) cell
    verbatim, and a link back to the sheet row. Write its URL into Issue.
 3. When feedback is added to a row later, comment the new text on its issue.
-4. Work a change set only when **Ready for agent** is Yes; its PRs say
+4. Propose a direction in **Contributor Feedback (agent)** whenever the
+   row changes, whoever changed it, a person or an agent. On each sync
+   compute `feedbackBasis(header, row)` (`tools/review-sheet-sync/feedback-issue.ts`:
+   a short hash of Title, Selected Sections and the people's Contributor
+   Feedback columns). Where it differs from the Agent tab's **Feedback
+   basis (change set)**, or the proposal cell is empty (a person clears it
+   to ask for a fresh one), write a new proposal and the new basis. The
+   script's own writes (ids, links, tree marks) do not change the basis.
+5. Work a change set only when **Ready for agent** is Yes; its PRs say
    `Closes #n` for the change set's issue, and go to Agent's PR columns.
 
 Title stays the contributors': the agent never writes it (in public-comment

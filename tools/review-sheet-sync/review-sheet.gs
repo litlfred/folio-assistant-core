@@ -17,8 +17,9 @@
  * Install once: Extensions > Apps Script, paste this file as Code.gs (the
  * only file to paste), save, pick installTriggers in the function
  * list, press Run and allow access, then reload the sheet. A "Review links"
- * menu appears. An edit marks the sheet dirty and a 5-minute trigger
- * rebuilds; "Refresh now" rebuilds at once. Columns are found by their header
+ * menu appears. In a drafting sheet an edit rebuilds at once; in a
+ * public-comment sheet it marks the sheet dirty and a 5-minute trigger
+ * rebuilds. "Refresh now" rebuilds at once. Columns are found by their header
  * text, so they may be moved freely.
  *
  * Trust: @OnlyCurrentDoc limits the script to this spreadsheet. It reads and
@@ -129,9 +130,12 @@ function markDirty(e) {
   const name = e && e.range && e.range.getSheet().getName();
   if (!name || name === CONFIG_TAB) return;
   try { loadConfig(SpreadsheetApp.getActive()); } catch (err) { return; }
-  if (WATCHED.includes(name)) {
-    PropertiesService.getDocumentProperties().setProperty('dirty', '1');
-  }
+  if (!WATCHED.includes(name)) return;
+  PropertiesService.getDocumentProperties().setProperty('dirty', '1');
+  // A drafting sheet is small: refresh at once, so a pick shows its link
+  // and a new row its Change-set within seconds. A public-comment sheet is
+  // large, so it waits for the 5-minute trigger.
+  if (DRAFTING) refreshIfDirty();
 }
 
 function refreshIfDirty() {
@@ -194,9 +198,14 @@ function readSheet(sh) {
 }
 function col(s, name) { return s.header.indexOf(name); }
 function cols(s, name) { return s.header.map((h, i) => (h === name ? i : -1)).filter(i => i >= 0); }
-/** Columns whose header is `name` or `name (…)`, e.g. "Contributor Feedback (CL)". */
+/**
+ * Columns whose header is `name` or `name (...)`, e.g. "Contributor Feedback
+ * (CL)": the people's. `name (agent)` is the agent's proposal, not a
+ * person's feedback, so it is left out.
+ */
 function colsLike(s, name) {
-  return s.header.map((h, i) => (h === name || String(h).indexOf(name + ' (') === 0 ? i : -1)).filter(i => i >= 0);
+  return s.header.map((h, i) => ((h === name || String(h).indexOf(name + ' (') === 0) &&
+    h !== name + ' (agent)' ? i : -1)).filter(i => i >= 0);
 }
 
 function writeRich(s, c, rich) {
@@ -491,7 +500,8 @@ function refreshDraft() {
   // Change-set ids: mechanical, assigned once, never reused.
   // A row is used once any cell a person fills holds something; "No" (a
   // Yes/No dropdown's default) and the script's own columns do not count.
-  const mech = [c.cs, c.sectionLinks, c.issue, c.agentic, c.staging];
+  const mech = [c.cs, c.sectionLinks, c.issue, c.agentic, c.staging,
+    col(fb, COLS.draft.feedback + ' (agent)')];
   if (c.cs >= 0) {
     let next = 1 + fb.rows.reduce((m, r) => {
       const x = /^CS-(\d+)$/.exec(String(r[c.cs]).trim());

@@ -361,11 +361,25 @@ describe("review-sheet.gs in drafting mode", () => {
     expect((fb["Staging review page"][1][0] as Rich).text).toBe("");
   });
 
-  test("only Contributor Feedback and Agent edits mark the sheet dirty", () => {
+  test("an edit to Contributor Feedback or Agent refreshes at once; another tab's does not", () => {
     const rt2 = runtime(withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>);
     const s = load(code, rt2.g);
-    s.markDirty({ range: { getSheet: () => rt2.sheet("Agent") } });
-    expect(rt2.props.dirty).toBe("1");
+    s.markDirty({ range: { getSheet: () => rt2.sheet("Config") } });
+    expect(rt2.written["Contributor Feedback"]).toBeUndefined();
+    s.markDirty({ range: { getSheet: () => rt2.sheet("Contributor Feedback") } });
+    expect(rt2.written["Contributor Feedback"]["Change-set"]).toEqual([["CS-004"], ["CS-005"], [""]]);
+    expect(rt2.props.dirty).toBeUndefined();
+  });
+
+  test("the agent's Contributor Feedback (agent) column is neither people's feedback nor makes a row used", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const r = t["Contributor Feedback"].rows;
+    r[0].push("Contributor Feedback (agent)");
+    r.forEach((x, i) => i && x.push(""));
+    r[3][9] = "Proposal";
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    expect(rt2.written["Contributor Feedback"]["Change-set"]).toEqual([["CS-004"], ["CS-005"], [""]]);
   });
 });
 

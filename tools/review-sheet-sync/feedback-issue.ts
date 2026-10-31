@@ -7,6 +7,7 @@
  *
  * Skill: `review-sheet-script`, "Feedback from the site".
  */
+import { createHash } from "node:crypto";
 import { bareName, buildToc } from "./build-review-sheet-script.js";
 
 export type Feedback = {
@@ -71,4 +72,24 @@ export function feedbackRow(issue: { body: string; url: string; login: string },
     feedback: `@${issue.login}${f.type ? ` (${f.type})` : ""}: ${f.comment ?? ""}${f.proposed ? `\nProposed: ${f.proposed}` : ""}`,
     issue: issue.url,
   };
+}
+
+/**
+ * What the agent's proposal (the `Contributor Feedback (agent)` column) was
+ * written against: a short hash of the row's people cells, Title, Selected
+ * Sections and every person's Contributor Feedback column, by header. The
+ * agent keeps it in the Agent tab's `Feedback basis (change set)`; on each
+ * sync a row whose basis differs, whoever changed it, a person or an agent,
+ * gets a fresh proposal, and so does a row whose proposal a person cleared.
+ * Picks are compared bare, so the script's repair of a tree mark is no change.
+ */
+export function feedbackBasis(header: string[], row: string[], names = { title: "Title", sections: "Selected Sections", feedback: "Contributor Feedback" }): string {
+  const parts: string[] = [];
+  header.forEach((h, i) => {
+    const v = String(row[i] ?? "").trim();
+    if (h === names.title) parts.push(`${h}=${v}`);
+    else if (h === names.sections) parts.push(`${h}=${v.split(",").map(bareName).filter(Boolean).join(",")}`);
+    else if ((h === names.feedback || h.startsWith(`${names.feedback} (`)) && h !== `${names.feedback} (agent)`) parts.push(`${h}=${v}`);
+  });
+  return createHash("sha256").update(parts.join("\n")).digest("hex").slice(0, 12);
 }
