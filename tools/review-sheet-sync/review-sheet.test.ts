@@ -850,12 +850,15 @@ describe("review-sheet.gs in drafting mode", () => {
   });
 
   test("each comment of the change set needs one disposition; an overall statement is allowed (owner, 2026-10-31)", () => {
-    const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems };`)({}) as { dispositionProblems: (t: string, n: string[]) => string };
+    const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems };`)({}) as { dispositionProblems: (t: string, n: string[], h?: Record<string, string>) => string };
     const ok = "Decided (Q1, 2026-10-31): A, by the Editor; gloss it.\nOverall: partly accepted as editorial.\nNo. 136: Accepted. Defined at first use.\nNos. 127 to 129 and 131: Not accepted. Already addressed.\nNo. 130: Noted.";
     expect(fns.dispositionProblems(ok, ["127", "128", "129", "130", "131", "136"])).toBe("");
     expect(fns.dispositionProblems(ok, ["127", "128", "129", "130", "131", "136", "140", "141"])).toBe("\u26a0 No disposition yet for No. 140, 141");
     expect(fns.dispositionProblems("No. 136: Fixed it.", ["136"])).toMatch(/^\u26a0 No. 136: start with one of Accepted/);
     expect(fns.dispositionProblems("No. 9: Noted.\nNo. 136: Accepted.\nNo. 136: Noted.", ["136"])).toBe("\u26a0 No. 9 is not in this change set\n\u26a0 No. 136 has two dispositions");
+    // Drawn from the people's Blue Disposition: a different word is flagged, Pending is not.
+    expect(fns.dispositionProblems("No. 136: Accepted.\nNo. 137: Noted.", ["136", "137"], { "136": "Noted", "137": "Pending" }))
+      .toBe("\u26a0 No. 136: Accepted here, Noted in the people's Disposition");
   });
 
   test("security: text a person or the agent typed is never written back as a formula", () => {

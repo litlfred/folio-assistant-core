@@ -479,11 +479,13 @@ function refreshLocked() {
     });
     refreshRpc(rpc, pcOf, csOfNo, stOf, prOf);
     const csCol = col(rcs, 'Change-set'), all = () => true;
+    const humanDisp = {}, hNo = col(rpc, COLS.rpc.no), hD = col(rpc, COLS.rpc.disposition || 'Disposition');
+    if (hNo >= 0 && hD >= 0) rpc.rows.forEach(r => { const n = String(r[hNo]).trim(); if (n) humanDisp[n] = String(r[hD]).trim(); });
     const readyAt = readyTimes(rcs, csCol, prOf, all, docProps_()), lineOf = {};
     refreshRcs(rcs, rpc, csOf, stOf, prOf, readyAt);
     writeRows(rcs, col(rcs, COLS.rcs.dispositionsAgent || DISPOSITIONS_AGENT), null, r => {
       const cs = String(r[csCol]).trim();
-      return dispositionCell(dispOf[cs], csOf[cs]);
+      return dispositionCell(dispOf[cs], csOf[cs], humanDisp);
     });
     rcs.rows.forEach(r => {
       const cs = String(r[csCol]).trim();
@@ -833,7 +835,7 @@ const DISPOSITIONS_CS = 'Disposition (change set)', DISPOSITIONS_AGENT = 'Dispos
  * DISPOSITION_WORDS. Returns the problems, one line each ('' when none).
  */
 const DISPOSITION_WORDS = ['Accepted', 'Partially accepted', 'Not accepted', 'Noted', 'Deferred', 'Duplicate', 'Out of scope', 'Withdrawn'];
-function dispositionProblems(text, nos) {
+function dispositionProblems(text, nos, human) {
   const want = (nos || []).map(String), seen = {}, out = [];
   const words = new RegExp('^(' + DISPOSITION_WORDS.join('|') + ')\\b', 'i');
   String(text || '').split('\n').forEach(line => {
@@ -845,8 +847,15 @@ function dispositionProblems(text, nos) {
       else for (let n = +a; n <= +z && n - +a < 1000; n++) got.push(String(n));
       return '';
     });
-    if (!words.test(m[2])) out.push('\u26a0 No. ' + got.join(', ') + ': start with one of ' + DISPOSITION_WORDS.join(', '));
+    const w = m[2].match(words);
+    if (!w) out.push('\u26a0 No. ' + got.join(', ') + ': start with one of ' + DISPOSITION_WORDS.join(', '));
     got.forEach(n => {
+      // The agent drafts from the people's Blue Disposition (owner,
+      // 2026-10-31: "agent should draw from human blue dispositions"); a
+      // different word is shown, never corrected.
+      const h = String((human || {})[n] || '').trim();
+      if (w && h && !/^pending$/i.test(h) && h.toLowerCase() !== w[1].toLowerCase())
+        out.push('\u26a0 No. ' + n + ': ' + w[1] + ' here, ' + h + ' in the people\'s Disposition');
       if (want.length && want.indexOf(n) < 0) out.push('\u26a0 No. ' + n + ' is not in this change set');
       else if (seen[n]) out.push('\u26a0 No. ' + n + ' has two dispositions');
       seen[n] = true;
@@ -857,9 +866,9 @@ function dispositionProblems(text, nos) {
   return out.join('\n');
 }
 /** The Disposition (agent) cell: the problems in bold above the agent's record. */
-function dispositionCell(text, nos) {
+function dispositionCell(text, nos, human) {
   if (!String(text || '').trim()) return rich([{ t: '' }]);
-  const p = dispositionProblems(text, nos);
+  const p = dispositionProblems(text, nos, human);
   return rich(p ? [{ t: p, bold: true }, { t: '\n' + text }] : [{ t: text }]);
 }
 function progressLine(o) {

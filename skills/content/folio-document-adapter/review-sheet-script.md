@@ -38,8 +38,8 @@ comment).
 | People (Authoring Committee, Feedback Review Committee) | the whole sheet | Blue columns on the people's tabs; cell comments | Green, Grey, Orange, Agent tabs, Config |
 | Editor (the Config EDITORS list) | the whole sheet | Orange `Ready for agent`, `Ready for merge` | Green, Grey, Agent tabs, Config |
 | Owner | the whole sheet | Config `EDITORS` | anything the agent or script writes |
-| Apps Script (`review-sheet.gs`, built by Tool `review-sheet-sync`) | Config (CFG, COLS, DATA, EDITORS); the people's tabs; the Agent tab(s) | Grey columns (ids, links, joins); Green columns copied from the Agent tab(s); the STALE mark on the agent column; `Ready for agent` back to No once, on the turn to stale; the Watch tab; protections on the Ready columns | Blue columns' contents; Orange except the stale reset; the Agent tab(s) |
-| Agent (sync or watcher) | the whole sheet; the folio's repository | the Agent tab(s) (one row per change set, and in public comment one row per comment on Agent - Comments); the agent column, `Feedback (agent)` (drafting) or `Change Set Feedback (agent)` (public comment); Config rows other than EDITORS | Blue, Orange, Grey; the Title on a drafting sheet |
+| Apps Script (`review-sheet.gs`, built by Tool `review-sheet-sync`) | Config (CFG, COLS, DATA, EDITORS); the people's tabs; the Agent tab(s) | Grey columns (ids, links, joins); Green columns copied from the Agent tab(s); the STALE mark on the agent column; `Ready for agent` back to No once, on the turn to stale; the Watch tab; protections on the Ready columns; the QC problems at the top of `Disposition (agent)` | Blue columns' contents; Orange except the stale reset; the Agent tab(s) |
+| Agent (sync or watcher) | the whole sheet, and above all the people's Blue `Disposition` of each comment, which its dispositions start from; the folio's repository | the Agent tab(s) (one row per change set, and in public comment one row per comment on Agent - Comments), including `Disposition (change set)` in the format below; the agent column, `Feedback (agent)` (drafting) or `Change Set Feedback (agent)` (public comment); Config rows other than EDITORS | Blue, Orange, Grey; the Title on a drafting sheet |
 | Tool `review-sheet-sync` | the folio's `review/*/sheet-sync.json`, anchors, line map | `Code.gs` (generic); the Config rows for one sheet (`--config ... --out rows`); a drafting sheet's TOC rows (`--toc-out rows`) | the sheet itself |
 | Script `review-anchors-from-folio.ts` | the folio's document manifests and block prose; optionally the library file it was seeded from | `folio/<doc>/review-anchors.json` (`--check` compares) | the sheet |
 
@@ -101,7 +101,19 @@ status, on Review Change Sets or Contributor Feedback. It holds:
    this (`dispositionProblems`) and puts any problem, in bold, at the top of
    Disposition (agent): `⚠ No disposition yet for No. 140, 141`, `⚠ No. 9
    is not in this change set`, `⚠ No. 136 has two dispositions`, or a line
-   whose word is not a disposition. It never edits the Agent tab. Written
+   whose word is not a disposition. It never edits the Agent tab.
+
+   **Drawn from the people's dispositions** (owner, 2026-10-31: "QC check is
+   that each PC # in the CS has a disposition. agent should draw from human
+   blue dispositions when drafting"). Before writing a comment's line, the
+   agent reads that comment's Blue `Disposition` on Review Public Comments
+   (drafting: the row's Blue `Disposition`). Where a person has set one, the
+   line uses the same word, and the text says what was done; where it is
+   empty or Pending, the agent proposes one. The QC check is that every
+   comment number in the change set has a disposition; a word that differs
+   from the people's is flagged (`⚠ No. 136: Accepted here, Noted in the
+   people's Disposition`) for the committee to settle, and never corrected
+   by the agent or the script. Written
    before the staging preview is made, and kept current with each push.
 
 Once an Editor sets Ready for merge to Yes, the record as it stands is the
