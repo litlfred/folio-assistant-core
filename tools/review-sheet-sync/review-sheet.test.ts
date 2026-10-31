@@ -354,6 +354,27 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     expect(String(rt2.written["Review Change Sets"]["Change Set Feedback (agent)"][0][0])).toMatch(/^\u26a0 Stale: /);
   });
 
+  test("an Editor setting Ready for agent shows in the agent's feedback at once, even on a slow sheet (owner, 2026-10-31)", () => {
+    const hdr = ["Change-set", "Title", "TWG (CS)", "Committee Feedback (CL)", "Change Set Feedback (agent)", "Ready for agent"];
+    const row = ["CS-001", "Fix scope", "TWG 1", "do it", "Proposal", "Yes"];
+    const t = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][] }>;
+    t["Review Change Sets"].rows = [hdr, row];
+    t["Agent - Change Sets"].rows[0].push("Feedback basis (change set)");
+    t["Agent - Change Sets"].rows[1].push(feedbackBasis(hdr, row, ["Title", "TWG (CS)"], "Committee Feedback"));
+    const rt2 = runtime(t);
+    rt2.props.lastMs = "20000";
+    const sheet = rt2.sheet("Review Change Sets");
+    const edit = (c: number) => ({ range: { getSheet: () => sheet, getColumn: () => c, getNumColumns: () => 1, getRow: () => 2, getNumRows: () => 1 } });
+    load(code, rt2.g).markDirty(edit(6));
+    expect(rt2.props["ready:CS-001"]).toMatch(/^\d{4}-\d\d-\d\d \d\d:\d\dZ$/);
+    expect(String(rt2.written["Review Change Sets"]["Change Set Feedback (agent)"][0][0])).toMatch(/^\u23f3 Ready for agent set .*: the agent will act on this and rewrite it\.\nProposal$/);
+    // An edit of another column records nothing.
+    const rt3 = runtime(t);
+    rt3.props.lastMs = "20000";
+    load(code, rt3.g).markDirty({ range: { ...edit(4).range, getSheet: () => rt3.sheet("Review Change Sets") } });
+    expect(rt3.props["ready:CS-001"]).toBeUndefined();
+  });
+
   test("a sheet with both agent tables on one Agent tab, as before 2026-10-31, works the same", () => {
     const oneRows = configRows(buildConfig(folio({ AGENT: "Agent", AGENT_CS: "" }), "review/public-comment/sheet-sync.json"));
     const t = withConfig(tabs(), oneRows) as Record<string, { id: number; rows: string[][] }>;

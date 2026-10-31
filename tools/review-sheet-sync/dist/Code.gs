@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 b7bd776d31214857.
+// folio-assistant-core tools/review-sheet-sync at template sha256 dd2df0a57fd2c085.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 b7bd776d31214857';
+const SCRIPT_VERSION = 'template sha256 dd2df0a57fd2c085';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -268,6 +268,14 @@ function markDirty(e) {
   try { loadConfig(SpreadsheetApp.getActive()); } catch (err) { return; }
   if (!WATCHED.includes(name)) return;
   const props = docProps_();
+  // An Editor's Ready for agent edit is timed now, not on the next refresh,
+  // so the agent's feedback says "Ready for agent set" at once (owner,
+  // 2026-10-31: "i expected to see change to Change Set Feedback (agent) b/c
+  // i said ready for agent").
+  let readyNow = {};
+  if (name === (DRAFTING ? CFG.FEEDBACK : CFG.RCS)) {
+    try { readyNow = noteReady_(e, props, DRAFTING ? COLS.draft.cs : 'Change-set'); } catch (err) { /* the refresh still runs */ }
+  }
   if (DRAFTING) {
     // Incremental: remember which Contributor Feedback rows the edit touched
     // and rebuild only those, at once. An edit of the header row, or of the
@@ -298,11 +306,35 @@ function markDirty(e) {
   // A slow sheet waits for the timer, but a proposal an edit makes stale is
   // flagged at once: it reads only two tabs (owner, 2026-10-31: "made
   // feedback change in RefArch Log but no warning on stale").
-  if (name === CFG.RCS) { try { staleNow(); } catch (err) { /* the timer still runs */ } }
+  if (name === CFG.RCS) { try { staleNow(readyNow); } catch (err) { /* the timer still runs */ } }
+}
+
+/**
+ * Record when an edit set Ready for agent to Yes ("ready:CS-001" = now), or
+ * clear it on No. Returns { cs: time } for the rows turned Yes.
+ */
+function noteReady_(e, props, csHeader) {
+  const r = e.range;
+  if (!r.getColumn) return {};
+  const s = readSheet(r.getSheet());
+  const rc = col(s, 'Ready for agent'), cc = col(s, csHeader);
+  const c0 = r.getColumn(), nc = r.getNumColumns ? r.getNumColumns() : 1;
+  if (rc < 0 || cc < 0 || rc + 1 < c0 || rc + 1 >= c0 + nc) return {};
+  const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z', out = {};
+  const r0 = r.getRow(), n = Math.min(r.getNumRows(), MAX_ROWS);
+  for (let row = r0; row < r0 + n; row++) {
+    const v = s.rows[row - s.top];
+    if (!v) continue;
+    const cs = String(v[cc]).trim();
+    if (!cs) continue;
+    if (/^yes$/i.test(String(v[rc]).trim())) { props.setProperty('ready:' + cs, now); out[cs] = now; }
+    else props.deleteProperty('ready:' + cs);
+  }
+  return out;
 }
 
 /** Public comment: flag stale proposals on Review Change Sets, without a full rebuild. */
-function staleNow() {
+function staleNow(readyNow) {
   const ss = SpreadsheetApp.getActive();
   const agentCs = readSheet(ss.getSheetByName(CFG.AGENT_CS || CFG.AGENT));
   const rcs = readSheet(ss.getSheetByName(CFG.RCS));
@@ -310,7 +342,11 @@ function staleNow() {
   if (aId < 0 || aBasis < 0) return;
   const basisOfCs = {};
   agentCs.rows.forEach(r => { const id = String(r[aId]).trim(); if (id) basisOfCs[id] = String(r[aBasis]).trim(); });
-  markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)');
+  // Only the rows an Editor just set to Yes get their progress line here;
+  // the rest keep theirs until the timer's full refresh.
+  const lineOf = {};
+  Object.keys(readyNow || {}).forEach(cs => { lineOf[cs] = progressLine({ readyAt: readyNow[cs] }); });
+  markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)', lineOf);
 }
 
 const FAST_MS = 5000;
@@ -743,7 +779,7 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) 
     const cs = String(r[csCol]).trim();
     const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[cs]);
     const cur = t === null ? String(r[ag]) : t;
-    const fin = lineOf ? withProgress(cur, lineOf[cs] || '') : cur;
+    const fin = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? withProgress(cur, lineOf[cs]) : cur;
     if (fin !== String(r[ag])) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(fin)]]);
     unready(s, r, k, r[ag], t);
     markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), fin);

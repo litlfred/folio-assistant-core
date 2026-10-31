@@ -247,6 +247,10 @@ drops it when it rewrites the proposal. An Editor's Orange change (a Ready
 column) is not part of the basis, so it never marks the proposal stale: it
 shows here as a note, and Ready stays as the Editor set it (owner's card,
 option A).
+The note appears at once: an edit of a Ready for agent cell records its time
+(`noteReady_`) and, on a slow public-comment sheet, `staleNow` writes that
+row's line without waiting for the timer (owner, 2026-10-31: "i expected to
+see change to Change Set Feedback (agent) b/c i said ready for agent").
 
 **How to tell it works.** The first run of `installTriggers` takes about 20
 seconds for 800 rows and its execution log ends "Execution completed" (a
