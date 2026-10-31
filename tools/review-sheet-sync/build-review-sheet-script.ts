@@ -16,7 +16,7 @@
  *   page, and the printed-to-PDF page offset.
  *
  *   bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts \
- *     [--script Code.gs] [--repo . --config review/public-comment/sheet-sync.json --out config-rows.json]
+ *     [--script Code.gs] [--repo . --config review/public-comment/sheet-sync.json --out config-rows.json [--toc-out toc-rows.json]]
  *
  * Skill: `review-sheet-script`.
  */
@@ -459,6 +459,22 @@ export function editorSteps(): string[] {
 }
 
 /**
+ * A drafting sheet's TOC tab, as the script's own refresh writes it: the
+ * Selected Sections dropdown reads column A. The agent writes these with the
+ * Config rows when it links a sheet, so the dropdown works before anyone has
+ * pasted the script (owner, 2026-10-31: a new copy showed an empty dropdown).
+ * `undefined` for a public-comment sheet, which has no TOC.
+ */
+export function tocRows(c: SheetConfig): string[][] | undefined {
+  const toc = (c.DATA as { TOC?: [string, string][] }).TOC;
+  if (!c.CFG.TOC || !toc) return undefined;
+  const q = (x: string) => x.replace(/"/g, '""');
+  return [["Section", "Link", "Anchor"]].concat(
+    toc.map(([name, anchor]) => [name, `=HYPERLINK("${q(c.CFG.SECTION_URL + anchor)}","open")`, anchor]),
+  );
+}
+
+/**
  * The Config tab's rows: a header, then CFG, COLS and DATA, each as JSON with
  * a leading "|" so a sheet never reads it as a number or formula, a long
  * value continued on the next rows under the same key.
@@ -562,13 +578,21 @@ if (import.meta.main) {
       console.error(`no ${cfg} in ${repo}: write one first (skill review-sheet-script)`);
       process.exit(2);
     }
-    const rows = `${JSON.stringify(configRows(buildConfig(repo, cfg)), null, 1)}\n`;
+    const built = buildConfig(repo, cfg);
+    const rows = `${JSON.stringify(configRows(built), null, 1)}\n`;
     const to = arg("--out");
     if (to) { writeFileSync(to, rows); console.error(`wrote ${to}: the Config tab's rows`); }
     else process.stdout.write(rows);
+    const tocOut = arg("--toc-out");
+    if (tocOut) {
+      const toc = tocRows(built);
+      if (!toc) { console.error(`${cfg} is not a drafting sheet: it has no TOC tab`); process.exit(2); }
+      writeFileSync(tocOut, `${JSON.stringify(toc, null, 1)}\n`);
+      console.error(`wrote ${tocOut}: the TOC tab's rows (the Selected Sections dropdown)`);
+    }
   }
   if (!script && !cfg) {
-    console.error("usage: build-review-sheet-script.ts [--script Code.gs] [--repo <folio>] [--config review/<mode>/sheet-sync.json] [--out config-rows.json]");
+    console.error("usage: build-review-sheet-script.ts [--script Code.gs] [--repo <folio>] [--config review/<mode>/sheet-sync.json] [--out config-rows.json] [--toc-out toc-rows.json]");
     process.exit(2);
   }
 }

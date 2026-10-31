@@ -13,7 +13,7 @@ import { mkdtempSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { buildConfig, buildScript, chunks, configRows, readable, tabInstructions } from "./build-review-sheet-script.js";
+import { buildConfig, buildScript, chunks, configRows, readable, tabInstructions, tocRows } from "./build-review-sheet-script.js";
 import { feedbackBasis, hashOf } from "./feedback-issue.js";
 
 const code = buildScript();
@@ -115,6 +115,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
   const g = {
     SpreadsheetApp: {
       getActive: () => ({
+        getId: () => "copy-sheet-id",
         getSheetByName: (n: string) => (tabs[n] ? sheet(n) : null),
         insertSheet: (n: string) => ((tabs[n] = { id: 99, rows: [["Section", "Link"]] }), sheet(n)),
       }),
@@ -499,6 +500,12 @@ describe("review-sheet.gs in drafting mode", () => {
       'Ch 12 Privacy; Security and Trust\n1.1 Global challenges\n\u26a0 "Somewhere else" is not in the document now: pick its section again');
     expect(tabs.TOC.rows.length).toBeGreaterThan(0);
     expect((rt.written.TOC.Section as string[][])[5]).toEqual(["\u2800\u2800\u28001.1 Global challenges", '=HYPERLINK("https://x.example/S#sec:1-1","open")', "sec:1-1"]);
+  });
+
+  test("the agent's TOC rows are the ones the script's refresh writes, so a linked copy's dropdown works before the script is pasted", () => {
+    const toc = tocRows(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"))!;
+    expect(toc).toEqual(rt.written.TOC.Section as string[][]);
+    expect(tocRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"))).toBeUndefined();
   });
 
   test("a pick with the old \u2514 mark is rewritten to the indented name", () => {
@@ -889,5 +896,13 @@ describe("the colour key in Instructions text", () => {
 
   test("text without a colour word gets no runs", () => {
     expect(keyRuns("Kept by the agent's watcher. Do not edit.")).toEqual([]);
+  });
+});
+
+describe("a copy that is not linked to a repository yet", () => {
+  test("says so, with this sheet's ID, instead of failing on a missing row", () => {
+    const t = { ...tabs(), Config: { id: 900, rows: [["Key", "Value"], ["EDITORS", ""]] } };
+    const rt = runtime(t);
+    expect(() => load(code, rt.g).refreshAll()).toThrow(/not linked to a document repository yet.*copy-sheet-id/);
   });
 });

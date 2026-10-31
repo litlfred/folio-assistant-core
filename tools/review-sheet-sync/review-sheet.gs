@@ -50,6 +50,7 @@ function loadConfig(ss) {
     k = String(k).trim();
     if (k) parts[k] = (parts[k] || '') + String(v).replace(/^\|/, '');
   });
+  if (!parts.CFG) throw new Error(notLinked(ss));
   const json = k => {
     if (!parts[k]) throw new Error('The "' + CONFIG_TAB + '" tab has no ' + k + ' row. Ask the agent to write it again.');
     return JSON.parse(parts[k]);
@@ -70,11 +71,29 @@ function loadConfig(ss) {
   WATCHED = DRAFTING ? [CFG.FEEDBACK, CFG.AGENT] : [CFG.RPC, CFG.AGENT, CFG.RCS].concat(CFG.AGENT_CS ? [CFG.AGENT_CS] : []);
 }
 
+/**
+ * A copy of a template is not linked to a repository until the agent writes
+ * its Config from the folio's sheet-sync.json. Say so, with what to ask for,
+ * rather than leaving an empty dropdown to explain itself.
+ */
+function notLinked(ss) {
+  return 'This sheet is not linked to a document repository yet, so its Config tab is empty and ' +
+    'the Selected Sections dropdown has nothing to offer. Ask the agent to link it: name the repository ' +
+    'and give this spreadsheet\'s ID, ' + ss.getId() + '. The agent adds review/<mode>/sheet-sync.json ' +
+    'there and writes this Config tab (skill review-sheet-script, "Linking a sheet to a repository").';
+}
+
 function onOpen() {
   SpreadsheetApp.getUi().createMenu('Review links')
     .addItem('Refresh now', 'refreshAll')
     .addItem('Install automatic refresh', 'installTriggers')
     .addToUi();
+  try {
+    const ss = SpreadsheetApp.getActive();
+    const sh = ss.getSheetByName(CONFIG_TAB);
+    const keys = sh ? sh.getRange(1, 1, Math.max(sh.getLastRow(), 1), 1).getDisplayValues().map(r => String(r[0]).trim()) : [];
+    if (!keys.includes('CFG')) ss.toast(notLinked(ss), 'Not linked to a repository yet', 30);
+  } catch (e) { /* a toast is a courtesy; never block the menu */ }
 }
 
 function installTriggers() {
