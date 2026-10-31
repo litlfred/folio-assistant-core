@@ -1075,3 +1075,22 @@ describe("Decision needed stands out in the agent's feedback (owner, 2026-10-31)
     expect(fns.decisionSpans("Decided (Q1): A.")).toEqual([]);
   });
 });
+
+describe("the timer runs every minute (owner, 2026-10-31)", () => {
+  test("a sheet on the old 5-minute timer moves itself to 1 minute, once", () => {
+    const made: number[] = [], removed: string[] = [];
+    const app = {
+      getProjectTriggers: () => [{ getHandlerFunction: () => "refreshIfDirty" }, { getHandlerFunction: () => "markDirty" }],
+      deleteTrigger: (t: { getHandlerFunction: () => string }) => removed.push(t.getHandlerFunction()),
+      newTrigger: () => ({ timeBased: () => ({ everyMinutes: (n: number) => ({ create: () => made.push(n) }) }) }),
+    };
+    const props: Record<string, string> = {};
+    const p = { getProperty: (k: string) => props[k] ?? null, setProperty: (k: string, v: string) => (props[k] = v) };
+    const f = new Function("SpreadsheetApp", `${code}\nreturn { init, upgradeTimer_ };`)({});
+    f.init({ ScriptApp: app });
+    f.upgradeTimer_(p);
+    f.upgradeTimer_(p);
+    expect(removed).toEqual(["refreshIfDirty"]);
+    expect(made).toEqual([1]);
+  });
+});
