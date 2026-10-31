@@ -38,6 +38,7 @@ move them.
 | Review Public Comments | Line no(s) / Table / Figure | each `p.N` and each `line(s) N–M` / `L N` links to its page. Draft line numbers restart, so a line is placed on the page, near the row's own pages, whose numbered lines hold it |
 | Review Change Sets | Sections, Pages | the union over the change-set's comments, sorted by page, each linked |
 | Review Change Sets | Agentic status | the same, per change-set; the status is its PCs' Agentic statuses, each once |
+| Review Change Sets | Agentic status (filter) | one plain value per change set, for a filter view (owner, 2026-10-31): "Needs human" if any of its comments needs a person, else the least advanced of its comments' Agentic statuses (Not started, Working, PR open, Ready for review, Change merged); "Not in comment record" only when all are |
 | Review Change Sets | Public Comments | `No. n (Status) · comment`, status in bold, joined by a blank line |
 | Review Change Sets | Suggested Revisions, PC Architect Feedback, Dispositions | `No. n · text`, one per comment |
 
@@ -209,6 +210,26 @@ moves, or a tab or a header the script reads is renamed. Re-paste Code.gs
 only when the script itself changes. Renaming a header the script reads,
 without rewriting Config, leaves that column unlinked; it fails nothing.
 
+## Sheet conventions (any agent-written Google Sheet)
+
+These hold for every Google Sheet an agent writes or keeps current, not only
+the review sheets (owner, 2026-10-31):
+
+| colour | who controls it | lock |
+|---|---|---|
+| grey | mechanical: ids, headers, copied source text | owner only |
+| blue | people: the human-controlled columns | open to the sheet's editors |
+| orange | editor gates (Ready for agent, Ready for merge) | its own lock, owner plus the named editors |
+| green | agent-derived: links, joins, status | owner only |
+
+- **Templates** are locked to the owner except the blue columns; the orange
+  gates carry their own lock that starts with the owner alone.
+- **The Config tab** is visible, never hidden, and locked to the owner: the
+  agent writes it, people can read what the sheet is set up for.
+- **Which template** depends on the document's authoring stage: the
+  Contributor template while it is being drafted and authored, the Public
+  Comment Review template once public comment opens.
+
 ## Published with the document's site
 
 `scripts/review-sheet-site.ts --out <site>` (package script
@@ -278,7 +299,7 @@ topic), and each change set gets a GitHub issue.
 
 | tab | who writes | columns |
 |---|---|---|
-| **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Selected Sections** (a multi-select dropdown of the document's table of contents, each section marked under its chapter with "└ " (and "│ " per further level), since a dropdown cannot nest (owner, 2026-10-31); not leading spaces, because Sheets trims a multi-select cell and the first chip would lose them and read as Invalid; it stays plain, because a dropdown chip cannot carry a link), any number of **Contributor Feedback (…)** columns, one per contributor, with their initials or name in the brackets (e.g. `Contributor Feedback (CL)`); the script reads every column whose header is `Contributor Feedback` or starts `Contributor Feedback (`. Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Grey, mechanical, by the script (owner, 2026-10-31): **Section links** (each selected section on its own line, linked to its place on the document page, like the Sections column of the public-comment log; it is mechanical, a copy of Selected Sections with links, so grey, not green). Green, by the agent: **Contributor Feedback (agent)**, right of Ready for merge (owner, 2026-10-31): the agent's proposed direction for resolving the change set, so people react to a proposal rather than draft from nothing; it is not a person's feedback, the script leaves it out of the Contributor Feedback columns, and it decides nothing. Green, by the script from Agent: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`), **Staging review page** (a "review" link to the change set's preview while its PR is open) |
+| **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Selected Sections** (a multi-select dropdown of the document's table of contents, each section indented under its chapter by three U+2800 blanks per level, since a dropdown cannot nest (owner, 2026-10-31; a "└ " mark was tried first and found too cluttered); not real spaces, because Sheets trims a multi-select cell and the first chip would lose them and read as Invalid; it stays plain, because a dropdown chip cannot carry a link), any number of **Contributor Feedback (…)** columns, one per contributor, with their initials or name in the brackets (e.g. `Contributor Feedback (CL)`); the script reads every column whose header is `Contributor Feedback` or starts `Contributor Feedback (`. Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Grey, mechanical, by the script (owner, 2026-10-31): **Section links** (each selected section on its own line, linked to its place on the document page, like the Sections column of the public-comment log; it is mechanical, a copy of Selected Sections with links, so grey, not green). Green, by the agent: **Contributor Feedback (agent)**, right of Ready for merge (owner, 2026-10-31): the agent's proposed direction for resolving the change set, so people react to a proposal rather than draft from nothing; it is not a person's feedback, the script leaves it out of the Contributor Feedback columns, and it decides nothing. Green, by the script from Agent: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`), **Staging review page** (a "review" link to the change set's preview while its PR is open), **Agentic status (filter)** (the change set's status as one plain value, for the "By agentic status" filter view; green like the other columns the script copies from Agent, owner 2026-10-31) |
 | **Agent** | the agent only | one row per change set: Change-set, Issue (URL), Agentic status, Pull request (change set), What the PRs changed (change set), Agent completed (UTC, change set), Staging review page (change set), Feedback basis (change set). The agent writes it as each step completes, by the steps of the `review-sheet-agent-columns` skill (core#315, not yet merged); a drafting sheet has no per-comment rows, so only its change-set columns apply |
 | **TOC** (hidden) | the script | the Sections dropdown's list and each entry's link. Rewritten on every refresh, so it follows the document |
 
@@ -445,15 +466,26 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    Paste the script into the template itself once, so every copy starts with
    it. A copy keeps the version it was made with: when Code.gs changes,
    paste it again into each sheet in use.
-6. **Drafting only: allow multiple sections.** installTriggers checks the
-   Selected Sections dropdown: it adds the rule (a dropdown from
-   `TOC!A2:A`) when the column has none, leaves an existing one alone (a
-   rewrite would clear its tick), and then shows a box naming the one step
-   left. Select the Selected Sections column > Data > Data validation > the
-   dropdown rule > Display style **Chip** (Advanced options) > tick **Allow
-   multiple selections** > Done. Copies made after the template has it
-   ticked keep it. The tick is a person's step: neither the Sheets API nor
-   Apps Script can set it on a from-a-range rule.
+6. **Drafting only: finish the Selected Sections dropdown.** installTriggers
+   checks the dropdown: it adds the rule (a dropdown from `TOC!A2:A`) when
+   the column has none, and leaves an existing one alone (a rewrite would
+   clear its tick). Two settings are a person's, once per sheet:
+   - click the column letter above "Selected Sections" to select the column;
+   - choose Data, then Data validation;
+   - open the rule for that column (the sidebar lists it by its range, such
+     as `'Contributor Feedback'!E2:E1000`, as "Dropdown (from a range)");
+   - tick **Allow multiple selections**;
+   - open Advanced options and set Display style to **Chip**;
+   - press Done.
+
+   Neither Apps Script nor the Sheets API can read or set these two
+   settings, so installTriggers cannot check them directly. It shows the
+   steps, with the exact range, unless it has evidence they are done: a cell
+   already holding two sections from the list, or a Yes to the box's "Is this
+   done already?" (kept as the document property `dropdownDone`). Copies made
+   after the template has them keep them. The same steps are written at the
+   top of the Config tab, as `SETUP` rows, so they stay with the sheet
+   (owner, 2026-10-31); the script ignores those rows.
 7. **Ask the agent to watch it.** In the project chat: "watch the
    <document> log" with the copy's URL. The coordinator starts the sheet's
    watcher thread (§"The watcher"). Setup is not finished without it.
@@ -465,10 +497,12 @@ opens it.
 
 | sheet | view | shows |
 |---|---|---|
-| drafting: Contributor Feedback | Open | rows with a Title, Ready for merge not Yes |
+| drafting: Contributor Feedback | By agentic status | every row; pick values in the Agentic status (filter) column's filter (a plain copy of the change set's Agent status, owner 2026-10-31) |
+| | Open | rows with a Title, Ready for merge not Yes |
 | | Ready for editor | rows with a Title, Ready for agent not Yes |
 | | Decided | Ready for merge is Yes |
 | public comment: Review Change Sets | Change sets: Open / Ready for editor / Decided | the same three, on its Ready columns |
+| | Change sets: by agentic status | every change set; pick values in the Agentic status (filter) column's filter |
 | public comment: Review Public Comments | Comments: Open | a No., Disposition empty |
 | | Comments: Decided | Disposition filled |
 
@@ -489,7 +523,7 @@ Sections before anything else:
 
 | the pick | what the script does |
 |---|---|
-| a current section, with or without its "└ " mark | rewrites it to the dropdown's name, mark included |
+| a current section, with or without its indent (or the old "└ " mark) | rewrites it to the dropdown's name, indent included |
 | a section renamed or renumbered since it was picked | finds it by its anchor (the TOC tab's column C keeps the anchors of the names it offered before) and rewrites it to the new name |
 | a section no longer in the document | keeps it, so nothing a person chose is lost, and adds a line in Section links: ⚠ "<name>" is not in the document now: pick its section again |
 

@@ -2,7 +2,6 @@
   "id": "content-author",
   "name": "Content Authoring",
   "description": "Create and develop content artifacts according to the project plan.",
-  "roles": ["author", "business-analyst", "fhir-modeller", "terminologist", "admin"],
   "requiredCapabilities": [
     { "capabilityId": "git-push", "degradation": "warn" }
   ],

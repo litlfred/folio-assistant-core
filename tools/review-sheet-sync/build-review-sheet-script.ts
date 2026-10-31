@@ -76,7 +76,7 @@ export const DRAFT_TABS = { FEEDBACK: "Contributor Feedback", AGENT: "Agent", TO
 export const DRAFT_COLUMNS = {
   draft: {
     cs: "Change-set", title: "Title", sections: "Selected Sections", sectionLinks: "Section links", feedback: "Contributor Feedback",
-    issue: "Issue", agentic: "Agentic status", staging: "Staging review page",
+    issue: "Issue", agentic: "Agentic status", staging: "Staging review page", status: "Agentic status (filter)",
   },
   draftAgent: {
     csId: "Change-set", issue: "Issue", agentic: "Agentic status", prs: "Pull request (change set)",
@@ -92,16 +92,19 @@ export const DRAFT_COLUMNS = {
  * choices with ", ".
  */
 /**
- * The dropdown is a flat list, so a section is marked under its chapter with
- * a tree mark, "\u2514 " ("└ "), and "\u2502 " ("│ ") per further level (owner,
- * 2026-10-31, "Indent sub-sections"). Not leading spaces: a multi-select cell
- * is stored trimmed, so a first chip that began with spaces lost them and no
- * longer matched the list ("Invalid"). The script and the feedback-issue
- * reader compare names with the mark stripped (`bareName`), so a value picked
- * before the mark still links.
+ * The dropdown is a flat list, so a section is indented under its chapter
+ * (owner, 2026-10-31, "Indent sub-sections"; the "└ " mark tried first was
+ * "too cluttered", so plain indent). The indent is three U+2800 (Braille
+ * pattern blank) per level, which shows as blank space but is not whitespace:
+ * Sheets stores a multi-select cell trimmed, so a first chip that began with
+ * real spaces lost them and no longer matched the list ("Invalid"). The
+ * script and the feedback-issue reader compare names with the indent
+ * stripped (`bareName`), also the old "└ "/"│ " marks, so a value picked
+ * before still links and the script rewrites it to the current name.
  */
-export const treeMark = (depth: number) => (depth > 0 ? "\u2502\u2002".repeat(depth - 1) + "\u2514\u2002" : "");
-export const bareName = (n: string) => n.replace(/^[\s\u2502\u2514]+/, "").trim();
+export const INDENT = "\u2800\u2800\u2800";
+export const treeMark = (depth: number) => (depth > 0 ? INDENT.repeat(depth) : "");
+export const bareName = (n: string) => n.replace(/^[\s\u2800\u2502\u2514]+/, "").trim();
 
 export function buildToc(a: { chapters: Chapter[]; sections: DraftSection[] }): [string, string][] {
   const clean = (s: string) => s.replace(/,/g, ";").replace(/\s+/g, " ").trim();
@@ -137,7 +140,7 @@ export const DEFAULT_COLUMNS = {
   rcs: {
     cs: "Change-set", sections: "Sections", pages: "Pages", comments: "Public Comments",
     revisions: "Suggested Revisions", feedback: "PC Architect Feedback", dispositions: "Dispositions",
-    agentic: "Agentic status", staging: "Staging review page",
+    agentic: "Agentic status", staging: "Staging review page", status: "Agentic status (filter)",
   },
   agent: {
     no: "No.", pc: "Comment ref", agentic: "Agentic status", cs: "Change-sets",
@@ -309,12 +312,42 @@ export function buildConfig(repo: string, cfgPath: string): SheetConfig {
 const CHUNK = 40_000;
 
 /**
+ * The setup steps a person takes, written at the top of the Config tab so
+ * they stay with the sheet (owner, 2026-10-31: "so people don't lose the
+ * info"). The skill review-sheet-script says the same; the drafting script's
+ * installTriggers box shows the dropdown steps with the exact range.
+ */
+export function setupSteps(c: SheetConfig): string[] {
+  const steps = [
+    "Setup, once per sheet (the skill review-sheet-script has the detail):",
+    "1. Extensions, then Apps Script. Replace all of Code.gs with the published script and save.",
+    "2. Pick installTriggers in the function list and press Run. Allow access (Advanced, then continue).",
+    "3. Reload the sheet. A Review links menu appears; Review links, then Refresh now, checks it.",
+  ];
+  if (c.CFG.MODE === "drafting") {
+    const col = c.COLS.draft?.sections ?? "Selected Sections";
+    steps.push(
+      `4. Finish the ${col} dropdown. Neither the script nor the Sheets API can set these two settings:`,
+      `   • Click the column letter above "${col}" to select the column`,
+      "   • Choose Data, then Data validation",
+      `   • Open the rule for that column (it says "Dropdown (from a range)")`,
+      "   • Tick Allow multiple selections",
+      "   • Open Advanced options and set Display style to Chip",
+      "   • Press Done",
+    );
+  }
+  steps.push("Below: the script's settings. Ask the agent to change them; do not edit by hand.");
+  return steps;
+}
+
+/**
  * The Config tab's rows: a header, then CFG, COLS and DATA, each as JSON with
  * a leading "|" so a sheet never reads it as a number or formula, a long
  * value continued on the next rows under the same key.
  */
 export function configRows(c: SheetConfig): string[][] {
-  const rows: string[][] = [["Key", "Value (JSON, written by the agent from sheet-sync.json; do not edit)"]];
+  const rows: string[][] = [["Key", "Value (written by the agent from sheet-sync.json; do not edit)"]];
+  for (const line of setupSteps(c)) rows.push(["SETUP", line]);
   for (const key of ["CFG", "COLS", "DATA"] as const) {
     // Indented only where a person might edit by hand (CFG: URLs, tab names;
     // COLS: column headers). DATA is generated from the folio, so it stays

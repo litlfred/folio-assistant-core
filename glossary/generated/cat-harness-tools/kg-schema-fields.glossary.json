@@ -3871,20 +3871,6 @@
       "status": "candidate"
     },
     {
-      "id": "constraints.constraintcontext.laketreecontainsbasename",
-      "prefLabel": "ConstraintContext.lakeTreeContainsBasename",
-      "definition": "Basename lookup under a Lake package root (for lean.ref fallback).",
-      "source": "cat-harness-tools/schemas/constraints.ts#ConstraintContext.lakeTreeContainsBasename",
-      "status": "candidate"
-    },
-    {
-      "id": "constraints.constraintcontext.leancontent",
-      "prefLabel": "ConstraintContext.leanContent",
-      "definition": "Lean sibling stub content (for §3b-cond kind-check), if the file exists.",
-      "source": "cat-harness-tools/schemas/constraints.ts#ConstraintContext.leanContent",
-      "status": "candidate"
-    },
-    {
       "id": "constraints.constraintcontext.mdcontent",
       "prefLabel": "ConstraintContext.mdContent",
       "definition": "Markdown content of the companion .md file (for cross-ref scanning).",

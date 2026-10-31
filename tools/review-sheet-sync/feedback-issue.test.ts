@@ -45,7 +45,7 @@ describe("feedback issues become Contributor Feedback rows", () => {
   test("the row: Sections from the block's anchor, a draft Title, feedback signed by login", () => {
     expect(feedbackRow({ body: formBody, url: "https://github.com/o/r/issues/7", login: "ana" }, anchors)).toEqual({
       title: "1.1 Global challenges: Add shortage numbers.",
-      sections: "\u2514\u20021.1 Global challenges",
+      sections: "\u2800\u2800\u28001.1 Global challenges",
       feedback: "@ana (Technical): Add shortage numbers. They matter.",
       issue: "https://github.com/o/r/issues/7",
     });
@@ -61,7 +61,7 @@ describe("feedback issues become Contributor Feedback rows", () => {
 
 describe("feedbackBasis", () => {
   const header = ["Change-set", "Title", "Selected Sections", "Contributor Feedback (CL)", "Ready for merge", "Contributor Feedback (agent)", "Issue"];
-  const row = ["CS-001", "Define registry", "\u2514\u20021.1 Global challenges", "CL: needs a definition", "No", "Try X", "dth#1"];
+  const row = ["CS-001", "Define registry", "\u2800\u2800\u28001.1 Global challenges", "CL: needs a definition", "No", "Try X", "dth#1"];
   const b = feedbackBasis(header, row);
   test("changes when a person's cell changes", () => {
     expect(feedbackBasis(header, row.map((v, i) => (i === 3 ? v + " more" : v)))).not.toBe(b);
