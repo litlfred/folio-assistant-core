@@ -134,20 +134,28 @@ export function dispositions(input: DispositionInput): { text: string; problems:
  */
 export function brief(input: DispositionInput, look?: string, pcs?: string): string {
   const { text } = dispositions(input);
+  // The sheet's No. is not the comment's id (on DPI-H, No. 136 is PC-0137), so
+  // the ref is read from the Agent - Comments "Comment ref" column, never derived.
+  const refOf: Record<string, string> = {};
+  if (pcs) {
+    if (!input.comments) throw new Error("--pcs needs \"comments\": the Agent - Comments rows with their header, for the Comment ref of each No.");
+    const no = column(input.comments, "No."), ref = column(input.comments, "Comment ref");
+    input.comments.slice(1).forEach((r) => { const n = String(r[no] ?? "").trim(), f = String(r[ref] ?? "").trim(); if (n && f) refOf[n] = f; });
+  }
   const lines = text.split("\n").filter((l) => l && !/^Decided\b/.test(l));
-  const md = lines.map((l) => l.replace(/^(Overall|Nos?\. [^:]+):/, (_, h) => `- **${pcs && h !== "Overall" ? linkNos(h, pcs) : h}:**`));
+  const md = lines.map((l) => l.replace(/^(Overall|Nos?\. [^:]+):/, (_, h) => `- **${pcs && h !== "Overall" ? linkNos(h, pcs, refOf) : h}:**`));
   return ["<!-- review-brief -->", ...md, ...(look ? [`- **Where to look:** ${look}`] : []), "<!-- /review-brief -->"].join("\n");
 }
 
 /**
  * "Nos. 127 to 129 and 134" with each comment linked to its row on the
- * public-comment dashboard (`<dashboard>#PC-0127`), so a reader of the review
- * page can open the comment itself. A run is spelled out, since a link to
- * "127 to 129" would hide 128.
+ * public-comment dashboard (`<dashboard>#<Comment ref>`), so a reader of the
+ * review page can open the comment itself. A run is spelled out, since a link
+ * to "127 to 129" would hide 128. A number with no known ref stays unlinked.
  */
-export function linkNos(label: string, dashboard: string): string {
+export function linkNos(label: string, dashboard: string, refOf: Record<string, string>): string {
   const base = dashboard.replace(/#.*$/, "");
-  const link = (n: string) => `[${n}](${base}#PC-${n.padStart(4, "0")})`;
+  const link = (n: string) => (refOf[n] ? `[${n}](${base}#${refOf[n]})` : n);
   const expanded = label.replace(/(\d+) to (\d+)/g, (_, a, b) => {
     const out: number[] = [];
     for (let i = Number(a); i <= Number(b); i++) out.push(i);

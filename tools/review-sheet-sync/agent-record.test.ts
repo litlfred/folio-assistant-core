@@ -42,10 +42,15 @@ describe("agent-record (owner, 2026-10-31, option C)", () => {
     expect(brief({ cs: "X", nos: [1, 2], previous: "Decided (No. 1, d): A.", overall: "All.", items: [{ nos: [1, 2], word: "Accepted", why: "Done." }] }, "3.1, second paragraph"))
       .toBe("<!-- review-brief -->\n- **Overall:** All.\n- **Nos. 1 and 2:** Accepted. Done.\n- **Where to look:** 3.1, second paragraph\n<!-- /review-brief -->");
   });
-  test("--pcs links each comment to its dashboard row, a run spelled out", () => {
+  test("--pcs links each comment to its dashboard row by its Comment ref, a run spelled out", () => {
     const d = "https://x.io/pc/";
-    expect(linkNos("Nos. 127 to 129 and 134", d)).toBe(`Nos. [127](${d}#PC-0127), [128](${d}#PC-0128), [129](${d}#PC-0129) and [134](${d}#PC-0134)`);
-    expect(brief({ cs: "X", nos: [7], overall: "All 2 fixed.", items: [{ nos: [7], word: "Accepted" }] }, undefined, d))
-      .toBe(`<!-- review-brief -->\n- **Overall:** All 2 fixed.\n- **No. [7](${d}#PC-0007):** Accepted.\n<!-- /review-brief -->`);
+    // On DPI-H the sheet's No. is one below the ref: No. 136 is PC-0137.
+    const refs = { "127": "PC-0128", "128": "PC-0129", "129": "PC-0130", "134": "PC-0135" };
+    expect(linkNos("Nos. 127 to 129 and 134", d, refs)).toBe(`Nos. [127](${d}#PC-0128), [128](${d}#PC-0129), [129](${d}#PC-0130) and [134](${d}#PC-0135)`);
+    expect(linkNos("No. 5", d, {})).toBe("No. 5");
+    const rows = [["No.", "Comment ref", "Change-sets"], ["7", "PC-0008", "X"]];
+    expect(brief({ cs: "X", comments: rows, overall: "All fixed.", items: [{ nos: [7], word: "Accepted" }] }, undefined, d))
+      .toBe(`<!-- review-brief -->\n- **Overall:** All fixed.\n- **No. [7](${d}#PC-0008):** Accepted.\n<!-- /review-brief -->`);
+    expect(() => brief({ cs: "X", nos: [7], items: [] }, undefined, d)).toThrow(/Comment ref/);
   });
 });

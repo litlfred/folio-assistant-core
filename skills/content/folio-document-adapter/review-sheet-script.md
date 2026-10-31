@@ -303,8 +303,10 @@ cells, and the agent runs the sheet's own check before writing.
   review" pane shows only that section (cat-harness-tools#1153). Add
   `--pcs <public-comment dashboard url>` (on smart-ra,
   `https://litlfred.github.io/smart-ra/en/folio-assistant-core/public-comments/folio/dpi-h-ra/`)
-  and every comment number links to its row there (`#PC-0127`), so the
-  reviewer can open the comment itself. A run such as "127 to 131" is
+  and every comment number links to its row there, so the reviewer can open
+  the comment itself. The link target is the comment's own id from the
+  Agent - Comments "Comment ref" column (pass those rows as `comments`): the
+  sheet's No. is not the id (on DPI-H, No. 136 is PC-0137). A run such as "127 to 131" is
   spelled out, so no comment hides behind a range.
 
 Drafting sheets have no comment numbers: pass `"nos": []` and items without
