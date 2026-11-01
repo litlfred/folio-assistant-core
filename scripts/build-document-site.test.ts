@@ -50,6 +50,19 @@ describe("build-document-site", () => {
     expect(landing).not.toContain("blocks)");
   });
 
+  test("a document's status is part of its title: heading, page title and landing list", async () => {
+    const d = scaffold();
+    const manifest = join(d, "folio", "handbook", "handbook.ts");
+    writeFileSync(manifest, readFileSync(manifest, "utf-8").replace('title: "Handbook",', 'title: "Handbook",\n  meta: { status: "Working Draft" },'));
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out);
+    expect(r.errors).toEqual([]);
+    expect(r.documents.map((x) => x.title)).toEqual(["Handbook - Working Draft"]);
+    const html = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
+    expect(html).toMatch(/<h1[^>]*>\s*Handbook - Working Draft\s*<\/h1>/);
+    expect(html).toContain("<title>Handbook - Working Draft");
+  });
+
   test("every block's KG node is published, one per block and as the document's graph", async () => {
     const d = scaffold();
     const out = join(d, "_site");

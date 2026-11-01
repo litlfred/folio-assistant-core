@@ -814,9 +814,14 @@ export async function buildDocumentSite(
   for (const d of docs) {
     const built = await buildDocumentMarkdown(d.path);
     for (const i of built.issues) if (i.level === "error") result.errors.push(`${d.slug}: ${i.message}`);
+    const manifest = (await import(d.path)).default as Paper;
+    // A document with a status ("Working Draft") carries it in its title
+    // everywhere: the heading, the page title and the landing list.
+    const status = typeof manifest.meta?.status === "string" ? manifest.meta.status : undefined;
+    const title = withStatus(manifest.title ?? d.slug, status);
+    if (status && manifest.title) built.markdown = built.markdown.replace(`# ${manifest.title}\n`, `# ${title}\n`);
     const termLinks = opts.linkTerms ? await glossaryTermLinks(repoRoot, documentPageDir(d.slug)) : undefined;
     const html = await renderDocumentHtml(built.markdown, { math, bibliographyUrl: opts.bibliographyUrl, termLinks });
-    const manifest = (await import(d.path)).default as Paper;
     // The page under the locale, its data where it was (document-site-route.ts).
     const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
     const data = join(outDir, ...documentDataDir(d.slug).split("/"));
@@ -847,7 +852,6 @@ export async function buildDocumentSite(
       return compact || r.inserted === 0 ? r.html : r.html.replace("</body>", `${compactActionsScript(cfg, documentPage(d.slug))}</body>`);
     };
     const lazy = opts.lazy === "always" || ((opts.lazy ?? "auto") === "auto" && blocks.length >= LAZY_THRESHOLD);
-    const title = manifest.title ?? d.slug;
     // Themed, the theme's sidebar is the page's index, built from heading ids;
     // the rail's declared contents (pageContents) would be a second one.
     if (!lazy) {
@@ -855,7 +859,7 @@ export async function buildDocumentSite(
       else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(html) + html, mathOpts)));
     } else {
       // The whole document on one page, for file://, no-JS readers and tools.
-      writeFileSync(join(dir, "index.hydrated.html"), withActions(page(manifest.title ?? d.slug, pageContents(html) + html, mathOpts)));
+      writeFileSync(join(dir, "index.hydrated.html"), withActions(page(title, pageContents(html) + html, mathOpts)));
       const split = splitBlocks(built.markdown, new Set(blocks.map((b) => b.label)));
       const index = { chunks: 0, of: {} as Record<string, number>, ids: {} as Record<string, number> };
       mkdirSync(join(data, "blocks"), { recursive: true });
@@ -891,8 +895,7 @@ export async function buildDocumentSite(
     writeFileSync(join(data, "graph.jsonld"), JSON.stringify({ "@graph": graph.nodes.map((n) => JSON.parse(n.text) as unknown) }) + "\n");
     const media = join(dirname(d.path), "media");
     if (existsSync(media)) cpSync(media, join(dir, "media"), { recursive: true });
-    const status = typeof manifest.meta?.status === "string" ? manifest.meta.status : undefined;
-    result.documents.push({ slug: d.slug, title: status ? `${title} - ${status}` : title, blocks: built.blockCount, page: documentPage(d.slug) });
+    result.documents.push({ slug: d.slug, title, blocks: built.blockCount, page: documentPage(d.slug) });
   }
   const list = result.documents
     // A reader looks for the document by its title, not its folder name (owner, 2026-11-01).
@@ -1031,4 +1034,9 @@ if (import.meta.main) {
     process.exit(1);
   }
   console.error(`✓ ${r.documents.length} document(s) → ${relative(repo, out) || "."}`);
+}
+
+/** A document's title with its status, "Title - Working Draft", or the title alone. */
+export function withStatus(title: string, status?: string): string {
+  return status ? `${title} - ${status}` : title;
 }
