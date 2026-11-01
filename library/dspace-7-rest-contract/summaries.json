@@ -970,6 +970,975 @@
           "drafted_at": "2026-11-01"
         }
       ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s052-single-bitstream-format",
+      "source": "sections/s052-single-bitstream-format.md",
+      "source_hash": "fc7cf2f3dca2507fb5d0cd433b54c18a4a3ef7955e39064d7e1053047c482c27",
+      "narrative": [
+        {
+          "text": "Specifies the single bitstream format endpoint: GET returns its id, descriptions, mimetype, support level, internal flag and extensions, while admin-only PUT updates it and DELETE removes it. The status codes cover an invalid support level (400), missing login or rights (401, 403) and a format that does not exist (404).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s053-bitstreams-endpoints",
+      "source": "sections/s053-bitstreams-endpoints.md",
+      "source_hash": "d99a22de56a884f3efa61bdad36ce5d01589b0b569b27d10e4788ad8e71b4dda",
+      "narrative": [
+        {
+          "text": "Heading for the bitstreams endpoints, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s054-main-endpoint",
+      "source": "sections/s054-main-endpoint.md",
+      "source_hash": "ef0ac12a04bf964069c6bb5f8ac37f842d4fe6c101d7273782033552bc312d96",
+      "narrative": [
+        {
+          "text": "Says the main /api/core/bitstreams endpoint is unsupported, because bitstreams hold much more than item files, so listing them all adds little value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s055-single-bitstream",
+      "source": "sections/s055-single-bitstream.md",
+      "source_hash": "771eecb227c4d3003d14695f65a4c4b57747b24165835d8d4aae8b60eff2b3dd",
+      "narrative": [
+        {
+          "text": "Specifies GET of a single bitstream, returning its uuid, name, metadata, size, MD5 checksum and sequence id, with links to its format, content, bundle and thumbnail.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s056-patch-operations",
+      "source": "sections/s056-patch-operations.md",
+      "source_hash": "e9239c3a0700546f7e7c4a025c389832d14e86e98b4a644dd9d36db819fe2ad7",
+      "narrative": [
+        {
+          "text": "Says bitstream metadata is changed as described in the page on modifying metadata via Patch.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s057-linked-entities",
+      "source": "sections/s057-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for a bitstream's linked entities; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s058-format",
+      "source": "sections/s058-format.md",
+      "source_hash": "4412eadd2b110e24982d0ee595662c4e4c6fdf7a0351bb5ec03a8df77cb11347",
+      "narrative": [
+        {
+          "text": "Specifies the format link of a bitstream: GET returns it, and PUT sets it from exactly one bitstream format URI as text/uri-list, with 400 if the format does not exist or more than one is given. It notes that setting the format, known or unknown, removes dc.format, while dc.format is set by a separate call and is discouraged for a known format.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s059-bundle",
+      "source": "sections/s059-bundle.md",
+      "source_hash": "476c468b01dab134ca6a27b8b192dad89d81f96814278ef796ccd7e55f627f13",
+      "narrative": [
+        {
+          "text": "Specifies the bundle link of a bitstream: GET returns the bundle, and PUT with exactly one bundle URI moves the bitstream there, with 422 if the bundle does not exist or more than one is given.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s060-content",
+      "source": "sections/s060-content.md",
+      "source_hash": "6ac346fbe631675b186d4e67a067bc6a44cbda777795604f38cfc66b82636280",
+      "narrative": [
+        {
+          "text": "Specifies the content link of a bitstream, which returns its bits with ETag (the MD5 checksum), Content-Type and Content-Length, and accepts a short-lived authentication-token for restricted files; If-Modified-Since, Range and If-None-Match are not implemented yet.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s061-main-thumbnail",
+      "source": "sections/s061-main-thumbnail.md",
+      "source_hash": "9cf08c9ea15b64b69e7c580f02cfea633fe88cf044d4782435bbdb34dcbfc227",
+      "narrative": [
+        {
+          "text": "Specifies the thumbnail link of a bitstream, supported only for bitstreams in the ORIGINAL bundle, returning 204 when there is no thumbnail.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s062-search-methods",
+      "source": "sections/s062-search-methods.md",
+      "source_hash": "7d8af4ac799f5ea877a92826131c552408861d1397c3a6e58113e551d1f2da7b",
+      "narrative": [
+        {
+          "text": "Heading for the bitstream search methods; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s063-byitemhandle",
+      "source": "sections/s063-byitemhandle.md",
+      "source_hash": "d0ed7b0d9b1f4217ec55886958ae0d49cf7aa8f235ff132fdb4d2f4bd82adb4b",
+      "narrative": [
+        {
+          "text": "Specifies the byItemHandle search, which finds a bitstream from an item's handle plus its sequence id or filename, returning 204 when none matches and 400 when both are missing.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s064-delete-method",
+      "source": "sections/s064-delete-method.md",
+      "source_hash": "84e2cee50a3f7b367674af751c4150da1d599052c500db99539d075afdf79409",
+      "narrative": [
+        {
+          "text": "Heading for the bitstream DELETE method; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s065-single-bitstream-delete",
+      "source": "sections/s065-single-bitstream-delete.md",
+      "source_hash": "28cf003f37029f3c50a6d692e29504160a8a2e2e82d7793c27b5c91b99bee632",
+      "narrative": [
+        {
+          "text": "Specifies deleting a single bitstream, which works for item bitstreams and community or collection logos, though the status list gives 422 for a logo.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s066-multiple-bitstreams-delete",
+      "source": "sections/s066-multiple-bitstreams-delete.md",
+      "source_hash": "21b4b7f2637eec456ff0d94ecb3533c38af368036fac7ad69ca9dede1f7c5464",
+      "narrative": [
+        {
+          "text": "Specifies deleting several item bitstreams in one PATCH to /api/core/bitstreams with a list of remove operations, mainly for the item admin edit page. It returns 404 if any bitstream is missing and 422 if any is not attached to an item.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s067-browse-endpoints",
+      "source": "sections/s067-browse-endpoints.md",
+      "source_hash": "f0b6dc66514e1556cad7097742672bc30bb098b11281bf63a8a9e778aa6a7359",
+      "narrative": [
+        {
+          "text": "Heading for the browse endpoints, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s068-main-endpoint",
+      "source": "sections/s068-main-endpoint.md",
+      "source_hash": "181c8a7f59a993478d36428c39fd2c8af55327347b8d92da9de37d7fa33d09b6",
+      "narrative": [
+        {
+          "text": "Specifies /api/discover/browses, which gives access to the Solr-based browse system by listing the available browse indexes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s069-browse-types",
+      "source": "sections/s069-browse-types.md",
+      "source_hash": "4bc828a9b6e8abe20ce1d63fdac88b3f9fcebe3de9163f4cda974d543f1babda",
+      "narrative": [
+        {
+          "text": "Describes the three browse types and which links each uses. valueList has two levels, entries such as authors then their items, through the entries link; flatBrowse lists items directly through the items link; and hierarchicalBrowse shows a vocabulary tree through the vocabulary link, then the items of an entry.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s070-single-browse-index",
+      "source": "sections/s070-single-browse-index.md",
+      "source_hash": "f79b3b1895ff7a0cac04207504dcb25b18744260bf606b7f8994b3dd09c15dd4",
+      "narrative": [
+        {
+          "text": "Specifies GET of a single browse index, returning its id, browse type, whether it is a metadata browse, data type (title, date or text), sort options, default order and the metadata fields it is built from. It links to its items and, for metadata browses only, its entries, and returns 404 for an unknown index.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s071-hierarchical-browse-index",
+      "source": "sections/s071-hierarchical-browse-index.md",
+      "source_hash": "cc90dc962aefbaede3d9e499a3a8ea569982566e990f96fc8324d59418919392",
+      "narrative": [
+        {
+          "text": "Specifies GET of a hierarchical browse index, returning its id, the hierarchicalBrowse type, the discovery facet used to filter items, the vocabulary holding the tree and its metadata fields, with a link to that vocabulary.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s072-browse-indexes-configured-for-metadata-linking",
+      "source": "sections/s072-browse-indexes-configured-for-metadata-linking.md",
+      "source_hash": "b9e8a1a1cfcacb72ec9a318001f484b8b3facdd80e0121514ba631ea692c61fb",
+      "narrative": [
+        {
+          "text": "Heading for browse indexes configured for metadata linking; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s073-get-a-single-index-configured-as-browse-links-fo",
+      "source": "sections/s073-get-a-single-index-configured-as-browse-links-fo.md",
+      "source_hash": "cf25c226f0902f512adfae67e311046a517ac886caed1bc6b16d71c03baaf2ac",
+      "narrative": [
+        {
+          "text": "Specifies the byFields search, which returns the browse index configured as browse links for one or more given metadata fields, with 204 if none is configured and 400 if the fields parameter is missing.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s074-browse-entries",
+      "source": "sections/s074-browse-entries.md",
+      "source_hash": "e0470295126533d6d9b928f49e053d8187ce6bfdd3383bb45b0add9fcdefc69e",
+      "narrative": [
+        {
+          "text": "Heading for browse entries; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s075-metadata-browse-1st-level",
+      "source": "sections/s075-metadata-browse-1st-level.md",
+      "source_hash": "b163fd54e41b58d73cdb2b43a498eb67a139c5d976bc537ef109bbb85f4564c5",
+      "narrative": [
+        {
+          "text": "Specifies the first level of a metadata browse, which returns entries with an authority, a value and an item count, plus an items link that HAL clients should follow. It takes pagination with only the default sort, a startsWith prefix filter and a community or collection scope, and returns 404 for a non-metadata index and 422 if page and startsWith are both sent.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s076-item-browse-or-2nd-level-metadata-browse",
+      "source": "sections/s076-item-browse-or-2nd-level-metadata-browse.md",
+      "source_hash": "367dd46ba918afad181a50f89d2e151c3268790a94aa97333acc3cac8e641bd3",
+      "narrative": [
+        {
+          "text": "Specifies the items of a browse index, used both for a flat item browse and for the second level of a metadata browse, with pagination, sorting by the index's sort options, startsWith and scope. A metadata browse needs exactly one of value or authority, and sending one to a non-metadata index, or omitting it on a metadata index, gives 500.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s077-bulkaccessconditionoptions-endpoints",
+      "source": "sections/s077-bulkaccessconditionoptions-endpoints.md",
+      "source_hash": "68fbdf1afbf63c98a751fb686c5c74cb7a8a9d1373a0be91ada15edbeee3951a",
+      "narrative": [
+        {
+          "text": "Heading for the bulk access condition options endpoints, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s078-main-endpoint",
+      "source": "sections/s078-main-endpoint.md",
+      "source_hash": "3d0e76b4ff906af8f72c4a30674f7ea33605bf4864dfe195699f63d74938cef1",
+      "narrative": [
+        {
+          "text": "Specifies /api/config/bulkaccessconditionoptions, which lists the configurations for bulk access control at item and bitstream level. Only one repository-wide configuration exists, set in access-conditions.xml, and only users who administer at least one community, collection or item may read it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s079-single-bulkaccessconditionoptions-form",
+      "source": "sections/s079-single-bulkaccessconditionoptions-form.md",
+      "source_hash": "40b18e6198b8e2ed8f35927410fb52aa923665d86f228dc27627600c955dd66b",
+      "narrative": [
+        {
+          "text": "Specifies GET of the single bulk access configuration, named default, which lists the access condition options allowed at item level and at bitstream level, such as openaccess, administrator, embargo and lease. An option may require a start date or end date bounded by a maximum, with the end after the start, and any configuration name other than default returns 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s080-bundles-endpoints",
+      "source": "sections/s080-bundles-endpoints.md",
+      "source_hash": "bf27cd746f6105fad355352a89d586de82b538f4f687558d1bb5182f7e3531a7",
+      "narrative": [
+        {
+          "text": "Heading for the bundles endpoints, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s081-main-endpoint",
+      "source": "sections/s081-main-endpoint.md",
+      "source_hash": "031d287abaf621bac801d89087259e3121851bd01581064b105bcfdaac657906",
+      "narrative": [
+        {
+          "text": "Says the main /api/core/bundles endpoint is unsupported and should not be implemented.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s082-single-bundle",
+      "source": "sections/s082-single-bundle.md",
+      "source_hash": "30109eef8d35f62cd45f5dcc5ca18215d0e00dfc274a30ff5babea2a7da78afe",
+      "narrative": [
+        {
+          "text": "Specifies GET of a single bundle, with a sample response giving its uuid, name such as ORIGINAL, and metadata. It links to its primary bitstream, bitstreams and item, and the sample embeds the bitstreams with their metadata, size, checksum and links.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s083-creating-a-bundle",
+      "source": "sections/s083-creating-a-bundle.md",
+      "source_hash": "37eb01393dc5de545c46c0d5eafab8fdd339300f890b0e59271ee3d4f8a7db32",
+      "narrative": [
+        {
+          "text": "Says bundles are created only as part of an item, and points to the item endpoint for that contract.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s084-deleting-a-bundle",
+      "source": "sections/s084-deleting-a-bundle.md",
+      "source_hash": "69fda9cc6dc01519faa941b194ac2f0281cd1a661d63f0166a868393f68845ac",
+      "narrative": [
+        {
+          "text": "Specifies DELETE of a bundle, which also deletes every bitstream in it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s085-bitstreams",
+      "source": "sections/s085-bitstreams.md",
+      "source_hash": "9231238bceea330f001d821d893eaf3f4d8e86cfaaeee12988586f42aea5c510",
+      "narrative": [
+        {
+          "text": "Specifies the bitstreams of a bundle: GET lists them with pagination, and POST uploads one file as multipart/form-data with optional name and metadata as a JSON property. Upload returns 201 with the new bitstream, 400 with no file and 412 when the declared size or checksum does not match, and any extra files are ignored.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s086-ordering-bitstreams",
+      "source": "sections/s086-ordering-bitstreams.md",
+      "source_hash": "7550328bd2575743a33e7fe925288229dec9f1902e6724de1ef592339de22b63",
+      "narrative": [
+        {
+          "text": "Says a bundle's bitstreams are reordered with a PATCH move operation on the bundle, and shows moving the last bitstream to the first position.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s087-primary-bitstream",
+      "source": "sections/s087-primary-bitstream.md",
+      "source_hash": "2846603c091175815bd37d97983a6e53ddda09542754789492142070fbafeea9",
+      "narrative": [
+        {
+          "text": "Says a bundle's primary bitstream is exposed as a link at /primaryBitstream and can be changed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s088-retrieve-primary-bitstream",
+      "source": "sections/s088-retrieve-primary-bitstream.md",
+      "source_hash": "266915336cf1d7462462df4e09c153031c2c2966f4648665905ea87af66c1c9b",
+      "narrative": [
+        {
+          "text": "Says GET on primaryBitstream retrieves a bundle's primary bitstream, which may be null.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s089-create-primary-bitstream",
+      "source": "sections/s089-create-primary-bitstream.md",
+      "source_hash": "b9ddce49f47159046675598c3f5a79454500276146ffdc516be09a525a161c67",
+      "narrative": [
+        {
+          "text": "Specifies POST to primaryBitstream, which marks one bitstream URI as primary when the bundle has none, returning 400 if one already exists and 422 if the bitstream is missing or not in the bundle.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s090-update-primary-bitstream",
+      "source": "sections/s090-update-primary-bitstream.md",
+      "source_hash": "1d267dbf1ca61b820d1dcdbe30854bf1988f083dc4650e02bb9b990481f542b1",
+      "narrative": [
+        {
+          "text": "Specifies PUT to primaryBitstream, which replaces an existing primary bitstream with the one URI given, returning 400 if there was none and 422 if the bitstream is missing or not in the bundle.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s091-removing-primary-bitstream",
+      "source": "sections/s091-removing-primary-bitstream.md",
+      "source_hash": "40bfb97ae5d6ca88f3892fb6139ab325d196769865b033d243688e536c323a2f",
+      "narrative": [
+        {
+          "text": "Specifies DELETE of primaryBitstream, which leaves the bundle with no primary bitstream without deleting or moving the bitstream itself, returning 400 if there was none.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s092-claimed-tasks-endpoints",
+      "source": "sections/s092-claimed-tasks-endpoints.md",
+      "source_hash": "d01dba07895a22dc5b2050808a9ada37609f60f47ff578b4ca60508b522bae17",
+      "narrative": [
+        {
+          "text": "Heading for the claimed tasks endpoints, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s093-main-endpoint",
+      "source": "sections/s093-main-endpoint.md",
+      "source_hash": "8a201494320656d6f61606d4b4684ed17c67ff2085df80bc23fdc5126aee0cea",
+      "narrative": [
+        {
+          "text": "Says listing all claimed tasks at /api/workflow/claimedtasks is not allowed; only filtered subsets can be retrieved.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s094-single-claimed-task",
+      "source": "sections/s094-single-claimed-task.md",
+      "source_hash": "3d5ff378b830f34ecccdee7b5aefe8e6167cf29e6eeff8191bb01b8a527e542d",
+      "narrative": [
+        {
+          "text": "Specifies GET of a single claimed task, returning its id, step and action, with links to the step, action, underlying workflow item and owning eperson.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s095-linked-entities",
+      "source": "sections/s095-linked-entities.md",
+      "source_hash": "26d243fd109b64c783bd0ec0b475eaf3071890d5378a73bd878dc579fd34fbe9",
+      "narrative": [
+        {
+          "text": "Heading for a claimed task's linked entities; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s096-workflowitem",
+      "source": "sections/s096-workflowitem.md",
+      "source_hash": "ac273cb6a78366203651f98918dabe092d9bbbd7616da8ba4f23af1969a6a3a4",
+      "narrative": [
+        {
+          "text": "Specifies the read-only workflowitem link of a claimed task, which returns the workflow item the task holds; it cannot change once the task exists.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s097-owner",
+      "source": "sections/s097-owner.md",
+      "source_hash": "a62e6fa13ca9894fd2367c28107c6697cded3849eff11e7c8349f6b73a1bbb3c",
+      "narrative": [
+        {
+          "text": "Specifies the read-only owner link of a claimed task, which returns the eperson who claimed it; the owner cannot change, and unclaiming is done with DELETE.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s098-workflow-step",
+      "source": "sections/s098-workflow-step.md",
+      "source_hash": "d3b114531bda260c793d2d517d66a389fdd3ed72452c0a8cf2d7c79fe8720ede",
+      "narrative": [
+        {
+          "text": "Specifies the read-only step link of a claimed task, which returns the workflow step currently assigned to it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s099-workflow-action",
+      "source": "sections/s099-workflow-action.md",
+      "source_hash": "71fa21d44c97f2f589c60dcccd2c2a253a8430218dc1c5cbc3cb5abf6e6fe9c4",
+      "narrative": [
+        {
+          "text": "Specifies the read-only action link of a claimed task, which returns its current workflow action; the action itself is performed by POSTing to the claimed task.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s100-search-methods",
+      "source": "sections/s100-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the claimed task search methods; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s101-findbyuser",
+      "source": "sections/s101-findbyuser.md",
+      "source_hash": "b20899f597c0100168860d4cfc6578102dd57957396c09aff96acceba1164543",
+      "narrative": [
+        {
+          "text": "Specifies the findByUser search, which returns the tasks claimed by the given user.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s102-findallbyitem",
+      "source": "sections/s102-findallbyitem.md",
+      "source_hash": "c8d1d49b231230b2ae409d585dfcca27d667c0fba8eb3048d8e0de5c51eb86e1",
+      "narrative": [
+        {
+          "text": "Specifies the admin-only findAllByItem search, which returns all claimed tasks for an item, with an empty page when there are none, 400 for a missing or invalid uuid and 422 when the uuid is not an item.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
