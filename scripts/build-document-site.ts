@@ -92,6 +92,30 @@ import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, document
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
+/**
+ * Tables, set apart from the narrative in the ArchiMate poster's look
+ * (cat-harness-tools `archimate/scripts/figure-theme.ts`, THEME): a white card
+ * with a deep ink header strip, pale banded rows and light rules, centred,
+ * with room above and below. White in light and dark mode alike, as figures
+ * are, so a table reads the same on every document page. Owner, 2026-11-01:
+ * tables "run into narrative text", "use theme stylings", "smart-ra poster
+ * colors/styling". `scope` prefixes every selector (the themed page).
+ */
+export function tableStyle(scope = ""): string {
+  const s = scope ? `${scope} ` : "";
+  return `
+  ${s}table { display: block; box-sizing: border-box; width: max-content; max-width: min(100%, 100vw - 7rem); overflow-x: auto; margin: 1.5rem 0; border-collapse: collapse;
+    background: #fff; color: #2d3748; border: 1px solid #14213d; border-radius: 6px; box-shadow: 0 1px 4px rgba(20, 33, 61, .18); font-size: .92em; }
+  ${s}th, ${s}td { border: 1px solid #c9cfd8; padding: .4rem .65rem; text-align: left; vertical-align: top; }
+  ${s}thead th { background: #14213d; color: #fff; font-weight: 600; border-color: #14213d; }
+  ${s}tbody tr:nth-child(even) > td { background: #f3f4f6; }
+  ${s}table a { color: #0b5cad; }
+  ${s}table code { color: inherit; background: none; padding: 0; }
+  /* A table wider than the reading column grows past it, centred on it, up to the window; only then does it scroll. */
+  @media (min-width: 50rem) { ${s}table { max-width: calc(100vw - 7rem); position: relative; left: 50%; transform: translateX(-50%); } }
+`;
+}
+
 /** The standalone page's own stylesheet. Light and dark follow the reader's system setting. */
 const PAGE_STYLE = `<style>
   :root { color-scheme: light dark; --fg: #1b1b1b; --bg: #fdfdfb; --muted: #5b5b5b; --link: #0b5cad; }
@@ -106,8 +130,7 @@ const PAGE_STYLE = `<style>
   a { color: var(--link); }
   a:focus-visible { outline: 3px solid var(--link); outline-offset: 2px; }
   h1, h2, h3 { line-height: 1.25; }
-  table { border-collapse: collapse; } th, td { border: 1px solid var(--muted); padding: .3rem .5rem; }
-  :target { scroll-margin-top: 1rem; }
+${tableStyle()}  :target { scroll-margin-top: 1rem; }
   .katex-display { overflow-x: auto; overflow-y: hidden; }
   dfn.defterm { font-style: normal; font-weight: 600; }
   .cite { color: var(--muted); }
@@ -158,7 +181,7 @@ const THEMED_STYLE = `
 .${DOC_CLASS} .fa-blk:empty { min-height: 3rem; }
 .${DOC_CLASS} .fa-one-page { font-size: .85rem; opacity: .72; }
 .${DOC_CLASS} .pc-bar { position: static; background: none; }
-`;
+${tableStyle(`.${DOC_CLASS}`)}`;
 
 /** A layout name as front matter may carry it, or a throw. */
 function layoutName(layout: string, what: string): string {
