@@ -2,11 +2,11 @@
 # folio-assistant-x80s
 $schema: bean/1.0.0
 title: 'INGEST: agent summaries of prose blocks, a QA sidecar drained slowly during ingestion'
-status: todo
+status: completed
 type: task
 priority: normal
 created_at: 2026-09-24T05:54:04Z
-updated_at: 2026-10-31T04:10:00Z
+updated_at: 2026-11-01T23:05:00Z
 parent: folio-assistant-slw1
 ---
 
@@ -38,8 +38,8 @@ Measured 2026-09-24: 1335 prose blocks, 10 with empty text, so 1325 to summarise
 - [x] drain commands, and the narratives review reads the sidecar
 - [x] viewer: the summary beside the extract, with a state badge; wireframe updated
 - [x] first drain: arxiv-2312.07755v1, 22 drafts
-- [ ] drain the rest a few blocks at a time during ingestion work
-- [ ] a person reviews the drafts (`bun run cat narratives`)
+- [x] drain the rest a few blocks at a time during ingestion work
+- [x] a person reviews the drafts (`bun run cat narratives`) → moved to `pvq4`
 
 ## Owner decision, 2026-09-24
 
@@ -55,8 +55,8 @@ Released `in-progress` → `todo` on the owner's instruction (review session htt
 ## 2026-09-30 — owner decisions, applied
 - **Hold-back enforced** (owner: 'Enforce in queue'). New ContentDirectory field summaries: 'drain'|'held', declared on agent-skills' OWN library entry (not the cat-harness mirror). summaries.ts heldLibraries() reads it from the owning declaration; entryDirs/next/backlog/check:l1-complete skip it; the listing prints 'held: agent-skills/library/'. Backlog 1693 → 1509 of 1531.
 - **Attribution** (owner: options B+C, after the model field was explained in full). model stays REQUIRED for an agent (C); MODEL_NOT_DISCLOSED = 'not-disclosed' is now DECLARED in schemas/attribution.ts (B) and requires a session URL so the model stays recoverable. 28 earlier figure descriptions already used it. The viewer says 'model not disclosed (recoverable from its session)'. Drafts from sessions that may not write a model identifier can now be recorded honestly.
-- [ ] drain the rest a few blocks at a time (unblocked)
-- [ ] a person reviews the drafts (bun run cat narratives)
+- [x] drain the rest a few blocks at a time (unblocked)
+- [x] a person reviews the drafts (bun run cat narratives) → moved to `pvq4`
 
 _2026-09-30T08:24:12Z_ — Claimed by claude/brave-hawking-511rrx — pushed to main so sibling sessions see it before this branch has a PR (bean 35nj).
 
@@ -238,3 +238,7 @@ _2026-10-31T04:10:00Z_ — Batches 66 & 67 opened on `litlfred/cat-harness` to d
 - **Batch 66 ([`litlfred/cat-harness#836`](https://github.com/litlfred/cat-harness/pull/836), `fix/x80s-ch-batch66`)**: 59 English `draft` summaries across `cat-harness/library/arxiv-0909.4061v2` (`prose-page-016` through `prose-page-074`; `74/74` prose blocks summarised, `0` backlog; `drafted_by.model: "not-disclosed"`, `session: "conversation://bff31c8b-00de-4342-bf75-fbff1f059feb"`).
 - **Batch 67 ([`litlfred/cat-harness#835`](https://github.com/litlfred/cat-harness/pull/835), `fix/x80s-ch-batch67`)**: 141 English `draft` summaries across `cat-harness/library/arxiv-2607.20636v1` (`prose-sec-front-matter` and `prose-sec-000` through `prose-sec-139`; `141/141` prose blocks summarised, `0` backlog; `drafted_by.model: "not-disclosed"`, `session: "conversation://071caabf-896c-4412-8e76-06e093b66f3d"`).
 Combined with `#835` and `#836`, `cat-harness/library/` reaches **0 prose block summary backlog** (`200 -> 0` remaining unsummarised blocks across non-held entries), and all 6 declared libraries across the corpus (`cat-harness`, `folio-assistant-core`, `folio-assistant-sci`, `who-iris`, `smart-base`, `smart-immunizations`) are at **0 draft backlog** across `main` + open PRs.
+
+## Closed 2026-11-01
+
+The drain is done. folio-assistant-core#561 records 731 C2PA 2.5 drafts and #562 records 762 DSpace 7 REST drafts, each written by `summaries:record` and each PR body stating "Agent drafts only (state: draft). NOT human-adjudicated.". The other 200 backlog blocks are cat-harness's, already on cat-harness main (#835, #836), and reach the fa count with the next cat-harness re-pin. The remaining item, "a person reviews the drafts", moved to its own bean, `pvq4`, on the owner's choice (Q-CM-2 option A). That bean is outside the MVP, so this one closes. QA report: /mnt/project-files/x80s-drain-2026-11-01/qa-report.md.
