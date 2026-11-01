@@ -425,11 +425,14 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
   // Column names carry their colour in the sheet, so the steps name no colours
   // (owner, 2026-11-01 18:22Z: "you dont need to say (Orange) or (Blue)"; 18:26Z: too wordy).
   const ask = "Agentic status says \"Needs you\" when it has a question.";
+  // Name each column people fill, so the sheet colours it (owner, 2026-11-01 18:33Z).
+  const yours = drafting ? fb : "Committee Feedback";
+  const disp = drafting ? "Disposition" : "Dispositions";
   const changeSet = [
     "   3. An Editor sets Ready for agent to Yes once the direction is agreed.",
     `   4. The agent makes one pull request. Agentic status tracks it; ${staging} opens the changes. When the preview is live, Ready for agent becomes Completed.`,
-    "   5. New feedback marks the proposal stale and resets Ready for agent to No. An Editor sets Yes again to update the pull request.",
-    "   6. A second reviewer checks each disposition against the pull request and reads the QA report. Then an Editor sets Ready for merge to Yes, and the agent merges.",
+    `   5. New ${yours} marks the proposal stale and resets Ready for agent to No. An Editor sets Yes again to update the pull request.`,
+    `   6. A second reviewer checks the ${disp} against the pull request and reads the QA report. Then an Editor sets Ready for merge to Yes, and the agent merges.`,
   ];
   const out: Record<string, string> = {
     [CONFIG_TAB]: `The script's settings. Work happens on ${people}. Do not edit, except EDITORS (owner only).`,
@@ -453,15 +456,15 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
     out[t.RPC] = [
       colours,
       "One row per public comment, as received:",
-      "   1. The Feedback Review Committee adds its feedback, TWG, comment type, disposition and status.",
-      `   2. The agent puts the comment in a Change Set (linked to ${t.RCS}) and suggests a TWG.`,
+      "   1. The Feedback Review Committee adds Committee Feedback, TWG (human), Comment type, Disposition and Status.",
+      `   2. The agent puts the comment in a Change Set (linked to ${t.RCS}) and suggests a TWG (agent).`,
       `   3. Edits are decided per change set, on ${t.RCS}. Agentic status and ${staging} here follow the change set.`,
       ...footer,
     ].join("\n");
     out[t.RCS] = [
       colours,
       `One row per change set, joining its comments from ${t.RPC}:`,
-      "   1. The Feedback Review Committee gives feedback on the change set and picks its TWG.",
+      "   1. The Feedback Review Committee gives Committee Feedback on the change set and picks its TWG (CS).",
       `   2. The agent proposes a direction in ${c.COLS.rcs?.agentFeedback || "Change Set Feedback (agent)"}. ${ask}`,
       ...changeSet,
       ...footer,
