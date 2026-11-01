@@ -80,6 +80,7 @@ import { perScheme, run as runTermMapping, termState, type SchemeState, type Ter
 import { MAPPING_TARGETS } from "@litlfred/cat-harness-tools/schemas/content/term-mapping.ts";
 import { GLOSSARY_SUBDIR, allTranslationDirs, potPath, sourceText, templateName } from "./glossary-pot.ts";
 import { archimateDepictions, type Depiction } from "./glossary-archimate.ts";
+import type { Passage } from "./term-passages.ts";
 import { parsePo } from "@litlfred/cat-harness-tools/pipeline/po-inject.ts";
 import { forwardingParts, pageParts, visualiserFor, visualiserPageDir } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.ts";
 import { ROUTE_SEGMENT, visualiserRoute, type VisualiserRouteParts } from "@litlfred/cat-harness-tools/schemas/kg/visualiser-route.ts";
@@ -787,6 +788,76 @@ function depictionLine(anchor: string): string[] {
   return [`<p class="fa-gloss-archimate">Depicted in ArchiMate ${esc(d.instance)} ${esc(d.model)}: ${els}${views}</p>`];
 }
 
+// ── Term pages (folio-assistant-core#498) ──────────────────────
+//
+// Owner, 2026-11-01, card Q-GLO-2 A: a term link takes the reader to a page
+// for the term. Q-GLO-3 C: the term's defining site is its glossary row (the
+// SKOS `source`), which keeps one node-kind structure for every term, and the
+// page links the narrative passages that explain or use the term as its
+// PROVENANCE ("term should link to narrative as provenance"). One page per
+// AUTHORED-scheme term; an extracted candidate keeps its row only.
+
+/** Where an authored term's page is written. */
+export function termPagePath(s: Pick<GlossarySource, "instance" | "glossary">, id: string): string {
+  return join(dirname(pagePath(`@${s.instance}`)), s.glossary.id, id, "index.md");
+}
+/** An authored term's page, site-root path with a leading slash: `/<glossary route>/instance/<instance>/<scheme>/<term>/`. */
+export function termPermalink(s: Pick<GlossarySource, "instance" | "glossary">, id: string): string {
+  return `${permalinkOf(`@${s.instance}`)}${s.glossary.id}/${id}/`;
+}
+
+/**
+ * The narrative passages of each authored term, keyed by anchor
+ * (`term-passages.ts`), and the document anchor of each block by source file,
+ * so a term's `source` links to its glossary row in the rendered document.
+ * Set once by {@link loadProvenance}; empty, term pages list no passages.
+ */
+let PASSAGES: ReadonlyMap<string, Passage[]> = new Map();
+let BLOCK_HREF: ReadonlyMap<string, string> = new Map();
+
+/** Read every document folio in the checkout and match each authored term against it. */
+export async function loadProvenance(repo: string, c: ReturnType<typeof collect>): Promise<ReadonlyMap<string, Passage[]>> {
+  const { narrativeBlocks, passagesIn } = await import("./term-passages.ts");
+  const roots = [...new Set([repo, ...instanceOwners(repo).map((o) => o.root)])];
+  const terms = c.glossaries
+    .filter((s) => !s.extracted)
+    .flatMap((s) =>
+      s.glossary.terms.map((t) => ({
+        key: anchorOf(s, t.id),
+        id: t.id,
+        labels: [first(t.prefLabel), ...(t.altLabel ?? [])],
+        ...(t.notation ? { notation: t.notation } : {}),
+        ...(t.source ? { source: t.source } : {}),
+      })),
+    );
+  const merged = new Map<string, Passage[]>();
+  const hrefs = new Map<string, string>();
+  const seen = new Set<string>();
+  for (const root of roots) {
+    let blocks: Awaited<ReturnType<typeof narrativeBlocks>>;
+    try {
+      blocks = await narrativeBlocks(root);
+    } catch {
+      continue; // a root whose document manifests do not load here contributes nothing
+    }
+    blocks = blocks.filter((b) => !seen.has(`${b.document}#${b.label}`));
+    for (const b of blocks) {
+      seen.add(`${b.document}#${b.label}`);
+      hrefs.set(b.source.replace(/\.(md|ts)$/, ""), `${b.page}#${b.label}`);
+    }
+    for (const [k, v] of passagesIn(blocks, terms)) merged.set(k, [...(merged.get(k) ?? []), ...v]);
+  }
+  PASSAGES = merged;
+  BLOCK_HREF = hrefs;
+  return merged;
+}
+
+/** Set the provenance directly (tests). */
+export function setProvenance(passages: ReadonlyMap<string, Passage[]>, blockHref: ReadonlyMap<string, string> = new Map()): void {
+  PASSAGES = passages;
+  BLOCK_HREF = blockHref;
+}
+
 /** A note's text with its web addresses as links. */
 function noteHtml(note: string): string {
   return esc(note).replace(/https?:\/\/[^\s<>"]+[^\s<>".,;)]/g, (u) => `<a href="${u}">${u.replace(/^https?:\/\//, "")}</a>`);
@@ -865,7 +936,7 @@ function termEntry(row: Row, marks?: ReadonlyMap<string, string>): string {
             .join(", ")}</p>`,
         ]
       : []),
-    `<p class="fa-gloss-meta">${meta}${t.isDefinedBy ? ` · defined by ${link(t.isDefinedBy)}` : ""}${t.source ? ` · source ${sourceLink(t.source)}` : ""}</p>`,
+    `<p class="fa-gloss-meta">${s.extracted ? "" : `<a href="{{ '${termPermalink(s, t.id)}' | relative_url }}">Term page</a> · `}${meta}${t.isDefinedBy ? ` · defined by ${link(t.isDefinedBy)}` : ""}${t.source ? ` · source ${sourceLink(t.source)}` : ""}</p>`,
     ...(matches.length ? [`<ul class="fa-gloss-matches">${matches.join("")}</ul>`] : []),
     ...depictionLine(anchorOf(s, t.id)),
     ...(marks?.has(anchorOf(s, t.id)) ? [marks.get(anchorOf(s, t.id))!] : []),
@@ -1468,6 +1539,118 @@ ${FILTER_SCRIPT}
   );
 }
 
+/** A term named by `ref` (a local id in `s`, or any collected term's IRI), resolved, or undefined. */
+function resolveRef(c: ReturnType<typeof collect>, s: GlossarySource, ref: string): Row | undefined {
+  const local = s.glossary.terms.find((x) => x.id === ref);
+  return local ? { s, t: local, label: first(local.prefLabel) } : termIndex(c.glossaries).get(ref);
+}
+
+/** A link to a term: its page when it is authored, else its row. */
+function termLink(r: Row): string {
+  const href = r.s.extracted ? `${permalinkOf(pageOf(r.s))}#${anchorOf(r.s, r.t.id)}` : termPermalink(r.s, r.t.id);
+  return `<a href="{{ '${href}' | relative_url }}">${withInlineCode(r.label, esc)}</a>`;
+}
+
+/** The terms whose `broader` names `row`: its narrower terms, computed, so nobody writes the inverse by hand. */
+function narrowerOf(c: ReturnType<typeof collect>, row: Row): Row[] {
+  const iri = row.t.iri ?? termIri(row.s.ns, row.s.glossary, row.t.id);
+  return c.glossaries
+    .filter((s) => !s.extracted)
+    .flatMap((s) => s.glossary.terms.filter((t) => (t.broader ?? []).some((b) => (s === row.s && b === row.t.id) || b === iri)).map((t) => ({ s, t, label: first(t.prefLabel) })));
+}
+
+/** One passage as a list item: section, then the words around the term. */
+function passageItem(p: Passage): string {
+  return `<li><a href="{{ '/${esc(p.href)}' | relative_url }}">${esc(p.section || p.label)}</a> <span class="fa-gloss-meta">(${esc(p.document)})</span><br><span class="fa-gloss-excerpt">${esc(p.excerpt)}</span></li>`;
+}
+
+/**
+ * One authored term's page (Q-GLO-2 A): what it means, where it is defined,
+ * what it relates to, and where the narrative explains and uses it.
+ */
+export function renderTermPage(c: ReturnType<typeof collect>, s: GlossarySource, t: Glossary["terms"][number]): string {
+  const label = first(t.prefLabel);
+  const row: Row = { s, t, label };
+  const iri = t.iri ?? termIri(s.ns, s.glossary, t.id);
+  const refs = (xs: readonly string[] | undefined) => (xs ?? []).map((r) => resolveRef(c, s, r)).filter((r): r is Row => r !== undefined);
+  const broader = refs(t.broader);
+  const narrower = narrowerOf(c, row);
+  const related = refs(t.related);
+  const list = (title: string, rows: Row[]) => (rows.length ? [`<h2>${title}</h2>`, `<ul>${rows.map((r) => `<li>${termLink(r)}</li>`).join("")}</ul>`] : []);
+  const matches = (["exactMatch", "closeMatch", "broadMatch", "narrowMatch"] as const).flatMap((m) => (t[m] ?? []).map((u) => `<li>${m}: ${link(u)}</li>`));
+  const passages = PASSAGES.get(anchorOf(s, t.id)) ?? [];
+  const explains = passages.filter((p) => p.kind === "explains");
+  const mentions = passages.filter((p) => p.kind === "mentions");
+  const rowHref = t.source ? BLOCK_HREF.get(t.source.split("#", 1)[0]!.replace(/\.(md|ts)$/, "")) : undefined;
+  const entry = `${permalinkOf(`@${s.instance}`)}#${anchorOf(s, t.id)}`;
+  // Absolute, so the JSON-LD's IRIs do not resolve against the term page itself.
+  const abs = (href: string) => `{{ '/${href.replace(/'/g, "%27")}' | absolute_url }}`;
+  // The defining site is the glossary row (Q-GLO-3 C); the passages are
+  // provenance, so the JSON-LD names them as what the concept was derived
+  // from and where it is used, not as definitions.
+  const ld = {
+    "@context": { skos: "http://www.w3.org/2004/02/skos/core#", dcterms: "http://purl.org/dc/terms/", prov: "http://www.w3.org/ns/prov#" },
+    "@id": iri,
+    "@type": "skos:Concept",
+    "skos:prefLabel": label,
+    ...(t.notation ? { "skos:notation": t.notation } : {}),
+    ...(t.definition ? { "skos:definition": first(t.definition) } : {}),
+    "skos:inScheme": { "@id": schemeIri(s.ns, s.glossary) },
+    ...(rowHref ? { "dcterms:source": { "@id": abs(rowHref) } } : t.source ? { "dcterms:source": t.source } : {}),
+    ...(explains.length ? { "prov:wasDerivedFrom": explains.map((p) => ({ "@id": abs(p.href) })) } : {}),
+    ...(mentions.length ? { "dcterms:isReferencedBy": mentions.map((p) => ({ "@id": abs(p.href) })) } : {}),
+  };
+  const status = t.status === "authored" ? "" : ` <span class="fa-gloss-status">${esc(t.status)}</span>`;
+  return `---
+layout: default
+${GENERATED_FM}
+title: "${label.replace(/"/g, '\\"')}"
+nav_exclude: true
+permalink: ${termPermalink(s, t.id)}
+---
+${GENERATED}
+
+# ${withInlineCode(label, esc)}${t.notation && t.notation !== label ? ` (${esc(t.notation)})` : ""}${status}
+
+${t.definition ? `<p>${withInlineCode(first(t.definition), esc)}</p>` : "<p><em>No definition yet.</em></p>"}
+${t.altLabel?.length ? `<p class="fa-gloss-meta">Also called: ${t.altLabel.map((a) => esc(a)).join(", ")}</p>` : ""}
+${t.scopeNote ? `<p class="fa-gloss-note">${noteHtml(t.scopeNote)}</p>` : ""}
+
+<h2>Defined in</h2>
+<ul>
+<li>${pageLink(`@${s.instance}`, `${s.glossary.title}`)}: <a href="{{ '${entry}' | relative_url }}">glossary entry</a>${rowHref ? ` · <a href="{{ '/${esc(rowHref)}' | relative_url }}">glossary row in the document</a>` : t.source ? ` · source ${sourceLink(t.source)}` : ""}</li>
+${t.isDefinedBy ? `<li>defined by ${link(t.isDefinedBy)}</li>` : ""}
+</ul>
+
+${[...list("Broader", broader), ...list("Narrower", narrower), ...list("Related", related)].join("\n")}
+${matches.length ? `<h2>Matches</h2>\n<ul class="fa-gloss-matches">${matches.join("")}</ul>` : ""}
+${depictionLine(anchorOf(s, t.id)).join("\n")}
+
+<h2>In the narrative</h2>
+${explains.length ? `<p>Explained in:</p>\n<ol>${explains.map(passageItem).join("")}</ol>` : ""}
+${mentions.length ? `<p>Used in:</p>\n<ol>${mentions.map(passageItem).join("")}</ol>` : ""}
+${passages.length ? "" : "<p><em>No passage of a document in this folio names this term.</em></p>"}
+
+<p class="fa-gloss-meta">IRI <code>${esc(iri)}</code> · ${skosLink(s)}</p>
+
+<script type="application/ld+json">
+${JSON.stringify(ld, null, 1)}
+</script>
+`;
+}
+
+/** Every authored term's page, path → content. */
+export function termPagesOf(c: ReturnType<typeof collect>): Map<string, string> {
+  const keys = new Set<string>(authoredKeys(c));
+  const out = new Map<string, string>();
+  for (const s of c.glossaries) {
+    if (s.extracted || !keys.has(`@${s.instance}`)) continue;
+    if (ONLY !== undefined && s.instance !== ONLY) continue;
+    for (const t of s.glossary.terms) out.set(termPagePath(s, t.id), renderTermPage(c, s, t));
+  }
+  return out;
+}
+
 /**
  * The index's "Authored terms" section: where each instance's terms are. It
  * keeps the headings the terms had here — each ordered scheme's, then "every
@@ -1860,6 +2043,7 @@ export function outputs(
   unresolved: string[] = [],
 ): Map<string, string> {
   const out = new Map<string, string>([...renderPages(c)].map(([k, page]) => [pagePath(k), page] as const));
+  for (const [p, page] of termPagesOf(c)) out.set(p, page);
   // Automated matches go into each scheme's SKOS (owner, 2026-10-02), in a
   // named graph marked as a program's work. See `toSkos`.
   const auto = automatedMatches(mapping.states, c.glossaries);
@@ -1909,6 +2093,7 @@ if (import.meta.main) {
     process.exit(1);
   }
   await loadDepictions(REPO, c);
+  await loadProvenance(REPO, c);
   const unresolved: string[] = [];
   const files = written(outputs(c, undefined, undefined, unresolved));
   // Reported, never fatal: a match the record cannot place is left out of the

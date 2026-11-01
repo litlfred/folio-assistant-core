@@ -1452,7 +1452,7 @@ describe("hover text on every column head (owner, 2026-10-31)", () => {
     const heads: [string, string[]][] = [
       ["rpc", ["No.", "Sections", "Page", "Line no(s) / Table / Figure", "Comment / issue", "Suggested revision", "Change Set", "TWG (agent)", "TWG (human)", "Comment type", "Committee Feedback (initials)", "Disposition", "Status", "Agentic status", "Staging review"]],
       ["rcs", ["Change-set", "Title", "Sections", "Pages", "Public Comments", "Suggested Revisions", "PC Committee Feedback", "Dispositions", "TWG (PCs)", "TWG (CS)", "Committee Feedback (CL)", "Architect Feedback (AB)", "Ready for agent", "Ready for merge", "Disposition (agent)", "Change Set Feedback (agent)", "Agentic status", "Staging review", "Agentic status (filter)"]],
-      ["draft", ["Change-set", "Title", "Selected Sections", "Section links", "Contributor Feedback (initials/name)", "Disposition", "Ready for agent", "Ready for merge", "Disposition (agent)", "Feedback (agent)", "Agentic status (filter)", "Issue", "Agentic status", "Staging review"]],
+      ["draft", ["Change-set", "Title", "Selected Sections", "Section links", "Contributor Feedback (initials/name)", "Disposition", "Ready for agent", "Ready for merge", "Issue", "Disposition (agent)", "Feedback (agent)", "Agentic status", "Agentic status (filter)", "Staging review"]],
       ["agent", ["No.", "Comment ref", "Agentic status", "Agentic action taken", "Agentic applied in (section / version)", "Agentic handled by", "Agentic date actioned", "Change-sets", "Change-set", "Title", "Issue", "Pull request (change set)", "Staging review page (change set)", "What the PRs changed (change set)", "Agent completed (UTC, change set)", "Feedback basis (change set)", "Staging built (UTC, change set)", "PR head (change set)", "Staging built from (change set)", "Staging deploy (change set)", "Disposition (change set)", "QA gate (change set)", "QA report (change set)", "Agent conversation (change set)"]],
     ];
     for (const [k, hs] of heads) for (const h of hs) expect([k, h, fns.headerNoteFor(k, h).length > 10]).toEqual([k, h, true]);
@@ -1612,6 +1612,25 @@ describe("Agentic status sits left of its filter column (owner, 2026-10-31)", ()
     const moves: Array<[number, number]> = [];
     expect(placeBefore(sheetWith(["Change-set", "Agentic status (filter)", "Issue", "Agentic status"], moves), "Agentic status", "Agentic status (filter)")).toBe(true);
     expect(moves).toEqual([[4, 2]]);
+  });
+  test("unmerges the title row (B1) for the move and merges it again, keeping its text", () => {
+    const log: string[] = [];
+    const header = ["Change-set", "Agentic status (filter)", "Issue", "Agentic status"];
+    const title = { text: "Contributor Log" };
+    const merge = {
+      getA1Notation: () => "B1:D1",
+      getCell: () => ({ getRichTextValue: () => title }),
+      breakApart: () => log.push("break B1:D1"),
+    };
+    const sh = {
+      getLastRow: () => 2, getLastColumn: () => header.length,
+      getRange: (r: number | string, c?: number) => typeof r === "string"
+        ? { merge: () => log.push(`merge ${r}`), getCell: () => ({ setRichTextValue: (v: unknown) => log.push(`text ${v === title}`) }) }
+        : { getDisplayValues: () => [["Instructions", "", "", ""], header], getMergedRanges: () => [merge], col: c },
+      moveColumns: (range: { col: number }, to: number) => log.push(`move ${range.col}->${to}`),
+    };
+    expect(placeBefore(sh, "Agentic status", "Agentic status (filter)")).toBe(true);
+    expect(log).toEqual(["break B1:D1", "move 4->2", "merge B1:D1", "text true"]);
   });
   test("leaves it when it is already there", () => {
     const moves: Array<[number, number]> = [];
