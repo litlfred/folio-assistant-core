@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { feedbackProblems, lint, prStateProblems } from "./lint.js";
+import { feedbackProblems, lint, prStateProblems, sectionProblems } from "./lint.js";
 
 const good = [
   "⏳ Needs you: answer the Decision needed below, then set Ready for agent to Yes.",
@@ -48,5 +48,19 @@ describe("lint", () => {
     const out = lint(fb, ag, { "litlfred/dth-hrh#61": { state: "closed", merged: true } });
     expect(out).toHaveLength(1);
     expect(out[0].cs).toBe("CS-001");
+  });
+});
+
+describe("sectionProblems (Q-FBK-3 A)", () => {
+  const url = "https://github.com/litlfred/dth-hrh/pull/82";
+  const st = (files: string[]) => ({ "litlfred/dth-hrh#82": { state: "open" as const, merged: false, files } });
+  test("feedback with no section selected must ask which", () => {
+    expect(sectionProblems("", "Proposed direction: link personas.", [], {})[0]).toMatch(/No Selected Sections/);
+    expect(sectionProblems("", "Decision needed: which sections should this cover?\n  A. Ch 5 (recommended)\n  B. Ch 6", [], {})).toEqual([]);
+  });
+  test("a PR outside the selected chapters is flagged unless declared", () => {
+    expect(sectionProblems("5.1 Personas", "Proposed direction: x", [url], st(["content/ch5/a.md", "content/ch6/b.md"]))[0]).toMatch(/chapter 6/);
+    expect(sectionProblems("5.1 Personas", "Proposed direction: x\nOutside the selected sections: 6.2, two new personas.", [url], st(["content/ch6/b.md"]))).toEqual([]);
+    expect(sectionProblems("Ch 5 Personas, 6.2 Governance", "Proposed direction: x", [url], st(["content/ch6/b.md"]))).toEqual([]);
   });
 });

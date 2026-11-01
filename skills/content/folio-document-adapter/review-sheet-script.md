@@ -74,6 +74,26 @@ Next: <what happens next, and who does it>
   (Q1 ...)") goes to Disposition (agent), never here. Pull request state
   comes from the script's ⏳ line, so the agent does not restate it.
 - At most 10 lines, so the row shows it whole.
+- Name pull requests and issues as `repo#n` (e.g. `dth-hrh#82`). The script
+  links each one, and under its ⏳ line adds `↳ Where to review:`, one link
+  per Selected Section to that section on the change set's preview (or on
+  the published draft while there is no preview). The agent writes no URLs
+  of its own for these (owner, 2026-11-01: "google sheet feedback from agent
+  needs links ... hard to see where to review"; Q-FBK-3 A).
+
+**Selected Sections bound the work** (owner, 2026-11-01: "agents did not
+make use of selected sections. that should be controlled better with
+skills/tools"; Q-FBK-3 A). The agent reads the row's Selected Sections
+before it proposes anything, and its proposal, its edits and its PR stay
+inside them. A row with no section picked gets a `Decision needed:` question
+asking which sections (with the agent's guess as the recommended option), or,
+for a row from an issue that names its block, the agent fills them in from
+the issue. When an edit must reach outside them (a glossary term, a figure
+in another chapter), the cell says so on its own line:
+`Outside the selected sections: <which, and why>`. The watcher's lint
+(`tools/review-log-watch/lint.ts`) fails a row with feedback and no section
+picked, and a row whose PR changes a chapter none of its sections are in
+without that line.
 
 The watcher checks every row against this layout on each poll
 (`tools/review-log-watch/lint.ts`, skill `review-log-watch`) and fixes any

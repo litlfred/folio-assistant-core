@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 273d04075397d720.
+// folio-assistant-core tools/review-sheet-sync at template sha256 f1d81960a2ff6477.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 273d04075397d720';
+const SCRIPT_VERSION = 'template sha256 f1d81960a2ff6477';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -1338,9 +1338,10 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) 
     const fin = L !== undefined ? withProgress(cur, L) : cur;
     if (fin !== String(r[ag])) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(fin)]]);
     unready(s, r, k, r[ag], t);
-    const off = fin.indexOf(STALE + '\n') === 0 ? STALE.length + 1 : 0;
+    // Where the status block landed: after a stale mark, and after a review ask askFirst may put first.
+    const off = L && typeof L === 'object' && L.text ? Math.max(0, fin.indexOf(L.text)) : 0;
     const links = L && typeof L === 'object' ? L.links.map(x => [x[0] + off, x[1] + off, x[2]]) : [];
-    markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), fin, links);
+    markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), fin, links.concat(autoLinks(fin, links)));
   });
 }
 
@@ -1573,6 +1574,54 @@ function reLink(from, to, links) {
   });
   return { text: to, links: moved };
 }
+/**
+ * Where to review (owner, 2026-11-01: "google sheet feedback from agent needs
+ * links ... hard to see where to review. agents did not make use of selected
+ * sections"; Q-FBK-3). One "\u21b3 Where to review:" line under the status, each
+ * Selected Section linked to its place on the change set's preview while
+ * there is one, else on the published draft. With no section picked it says
+ * so, and the agent asks which (skill review-sheet-script).
+ */
+function previewSection(url, staging) {
+  const st = /^(.*\/STAGING\/[^/]+\/)/.exec(String(staging || ''));
+  const se = /^(https?:\/\/[^/]+\/[^/]+\/)(.*)$/.exec(String(url || ''));
+  return st && se && st[1].indexOf(se[1]) === 0 ? st[1] + se[2] : url;
+}
+function whereLine(picked, tocUrl, staging) {
+  const names = picked.filter(n => tocUrl[n]);
+  if (!names.length) return { text: STATUS_SUB + '\u26a0 No section selected: pick them in Selected Sections so the agent knows where to work.', links: [] };
+  let text = STATUS_SUB + 'Where to review' + (staging ? ' (preview)' : '') + ': ';
+  const links = [];
+  names.forEach((n, i) => {
+    if (i) text += ' \u00b7 ';
+    links.push([text.length, text.length + n.length, previewSection(tocUrl[n], staging)]);
+    text += n;
+  });
+  return { text: text, links: links };
+}
+function withWhere(line, where) {
+  const l = line && typeof line === 'object' ? line : { text: String(line || ''), links: [] };
+  if (!l.text) return where;
+  const off = l.text.length + 1;
+  return { text: l.text + '\n' + where.text, links: l.links.concat(where.links.map(([a, z, u]) => [a + off, z + off, u])) };
+}
+/**
+ * Every "repo#n" in the agent's feedback becomes a link (owner, 2026-11-01:
+ * "needs links"). The owner comes from REPO_URL; GitHub sends /issues/n on
+ * to the pull request when n is one.
+ */
+function autoLinks(text, taken) {
+  const m0 = /github\.com\/([^/\s]+)\//.exec(String((typeof CFG !== 'undefined' && CFG && CFG.REPO_URL) || ''));
+  if (!m0) return [];
+  const out = [], re = /\b([a-z0-9][\w.-]*)#(\d+)\b/gi;
+  let m;
+  while ((m = re.exec(String(text)))) {
+    const a = m.index, z = a + m[0].length;
+    if ((taken || []).some(([x, y]) => a < y && z > x)) continue;
+    out.push([a, z, 'https://github.com/' + m0[1] + '/' + m[1] + '/issues/' + m[2]]);
+  }
+  return out;
+}
 /** The text with its status (progress line, or block) replaced, or removed when line is ''. */
 function withProgress(text, line) {
   const t = String(text);
@@ -1595,7 +1644,9 @@ function askFirst(l, lines) {
   const body = lines.join('\n');
   const asksDecision = /Decision needed/.test(String(l || ''));
   if (asksDecision && !/Decision needed/.test(body)) l = '';
-  if (!l && /^Proposed direction/.test(body) && !/Decision needed/.test(body)) return [PROGRESS + ASK_PROPOSAL];
+  const ask = /^Proposed direction/.test(body) && !/Decision needed/.test(body);
+  // With no status line of its own (only "\u21b3" lines, such as Where to review), the review ask goes first.
+  if (ask && (!l || String(l).indexOf(PROGRESS) !== 0)) return [PROGRESS + ASK_PROPOSAL].concat(l ? [l] : []);
   return l ? [l] : [];
 }
 
@@ -2233,7 +2284,10 @@ function refreshDraft(rows) {
   fb.rows.forEach(r => {
     const cs = String(r[c.cs]).trim();
     const line = cs ? progressLine({ readyAt: readyAt[cs], merge: isYes(fb, r, 'Ready for merge'), status: stOf[cs] || '', prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] }) : '';
-    if (cs) lineOf[cs] = c.agentic < 0 ? statusBlock(line, stOf[cs] || '', prOf[cs] || []) : line;
+    if (!cs) return;
+    const base = c.agentic < 0 ? statusBlock(line, stOf[cs] || '', prOf[cs] || []) : line;
+    const picked = c.sections >= 0 ? String(r[c.sections]).split(',').map(bareName).filter(Boolean) : null;
+    lineOf[cs] = picked ? withWhere(base, whereLine(picked, tocUrl, stagingOf[cs])) : base;
   });
   markStale(fb, c.cs, basisOfCs, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback, COLS.draft.agentFeedback || 'Feedback (agent)', lineOf, want);
   completeReady(fb, c.cs, prOf, stagingOf, builtOf, readyAt);

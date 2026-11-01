@@ -1,6 +1,7 @@
 /**
- * Check a drafting review log's agent feedback against the fixed layout, and
- * the Agent tab's pull request states against GitHub.
+ * Check a drafting review log's agent feedback against the fixed layout, the
+ * row's Selected Sections, and the Agent tab's pull request states against
+ * GitHub.
  *
  * Owner, 2026-11-01: "these feedback are not at all clear what agent asking
  * contributors to respond about". Q-FBK-1 A: a fixed cell layout (the ask
@@ -59,7 +60,47 @@ export function feedbackProblems(text: string, status = ""): string[] {
   return out;
 }
 
-export type PrState = { state: "open" | "closed"; merged: boolean };
+export type PrState = { state: "open" | "closed"; merged: boolean; files?: string[] };
+
+/** The chapter number a section name sits in: "4.1 Scope" and "Ch 4 Why" are 4; unnumbered (Annex, Preface) is undefined. */
+export function chapterOfSection(name: string): number | undefined {
+  const m = /^\s*(?:ch(?:apter)?\.?\s*)?(\d+)(?:[.\s]|$)/i.exec(String(name).replace(/^[\s\u2800]+/, ""));
+  return m ? Number(m[1]) : undefined;
+}
+/** The chapter number a changed file sits in, from a `ch4/`, `chapter-04/` or `ch04-...` path segment. */
+export function chapterOfFile(path: string): number | undefined {
+  const m = /(?:^|\/)ch(?:apter)?[-_]?0*(\d+)(?:\/|[-_.])/i.exec(path);
+  return m ? Number(m[1]) : undefined;
+}
+
+/**
+ * The row's Selected Sections bound the agent's work (owner, 2026-11-01:
+ * "agents did not make use of selected sections. that should be controlled
+ * better with skills/tools"; Q-FBK-3 A). A row with feedback but no section
+ * must ask which; a PR that changes a chapter no selected section is in must
+ * say so on an "Outside the selected sections:" line.
+ */
+export function sectionProblems(sections: string, feedback: string, prUrls: string[], states: Record<string, PrState>): string[] {
+  const picked = String(sections ?? "").split(",").map(x => x.trim()).filter(Boolean);
+  const body = agentLines(feedback).join("\n");
+  const out: string[] = [];
+  if (!picked.length) {
+    if (body.trim() && !/^Decision needed\b[^\n]*:[^\n]*section/im.test(body))
+      out.push('No Selected Sections: ask which sections in a "Decision needed:" question, or fill them in from the issue.');
+    return out;
+  }
+  const chapters = picked.map(chapterOfSection);
+  if (chapters.some(c => c === undefined)) return out;
+  const declared = /^Outside the selected sections:/m.test(body);
+  for (const url of prUrls) {
+    const k = prKey(url);
+    const files = (k && states[k]?.files) || [];
+    const outside = [...new Set(files.map(chapterOfFile).filter((c): c is number => c !== undefined && !chapters.includes(c)))];
+    if (outside.length && !declared)
+      out.push(`${k} changes chapter ${outside.join(", ")}, outside the selected sections (${picked.join(", ")}); keep to them, or say so on an "Outside the selected sections:" line.`);
+  }
+  return out;
+}
 
 /** `owner/repo#n` from a pull request URL. */
 export function prKey(url: string): string | undefined {
@@ -113,6 +154,7 @@ export function lint(feedback: string[][], agent: string[][], states: Record<str
     const problems = [
       ...feedbackProblems(r["Feedback (agent)"] ?? "", statusOf[cs] ?? ""),
       ...prStateProblems(statusOf[cs] ?? "", prsOf[cs] ?? [], states),
+      ...sectionProblems(r["Selected Sections"] ?? "", r["Feedback (agent)"] ?? "", prsOf[cs] ?? [], states),
     ];
     if (problems.length) out.push({ cs, problems });
   }
@@ -138,7 +180,8 @@ if (import.meta.main) {
     for (const k of keys) {
       const [repo, n] = k.split("#");
       const pr = JSON.parse(execFileSync("gh", ["api", `repos/${repo}/pulls/${n}`], { encoding: "utf8" }));
-      states[k] = { state: pr.state, merged: !!pr.merged };
+      const files = pr.state === "open" ? (JSON.parse(execFileSync("gh", ["api", "--paginate", `repos/${repo}/pulls/${n}/files?per_page=100`, "--jq", "[.[].filename]"], { encoding: "utf8" }).trim().replace(/\]\s*\[/g, ",")) as string[]) : [];
+      states[k] = { state: pr.state, merged: !!pr.merged, files };
     }
   }
   const result = lint(feedback, agent, states);

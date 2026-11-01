@@ -134,6 +134,9 @@ cell has a fixed layout"):
   more than 10 lines;
 - a PR that GitHub says is merged or closed while the Agent tab's status
   still says open (CS-001 showed "dth-hrh#61 open" after it merged).
+- feedback on a row with no Selected Sections and no question asking which,
+  or a PR that changes a chapter outside the Selected Sections without an
+  `Outside the selected sections:` line (Q-FBK-3 A).
 
 Exit 0 is clean. Exit 10 lists problems: the watcher fixes the Agent tab
 status or rewrites the cell to the layout in the same wake, and records the
