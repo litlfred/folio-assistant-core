@@ -38,6 +38,7 @@
         <bpmn:flowNodeRef>StartEvent_Poll</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReadSheet</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_RunCheck</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_StallCheck</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Changed</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_AppendRows</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_AgentPass</bpmn:flowNodeRef>
@@ -47,10 +48,10 @@
       </bpmn:lane>
     </bpmn:laneSet>
 
-    <bpmn:startEvent id="StartEvent_Poll" name="Every 3 minutes">
-      <bpmn:documentation>The watcher's poll: a chain of 3-minute delayed wakes, each queuing the next, with an hourly scheduled task that restarts the chain if it breaks (owner, 2026-11-01 10:20Z: "instead of 1-minute lets do 3").</bpmn:documentation>
+    <bpmn:startEvent id="StartEvent_Poll" name="Every minute">
+      <bpmn:documentation>The watcher's poll: a chain of 1-minute delayed wakes, each queuing the next before it reads anything, with an hourly scheduled task that restarts the chain if it breaks (owner, 2026-11-01 19:47Z: every 1 minute, never skipping a poll during long work; it was 3 minutes from 10:20Z).</bpmn:documentation>
       <bpmn:outgoing>WF01</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="Timer_Poll"><bpmn:timeCycle>R/PT3M</bpmn:timeCycle></bpmn:timerEventDefinition>
+      <bpmn:timerEventDefinition id="Timer_Poll"><bpmn:timeCycle>R/PT1M</bpmn:timeCycle></bpmn:timerEventDefinition>
     </bpmn:startEvent>
     <bpmn:serviceTask id="Task_ReadSheet" name="Read the Contributor Feedback tab">
       <bpmn:documentation>Reads Watch!F1:I1, the hash of the person-set cells that the sheet script writes on every refresh (Q-WATCH4 A), and Contributor Feedback's header row and Issue column, and saves them as JSON for the check. A sheet without the Watch hash yet is read whole. Reading is not agent work: it changes nothing.</bpmn:documentation>
@@ -64,9 +65,15 @@
       <bpmn:incoming>WF02</bpmn:incoming>
       <bpmn:outgoing>WF03</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:exclusiveGateway id="Gateway_Changed" name="Sheet or issues changed?">
-      <bpmn:documentation>The tool's status. unchanged (exit 0): the poll ends and no agent work starts. changed (exit 10): its changes and the rows to append go on.</bpmn:documentation>
+    <bpmn:task id="Task_StallCheck" name="Hand new feedback to the row's agent; take over stalled rows">
+      <bpmn:documentation>On every poll, changed or not, new Blue feedback goes verbatim to the agent working the row, and a stalled row is restarted or taken over, on the owner's rule of 2026-11-01 21:08Z. For each row: new Blue feedback goes, verbatim and in the same poll, to the thread that owns the row (named in its Agent row or Feedback (agent)), and Feedback (agent) says who has it. A row is stalled when its Blue cells changed, or Ready for agent turned Yes, more than 10 minutes ago and no Agent step was recorded since; or when its agent recorded no step for 2 hours. A stalled row's owning thread is asked once; with no answer within 10 minutes, or a thread that is done or stopped, the watcher takes the row over, or asks the coordinator for a new thread, and writes the new owner, the step and a link into Feedback (agent). The owner's words: "when new feedback check if current agent is still working and provide it to them. if not try and pick up"; "agent should also watch for stalled and restart as needed".</bpmn:documentation>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="review-log-watch"/></bpmn:extensionElements>
       <bpmn:incoming>WF03</bpmn:incoming>
+      <bpmn:outgoing>WF09</bpmn:outgoing>
+    </bpmn:task>
+    <bpmn:exclusiveGateway id="Gateway_Changed" name="Sheet or issues changed?">
+      <bpmn:documentation>The tool's status. unchanged (exit 0): the poll ends and no other agent work starts. changed (exit 10): its changes and the rows to append go on.</bpmn:documentation>
+      <bpmn:incoming>WF09</bpmn:incoming>
       <bpmn:outgoing>WF04</bpmn:outgoing>
       <bpmn:outgoing>WF05</bpmn:outgoing>
     </bpmn:exclusiveGateway>
@@ -98,7 +105,8 @@
 
     <bpmn:sequenceFlow id="WF01" sourceRef="StartEvent_Poll" targetRef="Task_ReadSheet" />
     <bpmn:sequenceFlow id="WF02" sourceRef="Task_ReadSheet" targetRef="Task_RunCheck" />
-    <bpmn:sequenceFlow id="WF03" sourceRef="Task_RunCheck" targetRef="Gateway_Changed" />
+    <bpmn:sequenceFlow id="WF03" sourceRef="Task_RunCheck" targetRef="Task_StallCheck" />
+    <bpmn:sequenceFlow id="WF09" sourceRef="Task_StallCheck" targetRef="Gateway_Changed" />
     <bpmn:sequenceFlow id="WF04" name="changed" sourceRef="Gateway_Changed" targetRef="Task_AppendRows" />
     <bpmn:sequenceFlow id="WF05" name="unchanged" sourceRef="Gateway_Changed" targetRef="EndEvent_NoWork" />
     <bpmn:sequenceFlow id="WF06" sourceRef="Task_AppendRows" targetRef="Task_AgentPass" />
@@ -153,8 +161,17 @@
         <di:waypoint x="436" y="155" />
         <di:waypoint x="496" y="155" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_StallCheck_di" bpmnElement="Task_StallCheck">
+        <dc:Bounds x="496" y="250" width="120" height="90" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="WF03_di" bpmnElement="WF03">
-        <di:waypoint x="616" y="155" />
+        <di:waypoint x="556" y="200" />
+        <di:waypoint x="556" y="250" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="WF09_di" bpmnElement="WF09">
+        <di:waypoint x="616" y="295" />
+        <di:waypoint x="646" y="295" />
+        <di:waypoint x="646" y="155" />
         <di:waypoint x="676" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="WF04_di" bpmnElement="WF04">

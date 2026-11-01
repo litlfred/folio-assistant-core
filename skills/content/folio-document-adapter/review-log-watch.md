@@ -35,9 +35,9 @@ The owner's answers:
   issues. if issue is closed it correpsonds to hidden row that text has line
   through it/hidden".
 
-The poll still wakes the watcher thread every 3 minutes. Until the tool says
-`changed`, though, the watcher only reads and runs the tool. It does not
-reason about the rows, edit anything or post anything.
+The poll wakes the watcher thread every minute. Until the tool says
+`changed`, the watcher only reads, runs the tool and does the stall pass
+("Every poll", below). It does not otherwise reason about the rows.
 
 ## Each wake
 
@@ -61,7 +61,8 @@ reason about the rows, edit anything or post anything.
      --sheet-hash <Watch!G1>
    ```
 
-   - Exit 0 is `{"status":"unchanged"}`. Queue the next wake and stop.
+   - Exit 0 is `{"status":"unchanged"}`. Do the stall pass (below), then
+     stop. The next wake was queued first.
    - Exit 10 is `changed`. The output has `changes` (an issue opened, updated
      or closed, or a cell's old and new text) and `append`.
 3. **Append** each `append[].row` below the last row of Contributor Feedback.
@@ -102,6 +103,35 @@ reason about the rows, edit anything or post anything.
    still differs from the stored state, so it comes back on the next wake.
 7. Queue the next wake.
 
+## Every poll: hand new feedback on, and catch stalled rows
+
+The owner's rule, 2026-11-01 21:08Z: "when new feedback check if current
+agent is still working and provide it to them. if not try and pick up", and
+"agent should also watch for stalled and restart as needed". DTH-HRH CS-007
+showed why: a contributor wrote twice in their column, and the agent working
+the row never heard of it, because nothing passed it on.
+
+This pass runs on **every** poll, changed or not, after the check:
+
+1. **New feedback goes to the row's agent.** For each row whose Blue cells
+   changed, find the thread that owns it: the one named in its Agent row or
+   its Feedback (agent) cell, or else ask the coordinator. Send it the new
+   text verbatim, with the CS id, the cell and the time. Then write in
+   Feedback (agent) who has it and what happens next, so the contributor sees
+   at once that it was heard.
+2. **Find stalled rows.** A row is stalled when
+   - its Blue cells changed, or Ready for agent turned Yes, more than
+     **10 minutes** ago, and no Agent step has been recorded since; or
+   - its agent has recorded no step for **2 hours** while the row is open.
+3. **Restart or take over.** Ask the owning thread once. If it gives no
+   answer within 10 minutes, or it is done or stopped, take the row over
+   yourself, or ask the coordinator for a new thread. Either way, write the
+   new owner, its current step and a link into Feedback (agent).
+
+A row whose agent is working, but that shows nothing new, is not stalled:
+say what it is doing in Feedback (agent), with links to its pull requests,
+so the row stops looking stuck.
+
 ## What counts as a change
 
 - **Issues:** the repository's issues, open and closed, with their state and
@@ -129,8 +159,11 @@ reason about the rows, edit anything or post anything.
 
 A log is not set up until a watcher has both of these wakes:
 
-- a chain of **3-minute** delayed wakes (`send_later`), each of which queues
-  the next (owner, 2026-11-01 10:20Z: "instead of 1-minute lets do 3");
+- a chain of **1-minute** delayed wakes (`send_later`), each of which queues
+  the next before it reads anything (owner, 2026-11-01 19:47Z: every minute,
+  never skipping a poll during long work; it was 3 minutes from 10:20Z). A
+  `send_later` fires once, so a wake that does not queue the next ends the
+  chain;
 - an hourly scheduled task that restarts the chain if it breaks.
 
 Keep the state file outside the repository, one per sheet. Without it, a fresh

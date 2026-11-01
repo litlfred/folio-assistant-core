@@ -76,6 +76,16 @@ A disposition for the change set is written only from
 `agent-record.ts dispositions` (`review-sheet-script`, "Writing the Agent
 tab with the tool").
 
+**New feedback while you work, and stalls** (owner, 2026-11-01 21:08Z).
+The log watcher (skill [`review-log-watch`](review-log-watch.md), "Every
+poll") sends new Blue feedback on your row to you, verbatim. Answer it in the
+same turn: record the Agent step (`reading` at least), and tell the watcher
+your step and links, so the row shows who has it. Record a step at least
+every time you finish one: a row with no new step 10 minutes after its
+feedback changed, or none for 2 hours, counts as stalled, and the watcher
+restarts it or takes it over. Name your thread in the row's Feedback (agent)
+so the watcher knows whom to ask.
+
 ## What to write
 
 - **Re-read the headers first.** People move columns. Find each column by its
