@@ -373,6 +373,9 @@ const CHUNK = 40_000;
  * Instructions row above each tab's header carries the same words; the script
  * skips that row (owner, 2026-10-31).
  */
+/** How the colour key line starts; the script finds the key by it. */
+export const COLOUR_KEY_LEAD = "Column colours:     ";
+
 export function colourKey(c: SheetConfig): { blue: string; green: string; orange: string; grey: string } {
   // Process roles, not job titles: who sits on the committee is the sheet's business (owner, 2026-10-31).
   const people = c.CFG.MODE === "drafting" ? "the Authoring Committee" : "the Feedback Review Committee";
@@ -414,9 +417,15 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
   const drafting = c.CFG.MODE === "drafting";
   const t = { ...(drafting ? DRAFT_TABS : DEFAULT_TABS), ...c.CFG } as Record<string, string>;
   const k = colourKey(c);
-  const colours = [k.blue, k.green, k.orange, k.grey].map((x) => x.replace(": ", " = ")).join("     ");
+  // The key names no colour: each phrase is shown in its colour by the
+  // script (owner, 2026-11-01: "make the text colored not have the word").
+  const colours = COLOUR_KEY_LEAD + [k.blue, k.green, k.orange, k.grey].map((x) => x.replace(/^\w+: /, "")).join("     ");
   const staging = (drafting ? c.COLS.draft?.staging : c.COLS.rcs?.staging) ?? "Staging review";
   const fb = c.COLS.draft?.feedback ?? "Contributor Feedback";
+  // Column names in the steps are shown bold in their column's colour by the
+  // script, so the text never says the colour (owner, 2026-11-01).
+  const pcFb = (c.COLS.rpc?.feedback ?? "Committee Feedback (initials)").replace(/ \(.*\)$/, "");
+  const reviewersFb = drafting ? fb : pcFb;
   const people = drafting ? t.FEEDBACK : `${t.RPC} and ${t.RCS}`;
   const footer = [
     "Your rows: Data, then Filter views (changes nothing for others). No edit rights? Insert, then Comment.",
@@ -425,13 +434,11 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
   // Column names carry their colour in the sheet, so the steps name no colours
   // (owner, 2026-11-01 18:22Z: "you dont need to say (Orange) or (Blue)"; 18:26Z: too wordy).
   const ask = "Agentic status says \"Needs you\" when it has a question.";
-  // Name each column people fill, so the sheet colours it (owner, 2026-11-01 18:33Z).
-  const yours = drafting ? fb : "Committee Feedback";
   const disp = drafting ? "Disposition" : "Dispositions";
   const changeSet = [
     "   3. An Editor sets Ready for agent to Yes once the direction is agreed.",
     `   4. The agent makes one pull request. Agentic status tracks it; ${staging} opens the changes. When the preview is live, Ready for agent becomes Completed.`,
-    `   5. New ${yours} marks the proposal stale and resets Ready for agent to No. An Editor sets Yes again to update the pull request.`,
+    `   5. New ${reviewersFb} marks the proposal stale and resets Ready for agent to No. An Editor sets Yes again to update the pull request.`,
     `   6. A second reviewer checks the ${disp} against the pull request and reads the QA report. Then an Editor sets Ready for merge to Yes, and the agent merges.`,
   ];
   const out: Record<string, string> = {
@@ -456,7 +463,7 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
     out[t.RPC] = [
       colours,
       "One row per public comment, as received:",
-      "   1. The Feedback Review Committee adds Committee Feedback, TWG (human), Comment type, Disposition and Status.",
+      `   1. The Feedback Review Committee adds ${pcFb}, TWG (human), Comment type, Disposition and Status.`,
       `   2. The agent puts the comment in a Change Set (linked to ${t.RCS}) and suggests a TWG (agent).`,
       `   3. Edits are decided per change set, on ${t.RCS}. Agentic status and ${staging} here follow the change set.`,
       ...footer,
@@ -464,7 +471,7 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
     out[t.RCS] = [
       colours,
       `One row per change set, joining its comments from ${t.RPC}:`,
-      "   1. The Feedback Review Committee gives Committee Feedback on the change set and picks its TWG (CS).",
+      `   1. The Feedback Review Committee gives ${pcFb} on the change set and picks its TWG (CS).`,
       `   2. The agent proposes a direction in ${c.COLS.rcs?.agentFeedback || "Change Set Feedback (agent)"}. ${ask}`,
       ...changeSet,
       ...footer,
@@ -502,7 +509,7 @@ export function dropdownSteps(c: SheetConfig): string[] | undefined {
 /** Who may set the Ready columns, and how the owner names them in the EDITORS row. */
 export function editorSteps(): string[] {
   return [
-    "Who may set Ready for agent and Ready for merge: the emails in the orange EDITORS cell below (column B).",
+    "Who may set Ready for agent and Ready for merge: the emails in the EDITORS cell below (column B).",
     "   • Share each of them as Editor first (Share button, pick Editor)",
     "   • Type their emails in the EDITORS cell; only the owner can change it",
     "   • Format: plain emails only, no names; one per line (Ctrl+Enter, or Cmd+Enter on a Mac, starts a new line in a cell). Commas or semicolons also work",

@@ -325,8 +325,22 @@ function placeBefore(sh, name, before) {
   if (!sh) return false;
   const s = readSheet(sh), a = s.header.indexOf(name), b = s.header.indexOf(before);
   if (a < 0 || b < 0 || a === b - 1) return false;
+  // Sheets refuses to move part of a merged cell, and the title row's B1 is
+  // merged across the header (owner, 2026-11-01: the move silently failed on
+  // the Contributor Log and template). Unmerge the rows above the header,
+  // move, then merge the same cells again with their text kept.
+  const above = s.top - 2;
+  const merged = above > 0 && sh.getRange(1, 1, above, sh.getLastColumn()).getMergedRanges
+    ? sh.getRange(1, 1, above, sh.getLastColumn()).getMergedRanges() : [];
+  const kept = merged.map(m => ({ a1: m.getA1Notation(), rich: m.getCell(1, 1).getRichTextValue() }));
+  merged.forEach(m => m.breakApart());
   // moveColumns' destination is the index BEFORE the move, 1-based.
   sh.moveColumns(sh.getRange(1, a + 1, 1, 1), b + 1);
+  kept.forEach(k => {
+    const r = sh.getRange(k.a1);
+    r.merge();
+    if (k.rich) r.getCell(1, 1).setRichTextValue(k.rich);
+  });
   return true;
 }
 
@@ -844,15 +858,67 @@ function headerNotes(ss) {
   });
 }
 const KEY_COLOURS = { blue: '#1f5fa8', green: '#2e7d32', orange: '#c25e00', grey: '#666666' };
+const KEY_ORDER = ['blue', 'green', 'orange', 'grey'];
+const KEY_LEAD_RE = /^Column colou?rs:\s*/;
 const KEY_WORD_RE = /\b(blue|green|orange|grey)\b/gi;
-function keyRuns(text) {
+/**
+ * Which key colour a header's fill is: grey when its channels are close,
+ * otherwise the strongest channel (blue, green, or red for orange). A white
+ * or unfilled head has no colour.
+ */
+function fillGroup(hex) {
+  const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(String(hex || ''));
+  if (!m) return null;
+  const [r, g, b] = [m[1], m[2], m[3]].map(x => parseInt(x, 16) / 255);
+  if (Math.min(r, g, b) > 0.95) return null;
+  if (Math.max(r, g, b) - Math.min(r, g, b) < 0.08) return 'grey';
+  return b >= r && b >= g ? 'blue' : g >= r ? 'green' : 'orange';
+}
+/**
+ * Column names to colour in the Instructions text, each with its header's
+ * key colour (owner, 2026-11-01: "make use of colors match the column
+ * headers"). A people's column with initials in its head ("Contributor
+ * Feedback (CL)") is also found by its bare name.
+ */
+function headerColours(ss) {
+  const out = {};
+  ss.getSheets().forEach(sh => {
+    if (sh.isSheetHidden() || sh.getName() === CONFIG_TAB || sh.getLastColumn() < 1) return;
+    const n = Math.min(5, sh.getLastRow());
+    if (n < 1) return;
+    const row = legendCount(sh.getRange(1, 1, n, 1).getDisplayValues().map(r => r[0])) + 1;
+    const r = sh.getRange(row, 1, 1, sh.getLastColumn());
+    const heads = r.getDisplayValues()[0], fills = r.getBackgrounds()[0];
+    heads.forEach((h, i) => {
+      const name = String(h).trim(), grp = fillGroup(fills[i]);
+      if (!name || !grp) return;
+      if (!out[name]) out[name] = grp;
+      const bare = /^(.*Feedback) \((?!agent\)).*\)$/.exec(name);
+      if (bare && !out[bare[1]]) out[bare[1]] = grp;
+    });
+  });
+  return out;
+}
+/** [start, end, colour] runs for one Instructions text. */
+function keyRuns(text, heads) {
   const runs = [];
   // A setup line (markSetup) may sit above the key: the key is then the second line.
   const at = text.indexOf(SETUP_MARK) === 0 && text.indexOf('\n') >= 0 ? text.indexOf('\n') + 1 : 0;
   const nl = text.indexOf('\n', at);
   const first = nl < 0 ? text.slice(at) : text.slice(at, nl);
   let keyEnd = 0;
-  if (/^(blue|green|orange|grey) = /i.test(first)) {
+  const lead = KEY_LEAD_RE.exec(first);
+  if (lead) {
+    // "Column colours:     your input ...     written by the agent ...": the
+    // phrases in key order, no colour named.
+    let p = at + lead[0].length, k = 0;
+    first.slice(lead[0].length).split(/(\s{3,})/).forEach(part => {
+      if (/^\s+$/.test(part)) { p += part.length; return; }
+      if (part && k < KEY_ORDER.length) runs.push([p, p + part.length, KEY_COLOURS[KEY_ORDER[k++]]]);
+      p += part.length;
+    });
+    keyEnd = at + first.length;
+  } else if (/^(blue|green|orange|grey) = /i.test(first)) {
     const seg = /(blue|green|orange|grey) = .*?(?=\s{3,}|$)/gi;
     let m;
     while ((m = seg.exec(first))) runs.push([at + m.index, at + m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
@@ -861,60 +927,19 @@ function keyRuns(text) {
   let m;
   KEY_WORD_RE.lastIndex = keyEnd;
   while ((m = KEY_WORD_RE.exec(text))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
-  return runs;
-}
-/**
- * Column names in the Instructions text are coloured like their column
- * (owner, 2026-11-01 18:17Z: "i wanted the instructions to reference the
- * column headers and the text is colored"). `heads` is the tab's header row
- * as [name, family] pairs, the family read from the header's fill (see
- * fillFamily). A name matches whole and case-sensitively; longer names win,
- * so "Ready for agent" is not also coloured as part of something shorter.
- */
-const HEADER_FILLS = { blue: '#9dc3e7', green: '#93c27c', orange: '#f4b16a', grey: '#b6b6b6' };
-function fillFamily(hex) {
-  const rgb = h => [1, 3, 5].map(i => parseInt(String(h).slice(i, i + 2), 16));
-  if (!/^#[0-9a-f]{6}$/i.test(String(hex))) return '';
-  const c = rgb(hex);
-  let best = '', bestD = 60 * 60 * 3;
-  Object.keys(HEADER_FILLS).forEach(k => {
-    const d = rgb(HEADER_FILLS[k]).reduce((a, v, i) => a + (v - c[i]) * (v - c[i]), 0);
-    if (d < bestD) { best = k; bestD = d; }
-  });
-  return best;
-}
-function headerRuns(text, heads) {
-  const names = [];
-  (heads || []).forEach(([h, fam]) => {
-    const name = String(h || '').trim();
-    if (!name || !KEY_COLOURS[fam]) return;
-    names.push([name, fam]);
-    // "Contributor Feedback (initials/name)" is written "Contributor Feedback" in the text.
-    const base = name.replace(/\s*\((?:initials|name)[^)]*\)$/i, '');
-    if (base !== name) names.push([base, fam]);
-  });
-  names.sort((a, b) => b[0].length - a[0].length);
-  const taken = [], runs = [];
-  const esc = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  names.forEach(([name, fam]) => {
-    const re = new RegExp('(^|[^A-Za-z])(' + esc(name) + ')(?![A-Za-z])', 'g');
-    let m;
-    while ((m = re.exec(text))) {
-      const a = m.index + m[1].length, z = a + m[2].length;
-      if (taken.some(([x, y]) => a < y && z > x)) continue;
-      taken.push([a, z]);
-      runs.push([a, z, KEY_COLOURS[fam]]);
+  // Column names, longest first, whole words only, never inside a run already taken.
+  const names = Object.keys(heads || {}).sort((a, b) => b.length - a.length);
+  const taken = (a, z) => runs.some(([x, y]) => a < y && z > x);
+  const word = ch => /[A-Za-z0-9]/.test(ch || '');
+  names.forEach(name => {
+    let at = text.indexOf(name, keyEnd);
+    while (at >= 0) {
+      const z = at + name.length;
+      if (!word(text[at - 1]) && !word(text[z]) && !taken(at, z)) runs.push([at, z, KEY_COLOURS[heads[name]]]);
+      at = text.indexOf(name, z);
     }
   });
-  return runs;
-}
-/** Colour-word runs and column-name runs together, in text order, without overlaps. */
-function instructionRuns(text, heads) {
-  const out = [];
-  keyRuns(text).concat(headerRuns(text, heads)).sort((p, q) => p[0] - q[0] || q[1] - p[1]).forEach(r => {
-    if (!out.length || r[0] >= out[out.length - 1][1]) out.push(r);
-  });
-  return out;
+  return runs.sort((a, b) => a[0] - b[0]);
 }
 /**
  * The Config tab's colours, kept by every refresh so a row the agent wrote
@@ -948,22 +973,21 @@ function styleConfig(ss) {
 
 function colourInstructions(ss) {
   if (!ss) throw new Error(RUN_THIS);
+  const heads = headerColours(ss);
   ss.getSheets().forEach(sh => {
     const n = Math.min(5, sh.getLastRow());
     if (n < 2 || sh.getLastColumn() < 2) return;
     const h = legendCount(sh.getRange(1, 1, n, 1).getDisplayValues().map(r => r[0]));
-    let heads = [];
-    try {
-      const hr = sh.getRange(h + 1, 1, 1, sh.getLastColumn());
-      const fills = hr.getBackgrounds()[0];
-      heads = hr.getDisplayValues()[0].map((x, i) => [x, fillFamily(fills[i])]);
-    } catch (e) { /* no header row: colour words only */ }
     for (let r = 1; r <= h; r++) {
       const cell = sh.getRange(r, 2);
       const now = cell.getRichTextValue();
       const text = now ? now.getText() : '';
-      const runs = instructionRuns(text, heads);
-      if (!runs.length || runs.every(([a, z, c]) => (now.getTextStyle(a, z).getForegroundColor() || '').toLowerCase() === c)) continue;
+      const runs = keyRuns(text, heads);
+      // Rewritten only when some run lacks its colour, so a refresh is cheap.
+      if (!runs.length || runs.every(([a, z, c]) => {
+        const st = now.getTextStyle(a, z);
+        return (st.getForegroundColor() || '').toLowerCase() === c && st.isBold();
+      })) continue;
       const b = SpreadsheetApp.newRichTextValue().setText(text);
       runs.forEach(([a, z, c]) => b.setTextStyle(a, z, SpreadsheetApp.newTextStyle().setForegroundColor(c).setBold(true).build()));
       const url = /https?:\/\/\S+/g;
@@ -1114,8 +1138,16 @@ function hashOf(text) {
  * initials) changes no row's basis. Returns that hash first, then the older
  * one that kept empty cells, so a basis an agent wrote before the change still
  * matches until it next writes one.
+ *
+ * A basis written as "2:<hash>" also covers the row's grey content columns
+ * (basisGrey), so a change to the comments a change set joins marks its
+ * proposal stale too (owner, 2026-10-31: "changed blue human (or mechanical
+ * grey) content"). `written` is the stored basis: its form says which hash
+ * to compare with, so old bases keep matching until the agent rewrites them.
  */
-function basisOf(header, row, exact, prefix) {
+function basisOf(header, row, exact, prefix, written) {
+  const v2 = /^2:/.test(String(written || ''));
+  if (v2) exact = exact.concat(basisGrey());
   const parts = [], legacy = [];
   header.forEach((h, i) => {
     let v = String(row[i] == null ? '' : row[i]).trim();
@@ -1127,9 +1159,22 @@ function basisOf(header, row, exact, prefix) {
       if (v) parts.push(h + '=' + v);
     }
   });
+  const pfx = v2 ? '2:' : '';
   // A basis written before a rename (RENAMED) names the columns the old way.
   const was = t => t.map(x => { const a = aliasOf(x.split('=')[0]); return a === null || x.indexOf('Committee') !== 0 ? x : a + x.slice(x.indexOf('=')); });
-  return [hashOf(parts.join('\n')), hashOf(legacy.join('\n')), hashOf(was(parts).join('\n')), hashOf(was(legacy).join('\n'))];
+  return [pfx + hashOf(parts.join('\n')), pfx + hashOf(legacy.join('\n')), pfx + hashOf(was(parts).join('\n')), pfx + hashOf(was(legacy).join('\n'))];
+}
+
+/**
+ * The grey (mechanical) content columns a proposal also rests on: in a
+ * public-comment sheet, what Review Change Sets joins from its comments.
+ * Not the agent's own columns (Agentic status, Staging review page), so the
+ * agent's writes never make its proposals stale.
+ */
+function basisGrey() {
+  if (DRAFTING) return [];
+  const c = COLS.rcs;
+  return [c.sections, c.pages, c.comments, c.revisions, c.feedback, c.dispositions, 'TWG (PCs)'].filter(Boolean);
 }
 
 /** "2026-10-30 22:30Z" (or ISO) -> ms, or NaN. */
@@ -1341,7 +1386,8 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) 
   s.rows.forEach((r, k) => {
     if (want && !want(k)) return;
     const cs = String(r[csCol]).trim();
-    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[cs]);
+    const w = basisOfCs[cs];
+    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix, w), w);
     const cur = t === null ? String(r[ag]) : t;
     const L0 = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? lineOf[cs] : undefined;
     const L = L0 === undefined ? L0 : askChecked(L0, cur);
@@ -2165,6 +2211,8 @@ function refreshDraft(rows) {
   // Agentic status sits just left of its filter column (owner, 2026-10-31).
   // Moved here, inside the locked run, before any column is read by position.
   try { placeBefore(ss.getSheetByName(CFG.FEEDBACK), COLS.draft.agentic || 'Agentic status', COLS.draft.status || 'Agentic status (filter)'); } catch (err) { /* the refresh still runs */ }
+  // Issue sits just left of Disposition (agent) (owner, 2026-11-01).
+  try { placeBefore(ss.getSheetByName(CFG.FEEDBACK), COLS.draft.issue || 'Issue', 'Disposition (agent)'); } catch (err) { /* the refresh still runs */ }
   const fb = readSheet(ss.getSheetByName(CFG.FEEDBACK));
   const agentSh = ss.getSheetByName(CFG.AGENT);
   const agent = agentSh ? readSheet(agentSh) : { header: [], rows: [] };

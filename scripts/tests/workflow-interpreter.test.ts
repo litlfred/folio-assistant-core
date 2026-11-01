@@ -81,6 +81,22 @@ describe("the HCI validation gate holds", () => {
     expect(() => complete(model, state, "Task_Commit")).toThrow(/not enabled/);
   });
 
+  test("a change with no recommendation skips the evidence search, and says so", async () => {
+    // Gateway_RecommendationInPlay (folio-assistant-core#505): a figure redrawn
+    // from its own source carries no recommendation, so there is no PICO to
+    // frame. The `no` branch ends the subprocess at its own event; drafting is
+    // enabled next, and nothing of the search ran.
+    const model = await editing();
+    const state = startInstance(model, { id: "t-norec", subject: "fig:15" });
+    complete(model, state, "Task_DescribeChange");
+    openBean(model, state);
+    drainSubprocess(model, state, "CallActivity_Evidence", { Gateway_RecommendationInPlay: "no" });
+    expect(enabled(model, state).map((e) => e.node)).toEqual(["Task_DraftEdit"]);
+    const walked = JSON.stringify(state);
+    expect(walked).toContain("Gateway_RecommendationInPlay");
+    expect(walked).not.toContain("Task_FramePico");
+  });
+
   test("both validation branches must report before the findings are collated", async () => {
     const model = await editing();
     const state = startInstance(model, { id: "t3", subject: "def:x" });

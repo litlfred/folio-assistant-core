@@ -64,6 +64,14 @@ reason about the rows, edit anything or post anything.
    - Exit 0 is `{"status":"unchanged"}`. Queue the next wake and stop.
    - Exit 10 is `changed`. The output has `changes` (an issue opened, updated
      or closed, or a cell's old and new text) and `append`.
+
+   **Inserted rows.** People may insert a row anywhere. The state keys each
+   cell by its row's Change-set id (`CS-004:Ready for agent`), and by sheet
+   row only for a row with no id, so an insert moves no change set and
+   reports nothing. A cell change carries `cs` and the row it is on now. Every
+   row number in the output (`changes[].row`, `closedRows`) is from this
+   read, so write only from the read you just checked, never from a row
+   number kept from an earlier check (owner question, 2026-11-01 18:12Z).
 3. **Append** each `append[].row` below the last row of Contributor Feedback.
    The row is already lined up with the header:
    - **Change-set:** the next id, also in `append[].agent.csId`.
