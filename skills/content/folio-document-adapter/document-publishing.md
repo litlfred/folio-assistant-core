@@ -116,3 +116,15 @@ Publication authorisation is the base process's, not this skill's:
 `draft-to-publication.bpmn` and no content type can opt out of them. Render,
 review, then take the release decision through the workflow —
 `workflow_next` will tell you what is enabled.
+
+### A public comment release is a full build
+
+A site build is a `preview` (a pull request's `STAGING/<slug>/`: only what the
+change reaches, every whole-corpus index borrowed from main) or `full` (the
+main deploy, a public comment release, a release: every index rebuilt). Owner,
+2026-11-01; cat-harness skill `feature-staging`, section "Build types".
+
+Before `pc:release freeze`, dispatch the preview workflow for the branch with
+`build_type: full`, so the frozen copy's search index and slices describe the
+draft rather than main. Freeze refuses a copy whose `staging.json` says
+`buildType: "preview"`, and records the build type in `release.json`.

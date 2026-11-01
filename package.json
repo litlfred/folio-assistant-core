@@ -74,6 +74,7 @@
     "figure:smart-approach": "bun run folio-assistant-core/scripts/smart-approach-svg.ts",
     "bibliography:page": "bun run folio-assistant-core/scripts/bibliography-page.ts",
     "glossary:page": "bun run folio-assistant-core/scripts/glossary-page.ts",
+    "glossary:table": "bun run folio-assistant-core/scripts/glossary-table.ts",
     "glossary:pot": "bun run folio-assistant-core/scripts/glossary-pot.ts --extract",
     "glossary:acronyms": "bun run folio-assistant-core/scripts/glossary-acronyms.ts --folio folio",
     "glossary:pot:check": "bun run folio-assistant-core/scripts/glossary-pot.ts --check",

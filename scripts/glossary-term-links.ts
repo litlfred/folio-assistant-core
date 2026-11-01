@@ -19,8 +19,9 @@
  *   the start of a sentence. Another instance's one-word term is too often the
  *   English word: "Product code" and "Product verification" in dth-pc are not
  *   smart-ra's Product.
- * - Each link goes to the term's entry on the glossary page this site already
- *   composes (`glossary-page.ts`), by the same anchor that page writes.
+ * - Each link goes to the term's own page (`glossary-page.ts`, `termPagePath`),
+ *   which shows its glossary row, related terms and the narrative passages
+ *   (owner, 2026-11-01, Q-GLO-2 A, folio-assistant-core#498).
  * - Only a whole-word, case-sensitive match of a label that starts with a
  *   capital letter links, with an optional plural "s". The longest label wins
  *   ("Regulated Trade Item" before "Trade Item").
@@ -70,7 +71,7 @@ export function neededInstances(repoRoot: string): Set<string> {
 
 /** The links for a document whose page is in `pageDir` (relative to the site root). */
 export async function termLinks(repoRoot: string, pageDir: string): Promise<TermLink[]> {
-  const { collect, anchorOf, permalinkOf, pageOf } = await import("./glossary-page.ts");
+  const { collect, termPermalink } = await import("./glossary-page.ts");
   const { termIri } = await import("../schemas/glossary.ts");
   const wanted = neededInstances(repoRoot);
   const self = [...wanted][0];
@@ -80,10 +81,11 @@ export async function termLinks(repoRoot: string, pageDir: string): Promise<Term
     // A scheme counts for the instance that declares it, so a term of dth-sc's is
     // dth-sc's even while the page credits it elsewhere (scheme-owner.ts).
     if (s.extracted || !wanted.has(s.declaredBy ?? s.instance)) continue;
-    const page = permalinkOf(pageOf(s)).replace(/^\//, "");
     for (const t of s.glossary.terms) {
       const def = t.definition ? labelOf(t.definition as LangText).split(/(?<=\.)\s/)[0] : undefined;
-      const href = `${posix.relative(pageDir, page)}/#${anchorOf(s, t.id)}`;
+      // The term's own page (folio-assistant-core#498, Q-GLO-2 A), which links
+      // on to its glossary row, related terms and the narrative passages.
+      const href = `${posix.relative(pageDir, termPermalink(s, t.id).replace(/^\/|\/$/g, ""))}/`;
       const iri = t.iri ?? termIri(s.ns, s.glossary, t.id);
       byIri.set(iri, { label: labelOf(t.prefLabel as LangText), href, iri, prose: false, ...(def ? { title: def } : {}) });
       for (const label of [labelOf(t.prefLabel as LangText), ...(t.altLabel ?? [])]) {
