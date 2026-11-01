@@ -23,6 +23,7 @@
     "adapters/document/tools/transform.ts",
     "adapters/document/tools/validate.ts",
     "scripts/tests/audit-tools.test.ts",
+    "scripts/tests/document-tools-path-containment.test.ts",
     "scripts/tests/qa-tools.test.ts",
     "scripts/tests/transform-bib-tools.test.ts"
   ]
