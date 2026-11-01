@@ -85,6 +85,7 @@ import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts
 import { visualiserNavDeclaration, type VisualiserNavEntry } from "@litlfred/cat-harness-tools/scripts/lib/navbar.js";
 import { wrapRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 import { scopeCss } from "./scope-css.js";
+import { liveFigures, withLiveFigures } from "./live-figures.js";
 import { linkTerms, termLinks as glossaryTermLinks, type TermLink } from "./glossary-term-links.ts";
 import { referenceAnchor } from "../schemas/reference.ts";
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
@@ -112,6 +113,8 @@ const PAGE_STYLE = `<style>
   .cite { color: var(--muted); }
   .fa-blk:empty { min-height: 3rem; }
   .fa-one-page { font-size: .85rem; color: var(--muted); }
+  .fa-live-figure img { max-width: 100%; height: auto; }
+  .fa-live-figure-note { display: block; font-size: .85rem; color: var(--muted); }
 </style>`;
 
 /** A readable page shell. Light and dark follow the reader's system setting. */
@@ -821,7 +824,11 @@ export async function buildDocumentSite(
     const title = withStatus(manifest.title ?? d.slug, status);
     if (status && manifest.title) built.markdown = built.markdown.replace(`# ${manifest.title}\n`, `# ${title}\n`);
     const termLinks = opts.linkTerms ? await glossaryTermLinks(repoRoot, documentPageDir(d.slug)) : undefined;
-    const html = await renderDocumentHtml(built.markdown, { math, bibliographyUrl: opts.bibliographyUrl, termLinks });
+    // A figure that is a view of the instance's ArchiMate model is drawn from
+    // the model, linked to the view's page (live-figures.ts); the PNG stays the fallback.
+    const live = liveFigures(repoRoot, documentPageDir(d.slug));
+    const render = async (md: string) => withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks }), live);
+    const html = await render(built.markdown);
     // The page under the locale, its data where it was (document-site-route.ts).
     const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
     const data = join(outDir, ...documentDataDir(d.slug).split("/"));
@@ -867,7 +874,7 @@ export async function buildDocumentSite(
         const n = index.chunks++;
         const chunk: Record<string, string> = {};
         for (const b of split.blocks.slice(i, i + LAZY_CHUNK)) {
-          const h = await renderDocumentHtml(b.markdown, { math, bibliographyUrl: opts.bibliographyUrl, termLinks });
+          const h = await render(b.markdown);
           chunk[b.label] = h;
           index.of[b.label] = n;
           for (const id of idsIn(h)) index.ids[id] ??= n;
@@ -875,7 +882,7 @@ export async function buildDocumentSite(
         writeFileSync(join(data, "blocks", `${String(n).padStart(3, "0")}.json`), JSON.stringify(chunk));
       }
       lazyOf.set(d.slug, { hydrated: hydratedPage(d.slug), chunks: index.chunks, of: index.of });
-      const shellHtml = await renderDocumentHtml(split.shell, { math, bibliographyUrl: opts.bibliographyUrl, termLinks });
+      const shellHtml = await render(split.shell);
       const note = `<p class="fa-one-page">The text loads as you read. <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
       const loader = lazyLoader(index, fromPageDir(documentPageDir(d.slug), `${documentDataDir(d.slug)}/blocks`));
       if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, note + headingIds(shellHtml), mathOpts, loader), true)));
