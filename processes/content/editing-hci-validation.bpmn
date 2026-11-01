@@ -56,7 +56,6 @@
         <bpmn:flowNodeRef>Task_RecordDecision</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_EditorDecision</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Discarded</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Call_BeanClose</bpmn:flowNodeRef>
               <bpmn:flowNodeRef>CallActivity_Evidence</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_WorkPlan" name="Work plan — beans (shared by humans and agents)" partitionElementRef="work-plan">
@@ -66,6 +65,7 @@
         <bpmn:flowNodeRef>End_BeanNotYours</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_LogFindings</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ResolveBean</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_BeanClosedHow</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Agent" name="Authoring agent (system)" partitionElementRef="authoring-agent">
         <bpmn:documentation>Produces the proposed change and, once findings exist, weighs the options for it — accept, revise, discard — but stops short of choosing: Call_OptionsAnalysis records that the options were weighed, Task_RecordDecision in the editor's lane records what was chosen, and collapsing the two would let the same party both analyse and decide.</bpmn:documentation>
@@ -286,9 +286,10 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
     <bpmn:callActivity id="Task_ResolveBean" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
       <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
-          <bpmn:incoming>Flow_26</bpmn:incoming>
-          <bpmn:outgoing>Flow_27</bpmn:outgoing>
     </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="GW_BeanClosedHow" name="How did it end?">
+      <bpmn:documentation>Which outcome the bean was closed with, so each ends at its own named end event. The bean is closed once, on every path (bpmn-authoring: open and close the bean at the top, once).</bpmn:documentation>
+    </bpmn:exclusiveGateway>
     <bpmn:endEvent id="EndEvent_InCorpus" name="Change is in the corpus">
       <bpmn:incoming>Flow_27</bpmn:incoming>
     </bpmn:endEvent>
@@ -302,12 +303,6 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
       <bpmn:documentation>Someone else holds the bean; this run stops without touching it.</bpmn:documentation>
       <bpmn:incoming>SF_Bean_2</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Call_BeanClose" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
-      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
-      <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
-      <bpmn:incoming>Flow_24</bpmn:incoming>
-      <bpmn:outgoing>SF_Bean_3</bpmn:outgoing>
-    </bpmn:callActivity>
     <bpmn:sequenceFlow id="Flow_01" sourceRef="StartEvent_EditRequested" targetRef="Task_DescribeChange" />
     <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_DescribeChange" targetRef="Task_ClaimBean" />
     <bpmn:sequenceFlow id="Flow_03" name="claimed" sourceRef="GW_BeanYours" targetRef="CallActivity_Evidence" />
@@ -334,16 +329,18 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
     <bpmn:sequenceFlow id="Flow_21b" sourceRef="Task_RecordDecision" targetRef="Gateway_EditorDecision" />
     <bpmn:sequenceFlow id="Flow_22" name="revise" sourceRef="Gateway_EditorDecision" targetRef="Task_ReviseEdit" />
     <bpmn:sequenceFlow id="Flow_23" name="re-validate" sourceRef="Task_ReviseEdit" targetRef="Gateway_ProposalReady" />
-    <bpmn:sequenceFlow id="Flow_24" name="discard" sourceRef="Gateway_EditorDecision" targetRef="Call_BeanClose" />
+    <bpmn:sequenceFlow id="Flow_24" name="discard" sourceRef="Gateway_EditorDecision" targetRef="Task_ResolveBean" />
     <bpmn:sequenceFlow id="Flow_25" name="accept" sourceRef="Gateway_EditorDecision" targetRef="Task_Commit" />
     <bpmn:sequenceFlow id="Flow_26" sourceRef="Task_Commit" targetRef="Task_ResolveBean" />
-    <bpmn:sequenceFlow id="Flow_27" sourceRef="Task_ResolveBean" targetRef="EndEvent_InCorpus" />
+    <bpmn:sequenceFlow id="Flow_GW_BeanClosedHow" sourceRef="Task_ResolveBean" targetRef="GW_BeanClosedHow"/>
+    <bpmn:sequenceFlow name="in the corpus" id="Flow_27" sourceRef="GW_BeanClosedHow" targetRef="EndEvent_InCorpus" />
     <bpmn:sequenceFlow id="SF_Bean_1" sourceRef="Task_ClaimBean" targetRef="GW_BeanYours"/>
     <bpmn:sequenceFlow id="SF_Bean_2" name="not yours" sourceRef="GW_BeanYours" targetRef="End_BeanNotYours"/>
-    <bpmn:sequenceFlow id="SF_Bean_3" sourceRef="Call_BeanClose" targetRef="EndEvent_Discarded"/>
+    <bpmn:sequenceFlow name="discarded" id="SF_Bean_3" sourceRef="GW_BeanClosedHow" targetRef="EndEvent_Discarded"/>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_FolioEditing">
+      <bpmndi:BPMNEdge id="Edge_Flow_GW_BeanClosedHow" bpmnElement="Flow_GW_BeanClosedHow"><di:waypoint x="3338" y="305"/><di:waypoint x="3378" y="305"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_FolioEditing_di" bpmnElement="Participant_FolioEditing" isHorizontal="true">
         <dc:Bounds x="160" y="80" width="3393" height="1422" />
       </bpmndi:BPMNShape>
@@ -453,23 +450,26 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
         <dc:Bounds x="2685" y="514.5" width="170" height="101" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Discarded_di" bpmnElement="EndEvent_Discarded">
-        <dc:Bounds x="3095" y="137" width="36" height="36" />
+        <dc:Bounds x="3518" y="338" width="36" height="36" />
         
-      <bpmndi:BPMNLabel>
-          <dc:Bounds x="3058" y="177" width="110" height="30" />
-        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <bpmndi:BPMNLabel><dc:Bounds x="3424" y="378" width="90" height="35" /></bpmndi:BPMNLabel>
+        
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Commit_di" bpmnElement="Task_Commit">
         <dc:Bounds x="3028" y="1382" width="130" height="90" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_GW_BeanClosedHow" bpmnElement="GW_BeanClosedHow" isMarkerVisible="true"><dc:Bounds x="3378" y="280" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="3312.08" y="353.5" width="90" height="35" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ResolveBean_di" bpmnElement="Task_ResolveBean">
         <dc:Bounds x="3208" y="260" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_InCorpus_di" bpmnElement="EndEvent_InCorpus">
-        <dc:Bounds x="3415" y="1409" width="36" height="36" />
+        <dc:Bounds x="3518" y="238" width="36" height="36" />
         
-      <bpmndi:BPMNLabel>
-          <dc:Bounds x="3378" y="1449" width="110" height="30" />
-        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <bpmndi:BPMNLabel><dc:Bounds x="3334" y="238" width="180" height="18" /></bpmndi:BPMNLabel>
+        
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_01_di" bpmnElement="Flow_01">
         <di:waypoint x="298" y="155" />
         <di:waypoint x="355" y="155" />
@@ -593,9 +593,8 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
         <di:waypoint x="2685" y="565" />
         <di:waypoint x="1035" y="565" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_24_di" bpmnElement="Flow_24">
-        <di:waypoint x="2795" y="155" />
-        <di:waypoint x="2895" y="155" />
+      <bpmndi:BPMNEdge id="Flow_24_di" bpmnElement="Flow_24"><di:waypoint x="2795" y="155"/><di:waypoint x="3188" y="155"/><di:waypoint x="3188" y="305"/><di:waypoint x="3208" y="305"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="2946.5" y="135" width="90" height="17" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_25_di" bpmnElement="Flow_25">
         <di:waypoint x="2783" y="180" />
@@ -604,15 +603,9 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
         <di:waypoint x="3113" y="1382" />
         <bpmndi:BPMNLabel><dc:Bounds x="2787" y="188.5" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_26_di" bpmnElement="Flow_26">
-        <di:waypoint x="3158" y="1427" />
-        <di:waypoint x="3273" y="1427" />
-        <di:waypoint x="3273" y="350" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_27_di" bpmnElement="Flow_27">
-        <di:waypoint x="3338" y="305" />
-        <di:waypoint x="3433" y="305" />
-        <di:waypoint x="3433" y="1409" />
+      <bpmndi:BPMNEdge id="Flow_26_di" bpmnElement="Flow_26"><di:waypoint x="3158" y="1427"/><di:waypoint x="3188" y="1427"/><di:waypoint x="3188" y="305"/><di:waypoint x="3208" y="305"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_27_di" bpmnElement="Flow_27"><di:waypoint x="3403" y="280"/><di:waypoint x="3403" y="256"/><di:waypoint x="3518" y="256"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="3407" y="259" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="GW_BeanYours_di" bpmnElement="GW_BeanYours" isMarkerVisible="true"><dc:Bounds x="620" y="380" width="50" height="50" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_BeanNotYours_di" bpmnElement="End_BeanNotYours"><dc:Bounds x="700" y="387" width="36" height="36" />
@@ -626,10 +619,8 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
         <di:waypoint x="670" y="405" />
         <di:waypoint x="700" y="405" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Call_BeanClose_di" bpmnElement="Call_BeanClose"><dc:Bounds x="2895" y="115" width="160" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SF_Bean_3_di" bpmnElement="SF_Bean_3">
-        <di:waypoint x="3055" y="155" />
-        <di:waypoint x="3095" y="155" />
+      <bpmndi:BPMNEdge id="SF_Bean_3_di" bpmnElement="SF_Bean_3"><di:waypoint x="3403" y="330"/><di:waypoint x="3403" y="356"/><di:waypoint x="3518" y="356"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="3407" y="334.5" width="90" height="17" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
