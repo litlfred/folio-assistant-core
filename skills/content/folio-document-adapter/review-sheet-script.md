@@ -865,9 +865,21 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
 3. **Link it to the repository (agent).** Give the agent the copy's URL and
    the document's repository. The agent follows "Linking a sheet to a
    repository" below. Until it does, Config holds only its Instructions,
-   Key and EDITORS rows, the Selected Sections dropdown is empty, and the
-   script says "not linked to a document repository yet" with the sheet's
-   ID when the sheet opens and on every run.
+   Key and EDITORS rows and the Selected Sections dropdown is empty.
+   The sheet itself says what to do next (owner, 2026-11-01: the old toast
+   was cut off before it said what to do, and the steps belong on the
+   sheet). The first line of each tab's Instructions starts with ⚠ and
+   names the next step: "Not set up yet. Step 1 of 2: ask the agent to link
+   this sheet …" (the templates carry it, so a copy starts with it), then,
+   once linked, "Almost set up. Step 2 of 2: choose Review links, then
+   Install". A short toast says the same when the sheet opens, and every
+   run of an unlinked sheet stops with "Ask the agent to link this sheet to
+   its document: give it this sheet's link (ID …)". Once installed (the
+   `timerMinutes` document property installTriggers sets), the ⚠ line goes
+   and each tab's Instructions ends with a
+   `Document: <site>   Repository: <repo>` line; Config has an
+   `Instructions - Links` row with the site, the repository and the
+   sheet's settings file.
 4. **Name the editors (owner).** Type their emails in Config's orange
    `EDITORS` row, or leave it empty so only the owner can set the Ready
    columns (below).
@@ -1066,12 +1078,20 @@ work second, in this order:
    leaves all three out. Run `review:anchors` and commit the file. A new
    document folio declares both scripts from its first commit, so no sheet
    ever waits on them.
-2. **The folio names the sheet.** `review/<mode>/sheet-sync.json`:
-   `{"mode":"drafting","anchors":"folio/<doc>/review-anchors.json","sectionUrl":"en/<doc>/#","sheet":"<spreadsheet id>"}`.
-3. **The agent writes the sheet.** From the folio's root:
-   `bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts --config review/<mode>/sheet-sync.json --out config-rows.json --toc-out toc-rows.json`,
-   then, with the Sheets connector, the CFG, COLS and DATA rows into Config
-   below EDITORS (keep the sheet's EDITORS value), and for drafting the TOC
+2. **The folio names the sheet, and 3a. the rows are built: one command.**
+   From the folio's root, with the link the person pasted:
+   `bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts --link <sheet link or id> --document <doc> --out config-rows.json --toc-out toc-rows.json`.
+   It writes `review/drafting/sheet-sync.json`
+   (`{"mode":"drafting","anchors":"folio/<doc>/review-anchors.json","sectionUrl":"en/<doc>/#","sheet":"<spreadsheet id>"}`;
+   an existing file keeps its settings and only gets the new `sheet`), then
+   the rows. The site and repository links come from the folio's `iriBase`
+   (`https://<owner>.github.io/<repo>/` is `https://github.com/<owner>/<repo>`);
+   a folio on another host sets `"repository"` in sheet-sync.json.
+   Public comment, or to rebuild after a structural change: `--config review/<mode>/sheet-sync.json` instead of `--link`.
+3. **The agent writes the sheet.** With the Sheets connector, it writes the
+   rows from step 2: the whole Config tab from A1, keeping the sheet's
+   EDITORS value (the `Instructions - Links` row sits above Key, so the CFG,
+   COLS and DATA rows land below EDITORS), and for drafting the TOC
    rows into the TOC tab from A1. The connector writes values, not colours,
    so the agent also colours Config: the Key row a Grey header (`#b7b7b7`,
    bold), EDITORS Orange (`#f4b26b`), and CFG, COLS, DATA and their

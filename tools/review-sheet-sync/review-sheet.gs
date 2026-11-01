@@ -46,7 +46,7 @@ function installTriggers() {
   host_().ScriptApp.newTrigger('markDirty').forSpreadsheet(ss).onEdit().create();
   host_().ScriptApp.newTrigger('refreshIfDirty').timeBased().everyMinutes(TIMER_MINUTES).create();
   docProps_().setProperty('timerMinutes', String(TIMER_MINUTES));
-  refreshAll();
+  refreshAll(); // also takes the setup line off each tab: timerMinutes marks it installed
   applyEditors(ss);
   if (DRAFTING) checkDropdown(ss);
 }
@@ -126,14 +126,56 @@ function loadConfig(ss) {
 
 /**
  * A copy of a template is not linked to a repository until the agent writes
- * its Config from the folio's sheet-sync.json. Say so, with what to ask for,
- * rather than leaving an empty dropdown to explain itself.
+ * its Config from the folio's sheet-sync.json. The message leads with what to
+ * do and stays short enough for a toast (owner, 2026-11-01: the toast "was
+ * cut off ... User wont know what to do").
  */
 function notLinked(ss) {
-  return 'This sheet is not linked to a document repository yet, so its Config tab is empty and ' +
-    'the Selected Sections dropdown has nothing to offer. Ask the agent to link it: name the repository ' +
-    'and give this spreadsheet\'s ID, ' + ss.getId() + '. The agent adds review/<mode>/sheet-sync.json ' +
-    'there and writes this Config tab (skill review-sheet-script, "Linking a sheet to a repository").';
+  return 'Ask the agent to link this sheet to its document: give it this sheet\'s link (ID ' + ss.getId() +
+    '). Until then the Config tab and the Selected Sections dropdown are empty.';
+}
+/**
+ * The setup steps a person still has to take, as the first line of each
+ * tab's Instructions, so the sheet itself says what to do next (owner,
+ * 2026-11-01: "put instructions on sheet ... Warning icon on first line";
+ * "should be in the google sheet template so clearer what to do"). The
+ * templates carry the first step from the start; the script moves it on.
+ */
+const SETUP_MARK = '\u26a0 ';
+const SETUP_STEPS = {
+  unlinked: SETUP_MARK + 'Not set up yet. Step 1 of 2: ask the agent to link this sheet to its document, and give it this sheet\'s link. ' +
+    'Step 2: choose Review links, then Install.',
+  uninstalled: SETUP_MARK + 'Almost set up. Step 2 of 2: choose Review links, then Install (once), and allow it. The script then keeps this sheet current.',
+};
+/** Where the sheet's setup is: 'unlinked' (no Config), 'uninstalled' (no timer yet) or 'ready'. */
+function setupState(linked) {
+  if (!linked) return 'unlinked';
+  try { return docProps_().getProperty('timerMinutes') ? 'ready' : 'uninstalled'; } catch (e) { return 'uninstalled'; }
+}
+/**
+ * Keep each visible tab's first Instructions cell in step with the setup:
+ * a ⚠ first line with the next step until the sheet is linked and
+ * installed; once linked, a last line with the document's site and
+ * repository (owner, 2026-11-01). A plain text write; colourInstructions
+ * puts the colours back on the next refresh.
+ */
+function markSetup(ss, state) {
+  if (!ss) throw new Error(RUN_THIS);
+  const parts = state !== 'unlinked' && CFG ? [CFG.SITE_URL, CFG.REPO_URL && 'Repository: ' + CFG.REPO_URL].filter(Boolean) : [];
+  const where = parts.length ? 'Document: ' + parts.join('   ') : '';
+  ss.getSheets().forEach(sh => {
+    if (sh.isSheetHidden() || sh.getName() === CONFIG_TAB || sh.getLastRow() < 1 || sh.getLastColumn() < 2) return;
+    if (!LEGEND_RE.test(String(sh.getRange(1, 1).getDisplayValue()).trim())) return;
+    const cell = sh.getRange(1, 2);
+    const before = String(cell.getDisplayValue());
+    let lines = before.split('\n').filter(l => l.indexOf(SETUP_MARK) !== 0 && l.indexOf('Document: ') !== 0);
+    if (SETUP_STEPS[state]) lines.unshift(SETUP_STEPS[state]);
+    if (where) lines.push(where);
+    const text = lines.join('\n');
+    if (text !== before) cell.setValue(text);
+  });
+  // A plain write drops the colours; put them back now, linked or not.
+  try { colourInstructions(ss); } catch (e) { /* cosmetic only */ }
 }
 
 function showVersion() {
@@ -156,7 +198,11 @@ function onOpen() {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(CONFIG_TAB);
     const keys = sh ? sh.getRange(1, 1, Math.max(sh.getLastRow(), 1), 1).getDisplayValues().map(r => String(r[0]).trim()) : [];
-    if (!keys.includes('CFG')) ss.toast(notLinked(ss), 'Not linked to a repository yet', 30);
+    const linked = keys.includes('CFG');
+    if (!linked) ss.toast('Ask the agent to link this sheet. The \u26a0 line at the top of the tab says how.', '\u26a0 Not set up yet', 30);
+    else if (setupState(true) === 'uninstalled') ss.toast('Choose Review links, then Install, to start the script.', '\u26a0 Almost set up', 30);
+    if (linked) loadConfig(ss);
+    markSetup(ss, setupState(linked));
   } catch (e) { /* a toast is a courtesy; never block the menu */ }
 }
 
@@ -467,6 +513,7 @@ function refreshAll() {
   try {
     refreshLocked();
     applyEditors(SpreadsheetApp.getActive());
+    try { markSetup(SpreadsheetApp.getActive(), setupState(true)); } catch (err) { /* cosmetic only */ }
     try { colourInstructions(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
     try { styleConfig(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
     return true;
@@ -779,14 +826,16 @@ const KEY_COLOURS = { blue: '#1f5fa8', green: '#2e7d32', orange: '#c25e00', grey
 const KEY_WORD_RE = /\b(blue|green|orange|grey)\b/gi;
 function keyRuns(text) {
   const runs = [];
-  const nl = text.indexOf('\n');
-  const first = nl < 0 ? text : text.slice(0, nl);
+  // A setup line (markSetup) may sit above the key: the key is then the second line.
+  const at = text.indexOf(SETUP_MARK) === 0 && text.indexOf('\n') >= 0 ? text.indexOf('\n') + 1 : 0;
+  const nl = text.indexOf('\n', at);
+  const first = nl < 0 ? text.slice(at) : text.slice(at, nl);
   let keyEnd = 0;
   if (/^(blue|green|orange|grey) = /i.test(first)) {
     const seg = /(blue|green|orange|grey) = .*?(?=\s{3,}|$)/gi;
     let m;
-    while ((m = seg.exec(first))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
-    keyEnd = first.length;
+    while ((m = seg.exec(first))) runs.push([at + m.index, at + m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
+    keyEnd = at + first.length;
   }
   let m;
   KEY_WORD_RE.lastIndex = keyEnd;
