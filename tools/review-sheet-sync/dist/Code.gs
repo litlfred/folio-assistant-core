@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 b9122a49aba7894c.
+// folio-assistant-core tools/review-sheet-sync at template sha256 3b0d7804121e91d2.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,9 +75,9 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 b9122a49aba7894c';
+const SCRIPT_VERSION = 'template sha256 3b0d7804121e91d2';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
-const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
+const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
   'in the function list (next to Run and Debug), then press Run.';
 let CFG = null, COLS = null, DATA = null, DRAFTING = false, WATCHED = [], EDITORS = null, EDITORS_SKIPPED = [];
@@ -179,13 +179,14 @@ function markSetup(ss, state) {
 }
 
 function showVersion() {
-  // Short and plain (owner, 2026-11-01: the old text was "long, unclear").
-  const build = String(SCRIPT_VERSION).replace(/^template sha256 /, '');
-  SpreadsheetApp.getUi().alert('Which version is this?',
-    'Build: ' + build + '\n\n' +
-    'Newest build: the "at ..." line near the top of ' + LATEST_URL + '\n\n' +
-    'Different? Ask the agent for the Code.gs copy page, paste it over Code.gs in the Folio Review Library (' + LIBRARY_URL + ') and save, ' +
-    'then choose Review links, Refresh now in each sheet.',
+  // Short, one fact per line (owner, 2026-11-01: "not pretty as requested").
+  // The copy page is the one place the newest build is published: the GitHub
+  // updater is broken, and main can lag an open PR. An alert cannot hold a
+  // link, and HtmlService stays out of this script (see the security tests).
+  const build = String(SCRIPT_VERSION).replace(/^template sha256 /, '').slice(0, 8);
+  SpreadsheetApp.getUi().alert('Code.gs build ' + build,
+    'Newest build: top of the copy page\n' + COPY_PAGE_URL.replace(/^https:\/\//, '') + '\n\n' +
+    'Different? Paste that page over Code.gs in the Folio Review Library, then save.',
     SpreadsheetApp.getUi().ButtonSet.OK);
 }
 
