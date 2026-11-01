@@ -951,6 +951,956 @@
           "drafted_at": "2026-11-01"
         }
       ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s305-modifying-metadata-via-patch",
+      "source": "sections/s305-modifying-metadata-via-patch.md",
+      "source_hash": "6dfd60019395443d579a3af336c299ade340da271160fca28f70f7802651dcf7",
+      "narrative": [
+        {
+          "text": "Opens the guide Modifying metadata via Patch, with a contents list: introduction, adding, removing, replacing and ordering metadata.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s306-introduction",
+      "source": "sections/s306-introduction.md",
+      "source_hash": "c622526591bc4ffbd51d82539b80df9266a827acffd5f8627a7b66da9a9d2322",
+      "narrative": [
+        {
+          "text": "Any user with write permission on a DSpace object can change its metadata with an HTTP PATCH, in much the same way for every object type; a PATCH acts on the whole object, so other mutable attributes can change in the same request. A metadata path targets all metadata (/metadata, value an object), one field (/metadata/dc.title, value an array) or one value (/metadata/dc.title/0, value an object). Fields named in the path must exist in the metadata registry, or the request fails with 422. Items in submission use the same model but are covered by the WorkspaceItem Metadata page. The examples start from a single dc.title.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s307-adding-metadata",
+      "source": "sections/s307-adding-metadata.md",
+      "source_hash": "dd0fd6cdf74beead774fc371c62db337c912d6d657346cb3720529b2eb03b1a1",
+      "narrative": [
+        {
+          "text": "The add operation adds any number of metadata values in one request. Following RFC 6902 section 4.1, adding to an existing key replaces all its values. A field with no values must be initialised with an array; once values exist, the path ends with a position (/0 for first, /- for last). New values default to null language and authority and confidence -1. The example adds a description and two titles and shows the result.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s308-removing-metadata",
+      "source": "sections/s308-removing-metadata.md",
+      "source_hash": "b000f06bac9f1d956b3c4fa0d12c17b0557d43b8d8c7cf17e7f5b7451b5a511f",
+      "narrative": [
+        {
+          "text": "The remove operation deletes all values of a key (path to the key) or one value at a known position (path to the value); for a key with one value the two are equivalent. The example removes the description and the first title.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s309-replacing-metadata",
+      "source": "sections/s309-replacing-metadata.md",
+      "source_hash": "334fe71d66828c76556d17cd5c7c93071365fc65fb23e3b51980eba27f72c02c",
+      "narrative": [
+        {
+          "text": "The replace operation overwrites, in one operation, all of an object's metadata, all values of an existing key, one existing value, or one property of a value (such as /metadata/dc.title/0/language). The example replaces the first title's value and language with a Japanese title.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s310-ordering-metadata",
+      "source": "sections/s310-ordering-metadata.md",
+      "source_hash": "51b7197152d3ac11fd2168435e86ba6e9135a02f3738a7532cbe6f4f3b6a02dd",
+      "narrative": [
+        {
+          "text": "The move operation reorders metadata values; the example moves the last dc.title to first position with from and path.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s311-metadata-suggestions-md",
+      "source": "sections/s311-metadata-suggestions-md.md",
+      "source_hash": "b4050e666345f2bc566825d6b9d3123293a02e7a8208413e6178a6372af040fb",
+      "narrative": [
+        {
+          "text": "Warning banner: the page that follows describes a submission metadata enhancement that was designed but never fully implemented because of its complexity. The unfinished work is DSpace pull request 2712, and until it moves forward the documentation is marked invalid.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s312-metadata-suggestions-from-live-import",
+      "source": "sections/s312-metadata-suggestions-from-live-import.md",
+      "source_hash": "977a3c1b6b9c9279d380e62606d78f342ed08b35691750aa2fdada3f3ac7a0ce",
+      "narrative": [
+        {
+          "text": "Opens Metadata suggestions from live import, with a contents list: introduction, main and single-suggestion endpoints, linked entities (entries, single entry, differences), and the kinds of suggested change (adding, replacing, name variants, relationships).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s313-introduction",
+      "source": "sections/s313-introduction.md",
+      "source_hash": "5f8a194b7c6e71dca6c4f4b967912379eed878ff3e229d05de721f03271f5d39",
+      "narrative": [
+        {
+          "text": "This contract lets a user get suggested metadata changes for an item in submission or workflow. The user picks a live import source (PubMed for a medical publication, ORCID for an author, a RIS file for uploaded metadata); the source suggests matches, and an accepted match yields suggested changes, shown alongside the source's full metadata.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s314-main-endpoint",
+      "source": "sections/s314-main-endpoint.md",
+      "source_hash": "af3c27f5c3328e76ed41fd5848fed89b12e3861cb9ff3ba78ff53781055ebc96",
+      "narrative": [
+        {
+          "text": "GET /api/integration/metadata-suggestions lists the configured live import sources that can suggest metadata, possibly filtered by workspaceitem or workflowitem (the text asks whether this should come from the submission forms instead). The list may differ per item, for example ORCID for a Person and PubMed for a Publication. Each source states whether it is query-based, file-based or metadata-based; the example lists pubmed, orcid, ciencia and a RIS file loader.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s315-single-suggestion-endpoint",
+      "source": "sections/s315-single-suggestion-endpoint.md",
+      "source_hash": "0f2ba5dcf7a02ce00ce3d962529d12a3eda6bfdef2c5f45d57babcc40af6ca31",
+      "narrative": [
+        {
+          "text": "GET /api/integration/metadata-suggestions/<name> returns one live import source. Its flags say whether it suggests from a query, from an uploaded file, or from the item's current metadata. Link: entries, the values the source manages.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s316-linked-entities",
+      "source": "sections/s316-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a metadata suggestion source; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s317-live-import-entries",
+      "source": "sections/s317-live-import-entries.md",
+      "source_hash": "fa47553a1df2b1b3853fc2880f3dd1f75c28e391c59c167e02fde4f40ba66018",
+      "narrative": [
+        {
+          "text": "GET /api/integration/metadata-suggestions/<name>/entries returns the source's entries that match a query (query-based sources), a bitstream (file-based) or the item's metadata (use-metadata, metadata-based), for a given workspaceitem or workflowitem (exactly one), paginated where the source allows. The ORCID example for query=Smith returns person entries with their ORCID id, URI and names, each linking to its differences.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s318-single-entry",
+      "source": "sections/s318-single-entry.md",
+      "source_hash": "d2efd22e9acfdcf1441eeb75342d3b6278871806a40dc1270dbb09bbacbcadd4",
+      "narrative": [
+        {
+          "text": "GET /api/integration/metadata-suggestions/<name>/entryValues/<entry-id> returns one entry of a live import source, with its display value, the source name and its metadata; the ORCID example shows an author record. It links to the entry's differences.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s319-differences-for-a-single-entry",
+      "source": "sections/s319-differences-for-a-single-entry.md",
+      "source_hash": "8d821052c4712f10f94fd6c6ef62890593af747f47abd5cb90844916e996b9d9",
+      "narrative": [
+        {
+          "text": "GET /api/integration/metadata-suggestions/<name>/entryValueDifferences/<entry-id> returns the metadata changes one entry suggests for an item; workspaceitem or workflowitem is required. For each field it gives the current values and suggestions, each with candidate operations and a new value. The suggestions take account of the item's current metadata and of the submission forms (only editable fields, one value for a non-repeatable field), and the first operation is the one REST considers most relevant. ORCID and PubMed examples are given.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s320-changes-suggested-from-the-live-import",
+      "source": "sections/s320-changes-suggested-from-the-live-import.md",
+      "source_hash": "ab0db704f61986ec12d03dc0ab1836b415003864e8f2a7b6497fc5fb9645a530",
+      "narrative": [
+        {
+          "text": "Heading for the section on changes suggested from the live import; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s321-introduction",
+      "source": "sections/s321-introduction.md",
+      "source_hash": "882e77602aeed2a4fd50733d964b2610707de8d5e6ff81aa5baa8650605cdfee",
+      "narrative": [
+        {
+          "text": "Suggested changes from a live import are offered to the user to apply or ignore, in a form close to Metadata Patch so the interface can display and apply them. For each field they give the current values and, per suggestion, one or more operations (the first preferred) and the new value. The operations are add (append), replace/<place>, namevariant/<place> (replace a relationship's name variant) and add-relationship. If the user accepts, the interface applies them with a PATCH. The examples start from two authors, one of them virtual, and an issue date of 2019.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s322-adding-metadata",
+      "source": "sections/s322-adding-metadata.md",
+      "source_hash": "03d6470bf957a101b03795001db8ba12fe2a42dedff02c547cf5369cb971e80f",
+      "narrative": [
+        {
+          "text": "An add suggestion proposes new values; the example suggests two dc.subject values, and the resulting metadata shows them appended.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s323-replacing-metadata",
+      "source": "sections/s323-replacing-metadata.md",
+      "source_hash": "2ee46c08e690f450933391946bc051b9f152d6e7978f21a7107a3e3f1d954ffe",
+      "narrative": [
+        {
+          "text": "A replace/<place> suggestion proposes overwriting one existing value; the example replaces the issue date 2019 with 2019-09-23.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s324-replacing-name-variants",
+      "source": "sections/s324-replacing-name-variants.md",
+      "source_hash": "7897e6158e1da6b4aab6edfb89ce829fb029bdfdc1260eb4912e76c5b8753b76",
+      "narrative": [
+        {
+          "text": "A namevariant/<place> suggestion proposes replacing the name variant of the relationship at that place. The example offers two operations for the second author, replacing the name variant or adding the new value as another author; choosing the first changes the virtual author's display to \"Wylie, C E\".",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s325-adding-relationships",
+      "source": "sections/s325-adding-relationships.md",
+      "source_hash": "f0c4e7f277e3d4a1038c789a6cedb73747e3dd4fd3db5c58365eeffdacf62ff8",
+      "narrative": [
+        {
+          "text": "An add-relationship suggestion proposes creating a new relationship, giving the related item and relationship type; the example adds Newton, J R as a related author, who then appears as a virtual author value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s326-metadata-fields-endpoints",
+      "source": "sections/s326-metadata-fields-endpoints.md",
+      "source_hash": "c35e248faa48f1d2e7570a4d88dd80c267f4081fc98cb87e865da402ff990302",
+      "narrative": [
+        {
+          "text": "Opens the Metadata Fields endpoints; no text beyond the heading and the link back to the endpoint list.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s327-main-endpoint",
+      "source": "sections/s327-main-endpoint.md",
+      "source_hash": "c8924d5471efc2fe41ddff0ac35f9db115150e4d8f6f7db40eb50baf93bc34ff",
+      "narrative": [
+        {
+          "text": "GET /api/core/metadatafields lists the metadata fields defined in the registry.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s328-single-metadata-field",
+      "source": "sections/s328-single-metadata-field.md",
+      "source_hash": "792277e1956669b7a53c2ea8f400d5a29b6b8069926f4665d9a77282334de7eb",
+      "narrative": [
+        {
+          "text": "GET /api/core/metadatafields/<id> returns one metadata field: id, element, qualifier and scope note (the example is contributor.advisor). Link: schema, the field's metadata schema.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s329-linked-entities",
+      "source": "sections/s329-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a metadata field; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s330-schema",
+      "source": "sections/s330-schema.md",
+      "source_hash": "068ec587d7e2bc216e5cdf4b971ea6ade185d179ef6cc9c9dd3f1c4c067b443b",
+      "narrative": [
+        {
+          "text": "GET /api/core/metadatafields/<id>/schema returns the metadata schema the field belongs to.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s331-search-methods",
+      "source": "sections/s331-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the Metadata Fields endpoint; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s332-byschema",
+      "source": "sections/s332-byschema.md",
+      "source_hash": "7535ddf421f308212c88565373ccf952a81224efcd917a70e4148a714d88294f",
+      "narrative": [
+        {
+          "text": "GET /api/core/metadatafields/search/bySchema?schema=<prefix> lists the fields of one schema (such as dc or dcterms), paginated; schema is mandatory.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s333-byfieldname",
+      "source": "sections/s333-byfieldname.md",
+      "source_hash": "23d18f03f57479acad9c13bf1cc52ff79a2aeae279d26be016d2c6820477a633",
+      "narrative": [
+        {
+          "text": "GET /api/core/metadatafields/search/byFieldName finds fields by any combination of exact schema, element and qualifier, a query matching the start of part of the qualified name (such as dc.ti), or exactName, the full schema.element.qualifier, which returns at most one field. Paginated.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s334-creating-a-metadata-field",
+      "source": "sections/s334-creating-a-metadata-field.md",
+      "source_hash": "94c5ee0b9eaf57af3f084a05fdba211f05305aed2feb7f6bee9909fce7bd6f79",
+      "narrative": [
+        {
+          "text": "POST /api/core/metadatafields?schemaId=<id>, as an administrator, creates a field from element, qualifier and scopeNote. Codes: 201, 400 for an unparsable body, 401, 403, and 422 if the schema does not exist, or the element is empty, or element or qualifier contains dots, commas or spaces or exceeds 64 characters.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s335-updating-a-metadata-field",
+      "source": "sections/s335-updating-a-metadata-field.md",
+      "source_hash": "ef9c45c3b42b512c031b15807a56b1ecc8cf6ee0053046f78e3f2a90ca1d3518",
+      "narrative": [
+        {
+          "text": "PUT /api/core/metadatafields/<id> updates a field's scope note and returns the field. Element and qualifier cannot change (422). Codes: 200, 400, 401, 403, 404, 422.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s336-deleting-a-metadata-field",
+      "source": "sections/s336-deleting-a-metadata-field.md",
+      "source_hash": "abbcc827db8cbbada064361c82a027a7b99226fa192e0fa55142def396595bf5",
+      "narrative": [
+        {
+          "text": "DELETE /api/core/metadatafields/<id> deletes a metadata field. Codes: 204, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s337-metadata-schemas-endpoints",
+      "source": "sections/s337-metadata-schemas-endpoints.md",
+      "source_hash": "8d4e7d52e970fa462296c49323732806629d031321640c43e13305ce2fffefc7",
+      "narrative": [
+        {
+          "text": "Opens the Metadata Schemas endpoints; no text beyond the heading and the link back to the endpoint list.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s338-main-endpoint",
+      "source": "sections/s338-main-endpoint.md",
+      "source_hash": "583dab5aecbee8fd6d907a3d3468d0360ca0cb25df3319649afb52c128bf745e",
+      "narrative": [
+        {
+          "text": "GET /api/core/metadataschemas lists the metadata schemas defined in the registry.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s339-single-metadata-schema",
+      "source": "sections/s339-single-metadata-schema.md",
+      "source_hash": "e3003ee2051f881f7a2b0f6c3c7b93d441da4e1c87d013d8e6f9d7f9859742d5",
+      "narrative": [
+        {
+          "text": "GET /api/core/metadataschemas/<id> returns one schema: id, prefix (such as dc) and namespace. No other links. Codes: 200, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s340-creating-a-metadata-schema",
+      "source": "sections/s340-creating-a-metadata-schema.md",
+      "source_hash": "bcb367099b13cb0042040b35c1b2622a3d575ec6c5c4bdb33a572d774fa12497",
+      "narrative": [
+        {
+          "text": "POST /api/core/metadataschemas, as an administrator, creates a schema from a prefix and namespace. Codes: 201, 400, 401, 403, and 422 if the prefix is empty, contains dots, commas or spaces, or exceeds 32 characters, or if the namespace is empty.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s341-updating-a-metadata-schema",
+      "source": "sections/s341-updating-a-metadata-schema.md",
+      "source_hash": "648d5baca68b57b45ef9b3d6b848feb273f254dc39912e443c040d3226239af7",
+      "narrative": [
+        {
+          "text": "PUT /api/core/metadataschemas/<id> updates a schema and returns it. The prefix cannot change and the namespace cannot be emptied (422). Codes: 200, 400, 401, 403, 422.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s342-deleting-a-metadata-schema",
+      "source": "sections/s342-deleting-a-metadata-schema.md",
+      "source_hash": "bf3240bab3f8727bea6580a633f65b6448c4907eebbe1ec9185aa1446bc845b4",
+      "narrative": [
+        {
+          "text": "DELETE /api/core/metadataschemas/<id> deletes a metadata schema. Codes: 204, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s343-orcid-history-endpoints",
+      "source": "sections/s343-orcid-history-endpoints.md",
+      "source_hash": "d925c64a49c088f227ec51a9942d96c27630049c3e93e22f259d2dbd975eff6e",
+      "narrative": [
+        {
+          "text": "Opens the ORCID History endpoints, which manage the ORCID history records of a researcher profile; only the EPerson who owns the profile item may use them. A history record is created when an ORCID queue record is processed, that is, when DSpace tries to synchronise the entity with the ORCID registry. Available only when orcid.synchronization-enabled is true.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s344-single-orcid-history-entry",
+      "source": "sections/s344-single-orcid-history-entry.md",
+      "source_hash": "ec7241d09196cc4c773b7c915743b077dcac7225686b3769b7f011f26f6e95d6",
+      "narrative": [
+        {
+          "text": "GET /api/eperson/orcidhistories/<id> returns one ORCID history record: the profile item, the entity item sent to ORCID, the HTTP status of the call, the ORCID put code if any, the full ORCID response body and a timestamp. The text also mentions last-attempt and success timestamps. Only the profile owner may read it. Codes: 200, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s345-send-to-orcid-registry",
+      "source": "sections/s345-send-to-orcid-registry.md",
+      "source_hash": "96f742e277c21ec85e74d8a855fe67abfe599615c18b0b094fa07de548eada7f",
+      "narrative": [
+        {
+          "text": "POST /api/eperson/orcidhistories, with an ORCID queue record URI as a text/uri-list body, sends that record to the ORCID API and creates a history record. forceAddition=true sends it as a new ORCID resource even if a put code already exists. Only the profile owner may call it. Codes: 201, 401, 403, 404 if the queue record does not exist, 422 if the object to synchronise is invalid.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s346-orcid-queue-endpoints",
+      "source": "sections/s346-orcid-queue-endpoints.md",
+      "source_hash": "566f11047cf007f3c786a6abae91960ab80698f0a9c716a9cf4db31c599cc82a",
+      "narrative": [
+        {
+          "text": "Opens the ORCID Queue endpoints, which manage the ORCID queue records of a researcher profile; only the EPerson who owns the profile item may use them. Processing a queue record creates an ORCID history record. Available only when orcid.synchronization-enabled is true.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s347-single-orcid-queue-entry",
+      "source": "sections/s347-single-orcid-queue-entry.md",
+      "source_hash": "70127c6d987788074e911fdce0f9736842697afd6185a69daed26348858065cd",
+      "narrative": [
+        {
+          "text": "GET /api/eperson/orcidqueues/<id> returns one ORCID queue record: the profile item, the entity item to send to ORCID, a description, the record type (such as Publication) and the operation (such as INSERT). Only the profile owner may read it. Codes: 200, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s348-search-orcid-queue-entries-by-profileitem-id",
+      "source": "sections/s348-search-orcid-queue-entries-by-profileitem-id.md",
+      "source_hash": "02f2af1065eefb2ac81ed51c4494efbc91e8225b7b651a7eb53e652e108e5055",
+      "narrative": [
+        {
+          "text": "GET /api/eperson/orcidqueues/search/findByProfileItem?profileItemId=<uuid> returns, paginated, every ORCID queue record of a profile item, each with its entity, description, record type and operation (INSERT, UPDATE or DELETE). Only the profile owner may call it. Codes: 200, 401, 403.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s349-delete-an-orcid-queue-entry",
+      "source": "sections/s349-delete-an-orcid-queue-entry.md",
+      "source_hash": "007866b2f140c77108d1b3be15765f9b14c9649bc937167e71d80f4050b2980b",
+      "narrative": [
+        {
+          "text": "DELETE /api/eperson/orcidqueues/<id> deletes one ORCID queue record, with no response body. Only the profile owner may call it. Codes: 204, 401, 403.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s350-general-rules-for-the-patch-operation",
+      "source": "sections/s350-general-rules-for-the-patch-operation.md",
+      "source_hash": "08224190752a0306e36b1cf2c737b21c9225e8ffbb678d2388e7a7f55b373738",
+      "narrative": [
+        {
+          "text": "Opens General rules for the Patch operation. A PATCH body follows JSON Patch (RFC 6902), and each successful patch returns 200 with the patched resource as a GET would return it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s351-add",
+      "source": "sections/s351-add.md",
+      "source_hash": "e728e0148f2f8ff1a5094c38b8cea6fe08e12a4193a35021d26dfe820b6970b1",
+      "narrative": [
+        {
+          "text": "The add operation should be supported on every JSON path not marked READ-ONLY. Per RFC 6902 section 4.1, adding to an attribute that is already set replaces its value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s352-remove",
+      "source": "sections/s352-remove.md",
+      "source_hash": "7b741cdbde2f0df7583b52a715fc2955132e08b3371e8fa595f5cc54709a8360",
+      "narrative": [
+        {
+          "text": "The remove operation should be supported on every JSON path not marked READ-ONLY, including array positions where order matters, such as metadata values or uploaded bitstreams, so one author or file can be removed. The path is nullified and its children deleted.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s353-replace",
+      "source": "sections/s353-replace.md",
+      "source_hash": "dbe499f85254589de1789ebee14690e60129cc9b65177c8be42404eb73d33445",
+      "narrative": [
+        {
+          "text": "The replace operation should be supported on every JSON path not marked READ-ONLY. It replaces only existing information; replacing a value that is not set returns an error.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s354-move",
+      "source": "sections/s354-move.md",
+      "source_hash": "1835449bfab68a04c7d7def39eaa6e5151e6175ae452b29abde102aeba761bf0",
+      "narrative": [
+        {
+          "text": "The move operation should be supported on arrays and lists where position matters, such as metadata values (to reorder authors) and the list of bitstreams.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
