@@ -69,6 +69,7 @@
     "check:materialized-fixity": "bun run folio-assistant-core/scripts/check-materialized-fixity.ts",
     "check:voices": "bun run folio-assistant-core/scripts/check-voices.ts",
     "l1:coverage": "bun run folio-assistant-core/scripts/l1-coverage.ts",
+    "dth:init": "bun run folio-assistant-core/scripts/dth-init.ts",
     "figure:coverage": "bun run folio-assistant-core/scripts/figure-coverage.ts",
     "figure:diig-phases": "bun run folio-assistant-core/scripts/diig-phases-svg.ts",
     "figure:smart-approach": "bun run folio-assistant-core/scripts/smart-approach-svg.ts",
