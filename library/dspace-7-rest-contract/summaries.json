@@ -1,0 +1,956 @@
+{
+  "$schema": "folio-block-summaries/v1",
+  "entry": "dspace-7-rest-contract",
+  "summaries": [
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s713-relationship-between-the-access-conditions-of-th",
+      "source": "sections/s713-relationship-between-the-access-conditions-of-th.md",
+      "source_hash": "488bd73a6bdff61a224c05bd6557ad1a240defcb10385e9615289f5fdd46f689",
+      "narrative": [
+        {
+          "text": "How item and bitstream access conditions relate: access conditions set on a bitstream through the upload section override the item's. A bitstream with no access conditions of its own inherits the item's; one that has its own ignores the item's.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s714-workspaceitem-data-of-cc-license-sectiontype",
+      "source": "sections/s714-workspaceitem-data-of-cc-license-sectiontype.md",
+      "source_hash": "23c0ac8e51966bc515a91326000fbbd272919f11c23d2b8e7815997a9b33e4d2",
+      "narrative": [
+        {
+          "text": "The cclicense section of a WorkspaceItem holds the Creative Commons licence: uri (the licence URI, usually stored in dc.rights.uri), rights (the licence name, usually stored in dc.rights) and file (the bitstream holding the licence). Each is null when no licence has been granted.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s715-patch-operations",
+      "source": "sections/s715-patch-operations.md",
+      "source_hash": "e8df9e12db42fe4afbba6cd5c8d5011ab1c11eab18cc91133a9c9dfafaefe07b",
+      "narrative": [
+        {
+          "text": "Patch operations on the cclicense section take a JSON Patch body (RFC 6902); each successful one returns 200 with the new workspace item.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s716-add",
+      "source": "sections/s716-add.md",
+      "source_hash": "1514f962296e065ef26b54306c60915fd12f1714c00c15d8d0a1d31026603958",
+      "narrative": [
+        {
+          "text": "Accepting a Creative Commons licence: a PATCH add of the licence URI, obtained from the Search CC License endpoint, at /sections/<form-name>/uri. dc.rights, dc.rights.uri and the RDF bitstream are then fetched from the Creative Commons API. A later add on the same path replaces the licence: the new one is added to the item and the old one deleted. Using add to replace follows RFC 6902 section 4.1, under which adding to an existing member replaces its value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s717-remove",
+      "source": "sections/s717-remove.md",
+      "source_hash": "6fb2966eb69614a2704af1fe19a2a16f19da8683cc7068c376b1d10054cc5141",
+      "narrative": [
+        {
+          "text": "Removing a granted Creative Commons licence: a PATCH remove on /sections/<form-name>/uri.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s718-workspaceitem-data-of-identifiers-sectiontype",
+      "source": "sections/s718-workspaceitem-data-of-identifiers-sectiontype.md",
+      "source_hash": "0adc99648683c9573a2d04c257267c1318b579af0178285948008f06a2e21a04",
+      "narrative": [
+        {
+          "text": "The identifiers section of a WorkspaceItem lists the identifiers assigned to it, in the same structure as the item identifiers link. Each identifier has value (the identifier string, such as a DOI URL), identifierType (such as doi or handle), identifierStatus (where relevant, since some types are minted locally and then reserved or registered upstream) and type (the resource type, for context in the UI). The supported types are doi and handle.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s719-patch-operations",
+      "source": "sections/s719-patch-operations.md",
+      "source_hash": "e092c1c91ed800fa890d54191804c8ae0e22c548d8c4da8c53fc914644af646f",
+      "narrative": [
+        {
+          "text": "The identifiers section has no PATCH operations; it only reports the identifiers currently assigned to the workspace item.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s720-workspaceitem-data-of-license-sectiontype",
+      "source": "sections/s720-workspaceitem-data-of-license-sectiontype.md",
+      "source_hash": "71b00e2ac0939607316b52e2d5c514271b1a0c63527dcc25a7915e2a0b5e2f9a",
+      "narrative": [
+        {
+          "text": "The license section of a WorkspaceItem holds the deposit licence grant: granted (true or false), url (read-only; where the granted licence can be seen) and acceptanceDate (read-only; the acceptance time recorded in the licence bitstream's dcterms:dateAccepted, null for licences granted before DSpace 7).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s721-patch-operations",
+      "source": "sections/s721-patch-operations.md",
+      "source_hash": "e8df9e12db42fe4afbba6cd5c8d5011ab1c11eab18cc91133a9c9dfafaefe07b",
+      "narrative": [
+        {
+          "text": "Patch operations on the license section take a JSON Patch body (RFC 6902); each successful one returns 200 with the new workspace item.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s722-add",
+      "source": "sections/s722-add.md",
+      "source_hash": "5c6c862d8fa8e0f60e0ddc216ef4a47486a47c79c2573dcc10d60458c373ad17",
+      "narrative": [
+        {
+          "text": "Accepting the deposit licence: a PATCH add of true at /sections/<form-name>/granted, with before and after example documents showing granted, url and acceptanceDate being set. A later add on granted replaces the licence: a new licence bitstream is added and the old one deleted, so url and acceptanceDate change. Adding false rejects or removes the licence. Using add to replace follows RFC 6902 section 4.1.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s723-replace",
+      "source": "sections/s723-replace.md",
+      "source_hash": "8cacf604f0792869f93a9810f568efe534defd8ccb935b66897ca048886a786b",
+      "narrative": [
+        {
+          "text": "The licence can also be accepted or rejected by a replace on the granted path with true or false; the curl examples given use the add operation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s724-remove",
+      "source": "sections/s724-remove.md",
+      "source_hash": "1caac75842792c9a198020f766b19d9b88523f6dbbad7ae4152f9f10efba1abf",
+      "narrative": [
+        {
+          "text": "Removing a granted licence: a PATCH remove on /sections/license/granted, with example documents before and after.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s725-move-test-copy",
+      "source": "sections/s725-move-test-copy.md",
+      "source_hash": "d37fcbbc300b0d0dad3927116a17b6b4cb515360161cdb74b005033e3c746b0c",
+      "narrative": [
+        {
+          "text": "There is no plan to implement the move, test and copy operations on the license section for now.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s726-workspaceitem-data-of-submission-form-sectiontyp",
+      "source": "sections/s726-workspaceitem-data-of-submission-form-sectiontyp.md",
+      "source_hash": "f3933ec4c0d9ff38ba729e0275e819111a3e2ae3203753a858afe87c6d9d1c90",
+      "narrative": [
+        {
+          "text": "The submission-form section of a WorkspaceItem holds the metadata collected by one submission form. Each key is a metadata field in dot form (such as dc.title or dc.contributor.author), and its value is an array ordered by place, each entry with value, authority (the authority key, if any), confidence (the authority confidence, or -1) and language (an ISO code, if any). Archived items model metadata the same way, but in a different place in the JSON, and are changed as described on the Modifying Metadata via PATCH page.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s727-patch-operations",
+      "source": "sections/s727-patch-operations.md",
+      "source_hash": "5e2658f6c0eafe2f2396f98fb1200075a58c344cd30e5264c91397532f520fd8",
+      "narrative": [
+        {
+          "text": "Patch operations on the submission-form section take a JSON Patch body (RFC 6902).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s728-add",
+      "source": "sections/s728-add.md",
+      "source_hash": "0d9b9320cbd0ac7ffa44b6870f2da52e0d203f6fff2ed602742045a8e1d495e9",
+      "narrative": [
+        {
+          "text": "Adding metadata in a submission form. A PATCH add on /sections/<form-name>/<metadata>/- appends a value (value, language, authority, confidence) to an existing field, and an add on /<metadata>/<index> inserts it at a zero-based position; worked examples append and then insert authors. A field not yet present must be initialised by adding an array of values at /sections/<form-name>/<metadata>, since appending to a missing path is not allowed; the same call with several values initialises or replaces all of a field's values. Using add to replace follows RFC 6902 section 4.1, and sending an array to the - position would create a nested array element (Appendix A.16).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s729-remove",
+      "source": "sections/s729-remove.md",
+      "source_hash": "39189748b7b1b323a9b9eb2d746942ffe3fb379782edb9a4b7a3d5847260e59d",
+      "narrative": [
+        {
+          "text": "Removing metadata in a submission form: a PATCH remove on /sections/<form-name>/<metadata>/<index> removes one value, and a remove on /sections/<form-name>/<metadata> removes all values of the field; examples are given.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s730-replace",
+      "source": "sections/s730-replace.md",
+      "source_hash": "fa2f4695a507365430b144faa43c85f76add2bb94a5766df64987bde37522044",
+      "narrative": [
+        {
+          "text": "Replacing metadata in a submission form. Replace changes existing information only; replacing a field not yet set is an error. Examples replace a title value and language at /sections/traditionalpageone/dc.title/0, and change just its language at /dc.title/0/language.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s731-move",
+      "source": "sections/s731-move.md",
+      "source_hash": "95156fe22050e3014d50f01cd1d3efff81a814d19adff3fe2cb1e021776dda5f",
+      "narrative": [
+        {
+          "text": "Reordering metadata values: a PATCH move from one index to another, for example moving the third author (/dc.contributor.author/2) to the first position (/dc.contributor.author/0).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s732-test-copy",
+      "source": "sections/s732-test-copy.md",
+      "source_hash": "e3292fa83866ca71799c4b9cd28b5d079052fa42d63b766676a93c8798dae645",
+      "narrative": [
+        {
+          "text": "There is no plan to implement the test and copy operations on the submission-form section for now.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s733-workspaceitem-data-of-sherpa-policies-sectiontyp",
+      "source": "sections/s733-workspaceitem-data-of-sherpa-policies-sectiontyp.md",
+      "source_hash": "1f790d57c8af469cc3eaa2f9e6d69867c083c373b47ee4deae0d1f1fd2aaf822",
+      "narrative": [
+        {
+          "text": "The sherpaPolicies section of a WorkspaceItem holds the publisher open access policies retrieved from Sherpa/RoMEO: a retrievalTime and a sherpaResponse with the journal metadata (titles, ISSNs, publishers, DOAJ status) and its publisher policies, such as permitted versions, embargoes, licences, conditions and archiving locations. sherpaResponse is never empty; with no results it carries at least an error flag and a message. The section is left out entirely when the item has nothing, such as an ISSN, to query Sherpa/RoMEO with.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s734-patch-operations",
+      "source": "sections/s734-patch-operations.md",
+      "source_hash": "c294068f8b8c8b9c5bd4974f13ab39d3a4097422a38ca649e8514288a02fea7d",
+      "narrative": [
+        {
+          "text": "Patch operations on the sherpaPolicies section take a JSON Patch body (RFC 6902), but the section is almost read-only, since its data come straight from Sherpa; the only accepted change is removing retrievalTime.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s735-remove",
+      "source": "sections/s735-remove.md",
+      "source_hash": "489f45116f96869991e820b3724ec0acc2bc83ae03d4a4423b92d90081ebb195",
+      "narrative": [
+        {
+          "text": "Sherpa data are cached to limit load on the Sherpa web services. A PATCH remove of /sections/sherpaPolicies/retrievalTime forces a fresh call.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s736-workspaceitem-data-of-upload-sectiontype",
+      "source": "sections/s736-workspaceitem-data-of-upload-sectiontype.md",
+      "source_hash": "86d6171cd4b75648e57d35eaffd69ee925ef4497161d9541cc8696588d2cf6e1",
+      "narrative": [
+        {
+          "text": "The upload section of a WorkspaceItem lists the user's uploaded files. Each file has metadata (in the same structure as the submission-form section), sizeBytes and checkSum (algorithm and value; both read-only, computed by the server on receipt), url (read-only; where the file can be downloaded) and accessConditions (the policies the user applied to the file).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s737-patch-operations",
+      "source": "sections/s737-patch-operations.md",
+      "source_hash": "76588eb69d6ec337b7f34662005abaa11ac9754456cfbcbc581b9f782ed53511",
+      "narrative": [
+        {
+          "text": "Patch operations on the upload section take a JSON Patch body (RFC 6902); each successful one returns 200 with the new workspace item. The general patch rules apply.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s738-add",
+      "source": "sections/s738-add.md",
+      "source_hash": "e17ac1edb54d33352df59ff09ae92de3e976dd1ccb8e6ccf872541d86ccee344",
+      "narrative": [
+        {
+          "text": "In the upload section, add is used to add metadata or access conditions to files already uploaded. A new file is uploaded with a multipart POST to the workspace items endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s739-metadata",
+      "source": "sections/s739-metadata.md",
+      "source_hash": "c6b0e9de8d53bbf5e507d5469cb2214bf9a6ec39b6331e0dac7a0b1f374bb71a",
+      "narrative": [
+        {
+          "text": "Adding file metadata in the upload section works as for the submission form, with the path /sections/<form-name>/files/<file-index>/metadata/<metadata>: append with /-, insert at a zero-based index, or add an array at the field path to initialise or replace all its values. The example sets the first uploaded file's dc.title to MyFile.pdf. More examples are on the submission-form section page.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s740-access-condition",
+      "source": "sections/s740-access-condition.md",
+      "source_hash": "9c0ed943240db0276d7d109310614f3a98d98a0a94c098ce477ba7640dc528ab",
+      "narrative": [
+        {
+          "text": "Adding a file access condition: a PATCH add on /sections/<form-name>/files/<file-index>/accessConditions/- appends one, and an add of an array on the file's access conditions path replaces them all. The attributes needed depend on the condition's name, as configured in submissionuploads: openaccess needs nothing more, while embargo is rejected without a startDate. The array is never null, so clients can always append rather than add at an index.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s741-remove",
+      "source": "sections/s741-remove.md",
+      "source_hash": "f230593c4a591d35770f225c09ce848a792290830c9ea0fb84ff3fcf1b4b550c",
+      "narrative": [
+        {
+          "text": "Removing an uploaded file: a PATCH remove on /sections/uploads/files/<file-index>.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s742-metadata",
+      "source": "sections/s742-metadata.md",
+      "source_hash": "a5d52a5b037f221e8b003e66a056165861ca879facedd317f48f2728e18a96e6",
+      "narrative": [
+        {
+          "text": "Removing file metadata, or a single value, works as on the submission-form section, using the path to the file's metadata (/files/<file-index>/metadata/).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s743-access-condition",
+      "source": "sections/s743-access-condition.md",
+      "source_hash": "9d43dfc67576824ce05ea581a8d4ada2c309a0b3b8ea76afb6ba4bbead4bf08e",
+      "narrative": [
+        {
+          "text": "Removing a file access condition: a PATCH remove on /sections/uploads/files/<file-index>/accessConditions/<index> removes one, and a remove on the file's accessConditions path resets them to an empty array.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s744-replace",
+      "source": "sections/s744-replace.md",
+      "source_hash": "0bddade96104af3723b7a81cfa8570a2f39f8a774959c423cefc452e45ca8ba9",
+      "narrative": [
+        {
+          "text": "In the upload section, replace changes existing information only; replacing something with no previous value is an error, per the general patch rules.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s745-metadata",
+      "source": "sections/s745-metadata.md",
+      "source_hash": "a91308fa81aff880cd418f9dc654da976bfe685417221780a7c6f055e96335f5",
+      "narrative": [
+        {
+          "text": "Replacing file metadata, or a single value, works as on the submission-form section, using the path to the file's metadata (/files/<file-index>/metadata/).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s746-access-condition",
+      "source": "sections/s746-access-condition.md",
+      "source_hash": "b7d7cde681800eb0eb28b00a5adad8e79c3fc9d5d5d60ec0b2d5e3bc6f29da2f",
+      "narrative": [
+        {
+          "text": "Replacing a file access condition swaps it for a new one whose settings must be valid for its name in the submissionuploads configuration; the example sets an embargo with a start date at index 0. The backend removes the old policy and creates a new one; the text says this works only when the old and new conditions need the same settings (as openaccess and administrator do), and otherwise the request fails with 422.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s747-move",
+      "source": "sections/s747-move.md",
+      "source_hash": "735653e3fd421b556b337fc995fc1e9d7bca44e18c6ccfc83cd12d69d7dfc4c4",
+      "narrative": [
+        {
+          "text": "Uploaded files can be reordered with a move on the files index path, for example moving the third file (/files/2) to the first position (/files/0).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s748-metadata",
+      "source": "sections/s748-metadata.md",
+      "source_hash": "f6423da115565cd152661a681bf1d34c104aedfd060b6e09e13ccd2c7ed47c03",
+      "narrative": [
+        {
+          "text": "Moving a value of a repeatable file metadata field works as on the submission-form section, using the path to the file's metadata (/files/<file-index>/metadata/).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s749-test-copy",
+      "source": "sections/s749-test-copy.md",
+      "source_hash": "01d16a46536b38d01909e55296c118e4465003f6bcf8769238fd2e7c06d0c3dc",
+      "narrative": [
+        {
+          "text": "There is no plan to implement the test and copy operations on the upload section for now.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s750-workspaceitem-endpoints",
+      "source": "sections/s750-workspaceitem-endpoints.md",
+      "source_hash": "d18ef69b63c059dd1d7b0e80e9ee0d8ea272a64e4d38a3a100d439da42054ccb",
+      "narrative": [
+        {
+          "text": "Title of the WorkspaceItem Endpoints page, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s751-main-endpoint",
+      "source": "sections/s751-main-endpoint.md",
+      "source_hash": "38dd0114b7c20ac8ded2544923095fa0e860c1b25fcc97b62d1549bfed81fe84",
+      "narrative": [
+        {
+          "text": "/api/submission/workspaceitems lists the workspace items. The example is still to be provided.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s752-multipart-post-method",
+      "source": "sections/s752-multipart-post-method.md",
+      "source_hash": "5cf095eeb34f14d8f1efbe5366c0453d1e218cf58bc01ee677c48cc39299b886",
+      "narrative": [
+        {
+          "text": "A multipart POST to /api/submission/workspaceitems creates a workspace item in one of two ways. From a remote resource: a text/uri-list body naming an external entry value (for example an ORCID record), whose metadata is imported straight away with no preview, since the user has already chosen the record and the item starts empty. From files: one or more uploaded files, where files with no parser are discarded, the first parseable file pre-fills the metadata and the others are just attached, and a file holding more than one entry gives 422. curl examples are given for both.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s753-single-workspace-item",
+      "source": "sections/s753-single-workspace-item.md",
+      "source_hash": "176d01e34c4aff9429f10ae2dab2af27c93a051b295e4eb3f25fb2b7764b38e8",
+      "narrative": [
+        {
+          "text": "/api/submission/workspaceitems/<id> returns one workspace item. The in-progress submission's data sit in a sections map that follows the submission definition and is open for extension (each section type has its own JSON structure; the example shows collection, identifiers, form pages, license, cclicense and uploads). It links to collection (where the item will be created), item (which holds the data), submissionDefinition and supervisionOrders.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s754-multipart-post-method-on-a-single-workspaceitem",
+      "source": "sections/s754-multipart-post-method-on-a-single-workspaceitem.md",
+      "source_hash": "68144012bdb9b3acf35aa540a6a6b31d8880a102d622879c7712db53cd00dfb3",
+      "narrative": [
+        {
+          "text": "A multipart POST to a single workspace item usually adds a new file to the section named by the upload variable (uploads by default), handled by that section's implementation, and returns 201 with the workspace item's new state. An owning collection may be given; if omitted, the first collection the user can submit to is used.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s755-linked-entities",
+      "source": "sections/s755-linked-entities.md",
+      "source_hash": "26d243fd109b64c783bd0ec0b475eaf3071890d5378a73bd878dc579fd34fbe9",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a workspace item.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s756-collection",
+      "source": "sections/s756-collection.md",
+      "source_hash": "792536b453f0f03dfa5bc384d9a749575d4b4be03b09a7e31f0d2bd508897136",
+      "narrative": [
+        {
+          "text": "/api/submission/workspaceitems/<id>/collection is read-only and returns the collection the in-progress submission belongs to. The collection cannot be changed directly once the submission exists; a section such as the enhanced select-collection section planned for DSpace 7 could change it through the sections data. The example is still to be provided.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s757-item",
+      "source": "sections/s757-item.md",
+      "source_hash": "794e4216fdf2a0e19874d2dac59dbcebd9eb15a2eed639228ad71d95b6d58e6c",
+      "narrative": [
+        {
+          "text": "/api/submission/workspaceitems/<id>/item is read-only and returns the backend item held by the submission. The item cannot be replaced once the submission exists; changes to it show up in the submission automatically but are not checked by submission validation, as they are administrative edits. The example is still to be provided.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s758-submissiondefinition",
+      "source": "sections/s758-submissiondefinition.md",
+      "source_hash": "b62f20ca52b1a527db02332e264db77a23037c9bd59a6780a6a443ce61a68906",
+      "narrative": [
+        {
+          "text": "/api/submission/workspaceitems/<id>/submissionDefinition is read-only and returns the submission definition used by the in-progress submission, which by default is derived from its collection and follows any change of collection. The same definition can be had from /api/config/submissiondefinitions/search/findByCollection, but this link saves a separate call and leaves room to change the one-to-one link between collections and definitions later without breaking clients. The example is still to be provided.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s759-search-methods",
+      "source": "sections/s759-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the workspace items endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s760-findbysubmitter",
+      "source": "sections/s760-findbysubmitter.md",
+      "source_hash": "88dbf66e184e368f872fabab80dbc9efe314ae6ed30cb8f1df0aa550f4464e6f",
+      "narrative": [
+        {
+          "text": "Search method findBySubmitter, /api/submission/workspaceitems/search/findBySubmitter?uuid=<submitter-uuid>, returns the workspace items created by that eperson.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s761-get-single-workspace-item-from-item-uuid",
+      "source": "sections/s761-get-single-workspace-item-from-item-uuid.md",
+      "source_hash": "13c8036a3acad9554a2be950943d6fd55d8a3452e96d51b6562aed47c0bce4e6",
+      "narrative": [
+        {
+          "text": "Search method item, /api/submission/workspaceitems/search/item?uuid=<item-uuid>, returns the workspace item for an item; uuid is mandatory, and since an item has at most one workspace item, the result is a single object, not a list. Responses: 200 OK with the workspace item; 401 if not authenticated; 403 without permission to view it; 204 if there is none.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s762-delete-method",
+      "source": "sections/s762-delete-method.md",
+      "source_hash": "282ffbb2acf818818742009b304eb00827c77627c8aecb93eafe4a70daedf0f8",
+      "narrative": [
+        {
+          "text": "DELETE /api/submission/workspaceitems/<uuid> deletes the workspace item and its associated item. Responses: 204 No content; 401 if not authenticated; 403 unless the requester is the submitter or an administrator; 404 if it does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    }
+  ]
+}
