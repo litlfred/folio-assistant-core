@@ -34,6 +34,14 @@
  * | `<route>/<sub-graph>/` | the references of one declared directory |
  * | `<route>/<sub-graph>/#<key>` | one reference, with its own export |
  *
+ * On a site that is its own index (an instance declared at the checkout root,
+ * such as smart-ra), that instance is the site's own: the whole page lists its
+ * references first, then every other layer's in a closed "From dependencies"
+ * section grouped by layer, so a reader sees the site's own bibliography
+ * without the layers below it (owner, 2026-11-01). A sub-graph id two layers
+ * share (`library`) gets one page per layer: a dependency's is
+ * `<instance>-<id>`.
+ *
  * Beside each page are its exports: `references.bib`, `references.csl.json`,
  * `references.ris` and `references.jsonld` (Dublin Core / BIBO). One
  * reference's export is on its entry: the page carries each entry's BibTeX,
@@ -111,8 +119,10 @@ export interface Entry {
 }
 
 export interface AssetView {
-  /** The sub-graph id (`<route>/<subgraph>/<asset>/`). */
+  /** The sub-graph id. */
   subgraph: string;
+  /** The sub-graph's route segment (`<route>/<slug>/<asset>/`): see {@link SubgraphView.slug}. */
+  slug: string;
   /** The asset slug within the sub-graph. */
   asset: string;
   /** Instance name. */
@@ -123,10 +133,32 @@ export interface AssetView {
   entries: Entry[];
 }
 
+/** One scanned sub-graph. */
+export interface SubgraphView {
+  id: string;
+  instance: string;
+  kind: "references" | "catalogue" | "library";
+  path: string;
+  /**
+   * Its route segment (`<route>/<slug>/`). The id itself, unless another
+   * instance declares the same id: then a dependency's is `<instance>-<id>`,
+   * so each layer's `library` gets its own page instead of sharing one.
+   */
+  slug: string;
+}
+
 export interface Collected {
   entries: Entry[];
   /** Every sub-graph that was scanned, with its instance, so an empty one is still listed. */
-  subgraphs: { id: string; instance: string; kind: "references" | "catalogue" | "library"; path: string }[];
+  subgraphs: SubgraphView[];
+  /**
+   * The instance the site belongs to: the one declared at the checkout root
+   * (a repository that is its own index, such as smart-ra). Every other
+   * instance in the checkout is one of its dependencies. `undefined` when no
+   * instance is declared at the root (the platform monorepo): then no
+   * instance is singled out and the page is one list.
+   */
+  own?: string;
   /** Per-asset bibliography views (`<route>/<sub-graph>/<asset>/`). */
   assets: AssetView[];
   invalid: string[];
@@ -158,10 +190,12 @@ export function heldCopies(instanceRoot: string, catalogueDir: string): Map<stri
 /** Every reference in the checkout. */
 export function collect(repo: string = REPO): Collected {
   const out: Collected = { entries: [], subgraphs: [], assets: [], invalid: [] };
+  const scanned: Omit<SubgraphView, "slug">[] = [];
   const rawLibraryAssets: { subgraph: string; asset: string; instance: string; path: string; ownEntry: Entry }[] = [];
   for (const root of instanceRootsIn(repo)) {
     const decl = readDeclaration(root);
     if (!decl) continue;
+    if (resolve(root) === resolve(repo)) out.own = decl.name;
     const dirs = resolveDirectories([{ name: decl.name, root, own: true }]).filter((d) => d.own);
     const heldByCatalogue = new Set<string>();
     for (const d of dirs) {
@@ -180,7 +214,7 @@ export function collect(repo: string = REPO): Collected {
         return entry;
       };
       if (kinds.includes("references")) {
-        out.subgraphs.push({ id: d.id, instance: decl.name, kind: "references", path: rel(repo, d.absPath) });
+        scanned.push({ id: d.id, instance: decl.name, kind: "references", path: rel(repo, d.absPath) });
         const jsonFiles = readdirSync(d.absPath).filter((f) => f.endsWith(".json")).sort();
         const jsonBases = new Set(jsonFiles.map((f) => f.slice(0, -5)));
         for (const f of jsonFiles) {
@@ -236,7 +270,7 @@ export function collect(repo: string = REPO): Collected {
       if (kinds.includes("catalogue")) {
         const records = join(d.absPath, "records");
         if (!existsSync(records)) continue;
-        out.subgraphs.push({ id: d.id, instance: decl.name, kind: "catalogue", path: rel(repo, d.absPath) });
+        scanned.push({ id: d.id, instance: decl.name, kind: "catalogue", path: rel(repo, d.absPath) });
         const held = heldCopies(root, d.absPath);
         for (const f of readdirSync(records).filter((f) => f.endsWith(".dc.json")).sort()) {
           const p = join(records, f);
@@ -268,7 +302,7 @@ export function collect(repo: string = REPO): Collected {
           return existsSync(join(assetDir, "manifest.jsonld")) && !heldByCatalogue.has(assetDir);
         });
         if (standaloneAssets.length > 0) {
-          out.subgraphs.push({ id: d.id, instance: decl.name, kind: "library", path: rel(repo, d.absPath) });
+          scanned.push({ id: d.id, instance: decl.name, kind: "library", path: rel(repo, d.absPath) });
           for (const slug of standaloneAssets) {
             const assetDir = join(d.absPath, slug);
             const manifestRel = rel(repo, join(assetDir, "manifest.jsonld"));
@@ -294,7 +328,11 @@ export function collect(repo: string = REPO): Collected {
     else seen.set(k, e.file);
   }
   out.entries.sort(byCitation);
-  out.subgraphs.sort((a, b) => a.id.localeCompare(b.id, "en"));
+  const instancesOf = new Map<string, Set<string>>();
+  for (const s of scanned) instancesOf.set(s.id, (instancesOf.get(s.id) ?? new Set()).add(s.instance));
+  const slugOf = (id: string, instance: string) => ((instancesOf.get(id)?.size ?? 0) > 1 && instance !== out.own ? `${instance}-${id}` : id);
+  out.subgraphs = scanned.map((s) => ({ ...s, slug: slugOf(s.id, s.instance) }));
+  out.subgraphs.sort((a, b) => a.slug.localeCompare(b.slug, "en"));
 
   // Build per-asset bibliography views (`<route>/<sub-graph>/<asset>/`):
   // each standalone library asset holds its own reference plus any references
@@ -309,13 +347,14 @@ export function collect(repo: string = REPO): Collected {
     const assetEntries = [la.ownEntry, ...extracted].sort(byCitation);
     out.assets.push({
       subgraph: la.subgraph,
+      slug: slugOf(la.subgraph, la.instance),
       asset: la.asset,
       instance: la.instance,
       path: la.path,
       entries: assetEntries,
     });
   }
-  out.assets.sort((a, b) => a.subgraph.localeCompare(b.subgraph, "en") || a.asset.localeCompare(b.asset, "en"));
+  out.assets.sort((a, b) => a.slug.localeCompare(b.slug, "en") || a.asset.localeCompare(b.asset, "en"));
   return out;
 }
 
@@ -460,6 +499,9 @@ const FILTER_SCRIPT = `<script>
 function run(){var v=q.value.trim().toLowerCase(),k=0;
 document.querySelectorAll("li[data-fa-bib]").forEach(function(li){var ok=!v||(li.textContent+" "+li.getAttribute("data-fa-bib")).toLowerCase().indexOf(v)>=0;li.hidden=!ok;if(ok)k++;});n.textContent=k;}
 q.addEventListener("input",run);}
+document.querySelectorAll("details.fa-bib-deps").forEach(function(d){if(q)q.addEventListener("input",function(){if(q.value.trim())d.open=true;});});
+function openFor(){var h=location.hash&&document.getElementById(decodeURIComponent(location.hash.slice(1)));var d=h&&h.closest&&h.closest("details.fa-bib-deps");if(d&&!d.open){d.open=true;h.scrollIntoView();}}
+openFor();window.addEventListener("hashchange",openFor);
 var ALLOWED_URL_SCHEMES=["http:","https:","mailto:","tel:"];
 function safeHref(u){if(!u)return undefined;var s=String(u).replace(/[\\u0009\\u000A\\u000D]/g,"").trim();if(!s||s.indexOf("//")===0)return undefined;if(/^[#?./]/.test(s)||!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(s))return s;var sc=s.slice(0,s.indexOf(":")+1).toLowerCase();return ALLOWED_URL_SCHEMES.indexOf(sc)>=0?s:undefined;}
 var form=document.getElementById("fa-bib-add-form");if(!form)return;
@@ -498,20 +540,54 @@ export const EXPORTS = [
   ["references.jsonld", "Dublin Core / BIBO JSON-LD", toJsonLdGraph],
 ] as const;
 
+const plural = (n: number, one: string) => `${n} ${one}${n === 1 ? "" : "s"}`;
+
+/**
+ * The list when a site has an own instance: its references first, then every
+ * dependency's, grouped by layer, in a closed `From dependencies` section so
+ * the page opens on the site's own bibliography. The filter and a link to an
+ * entry's anchor open the section.
+ */
+export function ownAndDependenciesHtml(own: string, entries: Entry[]): string {
+  const mine = entries.filter((e) => e.instance === own);
+  const layers = [...new Set(entries.filter((e) => e.instance !== own).map((e) => e.instance))].sort((a, b) => a.localeCompare(b, "en"));
+  const ownList = mine.length ? `<ol class="fa-bib">\n${mine.map(entryHtml).join("\n")}\n</ol>` : `<p>${esc(own)} has no references of its own yet.</p>`;
+  const deps = layers.length
+    ? `<details class="fa-bib-deps" id="fa-bib-deps">
+<summary><strong>From dependencies</strong>: ${plural(entries.length - mine.length, "reference")} from ${plural(layers.length, "layer")} that ${esc(own)} builds on. They are not part of ${esc(own)}.</summary>
+${layers
+  .map((l) => {
+    const ls = entries.filter((e) => e.instance === l);
+    return `<h3 id="fa-bib-dep-${esc(anchorOf(l).replace(/^ref-/, ""))}">${esc(l)} <small>(dependency, ${plural(ls.length, "reference")})</small></h3>
+<ol class="fa-bib fa-bib-dep" data-fa-bib-layer="${esc(l)}">
+${ls.map(entryHtml).join("\n")}
+</ol>`;
+  })
+  .join("\n")}
+</details>`
+    : "";
+  return `<h2 id="fa-bib-own">${esc(own)} <small>(this site, ${plural(mine.length, "reference")})</small></h2>
+${ownList}
+${deps}`;
+}
+
 /** A page: front matter, what it holds, its exports, the `+ Add reference` panel, the filter and the list. */
-export function renderPage(opts: { title: string; permalink: string; intro: string; entries: Entry[]; nav?: string; targetDir?: string }): string {
-  const { title, permalink, intro, entries, nav, targetDir } = opts;
+export function renderPage(opts: { title: string; permalink: string; intro: string; entries: Entry[]; nav?: string; targetDir?: string; own?: string }): string {
+  const { title, permalink, intro, entries, nav, targetDir, own } = opts;
   const exports = EXPORTS.map(([f, label]) => `<a href="${f}">${label}</a>`).join(" · ");
   const addPanel = addReferenceHtml({ targetDir });
+  const grouped = own !== undefined && entries.some((e) => e.instance !== own);
   const list = entries.length
     ? `<label for="fa-bib-q">Filter references</label>
 <input id="fa-bib-q" type="search" autocomplete="off" style="min-height:44px;width:100%;max-width:32rem">
 <p aria-live="polite"><span id="fa-bib-n">${entries.length}</span> shown</p>
 
-<ol class="fa-bib">
-${entries.map(entryHtml).join("\n")}
-</ol>`
+${grouped && own !== undefined ? ownAndDependenciesHtml(own, entries) : `<ol class="fa-bib">\n${entries.map(entryHtml).join("\n")}\n</ol>`}`
     : "<p>No references here yet.</p>";
+  const ownCount = grouped ? entries.filter((e) => e.instance === own).length : entries.length;
+  const exportLead = grouped
+    ? `**Export all ${plural(entries.length, "reference")}** (${ownCount} of ${own}'s own and ${entries.length - ownCount} from dependencies):`
+    : `**Export these ${plural(entries.length, "reference")}:**`;
   return `---
 title: "${title.replace(/"/g, '\\"')}"
 permalink: ${permalink}
@@ -523,7 +599,7 @@ ${GENERATED}
 
 ${intro}
 
-**Export these ${entries.length} reference${entries.length === 1 ? "" : "s"}:** ${exports}
+${exportLead} ${exports}
 ${nav ? `\n${nav}\n` : ""}
 ${addPanel}
 
@@ -541,37 +617,50 @@ export function outputs(c: Collected): Map<string, string> {
     const refs = entries.map((e) => e.ref);
     for (const [f, , fn] of EXPORTS) out.set(join(dir, f), fn(refs));
   };
-  const nav = c.subgraphs.length
-    ? `**By sub-graph:** ${c.subgraphs
-        .map((s) => `<a href="${s.id}/">${s.id}</a> (${c.entries.filter((e) => e.subgraph === s.id).length})`)
-        .join(" · ")}`
-    : undefined;
-  const defaultTargetDir = c.subgraphs.find((s) => s.kind === "references")?.path ?? "references";
+  const inSub = (s: { id: string; instance: string }) => c.entries.filter((e) => e.subgraph === s.id && e.instance === s.instance);
+  // A directory declaring two kinds (references and catalogue) is scanned twice: one link, one page.
+  const pages = [...new Map(c.subgraphs.map((s) => [s.slug, s])).values()];
+  const link = (s: SubgraphView, layer: boolean) => `<a href="${s.slug}/">${s.id}</a> (${inSub(s).length}${layer ? `, ${s.instance}` : ""})`;
+  const own = c.own !== undefined && c.subgraphs.some((s) => s.instance !== c.own) ? c.own : undefined;
+  const nav = !pages.length
+    ? undefined
+    : own === undefined
+      ? `**By sub-graph:** ${pages.map((s) => link(s, false)).join(" · ")}`
+      : [
+          `**${own} (this site), by sub-graph:** ${pages.filter((s) => s.instance === own).map((s) => link(s, false)).join(" · ") || "none"}`,
+          `**Dependencies, by sub-graph:** ${pages.filter((s) => s.instance !== own).map((s) => link(s, true)).join(" · ")}`,
+        ].join("<br>\n");
+  const defaultTargetDir =
+    c.subgraphs.find((s) => s.kind === "references" && s.instance === c.own)?.path ?? c.subgraphs.find((s) => s.kind === "references")?.path ?? "references";
   write(
     ROOT,
     renderPage({
       title: "Bibliography",
       permalink: `/${ROUTE}/`,
       intro:
-        "Every reference in the knowledge graph: the bibliographies folios declare (`references` directories, one `folio-reference/v1` node each), the Dublin Core records of catalogues (`catalogue` directories), and the ingested items of libraries (`library` directories), as one list. Each reference sits at `references/<key>`, the IRI a `\\cite{key}` resolves to.",
+        (own === undefined
+          ? "Every reference in the knowledge graph: the bibliographies folios declare (`references` directories, one `folio-reference/v1` node each), the Dublin Core records of catalogues (`catalogue` directories), and the ingested items of libraries (`library` directories), as one list."
+          : `The references of ${own}, this site, come first: its bibliography (\`references\` directories, one \`folio-reference/v1\` node each), its catalogue records and its library items. The references of the layers ${own} depends on follow, under **From dependencies**, grouped by layer; they are not part of ${own}.`) +
+        " Each reference sits at `references/<key>`, the IRI a `\\cite{key}` resolves to.",
       entries: c.entries,
       nav,
       targetDir: defaultTargetDir,
+      own,
     }),
     c.entries,
   );
-  for (const s of c.subgraphs) {
-    const entries = c.entries.filter((e) => e.subgraph === s.id);
-    const subAssets = (c.assets ?? []).filter((a) => a.subgraph === s.id);
+  for (const s of pages) {
+    const entries = inSub(s);
+    const subAssets = (c.assets ?? []).filter((a) => a.slug === s.slug);
     const assetNav = subAssets.length
       ? `**By asset:** ${subAssets.map((a) => `<a href="${a.asset}/">${a.asset}</a> (${a.entries.length})`).join(" · ")}`
       : undefined;
     write(
-      join(ROOT, s.id),
+      join(ROOT, s.slug),
       renderPage({
-        title: `Bibliography: ${s.id}`,
-        permalink: `/${ROUTE}/${s.id}/`,
-        intro: `The references of \`${s.path}/\` (${s.instance}, a \`${s.kind}\` directory). [All references](../).`,
+        title: `Bibliography: ${s.slug}`,
+        permalink: `/${ROUTE}/${s.slug}/`,
+        intro: `The references of \`${s.path}/\` (${s.instance}${own !== undefined && s.instance !== own ? `, a dependency of ${own}` : ""}, a \`${s.kind}\` directory). [All references](../).`,
         entries,
         nav: assetNav,
         targetDir: s.kind === "references" ? s.path : defaultTargetDir,
@@ -581,11 +670,11 @@ export function outputs(c: Collected): Map<string, string> {
   }
   for (const a of c.assets ?? []) {
     write(
-      join(ROOT, a.subgraph, a.asset),
+      join(ROOT, a.slug, a.asset),
       renderPage({
-        title: `Bibliography: ${a.subgraph}/${a.asset}`,
-        permalink: `/${ROUTE}/${a.subgraph}/${a.asset}/`,
-        intro: `The reference for \`${a.path}\` (${a.instance}) and any references extracted from it. [${a.subgraph}](../) · [All references](../../).`,
+        title: `Bibliography: ${a.slug}/${a.asset}`,
+        permalink: `/${ROUTE}/${a.slug}/${a.asset}/`,
+        intro: `The reference for \`${a.path}\` (${a.instance}${own !== undefined && a.instance !== own ? `, a dependency of ${own}` : ""}) and any references extracted from it. [${a.slug}](../) · [All references](../../).`,
         entries: a.entries,
       }),
       a.entries,
