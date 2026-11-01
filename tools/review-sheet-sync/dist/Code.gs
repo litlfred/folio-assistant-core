@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 14524eda88bed61b.
+// folio-assistant-core tools/review-sheet-sync at template sha256 a13460bd816fd77d.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 14524eda88bed61b';
+const SCRIPT_VERSION = 'template sha256 a13460bd816fd77d';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -860,6 +860,59 @@ function keyRuns(text) {
   return runs;
 }
 /**
+ * Column names in the Instructions text are coloured like their column
+ * (owner, 2026-11-01 18:17Z: "i wanted the instructions to reference the
+ * column headers and the text is colored"). `heads` is the tab's header row
+ * as [name, family] pairs, the family read from the header's fill (see
+ * fillFamily). A name matches whole and case-sensitively; longer names win,
+ * so "Ready for agent" is not also coloured as part of something shorter.
+ */
+const HEADER_FILLS = { blue: '#9dc3e7', green: '#93c27c', orange: '#f4b16a', grey: '#b6b6b6' };
+function fillFamily(hex) {
+  const rgb = h => [1, 3, 5].map(i => parseInt(String(h).slice(i, i + 2), 16));
+  if (!/^#[0-9a-f]{6}$/i.test(String(hex))) return '';
+  const c = rgb(hex);
+  let best = '', bestD = 60 * 60 * 3;
+  Object.keys(HEADER_FILLS).forEach(k => {
+    const d = rgb(HEADER_FILLS[k]).reduce((a, v, i) => a + (v - c[i]) * (v - c[i]), 0);
+    if (d < bestD) { best = k; bestD = d; }
+  });
+  return best;
+}
+function headerRuns(text, heads) {
+  const names = [];
+  (heads || []).forEach(([h, fam]) => {
+    const name = String(h || '').trim();
+    if (!name || !KEY_COLOURS[fam]) return;
+    names.push([name, fam]);
+    // "Contributor Feedback (initials/name)" is written "Contributor Feedback" in the text.
+    const base = name.replace(/\s*\((?:initials|name)[^)]*\)$/i, '');
+    if (base !== name) names.push([base, fam]);
+  });
+  names.sort((a, b) => b[0].length - a[0].length);
+  const taken = [], runs = [];
+  const esc = t => t.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  names.forEach(([name, fam]) => {
+    const re = new RegExp('(^|[^A-Za-z])(' + esc(name) + ')(?![A-Za-z])', 'g');
+    let m;
+    while ((m = re.exec(text))) {
+      const a = m.index + m[1].length, z = a + m[2].length;
+      if (taken.some(([x, y]) => a < y && z > x)) continue;
+      taken.push([a, z]);
+      runs.push([a, z, KEY_COLOURS[fam]]);
+    }
+  });
+  return runs;
+}
+/** Colour-word runs and column-name runs together, in text order, without overlaps. */
+function instructionRuns(text, heads) {
+  const out = [];
+  keyRuns(text).concat(headerRuns(text, heads)).sort((p, q) => p[0] - q[0] || q[1] - p[1]).forEach(r => {
+    if (!out.length || r[0] >= out[out.length - 1][1]) out.push(r);
+  });
+  return out;
+}
+/**
  * The Config tab's colours, kept by every refresh so a row the agent wrote
  * with the Sheets connector (which writes values, not colours) still reads
  * right (owner, 2026-10-31: "key cfg and COLS need to be grey"). The Key
@@ -895,12 +948,18 @@ function colourInstructions(ss) {
     const n = Math.min(5, sh.getLastRow());
     if (n < 2 || sh.getLastColumn() < 2) return;
     const h = legendCount(sh.getRange(1, 1, n, 1).getDisplayValues().map(r => r[0]));
+    let heads = [];
+    try {
+      const hr = sh.getRange(h + 1, 1, 1, sh.getLastColumn());
+      const fills = hr.getBackgrounds()[0];
+      heads = hr.getDisplayValues()[0].map((x, i) => [x, fillFamily(fills[i])]);
+    } catch (e) { /* no header row: colour words only */ }
     for (let r = 1; r <= h; r++) {
       const cell = sh.getRange(r, 2);
       const now = cell.getRichTextValue();
       const text = now ? now.getText() : '';
-      const runs = keyRuns(text);
-      if (!runs.length || (now.getTextStyle(runs[0][0], runs[0][1]).getForegroundColor() || '').toLowerCase() === runs[0][2]) continue;
+      const runs = instructionRuns(text, heads);
+      if (!runs.length || runs.every(([a, z, c]) => (now.getTextStyle(a, z).getForegroundColor() || '').toLowerCase() === c)) continue;
       const b = SpreadsheetApp.newRichTextValue().setText(text);
       runs.forEach(([a, z, c]) => b.setTextStyle(a, z, SpreadsheetApp.newTextStyle().setForegroundColor(c).setBold(true).build()));
       const url = /https?:\/\/\S+/g;

@@ -1642,3 +1642,40 @@ describe("the Selected Sections dropdown reminder (core#472)", () => {
     expect(body).toMatch(/ss\.toast\(msg,/);
   });
 });
+
+describe("column names in Instructions text are coloured like their column", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { instructionRuns, fillFamily };`)({}) as {
+    instructionRuns(t: string, h: [string, string][]): [number, number, string][];
+    fillFamily(hex: string): string;
+  };
+  const heads: [string, string][] = [
+    ["Change-set", fns.fillFamily("#b7b7b7")],
+    ["Contributor Feedback (initials/name)", fns.fillFamily("#9dc3e7")],
+    ["Ready for agent", fns.fillFamily("#f4b16a")],
+    ["Feedback (agent)", fns.fillFamily("#93c27c")],
+    ["Agentic status", fns.fillFamily("#93c27c")],
+    ["Agentic status (filter)", fns.fillFamily("#93c27c")],
+  ];
+
+  test("a header fill maps to its colour family; white maps to none", () => {
+    expect(heads.map(([, f]) => f)).toEqual(["grey", "blue", "orange", "green", "green", "green"]);
+    expect(fns.fillFamily("#ffffff")).toBe("");
+  });
+
+  test("each header name is coloured with its column's ink, the longest name first", () => {
+    const text = "An Editor sets Ready for agent (Orange) to Yes. The agent writes Feedback (agent); Agentic status says where it is. Add feedback in the Blue Contributor Feedback columns.";
+    const words = fns.instructionRuns(text, heads).map(([a, z, c]) => [text.slice(a, z), c]);
+    expect(words).toEqual([
+      ["Ready for agent", "#c25e00"],
+      ["Orange", "#c25e00"],
+      ["Feedback (agent)", "#2e7d32"],
+      ["Agentic status", "#2e7d32"],
+      ["Blue", "#1f5fa8"],
+      ["Contributor Feedback", "#1f5fa8"],
+    ]);
+  });
+
+  test("a name inside a longer word is not coloured", () => {
+    expect(fns.instructionRuns("Change-sets are kept.", heads)).toEqual([]);
+  });
+});
