@@ -761,6 +761,1013 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s406-16-4-1-12-relationship-between-actions-and-ingre",
+      "source": "sections/s406-16-4-1-12-relationship-between-actions-and-ingre.md",
+      "source_hash": "c17d7fe9a5ed3b15c1d127649ce73919e0025f4feb899188ccbf68439b081052",
+      "narrative": [
+        {
+          "text": "Summarises the requirements that link actions assertions, which record what happened to an asset, with ingredient assertions, which record the other assets or data involved, noting that adding one often requires a matching entry in the other and that c2pa.opened and c2pa.placed actions must reference their ingredient assertions. It gives further examples: a c2pa.created action may reference inputTo ingredients such as Generative AI inputs, and a c2pa.deleted action may reference a componentOf ingredient and should be paired with c2pa.redacted when that ingredient assertion is also redacted.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s407-16-4-1-12-1-digital-source-type",
+      "source": "sections/s407-16-4-1-12-1-digital-source-type.md",
+      "source_hash": "1d9b3c8b3fc51f6f7b3ffc4897478c947f1bb7a711b21b081304d571586eb03d",
+      "narrative": [
+        {
+          "text": "Explains that an ingredient's digitalSourceType can be inferred from its active manifest if it has one, or otherwise carried in the ingredient assertion itself, that an ingredient assertion shall not contain both activeManifest and digitalSourceType, and that an ingredient may declare no digitalSourceType at all.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s408-16-4-1-13-deprecated-actions",
+      "source": "sections/s408-16-4-1-13-deprecated-actions.md",
+      "source_hash": "c7be3aa52858ac8a0eaab6c720d97ed964a189a5bb49ae26c1c9205d793aba8e",
+      "narrative": [
+        {
+          "text": "Lists eight deprecated actions (c2pa.copied, c2pa.formatted, c2pa.version_updated, c2pa.printed, c2pa.managed, c2pa.produced, c2pa.saved and c2pa.removed), which shall no longer be written into c2pa.actions or c2pa.actions.v2 assertions but may appear in pre-existing manifests.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s409-16-4-1-14-schema-and-example",
+      "source": "sections/s409-16-4-1-14-schema-and-example.md",
+      "source_hash": "20711fbf8731f9e5fda79dbc97bb7aeadc8f9f414d2a54d7a7730be77f305670",
+      "narrative": [
+        {
+          "text": "Gives the CDDL schemas for the actions assertions, with c2pa.actions defined by the deprecated actions-map rule and c2pa.actions.v2 by actions-map-v2, plus the generated list of predefined action names (c2pa.* and font.* actions, with a pattern allowing custom names). The v2 schema defines a required actions array and allActionsIncluded flag, optional templates, softwareAgents and metadata, and per-action fields such as softwareAgent, description, digitalSourceType, exact or ranged timing (when, or whenStart and whenEnd), changes, related, reason (required for c2pa.redacted) and parameters including redacted, ingredients, relatedAssertions, sourceLanguage, targetLanguage, name and multipleInstances. It also gives a CDDL for font-specific action parameters (Unicode ranges and variable-font instance settings such as weight, width, italic, slant and optical size) and a CBOR diagnostic example of a v2 actions assertion with a filtered and a cropped action.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s410-16-4-2-external-reference",
+      "source": "sections/s410-16-4-2-external-reference.md",
+      "source_hash": "7b49df31f655e6c947e16fef0f20939d18fff6feb987fea558153880167b7ad7",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.4.2, External Reference; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s411-16-4-2-1-description",
+      "source": "sections/s411-16-4-2-1-description.md",
+      "source_hash": "22efa3c94a33feab13424c3f5617f8e5a5914015ca8fc67a5a7de268d71daaea",
+      "narrative": [
+        {
+          "text": "Defines the external reference assertion (label c2pa.external-reference), which points to data stored remotely, either advisory and changeable via an unhashed-ext-uri-map or cryptographically bound at signing via a hashed-ext-uri-map, in a required location field with an optional label when the target is a complete assertion; it should appear in gathered_assertions and shall not reference actions, hash, cloud-data, external-reference or ingredient assertions. Referenced data shall be treated as optional and should not be retrieved during manifest validation, unhashed retrieved data shall be treated as advisory unless independently verified, and the size field should be omitted when the referenced data may change.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s412-16-4-2-2-process-evidence",
+      "source": "sections/s412-16-4-2-2-process-evidence.md",
+      "source_hash": "adf571a8799c26ebec8eec52aef14f0815bdadd460cebe2cd40b4b8eb8ba44b4",
+      "narrative": [
+        {
+          "text": "States that the hashed variant of an external reference assertion may point to externally stored creation-process evidence, identified through the data_types field using the predefined values c2pa.types.audit-log and c2pa.types.version-history (or entity-specific types following namespace syntax), with processStart and processEnd in metadata describing the process where applicable.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s413-16-4-2-3-schema-and-example",
+      "source": "sections/s413-16-4-2-3-schema-and-example.md",
+      "source_hash": "a772e2b048c7bc89d925a4f856596beb499d8be9c8fec571b9d2f1b639e96fad",
+      "narrative": [
+        {
+          "text": "Gives the CDDL for the external reference assertion as two rules, external-reference-map with an unhashed location and hashed-external-reference-map with a hashed location, each also allowing optional label, description and metadata fields. It also defines the unhashed-ext-uri-map (url plus optional dc:format, size and data_types) and the hashed-ext-uri-map, which additionally requires alg and hash. CBOR diagnostic examples show unhashed references to a remote c2pa.metadata assertion, an arbitrary blob and changing JSON data, and hashed references to an audit log and a version history.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s414-16-4-3-linked-resource-integrity",
+      "source": "sections/s414-16-4-3-linked-resource-integrity.md",
+      "source_hash": "dff8b5d96fcc776c9b5d5e876ccbc014d8b943327249b95724b4dda76bb20c1a",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.4.3, Linked Resource Integrity; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s415-16-4-3-1-description",
+      "source": "sections/s415-16-4-3-1-description.md",
+      "source_hash": "7be86107c6e1bb3571806e19ac515d718ca2f9f27e54cd64cd99877d8e562bd0",
+      "narrative": [
+        {
+          "text": "Defines the linked resource integrity assertion (label c2pa.linked-resource-integrity), which provides hash coverage, akin to W3C Subresource Integrity, for external resources referenced by container formats, using a resources field holding either an externalResources array of hashed absolute URLs or a relativeResources array with a shared alg; it shall appear only in created_assertions, and relative URIs shall be resolved against the asset's location, or treated as unresolvable when that location is unknown. The optional allURIsIncluded flag, when true, says every fetched or embedded reference the signer can enumerate at signing time is covered, excluding navigational links, the manifest itself and transitively discovered resources, while an absent value should be read as meaning more references may exist; validators are not required to retrieve resources, so hash checking is optional.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s416-16-4-3-2-schema-and-example",
+      "source": "sections/s416-16-4-3-2-schema-and-example.md",
+      "source_hash": "a4b2ead7b59f005beb75741c89efa499d70627a881b3f4554b23f01c7e844034",
+      "narrative": [
+        {
+          "text": "Gives the CDDL for the linked resource integrity assertion, where linked-resource-integrity-map holds resources as either an external-resources-map or a relative-resources-map (with its own alg), plus optional allURIsIncluded and metadata. It also defines the hashed-ext-uri-map and the uri-hashed-data-map, whose relative URI type permits no scheme or authority and leaves rejection of percent-encoded traversal to validation. Two CBOR diagnostic examples show an HTML asset with two fully covered external resources and a MaterialX scene with one relative texture and partial coverage.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s417-16-4-4-asset-reference",
+      "source": "sections/s417-16-4-4-asset-reference.md",
+      "source_hash": "24ecd0c17b16751cfaa9760196a14426038161d6a4915500160acd99e1c3a895",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.4.4, Asset Reference; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s418-16-4-4-1-description",
+      "source": "sections/s418-16-4-4-1-description.md",
+      "source_hash": "9fdaa549060864ae780128c631bb478fe550456f4d47a6f4025fa1d499d7ca84",
+      "narrative": [
+        {
+          "text": "Defines the asset reference assertion (label c2pa.asset-ref), which records via URIs one or more locations, a single asset or a directory of collection-hashed assets, where a copy of the asset may be obtained, with the metadata time stamp giving a basis for judging link freshness.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s419-16-4-4-2-schema-and-example",
+      "source": "sections/s419-16-4-4-2-schema-and-example.md",
+      "source_hash": "ccf80dc8e80d681b91fb5647f5af577ebabdae3fb095691282c95065e59cc9ae",
+      "narrative": [
+        {
+          "text": "Gives the CDDL for the asset reference assertion, where asset-ref-map holds a required references array whose entries pair a reference containing a uri with an optional human-readable description, plus optional metadata. A CBOR diagnostic example lists one web location and one IPFS location.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s420-16-4-5-repository-receipt",
+      "source": "sections/s420-16-4-5-repository-receipt.md",
+      "source_hash": "9567e57795595953f86418e81976181de805138099eac0da15bc5150e923d118",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.4.5, Repository Receipt; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s421-16-4-5-1-description",
+      "source": "sections/s421-16-4-5-1-description.md",
+      "source_hash": "66c978c058c8a2dae295dfbc3a2678a8932ae3f7cbcf317139ae521cb10c736f",
+      "narrative": [
+        {
+          "text": "Defines the repository receipt assertion (label c2pa.repository-receipt), which may record proof that a C2PA Manifest Repository ingested a manifest and shall appear only in an update manifest, with a body that is a JSON-LD object including @context. Its repository object shall give the repository's base uri and a canonical manifestId, and its anchor object shall give a uri where the proof can be verified and a repository-defined proof object, with optional repository-specific parameters.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s422-16-4-5-2-repository-receipt-assertion-schema-and",
+      "source": "sections/s422-16-4-5-2-repository-receipt-assertion-schema-and.md",
+      "source_hash": "0a06d44a48e84dbae0a4774d0afeb74dd13343a8848614c038d807f054e26ae2",
+      "narrative": [
+        {
+          "text": "Gives the JSON Schema for the repository receipt assertion payload, requiring @context, an @type fixed to org.c2pa.repository-receipt, a repository object (uri and manifestId) and an anchor object (uri and proof, with optional parameters). An example JSON object shows a receipt from a repository with an anchor URI, a view parameter and a proof value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s423-16-5-ingredient",
+      "source": "sections/s423-16-5-ingredient.md",
+      "source_hash": "cab5f018ff04336642aa1a69f838c2d2eeaedb2572512c3e5f3ccccb717fd5fd",
+      "narrative": [
+        {
+          "text": "Introduces the ingredient assertion, which describes an asset used in creating, or otherwise related to, the asset described by the manifest, together with its relationship to that asset and a reference to its own provenance data.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s424-16-5-1-description",
+      "source": "sections/s424-16-5-1-description.md",
+      "source_hash": "7aad529efe048e6435c9f73d670ecf90c22d1d2ab57cf7bb35f5c8827dc41416",
+      "narrative": [
+        {
+          "text": "Explains that ingredients record the provenance of assets composed into, derived from or rendered from other assets, and also describe assets or data used as input to processes such as AI/ML training or inference. It names three versions of the assertion, deprecated c2pa.ingredient and c2pa.ingredient.v2 and the current c2pa.ingredient.v3, which shall be the label used and addresses validating ingredients after redaction, with the usual multiple-instance labelling applying.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s425-16-5-2-establishing-unique-identifiers",
+      "source": "sections/s425-16-5-2-establishing-unique-identifiers.md",
+      "source_hash": "17d67ef875757ba167e632a0be801f04cee3f263057960e5342dfec621b6d2b5",
+      "narrative": [
+        {
+          "text": "Specifies that an ingredient containing a C2PA Manifest takes its unique identifier from the manifest label of its active manifest, making instanceID unnecessary, while an instanceID supplied by the claim generator shall be determined as specified for non-C2PA assets, and may be supplied even when a manifest exists.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s426-16-5-3-relationship",
+      "source": "sections/s426-16-5-3-relationship.md",
+      "source_hash": "69ef1598ade6e1645a04bb573f16b8fbe259c20a0897354d5d184be383c70ce0",
+      "narrative": [
+        {
+          "text": "Requires each ingredient's relationship to be described as parentOf (the asset is derived from or a rendition of it, also used with update manifests), componentOf (it is one part of a composed asset) or inputTo (it was input to a computational process such as an AI/ML model). In Standard Manifests a claim generator adding an ingredient shall ensure a c2pa.actions assertion exists and add c2pa.opened for parentOf or c2pa.placed for componentOf, and a parentOf or componentOf ingredient assertion shall be listed in the same claim field (created_assertions or gathered_assertions) as the actions assertion referring to it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s427-16-5-4-title",
+      "source": "sections/s427-16-5-4-title.md",
+      "source_hash": "da3b963b4a5d4171fba094e85640b86523087bb9b13bbb18a7a3310bb2142015",
+      "narrative": [
+        {
+          "text": "Specifies that dc:title, if present, shall be a human-readable ingredient name taken from XMP or a filesystem name, but claim generators should not set it when the information is available in the ingredient's active manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s428-16-5-5-format",
+      "source": "sections/s428-16-5-5-format.md",
+      "source_hash": "490d6d5c7d0ac9497ed5fb26243ed198e5c097d36d39fa442768bbb79afdf32d",
+      "narrative": [
+        {
+          "text": "Specifies that dc:format, if present, shall be the ingredient's IANA media type, that claim generators should provide it with a valid value, and that multi-file ingredients such as an AI/ML data set shall use multipart/mixed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s429-16-5-6-schema-and-example",
+      "source": "sections/s429-16-5-6-schema-and-example.md",
+      "source_hash": "78ee5dd52948d632e1068ffc02ff288bcd083658f0902d66c46a347682774abe",
+      "narrative": [
+        {
+          "text": "Gives the CDDL for the ingredient assertion in its current v3 form (ingredient-map-v3) and the deprecated v2 and v1 forms, along with the format-string pattern and the relationship values parentOf, componentOf and inputTo. The v3 map requires only relationship and offers optional fields including dc:title, dc:format, validationResults, instanceID, data, dataTypes, either activeManifest or digitalSourceType but not both, relatedAssertions, claimSignature, thumbnail, description, informationalURI, softBindingsMatched, softBindingAlgorithmsMatched and metadata. A CBOR diagnostic example shows a parentOf ingredient with a thumbnail, related assertion, active manifest, claim signature and validationResults including ingredientDeltas.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s430-16-5-7-description-field",
+      "source": "sections/s430-16-5-7-description-field.md",
+      "source_hash": "c002e36d69a294050111d3b96c18eb490f63be57a826191cfa8f2e8fc05c9a0a",
+      "narrative": [
+        {
+          "text": "Allows an ingredient to carry a free-text description field about what it is or is used for, which should be produced by the claim generator rather than contain user-provided information, user descriptions instead going in a custom assertion.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s431-16-5-8-ingredient-data",
+      "source": "sections/s431-16-5-8-ingredient-data.md",
+      "source_hash": "eb87127efed9b236658569082c4833b6d4256f2c22d525bc689d58f2c1aa1288",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.5.8, Ingredient Data; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s432-16-5-8-1-standard-usage",
+      "source": "sections/s432-16-5-8-1-standard-usage.md",
+      "source_hash": "cfd9a01859e2f314b2e61a69f0b7128a8e31130dfb3ecc691802919e865b9f6b",
+      "narrative": [
+        {
+          "text": "Explains that an ingredient's own data, important for uses such as Generative AI, can be supplied through the data field, as a hashed-uri to an embedded data assertion or a hashed-ext-uri-map to external data, and that claim generators should weigh size since embedded data is carried into future manifests unless redacted. Where data can be neither embedded nor linked, such as a private AI model, an asset type in data_types can describe it, and examples show prompt, public model and private model ingredients.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s433-16-5-8-2-multi-file-ingredients",
+      "source": "sections/s433-16-5-8-2-multi-file-ingredients.md",
+      "source_hash": "1e053c8fad167b1e51e0ee5d0ec79aebf96bf501018b15e0c5de0a5b1ae44c47",
+      "narrative": [
+        {
+          "text": "Recommends that an ingredient made of multiple files, such as an AI/ML training data set, include its C2PA Manifest in the ingredient assertion and that the data set's manifest include an asset reference assertion pointing to where the files are found.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s434-16-5-9-informational-uri",
+      "source": "sections/s434-16-5-9-informational-uri.md",
+      "source_hash": "64cc1d7877ea577fdaa50fc300d60a6a6a1cb851e2c9f1bb007c62c18d82c212",
+      "narrative": [
+        {
+          "text": "Specifies that a URL to a web page about an ingredient, such as AI/ML model details, should go in the informationalURI field, which is not an authenticated link to the ingredient's content and was named informational_URI in deprecated versions.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s435-16-5-10-thumbnails",
+      "source": "sections/s435-16-5-10-thumbnails.md",
+      "source_hash": "180bf574cadd3822d84fd26b9afefbd98ffa56ad6b7340afa95a421d4c884218",
+      "narrative": [
+        {
+          "text": "Specifies that a thumbnail recording an ingredient's state at import shall be added as a thumbnail assertion referenced by hashed-uri, and also added to relatedAssertions when newly created in the active manifest, while Manifest Consumers should still support the earlier data box approach.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s436-16-5-11-related-assertions",
+      "source": "sections/s436-16-5-11-related-assertions.md",
+      "source_hash": "dd8fcc1de835e388ff21195c117ce164b084910fa2091e3fe1ce9dc2ce9029c4",
+      "narrative": [
+        {
+          "text": "Allows the claim generator to use the ingredient's relatedAssertions field, an array of hashed JUMBF URIs to non-ingredient, non-action assertions in the same manifest, to mark assertions that are about the ingredient rather than the current asset, though such assertions should appear in the ingredient's own manifest where possible. Each referenced assertion shall have a label ending in .ingredient (for example c2pa.ai-disclosure.ingredient or com.litware.metadata.ingredient) following the usual multiple-instance rules, and an example shows an inputTo ingredient referencing an AI disclosure assertion.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s437-16-5-12-existing-manifests",
+      "source": "sections/s437-16-5-12-existing-manifests.md",
+      "source_hash": "40d0ff9fd896cac921b412cbea8f37af59bf4d8312c1d3a37fdd61d66b41c484",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.5.12, Existing manifests; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s438-16-5-12-1-general",
+      "source": "sections/s438-16-5-12-1-general.md",
+      "source_hash": "aa29710a1a775a662b74bf5aaa9486e664c41fa01abd544f5356f2d211695e95",
+      "narrative": [
+        {
+          "text": "Requires the claim generator to copy every validated C2PA Manifest from an ingredient's Manifest Store that is not already in the asset's store, subject to the copying rules or user or configuration direction. It should also copy unvalidated manifests and unrecognised JUMBF boxes and superboxes, to stay compatible with custom assertions and future constructs.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s439-16-5-13-copying-existing-manifests",
+      "source": "sections/s439-16-5-13-copying-existing-manifests.md",
+      "source_hash": "0cc2d9e53d5d9951fb5ce7bb50999de215fa37f6f814ef2c5290f61ac413394c",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.5.13, Copying existing manifests; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s440-16-5-13-1-determining-the-need",
+      "source": "sections/s440-16-5-13-1-determining-the-need.md",
+      "source_hash": "ff8edbdf4aaf3254b0c53b1fdc356df8bad8d407964a30100c241f7d24d616e3",
+      "narrative": [
+        {
+          "text": "Sets out the procedure a claim generator shall follow to decide whether to copy each manifest from an ingredient's Manifest Store: validate the ingredient (optionally stopping on failure if so directed), compare manifest URNs with those already in the asset's store, and on a URN match compare manifest box hashes, not copying when they match. When hashes differ only because of redaction it keeps the existing manifest, replaces it, or redacts it to the union of both redaction sets depending on where redactions were applied, and in all other cases it copies the ingredient's manifest, re-labelled with a new URN.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s441-16-5-13-2-examples",
+      "source": "sections/s441-16-5-13-2-examples.md",
+      "source_hash": "9185d33c913dde56b86e343b52870a99721530fe03109217ff43742fbf2b9ac8",
+      "narrative": [
+        {
+          "text": "Gives two examples of manifest copying in which claim generator D imports ingredient B (carrying manifest A) and then ingredient C carrying a redacted manifest A, which D uses to overwrite its copy of A. In the second, the version of A from C fails validation, so D copies it under a new URN instead, with a note that non-manifest JUMBF boxes need not be copied.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s442-16-5-13-3-adding-manifest-references-to-the-ingr",
+      "source": "sections/s442-16-5-13-3-adding-manifest-references-to-the-ingr.md",
+      "source_hash": "9610f7bc411b6e415518db3d66d43e0cb634393827d44c8a0809b5be00c4a32a",
+      "narrative": [
+        {
+          "text": "Requires that when an ingredient's active manifest has been copied into the asset's store, hashed_uri references to its manifest box and claim signature box be stored in the ingredient assertion's activeManifest and claimSignature fields. An ingredient added without a manifest may instead carry a digitalSourceType drawn from the values allowed for actions, an ingredient assertion shall not contain both activeManifest and digitalSourceType, and an example shows a componentOf ingredient marked as trained algorithmic media.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s443-16-5-13-4-ingredient-validation",
+      "source": "sections/s443-16-5-13-4-ingredient-validation.md",
+      "source_hash": "5c117b8184e6f8f414c950ae14992f9e8d8785f140bfde8122a1598317219512",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.5.13.4, Ingredient validation; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s444-16-5-13-4-1-general",
+      "source": "sections/s444-16-5-13-4-1-general.md",
+      "source_hash": "f078bf74afbd32e67f81b277d63bdf4e58c252d536ac9e8df4508f8bf6586c9a",
+      "narrative": [
+        {
+          "text": "Requires the claim generator, when an ingredient assertion references a C2PA Manifest, to validate the ingredient and record all success, informational and failure codes in validationResults or validationStatus for use in future validations. A recorded failure is treated as an explicit statement that an actor knowingly chose to proceed despite errors, and claim generators are advised to raise warnings prominently.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s445-16-5-13-4-2-v2-ingredient-assertions-deprecated",
+      "source": "sections/s445-16-5-13-4-2-v2-ingredient-assertions-deprecated.md",
+      "source_hash": "5f1f18cfb0267ee0ffe8b38b937624f16b26dc881724c8ee91dbb5d2f0f41e1b",
+      "narrative": [
+        {
+          "text": "Describes validationStatus in deprecated v2 ingredient assertions, optional and possibly empty without c2pa_manifest, and otherwise an array of status-map objects each with a code, an optional success boolean, an optional explanation and a url that should point to the failing claim, signature or assertion. Custom status codes are permitted but shall follow entity-specific namespace syntax and include a success boolean.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s446-16-5-13-4-3-v3-ingredient-assertions",
+      "source": "sections/s446-16-5-13-4-3-v3-ingredient-assertions.md",
+      "source_hash": "465396518a7351ba49a652035676c3faf088e3fb094ecf7a7de1a4fc7cf99415",
+      "narrative": [
+        {
+          "text": "Requires a v3 ingredient assertion with activeManifest to carry validationResults, which may also appear without it, for example when a remote manifest could not be retrieved, and which shall hold full results for the ingredient's active manifest plus ingredientDeltas giving, for each manifest-bearing ingredient assertion in the ingredient's store, its ingredientAssertionURI and validationDeltas omitting statuses already recorded (compared on type, code and url). Each status-map shall contain a code and may contain a url and explanation, custom codes shall follow entity-specific namespace syntax, and a worked example and a manifest.inaccessible example illustrate usage. The results map may also carry a SemVer specVersion and either the deprecated trustListUri or trustListUris, whose objects shall each give the uri and type (such as c2pa.trustList or c2pa.tsaTrustList) of a trust list where a trust anchor matched, with an optional identifier that for ETSI-formatted lists shall be the list's sequence number.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s447-16-5-14-ingredient-metadata",
+      "source": "sections/s447-16-5-14-ingredient-metadata.md",
+      "source_hash": "669e07fb7f81f7e4caa090495f3d313596caa6493c8ef532ca6b5dfeaf82afb8",
+      "narrative": [
+        {
+          "text": "Explains that an ingredient assertion's metadata field may carry information such as generation time to help Manifest Consumers judge provenance. When only part of an ingredient is used, metadata should include a regionOfInterest describing the parts used, as an example with temporal and track regions shows.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s448-16-5-15-soft-bindings",
+      "source": "sections/s448-16-5-15-soft-bindings.md",
+      "source_hash": "d8955272200ea475e1ede1d5ed01fac6fcf040355ec08ff0434d97453a810e32",
+      "narrative": [
+        {
+          "text": "Requires that when an active manifest includes as a parentOf ingredient a manifest found through a soft binding lookup, the ingredient assertion shall set softBindingsMatched to true and list in softBindingAlgorithmsMatched the algorithm names, as identified in the C2PA Soft Binding Algorithm List, used to find it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s449-16-6-content-description-enrichment",
+      "source": "sections/s449-16-6-content-description-enrichment.md",
+      "source_hash": "066cf9f579493961aceadb5c4ff0fefff8055f71304ea165792d6af0625a62ba",
+      "narrative": [
+        {
+          "text": "Introduces the content description and enrichment assertions, which carry extra information about an asset or alternative representations of its content, such as thumbnails, metadata, format-specific details and externally stored data.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s450-16-6-1-thumbnail",
+      "source": "sections/s450-16-6-1-thumbnail.md",
+      "source_hash": "6b7442f4b1b44f82f0d7af9803cb6cb372eab9e3b6fd4ac6fdcfd2806110922c",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.6.1, Thumbnail; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s451-16-6-1-1-description",
+      "source": "sections/s451-16-6-1-1-description.md",
+      "source_hash": "a61d91c21945d084f416761fe88760887819870baba91b585822db4b9d3c1983",
+      "narrative": [
+        {
+          "text": "States that a thumbnail assertion gives an approximate visual representation of the asset at a specific lifecycle event, of which there are two, ingredient import and claim creation, each with its own label; the extracted list appears garbled, splitting this into two bullets that do not each name an event.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s452-16-6-1-1-1-claim-thumbnails",
+      "source": "sections/s452-16-6-1-1-1-claim-thumbnails.md",
+      "source_hash": "037c16a046e72bbd7516f1b9b77b8f702b0e93b4a09a99ca58a5d7a851194b6b",
+      "narrative": [
+        {
+          "text": "Specifies that a thumbnail made at claim creation shall be labelled c2pa.thumbnail.claim, with at most one per manifest, and that the older convention of adding the media type to the label is deprecated.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s453-16-6-1-1-2-ingredient-thumbnails",
+      "source": "sections/s453-16-6-1-1-2-ingredient-thumbnails.md",
+      "source_hash": "c2dddc00c673b51c25dfc9b8c04169119e06d97ce12e2cfbcd8ab9dbaa235f9e",
+      "narrative": [
+        {
+          "text": "Specifies that importing an ingredient should reference its own manifest-stored thumbnail, or, where none exists, a new thumbnail should be generated and stored as an ingredient thumbnail assertion whose label shall start with c2pa.thumbnail.ingredient, follow multiple-instance rules, and be added to the ingredient's relatedAssertions. It notes that earlier conventions of media-type suffixes and a _1 suffix with a single underscore for the first instance are deprecated.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s454-16-6-1-1-3-technical-details",
+      "source": "sections/s454-16-6-1-1-3-technical-details.md",
+      "source_hash": "8c509bd0d00717b00fac49d422fa50ad8e84ebbf48907ab87d67db3bb52aae2a",
+      "narrative": [
+        {
+          "text": "States that a thumbnail assertion is an embedded data assertion distinguished by a special label for this use.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s455-16-6-2-alternative-content-representation",
+      "source": "sections/s455-16-6-2-alternative-content-representation.md",
+      "source_hash": "509b76197015207c9927c4a7ace97a1dd43aad86a83a7f3831c4004ea3496755",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.6.2, Alternative Content Representation; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s456-16-6-2-1-general",
+      "source": "sections/s456-16-6-2-1-general.md",
+      "source_hash": "11e3419c570919997a0e82bcb1bb0a070cc0daf746737b0e6c0503de3fd97034",
+      "narrative": [
+        {
+          "text": "Defines the alternative content representation assertion, which shall have the label c2pa.alternative-content-representation and refers to digital content different from the primary asset, with parameters that depend on the file format as specified in the following sections.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s457-16-6-2-2-original-preservation-image",
+      "source": "sections/s457-16-6-2-2-original-preservation-image.md",
+      "source_hash": "37aeef2d2251d2c782ba3a7c36f6b752dd4152c0fffd32913befe6ef97fd6b8e",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.6.2.2, Original Preservation Image; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s458-16-6-2-2-1-description",
+      "source": "sections/s458-16-6-2-2-1-description.md",
+      "source_hash": "f77c9fd506305becbec72835789fa4509bad726ffa3feb7d92e148cd8bad0ba8",
+      "narrative": [
+        {
+          "text": "Describes using the alternative content representation assertion to reference an Exif Original Preservation Image (OPI), the unprocessed capture-time image, either where it sits in the asset's MPF, located by its index in the parts array of the multi-asset hash assertion, or moved into the manifest, as typically happens when the format changes from Exif or the file becomes an ingredient. A moved OPI shall be recorded unchanged as an embedded data assertion, edits preserving the OPI should add a new assertion, removal shall be recorded with c2pa.deleted or by redaction rules, and a manifest shall not contain more than one such assertion labelled exif.originalPreservationImage.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
