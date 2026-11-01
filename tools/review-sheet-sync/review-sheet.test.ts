@@ -1638,3 +1638,26 @@ describe("Agentic status sits left of its filter column (owner, 2026-10-31)", ()
     expect(moves).toEqual([]);
   });
 });
+
+describe("the Selected Sections dropdown reminder (core#472)", () => {
+  const src = readText(join(import.meta.dir, "review-sheet.gs"), "utf8");
+  const fns = new Function("SpreadsheetApp", `${src}\nreturn { multiPicked, setData: (d) => { DATA = d; } };`)({}) as {
+    multiPicked: (cells: { getDisplayValues: () => string[][] }, top: number) => number[];
+    setData: (d: unknown) => void;
+  };
+  fns.setData({ TOC: [["Front matter"], ["Annexes"], ["Glossary"]] });
+  const cells = (vals: string[]) => ({ getDisplayValues: () => vals.map((v) => [v]) });
+
+  test("names the rows holding two sections, which a single-pick rule marks Invalid", () => {
+    expect(fns.multiPicked(cells(["Front matter", "Front matter, Annexes", "", "Annexes, Glossary"]), 3)).toEqual([4, 6]);
+  });
+  test("two picks are not taken as proof the tick is on: the reminder is skipped only when the person said it is done", () => {
+    expect(src).not.toMatch(/dropdownDone'\) \|\| multiPicked/);
+    expect(src).toMatch(/if \(had && props\.getProperty\('dropdownDone'\)\) return;/);
+  });
+  test("the reminder also goes to the execution log, for an Install run from the editor", () => {
+    const body = src.slice(src.indexOf("function checkDropdown("), src.indexOf("function normalizeRows("));
+    expect(body).toMatch(/console\.log\(msg\)/);
+    expect(body).toMatch(/ss\.toast\(msg,/);
+  });
+});

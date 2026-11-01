@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 14c21641b96ac77e.
+// folio-assistant-core tools/review-sheet-sync at template sha256 4a63cef7486b08c1.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 14c21641b96ac77e';
+const SCRIPT_VERSION = 'template sha256 4a63cef7486b08c1';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -179,12 +179,13 @@ function markSetup(ss, state) {
 }
 
 function showVersion() {
-  SpreadsheetApp.getUi().alert('Review sheet script',
-    'This sheet runs: ' + SCRIPT_VERSION + '\n\n' +
-    'The latest published script: ' + LATEST_URL + '\n' +
-    'Its stamp is near the top ("at ..."). If it differs, the owner pastes it once into the Folio Review Library ' +
-    '(' + LIBRARY_URL + '); every sheet that uses the library then runs it. A sheet with the whole script pasted in ' +
-    'instead: Extensions, then Apps Script, replace Code.gs, save, and Review links, then Refresh now.',
+  // Short and plain (owner, 2026-11-01: the old text was "long, unclear").
+  const build = String(SCRIPT_VERSION).replace(/^template sha256 /, '');
+  SpreadsheetApp.getUi().alert('Which version is this?',
+    'Build: ' + build + '\n\n' +
+    'Newest build: the "at ..." line near the top of ' + LATEST_URL + '\n\n' +
+    'Different? Ask the agent for the Code.gs copy page, paste it over Code.gs in the Folio Review Library (' + LIBRARY_URL + ') and save, ' +
+    'then choose Review links, Refresh now in each sheet.',
     SpreadsheetApp.getUi().ButtonSet.OK);
 }
 
@@ -241,13 +242,17 @@ function applyEditors(ss) {
 
 /**
  * Drafting: make sure Selected Sections is a dropdown of the hidden TOC tab,
- * and tell the person the steps a script cannot take. A missing dropdown is
+ * and tell the person the step a script cannot take. A missing dropdown is
  * added; an existing one is left alone, since writing it again would clear
- * its "Allow multiple selections" tick. Neither Apps Script nor the Sheets
- * API can read that tick, so the box is skipped only on
- * evidence: a cell already holding two sections from the list (or, on a sheet
- * installed before 2026-10-31, the person having said it is done). The same
- * steps are in the Config tab's Instructions row.
+ * its "Allow multiple selections" tick. Apps Script cannot read or set that
+ * tick, and the Sheets API refuses to set it on a range rule, so the reminder
+ * is given at every Install. A cell holding two sections is no proof the tick
+ * is on: the rule may still mark it Invalid (core#472, the DTH-PHC and DTH-PC
+ * logs), so such rows are named in the reminder instead. The reminder goes
+ * to the execution log as well as a toast, since a toast is missed when
+ * Install runs from the editor. A sheet installed before 2026-10-31 whose
+ * person said it is done stays quiet. The same steps are in the Config tab's
+ * Instructions row.
  */
 function checkDropdown(ss) {
   if (!ss) throw new Error(RUN_THIS);
@@ -263,16 +268,21 @@ function checkDropdown(ss) {
       .setAllowInvalid(true).build());
   }
   const props = docProps_();
-  if (had && (props.getProperty('dropdownDone') || multiPicked(cells))) return;
+  if (had && props.getProperty('dropdownDone')) return;
+  const multi = had ? multiPicked(cells, s.top) : [];
+  const msg = 'Selected Sections is ' + (had ? 'a dropdown' : 'now a dropdown of the document\'s sections') +
+    '. One step only a person can take: select the "' + COLS.draft.sections +
+    '" column, choose Data, then Data validation, open its rule, set Advanced options > Display style to Chip, then tick Allow multiple selections (greyed out until the style is Chip), and press Done. ' +
+    (multi.length ? 'Until it is ticked, rows with two sections (row ' + multi.slice(0, 5).join(', ') + (multi.length > 5 ? ', ...' : '') + ') show Invalid. ' : '') +
+    'If it is already ticked, there is nothing to do. The same steps are on the Config tab.';
+  // The execution log, for an Install run from the editor, where no toast shows.
+  console.log(msg);
   // A toast, never a dialog: a dialog waits for an answer in the sheet, and
   // when Install is run from the Apps Script editor nobody sees it, so the
   // run hangs until Apps Script stops it after 6 minutes (owner, 2026-10-31:
   // "Exceeded maximum execution time" on the DTH-SC log).
   try {
-    ss.toast('Selected Sections is ' + (had ? 'a dropdown' : 'now a dropdown of the document\'s sections') +
-      '. One step only a person can take: select the "' + COLS.draft.sections +
-      '" column, choose Data, then Data validation, open its rule, set Advanced options > Display style to Chip, then tick Allow multiple selections (greyed out until the style is Chip), and press Done. ' +
-      'The same steps are on the Config tab.', 'Finish the dropdown', 30);
+    ss.toast(msg, 'Finish the dropdown', 30);
   } catch (e) { /* a toast is a courtesy */ }
 }
 
@@ -333,13 +343,15 @@ function placeBefore(sh, name, before) {
   return true;
 }
 
-/** True when some cell holds two or more sections from the list, which only a multi-select rule allows. */
-function multiPicked(cells) {
+/** Row numbers of the cells holding two or more sections from the list: a single-pick rule marks them Invalid. */
+function multiPicked(cells, top) {
   const names = new Set(DATA.TOC.map(t => bareName(t[0])));
-  return cells.getDisplayValues().some(([v]) => {
+  const rows = [];
+  cells.getDisplayValues().forEach(([v], k) => {
     const parts = String(v).split(',').map(x => x.trim()).filter(Boolean);
-    return parts.length > 1 && parts.every(x => names.has(bareName(x)));
+    if (parts.length > 1 && parts.every(x => names.has(bareName(x)))) rows.push(top + k);
   });
+  return rows;
 }
 
 /**
@@ -508,6 +520,7 @@ function refreshIfDirty() {
     checkSheet(SpreadsheetApp.getActive());
     refreshDraft(full ? null : rows);
     try { capRows(SpreadsheetApp.getActive(), [CFG.FEEDBACK]); } catch (err) { /* cosmetic only */ }
+    writeWatchHash(SpreadsheetApp.getActive());
   } finally {
     props.setProperty('lastMs', String(Date.now() - t0));
     lock.releaseLock();
@@ -541,7 +554,11 @@ function refreshLocked() {
   {
     loadConfig(SpreadsheetApp.getActive());
     checkSheet(SpreadsheetApp.getActive());
-    if (DRAFTING) return refreshDraft();
+    if (DRAFTING) {
+      const out = refreshDraft();
+      writeWatchHash(SpreadsheetApp.getActive());
+      return out;
+    }
     const ss = SpreadsheetApp.getActive();
     // Added inside the run, under its lock, so no other refresh writes by a
     // column position this changes (memory: never move columns mid-refresh).
@@ -986,6 +1003,44 @@ function writeRows(s, c, only, f) {
 function asText(v) {
   const t = String(v == null ? '' : v);
   return /^[=+\-@]/.test(t) ? "'" + t : t;
+}
+
+// ---------- Watch hash: one cell a watcher reads instead of the log ----------
+
+/**
+ * The headers people set on Contributor Feedback (Blue and Orange). Tool
+ * review-log-watch watches the same ones (watch.ts watchedHeader).
+ */
+function watchedHeader_(h) {
+  return h === 'Title' || h === 'Selected Sections' || h === 'Disposition' ||
+    h === 'Ready for agent' || h === 'Ready for merge' || h === 'Dispositions confirmed' ||
+    (h.indexOf('Contributor Feedback') === 0 && h !== 'Contributor Feedback (agent)');
+}
+
+/**
+ * Write a hash of every non-empty person-set cell of Contributor Feedback to
+ * the hidden Watch tab, F1 "Cells hash" and G1 the hash, H1 "Checked (UTC)"
+ * and I1 when. A review-log watcher reads Watch!F1:I1 and the Issue column
+ * on each poll, instead of the whole log, and passes the hash to Tool
+ * review-log-watch (`--sheet-hash`); a different hash means a person changed
+ * something (owner, 2026-11-01, Q-WATCH4 A). Columns A to D are left to any
+ * other Watch writer. Never stops the refresh.
+ */
+function writeWatchHash(ss) {
+  try {
+    const s = readSheet(ss.getSheetByName(CFG.FEEDBACK));
+    const lines = [];
+    s.rows.forEach((r, k) => s.header.forEach((h, c) => {
+      const v = String(r[c] == null ? '' : r[c]).trim();
+      if (v && watchedHeader_(String(h).trim())) lines.push(k + ':' + String(h).trim() + '=' + v);
+    }));
+    let sh = ss.getSheetByName('Watch');
+    if (!sh) { sh = ss.insertSheet('Watch'); sh.hideSheet(); }
+    const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
+    sh.getRange(1, 6, 1, 4).setValues([['Cells hash', hashOf(lines.join('\n')), 'Checked (UTC)', now]]);
+  } catch (err) {
+    // A Watch tab that cannot be written must never stop the refresh.
+  }
 }
 
 /** A string inside a formula's double quotes: each " doubled (finding F2). */

@@ -85,3 +85,26 @@ describe("coverage of a folio", () => {
     expect(bad.problems.length).toBe(1);
   });
 });
+
+describe("the glossary as captured text", () => {
+  it("a sentence the glossary holds is captured, also across a dropped hyphen", () => {
+    const { l1, folio } = fixture();
+    const glossary = join(folio, "..", "glossary");
+    mkdirSync(glossary, { recursive: true });
+    writeFileSync(
+      join(glossary, "terms.glossary.json"),
+      JSON.stringify({ concepts: [{ definition: "In no event shall WHO be liable for damages." }] }),
+    );
+    writeFileSync(join(l1, "sections", "sec-c.md"), "An opensource software must have a license approved by the initiative.\n");
+    writeFileSync(
+      join(glossary, "more.glossary.json"),
+      JSON.stringify([{ definition: "Words. An open-source software must have a license approved by the initiative." }]),
+    );
+    const without = folioCoverage({ l1Dir: l1, folioDir: folio });
+    expect(without.sentences.filter((s) => s.state === "captured").length).toBe(1);
+    const r = folioCoverage({ l1Dir: l1, folioDir: folio, glossaryDir: glossary });
+    const state = Object.fromEntries(r.sentences.map((s) => [s.location, s.state]));
+    expect(state["p2:s2"]).toBe("captured");
+    expect(state["p3:s1"]).toBe("captured");
+  });
+});
