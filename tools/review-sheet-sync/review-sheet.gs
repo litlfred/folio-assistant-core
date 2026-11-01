@@ -1930,6 +1930,8 @@ function refreshDraft(rows) {
   // Agentic status sits just left of its filter column (owner, 2026-10-31).
   // Moved here, inside the locked run, before any column is read by position.
   try { placeBefore(ss.getSheetByName(CFG.FEEDBACK), COLS.draft.agentic || 'Agentic status', COLS.draft.status || 'Agentic status (filter)'); } catch (err) { /* the refresh still runs */ }
+  // Issue sits just left of Disposition (agent) (owner, 2026-11-01).
+  try { placeBefore(ss.getSheetByName(CFG.FEEDBACK), COLS.draft.issue || 'Issue', 'Disposition (agent)'); } catch (err) { /* the refresh still runs */ }
   const fb = readSheet(ss.getSheetByName(CFG.FEEDBACK));
   const agentSh = ss.getSheetByName(CFG.AGENT);
   const agent = agentSh ? readSheet(agentSh) : { header: [], rows: [] };
