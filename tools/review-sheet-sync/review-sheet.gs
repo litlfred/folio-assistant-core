@@ -1493,6 +1493,8 @@ function progressLine(o) {
   if (/merged/i.test(o.status || '')) return '';
   // A question for a person comes first: nothing moves until it is answered.
   if (/needs/i.test(o.status || '')) return PROGRESS + 'Needs you: answer the Decision needed below, then set Ready for agent to Yes.';
+  // A revert, a split or a committee review is said as it is, not as "open".
+  if (/revert|split|committee/i.test(o.status || '')) return PROGRESS + String(o.status).trim() + '.';
   const step = agentStep(o.built && o.built.step);
   if (step && (step.name === 'merging' || !o.merge)) {
     const dones = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
@@ -1578,33 +1580,26 @@ function readyTimes(s, csCol, prOf, want, props) {
 const isYes = (s, r, h) => { const c = col(s, h); return c >= 0 && /^yes$/i.test(String(r[c]).trim()); };
 
 /**
- * The agent's "Decision needed" block in bold, so a reader sees at once
- * that the row waits on them (owner, 2026-10-31: "decision needed should be
- * bold highlighted in change set feedback so clear"). The block runs to the
- * next blank line. Cells without one are left as they are.
+ * The tags in the agent's feedback in bold ("Decision needed:", "Status:",
+ * "Next:"), and the rest plain, so a reader sees at once what the row asks
+ * of them. Cells without a tag or link are left as they are.
  */
 const DECISION_INK = '#000000';
 function decisionSpans(text) {
-  const t = String(text), spans = [], re = /Decision needed/g;
+  // Only the tags are bold, never whole blocks or lines (owner, 2026-11-01:
+  // "all text is bold which is ugly. only a tag like \"Decisions Needed:\"
+  // should be bold"). A tag is a short label ending in a colon: at the start
+  // of a line ("Decision needed (No. 1):", "Status:", "Next:"), or right
+  // after the script's \u23f3 mark ("Needs you:"). Comment numbers stay bold.
+  const t = String(text), spans = [];
   let m;
-  while ((m = re.exec(t))) {
-    const end = t.indexOf('\n\n', m.index);
-    spans.push([m.index, end < 0 ? t.length : end]);
+  const lab = /(^|\n)(\u26a0 |\u23f3 )?([A-Z][A-Za-z0-9 ()\-.]{1,40}:)(?=\s|$)/g;
+  while ((m = lab.exec(t))) {
+    const a = m.index + m[1].length + (m[2] || '').length;
+    spans.push([a, a + m[3].length]);
   }
-  // The script's ⏳ status line is bold too, so it reads as the row's state
-  // (owner, 2026-10-31: "not bold").
-  // Labels at the start of a line ("What changed:", "Proposed direction:")
-  // and comment numbers, so the structure reads at a glance.
-  const lab = /(^|\n)([A-Z][A-Za-z ()]{2,40}:)(?=\s)/g;
-  while ((m = lab.exec(t))) spans.push([m.index + m[1].length, m.index + m[1].length + m[2].length]);
   const ref = /\bNos?\.\s*\d+(?:(?:,\s*|\s+and\s+|\s+to\s+)\d+)*/g;
   while ((m = ref.exec(t))) spans.push([m.index, m.index + m[0].length]);
-  const i = t.indexOf('\n' + PROGRESS);
-  const p = t.indexOf(PROGRESS) === 0 ? 0 : i < 0 ? -1 : i + 1;
-  if (p >= 0) {
-    const e = t.indexOf('\n', p);
-    spans.push([p, e < 0 ? t.length : e]);
-  }
   return spans;
 }
 function markDecision(range, text, links) {
@@ -1612,6 +1607,9 @@ function markDecision(range, text, links) {
   if (!spans.length && !(links || []).length) return;
   const b = SpreadsheetApp.newRichTextValue().setText(String(text));
   const st = SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(DECISION_INK).build();
+  // The cell's own format must not make everything bold under the tags.
+  if (String(text).length) b.setTextStyle(0, String(text).length, SpreadsheetApp.newTextStyle().setBold(false).build());
+  if (range.setFontWeight) range.setFontWeight('normal');
   spans.forEach(([a, z]) => b.setTextStyle(a, z, st));
   (links || []).forEach(([a, z, u]) => b.setLinkUrl(a, z, u));
   range.setRichTextValue(b.build());

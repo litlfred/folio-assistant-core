@@ -1323,18 +1323,17 @@ describe("Needs human says what the person must do (owner, 2026-10-31)", () => {
   });
 });
 
-describe("Decision needed stands out in the agent's feedback (owner, 2026-10-31)", () => {
+describe("only the tags are bold in the agent's feedback (owner, 2026-11-01)", () => {
   const fns = new Function("SpreadsheetApp", `${code}\nreturn { decisionSpans };`)({}) as { decisionSpans: (t: string) => [number, number][] };
-  test("the block runs from Decision needed to the next blank line", () => {
+  const bold = (t: string) => fns.decisionSpans(t).map(([a, z]) => t.slice(a, z));
+  test("the Decision needed tag is bold, its question and options are not", () => {
     const t = "Proposed direction: x.\n\nDecision needed (No. 1): y?\nA. Yes\nB. No\n\nDecided (Q1): A.";
-    const [[a, z]] = fns.decisionSpans(t);
-    expect(t.slice(a, z)).toBe("Decision needed (No. 1): y?\nA. Yes\nB. No");
+    expect(bold(t)).toEqual(["Proposed direction:", "Decision needed (No. 1):", "Decided (Q1):", "No. 1"]);
   });
-  test("no block, no spans", () => {
-    expect(fns.decisionSpans("Decided (Q1): A.")).toEqual([]);
-    // The script's status line is bold as well, below a stale mark.
-    const st = "\u26a0 Stale: x\n\u23f3 r#1 open.\nProposal";
-    expect(fns.decisionSpans(st)).toEqual([[st.indexOf("\u23f3"), st.indexOf("\nProposal")]]);
+  test("the status line bolds its tag only", () => {
+    const st = "\u26a0 Stale: x\n\u23f3 Needs you: answer it.\nStatus: draft.\nNext: review it.";
+    expect(bold(st)).toEqual(["Stale:", "Needs you:", "Status:", "Next:"]);
+    expect(bold("\u23f3 r#1 open.\nProposal")).toEqual([]);
   });
 });
 
