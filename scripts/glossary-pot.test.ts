@@ -13,7 +13,7 @@ import { existsSync, readFileSync } from "node:fs";
 
 import { GlossarySchema } from "../schemas/glossary.ts";
 import { LOCALE_PAGE_STRINGS, LOCALE_PAGE_TEMPLATE, collect, type GlossarySource } from "./glossary-page.ts";
-import { catalogueDir, potEntries, potPath, sourceText, templateName, templates } from "./glossary-pot.ts";
+import { catalogueDir, potComparable, potEntries, potPath, sourceText, templateName, templates } from "./glossary-pot.ts";
 
 const c = collect();
 const tpl = templates(c);
@@ -101,5 +101,25 @@ describe("potEntries on a mixed scheme", () => {
   const s: GlossarySource = { instance: "x", ns: "https://example.org/x/ns#", file: "none.glossary.json", glossary: g };
   it("extracts the authored term's source-language label, alt label and definition, and nothing else", () => {
     expect(potEntries(s).map((e) => e.msgid).sort()).toEqual(["The first.", "alpha", "first"]);
+  });
+});
+
+describe("potComparable: locations are not content (smart-trust#120)", () => {
+  const pot = (loc: string, msgid: string) =>
+    `msgid ""\nmsgstr ""\n"POT-Creation-Date: 2026-11-01T00:00:00.000Z\\n"\n\n#. Glossary term label\n#: ${loc}:12\nmsgid "${msgid}"\nmsgstr ""\n`;
+
+  it("the same template extracted from two roots compares equal", () => {
+    expect(potComparable(pot("glossary/g.glossary.json", "Trust anchor")))
+      .toBe(potComparable(pot("smart-trust/glossary/g.glossary.json", "Trust anchor")));
+  });
+
+  it("a changed msgid still compares unequal", () => {
+    expect(potComparable(pot("glossary/g.glossary.json", "Trust anchor")))
+      .not.toBe(potComparable(pot("glossary/g.glossary.json", "Trust list")));
+  });
+
+  it("a changed extractor comment still compares unequal", () => {
+    const a = pot("glossary/g.glossary.json", "Trust anchor");
+    expect(potComparable(a)).not.toBe(potComparable(a.replace("#. Glossary term label", "#. Glossary term definition")));
   });
 });

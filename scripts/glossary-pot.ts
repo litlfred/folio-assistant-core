@@ -12,7 +12,7 @@
  *
  * - the template is written by `formatPot` (`cat-harness-tools/pipeline/pot-extract.ts`),
  *   the formatter `translate-bpmn` uses, and compared with the same
- *   timestamp-blind `potWithoutTimestamp`;
+ *   timestamp-blind `potWithoutTimestamp` (and blind to `#:` locations, {@link potComparable});
  * - it lands in the declared `translation-sources` directory, per locale, in
  *   a `glossary/` subdirectory beside `processes/`, named after the SKOS file
  *   the page already publishes (`<instance>--<scheme>.pot`);
@@ -189,6 +189,25 @@ export function allTranslationDirs(repo: string = REPO): string[] {
   return declaredDirectories(repo, "translation-sources");
 }
 
+/**
+ * The form two templates are compared in: {@link potWithoutTimestamp}, and the
+ * `#:` source-location lines set aside too.
+ *
+ * A location is written relative to the checkout's root, so the same
+ * instance's template cites `glossary/x.glossary.json` when the instance is
+ * its own index and `<instance>/glossary/x.glossary.json` when an index
+ * mounts it. Comparing locations made every instance that is checked both
+ * ways (smart-trust on its own CI and in folio-assistant) stale in one of
+ * them, whichever way it was written. A location is not text a translator
+ * works on: a term added, removed or reworded still changes a msgid, a
+ * comment or the order, and still fails the check. The file keeps its
+ * locations; only the comparison ignores them, so `--extract` does not
+ * rewrite a template whose only difference is where it was extracted.
+ */
+export function potComparable(text: string): string {
+  return potWithoutTimestamp(text).replace(/^#: .*$/gm, "#: <location>");
+}
+
 function knownLocales(dir: string): string[] {
   if (!existsSync(dir)) return [];
   return readdirSync(dir, { withFileTypes: true })
@@ -236,7 +255,7 @@ if (import.meta.main) {
         const p = potPath(placed.get(name)!.dir, loc, name);
         const rel = relative(REPO, p);
         if (!existsSync(p)) bad.push(`never extracted: ${rel}`);
-        else if (potWithoutTimestamp(readFileSync(p, "utf-8")) !== potWithoutTimestamp(render(name, loc))) bad.push(`out of date: ${rel}`);
+        else if (potComparable(readFileSync(p, "utf-8")) !== potComparable(render(name, loc))) bad.push(`out of date: ${rel}`);
       }
       for (const dir of dirs) {
         const sub = join(dir, loc, GLOSSARY_SUBDIR);
@@ -269,7 +288,7 @@ if (import.meta.main) {
       const p = potPath(placed.get(name)!.dir, loc, name);
       const fresh = render(name, loc);
       // Written only when the content changed: POT-Creation-Date moves on every run.
-      if (existsSync(p) && potWithoutTimestamp(readFileSync(p, "utf-8")) === potWithoutTimestamp(fresh)) continue;
+      if (existsSync(p) && potComparable(readFileSync(p, "utf-8")) === potComparable(fresh)) continue;
       mkdirSync(dirname(p), { recursive: true });
       writeFileSync(p, fresh);
     }
