@@ -761,6 +761,1013 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s618-a-7-1-1-embedded-inline-manifests",
+      "source": "sections/s618-a-7-1-1-embedded-inline-manifests.md",
+      "source_hash": "33f138ff0f4d6035d46074e3bda4947815f93bbddf0514c5555c229776969ec3",
+      "narrative": [
+        {
+          "text": "An embedded HTML manifest store must be placed, Base64-encoded, in a script element of type application/c2pa in the document head, and validators must strip surrounding whitespace before decoding, with an example document shown.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s619-a-7-1-2-external-referenced-manifests",
+      "source": "sections/s619-a-7-1-2-external-referenced-manifests.md",
+      "source_hash": "90870db4c734db11dba5a002835d87dfb6a48d370939fc94ebbdd857a78f8f8a",
+      "narrative": [
+        {
+          "text": "A referenced HTML manifest store must be linked from the document head by a link element with rel=\"c2pa-manifest\" and an href, which validators match on alone (type=\"application/c2pa\" is recommended), and the external store must carry a content binding, with an example document shown.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s620-a-7-1-3-hard-binding",
+      "source": "sections/s620-a-7-1-3-hard-binding.md",
+      "source_hash": "894e0af1728aa2e603f11521f68ae53a1c1967152369819a76e9aed9d5904768",
+      "narrative": [
+        {
+          "text": "A claim generator embedding a manifest store in HTML must include a c2pa.hash.data assertion, whose single exclusion range covers the whole script element when the manifest is embedded, and which has no exclusion range when the manifest is referenced by a link element. A note explains that the hash covers the stored bytes, so any re-serialisation of the HTML invalidates the binding by design, and advises embedding after final serialisation or using an external manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s621-a-7-1-4-validator-behaviour",
+      "source": "sections/s621-a-7-1-4-validator-behaviour.md",
+      "source_hash": "a70b3bf8a391b8dd99374569ce8c63d21bb1592e26e055c9d4d75f3674290916",
+      "narrative": [
+        {
+          "text": "Validators of text/html documents must parse the head as bytes for an application/c2pa script element or a c2pa-manifest link element, treat multiple matches as no manifest, and Base64-decode a script element's content. Resolving a link's external URI is optional, and any obtained manifest store is then validated through the normal validation process.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s622-a-8-embedding-manifests-into-unstructured-text",
+      "source": "sections/s622-a-8-embedding-manifests-into-unstructured-text.md",
+      "source_hash": "57cf7862ddfeb988ff143220de751ea195a4723b6753e91610484a42d89ef0d6",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.8, Embedding Manifests into Unstructured Text; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s623-a-8-1-general",
+      "source": "sections/s623-a-8-1-general.md",
+      "source_hash": "60cc24741229099b48d7bd04f4fe59f98e289d069e4d5e01e45c5a58d7f6eaf5",
+      "narrative": [
+        {
+          "text": "Manifest stores may be embedded in unstructured Unicode text, such as text meant to be copied and pasted, as a sequence of non-rendering Unicode Variation Selectors, though this method should be used only when no other embedding is feasible and remains under review.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s624-a-8-2-the-c2patextmanifestwrapper-structure",
+      "source": "sections/s624-a-8-2-the-c2patextmanifestwrapper-structure.md",
+      "source_hash": "789eafc119f763e76b9f767ea04b4ac4ec9861009d2703697544548fddd265cd",
+      "narrative": [
+        {
+          "text": "Unstructured text assets that embed a Content Credential must do so with Unicode variation selectors following the defined C2PATextManifestWrapper syntax and semantics, chosen because they are non-rendering yet valid Unicode.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s625-a-8-2-1-definition",
+      "source": "sections/s625-a-8-2-1-definition.md",
+      "source_hash": "848d3187fe62462f4f05cff113b5027d02952b0b123fea5530bec0fb44eae72f",
+      "narrative": [
+        {
+          "text": "Defines the C2PATextManifestWrapper as an optional container, encoded as Unicode Variation Selectors and present zero or one time, that holds a complete C2PA Manifest Store in JUMBF format.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s626-a-8-2-2-syntax",
+      "source": "sections/s626-a-8-2-2-syntax.md",
+      "source_hash": "fe9c9593f46724f4c9bc56c97ab52b0c5fdc03840447f97178d8cab174e1f1db",
+      "narrative": [
+        {
+          "text": "Gives the binary syntax of C2PATextManifestWrapper: a 64-bit magic value \"C2PATXT\\0\", an 8-bit version of 1, a 32-bit manifestLength, the JUMBF container bytes and optional trailing padding.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s627-a-8-2-3-semantics",
+      "source": "sections/s627-a-8-2-3-semantics.md",
+      "source_hash": "c88f5ea8b330c591111f4b5331c3d6ebbc69a441f3b677c704dd10d0756bf3da",
+      "narrative": [
+        {
+          "text": "Explains the wrapper's fields: the fixed magic identifier, the version (currently 1), the big-endian manifestLength, the raw JUMBF manifest store bytes, and padding bytes that carry no meaning, must be ignored when decoding and allow a deterministic wrapper length.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s628-a-8-3-encoding-and-decoding-algorithms",
+      "source": "sections/s628-a-8-3-encoding-and-decoding-algorithms.md",
+      "source_hash": "983442b161fe9c1342e8df49bd703faa6f4665b6cf3292f02588133e6294ea44",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.8.3, Encoding and Decoding Algorithms; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s629-a-8-3-1-byte-to-variation-selector-conversion",
+      "source": "sections/s629-a-8-3-1-byte-to-variation-selector-conversion.md",
+      "source_hash": "48eac5890bf35c5fd38f4c49a7a957d0de510e49983baaf548ea67f89d59f0e4",
+      "narrative": [
+        {
+          "text": "Each wrapper byte must be converted to a variation selector, with bytes 0 to 15 mapping to U+FE00 onward and bytes 16 to 255 mapping to U+E0100 onward, as shown in pseudocode.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s630-a-8-3-2-variation-selector-to-byte-conversion",
+      "source": "sections/s630-a-8-3-2-variation-selector-to-byte-conversion.md",
+      "source_hash": "e54b58f6467ebf6c78e8b16e734e1f53741cc37f949046447419da54304a75f8",
+      "narrative": [
+        {
+          "text": "Gives the pseudocode for decoding variation selectors back to bytes, inverting the two ranges U+FE00 to U+FE0F and U+E0100 to U+E01EF and returning INVALID for any other code point.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s631-a-8-3-3-encoding-example",
+      "source": "sections/s631-a-8-3-3-encoding-example.md",
+      "source_hash": "6a3cfeac7a22a9b25d6b6cdb2fbe4c945181986d1e8762e60ebc3ba20fbf457c",
+      "narrative": [
+        {
+          "text": "A non-normative table shows sample bytes with their variation-selector code points and UTF-8 encodings, and shows how the magic value C2PATXT\\0 encodes to eight variation selectors that a validator decodes and compares to identify a candidate wrapper.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s632-a-8-4-placement-and-detection-strategy",
+      "source": "sections/s632-a-8-4-placement-and-detection-strategy.md",
+      "source_hash": "0eb7f336e198a1b0e6b7f01257b6b65cdb9c0efe2973fa4481424244e81d5ca6",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.8.4, Placement and Detection Strategy; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s633-a-8-4-1-placement-rules",
+      "source": "sections/s633-a-8-4-1-placement-rules.md",
+      "source_hash": "b7d529b64e7612b6a1ceab5a2a33f1fa6bd805260d051c31244a2941787743ea",
+      "narrative": [
+        {
+          "text": "The wrapper must be a single contiguous, unsplit run of variation selectors immediately preceded by a U+FEFF marker, which counts as part of the wrapper for the c2pa.hash.data exclusion, and should be placed at the end of the visible text. A claim generator should embed at most one wrapper, and a validator finding more than one valid wrapper must treat the asset as having no manifests.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s634-a-8-4-2-detection-algorithm",
+      "source": "sections/s634-a-8-4-2-detection-algorithm.md",
+      "source_hash": "3eeb594b8dd1862097119fdea641314697806ae26bd97e2c7ffcf8c2269b5c27",
+      "narrative": [
+        {
+          "text": "Validators must scan text for U+FEFF markers, treat the following run of variation selectors as a candidate, check that its first eight decoded bytes match the C2PATXT\\0 magic, then parse the rest, ignoring any candidate that fails either step.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s635-a-8-5-deterministic-wrapper-padding",
+      "source": "sections/s635-a-8-5-deterministic-wrapper-padding.md",
+      "source_hash": "76cea8fff09d281172a83622f58ee6cd82a024becc562d2b2ebd1b37ae74df12",
+      "narrative": [
+        {
+          "text": "A note explains that a wrapper's UTF-8 length depends on how many bytes map to 3-byte versus 4-byte variation selectors, creating a circular dependency between the c2pa.hash.data exclusion length and the manifest bytes, which deterministic padding resolves by deriving the length from the manifest byte count alone.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s636-a-8-5-1-worst-case-encoding-formula",
+      "source": "sections/s636-a-8-5-1-worst-case-encoding-formula.md",
+      "source_hash": "32ce45e6b6273dd6251541b40ae47e72d04c3874a2c577a01e3e0e0f8afc1d01",
+      "narrative": [
+        {
+          "text": "Defines the deterministic target wrapper byte length for an M-byte manifest as 3 + (13 + M) * 4 + 6, covering the U+FEFF prefix, the 13-byte header, the worst case of 4 bytes per selector, and a margin of 6. Notes explain that the margin guarantees the gap to the actual length can always be expressed as a combination of 3s and 4s, aided by the low-range bytes always present in the header.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s637-a-8-5-2-claim-generator-procedure",
+      "source": "sections/s637-a-8-5-2-claim-generator-procedure.md",
+      "source_hash": "84360e486eb5701bb88db52a50055157953f94cc88019fa5daf62dd228de56c3",
+      "narrative": [
+        {
+          "text": "A claim generator should build the manifest store with a placeholder exclusion_length, compute the target length E, rebuild with exclusion_length set to E (repeating once if the CBOR integer width changes), and encode the wrapper. It then fills the gap between E and the actual length with a fixed number of 0x00 and 0x10 padding bytes, so that compliant generators produce byte-identical wrappers.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s638-a-8-6-validation-requirements",
+      "source": "sections/s638-a-8-6-validation-requirements.md",
+      "source_hash": "38966717b2e47ddc9e8f66385b636ff6a7bb25a78132790639ff307a51be928d",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.8.6, Validation Requirements; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s639-a-8-6-1-validating-a-data-hash",
+      "source": "sections/s639-a-8-6-1-validating-a-data-hash.md",
+      "source_hash": "098679cbe68ca5ec8b4092f9a46043fa46936a6d3088f78eac45e868538101cc",
+      "narrative": [
+        {
+          "text": "When validating c2pa.hash.data on unstructured text, the exclusions must match the wrapper's location, and the hash must be computed by removing the excluded bytes, normalising the rest to NFC and encoding as UTF-8, then must match the assertion's hash.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s640-a-8-6-2-normalization",
+      "source": "sections/s640-a-8-6-2-normalization.md",
+      "source_hash": "112334aa54297b4476eb84a0e5ad42bb3d109647572221ff954492b563046a76",
+      "narrative": [
+        {
+          "text": "Producers and consumers must normalise text to Unicode NFC before hashing so that hash values are consistent across platforms.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s641-a-8-6-3-exclusion-handling",
+      "source": "sections/s641-a-8-6-3-exclusion-handling.md",
+      "source_hash": "091fdf3d3f9690248cad3d29a7e19e01fa6e2700b461ebb10271e9288613bd2a",
+      "narrative": [
+        {
+          "text": "The c2pa.hash.data exclusions use byte offsets into the stored UTF-8 text before NFC normalisation, and implementations must compute byte (not character) offsets against the stored text and ensure the exclusion covers the whole wrapper, including the U+FEFF marker and any padding.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s642-a-9-embedding-manifests-into-structured-text",
+      "source": "sections/s642-a-9-embedding-manifests-into-structured-text.md",
+      "source_hash": "1c8c7fbd6124bce207cdc6d088813ee410ce6a82e224c7f1c438b558d9599710",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.9, Embedding Manifests into Structured Text; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s643-a-9-1-general",
+      "source": "sections/s643-a-9-1-general.md",
+      "source_hash": "24306dafa615e4e713e5964f8ce4f4dfc3c9e0fab74d474e7a7e5e621d834980",
+      "narrative": [
+        {
+          "text": "Structured text formats with comment syntax, such as source code, configuration files and markup, can carry a manifest store, either referenced or embedded, in a block delimited by fixed ASCII armour-style delimiters, which unlike the variation-selector method stays human-readable and needs no special Unicode support. Format-specific mechanisms should be preferred where available, and structured text inside a container format should have its manifest store embedded in the container.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s644-a-9-2-applicability",
+      "source": "sections/s644-a-9-2-applicability.md",
+      "source_hash": "6fc43c1ed9b0c56b8070c65bb470fa9b2732a5a62faff173dbc9608f7af61dd8",
+      "narrative": [
+        {
+          "text": "The method applies to text/* files without their own embedding section, and to other plain-text formats with comment syntax, while HTML, SVG and TTML are excluded, and other XML formats may use XML comments. It must not be used for binary formats, formats lacking both comments and front matter such as CSV, or append-only files like logs and JSONL, which use the separate checkpoint method.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s645-a-9-3-guidance-for-json-based-formats",
+      "source": "sections/s645-a-9-3-guidance-for-json-based-formats.md",
+      "source_hash": "d7962a135277bbe950c5d5742a0c3aadfc8a45cf54940a973289d2705dc051fc",
+      "narrative": [
+        {
+          "text": "JSON-based formats lack comments and front matter, so they cannot use the structured text manifest block, but individual formats may define their own extension point, for example a root c2pa_credential member holding a manifest URI or a data: URI. The specification does not reserve c2pa_credential for all JSON, notes that strict schemas may reject it, and gives two example documents.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s646-a-9-4-manifest-block-format",
+      "source": "sections/s646-a-9-4-manifest-block-format.md",
+      "source_hash": "ea9504ab07bf3954d34afffc5088812c1ababbc54b9c31013cfa6e22662f90d7",
+      "narrative": [
+        {
+          "text": "A manifest block must go inside an existing front matter section, or otherwise be a single comment line, a claim generator must not add front matter where none exists, and the block is delimited by -----BEGIN C2PA MANIFEST----- and -----END C2PA MANIFEST-----. At most one manifest block is allowed per file, and a validator finding more must treat the asset as having no manifests, while append-only checkpoint lines are handled separately.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s647-a-9-4-1-single-line-form-comments",
+      "source": "sections/s647-a-9-4-1-single-line-form-comments.md",
+      "source_hash": "f90491e27f472fb8f7fb5d13c8cfc26d0e2b5b0787df3998737f8e63726f7f94",
+      "narrative": [
+        {
+          "text": "In the single-line form the manifest block is one comment line with the host's comment prefix and suffix around the fixed delimiters and a manifest reference, which is preferably a URI or else a Base64 data: URI. The block is strongly recommended to sit at the start of the file but must go at the end when the first line is reserved (such as a shebang or XML declaration), sits after the header in formats like WebVTT, and should use preservation-hint comment conventions where available.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s648-a-9-4-2-multi-line-form-front-matter",
+      "source": "sections/s648-a-9-4-2-multi-line-form-front-matter.md",
+      "source_hash": "b0334d6c6a77257440e6c12bb60f821a4ce7b953cc0674eb5c2b9e3f41fa405b",
+      "narrative": [
+        {
+          "text": "Formats with front matter, such as YAML or TOML front matter, place a multi-line manifest block inside it, with the BEGIN and END C2PA MANIFEST delimiters each on its own line and the manifest reference between them, the host's front matter delimiters not being part of the block.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s649-a-9-4-3-examples",
+      "source": "sections/s649-a-9-4-3-examples.md",
+      "source_hash": "442afe5a94ffdafc735bbbea25290d2938236de66a271deacbd74b0d03571047",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.9.4.3, Examples; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s650-a-9-4-3-1-single-line-referenced",
+      "source": "sections/s650-a-9-4-3-1-single-line-referenced.md",
+      "source_hash": "50c56a98fe2a298355d1ba81255c2bd5e57714ca1cb3353cb2c14107f792e8e1",
+      "narrative": [
+        {
+          "text": "A table shows single-line referenced manifest blocks using a sample manifest URL in the comment syntax of Python, JavaScript, SQL, CSS, Markdown, RSS/Atom and WebVTT.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s651-a-9-4-3-2-single-line-embedded-via-data-uri",
+      "source": "sections/s651-a-9-4-3-2-single-line-embedded-via-data-uri.md",
+      "source_hash": "352bd153174df2c166c7867d6df4ae7b8270782da8cbab15c151add5643cef3c",
+      "narrative": [
+        {
+          "text": "Example of a single-line manifest block in a hash comment that embeds a truncated Base64 manifest store as a data: URI.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s652-a-9-4-3-3-front-matter-referenced",
+      "source": "sections/s652-a-9-4-3-3-front-matter-referenced.md",
+      "source_hash": "3af6a4a482a8e40f1c738eca3cab1dd7111391dd24249064af45e05d50e595ea",
+      "narrative": [
+        {
+          "text": "Example of a Markdown YAML front matter section containing a manifest block that references an external manifest URL.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s653-a-9-4-3-4-front-matter-embedded-via-data-uri",
+      "source": "sections/s653-a-9-4-3-4-front-matter-embedded-via-data-uri.md",
+      "source_hash": "eb6928d786cbee2af551e1b5f4f0e90884193cce7cbfa19e2ad9db34166dd745",
+      "narrative": [
+        {
+          "text": "Example of a Markdown YAML front matter section containing a manifest block that embeds a truncated Base64 manifest store as a data: URI.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s654-a-9-4-3-5-webvtt-referenced",
+      "source": "sections/s654-a-9-4-3-5-webvtt-referenced.md",
+      "source_hash": "871c320700f7294e07516e4d2949095b221fe4168d57717649ed6ff7ad1e1a0a",
+      "narrative": [
+        {
+          "text": "Example of a WebVTT file with a referenced manifest block on a NOTE line between the WEBVTT header and the first cue.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s655-a-9-4-3-6-rss-referenced",
+      "source": "sections/s655-a-9-4-3-6-rss-referenced.md",
+      "source_hash": "18b6dd05f1ec33e6c476c1c521a2dfe53b612e24576bc3e3cd5c18990c94352c",
+      "narrative": [
+        {
+          "text": "For RSS 2.0 feeds the manifest block is an XML comment placed right after the XML declaration and before the rss root element, with an example feed shown.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s656-a-9-4-3-7-atom-referenced",
+      "source": "sections/s656-a-9-4-3-7-atom-referenced.md",
+      "source_hash": "b1805e6f5237a79b1211922036bbe4a12ff4061c24e56002fde0ccd1c094a7d1",
+      "narrative": [
+        {
+          "text": "For Atom feeds the manifest block is an XML comment placed right after the XML declaration and before the feed root element, with an example, and XML formats beginning with an XML declaration must place the block on the next line before the root element.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s657-a-9-5-hard-binding",
+      "source": "sections/s657-a-9-5-hard-binding.md",
+      "source_hash": "249b1ec236a21b7e5f829176764848b41a9eec5ba175385d0d8acaf5c2016fe1",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.9.5, Hard Binding; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s658-a-9-5-1-manifest-blocks",
+      "source": "sections/s658-a-9-5-1-manifest-blocks.md",
+      "source_hash": "a34941b60ee47c1436e26b7155e7816862ebbabba252ff5bac352361b722428d",
+      "narrative": [
+        {
+          "text": "A claim generator embedding a structured text manifest block must include a c2pa.hash.data assertion whose single exclusion range covers the whole block, reading files in binary mode, with start and length values defined for blocks at the beginning, at the end, elsewhere, or making up the whole file. Front matter delimiters are not excluded, line terminators must be LF or CRLF (bare CR files must be converted first), and the generator must not change line endings outside the block.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s659-a-9-6-validation-behaviour",
+      "source": "sections/s659-a-9-6-validation-behaviour.md",
+      "source_hash": "1b8ef9a02bdfdf1633ca1b7b327e2a5dd7f5379eee7986a44fbe5fa7b492adba",
+      "narrative": [
+        {
+          "text": "Points to the Validation clause for the normative procedure to locate and validate a structured text data hash.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s660-a-10-embedding-manifests-into-warc-files",
+      "source": "sections/s660-a-10-embedding-manifests-into-warc-files.md",
+      "source_hash": "cb95a58eab5bfa1a3412577be456fc5631731e0ad8dd5e675d49daf72fdea2b1",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.10, Embedding manifests into WARC files; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s661-a-10-1-general",
+      "source": "sections/s661-a-10-1-general.md",
+      "source_hash": "74d08d3b3e0bb9366c52744f4e48abb6f2948aae129f907875663050ebaff366",
+      "narrative": [
+        {
+          "text": "Defines how to embed a C2PA Manifest Store in WARC files (application/warc), the archive format of concatenated capture records, applying to WARC 1.1 and optionally WARC 1.0. Notes say this in-band provenance complements existing fixity practices and contrast its signing model with WACZ, PREMIS and BagIt.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s662-a-10-2-placement-of-the-manifest-store",
+      "source": "sections/s662-a-10-2-placement-of-the-manifest-store.md",
+      "source_hash": "86ce3bbaf91661e5cfed87072beae7937c9e2df8da990a6a614b7646eba87552",
+      "narrative": [
+        {
+          "text": "The manifest store must be the block of a dedicated WARC record with WARC-Type c2pa-provenance, Content-Type application/c2pa, the manifest creation time and its length, without a WARC-Target-URI, and validators identify it by those two type values. That record must be the last in the file and the only one of its kind, and updates must remove it and append a replacement, leaving other records' bytes and hashes unchanged.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s663-a-10-3-hashing",
+      "source": "sections/s663-a-10-3-hashing.md",
+      "source_hash": "8dc64f68b685cfa8d91d83340c671a7e543b1c2d5e9ea938f4a13a42b527c659",
+      "narrative": [
+        {
+          "text": "A WARC file must be hashed with a collection data hash covering every record except the manifest record, each hashed over its full uncompressed bytes including headers, and each entry's uri must be the record's WARC-Record-ID, which generators must check is unique. Continuation records are hashed individually and revisit records as they appear, without dereferencing.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s664-a-10-4-update-manifests-and-compressed-manifests",
+      "source": "sections/s664-a-10-4-update-manifests-and-compressed-manifests.md",
+      "source_hash": "99dc3b74c71edfe07c38bd61faeb37d0397f63a924c4b1d4cb89a65a5bf25e16",
+      "narrative": [
+        {
+          "text": "The WARC manifest record may contain update manifests and compressed manifests, and an update is added by removing and re-appending the manifest record, leaving the existing collection data hash binding valid since update manifests carry no content binding. Because records are identified by WARC-Record-ID rather than offset, the manifest record's offset and length may change, and manifest compression is independent of WARC record compression.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s665-a-10-5-compressed-warc-files",
+      "source": "sections/s665-a-10-5-compressed-warc-files.md",
+      "source_hash": "7c8782586a9e746fb06d11adc6579eaa2a3b043d66258719c54bc7c94d0ef311",
+      "narrative": [
+        {
+          "text": "Because record hashes are computed over uncompressed bytes, records may be stored uncompressed or recompressed under per-record gzip, whole-file gzip or WARC-zstd without invalidating the collection data hash.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s666-a-10-6-concatenation-and-splitting",
+      "source": "sections/s666-a-10-6-concatenation-and-splitting.md",
+      "source_hash": "2295642c111a4a4cbe707cf8ee631fecb9abc3a275776b605974f6faf11a7c70",
+      "narrative": [
+        {
+          "text": "When WARC files are concatenated or split, a claim generator must remove pre-existing manifest records and append a new one covering all remaining records, optionally citing the earlier manifests as ingredients, since any change to record content or the record set requires a new manifest store.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s667-a-10-7-validation-behaviour",
+      "source": "sections/s667-a-10-7-validation-behaviour.md",
+      "source_hash": "87b816a387a7589ddebd2d1c5c466c8f09f66c634a0bd5b617dc35fab5efd988",
+      "narrative": [
+        {
+          "text": "Points to the Validation clause for the normative procedures to locate the manifest store in WARC files and to validate their collection data hash.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s668-appendix-b-user-experience",
+      "source": "sections/s668-appendix-b-user-experience.md",
+      "source_hash": "17f8e1baf366b3bc501e52da258dc8d74bb33b30ca709fc674f9870553bce998",
+      "narrative": [
+        {
+          "text": "Appendix B is a non-normative summary of the C2PA approach to user experience for provenance, deferring to the separate User Experience Recommendations document as the definitive guidance.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s669-b-1-principles",
+      "source": "sections/s669-b-1-principles.md",
+      "source_hash": "79c41a4eda4a8626cf9ee73f546504152bbb2c2adb8a15061ae71da2c9aaef2f",
+      "narrative": [
+        {
+          "text": "Provenance UX must be informed by the asset's context, and the recommendations, which are not mandates, describe interfaces for consumers, creators, publishers and verifiers across common contexts.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s670-b-2-disclosure-levels",
+      "source": "sections/s670-b-2-disclosure-levels.md",
+      "source_hash": "a20fe54b08c0deb053d9eee9338619114e58e4c40da2f247214fbb8c06fc6ce7",
+      "narrative": [
+        {
+          "text": "Lists four progressive disclosure levels for C2PA data, from an indication of presence and validation status, through a summary and a detailed provenance view, to a forensic tool showing signatures and trust signals; the block ends with a stray \"== Information security\" heading fragment, apparently from extraction.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
