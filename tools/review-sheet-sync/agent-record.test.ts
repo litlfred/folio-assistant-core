@@ -8,6 +8,7 @@ import { loadBlockModuleSync } from "@litlfred/cat-harness-tools/pipeline/block-
 import { readBlockManifest } from "@litlfred/cat-harness-tools/pipeline/qa-utils.js";
 import { COMMIT_ACTIVITY, checkCorpusGate } from "@litlfred/cat-harness-tools/src/workflow/corpus-gate.js";
 import { loadInstance } from "@litlfred/cat-harness-tools/src/workflow/store.js";
+import { instanceDeclarationFilename } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import {
   blockLabelFor,
   brief,
@@ -88,6 +89,15 @@ describe("review-sheet QA pass writes editing-hci-validation instances that sati
   test("qaPass writes editing--<block>.json per changed block and checkCorpusGate allows the change", async () => {
     const repo = mkdtempSync(join(tmpdir(), "agent-record-gate-"));
     try {
+      // The fixture is an instance with its own `beans/` in the checkout, so
+      // its workflow instances are written and read there. Without this the
+      // store resolved `beans` to cat-harness's, which is kept on
+      // `cat/cat-harness/beans` and is not mounted in CI.
+      writeFileSync(
+        join(repo, instanceDeclarationFilename("agent-record-gate")),
+        JSON.stringify({ name: "agent-record-gate", directories: [{ id: "beans", path: "beans/", graphTypologies: ["beans"] }] }),
+      );
+      mkdirSync(join(repo, "beans", "workflows"), { recursive: true });
       const ch = join(repo, "folio", "dth-hrh", "ch11");
       mkdirSync(ch, { recursive: true });
       writeFileSync(
