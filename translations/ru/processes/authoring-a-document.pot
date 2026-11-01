@@ -16,47 +16,47 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:91
 #. Diagram label
-msgid "1 · Plan the document [content-plan]"
+msgid "1 · Plan the document"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:99
 #. Diagram label
-msgid "2 · Seed the work plan [todo-manager]"
+msgid "2 · Seed the work plan"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:103
 #. Diagram label
-msgid "3 · Scaffold the folio [folio_init]"
+msgid "3 · Scaffold the folio"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:111
 #. Diagram label
-msgid "4 · Author blocks [document-authoring]"
+msgid "4 · Author blocks"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:122
 #. Diagram label
-msgid "5 · Check the profile [content-validate]"
+msgid "5 · Check the profile"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:136
 #. Diagram label
-msgid "6 · Validate [content-validate]"
+msgid "6 · Validate"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:145
 #. Diagram label
-msgid "7 · Render MD / HTML / PDF [document-publishing]"
+msgid "7 · Render MD / HTML / PDF"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:153
 #. Diagram label
-msgid "8 · Review and feedback [content-review]"
+msgid "8 · Review and feedback"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:169
 #. Diagram label
-msgid "9 · Publish [content-publish]"
+msgid "9 · Publish"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:131
@@ -126,7 +126,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:196
 #. Diagram label
-msgid "Close the bean [bean-close]"
+msgid "Close the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:123
@@ -136,7 +136,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:202
 #. Diagram label
-msgid "Contributor feedback [review-sheet-script]"
+msgid "Contributor feedback"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:177
@@ -181,7 +181,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:180
 #. Diagram label
-msgid "Open the bean [bean-open]"
+msgid "Open the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:79

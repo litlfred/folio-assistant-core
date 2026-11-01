@@ -42,13 +42,13 @@ How a document folio — structured prose and policy guidance, with no Lean and 
 - What: The plan becomes beans, so a resumed session or a sibling agent can pick it up.
 - Shared step `GT_SeedWorkPlan`.
 - Record it: `workflow_complete` with `node: "Task_SeedPlan"`.
-- next: → `Task_Scaffold` (3 · Scaffold the folio [folio_init])
+- next: → `Task_Scaffold` (3 · Scaffold the folio)
 
 ## Done — Not yours — left alone (`End_BeanNotYours`)
 
 - The instance completes here: Someone else holds the bean; this run stops without touching it. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
-### 4. 3 · Scaffold the folio [folio_init] (`Task_Scaffold`)
+### 4. 3 · Scaffold the folio (`Task_Scaffold`)
 
 - Who: the `Authoring agent (system)` lane (role `authoring-agent`).
 - Skill: `document-structure`.

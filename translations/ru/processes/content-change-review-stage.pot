@@ -51,7 +51,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:87
 #. Diagram label
-msgid "Open the branch-watch bean [watch]"
+msgid "Open the branch-watch bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:33

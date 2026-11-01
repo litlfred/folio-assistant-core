@@ -93,8 +93,7 @@ for L1 ingestion">
       <bpmn:incoming>SF_Bean_1</bpmn:incoming>
     </bpmn:callActivity>
     <bpmn:serviceTask id="Task_Detect" name="Detect media type
-and mint a doc id
-[document-intake]">
+and mint a doc id">
       <bpmn:documentation>Sniff the media type rather than trusting the extension, and mint the doc id from the page-1 arXiv stamp where there is one, else from the filename.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
@@ -103,8 +102,7 @@ and mint a doc id
       <bpmn:outgoing>Flow_i2</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_Licence" name="Establish the licence
-from the upload alone
-[document-intake]">
+from the upload alone">
       <bpmn:documentation>EARLY, by the owner's ruling on bean 7bg9 (2026-09-20): before any derivation, because library/ is holds: content and anything derived first is committed, so refusing it later is a deletion nobody may take unasked. This step sees only the upload itself — the licence recorded in its intake.json (the same stated / unknown record a library manifest carries) and whether a LICENSE file sits beside it. It never infers a licence from extracted text. The verdict is stated, unknown, or UNDETERMINED, and undetermined is never reported as cleared: the pipeline proceeds and says so, because a licence that only extraction can reveal is a later check's to find.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
@@ -112,8 +110,7 @@ from the upload alone
       <bpmn:incoming>Flow_i2</bpmn:incoming>
       <bpmn:outgoing>Flow_i2a</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:callActivity id="CallActivity_Extract" name="Extract structure
-[document-intake]" calledElement="Process_ExtractStructure">
+    <bpmn:callActivity id="CallActivity_Extract" name="Extract structure" calledElement="Process_ExtractStructure">
       <bpmn:documentation>See ingest-extract-structure.bpmn.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
@@ -122,8 +119,7 @@ from the upload alone
       <bpmn:outgoing>Flow_i3</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:callActivity id="CallActivity_Derive" name="Derive content
-from the assets
-[document-intake]" calledElement="Process_DeriveContent">
+from the assets" calledElement="Process_DeriveContent">
       <bpmn:documentation>See ingest-derive-content.bpmn. Most of this subprocess is not implemented yet.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
@@ -145,8 +141,7 @@ WHY IT IS A GATEWAY AND NOT A FILTER INSIDE THE SUBPROCESS. `ingest-theme.bpmn` 
       <bpmn:outgoing>Flow_theme_yes</bpmn:outgoing>
       <bpmn:outgoing>Flow_theme_no</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:callActivity id="CallActivity_IngestTheme" name="Ingest the theme
-[theme-art-intake]" calledElement="Process_IngestTheme">
+    <bpmn:callActivity id="CallActivity_IngestTheme" name="Ingest the theme" calledElement="Process_IngestTheme">
       <bpmn:documentation>See ingest-theme.bpmn. The subprocess derives one Theme node with kind sticky|webpage|publication, and refuses a source it cannot complete rather than emitting a partial theme.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="theme-art-intake" />
@@ -154,7 +149,7 @@ WHY IT IS A GATEWAY AND NOT A FILTER INSIDE THE SUBPROCESS. `ingest-theme.bpmn` 
       <bpmn:incoming>Flow_theme_yes</bpmn:incoming>
       <bpmn:outgoing>Flow_theme_join</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean&#10;[bean-open]" calledElement="Process_BeanOpen">
+    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean" calledElement="Process_BeanOpen">
       <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_i1</bpmn:incoming>
@@ -170,7 +165,7 @@ WHY IT IS A GATEWAY AND NOT A FILTER INSIDE THE SUBPROCESS. `ingest-theme.bpmn` 
       <bpmn:documentation>Someone else holds the bean; this run stops without touching it.</bpmn:documentation>
       <bpmn:incoming>SF_Bean_3</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Call_BeanClose" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
+    <bpmn:callActivity id="Call_BeanClose" name="Close the bean" calledElement="Process_BeanClose">
       <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_i11</bpmn:incoming>
@@ -180,8 +175,7 @@ WHY IT IS A GATEWAY AND NOT A FILTER INSIDE THE SUBPROCESS. `ingest-theme.bpmn` 
     <bpmn:sequenceFlow id="Flow_theme_join" sourceRef="CallActivity_IngestTheme" targetRef="CallActivity_BuildKg" />
     <bpmn:sequenceFlow id="Flow_theme_no" name="no" sourceRef="Gateway_ThemeSource" targetRef="CallActivity_BuildKg" />
     <bpmn:callActivity id="CallActivity_BuildKg" name="Build the L1
-knowledge graph
-[document-intake]" calledElement="Process_BuildL1Kg">
+knowledge graph" calledElement="Process_BuildL1Kg">
       <bpmn:documentation>See ingest-build-l1-kg.bpmn.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
@@ -232,8 +226,7 @@ library/&lt;bib-slug&gt;/">
       <bpmn:outgoing>Flow_i10</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_SummaryQueue" name="Prose blocks enter
-the summary queue
-[l1-document-ingestion]">
+the summary queue">
       <bpmn:documentation>Owner, 2026-09-24: "Make as QA sidecar as part of general doc ingestion to slowly drain."
 
 Nothing is written to ENQUEUE a block: the queue is derived (every prose block in every declared library, minus those whose summaries.json record is a current draft or confirmation), so a promoted entry is in it the moment its blocks are. A re-ingested document whose text changed re-enters it on its own, because the record's source_hash no longer matches.
