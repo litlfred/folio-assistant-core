@@ -126,7 +126,7 @@
       <bpmn:documentation>P1 trigger: a recipient asks for data, or a programme needs a standing agreement (for example a cross-border surveillance feed).</bpmn:documentation>
       <bpmn:outgoing>F01</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean&#10;[bean-open]" calledElement="Process_BeanOpen">
+    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean" calledElement="Process_BeanOpen">
       <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
       <bpmn:incoming>F01</bpmn:incoming>
@@ -155,13 +155,13 @@
       <bpmn:incoming>F74</bpmn:incoming>
       <bpmn:outgoing>F06</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="Task_WriteText" name="P1.2 · Write the legal text&#10;[document-authoring]">
+    <bpmn:userTask id="Task_WriteText" name="P1.2 · Write the legal text">
       <bpmn:documentation>Write the agreement as a document folio: one normative statement per clause the parties must keep, through normative-statements. The text says which governs if it and a machine-readable form disagree (suggested: the text).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="document-authoring"/><bootstrap.processes:skill ref="normative-statements"/><bootstrap.processes:skill ref="document-structure"/></bpmn:extensionElements>
       <bpmn:incoming>F06</bpmn:incoming>
       <bpmn:outgoing>F07</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_RecordLegalBasis" name="P1.2a · Record the legal basis&#10;[normative-statements]">
+    <bpmn:userTask id="Task_RecordLegalBasis" name="P1.2a · Record the legal basis">
       <bpmn:documentation>The text states the legal basis the parties agreed in P1.1 as a normative statement: consent, treatment, public-health law, or a research waiver. Consent rule 1: only an agreement whose legal basis is consent carries the odrl:obtainConsent duty; treatment, public-health law and research waivers do not rest on consent. The gateway that follows, the ODRL and the reviewers all read the basis from this statement.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="normative-statements"/></bpmn:extensionElements>
       <bpmn:incoming>F07</bpmn:incoming>
@@ -173,7 +173,7 @@
       <bpmn:outgoing>F61</bpmn:outgoing>
       <bpmn:outgoing>F62</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="Task_PlainSummary" name="P1.2b · Draft the plain-language summary&#10;[document-authoring]">
+    <bpmn:userTask id="Task_PlainSummary" name="P1.2b · Draft the plain-language summary">
       <bpmn:documentation>Consent-based only. Write a plain-language summary of the agreement in the same document folio: what it lets the recipient do with the person's data, in words the person can read. Consent rule 3: every agreement that needs consent publishes this summary, hashed with the agreement (P2.2a), and the summary is what the person consents to. It is reviewed, rendered and versioned with the text.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="document-authoring"/></bpmn:extensionElements>
       <bpmn:incoming>F61</bpmn:incoming>
@@ -197,7 +197,7 @@
       <bpmn:incoming>F08</bpmn:incoming>
       <bpmn:outgoing>F10</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_CheckOdrl" name="P1.4 · Check the ODRL against the text&#10;[content-review]">
+    <bpmn:userTask id="Task_CheckOdrl" name="P1.4 · Check the ODRL against the text">
       <bpmn:documentation>Computable only. A person checks that the ODRL says what the text says, and signs it off. A program can check the ODRL is well formed; it cannot check that it matches the text. The check includes the consent duty: present when the legal basis is consent, absent otherwise (consent rule 1).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="content-review"/></bpmn:extensionElements>
       <bpmn:incoming>F10</bpmn:incoming>
@@ -215,7 +215,7 @@
       <bpmn:incoming>F12</bpmn:incoming>
       <bpmn:outgoing>F13</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_Review" name="Review the draft agreement&#10;[content-review]">
+    <bpmn:userTask id="Task_Review" name="Review the draft agreement">
       <bpmn:documentation>Legal and policy review of the whole draft. Reviewers comment on blocks through review-comments; review says which review skill answers which question. For a consent-based agreement the reviewers also check that the plain-language summary says what the text says, since it is what the person consents to (consent rule 3).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="content-review"/><bootstrap.processes:skill ref="review-comments"/></bpmn:extensionElements>
       <bpmn:incoming>F13</bpmn:incoming>
@@ -227,7 +227,7 @@
       <bpmn:outgoing>F15</bpmn:outgoing>
       <bpmn:outgoing>F16</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:callActivity id="Call_PublicComment" name="Public comment on the template&#10;[public-comment]" calledElement="Process_PublicComment">
+    <bpmn:callActivity id="Call_PublicComment" name="Public comment on the template" calledElement="Process_PublicComment">
       <bpmn:documentation>Comments on the frozen, line-numbered review version of the public template are placed, triaged, weighed and decided (public-comment.bpmn). Private annexes are never circulated.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>F15</bpmn:incoming>
@@ -245,7 +245,7 @@
       <bpmn:outgoing>F19</bpmn:outgoing>
       <bpmn:outgoing>F20</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_Render" name="Render the text to HTML / PDF&#10;[document-publishing]">
+    <bpmn:serviceTask id="Task_Render" name="Render the text to HTML / PDF">
       <bpmn:documentation>Render the agreed text to the form that will be signed (HTML and PDF), without a TeX installation. A consent-based agreement's plain-language summary is rendered with it.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="document-publishing"/></bpmn:extensionElements>
       <bpmn:incoming>F20</bpmn:incoming>
@@ -257,13 +257,13 @@
       <bpmn:incoming>F21</bpmn:incoming>
       <bpmn:outgoing>F22</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_AssignVersion" name="P2.1 · Assign the version and its immutable URL&#10;[content-publish]">
+    <bpmn:userTask id="Task_AssignVersion" name="P2.1 · Assign the version and its immutable URL">
       <bpmn:documentation>Each signed version gets its own immutable URL (for example /dsa/42/v3). A 'latest' URL may exist; nothing cites it. A new version never overwrites an old one. This fixed-version URL is the one a Consent cites (consent rule 2), and a computable agreement's ODRL policy uid is set to it (P2.3).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="content-publish"/><bootstrap.processes:skill ref="package-release"/></bpmn:extensionElements>
       <bpmn:incoming>F22</bpmn:incoming>
       <bpmn:outgoing>F23</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_Hash" name="P2.2 · Record the SHA-256 of each file&#10;[dsa-checksum]">
+    <bpmn:userTask id="Task_Hash" name="P2.2 · Record the SHA-256 of each file">
       <bpmn:documentation>Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one, recorded as DCAT 3 spdx:checksum and verified by check:dsa-hash.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="dsa-checksum"/></bpmn:extensionElements>
       <bpmn:incoming>F23</bpmn:incoming>
@@ -275,13 +275,13 @@
       <bpmn:outgoing>F65</bpmn:outgoing>
       <bpmn:outgoing>F66</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="Task_HashSummary" name="P2.2a · Hash the plain-language summary with the agreement&#10;[dsa-checksum]">
+    <bpmn:userTask id="Task_HashSummary" name="P2.2a · Hash the plain-language summary with the agreement">
       <bpmn:documentation>Consent-based only. Record the SHA-256 of the plain-language summary beside the agreement's, in the same version (consent rule 3). The summary a person consented to can then be checked against the agreement it summarises; a changed summary is a new version.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="dsa-checksum"/></bpmn:extensionElements>
       <bpmn:incoming>F65</bpmn:incoming>
       <bpmn:outgoing>F67</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_ConsentCitation" name="P2.2b · State the fixed-version URL and hash a Consent cites&#10;[content-publish]">
+    <bpmn:userTask id="Task_ConsentCitation" name="P2.2b · State the fixed-version URL and hash a Consent cites">
       <bpmn:documentation>Consent-based only. The version's publication metadata states the fixed-version URL (P2.1) and the hash (P2.2) that a Consent cites in FHIR R4 Consent.policy.uri (consent rule 2), never the 'latest' URL. For a computable agreement that URL is also the ODRL policy uid (P2.3): a Consent counts only when its Consent.policy.uri equals the agreement's ODRL policy uid, so the two are the same string.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="content-publish"/></bpmn:extensionElements>
       <bpmn:incoming>F67</bpmn:incoming>
@@ -299,7 +299,7 @@
       <bpmn:outgoing>F25</bpmn:outgoing>
       <bpmn:outgoing>F26</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="Task_OdrlCitesText" name="P2.3 · Make the ODRL cite the text by URL and hash&#10;[dsa-odrl-source]">
+    <bpmn:userTask id="Task_OdrlCitesText" name="P2.3 · Make the ODRL cite the text by URL and hash">
       <bpmn:documentation>The ODRL policy names the signed text distribution with dcterms:source (DCMI Terms), pointing at the immutable URL whose spdx:checksum was just recorded. Its uid is that same fixed-version URL, the URL a Consent cites in Consent.policy.uri (consent rule 2).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="dsa-odrl-source"/></bpmn:extensionElements>
       <bpmn:incoming>F25</bpmn:incoming>
@@ -311,19 +311,19 @@
       <bpmn:incoming>F27</bpmn:incoming>
       <bpmn:outgoing>F28</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_Publish" name="Publish the version at its URL&#10;[content-publish]">
+    <bpmn:serviceTask id="Task_Publish" name="Publish the version at its URL">
       <bpmn:documentation>Publish the files at the version's immutable URL. If the parties' names are sensitive, publish only the template and the hash of the signed instance. A consent-based agreement publishes its plain-language summary and its hash with the text (consent rule 3). Check before publishing (consent rule 2): a computable agreement's ODRL policy uid equals this version's fixed-version URL, the URL a Consent cites; if they differ, the version is not published.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="content-publish"/></bpmn:extensionElements>
       <bpmn:incoming>F28</bpmn:incoming>
       <bpmn:outgoing>F29</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Task_Catalogue" name="P2.4–5 · Write the DCAT 3 record and link versions&#10;[dsa-dcat-record]">
+    <bpmn:userTask id="Task_Catalogue" name="P2.4–5 · Write the DCAT 3 record and link versions">
       <bpmn:documentation>One DCAT 3 record: the agreement as a catalogued resource, each file a dcat:Distribution with dcat:downloadURL and spdx:checksum; datasets it covers carry odrl:hasPolicy. Versions are linked with DCAT 3 versioning (previous version, version, current version).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="dsa-dcat-record"/></bpmn:extensionElements>
       <bpmn:incoming>F29</bpmn:incoming>
       <bpmn:outgoing>F30</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:callActivity id="Call_BeanClosePublished" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
+    <bpmn:callActivity id="Call_BeanClosePublished" name="Close the bean" calledElement="Process_BeanClose">
       <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
       <bpmn:incoming>F30</bpmn:incoming>
@@ -337,7 +337,7 @@
       <bpmn:documentation>P14 trigger: the parties want to change the terms, the end date is reached, or one party gives notice of termination.</bpmn:documentation>
       <bpmn:outgoing>F40</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:callActivity id="Call_BeanOpenChange" name="Open the bean&#10;[bean-open]" calledElement="Process_BeanOpen">
+    <bpmn:callActivity id="Call_BeanOpenChange" name="Open the bean" calledElement="Process_BeanOpen">
       <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
       <bpmn:incoming>F40</bpmn:incoming>
@@ -396,7 +396,7 @@
       <bpmn:incoming>F73</bpmn:incoming>
       <bpmn:outgoing>F74</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="Task_SetStatus" name="P14.5 · Set the catalogue status to ended&#10;[dsa-catalogue-status]">
+    <bpmn:userTask id="Task_SetStatus" name="P14.5 · Set the catalogue status to ended">
       <bpmn:documentation>Set the life-cycle status of the agreement's DCAT 3 record (DCAT 3 §6.4.30). The published versions stay readable at their URLs.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="dsa-catalogue-status"/></bpmn:extensionElements>
       <bpmn:incoming>F47</bpmn:incoming>
@@ -408,7 +408,7 @@
       <bpmn:incoming>F49</bpmn:incoming>
       <bpmn:outgoing>F50</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:callActivity id="Call_BeanCloseEnded" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
+    <bpmn:callActivity id="Call_BeanCloseEnded" name="Close the bean" calledElement="Process_BeanClose">
       <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
       <bpmn:incoming>F50</bpmn:incoming>

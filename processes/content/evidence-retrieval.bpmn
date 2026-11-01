@@ -68,7 +68,7 @@
     <bpmn:startEvent id="StartEvent_Recommendation" name="A recommendation is in play">
       <bpmn:outgoing>Flow_01</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="Task_ReviewExisting" name="Review the guidance already in this content&#10;[content-review]">
+    <bpmn:userTask id="Task_ReviewExisting" name="Review the guidance already in this content">
       <bpmn:documentation>The author reads what the document, DAK or IG ALREADY says on this question, before looking outward. A recommendation that contradicts a sibling recommendation in the same artefact is a defect no external evidence will reveal.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
@@ -76,7 +76,7 @@
       <bpmn:incoming>Flow_01</bpmn:incoming>
       <bpmn:outgoing>Flow_02</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_FramePico" name="Frame the question as PICO&#10;[content-author]">
+    <bpmn:userTask id="Task_FramePico" name="Frame the question as PICO">
       <bpmn:documentation>Population, Intervention, Comparator, Outcome. The PICO is what makes the search reproducible and the evidence auditable: without it, 'we looked for evidence' is not a claim anyone can check. WHO guideline development states the question this way before any retrieval.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-author" />
@@ -90,7 +90,7 @@
       <bpmn:outgoing>Flow_05</bpmn:outgoing>
       <bpmn:outgoing>Flow_06</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:serviceTask id="Task_L1Sources" name="Search trusted SOURCES — L1&#10;[document-intake]">
+    <bpmn:serviceTask id="Task_L1Sources" name="Search trusted SOURCES — L1">
       <bpmn:documentation>Ingested primary literature under library/: the sections/*.md tree and, where a document was scanned, ocr/page-NNN.txt. NOTE the known blind spot — a document OCR'd but never re-run through pdf-structure.py has only a stub in sections/, so a sections-only search misses it.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
@@ -145,7 +145,7 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       <bpmn:outgoing>Flow_12</bpmn:outgoing>
       <bpmn:outgoing>Flow_13</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_RecordUnverified" name="Open a bean for the unverified citation&#10;[todo-manager]">
+    <bpmn:serviceTask id="Task_RecordUnverified" name="Open a bean for the unverified citation">
       <bpmn:documentation>An unresolvable citation is not dropped and not silently kept. It becomes a tracked item, so the gap is visible in the work plan rather than surviving as a footnote nobody re-checks.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="todo-manager" />
@@ -169,7 +169,7 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       <bpmn:outgoing>Flow_16</bpmn:outgoing>
       <bpmn:outgoing>Flow_17</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_RecordGap" name="Record the evidence gap&#10;[todo-manager]">
+    <bpmn:serviceTask id="Task_RecordGap" name="Record the evidence gap">
       <bpmn:documentation>Insufficient evidence is a RESULT. It is recorded as such -- an honest gap the guideline can state -- rather than being closed by weakening the recommendation until the available evidence supports it.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="todo-manager" />
@@ -178,7 +178,7 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       <bpmn:incoming>Flow_16</bpmn:incoming>
       <bpmn:outgoing>Flow_18</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Task_AttachEvidence" name="Attach the evidence to the recommendation&#10;[content-author]">
+    <bpmn:userTask id="Task_AttachEvidence" name="Attach the evidence to the recommendation">
       <bpmn:documentation>The PICO, the graded body of evidence, each verified citation and its resolved authority record are written onto the recommendation block, so a reader can retrace the whole chain from the sentence back to the source.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-author" />

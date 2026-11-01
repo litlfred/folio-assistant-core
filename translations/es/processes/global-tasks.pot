@@ -16,7 +16,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/global-tasks.bpmn:24
 #. Diagram label
-msgid "Seed the work plan [todo-manager]"
+msgid "Seed the work plan"
 msgstr ""
 
 #: ../folio-assistant-core/processes/global-tasks.bpmn:25

@@ -31,7 +31,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-committee.bpmn:129
 #. Diagram label
-msgid "Adjudicate the disagreement [adjudication]"
+msgid "Adjudicate the disagreement"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-committee.bpmn:130

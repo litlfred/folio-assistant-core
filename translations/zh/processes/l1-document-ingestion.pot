@@ -56,7 +56,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:182
 #. Diagram label
-msgid "Build the L1 knowledge graph [document-intake]"
+msgid "Build the L1 knowledge graph"
 msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:276
@@ -66,7 +66,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:173
 #. Diagram label
-msgid "Close the bean [bean-close]"
+msgid "Close the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:272
@@ -81,12 +81,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:124
 #. Diagram label
-msgid "Derive content from the assets [document-intake]"
+msgid "Derive content from the assets"
 msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:95
 #. Diagram label
-msgid "Detect media type and mint a doc id [document-intake]"
+msgid "Detect media type and mint a doc id"
 msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:108
@@ -96,7 +96,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:105
 #. Diagram label
-msgid "Establish the licence from the upload alone [document-intake]"
+msgid "Establish the licence from the upload alone"
 msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:252
@@ -106,7 +106,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:115
 #. Diagram label
-msgid "Extract structure [document-intake]"
+msgid "Extract structure"
 msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:34
@@ -121,7 +121,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:148
 #. Diagram label
-msgid "Ingest the theme [theme-art-intake]"
+msgid "Ingest the theme"
 msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:259
@@ -171,7 +171,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:157
 #. Diagram label
-msgid "Open the bean [bean-open]"
+msgid "Open the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:237
@@ -191,7 +191,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:234
 #. Diagram label
-msgid "Prose blocks enter the summary queue [l1-document-ingestion]"
+msgid "Prose blocks enter the summary queue"
 msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:164

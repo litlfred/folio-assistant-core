@@ -31,7 +31,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:180
 #. Diagram label
-msgid "Close the bean [bean-close]"
+msgid "Close the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:35
@@ -46,12 +46,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:120
 #. Diagram label
-msgid "Draft, review and publish [content-publish]"
+msgid "Draft, review and publish"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:101
 #. Diagram label
-msgid "Editing and HCI validation [content-author]"
+msgid "Editing and HCI validation"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:69
@@ -61,7 +61,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:137
 #. Diagram label
-msgid "File feedback as beans [todo-manager]"
+msgid "File feedback as beans"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:86
@@ -86,7 +86,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:112
 #. Diagram label
-msgid "Integration test and QA sweep [content-test]"
+msgid "Integration test and QA sweep"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:147
@@ -121,7 +121,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:164
 #. Diagram label
-msgid "Open the bean [bean-open]"
+msgid "Open the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:53
@@ -131,7 +131,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:89
 #. Diagram label
-msgid "Plan scope, team, artifacts [content-plan]"
+msgid "Plan scope, team, artifacts"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:181
@@ -161,7 +161,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:153
 #. Diagram label
-msgid "Retire or archive [content-retire]"
+msgid "Retire or archive"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:77
@@ -221,7 +221,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:129
 #. Diagram label
-msgid "Triage published feedback [content-feedback]"
+msgid "Triage published feedback"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:138

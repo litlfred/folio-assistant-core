@@ -88,7 +88,7 @@
     <bpmn:startEvent id="StartEvent_NewDocument" name="New document">
       <bpmn:outgoing>D01</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="Task_Plan" name="1 · Plan the document&#10;[content-plan]">
+    <bpmn:userTask id="Task_Plan" name="1 · Plan the document">
       <bpmn:documentation>Scope it: chapters, the blocks each needs, which statements are normative.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-plan" />
@@ -108,7 +108,7 @@
       <bpmn:incoming>D03</bpmn:incoming>
       <bpmn:outgoing>D04</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_AuthorBlocks" name="4 · Author blocks&#10;[document-authoring]">
+    <bpmn:serviceTask id="Task_AuthorBlocks" name="4 · Author blocks">
       <bpmn:documentation>Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn. A normative statement is a `recommendation` block (bean 55ao), drafted through normative-statements: one statement per block, a folio-chosen label, and its strength as a code in a declared code list, so a reviewer signs off each one individually.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-authoring" />
@@ -119,7 +119,7 @@
       <bpmn:incoming>D12</bpmn:incoming>
       <bpmn:outgoing>D05</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_ProfileCheck" name="5 · Check the profile&#10;[content-validate]">
+    <bpmn:serviceTask id="Task_ProfileCheck" name="5 · Check the profile">
       <bpmn:documentation>content_profile_check: no math kind, no lean field, no .lean sibling. This is the step a paper folio does not have, and the reason a document folio never needs Lean or TeX to publish.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-validate" />
@@ -133,7 +133,7 @@
       <bpmn:outgoing>D07</bpmn:outgoing>
       <bpmn:outgoing>D08</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_Validate" name="6 · Validate&#10;[content-validate]">
+    <bpmn:serviceTask id="Task_Validate" name="6 · Validate">
       <bpmn:documentation>Schema and constraint checks over every block.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-validate" />
@@ -142,7 +142,7 @@
       <bpmn:incoming>D16</bpmn:incoming>
       <bpmn:outgoing>D09</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_Render" name="7 · Render MD / HTML / PDF&#10;[document-publishing]">
+    <bpmn:serviceTask id="Task_Render" name="7 · Render MD / HTML / PDF">
       <bpmn:documentation>Assemble to Markdown, then pandoc. The PDF goes through an HTML engine — never latexmk.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-publishing" />
@@ -150,7 +150,7 @@
       <bpmn:incoming>D09</bpmn:incoming>
       <bpmn:outgoing>D10</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Task_Review" name="8 · Review and feedback&#10;[content-review]">
+    <bpmn:userTask id="Task_Review" name="8 · Review and feedback">
       <bpmn:documentation>The reviewer this folio binds. authoring-document relaxes the base SME step precisely because no single lane fits every document.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
@@ -166,7 +166,7 @@
       <bpmn:outgoing>D13</bpmn:outgoing>
       <bpmn:outgoing>D15</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_Publish" name="9 · Publish&#10;[content-publish]">
+    <bpmn:serviceTask id="Task_Publish" name="9 · Publish">
       <bpmn:documentation>See draft-to-publication.bpmn for the review and release path this expands into. Release authorisation is not relaxable.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-publish" />
@@ -177,7 +177,7 @@
     <bpmn:endEvent id="EndEvent_Published" name="Document published">
       <bpmn:incoming>SF_Bean_4</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean&#10;[bean-open]" calledElement="Process_BeanOpen">
+    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean" calledElement="Process_BeanOpen">
       <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
       <bpmn:incoming>D02</bpmn:incoming>
@@ -193,13 +193,13 @@
       <bpmn:documentation>Someone else holds the bean; this run stops without touching it.</bpmn:documentation>
       <bpmn:incoming>SF_Bean_3</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Call_BeanClose" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
+    <bpmn:callActivity id="Call_BeanClose" name="Close the bean" calledElement="Process_BeanClose">
       <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
       <bpmn:incoming>D14</bpmn:incoming>
       <bpmn:outgoing>SF_Bean_4</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:callActivity id="Call_ContributorFeedback" name="Contributor feedback&#10;[review-sheet-script]" calledElement="Process_ContributorFeedback">
+    <bpmn:callActivity id="Call_ContributorFeedback" name="Contributor feedback" calledElement="Process_ContributorFeedback">
       <bpmn:documentation>Process_ContributorFeedback: while the document is a working draft, the Authoring Committee gives feedback through the Contributor Feedback sheet, and each change set is edited and merged in its own pull request. When its changes are merged, the document is validated and rendered again (owner, 2026-10-31).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>D15</bpmn:incoming>

@@ -84,7 +84,7 @@ Called from content-change-review after the first push and after every revision,
       <bpmn:incoming>p3</bpmn:incoming>
       <bpmn:outgoing>p4</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Task_WatchBranchCI" name="Open the branch-watch bean&#10;[watch]">
+    <bpmn:task id="Task_WatchBranchCI" name="Open the branch-watch bean">
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="watch" />
         <bootstrap.processes:skill ref="todo-manager" />

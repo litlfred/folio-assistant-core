@@ -71,7 +71,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:93
 #. Diagram label
-msgid "Note the main-branch watch [watch]"
+msgid "Note the main-branch watch"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:57
