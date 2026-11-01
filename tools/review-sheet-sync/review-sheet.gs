@@ -174,6 +174,8 @@ function markSetup(ss, state) {
     const text = lines.join('\n');
     if (text !== before) cell.setValue(text);
   });
+  // A plain write drops the colours; put them back now, linked or not.
+  try { colourInstructions(ss); } catch (e) { /* cosmetic only */ }
 }
 
 function showVersion() {
@@ -824,14 +826,16 @@ const KEY_COLOURS = { blue: '#1f5fa8', green: '#2e7d32', orange: '#c25e00', grey
 const KEY_WORD_RE = /\b(blue|green|orange|grey)\b/gi;
 function keyRuns(text) {
   const runs = [];
-  const nl = text.indexOf('\n');
-  const first = nl < 0 ? text : text.slice(0, nl);
+  // A setup line (markSetup) may sit above the key: the key is then the second line.
+  const at = text.indexOf(SETUP_MARK) === 0 && text.indexOf('\n') >= 0 ? text.indexOf('\n') + 1 : 0;
+  const nl = text.indexOf('\n', at);
+  const first = nl < 0 ? text.slice(at) : text.slice(at, nl);
   let keyEnd = 0;
   if (/^(blue|green|orange|grey) = /i.test(first)) {
     const seg = /(blue|green|orange|grey) = .*?(?=\s{3,}|$)/gi;
     let m;
-    while ((m = seg.exec(first))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
-    keyEnd = first.length;
+    while ((m = seg.exec(first))) runs.push([at + m.index, at + m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
+    keyEnd = at + first.length;
   }
   let m;
   KEY_WORD_RE.lastIndex = keyEnd;

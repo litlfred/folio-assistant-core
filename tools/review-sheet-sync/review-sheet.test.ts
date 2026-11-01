@@ -1067,6 +1067,18 @@ describe("a copy that is not linked to a repository yet", () => {
   });
 });
 
+describe("the colour key under a setup line", () => {
+  test("is still coloured segment by segment when a \u26a0 line sits above it", () => {
+    const fn = new Function("SpreadsheetApp", `${code}\nreturn { keyRuns };`);
+    const { keyRuns } = fn({}) as { keyRuns(t: string): [number, number, string][] };
+    const key = "Blue = your input     Green = the agent";
+    const plain = keyRuns(key);
+    const under = keyRuns("\u26a0 Not set up yet. Step 1 of 2: ask\n" + key);
+    const shift = "\u26a0 Not set up yet. Step 1 of 2: ask\n".length;
+    expect(under.slice(0, 2)).toEqual(plain.slice(0, 2).map(([a, z, c]) => [a + shift, z + shift, c]));
+  });
+});
+
 describe("linking a copied template (owner, 2026-11-01: make it mechanical)", () => {
   test("a sheet link or a bare id gives the spreadsheet id", () => {
     const id = "1ACmiSvHK2kYlqaL0--p2u4Op7g4R1_BzgNFuW7QUs3Y";

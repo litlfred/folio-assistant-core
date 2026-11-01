@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 ea965cdf55a6666f.
+// folio-assistant-core tools/review-sheet-sync at template sha256 56e93ae0d48dfe5c.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 ea965cdf55a6666f';
+const SCRIPT_VERSION = 'template sha256 56e93ae0d48dfe5c';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -174,6 +174,8 @@ function markSetup(ss, state) {
     const text = lines.join('\n');
     if (text !== before) cell.setValue(text);
   });
+  // A plain write drops the colours; put them back now, linked or not.
+  try { colourInstructions(ss); } catch (e) { /* cosmetic only */ }
 }
 
 function showVersion() {
@@ -824,14 +826,16 @@ const KEY_COLOURS = { blue: '#1f5fa8', green: '#2e7d32', orange: '#c25e00', grey
 const KEY_WORD_RE = /\b(blue|green|orange|grey)\b/gi;
 function keyRuns(text) {
   const runs = [];
-  const nl = text.indexOf('\n');
-  const first = nl < 0 ? text : text.slice(0, nl);
+  // A setup line (markSetup) may sit above the key: the key is then the second line.
+  const at = text.indexOf(SETUP_MARK) === 0 && text.indexOf('\n') >= 0 ? text.indexOf('\n') + 1 : 0;
+  const nl = text.indexOf('\n', at);
+  const first = nl < 0 ? text.slice(at) : text.slice(at, nl);
   let keyEnd = 0;
   if (/^(blue|green|orange|grey) = /i.test(first)) {
     const seg = /(blue|green|orange|grey) = .*?(?=\s{3,}|$)/gi;
     let m;
-    while ((m = seg.exec(first))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
-    keyEnd = first.length;
+    while ((m = seg.exec(first))) runs.push([at + m.index, at + m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
+    keyEnd = at + first.length;
   }
   let m;
   KEY_WORD_RE.lastIndex = keyEnd;
