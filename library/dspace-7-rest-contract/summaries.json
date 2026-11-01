@@ -1,0 +1,975 @@
+{
+  "$schema": "folio-block-summaries/v1",
+  "entry": "dspace-7-rest-contract",
+  "summaries": [
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s001-dspace-7-rest-contract",
+      "source": "sections/s001-dspace-7-rest-contract.md",
+      "source_hash": "df0b5cef74004583dc08eb0610b589fdea9290755890edc934b2bfefebee4e9c",
+      "narrative": [
+        {
+          "text": "Opening of the DSpace 7 REST Contract, which says this repository documents the DSpace REST API contract from version 7.0 and points to the backend code that implements it and to the Angular DSpace User Interface as one example client.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s002-table-of-contents",
+      "source": "sections/s002-table-of-contents.md",
+      "source_hash": "7182b907b6e8c62cd2339b70cba729859551a578aeaa28eb3f99445cbc5fc90d",
+      "narrative": [
+        {
+          "text": "Table of contents for the contract's overview, listing its sections on REST endpoints, HTTP verbs and response codes, pagination, REST design principles, content negotiation, proxies, ETags, API versioning and community resources.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s003-rest-endpoints",
+      "source": "sections/s003-rest-endpoints.md",
+      "source_hash": "69d09ec9ed5216cb67df47f172c83f8cd833a66b10ce947c1338ba8b81b05aca",
+      "narrative": [
+        {
+          "text": "Says a HAL document at the API root lists all primary endpoints for discovery, and links to the pages on endpoints, submission, search sub-paths, projections and CSRF protection, noting that modifying verbs must carry a CSRF token.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s004-use-of-http-verbs-and-response-codes",
+      "source": "sections/s004-use-of-http-verbs-and-response-codes.md",
+      "source_hash": "78b6bc9a83da7f692ad821dd00e08eeb69efd0a2602b5ff9351791903d77caab",
+      "narrative": [
+        {
+          "text": "Defines the REST terms the contract uses, following Spring Data REST: a resource is anything with a URI, an object is the stored thing behind it, a collection is any endpoint returning many resources, and an association is a link between two resources. It warns that a REST \"collection\" is unrelated to a DSpace Collection object.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s005-on-collection-of-resources-endpoints",
+      "source": "sections/s005-on-collection-of-resources-endpoints.md",
+      "source_hash": "a2463b122da23f0cdb07533cd458760bc86fa1b5b908c2c250c0141418ed9b84",
+      "narrative": [
+        {
+          "text": "Describes endpoints that act on a group of resources, such as /api/core/items: POST creates a resource whose required attributes must be in the body, with required links (like a Collection's parent Community) passed as query parameters. GET returns the first page of the group, and PATCH applies batch updates following JSON Patch (RFC 6902).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s006-on-single-resource-endpoints",
+      "source": "sections/s006-on-single-resource-endpoints.md",
+      "source_hash": "72b1af52c6b8dcb3b334a3928e43625fc85d9b0e28afa82b07a0858aa5f4ae4d",
+      "narrative": [
+        {
+          "text": "Describes the verbs on a single-resource endpoint: GET returns it, HEAD says whether it is available, PUT replaces it wholly from a non-empty body with no query parameters, PATCH updates it partially using JSON Patch, and DELETE removes it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s007-on-sub-path-of-a-single-resource-endpoint-associ",
+      "source": "sections/s007-on-sub-path-of-a-single-resource-endpoint-associ.md",
+      "source_hash": "bc3eaa1a011219972f78e2724c01a8d3248b44ca47f8b1d7b1df800a801ca3cd",
+      "narrative": [
+        {
+          "text": "Describes association endpoints, the sub-paths of a single resource that hold its linked resources, such as an Item's mappedCollections. GET returns the links, PUT replaces them with URIs sent as text/uri-list, POST adds one to a multi-valued association, and DELETE unlinks, returning 405 when the association is required and naming the individual link in the URI rather than in a body.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s008-error-codes",
+      "source": "sections/s008-error-codes.md",
+      "source_hash": "3eee69cc6437aca62209cbf287277e722b70b7b1755da8d60dc74112d8930785",
+      "narrative": [
+        {
+          "text": "Lists the general error codes: 400 for several URIs on a to-one association, 401 when login is needed, 403 for missing privilege or a bad CSRF token, 404 when the target does not exist, 405 for an unimplemented method or deleting a required association, and 422 for well-formed but invalid data.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s009-pagination",
+      "source": "sections/s009-pagination.md",
+      "source_hash": "7954948522df6bca84db2f9f1453e938dfe3d69642effb7fd22806fb479035fa",
+      "narrative": [
+        {
+          "text": "States that every endpoint exposing a collection of resources, including embedded or linked sub-paths, must implement the common pagination behaviour that follows.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s010-pagination-request-parameters",
+      "source": "sections/s010-pagination-request-parameters.md",
+      "source_hash": "ee380b88ad3e3a60b12ed106ecbd96d37840712584f7ce83d1e244c19e4e6f1f",
+      "narrative": [
+        {
+          "text": "Defines the pagination parameters: a zero-based page, a positive size capped at a configurable maximum without error, and a sort criterion with optional asc or desc, with invalid values rejected with 400.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s011-pagination-response",
+      "source": "sections/s011-pagination-response.md",
+      "source_hash": "bb79f14f3ac14bad03c048d8ad7a01ea608f823b94fe4add64d945a9aa82197f",
+      "narrative": [
+        {
+          "text": "Specifies the page object in every paginated HAL response, with size, totalElements, totalPages and the zero-based number. It also lists the optional self, next, previous, first and last links, which keep the same size and sort, with JSON examples of both.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s012-out-of-bound-pages",
+      "source": "sections/s012-out-of-bound-pages.md",
+      "source_hash": "879cb6ca16b807d1c18983f61341011a06528256eefd974375d75a7436510040",
+      "narrative": [
+        {
+          "text": "Says a request for a page beyond the result set returns an empty page that still carries the first and last links and the total count.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s013-pagination-error-codes",
+      "source": "sections/s013-pagination-error-codes.md",
+      "source_hash": "342953d79255260b3d6e463c4948a5fb4a72389afa1b08c968d33ddd47c91acf",
+      "narrative": [
+        {
+          "text": "Says a pagination request with an unknown sort criterion or an invalid ordering keyword returns 400 Bad Request.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s014-rest-design-principles",
+      "source": "sections/s014-rest-design-principles.md",
+      "source_hash": "955e7395ba04ae3b313d994c52942773ab2bcb6c6e464f2397320310754197ed",
+      "narrative": [
+        {
+          "text": "Introduces the design principles the REST API tries to follow, listed in the sections below.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s015-on-the-naming-of-endpoints",
+      "source": "sections/s015-on-the-naming-of-endpoints.md",
+      "source_hash": "4038fceb93c10ba0af33a8a658c378ed1c01d85c5322acb5d62991698540fabd",
+      "narrative": [
+        {
+          "text": "Gives the endpoint naming rules: plural nouns, compound words joined in lowercase without punctuation, short descriptive names with any abbreviation spelt out in the contract. Endpoints are grouped either under a singular category such as /api/config or by a shared name prefix such as workflow.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s016-hateoas-hal",
+      "source": "sections/s016-hateoas-hal.md",
+      "source_hash": "7326db41b6c903125261e1ada3eb471681521f2714d08c17062acbefb51fb7eb",
+      "narrative": [
+        {
+          "text": "Says the API follows HATEOAS and uses the HAL format for links and embedded resources, always with absolute links, and ships Spring's embedded HAL Browser.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s017-statelessness",
+      "source": "sections/s017-statelessness.md",
+      "source_hash": "ff3eddbb541960d53bfc847d9a46c4c10722c93e1c8dd31637d1aab79acc042d",
+      "narrative": [
+        {
+          "text": "Says the API is stateless, so the server returns a token carrying any state and the client must send it back on each later request to keep that state.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s018-json-web-tokens",
+      "source": "sections/s018-json-web-tokens.md",
+      "source_hash": "972ce2923c164b815d4f352312f5ce5a210da2d1ca6a00b79659c409c9d0dcd4",
+      "narrative": [
+        {
+          "text": "Says JSON Web Tokens carry state and authentication between requests, and the client should return the JWT the API issues in later requests.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s019-alps-application-level-profile-semantics",
+      "source": "sections/s019-alps-application-level-profile-semantics.md",
+      "source_hash": "8addca890d72fcdf46dd0b76639c452379b9f2f8d81795184eddd71e44990d63",
+      "narrative": [
+        {
+          "text": "Says ALPS profile metadata is not yet implemented but expected, so the API root must already carry a profile link as defined in RFC 6906.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s020-spring-technology-alignment",
+      "source": "sections/s020-spring-technology-alignment.md",
+      "source_hash": "f801a8ab94634999c01a5c96075060cc347b7a4038436afc93d682e88fa2851a",
+      "narrative": [
+        {
+          "text": "Lists the Spring libraries behind the API: Spring Boot, MVC, REST, HATEOAS, the HAL Browser and REST Docs. It notes that Spring Data REST is not used directly because of data-layer incompatibilities, but the implementation aligns with it where possible.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s021-content-negotiation",
+      "source": "sections/s021-content-negotiation.md",
+      "source_hash": "ce498586d086baeaa8e92f3cfc635da7c4d1515da5b855f0eec20f209f0caddf",
+      "narrative": [
+        {
+          "text": "Says the API returns only application/json, so there is no real content negotiation, though POST may accept other types such as text/uri-list or multipart/form-data and PUT on associations accepts text/uri-list.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s022-language-support",
+      "source": "sections/s022-language-support.md",
+      "source_hash": "b949773e6cee1835f7c3418e5c634a6b0ef087e508d4302dfad4ffaa3ecb823d",
+      "narrative": [
+        {
+          "text": "Explains locale handling for backend features such as submission forms and vocabularies: the client may send Accept-Language, the server uses the highest-priority supported locale or ignores the header, and Content-Language reports the locale used or, for locale-independent endpoints, all supported ones. Clients must keep sending Accept-Language once a user picks a language, and without a usable request locale DSpace falls back to the user's stored preference and then to default.locale.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s023-proxies",
+      "source": "sections/s023-proxies.md",
+      "source_hash": "6f34f1946afd32b57fe3afdf9a31c9ad8e4102f78d67909e80755fd1ac707466",
+      "narrative": [
+        {
+          "text": "Says the API honours X-Forwarded-For from localhost by default, that other trusted IPs or ranges can be added with proxies.trusted.ipranges in local.cfg, and that the header is read only when useProxies is true.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s024-etags-conditional-headers",
+      "source": "sections/s024-etags-conditional-headers.md",
+      "source_hash": "7f5973f29a4569959a20e927fab01fe8aecdb4ff32ba9a683052491231a97f48",
+      "narrative": [
+        {
+          "text": "Says every returned document is expected to carry an ETag, usable with If-None-Match on GET to get 304 Not Modified and with If-Match on modifying verbs for optimistic locking. Resources that honour If-Modified-Since must return Last-Modified, and those that do not must not.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s025-api-versioning",
+      "source": "sections/s025-api-versioning.md",
+      "source_hash": "0ce1354b13523a41dcf354f1f1a7cabc5e3f561faf53ba24b9e0e79bd717d72e",
+      "narrative": [
+        {
+          "text": "Says the REST API is versioned with the DSpace software, so DSpace 7.x carries REST API v7, and points to the release notes for deprecations and breaking changes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s026-community-resources",
+      "source": "sections/s026-community-resources.md",
+      "source_hash": "9ffc5be9861a8ece00acea847127cc47bf26fa4c71f9b466c7f54a7ab37a3aaf",
+      "narrative": [
+        {
+          "text": "Links community resources for the REST API: the code branch, coding tips, the DSpace Slack #rest-api channel and the DSpace 7 Working Group pages.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s027-actuator",
+      "source": "sections/s027-actuator.md",
+      "source_hash": "882434accafca668c0f01ecfecd3856b4abbbb2738c080e44e518cecb1e2d18a",
+      "narrative": [
+        {
+          "text": "Describes the Spring actuator endpoints enabled by default: /actuator/info for administrators, configurable through actuator.cfg, and /actuator/health, which aggregates component status as UP, UP_WITH_ISSUES, OUT_OF_SERVICE or DOWN and shows component detail only to administrators.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s028-authentication",
+      "source": "sections/s028-authentication.md",
+      "source_hash": "4de2dc481fea1ea9ed4dca06921b1d9413712e9d35966af9296985495ebe58fe",
+      "narrative": [
+        {
+          "text": "Opens the authentication page, saying DSpace 7 authentication is based on JSON Web Tokens (RFC 7519) and pointing to the wiki for implementation details.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s029-login",
+      "source": "sections/s029-login.md",
+      "source_hash": "4e8f514c4c7b141de2b22dc4a660ad0dafcb2bfba3b73fc4fec07e1a7bf826c1",
+      "narrative": [
+        {
+          "text": "Specifies POST /api/authn/login, whose parameters depend on the authentication method, with a WWW-Authenticate header listing the supported methods; it returns 200 with the JWT in the Authorization header, or 401 on failure.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s030-username-password-based-authentication",
+      "source": "sections/s030-username-password-based-authentication.md",
+      "source_hash": "5136a24d7cf9111ba95012558d75e6055cfca1a4ab3065d359ff1fa9dbf582dd",
+      "narrative": [
+        {
+          "text": "Shows password login as a form-encoded POST of user and password that must carry a valid CSRF token and cookie, returning a bearer JWT in the Authorization header for use on later calls.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s031-shibboleth-authentication",
+      "source": "sections/s031-shibboleth-authentication.md",
+      "source_hash": "dbb76f188d2aee1bdbaf39612331b58b75636b076062be272b11392123ee8b29",
+      "narrative": [
+        {
+          "text": "Says the Shibboleth realm exposes a location the client must follow to set up a Shibboleth session, after which the login endpoint returns the JWT.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s032-refresh-authentication",
+      "source": "sections/s032-refresh-authentication.md",
+      "source_hash": "4f4841934ece6f928b651ab8c05ca0559121dda47a78689ffd24366381795b2c",
+      "narrative": [
+        {
+          "text": "Explains refreshing a token before it expires by POSTing the current bearer token to the login endpoint with no other parameters, which returns a new token with a fresh expiry, 30 minutes by default.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s033-json-web-token-structure",
+      "source": "sections/s033-json-web-token-structure.md",
+      "source_hash": "6d42b6dd4373986baa1257b3aa11d9e6d8149f83a4930683a66539f06cc7c3e0",
+      "narrative": [
+        {
+          "text": "Lists the JWT claims: eid for the eperson id, sg for the user's special groups, and exp for the expiry date.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s034-logout",
+      "source": "sections/s034-logout.md",
+      "source_hash": "05ed236828b0b4bbbf90cda551cb65067c61265990eddff5c013d01bac384cac",
+      "narrative": [
+        {
+          "text": "Specifies POST /api/authn/logout, which invalidates the bearer token server-side, logging the user out on every device, and needs a CSRF token. It returns 204, or 302 when a logout page is configured, and never reports a missing or invalid token.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s035-status",
+      "source": "sections/s035-status.md",
+      "source_hash": "3d2131fcf7824ccd9e6dc657baffa65bfe321334e6691b3d5f7eddd782b1c0a3",
+      "narrative": [
+        {
+          "text": "Specifies GET /api/authn/status, which reports whether the API is up and whether the sent token is valid, links and embeds the authenticated eperson, and lists any special groups, which can exist without a login. It always returns 200, whether the token is valid, invalid or missing.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s036-log-in-as",
+      "source": "sections/s036-log-in-as.md",
+      "source_hash": "2f7bca5a7f4167141c3f3bb2e48bbfb011bcffaceb0dc0e39ad4012b59c41695",
+      "narrative": [
+        {
+          "text": "Says an administrator allowed to log in as others can send X-On-Behalf-Of with an EPerson UUID to act as that user, checkable through the loginOnBehalfOf feature, with 400 for an invalid UUID and 403 when not authorised.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s037-request-short-lived-token",
+      "source": "sections/s037-request-short-lived-token.md",
+      "source_hash": "517f79d91d4ea35cbbc13dab1c956eb91c891c408739b3febae108e5df6682f2",
+      "narrative": [
+        {
+          "text": "Specifies POST /api/authn/shortlivedtokens, which gives a logged-in user a token valid for at most 2 seconds for protected file downloads, returning 401 when no one is logged in; the GET form was dropped in 7.5.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s038-using-short-lived-token",
+      "source": "sections/s038-using-short-lived-token.md",
+      "source_hash": "bcbf20a6deff28584323128eec5bc24680490309b26cc21f2d87897d58c02179",
+      "narrative": [
+        {
+          "text": "Says the authentication-token request parameter lets a short-lived token authenticate almost any request without a header, except login refresh and creating another short-lived token.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s039-authorizations-endpoints",
+      "source": "sections/s039-authorizations-endpoints.md",
+      "source_hash": "012baf7ece081c57e03ffb08fa6c50fb2ae1a254d3630127aacbb79a532bcb06",
+      "narrative": [
+        {
+          "text": "Opens the authorizations endpoints, which list the rights a user has on an object or the whole site, however they were granted, and are read-only because rights come from processes, configuration and resource policies.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s040-main-endpoint",
+      "source": "sections/s040-main-endpoint.md",
+      "source_hash": "04ffbd88ea2881878bb8eeccbf5d7c316c790f88754960e8aba811c19003f2a6",
+      "narrative": [
+        {
+          "text": "Says the main /api/authz/authorizations endpoint is not implemented and returns 405, since there is no use case for listing all authorizations.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s041-single-authorization",
+      "source": "sections/s041-single-authorization.md",
+      "source_hash": "be1d0d663170a6ccfa8d46f7f98800b894ee7d0ca2d424dee27db32c29e419e0",
+      "narrative": [
+        {
+          "text": "Specifies GET of a single authorization, whose id combines the optional eperson UUID, feature id, REST object category and name, and object id, with links to the eperson, feature and object. Only administrators and the named user may read it, with 401, 403 and 404 for the usual failures.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s042-search-methods",
+      "source": "sections/s042-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the authorization search methods; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s043-object",
+      "source": "sections/s043-object.md",
+      "source_hash": "eab651769df4ffe3be70485628a8a0b12fb48248e2adedeaeb4568d8375cf3bd",
+      "narrative": [
+        {
+          "text": "Specifies the object search, which takes a mandatory resource URI and an optional eperson and feature and returns every matching authorization, including those open to anonymous users. Without an eperson it evaluates anonymous access, and only administrators or the named user may query for an eperson.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s044-objects",
+      "source": "sections/s044-objects.md",
+      "source_hash": "bc6f38b16c3dbffd436aa15cf4d8b0fd54bda1d19ba7278d3137bb4e401b87db",
+      "narrative": [
+        {
+          "text": "Specifies the objects search, which checks several objects at once by repeated UUIDs and a mandatory resource type, with an optional eperson and repeatable feature filter. It returns all matching authorizations, anonymous ones included, under the same access rules as the single-object search.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s045-other-http-verbs-than-get",
+      "source": "sections/s045-other-http-verbs-than-get.md",
+      "source_hash": "5f778f557b62f0a7f6b54f059134f41ebd5c5149175ceee88ead8fed261cc1f7",
+      "narrative": [
+        {
+          "text": "Says the authorization endpoints support no verb but GET, since authorizations are generated by the system from other endpoints such as resource policies, submission and workflow.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s046-linked-entities",
+      "source": "sections/s046-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for the authorization's linked entities; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s047-eperson",
+      "source": "sections/s047-eperson.md",
+      "source_hash": "1253405c2f5f4e28207568a0e554adad6914467fa084e4fe92ac21963f795566",
+      "narrative": [
+        {
+          "text": "Specifies the eperson link of an authorization, which returns the eperson, or 204 when the authorization is for anonymous users.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s048-object",
+      "source": "sections/s048-object.md",
+      "source_hash": "c95ec489be1dffa8ab005162b63a8ca7c66800556d679befc380154fca007e18",
+      "narrative": [
+        {
+          "text": "Specifies the object link of an authorization, which returns the resource the authorization is scoped to.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s049-feature",
+      "source": "sections/s049-feature.md",
+      "source_hash": "d154fbe1333cb7aa1c073a13464357cc85890f17a9e6d4b76e5a74638006323e",
+      "narrative": [
+        {
+          "text": "Specifies the feature link of an authorization, which returns the feature the user can access through it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s050-bitstream-formats-endpoints",
+      "source": "sections/s050-bitstream-formats-endpoints.md",
+      "source_hash": "df73bc89360c6145511a39f1de779bf2240a73f34ec35cfa5ce0b702e0509971",
+      "narrative": [
+        {
+          "text": "Heading for the bitstream formats endpoints, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s051-main-endpoint",
+      "source": "sections/s051-main-endpoint.md",
+      "source_hash": "eaeb694a96a5ccfd17dce122d7abc8bcf104ced23647c9544da9ce4948278bad",
+      "narrative": [
+        {
+          "text": "Specifies GET /api/core/bitstreamformats to list the registry's bitstream formats and an admin-only POST that creates one from JSON giving descriptions, mimetype, support level, internal flag and extensions, returning 201, or 400 for an invalid support level.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    }
+  ]
+}
