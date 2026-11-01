@@ -761,6 +761,880 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s225-14-10-validate-the-assertions",
+      "source": "sections/s225-14-10-validate-the-assertions.md",
+      "source_hash": "db18adf4682ee7bdcb5f6dc91f305daf564d9f2ef42078e7ea7d722cd08f8df9",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.10 Validate the Assertions; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s226-14-10-1-validate-the-correct-assertions-for-the-",
+      "source": "sections/s226-14-10-1-validate-the-correct-assertions-for-the-.md",
+      "source_hash": "205ffe284ce371ef90461ca4b7c2898586393af2eb5b8a91383cc290b5cc7fba",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.10.1 Validate the correct assertions for the type of manifest; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s227-14-10-1-1-general",
+      "source": "sections/s227-14-10-1-1-general.md",
+      "source_hash": "ddf56a4a772b382110a7115d3535122e06d10aaf2017191ca52419785c4be7f4",
+      "narrative": [
+        {
+          "text": "States that, depending on the type of manifest, some assertions are required or forbidden, and requires a validator to check for required and not-permitted assertions.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s228-14-10-1-2-standard-manifest-assertions",
+      "source": "sections/s228-14-10-1-2-standard-manifest-assertions.md",
+      "source_hash": "da610c4a9d43e9999751913861c77575f5466e7f7bd4c7ae27e1b162ca5dcf5a",
+      "narrative": [
+        {
+          "text": "Specifies the assertion checks for a standard manifest: there shall be exactly one hard binding assertion (c2pa.hash.data, c2pa.hash.boxes, c2pa.hash.collection.data, c2pa.hash.segment, the deprecated c2pa.hash.bmff.v2, or c2pa.hash.bmff.v3), otherwise rejection with claim.hardBindings.missing or assertion.multipleHardBindings. It also requires at most one c2pa.ingredient assertion with relationship parentOf (else manifest.multipleParents) and at least one actions assertion in created_assertions or gathered_assertions (else claim.actions.missing). Finally, a c2pa.created or c2pa.opened action must appear in the first actions assertion of exactly one of those two lists, else the manifest is rejected with assertion.action.malformed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s229-14-10-1-3-update-manifest-assertions",
+      "source": "sections/s229-14-10-1-3-update-manifest-assertions.md",
+      "source_hash": "67552cbef92fc7c738322f3977176f6f3b80c16088904fff9ff6e996d9a56f73",
+      "narrative": [
+        {
+          "text": "Specifies the assertion checks for an update manifest: exactly one ingredient assertion with relationship parentOf must be present, otherwise rejection with manifest.update.wrongParents. The manifest shall be rejected with manifest.update.invalid if it contains any hard binding assertions (c2pa.hash.data, c2pa.hash.boxes, c2pa.hash.collection.data, c2pa.hash.segment, c2pa.hash.bmff.v2, c2pa.hash.bmff.v3), thumbnail assertions, or c2pa.hash.multi-asset assertions. Any action in c2pa.actions or c2pa.actions.v2 assertions must use one of the values supported for update manifests, else the same failure code applies.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s230-14-10-2-preparing-the-list-of-redacted-assertion",
+      "source": "sections/s230-14-10-2-preparing-the-list-of-redacted-assertion.md",
+      "source_hash": "35e9ac6d8565a86b22ef31b753aacdcd29051b744a0d4401a85cc345ca87d101",
+      "narrative": [
+        {
+          "text": "Requires a validator processing a claim to gather the set of redacted assertions for each ingredient's manifest from the JUMBF URIs in its redacted_assertions field, and forbids a claim's redacted_assertions from referencing any of its own assertions. A note explains that assertions can be redacted at any point in the asset's provenance history, not only by the claim generator that first used the ingredient; further detail is in section 14.11.3.2 Performing explicit validation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s231-14-10-3-redacted-assertion-representation",
+      "source": "sections/s231-14-10-3-redacted-assertion-representation.md",
+      "source_hash": "6afa8be9c6bcb2fcdf5a0c3c2dcf89c69a3f7da5fc58432905782b4bfddfa9ef",
+      "narrative": [
+        {
+          "text": "Specifies that a redacted assertion may either be removed entirely from the assertion store or keep its labelled assertion container with its content boxes replaced by a single UUID Content box carrying the C2PA Redaction UUID (CAA98EEE-9D4D-F80E-86AD-4DFFCA263973) and a DATA field of only zeros. A validator shall accept either representation as validly redacted.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s232-14-10-4-assertion-validation",
+      "source": "sections/s232-14-10-4-assertion-validation.md",
+      "source_hash": "a81dfe2ada34c516f92539a2e864486f1a1d664c7e28f81a2316aba00ab58241",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.10.4 Assertion Validation; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s233-14-10-4-1-general",
+      "source": "sections/s233-14-10-4-1-general.md",
+      "source_hash": "799b7027ae754be86c18a3e017d6e5844cf2ee983d03e6bc8675fe3218c82879",
+      "narrative": [
+        {
+          "text": "Defines the general validation procedure for each hashed_uri in a claim's created_assertions and gathered_assertions (or a v1 claim's assertions). Redacted assertions are treated as valid unless labelled c2pa.actions or c2pa.actions.v2 (rejected with assertion.action.redacted); other assertions must resolve within the same manifest (else assertion.outsideManifest or assertion.missing) and their computed hash must match (else assertion.hashedURI.mismatch, otherwise assertion.hashedURI.match is recorded). The claim shall also be rejected for malformed CBOR or non-conforming JSON (assertion.cbor.invalid or assertion.json.invalid), for assertions in the store that the claim does not reference (assertion.undeclared), and for redacted_assertions URIs pointing into the claim's own manifest (assertion.selfRedacted). Assertion metadata is not validated except that processStart must not be later than processEnd, else assertion.metadata.malformed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s234-14-10-4-2-specific-assertion-validation",
+      "source": "sections/s234-14-10-4-2-specific-assertion-validation.md",
+      "source_hash": "a84844b54da928df96891f72faa211cd630c044de526333e8b19d8f28658e732",
+      "narrative": [
+        {
+          "text": "Requires the validator to check each assertion's label and perform the specific validation steps for listed types: c2pa.cloud-data, c2pa.external-reference, c2pa.actions or c2pa.actions.v2, c2pa.linked-resource-integrity, c2pa.metadata, c2pa.session-keys, c2pa.time-stamp and c2pa.alternative-content-representation; unlisted types need no further steps. A note says ingredient assertions are validated separately under section 14.11 Validate the Ingredients. Any hashed_uri or hashed_ext_uri field in a standard assertion shall be validated per section 14.10.4.3 Validation of References, except the activeManifest field of c2pa.ingredient.v3 and the externalResources entries of c2pa.linked-resource-integrity, which have their own procedures.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s235-14-10-4-2-1-c2pa-cloud-data-validation",
+      "source": "sections/s235-14-10-4-2-1-c2pa-cloud-data-validation.md",
+      "source_hash": "1d29c424bd092bb128c48531964a431ac6ae1f1aa734cab72005729a28da79fa",
+      "narrative": [
+        {
+          "text": "Specifies validation of c2pa.cloud-data assertions: the label, size and location fields must be present, otherwise rejection with assertion.cloud-data.malformed. The claim shall be rejected with assertion.cloud-data.hardBinding if the external label is a hard binding or multi-asset hash label, with assertion.cloud-data.actions if an update manifest references an actions label, and with assertion.cloud-data.malformed if the label is an actions, cloud-data or ingredient label. The location field is validated per section 14.10.5.2 Validation of External References, and if retrieved, the JUMBF box label must match the label field or the claim is rejected with assertion.cloud-data.labelMismatch.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s236-14-10-4-2-2-c2pa-external-reference-validation",
+      "source": "sections/s236-14-10-4-2-2-c2pa-external-reference-validation.md",
+      "source_hash": "b307b7841bb5c58f01c8379b9daf37eb3f1e97c08ec17f4203b50763e29c4662",
+      "narrative": [
+        {
+          "text": "Specifies validation of c2pa.external-reference assertions: a location field with a url field is required, and location must contain both or neither of alg and hash, otherwise rejection with assertion.external-reference.malformed. When hashed data is retrieved, a hash mismatch is reported as assertion.external-reference.hashMismatch. A label field naming an actions, cloud-data, external-reference, hard binding, multi-asset hash or ingredient label causes rejection with assertion.external-reference.malformed, and a retrieved JUMBF box whose label differs from the label field is reported as assertion.external-reference.labelMismatch.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s237-14-10-4-2-3-c2pa-linked-resource-integrity-valid",
+      "source": "sections/s237-14-10-4-2-3-c2pa-linked-resource-integrity-valid.md",
+      "source_hash": "b9629a2659cb021fdafa00248db7cb70c08436c664a701e2c2c255ea336649fe",
+      "narrative": [
+        {
+          "text": "Specifies validation of c2pa.linked-resource-integrity assertions: the assertion must be in created_assertions (else assertion.linkedResourceIntegrity.notCreated) and its resources field must hold a non-empty externalResources array or a non-empty relativeResources array with an alg field (else assertion.linkedResourceIntegrity.malformed). Each well-formed entry receives exactly one terminal code, including a resourceUrl field: skipped if not retrieved, or match, inaccessible, sizeMismatch, formatMismatch or hashMismatch, none of which cause rejection. External entries need url, alg and hash and follow section 14.10.5.2 Validation of External References with the mismatch codes remapped to informational ones. Relative entries need uri and hash, the shared alg is checked per section 14.4.4 Algorithm validation, and a decoded uri containing a path segment of exactly .. causes rejection with assertion.linkedResourceIntegrity.invalidURI before retrieved data is checked for size, format and hash.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s238-14-10-4-2-4-c2pa-actions-validation",
+      "source": "sections/s238-14-10-4-2-4-c2pa-actions-validation.md",
+      "source_hash": "e48e7e2f202fc6f6dd8d6da3382b6e959395387b4eb33cfa76e57d29a6dd066e",
+      "narrative": [
+        {
+          "text": "Specifies validation of c2pa.actions and c2pa.actions.v2 assertions, noting that when, whenStart and whenEnd get syntax and consistency checks but shall not be compared to an external time source. An actions field is required, and in v2 when may not appear with whenStart or whenEnd and whenStart must not be later than whenEnd (else assertion.action.malformed); c2pa.created or c2pa.opened is only allowed as the first action of the first actions assertion. Actions c2pa.opened, c2pa.placed, c2pa.removed, c2pa.deleted, c2pa.transcoded and c2pa.repackaged must reference ingredient assertions with the expected relationship and manifest location, otherwise assertion.action.ingredientMismatch (with an informational assertion.action.ingredientLocationMismatch for a v2 claim whose ingredient is listed in a different field). It further covers c2pa.redacted needing a resolvable JUMBF URI (else assertion.action.redactionMismatch), validation of icon fields and relatedAssertions entries, and the requirement that c2pa.watermarked or c2pa.watermarked.bound actions be accompanied by a c2pa.soft-binding assertion (else assertion.action.softBindingMissing).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s239-14-10-4-2-5-c2pa-metadata-validation",
+      "source": "sections/s239-14-10-4-2-5-c2pa-metadata-validation.md",
+      "source_hash": "911317a3fc261189df4e7d3f3fbeea7f8e87c2b65095ae33cc928b720ba5642e",
+      "narrative": [
+        {
+          "text": "States that c2pa.metadata needs no assertion-specific validation. Although generators are still required to limit metadata to the allowed list, validators should not reject assertions containing unlisted fields, to support forward compatibility, unlike earlier versions of the specification.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s240-14-10-4-2-6-c2pa-session-keys-validation",
+      "source": "sections/s240-14-10-4-2-6-c2pa-session-keys-validation.md",
+      "source_hash": "fa38acd3aeb92224634eaab268ff34bd3919a2eaffeaee7565fdc26db8bde0c3",
+      "narrative": [
+        {
+          "text": "Requires a validator to ensure that the signerBinding signature of a c2pa.session-keys assertion is correct, by verifying it validates using the session key and that its payload is the Signer's end-entity certificate. Session keys are valid only if this signature validates successfully.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s241-14-10-4-2-7-c2pa-time-stamp-validation",
+      "source": "sections/s241-14-10-4-2-7-c2pa-time-stamp-validation.md",
+      "source_hash": "978d08653959fd3ef1b141bea96320b5b99050fffabf3ff7b613c309cb17cb6f",
+      "narrative": [
+        {
+          "text": "Requires a validator to ensure that a c2pa.time-stamp assertion is well-formed CBOR consisting of a single map with at least one key/value pair, otherwise rejecting the claim with assertion.timestamp.malformed. Because the time stamp token is validated as described in section 14.8.2 Validating the TimeStampToken, the validator needs to store it and its associated C2PA Manifest identifier for later use.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s242-14-10-4-2-8-c2pa-alternative-content-representat",
+      "source": "sections/s242-14-10-4-2-8-c2pa-alternative-content-representat.md",
+      "source_hash": "a6c4577bcdbf02998ab91147dcd50812c10bc7dbb30a8923561f86ecbf82d477",
+      "narrative": [
+        {
+          "text": "Specifies validation of c2pa.alternative-content-representation assertions whose type is exif.originalPreservationImage: at most one such assertion may appear in the active manifest, and exactly one of multiAssetPartIndex or embeddedOriginalPreservationImage must be present, else rejection with assertion.alternativeContentRepresentation.malformed. A multiAssetPartIndex requires a c2pa.hash.multi-asset assertion and must be an in-bounds index into its parts array. An embeddedOriginalPreservationImage must be a hashed-uri-map with a hash field whose value matches the computed hash of the resolved data, else assertion.alternativeContentRepresentation.hashMismatch; if no failures occur, assertion.alternativeContentRepresentation.match is recorded.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s243-14-10-4-3-validation-of-references",
+      "source": "sections/s243-14-10-4-3-validation-of-references.md",
+      "source_hash": "b7167bdec9f7167f106ead1b23de70438edb686ac33a13537fb056b41bbec833",
+      "narrative": [
+        {
+          "text": "Describes how hashed_uri and hashed_ext_uri references in standard assertions are validated, excluding the activeManifest field of c2pa.ingredient.v3 and the externalResources entries of c2pa.linked-resource-integrity. A retrieved hashed_ext_uri follows section 14.10.5.2 Validation of External References. For a hashed_uri, a missing url or unlocatable destination is a validation failure with hashedURI.missing; otherwise the algorithm is determined per section 14.4, and a missing hash field or a mismatch with the computed hash causes rejection with hashedURI.mismatch.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s244-14-10-5-external-data-validation",
+      "source": "sections/s244-14-10-5-external-data-validation.md",
+      "source_hash": "e6642438fe28addbee8d0c301120ffb7694bb4f4f943aed95d254d65723258cb",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.10.5 External Data Validation; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s245-14-10-5-1-general",
+      "source": "sections/s245-14-10-5-1-general.md",
+      "source_hash": "f4cf2d0d68476b4a487bac5d513a5b3ef501a46d087ab00ff12a4b227e8de806",
+      "narrative": [
+        {
+          "text": "States that externally hosted data referenced by cloud data or hashed external reference assertions is not retrieved during standard validation; a validator shall first successfully validate the claim and shall not retrieve external data from a rejected claim. Because retrieval is optional, failure to retrieve or validate external data shall not cause rejection. A validator that does retrieve such data shall follow section 14.10.5.2 Validation of External References, may apply the countermeasures of section 14.10.5.3 Retrieval Security, and shall validate retrieved labelled assertions as if they were embedded.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s246-14-10-5-2-validation-of-external-references",
+      "source": "sections/s246-14-10-5-2-validation-of-external-references.md",
+      "source_hash": "7b8dec1aa784c0aee0ed011812dcbea357d1ac5dacb48e4bee528e92b7ac62ef",
+      "narrative": [
+        {
+          "text": "Specifies the procedure for validating external data from cloud data or hashed external reference assertions. The validator resolves the url and aborts if it is missing, a countermeasure is applied, or retrieval fails; it then returns assertion.hashedURI.mismatch without providing the data if the retrieved representation's length differs from size or its Content-Type differs from the declared content type (from dc:format, defaulting to application/jumbf for cloud data, with content_type ignored). For a hashed_ext_uri, the hash is computed with the algorithm determined per section 14.4.3 For Hashed Ext URIs; a missing or mismatched hash yields assertion.hashedURI.mismatch, otherwise assertion.hashedURI.match is recorded and the data is provided to the application.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s247-14-10-5-3-retrieval-security",
+      "source": "sections/s247-14-10-5-3-retrieval-security.md",
+      "source_hash": "6b63c564ab25bcadebf8209f919999bb5038c96f05bf73349f3e3052c6e596bb",
+      "narrative": [
+        {
+          "text": "Permits a validator performing network retrieval to apply the countermeasures in this section before and during each retrieval attempt, regardless of which assertion type triggered it. If retrieval is done by a platform the validator does not control and cannot apply the countermeasures, the validator may route retrieval through a component that can, such as a server-side service, or may decline to retrieve. A note gives a browser-based validator as an example and recalls that skipping optional retrieval does not cause a claim to be rejected.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s248-14-10-5-3-1-permitted-schemes-and-identifiers",
+      "source": "sections/s248-14-10-5-3-1-permitted-schemes-and-identifiers.md",
+      "source_hash": "6899abeb609fa3fbc6c699c6f7f5f2edaffa53624f8e4517be969f8677c12771",
+      "narrative": [
+        {
+          "text": "Permits a validator to limit automated retrieval to the https URI scheme and to decline other schemes such as file or ftp and non-network identifiers, noting that unencrypted http is discouraged by industry practice. A validator may also reject a URI whose authority contains a userinfo subcomponent before attempting retrieval.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s249-14-10-5-3-2-credential-handling",
+      "source": "sections/s249-14-10-5-3-2-credential-handling.md",
+      "source_hash": "fb77e8a89329c528e79aedcf42ad24f81155dc543ffc2d9d47d8ea57f348b829",
+      "narrative": [
+        {
+          "text": "Permits a validator to omit ambient credentials such as cookies, Authorization headers, proxy credentials or client certificates from retrieval requests unless the operator has explicitly configured them for that specific origin. A validator may also withhold credentials attached for one origin from a different origin reached through a redirect.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s250-14-10-5-3-3-address-validation-and-connection-bi",
+      "source": "sections/s250-14-10-5-3-3-address-validation-and-connection-bi.md",
+      "source_hash": "a3b83f5bca9c04e2c407a65d6b4641005ccd86bd008cf1b596a69bf953efcb5e",
+      "narrative": [
+        {
+          "text": "Permits a validator to resolve the target host before connecting and check each candidate IP address against an address policy, disallowing loopback, link-local, private-use, unique-local or other non-publicly-routable addresses unless the operator explicitly permits them, and aborting if all candidates are disallowed. The validator may also bind the connection to a checked address, verify the actual peer address before sending data, and treat any later name resolution, including by a library or proxy, as subject to the same policy. Where the operator configures a resolving proxy, these checks may be delegated to it, and the proxy's own address is not subject to the policy. Notes explain that operator configuration supports enterprise private networks and synthetic-address tunnelling services, that the restriction exists because the URI comes from the manifest author, and that retrieval can disclose the requested hostname, which encrypted DNS, a remote-resolving proxy, or not retrieving can reduce.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s251-14-10-5-3-4-redirect-handling",
+      "source": "sections/s251-14-10-5-3-4-redirect-handling.md",
+      "source_hash": "7614d0f0970fd37d5bda1fe394567a1aa32f778d07c42c76e191068170f4f473",
+      "narrative": [
+        {
+          "text": "Permits a validator to limit the number of HTTP redirects it follows per validation operation and to refuse HTTPS-to-HTTP redirects, aborting retrieval if either occurs. Before sending a redirected request, a validator may apply the scheme, credential and address countermeasures of sections 14.10.5.3.1 to 14.10.5.3.3 to the redirect target exactly as for the initial request.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s252-14-10-5-3-5-retrieved-representation",
+      "source": "sections/s252-14-10-5-3-5-retrieved-representation.md",
+      "source_hash": "917ad1bed3b2ce6752a3b1c9939b878dd36387a6aee98bfeacf87368460d17d6",
+      "narrative": [
+        {
+          "text": "Defines the retrieved representation used for the size, media type and hash checks in section 14.10.5.2 Validation of External References as the response body bytes after removing HTTP transfer coding and any Content-Encoding, but before any character decoding, parsing, normalization or other transformation. Requires all three checks to be performed against this same representation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s253-14-10-5-3-6-resource-limits",
+      "source": "sections/s253-14-10-5-3-6-resource-limits.md",
+      "source_hash": "bacd1ee2c20d53e8974d6e4b9dcdf10ae04d8963d5619dab0950e57de03fed8c",
+      "narrative": [
+        {
+          "text": "Defines a retrieval attempt as a single request-response exchange and a validation operation as the full process of resolving, retrieving, decoding and validating the data for one hashed_ext_uri, unhashed_ext_uri or cloud data location, including redirects. Permits a validator to enforce per-operation limits on redirects, encoded bytes read, decoded representation bytes, decompression nesting depth and an overall deadline, and per-claim limits on total retrieval attempts and concurrent operations. If an enforced limit is exceeded, the validator may abort and discard partial data; a note says the size field gives an a priori bound on decoded bytes usable as a read limit.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s254-14-11-validate-the-ingredients",
+      "source": "sections/s254-14-11-validate-the-ingredients.md",
+      "source_hash": "0dab84249594b4701e9f39396d9f26050ea5de6cb511b00ad861fd4c8b8f75e8",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.11 Validate the Ingredients; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s255-14-11-1-explanation",
+      "source": "sections/s255-14-11-1-explanation.md",
+      "source_hash": "21aa87c5f23f8a99d6f52f4c621acc22fd60baf5db974157c8f9e481a02be872",
+      "narrative": [
+        {
+          "text": "Requires a validator to perform the validation steps for the presented asset and its active manifest, rejecting the manifest with the indicated failure code if any step finds it invalid. Explains that an active manifest may list ingredients via ingredient assertions, some of which may have their own manifests with further ingredients.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s256-14-11-2-processing-ingredient-manifests",
+      "source": "sections/s256-14-11-2-processing-ingredient-manifests.md",
+      "source_hash": "74b959e0bc9483c761dd47fa8fe82a4367992a4109d901900c74cea0249a905d",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.11.2 Processing Ingredient Manifests; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s257-14-11-2-1-standard-manifests-in-an-ingredient",
+      "source": "sections/s257-14-11-2-1-standard-manifests-in-an-ingredient.md",
+      "source_hash": "3181287bd735fe176f08c2573402c4141898e278f3baa52f8f24a28ac3a47135",
+      "narrative": [
+        {
+          "text": "Requires that, when processing a standard manifest, a validator validate each ingredient regardless of its relationship value, as described in section 14.11.3 Ingredient Assertion Validation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s258-14-11-2-2-update-manifests-in-an-ingredient",
+      "source": "sections/s258-14-11-2-2-update-manifests-in-an-ingredient.md",
+      "source_hash": "609fe87ce81b4112a8286ecc32cc3aebabe9e9698ca0f4b68644e7b8796f2e67",
+      "narrative": [
+        {
+          "text": "Requires that, for update manifests, the parentOf ingredient be validated as described in section 14.11.3 Ingredient Assertion Validation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s259-14-11-2-3-time-stamp-manifests-in-an-ingredient",
+      "source": "sections/s259-14-11-2-3-time-stamp-manifests-in-an-ingredient.md",
+      "source_hash": "6ff22e5c3d9118b421aa1fcd86106aaa104cff62dc6e1db9419ed9794eb16550",
+      "narrative": [
+        {
+          "text": "Requires that any time stamp manifests found in an ingredient be ignored, noting that this feature is deprecated in favour of the time stamp assertion and the text is retained for historical purposes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s260-14-11-3-ingredient-assertion-validation",
+      "source": "sections/s260-14-11-3-ingredient-assertion-validation.md",
+      "source_hash": "e608692a39e8b5608ec15bf1cd64f964e522954987ce26bf19c1f31ce7d3adcb",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.11.3 Ingredient Assertion Validation; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s261-14-11-3-1-validation-overview",
+      "source": "sections/s261-14-11-3-1-validation-overview.md",
+      "source_hash": "968ca6f454e183ddb4c851bb624809d4a1465012231b68e324d9597bf2189175",
+      "narrative": [
+        {
+          "text": "Presents Figure 13, Ingredient Validation, a flowchart of the process for validating ingredient assertions in a C2PA Manifest, and notes that the text is authoritative where it differs from the figure.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s262-14-11-3-2-performing-explicit-validation",
+      "source": "sections/s262-14-11-3-2-performing-explicit-validation.md",
+      "source_hash": "c8d6d7d7bbd6d23d00f399d462ce5b084b3bd9035078b3da8c2e00ad5ab57e28",
+      "narrative": [
+        {
+          "text": "Specifies explicit checks on ingredient assertions, each failing with assertion.ingredient.malformed: the relationship field must be present and be parentOf, inputTo or componentOf, and activeManifest and digitalSourceType must not both be present. If relatedAssertions is present it must be a non-empty array whose hashed URIs validate per section 14.10.4.3 and resolve to assertions in the same manifest that are not ingredient or actions assertions and whose label ends with .ingredient, ignoring any multiple-instance suffix. A referenced assertion that has been redacted causes the informational code assertion.redacted to be recorded.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s263-14-11-3-3-performing-recursive-validation",
+      "source": "sections/s263-14-11-3-3-performing-recursive-validation.md",
+      "source_hash": "a0c1d995fb46a307a9517de976f65251c50449e4a8c4bfef51438fc7f7896bd8",
+      "narrative": [
+        {
+          "text": "Requires the validator to recursively validate all ingredient manifests, with results equivalent to the described depth-first algorithm. The algorithm collects lists of ingredient manifest hashed_uri tuples (activeManifest or c2pa_manifest plus claimSignature) and redacted assertion JUMBF URIs across the lineage, rejecting with claim.missing or assertion.selfRedacted where appropriate, skipping unresolvable, mismatched or zeroed ingredient assertions and returning any validationResults status codes. Each ingredient manifest with matching redacted assertions is then validated by the claim signature hash method, otherwise by either that method or the manifest hash method, with validationResults entries reconciled against the validation output. A v3 ingredient with activeManifest but no validationResults yields assertion.ingredient.malformed, and validators should ignore other manifests in the store that are not in the ingredient list, for compatibility with custom and future constructs.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s264-14-11-3-3-1-claim-signature-hash-validation-meth",
+      "source": "sections/s264-14-11-3-3-1-claim-signature-hash-validation-meth.md",
+      "source_hash": "d1c5bdee22b7e7965ecaf1c4cd49587a64f87a112ff930eed4ca1454189d5411",
+      "narrative": [
+        {
+          "text": "Describes the claim signature hash validation method, a full validation of the ingredient's claim without evaluating content bindings. The claimSignature url is resolved (else ingredient.claimSignature.missing) and its hash compared with the hash field, rejecting with ingredient.claimSignature.mismatch if absent or unequal; on a match, ingredient.claimSignature.validated is issued and the signature, time stamp and revocation information are validated per sections 14.7 to 14.9. Redacted assertions with a matching manifest label that contain anything other than zero bytes cause rejection with assertion.notRedacted, and non-redacted assertions other than hard bindings are validated per section 14.10. Under this method the validator shall not record hash mismatch codes for activeManifest, and notes explain that only c2pa.ingredient.v3 has a claimSignature field, so redactions in manifests referenced by deprecated ingredient assertions cause validation to fail.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s265-14-11-3-3-2-manifest-hash-validation-method",
+      "source": "sections/s265-14-11-3-3-2-manifest-hash-validation-method.md",
+      "source_hash": "9537618db83bd0f21889163dd88bb075db9718341d3a73aa40c4ce4967f52bd7",
+      "narrative": [
+        {
+          "text": "Describes the manifest hash validation method, a faster option for an ingredient manifest unchanged by redaction when the validator trusts the previous claim generator's results. The activeManifest url is resolved (else ingredient.manifest.missing), its hash computed per section 14.4 and section 9.4.2.3, and compared with the hash field; a missing or unequal hash causes rejection with ingredient.manifest.mismatch, while a match fully validates the ingredient and issues ingredient.manifest.validated.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s266-14-12-validate-the-asset-s-content",
+      "source": "sections/s266-14-12-validate-the-asset-s-content.md",
+      "source_hash": "bb5e295cb6d27f54f2c11879ac0928b2f10f9af5d81ae2054d54e9c61d7072bc",
+      "narrative": [
+        {
+          "text": "Requires the asset's content to be validated using the hard binding in the active manifest if it is a standard manifest, or, for an update manifest, by following the chain of parentOf ingredients to the first standard manifest. If no standard manifest is found or it has no hard binding in created_assertions, the active manifest's claim shall be rejected with claim.hardBindings.missing. Notes that an asset may consist of multiple parts with their own hashes, per section 16.3.5 Multi-Asset Hash, which may be validated separately.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s267-14-12-1-validating-a-data-hash",
+      "source": "sections/s267-14-12-1-validating-a-data-hash.md",
+      "source_hash": "9c44b171f82340e37b9a59a000d9016cd9c721faafcc83451cabad65aeb130d5",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.12.1 Validating a data hash; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s268-14-12-1-1-general",
+      "source": "sections/s268-14-12-1-1-general.md",
+      "source_hash": "19b1ed95bec80e750e2bee61100da20f7fbb87d9bba56cb3cb7a3c59bc946192",
+      "narrative": [
+        {
+          "text": "Specifies validation of a c2pa.hash.data assertion: overlapping or negative exclusion ranges cause rejection with assertion.dataHash.malformed, and when update manifests are present the C2PA Manifest Store exclusion length and later range starts are adjusted for the store's current length. The hash is computed over the asset bytes outside the exclusion ranges; an exclusion running past the end of the asset, a missing hash field, or non-permitted data within the manifest store exclusion causes rejection with assertion.dataHash.mismatch, and an unlisted alg causes algorithm.unsupported. Additional exclusions beyond the manifest store and padding produce the informational code assertion.dataHash.additionalExclusionsPresent, pad and pad2 fields are ignored, and success yields assertion.dataHash.match. If the hash does not match, a multi-asset hash assertion is validated if present, otherwise the manifest is rejected with assertion.dataHash.mismatch.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s269-14-12-1-2-hashing-of-jpeg-1-files",
+      "source": "sections/s269-14-12-1-2-hashing-of-jpeg-1-files.md",
+      "source_hash": "8b5684ca6f48db26c33069dcdfb7a42ee334ae794bdbd5438093b116f34ea22b",
+      "narrative": [
+        {
+          "text": "Specifies that in JPEG 1 files the file format extras include APP11 markers and their segment length bytes, and requires a validator to match the total exclusion range length against the total length of all APP11 segments holding the C2PA Manifest to detect tampering. A note says APP11 segments used for other purposes, such as JPEG 360 or JPEG Privacy and Security, are not included.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s270-14-12-1-3-hashing-of-unstructured-text",
+      "source": "sections/s270-14-12-1-3-hashing-of-unstructured-text.md",
+      "source_hash": "0ce5d010677a318255ca6bbc01db4b8e20cd616059a3bbe7519a22a9fbed7a53",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.12.1.3 Hashing of Unstructured Text; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
