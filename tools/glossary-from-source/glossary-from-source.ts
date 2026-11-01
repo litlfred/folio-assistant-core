@@ -15,7 +15,7 @@ export default toolFactory((t) =>
       inputs: [
         { name: "out", schema: t("RepoPath"), required: true, arg: { flag: "--out" }, description: "The scheme file to write or merge into: `glossary/<scheme>.glossary.json`." },
         { name: "id", schema: t("Slug"), required: false, arg: { flag: "--id" }, description: "The scheme id, for a new file." },
-        { name: "title", schema: t("Text"), required: false, arg: { flag: "--title" }, description: "The scheme title, for a new file." },
+        { name: "title", schema: t("Text"), required: false, arg: { stdin: true }, description: "The scheme title, for a new file: free text, so it goes on stdin." },
         { name: "from", schema: t("RepoPath"), required: false, arg: { flag: "--from" }, description: "A directory whose glossary and abbreviations sections are read: an L1 entry's `sections/`." },
         { name: "terms", schema: t("RepoPath"), required: false, arg: { flag: "--terms" }, description: "A Markdown file read as term and definition rows." },
         { name: "abbreviations", schema: t("RepoPath"), required: false, arg: { flag: "--abbreviations" }, description: "A Markdown file read as acronym and expansion rows." },

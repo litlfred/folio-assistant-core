@@ -283,9 +283,12 @@ if (import.meta.main) {
   const repo = process.cwd();
   const out = one("--out");
   const id = one("--id");
-  const title = one("--title");
+  // A new scheme's title is free text, so a Tool passes it on stdin, never as
+  // a word of argv (check:tools' injection rule). A person may still use --title.
+  const needsTitle = !!out && !existsSync(out) && !one("--title");
+  const title = one("--title") ?? (needsTitle && !process.stdin.isTTY ? (await Bun.stdin.text()).trim() || undefined : undefined);
   if (!out || (!existsSync(out) && (!id || !title))) {
-    console.error("usage: glossary-from-source --out <file> [--id <scheme> --title <title>] [--from DIR] [--terms FILE]... [--abbreviations FILE]... [--check]");
+    console.error("usage: glossary-from-source --out <file> [--id <scheme> --title <title> | title on stdin] [--from DIR] [--terms FILE]... [--abbreviations FILE]... [--check]");
     process.exit(2);
   }
   const inputs: Input[] = [
