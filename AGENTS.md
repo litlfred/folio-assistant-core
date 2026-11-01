@@ -27,7 +27,7 @@ exception to the rule above: they live in `cat-harness-tools/schemas/kg/material
 
 <!-- skills:index:begin -->
 
-_45 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
+_46 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
 
 **`skills/`** (1)
 
@@ -45,7 +45,7 @@ _45 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`registry-authority-contract`](skills/content/content-lifecycle-ext/registry-authority-contract.md) | The contract the `external-registry` role is held to when a candidate source is checked against the body that publishes it: resolve the identifier through its own API and return the record, so… |
 | [`review-comments`](skills/content/content-lifecycle-ext/review-comments.md) | Reviewer comments on a folio's edit-set, from a tagged pull-request comment to a structured todo on the review page. |
 
-**`skills/content/folio-document-adapter/`** (19)
+**`skills/content/folio-document-adapter/`** (20)
 
 | Skill | What it is for |
 |---|---|
@@ -67,6 +67,7 @@ _45 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`normative-statements`](skills/content/folio-document-adapter/normative-statements.md) | Carry a **recommendation, requirement or rule** in a document folio — the thing an L1 health-policy guidance note, a standard, or a terms-of-reference document exists to state. |
 | [`public-comment-channels`](skills/content/folio-document-adapter/public-comment-channels.md) | Set up the channels a public-comment release goes out on (an offline Excel sheet, a Google Form, a GitHub issue form, and the review sheet), each limited to the release's fixed references, with the… |
 | [`public-comment`](skills/content/folio-document-adapter/public-comment.md) | Run a **public review** of a document folio. |
+| [`review-log-watch`](skills/content/folio-document-adapter/review-log-watch.md) | Poll a drafting review log (a Contributor Feedback sheet) and its folio repository's issues mechanically, with Tool `review-log-watch`, and start agent work only when a cell people set or an open… |
 | [`review-sheet-script`](skills/content/folio-document-adapter/review-sheet-script.md) | Build, install and reuse the Google Apps Script that keeps a review sheet's links and joined columns current (Tool `review-sheet-sync`). |
 
 **`skills/content/requirements-planning/`** (2)
