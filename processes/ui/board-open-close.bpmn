@@ -55,6 +55,7 @@ The rule the diagram exists to hold is the one about the way back: an action who
     <bpmn:laneSet id="LaneSet_BoardOpenClose">
       <bpmn:lane id="Lane_Reader" name="Reader" partitionElementRef="user">
         <bpmn:flowNodeRef>Start_Board</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_Act_Join</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>GW_Act</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>End_Board</bpmn:flowNodeRef>
       </bpmn:lane>
@@ -87,10 +88,16 @@ The rule the diagram exists to hold is the one about the way back: an action who
       <bpmn:outgoing>F_2</bpmn:outgoing>
     </bpmn:task>
 
-    <bpmn:exclusiveGateway id="GW_Act" name="What did the reader do?">
-      <bpmn:documentation>Waits on the reader's next action on the board. Opening a card projects a window; selecting a window raises it; `[x]` closes a window back to its avatar; resizing the board re-resolves each kind's zoom threshold; leaving ends. Every branch but `leave` comes back here, which is what makes open and close a toggle.</bpmn:documentation>
+    <bpmn:exclusiveGateway id="GW_Act_Join">
+      <bpmn:documentation>Brings the paths together before the decision after it, so that decision only splits.</bpmn:documentation>
       <bpmn:incoming>F_2</bpmn:incoming>
       <bpmn:incoming>F_Back</bpmn:incoming>
+      <bpmn:outgoing>Flow_GW_Act_Join</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GW_Act" name="What did the reader do?">
+      <bpmn:documentation>Waits on the reader's next action on the board. Opening a card projects a window; selecting a window raises it; `[x]` closes a window back to its avatar; resizing the board re-resolves each kind's zoom threshold; leaving ends. Every branch but `leave` comes back here, which is what makes open and close a toggle.</bpmn:documentation>
+      
+      <bpmn:incoming>Flow_GW_Act_Join</bpmn:incoming>
       <bpmn:outgoing>F_DoOpen</bpmn:outgoing>
       <bpmn:outgoing>F_DoRaise</bpmn:outgoing>
       <bpmn:outgoing>F_DoClose</bpmn:outgoing>
@@ -157,7 +164,7 @@ The rule the diagram exists to hold is the one about the way back: an action who
     </bpmn:endEvent>
 
     <bpmn:sequenceFlow id="F_1" sourceRef="Start_Board" targetRef="A_RenderAvatars"/>
-    <bpmn:sequenceFlow id="F_2" sourceRef="A_RenderAvatars" targetRef="GW_Act"/>
+    <bpmn:sequenceFlow id="F_2" sourceRef="A_RenderAvatars" targetRef="GW_Act_Join"/>
     <bpmn:sequenceFlow id="F_DoOpen" name="open a card" sourceRef="GW_Act" targetRef="A_Open"/>
     <bpmn:sequenceFlow id="F_DoRaise" name="select a window" sourceRef="GW_Act" targetRef="A_Raise"/>
     <bpmn:sequenceFlow id="F_DoClose" name="[x]" sourceRef="GW_Act" targetRef="A_Close"/>
@@ -166,7 +173,8 @@ The rule the diagram exists to hold is the one about the way back: an action who
     <bpmn:sequenceFlow id="F_Opened" sourceRef="A_Open" targetRef="A_Raise"/>
     <bpmn:sequenceFlow id="F_Raised" sourceRef="A_Raise" targetRef="End_Board"/>
     <bpmn:sequenceFlow id="F_Closed" sourceRef="A_Close" targetRef="A_OfferWayBack"/>
-    <bpmn:sequenceFlow id="F_Back" sourceRef="A_OfferWayBack" targetRef="GW_Act"/>
+    <bpmn:sequenceFlow id="F_Back" sourceRef="A_OfferWayBack" targetRef="GW_Act_Join"/>
+    <bpmn:sequenceFlow id="Flow_GW_Act_Join" sourceRef="GW_Act_Join" targetRef="GW_Act"/>
     <bpmn:sequenceFlow id="F_Zoom1" sourceRef="A_ResolveThreshold" targetRef="A_SwapToAvatar"/>
     <bpmn:sequenceFlow id="F_Zoom2" sourceRef="A_SwapToAvatar" targetRef="A_RenderAvatars"/>
   </bpmn:process>
@@ -181,47 +189,54 @@ The rule the diagram exists to hold is the one about the way back: an action who
   <bpmndi:BPMNDiagram id="BPMNDiagram_BoardOpenClose">
     <bpmndi:BPMNPlane id="BPMNPlane_BoardOpenClose" bpmnElement="Collab_BoardOpenClose">
       <bpmndi:BPMNShape id="Shape_Participant_BoardOpenClose" bpmnElement="Participant_BoardOpenClose" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="930" height="520"/>
+        <dc:Bounds x="160" y="80" width="1020" height="520"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Lane_Reader" bpmnElement="Lane_Reader" isHorizontal="true">
-        <dc:Bounds x="190" y="80" width="900" height="120"/>
+        <dc:Bounds x="190" y="80" width="990" height="120"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Lane_Renderer" bpmnElement="Lane_Renderer" isHorizontal="true">
-        <dc:Bounds x="190" y="200" width="900" height="400"/>
+        <dc:Bounds x="190" y="200" width="990" height="400"/>
       </bpmndi:BPMNShape>
 
       <bpmndi:BPMNShape id="Shape_Start_Board" bpmnElement="Start_Board">
         <dc:Bounds x="220" y="122" width="36" height="36"/>
         <bpmndi:BPMNLabel><dc:Bounds x="260" y="82" width="90" height="36" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Shape_GW_Act" bpmnElement="GW_Act" isMarkerVisible="true">
+      <bpmndi:BPMNShape id="Shape_GW_Act_Join" bpmnElement="GW_Act_Join" isMarkerVisible="true">
         <dc:Bounds x="480" y="115" width="50" height="50"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="534" y="115" width="180" height="18" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_GW_Act_Join" bpmnElement="Flow_GW_Act_Join">
+        <di:waypoint x="530" y="140"/>
+        <di:waypoint x="570" y="140"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_GW_Act" bpmnElement="GW_Act" isMarkerVisible="true">
+        <dc:Bounds x="570" y="115" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="624" y="115" width="180" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_End_Board" bpmnElement="End_Board">
-        <dc:Bounds x="990" y="122" width="36" height="36"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="940.5" y="162" width="135" height="36" /></bpmndi:BPMNLabel>
+        <dc:Bounds x="1080" y="122" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1030.5" y="162" width="135" height="36" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_RenderAvatars" bpmnElement="A_RenderAvatars">
         <dc:Bounds x="300" y="250" width="120" height="80"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_Open" bpmnElement="A_Open">
-        <dc:Bounds x="590" y="230" width="120" height="80"/>
+        <dc:Bounds x="680" y="230" width="120" height="80"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_Raise" bpmnElement="A_Raise">
-        <dc:Bounds x="760" y="230" width="120" height="80"/>
+        <dc:Bounds x="850" y="230" width="120" height="80"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_Close" bpmnElement="A_Close">
-        <dc:Bounds x="590" y="360" width="120" height="80"/>
+        <dc:Bounds x="680" y="360" width="120" height="80"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_OfferWayBack" bpmnElement="A_OfferWayBack">
-        <dc:Bounds x="760" y="360" width="120" height="80"/>
+        <dc:Bounds x="850" y="360" width="120" height="80"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_ResolveThreshold" bpmnElement="A_ResolveThreshold">
-        <dc:Bounds x="560" y="480" width="140" height="80"/>
+        <dc:Bounds x="650" y="480" width="140" height="80"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_SwapToAvatar" bpmnElement="A_SwapToAvatar">
-        <dc:Bounds x="760" y="480" width="160" height="80"/>
+        <dc:Bounds x="850" y="480" width="160" height="80"/>
       </bpmndi:BPMNShape>
 
       <bpmndi:BPMNEdge id="Edge_F_1" bpmnElement="F_1">
@@ -236,67 +251,68 @@ The rule the diagram exists to hold is the one about the way back: an action who
         <di:waypoint x="480" y="140"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_DoOpen" bpmnElement="F_DoOpen">
-        <di:waypoint x="505" y="165"/>
-        <di:waypoint x="505" y="270"/>
-        <di:waypoint x="590" y="270"/>
+        <di:waypoint x="595" y="165"/>
+        <di:waypoint x="595" y="270"/>
+        <di:waypoint x="680" y="270"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="501" y="208.5" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_DoRaise" bpmnElement="F_DoRaise">
-        <di:waypoint x="530" y="140"/>
-        <di:waypoint x="820" y="140"/>
-        <di:waypoint x="820" y="230"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="630" y="143" width="90" height="53" /></bpmndi:BPMNLabel>
+        <di:waypoint x="620" y="140"/>
+        <di:waypoint x="910" y="140"/>
+        <di:waypoint x="910" y="230"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="720" y="143" width="90" height="53" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_DoClose" bpmnElement="F_DoClose">
-        <di:waypoint x="505" y="165"/>
-        <di:waypoint x="505" y="180"/>
-        <di:waypoint x="545" y="180"/>
-        <di:waypoint x="545" y="400"/>
-        <di:waypoint x="590" y="400"/>
+        <di:waypoint x="595" y="165"/>
+        <di:waypoint x="595" y="180"/>
+        <di:waypoint x="635" y="180"/>
+        <di:waypoint x="635" y="400"/>
+        <di:waypoint x="680" y="400"/>
         <bpmndi:BPMNLabel><dc:Bounds x="451" y="281" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_DoZoom" bpmnElement="F_DoZoom">
-        <di:waypoint x="480" y="140"/>
+        <di:waypoint x="570" y="140"/>
         <di:waypoint x="270" y="140"/>
         <di:waypoint x="270" y="520"/>
-        <di:waypoint x="560" y="520"/>
+        <di:waypoint x="650" y="520"/>
         <bpmndi:BPMNLabel><dc:Bounds x="330" y="143" width="90" height="35" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Leave" bpmnElement="F_Leave">
-        <di:waypoint x="505" y="115"/>
-        <di:waypoint x="505" y="100"/>
-        <di:waypoint x="1008" y="100"/>
-        <di:waypoint x="1008" y="122"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="711.5" y="80" width="90" height="17" /></bpmndi:BPMNLabel>
+        <di:waypoint x="595" y="115"/>
+        <di:waypoint x="595" y="100"/>
+        <di:waypoint x="1098" y="100"/>
+        <di:waypoint x="1098" y="122"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="801.5" y="80" width="90" height="17" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Opened" bpmnElement="F_Opened">
-        <di:waypoint x="710" y="270"/>
-        <di:waypoint x="760" y="270"/>
+        <di:waypoint x="800" y="270"/>
+        <di:waypoint x="850" y="270"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Raised" bpmnElement="F_Raised">
-        <di:waypoint x="880" y="270"/>
-        <di:waypoint x="940" y="270"/>
-        <di:waypoint x="940" y="140"/>
-        <di:waypoint x="990" y="140"/>
+        <di:waypoint x="970" y="270"/>
+        <di:waypoint x="1030" y="270"/>
+        <di:waypoint x="1030" y="140"/>
+        <di:waypoint x="1080" y="140"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Closed" bpmnElement="F_Closed">
-        <di:waypoint x="710" y="400"/>
-        <di:waypoint x="760" y="400"/>
+        <di:waypoint x="800" y="400"/>
+        <di:waypoint x="850" y="400"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Back" bpmnElement="F_Back">
-        <di:waypoint x="880" y="400"/>
-        <di:waypoint x="960" y="400"/>
-        <di:waypoint x="960" y="210"/>
+        <di:waypoint x="970" y="400"/>
+        <di:waypoint x="1050" y="400"/>
+        <di:waypoint x="1050" y="210"/>
         <di:waypoint x="505" y="210"/>
         <di:waypoint x="505" y="165"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Zoom1" bpmnElement="F_Zoom1">
-        <di:waypoint x="700" y="520"/>
-        <di:waypoint x="760" y="520"/>
+        <di:waypoint x="790" y="520"/>
+        <di:waypoint x="850" y="520"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Zoom2" bpmnElement="F_Zoom2">
-        <di:waypoint x="920" y="520"/>
-        <di:waypoint x="960" y="520"/>
-        <di:waypoint x="960" y="575"/>
+        <di:waypoint x="1010" y="520"/>
+        <di:waypoint x="1050" y="520"/>
+        <di:waypoint x="1050" y="575"/>
         <di:waypoint x="360" y="575"/>
         <di:waypoint x="360" y="330"/>
       </bpmndi:BPMNEdge>

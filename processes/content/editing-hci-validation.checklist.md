@@ -164,7 +164,7 @@ What happens to one proposed change to one content block: drafted, validated mec
 - The editor's recorded decision, with its audit note.
 - Call `workflow_complete` with `node: "Gateway_EditorDecision"` and `outcome` set to the label that holds:
   - «revise» → `Task_ReviseEdit` (Revise the proposed change)
-  - «discard» → `Call_BeanClose` (Close the bean)
+  - «discard» → `Task_ResolveBean` (Close the bean)
   - «accept» → `Task_Commit` (Commit into the corpus)
 
 ### 15. Revise the proposed change (`Task_ReviseEdit`)
@@ -175,13 +175,13 @@ What happens to one proposed change to one content block: drafted, validated mec
 - Record it: `workflow_complete` with `node: "Task_ReviseEdit"`.
 - next: → `Gateway_ProposalReady` (Proposed change ready)
 
-### 16. Close the bean (`Call_BeanClose`)
+### 16. Close the bean (`Task_ResolveBean`)
 
-- Who: the `Editor / author (person)` lane (role `author`).
+- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
 - Skill: `todo-manager`.
 - What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
 - A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
-- next: → `EndEvent_Discarded` (Change discarded)
+- next: → `GW_BeanClosedHow` (How did it end?)
 
 ### 17. Commit into the corpus (`Task_Commit`)
 
@@ -191,18 +191,17 @@ What happens to one proposed change to one content block: drafted, validated mec
 - Record it: `workflow_complete` with `node: "Task_Commit"`.
 - next: → `Task_ResolveBean` (Close the bean)
 
-## Done — Change discarded (`EndEvent_Discarded`)
+### Decide — How did it end? (`GW_BeanClosedHow`)
+
+- Which outcome the bean was closed with, so each ends at its own named end event.
+- Call `workflow_complete` with `node: "GW_BeanClosedHow"` and `outcome` set to the label that holds:
+  - «in the corpus» → `EndEvent_InCorpus` (Change is in the corpus)
+  - «discarded» → `EndEvent_Discarded` (Change discarded)
+
+## Done — Change is in the corpus (`EndEvent_InCorpus`)
 
 - The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
-### 18. Close the bean (`Task_ResolveBean`)
-
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
-- Skill: `todo-manager`.
-- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
-- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
-- next: → `EndEvent_InCorpus` (Change is in the corpus)
-
-## Done — Change is in the corpus (`EndEvent_InCorpus`)
+## Done — Change discarded (`EndEvent_Discarded`)
 
 - The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.

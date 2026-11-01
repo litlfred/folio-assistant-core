@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dsa-document-lifecycle\n"
-"POT-Creation-Date: 2026-10-30T20:01:28.955Z\n"
+"POT-Creation-Date: 2026-11-01T10:26:04.737Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ar\n"
@@ -14,17 +14,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:417
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:412
 #. Diagram label
 msgid "Agreement ended"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:406
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:400
 #. Diagram element documentation
 msgid "All grants are revoked (P13) and the end-of-agreement duties start: return or delete the data, then check them (P12). Those are server processes in smart-trust; this step records that the parties started them."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:362
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:356
 #. Diagram label
 msgid "Amend, renew or end?"
 msgstr ""
@@ -44,7 +44,7 @@ msgstr ""
 msgid "Build pipeline (system)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:444
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:439
 #. Diagram label
 msgid "changes needed"
 msgstr ""
@@ -54,12 +54,12 @@ msgstr ""
 msgid "Checks the ODRL against the text, and reviews the whole draft. Decides whether the public terms go out for public comment, and whether the draft is ready to sign."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:424
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:419
 #. Diagram label
 msgid "claimed"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:326
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:405
 #. Diagram label
 msgid "Close the bean [bean-close]"
 msgstr ""
@@ -89,12 +89,12 @@ msgstr ""
 msgid "Compute SHA-256 (FIPS 180-4) of the signed text, and of the ODRL file if there is one, recorded as DCAT 3 spdx:checksum and verified by check:dsa-hash."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:429
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:424
 #. Diagram label
 msgid "consent"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:380
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:374
 #. Diagram element documentation
 msgid "Consent rule 2, for a new version only. `widens use` (for example more data, more purposes, more recipients or a longer period): the Consents that cite the old version do not cover the new one, so new consent is needed. `narrows use`: no new consent is needed. `not consent-based`: there is no consent to renew."
 msgstr ""
@@ -124,7 +124,7 @@ msgstr ""
 msgid "Consent-based only. Write a plain-language summary of the agreement in the same document folio: what it lets the recipient do with the person's data, in words the person can read. Consent rule 3: every agreement that needs consent publishes this summary, hashed with the agreement (P2.2a), and the summary is what the person consents to. It is reviewed, rendered and versioned with the text."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:379
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:373
 #. Diagram label
 msgid "Consent-based: does the amendment widen use?"
 msgstr ""
@@ -144,12 +144,12 @@ msgstr ""
 msgid "Data sharing agreement document life cycle"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:356
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:350
 #. Diagram label
 msgid "Decide: amend, renew or end"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:434
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:429
 #. Diagram label
 msgid "document only"
 msgstr ""
@@ -164,12 +164,17 @@ msgstr ""
 msgid "Each signed version gets its own immutable URL (for example /dsa/42/v3). A 'latest' URL may exist; nothing cites it. A new version never overwrites an old one. This fixed-version URL is the one a Consent cites (consent rule 2), and a computable agreement's ODRL policy uid is set to it (P2.3)."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:469
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:465
 #. Diagram label
 msgid "end"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:374
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:474
+#. Diagram label
+msgid "ended"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:368
 #. Diagram element documentation
 msgid "Existing grants keep citing the old hash. The parties decide, per agreement: they stay valid until expiry, or they are revoked and reissued against the new version (in smart-trust). The old version stays readable."
 msgstr ""
@@ -182,6 +187,11 @@ msgstr ""
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:41
 #. Diagram element documentation
 msgid "How a data sharing agreement is drafted, negotiated, signed, published with a version, a hash and a catalogue record, and later amended, renewed or ended. It covers the agreement as a document folio only: processes P1, P2 and P14 of the DSA process catalogue. Two entry points: a request for an agreement (P1, then P2), and a change to one in force (P14). An amendment or a renewal with a new end date runs P1 and P2 again and publishes a new version linked to the old one; the old version stays readable. Standards named: ODRL 2.2 (the Agreement), DCAT 3 (catalogue record, distributions, checksums, versions) and DCMI Terms (dcterms:source from the policy to the text). No field is defined here. Steps no skill covers yet are user tasks with a no-skill reason starting \"Gap:\". Owner's option B13-B, 2026-10-30; folio-assistant#2702. Consent rules (owner, 2026-10-30), which every agreement drawn here keeps. 1. Legal basis: an agreement carries the odrl:obtainConsent duty only when consent is its legal basis; treatment, public-health law and research waivers do not rest on consent (P1.2a, P1.3). 2. Version pinning: a Consent cites the agreement's fixed-version URL and hash (FHIR R4 Consent.policy.uri), and for a computable agreement the ODRL policy uid is that same URL (P2.1, P2.2b, P2.3); an amendment that widens use needs new consent, one that narrows use does not (P14.3). 3. Plain language: every agreement that needs consent publishes a plain-language summary, hashed with the agreement, and that summary is what the person consents to (P1.2b, P2.2a). How a person gives, withdraws or is asked again for consent is the trust layer's, not this diagram's."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:409
+#. Diagram label
+msgid "How did it end?"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:297
@@ -219,7 +229,7 @@ msgstr ""
 msgid "Merge: the first draft, a review that asks for changes, and an amendment or renewal (P14) all come back to writing the text."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:393
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:387
 #. Diagram element documentation
 msgid "Merge: with or without new consent, the new version is written and published again (P1, P2). Its DCAT 3 record carries dcat:previousVersion naming the fixed-version URL of the version it amends (P2.4–5, dsa-dcat-record); older Consents are carried across a narrowing amendment along that chain."
 msgstr ""
@@ -229,27 +239,27 @@ msgstr ""
 msgid "Merge: with or without public comment, the reviewers then decide whether the draft is ready to sign."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:472
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:468
 #. Diagram label
 msgid "narrows use"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:467
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:463
 #. Diagram label
 msgid "new version"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:441
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:436
 #. Diagram label
 msgid "no"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:451
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:446
 #. Diagram label
 msgid "not consent-based"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:423
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:418
 #. Diagram label
 msgid "not yours"
 msgstr ""
@@ -324,22 +334,22 @@ msgstr ""
 msgid "P1.6 · Sign"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:337
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:331
 #. Diagram element documentation
 msgid "P14 trigger: the parties want to change the terms, the end date is reached, or one party gives notice of termination."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:373
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:367
 #. Diagram label
 msgid "P14.2 · Decide what happens to existing grants"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:386
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:380
 #. Diagram label
 msgid "P14.3 · Record that new consent is needed"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:399
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:393
 #. Diagram label
 msgid "P14.5 · Set the catalogue status to ended [dsa-catalogue-status]"
 msgstr ""
@@ -379,7 +389,7 @@ msgstr ""
 msgid "Parties and signatories (provider, recipient)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:327
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:406
 #. Diagram element documentation
 msgid "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step."
 msgstr ""
@@ -414,6 +424,11 @@ msgstr ""
 msgid "Publish the version at its URL [content-publish]"
 msgstr ""
 
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:457
+#. Diagram label
+msgid "published"
+msgstr ""
+
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:106
 #. Diagram label
 msgid "Publisher (data provider's publication manager)"
@@ -429,7 +444,7 @@ msgstr ""
 msgid "Reads which end Process_BeanOpen reached. `claimed`: the bean is in progress and this process works it. `not yours`: a sibling session or a human holds it, nothing was written to it, and this process stops here rather than work a bean it does not own (bean-coordination)."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:445
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:440
 #. Diagram label
 msgid "ready"
 msgstr ""
@@ -454,12 +469,12 @@ msgstr ""
 msgid "Renders the agreed text before it is signed, and publishes the signed version at its immutable URL."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:468
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:464
 #. Diagram label
 msgid "renew by grant"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:369
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:363
 #. Diagram label
 msgid "Renewed by a new grant"
 msgstr ""
@@ -474,12 +489,12 @@ msgstr ""
 msgid "Reviewer (legal, policy)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:405
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:399
 #. Diagram label
 msgid "Revoke grants and start end-of-agreement duties"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:400
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:394
 #. Diagram element documentation
 msgid "Set the life-cycle status of the agreement's DCAT 3 record (DCAT 3 §6.4.30). The published versions stay readable at their URLs."
 msgstr ""
@@ -499,17 +514,17 @@ msgstr ""
 msgid "Split the agreement into a public template and private annexes (security controls, named staff). Only the hash of a private annex is ever published."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:336
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:330
 #. Diagram label
 msgid "Terms change, end date reached, or notice given"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:418
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:413
 #. Diagram element documentation
 msgid "The agreement has expired or been terminated, its catalogue status says so, and its versions stay readable."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:387
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:381
 #. Diagram element documentation
 msgid "The amendment widens use, so a Consent citing the old version's URL and hash does not cover the new version (consent rule 2). Record on the bean, and in the new version's text, that new consent is needed; the new version gets its own plain-language summary (P1.2b). Asking each person again is the trust layer's."
 msgstr ""
@@ -534,12 +549,12 @@ msgstr ""
 msgid "The parties agree the purpose, the datasets, the period, the conditions and duties, which trust anchors each side accepts, and the legal basis the sharing rests on (consent, treatment, public-health law or a research waiver). This sets what the text must say; it is a negotiation between people."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:357
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:351
 #. Diagram element documentation
 msgid "The parties decide what happens to the agreement. Deciding to amend or terminate is human; expiry of a computable agreement is already enforced by its ODRL dateTime constraint."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:363
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:357
 #. Diagram element documentation
 msgid "The parties' decision. `new version` (amend, or renew with a new end date) runs P1 again and publishes a new version linked to the old one. `renew by grant` (the version has no end date): nothing in the document changes. `end` (expiry or termination) closes the agreement."
 msgstr ""
@@ -554,7 +569,7 @@ msgstr ""
 msgid "The signatories sign: wet ink, or an electronic signature under national law. Technically a detached JWS (RFC 7515) or CMS (RFC 5652); PAdES for a signed PDF needs the owner's approval."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:333
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:327
 #. Diagram element documentation
 msgid "The signed version is at its immutable URL, with its hash and catalogue record. Grants and keys that cite it are issued in the server processes (smart-trust), not here."
 msgstr ""
@@ -564,12 +579,12 @@ msgstr ""
 msgid "The text states the legal basis the parties agreed in P1.1 as a normative statement: consent, treatment, public-health law, or a research waiver. Consent rule 1: only an agreement whose legal basis is consent carries the odrl:obtainConsent duty; treatment, public-health law and research waivers do not rest on consent. The gateway that follows, the ODRL and the reviewers all read the basis from this statement."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:370
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:364
 #. Diagram element documentation
 msgid "The version has no end date, so renewal is a new grant under the same version. Grants are issued in the server processes (smart-trust), not here."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:430
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:425
 #. Diagram label
 msgid "treatment, law or waiver"
 msgstr ""
@@ -579,12 +594,17 @@ msgstr ""
 msgid "Used only when the public part of the agreement (the template) goes out for public comment. Comments are handled in Process_PublicComment, the same as for any document folio."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:332
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:326
 #. Diagram label
 msgid "Version published — agreement in force"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:471
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:410
+#. Diagram element documentation
+msgid "Which outcome the bean was closed with, so each ends at its own named end event. The bean is closed once, on every path (bpmn-authoring: open and close the bean at the top, once)."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:467
 #. Diagram label
 msgid "widens use"
 msgstr ""
@@ -604,7 +624,7 @@ msgstr ""
 msgid "Writes the legal text and, for a computable agreement, derives the ODRL 2.2 Agreement from it. Every loop comes back here: a review that asks for changes, an amendment, and a renewal that needs a new version."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:433
+#: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:428
 #. Diagram label
 msgid "yes"
 msgstr ""
