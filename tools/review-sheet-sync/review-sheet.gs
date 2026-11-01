@@ -1147,6 +1147,13 @@ function stagingCell(url, built, prs, readyAt, disp) {
   const w = stagingWarning(url, built, prs, readyAt);
   const dl = disp ? [{ t: '\n\u26a0 ' + disp + ': not ready for merge', bold: true }] : [];
   if (!url) return rich((w ? [{ t: w, bold: true }] : []).concat(w ? dl : []));
+  // No link until Pages has deployed it (owner, 2026-11-01: a review link
+  // that answered 404 "so user is confused"). The agent reads the Pages
+  // deployment through the GitHub API and writes Staging deploy; the script
+  // needs no internet access, so it trusts that value: building, on gh-pages
+  // or deploying shows the stage with no link, deployed shows the link.
+  const stage = deployStage((built || {}).deploy);
+  if (stage) return rich([{ t: '\u23f3 Preview not live yet: ' + stage + '. The link appears when Pages has deployed it.', bold: true }].concat(dl));
   // The staging QA report beside the preview (owner, 2026-10-31: "sheets
   // should link to QA reports for the staging"), then the QA gate.
   // "QA report" opens the viewer: the preview's review page, at its

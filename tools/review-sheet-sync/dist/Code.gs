@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 29c95391d09f7ad9.
+// folio-assistant-core tools/review-sheet-sync at template sha256 345da96a545d8a0c.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 29c95391d09f7ad9';
+const SCRIPT_VERSION = 'template sha256 345da96a545d8a0c';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -1147,6 +1147,13 @@ function stagingCell(url, built, prs, readyAt, disp) {
   const w = stagingWarning(url, built, prs, readyAt);
   const dl = disp ? [{ t: '\n\u26a0 ' + disp + ': not ready for merge', bold: true }] : [];
   if (!url) return rich((w ? [{ t: w, bold: true }] : []).concat(w ? dl : []));
+  // No link until Pages has deployed it (owner, 2026-11-01: a review link
+  // that answered 404 "so user is confused"). The agent reads the Pages
+  // deployment through the GitHub API and writes Staging deploy; the script
+  // needs no internet access, so it trusts that value: building, on gh-pages
+  // or deploying shows the stage with no link, deployed shows the link.
+  const stage = deployStage((built || {}).deploy);
+  if (stage) return rich([{ t: '\u23f3 Preview not live yet: ' + stage + '. The link appears when Pages has deployed it.', bold: true }].concat(dl));
   // The staging QA report beside the preview (owner, 2026-10-31: "sheets
   // should link to QA reports for the staging"), then the QA gate.
   // "QA report" opens the viewer: the preview's review page, at its
