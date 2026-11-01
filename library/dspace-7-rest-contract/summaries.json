@@ -1,0 +1,975 @@
+{
+  "$schema": "folio-block-summaries/v1",
+  "entry": "dspace-7-rest-contract",
+  "summaries": [
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s509-parameters",
+      "source": "sections/s509-parameters.md",
+      "source_hash": "52c5db3c307694b4896f131a7657ce83d5f76fe1f27ddab9236973cb42f3570d",
+      "narrative": [
+        {
+          "text": "Parameters of the metadata-export-search script: -q/--query for the discovery search string (not URL encoded), -s/--scope for the UUID of the site, community or collection that limits the search, -c/--configuration for the Discovery configuration to use, -f/--filter for an advanced filter written <filter-name>,<filter-operator>=<filter-value> (for example author,authority=<uuid> or title,contains=sample text), and -h/--help.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s510-conclusion-quickguide",
+      "source": "sections/s510-conclusion-quickguide.md",
+      "source_hash": "5f87cae496adc5250b721cc284ed12f6d797ad17c76c48cf5e2d88d20f3643a0",
+      "narrative": [
+        {
+          "text": "Closing quick guide for the metadata-export-search script. It exports, as CSV, the metadata of the records that match a discovery search, so a chosen subset of records can be moved into other systems or analysed with other tools.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s511-metadata-export-script",
+      "source": "sections/s511-metadata-export-script.md",
+      "source_hash": "f378b3808b09604d64eac1dfd81f9b74c6291e90626566185ac1ed0addb53de4",
+      "narrative": [
+        {
+          "text": "Title and table of contents of the metadata-export script page, with a link back to the script index. The page has the usual sections: what it does, who can use it, when to use it, how it works, parameters, and a quick guide.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s512-what-it-does",
+      "source": "sections/s512-what-it-does.md",
+      "source_hash": "ee1a55a68a1636c9e7f16f533eab113e67f87f68ad41710d89848b5a937a54de",
+      "narrative": [
+        {
+          "text": "The metadata-export script exports, in CSV, the metadata of one item, collection or community. The block points to the DSpace 7 Batch Metadata Editing documentation for more.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s513-who-can-use-it",
+      "source": "sections/s513-who-can-use-it.md",
+      "source_hash": "feb6950410c85ca0aa0b3cf2ba7c4e5a7c2577b0be213ab97fe20faa19cf6b5b",
+      "narrative": [
+        {
+          "text": "Only repository administrators can run the metadata-export script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s514-when-we-use-it",
+      "source": "sections/s514-when-we-use-it.md",
+      "source_hash": "d4e143cff335449131730ddf697da2be40dd0371fdec65817ee55d581430302c",
+      "narrative": [
+        {
+          "text": "The metadata-export script is used for batch editing: export the metadata of items, collections or communities, change it in a spreadsheet or text editor, then load it back with the metadata-import script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s515-how-it-works",
+      "source": "sections/s515-how-it-works.md",
+      "source_hash": "81f33993c0f34dc3a3bac5e2757ac536224ac0d55df59cc451edb60815aa1e79",
+      "narrative": [
+        {
+          "text": "How the metadata-export script works. It reads the metadata of the given item, collection or community from the database and writes it to a CSV file. By default only the fields users normally edit (such as title, author and date) are exported; -a/--all adds the fields that are not normally changed, such as provenance.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s516-parameters",
+      "source": "sections/s516-parameters.md",
+      "source_hash": "809f3da0279bd51a7ad61fdfb00dd3af4d811352ffa230491c1623f6324c2950",
+      "narrative": [
+        {
+          "text": "Parameters of the metadata-export script: -i/--id for the id or handle of the item, collection or community to export, -a/--all to include fields that are not normally changed (for example provenance), and -h/--help.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s517-conclusion-quickguide",
+      "source": "sections/s517-conclusion-quickguide.md",
+      "source_hash": "14775afd20c6265e7c7215be6fd5a85639111adaf0ccb8ba3003048a6572cb6c",
+      "narrative": [
+        {
+          "text": "Closing quick guide for the metadata-export script: export metadata to a spreadsheet or editor, change many items, collections or communities at once, then re-import with the metadata-import script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s518-metadata-import-script",
+      "source": "sections/s518-metadata-import-script.md",
+      "source_hash": "357f36b195612aba6097dbfada660e71660a769073e98d2e0897076519897812",
+      "narrative": [
+        {
+          "text": "Title and table of contents of the metadata-import script page, with a link back to the script index and the usual sections (what, who, when, how, parameters, quick guide).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s519-what-it-does",
+      "source": "sections/s519-what-it-does.md",
+      "source_hash": "b678336342c7931789bf36ede4bcad39f74de56848c92848c042981f888a291a",
+      "narrative": [
+        {
+          "text": "The metadata-import script imports metadata from a CSV file after batch editing. The block points to the DSpace 7 Batch Metadata Editing documentation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s520-who-can-use-it",
+      "source": "sections/s520-who-can-use-it.md",
+      "source_hash": "feb6950410c85ca0aa0b3cf2ba7c4e5a7c2577b0be213ab97fe20faa19cf6b5b",
+      "narrative": [
+        {
+          "text": "Only repository administrators can run the metadata-import script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s521-when-we-use-it",
+      "source": "sections/s521-when-we-use-it.md",
+      "source_hash": "aaa13e9ec343ce55fc40d4c2ff1d4ac9934a1ee1e5f94b7b18c2af5c4542a226",
+      "narrative": [
+        {
+          "text": "The metadata-import script is for large-scale changes, so that the metadata of many items can be updated in bulk.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s522-how-it-works",
+      "source": "sections/s522-how-it-works.md",
+      "source_hash": "933a5641b2682471f269d54e7c93772c222bc5e894bed3f4c8f513172fad6136",
+      "narrative": [
+        {
+          "text": "How the metadata-import script works: it reads a CSV file of metadata and updates the matching items in DSpace, typically after a batch edit of many items.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s523-parameters",
+      "source": "sections/s523-parameters.md",
+      "source_hash": "a38eb831a3083f2ede95039dad044967d0308dced770e274b35a222d1e90e31d",
+      "narrative": [
+        {
+          "text": "Parameters of the metadata-import script: -f <file> for the CSV source file, -s for silent operation with no confirmation of changes (use with caution), -w to send new items through the collection workflow, -n to send notification emails when new items go through a workflow, -v to validate the CSV without importing, -t to apply the collection template to new items if one exists, and -h/--help.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s524-conclusion-quickguide",
+      "source": "sections/s524-conclusion-quickguide.md",
+      "source_hash": "bb37e6b03e9f2b11f326c6580414c3d231f6a597e8f8e937088fe104cf57733f",
+      "narrative": [
+        {
+          "text": "Closing quick guide for the metadata-import script. It imports metadata after a batch edit. Take care with silent mode, and validate the CSV before importing.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s525-orcid-bulk-push-script",
+      "source": "sections/s525-orcid-bulk-push-script.md",
+      "source_hash": "385e20967c4b36df265e3d5e45e04bdbd90b5f6b861796ffcc58a14e8383008c",
+      "narrative": [
+        {
+          "text": "Title and table of contents of the ORCID-bulk-push script page, with a link back to the script index and the usual sections (what, who, when, how, parameters, quick guide).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s526-what-it-does",
+      "source": "sections/s526-what-it-does.md",
+      "source_hash": "1ec4a34f34bb7dd55537ca6612db7d3668b145ea8985ec5bd647471b1c61807c",
+      "narrative": [
+        {
+          "text": "The ORCID-bulk-push script synchronises, in bulk, every ORCID entity waiting in the ORCID queue. It is part of the DSpace ORCID integration, and the block points to the ORCID Integration documentation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s527-who-can-use-it",
+      "source": "sections/s527-who-can-use-it.md",
+      "source_hash": "feb6950410c85ca0aa0b3cf2ba7c4e5a7c2577b0be213ab97fe20faa19cf6b5b",
+      "narrative": [
+        {
+          "text": "Only repository administrators can run the ORCID-bulk-push script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s528-when-we-use-it",
+      "source": "sections/s528-when-we-use-it.md",
+      "source_hash": "8943599374f0d4fe4127406f9929422c47dfa33c1aaeb40ca8b3f49cfe81b2aa",
+      "narrative": [
+        {
+          "text": "The ORCID-bulk-push script is used to make sure every entity in the ORCID queue is synchronised, including ones whose earlier synchronisation failed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s529-how-it-works",
+      "source": "sections/s529-how-it-works.md",
+      "source_hash": "30d3b06437a9c4074754d848dd01fd2addf54f70dc968a33492fe848c238b546",
+      "narrative": [
+        {
+          "text": "How the ORCID-bulk-push script works. It finds every entity in the ORCID queue and tries to synchronise each with ORCID. A failed entity is retried up to a maximum number of attempts, 10 by default and configurable in the ORCID configuration file. The -f option forces synchronisation even when that maximum has been reached.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s530-parameters",
+      "source": "sections/s530-parameters.md",
+      "source_hash": "a37a2c0822f6d0e6fb65922bc184b88040dedfd3338105039f1242674a0ebb95",
+      "narrative": [
+        {
+          "text": "The ORCID-bulk-push script has one parameter: -f/--force, which forces synchronisation and ignores the maximum number of attempts.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s531-conclusion-quickguide",
+      "source": "sections/s531-conclusion-quickguide.md",
+      "source_hash": "31d9435f2fb05bdc13b72b5adbd51c8883e907fac67040fe7fa89ca686ba1393",
+      "narrative": [
+        {
+          "text": "Closing quick guide for the ORCID-bulk-push script. It synchronises every queued ORCID entity so DSpace stays up to date with ORCID, retries failures up to the maximum, and -f forces synchronisation of entities that have already failed too often.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s532-process-cleaner-script",
+      "source": "sections/s532-process-cleaner-script.md",
+      "source_hash": "e0816d4befd82a8e39d9a5470818e74ebc54698af01b76805c2965cfb1ce5213",
+      "narrative": [
+        {
+          "text": "Title and table of contents of the process-cleaner script page, with a link back to the script index and the usual sections (what, who, when, how, parameters, quick guide).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s533-what-it-does",
+      "source": "sections/s533-what-it-does.md",
+      "source_hash": "f06a8cfb57b6eaff1f3fb07ac67a080234e30bedc81b1364d11be0bec8913877",
+      "narrative": [
+        {
+          "text": "The process-cleaner script removes old DSpace processes that are in a given state: RUNNING, FAILED or COMPLETED.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s534-who-can-use-it",
+      "source": "sections/s534-who-can-use-it.md",
+      "source_hash": "feb6950410c85ca0aa0b3cf2ba7c4e5a7c2577b0be213ab97fe20faa19cf6b5b",
+      "narrative": [
+        {
+          "text": "Only repository administrators can run the process-cleaner script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s535-when-we-use-it",
+      "source": "sections/s535-when-we-use-it.md",
+      "source_hash": "595339fe42bf92ad6736d9a6b788f69232df041ef2a392f8c6afa0d934ee6639",
+      "narrative": [
+        {
+          "text": "The process-cleaner script is used to clear out old processes that are no longer needed and that accumulate and take up server resources.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s536-how-it-works",
+      "source": "sections/s536-how-it-works.md",
+      "source_hash": "a71bb0cc8333471014a612c6eef75ca4cb0223896d580c8185656ac658b9e4ff",
+      "narrative": [
+        {
+          "text": "How the process-cleaner script works. It finds processes in the chosen states and deletes them from the database. By default it deletes COMPLETED processes; -r adds RUNNING ones and -f adds FAILED ones.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s537-parameters",
+      "source": "sections/s537-parameters.md",
+      "source_hash": "ca86a25aefaf9ff70849455ba76c458dd5305b0f9ae536cae2eb8d002fd765b0",
+      "narrative": [
+        {
+          "text": "Parameters of the process-cleaner script: -h/--help, -r/--running to delete RUNNING processes, -f/--failed to delete FAILED processes, and -c/--completed to delete COMPLETED processes, which is the default when no status is given.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s538-conclusion-quickguide",
+      "source": "sections/s538-conclusion-quickguide.md",
+      "source_hash": "be151beab10d0c42e32f15106058b49afa0fba1108babc18264e16ef443bb5f1",
+      "narrative": [
+        {
+          "text": "Closing quick guide for the process-cleaner script: removing old processes frees server resources. Give the states of the processes to remove.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s539-retry-tracker-script",
+      "source": "sections/s539-retry-tracker-script.md",
+      "source_hash": "a79172f128c01cd8a2e2843ff9409da54a167fd11bc81f43db638afbcac053da",
+      "narrative": [
+        {
+          "text": "Title and table of contents of the retry-tracker script page, with a link back to the script index and the usual sections (what, who, when, how, parameters, quick guide).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s540-what-it-does",
+      "source": "sections/s540-what-it-does.md",
+      "source_hash": "b6b4a65af4b76125484a1229b54a533ee0445a849eba79e3353dbec4db8dba23",
+      "narrative": [
+        {
+          "text": "The retry-tracker script retries failed commits to the OpenURLTracker, which records requests DSpace makes to external systems (such as DOI lookup services) and stores metadata about them in the database. The script is also used when exchanging usage statistics with IRUS.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s541-who-can-use-it",
+      "source": "sections/s541-who-can-use-it.md",
+      "source_hash": "feb6950410c85ca0aa0b3cf2ba7c4e5a7c2577b0be213ab97fe20faa19cf6b5b",
+      "narrative": [
+        {
+          "text": "Only repository administrators can run the retry-tracker script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s542-when-we-use-it",
+      "source": "sections/s542-when-we-use-it.md",
+      "source_hash": "bb4f52cf0beb8d78bdfc7952d45aedf750e4b0bd35f6a474fe3bf56386d85259",
+      "narrative": [
+        {
+          "text": "The retry-tracker script is used when requests to external systems have failed because of network or service problems and need to be sent again.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s543-how-it-works",
+      "source": "sections/s543-how-it-works.md",
+      "source_hash": "a50a00cf30571e55848ee3dafc453235f6aeab973c839e40c13b2e233d9f9565",
+      "narrative": [
+        {
+          "text": "How the retry-tracker script works. It finds the URLs marked as failed in the OpenURLTracker table and sends those requests again, which helps after temporary network or service failures. The -a option adds a test URL to the table so the script can be tried without waiting for a real failure.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s544-parameters",
+      "source": "sections/s544-parameters.md",
+      "source_hash": "9fd23308647acf8fd550b2cc1078ebf0e4eb1a2899a93b926b25f51629e3b28f",
+      "narrative": [
+        {
+          "text": "Parameters of the retry-tracker script: -a <value> adds a \"failed\" row with a URL, for testing only; -r retries every URL in the table of failed requests, including one added with -a; -h/--help prints help.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s545-conclusion-quickguide",
+      "source": "sections/s545-conclusion-quickguide.md",
+      "source_hash": "624e6a92cb1850f71f8b085ef333bd2c53acb2eff2738a40e247bbfca6229b49",
+      "narrative": [
+        {
+          "text": "Closing quick guide for the retry-tracker script: it resends failed requests to external systems so they are not lost to temporary network or service problems, and is worth adding to the workflow when such failures are frequent.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s546-solr-database-resync-script",
+      "source": "sections/s546-solr-database-resync-script.md",
+      "source_hash": "6220abaa2f82e02f1923d4b714cb23e2c1d483dcb6a4c3cfdf1a485814613e39",
+      "narrative": [
+        {
+          "text": "Title and table of contents of the solr-database-resync script page, with a link back to the script index and the usual sections (what, who, when, how, parameters, quick guide).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s547-what-it-does",
+      "source": "sections/s547-what-it-does.md",
+      "source_hash": "515304269d5810c6c5331a503412ce819eaf4642d4a854e5a019b5a0a4561550",
+      "narrative": [
+        {
+          "text": "The solr-database-resync script updates the database status of items in Solr.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s548-who-can-use-it",
+      "source": "sections/s548-who-can-use-it.md",
+      "source_hash": "feb6950410c85ca0aa0b3cf2ba7c4e5a7c2577b0be213ab97fe20faa19cf6b5b",
+      "narrative": [
+        {
+          "text": "Only repository administrators can run the solr-database-resync script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s549-when-we-use-it",
+      "source": "sections/s549-when-we-use-it.md",
+      "source_hash": "79061bfbd0e889a5443c149cd2284732add3c2c343f4fa08e603d59b847865ee",
+      "narrative": [
+        {
+          "text": "The solr-database-resync script is used when the database and the Solr index disagree, for example after the database was changed outside DSpace or indexing failed, so that item statuses in Solr no longer match and search results are wrong.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s550-how-it-works",
+      "source": "sections/s550-how-it-works.md",
+      "source_hash": "5b2c2eab322ab6b4c69dd94f2d74abaaeba9f41eef8ce613cc43af96e8305418",
+      "narrative": [
+        {
+          "text": "How the solr-database-resync script works. Each item's metadata is stored in the database and indexed in Solr, where a status field says whether the item is in archive, withdrawn or discoverable. The script reads all items and their status from the Solr index, checks each against the database, updates the database status where needed, and then reindexes each item so Solr holds the correct status.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s551-parameters",
+      "source": "sections/s551-parameters.md",
+      "source_hash": "8d72515e86e74b72e94794e22eb96e7434fd3ffb99b9a1830dc9189a49f77e39",
+      "narrative": [
+        {
+          "text": "The solr-database-resync script takes no parameters.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s552-conclusion-quickguide",
+      "source": "sections/s552-conclusion-quickguide.md",
+      "source_hash": "04951b2c49eb7b09fd004c3b41d84f1ecf41b07201b88ba9edd93b2617fda9ca",
+      "narrative": [
+        {
+          "text": "Closing quick guide for the solr-database-resync script. It brings the database and the Solr index back in line, but it can change the status of many items, so use it only when needed and back up the database first. It can help diagnose and fix wrong search results or item statuses.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s553-subscription-send-script",
+      "source": "sections/s553-subscription-send-script.md",
+      "source_hash": "d13c6fe2e080eed8683a45875faa80e2496922df0029ddd45f19ed1ceb9350e5",
+      "narrative": [
+        {
+          "text": "Title and table of contents of the subscription-send script page, with a link back to the script index and the usual sections (what, who, when, how, parameters, quick guide).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s554-what-it-does",
+      "source": "sections/s554-what-it-does.md",
+      "source_hash": "b0b4e6dbf108f992b67ba5f750ee53041975dc5fd01fe8f4c5f873b185848ad1",
+      "narrative": [
+        {
+          "text": "The subscription-send script sends the email notifications for DSpace subscriptions, which users can take out on communities, collections or items. The block points to the Email Subscriptions documentation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s555-who-can-use-it",
+      "source": "sections/s555-who-can-use-it.md",
+      "source_hash": "feb6950410c85ca0aa0b3cf2ba7c4e5a7c2577b0be213ab97fe20faa19cf6b5b",
+      "narrative": [
+        {
+          "text": "Only repository administrators can run the subscription-send script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s556-when-we-use-it",
+      "source": "sections/s556-when-we-use-it.md",
+      "source_hash": "b10b9100b7b51191f56f99db2631abef0fb37a98f0b9520fba224ea59792ca66",
+      "narrative": [
+        {
+          "text": "The subscription-send script sends periodic email updates at each user's chosen subscription frequency.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s557-how-it-works",
+      "source": "sections/s557-how-it-works.md",
+      "source_hash": "a820e10e23135bb3252f7fe70363c20c0b6024966f5087adec5942eb540ea740",
+      "narrative": [
+        {
+          "text": "How the subscription-send script works. It runs periodically (for example daily) on the server, finds the users subscribed to communities, collections or items, and sends an email notification for each subscription. Its frequency parameter sets how often notifications go out; for example W sends them once a week.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s558-parameters",
+      "source": "sections/s558-parameters.md",
+      "source_hash": "291c5f33579400d8eb321d36c4ff019cc81b02a48e5cd3a69a3de26c9f8426bd",
+      "narrative": [
+        {
+          "text": "The subscription-send script has one parameter: -f/--frequency <value>, the subscription frequency, which is D (day), W (week) or M (month).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s559-conclusion-quickguide",
+      "source": "sections/s559-conclusion-quickguide.md",
+      "source_hash": "b1f4aabd71bcaed9b231e26ad113b9a6177392e243dd04791feb638662bc0d5a",
+      "narrative": [
+        {
+          "text": "Closing quick guide for the subscription-send script: it emails users about the items they subscribed to. It runs daily by default and the frequency can be changed; it can also help diagnose users not receiving their subscription emails.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    }
+  ]
+}
