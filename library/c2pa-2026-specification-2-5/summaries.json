@@ -761,6 +761,823 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s363-16-3-4-3-fields",
+      "source": "sections/s363-16-3-4-3-fields.md",
+      "source_hash": "11bd02bd9a757a0766ffd5ed0addcd1c78f8323c737332c6667d0aa7e3d5e379",
+      "narrative": [
+        {
+          "text": "Defines the collection data hash fields: uris is an array of uri-hashed-data-map values representing the collection, and alg, if present, shall name an allowed hash algorithm used for every member, otherwise the Claim's alg applies. Each entry shall have a uri that is a valid relative URI resolved against the manifest's location (except for container formats whose members use a native absolute URI, such as a WARC-Record-ID, where the uri shall be that identifier), and claim generators shall validate or sanitize URIs so that neither . nor .. appear. The uri shall not contain a query component, though a fragment is permitted, because it names a static hashed content item. The hash field holds the hash over all bytes of the content item with no exceptions, and the remaining fields are identical to those of an ingredient assertion.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s364-16-3-4-4-hashing-the-members-of-the-collection",
+      "source": "sections/s364-16-3-4-4-hashing-the-members-of-the-collection.md",
+      "source_hash": "d7700d460492c6b69535cebaa62c54d09a05c33e9f32040c67ee4978fff99941",
+      "narrative": [
+        {
+          "text": "Requires each file in the collection to be hashed individually with the algorithm in the alg field, with the result stored in the hash field of the uri-hashed-data-map for that file's uri. States that not every file in a hierarchy needs to be included, noting that this also gives an adversary an opening to add files without invalidating the binding.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s365-16-3-5-multi-asset-hash",
+      "source": "sections/s365-16-3-5-multi-asset-hash.md",
+      "source_hash": "03dbffb2b55c18d2c36e357d3b89e3798ff669d5833e5d73a543c82d89cbed45",
+      "narrative": [
+        {
+          "text": "Heading that opens section 16.3.5 Multi-Asset Hash; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s366-16-3-5-1-description",
+      "source": "sections/s366-16-3-5-1-description.md",
+      "source_hash": "5aea269b5fdb57459bcf52a46bda46da0207525a46a3330d3c318edbffae7f25",
+      "narrative": [
+        {
+          "text": "Describes file formats composed of multiple parts that are each valid files, such as CIPA Multi-Picture Format, Android Ultra HDR, ISO 21496 HDR and Android Motion Photo. Explains that existing hard binding assertions cannot separately verify each part's integrity or record parts' own C2PA Manifests, and that the multi-asset hash assertion provides this. Also notes the case of an optional part that may be removed by a workflow without a trusted signer while the rest of the file remains verifiable.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s367-16-3-5-2-details",
+      "source": "sections/s367-16-3-5-2-details.md",
+      "source_hash": "075d0a9cd0721414d9ef44218c746b9b2cfa2a172c647d90e7931c02a1287496",
+      "narrative": [
+        {
+          "text": "Requires the multi-asset hash assertion to be labelled c2pa.hash.multi-asset; although it contains hashes and modifies hard binding handling, it is not considered a hard binding, it shall not appear in a cloud data or external reference assertion, and it should not be used with a compressed manifest. Every part, including the primary part, shall be a part-hash-map in the parts array, listed in file order, contiguous, non-overlapping and covering every byte, with a location locator giving either byteOffset and length or a bmffBox whose payload (excluding header) is the part. The hashAssertion field shall be a hashed URI to a standard hard binding assertion whose label has .part and any multiple instance identifier appended (e.g. c2pa.hash.data.part__2), with absolute offsets computed relative to the part's start. The optional boolean field defaults to false, and a part's own C2PA Manifest that is not self-contained is recommended to be stored in the asset's Manifest Store and referenced through a componentOf ingredient.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s368-16-3-5-3-schema-and-example",
+      "source": "sections/s368-16-3-5-3-schema-and-example.md",
+      "source_hash": "d258aad34caa3186b05cf15d3ff794ae3d753e35306f5451ef288a669ac2a7d1",
+      "narrative": [
+        {
+          "text": "Specifies the CDDL schema for the multi-asset hash assertion through the multi-asset-hash-map rule, whose parts array holds part-hash-map entries with a location (either a byte range or a bmffBox), a hashAssertion hashed URI and an optional optional flag; the full normative schema is in Section G.4.6, Multi-Asset Hash. Gives a CBOR diagnostic example of a two-part 33,333-byte asset with c2pa.hash.boxes.part and c2pa.hash.data.part assertions for the parts and an overall c2pa.hash.boxes assertion using c2pa.after, and illustrates its use for an HDR gain map in Figure 17.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s369-16-3-6-segment-hash",
+      "source": "sections/s369-16-3-6-segment-hash.md",
+      "source_hash": "b7087ae08b887483cdfd7e4405ba6deb3782249c4014f31abd6cd08a790d95a0",
+      "narrative": [
+        {
+          "text": "Heading that opens section 16.3.6 Segment Hash; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s370-16-3-6-1-description",
+      "source": "sections/s370-16-3-6-1-description.md",
+      "source_hash": "90c1babc391dada856b159a6683e75ee2a6a094c516f64b1374828a7759ed2ae",
+      "narrative": [
+        {
+          "text": "Describes the problem of append-only files such as application logs, event logs and JSON Lines streams, where a single hard binding over the whole file would be invalidated by the next line written. Explains that a segment hash assertion binds a manifest to one bounded segment, the bytes added since the previous checkpoint, and records the position and length of the sentinel line carrying its manifest plus a digest of the preceding checkpoint's sentinel line so history cannot be rewritten without breaking the chain. Refers to Section A.3.17, Embedding manifests into append-only text files, for how checkpoints are written.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s371-16-3-6-2-details",
+      "source": "sections/s371-16-3-6-2-details.md",
+      "source_hash": "31117cf0fdf1e28923f579cd1feca8ced561e370aa9943a0d3340c25fd5e96ee",
+      "narrative": [
+        {
+          "text": "Requires the segment hash assertion to be labelled c2pa.hash.segment; it is a hard binding to be used only for assets described in Section A.3.17, and it shall not appear in a cloud data or external reference assertion. The version field shall be 1, alg (if present) shall name an allowed algorithm used for both hash and predecessorSentinel.hash (else the Claim's alg), segmentStart and segmentEnd mark the segment up to the start of the sentinel line (segmentStart being 0 for the first checkpoint), and hash covers [segmentStart, segmentEnd). The sentinelLength field shall be present when the sentinel line references the manifest store by external URI and absent when it embeds it inline, because the inline length cannot be known at signing time. The predecessorSentinel field shall be present for every checkpoint after the first, locating and hashing the preceding sentinel line, and absent for the first.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s372-16-3-6-3-schema-and-example",
+      "source": "sections/s372-16-3-6-3-schema-and-example.md",
+      "source_hash": "e6742bbf0e2c9b65fcde97b74f7298b9ab88fe0127ac72b3a7d80b46a2ddecd2",
+      "narrative": [
+        {
+          "text": "Specifies the CDDL schema for the segment hash assertion through the segment-hash-map rule, with version 1, optional alg, hash, segmentStart, segmentEnd, optional sentinelLength, optional predecessorSentinel and optional metadata, and a predecessor-sentinel-map whose start, length and hash fields are required together; the full normative schema is in Section G.4.7, Segment Hash. Gives a CBOR diagnostic example using the offsets and hashes of the second checkpoint from Section A.3.17.6, Test vectors.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s373-16-3-7-soft-binding",
+      "source": "sections/s373-16-3-7-soft-binding.md",
+      "source_hash": "1aadf4819fcf5d3c108b86a89b846a82f19db7e6a68fa6d986e75f46737cb5da",
+      "narrative": [
+        {
+          "text": "Heading that opens section 16.3.7 Soft Binding; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s374-16-3-7-1-description",
+      "source": "sections/s374-16-3-7-1-description.md",
+      "source_hash": "67cd26e701ec65fd032f1a1d3ed247d60e932984689db6d389f9b23875e8530c",
+      "narrative": [
+        {
+          "text": "Requires that a soft binding a claim generator provides for an asset's content be described using a soft binding assertion labelled c2pa.soft-binding. Deprecates the never-used url field in favor of the asset reference assertion, so claim generators shall not add it and consumers shall ignore it. Also deprecates the extent field within scope in favor of the region field, so claim generators shall not add it and consumers should ignore it; in both cases the field still counts as part of the content validated per Section 14.10.4, Assertion Validation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s375-16-3-7-2-schema-and-example",
+      "source": "sections/s375-16-3-7-2-schema-and-example.md",
+      "source_hash": "2ef11c5146d4d598cb5690626ed7807d534de94393a5c4d331edb6848cd3ff7c",
+      "narrative": [
+        {
+          "text": "Specifies the CDDL schema for the soft binding assertion through the soft-binding-map rule, with alg, blocks, optional pad, pad2, name, alg-params, bindingMetadata, deprecated url and metadata; each soft-binding-block-map has a scope (deprecated extent, timespan in milliseconds or region) and a value, and the full normative schema is in Section G.5.12, Soft Binding. Gives a CBOR diagnostic example using the phash algorithm with two timespan blocks.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s376-16-3-7-3-requirements",
+      "source": "sections/s376-16-3-7-3-requirements.md",
+      "source_hash": "9f1cfc9340e7912ab07e0224a619c0469c8a04a4c616fab2d405c8542223637f",
+      "narrative": [
+        {
+          "text": "Requires the soft binding algorithm to be given in the alg field and the blocks it was applied over to be listed in blocks, and recommends that any extra algorithm parameters be placed in alg-params. Allows the scope field to contain either a region (a region-map from Section 16.9.2, Regions of Interest) or a timespan in milliseconds from the start of the content, and requires pad and pad2, if present, to be zero-filled byte strings.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s377-16-3-7-3-1-bindingmetadata",
+      "source": "sections/s377-16-3-7-3-1-bindingmetadata.md",
+      "source_hash": "0f146712d182b245b1e796a98010b71e93ccab1cc0962b0fc4c9acd3c72279f4",
+      "narrative": [
+        {
+          "text": "Allows a soft binding assertion to include a bindingMetadata key carrying pre-defined and custom algorithm- or workflow-specific fields, with custom fields required to follow entity-specific namespacing (e.g. com.litware.someFieldName). States that a C2PA Validator should not use this information when validating the soft binding but may use it for logging or informational purposes, since the normative validation information is in the other assertion fields and the algorithm's entry in the Soft Binding Algorithm List.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s378-16-3-7-4-soft-binding-algorithm-list",
+      "source": "sections/s378-16-3-7-4-soft-binding-algorithm-list.md",
+      "source_hash": "b8f4960f98e5991f5da9e0a599f2380c7964a9cd61885cb047f6b4d9ec7cf391",
+      "narrative": [
+        {
+          "text": "Describes the soft binding algorithm list, a machine-readable JSON document maintained by the C2PA at https://sbal.c2pa.org, as the list of recommended values for the alg field, which should match an entry's alg. Entries marked deprecated shall not be used to create soft binding assertions, and resolving with them is discouraged; validators should not resolve such bindings. Gives the JSON schema for entries and requires each entry's alg to follow namespacing and represent the owner, each algorithm version to have its own entry, type to be watermark or fingerprint, and supported media types to be given as encodedMediaTypes or decodedMediaTypes based on IANA types. Requires entryMetadata with a description and dateEntered, a required contact email and a required informationalUrl to a page describing the algorithm, including the algorithm-specific format of alg-params and value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s379-16-3-7-5-soft-binding-resolution-api",
+      "source": "sections/s379-16-3-7-5-soft-binding-resolution-api.md",
+      "source_hash": "b7a646022f4d73a5831230d324876582cd03acbecf62a0be97c9b40423f807fd",
+      "narrative": [
+        {
+          "text": "Describes the soft binding resolution API as a Web API for retrieving C2PA Manifest stores from an endpoint given a soft binding value, a manifest identifier or an asset. States that a soft binding algorithm list entry may list resolution API URIs in softBindingResolutionApis, any of which may be used, and points to the separate API specification.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s380-16-3-7-5-1-validating-soft-binding-matches",
+      "source": "sections/s380-16-3-7-5-1-validating-soft-binding-matches.md",
+      "source_hash": "579387d24fb534ccfc2b6b87f36cb7233396cb0aaaddc34e28aac9265230bfdc",
+      "narrative": [
+        {
+          "text": "Describes using soft bindings to discover the active manifest in a manifest repository for an asset whose C2PA Manifest is absent or invalid, requiring discovery to use one or more algorithms identified in the C2PA Soft Binding Algorithm List. Requires that, if the located manifest contains soft binding assertions, the matcher ensure all of them match the soft bindings used for discovery. A soft binding assertion matches when both its alg and value match those used, with matching performed as the specified algorithm prescribes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s381-16-4-provenance-workflow",
+      "source": "sections/s381-16-4-provenance-workflow.md",
+      "source_hash": "fe140a1e912b753250207102180f807024a6c14d35073fff8ebe4992c29a0fd1",
+      "narrative": [
+        {
+          "text": "Describes the provenance and workflow assertions as those recording how an asset came to be, namely the actions performed on it and its relationships to other assets and external resources.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s382-16-4-1-actions",
+      "source": "sections/s382-16-4-1-actions.md",
+      "source_hash": "6cba2f015ebbe2abeea532ff939ae39983ced23949511744f82d7443a4ce1ee2",
+      "narrative": [
+        {
+          "text": "Heading that opens section 16.4.1 Actions; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s383-16-4-1-1-description",
+      "source": "sections/s383-16-4-1-1-description.md",
+      "source_hash": "e8df0a4586c67c76b2ff7944d6664d132f6030d252a675c901f5426d20be5cba",
+      "narrative": [
+        {
+          "text": "Describes the actions assertion as an array of actions on the asset's content, each stating what happened and optionally when and with what software, with array order unspecified except as noted in Section 16.4.1.2. Distinguishes the deprecated v1 (c2pa.actions) from v2, which shall be labelled c2pa.actions.v2 and may derive actions from a templates array, and notes that actions are modelled after XMP ResourceEvents. Requires each action value to be a pre-defined or entity-specific action name. Lists the pre-defined c2pa. actions in Table 4 with their meanings and whether each is a perceptible or non-editorial transformation (for example c2pa.created, c2pa.opened, c2pa.edited, c2pa.modified, c2pa.redacted, c2pa.watermarked.bound, with c2pa.color_adjustments, c2pa.removed and c2pa.watermarked deprecated), noting that perceptible means an action can produce a perceptible change, and lists the font. actions in Table 5, which replace the deprecated c2pa.font prefix.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s384-16-4-1-2-mandatory-presence-of-at-least-one-acti",
+      "source": "sections/s384-16-4-1-2-mandatory-presence-of-at-least-one-acti.md",
+      "source_hash": "c001864b586b1db9ae4029eced33590acd163606f7360b2792dc3ac4a8fa1ad6",
+      "narrative": [
+        {
+          "text": "Requires at least one actions assertion in the created_assertions of a standard C2PA Manifest's Claim. For an asset created de novo the first c2pa.actions assertion shall begin with a c2pa.created action carrying an appropriate digitalSourceType (http://c2pa.org/digitalsourcetype/empty when there is no digital content); for an asset created by opening an existing asset as a parentOf ingredient it shall begin with c2pa.opened, with a matching c2pa.ingredient.v3 assertion referenced in the action's parameters ingredients. Notes that this does not apply to Update Manifests and that c2pa.opened needs no digitalSourceType, and requires that a manifest's actions contain no more than one c2pa.created or c2pa.opened action. Gives examples of a generative AI video, an image built from a template with placed photos, and a newsroom edit of a camera-captured photo.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s385-16-4-1-3-all-actions-included",
+      "source": "sections/s385-16-4-1-3-all-actions-included.md",
+      "source_hash": "8e98925399137be910d0d68297e155c2ff88b2f1b7fe76f30851837b306cd203",
+      "narrative": [
+        {
+          "text": "Requires the claim generator to set the allActionsIncluded boolean in actions-map-v2, where true states that all actions performed are described and false states that unrecorded actions may have occurred; manifest consumers should interpret an omitted field as indicating that unrecorded actions may have been performed, and the field was optional in previous versions. Requires allActionsIncluded to be true when an asset is opened only to record c2pa.opened and immediately re-saved without other changes. Notes that external reference assertions with a hashed location can provide bound data about a process and be linked to actions via relatedAssertions.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s386-16-4-1-4-fields-in-the-actions-assertion",
+      "source": "sections/s386-16-4-1-4-fields-in-the-actions-assertion.md",
+      "source_hash": "4ffaae2a32afa728608b143bd56d31064a3a8eef793de110706df87c004d296d",
+      "narrative": [
+        {
+          "text": "Heading that opens section 16.4.1.4 Fields in the actions assertion; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s387-16-4-1-4-1-description",
+      "source": "sections/s387-16-4-1-4-1-description.md",
+      "source_hash": "5b0634b2c6307471b2872bc7cef233c8e19ae5b18ab11b01d6cd11acaebe8e90",
+      "narrative": [
+        {
+          "text": "Allows an action to include a free-text description field explaining what the action does, most useful for non-standard actions but also usable to add information to a standard action, such as \"Paintbrush tool\" for c2pa.edited.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s388-16-4-1-4-2-reason",
+      "source": "sections/s388-16-4-1-4-2-reason.md",
+      "source_hash": "11e05fa10d61d441fffeb10a3fc50cd91f3195cfd69a86a075fc94b3c7bf6c5e",
+      "narrative": [
+        {
+          "text": "Requires that the reason field, if present, contain one of the standard values c2pa.PII.present, c2pa.invalid.data, c2pa.trade-secret.present or c2pa.government.confidential, or a custom value following entity-specific namespacing. Notes that only redaction-focused c2pa values are defined so far, and requires that a c2pa.redacted action's reason field contain the rationale for the redaction.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s389-16-4-1-4-3-when",
+      "source": "sections/s389-16-4-1-4-3-when.md",
+      "source_hash": "ae3fff5a1af24618a246468d7dd6da6810bf6f2c3352b31487570f6f4a2ab1ad",
+      "narrative": [
+        {
+          "text": "Allows an action to include a when field for the time of the action, which shall be a CBOR date/time and shall be interpreted as whenStart and whenEnd sharing the same absolute value; claim generators should use when for a single exact time. A v2 action may instead use whenStart (generator-lower-bound-time-type) and whenEnd (generator-upper-bound-time-type) as defined in Section 8.9, with whenStart not later than whenEnd when both are present, and when shall not appear together with either of them. Notes that these are claim-generator-provided timestamps and that UTC-based times should be used.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s390-16-4-1-4-4-softwareagent",
+      "source": "sections/s390-16-4-1-4-4-softwareagent.md",
+      "source_hash": "f3975b6515dc62c34a69f344d943bb3a6d7004cb8814d310a417cf543fb1624a",
+      "narrative": [
+        {
+          "text": "Describes the softwareAgent field identifying the software or hardware that performed an action, a text string in v1 and a generator-info-map in v2. When multiple softwareAgents are used, softwareAgentIndex shall reference the agent by its 0-based index in the softwareAgents array, and an action shall have only one of softwareAgent or softwareAgentIndex. Notes that these fields help when the agent differs from the claim generator and that the earlier actors field was removed in version 2.0.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s391-16-4-1-4-5-digital-source-type",
+      "source": "sections/s391-16-4-1-4-5-digital-source-type.md",
+      "source_hash": "a55d05b8021784b743362259b47fa23c9546c3511e117d70a5a26b12a70fe0cd",
+      "narrative": [
+        {
+          "text": "Allows an action to include a digitalSourceType whose value shall be an IPTC-defined term or one of the C2PA values http://c2pa.org/digitalsourcetype/empty (effectively empty content) or http://c2pa.org/digitalsourcetype/trainedAlgorithmicData (model-derived data in a data format rather than a media type). Notes its common use with c2pa.created to indicate how media was created, and states that for trained algorithmic assets one or more ingredients may be added to describe the inputs and referenced from a c2pa.placed or c2pa.created action.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s392-16-4-1-4-6-unique-identifiers-for-actions",
+      "source": "sections/s392-16-4-1-4-6-unique-identifiers-for-actions.md",
+      "source_hash": "6cd8b532b48617fd85797b658b208abe8214263da75fd522ba0c48f4c57aa4c9",
+      "narrative": [
+        {
+          "text": "Describes how to identify a specific action instance, either implicitly or explicitly. Recommends implicitly using the JUMBF URI of the actions assertion and, for a specific action, appending &cbor= with a JSON Pointer (RFC 6901) path such as /actions/1, observing all JSON Pointer rules. Suggests a custom parameters key such as com.fabrikam.actionId for an explicit identifier.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s393-16-4-1-4-7-changes",
+      "source": "sections/s393-16-4-1-4-7-changes.md",
+      "source_hash": "b2654f944a4512a61a50e9bbe765f7e8f5b055aaf293cf713ad36812f20917d0",
+      "narrative": [
+        {
+          "text": "Explains that an action may apply to only part of an asset, such as a range of video frames or an image area; in v1 this was a text string, while in v2 it is a changes field holding an array of region-map objects from Section 16.9.2, Regions of Interest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s394-16-4-1-4-8-parameters",
+      "source": "sections/s394-16-4-1-4-8-parameters.md",
+      "source_hash": "4762b002b16f87366726885058e0c321d5b0c490ad643c6144feb375e7ffbe18",
+      "narrative": [
+        {
+          "text": "Describes the parameters key for action-specific pre-defined and custom fields, with custom fields required to follow entity-specific namespacing, and the optional multipleInstances field, whose absence means it is unknown whether the action was repeated. Requires c2pa.opened and c2pa.placed actions to hold hashed JUMBF URIs to related ingredient assertions in ingredient (v1) or ingredients (v2), allows a c2pa.deleted action to reference a componentOf ingredient whose content it fully removes, and recommends regionOfInterest metadata when only part of an ingredient is relevant. Requires sourceLanguage and targetLanguage in c2pa.translated to be BCP 47 codes and the redacted field of c2pa.redacted to hold the JUMBF URI of the redacted assertion, and allows an optional machine-readable name field that sub-classifies the action. Gives an example c2pa.created action for a Generative AI image referencing two ingredients.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s395-16-4-1-4-9-related-assertions",
+      "source": "sections/s395-16-4-1-4-9-related-assertions.md",
+      "source_hash": "3cf623b10780fcb378f4ddf05733c40830510921795133d5d53acb8399aeb206",
+      "narrative": [
+        {
+          "text": "Allows an action's parameters to include relatedAssertions, an array of one or more hashed JUMBF URIs to related assertions in the same C2PA Manifest. Entries shall not reference actions or ingredient assertions (c2pa.actions, c2pa.actions.v2, c2pa.ingredient, c2pa.ingredient.v2 or c2pa.ingredient.v3), and Manifest Consumers may use them to present additional context. Notes that this lets an action reference, for example, an assertion metadata assertion.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s396-16-4-1-5-watermarking",
+      "source": "sections/s396-16-4-1-5-watermarking.md",
+      "source_hash": "673fada9bcb1ffe82a7687f0a09e1732c3bd404337187c2e058b141a17b59f92",
+      "narrative": [
+        {
+          "text": "Requires that a c2pa.watermarked.bound action be accompanied by a soft binding assertion describing the inserted watermark, which the action should reference through relatedAssertions in its parameters. Notes that c2pa.watermarked is deprecated in favor of c2pa.watermarked.bound and c2pa.watermarked.unbound.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s397-16-4-1-6-action-templates",
+      "source": "sections/s397-16-4-1-6-action-templates.md",
+      "source_hash": "3529c462811e093a2dd642de42a76c03b1fa279e473949e95234edb25f1fd8d3",
+      "narrative": [
+        {
+          "text": "Heading that opens section 16.4.1.6 Action Templates; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s398-16-4-1-6-1-templates",
+      "source": "sections/s398-16-4-1-6-1-templates.md",
+      "source_hash": "144b93b2cc8c1463f28d39fc11ef17c704526feb5ee5ae5eed82795016a9882b",
+      "narrative": [
+        {
+          "text": "Describes v2 action templates, which a C2PA Manifest Consumer combines with actions of the same name, or with all actions when the template's action is *, merging multiple applicable templates starting with * and then in array order. Requires the consumer to take template values and overlay the action's own values, replacing any with the same name, and illustrates this with examples and Figure 18, Actions Template Flow. Template parameters are merged key by key with the action's parameters, the action's values taking precedence, or used unchanged if the action has none. The templateParameters key is deprecated in favor of parameters, and consumers shall treat its pairs as parameters using the same precedence rules.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s399-16-4-1-6-2-softwareagents",
+      "source": "sections/s399-16-4-1-6-2-softwareagents.md",
+      "source_hash": "0cda7aa2c5a5760dae515b0daf86ad2768a29fab81ef7b465ffb20b0b4155bd5",
+      "narrative": [
+        {
+          "text": "Describes the softwareAgents field, an array of generator-info-map objects that can list multiple software or hardware agents, each referenced by index through the softwareAgentIndex field of an action or template. Gives a CBOR diagnostic example of six actions referencing two agents.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s400-16-4-1-6-3-icons",
+      "source": "sections/s400-16-4-1-6-3-icons.md",
+      "source_hash": "78bfbeb7fb18d822c379d56852beab2e64c6a29963d283121412d43fb987240c",
+      "narrative": [
+        {
+          "text": "Allows a template to include an icon, a raster or vector image the Manifest Consumer can use to represent the action, but requires icons to appear only in templates for entity-specific actions. The icon value, if present, shall be a hashed URI to an embedded data assertion (labelled c2pa.icon and following the multiple-instance label rules) or a cloud data assertion, matching the structure of the icon field in the Claim's Generator Info Map. Recommends that Manifest Consumers also support the data box approach from earlier versions.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s401-16-4-1-7-localizations",
+      "source": "sections/s401-16-4-1-7-localizations.md",
+      "source_hash": "85f1399931f8048c0edfc5b82b63b442ced826e6324f5b3118cd1bacb3224632",
+      "narrative": [
+        {
+          "text": "Requires that, if an actions assertion's metadata contains a localization dictionary for a template, those localizations also apply to every action based on that template.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s402-16-4-1-8-related-actions",
+      "source": "sections/s402-16-4-1-8-related-actions.md",
+      "source_hash": "b8f16644ff5ae41cfde1990e648da868967d686cbc844493f807892ece626251",
+      "narrative": [
+        {
+          "text": "Describes the v2 related field for listing additional actions related to a primary action, usually occurring at the same time. Recommends that each related action include only the fields that differ from the primary action, with a C2PA Manifest Consumer merging the values with the primary action, as with a template, to get the full picture.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s403-16-4-1-9-asset-renditions",
+      "source": "sections/s403-16-4-1-9-asset-renditions.md",
+      "source_hash": "33dc6a8444c98da6a8bdf554bd9eb6eaf37f4b1cf82360590362aa3896a90855",
+      "narrative": [
+        {
+          "text": "Describes using the actions assertion to signal a claim creator's intent when creating asset renditions for different connectivity, resolution and other environments. The presence of only c2pa.published, c2pa.transcoded and c2pa.repackaged actions signals that the signer asserts no editorial changes to the digital content occurred between the ingredient(s) and this asset, and a single parentOf ingredient further signals that the asset was derived directly from that parent.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s404-16-4-1-10-soft-binding-lookup",
+      "source": "sections/s404-16-4-1-10-soft-binding-lookup.md",
+      "source_hash": "ef927b8eed128c7070e2d3b9adf15e298779c6a4ebd926cc092ad71b237a67e1",
+      "narrative": [
+        {
+          "text": "Allows a claim generator performing c2pa.opened or c2pa.placed with an asset lacking a C2PA Manifest to use a soft binding lookup to find its manifest, and recommends adding any located manifest as the ingredient assertion's activeManifest. If it does so, the ingredient assertion shall also contain softBindingsMatched set to true and a softBindingAlgorithmsMatched array with at least one entry, indicating to consumers that a lookup was used. Notes that validation failures are to be expected in the ingredient assertion because recovered manifests usually carry non-matching hard bindings, and gives a CBOR diagnostic example.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s405-16-4-1-11-removing-previous-ingredients",
+      "source": "sections/s405-16-4-1-11-removing-previous-ingredients.md",
+      "source_hash": "8c2fc042f55c815c9239cec8cb3027aa9a5065c46348c589fdb64cd823e25c0c",
+      "narrative": [
+        {
+          "text": "Allows a claim generator to use a c2pa.deleted action when a deletion removes all the content of an ingredient previously recorded with a componentOf relationship, indicating it should no longer be considered part of the asset. If that ingredient assertion is also redacted, a c2pa.redacted action should be used as well and the c2pa.deleted action should reference the redacted ingredient assertion.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
