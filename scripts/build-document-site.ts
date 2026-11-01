@@ -438,12 +438,37 @@ function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Re
     for (const e of entries) if (e.isIntersecting) { io.unobserve(e.target); load(ix.of[e.target.dataset.blk]); }
   }, { rootMargin: "2000px 0px" });
   for (const ph of document.querySelectorAll(".fa-blk")) io.observe(ph);
+  // Blocks above the target fill in after it is reached (and figures and
+  // math render), pushing it down the page. So jump (not the theme's smooth
+  // scroll, which a growing page outruns) and hold the target where it
+  // landed, each frame, until the reader scrolls, clicks or types, or the
+  // page has kept still for a few seconds.
+  let unpin = () => {};
+  const pin = (el) => {
+    unpin();
+    el.scrollIntoView({ behavior: "instant" });
+    const top = el.getBoundingClientRect().top;
+    let still = performance.now(), frame;
+    const hold = (now) => {
+      const d = el.getBoundingClientRect().top - top;
+      if (Math.abs(d) > 1) { scrollBy({ top: d, behavior: "instant" }); still = now; }
+      if (now - still > 4000) unpin(); else frame = requestAnimationFrame(hold);
+    };
+    const stop = ["wheel", "touchstart", "pointerdown", "keydown"];
+    const off = () => { cancelAnimationFrame(frame); for (const t of stop) removeEventListener(t, off, true); };
+    unpin = off;
+    for (const t of stop) addEventListener(t, off, { capture: true, passive: true });
+    frame = requestAnimationFrame(hold);
+  };
   // A link to a block, or to a term inside one, loads its chunk and lands on it.
   const go = () => {
-    const id = decodeURIComponent(location.hash.slice(1));
-    const n = id ? (ix.of[id] ?? ix.ids[id]) : undefined;
-    if (n === undefined) return;
-    load(n).then(() => document.getElementById(id)?.scrollIntoView());
+    let id;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { id = location.hash.slice(1); }
+    if (!id) return;
+    const n = ix.of[id] ?? ix.ids[id];
+    const land = () => { const el = document.getElementById(id); if (el) pin(el); };
+    if (n === undefined) land();
+    else load(n).then(land);
   };
   addEventListener("hashchange", go);
   go();
