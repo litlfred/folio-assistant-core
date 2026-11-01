@@ -761,6 +761,880 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s179-13-5-1-1-general-requirements",
+      "source": "sections/s179-13-5-1-1-general-requirements.md",
+      "source_hash": "448e5703f5f567b76bf065db8a6497e323b019fb07c876b5cb79ab86fb302c7e",
+      "narrative": [
+        {
+          "text": "Defines requirements for an X.509 certificate to be acceptable as a C2PA claim signing credential, not applying to TSA, OCSP or CA certificates. Requires the signatureAlgorithm to be one of the listed ECDSA, RSA, RSASSA-PSS, Ed25519 or ML-DSA identifiers, with constraints on RSASSA-PSS parameters, absent parameters for ML-DSA, named curves prime256v1, secp384r1 or secp521r1 for EC keys, and RSA moduli of at least 2048 bits; a note explains that RSASSA-PKCS1-v1_5 is permitted for CA certificate signatures but not for C2PA claims. For all certificates outside the private credential store, requires v3, no unique IDs, correct Basic Constraints (only end entity certificates sign claims, time stamps and OCSP responses), Authority and Subject Key Identifiers as prescribed, and a Key Usage extension with digitalSignature for manifest signers. Requires a non-empty EKU extension in end entity certificates, forbidding anyExtendedKeyUsage, requiring id-kp-timeStamping or id-kp-OCSPSigning for those purposes exclusively, and not rejecting certificates for unrelated extra EKUs.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s180-13-5-1-2-certificate-trust-chain",
+      "source": "sections/s180-13-5-1-2-certificate-trust-chain.md",
+      "source_hash": "fe630ad3767c7d52434c79c4a7cf08d1542b1bbbcbb62e5c537e57f540e41164",
+      "narrative": [
+        {
+          "text": "Specifies that a signing certificate in the private credential store is accepted, while otherwise the trust chain shall be built and validated per RFC 5280, section 6, for the relevant purpose and trust anchor store, with any failure causing rejection; the private credential store is never used to build chains or validate time stamps. Requires validators to reject certificates used for purposes not authorized by their EKU, and requires claim signing certificates to have at least one EKU for which the validator has trust anchors, using only those anchors. Requires validators to verify Certificate Profile compliance (outside the private credential store), including EKU presence and authorization for no more than one of C2PA signing, time stamp signing or OCSP signing, and to ignore any EKU present on CA certificates.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s181-13-5-2-certificate-revocation",
+      "source": "sections/s181-13-5-2-certificate-revocation.md",
+      "source_hash": "6d29c567564ad119ed76e54fd80ca21f29077d721e585a79f65918f38160f106",
+      "narrative": [
+        {
+          "text": "Recommends that claim generators implement revocation using OCSP and OCSP stapling, and forbids them from using Certificate Revocation Lists, noting CRLs are slow to download and large. Recommends that CAs include an AuthorityInfoAccess extension, and requires that, when present, revocation information be stored in an unprotected COSE_Sign1 header labelled rVals following the given CDDL with an ocspVals array. Recommends that before signing, a claim generator query the OCSP service for the signer's certificate and any included intermediate CA certificates and store the responses in ocspVals, with validation described in Validate the Credential Revocation Information.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s182-14-validation",
+      "source": "sections/s182-14-validation.md",
+      "source_hash": "ea8be29f1fffefbe6e96a4e94be52219444d247a45fd984e4896888201a5d030",
+      "narrative": [
+        {
+          "text": "Heading that opens Chapter 14, Validation; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s183-14-1-validation-process",
+      "source": "sections/s183-14-1-validation-process.md",
+      "source_hash": "77fe190a5f8b1c231535d1b7e7b911a5da3cdd1d5200ffbb675d12c7170b1f13",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.1 Validation Process; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s184-14-1-1-description",
+      "source": "sections/s184-14-1-1-description.md",
+      "source_hash": "74a2359615d1f4f0f19bda31db4b7e958b2d0668405e7318f5c86b884b46b960",
+      "narrative": [
+        {
+          "text": "Describes validation of a C2PA Manifest as a multi-step process covering its assertions, claim and claim signature, plus any associated hard bindings for active manifests only. Defines a validator as a hardware or software actor that implements the validation algorithms in this clause.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s185-14-1-2-phases-of-validation",
+      "source": "sections/s185-14-1-2-phases-of-validation.md",
+      "source_hash": "38abf696b6073b269ce1c4db190d0f03330c9f0a5a4541c7c6bf8c78461446fd",
+      "narrative": [
+        {
+          "text": "Lists the phases of validation, in no particular order: validating the assertions (Section 14.10), the ingredients if any (Section 14.11), the time stamp (Section 14.8), the credential revocation information (Section 14.9), the claim signature (Section 14.7), and the asset's content (Section 14.12). States that the results determine whether a manifest is Well-Formed, Valid or Trusted as described in Section 13.3, Validation states.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s186-14-1-3-visual-representation",
+      "source": "sections/s186-14-1-3-visual-representation.md",
+      "source_hash": "3306d880dbdc3ef1c3dacc98d4077ef9e0a1edc5f819196bad2a2c13a899af59",
+      "narrative": [
+        {
+          "text": "Presents Figure 12, Validating a Claim, as a visual representation of validating a C2PA Manifest, noting that the text is authoritative where it differs from the figure.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s187-14-2-returning-validation-results",
+      "source": "sections/s187-14-2-returning-validation-results.md",
+      "source_hash": "1f2afbff787f419a9a536423bac50a73e13c75d110d365e33c8e0f3e542edd22",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.2 Returning Validation Results; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s188-14-2-1-general",
+      "source": "sections/s188-14-2-1-general.md",
+      "source_hash": "122dd4fa705519d7620672e472f5fa56dac4a3755e086b0004651f47f6efdbf5",
+      "narrative": [
+        {
+          "text": "Requires the validation algorithm to return a consolidated set of results, per the schema in Section 14.2.2, for all manifests in the asset's C2PA Manifest Store, including the active manifest and those referenced by ingredient assertions. Specifies standard success, informational and failure codes from Appendix D and permits custom codes that follow entity-specific namespace syntax. Requires a claim generator adding an ingredient to act as a validator, run the full algorithm on it, and record the results in the ingredient assertion's validationResults field. Permits results to include a SemVer specVersion and either a deprecated trustListUri or a trustListUris field identifying the trust lists used.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s189-14-2-2-validation-structures",
+      "source": "sections/s189-14-2-2-validation-structures.md",
+      "source_hash": "3c2348470bcb0f6b2bcffaae3d9749c4ca3ee8c0ede637b085aa3dab784e0975",
+      "narrative": [
+        {
+          "text": "Defines, in CDDL, the data structures for validation results, with a complete normative schema in Section G.7.3. These include status-map (a code, at most one of url or resourceUrl, an optional explanation, and a deprecated success flag), status-codes-map with success, informational and failure arrays, and trust-list-uri-map with uri, type and optional identifier. Also defines validation-results-map with optional activeManifest, ingredientDeltas, specVersion, and either trustListUri (deprecated) or trustListUris, and ingredient-delta-validation-result-map with ingredientAssertionURI and validationDeltas.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s190-14-3-displaying-manifest-information",
+      "source": "sections/s190-14-3-displaying-manifest-information.md",
+      "source_hash": "22a760e11e67efeeed07e8396ca6590e81d2a37e84d742ac9b7a2d2c6bccdf54",
+      "narrative": [
+        {
+          "text": "Recommends that Manifest Consumers not display data from manifests or assets that are not Valid. Requires that, if such data is displayed anyway, the display include a warning about the lack of validity and a warning that the data shall not be attributed to the manifest's signer (or, for an ingredient manifest, to the asset's manifest's signer). A note says authoring scenarios should raise warnings more prominently.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s191-14-4-determining-the-hashing-algorithm",
+      "source": "sections/s191-14-4-determining-the-hashing-algorithm.md",
+      "source_hash": "580132257d33d5ad02ed18ae20af352b1f9b9f23b237347fd7befd1010bcddfa",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.4 Determining the hashing algorithm; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s192-14-4-1-for-hard-binding-assertions",
+      "source": "sections/s192-14-4-1-for-hard-binding-assertions.md",
+      "source_hash": "eec78762f96462cc346fe964f730ee29ffd90e9e1204fb33aa2162bf0e7b1fef",
+      "narrative": [
+        {
+          "text": "Requires the alg field of a hard binding assertion, if present, to be used as its hashing algorithm, otherwise the Claim's alg field. Requires the Claim to be rejected with algorithm.unsupported if neither is present.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s193-14-4-2-for-hashed-uris",
+      "source": "sections/s193-14-4-2-for-hashed-uris.md",
+      "source_hash": "eaad9ab31721f50ed28688cc93ebaf00284c7addb2498d2c42402210cd25b7e4",
+      "narrative": [
+        {
+          "text": "Requires the hash algorithm for a hashed_uri structure to be taken from its own alg field if present, otherwise from the nearest enclosing structure with an alg field, otherwise from the claim's alg field. Requires the claim to be rejected with algorithm.unsupported if no alg field is found in any of these locations.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s194-14-4-3-for-hashed-ext-uris",
+      "source": "sections/s194-14-4-3-for-hashed-ext-uris.md",
+      "source_hash": "d593ad7d74b3b3736dc2d3dcbea7fa242628e36257933e43a6c709113084dfdd",
+      "narrative": [
+        {
+          "text": "Requires the alg field of a hashed_ext_uri structure, which encapsulates an external URI and its hash, to be used as its hashing algorithm, and requires the failure code algorithm.unsupported if it is absent. Notes that alg is mandatory in hashed_ext_uri, so no recursive lookup is needed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s195-14-4-4-algorithm-validation",
+      "source": "sections/s195-14-4-4-algorithm-validation.md",
+      "source_hash": "97f0b73ede46bf08feed344cbcef2f77fcb69dc7e72095fb5420c875406fd5cb",
+      "narrative": [
+        {
+          "text": "Requires the determined hashing algorithm to be compared against the allowed and deprecated lists in Section 12.1, Hashing. Requires rejecting the claim with algorithm.unsupported if it is in neither list, and issuing the informational code algorithm.deprecated if it is in the deprecated list.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s196-14-5-locating-the-active-manifest",
+      "source": "sections/s196-14-5-locating-the-active-manifest.md",
+      "source_hash": "73cddb4874c85c0a8cfcd3d83270fe8073abd3fa7f4a2659bf7c004060a03cda",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.5 Locating the Active Manifest; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s197-14-5-1-general",
+      "source": "sections/s197-14-5-1-general.md",
+      "source_hash": "d53b5ef0f38dc69aebd8467338f6ebabb482e3738e6aed8f55f2dadb3491a8f5",
+      "narrative": [
+        {
+          "text": "Requires the last C2PA Manifest superbox in the C2PA Manifest Store superbox to be considered the active manifest, noting that locating the store may involve several locations and is a prerequisite with no validation status code of its own. Requires an asset to be treated as if no manifests were located when no store can be found, or when more than one store is found where an embedding method admits only one. Notes that implementations may surface additional information about why no manifests were located.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s198-14-5-2-embedded",
+      "source": "sections/s198-14-5-2-embedded.md",
+      "source_hash": "4349516136185ef1f2d75363450db0b7bf73a338dd88511b6339fc300d3bccaf",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.5.2 Embedded; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s199-14-5-2-1-general",
+      "source": "sections/s199-14-5-2-1-general.md",
+      "source_hash": "7c4f2056ffef0e9d0b2c8e3b8a0a3de7f1603284413d2c8314ce4fdebd6480b5",
+      "narrative": [
+        {
+          "text": "Requires the validator to locate the C2PA Manifest Store embedded at the standard embedding locations, and permits checking an HTTP Link header if none is found. Requires multiple embedded stores to be considered invalid, with validation that should treat this as no manifests located and with none included in an ingredient assertion. Requires an embedded store to take precedence over a remote one indicated by a Link header. Requires rejection with manifest.inaccessible.encrypted if the store is unreadable due to encryption (excluding mechanisms such as the PDF Identity crypt filter) and with manifest.inaccessible.malformed if it is readable but cannot be interpreted as a valid store.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s200-14-5-2-2-special-considerations-for-pdf",
+      "source": "sections/s200-14-5-2-2-special-considerations-for-pdf.md",
+      "source_hash": "be84ddd3c6725174921a1c6308f508af060552714cbddd781cab81900e1754f5",
+      "narrative": [
+        {
+          "text": "Describes how PDF incremental updates require support for multiple C2PA Manifest Stores, but only one per update section. Requires multiple stores in a single update section to be considered invalid (treated as if no manifests were located), while stores in earlier updates or the original PDF remain valid and are processed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s201-14-5-2-3-special-considerations-for-html",
+      "source": "sections/s201-14-5-2-3-special-considerations-for-html.md",
+      "source_hash": "8454078cd5ff3821e4aace100c6805e43f51b4b09bae6058d665cb49991f3ca5",
+      "narrative": [
+        {
+          "text": "Requires the C2PA Manifest Store for HTML assets to be located using the procedure in Section A.7, Embedding Manifests into HTML. Requires the asset to be treated as if no manifests were located if the head element contains more than one C2PA manifest element, such as multiple script elements with type=\"application/c2pa\" or both a script and a link element.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s202-14-5-2-4-special-considerations-for-structured-t",
+      "source": "sections/s202-14-5-2-4-special-considerations-for-structured-t.md",
+      "source_hash": "abc2547d703685ffae9efbeea28a9af70e7d8a8d078d2743deb627c926c1d824",
+      "narrative": [
+        {
+          "text": "Requires locating the C2PA Manifest Store for structured text per Section A.9 by reading the file in binary mode and searching for the -----BEGIN C2PA MANIFEST----- and -----END C2PA MANIFEST----- delimiters, treating the asset as having no manifests if delimiters are missing, unpaired or there is more than one block. Requires extracting and whitespace-trimming the reference between delimiters. Specifies resolving a data: URI only if it has media type application/c2pa and base64 encoding, resolving other URIs per Section 14.5.3 (retrieval is optional; if not retrieved, no manifests are treated as located), and otherwise treating the asset as having no manifests.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s203-14-5-2-5-special-considerations-for-append-only-",
+      "source": "sections/s203-14-5-2-5-special-considerations-for-append-only-.md",
+      "source_hash": "43b8a9302bfbb50471e7a334c7b430af10707281f0ca96cfc5f66cdcefe27a68",
+      "narrative": [
+        {
+          "text": "Requires locating the C2PA Manifest Store for append-only plain-text files and JSONL streams per Section A.3.17 by scanning in binary mode from the end for the last complete sentinel line (a BEGIN/END C2PA CHECKPOINT line for plain text, or a JSON object with a c2pa:checkpoint member for JSONL). Requires treating the asset as having no manifests and reporting manifest.appendOnlyText.noSentinel if no such line is found or it is malformed. Specifies extracting and trimming the reference, decoding valid application/c2pa base64 data: URIs (otherwise reporting manifest.appendOnlyText.noSentinel) and resolving other URIs per Section 14.5.3, reporting manifest.inaccessible if retrieval fails. The located store is that of the active checkpoint, with earlier checkpoints found by following the chain described in Section 14.12.6.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s204-14-5-2-6-special-considerations-for-unstructured",
+      "source": "sections/s204-14-5-2-6-special-considerations-for-unstructured.md",
+      "source_hash": "b3562c5c9bc04851af9019863b19dbd47faed025cd8738079c2c332a97d4cbd6",
+      "narrative": [
+        {
+          "text": "Requires the C2PA Manifest Store for unstructured text to be located using the procedure in Section A.8, Embedding Manifests into Unstructured Text. Requires the asset to be treated as if no manifests were located if no valid C2PATextManifestWrapper, or more than one, is found.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s205-14-5-2-7-special-considerations-for-tiff",
+      "source": "sections/s205-14-5-2-7-special-considerations-for-tiff.md",
+      "source_hash": "f05853d8e497180aebb9f2ea52be520318b472df2daba1709bb094f0c5da38a2",
+      "narrative": [
+        {
+          "text": "Requires the C2PA Manifest Store for TIFF-based assets to be located in either the first IFD or the last IFD.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s206-14-5-2-8-special-considerations-for-warc",
+      "source": "sections/s206-14-5-2-8-special-considerations-for-warc.md",
+      "source_hash": "fc655f8a074e47933bbc73cb652b97462799e3aa368309180329d6752f4c9a55",
+      "narrative": [
+        {
+          "text": "Requires the C2PA Manifest Store for WARC files to be located per Section A.10 by scanning for a record with WARC-Type c2pa-provenance and Content-Type application/c2pa. Specifies that if none is found the file has no manifest store, if more than one is present the asset shall be treated as if no manifests were located, and if exactly one is found the store shall be extracted from its block. Notes that a companion CDX or CDXJ index may be used to locate the record without scanning the whole file.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s207-14-5-3-by-reference-or-uri",
+      "source": "sections/s207-14-5-3-by-reference-or-uri.md",
+      "source_hash": "a824b536a4100fb8b6d5d957c8c37ecc4f9e91491f3549c9e00aa3b23edec78e",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.5.3 By Reference or URI; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s208-14-5-3-1-by-reference",
+      "source": "sections/s208-14-5-3-1-by-reference.md",
+      "source_hash": "fadb8ddd90ea2981c44c8c26e9d29a178b6bffd42361813c2bc7a9804826761d",
+      "narrative": [
+        {
+          "text": "Recommends that, when no store is embedded, a validator attempt in order to locate a remote C2PA Manifest Store via an HTTP Link header, an XMP dcterms:provenance URI, a font C2PA table with non-zero activeManifestUriLength, sidecar files named with an added or replacement .c2pa extension, or a similarly named entry in the same archive, stopping at the first found. Permits looking in other places if these fail. Requires the manifest.inaccessible error code when a documented remote manifest is missing or unreachable, and rejection with manifest.inaccessible.encrypted or manifest.inaccessible.malformed when a retrieved store is unreadable due to encryption or cannot be interpreted as valid.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s209-14-5-3-2-by-link-header",
+      "source": "sections/s209-14-5-3-2-by-link-header.md",
+      "source_hash": "41075880d4cbbff10b744ecd85558f9e9713f31a34bd81aba45cec22cdedafcb",
+      "narrative": [
+        {
+          "text": "Recommends that, for assets retrieved over HTTP, a validator look for a Link header (per RFC 8288) with rel=c2pa-manifest, from whose http or https URI the C2PA Manifest Store can be retrieved. Describes that the link may also refer to an embedded store using a JUMBF URI fragment to the C2PA Manifest Store superbox, and requires validators to ignore any childlabel portion since references to specific manifests are not permitted. Notes that HTTP refers to the protocol in RFC 9110, not only the http:// scheme.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s210-14-5-4-decompression",
+      "source": "sections/s210-14-5-4-decompression.md",
+      "source_hash": "653d01084867030fc08199af7b1ec753268e2070c0fec577c5646345416d6c0b",
+      "narrative": [
+        {
+          "text": "Requires a validator to decompress compressed standard or update manifests before standard validation. Requires rejection with manifest.compressed.invalid if decompression fails or the brob box data is not a standard or update manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s211-14-5-5-validating-a-match",
+      "source": "sections/s211-14-5-5-validating-a-match.md",
+      "source_hash": "d4e7bddc6363a4bc1c5529542d7c1308239788095164adab7c2578d688f461e7",
+      "narrative": [
+        {
+          "text": "Describes that a validator may wish to confirm that the located C2PA Manifest Store belongs to the asset. Requires using the active manifest's hard binding assertion for this, and, since a mismatch could mean either modification or the wrong store, requires treating it as a non-matching hard binding and rejecting with assertion.dataHash.mismatch, assertion.boxesHash.mismatch, assertion.collectionHash.mismatch, assertion.segmentHash.mismatch or assertion.bmffHash.mismatch depending on the assertion type.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s212-14-6-locating-and-validating-the-claim",
+      "source": "sections/s212-14-6-locating-and-validating-the-claim.md",
+      "source_hash": "065fb3a8de6666c2ba0b9d2283fe2ac9b4691f34191ca58b2e81eb0304c46497",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.6 Locating and Validating the Claim; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s213-14-6-1-locating",
+      "source": "sections/s213-14-6-1-locating.md",
+      "source_hash": "44347ef56d81590bc73d6386106a0259635dcf60f8094d262a7b250edb35533d",
+      "narrative": [
+        {
+          "text": "Specifies locating the claim within the current manifest as the JUMBF superbox labelled c2pa.claim.v2 (or c2pa.claim for older claims) with JUMBF type UUID 6332636C-0011-0010-8000-00AA00389B71 (c2cl), which is the same for both formats. Requires exactly one such box, rejecting the manifest with claim.multiple if more than one is found.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s214-14-6-2-validating",
+      "source": "sections/s214-14-6-2-validating.md",
+      "source_hash": "cdb6ad00ec668fd45a13ad32ff473b8687c50d1923e8a0c3ccda53d693735f63",
+      "narrative": [
+        {
+          "text": "Requires a claim whose content is not well-formed CBOR to be rejected with claim.cbor.invalid. Requires a c2pa.claim.v2 to contain instanceID, signature, created_assertions and claim_generator_info, and requires rejection with claim.malformed if any is missing or if claim_generator_info lacks a name field. Requires any icon field in the generator-info-map to be validated as described in Section 14.10.4.3, Validation of References.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s215-14-7-validate-the-signature",
+      "source": "sections/s215-14-7-validate-the-signature.md",
+      "source_hash": "5a3c818fafc7bdd309445568003e15072e6d7a13cd593d351cdbfe9826313456",
+      "narrative": [
+        {
+          "text": "Requires the validator to resolve the claim's signature field to the COSE signature, rejecting with claimSignature.missing if it is absent, unresolvable or outside the same C2PA Manifest box. Requires credential validation per Chapter 13, rejecting with signingCredential.invalid for unacceptable credentials and algorithm.unsupported for algorithms not on the allowed or deprecated lists. Requires checking for a valid time stamp first, then recommends verifying a chain of trust to a trust anchor configuration while honouring notBefore and notAfter, assigning signingCredential.trusted or rejecting with signingCredential.untrusted. Requires then verifying the signature per Section 12.3, assigning claimSignature.validated or rejecting with claimSignature.mismatch, and states that headers in the rest of the chapter mean the union of protected and unprotected headers.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s216-14-8-validate-the-time-stamp",
+      "source": "sections/s216-14-8-validate-the-time-stamp.md",
+      "source_hash": "1697d975705b7aae8e9dbd7ace0a15f3f9e32531b3c4d748a22e5fec332a6577",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.8 Validate the Time Stamp; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s217-14-8-1-obtaining-the-timestamptoken",
+      "source": "sections/s217-14-8-1-obtaining-the-timestamptoken.md",
+      "source_hash": "770ba6628f5792f3bbfea00fb0e3208e81de9cc85b76f25883f753be75b5a62d",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.8.1 Obtaining the TimeStampToken; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s218-14-8-1-1-embedded-in-the-claim-signature",
+      "source": "sections/s218-14-8-1-1-embedded-in-the-claim-signature.md",
+      "source_hash": "f7259068d250b55cf2699bc64985563d1a280916584019cebccd30d686e32bdd",
+      "narrative": [
+        {
+          "text": "Specifies that when a sigTst or sigTst2 header is present its tstTokens array is expected to hold a single tstToken, and requires issuing timeStamp.malformed and ignoring the time stamps if there is more than one. Requires a validator supporting sigTst to take the val property as an RFC 3161 TimeStampResp, issue timeStamp.malformed and ignore it if the PKIStatusInfo status is not 0 (granted) or 1 (grantedWithMods), and otherwise use its timeStampToken. Requires a validator for sigTst2 to take the val property as an RFC 3161 timeStampToken.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s219-14-8-1-2-referenced-by-a-time-stamp-assertion",
+      "source": "sections/s219-14-8-1-2-referenced-by-a-time-stamp-assertion.md",
+      "source_hash": "e4be586fc7e2c369b7d0ea5945fb9a68932d011d39096d998e5fc9014d2f54f8",
+      "narrative": [
+        {
+          "text": "Requires a validator to skip this step if a TimeStampToken from a sigTst or sigTst2 header has already passed validation, and to follow it otherwise. Requires that, if time stamp assertions were previously mapped from C2PA Manifest identifiers to TimeStampTokens, the validator use the token mapped to the current manifest's identifier, trying each one if several exist until one passes. States that no error is raised when the identifier is absent from the mapping.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s220-14-8-2-validating-the-timestamptoken",
+      "source": "sections/s220-14-8-2-validating-the-timestamptoken.md",
+      "source_hash": "0d3436c0d475899c0af5dbceed514df5dcf3827153eb7c2871de566e4f7c0ce0",
+      "narrative": [
+        {
+          "text": "Requires validators to check the timeStampToken's signature algorithm, signature, messageImprint presence, imprint hash algorithm, imprint match against the claim (sigTst) or COSE signature field (sigTst2), TSA certificate trust chain, and that genTime falls within the TSA and CA certificates' validity, issuing informational codes such as timeStamp.untrusted, timeStamp.mismatch, timeStamp.malformed or timeStamp.outsideValidity and ignoring the time stamp on failure. Requires issuing timeStamp.trusted and timeStamp.validated when all checks pass, then checking genTime against the claim signing certificate chain to return claimSignature.insideValidity or reject with claimSignature.outsideValidity. Notes that a failed time stamp does not by itself reject the manifest, that time stamps stay valid after the TSA credential expires, and that TSA revocation status is not required. Requires validators to use the attested time when a trusted, validated time stamp is present, and otherwise to use the current time to return claimSignature.insideValidity or reject with claimSignature.outsideValidity.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s221-14-8-3-validating-the-claimed-time-of-signing",
+      "source": "sections/s221-14-8-3-validating-the-claimed-time-of-signing.md",
+      "source_hash": "ffe7547162a36ab75680ffc3900d49b2a13f4cdb3f6c1db43bde3b81126c4a8d",
+      "narrative": [
+        {
+          "text": "Permits a validator to check that the claimed time of signing in the iat protected header falls within the validity period of the signer's certificate and CA certificates and is no later than any trusted time stamp. Requires that a validator performing this check return the informational code timeOfSigning.insideValidity or timeOfSigning.outsideValidity accordingly.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s222-14-9-validate-the-credential-revocation-informat",
+      "source": "sections/s222-14-9-validate-the-credential-revocation-informat.md",
+      "source_hash": "77a84f719073f1d898af4b7ad9c32a7108ec45734e24ff319820a6e415e598e4",
+      "narrative": [
+        {
+          "text": "Describes determining the revocation status of the signer's certificate and CA certificates in the trust chain as important to deciding validity and trust. Recommends determining CA certificate status via the AIA extension and any included OCSP responses, and requires rejection with signingCredential.untrusted if a CA certificate was revoked at the trusted time stamp time or current time. For the signer's certificate, requires treating it as not revoked when revocation status is unsupported, and validating stapled rVals OCSP responses and any certificate status assertions in other manifests per Section 14.9.1, trying each until one passes. Recommends that an online validator query the OCSP responder per Section 14.9.2 if no revocation information is found in the C2PA Manifest Store.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s223-14-9-1-determining-revocation-through-ocsp-respo",
+      "source": "sections/s223-14-9-1-determining-revocation-through-ocsp-respo.md",
+      "source_hash": "a28229588111e6a613064a6f154e5791860bd2a3701c870a31690edc34e5feec",
+      "narrative": [
+        {
+          "text": "Requires a validator to decode OCSP responses per RFC 6960, including requirements 1 through 4 of section 3.2. Specifies that an accepted response establishes the certificate was not revoked at signing when the claim signature has a valid time stamp, a SingleResponse has status good with the current time no earlier than thisUpdate and the attested time before thisUpdate or within the (thisUpdate,nextUpdate) or (thisUpdate,producedAt + 24 hours) interval, and the signer is an authorized responder. Requires the validator then to issue signingCredential.ocsp.notRevoked or perform an online OCSP check, and to reject with signingCredential.ocsp.revoked if a response meets all conditions except that certStatus is revoked.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s224-14-9-2-determining-revocation-from-online-ocsp-r",
+      "source": "sections/s224-14-9-2-determining-revocation-from-online-ocsp-r.md",
+      "source_hash": "d098b8c6c535c321c35f5f6a8099337b06d361ac9ffd0261179bf983bba894d8",
+      "narrative": [
+        {
+          "text": "Permits a validator to query the OCSP responder online when no stored response satisfies Section 14.9.1 or the claim signature lacks a time stamp, noting that such queries can reveal the asset being validated. Requires signingCredential.ocsp.skipped if the check is not performed and signingCredential.ocsp.inaccessible if no response is received. Specifies that an accepted response establishes non-revocation when the time stamp time (or current time if no valid time stamp) falls within (thisUpdate,nextUpdate), certStatus is good or revoked with removeFromCRL, and the signer is an authorized responder, or when a revoked status with another reason has a revocationTime after a valid attested time stamp falling within that interval. Requires signingCredential.ocsp.notRevoked in those cases, otherwise signingCredential.ocsp.unknown for an unknown status or rejection with signingCredential.ocsp.revoked.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
