@@ -54,6 +54,18 @@ import { LOCALE_PAGE_STRINGS, LOCALE_PAGE_TEMPLATE, collect, type GlossarySource
 
 const CORE = resolve(import.meta.dir, "..");
 const REPO = repoRootFor(CORE);
+
+/**
+ * What the check compares: the template without its timestamp and without its
+ * `#:` source references. A reference names the source file by its path in the
+ * checkout, and a layer sits at a different path in each checkout that checks
+ * it (`smart-trust/glossary/…` in folio-assistant, `glossary/…` in
+ * smart-trust's own CI), so no one file passes both. Every msgid, msgctxt and
+ * comment is still compared exactly. Owner card Q-TRAIN-8 (folio-assistant#2873).
+ */
+export function potForCheck(pot: string): string {
+  return potWithoutTimestamp(pot).split("\n").filter((l) => !l.startsWith("#: ")).join("\n");
+}
 /**
  * The platform instance whose `translation-sources` directory holds the
  * templates: cat-harness, the site the glossary page is published on, and the
@@ -236,7 +248,7 @@ if (import.meta.main) {
         const p = potPath(placed.get(name)!.dir, loc, name);
         const rel = relative(REPO, p);
         if (!existsSync(p)) bad.push(`never extracted: ${rel}`);
-        else if (potWithoutTimestamp(readFileSync(p, "utf-8")) !== potWithoutTimestamp(render(name, loc))) bad.push(`out of date: ${rel}`);
+        else if (potForCheck(readFileSync(p, "utf-8")) !== potForCheck(render(name, loc))) bad.push(`out of date: ${rel}`);
       }
       for (const dir of dirs) {
         const sub = join(dir, loc, GLOSSARY_SUBDIR);

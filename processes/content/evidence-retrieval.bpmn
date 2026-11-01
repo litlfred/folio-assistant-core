@@ -33,11 +33,13 @@
     <bpmn:participant id="Participant_EvidenceRetrieval" name="Editing subprocess — evidence for a recommendation" processRef="Process_EvidenceRetrieval" />
   </bpmn:collaboration>
   <bpmn:process id="Process_EvidenceRetrieval" name="Evidence for a recommendation" isExecutable="false">
-    <bpmn:documentation>Frame a question for a recommendation, retrieve and appraise evidence from trusted sources, and either attach it or record the gap. The author reviews the guidance already in their content, frames the question as PICO, retrieves candidate evidence across three classes (trusted L1 sources, trusted L2/L3 content, data repositories), verifies each candidate's authority against the publishing body's own API, grades the body of evidence, and either attaches it to the recommendation or records the gap. STRAWPERSON: registries, grading system and API bindings are not fixed here.</bpmn:documentation>
+    <bpmn:documentation>Frame a question for a recommendation, retrieve and appraise evidence from trusted sources, and either attach it or record the gap; a change that states or alters no recommendation ends at its own event before any search. The author reviews the guidance already in their content, frames the question as PICO, retrieves candidate evidence across three classes (trusted L1 sources, trusted L2/L3 content, data repositories), verifies each candidate's authority against the publishing body's own API, grades the body of evidence, and either attaches it to the recommendation or records the gap. STRAWPERSON: registries, grading system and API bindings are not fixed here.</bpmn:documentation>
     <bpmn:laneSet id="LaneSet_EvidenceRetrieval">
       <bpmn:lane id="Lane_Author" name="Author / guideline developer (person)" partitionElementRef="author">
         <bpmn:documentation>Brackets the machine work rather than doing it: frames the PICO before Lane_Agent fans out across evidence classes, then is the only lane that grades what comes back and decides whether it is sufficient for a recommendation — retrieval and authority-checking are delegated, but the judgement that turns evidence into a claim never leaves this lane.</bpmn:documentation>
         <bpmn:flowNodeRef>StartEvent_Recommendation</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Gateway_RecommendationInPlay</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_NoRecommendation</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReviewExisting</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_FramePico</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_AppraiseGrade</bpmn:flowNodeRef>
@@ -65,18 +67,27 @@
         <bpmn:flowNodeRef>EndEvent_GapRecorded</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
-    <bpmn:startEvent id="StartEvent_Recommendation" name="A recommendation is in play">
+    <bpmn:startEvent id="StartEvent_Recommendation" name="An edit is about to be drafted">
       <bpmn:outgoing>Flow_01</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="Task_ReviewExisting" name="Review the guidance already in this content">
+    <bpmn:exclusiveGateway id="Gateway_RecommendationInPlay" name="Does the change state or alter a recommendation?">
+      <bpmn:documentation>The author answers before any search starts. `yes`: the change states a recommendation or alters one, and the evidence is gathered as below. `no`: the change carries none -- a mathematics folio has none, and a figure redrawn from its own source as a computable graphic adds or changes none -- so there is nothing to frame as PICO. The `no` branch ends at its own event, which records that answer in the instance history; it does not pretend a search was run. The answer is the author's and the editor still rules on the change at Task_ReviewFindings in Process_Editing, so a wrong `no` is caught there.</bpmn:documentation>
+      <bpmn:incoming>Flow_01</bpmn:incoming>
+      <bpmn:outgoing>Flow_RecYes</bpmn:outgoing>
+      <bpmn:outgoing>Flow_RecNo</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:endEvent id="EndEvent_NoRecommendation" name="No recommendation in this change">
+      <bpmn:incoming>Flow_RecNo</bpmn:incoming>
+    </bpmn:endEvent>
+    <bpmn:userTask id="Task_ReviewExisting" name="Review the guidance already in this content&#10;[content-review]">
       <bpmn:documentation>The author reads what the document, DAK or IG ALREADY says on this question, before looking outward. A recommendation that contradicts a sibling recommendation in the same artefact is a defect no external evidence will reveal.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_01</bpmn:incoming>
+      <bpmn:incoming>Flow_RecYes</bpmn:incoming>
       <bpmn:outgoing>Flow_02</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_FramePico" name="Frame the question as PICO">
+    <bpmn:userTask id="Task_FramePico" name="Frame the question as PICO&#10;[content-author]">
       <bpmn:documentation>Population, Intervention, Comparator, Outcome. The PICO is what makes the search reproducible and the evidence auditable: without it, 'we looked for evidence' is not a claim anyone can check. WHO guideline development states the question this way before any retrieval.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-author" />
@@ -90,7 +101,7 @@
       <bpmn:outgoing>Flow_05</bpmn:outgoing>
       <bpmn:outgoing>Flow_06</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:serviceTask id="Task_L1Sources" name="Search trusted SOURCES — L1">
+    <bpmn:serviceTask id="Task_L1Sources" name="Search trusted SOURCES — L1&#10;[document-intake]">
       <bpmn:documentation>Ingested primary literature under library/: the sections/*.md tree and, where a document was scanned, ocr/page-NNN.txt. NOTE the known blind spot — a document OCR'd but never re-run through pdf-structure.py has only a stub in sections/, so a sections-only search misses it.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
@@ -145,7 +156,7 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       <bpmn:outgoing>Flow_12</bpmn:outgoing>
       <bpmn:outgoing>Flow_13</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_RecordUnverified" name="Open a bean for the unverified citation">
+    <bpmn:serviceTask id="Task_RecordUnverified" name="Open a bean for the unverified citation&#10;[todo-manager]">
       <bpmn:documentation>An unresolvable citation is not dropped and not silently kept. It becomes a tracked item, so the gap is visible in the work plan rather than surviving as a footnote nobody re-checks.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="todo-manager" />
@@ -169,7 +180,7 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       <bpmn:outgoing>Flow_16</bpmn:outgoing>
       <bpmn:outgoing>Flow_17</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_RecordGap" name="Record the evidence gap">
+    <bpmn:serviceTask id="Task_RecordGap" name="Record the evidence gap&#10;[todo-manager]">
       <bpmn:documentation>Insufficient evidence is a RESULT. It is recorded as such -- an honest gap the guideline can state -- rather than being closed by weakening the recommendation until the available evidence supports it.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="todo-manager" />
@@ -178,7 +189,7 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       <bpmn:incoming>Flow_16</bpmn:incoming>
       <bpmn:outgoing>Flow_18</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Task_AttachEvidence" name="Attach the evidence to the recommendation">
+    <bpmn:userTask id="Task_AttachEvidence" name="Attach the evidence to the recommendation&#10;[content-author]">
       <bpmn:documentation>The PICO, the graded body of evidence, each verified citation and its resolved authority record are written onto the recommendation block, so a reader can retrace the whole chain from the sentence back to the source.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-author" />
@@ -192,7 +203,9 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
     <bpmn:endEvent id="EndEvent_GapRecorded" name="Gap recorded, no recommendation">
       <bpmn:incoming>Flow_18</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:sequenceFlow id="Flow_01" sourceRef="StartEvent_Recommendation" targetRef="Task_ReviewExisting" />
+    <bpmn:sequenceFlow id="Flow_01" sourceRef="StartEvent_Recommendation" targetRef="Gateway_RecommendationInPlay" />
+    <bpmn:sequenceFlow id="Flow_RecYes" name="yes" sourceRef="Gateway_RecommendationInPlay" targetRef="Task_ReviewExisting" />
+    <bpmn:sequenceFlow id="Flow_RecNo" name="no" sourceRef="Gateway_RecommendationInPlay" targetRef="EndEvent_NoRecommendation" />
     <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_ReviewExisting" targetRef="Task_FramePico" />
     <bpmn:sequenceFlow id="Flow_03" sourceRef="Task_FramePico" targetRef="Gateway_RetrievalFork" />
     <bpmn:sequenceFlow id="Flow_04" sourceRef="Gateway_RetrievalFork" targetRef="Task_L1Sources" />
@@ -219,7 +232,13 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       <bpmndi:BPMNShape id="Lane_Agent_di" bpmnElement="Lane_Agent" isHorizontal="true"><dc:Bounds x="190" y="260" width="2735" height="180" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Trusted_di" bpmnElement="Lane_Trusted" isHorizontal="true"><dc:Bounds x="190" y="80" width="2735" height="180" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_WorkPlan_di" bpmnElement="Lane_WorkPlan" isHorizontal="true"><dc:Bounds x="190" y="667" width="2735" height="180" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="StartEvent_Recommendation_di" bpmnElement="StartEvent_Recommendation"><dc:Bounds x="277" y="512" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="StartEvent_Recommendation_di" bpmnElement="StartEvent_Recommendation"><dc:Bounds x="237" y="512" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Gateway_RecommendationInPlay_di" bpmnElement="Gateway_RecommendationInPlay" isMarkerVisible="true"><dc:Bounds x="320" y="505" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="285" y="452" width="120" height="48" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_NoRecommendation_di" bpmnElement="EndEvent_NoRecommendation"><dc:Bounds x="327" y="605" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="370" y="603" width="110" height="40" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReviewExisting_di" bpmnElement="Task_ReviewExisting"><dc:Bounds x="415" y="479.5" width="180" height="101" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_FramePico_di" bpmnElement="Task_FramePico"><dc:Bounds x="635" y="479.5" width="180" height="101" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_RetrievalFork_di" bpmnElement="Gateway_RetrievalFork"><dc:Bounds x="880" y="325" width="50" height="50" />
@@ -241,10 +260,18 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
         
       <bpmndi:BPMNLabel><dc:Bounds x="2485" y="712.5" width="90" height="89" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_01_di" bpmnElement="Flow_01">
-        <di:waypoint x="313" y="530" />
-        <di:waypoint x="366" y="530" />
-        <di:waypoint x="366" y="530" />
+        <di:waypoint x="273" y="530" />
+        <di:waypoint x="320" y="530" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_RecYes_di" bpmnElement="Flow_RecYes">
+        <di:waypoint x="370" y="530" />
         <di:waypoint x="415" y="530" />
+        <bpmndi:BPMNLabel><dc:Bounds x="380" y="512" width="20" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_RecNo_di" bpmnElement="Flow_RecNo">
+        <di:waypoint x="345" y="555" />
+        <di:waypoint x="345" y="605" />
+        <bpmndi:BPMNLabel><dc:Bounds x="350" y="570" width="20" height="14" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_02_di" bpmnElement="Flow_02">
         <di:waypoint x="595" y="530" />
