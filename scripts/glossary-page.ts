@@ -114,6 +114,9 @@ const INTO_SITE = siteArg() !== undefined;
  * site does not carry are left as text, so the publish link check passes.
  */
 export const ONLY: string | undefined = (() => {
+  // Only this script's own command line: a script that imports it (such as
+  // glossary-validate.ts) has its own --instance flag, meaning something else.
+  if (!import.meta.main) return undefined;
   const i = process.argv.indexOf("--instance");
   return i > 0 ? process.argv[i + 1] : undefined;
 })();

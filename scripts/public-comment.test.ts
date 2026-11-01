@@ -204,12 +204,17 @@ describe("the store and the lifecycle", () => {
     expect(importRows(s, rows, { channel: "comment-matrix", batch: "m1-again", sha256: "x" }, at).alreadyImported).toBe(true);
   });
 
-  test("every move is a task in public-comment.bpmn", () => {
-    const bpmn = readFileSync(join(import.meta.dir, "..", "processes", "content", "public-comment.bpmn"), "utf-8");
+  test("every move is a task in the diagram its transition names", () => {
     for (const t of PUBLIC_COMMENT_TRANSITIONS) {
-      expect(bpmn).toContain(`id="${t.by.task}"`);
-      expect(bpmn).toContain(`id="${t.by.process}"`);
+      const bpmn = readFileSync(join(import.meta.dir, "..", "processes", "content", t.by.file), "utf-8");
+      expect(bpmn).toContain(`<bpmn:process id="${t.by.process}"`);
+      expect(bpmn).toMatch(new RegExp(`<bpmn:\\w+ id="${t.by.task}"`));
     }
+  });
+
+  test("the public comment process calls its change phase", () => {
+    const bpmn = readFileSync(join(import.meta.dir, "..", "processes", "content", "public-comment.bpmn"), "utf-8");
+    expect(bpmn).toMatch(/<bpmn:callActivity id="CallActivity_MakeChange"[^>]*calledElement="Process_PublicCommentChange"/);
   });
 
   test("triage → assign → recommend → decide → edit (author) → incorporate", () => {

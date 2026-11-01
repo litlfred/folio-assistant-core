@@ -7,7 +7,8 @@ output: schemas/skills/public-comment/output.schema.json
 
 > Skill id: `public-comment` · Package: `folio-document-adapter` · Process:
 > `folio-assistant-core/processes/content/public-comment.bpmn`
-> (`Process_PublicComment`) · Tool: `folio-assistant-core/scripts/public-comment.ts`
+> (`Process_PublicComment`), which calls its change phase
+> `public-comment-change.bpmn` (`Process_PublicCommentChange`) · Tool: `folio-assistant-core/scripts/public-comment.ts`
 > · Schema: `folio-assistant-core/schemas/public-comment.ts` · Bean `v26p`,
 > issue #197.
 
@@ -258,8 +259,11 @@ Each sync does the steps below, in this order.
       never by a reviewer's name.
 
 3. **Merge the released PRs.** For each change-set with an open PR (Agent K)
-   whose Review Change Sets row has **Ready for merge = Yes**, merge it (owner,
-   2026-10-30). Any editor may set it. Only a PR in the folio's own repository is
+   whose Review Change Sets row has **Ready for merge = Yes**, and whose **QA
+   gate** has passed for the PR's head commit, merge it (owner, 2026-10-30;
+   the gate 2026-10-31). The gate is run by a reviewer that did not write the
+   PR (`review-sheet-script`, "The QA gate"); without a pass for the current
+   head, the agent does not merge and its ⏳ line says why. Nor does it merge while any comment's committee Disposition is still Pending (`review-sheet-script`, "Unconfirmed dispositions block the merge"). Any editor may set it. Only a PR in the folio's own repository is
    merged, never one on a WHO repository. After the merge, set every PC row of
    the change-set to *Change merged*, clear its staging link (Agent L), and comment on the
    PR's issue. If the merge is refused (a session safety check, a conflict, a
@@ -313,7 +317,7 @@ committee has to judge. The agent may draft an editorial change-set as a
 **draft PR with a staging preview** without waiting for Ready for agent
 (owner, 2026-10-31, standing rule after smart-ra CS-052, 060, 097, 194, 254,
 283). It records each step in the Agent tab as usual
-([`review-sheet-agent-columns`](review-sheet-agent-columns.md)), with
+(`review-sheet-agent-columns`, core#315), with
 "editorial draft" in its status.
 
 - It still never sets **Ready for merge**, and nothing merges without it.
@@ -347,7 +351,8 @@ trust it:
 ## The lifecycle, and who moves it
 
 `received → triaged → assigned → recommended → decided → editing → incorporated`, plus
-`duplicate` and `withdrawn`. Every move is a task in `public-comment.bpmn`.
+`duplicate` and `withdrawn`. Every move is a task in `public-comment.bpmn` or,
+for `edit` and `incorporate`, in its change phase `public-comment-change.bpmn`.
 `transition()` refuses any other move. Do not edit a comment's `status` by
 hand: the dashboard counts statuses, and a hand-closed comment reads as
 adjudicated when no one decided it.
@@ -535,7 +540,19 @@ what they mention.
    to *editing*, with the branch and PR. Comments not yet decided, or decided
    `not-accepted`/`noted`/`deferred`, do not move.
 3. Edit the folio's blocks. An agent in the `author` role edits only what the
-   decisions and the issue's requirements say.
+   decisions and the issue's requirements say. Before the preview is staged,
+   it writes the change set's **Disposition (change set)** on the review
+   sheet's Agent tab, below the change set's decision history (which is only
+   ever added to): one blurb describing every disposition in the change
+   set, one line per comment (`No. 136: Accepted. <what was done>`, after an
+   optional `Overall:` line), starting from each comment's Blue Disposition
+   on Review Public Comments; the review sheet checks that every comment
+   number in the change set has one (`review-sheet-script`). Before Ready
+   for merge, an independent reviewer runs the QA gate: every disposition
+   against the people's Blue Disposition and the PR's diff, and the staging
+   QA report (`review-sheet-script`, "The QA gate"). Once an Editor sets Ready for merge to
+   Yes, that blurb is the summary: in the merge commit and as the closing
+   comment on the change set's issue (owner, 2026-10-31).
 4. The staging preview is published to `STAGING/<branch>/`. The dashboard links
    each comment's anchor on `main` (before) and on the preview (after). See
    [`staging-review`](../../../../cat-harness/skills/sdlc/sdlc-core/staging-review.md).

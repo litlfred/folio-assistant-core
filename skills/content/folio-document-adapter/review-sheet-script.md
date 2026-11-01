@@ -38,8 +38,9 @@ comment).
 | People (Authoring Committee, Feedback Review Committee) | the whole sheet | Blue columns on the people's tabs; cell comments | Green, Grey, Orange, Agent tabs, Config |
 | Editor (the Config EDITORS list) | the whole sheet | Orange `Ready for agent`, `Ready for merge` | Green, Grey, Agent tabs, Config |
 | Owner | the whole sheet | Config `EDITORS` | anything the agent or script writes |
-| Apps Script (`review-sheet.gs`, built by Tool `review-sheet-sync`) | Config (CFG, COLS, DATA, EDITORS); the people's tabs; the Agent tab(s) | Grey columns (ids, links, joins); Green columns copied from the Agent tab(s); the STALE mark on the agent column; `Ready for agent` back to No once, on the turn to stale; the Watch tab; protections on the Ready columns | Blue columns' contents; Orange except the stale reset; the Agent tab(s) |
-| Agent (sync or watcher) | the whole sheet; the folio's repository | the Agent tab(s) (one row per change set, and in public comment one row per comment on Agent - Comments); the agent column, `Feedback (agent)` (drafting) or `Change Set Feedback (agent)` (public comment); Config rows other than EDITORS | Blue, Orange, Grey; the Title on a drafting sheet |
+| Apps Script (`review-sheet.gs`, built by Tool `review-sheet-sync`) | Config (CFG, COLS, DATA, EDITORS); the people's tabs; the Agent tab(s) | Grey columns (ids, links, joins); Green columns copied from the Agent tab(s); the STALE mark on the agent column; `Ready for agent` back to No once, on the turn to stale; the Watch tab; protections on the Ready columns; the QC problems at the top of `Disposition (agent)` | Blue columns' contents; Orange except the stale reset; the Agent tab(s) |
+| Agent (sync or watcher) | the whole sheet, and above all the people's Blue `Disposition` of each comment, which its dispositions start from; the folio's repository | the Agent tab(s) (one row per change set, and in public comment one row per comment on Agent - Comments), including `Disposition (change set)` in the format below; the agent column, `Feedback (agent)` (drafting) or `Change Set Feedback (agent)` (public comment); Config rows other than EDITORS | Blue, Orange, Grey; the Title on a drafting sheet |
+| QA reviewer (independent: an agent session that did not write the PR, or a person) | the change set's `Disposition (change set)`, the people's Blue `Disposition` and feedback, the PR's diff at its head commit, the staging QA report | `QA gate (change set)` and `QA report (change set)` on the Agent tab, nothing else | everything else, and never a change set whose PR it wrote |
 | Tool `review-sheet-sync` | the folio's `review/*/sheet-sync.json`, anchors, line map | `Code.gs` (generic); the Config rows for one sheet (`--config ... --out rows`); a drafting sheet's TOC rows (`--toc-out rows`) | the sheet itself |
 | Script `review-anchors-from-folio.ts` | the folio's document manifests and block prose; optionally the library file it was seeded from | `folio/<doc>/review-anchors.json` (`--check` compares) | the sheet |
 
@@ -66,8 +67,85 @@ saying where the question is and what to do, and Agentic status (filter)
 reads `Needs you: answer the agent's question`, so the "Needs you" filter view
 finds it. A card in the agent's chat may carry the same
 question for the owner, but the sheet is the record people see. When the
-question is answered, the agent replaces the block with the decision and who
-made it.
+question is answered, the agent removes the block from the feedback and
+adds the decision, with who made it, to Disposition (agent) (below).
+
+**Disposition (agent): the change set's decisions and dispositions** (owner,
+2026-10-31: "agent should NOT remove historical decisions", "decision history
+in own column Disposition (agent), not in Change Set Feedback (agent)", "new
+col left of agentic status"). The agent keeps one record per change set in
+the Agent tab's **Disposition (change set)**, and the script shows it,
+read-only, in the Green **Disposition (agent)** column, just right of Ready
+for merge (owner, 2026-10-31, moved from left of Agentic status), on Review
+Change Sets or Contributor Feedback. An empty one still reads, in bold,
+`⚠ No disposition yet for Nos. 127 to 131 and 134` when the change set has
+comments ("make sure ... mechanical 'this PC has no disposition' is shown").
+It holds:
+
+1. **The decision history**, oldest first, one line per decision, never
+   removed or rewritten: `Decided (Q1, 2026-10-31): A, by the Editor; <what
+   it means>`. When a Decision needed question in the agent's feedback is
+   answered, the decision moves here, and the question leaves the feedback
+   cell. Change Set Feedback (agent) holds only the current proposal and any
+   open question.
+2. **One disposition per comment** (owner, 2026-10-31: "enforce more
+   structured Disposition (change set), so each PC is given a disposition"),
+   after an optional overall statement ("can also be an overall disposition
+   statement without reference to a PC"):
+
+   ```
+   Overall: <a statement for the whole change set>
+   No. 136: Accepted. DPI-F defined at first use, with a glossary entry.
+   Nos. 127 to 135, 138 and 139: Not accepted. Already addressed.
+   No. 326: Partially accepted. <what was done, and what was not>
+   ```
+
+   A disposition is one of Accepted, Partially accepted, Not accepted,
+   Noted, Deferred, Duplicate, Out of scope or Withdrawn, first after the
+   colon. Every comment of the change set gets exactly one. The script checks
+   this (`dispositionProblems`) and puts any problem, in bold, at the top of
+   Disposition (agent): `⚠ No disposition yet for No. 140, 141`, `⚠ No. 9
+   is not in this change set`, `⚠ No. 136 has two dispositions`, or a line
+   whose word is not a disposition. It never edits the Agent tab.
+
+   **Drawn from the people's dispositions** (owner, 2026-10-31: "QC check is
+   that each PC # in the CS has a disposition. agent should draw from human
+   blue dispositions when drafting"). Before writing a comment's line, the
+   agent reads that comment's Blue `Disposition` on Review Public Comments
+   (drafting: the row's Blue `Disposition`). Where a person has set one, the
+   line uses the same word, and the text says what was done; where it is
+   empty or Pending, the agent proposes one. The QC check is that every
+   comment number in the change set has a disposition; a word that differs
+   from the people's is flagged (`⚠ No. 136: Accepted here, Noted in the
+   people's Disposition`) for the committee to settle, and never corrected
+   by the agent or the script. Written
+   before the staging preview is made, and kept current with each push.
+
+Once an Editor sets Ready for merge to Yes, the record as it stands is the
+summary: the agent puts it in the merge commit and posts it as the closing
+comment on the change set's issue.
+
+**From a sibling agent** (owner, 2026-10-31: *"if other fedbcak mechanism in
+play like tools such as google sheets that can enage as well then should also
+be avialbe to use"*, folio-assistant-core#433). An agent that is not the one
+talking with the owner, such as a project thread or a subagent, also writes
+its question here when the sheet governs the work. It is the `review-sheet`
+channel of the harness skill `hand-back-to-discussion` (cat-harness
+`schemas/skills/hand-back-to-discussion/input.schema.json`):
+
+| channel field | on the sheet |
+|---|---|
+| `spreadsheetId` | the sheet, as the folio's `review/*/sheet-sync.json` names it |
+| `tab` | Review Change Sets, or Contributor Feedback on a drafting sheet |
+| `row` | the change set id or comment number, never a row index |
+| `column` | `Change Set Feedback (agent)` or `Feedback (agent)`, by header |
+
+The block, the Agentic status and the replacement on answer are the same as
+above. The sheet is an extra copy, never the only one: the sibling still hands
+the question back to the discussion agent, which asks the owner. A
+Blue-column answer counts as the answer in either place. The agent that takes
+it routes it to the other copy and marks that copy answered (the chat copy is
+struck through, with `[Edit: …]` added).
 
 **What it keeps current.** Columns are found by header text, so people may
 move them.
@@ -192,12 +270,76 @@ records, on each pass over a change set with an open PR:
 |---|---|---|
 | **PR head (change set)** | each PR's latest commit, one per line, in the PR order | the PR (`gh pr view --json headRefOid`) |
 | **Staging built from (change set)** | the commit the preview was built from | the newest gh-pages commit touching `STAGING/<slug>/`. Its message is `staging(<slug>): from <sha>` when an agent staged it (`stage-local.ts`), or `Publish <site> <sha8> preview of <branch>` when the site-publish workflow did; both forms are accepted |
-| **Staging deploy (change set)** | `deployed`, `pending` or `failed` | the Pages deployment of that gh-pages commit: `gh api repos/<o>/<r>/pages/builds/latest`, or, where that endpoint is blocked, the conclusion of the "pages build and deployment" run in `actions/runs?head_sha=<gh-pages commit>` |
+| **Staging deploy (change set)** | the restage's stage, updated as it moves: `building` (the site is being built), `pushed` (on gh-pages, waiting for Pages), `deploying` (Pages is deploying it; `pending` reads the same), `deployed`, or `failed` | the Pages deployment of that gh-pages commit: `gh api repos/<o>/<r>/pages/builds/latest`, or, where that endpoint is blocked, the conclusion of the "pages build and deployment" run in `actions/runs?head_sha=<gh-pages commit>` |
+
+**On every push, in the same pass** (owner, 2026-10-31: "preview review
+should say stale if started but not done"): write the new **PR head**, set
+**Staging deploy** to `building`, set each comment's status, and stamp
+**Agent completed** with the clock (`date -u '+%Y-%m-%d %H:%MZ'`), never an
+estimate. A push recorded only in prose leaves the sheet saying the old
+preview is current and the row is "Not started". Then, as the restage moves
+(owner, 2026-10-31: "update stages of gh-pages deployment (merge to
+gh-pages, waiting for deploy, deployed)"): on the gh-pages push, write
+**Staging built from** and **Staging built** and set `pushed`; when the
+Pages run starts, `deploying`; when it succeeds, `deployed`. The sheet shows
+each stage in Staging review and the ⏳ line. With each stage before `deployed` the agent adds
+when it expects the preview live, from the clock and recent runs of the
+same site (`gh run list --workflow pages-build-deployment` and the build's
+own duration): `building, expected 2026-10-31 15:20Z`. The sheet shows
+"expected live <time>" after the stage (owner, 2026-10-31: "also expected
+time of gh-page deployment").
+
+### Writing the Agent tab with the tool (owner, 2026-10-31, option C)
+
+The agent does not type numbers or times into the Agent tab. On 2026-10-31
+two typed slips reached a sheet: `Nos. 127 to 135` took in two comments of
+another change set, and an Agent completed time was left behind after the
+agent acted. The owner chose "A, and agent self-check": a tool makes the
+cells, and the agent runs the sheet's own check before writing.
+
+- **Dispositions.** Read Agent - Comments (`No.`, `Change-sets`) and Review
+  Public Comments (`No.`, `Disposition`) with their header rows, and the
+  change set's current Disposition (change set) cell. Put them in an input
+  file with the items (which numbers, which word, why; `rest` for "every
+  other comment of the change set"), and run
+  `bun run folio-assistant-core/tools/review-sheet-sync/agent-record.ts dispositions <input.json>`.
+  The tool takes the change set's numbers from the sheet, groups them
+  (`Nos. 127 to 131, 134, 135, 138 and 139`), uses the people's Blue word
+  where an item names none, keeps every earlier `Decided` line, and runs
+  `dispositionProblems` from the same review-sheet.gs the sheet runs. If
+  anything would show a ⚠, it prints the problems, exits 1 and writes
+  nothing: fix the input and run it again. Write its output, unchanged, to
+  Disposition (change set).
+- **On every push.** `agent-record.ts push --head <full sha> --expect <minutes>`
+  prints PR head, Staging deploy (`building, expected <time>`) and Agent
+  completed, the times from the clock. Write all three in one update.
+- **After acting on Ready for agent with no new commit** (the PR already
+  held the change), run `agent-record.ts done` and write the Agent
+  completed it prints, so it is later than the Ready time and the ⏳ line
+  moves on. Not `push`: nothing is restaged, so Staging deploy stays as it is.
+
+- **The PR's review brief.** `agent-record.ts brief <input.json> --look
+  "<where to look>"` prints the same Overall and per-comment lines as
+  Markdown between `<!-- review-brief -->` and `<!-- /review-brief -->`. Put
+  it in the PR body: the staging review page's "What to expect in this
+  review" pane shows only that section (cat-harness-tools#1153). Add
+  `--pcs <public-comment dashboard url>` (on smart-ra,
+  `https://litlfred.github.io/smart-ra/en/folio-assistant-core/public-comments/folio/dpi-h-ra/`)
+  and every comment number links to its row there, so the reviewer can open
+  the comment itself. The link target is the comment's own id from the
+  Agent - Comments "Comment ref" column (pass those rows as `comments`): the
+  sheet's No. is not the id (on DPI-H, No. 136 is PC-0137). A run such as "127 to 131" is
+  spelled out, so no comment hides behind a range.
+
+Drafting sheets have no comment numbers: pass `"nos": []` and items without
+numbers are not needed; the tool then only keeps the history.
 
 The script compares only; it stays `@OnlyCurrentDoc` with no internet access. Short and full shas both work: it compares the common prefix, at least 7 characters.
 It reads the active PR as the last one listed (one branch, one active PR per
 row) and writes, in this order of precedence: `⚠ deploy failed`;
-`⚠ stale: built from <sha>, PR now at <sha>`; `⚠ deploy in progress`. A
+`⚠ stale: built from <sha>, PR now at <sha>` (with `; restaging: <stage>`
+while one runs); `⚠ restaging: building the preview | on gh-pages, waiting
+for Pages to deploy | Pages is deploying it`. A
 change set with a recorded PR head but no preview link shows `⚠ no preview
 yet: not ready for merge`. A change set is never ready for merge without a
 preview to review (owner, 2026-10-31: "how can it be ready for merge when
@@ -233,6 +375,30 @@ Feedback). The script computes the same hash; while they differ it puts
 "⚠ Stale: the row changed since this proposal; the agent will propose
 again." on the proposal's first line, and takes it off if the row changes
 back. The agent's next sync replaces the proposal and the basis.
+
+**Where the change set is** (owner, 2026-10-31: "agent feedback should also
+try to say where it is in producing PR / staging"). Below any stale mark, the
+script keeps one line starting with ⏳ at the top of the agent's proposal
+(`progressLine`, `withProgress`), and replaces it on every refresh:
+"Ready for merge set: the agent will merge dth-hrh#7."; "Ready for agent set
+`<time>`: the agent will act on this and rewrite it."; "The agent is working on
+dth-hrh#7."; or "dth-hrh#7 open; no preview yet | preview current (built
+`<time>`) | preview missing feedback from `<time>`." No pull request, a merged
+one, or an empty proposal gets no line. The agent never writes this line and
+drops it when it rewrites the proposal; the next refresh (within a minute)
+puts it back. The line is bold, and an open PR's line carries the agent's
+last completion time ("smart-ra#185 open, updated 2026-10-31 14:41Z;
+preview stale: built from 420acd3, PR now at e7b4094."). The agent writes no
+status line of its own ("Status (agent, …)"): it records the facts in the
+Agent tab (PR head, Staging deploy, Agent completed from `date -u`) and the
+sheet says them (owner, 2026-10-31: "lost time, not bold"). An Editor's Orange change (a Ready
+column) is not part of the basis, so it never marks the proposal stale: it
+shows here as a note, and Ready stays as the Editor set it (owner's card,
+option A).
+The note appears at once: an edit of a Ready for agent cell records its time
+(`noteReady_`) and, on a slow public-comment sheet, `staleNow` writes that
+row's line without waiting for the timer (owner, 2026-10-31: "i expected to
+see change to Change Set Feedback (agent) b/c i said ready for agent").
 
 **How to tell it works.** The first run of `installTriggers` takes about 20
 seconds for 800 rows and its execution log ends "Execution completed" (a
@@ -292,6 +458,196 @@ that test.
 moves, or a tab or a header the script reads is renamed. Re-paste Code.gs
 only when the script itself changes. Renaming a header the script reads,
 without rewriting Config, leaves that column unlinked; it fails nothing.
+
+## Ready for agent: Yes, No, Completed (owner, 2026-10-31)
+
+"preview is now live, so nothing more for agent to do. so no longer ready
+for agent ... like Yes, No, Completed". The script sets Ready for agent from
+**Yes** to **Completed** once the agent's last push is later than the time
+Yes was set and the preview of it is live and current (no ⚠ in Staging
+review). An Editor sets **Yes** again to send the row back to the agent. A
+row that turns stale goes back to **No** from Yes or Completed, as before.
+The agent never writes the Orange columns.
+
+**Every pass ends with a finish stamp after the Ready time** (owner,
+2026-10-31: "make sure process works … so it doesnt fail again"). On DTH-HRH
+CS-001 the agent pushed at 12:49Z, Ready for agent was set (again) at 12:57Z,
+and no agent ran after that: the row read "the agent will act on this" for
+seven hours and never reached Completed. So:
+
+- The agent ends EVERY pass with a stamp from the tool: `push --head <sha>`
+  when it committed, else `done`, which writes Agent completed and the step
+  `idle` together. A proposal that waits for the Editor ends with
+  `step proposed`. The script counts a later `idle` or `proposed` step as
+  the end of the pass, the same as Agent completed.
+- Before stopping, the agent re-reads Ready for agent: if it was set after
+  the pass began, the pass is not over; act on it (or `done` if there is
+  nothing new).
+- A Ready for agent with no step recorded after it for 20 minutes shows
+  "⚠ no agent has picked this up for N min: ask in the project chat" on the
+  ⏳ line and in Agentic status, so a row with no agent never looks like
+  quiet work.
+- Every log needs a watcher: the setup is not complete until an agent
+  thread is watching the sheet. A thread acts only when something wakes it,
+  so the watcher needs a scheduled wake: an hourly scheduled task, plus a
+  chain of 20-minute delayed wakes (`send_later`) that each pass renews.
+  Without one, a Ready for agent waits until somebody happens to ask.
+
+## One agent column, status on top (owner, 2026-10-31, option A)
+
+"why Change Set Feedback (agent) and Agentic status not consolidated to one?"
+A sheet without an **Agentic status** column gets the status on top of the
+agent column (`Change Set Feedback (agent)` or `Feedback (agent)`) instead:
+
+```
+⏳ smart-ra#185 open, updated 2026-10-31 15:26Z; preview current (built 15:19Z).
+↳ smart-ra#185 (PR open, 2026-10-31 15:26Z) · DPI-F at first use
+<the agent's proposal and any Decision needed question>
+```
+
+The ⏳ line and each `↳` line (one per pull request, linked; and the ask
+when people must answer) are the script's; it replaces them on every
+refresh and never stacks them. The agent writes only what is below them and
+never starts its own text with ⏳ or ↳. **Agentic status (filter)** stays,
+for the filter views. A sheet that keeps its Agentic status column keeps the
+old layout, so the change is made by deleting that column.
+
+## The QA gate, before Ready for merge (owner, 2026-10-31)
+
+"agent should make sure all dispositions are consistent with human and feature
+branch changes. add review (agent-independent) before ready for merge", then
+"QA gate. also sheets should link to QA reports for the staging".
+
+**Who.** A reviewer that did not write the change: another agent session, or
+a person. The authoring agent never gates its own pull request; one party
+doing both halves is not this check.
+
+**What it checks**, against the PR's head commit:
+
+1. every comment (drafting: every feedback item) of the change set has one
+   disposition (the script's `dispositionProblems` already flags gaps);
+2. each disposition agrees with the people's Blue `Disposition`, where one
+   is set;
+3. each **Accepted** or **Partially accepted** item has its change in the
+   PR's diff, and the change does what the line says;
+4. a **Not accepted**, **Noted**, **Deferred**, **Duplicate** or **Out of
+   scope** item has no change in the diff that contradicts it;
+5. the diff changes nothing that no disposition accounts for;
+6. the staging QA report for that commit has no failing gate.
+
+**What it writes**, on the Agent tab's change-set row and nowhere else:
+
+- `QA gate (change set)`: first line `Passed <head sha>: <one line>` or
+  `Failed <head sha>: <the first problem>`, then one line per problem;
+- `QA report (change set)`: the link to the QA report for the staged
+  commit: the tree `pr/<n>/<sha>` on the folio's QA reports branch (in
+  smart-ra, `cat/cat-harness/qa-reports`; check the branch name, it varies).
+
+**What the sheet shows.** Staging review reads `review · QA report` (both
+links), then the gate: `✓ QA gate passed (b20534f)`, or in bold
+`⚠ QA gate: no independent review yet: not ready for merge`,
+`⚠ QA gate failed: <why>`, or `⚠ QA gate stale: reviewed 1234567, PR now at
+b20534f: not ready for merge` once the PR moves on (`qaGate`). If Ready for
+merge is set before the gate passes, the agent's ⏳ line says it will not
+merge until it does, and the agent does not merge. A failed gate sends the
+change set back to the author, who updates the PR and its dispositions; the
+gate then runs again on the new head.
+
+## Unconfirmed dispositions block the merge (owner, 2026-10-31, option A)
+
+The agent's disposition for a comment is a proposal until the committee
+records its own word in the people's Disposition column. While any comment
+of a change set is still Pending (or empty) there, Disposition (agent) shows
+"⚠ Not confirmed by the committee (Disposition still Pending): Nos. …".
+Staging review shows "⚠ dispositions not complete or not confirmed: not
+ready for merge", and the ⏳ line says the agent will not merge until every
+disposition is complete and confirmed. The agent never merges such a change
+set, even with Ready for merge = Yes. `agent-record.ts dispositions` does not
+stop on this line, because confirming is the committee's step, not a fault
+in the agent's record.
+
+An Editor confirms in the Orange **Dispositions confirmed** column, left of
+Ready for merge ("make orange column ...", "put to left of ready for merge"):
+**Yes** confirms every agent disposition in the change set (owner, option A,
+after multi-select over every comment number proved greyed out: the list was
+too long). To differ on one comment, the committee sets that comment's own
+Disposition on Review Public Comments, and a mismatch is flagged. Comment
+numbers typed in the cell ("No. 327") confirm just those; a number outside
+the change set is flagged. The script adds the column itself, inside its
+locked run (so no other refresh writes by a shifted position), and keeps its
+Yes/No dropdown.
+
+There is no per-comment checkbox (owner, 2026-10-31 21:49Z, Q "Confirming
+dispositions": "C. Yes/No only"); the Yes/No per change set, typed comment
+numbers, and a comment's own Disposition are the only ways to confirm.
+
+## Where the agent is: Agent step (owner, 2026-10-31)
+
+"I don't see a state change indication on where agent is in process
+(thinking? writing PR? trying to render? what?)". At every move the agent
+writes **Agent step (change set)** on its change-set tab, with
+`agent-record.ts step <name>` so the time comes from the clock. The script
+shows it on the ⏳ line for as long as it holds, e.g. "⏳ Agent: editing the
+document (since today 17:20Z)" (or "yesterday …", or "3 days ago, 2026-10-28 …"), and adds "⚠ no update for N min" after 30 minutes.
+A question for a person ("Needs you: answer the Decision needed below, then
+set Ready for agent to Yes") always comes first. The script adds the column,
+at the end of the tab, inside its locked run.
+
+| step | when the agent writes it | BPMN task |
+|---|---|---|
+| `reading` | it starts on new feedback or a Ready for agent | (start of `Task_Propose` / `Task_EditInPullRequest`; public comment: `Task_AuthorEdits`) |
+| `proposing` | it writes or rewrites its proposal | `Task_Propose` (public comment: `Task_ProposeChangeSets`) |
+| `editing` | it edits the document on the branch | `Task_EditInPullRequest` (`Task_AuthorEdits`) |
+| `pushing` | it commits and pushes | end of the edit task, with `push` |
+| `staging` | the preview is building | the staging step of the edit task |
+| `deploying` | Pages is publishing the preview | as above |
+| `qa-review` | it waits for the independent reviewer | `Task_QaGate` |
+| `merging` | it merges after Ready for merge | `Task_Merge` (`Task_Incorporate`) |
+| `proposed` | it has written a proposal and waits for Ready for agent = Yes; the ⏳ line says "Proposal ready: set Ready for agent to Yes" | end of `Task_Propose` |
+| `idle` | it stops: done, or waiting on a person | — |
+
+The agent writes its proposal straight into the feedback cell, which drops
+the ⏳ line; the timer watches that column (without the script's own lines),
+so the status comes back on the next tick without anyone pressing Refresh.
+
+Write `idle` (or the next step) before leaving a change set; a step left
+behind turns into the "no update" warning, which is the point.
+
+## Rows at most 10 lines high (owner, 2026-10-31)
+
+"Make rows of human input tabs no more than 10 lines high on a laptop", "so
+scroll overflow". Sheets cannot scroll inside a cell, so on the people's tabs
+(Review Public Comments, Review Change Sets, Contributor Feedback) a row whose
+text would run past about 10 lines is fixed at that height and the rest is
+clipped. Clicking the cell shows the whole text in the formula bar, and
+double-clicking opens it scrollable. Rows that fit size themselves, and a row
+that shrinks back under the cap is released. The script estimates lines from
+column widths (`capRows`), so it needs no layout access.
+
+## Structured cells and column hover text (owner, 2026-10-31)
+
+"Several of the cols could be a bit more structured": a list is never run
+together with semicolons. Agents write "What changed" and "What the PRs
+changed (change set)" one item per line, as `• <item> (No. n)`, under a
+label line ending in a colon. The script splits any remaining `a; b; c` into
+bullet lines, and bolds line-start labels (`What changed:`, `Proposed
+direction:`) and comment references (`No. 326`, `Nos. 1, 2 and 5`).
+
+Every column head carries a hover note saying what the column holds and who
+fills it in ("can we add hover text to the column heads", all columns). The
+note does not name the colour ("don't need to name the color in the
+tooltip"). The notes are `HEADER_NOTES` in the script, keyed by header (or
+`<tab kind>|<header>` where one header means different things on different
+tabs); a head named `Name (initials)` uses its `Name (*)` entry. The script
+owns the note on every head it knows and writes only notes that changed; a
+head it does not know keeps its own. A new column gets its note in the same
+change that adds its header; `review-sheet.test.ts` checks that every known
+head has one and that none names a colour.
+
+The QA report link opens the viewer, the preview review page's per-section
+QA table (`<review page>#heat`), with the raw qa-reports entry beside it as
+"files". Text in a cell that is not a link is written plain, so it never
+inherits a link's blue underline.
 
 ## Sheet conventions (any agent-written Google Sheet)
 
@@ -509,9 +865,21 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
 3. **Link it to the repository (agent).** Give the agent the copy's URL and
    the document's repository. The agent follows "Linking a sheet to a
    repository" below. Until it does, Config holds only its Instructions,
-   Key and EDITORS rows, the Selected Sections dropdown is empty, and the
-   script says "not linked to a document repository yet" with the sheet's
-   ID when the sheet opens and on every run.
+   Key and EDITORS rows and the Selected Sections dropdown is empty.
+   The sheet itself says what to do next (owner, 2026-11-01: the old toast
+   was cut off before it said what to do, and the steps belong on the
+   sheet). The first line of each tab's Instructions starts with ⚠ and
+   names the next step: "Not set up yet. Step 1 of 2: ask the agent to link
+   this sheet …" (the templates carry it, so a copy starts with it), then,
+   once linked, "Almost set up. Step 2 of 2: choose Review links, then
+   Install". A short toast says the same when the sheet opens, and every
+   run of an unlinked sheet stops with "Ask the agent to link this sheet to
+   its document: give it this sheet's link (ID …)". Once installed (the
+   `timerMinutes` document property installTriggers sets), the ⚠ line goes
+   and each tab's Instructions ends with a
+   `Document: <site>   Repository: <repo>` line; Config has an
+   `Instructions - Links` row with the site, the repository and the
+   sheet's settings file.
 4. **Name the editors (owner).** Type their emails in Config's orange
    `EDITORS` row, or leave it empty so only the owner can set the Ready
    columns (below).
@@ -550,16 +918,28 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    - choose Data, then Data validation;
    - open the rule for that column (the sidebar lists it by its range, such
      as `'Contributor Feedback'!E2:E1000`, as "Dropdown (from a range)");
+   - under Advanced options, check that Display style is **Chip**;
    - tick **Allow multiple selections**;
    - press Done.
 
-   The Chip display style needs nothing: the dropdown rule (in the template,
-   and as written through the Sheets API) already carries it (owner,
-   2026-10-31: "chip style was preselected on dth-pc log"). Neither Apps
-   Script nor the Sheets API can read or set the multiple-selections tick, so installTriggers cannot check them directly. It shows the
-   steps, with the exact range, unless it has evidence they are done: a cell
-   already holding two sections from the list, or a Yes to the box's "Is this
-   done already?" (kept as the document property `dropdownDone`). Copies made
+   **The tick is greyed out unless the style is Chip** (owner, 2026-10-31,
+   DTH-PC: "cant multiselct ... why ... fix process error"). A rule that
+   Apps Script writes (`requireValueInRange`) gets the **Arrow** style, and
+   Apps Script cannot change it, so a log whose dropdown the script had to
+   add could not be ticked. The agent therefore sets the style through the
+   Sheets API at setup, and whenever a log's rule reads `customUiMode: ARROW`:
+   `setDataValidation` with the same `ONE_OF_RANGE` condition and
+   `"showCustomUi": true, "customUiMode": "CHIP", "strict": false`. The API
+   reads the tick (`condition.allowMultipleSelections`) but sets it only for
+   `ONE_OF_LIST` rules, so ticking it on the range rule stays the person's
+   step. installTriggers cannot check either directly. It shows the
+   steps in a 30-second toast unless it has evidence they are done: a cell
+   already holding two sections from the list (or `dropdownDone`, set by the
+   older dialog). It is a toast, never a dialog: a dialog waits for an answer
+   in the sheet, and an Install run from the Apps Script editor then hangs
+   until Apps Script stops it at 6 minutes (owner, 2026-10-31, DTH-SC log:
+   "Exceeded maximum execution time"). Only the menu's "Which version is
+   this?" opens a dialog. Copies made
    after the template has them keep them. The same steps are written at the
    top of the Config tab, in its `Instructions - Dropdown` row, so they stay with
    the sheet (owner, 2026-10-31); the script ignores that row.
@@ -645,8 +1025,29 @@ Each sheet, once (templates first, so copies inherit it):
    (Development mode)**, Identifier `Review`, **Add**.
 3. In the sheet, **Review links > Install**.
 
-An update is one paste of the new `dist/Code.gs` into the library. Every sheet
-runs it from its next open, edit or timer. "Which version is this?" reports the
+An update needs no paste (owner, 2026-10-31, option B: "Update from GitHub,
+one click"). The library also holds
+[`dist/Updater.gs`](../../../tools/review-sheet-sync/dist/Updater.gs);
+**`updateFromGitHub`**, run from the library's editor, fetches `dist/Code.gs`
+from `main` and writes it over the library's Code.gs through the Apps Script
+API, leaving the library's other files alone. It refuses anything that is not
+the review-sheet script (an error page, the stub) and logs "Updated to
+`<version>`" or "Already current". There is no timer: an update runs when the
+owner runs it. Every sheet runs the new code from its next open, edit or timer.
+
+Adding the updater, once:
+
+1. Turn on the Apps Script API at <https://script.google.com/home/usersettings>.
+2. In the library, **Files +**, Script, name it `Updater`; paste `dist/Updater.gs`; save.
+3. **Project settings**: tick "Show appsscript.json manifest file in editor",
+   then replace `appsscript.json` with
+   [`dist/library-appsscript.json`](../../../tools/review-sheet-sync/dist/library-appsscript.json)
+   (it adds the `script.projects` and `script.external_request` scopes); save.
+4. Pick `updateFromGitHub` in the function list, **Run**, and allow it.
+
+After that an update is step 4 alone. Without the updater, an update is one
+paste of the new `dist/Code.gs` into the library; a page with a Copy button
+holds the current one. "Which version is this?" reports the
 library's stamp.
 
 Why the stub hands its services over (`Review.init`): a library has no
@@ -677,12 +1078,20 @@ work second, in this order:
    leaves all three out. Run `review:anchors` and commit the file. A new
    document folio declares both scripts from its first commit, so no sheet
    ever waits on them.
-2. **The folio names the sheet.** `review/<mode>/sheet-sync.json`:
-   `{"mode":"drafting","anchors":"folio/<doc>/review-anchors.json","sectionUrl":"en/<doc>/#","sheet":"<spreadsheet id>"}`.
-3. **The agent writes the sheet.** From the folio's root:
-   `bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts --config review/<mode>/sheet-sync.json --out config-rows.json --toc-out toc-rows.json`,
-   then, with the Sheets connector, the CFG, COLS and DATA rows into Config
-   below EDITORS (keep the sheet's EDITORS value), and for drafting the TOC
+2. **The folio names the sheet, and 3a. the rows are built: one command.**
+   From the folio's root, with the link the person pasted:
+   `bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts --link <sheet link or id> --document <doc> --out config-rows.json --toc-out toc-rows.json`.
+   It writes `review/drafting/sheet-sync.json`
+   (`{"mode":"drafting","anchors":"folio/<doc>/review-anchors.json","sectionUrl":"en/<doc>/#","sheet":"<spreadsheet id>"}`;
+   an existing file keeps its settings and only gets the new `sheet`), then
+   the rows. The site and repository links come from the folio's `iriBase`
+   (`https://<owner>.github.io/<repo>/` is `https://github.com/<owner>/<repo>`);
+   a folio on another host sets `"repository"` in sheet-sync.json.
+   Public comment, or to rebuild after a structural change: `--config review/<mode>/sheet-sync.json` instead of `--link`.
+3. **The agent writes the sheet.** With the Sheets connector, it writes the
+   rows from step 2: the whole Config tab from A1, keeping the sheet's
+   EDITORS value (the `Instructions - Links` row sits above Key, so the CFG,
+   COLS and DATA rows land below EDITORS), and for drafting the TOC
    rows into the TOC tab from A1. The connector writes values, not colours,
    so the agent also colours Config: the Key row a Grey header (`#b7b7b7`,
    bold), EDITORS Orange (`#f4b26b`), and CFG, COLS, DATA and their

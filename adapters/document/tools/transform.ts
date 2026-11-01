@@ -11,9 +11,11 @@
  * @module folio-assistant/adapters/document/tools/transform
  */
 
+import { resolveWithin, safeSegment } from "@litlfred/cat-harness-tools/src/core/safe-path.js";
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { runPipeline, asToolText, autoPaper } from "./_pipeline.js";
+import { get } from "../paths.js";
+import { runPipeline, asToolText, autoPaper, refuseTool } from "./_pipeline.js";
 
 /** codemod id → pipeline script. */
 const CODEMODS = {
@@ -39,6 +41,17 @@ export function registerTransformTools(server: McpServer): void {
       apply: z.boolean().default(false).describe("Write changes (default: dry-run)"),
     },
     async ({ name, target, apply }) => {
+      if (target !== undefined) {
+        if (
+          target.startsWith("/") ||
+          target.startsWith("\\") ||
+          target.includes("\0") ||
+          target.split("/").some((seg) => safeSegment(seg) === undefined) ||
+          resolveWithin(get.REPO_ROOT(), target) === undefined
+        ) {
+          return refuseTool("codemod", `target path '${target}' escapes repository root or contains invalid segments`);
+        }
+      }
       const dir = target ?? (autoPaper() ? `folio/${autoPaper()}` : undefined);
       if (!dir) {
         return asToolText("codemod", {

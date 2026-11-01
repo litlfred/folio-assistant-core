@@ -119,27 +119,53 @@
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_PublicCommentRelease">
     <bpmndi:BPMNPlane id="BPMNPlane_PublicCommentRelease" bpmnElement="Collaboration_PublicCommentRelease">
-      <bpmndi:BPMNShape id="Participant_PublicCommentRelease_di" bpmnElement="Participant_PublicCommentRelease" isHorizontal="true"><dc:Bounds x="100" y="60" width="1560" height="390" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_Committee_di" bpmnElement="Lane_Committee" isHorizontal="true"><dc:Bounds x="130" y="60" width="1530" height="130" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_Editor_di" bpmnElement="Lane_Editor" isHorizontal="true"><dc:Bounds x="130" y="190" width="1530" height="130" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_Pipeline_di" bpmnElement="Lane_Pipeline" isHorizontal="true"><dc:Bounds x="130" y="320" width="1530" height="130" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Participant_PublicCommentRelease_di" bpmnElement="Participant_PublicCommentRelease" isHorizontal="true"><dc:Bounds x="100" y="60" width="1600" height="390" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Committee_di" bpmnElement="Lane_Committee" isHorizontal="true"><dc:Bounds x="130" y="60" width="1570" height="130" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Editor_di" bpmnElement="Lane_Editor" isHorizontal="true"><dc:Bounds x="130" y="190" width="1570" height="130" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Pipeline_di" bpmnElement="Lane_Pipeline" isHorizontal="true"><dc:Bounds x="130" y="320" width="1570" height="130" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_DraftReady_di" bpmnElement="StartEvent_DraftReady"><dc:Bounds x="190" y="107" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="153" y="147" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_AgreeReleaseDate_di" bpmnElement="Task_AgreeReleaseDate"><dc:Bounds x="250" y="80" width="120" height="90" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_BuildPcRelease_di" bpmnElement="Task_BuildPcRelease"><dc:Bounds x="420" y="340" width="120" height="90" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_SetUpChannels_di" bpmnElement="Task_SetUpChannels"><dc:Bounds x="590" y="210" width="120" height="90" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_WriteAnnouncement_di" bpmnElement="Task_WriteAnnouncement"><dc:Bounds x="760" y="210" width="120" height="90" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Distribute_di" bpmnElement="Task_Distribute"><dc:Bounds x="930" y="80" width="120" height="90" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="CallActivity_PublicComment_di" bpmnElement="CallActivity_PublicComment"><dc:Bounds x="1100" y="210" width="120" height="90" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ArchiveRelease_di" bpmnElement="Task_ArchiveRelease"><dc:Bounds x="1270" y="340" width="120" height="90" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_Closed_di" bpmnElement="EndEvent_Closed"><dc:Bounds x="1450" y="367" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1413" y="407" width="110" height="40" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_SetUpChannels_di" bpmnElement="Task_SetUpChannels"><dc:Bounds x="580" y="210" width="160" height="90" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_WriteAnnouncement_di" bpmnElement="Task_WriteAnnouncement"><dc:Bounds x="780" y="210" width="120" height="90" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Distribute_di" bpmnElement="Task_Distribute"><dc:Bounds x="950" y="80" width="120" height="90" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="CallActivity_PublicComment_di" bpmnElement="CallActivity_PublicComment"><dc:Bounds x="1110" y="210" width="160" height="90" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ArchiveRelease_di" bpmnElement="Task_ArchiveRelease"><dc:Bounds x="1310" y="340" width="120" height="90" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_Closed_di" bpmnElement="EndEvent_Closed"><dc:Bounds x="1490" y="367" width="36" height="36" /><bpmndi:BPMNLabel><dc:Bounds x="1530" y="349.5" width="110" height="71" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_DraftReady_To_AgreeReleaseDate_di" bpmnElement="Flow_DraftReady_To_AgreeReleaseDate"><di:waypoint x="226" y="125" /><di:waypoint x="250" y="125" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_AgreeReleaseDate_To_BuildPcRelease_di" bpmnElement="Flow_AgreeReleaseDate_To_BuildPcRelease"><di:waypoint x="370" y="125" /><di:waypoint x="395" y="125" /><di:waypoint x="395" y="385" /><di:waypoint x="420" y="385" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_BuildPcRelease_To_SetUpChannels_di" bpmnElement="Flow_BuildPcRelease_To_SetUpChannels"><di:waypoint x="540" y="385" /><di:waypoint x="565" y="385" /><di:waypoint x="565" y="255" /><di:waypoint x="590" y="255" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_SetUpChannels_To_WriteAnnouncement_di" bpmnElement="Flow_SetUpChannels_To_WriteAnnouncement"><di:waypoint x="710" y="255" /><di:waypoint x="760" y="255" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_WriteAnnouncement_To_Distribute_di" bpmnElement="Flow_WriteAnnouncement_To_Distribute"><di:waypoint x="880" y="255" /><di:waypoint x="905" y="255" /><di:waypoint x="905" y="125" /><di:waypoint x="930" y="125" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_Distribute_To_PublicComment_di" bpmnElement="Flow_Distribute_To_PublicComment"><di:waypoint x="1050" y="125" /><di:waypoint x="1075" y="125" /><di:waypoint x="1075" y="255" /><di:waypoint x="1100" y="255" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_PublicComment_To_ArchiveRelease_di" bpmnElement="Flow_PublicComment_To_ArchiveRelease"><di:waypoint x="1220" y="255" /><di:waypoint x="1245" y="255" /><di:waypoint x="1245" y="385" /><di:waypoint x="1270" y="385" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_ArchiveRelease_To_Closed_di" bpmnElement="Flow_ArchiveRelease_To_Closed"><di:waypoint x="1390" y="385" /><di:waypoint x="1450" y="385" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_BuildPcRelease_To_SetUpChannels_di" bpmnElement="Flow_BuildPcRelease_To_SetUpChannels">
+        <di:waypoint x="540" y="385" />
+        <di:waypoint x="565" y="385" />
+        <di:waypoint x="565" y="255" />
+        <di:waypoint x="580" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_SetUpChannels_To_WriteAnnouncement_di" bpmnElement="Flow_SetUpChannels_To_WriteAnnouncement">
+        <di:waypoint x="740" y="255" />
+        <di:waypoint x="780" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_WriteAnnouncement_To_Distribute_di" bpmnElement="Flow_WriteAnnouncement_To_Distribute">
+        <di:waypoint x="900" y="255" />
+        <di:waypoint x="925" y="255" />
+        <di:waypoint x="925" y="125" />
+        <di:waypoint x="950" y="125" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_Distribute_To_PublicComment_di" bpmnElement="Flow_Distribute_To_PublicComment">
+        <di:waypoint x="1070" y="125" />
+        <di:waypoint x="1095" y="125" />
+        <di:waypoint x="1095" y="255" />
+        <di:waypoint x="1110" y="255" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_PublicComment_To_ArchiveRelease_di" bpmnElement="Flow_PublicComment_To_ArchiveRelease">
+        <di:waypoint x="1270" y="255" />
+        <di:waypoint x="1295" y="255" />
+        <di:waypoint x="1295" y="385" />
+        <di:waypoint x="1310" y="385" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_ArchiveRelease_To_Closed_di" bpmnElement="Flow_ArchiveRelease_To_Closed">
+        <di:waypoint x="1430" y="385" />
+        <di:waypoint x="1490" y="385" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

@@ -37,6 +37,20 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
 import { CatalogueNodeSchema, resolvableIri, type CatalogueNode } from "../schemas/catalogue.js";
+import { assertHttpsHost, fetchChecked } from "./lib/safe-url.js";
+
+/** Hosts that source-liveness and Wayback probes are permitted to contact (over https: only). */
+export const ALLOWED_LIVENESS_HOSTS: ReadonlySet<string> = new Set([
+  "hdl.handle.net",
+  "iris.who.int",
+  "iris.paho.org",
+  "www.who.int",
+  "cdn.who.int",
+  "apps.who.int",
+  "archive.org",
+  "web.archive.org",
+]);
+const WAYBACK_HOSTS: ReadonlySet<string> = new Set(["archive.org", "web.archive.org"]);
 
 export type Liveness = "live" | "gone" | "could-not-determine";
 export type SnapshotState = "found" | "none" | "could-not-determine";
@@ -56,7 +70,19 @@ export interface NodeLiveness {
 /** The one network call, injectable so tests never touch the network. */
 export type Fetcher = (url: string, init: { method: "HEAD" | "GET"; signal: AbortSignal }) => Promise<{ status: number; json?: () => Promise<unknown> }>;
 
-const realFetch: Fetcher = (url, init) => fetch(url, { ...init, redirect: "follow" });
+/** Build a redirect-checking `Fetcher` that enforces `https:` and `allowedHosts` at every hop. */
+export function createSafeFetcher(
+  rawFetch: typeof fetch = fetch,
+  allowedHosts: ReadonlySet<string> = ALLOWED_LIVENESS_HOSTS,
+  maxRedirects = 5,
+): Fetcher {
+  return async (url, init) => {
+    const { response } = await fetchChecked(url, allowedHosts, init, rawFetch, maxRedirects);
+    return response;
+  };
+}
+
+const realFetch: Fetcher = createSafeFetcher();
 
 async function withTimeout<T>(ms: number, f: (s: AbortSignal) => Promise<T>): Promise<T> {
   const c = new AbortController();
@@ -69,9 +95,15 @@ async function withTimeout<T>(ms: number, f: (s: AbortSignal) => Promise<T>): Pr
 }
 
 /** Classify one IRI. Every failure mode lands in could-not-determine. */
-export async function probeLiveness(iri: string, fetcher: Fetcher = realFetch, timeoutMs = 8000): Promise<{ liveness: Liveness; basis: string }> {
+export async function probeLiveness(
+  iri: string,
+  fetcher: Fetcher = realFetch,
+  timeoutMs = 8000,
+  allowedHosts: ReadonlySet<string> = ALLOWED_LIVENESS_HOSTS,
+): Promise<{ liveness: Liveness; basis: string }> {
   try {
-    const r = await withTimeout(timeoutMs, (signal) => fetcher(iri, { method: "HEAD", signal }));
+    const checkedIri = assertHttpsHost(iri, allowedHosts).href;
+    const r = await withTimeout(timeoutMs, (signal) => fetcher(checkedIri, { method: "HEAD", signal }));
     if (r.status >= 200 && r.status < 400) return { liveness: "live", basis: `HTTP ${r.status}` };
     if (r.status === 404 || r.status === 410) return { liveness: "gone", basis: `HTTP ${r.status}` };
     return { liveness: "could-not-determine", basis: `HTTP ${r.status} — neither present nor absent (a refusal or an error is not an answer)` };
@@ -81,14 +113,23 @@ export async function probeLiveness(iri: string, fetcher: Fetcher = realFetch, t
 }
 
 /** Ask the Wayback Machine whether a snapshot of `iri` exists. */
-export async function probeSnapshot(iri: string, fetcher: Fetcher = realFetch, timeoutMs = 8000): Promise<{ snapshot: SnapshotState; url?: string; basis: string }> {
-  const api = `https://archive.org/wayback/available?url=${encodeURIComponent(iri)}`;
+export async function probeSnapshot(
+  iri: string,
+  fetcher: Fetcher = realFetch,
+  timeoutMs = 8000,
+  allowedHosts: ReadonlySet<string> = ALLOWED_LIVENESS_HOSTS,
+): Promise<{ snapshot: SnapshotState; url?: string; basis: string }> {
   try {
+    const checkedIri = assertHttpsHost(iri, allowedHosts).href;
+    const api = `https://archive.org/wayback/available?url=${encodeURIComponent(checkedIri)}`;
     const r = await withTimeout(timeoutMs, (signal) => fetcher(api, { method: "GET", signal }));
     if (r.status !== 200 || !r.json) return { snapshot: "could-not-determine", basis: `availability API answered HTTP ${r.status}` };
     const body = (await r.json()) as { archived_snapshots?: { closest?: { available?: boolean; url?: string; timestamp?: string } } };
     const c = body?.archived_snapshots?.closest;
-    if (c?.available && c.url) return { snapshot: "found", url: c.url, basis: `closest snapshot ${c.timestamp ?? "(no timestamp)"}` };
+    if (c?.available && c.url) {
+      const checkedSnapshotUrl = assertHttpsHost(c.url, WAYBACK_HOSTS).href;
+      return { snapshot: "found", url: checkedSnapshotUrl, basis: `closest snapshot ${c.timestamp ?? "(no timestamp)"}` };
+    }
     if (body && typeof body === "object" && "archived_snapshots" in body) return { snapshot: "none", basis: "the availability API reports no snapshot" };
     return { snapshot: "could-not-determine", basis: "the availability API answered in an unexpected shape" };
   } catch (e) {

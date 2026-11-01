@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { fileNameOf, isoDate, pageToRecord, readItemPage } from "./fetch-who-publication.ts";
+import { fetchWhoPublication, fileNameOf, isoDate, pageToRecord, readItemPage } from "./fetch-who-publication.ts";
 
 // The shape of https://www.who.int/publications/m/item/analysis-and-use-of-health-facility-data-guidance-for-immunization-programme-managers
 // as served on 2026-10-08, cut down to the dynamic-content blocks this reads.
@@ -90,5 +90,60 @@ describe("isoDate", () => {
     expect(isoDate("1 December 2025")).toBe("2025-12-01");
     expect(isoDate("December 2025")).toBeUndefined();
     expect(isoDate("1 Decembre 2025")).toBeUndefined();
+  });
+});
+
+describe("fetchWhoPublication destination checks (bean folio-core-xpsq)", () => {
+  test("refuses a page download link that points to http:// or an unexpected host", async () => {
+    const pageWithHref = (href: string) =>
+      PAGE.replace(
+        "https://cdn.who.int/media/docs/default-source/documents/ddi/facilityanalysisguide-immunization.pdf?sfvrsn=3cb62a74_2&amp;download=true",
+        href,
+      );
+
+    const stubForPage = (html: string): typeof fetch =>
+      (async (input: string | URL | Request) => {
+        const u = String(input);
+        if (u === URL_) {
+          return new Response(html, { status: 200 });
+        }
+        throw new Error(`unexpected fetch to ${u}`);
+      }) as unknown as typeof fetch;
+
+    await expect(
+      fetchWhoPublication(
+        URL_,
+        new Date("2026-10-08T00:00:00Z"),
+        stubForPage(pageWithHref("http://cdn.who.int/doc.pdf")),
+      ),
+    ).rejects.toThrow(/https:/i);
+
+    await expect(
+      fetchWhoPublication(
+        URL_,
+        new Date("2026-10-08T00:00:00Z"),
+        stubForPage(pageWithHref("https://evil.example/doc.pdf")),
+      ),
+    ).rejects.toThrow(/unexpected host/i);
+  });
+
+  test("refuses a PDF download redirect to non-https or an unexpected host", async () => {
+    const redirectToEvil: typeof fetch = (async (input: string | URL | Request) => {
+      const u = String(input);
+      if (u === URL_) {
+        return new Response(PAGE, { status: 200 });
+      }
+      if (u.startsWith("https://cdn.who.int/")) {
+        return new Response(null, {
+          status: 302,
+          headers: { location: "http://169.254.169.254/latest/meta-data/" },
+        });
+      }
+      throw new Error(`unexpected fetch to ${u}`);
+    }) as unknown as typeof fetch;
+
+    await expect(
+      fetchWhoPublication(URL_, new Date("2026-10-08T00:00:00Z"), redirectToEvil),
+    ).rejects.toThrow(/https:/i);
   });
 });

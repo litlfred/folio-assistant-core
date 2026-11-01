@@ -1,0 +1,766 @@
+{
+  "$schema": "folio-block-summaries/v1",
+  "entry": "c2pa-2026-specification-2-5",
+  "summaries": [
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s001-content-credentials-c2pa-technical-specification",
+      "source": "sections/s001-content-credentials-c2pa-technical-specification.md",
+      "source_hash": "9a82225a162288a253dfdc17844fc8aafb7b6d5e619b7afe09653f989a533fcf",
+      "narrative": [
+        {
+          "text": "Title block of the C2PA Technical Specification (Content Credentials). It states that the work is licensed under Creative Commons Attribution 4.0 International, and carries an \"as is\" disclaimer: the parties disclaim all warranties, the implementer and user assume the entire risk of using the materials, and the parties are not liable for lost profits or indirect, special, incidental or consequential damages.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s002-1-introduction",
+      "source": "sections/s002-1-introduction.md",
+      "source_hash": "576ec3c532e44be26a8361d65fd736a9ad8e04d50ef96114eca69f0f3ce0ce36",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 1, Introduction; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s003-1-1-overview",
+      "source": "sections/s003-1-1-overview.md",
+      "source_hash": "2b7ba6b46f23ec50dca4b010a3a8df98eec1e37d0feb3b68ee2b4892df3eb069",
+      "narrative": [
+        {
+          "text": "The overview motivates the specification. It says establishing the provenance of media is critical to trust, because mis-attributed and mis-contextualised content spreads quickly on social platforms and inauthentic content is rising, and because creators cannot currently attach metadata to their work in a secure, tamper-evident and standardised way across platforms. Provenance lets creators and editors disclose how an asset was created and changed; each change is added while the existing provenance is preserved. The C2PA developed the specification to enable global, opt-in adoption of digital provenance, informed by requirements from industry experts and partners including the Project Origin Alliance and the Content Authenticity Initiative, and notes that regulators could also use it to establish standards.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s004-1-2-scope",
+      "source": "sections/s004-1-2-scope.md",
+      "source_hash": "e5486a7b841c470fddbb922e6b061b444dac5b9ab0eb32cb3d57741f75925ed9",
+      "narrative": [
+        {
+          "text": "The scope: the specification describes the technical side of the C2PA architecture, a model for storing and accessing cryptographically verifiable information whose trustworthiness is assessed against a defined trust model, including how to create and process a C2PA Manifest and how digital signatures provide tamper-evidence and trust. It was written after the C2PA's Guiding Principles, which focus on privacy and personal control of data and on potential abuse; implementers are strongly encouraged to let creators and publishers control whether certain provenance data is included. Quoting those principles, it says C2PA specifications do not judge provenance data as good or bad, only whether its assertions validate as bound to the asset, well-formed and untampered. The specification should not harm content accessibility, and other C2PA documents cover user experience and threat and harms modelling.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s005-1-3-technical-overview",
+      "source": "sections/s005-1-3-technical-overview.md",
+      "source_hash": "150dae1191527b32dc4b3aea3bf9846a9015384e456adeca8a58228fde47b68f",
+      "narrative": [
+        {
+          "text": "The technical overview: C2PA information is a series of statements, called assertions, about matters such as asset creation, edit actions, capture device details and bindings to content; together they make up an asset's provenance and act as trust signals for a human. Assertions are wrapped with further information into a claim, which the claim generator signs on behalf of the signer with the signer's credential, producing the claim signature. A claim generator (hardware or software) binds the assertions, claim and claim signature into a verifiable unit, the C2PA Manifest (Figure 1), and the set of C2PA Manifests stored in the asset's Content Credential is its provenance data.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s006-1-3-1-establishing-trust",
+      "source": "sections/s006-1-3-1-establishing-trust.md",
+      "source_hash": "1794e29299d74dcd14522ce5510f82affe3c6f2a3d703c64f1b234d13d18aae3",
+      "narrative": [
+        {
+          "text": "Trust in C2PA rests on the identity of the signer associated with the key used to sign a claim, per the specification's trust model. Combined with trusted time stamps, claim signatures can be validated indefinitely to determine whether a claim was signed while the signing credentials were valid and not revoked.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s007-1-3-2-an-example",
+      "source": "sections/s007-1-3-2-an-example.md",
+      "source_hash": "6c46f14e5fafce43c7f3ea70732619efd89dae166ee85d2e754b332892f962a6",
+      "narrative": [
+        {
+          "text": "A worked example: a C2PA-enabled camera or phone takes a photograph and creates a manifest whose assertions include details about the camera, a thumbnail and cryptographic hashes binding the photograph to the manifest. The assertions are listed in a claim, which is digitally signed, and the whole C2PA Manifest (Figure 2) is embedded in the output JPEG, where it remains valid indefinitely. A manifest consumer such as a validator then validates the signature and its credential, checks each assertion, and presents the information and signature so the user can make an informed decision about the content's trustworthiness.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s008-1-3-3-design-goals",
+      "source": "sections/s008-1-3-3-design-goals.md",
+      "source_hash": "55626751d678728d44a24d9927dad5dd2092951b8e450cbc5f3fdfdebec93fdb",
+      "narrative": [
+        {
+          "text": "The design goals, listed in Table 1 so the technology works across hardware and software worldwide and is accessible to all: privacy (users control their information), responsibility (consumers can determine provenance), scalability (web-scale creation and validation), extensibility (others can add metadata and credentials without C2PA approval), interoperability, whole-workflow applicability (provenance kept from creation through publication), technology minimalism (rely on well-established techniques), security (trustworthy integrity and source, with expert review), content ubiquity (all common media types, including documents), flexible locality (online and offline), global universality, accessibility (e.g. WCAG), harms and misuse (avert harms, including to human rights and vulnerable groups), and evolving (continual review against these goals).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s009-1-4-how-to-read-this-specification",
+      "source": "sections/s009-1-4-how-to-read-this-specification.md",
+      "source_hash": "6365d140a52c798b1aad96209503d6953d3a0001437721a85bf634c822801ab2",
+      "narrative": [
+        {
+          "text": "Reading guidance: the specification is easier to read in the parts relevant to one's role, in a useful order, than from start to finish. It lists three roles, each with its own section: claim generators (1.5), validators (1.6) and security reviewers (1.7).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s010-1-5-claim-generators",
+      "source": "sections/s010-1-5-claim-generators.md",
+      "source_hash": "c4b38fafa445d4357a2c589b56e36dac325fa854e4d82ed1edacc3db4e40f2cb",
+      "narrative": [
+        {
+          "text": "A reading path for claim generators, whose core flow is to create assertions, reference them from a claim, include relevant ingredients, bind the claim to the asset, sign it, and package everything as a valid C2PA Manifest; examples are cameras, recorders, AI asset creators, editing software and transcoders. Required reading, each with its reason: the Technical Overview; selected Glossary terms; Assertions; Unique Identifiers (C2PA URNs); Binding to Content (hard bindings, and soft bindings such as watermarks for recovering a stripped manifest); Claims; URI References; Manifests; Embedding C2PA Manifests (only the supported formats); the standard assertions the generator emits; Cryptography; and parts of the Trust Model. Live Media is required only for live content, and Validation only for generators that support ingredients, since ingredients must be validated on ingestion — though any generator can use it as a QA checklist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s011-1-6-validators",
+      "source": "sections/s011-1-6-validators.md",
+      "source_hash": "221ffcbb30bad701b76e720020ad6d2c4ad3ef362155fb0e344816ea03a00a5f",
+      "narrative": [
+        {
+          "text": "A reading path for validators, whose core flow is to locate the C2PA Manifest Store, identify the active manifest, validate the claim and signature, check signer trust and credential status, validate assertions, ingredients and the content binding, and return or display the results; examples are photo galleries, social media platforms, news publishers and verification tools. Required reading: the Technical Overview; selected Glossary terms; parts of Manifests; hard and soft bindings; hashing and signatures in Cryptography; parts of the Trust Model (validation states, trust lists, X.509 certificates); all of Validation, the core validator section; and the standard assertions the product handles. User Experience is needed only when results are shown to users, so as not to mislead them, and Live Media only for live content. Embedding, Assertions, Claims and URI References are listed as helpful context on the data structures.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s012-1-7-security-reviewers",
+      "source": "sections/s012-1-7-security-reviewers.md",
+      "source_hash": "a211b3e8b09580992d63df01d0e5b979f81f487876903ee86389da3bf79ae380",
+      "narrative": [
+        {
+          "text": "A reading path for security reviewers, who check whether the trust model, cryptographic algorithms, validation process and security guidance meet current best practice. Required reading: the Design Goals (including what the specification is and is not meant to prove), the Technical Overview, Information Security Considerations (the core section, on threats, harms, misuse and abuse), the Trust Model, Cryptography and Validation. Helpful context: Assertions, Binding to Content (including the risks when assets are modified, stripped or matched by soft binding), Claims, Manifests (integrity, ambiguity, stripping and substitution risks), the relevant embedding formats, and the standard assertions relevant to the reviewer's threat model. User Experience is needed when reviewing user-facing trust signals, since misleading presentation can undermine security claims, and Live Media when reviewing live workflows.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s013-2-glossary",
+      "source": "sections/s013-2-glossary.md",
+      "source_hash": "2e756a543f868ee9c51bc8e3049a775033d4cb531b8158852399b1e8278050b0",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 2, Glossary; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s014-2-1-introductory-terms",
+      "source": "sections/s014-2-1-introductory-terms.md",
+      "source_hash": "8b062ba778e333a1c79f2750bd55ef01f685050bb2478e120f92af7e1ba1322d",
+      "narrative": [
+        {
+          "text": "Heading for Section 2.1, Introductory terms; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s015-2-1-1-actor",
+      "source": "sections/s015-2-1-1-actor.md",
+      "source_hash": "d0d9d2d1cbedc81417237eeddad58fd2e383bb1f9935b106962d0f47d3be19d0",
+      "narrative": [
+        {
+          "text": "Defines an actor as a human or non-human (hardware or software) participant in the C2PA ecosystem, such as a camera, image editing software, a cloud service or the person using them. A note adds that an organisation or group of actors may also count as an actor.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s016-2-1-2-claim-generator",
+      "source": "sections/s016-2-1-2-claim-generator.md",
+      "source_hash": "d84a2695b4534ddc2a871e816cb11cde7a603295b46d58a21f0e8d627ccbb5d3",
+      "narrative": [
+        {
+          "text": "Defines the claim generator as the non-human (hardware or software) actor that generates the claim about an asset and the claim signature, leading to the asset's C2PA Manifest. A note says it is a component of a larger system, such as a library, SDK or shared service that a signer relies on, and is not the signer, so it does not take responsibility for the content of the claim or its assertions.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s017-2-1-3-signer",
+      "source": "sections/s017-2-1-3-signer.md",
+      "source_hash": "8d5655e127f608c850218c599edb1249bd433c8017b9f2d458e0b02872b3a7ca",
+      "narrative": [
+        {
+          "text": "Defines the signer as the holder of the credential whose private key is used to sign the claim; the signer is identified by the subject of that credential.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s018-2-1-4-manifest-consumer",
+      "source": "sections/s018-2-1-4-manifest-consumer.md",
+      "source_hash": "2cd490ed88bdeb6f9c827b2a2f2c24810aba79c4c93a2570e4dbae7a24a3306e",
+      "narrative": [
+        {
+          "text": "Defines a manifest consumer as an actor that consumes an asset with an associated C2PA Manifest in order to obtain the provenance data from that manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s019-2-1-5-validator",
+      "source": "sections/s019-2-1-5-validator.md",
+      "source_hash": "ed57c3ec406dc3bfec0381335523f83fd740d8402a8d0ca8cce5641f6506d360",
+      "narrative": [
+        {
+          "text": "Defines a validator as a manifest consumer whose role is to perform the actions described in the specification's validation section.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s020-2-1-6-action",
+      "source": "sections/s020-2-1-6-action.md",
+      "source_hash": "6c170d39b4672b41b51233d8b9af29cfce75175524d3f904cb1918380190d724",
+      "narrative": [
+        {
+          "text": "Defines an action as an operation performed by an actor on an asset, with examples \"create\", \"embed\" and \"apply filter\".",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s021-2-2-assets-and-content",
+      "source": "sections/s021-2-2-assets-and-content.md",
+      "source_hash": "cfecad30c2afc04b8855496c16df1f69508a93a17b7338549642717625d88b63",
+      "narrative": [
+        {
+          "text": "Heading for Section 2.2, Assets and Content; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s022-2-2-1-digital-content",
+      "source": "sections/s022-2-2-1-digital-content.md",
+      "source_hash": "f3f044d7e797230755f9121fa5fcbeb9bdbbbed2a9ad760506914ad48d10928c",
+      "narrative": [
+        {
+          "text": "Defines digital content as the part of an asset that is the actual content, such as an image's pixels, together with any technical metadata needed to understand it, such as a colour profile or encoding parameters.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s023-2-2-2-asset-metadata",
+      "source": "sections/s023-2-2-2-asset-metadata.md",
+      "source_hash": "7ae7d6206fa0f22372b5f1449f26962942841b48152ba1f1241eb7735e087326",
+      "narrative": [
+        {
+          "text": "Defines asset metadata as non-technical information about an asset and its digital content.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s024-2-2-3-asset",
+      "source": "sections/s024-2-2-3-asset.md",
+      "source_hash": "af347881ff0808591cef59ca471a6f870397d8bc51fffcfbad46cac8e65e2b6f",
+      "narrative": [
+        {
+          "text": "Defines an asset as a file or stream of data containing digital content, asset metadata and, optionally, a C2PA Manifest. A note extends \"file\" here to include cloud-native and dynamically generated data.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s025-2-2-4-derived-asset",
+      "source": "sections/s025-2-2-4-derived-asset.md",
+      "source_hash": "bebd315047a6ee99697fab17e4ad1661246189990cd6c6cad9d96e187220517b",
+      "narrative": [
+        {
+          "text": "Defines a derived asset as one created from an existing asset by performing actions that modify its digital content, for example a shortened audio stream or a document with added pages.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s026-2-2-5-asset-rendition",
+      "source": "sections/s026-2-2-5-asset-rendition.md",
+      "source_hash": "b90387037f756e4a975ff50eb6ced6f091748cff608034b7f2cb6e076bce487f",
+      "narrative": [
+        {
+          "text": "Defines an asset rendition as a representation of an asset, either part of it or a wholly new asset, whose digital content has undergone a non-editorial transformation such as re-encoding or scaling; the example is a video re-encoded for a lower screen resolution or bandwidth.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s027-2-2-6-composed-asset",
+      "source": "sections/s027-2-2-6-composed-asset.md",
+      "source_hash": "e0c6ca2690a897f04cd1a007cd29f13e0ba72396a25a5cf4297272b078f84431",
+      "narrative": [
+        {
+          "text": "Defines a composed asset as one built from a collection of parts or fragments of digital content, called ingredients, taken from one or more other assets. When it starts from an existing asset it is a special case of a derived asset, but it can also start from a blank slate. Examples are a video assembled from imported clips and audio segments, and an image with another image superimposed on it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s028-2-2-7-editorial-transformation",
+      "source": "sections/s028-2-2-7-editorial-transformation.md",
+      "source_hash": "e545932ac7e378e5d30e759c542612bd9e1fa1accba8ef69e1744a9fc21ef0d6",
+      "narrative": [
+        {
+          "text": "Defines an editorial transformation as one that alters the intent or the meaning (or both) of the digital content. A note says every editorial transformation is perceptible, but not every perceptible transformation is editorial.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s029-2-2-8-perceptible-transformation",
+      "source": "sections/s029-2-2-8-perceptible-transformation.md",
+      "source_hash": "c1dbb45d70cd03fb672bf84b91cc04efc6238b6cb77505f8ec517e390f489646",
+      "narrative": [
+        {
+          "text": "Defines a perceptible transformation as one that alters how humans perceive the digital content under normal conditions.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s030-2-3-core-aspects-of-c2pa",
+      "source": "sections/s030-2-3-core-aspects-of-c2pa.md",
+      "source_hash": "c93fd5d47f85d642e158d88c3876657db33f34d6cc3803a21ee3fb730c080d97",
+      "narrative": [
+        {
+          "text": "Heading for Section 2.3, Core Aspects of C2PA; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s031-2-3-1-assertion",
+      "source": "sections/s031-2-3-1-assertion.md",
+      "source_hash": "0ec649c3751695b1a0a92302cb0e360baf06e78b6545fde11035a2d40c137d8f",
+      "narrative": [
+        {
+          "text": "Defines an assertion as a data structure representing a statement about the asset, either made by the signer or simply gathered when the claim is generated; it is part of the C2PA Manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s032-2-3-2-assertion-store",
+      "source": "sections/s032-2-3-2-assertion-store.md",
+      "source_hash": "eea8cfff8b8f1a150cdb3ac49d2f106ea9c5983dd49fada152bdaa1ab05883d4",
+      "narrative": [
+        {
+          "text": "Defines the assertion store as the logical collection of assertions that a claim references within a C2PA Manifest, stored together as one construct, and points to the Assertion Store section for its full structure.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s033-2-3-3-claim",
+      "source": "sections/s033-2-3-3-claim.md",
+      "source_hash": "5b9a98e7f2855e3d443a262cf2bc21b0f7c66ec1a8430267f0cd80e79826fba4",
+      "narrative": [
+        {
+          "text": "Defines a claim as a digitally signed, tamper-evident data structure that references a set of assertions about an asset and the information needed to represent the content binding, and that declares any redacted assertions; it is part of the C2PA Manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s034-2-3-4-claim-signature",
+      "source": "sections/s034-2-3-4-claim-signature.md",
+      "source_hash": "97c7a242bfc98f91b98618053f44c299bdfc0bc616a6361c4ae8c3bcca270fde",
+      "narrative": [
+        {
+          "text": "Defines the claim signature as the digital signature on the claim, made with the private key owned by a signer; it is part of the C2PA Manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s035-2-3-5-c2pa-manifest",
+      "source": "sections/s035-2-3-5-c2pa-manifest.md",
+      "source_hash": "03193c10327be2fea603b2ef15333aeb9e4732a4f7e9669b12c6872968ffd5f9",
+      "narrative": [
+        {
+          "text": "Defines a C2PA Manifest as the set of provenance information about an asset formed by one or more assertions (including content bindings), a single claim and a claim signature; it is part of a C2PA Manifest Store. A note says a manifest can reference other manifests.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s036-2-3-6-c2pa-manifest-store",
+      "source": "sections/s036-2-3-6-c2pa-manifest-store.md",
+      "source_hash": "fdae139cc2a73faca85fb6963d8047103e07cd34d83d248a35ca401a3d5f7fe9",
+      "narrative": [
+        {
+          "text": "Defines a C2PA Manifest Store as a collection of C2PA Manifests that can be embedded in an asset or kept external to it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s037-2-3-7-content-credential",
+      "source": "sections/s037-2-3-7-content-credential.md",
+      "source_hash": "b5579f71b7fb1e5e0abdc2495caabf8ca9e00194725458a80dcafa8e64fbfff6",
+      "narrative": [
+        {
+          "text": "Defines Content Credential as the preferred non-technical term for a C2PA Manifest, so an asset's manifest store represents its Content Credentials. The term also names the C2PA technology as a whole and is treated as a plural noun: one manifest is a Content Credential, while several manifests or the broader concept are Content Credentials.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s038-2-3-8-active-manifest",
+      "source": "sections/s038-2-3-8-active-manifest.md",
+      "source_hash": "c643ea8c16c79b0dd3c1aaafc1617383e5b9c6e8b33c0ed700835990212b84b6",
+      "narrative": [
+        {
+          "text": "Defines the active manifest as the last manifest in a C2PA Manifest Store's list, the one whose content bindings can be validated, and points to the Manifest Store section for its full structure.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s039-2-3-9-provenance",
+      "source": "sections/s039-2-3-9-provenance.md",
+      "source_hash": "8cbaf735e7b791936467f5bc8a25854316722b71137c41120c8e7aaaad0d6aa3",
+      "narrative": [
+        {
+          "text": "Defines provenance as the logical concept of understanding an asset's history and its interactions with actors and other assets, as represented by the provenance data.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s040-2-3-10-provenance-data",
+      "source": "sections/s040-2-3-10-provenance-data.md",
+      "source_hash": "10c4451ce5b59627518067a60dc19f099a9abc480f3cabf137753abc5baa678e",
+      "narrative": [
+        {
+          "text": "Defines provenance data as the set of C2PA Manifests for an asset and, for a composed asset, for its ingredients, and points to the Manifests section for its full structure. A note says a manifest can reference other manifests.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt8XGaYRhVSNVtpws5L"
+          },
+          "drafted_at": "2026-10-31"
+        }
+      ]
+    }
+  ]
+}

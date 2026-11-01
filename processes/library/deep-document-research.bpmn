@@ -192,7 +192,7 @@ A figure description an agent drafted is NOT reported as what the figure shows. 
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_GW_Sufficient" bpmnElement="GW_Sufficient" isMarkerVisible="true">
         <dc:Bounds x="1100" y="175" width="50" height="50"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="1070" y="130" width="112" height="40"/></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel><dc:Bounds x="1128.58" y="121.5" width="112" height="35" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_Report" bpmnElement="A_Report">
         <dc:Bounds x="1220" y="160" width="200" height="80"/>
@@ -209,6 +209,7 @@ A figure description an agent drafted is NOT reported as what the figure shows. 
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_NotHeld" bpmnElement="F_NotHeld">
         <di:waypoint x="325" y="225"/><di:waypoint x="325" y="340"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="329" y="274" width="90" height="17" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_2" bpmnElement="F_2">
         <di:waypoint x="600" y="200"/><di:waypoint x="650" y="200"/>
@@ -221,12 +222,14 @@ A figure description an agent drafted is NOT reported as what the figure shows. 
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Again" bpmnElement="F_Again">
         <di:waypoint x="1125" y="225"/><di:waypoint x="1125" y="300"/><di:waypoint x="505" y="300"/><di:waypoint x="505" y="240"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1129" y="236" width="90" height="53" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Sufficient" bpmnElement="F_Sufficient">
         <di:waypoint x="1150" y="200"/><di:waypoint x="1220" y="200"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Exhausted" bpmnElement="F_Exhausted">
         <di:waypoint x="1125" y="175"/><di:waypoint x="1125" y="110"/><di:waypoint x="1320" y="110"/><di:waypoint x="1320" y="160"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="1177.5" y="72" width="90" height="35" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_5" bpmnElement="F_5">
         <di:waypoint x="1420" y="200"/><di:waypoint x="1490" y="200"/>

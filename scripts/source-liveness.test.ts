@@ -10,7 +10,7 @@
 import { describe, expect, test } from "bun:test";
 import { resolve } from "node:path";
 
-import { catalogueNodes, checkSourceLiveness, exitCodeFor, probeLiveness, probeSnapshot, type Fetcher } from "./source-liveness.ts";
+import { catalogueNodes, checkSourceLiveness, createSafeFetcher, exitCodeFor, probeLiveness, probeSnapshot, type Fetcher } from "./source-liveness.ts";
 
 const answers = (status: number, body?: unknown): Fetcher => async () => ({ status, json: body === undefined ? undefined : async () => body });
 const refuses: Fetcher = async () => {
@@ -24,38 +24,38 @@ describe("probeLiveness", () => {
   });
 
   test("404 and 410 are gone", async () => {
-    expect((await probeLiveness("x", answers(404))).liveness).toBe("gone");
-    expect((await probeLiveness("x", answers(410))).liveness).toBe("gone");
+    expect((await probeLiveness("https://hdl.handle.net/10665/1", answers(404))).liveness).toBe("gone");
+    expect((await probeLiveness("https://hdl.handle.net/10665/1", answers(410))).liveness).toBe("gone");
   });
 
   test("a refusal, an error or no answer is could-not-determine — never live, never gone", async () => {
     for (const f of [answers(403), answers(401), answers(500), refuses]) {
-      expect((await probeLiveness("x", f)).liveness).toBe("could-not-determine");
+      expect((await probeLiveness("https://hdl.handle.net/10665/1", f)).liveness).toBe("could-not-determine");
     }
   });
 
   test("a timeout is could-not-determine", async () => {
     const hangs: Fetcher = (_u, { signal }) =>
       new Promise((_r, reject) => signal.addEventListener("abort", () => reject(new Error("aborted"))));
-    expect((await probeLiveness("x", hangs, 20)).liveness).toBe("could-not-determine");
+    expect((await probeLiveness("https://hdl.handle.net/10665/1", hangs, 20)).liveness).toBe("could-not-determine");
   });
 });
 
 describe("probeSnapshot", () => {
   test("a closest available snapshot is found, with its URL", async () => {
-    const r = await probeSnapshot("x", answers(200, { archived_snapshots: { closest: { available: true, url: "https://web.archive.org/web/2020/x", timestamp: "2020" } } }));
+    const r = await probeSnapshot("https://hdl.handle.net/10665/1", answers(200, { archived_snapshots: { closest: { available: true, url: "https://web.archive.org/web/2020/x", timestamp: "2020" } } }));
     expect(r.snapshot).toBe("found");
     expect(r.url).toContain("web.archive.org");
   });
 
   test("an empty answer is none", async () => {
-    expect((await probeSnapshot("x", answers(200, { archived_snapshots: {} }))).snapshot).toBe("none");
+    expect((await probeSnapshot("https://hdl.handle.net/10665/1", answers(200, { archived_snapshots: {} }))).snapshot).toBe("none");
   });
 
   test("no answer, or an odd one, is could-not-determine", async () => {
-    expect((await probeSnapshot("x", refuses)).snapshot).toBe("could-not-determine");
-    expect((await probeSnapshot("x", answers(503))).snapshot).toBe("could-not-determine");
-    expect((await probeSnapshot("x", answers(200, { unexpected: true }))).snapshot).toBe("could-not-determine");
+    expect((await probeSnapshot("https://hdl.handle.net/10665/1", refuses)).snapshot).toBe("could-not-determine");
+    expect((await probeSnapshot("https://hdl.handle.net/10665/1", answers(503))).snapshot).toBe("could-not-determine");
+    expect((await probeSnapshot("https://hdl.handle.net/10665/1", answers(200, { unexpected: true }))).snapshot).toBe("could-not-determine");
   });
 });
 
@@ -91,5 +91,61 @@ describe("over the real who-iris catalogue, with the network refused", () => {
   test("all live exits 0", async () => {
     const r = await checkSourceLiveness(nodes, answers(200, { archived_snapshots: {} }));
     expect(exitCodeFor(r)).toBe(0);
+  });
+});
+
+describe("destination checks and redirect validation (bean folio-core-xpsq)", () => {
+  test("probeLiveness and probeSnapshot refuse non-https URLs and unexpected hosts", async () => {
+    const httpRes = await probeLiveness("http://hdl.handle.net/10665/1", answers(200));
+    expect(httpRes.liveness).toBe("could-not-determine");
+    expect(httpRes.basis).toMatch(/https:/i);
+
+    const hostRes = await probeLiveness("https://evil.example/10665/1", answers(200));
+    expect(hostRes.liveness).toBe("could-not-determine");
+    expect(hostRes.basis).toMatch(/unexpected host/i);
+
+    const snapHostRes = await probeSnapshot("https://evil.example/10665/1", answers(200));
+    expect(snapHostRes.snapshot).toBe("could-not-determine");
+    expect(snapHostRes.basis).toMatch(/unexpected host/i);
+  });
+
+  test("createSafeFetcher follows allowed https redirects and refuses redirects to http:// or unexpected hosts", async () => {
+    const okRedirectFetch: typeof fetch = (async (input: string | URL | Request) => {
+      const u = String(input);
+      if (u === "https://hdl.handle.net/10665/1") {
+        return new Response(null, {
+          status: 302,
+          headers: { location: "https://iris.who.int/handle/10665/1" },
+        });
+      }
+      if (u === "https://iris.who.int/handle/10665/1") {
+        return new Response(null, { status: 200 });
+      }
+      throw new Error(`unexpected ${u}`);
+    }) as unknown as typeof fetch;
+
+    const okRes = await probeLiveness(
+      "https://hdl.handle.net/10665/1",
+      createSafeFetcher(okRedirectFetch),
+    );
+    expect(okRes.liveness).toBe("live");
+
+    const evilRedirectFetch: typeof fetch = (async (input: string | URL | Request) => {
+      const u = String(input);
+      if (u === "https://hdl.handle.net/10665/1") {
+        return new Response(null, {
+          status: 302,
+          headers: { location: "http://169.254.169.254/latest/meta-data/" },
+        });
+      }
+      throw new Error(`should not follow redirect to ${u}`);
+    }) as unknown as typeof fetch;
+
+    const evilRes = await probeLiveness(
+      "https://hdl.handle.net/10665/1",
+      createSafeFetcher(evilRedirectFetch),
+    );
+    expect(evilRes.liveness).toBe("could-not-determine");
+    expect(evilRes.basis).toMatch(/https:/i);
   });
 });

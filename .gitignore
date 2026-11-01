@@ -18,3 +18,4 @@ node_modules/
 /bootstrap/
 /bootstrap-tools/
 # END index mounts
+tools/review-sheet-sync/code-page.html

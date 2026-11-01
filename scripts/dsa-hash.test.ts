@@ -4,10 +4,17 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { GraphTypologyNodeSchema } from "@litlfred/cat-harness-tools/schemas/kg/graph-typology-node.js";
 import { resolveNodeSchemas } from "@litlfred/cat-harness-tools/schemas/kg/kind-validator.js";
+import { toolsOf } from "@litlfred/cat-harness-tools/tools/discover.js";
 import {
   DEFAULT_DSA_FIXTURE_DIR,
   computeSha256Hex,
   verifyDsaDirectory,
+  DCAT_3_TERMS,
+  DCTERMS_TERMS,
+  loadPinnedContexts,
+  ODRL_22_TERMS,
+  OFFICIAL_CONTEXT_PROVENANCE,
+  OFFICIAL_CONTEXTS_DIR,
   verifyDsaVersion,
 } from "./check-dsa-hash.ts";
 
@@ -212,5 +219,57 @@ describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
     } finally {
       rmSync(tmp, { recursive: true, force: true });
     }
+  });
+
+  it("loads ODRL 2.2, DCAT 3 and DCMI Terms from SHA-256-pinned official context files and rejects made-up prefixed terms", () => {
+    expect(OFFICIAL_CONTEXT_PROVENANCE.length).toBe(5);
+    expect(ODRL_22_TERMS.has("Agreement")).toBe(true);
+    expect(ODRL_22_TERMS.has("odrl:Agreement")).toBe(true);
+    expect(DCAT_3_TERMS.has("dcat:Resource")).toBe(true);
+    expect(DCAT_3_TERMS.has("dcat:Distribution")).toBe(true);
+    expect(DCAT_3_TERMS.has("spdx:checksum")).toBe(true);
+    expect(DCAT_3_TERMS.has("adms:status")).toBe(true);
+    expect(DCTERMS_TERMS.has("dcterms:source")).toBe(true);
+    expect(DCTERMS_TERMS.has("dcterms:issued")).toBe(true);
+
+    // Made-up terms in official prefixes must not be in the parsed sets and must fail verifyDsaVersion
+    const v1 = loadWorkedVersion("v1");
+    for (const madeUp of ["odrl:madeUpTerm", "dcat:madeUpTerm", "dcterms:madeUpTerm", "spdx:madeUpTerm"]) {
+      const bad = verifyDsaVersion({
+        legalText: v1.legalText,
+        dcat: { ...v1.dcat, [madeUp]: "invented" },
+        agreement: v1.agreement,
+      });
+      expect(bad.ok).toBe(false);
+      expect(bad.errors.some((e) => e.includes(`property "${madeUp}" is not defined in ODRL 2.2, DCAT 3 or DCMI Terms`))).toBe(true);
+    }
+
+    // Tampering with a pinned official context file fails loadPinnedContexts with a SHA-256 mismatch
+    const tmp = mkdtempSync(join(tmpdir(), "dsa-ctx-tamper-"));
+    try {
+      for (const entry of OFFICIAL_CONTEXT_PROVENANCE) {
+        writeFileSync(join(tmp, entry.file), readFileSync(join(OFFICIAL_CONTEXTS_DIR, entry.file)));
+      }
+      writeFileSync(join(tmp, "provenance.json"), readFileSync(join(OFFICIAL_CONTEXTS_DIR, "provenance.json")));
+      writeFileSync(join(tmp, "odrl-2.2.context.json"), '{"@context": {"madeUp": "http://www.w3.org/ns/odrl/2/madeUp"}}\n');
+      expect(() => loadPinnedContexts(tmp)).toThrow(/SHA-256 mismatch/);
+    } finally {
+      rmSync(tmp, { recursive: true, force: true });
+    }
+  });
+
+  it("declares the check-dsa-hash Tool satisfying the four dsa-* skills", () => {
+    const coreTools = toolsOf(CORE_ROOT);
+    const tool = coreTools.find((t) => t.id === "check-dsa-hash");
+    expect(tool).toBeDefined();
+    expect(tool!.satisfies).toEqual([
+      "dsa-checksum",
+      "dsa-odrl-source",
+      "dsa-dcat-record",
+      "dsa-catalogue-status",
+    ]);
+    expect(tool!.invoke).toEqual({
+      shell: "bun run folio-assistant-core/scripts/check-dsa-hash.ts",
+    });
   });
 });

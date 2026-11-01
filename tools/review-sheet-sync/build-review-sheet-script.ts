@@ -68,6 +68,8 @@ export type SheetSyncConfig = {
   /** Other names for front-matter chapters: alias -> chapter title. */
   aliases?: Record<string, string>;
   tabs?: Partial<{ RPC: string; RCS: string; AGENT: string; AGENT_CS: string; FEEDBACK: string; TOC: string }>;
+  /** The document's GitHub repository, e.g. `https://github.com/litlfred/dth-phc`. Default: read from the folio's iriBase. */
+  repository?: string;
   columns?: Partial<{ rpc: Record<string, string>; rcs: Record<string, string>; agent: Record<string, string>; draft: Record<string, string>; draftAgent: Record<string, string> }>;
 };
 
@@ -86,6 +88,8 @@ export const DRAFT_COLUMNS = {
     built: "Staging built (UTC, change set)",
     head: "PR head (change set)", builtFrom: "Staging built from (change set)", deploy: "Staging deploy (change set)",
     conversation: "Agent conversation (change set)",
+    dispositions: "Disposition (change set)",
+    gate: "QA gate (change set)", qa: "QA report (change set)",
   },
 };
 
@@ -159,6 +163,8 @@ export const DEFAULT_COLUMNS = {
     done: "Agent completed (UTC, change set)", basis: "Feedback basis (change set)",
     staging: "Staging review page (change set)", built: "Staging built (UTC, change set)",
     head: "PR head (change set)", builtFrom: "Staging built from (change set)", deploy: "Staging deploy (change set)",
+    dispositions: "Disposition (change set)",
+    gate: "QA gate (change set)", qa: "QA report (change set)",
   },
 };
 
@@ -288,6 +294,32 @@ export function siteUrl(u: string, base: string | undefined, what: string): stri
   return base + u.replace(/^\.?\//, "");
 }
 
+/**
+ * The GitHub repository behind a GitHub Pages site: `https://<owner>.github.io/<repo>/`
+ * is `https://github.com/<owner>/<repo>`. Undefined for any other host.
+ */
+export function repoOfSite(base: string | undefined): string | undefined {
+  const m = base?.match(/^https:\/\/([A-Za-z0-9-]+)\.github\.io\/([A-Za-z0-9._-]+)\/?/);
+  return m ? `https://github.com/${m[1]}/${m[2]}` : undefined;
+}
+
+/** A spreadsheet id from its id or any of its URLs (`.../spreadsheets/d/<id>/edit?gid=0`). */
+export function sheetIdOf(s: string): string {
+  const m = s.match(/\/spreadsheets\/d\/([A-Za-z0-9_-]{20,})/) ?? s.match(/^([A-Za-z0-9_-]{20,})$/);
+  if (!m) throw new Error(`"${s}" is neither a Google Sheets link nor a spreadsheet id`);
+  return m[1];
+}
+
+/**
+ * A new drafting sheet's sheet-sync.json, from the folio alone: the anchors
+ * file and the section URL follow from the document's name. `--link` writes
+ * it, so linking a copied template is one command (owner, 2026-11-01: "make
+ * as much mechanical as possible").
+ */
+export function draftingSheetSync(document: string, sheet: string): SheetSyncConfig {
+  return { mode: "drafting", anchors: `folio/${document}/review-anchors.json`, sectionUrl: `en/${document}/#`, sheet: sheetIdOf(sheet) };
+}
+
 export function buildConfig(repo: string, cfgPath: string): SheetConfig {
   const cfg: SheetSyncConfig = JSON.parse(readFileSync(join(repo, cfgPath), "utf8"));
   const base = siteBase(repo);
@@ -316,7 +348,14 @@ export function buildConfig(repo: string, cfgPath: string): SheetConfig {
       agent: { ...DEFAULT_COLUMNS.agent, ...cfg.columns?.agent },
     };
   }
-  CFG = { SOURCE: cfgPath, ...(cfg.sheet ? { SHEET: cfg.sheet } : {}), ...CFG };
+  // Where the document lives, shown on the sheet once it is linked (owner,
+  // 2026-11-01: "a link to the github repo and gh-pages ... so user can link").
+  const repoUrl = cfg.repository ?? repoOfSite(base);
+  CFG = {
+    SOURCE: cfgPath, ...(cfg.sheet ? { SHEET: cfg.sheet } : {}),
+    ...(base ? { SITE_URL: base } : {}), ...(repoUrl ? { REPO_URL: repoUrl } : {}),
+    ...CFG,
+  };
   return { CFG, COLS, DATA: data };
 }
 
@@ -386,9 +425,9 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
   // Steps 3 to 6, the same on every change-set tab.
   const changeSet = [
     "   3. An Editor sets Ready for agent (Orange) to Yes once the direction is agreed.",
-    `   4. The agent edits the document in one pull request for the row. Agentic status (Green) says where it is; ${staging} opens what changed.`,
+    `   4. The agent edits the document in one pull request for the row. Agentic status (Green) says where it is; ${staging} opens what changed. Once the agent has finished and its preview is live, the script sets Ready for agent to Completed.`,
     "   5. Reviewers answer in Blue. A change marks the proposal stale and sets Ready for agent (Orange) back to No; an Editor sets Yes again to have the agent update the pull request.",
-    "   6. An Editor sets Ready for merge (Orange) to Yes, and the agent merges.",
+    "   6. A reviewer who did not write the change checks every disposition against the Blue Disposition and the pull request, and reads the QA report (the QA gate). Once it passes, an Editor sets Ready for merge (Orange) to Yes, and the agent merges.",
   ];
   const out: Record<string, string> = {
     [CONFIG_TAB]: `The script's settings. Work happens on ${people}; nothing here needs you unless you install the script. Do not edit this tab: the agent writes it, except EDITORS, which only the owner edits.`,
@@ -443,15 +482,15 @@ export function setupSteps(_c: SheetConfig): string[] {
   return steps;
 }
 
-/** Drafting only: the two dropdown settings neither the script nor the Sheets API can set. */
+/** Drafting only: the dropdown settings a person sets (the agent sets the Chip style through the Sheets API; the tick only a person can set on a range rule). */
 export function dropdownSteps(c: SheetConfig): string[] | undefined {
   if (c.CFG.MODE !== "drafting") return undefined;
   const col = c.COLS.draft?.sections ?? "Selected Sections";
   return [
-    `Once per sheet, after installing the script: allow several sections in the ${col} dropdown (neither the script nor the Sheets API can):`,
+    `Once per sheet, after installing the script: allow several sections in the ${col} dropdown (the script cannot):`,
     `   • Click the column letter above "${col}", then Data, then Data validation`,
-    `   • Open the rule (it says "Dropdown (from a range)"), tick Allow multiple selections, and press Done`,
-    "   • The Chip display style is already set; leave it",
+    `   • Open the rule (it says "Dropdown (from a range)"), open Advanced options and set Display style to Chip`,
+    "   • Then tick Allow multiple selections (it is greyed out until the style is Chip) and press Done",
   ];
 }
 
@@ -501,6 +540,7 @@ export function configRows(c: SheetConfig): string[][] {
     ["Instructions - Install script", setupSteps(c).join("\n")],
     ...(dropdownSteps(c) ? [["Instructions - Dropdown", dropdownSteps(c)!.join("\n")]] : []),
     ["Instructions - Editors", editorSteps().join("\n")],
+    ...(linkLines(c).length ? [["Instructions - Links", linkLines(c).join("\n")]] : []),
     ["Key", "Value (written by the agent from sheet-sync.json; do not edit, except EDITORS)"],
     ["EDITORS", ""],
   ];
@@ -511,6 +551,17 @@ export function configRows(c: SheetConfig): string[][] {
     for (const chunk of chunks(key === "DATA" ? JSON.stringify(c[key]) : readable(c[key]))) rows.push([key, "|" + chunk]);
   }
   return rows;
+}
+
+/** Where the document lives: its published site, its repository, and this sheet's settings file. */
+export function linkLines(c: SheetConfig): string[] {
+  const out: string[] = [];
+  if (c.CFG.SITE_URL) out.push(`Document (GitHub Pages): ${c.CFG.SITE_URL}`);
+  if (c.CFG.REPO_URL) {
+    out.push(`Repository: ${c.CFG.REPO_URL}`);
+    out.push(`This sheet's settings: ${c.CFG.REPO_URL}/blob/main/${c.CFG.SOURCE}`);
+  }
+  return out;
 }
 
 /** A cell of the Config tab holds at most this many lines, so a row stays a readable height. */
@@ -607,6 +658,9 @@ if (import.meta.main) {
     console.error("wrote dist/Code.gs");
     writeFileSync(join(here, "dist", "Stub.gs"), readFileSync(join(here, "stub.gs"), "utf8"));
     console.error("wrote dist/Stub.gs");
+    writeFileSync(join(here, "dist", "Updater.gs"), readFileSync(join(here, "updater.gs"), "utf8"));
+    writeFileSync(join(here, "dist", "library-appsscript.json"), readFileSync(join(here, "library-appsscript.json"), "utf8"));
+    console.error("wrote dist/Updater.gs and dist/library-appsscript.json");
   }
   const script = arg("--script");
   if (script) {
@@ -614,7 +668,19 @@ if (import.meta.main) {
     writeFileSync(script, out);
     console.error(`wrote ${script} (${out.length} bytes, sha256 ${sha(out)})`);
   }
-  const cfg = arg("--config");
+  const link = arg("--link");
+  let cfg = arg("--config");
+  if (link) {
+    // One command links a copied template: write sheet-sync.json, then the rows below.
+    const document = arg("--document");
+    if (!document) { console.error("--link needs --document <doc>, the folio's document name (folio/<doc>/)"); process.exit(2); }
+    cfg = cfg ?? "review/drafting/sheet-sync.json";
+    const at = join(resolve(arg("--repo") ?? "."), cfg);
+    const sync = existsSync(at) ? { ...JSON.parse(readFileSync(at, "utf8")), sheet: sheetIdOf(link) } : draftingSheetSync(document, link);
+    mkdirSync(dirname(at), { recursive: true });
+    writeFileSync(at, `${JSON.stringify(sync, null, 2)}\n`);
+    console.error(`wrote ${cfg}: sheet ${sync.sheet}`);
+  }
   if (cfg) {
     const repo = resolve(arg("--repo") ?? ".");
     if (!existsSync(join(repo, cfg))) {
@@ -634,8 +700,8 @@ if (import.meta.main) {
       console.error(`wrote ${tocOut}: the TOC tab's rows (the Selected Sections dropdown)`);
     }
   }
-  if (!script && !cfg && !process.argv.includes("--dist")) {
-    console.error("usage: build-review-sheet-script.ts [--script Code.gs] [--repo <folio>] [--config review/<mode>/sheet-sync.json] [--out config-rows.json] [--toc-out toc-rows.json] [--dist]");
+  if (!script && !cfg && !link && !process.argv.includes("--dist")) {
+    console.error("usage: build-review-sheet-script.ts [--script Code.gs] [--repo <folio>] [--link <sheet url or id> --document <doc>] [--config review/<mode>/sheet-sync.json] [--out config-rows.json] [--toc-out toc-rows.json] [--dist]");
     process.exit(2);
   }
 }
