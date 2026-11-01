@@ -15,6 +15,7 @@
   "licence": "MIT",
   "licenceSource": "the installed package's own package.json (`license`)",
   "usedBy": [
+    "schemas/changeset.ts",
     "scripts/build-document-site.ts"
   ]
 }

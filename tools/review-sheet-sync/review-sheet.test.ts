@@ -15,7 +15,7 @@ import { join } from "node:path";
 
 import { buildConfig, buildScript, chunks, CODE_GS_RAW, CODE_GS_URL, LIBRARY_ID, STUB_GS_URL, configRows, draftingSheetSync, linkLines, readable, repoOfSite, sheetIdOf, tabInstructions, tocRows } from "./build-review-sheet-script.js";
 import { readFileSync as readText } from "node:fs";
-import { feedbackBasis, hashOf } from "./feedback-issue.js";
+import { feedbackBasis, hashOf, PC_BASIS_GREY } from "./feedback-issue.js";
 
 const code = buildScript();
 /** A fake Apps Script TextStyle builder: every setter chains; build() keeps bold. */
@@ -506,11 +506,14 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json")).map((r) => r[0])).not.toContain("Instructions - Dropdown");
     const d = tabInstructions(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
     const cf = d["Contributor Feedback"];
-    expect(cf).toContain("Blue = your input, by the Authoring Committee");
-    expect(cf).toContain("Ready for agent (Orange) back to No");
+    expect(cf).toContain("Column colours:     your input, by the Authoring Committee");
+    expect(cf).toContain("sets Ready for agent back to No");
+    expect(cf).toContain("Reviewers update Contributor Feedback.");
     expect(cf).toContain("Filter views");
-    // Colour words are capitalised, so the sheet can bold and colour each one.
-    expect(cf).not.toMatch(/\b(blue|green|orange|grey)\b/);
+    // No colour is named: the script colours the column names (owner, 2026-11-01).
+    for (const t of [...Object.values(d), ...Object.values(tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json")))]) {
+      expect(t).not.toMatch(/\b(blue|green|orange|grey)\b/i);
+    }
     expect(cf).toContain("/en/cat-harness/processes/contributor-feedback.html");
     const p = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
     expect(p["Review Public Comments"]).toContain("one row per public comment");
@@ -940,6 +943,49 @@ describe("review-sheet.gs in drafting mode", () => {
   });
 });
 
+describe("a \"2:\" basis: a proposal also goes stale on the grey content its comments join (#348)", () => {
+  const pcRows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
+  const exact = ["Title", "TWG (CS)"];
+  const hdr = ["Change-set", "Title", "TWG (CS)", "Suggested Revisions", "TWG (PCs)", "Agentic status", "Committee Feedback (CL)", "Change Set Feedback (agent)", "Ready for agent"];
+  const run = (row: string[], basis: string) => {
+    const t = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][] }>;
+    t["Review Change Sets"].rows = [hdr, row];
+    t["Agent - Change Sets"].rows[0].push("Feedback basis (change set)");
+    t["Agent - Change Sets"].rows[1].push(basis);
+    const rt = runtime(t);
+    load(code, rt.g).refreshAll();
+    const w = rt.written["Review Change Sets"]?.["Change Set Feedback (agent)"];
+    return w ? String(T(w[0][0])) : row[7];
+  };
+  const base = () => ["CS-001", "Fix scope", "TWG 1", "No. 1 · Lengthen it", "Editorial", "Working", "do it", "Proposal", "No"];
+
+  test("a 2: basis is stale when a joined grey cell changes, and not when it does not", () => {
+    const basis = feedbackBasis(hdr, base(), exact, "Committee Feedback", PC_BASIS_GREY);
+    expect(basis).toMatch(/^2:/);
+    expect(run(base(), basis)).not.toMatch(/⚠ Stale/);
+    const moved = base();
+    moved[3] = "No. 1 · Lengthen it, and add an example";
+    expect(run(moved, basis)).toMatch(/^⚠ Stale: /);
+  });
+
+  test("the agent's own columns are not part of it", () => {
+    const basis = feedbackBasis(hdr, base(), exact, "Committee Feedback", PC_BASIS_GREY);
+    const row = base();
+    row[5] = "PR open";
+    expect(run(row, basis)).not.toMatch(/⚠ Stale/);
+  });
+
+  test("an older basis (no 2:) ignores grey content, and still goes stale on a blue cell", () => {
+    const basis = feedbackBasis(hdr, base(), exact, "Committee Feedback");
+    const grey = base();
+    grey[3] = "changed";
+    expect(run(grey, basis)).not.toMatch(/⚠ Stale/);
+    const blue = base();
+    blue[6] = "do it differently";
+    expect(run(blue, basis)).toMatch(/^⚠ Stale: /);
+  });
+});
+
 describe("sheet-sync URLs relative to the folio's site", () => {
   test("resolve against the instance's iriBase, so a move to another org changes one line", () => {
     const repo = draftFolio();
@@ -992,25 +1038,40 @@ describe("the Config tab's rows", () => {
 });
 
 describe("the colour key in Instructions text", () => {
-  const keyRuns = new Function("SpreadsheetApp", `${code}\nreturn keyRuns;`)({}) as (t: string) => [number, number, string][];
+  const keyRuns = new Function("SpreadsheetApp", `${code}\nreturn keyRuns;`)({}) as (t: string, h?: Record<string, string>) => [number, number, string][];
+  const fillGroup = new Function("SpreadsheetApp", `${code}\nreturn fillGroup;`)({}) as (h: string) => string | null;
   const text = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"))["Review Change Sets"];
-  const runs = keyRuns(text);
+  const heads = { "Ready for agent": "orange", "Ready for merge": "orange", "Agentic status": "green", "Agentic status (filter)": "green", "Committee Feedback": "blue", "Disposition": "blue", "Staging review": "green" };
+  const runs = keyRuns(text, heads);
   const words = runs.map(([a, z, c]) => [text.slice(a, z), c]);
 
-  test("each key segment on the first line is coloured whole, in its own colour", () => {
-    expect(words.slice(0, 4).map(([w]) => w.split(" = ")[0])).toEqual(["Blue", "Green", "Orange", "Grey"]);
-    expect(words[0][0]).toContain("your input");
+  test("each key phrase on the first line is coloured whole, in key order, naming no colour", () => {
+    expect(words[0][0]).toBe("your input, by the Feedback Review Committee");
+    expect(words[1][0]).toBe("written by the agent");
     expect(new Set(words.slice(0, 4).map(([, c]) => c)).size).toBe(4);
   });
 
-  test("later colour words are coloured one by one, with the key's colour", () => {
+  test("column names are coloured like their header, whole words, longest first", () => {
     const later = words.slice(4);
-    expect(later.length).toBeGreaterThan(3);
-    for (const [w, c] of later) expect(c).toBe(words.find(([k]) => k.toLowerCase().startsWith(w.toLowerCase()))![1]);
+    for (const [w, c] of later) expect(["#1f5fa8", "#2e7d32", "#c25e00", "#666666"]).toContain(c);
+    expect(later).toContainEqual(["Ready for agent", "#c25e00"]);
+    expect(later).toContainEqual(["Ready for merge", "#c25e00"]);
+    expect(later).toContainEqual(["Committee Feedback", "#1f5fa8"]);
+    expect(later).toContainEqual(["Agentic status", "#2e7d32"]);
+    // No overlapping runs.
+    for (let i = 1; i < runs.length; i++) expect(runs[i][0]).toBeGreaterThanOrEqual(runs[i - 1][1]);
   });
 
-  test("text without a colour word gets no runs", () => {
-    expect(keyRuns("Kept by the agent's watcher. Do not edit.")).toEqual([]);
+  test("header fills map to the key colour", () => {
+    expect(fillGroup("#9dc3e7")).toBe("blue");
+    expect(fillGroup("#f4b16a")).toBe("orange");
+    expect(fillGroup("#93c27c")).toBe("green");
+    expect(fillGroup("#b6b6b6")).toBe("grey");
+    expect(fillGroup("#ffffff")).toBe(null);
+  });
+
+  test("text without a colour word or column name gets no runs", () => {
+    expect(keyRuns("Kept by the agent's watcher. Do not edit.", heads)).toEqual([]);
   });
 });
 
