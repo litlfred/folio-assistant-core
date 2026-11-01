@@ -26,8 +26,16 @@
  * The model file keeps every byte this does not change. Archi's zipped
  * archive is written back as a zip.
  *
+ * **Seeding, once.** `--seed` goes the other way, one time, to move a
+ * model's existing knowledge into the graph: every term an element already
+ * points at (`skosConcept`) and that has no `focus` yet gets one, with the
+ * element's type and its relationships to the other linked elements. After
+ * that the glossary is the source, and this Tool keeps the model agreeing.
+ * A term that already has a focus is never overwritten.
+ *
  * Usage:
  *   bun run cat archimate:from-glossary --instance <dir> --model <model id> [--write] [--prune] [--check] [--json]
+ *   bun run cat archimate:from-glossary --instance <dir> --model <model id> --seed [--write]
  *
  * Without `--write` it reports what it would change. `--check` fails when
  * anything would change, or a type disagrees. The report also counts the
@@ -40,7 +48,7 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
 import { basename, join, resolve } from "node:path";
 
-import { GlossarySchema, isArchimateFocus, type ArchimateFocus, type ArchimateRelationshipType, type LangText } from "../schemas/glossary.ts";
+import { ARCHIMATE_RELATIONSHIPS, GlossarySchema, isArchimateFocus, type ArchimateFocus, type ArchimateRelationshipType, type LangText } from "../schemas/glossary.ts";
 
 export const TOOL_ID = "archimate-from-glossary";
 
@@ -153,6 +161,48 @@ export function plan(model: ModelLike, terms: readonly GraphElement[], modelId: 
     if (linkedIds.has(m.source) && linkedIds.has(m.target) && !wanted.has(`${m.source}|${m.type}|${m.target}`)) p.extra.push({ id: m.id, type: m.type, source: m.source, target: m.target });
   }
   return p;
+}
+
+/** One glossary file's terms, each with the focus the model gives it: the `--seed` plan. */
+export interface Seed {
+  file: string;
+  focus: Array<{ termId: string; focus: ArchimateFocus }>;
+}
+
+/**
+ * The focus each linked, focus-less term would take from the model: the
+ * element's type, and its relationships to other linked elements (by term
+ * id, when both terms are in the same glossary). Groupings and junctions are
+ * how a view is drawn, so they are never seeded.
+ */
+export function seedFrom(model: ModelLike, glossaries: Array<{ file: string; id: string; terms: Array<{ id: string; focus?: unknown }> }>): Seed[] {
+  const termOf = new Map<string, { file: string; scheme: string; termId: string; hasFocus: boolean }>();
+  for (const g of glossaries) for (const t of g.terms) termOf.set(`${g.file}#${t.id}`, { file: g.file, scheme: g.id, termId: t.id, hasFocus: t.focus !== undefined });
+  const linked = new Map<string, { file: string; scheme: string; termId: string; hasFocus: boolean }>(); // element id -> term
+  const taken = new Set<string>();
+  for (const e of model.elements) {
+    if (e.type === "Grouping" || e.type === "Junction") continue;
+    for (const l of e.properties.filter((x) => x.key === "skosConcept")) {
+      const t = termOf.get(l.value) ?? termOf.get(l.value.replace(/^.*\//, ""));
+      const k = t && `${t.file}#${t.termId}`;
+      if (!t || taken.has(k!)) continue; // one element per term: the first wins, as plan() reports
+      taken.add(k!);
+      linked.set(e.id, t);
+    }
+  }
+  const out = new Map<string, Seed>();
+  for (const e of model.elements) {
+    const t = linked.get(e.id);
+    if (!t || t.hasFocus) continue;
+    const relationships = model.relationships
+      .filter((r) => r.source === e.id && linked.get(r.target)?.file === t.file && (ARCHIMATE_RELATIONSHIPS as readonly string[]).includes(r.type))
+      .map((r) => ({ type: r.type as ArchimateRelationshipType, target: linked.get(r.target)!.termId, ...(r.type === "Access" && r.accessType ? { accessType: r.accessType as "read" } : {}) }))
+      .sort((a, b) => `${a.type}|${a.target}`.localeCompare(`${b.type}|${b.target}`));
+    const seed = out.get(t.file) ?? { file: t.file, focus: [] };
+    seed.focus.push({ termId: t.termId, focus: { archimate: e.type, ...(relationships.length ? { relationships } : {}) } });
+    out.set(t.file, seed);
+  }
+  return [...out.values()];
 }
 
 // ── Writing ──────────────────────────────────────────────────────────────
@@ -298,6 +348,27 @@ if (import.meta.main) {
   }
   const file = join(archimateDir(root, config), m.file);
   const bytes = readFileSync(file);
+  if (process.argv.includes("--seed")) {
+    const dir = join(root, "glossary");
+    const files = existsSync(dir) ? readdirSync(dir).filter((x) => x.endsWith(".glossary.json")).sort() : [];
+    const raw = new Map(files.map((f) => [f, JSON.parse(readFileSync(join(dir, f), "utf8")) as { id: string; terms: Array<Record<string, unknown> & { id: string }> }]));
+    const seeds = seedFrom(readArchimate(bytes) as ModelLike, [...raw].map(([f, g]) => ({ file: f, id: g.id, terms: g.terms })));
+    for (const s of seeds) {
+      console.log(`${s.file}: ${s.focus.length} term(s) take their focus from model ${modelId}`);
+      for (const x of s.focus) console.log(`  ${x.termId}: ${x.focus.archimate}${x.focus.relationships?.length ? `, ${x.focus.relationships.length} relationship(s)` : ""}`);
+      if (!process.argv.includes("--write")) continue;
+      const g = raw.get(s.file)!;
+      for (const x of s.focus) {
+        const t = g.terms.find((u) => u.id === x.termId)!;
+        t.focus = x.focus;
+      }
+      GlossarySchema.parse(g); // never write a glossary the schema refuses
+      writeFileSync(join(dir, s.file), `${JSON.stringify(g, null, 2)}\n`);
+      console.log(`wrote glossary/${s.file}`);
+    }
+    if (!seeds.length) console.log("nothing to seed: no linked term is without a focus");
+    process.exit(0);
+  }
   const p = plan(readArchimate(bytes) as ModelLike, graphElements(root), modelId);
   if (process.argv.includes("--json")) console.log(JSON.stringify(p, null, 2));
   else console.log(report(p, modelId));

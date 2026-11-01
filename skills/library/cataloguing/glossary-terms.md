@@ -403,6 +403,11 @@ is removed only with `--prune`. Archi keeps the layout: no box moves. Its
 report counts the elements that still point at no term. That is the part of
 the model not yet in the graph.
 
+To start from a model that already exists, run it once with `--seed`
+(`--seed --write` to write). Every term an element already points at, and
+that has no `focus` yet, takes the element's type and its relationships to
+the other linked elements. From then on, the glossary is the source.
+
 This reverses the direction for the elements the graph holds. The
 `glossary-archimate` page links still read the model's `skosConcept`, which now
 points back at the term the element was drawn from.

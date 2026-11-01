@@ -5,7 +5,7 @@
  */
 import { describe, expect, test } from "bun:test";
 
-import { applyPlan, plan, type GraphElement } from "./archimate-from-glossary.ts";
+import { applyPlan, plan, seedFrom, type GraphElement } from "./archimate-from-glossary.ts";
 
 const am = "../../cat-harness-tools/archimate";
 const { parseArchimate, layerOf } = await import(`${am}/schemas/archimate.ts`);
@@ -91,5 +91,12 @@ describe("archimate-from-glossary", () => {
     const after = parseArchimate(xml);
     expect(after.views[0].connections).toEqual([]);
     expect(plan(after, TERMS, "m").extra).toEqual([]);
+  });
+
+  test("--seed moves a model's linked elements into the graph once, never over an existing focus", () => {
+    const seeds = seedFrom(model, [{ file: "ra.glossary.json", id: "ra", terms: [{ id: "client-registry" }, { id: "client-lookup", focus: { archimate: "ApplicationService" } }] }]);
+    expect(seeds).toEqual([{ file: "ra.glossary.json", focus: [{ termId: "client-registry", focus: { archimate: "ApplicationComponent" } }] }]);
+    const both = seedFrom(model, [{ file: "ra.glossary.json", id: "ra", terms: [{ id: "client-registry" }, { id: "client-lookup" }] }]);
+    expect(both[0]!.focus.find((x) => x.termId === "client-lookup")!.focus).toEqual({ archimate: "ApplicationService", relationships: [{ type: "Serving", target: "client-registry" }] });
   });
 });
