@@ -49,7 +49,7 @@ Two separate failures sat behind that question:
    | a decision or a transition rule | **DMN 1.3** | `processes/decisions/` |
    | classes, attributes, cardinalities | **FHIR logical models** (FSH), drawn as a UML class diagram generated from them | the upstream IG (e.g. smart-pcmt), else a litlfred FSH repo |
    | a graph of named boxes and arrows | find what the boxes ARE (processes, actors, systems) and model it as **ArchiMate** elements and relationships | the reference architecture |
-   | phases, layers, nested shapes, a tree, a staircase | an **SVG generated from data**: a data file plus a generator Tool. The DIIG phases chart is the worked example: `diig-phases-figure/v1` data on the who-iris library entry of each publication that prints it, drawn by Tool `diig-phases-svg` | the data on the source's who-iris library entry; the folio commits the SVG, and adds only its own tiles in a `diig-phases-adaptation/v1` file |
+   | phases, layers, nested shapes, a tree, a staircase | an **SVG generated from data**: a data file plus a generator Tool. The DIIG phases chart is the worked example: `diig-phases-figure/v1` data on the L1 library entry of each publication that prints it, drawn by Tool `diig-phases-svg` | the data on the source's L1 library entry; the folio commits the SVG, and adds only its own tiles in a `diig-phases-adaptation/v1` file |
    | a table of values drawn as a picture | a **table** block | the block |
    | a country example, a photograph, a screenshot, a third-party figure | **keep the cited picture** (`scope: "rebuild"` exclusion, signed off) | unchanged |
 
@@ -124,7 +124,7 @@ Product, Trade Item, Regulated Trade Item) is a data model.
    litlfred repository. sushi must run without errors before the commit.
 3. Draw the figure as a UML class diagram generated from the
    StructureDefinitions, never from the picture. Show each entity as an
-   IG-style structure tree, using fhir-harness `logical-model-schemas` and
+   IG-style structure tree, using the FHIR layer's `logical-model-schemas` and
    `ig-ast-render`.
 4. In mapping tables, every FHIR path links to the spec page for its version
    (`https://hl7.org/fhir/R5/<resource>-definitions.html#<Resource.path>`), and
@@ -137,11 +137,11 @@ Product, Trade Item, Regulated Trade Item) is a data model.
 Charts such as the SMART Guidelines L1–L5 layers, the DIIG phases, nested
 strategies or a cost tree are not graphs. Write their content as a data file:
 layers, boxes, their text, and which feeds which. Then generate the SVG with a
-Tool. The DIIG phases chart is the worked example (owner, 2026-10-31, "B in
-who-iris"):
+Tool. The DIIG phases chart is the worked example (owner, 2026-10-31, option B: the data lives in the
+L1 library):
 
 - Each published version is transcribed once, as `diig-phases-figure/v1`
-  data on that publication's who-iris library entry, under `figure-data/`.
+  data on that publication's L1 library entry, under `figure-data/`.
   DIIG Fig. 1.1.1 lives on `9789240010567-eng`, and the product catalogue
   handbook's Fig. 4 lives on `9789240116191-eng`.
 - A folio that adds its own tiles (dth-hrh) writes only those tiles in a
