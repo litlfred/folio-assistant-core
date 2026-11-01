@@ -122,36 +122,33 @@ the corpus graph">
       <bpmndi:BPMNShape id="Lane_0_di" bpmnElement="Lane_0" isHorizontal="true"><dc:Bounds x="190" y="80" width="1510" height="180" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_1_di" bpmnElement="Lane_1" isHorizontal="true"><dc:Bounds x="190" y="260" width="1510" height="180" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_Derived2_di" bpmnElement="StartEvent_Derived2"><dc:Bounds x="277" y="152" width="36" height="36" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Dublin_di" bpmnElement="Task_Dublin"><dc:Bounds x="425" y="110" width="120" height="120" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Manifest_di" bpmnElement="Task_Manifest"><dc:Bounds x="630" y="110" width="120" height="120" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Assets_di" bpmnElement="Task_Assets"><dc:Bounds x="850" y="110" width="120" height="120" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Bind_di" bpmnElement="Task_Bind"><dc:Bounds x="1070" y="110" width="120" height="120" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Link_di" bpmnElement="Task_Link"><dc:Bounds x="1275" y="290" width="120" height="120" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Dublin_di" bpmnElement="Task_Dublin"><dc:Bounds x="410" y="130" width="150" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Manifest_di" bpmnElement="Task_Manifest"><dc:Bounds x="600" y="129" width="180" height="82" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Assets_di" bpmnElement="Task_Assets"><dc:Bounds x="820" y="120" width="180" height="100" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Bind_di" bpmnElement="Task_Bind"><dc:Bounds x="1040" y="129" width="180" height="82" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Link_di" bpmnElement="Task_Link"><dc:Bounds x="1260" y="310" width="150" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_KgBuilt_di" bpmnElement="EndEvent_KgBuilt"><dc:Bounds x="1507" y="332" width="36" height="36" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="Flow_k1_di" bpmnElement="Flow_k1">
-        <di:waypoint x="313" y="170" />
-        <di:waypoint x="425" y="170" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_k1_di" bpmnElement="Flow_k1"><di:waypoint x="313" y="170" /><di:waypoint x="410" y="170" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_k2_di" bpmnElement="Flow_k2">
-        <di:waypoint x="545" y="170" />
-        <di:waypoint x="630" y="170" />
+        <di:waypoint x="560" y="170" />
+        <di:waypoint x="615" y="170" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_k3_di" bpmnElement="Flow_k3">
-        <di:waypoint x="750" y="170" />
-        <di:waypoint x="850" y="170" />
+        <di:waypoint x="780" y="170" />
+        <di:waypoint x="820" y="170" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_k4_di" bpmnElement="Flow_k4">
-        <di:waypoint x="970" y="170" />
-        <di:waypoint x="1070" y="170" />
+        <di:waypoint x="1000" y="170" />
+        <di:waypoint x="1040" y="170" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_k5_di" bpmnElement="Flow_k5">
-        <di:waypoint x="1190" y="170" />
-        <di:waypoint x="1232.5" y="170" />
-        <di:waypoint x="1232.5" y="350" />
-        <di:waypoint x="1275" y="350" />
+        <di:waypoint x="1220" y="170" />
+        <di:waypoint x="1230" y="170" />
+        <di:waypoint x="1230" y="350" />
+        <di:waypoint x="1260" y="350" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_k6_di" bpmnElement="Flow_k6">
-        <di:waypoint x="1395" y="350" />
+        <di:waypoint x="1410" y="350" />
         <di:waypoint x="1507" y="350" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

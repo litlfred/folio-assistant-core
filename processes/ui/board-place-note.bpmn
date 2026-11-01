@@ -122,34 +122,34 @@ The rule the diagram holds is in the first activity's own wording: the note goes
   <bpmndi:BPMNDiagram id="BPMNDiagram_BoardPlaceNote">
     <bpmndi:BPMNPlane id="BPMNPlane_BoardPlaceNote" bpmnElement="Collab_BoardPlaceNote">
       <bpmndi:BPMNShape id="Shape_Participant_BoardPlaceNote" bpmnElement="Participant_BoardPlaceNote" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="920" height="400" />
+        <dc:Bounds x="160" y="80" width="920" height="400"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Lane_Author" bpmnElement="Lane_Author" isHorizontal="true">
-        <dc:Bounds x="190" y="80" width="890" height="200" />
+        <dc:Bounds x="190" y="80" width="890" height="200"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Lane_Layer" bpmnElement="Lane_Layer" isHorizontal="true">
-        <dc:Bounds x="190" y="280" width="890" height="200" />
+        <dc:Bounds x="190" y="280" width="890" height="200"/>
       </bpmndi:BPMNShape>
 
       <bpmndi:BPMNShape id="Shape_Start_Place" bpmnElement="Start_Place">
-        <dc:Bounds x="220" y="162" width="36" height="36" />
-        
-      <bpmndi:BPMNLabel><dc:Bounds x="219.09" y="197.5" width="90" height="54" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <dc:Bounds x="220" y="162" width="36" height="36"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="219.09" y="197.5" width="90" height="54" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_GW_Exists" bpmnElement="GW_Exists" isMarkerVisible="true">
-        <dc:Bounds x="320" y="155" width="50" height="50" />
-        
-      <bpmndi:BPMNLabel><dc:Bounds x="277.5" y="97" width="135" height="54" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <dc:Bounds x="320" y="155" width="50" height="50"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="277.5" y="97" width="135" height="54" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_CreateNote" bpmnElement="A_CreateNote">
-        <dc:Bounds x="440" y="120" width="120" height="120" />
+        <dc:Bounds x="430" y="140" width="140" height="80"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_Place" bpmnElement="A_Place">
-        <dc:Bounds x="630" y="320" width="120" height="120" />
+        <dc:Bounds x="620" y="340" width="140" height="80"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_SweepOrphans" bpmnElement="A_SweepOrphans">
-        <dc:Bounds x="830" y="320" width="120" height="120" />
+        <dc:Bounds x="820" y="340" width="140" height="80"/>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_End_Placed" bpmnElement="End_Placed">
-        <dc:Bounds x="1000" y="362" width="36" height="36" />
+        <dc:Bounds x="1000" y="362" width="36" height="36"/>
       </bpmndi:BPMNShape>
 
       <bpmndi:BPMNEdge id="Edge_F_1" bpmnElement="F_1">
@@ -157,28 +157,28 @@ The rule the diagram holds is in the first activity's own wording: the note goes
         <di:waypoint x="320" y="180"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_New" bpmnElement="F_New">
-        <di:waypoint x="370" y="180" />
-        <di:waypoint x="440" y="180" />
+        <di:waypoint x="370" y="180"/>
+        <di:waypoint x="430" y="180"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="339.25" y="138.5" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Existing" bpmnElement="F_Existing">
-        <di:waypoint x="345" y="205" />
-        <di:waypoint x="345" y="380" />
-        <di:waypoint x="630" y="380" />
+        <di:waypoint x="345" y="205"/>
+        <di:waypoint x="345" y="380"/>
+        <di:waypoint x="620" y="380"/>
         <bpmndi:BPMNLabel><dc:Bounds x="349" y="300.25" width="90" height="72" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Created" bpmnElement="F_Created">
-        <di:waypoint x="560" y="180" />
-        <di:waypoint x="595" y="180" />
-        <di:waypoint x="595" y="380" />
-        <di:waypoint x="630" y="380" />
+        <di:waypoint x="570" y="180"/>
+        <di:waypoint x="690" y="180"/>
+        <di:waypoint x="690" y="340"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_2" bpmnElement="F_2">
-        <di:waypoint x="750" y="380" />
-        <di:waypoint x="830" y="380" />
+        <di:waypoint x="760" y="380"/>
+        <di:waypoint x="820" y="380"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_3" bpmnElement="F_3">
-        <di:waypoint x="950" y="380" />
-        <di:waypoint x="1000" y="380" />
+        <di:waypoint x="960" y="380"/>
+        <di:waypoint x="1000" y="380"/>
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

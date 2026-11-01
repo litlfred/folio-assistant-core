@@ -132,16 +132,16 @@ Called from content-change-review after the first push and after every revision,
         <dc:Bounds x="242" y="137" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_BuildStaging_di" bpmnElement="Task_BuildStaging">
-        <dc:Bounds x="370" y="95" width="120" height="120" />
+        <dc:Bounds x="370" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_DeployStaging_di" bpmnElement="Task_DeployStaging">
-        <dc:Bounds x="540" y="95" width="120" height="120" />
+        <dc:Bounds x="540" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CommentPR_di" bpmnElement="Task_CommentPR">
-        <dc:Bounds x="710" y="95" width="120" height="120" />
+        <dc:Bounds x="710" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_WatchBranchCI_di" bpmnElement="Task_WatchBranchCI">
-        <dc:Bounds x="880" y="95" width="120" height="120" />
+        <dc:Bounds x="880" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_Staged_di" bpmnElement="End_Staged">
         <dc:Bounds x="1092" y="137" width="36" height="36" />

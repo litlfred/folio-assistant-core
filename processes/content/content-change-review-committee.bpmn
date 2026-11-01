@@ -253,53 +253,53 @@ Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is r
         <dc:Bounds x="242" y="137" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CompareBeforeAfter_di" bpmnElement="Task_CompareBeforeAfter">
-        <dc:Bounds x="370" y="95" width="120" height="120" />
+        <dc:Bounds x="370" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_IngestComments_di" bpmnElement="Task_IngestComments">
-        <dc:Bounds x="550" y="375" width="120" height="120" />
+        <dc:Bounds x="530" y="395" width="160" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_SliceAndAssign_di" bpmnElement="Task_SliceAndAssign">
-        <dc:Bounds x="730" y="375" width="120" height="120" />
+        <dc:Bounds x="730" y="395" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Call_ReviewSlices_di" bpmnElement="Call_ReviewSlices">
-        <dc:Bounds x="910" y="95" width="120" height="120" />
+        <dc:Bounds x="890" y="115" width="160" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Withdraw_di" bpmnElement="GW_Withdraw">
         <dc:Bounds x="1145" y="130" width="50" height="50" />
         
       <bpmndi:BPMNLabel><dc:Bounds x="1125" y="91" width="90" height="35" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_WithdrawComment_di" bpmnElement="Task_WithdrawComment">
-        <dc:Bounds x="1110" y="225" width="120" height="120" />
+        <dc:Bounds x="1090" y="245" width="160" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Disputed_di" bpmnElement="GW_Disputed">
         <dc:Bounds x="1345" y="130" width="50" height="50" />
         
       <bpmndi:BPMNLabel><dc:Bounds x="1325" y="90" width="90" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Call_Adjudication_di" bpmnElement="Call_Adjudication">
-        <dc:Bounds x="1310" y="225" width="120" height="120" />
+        <dc:Bounds x="1290" y="238.5" width="160" height="93" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Covered_di" bpmnElement="GW_Covered">
         <dc:Bounds x="1515" y="410" width="50" height="50" />
-        
-      <bpmndi:BPMNLabel><dc:Bounds x="1569" y="464" width="225" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <bpmndi:BPMNLabel><dc:Bounds x="1569" y="464" width="225" height="36" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReviewUses_di" bpmnElement="Task_ReviewUses">
-        <dc:Bounds x="1650" y="95" width="120" height="120" />
+        <dc:Bounds x="1650" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReviewImpact_di" bpmnElement="Task_ReviewImpact">
-        <dc:Bounds x="1820" y="95" width="120" height="120" />
+        <dc:Bounds x="1820" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Approved_di" bpmnElement="GW_Approved">
         <dc:Bounds x="2025" y="130" width="50" height="50" />
         
       <bpmndi:BPMNLabel><dc:Bounds x="2005" y="90" width="90" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_RequestChanges_di" bpmnElement="Task_RequestChanges">
-        <dc:Bounds x="1990" y="225" width="120" height="120" />
+        <dc:Bounds x="1990" y="245" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_ChangesRequested_di" bpmnElement="End_ChangesRequested">
         <dc:Bounds x="2202" y="267" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Approve_di" bpmnElement="Task_Approve">
-        <dc:Bounds x="2160" y="95" width="120" height="120" />
+        <dc:Bounds x="2160" y="115" width="120" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_Reviewer_di" bpmnElement="End_Reviewer">
         <dc:Bounds x="2372" y="137" width="36" height="36" />
@@ -310,22 +310,22 @@ Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is r
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="r2_di" bpmnElement="r2">
         <di:waypoint x="490" y="155" />
-        <di:waypoint x="520" y="155" />
-        <di:waypoint x="520" y="435" />
-        <di:waypoint x="550" y="435" />
+        <di:waypoint x="515" y="155" />
+        <di:waypoint x="515" y="435" />
+        <di:waypoint x="530" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c1_di" bpmnElement="c1">
-        <di:waypoint x="670" y="435" />
+        <di:waypoint x="690" y="435" />
         <di:waypoint x="730" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c2_di" bpmnElement="c2">
         <di:waypoint x="850" y="435" />
-        <di:waypoint x="880" y="435" />
-        <di:waypoint x="880" y="155" />
-        <di:waypoint x="910" y="155" />
+        <di:waypoint x="875" y="435" />
+        <di:waypoint x="875" y="155" />
+        <di:waypoint x="890" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c3_di" bpmnElement="c3">
-        <di:waypoint x="1030" y="155" />
+        <di:waypoint x="1050" y="155" />
         <di:waypoint x="1145" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c4_di" bpmnElement="c4">
@@ -337,7 +337,7 @@ Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is r
         <di:waypoint x="1345" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c6_di" bpmnElement="c6">
-        <di:waypoint x="1230" y="285" />
+        <di:waypoint x="1250" y="285" />
         <di:waypoint x="1287.5" y="285" />
         <di:waypoint x="1287.5" y="155" />
         <di:waypoint x="1345" y="155" />
