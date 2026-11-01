@@ -68,6 +68,24 @@ is the subprocess `processes/content/record-agent-step.bpmn`, in this order:
    the script's next run. If they disagree with Feedback (agent), fix the
    Agent row, never the copied columns.
 
+**A preview link goes in only when it is live** (owner, 2026-11-01: the
+CS-007 review page answered 404, "so user is confused"). Live means the
+GitHub Pages deploy of a gh-pages commit at or after the preview's publish
+succeeded (`pages-build-deployment` run, conclusion success), and an HTTP GET
+of each link answers 200 where the agent can reach the site. A publish that is
+only on the gh-pages branch is not live: deploys queue, and the next push
+cancels a queued one. Until then leave Staging review page empty, set Staging
+deploy to `deploying`, and write "Preview deploying" in Feedback (agent) with
+no preview link. Link the pull request instead.
+
+How to tell it is live, from where the agent runs (agents can be firewalled
+from github.io): `gh api repos/<owner>/<repo>/actions/workflows/pages-build-deployment/runs`
+and take the newest run whose gh-pages commit is at or after the preview's
+publish; `completed` with `success` is live, `queued`, `in_progress` or
+`cancelled` is not. Then write `deployed` in Staging deploy. The sheet script
+does not fetch pages (it has no network permission, by its security review);
+it shows the link only when Staging deploy says `deployed`.
+
 Never write Feedback (agent) alone. The script builds Agentic status and
 Staging review only from the Agent tab, so a preview link written only in
 Feedback (agent) leaves Staging review empty and Agentic status naming the

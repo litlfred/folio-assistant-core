@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: record-agent-step\n"
-"POT-Creation-Date: 2026-11-01T21:47:49.384Z\n"
+"POT-Creation-Date: 2026-11-01T21:59:29.980Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ru\n"
@@ -31,7 +31,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/record-agent-step.bpmn:61
 #. Diagram element documentation
-msgid "Feedback (agent) in the fixed layout (the ask first, then Status: and Next:), linking the same pull request and preview the Agent row now names. In a log one watcher owns, another thread sends the watcher its step and links instead of writing the sheet."
+msgid "Feedback (agent) in the fixed layout (the ask first, then Status: and Next:), linking the same pull request and preview the Agent row now names. In a log one watcher owns, another thread sends the watcher its step and links instead of writing the sheet. A preview or review link is written only once it is live (owner, 2026-11-01: a review link that answered 404 \"so user is confused\"): the GitHub Pages deploy of a gh-pages commit at or after the preview's publish has succeeded, and an HTTP GET of each link answers 200 where the agent can reach the site. A publish that is only on the gh-pages branch is not live: Pages deploys can be queued for many minutes or cancelled by the next push. Until then Staging review page stays empty, Staging deploy says deploying, and Feedback (agent) says \"Preview deploying\" with no preview link."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/record-agent-step.bpmn:85
@@ -41,7 +41,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/record-agent-step.bpmn:54
 #. Diagram element documentation
-msgid "On the Agent tab, the change set's row: Agentic status (Not started, Working, PR open, Ready for review, Change merged or Needs human); Pull request; Staging review page; Staging built, PR head, Staging built from and Staging deploy from `agent-record.ts push`; and Agent step from `agent-record.ts step <name>`, exactly \"<step> <YYYY-MM-DD HH:MMZ>\" with a step from the fixed list (reading, proposing, editing, pushing, staging, deploying, qa-review, merging, proposed, idle). Prose in Agent step is not read: use idle when the row waits for people."
+msgid "On the Agent tab, the change set's row: Agentic status (Not started, Working, PR open, Ready for review, Change merged or Needs human); Pull request; Staging review page; Staging built, PR head, Staging built from and Staging deploy from `agent-record.ts push`; and Agent step from `agent-record.ts step <name>`, exactly \"<step> <YYYY-MM-DD HH:MMZ>\" with a step from the fixed list (reading, proposing, editing, pushing, staging, deploying, qa-review, merging, proposed, idle). Prose in Agent step is not read: use idle when the row waits for people. A preview or review link is written only once it is live (owner, 2026-11-01: a review link that answered 404 \"so user is confused\"): the GitHub Pages deploy of a gh-pages commit at or after the preview's publish has succeeded, and an HTTP GET of each link answers 200 where the agent can reach the site. A publish that is only on the gh-pages branch is not live: Pages deploys can be queued for many minutes or cancelled by the next push. Until then Staging review page stays empty, Staging deploy says deploying, and Feedback (agent) says \"Preview deploying\" with no preview link."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/record-agent-step.bpmn:50
