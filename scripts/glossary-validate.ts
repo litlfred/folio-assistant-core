@@ -22,7 +22,9 @@
  * - every ArchiMate element or view a block names in `meta.archimate`, and
  *   every figure-to-view mapping, exists in a mounted instance's model;
  * - with `--capitalized`, every prefLabel starts with a capital (the DTH rule
- *   that KG concepts are Capitalized; owner, 2026-10-31).
+ *   that KG concepts are Capitalized; owner, 2026-10-31). A name written
+ *   with one lower-case letter before a capital, such as iHRIS or mHealth,
+ *   counts as Capitalized: that is how its owner spells it.
  *
  * A mounted instance is any directory `<repo>/<d>/` holding `<d>.json`. It
  * reports each failure and exits 1 if there is one. ArchiMate links are
@@ -145,6 +147,9 @@ export function metaOf(src: string): Meta | undefined {
   return undefined;
 }
 
+/** Starts with a capital, or is a name like iHRIS or mHealth (one lower-case letter, then a capital). */
+export const CAPITALIZED = /^(?:[A-Z]|[a-z][A-Z])/;
+
 export async function validate(repo: string, instance: string, opts: { capitalized?: boolean } = {}): Promise<Report> {
   const errors: string[] = [];
   const notes: string[] = [];
@@ -179,7 +184,7 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
       // prefLabel is a string or a language map; every label must be Capitalized.
       const labels = typeof t.prefLabel === "string" ? [t.prefLabel] : Object.values(t.prefLabel);
       for (const l of labels) {
-        if (opts.capitalized && !/^[A-Z]/.test(l)) errors.push(`${f}: ${t.id} prefLabel "${l}" is not Capitalized`);
+        if (opts.capitalized && !CAPITALIZED.test(l)) errors.push(`${f}: ${t.id} prefLabel "${l}" is not Capitalized`);
       }
       for (const b of t.broader ?? []) checkRef(`${f}: ${t.id} broader`, b);
       for (const r of t.related ?? []) checkRef(`${f}: ${t.id} related`, r);
