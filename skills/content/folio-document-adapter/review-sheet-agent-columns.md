@@ -92,6 +92,15 @@ never typed.
 | merged | *Change merged* | clear the Staging review page (a merged branch's preview 404s); Agent step `idle`; then close the change set (below) |
 | closed unmerged | *Not started*, and say so in action taken | remove that PR's line from Pull request, What the PRs changed, Agent completed and PR head; Agent step `idle` |
 
+**Adding change sets: write the Agent tab only** (2026-11-01). On a
+public-comment log, Review Change Sets columns A:B (Change-set, Title) are a
+spill, `=FILTER('Agent - Change Sets'!A3:B, ...)` in A3, so a new change set
+is a new row at the end of Agent - Change Sets and nothing else. A value typed
+into Review Change Sets A:B blocks the spill: every id shows #REF! and the
+tab looks empty (the 82 DPI-H rows written to A210:B291 did this until they
+were cleared). Before writing any cell, read its formula; never write over or
+below a formula's spill range.
+
 **Closing a change set is one step with two tools** (owner, 2026-11-01
 21:50Z: "if agent close it, that is part of close process (githu b issue and
 google sheet as tools)"). Task `Task_CloseChangeSet` of
