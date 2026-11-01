@@ -1939,6 +1939,975 @@
           "drafted_at": "2026-11-01"
         }
       ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s103-findbyitem",
+      "source": "sections/s103-findbyitem.md",
+      "source_hash": "38e110a463c6c41d671557d86ec9f1b42e6c4b1f31f78554ad2d106f86df7e83",
+      "narrative": [
+        {
+          "text": "Specifies the findByItem search, which returns the single task the current user has claimed for an item, or 204 if there is none.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s104-post-method",
+      "source": "sections/s104-post-method.md",
+      "source_hash": "d3975ef1b934fae19ab1e10412f63d2376b4214f2441df9140ead11860a4e083",
+      "narrative": [
+        {
+          "text": "Specifies POST to /api/workflow/claimedtasks, which claims a pool task given as a text/uri-list URI, returning 201 with the new claimed task and removing the pool task, 403 if the user is not its reviewer and 422 if it does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s105-post-method-single-resource-level",
+      "source": "sections/s105-post-method-single-resource-level.md",
+      "source_hash": "c2f2eab09bf1a1683d7664e4e5c755eb3a19b40fbd2b10be1ecf66544aa0748b",
+      "narrative": [
+        {
+          "text": "Says a claimed task is performed by POSTing request parameters to its URL that tell the workflow action what to do. A table maps actions to parameters: approve or reject (with a reason) for edit actions, approve for the final edit, choosing a reviewer by eperson UUID, and recording a score.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s106-return-code",
+      "source": "sections/s106-return-code.md",
+      "source_hash": "14277920a39a9a5973b646cd372a1ed55d6de598528141e8ffbf0530102cf8de",
+      "narrative": [
+        {
+          "text": "Lists the return codes for performing a claimed task: 204 on success, 403 if the user cannot perform it, 404 if it is no longer available and 422 for validation errors such as a missing reason.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s107-delete-method",
+      "source": "sections/s107-delete-method.md",
+      "source_hash": "f8605379094b0881059818ef969e88158c401d90df621491c576633ddce83a2d",
+      "narrative": [
+        {
+          "text": "Says a task is unclaimed by sending DELETE to it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s108-multipart-post-method",
+      "source": "sections/s108-multipart-post-method.md",
+      "source_hash": "a86258d54242a7cb1c9a73036ade067f3397d23e94830db3943ed8e686bf47e7",
+      "narrative": [
+        {
+          "text": "Says multipart POST is not allowed on claimed tasks.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s109-collections-endpoints",
+      "source": "sections/s109-collections-endpoints.md",
+      "source_hash": "4e40988fe51d9fda51c9c2ab9b0292c0cf3f99607dc53197a59c5488e6198f89",
+      "narrative": [
+        {
+          "text": "Heading for the collections endpoints, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s110-main-endpoint",
+      "source": "sections/s110-main-endpoint.md",
+      "source_hash": "2b61194b628aa78d24d7fe26bbb3414358faf5647d0f1a0623c3372aad372df6",
+      "narrative": [
+        {
+          "text": "Specifies /api/core/collections, which lists the collections.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s111-single-collection",
+      "source": "sections/s111-single-collection.md",
+      "source_hash": "aecbc64d6aabec83a43cd388d4b07be67e8a861f3705ec86f2fbc8f0af0773eb",
+      "narrative": [
+        {
+          "text": "Specifies GET of a single collection, returning its uuid, name, handle, archived item count and Dublin Core metadata such as description, provenance, rights and title. It links to its logo, license, default access conditions, parent community and its administrator, submitter, default read and workflow groups, and the item count is -1 when counting is disabled.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s112-search-methods",
+      "source": "sections/s112-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the collection search methods; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s113-findsubmitauthorized",
+      "source": "sections/s113-findsubmitauthorized.md",
+      "source_hash": "a042b366d665ff39468f32e79482d8fbf61c1f29f5d87eeb4ab27509d87942c4",
+      "narrative": [
+        {
+          "text": "Specifies the findSubmitAuthorized search, which lists the collections the current user may submit to, filtered by an optional query that also supports name autosuggest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s114-findsubmitauthorizedbyentitytype",
+      "source": "sections/s114-findsubmitauthorizedbyentitytype.md",
+      "source_hash": "0b1cc918acafaf28e1aeb8dffc33c333c37176cb58f278f9b82317474ebce807",
+      "narrative": [
+        {
+          "text": "Specifies the findSubmitAuthorizedByEntityType search, which lists the collections the user may submit to that handle a given entity type such as Publication, returning 400 if entityType is missing or invalid.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s115-findsubmitauthorizedbycommunity",
+      "source": "sections/s115-findsubmitauthorizedbycommunity.md",
+      "source_hash": "0ddf9e1e1169904996620852cb1135289bf1832912933bc0ad8e52fd784c2331",
+      "narrative": [
+        {
+          "text": "Specifies the findSubmitAuthorizedByCommunity search, which lists the direct child collections of a community that the user may submit to, with an optional query and 400 for a missing or invalid uuid.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s116-findsubmitauthorizedbycommunityandentitytype",
+      "source": "sections/s116-findsubmitauthorizedbycommunityandentitytype.md",
+      "source_hash": "6dea2dcbc77f64601de9fda3cb404ad653766d8967a349d586c9a18c4fd81f1c",
+      "narrative": [
+        {
+          "text": "Specifies the findSubmitAuthorizedByCommunityAndEntityType search, which lists a community's child collections that handle a given entity type and accept the user's submissions, returning 400 if either parameter is missing or invalid.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s117-findadminauthorized",
+      "source": "sections/s117-findadminauthorized.md",
+      "source_hash": "87a6ff08986edc608b25040fb1727f20517257a7a9d382f5714e90c88d6b0abf",
+      "narrative": [
+        {
+          "text": "Specifies the findAdminAuthorized search, which lists the collections the current user administers, with an optional query filter.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s118-findeditauthorized",
+      "source": "sections/s118-findeditauthorized.md",
+      "source_hash": "9482609ecdd6a4dd32eceb923ece2baa041c2c7e2c3d09ba535ac0bf7a32cfdb",
+      "narrative": [
+        {
+          "text": "Specifies the findEditAuthorized search, which lists the collections the current user may edit, with an optional query filter.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s119-patch-operations",
+      "source": "sections/s119-patch-operations.md",
+      "source_hash": "d83a569910b31941f4e9d7ae16432e24762f00a034f67f9fcd48c476544c5674",
+      "narrative": [
+        {
+          "text": "Says collection metadata is changed as described in the page on modifying metadata via Patch.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s120-linked-entities",
+      "source": "sections/s120-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for a collection's linked entities; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s121-logo",
+      "source": "sections/s121-logo.md",
+      "source_hash": "a20afa23b429ebec0b8eb3dd55691f8b31abe08b4f1829c25240fdf5f039121d",
+      "narrative": [
+        {
+          "text": "Heading for a collection's logo; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s122-retrieve-logo",
+      "source": "sections/s122-retrieve-logo.md",
+      "source_hash": "827d2e1bcd402a6c1d07b78fdec27d54c3e5afaee3c0ee6ef421456ed31bb2ec",
+      "narrative": [
+        {
+          "text": "Specifies GET of a collection's logo, which returns the bitstream holding it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s123-create-logo",
+      "source": "sections/s123-create-logo.md",
+      "source_hash": "088e1dca4980692c088786560325a823b7713dd56eb27ec2ae8a6bb0befe370f",
+      "narrative": [
+        {
+          "text": "Specifies POST of a logo to a collection that has none, uploading one file as multipart/form-data and returning the new bitstream, with 412 on a size or checksum mismatch and 422 if there is no file or a logo already exists.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s124-replace-logo",
+      "source": "sections/s124-replace-logo.md",
+      "source_hash": "98fda8186d80a435a55cb4bfe95f3729e2d60bcf769532c11a00008028d4c404",
+      "narrative": [
+        {
+          "text": "Says replacing a collection's logo means deleting the old one and creating a new one.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s125-delete-logo",
+      "source": "sections/s125-delete-logo.md",
+      "source_hash": "6939fc27b222e502434c1b4243dd11afe12bef531b933ebed53c5d1d40e59ef8",
+      "narrative": [
+        {
+          "text": "Says a collection's logo is removed with the bitstream delete endpoint, which also removes its link to the collection.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s126-license",
+      "source": "sections/s126-license.md",
+      "source_hash": "c1e12d01b2e9a0af0ded78ac5615d65436b6fa8ac565abf8a4a4b18a74aba270",
+      "narrative": [
+        {
+          "text": "Specifies the license link of a collection, which returns the license template text it uses and a read-only custom flag that is false when the site template applies.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s127-item-template",
+      "source": "sections/s127-item-template.md",
+      "source_hash": "3b63b6e0cc2ea4da9ed410caa588a51f8c171f50c3d09e47554f4a5eb77431ed",
+      "narrative": [
+        {
+          "text": "Heading for a collection's item template; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s128-retrieve-item-template",
+      "source": "sections/s128-retrieve-item-template.md",
+      "source_hash": "760ef8fd0ccab167385156175c601d4e40f738d06ed62d4d489ad7f8c4edc603",
+      "narrative": [
+        {
+          "text": "Specifies GET of a collection's item template, which returns the item that serves as the template.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s129-create-item-template",
+      "source": "sections/s129-create-item-template.md",
+      "source_hash": "268ec83ebbb91c62d2bcfa4a96e1c067e4d2cb26d2880af76c5a9001ca46b494",
+      "narrative": [
+        {
+          "text": "Specifies POST of an item template to a collection that has none, sending metadata as JSON with inArchive, discoverable and withdrawn omitted or false. It returns the created item, or 422 if any of those flags is true or a template already exists.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s130-replace-item-template",
+      "source": "sections/s130-replace-item-template.md",
+      "source_hash": "af7d4fa51545a18a3fd7351e97ed8f9508526e3e1abbc81ee8b65cdba61d5f89",
+      "narrative": [
+        {
+          "text": "Says an item template is updated with PATCH on the item templates endpoint, which holds the details.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s131-delete-item-template",
+      "source": "sections/s131-delete-item-template.md",
+      "source_hash": "a415d573fb143914fca91d8d0df9e5b14a02109f774a53366e10218f94e0e537",
+      "narrative": [
+        {
+          "text": "Says an item template is deleted with DELETE on the item templates endpoint, which holds the details.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s132-default-access-conditions",
+      "source": "sections/s132-default-access-conditions.md",
+      "source_hash": "8792bb01ba5f644d0e20c85b28a4ac170d4c3ee5c50c21e0127d9566bbb021e8",
+      "narrative": [
+        {
+          "text": "Specifies the defaultAccessConditions link of a collection, which returns the resource policies applied by default to new submissions, its DEFAULT_BITSTREAM_READ policies.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s133-mapped-items",
+      "source": "sections/s133-mapped-items.md",
+      "source_hash": "3c3cb7f22d5e70922b96e160126656911eb91d67921428d4f000e7fd4bc47cdb",
+      "narrative": [
+        {
+          "text": "Specifies the read-only mappedItems link of a collection, which lists the items mapped to it; mappings are changed only through an item's mappedCollections.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s134-collection-harvesting-settings",
+      "source": "sections/s134-collection-harvesting-settings.md",
+      "source_hash": "e588fcea1a5ce1b0925e88fc1969d87e2a4f6ce96651e4def2ea20f720737986",
+      "narrative": [
+        {
+          "text": "Specifies GET of a collection's harvesting settings, readable only by collection administrators, giving the harvest type (none, metadata only, with references, or with bitstreams), OAI source and set, metadata format and status. Sample responses show an enabled OAI harvest and a disabled one, each embedding the available metadata formats.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s135-changing-collection-harvesting-settings",
+      "source": "sections/s135-changing-collection-harvesting-settings.md",
+      "source_hash": "650f562001b1af3ee9bc47015c6e5b35ba7240ac25384a18df882bc0f199d470",
+      "narrative": [
+        {
+          "text": "Specifies PUT of a collection's harvesting settings by collection administrators, setting the harvest type, OAI source, set and metadata format, or harvest_type NONE to disable it, with 422 for an invalid type or format.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s136-parent-community",
+      "source": "sections/s136-parent-community.md",
+      "source_hash": "c36b40add119b5cb5b71e0414fa45402a9f83b9587c7dde6240f0a25d7d6f09f",
+      "narrative": [
+        {
+          "text": "Specifies the parentCommunity link of a collection, which returns one containing community even when there are several, or 204 if it has none.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s137-groups",
+      "source": "sections/s137-groups.md",
+      "source_hash": "a03fdbf5ec463924a0e15dc0e1417a030c437f1d495800bde62f142c642e7bc2",
+      "narrative": [
+        {
+          "text": "Lists the collection group types that can be managed: administrators, submitters, default item read, default bitstream read and the workflow role groups.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s138-collection-administrators",
+      "source": "sections/s138-collection-administrators.md",
+      "source_hash": "90459bdcd72d8305ce2348ef1a3642c4f5e6f6487108df03ba9a3b11be2e04cc",
+      "narrative": [
+        {
+          "text": "Introduces the adminGroup endpoints for managing a collection's administrators.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s139-retrieve-collection-administrators",
+      "source": "sections/s139-retrieve-collection-administrators.md",
+      "source_hash": "2191e1e6d0a55619d67f8945ad24a132dfdfbef4788e159e52a4cd11074a8abf",
+      "narrative": [
+        {
+          "text": "Specifies GET of a collection's administrator group, readable by parent community and collection administrators, returning 204 when the collection has none.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s140-create-collection-administrators-group",
+      "source": "sections/s140-create-collection-administrators-group.md",
+      "source_hash": "86223a58ace9dc3ee4f4a3ad03b4f6ad9cfa0553d1ce87146215bc66064d24fd",
+      "narrative": [
+        {
+          "text": "Specifies POST of an administrator group for a collection that has none, sending only metadata since the name cannot be set here. It returns 422 if a name is given, permanent is true, or the group already exists.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s141-modifying-the-collection-administrators-group",
+      "source": "sections/s141-modifying-the-collection-administrators-group.md",
+      "source_hash": "e2979b94a4bd0d1a63f10f7bcc3fcf1ed0c22b30da3b6d0dd90c0fd6a941ff24",
+      "narrative": [
+        {
+          "text": "Says members and sub-groups of a collection's administrator group are added through the EPerson Group endpoint, and admins, parent community admins and collection admins may change it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s142-delete-the-collection-administrators-group",
+      "source": "sections/s142-delete-the-collection-administrators-group.md",
+      "source_hash": "593068c57ec9baabfb822b20bb8798ac2f17f184966092bdcec724660ad41667",
+      "narrative": [
+        {
+          "text": "Specifies DELETE of a collection's administrator group by admins, parent community admins or collection admins; the status list gives both 204 for a no-op and 422 when no group existed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s143-collection-submitters",
+      "source": "sections/s143-collection-submitters.md",
+      "source_hash": "c7bbcf8a01b6654dab7c8586b8a5af64dd3c31de62f6d294cf401e25e92d2dd6",
+      "narrative": [
+        {
+          "text": "Specifies the submittersGroup endpoints, which work like the administrator group except that collection administrators may also create it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s144-collection-default-item-read-rights-group",
+      "source": "sections/s144-collection-default-item-read-rights-group.md",
+      "source_hash": "6b42c5e3e7662201ba2bafbab6c88c7257693f9fba24497143283f31efde5a71",
+      "narrative": [
+        {
+          "text": "Specifies the itemReadGroup endpoints for the default item read rights group, which work like the administrator group except that collection administrators may also create it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s145-collection-default-bitstream-read-rights-group",
+      "source": "sections/s145-collection-default-bitstream-read-rights-group.md",
+      "source_hash": "877287fbd7c0520ac83214f4319c201e4b981bfb4ec86879d603a0302ada5a77",
+      "narrative": [
+        {
+          "text": "Specifies the bitstreamReadGroup endpoints for the default bitstream read rights group, which work like the administrator group except that collection administrators may also create it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s146-collection-workflow-groups",
+      "source": "sections/s146-collection-workflow-groups.md",
+      "source_hash": "2c154949aa8c3f4d82b97d941d9e92175054e22e177366c1e1e8f009ff5afe2a",
+      "narrative": [
+        {
+          "text": "Specifies the workflowGroups endpoints, one per workflow role with collection scope, such as reviewer, editor, finaleditor or reviewmanagers. They work like the administrator group, collection administrators may also create them, and each has a HAL link.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s147-delete-a-collection-workflow-group",
+      "source": "sections/s147-delete-a-collection-workflow-group.md",
+      "source_hash": "daec14a86bb4e500ee50691613e412d9f3cc2eb7bb54345bfeae981e3deb1bbf",
+      "narrative": [
+        {
+          "text": "Specifies DELETE of a collection workflow role's group, returning 422 while the role still has pending tasks that would be left invalid.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s148-creating-a-collection",
+      "source": "sections/s148-creating-a-collection.md",
+      "source_hash": "3131a3c366dc80d0133fb37a37311df972179ca53adec673254e6eccb8352e4d",
+      "narrative": [
+        {
+          "text": "Specifies creating a collection as an admin by POSTing its name and metadata with the parent community as a query parameter, returning 422 if that community does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s149-updating-a-collection",
+      "source": "sections/s149-updating-a-collection.md",
+      "source_hash": "4d740d187855da5fcef310d77acabf0dab338e5ece566af024d3470f229e4826",
+      "narrative": [
+        {
+          "text": "Specifies PUT on a collection to update its metadata, returning the updated object. Changing the non-editable id, uuid, handle or type gives 422.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s150-deleting-a-collection",
+      "source": "sections/s150-deleting-a-collection.md",
+      "source_hash": "9d5fa8b27c24f09d3aeede89229cc87afc8866c503472ea0617bfcd58ca185a7",
+      "narrative": [
+        {
+          "text": "Specifies DELETE of a collection, returning 204, or 404 if it does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s151-communities-endpoints",
+      "source": "sections/s151-communities-endpoints.md",
+      "source_hash": "5f6af97a458ee6e971b149ee9d4359f9612cd426d57b08538cddbb883357e69a",
+      "narrative": [
+        {
+          "text": "Heading for the communities endpoints, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s152-main-endpoint",
+      "source": "sections/s152-main-endpoint.md",
+      "source_hash": "824654a8bbe84d9e5335aceb1d9d397e08e5b0dc85aaadbb9ff551d599dd6d71",
+      "narrative": [
+        {
+          "text": "Specifies /api/core/communities, which lists the communities.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s153-single-community",
+      "source": "sections/s153-single-community.md",
+      "source_hash": "609000386374f502f2e11fc6da7b6610ad7e0a8c7b9b622cfe63906daf5d43f4",
+      "narrative": [
+        {
+          "text": "Specifies GET of a single community, returning its uuid, name, handle, archived item count and Dublin Core metadata. It links to its sub-communities, collections, logo, parent community and administrator group, and the item count is -1 when counting is disabled.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
