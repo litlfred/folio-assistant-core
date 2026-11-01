@@ -14,12 +14,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:247
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:244
 #. Diagram element documentation
 msgid "A decision is an act ABOUT the findings, not a finding. Record the outcome, every finding it weighed, every finding it overrules — and an audit note saying why it was made, or why a finding in it was left. Each note cites corpus evidence: a witness, another finding, a QA report, a block, a file range. An overruled mechanical finding stays on the record; a gate whose findings vanish when somebody disagrees with them cannot be audited. An agent may assemble the citations and is recorded as `proposed_by`; the author is whoever decided."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:175
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:172
 #. Diagram element documentation
 msgid "A review agent judges what no checker can: accuracy, voice, exposition, whether the change says what the editor meant."
 msgstr ""
@@ -29,17 +29,17 @@ msgstr ""
 msgid "accept"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:255
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:252
 #. Diagram label
 msgid "Accept, revise or discard?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:174
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:171
 #. Diagram label
 msgid "Agent review of the change [content-review]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:195
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:192
 #. Diagram label
 msgid "All checks reported"
 msgstr ""
@@ -54,22 +54,22 @@ msgstr ""
 msgid "Bean claimed?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:117
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:114
 #. Diagram element documentation
 msgid "Before anything is drafted: the author reads the guidance ALREADY in this content, frames the question as PICO, retrieves candidates across the three evidence classes, and has each candidate's authority resolved against its publisher's own API. A recommendation reaches the drafting step with its evidence attached, or with the gap recorded. This step has nothing to do for content that carries no recommendations -- a mathematics folio has none -- and is skipped there rather than satisfied vacuously."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:145
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:142
 #. Diagram element documentation
 msgid "Block schema, label prefixes, required fields, constraint rules."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:160
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:157
 #. Diagram label
 msgid "Build and QA gates [content-test]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:274
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:271
 #. Diagram label
 msgid "Change discarded"
 msgstr ""
@@ -89,22 +89,22 @@ msgstr ""
 msgid "Close the bean [bean-close]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:202
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:199
 #. Diagram label
 msgid "Collate findings into a report"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:277
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:274
 #. Diagram label
 msgid "Commit into the corpus"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:93
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:341
 #. Diagram label
-msgid "Corpus (versioned store)"
+msgid "Corpus"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:102
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:99
 #. Diagram label
 msgid "Describe the intended change"
 msgstr ""
@@ -119,17 +119,17 @@ msgstr ""
 msgid "discarded"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:169
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:166
 #. Diagram element documentation
 msgid "Does this change need a judgement call? `no` goes to agent review; `yes` goes to a human or SME. The question is about the change, not about who is available."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:123
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:120
 #. Diagram label
 msgid "Draft the block edit [content-author]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:99
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:96
 #. Diagram label
 msgid "Edit requested"
 msgstr ""
@@ -144,7 +144,7 @@ msgstr ""
 msgid "Editor / author (person)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:183
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:180
 #. Diagram element documentation
 msgid "Escalated to a human reviewer or subject-matter expert when the change turns on clinical or scientific judgement. A rendered change reaches the reviewer with its before/after preview (skill before-after-preview)."
 msgstr ""
@@ -154,7 +154,7 @@ msgstr ""
 msgid "Every act the requesting party performs personally rather than through the agent lands here: stating the change, retrieving its evidence, and — once every validation path has reported — ruling on it. The gate sits at Task_ReviewFindings rather than earlier because a decision taken before the findings exist would not be a decision about the change that was actually built."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:213
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:210
 #. Diagram element documentation
 msgid "Findings are appended to the bean, so the next agent or human sees what is outstanding."
 msgstr ""
@@ -164,17 +164,17 @@ msgstr ""
 msgid "Folio editing — one proposed change to a content block"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:75
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:77
 #. Diagram element documentation
 msgid "Forks validation into its four parallel paths and, once every one reports, collates mechanical results and review findings into a single report. It is the aggregation point rather than a checker itself — its only job is making sure none of the four is missing before the editor sees anything."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:116
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:113
 #. Diagram label
 msgid "Gather and verify the evidence"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:74
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:76
 #. Diagram label
 msgid "HCI validation pipeline (system)"
 msgstr ""
@@ -184,7 +184,7 @@ msgstr ""
 msgid "How did it end?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:182
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:179
 #. Diagram label
 msgid "Human / SME review [content-review]"
 msgstr ""
@@ -194,17 +194,17 @@ msgstr ""
 msgid "in the corpus"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:168
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:165
 #. Diagram label
 msgid "Judgement call?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:161
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:158
 #. Diagram element documentation
 msgid "Lean build and proof status, LaTeX compile, FHIR/SUSHI validation, QA axes."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:212
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:209
 #. Diagram label
 msgid "Log findings on the bean [todo-manager]"
 msgstr ""
@@ -214,12 +214,12 @@ msgstr ""
 msgid "mechanical"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:203
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:200
 #. Diagram element documentation
 msgid "Mechanical results and review findings are merged into one report against the proposed change."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:80
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:82
 #. Diagram label
 msgid "Mechanical validation (system)"
 msgstr ""
@@ -234,7 +234,7 @@ msgstr ""
 msgid "non-mechanical"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:86
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:88
 #. Diagram label
 msgid "Non-mechanical validation (review agent or SME)"
 msgstr ""
@@ -249,22 +249,22 @@ msgstr ""
 msgid "Not yours — left alone"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:236
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:233
 #. Diagram element documentation
 msgid "On the edge out of `Task_ReviewFindings` and before `Task_RecordDecision`: the findings are the evidence, so the options can only be weighed once they exist, and after `Task_RecordDecision` the decision is already written down. NOT between `Gateway_EditorDecision` and `Task_RecordDecision`, which is the pair the work-plan named — in this diagram those run the OTHER WAY ROUND. `Flow_21b` goes `Task_RecordDecision` -> `Gateway_EditorDecision`, so the gateway reads a decision that has already been recorded, and interposing there would analyse options after the choice was made. In the Agent lane, and this diagram makes the reason sharp. `Task_RecordDecision` is a `userTask` in `Lane_Editor` that already names `decision-audit`, and `Process_OptionsAnalysis` ends with its own `decision-audit` note. Those are two different acts — the subprocess records that the options were WEIGHED, the editor records WHAT WAS CHOSEN — and putting the analysis in the editor's lane would collapse them, making the same party both analyse and decide. The subprocess's own documentation refuses that: it produces options and a recommendation, and the authorisation belongs to the calling step. `CallActivity_Evidence` sits in `Lane_Editor` instead, and that is not an inconsistency: the author performs the evidence retrieval, whereas here the point is that the analyst is not the decider. On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — irreversibility and surprise — and leaving there is a correct outcome. A spelling fix that reached `Task_ReviewFindings` with one mechanical finding exits immediately; a revise-or-discard on a block other content depends on does not."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:278
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:275
 #. Diagram element documentation
 msgid "Only now does the change become corpus content, together with its QA sidecars. Subject to the commit-hygiene requirement."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:110
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:107
 #. Diagram label
 msgid "Open the bean [bean-open]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:235
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:232
 #. Diagram label
 msgid "Options analysis accept · revise · discard"
 msgstr ""
@@ -274,7 +274,7 @@ msgstr ""
 msgid "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:111
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:108
 #. Diagram element documentation
 msgid "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached."
 msgstr ""
@@ -284,7 +284,7 @@ msgstr ""
 msgid "Produces the proposed change and, once findings exist, weighs the options for it — accept, revise, discard — but stops short of choosing: Call_OptionsAnalysis records that the options were weighed, Task_RecordDecision in the editor's lane records what was chosen, and collapsing the two would let the same party both analyse and decide."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:132
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:129
 #. Diagram label
 msgid "Proposed change ready"
 msgstr ""
@@ -299,17 +299,12 @@ msgstr ""
 msgid "Reads which end Process_BeanOpen reached. `claimed`: the bean is in progress and this process works it. `not yours`: a sibling session or a human holds it, nothing was written to it, and this process stops here rather than work a bean it does not own (bean-coordination)."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:94
-#. Diagram element documentation
-msgid "Receives the write only after Gateway_EditorDecision resolves to accept. The one activity here is irreversible in a way nothing upstream is, which is why it is subject to the commit-hygiene requirement and reachable from no path except acceptance."
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:246
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:243
 #. Diagram label
 msgid "Record the decision and audit note"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:224
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:221
 #. Diagram label
 msgid "Review the findings"
 msgstr ""
@@ -319,22 +314,22 @@ msgstr ""
 msgid "revise"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:265
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:262
 #. Diagram label
 msgid "Revise the proposed change [content-author]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:137
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:134
 #. Diagram label
 msgid "Run HCI validation"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:81
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:83
 #. Diagram element documentation
 msgid "Runs the three checks that need no judgement call — schema and constraints, syntax and link resolution, build and QA gates — in parallel with the non-mechanical review rather than gating on it, so a spelling error is never held up behind a pending SME review, or the reverse."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:144
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:141
 #. Diagram label
 msgid "Schema and constraint checks [content-validate]"
 msgstr ""
@@ -344,42 +339,42 @@ msgstr ""
 msgid "Someone else holds the bean; this run stops without touching it."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:87
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:89
 #. Diagram element documentation
 msgid "Supplies the half of validation no checker can perform: whether the change says what the editor meant. Gateway_ReviewerKind escalates from agent review to a human SME specifically when the judgement needed turns clinical or scientific rather than editorial."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:152
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:149
 #. Diagram label
 msgid "Syntax, spelling and links [content-validate]"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:153
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:150
 #. Diagram element documentation
 msgid "Syntax, spelling, cross-references, citation and link resolution."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:124
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:121
 #. Diagram element documentation
 msgid "The authoring agent produces a PROPOSED change. Nothing is written to the corpus yet. For a rendered change it also produces the before/after preview (skill before-after-preview) here, before Gateway_ValidationFork, so the preview exists when the parallel review starts."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:266
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:263
 #. Diagram element documentation
 msgid "The editor chose revise: rework the proposed change against the findings the editor reviewed, then send it back through validation as a new proposal. The before/after preview is refreshed with it (skill before-after-preview)."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:103
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:100
 #. Diagram element documentation
 msgid "The editor states the change in natural language; no content has moved yet."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:256
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:253
 #. Diagram element documentation
 msgid "The editor's recorded decision, with its audit note. `revise` reworks the proposed change; `discard` ends with the change dropped; `accept` commits it into the corpus."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:225
+#: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:222
 #. Diagram element documentation
 msgid "THE GATE: the editor sees every finding BEFORE anything reaches the corpus."
 msgstr ""

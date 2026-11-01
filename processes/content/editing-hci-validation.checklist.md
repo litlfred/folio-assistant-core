@@ -185,7 +185,7 @@ What happens to one proposed change to one content block: drafted, validated mec
 
 ### 17. Commit into the corpus (`Task_Commit`)
 
-- Who: the `Corpus (versioned store)` lane (role `corpus`).
+- Who: the `Authoring agent (system)` lane (role `authoring-agent`).
 - Skill: `corpus-commit-contract`.
 - What: Only now does the change become corpus content, together with its QA sidecars.
 - Record it: `workflow_complete` with `node: "Task_Commit"`.
