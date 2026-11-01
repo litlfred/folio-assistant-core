@@ -1742,3 +1742,30 @@ describe("Where to review and PR links (Q-FBK-3 A)", () => {
     expect(l[0][2]).toBe("https://github.com/litlfred/dth-hrh/issues/82");
   });
 });
+
+describe("a refresh keeps the links an agent put in its feedback (owner, 2026-11-01: \"Dont know where link is\")", () => {
+  const { keptLinks, linkRuns } = new Function("SpreadsheetApp", code + "\nreturn { keptLinks, linkRuns };")({}) as {
+    keptLinks: (r: { text: string; url: string }[], t: string) => [number, number, string][];
+    linkRuns: (range: object) => { text: string; url: string }[];
+  };
+  test("each linked label is found again in the new text, in order", () => {
+    const runs = [
+      { text: "dth-hrh#75", url: "https://github.com/litlfred/dth-hrh/pull/75" },
+      { text: "dth-hrh#75", url: "https://github.com/litlfred/dth-hrh/pull/75" },
+    ];
+    const t = "⏳ The agent is working on dth-hrh#69.\nStatus: plan dth-hrh#75 signed off.\nWhere to review: dth-hrh#75.";
+    const k = keptLinks(runs, t);
+    expect(k.map(([a, z]) => t.slice(a, z))).toEqual(["dth-hrh#75", "dth-hrh#75"]);
+    expect(k[0][0]).toBeLessThan(k[1][0]);
+  });
+  test("a label no longer in the text is dropped", () => {
+    expect(keptLinks([{ text: "gone", url: "https://x/" }], "new text")).toEqual([]);
+  });
+  test("a cell without rich text gives no runs", () => {
+    expect(linkRuns({})).toEqual([]);
+    expect(linkRuns({ getRichTextValue: () => { throw new Error("no"); } })).toEqual([]);
+    const run = (text: string, url: string | null) => ({ getText: () => text, getLinkUrl: () => url });
+    expect(linkRuns({ getRichTextValue: () => ({ getRuns: () => [run("a ", null), run("#75", "https://u/"), run(" ", "https://v/")] }) }))
+      .toEqual([{ text: "#75", url: "https://u/" }]);
+  });
+});

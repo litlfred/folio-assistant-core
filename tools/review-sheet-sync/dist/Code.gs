@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 f1d81960a2ff6477.
+// folio-assistant-core tools/review-sheet-sync at template sha256 b90b7bce604a1180.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 f1d81960a2ff6477';
+const SCRIPT_VERSION = 'template sha256 b90b7bce604a1180';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -1336,11 +1336,14 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) 
     const L0 = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? lineOf[cs] : undefined;
     const L = L0 === undefined ? L0 : askChecked(L0, cur);
     const fin = L !== undefined ? withProgress(cur, L) : cur;
+    // Read the cell's links before a plain write wipes them (owner, 2026-11-01: "Dont know where link is").
+    const kept = keptLinks(linkRuns(s.sh.getRange(k + s.top, ag + 1, 1, 1)), fin);
     if (fin !== String(r[ag])) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(fin)]]);
     unready(s, r, k, r[ag], t);
     // Where the status block landed: after a stale mark, and after a review ask askFirst may put first.
     const off = L && typeof L === 'object' && L.text ? Math.max(0, fin.indexOf(L.text)) : 0;
-    const links = L && typeof L === 'object' ? L.links.map(x => [x[0] + off, x[1] + off, x[2]]) : [];
+    const own = L && typeof L === 'object' ? L.links.map(x => [x[0] + off, x[1] + off, x[2]]) : [];
+    const links = own.concat(kept.filter(([a, z]) => !own.some(([b, y]) => a < y && b < z)));
     markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), fin, links.concat(autoLinks(fin, links)));
   });
 }
@@ -1700,6 +1703,30 @@ function decisionSpans(text) {
   while ((m = ref.exec(t))) spans.push([m.index, m.index + m[0].length]);
   return spans;
 }
+/** The linked runs of a cell, as [{ text, url }]; [] when the cell has none or cannot say. */
+function linkRuns(range) {
+  let rt = null;
+  try { rt = range.getRichTextValue ? range.getRichTextValue() : null; } catch (e) { rt = null; }
+  if (!rt || !rt.getRuns) return [];
+  return rt.getRuns().map(x => ({ text: x.getText(), url: x.getLinkUrl ? x.getLinkUrl() : null })).filter(x => x.url && String(x.text).trim());
+}
+
+/**
+ * Where the links someone (an agent, through the Sheets API) put in a cell land
+ * in its new text, as [start, end, url]: each linked label is found again, in
+ * order, so a refresh that adds a status line keeps every link it can place.
+ */
+function keptLinks(runs, text) {
+  const t = String(text), from = {}, out = [];
+  (runs || []).forEach(x => {
+    const w = String(x.text), at = t.indexOf(w, from[w] || 0);
+    if (at < 0) return;
+    from[w] = at + w.length;
+    out.push([at, at + w.length, x.url]);
+  });
+  return out;
+}
+
 function markDecision(range, text, links) {
   const spans = decisionSpans(text);
   if (!spans.length && !(links || []).length) return;
