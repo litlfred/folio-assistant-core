@@ -21,11 +21,12 @@ jobs:
     with:
       # On a draft PR: prepare and typecheck only; the full tier runs on ready_for_review.
       draft-fast-tier: true
-      # Eight gate shards a side, not the default four (2026-11-01): the
-      # gates are split by each shard's expected wall time
-      # (cat-harness-tools#1213), so the shard holding the long alone gate
-      # takes little else and the rest finish together.
-      gate-shards: 8
+      # Five gate shards a side, not the default four (2026-11-01). The gates
+      # are split by each shard's expected wall time (cat-harness-tools#1213),
+      # so two shards hold the two ~500 s gates and three share the rest. The
+      # 8-shard trial (run 41287467368) gave the same ~510 s slowest shard, but
+      # its 16 jobs waited up to 17 min for runners.
+      gate-shards: 5
       # A PR that touches only the review-sheet tool runs only its tests,
       # about 2 minutes instead of ~30 (owner 2026-10-31, Q-CI1 A).
       quick-paths: >-
