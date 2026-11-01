@@ -1546,11 +1546,12 @@ function statusBlock(line, status, prs) {
 /**
  * "Needs you" only when there is a question to answer (owner, 2026-11-01:
  * "these feedback are not at all clear what agent asking contributors to
- * respond about"; Q-FBK-1 A). The status said "answer the Decision needed
- * below" on rows whose feedback held no Decision needed block. Without one,
- * the line says the question is missing and the "↳ Needs you" line goes.
+ * respond about"; Q-FBK-1 A). Without a Decision needed block in the cell,
+ * the Needs you status line and the "↳ Needs you" line go, the PR lines stay
+ * with their links, and askFirst adds the review ask. The watcher's lint
+ * (tools/review-log-watch/lint.ts) flags the row so the agent writes the
+ * question or clears the status.
  */
-const NO_ASK = PROGRESS + '\u26a0 Marked as needing you, but the agent has not written its question here yet. Nothing to answer until it does.';
 function hasAsk(text) {
   return /(^|\n)Decision needed\b[^\n]*:/.test(String(text || ''));
 }
@@ -1558,8 +1559,8 @@ function askChecked(line, text) {
   const t = line && typeof line === 'object' ? line.text : String(line || '');
   if (t.indexOf('Needs you') < 0 || hasAsk(text)) return line;
   const kept = t.split('\n')
-    .filter((l, i) => !(i > 0 && l.indexOf(STATUS_SUB + NEEDS_YOU) === 0))
-    .map((l, i) => (i === 0 && l.indexOf(PROGRESS + 'Needs you') === 0 ? NO_ASK : l));
+    .filter((l, i) => !(i === 0 && l.indexOf(PROGRESS + 'Needs you') === 0))
+    .filter(l => l.indexOf(STATUS_SUB + NEEDS_YOU) !== 0);
   return line && typeof line === 'object' ? reLink(t, kept.join('\n'), line.links) : kept.join('\n');
 }
 /** Move each link [a, z, url] of `from` to where its text sits in `to` (links are on PR labels, which stay). */
@@ -1580,7 +1581,22 @@ function withProgress(text, line) {
   const lines = t.split('\n');
   const stale = lines[0] === STALE ? [lines.shift()] : [];
   while (lines.length && (lines[0].indexOf(PROGRESS) === 0 || lines[0].indexOf(STATUS_SUB) === 0)) lines.shift();
-  return stale.concat(l ? [l] : [], lines).join('\n');
+  return stale.concat(askFirst(l, lines), lines).join('\n');
+}
+
+/**
+ * The ask comes first, and says exactly what to answer (owner, 2026-11-01:
+ * "these feedback are not at all clear what agent asking contributors to
+ * respond about"). A "Decision needed" status line stays only when the cell
+ * has a Decision needed block; a bare proposal gets the review ask.
+ */
+const ASK_PROPOSAL = 'Please review: do you agree with the proposed direction below? Write yes, or what to change, in your feedback column. Then an Editor sets Ready for agent to Yes.';
+function askFirst(l, lines) {
+  const body = lines.join('\n');
+  const asksDecision = /Decision needed/.test(String(l || ''));
+  if (asksDecision && !/Decision needed/.test(body)) l = '';
+  if (!l && /^Proposed direction/.test(body) && !/Decision needed/.test(body)) return [PROGRESS + ASK_PROPOSAL];
+  return l ? [l] : [];
 }
 
 /**
