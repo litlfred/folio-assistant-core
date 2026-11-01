@@ -44,6 +44,10 @@ describe("build-document-site", () => {
     const landing = readFileSync(join(out, "index.html"), "utf-8");
     expect(landing).toContain('href="en/handbook/index.html"');
     expect(landing).toContain('href="en/review/index.html"');
+    // Listed by its title, not its folder name or a block count.
+    expect(r.documents.map((x) => x.title)).toEqual(["Handbook"]);
+    expect(landing).toContain('<a href="en/handbook/index.html">Handbook</a>');
+    expect(landing).not.toContain("blocks)");
   });
 
   test("every block's KG node is published, one per block and as the document's graph", async () => {

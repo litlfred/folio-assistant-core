@@ -768,7 +768,8 @@ export function defaultBlockActions(repoRoot: string, over: Partial<BlockActions
 }
 
 export interface SiteBuildResult {
-  documents: { slug: string; blocks: number; page: string }[];
+  /** `title`: the manifest's title, with its `meta.status` (e.g. "Working Draft") when it declares one. */
+  documents: { slug: string; title: string; blocks: number; page: string }[];
   errors: string[];
 }
 
@@ -890,10 +891,12 @@ export async function buildDocumentSite(
     writeFileSync(join(data, "graph.jsonld"), JSON.stringify({ "@graph": graph.nodes.map((n) => JSON.parse(n.text) as unknown) }) + "\n");
     const media = join(dirname(d.path), "media");
     if (existsSync(media)) cpSync(media, join(dir, "media"), { recursive: true });
-    result.documents.push({ slug: d.slug, blocks: built.blockCount, page: documentPage(d.slug) });
+    const status = typeof manifest.meta?.status === "string" ? manifest.meta.status : undefined;
+    result.documents.push({ slug: d.slug, title: status ? `${title} - ${status}` : title, blocks: built.blockCount, page: documentPage(d.slug) });
   }
   const list = result.documents
-    .map((d) => `<li><a href="${esc(d.page)}">${esc(d.slug)}</a> (${d.blocks} blocks)</li>`)
+    // A reader looks for the document by its title, not its folder name (owner, 2026-11-01).
+    .map((d) => `<li><a href="${esc(d.page)}">${esc(d.title)}</a></li>`)
     .join("\n");
   const outline: Outline = { $schema: OUTLINE_SCHEMA, documents: [] };
   for (const d of docs) {
@@ -908,7 +911,9 @@ export async function buildDocumentSite(
   const review = join(outDir, ...REVIEW_PAGE_DIR.split("/"));
   mkdirSync(review, { recursive: true });
   writeFileSync(join(review, "index.html"), reviewPageHtml());
-  const also = landingLinks(readDeclaration(repoRoot), (p) => existsSync(join(repoRoot, p)));
+  // The documents are listed above, by title; a second "The document" link to the same page only confuses.
+  const pages = new Set(result.documents.map((d) => dirname(d.page) + "/"));
+  const also = landingLinks(readDeclaration(repoRoot), (p) => existsSync(join(repoRoot, p))).filter((l) => !pages.has(l.href.replace(/\/?$/, "/")));
   const landing =
     `<h1>Documents</h1>\n<p><a href="${esc(REVIEW_PAGE_DIR)}/index.html">What changed from main</a></p>\n<ul>\n${list}\n</ul>` +
     (also.length ? `\n<h2>Also on this site</h2>\n<ul>\n${also.map((l) => `<li><a href="${esc(l.href)}">${esc(l.title)}</a></li>`).join("\n")}\n</ul>` : "");
