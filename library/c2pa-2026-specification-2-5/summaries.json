@@ -761,6 +761,880 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s271-14-12-1-3-1-validating-a-text-data-hash",
+      "source": "sections/s271-14-12-1-3-1-validating-a-text-data-hash.md",
+      "source_hash": "cd83ba73637f9aa3b02d8edaf7a9a1df58acd8704b9a58afc720e0f2e4e44cf2",
+      "narrative": [
+        {
+          "text": "Specifies how validators shall validate a c2pa.hash.data hard binding for unstructured text with an embedded C2PATextManifestWrapper. The validator locates all valid wrappers (accepting decoded streams of at least manifestLength + 13 bytes and ignoring trailing padding), identifies the wrapper whose byte range, including padding, matches the exclusions, and rejects with assertion.dataHash.malformed if none matches. It then removes the wrapper bytes, normalizes the remaining text to NFC, encodes it as UTF-8, hashes it with the alg of the assertion, and records assertion.dataHash.match on a match or rejects with assertion.dataHash.mismatch otherwise.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s272-14-12-1-3-2-validation-result-codes",
+      "source": "sections/s272-14-12-1-3-2-validation-result-codes.md",
+      "source_hash": "0341afdf2915d236baaa7d9687fe69b698853222afa02f70270e2e98f09e7a11",
+      "narrative": [
+        {
+          "text": "Lists the standard result codes for text validation: assertion.dataHash.match for success, assertion.dataHash.mismatch for a hash mismatch indicating tampering, and assertion.dataHash.malformed for a malformed data hash assertion such as invalid exclusion ranges.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s273-14-12-1-3-3-partial-text-extraction",
+      "source": "sections/s273-14-12-1-3-3-partial-text-extraction.md",
+      "source_hash": "566b056e313dfd878ca9b4107a19c37b9e4a3cc61bf39f02464641dd00ee7e56",
+      "narrative": [
+        {
+          "text": "Explains that partially copied unstructured text may have a truncated or absent C2PATextManifestWrapper that cannot be decoded, so the asset is treated as if no manifests were located. A validator may indicate to the user that the content appears to be a fragment of a larger asset.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s274-14-12-1-4-hashing-of-structured-text",
+      "source": "sections/s274-14-12-1-4-hashing-of-structured-text.md",
+      "source_hash": "2a5f39fc0141119f13c102c6dc2be822e47a6a6081019421550b8613ac092f26",
+      "narrative": [
+        {
+          "text": "Requires that for structured text assets the data hash be computed over the raw file bytes with the manifest block excluded via the exclusion range, following the general data hash procedure of section 12.2.2 Hard Bindings. A note explains that no Unicode normalization is applied because structured text files are byte-stable and NFC could cause false mismatches for legitimate NFD content, and that ASCII delimiters make the manifest block boundaries unambiguous.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s275-14-12-1-5-hashing-of-onnx-files",
+      "source": "sections/s275-14-12-1-5-hashing-of-onnx-files.md",
+      "source_hash": "a8d763ff0374252d8b27bcdc5c4360bbee3bb3ee1d284d06a848ba655a17ea45",
+      "narrative": [
+        {
+          "text": "Requires that for ONNX files the data hash be computed over the raw bytes of the serialized ModelProto with the Base64-encoded c2pa:manifest value excluded, following section 12.2.2 Hard Bindings. A validator shall verify that exactly one StringStringEntryProto with key c2pa:manifest exists in ModelProto.metadata_props, treating the asset as having no manifests if there is more than one, and shall verify that the exclusion range matches the offset and length of the Base64-encoded manifest value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s276-14-12-1-6-hashing-of-safetensors-files",
+      "source": "sections/s276-14-12-1-6-hashing-of-safetensors-files.md",
+      "source_hash": "474e694e5886a343b2137a9a132c134eb0ade5ee4e639cf5dbecc650193b07dc",
+      "narrative": [
+        {
+          "text": "Requires that for SafeTensors files the data hash be computed over the complete file (8-byte header length, JSON header and tensor data) with the Base64-encoded c2pa:manifest value excluded, following section 12.2.2 Hard Bindings. A validator shall verify that exactly one c2pa:manifest key exists in the __metadata__ object, treating the asset as having no manifests if there is more than one, and shall reject the asset with assertion.dataHash.malformed if the header length field does not match the actual JSON header length.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s277-14-12-2-validating-a-bmff-hash",
+      "source": "sections/s277-14-12-2-validating-a-bmff-hash.md",
+      "source_hash": "da2ac6952b4680b291daf8b6502e2a56505b0ed152d802723783c5761381898e",
+      "narrative": [
+        {
+          "text": "Specifies validation of BMFF hashes: rendered content shall be validated against its hard binding per section 12.2.2, falling back to a multi-asset hash if present, and any failure or missing bound content shall be clearly signalled to the user and continue to be reported. For streamed or progressively downloaded content, not-yet-available portions are not failures, but each portion shall be validated before rendering and its sequence checked, with unexpected discontinuities signalled and Merkle location values required to start at zero and increment by one; content not rendered as intended, such as fast-forward, may be signalled as unvalidatable. With an update ContentProvenanceBox, the active manifest is searched there first and the parentOf chain followed to the first non-update manifest, whose BMFF hash is validated. The manifest is rejected with assertion.bmffHash.malformed for missing or empty exclusions, fragmented assets with both hash and merkle, or overlapping or negative subset ranges; extra exclusions yield assertion.bmffHash.additionalExclusionsPresent, pad fields are ignored, success yields assertion.bmffHash.match, and a mismatch defers to a multi-asset hash assertion if present.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s278-14-12-2-1-non-fragmented-asset-using-merkle-tree",
+      "source": "sections/s278-14-12-2-1-non-fragmented-asset-using-merkle-tree.md",
+      "source_hash": "127ec0f22cb6171f0d676a3689be0ca1954b4eab278691438f4e17a6effad17c",
+      "narrative": [
+        {
+          "text": "Specifies Merkle tree validation for non-fragmented BMFF assets: without fixedBlockSize or variableBlockSizes the whole mdat payload is one leaf, with fixedBlockSize it is split into fixed blocks (the last block should be truncated to the payload end), and with variableBlockSizes it is split per that array, which must match count and the payload size. Having both block size fields, or a count smaller than the computed leaf nodes, causes rejection with assertion.bmffHash.malformed. Leaf hashes that do not match merkle-map.hashes cause rejection with assertion.bmffHash.mismatch, and when count exceeds the number of hashes the auxiliary uuid C2PA box is required, else assertion.bmffHash.malformed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s279-14-12-2-2-fragmented-asset-using-merkle-tree",
+      "source": "sections/s279-14-12-2-2-fragmented-asset-using-merkle-tree.md",
+      "source_hash": "5a78439e6f09da3198aa80b3d3c8cfaefd05289dca16ebce9b60aa62df7b5dca",
+      "narrative": [
+        {
+          "text": "Requires that for fragmented BMFF assets with a merkle field the validator validate the Merkle tree, rejecting the manifest with assertion.bmffHash.malformed if the auxiliary uuid C2PA box is missing and with assertion.bmffHash.mismatch if the hash computed from that box and leaf node does not match the corresponding entry in merkle-map.hashes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s280-14-12-3-validating-a-general-box-hash",
+      "source": "sections/s280-14-12-3-validating-a-general-box-hash.md",
+      "source_hash": "ac93ac093d22781552d558aa18e1c8b1fa48ec188842a6605fd144e481b09c1e",
+      "narrative": [
+        {
+          "text": "Specifies validation of a c2pa.hash.boxes assertion: the boxes field must be present (else assertion.boxesHash.malformed), boxes must appear in the asset in the listed order (else assertion.boxesHash.mismatch), and unlisted boxes cause assertion.boxesHash.unknownBox. The hash algorithm is taken from the box-hash-map, box-map or Claim alg in that order, with algorithm.unsupported if none is valid; exclusion ranges are relative to the box given by boxIndex and must exist, not overlap and not be negative (else assertion.boxesHash.malformed), and missing names fields are also malformed. Hashes are computed over each box or range of named boxes, skipping exclusions and boxes marked excluded; data in the manifest store exclusion other than the store and padding, exclusions running past a box, or a missing or mismatched hash cause assertion.boxesHash.mismatch, with fallback to a multi-asset hash if present. Extra exclusions yield assertion.boxesHash.additionalExclusionsPresent, pad fields are ignored, and success yields assertion.boxesHash.match.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s281-14-12-3-1-jpeg-1-special-handling",
+      "source": "sections/s281-14-12-3-1-jpeg-1-special-handling.md",
+      "source_hash": "c30d3e3a3e9548b9a27908c40e165fa5bbe8c2b0abd8126c58052ea5c1ec4497",
+      "narrative": [
+        {
+          "text": "Requires a validator of a JPEG 1 asset to check that each box marked with the C2PA identifier is an APP11 containing part or all of the C2PA Manifest Store, identified as a JUMBF superbox labelled c2pa with type UUID 63327061-0011-0010-8000-00AA00389B71. An APP11 not part of the store and not in the hashed boxes list causes rejection with assertion.boxesHash.unknownBox.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s282-14-12-3-2-jpeg-xl-special-handling",
+      "source": "sections/s282-14-12-3-2-jpeg-xl-special-handling.md",
+      "source_hash": "28bd64be479526cad32233cbad6b8a2d4164855443eef0b6be9e38b1dbd3d9dd",
+      "narrative": [
+        {
+          "text": "States that in JPEG-XL the C2PA Manifest Store is a top-level JUMBF box, and requires the box containing it to be identified with the special C2PA box identifier; the store is recognised as a JUMBF superbox labelled c2pa with type UUID 63327061-0011-0010-8000-00AA00389B71.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s283-14-12-3-3-font-special-handling",
+      "source": "sections/s283-14-12-3-3-font-special-handling.md",
+      "source_hash": "0f268d6c7dc2b910ac96fefaed14b8b0a0e5beab10770efd501d681fa5b7f339",
+      "narrative": [
+        {
+          "text": "Requires a validator of a font to check that the box for the font's C2PA table is present and determine whether it holds an embedded manifest, a remote manifest URI or both. Font tables not covered by any box cause rejection with assertion.boxesHash.unknownBox.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s284-14-12-4-validating-a-multi-asset-hash",
+      "source": "sections/s284-14-12-4-validating-a-multi-asset-hash.md",
+      "source_hash": "cdbda648a4fc80801c6ae64d855559b7d73b9ce3a39581c579275dd6589c4e72",
+      "narrative": [
+        {
+          "text": "Specifies that if standard hard binding validation fails and a multi-asset hash assertion is in created_assertions, the validator shall validate it; more than one such assertion, a missing or empty parts array, or a part lacking a valid locator and hashAssertion causes rejection with assertion.multiAssetHash.malformed. Byte-offset locators need non-negative byteOffset and length, and bmffBox locators must reference a present box. A missing non-optional part causes assertion.multiAssetHash.missingPart while optional parts are skipped, and overlapping parts or parts not covering every byte cause assertion.multiAssetHash.malformed. Each part is hashed with its referenced method using offsets relative to the part start, with truncation or mismatch causing assertion.multiAssetHash.mismatch; if all parts validate, assertion.multiAssetHash.match is recorded and no hard binding failure codes are recorded.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s285-14-12-5-validating-a-collection-data-hash",
+      "source": "sections/s285-14-12-5-validating-a-collection-data-hash.md",
+      "source_hash": "f60ccd06ab7a0792cff4d90119e76861ea27562ba99e9490665269e54eafec66",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.12.5 Validating a collection data hash; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s286-14-12-5-1-general",
+      "source": "sections/s286-14-12-5-1-general.md",
+      "source_hash": "28125776a9b5f3c647d8203cf5aa11acd7d3778543020e1dd9616e1d5e3eeb0e",
+      "narrative": [
+        {
+          "text": "Specifies validation of a c2pa.hash.collection.data assertion by iterating over its uris array, rejecting with assertion.collectionHash.malformed if uris is missing or any entry lacks uri or hash. Each uri shall be checked before use and rejected with assertion.collectionHash.invalidURI if it contains . or ..; each retrieved asset is hashed over all its bytes, with a mismatch causing assertion.collectionHash.mismatch and a match adding assertion.collectionHash.match. Any listed file not found causes rejection with assertion.collectionHash.incorrectFileCount.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s287-14-12-5-2-extras-for-zip",
+      "source": "sections/s287-14-12-5-2-extras-for-zip.md",
+      "source_hash": "a13c7b274c75b30c4fd5daaeb68b00859096e075906d8aa4c18597142c1984ee",
+      "narrative": [
+        {
+          "text": "States that for ZIP files the collection data hash includes a zip_central_directory_hash field hashing every central directory header and the end of central directory record with the same algorithm as the hash field. A validator shall check that this field is present and matches, rejecting the manifest with assertion.collectionHash.mismatch otherwise.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s288-14-12-5-3-hashing-of-warc-files",
+      "source": "sections/s288-14-12-5-3-hashing-of-warc-files.md",
+      "source_hash": "eb4f8c5c50d0c056178272132c3a1de3e20eb3883beca0a64ba892fcadaf2908",
+      "narrative": [
+        {
+          "text": "Specifies that for WARC files the collection data hash covers every record except the C2PA manifest record, each hashed over its uncompressed bytes. Because WARC has no central directory, a validator shall reject with assertion.collectionHash.mismatch if any two non-manifest records share a WARC-Record-ID, and shall verify that records and uris entries correspond one-to-one by matching uri to WARC-Record-ID, rejecting with the same code otherwise, so that appended or duplicated records cannot leave the manifest valid. Compressed records shall be decompressed under an implementation-defined maximum size and rejected with assertion.collectionHash.mismatch if they exceed it or if the decompressed length differs from Content-Length, which a note explains bounds work from maliciously crafted records.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s289-14-12-6-validating-a-segment-hash",
+      "source": "sections/s289-14-12-6-validating-a-segment-hash.md",
+      "source_hash": "63f9636d7d3501d4fc397873c71950e1460cb4c2f30bb72e0d3da146f9a67d8c",
+      "narrative": [
+        {
+          "text": "Heading that opens section 14.12.6 Validating a segment hash; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s290-14-12-6-1-general",
+      "source": "sections/s290-14-12-6-1-general.md",
+      "source_hash": "999d594a8fbd1a98ef8ea23d939091d39ca2ab81a974d14b4d525f176dff8947",
+      "narrative": [
+        {
+          "text": "Specifies validation of a c2pa.hash.segment assertion over the file read in binary mode. The manifest is rejected with assertion.segmentHash.malformed if version is missing or unrecognised, if hash, segmentStart or segmentEnd is missing or segmentEnd is less than segmentStart, if predecessorSentinel lacks start, length or hash, or if sentinelLength presence does not match whether the sentinel line references the store externally (required) or inline (forbidden). The sentinel line must begin at segmentEnd, and the hash over bytes [segmentStart, segmentEnd) must match, otherwise assertion.segmentHash.mismatch; on success assertion.segmentHash.match is added.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s291-14-12-6-2-coverage-of-the-asset",
+      "source": "sections/s291-14-12-6-2-coverage-of-the-asset.md",
+      "source_hash": "716cf560ad8ec3f1af4f9eed6749715c34e8cfceea323d10a4545d3f8b8f6585",
+      "narrative": [
+        {
+          "text": "Requires that the checkpoints in a file together cover every byte. For the active checkpoint, the end boundary (segmentEnd plus sentinelLength, or plus the actual sentinel line length including its line ending) must equal the file length, the first checkpoint without predecessorSentinel must have segmentStart of 0, and every other checkpoint's segmentStart must equal predecessorSentinel.start plus predecessorSentinel.length; any failure causes rejection with assertion.segmentHash.partialCoverage. A note says these checks ensure every byte up to the active sentinel line falls in exactly one segment or sentinel line, with no gaps.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s292-14-12-6-3-validating-the-chain-of-checkpoints",
+      "source": "sections/s292-14-12-6-3-validating-the-chain-of-checkpoints.md",
+      "source_hash": "e5b664fa370eadd98e7b726bc5dd6a0bb3a68ce43f8f55418888c8986e0ef399",
+      "narrative": [
+        {
+          "text": "Describes validating the chain of checkpoints, where each later checkpoint records its predecessor's sentinel line position and digest and references its manifest as a parentOf ingredient. Starting from the active checkpoint, for each checkpoint with predecessorSentinel the validator shall hash the referenced bytes (rejecting with assertion.segmentHash.predecessorMismatch on mismatch), obtain the preceding manifest store from them, and validate its segment hash assertion per sections 14.12.6.1 and 14.12.6.2; a checkpoint without predecessorSentinel completes the chain. If an earlier checkpoint's externally stored manifest cannot be retrieved, the validator shall report manifest.inaccessible and treat that and all earlier segments as unverified, but shall not reject the active checkpoint on that basis alone.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s293-15-live-media",
+      "source": "sections/s293-15-live-media.md",
+      "source_hash": "e5ad07155b28bed7725868a48fe796aa00316dd482d4bdd368e580e7ab9c0d92",
+      "narrative": [
+        {
+          "text": "Heading that opens section 15 Live Media; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s294-15-1-introduction",
+      "source": "sections/s294-15-1-introduction.md",
+      "source_hash": "16420a76975bd003f8661b6c1166112a7e9f8f984a97db171f2de90f91fea3b4",
+      "narrative": [
+        {
+          "text": "Introduces the C2PA Live Media specification as supporting live, streaming and dynamic packaging workflows where content is created or packaged in real time, and outlining how to manage assertions for tracks in live sessions to ensure integrity and authenticity. Notes clarify that it covers live streaming and dynamic packaging and is not limited to video, provided the packaging is BMFF or delivery uses Enhanced RTMP (V2). States that this version applies to ISO BMFF content, ISO/IEC 23000-19 content, and Enhanced RTMP (V2) contributions via section 15.5 Verifiable Segment Info method, while being agnostic of manifest and delivery protocols, and does not support MPEG-2 Transport Streams.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s295-15-2-compatibility-with-previous-versions",
+      "source": "sections/s295-15-2-compatibility-with-previous-versions.md",
+      "source_hash": "23ab27d87f32bc1a83fb7c49c40c4ad311e4ed0a9e68d9df46a5b169f1eb48bf",
+      "narrative": [
+        {
+          "text": "States that beginning with version 2.5 the term live video was renamed live media to reflect broader scope, with live video now considered a subset. Identifiers originally defined with livevideo nomenclature, including CDDL rule and file names, assertion labels and validation failure codes, are retained without renaming for compatibility.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s296-15-3-architecture",
+      "source": "sections/s296-15-3-architecture.md",
+      "source_hash": "5ec1779c1fcc8ead3f41f4a64b27f34085f301acd33a7e33ec6ae741d42920f6",
+      "narrative": [
+        {
+          "text": "Heading that opens section 15.3 Architecture; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s297-15-3-1-c2pa-manifest-transport",
+      "source": "sections/s297-15-3-1-c2pa-manifest-transport.md",
+      "source_hash": "3a6f91ba746dc1d897c1c63b523416d8d8a68034d0dab20636772e4b2a29771e",
+      "narrative": [
+        {
+          "text": "Describes live media manifest transport as building on BMFF embedding with two key requirements: content hashing shall use a standard bmff-hash-map targeting a segment (or the method of section 15.5.3 for Enhanced RTMP (V2)), and any C2PA Manifest Store in a live stream shall be in a uuid box per section A.5.1, or for Enhanced RTMP (V2) in a c2paManifest pair in a VideoPacketType.Metadata or AudioPacketType.Metadata message. The uuid box holding a manifest store may appear in any segment and is called the C2PA Manifest Box. Defines dynamically packaged content as prepared just-in-time on request, treats live media and dynamically packaged content as interchangeable terms, and notes that live streams are always dynamically packaged but not vice versa.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s298-15-3-2-segment-based-validation",
+      "source": "sections/s298-15-3-2-segment-based-validation.md",
+      "source_hash": "d57372b3103d3fda5b1b0ec442448c5d10d313521077930c4661a0bf2b8dbdd2",
+      "narrative": [
+        {
+          "text": "States that live or dynamically packaged streams require each segment to be validated independently, so each segment must carry its own content hash. Describes two signing methods, either of which can be used and validators need not support both: section 15.4 Per-segment C2PA Manifest Box method and section 15.5 Verifiable Segment Info method, the latter using a verifiable-segment-info in an emsg box or E-RTMP Metadata message together with session keys. Other C2PA-defined live media binding schemes may be used provided they compute segment hashes with a standard bmff-hash-map and embed or reference the manifest store via a uuid box per section A.5.1.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s299-15-3-3-c2pa-manifest-binding-in-an-initializatio",
+      "source": "sections/s299-15-3-3-c2pa-manifest-binding-in-an-initializatio.md",
+      "source_hash": "14920d586df1b4f5562fa21d8d1c1f0a7bcbe8393afa123b0e600911bcde8551",
+      "narrative": [
+        {
+          "text": "Requires that, where an initialization segment is used, it contain a uuid box whose bmff-hash-map includes the moov box, cryptographically linking it to the media segments. In broadcast push scenarios the initialization segment may be repeated periodically and the uuid box need not be in every copy. A note explains the binding ensures the manifest corresponds to the specific media, preventing replay attacks and content substitution.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s300-15-4-per-segment-c2pa-manifest-box-method",
+      "source": "sections/s300-15-4-per-segment-c2pa-manifest-box-method.md",
+      "source_hash": "cca52ed2b4b9b89c730e86b5392865bae6bbdb44a524011e4cb6c7874f2dc04a",
+      "narrative": [
+        {
+          "text": "Heading that opens section 15.4 Per-segment C2PA Manifest Box method; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s301-15-4-1-description",
+      "source": "sections/s301-15-4-1-description.md",
+      "source_hash": "5c971cc2f42dbc04536737b9e1cecc9cdb59be798a8278876088c1c96cc5ad83",
+      "narrative": [
+        {
+          "text": "Describes the per-segment C2PA Manifest Box method, which a live media stream may use: each media segment shall contain a C2PA Manifest Box in a uuid box per section A.5.1, whose active manifest shall contain a c2pa.hash.bmff.v3 assertion with a hash covering the segment and no merkle field, plus a live media segment assertion, and may contain other relevant assertions. Claim generators may embed additional per-segment validation values derived from segment hashes, such as anchor-point chaining values. A note says this method does not need session keys, verifiable-segment-info-map or emsg boxes and can be used independently of the Verifiable Segment Info method.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s302-15-4-2-live-media-segment-assertion",
+      "source": "sections/s302-15-4-2-live-media-segment-assertion.md",
+      "source_hash": "ffc0c5f7a0f8f2eea2226dcdd6ae56afe33f7806c0902bb4712adcb62c7e5498",
+      "narrative": [
+        {
+          "text": "Requires a live media segment assertion labelled c2pa.livevideo.segment in each segment's manifest when using the per-segment C2PA Manifest Box method, containing a sequenceNumber identifying the segment and a streamId identifying the whole stream (any unique string, such as a UUID or URL). It shall also contain a continuityMethod field indicating how cryptographic continuity between segments is ensured; the only defined value is c2pa.manifestId, which requires a previousManifestId field holding the previous segment's manifest identifier. Implementers may define other continuity methods and fields, named using labels as described in section 8.2 Labels.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s303-15-4-2-1-schema-and-example",
+      "source": "sections/s303-15-4-2-1-schema-and-example.md",
+      "source_hash": "a3ff548703d49079421a634c7428d76d93a3fcfe6ce6148494463c4e943b9d1c",
+      "narrative": [
+        {
+          "text": "Gives the CDDL schema for the live media segment assertion via the livevideo-segment-map rule, with sequenceNumber, streamId, continuityMethod and optional additional fields, and the livevideo-segment-map-manifestId rule adding previousManifestId when continuityMethod is c2pa.manifestId; the complete normative schema is in section G.8.1 Live Media Segment. Also provides a CBOR diagnostic notation example of such an assertion.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s304-15-5-verifiable-segment-info-method",
+      "source": "sections/s304-15-5-verifiable-segment-info-method.md",
+      "source_hash": "4956b07ce2c7614a5f35e39832dfb612dbeb90c9e4466696752438486f03a157",
+      "narrative": [
+        {
+          "text": "Heading that opens section 15.5 Verifiable Segment Info method; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s305-15-5-1-description",
+      "source": "sections/s305-15-5-1-description.md",
+      "source_hash": "b9587d6e252840e7ba6bc3158d2cbfa8045e8a82321d921da5249e75b17454de",
+      "narrative": [
+        {
+          "text": "Defines the verifiable-segment-info as a COSE_Sign1_Tagged structure giving concise per-segment information so each live media segment can be validated independently, used in workflows that sign segment information with session keys. Its payload is a CBOR-serialized segment-info-map that shall be present and not detached, signed by a private session key, with alg (and optionally iat) in the protected header and the session key kid in the unprotected header. The segment-info-map shall contain sequenceNumber (matching mfhd.sequence_number or the ISO/IEC 23009-9 indexing rules, and matching the live media segment assertion when both methods are used), manifestId identifying the current or still-active manifest, and bmffHash, a bmff-hash-map of the segment with no merkle field and an exclusion for /emsg boxes with value urn:c2pa:verifiable-segment-info. It may also contain an optional manifestUri hashed-ext-uri from which a manifest can be retrieved.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s306-15-5-2-use-in-an-emsg-box",
+      "source": "sections/s306-15-5-2-use-in-an-emsg-box.md",
+      "source_hash": "c8d537f01b6abfe387e51bef5c2ce369c99a31fb5179789473dcfb5f3ed7ff76",
+      "narrative": [
+        {
+          "text": "Requires that, in workflows using the verifiable-segment-info method, a verifiable-segment-info be present in the emsg box of each segment, noting this does not apply to workflows relying only on per-segment C2PA Manifest Boxes. Specifies the emsg field values: version 0, scheme_id_uri urn:c2pa:verifiable-segment-info, value fseg, presentation_time_delta 0, timescale and event_duration covering the segment, a session-unique id, and message_data holding the encoded verifiable-segment-info. Gives the CDDL schema for verifiable-segment-info and segment-info-map, with the complete normative schema in section G.8.2 Verifiable Segment Info.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s307-15-5-3-carriage-over-enhanced-rtmp-e-rtmp",
+      "source": "sections/s307-15-5-3-carriage-over-enhanced-rtmp-e-rtmp.md",
+      "source_hash": "fb33526a42b5d63e513f4a495abfb857fb37c142f75e01d3dd2b8664ef162193",
+      "narrative": [
+        {
+          "text": "Describes carriage over Enhanced RTMP (V2), a message-based streaming protocol used for live contribution that does not use ISO BMFF packaging. For such content, rtmp-verifiable-segment-info is carried in a VideoPacketType.Metadata or AudioPacketType.Metadata message instead of an emsg box, with an rtmp-segment-info-map payload whose sequenceNumber and manifestId have the same meaning as before and whose segmentHash, an rtmp-hash-map, replaces bmffHash. A note says AudioPacketType.Metadata is not yet defined by Enhanced RTMP (V2) and its use assumes it will be added.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s308-15-5-3-1-logical-segment",
+      "source": "sections/s308-15-5-3-1-logical-segment.md",
+      "source_hash": "482cd3c4b4c98e2ea6c074ba5bbd7d2279ee61813ef48de40f045310463fff6e",
+      "narrative": [
+        {
+          "text": "Defines a logical segment for Enhanced RTMP (V2) content: tracks are identified by media type and trackId (non-multitrack messages belong to track 0, and an absent trackId equals 0), and a segment is scoped to one track, with the carrying Metadata message required to belong to that track. A video or audio segment shall begin at the tag header of the first frame after the previous segment and consist of complete frames followed by one or more Metadata messages carrying rtmp-verifiable-segment-info. Publishers shall send Metadata messages on the same chunk stream as the track's coded frames, with a timestamp equal to the segment's last frame, which a note says guarantees unambiguous ordering. Consecutive Metadata messages belong to the segment they close, boundaries shall not split frames, sequenceNumber shall increase by 1 per segment per track, and each session key shall sign for only one track.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s309-15-5-3-2-segment-hash-computation",
+      "source": "sections/s309-15-5-3-2-segment-hash-computation.md",
+      "source_hash": "14e14370028c6a47ef5bf74eca919b9817ce7b883a3c608214ae69c5a746c942",
+      "narrative": [
+        {
+          "text": "Specifies that segmentHash in an rtmp-segment-info-map shall be computed with the alg algorithm over the concatenation, in transmission order, of each coded-frame packet's RTMP message timestamp (32-bit unsigned big-endian), composition time offset (24-bit signed big-endian, or 0 if absent) and coded media data. Only the segment's track packet from a Multitrack message is included, Aggregate Message contents are treated as individually transmitted with normalized timestamps, and no other bytes are included. Notes clarify that control messages, data messages, codec configuration packets and all Metadata messages do not contribute, that rewriting timestamps or composition offsets invalidates the hash, and that the TimestampOffsetNano ModEx data is not covered and so cannot be relied upon by a validator.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s310-15-5-3-3-initialization-data-binding",
+      "source": "sections/s310-15-5-3-3-initialization-data-binding.md",
+      "source_hash": "4ff7fa22d1f7c301700e1c6eea8fecb925f69b4aa6034ef3a686d0b73ed45735",
+      "narrative": [
+        {
+          "text": "Requires a manifest delivered in a c2paManifest pair to use as its hard binding a data hash assertion without exclusions, computed over the E-RTMP initialization data, defined as the concatenated codec configuration payloads from each track's most recent SequenceStart packet (or legacy sequence header), video tracks before audio and by ascending trackId. Publishers shall send each track's codec configuration on that track's chunk stream and before the binding c2paManifest, sending a new c2paManifest before dependent frames if configuration changes. A validator shall validate this hard binding when it validates the first segment whose manifestId identifies that manifest, against the configuration most recently received before that segment's closing c2paSegmentInfo. Notes explain this mirrors binding to the moov box, that onMetaData is excluded because intermediaries rewrite it, and that multiple message streams on one connection share one manifest and so must not reuse a media type and trackId combination.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s311-15-5-3-4-amf-carriage",
+      "source": "sections/s311-15-5-3-4-amf-carriage.md",
+      "source_hash": "03bdadc048d55dc3f48733126724afd980dff0ef97bb5fc2894014016f053e6e",
+      "narrative": [
+        {
+          "text": "Requires AMF3 object encoding in VideoPacketType.Metadata and AudioPacketType.Metadata messages, with the c2paSegmentInfo and c2paManifest values carried as native AMF3 ByteArray. c2paSegmentInfo holds the binary rtmp-verifiable-segment-info in the Metadata messages closing each segment; several may appear for one segment, for example during key rotation, and the segment is valid if at least one validates. c2paManifest holds a binary C2PA Manifest Store that shall include a c2pa.session-keys assertion, sent for the first manifest and whenever the active manifest changes, and should be on the video track unless an audio track needs its own manifest. Gives the CDDL schema for rtmp-segment-info-map (normative schema in section G.8.3 Enhanced RTMP Segment Info) and a CBOR diagnostic example.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s312-15-5-3-5-capability-negotiation",
+      "source": "sections/s312-15-5-3-5-capability-negotiation.md",
+      "source_hash": "5ad0ed297ecb1ba4dfa079a3de3494b2319c23ea8deb062c2c767af792e39126",
+      "narrative": [
+        {
+          "text": "Requires C2PA Manifest support over E-RTMP to be negotiated in the connection handshake using the C2PA bit (0x10) of CapsExMask: a supporting client shall set it in the capsEx property of its connect Command Object and set objectEncoding to 3, and a supporting server shall set it in the Info Object of its _result. An endpoint shall not send c2paSegmentInfo or c2paManifest unless both sides signaled support, and a non-signaling endpoint should not expect them. Receivers shall ignore unrecognized pairs in Metadata messages and continue processing the rest; a note says negotiation avoids depending on legacy endpoint behaviour.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s313-15-5-3-6-reconnection",
+      "source": "sections/s313-15-5-3-6-reconnection.md",
+      "source_hash": "d51fdcde7796a0bd53c2ff20aaea3070a21ccf0dfd8fd43f6b78855fcf0c891d",
+      "narrative": [
+        {
+          "text": "States that an Enhanced RTMP (V2) reconnection does not affect a stream's C2PA state (active manifest, session keys and per-track sequenceNumber), so segments on the new connection shall continue each track's sequenceNumber. After reconnecting, a publisher shall resend the active manifest in a c2paManifest pair after each track's codec configuration and before the first coded frame. Notes explain that this supports moving to a different server instance, and that segments cannot span a reconnection, so a publisher can send each track's current c2paSegmentInfo before disconnecting to avoid unvalidatable frames.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s314-15-5-4-c2pa-manifest-updates",
+      "source": "sections/s314-15-5-4-c2pa-manifest-updates.md",
+      "source_hash": "a96998d05a167fde3e868dc23201fcbc5895056cdef21dbf70e85c326d418748",
+      "narrative": [
+        {
+          "text": "Requires that when a new segment needs different assertions, such as changed provenance or replacement of expiring session keys, a new C2PA Manifest Store be provided, embedded in a C2PA Manifest Box, linked externally, or for E-RTMP via a c2paManifest pair in a Metadata message. The new manifest shall apply to all subsequent segments until another is provided, which a note says allows dynamic updates while maintaining integrity and authenticity.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s315-15-5-5-session-keys",
+      "source": "sections/s315-15-5-5-session-keys.md",
+      "source_hash": "7db8d1062f35262ef79440b7ffa8b88cdbb34cee7755052cb68397ad79874f7c",
+      "narrative": [
+        {
+          "text": "Heading that opens section 15.5.5 Session Keys; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s316-15-5-5-1-description",
+      "source": "sections/s316-15-5-5-1-description.md",
+      "source_hash": "fc507843ee5334b2aa108029c13a44f9089a6285e12ef919309ad625b70ffc0e",
+      "narrative": [
+        {
+          "text": "Describes session keys as asymmetric key pairs that may use any algorithm allowed for claim generator X.509 certificates; they shall be generated at the start of a live media session, may also be delivered in later manifests, are each used for a limited period to enable rotation, and should be updated when provenance changes. Public keys are delivered in a C2PA Manifest, with the initial set in the initialization segment's manifest or, for E-RTMP, in a c2paManifest sent before the referencing c2paSegmentInfo. For an unknown session key, a receiver should check the segment's C2PA Manifest Box, then the manifestUri, and shall fall back to the initialization segment's manifest; for E-RTMP it shall use the c2paManifest matching manifestId and should try manifestUri if needed. The receiver shall ensure the retrieved manifest's identifier matches manifestId, and an externally hosted manifest needs to remain at its URI for as long as the content is provided.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
