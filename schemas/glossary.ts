@@ -77,7 +77,7 @@ export type LangText = z.infer<typeof LangTextSchema>;
  *   as Wikidata or ROR.
  */
 export const ORG_TYPES = ["Organization", "FormalOrganization", "OrganizationalUnit", "OrganizationalCollaboration"] as const;
-export const FocusSchema = z
+export const OrgFocusSchema = z
   .object({
     type: z.enum(ORG_TYPES),
     iri: Iri.optional(),
@@ -86,7 +86,65 @@ export const FocusSchema = z
     sameAs: z.array(Iri).optional(),
   })
   .strict();
+export type OrgFocus = z.infer<typeof OrgFocusSchema>;
+
+/** ArchiMate 3.2's relationships, by the names its exchange format gives them. */
+export const ARCHIMATE_RELATIONSHIPS = [
+  "Composition",
+  "Aggregation",
+  "Assignment",
+  "Realization",
+  "Serving",
+  "Access",
+  "Influence",
+  "Triggering",
+  "Flow",
+  "Specialization",
+  "Association",
+] as const;
+export type ArchimateRelationshipType = (typeof ARCHIMATE_RELATIONSHIPS)[number];
+
+/**
+ * A concept that is an architecture element: the knowledge graph holds the
+ * element and its relationships, and the ArchiMate model is drawn from it.
+ * Owner, 2026-11-01 (smart-ra#166, "much of models should be rendered from
+ * KG content", option B "whole model from the graph", then A "on each
+ * glossary term"). Archi keeps only where the boxes sit.
+ *
+ * - `archimate`: the element's type, as ArchiMate's exchange format names it
+ *   (`ApplicationComponent`, `BusinessRole`, …).
+ * - `iri`: the element's IRI when someone else mints one. Without it, the
+ *   element is `<term IRI>/_focus`, as an organization is.
+ * - `relationships`: from this element to another term's element (a local
+ *   term id) or to an element by IRI. `accessType` only on `Access`.
+ *
+ * The concept keeps the words; the element keeps what is true of the
+ * architecture. A model element is linked back to the term by its
+ * `skosConcept` property.
+ */
+export const ArchimateRelationshipSchema = z
+  .object({
+    type: z.enum(ARCHIMATE_RELATIONSHIPS),
+    target: z.string().min(1),
+    accessType: z.enum(["read", "write", "readwrite", "access"]).optional(),
+  })
+  .strict()
+  .refine((r) => r.accessType === undefined || r.type === "Access", { message: "accessType is only for an Access relationship" });
+export type ArchimateRelationship = z.infer<typeof ArchimateRelationshipSchema>;
+export const ArchimateFocusSchema = z
+  .object({
+    archimate: z.string().regex(/^[A-Z][A-Za-z]+$/, "an ArchiMate element type, such as ApplicationComponent"),
+    iri: Iri.optional(),
+    relationships: z.array(ArchimateRelationshipSchema).optional(),
+  })
+  .strict();
+export type ArchimateFocus = z.infer<typeof ArchimateFocusSchema>;
+
+/** What a term's concept is about: an organization, or an architecture element. */
+export const FocusSchema = z.union([OrgFocusSchema, ArchimateFocusSchema]);
 export type Focus = z.infer<typeof FocusSchema>;
+export const isOrgFocus = (f: Focus | undefined): f is OrgFocus => f !== undefined && "type" in f;
+export const isArchimateFocus = (f: Focus | undefined): f is ArchimateFocus => f !== undefined && "archimate" in f;
 
 export const TermSchema = z
   .object({
@@ -127,7 +185,7 @@ export const TermSchema = z
      * `<bootstrap>/ns#Node`, not also `…ns#glossary/terms/node`.
      */
     iri: Iri.optional(),
-    /** The thing the concept is about, such as an organization ({@link FocusSchema}): `foaf:focus`. */
+    /** The thing the concept is about, an organization or an architecture element ({@link FocusSchema}): `foaf:focus`. */
     focus: FocusSchema.optional(),
     /** Where the term came from: a repository path (with #anchor) or an IRI. */
     source: z.string().min(1).optional(),
@@ -194,15 +252,27 @@ export const GlossarySchema = z
     });
     // A local reference must name a term here; anything else must be an IRI.
     g.terms.forEach((t, i) => {
-      (t.focus?.subOrganizationOf ?? []).forEach((ref, j) => {
+      ((isOrgFocus(t.focus) && t.focus.subOrganizationOf) || []).forEach((ref, j) => {
         const local = g.terms.find((u) => u.id === ref);
-        if (local ? !local.focus : !/^[a-z][a-z0-9+.-]*:\/\//i.test(ref)) {
+        if (local ? !isOrgFocus(local.focus) : !/^[a-z][a-z0-9+.-]*:\/\//i.test(ref)) {
           ctx.addIssue({
             code: "custom",
             path: ["terms", i, "focus", "subOrganizationOf", j],
             message: local
               ? `"${ref}" is a term with no focus, so it names no organization`
               : `"${ref}" is neither a term in this glossary nor an absolute IRI`,
+          });
+        }
+      });
+      ((isArchimateFocus(t.focus) && t.focus.relationships) || []).forEach((r, j) => {
+        const local = g.terms.find((u) => u.id === r.target);
+        if (local ? !isArchimateFocus(local.focus) : !/^[a-z][a-z0-9+.-]*:\/\//i.test(r.target)) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["terms", i, "focus", "relationships", j, "target"],
+            message: local
+              ? `"${r.target}" is a term whose focus is no ArchiMate element`
+              : `"${r.target}" is neither a term in this glossary nor an absolute IRI`,
           });
         }
       });
@@ -235,6 +305,8 @@ export function focusIri(conceptIri: string, f: Pick<Focus, "iri">): string {
 
 export const FOAF_NS = "http://xmlns.com/foaf/0.1/" as const;
 export const ORG_NS = "http://www.w3.org/ns/org#" as const;
+/** The Open Group's namespace for the ArchiMate exchange format. */
+export const ARCHIMATE_NS = "http://www.opengroup.org/xsd/archimate/3.1/" as const;
 export const OWL_NS = "http://www.w3.org/2002/07/owl#" as const;
 
 function langValues(t: LangText): Array<{ "@value": string; "@language"?: string }> {
@@ -424,7 +496,21 @@ export function toSkos(
     if (t.source) node["dcterms:source"] = t.source;
     if (t.status !== "authored") node["skos:note"] = t.reason ? `${t.status}: ${t.reason}` : t.status;
     graph.push(node);
-    if (t.focus) {
+    if (isArchimateFocus(t.focus)) {
+      const f = t.focus;
+      const fIri = focusIri(idOf(t.id), f);
+      node["foaf:focus"] = { "@id": fIri };
+      const elRef = (r: string) => {
+        if (/^[a-z][a-z0-9+.-]*:\/\//i.test(r)) return { "@id": r };
+        const target = g.terms.find((u) => u.id === r)!;
+        return { "@id": focusIri(idOf(r), target.focus!) };
+      };
+      // Each relationship is a predicate in ArchiMate's namespace, lower-cased
+      // as RDF properties are: `archimate:serving`, `archimate:realization`.
+      const rels: Record<string, { "@id": string }[]> = {};
+      for (const r of f.relationships ?? []) (rels[`archimate:${r.type[0]!.toLowerCase()}${r.type.slice(1)}`] ??= []).push(elRef(r.target));
+      graph.push({ "@id": fIri, "@type": `archimate:${f.archimate}`, "rdfs:label": langValues(t.prefLabel), ...rels });
+    } else if (isOrgFocus(t.focus)) {
       const f = t.focus;
       const fIri = focusIri(idOf(t.id), f);
       node["foaf:focus"] = { "@id": fIri };
@@ -462,12 +548,15 @@ export function toSkos(
       "skos:member": g.members.map((m) => ({ "@id": m })),
     });
   }
-  const hasFocus = g.terms.some((t) => t.focus);
+  const hasFocus = g.terms.some((t) => isOrgFocus(t.focus));
+  const hasElement = g.terms.some((t) => isArchimateFocus(t.focus));
   const context = {
     skos: SKOS_NS,
     dcterms: DCTERMS_NS,
     rdfs: "http://www.w3.org/2000/01/rdf-schema#",
-    ...(hasFocus ? { foaf: FOAF_NS, org: ORG_NS, owl: OWL_NS } : {}),
+    ...(hasFocus || hasElement ? { foaf: FOAF_NS } : {}),
+    ...(hasFocus ? { org: ORG_NS, owl: OWL_NS } : {}),
+    ...(hasElement ? { archimate: ARCHIMATE_NS } : {}),
   };
   const prov = automated ? automatedNodes(automatedGraphIri(ns, g), idOf, automated.matches, automated.agent) : [];
   if (!prov.length) return { "@context": context, "@graph": graph };

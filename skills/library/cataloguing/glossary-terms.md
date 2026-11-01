@@ -360,6 +360,53 @@ Each row is a candidate for a person to decide on. Words set in capitals
 (`RESOURCES` in a figure), plural forms (`GTINs`) and the folio's own ids
 (`PC-R-05`) are left out.
 
+## Architecture elements: the model drawn from the graph (owner, 2026-11-01)
+
+A reference architecture's elements live in the knowledge graph, and the
+ArchiMate model is drawn from it (smart-ra#166: "much of models should be
+rendered from KG content", option B, with the relationships "on each glossary
+term", option A). A term that names an element is a glossary term like any
+other, plus a `focus` that is the element: its ArchiMate type, and its
+relationships to other terms' elements.
+
+```json
+{
+  "id": "client-registry",
+  "prefLabel": "Client Registry",
+  "definition": "…quoted from the document…",
+  "status": "candidate",
+  "focus": {
+    "archimate": "ApplicationComponent",
+    "relationships": [
+      { "type": "Realization", "target": "client-identification" },
+      { "type": "Access", "target": "client-record", "accessType": "read" }
+    ]
+  }
+}
+```
+
+- `archimate` is the element type, as ArchiMate's exchange format names it.
+- `relationships[].type` is one of ArchiMate 3.2's eleven. `target` is a
+  local term whose focus is an element, or an element's IRI. `accessType` is
+  only for `Access`.
+- In JSON-LD the element is `<term IRI>/_focus`, typed `archimate:<Type>`,
+  and each relationship is a predicate such as `archimate:serving`.
+
+The Tool `archimate-from-glossary` (`bun run cat archimate:from-glossary
+--instance <dir> --model <id> [--write] [--prune] [--check]`) makes the model
+agree. It matches each element by its `skosConcept` property, never by name.
+It names and documents the element from the term, creates any element the
+model lacks (on no view: place it in Archi, or with `archimate-detangle`), and
+adds the relationships the terms list. A type that disagrees is reported, and
+a person decides. A relationship between linked elements that no term lists
+is removed only with `--prune`. Archi keeps the layout: no box moves. Its
+report counts the elements that still point at no term. That is the part of
+the model not yet in the graph.
+
+This reverses the direction for the elements the graph holds. The
+`glossary-archimate` page links still read the model's `skosConcept`, which now
+points back at the term the element was drawn from.
+
 ## Not here
 
 A clinical code system is FHIR `CodeSystem`/`ValueSet`, not a glossary (bean
