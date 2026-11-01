@@ -47,7 +47,7 @@ export interface DthInitOptions {
   needs?: string[];
   sheet?: string;
   /** The `instances` of an existing DTH's index.config.json. */
-  pins: Array<{ name: string; source: Record<string, any> }>;
+  pins: Array<{ name: string; source: Record<string, unknown> }>;
 }
 
 export type Planned = { path: string; content: string; merge?: boolean };
