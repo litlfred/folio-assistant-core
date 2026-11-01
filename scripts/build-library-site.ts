@@ -38,6 +38,7 @@
  */
 import { existsSync, mkdirSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
+import { libraryEntries } from "./lib/library-entries.ts";
 
 import { folioDir, readDeclaration } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { readEntryDocument, DOCUMENT_VIEW_JS, type DocumentView, type EntryLinks } from "@litlfred/cat-harness-tools/scripts/lib/library-document.ts";
@@ -232,9 +233,8 @@ export function buildLibrarySite(repoRoot: string, outDir: string, opts: { repo?
   const repo = opts.repo ?? defaultBlockActions(repoRoot).repo;
   const result: LibrarySiteResult = { entries: [] };
   for (const lib of libraryDirs(repoRoot)) {
-    for (const name of readdirSync(lib).sort()) {
-      const dir = join(lib, name);
-      if (name.startsWith(".") || !statSync(dir).isDirectory()) continue;
+    // Flat or filed in a concern group (bean `6fez`); the slug names the route.
+    for (const { slug: name, dir } of libraryEntries(lib)) {
       const view = entryView(repoRoot, dir, repo);
       if (!view) continue;
       const title = view.title ?? name;
