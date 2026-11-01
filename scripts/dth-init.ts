@@ -75,7 +75,7 @@ export function dthScripts(o: DthInitOptions): Record<string, string> {
     "check:kg-blocks": `bun run cat-harness-tools/pipeline/gen-block-jsonld.ts --paper ${o.name} --check`,
     "check:library-kg": "bun run cat-harness-tools/pipeline/gen-library-jsonld.ts --check",
     "check:dth-glossary": `bun run folio-assistant-core/scripts/glossary-validate.ts --instance ${o.name} --capitalized`,
-    "l1:coverage": `bun run folio-assistant-core/scripts/folio-l1-coverage.ts --document ${o.name} --l1 who-iris/library/${l1}`,
+    "l1:coverage:write": `bun run folio-assistant-core/scripts/folio-l1-coverage.ts --document ${o.name} --l1 who-iris/library/${l1}`,
     "check:l1-coverage": `bun run folio-assistant-core/scripts/folio-l1-coverage.ts --document ${o.name} --l1 who-iris/library/${l1} --check`,
     "review:anchors": anchors,
     "check:review-anchors": `${anchors} --check`,
