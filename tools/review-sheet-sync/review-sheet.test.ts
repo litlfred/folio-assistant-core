@@ -507,7 +507,9 @@ describe("review-sheet.gs in drafting mode", () => {
     const d = tabInstructions(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
     const cf = d["Contributor Feedback"];
     expect(cf).toContain("Blue = your input, by the Authoring Committee");
-    expect(cf).toContain("Ready for agent (Orange) back to No");
+    expect(cf).toContain("Ready for agent back to No");
+    // Column names are coloured like their column, so the steps name no colours (owner, 2026-11-01 18:22Z).
+    expect(cf.split("\n").slice(1).join("\n")).not.toMatch(/\b(Blue|Green|Orange|Grey)\b/);
     expect(cf).toContain("Filter views");
     // Colour words are capitalised, so the sheet can bold and colour each one.
     expect(cf).not.toMatch(/\b(blue|green|orange|grey)\b/);
@@ -1005,7 +1007,7 @@ describe("the colour key in Instructions text", () => {
 
   test("later colour words are coloured one by one, with the key's colour", () => {
     const later = words.slice(4);
-    expect(later.length).toBeGreaterThan(3);
+    expect(later.length).toBeGreaterThan(0);
     for (const [w, c] of later) expect(c).toBe(words.find(([k]) => k.toLowerCase().startsWith(w.toLowerCase()))![1]);
   });
 
