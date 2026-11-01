@@ -761,6 +761,880 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s317-15-5-5-2-session-keys-assertion",
+      "source": "sections/s317-15-5-5-2-session-keys-assertion.md",
+      "source_hash": "28610d429969a5224eb367a96923edcd6860b9ecf5528e3656575def46eb1599",
+      "narrative": [
+        {
+          "text": "Describes the session keys assertion as the means of carrying one or more public session keys inside a C2PA Manifest, and points to the Session Keys Assertion section for its full description.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s318-15-6-live-media-architecture-diagram",
+      "source": "sections/s318-15-6-live-media-architecture-diagram.md",
+      "source_hash": "e899736635f8a2fd45c656c00aa9e513cba7faeb1daa08f858d4dbaf2a80423d",
+      "narrative": [
+        {
+          "text": "Introduces Figure 14, Live Media Architecture, which shows the general scheme of the data structures that can be used in a live media workflow and how each connects to the others.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s319-15-7-live-media-generation-process",
+      "source": "sections/s319-15-7-live-media-generation-process.md",
+      "source_hash": "bcdd2848f1d7e868ee54400d8330c6730f0aa3cc58c41a3ce841d7563396ecf9",
+      "narrative": [
+        {
+          "text": "Heading that opens section 15.7 Live Media Generation Process; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s320-15-7-1-per-segment-c2pa-manifest-box-method",
+      "source": "sections/s320-15-7-1-per-segment-c2pa-manifest-box-method.md",
+      "source_hash": "75445f3e305e231034cf158db94686fc84f641701b7d84e744612a513d2dd175",
+      "narrative": [
+        {
+          "text": "Specifies that, with the per-segment C2PA Manifest Box method, each segment's C2PA Manifest is constructed as described in Section A.5, Embedding manifests into BMFF-based assets, except that the bmff-hash-map hashes only that segment's bytes. Requires that a Live Media Segment Assertion (Section 15.4.2) be included in the manifest to provide metadata about the segment.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s321-15-7-2-verifiable-segment-info-method",
+      "source": "sections/s321-15-7-2-verifiable-segment-info-method.md",
+      "source_hash": "3cf2c41bd5795d93eac6a65d1a6fe8eb7135630bdd991ab3cab9c7a16ee03fc7",
+      "narrative": [
+        {
+          "text": "Describes the two steps of generating a live media stream with the Verifiable Segment Info method. In session key generation, one or more session keys, each with its own createdAt, validityPeriod and minSequenceNumber, are included in the C2PA Manifest in the C2PA Manifest Box that shall be present in the initialization segment(s), or in an E-RTMP VideoPacketType.Metadata or AudioPacketType.Metadata message; minSequenceNumber indicates the earliest segment that should be signed with that key, supporting overlap for key rotation. In signing the box hash, each BMFF/CMAF segment shall have an emsg box containing the verifiable-segment-info, a segment-info-map signed by a session key that carries a sequenceNumber against out-of-order attacks and a bmff-hash-map hashing the segment, and an updated manifest may be included in the segment or referenced via manifestUri. Notes explain that over Enhanced RTMP (V2) each track uses its own session key and an rtmp-verifiable-segment-info with an rtmp-segment-info-map is carried in Metadata messages, and that longer streams rotate session keys through subsequent initialization segments.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s322-15-8-live-media-validation-process",
+      "source": "sections/s322-15-8-live-media-validation-process.md",
+      "source_hash": "9ccca30145b4fd07856bb38d8da907320ea49f4f417bac8ce6ea0c8b11ebc4b1",
+      "narrative": [
+        {
+          "text": "Heading that opens section 15.8 Live Media Validation Process; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s323-15-8-1-initial-common-validation-steps",
+      "source": "sections/s323-15-8-1-initial-common-validation-steps.md",
+      "source_hash": "221783ec5df13316e793638ea6b093509a2c49fbe313bde0afbabb45136c1e1d",
+      "narrative": [
+        {
+          "text": "Specifies the initial validation steps common to live media segments. An initialization segment containing an mdat box fails with livevideo.init.invalid; a BMFF/CMAF segment with neither a C2PA Manifest Box nor a conforming emsg box, or an E-RTMP segment not closed by Metadata messages carrying a conforming c2paSegmentInfo, fails with livevideo.segment.invalid. A C2PA Manifest Box found in a segment shall be validated per Chapter 14, Validation, failing with livevideo.manifest.invalid if it does not validate. For Enhanced RTMP (V2) content, the validator shall have obtained the C2PA Manifest identified by the manifestId of the rtmp-segment-info-map (else livevideo.init.invalid), shall validate it with its hard binding checked against the E-RTMP initialization data, and shall fail the segment with livevideo.init.invalid if any coded frame's most recent codec configuration is not the one bound by that manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s324-15-8-2-per-segment-c2pa-manifest-box-validation",
+      "source": "sections/s324-15-8-2-per-segment-c2pa-manifest-box-validation.md",
+      "source_hash": "a450c851eb9afffde8d3ff82e701cf14149ec15e0629294ea748c34fc48d7fd8",
+      "narrative": [
+        {
+          "text": "Lists the tests a validator shall perform when the C2PA Manifest in a segment's C2PA Manifest Box contains a live media segment assertion. The sequenceNumber must exceed that of the previous segment (unless it is the first) and the streamId must match the previous segment's, otherwise livevideo.assertion.invalid; continuityMethod must be present, otherwise livevideo.continuityMethod.invalid. If continuityMethod is \"c2pa.manifestId\", a previousManifestId field is required (else livevideo.continuityMethod.invalid) and must match the previous segment's manifestId (else livevideo.segment.invalid), and any other continuity method the validator does not recognize or support fails with livevideo.continuityMethod.invalid.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s325-15-8-3-verifiable-segment-info-validation",
+      "source": "sections/s325-15-8-3-verifiable-segment-info-validation.md",
+      "source_hash": "2bd3b4137e67d622b2b262dc6f5280b7e8451cab19a8d4372e2cab332ddd070e",
+      "narrative": [
+        {
+          "text": "Specifies how a validator processes the Verifiable Segment Info method: public session keys from a session keys assertion are extracted and stored, and a key that does not conform or whose signerBinding signature fails is invalid and causes livevideo.sessionkey.invalid. A non-initialization segment with a conforming emsg box but no valid session keys fails with livevideo.segment.invalid; otherwise the validator uses the kid from the unprotected header to find the key, retrieving the manifest via manifestUri if needed, and fails with livevideo.segment.invalid if the key is missing or the signature does not verify. The segment-info-map check also fails with livevideo.segment.invalid if the sequenceNumber does not increase, is below the key's minSequenceNumber, the BMFF/CMAF presentation time is outside the key's validity period, or the hash does not match bmffHash. The validator should also check that the certificate that signed the manifest providing the current session key is still valid, failing with livevideo.sessionkey.invalid if it is not.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s326-15-8-4-verifiable-segment-info-validation-over-e",
+      "source": "sections/s326-15-8-4-verifiable-segment-info-validation-over-e.md",
+      "source_hash": "5ef3a7852eeadc7230bc23a56332108ae552c0beee75f308674f54a177f52501",
+      "narrative": [
+        {
+          "text": "Specifies that for content contributed over Enhanced RTMP (V2) the Verifiable Segment Info validation steps apply, with the Metadata message carrying c2paSegmentInfo used in place of the emsg box and the rtmp-segment-info-map segmentHash field used in place of bmffHash, and session keys delivered in c2pa.session-keys in a c2paManifest metadata message. Lists the errors that cause livevideo.segment.invalid when parsing the rtmp-segment-info-map: a non-increasing sequenceNumber within a track, a sequenceNumber below the key's minSequenceNumber, validation time outside the key's createdAt plus validityPeriod window, a hash mismatch with segmentHash, a key identified by kid already used for a different track, or a Metadata message that does not belong to the track identified by its mediaType and trackId.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s327-16-c2pa-standard-assertions",
+      "source": "sections/s327-16-c2pa-standard-assertions.md",
+      "source_hash": "a93787e9bec49e0ff4060d880e75731f27313cb67844e37851c64666140fecfe",
+      "narrative": [
+        {
+          "text": "Heading that opens section 16 C2PA Standard Assertions; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s328-16-1-introduction",
+      "source": "sections/s328-16-1-introduction.md",
+      "source_hash": "0dece3c63938ff3b3b3a54ae0e538ce91e1d56a3369bafd1b0acc4637c15a7c1",
+      "narrative": [
+        {
+          "text": "Introduces the standard set of assertions for C2PA implementations, noting that example JUMBF URIs are shortened for illustration. Requires all assertions to have a label per Section 8.2, Labels, and to be versioned per Chapter 5, Versioning; standardized assertions use the JSON, CBOR or Embedded File JUMBF content types from ISO 19566-5:2023, entity-specific assertions may use others, and the Codestream content type shall not be used. Unless otherwise stated, standard assertions shall be serialized as CBOR complying with the Core Deterministic Encoding Requirements of RFC 8949 with CDDL schemas, while JSON assertions use JSON Schema. Explains that the assertions are grouped into functional clusters, and that Metadata About Assertions and Regions of Interest are supporting structures used by assertions rather than assertions themselves.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s329-16-2-standard-c2pa-assertion-summary",
+      "source": "sections/s329-16-2-standard-c2pa-assertion-summary.md",
+      "source_hash": "ed6a2ee3b937c7ba150c481633a639682774e9689a51851397b8162a5c7cbeeb",
+      "narrative": [
+        {
+          "text": "Lists the standard C2PA assertions in Table 3, grouped by function (content binding and integrity, provenance and workflow, ingredient, content description and referencing, trust and validation adjuncts, policy and disclosure), giving each type's assertion labels, schema and serialization. Examples include c2pa.hash.data, c2pa.hash.bmff.v3 (with c2pa.hash.bmff removed and c2pa.hash.bmff.v2 deprecated), c2pa.actions.v2, c2pa.ingredient.v3, c2pa.metadata (JSON-LD), c2pa.session-keys and c2pa.ai-disclosure.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s330-16-3-content-binding-integrity",
+      "source": "sections/s330-16-3-content-binding-integrity.md",
+      "source_hash": "b0c0ebe041deef6a47a26a26853c892d8f8449967abd78575a7363ae56df2885",
+      "narrative": [
+        {
+          "text": "Describes the content binding and integrity assertions as those that bind a manifest to an asset's content and let a Manifest Consumer detect tampering, using either cryptographic hashes of the asset's bytes or soft (perceptual) bindings.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s331-16-3-1-data-hash",
+      "source": "sections/s331-16-3-1-data-hash.md",
+      "source_hash": "60ed93d9783d6345d9ecee7810fc56c180bbc04c318bb9ff1ae39d0ccb3efbf8",
+      "narrative": [
+        {
+          "text": "Heading that opens section 16.3.1 Data Hash; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s332-16-3-1-1-description",
+      "source": "sections/s332-16-3-1-1-description.md",
+      "source_hash": "9dbbc9cfa286b2406a9d596e43c92bd77da155fa634b63a07b662bdd0fecdb23",
+      "narrative": [
+        {
+          "text": "Describes the data hash assertion as the most common hard binding for non-BMFF-based assets, recommending the general box hash assertion for box-like formats not compatible with BMFF. The optional alg field shall name an allowed algorithm (otherwise the Claim's alg applies), the hash goes in the hash field, and excluded ranges shall be listed in exclusions in increasing start order without overlap. Exclusion ranges shall begin and end within one logical unit without overlapping its header or length fields (except freebox or pad data), and the claim generator shall ensure they contain only C2PA Manifest Store content or asset metadata and cannot materially affect interpretation of the asset. The deprecated url field shall not be added and shall be ignored by consumers, and the assertion shall be labelled c2pa.hash.data and shall not appear in a cloud data or external reference assertion nor be used with a compressed manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s333-16-3-1-2-schema-and-example",
+      "source": "sections/s333-16-3-1-2-schema-and-example.md",
+      "source_hash": "4e0b60ce8b819ca5b1ee7d85c59a9fcd08e3d7f201bdd64f1b44e31537520afe",
+      "narrative": [
+        {
+          "text": "Specifies the CDDL schema for the data hash assertion (the data-hash-map rule, with optional exclusions, alg, pad2, name and deprecated url, and required hash and pad), with the full normative schema in Section G.4.1, and gives a CBOR diagnostic example. Requires exclusion start and length values to use preferred (shortest) serialization normally, but to be written as 32-bit integers when they are not yet known. Requires pad to be present as a zero-filled byte string and pad2, if present, to be zero-filled, with Section 11.7, Multiple Step Processing, describing how to fill in values and adjust padding.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s334-16-3-1-3-special-consideration-for-jpeg-1",
+      "source": "sections/s334-16-3-1-3-special-consideration-for-jpeg-1.md",
+      "source_hash": "773f988ab9ac4bc24c95142bc509386857058fe96906a4935c1999c6f0e31eb8",
+      "narrative": [
+        {
+          "text": "Requires that, when hashing a JPEG 1 file into which the C2PA Manifest will be embedded, the APP11 marker (FFEB) and segment length (Lp) of all APP11 segments containing the JUMBF data be included in the exclusion range. Notes that these APP11 segments are contiguous, so a single range is required.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s335-16-3-1-4-special-consideration-for-png",
+      "source": "sections/s335-16-3-1-4-special-consideration-for-png.md",
+      "source_hash": "e1aec48c7fc4cf460fd292c19b3eeb9375c8b0ac5465da9fe82c11fac5ef7131",
+      "narrative": [
+        {
+          "text": "States that, when hashing a PNG file into which the C2PA Manifest will be embedded, it is important to include the Length and the 'caBX' chunk type of the chunk containing the JUMBF data in the exclusion range.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s336-16-3-1-5-special-considerations-for-tiff-based",
+      "source": "sections/s336-16-3-1-5-special-considerations-for-tiff-based.md",
+      "source_hash": "365b12806745174fc0175dec11dd7661eb15e1aaafc2144c9e655427110d9a2b",
+      "narrative": [
+        {
+          "text": "Recommends that, when hashing a TIFF-based asset into which the C2PA Manifest will be embedded, the count field of the C2PA Manifest Store's IFD Entry be included in the exclusion ranges, to support Update Manifests that could change the size of the embedded C2PA Manifest Store.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s337-16-3-1-6-special-considerations-for-riff-based",
+      "source": "sections/s337-16-3-1-6-special-considerations-for-riff-based.md",
+      "source_hash": "cf8d712bc1e1892ff80a8b904e0d259dc0fbcc134ae950c18a313a072b98fe91",
+      "narrative": [
+        {
+          "text": "Recommends that, when hashing a RIFF-based asset into which the C2PA Manifest will be embedded, the size field of the top-level RIFF chunk (the four bytes at offset 4) be included in the exclusion ranges. Explains that this supports Update Manifests, since this size field covers the whole file and is rewritten whenever the C2PA Manifest Store size changes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s338-16-3-2-bmff-based-hash",
+      "source": "sections/s338-16-3-2-bmff-based-hash.md",
+      "source_hash": "5502d4097b4c471be029ec6c8d4d24de816c66bc1723c55bee3d385219de9ca4",
+      "narrative": [
+        {
+          "text": "Heading that opens section 16.3.2 BMFF-Based Hash; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s339-16-3-2-1-description",
+      "source": "sections/s339-16-3-2-1-description.md",
+      "source_hash": "c7d85eb19a44a945662d5e6568f64276b80ea4d5d392cfe7e2d25774cf053138",
+      "narrative": [
+        {
+          "text": "Requires that portions of a BMFF-based asset to be identified with a hard binding be described using BMFF-based hash assertions labelled c2pa.hash.bmff.v3. All Merkle trees used shall be balanced binary trees of minimum depth, with NULL padding only at the rightmost positions and each level more than half full. Notes that earlier versions documented c2pa.hash.bmff and c2pa.hash.bmff.v2, and requires validators to ignore any c2pa.hash.bmff assertions. The assertion shall not appear in a cloud data or external reference assertion, and the deprecated url field shall not be added by claim generators and shall be ignored by consumers.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s340-16-3-2-2-hash-computation",
+      "source": "sections/s340-16-3-2-2-hash-computation.md",
+      "source_hash": "a2248244e68c95dbb9637f27c8b24f50625bf46c1f26277eabc20f54a749ee4f",
+      "narrative": [
+        {
+          "text": "Specifies how the BMFF hash is computed: alg selects an allowed algorithm or defaults to the Claim's alg; non-fragmented MP4 needs hash, merkle or both, fragmented MP4 validated by Merkle tree needs only merkle, and live media segments need only hash. All file bytes are hashed except boxes or subsets matching exclusions entries, with box headers following the box's inclusion or exclusion, subset offsets measured from the box start and ordered without overlap, and in v2 and v3 each non-excluded root box contributing its 8-byte big-endian absolute offset concatenated with its data (the offset omitted for Merkle hashes when both hash and merkle are present). Defines exclusion matching by xpath, length, version, flags (with exact) and data, restricts xpath to a strict abbreviated full-path subset of BMFF 4cc nodes, and requires non-leaf nodes to be plain container boxes, with the box holding an embedded manifest always excluded. Requires 'free' boxes to replace or reserve space for excluded boxes, requires post-embed offsets to be hashed, and describes three ways to achieve this: pre-inserted 'free' boxes, a two-pass approach, or placing Update Manifests at the end of the file using box_purpose values original and update.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s341-16-3-2-3-schema-and-example",
+      "source": "sections/s341-16-3-2-3-schema-and-example.md",
+      "source_hash": "b287a7c4dc9b966023dbeba1119b69b0c7b6db395201f5f603965b095646c718",
+      "narrative": [
+        {
+          "text": "Specifies the CDDL schema shared by the c2pa.hash.bmff.v2 (deprecated) and c2pa.hash.bmff.v3 assertions through the bmff-hash-map rule, with the complete normative schema in Section G.4.2, BMFF Hash. The map carries required exclusions plus optional alg, hash, merkle, name, deprecated url and sequenceNumber, with exclusions-map entries defined by xpath and optional length, data, subset, version, flags and exact, and merkle-map entries carrying uniqueId, localId, count, optional alg and initHash, hashes, and optional fixedBlockSize or variableBlockSizes for piecewise mdat validation. Gives CBOR diagnostic examples for a monolithic MP4, for fragmented MP4 files and for non-fragmented MP4 with a Merkle tree, plus pseudo-code for computing the BMFF-based hash and a suggested example of hashing for the Merkle map.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s342-16-3-2-4-exclusion-list-profiles",
+      "source": "sections/s342-16-3-2-4-exclusion-list-profiles.md",
+      "source_hash": "cf5ee7d64a975c2736c70cf6d7f1d53f56a3ee34a30d9eeaf116ac4216f0f3ad",
+      "narrative": [
+        {
+          "text": "Heading that opens section 16.3.2.4 Exclusion list profiles; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s343-16-3-2-4-1-general",
+      "source": "sections/s343-16-3-2-4-1-general.md",
+      "source_hash": "c3610f33fcf55139288c4551970e12a2aee22c0fb66dbe063ec2ef5c7f597be9",
+      "narrative": [
+        {
+          "text": "States that this section describes a set of pre-defined, named profiles of extension lists.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s344-16-3-2-4-2-basic-profile",
+      "source": "sections/s344-16-3-2-4-2-basic-profile.md",
+      "source_hash": "b86eb30c2b7734d685a36d1336b0d34135cdb4aafafd2c15983f80a9feed493c",
+      "narrative": [
+        {
+          "text": "States that typical untimed media such as still photos and timed media such as videos, fragmented or not, need only include the mandatory exclusions listed in the Exclusion List Requirements.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s345-16-3-2-5-fragmented-bmff-entity-diagram",
+      "source": "sections/s345-16-3-2-5-fragmented-bmff-entity-diagram.md",
+      "source_hash": "b92b41a8440f03ea881e05ab2f258f707ea4762b54145a0b3392f77daab08210",
+      "narrative": [
+        {
+          "text": "Introduces Figure 15, Fragmented BMFF Entity Diagram, which shows the relationships among the C2PA objects that make up a fragmented BMFF manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s346-16-3-2-6-validation",
+      "source": "sections/s346-16-3-2-6-validation.md",
+      "source_hash": "ae373485b3ebcbe190128b2d2ef5de902d547d3738166e76cdace07e00d98f06",
+      "narrative": [
+        {
+          "text": "Describes validating a chunk of fragmented BMFF content: first validate the merkle-map initHash over the corresponding initialization segment, then locate the matching entry in the merkle-map hashes array and check it against the chunk's data hash, deriving it if needed with the Merkle proof from the chunk's bmff-merkle-map. Explains with Figure 16 that the c2pa-specific manifest box in each track's initialization segment contains the Manifest Store, which must be identical across multiple initialization segments, and that the active manifest's c2pa.hash.bmff.v3 assertion holds a merkle array with one merkle-map per track.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s347-16-3-2-6-1-steps",
+      "source": "sections/s347-16-3-2-6-1-steps.md",
+      "source_hash": "a2bdbda984432bb52627f8a5305817b36dd05130f15bffde0a4b9ea816213e65",
+      "narrative": [
+        {
+          "text": "Lists the steps to verify an example chunk m+3: use the uniqueId and localId from the chunk's bmff-merkle-map to find the matching merkle-map in the init segment's c2pa.hash.bmff.v3 assertion, and verify the init segment by comparing its hash (using the assertion's exclusions and the merkle-map alg) to initHash. Then hash the chunk to derive D0,2, combine it with the proof hashes D0,3 and D1,0 from the chunk's bmff-merkle-map to derive D2,0, and treat the chunk as verified if the derived D2,0 equals the stored D2,0 in the merkle-map hashes and the initialization segment was verified.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s348-16-3-3-general-box-hash",
+      "source": "sections/s348-16-3-3-general-box-hash.md",
+      "source_hash": "fb641992ef2d76f55fea05d5499f8df445c12aff043314add0d7900060156558",
+      "narrative": [
+        {
+          "text": "Heading that opens section 16.3.3 General Box Hash; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s349-16-3-3-1-description",
+      "source": "sections/s349-16-3-3-1-description.md",
+      "source_hash": "cf01075808b93116a9434681fca33f977c09ee02c0d450e16226681309ca4f5e",
+      "narrative": [
+        {
+          "text": "Recommends that claim generators use a general box hash assertion, labelled c2pa.hash.boxes, as a hard binding for non-BMFF box formats such as JPEG 1, PNG or GIF; it is an array of structures each listing one or more boxes and a hash over them (including any data between them). Boxes shall appear in asset order, including the C2PA Manifest box, and unlisted or out-of-order boxes cause rejection during validation. Describes the excluded flag (letting validators ignore a whole box, with an accurate hash or the single byte 00 recommended) and the exclusions byte ranges (with boxIndex, ordered, non-overlapping, confined to one box and to manifest or metadata content), where excluded set to true takes precedence over exclusions. Requires each instance of repeated box types to be listed separately, defines alg fallback from box-hash-map to box-map to Claim, and requires the C2PA Manifest Store box to be listed alone with name C2PA and hash 00 as a single box even when split across JPEG APP11 segments. The optional pad and pad2 shall be zero-filled, and the assertion shall not appear in a Cloud Data or External Reference assertion.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s350-16-3-3-2-special-handling-of-multi-part-assets",
+      "source": "sections/s350-16-3-3-2-special-handling-of-multi-part-assets.md",
+      "source_hash": "c8c5974bebfa18f5601cfefe6adbc9d2e054f807da86c48f49b800bbc60a04cf",
+      "narrative": [
+        {
+          "text": "Defines a logical box labelled c2pa.after for multi-part formats where part data follows the primary part's box-based data; if present it shall be listed last and its hash shall cover from the byte after the last box to the end of the physical file. Requires that only the whole-asset hard binding assertion may include a c2pa.after box, while a hash assertion for an individual part shall cover only that part.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s351-16-3-3-3-handling-for-specific-formats",
+      "source": "sections/s351-16-3-3-3-handling-for-specific-formats.md",
+      "source_hash": "aa09d4ec150a20a72b3d24ecd0f641da2f773e8f25ef066773098c59aad13591",
+      "narrative": [
+        {
+          "text": "Heading that opens section 16.3.3.3 Handling for specific formats; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s352-16-3-3-3-1-jpeg-1-specific-handling",
+      "source": "sections/s352-16-3-3-3-1-jpeg-1-specific-handling.md",
+      "source_hash": "3c493446664233e23e79bfde36d2096551d598f906dfdffa5a6a64bbc6f3ad1f",
+      "narrative": [
+        {
+          "text": "Specifies JPEG 1 handling for general box hash: non-C2PA APP11 boxes shall be included in the hashed boxes, APP11 boxes holding the C2PA Manifest Store shall be identified as C2PA, and all other boxes shall use the symbols from ISO 10918-1:1994, Table B.1. Notes that the manifest store is recognizable as a JUMBF superbox labelled c2pa with the given type UUID, and that SOS and RST[n] boxes include their following entropy-coded segments. Explains that CIPA Multi-Picture Format files can be supported by listing all boxes of each Individual Image in sequence, but that if the file is treated as a multi-part asset the c2pa.after box shall be used for parts after the first image's EOI.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s353-16-3-3-3-2-png-specific-handling",
+      "source": "sections/s353-16-3-3-3-2-png-specific-handling.md",
+      "source_hash": "5db7d0372297a37566697c92260afaa21ae837202bdbc7009e06ca086054b2fe",
+      "narrative": [
+        {
+          "text": "Explains that a PNG file always begins with an 8-byte header, and that to include it the special value PNGh is used as the first box in the list, with hashing starting from the first byte of the image.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s354-16-3-3-3-3-tiff-specific-handling",
+      "source": "sections/s354-16-3-3-3-3-tiff-specific-handling.md",
+      "source_hash": "5ce01ccbe12974e3ebcd2847c24a52641ba44c01585125be4bfc9d4c8e602cd3",
+      "narrative": [
+        {
+          "text": "Notes that general box hash support for TIFF, documented in previous versions, has been removed in favor of the data hash because TIFF's indirection and structure make box hashing awkward, inefficient and prone to interoperability issues.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s355-16-3-3-3-4-gif-specific-handling",
+      "source": "sections/s355-16-3-3-3-4-gif-specific-handling.md",
+      "source_hash": "553c646b7eb320c3fd962de33d46b5738a296613c732bab46c0373ee4e570719",
+      "narrative": [
+        {
+          "text": "Specifies GIF handling for general box hash: hashing a box with a Packed Fields attribute also hashes the optional data it indicates, such as Local or Global Color Tables. Requires boxes with a block label to be named \"<Block Label>\" and extension blocks to be named \"<Extension Introducer><Extension Label>\", with the header named \"GIF89a\", Table Based Image Data \"TBID\" and the Logical Screen Descriptor \"LSD\", and gives examples such as \"3B\" for the trailer and \"21FE\" for a Comment Extension.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s356-16-3-3-3-5-riff-specific-handling",
+      "source": "sections/s356-16-3-3-3-5-riff-specific-handling.md",
+      "source_hash": "88d7c443a142ed8df0037f9f258498f13fad3ed074bfebf1214045463a794e39",
+      "narrative": [
+        {
+          "text": "Describes the nested RIFF chunk structure of L0 RIFF chunks, L1 sub-chunks and LIST chunks that nest further chunks, and specifies how they map to general box hash boxes. Each L0 chunk shall be a 12-byte box named by its media type identifier, each non-LIST L1 chunk a box named by its chunk identifier, and each LIST L1 chunk a box named by its list type identifier, with L1 boxes spanning from byte 0 through any padding byte. All L2 and deeper chunks shall be hashed as part of their LIST L1 chunk, and padding bytes shall be treated as part of, and hashed with, the preceding chunk.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s357-16-3-3-3-6-font-specific-handling",
+      "source": "sections/s357-16-3-3-3-6-font-specific-handling.md",
+      "source_hash": "4ef82a0640e7a2c36a55c69e73975f2471aa0ca777c522c92227de4970c5733a",
+      "narrative": [
+        {
+          "text": "Specifies that font tables, including the C2PA table, correspond directly to hash boxes enumerated in table directory order, with the table directory itself not hashed and checkSumAdjustment treated as zero when hashing the box containing the head table. Leaves the grouping of tables into boxes to the claim generator, noting that one table per box helps hashes survive re-packaging while combined boxes may not validate after a format transformation. States that, because font consumers shall not react to unrecognized tables, existing infrastructure expects the head table's checkSumAdjustment to incorporate the final content of the C2PA table.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s358-16-3-3-3-7-ogg-specific-handling",
+      "source": "sections/s358-16-3-3-3-7-ogg-specific-handling.md",
+      "source_hash": "e8935693a0265c0b1fccc701de5ed242b6113032202c339edb72f5ec0d4c2050",
+      "narrative": [
+        {
+          "text": "Specifies that, for hashing an Ogg file, each logical bitstream is treated as a single box comprising all its Pages in order, with the C2PA Manifest Store box being the bitstream identified in Section A.3.7, Embedding manifests into OGG Vorbis. Requires each non-C2PA bitstream's box name to be Stream-[bitstream_serial_number], using the ASCII base-10 value of the serial number read as a 32-bit little-endian unsigned integer, so that serial number \\x01\\x00\\x00\\x00 yields \"Stream-1\".",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s359-16-3-3-4-schema-and-example",
+      "source": "sections/s359-16-3-3-4-schema-and-example.md",
+      "source_hash": "2c02852f963e669c81e23b6b5f5af3cd120edfbe510c3f3ceb2d0d558dc4346c",
+      "narrative": [
+        {
+          "text": "Specifies the CDDL schema for the general box hash through the box-map rule (boxes and optional alg) and box-hash-map (names, optional alg, hash, optional excluded, exclusions, pad and pad2), with box-exclusions-map entries of start, length and optional boxIndex, and refers to Section G.4.4, Boxes Hash, for the complete normative schema. Gives CBOR diagnostic examples for JPEG 1, PNG, GIF, TTF and JXL. Requires exclusion start and length values to use preferred (shortest) serialization normally, but to be written as 32-bit integers when not yet known.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s360-16-3-4-collection-data-hash",
+      "source": "sections/s360-16-3-4-collection-data-hash.md",
+      "source_hash": "9d1c74be83733d06155a4f9e7375a9e1d18ed73b4a331894f26e44c4905ad6a4",
+      "narrative": [
+        {
+          "text": "Heading that opens section 16.3.4 Collection Data Hash; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s361-16-3-4-1-description",
+      "source": "sections/s361-16-3-4-1-description.md",
+      "source_hash": "c9346bf3bfb4d8a0e910b1224fe3533f17ccf508392567611ad3975d14681b92",
+      "narrative": [
+        {
+          "text": "Requires that, when a C2PA Manifest is known in advance to refer to a collection of assets rather than a single asset, the collection data hash assertion be used to specify the hard bindings for the assets in the collection. Notes that each folder of an AI/ML training data set can be described as a separate ingredient of the full data set's manifest. The assertion shall be labelled c2pa.hash.collection.data and shall not appear in a cloud data assertion.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s362-16-3-4-2-schema-and-example",
+      "source": "sections/s362-16-3-4-2-schema-and-example.md",
+      "source_hash": "28f768e2aa9d174eee1f0c64c6feb244ce7d1efec15bf867afb67ead6b363f20",
+      "narrative": [
+        {
+          "text": "Specifies the CDDL schema for the collection data hash assertion through the collection-data-hash-map rule, which holds a uris array of hashed URI entries, a required alg and an optional zip_central_directory_hash, and also allows URN-based record identifiers per RFC 8141; the complete normative schema is in Section G.4.5, Collection Data Hash. Gives CBOR diagnostic examples for a list of remote URLs, a list of relative file URIs and relative paths inside an EPUB.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
