@@ -89,8 +89,18 @@ never typed.
 | Ready for agent acted on, no new commit | date actioned | Agent completed from `agent-record.ts done` |
 | blocked on a decision | *Needs human*, and what is needed in action taken | Agent step `idle` |
 | ready for review | *Ready for review* | Agent completed; Agent step `qa-review` or `idle` |
-| merged | *Change merged* | clear the Staging review page (a merged branch's preview 404s); Agent step `idle` |
+| merged | *Change merged* | clear the Staging review page (a merged branch's preview 404s); Agent step `idle`; then close the change set (below) |
 | closed unmerged | *Not started*, and say so in action taken | remove that PR's line from Pull request, What the PRs changed, Agent completed and PR head; Agent step `idle` |
+
+**Closing a change set is one step with two tools** (owner, 2026-11-01
+21:50Z: "if agent close it, that is part of close process (githu b issue and
+google sheet as tools)"). Task `Task_CloseChangeSet` of
+`processes/content/contributor-feedback.bpmn`: close the GitHub issue (with
+the merge, or the reason it closed unmerged), then set the Agent row's
+Agentic status to *Closed* (or *Change merged*) through Record agent step.
+The sheet script hides that row and strikes the whole row through; reopening
+the issue and writing a new status shows it again. Never hide, strike or
+delete a row by hand.
 
 A disposition for the change set is written only from
 `agent-record.ts dispositions` (`review-sheet-script`, "Writing the Agent

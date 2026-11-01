@@ -57,6 +57,7 @@
         <bpmn:flowNodeRef>Task_Propose</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_EditInPullRequest</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Merge</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CloseChangeSet</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Merged</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Editor" name="Editor" partitionElementRef="editor">
@@ -135,8 +136,14 @@
       <bpmn:incoming>CF09</bpmn:incoming>
       <bpmn:outgoing>CF10</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="EndEvent_Merged" name="Change merged">
+    <bpmn:serviceTask id="Task_CloseChangeSet" name="Close the change set: the issue, then the sheet row">
+      <bpmn:documentation>Closing is one step with two tools, GitHub and the review sheet (owner, 2026-11-01 21:50Z: "if agent close it, that is part of close process (github issue and google sheet as tools)"). The agent closes the change set's issue on GitHub, with the merge or the reason it closed unmerged, then records Agentic status Closed (or Change merged) on the Agent tab through Record agent step (record-agent-step.bpmn). The sheet script then hides the row and strikes the whole row through ("make sure complete changeset rows are hidden so not cluttered and that text of that whole row is crossed out"). The agent never hides or strikes a row by hand, and never deletes one: reopening the issue and writing a new status shows it again. Hiding and striking are formatting only, which the review-log watcher ignores. A change set closed without a merge, at a person's request, takes this step too.</bpmn:documentation>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-agent-columns"/></bpmn:extensionElements>
       <bpmn:incoming>CF10</bpmn:incoming>
+      <bpmn:outgoing>CF14</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="EndEvent_Merged" name="Change merged and closed">
+      <bpmn:incoming>CF14</bpmn:incoming>
     </bpmn:endEvent>
 
     <bpmn:sequenceFlow id="CF01" sourceRef="StartEvent_Feedback" targetRef="Task_StartRow" />
@@ -151,25 +158,26 @@
     <bpmn:sequenceFlow id="CF12" name="failed" sourceRef="Gateway_QaPassed" targetRef="Task_EditInPullRequest" />
     <bpmn:sequenceFlow id="CF13" name="passed" sourceRef="Gateway_QaPassed" targetRef="Task_ReadyForMerge" />
     <bpmn:sequenceFlow id="CF09" sourceRef="Task_ReadyForMerge" targetRef="Task_Merge" />
-    <bpmn:sequenceFlow id="CF10" sourceRef="Task_Merge" targetRef="EndEvent_Merged" />
+    <bpmn:sequenceFlow id="CF10" sourceRef="Task_Merge" targetRef="Task_CloseChangeSet" />
+    <bpmn:sequenceFlow id="CF14" sourceRef="Task_CloseChangeSet" targetRef="EndEvent_Merged" />
   </bpmn:process>
 
   <bpmndi:BPMNDiagram id="BPMNDiagram_ContributorFeedback">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_ContributorFeedback">
       <bpmndi:BPMNShape id="Participant_ContributorFeedback_di" bpmnElement="Participant_ContributorFeedback" isHorizontal="true">
-        <dc:Bounds x="160" y="60" width="1956" height="660" />
+        <dc:Bounds x="160" y="60" width="2136" height="660" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Committee_di" bpmnElement="Lane_Committee" isHorizontal="true">
-        <dc:Bounds x="190" y="60" width="1926" height="180" />
+        <dc:Bounds x="190" y="60" width="2106" height="180" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Agent_di" bpmnElement="Lane_Agent" isHorizontal="true">
-        <dc:Bounds x="190" y="240" width="1926" height="160" />
+        <dc:Bounds x="190" y="240" width="2106" height="160" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Editor_di" bpmnElement="Lane_Editor" isHorizontal="true">
-        <dc:Bounds x="190" y="400" width="1926" height="160" />
+        <dc:Bounds x="190" y="400" width="2106" height="160" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_QaReviewer_di" bpmnElement="Lane_QaReviewer" isHorizontal="true">
-        <dc:Bounds x="190" y="560" width="1926" height="160" />
+        <dc:Bounds x="190" y="560" width="2106" height="160" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_QaGate_di" bpmnElement="Task_QaGate">
         <dc:Bounds x="1406" y="580" width="180" height="120" />
@@ -208,9 +216,12 @@
         <dc:Bounds x="1856" y="275" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Merged_di" bpmnElement="EndEvent_Merged">
-        <dc:Bounds x="2036" y="302" width="36" height="36" />
+        <dc:Bounds x="2216" y="302" width="36" height="36" />
         
-      <bpmndi:BPMNLabel><dc:Bounds x="2009" y="342" width="90" height="20" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNLabel><dc:Bounds x="2189" y="342" width="90" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CloseChangeSet_di" bpmnElement="Task_CloseChangeSet">
+        <dc:Bounds x="2036" y="275" width="130" height="90" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="CF01_di" bpmnElement="CF01">
         <di:waypoint x="276" y="160" />
         <di:waypoint x="316" y="160" />
@@ -264,6 +275,10 @@
       <bpmndi:BPMNEdge id="CF10_di" bpmnElement="CF10">
         <di:waypoint x="1986" y="320" />
         <di:waypoint x="2036" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="CF14_di" bpmnElement="CF14">
+        <di:waypoint x="2166" y="320" />
+        <di:waypoint x="2216" y="320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="CF11_di" bpmnElement="CF11">
         <di:waypoint x="1586" y="640" />

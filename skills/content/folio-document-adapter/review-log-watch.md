@@ -150,6 +150,17 @@ watcher its step and links; the watcher writes them, because one watcher owns
 each log (owner, 2026-11-01: "why not column P? Column O was not updated for
 row 11").
 
+## Finished rows: hidden and struck through, and not feedback
+
+A finished change set's row (Agentic status *Change merged* or *Closed*) is
+hidden and its whole row struck through by the sheet script (owner,
+2026-11-01 21:50Z: "this visual change should be ignored by the watchers").
+The check compares cell values only, so hiding, unhiding and the line are
+never a change, and a hidden row still counts as a row: never append it
+again. When the check lists `closedRows` (rows linking a closed issue), the
+watcher closes each through Record agent step with Agentic status *Closed*;
+the script does the hiding.
+
 ## What counts as a change
 
 - **Issues:** the repository's issues, open and closed, with their state and
