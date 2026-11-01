@@ -26,6 +26,10 @@ function isReviewSheetCode_(text) {
 }
 
 function updateFromGitHub() {
+  // Say something on every run, so a run is never silent (owner, 2026-11-01:
+  // "it simply does nothing"). Run from the editor, these lines show in the
+  // Execution log at the bottom.
+  console.log('Checking GitHub for a newer Code.gs: ' + UPDATE_FROM);
   const got = UrlFetchApp.fetch(UPDATE_FROM, { muteHttpExceptions: true });
   if (got.getResponseCode() !== 200) throw new Error('GitHub answered ' + got.getResponseCode() + ' for ' + UPDATE_FROM);
   const code = got.getContentText();
@@ -40,13 +44,19 @@ function updateFromGitHub() {
   const files = JSON.parse(now.getContentText()).files || [];
   const mine = files.filter(f => f.type === 'SERVER_JS' && isReviewSheetCode_(f.source || ''))[0];
   const version = (code.match(/^const SCRIPT_VERSION = '([^']+)';$/m) || [])[1];
-  if (mine && mine.source === code) { console.log('Already current: ' + version); return 'current'; }
+  const had = mine ? ((mine.source.match(/^const SCRIPT_VERSION = '([^']+)';$/m) || [])[1] || 'unknown') : 'none';
+  if (mine && mine.source === code) {
+    console.log('Already current: the library runs ' + version + ', the same as GitHub main. Nothing to update ' +
+      '(a fix shows here only once its pull request is merged).');
+    return 'current';
+  }
   if (mine) mine.source = code; else files.push({ name: 'Code', type: 'SERVER_JS', source: code });
   const put = UrlFetchApp.fetch(api, {
     method: 'put', contentType: 'application/json', headers: headers,
     payload: JSON.stringify({ files: files }), muteHttpExceptions: true,
   });
   if (put.getResponseCode() !== 200) throw new Error('Saving failed (' + put.getResponseCode() + '): ' + put.getContentText().slice(0, 300));
-  console.log('Updated to ' + version);
+  console.log('Updated from ' + had + ' to ' + version + '. Reload any open editor tab of this library before ' +
+    'saving there (an old tab would save the old code back), then Review links > Refresh now in each sheet.');
   return 'updated';
 }
