@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dsa-document-lifecycle\n"
-"POT-Creation-Date: 2026-11-01T10:53:09.395Z\n"
+"POT-Creation-Date: 2026-11-01T11:34:43.556Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: fr\n"
@@ -291,7 +291,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:142
 #. Diagram label
-msgid "P1.1 · Agree purpose, datasets, period, duties and trust anchors"
+msgid "P1.1 · Agree the terms"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:155
@@ -301,12 +301,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:161
 #. Diagram label
-msgid "P1.2a · Record the legal basis [normative-statements]"
+msgid "P1.2a · Record the legal basis"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:173
 #. Diagram label
-msgid "P1.2b · Draft the plain-language summary [document-authoring]"
+msgid "P1.2b · Draft the plain summary"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:191
@@ -316,7 +316,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:197
 #. Diagram label
-msgid "P1.4 · Check the ODRL against the text [content-review]"
+msgid "P1.4 · Check the ODRL against the text"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:209
@@ -341,42 +341,42 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:377
 #. Diagram label
-msgid "P14.3 · Record that new consent is needed"
+msgid "P14.3 · New consent needed"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:390
 #. Diagram label
-msgid "P14.5 · Set the catalogue status to ended [dsa-catalogue-status]"
+msgid "P14.5 · Set the status to ended"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:257
 #. Diagram label
-msgid "P2.1 · Assign the version and its immutable URL [content-publish]"
+msgid "P2.1 · Assign version and fixed URL"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:263
 #. Diagram label
-msgid "P2.2 · Record the SHA-256 of each file [dsa-checksum]"
+msgid "P2.2 · Record each file's SHA-256"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:275
 #. Diagram label
-msgid "P2.2a · Hash the plain-language summary with the agreement [dsa-checksum]"
+msgid "P2.2a · Hash the plain summary"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:281
 #. Diagram label
-msgid "P2.2b · State the fixed-version URL and hash a Consent cites [content-publish]"
+msgid "P2.2b · State the URL and hash to cite"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:299
 #. Diagram label
-msgid "P2.3 · Make the ODRL cite the text by URL and hash [dsa-odrl-source]"
+msgid "P2.3 · Make the ODRL cite the text"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:317
 #. Diagram label
-msgid "P2.4–5 · Write the DCAT 3 record and link versions [dsa-dcat-record]"
+msgid "P2.4–5 · Write the DCAT 3 record"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:52
@@ -401,7 +401,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:227
 #. Diagram label
-msgid "Public comment on the template [public-comment]"
+msgid "Public comment on the template"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:99
@@ -416,7 +416,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:311
 #. Diagram label
-msgid "Publish the version at its URL [content-publish]"
+msgid "Publish the version at its URL"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:454
@@ -456,7 +456,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:245
 #. Diagram label
-msgid "Render the text to HTML / PDF [document-publishing]"
+msgid "Render the text to HTML and PDF"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:117
@@ -476,7 +476,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:215
 #. Diagram label
-msgid "Review the draft agreement [content-review]"
+msgid "Review the draft agreement"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:91

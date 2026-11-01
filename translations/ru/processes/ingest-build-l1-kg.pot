@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ingest-build-l1-kg\n"
-"POT-Creation-Date: 2026-11-01T10:53:09.421Z\n"
+"POT-Creation-Date: 2026-11-01T11:34:43.586Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ru\n"
@@ -14,19 +14,19 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:102
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:101
 #. Diagram element documentation
 msgid "Anything in library/ is L1 source content. A knowledge-graph reference from any artefact -- paper, L2, L3 -- resolves to it through library/."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:86
-#. Diagram label
-msgid "Bind the folder name to the bibliography slug"
-msgstr ""
-
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:88
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:87
 #. Diagram element documentation
 msgid "Bind the folder name to the document's bibliography slug, so library/<bib-slug>/ and its citation key are the same string: a citation resolves to a directory without a lookup table between them."
+msgstr ""
+
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:86
+#. Diagram label
+msgid "Bind the folder to its bibliography slug"
 msgstr ""
 
 #: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:29
@@ -34,7 +34,7 @@ msgstr ""
 msgid "Build the L1 knowledge graph from what ingestion derived: Dublin Core, the manifest, the assets, their binding and their links. folio-assistant — Ingestion subprocess — build the L1 knowledge graph. Source of truth: this file. Open it in bpmn.io, Camunda Modeler, or any other BPMN 2.0 tool. The SVG under docs/assets/img/workflows/ is generated from it by `bun run cat render:bpmn` — never hand-edit the SVG. The <bootstrap.processes:skill> extension on an activity names the folio-assistant skill that implements it; <cat-harness.processes:bean> marks a step that reads or writes the shared work plan in beans/."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:118
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:117
 #. Diagram label
 msgid "Corpus"
 msgstr ""
@@ -59,12 +59,12 @@ msgstr ""
 msgid "kind / role / url-or-path / checksum / retrieved. A SIBLING of library:, never inside it: LibraryRef is regenerated from the tree, so an authored URL placed there is dropped on the next sync."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:109
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:108
 #. Diagram label
 msgid "L1 graph built"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:96
+#: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:95
 #. Diagram label
 msgid "Link L1 nodes into the corpus graph"
 msgstr ""

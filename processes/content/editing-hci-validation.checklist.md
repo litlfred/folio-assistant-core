@@ -149,9 +149,9 @@ What happens to one proposed change to one content block: drafted, validated mec
 - Who: the `Authoring agent (system)` lane (role `authoring-agent`).
 - What: On the edge out of `Task_ReviewFindings` and before `Task_RecordDecision`: the findings are the evidence, so the options can only be weighed once they exist, and after `Task_RecordDecision` the decision is already written down.
 - A subprocess (`Process_OptionsAnalysis`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
-- next: → `Task_RecordDecision` (Record the decision and its audit note)
+- next: → `Task_RecordDecision` (Record the decision and audit note)
 
-### 14. Record the decision and its audit note (`Task_RecordDecision`)
+### 14. Record the decision and audit note (`Task_RecordDecision`)
 
 - Who: the `Editor / author (person)` lane (role `author`).
 - Skill: `decision-audit`.

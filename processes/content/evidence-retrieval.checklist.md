@@ -10,9 +10,9 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 
 - Begin here.
 - Call `workflow_start` with `process: "Process_EvidenceRetrieval"` and the subject this run is about; keep the instance id it returns.
-- next: → `Task_ReviewExisting` (Review the guidance already in this content)
+- next: → `Task_ReviewExisting` (Review the existing guidance)
 
-### 1. Review the guidance already in this content (`Task_ReviewExisting`)
+### 1. Review the existing guidance (`Task_ReviewExisting`)
 
 - Who: the `Author / guideline developer (person)` lane (role `author`).
 - Skill: `content-review`.
@@ -30,10 +30,10 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 
 ### Do all of — Retrieve across evidence classes (`Gateway_RetrievalFork`)
 
-- Work every branch; none is optional. Branches: → `Task_L1Sources` (Search trusted SOURCES — L1), → `Task_L2L3Content` (Search trusted CONTENT — L2 DAKs, L3 IGs), → `Task_DataRepos` (Query data repositories and statistical datasets)
+- Work every branch; none is optional. Branches: → `Task_L1Sources` (Search trusted L1 sources), → `Task_L2L3Content` (Search trusted L2 and L3 content), → `Task_DataRepos` (Query data repositories and statistical datasets)
 - The engine passes through this gateway itself; there is nothing to record here.
 
-### 3. Search trusted SOURCES — L1 (`Task_L1Sources`)
+### 3. Search trusted L1 sources (`Task_L1Sources`)
 
 - Who: the `Evidence agent (system)` lane (role `evidence-agent`).
 - Skill: `document-intake`.
@@ -41,7 +41,7 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 - Record it: `workflow_complete` with `node: "Task_L1Sources"`.
 - next: → `Gateway_RetrievalJoin` (Candidates assembled)
 
-### 4. Search trusted CONTENT — L2 DAKs, L3 IGs (`Task_L2L3Content`)
+### 4. Search trusted L2 and L3 content (`Task_L2L3Content`)
 
 - Who: the `Evidence agent (system)` lane (role `evidence-agent`).
 - Skill: `document-intake`, `document-intake`, `document-intake`.
@@ -60,9 +60,9 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 ### Wait for all — Candidates assembled (`Gateway_RetrievalJoin`)
 
 - Continue only when every one of the 3 incoming branches is done; the engine passes through itself.
-- next: → `Task_VerifyAuthority` (Verify authority against the observatory / registry API)
+- next: → `Task_VerifyAuthority` (Verify authority against the registry)
 
-### 6. Verify authority against the observatory / registry API (`Task_VerifyAuthority`)
+### 6. Verify authority against the registry (`Task_VerifyAuthority`)
 
 - Who: the `Trusted registries and observatories (external)` lane (role `external-registry`).
 - Skill: `registry-authority-contract`.
@@ -98,7 +98,7 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 - Answered by the appraisal: is the graded evidence enough to support a recommendation?
 - Call `workflow_complete` with `node: "Gateway_Sufficient"` and `outcome` set to the label that holds:
   - «no» → `Task_RecordGap` (Record the evidence gap)
-  - «yes» → `Task_AttachEvidence` (Attach the evidence to the recommendation)
+  - «yes» → `Task_AttachEvidence` (Attach the evidence)
 
 ### 9. Record the evidence gap (`Task_RecordGap`)
 
@@ -108,7 +108,7 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 - Record it: `workflow_complete` with `node: "Task_RecordGap"`.
 - next: → `EndEvent_GapRecorded` (Gap recorded, no recommendation)
 
-### 10. Attach the evidence to the recommendation (`Task_AttachEvidence`)
+### 10. Attach the evidence (`Task_AttachEvidence`)
 
 - Who: the `Author / guideline developer (person)` lane (role `author`).
 - Skill: `content-author`.

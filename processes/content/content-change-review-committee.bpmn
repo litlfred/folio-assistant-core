@@ -113,7 +113,7 @@ Called from content-change-review when the author submits. Which end it reaches 
       <bpmn:outgoing>c4</bpmn:outgoing>
       <bpmn:outgoing>c5</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:task id="Task_WithdrawComment" name="Withdraw a review comment&#10;[folio-review-comment-move]">
+    <bpmn:task id="Task_WithdrawComment" name="Withdraw a review comment">
       <bpmn:documentation>The reviewer who made a comment takes it back (it was a misreading, or a later slice answered it). Recorded with `folio-review-comment-move --to withdrawn`, committed to the edit-set's feature branch like every status change. This is the `withdraw` transition of REVIEW_TRANSITIONS.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="review-comments" />

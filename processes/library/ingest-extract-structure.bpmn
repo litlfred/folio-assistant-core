@@ -86,8 +86,7 @@ with doc_brief front-matter">
       <bpmn:incoming>Flow_e5</bpmn:incoming>
       <bpmn:outgoing>Flow_e6</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_Structure" name="Write structure.json
-(TOC, page ranges, metadata)">
+    <bpmn:serviceTask id="Task_Structure" name="Write structure.json">
       <bpmn:documentation>Write structure.json (pdf-structure/v1): doc id, TOC from the PDF outline or inferred from headings, page ranges, metadata, and source{} with the sha256 and a mimetype sniffed from the bytes, never the extension. A structure that could not be determined says so in structure_note rather than being rendered as one. For OCR'd text, source.runContext cites the OCR step's run context by sha256. A title already known for the document (the catalogue's dc.title, or one given with --title) is passed through as the raw title, so the sections' doc_title does not carry a scan's misreading (bean turh).</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />

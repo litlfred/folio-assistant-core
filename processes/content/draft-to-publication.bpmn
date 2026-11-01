@@ -169,7 +169,7 @@
       <bpmn:incoming>G21</bpmn:incoming>
       <bpmn:outgoing>G22</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:userTask id="Task_ReviewDraft" name="Review the draft publication&#10;[content-review]">
+    <bpmn:userTask id="Task_ReviewDraft" name="Review the draft publication">
       <bpmn:documentation>Content reviewer, QC reviewer and technical officer review the draft as a whole — coherence, phase-gate criteria, breaking vs non-breaking change.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
@@ -178,7 +178,7 @@
       <bpmn:incoming>G10</bpmn:incoming>
       <bpmn:outgoing>G12</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_SmeSignoff" name="Clinical / scientific sign-off&#10;[content-review]">
+    <bpmn:userTask id="Task_SmeSignoff" name="Clinical or scientific sign-off">
       <bpmn:documentation>Domain sign-off: clinical SMEs for a guideline, subject-matter reviewers for a paper.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />

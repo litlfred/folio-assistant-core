@@ -83,8 +83,7 @@ local path or remote URL">
       <bpmn:incoming>Flow_k3</bpmn:incoming>
       <bpmn:outgoing>Flow_k4</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_Bind" name="Bind the folder name
-to the bibliography slug">
+    <bpmn:serviceTask id="Task_Bind" name="Bind the folder to its bibliography slug">
       <bpmn:documentation>Bind the folder name to the document's bibliography slug, so library/&lt;bib-slug&gt;/ and its citation key are the same string: a citation resolves to a directory without a lookup table between them.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake"/>

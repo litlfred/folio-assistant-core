@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: draft-to-publication\n"
-"POT-Creation-Date: 2026-10-31T16:31:59.511Z\n"
+"POT-Creation-Date: 2026-11-01T11:34:43.542Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: es\n"
@@ -59,14 +59,14 @@ msgstr ""
 msgid "claimed"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:181
-#. Diagram label
-msgid "Clinical / scientific sign-off [content-review]"
-msgstr ""
-
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:89
 #. Diagram label
 msgid "Clinical / scientific SMEs"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:181
+#. Diagram label
+msgid "Clinical or scientific sign-off"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:242
@@ -246,7 +246,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:172
 #. Diagram label
-msgid "Review the draft publication [content-review]"
+msgid "Review the draft publication"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:121

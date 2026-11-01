@@ -86,9 +86,7 @@ for L1 ingestion">
       <bpmn:outgoing>Flow_i1a</bpmn:outgoing>
       <bpmn:incoming>SF_Bean_1</bpmn:incoming>
     </bpmn:callActivity>
-    <bpmn:serviceTask id="Task_Detect" name="Detect media type
-and mint a doc id
-[document-intake]">
+    <bpmn:serviceTask id="Task_Detect" name="Detect media type, mint a doc id">
       <bpmn:documentation>Sniff the media type rather than trusting the extension, and mint the doc id from the page-1 arXiv stamp where there is one, else from the filename.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
@@ -96,9 +94,7 @@ and mint a doc id
       <bpmn:incoming>Flow_i1a</bpmn:incoming>
       <bpmn:outgoing>Flow_i2</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_Licence" name="Establish the licence
-from the upload alone
-[document-intake]">
+    <bpmn:serviceTask id="Task_Licence" name="Establish the licence from the upload">
       <bpmn:documentation>EARLY, by the owner's ruling on bean 7bg9 (2026-09-20): before any derivation, because library/ is holds: content and anything derived first is committed, so refusing it later is a deletion nobody may take unasked. This step sees only the upload itself — the licence recorded in its intake.json (the same stated / unknown record a library manifest carries) and whether a LICENSE file sits beside it. It never infers a licence from extracted text. The verdict is stated, unknown, or UNDETERMINED, and undetermined is never reported as cleared: the pipeline proceeds and says so, because a licence that only extraction can reveal is a later check's to find.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
@@ -115,9 +111,7 @@ from the upload alone
       <bpmn:incoming>Flow_i2a</bpmn:incoming>
       <bpmn:outgoing>Flow_i3</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:callActivity id="CallActivity_Derive" name="Derive content
-from the assets
-[document-intake]" calledElement="Process_DeriveContent">
+    <bpmn:callActivity id="CallActivity_Derive" name="Derive content from the assets" calledElement="Process_DeriveContent">
       <bpmn:documentation>See ingest-derive-content.bpmn. Most of this subprocess is not implemented yet.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
@@ -173,9 +167,7 @@ WHY IT IS A GATEWAY AND NOT A FILTER INSIDE THE SUBPROCESS. `ingest-theme.bpmn` 
     <bpmn:sequenceFlow id="Flow_theme_yes" name="yes" sourceRef="Gateway_ThemeSource" targetRef="CallActivity_IngestTheme" />
     <bpmn:sequenceFlow id="Flow_theme_join" sourceRef="CallActivity_IngestTheme" targetRef="CallActivity_BuildKg" />
     <bpmn:sequenceFlow id="Flow_theme_no" name="no" sourceRef="Gateway_ThemeSource" targetRef="CallActivity_BuildKg" />
-    <bpmn:callActivity id="CallActivity_BuildKg" name="Build the L1
-knowledge graph
-[document-intake]" calledElement="Process_BuildL1Kg">
+    <bpmn:callActivity id="CallActivity_BuildKg" name="Build the L1 knowledge graph" calledElement="Process_BuildL1Kg">
       <bpmn:documentation>See ingest-build-l1-kg.bpmn.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
@@ -228,9 +220,7 @@ library/&lt;bib-slug&gt;/">
       <bpmn:incoming>Flow_i9</bpmn:incoming>
       <bpmn:outgoing>Flow_i10</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_SummaryQueue" name="Prose blocks enter
-the summary queue
-[l1-document-ingestion]">
+    <bpmn:serviceTask id="Task_SummaryQueue" name="Queue prose blocks for summary">
       <bpmn:documentation>Owner, 2026-09-24: "Make as QA sidecar as part of general doc ingestion to slowly drain."
 
 Nothing is written to ENQUEUE a block: the queue is derived (every prose block in every declared library, minus those whose summaries.json record is a current draft or confirmation), so a promoted entry is in it the moment its blocks are. A re-ingested document whose text changed re-enters it on its own, because the record's source_hash no longer matches.

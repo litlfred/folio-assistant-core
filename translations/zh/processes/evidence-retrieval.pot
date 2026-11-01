@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: evidence-retrieval\n"
-"POT-Creation-Date: 2026-11-01T10:53:09.409Z\n"
+"POT-Creation-Date: 2026-11-01T11:34:43.571Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: zh\n"
@@ -46,7 +46,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:184
 #. Diagram label
-msgid "Attach the evidence to the recommendation [content-author]"
+msgid "Attach the evidence"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:38
@@ -101,7 +101,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:76
 #. Diagram label
-msgid "Frame the question as PICO [content-author]"
+msgid "Frame the question as PICO"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:195
@@ -161,17 +161,17 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:68
 #. Diagram label
-msgid "Review the guidance already in this content [content-review]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:98
-#. Diagram label
-msgid "Search trusted CONTENT — L2 DAKs, L3 IGs"
+msgid "Review the existing guidance"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:90
 #. Diagram label
-msgid "Search trusted SOURCES — L1 [document-intake]"
+msgid "Search trusted L1 sources"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:98
+#. Diagram label
+msgid "Search trusted L2 and L3 content"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:166
@@ -206,7 +206,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:130
 #. Diagram label
-msgid "Verify authority against the observatory / registry API"
+msgid "Verify authority against the registry"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:217

@@ -74,7 +74,7 @@
     <bpmn:startEvent id="StartEvent_Feedback" name="Feedback on the working draft">
       <bpmn:outgoing>CF01</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="Task_StartRow" name="Start a change-set row: title, sections, feedback">
+    <bpmn:userTask id="Task_StartRow" name="Start a change-set row">
       <bpmn:documentation>A member adds a row on the Contributor Feedback tab: a title, the Selected Sections it is about (a dropdown from the document's table of contents) and their feedback in their own Blue column. The script gives the row its Change-set id and links each section.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF01</bpmn:incoming>
@@ -112,7 +112,7 @@
       <bpmn:outgoing>CF07</bpmn:outgoing>
       <bpmn:outgoing>CF08</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_QaGate" name="QA gate: review dispositions against the people and the pull request">
+    <bpmn:serviceTask id="Task_QaGate" name="QA-review the dispositions">
       <bpmn:documentation>Reads: the change set's Disposition (change set), the people's Blue Disposition and feedback, the pull request's diff at its head commit, and the staging QA report. Checks that every feedback item has one disposition; that each agrees with the people's Blue Disposition; that each Accepted or Partially accepted item has the change in the diff, and a Not accepted, Noted, Duplicate or Out of scope item has none; that the diff changes nothing no disposition accounts for; and that the QA report for the staged commit has no failing gate. Writes: QA gate (change set) on the Agent tab, first line "Passed &lt;head sha&gt;: …" or "Failed &lt;head sha&gt;: &lt;why&gt;", and QA report (change set), the report's link. The sheet shows the gate under Staging review; a pass for an older commit reads as stale (owner, 2026-10-31).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF08</bpmn:incoming>

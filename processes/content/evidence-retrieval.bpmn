@@ -65,7 +65,7 @@
     <bpmn:startEvent id="StartEvent_Recommendation" name="A recommendation is in play">
       <bpmn:outgoing>Flow_01</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="Task_ReviewExisting" name="Review the guidance already in this content&#10;[content-review]">
+    <bpmn:userTask id="Task_ReviewExisting" name="Review the existing guidance">
       <bpmn:documentation>The author reads what the document, DAK or IG ALREADY says on this question, before looking outward. A recommendation that contradicts a sibling recommendation in the same artefact is a defect no external evidence will reveal.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
@@ -73,7 +73,7 @@
       <bpmn:incoming>Flow_01</bpmn:incoming>
       <bpmn:outgoing>Flow_02</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_FramePico" name="Frame the question as PICO&#10;[content-author]">
+    <bpmn:userTask id="Task_FramePico" name="Frame the question as PICO">
       <bpmn:documentation>Population, Intervention, Comparator, Outcome. The PICO is what makes the search reproducible and the evidence auditable: without it, 'we looked for evidence' is not a claim anyone can check. WHO guideline development states the question this way before any retrieval.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-author" />
@@ -87,7 +87,7 @@
       <bpmn:outgoing>Flow_05</bpmn:outgoing>
       <bpmn:outgoing>Flow_06</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:serviceTask id="Task_L1Sources" name="Search trusted SOURCES — L1&#10;[document-intake]">
+    <bpmn:serviceTask id="Task_L1Sources" name="Search trusted L1 sources">
       <bpmn:documentation>Ingested primary literature under library/: the sections/*.md tree and, where a document was scanned, ocr/page-NNN.txt. NOTE the known blind spot — a document OCR'd but never re-run through pdf-structure.py has only a stub in sections/, so a sections-only search misses it.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
@@ -95,7 +95,7 @@
       <bpmn:incoming>Flow_04</bpmn:incoming>
       <bpmn:outgoing>Flow_07</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_L2L3Content" name="Search trusted CONTENT — L2 DAKs, L3 IGs">
+    <bpmn:serviceTask id="Task_L2L3Content" name="Search trusted L2 and L3 content">
       <bpmn:documentation>Already-adjudicated guidance: WHO SMART DAKs at L2 and FHIR Implementation Guides at L3. A recommendation adopted in a published DAK is evidence of a different kind from a primary study -- it is a prior decision, with its own provenance, and must be cited as that rather than laundered into primary evidence.
 
 NOT YET SKILL-BACKED. This step named `corpus-search`, which has never
@@ -127,7 +127,7 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       <bpmn:incoming>Flow_09</bpmn:incoming>
       <bpmn:outgoing>Flow_10</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:serviceTask id="Task_VerifyAuthority" name="Verify authority against the observatory / registry API">
+    <bpmn:serviceTask id="Task_VerifyAuthority" name="Verify authority against the registry">
       <bpmn:documentation>Each candidate is resolved against the standard API of the body that publishes it, so that 'authoritative' is a RESOLVED FACT rather than an assertion in the citation. What is checked: that the identifier resolves at the publisher; that the retrieved record matches what the citation claims; that the version and date are the ones cited; and that the publisher is one this folio has declared trusted. STRAWPERSON: the concrete registry list and endpoints are not settled here -- see the cat-harness.processes:policy note.</bpmn:documentation>
       <bpmn:extensionElements>
         <cat-harness.processes:policy enforcement="strict" />
@@ -181,7 +181,7 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
         <bpmn:targetRef>DSR_work_plan</bpmn:targetRef>
       </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Task_AttachEvidence" name="Attach the evidence to the recommendation&#10;[content-author]">
+    <bpmn:userTask id="Task_AttachEvidence" name="Attach the evidence">
       <bpmn:documentation>The PICO, the graded body of evidence, each verified citation and its resolved authority record are written onto the recommendation block, so a reader can retrace the whole chain from the sentence back to the source.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-author" />

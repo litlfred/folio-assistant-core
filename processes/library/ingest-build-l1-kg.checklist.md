@@ -34,9 +34,9 @@ Build the L1 knowledge graph from what ingestion derived: Dublin Core, the manif
 - Skill: `document-intake`.
 - What: kind / role / url-or-path / checksum / retrieved.
 - Record it: `workflow_complete` with `node: "Task_Assets"`.
-- next: → `Task_Bind` (Bind the folder name to the bibliography slug)
+- next: → `Task_Bind` (Bind the folder to its bibliography slug)
 
-### 4. Bind the folder name to the bibliography slug (`Task_Bind`)
+### 4. Bind the folder to its bibliography slug (`Task_Bind`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: editing-hci-validation\n"
-"POT-Creation-Date: 2026-11-01T10:53:09.405Z\n"
+"POT-Creation-Date: 2026-11-01T11:34:43.567Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: zh\n"
@@ -171,7 +171,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:116
 #. Diagram label
-msgid "Gather and verify the evidence [evidence-retrieval]"
+msgid "Gather and verify the evidence"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:74
@@ -306,7 +306,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:246
 #. Diagram label
-msgid "Record the decision and its audit note [decision-audit]"
+msgid "Record the decision and audit note"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:224

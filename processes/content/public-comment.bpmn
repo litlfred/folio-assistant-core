@@ -124,7 +124,7 @@
       <bpmn:incoming>Flow_ToGroup</bpmn:incoming>
       <bpmn:outgoing>Flow_ToReroute</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:userTask id="Task_RerouteChangeSet" name="Re-route a change-set to another committee, with a reason">
+    <bpmn:userTask id="Task_RerouteChangeSet" name="Re-route to another committee">
       <bpmn:documentation>public-comment-changesets reroute, or cs-committee: &lt;TWG&gt; — &lt;why&gt; on GitHub from a person in the committee or editor lane (bean se3i, issue #197). Moves the change-set to another TWG review committee and records who, when, from, to and why on the change-set record, so re-ingesting comments never resets it. Person-only (userTask): agents cannot re-route a change-set on their own.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToReroute</bpmn:incoming>
