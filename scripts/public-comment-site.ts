@@ -656,12 +656,12 @@ export function overlaySnippet(rows: SiteComment[], opts: { repo?: string; issue
   const meta = JSON.stringify({ repo: opts.repo ?? "", issues: opts.issues ?? {}, dashboard: opts.dashboard }).replace(/</g, "\\u003c");
   return `
 <style>
-  /* Owner, 2026-11-01 (Q-STY-1 A): a block's comments sit in its control
-     box on the right, greyed until hover like the figure controls, and the
-     list pops over the text so reading flow and navigation do not move. */
+  /* Owner, 2026-11-01 (Q-STY-2): a block's comments are a 💬 icon among its
+     controls (cat-harness-tools' block panel), its list a pane that slides
+     out from the right. Without the panel runtime the note pops over the
+     text from the same right-hand box instead. */
   .block-actions { position:relative; float:right; margin-left:.6rem; font-size:.75rem; white-space:nowrap; opacity:.55; }
-  .block-actions:hover, .block-actions:focus-within { opacity:1; }
-  .block-actions:has(.pc-note[open]) { opacity:1; }
+  .block-actions:hover, .block-actions:focus-within, .block-actions:has(.pc-note[open]) { opacity:1; }
   .pc-note { display:inline-block; position:relative; margin:0; padding:0; font-size:inherit; }
   .pc-note > summary { cursor:pointer; list-style:none; padding:0 .3rem; border-radius:4px; }
   .pc-note > summary::-webkit-details-marker { display:none; }
@@ -669,6 +669,8 @@ export function overlaySnippet(rows: SiteComment[], opts: { repo?: string; issue
   .pc-note > ul { position:absolute; right:0; top:1.7em; z-index:20; width:min(24rem,80vw); margin:0; padding:.5rem .8rem .5rem 1.8rem;
     white-space:normal; text-align:left; font-size:.85rem; line-height:1.45; background:var(--bg,#fff); color:var(--fg,inherit);
     border:1px solid #8886; border-radius:8px; box-shadow:0 8px 24px #0003; }
+  .fa-block-panel .pc-list { margin:0; padding-left:1.1rem; }
+  .fa-block-panel .pc-list li { margin:.45rem 0; }
   .pc-bar { position:sticky; top:0; z-index:1; padding:.4rem 0; background:var(--bg,#fdfdfb); border-bottom:1px solid #8884; margin-bottom:1rem; }
 </style>
 <script type="application/json" id="pc-data">${json}</script>
@@ -696,6 +698,18 @@ export function overlaySnippet(rows: SiteComment[], opts: { repo?: string; issue
     const a = document.getElementById(label);
     if (!a) return;
     const host = a.parentElement && a.parentElement.tagName === "P" && a.parentElement.textContent.trim() === "" ? a.parentElement : a;
+    // Into the block's control box first; a block with no box gets one, so
+    // every block's controls look the same.
+    let acts = document.querySelector('.block-actions[data-block="' + CSS.escape(label) + '"]');
+    if (!acts) {
+      acts = document.createElement("span");
+      acts.className = "block-actions";
+      acts.dataset.block = label;
+      host.after(acts);
+    }
+    discussed(acts, h);
+    const bp = panel();
+    if (bp) { bp.icon(acts, "comments", h.n); return; }
     const d = document.createElement("details");
     d.className = "pc-note";
     const n = h.o;
@@ -711,18 +725,11 @@ export function overlaySnippet(rows: SiteComment[], opts: { repo?: string; issue
       d.append(ul);
       listOf(label).then((list) => { ul.innerHTML = list.map(item).join("") || "<li>Could not load the comments.</li>"; });
     });
-    // Into the block's control box (its [edit] [feedback]), first; a block
-    // with no box gets one, so every block's controls look the same.
-    let acts = document.querySelector('.block-actions[data-block="' + CSS.escape(label) + '"]');
-    if (!acts) {
-      acts = document.createElement("span");
-      acts.className = "block-actions";
-      acts.dataset.block = label;
-      host.after(acts);
-    }
     acts.prepend(d);
-    // Beside the block's [feedback]: the issues where its change-sets are
-    // already being discussed, so a reader joins rather than duplicates.
+  };
+  // Beside the block's [feedback]: the issues where its change-sets are
+  // already being discussed, so a reader joins rather than duplicates.
+  const discussed = (acts, h) => {
     const nums = [...new Set(h.s.map((id) => meta.issues[id]).filter(Boolean))];
     if (acts && meta.repo && nums.length) {
       const s = document.createElement("span");
@@ -730,6 +737,24 @@ export function overlaySnippet(rows: SiteComment[], opts: { repo?: string; issue
       s.innerHTML = "discussed in " + nums.map((n) => "<a href=\\"https://github.com/" + esc(meta.repo) + "/issues/" + n + "\\">#" + n + "</a>").join(" ");
       acts.append(s);
     }
+  };
+  // The block panel's comments pane, registered once the runtime is there.
+  let bpReady = false;
+  const panel = () => {
+    const bp = window.faBlockPanel;
+    if (!bp || bpReady) return bp;
+    bpReady = true;
+    bp.pane("comments", { icon: "\u{1F4AC}", title: "Public comments", render: (label, body) => {
+      const h = data[label] || { n: 0, o: 0 };
+      const sum = document.createElement("p");
+      sum.innerHTML = h.n + " comment" + (h.n === 1 ? "" : "s") + (h.o ? ", " + h.o + " open" : "") + " \u00b7 <a href=\"" + esc(meta.dashboard) + "\">all public comments</a>";
+      const ul = document.createElement("ul");
+      ul.className = "pc-list";
+      ul.innerHTML = "<li>Loading…</li>";
+      body.append(sum, ul);
+      listOf(label).then((list) => { ul.innerHTML = list.map(item).join("") || "<li>Could not load the comments.</li>"; });
+    } });
+    return bp;
   };
   // A popped-over list closes on a click elsewhere or on Escape.
   const shut = (keep) => document.querySelectorAll(".pc-note[open]").forEach((d) => { if (d !== keep) d.open = false; });
