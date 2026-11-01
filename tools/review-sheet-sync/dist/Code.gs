@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 4d7f19c2d1b3fb83.
+// folio-assistant-core tools/review-sheet-sync at template sha256 56e93ae0d48dfe5c.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -46,7 +46,7 @@ function installTriggers() {
   host_().ScriptApp.newTrigger('markDirty').forSpreadsheet(ss).onEdit().create();
   host_().ScriptApp.newTrigger('refreshIfDirty').timeBased().everyMinutes(TIMER_MINUTES).create();
   docProps_().setProperty('timerMinutes', String(TIMER_MINUTES));
-  refreshAll();
+  refreshAll(); // also takes the setup line off each tab: timerMinutes marks it installed
   applyEditors(ss);
   if (DRAFTING) checkDropdown(ss);
 }
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 4d7f19c2d1b3fb83';
+const SCRIPT_VERSION = 'template sha256 56e93ae0d48dfe5c';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -126,14 +126,56 @@ function loadConfig(ss) {
 
 /**
  * A copy of a template is not linked to a repository until the agent writes
- * its Config from the folio's sheet-sync.json. Say so, with what to ask for,
- * rather than leaving an empty dropdown to explain itself.
+ * its Config from the folio's sheet-sync.json. The message leads with what to
+ * do and stays short enough for a toast (owner, 2026-11-01: the toast "was
+ * cut off ... User wont know what to do").
  */
 function notLinked(ss) {
-  return 'This sheet is not linked to a document repository yet, so its Config tab is empty and ' +
-    'the Selected Sections dropdown has nothing to offer. Ask the agent to link it: name the repository ' +
-    'and give this spreadsheet\'s ID, ' + ss.getId() + '. The agent adds review/<mode>/sheet-sync.json ' +
-    'there and writes this Config tab (skill review-sheet-script, "Linking a sheet to a repository").';
+  return 'Ask the agent to link this sheet to its document: give it this sheet\'s link (ID ' + ss.getId() +
+    '). Until then the Config tab and the Selected Sections dropdown are empty.';
+}
+/**
+ * The setup steps a person still has to take, as the first line of each
+ * tab's Instructions, so the sheet itself says what to do next (owner,
+ * 2026-11-01: "put instructions on sheet ... Warning icon on first line";
+ * "should be in the google sheet template so clearer what to do"). The
+ * templates carry the first step from the start; the script moves it on.
+ */
+const SETUP_MARK = '\u26a0 ';
+const SETUP_STEPS = {
+  unlinked: SETUP_MARK + 'Not set up yet. Step 1 of 2: ask the agent to link this sheet to its document, and give it this sheet\'s link. ' +
+    'Step 2: choose Review links, then Install.',
+  uninstalled: SETUP_MARK + 'Almost set up. Step 2 of 2: choose Review links, then Install (once), and allow it. The script then keeps this sheet current.',
+};
+/** Where the sheet's setup is: 'unlinked' (no Config), 'uninstalled' (no timer yet) or 'ready'. */
+function setupState(linked) {
+  if (!linked) return 'unlinked';
+  try { return docProps_().getProperty('timerMinutes') ? 'ready' : 'uninstalled'; } catch (e) { return 'uninstalled'; }
+}
+/**
+ * Keep each visible tab's first Instructions cell in step with the setup:
+ * a \u26a0 first line with the next step until the sheet is linked and
+ * installed; once linked, a last line with the document's site and
+ * repository (owner, 2026-11-01). A plain text write; colourInstructions
+ * puts the colours back on the next refresh.
+ */
+function markSetup(ss, state) {
+  if (!ss) throw new Error(RUN_THIS);
+  const parts = state !== 'unlinked' && CFG ? [CFG.SITE_URL, CFG.REPO_URL && 'Repository: ' + CFG.REPO_URL].filter(Boolean) : [];
+  const where = parts.length ? 'Document: ' + parts.join('   ') : '';
+  ss.getSheets().forEach(sh => {
+    if (sh.isSheetHidden() || sh.getName() === CONFIG_TAB || sh.getLastRow() < 1 || sh.getLastColumn() < 2) return;
+    if (!LEGEND_RE.test(String(sh.getRange(1, 1).getDisplayValue()).trim())) return;
+    const cell = sh.getRange(1, 2);
+    const before = String(cell.getDisplayValue());
+    let lines = before.split('\n').filter(l => l.indexOf(SETUP_MARK) !== 0 && l.indexOf('Document: ') !== 0);
+    if (SETUP_STEPS[state]) lines.unshift(SETUP_STEPS[state]);
+    if (where) lines.push(where);
+    const text = lines.join('\n');
+    if (text !== before) cell.setValue(text);
+  });
+  // A plain write drops the colours; put them back now, linked or not.
+  try { colourInstructions(ss); } catch (e) { /* cosmetic only */ }
 }
 
 function showVersion() {
@@ -156,7 +198,11 @@ function onOpen() {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(CONFIG_TAB);
     const keys = sh ? sh.getRange(1, 1, Math.max(sh.getLastRow(), 1), 1).getDisplayValues().map(r => String(r[0]).trim()) : [];
-    if (!keys.includes('CFG')) ss.toast(notLinked(ss), 'Not linked to a repository yet', 30);
+    const linked = keys.includes('CFG');
+    if (!linked) ss.toast('Ask the agent to link this sheet. The \u26a0 line at the top of the tab says how.', '\u26a0 Not set up yet', 30);
+    else if (setupState(true) === 'uninstalled') ss.toast('Choose Review links, then Install, to start the script.', '\u26a0 Almost set up', 30);
+    if (linked) loadConfig(ss);
+    markSetup(ss, setupState(linked));
   } catch (e) { /* a toast is a courtesy; never block the menu */ }
 }
 
@@ -467,6 +513,7 @@ function refreshAll() {
   try {
     refreshLocked();
     applyEditors(SpreadsheetApp.getActive());
+    try { markSetup(SpreadsheetApp.getActive(), setupState(true)); } catch (err) { /* cosmetic only */ }
     try { colourInstructions(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
     try { styleConfig(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
     return true;
@@ -541,9 +588,6 @@ function refreshLocked() {
     refreshRcs(rcs, rpc, csOf, stOf, prOf, readyAt, builtOf);
     const cCol = col(rcs, CONFIRMED), confirmedOf = {};
     if (cCol >= 0) rcs.rows.forEach(r => { const cs = String(r[csCol]).trim(); if (cs) confirmedOf[cs] = confirmedNos(r[cCol], csOf[cs] || []); });
-    // A ticked comment on Review Public Comments counts as well (option A).
-    const ticked = tickedNos(rpc);
-    Object.keys(csOf).forEach(cs => { confirmedOf[cs] = [...new Set((confirmedOf[cs] || []).concat((csOf[cs] || []).map(String).filter(n => ticked[n])))]; });
     writeRows(rcs, col(rcs, COLS.rcs.dispositionsAgent || DISPOSITIONS_AGENT), null, r => {
       const cs = String(r[csCol]).trim();
       return dispositionCell(dispOf[cs], csOf[cs], humanDisp, confirmedOf[cs]);
@@ -637,8 +681,7 @@ const HEADER_NOTES = {
   'TWG (PCs)': 'The working groups of these comments. Kept by the script.',
   'TWG (CS)': 'The working group that owns this change set. You fill this in.',
   'Ready for agent': 'Yes: the direction is agreed and the agent may edit. No: wait. Completed: the agent has finished and the preview is current (set by the script). Any change in feedback sets it back to No. Set by an Editor.',
-  'Dispositions confirmed': 'Yes: the committee confirms every disposition the agent gave in this change set. To confirm one comment at a time, tick it in Confirmed (committee) on Review Public Comments. The agent will not merge until every comment is confirmed or has its own Disposition. Set by an Editor.',
-  'rpc|Confirmed (committee)': 'Tick to confirm the agent\'s disposition of this one comment, when the change set as a whole is not yet confirmed. Set by an Editor.',
+  'Dispositions confirmed': 'Yes: the committee confirms every disposition the agent gave in this change set. To differ on one comment, set that comment\'s own Disposition on Review Public Comments. The agent will not merge until every comment is confirmed or has its own Disposition. Set by an Editor.',
   'Ready for merge': 'Yes: merge the pull request. The agent merges only once the QA gate has passed for the current version. Set by an Editor.',
   'Disposition (agent)': 'The decisions made so far (oldest first, never removed), then one disposition per comment number. "No disposition yet" lists the numbers still missing one. From the agent, read only.',
   'Change Set Feedback (agent)': 'The status on top, then the agent\'s current proposal and any question it needs answered, with options and a recommendation.',
@@ -783,14 +826,16 @@ const KEY_COLOURS = { blue: '#1f5fa8', green: '#2e7d32', orange: '#c25e00', grey
 const KEY_WORD_RE = /\b(blue|green|orange|grey)\b/gi;
 function keyRuns(text) {
   const runs = [];
-  const nl = text.indexOf('\n');
-  const first = nl < 0 ? text : text.slice(0, nl);
+  // A setup line (markSetup) may sit above the key: the key is then the second line.
+  const at = text.indexOf(SETUP_MARK) === 0 && text.indexOf('\n') >= 0 ? text.indexOf('\n') + 1 : 0;
+  const nl = text.indexOf('\n', at);
+  const first = nl < 0 ? text.slice(at) : text.slice(at, nl);
   let keyEnd = 0;
   if (/^(blue|green|orange|grey) = /i.test(first)) {
     const seg = /(blue|green|orange|grey) = .*?(?=\s{3,}|$)/gi;
     let m;
-    while ((m = seg.exec(first))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
-    keyEnd = first.length;
+    while ((m = seg.exec(first))) runs.push([at + m.index, at + m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
+    keyEnd = at + first.length;
   }
   let m;
   KEY_WORD_RE.lastIndex = keyEnd;
@@ -1222,19 +1267,6 @@ const DISPOSITION_WORDS = ['Accepted', 'Partially accepted', 'Not accepted', 'No
  * cell ("No. 327") still confirm just those comments.
  */
 const CONFIRMED = 'Dispositions confirmed', CONFIRM_CHOICES = ['Yes', 'No'];
-/**
- * One comment at a time (owner, 2026-10-31, option A "a checkbox per
- * comment"): an Orange checkbox column on Review Public Comments, right of the
- * people's Disposition. A ticked box confirms that comment's agent disposition,
- * whatever its change set's Yes/No says.
- */
-const CONFIRMED_PC = 'Confirmed (committee)';
-function tickedNos(rpc) {
-  const no = col(rpc, (COLS && COLS.rpc && COLS.rpc.no) || 'No.'), c = col(rpc, CONFIRMED_PC), out = {};
-  if (no < 0 || c < 0) return out;
-  rpc.rows.forEach(r => { const n = String(r[no]).trim(); if (n && (r[c] === true || /^(true|yes)$/i.test(String(r[c]).trim()))) out[n] = true; });
-  return out;
-}
 function confirmedNos(value, nos) {
   const v = String(value || '').trim();
   if (/^(yes|all)$/i.test(v) || /(^|,)\s*all\s*(,|$)/i.test(v)) return (nos || []).map(String);
@@ -1263,30 +1295,6 @@ function ensureConfirmedColumn(ss) {
   const vals = rule ? rule.getCriteriaValues() : [];
   if (!rule || rule.getCriteriaType() !== SpreadsheetApp.DataValidationCriteria.VALUE_IN_LIST || String(vals[0]) !== String(CONFIRM_CHOICES))
     cells.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(CONFIRM_CHOICES, true).setAllowInvalid(true).build());
-  ensureConfirmedPcColumn(ss, sh.getRange(s.top - 1, c + 1));
-}
-/** The per-comment checkbox column on Review Public Comments, inside the locked run. */
-function ensureConfirmedPcColumn(ss, orangeHead) {
-  const sh = ss.getSheetByName(CFG.RPC);
-  if (!sh) return;
-  const s = readSheet(sh);
-  let c = s.header.indexOf(CONFIRMED_PC);
-  const rows = sh.getMaxRows() - s.top + 1;
-  if (c < 0) {
-    const d = s.header.indexOf(COLS.rpc.disposition || 'Disposition');
-    if (d < 0) return;
-    sh.insertColumnAfter(d + 1);
-    sh.getRange(s.top - 1, d + 1, rows + 1, 1).copyTo(sh.getRange(s.top - 1, d + 2, rows + 1, 1), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
-    sh.getRange(s.top, d + 2, rows, 1).clearDataValidations();
-    const head = sh.getRange(s.top - 1, d + 2);
-    head.setValue(CONFIRMED_PC);
-    if (orangeHead) head.setBackground(orangeHead.getBackground());
-    sh.setColumnWidth(d + 2, 110);
-    c = d + 1;
-  }
-  const cells = sh.getRange(s.top, c + 1, rows, 1);
-  const rule = cells.getCell(1, 1).getDataValidation();
-  if (!rule || rule.getCriteriaType() !== SpreadsheetApp.DataValidationCriteria.CHECKBOX) cells.insertCheckboxes();
 }
 function dispositionProblems(text, nos, human, confirmed) {
   const want = (nos || []).map(String), seen = {}, out = [];

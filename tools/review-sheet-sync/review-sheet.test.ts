@@ -13,7 +13,7 @@ import { mkdtempSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { buildConfig, buildScript, chunks, CODE_GS_RAW, CODE_GS_URL, LIBRARY_ID, STUB_GS_URL, configRows, readable, tabInstructions, tocRows } from "./build-review-sheet-script.js";
+import { buildConfig, buildScript, chunks, CODE_GS_RAW, CODE_GS_URL, LIBRARY_ID, STUB_GS_URL, configRows, draftingSheetSync, linkLines, readable, repoOfSite, sheetIdOf, tabInstructions, tocRows } from "./build-review-sheet-script.js";
 import { readFileSync as readText } from "node:fs";
 import { feedbackBasis, hashOf } from "./feedback-issue.js";
 
@@ -1018,7 +1018,99 @@ describe("a copy that is not linked to a repository yet", () => {
   test("says so, with this sheet's ID, instead of failing on a missing row", () => {
     const t = { ...tabs(), Config: { id: 900, rows: [["Key", "Value"], ["EDITORS", ""]] } };
     const rt = runtime(t);
-    expect(() => load(code, rt.g).refreshAll()).toThrow(/not linked to a document repository yet.*copy-sheet-id/);
+    expect(() => load(code, rt.g).refreshAll()).toThrow(/^Ask the agent to link this sheet.*copy-sheet-id/);
+  });
+
+  test("the toast leads with the action and is short enough not to be cut off (owner, 2026-11-01)", () => {
+    const toast = code.match(/ss\.toast\('(Ask the agent to link[^']*)'/)?.[1];
+    expect(toast).toBeDefined();
+    expect(toast!.length).toBeLessThan(100);
+  });
+
+  /** A spreadsheet with one people's tab whose first Instructions cell is `text`. */
+  const setupSheet = (text: string, cfg?: Record<string, string>) => {
+    const cell = { v: text };
+    const tab = {
+      getName: () => "Contributor Feedback", isSheetHidden: () => false, getLastRow: () => 2, getLastColumn: () => 3,
+      getRange: (_r: number, c: number) => ({
+        getDisplayValue: () => (c === 1 ? "Instructions" : cell.v),
+        setValue: (v: string) => { cell.v = v; },
+      }),
+    };
+    const fn = new Function("SpreadsheetApp", "LockService", "PropertiesService", "Utilities", "ScriptApp", "Session",
+      `${code}\nCFG = ${JSON.stringify(cfg ?? null)};\nreturn { markSetup };`);
+    const { markSetup } = fn({}, {}, {}, {}, {}, {}) as { markSetup(ss: unknown, state: string): void };
+    return { cell, run: (state: string) => markSetup({ getSheets: () => [tab] }, state) };
+  };
+  const sites = { SITE_URL: "https://o.github.io/dth/", REPO_URL: "https://github.com/o/dth" };
+
+  test("an unlinked sheet says what to do first on the first line of each tab's Instructions, once", () => {
+    const s = setupSheet("Blue = your input\nsteps");
+    s.run("unlinked");
+    s.run("unlinked");
+    expect(s.cell.v.split("\n")[0]).toMatch(/^\u26a0 Not set up yet\. Step 1 of 2: ask the agent to link this sheet/);
+    expect(s.cell.v.split("\n").filter((l) => l.startsWith("\u26a0")).length).toBe(1);
+    expect(s.cell.v).toContain("Blue = your input\nsteps");
+  });
+
+  test("linked but not installed: the line moves on to Install, and the links appear", () => {
+    const s = setupSheet("\u26a0 Not set up yet. Step 1 of 2: ...\nBlue = your input", sites);
+    s.run("uninstalled");
+    expect(s.cell.v.split("\n")[0]).toMatch(/^\u26a0 Almost set up\. Step 2 of 2: choose Review links, then Install/);
+  });
+
+  test("once installed, the warning goes and the document's site and repository are shown", () => {
+    const s = setupSheet("\u26a0 Almost set up. Step 2 of 2\nBlue = your input", sites);
+    s.run("ready");
+    s.run("ready");
+    expect(s.cell.v).toBe("Blue = your input\nDocument: https://o.github.io/dth/   Repository: https://github.com/o/dth");
+  });
+});
+
+describe("the colour key under a setup line", () => {
+  test("is still coloured segment by segment when a \u26a0 line sits above it", () => {
+    const fn = new Function("SpreadsheetApp", `${code}\nreturn { keyRuns };`);
+    const { keyRuns } = fn({}) as { keyRuns(t: string): [number, number, string][] };
+    const key = "Blue = your input     Green = the agent";
+    const plain = keyRuns(key);
+    const under = keyRuns("\u26a0 Not set up yet. Step 1 of 2: ask\n" + key);
+    const shift = "\u26a0 Not set up yet. Step 1 of 2: ask\n".length;
+    expect(under.slice(0, 2)).toEqual(plain.slice(0, 2).map(([a, z, c]) => [a + shift, z + shift, c]));
+  });
+});
+
+describe("linking a copied template (owner, 2026-11-01: make it mechanical)", () => {
+  test("a sheet link or a bare id gives the spreadsheet id", () => {
+    const id = "1ACmiSvHK2kYlqaL0--p2u4Op7g4R1_BzgNFuW7QUs3Y";
+    expect(sheetIdOf(`https://docs.google.com/spreadsheets/d/${id}/edit?gid=0#gid=0`)).toBe(id);
+    expect(sheetIdOf(id)).toBe(id);
+    expect(() => sheetIdOf("not a sheet")).toThrow();
+  });
+
+  test("a GitHub Pages site names its repository; another host names none", () => {
+    expect(repoOfSite("https://litlfred.github.io/dth-phc/")).toBe("https://github.com/litlfred/dth-phc");
+    expect(repoOfSite("https://example.org/dth/")).toBeUndefined();
+    expect(repoOfSite(undefined)).toBeUndefined();
+  });
+
+  test("a drafting sheet-sync.json follows from the document's name", () => {
+    expect(draftingSheetSync("dth-phc", "https://docs.google.com/spreadsheets/d/1ACmiSvHK2kYlqaL0--p2u4Op7g4R1_BzgNFuW7QUs3Y/edit"))
+      .toEqual({ mode: "drafting", anchors: "folio/dth-phc/review-anchors.json", sectionUrl: "en/dth-phc/#", sheet: "1ACmiSvHK2kYlqaL0--p2u4Op7g4R1_BzgNFuW7QUs3Y" });
+  });
+
+  test("the Config tab shows the site, the repository and the settings file, from repository or iriBase", () => {
+    const repo = draftFolio();
+    writeFileSync(join(repo, "dth.json"), JSON.stringify({ iriBase: "https://o.github.io/dth/" }));
+    const c = buildConfig(repo, "review/drafting/sheet-sync.json");
+    expect(c.CFG.SITE_URL).toBe("https://o.github.io/dth/");
+    expect(c.CFG.REPO_URL).toBe("https://github.com/o/dth");
+    expect(linkLines(c)).toEqual([
+      "Document (GitHub Pages): https://o.github.io/dth/",
+      "Repository: https://github.com/o/dth",
+      "This sheet's settings: https://github.com/o/dth/blob/main/review/drafting/sheet-sync.json",
+    ]);
+    const rows = configRows(c);
+    expect(rows.findIndex((r) => r[0] === "Instructions - Links")).toBeLessThan(rows.findIndex((r) => r[0] === "Key"));
   });
 });
 
@@ -1421,19 +1513,10 @@ describe("unconfirmed dispositions are flagged and block the merge (owner, 2026-
 });
 
 describe("Dispositions confirmed, an Editor's multi-select (owner, 2026-10-31)", () => {
-  const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems, confirmedNos, tickedNos };`)({}) as {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems, confirmedNos };`)({}) as {
     dispositionProblems: (t: string, n: string[], h?: Record<string, string>, c?: string[]) => string;
     confirmedNos: (v: string, n: string[]) => string[];
-    tickedNos: (s: { header: string[]; rows: unknown[][] }) => Record<string, boolean>;
   };
-  test("a ticked Confirmed (committee) box confirms that one comment (option A)", () => {
-    const rpc = { header: ["No.", "Disposition", "Confirmed (committee)"], rows: [["326", "Pending", true], ["327", "Pending", false], ["328", "", "TRUE"]] };
-    expect(fns.tickedNos(rpc)).toEqual({ "326": true, "328": true });
-    const text = "No. 326: Accepted. Done.\nNo. 327: Accepted. Done.";
-    const p = fns.dispositionProblems(text, ["326", "327"], { "326": "Pending", "327": "Pending" }, Object.keys(fns.tickedNos(rpc)));
-    expect(p).toMatch(/Not confirmed[^\n]*No\. 327/);
-    expect(p).not.toMatch(/326/);
-  });
   test("Yes (or All) confirms every comment; No none; typed numbers confirm those", () => {
     expect(fns.confirmedNos("All", ["1", "2"])).toEqual(["1", "2"]);
     expect(fns.confirmedNos("Yes", ["1", "2"])).toEqual(["1", "2"]);
