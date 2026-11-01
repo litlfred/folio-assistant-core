@@ -1901,6 +1901,956 @@
           "drafted_at": "2026-11-01"
         }
       ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s355-test-copy",
+      "source": "sections/s355-test-copy.md",
+      "source_hash": "01d16a46536b38d01909e55296c118e4465003f6bcf8769238fd2e7c06d0c3dc",
+      "narrative": [
+        {
+          "text": "The JSON Patch test and copy operations are not planned at this stage.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s356-error-codes",
+      "source": "sections/s356-error-codes.md",
+      "source_hash": "4ce0cf6f81c67fdf74f0e1838786a5f8bb9f3ab1cf1bb710344ba47aaebd7202",
+      "narrative": [
+        {
+          "text": "Error codes for PATCH requests: 405 if PATCH is not implemented; 415 if the body is not sent as application/json-patch+json; 400 for a malformed patch document (RFC 5789); and 422 when the document is valid but cannot be applied, for example because it would leave the resource invalid. A JSON body with details, such as the index of the failing operation, is still to be defined.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s357-pool-tasks-endpoints",
+      "source": "sections/s357-pool-tasks-endpoints.md",
+      "source_hash": "722423a16d5a897418675aabe9bff8341538540255edfe5a7d1760ab06003d86",
+      "narrative": [
+        {
+          "text": "Opens the Pool Tasks endpoints; no text beyond the heading and the link back to the endpoint list.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s358-main-endpoint",
+      "source": "sections/s358-main-endpoint.md",
+      "source_hash": "90c590786222d20923108b99f554721f0b7bd8320f7d0429b61fbc65b508b347",
+      "narrative": [
+        {
+          "text": "Listing all pool tasks at /api/workflow/pooltasks is not allowed; only filtered subsets can be retrieved, through the search methods.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s359-single-pool-task",
+      "source": "sections/s359-single-pool-task.md",
+      "source_hash": "1bbe9009a2d993199f2585db6f6c4eb602b1ab9fa828a36b3196ba341459dd50",
+      "narrative": [
+        {
+          "text": "GET /api/workflow/pooltasks/<id> returns one task in the workflow pool, with its step and action. Links: step, action, workflowitem (the item under review), and the eperson or group that can claim the task.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s360-linked-entities",
+      "source": "sections/s360-linked-entities.md",
+      "source_hash": "26d243fd109b64c783bd0ec0b475eaf3071890d5378a73bd878dc579fd34fbe9",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a pool task; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s361-workflowitem",
+      "source": "sections/s361-workflowitem.md",
+      "source_hash": "6e5cebe1bbefa8e985501ed030d1dcd784ae29ff2ad8215ddc9a71ed0847cac8",
+      "narrative": [
+        {
+          "text": "GET /api/workflow/pooltasks/<id>/workflowitem returns the workflow item the task holds. Read-only: once the task exists its workflow item cannot change.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s362-eperson",
+      "source": "sections/s362-eperson.md",
+      "source_hash": "19b388d99b35d165c6fee7ccb2f3d9bcf9010c51a1b0e306bbf79668bf967f71",
+      "narrative": [
+        {
+          "text": "GET /api/workflow/pooltasks/<id>/eperson returns the eperson who can claim the task. Read-only: it cannot change once the task exists.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s363-group",
+      "source": "sections/s363-group.md",
+      "source_hash": "17e27e4c4fbfa38d7284d27358003c6f497dc4e52f69cb0baf473675af9606a8",
+      "narrative": [
+        {
+          "text": "GET /api/workflow/pooltasks/<id>/group returns the group of epersons who can claim the task. Read-only: it cannot change once the task exists.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s364-workflow-step",
+      "source": "sections/s364-workflow-step.md",
+      "source_hash": "a40b08f3319ae7311f956fabf1dcf05117934dbdf5ea7355a51d1957352e3224",
+      "narrative": [
+        {
+          "text": "GET /api/workflow/pooltasks/<id>/step returns the workflow step currently assigned to the task; read-only.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s365-workflow-action",
+      "source": "sections/s365-workflow-action.md",
+      "source_hash": "d4e1cce4f52258dca917424314f136e97204079f5d3dd5fb2d145aec84780f2a",
+      "narrative": [
+        {
+          "text": "GET /api/workflow/pooltasks/<id>/action returns the workflow action currently assigned to the task; read-only.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s366-search-methods",
+      "source": "sections/s366-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the Pool Tasks endpoint; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s367-findbyuser",
+      "source": "sections/s367-findbyuser.md",
+      "source_hash": "e5d0be82206d879f42e392d5642c1f80d283c9952336ee8f97b5a8bca04733f4",
+      "narrative": [
+        {
+          "text": "The findByUser search, given a user UUID, returns the pool tasks available to that user; the path printed for it is under /api/workflow/workflowitems/search.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s368-findallbyitem",
+      "source": "sections/s368-findallbyitem.md",
+      "source_hash": "e3cc1dc77a51f379c8c8094434e578e0396c1cb169b2a131afc60775854f6730",
+      "narrative": [
+        {
+          "text": "GET /api/workflow/pooltasks/search/findAllByItem?uuid=<item-uuid>, administrators only, returns every pool task for an item, paginated. Codes: 200 (an empty page if none), 400 for a missing or invalid uuid, 401, 403, 422 if the uuid is not an item.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s369-findbyitem",
+      "source": "sections/s369-findbyitem.md",
+      "source_hash": "174a01522ae5670800bbdf4fbd050360789a58f7964dce9471e1aaf07593ecd3",
+      "narrative": [
+        {
+          "text": "GET /api/workflow/pooltasks/search/findByItem?uuid=<item-uuid> returns the single pool task, if any, for an item and the current user. Codes: 200, 204 if there is none, 400, 401, 422 if the uuid is not an item.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s370-post-method-collection-level",
+      "source": "sections/s370-post-method-collection-level.md",
+      "source_hash": "18ad7b55edde03232ab73577cfee46d0675b7a999f37a6fb0032be598c542d5c",
+      "narrative": [
+        {
+          "text": "Pool tasks are created only by the workflow system; no method creates them by hand, to prevent hijacking the workflow or making it inconsistent.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s371-post-method-single-resource-level",
+      "source": "sections/s371-post-method-single-resource-level.md",
+      "source_hash": "d0ae6a97f6189775e1eedf10049071562ec6c66f7baa3d337391be80f15e601d",
+      "narrative": [
+        {
+          "text": "POST on a single pool task is not allowed; a task is claimed by POSTing to the Claimed Tasks endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s372-delete-method",
+      "source": "sections/s372-delete-method.md",
+      "source_hash": "f7aa18db7f72aba8849785d56cec6d4efe18253ad5be0c1413b0374e2d81a14c",
+      "narrative": [
+        {
+          "text": "DELETE on a pool task is not allowed; a workflow is reset by a DELETE on the Workflow Items endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s373-multipart-post-method",
+      "source": "sections/s373-multipart-post-method.md",
+      "source_hash": "a86258d54242a7cb1c9a73036ade067f3397d23e94830db3943ed8e686bf47e7",
+      "narrative": [
+        {
+          "text": "Multipart POST is not allowed on pool tasks.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s374-admin-processes-endpoints",
+      "source": "sections/s374-admin-processes-endpoints.md",
+      "source_hash": "477734af8377cb9e3ec437b51ccdaa023f30335047b595b19b56eef9e10842ae",
+      "narrative": [
+        {
+          "text": "Opens the Admin Processes endpoints, which list and manage the script processes started through the Scripts endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s375-execution-list",
+      "source": "sections/s375-execution-list.md",
+      "source_hash": "5bc15a4a0a24d7ef7bc7259d29ec7adf19dd6f48478d94ccf7e9a65104a836ec",
+      "narrative": [
+        {
+          "text": "GET /api/system/processes lists all processes, paginated. Each gives its id, the user who started it, creation, start and end times, the script name, its status and its parameters, with links to the script, its console output and its files. Optional filters: script, userId (only administrators may see others' processes), status and parameter.<name>. Codes: 200, 401, 403 for non-administrators.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s376-execution-details",
+      "source": "sections/s376-execution-details.md",
+      "source_hash": "a459491b9f60a044a827a1982e645c53fe427e0adba371bf7830ae883c4d6aaa",
+      "narrative": [
+        {
+          "text": "GET /api/system/processes/<id> returns one process in the same form as the list. Status is SCHEDULED, RUNNING, COMPLETED or FAILED. Codes: 200; 401 if not authenticated and the process was not started anonymously; 403 unless the caller is an administrator or started the process.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s377-execution-console-output",
+      "source": "sections/s377-execution-console-output.md",
+      "source_hash": "0b7b0370d90529b582202b50966a2a8c6f2d294e1bce142b063d2df2f870dba8",
+      "narrative": [
+        {
+          "text": "GET /api/system/processes/<id>/output returns the script's full console output, without timestamps; a live feed may come in a later version. Codes: 200, 401, 403 (administrator or starter only), 404 for an unknown process.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s378-execution-file-output-list",
+      "source": "sections/s378-execution-file-output-list.md",
+      "source_hash": "ac294c85369846d9b615521f4cb6bae8282e55c5dbd8e6333807b75982dd7957",
+      "narrative": [
+        {
+          "text": "GET /api/system/processes/<id>/files lists, paginated, the files tied to a process: files the user uploaded for an import or files the script produced, such as an export. Each is a bitstream whose dspace.process.filetype metadata gives its role (for example exportCSV). Codes: 200, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s379-get-process-file-types",
+      "source": "sections/s379-get-process-file-types.md",
+      "source_hash": "738c3e908276f2da082c554a4489e2cb914c408be76c1fc91e68fea00fcc8a6f",
+      "narrative": [
+        {
+          "text": "GET /api/system/processes/<id>/filetypes returns the file types a process has, such as inputFile and outputFile; a type names what a file represents (for example mappingFile or exportCSV) and can be used with .../files/<type>. Codes: 200, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s380-execution-file-output-using-type-identifier",
+      "source": "sections/s380-execution-file-output-using-type-identifier.md",
+      "source_hash": "09fbacd93e9774af74641d0bee6eb51d2a45a3bb7450d8f3d76f0f4392e10f9c",
+      "narrative": [
+        {
+          "text": "GET /api/system/processes/<id>/files/<type> returns the process's file of that type, matched on the bitstream's dspace.process.filetype metadata. Codes: 200, 401, 403, and 404 for an unknown process or type.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s381-search-methods",
+      "source": "sections/s381-search-methods.md",
+      "source_hash": "2d9384f78a20622aa31d17b66744942adeb0cc45483a6fc7572b71d25b091a2c",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the Processes endpoint; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s382-search-processes-by-property",
+      "source": "sections/s382-search-processes-by-property.md",
+      "source_hash": "c70de7877e52c38b7640ec1e93a260a7a8356bc8f7c645beba174008935e0110",
+      "narrative": [
+        {
+          "text": "GET /api/system/processes/search/byProperty searches processes by optional userId, scriptName and processStatus, sortable by start or end time and paginated. Administrators only. Codes: 200, 401, 403.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s383-retrieve-own-processes",
+      "source": "sections/s383-retrieve-own-processes.md",
+      "source_hash": "30bd6ff76796e6669ceb10893c27eab9f298ba9d76e16ceef76a631c61683c5f",
+      "narrative": [
+        {
+          "text": "GET /api/system/processes/search/own returns, paginated, the processes started by the logged-in user. Codes: 200, 401.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s384-execution-deletion",
+      "source": "sections/s384-execution-deletion.md",
+      "source_hash": "17ceb5c74527396b3944c4193ec50e80366e8de9ce0db679bc4186a898009e4b",
+      "narrative": [
+        {
+          "text": "DELETE /api/system/processes/<id> deletes a process with its files and output. Only scheduled, completed or failed processes can be deleted, and stopping a running one may come later. Codes: 201 (as printed), 404 if the process does not exist, 422 if it is running.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s385-script-invocation",
+      "source": "sections/s385-script-invocation.md",
+      "source_hash": "6284e2a95ec6ee5bdc8965937c8bbdf354ab6cab654c05774913a2fbae056d81",
+      "narrative": [
+        {
+          "text": "Starting a script is documented under Script Invocation in the Scripts endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s386-researcher-profiles-endpoints",
+      "source": "sections/s386-researcher-profiles-endpoints.md",
+      "source_hash": "4dabcf4264ca42f23ff3099cf5b9040ddbe4698dae899536eb4a26e45d7ce153",
+      "narrative": [
+        {
+          "text": "Opens the Researcher Profiles endpoints, which manage the profile item linked to an eperson. The item type used for profiles is configurable (Person by default); if the instance does not support profiles, the endpoints are disabled.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s387-get-all-profile",
+      "source": "sections/s387-get-all-profile.md",
+      "source_hash": "4931e912922c498439699e463477f1c9d6e6f773a6c61931bff61405ca662746",
+      "narrative": [
+        {
+          "text": "Listing all profiles at GET /api/eperson/profiles is not supported.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s388-single-profile",
+      "source": "sections/s388-single-profile.md",
+      "source_hash": "c9efdecfb7e19066fd92476be17d60110b6df7586dd97f5d11af75c7dc19666b",
+      "narrative": [
+        {
+          "text": "GET /api/eperson/profiles/<eperson-uuid> returns a profile, to administrators or its owner. Its id is the owner's eperson UUID. visible adds or removes the anonymous READ policy, and leaves other custom READ policies in force. orcid and orcidSynchronization (mode and publication, funding and profile preferences) appear only when the profile is linked to ORCID. Links: item and eperson. Codes: 200, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s389-linked-entities",
+      "source": "sections/s389-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a researcher profile; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s390-item",
+      "source": "sections/s390-item.md",
+      "source_hash": "c784dd79b7b682be4b2ef44aad6f781c0ced2c7bcd7d3ed6694db4baf678148c",
+      "narrative": [
+        {
+          "text": "GET /api/eperson/profiles/<eperson-uuid>/item returns the item that models the profile, here a Person entity whose dspace.object.owner points to the eperson. Codes: 200, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s391-eperson",
+      "source": "sections/s391-eperson.md",
+      "source_hash": "05afc1693e87026d0668af359c1ea61f093be0ae454dd320e52b098773ad3fb9",
+      "narrative": [
+        {
+          "text": "GET /api/eperson/profiles/<eperson-uuid>/eperson returns the eperson who owns the profile. Codes: 200, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s392-creating-a-new-profile",
+      "source": "sections/s392-creating-a-new-profile.md",
+      "source_hash": "5934b695d555f707e5399ddad61e5dac3aee034d524e58c32e5d6e61e3a0800b",
+      "narrative": [
+        {
+          "text": "POST /api/eperson/profiles?eperson=<uuid> creates a profile for that eperson, or for the current user if none is given; only the eperson or an administrator may do so. It returns the new profile with 201, or with 422 the existing profile that conflicts (or 422 if the eperson does not exist). Other codes: 401, 403.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s393-claim-an-existing-profile",
+      "source": "sections/s393-claim-an-existing-profile.md",
+      "source_hash": "4038ba68b11e74d5491bce2349bda98c4eba86cb6eab3d5a88e7f1071b237f62",
+      "narrative": [
+        {
+          "text": "POST /api/eperson/profiles?eperson=<uuid> with a text/uri-list body naming an existing profile item claims that item: the eperson (or the current user) becomes its owner. Only the eperson or an administrator may do this. Codes: 201, 401, 403, 404 if the eperson does not exist, 422 if the eperson already has a profile or the item is already owned.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s394-hide-unhide-a-profile",
+      "source": "sections/s394-hide-unhide-a-profile.md",
+      "source_hash": "4a357e9915ee388c6c3dcc27a3de88d4b9f3ae8cc19e8c4bacd22be268e96074",
+      "narrative": [
+        {
+          "text": "PATCH /api/eperson/profiles/<eperson-uuid>, replacing /visible, hides or shows a profile: true grants anonymous READ access and false removes it. More complex permissions go through the ResourcePolicies endpoint. Only the eperson or an administrator may do this. It returns the updated profile. Codes: 200, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s395-modify-orcid-synchronization-preferences",
+      "source": "sections/s395-modify-orcid-synchronization-preferences.md",
+      "source_hash": "c8445e52b5266fc52b9cd5ef56edcdd14278efef8526dd83373fecacdeba6bed",
+      "narrative": [
+        {
+          "text": "PATCH /api/eperson/profiles/<eperson-uuid> with replace operations changes ORCID synchronisation: /orcid/mode (BATCH or MANUAL), /orcid/publications and /orcid/fundings (DISABLED or ALL), and /orcid/profile (BIOGRAPHICAL and/or IDENTIFIERS, comma-separated). Only an administrator may change another eperson's profile. Codes: 200, 400 if the profile is not linked to ORCID, 401, 403, 404, 422 for an invalid path or value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s396-connect-a-profile-with-orcid",
+      "source": "sections/s396-connect-a-profile-with-orcid.md",
+      "source_hash": "c8b1f50509cdc734f741ceb8e663504355cf29b23826fb5426c7eb10e853e8d8",
+      "narrative": [
+        {
+          "text": "PATCH /api/eperson/profiles/<eperson-uuid> with an add on /orcid, whose value is an ORCID authorisation code, connects the profile to an ORCID account (three-legged OAuth). Only an administrator may change another eperson's profile. Codes: 200, 401, 403, 404, 422 for an invalid code, 500 on a configuration error or if ORCID is down.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s397-disconnect-a-profile-from-orcid",
+      "source": "sections/s397-disconnect-a-profile-from-orcid.md",
+      "source_hash": "88a847ab502a0f6fd3f3ee4c98dd7cac17481618eee486f1be7e4161ccc588b6",
+      "narrative": [
+        {
+          "text": "PATCH /api/eperson/profiles/<eperson-uuid> with a remove on /orcid disconnects the profile from its ORCID account. Only an administrator may change another eperson's profile. Codes: 200, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s398-delete-a-profile",
+      "source": "sections/s398-delete-a-profile.md",
+      "source_hash": "2ceac9a60c4bd288ab30b8acf3da3a621e864e5e4f7f67dc19ec4d8864233d28",
+      "narrative": [
+        {
+          "text": "DELETE /api/eperson/profiles/<eperson-uuid> deletes an eperson's profile; only the eperson or an administrator may do so. Configuration decides between a soft delete, which only unlinks the profile from the eperson, and a hard delete, which removes the profile item. Codes: 204 (also for a no-op), 401, 403.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s399-projections",
+      "source": "sections/s399-projections.md",
+      "source_hash": "8ac7b9468041c91185c721475bffeadcdfdb33599ef212d21cececf512df7580",
+      "narrative": [
+        {
+          "text": "Opens Projections. Every GET returning a HAL document accepts an optional projection argument naming an alternative representation, which may add, change or omit information; it applies to the requested resource and to its embedded resources.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s400-standard-projections",
+      "source": "sections/s400-standard-projections.md",
+      "source_hash": "b28fa78fa325a834c8cad6ba21b15e224c7888ab30c957a38b2bec9a0ba8b543",
+      "narrative": [
+        {
+          "text": "Introduces the two standard projections available in every DSpace 7 instance.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s401-default-projection",
+      "source": "sections/s401-default-projection.md",
+      "source_hash": "f0b53c0f2e4f76e7b2c3e376520a1e8d6243954e790facc6fe3500b98732329c",
+      "narrative": [
+        {
+          "text": "The default projection leaves the representation unchanged and omits all embedded subresources (no _embedded section). It applies to single-resource endpoints when no projection is given.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s402-full-projection-projection-full",
+      "source": "sections/s402-full-projection-projection-full.md",
+      "source_hash": "535d7f079e2eeccc4dfd40b42df7c558c22da7cd0dc65d316d0e4cb66d96564a",
+      "narrative": [
+        {
+          "text": "The full projection (?projection=full) embeds all linked subresources, limited to two levels of embedding at most.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s403-custom-projections",
+      "source": "sections/s403-custom-projections.md",
+      "source_hash": "08bbdb287c212b1b9e69e764aba2824a2046c298ebd18b219c9a1f9582c3e764",
+      "narrative": [
+        {
+          "text": "Developers can add a projection by deploying a uniquely named Projection as a Spring @Component in the server webapp; it is discovered automatically and used with ?projection=<name> on every endpoint. The Projection javadocs give details.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s404-specify-embed-requests",
+      "source": "sections/s404-specify-embed-requests.md",
+      "source_hash": "374011278054b2bbc8e8b615dacf28e8fb7c65d18202a8a1e7b6e1d969237639",
+      "narrative": [
+        {
+          "text": "Every GET returning a HAL document accepts an optional embed argument giving the link path of information to embed. Embeds can only add to the default representation, apply to the requested resource and its embedded resources, and work for any linked resource that allows embedding, without configuration.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
