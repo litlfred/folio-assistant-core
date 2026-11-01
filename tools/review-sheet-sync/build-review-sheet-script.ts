@@ -354,6 +354,7 @@ export function buildConfig(repo: string, cfgPath: string): SheetConfig {
   CFG = {
     SOURCE: cfgPath, ...(cfg.sheet ? { SHEET: cfg.sheet } : {}),
     ...(base ? { SITE_URL: base } : {}), ...(repoUrl ? { REPO_URL: repoUrl } : {}),
+    LATEST_BUILD: latestBuild(),
     ...CFG,
   };
   return { CFG, COLS, DATA: data };
@@ -479,13 +480,13 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
 
 export function setupSteps(_c: SheetConfig): string[] {
   const steps = [
-    `Once per sheet, by the sheet's owner. Made with File, then Make a copy, of the template? It is already set up: choose Review links, then Install, allow it (step 5), and you are done. Otherwise (details: ${INSTALL_GUIDE_URL}):`,
+    `Once per sheet, by the sheet's owner. Made with File, then Make a copy, of the template? It is already set up: choose Folio Assistant, then Install, allow it (step 5), and you are done. Otherwise (details: ${INSTALL_GUIDE_URL}):`,
     `1. Get the short stub: open ${STUB_GS_URL} and press "Copy raw file" (the two-squares button at the top right of the code)`,
     "2. Here, choose Extensions, then Apps Script. Name the project after this sheet (click \"Untitled project\"). \"Unable to open the file\"? Use a private window signed in to the owner's account only",
     "3. Click Code.gs, select all, delete, paste the stub and save (Ctrl+S or Cmd+S)",
     `4. Next to Libraries, press +, paste the Script ID ${LIBRARY_ID}, press Look up, choose Version HEAD (Development mode), set Identifier to Review, and press Add`,
-    "5. Reload the sheet and choose Review links, then Install. Google asks to allow it, then says \"Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.\" That is expected for a sheet's own script. Choose Advanced, then Go to <project name> (unsafe), then Allow. Why: https://support.google.com/cloud/answer/7454865",
-    "6. Review links, then Refresh now, checks it",
+    "5. Reload the sheet and choose Folio Assistant, then Install. Google asks to allow it, then says \"Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.\" That is expected for a sheet's own script. Choose Advanced, then Go to <project name> (unsafe), then Allow. Why: https://support.google.com/cloud/answer/7454865",
+    "6. Folio Assistant, then Refresh now, checks it",
     `   • Updates need nothing here: the code lives once in the Folio Review Library (${LIBRARY_URL}), and every sheet runs its latest version`,
   ];
   return steps;
@@ -512,7 +513,7 @@ export function editorSteps(): string[] {
     "   • Format: plain emails only, no names; one per line (Ctrl+Enter, or Cmd+Enter on a Mac, starts a new line in a cell). Commas or semicolons also work",
     "   • Example, for two editors:\n        ana@example.org\n        ben@example.org",
     "   • Anything that is not an email is left out, and Refresh now says which",
-    "   • Choose Review links, then Refresh now: the two Ready columns are locked to the owner plus them",
+    "   • Choose Folio Assistant, then Refresh now: the two Ready columns are locked to the owner plus them",
     "   • Leave it empty and only the owner can set them (the default)",
   ];
 }
@@ -619,6 +620,20 @@ export function chunks(json: string): string[] {
   return out;
 }
 
+function contentStamp(template: string): string {
+  return `template sha256 ${createHash("sha256").update(template).digest("hex").slice(0, 16)}`;
+}
+
+/**
+ * The build stamp of the Code.gs this checkout publishes. The Config tab
+ * carries it as LATEST_BUILD, so "Which version is this?" can say whether the
+ * sheet is up to date without the script fetching anything (owner, 2026-11-01).
+ */
+export function latestBuild(): string {
+  const here = dirname(fileURLToPath(import.meta.url));
+  return contentStamp(readFileSync(join(here, "review-sheet.gs"), "utf8"));
+}
+
 /** The one script every review sheet runs: the template, stamped with its commit. */
 export function buildScript(opts: { stamp?: "commit" | "content" } = {}): string {
   const here = dirname(fileURLToPath(import.meta.url));
@@ -626,9 +641,7 @@ export function buildScript(opts: { stamp?: "commit" | "content" } = {}): string
   // The committed copy (dist/Code.gs) is stamped by the template's content, not
   // a commit: a file cannot name the commit it is in, and the check that it is
   // current must not change with every commit.
-  const at = opts.stamp === "content"
-    ? `template sha256 ${createHash("sha256").update(template).digest("hex").slice(0, 16)}`
-    : templateCommit(here);
+  const at = opts.stamp === "content" ? contentStamp(template) : templateCommit(here);
   return asciiOnly(template
     .replace("/*@@VERSION@@*/", `// folio-assistant-core tools/review-sheet-sync at ${at}.`)
     .replace("@@STAMP@@", at.replace(/'/g, "")));
