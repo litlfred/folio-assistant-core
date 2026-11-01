@@ -2908,6 +2908,975 @@
           "drafted_at": "2026-11-01"
         }
       ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s154-linked-entities",
+      "source": "sections/s154-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for a community's linked entities; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s155-subcommunities",
+      "source": "sections/s155-subcommunities.md",
+      "source_hash": "472679dd095e4444579925c14730e0d84bb9d0532449df32980aaf62c2782f3f",
+      "narrative": [
+        {
+          "text": "Specifies the subcommunities link of a community, which returns its sub-communities with pagination.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s156-collections",
+      "source": "sections/s156-collections.md",
+      "source_hash": "08b0d4dd0c5ac81372a1c37fff332594200610ec106031f26b2a34f060cd6f12",
+      "narrative": [
+        {
+          "text": "Specifies the collections link of a community, which returns its collections with pagination.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s157-logo",
+      "source": "sections/s157-logo.md",
+      "source_hash": "a20afa23b429ebec0b8eb3dd55691f8b31abe08b4f1829c25240fdf5f039121d",
+      "narrative": [
+        {
+          "text": "Heading for a community's logo; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s158-retrieve-logo",
+      "source": "sections/s158-retrieve-logo.md",
+      "source_hash": "fa818c786824e13d259a10a04f78d117600549d24a32d653d62e8e17eceafad6",
+      "narrative": [
+        {
+          "text": "Specifies GET of a community's logo, which returns the bitstream holding it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s159-create-logo",
+      "source": "sections/s159-create-logo.md",
+      "source_hash": "e3be35e478569343656c08c182f776520c701db4e9f250b1c18b5c550cfdd381",
+      "narrative": [
+        {
+          "text": "Specifies POST of a logo to a community that has none, uploading one file as multipart/form-data and returning the new bitstream, with 412 on a size or checksum mismatch and 422 if there is no file or a logo already exists.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s160-replace-logo",
+      "source": "sections/s160-replace-logo.md",
+      "source_hash": "bfab57be056f23fda3d3f0d92324da2da6df6c3939f4687b59875f6cc1a9ced1",
+      "narrative": [
+        {
+          "text": "Specifies PUT of a new logo to a community that already has one, uploading one file as multipart/form-data, with 412 on a size or checksum mismatch and 422 if there is no file or no existing logo.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s161-delete-logo",
+      "source": "sections/s161-delete-logo.md",
+      "source_hash": "277a6e5d4a516286f1161345d414093909c43072f980e6edd3b23ad760effa5b",
+      "narrative": [
+        {
+          "text": "Specifies DELETE of a community's logo, returning 204, or 422 if the community had no logo.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s162-parent-community",
+      "source": "sections/s162-parent-community.md",
+      "source_hash": "219ae532c3c1e438d8e10c16f903ec72a8716a0f82cda6f57ffa0207627c401c",
+      "narrative": [
+        {
+          "text": "Specifies the parentCommunity link of a community, which returns one containing community even when there are several, or 204 if it has none.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s163-groups",
+      "source": "sections/s163-groups.md",
+      "source_hash": "5f0a46926a0f73503744dedbdfd1cc647e2dae3de834f0b23ce9e16df13ed3d2",
+      "narrative": [
+        {
+          "text": "Heading for community groups; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s164-community-administrators",
+      "source": "sections/s164-community-administrators.md",
+      "source_hash": "b88bfcf9efff30335bad53f88c64c286cd16a9a310be4c712c167928509b3f50",
+      "narrative": [
+        {
+          "text": "Introduces the adminGroup endpoints for managing a community's administrators.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s165-retrieve-community-administrators",
+      "source": "sections/s165-retrieve-community-administrators.md",
+      "source_hash": "a2d5550c68564cee57dc0812448a3e0d463eb7f77159c47d8994317ec09bda33",
+      "narrative": [
+        {
+          "text": "Specifies GET of a community's administrator group, readable by admins and community or parent community admins, returning 204 when the community has none.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s166-create-community-administrators-group",
+      "source": "sections/s166-create-community-administrators-group.md",
+      "source_hash": "f93fafa7aa80382613961f35ac1c5bba9a8e8772e67927639f4ac787db51a21f",
+      "narrative": [
+        {
+          "text": "Specifies POST of an administrator group for a community that has none, sending only metadata since the name cannot be set here, with 422 if a name is given, permanent is true, or a group already exists.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s167-modifying-the-community-administrators-group",
+      "source": "sections/s167-modifying-the-community-administrators-group.md",
+      "source_hash": "5a63f915328d7a560a46bb87a47fd51f79799e5fd59d3116d869aef479857da9",
+      "narrative": [
+        {
+          "text": "Says members and sub-groups of a community's administrator group are added through the EPerson Group endpoint, and admins and community or parent community admins may change it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s168-delete-the-community-administrators-group",
+      "source": "sections/s168-delete-the-community-administrators-group.md",
+      "source_hash": "cb5c4e8da1b306096fab81e81468909a35792c75cfb3e8828a1c1601cc7f4c6d",
+      "narrative": [
+        {
+          "text": "Specifies DELETE of a community's administrator group by admins or community or parent community admins, returning 204 even when there was no group.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s169-search-methods",
+      "source": "sections/s169-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the community search methods; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s170-top",
+      "source": "sections/s170-top.md",
+      "source_hash": "623fd099eef7652b2f27a55d1b855371610c016cfa4a82a826aa35bbd595dd21",
+      "narrative": [
+        {
+          "text": "Specifies the top search, which returns the top-level communities, those with no parent, with pagination.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s171-findadminauthorized",
+      "source": "sections/s171-findadminauthorized.md",
+      "source_hash": "61f228de2a85f6287b5d96b9e1a81c1724126774242ed64d18e9f53eac4dea35",
+      "narrative": [
+        {
+          "text": "Specifies the findAdminAuthorized search, which lists the communities the current user administers, with an optional query filter.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s172-findeditauthorized",
+      "source": "sections/s172-findeditauthorized.md",
+      "source_hash": "b25ac4f9897a0641cc68b2e349665c5316449303dddf1af003dd2ffcaf8f2ea1",
+      "narrative": [
+        {
+          "text": "Specifies the findEditAuthorized search, which lists the communities the current user may edit, with an optional query filter.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s173-findaddauthorized",
+      "source": "sections/s173-findaddauthorized.md",
+      "source_hash": "5b115dd542ddc7793d8d2ef177b466245ea3742c9d9993ec1e660289f22a8ed9",
+      "narrative": [
+        {
+          "text": "Specifies the findAddAuthorized search, which lists the communities the current user may add collections or sub-communities to, with an optional query filter.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s174-creating-communities",
+      "source": "sections/s174-creating-communities.md",
+      "source_hash": "b3ec6797d167809eb75e59064f29c79b5d70d65bafd4283eeb2fbb30068616a7",
+      "narrative": [
+        {
+          "text": "Heading for creating communities; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s175-creating-top-level-community",
+      "source": "sections/s175-creating-top-level-community.md",
+      "source_hash": "94c47a87cd1e9e8a934146230c082afd73d2a279a445abae0f768a449b620cd3",
+      "narrative": [
+        {
+          "text": "Specifies creating a top-level community as an admin by POSTing its name and title metadata to /api/core/communities.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s176-creating-subcommunity",
+      "source": "sections/s176-creating-subcommunity.md",
+      "source_hash": "7a177b0eac1548376804395878587532d37ff455f374520304d10c2f9a6ee2d8",
+      "narrative": [
+        {
+          "text": "Specifies creating a sub-community as an admin by POSTing its name and metadata with the parent community as a query parameter, returning 422 if that community does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s177-updating-a-community",
+      "source": "sections/s177-updating-a-community.md",
+      "source_hash": "c90290bb7939c581d7b045e9803aa1abb913f35caf58fcc58026117746f32fce",
+      "narrative": [
+        {
+          "text": "Specifies PUT on a community to update its metadata, returning the updated object. Changing the non-editable id, uuid, handle or type gives 422.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s178-deleting-a-community",
+      "source": "sections/s178-deleting-a-community.md",
+      "source_hash": "7ff52b173db3bc4c4b84365f4e44ee1b1a9bb31e28718b645d1d5bc597bb97ff",
+      "narrative": [
+        {
+          "text": "Specifies DELETE of a community, returning 204, or 404 if it does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s179-patch-operations",
+      "source": "sections/s179-patch-operations.md",
+      "source_hash": "2d328e69f6f08d2c7bffcd2a857fce5593a4e2d3575942717409016181638baf",
+      "narrative": [
+        {
+          "text": "Says community metadata is changed as described in the page on modifying metadata via Patch.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s180-configuration-properties",
+      "source": "sections/s180-configuration-properties.md",
+      "source_hash": "728227f6a00c58d5920fe01a2bf7cf6ceca5ab3ab2f1a9f7130b0a9e88c58cae",
+      "narrative": [
+        {
+          "text": "Heading for the configuration properties endpoints; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s181-main-endpoint",
+      "source": "sections/s181-main-endpoint.md",
+      "source_hash": "c35331ac17789ef89b41602224acf874f0d09412b6c2078d8a19293fe9087d99",
+      "narrative": [
+        {
+          "text": "Says the main /api/config/properties endpoint is not implemented and returns 405, since there is no use case for listing all properties.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s182-single-property",
+      "source": "sections/s182-single-property.md",
+      "source_hash": "6da9a0522613c19470a6e14643ed756dd81becdfc4d488b1da467a8b85c65d42",
+      "narrative": [
+        {
+          "text": "Specifies GET of a single configuration property, which returns its name and values only for properties on the server's whitelist, and 404 otherwise.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s183-csrf-protection",
+      "source": "sections/s183-csrf-protection.md",
+      "source_hash": "9a0c6da2ebd6b73cc823d0566de452521d09632fdf2584ed8125e5da9cc246c9",
+      "narrative": [
+        {
+          "text": "Says every modifying request must send a valid CSRF token in the X-XSRF-TOKEN header, or it fails with 403 Forbidden.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s184-how-to-obtain-reset-a-csrf-token",
+      "source": "sections/s184-how-to-obtain-reset-a-csrf-token.md",
+      "source_hash": "5591eccf558c4c67451b77667ef21c6aca6eba09c6dd68c07459ffe11cef03c3",
+      "narrative": [
+        {
+          "text": "Says the CSRF token arrives automatically in an earlier response and may change at any time, mainly at login, logout or refresh, so clients must watch every response for it; a GET endpoint can also force a refresh.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s185-get-api-security-csrf",
+      "source": "sections/s185-get-api-security-csrf.md",
+      "source_hash": "64d341fa36a09c02f5f65b685516494f06fd10c07cfc89d15a6b9f9f378f83fe",
+      "narrative": [
+        {
+          "text": "Specifies GET /api/security/csrf, which issues a new CSRF token in the DSPACE-XSRF-TOKEN header and the DSPACE-XSRF-COOKIE cookie with an empty 204 response. It is meant mainly for obtaining the first token and should be used sparingly, and other verbs get 403.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s186-what-is-csrf-and-why-is-this-necessary",
+      "source": "sections/s186-what-is-csrf-and-why-is-this-necessary.md",
+      "source_hash": "9dde2ff98202004f8fcbd923da3f21f62dca96f21874f0353f0303a73db22e15",
+      "narrative": [
+        {
+          "text": "Explains that CSRF protection guards against cross-site request forgery, where a logged-in user is tricked into unwanted actions, and that DSpace follows OWASP guidance using a customised Spring Security CSRF protection that also works cross-domain. Clients on other domains must still be allowed through the CORS setting rest.cors.allowed-origins.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s187-how-does-csrf-protection-work-in-dspace-rest-api",
+      "source": "sections/s187-how-does-csrf-protection-work-in-dspace-rest-api.md",
+      "source_hash": "e64a374041367b313cd648750fc3c352be3a020d94e2558f500bcc46770d33b3",
+      "narrative": [
+        {
+          "text": "Explains the backend's CSRF mechanism: the API stores the token in an HttpOnly DSPACE-XSRF-COOKIE and sends it in the DSPACE-XSRF-TOKEN header, with SameSite=Lax over HTTP, which blocks cross-domain logins and suits development only, and SameSite=None; Secure over HTTPS for production. The client must keep the latest token and return it in X-XSRF-TOKEN on every modifying request, login included. The API compares header and cookie and returns 403 on a mismatch or a missing cookie.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s188-how-does-csrf-protection-work-in-dspace-user-int",
+      "source": "sections/s188-how-does-csrf-protection-work-in-dspace-user-int.md",
+      "source_hash": "e82400fdbca8489c1c951e114ef19ce61ba3dcbb0afb8d05306330b2109cb4ed",
+      "narrative": [
+        {
+          "text": "Explains how the Angular DSpace UI handles CSRF: it cannot read the HttpOnly cookie, so it copies the token from the DSPACE-XSRF-TOKEN header into its own XSRF-TOKEN cookie. It sends the token back in X-XSRF-TOKEN on modifying requests and updates the cookie whenever a response carries a new token.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s189-endpoints",
+      "source": "sections/s189-endpoints.md",
+      "source_hash": "b8b808ef42e268ebb36237e57d5f88b85e2ac88d09ccf269a5fd8b2daf26a976",
+      "narrative": [
+        {
+          "text": "Heading for the endpoints list, with a link to the REST overview documentation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s190-available-endpoints",
+      "source": "sections/s190-available-endpoints.md",
+      "source_hash": "1df6d446ae5a95eaaeac68de6bf296ec27dfb86f995eb87235f007669a411711",
+      "narrative": [
+        {
+          "text": "Lists the available REST endpoints, grouped under core, eperson, authn, config, discover, submission, system, versioning, workflow, tools, authz, statistics and pid, each linked to its own page.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s191-actuator-endpoints",
+      "source": "sections/s191-actuator-endpoints.md",
+      "source_hash": "75aa900945e320000499c7c10ebf60230dcefdb161b43cc667125afe512de404",
+      "narrative": [
+        {
+          "text": "Says the /actuator/info and /actuator/health endpoints are built with Spring Boot Actuator and enabled by default, and points to the actuator page.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s192-other-endpoints-raw-list",
+      "source": "sections/s192-other-endpoints-raw-list.md",
+      "source_hash": "57be2c4a8a9ee0faae67088ae8a420147c6f5d0b55d507734cfa6bd101740b6e",
+      "narrative": [
+        {
+          "text": "Gives a raw list of further planned endpoints, such as authorize, curate, export, bulk metadata edit and statistics, plus a configuration endpoint for client-relevant values and a feature endpoint for enabled features, with an open question on which values are safe to expose.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s193-other-endpoints-not-under-api-context",
+      "source": "sections/s193-other-endpoints-not-under-api-context.md",
+      "source_hash": "af1e0b20d254dfb57fba37cb70f43bfe70e4e7f9a8036b1a3e9e31527113729f",
+      "narrative": [
+        {
+          "text": "Lists the endpoints outside the /api context: OAI-PMH, OpenSearch, signposting linksets, and SWORD and SWORD2 when enabled.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s194-entity-type-endpoints",
+      "source": "sections/s194-entity-type-endpoints.md",
+      "source_hash": "e4cd87662da21192a0aff61c1fe4d48b4d6a51a7aca590472dc0a53f4b86983b",
+      "narrative": [
+        {
+          "text": "Opens the entity type endpoints, which list the kinds of entity, such as publication, person or journal, and link to the relationship types each may have; entities are items with a valid dspace.entity.type value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s195-main-endpoint",
+      "source": "sections/s195-main-endpoint.md",
+      "source_hash": "74cf39ad4461136f629d23e391ce55fa27c6caeb238356d27fcd6c1e3d23f43c",
+      "narrative": [
+        {
+          "text": "Specifies /api/core/entitytypes, which returns a paginated list of entity types, each with an id, a label such as Publication or Person, and a link to its relationship types.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s196-single-entity-type",
+      "source": "sections/s196-single-entity-type.md",
+      "source_hash": "695e88db18e8034716704fe09baf680a7740edd1e8d1b99fb202f9f91578a225",
+      "narrative": [
+        {
+          "text": "Specifies GET of a single entity type, returning its id and label with an unembedded link to its relationship types.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s197-relationship-types-for-the-current-entity-type",
+      "source": "sections/s197-relationship-types-for-the-current-entity-type.md",
+      "source_hash": "1ee1c81db0436a77564063c7ae3509f54fae79c4cd39f3e4e855701cf84f8936",
+      "narrative": [
+        {
+          "text": "Specifies the relationshiptypes link of an entity type, which embeds the relationship types where that entity type is on either side.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s198-get-entity-type-from-label",
+      "source": "sections/s198-get-entity-type-from-label.md",
+      "source_hash": "40da42d13587d23f683a1d6a5b3d30ae3cabbd342891c58f165026445dbced8c",
+      "narrative": [
+        {
+          "text": "Specifies looking up an entity type by its mandatory label, which returns the one matching type or 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s199-search-methods",
+      "source": "sections/s199-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the entity type search methods; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s200-findallbyauthorizedcollection",
+      "source": "sections/s200-findallbyauthorizedcollection.md",
+      "source_hash": "2e8053e00e6fb35f09ec2c0aefcecc679338a5a338f0494f43f79e99e8e101b8",
+      "narrative": [
+        {
+          "text": "Specifies the findAllByAuthorizedCollection search, which lists the entity types that have at least one collection the user may submit to.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s201-findallbyauthorizedexternalsource",
+      "source": "sections/s201-findallbyauthorizedexternalsource.md",
+      "source_hash": "db9ccfac0dabbd42c45de45e2cdf9485255f53afde1651687004a3a5da975a9e",
+      "narrative": [
+        {
+          "text": "Specifies the findAllByAuthorizedExternalSource search, which lists the entity types that have at least one collection the user may submit to and are supported by at least one external data source provider.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s202-eperson-groups-endpoints",
+      "source": "sections/s202-eperson-groups-endpoints.md",
+      "source_hash": "7fb24ed81f7a6ebc0858c04cb7cc69091ca0f0fe0f27d0b3e61141e1a4afb2b4",
+      "narrative": [
+        {
+          "text": "Heading for the EPerson groups endpoints, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s203-main-endpoint",
+      "source": "sections/s203-main-endpoint.md",
+      "source_hash": "5aae2bb19f5e35dace59dee9e357ac45d348a493273e709a6d2db7ade789a3e0",
+      "narrative": [
+        {
+          "text": "Names the main endpoint GET /api/eperson/groups; the block gives no further detail.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s204-single-eperson-group",
+      "source": "sections/s204-single-eperson-group.md",
+      "source_hash": "aafe038a22aa17a0a2d29d48a857413cb21ae34866e97bc628c882bf5750e035",
+      "narrative": [
+        {
+          "text": "Specifies GET of a single EPerson group, returning its id, name, metadata and permanent flag with links to its sub-groups and members. A permanent group is a required system group, such as Administrator, and cannot be removed or renamed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
