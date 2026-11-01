@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 b90b7bce604a1180.
+// folio-assistant-core tools/review-sheet-sync at template sha256 29c95391d09f7ad9.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 b90b7bce604a1180';
+const SCRIPT_VERSION = 'template sha256 29c95391d09f7ad9';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -627,6 +627,9 @@ function refreshLocked() {
     });
     markStale(rcs, csCol, basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)', lineOf);
     completeReady(rcs, csCol, prOf, stagingOf, builtOf, readyAt);
+    const csSt = {};
+    rcs.rows.forEach(r => { const cs = String(r[csCol]).trim(); if (cs) csSt[cs] = csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)); });
+    finishDoneRows(rcs, csCol, csSt, docProps_());
     try { capRows(ss, [CFG.RPC, CFG.RCS]); } catch (err) { /* cosmetic only */ }
     // Staging review page, from Agent: only where Agent names a preview, so a
     // sheet whose agent writes the cell directly keeps it.
@@ -2318,6 +2321,37 @@ function refreshDraft(rows) {
   });
   markStale(fb, c.cs, basisOfCs, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback, COLS.draft.agentFeedback || 'Feedback (agent)', lineOf, want);
   completeReady(fb, c.cs, prOf, stagingOf, builtOf, readyAt);
+  finishDoneRows(fb, c.cs, stOf, props);
+}
+/**
+ * A finished change set's row is hidden, and its whole row struck through, so
+ * open work is not cluttered (owner, 2026-11-01 21:50Z: "make sure complete
+ * changeset rows are hidden so not cluttered and that text of that whole row
+ * is crossed out"). Finished means its Agentic status (Agent tab) is Change
+ * merged or Closed; closing a change set writes Closed there when it closes
+ * the issue. A row that is reopened is shown again and the line removed.
+ * Only formatting changes: no value is written, so a watcher, which compares
+ * values, never reads it as new feedback. One property per change set
+ * ("d:CS-001") records what was applied, so an unchanged row is not touched.
+ */
+const DONE_STATUS = /^(change merged|closed)\b/i;
+function isDoneStatus(st) { return DONE_STATUS.test(String(st || '').trim()); }
+function finishDoneRows(s, csCol, stOf, props) {
+  if (csCol < 0 || !s.sh || typeof s.sh.hideRows !== 'function') return;
+  const width = Math.max(s.sh.getLastColumn(), 1);
+  s.rows.forEach((r, k) => {
+    const cs = String(r[csCol]).trim();
+    if (!cs) return;
+    const done = isDoneStatus(stOf[cs]);
+    const was = props.getProperty('d:' + cs) === '1';
+    if (done === was) return;
+    const row = k + s.top;
+    try {
+      s.sh.getRange(row, 1, 1, width).setFontLine(done ? 'line-through' : 'none');
+      if (done) s.sh.hideRows(row); else s.sh.showRows(row);
+      props.setProperty('d:' + cs, done ? '1' : '0');
+    } catch (err) { /* cosmetic only: tried again on the next run */ }
+  });
 }
 /** A dropdown name without its indent (U+2800 blanks; old "\u2514 "/"\u2502 " marks) or spaces. */
 const bareName = n => String(n).replace(/^[\s\u2800\u2502\u2514]+/, '').trim();

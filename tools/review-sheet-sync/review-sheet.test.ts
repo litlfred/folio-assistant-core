@@ -1769,3 +1769,32 @@ describe("a refresh keeps the links an agent put in its feedback (owner, 2026-11
       .toEqual([{ text: "#75", url: "https://u/" }]);
   });
 });
+
+describe("finished change sets are hidden and struck through", () => {
+  // Owner, 2026-11-01 21:50Z: "make sure complete changeset rows are hidden so
+  // not cluttered and that text of that whole row is crossed out".
+  const { finishDoneRows } = new Function(code + "\nreturn { finishDoneRows };")() as {
+    finishDoneRows: (s: object, csCol: number, stOf: Record<string, string>, props: object) => void;
+  };
+  const run = (stOf: Record<string, string>, store: Record<string, string> = {}) => {
+    const log: string[] = [];
+    const sh = {
+      getLastColumn: () => 5,
+      getRange: (row: number, _c: number, _n: number, w: number) => ({ setFontLine: (l: string) => log.push(`line ${row} ${w} ${l}`) }),
+      hideRows: (row: number) => log.push(`hide ${row}`),
+      showRows: (row: number) => log.push(`show ${row}`),
+    };
+    const props = { getProperty: (k: string) => store[k] ?? null, setProperty: (k: string, v: string) => { store[k] = v; } };
+    finishDoneRows({ sh, top: 3, rows: [["CS-001"], ["CS-002"], [""], ["CS-003"]] }, 0, stOf, props);
+    return { log, store };
+  };
+  test("Change merged and Closed rows are struck through across the row and hidden; others untouched", () => {
+    const { log, store } = run({ "CS-001": "Change merged", "CS-002": "PR open", "CS-003": "Closed" });
+    expect(log).toEqual(["line 3 5 line-through", "hide 3", "line 6 5 line-through", "hide 6"]);
+    expect(store).toEqual({ "d:CS-001": "1", "d:CS-003": "1" });
+  });
+  test("an unchanged row is not touched again, and a reopened row is shown with the line removed", () => {
+    const { log } = run({ "CS-001": "Change merged", "CS-003": "Working" }, { "d:CS-001": "1", "d:CS-003": "1" });
+    expect(log).toEqual(["line 6 5 none", "show 6"]);
+  });
+});
