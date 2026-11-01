@@ -67,7 +67,7 @@ _46 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`normative-statements`](skills/content/folio-document-adapter/normative-statements.md) | Carry a **recommendation, requirement or rule** in a document folio — the thing an L1 health-policy guidance note, a standard, or a terms-of-reference document exists to state. |
 | [`public-comment-channels`](skills/content/folio-document-adapter/public-comment-channels.md) | Set up the channels a public-comment release goes out on (an offline Excel sheet, a Google Form, a GitHub issue form, and the review sheet), each limited to the release's fixed references, with the… |
 | [`public-comment`](skills/content/folio-document-adapter/public-comment.md) | Run a **public review** of a document folio. |
-| [`review-sheet-agent-columns`](skills/content/folio-document-adapter/review-sheet-agent-columns.md) | Whenever an agent works on a change set of a folio whose review sheet is kept by the Tool `review-sheet-sync`, it writes the Agent tab's columns for that change set and its comments as it goes:… |
+| [`review-sheet-agent-columns`](skills/content/folio-document-adapter/review-sheet-agent-columns.md) | Whenever an agent works on a change set of a folio whose review sheet is kept by the Tool `review-sheet-sync`, it writes the Agent tabs' columns for that change set and its comments as it goes:… |
 | [`review-sheet-script`](skills/content/folio-document-adapter/review-sheet-script.md) | Build, install and reuse the Google Apps Script that keeps a review sheet's links and joined columns current (Tool `review-sheet-sync`). |
 
 **`skills/content/requirements-planning/`** (2)
