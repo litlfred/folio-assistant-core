@@ -490,8 +490,15 @@ seven hours and never reached Completed. So:
 - Every log needs a watcher: the setup is not complete until an agent
   thread is watching the sheet. A thread acts only when something wakes it,
   so the watcher needs a scheduled wake: an hourly scheduled task, plus a
-  chain of 20-minute delayed wakes (`send_later`) that each pass renews.
-  Without one, a Ready for agent waits until somebody happens to ask.
+  chain of 3-minute delayed wakes (`send_later`) that each pass renews
+  (owner, 2026-11-01 10:20Z: "instead of 1-minute lets do 3"). Each wake runs the mechanical
+  check of skill [`review-log-watch`](review-log-watch.md) first, and does
+  agent work only when it reports a change. For that check the script
+  writes, in a drafting sheet, a hash of every cell people set on
+  Contributor Feedback to the hidden Watch tab (`F1:I1`: `Cells hash`, the
+  hash, `Checked (UTC)`, the time), on every refresh and timer tick
+  (Q-WATCH4 A). Without a watcher, a Ready for
+  agent waits until somebody happens to ask.
 
 ## One agent column, status on top (owner, 2026-10-31, option A)
 

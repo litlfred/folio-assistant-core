@@ -49,6 +49,13 @@
  * processes"*, reusable for any document's public comment; the skill is
  * `public-comment`, "The review sheet's Apps Script".
  *
+ * ## `review-log-watch` — owner, 2026-11-01 (Q-WATCH1 B)
+ *
+ * The mechanical check a review-log watcher runs on every poll: has anything
+ * people set on the sheet, or any open issue, changed since the last poll?
+ * Only then does the agent work. Skill `review-log-watch`, process
+ * `processes/content/review-log-watch.bpmn`.
+ *
  * ## One Tool per folder — bean `tdir`
  *
  * Each Tool is declared in `<id>/<id>.ts` beside this file, with its scripts
