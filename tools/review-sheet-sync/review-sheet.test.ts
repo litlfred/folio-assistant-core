@@ -506,11 +506,14 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json")).map((r) => r[0])).not.toContain("Instructions - Dropdown");
     const d = tabInstructions(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
     const cf = d["Contributor Feedback"];
-    expect(cf).toContain("Blue = your input, by the Authoring Committee");
-    expect(cf).toContain("Ready for agent (Orange) back to No");
+    expect(cf).toContain("Column colours:     your input, by the Authoring Committee");
+    expect(cf).toContain("sets Ready for agent back to No");
+    expect(cf).toContain("Reviewers update Contributor Feedback.");
     expect(cf).toContain("Filter views");
-    // Colour words are capitalised, so the sheet can bold and colour each one.
-    expect(cf).not.toMatch(/\b(blue|green|orange|grey)\b/);
+    // No colour is named: the script colours the column names (owner, 2026-11-01).
+    for (const t of [...Object.values(d), ...Object.values(tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json")))]) {
+      expect(t).not.toMatch(/\b(blue|green|orange|grey)\b/i);
+    }
     expect(cf).toContain("/en/cat-harness/processes/contributor-feedback.html");
     const p = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
     expect(p["Review Public Comments"]).toContain("one row per public comment");
@@ -992,25 +995,40 @@ describe("the Config tab's rows", () => {
 });
 
 describe("the colour key in Instructions text", () => {
-  const keyRuns = new Function("SpreadsheetApp", `${code}\nreturn keyRuns;`)({}) as (t: string) => [number, number, string][];
+  const keyRuns = new Function("SpreadsheetApp", `${code}\nreturn keyRuns;`)({}) as (t: string, h?: Record<string, string>) => [number, number, string][];
+  const fillGroup = new Function("SpreadsheetApp", `${code}\nreturn fillGroup;`)({}) as (h: string) => string | null;
   const text = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"))["Review Change Sets"];
-  const runs = keyRuns(text);
+  const heads = { "Ready for agent": "orange", "Ready for merge": "orange", "Agentic status": "green", "Agentic status (filter)": "green", "Committee Feedback": "blue", "Disposition": "blue", "Staging review": "green" };
+  const runs = keyRuns(text, heads);
   const words = runs.map(([a, z, c]) => [text.slice(a, z), c]);
 
-  test("each key segment on the first line is coloured whole, in its own colour", () => {
-    expect(words.slice(0, 4).map(([w]) => w.split(" = ")[0])).toEqual(["Blue", "Green", "Orange", "Grey"]);
-    expect(words[0][0]).toContain("your input");
+  test("each key phrase on the first line is coloured whole, in key order, naming no colour", () => {
+    expect(words[0][0]).toBe("your input, by the Feedback Review Committee");
+    expect(words[1][0]).toBe("written by the agent");
     expect(new Set(words.slice(0, 4).map(([, c]) => c)).size).toBe(4);
   });
 
-  test("later colour words are coloured one by one, with the key's colour", () => {
+  test("column names are coloured like their header, whole words, longest first", () => {
     const later = words.slice(4);
-    expect(later.length).toBeGreaterThan(3);
-    for (const [w, c] of later) expect(c).toBe(words.find(([k]) => k.toLowerCase().startsWith(w.toLowerCase()))![1]);
+    for (const [w, c] of later) expect(["#1f5fa8", "#2e7d32", "#c25e00", "#666666"]).toContain(c);
+    expect(later).toContainEqual(["Ready for agent", "#c25e00"]);
+    expect(later).toContainEqual(["Ready for merge", "#c25e00"]);
+    expect(later).toContainEqual(["Committee Feedback", "#1f5fa8"]);
+    expect(later).toContainEqual(["Agentic status", "#2e7d32"]);
+    // No overlapping runs.
+    for (let i = 1; i < runs.length; i++) expect(runs[i][0]).toBeGreaterThanOrEqual(runs[i - 1][1]);
   });
 
-  test("text without a colour word gets no runs", () => {
-    expect(keyRuns("Kept by the agent's watcher. Do not edit.")).toEqual([]);
+  test("header fills map to the key colour", () => {
+    expect(fillGroup("#9dc3e7")).toBe("blue");
+    expect(fillGroup("#f4b16a")).toBe("orange");
+    expect(fillGroup("#93c27c")).toBe("green");
+    expect(fillGroup("#b6b6b6")).toBe("grey");
+    expect(fillGroup("#ffffff")).toBe(null);
+  });
+
+  test("text without a colour word or column name gets no runs", () => {
+    expect(keyRuns("Kept by the agent's watcher. Do not edit.", heads)).toEqual([]);
   });
 });
 
@@ -1452,7 +1470,7 @@ describe("hover text on every column head (owner, 2026-10-31)", () => {
     const heads: [string, string[]][] = [
       ["rpc", ["No.", "Sections", "Page", "Line no(s) / Table / Figure", "Comment / issue", "Suggested revision", "Change Set", "TWG (agent)", "TWG (human)", "Comment type", "Committee Feedback (initials)", "Disposition", "Status", "Agentic status", "Staging review"]],
       ["rcs", ["Change-set", "Title", "Sections", "Pages", "Public Comments", "Suggested Revisions", "PC Committee Feedback", "Dispositions", "TWG (PCs)", "TWG (CS)", "Committee Feedback (CL)", "Architect Feedback (AB)", "Ready for agent", "Ready for merge", "Disposition (agent)", "Change Set Feedback (agent)", "Agentic status", "Staging review", "Agentic status (filter)"]],
-      ["draft", ["Change-set", "Title", "Selected Sections", "Section links", "Contributor Feedback (initials/name)", "Disposition", "Ready for agent", "Ready for merge", "Disposition (agent)", "Feedback (agent)", "Agentic status (filter)", "Issue", "Agentic status", "Staging review"]],
+      ["draft", ["Change-set", "Title", "Selected Sections", "Section links", "Contributor Feedback (initials/name)", "Disposition", "Ready for agent", "Ready for merge", "Issue", "Disposition (agent)", "Feedback (agent)", "Agentic status", "Agentic status (filter)", "Staging review"]],
       ["agent", ["No.", "Comment ref", "Agentic status", "Agentic action taken", "Agentic applied in (section / version)", "Agentic handled by", "Agentic date actioned", "Change-sets", "Change-set", "Title", "Issue", "Pull request (change set)", "Staging review page (change set)", "What the PRs changed (change set)", "Agent completed (UTC, change set)", "Feedback basis (change set)", "Staging built (UTC, change set)", "PR head (change set)", "Staging built from (change set)", "Staging deploy (change set)", "Disposition (change set)", "QA gate (change set)", "QA report (change set)", "Agent conversation (change set)"]],
     ];
     for (const [k, hs] of heads) for (const h of hs) expect([k, h, fns.headerNoteFor(k, h).length > 10]).toEqual([k, h, true]);
@@ -1613,9 +1631,51 @@ describe("Agentic status sits left of its filter column (owner, 2026-10-31)", ()
     expect(placeBefore(sheetWith(["Change-set", "Agentic status (filter)", "Issue", "Agentic status"], moves), "Agentic status", "Agentic status (filter)")).toBe(true);
     expect(moves).toEqual([[4, 2]]);
   });
+  test("unmerges the title row (B1) for the move and merges it again, keeping its text", () => {
+    const log: string[] = [];
+    const header = ["Change-set", "Agentic status (filter)", "Issue", "Agentic status"];
+    const title = { text: "Contributor Log" };
+    const merge = {
+      getA1Notation: () => "B1:D1",
+      getCell: () => ({ getRichTextValue: () => title }),
+      breakApart: () => log.push("break B1:D1"),
+    };
+    const sh = {
+      getLastRow: () => 2, getLastColumn: () => header.length,
+      getRange: (r: number | string, c?: number) => typeof r === "string"
+        ? { merge: () => log.push(`merge ${r}`), getCell: () => ({ setRichTextValue: (v: unknown) => log.push(`text ${v === title}`) }) }
+        : { getDisplayValues: () => [["Instructions", "", "", ""], header], getMergedRanges: () => [merge], col: c },
+      moveColumns: (range: { col: number }, to: number) => log.push(`move ${range.col}->${to}`),
+    };
+    expect(placeBefore(sh, "Agentic status", "Agentic status (filter)")).toBe(true);
+    expect(log).toEqual(["break B1:D1", "move 4->2", "merge B1:D1", "text true"]);
+  });
   test("leaves it when it is already there", () => {
     const moves: Array<[number, number]> = [];
     expect(placeBefore(sheetWith(["Change-set", "Agentic status", "Agentic status (filter)"], moves), "Agentic status", "Agentic status (filter)")).toBe(false);
     expect(moves).toEqual([]);
+  });
+});
+
+describe("the Selected Sections dropdown reminder (core#472)", () => {
+  const src = readText(join(import.meta.dir, "review-sheet.gs"), "utf8");
+  const fns = new Function("SpreadsheetApp", `${src}\nreturn { multiPicked, setData: (d) => { DATA = d; } };`)({}) as {
+    multiPicked: (cells: { getDisplayValues: () => string[][] }, top: number) => number[];
+    setData: (d: unknown) => void;
+  };
+  fns.setData({ TOC: [["Front matter"], ["Annexes"], ["Glossary"]] });
+  const cells = (vals: string[]) => ({ getDisplayValues: () => vals.map((v) => [v]) });
+
+  test("names the rows holding two sections, which a single-pick rule marks Invalid", () => {
+    expect(fns.multiPicked(cells(["Front matter", "Front matter, Annexes", "", "Annexes, Glossary"]), 3)).toEqual([4, 6]);
+  });
+  test("two picks are not taken as proof the tick is on: the reminder is skipped only when the person said it is done", () => {
+    expect(src).not.toMatch(/dropdownDone'\) \|\| multiPicked/);
+    expect(src).toMatch(/if \(had && props\.getProperty\('dropdownDone'\)\) return;/);
+  });
+  test("the reminder also goes to the execution log, for an Install run from the editor", () => {
+    const body = src.slice(src.indexOf("function checkDropdown("), src.indexOf("function normalizeRows("));
+    expect(body).toMatch(/console\.log\(msg\)/);
+    expect(body).toMatch(/ss\.toast\(msg,/);
   });
 });

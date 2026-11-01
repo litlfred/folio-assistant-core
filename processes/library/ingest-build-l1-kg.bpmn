@@ -46,6 +46,7 @@
         <bpmn:flowNodeRef>Task_Manifest</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Assets</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Bind</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Glossary</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Link</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_KgBuilt</bpmn:flowNodeRef>
       </bpmn:lane>
@@ -92,6 +93,14 @@ local path or remote URL">
       <bpmn:incoming>Flow_k4</bpmn:incoming>
       <bpmn:outgoing>Flow_k5</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Glossary" name="Read glossary and abbreviations into candidate terms">
+      <bpmn:extensionElements>
+        <bootstrap.processes:skill ref="glossary-terms"/>
+      </bpmn:extensionElements>
+      <bpmn:documentation>Owner, 2026-11-01 (folio-assistant-core#498, Q-GLO-1 C): the source's glossary and abbreviations sections become candidate terms of a folio-glossary/v1 scheme with the Tool glossary-from-source, verbatim, each with source file#line, and an acronym as the notation of the term it expands. Terms a person owns are never changed, and only a person moves a term to authored. A source with no such section skips this step with nothing written.</bpmn:documentation>
+      <bpmn:incoming>Flow_k5</bpmn:incoming>
+      <bpmn:outgoing>Flow_k5b</bpmn:outgoing>
+    </bpmn:serviceTask>
     <bpmn:task id="Task_Link" name="Link L1 nodes into
 the corpus graph">
       <bpmn:extensionElements>
@@ -99,7 +108,7 @@ the corpus graph">
       </bpmn:extensionElements>
 
       <bpmn:documentation>Anything in library/ is L1 source content. A knowledge-graph reference from any artefact -- paper, L2, L3 -- resolves to it through library/.</bpmn:documentation>
-      <bpmn:incoming>Flow_k5</bpmn:incoming>
+      <bpmn:incoming>Flow_k5b</bpmn:incoming>
       <bpmn:outgoing>Flow_k6</bpmn:outgoing>
       <bpmn:dataOutputAssociation id="DOA_Task_Link">
         <bpmn:targetRef>DSR_corpus</bpmn:targetRef>
@@ -112,7 +121,8 @@ the corpus graph">
     <bpmn:sequenceFlow id="Flow_k2" sourceRef="Task_Dublin" targetRef="Task_Manifest" />
     <bpmn:sequenceFlow id="Flow_k3" sourceRef="Task_Manifest" targetRef="Task_Assets" />
     <bpmn:sequenceFlow id="Flow_k4" sourceRef="Task_Assets" targetRef="Task_Bind" />
-    <bpmn:sequenceFlow id="Flow_k5" sourceRef="Task_Bind" targetRef="Task_Link" />
+    <bpmn:sequenceFlow id="Flow_k5" sourceRef="Task_Bind" targetRef="Task_Glossary" />
+    <bpmn:sequenceFlow id="Flow_k5b" sourceRef="Task_Glossary" targetRef="Task_Link" />
     <bpmn:sequenceFlow id="Flow_k6" sourceRef="Task_Link" targetRef="EndEvent_KgBuilt" />
     <bpmn:dataStoreReference id="DSR_corpus" name="Corpus" dataStoreRef="corpus"/>
   </bpmn:process>
@@ -125,6 +135,7 @@ the corpus graph">
       <bpmndi:BPMNShape id="Task_Manifest_di" bpmnElement="Task_Manifest"><dc:Bounds x="630" y="110" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Assets_di" bpmnElement="Task_Assets"><dc:Bounds x="850" y="110" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Bind_di" bpmnElement="Task_Bind"><dc:Bounds x="1070" y="110" width="120" height="120" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Glossary_di" bpmnElement="Task_Glossary"><dc:Bounds x="1260" y="110" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Link_di" bpmnElement="Task_Link"><dc:Bounds x="1260" y="310" width="150" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_KgBuilt_di" bpmnElement="EndEvent_KgBuilt"><dc:Bounds x="1507" y="332" width="36" height="36" /></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_k1_di" bpmnElement="Flow_k1">
@@ -145,9 +156,11 @@ the corpus graph">
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_k5_di" bpmnElement="Flow_k5">
         <di:waypoint x="1190" y="170" />
-        <di:waypoint x="1225" y="170" />
-        <di:waypoint x="1225" y="350" />
-        <di:waypoint x="1260" y="350" />
+        <di:waypoint x="1260" y="170" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_k5b_di" bpmnElement="Flow_k5b">
+        <di:waypoint x="1320" y="230" />
+        <di:waypoint x="1320" y="310" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_k6_di" bpmnElement="Flow_k6">
         <di:waypoint x="1410" y="350" />

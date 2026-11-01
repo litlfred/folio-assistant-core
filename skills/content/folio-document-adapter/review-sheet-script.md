@@ -490,8 +490,15 @@ seven hours and never reached Completed. So:
 - Every log needs a watcher: the setup is not complete until an agent
   thread is watching the sheet. A thread acts only when something wakes it,
   so the watcher needs a scheduled wake: an hourly scheduled task, plus a
-  chain of 20-minute delayed wakes (`send_later`) that each pass renews.
-  Without one, a Ready for agent waits until somebody happens to ask.
+  chain of 3-minute delayed wakes (`send_later`) that each pass renews
+  (owner, 2026-11-01 10:20Z: "instead of 1-minute lets do 3"). Each wake runs the mechanical
+  check of skill [`review-log-watch`](review-log-watch.md) first, and does
+  agent work only when it reports a change. For that check the script
+  writes, in a drafting sheet, a hash of every cell people set on
+  Contributor Feedback to the hidden Watch tab (`F1:I1`: `Cells hash`, the
+  hash, `Checked (UTC)`, the time), on every refresh and timer tick
+  (Q-WATCH4 A). Without a watcher, a Ready for
+  agent waits until somebody happens to ask.
 
 ## One agent column, status on top (owner, 2026-10-31, option A)
 
@@ -665,13 +672,15 @@ the review sheets (owner, 2026-10-31):
   gates carry their own lock that starts with the owner alone.
 - **The Config tab** is visible, never hidden, and locked to the owner: the
   agent writes it, people can read what the sheet is set up for.
-- **The colour key is shown in its colours** (owner, 2026-10-31: "no color
-  coded instructions"). In each tab's Instructions text the key on the first
-  line ("Blue = your input ...") is coloured segment by segment, and every
-  later Blue, Green, Orange or Grey word is coloured by itself, bold, in a
-  darker shade of its column colour. The script's `colourInstructions` does
-  it on every refresh, so text the agent rewrites through the API, which drops
-  the colours, gets them back within a minute.
+- **Instructions name no colour** (owner, 2026-11-01: "make the text colored
+  not have the word"). The key on the first line reads "Column colours:"
+  then one phrase per colour ("your input, by ...", "written by the agent",
+  ...), each shown in its colour, and the steps name columns ("Reviewers
+  update Contributor Feedback", "an Editor sets Ready for agent"), never a
+  colour. The script's `colourInstructions` shows each column name bold in a
+  darker shade of that column's header fill, on every refresh, so text the
+  agent rewrites through the API, which drops the colours, gets them back
+  within a minute.
 - **Which template** depends on the document's authoring stage: the
   Contributor template while it is being drafted and authored, the Public
   Comment Review template once public comment opens.
@@ -746,7 +755,7 @@ topic), and each change set gets a GitHub issue.
 | tab | who writes | columns |
 |---|---|---|
 | **Contributor Feedback** | people, plus the Apps Script | one row per change set. Grey, mechanical: **Change-set** (the script gives a used row the next `CS-nnn` once; it stays with the row). Blue, people: **Title** (human-controlled), **Selected Sections** (a multi-select dropdown of the document's table of contents, each section indented under its chapter by three U+2800 blanks per level, since a dropdown cannot nest (owner, 2026-10-31; a "└ " mark was tried first and found too cluttered); not real spaces, because Sheets trims a multi-select cell and the first chip would lose them and read as Invalid; it stays plain, because a dropdown chip cannot carry a link), any number of **Contributor Feedback (…)** columns, one per contributor, with their initials or name in the brackets (e.g. `Contributor Feedback (CL)`); the script reads every column whose header is `Contributor Feedback` or starts `Contributor Feedback (`; **Disposition** (a dropdown: Pending, Accepted, Partially accepted, Not accepted, Noted, Duplicate, Out of scope; owner, 2026-10-31), the committee's verdict on the row. Orange: **Ready for agent**, **Ready for merge** (Yes/No, editors). Grey, mechanical, by the script (owner, 2026-10-31): **Section links** (each selected section on its own line, linked to its place on the document page, like the Sections column of the public-comment log; it is mechanical, a copy of Selected Sections with links, so grey, not green). Green, by the agent: **Feedback (agent)**, right of Ready for merge (owner, 2026-10-31): the agent's proposed direction for resolving the change set, so people react to a proposal rather than draft from nothing; it is not a person's feedback, the script leaves it out of the Contributor Feedback columns, and it decides nothing. Green, by the script from Agent: **Issue** (`<repo>#n`, linked), **Agentic status** (as in public-comment mode: one line per PR, `<repo>#n (status, completed) · what it changed`), **Staging review** (a "review" link to the change set's review page on its staging preview, `STAGING/<branch>/en/review/`, while its PR is open; the column was "Staging review page" until 2026-10-31, owner), **Agentic status (filter)** (the change set's status as one plain value, for the "By agentic status" filter view; green like the other columns the script copies from Agent, owner 2026-10-31) |
-| **Agent** | the agent only | one row per change set: Change-set, Issue (URL), Agentic status, Pull request (change set), What the PRs changed (change set), Agent completed (UTC, change set), Staging review page (change set), Feedback basis (change set). The agent writes it as each step completes, by the steps of the `review-sheet-agent-columns` skill (core#315, not yet merged); a drafting sheet has no per-comment rows, so only its change-set columns apply |
+| **Agent** | the agent only | one row per change set: Change-set, Issue (URL), Agentic status, Pull request (change set), What the PRs changed (change set), Agent completed (UTC, change set), Staging review page (change set), Feedback basis (change set). The agent writes it as each step completes, by the steps of the `review-sheet-agent-columns` skill; a drafting sheet has no per-comment rows, so only its change-set columns apply |
 | **TOC** (hidden) | the script | the Sections dropdown's list and each entry's link. Rewritten on every refresh, so it follows the document |
 
 Colours as in public-comment mode: grey mechanical, blue human, orange
@@ -840,8 +849,11 @@ A new document starts from its "make a copy" link
 installTriggers. The script in the template needs no change.
 
 **Locks in a template and its copies** (owner, 2026-10-31): every cell is
-locked to the owner except the blue, human-controlled columns. That covers
-the headers, the grey mechanical and green agent-derived columns, the
+locked to the owner except the blue, human-controlled columns, and the
+heads of the Contributor Feedback (or Committee Feedback) columns, where
+each contributor writes their initials (owner, 2026-11-01: "why is
+contributor feedback locked? ... thats an error"). The lock covers the other
+headers, the grey mechanical and green agent-derived columns, the
 Config tab, the Agent tab and the hidden TOC. The orange Ready-for-agent and
 Ready-for-merge columns have a lock of their own, **"Ready columns:
 editors"**, which starts with only the owner; the owner adds each document

@@ -179,12 +179,13 @@ function markSetup(ss, state) {
 }
 
 function showVersion() {
-  SpreadsheetApp.getUi().alert('Review sheet script',
-    'This sheet runs: ' + SCRIPT_VERSION + '\n\n' +
-    'The latest published script: ' + LATEST_URL + '\n' +
-    'Its stamp is near the top ("at ..."). If it differs, the owner pastes it once into the Folio Review Library ' +
-    '(' + LIBRARY_URL + '); every sheet that uses the library then runs it. A sheet with the whole script pasted in ' +
-    'instead: Extensions, then Apps Script, replace Code.gs, save, and Review links, then Refresh now.',
+  // Short and plain (owner, 2026-11-01: the old text was "long, unclear").
+  const build = String(SCRIPT_VERSION).replace(/^template sha256 /, '');
+  SpreadsheetApp.getUi().alert('Which version is this?',
+    'Build: ' + build + '\n\n' +
+    'Newest build: the "at ..." line near the top of ' + LATEST_URL + '\n\n' +
+    'Different? Ask the agent for the Code.gs copy page, paste it over Code.gs in the Folio Review Library (' + LIBRARY_URL + ') and save, ' +
+    'then choose Review links, Refresh now in each sheet.',
     SpreadsheetApp.getUi().ButtonSet.OK);
 }
 
@@ -241,13 +242,17 @@ function applyEditors(ss) {
 
 /**
  * Drafting: make sure Selected Sections is a dropdown of the hidden TOC tab,
- * and tell the person the steps a script cannot take. A missing dropdown is
+ * and tell the person the step a script cannot take. A missing dropdown is
  * added; an existing one is left alone, since writing it again would clear
- * its "Allow multiple selections" tick. Neither Apps Script nor the Sheets
- * API can read that tick, so the box is skipped only on
- * evidence: a cell already holding two sections from the list (or, on a sheet
- * installed before 2026-10-31, the person having said it is done). The same
- * steps are in the Config tab's Instructions row.
+ * its "Allow multiple selections" tick. Apps Script cannot read or set that
+ * tick, and the Sheets API refuses to set it on a range rule, so the reminder
+ * is given at every Install. A cell holding two sections is no proof the tick
+ * is on: the rule may still mark it Invalid (core#472, the DTH-PHC and DTH-PC
+ * logs), so such rows are named in the reminder instead. The reminder goes
+ * to the execution log as well as a toast, since a toast is missed when
+ * Install runs from the editor. A sheet installed before 2026-10-31 whose
+ * person said it is done stays quiet. The same steps are in the Config tab's
+ * Instructions row.
  */
 function checkDropdown(ss) {
   if (!ss) throw new Error(RUN_THIS);
@@ -263,16 +268,21 @@ function checkDropdown(ss) {
       .setAllowInvalid(true).build());
   }
   const props = docProps_();
-  if (had && (props.getProperty('dropdownDone') || multiPicked(cells))) return;
+  if (had && props.getProperty('dropdownDone')) return;
+  const multi = had ? multiPicked(cells, s.top) : [];
+  const msg = 'Selected Sections is ' + (had ? 'a dropdown' : 'now a dropdown of the document\'s sections') +
+    '. One step only a person can take: select the "' + COLS.draft.sections +
+    '" column, choose Data, then Data validation, open its rule, set Advanced options > Display style to Chip, then tick Allow multiple selections (greyed out until the style is Chip), and press Done. ' +
+    (multi.length ? 'Until it is ticked, rows with two sections (row ' + multi.slice(0, 5).join(', ') + (multi.length > 5 ? ', ...' : '') + ') show Invalid. ' : '') +
+    'If it is already ticked, there is nothing to do. The same steps are on the Config tab.';
+  // The execution log, for an Install run from the editor, where no toast shows.
+  console.log(msg);
   // A toast, never a dialog: a dialog waits for an answer in the sheet, and
   // when Install is run from the Apps Script editor nobody sees it, so the
   // run hangs until Apps Script stops it after 6 minutes (owner, 2026-10-31:
   // "Exceeded maximum execution time" on the DTH-SC log).
   try {
-    ss.toast('Selected Sections is ' + (had ? 'a dropdown' : 'now a dropdown of the document\'s sections') +
-      '. One step only a person can take: select the "' + COLS.draft.sections +
-      '" column, choose Data, then Data validation, open its rule, set Advanced options > Display style to Chip, then tick Allow multiple selections (greyed out until the style is Chip), and press Done. ' +
-      'The same steps are on the Config tab.', 'Finish the dropdown', 30);
+    ss.toast(msg, 'Finish the dropdown', 30);
   } catch (e) { /* a toast is a courtesy */ }
 }
 
@@ -314,18 +324,34 @@ function placeBefore(sh, name, before) {
   if (!sh) return false;
   const s = readSheet(sh), a = s.header.indexOf(name), b = s.header.indexOf(before);
   if (a < 0 || b < 0 || a === b - 1) return false;
+  // Sheets refuses to move part of a merged cell, and the title row's B1 is
+  // merged across the header (owner, 2026-11-01: the move silently failed on
+  // the Contributor Log and template). Unmerge the rows above the header,
+  // move, then merge the same cells again with their text kept.
+  const above = s.top - 2;
+  const merged = above > 0 && sh.getRange(1, 1, above, sh.getLastColumn()).getMergedRanges
+    ? sh.getRange(1, 1, above, sh.getLastColumn()).getMergedRanges() : [];
+  const kept = merged.map(m => ({ a1: m.getA1Notation(), rich: m.getCell(1, 1).getRichTextValue() }));
+  merged.forEach(m => m.breakApart());
   // moveColumns' destination is the index BEFORE the move, 1-based.
   sh.moveColumns(sh.getRange(1, a + 1, 1, 1), b + 1);
+  kept.forEach(k => {
+    const r = sh.getRange(k.a1);
+    r.merge();
+    if (k.rich) r.getCell(1, 1).setRichTextValue(k.rich);
+  });
   return true;
 }
 
-/** True when some cell holds two or more sections from the list, which only a multi-select rule allows. */
-function multiPicked(cells) {
+/** Row numbers of the cells holding two or more sections from the list: a single-pick rule marks them Invalid. */
+function multiPicked(cells, top) {
   const names = new Set(DATA.TOC.map(t => bareName(t[0])));
-  return cells.getDisplayValues().some(([v]) => {
+  const rows = [];
+  cells.getDisplayValues().forEach(([v], k) => {
     const parts = String(v).split(',').map(x => x.trim()).filter(Boolean);
-    return parts.length > 1 && parts.every(x => names.has(bareName(x)));
+    if (parts.length > 1 && parts.every(x => names.has(bareName(x)))) rows.push(top + k);
   });
+  return rows;
 }
 
 /**
@@ -494,6 +520,7 @@ function refreshIfDirty() {
     checkSheet(SpreadsheetApp.getActive());
     refreshDraft(full ? null : rows);
     try { capRows(SpreadsheetApp.getActive(), [CFG.FEEDBACK]); } catch (err) { /* cosmetic only */ }
+    writeWatchHash(SpreadsheetApp.getActive());
   } finally {
     props.setProperty('lastMs', String(Date.now() - t0));
     lock.releaseLock();
@@ -527,7 +554,11 @@ function refreshLocked() {
   {
     loadConfig(SpreadsheetApp.getActive());
     checkSheet(SpreadsheetApp.getActive());
-    if (DRAFTING) return refreshDraft();
+    if (DRAFTING) {
+      const out = refreshDraft();
+      writeWatchHash(SpreadsheetApp.getActive());
+      return out;
+    }
     const ss = SpreadsheetApp.getActive();
     // Added inside the run, under its lock, so no other refresh writes by a
     // column position this changes (memory: never move columns mid-refresh).
@@ -823,15 +854,67 @@ function headerNotes(ss) {
   });
 }
 const KEY_COLOURS = { blue: '#1f5fa8', green: '#2e7d32', orange: '#c25e00', grey: '#666666' };
+const KEY_ORDER = ['blue', 'green', 'orange', 'grey'];
+const KEY_LEAD_RE = /^Column colou?rs:\s*/;
 const KEY_WORD_RE = /\b(blue|green|orange|grey)\b/gi;
-function keyRuns(text) {
+/**
+ * Which key colour a header's fill is: grey when its channels are close,
+ * otherwise the strongest channel (blue, green, or red for orange). A white
+ * or unfilled head has no colour.
+ */
+function fillGroup(hex) {
+  const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(String(hex || ''));
+  if (!m) return null;
+  const [r, g, b] = [m[1], m[2], m[3]].map(x => parseInt(x, 16) / 255);
+  if (Math.min(r, g, b) > 0.95) return null;
+  if (Math.max(r, g, b) - Math.min(r, g, b) < 0.08) return 'grey';
+  return b >= r && b >= g ? 'blue' : g >= r ? 'green' : 'orange';
+}
+/**
+ * Column names to colour in the Instructions text, each with its header's
+ * key colour (owner, 2026-11-01: "make use of colors match the column
+ * headers"). A people's column with initials in its head ("Contributor
+ * Feedback (CL)") is also found by its bare name.
+ */
+function headerColours(ss) {
+  const out = {};
+  ss.getSheets().forEach(sh => {
+    if (sh.isSheetHidden() || sh.getName() === CONFIG_TAB || sh.getLastColumn() < 1) return;
+    const n = Math.min(5, sh.getLastRow());
+    if (n < 1) return;
+    const row = legendCount(sh.getRange(1, 1, n, 1).getDisplayValues().map(r => r[0])) + 1;
+    const r = sh.getRange(row, 1, 1, sh.getLastColumn());
+    const heads = r.getDisplayValues()[0], fills = r.getBackgrounds()[0];
+    heads.forEach((h, i) => {
+      const name = String(h).trim(), grp = fillGroup(fills[i]);
+      if (!name || !grp) return;
+      if (!out[name]) out[name] = grp;
+      const bare = /^(.*Feedback) \((?!agent\)).*\)$/.exec(name);
+      if (bare && !out[bare[1]]) out[bare[1]] = grp;
+    });
+  });
+  return out;
+}
+/** [start, end, colour] runs for one Instructions text. */
+function keyRuns(text, heads) {
   const runs = [];
   // A setup line (markSetup) may sit above the key: the key is then the second line.
   const at = text.indexOf(SETUP_MARK) === 0 && text.indexOf('\n') >= 0 ? text.indexOf('\n') + 1 : 0;
   const nl = text.indexOf('\n', at);
   const first = nl < 0 ? text.slice(at) : text.slice(at, nl);
   let keyEnd = 0;
-  if (/^(blue|green|orange|grey) = /i.test(first)) {
+  const lead = KEY_LEAD_RE.exec(first);
+  if (lead) {
+    // "Column colours:     your input ...     written by the agent ...": the
+    // phrases in key order, no colour named.
+    let p = at + lead[0].length, k = 0;
+    first.slice(lead[0].length).split(/(\s{3,})/).forEach(part => {
+      if (/^\s+$/.test(part)) { p += part.length; return; }
+      if (part && k < KEY_ORDER.length) runs.push([p, p + part.length, KEY_COLOURS[KEY_ORDER[k++]]]);
+      p += part.length;
+    });
+    keyEnd = at + first.length;
+  } else if (/^(blue|green|orange|grey) = /i.test(first)) {
     const seg = /(blue|green|orange|grey) = .*?(?=\s{3,}|$)/gi;
     let m;
     while ((m = seg.exec(first))) runs.push([at + m.index, at + m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
@@ -840,7 +923,19 @@ function keyRuns(text) {
   let m;
   KEY_WORD_RE.lastIndex = keyEnd;
   while ((m = KEY_WORD_RE.exec(text))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
-  return runs;
+  // Column names, longest first, whole words only, never inside a run already taken.
+  const names = Object.keys(heads || {}).sort((a, b) => b.length - a.length);
+  const taken = (a, z) => runs.some(([x, y]) => a < y && z > x);
+  const word = ch => /[A-Za-z0-9]/.test(ch || '');
+  names.forEach(name => {
+    let at = text.indexOf(name, keyEnd);
+    while (at >= 0) {
+      const z = at + name.length;
+      if (!word(text[at - 1]) && !word(text[z]) && !taken(at, z)) runs.push([at, z, KEY_COLOURS[heads[name]]]);
+      at = text.indexOf(name, z);
+    }
+  });
+  return runs.sort((a, b) => a[0] - b[0]);
 }
 /**
  * The Config tab's colours, kept by every refresh so a row the agent wrote
@@ -874,6 +969,7 @@ function styleConfig(ss) {
 
 function colourInstructions(ss) {
   if (!ss) throw new Error(RUN_THIS);
+  const heads = headerColours(ss);
   ss.getSheets().forEach(sh => {
     const n = Math.min(5, sh.getLastRow());
     if (n < 2 || sh.getLastColumn() < 2) return;
@@ -882,8 +978,12 @@ function colourInstructions(ss) {
       const cell = sh.getRange(r, 2);
       const now = cell.getRichTextValue();
       const text = now ? now.getText() : '';
-      const runs = keyRuns(text);
-      if (!runs.length || (now.getTextStyle(runs[0][0], runs[0][1]).getForegroundColor() || '').toLowerCase() === runs[0][2]) continue;
+      const runs = keyRuns(text, heads);
+      // Rewritten only when some run lacks its colour, so a refresh is cheap.
+      if (!runs.length || runs.every(([a, z, c]) => {
+        const st = now.getTextStyle(a, z);
+        return (st.getForegroundColor() || '').toLowerCase() === c && st.isBold();
+      })) continue;
       const b = SpreadsheetApp.newRichTextValue().setText(text);
       runs.forEach(([a, z, c]) => b.setTextStyle(a, z, SpreadsheetApp.newTextStyle().setForegroundColor(c).setBold(true).build()));
       const url = /https?:\/\/\S+/g;
@@ -972,6 +1072,44 @@ function writeRows(s, c, only, f) {
 function asText(v) {
   const t = String(v == null ? '' : v);
   return /^[=+\-@]/.test(t) ? "'" + t : t;
+}
+
+// ---------- Watch hash: one cell a watcher reads instead of the log ----------
+
+/**
+ * The headers people set on Contributor Feedback (Blue and Orange). Tool
+ * review-log-watch watches the same ones (watch.ts watchedHeader).
+ */
+function watchedHeader_(h) {
+  return h === 'Title' || h === 'Selected Sections' || h === 'Disposition' ||
+    h === 'Ready for agent' || h === 'Ready for merge' || h === 'Dispositions confirmed' ||
+    (h.indexOf('Contributor Feedback') === 0 && h !== 'Contributor Feedback (agent)');
+}
+
+/**
+ * Write a hash of every non-empty person-set cell of Contributor Feedback to
+ * the hidden Watch tab, F1 "Cells hash" and G1 the hash, H1 "Checked (UTC)"
+ * and I1 when. A review-log watcher reads Watch!F1:I1 and the Issue column
+ * on each poll, instead of the whole log, and passes the hash to Tool
+ * review-log-watch (`--sheet-hash`); a different hash means a person changed
+ * something (owner, 2026-11-01, Q-WATCH4 A). Columns A to D are left to any
+ * other Watch writer. Never stops the refresh.
+ */
+function writeWatchHash(ss) {
+  try {
+    const s = readSheet(ss.getSheetByName(CFG.FEEDBACK));
+    const lines = [];
+    s.rows.forEach((r, k) => s.header.forEach((h, c) => {
+      const v = String(r[c] == null ? '' : r[c]).trim();
+      if (v && watchedHeader_(String(h).trim())) lines.push(k + ':' + String(h).trim() + '=' + v);
+    }));
+    let sh = ss.getSheetByName('Watch');
+    if (!sh) { sh = ss.insertSheet('Watch'); sh.hideSheet(); }
+    const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
+    sh.getRange(1, 6, 1, 4).setValues([['Cells hash', hashOf(lines.join('\n')), 'Checked (UTC)', now]]);
+  } catch (err) {
+    // A Watch tab that cannot be written must never stop the refresh.
+  }
 }
 
 /** A string inside a formula's double quotes: each " doubled (finding F2). */
@@ -1916,6 +2054,8 @@ function refreshDraft(rows) {
   // Agentic status sits just left of its filter column (owner, 2026-10-31).
   // Moved here, inside the locked run, before any column is read by position.
   try { placeBefore(ss.getSheetByName(CFG.FEEDBACK), COLS.draft.agentic || 'Agentic status', COLS.draft.status || 'Agentic status (filter)'); } catch (err) { /* the refresh still runs */ }
+  // Issue sits just left of Disposition (agent) (owner, 2026-11-01).
+  try { placeBefore(ss.getSheetByName(CFG.FEEDBACK), COLS.draft.issue || 'Issue', 'Disposition (agent)'); } catch (err) { /* the refresh still runs */ }
   const fb = readSheet(ss.getSheetByName(CFG.FEEDBACK));
   const agentSh = ss.getSheetByName(CFG.AGENT);
   const agent = agentSh ? readSheet(agentSh) : { header: [], rows: [] };

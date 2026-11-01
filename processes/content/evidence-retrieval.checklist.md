@@ -4,13 +4,20 @@
 
 > **Generated, and not the authority.** This is `folio-assistant-core/processes/content/evidence-retrieval.bpmn` (process `Process_EvidenceRetrieval`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
 
-Frame a question for a recommendation, retrieve and appraise evidence from trusted sources, and either attach it or record the gap.
+Frame a question for a recommendation, retrieve and appraise evidence from trusted sources, and either attach it or record the gap; a change that states or alters no recommendation ends at its own event before any search.
 
-## Begin — A recommendation is in play (`StartEvent_Recommendation`)
+## Begin — An edit is about to be drafted (`StartEvent_Recommendation`)
 
 - Begin here.
 - Call `workflow_start` with `process: "Process_EvidenceRetrieval"` and the subject this run is about; keep the instance id it returns.
-- next: → `Task_ReviewExisting` (Review the existing guidance)
+- next: → `Gateway_RecommendationInPlay` (Does the change state or alter a recommendation?)
+
+### Decide — Does the change state or alter a recommendation? (`Gateway_RecommendationInPlay`)
+
+- The author answers before any search starts.
+- Call `workflow_complete` with `node: "Gateway_RecommendationInPlay"` and `outcome` set to the label that holds:
+  - «yes» → `Task_ReviewExisting` (Review the existing guidance)
+  - «no» → `EndEvent_NoRecommendation` (No recommendation in this change)
 
 ### 1. Review the existing guidance (`Task_ReviewExisting`)
 
@@ -19,6 +26,10 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 - What: The author reads what the document, DAK or IG ALREADY says on this question, before looking outward.
 - Record it: `workflow_complete` with `node: "Task_ReviewExisting"`.
 - next: → `Task_FramePico` (Frame the question as PICO)
+
+## Done — No recommendation in this change (`EndEvent_NoRecommendation`)
+
+- The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
 ### 2. Frame the question as PICO (`Task_FramePico`)
 
