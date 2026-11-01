@@ -13,7 +13,7 @@ import { existsSync, readFileSync } from "node:fs";
 
 import { GlossarySchema } from "../schemas/glossary.ts";
 import { LOCALE_PAGE_STRINGS, LOCALE_PAGE_TEMPLATE, collect, type GlossarySource } from "./glossary-page.ts";
-import { catalogueDir, potEntries, potPath, sourceText, templateName, templates } from "./glossary-pot.ts";
+import { catalogueDir, potEntries, potForCheck, potPath, sourceText, templateName, templates } from "./glossary-pot.ts";
 
 const c = collect();
 const tpl = templates(c);
@@ -101,5 +101,18 @@ describe("potEntries on a mixed scheme", () => {
   const s: GlossarySource = { instance: "x", ns: "https://example.org/x/ns#", file: "none.glossary.json", glossary: g };
   it("extracts the authored term's source-language label, alt label and definition, and nothing else", () => {
     expect(potEntries(s).map((e) => e.msgid).sort()).toEqual(["The first.", "alpha", "first"]);
+  });
+});
+
+describe("the check is blind to where a layer sits in the checkout (owner card Q-TRAIN-8)", () => {
+  const at = (ref: string, msgid = "Trust domain") =>
+    `msgid ""\nmsgstr ""\n"POT-Creation-Date: 2026-11-01T09:14:41.045Z\\n"\n\n#. Glossary term label\n#: ${ref}:83\nmsgid "${msgid}"\nmsgstr ""\n`;
+
+  it("the same template, checked out under a different path, is current", () => {
+    expect(potForCheck(at("glossary/gdhcn.glossary.json"))).toBe(potForCheck(at("smart-trust/glossary/gdhcn.glossary.json")));
+  });
+
+  it("a changed msgid is still out of date", () => {
+    expect(potForCheck(at("glossary/g.json", "Trust domain"))).not.toBe(potForCheck(at("glossary/g.json", "Trust network")));
   });
 });
