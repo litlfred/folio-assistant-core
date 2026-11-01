@@ -290,6 +290,7 @@ smart-base:
 | a DAK requirement row, `<CODE>.FXREQ.<n>` / `.NFXREQ.<n>` | `functional-requirement` / `non-functional-requirement` | smart-base |
 | a system's `shall`/`must`/`should` in prose ("The registry shall …") | `functional-requirement`, no id | smart-base |
 | a row of a table of system functions | `functional-requirement`, `source_kind: function-table-row` (by hand today) | smart-base |
+| a row of a table of information needs, an item of a list of reports or functions, a figure caption naming a function | `functional-requirement`, `source_kind`: `information-need-table-row`, `function-list-item`, `figure-caption` (by hand today; first used on who-iris#167) | smart-base |
 | an indicator | `indicator` | smart-base |
 | any other normative sentence | [`recommendation`](../../content/folio-document-adapter/normative-statements.md), strength in `rfc2119-requirement-level` or `grade-recommendation-strength` | core |
 
