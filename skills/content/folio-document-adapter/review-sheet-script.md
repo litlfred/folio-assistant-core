@@ -686,13 +686,15 @@ the review sheets (owner, 2026-10-31):
   gates carry their own lock that starts with the owner alone.
 - **The Config tab** is visible, never hidden, and locked to the owner: the
   agent writes it, people can read what the sheet is set up for.
-- **The colour key is shown in its colours** (owner, 2026-10-31: "no color
-  coded instructions"). In each tab's Instructions text the key on the first
-  line ("Blue = your input ...") is coloured segment by segment, and every
-  later Blue, Green, Orange or Grey word is coloured by itself, bold, in a
-  darker shade of its column colour. The script's `colourInstructions` does
-  it on every refresh, so text the agent rewrites through the API, which drops
-  the colours, gets them back within a minute.
+- **Instructions name no colour** (owner, 2026-11-01: "make the text colored
+  not have the word"). The key on the first line reads "Column colours:"
+  then one phrase per colour ("your input, by ...", "written by the agent",
+  ...), each shown in its colour, and the steps name columns ("Reviewers
+  update Contributor Feedback", "an Editor sets Ready for agent"), never a
+  colour. The script's `colourInstructions` shows each column name bold in a
+  darker shade of that column's header fill, on every refresh, so text the
+  agent rewrites through the API, which drops the colours, gets them back
+  within a minute.
 - **Which template** depends on the document's authoring stage: the
   Contributor template while it is being drafted and authored, the Public
   Comment Review template once public comment opens.
@@ -861,8 +863,11 @@ A new document starts from its "make a copy" link
 installTriggers. The script in the template needs no change.
 
 **Locks in a template and its copies** (owner, 2026-10-31): every cell is
-locked to the owner except the blue, human-controlled columns. That covers
-the headers, the grey mechanical and green agent-derived columns, the
+locked to the owner except the blue, human-controlled columns, and the
+heads of the Contributor Feedback (or Committee Feedback) columns, where
+each contributor writes their initials (owner, 2026-11-01: "why is
+contributor feedback locked? ... thats an error"). The lock covers the other
+headers, the grey mechanical and green agent-derived columns, the
 Config tab, the Agent tab and the hidden TOC. The orange Ready-for-agent and
 Ready-for-merge columns have a lock of their own, **"Ready columns:
 editors"**, which starts with only the owner; the owner adds each document

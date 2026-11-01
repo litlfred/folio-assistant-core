@@ -49,6 +49,52 @@ candidates; only a person moves one to `authored`. A paper's definition block
 counts as that person: its author wrote the definition and marked it (see
 "A paper's glossary" below).
 
+## How a term is linked: the workflow
+
+Owner, 2026-11-01 (folio-assistant-core#498; cards Q-GLO-1 C, Q-GLO-2 A,
+Q-GLO-3 C): link terms across the glossary, the narrative and the knowledge
+graph with a few shared joins, not a framework. "I don't want to get heavy /
+prescriptive."
+
+**One join key: the SKOS term** (its id, or its IRI from another instance).
+Everything else points at it, and nothing copies it.
+
+| thing | how it names the term |
+|---|---|
+| the defining site | the term's `source`: its glossary row (an L1 section line, or the document's glossary table block). One node-kind structure for every term. |
+| a narrative block that explains the term at length | the block's `defines: [<term id>]` (and `:defterm[...]{#id}` inline). Provenance, not a second definition (Q-IV-8 A). |
+| other uses in prose | nothing to write: matched at build time (`term-passages.ts`) and linked by `--link-terms` |
+| an acronym | `notation` on the term, never a second list. The acronyms table is drawn from it (`glossary:table`). |
+| an organization | `focus` (W3C ORG), shared ones in smart-ra `organizations.glossary.json` |
+| an ArchiMate element | the element's `skosConcept` property (`glossary-archimate.ts`) |
+| a BPMN lane or task, DMN decision, skill, Tool | the generated candidate schemes (`glossary-extract.ts`); `exactMatch` when one is the same concept |
+| a FHIR code | `exactMatch` / `closeMatch` to the CodeSystem concept; the code stays a CodeSystem |
+| an external glossary | `exactMatch` to its IRI, `members`, or a whole scheme in `remoteGraphs` |
+
+**Where terms come from.**
+
+- *Ingesting a source* (L1, DTH, DAK): `bun run cat glossary:from-source`
+  reads its glossary and abbreviations sections into verbatim `candidate`
+  terms with `source: <file>#L<line>` (`l1-document-ingestion`). No
+  per-handbook script.
+- *Authoring in the narrative* (dth-hrh): the glossary file is edited, and the
+  chapter is drawn from it (`glossary:table`, or the folio's own build). A
+  block that explains a term lists it in `defines`.
+- *External*: reference, don't copy (below).
+
+**What a reader gets.** Every authored-scheme term has a page
+(`glossary:page`, `glossary/instance/<instance>/<scheme>/<term>/`). It shows the
+definition and acronym, **Defined in** (its glossary row), broader, narrower
+(computed), related terms, matches, ArchiMate elements, and **In the
+narrative**: the blocks that explain it, then those that use it. A
+Capitalized label in prose links to that page when the document build passes
+`--link-terms`, which `dth-init` sets for every DTH.
+
+**Warnings, never failures.** `bun run cat glossary:links` reports a `source`
+that is missing from a mounted layer, and a `defines` id that no scheme holds.
+With `--all` it also lists terms the narrative never uses. The acronym report is
+`glossary:acronyms`.
+
 ## Conventions
 
 The owner, 2026-09-24: *"What does folio-assistant do? B should follow. Update
