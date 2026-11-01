@@ -149,11 +149,19 @@ describe("library location is read from the declaration", () => {
     // `heldEntries` list on the library entry — the owner's hold on those
     // documents — never by a pattern, so folio content arriving here still
     // fails, by name, exactly as before.
+    //
+    // And SOURCES AWAITING CITATION (bean `e0jh`): a source the owner asked to
+    // ingest ahead of the methodology text that will cite it, listed by name
+    // in `awaitingCitation`. Same rule — by name, never by pattern — but the
+    // entry's summaries are not held back, which is why it is not folded into
+    // `heldEntries`. Once a methodology cites it, it leaves the list.
     const decl = JSON.parse(readFileSync(declarationPathIn(PLATFORM)!, "utf8")) as {
-      directories?: Array<{ graphTypologies?: string[]; heldEntries?: string[] }>;
+      directories?: Array<{ graphTypologies?: string[]; heldEntries?: string[]; awaitingCitation?: string[] }>;
     };
     const admitted = new Set(
-      (decl.directories ?? []).filter((d) => d.graphTypologies?.includes("library")).flatMap((d) => d.heldEntries ?? []),
+      (decl.directories ?? [])
+        .filter((d) => d.graphTypologies?.includes("library"))
+        .flatMap((d) => [...(d.heldEntries ?? []), ...(d.awaitingCitation ?? [])]),
     );
 
     const uncited = entries.filter((e) => !cited.has(e) && !admitted.has(e));

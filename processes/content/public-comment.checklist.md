@@ -91,7 +91,7 @@ A frozen, line-numbered draft went out for public review.
 
 - Call `workflow_complete` with `node: "Gateway_ChangesDocument"` and `outcome` set to the label that holds:
   - «no: not accepted, noted, deferred» → `EndEvent_Decided` (Decided, answer recorded)
-  - «yes: accepted» → `Task_AuthorEdits` (Edit the document as decided, on a feature branch)
+  - «yes: accepted» → `CallActivity_MakeChange` (Make the change, check it and merge it)
 
 ### 7. Re-route a change-set to another committee, with a reason (`Task_RerouteChangeSet`)
 
@@ -105,13 +105,13 @@ A frozen, line-numbered draft went out for public review.
 
 - The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
-### 8. Edit the document as decided, on a feature branch (`Task_AuthorEdits`)
+### 8. Make the change, check it and merge it (`CallActivity_MakeChange`)
 
-- Who: the `Author (human or agentic)` lane (role `author`).
+- Who: the `Editor` lane (role `editor`).
 - Skill: `public-comment`.
-- What: public-comment edit --branch: the author (human, or an agent in the author role) edits the folio's blocks as the decision says, on a feature branch for one change-set.
-- Record it: `workflow_complete` with `node: "Task_AuthorEdits"`.
-- next: → `CallActivity_ChangeSet` (Review the change set on its staging preview)
+- What: The second phase, drawn on its own page (public-comment-change.bpmn): an author edits the document as decided on a feature branch, the change set is reviewed on its staging preview, an independent QA gate checks the dispositions against the pull request, and each comment it answers is marked incorpo
+- A subprocess (`Process_PublicCommentChange`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `EndEvent_Incorporated` (Incorporated in the document)
 
 ### 9. Assign to committee members (`Task_Assign`)
 
@@ -121,30 +121,14 @@ A frozen, line-numbered draft went out for public review.
 - Record it: `workflow_complete` with `node: "Task_Assign"`.
 - next: → `Task_CommitteeRecommends` (Recommend a decision, with a rationale)
 
-### 10. Review the change set on its staging preview (`CallActivity_ChangeSet`)
+## Done — Incorporated in the document (`EndEvent_Incorporated`)
 
-- Who: the `Change set — feature branch and staging` lane (role `build-pipeline`).
-- Skill: `staging-review`.
-- What: The existing content-change review, unchanged, of the author's branch: its PR lists the PC refs it answers, and its staging preview is the after side of every deep link.
-- A subprocess (`Process_ContentChangeReview`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
-- next: → `Task_Incorporate` (Mark incorporated when the change set merges)
+- The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
-### 11. Recommend a decision, with a rationale (`Task_CommitteeRecommends`)
+### 10. Recommend a decision, with a rationale (`Task_CommitteeRecommends`)
 
 - Who: the `Review committee` lane (role `reviewer`).
 - Skill: `public-comment`.
 - What: A GitHub comment tagged pc: PC-0042 / recommend: code, from a login in config.json committee, or public-comment recommend.
 - Record it: `workflow_complete` with `node: "Task_CommitteeRecommends"`.
 - next: → `Task_EditorDecides` (Decide, weighing the recommendations)
-
-### 12. Mark incorporated when the change set merges (`Task_Incorporate`)
-
-- Who: the `Change set — feature branch and staging` lane (role `build-pipeline`).
-- Skill: `public-comment`.
-- What: public-comment incorporate, naming the branch, PR and staging URL; done by the folio's workflow when the PR that closes a change-set issue merges.
-- Record it: `workflow_complete` with `node: "Task_Incorporate"`.
-- next: → `EndEvent_Incorporated` (Incorporated in the document)
-
-## Done — Incorporated in the document (`EndEvent_Incorporated`)
-
-- The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
