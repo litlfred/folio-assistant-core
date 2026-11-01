@@ -13,7 +13,6 @@ function fixture() {
   const root = mkdtempSync(join(tmpdir(), "folio-l1-"));
   const l1 = join(root, "l1");
   mkdirSync(join(l1, "sections"), { recursive: true });
-  writeFileSync(join(l1, "structure.json"), JSON.stringify({ sections: [{ id: "sec-b" }, { id: "sec-a" }] }));
   writeFileSync(
     join(l1, "sections", "sec-b.md"),
     "---\ntitle: B\n---\nCountries should keep one product register. In no event shall WHO be liable for damages.\n",
@@ -30,11 +29,16 @@ function fixture() {
 }
 
 describe("reading the L1 entry", () => {
-  it("takes sections in structure.json order and drops front matter", () => {
+  it("with no structure file, takes the sorted sections and drops front matter", () => {
     const { l1 } = fixture();
     const s = readL1Sections(l1);
-    expect(s.map((x) => [x.page, x.sectionId])).toEqual([[1, "sec-b"], [2, "sec-a"]]);
-    expect(s[0].text.startsWith("Countries")).toBe(true);
+    expect(s.map((x) => [x.page, x.sectionId])).toEqual([[1, "sec-a"], [2, "sec-b"]]);
+    expect(s[1].text.startsWith("Countries")).toBe(true);
+  });
+  it("refuses a structure file it cannot read, rather than reading no sections", () => {
+    const { l1 } = fixture();
+    writeFileSync(join(l1, "structure.json"), JSON.stringify({ sections: [] }));
+    expect(() => readL1Sections(l1)).toThrow();
   });
 });
 
@@ -53,8 +57,8 @@ describe("coverage of a folio", () => {
     const { l1, folio } = fixture();
     const r = folioCoverage({ l1Dir: l1, folioDir: folio });
     const state = Object.fromEntries(r.sentences.map((s) => [s.location, s.state]));
-    expect(state).toEqual({ "p1:s1": "captured", "p1:s2": "unaccounted", "p2:s1": "unaccounted" });
-    expect(r.sentences[0].sectionId).toBe("sec-b");
+    expect(state).toEqual({ "p1:s1": "unaccounted", "p2:s1": "captured", "p2:s2": "unaccounted" });
+    expect(r.sentences[1].sectionId).toBe("sec-b");
     expect("generatedAt" in r).toBe(false);
   });
 
@@ -62,20 +66,20 @@ describe("coverage of a folio", () => {
     const { l1, folio } = fixture();
     const text = "In no event shall WHO be liable for damages.";
     const unsigned = folioCoverage({ l1Dir: l1, folioDir: folio, exclusions: [{ text, reason: "editorial" }] });
-    expect(unsigned.sentences.find((s) => s.location === "p1:s2")!.state).toBe("unaccounted");
+    expect(unsigned.sentences.find((s) => s.location === "p2:s2")!.state).toBe("unaccounted");
     const signed = folioCoverage({
       l1Dir: l1,
       folioDir: folio,
       exclusions: [{ text, reason: "editorial", signedOffBy: "a reviewer", signedOffAt: "2026-11-01" }],
     });
-    expect(signed.sentences.find((s) => s.location === "p1:s2")!.state).toBe("excluded");
+    expect(signed.sentences.find((s) => s.location === "p2:s2")!.state).toBe("excluded");
   });
 
   it("a quote captures a sentence only if the block holds it", () => {
     const { l1, folio } = fixture();
     const quote = "The plan should name the resources needed to run the system.";
     const ok = folioCoverage({ l1Dir: l1, folioDir: folio, quotes: [{ block: "ch01/p-plan", quote }] });
-    expect(ok.sentences.find((s) => s.location === "p2:s1")!.state).toBe("captured");
+    expect(ok.sentences.find((s) => s.location === "p1:s1")!.state).toBe("captured");
     expect(ok.problems).toEqual([]);
     const bad = folioCoverage({ l1Dir: l1, folioDir: folio, quotes: [{ block: "ch01/p-register", quote }] });
     expect(bad.problems.length).toBe(1);

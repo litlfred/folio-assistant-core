@@ -104,12 +104,24 @@ function walkTs(dir: string): string[] {
   );
 }
 
+/** The parts of a block's meta this validator reads. */
+export interface Meta {
+  glossary?: Array<string | { iri?: unknown }>;
+  glossaryTerms?: Array<string | { iri?: unknown }>;
+  archimate?: {
+    elements?: Array<{ iri?: unknown; name?: unknown }>;
+    views?: Array<{ iri?: unknown; name?: unknown }>;
+    figures?: Array<{ figure?: unknown; model?: unknown; view?: unknown }>;
+  };
+  [key: string]: unknown;
+}
+
 /**
  * A block's `meta: { … }` object, read as JSON whether it is written on one
  * line or pretty-printed over several. `undefined` if there is none or it is
  * not JSON.
  */
-export function metaOf(src: string): Record<string, any> | undefined {
+export function metaOf(src: string): Meta | undefined {
   const start = src.search(/\bmeta:\s*\{/);
   if (start < 0) return undefined;
   const open = src.indexOf("{", start);
@@ -153,7 +165,7 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
     const inst = mounted.find((x) => r.startsWith(x.ns));
     if (!inst) return;
     // Only glossary IRIs are glossary terms; a class of the instance's own
-    // vocabulary (smart-base's `ns#BusinessProcess`) is not checked here.
+    // vocabulary (a `ns#BusinessProcess` class) is not checked here.
     if (!r.startsWith(`${inst.ns}glossary/`)) {
       otherIris.set(inst.name, (otherIris.get(inst.name) ?? 0) + 1);
       return;

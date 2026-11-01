@@ -15,7 +15,7 @@
  *
  * ## Inputs
  *
- * - The L1 entry's sections, in `structure.json` order (else the sorted
+ * - The L1 entry's sections, in the order of its structure file (else the sorted
  *   `sections/*.md`). Front matter and the "no text on this page" marker are
  *   dropped. Section N is "page" N of the report, so `p3:s2` is the second
  *   sentence of the third section.
@@ -45,6 +45,7 @@
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
+import { readStructure, STRUCTURE_FILENAME } from "@litlfred/cat-harness-tools/schemas/content/document-structure.js";
 import { coverage, exitCodeFor, normalise, sentencesOf, type Captured, type Exclusion, type Page } from "./l1-coverage.ts";
 
 /** Fragments shorter than this are not used as captured text. */
@@ -59,13 +60,19 @@ function stripFrontMatter(raw: string): string {
   return (m ? raw.slice(m[0].length) : raw).replace(/^_\(no text on this page\)_\s*$/gm, "");
 }
 
-/** The L1 entry's sections, as numbered pages, in reading order. */
+/**
+ * The L1 entry's sections, as numbered pages, in reading order: the order of
+ * its structure file, read through the shared accessor. With no structure
+ * file, the sorted `sections/*.md`. A structure file that cannot be read is an
+ * error, never an entry with no sections.
+ */
 export function readL1Sections(l1Dir: string): SectionPage[] {
   const dir = join(l1Dir, "sections");
   let ids: string[];
-  const structure = join(l1Dir, "structure.json");
-  if (existsSync(structure)) {
-    ids = (JSON.parse(readFileSync(structure, "utf8")).sections ?? []).map((s: { id: string }) => s.id);
+  if (existsSync(join(l1Dir, STRUCTURE_FILENAME))) {
+    const s = readStructure(l1Dir);
+    if ("reason" in s) throw new Error(`${l1Dir}: ${s.reason}`);
+    ids = s.sections.map((x) => x.id);
   } else {
     ids = readdirSync(dir).filter((f) => f.endsWith(".md")).sort().map((f) => f.replace(/\.md$/, ""));
   }
