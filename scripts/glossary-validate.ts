@@ -25,7 +25,8 @@
  * - the overlay rule, for an instance whose own `archimate/` model tags its
  *   items `overlay:base` or `overlay:owner` (a DTH's overlay on smart-ra): every
  *   element and relationship is a reference copy of a mounted item (same id,
- *   named by IRI) or owned by this instance and not in the base model;
+ *   named by IRI) or owned by this instance and not in the base model; an
+ *   `overlay:dth` copy from another DTH's overlay is noted, not checked;
  * - with `--capitalized`, every prefLabel starts with a capital (the DTH rule
  *   that KG concepts are Capitalized; owner, 2026-10-31).
  *
@@ -249,6 +250,7 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
     const elsewhere = new Map<string, number>();
     let base = 0;
     let owned = 0;
+    let fromDth = 0;
     for (const kind of ["elements", "relationships", "views"] as const) {
       for (const x of l.items[kind]) {
         const ctx = `${self.name} archimate ${l.id}: ${kind.slice(0, -1)} '${x.name ?? x.id}' (${x.id})`;
@@ -269,12 +271,16 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
             else elsewhere.set(v, (elsewhere.get(v) ?? 0) + 1);
           }
           owned++;
+        } else if (x.properties.some((p) => p.key === "overlay:dth")) {
+          // A copy from another DTH's overlay (dth-sfp borrows from dth-phc).
+          fromDth++;
         } else if (kind !== "views") {
           errors.push(`${ctx}: has neither overlay:base nor overlay:owner=${self.name}`);
         }
       }
     }
     notes.push(`${self.name} archimate ${l.id} overlay on ${[...baseVersions].join(", ") || "no base"}: ${owned} owned, ${base} reference copies checked`);
+    if (fromDth) notes.push(`${fromDth} item(s) of the ${self.name} overlay are overlay:dth copies from another DTH's overlay: not checked`);
     for (const [v, n] of elsewhere) notes.push(`${n} item(s) the ${self.name} overlay owns are also in mounted model ${v}, which it does not overlay`);
   }
   const iriRe = /\/archimate\/([^/]+)\/(elements|views)\/([^/]+)\.jsonld$/;

@@ -101,13 +101,14 @@ const mine = { "overlay:owner": "pc" };
 
 describe("glossary-validate: the overlay rule and links into the instance's own model", () => {
   test("an overlay of reference copies and owned items passes, and links into it are checked", async () => {
-    const pc = archi([["e1", "One", base("elements", "e1")], ["p1", "Mine", mine]], ["pr1", "p1", "e1", mine]);
+    const pc = archi([["e1", "One", base("elements", "e1")], ["p1", "Mine", mine], ["d1", "Borrowed", { "overlay:dth": "https://x/phc/archimate/0.1/elements/d1.jsonld" }]], ["pr1", "p1", "e1", mine]);
     const repo = overlayFixture(pc, {
       archimate: { elements: [{ iri: "https://x/pc/archimate/0.1/elements/p1.jsonld", name: "Mine" }, { iri: "https://x/sc/archimate/1.0/elements/e2.jsonld", name: "Two" }] },
     });
     const r = await validate(repo, "pc");
     expect(r.errors).toEqual([]);
     expect(r.notes.join("\n")).toContain("pc archimate 0.1 overlay on 1.0: 2 owned, 1 reference copies checked");
+    expect(r.notes.join("\n")).toContain("1 item(s) of the pc overlay are overlay:dth copies");
     expect(r.notes.join("\n")).not.toContain("not checked\n· pc");
   });
 
