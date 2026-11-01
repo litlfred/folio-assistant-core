@@ -1,0 +1,975 @@
+{
+  "$schema": "folio-block-summaries/v1",
+  "entry": "dspace-7-rest-contract",
+  "summaries": [
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s560-discovery-search-endpoints",
+      "source": "sections/s560-discovery-search-endpoints.md",
+      "source_hash": "828cbdfd39548badafadbecc08c34afc605db23eb8efb0d21496875cd7965bca",
+      "narrative": [
+        {
+          "text": "Title of the Discovery Search Endpoints page, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s561-search-endpoint",
+      "source": "sections/s561-search-endpoint.md",
+      "source_hash": "c0024709ab8732e6a8373fa892464a8fd6e9bd498d5d0b1d93ce9beb36deb9fe",
+      "narrative": [
+        {
+          "text": "The /api/discover/search endpoint exposes the Discovery search screen's configuration so a client can build complex searches. It takes scope (the UUID of a site, community or collection; a scope-specific configuration in discovery.xml is used if one exists, else the default) and configuration (a named Discovery configuration, ignored when the scope already has one; the special workspace and workflow configurations always exist for MyDSpace). The response lists the advanced search filters (each with a type, whether it has facets, whether it is open by default, and its supported operators: equals, notequals, authority, notauthority, contains, notcontains) and the available sort options (score, dc.title, dc.date.issued, dc.date.accessioned). It links to objects (the matching results) and facets (facet values and counts).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s562-matching-dspace-objects-search-results",
+      "source": "sections/s562-matching-dspace-objects-search-results.md",
+      "source_hash": "3def464a31ce7b01a1fc66526b2c5e58cafb786ab9bf4d7d5a6890956226c3ef",
+      "narrative": [
+        {
+          "text": "The /api/discover/search/objects endpoint returns the DSpace objects matching a search. Parameters: query (a Solr/Lucene query; special characters must be percent-encoded), dsoType (all, item, community or collection), scope (container UUID), configuration (ignored if the scope has its own), filters written f.<filter-name>=<value>,<operator> where name and operator must come from the parent search endpoint (an absent or invalid operator gives 422 Unprocessable Entity), and page, size and sort (a sort name from the parent endpoint or default, then a direction). The example response echoes the query, scope, applied filters and sort, and embeds a paginated list of search results, each with hit highlights and the indexable object, plus the facets for the query (author, subject and a dateIssued facet with min and max values and date-range buckets), each value linking to a refined search.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s563-matching-facets-search-results",
+      "source": "sections/s563-matching-facets-search-results.md",
+      "source_hash": "b077bb7ea132a07991afbe8fa2b0cd5c585f591dc9fde57685bfeed878bc2e4d",
+      "narrative": [
+        {
+          "text": "The /api/discover/search/facets endpoint returns the configured facets and their values for a search. It takes the same refinements as the objects search: query (a Lucene/Solr query; escape special characters to search them literally), a repeatable dsoType, scope, configuration, f.<filter-name>=<value>,<operator> filters (invalid operator gives 422), and page, size and sort. Some facets can be configured in discovery.xml to expose minimum and maximum values, as dateIssued does in the example. The example response echoes the query, filters and sort and embeds a paginated list of facets (author, subject, dateIssued), each with its values, counts and links to refined searches and to the next page.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s564-matching-facet-search-results",
+      "source": "sections/s564-matching-facet-search-results.md",
+      "source_hash": "f0c30169149c45ff5dbeaa2e89d6ac49f983364711d57c9783c8ee8610164c36",
+      "narrative": [
+        {
+          "text": "The /api/discover/facets endpoint lists the facet fields that can be queried in the Discovery (Solr-based) facet system. It takes scope and configuration, with the same fallback rules as the search endpoint, and the facets returned depend on the Discovery configuration in discovery.xml. The example response is a paginated list of facets (author, subject, dateIssued with hasMinMaxValues, and has_content_in_original_bundle), each with a type, a limit and a self link.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s565-list-values-of-a-certain-facet",
+      "source": "sections/s565-list-values-of-a-certain-facet.md",
+      "source_hash": "4ba474966494e24e711cb05a1e71173cc0534e9b65a0c73a2f7156970a54a161",
+      "narrative": [
+        {
+          "text": "The /api/discover/facets/<facet-name> endpoint lists the values of one facet. It can be refined by query, scope, f.<filter-name>=<value>,<operator> filters (an absent or invalid operator gives 422) and page, size and sort, where sort is count (descending number of matching records) or index (alphabetical). The example response for the author facet echoes the query and filters and returns paginated values, each with a label, count, authority key and a link to the search restricted to that value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s566-special-configurations",
+      "source": "sections/s566-special-configurations.md",
+      "source_hash": "d7dfaf95e7e27eda9b1d35399d4ec2013294cfebd2143ef69632887a65835d16",
+      "narrative": [
+        {
+          "text": "Heading for the special Discovery configurations, workspace and workflow, described in the next two blocks.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s567-workspace",
+      "source": "sections/s567-workspace.md",
+      "source_hash": "19976d0ce7b49fa357b849360dbd456c2b9c872b374f0623dae5482bfbfa5bae",
+      "narrative": [
+        {
+          "text": "The workspace Discovery configuration returns every submission made by the current user, whatever its status: workspace items, workflow items and archived items. The example search result lists two workspace items and one workflow item (each with its sections, such as license, upload and traditionalpageone metadata, and links to its collection, item, submission definition and submitter), with facets namedresourcetype (Workspace, Workflow), itemtype and dateIssued.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s568-workflow",
+      "source": "sections/s568-workflow.md",
+      "source_hash": "3b0d0771acde41efc12924029fef703e3e6985860016489437af3a352a5863e4",
+      "narrative": [
+        {
+          "text": "The workflow Discovery configuration returns the workflow tasks relevant to the current user: pool tasks that can be claimed and tasks already claimed. The example search result lists two pool tasks in reviewstep with claimaction, each linking to its eperson, group and workflow item, with facets namedresourcetype (Waiting for Controller), itemtype, dateIssued and submitter.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s569-search-methods-on-collection-endpoints",
+      "source": "sections/s569-search-methods-on-collection-endpoints.md",
+      "source_hash": "90bed12610da870cc5c83be9256076bb407898db7a082cef7deb2fdedfe0a678",
+      "narrative": [
+        {
+          "text": "Search methods on collection endpoints. A collection endpoint such as /api/core/{model} may expose search methods that return a subset of its resources, for example /api/core/communities/search/top for top-level communities or /api/submission/workspaceitems/search/findBySubmitter?uuid=<submitter-uuid>. All search methods of a resource are listed as a HAL document at /api/core/{model}/search, and each is exposed at /api/core/{model}/search/{method-name}. Discovery search is a separate topic.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s570-endpoints-that-have-search-methods",
+      "source": "sections/s570-endpoints-that-have-search-methods.md",
+      "source_hash": "7b2c01eb3fa3e58c13de441e96d697a90c7777ec833c2c2bbb873ef0686c8467",
+      "narrative": [
+        {
+          "text": "The endpoints that have search methods: /api/core/communities, /api/core/metadatafields, /api/config/submissiondefinitions, /api/submission/workspaceitems, /api/workflow/claimedtasks, /api/workflow/polltasks and /api/workflow/workflowitems.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s571-signposting-endpoints",
+      "source": "sections/s571-signposting-endpoints.md",
+      "source_hash": "77e87e1724d77ea7e4703b2e430ee87ea30bdd339d37d3a16b8e5e97d900e5e8",
+      "narrative": [
+        {
+          "text": "Title of the Signposting Endpoints page, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s572-the-signposting-is-used-to-implement-signposting",
+      "source": "sections/s572-the-signposting-is-used-to-implement-signposting.md",
+      "source_hash": "dcd139d1f8ca994c0e179771826e7d22de9d49f96dde0910fde9ed5db8b2982f",
+      "narrative": [
+        {
+          "text": "The /signposting endpoints implement Signposting, which makes the scholarly web friendlier to machines by giving typed links, in HTTP Link headers and, for HTML, in link elements. DSpace supports the FAIR signposting profile at level 2.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s573-main-endpoint",
+      "source": "sections/s573-main-endpoint.md",
+      "source_hash": "802c198643e91fbed67ea4babc8fd70d2fbac8b5dfa02a3a4ca39aaa2663f54c",
+      "narrative": [
+        {
+          "text": "Signposting main endpoint and the JSON linkset. /signposting/linksets is not implemented and returns 405, since there is no use case for listing all linksets. /signposting/linksets/<uuid>/json returns, in application/linkset+json, the typed links for an item and its files: item (bitstream downloads with their media types), type (schema.org AboutPage), linkset, describedby (DataCite XML), cite-as (the handle), author (an ORCID), license, and for each bitstream a collection link back to the item; a describes link ties the description back to the item. Return codes: 200 OK, 403 Forbidden without permission to read the item, 404 Not found if the item does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s574-in-application-linkset-serialization",
+      "source": "sections/s574-in-application-linkset-serialization.md",
+      "source_hash": "725c5bbbe34b4068e3350ca07f8e3f5cdfcaf0aaf060e0cafa8518bda91f1d4f",
+      "narrative": [
+        {
+          "text": "Two more signposting endpoints. /signposting/linksets/<uuid> returns the same typed links in application/linkset serialization (a list of <url>; rel=...; type=...; anchor=... entries covering item, describedby, cite-as, author (ORCID and ISNI), linkset, type, collection and describes). /signposting/links/<uuid> returns, as a JSON array of href, rel and type, the typed links for an item or bitstream to put in that page's response header or meta tags. Both return 200 OK, 403 Forbidden without permission to read the item, or 404 Not found.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s575-describes-the-scholarly-object-in-a-commonly-use",
+      "source": "sections/s575-describes-the-scholarly-object-in-a-commonly-use.md",
+      "source_hash": "0ab089e5d3b87b216f84fb2a4c34864ea8b2ecae987dfc281458f5d538690307",
+      "narrative": [
+        {
+          "text": "The /signposting/describedby/<uuid> endpoint returns a description of the object in a commonly used format; the example is DataCite kernel-3 XML with title, DOI and URI alternate identifiers and Accepted and Available dates. Return codes: 200 OK, 403 Forbidden without permission to read the item, 404 Not found.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s576-displaying-usage-statistics",
+      "source": "sections/s576-displaying-usage-statistics.md",
+      "source_hash": "509a995c452725fb2526100fd6b78b0e91d27390edfcdbbd36df1ccbafa23777",
+      "narrative": [
+        {
+          "text": "Title of the Displaying usage statistics page, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s577-statistics-for-a-dspaceobject",
+      "source": "sections/s577-statistics-for-a-dspaceobject.md",
+      "source_hash": "c396a5d6120e803a3db1ed38a5e932adc2a07c3fd32213a06d2771a236d60faa",
+      "narrative": [
+        {
+          "text": "GET /api/statistics/usagereports, the main usage-report endpoint, is not implemented and returns 405, since there is no use case for listing all reports.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s578-single-statistic",
+      "source": "sections/s578-single-statistic.md",
+      "source_hash": "5bfaa137f3d9dc765acb165b94da2e17ccd05293836aa54d3629013aefd645e8",
+      "narrative": [
+        {
+          "text": "GET /api/statistics/usagereports/<id> returns one usage report. The id joins the object's UUID and the report type, for example <uuid>_TopCountries. A report holds points whose type can be country, city, bitstream, item, collection, community or date, and the supported report types are TotalVisits, TotalVisitsPerMonth, TotalDownloads, TopCountries and TopCities. Responses: 200 OK; 401 Unauthorized or 403 Forbidden when the statistics are not open to anonymous users and the caller is not authenticated or lacks permission; 404 Not Found.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s579-search-statistics-for-a-dspaceobject",
+      "source": "sections/s579-search-statistics-for-a-dspaceobject.md",
+      "source_hash": "d7c4167ae933a127d324396d230f18c5c11107b2021daac82490bfc393db331f",
+      "narrative": [
+        {
+          "text": "GET /api/statistics/usagereports/search/object returns a paginated list of usage reports for one DSpace object, named by the uri parameter (the full REST URI of the resource), with the usual page and size parameters. The examples show reports for a site and for an item, such as TotalVisits with view counts. Responses: 200 OK; 400 Bad Request for a badly formed uri; 401 or 403 when the statistics are not open to anonymous users.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s580-collecting-user-interactions",
+      "source": "sections/s580-collecting-user-interactions.md",
+      "source_hash": "86b884a3fcc9c549e82fdec0167ea712595a5a074b76e3159793732505344e9f",
+      "narrative": [
+        {
+          "text": "Title of the Collecting user interactions page, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s581-view-events-endpoint",
+      "source": "sections/s581-view-events-endpoint.md",
+      "source_hash": "7b7b3a4ea60e49f02b8671325d22d59f13215d07c8bc634add8f3a730bd7d214",
+      "narrative": [
+        {
+          "text": "POST /api/statistics/viewevents records a page view. The parameters are described in the next blocks; everything else about the interaction is taken from the request itself.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s582-required-parameters",
+      "source": "sections/s582-required-parameters.md",
+      "source_hash": "19de5118d270265a9476a1c7691b4ac36cedf04407ee1ed4d73facfa266aba23",
+      "narrative": [
+        {
+          "text": "Required parameters of a view event: targetId, the id of the object viewed, and targetType, its type.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s583-optional-parameters",
+      "source": "sections/s583-optional-parameters.md",
+      "source_hash": "997a2ecb84777add9c7e72d50e04e06707fa93aceec95656c7270cd2244a88fb",
+      "narrative": [
+        {
+          "text": "Optional parameter of a view event: referrer, the referrer of the object viewed; if absent it is taken from the request.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s584-status-codes",
+      "source": "sections/s584-status-codes.md",
+      "source_hash": "6eadf9f363c81ed25caad7c158099d05392142a866929adc3923470b0e03df18",
+      "narrative": [
+        {
+          "text": "Status codes of the view events endpoint: 201 Created on success, 400 Bad request if a parameter is missing or invalid, 422 Unprocessable Entity if the parameters do not point to a valid object.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s585-example-item-page-view",
+      "source": "sections/s585-example-item-page-view.md",
+      "source_hash": "2159e695fe81ad763cc927cf4dc94f5c8465c2377eef2beb7b776132635d3414",
+      "narrative": [
+        {
+          "text": "Example body of an item page view event: a targetId UUID, targetType item, and a referrer URL.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s586-search-events-endpoint",
+      "source": "sections/s586-search-events-endpoint.md",
+      "source_hash": "627942f524f07d8b71e48ad2f8c4ce817feb75c58dc6d8266e3790a259922656",
+      "narrative": [
+        {
+          "text": "POST /api/statistics/searchevents records a search. The parameters are described in the next blocks; everything else about the interaction is taken from the request itself.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s587-required-parameters",
+      "source": "sections/s587-required-parameters.md",
+      "source_hash": "e5fcdb061ab7072d6c4e4a44e8b3c35bae292522473c8bd48571b095fa2efed6",
+      "narrative": [
+        {
+          "text": "Required parameters of a search event: query (the Discovery search string), page (an object giving the pagination state) and sort (an object giving the sort state), both as described in the pagination documentation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s588-optional-parameters",
+      "source": "sections/s588-optional-parameters.md",
+      "source_hash": "65f820fcd5cb0476c51e86f23e6890db4b8611c27a2e507d98559a5a6cc8e412",
+      "narrative": [
+        {
+          "text": "Optional parameters of a search event: dsoType (all, item, community or collection), scope (the UUID of the container the search was limited to), configuration (the Discovery configuration used) and appliedFilters (the array of search filters applied, as in the search documentation).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s589-status-codes",
+      "source": "sections/s589-status-codes.md",
+      "source_hash": "e7057a77a180e87ddf15addbd5b2663c838f2473e3a19faf8179b8a90070f552",
+      "narrative": [
+        {
+          "text": "Status codes of the search events endpoint: 201 Created on success, 400 Bad request if a required parameter is missing or a parameter is invalid.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s590-example-search",
+      "source": "sections/s590-example-search.md",
+      "source_hash": "811a0693591006f5c76e840abdc34fdba15842e144abc734f0cc4d3a27484a9c",
+      "narrative": [
+        {
+          "text": "Example body of a search event: a query, a scope UUID, the default configuration, applied filters, and the page and sort objects.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s591-downloads-and-workflow",
+      "source": "sections/s591-downloads-and-workflow.md",
+      "source_hash": "61e807c6235807a483f477238cb918af747e4efd18a166e42b80b461875e5b55",
+      "narrative": [
+        {
+          "text": "Download and workflow statistics need no client call. REST records file downloads itself, because the download always passes through REST even when the UI is not involved (for example a direct link from Google), and the internal workflow already records workflow action statistics.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s592-submission-deposit",
+      "source": "sections/s592-submission-deposit.md",
+      "source_hash": "1d266e3806f2c5211421e417511de4e39ae46c703a3b8ec02ae70147889a2e5b",
+      "narrative": [
+        {
+          "text": "Overview of submitting a new item through the REST API. Submission and workflow is one of the most used DSpace features and, being configurable, uses many endpoints. Every step needs authentication and a valid CSRF token: send the Authorization header and the CSRF token with every request.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s593-starting-a-submission",
+      "source": "sections/s593-starting-a-submission.md",
+      "source_hash": "4d50091044023384a5c2771ab17ddbcb159d2c0d59d94a40f53bb47169a613e3",
+      "narrative": [
+        {
+          "text": "Starting a submission means creating a WorkspaceItem, the in-progress submission object, with POST /api/submission/workspaceitems?owningCollection=<collection-uuid>, since every item belongs to a collection. This creates an empty WorkspaceItem by default; a multipart POST can instead start it from an uploaded file or from an external entry whose metadata is imported.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s594-modifying-the-submission",
+      "source": "sections/s594-modifying-the-submission.md",
+      "source_hash": "b0df32c8b0aeb186d99df55ed4cf53afacea4899ea1a6bec7e2ac028bc2f797e",
+      "narrative": [
+        {
+          "text": "Modifying a submission. The response to the create call is the new WorkspaceItem; keep its id, which is needed to read or update it (GET /api/submission/workspaceitems/<id>). The item lists the sections to complete, which correspond to /api/config/submissionsections; each section's name is its id, and its sectionType says how to work with it. The section types are submission-form (metadata), upload (files), access (access rights and embargo), license (accepting the required licence) and cclicense (an optional Creative Commons licence), each documented separately.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s595-completing-the-submission-starting-workflow",
+      "source": "sections/s595-completing-the-submission-starting-workflow.md",
+      "source_hash": "8339229141823c02cd7c88406484bd7a911fa86c135e3918df8a830d1e5b0c5b",
+      "narrative": [
+        {
+          "text": "Completing a submission means sending it into the approval workflow by POSTing the WorkspaceItem to the workflow items endpoint. Approval workflow is set per collection and is off by default. Without a workflow the item becomes available at once and keeps the UUID it had as a WorkspaceItem; with one, a WorkflowItem is returned and can be read at /api/workflow/workflowitems/<id>.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s596-submissionaccessoptions-endpoints",
+      "source": "sections/s596-submissionaccessoptions-endpoints.md",
+      "source_hash": "ab4ea1c3849db79a94b1e4ead0ef55fe0a2a970c5b010368b0b0c87b013abef2",
+      "narrative": [
+        {
+          "text": "Title of the SubmissionAccessOptions Endpoints page, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s597-main-endpoint",
+      "source": "sections/s597-main-endpoint.md",
+      "source_hash": "72dc7056a1fa763e20037f3140680a534548be4df4455a7fc63d45afddb173dc",
+      "narrative": [
+        {
+          "text": "/api/config/submissionaccessoptions lists the SubmissionAccessConfig configurations, each of which gathers in one place the settings the submission access section needs.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s598-single-submission-form",
+      "source": "sections/s598-single-submission-form.md",
+      "source_hash": "56ff2ef75494b4bc787ecc0468339e0d4558d7fd2c06064281b786db8fd72d92",
+      "narrative": [
+        {
+          "text": "/api/config/submissionaccessoptions/<config-name> returns one access configuration. canChangeDiscoverable says whether the submitter may choose if the item is findable through search and browse. Each entry in accessConditionOptions has a name, which the UI can show (translated through i18n) and the backend uses to build the resource policy; if hasStartDate is true a start date is required, no later than maxStartDate when that is set; if hasEndDate is true an end date is required, no later than maxEndDate when set, and after any start date. A null accessConditionOptions means the submitter cannot set a policy and the item gets only the policies inherited from its collection.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s599-submission-cc-licenses-endpoints",
+      "source": "sections/s599-submission-cc-licenses-endpoints.md",
+      "source_hash": "e7a1f367e21c29d3f4bb3ae734d85bea01224450c0cb8f17f47ca3ce549e9ed1",
+      "narrative": [
+        {
+          "text": "Introduction to the Submission CC Licenses endpoints. The structure follows the configuration options of DSpace 6 and earlier. The first implementation expects a single site-level configuration named default; having an endpoint for a collection of configurations leaves room for different setups for different kinds of submission, such as theses, technical reports or journal articles.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s600-main-endpoint",
+      "source": "sections/s600-main-endpoint.md",
+      "source_hash": "d19a398ea4e4dc5fc8c921d40dd9a346e0bf56804d98ffe90e23af2b2b246249",
+      "narrative": [
+        {
+          "text": "/api/config/submissioncclicenses lists the Creative Commons licences configured for the repository, corresponding to the Creative Commons REST API (version 1.5) filtered to those licences. The example returns a paginated list with entries such as publicdomain.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s601-single-cc-license",
+      "source": "sections/s601-single-cc-license.md",
+      "source_hash": "8a4371c9c792e465310d63867f3fee02bb348a0cfae6eb6f4d4f5d07d63d05d2",
+      "narrative": [
+        {
+          "text": "/api/config/submissioncclicenses/<license-name> returns one Creative Commons licence. A basic licence, such as publicdomain (CC0), has no fields; others, such as standard, have fields, which are the questions to answer when assigning the licence, each with a label, description and allowed values.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s602-search-cc-license",
+      "source": "sections/s602-search-cc-license.md",
+      "source_hash": "59d4237034692f2424495b54cbed8113992553c9f0fe7d8e34d9e26e0525971e",
+      "narrative": [
+        {
+          "text": "/api/config/submissioncclicenseurls/search/rightsByQuestions returns the final Creative Commons licence URI once the licence's questions are answered. First read the licence with /api/config/submissioncclicenses/<license-name>. Parameters: license (a licence id from the list, such as standard or publicdomain) and answer_<field-id>=<value-id> for each answer (for example answer_commercial=y&answer_derivatives=sa); answers are needed only if the licence asks for them. A valid combination returns the licence URL. Response codes: 200 OK, 400 Bad Request for invalid or missing answers, 401 Unauthorized if not logged in, 404 Not found for an unknown licence.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s603-submission-definitions-endpoints",
+      "source": "sections/s603-submission-definitions-endpoints.md",
+      "source_hash": "9c529051c0eb3f7feddeeb8ffa83a4e819a07e736e7907bd82c28134ed86814f",
+      "narrative": [
+        {
+          "text": "Introduction to the Submission-Definitions endpoints. A submission definition is set globally or per collection and describes a whole submission process as a series of sections (called steps before DSpace 7).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s604-main-endpoint",
+      "source": "sections/s604-main-endpoint.md",
+      "source_hash": "6515f26fd07dd485871ea2c7dd2970f17f0aa5f4a4260a616af836dbcad548e1",
+      "narrative": [
+        {
+          "text": "/api/config/submissiondefinitions lists the configured submission definitions. The example is still to be provided.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s605-single-submission-definition",
+      "source": "sections/s605-single-submission-definition.md",
+      "source_hash": "b0232868375f7482930d30fdedf6840118e7f77571a3c4c34ea14fdd74504798",
+      "narrative": [
+        {
+          "text": "/api/config/submissiondefinitions/<definition-name> returns one submission definition, with its name (for example traditional), whether it is the default, and its type. It links to collections, the collections that explicitly use it, and sections, the submission sections it includes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s606-search-methods",
+      "source": "sections/s606-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the submission definitions endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s607-findbycollection",
+      "source": "sections/s607-findbycollection.md",
+      "source_hash": "04ff61442b0ea9edbd833878de9c924b1f437d7a91430c3f554adac80ad25836",
+      "narrative": [
+        {
+          "text": "Search method findByCollection, /api/config/submissiondefinitions/search/findByCollection?uuid=<collection-uuid>, returns the submission definition that applies to a collection, falling back to the default configuration.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s608-linked-entities",
+      "source": "sections/s608-linked-entities.md",
+      "source_hash": "26d243fd109b64c783bd0ec0b475eaf3071890d5378a73bd878dc579fd34fbe9",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a submission definition.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s609-collections",
+      "source": "sections/s609-collections.md",
+      "source_hash": "0d900de3e6be67270f5368d95e14a5086b7b9418b8cdbf8cd9aa2a135c2884e7",
+      "narrative": [
+        {
+          "text": "/api/config/submissiondefinitions/<definition-name>/collections lists the collections that explicitly use the submission definition. A collection that names no definition gets the default mapping but is not listed here.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s610-sections",
+      "source": "sections/s610-sections.md",
+      "source_hash": "928c548542a061045d0b136d1756e361c8840428a8e2deab0fea4a65069c58dd",
+      "narrative": [
+        {
+          "text": "/api/config/submissiondefinitions/<definition-name>/sections lists the submission sections used in the definition, as described on the submission sections page.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    }
+  ]
+}
