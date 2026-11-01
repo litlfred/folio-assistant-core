@@ -77,8 +77,8 @@ Called from content-change-review when the author submits. Which end it reaches 
       <bpmn:incoming>r1</bpmn:incoming>
       <bpmn:outgoing>r2</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Task_IngestComments" name="Ingest tagged review comments&#10;[folio-review-comments]">
-      <bpmn:documentation>Every PR conversation comment that starts with `block: &lt;label&gt;` becomes a `review-comment/1.0.0` todo (open), idempotently, and is published with the preview as `review-comments.json`. The staging workflow runs this on every push and on every tagged comment; the coordinator owns that it has run before slicing, because the slices are cut around what reviewers have already said. This is the `ingest` transition of REVIEW_TRANSITIONS.</bpmn:documentation>
+    <bpmn:task id="Task_IngestComments" name="Ingest tagged review comments">
+      <bpmn:documentation>Every PR conversation comment that starts with `block: &lt;label&gt;` becomes a `review-comment/1.0.0` todo (open), idempotently, and is published with the preview as `review-comments.json`. The staging workflow runs this on every push and on every tagged comment; the coordinator owns that it has run before slicing, because the slices are cut around what reviewers have already said. This is the `ingest` transition of REVIEW_TRANSITIONS. Uses `folio-review-comments`.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="review-comments" />
       </bpmn:extensionElements>
@@ -96,7 +96,7 @@ Called from content-change-review when the author submits. Which end it reaches 
       <bpmn:incoming>c8</bpmn:incoming>
       <bpmn:outgoing>c2</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:callActivity id="Call_ReviewSlices" name="Review each slice&#10;[review-task]" calledElement="Process_Review">
+    <bpmn:callActivity id="Call_ReviewSlices" name="Review each slice" calledElement="Process_Review">
       <bpmn:documentation>review-task.bpmn, once per slice, in parallel lanes by role. What kind of thing changed decides which review the slice descends into; the reviewer takes on that inner lane's role for the call only. Each reviewer gives the slice's blocks a verdict, and comments on the pull request with the `block:` tag where something needs saying.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
@@ -111,7 +111,7 @@ Called from content-change-review when the author submits. Which end it reaches 
       <bpmn:outgoing>c4</bpmn:outgoing>
       <bpmn:outgoing>c5</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:task id="Task_WithdrawComment" name="Withdraw a review comment&#10;[folio-review-comment-move]">
+    <bpmn:task id="Task_WithdrawComment" name="Withdraw a review comment">
       <bpmn:documentation>The reviewer who made a comment takes it back (it was a misreading, or a later slice answered it). Recorded with `folio-review-comment-move --to withdrawn`, committed to the edit-set's feature branch like every status change. This is the `withdraw` transition of REVIEW_TRANSITIONS.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="review-comments" />

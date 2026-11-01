@@ -101,7 +101,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-committee.bpmn:81
 #. Diagram element documentation
-msgid "Every PR conversation comment that starts with `block: <label>` becomes a `review-comment/1.0.0` todo (open), idempotently, and is published with the preview as `review-comments.json`. The staging workflow runs this on every push and on every tagged comment; the coordinator owns that it has run before slicing, because the slices are cut around what reviewers have already said. This is the `ingest` transition of REVIEW_TRANSITIONS."
+msgid "Every PR conversation comment that starts with `block: <label>` becomes a `review-comment/1.0.0` todo (open), idempotently, and is published with the preview as `review-comments.json`. The staging workflow runs this on every push and on every tagged comment; the coordinator owns that it has run before slicing, because the slices are cut around what reviewers have already said. This is the `ingest` transition of REVIEW_TRANSITIONS. Uses `folio-review-comments`."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-committee.bpmn:89
@@ -111,7 +111,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-committee.bpmn:80
 #. Diagram label
-msgid "Ingest tagged review comments [folio-review-comments]"
+msgid "Ingest tagged review comments"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-committee.bpmn:123
@@ -156,7 +156,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-committee.bpmn:99
 #. Diagram label
-msgid "Review each slice [review-task]"
+msgid "Review each slice"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-committee.bpmn:166
@@ -206,7 +206,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-committee.bpmn:114
 #. Diagram label
-msgid "Withdraw a review comment [folio-review-comment-move]"
+msgid "Withdraw a review comment"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-committee.bpmn:225

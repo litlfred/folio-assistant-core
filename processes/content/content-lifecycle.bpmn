@@ -94,7 +94,7 @@
       <bpmn:incoming>H01</bpmn:incoming>
       <bpmn:outgoing>H02</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:callActivity id="Task_SeedBeans" name="Seed the work plan&#10;[todo-manager]" calledElement="GT_SeedWorkPlan">
+    <bpmn:callActivity id="Task_SeedBeans" name="Seed the work plan" calledElement="GT_SeedWorkPlan">
       <bpmn:outgoing>H03</bpmn:outgoing>
       <bpmn:incoming>SF_Bean_1</bpmn:incoming>
     </bpmn:callActivity>

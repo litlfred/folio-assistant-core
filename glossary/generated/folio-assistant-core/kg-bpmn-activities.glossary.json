@@ -272,7 +272,7 @@
     },
     {
       "id": "process_contentchangereviewcommittee.call_reviewslices",
-      "prefLabel": "Review each slice [review-task]",
+      "prefLabel": "Review each slice",
       "definition": "review-task.bpmn, once per slice, in parallel lanes by role. What kind of thing changed decides which review the slice descends into; the reviewer takes on that inner lane's role for the call only. Each reviewer gives the slice's blocks a verdict, and comments on the pull request with the `block:` tag where something needs saying.",
       "notation": "Call_ReviewSlices",
       "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Call_ReviewSlices",
@@ -296,7 +296,7 @@
     },
     {
       "id": "process_contentchangereviewcommittee.task_ingestcomments",
-      "prefLabel": "Ingest tagged review comments [folio-review-comments]",
+      "prefLabel": "Ingest tagged review comments",
       "definition": "Every PR conversation comment that starts with `block: <label>` becomes a `review-comment/1.0.0` todo (open), idempotently, and is published with the preview as `review-comments.json`. The staging workflow runs this on every push and on every tagged comment; the coordinator owns that it has run before slicing, because the slices are cut around what reviewers have already said. This is the `ingest` transition of REVIEW_TRANSITIONS.",
       "notation": "Task_IngestComments",
       "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Task_IngestComments",
@@ -336,7 +336,7 @@
     },
     {
       "id": "process_contentchangereviewcommittee.task_withdrawcomment",
-      "prefLabel": "Withdraw a review comment [folio-review-comment-move]",
+      "prefLabel": "Withdraw a review comment",
       "definition": "The reviewer who made a comment takes it back (it was a misreading, or a later slice answered it). Recorded with `folio-review-comment-move --to withdrawn`, committed to the edit-set's feature branch like every status change. This is the `withdraw` transition of REVIEW_TRANSITIONS.",
       "notation": "Task_WithdrawComment",
       "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Task_WithdrawComment",
@@ -608,7 +608,7 @@
     },
     {
       "id": "process_documentauthoring.task_scaffold",
-      "prefLabel": "3 · Scaffold the folio [folio_init]",
+      "prefLabel": "3 · Scaffold the folio",
       "definition": "folio_init writes content/, uploads/, library/, the manifests, the builder shim and AGENTS.md. Skipped when the folio already exists.",
       "notation": "Task_Scaffold",
       "source": "folio-assistant-core/processes/content/authoring-a-document.bpmn#Task_Scaffold",

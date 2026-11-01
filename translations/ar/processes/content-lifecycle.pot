@@ -186,7 +186,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:97
 #. Diagram label
-msgid "Seed the work plan [todo-manager]"
+msgid "Seed the work plan"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-lifecycle.bpmn:177

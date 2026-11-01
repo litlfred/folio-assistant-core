@@ -96,11 +96,11 @@
       <bpmn:incoming>D01</bpmn:incoming>
       <bpmn:outgoing>D02</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:callActivity id="Task_SeedPlan" name="2 · Seed the work plan&#10;[todo-manager]" calledElement="GT_SeedWorkPlan">
+    <bpmn:callActivity id="Task_SeedPlan" name="2 · Seed the work plan" calledElement="GT_SeedWorkPlan">
       <bpmn:outgoing>D03</bpmn:outgoing>
       <bpmn:incoming>SF_Bean_1</bpmn:incoming>
     </bpmn:callActivity>
-    <bpmn:serviceTask id="Task_Scaffold" name="3 · Scaffold the folio&#10;[folio_init]">
+    <bpmn:serviceTask id="Task_Scaffold" name="3 · Scaffold the folio">
       <bpmn:documentation>folio_init writes content/, uploads/, library/, the manifests, the builder shim and AGENTS.md. Skipped when the folio already exists.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-structure" />

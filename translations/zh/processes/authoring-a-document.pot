@@ -21,12 +21,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:99
 #. Diagram label
-msgid "2 · Seed the work plan [todo-manager]"
+msgid "2 · Seed the work plan"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:103
 #. Diagram label
-msgid "3 · Scaffold the folio [folio_init]"
+msgid "3 · Scaffold the folio"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:111
