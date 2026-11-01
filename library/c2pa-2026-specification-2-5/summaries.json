@@ -761,6 +761,918 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s724-g-4-3-bmff-merkle-hash",
+      "source": "sections/s724-g-4-3-bmff-merkle-hash.md",
+      "source_hash": "072648fed3232cabef2781c3ea1377e9dd856c06eba0d6b79d5ff0c78bf8d9c2",
+      "narrative": [
+        {
+          "text": "The CDDL defines bmff-merkle-map, which holds enough information to validate a single 'mdat' box, or part of one, when a Merkle tree is used, with uniqueId and localId fields identifying the tree and a zero-based location index into its leaf-most row. An optional ordered hashes array gives the extra hashes needed to climb from the leaf to the tree row held in the manifest; it may be absent, excludes null hashes, and uses the alg from the matching merkle entry in the BMFF hash structure.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s725-g-4-4-boxes-hash",
+      "source": "sections/s725-g-4-4-boxes-hash.md",
+      "source_hash": "7b15b2a73a48694710f42086ba9520a0476ce76ac930c001b325cd32ba0694a9",
+      "narrative": [
+        {
+          "text": "The CDDL defines box-map, an array of box-hash-map entries plus an optional alg, where each entry lists box identifiers in order of appearance (names, e.g. APP0 or IHDR), the hash value, and optional excluded, exclusions, pad and pad2 fields. The alg is taken from the innermost structure that supplies it and the structure is invalid if none does, while box-exclusions-map gives start, length and an optional boxIndex for exclusion ranges that must increase monotonically and not overlap.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s726-g-4-5-collection-data-hash",
+      "source": "sections/s726-g-4-5-collection-data-hash.md",
+      "source_hash": "62209aa18694930eef53eafc4904aeb0a256b00ee29dbc74bdb097d1b7c7c5ae",
+      "narrative": [
+        {
+          "text": "The CDDL defines the collection data hash map as a uris array of hashed URI entries, a required alg naming the hash algorithm applied to each entry, and an optional zip_central_directory_hash, and it also allows URN-based record identifiers (such as WARC-Record-ID) as relative URLs for containers whose members are named by URN.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s727-g-4-6-multi-asset-hash",
+      "source": "sections/s727-g-4-6-multi-asset-hash.md",
+      "source_hash": "deacae38909bdc5d40c91f1e2ccf52b2c7c82f95074e6793e278d05163119b35",
+      "narrative": [
+        {
+          "text": "The CDDL defines multi-asset-hash-map as a parts array in which each part-hash-map gives the part's location (either a byte offset and length or a bmffBox XPath, but not both), a hashed URI to that part's hash assertion, and an optional flag marking the part as optional and discardable.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s728-g-4-7-segment-hash",
+      "source": "sections/s728-g-4-7-segment-hash.md",
+      "source_hash": "ee209ce119a055e6eaac01e077dc983d0cb0ef2f5018da6b8a342ff466f373a1",
+      "narrative": [
+        {
+          "text": "The CDDL defines segment-hash-map, a segment hash assertion for append-only plain-text files that binds a signed checkpoint manifest byte-exactly to its covered segment, with version fixed at 1, an optional alg resolved as in other hash structures, the hash of bytes from segmentStart to segmentEnd, an optional sentinelLength (present only when the sentinel references an external URI) and optional metadata. Every checkpoint after the first must carry predecessorSentinel, whose start, length and hash fields must all appear together and authenticate the immediately preceding sentinel line, so that earlier sentinels cannot be rewritten without breaking the chain.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s729-g-5-content-assertions",
+      "source": "sections/s729-g-5-content-assertions.md",
+      "source_hash": "41faf986a341fb72349aefdc92305253ec4955b33b0929217af37f193a03eaa3",
+      "narrative": [
+        {
+          "text": "Heading that opens Section G.5, Content Assertions; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s730-g-5-1-actions",
+      "source": "sections/s730-g-5-1-actions.md",
+      "source_hash": "0cc28703a1a97fdf2ab382f8cb3b266c01f01b83c4278ea4ce310eccd4400ba2",
+      "narrative": [
+        {
+          "text": "The CDDL defines version 2 of the actions assertion, actions-map-v2, with a required actions list and allActionsIncluded flag (previously optional) plus optional templates, softwareAgents and metadata, and it lists reason values such as c2pa.PII.present and c2pa.trade-secret.present. Each action item names the action, may carry a software agent or index, description and digitalSourceType, either an exact when time or a whenStart/whenEnd range (mutually exclusive), changed regions, related actions, and parameters such as redacted, ingredients, relatedAssertions, source and target languages for translation, name and multipleInstances, with reason and redacted required for c2pa.redacted. Action templates may use the \"*\" wildcard, an icon and parameters, with the older templateParameters deprecated and to be merged as if it were parameters, and the block also gives the deprecated version 1 actions-map, whose items use a string softwareAgent, a semicolon-delimited changed field, instanceID and a single ingredient parameter.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s731-g-5-2-action-enumeration-values",
+      "source": "sections/s731-g-5-2-action-enumeration-values.md",
+      "source_hash": "2dcb4d6ba689cd7d7a190ae9bd825f0f0a78642d10652f819950aa4c029ed29e",
+      "narrative": [
+        {
+          "text": "The CDDL, generated from actions.yaml, enumerates the predefined values of $action-choice, from c2pa.addedText, c2pa.created, c2pa.edited and c2pa.redacted through c2pa.watermarked.bound and c2pa.watermarked.unbound. It also lists font-specific actions such as font.subset, font.merged and font.hinted, and allows custom actions matching a dotted, label-style pattern.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s732-g-5-3-font-actions",
+      "source": "sections/s732-g-5-3-font-actions.md",
+      "source_hash": "82c97e2190cc002694db75708504dbb3157c66a8959460cdfe350c489114df08",
+      "narrative": [
+        {
+          "text": "The CDDL defines the maps, ranges and parameters for font actions, including inclusive Unicode start/stop ranges used by font.subset and the font.characters added, deleted and modified actions. It also defines the parameters for instantiating a font from a variable font, namely weight (1 to 1000, 400 being normal), width (0 to 1000 percent), italic, slant (-90 to 90 degrees), optical-size and any custom axes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s733-g-5-4-ingredient",
+      "source": "sections/s733-g-5-4-ingredient.md",
+      "source_hash": "5331d4eb7024314d409d0906881cc6d75e4258b133ee9ac3a21f7a50ebad5254",
+      "narrative": [
+        {
+          "text": "The CDDL defines version 3 of the ingredient assertion, ingredient-map-v3, whose only required field is relationship, alongside optional fields such as dc:title, dc:format, validationResults, instanceID, data, dataTypes, relatedAssertions, claimSignature, thumbnail, description, informationalURI, softBindingsMatched, softBindingAlgorithmsMatched and metadata. It may carry either activeManifest or digitalSourceType but not both. The block also gives the deprecated version 2 and version 1 ingredient maps, which require dc:title and dc:format and use fields such as documentID, c2pa_manifest and validationStatus, and it defines the media type format string and the relationship values parentOf, componentOf and inputTo.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s734-g-5-5-asset-reference",
+      "source": "sections/s734-g-5-5-asset-reference.md",
+      "source_hash": "a3b4e74dbe4c556bee72e5eda45853c0a4d9e2689f0606408795ba9283a3e38e",
+      "narrative": [
+        {
+          "text": "The CDDL defines the asset reference assertion, which describes where a copy of the asset may be obtained through a references array whose entries each hold a uri and an optional human-readable description, plus optional metadata.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s735-g-5-6-asset-type",
+      "source": "sections/s735-g-5-6-asset-type.md",
+      "source_hash": "8f26da440952c033464c77e354b00d252596ded3deb20edb4c5082141f03dadc",
+      "narrative": [
+        {
+          "text": "The CDDL defines the asset type assertion, which describes an asset's type or format to guide parsing or processing and can also describe external or related assets such as AI/ML models, using asset-type-map entries with a type and an optional SemVer version alongside an optional dc:format and metadata.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s736-g-5-7-asset-type-and-model-enumeration-values",
+      "source": "sections/s736-g-5-7-asset-type-and-model-enumeration-values.md",
+      "source_hash": "d0a75788180cbd93fd832b05da2b4bc288824aec15286b0415b71ae4970d1e7e",
+      "narrative": [
+        {
+          "text": "The CDDL enumerates the $model-type-choice values for AI/ML model formats, such as c2pa.types.model.onnx, c2pa.types.model.pytorch and c2pa.types.model.tensorflow. It also enumerates $asset-type-choice values such as c2pa.types.dataset, c2pa.types.generator.prompt and c2pa.types.version-history, which include all model types and allow custom label-style values.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s737-g-5-8-external-reference",
+      "source": "sections/s737-g-5-8-external-reference.md",
+      "source_hash": "93d8676c013c2dd1768627cd711efc6b1763aa4385bce95140cd0ea4a54b30d7",
+      "narrative": [
+        {
+          "text": "The CDDL defines two assertions that point to externally stored assertion data, external-reference-map using an unhashed location and hashed-external-reference-map using a hashed location, each with an optional label, description and metadata.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s738-g-5-9-cloud-data",
+      "source": "sections/s738-g-5-9-cloud-data.md",
+      "source_hash": "de472b814f4c137f59f886620fd2bf6e59b4b2273b1573d6661ce3f35ceb4e3f",
+      "narrative": [
+        {
+          "text": "The CDDL defines cloud-data-map, an assertion pointing to an assertion stored in the cloud, with a required label, a size of at least one byte and a hashed external location, plus optional content_type and metadata.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s739-g-5-10-regions-of-interest",
+      "source": "sections/s739-g-5-10-regions-of-interest.md",
+      "source_hash": "c836cde5179af26cb95e7f12d6f96fe5e22774ec526ae704e17d51fe8bb2024c",
+      "narrative": [
+        {
+          "text": "The CDDL defines region-map, which describes a region of interest through one or more ranges together with optional name, identifier, type, description and metadata fields, and a role field that is marked deprecated. Each range has a type of spatial, temporal, frame, textual or identified, with matching shape, time, frame, text or item details, where a shape is a rectangle, circle or polygon measured in pixels or percent from an origin, with an optional inside flag. Times are either NPT or wall-clock (start inclusive, end exclusive unless endInclusivity says inclusive), frames cover video frames or document pages, text ranges use fragment-based selectors modelled on W3C Web Annotation, and identified ranges pair a container-specific identifier such as track_id with a value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s740-g-5-11-region-role-enumeration-values",
+      "source": "sections/s740-g-5-11-region-role-enumeration-values.md",
+      "source_hash": "ba7d767e048c2ccb634d7d8c89f2e3ae537054551c840e97cbf38e1c06833dc1",
+      "narrative": [
+        {
+          "text": "The CDDL enumerates the deprecated $role-choice values for regions of interest. They include c2pa.areaOfInterest, c2pa.cropped, c2pa.edited, c2pa.placed, c2pa.redacted, c2pa.subjectArea, c2pa.deleted and c2pa.styled, plus c2pa.watermarked and c2pa.watermarked.bound for soft binding and c2pa.watermarked.unbound for watermarking without one.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s741-g-5-12-soft-binding",
+      "source": "sections/s741-g-5-12-soft-binding.md",
+      "source_hash": "6842b536d7125cca3832dcbd0345f469cd833d22b2c791c761b4643071b9bf80",
+      "narrative": [
+        {
+          "text": "The CDDL defines soft-binding-map, which stores one or more soft bindings over some or all of an asset's content, with an alg (resolved from the enclosing alg_soft if absent, invalid if neither is set), a blocks array, and optional pad fields, name, alg-params, bindingMetadata, a deprecated url and metadata. Each block pairs an algorithm-specific value with a scope given by a deprecated extent, a millisecond timespan or a region of interest, and the binding metadata may include a description, contact, informationalUrl and custom fields.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s742-g-5-13-environmental-sustainability",
+      "source": "sections/s742-g-5-13-environmental-sustainability.md",
+      "source_hash": "999eaccd618d6e564389c524ef8f2cdfea358c916b3c730530fc9e07c33fcf6e",
+      "narrative": [
+        {
+          "text": "The CDDL defines the environmental sustainability assertion, which records energy_kwh, carbon_kgco2e and water_litres measurements (each a non-negative value with an optional measurement method) tied to creating or modifying an asset, plus metadata and custom fields.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s743-g-5-14-ai-disclosure",
+      "source": "sections/s743-g-5-14-ai-disclosure.md",
+      "source_hash": "def276f7e7785c75e923aff6c3e0086471417878447d1ce25fbdffa0c32f909a",
+      "narrative": [
+        {
+          "text": "The CDDL defines ai-model-disclosure-map, which requires a modelType and optionally gives modelName, modelIdentifier, a contentProfile, arXiv-style scientificDomain values and metadata. The content profile can declare a humanOversightLevel of fully_autonomous, prompt_guided or human_validated to tell validators how much human involvement there was, and further fields such as modelFrontier and harmEvaluation are noted as pending future specification.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s744-g-5-15-linked-resource-integrity",
+      "source": "sections/s744-g-5-15-linked-resource-integrity.md",
+      "source_hash": "a1877fed194c2d32956291e60f4ec4b4c0947787738b7c6ac386eb542b3eb593",
+      "narrative": [
+        {
+          "text": "The CDDL defines linked-resource-integrity-map, whose resources are either externalResources (hashed external URIs, for formats that only support absolute references) or relativeResources with an alg (for formats supporting references relative to the asset). An optional allURIsIncluded flag says whether every URI embedded in the container is covered, and optional metadata may be added.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s745-g-5-16-depth-map-gdepth",
+      "source": "sections/s745-g-5-16-depth-map-gdepth.md",
+      "source_hash": "803f2b5aa08dada3bb1016c5ea94b1697081d682183c119fba30e03b8caee932",
+      "narrative": [
+        {
+          "text": "The CDDL defines depthmap-gdepth-map, an assertion holding a GDepth-format 3D depth map of the captured scene, which requires GDepth:Format (RangeInverse by default, or RangeLinear), GDepth:Near, GDepth:Far, GDepth:Mime and base64 GDepth:Data. Optional fields cover units (m or mm), measurement type (OpticalAxis or OpticRay), a confidence image and its type, the device manufacturer, model and software, and the original colour image's width and height, which apps must update when scaling, cropping or rotating that image.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s746-g-5-17-alternative-content-representation",
+      "source": "sections/s746-g-5-17-alternative-content-representation.md",
+      "source_hash": "9095236bf622e39fc1ce01e59068c61c016c6ae4af33292ac02e425a2ba13074",
+      "narrative": [
+        {
+          "text": "The CDDL defines the alternative content representation, a reference to another version of the content that is either an original preservation image or a generic representation with a label-style type and free-form parameters. The original preservation image form, typed exif.originalPreservationImage, can locate the image by a zero-based multiAssetPartIndex into a c2pa.hash.multi-asset assertion or by a hashed URI to an embedded data assertion or equivalent.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s747-g-5-18-font-information",
+      "source": "sections/s747-g-5-18-font-information.md",
+      "source_hash": "4d1d486f5d115922c11a9316ee0a359147b912d32a613ccdbe58398d3cf1f736",
+      "narrative": [
+        {
+          "text": "The CDDL defines font-info-map, the data for the font.info assertion, which requires fullName, familyName, style, weight (a class name and a 1 to 1000 value), a constrained postScriptName, format (TrueType or OpenType) and copyrightNotice. Optional fields include version, versionUrl, releaseDate, copyrightHolder, copyrightYears, designers (each with person, foundry, contribution and start and end dates), designFoundry, sourceFoundry, identifier and metadata, and the allowed styles are Normal, Italic, Oblique, Roman and Regular.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s748-g-5-19-font-weight-class-enumeration-values",
+      "source": "sections/s748-g-5-19-font-weight-class-enumeration-values.md",
+      "source_hash": "acfd725cdd2d915f39209a0a80d6e53588d7c3fd0bf87388a5ded27c3d50aa17",
+      "narrative": [
+        {
+          "text": "The CDDL enumerates the $font-weight-class names used in font information, running from Microline, Hairline and Thin through Regular, Medium and Bold to ExtraBlack, UltraBlack and MegaBlack.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s749-g-6-trust-and-security",
+      "source": "sections/s749-g-6-trust-and-security.md",
+      "source_hash": "ffc8cbb6c2702b25bee074b21a3269d8e3976614b95c59b2ff5b491374817520",
+      "narrative": [
+        {
+          "text": "Heading that opens Section G.6, Trust and Security; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s750-g-6-1-certificate-status",
+      "source": "sections/s750-g-6-1-certificate-status.md",
+      "source_hash": "b756960ce5f5a9c3b52c442970fa55392973e52a848a56c354268b9981df965b",
+      "narrative": [
+        {
+          "text": "The CDDL defines certificate-status-map as a required array of one or more ocspVals byte strings.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s751-g-6-2-session-keys",
+      "source": "sections/s751-g-6-2-session-keys.md",
+      "source_hash": "c2c59c31e8d17c80e63318551edd8ca6fbbc2989554583f3d2f0744269c641f4",
+      "narrative": [
+        {
+          "text": "The CDDL defines session-keys-data, which supplies one or more session keys for live-media validation, each with a COSE key used to sign verifiable segment info, a minimum sequence number, a createdAt time, a validity period in seconds and a signerBinding signature of the signer's end-entity certificate made with that key.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s752-g-6-3-time-stamp",
+      "source": "sections/s752-g-6-3-time-stamp.md",
+      "source_hash": "16c7fa6cdc07429394b298eb32339fa2ca714dfb08a11112abe575c91dfadcbe",
+      "narrative": [
+        {
+          "text": "The CDDL defines the time stamp map, which maps manifest URNs of the form urn:c2pa:... to time stamp byte strings.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s753-g-6-4-revocation-values-rvals",
+      "source": "sections/s753-g-6-4-revocation-values-rvals.md",
+      "source_hash": "3df99c32797249c53f5666e5c83690a88e8a485005f2c081160645b1d4ef7bcb",
+      "narrative": [
+        {
+          "text": "The CDDL defines rVals as an array of one or more ocspVals byte strings, and a note explains it is a CBOR adaptation of part of the JAdES schema that stores only OCSP responses, as binary strings.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s754-g-7-common-types",
+      "source": "sections/s754-g-7-common-types.md",
+      "source_hash": "08ef841dd1b386cd8363e3e8d3ab200612b7dbbd3dce6246471f5b24c57382be",
+      "narrative": [
+        {
+          "text": "Heading that opens Section G.7, Common Types; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s755-g-7-1-assertion-metadata-common-types",
+      "source": "sections/s755-g-7-1-assertion-metadata-common-types.md",
+      "source_hash": "7a0fc71536e8a083a0dffefd12a43d9dc2dcfe7575a7393d6d08b0e8c3720c30",
+      "narrative": [
+        {
+          "text": "The CDDL defines the common assertion metadata map, with optional dateTime, reviewRatings, reference, a deprecated dataSource that claim generators shall not include, localizations, regionOfInterest, processStart, processEnd and custom fields, along with lower- and upper-bound time types whose timeStampType defaults to absolute. It also defines source-map (a source type and details), rating-map (a value from 1 to 5 with an optional code and explanation) and localization entries.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s756-g-7-2-assertion-metadata-enumeration-values",
+      "source": "sections/s756-g-7-2-assertion-metadata-enumeration-values.md",
+      "source_hash": "f639bda7ac32c52dae2e9ddfea3514607c7de535d765e85ba79095e1e6670e7e",
+      "narrative": [
+        {
+          "text": "The CDDL enumerates $source-type values such as signer, claimGenerator.REE, localProvider.TEE, remoteProvider.1stParty and humanEntry, and $review-code values such as actions.missing, ingredient.modified and thumbnail.primaryMismatch, marking some of each as deprecated as of 2.0.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s757-g-7-3-validation-result-structures",
+      "source": "sections/s757-g-7-3-validation-result-structures.md",
+      "source_hash": "6039949d6e83b77deb0ad56a5b228535a1e5e7d870dafc5b4d31633d4ed69501",
+      "narrative": [
+        {
+          "text": "The CDDL defines status-map, which holds a label-style code, at most one of url or resourceUrl, an optional explanation and a deprecated success flag, and status-codes-map, which groups such entries into success, informational and failure arrays. It also defines a SemVer string pattern, trust-list-uri-map, and validation-results-map, which may carry the active manifest's status codes, per-ingredient validation deltas, the specVersion used, and either a deprecated trustListUri or a trustListUris array.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s758-g-8-live-media",
+      "source": "sections/s758-g-8-live-media.md",
+      "source_hash": "014960313f7192ce4722a3aeade6dbf0120f3bb7ea3140c500132b64786ae837",
+      "narrative": [
+        {
+          "text": "Heading that opens Section G.8, Live Media; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s759-g-8-1-live-media-segment",
+      "source": "sections/s759-g-8-1-live-media-segment.md",
+      "source_hash": "85f221686916044fb4ef8f9790763a0a46359699b170a29278e0d8605d3bc4d6",
+      "narrative": [
+        {
+          "text": "The CDDL defines livevideo-segment-map, an assertion carrying live media segment information through a monotonically increasing sequenceNumber, a streamId and a continuityMethod, and adds a previousManifestId field when the continuity method is c2pa.manifestId.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s760-g-8-2-verifiable-segment-info",
+      "source": "sections/s760-g-8-2-verifiable-segment-info.md",
+      "source_hash": "f2cbf5f7dd722dec8cfcb1ce80c96bc00e6165b5c480af76bc518364bb4da15a",
+      "narrative": [
+        {
+          "text": "The CDDL defines verifiable-segment-info as a COSE_Sign1 structure, with the algorithm and optional signing time in the protected header and the session key id in the unprotected header, whose payload segment-info-map holds a sequenceNumber, a bmffHash, a manifestId and an optional manifestUri.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s761-g-8-3-enhanced-rtmp-segment-info",
+      "source": "sections/s761-g-8-3-enhanced-rtmp-segment-info.md",
+      "source_hash": "d8fabf78b9d3e622f5364807cb5564a9a05dff9b80fe8bb939e7d7b67edf4dae",
+      "narrative": [
+        {
+          "text": "The CDDL defines the Enhanced RTMP form of verifiable segment info for segments not packaged as BMFF/CMAF fragments, a COSE_Sign1 structure whose rtmp-segment-info-map payload gives an audio or video mediaType, an optional trackId (absent meaning 0), a per-track sequenceNumber increasing by one, a segmentHash, a manifestId and an optional manifestUri.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s762-g-8-4-enhanced-rtmp-hash",
+      "source": "sections/s762-g-8-4-enhanced-rtmp-hash.md",
+      "source_hash": "5d3f6bce50ac2dac9af941837cbff78fbbb1cc371847119da70c984e1bbcba79",
+      "narrative": [
+        {
+          "text": "The CDDL defines rtmp-hash-map, which stores an alg identifier and the hash bytes of an Enhanced RTMP segment's media payload.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s763-appendix-h-deprecated-constructs",
+      "source": "sections/s763-appendix-h-deprecated-constructs.md",
+      "source_hash": "93c7331130a88d3d57d6bdf015cc7976ad1d447cc3b91e262af7488b14feb657",
+      "narrative": [
+        {
+          "text": "The annex introduction says it records constructs deprecated in the specification, which claim generators shall not use but validators should still accept for backwards compatibility.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s764-h-1-datasource-field-in-assertion-metadata",
+      "source": "sections/s764-h-1-datasource-field-in-assertion-metadata.md",
+      "source_hash": "99027b86f6f48393cd7e26af491f4094a3eb44e89a594880a3e31d5672cb2d18",
+      "narrative": [
+        {
+          "text": "The dataSource field in assertion metadata is deprecated: claim generators shall not include it, while validators shall still accept it, because no known implementations used it. The block describes its former structure, a type drawn from a table of values such as signer, claimGenerator.REE, localProvider.TEE, remoteProvider, remoteProvider.external and humanEntry (or an entity-specific namespace), and a human-readable details string.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s765-h-2-string-label-x5chain",
+      "source": "sections/s765-h-2-string-label-x5chain.md",
+      "source_hash": "8ce838be19b85b7b58bd442990e6eef64f41475650abc6962b7062e524d5dd0d",
+      "narrative": [
+        {
+          "text": "The string label x5chain for the X.509 certificate chain COSE header is deprecated, so claim generators shall use integer label 33, now standardised by RFC 9360, while validators shall still accept the string label.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s766-h-3-data-boxes",
+      "source": "sections/s766-h-3-data-boxes.md",
+      "source_hash": "5b123c4bfcf8322524046218c6b1ce5c9472ffc2a49affdab0357b2acf70a70e",
+      "narrative": [
+        {
+          "text": "The note says data boxes are deprecated and kept only for historical reference, replaced by a standard assertion that holds data in a JUMBF Embedded File content type box.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s767-h-3-1-general",
+      "source": "sections/s767-h-3-1-general.md",
+      "source_hash": "4694fc7c2750c0ff339991d69652b8fb03be2c0236410f50de7d91925a8bd6f8",
+      "narrative": [
+        {
+          "text": "Data boxes let arbitrary data referenced from an assertion be placed in the Data Box Store as single CBOR content type boxes, with the binary data in the data field, its type identified by an IANA media type in dc:format (structured suffixes such as +json are allowed), and optional asset types in data_types. A data box shall have the label c2pa.data and follows the usual assertion label rules for multiple instances.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s768-h-3-2-schema-and-example",
+      "source": "sections/s768-h-3-2-schema-and-example.md",
+      "source_hash": "9cd62859692d9d89fd2537b2004eb949e8150b4c8afc7dcf5bdf43987fc68bc1",
+      "narrative": [
+        {
+          "text": "The CDDL defines data-box-map, which holds an IANA media type in dc:format, arbitrary data as a byte string and optional data_types.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s769-h-4-data-box-store",
+      "source": "sections/s769-h-4-data-box-store.md",
+      "source_hash": "ba55f58139d0434e79e28a8ee2402ffec93b5b35d276a632c5eff7d6ba274b01",
+      "narrative": [
+        {
+          "text": "The deprecated, historical Data Box Store is a JUMBF superbox that shall contain only CBOR content type boxes labelled c2pa.data, and shall itself have the label c2pa.databoxes and the c2db type UUID, and the block also includes a figure of a manifest store with data boxes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s770-h-5-action-c2pa-removed",
+      "source": "sections/s770-h-5-action-c2pa-removed.md",
+      "source_hash": "e7382754e3cb1dffad6ade083b3ede22460343769b38def9966eff2e5f87a7cd",
+      "narrative": [
+        {
+          "text": "The c2pa.removed action, formerly used for removed componentOf ingredients, is deprecated in favour of the ingredient field of c2pa.deleted, so claim generators shall not use it, though validators should still accept it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s771-h-5-1-validation-rule",
+      "source": "sections/s771-h-5-1-validation-rule.md",
+      "source_hash": "9c9dcb32a8eeb4d58188ebb8e2fa4863c5ef5d83e4decf8880ccfea8d1d92301",
+      "narrative": [
+        {
+          "text": "The validation rule requires that the ingredients (or, for c2pa.actions, ingredient) field hold one or more valid hashed URIs, each resolving to an ingredient assertion in another manifest whose relationship is componentOf, and otherwise the claim shall be rejected with assertion.action.ingredientMismatch.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
