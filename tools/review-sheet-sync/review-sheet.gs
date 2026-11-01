@@ -198,9 +198,11 @@ function applyEditors(ss) {
  * and tell the person the steps a script cannot take. A missing dropdown is
  * added; an existing one is left alone, since writing it again would clear
  * its "Allow multiple selections" tick. Neither Apps Script nor the Sheets
- * API can read that tick, so the box is skipped only on
- * evidence: a cell already holding two sections from the list (or, on a sheet
- * installed before 2026-10-31, the person having said it is done). The same
+ * API can read that tick, so the reminder shows on every Install (unless, on
+ * a sheet installed before 2026-10-31, the person said it is done). A cell
+ * holding two sections is NOT evidence: the agent and pasted text write such
+ * cells too, and without the tick Sheets marks them "Invalid: Input must
+ * fall within specified range" (owner, 2026-11-01, DTH-PHC log). The same
  * steps are in the Config tab's Instructions row.
  */
 function checkDropdown(ss) {
@@ -217,14 +219,14 @@ function checkDropdown(ss) {
       .setAllowInvalid(true).build());
   }
   const props = docProps_();
-  if (had && (props.getProperty('dropdownDone') || multiPicked(cells))) return;
+  if (had && props.getProperty('dropdownDone')) return;
   // A toast, never a dialog: a dialog waits for an answer in the sheet, and
   // when Install is run from the Apps Script editor nobody sees it, so the
   // run hangs until Apps Script stops it after 6 minutes (owner, 2026-10-31:
   // "Exceeded maximum execution time" on the DTH-SC log).
   try {
     ss.toast('Selected Sections is ' + (had ? 'a dropdown' : 'now a dropdown of the document\'s sections') +
-      '. One step only a person can take: select the "' + COLS.draft.sections +
+      '. One step only a person can take (without it, a cell with two sections shows "Invalid"): select the "' + COLS.draft.sections +
       '" column, choose Data, then Data validation, open its rule, set Advanced options > Display style to Chip, then tick Allow multiple selections (greyed out until the style is Chip), and press Done. ' +
       'The same steps are on the Config tab.', 'Finish the dropdown', 30);
   } catch (e) { /* a toast is a courtesy */ }
@@ -271,15 +273,6 @@ function placeBefore(sh, name, before) {
   // moveColumns' destination is the index BEFORE the move, 1-based.
   sh.moveColumns(sh.getRange(1, a + 1, 1, 1), b + 1);
   return true;
-}
-
-/** True when some cell holds two or more sections from the list, which only a multi-select rule allows. */
-function multiPicked(cells) {
-  const names = new Set(DATA.TOC.map(t => bareName(t[0])));
-  return cells.getDisplayValues().some(([v]) => {
-    const parts = String(v).split(',').map(x => x.trim()).filter(Boolean);
-    return parts.length > 1 && parts.every(x => names.has(bareName(x)));
-  });
 }
 
 /**
