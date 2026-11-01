@@ -747,7 +747,7 @@ export function overlaySnippet(rows: SiteComment[], opts: { repo?: string; issue
     bp.pane("comments", { icon: "\u{1F4AC}", title: "Public comments", render: (label, body) => {
       const h = data[label] || { n: 0, o: 0 };
       const sum = document.createElement("p");
-      sum.innerHTML = h.n + " comment" + (h.n === 1 ? "" : "s") + (h.o ? ", " + h.o + " open" : "") + " \u00b7 <a href=\"" + esc(meta.dashboard) + "\">all public comments</a>";
+      sum.innerHTML = h.n + " comment" + (h.n === 1 ? "" : "s") + (h.o ? ", " + h.o + " open" : "") + " \\u00b7 <a href=\\"" + esc(meta.dashboard) + "\\">all public comments</a>";
       const ul = document.createElement("ul");
       ul.className = "pc-list";
       ul.innerHTML = "<li>Loading…</li>";
