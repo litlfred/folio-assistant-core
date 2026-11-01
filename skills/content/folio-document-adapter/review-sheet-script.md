@@ -490,8 +490,8 @@ seven hours and never reached Completed. So:
 - Every log needs a watcher: the setup is not complete until an agent
   thread is watching the sheet. A thread acts only when something wakes it,
   so the watcher needs a scheduled wake: an hourly scheduled task, plus a
-  chain of 1-minute delayed wakes (`send_later`) that each pass renews
-  (owner, 2026-10-31: "watcher every min"). Each wake runs the mechanical
+  chain of 3-minute delayed wakes (`send_later`) that each pass renews
+  (owner, 2026-11-01 10:20Z: "instead of 1-minute lets do 3"). Each wake runs the mechanical
   check of skill [`review-log-watch`](review-log-watch.md) first, and does
   agent work only when it reports a change. Without a watcher, a Ready for
   agent waits until somebody happens to ask.

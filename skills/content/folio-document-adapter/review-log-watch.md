@@ -35,7 +35,7 @@ The owner's answers:
   issues. if issue is closed it correpsonds to hidden row that text has line
   through it/hidden".
 
-The poll still wakes the watcher thread once a minute. Until the tool says
+The poll still wakes the watcher thread every 3 minutes. Until the tool says
 `changed`, though, the watcher only reads and runs the tool. It does not
 reason about the rows, edit anything or post anything.
 
@@ -100,8 +100,8 @@ reason about the rows, edit anything or post anything.
 
 A log is not set up until a watcher has both of these wakes:
 
-- a chain of **1-minute** delayed wakes (`send_later`), each of which queues
-  the next;
+- a chain of **3-minute** delayed wakes (`send_later`), each of which queues
+  the next (owner, 2026-11-01 10:20Z: "instead of 1-minute lets do 3");
 - an hourly scheduled task that restarts the chain if it breaks.
 
 Keep the state file outside the repository, one per sheet. Without it, a fresh

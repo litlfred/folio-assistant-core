@@ -6,9 +6,9 @@
 
 One poll of one drafting review log (a Contributor Feedback sheet) and its folio repository.
 
-## Begin — Every minute (`StartEvent_Poll`)
+## Begin — Every 3 minutes (`StartEvent_Poll`)
 
-- Begin here: The watcher's poll: a chain of 1-minute delayed wakes, each queuing the next, with an hourly scheduled task that restarts the chain if it breaks (owner, 2026-10-31: "watcher every min").
+- Begin here: The watcher's poll: a chain of 3-minute delayed wakes, each queuing the next, with an hourly scheduled task that restarts the chain if it breaks (owner, 2026-11-01 10:20Z: "instead of 1-minute lets do 3").
 - Call `workflow_start` with `process: "Process_ReviewLogWatch"` and the subject this run is about; keep the instance id it returns.
 - next: → `Task_ReadSheet` (Read the Contributor Feedback tab)
 

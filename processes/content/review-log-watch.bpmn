@@ -47,10 +47,10 @@
       </bpmn:lane>
     </bpmn:laneSet>
 
-    <bpmn:startEvent id="StartEvent_Poll" name="Every minute">
-      <bpmn:documentation>The watcher's poll: a chain of 1-minute delayed wakes, each queuing the next, with an hourly scheduled task that restarts the chain if it breaks (owner, 2026-10-31: "watcher every min").</bpmn:documentation>
+    <bpmn:startEvent id="StartEvent_Poll" name="Every 3 minutes">
+      <bpmn:documentation>The watcher's poll: a chain of 3-minute delayed wakes, each queuing the next, with an hourly scheduled task that restarts the chain if it breaks (owner, 2026-11-01 10:20Z: "instead of 1-minute lets do 3").</bpmn:documentation>
       <bpmn:outgoing>WF01</bpmn:outgoing>
-      <bpmn:timerEventDefinition id="Timer_Poll"><bpmn:timeCycle>R/PT1M</bpmn:timeCycle></bpmn:timerEventDefinition>
+      <bpmn:timerEventDefinition id="Timer_Poll"><bpmn:timeCycle>R/PT3M</bpmn:timeCycle></bpmn:timerEventDefinition>
     </bpmn:startEvent>
     <bpmn:serviceTask id="Task_ReadSheet" name="Read the Contributor Feedback tab">
       <bpmn:documentation>Reads the drafting sheet's Contributor Feedback tab from row 1 (the Sheets API values), and saves it as JSON for the check. Reading is not agent work: it changes nothing.</bpmn:documentation>
