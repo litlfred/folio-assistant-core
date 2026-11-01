@@ -184,8 +184,8 @@ function showVersion() {
   SpreadsheetApp.getUi().alert('Which version is this?',
     'Build: ' + build + '\n\n' +
     'Newest build: the "at ..." line near the top of ' + LATEST_URL + '\n\n' +
-    'Different? Open the Folio Review Library (' + LIBRARY_URL + '), pick updateFromGitHub, and press Run. ' +
-    'Every sheet then runs the newest build.',
+    'Different? Ask the agent for the Code.gs copy page, paste it over Code.gs in the Folio Review Library (' + LIBRARY_URL + ') and save, ' +
+    'then choose Review links, Refresh now in each sheet.',
     SpreadsheetApp.getUi().ButtonSet.OK);
 }
 
