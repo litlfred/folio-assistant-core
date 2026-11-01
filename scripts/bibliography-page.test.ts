@@ -292,3 +292,59 @@ describe("rendering", () => {
     }
   });
 });
+
+describe("a site with its own instance (declared at the checkout root) and dependencies", () => {
+  /** `site-x` is declared at the root; `dep-x` is a mounted layer. Both name their directory `references`. */
+  function siteCheckout(): string {
+    const root = mkdtempSync(join(tmpdir(), "bib-site-"));
+    made.push(root);
+    writeDeclaration(root, { name: "site-x", directories: [{ id: "references", path: "references/", graphTypologies: ["references"] }] });
+    put(root, "references/zeta2020.json", { $schema: "folio-reference/v1", id: "zeta2020", type: "book", title: "Own work", author: [{ family: "Zeta", given: "Z" }] });
+    const dep = join(root, "dep-x");
+    mkdirSync(dep, { recursive: true });
+    writeDeclaration(dep, { name: "dep-x", directories: [{ id: "references", path: "references/", graphTypologies: ["references"] }] });
+    put(dep, "references/alpha2019.json", { $schema: "folio-reference/v1", id: "alpha2019", type: "book", title: "Dependency work", author: [{ family: "Alpha", given: "A" }] });
+    return root;
+  }
+  const c = collect(siteCheckout());
+  const files = outputs(c);
+  const page = (suffix: string) => [...files].find(([p]) => p.endsWith(suffix))![1];
+
+  test("the root instance is the site's own; a dependency's clashing sub-graph id gets its layer prefix", () => {
+    expect(c.invalid).toEqual([]);
+    expect(c.own).toBe("site-x");
+    expect(c.subgraphs.map((s) => [s.instance, s.slug])).toEqual([
+      ["dep-x", "dep-x-references"],
+      ["site-x", "references"],
+    ]);
+  });
+
+  test("the whole page lists the site's own references first and the dependencies in a labelled, closed section", () => {
+    const root = page("bibliography/index.md");
+    const own = root.indexOf('id="ref-zeta2020"');
+    const deps = root.indexOf('<details class="fa-bib-deps"');
+    const dep = root.indexOf('id="ref-alpha2019"');
+    expect(own).toBeGreaterThan(-1);
+    expect(deps).toBeGreaterThan(own);
+    expect(dep).toBeGreaterThan(deps);
+    expect(root).toContain("<strong>From dependencies</strong>");
+    expect(root).toContain("They are not part of site-x.");
+    expect(root).toContain("dep-x <small>(dependency, 1 reference)</small>");
+    expect(root).toContain("**site-x (this site), by sub-graph:** <a href=\"references/\">references</a> (1)");
+    expect(root).toContain("**Dependencies, by sub-graph:** <a href=\"dep-x-references/\">references</a> (1, dep-x)");
+  });
+
+  test("each layer's sub-graph page holds only that layer's references", () => {
+    expect(page("bibliography/references/index.md")).toContain('id="ref-zeta2020"');
+    expect(page("bibliography/references/index.md")).not.toContain('id="ref-alpha2019"');
+    const dep = page("bibliography/dep-x-references/index.md");
+    expect(dep).toContain('id="ref-alpha2019"');
+    expect(dep).toContain("a dependency of site-x");
+  });
+
+  test("with no instance at the root, the page stays one list", () => {
+    const plain = [...outputs(collect(checkout()))].find(([p]) => p.endsWith("bibliography/index.md"))![1];
+    expect(plain).not.toContain("<details class=\"fa-bib-deps\"");
+    expect(plain).toContain("**By sub-graph:**");
+  });
+});
