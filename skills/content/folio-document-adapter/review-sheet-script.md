@@ -317,6 +317,14 @@ cells, and the agent runs the sheet's own check before writing.
   held the change), run `agent-record.ts done` and write the Agent
   completed it prints, so it is later than the Ready time and the ⏳ line
   moves on. Not `push`: nothing is restaged, so Staging deploy stays as it is.
+- **When the QA gate passes** (#448), run
+  `agent-record.ts qa-pass --cs <CS-nnn> --head <sha> --summary "<one line>" --report <url>`
+  (or pass `--qa-gate "Passed <sha>: <one line>"` and optional `--blocks <b1,b2>` / `--since <ref>`).
+  It checks the gate string with the sheet's own `qaGate` and writes one
+  `editing-hci-validation` workflow instance (`beans/workflows/editing--<block>.json`)
+  per changed block, advancing through `Task_Commit` with the change-set id,
+  the `Passed <sha>` QA review and the editor's review-sheet decision, so
+  `check:corpus-gate` goes green.
 
 - **The PR's review brief.** `agent-record.ts brief <input.json> --look
   "<where to look>"` prints the same Overall and per-comment lines as
@@ -563,6 +571,9 @@ doing both halves is not this check.
 - `QA report (change set)`: the link to the QA report for the staged
   commit: the tree `pr/<n>/<sha>` on the folio's QA reports branch (in
   smart-ra, `cat/cat-harness/qa-reports`; check the branch name, it varies).
+- When the gate passes, run `agent-record.ts qa-pass --cs <CS-nnn> --qa-gate "Passed <head sha>: <one line>" --report <url>`
+  so the `editing-hci-validation` workflow instance (`beans/workflows/editing--<block>.json`)
+  is written for each changed block and `check:corpus-gate` passes (#448).
 
 **What the sheet shows.** Staging review reads `review · QA report` (both
 links), then the gate: `✓ QA gate passed (b20534f)`, or in bold
