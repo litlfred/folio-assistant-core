@@ -1,0 +1,975 @@
+{
+  "$schema": "folio-block-summaries/v1",
+  "entry": "dspace-7-rest-contract",
+  "summaries": [
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s611-submission-forms-endpoints",
+      "source": "sections/s611-submission-forms-endpoints.md",
+      "source_hash": "b7d2bdee16bc57808fc2c50c034b7f8831d82d453e30c7be7fd16225abce7a4b",
+      "narrative": [
+        {
+          "text": "Introduction to the Submission-Forms endpoints. A submission form is one configurable data entry form, made of one or more fields and tied to a submission section. DSpace 6 and earlier called it an input-form, configured in input-forms.xml.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s612-main-endpoint",
+      "source": "sections/s612-main-endpoint.md",
+      "source_hash": "03a72d8d508b567893100097a9f53b30e19280dab61b8e75cd01c6f516bcc7dc",
+      "narrative": [
+        {
+          "text": "/api/config/submissionforms lists the configured submission forms. Since DSpace 7 the old input-forms.xml is split by page: each submission form is one page of inputs, and pages are combined by the submission definition (item-submission.xml). The example is still to be provided.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s613-single-submission-form",
+      "source": "sections/s613-single-submission-form.md",
+      "source_hash": "0656926e0afbf407b6b27eda75578a95c6d3fc1758ed0427151b9feaa4ebc7b4",
+      "narrative": [
+        {
+          "text": "/api/config/submissionforms/<form-name> returns one submission form, for example traditionalpageone, as an ordered array of rows of fields. Each field has: input (the widget type, such as onebox, dropdown, date, lookup or lookup-name, and an optional validation regex; dropdown and lookup need a controlled vocabulary, and onebox gives auto-suggest, or the selection tree for a hierarchical vocabulary); scope (null, workflow or submission) with visibility (editable when null, readonly, or hidden); label; mandatory and mandatoryMessage; repeatable; hints; style (CSS classes); selectableMetadata (one or more metadata keys, each with an optional controlled vocabulary and label, the list form coming from qualdrop_value); selectableRelationship (relationship type, filter, Discovery search configuration, external sources and whether name variants are allowed); languageCodes (display and code pairs); and typeBind (the publication types the field applies to; empty means all). The selectable metadata and relationship attributes are exposed as strings for simplicity rather than as HAL links.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s614-submission-section-types",
+      "source": "sections/s614-submission-section-types.md",
+      "source_hash": "cb3de469b6a33226b6295f9059b9da41fea3a9130982256c1250c83585f988d5",
+      "narrative": [
+        {
+          "text": "Table of the submission section types available out of the box in DSpace 7, with the endpoint that holds each one's extra configuration and the page documenting its data in a workspace item: collection (no configuration; data is the collection UUID), submission-form (/config/submissionforms), upload (/config/submissionuploads), license (taken from the collection's license link), cclicense (/config/submissioncclicenses), access (/config/submissionaccessoptions), sherpaPolicies (none) and identifiers (none).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s615-submission-sections-endpoints",
+      "source": "sections/s615-submission-sections-endpoints.md",
+      "source_hash": "2424d13c950c66e78694712a030d22ba01002eaee693a8e89b758ff3f8e0be4d",
+      "narrative": [
+        {
+          "text": "Introduction to the Submission-Sections endpoints. A submission section is one section of the submission process. A submission-form section has a configurable input form; other section types, such as file upload, embargo and access rights or Creative Commons licensing, are not all configurable. The available section types are listed on their own page.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s616-main-endpoint",
+      "source": "sections/s616-main-endpoint.md",
+      "source_hash": "f15be0f4ed1e73ce8d70859ebd727d5504a79b6e954fe8dac8fa682c68c7916a",
+      "narrative": [
+        {
+          "text": "/api/config/submissionsections lists the configured submission sections. The example is still to be provided.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s617-single-submission-definition",
+      "source": "sections/s617-single-submission-definition.md",
+      "source_hash": "f0fc677040ba431a399e6ab726177223568fc20d79b41f87950f22a4750e7119",
+      "narrative": [
+        {
+          "text": "/api/config/submissionsections/<section-name> returns one submission section, with an id, a header (the label or i18n key shown to the user), mandatory (whether every submission must use the section; otherwise the user may enable or disable it), scope (null, or workflow or submission to limit the section to that phase), sectionType (the kind of section the UI must use; see the section types page) and a config link.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s618-linked-entities",
+      "source": "sections/s618-linked-entities.md",
+      "source_hash": "2f888669cd362aabfd8f1e6cbd5e46ea456d6bac10878b7890874b31d66bb5e2",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a submission section.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s619-config",
+      "source": "sections/s619-config.md",
+      "source_hash": "c4620766cbad1f24898949a0c91cf0751b5ea5e5bbb30f5d008a4bebe26044c0",
+      "narrative": [
+        {
+          "text": "The config link of a submission section points to its detailed configuration, which depends on the section type: for example the fields of a form section, or the upload and access condition options of an upload section.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s620-submissionuploads-endpoints",
+      "source": "sections/s620-submissionuploads-endpoints.md",
+      "source_hash": "f9f13e731140d838bc089ef7dca417623ce7711bbbb8e3ff70b98f0c0c7968b4",
+      "narrative": [
+        {
+          "text": "Introduction to the SubmissionUploads endpoints. The structure follows the configuration options of DSpace 6 and earlier. The first implementation expects a single site-level configuration named default; an endpoint for a collection of configurations leaves room for different setups for different kinds of submission, such as theses, technical reports or journal articles.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s621-main-endpoint",
+      "source": "sections/s621-main-endpoint.md",
+      "source_hash": "2c5d57d09769d6f6137ba794c14e6f14c727f84df92f7f9b5efdedd2d4132b01",
+      "narrative": [
+        {
+          "text": "/api/config/submissionuploads lists the SubmissionUploadConfig configurations, each of which gathers what the upload section needs, such as the maximum file size and the access condition options. The example is still to be provided.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s622-single-submission-form",
+      "source": "sections/s622-single-submission-form.md",
+      "source_hash": "a2ffeec93afe4693523e1c7f5f2353515b6f7ead9ed63e8a1c458233bb78ff39",
+      "narrative": [
+        {
+          "text": "/api/config/submissionuploads/<upload-name> returns one upload configuration; the name starts out hard-coded to default. It holds whether an upload is required, the maximum file size (536870912 bytes in the example) and accessConditionOptions. Each option's name is shown by the UI (translated through i18n) and used by the backend to build the resource policy on the uploaded file; hasStartDate and hasEndDate require a start or end date, bounded by maxStartDate and maxEndDate when set, and an end date must follow the start date. A null accessConditionOptions means the submitter cannot set a policy and the file inherits the collection's policies. A metadata link points to the submission form for the file metadata.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s623-linked-entities",
+      "source": "sections/s623-linked-entities.md",
+      "source_hash": "26d243fd109b64c783bd0ec0b475eaf3071890d5378a73bd878dc579fd34fbe9",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of an upload configuration.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s624-metadata",
+      "source": "sections/s624-metadata.md",
+      "source_hash": "d6183bf9a3e68540044463eb86a63109aed243d0b400f0fac0c6877f115e062e",
+      "narrative": [
+        {
+          "text": "The metadata link of an upload configuration, /api/config/submissionupload/<upload-name>/metadata, returns the submission form used for the files' metadata.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s625-subscriptions-endpoints",
+      "source": "sections/s625-subscriptions-endpoints.md",
+      "source_hash": "29c181bc1b4fe1b6edce24d29ff93b79c3ed6f5ce13a155aeb52731a0b376dd4",
+      "narrative": [
+        {
+          "text": "Introduction to the Subscriptions endpoints, which hold all the subscriptions requested.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s626-main-endpoint",
+      "source": "sections/s626-main-endpoint.md",
+      "source_hash": "3198a2ecb47efbc9ceaeaff23fb708b7030bacc516b2e3240bfbd213cfefbcdb",
+      "narrative": [
+        {
+          "text": "GET /api/core/subscriptions returns a paginated list of all subscriptions, ordered by the UUID of the subscribed object. Each subscription has an id, a subscription type, a parameter list (such as frequency) and links to its eperson and resource. Return codes: 200 OK, 401 Unauthorized if not authenticated, 403 Forbidden for anyone but administrators.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s627-single-subscription-object",
+      "source": "sections/s627-single-subscription-object.md",
+      "source_hash": "af120b211200c394ba73c44f8a9055376bd0fb341f8b4166230bff0a6bc2687d",
+      "narrative": [
+        {
+          "text": "GET /api/core/subscription/<id> returns one subscription. subscriptionType is currently only content, with room for others such as statistics. The parameter list currently supports only frequency, whose values are D (day), W (week) and M (month). Status codes: 200 OK for an administrator or the subscription's owner; 401 or 403 otherwise; 404 if it does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s628-search-methods",
+      "source": "sections/s628-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the subscriptions endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s629-findbyeperson",
+      "source": "sections/s629-findbyeperson.md",
+      "source_hash": "6e9eb27423de602137fb077383227ada950ea365719b02897c0629b87f537a1b",
+      "narrative": [
+        {
+          "text": "Search method findByEPerson, GET /api/core/subscription/search/findByEPerson?uuid=<eperson-uuid>, returns a paginated list of the subscriptions of one eperson; uuid is mandatory. Status codes: 200 OK; 400 Bad Request for a missing or invalid uuid; 422 if the uuid is not an eperson; 401 if not authenticated; 403 for anyone but a system administrator or that eperson.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s630-findbyepersonanddso",
+      "source": "sections/s630-findbyepersonanddso.md",
+      "source_hash": "6461816cf95060b590d09c3aa94a93950bb029dd9f3c03fe91be2231d7d75347",
+      "narrative": [
+        {
+          "text": "Search method findByEPersonAndDso, GET /api/core/subscriptions/search/findByEPersonAndDso?resource=<id>&eperson_id=<id>, returns the subscriptions a person holds on one community, collection or item; both parameters are mandatory, and page and size are supported. Status codes: 200 OK; 400 for missing or invalid parameters; 401 if not authenticated; 403 for anyone but a system administrator or that eperson.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s631-creating-a-subscription",
+      "source": "sections/s631-creating-a-subscription.md",
+      "source_hash": "de35b1c8e09574f7b3281e57433ee7d1b963f477e56309a5dc41c0b0fa0e36d1",
+      "narrative": [
+        {
+          "text": "Creating a subscription: POST /api/core/subscriptions?eperson_id=<uuid>&resource=<uuid>, both mandatory, with a body whose subscriptionType must be content and whose single parameter must be frequency with value D (day), W (week) or M (month). Return codes: 200 OK with the new subscription; 400 if a parameter is missing or not a UUID; 401 if not authenticated; 403 for anyone but a system administrator or the owner; 422 for an invalid type, parameter name or value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s632-updating-subscription",
+      "source": "sections/s632-updating-subscription.md",
+      "source_hash": "f17286fb7b08f4460aee207ab829bb9043cd0e9f5ec4caf6f37cd88640935ec3",
+      "narrative": [
+        {
+          "text": "Updating a subscription: PUT /api/core/subscription/<id> with a JSON body of the same form as for creation (type content, parameter frequency with value D, W or M). Return codes: 200 OK with the subscription; 401 if not authenticated; 403 for anyone but a system administrator or the owner; 422 for an invalid type, parameter name or value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s633-deleting-a-subscription-object",
+      "source": "sections/s633-deleting-a-subscription-object.md",
+      "source_hash": "3e1f2443b73df5c1aa0cb5bee4edf958c8645540f61cf52762f4d95ce5f549aa",
+      "narrative": [
+        {
+          "text": "Deleting a subscription: DELETE /api/core/subscriptions/<id>. Return codes: 204 No content on success; 401 if not authenticated; 403 unless the caller owns the subscription or is an administrator; 404 if it does not exist or was already deleted.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s634-linked-entities",
+      "source": "sections/s634-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a subscription.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s635-eperson",
+      "source": "sections/s635-eperson.md",
+      "source_hash": "ac4fd8ede9d6191353b0ada80fc17b30156e03d3adcc09a70677336a862dd0a5",
+      "narrative": [
+        {
+          "text": "GET /api/core/subscriptions/<id>/eperson returns the eperson the subscription belongs to. Return codes: 200 OK, 401 Unauthorized, 403 Forbidden, 404 if the subscription does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s636-resource",
+      "source": "sections/s636-resource.md",
+      "source_hash": "1d743cd7e34b2cf5b97d1ff84c985c5aea19d89e0f08a02c3e2e528df108faf4",
+      "narrative": [
+        {
+          "text": "GET /api/core/subscriptions/<id>/resource returns the community, collection or item the subscription is on. Return codes: 200 OK, 401 Unauthorized, 403 Forbidden, 404 if the subscription does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s637-supervision-orders-endpoints",
+      "source": "sections/s637-supervision-orders-endpoints.md",
+      "source_hash": "ef8415099bde953850ba1464f78501631d3677c7170c60b503a28d72cc6d3c90",
+      "narrative": [
+        {
+          "text": "Introduction to the Supervision Orders endpoints, used to create, manage and find supervision orders.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s638-main-endpoint",
+      "source": "sections/s638-main-endpoint.md",
+      "source_hash": "9f8d80b02653adfdb620f13a519d57255d2b2a4baf405ed24c986a42b2a25d48",
+      "narrative": [
+        {
+          "text": "/api/core/supervisionorders returns a paginated list of every supervision order in the system.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s639-single-supervision-order",
+      "source": "sections/s639-single-supervision-order.md",
+      "source_hash": "295e4f6b9775363cc67d5162aa68cdbc59acca4382ffa116940277a97da3bd1c",
+      "narrative": [
+        {
+          "text": "/api/core/supervisionorders/<id> returns one supervision order: its id, and links to the item it is defined on and the group allowed to supervise that item. Status codes: 200 OK; 401 if not authenticated; 403 for non-administrators; 404 if it does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s640-search-methods",
+      "source": "sections/s640-search-methods.md",
+      "source_hash": "7d8af4ac799f5ea877a92826131c552408861d1397c3a6e58113e551d1f2da7b",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the supervision orders endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s641-find-by-item",
+      "source": "sections/s641-find-by-item.md",
+      "source_hash": "dff5aff60f5f9673837d2f3173bc247616bad51987de68ac1f49082bab7107a8",
+      "narrative": [
+        {
+          "text": "Search method byItem, /api/core/supervisionorders/search/byItem?uuid=<item-uuid>, returns the supervision orders on one item; uuid is mandatory. Return codes: 200 OK, including when the item has none; 400 for a missing or malformed uuid; 404 if no item matches.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s642-creating-a-supervision-order",
+      "source": "sections/s642-creating-a-supervision-order.md",
+      "source_hash": "295c7711e639d619845cb73e7c3f491ec545d680b4a4893006cef9a01c628f6c",
+      "narrative": [
+        {
+          "text": "Creating a supervision order: POST /api/core/supervisionorders?uuid=<item>&group=<group>&type=<type>, all mandatory. The type sets what the group's members are granted: NONE (nothing), EDITOR (read and write on the item and its bitstreams) or OBSERVER (read on the item and its bitstreams). A sample curl call is given. Return codes: 201 Created; 401 if not authenticated; 400 for a missing or malformed uuid or group, or one of the wrong object type; 403 for non-administrators; 422 if the item or group does not exist, the group already has an order on the item, or the item is not an in-progress submission (orders can only be made during submission or workflow).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s643-deleting-a-supervision-order",
+      "source": "sections/s643-deleting-a-supervision-order.md",
+      "source_hash": "e7a0573bc416c185f1b855c67fc3e5c3cae37a574b5dabd34e5ab3f033ab6348",
+      "narrative": [
+        {
+          "text": "Deleting a supervision order: DELETE /api/core/supervisionorders/<id>, with a sample curl call. Return codes: 204 No content; 401 if not authenticated; 403 for non-administrators; 404 if it does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s644-system-wide-alerts",
+      "source": "sections/s644-system-wide-alerts.md",
+      "source_hash": "5de536e6910e04bd151f897de1eadb06f86128d7c4a611a64104ed17e81174d6",
+      "narrative": [
+        {
+          "text": "Introduction to the system-wide alerts endpoints, which expose alerts shown as banners in the frontend. Only administrators create and edit alerts; everyone can view them, but regular users see only active ones. DSpace currently supports a single alert, though the endpoints allow for several, and the per-alert session restriction is a placeholder because session control is not implemented yet.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s645-retrieve-all-active-alerts",
+      "source": "sections/s645-retrieve-all-active-alerts.md",
+      "source_hash": "9fa942024ff15e309a43291d12ca671b97598c2cdc5085220130d2c4073d8ee5",
+      "narrative": [
+        {
+          "text": "GET /api/system/systemwidealerts/search/active returns all active alerts, which the UI uses to decide what to show. It is the only alert endpoint non-administrators need. Status: 200 OK.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s646-retrieve-a-specific-alert",
+      "source": "sections/s646-retrieve-a-specific-alert.md",
+      "source_hash": "5d0f7a32577403598ad3a507a493506373df6ad05f437e714b11826c437a3a87",
+      "narrative": [
+        {
+          "text": "GET /api/system/systemwidealerts/<alert-id> returns one alert by its integer id, with its message, allowSessions, countdownTo date and active flag. An inactive alert is visible only to administrators; to anyone else it looks as if it does not exist. Status codes: 200 OK, or 404 for an inactive alert requested by a non-administrator.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s647-retrieve-all-alerts",
+      "source": "sections/s647-retrieve-all-alerts.md",
+      "source_hash": "fb612b7682670e731a0a186d00ef3298f8ae3659cab6a0e0d2ffcd9b7894e0d9",
+      "narrative": [
+        {
+          "text": "GET /api/system/systemwidealerts returns every system-wide alert, inactive ones included. Status codes: 200 OK, 401 if not logged in, 403 for non-administrators.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s648-create-a-new-alert",
+      "source": "sections/s648-create-a-new-alert.md",
+      "source_hash": "d8bea0ec2b2a01c8abcea46e775dade4c4bcc631573cc1a08f32d139a9768a00",
+      "narrative": [
+        {
+          "text": "Creating an alert: POST /api/system/systemwidealerts, for administrators, with a body giving message, allowSessions, countdownTo (a UTC datetime string) and active. allowSessions is all (allow all sessions), current (only current sessions; administrators can still log in) or admin (only administrators; other users are logged out). Status codes: 201 Created; 400 if an alert already exists; 401 if not logged in; 403 for non-administrators; 422 if the body cannot be parsed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s649-modify-an-existing-alert",
+      "source": "sections/s649-modify-an-existing-alert.md",
+      "source_hash": "036488720c7a284447e437f531313e5144fd6ee8c47b100c3e7fc0dc7b2f73a8",
+      "narrative": [
+        {
+          "text": "Modifying an alert: PUT /api/system/systemwidealerts/<alert-id>, for administrators, with the same body fields and allowSessions values as creation, and countdownTo as a UTC datetime string. Status codes: 200 OK; 401 if not logged in; 403 for non-administrators; 404 if no such alert; 422 if the body cannot be parsed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s650-versioning-endpoints",
+      "source": "sections/s650-versioning-endpoints.md",
+      "source_hash": "8b50afd7c698af3f03e0e528e341435b2753c3365188e75007556a90f7487a0a",
+      "narrative": [
+        {
+          "text": "Introduction to the versioning endpoints, which give access to a single version of an item. If versioning.item.history.view.admin is true, only community, collection or repository administrators can read versions; otherwise they are public. A version's access is independent of its item's, so a version of an item the user cannot see may still be read, which the text says is safe because a version exposes nothing sensitive.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s651-main-endpoint",
+      "source": "sections/s651-main-endpoint.md",
+      "source_hash": "86ff9b4e7f61d9ccb9631da5a44c72035986406817e30526f0fcd296e71ca64a",
+      "narrative": [
+        {
+          "text": "/api/versioning/versions, the main versions endpoint, is not supported and returns 405 Method Not Allowed: versions are reached from an item or a version history, or directly by id.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s652-create-version",
+      "source": "sections/s652-create-version.md",
+      "source_hash": "7adaa2ea16aeb2e5045c3a8ba91d0eb697bb5825a59e5905db404b44e4b42ff8",
+      "narrative": [
+        {
+          "text": "Creating a version: POST /api/versioning/versions with an optional summary parameter and a text/uri-list body holding the URI of the item to version, which may have no history yet or belong to one (an older version can be used, to help restore it). Item administrators, and the original submitter if versioning.submitterCanCreateNewVersion allows, may do this. The new version is returned. Status codes: 201 Created; 401 if not authenticated; 403 without permission, or for an entity item while versioning.block.entity is true or unset; 400 if the URI is not an item; 422 if a new version is already in progress in the same history.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s653-get-single-version",
+      "source": "sections/s653-get-single-version.md",
+      "source_hash": "b08be88e5f9a448d1de17a5cc27a85485f617981201c5ead4ef082f0b1f337f2",
+      "narrative": [
+        {
+          "text": "GET /api/versioning/versions/<versionId> returns one version: id, version number, created date, summary and, for an administrator of the item or when versioning.item.history.include.submitter is true, submitterName, with links to the version history and the item. What is returned depends on permissions and configuration. Status codes: 200 OK; 401 or 403 when versioning is not public and the caller is unauthenticated or lacks permission; 404 if the version does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s654-get-single-version-for-item",
+      "source": "sections/s654-get-single-version-for-item.md",
+      "source_hash": "9651b0f3f698fbd4cca32cbd0455b1d8169604d63de0f4a8b458da19d2803889",
+      "narrative": [
+        {
+          "text": "To get the version of an item, follow the version link on the item endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s655-remove-version",
+      "source": "sections/s655-remove-version.md",
+      "source_hash": "5f2e7c8d0380504f26f197dfaf16ed8cca34f9d2a793edb32b2512eb505a8371",
+      "narrative": [
+        {
+          "text": "A version is removed by deleting the item linked to it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s656-update-version-patch-operations",
+      "source": "sections/s656-update-version-patch-operations.md",
+      "source_hash": "0900ab6be7e0a6209d8701721281a629d69edad57533311be86bcdd9e0751cab",
+      "narrative": [
+        {
+          "text": "Updating a version. Only the summary can be changed, by item administrators; every other property is read-only and changing it gives 422. Item metadata is changed through the items, workspace items or workflow items endpoints, depending on the item's status. The summary is changed by a PATCH on /summary following the general patch rules: remove clears it, replace or add replaces it, add sets it when empty; a curl example is given, and an Authorization header is needed. Return codes: 200 OK, 401, 403, 404 if the version does not exist, and other codes per the patch rules.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s657-linked-entities",
+      "source": "sections/s657-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a version.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s658-version-history",
+      "source": "sections/s658-version-history.md",
+      "source_hash": "47d31e2f49689444039532086b4db08e78ffc73965c286a8d86e27cd136767b5",
+      "narrative": [
+        {
+          "text": "The versionhistory link of a version returns its version history, described on the Version history page.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s659-item",
+      "source": "sections/s659-item.md",
+      "source_hash": "4c37080007092aeef9806070311a65b99911d5009461cf07ec56c5a8a8718272",
+      "narrative": [
+        {
+          "text": "The item link of a version returns the item that matches this version.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s660-version-history-endpoints",
+      "source": "sections/s660-version-history-endpoints.md",
+      "source_hash": "1673a1da518be174409406a1c2bb86aefe335947e3adeeb807a97e736dc2c3bb",
+      "narrative": [
+        {
+          "text": "Introduction to the version history endpoints. A version history groups all related versions. If versioning.item.history.view.admin is true, only community, collection or repository administrators can read histories; otherwise they are public. Access to a history is independent of its items, so a history of items the user cannot see may still be read, which the text says is safe because neither histories nor versions expose sensitive information.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s661-main-endpoint",
+      "source": "sections/s661-main-endpoint.md",
+      "source_hash": "e8d1ea02f535a3776fd577493a48d7c375e60eea7b00aad931141bf7d9462e1f",
+      "narrative": [
+        {
+          "text": "/api/versioning/versionhistories, the main version histories endpoint, is not supported and returns 405 Method Not Allowed: histories are reached from a version item or directly by id.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    }
+  ]
+}
