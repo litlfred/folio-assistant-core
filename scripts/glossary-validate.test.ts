@@ -60,6 +60,11 @@ describe("glossary-validate", () => {
     expect((await validate(repo, "pc")).errors).toEqual([]);
   });
 
+  test("--capitalized accepts a name its owner spells with a lower-case first letter, such as iHRIS", async () => {
+    const repo = fixture([term("ihris", "iHRIS"), term("mhealth", "mHealth")]);
+    expect((await validate(repo, "pc", { capitalized: true })).errors).toEqual([]);
+  });
+
   test("a block's meta.glossary link is checked; ArchiMate links with no model mounted are noted, not failed", async () => {
     const repo = fixture([term("trade-item", "Trade Item")], {
       glossary: [{ iri: `${sc}traceability` }, { iri: `${sc}gone` }],
