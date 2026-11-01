@@ -92,9 +92,11 @@ reason about the rows, edit anything or post anything.
 
   The agent's Green columns and the script's Grey ones are not watched, so
   the watcher's own writes never wake it.
-- **First check:** with no state file yet, every issue counts as new, and
-  every unlinked issue gets a row. This is how an existing sheet takes in its
-  existing issues.
+- **First check (`baseline: true`):** with no state file yet, every issue
+  counts as new and every unlinked issue gets a row. This is how an existing
+  sheet takes in its existing issues. The watcher appends the rows, hides the
+  closed ones and accepts, but starts no agent pass, because a cell that is
+  merely seen for the first time has not changed.
 
 ## Setting up a watcher
 

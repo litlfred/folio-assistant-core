@@ -18,6 +18,7 @@ describe("review-log-watch", () => {
     expect(r.status).toBe("changed");
     if (r.status !== "changed") return;
     expect(r.append.map((a) => a.issue)).toEqual([8]);
+    expect(r.baseline).toBe(true);
     expect(r.changes.filter((c) => c.kind === "issue-opened").map((c) => (c as { issue: number }).issue)).toEqual([5, 8]);
   });
 
@@ -72,6 +73,8 @@ describe("review-log-watch", () => {
   test("links and cells are read from the header row, wherever it is", () => {
     expect([...linkedIssues(sheet([row1]), repo)]).toEqual([[5, [3]]]);
     expect(linkedIssues(sheet([row1]), "litlfred/dth-pc").size).toBe(0);
+    const short = [...row1]; short[10] = "dth-phc#6, litlfred/dth-phc#7; dth-pc#9";
+    expect([...linkedIssues(sheet([short]), repo).keys()]).toEqual([6, 7]);
     expect(sheetCells(sheet([row1]))).toEqual({ "3:Title": "Sign off exclusions", "3:Selected Sections": "Front matter" });
   });
 
@@ -79,5 +82,6 @@ describe("review-log-watch", () => {
     expect(summary("### Comment\n\n_No response_\n\n### Proposed\n\nDo this.")).toBe("Do this.");
     expect(summary("x".repeat(400)).length).toBe(300);
     expect(summary(null)).toBe("");
+    expect(summary("**Content:** `dth-hrh` **Block:** `fig:x`")).toBe("Content: dth-hrh Block: fig:x");
   });
 });

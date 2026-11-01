@@ -53,6 +53,8 @@ export type WatchResult =
   | { status: "unchanged"; digest: string }
   | {
       status: "changed"; digest: string; changes: Change[]; append: AppendRow[];
+      /** No state file yet: append the rows and accept, but start no agent pass for the cells. */
+      baseline: boolean;
       /** Sheet rows (1-based) linking a closed issue: hide them and strike their text through. */
       closedRows: number[];
       state: WatchState;
@@ -87,17 +89,20 @@ export function sheetCells(values: string[][]): Record<string, string> {
   return out;
 }
 
-/** Issue numbers the sheet already links, from the Issue column (any `/issues/N` URL of the repo), each with its sheet rows (1-based). */
+/** Issue numbers the sheet already links, from the Issue column (an `/issues/N` URL of the repo, `owner/name#N` or `name#N`), each with its sheet rows (1-based). */
 export function linkedIssues(values: string[][], repo: string): Map<number, number[]> {
   const hi = headerIndex(values);
   const out = new Map<number, number[]>();
   if (hi < 0) return out;
   const col = values[hi].findIndex((h) => String(h ?? "").trim() === "Issue");
   if (col < 0) return out;
-  const re = new RegExp(`github\\.com/${repo.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&")}/issues/(\\d+)`, "gi");
+  const esc = (t: string) => t.replace(/[.*+?^${}()|[\]\\/]/g, "\\$&");
+  const name = repo.split("/")[1] ?? repo;
+  // A URL, `owner/name#N`, or the short `name#N` the sheets show.
+  const re = new RegExp(`github\\.com/${esc(repo)}/issues/(\\d+)|(?:${esc(repo.split("/")[0])}/)?\\b${esc(name)}#(\\d+)`, "gi");
   for (let r = hi + 1; r < values.length; r++) {
     for (const m of String(values[r][col] ?? "").matchAll(re)) {
-      const n = Number(m[1]);
+      const n = Number(m[1] ?? m[2]);
       out.set(n, [...(out.get(n) ?? []), r + 1]);
     }
   }
@@ -106,12 +111,12 @@ export function linkedIssues(values: string[][], repo: string): Map<number, numb
 
 const labelNames = (i: Issue) => (i.labels ?? []).map((l) => (typeof l === "string" ? l : l.name));
 
-/** The issue's first paragraph, without form headings, cut to `max` characters. */
+/** The issue's first paragraph, without form headings, bold or code marks, cut to `max` characters. */
 export function summary(body: string | null | undefined, max = 300): string {
   const text = String(body ?? "")
     .replace(/<!--[\s\S]*?-->/g, "")
     .split(/\n\s*\n/)
-    .map((p) => p.replace(/^#+\s.*$/gm, "").replace(/\s+/g, " ").trim())
+    .map((p) => p.replace(/^#+\s.*$/gm, "").replace(/\*\*|__|`/g, "").replace(/\s+/g, " ").trim())
     .find((p) => p && p !== "_No response_") ?? "";
   return text.length > max ? text.slice(0, max - 1).trimEnd() + "…" : text;
 }
@@ -198,7 +203,7 @@ export function watch(
     .flatMap((i) => linked.get(i.number) ?? [])
     .sort((a, b) => a - b);
 
-  return { status: "changed", digest, changes, append, closedRows, state: { digest, issues: issueMap, cells } };
+  return { status: "changed", digest, changes, append, closedRows, baseline: !prev, state: { digest, issues: issueMap, cells } };
 }
 
 function arg(name: string): string | undefined {
