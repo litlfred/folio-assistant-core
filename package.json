@@ -50,7 +50,7 @@
     "remark-html": "^16.0.1",
     "remark-math": "^6.0.0",
     "unist-util-visit": "^5.1.0",
-    "zod": "^4.6.5"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@types/jsonld": "^1.5.15",
@@ -69,20 +69,29 @@
     "check:materialized-fixity": "bun run folio-assistant-core/scripts/check-materialized-fixity.ts",
     "check:voices": "bun run folio-assistant-core/scripts/check-voices.ts",
     "l1:coverage": "bun run folio-assistant-core/scripts/l1-coverage.ts",
+    "dth:init": "bun run folio-assistant-core/scripts/dth-init.ts",
     "figure:coverage": "bun run folio-assistant-core/scripts/figure-coverage.ts",
     "figure:diig-phases": "bun run folio-assistant-core/scripts/diig-phases-svg.ts",
     "figure:smart-approach": "bun run folio-assistant-core/scripts/smart-approach-svg.ts",
     "bibliography:page": "bun run folio-assistant-core/scripts/bibliography-page.ts",
     "glossary:page": "bun run folio-assistant-core/scripts/glossary-page.ts",
+    "glossary:table": "bun run folio-assistant-core/scripts/glossary-table.ts",
     "glossary:pot": "bun run folio-assistant-core/scripts/glossary-pot.ts --extract",
     "glossary:acronyms": "bun run folio-assistant-core/scripts/glossary-acronyms.ts --folio folio",
     "glossary:pot:check": "bun run folio-assistant-core/scripts/glossary-pot.ts --check",
     "sources:liveness": "bun run folio-assistant-core/scripts/source-liveness.ts",
     "kg:materialize": "bun run folio-assistant-core/scripts/kg-materialize.ts",
     "kg:materialize:check": "bun run folio-assistant-core/scripts/kg-materialize.ts --check",
-    "check:dsa-hash": "bun run folio-assistant-core/scripts/check-dsa-hash.ts"
+    "check:dsa-hash": "bun run folio-assistant-core/scripts/check-dsa-hash.ts",
+    "check:core-security-gate": "bun run folio-assistant-core/scripts/check-security-gate.ts"
   },
   "scripts": {
-    "typecheck": "tsc -p tsconfig.json"
+    "typecheck": "tsc -p tsconfig.json",
+    "check:core-security-gate": "bun run scripts/check-security-gate.ts",
+    "security:gate": "bun run scripts/check-security-gate.ts"
+  },
+  "overrides": {
+    "undici": "^6.29.1",
+    "minimatch": "^11.0.1"
   }
 }

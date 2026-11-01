@@ -23,12 +23,13 @@
  * @module folio-assistant/adapters/document/tools/qa
  */
 
+import { safeSegment, writableWithin } from "@litlfred/cat-harness-tools/src/core/safe-path.js";
 import { z } from "zod";
 import { existsSync, readFileSync } from "fs";
-import { join } from "path";
+import { join, resolve } from "path";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { get } from "../paths.js";
-import { runPipeline, asToolText, autoPaper, tryParseJson } from "./_pipeline.js";
+import { runPipeline, asToolText, autoPaper, refuseTool, tryParseJson } from "./_pipeline.js";
 
 const paperArg = (p?: string) => (p ? `folio/${p}` : undefined);
 
@@ -45,6 +46,9 @@ export function registerQaTools(server: McpServer): void {
       apply: z.boolean().default(false).describe("Write sidecar updates (default: dry-run, read-only)"),
     },
     async ({ paper, only, apply }) => {
+      if (paper !== undefined && safeSegment(paper) === undefined) {
+        return refuseTool("qa_sweep", `invalid paper segment '${paper}'`);
+      }
       const args: string[] = [];
       const pp = paperArg(autoPaper(paper));
       if (pp) args.push(pp);
@@ -86,6 +90,9 @@ export function registerQaTools(server: McpServer): void {
       paper: z.string().optional().describe("Paper name (auto-detected if only one)"),
     },
     async ({ paper }) => {
+      if (paper !== undefined && safeSegment(paper) === undefined) {
+        return refuseTool("glossary_check", `invalid paper segment '${paper}'`);
+      }
       const pp = paperArg(autoPaper(paper));
       if (!pp) {
         return asToolText("glossary_check", {
@@ -106,10 +113,24 @@ export function registerQaTools(server: McpServer): void {
       out: z.string().optional().describe("Output directory (default: build/viewer)"),
     },
     async ({ paper, out }) => {
+      if (paper !== undefined && safeSegment(paper) === undefined) {
+        return refuseTool("content_export", `invalid paper segment '${paper}'`);
+      }
+      const root = get.REPO_ROOT();
+      let resolvedOut: string | undefined;
+      if (out !== undefined) {
+        if (out.includes("\0")) {
+          return refuseTool("content_export", "output path contains NUL byte");
+        }
+        resolvedOut = resolve(root, out);
+        if (!writableWithin(root, resolvedOut)) {
+          return refuseTool("content_export", `output directory '${out}' escapes repository root`);
+        }
+      }
       const p = autoPaper(paper);
       const args: string[] = [];
       if (p) args.push("--paper", p);
-      if (out) args.push("--out", out);
+      if (resolvedOut) args.push("--out", resolvedOut);
       return asToolText("content_export", runPipeline("export-json", args));
     },
   );
@@ -128,6 +149,9 @@ export function registerPaperQaTools(server: McpServer): void {
       paper: z.string().optional().describe("Paper name (auto-detected if only one)"),
     },
     async ({ paper }) => {
+      if (paper !== undefined && safeSegment(paper) === undefined) {
+        return refuseTool("proof_status", `invalid paper segment '${paper}'`);
+      }
       const args: string[] = [];
       const pp = paperArg(autoPaper(paper));
       if (pp) args.push(pp);

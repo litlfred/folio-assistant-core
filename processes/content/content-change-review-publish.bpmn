@@ -145,6 +145,7 @@ Called from content-change-review after the committee approves. Approving is the
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Merged_di" bpmnElement="GW_Merged">
         <dc:Bounds x="575" y="280" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="555" y="258" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_NotMerged_di" bpmnElement="End_NotMerged">
         <dc:Bounds x="582" y="417" width="36" height="36" />

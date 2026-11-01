@@ -47,7 +47,8 @@
  * is being made while it is made.
  *
  * plus `duplicate` and `withdrawn` from any open state. Every move is a task
- * in `public-comment.bpmn`, and {@link transition} refuses any other, for the
+ * in `public-comment.bpmn` or its change phase, `public-comment-change.bpmn`,
+ * and {@link transition} refuses any other, for the
  * reason `review-comment.ts` gives: a status is what the dashboard counts, and
  * a comment closed outside the process would count as adjudicated when no one
  * in a review lane decided anything.
@@ -142,6 +143,8 @@ export interface PublicCommentTransition {
 }
 
 const P = { file: "public-comment.bpmn", process: "Process_PublicComment" } as const;
+/** The change phase, drawn on its own page and called from Process_PublicComment. */
+const C = { file: "public-comment-change.bpmn", process: "Process_PublicCommentChange" } as const;
 const OPEN = OPEN_STATUSES;
 
 /** Every move there is. A test holds each `task` to one that exists in the diagram. */
@@ -156,8 +159,8 @@ export const PUBLIC_COMMENT_TRANSITIONS: readonly PublicCommentTransition[] = [
   // editor's (the master log's status, imported as one until 2026-10-07)
   // is taken back wherever it got to. The history keeps every step.
   { name: "reopen", from: ["decided", "editing", "incorporated"], to: "triaged", by: { ...P, task: "Task_EditorDecides" } },
-  { name: "edit", from: ["decided", "editing"], to: "editing", by: { ...P, task: "Task_AuthorEdits" } },
-  { name: "incorporate", from: ["decided", "editing"], to: "incorporated", by: { ...P, task: "Task_Incorporate" } },
+  { name: "edit", from: ["decided", "editing"], to: "editing", by: { ...C, task: "Task_AuthorEdits" } },
+  { name: "incorporate", from: ["decided", "editing"], to: "incorporated", by: { ...C, task: "Task_Incorporate" } },
   { name: "duplicate", from: [...OPEN], to: "duplicate", by: { ...P, task: "Task_Triage" } },
   { name: "withdraw", from: [...OPEN], to: "withdrawn", by: { ...P, task: "Task_Withdraw" } },
 ];

@@ -2,13 +2,13 @@
 # folio-assistant-supn
 $schema: bean/1.0.0
 title: 'HARNESS CARDS BECOME TODOS: outstanding work, a next-action recommendation from initialisation state, and health badges'
-status: in-progress
+status: todo
 type: task
 priority: normal
 tags:
     - rehomed
 created_at: 2026-09-20T15:07:23Z
-updated_at: 2026-10-30T17:55:00Z
+updated_at: 2026-10-31T22:45:00Z
 parent: folio-assistant-yj32
 ---
 
@@ -183,34 +183,6 @@ cat-harness-tools#766 (harness:state, boxes 1-2) merged 2026-10-29. Left: the ca
 _2026-10-30T12:00Z_ — Boxes 1-2 are in draft PRs cat-harness#711 (Tool definition) and folio-assistant#2724 (deploy line), tracked by issue cat-harness#712. Order: merge #711, re-pin, merge #2724. Box 3 stays paused (95sk R29). (https://claude.ai/code/session_01Qmmkt7iaCtGYwZbW9x7eYe)
 
 
-_2026-10-24T08:58:00Z_ — Re-measured, not claimed (https://claude.ai/code/session_01WJw1NBGSTLWvBnyQzJHXjx).
-- **Box 1 still unmet.** `beans/workflows/` now holds 12 instances: code-change-review, crdm, merge-train and sampleimport. None of them is `initialize-harness.bpmn`.
-- **Box 2 still unmet.** No health check is per-instance.
-- **Box 3 now collides with an owner pause.** On 2026-10-24 the owner paused todos and sticky notes, saying "they should be the same thing, that's part of the problem" (bean `95sk`, R29). This box makes the harness card a todo sticky, so it waits on that merge too.
-Left `todo`.
-
-## 2026-10-24 — owner ruling: boxes 1 and 2 now, box 3 paused
-
-The owner tapped option A, "Boxes 1-2 now, box 3 paused", at 14:04Z (card in the
-"Drain folio-assistant-core beans" thread, https://claude.ai/code/session_01MK9nZ3Gmon4cDBRLSURizU).
-Boxes 1 (setup position per harness) and 2 (per-harness health) may be worked now.
-Box 3 (the card as a todo sticky) waits until the owner unpauses todos and stickies (95sk R29).
-That thread takes boxes 1 and 2 after 0exf.
-
-_2026-10-24T14:50:00Z_ — Boxes 1 and 2 claimed by the "Drain folio-assistant-core beans" thread (https://claude.ai/code/session_01MK9nZ3Gmon4cDBRLSURizU), per the owner ruling above. Box 3 stays paused.
-
-## 2026-10-24 — owner ruling: work it out at publish time (boxes 1 and 2)
-
-The owner tapped "A. Work out at publish time" at 14:31Z (card in the "Drain folio-assistant-core beans" thread, https://claude.ai/code/session_01MK9nZ3Gmon4cDBRLSURizU). A Tool runs bootstrap-tools' read-only setup check (`init.ts --dry-run --offline`) on every mounted harness at site build, and publishes one state file per harness: its setup steps, the next step to take, and health badges (setup steps done of the total, plus that harness's own `health --instance` verdict). Nothing is committed, so nothing goes stale or drifts between bean copies.
-
-_2026-10-24T15:00:00Z_ — Boxes 1 and 2 built (Drain folio-assistant-core beans thread):
-- cat-harness-tools#766: `bun run cat harness:state` — bootstrap's setup check, offline and dry-run, one `folio-harness-state/v1` file per harness (position, next step, badges `initialization` and `repository`).
-- cat-harness branch `claude/supn-harness-state-tool`: the Tool definition; its PR opens once #766 merges (`check:tools` needs the script).
-- folio-assistant branch `claude/supn-harness-state-deploy`: the deploy line; its PR opens once the index pins tools at or after #766.
-First run on the composed index: every harness reports, and several layers have declared directories that are absent (e.g. `test/health/results/` in cat-harness, core and who-iris).
-
-## Progress 2026-10-29
-
-cat-harness-tools#766 (harness:state, boxes 1-2) merged 2026-10-29. Left: the cat-harness Tool definition and the folio-assistant site-build line; box 3 stays paused with todos/stickies. (Lane B drain thread.)
-
 _2026-10-30T17:55:00Z_ — Boxes 1 and 2 done: [litlfred/cat-harness#711](https://github.com/litlfred/cat-harness/pull/711) (the `harness:state` Tool) merged 12:41Z, and [litlfred/folio-assistant#2724](https://github.com/litlfred/folio-assistant/pull/2724) (the site-build line) merged 12:46Z. Box 3 stays paused by the owner's 2026-10-24 ruling (todos and stickies, `95sk` R29), so this bean stays in progress with nothing to do until that pause lifts. (Thread "Fix publish failure and orphan beans", https://claude.ai/code/session_01Qmmkt5bHqcmhAXH3s3z4s5)
+
+_2026-10-31T22:45:00Z_ — Status set to `todo` (bean drain tidy-up, sibling S3, https://claude.ai/code/session_01Qmmkt5KrQTMk55GWX1YUtj). Boxes 1 and 2 are done (cat-harness#711, folio-assistant#2724). Box 3 is the only work left, and it waits on the owner's pause of todos and stickies (`folio-assistant-r29x`, R29, which is `todo`), so nobody is working this bean. Pick it up when R29 is unpaused. Also removed a second copy of the four 2026-10-24 sections that had been pasted twice; the first copy is unchanged.

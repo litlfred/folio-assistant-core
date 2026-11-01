@@ -46,7 +46,7 @@ function installTriggers() {
   host_().ScriptApp.newTrigger('markDirty').forSpreadsheet(ss).onEdit().create();
   host_().ScriptApp.newTrigger('refreshIfDirty').timeBased().everyMinutes(TIMER_MINUTES).create();
   docProps_().setProperty('timerMinutes', String(TIMER_MINUTES));
-  refreshAll();
+  refreshAll(); // also takes the setup line off each tab: timerMinutes marks it installed
   applyEditors(ss);
   if (DRAFTING) checkDropdown(ss);
 }
@@ -126,14 +126,56 @@ function loadConfig(ss) {
 
 /**
  * A copy of a template is not linked to a repository until the agent writes
- * its Config from the folio's sheet-sync.json. Say so, with what to ask for,
- * rather than leaving an empty dropdown to explain itself.
+ * its Config from the folio's sheet-sync.json. The message leads with what to
+ * do and stays short enough for a toast (owner, 2026-11-01: the toast "was
+ * cut off ... User wont know what to do").
  */
 function notLinked(ss) {
-  return 'This sheet is not linked to a document repository yet, so its Config tab is empty and ' +
-    'the Selected Sections dropdown has nothing to offer. Ask the agent to link it: name the repository ' +
-    'and give this spreadsheet\'s ID, ' + ss.getId() + '. The agent adds review/<mode>/sheet-sync.json ' +
-    'there and writes this Config tab (skill review-sheet-script, "Linking a sheet to a repository").';
+  return 'Ask the agent to link this sheet to its document: give it this sheet\'s link (ID ' + ss.getId() +
+    '). Until then the Config tab and the Selected Sections dropdown are empty.';
+}
+/**
+ * The setup steps a person still has to take, as the first line of each
+ * tab's Instructions, so the sheet itself says what to do next (owner,
+ * 2026-11-01: "put instructions on sheet ... Warning icon on first line";
+ * "should be in the google sheet template so clearer what to do"). The
+ * templates carry the first step from the start; the script moves it on.
+ */
+const SETUP_MARK = '\u26a0 ';
+const SETUP_STEPS = {
+  unlinked: SETUP_MARK + 'Not set up yet. Step 1 of 2: ask the agent to link this sheet to its document, and give it this sheet\'s link. ' +
+    'Step 2: choose Review links, then Install.',
+  uninstalled: SETUP_MARK + 'Almost set up. Step 2 of 2: choose Review links, then Install (once), and allow it. The script then keeps this sheet current.',
+};
+/** Where the sheet's setup is: 'unlinked' (no Config), 'uninstalled' (no timer yet) or 'ready'. */
+function setupState(linked) {
+  if (!linked) return 'unlinked';
+  try { return docProps_().getProperty('timerMinutes') ? 'ready' : 'uninstalled'; } catch (e) { return 'uninstalled'; }
+}
+/**
+ * Keep each visible tab's first Instructions cell in step with the setup:
+ * a ⚠ first line with the next step until the sheet is linked and
+ * installed; once linked, a last line with the document's site and
+ * repository (owner, 2026-11-01). A plain text write; colourInstructions
+ * puts the colours back on the next refresh.
+ */
+function markSetup(ss, state) {
+  if (!ss) throw new Error(RUN_THIS);
+  const parts = state !== 'unlinked' && CFG ? [CFG.SITE_URL, CFG.REPO_URL && 'Repository: ' + CFG.REPO_URL].filter(Boolean) : [];
+  const where = parts.length ? 'Document: ' + parts.join('   ') : '';
+  ss.getSheets().forEach(sh => {
+    if (sh.isSheetHidden() || sh.getName() === CONFIG_TAB || sh.getLastRow() < 1 || sh.getLastColumn() < 2) return;
+    if (!LEGEND_RE.test(String(sh.getRange(1, 1).getDisplayValue()).trim())) return;
+    const cell = sh.getRange(1, 2);
+    const before = String(cell.getDisplayValue());
+    let lines = before.split('\n').filter(l => l.indexOf(SETUP_MARK) !== 0 && l.indexOf('Document: ') !== 0);
+    if (SETUP_STEPS[state]) lines.unshift(SETUP_STEPS[state]);
+    if (where) lines.push(where);
+    const text = lines.join('\n');
+    if (text !== before) cell.setValue(text);
+  });
+  // A plain write drops the colours; put them back now, linked or not.
+  try { colourInstructions(ss); } catch (e) { /* cosmetic only */ }
 }
 
 function showVersion() {
@@ -156,7 +198,11 @@ function onOpen() {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(CONFIG_TAB);
     const keys = sh ? sh.getRange(1, 1, Math.max(sh.getLastRow(), 1), 1).getDisplayValues().map(r => String(r[0]).trim()) : [];
-    if (!keys.includes('CFG')) ss.toast(notLinked(ss), 'Not linked to a repository yet', 30);
+    const linked = keys.includes('CFG');
+    if (!linked) ss.toast('Ask the agent to link this sheet. The \u26a0 line at the top of the tab says how.', '\u26a0 Not set up yet', 30);
+    else if (setupState(true) === 'uninstalled') ss.toast('Choose Review links, then Install, to start the script.', '\u26a0 Almost set up', 30);
+    if (linked) loadConfig(ss);
+    markSetup(ss, setupState(linked));
   } catch (e) { /* a toast is a courtesy; never block the menu */ }
 }
 
@@ -199,8 +245,9 @@ function applyEditors(ss) {
  * added; an existing one is left alone, since writing it again would clear
  * its "Allow multiple selections" tick. Neither Apps Script nor the Sheets
  * API can read that tick, so the box is skipped only on
- * evidence: a cell already holding two sections from the list, or the person
- * having said it is done (Yes). The same steps are in the Config tab's Instructions row.
+ * evidence: a cell already holding two sections from the list (or, on a sheet
+ * installed before 2026-10-31, the person having said it is done). The same
+ * steps are in the Config tab's Instructions row.
  */
 function checkDropdown(ss) {
   if (!ss) throw new Error(RUN_THIS);
@@ -217,20 +264,59 @@ function checkDropdown(ss) {
   }
   const props = docProps_();
   if (had && (props.getProperty('dropdownDone') || multiPicked(cells))) return;
-  const range = "'" + sh.getName() + "'!" + cells.getA1Notation();
-  const ui = SpreadsheetApp.getUi();
-  const answer = ui.alert('Finish the Selected Sections dropdown',
-    (had ? 'Selected Sections is a dropdown' : 'Selected Sections is now a dropdown of the document\'s sections') +
-    ', but one setting only a person can make:\n\n' +
-    '\u2022 Click the column letter above "' + COLS.draft.sections + '" to select the column\n' +
-    '\u2022 Choose Data, then Data validation\n' +
-    '\u2022 Open the rule for ' + range + ' (it says "Dropdown (from a range)")\n' +
-    '\u2022 Tick Allow multiple selections\n' +
-    '\u2022 Press Done\n\n' +
-    'The script keeps the list and every pick current after that. These steps are also on the Config tab.\n\n' +
-    'Is this done already? Yes stops this message; No shows it again next time.',
-    ui.ButtonSet.YES_NO);
-  if (answer === ui.Button.YES) props.setProperty('dropdownDone', '1');
+  // A toast, never a dialog: a dialog waits for an answer in the sheet, and
+  // when Install is run from the Apps Script editor nobody sees it, so the
+  // run hangs until Apps Script stops it after 6 minutes (owner, 2026-10-31:
+  // "Exceeded maximum execution time" on the DTH-SC log).
+  try {
+    ss.toast('Selected Sections is ' + (had ? 'a dropdown' : 'now a dropdown of the document\'s sections') +
+      '. One step only a person can take: select the "' + COLS.draft.sections +
+      '" column, choose Data, then Data validation, open its rule, set Advanced options > Display style to Chip, then tick Allow multiple selections (greyed out until the style is Chip), and press Done. ' +
+      'The same steps are on the Config tab.', 'Finish the dropdown', 30);
+  } catch (e) { /* a toast is a courtesy */ }
+}
+
+/**
+ * Data rows look like data rows (owner, 2026-10-31: "why row 3 bold", "review
+ * styling on PR Feedback and apply to Contrib Feedback"). A row inserted just
+ * under the header takes the header's look (bold, dark fill, centred), so the
+ * first change set of a new log read as a second header. Any data row whose
+ * cells are bold or centred at cell level gets its format back from the last
+ * row of the tab, which nobody types in, before the script writes its own
+ * rich text (which carries its own bold spans).
+ */
+function normalizeRows(sh) {
+  if (!sh) return 0;
+  const s = readSheet(sh), n = sh.getLastRow() - s.top + 1;
+  if (n <= 0) return 0;
+  const width = sh.getLastColumn(), last = sh.getMaxRows();
+  if (last < s.top + n) return 0;
+  const range = sh.getRange(s.top, 1, n, width);
+  const weights = range.getFontWeights(), valign = range.getVerticalAlignments();
+  let fixed = 0;
+  for (let k = 0; k < n; k++) {
+    // Column A (the id, always plain) and the alignment: the script's own rich
+    // text has bold spans, which must not read as a header row.
+    const off = weights[k][0] === 'bold' || valign[k].some(v => /middle|center/i.test(String(v)));
+    if (!off) continue;
+    sh.getRange(last, 1, 1, width).copyTo(sh.getRange(s.top + k, 1, 1, width), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+    fixed++;
+  }
+  return fixed;
+}
+
+/**
+ * Move column `name` to sit immediately left of column `before`, by header.
+ * Only ever called inside the locked run (memory: never move columns
+ * mid-refresh). Returns true when it moved something.
+ */
+function placeBefore(sh, name, before) {
+  if (!sh) return false;
+  const s = readSheet(sh), a = s.header.indexOf(name), b = s.header.indexOf(before);
+  if (a < 0 || b < 0 || a === b - 1) return false;
+  // moveColumns' destination is the index BEFORE the move, 1-based.
+  sh.moveColumns(sh.getRange(1, a + 1, 1, 1), b + 1);
+  return true;
 }
 
 /** True when some cell holds two or more sections from the list, which only a multi-select rule allows. */
@@ -268,6 +354,14 @@ function markDirty(e) {
   try { loadConfig(SpreadsheetApp.getActive()); } catch (err) { return; }
   if (!WATCHED.includes(name)) return;
   const props = docProps_();
+  // An Editor's Ready for agent edit is timed now, not on the next refresh,
+  // so the agent's feedback says "Ready for agent set" at once (owner,
+  // 2026-10-31: "i expected to see change to Change Set Feedback (agent) b/c
+  // i said ready for agent").
+  let readyNow = {};
+  if (name === (DRAFTING ? CFG.FEEDBACK : CFG.RCS)) {
+    try { readyNow = noteReady_(e, props, DRAFTING ? COLS.draft.cs : 'Change-set'); } catch (err) { /* the refresh still runs */ }
+  }
   if (DRAFTING) {
     // Incremental: remember which Contributor Feedback rows the edit touched
     // and rebuild only those, at once. An edit of the header row, or of the
@@ -298,11 +392,35 @@ function markDirty(e) {
   // A slow sheet waits for the timer, but a proposal an edit makes stale is
   // flagged at once: it reads only two tabs (owner, 2026-10-31: "made
   // feedback change in RefArch Log but no warning on stale").
-  if (name === CFG.RCS) { try { staleNow(); } catch (err) { /* the timer still runs */ } }
+  if (name === CFG.RCS) { try { staleNow(readyNow); } catch (err) { /* the timer still runs */ } }
+}
+
+/**
+ * Record when an edit set Ready for agent to Yes ("ready:CS-001" = now), or
+ * clear it on No. Returns { cs: time } for the rows turned Yes.
+ */
+function noteReady_(e, props, csHeader) {
+  const r = e.range;
+  if (!r.getColumn) return {};
+  const s = readSheet(r.getSheet());
+  const rc = col(s, 'Ready for agent'), cc = col(s, csHeader);
+  const c0 = r.getColumn(), nc = r.getNumColumns ? r.getNumColumns() : 1;
+  if (rc < 0 || cc < 0 || rc + 1 < c0 || rc + 1 >= c0 + nc) return {};
+  const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z', out = {};
+  const r0 = r.getRow(), n = Math.min(r.getNumRows(), MAX_ROWS);
+  for (let row = r0; row < r0 + n; row++) {
+    const v = s.rows[row - s.top];
+    if (!v) continue;
+    const cs = String(v[cc]).trim();
+    if (!cs) continue;
+    if (/^yes$/i.test(String(v[rc]).trim())) { props.setProperty('ready:' + cs, now); out[cs] = now; }
+    else props.deleteProperty('ready:' + cs);
+  }
+  return out;
 }
 
 /** Public comment: flag stale proposals on Review Change Sets, without a full rebuild. */
-function staleNow() {
+function staleNow(readyNow) {
   const ss = SpreadsheetApp.getActive();
   const agentCs = readSheet(ss.getSheetByName(CFG.AGENT_CS || CFG.AGENT));
   const rcs = readSheet(ss.getSheetByName(CFG.RCS));
@@ -310,7 +428,11 @@ function staleNow() {
   if (aId < 0 || aBasis < 0) return;
   const basisOfCs = {};
   agentCs.rows.forEach(r => { const id = String(r[aId]).trim(); if (id) basisOfCs[id] = String(r[aBasis]).trim(); });
-  markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)');
+  // Only the rows an Editor just set to Yes get their progress line here;
+  // the rest keep theirs until the timer's full refresh.
+  const lineOf = {};
+  Object.keys(readyNow || {}).forEach(cs => { lineOf[cs] = progressLine({ readyAt: readyNow[cs] }); });
+  markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)', lineOf);
 }
 
 const FAST_MS = 5000;
@@ -340,13 +462,14 @@ function refreshIfDirty() {
   upgradeTimer_(props);
   try { loadConfig(SpreadsheetApp.getActive()); } catch (err) { return; }
   try { colourInstructions(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
+  try { headerNotes(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
   if (!DRAFTING) {
     // The agent writes Agent through the API, which fires no edit, so the
     // timer also rebuilds when the Agent tab's contents have changed.
     const seen = hashOf(JSON.stringify([CFG.AGENT, CFG.AGENT_CS].filter(Boolean).map(n => {
       const a = SpreadsheetApp.getActive().getSheetByName(n);
       return a ? a.getRange(1, 1, Math.max(a.getLastRow(), 1), Math.max(a.getLastColumn(), 1)).getDisplayValues() : [];
-    })));
+    }).concat([agentColumnText()])));
     const moved = seen !== (props.getProperty('agentHash') || '');
     if (props.getProperty('dirty') !== '1' && !moved) return;
     // Cleared before the run, so an edit made during it marks it dirty
@@ -370,6 +493,8 @@ function refreshIfDirty() {
     props.deleteProperty('rows');
     checkSheet(SpreadsheetApp.getActive());
     refreshDraft(full ? null : rows);
+    try { capRows(SpreadsheetApp.getActive(), [CFG.FEEDBACK]); } catch (err) { /* cosmetic only */ }
+    writeWatchHash(SpreadsheetApp.getActive());
   } finally {
     props.setProperty('lastMs', String(Date.now() - t0));
     lock.releaseLock();
@@ -379,11 +504,17 @@ function refreshIfDirty() {
 /** Rebuild everything. True when it ran; false when another run held the lock. */
 function refreshAll() {
   const lock = docLock_();
-  if (!lock.tryLock(1000)) return false;
+  if (!lock.tryLock(1000)) {
+    // Refresh now pressed while a timer refresh runs: say so rather than do
+    // nothing in silence (owner, 2026-10-31: "what does Refresh now do exactly?").
+    try { SpreadsheetApp.getActive().toast('Another refresh is running. Try again in a minute.', 'Review links', 5); } catch (err) { /* no UI on a timer */ }
+    return false;
+  }
   const t0 = Date.now();
   try {
     refreshLocked();
     applyEditors(SpreadsheetApp.getActive());
+    try { markSetup(SpreadsheetApp.getActive(), setupState(true)); } catch (err) { /* cosmetic only */ }
     try { colourInstructions(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
     try { styleConfig(SpreadsheetApp.getActive()); } catch (err) { /* cosmetic only */ }
     return true;
@@ -397,8 +528,17 @@ function refreshLocked() {
   {
     loadConfig(SpreadsheetApp.getActive());
     checkSheet(SpreadsheetApp.getActive());
-    if (DRAFTING) return refreshDraft();
+    if (DRAFTING) {
+      const out = refreshDraft();
+      writeWatchHash(SpreadsheetApp.getActive());
+      return out;
+    }
     const ss = SpreadsheetApp.getActive();
+    // Added inside the run, under its lock, so no other refresh writes by a
+    // column position this changes (memory: never move columns mid-refresh).
+    try { ensureConfirmedColumn(ss); } catch (err) { /* the refresh still runs */ }
+    try { ensureAgentStepColumn(ss.getSheetByName(CFG.AGENT_CS || CFG.AGENT)); } catch (err) { /* the refresh still runs */ }
+    [CFG.RPC, CFG.RCS].forEach(n => { try { normalizeRows(ss.getSheetByName(n)); } catch (err) { /* cosmetic only */ } });
     const rpc = readSheet(ss.getSheetByName(CFG.RPC));
     const agent = readSheet(ss.getSheetByName(CFG.AGENT));
     const agentCs = CFG.AGENT_CS ? readSheet(ss.getSheetByName(CFG.AGENT_CS)) : agent;
@@ -415,6 +555,8 @@ function refreshLocked() {
     const aHead = col(agentCs, COLS.agent.head || 'PR head (change set)');
     const aFrom = col(agentCs, COLS.agent.builtFrom || 'Staging built from (change set)');
     const aDeploy = col(agentCs, COLS.agent.deploy || 'Staging deploy (change set)');
+    const aDisp = col(agentCs, COLS.agent.dispositions || DISPOSITIONS_CS), dispOf = {};
+    const aGate = col(agentCs, COLS.agent.gate || QA_GATE), aQa = col(agentCs, COLS.agent.qa || QA_REPORT), aStep = col(agentCs, AGENT_STEP);
     agent.rows.forEach(r => {
       const n = String(r[aNo]).trim();
       if (n) {
@@ -432,9 +574,10 @@ function refreshLocked() {
       const id = aId >= 0 ? String(r[aId]).trim() : '';
       if (id && aBasis >= 0) basisOfCs[id] = String(r[aBasis]).trim();
       if (id && aStaging >= 0) stagingOf[id] = (String(r[aStaging]).match(/https:\/\/\S+/) || [''])[0];
-      if (id) builtOf[id] = builtInfo(r, aBuilt, aFrom, aDeploy);
+      if (id) builtOf[id] = builtInfo(r, aBuilt, aFrom, aDeploy, aGate, aQa, aStep);
+      if (id && aDisp >= 0) dispOf[id] = String(r[aDisp]);
       if (id && aPrs >= 0) {
-        const descs = aCh >= 0 ? String(r[aCh]).split('\n').map(x => x.trim()) : [];
+        const descs = aCh >= 0 ? prDescs(r[aCh]) : [];
         const dones = aDone >= 0 ? String(r[aDone]).split('\n').map(x => x.trim()) : [];
         const heads = aHead >= 0 ? String(r[aHead]).split('\n').map(x => x.trim()) : [];
         prOf[id] = String(r[aPrs]).split('\n').map(x => x.trim()).filter(Boolean)
@@ -443,14 +586,41 @@ function refreshLocked() {
       }
     });
     refreshRpc(rpc, pcOf, csOfNo, stOf, prOf);
-    refreshRcs(rcs, rpc, csOf, stOf, prOf);
-    markStale(rcs, col(rcs, 'Change-set'), basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)');
+    const csCol = col(rcs, 'Change-set'), all = () => true;
+    const humanDisp = {}, hNo = col(rpc, COLS.rpc.no), hD = col(rpc, COLS.rpc.disposition || 'Disposition');
+    if (hNo >= 0 && hD >= 0) rpc.rows.forEach(r => { const n = String(r[hNo]).trim(); if (n) humanDisp[n] = String(r[hD]).trim(); });
+    const readyAt = readyTimes(rcs, csCol, prOf, all, docProps_()), lineOf = {};
+    refreshRcs(rcs, rpc, csOf, stOf, prOf, readyAt, builtOf);
+    const cCol = col(rcs, CONFIRMED), confirmedOf = {};
+    if (cCol >= 0) rcs.rows.forEach(r => { const cs = String(r[csCol]).trim(); if (cs) confirmedOf[cs] = confirmedNos(r[cCol], csOf[cs] || []); });
+    writeRows(rcs, col(rcs, COLS.rcs.dispositionsAgent || DISPOSITIONS_AGENT), null, r => {
+      const cs = String(r[csCol]).trim();
+      return dispositionCell(dispOf[cs], csOf[cs], humanDisp, confirmedOf[cs]);
+    });
+    // No Agentic status column: the status sits on top of the agent's
+    // feedback instead (owner, 2026-10-31, option A: "One column, status on top").
+    const mergedRcs = col(rcs, COLS.rcs.agentic || 'Agentic status') < 0;
+    const dispBlock = {};
+    rcs.rows.forEach(r => {
+      const cs = String(r[csCol]).trim();
+      if (cs && (prOf[cs] || []).length && dispositionProblems(dispOf[cs] || '', csOf[cs] || [], humanDisp, confirmedOf[cs]))
+        dispBlock[cs] = 'dispositions not complete or not confirmed';
+    });
+    rcs.rows.forEach(r => {
+      const cs = String(r[csCol]).trim();
+      const st = csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean));
+      if (cs && mergedRcs) lineOf[cs] = statusBlock(progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: st, prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs], disp: dispBlock[cs] }), st, prOf[cs] || []);
+      else if (cs) lineOf[cs] = progressLine({ readyAt: readyAt[cs], merge: isYes(rcs, r, 'Ready for merge'), status: csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)), prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs], disp: dispBlock[cs] });
+    });
+    markStale(rcs, csCol, basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)', lineOf);
+    completeReady(rcs, csCol, prOf, stagingOf, builtOf, readyAt);
+    try { capRows(ss, [CFG.RPC, CFG.RCS]); } catch (err) { /* cosmetic only */ }
     // Staging review page, from Agent: only where Agent names a preview, so a
     // sheet whose agent writes the cell directly keeps it.
     const rSt = COLS.rcs.staging ? col(rcs, COLS.rcs.staging) : -1, rCs = col(rcs, COLS.rcs.cs);
     if (rSt >= 0 && rCs >= 0) rcs.rows.forEach((r, k) => {
       const id = String(r[rCs]).trim();
-      if (stagingOf[id] || awaitsPreview(prOf[id])) rcs.sh.getRange(k + rcs.top, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id])]]);
+      if (stagingOf[id] || awaitsPreview(prOf[id])) rcs.sh.getRange(k + rcs.top, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id], readyAt[id], dispBlock[id])]]);
     });
   }
 }
@@ -478,18 +648,199 @@ function legendCount(firstCells) {
  * the API, which drops the colours, and the next refresh puts them back.
  * Links in the text are kept as links.
  */
+/**
+ * Hover text on every column head (owner, 2026-10-31: "can we add hover text
+ * to the column heads that describes what it is", all columns in the sheets;
+ * "don't need to name the color in the tooltip"). Each note says what the
+ * column holds and who fills it in. Matched by header, first on
+ * "<tab kind>|<header>", then on the header alone; a header ending in "(...)"
+ * (a person's initials) also matches its "Name (*)" entry. The script owns
+ * every head note on these tabs; a head with no entry is left alone.
+ */
+const HEADER_NOTES = {
+  // Review Public Comments
+  'rpc|No.': 'The public comment number, as received. Cite a comment by it, e.g. "No. 132". Kept by the script.',
+  'rpc|Sections': 'The sections of the document the comment is about, linked to the draft. Kept by the script.',
+  'Page': 'The page of the review draft the comment cites, linked to that page. Kept by the script.',
+  'Line no(s) / Table / Figure': 'The lines, table or figure of the review draft the comment cites. From the submission.',
+  'Comment / issue': 'The comment, as the submitter wrote it. Never edited.',
+  'Suggested revision': 'The change the submitter proposed, as written. Never edited.',
+  'Change Set': 'The change set this comment is grouped into, linked to its row on Review Change Sets. Set by the agent.',
+  'TWG (agent)': 'The technical working group the agent suggests for this comment.',
+  'TWG (human)': 'The technical working group you assign. Wins over the agent\'s suggestion. You fill this in.',
+  'Comment type': 'The kind of comment, e.g. editorial or technical. You fill this in.',
+  'Committee Feedback (*)': 'One reviewer\'s feedback. Put your initials in the column head; one column per reviewer. You fill this in.',
+  'rpc|Disposition': 'The committee\'s decision on this comment: Accepted, Partially accepted, Not accepted, Noted, Deferred, Duplicate, Out of scope or Withdrawn. You fill this in; the agent starts from it and never overrides it.',
+  'rpc|Status': 'Where the comment is in review, e.g. Open, In review, Closed. You fill this in.',
+  'rpc|Agentic status': 'Where the agent is with this comment\'s change set: Working, PR open, Needs you, Completed. Kept by the script.',
+  'rpc|Staging review': 'Opens the preview of this comment\'s change set, with a warning when it is stale or still building. Kept by the script.',
+  // Review Change Sets
+  'Change-set': 'The change set id (CS-001, ...). A change set groups related comments into one pull request. Kept by the script.',
+  'rcs|Title': 'A short name for the change set. Set by the agent.',
+  'rcs|Sections': 'The sections of the document the change set touches, linked to the draft. Kept by the script.',
+  'Pages': 'The review-draft pages its comments cite. Kept by the script.',
+  'Public Comments': 'The public comments in this change set, each linked to its row on Review Public Comments. Kept by the script.',
+  'Suggested Revisions': 'The submitters\' suggested revisions for these comments. Kept by the script.',
+  'PC Committee Feedback': 'The committee\'s feedback on each of these comments, from Review Public Comments. Kept by the script.',
+  'Dispositions': 'The dispositions people set on each of these comments, from Review Public Comments. Kept by the script.',
+  'TWG (PCs)': 'The working groups of these comments. Kept by the script.',
+  'TWG (CS)': 'The working group that owns this change set. You fill this in.',
+  'Ready for agent': 'Yes: the direction is agreed and the agent may edit. No: wait. Completed: the agent has finished and the preview is current (set by the script). Any change in feedback sets it back to No. Set by an Editor.',
+  'Dispositions confirmed': 'Yes: the committee confirms every disposition the agent gave in this change set. To differ on one comment, set that comment\'s own Disposition on Review Public Comments. The agent will not merge until every comment is confirmed or has its own Disposition. Set by an Editor.',
+  'Ready for merge': 'Yes: merge the pull request. The agent merges only once the QA gate has passed for the current version. Set by an Editor.',
+  'Disposition (agent)': 'The decisions made so far (oldest first, never removed), then one disposition per comment number. "No disposition yet" lists the numbers still missing one. From the agent, read only.',
+  'Change Set Feedback (agent)': 'The status on top, then the agent\'s current proposal and any question it needs answered, with options and a recommendation.',
+  'Feedback (agent)': 'The status on top, then the agent\'s current proposal and any question it needs answered, with options and a recommendation.',
+  'Agentic status': 'Where the agent is: Working, PR open, Needs you (a question for you), Completed, with each pull request and what it changed. Kept by the script.',
+  'Staging review': 'Opens the preview of the change, and its QA report. Shows the QA gate, and a warning while the preview is stale or being rebuilt. Kept by the script.',
+  'Agentic status (filter)': 'A one-word copy of Agentic status, for filter views. Kept by the script.',
+  // Contributor Feedback (drafting)
+  'draft|Title': 'A short name for this row\'s change. You fill this in.',
+  'Selected Sections': 'The sections this row is about. Pick from the dropdown; several are allowed. You fill this in.',
+  'Section links': 'Links to the selected sections in the current draft. Kept by the script.',
+  'Contributor Feedback (*)': 'One contributor\'s feedback. Put your initials or name in the column head; one column per contributor. You fill this in.',
+  'draft|Disposition': 'The decision on this row. You fill this in.',
+  'Issue': 'The GitHub issue that tracks this change set. Set by the agent.',
+  // Agent tabs (written only by the agent)
+  'agent|No.': 'The public comment number. Written by the agent.',
+  'agent|Title': 'A short name for the change set. Written by the agent.',
+  'Comment ref': 'The comment\'s id in the repository (PC-0001, ...). Written by the agent.',
+  'Agentic action taken': 'What the agent did for this comment. Written by the agent.',
+  'Agentic applied in (section / version)': 'Where the change landed: section and version. Written by the agent.',
+  'Agentic handled by': 'Which agent session handled it. Written by the agent.',
+  'Agentic date actioned': 'When the agent acted (UTC). Written by the agent.',
+  'Change-sets': 'The change set(s) this comment belongs to. Written by the agent.',
+  'Pull request (change set)': 'The pull request(s) with the change set\'s edits. Written by the agent.',
+  'Staging review page (change set)': 'The preview page for the change set. Written by the agent.',
+  'What the PRs changed (change set)': 'What the pull requests changed, one item per line with the comment numbers. Written by the agent.',
+  'Agent completed (UTC, change set)': 'When the agent last finished work on this change set, from the clock. Written by the agent.',
+  'Feedback basis (change set)': 'A fingerprint of the feedback the agent worked from. When the feedback changes, the proposal is marked stale. Written by the agent.',
+  'Staging built (UTC, change set)': 'When the preview was built. Written by the agent.',
+  'PR head (change set)': 'The pull request\'s current commit. Written by the agent.',
+  'Staging built from (change set)': 'The commit the preview was built from. If it differs from PR head, the preview is stale. Written by the agent.',
+  'Staging deploy (change set)': 'Where the preview deploy is: building, pushed, deploying, deployed or failed, with the expected live time. Written by the agent.',
+  'Disposition (change set)': 'The decisions so far, then one disposition per comment. Shown on the review tab as Disposition (agent). Written by the agent with its record tool.',
+  'QA gate (change set)': '"Passed" or "Failed" for one version of the pull request. No merge until it passed for the current one. Written only by an independent reviewer, never the authoring agent.',
+  'Agent step (change set)': 'What the agent is doing now and since when, e.g. "editing 2026-10-31 17:20Z": reading, proposing, editing, pushing, staging, deploying, qa-review, merging or idle. Shown on the status line. Written by the agent with its record tool.',
+  'QA report (change set)': 'The QA results for the current version of the pull request. Written by the agent.',
+  'Agent conversation (change set)': 'The agent session working on this change set. Written by the agent.',
+};
+/** The head notes the script wrote before 2026-10-31 16:05Z ended in this. */
+const NOTE_MARK = '\n\n(Column note kept by the review sheet script.)';
+/**
+ * Rows on the people's tabs are at most about 10 lines high (owner,
+ * 2026-10-31: "make rows of human input tabs no more than 10 lines high on a
+ * laptop", "so scroll overflow"). Sheets has no scrolling inside a cell, so a
+ * longer row is fixed at 10 lines and the rest is clipped: clicking the cell
+ * shows the whole text in the formula bar, and double-clicking opens it
+ * scrollable. A row that fits is left to size itself. Lines are estimated
+ * from each column's width, the same way for every run, so a row is only
+ * rewritten when its estimate crosses the cap.
+ */
+const ROW_CAP_LINES = 10, LINE_PX = 17, CHAR_PX = 7;
+function rowLines(values, widths) {
+  return values.reduce((most, v, c) => {
+    const per = Math.max(1, Math.floor((widths[c] - 8) / CHAR_PX));
+    const n = String(v).split('\n').reduce((k, line) => k + Math.max(1, Math.ceil(line.length / per)), 0);
+    return Math.max(most, n);
+  }, 1);
+}
+function capRows(ss, names) {
+  const cap = ROW_CAP_LINES * LINE_PX + 4;
+  names.filter(Boolean).forEach(name => {
+    const sh = ss.getSheetByName(name);
+    if (!sh || sh.getLastRow() < 3) return;
+    const s = readSheet(sh);
+    const widths = s.header.map((_, c) => sh.getColumnWidth(c + 1));
+    const props = docProps_(), key = 'capped:' + sh.getSheetId();
+    const was = JSON.parse(props.getProperty(key) || '[]');
+    const now = [];
+    s.rows.forEach((r, k) => { if (rowLines(r, widths) > ROW_CAP_LINES) now.push(k + s.top); });
+    const add = now.filter(x => was.indexOf(x) < 0), drop = was.filter(x => now.indexOf(x) < 0);
+    runs(add).forEach(([a, n]) => sh.setRowHeightsForced(a, n, cap));
+    runs(drop).forEach(([a, n]) => sh.autoResizeRows(a, n));
+    if (add.length || drop.length) props.setProperty(key, JSON.stringify(now));
+  });
+}
+/** [3,4,5,9] -> [[3,3],[9,1]]: start row and count. */
+function runs(rows) {
+  const out = [];
+  rows.slice().sort((x, y) => x - y).forEach(r => {
+    const last = out[out.length - 1];
+    if (last && last[0] + last[1] === r) last[1]++;
+    else out.push([r, 1]);
+  });
+  return out;
+}
+/**
+ * The agent also writes its proposal straight into Change Set Feedback (agent)
+ * on Review Change Sets, which fires no edit either, and that rewrite drops
+ * the script's ⏳ status line (owner, 2026-10-31: "i dont see status"). So the
+ * timer watches that column too, with the script's own lines taken out, so
+ * putting the status line back does not itself count as a change.
+ */
+function agentColumnText() {
+  const sh = SpreadsheetApp.getActive().getSheetByName(CFG.RCS);
+  if (!sh) return '';
+  const s = readSheet(sh), c = col(s, COLS.rcs.agentFeedback || 'Change Set Feedback (agent)');
+  if (c < 0) return '';
+  return s.rows.map(r => ownText(r[c])).join('\u0001');
+}
+/** The agent's own text: without the script's status, PR and stale lines. */
+function ownText(v) {
+  return String(v).split('\n').filter(l => !/^(\u23f3|\u21b3 |\u26a0 Stale)/.test(l)).join('\n');
+}
+function headerNoteFor(kind, h) {
+  const own = HEADER_NOTES[kind + '|' + h] || HEADER_NOTES[h];
+  if (own) return own;
+  const m = /^(.+?) \([^)]*\)$/.exec(h);
+  if (m && HEADER_NOTES[m[1] + ' (*)']) return HEADER_NOTES[m[1] + ' (*)'];
+  const a = aliasOf(h);
+  return a ? headerNoteFor(kind, a) : '';
+}
+function tabKind(name) {
+  if (!CFG) return '';
+  if (name === CFG.RPC) return 'rpc';
+  if (name === CFG.RCS) return 'rcs';
+  if (name === CFG.FEEDBACK) return 'draft';
+  if (name === CFG.AGENT || name === CFG.AGENT_CS) return 'agent';
+  return '';
+}
+/** Set the head notes of every known tab. Cheap: only changed notes are written. */
+function headerNotes(ss) {
+  ss.getSheets().forEach(sh => {
+    const kind = tabKind(sh.getName());
+    if (!kind) return;
+    const width = sh.getLastColumn();
+    if (width < 1) return;
+    const row = topRow(sh) - 1;
+    const r = sh.getRange(row, 1, 1, width);
+    const heads = r.getDisplayValues()[0], notes = r.getNotes()[0];
+    let changed = false;
+    const out = heads.map((h, i) => {
+      const was = notes[i] || '';
+      const want = headerNoteFor(kind, String(h).trim());
+      const next = want || (was.slice(-NOTE_MARK.length) === NOTE_MARK ? '' : was);
+      if (next !== was) changed = true;
+      return next;
+    });
+    if (changed) r.setNotes([out]);
+  });
+}
 const KEY_COLOURS = { blue: '#1f5fa8', green: '#2e7d32', orange: '#c25e00', grey: '#666666' };
 const KEY_WORD_RE = /\b(blue|green|orange|grey)\b/gi;
 function keyRuns(text) {
   const runs = [];
-  const nl = text.indexOf('\n');
-  const first = nl < 0 ? text : text.slice(0, nl);
+  // A setup line (markSetup) may sit above the key: the key is then the second line.
+  const at = text.indexOf(SETUP_MARK) === 0 && text.indexOf('\n') >= 0 ? text.indexOf('\n') + 1 : 0;
+  const nl = text.indexOf('\n', at);
+  const first = nl < 0 ? text.slice(at) : text.slice(at, nl);
   let keyEnd = 0;
   if (/^(blue|green|orange|grey) = /i.test(first)) {
     const seg = /(blue|green|orange|grey) = .*?(?=\s{3,}|$)/gi;
     let m;
-    while ((m = seg.exec(first))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
-    keyEnd = first.length;
+    while ((m = seg.exec(first))) runs.push([at + m.index, at + m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
+    keyEnd = at + first.length;
   }
   let m;
   KEY_WORD_RE.lastIndex = keyEnd;
@@ -628,6 +979,44 @@ function asText(v) {
   return /^[=+\-@]/.test(t) ? "'" + t : t;
 }
 
+// ---------- Watch hash: one cell a watcher reads instead of the log ----------
+
+/**
+ * The headers people set on Contributor Feedback (Blue and Orange). Tool
+ * review-log-watch watches the same ones (watch.ts watchedHeader).
+ */
+function watchedHeader_(h) {
+  return h === 'Title' || h === 'Selected Sections' || h === 'Disposition' ||
+    h === 'Ready for agent' || h === 'Ready for merge' || h === 'Dispositions confirmed' ||
+    (h.indexOf('Contributor Feedback') === 0 && h !== 'Contributor Feedback (agent)');
+}
+
+/**
+ * Write a hash of every non-empty person-set cell of Contributor Feedback to
+ * the hidden Watch tab, F1 "Cells hash" and G1 the hash, H1 "Checked (UTC)"
+ * and I1 when. A review-log watcher reads Watch!F1:I1 and the Issue column
+ * on each poll, instead of the whole log, and passes the hash to Tool
+ * review-log-watch (`--sheet-hash`); a different hash means a person changed
+ * something (owner, 2026-11-01, Q-WATCH4 A). Columns A to D are left to any
+ * other Watch writer. Never stops the refresh.
+ */
+function writeWatchHash(ss) {
+  try {
+    const s = readSheet(ss.getSheetByName(CFG.FEEDBACK));
+    const lines = [];
+    s.rows.forEach((r, k) => s.header.forEach((h, c) => {
+      const v = String(r[c] == null ? '' : r[c]).trim();
+      if (v && watchedHeader_(String(h).trim())) lines.push(k + ':' + String(h).trim() + '=' + v);
+    }));
+    let sh = ss.getSheetByName('Watch');
+    if (!sh) { sh = ss.insertSheet('Watch'); sh.hideSheet(); }
+    const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
+    sh.getRange(1, 6, 1, 4).setValues([['Cells hash', hashOf(lines.join('\n')), 'Checked (UTC)', now]]);
+  } catch (err) {
+    // A Watch tab that cannot be written must never stop the refresh.
+  }
+}
+
 /** A string inside a formula's double quotes: each " doubled (finding F2). */
 function q(v) { return String(v).replace(/"/g, '""'); }
 
@@ -679,10 +1068,21 @@ function utcMs(t) {
  * was built (Agent: Agent completed vs Staging built). Without a build time
  * nothing is claimed either way.
  */
-function stagingCell(url, built, prs, readyAt) {
+function stagingCell(url, built, prs, readyAt, disp) {
   const w = stagingWarning(url, built, prs, readyAt);
-  if (!url) return rich(w ? [{ t: w, bold: true }] : []);
-  return rich([{ t: 'review', url: url }].concat(w ? [{ t: ' ' + w, bold: true }] : []));
+  const dl = disp ? [{ t: '\n\u26a0 ' + disp + ': not ready for merge', bold: true }] : [];
+  if (!url) return rich((w ? [{ t: w, bold: true }] : []).concat(w ? dl : []));
+  // The staging QA report beside the preview (owner, 2026-10-31: "sheets
+  // should link to QA reports for the staging"), then the QA gate.
+  // "QA report" opens the viewer: the preview's review page, at its
+  // per-section QA table (owner, 2026-10-31: "i thought there was a viewer
+  // page"); "files" is the raw qa-reports entry the QA gate reads.
+  const view = /\/review\/?$/.test(url) ? url.replace(/\/?$/, '/') + '#heat' : '';
+  const qa = built && built.qa ? (view ? [{ t: ' \u00b7 ' }, { t: 'QA report', url: view }, { t: ' (' }, { t: 'files', url: built.qa }, { t: ')' }]
+    : [{ t: ' \u00b7 ' }, { t: 'QA report', url: built.qa }]) : [];
+  const gate = qaGate(built, prs).text;
+  return rich([{ t: 'review', url: url }].concat(qa, w ? [{ t: ' ' + w, bold: true }] : [],
+    gate ? [{ t: '\n' + gate, bold: !/^\u2713/.test(gate) }] : [], dl));
 }
 
 /**
@@ -705,12 +1105,14 @@ function stagingWarning(url, built, prs, readyAt) {
   if (!url) return active ? '\u26a0 no preview yet: not ready for merge' : '';
   const deploy = String(b.deploy || '').toLowerCase();
   if (/fail|error/.test(deploy)) return '\u26a0 deploy failed';
+  const stage = deployStage(deploy);
   if (active && b.from) {
     const n = Math.min(active.head.length, b.from.length, 40);
     if (n >= 7 && active.head.slice(0, n).toLowerCase() !== b.from.slice(0, n).toLowerCase())
-      return '\u26a0 stale: built from ' + b.from.slice(0, 7) + ', PR now at ' + active.head.slice(0, 7);
+      return '\u26a0 stale: built from ' + b.from.slice(0, 7) + ', PR now at ' + active.head.slice(0, 7) +
+        (stage ? '; restaging: ' + stage : '');
   }
-  if (/pend|queue|progress|build/.test(deploy)) return '\u26a0 deploy in progress';
+  if (stage) return '\u26a0 stale, restaging: ' + stage;
   const at = utcMs(b.at);
   // An Editor sent the row back to the agent after this preview was built:
   // the PR is about to change, so the preview no longer shows the agreed text.
@@ -721,24 +1123,387 @@ function stagingWarning(url, built, prs, readyAt) {
     return '\u26a0 stale: built ' + String(b.at).trim() + ', PR changed since';
   return '';
 }
+/**
+ * Where a restage is, from the agent's Staging deploy value (owner,
+ * 2026-10-31: "update stages of gh-pages deployment (merge to gh-pages,
+ * waiting for deploy, deployed)"). The agent records each stage as it
+ * happens: building, pushed (on gh-pages), deploying, deployed or failed;
+ * "pending" is read as deploying. '' when deployed or unknown.
+ */
+function deployStage(deploy) {
+  const d = String(deploy || '').toLowerCase();
+  // The agent may add when it expects the preview live, from recent runs
+  // (owner, 2026-10-31: "also expected time of gh-page deployment"):
+  // "building, expected 2026-10-31 15:20Z".
+  const e = String(deploy || '').match(/expected[^0-9]*((?:\d{4}-\d\d-\d\d )?\d\d:\d\dZ)/i);
+  const by = e ? ', expected live ' + e[1].toUpperCase() : '';
+  if (/build/.test(d)) return 'building the preview' + by;
+  if (/push|gh-pages|merged|queue|wait/.test(d)) return 'on gh-pages, waiting for Pages to deploy' + by;
+  if (/pend|progress|deploying/.test(d)) return 'Pages is deploying it' + by;
+  return '';
+}
 /** A change set with a PR whose head the agent recorded, and so owes a preview. */
 function awaitsPreview(prs) { return (prs || []).some(p => p.head); }
-function builtInfo(r, at, from, deploy) {
-  const v = c => (c >= 0 ? String(r[c]).trim() : '');
-  return { at: v(at), from: v(from), deploy: v(deploy) };
+function builtInfo(r, at, from, deploy, gate, qa, step) {
+  const v = c => (c >= 0 && c !== undefined ? String(r[c]).trim() : '');
+  return { at: v(at), from: v(from), deploy: v(deploy), gate: v(gate), qa: (v(qa).match(/https:\/\/\S+/) || [''])[0], step: v(step) };
+}
+
+/**
+ * Where the agent is, kept on the ⏳ line for as long as it is there (owner,
+ * 2026-10-31: "i dont see a state change indication on where agent is in
+ * process (thinking? writing PR? trying to render? what?)"). The agent writes
+ * "Agent step (change set)" at every move, with `agent-record.ts step <name>`
+ * so the time comes from the clock: "<step> <YYYY-MM-DD HH:MMZ>". The steps
+ * are a fixed list, one per task of contributor-feedback.bpmn and
+ * public-comment.bpmn the agent performs.
+ */
+const AGENT_STEP = 'Agent step (change set)';
+const AGENT_STEPS = {
+  reading: 'reading the feedback',
+  proposing: 'writing its proposal',
+  editing: 'editing the document',
+  pushing: 'pushing the pull request',
+  staging: 'building the preview',
+  deploying: 'waiting for the preview to go live',
+  'qa-review': 'waiting for the independent QA review',
+  merging: 'merging the pull request',
+  proposed: 'proposal ready',
+  idle: '',
+};
+/**
+ * When the agent last finished a pass: its latest Agent completed, or a later
+ * "idle" or "proposed" step, which also says it stopped (owner, 2026-10-31:
+ * "make sure process works … so it doesnt fail again"). NaN when neither.
+ */
+function lastFinished(prs, stepCell) {
+  const t = (prs || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
+  const m = String(stepCell || '').trim().match(/^(idle|proposed)\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}Z)$/i);
+  if (m) t.push(utcMs(m[2]));
+  return t.length ? Math.max.apply(null, t) : NaN;
+}
+/** Minutes after Ready for agent with no step before the row warns that no agent has it. */
+const PICKUP_MIN = 20;
+function unpicked(readyAt, now) {
+  const age = Math.round(((now || Date.now()) - utcMs(readyAt)) / 60000);
+  return age > PICKUP_MIN ? '; \u26a0 no agent has picked this up for ' + age + ' min: ask in the project chat' : '';
+}
+/** "editing 2026-10-31 17:20Z" -> { name, text, at }, or null. */
+function agentStep(cell) {
+  const m = String(cell || '').trim().match(/^([a-z-]+)\s+(\d{4}-\d{2}-\d{2} \d{2}:\d{2}Z)$/i);
+  if (!m || !(m[1].toLowerCase() in AGENT_STEPS) || !AGENT_STEPS[m[1].toLowerCase()]) return null;
+  return { name: m[1].toLowerCase(), text: AGENT_STEPS[m[1].toLowerCase()], at: m[2] };
+}
+/**
+ * "today 17:47Z", "yesterday 17:47Z", or "3 days ago, 2026-10-28 17:47Z"
+ * (owner, 2026-10-31: "today/yesterday > 1 days ago"). Days are UTC days.
+ */
+function whenLabel(at, now) {
+  const day = ms => Math.floor(ms / 86400000);
+  const n = day(now || Date.now()) - day(utcMs(at)), hm = String(at).slice(11);
+  return n <= 0 ? 'today ' + hm : n === 1 ? 'yesterday ' + hm : n + ' days ago, ' + at;
+}
+/** The step line: "Agent: editing the document (since 17:20Z)", with a warning once it has gone quiet. */
+function stepLine(step, now) {
+  if (step.name === 'proposed')
+    return PROGRESS + 'Proposal ready (' + whenLabel(step.at, now) + '): set Ready for agent to Yes to start, or answer in your feedback.';
+  const age = Math.round(((now || Date.now()) - utcMs(step.at)) / 60000);
+  return PROGRESS + 'Agent: ' + step.text + ' (since ' + whenLabel(step.at, now) +
+    (age > 30 ? '; \u26a0 no update for ' + age + ' min' : '') + ').';
+}
+/** Add the Agent step column at the END of the agent's change-set tab, inside the locked run. */
+function ensureAgentStepColumn(sh) {
+  if (!sh) return;
+  const s = readSheet(sh);
+  if (s.header.indexOf(AGENT_STEP) >= 0) return;
+  const c = s.header.length + 1;
+  if (sh.getMaxColumns() < c) sh.insertColumnAfter(c - 1);
+  sh.getRange(s.top - 1, c - 1).copyTo(sh.getRange(s.top - 1, c), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+  sh.getRange(s.top - 1, c).setValue(AGENT_STEP);
+}
+
+/**
+ * The QA gate: an independent review of the change set before Ready for merge
+ * (owner, 2026-10-31: "agent should make sure all dispositions are consistent
+ * with human and feature branch changes. add review (agent-independent)
+ * before ready for merge", then "QA gate"). A reviewer that did not write the
+ * pull request (another agent session, or a person) checks every disposition
+ * line against the people's Blue Disposition and against the PR's diff, and
+ * reads the staging QA report, then writes QA gate (change set) on the Agent
+ * tab, first line "Passed <PR head sha>: …" or "Failed <PR head sha>: <why>".
+ * The script only compares: a pass for an older commit than the PR's head is
+ * stale. Returns { ok, text }; text is '' when there is no PR to gate.
+ */
+function qaGate(built, prs) {
+  const g = String((built || {}).gate || '').trim();
+  const active = (prs || []).filter(p => p.head).slice(-1)[0];
+  if (!active) return { ok: false, text: '' };
+  const not = ': not ready for merge';
+  if (!g) return { ok: false, text: '\u26a0 QA gate: no independent review yet' + not };
+  const first = g.split('\n')[0].trim();
+  const m = /^(pass|fail)\w*\s*:?\s*([0-9a-f]{7,40})?\b\s*:?\s*(.*)$/i.exec(first);
+  if (!m) return { ok: false, text: '\u26a0 QA gate unreadable ("' + first.slice(0, 40) + '")' + not };
+  const sha = (m[2] || '').toLowerCase(), head = active.head.toLowerCase();
+  if (/^fail/i.test(m[1])) return { ok: false, text: '\u26a0 QA gate failed' + (m[3] ? ': ' + m[3] : '') };
+  if (!sha) return { ok: false, text: '\u26a0 QA gate passed but names no commit' + not };
+  const n = Math.min(sha.length, head.length);
+  if (sha.slice(0, n) !== head.slice(0, n))
+    return { ok: false, text: '\u26a0 QA gate stale: reviewed ' + sha.slice(0, 7) + ', PR now at ' + head.slice(0, 7) + not };
+  return { ok: true, text: '\u2713 QA gate passed (' + sha.slice(0, 7) + ')' };
 }
 
 /** Flag the agent's proposal (column `agentName`) of each row whose basis moved on. */
-function markStale(s, csCol, basisOfCs, exact, prefix, agentName) {
+function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) {
   const ag = col(s, agentName);
   if (ag < 0 || csCol < 0) return;
   s.rows.forEach((r, k) => {
-    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[String(r[csCol]).trim()]);
-    if (t !== null) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(t)]]);
+    if (want && !want(k)) return;
+    const cs = String(r[csCol]).trim();
+    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[cs]);
+    const cur = t === null ? String(r[ag]) : t;
+    const L = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? lineOf[cs] : undefined;
+    const fin = L !== undefined ? withProgress(cur, L) : cur;
+    if (fin !== String(r[ag])) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(fin)]]);
     unready(s, r, k, r[ag], t);
-    markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), t === null ? r[ag] : t);
+    const off = fin.indexOf(STALE + '\n') === 0 ? STALE.length + 1 : 0;
+    const links = L && typeof L === 'object' ? L.links.map(x => [x[0] + off, x[1] + off, x[2]]) : [];
+    markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), fin, links);
   });
 }
+
+/**
+ * Where the change set is, as one line the script keeps at the top of the
+ * agent's feedback (below a stale mark), starting with PROGRESS (owner,
+ * 2026-10-31: "agent feedback should also try to say where it is in
+ * producing PR / staging", and an Editor's Orange change adds a note rather
+ * than marking the proposal stale). The agent never writes this line.
+ */
+const PROGRESS = '\u23f3 ';
+/**
+ * The change set's Dispositions: one blurb, written by the agent on the Agent
+ * tab before the preview is staged, describing every disposition in the
+ * change set. It is the summary used once Ready for merge is Yes: in the
+ * merge and when the change set's issue is closed (owner, 2026-10-31). The
+ * script shows it, read-only, wherever the people's tab has the column.
+ */
+const QA_GATE = 'QA gate (change set)', QA_REPORT = 'QA report (change set)';
+const DISPOSITIONS_CS = 'Disposition (change set)', DISPOSITIONS_AGENT = 'Disposition (agent)';
+/**
+ * The record's structure (owner, 2026-10-31: "enforce more structured
+ * Disposition (change set), so each PC is given a disposition"; "can also
+ * be an overall disposition statement without reference to a PC"). Lines:
+ *   Decided (Q1, 2026-10-31): A, by the Editor; <what it means>
+ *   Overall: <a statement for the whole change set>        (optional)
+ *   No. 136: Accepted. <what was done>
+ *   Nos. 127 to 135, 138 and 139: Not accepted. <why>
+ * Each comment of the change set needs exactly one disposition, from
+ * DISPOSITION_WORDS. Returns the problems, one line each ('' when none).
+ */
+const DISPOSITION_WORDS = ['Accepted', 'Partially accepted', 'Not accepted', 'Noted', 'Deferred', 'Duplicate', 'Out of scope', 'Withdrawn'];
+/**
+ * "Dispositions confirmed" on Review Change Sets (owner, 2026-10-31: "make
+ * orange column ... of the PCs", "put to left of ready for merge"). Multi-select
+ * over every comment number was greyed out (the list is too long), so the
+ * owner chose option A: Yes or No per change set. Yes confirms every agent
+ * disposition in the set; to differ on one comment, the committee sets that
+ * comment's own Disposition, and a mismatch is flagged. Numbers typed in the
+ * cell ("No. 327") still confirm just those comments.
+ */
+const CONFIRMED = 'Dispositions confirmed', CONFIRM_CHOICES = ['Yes', 'No'];
+function confirmedNos(value, nos) {
+  const v = String(value || '').trim();
+  if (/^(yes|all)$/i.test(v) || /(^|,)\s*all\s*(,|$)/i.test(v)) return (nos || []).map(String);
+  return (v.match(/\d+/g) || []).map(String);
+}
+function ensureConfirmedColumn(ss) {
+  const sh = ss.getSheetByName(CFG.RCS);
+  if (!sh) return;
+  // The first version kept a long list on a hidden Lists tab: no longer used.
+  const old = ss.getSheetByName('Lists');
+  if (old && old.isSheetHidden()) ss.deleteSheet(old);
+  const s = readSheet(sh);
+  let c = s.header.indexOf(CONFIRMED);
+  const rows = sh.getMaxRows() - s.top + 1;
+  if (c < 0) {
+    const m = s.header.indexOf('Ready for merge');
+    if (m < 0) return;
+    sh.insertColumnBefore(m + 1);
+    sh.getRange(s.top - 1, m + 2, rows + 1, 1).copyTo(sh.getRange(s.top - 1, m + 1, rows + 1, 1), SpreadsheetApp.CopyPasteType.PASTE_FORMAT, false);
+    sh.getRange(s.top - 1, m + 1).setValue(CONFIRMED);
+    sh.setColumnWidth(m + 1, 120);
+    c = m;
+  }
+  const cells = sh.getRange(s.top, c + 1, rows, 1);
+  const rule = cells.getCell(1, 1).getDataValidation();
+  const vals = rule ? rule.getCriteriaValues() : [];
+  if (!rule || rule.getCriteriaType() !== SpreadsheetApp.DataValidationCriteria.VALUE_IN_LIST || String(vals[0]) !== String(CONFIRM_CHOICES))
+    cells.setDataValidation(SpreadsheetApp.newDataValidation().requireValueInList(CONFIRM_CHOICES, true).setAllowInvalid(true).build());
+}
+function dispositionProblems(text, nos, human, confirmed) {
+  const want = (nos || []).map(String), seen = {}, out = [];
+  const words = new RegExp('^(' + DISPOSITION_WORDS.join('|') + ')\\b', 'i');
+  String(text || '').split('\n').forEach(line => {
+    const m = line.match(/^\s*Nos?\.\s*([^:]+):\s*(.*)$/);
+    if (!m) return;
+    const got = [];
+    m[1].replace(/(\d+)\s*(?:to|-|\u2013)\s*(\d+)|(\d+)/g, (_, a, z, one) => {
+      if (one) got.push(one);
+      else for (let n = +a; n <= +z && n - +a < 1000; n++) got.push(String(n));
+      return '';
+    });
+    const w = m[2].match(words);
+    if (!w) out.push('\u26a0 No. ' + got.join(', ') + ': start with one of ' + DISPOSITION_WORDS.join(', '));
+    got.forEach(n => {
+      // The agent drafts from the people's Blue Disposition (owner,
+      // 2026-10-31: "agent should draw from human blue dispositions"); a
+      // different word is shown, never corrected.
+      const h = String((human || {})[n] || '').trim();
+      if (w && h && !/^pending$/i.test(h) && h.toLowerCase() !== w[1].toLowerCase())
+        out.push('\u26a0 No. ' + n + ': ' + w[1] + ' here, ' + h + ' in the people\'s Disposition');
+      if (want.length && want.indexOf(n) < 0) out.push('\u26a0 No. ' + n + ' is not in this change set');
+      else if (seen[n]) out.push('\u26a0 No. ' + n + ' has two dispositions');
+      seen[n] = true;
+    });
+  });
+  const missing = want.filter(n => !seen[n]).sort((x, y) => x - y);
+  // The agent's word is a proposal until the committee records its own
+  // (owner, 2026-10-31, option A: "Flag and block merge").
+  const hasHuman = human && Object.keys(human).length > 0;
+  // An Editor may confirm the agent's word in bulk in "Dispositions
+  // confirmed" (owner, 2026-10-31: "make orange column that contains list
+  // multiselect of the PCs").
+  const ok = (confirmed || []).map(String);
+  ok.filter(n => want.length && want.indexOf(n) < 0).forEach(n => out.push('\u26a0 No. ' + n + ' is confirmed but is not in this change set'));
+  const unconfirmed = hasHuman ? want.filter(n => ok.indexOf(n) < 0 && !/\S/.test(String(human[n] || '').replace(/^pending$/i, ''))) : [];
+  if (unconfirmed.length) out.unshift('\u26a0 Not confirmed by the committee (Disposition still Pending): ' + nosText(unconfirmed));
+  if (missing.length) out.unshift('\u26a0 No disposition yet for ' + nosText(missing));
+  return out.join('\n');
+}
+/** The Disposition (agent) cell: the problems in bold above the agent's record. */
+/** "No. 136" or "Nos. 127 to 131, 134 and 135": the form the agent writes, too. */
+function nosText(nos) {
+  const n = nos.map(Number).filter(x => !isNaN(x)).sort((a, b) => a - b).filter((x, i, a) => !i || x !== a[i - 1]);
+  const parts = [];
+  for (let i = 0; i < n.length;) {
+    let j = i;
+    while (j + 1 < n.length && n[j + 1] === n[j] + 1) j++;
+    if (j - i >= 2) parts.push(n[i] + ' to ' + n[j]);
+    else for (let k = i; k <= j; k++) parts.push(String(n[k]));
+    i = j + 1;
+  }
+  return (n.length > 1 ? 'Nos. ' : 'No. ') + (parts.length > 1 ? parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1] : parts[0] || '');
+}
+function dispositionCell(text, nos, human, confirmed) {
+  // An empty cell still says which comments have no disposition (owner,
+  // 2026-10-31: "make sure ... mechanical 'this PC has no disposition' is shown").
+  if (!String(text || '').trim())
+    return rich((nos || []).length ? [{ t: '\u26a0 No disposition yet for ' + nosText(nos), bold: true }] : [{ t: '' }]);
+  const p = dispositionProblems(text, nos, human, confirmed);
+  // Comment numbers in bold, as elsewhere on the sheet (owner, 2026-10-31:
+  // "Nos of PCs should be bolded like in other parts of sheet").
+  const body = [];
+  String(text).split('\n').forEach((line, i) => {
+    if (i) body.push({ t: '\n' });
+    // The structure stands out: the label, then the disposition word.
+    const m = line.match(/^(\s*(?:Nos?\.\s*[^:]+|Overall|Decided\s*\([^)]*\)):)(.*)$/);
+    if (!m) { body.push({ t: line }); return; }
+    body.push({ t: m[1], bold: true });
+    const w = m[2].match(new RegExp('^(\\s*)(' + DISPOSITION_WORDS.join('|') + ')\\b(.*)$', 'i'));
+    if (w && !/^\s*Decided/.test(m[1])) body.push({ t: w[1] }, { t: w[2], bold: true }, { t: w[3] });
+    else body.push({ t: m[2] });
+  });
+  return rich(p ? [{ t: p, bold: true }, { t: '\n' }].concat(body) : body);
+}
+function progressLine(o) {
+  const prs = o.prs || [];
+  const active = prs.slice(-1)[0];
+  const label = active ? prLabel(active.url) : '';
+  if (/merged/i.test(o.status || '')) return '';
+  // A question for a person comes first: nothing moves until it is answered.
+  if (/needs/i.test(o.status || '')) return PROGRESS + 'Needs you: answer the Decision needed below, then set Ready for agent to Yes.';
+  const step = agentStep(o.built && o.built.step);
+  if (step && (step.name === 'merging' || !o.merge)) {
+    const dones = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
+    const lastDone = dones.length ? Math.max.apply(null, dones) : -Infinity;
+    if (utcMs(step.at) >= lastDone && (!o.readyAt || utcMs(step.at) >= utcMs(o.readyAt))) return stepLine(step);
+  }
+  if (o.merge && active) {
+    const g = qaGate(o.built, prs);
+    const wait = [g.ok || !g.text ? '' : 'the QA gate passes (' + g.text.replace(/^\u26a0\s*/, '') + ')',
+      o.disp ? 'every disposition is complete and confirmed by the committee' : ''].filter(Boolean);
+    return PROGRESS + 'Ready for merge set: ' + (!wait.length ? 'the agent will merge ' + label + '.'
+      : 'the agent will not merge ' + label + ' until ' + wait.join(' and ') + '.');
+  }
+  const last = lastFinished(prs, o.built && o.built.step);
+  if (o.readyAt && !/working/i.test(o.status || '') && (isNaN(last) || utcMs(o.readyAt) > last))
+    return PROGRESS + 'Ready for agent set ' + o.readyAt + ': the agent will act on this and rewrite it' + unpicked(o.readyAt, o.now) + '.';
+  if (/working/i.test(o.status || '')) return PROGRESS + 'The agent is working on ' + (label || 'the pull request') + '.';
+  if (!active) return '';
+  const w = stagingWarning(o.staging, o.built, prs, o.readyAt);
+  const preview = !o.staging ? 'no preview yet' : w ? 'preview ' + w.replace(/^\u26a0\s*/, '') : 'preview current' + (o.built && o.built.at ? ' (built ' + o.built.at + ')' : '');
+  return PROGRESS + label + ' open' + (active.done ? ', updated ' + active.done : '') + '; ' + preview + '.';
+}
+
+/**
+ * The status block on top of the agent's feedback when the sheet has no
+ * Agentic status column (owner, 2026-10-31: "One column, status on top"):
+ * the ⏳ line, then one "↳ " line per pull request, linked, and the ask when
+ * people must answer. Returns { text, links } with links relative to it.
+ */
+const STATUS_SUB = '\u21b3 ';
+function statusBlock(line, status, prs) {
+  const parts = [];
+  if (line) parts.push({ t: line });
+  if (/needs human/i.test(status || '')) parts.push({ t: STATUS_SUB + NEEDS_YOU + ': under "Decision needed" below. Write your answer (the letter) in your Blue feedback column, then an Editor sets Ready for agent to Yes.' });
+  (prs || []).forEach(p => {
+    parts.push({ t: STATUS_SUB }, { t: prLabel(p.url), url: p.url },
+      { t: ' (' + [status, p.done].filter(Boolean).join(', ') + ')' + (p.desc ? descText(p.desc) : '') });
+  });
+  let text = '';
+  const links = [];
+  parts.forEach((p, i) => {
+    if (i && p.t.indexOf(STATUS_SUB) === 0 || i && p.t === STATUS_SUB) text += '\n';
+    if (p.url) links.push([text.length, text.length + p.t.length, p.url]);
+    text += p.t;
+  });
+  return { text: text, links: links };
+}
+/** The text with its status (progress line, or block) replaced, or removed when line is ''. */
+function withProgress(text, line) {
+  const t = String(text);
+  const l = line && typeof line === 'object' ? line.text : line;
+  if (!t.trim()) return l && typeof line === 'object' ? l : t;
+  const lines = t.split('\n');
+  const stale = lines[0] === STALE ? [lines.shift()] : [];
+  while (lines.length && (lines[0].indexOf(PROGRESS) === 0 || lines[0].indexOf(STATUS_SUB) === 0)) lines.shift();
+  return stale.concat(l ? [l] : [], lines).join('\n');
+}
+
+/**
+ * When each row's Ready for agent turned Yes (owner, 2026-10-31: "i just set
+ * Ready for agent to Y ... expected Staging review to get a stale warning").
+ * Kept per change set as "ready:CS-001" = the time, cleared on No. A Yes the
+ * script first sees on a row the agent has already worked (the script was
+ * just installed or re-pasted) counts from the agent's last completion.
+ */
+function readyTimes(s, csCol, prOf, want, props) {
+  const readyCol = col(s, 'Ready for agent'), readyAt = {};
+  if (readyCol < 0 || csCol < 0) return readyAt;
+  const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
+  s.rows.forEach((r, k) => {
+    const cs = String(r[csCol]).trim();
+    if (!cs) return;
+    const key = 'ready:' + cs, was = props.getProperty(key);
+    if (/^yes$/i.test(String(r[readyCol]).trim())) {
+      const done = (prOf[cs] || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
+      const first = done.length ? new Date(Math.max.apply(null, done)).toISOString().slice(0, 16).replace('T', ' ') + 'Z' : now;
+      if (!was && want(k)) props.setProperty(key, first);
+      readyAt[cs] = was || (want(k) ? first : '');
+    } else if (was && want(k)) props.deleteProperty(key);
+  });
+  return readyAt;
+}
+const isYes = (s, r, h) => { const c = col(s, h); return c >= 0 && /^yes$/i.test(String(r[c]).trim()); };
 
 /**
  * The agent's "Decision needed" block in bold, so a reader sees at once
@@ -754,14 +1519,29 @@ function decisionSpans(text) {
     const end = t.indexOf('\n\n', m.index);
     spans.push([m.index, end < 0 ? t.length : end]);
   }
+  // The script's ⏳ status line is bold too, so it reads as the row's state
+  // (owner, 2026-10-31: "not bold").
+  // Labels at the start of a line ("What changed:", "Proposed direction:")
+  // and comment numbers, so the structure reads at a glance.
+  const lab = /(^|\n)([A-Z][A-Za-z ()]{2,40}:)(?=\s)/g;
+  while ((m = lab.exec(t))) spans.push([m.index + m[1].length, m.index + m[1].length + m[2].length]);
+  const ref = /\bNos?\.\s*\d+(?:(?:,\s*|\s+and\s+|\s+to\s+)\d+)*/g;
+  while ((m = ref.exec(t))) spans.push([m.index, m.index + m[0].length]);
+  const i = t.indexOf('\n' + PROGRESS);
+  const p = t.indexOf(PROGRESS) === 0 ? 0 : i < 0 ? -1 : i + 1;
+  if (p >= 0) {
+    const e = t.indexOf('\n', p);
+    spans.push([p, e < 0 ? t.length : e]);
+  }
   return spans;
 }
-function markDecision(range, text) {
+function markDecision(range, text, links) {
   const spans = decisionSpans(text);
-  if (!spans.length) return;
+  if (!spans.length && !(links || []).length) return;
   const b = SpreadsheetApp.newRichTextValue().setText(String(text));
   const st = SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(DECISION_INK).build();
   spans.forEach(([a, z]) => b.setTextStyle(a, z, st));
+  (links || []).forEach(([a, z, u]) => b.setLinkUrl(a, z, u));
   range.setRichTextValue(b.build());
 }
 
@@ -775,7 +1555,28 @@ function unready(s, r, k, before, after) {
   const ready = col(s, 'Ready for agent');
   if (ready < 0 || after === null || String(after).indexOf(STALE + '\n') !== 0) return;
   if (String(before).indexOf(STALE + '\n') === 0) return;
-  if (/^yes$/i.test(String(r[ready]).trim())) s.sh.getRange(k + s.top, ready + 1, 1, 1).setValues([['No']]);
+  if (/^(yes|completed)$/i.test(String(r[ready]).trim())) s.sh.getRange(k + s.top, ready + 1, 1, 1).setValues([['No']]);
+}
+/**
+ * Ready for agent goes from Yes to Completed once the agent has finished what
+ * it was asked (its last push is after the Ready time) and the preview of it
+ * is live and current (owner, 2026-10-31: "preview is now live, so nothing
+ * more for agent to do ... like Yes, No, Completed"). Only the script sets
+ * Completed; an Editor sets Yes again to send the row back to the agent.
+ */
+function completeReady(s, csCol, prOf, stagingOf, builtOf, readyAt) {
+  const ready = col(s, 'Ready for agent');
+  if (ready < 0 || csCol < 0) return;
+  s.rows.forEach((r, k) => {
+    const cs = String(r[csCol]).trim();
+    if (!cs || !readyAt[cs] || !/^yes$/i.test(String(r[ready]).trim())) return;
+    const prs = prOf[cs] || [];
+    const last = lastFinished(prs, (builtOf[cs] || {}).step);
+    if (isNaN(last) || last <= utcMs(readyAt[cs])) return;
+    if (!stagingOf[cs] || stagingWarning(stagingOf[cs], builtOf[cs], prs, '')) return;
+    s.sh.getRange(k + s.top, ready + 1, 1, 1).setValues([['Completed']]);
+    r[ready] = 'Completed';
+  });
 }
 
 const STALE = '\u26a0 Stale: the row changed since this proposal; the agent will propose again.';
@@ -810,9 +1611,14 @@ function rich(parts) {
   });
   const b = SpreadsheetApp.newRichTextValue().setText(text);
   const bold = SpreadsheetApp.newTextStyle().setBold(true).build();
+  // Text that is not a link is drawn plain: a cell that held a link before
+  // keeps its blue underline on the following text otherwise (owner,
+  // 2026-10-31: the QA gate line looked like a link).
+  const plain = w => SpreadsheetApp.newTextStyle().setUnderline(false).setForegroundColor('#000000').setBold(!!w).build();
+  if (text) b.setTextStyle(0, text.length, plain(false));
   spans.forEach(([a, z, p]) => {
-    if (p.url) b.setLinkUrl(a, z, p.url);
-    if (p.bold) b.setTextStyle(a, z, bold);
+    if (p.url) b.setLinkUrl(a, z, p.url).setTextStyle(a, z, SpreadsheetApp.newTextStyle().setUnderline(true).setForegroundColor('#1155cc').setBold(!!p.bold).build());
+    else if (p.bold) b.setTextStyle(a, z, plain(true));
   });
   return b.build();
 }
@@ -841,10 +1647,14 @@ const prUrl = line => (line.match(/https:\/\/github\.com\/[^\s,;]+\/pull\/\d+/) 
  */
 function agenticCell(status, prs, o) {
   o = o || {};
-  const done = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
-  const last = done.length ? Math.max.apply(null, done) : NaN;
+  const last = lastFinished(prs, o.step);
   const queued = o.readyAt && !/working/i.test(status) && (isNaN(last) || utcMs(o.readyAt) > last);
-  const head = queued ? [{ t: 'Waiting on the agent since ' + o.readyAt + ' (Ready for agent set)', bold: true }]
+  // Once the agent records a step after Ready for agent, say what it is doing
+  // rather than that it is waited on (owner, 2026-10-31: "not sure what agent is doing").
+  const step = agentStep(o.step);
+  const stepped = step && step.name !== 'proposed' && (isNaN(last) || utcMs(step.at) >= last) && (!o.readyAt || utcMs(step.at) >= utcMs(o.readyAt));
+  const head = stepped ? [{ t: stepLine(step).replace(PROGRESS, ''), bold: true }]
+    : queued ? [{ t: 'Waiting on the agent since ' + o.readyAt + ' (Ready for agent set); it has not recorded a step yet' + unpicked(o.readyAt, o.now), bold: true }]
     : /working/i.test(status) && o.talk ? [{ t: 'An agent is working on it: ', bold: true }, { t: 'conversation', url: o.talk }]
     : /needs human/i.test(status) ? [{ t: NEEDS_YOU + ': it is under "Decision needed" in the agent\'s feedback column. Write your answer (the letter) in your Blue feedback column, then an Editor sets Ready for agent to Yes.', bold: true }] : [];
   const body = agenticParts(status, prs);
@@ -855,7 +1665,34 @@ function agenticParts(status, prs) {
   return prs.flatMap((p, i) => (i ? [{ t: '\n' }] : []).concat(
     [{ t: prLabel(p.url), url: p.url }],
     status || p.done ? [{ t: ' ' }, { t: '(' + [status, p.done].filter(Boolean).join(', ') + ')', bold: true }] : [],
-    p.desc ? [{ t: ' · ' + p.desc }] : []));
+    p.desc ? [{ t: descText(p.desc) }] : []));
+}
+/**
+ * What a PR changed, as the agent wrote it: one item reads inline after
+ * " · "; several ("a; b; c", or one per line) read one bullet per line
+ * (owner, 2026-10-31: "several of the cols could be a bit more structured").
+ */
+/**
+ * "What the PRs changed" holds one entry per pull request, in the order of
+ * the Pull request column. An entry may run over several lines (owner,
+ * 2026-10-31, "more structured"): a line that starts with a bullet, or
+ * follows a label line ending in ":", continues the entry above it. With one
+ * pull request the whole cell is its entry.
+ */
+function prDescs(text) {
+  const out = [];
+  String(text).split('\n').map(x => x.trim()).forEach(line => {
+    const prev = out.length ? out[out.length - 1] : null;
+    if (prev !== null && line && (/^[\u2022*-]\s/.test(line) || /:$/.test(prev.split('\n').pop()))) out[out.length - 1] = prev + '\n' + line;
+    else if (line || prev === null || out[out.length - 1] !== '') out.push(line);
+  });
+  return out.filter((x, i) => x || i < out.length - 1);
+}
+function descText(desc) {
+  const items = String(desc).split(/;\s+|\n+/).map(x => x.replace(/^[\u2022*-]\s*/, '').trim()).filter(Boolean);
+  // A label line ("What the PRs changed:") heads the list rather than being an item.
+  const label = items.length > 1 && /:$/.test(items[0]) ? ' \u00b7 ' + items.shift() : '';
+  return items.length > 1 ? label + items.map(x => '\n  \u2022 ' + x).join('') : (label || ' \u00b7') + ' ' + (items[0] || '');
 }
 
 /** "smart-ra#97": the repository and number, since Sheets' link popup cuts the URL short. */
@@ -1002,7 +1839,7 @@ function refreshRpc(s, pcOf, csOfNo, stOf, prOf) {
 
 // ---------- Review Change Sets ----------
 
-function refreshRcs(s, rpc, csOf, stOf, prOf) {
+function refreshRcs(s, rpc, csOf, stOf, prOf, readyAt, builtOf) {
   const c = {};
   Object.entries(COLS.rcs).forEach(([k, h]) => (c[k] = col(s, h)));
   const p = {};
@@ -1030,7 +1867,7 @@ function refreshRcs(s, rpc, csOf, stOf, prOf) {
   s.rows.forEach(r => {
     const cs = String(r[c.cs]).trim();
     const sts = [...new Set((csOf[cs] || []).map(n => stOf[n]).filter(Boolean))].join(', ');
-    out.agentic.push(agenticCell(sts, prOf[cs] || []));
+    out.agentic.push(agenticCell(sts, prOf[cs] || [], { readyAt: (readyAt || {})[cs], step: ((builtOf || {})[cs] || {}).step }));
     status.push([asText(csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)))]);
     const nos = (csOf[cs] || []).filter(n => rowOf[n]).sort((a, b) => a - b);
 
@@ -1116,7 +1953,12 @@ function csStatus(sts) {
  */
 function refreshDraft(rows) {
   const ss = SpreadsheetApp.getActive();
+  try { ensureAgentStepColumn(ss.getSheetByName(CFG.AGENT)); } catch (err) { /* the refresh still runs */ }
   const props = docProps_();
+  try { normalizeRows(ss.getSheetByName(CFG.FEEDBACK)); } catch (err) { /* cosmetic only */ }
+  // Agentic status sits just left of its filter column (owner, 2026-10-31).
+  // Moved here, inside the locked run, before any column is read by position.
+  try { placeBefore(ss.getSheetByName(CFG.FEEDBACK), COLS.draft.agentic || 'Agentic status', COLS.draft.status || 'Agentic status (filter)'); } catch (err) { /* the refresh still runs */ }
   const fb = readSheet(ss.getSheetByName(CFG.FEEDBACK));
   const agentSh = ss.getSheetByName(CFG.AGENT);
   const agent = agentSh ? readSheet(agentSh) : { header: [], rows: [] };
@@ -1135,7 +1977,8 @@ function refreshDraft(rows) {
   Object.entries(COLS.draftAgent).forEach(([k, h]) => (a[k] = col(agent, h)));
   // Columns added after a sheet's Config was written are found by their default names.
   [['head', 'PR head (change set)'], ['builtFrom', 'Staging built from (change set)'], ['deploy', 'Staging deploy (change set)'],
-    ['conversation', 'Agent conversation (change set)']]
+    ['conversation', 'Agent conversation (change set)'], ['dispositions', DISPOSITIONS_CS],
+    ['gate', QA_GATE], ['qa', QA_REPORT]]
     .forEach(([k, h]) => { if (a[k] === undefined) a[k] = col(agent, h); });
 
   // Rows whose change set's Agent row changed since the last run.
@@ -1186,18 +2029,19 @@ function refreshDraft(rows) {
     }
   }
 
-  const prOf = {}, stOf = {}, issuesOf = {}, stagingOf = {}, basisOfCs = {}, builtOf = {}, talkOf = {};
+  const prOf = {}, stOf = {}, issuesOf = {}, stagingOf = {}, basisOfCs = {}, builtOf = {}, talkOf = {}, dispOf = {};
   agent.rows.forEach(r => {
     const id = a.csId >= 0 ? String(r[a.csId]).trim() : '';
     if (!id) return;
+    if (a.dispositions >= 0) dispOf[id] = String(r[a.dispositions]);
     if (a.conversation >= 0) talkOf[id] = (String(r[a.conversation]).match(/https:\/\/\S+/) || [''])[0];
     if (a.agentic >= 0) stOf[id] = String(r[a.agentic]).trim();
     if (a.issue >= 0) issuesOf[id] = String(r[a.issue]).split('\n').map(issueUrl).filter(Boolean);
     if (a.staging >= 0) stagingOf[id] = (String(r[a.staging]).match(/https:\/\/\S+/) || [''])[0];
-    builtOf[id] = builtInfo(r, a.built, a.builtFrom, a.deploy);
+    builtOf[id] = builtInfo(r, a.built, a.builtFrom, a.deploy, a.gate, a.qa, col(agent, AGENT_STEP));
     if (a.basis >= 0) basisOfCs[id] = String(r[a.basis]).trim();
     if (a.prs >= 0) {
-      const descs = a.changes >= 0 ? String(r[a.changes]).split('\n').map(x => x.trim()) : [];
+      const descs = a.changes >= 0 ? prDescs(r[a.changes]) : [];
       const dones = a.done >= 0 ? String(r[a.done]).split('\n').map(x => x.trim()) : [];
       const heads = a.head >= 0 ? String(r[a.head]).split('\n').map(x => x.trim()) : [];
       prOf[id] = String(r[a.prs]).split('\n').map(x => x.trim()).filter(Boolean)
@@ -1252,34 +2096,14 @@ function refreshDraft(rows) {
     const urls = issuesOf[String(r[c.cs]).trim()] || [];
     return rich(urls.flatMap((u, i) => (i ? [{ t: '\n' }] : []).concat([{ t: issueLabel(u), url: u }])));
   });
-  // When each row's Ready for agent turned Yes (owner, 2026-10-31: "i just
-  // set Ready for agent to Y ... expected Staging review to get a stale
-  // warning"). Kept per change set as "ready:CS-001" = the time, cleared on
-  // No.
-  const readyCol = col(fb, 'Ready for agent'), readyAt = {};
-  if (readyCol >= 0) {
-    const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
-    fb.rows.forEach((r, k) => {
-      const cs = String(r[c.cs]).trim();
-      if (!cs) return;
-      const key = 'ready:' + cs, was = props.getProperty(key);
-      if (/^yes$/i.test(String(r[readyCol]).trim())) {
-        // A Yes the script first sees on a row the agent has already worked
-        // (the script was just installed or re-pasted) counts from the
-        // agent's last completion, not from now: it may already be answered.
-        const done = (prOf[cs] || []).map(p => utcMs(p.done)).filter(x => !isNaN(x));
-        const first = done.length ? new Date(Math.max.apply(null, done)).toISOString().slice(0, 16).replace('T', ' ') + 'Z' : now;
-        if (!was && want(k)) props.setProperty(key, first);
-        readyAt[cs] = was || (want(k) ? first : '');
-      } else if (was && want(k)) props.deleteProperty(key);
-    });
-  }
+  const readyAt = readyTimes(fb, c.cs, prOf, want, props);
   writeRows(fb, c.agentic, only, r => {
     const cs = String(r[c.cs]).trim();
-    return agenticCell(stOf[cs] || '', prOf[cs] || [], { readyAt: readyAt[cs], talk: talkOf[cs] });
+    return agenticCell(stOf[cs] || '', prOf[cs] || [], { readyAt: readyAt[cs], talk: talkOf[cs], step: (builtOf[cs] || {}).step });
   });
   // The same status as one plain value, for a filter (owner, 2026-10-31).
   if (c.status >= 0) writeRows(fb, c.status, only, r => rich([{ t: shownStatus(stOf[String(r[c.cs]).trim()] || '') }]));
+  writeRows(fb, col(fb, DISPOSITIONS_AGENT), only, r => dispositionCell(dispOf[String(r[c.cs]).trim()] || '', [], {}));
   // Staging review page: the change set's preview while its PR is open.
   writeRows(fb, c.staging, only, r => {
     const cs = String(r[c.cs]).trim();
@@ -1287,17 +2111,14 @@ function refreshDraft(rows) {
   });
   // Feedback (agent): flagged stale while the row's blue cells differ from
   // what the proposal was written against.
-  const ag = col(fb, COLS.draft.agentFeedback || 'Feedback (agent)');
-  if (ag >= 0) {
-    fb.rows.forEach((r, k) => {
-      if (!want(k)) return;
-      const cs = String(r[c.cs]).trim();
-      const t = staleText(r[ag], basisOf(fb.header, r, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback), basisOfCs[cs]);
-      if (t !== null) fb.sh.getRange(k + fb.top, ag + 1, 1, 1).setValues([[asText(t)]]);
-      unready(fb, r, k, r[ag], t);
-      markDecision(fb.sh.getRange(k + fb.top, ag + 1, 1, 1), t === null ? r[ag] : t);
-    });
-  }
+  const lineOf = {};
+  fb.rows.forEach(r => {
+    const cs = String(r[c.cs]).trim();
+    const line = cs ? progressLine({ readyAt: readyAt[cs], merge: isYes(fb, r, 'Ready for merge'), status: stOf[cs] || '', prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] }) : '';
+    if (cs) lineOf[cs] = c.agentic < 0 ? statusBlock(line, stOf[cs] || '', prOf[cs] || []) : line;
+  });
+  markStale(fb, c.cs, basisOfCs, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback, COLS.draft.agentFeedback || 'Feedback (agent)', lineOf, want);
+  completeReady(fb, c.cs, prOf, stagingOf, builtOf, readyAt);
 }
 /** A dropdown name without its indent (U+2800 blanks; old "\u2514 "/"\u2502 " marks) or spaces. */
 const bareName = n => String(n).replace(/^[\s\u2800\u2502\u2514]+/, '').trim();

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: draft-to-publication\n"
-"POT-Creation-Date: 2026-10-24T08:43:21.839Z\n"
+"POT-Creation-Date: 2026-10-31T16:31:59.511Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ar\n"
@@ -199,11 +199,6 @@ msgstr ""
 msgid "Programme manager (release authority)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:164
-#. Diagram label
-msgid "Public comment on the review version"
-msgstr ""
-
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:85
 #. Diagram label
 msgid "Public review (commenters, review committee, editor)"
@@ -232,6 +227,11 @@ msgstr ""
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:252
 #. Diagram element documentation
 msgid "Reads which end Process_BeanOpen reached. `claimed`: the bean is in progress and this process works it. `not yours`: a sibling session or a human holds it, nothing was written to it, and this process stops here rather than work a bean it does not own (bean-coordination)."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:164
+#. Diagram label
+msgid "Release for public comment"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:114
@@ -306,7 +306,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:165
 #. Diagram element documentation
-msgid "When the draft is released for public comment: comments returned on the frozen, line-numbered review version are placed, triaged, recommended on by the review committee and decided by the editor (public-comment.bpmn). Bean v26p, issue #197."
+msgid "When the draft goes out for public comment: the release date is agreed, the draft is frozen as a line-numbered public comment release, every channel is set up against it and announced, and the comments that come back are placed, triaged, recommended on by the review committee and decided by the editor (Process_PublicCommentRelease, which calls Process_PublicComment). Bean v26p, issue #197."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:55

@@ -12,6 +12,7 @@
  */
 
 import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+import { safeSegment } from "@litlfred/cat-harness-tools/src/core/safe-path.js";
 import { spawnSync } from "child_process";
 import { existsSync, readdirSync } from "fs";
 import { join, resolve } from "path";
@@ -211,9 +212,17 @@ export function asToolText(title: string, r: PipelineResult) {
   return { content: [{ type: "text" as const, text }] };
 }
 
+/** Format a path-containment or input validation refusal as an MCP error result. */
+export function refuseTool(title: string, reason: string) {
+  return {
+    content: [{ type: "text" as const, text: `# ${title}\n\n❌ Refused: ${reason}` }],
+    isError: true,
+  };
+}
+
 /** Resolve the single paper under folio/ if not given (else undefined). */
 export function autoPaper(paper?: string): string | undefined {
-  if (paper) return paper;
+  if (paper !== undefined) return safeSegment(paper);
   const dir = folioDir(get.REPO_ROOT());
   if (!existsSync(dir)) return undefined;
   const papers = readdirSync(dir, { withFileTypes: true })
@@ -223,6 +232,7 @@ export function autoPaper(paper?: string): string | undefined {
         !d.name.startsWith(".") &&
         !["pipeline", "schema", "node_modules"].includes(d.name),
     )
-    .map((d) => d.name);
+    .map((d) => safeSegment(d.name))
+    .filter((n): n is string => n !== undefined);
   return papers.length === 1 ? papers[0] : undefined;
 }

@@ -20,6 +20,9 @@
     "folio-repo-conversion",
     "normative-statements",
     "public-comment",
+    "public-comment-channels",
+    "review-log-watch",
+    "review-sheet-agent-columns",
     "review-sheet-script"
   ],
   "docker": {
