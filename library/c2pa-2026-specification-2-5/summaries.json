@@ -761,6 +761,1013 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s565-a-3-15-3-writing-a-manifest-store",
+      "source": "sections/s565-a-3-15-3-writing-a-manifest-store.md",
+      "source_hash": "1f6f9e66d6eef71d2ca39bd45dc31ee334afd64bd67ef2c9c012e0992f6c31ae",
+      "narrative": [
+        {
+          "text": "For ONNX models, a two-pass procedure shall be used: reserve a c2pa:manifest entry in metadata_props for a Base64 placeholder, serialise the ModelProto and hash the file excluding the placeholder, sign, then substitute the signed manifest at the same encoded length, and claim generators should keep the value's byte offset stable between passes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s566-a-3-16-embedding-manifests-into-safetensors",
+      "source": "sections/s566-a-3-16-embedding-manifests-into-safetensors.md",
+      "source_hash": "71d1b3b63e8df73116ab756d7fbeaf9a7e9f7fca06dceb81c5310587e0a31198",
+      "narrative": [
+        {
+          "text": "Introduces the SafeTensors format, describing its layout as an 8-byte little-endian header length, a UTF-8 JSON header with a __metadata__ object of string key/value pairs, and then raw tensor data.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s567-a-3-16-1-c2pa-manifest-store-embedding",
+      "source": "sections/s567-a-3-16-1-c2pa-manifest-store-embedding.md",
+      "source_hash": "b5563877a1578f846b957d3c107a0b07c6b47fca3bf64781c9fea760f2b72978",
+      "narrative": [
+        {
+          "text": "In SafeTensors, the Manifest Store shall be Base64-encoded and stored under a single c2pa:manifest key in the __metadata__ object, and if more than one such key is present the asset shall be treated as having no manifests.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s568-a-3-16-2-data-hash-binding",
+      "source": "sections/s568-a-3-16-2-data-hash-binding.md",
+      "source_hash": "020170b9d1c43a0abc9f6eb68f149ac3f3676e91d65913837dc2c2c424ce5118",
+      "narrative": [
+        {
+          "text": "A claim generator embedding a manifest in a SafeTensors file shall include a c2pa.hash.data assertion with one exclusion range covering the Base64 value bytes of the c2pa:manifest entry.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s569-a-3-16-3-writing-a-manifest-store",
+      "source": "sections/s569-a-3-16-3-writing-a-manifest-store.md",
+      "source_hash": "32b8a99551512b9cea7dd1e6a2f7bfd58524d0a32cc85bd167b50eab4b3c3db1",
+      "narrative": [
+        {
+          "text": "For SafeTensors, a two-pass procedure shall be used: reserve a placeholder c2pa:manifest key in __metadata__, hash the whole file (length field, JSON header and tensor data) excluding the placeholder, sign, then substitute the signed manifest at the same encoded length. The 8-byte header length field should stay consistent with the real header length, being updated and the exclusion range recalculated if the manifest changes it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s570-a-3-17-embedding-manifests-into-append-only-text",
+      "source": "sections/s570-a-3-17-embedding-manifests-into-append-only-text.md",
+      "source_hash": "a7c9ae53f707f75e5af1f5d0c49b8457a445884a3c792932fb44973fd3e3c04c",
+      "narrative": [
+        {
+          "text": "Introduces the method for append-only text files, in which provenance is attached through a rolling chain of signed checkpoints, each covering a bounded segment of new content and cryptographically linked to the previous one so a validator can verify the file's full history.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s571-a-3-17-1-applicability",
+      "source": "sections/s571-a-3-17-1-applicability.md",
+      "source_hash": "eee1174a98665f5d709d8d3d558e9965fa518413a52e6b04178185b6c9cd5572",
+      "narrative": [
+        {
+          "text": "The method applies only to files written by appending complete lines and never rewriting earlier bytes, namely plain-text logs (text/plain) and JSON Lines streams; CSV and TSV shall instead use an external manifest, and structured text such as source code, configuration, Markdown and YAML shall use the structured text embedding method. A file with checkpoints shall not also carry a structured text manifest block, and the two methods are told apart by the sentinel delimiters (BEGIN C2PA CHECKPOINT versus BEGIN C2PA MANIFEST).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s572-a-3-17-2-sentinel-line",
+      "source": "sections/s572-a-3-17-2-sentinel-line.md",
+      "source_hash": "05347064f5817df72bdbb00f918ad9c58ec8a08f081c1b3039ed44e327920c76",
+      "narrative": [
+        {
+          "text": "Each checkpoint shall be exactly one sentinel line appended right after its segment, delimited by -----BEGIN C2PA CHECKPOINT----- and -----END C2PA CHECKPOINT----- in plain text or written as a JSON object with a c2pa:checkpoint member in JSONL, and holding either an external URI to the Manifest Store or an inline data:application/c2pa;base64 URI, both of which validators shall accept. A file may hold many sentinel lines, and the one at the highest byte offset is the active checkpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s573-a-3-17-3-hard-binding",
+      "source": "sections/s573-a-3-17-3-hard-binding.md",
+      "source_hash": "28440e62535090368e6feacf2518b4f2b7682abf5917359fd8f796149e529b33",
+      "narrative": [
+        {
+          "text": "A checkpoint shall use a c2pa.hash.segment assertion as its hard binding, not c2pa.hash.data, and an example assertion with segmentStart, segmentEnd, sentinelLength and predecessorSentinel fields is given for a CRLF file.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s574-a-3-17-4-chain-structure",
+      "source": "sections/s574-a-3-17-4-chain-structure.md",
+      "source_hash": "87b6d02912f8af4fb5d279d84438b3dca13640145625b876ab05ae50769691cb",
+      "narrative": [
+        {
+          "text": "Each checkpoint manifest shall reference the immediately preceding checkpoint manifest as a parentOf ingredient, except the first checkpoint, and chain verification rules are deferred to the segment hash validation section.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s575-a-3-17-5-writing-a-checkpoint",
+      "source": "sections/s575-a-3-17-5-writing-a-checkpoint.md",
+      "source_hash": "f1ad0f6a94bb384c35f86882bdee4656a1eabe6ee2e8d99f7a3364b5802bf55b",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.3.17.5, Writing a checkpoint; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s576-a-3-17-5-1-external-uri-form",
+      "source": "sections/s576-a-3-17-5-1-external-uri-form.md",
+      "source_hash": "e388432e4dfef14055383afa359826b51020c64a8786a0f98dbd8b1e2550e32e",
+      "narrative": [
+        {
+          "text": "To write a checkpoint with an external URI, the claim generator chooses the manifest URI in advance, records the segment start and end offsets, hashes the preceding sentinel line for predecessorSentinel if there is one, then appends the formatted sentinel line in a single write and records its length as sentinelLength. It then builds the c2pa.hash.segment assertion from these values and signs and stores the Manifest Store at the chosen URI, so the sentinel append is the only file write, which suits WORM and append-only storage.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s577-a-3-17-5-2-inline-form",
+      "source": "sections/s577-a-3-17-5-2-inline-form.md",
+      "source_hash": "82af8d60fc72429f860cccf93f5f452ae8415d58913a42c281f62985ceb89e5c",
+      "narrative": [
+        {
+          "text": "The inline-form procedure records segment offsets and the predecessor sentinel hash as in the external form, but builds the c2pa.hash.segment assertion without a sentinelLength field (which shall not be present), signs the Manifest Store, and appends a sentinel embedding the Base64-encoded store in one write. Omitting sentinelLength removes the circular dependency between the manifest and the sentinel's length, keeping the procedure compatible with WORM and append-only storage.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s578-a-3-17-6-test-vectors",
+      "source": "sections/s578-a-3-17-6-test-vectors.md",
+      "source_hash": "03fa732e46c03535d6fa7651d260f54cfc939b19c1419e7669532cbc8be13414",
+      "narrative": [
+        {
+          "text": "Introduces the test vectors, which use a short plain-text file with external URI sentinels and SHA-256 hashes so implementers can reproduce the values.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s579-a-3-17-6-1-first-checkpoint-lf-line-endings",
+      "source": "sections/s579-a-3-17-6-1-first-checkpoint-lf-line-endings.md",
+      "source_hash": "a8f4b8149734947b99bc8f1146a61b3313da4c550707ccda7640c102f605f039",
+      "narrative": [
+        {
+          "text": "Test vector for a first checkpoint over the 12-byte LF segment alpha and bravo, showing the 112-byte sentinel line and the resulting c2pa.hash.segment assertion with segmentStart 0, segmentEnd 12 and sentinelLength 112.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s580-a-3-17-6-2-second-checkpoint-crlf-line-endings",
+      "source": "sections/s580-a-3-17-6-2-second-checkpoint-crlf-line-endings.md",
+      "source_hash": "deebd2f484352729afe7dd11bff76201ae75e62abee2725b755af18a0858c603",
+      "narrative": [
+        {
+          "text": "Test vector for a second checkpoint in a CRLF file, giving the byte ranges of the first sentinel and the 16-byte second segment and the resulting assertion values, including the predecessorSentinel start, length and hash.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s581-a-3-17-6-3-first-checkpoint-lf-line-endings-inli",
+      "source": "sections/s581-a-3-17-6-3-first-checkpoint-lf-line-endings-inli.md",
+      "source_hash": "2a3696b7788480d135af2e3dfab5c22e12d33215725ce75bf66d3382f7ec13cc",
+      "narrative": [
+        {
+          "text": "Test vector for a first checkpoint with an inline manifest over the same 12 bytes, where sentinelLength is absent and the hash matches the first example.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s582-a-4-embedding-manifests-into-pdfs",
+      "source": "sections/s582-a-4-embedding-manifests-into-pdfs.md",
+      "source_hash": "e032a1c7140220d48a0c67ec52ac10a18375e1cdad625a04b5eefef3bbb04285",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.4, Embedding manifests into PDFs; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s583-a-4-1-general",
+      "source": "sections/s583-a-4-1-general.md",
+      "source_hash": "f4a1a2914d51be523ee6cbf3b9107c6258999102197c68f95540887f028a0309",
+      "narrative": [
+        {
+          "text": "In PDFs, Manifest Stores shall be embedded as embedded file streams whose file specification has AFRelationship C2PA_Manifest and whose stream Subtype is application/c2pa, with an Identity crypt filter required in encrypted PDFs.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s584-a-4-2-document-level-manifests",
+      "source": "sections/s584-a-4-2-document-level-manifests.md",
+      "source_hash": "a2d2077a7a5625b40688f2601653307e1d6a6cab53922ac45bce8f9e0848e057",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.4.2, Document-level Manifests; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s585-a-4-2-1-adding-the-manifest-to-a-pdf",
+      "source": "sections/s585-a-4-2-1-adding-the-manifest-to-a-pdf.md",
+      "source_hash": "3c7b4462071c27a0c4d83c69a7d9515a4f7f3bafadb0343bd416c82195711c84",
+      "narrative": [
+        {
+          "text": "For a document-level manifest, the PDF catalog shall have an AF entry referencing only the embedded file specification holding the active manifest's store, also referenced from the EmbeddedFiles name tree or a FileAttachment annotation, with the annotation route required when a certifying signature exists so DocMDP restrictions are not broken. Because incremental updates allow multiple stores, the earliest store is the initial manifest and the latest the active one, and consumers shall process all manifests in all stores as if they were one store.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s586-a-4-2-2-compatibility-with-pdf-signatures",
+      "source": "sections/s586-a-4-2-2-compatibility-with-pdf-signatures.md",
+      "source_hash": "9262865df286352303a7969d8e2443408022f563123ff1185d559ea23ad4fa1b",
+      "narrative": [
+        {
+          "text": "When a PDF signature will also be applied, the size and location of its Contents key shall be fixed before C2PA signing and added as an exclusion in the c2pa.hash.data assertion, and the PDF signature shall cover the whole PDF including the Manifest Store.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s587-a-4-3-object-level-manifests",
+      "source": "sections/s587-a-4-3-object-level-manifests.md",
+      "source_hash": "89db678302db9bf45d9d9ce33306820291dcddd9bee3168d14c8ef11ce001f7e",
+      "narrative": [
+        {
+          "text": "Individual PDF objects, such as images, Form XObjects, fonts, marked content or structure elements, may carry their own Manifest Store through an AF entry referencing an embedded file specification, and such object-level manifests are recommended to be referenced from the active manifest as componentOf ingredients. The manifest shall be attached as close as possible to the object that actually stores the described data, for example the Image XObject stream or font file stream.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s588-a-4-4-example",
+      "source": "sections/s588-a-4-4-example.md",
+      "source_hash": "4a1b2734e5fc4dd2ba65a62f6ac4fa28fefffc8ac2bc802bfa54bfea76af8ec8",
+      "narrative": [
+        {
+          "text": "Holds only a figure, captioned as an example of a PDF with multiple ingredient manifests, with no explanatory text.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s589-a-5-embedding-manifests-into-bmff-based-assets",
+      "source": "sections/s589-a-5-embedding-manifests-into-bmff-based-assets.md",
+      "source_hash": "3d4207d7692c5afd2d700a07a7767fb62cba1731aae2ff79bd4bbb3339f7ac81",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.5, Embedding manifests into BMFF-based assets; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s590-a-5-1-the-uuid-box-for-c2pa",
+      "source": "sections/s590-a-5-1-the-uuid-box-for-c2pa.md",
+      "source_hash": "9c95a8634ce7b3c9c268b0513f0b732a3a83a399a23f67b1bed62ef2794f38be",
+      "narrative": [
+        {
+          "text": "All BMFF-based assets, timed, untimed or mixed, shall use a 'uuid' box for C2PA, chosen over a 'c2pa' box because Chromium-based browsers fail on unknown top-level boxes; supported formats include MP4, fragmented MP4, M4A, HEIF and AVIF.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s591-a-5-1-1-definition",
+      "source": "sections/s591-a-5-1-1-definition.md",
+      "source_hash": "aa6ac58337d5d2b80a2b3a42128b3f894b6c57cf18a519f82dd5d9f4d2256c8f",
+      "narrative": [
+        {
+          "text": "Gives the box definition for the C2PA 'uuid' box (its extended type, version 0, file container, zero or more allowed) and notes that one such box holds the Manifest Store while auxiliary boxes may hold extra validation data.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s592-a-5-1-2-syntax",
+      "source": "sections/s592-a-5-1-2-syntax.md",
+      "source_hash": "7ae7ba1d7d97452a90a500e38e8354e782e7987f13018fed889057a9bcfbb10a",
+      "narrative": [
+        {
+          "text": "Defines the syntax of ContentProvenanceBox, a 'uuid' FullBox whose header carries a box_purpose string and, for manifest or original purposes, a first_merkle_aux_offset field, with the remaining bytes forming the ContentProvenanceBoxPayload. The box_purpose values are manifest, original, update and merkle, and first_merkle_aux_offset shall give the absolute offset of the first merkle box or zero if there is none.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s593-a-5-2-box-containing-the-manifest",
+      "source": "sections/s593-a-5-2-box-containing-the-manifest.md",
+      "source_hash": "ade2ff7bbc84effa8c7676229b6fcbc083a2408c0d4a0c0faf331fc11856a99d",
+      "narrative": [
+        {
+          "text": "Boxes with box_purpose manifest, original or update carry the raw Manifest Store plus optional padding; manifest and original boxes shall follow 'ftyp' and sit before the first 'mdat' or 'moov' or next to 'moov', while an update box shall be the last top-level box, and update manifests are supported by renaming manifest to original without changing hash bindings. In fragmented MP4, each initialisation segment shall carry an identical manifest box for pull usage, while live push streams shall include it in at least one of every 10 initialisation segments.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s594-a-5-3-auxiliary-c2pa-boxes-for-large-and-fragmen",
+      "source": "sections/s594-a-5-3-auxiliary-c2pa-boxes-for-large-and-fragmen.md",
+      "source_hash": "19211187d8a6e4d7fd09a2fc3cd0da61655a693de308ee6c113ba3d6f3169eb8",
+      "narrative": [
+        {
+          "text": "Merkle-purpose boxes carry CBOR-encoded hashes and tree proofs for Merkle-tree based validation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s595-a-5-3-1-general",
+      "source": "sections/s595-a-5-3-1-general.md",
+      "source_hash": "d680cd1667a6a0d4f96065796b5373f37ab883445c91e254c7763d8960e400dc",
+      "narrative": [
+        {
+          "text": "Explains that large or fragmented BMFF assets use multiple hashes so parts can be validated without downloading every 'mdat', and that Merkle trees (one per 'mdat' in non-fragmented files, one per track in fragmented ones) keep the manifest small, with the manifest storing one tree row and an auxiliary box per subset giving its leaf position and the extra hashes needed. The choice of row trades manifest size against auxiliary box size and is left to the implementation, but the BMFF Hash portion of the manifest shall include the merkle field.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s596-a-5-3-1-1-non-fragmented-asset-that-can-be-valid",
+      "source": "sections/s596-a-5-3-1-1-non-fragmented-asset-that-can-be-valid.md",
+      "source_hash": "e08e1e77b3f4c10dd0877b6deb8d46b073734232a24347de81dbe0895ed6c71f",
+      "narrative": [
+        {
+          "text": "For a non-fragmented asset, two or more merkle boxes shall follow the last 'mdat' when the manifest holds a non-leaf row, with leaf hashes computed over 'mdat' payload subsets sized by fixedBlockSize or variableBlockSizes. The boxes shall follow subset order, be grouped contiguously per tree, and carry location values counting up from 0.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s597-a-5-3-1-2-fragmented-asset",
+      "source": "sections/s597-a-5-3-1-2-fragmented-asset.md",
+      "source_hash": "d57fb4731040e4bbbf6791c22bfdb167c4ad650c7db37b10bd35c76ed36acecc",
+      "narrative": [
+        {
+          "text": "For fMP4 split across files, one merkle box shall precede the 'moof' in each fragment file and each leaf hash covers the whole fragment file minus exclusions, while for a single flat fMP4 file a merkle box shall precede each 'moof' and each leaf hash covers that 'moof' up to the next one. Concatenating split files does not yield a compliant file, so producing both forms shall treat the first as a parentOf ingredient with a c2pa.repackaged action.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s598-a-5-3-1-3-live-media-fragmented-asset",
+      "source": "sections/s598-a-5-3-1-3-live-media-fragmented-asset.md",
+      "source_hash": "1bbcde3165fdabde4a6b7c4946dd20c82e2565b69d9de94922ae14ca350e1c7b",
+      "narrative": [
+        {
+          "text": "Points to the live media instructions for live fMP4 transmissions and restates that in push streaming the manifest box is required only in a portion of initialisation segments.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s599-a-5-3-1-4-box-containing-the-merkle-auxiliary",
+      "source": "sections/s599-a-5-3-1-4-box-containing-the-merkle-auxiliary.md",
+      "source_hash": "b3b93a10b3cba96a0b655a8993d453a0b33db24d903e22c3462a3de161f330aa",
+      "narrative": [
+        {
+          "text": "For auxiliary merkle boxes, box_purpose shall be merkle and the data shall be raw CBOR describing how to validate part of the asset, padded so that all such boxes for one Merkle tree in a file are a fixed size.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s600-a-5-3-1-5-regarding-unique-ids",
+      "source": "sections/s600-a-5-3-1-5-regarding-unique-ids.md",
+      "source_hash": "f5e462d30fe1e690c9448f0cea7d3cae658c9f45ff539e471e1fdf1b246bb1de",
+      "narrative": [
+        {
+          "text": "Because some IDs such as the 'tkhd' track_id are only locally unique, a unique ID defined at manifest creation is combined with the local ID to make a globally unique identifier. A note explains that fixed-size merkle boxes let a progressively downloading client compute the offset of the box it needs and fetch only that box.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s601-a-5-3-2-schema-and-example",
+      "source": "sections/s601-a-5-3-2-schema-and-example.md",
+      "source_hash": "34ddb72e740865c45755cc108a539246f24f482673bd5c5f241b2bc8598636e1",
+      "narrative": [
+        {
+          "text": "Gives the CDDL for bmff-merkle-map, with fields uniqueId, localId, location (zero-based leaf index) and an optional hashes array of the additional hashes needed to reach the manifest's Merkle row, plus a CBOR example. For non-fragmented assets localId shall be the zero-based index of the 'mdat', and for fragmented assets it shall be the track_id of the relevant 'tkhd' box.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s602-a-5-4-dynamic-stream-generation",
+      "source": "sections/s602-a-5-4-dynamic-stream-generation.md",
+      "source_hash": "99afef88b77af4f4778ea4f38c04623aef39a2bb64fddf619ee476da3664034d",
+      "narrative": [
+        {
+          "text": "Servers that generate adaptive bitrate streams at consumption time shall either hash streams and create a manifest per consumption or, if generation is deterministic, cache the hashes and manifests and embed them on delivery.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s603-a-5-5-exclusion-list-requirements",
+      "source": "sections/s603-a-5-5-exclusion-list-requirements.md",
+      "source_hash": "2fcaac1fc13b1f5533f71c439e4fa90f72639c42d819f6a9d0f593202724fbc9",
+      "narrative": [
+        {
+          "text": "For c2pa.hash.bmff.v2 and v3 assertions, the whole C2PA 'uuid' box and the 'mfra' box shall always be excluded and 'ftyp' should not be, with earlier mandatory exclusions dropped as insecure. When both hash and merkle fields are present, an 'mdat' subset exclusion at offset 16 with length 0 shall also appear, and bytes beyond a box's end shall never be hashed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s604-a-5-6-timed-media-streams-that-are-neither-audio",
+      "source": "sections/s604-a-5-6-timed-media-streams-that-are-neither-audio.md",
+      "source_hash": "8bc47e6a8b15ff2f84c7fa59ec1797ad41770576a555f6798891f12102846c4f",
+      "narrative": [
+        {
+          "text": "Non-audio, non-video timed-media streams, such as caption text, that are to be made tamper evident shall be handled like audio and video streams.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s605-a-5-7-external-references",
+      "source": "sections/s605-a-5-7-external-references.md",
+      "source_hash": "b0068f96b82cba28f5440d61df1e60098eb4383e96b275ddb7c8a7af06780a3e",
+      "narrative": [
+        {
+          "text": "Externally referenced content in BMFF boxes such as 'dref', 'url' or 'urn' that is to be tamper evident shall not have its referencing box excluded and shall have a separate cloud data assertion for each reference.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s606-a-5-8-size-requirements",
+      "source": "sections/s606-a-5-8-size-requirements.md",
+      "source_hash": "1c69b59b9777a22fc392bbfe9175a170c99a6f207e43295ae4f6c680005fcc79",
+      "narrative": [
+        {
+          "text": "If adding C2PA boxes pushes a BMFF file using 32-bit sizes or offsets past 4 gigabytes, the manifest creator is responsible for converting to suitable sizes and offsets, such as replacing 'stco' with 'co64', before creating the manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s607-a-6-embedding-manifests-into-zip-based-formats",
+      "source": "sections/s607-a-6-embedding-manifests-into-zip-based-formats.md",
+      "source_hash": "6af8bf45497c5ca17c05034817f2f36256aae62ff395e4ac2cb41cfd6641a58c",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.6, Embedding manifests into ZIP-based formats; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s608-a-6-1-general",
+      "source": "sections/s608-a-6-1-general.md",
+      "source_hash": "74719c5c6d529073625d2637097f345fceee5bfb09921df5cd5fc245eb520278",
+      "narrative": [
+        {
+          "text": "Notes that many file formats, including EPUB, Office Open XML, Open Document and OpenXPS, are ZIP archives with a specific content organisation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s609-a-6-2-hashing",
+      "source": "sections/s609-a-6-2-hashing.md",
+      "source_hash": "b5cbe57ff0e44989cccb1246ef00209589e1327e4b9c64fdadb859f470f9ddc1",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.6.2, Hashing; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s610-a-6-2-1-hashing-the-entries",
+      "source": "sections/s610-a-6-2-1-hashing-the-entries.md",
+      "source_hash": "5ebad00ffc40e21d9d5ef5d07423592f460174edc7fd2e8d42719be2fcdfc987",
+      "narrative": [
+        {
+          "text": "ZIP-based formats shall be hashed with a collection data hash covering every entry except the manifest, each hash taken over the local file header, compressed or encrypted content and any data descriptor, using the algorithm named in alg.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s611-a-6-2-2-hashing-the-zip-central-directory",
+      "source": "sections/s611-a-6-2-2-hashing-the-zip-central-directory.md",
+      "source_hash": "eb5c0d7797cd63e080903a34b605b5fcc181fb87b39bd76048df109bfca14dc9",
+      "narrative": [
+        {
+          "text": "Each central directory header and the end of central directory record shall be hashed in sequence, skipping the crc-32 field of the manifest's header, with the result stored in zip_central_directory_hash of the collection-data-hash-map, whose CDDL (uris, alg and the optional central directory hash) is given. A two-pass approach shall be used, first writing a zero-filled content_credential.c2pa and hashing the central directory, then completing and writing the manifest, and that file shall be stored uncompressed, unencrypted and with a general purpose bit flag of 0.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s612-a-6-3-placement-of-the-manifest-store",
+      "source": "sections/s612-a-6-3-placement-of-the-manifest-store.md",
+      "source_hash": "13636df3a5cf98ca8488ed30620f35343d34c26760f7388c0433c1f53082ddec",
+      "narrative": [
+        {
+          "text": "The Manifest Store shall be stored uncompressed and unencrypted as META-INF/content_credential.c2pa in the ZIP archive. In OPC packages such as Office Open XML and OpenXPS, the claim generator shall declare application/c2pa for it in [Content_Types].xml, through a Default or Override element, before computing the collection data hash.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s613-a-6-4-digitally-signing-zip-based-formats",
+      "source": "sections/s613-a-6-4-digitally-signing-zip-based-formats.md",
+      "source_hash": "b11b246c9907660d6dfcd28f4e7af567e0f560bcea3a75f7c87343eac750f0bb",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.6.4, Digitally signing ZIP-based formats; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s614-a-6-4-1-epub",
+      "source": "sections/s614-a-6-4-1-epub.md",
+      "source_hash": "89f24c10f9627946b11c02da94a5592512dec181a32997477bc17e107a81ac17",
+      "narrative": [
+        {
+          "text": "Because EPUB signatures follow XML DigSig and cannot sign the ZIP Central Directory, EPUB native signing shall happen before the C2PA Manifest is added.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s615-a-6-4-2-office-open-xml",
+      "source": "sections/s615-a-6-4-2-office-open-xml.md",
+      "source_hash": "7d6eef5915054a97da477c9e5271292b62e22cb414aa7a923438b9d3508cb601",
+      "narrative": [
+        {
+          "text": "Because OOXML signatures follow XML DigSig and cannot sign the ZIP Central Directory, OOXML native signing shall happen before the C2PA Manifest is added, and the same applies to OpenXPS.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s616-a-7-embedding-manifests-into-html",
+      "source": "sections/s616-a-7-embedding-manifests-into-html.md",
+      "source_hash": "6735c525639ed478ed87965c5c828dfb5e39bdaf72efd8bf01157782d0226744",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.7, Embedding Manifests into HTML; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s617-a-7-1-general",
+      "source": "sections/s617-a-7-1-general.md",
+      "source_hash": "06cd76af6de6d92b27dbbde9a0846e2e90c0c60b82c38134eaf0c1c2cf376895",
+      "narrative": [
+        {
+          "text": "HTML can associate a Manifest Store through an inline script element or, preferably, an external link element, both using application/c2pa in the head. There shall be at most one association per document, elements outside the head shall be ignored, and multiple manifest elements in the head shall cause the asset to be treated as having no manifests.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
