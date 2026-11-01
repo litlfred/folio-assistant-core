@@ -1,0 +1,956 @@
+{
+  "$schema": "folio-block-summaries/v1",
+  "entry": "dspace-7-rest-contract",
+  "summaries": [
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s255-features-endpoints",
+      "source": "sections/s255-features-endpoints.md",
+      "source_hash": "db4bf597673e9d620236e36e29032dfb925c09b7a92627b1fb2a9a5a91c1b025",
+      "narrative": [
+        {
+          "text": "Opens the Features endpoints. A feature represents a business goal that the Authorization endpoint uses to declare what a user can do on a given object.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s256-main-endpoint",
+      "source": "sections/s256-main-endpoint.md",
+      "source_hash": "88d775c29b8fe3fd3fedfe0244175ac635b89c0ec418defc7d622d7b50d968aa",
+      "narrative": [
+        {
+          "text": "GET /api/authz/features lists every feature in the system, paginated. Only system administrators may call it: 200 on success, 401 if not authenticated, 403 without administrator rights.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s257-single-feature",
+      "source": "sections/s257-single-feature.md",
+      "source_hash": "649ce1f45235e6571c6c74befa84b9617541a45a5bac919fb737b8807bad025b",
+      "narrative": [
+        {
+          "text": "GET /api/authz/features/<id> returns one feature, administrators only. The response carries an id (a unique short name), a human-readable description, and resourcetypes, the category.model types (singular, e.g. core.item) it applies to. Codes: 200, 401, 403, and 404 if the feature does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s258-search-methods",
+      "source": "sections/s258-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the Features endpoint; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s259-resourcetype",
+      "source": "sections/s259-resourcetype.md",
+      "source_hash": "80d5cafc2a1062adcf2df7f659dd9ead53342d64236047e2a613ba304927df8e",
+      "narrative": [
+        {
+          "text": "GET /api/authz/features/search/resourcetype?type=<category.model> returns the paginated features that apply to the given object type. Administrators only. Codes: 200, 400 if type is missing or invalid, 401, 403.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s260-feedbacks-endpoints",
+      "source": "sections/s260-feedbacks-endpoints.md",
+      "source_hash": "996e00f1e738f03dffafbab49267a049a67518d8644835c5e00afac778fc7570",
+      "narrative": [
+        {
+          "text": "Opens the Feedbacks endpoints under /api/tools/feedbacks, which send feedback by email to the configured feedback.recipient. Submitted feedback cannot be read back through the REST API.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s261-main-endpoint",
+      "source": "sections/s261-main-endpoint.md",
+      "source_hash": "4673ac3b1ed40869c65974465c78f2ce9f21aa91da9fa03b8d66b6091aa43ad3",
+      "narrative": [
+        {
+          "text": "The main endpoint /api/tools/feedbacks is not implemented, because there is no use case for listing feedback; it returns 405.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s262-single-feedback",
+      "source": "sections/s262-single-feedback.md",
+      "source_hash": "4db50a8e6555ea17cc32b17877f98bd883215e162075e6a7f092b89bc482978f",
+      "narrative": [
+        {
+          "text": "Fetching a single feedback at /api/tools/feedbacks/<id> is not implemented, for lack of a use case; it returns 405.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s263-creating-a-feedback",
+      "source": "sections/s263-creating-a-feedback.md",
+      "source_hash": "516658d22efc2b4cd239a898ff0fac7972cfe1acb4376e45c4154bb9b1bc6c1f",
+      "narrative": [
+        {
+          "text": "POST /api/tools/feedbacks sends feedback. The JSON body must give e-mail and message, and may give the page it came from. Codes: 201 on success, 400 if e-mail or message is missing, 404 if feedback.recipient is not configured.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s264-harvesting-metadata-configuration-endpoints",
+      "source": "sections/s264-harvesting-metadata-configuration-endpoints.md",
+      "source_hash": "4ec480159f14f810911bcc30bc4cb651bfd4f0709151368a6faac2e8bb090fbd",
+      "narrative": [
+        {
+          "text": "Opens the Harvesting metadata configuration endpoints; no text beyond the heading and the link back to the endpoint list.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s265-main-endpoint",
+      "source": "sections/s265-main-endpoint.md",
+      "source_hash": "011b1776a48948a980785991171bbba50543cf51c1b2b187e7f0f85c58810d73",
+      "narrative": [
+        {
+          "text": "GET /api/config/harvestermetadata lists the configured harvesting metadata formats. Each entry has an id, a label and a namespace; the example shows Simple Dublin Core (dc), Qualified Dublin Core (qdc) and DSpace Intermediate Metadata (dim).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s266-identifier-endpoints",
+      "source": "sections/s266-identifier-endpoints.md",
+      "source_hash": "0bada848993ab24923438ec87b01f0217677074fc419b75de46f3d89b4b9392b",
+      "narrative": [
+        {
+          "text": "Opens the Identifier endpoints; no text beyond the heading and the link back to the endpoint list.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s267-main-endpoint",
+      "source": "sections/s267-main-endpoint.md",
+      "source_hash": "ea666cc78d7f96824828a9c2f2106beef598393a7690262c9b07cfc469a62eb8",
+      "narrative": [
+        {
+          "text": "GET /api/pid/identifiers is not implemented; an item's identifiers come from the Items endpoint. POST /api/pid/identifiers?type=<type>, with the item URI as a text/uri-list body, mints and queues a new identifier for an archived item; only DOI is supported for now. It returns the identifier (value, type, status such as TO_BE_REGISTERED). Codes: 201, 400 (bad item or type, or DOI already registered), 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s268-get-identifiers-for-item",
+      "source": "sections/s268-get-identifiers-for-item.md",
+      "source_hash": "0db29e32c39c9da0e2ba9bec92877eda1f45719fbe33b266af289376e3a3d465",
+      "narrative": [
+        {
+          "text": "GET /api/pid/identifiers/search/findByItem?uuid=<uuid> returns the identifiers attached to an item, paginated. The example shows a DOI awaiting registration and a handle, each with value, identifierType and identifierStatus.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s269-find-dso-by-identifier-endpoint",
+      "source": "sections/s269-find-dso-by-identifier-endpoint.md",
+      "source_hash": "d6be18a894cdc48a51b85be5c82214a1d71e0b1303b5097023b9676783d7160d",
+      "narrative": [
+        {
+          "text": "GET /api/pid/find?id=<identifier> resolves a handle or DOI to its DSpace object and redirects to that object's endpoint: 302 on success, 404 if no object is found, 501 if the identifier cannot be resolved.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s270-item-request-endpoints",
+      "source": "sections/s270-item-request-endpoints.md",
+      "source_hash": "bfe9d661fa94cb627cabe412cdf3242d355ba2621d2780a3032e142bf3b9f0c9",
+      "narrative": [
+        {
+          "text": "Opens the Item Request endpoints, which support the Request a Copy feature.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s271-main-endpoint",
+      "source": "sections/s271-main-endpoint.md",
+      "source_hash": "7ab76f0c92a8888c48b8541417e67e5be89ad4234f34488bf9ef6d34dc6afe79",
+      "narrative": [
+        {
+          "text": "The main endpoint /api/tools/itemrequests, which would list requests without exposing tokens to non-administrators, is not implemented.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s272-single-request",
+      "source": "sections/s272-single-request.md",
+      "source_hash": "8213950a923c1a564cf08cf613ef82400a28684861132f72311889448d58521f",
+      "narrative": [
+        {
+          "text": "GET /api/tools/itemrequests/<token> returns one copy request. Its properties are the requested item and bitstream ids, allfiles, the requester's email, name and message, the request, expiry and decision dates, acceptRequest, and the opaque token; id, token and the dates are read-only. Links: item and bitstream. Codes: 200, or 404 for an unknown token.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s273-creating-a-request",
+      "source": "sections/s273-creating-a-request.md",
+      "source_hash": "f8bcd9c912ba0dfdd0c90292376aabcb0d1e80694094d4505256dba56332f059",
+      "narrative": [
+        {
+          "text": "POST /api/tools/itemrequests lets anyone file a copy request as JSON. itemId is always required; bitstreamId is required unless allfiles is true; requestEmail is required for anonymous sessions, and email and name come from the EPerson when the session is authenticated. The response is empty so the token is not exposed, and an appropriate person is notified. Codes: 201, 401 if anonymous requests are disabled, 422 for an unreadable body, a missing item or bitstream, or missing fields.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s274-accepting-denying-a-request",
+      "source": "sections/s274-accepting-denying-a-request.md",
+      "source_hash": "6c3da8e05f549ab63891717ae777069ce5f3525238dc78d4c65729cd13b0a4b7",
+      "narrative": [
+        {
+          "text": "PUT /api/tools/itemrequests/<token> accepts or denies a copy request; access is controlled by keeping the token secret. acceptRequest is required. Optional responseMessage, subject and suggestOpenAccess shape the reply to the requester (the last one also asks administrators to open access) and are not stored; requests cannot otherwise be updated. Codes: 200, 401 if anonymous, 403 if the user is not a configured approver, 422 if the request is unknown or acceptRequest is missing.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s275-linked-entities",
+      "source": "sections/s275-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of an item request; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s276-item-entries",
+      "source": "sections/s276-item-entries.md",
+      "source_hash": "108a9fbbd4de2d6d5e32390df2e523d26029f4bd713d141ccd24ee3f7d49025e",
+      "narrative": [
+        {
+          "text": "Names the linked endpoint /api/tools/itemrequests/<id>/item, the item a request is for; no further text.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s277-bitstream-entries",
+      "source": "sections/s277-bitstream-entries.md",
+      "source_hash": "6237db18792aaaafee35340fdfcb26679b7fcb6563fed3193ce5c2bae8d984d2",
+      "narrative": [
+        {
+          "text": "Names the linked endpoint /api/tools/itemrequests/<id>/bitstream, the bitstream a request is for; no further text.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s278-items-endpoints",
+      "source": "sections/s278-items-endpoints.md",
+      "source_hash": "1fc20c42e7a3361a1cccd83fda13762e132a061de2ee3d4fe58b7726781f6690",
+      "narrative": [
+        {
+          "text": "Opens the Items endpoints; no text beyond the heading and the link back to the endpoint list.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s279-main-endpoint",
+      "source": "sections/s279-main-endpoint.md",
+      "source_hash": "bb999828c65ac369b6fa7541a41acf71ec8a206aaa7a1fed3ac469fd480e3977",
+      "narrative": [
+        {
+          "text": "GET /api/core/items lists items from the database and is meant for administrators; users normally reach items through search or browse. It currently returns only archived, non-withdrawn items; withdrawn, workspace and workflow items are found through search, and template items through their collection. A later change may include all items (DSpace issue 3325).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s280-single-item",
+      "source": "sections/s280-single-item.md",
+      "source_hash": "284ed680c0a660290c50b95947f35a95bf16388430de4c8331b4476038d4dca3",
+      "narrative": [
+        {
+          "text": "GET /api/core/items/<uuid> returns one item: uuid, name, handle, a metadata map keyed by schema.element.qualifier with ordered values, and the flags inArchive, discoverable and withdrawn. Administrative metadata can be hidden by configuration, and a withdrawn item shows its metadata only to administrators. Links: bundles, owningCollection, mappedCollections, templateItemOf, relationships, thumbnail. A warning notes that the per-value place field may be dropped in favour of array order (issue 7582). Codes: 200, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s281-withdrawn-item",
+      "source": "sections/s281-withdrawn-item.md",
+      "source_hash": "b20be5a8d5cf7fef5b47b6f5c85e8f61db343fe311aa343cf3d36a68c492f447",
+      "narrative": [
+        {
+          "text": "A withdrawn item is a normal item retired by a patch operation. Once withdrawn, its response shows an empty metadata map to everyone except administrators, with inArchive false and withdrawn true, as the example shows.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s282-creating-an-archived-item",
+      "source": "sections/s282-creating-an-archived-item.md",
+      "source_hash": "8dd4f7ae330fe496fd0a945d8a2f0321160e1e4ef73db4003f7ae6e306f87e72",
+      "narrative": [
+        {
+          "text": "POST /api/core/items?owningCollection=<uuid> lets administrators create an archived item directly, bypassing the workflow, from a JSON body with name, metadata and the inArchive, discoverable and withdrawn flags.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s283-creating-an-archived-item-from-an-external-sourc",
+      "source": "sections/s283-creating-an-archived-item-from-an-external-sourc.md",
+      "source_hash": "a8a9107715a884ea11b0e544900793581f324b84fc2238dd56f8fc8fb102e861",
+      "narrative": [
+        {
+          "text": "The same POST /api/core/items?owningCollection=<uuid> call, sent with a text/uri-list body, lets administrators create an archived item from an external source: the body holds one external entry value (for example an ORCID record) whose metadata is imported. More than one entry gives 400.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s284-updating-item-metadata",
+      "source": "sections/s284-updating-item-metadata.md",
+      "source_hash": "85963b33a461d3237bf718e45da84edc7351af1536a9b892a6720a13b4ff7e65",
+      "narrative": [
+        {
+          "text": "PUT /api/core/items/<uuid> replaces an item's metadata with the JSON sent and returns the updated item.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s285-patch-operations",
+      "source": "sections/s285-patch-operations.md",
+      "source_hash": "f3ec6b5315343764ed11209f2a8a8d9c0b8ae740f101bbcb8d96ea17a6dacff4",
+      "narrative": [
+        {
+          "text": "Item metadata is changed by PATCH as described in Modifying metadata via Patch; a few further item properties can be patched as the following sections describe.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s286-replace",
+      "source": "sections/s286-replace.md",
+      "source_hash": "cb9046f72444c94b2eec35d1730a652ae348e65565c71e90a86210105eaed571",
+      "narrative": [
+        {
+          "text": "The PATCH replace operation changes only existing values; using it on an uninitialised value is an error. Replacing /withdrawn with true withdraws an item (inArchive becomes false), with false reinstates it (inArchive becomes true), and replacing /discoverable with false makes an item private. Each needs an Authorization header; curl examples and before and after states are given.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s287-linked-entities",
+      "source": "sections/s287-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of an item; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s288-access-status",
+      "source": "sections/s288-access-status.md",
+      "source_hash": "fb67be3298ffdd0d84f1a0fd0c2fe36246a21e554cd143c9989b600c747f6213",
+      "narrative": [
+        {
+          "text": "GET /api/core/items/<uuid>/accessStatus returns an item's computed access status. The default values are metadata.only (no primary file), open.access, embargo, restricted and unknown, computed from the policies of the primary file, or of the first file in the ORIGINAL bundle if none is marked primary. Codes: 200, 400 for an invalid UUID, 404 if the item cannot be retrieved.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s289-bundles",
+      "source": "sections/s289-bundles.md",
+      "source_hash": "b8812f0e8e06fede6dd08767642b8c42b19df50b5b4a08ad3a3f0d0e289c4103",
+      "narrative": [
+        {
+          "text": "GET /api/core/items/<uuid>/bundles returns an item's bundles (such as ORIGINAL and THUMBNAIL), which is how a client gets only one kind of bitstream or reorders a bundle. POST to the same path with a name and metadata creates a new bundle and returns it. Codes: 201, 400 if the bundle name already exists, 401, 403, 404, and 412 on a size or checksum mismatch.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s290-owning-collection",
+      "source": "sections/s290-owning-collection.md",
+      "source_hash": "3e5aef6beca9d3b5c51b5b9e895812531e53471cbec07ad8062baa1f4b264360",
+      "narrative": [
+        {
+          "text": "GET /api/core/items/<uuid>/owningCollection returns the item's owning collection, and PUT with a collection URI moves the item there (inheritPolicies=true also copies the target's policies); 204 on success. mappedCollections lists the other collections an item is mapped into. POST a collection URI to add a mapping and DELETE .../mappedCollections/<collection_uuid> to remove one, both 204 even as a no-op; PUT and deleting all mappings at once are unsupported. Errors include 405 for template items and 422 for an unknown collection or the owning collection.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s291-template-item",
+      "source": "sections/s291-template-item.md",
+      "source_hash": "a9678ae211a49373c47bfd37bc078a20025e7ebf8d800b29b844d4f47d0ed83f",
+      "narrative": [
+        {
+          "text": "GET /api/core/items/<uuid>/templateItemOf returns the collection that uses the item as its template.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s292-relationships-per-item",
+      "source": "sections/s292-relationships-per-item.md",
+      "source_hash": "31db75f15c53eb9fdf293d77ff165ae41f2b1c3320b851143a3fba043a48d15d",
+      "narrative": [
+        {
+          "text": "GET /api/core/items/<uuid>/relationships embeds every relationship in which the item is either the left or the right item.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s293-main-thumbnail",
+      "source": "sections/s293-main-thumbnail.md",
+      "source_hash": "072b3370ce760cf262a99cfbee11ebd97504dead45a7f3259f8ef294effc5401",
+      "narrative": [
+        {
+          "text": "GET /api/core/items/<uuid>/thumbnail returns the bitstream that is the item's main thumbnail. Codes: 200, 204 if there is no thumbnail, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s294-get-single-version-for-item",
+      "source": "sections/s294-get-single-version-for-item.md",
+      "source_hash": "93867d9a255df2310e984981a47d2b2a7868e73d04a4e377c43e6bb34199685c",
+      "narrative": [
+        {
+          "text": "GET /api/core/items/<item-uuid>/version returns the single version an item belongs to, in the same form as the Version endpoint. Read permission on the item and the version permissions are both checked. Codes: 200, 204 if the item is not versioned, 400 for a bad UUID, 401 and 403 when versioning is not public.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s295-get-item-identifiers",
+      "source": "sections/s295-get-item-identifiers.md",
+      "source_hash": "b1b3e98064fd994dedb19cb6783404ba8fc334242bb8486f85def9e4320ca51f",
+      "narrative": [
+        {
+          "text": "GET /api/core/items/<item-uuid>/identifiers returns the identifiers attached to an item, such as its DOI and handle, each with its type and, where relevant, its status. It uses the same data model as the identifiers submission step. Codes: 200, 400, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s296-deleting-an-item",
+      "source": "sections/s296-deleting-an-item.md",
+      "source_hash": "577c88d89cacf7969248c6ac50650c967ae530dd9a45c8c179b17884142ab645",
+      "narrative": [
+        {
+          "text": "DELETE /api/core/items/<uuid> deletes an item. The administrator-only copyVirtualMetadata parameter copies virtual metadata into related items before deletion: all, specific relationship type ids (repeatable), configured (taken from configuration), or none when absent. Codes: 204, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s297-search-methods",
+      "source": "sections/s297-search-methods.md",
+      "source_hash": "7d8af4ac799f5ea877a92826131c552408861d1397c3a6e58113e551d1f2da7b",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the Items endpoint; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s298-findeditauthorized",
+      "source": "sections/s298-findeditauthorized.md",
+      "source_hash": "7619e7b2e0f9400323dfeff81b46ec0b435ec16b81904358bf2bd41a4b0fcb45",
+      "narrative": [
+        {
+          "text": "GET /api/core/items/search/findEditAuthorized returns the items the current user may edit, paginated. An optional query filters by metadata and also acts as a prefix query, for autosuggest. Codes: 200, 401.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s299-collection-item-template-endpoints",
+      "source": "sections/s299-collection-item-template-endpoints.md",
+      "source_hash": "f481df4110c077a5cfa76bbf699341ac8e905afb7a2f60ceafdc910351598f3e",
+      "narrative": [
+        {
+          "text": "Opens the Collection Item Template endpoints; no text beyond the heading and the link back to the endpoint list.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s300-main-endpoint",
+      "source": "sections/s300-main-endpoint.md",
+      "source_hash": "5b4f2c3db5e512d4ec19f504863b79dae9256437f41d5837aeeb6d311cce423c",
+      "narrative": [
+        {
+          "text": "There is no endpoint listing all item templates; /api/core/itemtemplates is unsupported.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s301-single-item-template",
+      "source": "sections/s301-single-item-template.md",
+      "source_hash": "abe3e6ff542df03dd8873c9883dad6fc13bc97c8ee87d412c6f4a7e62c611dd6",
+      "narrative": [
+        {
+          "text": "GET /api/core/itemtemplates/<uuid> returns one item template. It has the shape of an item, with a null name and handle, template metadata, and inArchive, discoverable and withdrawn all false.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s302-creating-an-item-template",
+      "source": "sections/s302-creating-an-item-template.md",
+      "source_hash": "1f40b974daf1a9413fec242d03267cca16484441e502742d3a92c522c10a76d3",
+      "narrative": [
+        {
+          "text": "An item template is created with POST /api/core/collections/<uuid>/itemtemplate, documented in the Collections endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s303-updating-item-template-metadata",
+      "source": "sections/s303-updating-item-template-metadata.md",
+      "source_hash": "e5951f3fbd7fc4fe1a5d7a2724dfb895833c19441043af08d8657a1dabca7f24",
+      "narrative": [
+        {
+          "text": "PATCH /api/core/itemtemplates/<uuid> changes an item template's metadata as described in Modifying metadata via Patch; no other property can be changed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s304-delete-item-template",
+      "source": "sections/s304-delete-item-template.md",
+      "source_hash": "5d5231ac949afed1260785301a03224f6159936afc068c4ed1a261eb06910349",
+      "narrative": [
+        {
+          "text": "DELETE /api/core/itemtemplates/<uuid> deletes a collection's item template and removes its link to the collection. Codes: 204, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    }
+  ]
+}
