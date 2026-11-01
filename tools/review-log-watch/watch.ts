@@ -51,6 +51,14 @@ export type AppendRow = {
   issue: number; url: string; closed: boolean; row: string[];
   /** The links in the feedback cell (`column`, 0-based), to write as rich text so they are clickable. */
   links: { column: number; runs: CellLink[] };
+  /**
+   * The row's Change-set id, set in `row` too, and the Agent tab row to write
+   * with it. The sheet script fills Contributor Feedback's Issue column from
+   * the Agent tab, by Change-set, so an Issue written only on Contributor
+   * Feedback is cleared on its next refresh. Absent when the read has no
+   * Change-set column.
+   */
+  agent?: { csId: string; issue: string };
 };
 
 export type WatchResult =
@@ -206,8 +214,9 @@ export function feedbackColumn(header: string[]): number {
 /**
  * The Contributor Feedback row for an issue, aligned to the header: Title is
  * the issue's title, the first Contributor Feedback column "@login (#N): the
- * first paragraph", Issue the issue's URL. Every other cell is empty, so the
- * script assigns the Change-set id and people keep their columns.
+ * first paragraph", Issue the issue's URL. Every other cell is empty, so
+ * people keep their columns; `watch` sets the Change-set id when the read has
+ * that column.
  */
 export function issueRow(issue: Issue, header: string[]): string[] {
   const row = header.map(() => "");
@@ -282,10 +291,24 @@ export function watch(
   const hi = headerIndex(values);
   const header = hi < 0 ? [] : values[hi].map((h) => String(h ?? ""));
   const linked = linkedIssues(values, repo);
-  const append = hi < 0 ? [] : tracked
+  const csCol = header.findIndex((h) => h.trim() === "Change-set");
+  let next = 1 + values.slice(hi + 1).reduce((m, r) => {
+    const x = /^CS-(\d+)$/.exec(String(r[csCol] ?? "").trim());
+    return x ? Math.max(m, Number(x[1])) : m;
+  }, 0);
+  const append: AppendRow[] = hi < 0 ? [] : tracked
     .filter((i) => !linked.has(i.number))
     .sort((a, b) => a.number - b.number)
-    .map((i) => ({ issue: i.number, url: i.html_url, closed: isClosed(i), row: issueRow(i, header), links: { column: feedbackColumn(header), runs: feedbackCell(i).links } }));
+    .map((i) => {
+      const row = issueRow(i, header);
+      const out: AppendRow = { issue: i.number, url: i.html_url, closed: isClosed(i), row, links: { column: feedbackColumn(header), runs: feedbackCell(i).links } };
+      if (csCol >= 0) {
+        const csId = `CS-${String(next++).padStart(3, "0")}`;
+        row[csCol] = csId;
+        out.agent = { csId, issue: i.html_url };
+      }
+      return out;
+    });
   const closedRows = tracked
     .filter(isClosed)
     .flatMap((i) => linked.get(i.number) ?? [])
