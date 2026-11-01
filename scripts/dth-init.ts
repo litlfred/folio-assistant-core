@@ -97,6 +97,8 @@ export function plan(o: DthInitOptions): Planned[] {
       title: o.title,
       version: "0.1.0",
       iriBase: `https://litlfred.github.io/${o.name}/`,
+      // declared-path-literal: these ARE the new instance's declarations; no
+      // declaration exists yet to read them from.
       directories: [
         {
           id: "folio",
