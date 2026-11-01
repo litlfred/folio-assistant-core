@@ -768,7 +768,7 @@ export function overlaySnippet(rows: SiteComment[], opts: { repo?: string; issue
   const batch = (deadline) => {
     do { if (i >= entries.length) break; note(entries[i][0], entries[i][1]); i++; } while (deadline.timeRemaining() > 2 || i % 40 !== 0);
     if (i < entries.length) idle(batch);
-    else if (location.hash.length > 1) document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView();
+    else if (location.hash.length > 1) { try { document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({ behavior: "instant" }); } catch {} }
   };
   idle(batch);
   const bar = document.createElement("div");
