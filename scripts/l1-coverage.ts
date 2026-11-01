@@ -97,6 +97,15 @@ export function normalise(s: string): string {
     .replace(/[“”‟]/g, '"')
     .replace(/[‐-―−]/g, "-")
     .replace(/-\s*\n\s*/g, "") // a word hyphenated across a line break
+    // Hyphens inside words are not compared: the extraction keeps one and
+    // drops another ("low-birthweight" against "low-birth-weight").
+    // The same goes for the spacing around a dash or a slash, and for list
+    // bullets: the PDF text reads "immunization –summary" and "https:// www",
+    // the folio "immunization – summary" and "https://www".
+    .replace(/[•▪◦●]/g, " ")
+    .replace(/\s*-\s*/g, "-")
+    .replace(/\s*\/\s*/g, "/")
+    .replace(/(\w)-(?=\w)/g, "$1")
     .replace(/\s+/g, " ")
     .replace(/\s*([.;:,])\s*$/, "")
     .trim();
