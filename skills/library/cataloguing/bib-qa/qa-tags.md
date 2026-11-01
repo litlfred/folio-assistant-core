@@ -106,17 +106,18 @@ offline verification of citation correctness. Once a paper is in
 
 | Tool | Purpose |
 |------|---------|
-| `cat-harness-tools/scripts/gen-bib-papers-list.py` | Scan `content/schema/references.ts` for entries with publicly-downloadable URLs (arxiv, numdam, archive.org, OEIS, faculty pages); emit `scripts/bib-papers-list.txt` |
+| `scripts/gen-bib-papers-list.py` | Scan `content/schema/references.ts` for entries with publicly-downloadable URLs (arxiv, numdam, archive.org, OEIS, faculty pages); emit `scripts/bib-papers-list.txt` |
 | `scripts/bib-papers-list.txt` | Generated list, one entry per line: `<url>\|<target>\|<description>` |
-| `cat-harness-tools/scripts/upload-bib-papers.sh` | Read the list, download each file (idempotent by file existence), commit per-paper to a fresh `claude/upload-bib-papers-<utc-ymd>` branch via SSH; optional `--pr` to auto-open PR |
+| `scripts/upload-bib-papers.sh` | Read the list, download each file (idempotent by file existence), commit per-paper to a fresh `claude/upload-bib-papers-<utc-ymd>` branch via SSH; optional `--pr` to auto-open PR |
 | `scripts/upload-to-uploads.sh` | Single-file intake for ad-hoc additions (manual sources, scans, guidelines etc.) |
 
 Run from any clone with network access:
 
+<!-- command-path-ok: gen-bib-papers-list.py and upload-bib-papers.sh live in a folio's scripts/ directory (qou#7811, cat-harness-tools#939) -->
 ```bash
-python3 cat-harness-tools/scripts/gen-bib-papers-list.py     # regenerate the list
-bash cat-harness-tools/scripts/upload-bib-papers.sh --dry-run # preview
-bash cat-harness-tools/scripts/upload-bib-papers.sh --pr      # download + commit + push + open PR
+python3 scripts/gen-bib-papers-list.py     # regenerate the list
+bash scripts/upload-bib-papers.sh --dry-run # preview
+bash scripts/upload-bib-papers.sh --pr      # download + commit + push + open PR
 ```
 
 The script uses `git push --force-with-lease` so re-runs after a fix

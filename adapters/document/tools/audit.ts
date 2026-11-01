@@ -32,9 +32,10 @@
  * @module folio-assistant/adapters/document/tools/audit
  */
 
+import { safeSegment } from "@litlfred/cat-harness-tools/src/core/safe-path.js";
 import { z } from "zod";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
-import { runPipeline, asToolText, autoPaper } from "./_pipeline.js";
+import { runPipeline, asToolText, autoPaper, refuseTool } from "./_pipeline.js";
 
 /**
  * Which content types an audit can say anything useful about.
@@ -114,6 +115,9 @@ export function registerDocumentAuditTools(server: McpServer): void {
       paper: z.string().optional().describe("Document name (auto-detected if only one)"),
     },
     async ({ paper }) => {
+      if (paper !== undefined && safeSegment(paper) === undefined) {
+        return refuseTool("status_sections_audit", `invalid paper segment '${paper}'`);
+      }
       const p = autoPaper(paper);
       const args = p ? ["--paper", p] : [];
       return asToolText("status_sections_audit", runPipeline("audit-status-sections", args));

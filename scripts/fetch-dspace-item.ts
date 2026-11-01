@@ -40,8 +40,16 @@ import { join } from "node:path";
 
 import { IntakeSchema, type Intake } from "@litlfred/cat-harness-tools/schemas/library/intake.ts";
 import type { SourceLicence } from "@litlfred/cat-harness-tools/schemas/library/source-licence.ts";
+import { safeSegment } from "@litlfred/cat-harness-tools/src/core/safe-path.js";
 import { handleFromUrl } from "../schemas/catalogue.ts";
 import { DUBLIN_CORE_SCHEMA_TAG, DublinCoreRecordSchema, type DcField, type DublinCoreRecord } from "../schemas/dublin-core.ts";
+import { assertHttpsHost, fetchChecked } from "./lib/safe-url.ts";
+
+/** Known DSpace 7 repository hosts permitted by default. */
+export const ALLOWED_DSPACE_HOSTS: ReadonlySet<string> = new Set([
+  "iris.who.int",
+  "iris.paho.org",
+]);
 
 /** DSpace 7's `metadata` map: `"dc.title": [{ value, language, authority }]`. */
 type DspaceMetadata = Record<string, { value: string; language?: string | null; authority?: string | null }[]>;
@@ -119,9 +127,18 @@ interface Fetched {
   intake: Intake;
 }
 
-/** GET a DSpace REST resource; `T` names only the fields the caller reads. */
-async function json<T>(url: string): Promise<T> {
-  const r = await fetch(url, { headers: { accept: "application/json" } });
+/** GET a DSpace REST resource after verifying scheme/host on the URL and any redirects. */
+async function json<T>(
+  url: string,
+  allowedHosts: ReadonlySet<string>,
+  fetcher: typeof fetch,
+): Promise<T> {
+  const { response: r } = await fetchChecked(
+    url,
+    allowedHosts,
+    { headers: { accept: "application/json" } },
+    fetcher,
+  );
   if (!r.ok) throw new Error(`${url}: HTTP ${r.status}`);
   return (await r.json()) as T;
 }
@@ -131,31 +148,55 @@ type DspaceBundles = { _embedded: { bundles: { name: string; _links: { bitstream
 type DspaceBitstreams = { _embedded: { bitstreams: { name: string; _links: { content: { href: string } } }[] } };
 
 /** Resolve a handle URL to the item, its metadata and its one ORIGINAL PDF. */
-export async function fetchItem(handleUrl: string, now = new Date()): Promise<Fetched> {
+export async function fetchItem(
+  handleUrl: string,
+  now = new Date(),
+  fetcher: typeof fetch = fetch,
+  allowedHosts: ReadonlySet<string> = ALLOWED_DSPACE_HOSTS,
+): Promise<Fetched> {
+  const initialUrl = assertHttpsHost(handleUrl, allowedHosts);
   const handle = handleFromUrl(handleUrl);
   if (!handle) throw new Error(`${handleUrl} is not a handle URL (…/handle/<prefix>/<suffix>)`);
-  const origin = new URL(handleUrl).origin;
+  const itemHostAllowList = new Set([initialUrl.hostname.toLowerCase()]);
+  const origin = initialUrl.origin;
   // The handle page redirects to /items/<uuid>; the API has no handle lookup on every install.
-  const redirect = await fetch(`${origin}/handle/${handle}`, { redirect: "manual" });
-  const uuid = /\/items\/([0-9a-f-]{36})/.exec(redirect.headers.get("location") ?? "")?.[1];
+  const redirect = await fetcher(`${origin}/handle/${handle}`, { redirect: "manual" });
+  const loc = redirect.headers.get("location") ?? "";
+  if (loc) {
+    assertHttpsHost(loc, itemHostAllowList, `${origin}/handle/${handle}`);
+  }
+  const uuid = /\/items\/([0-9a-f-]{36})/.exec(loc)?.[1];
   if (!uuid) throw new Error(`${origin}/handle/${handle} did not redirect to an item (HTTP ${redirect.status})`);
   const api = `${origin}/server/api/core/items/${uuid}`;
-  const item = await json<DspaceItem>(api);
+  const item = await json<DspaceItem>(api, itemHostAllowList, fetcher);
   const retrievedAt = now.toISOString().replace(/\.\d+Z$/, "Z");
   const record = dspaceToRecord(uuid, item.metadata, api, retrievedAt);
 
-  const bundles = await json<DspaceBundles>(`${api}/bundles`);
+  const bundles = await json<DspaceBundles>(`${api}/bundles`, itemHostAllowList, fetcher);
   const original = bundles._embedded.bundles.find((b) => b.name === "ORIGINAL");
   if (!original) throw new Error(`${api}: no ORIGINAL bundle`);
-  const streams = (await json<DspaceBitstreams>(original._links.bitstreams.href))._embedded.bitstreams;
+  const bitstreamsHref = assertHttpsHost(
+    original._links.bitstreams.href,
+    itemHostAllowList,
+    api,
+  ).href;
+  const streams = (await json<DspaceBitstreams>(bitstreamsHref, itemHostAllowList, fetcher))._embedded.bitstreams;
   const pdfs = streams.filter((s) => /\.pdf$/i.test(s.name));
   // More than one PDF is a choice (language editions, annexes) and is refused, not guessed.
   if (pdfs.length !== 1) throw new Error(`${api}: ${pdfs.length} PDF bitstreams (${streams.map((s) => s.name).join(", ")}) — name the one to ingest`);
-  const res = await fetch(pdfs[0]!._links.content.href);
-  if (!res.ok) throw new Error(`${pdfs[0]!._links.content.href}: HTTP ${res.status}`);
+  const contentHref = assertHttpsHost(
+    pdfs[0]!._links.content.href,
+    itemHostAllowList,
+    api,
+  ).href;
+  const { response: res } = await fetchChecked(contentHref, itemHostAllowList, {}, fetcher);
+  if (!res.ok) throw new Error(`${contentHref}: HTTP ${res.status}`);
   const pdf = Buffer.from(await res.arrayBuffer());
   const pdfName = pdfs[0]!.name;
   const docId = pdfName.replace(/\.pdf$/i, "");
+  if (safeSegment(pdfName) === undefined || safeSegment(docId) === undefined) {
+    throw new Error(`Refused unsafe bitstream filename '${pdfName}'`);
+  }
   const itemUrl = `${origin}/items/${uuid}`;
   const intake = IntakeSchema.parse({
     $schema: "folio-intake/v1",

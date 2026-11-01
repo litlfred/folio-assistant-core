@@ -31,6 +31,14 @@
       "status": "candidate"
     },
     {
+      "id": "check-dsa-hash",
+      "prefLabel": "Verify Data Sharing Agreement hash, citation, and vocabulary terms",
+      "definition": "Verify a Data Sharing Agreement (DSA) directory or single version: checks that every JSON-LD term in `agreement.jsonld` and `dcat.jsonld` is defined in the SHA-256-pinned official W3C ODRL 2.2, W3C DCAT 3 (with SPDX 2.2.2 and ADMS), or DCMI Metadata Terms contexts; checks that the ODRL 2.2 Agreement's `uid` is the version's fixed-version URL and its `dcterms:source` cites the DCAT 3 `dcat:Distribution` whose `spdx:checksum` is checked; verifies that the SHA-256 digest of `agreement.md` matches `spdx:checksumValue`; and checks `dcat:previousVersion` and hash distinctness across versions.",
+      "notation": "check-dsa-hash",
+      "source": "folio-assistant-core/tools/check-dsa-hash/check-dsa-hash.ts#check-dsa-hash",
+      "status": "candidate"
+    },
+    {
       "id": "dublin-core-render",
       "prefLabel": "Dublin Core renderings",
       "definition": "Render every `folio-dublin-core/v1` record a catalogue item names as Dublin Core XML (qualified DC, per DCMI's XML guidelines) and as JSON-LD bound to DCMI Metadata Terms. Both are written into the instance's published root (`<instanceRoot>/dublin-core/<stem>.dc.xml` and `.dc.jsonld`), so the site mount publishes them beside the item pages. Deterministic. `--check` fails on a missing, stale or orphaned rendering. Governed by the `dublin-core-renderings` skill (bean `7eak`).",

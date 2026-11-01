@@ -13,11 +13,12 @@
  * @module adapters/paper/tools/bib
  */
 
+import { writableWithin } from "@litlfred/cat-harness-tools/src/core/safe-path.js";
 import { z } from "zod";
-import { join } from "path";
+import { join, resolve } from "path";
 import type { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { get } from "../paths.js";
-import { runPipeline, asToolText } from "./_pipeline.js";
+import { runPipeline, asToolText, refuseTool } from "./_pipeline.js";
 
 const BIB_MODES = ["cross-check", "doi", "crossref", "arxiv", "pandoc", "all"] as const;
 
@@ -61,7 +62,14 @@ export function registerBibTools(server: McpServer): void {
       out: z.string().optional().describe("Output path (default: build/references.bib)"),
     },
     async ({ out }) => {
-      const target = out ?? join(get.REPO_ROOT(), "build", "references.bib");
+      const root = get.REPO_ROOT();
+      if (out !== undefined && out.includes("\0")) {
+        return refuseTool("bib_export", "output path contains NUL byte");
+      }
+      const target = out !== undefined ? resolve(root, out) : join(root, "build", "references.bib");
+      if (!writableWithin(root, target)) {
+        return refuseTool("bib_export", `output path '${out}' escapes repository root`);
+      }
       return asToolText("bib_export", runPipeline("export-bibtex", ["--out", target]));
     },
   );

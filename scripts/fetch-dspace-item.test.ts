@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { dspaceToRecord, licenceFromRecord } from "./fetch-dspace-item.ts";
+import { dspaceToRecord, fetchItem, licenceFromRecord } from "./fetch-dspace-item.ts";
 
 // The shape WHO IRIS returned for 10665/340749 on 2026-10-06, cut down.
 const META = {
@@ -47,5 +47,143 @@ describe("licenceFromRecord", () => {
   test("no dc.rights is unknown, saying where it looked", () => {
     const { "dc.rights": _r, ...rest } = META;
     expect(licenceFromRecord(dspaceToRecord("u", rest, "s", "t"), url).searched?.[0]?.where).toContain("dc.rights");
+  });
+});
+
+describe("fetchItem destination checks (bean folio-core-xpsq)", () => {
+  const UUID = "58333fc5-9ec5-4d14-b341-5ae257dd0ad1";
+  const HANDLE_URL = "https://iris.who.int/handle/10665/340749";
+
+  test("refuses non-https handle URLs and unexpected hosts before any network call", async () => {
+    const neverCalled: typeof fetch = (async () => {
+      throw new Error("should not be called");
+    }) as unknown as typeof fetch;
+
+    await expect(
+      fetchItem("http://iris.who.int/handle/10665/340749", new Date(), neverCalled),
+    ).rejects.toThrow(/https:/i);
+
+    await expect(
+      fetchItem("https://evil.example/handle/10665/340749", new Date(), neverCalled),
+    ).rejects.toThrow(/unexpected host/i);
+  });
+
+  test("refuses server-supplied bitstreams.href or content.href pointing to another host or http://", async () => {
+    const makeStub = (contentHref: string): typeof fetch =>
+      (async (input: string | URL | Request) => {
+        const u = String(input);
+        if (u === HANDLE_URL) {
+          return new Response(null, {
+            status: 302,
+            headers: { location: `https://iris.who.int/items/${UUID}` },
+          });
+        }
+        if (u === `https://iris.who.int/server/api/core/items/${UUID}`) {
+          return Response.json({ metadata: META });
+        }
+        if (u === `https://iris.who.int/server/api/core/items/${UUID}/bundles`) {
+          return Response.json({
+            _embedded: {
+              bundles: [
+                {
+                  name: "ORIGINAL",
+                  _links: {
+                    bitstreams: {
+                      href: `https://iris.who.int/server/api/core/bundles/b1/bitstreams`,
+                    },
+                  },
+                },
+              ],
+            },
+          });
+        }
+        if (u === "https://iris.who.int/server/api/core/bundles/b1/bitstreams") {
+          return Response.json({
+            _embedded: {
+              bitstreams: [
+                {
+                  name: "9789240016514-eng.pdf",
+                  _links: { content: { href: contentHref } },
+                },
+              ],
+            },
+          });
+        }
+        throw new Error(`unexpected fetch to ${u}`);
+      }) as unknown as typeof fetch;
+
+    await expect(
+      fetchItem(
+        HANDLE_URL,
+        new Date("2026-10-06T00:00:00Z"),
+        makeStub("http://169.254.169.254/latest/meta-data/"),
+      ),
+    ).rejects.toThrow(/https:/i);
+
+    await expect(
+      fetchItem(
+        HANDLE_URL,
+        new Date("2026-10-06T00:00:00Z"),
+        makeStub("https://evil.example/9789240016514-eng.pdf"),
+      ),
+    ).rejects.toThrow(/unexpected host/i);
+  });
+
+  test("refuses a bitstream download that redirects to an unexpected host or http://", async () => {
+    const redirectStub: typeof fetch = (async (input: string | URL | Request) => {
+      const u = String(input);
+      if (u === HANDLE_URL) {
+        return new Response(null, {
+          status: 302,
+          headers: { location: `/items/${UUID}` },
+        });
+      }
+      if (u === `https://iris.who.int/server/api/core/items/${UUID}`) {
+        return Response.json({ metadata: META });
+      }
+      if (u === `https://iris.who.int/server/api/core/items/${UUID}/bundles`) {
+        return Response.json({
+          _embedded: {
+            bundles: [
+              {
+                name: "ORIGINAL",
+                _links: {
+                  bitstreams: {
+                    href: "https://iris.who.int/server/api/core/bundles/b1/bitstreams",
+                  },
+                },
+              },
+            ],
+          },
+        });
+      }
+      if (u === "https://iris.who.int/server/api/core/bundles/b1/bitstreams") {
+        return Response.json({
+          _embedded: {
+            bitstreams: [
+              {
+                name: "9789240016514-eng.pdf",
+                _links: {
+                  content: {
+                    href: "https://iris.who.int/server/api/core/bitstreams/bs1/content",
+                  },
+                },
+              },
+            ],
+          },
+        });
+      }
+      if (u === "https://iris.who.int/server/api/core/bitstreams/bs1/content") {
+        return new Response(null, {
+          status: 302,
+          headers: { location: "https://evil.example/payload.pdf" },
+        });
+      }
+      throw new Error(`unexpected fetch to ${u}`);
+    }) as unknown as typeof fetch;
+
+    await expect(
+      fetchItem(HANDLE_URL, new Date("2026-10-06T00:00:00Z"), redirectStub),
+    ).rejects.toThrow(/unexpected host/i);
   });
 });

@@ -2,7 +2,7 @@
 # folio-core-ho43
 $schema: bean/1.0.0
 title: 'MCP document tools take file paths from tool arguments without containment'
-status: todo
+status: completed
 type: bug
 priority: normal
 tags:
@@ -10,7 +10,7 @@ tags:
     - security-review-2026-10-31
     - red-flag-security
 created_at: 2026-10-31T04:01:25Z
-updated_at: 2026-10-31T04:01:25Z
+updated_at: 2026-10-31T08:30:00Z
 ---
 
 Found by the 2026-10-31 security and QA review of the folio-assistant layers (SOP: cat-harness `skills/conduct/security/`, the 16 rules of `skills/voices/secure-code-authoring/voice.json`, RED FLAG categories of cat-harness-tools `schemas/sdlc/red-flag.ts`). No fix PR yet: fixes wait for the owner's go-ahead.
@@ -31,5 +31,9 @@ Also: `render.ts:385-407` compiles caller-supplied `latex` and `packages` with p
 
 ## Done when
 
-- [ ] Write paths go through `writableWithin`; `paper`/`chapter` through `safeSegment`; `css` through `resolveWithin`
-- [ ] A test per tool shows `../` refused
+- [x] Write paths go through `writableWithin`; `paper`/`chapter` through `safeSegment`; `css` through `resolveWithin`
+- [x] A test per tool shows `../` refused
+
+## Summary of Changes
+
+Enforced path containment across `adapters/document/tools/{_pipeline,bib,qa,validate,render,audit,transform}.ts`: output paths/directories (`bib_export.out`, `content_export.out`, `content_build.output_dir`) go through `writableWithin`; `paper`/`chapter`/`document`/`target` segments go through `safeSegment`; `css` goes through `resolveWithin` + `realPathWithin`; `formula_render` validates `packages`, refuses file/shell TeX primitives, and passes `-no-shell-escape`. Added `scripts/tests/document-tools-path-containment.test.ts`.

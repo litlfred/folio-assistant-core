@@ -191,6 +191,17 @@ describe("changeset-text (bean d903): what the diff renderers read", () => {
     expect(t["def:a"]).toBeUndefined();
   });
 
+  it("a table's prose is rendered as a table, not left as pipes", () => {
+    const f = fixture(LAYOUT, ABC);
+    f.put({ slug: "b", label: "def:b", prose: "| A | B |\n|---|---|\n| 1 | 2 |\n" });
+    const base = git(f.repo, "rev-parse", "HEAD");
+    const { text } = computeWithText({ repoRoot: f.repo, folio: "folio", base, head: "worktree" }, true);
+    const html = text!.blocks["def:b"]!.head!.html;
+    expect(html).toContain("<table>");
+    expect(html).toContain("<td>2</td>");
+    expect(html).not.toContain("|");
+  });
+
   it("a renamed block's base text is read under its OLD label and filed under the new one", () => {
     const f = fixture(LAYOUT, ABC);
     f.put({ slug: "b", label: "def:bee", renamedFrom: ["def:b"], prose: "Renamed and reworded.\n" });

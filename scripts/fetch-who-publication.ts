@@ -56,7 +56,18 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { IntakeSchema, INTAKE_SCHEMA_TAG, type Intake } from "@litlfred/cat-harness-tools/schemas/library/intake.ts";
+import { safeSegment } from "@litlfred/cat-harness-tools/src/core/safe-path.js";
 import { DUBLIN_CORE_SCHEMA_TAG, DublinCoreRecordSchema, type DcField, type DublinCoreRecord } from "../schemas/dublin-core.ts";
+import { assertHttpsHost, fetchChecked } from "./lib/safe-url.ts";
+
+/** Expected hosts for WHO publication item pages and their PDF download bitstreams. */
+export const ALLOWED_WHO_HOSTS: ReadonlySet<string> = new Set([
+  "www.who.int",
+  "cdn.who.int",
+  "iris.who.int",
+  "apps.who.int",
+]);
+const WHO_ITEM_PAGE_HOSTS: ReadonlySet<string> = new Set(["www.who.int"]);
 
 const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
 
@@ -146,21 +157,35 @@ export interface Fetched {
   intake: Intake;
 }
 
-export async function fetchWhoPublication(url: string, now = new Date()): Promise<Fetched> {
+export async function fetchWhoPublication(
+  url: string,
+  now = new Date(),
+  fetcher: typeof fetch = fetch,
+  allowedHosts: ReadonlySet<string> = ALLOWED_WHO_HOSTS,
+): Promise<Fetched> {
+  assertHttpsHost(url, WHO_ITEM_PAGE_HOSTS);
   if (!/^https:\/\/www\.who\.int\/publications\/[a-z]\/item\//.test(url)) throw new Error(`${url} is not a who.int publication item page (…/publications/<m|i>/item/<slug>)`);
-  const res = await fetch(url, { headers: { "user-agent": "folio-assistant fetch-who-publication" } });
+  const { response: res } = await fetchChecked(
+    url,
+    WHO_ITEM_PAGE_HOSTS,
+    { headers: { "user-agent": "fetch-who-publication" } },
+    fetcher,
+  );
   if (!res.ok) throw new Error(`${url}: HTTP ${res.status}`);
   const page = readItemPage(await res.text());
   const pdfs = page.downloads.filter((d) => /\.pdf(\?|$)/i.test(d));
   // More than one is a choice (language editions, annexes) and is refused, not guessed.
   if (pdfs.length !== 1) throw new Error(`${url}: ${pdfs.length} PDF download(s) (${page.downloads.join(", ") || "none"}) — name the one to ingest`);
-  const href = new URL(pdfs[0]!, url).href;
-  const got = await fetch(href);
+  const href = assertHttpsHost(pdfs[0]!, allowedHosts, url).href;
+  const { response: got } = await fetchChecked(href, allowedHosts, {}, fetcher);
   if (!got.ok) throw new Error(`${href}: HTTP ${got.status}`);
   const pdf = Buffer.from(await got.arrayBuffer());
   if (pdf.subarray(0, 5).toString() !== "%PDF-") throw new Error(`${href}: not a PDF (starts ${JSON.stringify(pdf.subarray(0, 8).toString())})`);
   const pdfName = fileNameOf(href);
   const docId = pdfName.replace(/\.pdf$/i, "");
+  if (safeSegment(pdfName) === undefined || safeSegment(docId) === undefined) {
+    throw new Error(`Refused unsafe PDF filename '${pdfName}'`);
+  }
   const retrievedAt = now.toISOString().replace(/\.\d+Z$/, "Z");
   const record = pageToRecord(page, url, retrievedAt);
   const intake = IntakeSchema.parse({
