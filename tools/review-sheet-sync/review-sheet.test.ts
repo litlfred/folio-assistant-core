@@ -492,7 +492,7 @@ describe("review-sheet.gs in drafting mode", () => {
 
   test("each tab's Instructions say how that tab works, in the sheet's own words, and the Config tab's are short rows", () => {
     expect(dRows.slice(0, 5).map((r) => r[0])).toEqual(["Instructions", "Instructions - Install script", "Instructions - Dropdown", "Instructions - Editors", "Key"]);
-    expect(dRows[0][1]).toContain("only the owner edits");
+    expect(dRows[0][1]).toContain("EDITORS (owner only)");
     // Installing Code.gs, step by step, with the project named after the sheet (owner, 2026-10-31).
     expect(dRows[1][1]).toMatch(/Extensions, then Apps Script[\s\S]*Name the project after this sheet[\s\S]*Libraries[\s\S]*HEAD[\s\S]*Review[\s\S]*Advanced/);
     expect(dRows[1][1]).toContain("Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.");
@@ -506,8 +506,8 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json")).map((r) => r[0])).not.toContain("Instructions - Dropdown");
     const d = tabInstructions(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
     const cf = d["Contributor Feedback"];
-    expect(cf).toContain("Blue = your input, by the Authoring Committee");
-    expect(cf).toContain("Ready for agent back to No");
+    expect(cf).toContain("Blue = the Authoring Committee");
+    expect(cf).toContain("resets Ready for agent to No");
     // Column names are coloured like their column, so the steps name no colours (owner, 2026-11-01 18:22Z).
     expect(cf.split("\n").slice(1).join("\n")).not.toMatch(/\b(Blue|Green|Orange|Grey)\b/);
     expect(cf).toContain("Filter views");
@@ -515,8 +515,8 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(cf).not.toMatch(/\b(blue|green|orange|grey)\b/);
     expect(cf).toContain("/en/cat-harness/processes/contributor-feedback.html");
     const p = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
-    expect(p["Review Public Comments"]).toContain("one row per public comment");
-    expect(p["Review Change Sets"]).toContain("one row per change set");
+    expect(p["Review Public Comments"]).toContain("One row per public comment");
+    expect(p["Review Change Sets"]).toContain("One row per change set");
     expect(p["Review Change Sets"]).toContain("/en/cat-harness/processes/public-comment.html");
     expect(Object.values(p).join("\n")).not.toMatch(/architect/i);
     expect(configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"))[1][1]).not.toContain("Allow multiple selections");
@@ -1001,14 +1001,15 @@ describe("the colour key in Instructions text", () => {
 
   test("each key segment on the first line is coloured whole, in its own colour", () => {
     expect(words.slice(0, 4).map(([w]) => w.split(" = ")[0])).toEqual(["Blue", "Green", "Orange", "Grey"]);
-    expect(words[0][0]).toContain("your input");
+    expect(words[0][0]).toContain("Committee");
     expect(new Set(words.slice(0, 4).map(([, c]) => c)).size).toBe(4);
   });
 
-  test("later colour words are coloured one by one, with the key's colour", () => {
-    const later = words.slice(4);
-    expect(later.length).toBeGreaterThan(0);
-    for (const [w, c] of later) expect(c).toBe(words.find(([k]) => k.toLowerCase().startsWith(w.toLowerCase()))![1]);
+  test("a later colour word is coloured with the key's colour; the steps themselves name no colours", () => {
+    expect(words.slice(4)).toEqual([]);
+    const t = "Key: Blue = input\nThen answer in Blue.";
+    const r = keyRuns(t).map(([a, z, c]) => [t.slice(a, z), c]);
+    expect(r.at(-1)).toEqual(["Blue", r[0][1]]);
   });
 
   test("text without a colour word gets no runs", () => {

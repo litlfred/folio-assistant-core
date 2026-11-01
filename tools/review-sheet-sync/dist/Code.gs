@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 1d379d04cb6e38f0.
+// folio-assistant-core tools/review-sheet-sync at template sha256 b9122a49aba7894c.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 1d379d04cb6e38f0';
+const SCRIPT_VERSION = 'template sha256 b9122a49aba7894c';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -1525,7 +1525,7 @@ const STATUS_SUB = '\u21b3 ';
 function statusBlock(line, status, prs) {
   const parts = [];
   if (line) parts.push({ t: line });
-  if (/needs human/i.test(status || '')) parts.push({ t: STATUS_SUB + NEEDS_YOU + ': under "Decision needed" below. Write your answer (the letter) in your Blue feedback column, then an Editor sets Ready for agent to Yes.' });
+  if (/needs human/i.test(status || '')) parts.push({ t: STATUS_SUB + NEEDS_YOU + ': under "Decision needed" below. Write your answer (the letter) in your feedback column, then an Editor sets Ready for agent to Yes.' });
   (prs || []).forEach(p => {
     parts.push({ t: STATUS_SUB }, { t: prLabel(p.url), url: p.url },
       { t: ' (' + [status, p.done].filter(Boolean).join(', ') + ')' + (p.desc ? descText(p.desc) : '') });
@@ -1727,7 +1727,7 @@ function agenticCell(status, prs, o) {
   const head = stepped ? [{ t: stepLine(step).replace(PROGRESS, ''), bold: true }]
     : queued ? [{ t: 'Waiting on the agent since ' + o.readyAt + ' (Ready for agent set); it has not recorded a step yet' + unpicked(o.readyAt, o.now), bold: true }]
     : /working/i.test(status) && o.talk ? [{ t: 'An agent is working on it: ', bold: true }, { t: 'conversation', url: o.talk }]
-    : /needs human/i.test(status) ? [{ t: NEEDS_YOU + ': it is under "Decision needed" in the agent\'s feedback column. Write your answer (the letter) in your Blue feedback column, then an Editor sets Ready for agent to Yes.', bold: true }] : [];
+    : /needs human/i.test(status) ? [{ t: NEEDS_YOU + ': it is under "Decision needed" in the agent\'s feedback column. Write your answer (the letter) in your feedback column, then an Editor sets Ready for agent to Yes.', bold: true }] : [];
   const body = agenticParts(status, prs);
   return rich(head.length ? head.concat(body.length && body[0].t ? [{ t: '\n' }].concat(body) : []) : body);
 }

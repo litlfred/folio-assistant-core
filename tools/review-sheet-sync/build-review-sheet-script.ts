@@ -377,10 +377,10 @@ export function colourKey(c: SheetConfig): { blue: string; green: string; orange
   // Process roles, not job titles: who sits on the committee is the sheet's business (owner, 2026-10-31).
   const people = c.CFG.MODE === "drafting" ? "the Authoring Committee" : "the Feedback Review Committee";
   return {
-    blue: `Blue: your input, by ${people}`,
-    green: "Green: written by the agent",
-    orange: "Orange: workflow, set by an Editor",
-    grey: "Grey: mechanical, kept by the script or the source",
+    blue: `Blue: ${people}`,
+    green: "Green: the agent",
+    orange: "Orange: an Editor",
+    grey: "Grey: the script",
   };
 }
 
@@ -419,48 +419,50 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
   const fb = c.COLS.draft?.feedback ?? "Contributor Feedback";
   const people = drafting ? t.FEEDBACK : `${t.RPC} and ${t.RCS}`;
   const footer = [
-    "Find your rows: Data, then Filter views, then pick a view (works for viewers too, and changes nothing for anyone else). Comment without edit rights: Insert, then Comment.",
-    `Full process, every step and role: ${processPage(c)}`,
+    "Your rows: Data, then Filter views (changes nothing for others). No edit rights? Insert, then Comment.",
+    `Full process: ${processPage(c)}`,
   ];
-  // Steps 3 to 6, the same on every change-set tab.
+  // Column names carry their colour in the sheet, so the steps name no colours
+  // (owner, 2026-11-01 18:22Z: "you dont need to say (Orange) or (Blue)"; 18:26Z: too wordy).
+  const ask = "Agentic status says \"Needs you\" when it has a question.";
   const changeSet = [
     "   3. An Editor sets Ready for agent to Yes once the direction is agreed.",
-    `   4. The agent edits the document in one pull request for the row. Agentic status says where it is; ${staging} opens what changed. Once the agent has finished and its preview is live, the script sets Ready for agent to Completed.`,
-    `   5. Reviewers answer in ${drafting ? `the ${fb} columns` : "the Blue columns"}. A change marks the proposal stale and sets Ready for agent back to No; an Editor sets Yes again to have the agent update the pull request.`,
-    "   6. A reviewer who did not write the change checks every disposition against the Disposition and the pull request, and reads the QA report (the QA gate). Once it passes, an Editor sets Ready for merge to Yes, and the agent merges.",
+    `   4. The agent makes one pull request. Agentic status tracks it; ${staging} opens the changes. When the preview is live, Ready for agent becomes Completed.`,
+    "   5. New feedback marks the proposal stale and resets Ready for agent to No. An Editor sets Yes again to update the pull request.",
+    "   6. A second reviewer checks each disposition against the pull request and reads the QA report. Then an Editor sets Ready for merge to Yes, and the agent merges.",
   ];
   const out: Record<string, string> = {
-    [CONFIG_TAB]: `The script's settings. Work happens on ${people}; nothing here needs you unless you install the script. Do not edit this tab: the agent writes it, except EDITORS, which only the owner edits.`,
+    [CONFIG_TAB]: `The script's settings. Work happens on ${people}. Do not edit, except EDITORS (owner only).`,
     [t.AGENT]: drafting || !t.AGENT_CS
-      ? `Written only by the agent: one row per ${drafting ? "change set" : "comment or change set"}, with its status, pull request and preview. Do not edit. The script copies what it needs into the green columns of ${people}.`
-      : `Written only by the agent: one row per public comment, with its status, what was done and the change set it belongs to. Do not edit. The script copies what it needs into the green columns of ${t.RPC}.`,
-    ...(!drafting && t.AGENT_CS ? { [t.AGENT_CS]: `Written only by the agent: one row per change set, with its pull requests, what they changed and its staging preview. Do not edit. The script copies what it needs into the green columns of ${t.RCS} and ${t.RPC}.` } : {}),
-    Watch: "Kept by the agent's watcher: what changed since it last looked. Do not edit.",
+      ? `Written by the agent: one row per ${drafting ? "change set" : "comment or change set"}. Do not edit. The script copies it into ${people}.`
+      : `Written by the agent: one row per public comment. Do not edit. The script copies it into ${t.RPC}.`,
+    ...(!drafting && t.AGENT_CS ? { [t.AGENT_CS]: `Written by the agent: one row per change set. Do not edit. The script copies it into ${t.RCS} and ${t.RPC}.` } : {}),
+    Watch: "Kept by the agent's watcher. Do not edit.",
   };
   if (drafting) {
     out[t.FEEDBACK] = [
       colours,
-      "This tab has one row per change set:",
-      `   1. The Authoring Committee starts a row: a title, the Selected Sections, and feedback in the ${fb} columns. The script gives it a Change-set id.`,
-      `   2. The agent proposes a direction in ${c.COLS.draft?.agentFeedback || "Feedback (agent)"}. A question it needs answered is there too, with its options and recommendation, and Agentic status says \"Needs you: answer the agent's question\".`,
+      "One row per change set:",
+      `   1. The Authoring Committee starts a row: Title, Selected Sections and ${fb}. The script adds the Change-set id.`,
+      `   2. The agent proposes a direction in ${c.COLS.draft?.agentFeedback || "Feedback (agent)"}. ${ask}`,
       ...changeSet,
       ...footer,
     ].join("\n");
   } else {
-    out["Public Comment Source"] = `The public comments as received, one row per comment. Do not edit: a correction goes in a blue column on ${t.RPC}.`;
+    out["Public Comment Source"] = `The public comments as received. Do not edit: correct them on ${t.RPC}.`;
     out[t.RPC] = [
       colours,
-      "This tab has one row per public comment, as received (Grey):",
-      "   1. The Feedback Review Committee reads the comment and adds its feedback in the Blue columns, with the TWG, comment type, disposition and status.",
-      `   2. The agent puts each comment in a change set (Change Set, linked to its row on ${t.RCS}) and suggests a TWG.`,
-      `   3. Decisions to edit are made per change set, on ${t.RCS} (its Ready for agent and Ready for merge columns). Agentic status and ${staging} here follow the comment's change set.`,
+      "One row per public comment, as received:",
+      "   1. The Feedback Review Committee adds its feedback, TWG, comment type, disposition and status.",
+      `   2. The agent puts the comment in a Change Set (linked to ${t.RCS}) and suggests a TWG.`,
+      `   3. Edits are decided per change set, on ${t.RCS}. Agentic status and ${staging} here follow the change set.`,
       ...footer,
     ].join("\n");
     out[t.RCS] = [
       colours,
-      `This tab has one row per change set, joining its public comments from ${t.RPC}:`,
-      "   1. The Feedback Review Committee gives feedback on the change set in Blue and picks its TWG.",
-      `   2. The agent proposes a direction in ${c.COLS.rcs?.agentFeedback || "Change Set Feedback (agent)"}. A question it needs answered is there too, with its options and recommendation, and Agentic status says \"Needs you: answer the agent's question\".`,
+      `One row per change set, joining its comments from ${t.RPC}:`,
+      "   1. The Feedback Review Committee gives feedback on the change set and picks its TWG.",
+      `   2. The agent proposes a direction in ${c.COLS.rcs?.agentFeedback || "Change Set Feedback (agent)"}. ${ask}`,
       ...changeSet,
       ...footer,
     ].join("\n");
