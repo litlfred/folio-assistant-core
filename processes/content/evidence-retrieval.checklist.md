@@ -79,7 +79,7 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 
 ### 7. Open a bean for the unverified citation (`Task_RecordUnverified`)
 
-- Who: the `Work plan — beans (shared)` lane (role `work-plan`).
+- Who: the `Author / guideline developer (person)` lane (role `author`).
 - Skill: `todo-manager`.
 - What: An unresolvable citation is not dropped and not silently kept.
 - Record it: `workflow_complete` with `node: "Task_RecordUnverified"`.
@@ -102,7 +102,7 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 
 ### 9. Record the evidence gap (`Task_RecordGap`)
 
-- Who: the `Work plan — beans (shared)` lane (role `work-plan`).
+- Who: the `Author / guideline developer (person)` lane (role `author`).
 - Skill: `todo-manager`.
 - What: Insufficient evidence is a RESULT.
 - Record it: `workflow_complete` with `node: "Task_RecordGap"`.

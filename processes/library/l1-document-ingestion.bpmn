@@ -66,13 +66,7 @@ IT REFINES THE HARNESS FLOW BY CALLING IT. CallActivity_Basic runs the harness's
         <bpmn:flowNodeRef>Gateway_Complete</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Promote</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_SummaryQueue</bpmn:flowNodeRef>
-      </bpmn:lane>
-      <bpmn:lane id="Lane_2" name="Work plan — beans (shared by humans and agents)" partitionElementRef="work-plan">
-        <bpmn:documentation>A one-task detour from the Ingestion Engine's own loop: it exists as its own lane rather than a step inside Lane_1 specifically so that recording an incomplete L1 build is visible as a write to the SHARED plan — a bean anyone can see and pick up — rather than a private retry the engine keeps to itself.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_OpenBean</bpmn:flowNodeRef>
-      </bpmn:lane>
-      <bpmn:lane id="Lane_3" name="Corpus — L1 source knowledge graph" partitionElementRef="corpus">
-        <bpmn:documentation>The terminal state the whole diagram exists to reach: once Task_Promote lands material in library/&lt;bib-slug&gt;/, this lane is where that fact is recorded as available, and it is the boundary this diagram stops at — everything that depends on the source afterward, such as authoring-a-document.bpmn's citations, starts from here rather than being drawn into this process.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_Citeable</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Ingested</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Call_BeanClose</bpmn:flowNodeRef>
@@ -221,6 +215,9 @@ as a bean">
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_i7</bpmn:incoming>
       <bpmn:outgoing>Flow_i8</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DOA_Task_OpenBean">
+        <bpmn:targetRef>DSR_work_plan</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_Promote" name="Move into
 library/&lt;bib-slug&gt;/">
@@ -255,6 +252,9 @@ as an L1 source">
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_i12</bpmn:incoming>
       <bpmn:outgoing>Flow_i11</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DOA_Task_Citeable">
+        <bpmn:targetRef>DSR_corpus</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:task>
     <bpmn:endEvent id="EndEvent_Ingested" name="Ingested">
       <bpmn:incoming>SF_Bean_4</bpmn:incoming>
@@ -277,12 +277,13 @@ as an L1 source">
     <bpmn:sequenceFlow id="SF_Bean_2" sourceRef="Call_BeanOpen" targetRef="GW_BeanYours"/>
     <bpmn:sequenceFlow id="SF_Bean_3" name="not yours" sourceRef="GW_BeanYours" targetRef="End_BeanNotYours"/>
     <bpmn:sequenceFlow id="SF_Bean_4" sourceRef="Call_BeanClose" targetRef="EndEvent_Ingested"/>
+    <bpmn:dataStoreReference id="DSR_work_plan" name="Work plan (beans)" dataStoreRef="work-plan"/>
+    <bpmn:dataStoreReference id="DSR_corpus" name="Corpus" dataStoreRef="corpus"/>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="Diagram_L1DocumentIngestion">
     <bpmndi:BPMNPlane id="Plane_L1DocumentIngestion" bpmnElement="Collaboration_L1DocumentIngestion">
       <bpmndi:BPMNShape id="Participant_L1DocumentIngestion_di" bpmnElement="Participant_L1DocumentIngestion" isHorizontal="true"><dc:Bounds x="160" y="80" width="3285" height="540" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_1_di" bpmnElement="Lane_1" isHorizontal="true"><dc:Bounds x="190" y="80" width="3255" height="180" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_2_di" bpmnElement="Lane_2" isHorizontal="true"><dc:Bounds x="190" y="260" width="3255" height="180" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_1_di" bpmnElement="Lane_1" isHorizontal="true"><dc:Bounds x="190" y="80" width="3255" height="540" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_Document_di" bpmnElement="StartEvent_Document"><dc:Bounds x="212" y="152" width="36" height="36" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_Basic_di" bpmnElement="CallActivity_Basic"><dc:Bounds x="548" y="130" width="125" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_i1_di" bpmnElement="Flow_i1"><di:waypoint x="248" y="170"/><di:waypoint x="268" y="170"/></bpmndi:BPMNEdge>
@@ -290,7 +291,6 @@ as an L1 source">
         <di:waypoint x="673" y="170" />
         <di:waypoint x="705" y="170" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Lane_3_di" bpmnElement="Lane_3" isHorizontal="true"><dc:Bounds x="190" y="440" width="3255" height="180" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Detect_di" bpmnElement="Task_Detect"><dc:Bounds x="690" y="130" width="180" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Licence_di" bpmnElement="Task_Licence"><dc:Bounds x="910" y="119.5" width="180" height="101" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_Extract_di" bpmnElement="CallActivity_Extract"><dc:Bounds x="1130" y="130" width="150" height="80" /></bpmndi:BPMNShape>
@@ -391,6 +391,10 @@ as an L1 source">
         <di:waypoint x="3322" y="530" />
         <di:waypoint x="3362" y="530" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_DSR_work_plan" bpmnElement="DSR_work_plan"><dc:Bounds x="2340" y="660" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_DOA_Task_OpenBean" bpmnElement="DOA_Task_OpenBean"><di:waypoint x="2365" y="390"/><di:waypoint x="2365" y="660"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_DSR_corpus" bpmnElement="DSR_corpus"><dc:Bounds x="3101" y="660" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_DOA_Task_Citeable" bpmnElement="DOA_Task_Citeable"><di:waypoint x="3010" y="570"/><di:waypoint x="3010" y="635"/><di:waypoint x="3126" y="635"/><di:waypoint x="3126" y="660"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

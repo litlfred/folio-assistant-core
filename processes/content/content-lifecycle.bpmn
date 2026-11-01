@@ -58,17 +58,14 @@
         <bpmn:flowNodeRef>EndEvent_Retired</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Call_BeanClose</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_WorkPlan" name="Work plan — beans (shared by humans and agents)" partitionElementRef="work-plan">
-        <bpmn:documentation>Touched twice, not once: Task_SeedBeans converts the programme manager's plan into trackable work at the start, and Task_FeedbackBeans converts triaged reader feedback into more of it at the end, immediately before Gateway_NextCycle asks whether to go around again — so this lane is what makes the lifecycle a LOOP rather than a line, carrying what closed one cycle into what opens the next.</bpmn:documentation>
+      <bpmn:lane id="Lane_Editors" name="Editors + authoring agents" partitionElementRef="editor">
+        <bpmn:documentation>The single re-entry point for every round the cycle contains — Gateway_NextCycle's 'yes' branch (H09) loops straight back here rather than to Task_Plan — so this lane runs once per proposed change, not once per cycle, and is where the accept decision on each of those changes is made before anything reaches the corpus-wide Task_Test.</bpmn:documentation>
+        <bpmn:flowNodeRef>CallActivity_Editing</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_SeedBeans</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Call_BeanOpen</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>GW_BeanYours</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>End_BeanNotYours</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_FeedbackBeans</bpmn:flowNodeRef>
-      </bpmn:lane>
-      <bpmn:lane id="Lane_Editors" name="Editors + authoring agents" partitionElementRef="editor">
-        <bpmn:documentation>The single re-entry point for every round the cycle contains — Gateway_NextCycle's 'yes' branch (H09) loops straight back here rather than to Task_Plan — so this lane runs once per proposed change, not once per cycle, and is where the accept decision on each of those changes is made before anything reaches the corpus-wide Task_Test.</bpmn:documentation>
-        <bpmn:flowNodeRef>CallActivity_Editing</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Qa" name="Validation and QA (mechanical + agents)" partitionElementRef="validation-pipeline">
         <bpmn:documentation>The corpus-wide check no single block's HCI validation gate can perform — cross-references, whole-folio build status, proof status and QA axes — sitting between the editor's accept and the publication manager's release, so a change that passed block-level review still has to clear folio-level checks before CallActivity_Publication ever runs.</bpmn:documentation>
@@ -97,6 +94,9 @@
     <bpmn:callActivity id="Task_SeedBeans" name="Seed the work plan&#10;[todo-manager]" calledElement="GT_SeedWorkPlan">
       <bpmn:outgoing>H03</bpmn:outgoing>
       <bpmn:incoming>SF_Bean_1</bpmn:incoming>
+      <bpmn:dataOutputAssociation id="DOA_Task_SeedBeans">
+        <bpmn:targetRef>DSR_work_plan</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:callActivity>
     <bpmn:callActivity id="CallActivity_Editing" name="Editing and HCI validation&#10;[content-author]" calledElement="Process_Editing">
       <bpmn:documentation>See editing-hci-validation.bpmn. Runs once per proposed change, not once per cycle.</bpmn:documentation>
@@ -143,6 +143,9 @@
       </bpmn:extensionElements>
       <bpmn:incoming>H07</bpmn:incoming>
       <bpmn:outgoing>H08</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DOA_Task_FeedbackBeans">
+        <bpmn:targetRef>DSR_work_plan</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:task>
     <bpmn:exclusiveGateway id="Gateway_NextCycle" name="More content?">
       <bpmn:documentation>Asked after feedback is filed as beans: is there more content to write for this folio? `yes` returns to editing and HCI validation; `no` retires or archives it.</bpmn:documentation>
@@ -198,6 +201,7 @@
     <bpmn:sequenceFlow id="SF_Bean_2" sourceRef="Call_BeanOpen" targetRef="GW_BeanYours"/>
     <bpmn:sequenceFlow id="SF_Bean_3" name="not yours" sourceRef="GW_BeanYours" targetRef="End_BeanNotYours"/>
     <bpmn:sequenceFlow id="SF_Bean_4" sourceRef="Call_BeanClose" targetRef="EndEvent_Retired"/>
+    <bpmn:dataStoreReference id="DSR_work_plan" name="Work plan (beans)" dataStoreRef="work-plan"/>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_FolioLifecycle">
@@ -207,11 +211,8 @@
       <bpmndi:BPMNShape id="Lane_ProgMgr_di" bpmnElement="Lane_ProgMgr" isHorizontal="true">
         <dc:Bounds x="190" y="80" width="2223" height="150" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_WorkPlan_di" bpmnElement="Lane_WorkPlan" isHorizontal="true">
-        <dc:Bounds x="190" y="230" width="2223" height="430" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Editors_di" bpmnElement="Lane_Editors" isHorizontal="true">
-        <dc:Bounds x="190" y="660" width="2223" height="150" />
+        <dc:Bounds x="190" y="230" width="2223" height="580" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Qa_di" bpmnElement="Lane_Qa" isHorizontal="true">
         <dc:Bounds x="190" y="810" width="2223" height="150" />
@@ -342,6 +343,9 @@
         <di:waypoint x="2235" y="155" />
         <di:waypoint x="2275" y="155" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_DSR_work_plan" bpmnElement="DSR_work_plan"><dc:Bounds x="945" y="1300" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_DOA_Task_SeedBeans" bpmnElement="DOA_Task_SeedBeans"><di:waypoint x="640" y="630"/><di:waypoint x="640" y="1275"/><di:waypoint x="970" y="1275"/><di:waypoint x="970" y="1300"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_DOA_Task_FeedbackBeans" bpmnElement="DOA_Task_FeedbackBeans"><di:waypoint x="1630" y="630"/><di:waypoint x="1630" y="1275"/><di:waypoint x="970" y="1275"/><di:waypoint x="970" y="1300"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

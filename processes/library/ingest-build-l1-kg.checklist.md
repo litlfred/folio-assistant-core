@@ -46,7 +46,7 @@ Build the L1 knowledge graph from what ingestion derived: Dublin Core, the manif
 
 ### 5. Link L1 nodes into the corpus graph (`Task_Link`)
 
-- Who: the `Corpus — L1 source knowledge graph` lane (role `corpus`).
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
 - What: Anything in library/ is L1 source content.
 - Record it: `workflow_complete` with `node: "Task_Link"`.

@@ -58,21 +58,18 @@
         <bpmn:flowNodeRef>EndEvent_Discarded</bpmn:flowNodeRef>
               <bpmn:flowNodeRef>CallActivity_Evidence</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_WorkPlan" name="Work plan — beans (shared by humans and agents)" partitionElementRef="work-plan">
-        <bpmn:documentation>Claims the edit as a bean before drafting starts, so a re-entry cannot silently duplicate the same request, carries the findings onto it before the editor ever sees them, and closes or reopens it against whether the change actually landed. That record is independent of the audit note Task_RecordDecision writes for the decision itself — one tracks the edit's course, the other its outcome.</bpmn:documentation>
-        <bpmn:flowNodeRef>Task_ClaimBean</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>GW_BeanYours</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>End_BeanNotYours</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_LogFindings</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_ResolveBean</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>GW_BeanClosedHow</bpmn:flowNodeRef>
-      </bpmn:lane>
       <bpmn:lane id="Lane_Agent" name="Authoring agent (system)" partitionElementRef="authoring-agent">
         <bpmn:documentation>Produces the proposed change and, once findings exist, weighs the options for it — accept, revise, discard — but stops short of choosing: Call_OptionsAnalysis records that the options were weighed, Task_RecordDecision in the editor's lane records what was chosen, and collapsing the two would let the same party both analyse and decide.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_DraftEdit</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ProposalReady</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReviseEdit</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Call_OptionsAnalysis</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_ClaimBean</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_BeanYours</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_BeanNotYours</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_LogFindings</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_ResolveBean</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_BeanClosedHow</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Pipeline" name="HCI validation pipeline (system)" partitionElementRef="validation-pipeline">
         <bpmn:documentation>Forks validation into its four parallel paths and, once every one reports, collates mechanical results and review findings into a single report. It is the aggregation point rather than a checker itself — its only job is making sure none of the four is missing before the editor sees anything.</bpmn:documentation>
@@ -220,6 +217,9 @@ This step has nothing to do for content that carries no recommendations -- a mat
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_19</bpmn:incoming>
       <bpmn:outgoing>Flow_20</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DOA_Task_LogFindings">
+        <bpmn:targetRef>DSR_work_plan</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
     <bpmn:userTask id="Task_ReviewFindings" name="Review the findings">
       <bpmn:documentation>THE GATE: the editor sees every finding BEFORE anything reaches the corpus.</bpmn:documentation>
@@ -337,6 +337,7 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
     <bpmn:sequenceFlow id="SF_Bean_1" sourceRef="Task_ClaimBean" targetRef="GW_BeanYours"/>
     <bpmn:sequenceFlow id="SF_Bean_2" name="not yours" sourceRef="GW_BeanYours" targetRef="End_BeanNotYours"/>
     <bpmn:sequenceFlow name="discarded" id="SF_Bean_3" sourceRef="GW_BeanClosedHow" targetRef="EndEvent_Discarded"/>
+    <bpmn:dataStoreReference id="DSR_work_plan" name="Work plan (beans)" dataStoreRef="work-plan"/>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_FolioEditing">
@@ -347,11 +348,8 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
       <bpmndi:BPMNShape id="Lane_Editor_di" bpmnElement="Lane_Editor" isHorizontal="true">
         <dc:Bounds x="190" y="80" width="3363" height="150" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_WorkPlan_di" bpmnElement="Lane_WorkPlan" isHorizontal="true">
-        <dc:Bounds x="190" y="230" width="3363" height="260" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Agent_di" bpmnElement="Lane_Agent" isHorizontal="true">
-        <dc:Bounds x="190" y="490" width="3363" height="150" />
+        <dc:Bounds x="190" y="230" width="3363" height="410" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Pipeline_di" bpmnElement="Lane_Pipeline" isHorizontal="true">
         <dc:Bounds x="190" y="640" width="3363" height="150" />
@@ -622,6 +620,8 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
       <bpmndi:BPMNEdge id="SF_Bean_3_di" bpmnElement="SF_Bean_3"><di:waypoint x="3403" y="330"/><di:waypoint x="3403" y="356"/><di:waypoint x="3518" y="356"/>
         <bpmndi:BPMNLabel><dc:Bounds x="3407" y="334.5" width="90" height="17" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_DSR_work_plan" bpmnElement="DSR_work_plan"><dc:Bounds x="1989.33" y="1542" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_DOA_Task_LogFindings" bpmnElement="DOA_Task_LogFindings"><di:waypoint x="2150" y="355.5"/><di:waypoint x="2150" y="1517"/><di:waypoint x="2014.33" y="1517"/><di:waypoint x="2014.33" y="1542"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

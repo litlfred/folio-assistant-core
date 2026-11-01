@@ -44,6 +44,9 @@
         <bpmn:flowNodeRef>Gateway_Sufficient</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_AttachEvidence</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_EvidenceAttached</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RecordUnverified</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RecordGap</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_GapRecorded</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Agent" name="Evidence agent (system)" partitionElementRef="evidence-agent">
         <bpmn:documentation>The appraisal in the role's own description happens elsewhere in this diagram: this lane only fans out in parallel across the three evidence classes and joins the candidates, while grading is Lane_Author's call and authority is Lane_Trusted's — so what it owns here is coverage, not judgement.</bpmn:documentation>
@@ -57,12 +60,6 @@
         <bpmn:documentation>Task_VerifyAuthority and its gateway sit here rather than with Lane_Agent because the decision is not this instance's call — it is a readout of what the external API returns, and the moment that answer is uncertain or absent, Lane_WorkPlan opens a bean rather than this lane inventing a verdict.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_VerifyAuthority</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Authoritative</bpmn:flowNodeRef>
-      </bpmn:lane>
-      <bpmn:lane id="Lane_WorkPlan" name="Work plan — beans (shared)" partitionElementRef="work-plan">
-        <bpmn:documentation>Catches two different shortfalls at two different severities: an unverified citation is noted but the process continues into grading, while an insufficient body of evidence ends the process at its own event — so only the second is fatal, and both stay visible in the work plan rather than one being silently absorbed into the other.</bpmn:documentation>
-        <bpmn:flowNodeRef>Task_RecordUnverified</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_RecordGap</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>EndEvent_GapRecorded</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:startEvent id="StartEvent_Recommendation" name="A recommendation is in play">
@@ -153,6 +150,9 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_12</bpmn:incoming>
       <bpmn:outgoing>Flow_14</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DOA_Task_RecordUnverified">
+        <bpmn:targetRef>DSR_work_plan</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
     <bpmn:userTask id="Task_AppraiseGrade" name="Appraise and grade the body of evidence">
       <bpmn:documentation>Certainty of evidence per the grading system the folio declares. The grade attaches to the BODY of evidence for one PICO question, not to an individual citation -- which is why this step is after the join and not inside the fan-out.</bpmn:documentation>
@@ -177,6 +177,9 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_16</bpmn:incoming>
       <bpmn:outgoing>Flow_18</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DOA_Task_RecordGap">
+        <bpmn:targetRef>DSR_work_plan</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
     <bpmn:userTask id="Task_AttachEvidence" name="Attach the evidence to the recommendation&#10;[content-author]">
       <bpmn:documentation>The PICO, the graded body of evidence, each verified citation and its resolved authority record are written onto the recommendation block, so a reader can retrace the whole chain from the sentence back to the source.</bpmn:documentation>
@@ -211,14 +214,14 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
     <bpmn:sequenceFlow id="Flow_17" name="yes" sourceRef="Gateway_Sufficient" targetRef="Task_AttachEvidence" />
     <bpmn:sequenceFlow id="Flow_18" sourceRef="Task_RecordGap" targetRef="EndEvent_GapRecorded" />
     <bpmn:sequenceFlow id="Flow_19" sourceRef="Task_AttachEvidence" targetRef="EndEvent_EvidenceAttached" />
+    <bpmn:dataStoreReference id="DSR_work_plan" name="Work plan (beans)" dataStoreRef="work-plan"/>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="Diagram_EvidenceRetrieval">
     <bpmndi:BPMNPlane id="Plane_EvidenceRetrieval" bpmnElement="Collaboration_EvidenceRetrieval">
       <bpmndi:BPMNShape id="Participant_EvidenceRetrieval_di" bpmnElement="Participant_EvidenceRetrieval" isHorizontal="true"><dc:Bounds x="160" y="80" width="2765" height="767" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_Author_di" bpmnElement="Lane_Author" isHorizontal="true"><dc:Bounds x="190" y="440" width="2735" height="227" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Author_di" bpmnElement="Lane_Author" isHorizontal="true"><dc:Bounds x="190" y="440" width="2735" height="407" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Agent_di" bpmnElement="Lane_Agent" isHorizontal="true"><dc:Bounds x="190" y="260" width="2735" height="180" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Trusted_di" bpmnElement="Lane_Trusted" isHorizontal="true"><dc:Bounds x="190" y="80" width="2735" height="180" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_WorkPlan_di" bpmnElement="Lane_WorkPlan" isHorizontal="true"><dc:Bounds x="190" y="667" width="2735" height="180" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_Recommendation_di" bpmnElement="StartEvent_Recommendation"><dc:Bounds x="277" y="512" width="36" height="36" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReviewExisting_di" bpmnElement="Task_ReviewExisting"><dc:Bounds x="415" y="479.5" width="180" height="101" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_FramePico_di" bpmnElement="Task_FramePico"><dc:Bounds x="635" y="479.5" width="180" height="101" /></bpmndi:BPMNShape>
@@ -345,6 +348,9 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
         <di:waypoint x="2610" y="530" />
         <di:waypoint x="2645" y="530" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_DSR_work_plan" bpmnElement="DSR_work_plan"><dc:Bounds x="2070" y="887" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_DOA_Task_RecordUnverified" bpmnElement="DOA_Task_RecordUnverified"><di:waypoint x="1845" y="807.5"/><di:waypoint x="1845" y="862"/><di:waypoint x="2095" y="862"/><di:waypoint x="2095" y="887"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Edge_DOA_Task_RecordGap" bpmnElement="DOA_Task_RecordGap"><di:waypoint x="2345" y="807.5"/><di:waypoint x="2345" y="862"/><di:waypoint x="2095" y="862"/><di:waypoint x="2095" y="887"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

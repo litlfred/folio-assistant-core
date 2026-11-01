@@ -96,9 +96,6 @@
         <bpmn:flowNodeRef>Task_CreateRepo</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_HandOff</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Scaffold</bpmn:flowNodeRef>
-      </bpmn:lane>
-      <bpmn:lane id="Lane_WorkPlan" name="Work plan (beans)" partitionElementRef="work-plan">
-        <bpmn:documentation>Seeds one bean per top-level content object the author named, positioned after scaffolding but before the Pages probe — a work plan exists for a folio whose publication status is not yet known, rather than waiting on that answer.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_SeedPlan</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Call_BeanOpen</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>GW_BeanYours</bpmn:flowNodeRef>
@@ -240,6 +237,9 @@ authoring">
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_provision</bpmn:outgoing>
       <bpmn:incoming>SF_Bean_1</bpmn:incoming>
+      <bpmn:dataOutputAssociation id="DOA_Task_SeedPlan">
+        <bpmn:targetRef>DSR_work_plan</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
 
     <bpmn:serviceTask id="Task_ProvisionGhPages" name="Provision gh-pages">
@@ -361,14 +361,14 @@ be confirmed">
     <bpmn:sequenceFlow id="SF_Bean_2" sourceRef="Call_BeanOpen" targetRef="GW_BeanYours"/>
     <bpmn:sequenceFlow id="SF_Bean_3" name="not yours" sourceRef="GW_BeanYours" targetRef="End_BeanNotYours"/>
     <bpmn:sequenceFlow id="SF_Bean_4" sourceRef="Call_BeanClose" targetRef="EndEvent_Ready"/>
+    <bpmn:dataStoreReference id="DSR_work_plan" name="Work plan (beans)" dataStoreRef="work-plan"/>
   </bpmn:process>
 
   <bpmndi:BPMNDiagram id="Diagram_GettingStarted">
     <bpmndi:BPMNPlane id="Plane_GettingStarted" bpmnElement="Collaboration_GettingStarted">
       <bpmndi:BPMNShape id="Participant_GettingStarted_di" bpmnElement="Participant_GettingStarted" isHorizontal="true"><dc:Bounds x="160" y="80" width="2375" height="1240" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_User_di" bpmnElement="Lane_User" isHorizontal="true"><dc:Bounds x="190" y="80" width="2345" height="150" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_Agent_di" bpmnElement="Lane_Agent" isHorizontal="true"><dc:Bounds x="190" y="230" width="2345" height="360" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_WorkPlan_di" bpmnElement="Lane_WorkPlan" isHorizontal="true"><dc:Bounds x="190" y="590" width="2345" height="390" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Agent_di" bpmnElement="Lane_Agent" isHorizontal="true"><dc:Bounds x="190" y="230" width="2345" height="750" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Publish_di" bpmnElement="Lane_Publish" isHorizontal="true"><dc:Bounds x="190" y="980" width="2345" height="340" /></bpmndi:BPMNShape>
 
       <bpmndi:BPMNShape id="StartEvent_AskToStart_di" bpmnElement="StartEvent_AskToStart"><dc:Bounds x="240" y="137" width="36" height="36" /></bpmndi:BPMNShape>
@@ -532,6 +532,8 @@ be confirmed">
         <di:waypoint x="2395" y="1040" />
         <di:waypoint x="2435" y="1040" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_DSR_work_plan" bpmnElement="DSR_work_plan"><dc:Bounds x="1445" y="1360" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_DOA_Task_SeedPlan" bpmnElement="DOA_Task_SeedPlan"><di:waypoint x="1470" y="965"/><di:waypoint x="1470" y="1360"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

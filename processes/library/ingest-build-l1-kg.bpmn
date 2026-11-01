@@ -46,9 +46,6 @@
         <bpmn:flowNodeRef>Task_Manifest</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Assets</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Bind</bpmn:flowNodeRef>
-      </bpmn:lane>
-      <bpmn:lane id="Lane_1" name="Corpus — L1 source knowledge graph" partitionElementRef="corpus">
-        <bpmn:documentation>The single moment the four records Lane_0 wrote become reachable by reference rather than just present on disk: Task_Link is what a knowledge-graph reference in a paper, an L2 or an L3 artefact actually resolves through, and until it runs, dublin-core.jsonld and its siblings are files in library/ that nothing in the graph points to yet.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_Link</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_KgBuilt</bpmn:flowNodeRef>
       </bpmn:lane>
@@ -105,6 +102,9 @@ the corpus graph">
       <bpmn:documentation>Anything in library/ is L1 source content. A knowledge-graph reference from any artefact -- paper, L2, L3 -- resolves to it through library/.</bpmn:documentation>
       <bpmn:incoming>Flow_k5</bpmn:incoming>
       <bpmn:outgoing>Flow_k6</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DOA_Task_Link">
+        <bpmn:targetRef>DSR_corpus</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:task>
     <bpmn:endEvent id="EndEvent_KgBuilt" name="L1 graph built">
       <bpmn:incoming>Flow_k6</bpmn:incoming>
@@ -115,12 +115,12 @@ the corpus graph">
     <bpmn:sequenceFlow id="Flow_k4" sourceRef="Task_Assets" targetRef="Task_Bind" />
     <bpmn:sequenceFlow id="Flow_k5" sourceRef="Task_Bind" targetRef="Task_Link" />
     <bpmn:sequenceFlow id="Flow_k6" sourceRef="Task_Link" targetRef="EndEvent_KgBuilt" />
+    <bpmn:dataStoreReference id="DSR_corpus" name="Corpus" dataStoreRef="corpus"/>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="Diagram_BuildL1Kg">
     <bpmndi:BPMNPlane id="Plane_BuildL1Kg" bpmnElement="Collaboration_BuildL1Kg">
       <bpmndi:BPMNShape id="Participant_BuildL1Kg_di" bpmnElement="Participant_BuildL1Kg" isHorizontal="true"><dc:Bounds x="160" y="80" width="1540" height="360" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_0_di" bpmnElement="Lane_0" isHorizontal="true"><dc:Bounds x="190" y="80" width="1510" height="180" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_1_di" bpmnElement="Lane_1" isHorizontal="true"><dc:Bounds x="190" y="260" width="1510" height="180" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_0_di" bpmnElement="Lane_0" isHorizontal="true"><dc:Bounds x="190" y="80" width="1510" height="360" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_Derived2_di" bpmnElement="StartEvent_Derived2"><dc:Bounds x="277" y="152" width="36" height="36" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Dublin_di" bpmnElement="Task_Dublin"><dc:Bounds x="410" y="130" width="150" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Manifest_di" bpmnElement="Task_Manifest"><dc:Bounds x="600" y="129" width="180" height="82" /></bpmndi:BPMNShape>
@@ -151,6 +151,8 @@ the corpus graph">
         <di:waypoint x="1410" y="350" />
         <di:waypoint x="1507" y="350" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_DSR_corpus" bpmnElement="DSR_corpus"><dc:Bounds x="1310" y="480" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_DOA_Task_Link" bpmnElement="DOA_Task_Link"><di:waypoint x="1335" y="390"/><di:waypoint x="1335" y="480"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

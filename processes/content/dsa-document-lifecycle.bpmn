@@ -64,19 +64,6 @@
         <bpmn:flowNodeRef>GW_WidensJoin</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_EndDuties</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_WorkPlan" name="Work plan — beans (shared by humans and agents)" partitionElementRef="work-plan">
-        <bpmn:documentation>Opens a bean when an agreement is requested or changed, and closes it when a version is published or the agreement has ended. A resumed session can then pick up a half-negotiated agreement without starting again.</bpmn:documentation>
-        <bpmn:flowNodeRef>Call_BeanOpen</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>GW_BeanYours</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>End_BeanNotYours</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>End_InForce</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Call_BeanOpenChange</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>GW_BeanYoursChange</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>End_BeanNotYoursChange</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Call_BeanCloseEnded</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>GW_BeanClosedHow</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>End_Ended</bpmn:flowNodeRef>
-      </bpmn:lane>
       <bpmn:lane id="Lane_Author" name="Author and policy author" partitionElementRef="author">
         <bpmn:documentation>Writes the legal text and, for a computable agreement, derives the ODRL 2.2 Agreement from it. Every loop comes back here: a review that asks for changes, an amendment, and a renewal that needs a new version.</bpmn:documentation>
         <bpmn:flowNodeRef>GW_DraftMerge</bpmn:flowNodeRef>
@@ -90,6 +77,16 @@
         <bpmn:flowNodeRef>GW_ComputableJoin</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_SplitAnnexes</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_OdrlCitesText</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Call_BeanOpen</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_BeanYours</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_BeanNotYours</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_InForce</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Call_BeanOpenChange</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_BeanYoursChange</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_BeanNotYoursChange</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Call_BeanCloseEnded</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_BeanClosedHow</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_Ended</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Reviewer" name="Reviewer (legal, policy)" partitionElementRef="reviewer">
         <bpmn:documentation>Checks the ODRL against the text, and reviews the whole draft. Decides whether the public terms go out for public comment, and whether the draft is ready to sign.</bpmn:documentation>
@@ -478,8 +475,7 @@
       <bpmndi:BPMNEdge id="Edge_Flow_GW_BeanClosedHow" bpmnElement="Flow_GW_BeanClosedHow"><di:waypoint x="6950" y="305"/><di:waypoint x="6990" y="305"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_DsaDocumentLifecycle_di" bpmnElement="Participant_DsaDocumentLifecycle" isHorizontal="true"><dc:Bounds x="160" y="80" width="6938" height="1080" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Parties_di" bpmnElement="Lane_Parties" isHorizontal="true"><dc:Bounds x="190" y="80" width="6908" height="150" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_WorkPlan_di" bpmnElement="Lane_WorkPlan" isHorizontal="true"><dc:Bounds x="190" y="230" width="6908" height="180" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_Author_di" bpmnElement="Lane_Author" isHorizontal="true"><dc:Bounds x="190" y="410" width="6908" height="150" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Author_di" bpmnElement="Lane_Author" isHorizontal="true"><dc:Bounds x="190" y="230" width="6908" height="330" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Reviewer_di" bpmnElement="Lane_Reviewer" isHorizontal="true"><dc:Bounds x="190" y="560" width="6908" height="150" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_PublicReview_di" bpmnElement="Lane_PublicReview" isHorizontal="true"><dc:Bounds x="190" y="710" width="6908" height="150" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Publisher_di" bpmnElement="Lane_Publisher" isHorizontal="true"><dc:Bounds x="190" y="860" width="6908" height="150" /></bpmndi:BPMNShape>

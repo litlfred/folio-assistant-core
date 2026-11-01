@@ -21,7 +21,7 @@ What happens to one proposed change to one content block: drafted, validated mec
 
 ### 2. Open the bean (`Task_ClaimBean`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Authoring agent (system)` lane (role `authoring-agent`).
 - Skill: `bean-coordination`.
 - What: Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's.
 - A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
@@ -130,7 +130,7 @@ What happens to one proposed change to one content block: drafted, validated mec
 
 ### 11. Log findings on the bean (`Task_LogFindings`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Authoring agent (system)` lane (role `authoring-agent`).
 - Skill: `todo-manager`.
 - What: Findings are appended to the bean, so the next agent or human sees what is outstanding.
 - Record it: `workflow_complete` with `node: "Task_LogFindings"`.
@@ -177,7 +177,7 @@ What happens to one proposed change to one content block: drafted, validated mec
 
 ### 16. Close the bean (`Task_ResolveBean`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Authoring agent (system)` lane (role `authoring-agent`).
 - Skill: `todo-manager`.
 - What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
 - A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
