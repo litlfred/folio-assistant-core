@@ -1338,6 +1338,21 @@ describe("only the tags are bold in the agent's feedback (owner, 2026-11-01)", (
   });
 });
 
+describe("the ask comes first in the agent's feedback (owner, 2026-11-01)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { withProgress };`)({}) as { withProgress: (t: string, l: string) => string };
+  test("a bare proposal gets the review ask on top", () => {
+    expect(fns.withProgress("Proposed direction: accept.", "").split("\n")[0]).toMatch(/^\u23f3 Please review: do you agree with the proposed direction below\?/);
+  });
+  test("no Decision needed block, no Decision needed status line", () => {
+    const out = fns.withProgress("Status: draft PR r#1.", "\u23f3 Needs you: answer the Decision needed below, then set Ready for agent to Yes.");
+    expect(out).toBe("Status: draft PR r#1.");
+  });
+  test("a real Decision needed block keeps its status line", () => {
+    const l = "\u23f3 Needs you: answer the Decision needed below, then set Ready for agent to Yes.";
+    expect(fns.withProgress("Decision needed: which?\nA. x\nB. y", l).split("\n")[0]).toBe(l);
+  });
+});
+
 describe("the timer runs every minute (owner, 2026-10-31)", () => {
   test("a sheet on the old 5-minute timer moves itself to 1 minute, once", () => {
     const made: number[] = [], removed: string[] = [];

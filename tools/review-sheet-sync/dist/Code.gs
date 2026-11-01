@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 d15faf4abe76d677.
+// folio-assistant-core tools/review-sheet-sync at template sha256 1f1b7d5be7f00449.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 d15faf4abe76d677';
+const SCRIPT_VERSION = 'template sha256 1f1b7d5be7f00449';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -1550,7 +1550,22 @@ function withProgress(text, line) {
   const lines = t.split('\n');
   const stale = lines[0] === STALE ? [lines.shift()] : [];
   while (lines.length && (lines[0].indexOf(PROGRESS) === 0 || lines[0].indexOf(STATUS_SUB) === 0)) lines.shift();
-  return stale.concat(l ? [l] : [], lines).join('\n');
+  return stale.concat(askFirst(l, lines), lines).join('\n');
+}
+
+/**
+ * The ask comes first, and says exactly what to answer (owner, 2026-11-01:
+ * "these feedback are not at all clear what agent asking contributors to
+ * respond about"). A "Decision needed" status line stays only when the cell
+ * has a Decision needed block; a bare proposal gets the review ask.
+ */
+const ASK_PROPOSAL = 'Please review: do you agree with the proposed direction below? Write yes, or what to change, in your feedback column. Then an Editor sets Ready for agent to Yes.';
+function askFirst(l, lines) {
+  const body = lines.join('\n');
+  const asksDecision = /Decision needed/.test(String(l || ''));
+  if (asksDecision && !/Decision needed/.test(body)) l = '';
+  if (!l && /^Proposed direction/.test(body) && !/Decision needed/.test(body)) return [PROGRESS + ASK_PROPOSAL];
+  return l ? [l] : [];
 }
 
 /**

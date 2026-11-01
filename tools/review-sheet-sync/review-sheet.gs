@@ -1550,7 +1550,22 @@ function withProgress(text, line) {
   const lines = t.split('\n');
   const stale = lines[0] === STALE ? [lines.shift()] : [];
   while (lines.length && (lines[0].indexOf(PROGRESS) === 0 || lines[0].indexOf(STATUS_SUB) === 0)) lines.shift();
-  return stale.concat(l ? [l] : [], lines).join('\n');
+  return stale.concat(askFirst(l, lines), lines).join('\n');
+}
+
+/**
+ * The ask comes first, and says exactly what to answer (owner, 2026-11-01:
+ * "these feedback are not at all clear what agent asking contributors to
+ * respond about"). A "Decision needed" status line stays only when the cell
+ * has a Decision needed block; a bare proposal gets the review ask.
+ */
+const ASK_PROPOSAL = 'Please review: do you agree with the proposed direction below? Write yes, or what to change, in your feedback column. Then an Editor sets Ready for agent to Yes.';
+function askFirst(l, lines) {
+  const body = lines.join('\n');
+  const asksDecision = /Decision needed/.test(String(l || ''));
+  if (asksDecision && !/Decision needed/.test(body)) l = '';
+  if (!l && /^Proposed direction/.test(body) && !/Decision needed/.test(body)) return [PROGRESS + ASK_PROPOSAL];
+  return l ? [l] : [];
 }
 
 /**
