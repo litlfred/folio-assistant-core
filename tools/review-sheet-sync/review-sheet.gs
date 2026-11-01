@@ -270,8 +270,22 @@ function placeBefore(sh, name, before) {
   if (!sh) return false;
   const s = readSheet(sh), a = s.header.indexOf(name), b = s.header.indexOf(before);
   if (a < 0 || b < 0 || a === b - 1) return false;
-  // moveColumns' destination is the index BEFORE the move, 1-based.
-  sh.moveColumns(sh.getRange(1, a + 1, 1, 1), b + 1);
+  // The Instructions cell above the header is merged across the columns, and
+  // Sheets refuses to move a column through a merge, so the move silently
+  // failed (owner, 2026-11-01: "i think you need to unmerge the instructions
+  // cell to be able to move"). Break the merges above the header, move, and
+  // merge the same cells again; the merged text sits in the first cell, which
+  // does not move.
+  const above = s.top - 2;
+  const merges = above > 0 ? sh.getRange(1, 1, above, sh.getLastColumn()).getMergedRanges() : [];
+  const spans = merges.map(m => [m.getRow(), m.getColumn(), m.getNumRows(), m.getNumColumns()]);
+  merges.forEach(m => m.breakApart());
+  try {
+    // moveColumns' destination is the index BEFORE the move, 1-based.
+    sh.moveColumns(sh.getRange(1, a + 1, 1, 1), b + 1);
+  } finally {
+    spans.forEach(([r, c, nr, nc]) => sh.getRange(r, c, nr, nc).merge());
+  }
   return true;
 }
 
@@ -769,13 +783,65 @@ function headerNotes(ss) {
   });
 }
 const KEY_COLOURS = { blue: '#1f5fa8', green: '#2e7d32', orange: '#c25e00', grey: '#666666' };
+const KEY_ORDER = ['blue', 'green', 'orange', 'grey'];
+const KEY_LEAD_RE = /^Column colou?rs:\s*/;
 const KEY_WORD_RE = /\b(blue|green|orange|grey)\b/gi;
-function keyRuns(text) {
+/**
+ * Which key colour a header's fill is: grey when its channels are close,
+ * otherwise the strongest channel (blue, green, or red for orange). A white
+ * or unfilled head has no colour.
+ */
+function fillGroup(hex) {
+  const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(String(hex || ''));
+  if (!m) return null;
+  const [r, g, b] = [m[1], m[2], m[3]].map(x => parseInt(x, 16) / 255);
+  if (Math.min(r, g, b) > 0.95) return null;
+  if (Math.max(r, g, b) - Math.min(r, g, b) < 0.08) return 'grey';
+  return b >= r && b >= g ? 'blue' : g >= r ? 'green' : 'orange';
+}
+/**
+ * Column names to colour in the Instructions text, each with its header's
+ * key colour (owner, 2026-11-01: "make use of colors match the column
+ * headers"). A people's column with initials in its head ("Contributor
+ * Feedback (CL)") is also found by its bare name.
+ */
+function headerColours(ss) {
+  const out = {};
+  ss.getSheets().forEach(sh => {
+    if (sh.isSheetHidden() || sh.getName() === CONFIG_TAB || sh.getLastColumn() < 1) return;
+    const n = Math.min(5, sh.getLastRow());
+    if (n < 1) return;
+    const row = legendCount(sh.getRange(1, 1, n, 1).getDisplayValues().map(r => r[0])) + 1;
+    const r = sh.getRange(row, 1, 1, sh.getLastColumn());
+    const heads = r.getDisplayValues()[0], fills = r.getBackgrounds()[0];
+    heads.forEach((h, i) => {
+      const name = String(h).trim(), grp = fillGroup(fills[i]);
+      if (!name || !grp) return;
+      if (!out[name]) out[name] = grp;
+      const bare = /^(.*Feedback) \((?!agent\)).*\)$/.exec(name);
+      if (bare && !out[bare[1]]) out[bare[1]] = grp;
+    });
+  });
+  return out;
+}
+/** [start, end, colour] runs for one Instructions text. */
+function keyRuns(text, heads) {
   const runs = [];
   const nl = text.indexOf('\n');
   const first = nl < 0 ? text : text.slice(0, nl);
   let keyEnd = 0;
-  if (/^(blue|green|orange|grey) = /i.test(first)) {
+  const lead = KEY_LEAD_RE.exec(first);
+  if (lead) {
+    // "Column colours:     your input ...     written by the agent ...": the
+    // phrases in key order, no colour named.
+    let at = lead[0].length, k = 0;
+    first.slice(at).split(/(\s{3,})/).forEach(part => {
+      if (/^\s+$/.test(part)) { at += part.length; return; }
+      if (part && k < KEY_ORDER.length) runs.push([at, at + part.length, KEY_COLOURS[KEY_ORDER[k++]]]);
+      at += part.length;
+    });
+    keyEnd = first.length;
+  } else if (/^(blue|green|orange|grey) = /i.test(first)) {
     const seg = /(blue|green|orange|grey) = .*?(?=\s{3,}|$)/gi;
     let m;
     while ((m = seg.exec(first))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
@@ -784,7 +850,19 @@ function keyRuns(text) {
   let m;
   KEY_WORD_RE.lastIndex = keyEnd;
   while ((m = KEY_WORD_RE.exec(text))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
-  return runs;
+  // Column names, longest first, whole words only, never inside a run already taken.
+  const names = Object.keys(heads || {}).sort((a, b) => b.length - a.length);
+  const taken = (a, z) => runs.some(([x, y]) => a < y && z > x);
+  const word = ch => /[A-Za-z0-9]/.test(ch || '');
+  names.forEach(name => {
+    let at = text.indexOf(name, keyEnd);
+    while (at >= 0) {
+      const z = at + name.length;
+      if (!word(text[at - 1]) && !word(text[z]) && !taken(at, z)) runs.push([at, z, KEY_COLOURS[heads[name]]]);
+      at = text.indexOf(name, z);
+    }
+  });
+  return runs.sort((a, b) => a[0] - b[0]);
 }
 /**
  * The Config tab's colours, kept by every refresh so a row the agent wrote
@@ -818,6 +896,7 @@ function styleConfig(ss) {
 
 function colourInstructions(ss) {
   if (!ss) throw new Error(RUN_THIS);
+  const heads = headerColours(ss);
   ss.getSheets().forEach(sh => {
     const n = Math.min(5, sh.getLastRow());
     if (n < 2 || sh.getLastColumn() < 2) return;
@@ -826,8 +905,12 @@ function colourInstructions(ss) {
       const cell = sh.getRange(r, 2);
       const now = cell.getRichTextValue();
       const text = now ? now.getText() : '';
-      const runs = keyRuns(text);
-      if (!runs.length || (now.getTextStyle(runs[0][0], runs[0][1]).getForegroundColor() || '').toLowerCase() === runs[0][2]) continue;
+      const runs = keyRuns(text, heads);
+      // Rewritten only when some run lacks its colour, so a refresh is cheap.
+      if (!runs.length || runs.every(([a, z, c]) => {
+        const st = now.getTextStyle(a, z);
+        return (st.getForegroundColor() || '').toLowerCase() === c && st.isBold();
+      })) continue;
       const b = SpreadsheetApp.newRichTextValue().setText(text);
       runs.forEach(([a, z, c]) => b.setTextStyle(a, z, SpreadsheetApp.newTextStyle().setForegroundColor(c).setBold(true).build()));
       const url = /https?:\/\/\S+/g;

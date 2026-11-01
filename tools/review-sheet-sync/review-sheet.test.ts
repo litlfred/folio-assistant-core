@@ -506,11 +506,14 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json")).map((r) => r[0])).not.toContain("Instructions - Dropdown");
     const d = tabInstructions(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
     const cf = d["Contributor Feedback"];
-    expect(cf).toContain("Blue = your input, by the Authoring Committee");
-    expect(cf).toContain("Ready for agent (Orange) back to No");
+    expect(cf).toContain("Column colours:     your input, by the Authoring Committee");
+    expect(cf).toContain("sets Ready for agent back to No");
+    expect(cf).toContain("Reviewers update Contributor Feedback.");
     expect(cf).toContain("Filter views");
-    // Colour words are capitalised, so the sheet can bold and colour each one.
-    expect(cf).not.toMatch(/\b(blue|green|orange|grey)\b/);
+    // No colour is named: the script colours the column names (owner, 2026-11-01).
+    for (const t of [...Object.values(d), ...Object.values(tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json")))]) {
+      expect(t).not.toMatch(/\b(blue|green|orange|grey)\b/i);
+    }
     expect(cf).toContain("/en/cat-harness/processes/contributor-feedback.html");
     const p = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
     expect(p["Review Public Comments"]).toContain("one row per public comment");
@@ -992,25 +995,40 @@ describe("the Config tab's rows", () => {
 });
 
 describe("the colour key in Instructions text", () => {
-  const keyRuns = new Function("SpreadsheetApp", `${code}\nreturn keyRuns;`)({}) as (t: string) => [number, number, string][];
+  const keyRuns = new Function("SpreadsheetApp", `${code}\nreturn keyRuns;`)({}) as (t: string, h?: Record<string, string>) => [number, number, string][];
+  const fillGroup = new Function("SpreadsheetApp", `${code}\nreturn fillGroup;`)({}) as (h: string) => string | null;
   const text = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"))["Review Change Sets"];
-  const runs = keyRuns(text);
+  const heads = { "Ready for agent": "orange", "Ready for merge": "orange", "Agentic status": "green", "Agentic status (filter)": "green", "Committee Feedback": "blue", "Disposition": "blue", "Staging review": "green" };
+  const runs = keyRuns(text, heads);
   const words = runs.map(([a, z, c]) => [text.slice(a, z), c]);
 
-  test("each key segment on the first line is coloured whole, in its own colour", () => {
-    expect(words.slice(0, 4).map(([w]) => w.split(" = ")[0])).toEqual(["Blue", "Green", "Orange", "Grey"]);
-    expect(words[0][0]).toContain("your input");
+  test("each key phrase on the first line is coloured whole, in key order, naming no colour", () => {
+    expect(words[0][0]).toBe("your input, by the Feedback Review Committee");
+    expect(words[1][0]).toBe("written by the agent");
     expect(new Set(words.slice(0, 4).map(([, c]) => c)).size).toBe(4);
   });
 
-  test("later colour words are coloured one by one, with the key's colour", () => {
+  test("column names are coloured like their header, whole words, longest first", () => {
     const later = words.slice(4);
-    expect(later.length).toBeGreaterThan(3);
-    for (const [w, c] of later) expect(c).toBe(words.find(([k]) => k.toLowerCase().startsWith(w.toLowerCase()))![1]);
+    for (const [w, c] of later) expect(["#1f5fa8", "#2e7d32", "#c25e00", "#666666"]).toContain(c);
+    expect(later).toContainEqual(["Ready for agent", "#c25e00"]);
+    expect(later).toContainEqual(["Ready for merge", "#c25e00"]);
+    expect(later).toContainEqual(["Committee Feedback", "#1f5fa8"]);
+    expect(later).toContainEqual(["Agentic status", "#2e7d32"]);
+    // No overlapping runs.
+    for (let i = 1; i < runs.length; i++) expect(runs[i][0]).toBeGreaterThanOrEqual(runs[i - 1][1]);
   });
 
-  test("text without a colour word gets no runs", () => {
-    expect(keyRuns("Kept by the agent's watcher. Do not edit.")).toEqual([]);
+  test("header fills map to the key colour", () => {
+    expect(fillGroup("#9dc3e7")).toBe("blue");
+    expect(fillGroup("#f4b16a")).toBe("orange");
+    expect(fillGroup("#93c27c")).toBe("green");
+    expect(fillGroup("#b6b6b6")).toBe("grey");
+    expect(fillGroup("#ffffff")).toBe(null);
+  });
+
+  test("text without a colour word or column name gets no runs", () => {
+    expect(keyRuns("Kept by the agent's watcher. Do not edit.", heads)).toEqual([]);
   });
 });
 
@@ -1511,18 +1529,23 @@ describe("data rows look like data rows (owner, 2026-10-31: \"why row 3 bold\")"
 
 describe("Agentic status sits left of its filter column (owner, 2026-10-31)", () => {
   const placeBefore = new Function("SpreadsheetApp", `${code}\nreturn placeBefore;`)({});
-  const sheetWith = (header: string[], moves: Array<[number, number]>) => ({
+  const sheetWith = (header: string[], moves: Array<unknown>) => ({
     getLastRow: () => 2, getLastColumn: () => header.length,
-    getRange: (r: number, c: number) => ({ getDisplayValues: () => [["Instructions", ...header.slice(1).map(() => "")], header], col: c }),
+    getRange: (r: number, c: number, nr?: number, nc?: number) => ({
+      getDisplayValues: () => [["Instructions", ...header.slice(1).map(() => "")], header], col: c,
+      // The Instructions cell, merged across B..last, blocks a move until broken apart.
+      getMergedRanges: () => [{ getRow: () => 1, getColumn: () => 2, getNumRows: () => 1, getNumColumns: () => header.length - 1, breakApart: () => moves.push("unmerge") }],
+      merge: () => moves.push(["merge", r, c, nr, nc]),
+    }),
     moveColumns: (range: { col: number }, to: number) => moves.push([range.col, to]),
   });
-  test("moves it from after Issue to just before the filter", () => {
-    const moves: Array<[number, number]> = [];
+  test("moves it from after Issue to just before the filter, unmerging the Instructions cell around the move", () => {
+    const moves: Array<unknown> = [];
     expect(placeBefore(sheetWith(["Change-set", "Agentic status (filter)", "Issue", "Agentic status"], moves), "Agentic status", "Agentic status (filter)")).toBe(true);
-    expect(moves).toEqual([[4, 2]]);
+    expect(moves).toEqual(["unmerge", [4, 2], ["merge", 1, 2, 1, 3]]);
   });
   test("leaves it when it is already there", () => {
-    const moves: Array<[number, number]> = [];
+    const moves: Array<unknown> = [];
     expect(placeBefore(sheetWith(["Change-set", "Agentic status", "Agentic status (filter)"], moves), "Agentic status", "Agentic status (filter)")).toBe(false);
     expect(moves).toEqual([]);
   });
