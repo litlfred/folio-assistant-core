@@ -179,12 +179,13 @@ function markSetup(ss, state) {
 }
 
 function showVersion() {
-  SpreadsheetApp.getUi().alert('Review sheet script',
-    'This sheet runs: ' + SCRIPT_VERSION + '\n\n' +
-    'The latest published script: ' + LATEST_URL + '\n' +
-    'Its stamp is near the top ("at ..."). If it differs, the owner pastes it once into the Folio Review Library ' +
-    '(' + LIBRARY_URL + '); every sheet that uses the library then runs it. A sheet with the whole script pasted in ' +
-    'instead: Extensions, then Apps Script, replace Code.gs, save, and Review links, then Refresh now.',
+  // Short and plain (owner, 2026-11-01: the old text was "long, unclear").
+  const build = String(SCRIPT_VERSION).replace(/^template sha256 /, '');
+  SpreadsheetApp.getUi().alert('Which version is this?',
+    'Build: ' + build + '\n\n' +
+    'Newest build: the "at ..." line near the top of ' + LATEST_URL + '\n\n' +
+    'Different? Ask the agent for the Code.gs copy page, paste it over Code.gs in the Folio Review Library (' + LIBRARY_URL + ') and save, ' +
+    'then choose Review links, Refresh now in each sheet.',
     SpreadsheetApp.getUi().ButtonSet.OK);
 }
 
