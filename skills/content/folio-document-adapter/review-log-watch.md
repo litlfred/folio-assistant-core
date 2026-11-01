@@ -45,7 +45,8 @@ reason about the rows, edit anything or post anything.
    - `Watch!F1:I1`, where the sheet script writes `Cells hash`, the hash
      itself, and the time it last checked. The script rewrites it on every
      refresh and every timer tick, from the cells people set.
-   - Contributor Feedback's header row and its Issue column.
+   - Contributor Feedback's header row with its Change-set and Issue
+     columns (A to K), so the tool can give a new row the next Change-set id.
 
    Save the values as JSON, with the header row and with an empty first row
    for each sheet row above it, so the row numbers stay the sheet's. A sheet
@@ -65,6 +66,7 @@ reason about the rows, edit anything or post anything.
      or closed, or a cell's old and new text) and `append`.
 3. **Append** each `append[].row` below the last row of Contributor Feedback.
    The row is already lined up with the header:
+   - **Change-set:** the next id, also in `append[].agent.csId`.
    - **Title:** the issue's title.
    - **First Contributor Feedback column:** `@login (#N): first paragraph`.
    - **Issue:** the issue's URL.
@@ -75,8 +77,15 @@ reason about the rows, edit anything or post anything.
    Write the cell with those as `textFormatRuns` (`updateCells`), so each
    link is clickable (owner, 2026-11-01 10:51Z: "shiud be links").
 
-   Every other cell stays empty. The script assigns the Change-set id. This
-   tool is the only thing that adds issue rows, so nobody adds them by hand.
+   Then write `append[].agent` to the **Agent** tab as a new row: its
+   Change-set and Issue columns. The script fills Contributor Feedback's
+   Issue column from the Agent tab, by Change-set, on every refresh. An
+   Issue written only on Contributor Feedback is cleared on the next refresh,
+   which is how every issue link vanished from the four DTH logs on
+   2026-11-01 15:30Z.
+
+   Every other cell stays empty. This tool is the only thing that adds issue
+   rows, so nobody adds them by hand.
    A row with `closed: true` is appended like the others and then treated as
    in step 4.
 4. **Closed issues.** Hide each row in `closedRows`, plus the rows just
