@@ -51,6 +51,7 @@
  */
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join, relative, resolve } from "node:path";
+import { libraryEntries } from "./lib/library-entries.ts";
 
 import { declaredGraphs, instanceRootsIn } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { narrativeFor, type NarrativeSlot } from "@litlfred/cat-harness-tools/schemas/content/narrative.js";
@@ -110,8 +111,9 @@ export function blockUnits(libraries: string[]): BlockUnits {
   const seen = new Map<string, string>();
   for (const lib of libraries) {
     if (!existsSync(lib)) continue;
-    for (const entry of readdirSync(lib, { withFileTypes: true }).filter((e) => e.isDirectory()).map((e) => e.name).sort()) {
-      const dir = join(lib, entry, "blocks");
+    // Flat or filed in a concern group (bean `6fez`).
+    for (const { dir: entryDir } of libraryEntries(lib)) {
+      const dir = join(entryDir, "blocks");
       if (!existsSync(dir)) continue;
       for (const name of readdirSync(dir).filter((f) => f.endsWith(".jsonld")).sort()) {
         const file = join(dir, name);
