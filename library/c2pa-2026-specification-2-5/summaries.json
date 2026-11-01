@@ -761,6 +761,880 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s087-9-4-2-2-external",
+      "source": "sections/s087-9-4-2-2-external.md",
+      "source_hash": "fdfde50b381b14b79a6c05d1bc4776b6e0dc5ae4b76f442294d06a05f3867b5d",
+      "narrative": [
+        {
+          "text": "Specifies the hashed-ext-uri-map structure for referencing resources external to the C2PA Manifest Store, a variation of hashed-uri with an http/https url, a mandatory alg, a hash, and optional dc:format, size and data_types fields. Recommends the https scheme to protect privacy in transit but also permits http because data integrity is protected by the hash field, leaving manifest authors to choose. When present, dc:format provides an alternative to the Content-Type header and shall be used as the required format during content negotiation, and data_types may give one or more asset types for more clarity. The optional size field gives the size of the data to be retrieved and may serve validators as a hint alongside the hash, for example about whether to download, validate or both.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s088-9-4-2-3-hashing-jumbf-boxes",
+      "source": "sections/s088-9-4-2-3-hashing-jumbf-boxes.md",
+      "source_hash": "0c35b115479f32473054fe34babd34ceb2cf71ab154233bf25fd39f3f9a76220",
+      "narrative": [
+        {
+          "text": "Requires the hash for a URI reference to any JUMBF box, such as assertions and data boxes, to be computed over the contents of the structure's JUMBF superbox, including the JUMBF Description Box and all content boxes but not the superbox header (with more detail in Section 12.1 Hashing). Defines the C2PA salt as a Private field of a JUMBF Description box whose value is a standard box with a 4-byte big-endian length, a box type of c2sh, and a payload of 16 or 32 bytes of randomly generated data. Figure 5 shows an example c2pa.actions assertion.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s089-10-claims",
+      "source": "sections/s089-10-claims.md",
+      "source_hash": "d0b0e5a936d8477363746b03a7ff5acccd39c8319f7214f5821098b8e6ccca30",
+      "narrative": [
+        {
+          "text": "Heading that opens section 10 Claims; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s090-10-1-overview",
+      "source": "sections/s090-10-1-overview.md",
+      "source_hash": "3dcb42b06d43a00d955d783406cc3b6feee5dd0c13c10601d9efff950fbfac9d",
+      "narrative": [
+        {
+          "text": "Defines a claim as gathering all the assertions about an asset at a given time, including those for binding to content, which is then cryptographically hashed and signed as described in Section 10.3.2.4 Signing a Claim. Specifies that a claim is encoded as a JUMBF superbox labelled c2pa.claim.v2 with a CBOR payload that shall comply with the CBOR Core Deterministic Encoding Requirements. Notes that assertion metadata on claims is deprecated, and that the earlier c2pa.claim label and claim-map are deprecated: validators should still accept them, but claim generators shall not produce them.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s091-10-2-syntax",
+      "source": "sections/s091-10-2-syntax.md",
+      "source_hash": "4779bf402ebdcdadf11868174aeb76358b956e316ad3943378ea7fe5108c0f79",
+      "narrative": [
+        {
+          "text": "Heading that opens section 10.2 Syntax; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s092-10-2-1-schema",
+      "source": "sections/s092-10-2-1-schema.md",
+      "source_hash": "6e6aff3d94037b68ed567422a1b73e90b8a3a38ba40160b8da4fc37a09230fab",
+      "narrative": [
+        {
+          "text": "Gives the CDDL schema for claims: claim-map-v2 for the c2pa.claim.v2 label and the deprecated claim-map for c2pa.claim, with the complete normative schema in Section G.2.1 Claim. claim-map-v2 requires instanceID, claim_generator_info, signature and created_assertions, and optionally allows gathered_assertions, dc:title, redacted_assertions, alg, alg_soft, and the deprecated specVersion and metadata fields; the deprecated claim-map instead carries claim_generator, a claim_generator_info array, an assertions list and dc:format. It also defines generator-info-map with a required name and optional version, icon, operating_system, specVersion and any additional fields. An example claim-map-v2 is given in CBOR diagnostic notation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s093-10-2-2-fields",
+      "source": "sections/s093-10-2-2-fields.md",
+      "source_hash": "41b2540bb50a10c206684e707f84380a59e1ff9dc7f70f9e2167ca2b58cc2781",
+      "narrative": [
+        {
+          "text": "Specifies the claim's fields. The alg field, if present, shall be an allowed hash algorithm from Section 12.1 Hashing and applies to any hashed-uri, hard binding assertion or hash assertion that does not define its own, and if alg is absent each of those shall declare its algorithm explicitly. dc:title, if present, shall be a human-readable name for the asset, though claim generators should instead create a metadata assertion with dc:title; instanceID should be the asset's xmpMM:InstanceID when XMP is present, and otherwise some other unique identifier shall be used. The signature field shall be present with an absolute URI reference to the claim signature in the same C2PA Manifest, and created_assertions shall be present with one or more references to assertions made by the claim, attributed to the signer and including at least a hard binding assertion in a standard manifest. When present, gathered_assertions references assertions provided by other workflow components that are not attributed to the signer, and redacted_assertions references redacted assertions; the notes add that dc:format is no longer in c2pa.claim.v2, that XMP-derived field names do not require XMP, and that the claim-level specVersion is deprecated in favour of the one in claim_generator_info.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s094-10-2-3-claim-generator-info",
+      "source": "sections/s094-10-2-3-claim-generator-info.md",
+      "source_hash": "4a0b3ce43efdf1b8abe595f6ab062db09b2dacaf5256c1338aa8dd3095faedb0",
+      "narrative": [
+        {
+          "text": "Heading that opens section 10.2.3 Claim Generator Info; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s095-10-2-3-1-general",
+      "source": "sections/s095-10-2-3-1-general.md",
+      "source_hash": "619b9a8a2c538555c9c99101a8ad82b75c5f40c6bfb8bbf1315d1ebae43d7c71",
+      "narrative": [
+        {
+          "text": "Requires detailed information about the claim generator to be present as the value of claim_generator_info, and requires a Manifest Consumer to use that value to determine information about the claim generator for itself or for presentation in a UX. Notes that the simple-string claim_generator field of c2pa.claim is no longer present in c2pa.claim.v2.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s096-10-2-3-2-generator-info-map",
+      "source": "sections/s096-10-2-3-2-generator-info-map.md",
+      "source_hash": "e2d282bb7675ddd5bc1377968ba01c5e506705617eb27fc5e65c32ca1f1c7f09",
+      "narrative": [
+        {
+          "text": "Specifies that a claim_generator_info value is a generator-info-map that shall contain a name field and may contain version, icon, or both, plus any other fields using entity-specific namespacing, and that it shall represent the non-human (hardware or software) actor that generated the claim. If present, icon shall be a hashed URI to an embedded data assertion labelled c2pa.icon that follows the multiple-instance label rules, with its hash algorithm taken from the hashed URI's alg or else the claim's alg, and Manifest Consumers should also support the data box approach of earlier versions. A specVersion field should be present and, if so, shall contain the SemVer version of the specification the claim generator used to create the manifest (e.g. 2.4.0), which validators should treat as purely informational without changing their validation logic. A JSON example is included.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s097-10-3-creating-a-claim",
+      "source": "sections/s097-10-3-creating-a-claim.md",
+      "source_hash": "3fea32de677a11efe2788ace7c358e00f6ea0fb7a47260d20676a7fe0797419f",
+      "narrative": [
+        {
+          "text": "Heading that opens section 10.3 Creating a Claim; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s098-10-3-1-creating-assertions",
+      "source": "sections/s098-10-3-1-creating-assertions.md",
+      "source_hash": "ebdc973d21ca01b2264ea0bfc74026587ba9eec6cd9ae84f5d3636fe4a675d0c",
+      "narrative": [
+        {
+          "text": "States that before a claim can be finalized, all assertions need to be created and stored in a newly created C2PA Assertion Store. When creating a standard manifest where not all binding information is known at claim creation time, it directs use of the multiple step processing method to set up the information and fill it in later.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s099-10-3-2-preparing-the-claim",
+      "source": "sections/s099-10-3-2-preparing-the-claim.md",
+      "source_hash": "bfb8158201929de3cba38fec915618c2ea2c5b9839ecf1b9b1ee4e2ba9931408",
+      "narrative": [
+        {
+          "text": "Heading that opens section 10.3.2 Preparing the Claim; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s100-10-3-2-1-adding-assertions-and-redactions",
+      "source": "sections/s100-10-3-2-1-adding-assertions-and-redactions.md",
+      "source_hash": "23e8b7bab667a6d60c01911d30c4d8c28ed53e4a755b10d7209c92e8f43a8cd8",
+      "narrative": [
+        {
+          "text": "Requires the claim to contain a created_assertions field and allows a gathered_assertions field, whose combined values list the URI references of all assertions added to the assertion store that the claim is claiming. In a standard manifest, created_assertions shall include at least one assertion representing a hard binding. URI references to any assertions in ingredient claims that are being redacted shall be added to the redacted_assertions field.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s101-10-3-2-2-adding-ingredients",
+      "source": "sections/s101-10-3-2-2-adding-ingredients.md",
+      "source_hash": "af95c22bb02dbb4aada0451a48abe2ba9f436c48cc27343f50b1005ba87f6c00",
+      "narrative": [
+        {
+          "text": "Describes ingredients as existing assets an actor brings in to create a derived asset, composed asset or asset rendition, documented in the provenance data through ingredient assertions. Recommends inserting an ingredient's C2PA Manifests into the asset's C2PA Manifest Store, as described in Section 11.4 Ingredient Storage. If a manifest with the same unique identifier is already present, the two shall be compared: an identical new manifest shall be ignored, while a different one shall be added after its identifier is changed per Chapter 9 Unique Identifiers. If an ingredient's remote manifest cannot be retrieved, the claim generator should use the error code manifest.inaccessible.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s102-10-3-2-3-connecting-the-signature",
+      "source": "sections/s102-10-3-2-3-connecting-the-signature.md",
+      "source_hash": "1de520a012da899ac3b0d07bde42da5068d0e8d88768f91ec804ede5c217ee85",
+      "narrative": [
+        {
+          "text": "Explains that although the signature cannot be part of the signed payload, its label is predefined, so its full URI reference is known and is set as the value of the claim's signature field. This provides the explicit binding of the claim to its signature.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s103-10-3-2-4-signing-a-claim",
+      "source": "sections/s103-10-3-2-4-signing-a-claim.md",
+      "source_hash": "6eb11947b6d4615ec3e29fbd49a80b0bfce32c7648e76ac4bba4d3f2d371e0d9",
+      "narrative": [
+        {
+          "text": "Refers to Section 12.3 Digital Signatures for producing the signature, and requires that for both standard and update manifests the payload field of Sig_structure be the serialized CBOR of the claim document, using detached content mode. The resulting serialized COSE_Sign1_Tagged structure is written into the C2PA Claim Signature box.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s104-10-3-2-5-time-stamps",
+      "source": "sections/s104-10-3-2-5-time-stamps.md",
+      "source_hash": "24a1f59ddb62aa099855d0a172c0c1127cf00b85fd38b803c47522afffbb56f8",
+      "narrative": [
+        {
+          "text": "Heading that opens section 10.3.2.5 Time Stamps; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s105-10-3-2-5-1-use-of-rfc-3161",
+      "source": "sections/s105-10-3-2-5-1-use-of-rfc-3161.md",
+      "source_hash": "bba60c935894c56dfb02637b06d9fe18f546ac04670243b614786e265e0c83a7",
+      "narrative": [
+        {
+          "text": "Recommends that, if possible, the claim generator use an RFC 3161-compliant Time Stamping Authority to obtain a trusted time stamp proving the signature existed at a certain date and time, incorporated into the COSE_Sign1_Tagged structure as a countersignature. Encourages including time stamps because, per Chapter 14 Validation, manifests without them cease to be valid when the signing credential expires or is revoked. Requires a manifest to contain only one time stamp, noting that earlier versions allowed multiple.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s106-10-3-2-5-2-choosing-the-payload",
+      "source": "sections/s106-10-3-2-5-2-choosing-the-payload.md",
+      "source_hash": "ce20db0d1855fe4a582b087b46fd49bb5a6731ada7d7b5a093bdd346002c31fb",
+      "narrative": [
+        {
+          "text": "Defines the deprecated v1 payload (in a v1 time stamp) as the same payload value used in the Sig_signature for signing the claim, which a claim generator shall not create but a validator shall process if present. Defines the v2 payload (in a v2 time stamp) as the value of the signature field of the COSE_Sign1_Tagged structure created when signing the claim, including the entire serialized bstr with its major type and length bytes, and requires claim generators to use it when time stamping.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s107-10-3-2-5-3-obtaining-the-time-stamp",
+      "source": "sections/s107-10-3-2-5-3-obtaining-the-time-stamp.md",
+      "source_hash": "dad388486e1076cdbbea289deec29b187c12939e0313bd413d5bb0b46d93b57b",
+      "narrative": [
+        {
+          "text": "Requires all time stamps to be obtained per RFC 3161 with additional requirements. The MessageImprint of the TimeStampReq shall be computed from the RFC 9052 ToBeSigned value, using a Sig_structure whose context is CounterSignature, whose payload is as described in Section 10.3.2.5.2 Choosing the Payload, and whose other elements follow Section 12.3.3 Computing the Signature. The ToBeSigned value is hashed with an algorithm from the allowed list in Section 12.1 Hashing that the TSA supports (a TSA supporting none cannot be used), preferably the same algorithm as the claim's digital signature. The certReq boolean shall be asserted so that the TSA's certificate chain is provided in the response.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s108-10-3-2-5-4-storing-the-time-stamp",
+      "source": "sections/s108-10-3-2-5-4-storing-the-time-stamp.md",
+      "source_hash": "fe434b5b9eeddce78686e5fae5f006ecf48b794cf1d997483a124a9dec8534fb",
+      "narrative": [
+        {
+          "text": "Specifies that deprecated v1 time stamps are stored in a COSE unprotected header labelled sigTst whose value shall be a tstContainer, with the content of the TSA's TimeStampResp stored as the val of a tstTokens element. v2 time stamps shall be stored in a COSE unprotected header labelled sigTst2 as a tstContainer, with the timeStampToken from the TimeStampResp stored as val and formatted as a DER-encoded RFC 3161 TimeStampToken in a CBOR byte string; a note equates this to the CTT model of the IETF COSE time-stamp header draft, serving as a countersignature over the complete signature structure. If no time stamps are included, neither sigTst nor sigTst2 shall be present. The tstContainer CDDL is given and noted to be a CBOR adaptation of a subset of the JAdES schema, with val as a byte string rather than Base64.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s109-10-3-2-6-credential-revocation-information",
+      "source": "sections/s109-10-3-2-6-credential-revocation-information.md",
+      "source_hash": "f70d5a273e9f727348efac7202451bd500bac9ec604ca0b41254c02cdfd75bf0",
+      "narrative": [
+        {
+          "text": "Recommends that if the signer's credential supports online credential status queries and points to a service providing status information with a time stamp, the claim generator query it, capture the response, and store it as described for credentials in the Trust Model. If credential revocation information is attached this way, a trusted time stamp shall also be obtained after signing, as described in Section 10.3.2.5 Time Stamps.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s110-10-3-3-examples-of-claims",
+      "source": "sections/s110-10-3-3-examples-of-claims.md",
+      "source_hash": "23340cb51c33ebc1dff70902d097f9899527472b5028ea0983fff2d8197f74f3",
+      "narrative": [
+        {
+          "text": "Heading that opens section 10.3.3 Examples of Claims; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s111-10-3-3-1-single-claim",
+      "source": "sections/s111-10-3-3-1-single-claim.md",
+      "source_hash": "d5d1c3abde4e47246319d7bb33a478f1aa269493702d2458385f5cda3c9cd286",
+      "narrative": [
+        {
+          "text": "Presents Figure 6, a visual representation of an image with a single embedded claim containing multiple assertions.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s112-10-3-3-2-multiple-claims",
+      "source": "sections/s112-10-3-3-2-multiple-claims.md",
+      "source_hash": "ae8305d43e70a4ed05d6f974f1bf0437080b9ff63497bea2fcf8a8c20ca4ac81",
+      "narrative": [
+        {
+          "text": "Presents Figure 7, showing a second claim created for the single-claim example in which one of the original assertions has been redacted from the previous claim.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s113-11-manifests",
+      "source": "sections/s113-11-manifests.md",
+      "source_hash": "473e4ff6607cd7ae3e58e8f0d856b0dcd4eb99532ec10b7a5e263d511b431904",
+      "narrative": [
+        {
+          "text": "Heading that opens section 11 Manifests; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s114-11-1-overview",
+      "source": "sections/s114-11-1-overview.md",
+      "source_hash": "9e626f9a0bef0c03b44dc24f5c63e127d0f520ae50f8982013c304f90c6d2e00",
+      "narrative": [
+        {
+          "text": "Describes a C2PA Manifest as a container bundling an assertion store, a claim that hashes the assertions and provides information about the claim generator, and a claim signature over that claim. The manifest that describes the asset is the active manifest, and because ingredients may have their own manifests, all manifests associated with an asset are collected into a single C2PA Manifest Store. A standard C2PA Manifest includes a hard binding cryptographically associating it with the asset, so copying or linking it to a different asset is detectable and fails validation; serialization details are in Section 11.5 Serialization.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s115-11-2-manifest-store",
+      "source": "sections/s115-11-2-manifest-store.md",
+      "source_hash": "c3dc737a7cab99484005f5bbd396656009343881441e57df1cd3d0d154034d9a",
+      "narrative": [
+        {
+          "text": "Defines a C2PA Manifest Store as containing one or more C2PA Manifests, the last of which is the active manifest, and specifies that it is a JUMBF (ISO 19566-5:2023) superbox, with details in Section 11.5 Serialization. Figure 8 shows an example store with a single C2PA Manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s116-11-3-types-of-manifests",
+      "source": "sections/s116-11-3-types-of-manifests.md",
+      "source_hash": "14bc468327e4b777a7f984621a091f294b4e526babca3d2ae94f3d194669e075",
+      "narrative": [
+        {
+          "text": "Heading that opens section 11.3 Types of Manifests; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s117-11-3-1-common",
+      "source": "sections/s117-11-3-1-common.md",
+      "source_hash": "c1085141df60a11dc73a596797104371abce58572d034fec47259859daec873f",
+      "narrative": [
+        {
+          "text": "Requires every C2PA Manifest to contain an assertion store, a claim and a claim signature.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s118-11-3-2-standard-manifests",
+      "source": "sections/s118-11-3-2-standard-manifests.md",
+      "source_hash": "54790a6b818bc48d5291f6e207dac98aa1e689ad5b809a9c330608e8804939be",
+      "narrative": [
+        {
+          "text": "Requires a standard C2PA Manifest to contain exactly one hard binding to content assertion.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s119-11-3-3-update-manifests",
+      "source": "sections/s119-11-3-3-update-manifests.md",
+      "source_hash": "17007c6adf177477ff669350e834a99cfb502e4db469d7cde762335d760b2ce3",
+      "narrative": [
+        {
+          "text": "Recommends an Update Manifest when assertions are added to an existing C2PA Manifest without changing the digital content or other data covered by content bindings, and forbids it from containing c2pa.hash.data, c2pa.hash.boxes, c2pa.hash.collection.data, c2pa.hash.segment, c2pa.hash.bmff.v3 or c2pa.hash.multi-asset assertions. Where the existing content binding locates the C2PA Manifest Store by file offset and length, the store shall start at the same offset after updating, though its length may change. An Update Manifest may contain c2pa.actions or c2pa.actions.v2 assertions only with the actions c2pa.edited.metadata, c2pa.opened, c2pa.published or c2pa.redacted, and shall not contain a thumbnail assertion, since other actions or a thumbnail imply changes to the digital content. It shall contain exactly one c2pa.ingredient.v3 assertion with activeManifest and claimSignature URI references to the updated asset's C2PA Manifest and Claim Signature and a relationship of parentOf, where that ingredient manifest may be a standard or update manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s120-11-4-ingredient-storage",
+      "source": "sections/s120-11-4-ingredient-storage.md",
+      "source_hash": "66eda6ab64b98dcc0a28266a703ea174306c57aa36f60e6a42dd8449eab48528",
+      "narrative": [
+        {
+          "text": "Describes how, when a C2PA Manifest includes ingredient assertions and an ingredient contains a C2PA Manifest Store, its C2PA Manifests are normally included in the new asset's C2PA Manifest Store to keep the provenance data intact, as described in Section 10.3.2.2 Adding Ingredients. Figure 9 shows a C2PA Manifest Store with an ingredient. Notes that the previously supported Data Box Store (c2pa.databoxes) is covered for historical reference in Section H.4 Data Box Store of Appendix H Deprecated Constructs.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s121-11-5-serialization",
+      "source": "sections/s121-11-5-serialization.md",
+      "source_hash": "1c36914cb7d86853cc134434f85b5f44ed75ad85ddc7d0766ea7f039dcb33d91",
+      "narrative": [
+        {
+          "text": "Specifies that C2PA Manifest Stores and C2PA Manifests are serialized using JUMBF (ISO 19566-5:2023), and that this format shall also be used in formats without native JUMBF support or when stores are kept separately from the asset. Table 2 gives the JUMBF type UUID, label and contents for the Manifest Store (c2pa), standard manifest (c2ma), update manifest (c2um), compressed manifest (c2cm), deprecated standard manifest type (c2md), Assertion Store (c2as, label c2pa.assertions), Claim (c2cl, label c2pa.claim.v2) and Claim Signature (c2cs, label c2pa.signature). These boxes shall satisfy Section 11.5.3.2 Toggles and Section 11.5.3.3 Labels, and Manifest Consumers shall accept c2md superboxes as standard manifests while claim generators shall not create them.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s122-11-5-1-assertion-store-contents",
+      "source": "sections/s122-11-5-1-assertion-store-contents.md",
+      "source_hash": "366cfb01c1f50a2d3f8c1156077e1dcd7a424e1630ddf729bdae61523c7bf015",
+      "narrative": [
+        {
+          "text": "Specifies that the C2PA Assertion Store is a JUMBF superbox with the label and type given in Table 2, containing one or more C2PA Assertion superboxes whose JUMBF type defines the type of their content sub-boxes. Each assertion superbox shall have a label as defined in Standard Assertions and contain a JUMBF Description Box, one or more JUMBF Content Boxes and possibly a Padding Box. Recommends CBOR, JSON, Embedded File (bfdb and bidb) or UUID content types while permitting any JUMBF content type and a JUMBF Protection Box per ISO 19566-4:2020, and notes that custom formats such as encrypted data are supported through a UUID Content Box.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s123-11-5-2-compressed-manifests",
+      "source": "sections/s123-11-5-2-compressed-manifests.md",
+      "source_hash": "86bf053533626d3d9d0baad15045fcee1ac0f9ae06a74ceca6dab98488949077",
+      "narrative": [
+        {
+          "text": "Specifies that standard and update C2PA Manifests can be compressed in their entirety using a new brob JUMBF content box with box ID 0x62726F62, based on a similar JPEG-XL box. A compressed manifest shall have a TYPE of c2cm, a label identical to that of the compressed manifest superbox, and brob contents that are the Brotli-compressed (RFC 7932) bytes of the entire manifest superbox, as shown in Figure 10. Hashing a compressed box follows Section 9.4.2.3 Hashing JUMBF Boxes, covering the Description Box and the brob box with its compressed payload without decompressing it first. Anywhere the specification references a standard or update manifest, a compressed one is also valid.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s124-11-5-3-general-c2pa-jumbf-requirements",
+      "source": "sections/s124-11-5-3-general-c2pa-jumbf-requirements.md",
+      "source_hash": "316cd5d4f03fd972c8e398c563541c2ba983b34967c8f3f5732a8af3bd7fd078",
+      "narrative": [
+        {
+          "text": "Heading that opens section 11.5.3 General C2PA JUMBF Requirements; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s125-11-5-3-1-processing-rules",
+      "source": "sections/s125-11-5-3-1-processing-rules.md",
+      "source_hash": "d1023a83aeeefc358a0e8c261e395acfcc3276350b288423a2f62d9c03c4b913",
+      "narrative": [
+        {
+          "text": "Requires that a C2PA Manifest Consumer never process an assertion, assertion store, claim, claim signature or C2PA Manifest that is not contained in a C2PA Manifest Store, and that it skip over and ignore the contents of any JUMBF box or superbox whose type UUID it does not recognize. Notes that this lets a consumer process private boxes it knows about while ignoring unknown ones.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s126-11-5-3-2-toggles",
+      "source": "sections/s126-11-5-3-2-toggles.md",
+      "source_hash": "c10a4d6c58da21d833cd8fd0663f494d4afc338ff94ca3d34bd3010c0e8ffc44",
+      "narrative": [
+        {
+          "text": "Requires the Label Present toggle (xxxxxx1x) and the Requestable toggle (xxxxxx11) to be set on all JUMBF Description boxes used in a C2PA Manifest, because labels are required and boxes are referred to by JUMBF URIs. When a salt is included in a PRIVATE box as described in Section 9.4.2.3 Hashing JUMBF Boxes, the Private toggle (xxx1xxxx) shall also be set.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s127-11-5-3-3-labels",
+      "source": "sections/s127-11-5-3-3-labels.md",
+      "source_hash": "032777a5485d2af123fec821f9388d3bee2bd37b61fa3b13b9b0097206fc6ac6",
+      "narrative": [
+        {
+          "text": "Requires JUMBF labels to be stored as null-terminated Unicode characters in UTF-8, per ISO 19566-5:2023, A.3. Labels may not contain characters in the ranges U+0000 to U+001F or U+007F to U+009F, or the characters '/', ';', '?' and '#', and because labels are used in JUMBF URIs, U+FEFF, U+FFFF and U+D800-U+DFFF shall also not be used.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s128-11-5-3-4-unrecognized-boxes",
+      "source": "sections/s128-11-5-3-4-unrecognized-boxes.md",
+      "source_hash": "904073afdaa9d7fb204bfeb6f574a234174561f9227c8ddbcdd1d9a3f878210d",
+      "narrative": [
+        {
+          "text": "Allows the C2PA Manifest Store (c2pa) and C2PA Manifests (c2ma, c2um, c2cm and c2md) to contain JUMBF boxes and superboxes whose type UUIDs are not defined in the specification, provided they satisfy Section 11.5.3.2 Toggles and Section 11.5.3.3 Labels, enabling custom extensions and future additions without breaking compatibility. Requires any box or superbox with both the Requestable and Label Present toggles set to be maintained in any updated C2PA Manifest Store, since such boxes are intended to be referenced via JUMBF URIs and removing them could cause downstream workflows to fail.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s129-11-5-4-jumbf-rationale",
+      "source": "sections/s129-11-5-4-jumbf-rationale.md",
+      "source_hash": "24dc769c79f1eeea75e7b53d157e217a4eb0a8d6389200b22ad14b2bf6ba5e00",
+      "narrative": [
+        {
+          "text": "Explains why JUMBF (ISO 19566-5:2023) was chosen to serialize C2PA Manifests: it can store multiple manifests in one container, refer to elements within and across manifests via URIs, clearly identify the parts of an element to be hashed, and store both C2PA's predefined data types (e.g. JSON and CBOR) and arbitrary data formats. It is also natively supported by the JPEG family and compatible with the ISO BMFF box model, letting it work with classic image formats such as JPEG/JFIF and PNG as well as 3D and document formats such as PDF. A note explains that using CBOR for the entire manifest was considered but not chosen because CBOR is not a container format, and re-implementing JUMBF's features in CBOR would be a lot of work and would not fully remove the need for a JUMBF/BMFF parser.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s130-11-6-embedding",
+      "source": "sections/s130-11-6-embedding.md",
+      "source_hash": "6b5942e8adfde0d5586f0f9614f472aa794e072603613e0b9dad22e8f9be7d74",
+      "narrative": [
+        {
+          "text": "States that a C2PA Manifest Store can be embedded into a variety of file formats covering images, video, audio, fonts and documents, with technical details for each supported format in Appendix A Embedding manifests. Notes that many classic image formats such as BMP do not support embedding arbitrary data, so an external manifest is required for them.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s131-11-7-multiple-step-processing",
+      "source": "sections/s131-11-7-multiple-step-processing.md",
+      "source_hash": "6a372a8b47536c6c95deac7f479f9ac2b86347aef5649d782fd94e5603c4c80d",
+      "narrative": [
+        {
+          "text": "Explains that some file formats require the file offsets of the C2PA Manifest Store and asset content to be fixed before signing so content bindings align, yet the size of the manifest and its signature cannot be precisely known until after signing, citing JPEG 1, where the entire Manifest Store must appear before the image data. Requires a multiple step approach, similar to how PDF signatures are done, to accomplish this.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s132-11-7-1-create-content-bindings",
+      "source": "sections/s132-11-7-1-create-content-bindings.md",
+      "source_hash": "ea20c384d0e67b8d87daeb570007dd94e2fe8122eb4385e00ebf1ff2ace1b42b",
+      "narrative": [
+        {
+          "text": "Requires a standard manifest's claim to include one or more content binding assertions so that the asset is tamper-evident, and describes creating the data hash assertion using exclusion ranges, where a single hash covers only the asset ranges outside the exclusions (e.g. the claim creator may exclude the APP11 segments holding a manifest in a JPEG 1 file). To prevent insertion attacks a single exclusion range is desirable; when the manifest's size or location is unknown, start and length shall both be zero and pad should be large enough for the values written in the second pass, with at least 16 bytes recommended and pad consisting of all 0x00 bytes. Claim generators shall ensure that changes to pad data or other excluded data cannot change how the asset is interpreted; for JPEG 1, a note says this can be achieved by eliminating padding or by including all APP11 segment headers and 2-byte length fields in the data-hash-map.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
