@@ -21,6 +21,7 @@
     "normative-statements",
     "public-comment",
     "public-comment-channels",
+    "review-sheet-agent-columns",
     "review-sheet-script"
   ],
   "docker": {
