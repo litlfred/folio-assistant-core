@@ -794,7 +794,8 @@ export function defaultBlockActions(repoRoot: string, over: Partial<BlockActions
 }
 
 export interface SiteBuildResult {
-  documents: { slug: string; blocks: number; page: string }[];
+  /** `title`: the manifest's title, with its `meta.status` (e.g. "Working Draft") when it declares one. */
+  documents: { slug: string; title: string; blocks: number; page: string }[];
   errors: string[];
 }
 
@@ -839,13 +840,18 @@ export async function buildDocumentSite(
   for (const d of docs) {
     const built = await buildDocumentMarkdown(d.path);
     for (const i of built.issues) if (i.level === "error") result.errors.push(`${d.slug}: ${i.message}`);
+    const manifest = (await import(d.path)).default as Paper;
+    // A document with a status ("Working Draft") carries it in its title
+    // everywhere: the heading, the page title and the landing list.
+    const status = typeof manifest.meta?.status === "string" ? manifest.meta.status : undefined;
+    const title = withStatus(manifest.title ?? d.slug, status);
+    if (status && manifest.title) built.markdown = built.markdown.replace(`# ${manifest.title}\n`, `# ${title}\n`);
     const termLinks = opts.linkTerms ? await glossaryTermLinks(repoRoot, documentPageDir(d.slug)) : undefined;
     // A figure that is a view of the instance's ArchiMate model is drawn from
     // the model, linked to the view's page (live-figures.ts); the PNG stays the fallback.
     const live = liveFigures(repoRoot, documentPageDir(d.slug));
     const render = async (md: string) => withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks }), live);
     const html = await render(built.markdown);
-    const manifest = (await import(d.path)).default as Paper;
     // The page under the locale, its data where it was (document-site-route.ts).
     const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
     const data = join(outDir, ...documentDataDir(d.slug).split("/"));
@@ -876,7 +882,6 @@ export async function buildDocumentSite(
       return compact || r.inserted === 0 ? r.html : r.html.replace("</body>", `${compactActionsScript(cfg, documentPage(d.slug))}</body>`);
     };
     const lazy = opts.lazy === "always" || ((opts.lazy ?? "auto") === "auto" && blocks.length >= LAZY_THRESHOLD);
-    const title = manifest.title ?? d.slug;
     // Themed, the theme's sidebar is the page's index, built from heading ids;
     // the rail's declared contents (pageContents) would be a second one.
     if (!lazy) {
@@ -884,7 +889,7 @@ export async function buildDocumentSite(
       else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(html) + html, mathOpts)));
     } else {
       // The whole document on one page, for file://, no-JS readers and tools.
-      writeFileSync(join(dir, "index.hydrated.html"), withActions(page(manifest.title ?? d.slug, pageContents(html) + html, mathOpts)));
+      writeFileSync(join(dir, "index.hydrated.html"), withActions(page(title, pageContents(html) + html, mathOpts)));
       const split = splitBlocks(built.markdown, new Set(blocks.map((b) => b.label)));
       const index = { chunks: 0, of: {} as Record<string, number>, ids: {} as Record<string, number> };
       mkdirSync(join(data, "blocks"), { recursive: true });
@@ -920,10 +925,11 @@ export async function buildDocumentSite(
     writeFileSync(join(data, "graph.jsonld"), JSON.stringify({ "@graph": graph.nodes.map((n) => JSON.parse(n.text) as unknown) }) + "\n");
     const media = join(dirname(d.path), "media");
     if (existsSync(media)) cpSync(media, join(dir, "media"), { recursive: true });
-    result.documents.push({ slug: d.slug, blocks: built.blockCount, page: documentPage(d.slug) });
+    result.documents.push({ slug: d.slug, title, blocks: built.blockCount, page: documentPage(d.slug) });
   }
   const list = result.documents
-    .map((d) => `<li><a href="${esc(d.page)}">${esc(d.slug)}</a> (${d.blocks} blocks)</li>`)
+    // A reader looks for the document by its title, not its folder name (owner, 2026-11-01).
+    .map((d) => `<li><a href="${esc(d.page)}">${esc(d.title)}</a></li>`)
     .join("\n");
   const outline: Outline = { $schema: OUTLINE_SCHEMA, documents: [] };
   for (const d of docs) {
@@ -938,7 +944,9 @@ export async function buildDocumentSite(
   const review = join(outDir, ...REVIEW_PAGE_DIR.split("/"));
   mkdirSync(review, { recursive: true });
   writeFileSync(join(review, "index.html"), reviewPageHtml());
-  const also = landingLinks(readDeclaration(repoRoot), (p) => existsSync(join(repoRoot, p)));
+  // The documents are listed above, by title; a second "The document" link to the same page only confuses.
+  const pages = new Set(result.documents.map((d) => dirname(d.page) + "/"));
+  const also = landingLinks(readDeclaration(repoRoot), (p) => existsSync(join(repoRoot, p))).filter((l) => !pages.has(l.href.replace(/\/?$/, "/")));
   const landing =
     `<h1>Documents</h1>\n<p><a href="${esc(REVIEW_PAGE_DIR)}/index.html">What changed from main</a></p>\n<ul>\n${list}\n</ul>` +
     (also.length ? `\n<h2>Also on this site</h2>\n<ul>\n${also.map((l) => `<li><a href="${esc(l.href)}">${esc(l.title)}</a></li>`).join("\n")}\n</ul>` : "");
@@ -1056,4 +1064,9 @@ if (import.meta.main) {
     process.exit(1);
   }
   console.error(`✓ ${r.documents.length} document(s) → ${relative(repo, out) || "."}`);
+}
+
+/** A document's title with its status, "Title - Working Draft", or the title alone. */
+export function withStatus(title: string, status?: string): string {
+  return status ? `${title} - ${status}` : title;
 }
