@@ -18,6 +18,11 @@ What a reader does to a board and what the renderer does back: every card rests 
 - Skill: `board-windows`.
 - What: Render every card as its avatar — the starting state.
 - Record it: `workflow_complete` with `node: "A_RenderAvatars"`.
+- next: → `GW_Act_Join`
+
+### Merge — `GW_Act_Join`
+
+- Nothing to do or decide: the paths meet here and the engine passes through.
 - next: → `GW_Act` (What did the reader do?)
 
 ### Decide — What did the reader do? (`GW_Act`)
@@ -72,7 +77,7 @@ What a reader does to a board and what the renderer does back: every card rests 
 - Skill: `board-windows`.
 - What: Leave the way back reachable: the collapsed window becomes a control in its own position and focus moves to it — left alone, focus lands on <body> and the keyboard position is lost.
 - Record it: `workflow_complete` with `node: "A_OfferWayBack"`.
-- next: → `GW_Act` (What did the reader do?)
+- next: → `GW_Act_Join`
 
 ### 7. Swap cards below the threshold; leave open windows alone (`A_SwapToAvatar`)
 

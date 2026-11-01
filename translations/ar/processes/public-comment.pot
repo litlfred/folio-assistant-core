@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: public-comment\n"
-"POT-Creation-Date: 2026-10-31T21:14:47.816Z\n"
+"POT-Creation-Date: 2026-11-01T11:34:43.577Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ar\n"
@@ -196,7 +196,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/public-comment.bpmn:127
 #. Diagram label
-msgid "Re-route a change-set to another committee, with a reason"
+msgid "Re-route to another committee"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/public-comment.bpmn:139

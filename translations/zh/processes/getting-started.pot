@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: getting-started\n"
-"POT-Creation-Date: 2026-10-31T08:57:10.952Z\n"
+"POT-Creation-Date: 2026-11-01T10:53:09.350Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: zh\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:120
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:117
 #. Diagram label
 msgid "\"create a folio\""
 msgstr ""
@@ -49,17 +49,17 @@ msgstr ""
 msgid "Before Pages is switched on, make sure the gh-pages branch exists — the semantics of A_Provision in bootstrap-tools' render-kg-to-github-pages.bpmn, first half. `git ls-remote --heads origin gh-pages`; if absent, `bun run cat-harness/scripts/pages-bootstrap.ts --provision` pushes an orphan gh-pages holding a placeholder index.html and .nojekyll (idempotent; never forced; the script creates no remote branch without the flag). Then Settings → Pages → \"Deploy from a branch: gh-pages, / (root)\" — not \"GitHub Actions\" when the publish workflow pushes gh-pages. Every publishing path reaches this step: new-repo, overlay and add-folio, and an overlay or new repo that remote-mounts its dependencies (litlfred/test, provisioned at 860f9c2). Owner, 2026-10-01: \"need to create gh-pages branch before can turn on\"; 2026-10-07: \"need to create gh-pages before can deploy\" (#2417)."
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:126
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:123
 #. Diagram element documentation
 msgid "Before the first question is asked, establish HOW to ask it: audio, ordinary chat, selectable options for a user with limited hand function, large-type for low vision. A user who finds the questions unusable never reaches the rest of this diagram."
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:161
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:158
 #. Diagram label
 msgid "Choose from the offered options"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:183
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:180
 #. Diagram label
 msgid "Choose what the harness reads"
 msgstr ""
@@ -79,7 +79,7 @@ msgstr ""
 msgid "Computed from decisions/pages-live-gate.dmn. Four outcomes: `unprovisioned` (no gh-pages branch — back to Task_ProvisionGhPages) is checked first, and `unknown` is not a softer `not-yet`."
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:148
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:145
 #. Diagram element documentation
 msgid "Computed, not chosen. decisions/folio-intent.dmn returns one of five branches from statedIntent, isFolio and repoHasContent. Non-relaxable: this gateway IS the fix."
 msgstr ""
@@ -89,17 +89,17 @@ msgstr ""
 msgid "Confirmed live. The link is given as a link, and the author is told what is on it."
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:225
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:222
 #. Diagram element documentation
 msgid "content/, uploads/, library/, the first manifests, <slug>.json and index.config.json (the instance's config inline in its entry; no <slug>.config.json, bean ymvt), the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store. On the overlay path it declares in index.config.json exactly the markers picked at Task_ChooseHarnessed, and none it was not given. Refuses rather than overwrites when a folio is already present."
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:207
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:204
 #. Diagram label
 msgid "Create the repository"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:124
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:121
 #. Diagram label
 msgid "Detect the interaction modality"
 msgstr ""
@@ -124,12 +124,12 @@ msgstr ""
 msgid "Hand over the live link"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:217
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:214
 #. Diagram label
 msgid "Handed to content authoring"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:195
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:192
 #. Diagram label
 msgid "Import what, where, and who does it"
 msgstr ""
@@ -144,7 +144,7 @@ msgstr ""
 msgid "live"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:136
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:133
 #. Diagram element documentation
 msgid "Mechanical, read-only: does the instance's config (its `index.config.json` entry; a legacy `<name>.config.json` only as a fallback) declare a contentType, does the working tree hold somebody's existing project, and what has the user actually said. These are the three inputs to folio-intent.dmn. Non-relaxable: scaffolding without looking first is how a folio gets written over somebody's project."
 msgstr ""
@@ -184,7 +184,7 @@ msgstr ""
 msgid "Onboarding agent (system)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:209
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:206
 #. Diagram element documentation
 msgid "Only on the new-repo branch, and only after the user has named it. An empty working directory is scaffolded in place instead."
 msgstr ""
@@ -214,22 +214,22 @@ msgstr ""
 msgid "Provision gh-pages"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:108
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:105
 #. Diagram element documentation
 msgid "Provisions the gh-pages branch before Pages is switched on (Task_ProvisionGhPages, #2417), derives the URL, and holds the report that follows it: \"unprovisioned\" routes back to provisioning, and \"live\", \"not-yet\" and \"unknown\" are reached by exclusive branches of one DMN-computed gateway, and this lane is what keeps a failed probe from being reported as the softer \"not-yet\" it would be tempting to default to."
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:107
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:104
 #. Diagram label
 msgid "Publish — GitHub Pages"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:134
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:131
 #. Diagram label
 msgid "Read the repository facts"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:174
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:171
 #. Diagram element documentation
 msgid "Read-only. Classifies candidates into library/ (external source) and content/ (authored here), and reports what it could not classify as its own bucket rather than forcing every file into one of the two. Its fourth section, `markers`, lists the content markers it found — sushi-config.yaml, a legacy dak.json, .bpmn processes, a beans store, library/, Lean, folio manifests — each with its paths, whether index.config.json already declares it (declared, not-declared, or unknown), and the snippet that would. `bun run cat-harness-tools/scripts/scan-repo-content.ts --json`, a plain command any agent host can run."
 msgstr ""
@@ -254,12 +254,12 @@ msgstr ""
 msgid "Say where it will be"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:223
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:220
 #. Diagram label
 msgid "Scaffold the folio (folio_init)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:172
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:169
 #. Diagram label
 msgid "Scan the repo for content worth importing"
 msgstr ""
@@ -269,14 +269,9 @@ msgstr ""
 msgid "scripts/pages-bootstrap.ts: check the gh-pages branch first (absent is `unprovisioned`), derive the site URL from the git remote or the instance's config (its index.config.json entry), report whether a publish workflow exists and the Pages source it needs, and optionally probe until the site answers."
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:235
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:232
 #. Diagram label
 msgid "Seed the work plan"
-msgstr ""
-
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:101
-#. Diagram element documentation
-msgid "Seeds one bean per top-level content object the author named, positioned after scaffolding but before the Pages probe — a work plan exists for a folio whose publication status is not yet known, rather than waiting on that answer."
 msgstr ""
 
 #: ../folio-assistant-core/processes/conduct/getting-started.bpmn:70
@@ -294,27 +289,27 @@ msgstr ""
 msgid "Start the Pages build and derive the URL"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:236
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:233
 #. Diagram element documentation
 msgid "The first beans: what the author said they want to get started on, one bean per top-level content object they named."
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:219
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:216
 #. Diagram element documentation
 msgid "The misspeak case. The user has a folio and wants a document in it; this process ends and authoring-a-document.bpmn or authoring-a-paper.bpmn begins. Ending here rather than scaffolding is the whole value of the triage."
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:185
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:182
 #. Diagram element documentation
 msgid "The person picks which of the content markers the scan found the harness declares in index.config.json, and nothing is declared unpicked. A PERSON'S STEP: the scan's `markers` that are not yet declared are offered as selectable options — one per marker, each with its paths and what declaring it means, plus \"none of these\" — and the person picks which parts of the repository to load into the KG. A tap card where the host has one; otherwise a numbered pick-list with a stated default. Never a typed reply. The default declares NOTHING: a harness that declared every marker it found would be slurping the repository, which is what this step exists to prevent. Only the picks reach Task_Scaffold, which declares exactly those in index.config.json. With no undeclared marker found, nothing is asked. The same question is put after setup by running the scan with `--markers` (repo-conversion §2a)."
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:163
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:160
 #. Diagram element documentation
 msgid "The question is presented as a short list of selectable options, never as free prose, and the list names the top-level content types the agent knows about. The answer becomes the statedIntent fact and the table is evaluated again — the user's answer is read as evidence, like any other fact."
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:197
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:194
 #. Diagram element documentation
 msgid "Three questions the scan cannot answer: import these or not; library or content for each group; leave the files where they are or reorganize to declutter. Plus whether to dispatch one ingestion agent or a small swarm. Non-relaxable: nobody's files are moved or imported on inference."
 msgstr ""
@@ -334,12 +329,12 @@ msgstr ""
 msgid "User (person)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:146
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:143
 #. Diagram label
 msgid "What is the user asking for?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:100
+#: ../folio-assistant-core/processes/conduct/getting-started.bpmn:364
 #. Diagram label
 msgid "Work plan (beans)"
 msgstr ""

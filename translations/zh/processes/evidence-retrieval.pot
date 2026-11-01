@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: evidence-retrieval\n"
-"POT-Creation-Date: 2026-10-20T09:54:46.792Z\n"
+"POT-Creation-Date: 2026-11-01T11:34:43.571Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: zh\n"
@@ -14,39 +14,39 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:68
-#. Diagram label
-msgid "A recommendation is in play"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:102
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:110
 #. Diagram element documentation
 msgid "Already-adjudicated guidance: WHO SMART DAKs at L2 and FHIR Implementation Guides at L3. A recommendation adopted in a published DAK is evidence of a different kind from a primary study -- it is a prior decision, with its own provenance, and must be cited as that rather than laundered into primary evidence. NOT YET SKILL-BACKED. This step named `corpus-search`, which has never existed. It is not `corpus-grep`, whose job is the pre-declaration check that something really is an open gap — searching adjudicated L2/L3 content for evidence is a different task, so pointing the ref there would have been a plausible-looking wrong answer. Left uncovered until the skill is written."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:149
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:67
+#. Diagram label
+msgid "An edit is about to be drafted"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:157
 #. Diagram element documentation
 msgid "An unresolvable citation is not dropped and not silently kept. It becomes a tracked item, so the gap is visible in the work plan rather than surviving as a footnote nobody re-checks."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:143
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:151
 #. Diagram element documentation
 msgid "Answered by checking the source against the observatory or registry API: is its authority confirmed? `no` opens a bean for the unverified citation; `yes` goes on to appraise and grade the evidence."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:167
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:178
 #. Diagram element documentation
 msgid "Answered by the appraisal: is the graded evidence enough to support a recommendation? `no` records the evidence gap; `yes` attaches the evidence to the recommendation."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:157
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:168
 #. Diagram label
 msgid "Appraise and grade the body of evidence"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:181
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:195
 #. Diagram label
-msgid "Attach the evidence to the recommendation [content-author]"
+msgid "Attach the evidence"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:38
@@ -54,7 +54,7 @@ msgstr ""
 msgid "Author / guideline developer (person)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:142
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:150
 #. Diagram label
 msgid "Authority confirmed?"
 msgstr ""
@@ -64,22 +64,22 @@ msgstr ""
 msgid "Brackets the machine work rather than doing it: frames the PICO before Lane_Agent fans out across evidence classes, then is the only lane that grades what comes back and decides whether it is sufficient for a recommendation — retrieval and authority-checking are delegated, but the judgement that turns evidence into a claim never leaves this lane."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:127
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:135
 #. Diagram label
 msgid "Candidates assembled"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:62
-#. Diagram element documentation
-msgid "Catches two different shortfalls at two different severities: an unverified citation is noted but the process continues into grading, while an insufficient body of evidence ends the process at its own event — so only the second is fatal, and both stay visible in the work plan rather than one being silently absorbed into the other."
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:158
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:169
 #. Diagram element documentation
 msgid "Certainty of evidence per the grading system the folio declares. The grade attaches to the BODY of evidence for one PICO question, not to an individual citation -- which is why this step is after the join and not inside the fan-out."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:134
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:70
+#. Diagram label
+msgid "Does the change state or alter a recommendation?"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:142
 #. Diagram element documentation
 msgid "Each candidate is resolved against the standard API of the body that publishes it, so that 'authoritative' is a RESOLVED FACT rather than an assertion in the citation. What is checked: that the identifier resolves at the publisher; that the retrieved record matches what the citation claims; that the version and date are the ones cited; and that the publisher is one this folio has declared trusted. STRAWPERSON: the concrete registry list and endpoints are not settled here -- see the cat-harness.processes:policy note."
 msgstr ""
@@ -89,7 +89,7 @@ msgstr ""
 msgid "Editing subprocess — evidence for a recommendation"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:48
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:53
 #. Diagram label
 msgid "Evidence agent (system)"
 msgstr ""
@@ -101,125 +101,135 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:36
 #. Diagram element documentation
-msgid "Frame a question for a recommendation, retrieve and appraise evidence from trusted sources, and either attach it or record the gap. The author reviews the guidance already in their content, frames the question as PICO, retrieves candidate evidence across three classes (trusted L1 sources, trusted L2/L3 content, data repositories), verifies each candidate's authority against the publishing body's own API, grades the body of evidence, and either attaches it to the recommendation or records the gap. STRAWPERSON: registries, grading system and API bindings are not fixed here."
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:79
-#. Diagram label
-msgid "Frame the question as PICO [content-author]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:192
-#. Diagram label
-msgid "Gap recorded, no recommendation"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:118
-#. Diagram element documentation
-msgid "Indicator and microdata sources. Distinct from the two above because the unit of evidence is a MEASUREMENT with a population, a period and a method, not a claim in prose."
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:94
-#. Diagram element documentation
-msgid "Ingested primary literature under library/: the sections/*.md tree and, where a document was scanned, ocr/page-NNN.txt. NOTE the known blind spot — a document OCR'd but never re-run through pdf-structure.py has only a stub in sections/, so a sections-only search misses it."
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:173
-#. Diagram element documentation
-msgid "Insufficient evidence is a RESULT. It is recorded as such -- an honest gap the guideline can state -- rather than being closed by weakening the recommendation until the available evidence supports it."
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:206
-#. Diagram label
-msgid "no"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:148
-#. Diagram label
-msgid "Open a bean for the unverified citation [todo-manager]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:80
-#. Diagram element documentation
-msgid "Population, Intervention, Comparator, Outcome. The PICO is what makes the search reproducible and the evidence auditable: without it, 'we looked for evidence' is not a claim anyone can check. WHO guideline development states the question this way before any retrieval."
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:117
-#. Diagram label
-msgid "Query data repositories and statistical datasets"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:189
-#. Diagram label
-msgid "Recommendation is evidence-backed"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:172
-#. Diagram label
-msgid "Record the evidence gap [todo-manager]"
+msgid "Frame a question for a recommendation, retrieve and appraise evidence from trusted sources, and either attach it or record the gap; a change that states or alters no recommendation ends at its own event before any search. The author reviews the guidance already in their content, frames the question as PICO, retrieves candidate evidence across three classes (trusted L1 sources, trusted L2/L3 content, data repositories), verifies each candidate's authority against the publishing body's own API, grades the body of evidence, and either attaches it to the recommendation or records the gap. STRAWPERSON: registries, grading system and API bindings are not fixed here."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:87
 #. Diagram label
+msgid "Frame the question as PICO"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:206
+#. Diagram label
+msgid "Gap recorded, no recommendation"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:126
+#. Diagram element documentation
+msgid "Indicator and microdata sources. Distinct from the two above because the unit of evidence is a MEASUREMENT with a population, a period and a method, not a claim in prose."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:102
+#. Diagram element documentation
+msgid "Ingested primary literature under library/: the sections/*.md tree and, where a document was scanned, ocr/page-NNN.txt. NOTE the known blind spot — a document OCR'd but never re-run through pdf-structure.py has only a stub in sections/, so a sections-only search misses it."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:184
+#. Diagram element documentation
+msgid "Insufficient evidence is a RESULT. It is recorded as such -- an honest gap the guideline can state -- rather than being closed by weakening the recommendation until the available evidence supports it."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:211
+#. Diagram label
+msgid "no"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:76
+#. Diagram label
+msgid "No recommendation in this change"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:156
+#. Diagram label
+msgid "Open a bean for the unverified citation [todo-manager]"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:88
+#. Diagram element documentation
+msgid "Population, Intervention, Comparator, Outcome. The PICO is what makes the search reproducible and the evidence auditable: without it, 'we looked for evidence' is not a claim anyone can check. WHO guideline development states the question this way before any retrieval."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:125
+#. Diagram label
+msgid "Query data repositories and statistical datasets"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:203
+#. Diagram label
+msgid "Recommendation is evidence-backed"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:183
+#. Diagram label
+msgid "Record the evidence gap [todo-manager]"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:95
+#. Diagram label
 msgid "Retrieve across evidence classes"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:71
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:79
 #. Diagram label
-msgid "Review the guidance already in this content [content-review]"
+msgid "Review the existing guidance"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:101
 #. Diagram label
-msgid "Search trusted CONTENT — L2 DAKs, L3 IGs"
+msgid "Search trusted L1 sources"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:93
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:109
 #. Diagram label
-msgid "Search trusted SOURCES — L1 [document-intake]"
+msgid "Search trusted L2 and L3 content"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:166
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:177
 #. Diagram label
 msgid "Sufficient for a recommendation?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:57
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:62
 #. Diagram element documentation
 msgid "Task_VerifyAuthority and its gateway sit here rather than with Lane_Agent because the decision is not this instance's call — it is a readout of what the external API returns, and the moment that answer is uncertain or absent, Lane_WorkPlan opens a bean rather than this lane inventing a verdict."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:49
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:54
 #. Diagram element documentation
 msgid "The appraisal in the role's own description happens elsewhere in this diagram: this lane only fans out in parallel across the three evidence classes and joins the candidates, while grading is Lane_Author's call and authority is Lane_Trusted's — so what it owns here is coverage, not judgement."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:72
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:71
+#. Diagram element documentation
+msgid "The author answers before any search starts. `yes`: the change states a recommendation or alters one, and the evidence is gathered as below. `no`: the change carries none -- a mathematics folio has none, and a figure redrawn from its own source as a computable graphic adds or changes none -- so there is nothing to frame as PICO. The `no` branch ends at its own event, which records that answer in the instance history; it does not pretend a search was run. The answer is the author's and the editor still rules on the change at Task_ReviewFindings in Process_Editing, so a wrong `no` is caught there."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:80
 #. Diagram element documentation
 msgid "The author reads what the document, DAK or IG ALREADY says on this question, before looking outward. A recommendation that contradicts a sibling recommendation in the same artefact is a defect no external evidence will reveal."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:182
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:196
 #. Diagram element documentation
 msgid "The PICO, the graded body of evidence, each verified citation and its resolved authority record are written onto the recommendation block, so a reader can retrace the whole chain from the sentence back to the source."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:56
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:61
 #. Diagram label
 msgid "Trusted registries and observatories (external)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:133
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:141
 #. Diagram label
-msgid "Verify authority against the observatory / registry API"
+msgid "Verify authority against the registry"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:61
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:230
 #. Diagram label
-msgid "Work plan — beans (shared)"
+msgid "Work plan (beans)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:207
+#: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:210
 #. Diagram label
 msgid "yes"
 msgstr ""

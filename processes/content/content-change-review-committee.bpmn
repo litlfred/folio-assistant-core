@@ -27,6 +27,7 @@ Called from content-change-review when the author submits. Which end it reaches 
         <bpmn:flowNodeRef>Call_ReviewSlices</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>GW_Withdraw</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_WithdrawComment</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_Disputed_Join</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>GW_Disputed</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Call_Adjudication</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReviewUses</bpmn:flowNodeRef>
@@ -41,6 +42,7 @@ Called from content-change-review when the author submits. Which end it reaches 
         <bpmn:documentation>Organises a review large enough to need organising, and decides nothing about the content: ingests the reviewers' tagged comments, slices the change into pieces a reviewer can hold, assigns each slice to a review lane, and watches coverage until every changed block has a verdict or a reasoned waiver. A separate role from the editor on the owner's ruling of 2026-09-23 (bean en2d): organising a review and deciding its outcome are different accountabilities, and a process where one lane did both could not say which it was doing.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_IngestComments</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_SliceAndAssign</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_Covered_Join</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>GW_Covered</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
@@ -111,7 +113,7 @@ Called from content-change-review when the author submits. Which end it reaches 
       <bpmn:outgoing>c4</bpmn:outgoing>
       <bpmn:outgoing>c5</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:task id="Task_WithdrawComment" name="Withdraw a review comment&#10;[folio-review-comment-move]">
+    <bpmn:task id="Task_WithdrawComment" name="Withdraw a review comment">
       <bpmn:documentation>The reviewer who made a comment takes it back (it was a misreading, or a later slice answered it). Recorded with `folio-review-comment-move --to withdrawn`, committed to the edit-set's feature branch like every status change. This is the `withdraw` transition of REVIEW_TRANSITIONS.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="review-comments" />
@@ -119,10 +121,16 @@ Called from content-change-review when the author submits. Which end it reaches 
       <bpmn:incoming>c4</bpmn:incoming>
       <bpmn:outgoing>c6</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:exclusiveGateway id="GW_Disputed" name="A finding disputed?">
-      <bpmn:documentation>Is any finding disputed between author and reviewer? `Yes` goes to adjudication; `No` goes on to check that every changed block was reviewed.</bpmn:documentation>
+    <bpmn:exclusiveGateway id="GW_Disputed_Join">
+      <bpmn:documentation>Brings the paths together before the decision after it, so that decision only splits.</bpmn:documentation>
       <bpmn:incoming>c5</bpmn:incoming>
       <bpmn:incoming>c6</bpmn:incoming>
+      <bpmn:outgoing>Flow_GW_Disputed_Join</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
+    <bpmn:exclusiveGateway id="GW_Disputed" name="A finding disputed?">
+      <bpmn:documentation>Is any finding disputed between author and reviewer? `Yes` goes to adjudication; `No` goes on to check that every changed block was reviewed.</bpmn:documentation>
+      
+      <bpmn:incoming>Flow_GW_Disputed_Join</bpmn:incoming>
       <bpmn:outgoing>c7</bpmn:outgoing>
       <bpmn:outgoing>c9</bpmn:outgoing>
     </bpmn:exclusiveGateway>
@@ -138,13 +146,19 @@ Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is r
       <bpmn:incoming>c7</bpmn:incoming>
       <bpmn:outgoing>c10</bpmn:outgoing>
     </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="GW_Covered_Join">
+      <bpmn:documentation>Brings the paths together before the decision after it, so that decision only splits.</bpmn:documentation>
+      <bpmn:incoming>c9</bpmn:incoming>
+      <bpmn:incoming>c10</bpmn:incoming>
+      <bpmn:outgoing>Flow_GW_Covered_Join</bpmn:outgoing>
+    </bpmn:exclusiveGateway>
     <bpmn:exclusiveGateway id="GW_Covered" name="Every changed block and page reviewed?">
       <bpmn:documentation>Computed, not chosen: `decisions/review-coverage-gate.dmn` reads `uncoveredBlocks` (changed blocks with neither a verdict nor a reasoned waiver) and `openDefects`, and, where the build published a rendered impact, `unreviewedPages`, `undeterminedInputs` and `missedPages` with their `rendered` and `measured` statuses (skill rendered-impact). Resolved comments are not coverage, and coverage is not approval — that is GW_Approved.</bpmn:documentation>
       <bpmn:extensionElements>
         <cat-harness.processes:decision ref="decisions/review-coverage-gate.dmn#Decision_ReviewCoverageGate" />
       </bpmn:extensionElements>
-      <bpmn:incoming>c9</bpmn:incoming>
-      <bpmn:incoming>c10</bpmn:incoming>
+      
+      <bpmn:incoming>Flow_GW_Covered_Join</bpmn:incoming>
       <bpmn:outgoing>c8</bpmn:outgoing>
       <bpmn:outgoing>c11</bpmn:outgoing>
     </bpmn:exclusiveGateway>
@@ -223,11 +237,13 @@ Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is r
     <bpmn:sequenceFlow id="c2" sourceRef="Task_SliceAndAssign" targetRef="Call_ReviewSlices" />
     <bpmn:sequenceFlow id="c3" sourceRef="Call_ReviewSlices" targetRef="GW_Withdraw" />
     <bpmn:sequenceFlow id="c4" name="Yes" sourceRef="GW_Withdraw" targetRef="Task_WithdrawComment" />
-    <bpmn:sequenceFlow id="c5" name="No" sourceRef="GW_Withdraw" targetRef="GW_Disputed" />
-    <bpmn:sequenceFlow id="c6" sourceRef="Task_WithdrawComment" targetRef="GW_Disputed" />
+    <bpmn:sequenceFlow id="c5" name="No" sourceRef="GW_Withdraw" targetRef="GW_Disputed_Join" />
+    <bpmn:sequenceFlow id="c6" sourceRef="Task_WithdrawComment" targetRef="GW_Disputed_Join" />
+    <bpmn:sequenceFlow id="Flow_GW_Disputed_Join" sourceRef="GW_Disputed_Join" targetRef="GW_Disputed"/>
     <bpmn:sequenceFlow id="c7" name="Yes" sourceRef="GW_Disputed" targetRef="Call_Adjudication" />
-    <bpmn:sequenceFlow id="c9" name="No" sourceRef="GW_Disputed" targetRef="GW_Covered" />
-    <bpmn:sequenceFlow id="c10" sourceRef="Call_Adjudication" targetRef="GW_Covered" />
+    <bpmn:sequenceFlow id="c9" name="No" sourceRef="GW_Disputed" targetRef="GW_Covered_Join" />
+    <bpmn:sequenceFlow id="c10" sourceRef="Call_Adjudication" targetRef="GW_Covered_Join" />
+    <bpmn:sequenceFlow id="Flow_GW_Covered_Join" sourceRef="GW_Covered_Join" targetRef="GW_Covered"/>
     <bpmn:sequenceFlow id="c8" name="no" sourceRef="GW_Covered" targetRef="Task_SliceAndAssign" />
     <bpmn:sequenceFlow id="c11" name="yes" sourceRef="GW_Covered" targetRef="Task_ReviewUses" />
     <bpmn:sequenceFlow id="c11b" sourceRef="Task_ReviewUses" targetRef="Task_ReviewImpact" />
@@ -241,68 +257,82 @@ Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is r
   <bpmndi:BPMNDiagram id="BPMNDiagram_ContentChangeReviewCommittee">
     <bpmndi:BPMNPlane id="BPMNPlane_ContentChangeReviewCommittee" bpmnElement="Collaboration_ContentChangeReviewCommittee">
       <bpmndi:BPMNShape id="Participant_ContentChangeReviewCommittee_di" bpmnElement="Participant_ContentChangeReviewCommittee" isHorizontal="true">
-        <dc:Bounds x="100" y="80" width="2530" height="430" />
+        <dc:Bounds x="100" y="80" width="2710" height="430" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Reviewer_di" bpmnElement="Lane_Reviewer" isHorizontal="true">
-        <dc:Bounds x="130" y="80" width="2500" height="280" />
+        <dc:Bounds x="130" y="80" width="2680" height="280" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Coordinator_di" bpmnElement="Lane_Coordinator" isHorizontal="true">
-        <dc:Bounds x="130" y="360" width="2500" height="150" />
+        <dc:Bounds x="130" y="360" width="2680" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Start_Reviewer_di" bpmnElement="Start_Reviewer">
         <dc:Bounds x="242" y="137" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CompareBeforeAfter_di" bpmnElement="Task_CompareBeforeAfter">
-        <dc:Bounds x="370" y="115" width="120" height="80" />
+        <dc:Bounds x="370" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_IngestComments_di" bpmnElement="Task_IngestComments">
-        <dc:Bounds x="530" y="395" width="160" height="80" />
+        <dc:Bounds x="550" y="375" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_SliceAndAssign_di" bpmnElement="Task_SliceAndAssign">
-        <dc:Bounds x="730" y="395" width="120" height="80" />
+        <dc:Bounds x="730" y="375" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Call_ReviewSlices_di" bpmnElement="Call_ReviewSlices">
-        <dc:Bounds x="890" y="115" width="160" height="80" />
+        <dc:Bounds x="910" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Withdraw_di" bpmnElement="GW_Withdraw">
         <dc:Bounds x="1145" y="130" width="50" height="50" />
         
       <bpmndi:BPMNLabel><dc:Bounds x="1125" y="91" width="90" height="35" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_WithdrawComment_di" bpmnElement="Task_WithdrawComment">
-        <dc:Bounds x="1090" y="245" width="160" height="80" />
+        <dc:Bounds x="1110" y="225" width="120" height="120" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="GW_Disputed_di" bpmnElement="GW_Disputed">
+      <bpmndi:BPMNShape id="Shape_GW_Disputed_Join" bpmnElement="GW_Disputed_Join" isMarkerVisible="true">
         <dc:Bounds x="1345" y="130" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_GW_Disputed_Join" bpmnElement="Flow_GW_Disputed_Join">
+        <di:waypoint x="1395" y="155"/>
+        <di:waypoint x="1435" y="155"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="GW_Disputed_di" bpmnElement="GW_Disputed">
+        <dc:Bounds x="1435" y="130" width="50" height="50" />
         
       <bpmndi:BPMNLabel><dc:Bounds x="1325" y="90" width="90" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Call_Adjudication_di" bpmnElement="Call_Adjudication">
-        <dc:Bounds x="1290" y="238.5" width="160" height="93" />
+        <dc:Bounds x="1355" y="225" width="120" height="120" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_GW_Covered_Join" bpmnElement="GW_Covered_Join" isMarkerVisible="true">
+        <dc:Bounds x="1605" y="410" width="50" height="50" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_Flow_GW_Covered_Join" bpmnElement="Flow_GW_Covered_Join">
+        <di:waypoint x="1655" y="435"/>
+        <di:waypoint x="1695" y="435"/>
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="GW_Covered_di" bpmnElement="GW_Covered">
-        <dc:Bounds x="1515" y="410" width="50" height="50" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1569" y="464" width="225" height="36" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        <dc:Bounds x="1695" y="410" width="50" height="50" />
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="1749" y="464" width="225" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReviewUses_di" bpmnElement="Task_ReviewUses">
-        <dc:Bounds x="1650" y="115" width="120" height="80" />
+        <dc:Bounds x="1830" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReviewImpact_di" bpmnElement="Task_ReviewImpact">
-        <dc:Bounds x="1820" y="115" width="120" height="80" />
+        <dc:Bounds x="2000" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Approved_di" bpmnElement="GW_Approved">
-        <dc:Bounds x="2025" y="130" width="50" height="50" />
+        <dc:Bounds x="2205" y="130" width="50" height="50" />
         
-      <bpmndi:BPMNLabel><dc:Bounds x="2005" y="90" width="90" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNLabel><dc:Bounds x="2185" y="90" width="90" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_RequestChanges_di" bpmnElement="Task_RequestChanges">
-        <dc:Bounds x="1990" y="245" width="120" height="80" />
+        <dc:Bounds x="2170" y="225" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_ChangesRequested_di" bpmnElement="End_ChangesRequested">
-        <dc:Bounds x="2202" y="267" width="36" height="36" />
+        <dc:Bounds x="2382" y="267" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Approve_di" bpmnElement="Task_Approve">
-        <dc:Bounds x="2160" y="115" width="120" height="80" />
+        <dc:Bounds x="2340" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_Reviewer_di" bpmnElement="End_Reviewer">
-        <dc:Bounds x="2372" y="137" width="36" height="36" />
+        <dc:Bounds x="2552" y="137" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="r1_di" bpmnElement="r1">
         <di:waypoint x="278" y="155" />
@@ -310,22 +340,22 @@ Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is r
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="r2_di" bpmnElement="r2">
         <di:waypoint x="490" y="155" />
-        <di:waypoint x="515" y="155" />
-        <di:waypoint x="515" y="435" />
-        <di:waypoint x="530" y="435" />
+        <di:waypoint x="520" y="155" />
+        <di:waypoint x="520" y="435" />
+        <di:waypoint x="550" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c1_di" bpmnElement="c1">
-        <di:waypoint x="690" y="435" />
+        <di:waypoint x="670" y="435" />
         <di:waypoint x="730" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c2_di" bpmnElement="c2">
         <di:waypoint x="850" y="435" />
-        <di:waypoint x="875" y="435" />
-        <di:waypoint x="875" y="155" />
-        <di:waypoint x="890" y="155" />
+        <di:waypoint x="880" y="435" />
+        <di:waypoint x="880" y="155" />
+        <di:waypoint x="910" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c3_di" bpmnElement="c3">
-        <di:waypoint x="1050" y="155" />
+        <di:waypoint x="1030" y="155" />
         <di:waypoint x="1145" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c4_di" bpmnElement="c4">
@@ -337,60 +367,60 @@ Permitted answers (bean `bvuk`, owner 2026-09-23): `stands` — the finding is r
         <di:waypoint x="1345" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c6_di" bpmnElement="c6">
-        <di:waypoint x="1250" y="285" />
+        <di:waypoint x="1230" y="285" />
         <di:waypoint x="1287.5" y="285" />
         <di:waypoint x="1287.5" y="155" />
         <di:waypoint x="1345" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c7_di" bpmnElement="c7">
-        <di:waypoint x="1370" y="180" />
-        <di:waypoint x="1370" y="238.5" />
+        <di:waypoint x="1460" y="180" />
+        <di:waypoint x="1460" y="238.5" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c9_di" bpmnElement="c9">
-        <di:waypoint x="1395" y="155" />
-        <di:waypoint x="1540" y="155" />
-        <di:waypoint x="1540" y="410" />
+        <di:waypoint x="1485" y="155" />
+        <di:waypoint x="1630" y="155" />
+        <di:waypoint x="1630" y="410" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c10_di" bpmnElement="c10">
-        <di:waypoint x="1370" y="331.5" />
-        <di:waypoint x="1370" y="435" />
-        <di:waypoint x="1515" y="435" />
+        <di:waypoint x="1460" y="331.5" />
+        <di:waypoint x="1460" y="435" />
+        <di:waypoint x="1605" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c8_di" bpmnElement="c8">
-        <di:waypoint x="1540" y="460" />
-        <di:waypoint x="1540" y="498" />
+        <di:waypoint x="1720" y="460" />
+        <di:waypoint x="1720" y="498" />
         <di:waypoint x="790" y="498" />
         <di:waypoint x="790" y="475" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c11_di" bpmnElement="c11">
-        <di:waypoint x="1565" y="435" />
-        <di:waypoint x="1607" y="435" />
-        <di:waypoint x="1607" y="155" />
-        <di:waypoint x="1650" y="155" />
+        <di:waypoint x="1745" y="435" />
+        <di:waypoint x="1787" y="435" />
+        <di:waypoint x="1787" y="155" />
+        <di:waypoint x="1830" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="c11b_di" bpmnElement="c11b">
-        <di:waypoint x="1770" y="155" />
-        <di:waypoint x="1820" y="155" />
+        <di:waypoint x="1950" y="155" />
+        <di:waypoint x="2000" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="r3_di" bpmnElement="r3">
-        <di:waypoint x="1940" y="155" />
-        <di:waypoint x="2025" y="155" />
+        <di:waypoint x="2120" y="155" />
+        <di:waypoint x="2205" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="r4_di" bpmnElement="r4">
-        <di:waypoint x="2050" y="180" />
-        <di:waypoint x="2050" y="245" />
+        <di:waypoint x="2230" y="180" />
+        <di:waypoint x="2230" y="245" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="r5_di" bpmnElement="r5">
-        <di:waypoint x="2110" y="285" />
-        <di:waypoint x="2202" y="285" />
+        <di:waypoint x="2290" y="285" />
+        <di:waypoint x="2382" y="285" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="r6_di" bpmnElement="r6">
-        <di:waypoint x="2075" y="155" />
-        <di:waypoint x="2160" y="155" />
+        <di:waypoint x="2255" y="155" />
+        <di:waypoint x="2340" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="r8_di" bpmnElement="r8">
-        <di:waypoint x="2280" y="155" />
-        <di:waypoint x="2372" y="155" />
+        <di:waypoint x="2460" y="155" />
+        <di:waypoint x="2552" y="155" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

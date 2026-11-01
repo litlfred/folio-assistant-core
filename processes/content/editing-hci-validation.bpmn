@@ -56,16 +56,7 @@
         <bpmn:flowNodeRef>Task_RecordDecision</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_EditorDecision</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Discarded</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Call_BeanClose</bpmn:flowNodeRef>
               <bpmn:flowNodeRef>CallActivity_Evidence</bpmn:flowNodeRef>
-      </bpmn:lane>
-      <bpmn:lane id="Lane_WorkPlan" name="Work plan — beans (shared by humans and agents)" partitionElementRef="work-plan">
-        <bpmn:documentation>Claims the edit as a bean before drafting starts, so a re-entry cannot silently duplicate the same request, carries the findings onto it before the editor ever sees them, and closes or reopens it against whether the change actually landed. That record is independent of the audit note Task_RecordDecision writes for the decision itself — one tracks the edit's course, the other its outcome.</bpmn:documentation>
-        <bpmn:flowNodeRef>Task_ClaimBean</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>GW_BeanYours</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>End_BeanNotYours</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_LogFindings</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>Task_ResolveBean</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Agent" name="Authoring agent (system)" partitionElementRef="authoring-agent">
         <bpmn:documentation>Produces the proposed change and, once findings exist, weighs the options for it — accept, revise, discard — but stops short of choosing: Call_OptionsAnalysis records that the options were weighed, Task_RecordDecision in the editor's lane records what was chosen, and collapsing the two would let the same party both analyse and decide.</bpmn:documentation>
@@ -73,6 +64,14 @@
         <bpmn:flowNodeRef>Gateway_ProposalReady</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReviseEdit</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Call_OptionsAnalysis</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_ClaimBean</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_BeanYours</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>End_BeanNotYours</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_LogFindings</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_ResolveBean</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>GW_BeanClosedHow</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Commit</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>EndEvent_InCorpus</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Pipeline" name="HCI validation pipeline (system)" partitionElementRef="validation-pipeline">
         <bpmn:documentation>Forks validation into its four parallel paths and, once every one reports, collates mechanical results and review findings into a single report. It is the aggregation point rather than a checker itself — its only job is making sure none of the four is missing before the editor sees anything.</bpmn:documentation>
@@ -93,11 +92,6 @@
         <bpmn:flowNodeRef>Task_SmeReview</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ReviewerJoin</bpmn:flowNodeRef>
       </bpmn:lane>
-      <bpmn:lane id="Lane_Corpus" name="Corpus (versioned store)" partitionElementRef="corpus">
-        <bpmn:documentation>Receives the write only after Gateway_EditorDecision resolves to accept. The one activity here is irreversible in a way nothing upstream is, which is why it is subject to the commit-hygiene requirement and reachable from no path except acceptance.</bpmn:documentation>
-        <bpmn:flowNodeRef>Task_Commit</bpmn:flowNodeRef>
-        <bpmn:flowNodeRef>EndEvent_InCorpus</bpmn:flowNodeRef>
-      </bpmn:lane>
     </bpmn:laneSet>
     <bpmn:startEvent id="StartEvent_EditRequested" name="Edit requested">
       <bpmn:outgoing>Flow_01</bpmn:outgoing>
@@ -116,7 +110,7 @@
           <bpmn:incoming>Flow_02</bpmn:incoming>
       <bpmn:outgoing>SF_Bean_1</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:callActivity id="CallActivity_Evidence" name="Gather and verify the evidence&#10;[evidence-retrieval]" calledElement="Process_EvidenceRetrieval">
+    <bpmn:callActivity id="CallActivity_Evidence" name="Gather and verify the evidence" calledElement="Process_EvidenceRetrieval">
       <bpmn:documentation>Before anything is drafted: the author reads the guidance ALREADY in this content, frames the question as PICO, retrieves candidates across the three evidence classes, and has each candidate's authority resolved against its publisher's own API. A recommendation reaches the drafting step with its evidence attached, or with the gap recorded.
 
 This step has nothing to do for content that carries no recommendations -- a mathematics folio has none, and a figure redrawn from its own source adds none -- and the subprocess's first gateway (Gateway_RecommendationInPlay) ends it there at its own event, recording the answer, rather than satisfying the search vacuously.</bpmn:documentation>
@@ -220,6 +214,9 @@ This step has nothing to do for content that carries no recommendations -- a mat
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_19</bpmn:incoming>
       <bpmn:outgoing>Flow_20</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DOA_Task_LogFindings">
+        <bpmn:targetRef>DSR_work_plan</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
     <bpmn:userTask id="Task_ReviewFindings" name="Review the findings">
       <bpmn:documentation>THE GATE: the editor sees every finding BEFORE anything reaches the corpus.</bpmn:documentation>
@@ -243,7 +240,7 @@ In the Agent lane, and this diagram makes the reason sharp. `Task_RecordDecision
 
 On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — irreversibility and surprise — and leaving there is a correct outcome. A spelling fix that reached `Task_ReviewFindings` with one mechanical finding exits immediately; a revise-or-discard on a block other content depends on does not.</bpmn:documentation>
     </bpmn:callActivity>
-    <bpmn:userTask id="Task_RecordDecision" name="Record the decision and its audit note&#10;[decision-audit]">
+    <bpmn:userTask id="Task_RecordDecision" name="Record the decision and audit note">
       <bpmn:documentation>A decision is an act ABOUT the findings, not a finding. Record the outcome, every finding it weighed, every finding it overrules — and an audit note saying why it was made, or why a finding in it was left. Each note cites corpus evidence: a witness, another finding, a QA report, a block, a file range. An overruled mechanical finding stays on the record; a gate whose findings vanish when somebody disagrees with them cannot be audited. An agent may assemble the citations and is recorded as `proposed_by`; the author is whoever decided.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="decision-audit" />
@@ -282,13 +279,17 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_25</bpmn:incoming>
       <bpmn:outgoing>Flow_26</bpmn:outgoing>
+      <bpmn:dataOutputAssociation id="DOA_Task_Commit">
+        <bpmn:targetRef>DSR_corpus</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
     <bpmn:callActivity id="Task_ResolveBean" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
       <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
-          <bpmn:incoming>Flow_26</bpmn:incoming>
-          <bpmn:outgoing>Flow_27</bpmn:outgoing>
     </bpmn:callActivity>
+    <bpmn:exclusiveGateway id="GW_BeanClosedHow" name="How did it end?">
+      <bpmn:documentation>Which outcome the bean was closed with, so each ends at its own named end event. The bean is closed once, on every path (bpmn-authoring: open and close the bean at the top, once).</bpmn:documentation>
+    </bpmn:exclusiveGateway>
     <bpmn:endEvent id="EndEvent_InCorpus" name="Change is in the corpus">
       <bpmn:incoming>Flow_27</bpmn:incoming>
     </bpmn:endEvent>
@@ -302,12 +303,6 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
       <bpmn:documentation>Someone else holds the bean; this run stops without touching it.</bpmn:documentation>
       <bpmn:incoming>SF_Bean_2</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Call_BeanClose" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
-      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
-      <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
-      <bpmn:incoming>Flow_24</bpmn:incoming>
-      <bpmn:outgoing>SF_Bean_3</bpmn:outgoing>
-    </bpmn:callActivity>
     <bpmn:sequenceFlow id="Flow_01" sourceRef="StartEvent_EditRequested" targetRef="Task_DescribeChange" />
     <bpmn:sequenceFlow id="Flow_02" sourceRef="Task_DescribeChange" targetRef="Task_ClaimBean" />
     <bpmn:sequenceFlow id="Flow_03" name="claimed" sourceRef="GW_BeanYours" targetRef="CallActivity_Evidence" />
@@ -334,27 +329,28 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
     <bpmn:sequenceFlow id="Flow_21b" sourceRef="Task_RecordDecision" targetRef="Gateway_EditorDecision" />
     <bpmn:sequenceFlow id="Flow_22" name="revise" sourceRef="Gateway_EditorDecision" targetRef="Task_ReviseEdit" />
     <bpmn:sequenceFlow id="Flow_23" name="re-validate" sourceRef="Task_ReviseEdit" targetRef="Gateway_ProposalReady" />
-    <bpmn:sequenceFlow id="Flow_24" name="discard" sourceRef="Gateway_EditorDecision" targetRef="Call_BeanClose" />
+    <bpmn:sequenceFlow id="Flow_24" name="discard" sourceRef="Gateway_EditorDecision" targetRef="Task_ResolveBean" />
     <bpmn:sequenceFlow id="Flow_25" name="accept" sourceRef="Gateway_EditorDecision" targetRef="Task_Commit" />
     <bpmn:sequenceFlow id="Flow_26" sourceRef="Task_Commit" targetRef="Task_ResolveBean" />
-    <bpmn:sequenceFlow id="Flow_27" sourceRef="Task_ResolveBean" targetRef="EndEvent_InCorpus" />
+    <bpmn:sequenceFlow id="Flow_GW_BeanClosedHow" sourceRef="Task_ResolveBean" targetRef="GW_BeanClosedHow"/>
+    <bpmn:sequenceFlow name="in the corpus" id="Flow_27" sourceRef="GW_BeanClosedHow" targetRef="EndEvent_InCorpus" />
     <bpmn:sequenceFlow id="SF_Bean_1" sourceRef="Task_ClaimBean" targetRef="GW_BeanYours"/>
     <bpmn:sequenceFlow id="SF_Bean_2" name="not yours" sourceRef="GW_BeanYours" targetRef="End_BeanNotYours"/>
-    <bpmn:sequenceFlow id="SF_Bean_3" sourceRef="Call_BeanClose" targetRef="EndEvent_Discarded"/>
+    <bpmn:sequenceFlow name="discarded" id="SF_Bean_3" sourceRef="GW_BeanClosedHow" targetRef="EndEvent_Discarded"/>
+    <bpmn:dataStoreReference id="DSR_work_plan" name="Work plan (beans)" dataStoreRef="work-plan"/>
+    <bpmn:dataStoreReference id="DSR_corpus" name="Corpus" dataStoreRef="corpus"/>
   </bpmn:process>
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_FolioEditing">
+      <bpmndi:BPMNEdge id="Edge_Flow_GW_BeanClosedHow" bpmnElement="Flow_GW_BeanClosedHow"><di:waypoint x="3338" y="305"/><di:waypoint x="3378" y="305"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Participant_FolioEditing_di" bpmnElement="Participant_FolioEditing" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="3393" height="1422" />
+        <dc:Bounds x="160" y="80" width="3393" height="1272" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Editor_di" bpmnElement="Lane_Editor" isHorizontal="true">
         <dc:Bounds x="190" y="80" width="3363" height="150" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_WorkPlan_di" bpmnElement="Lane_WorkPlan" isHorizontal="true">
-        <dc:Bounds x="190" y="230" width="3363" height="260" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Agent_di" bpmnElement="Lane_Agent" isHorizontal="true">
-        <dc:Bounds x="190" y="490" width="3363" height="150" />
+        <dc:Bounds x="190" y="230" width="3363" height="410" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Pipeline_di" bpmnElement="Lane_Pipeline" isHorizontal="true">
         <dc:Bounds x="190" y="640" width="3363" height="150" />
@@ -365,9 +361,6 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
       <bpmndi:BPMNShape id="Lane_NonMechanical_di" bpmnElement="Lane_NonMechanical" isHorizontal="true">
         <dc:Bounds x="190" y="1122" width="3363" height="230" />
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_Corpus_di" bpmnElement="Lane_Corpus" isHorizontal="true">
-        <dc:Bounds x="190" y="1352" width="3363" height="150" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_EditRequested_di" bpmnElement="StartEvent_EditRequested">
         <dc:Bounds x="262" y="137" width="36" height="36" />
         
@@ -375,29 +368,25 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
           <dc:Bounds x="225" y="177" width="110" height="30" />
         </bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_DescribeChange_di" bpmnElement="Task_DescribeChange">
-        <dc:Bounds x="355" y="110" width="170" height="90" />
+        <dc:Bounds x="380" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ClaimBean_di" bpmnElement="Task_ClaimBean">
-        <dc:Bounds x="555" y="260" width="130" height="90" />
+        <dc:Bounds x="380" y="245" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_Evidence_di" bpmnElement="CallActivity_Evidence">
-        <dc:Bounds x="555" y="108.5" width="180" height="93" />
+        <dc:Bounds x="585" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_DraftEdit_di" bpmnElement="Task_DraftEdit">
-        <dc:Bounds x="765" y="520" width="170" height="90" />
+        <dc:Bounds x="790" y="505" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_ProposalReady_di" bpmnElement="Gateway_ProposalReady" isMarkerVisible="true">
         <dc:Bounds x="985" y="540" width="50" height="50" />
         
-      <bpmndi:BPMNLabel>
-          <dc:Bounds x="955" y="594" width="110" height="28" />
-        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNLabel><dc:Bounds x="955" y="500" width="110" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_ValidationFork_di" bpmnElement="Gateway_ValidationFork">
         <dc:Bounds x="1145" y="690" width="50" height="50" />
         
-      <bpmndi:BPMNLabel>
-          <dc:Bounds x="1015" y="702" width="125" height="28" />
-        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNLabel><dc:Bounds x="1107.5" y="651" width="125" height="35" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_SchemaValidate_di" bpmnElement="Task_SchemaValidate">
         <dc:Bounds x="1405" y="802" width="170" height="90" />
       </bpmndi:BPMNShape>
@@ -429,77 +418,67 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
           <dc:Bounds x="1670" y="702" width="110" height="28" />
         </bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CollateFindings_di" bpmnElement="Task_CollateFindings">
-        <dc:Bounds x="1905" y="670" width="130" height="90" />
+        <dc:Bounds x="1910" y="655" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_LogFindings_di" bpmnElement="Task_LogFindings">
         <dc:Bounds x="2065" y="254.5" width="170" height="101" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReviewFindings_di" bpmnElement="Task_ReviewFindings">
-        <dc:Bounds x="2265" y="110" width="130" height="90" />
+        <dc:Bounds x="2270" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Call_OptionsAnalysis_di" bpmnElement="Call_OptionsAnalysis">
-        <dc:Bounds x="2265" y="519" width="170" height="92" />
+        <dc:Bounds x="2380" y="245" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_RecordDecision_di" bpmnElement="Task_RecordDecision">
-        <dc:Bounds x="2470" y="104.5" width="170" height="101" />
+        <dc:Bounds x="2495" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_EditorDecision_di" bpmnElement="Gateway_EditorDecision" isMarkerVisible="true">
         <dc:Bounds x="2745" y="130" width="50" height="50" />
         
       <bpmndi:BPMNLabel>
-          <dc:Bounds x="2705" y="90" width="130" height="28" />
+          <dc:Bounds x="2640" y="96" width="95" height="42" />
         </bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReviseEdit_di" bpmnElement="Task_ReviseEdit">
-        <dc:Bounds x="2685" y="514.5" width="170" height="101" />
+        <dc:Bounds x="2710" y="505" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Discarded_di" bpmnElement="EndEvent_Discarded">
-        <dc:Bounds x="3095" y="137" width="36" height="36" />
+        <dc:Bounds x="3518" y="338" width="36" height="36" />
         
-      <bpmndi:BPMNLabel>
-          <dc:Bounds x="3058" y="177" width="110" height="30" />
-        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="3424" y="378" width="90" height="35" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Commit_di" bpmnElement="Task_Commit">
-        <dc:Bounds x="3028" y="1382" width="130" height="90" />
+        <dc:Bounds x="3033" y="245" width="120" height="120" />
       </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_GW_BeanClosedHow" bpmnElement="GW_BeanClosedHow" isMarkerVisible="true"><dc:Bounds x="3378" y="280" width="50" height="50" />
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="3312.08" y="353.5" width="90" height="35" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ResolveBean_di" bpmnElement="Task_ResolveBean">
         <dc:Bounds x="3208" y="260" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_InCorpus_di" bpmnElement="EndEvent_InCorpus">
-        <dc:Bounds x="3415" y="1409" width="36" height="36" />
+        <dc:Bounds x="3518" y="242" width="36" height="36" />
         
-      <bpmndi:BPMNLabel>
-          <dc:Bounds x="3378" y="1449" width="110" height="30" />
-        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="3334.01" y="233.5" width="180" height="18" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_01_di" bpmnElement="Flow_01">
         <di:waypoint x="298" y="155" />
-        <di:waypoint x="355" y="155" />
+        <di:waypoint x="380" y="155" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_02_di" bpmnElement="Flow_02">
-        <di:waypoint x="525" y="155" />
-        <di:waypoint x="540" y="155" />
-        <di:waypoint x="540" y="305" />
-        <di:waypoint x="555" y="305" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_03_di" bpmnElement="Flow_03">
-        <di:waypoint x="645" y="380" />
-        <di:waypoint x="645" y="201.5" />
-        <bpmndi:BPMNLabel><dc:Bounds x="649" y="237.63" width="90" height="17" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_02_di" bpmnElement="Flow_02"><di:waypoint x="440" y="215"/><di:waypoint x="440" y="245"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_03_di" bpmnElement="Flow_03"><di:waypoint x="585" y="305"/><di:waypoint x="645" y="305"/><di:waypoint x="645" y="215"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Evidence_di" bpmnElement="Flow_Evidence">
-        <di:waypoint x="735" y="155" />
-        <di:waypoint x="745" y="155" />
-        <di:waypoint x="745" y="565" />
-        <di:waypoint x="765" y="565" />
+        <di:waypoint x="705" y="155" />
+        <di:waypoint x="747.5" y="155" />
+        <di:waypoint x="747.5" y="565" />
+        <di:waypoint x="790" y="565" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_04_di" bpmnElement="Flow_04">
-        <di:waypoint x="935" y="565" />
+        <di:waypoint x="910" y="565" />
         <di:waypoint x="985" y="565" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_05_di" bpmnElement="Flow_05">
-        <di:waypoint x="1035" y="565" />
-        <di:waypoint x="1170" y="565" />
-        <di:waypoint x="1170" y="690" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_05_di" bpmnElement="Flow_05"><di:waypoint x="1010" y="590"/><di:waypoint x="1010" y="715"/><di:waypoint x="1145" y="715"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_06_di" bpmnElement="Flow_06">
         <di:waypoint x="1170" y="740" />
         <di:waypoint x="1170" y="845" />
@@ -564,24 +543,18 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_18_di" bpmnElement="Flow_18">
         <di:waypoint x="1835" y="715" />
-        <di:waypoint x="1905" y="715" />
+        <di:waypoint x="1910" y="715" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_19_di" bpmnElement="Flow_19">
-        <di:waypoint x="2035" y="715" />
-        <di:waypoint x="2150" y="715" />
-        <di:waypoint x="2150" y="355.5" />
+        <di:waypoint x="2030" y="715" />
+        <di:waypoint x="2047.5" y="715" />
+        <di:waypoint x="2047.5" y="305" />
+        <di:waypoint x="2065" y="305" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_20_di" bpmnElement="Flow_20">
-        <di:waypoint x="2235" y="305" />
-        <di:waypoint x="2330" y="305" />
-        <di:waypoint x="2330" y="200" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_21_di" bpmnElement="Flow_21">
-        <di:waypoint x="2330" y="200" />
-        <di:waypoint x="2330" y="519" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_20_di" bpmnElement="Flow_20"><di:waypoint x="2150" y="254.5"/><di:waypoint x="2150" y="155"/><di:waypoint x="2270" y="155"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_21_di" bpmnElement="Flow_21"><di:waypoint x="2330" y="215"/><di:waypoint x="2330" y="305"/><di:waypoint x="2380" y="305"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_21b_di" bpmnElement="Flow_21b">
-        <di:waypoint x="2640" y="155" />
+        <di:waypoint x="2615" y="155" />
         <di:waypoint x="2745" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_22_di" bpmnElement="Flow_22">
@@ -590,47 +563,43 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
         <bpmndi:BPMNLabel><dc:Bounds x="2774" y="338.75" width="90" height="17" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_23_di" bpmnElement="Flow_23">
-        <di:waypoint x="2685" y="565" />
+        <di:waypoint x="2710" y="565" />
         <di:waypoint x="1035" y="565" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_24_di" bpmnElement="Flow_24">
-        <di:waypoint x="2795" y="155" />
-        <di:waypoint x="2895" y="155" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_24_di" bpmnElement="Flow_24"><di:waypoint x="2770" y="130"/><di:waypoint x="2770" y="110"/><di:waypoint x="3273" y="110"/><di:waypoint x="3273" y="260"/></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_25_di" bpmnElement="Flow_25">
-        <di:waypoint x="2783" y="180" />
-        <di:waypoint x="2783" y="215" />
-        <di:waypoint x="3113" y="215" />
-        <di:waypoint x="3113" y="1382" />
-        <bpmndi:BPMNLabel><dc:Bounds x="2787" y="188.5" width="90" height="18" /></bpmndi:BPMNLabel>
+        <di:waypoint x="2795" y="155" />
+        <di:waypoint x="3093" y="155" />
+        <di:waypoint x="3093" y="245" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_26_di" bpmnElement="Flow_26">
-        <di:waypoint x="3158" y="1427" />
-        <di:waypoint x="3273" y="1427" />
-        <di:waypoint x="3273" y="350" />
+        <di:waypoint x="3153" y="305" />
+        <di:waypoint x="3208" y="305" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_27_di" bpmnElement="Flow_27">
-        <di:waypoint x="3338" y="305" />
-        <di:waypoint x="3433" y="305" />
-        <di:waypoint x="3433" y="1409" />
+        <di:waypoint x="3403" y="280" />
+        <di:waypoint x="3403" y="256" />
+        <di:waypoint x="3518" y="256" />
+        <bpmndi:BPMNLabel><dc:Bounds x="3407" y="259" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="GW_BeanYours_di" bpmnElement="GW_BeanYours" isMarkerVisible="true"><dc:Bounds x="620" y="380" width="50" height="50" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="End_BeanNotYours_di" bpmnElement="End_BeanNotYours"><dc:Bounds x="700" y="387" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="745" y="422.5" width="90" height="35" /></bpmndi:BPMNLabel>
+      <bpmndi:BPMNShape id="GW_BeanYours_di" bpmnElement="GW_BeanYours" isMarkerVisible="true"><dc:Bounds x="535" y="280" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="515" y="241" width="90" height="35" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SF_Bean_1_di" bpmnElement="SF_Bean_1">
-        <di:waypoint x="620" y="350" />
-        <di:waypoint x="620" y="380" />
+      <bpmndi:BPMNShape id="End_BeanNotYours_di" bpmnElement="End_BeanNotYours"><dc:Bounds x="542" y="380" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="SF_Bean_1_di" bpmnElement="SF_Bean_1"><di:waypoint x="500" y="305"/><di:waypoint x="535" y="305"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_Bean_2_di" bpmnElement="SF_Bean_2"><di:waypoint x="560" y="330"/><di:waypoint x="560" y="380"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="564" y="346" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="SF_Bean_2_di" bpmnElement="SF_Bean_2">
-        <di:waypoint x="670" y="405" />
-        <di:waypoint x="700" y="405" />
+      <bpmndi:BPMNEdge id="SF_Bean_3_di" bpmnElement="SF_Bean_3"><di:waypoint x="3403" y="330"/><di:waypoint x="3403" y="356"/><di:waypoint x="3518" y="356"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="3407" y="334.5" width="90" height="17" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Call_BeanClose_di" bpmnElement="Call_BeanClose"><dc:Bounds x="2895" y="115" width="160" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SF_Bean_3_di" bpmnElement="SF_Bean_3">
-        <di:waypoint x="3055" y="155" />
-        <di:waypoint x="3095" y="155" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_DSR_work_plan" bpmnElement="DSR_work_plan"><dc:Bounds x="2125" y="385" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="2105" y="439" width="90" height="36" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_DOA_Task_LogFindings" bpmnElement="DOA_Task_LogFindings"><di:waypoint x="2150" y="355.5"/><di:waypoint x="2150" y="385"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_DSR_corpus" bpmnElement="DSR_corpus"><dc:Bounds x="3068" y="420" width="50" height="50"/></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_DOA_Task_Commit" bpmnElement="DOA_Task_Commit"><di:waypoint x="3093" y="365"/><di:waypoint x="3093" y="420"/></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_21a_di" bpmnElement="Flow_21a"><di:waypoint x="2440" y="245"/><di:waypoint x="2440" y="155"/><di:waypoint x="2495" y="155"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
