@@ -2851,6 +2851,956 @@
           "drafted_at": "2026-11-01"
         }
       ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s405-basic-embeds",
+      "source": "sections/s405-basic-embeds.md",
+      "source_hash": "dd22ab319515a23baeab9cf3314ec5bbbda6ff119150e44a4f76e24803b668b9",
+      "narrative": [
+        {
+          "text": "The basic use of embed names one level of links, e.g. items/<uuid>?embed=bundles&embed=owningCollection, or with a comma-separated list. Embeds apply only to the requested resource: embedding a community's subcommunities and collections does not embed those of its subcommunities.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s406-multi-level-embeds",
+      "source": "sections/s406-multi-level-embeds.md",
+      "source_hash": "2302dc76f5fdda57eb2493ecf5c2b8f29dc22d9fb8aef2c3c1a2c164230cd60e",
+      "narrative": [
+        {
+          "text": "Multi-level embeds follow a path of links, e.g. embed=owningCollection/mappedItems/bundles/bitstreams embeds the owning collection, its mapped items, their bundles and those bundles' bitstreams, but nothing off that path (such as the main item's own bundles). A path may repeat a link name, as in subcommunities/subcommunities, and several paths can be combined.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s407-relationship-endpoints",
+      "source": "sections/s407-relationship-endpoints.md",
+      "source_hash": "9a89f8532497fb7da500f90f23a97effe5941e4d6f3bf23b93fc6d7c5db32b34",
+      "narrative": [
+        {
+          "text": "Opens the Relationship endpoints, which hold the relationships that connect two items. Each relationship has a relationship type and links to the two items.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s408-main-endpoint",
+      "source": "sections/s408-main-endpoint.md",
+      "source_hash": "578cb4a68cfcb7181d050f8ef6dbf4acc089215acc5c818279fa11e6de8618a2",
+      "narrative": [
+        {
+          "text": "The main endpoint /api/core/relationships lists relationships; it points to a demo sample.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s409-single-relationship",
+      "source": "sections/s409-single-relationship.md",
+      "source_hash": "86e06f67f2207bbfbc2295e2a4afd096575e8b6724c870584ad69e6edf094509",
+      "narrative": [
+        {
+          "text": "GET /api/core/relationships/<id> returns one relationship: its id, the left and right places, and optional leftward and rightward values (name variants, omitted when null). The relationship type is embedded (in the example isAuthorOfPublication between Publication and Person), while the two items are linked but not embedded.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s410-search-methods",
+      "source": "sections/s410-search-methods.md",
+      "source_hash": "7d8af4ac799f5ea877a92826131c552408861d1397c3a6e58113e551d1f2da7b",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the Relationship endpoint; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s411-relationship-involving-specified-items",
+      "source": "sections/s411-relationship-involving-specified-items.md",
+      "source_hash": "46310c4cdb75d0be6308b3bbbf10ab280b5a3e320772d24515f47d42c888b9c1",
+      "narrative": [
+        {
+          "text": "Several relationship operations. byItemsAndType, given a type, the label on the focus item's side, a focus item and candidate related items, returns which candidates are already related (400 for bad parameters, 422 if the label does not match the type). POST /api/core/relationships?relationshipType=<id> with two item URIs (left, then right), optionally with a name variant, creates a relationship (201, 401, 403, 422). PUT .../<id>/leftItem or /rightItem with one item URI replaces that side; the type cannot change. PUT .../<id> with JSON sets places and name variants, and omitted properties are removed. byLabel lists relationships whose type has a given label, optionally filtered to one object (dso) and to a related entity type.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s412-deleting-a-relationship",
+      "source": "sections/s412-deleting-a-relationship.md",
+      "source_hash": "1af3851749fddb7ee81dd2098eaa7a4259e83367186ccc05ad7996bfdcd7a46c",
+      "narrative": [
+        {
+          "text": "DELETE /api/core/relationships/<id> deletes a relationship. copyVirtualMetadata can copy virtual metadata into real metadata first: all (both items), left, right, configured, or none when absent; it needs permission to edit the items' metadata. Codes: 204, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s413-relationship-type-endpoints",
+      "source": "sections/s413-relationship-type-endpoints.md",
+      "source_hash": "a71e568c8944648b111320b3ee00c18d3048f7268d69fae3d5c4745e4772135c",
+      "narrative": [
+        {
+          "text": "Opens the Relationship Type endpoints, which hold the kinds of relationship, such as isAuthorOfPublication between a publication and a person. Links to the two item types are embedded.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s414-main-endpoint",
+      "source": "sections/s414-main-endpoint.md",
+      "source_hash": "5ec65665262be005cd04e3494aeaf0a8ccd908368ba24f0a5b23f076a276d80e",
+      "narrative": [
+        {
+          "text": "The main endpoint /api/core/relationshiptypes lists relationship types; it points to a demo sample.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s415-single-relationship-type",
+      "source": "sections/s415-single-relationship-type.md",
+      "source_hash": "965039a80b784c77fb08c2ad9b8113c5bcd8ac1357df50040cbb9c9a99808629",
+      "narrative": [
+        {
+          "text": "GET /api/core/relationshiptypes/<id> returns one relationship type: leftward and rightward type names, minimum and maximum cardinality on each side, and the two entity types it joins, which are embedded (Publication and Person in the example).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s416-search-methods",
+      "source": "sections/s416-search-methods.md",
+      "source_hash": "7d8af4ac799f5ea877a92826131c552408861d1397c3a6e58113e551d1f2da7b",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the Relationship Type endpoint; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s417-relationship-types-containing-an-entity-type",
+      "source": "sections/s417-relationship-types-containing-an-entity-type.md",
+      "source_hash": "9feaa618c99bf3bf1b77edb9d4d804b95d490e329b0ce0458532f20c674e8ba5",
+      "narrative": [
+        {
+          "text": "GET /api/core/relationshiptypes/search/byEntityType?type=<label> returns the relationship types with the given entity type on either side; type is mandatory. With the sample data model loaded, Publication gives types for authors, projects, organisational units and journal issues; the same label, such as isAuthorOfPublication, can belong to different types joining different entity types. Codes: 200 (an empty page if none), 400 for a missing or invalid type.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s418-resource-policies-endpoints",
+      "source": "sections/s418-resource-policies-endpoints.md",
+      "source_hash": "52e484965b1184999275e7e5efeced13b531ada78feb19312e827b65caa61b89",
+      "narrative": [
+        {
+          "text": "Opens the Resource Policies endpoints; no text beyond the heading and the link back to the endpoint list.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s419-main-endpoint",
+      "source": "sections/s419-main-endpoint.md",
+      "source_hash": "8c05eb5fc12b4dd93e75539dd27f4e1904242528b052d67de1317bbafc07658b",
+      "narrative": [
+        {
+          "text": "The main endpoint /api/authz/resourcepolicies is not implemented, for lack of a use case for listing every policy; it returns 405.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s420-single-resource-policy",
+      "source": "sections/s420-single-resource-policy.md",
+      "source_hash": "8d4cd22b6d49d90808422c119b76fe59cb03d4733a1740733660137d58fb4b01",
+      "narrative": [
+        {
+          "text": "GET /api/authz/resourcepolicies/<id> returns one resource policy: optional name and description; a policyType saying which process set it (TYPE_SUBMISSION, TYPE_WORKFLOW, TYPE_INHERITED from the collection, TYPE_CUSTOM set by the user, or null); the action granted (READ, WRITE, ADD, REMOVE, ADMIN, DELETE, WITHDRAWN_READ, DEFAULT_BITSTREAM_READ or DEFAULT_ITEM_READ); and optional start and end dates (YYYY-MM-DD; null means unbounded). Links: eperson, group, resource. Only administrators, users with ADMIN on the resource, or the eperson or group members named may read it. Codes: 200, 401 (also for Anonymous-group policies), 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s421-search-methods",
+      "source": "sections/s421-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the Resource Policies endpoint; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s422-resource",
+      "source": "sections/s422-resource.md",
+      "source_hash": "ad7d354b2debdc84699847068a0333682f2f20b37a4b648389ccb9d7b6e2de5b",
+      "narrative": [
+        {
+          "text": "GET /api/authz/resourcepolicies/search/resource?uuid=<uuid> returns the policies on a resource, optionally filtered by action, paginated. Only administrators and users with ADMIN on the resource may call it. Codes: 200, 400, 401, 403.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s423-eperson",
+      "source": "sections/s423-eperson.md",
+      "source_hash": "bf6796b54d9947bbaadd390ac373372fec170a8b051092899be7fb2ad54b6ed0",
+      "narrative": [
+        {
+          "text": "GET /api/authz/resourcepolicies/search/eperson?uuid=<uuid> returns the policies that name that eperson explicitly, optionally limited to one resource; inherited, broader and group-derived policies are excluded. Only administrators or that eperson may call it. Codes: 200, 400, 401, 403.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s424-group",
+      "source": "sections/s424-group.md",
+      "source_hash": "17b9e806497796821d44228343e02b443af22f6be788e77e5f99ca3865b7f41b",
+      "narrative": [
+        {
+          "text": "GET /api/authz/resourcepolicies/search/group?uuid=<uuid> returns the policies that name that group explicitly, optionally limited to one resource; inherited and broader policies are excluded. Only administrators or members of the group may call it. Codes: 200, 400, 401 (also for the Anonymous group), 403.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s425-creating-a-resource-policy",
+      "source": "sections/s425-creating-a-resource-policy.md",
+      "source_hash": "7bc6f465ece4d142c8274a9918384923c6007c20efeab6d3968666d698f90650",
+      "narrative": [
+        {
+          "text": "POST /api/authz/resourcepolicies?resource=<uuid> with exactly one of eperson or group creates a policy, administrators only. The body must have type resourcepolicy, a valid policyType and action, and dates in the stated format. It returns the new policy with 200. Codes: 200, 400 if eperson and group are both given, both missing, or not UUIDs, 401, 403.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s426-patch-operations",
+      "source": "sections/s426-patch-operations.md",
+      "source_hash": "991b4cb85efef8d94421916cf35e859d09a2c619fd580783e4f9877ecf206ff9",
+      "narrative": [
+        {
+          "text": "Heading for the patch operations on a resource policy; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s427-add",
+      "source": "sections/s427-add.md",
+      "source_hash": "c5d1f9042c5e9e294ea583c390a0676f93a1b4dc3a68518984764146d8e5fa3f",
+      "narrative": [
+        {
+          "text": "A PATCH add on a resource policy sets or replaces a value; the examples set the start date, then a name and description, with before and after states. Administrators or users with ADMIN on the resource only. Codes: 200 with the updated policy, 401, 403, 404, plus the general PATCH codes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s428-remove",
+      "source": "sections/s428-remove.md",
+      "source_hash": "a00ef08f3e4f9146c15dc650cbf17b98f1c10c9890bb00a2f694aaeb003c486f",
+      "narrative": [
+        {
+          "text": "A PATCH remove on a resource policy can clear startDate, endDate, name or description; other properties cannot be nulled. Removing the start date lifts an embargo, as the example shows. Same permissions and codes as add.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s429-replace",
+      "source": "sections/s429-replace.md",
+      "source_hash": "61fe7bff510947eaf56196c35d2cd2777082295f4d232e0bb4fb5f943db7c990",
+      "narrative": [
+        {
+          "text": "A PATCH replace on a resource policy changes an existing value only; replacing an unset value is an error. The example changes the start date from 2019-10-31 to 2020-01-01. Same permissions and codes as add.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s430-deleting-a-resource-policy",
+      "source": "sections/s430-deleting-a-resource-policy.md",
+      "source_hash": "1088e4991fbc4e6d350f297988f892a8edb51da87b97a269a766c0d7b98f174b",
+      "narrative": [
+        {
+          "text": "DELETE /api/authz/resourcepolicies/<id> deletes a policy; administrators or users with ADMIN on the resource only. Codes: 204, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s431-linked-entities",
+      "source": "sections/s431-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a resource policy; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s432-eperson",
+      "source": "sections/s432-eperson.md",
+      "source_hash": "c953e0cd9d2b2d661c58a05528045f1aa90cae08ae937bc6bcb75353c54c9265",
+      "narrative": [
+        {
+          "text": "GET /api/authz/resourcepolicies/<id>/eperson returns the eperson the policy names. Codes: 200, 204 if none is set, 401 (unless the policy concerns the Anonymous group), 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s433-update-eperson",
+      "source": "sections/s433-update-eperson.md",
+      "source_hash": "e557a541626233230ac89d103c6eba2d1aab20f42b7df5586f3d13a6e180dacf",
+      "narrative": [
+        {
+          "text": "PUT /api/authz/resourcepolicies/<id>/eperson with exactly one eperson URI as text/uri-list reassigns the policy to that eperson. Codes: 204, 401, 403, 404, and 422 if the policy is not an eperson policy or the list is empty, has several entries or names a group.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s434-group",
+      "source": "sections/s434-group.md",
+      "source_hash": "2a738894ec7a2cc145782c4d2eec436def7b0bc1700e3f2fc0f0e19a65fad5e3",
+      "narrative": [
+        {
+          "text": "GET /api/authz/resourcepolicies/<id>/group returns the group the policy names. Codes: 200, 204 if none is set, 401 (unless the policy concerns the Anonymous group), 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s435-update-group",
+      "source": "sections/s435-update-group.md",
+      "source_hash": "59520eb8fe4f8c93d293b96f65f814e04d053220af841c4ad128b9d898d2e98a",
+      "narrative": [
+        {
+          "text": "PUT /api/authz/resourcepolicies/<id>/group with exactly one group URI as text/uri-list reassigns the policy to that group. Codes: 204, 401, 403, 404, and 422 if the policy is not a group policy or the list is empty, has several entries or names an eperson.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s436-resource",
+      "source": "sections/s436-resource.md",
+      "source_hash": "9eefe9e189746750bbf85f6c7bc09f754fd727472114f78b88d56e7e0e4e3d70",
+      "narrative": [
+        {
+          "text": "GET /api/authz/resourcepolicies/<id>/resource returns the policy's target resource. The target cannot be changed; delete the policy and create a new one instead. Codes: 200, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s437-admin-scripts-endpoints",
+      "source": "sections/s437-admin-scripts-endpoints.md",
+      "source_hash": "ea209a0fd7b0ccee6ee65698b3db6a87f08e2cbe606de22ccd543baa97ddf3fd",
+      "narrative": [
+        {
+          "text": "Opens the Admin Scripts endpoints. Functions such as CSV and ZIP import and export, harvest runs and curation tasks each map to a DSpace command-line script, so instead of one endpoint per function the contract defines a generic endpoint for administrators to explore, run or schedule those scripts through REST.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s438-scripts-endpoint",
+      "source": "sections/s438-scripts-endpoint.md",
+      "source_hash": "2e070a31f0951216ff8ad9122b005239d96fc4d19c4b3b86c3922cd84ad48779",
+      "narrative": [
+        {
+          "text": "GET /api/system/scripts lists, paginated, the scripts in dspace/config/spring/rest/scripts.xml that support being run through REST, each with a name, description and self link.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s439-script-name-endpoint",
+      "source": "sections/s439-script-name-endpoint.md",
+      "source_hash": "6ac1670a0ef01956c25dccdb82eebcf9e9be2d61a004f5967b7ce850ebcb39b3",
+      "narrative": [
+        {
+          "text": "Heading for the endpoints of a single script; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s440-script-details",
+      "source": "sections/s440-script-details.md",
+      "source_hash": "db24e6148782725b55550d316d4ae1ed2995fa78f039117d98a0b3b2ecb71b0c",
+      "narrative": [
+        {
+          "text": "GET /api/system/scripts/<name> returns a script's description and the parameters it accepts, each with short and long names, a description, a type and whether it is mandatory; the example is the import script. Parameter types are string, date, boolean, file (uploaded in a multipart POST) and output (names an output file to download later). Codes: 200, 401, 403, 404.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s441-script-invocation",
+      "source": "sections/s441-script-invocation.md",
+      "source_hash": "0ae3e9319fddc449d59e9371190463c99f3ad67942c9ee8b6aa92bc8028f5088",
+      "narrative": [
+        {
+          "text": "POST /api/system/scripts/<name>/processes starts a script with its parameters sent as multipart/form-data and returns the new process (id, user, status, parameters, links to output); scheduling with a start time may come later. Status is SCHEDULED, RUNNING, COMPLETED or FAILED. Codes: 202, 401, 403, 400 (labelled Not found) when parameters do not match, 404 for an unknown script, 413 if an upload exceeds the configured maximum size.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s442-bulk-access-control-script",
+      "source": "sections/s442-bulk-access-control-script.md",
+      "source_hash": "e8e7952e508a4a228f2e67a9c5d0168b0eb87b009fa4a5716f4ef01b6d66345a",
+      "narrative": [
+        {
+          "text": "Opens the page on the bulk-access-control script, with its contents: what it does, who can use it, when, how it works, parameters, and what an access condition is.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s443-what-it-does",
+      "source": "sections/s443-what-it-does.md",
+      "source_hash": "264be81b15c0a59e43d02978ae6495be58bc955a8cb13117de7183ebcfb02249",
+      "narrative": [
+        {
+          "text": "The bulk-access-control script changes the access conditions of many items and bitstreams at once. It works with access conditions rather than raw resource policies, hiding DSpace's policy and bundle rules where it can. It takes the objects to process by UUID, and instructions to replace or add access conditions at item and/or bitstream level.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s444-who-can-use-it",
+      "source": "sections/s444-who-can-use-it.md",
+      "source_hash": "9e7496bde4306b230f1d95a83a26dc52c0574ec7114325a333431ca521741031",
+      "narrative": [
+        {
+          "text": "Any user with administrative rights over at least one community, collection or item may run the script, on the resources they administer.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s445-when-we-use-it",
+      "source": "sections/s445-when-we-use-it.md",
+      "source_hash": "2ac37fb6bf227f9a0050d3eac44ae0a4da76fa6b2e4d9431a907785a6f2facb0",
+      "narrative": [
+        {
+          "text": "The script is for aligning the access conditions of a community, collection or other selection with new institutional rules, such as making all theses open access or restricting all material of a project.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s446-how-it-works",
+      "source": "sections/s446-how-it-works.md",
+      "source_hash": "f691c2d5e09154369f44fd65b55bdf436bb5db2d87b27d51219aec2399f851ac",
+      "narrative": [
+        {
+          "text": "The script reads a JSON file saying which items and bitstreams to process and how to change their access conditions, then applies the given mode and conditions.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s447-parameters",
+      "source": "sections/s447-parameters.md",
+      "source_hash": "1c517b8245e13c744679e11cb3fb38c8be02b28f3ff4f17f85a2370267f5202f",
+      "narrative": [
+        {
+          "text": "Parameters: -u/--uuid (mandatory, repeatable) for the objects to process, -f/--file for the JSON instructions, -h for help. The file has an item node and/or a bitstream node, each with a mode (replace or add) and accessConditions. In replace mode an empty list resets items to what they inherit from the owning collection; a non-empty list stops inheritance. Bitstream changes apply to the ORIGINAL bundle and its derivatives, except derivatives created public by filter-media. Bitstream constraints can restrict processing to listed bitstreams when only one item is given. Condition names must match configured access conditions and their rules, or the script fails.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s448-what-is-an-access-condition",
+      "source": "sections/s448-what-is-an-access-condition.md",
+      "source_hash": "102a52264de0e5e43ac6a539537d3f21750173cc7a74878d982b3da59dbc8cd3",
+      "narrative": [
+        {
+          "text": "An access condition is usually a resource policy granting READ to an eperson or group on an object, possibly limited by start and end dates. Because READ is granted for different purposes during an item's life cycle, policies have types, and TYPE_CUSTOM or TYPE_INHERITED mark those that define an object's final access condition. The available conditions are configured in a backend Spring file and exposed through the Bulk Access Conditions endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s449-curate-script",
+      "source": "sections/s449-curate-script.md",
+      "source_hash": "83413d6d8a55a2031e46c12ec60fda6de3701223ae385a20b2fa99e112a85f8c",
+      "narrative": [
+        {
+          "text": "Opens the page on the curate script, with its contents: what it does, who can use it, when, how it works, parameters, and a quick guide.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s450-what-it-does",
+      "source": "sections/s450-what-it-does.md",
+      "source_hash": "00b9a9a89b93d6b894629b2e46283cbfcf1222388deb00a93d21317c4bd178fb",
+      "narrative": [
+        {
+          "text": "The curate script runs selected curation tasks, with options for reporting and queueing; the DSpace 7 Curation System documentation has more.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s451-who-can-use-it",
+      "source": "sections/s451-who-can-use-it.md",
+      "source_hash": "9e7496bde4306b230f1d95a83a26dc52c0574ec7114325a333431ca521741031",
+      "narrative": [
+        {
+          "text": "Any user with administrative rights over at least one community, collection or item may run the curate script, on the resources they administer.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s452-when-we-use-it",
+      "source": "sections/s452-when-we-use-it.md",
+      "source_hash": "0b366b94a7f10abcc98841e4a7429f01ea7e8705c267e8daaca8b01868f4da5f",
+      "narrative": [
+        {
+          "text": "The curate script runs curation tasks on items, collections, communities or the whole repository, for example to check that items have required metadata or valid links.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s453-how-it-works",
+      "source": "sections/s453-how-it-works.md",
+      "source_hash": "dbf198ae99ae89865118c61bc5182fedcc54143282d087dbd9b106b67a730458",
+      "narrative": [
+        {
+          "text": "Tasks are chosen with -t or -T and configured with -p; -i names the object, or all for the whole repository; -s sets the transaction scope; -q queues tasks for later; -r writes a report.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s454-parameters",
+      "source": "sections/s454-parameters.md",
+      "source_hash": "ab9deb50cff351f9f858f314d6428a9ea6e808ac1aad63dda9d243a05cacf18f",
+      "narrative": [
+        {
+          "text": "Parameter table for the curate script: -t task name (noop, profileformats, requiredmetadata, checklinks, registerdoi), -T a file of task names, -i the handle or all, -p NAME=VALUE task parameters, -q the queue to process, -r the report file (- for console; none if absent), -s scope (object, curation or open, default open), -v verbose, -h help.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
