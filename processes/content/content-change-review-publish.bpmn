@@ -141,23 +141,23 @@ Called from content-change-review after the committee approves. Approving is the
         <dc:Bounds x="242" y="137" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Merge_di" bpmnElement="Task_Merge">
-        <dc:Bounds x="370" y="115" width="120" height="80" />
+        <dc:Bounds x="370" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Merged_di" bpmnElement="GW_Merged">
         <dc:Bounds x="575" y="280" width="50" height="50" />
-        <bpmndi:BPMNLabel><dc:Bounds x="555" y="258" width="90" height="18" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="555" y="258" width="90" height="18" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_NotMerged_di" bpmnElement="End_NotMerged">
         <dc:Bounds x="582" y="417" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CleanupStaging_di" bpmnElement="Task_CleanupStaging">
-        <dc:Bounds x="710" y="265" width="120" height="80" />
+        <dc:Bounds x="710" y="245" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_RebuildMain_di" bpmnElement="Task_RebuildMain">
-        <dc:Bounds x="880" y="265" width="120" height="80" />
+        <dc:Bounds x="880" y="245" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_WatchMainCI_di" bpmnElement="Task_WatchMainCI">
-        <dc:Bounds x="1050" y="265" width="120" height="80" />
+        <dc:Bounds x="1050" y="245" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_Pipeline_di" bpmnElement="End_Pipeline">
         <dc:Bounds x="1262" y="287" width="36" height="36" />
