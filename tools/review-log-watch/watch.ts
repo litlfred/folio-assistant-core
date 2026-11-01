@@ -69,9 +69,13 @@ export function watchedHeader(h: string): boolean {
   );
 }
 
-/** The header row: the first row whose first cell is `Change-set`. */
+/**
+ * The header row: the first row whose first cell is `Change-set`, else (for a
+ * poll that reads only the Issue column) the first row with an `Issue` cell.
+ */
 export function headerIndex(values: string[][]): number {
-  return values.findIndex((r) => String(r[0] ?? "").trim() === "Change-set");
+  const i = values.findIndex((r) => String(r[0] ?? "").trim() === "Change-set");
+  return i >= 0 ? i : values.findIndex((r) => r.some((c) => String(c ?? "").trim() === "Issue"));
 }
 
 /** The watched cells, keyed by sheet row (1-based) and header. Empty cells are left out. */
@@ -145,7 +149,13 @@ export function digestOf(issues: Record<string, string>, cells: Record<string, s
   return hashOf(lines.join("\n"));
 }
 
-export type WatchOptions = { skipLabel?: string; author?: string };
+/**
+ * `sheetHash`: the sheet script's hash of the person-set cells (Watch!G1,
+ * Q-WATCH4 A). Given, it stands for the cells, so a poll reads one cell and the
+ * Issue column instead of the log; a change is then reported as one `cell`
+ * change on header `#hash`, and the watcher reads the rows it needs.
+ */
+export type WatchOptions = { skipLabel?: string; author?: string; sheetHash?: string };
 
 const isClosed = (i: Issue) => i.state === "closed";
 
@@ -167,7 +177,7 @@ export function watch(
     !i.pull_request && !labelNames(i).includes(skipLabel) && (!opts.author || i.user?.login === opts.author));
   const issueMap: Record<string, string> = {};
   for (const i of tracked) issueMap[String(i.number)] = `${isClosed(i) ? "closed" : "open"}|${i.updated_at}`;
-  const cells = sheetCells(values);
+  const cells = opts.sheetHash !== undefined ? { "0:#hash": opts.sheetHash } : sheetCells(values);
   const digest = digestOf(issueMap, cells);
   if (prev && prev.digest === digest) return { status: "unchanged", digest };
 
@@ -222,14 +232,14 @@ if (import.meta.main) {
   const sheet = arg("sheet");
   const statePath = arg("state");
   if (!repo || !sheet || !statePath) {
-    console.error("usage: watch.ts --repo owner/name --sheet values.json --state state.json [--issues issues.json] [--skip-label no-sheet] [--author login] [--accept]");
+    console.error("usage: watch.ts --repo owner/name --sheet values.json --state state.json [--issues issues.json] [--skip-label no-sheet] [--author login] [--sheet-hash h] [--accept]");
     process.exit(2);
   }
   const raw = JSON.parse(readFileSync(sheet, "utf8"));
   const values: string[][] = Array.isArray(raw) ? raw : raw.values ?? [];
   const issues: Issue[] = arg("issues") ? JSON.parse(readFileSync(arg("issues")!, "utf8")) : fetchIssues(repo);
   const prev: WatchState | undefined = existsSync(statePath) ? JSON.parse(readFileSync(statePath, "utf8")) : undefined;
-  const result = watch(values, issues, repo, prev, { skipLabel: arg("skip-label"), author: arg("author") });
+  const result = watch(values, issues, repo, prev, { skipLabel: arg("skip-label"), author: arg("author"), sheetHash: arg("sheet-hash") });
   if (result.status === "changed" && process.argv.includes("--accept")) {
     mkdirSync(dirname(statePath), { recursive: true });
     writeFileSync(statePath, JSON.stringify(result.state, null, 2) + "\n");

@@ -41,14 +41,23 @@ reason about the rows, edit anything or post anything.
 
 ## Each wake
 
-1. **Read** the Contributor Feedback tab from row 1, so the header row (first
-   cell `Change-set`) is included, and save the values as JSON.
+1. **Read** two small ranges (Q-WATCH4 A, owner 2026-11-01 10:36Z):
+   - `Watch!F1:I1`, where the sheet script writes `Cells hash`, the hash
+     itself, and the time it last checked. The script rewrites it on every
+     refresh and every timer tick, from the cells people set.
+   - Contributor Feedback's header row and its Issue column.
+
+   Save the values as JSON, with the header row and with an empty first row
+   for each sheet row above it, so the row numbers stay the sheet's. A sheet
+   whose script has no Watch tab yet is read whole, from row 1, and gets no
+   `--sheet-hash`.
 2. **Check**:
 
    ```
    bun run folio-assistant-core/tools/review-log-watch/watch.ts \
      --repo litlfred/dth-phc --sheet values.json \
-     --state ~/.cache/review-log-watch/<sheet-id>.json
+     --state ~/.cache/review-log-watch/<sheet-id>.json \
+     --sheet-hash <Watch!G1>
    ```
 
    - Exit 0 is `{"status":"unchanged"}`. Queue the next wake and stop.
@@ -85,7 +94,10 @@ reason about the rows, edit anything or post anything.
   - Pull requests are left out.
   - So are issues labelled `no-sheet`, which an Editor sets to keep an issue
     off the sheet.
-- **Cells:** only the ones people set, under these headers:
+- **Cells:** with `--sheet-hash`, the script's hash stands for them, and a
+  change shows as one change on `#hash`; the watcher then reads the rows to
+  see which changed. Without it, the tool compares the cells itself. Either
+  way, only the cells people set count, under these headers:
   - Title, Selected Sections, every Contributor Feedback column, and
     Disposition (Blue);
   - Ready for agent, Ready for merge and Dispositions confirmed (Orange).

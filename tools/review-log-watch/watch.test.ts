@@ -78,6 +78,16 @@ describe("review-log-watch", () => {
     expect(sheetCells(sheet([row1]))).toEqual({ "3:Title": "Sign off exclusions", "3:Selected Sections": "Front matter" });
   });
 
+  test("with the sheet script's hash, a poll needs only the Issue column", () => {
+    const issuesOnly = [[], ["Issue"], ["https://github.com/litlfred/dth-phc/issues/5"]];
+    const first = watch(issuesOnly, [issue(5), issue(8)], repo, undefined, { sheetHash: "abc" });
+    if (first.status !== "changed") throw new Error("expected changed");
+    expect(first.append.map((a) => [a.issue, a.row])).toEqual([[8, [`https://github.com/${repo}/issues/8`]]]);
+    expect(watch(issuesOnly, [issue(5), issue(8)], repo, first.state, { sheetHash: "abc" }).status).toBe("unchanged");
+    const r = watch(issuesOnly, [issue(5), issue(8)], repo, first.state, { sheetHash: "xyz" });
+    expect(r.status === "changed" && r.changes).toEqual([{ kind: "cell", row: 0, header: "#hash", from: "abc", to: "xyz" }]);
+  });
+
   test("summary skips form headings and empty answers, and cuts long text", () => {
     expect(summary("### Comment\n\n_No response_\n\n### Proposed\n\nDo this.")).toBe("Do this.");
     expect(summary("x".repeat(400)).length).toBe(300);

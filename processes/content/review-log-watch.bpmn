@@ -53,7 +53,7 @@
       <bpmn:timerEventDefinition id="Timer_Poll"><bpmn:timeCycle>R/PT3M</bpmn:timeCycle></bpmn:timerEventDefinition>
     </bpmn:startEvent>
     <bpmn:serviceTask id="Task_ReadSheet" name="Read the Contributor Feedback tab">
-      <bpmn:documentation>Reads the drafting sheet's Contributor Feedback tab from row 1 (the Sheets API values), and saves it as JSON for the check. Reading is not agent work: it changes nothing.</bpmn:documentation>
+      <bpmn:documentation>Reads Watch!F1:I1, the hash of the person-set cells that the sheet script writes on every refresh (Q-WATCH4 A), and Contributor Feedback's header row and Issue column, and saves them as JSON for the check. A sheet without the Watch hash yet is read whole. Reading is not agent work: it changes nothing.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-log-watch"/></bpmn:extensionElements>
       <bpmn:incoming>WF01</bpmn:incoming>
       <bpmn:outgoing>WF02</bpmn:outgoing>

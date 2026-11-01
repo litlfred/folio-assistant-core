@@ -16,7 +16,7 @@ One poll of one drafting review log (a Contributor Feedback sheet) and its folio
 
 - Who: the `Log watcher (authoring agent)` lane (role `authoring-agent`).
 - Skill: `review-log-watch`.
-- What: Reads the drafting sheet's Contributor Feedback tab from row 1 (the Sheets API values), and saves it as JSON for the check.
+- What: Reads Watch!F1:I1, the hash of the person-set cells that the sheet script writes on every refresh (Q-WATCH4 A), and Contributor Feedback's header row and Issue column, and saves them as JSON for the check.
 - Record it: `workflow_complete` with `node: "Task_ReadSheet"`.
 - next: → `Task_RunCheck` (Run the review-log-watch check)
 

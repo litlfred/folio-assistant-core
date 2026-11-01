@@ -15,6 +15,7 @@ export default toolFactory((t) =>
         { name: "state", schema: t("RepoPath"), required: true, arg: { flag: "--state" }, description: "The last check's state file. Missing on the first check, which reports every open issue as opened." },
         { name: "issues", schema: t("RepoPath"), required: false, arg: { flag: "--issues" }, description: "Issues as JSON (the issues API's shape), instead of reading them with `gh api`. For tests and offline runs." },
         { name: "author", schema: t("RepoPath"), required: false, arg: { flag: "--author" }, description: "Only issues this GitHub login opened. Default every author." },
+        { name: "sheetHash", schema: t("RepoPath"), required: false, arg: { flag: "--sheet-hash" }, description: "The sheet script's hash of the person-set cells, Watch!G1 (Q-WATCH4 A). Given, it stands for the cells, so `--sheet` needs only the header row and the Issue column." },
         { name: "skipLabel", schema: t("RepoPath"), required: false, arg: { flag: "--skip-label" }, description: "The label that keeps an issue off the sheet. Default `no-sheet`." },
       ],
       outputs: [
