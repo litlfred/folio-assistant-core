@@ -1960,7 +1960,8 @@ function refreshRcs(s, rpc, csOf, stOf, prOf, readyAt, builtOf) {
     const pageParts = compact(printed).map(([a, b]) => ({ t: a === b ? String(a) : a + '–' + b, url: pdfUrl(a) }));
     out.pages.push(rich(pageParts.flatMap((x, i) => (i ? [{ t: ', ' }, x] : [x]))));
 
-    out.comments.push(join(nos, '\n\n', n => {
+    // One line per comment, no blank line between (owner, 2026-11-01 18:24Z: "condense line spacing").
+    out.comments.push(join(nos, '\n', n => {
       const v = get(n, 'comment');
       if (!v) return null;
       const st = get(n, 'status');
@@ -1974,7 +1975,7 @@ function refreshRcs(s, rpc, csOf, stOf, prOf, readyAt, builtOf) {
       const v = fb.map(i => String(rowOf[n].r[i]).trim()).filter(Boolean).join(' | ');
       return v ? [ref(n), { t: ' · ' + v }] : null;
     }));
-    out.dispositions.push(join(nos, '\n\n', n => {
+    out.dispositions.push(join(nos, '\n', n => {
       const v = get(n, 'disposition');
       return v ? [ref(n), { t: ' · ' + v }] : null;
     }));

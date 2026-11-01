@@ -236,7 +236,7 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
 
   test("RCS joins its comments, each No. n linking to its RPC row, status bold", () => {
     const c = rcs["Public Comments"][0][0] as Rich;
-    expect(c.text).toBe("No. 1 (Pending) · Too short\n\nNo. 2 · Typo");
+    expect(c.text).toBe("No. 1 (Pending) · Too short\nNo. 2 · Typo");
     expect(c.links.map((l) => [slice(c, l), l[2]])).toEqual([["No. 1", "#gid=1&range=A2"], ["No. 2", "#gid=1&range=A3"]]);
     expect(c.bold.map(([a, z]) => c.text.slice(a, z))).toEqual(["(Pending)"]);
     expect((rcs["Suggested Revisions"][0][0] as Rich).text).toBe("No. 1 · Lengthen it");

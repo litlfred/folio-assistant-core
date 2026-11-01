@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 a13460bd816fd77d.
+// folio-assistant-core tools/review-sheet-sync at template sha256 1d379d04cb6e38f0.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 a13460bd816fd77d';
+const SCRIPT_VERSION = 'template sha256 1d379d04cb6e38f0';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -1960,7 +1960,8 @@ function refreshRcs(s, rpc, csOf, stOf, prOf, readyAt, builtOf) {
     const pageParts = compact(printed).map(([a, b]) => ({ t: a === b ? String(a) : a + '\u2013' + b, url: pdfUrl(a) }));
     out.pages.push(rich(pageParts.flatMap((x, i) => (i ? [{ t: ', ' }, x] : [x]))));
 
-    out.comments.push(join(nos, '\n\n', n => {
+    // One line per comment, no blank line between (owner, 2026-11-01 18:24Z: "condense line spacing").
+    out.comments.push(join(nos, '\n', n => {
       const v = get(n, 'comment');
       if (!v) return null;
       const st = get(n, 'status');
@@ -1974,7 +1975,7 @@ function refreshRcs(s, rpc, csOf, stOf, prOf, readyAt, builtOf) {
       const v = fb.map(i => String(rowOf[n].r[i]).trim()).filter(Boolean).join(' | ');
       return v ? [ref(n), { t: ' \u00b7 ' + v }] : null;
     }));
-    out.dispositions.push(join(nos, '\n\n', n => {
+    out.dispositions.push(join(nos, '\n', n => {
       const v = get(n, 'disposition');
       return v ? [ref(n), { t: ' \u00b7 ' + v }] : null;
     }));
