@@ -46,7 +46,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/review-log-watch.bpmn:80
 #. Diagram element documentation
-msgid "For each changed row, the agent pass of Contributor feedback on a working draft: a new or edited row gets a proposal, Ready for agent = Yes gets its edit, Ready for merge = Yes its merge, and a Blue answer to a Decision needed question is taken up. The agent records its step on the Agent tab at once, with the real time."
+msgid "For each changed row, the agent pass of Contributor feedback on a working draft: Ready for agent = Yes gets its edit, Ready for merge = Yes its merge, and a Blue answer to a Decision needed question is taken up. Every new row (from an issue, a person or a TWG workbook), every row with an empty Feedback (agent) and every row whose Blue cells changed gets feedback in the same wake (owner, 2026-11-01: \"agent should provide feedback whenever blue change or whenever new row added\"), in the fixed layout: the ask first (Decision needed: with lettered options, one recommended, and where to answer), then Proposed direction: and Next:, only the tags bold (Q-FBK-1 A). The agent then runs tools/review-log-watch/lint.ts and fixes what it flags: a cell that breaks the layout, or a PR state that GitHub contradicts. The agent records its step on the Agent tab at once, with the real time."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/review-log-watch.bpmn:74

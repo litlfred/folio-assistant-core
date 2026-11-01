@@ -93,10 +93,26 @@ reason about the rows, edit anything or post anything.
    striking are formatting only, so the row's text and history stay. A
    reopened issue's row is shown again, without the strike-through, by hand.
 5. **Agent pass.** Run [Contributor feedback](../../../processes/content/contributor-feedback.bpmn)
-   on each changed row, and record the step on the Agent tab at once. A new
-   row gets a proposal. A Ready for agent = Yes gets its edit, and a Ready for
-   merge = Yes gets its merge. A Blue answer to a Decision needed question is
-   taken up.
+   on each changed row, and record the step on the Agent tab at once. A
+   Ready for agent = Yes gets its edit, and a Ready for merge = Yes gets its
+   merge. A Blue answer to a Decision needed question is taken up.
+
+   **Feedback on every Blue change and every new row** (owner, 2026-11-01:
+   "agent should provide feedback whenever blue change or whenever new row
+   added"). In every log the watcher keeps, the agent writes or rewrites
+   Feedback (agent), in the layout of `review-sheet-script` ("The agent's
+   feedback cell has a fixed layout"), for each row that:
+   - is new, however it got there: from a GitHub issue (step 3), typed by a
+     person, or copied from a TWG workbook (DTH-HRH CS-002 and CS-003 came
+     that way, with no issue);
+   - has an empty Feedback (agent) cell; or
+   - has Blue cells (Title, Selected Sections, any Contributor Feedback
+     column, Disposition) that no longer match the Agent tab's Feedback
+     basis (`feedbackBasis()`), which is when the script shows "⚠ Stale".
+   It does this in the same wake, before accepting the state. A row it cannot
+   finish keeps its stale mark and comes back on the next wake. The digest
+   covers every row, not only issue rows, so a row with no issue still wakes
+   the watcher.
 6. **Accept.** Run the check again with the same inputs plus `--accept`, so
    the state file records what was handled. A row the pass could not finish
    still differs from the stored state, so it comes back on the next wake.

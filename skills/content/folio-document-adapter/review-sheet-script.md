@@ -58,16 +58,17 @@ Decision needed: <one question, in plain words, naming what it is about>
   B. <option>
 Answer in your feedback column, then an Editor sets Ready for agent to Yes.
 
-Proposal: <what the agent proposes or did, in one to three lines>
+Proposed direction: <what the agent proposes or did, in one to three lines>
 Next: <what happens next, and who does it>
 ```
 
 - The ask comes first, so a reader sees at once what they are asked. Leave
   the Decision needed block out when nothing is asked; the cell then opens
-  with `Proposal:`.
+  with `Proposed direction:`, and the script puts a "Please review: do you
+  agree with the proposed direction below?" ask on its status line.
 - One option says `(recommended)`; options are lettered so people answer
   with one letter.
-- Tags (`Decision needed:`, `Proposal:`, `Next:`) are the only bold text. The
+- Tags (`Decision needed:`, `Proposed direction:`, `Next:`) are the only bold text. The
   script bolds them; never write Markdown `**`.
 - Say only what stands now. History ("Step 2", "Already done", "Decided
   (Q1 ...)") goes to Disposition (agent), never here. Pull request state
@@ -827,7 +828,11 @@ Contributor Feedback row with a Change-set:
    verbatim, and a link back to the sheet row. Write its URL into Issue.
 3. When feedback is added to a row later, comment the new text on its issue.
 4. Propose a direction in **Feedback (agent)** whenever the
-   row changes, whoever changed it, a person or an agent. A question for
+   row changes, whoever changed it, a person or an agent, and for every new
+   row, whether it came from an issue, a person or a TWG workbook (owner,
+   2026-11-01: "agent should provide feedback whenever blue change or
+   whenever new row added"). The watcher does this on its next wake (skill
+   `review-log-watch`, step 5). A question for
    people goes there too, as a `Decision needed:` block (§"Inputs and
    outputs"). On each sync
    compute `feedbackBasis(header, row)` (`tools/review-sheet-sync/feedback-issue.ts`:
