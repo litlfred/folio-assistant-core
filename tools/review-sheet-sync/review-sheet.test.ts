@@ -1613,6 +1613,25 @@ describe("Agentic status sits left of its filter column (owner, 2026-10-31)", ()
     expect(placeBefore(sheetWith(["Change-set", "Agentic status (filter)", "Issue", "Agentic status"], moves), "Agentic status", "Agentic status (filter)")).toBe(true);
     expect(moves).toEqual([[4, 2]]);
   });
+  test("unmerges the title row (B1) for the move and merges it again, keeping its text", () => {
+    const log: string[] = [];
+    const header = ["Change-set", "Agentic status (filter)", "Issue", "Agentic status"];
+    const title = { text: "Contributor Log" };
+    const merge = {
+      getA1Notation: () => "B1:D1",
+      getCell: () => ({ getRichTextValue: () => title }),
+      breakApart: () => log.push("break B1:D1"),
+    };
+    const sh = {
+      getLastRow: () => 2, getLastColumn: () => header.length,
+      getRange: (r: number | string, c?: number) => typeof r === "string"
+        ? { merge: () => log.push(`merge ${r}`), getCell: () => ({ setRichTextValue: (v: unknown) => log.push(`text ${v === title}`) }) }
+        : { getDisplayValues: () => [["Instructions", "", "", ""], header], getMergedRanges: () => [merge], col: c },
+      moveColumns: (range: { col: number }, to: number) => log.push(`move ${range.col}->${to}`),
+    };
+    expect(placeBefore(sh, "Agentic status", "Agentic status (filter)")).toBe(true);
+    expect(log).toEqual(["break B1:D1", "move 4->2", "merge B1:D1", "text true"]);
+  });
   test("leaves it when it is already there", () => {
     const moves: Array<[number, number]> = [];
     expect(placeBefore(sheetWith(["Change-set", "Agentic status", "Agentic status (filter)"], moves), "Agentic status", "Agentic status (filter)")).toBe(false);
