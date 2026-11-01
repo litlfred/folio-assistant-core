@@ -761,6 +761,1013 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s459-16-6-2-2-2-schema-and-example",
+      "source": "sections/s459-16-6-2-2-2-schema-and-example.md",
+      "source_hash": "e0f0c86cdc4c7522a93bd25328badee9547c8c899ea0c99baac5b59c328f9a85",
+      "narrative": [
+        {
+          "text": "The schema defines the c2pa.alternative-content-representation assertion in CDDL as either an original-preservation-image-representation (type exif.originalPreservationImage, with parameters multiAssetPartIndex or embeddedOriginalPreservationImage) or a generic-representation with a namespaced type and free-form parameters. It requires the type to be exif.originalPreservationImage and the parameters to reference the original preservation image either by its part index in an MPF asset or by a hashed URI to an embedded data assertion in the manifest, but not both, with CBOR examples of each case.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s460-16-6-3-asset-type",
+      "source": "sections/s460-16-6-3-asset-type.md",
+      "source_hash": "2c379241dcfa0f49595fdb62a7a9265e684450e6f6b76133706f5c58c05af03c",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.6.3, Asset Type; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s461-16-6-3-1-description",
+      "source": "sections/s461-16-6-3-1-description.md",
+      "source_hash": "fabf9d9464960ee1b70d5c550947e22b092bdf1dc306e65117f7989c83f2fffb",
+      "narrative": [
+        {
+          "text": "The asset type assertion, labelled c2pa.asset-type.v2 and limited to one per manifest, gives extra context on how to parse or process an asset beyond a single Media Type, and replaces the deprecated c2pa.asset-type assertion. Its optional dc:format field holds the IANA Media Type, and its optional types field is an array of asset-type-map entries whose type value comes from the asset type or model type tables or an entity-specific namespace, with an optional version. Table 7 lists asset type values such as c2pa.types.dataset, c2pa.types.generator and serialization formats, and Table 8 lists AI/ML model type values from c2pa.types.model.caffe to c2pa.types.model.xgboost.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s462-16-6-3-2-schema-and-example",
+      "source": "sections/s462-16-6-3-2-schema-and-example.md",
+      "source_hash": "5e3c0e498e1af9d5a057e04dbc947ad47d9aff426ce28a3417d339e557ed6ec3",
+      "narrative": [
+        {
+          "text": "The CDDL defines the asset-types map, with optional dc:format, a types array of asset-type-map entries (each a type choice plus an optional SemVer version) and optional metadata. A CBOR example describes a TensorFlow 2.11.0 model stored in the SavedModel format.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s463-16-6-3-3-details-on-selection-of-a-value-for-typ",
+      "source": "sections/s463-16-6-3-3-details-on-selection-of-a-value-for-typ.md",
+      "source_hash": "6462864967425ae1f84d4ecfe2c5d779a0dcfdf3c84128ac1ddd03388a270f9a",
+      "narrative": [
+        {
+          "text": "When an asset's exact type is in the IANA application or text registries it should be recorded in dc:format, and an asset type assertion may combine a Dublin Core format with a C2PA standard or custom type. Table 9 lists common dc:format values such as application/json and text/csv, IANA structured suffixes like +json are also supported, and Table 10 adds two non-IANA formats, application/x-hdf5 and application/x-7z-compressed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s464-16-6-4-font-information",
+      "source": "sections/s464-16-6-4-font-information.md",
+      "source_hash": "a8a775346124d6033de5727e1023c6e2c4df671c62295e3da40313b59eeaabe6",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.6.4, Font Information; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s465-16-6-4-1-description",
+      "source": "sections/s465-16-6-4-1-description.md",
+      "source_hash": "025a9c03a5f822ed934f75d073def382712f75f2364abcc9d293a3a0377c3641",
+      "narrative": [
+        {
+          "text": "The Font Information assertion, labelled font.info with at most one per manifest, adds basic font metadata such as name, format, creator attribution and licensing so it can be validated cryptographically.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s466-16-6-4-2-schema-and-example",
+      "source": "sections/s466-16-6-4-2-schema-and-example.md",
+      "source_hash": "c09270d29392344a2d424635a67413a0b7509475012b59d4f79595fd290958cc",
+      "narrative": [
+        {
+          "text": "The CDDL defines font-info-map, with required fields fullName, familyName, style, weight, postScriptName (restricted to a printable ASCII pattern), format (TrueType or OpenType) and copyrightNotice, plus optional version, versionUrl, releaseDate, copyrightHolder, copyrightYears, designers, designFoundry, sourceFoundry and identifier. Supporting rules define the allowed styles, a weight map with a class name and a value from 1 to 1000, an entity map with name and URL, and a designer map with person, foundry, contribution and start and end dates. Two CBOR examples follow, a basic one and an extended one showing the optional fields.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s467-16-6-5-depthmap",
+      "source": "sections/s467-16-6-5-depthmap.md",
+      "source_hash": "d4a4d2d7b236202b7a980e16166e179ee8d45b6839b732d0384354791992649a",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.6.5, Depthmap; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s468-16-6-5-1-description",
+      "source": "sections/s468-16-6-5-1-description.md",
+      "source_hash": "5eb1f98a68bd0c0b10781bb56d88aaa921725352f75642f6dd961accb25dcec8",
+      "narrative": [
+        {
+          "text": "A depthmap assertion gives a 3D description of a captured scene, either as a pre-computed depth map or as data such as stereo images from which one can be computed; its label shall start with c2pa.depthmap followed by a part naming the depth map type, and the depth data shall be captured optically rather than inferred from a single 2D image.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s469-16-6-5-2-gdepth-depthmap",
+      "source": "sections/s469-16-6-5-2-gdepth-depthmap.md",
+      "source_hash": "949af5998eeb04a11e2715428fc4ea8607147b050a7d8f1172155b472727d53e",
+      "narrative": [
+        {
+          "text": "The GDepth depthmap assertion, labelled c2pa.depthmap.GDepth, encodes a pre-computed depth map using the GDepth format, and its data schema shall always mirror the published GDepth schema, with a note that splitting data beyond 64KB is not a concern.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s470-16-6-5-3-schema-and-example",
+      "source": "sections/s470-16-6-5-3-schema-and-example.md",
+      "source_hash": "1b8ddf7644a960bc5ebdbd468c816ef150f9888258eebea9522588b63296b73b",
+      "narrative": [
+        {
+          "text": "The CDDL defines depthmap-gdepth-map, with GDepth fields for format (RangeInverse or RangeLinear), near and far values, MIME type and base64 depth data, plus optional units, measure type, confidence image, device manufacturer, model, software and original image width and height. A CBOR example is given, and the block states that GDepth:Format, GDepth:Near, GDepth:Far, GDepth:Mime and GDepth:Data shall be present in every GDepth assertion.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s471-16-6-6-embedded-data",
+      "source": "sections/s471-16-6-6-embedded-data.md",
+      "source_hash": "29ae40f10c99605be74be7319e9e012c1fa611971ac119fa2bbfa3b71b34aacb",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.6.6, Embedded Data; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s472-16-6-6-1-description",
+      "source": "sections/s472-16-6-6-1-description.md",
+      "source_hash": "8138c44557c9f6e388d8a3276496ed5850ef47bdccefba288c2c23085d502502",
+      "narrative": [
+        {
+          "text": "The embedded data assertion replaces the deprecated data box concept, which could not be redacted, with a standard assertion holding data in a JUMBF Embedded File box; its label shall start with c2pa.embedded-data, and some other assertions such as c2pa.thumbnail.claim are technically equivalent under their own labels.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s473-16-6-6-2-technical-details",
+      "source": "sections/s473-16-6-6-2-technical-details.md",
+      "source_hash": "5fa31b4541e4b3072f3ce86037695be9c1daaa6eb99f85a43e85af8189881af5",
+      "narrative": [
+        {
+          "text": "The Embedded File Description box of an embedded data assertion shall carry an IANA media type (structured suffixes allowed) and may carry a file name, shall not set the External bit, and its Binary Data box shall hold file bytes matching that media type.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s474-16-6-7-cloud-data",
+      "source": "sections/s474-16-6-7-cloud-data.md",
+      "source_hash": "6edec859a7803a54f68f17929dcbc97140dac178220c0f9aceb9be28ecec735e",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.6.7, Cloud Data; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s475-16-6-7-1-description",
+      "source": "sections/s475-16-6-7-1-description.md",
+      "source_hash": "e851571df3d6b789cc044fe8eda24676b1030691b246a04d670a5a3083a577b6",
+      "narrative": [
+        {
+          "text": "The cloud data assertion, labelled c2pa.cloud-data, references a remotely stored C2PA assertion packaged as JUMBF (media type always application/jumbf) through a hashed URI, so the remote data must be static, and its contents shall be treated as optional and should not be fetched during manifest validation. It shall not refer to actions, hashing, ingredient or other cloud data assertions (a list of labels is given), and its size field shall give the referenced data's size while the size and dc:format fields of the hashed external URI map shall be omitted.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s476-16-6-7-2-schema-and-example",
+      "source": "sections/s476-16-6-7-2-schema-and-example.md",
+      "source_hash": "fa9bba7929c8730bdbe5144a43685d4557f79eccff27850bec2d519676704d71",
+      "narrative": [
+        {
+          "text": "The CDDL defines cloud-data-map with a label, a size of at least 1, a hashed external URI location, an optional content_type and optional metadata, followed by a CBOR example pointing to a remote c2pa.metadata assertion.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s477-16-6-8-metadata",
+      "source": "sections/s477-16-6-8-metadata.md",
+      "source_hash": "031decdaf12d76bbc62e330b1e6f8c7e484a3188a7c9e6ee557a548264619c64",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.6.8, Metadata; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s478-16-6-8-1-description",
+      "source": "sections/s478-16-6-8-1-description.md",
+      "source_hash": "2696ff42f6af2bec961431aca37c84743e8798c0044fd0f4d6c5080d51a6dce4",
+      "narrative": [
+        {
+          "text": "Metadata is now represented by a category of assertions with a standardized serialization, replacing earlier per-standard assertions, so that included metadata is signed, attributable and processed consistently; these assertions may represent existing standards or private specifications.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s479-16-6-8-2-common-requirements",
+      "source": "sections/s479-16-6-8-2-common-requirements.md",
+      "source_hash": "ab4564f88a479b0eee5f78aa0fc9817efcd81fa0e96fb25b158ac1348895a5b0",
+      "narrative": [
+        {
+          "text": "A metadata assertion's label shall end in .metadata or .metadata.ingredient, preceded by c2pa or an entity-specific namespace (for example com.litware.metadata). Each shall hold a single JSON content box with a JSON-LD serialization that includes @context, and the recommended approach is to build an XMP Data Model representation and serialize it to JSON-LD.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s480-16-6-8-3-the-c2pa-metadata-assertion",
+      "source": "sections/s480-16-6-8-3-the-c2pa-metadata-assertion.md",
+      "source_hash": "ae3b6f97c68615f7994f121dfa7bf9d29616bcf9e0a6f6c4bb58c407edb048dc",
+      "narrative": [
+        {
+          "text": "The block defines the c2pa.metadata assertion for a subset of common metadata schemas and requires claim generators to include only the fields enumerated in Appendix C, while custom-labelled metadata assertions may hold any values. JSON-LD examples show the assertion for an image (Exif, TIFF, IPTC and Photoshop fields including GPS data) and for a PDF.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s481-16-6-8-4-redaction-of-c2pa-metadata",
+      "source": "sections/s481-16-6-8-4-redaction-of-c2pa-metadata.md",
+      "source_hash": "42ffbdb232dea142df37558fdae73caf7329f81bd2f4cbc99367729d380f45b4",
+      "narrative": [
+        {
+          "text": "Although redaction removes only whole assertions, an update manifest allows partial redaction of c2pa.metadata by removing the original and adding a reduced version, which is then attributed to the update manifest's signer, for example keeping camera information while dropping location data.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s482-16-7-trust-validation-adjuncts",
+      "source": "sections/s482-16-7-trust-validation-adjuncts.md",
+      "source_hash": "8205211674696e80193ff6914cb03e9bf8f14d797e4cd7c1a87bc6e6ca6f4f24",
+      "narrative": [
+        {
+          "text": "Introduction to Section 16.7, saying these assertions carry information used in manifest validation, such as certificate status, trusted time-stamps and session keys.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s483-16-7-1-certificate-status",
+      "source": "sections/s483-16-7-1-certificate-status.md",
+      "source_hash": "cf4ba9e9c6b6bdd85c65bcfb672ef4abbd2e0258f9bd5bf614e5bc03cfd57ba5",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.7.1, Certificate Status; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s484-16-7-1-1-description",
+      "source": "sections/s484-16-7-1-1-description.md",
+      "source_hash": "f93f1518212befaff842f976e555144a08d98065270176f7a9cd123380e0201b",
+      "narrative": [
+        {
+          "text": "The certificate status assertion supplies trusted certificate revocation status after the fact for manifests created offline, where OCSP information could not be obtained at signing time.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s485-16-7-1-2-schema-and-example",
+      "source": "sections/s485-16-7-1-2-schema-and-example.md",
+      "source_hash": "85214fe8305670893c0791871e370f2e20f845e4a7591c79148f2c031c88357e",
+      "narrative": [
+        {
+          "text": "The CDDL defines the certificate status map as a single ocspVals array of one or more byte strings, with a CBOR example.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s486-16-7-1-3-requirements",
+      "source": "sections/s486-16-7-1-3-requirements.md",
+      "source_hash": "7482056b3d86677998a99d802e78585dcf415a119658ae15c1c46fe95555f45d",
+      "narrative": [
+        {
+          "text": "A certificate status assertion shall be labelled c2pa.certificate-status, appear at most once per manifest, and contain at least one ocspVals entry, storing the captured OCSP response in the same binary format used in the ocspVals array of the rVals header.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s487-16-7-2-time-stamps",
+      "source": "sections/s487-16-7-2-time-stamps.md",
+      "source_hash": "ba20ec14f45176b0933359cf2e15cc566a0ec3a5d16aa1cffaa19220e6d0ed9e",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.7.2, Time Stamps; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s488-16-7-2-1-description",
+      "source": "sections/s488-16-7-2-1-description.md",
+      "source_hash": "a27b3af58071fe6fab62270949fa78ef20afec3fda8aaa7ade2d49166a08588e",
+      "narrative": [
+        {
+          "text": "The time stamp assertion lets a trusted RFC 3161 time stamp be added later to a manifest created offline, before its signing certificate expires, giving proof of existence for the manifest and, for the active manifest, its asset.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s489-16-7-2-2-schema-and-example",
+      "source": "sections/s489-16-7-2-2-schema-and-example.md",
+      "source_hash": "0f2a513e6958c13dab1a0c1884a0fe87ec39ebb5cee6c3ebc0d03a26052d917c",
+      "narrative": [
+        {
+          "text": "The CDDL defines time-stamp-map as a map from C2PA manifest URNs to time stamp byte strings, with a CBOR example.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s490-16-7-2-3-requirements",
+      "source": "sections/s490-16-7-2-3-requirements.md",
+      "source_hash": "a5093ba0750dc914f274558a0a7cd1aed87bfa038b8dc166dc6713206bf4ca03",
+      "narrative": [
+        {
+          "text": "A time stamp assertion shall be labelled c2pa.time-stamp, appear at most once per manifest, and contain at least one entry keyed by the label of the manifest being time-stamped. Each value shall be the timeStampToken from an RFC 3161 TSA response obtained in detached mode by the usual process, except that the payload is the signature field of the target manifest's COSE_Sign1_Tagged claim signature.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s491-16-7-3-session-keys",
+      "source": "sections/s491-16-7-3-session-keys.md",
+      "source_hash": "e94d893ade5263c3acae297c8c33efcb72ddd2f498efdef7098e5f8489fa3a6a",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.7.3, Session Keys; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s492-16-7-3-1-description",
+      "source": "sections/s492-16-7-3-1-description.md",
+      "source_hash": "e4fe1f755d3d5d0ab21719b0e6f2b14e178adb88dda9667ddc1e7af66f4884a5",
+      "narrative": [
+        {
+          "text": "The session keys assertion provides the keys used to sign the verifiable-segment-info-map in live media workflows based on the Verifiable Segment Info method, and is not required for workflows that rely only on the per-segment C2PA Manifest Box method.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s493-16-7-3-2-requirements",
+      "source": "sections/s493-16-7-3-2-requirements.md",
+      "source_hash": "a2a2ee593b45dcc16301ea2beeb3805dd1915d1f2ae9aef331e48dac033269d2",
+      "narrative": [
+        {
+          "text": "A session keys assertion shall be labelled c2pa.session-keys, at most one per manifest, and holds a keys array whose entries contain a COSE key with a kid, minSequenceNumber, createdAt, validityPeriod and a signerBinding signature over the signer's end-entity certificate. Keys shall be used only within their validity period, and new keys supplied in a later manifest may overlap earlier ones but their minSequenceNumber shall be at least the current sequence number, supporting key rotation and preventing replay.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s494-16-7-3-3-schema-and-example",
+      "source": "sections/s494-16-7-3-3-schema-and-example.md",
+      "source_hash": "7758c4a72fd16ac1cca99f4202fffed67e957b366671159cb4f9ef9b8651598d",
+      "narrative": [
+        {
+          "text": "The CDDL defines session-keys-data as an array of one or more session-key maps, each with a COSE key, minSequenceNumber, createdAt timestamp, validityPeriod in seconds and a COSE_Sign1_Tagged signerBinding. A CBOR example shows a c2pa.session-keys assertion with two P-256 keys.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s495-16-8-policy-disclosure",
+      "source": "sections/s495-16-8-policy-disclosure.md",
+      "source_hash": "2d4339d4558551e6c88d5a99a04d1cb758c662ecd2e7b7c5e4a076df795d3ed9",
+      "narrative": [
+        {
+          "text": "Introduction to Section 16.8, saying these assertions disclose policy-relevant characteristics of an asset, such as environmental impact and the role of generative AI or human oversight in its creation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s496-16-8-1-environmental-sustainability",
+      "source": "sections/s496-16-8-1-environmental-sustainability.md",
+      "source_hash": "c66566ea515d83304f2c5486e5820595113c9fe18251a950b35366045a52adce",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.8.1, Environmental Sustainability; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s497-16-8-1-1-description",
+      "source": "sections/s497-16-8-1-1-description.md",
+      "source_hash": "22eb320ce3a6a0b475f92d1d2157e08c9ccd3c800e36a7f3fb468cd4ae492162",
+      "narrative": [
+        {
+          "text": "The c2pa.environmental-sustainability assertion conveys machine-generated data on the environmental costs of creating or modifying an asset, a manifest may hold several, and their data may be aggregated, including recursively across ingredients. An action may reference one through relatedAssertions, and any such reference shall be a hashed JUMBF URI to an assertion in the same manifest. The optional energy_kwh, carbon_kgco2e (gross emissions, excluding offsets) and water_litres fields shall each hold a non-negative value in their named unit, and any measurementMethod shall be a reverse-DNS namespaced custom value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s498-16-8-1-2-schema-and-example",
+      "source": "sections/s498-16-8-1-2-schema-and-example.md",
+      "source_hash": "9a1016c25fe3d3d86f127c7d09b11b8555f74ffcd8eb6ee7cb7d557a28357bcf",
+      "narrative": [
+        {
+          "text": "The CDDL defines environmental-sustainability-map with optional energy_kwh, carbon_kgco2e and water_litres measurement maps (a non-negative value and optional namespaced measurementMethod), metadata and custom fields. A CBOR example gives values for all three measures, though its caption describes a TensorFlow model, which does not match the example shown.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s499-16-8-2-ai-disclosure",
+      "source": "sections/s499-16-8-2-ai-disclosure.md",
+      "source_hash": "ea7e64cb23b8312a9664a655d704cefec3f3108819d6efe141d51aa268db0b6c",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.8.2, AI Disclosure; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s500-16-8-2-1-summary",
+      "source": "sections/s500-16-8-2-1-summary.md",
+      "source_hash": "248e231a5420f3f566736bd5f7a3e1774f7ef6cce4399991afe0a1aa7b21ab95",
+      "narrative": [
+        {
+          "text": "The AI Disclosure assertion is introduced so claim generators can provide machine-readable, verifiable AI transparency information supporting automated compliance checks.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s501-16-8-2-2-details",
+      "source": "sections/s501-16-8-2-2-details.md",
+      "source_hash": "495bc98cc62b108391dda47653b7efcba5d6f4f3403d0e41c6719ef8c11bef7c",
+      "narrative": [
+        {
+          "text": "The AI Disclosure assertion shall be labelled c2pa.ai-disclosure and shall include modelType from the model type table, any scientificDomain shall follow the arXiv taxonomy, and other optional fields shall conform to the CDDL types.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s502-16-8-2-3-relationship-between-digitalsourcetype-",
+      "source": "sections/s502-16-8-2-3-relationship-between-digitalsourcetype-.md",
+      "source_hash": "c872598d6d9f8438bf9684b0554bbfb42d7e25a6203ea383c76bd63977c768b5",
+      "narrative": [
+        {
+          "text": "The c2pa.ai-disclosure assertion complements c2pa.actions and digitalSourceType by adding model provenance, scientific domain metadata and a human oversight level. A table shows how digitalSourceType and humanOversightLevel combine, from fully autonomous AI generation to human-validated composites, and notes the assertion is not attached for digitalCreation with no trained model.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s503-16-8-2-4-schema-and-example",
+      "source": "sections/s503-16-8-2-4-schema-and-example.md",
+      "source_hash": "4b787d50bbf24a678b156a16ac9b879411af2d10b25d5066c5164208fcb67494",
+      "narrative": [
+        {
+          "text": "The CDDL defines ai-model-disclosure-map with a required modelType, optional modelName, modelIdentifier, scientificDomain list and metadata, and a contentProfile holding humanOversightLevel with the values fully_autonomous, prompt_guided or human_validated; further fields are listed as pending. A CBOR example discloses a Hugging Face Transformers model, though its caption describes a TensorFlow model, which does not match the example shown.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s504-16-9-assertion-supporting-structures",
+      "source": "sections/s504-16-9-assertion-supporting-structures.md",
+      "source_hash": "59daf6354fcc1c3c8c80c4e6d5f8b4a4169c7cf8b9822e615f8a75b156a6338a",
+      "narrative": [
+        {
+          "text": "Introduction to Section 16.9, saying the structures that follow are used by the assertions above rather than being assertions themselves.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s505-16-9-1-metadata-about-assertions",
+      "source": "sections/s505-16-9-1-metadata-about-assertions.md",
+      "source_hash": "002f137b12dd8f98dd825ab3c83f17ec1abd64894a88c87df11450fc0e7b20e4",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.9.1, Metadata About Assertions; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s506-16-9-1-1-description",
+      "source": "sections/s506-16-9-1-1-description.md",
+      "source_hash": "12b7b535c1459847e32ba6d0cabd6355771d2d5dc33de7b38a231f3c5330b82b",
+      "narrative": [
+        {
+          "text": "Assertion metadata provides additional information about an assertion, such as when it was generated, to help Manifest Consumers judge its provenance, and consumers are not required to read any of it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s507-16-9-1-2-custom-values",
+      "source": "sections/s507-16-9-1-2-custom-values.md",
+      "source_hash": "f2f89e9cf81ba96895b7f844f32791a5e0213621a8ab910293622eb40d86b3f9",
+      "narrative": [
+        {
+          "text": "The assertion metadata structure may include custom key/value pairs, whose keys shall use entity-specific namespaces to avoid collisions.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s508-16-9-1-3-schema-and-example",
+      "source": "sections/s508-16-9-1-3-schema-and-example.md",
+      "source_hash": "be6dbd584d4873bccac0a2c5ddd325482ebb6c2d37d1de4af097f3649cbb358e",
+      "narrative": [
+        {
+          "text": "The CDDL defines the assertion-metadata-map with optional dateTime, reviewRatings, reference, the deprecated dataSource (which claim generators shall not include), localizations, regionOfInterest, processStart, processEnd and custom fields. Supporting rules define bounded time maps with absolute, lowerBound or upperBound types, a source-map with a type and details, a rating-map with a value from 1 to 5, a code and explanation, and localization entries, followed by a CBOR example. Assertion metadata usually sits in another assertion's metadata field but can be stored separately in an assertion labelled c2pa.assertion.metadata, for example for non-JSON or non-CBOR assertions such as thumbnails.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s509-16-9-1-4-datetime",
+      "source": "sections/s509-16-9-1-4-datetime.md",
+      "source_hash": "909691aa4f72f67a80e64caa90b1d63861a17617c69c650ca24bbf7e10e01859",
+      "narrative": [
+        {
+          "text": "If present, dateTime shall be a CBOR-compliant date time string indicating when the assertion was generated.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s510-16-9-1-5-region-of-interest",
+      "source": "sections/s510-16-9-1-5-region-of-interest.md",
+      "source_hash": "93f4a53b6f78a598373ddd1bc646d28efd6b7ea44468dc5f0e334a2c312fe46d",
+      "narrative": [
+        {
+          "text": "An assertion that applies to only part of an asset, such as a range of video frames or an image area, may identify that part with a regionOfInterest field holding a region-map object.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s511-16-9-1-6-data-source",
+      "source": "sections/s511-16-9-1-6-data-source.md",
+      "source_hash": "4464eaaadee86835a9b7991ecd89ec1902fe1369c1a94430608e0e98e3fe1b1b",
+      "narrative": [
+        {
+          "text": "Note stating that the dataSource field is deprecated, with a pointer to Section H.1.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
