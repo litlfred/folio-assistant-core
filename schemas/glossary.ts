@@ -97,6 +97,13 @@ export const TermSchema = z
     /** The code. SKOS's own word for it. */
     notation: z.string().min(1).optional(),
     scopeNote: z.string().min(1).optional(),
+    /**
+     * A note for the editors, not part of the meaning (`skos:editorialNote`):
+     * the document's own marks such as "Under review" or "To be included
+     * before publication". A table drawn from the glossary prints it in
+     * brackets after the definition, as the document does (smart-ra Q-RAC-8 A).
+     */
+    editorialNote: z.string().min(1).optional(),
     /** Local term ids or absolute IRIs. */
     broader: z.array(z.string().min(1)).optional(),
     related: z.array(z.string().min(1)).optional(),
@@ -405,6 +412,7 @@ export function toSkos(
     if (t.definition) node["skos:definition"] = langValues(t.definition);
     if (t.notation) node["skos:notation"] = t.notation;
     if (t.scopeNote) node["skos:scopeNote"] = t.scopeNote;
+    if (t.editorialNote) node["skos:editorialNote"] = t.editorialNote;
     if (t.broader?.length) node["skos:broader"] = t.broader.map(ref);
     if (t.related?.length) node["skos:related"] = t.related.map(ref);
     for (const m of ["exactMatch", "closeMatch", "broadMatch", "narrowMatch"] as const) {
