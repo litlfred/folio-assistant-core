@@ -70,6 +70,19 @@ describe("review-log-watch", () => {
     expect(row.filter(Boolean).length).toBe(3);
   });
 
+  test("an appended row gets the next Change-set id and an Agent row with its Issue, since the script fills Issue from the Agent tab", () => {
+    const row7 = [...row1]; row7[0] = "CS-007"; row7[10] = "https://github.com/litlfred/dth-phc/issues/6";
+    const r = watch(sheet([row1, row7]), [issue(5), issue(6), issue(8), issue(9)], repo, undefined);
+    if (r.status !== "changed") throw new Error("expected changed");
+    expect(r.append.map((a) => [a.row[0], a.agent])).toEqual([
+      ["CS-008", { csId: "CS-008", issue: `https://github.com/${repo}/issues/8` }],
+      ["CS-009", { csId: "CS-009", issue: `https://github.com/${repo}/issues/9` }],
+    ]);
+    const noCs = watch([["Ready for agent", "Ready for merge", "Issue"], ["", "", "dth-phc#5"]], [issue(5), issue(8)], repo, undefined);
+    if (noCs.status !== "changed") throw new Error("expected changed");
+    expect(noCs.append[0].agent).toBeUndefined();
+  });
+
   test("links and cells are read from the header row, wherever it is", () => {
     expect([...linkedIssues(sheet([row1]), repo)]).toEqual([[5, [3]]]);
     expect(linkedIssues(sheet([row1]), "litlfred/dth-pc").size).toBe(0);
