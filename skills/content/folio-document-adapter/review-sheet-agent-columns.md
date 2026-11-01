@@ -56,6 +56,26 @@ way, by header.
 
 ## When to write
 
+**One move, one Record agent step** (owner, 2026-11-01: "what to fix in
+process and skills so doesnt happen again?"). Every move in the table below
+is the subprocess `processes/content/record-agent-step.bpmn`, in this order:
+
+1. Write the change set's Agent row: Agentic status, Pull request, Staging
+   review page, the build columns, and Agent step.
+2. Write Feedback (agent) from that row, linking the same pull request and
+   preview.
+3. Read back Agentic status, Agentic status (filter) and Staging review after
+   the script's next run. If they disagree with Feedback (agent), fix the
+   Agent row, never the copied columns.
+
+Never write Feedback (agent) alone. The script builds Agentic status and
+Staging review only from the Agent tab, so a preview link written only in
+Feedback (agent) leaves Staging review empty and Agentic status naming the
+old pull request (CS-007, 2026-11-01). Agent step must be exactly
+`<step> <YYYY-MM-DD HH:MMZ>` with a step from the fixed list; prose there is
+not read, and the row then warns "no agent has picked this up" however much
+work was done. A row waiting for people is `idle <time>`.
+
 Write as each step completes, not once at the end. Times, heads and steps
 come from `bun run folio-assistant-core/tools/review-sheet-sync/agent-record.ts`,
 never typed.

@@ -42,6 +42,7 @@
         <bpmn:flowNodeRef>Gateway_Changed</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_AppendRows</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_AgentPass</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_RecordStep</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Accept</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Done</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_NoWork</bpmn:flowNodeRef>
@@ -89,10 +90,16 @@
       <bpmn:incoming>WF06</bpmn:incoming>
       <bpmn:outgoing>WF07</bpmn:outgoing>
     </bpmn:callActivity>
+    <bpmn:callActivity id="Task_RecordStep" name="Record agent step on each row it wrote" calledElement="Process_RecordAgentStep">
+      <bpmn:documentation>For every row the pass or the stall check wrote, Record agent step: the Agent tab row first (status, pull request, preview, step), then Feedback (agent) from it, then read back Agentic status and Staging review. A row whose Feedback (agent) names a pull request or preview its Agent row does not, or whose Agent step is not "&lt;step&gt; &lt;time&gt;", is fixed here (owner, 2026-11-01).</bpmn:documentation>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-agent-columns"/></bpmn:extensionElements>
+      <bpmn:incoming>WF07</bpmn:incoming>
+      <bpmn:outgoing>WF10</bpmn:outgoing>
+    </bpmn:callActivity>
     <bpmn:serviceTask id="Task_Accept" name="Accept the new state">
       <bpmn:documentation>Runs the check again with --accept, so the state file holds what was just handled and the next poll compares against it. A row the pass could not finish stays changed and is picked up on the next poll.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-log-watch"/></bpmn:extensionElements>
-      <bpmn:incoming>WF07</bpmn:incoming>
+      <bpmn:incoming>WF10</bpmn:incoming>
       <bpmn:outgoing>WF08</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:endEvent id="EndEvent_Done" name="Changes handled">
@@ -110,7 +117,8 @@
     <bpmn:sequenceFlow id="WF04" name="changed" sourceRef="Gateway_Changed" targetRef="Task_AppendRows" />
     <bpmn:sequenceFlow id="WF05" name="unchanged" sourceRef="Gateway_Changed" targetRef="EndEvent_NoWork" />
     <bpmn:sequenceFlow id="WF06" sourceRef="Task_AppendRows" targetRef="Task_AgentPass" />
-    <bpmn:sequenceFlow id="WF07" sourceRef="Task_AgentPass" targetRef="Task_Accept" />
+    <bpmn:sequenceFlow id="WF07" sourceRef="Task_AgentPass" targetRef="Task_RecordStep" />
+    <bpmn:sequenceFlow id="WF10" sourceRef="Task_RecordStep" targetRef="Task_Accept" />
     <bpmn:sequenceFlow id="WF08" sourceRef="Task_Accept" targetRef="EndEvent_Done" />
   </bpmn:process>
 
@@ -186,9 +194,18 @@
         <di:waypoint x="906" y="155" />
         <di:waypoint x="966" y="155" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Task_RecordStep_di" bpmnElement="Task_RecordStep">
+        <dc:Bounds x="1056" y="250" width="120" height="90" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="WF07_di" bpmnElement="WF07">
-        <di:waypoint x="1086" y="155" />
-        <di:waypoint x="1146" y="155" />
+        <di:waypoint x="1026" y="200" />
+        <di:waypoint x="1026" y="295" />
+        <di:waypoint x="1056" y="295" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="WF10_di" bpmnElement="WF10">
+        <di:waypoint x="1176" y="295" />
+        <di:waypoint x="1206" y="295" />
+        <di:waypoint x="1206" y="200" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="WF08_di" bpmnElement="WF08">
         <di:waypoint x="1266" y="155" />

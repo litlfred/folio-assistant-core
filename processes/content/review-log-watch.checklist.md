@@ -61,9 +61,17 @@ One poll of one drafting review log (a Contributor Feedback sheet) and its folio
 - Skill: `review-sheet-script`.
 - What: For each changed row, the agent pass of Contributor feedback on a working draft: a new or edited row gets a proposal, Ready for agent = Yes gets its edit, Ready for merge = Yes its merge, and a Blue answer to a Decision needed question is taken up.
 - A subprocess (`Process_ContributorFeedback`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `Task_RecordStep` (Record agent step on each row it wrote)
+
+### 6. Record agent step on each row it wrote (`Task_RecordStep`)
+
+- Who: the `Log watcher (authoring agent)` lane (role `authoring-agent`).
+- Skill: `review-sheet-agent-columns`.
+- What: For every row the pass or the stall check wrote, Record agent step: the Agent tab row first (status, pull request, preview, step), then Feedback (agent) from it, then read back Agentic status and Staging review.
+- A subprocess (`Process_RecordAgentStep`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Task_Accept` (Accept the new state)
 
-### 6. Accept the new state (`Task_Accept`)
+### 7. Accept the new state (`Task_Accept`)
 
 - Who: the `Log watcher (authoring agent)` lane (role `authoring-agent`).
 - Skill: `review-log-watch`.

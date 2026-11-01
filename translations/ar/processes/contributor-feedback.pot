@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: contributor-feedback\n"
-"POT-Creation-Date: 2026-10-31T19:50:58.753Z\n"
+"POT-Creation-Date: 2026-11-01T21:47:49.330Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ar\n"
@@ -111,7 +111,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:97
 #. Diagram element documentation
-msgid "One row, one branch, one active pull request (owner, 2026-10-31): the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again. A closed pull request the committee wants back is reopened, or replaced by a new one on the same branch; earlier ones stay listed in Agentic status. Agentic status (Green) says where it is, and Staging review opens the preview's what-changed page. Before the preview is staged, the agent writes the change set's Disposition (change set) on the Agent tab: one line per feedback item, starting from the people's Blue Disposition, after an optional Overall statement; the sheet shows it in Disposition (agent) and flags any item without a disposition, or one that differs from the people's (owner, 2026-10-31)."
+msgid "One row, one branch, one active pull request (owner, 2026-10-31): the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again. A closed pull request the committee wants back is reopened, or replaced by a new one on the same branch; earlier ones stay listed in Agentic status. Agentic status (Green) says where it is, and Staging review opens the preview's what-changed page. Before the preview is staged, the agent writes the change set's Disposition (change set) on the Agent tab: one line per feedback item, starting from the people's Blue Disposition, after an optional Overall statement; the sheet shows it in Disposition (agent) and flags any item without a disposition, or one that differs from the people's (owner, 2026-10-31). It ends with Record agent step (record-agent-step.bpmn): the Agent tab row first, then Feedback (agent) from it, then the sheet read back, never Feedback (agent) alone (owner, 2026-11-01)."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:152
@@ -141,12 +141,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:116
 #. Diagram element documentation
-msgid "Reads: the change set's Disposition (change set), the people's Blue Disposition and feedback, the pull request's diff at its head commit, and the staging QA report. Checks that every feedback item has one disposition; that each agrees with the people's Blue Disposition; that each Accepted or Partially accepted item has the change in the diff, and a Not accepted, Noted, Duplicate or Out of scope item has none; that the diff changes nothing no disposition accounts for; and that the QA report for the staged commit has no failing gate. Writes: QA gate (change set) on the Agent tab, first line \"Passed <head sha>: …\" or \"Failed <head sha>: <why>\", and QA report (change set), the report's link. The sheet shows the gate under Staging review; a pass for an older commit reads as stale (owner, 2026-10-31)."
+msgid "Reads: the change set's Disposition (change set), the people's Blue Disposition and feedback, the pull request's diff at its head commit, and the staging QA report. Checks that every feedback item has one disposition; that each agrees with the people's Blue Disposition; that each Accepted or Partially accepted item has the change in the diff, and a Not accepted, Noted, Duplicate or Out of scope item has none; that the diff changes nothing no disposition accounts for; and that the QA report for the staged commit has no failing gate. Writes: QA gate (change set) on the Agent tab, first line \"Passed <head sha>: …\" or \"Failed <head sha>: <why>\", and QA report (change set), the report's link. The sheet shows the gate under Staging review; a pass for an older commit reads as stale (owner, 2026-10-31). It ends with Record agent step (record-agent-step.bpmn): the Agent tab row first, then Feedback (agent) from it, then the sheet read back, never Feedback (agent) alone (owner, 2026-11-01)."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:84
 #. Diagram element documentation
-msgid "Reads: the row (Title, Selected Sections, the Contributor Feedback columns, Disposition) and the sections it names. Writes: a proposed direction in Feedback (agent) (Green), and the row's feedback basis on the Agent tab, so the script can tell when the feedback has moved on. A question for people goes in Feedback (agent) as a Decision needed block with options and a recommendation, and the row's Agentic status becomes Needs human; a chat card may repeat it, but the sheet is the record. An answered question leaves the feedback: its decision is added to the change set's Disposition (change set) on the Agent tab, shown in Disposition (agent), whose decision history is appended to and never removed (owner, 2026-10-31)."
+msgid "Reads: the row (Title, Selected Sections, the Contributor Feedback columns, Disposition) and the sections it names. Writes: a proposed direction in Feedback (agent) (Green), and the row's feedback basis on the Agent tab, so the script can tell when the feedback has moved on. A question for people goes in Feedback (agent) as a Decision needed block with options and a recommendation, and the row's Agentic status becomes Needs human; a chat card may repeat it, but the sheet is the record. An answered question leaves the feedback: its decision is added to the change set's Disposition (change set) on the Agent tab, shown in Disposition (agent), whose decision history is appended to and never removed (owner, 2026-10-31). It ends with Record agent step (record-agent-step.bpmn): the Agent tab row first, then Feedback (agent) from it, then the sheet read back, never Feedback (agent) alone (owner, 2026-11-01)."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:103
@@ -171,7 +171,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:133
 #. Diagram element documentation
-msgid "The agent merges the row's pull request, and Agentic status says merged. The change set's Dispositions blurb, as it stands when Ready for merge is set to Yes, is the summary: it goes into the merge, and closes the change set's issue (owner, 2026-10-31)."
+msgid "The agent merges the row's pull request, and Agentic status says merged. The change set's Dispositions blurb, as it stands when Ready for merge is set to Yes, is the summary: it goes into the merge, and closes the change set's issue (owner, 2026-10-31). It ends with Record agent step (record-agent-step.bpmn): the Agent tab row first, then Feedback (agent) from it, then the sheet read back, never Feedback (agent) alone (owner, 2026-11-01)."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:63

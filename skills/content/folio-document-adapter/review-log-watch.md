@@ -132,6 +132,24 @@ A row whose agent is working, but that shows nothing new, is not stalled:
 say what it is doing in Feedback (agent), with links to its pull requests,
 so the row stops looking stuck.
 
+## Every poll: check each row against its Agent row
+
+After the stall pass, the watcher checks, for every row with a Feedback
+(agent) cell:
+
+- a pull request or preview named in Feedback (agent) is the one in the
+  row's Agent row (Pull request, Staging review page);
+- Agent step reads `<step> <YYYY-MM-DD HH:MMZ>`, not prose;
+- Agentic status shows no "no agent has picked this up" warning while the
+  row's thread is working.
+
+A row that fails is fixed through Record agent step
+(`processes/content/record-agent-step.bpmn`): the Agent row first, then
+Feedback (agent), then a read-back. Another thread that owns the row sends the
+watcher its step and links; the watcher writes them, because one watcher owns
+each log (owner, 2026-11-01: "why not column P? Column O was not updated for
+row 11").
+
 ## What counts as a change
 
 - **Issues:** the repository's issues, open and closed, with their state and
