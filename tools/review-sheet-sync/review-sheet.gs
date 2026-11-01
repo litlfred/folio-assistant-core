@@ -1335,10 +1335,13 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) 
     const cur = t === null ? String(r[ag]) : t;
     const L = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? lineOf[cs] : undefined;
     const fin = L !== undefined ? withProgress(cur, L) : cur;
+    // Read the cell's links before a plain write wipes them (owner, 2026-11-01: "Dont know where link is").
+    const kept = keptLinks(linkRuns(s.sh.getRange(k + s.top, ag + 1, 1, 1)), fin);
     if (fin !== String(r[ag])) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(fin)]]);
     unready(s, r, k, r[ag], t);
     const off = fin.indexOf(STALE + '\n') === 0 ? STALE.length + 1 : 0;
-    const links = L && typeof L === 'object' ? L.links.map(x => [x[0] + off, x[1] + off, x[2]]) : [];
+    const own = L && typeof L === 'object' ? L.links.map(x => [x[0] + off, x[1] + off, x[2]]) : [];
+    const links = own.concat(kept.filter(([a, z]) => !own.some(([b, y]) => a < y && b < z)));
     markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), fin, links);
   });
 }
@@ -1618,6 +1621,30 @@ function decisionSpans(text) {
   while ((m = ref.exec(t))) spans.push([m.index, m.index + m[0].length]);
   return spans;
 }
+/** The linked runs of a cell, as [{ text, url }]; [] when the cell has none or cannot say. */
+function linkRuns(range) {
+  let rt = null;
+  try { rt = range.getRichTextValue ? range.getRichTextValue() : null; } catch (e) { rt = null; }
+  if (!rt || !rt.getRuns) return [];
+  return rt.getRuns().map(x => ({ text: x.getText(), url: x.getLinkUrl ? x.getLinkUrl() : null })).filter(x => x.url && String(x.text).trim());
+}
+
+/**
+ * Where the links someone (an agent, through the Sheets API) put in a cell land
+ * in its new text, as [start, end, url]: each linked label is found again, in
+ * order, so a refresh that adds a status line keeps every link it can place.
+ */
+function keptLinks(runs, text) {
+  const t = String(text), from = {}, out = [];
+  (runs || []).forEach(x => {
+    const w = String(x.text), at = t.indexOf(w, from[w] || 0);
+    if (at < 0) return;
+    from[w] = at + w.length;
+    out.push([at, at + w.length, x.url]);
+  });
+  return out;
+}
+
 function markDecision(range, text, links) {
   const spans = decisionSpans(text);
   if (!spans.length && !(links || []).length) return;
