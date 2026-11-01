@@ -71,6 +71,16 @@ goes to stderr, the report to `--out` or stdout.
   contraindication`, and `may be` + given/administered/offered/considered/
   used/co-administered/implemented. Bare `may` does not count.
 
+## Where `--captured` comes from in a DAK or DTH
+
+From the entry's own `candidates.json`. The `requirements` aspect proposes
+every sentence carrying one of the markers above
+([`l1-document-ingestion`](l1-document-ingestion.md#requirements-and-normative-statements--every-dak-and-dth-source)),
+verbatim, so `jq '[.candidates[] | {id: (.number // .section_file), text: .statement}]'`
+over it is a `--captured` file. A sentence the aspect proposed matches. One it
+missed (split across a page or a table cell) shows as unaccounted, and goes to
+a person.
+
 ## Where it sits
 
 After [`l1-document-ingestion`](l1-document-ingestion.md) has produced the

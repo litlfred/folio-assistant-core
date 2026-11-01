@@ -78,6 +78,15 @@ convention was a labelled, titled `prose` block. Converting one means changing
 the builder call from `prose` to `recommendation` and adding `strength`. The
 label, title, `uses[]` and `.md` stay as they are, so no reference breaks.
 
+## When the statement comes from a source
+
+A normative statement or requirement that a SOURCE makes is already a node in
+that source's L1 entry (`l1-document-ingestion`, "Requirements and normative
+statements"), with the source's own number in `meta.source_number`. Cite that
+node from the block's `meta.source`, and keep the source's number in the
+title or prose. Do not mint a new id that looks like the source's: a reader
+cannot tell the two apart.
+
 ## What not to do
 
 - **Do not use `definition`.** It is a math kind: its `lean` field is
