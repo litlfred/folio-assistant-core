@@ -3801,6 +3801,1032 @@
           "drafted_at": "2026-11-01"
         }
       ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s455-conclusion-quickguide",
+      "source": "sections/s455-conclusion-quickguide.md",
+      "source_hash": "4582afb661bc18d3b7b344674dc64c5a3b72dcd887ac6f8a81c8d0363290cd47",
+      "narrative": [
+        {
+          "text": "Quick guide: the curate script runs a wide range of curation tasks on repository objects, chosen by task name and parameters, and is worth considering for automating curation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s456-export-script",
+      "source": "sections/s456-export-script.md",
+      "source_hash": "0db553c4782bce37e8b88a1746a8df10823288df0a6dfd37260905cbe5b85568",
+      "narrative": [
+        {
+          "text": "Opens the page on the export script, with its contents: what it does, who can use it, when, how it works, parameters, a quick guide, and an explanation of the Simple Archive Format (SAF).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s457-what-it-does",
+      "source": "sections/s457-what-it-does.md",
+      "source_hash": "f1b403d6103b63ddd6e63bc0bf1780d26a019da69f621308807ee7f36229440b",
+      "narrative": [
+        {
+          "text": "The export script exports single items or whole collections, optionally leaving out bitstreams and metadata.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s458-who-can-use-it",
+      "source": "sections/s458-who-can-use-it.md",
+      "source_hash": "9e7496bde4306b230f1d95a83a26dc52c0574ec7114325a333431ca521741031",
+      "narrative": [
+        {
+          "text": "Any user with administrative rights over at least one community, collection or item may run the export script, on the resources they administer.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s459-when-we-use-it",
+      "source": "sections/s459-when-we-use-it.md",
+      "source_hash": "f8e35322fbe67e76f5cdaf9c4c973dc16dbbe0e80d1f2151412679c12d45c91a",
+      "narrative": [
+        {
+          "text": "The export script batch-exports items to Simple Archive Format (SAF), for migration or backup.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s460-how-it-works",
+      "source": "sections/s460-how-it-works.md",
+      "source_hash": "01e2076cb346614d39a68d307bc2482eed5dbfecdf28f334e317f65dfbd8bded",
+      "narrative": [
+        {
+          "text": "The export script looks up the item or collection to export and writes a SAF package with the item metadata and, where applicable, the bitstreams.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s461-parameters",
+      "source": "sections/s461-parameters.md",
+      "source_hash": "96daf565628e876eb2c099c7a26e040deda8d70e9ecf7eb0d77239dc3713d50c",
+      "narrative": [
+        {
+          "text": "Export parameters: -t type (COLLECTION, which exports all its items, or ITEM), -i the id or handle, -n the sequence number to start from (for exporting large collections in batches), -m export for migration (dropping the handle and metadata the new system will recreate), -x leave out bitstreams (to keep the package small), -h help.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s462-conclusion-quickguide",
+      "source": "sections/s462-conclusion-quickguide.md",
+      "source_hash": "98e285e697ee25ea19730018585dd2db1bbb7622ed3aed428ce22b84a3ce3349",
+      "narrative": [
+        {
+          "text": "Quick guide: the export script writes items to SAF, with metadata and bitstreams by default, either of which can be left out, and its output can be imported easily when migrating to a new system.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s463-what-is-saf",
+      "source": "sections/s463-what-is-saf.md",
+      "source_hash": "4d89b5fa61482cb6d681c737a510add9aaf4ebbd65d0cb38bf8f5eb59b776fda",
+      "narrative": [
+        {
+          "text": "Heading for the section explaining the Simple Archive Format (SAF); no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s464-dspace-simple-archive-format",
+      "source": "sections/s464-dspace-simple-archive-format.md",
+      "source_hash": "45e43b1732cdb4e2e32f295f098044524bbfb17380f419dc84862359ec500d99",
+      "narrative": [
+        {
+          "text": "DSpace's Simple Archive Format is a directory with one subdirectory per item; each holds a file of the item's descriptive metadata and the item's files. The DSpace 7 documentation has details.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s465-a-visual-representation-of-a-saf",
+      "source": "sections/s465-a-visual-representation-of-a-saf.md",
+      "source_hash": "be2b9924529c5124f438001188914d5d2bd532ab4c05fe66dcdd5fa515fe2f44",
+      "narrative": [
+        {
+          "text": "A collapsible view of a SAF archive: a top-level directory with one subdirectory per item. Each item directory holds dublin_core.xml (dc schema metadata), metadata_<prefix>.xml for other registered schemas, a contents file listing the files one per line, an optional collections file of handles (the first is the owning collection), an optional relationships file for entities, and the files themselves, added as bitstreams.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s466-filter-media-script",
+      "source": "sections/s466-filter-media-script.md",
+      "source_hash": "03c9d2f80b491e4c59cf18ee21feb694a73b8e67b23c79a1a65768da6f8600a1",
+      "narrative": [
+        {
+          "text": "Opens the page on the filter-media script, with its contents: what it does, who can use it, when, how it works, parameters, and a quick guide.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s467-what-it-does",
+      "source": "sections/s467-what-it-does.md",
+      "source_hash": "95f804b27d2578744e12189fd472310b27d9558cf5ee7c9f6a82195b3a514b96",
+      "narrative": [
+        {
+          "text": "The filter-media script processes the files added to DSpace, for example extracting full text so files can be searched, and creating thumbnails. The Media Filter documentation has more.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s468-who-can-use-it",
+      "source": "sections/s468-who-can-use-it.md",
+      "source_hash": "feb6950410c85ca0aa0b3cf2ba7c4e5a7c2577b0be213ab97fe20faa19cf6b5b",
+      "narrative": [
+        {
+          "text": "Only repository administrators may run the filter-media script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s469-when-we-use-it",
+      "source": "sections/s469-when-we-use-it.md",
+      "source_hash": "c8873d26412dd8c2202f6e655dfb3ca2cedb35b6c8e6d60e662d4bb15151123d",
+      "narrative": [
+        {
+          "text": "The filter-media script is used to extract full text from documents and create thumbnails.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s470-how-it-works",
+      "source": "sections/s470-how-it-works.md",
+      "source_hash": "bc42433ce8a53e81de28f4d5c4a2c795dcd58f8ba67402f2e7b32e6533c51af5",
+      "narrative": [
+        {
+          "text": "By default filter-media processes every bitstream and runs every Media Filter plugin listed in filter.plugins in dspace.cfg, extracting full text and creating thumbnails; parameters narrow which bitstreams and plugins are used.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s471-parameters",
+      "source": "sections/s471-parameters.md",
+      "source_hash": "d27e7aa40b93cf8eddacaedfb41e7abdff650d4c0f46aca2d1fb89d4b7280321",
+      "narrative": [
+        {
+          "text": "filter-media parameters: -v verbose (prints the extracted text), -q quiet (errors only), -f force reprocessing of all bitstreams, -i only the given identifier, -m at most N items, -p only the named plugins (comma-separated), -s skip the given identifiers (comma-separated), -h help.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s472-conclusion-quickguide",
+      "source": "sections/s472-conclusion-quickguide.md",
+      "source_hash": "b4d978e126e5428edac3753b7ee1288c46490533840f73fb06b3aecc4bea068b",
+      "narrative": [
+        {
+          "text": "Quick guide: filter-media extracts full text and creates thumbnails for all bitstreams with all plugins by default, and its parameters restrict it to chosen bitstreams or plugins to save time.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s473-harvest-script",
+      "source": "sections/s473-harvest-script.md",
+      "source_hash": "7cbdfa380ca6fa575cacd6110e61c51174345bcf20081456a83c5f4dfbd54f8f",
+      "narrative": [
+        {
+          "text": "Opens the page on the harvest script, with its contents: what it does, who can use it, when, how it works, parameters, and a quick guide.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s474-what-it-does",
+      "source": "sections/s474-what-it-does.md",
+      "source_hash": "75201022ab4c2ec2fd37225b5defeb24cdeb51d1ee8b60ede1a6affa9f5a6d05",
+      "narrative": [
+        {
+          "text": "The harvest script sets a collection to harvest its items from an external OAI-PMH server, either metadata only or files as well where the source supports it. The OAI documentation has more.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s475-who-can-use-it",
+      "source": "sections/s475-who-can-use-it.md",
+      "source_hash": "feb6950410c85ca0aa0b3cf2ba7c4e5a7c2577b0be213ab97fe20faa19cf6b5b",
+      "narrative": [
+        {
+          "text": "Only repository administrators may run the harvest script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s476-when-we-use-it",
+      "source": "sections/s476-when-we-use-it.md",
+      "source_hash": "d778d046bb1fb48f6e498269bf54f42b95d03e3eb7098376b19f688d9c9443a4",
+      "narrative": [
+        {
+          "text": "The harvest script sets up a collection for harvesting, runs harvests, and manages harvested collections: it can reset their status, purge them, and reimport all of a collection's items.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s477-how-it-works",
+      "source": "sections/s477-how-it-works.md",
+      "source_hash": "2015c49ddc2d1828e53da0ea4c62023bfa4703bc6843fa1acbd5f251b7b282e7",
+      "narrative": [
+        {
+          "text": "The harvest script uses OAI-PMH: for a collection set up for harvesting it connects to the given server, fetches metadata for the configured set and format, and creates or updates items in DSpace.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s478-parameters",
+      "source": "sections/s478-parameters.md",
+      "source_hash": "2f321168305a24a3e15b10d6a5efaa3edb5a014ebe7056c0fb28aa4bbc8bd180",
+      "narrative": [
+        {
+          "text": "Harvest parameters: -p purge the collection's items, -r run a harvest, -g ping and set up the OAI server, -s set up the collection, -S start the harvest loop, -R reset harvest status on all collections, -P purge all harvestable collections, -o reimport (-p then -r), -c the collection, -t harvest type (0 for none), -a the OAI-PMH server address, -i the OAI set id, -m the metadata format (resolved in dspace.cfg), -h help.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s479-conclusion-quickguide",
+      "source": "sections/s479-conclusion-quickguide.md",
+      "source_hash": "ca9b3731711be1ef778772ce352f66833a2ea4301d08131c6a5a00fb012aabef",
+      "narrative": [
+        {
+          "text": "Quick guide: the harvest script manages OAI-PMH harvesting of external collections, from setup through running to managing harvested collections.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s480-import-script",
+      "source": "sections/s480-import-script.md",
+      "source_hash": "59cc82252223127dc30fcabc95bcdca8d59ddf29e514326255288cfdd32243f0",
+      "narrative": [
+        {
+          "text": "Opens the page on the import script, with its contents: what it does, who can use it, when, how it works, parameters, and a quick guide.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s481-what-it-does",
+      "source": "sections/s481-what-it-does.md",
+      "source_hash": "46addccc96f76aa2f9c463c2c82e9c1aee3051446c5670299a4f318621b7d4f5",
+      "narrative": [
+        {
+          "text": "The import script imports items or collections from Simple Archive Format (SAF), described on the export page. Its parameters set the action, the zip file, the destination collection, whether to use the collection's workflow, and whether to validate only.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s482-who-can-use-it",
+      "source": "sections/s482-who-can-use-it.md",
+      "source_hash": "feb6950410c85ca0aa0b3cf2ba7c4e5a7c2577b0be213ab97fe20faa19cf6b5b",
+      "narrative": [
+        {
+          "text": "Only repository administrators may run the import script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s483-when-we-use-it",
+      "source": "sections/s483-when-we-use-it.md",
+      "source_hash": "bb20ad883d3335e9800b83f33a3c92fc9408a96068d7ac5ae939add71b35e77a",
+      "narrative": [
+        {
+          "text": "The import script loads items from a SAF zip file, with options to add, replace or delete items, map them with a mapfile, send them through a collection's workflow, and more.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s484-how-it-works",
+      "source": "sections/s484-how-it-works.md",
+      "source_hash": "af24992ad36c7163889c4ab8234f9361d651da3ec6a261cd77984ba612b78671",
+      "narrative": [
+        {
+          "text": "The import script unpacks a SAF zip and handles each item as the parameters say: adding it to a collection, replacing items listed in a mapfile, or deleting them.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s485-parameters",
+      "source": "sections/s485-parameters.md",
+      "source_hash": "2ed990c3cba58f6d2b8b7ca4c5bc2c61c97c6f28ddeca597907eb758de4be6e8",
+      "narrative": [
+        {
+          "text": "Import parameters: -a add, -r replace items in the mapfile, -d delete items in the mapfile, -z the SAF zip, -c destination collection(s) by handle or id, -m the mapfile linking SAF items to DSpace items, -w send through the collection's workflow, -n send workflow notification emails, -v validate only (test run), -x leave out bitstreams, -p apply a template, -R resume a failed add, -q quiet, -h help.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s486-conclusion-quickguide",
+      "source": "sections/s486-conclusion-quickguide.md",
+      "source_hash": "74fc574d3e1ddd8ebd513b667d8064628802f927fadfd738de1a8b4ae01579de",
+      "narrative": [
+        {
+          "text": "Quick guide: the import script loads items from a SAF zip, with options to add, replace or delete, use a mapfile, go through a collection's workflow, and more.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s487-index-discovery-script",
+      "source": "sections/s487-index-discovery-script.md",
+      "source_hash": "872fa08907b711a9c094e341d692bffb297faa9ca91af7bd1b81ba9992d40a81",
+      "narrative": [
+        {
+          "text": "Opens the page on the index-discovery script, with its contents: what it does, who can use it, when, how it works, parameters, and a quick guide.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s488-what-it-does",
+      "source": "sections/s488-what-it-does.md",
+      "source_hash": "e0f236ac07691c05e23fb4848f05724a45073b203ca122cf3662d0b902d97e1a",
+      "narrative": [
+        {
+          "text": "The index-discovery script works on the Discovery Solr search index, adding, removing, updating or rebuilding it according to its parameters. The Discovery documentation has more.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s489-who-can-use-it",
+      "source": "sections/s489-who-can-use-it.md",
+      "source_hash": "feb6950410c85ca0aa0b3cf2ba7c4e5a7c2577b0be213ab97fe20faa19cf6b5b",
+      "narrative": [
+        {
+          "text": "Only repository administrators may run the index-discovery script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s490-when-we-use-it",
+      "source": "sections/s490-when-we-use-it.md",
+      "source_hash": "d4c17e76fb87b06658367253b574e4730483ef1529cba364119daae211eb0f0c",
+      "narrative": [
+        {
+          "text": "The index-discovery script keeps the Discovery Solr index up to date: adding, removing, updating and rebuilding it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s491-how-it-works",
+      "source": "sections/s491-how-it-works.md",
+      "source_hash": "26637535abb12aff344c45ec748e25ca1cc888ca65bd654a65d127c44b80de3d",
+      "narrative": [
+        {
+          "text": "The index-discovery script finds in the database the items, collections and communities to add, update or remove, and applies those changes to the Solr index.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s492-parameters",
+      "source": "sections/s492-parameters.md",
+      "source_hash": "f191996478a48fc71c4c3d034f463f8f9475e984a6bb6ffdac6d77b0486cadd8",
+      "narrative": [
+        {
+          "text": "index-discovery parameters: -r remove an object by handle, -i add or update an object by handle or UUID, -c clean out documents no longer in the database, -d delete all records, -b rebuild the index from scratch, -s rebuild the spellchecker (combinable with -b and -f), -f force reindexing even of up-to-date handles, -h help.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s493-conclusion-quickguide",
+      "source": "sections/s493-conclusion-quickguide.md",
+      "source_hash": "fe2cbcd6910478d6022732fc4bc7d578c375a8565fa81dae5fcb776f7302a888",
+      "narrative": [
+        {
+          "text": "Quick guide: index-discovery manages the Discovery Solr index, adding, updating or removing objects and cleaning, emptying or rebuilding the index, so users can find content.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s494-available-scripts-index",
+      "source": "sections/s494-available-scripts-index.md",
+      "source_hash": "df278354a97e7aa6b682eed188ab280d33efa5998abdc839f1217ca64eac02b8",
+      "narrative": [
+        {
+          "text": "Heading for the index of available scripts; no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s495-scripts-and-processes-endpoints",
+      "source": "sections/s495-scripts-and-processes-endpoints.md",
+      "source_hash": "984da25fa99bfc12719fba82d1e300db71cc33424c63ea8efa68bf03f53aed8c",
+      "narrative": [
+        {
+          "text": "Points to the Processes and Scripts endpoint documentation for how scripts and processes are run through the REST API.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s496-list-of-available-scripts",
+      "source": "sections/s496-list-of-available-scripts.md",
+      "source_hash": "f20c44de91fc3bd66701b67c78b46bbe8228ec7a9a8a557dd65c69f3b3daa539",
+      "narrative": [
+        {
+          "text": "Lists the scripts documented in the contract: curate, export, filter-media, harvest, import, index-discovery, metadata-deletion, metadata-export, metadata-export-search, metadata-import, orcid-bulk-push, process-cleaner, retry-tracker, solr-database-resync and subscription-send.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s497-metadata-deletion-script",
+      "source": "sections/s497-metadata-deletion-script.md",
+      "source_hash": "a7e1fd7a070daa6be2656bfd0f6fc381ef0457e70a13e1030a5e50a07313eadc",
+      "narrative": [
+        {
+          "text": "Opens the page on the metadata-deletion script, with its contents: what it does, who can use it, when, how it works, parameters, and a quick guide.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s498-what-it-does",
+      "source": "sections/s498-what-it-does.md",
+      "source_hash": "fe64d549272688a4527c5ff7f99b0f85f2ece64207099ff70fd4f224359b1bfa",
+      "narrative": [
+        {
+          "text": "The metadata-deletion script removes every value of a given metadata field from every item.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s499-who-can-use-it",
+      "source": "sections/s499-who-can-use-it.md",
+      "source_hash": "feb6950410c85ca0aa0b3cf2ba7c4e5a7c2577b0be213ab97fe20faa19cf6b5b",
+      "narrative": [
+        {
+          "text": "Only repository administrators may run the metadata-deletion script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s500-when-we-use-it",
+      "source": "sections/s500-when-we-use-it.md",
+      "source_hash": "8b0e5196d359e88e2dca9a7e9b6b6ec10aeed3e92e428b608d6d1b70d112886e",
+      "narrative": [
+        {
+          "text": "The metadata-deletion script is used to remove one metadata field from all items.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s501-how-it-works",
+      "source": "sections/s501-how-it-works.md",
+      "source_hash": "904024ab044cd70d47d0a2a9c95a53c35a0f1ab9da2b0222c2cec19dcdb41369",
+      "narrative": [
+        {
+          "text": "The metadata-deletion script finds all items holding the field and deletes all its values; this can take time on a large repository. The deletion is permanent and cannot be undone.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s502-parameters",
+      "source": "sections/s502-parameters.md",
+      "source_hash": "698d6f4639c329dc617e015781ac7cfc13045feffedf11ff6a040f70c98516eb",
+      "narrative": [
+        {
+          "text": "metadata-deletion parameters: -m the metadata field name, -l list the fields that can be deleted.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s503-conclusion-quickguide",
+      "source": "sections/s503-conclusion-quickguide.md",
+      "source_hash": "ec2d9be7dc3b2c83fc1778af5de5cd046ad5cfb3f0fc0dc2f3178339fa7e98f6",
+      "narrative": [
+        {
+          "text": "Quick guide: metadata-deletion removes a field from all items; back up the repository first in case values need restoring.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s504-metadata-export-search-script",
+      "source": "sections/s504-metadata-export-search-script.md",
+      "source_hash": "73b03199bd8440a2089f50698c035da878b8da2b876033bf8da9fd2bebb9f000",
+      "narrative": [
+        {
+          "text": "Opens the page on the metadata-export-search script, with its contents: what it does, who can use it, when, how it works, parameters, and a quick guide.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s505-what-it-does",
+      "source": "sections/s505-what-it-does.md",
+      "source_hash": "bc942839e149fd6d75fd9de03ee2959a19abe24b213c22cc0f656ba8ffa49f01",
+      "narrative": [
+        {
+          "text": "The metadata-export-search script exports, as CSV, the metadata of the results of a Discovery search. The Batch Metadata Editing documentation has more.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s506-who-can-use-it",
+      "source": "sections/s506-who-can-use-it.md",
+      "source_hash": "feb6950410c85ca0aa0b3cf2ba7c4e5a7c2577b0be213ab97fe20faa19cf6b5b",
+      "narrative": [
+        {
+          "text": "Only repository administrators may run the metadata-export-search script.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s507-when-we-use-it",
+      "source": "sections/s507-when-we-use-it.md",
+      "source_hash": "91c33b3d694f8ae195f296cb361bd548cc8304fc892e85362495dde1eec76e37",
+      "narrative": [
+        {
+          "text": "The metadata-export-search script is used for reports or exports based on search criteria, and its CSV can be the starting point for offline bulk edits through Batch Metadata Editing.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s508-how-it-works",
+      "source": "sections/s508-how-it-works.md",
+      "source_hash": "482d5c78e3cad3b19c8665aff68fb54106b0f2b3449e48b6a17fdf8fe735edd2",
+      "narrative": [
+        {
+          "text": "The script runs a search through the Discovery search API with the given query and parameters and exports the results' metadata as CSV.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7RqsTp9ABmR5SJCth"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
