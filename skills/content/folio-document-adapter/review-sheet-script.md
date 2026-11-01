@@ -995,8 +995,19 @@ the automatic refresh stays installed. Sheets drift, and that is accepted
 (owner, 2026-10-31: "sheets likely to drift anyways ... they need to know
 where to see latest published"): **Folio Assistant, then Which version is
 this?** shows the build the sheet runs (`SCRIPT_VERSION`, the stamp on the
-script's header line) and the link to the latest `dist/Code.gs`, whose
-header carries its own stamp to compare.
+script's header line), the Code.gs copy page, and "✓ Up to date" or "New
+build available" by comparing with the Config tab's `CFG.LATEST_BUILD`. The
+agent writes `LATEST_BUILD` (the content stamp of the build it publishes,
+`latestBuild()`) with the Config rows, so rewrite each sheet's Config when a
+new build goes out. The script never fetches (owner, 2026-11-01).
+
+**The menu** is named **Folio Assistant** and ends with **About Folio
+Assistant**, which points to https://litlfred.github.io/folio-assistant/; the
+same link is the last line of each tab's Instructions (owner, 2026-11-01).
+The library builds the menu (`addMenu`) and the stub asks it, so every sheet
+shows the same menu and a rename needs no new stub. A stub from before
+2026-11-01 builds its own "Review links" menu: paste `dist/Stub.gs` over it
+once.
 
 **A copy of the template needs none of this** (owner, 2026-10-31, option
 A): the script came with the file. Reload the copy, choose **Folio Assistant**,

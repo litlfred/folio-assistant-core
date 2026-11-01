@@ -1700,7 +1700,7 @@ describe("the Folio Assistant menu and version check (owner, 2026-11-01)", () =>
     expect(c.CFG.LATEST_BUILD).toMatch(/^template sha256 [0-9a-f]{16}$/);
     const r = run({ ...c, CFG: { ...c.CFG, LATEST_BUILD: "" } });
     r.s.showVersion();
-    expect(r.shown[0].body).toContain("Newest build: the \"at ...\" line");
+    expect(r.shown[0].body).toMatch(/^Newest build: top of the copy page/);
     const same = run({ ...c, CFG: { ...c.CFG, LATEST_BUILD: r.s.SCRIPT_VERSION } });
     same.s.showVersion();
     expect(same.shown[0].body).toContain("✓ Up to date.");
@@ -1711,7 +1711,7 @@ describe("the Folio Assistant menu and version check (owner, 2026-11-01)", () =>
     const c = pc();
     const r = run({ ...c, CFG: { ...c.CFG, LATEST_BUILD: "template sha256 0123456789abcdef" } });
     r.s.showVersion();
-    expect(r.shown[0].body).toContain("New build available: 0123456789abcdef");
-    expect(r.shown[0].body).toContain("Code.gs copy page");
+    expect(r.shown[0].body).toContain("New build available: 01234567");
+    expect(r.shown[0].body).toContain("claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd");
   });
 });

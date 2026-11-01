@@ -77,7 +77,7 @@ const CONFIG_TAB = 'Config';
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
 const SCRIPT_VERSION = '@@STAMP@@';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
-const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
+const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
 // The menu's name and the page it points to for more (owner, 2026-11-01:
 // "instead of Review links ... Folio Assistant ... link to the folio asst page").
 const MENU_NAME = 'Folio Assistant';
@@ -186,19 +186,20 @@ function markSetup(ss, state) {
 }
 
 function showVersion() {
-  // Short and plain (owner, 2026-11-01: the old text was "long, unclear").
-  // The newest build comes from the Config tab's CFG.LATEST_BUILD, which the
-  // agent writes when it publishes a build; the script still never fetches.
-  const build = String(SCRIPT_VERSION).replace(/^template sha256 /, '');
+  // Short, one fact per line (owner, 2026-11-01: "not pretty as requested").
+  // The copy page is the one place the newest build is published, and the
+  // Config tab's LATEST_BUILD (written by the agent with each build) says
+  // whether this sheet has it, so the script still never fetches. An alert
+  // cannot hold a link, and HtmlService stays out (see the security tests).
+  const short = v => String(v || '').replace(/^template sha256 /, '').slice(0, 8);
+  const build = short(SCRIPT_VERSION);
   let latest = '';
-  try { loadConfig(SpreadsheetApp.getActive()); latest = String((CFG && CFG.LATEST_BUILD) || '').replace(/^template sha256 /, ''); } catch (e) { /* not linked yet */ }
-  const update = 'Ask the agent for the Code.gs copy page, paste it over Code.gs in the Folio Review Library (' + LIBRARY_URL + ') and save, ' +
-    'then choose ' + MENU_NAME + ', Refresh now in each sheet.';
-  const status = !latest ? 'Newest build: the "at ..." line near the top of ' + LATEST_URL + '\n\nDifferent? ' + update
-    : latest === build ? '\u2713 Up to date.'
-    : 'New build available: ' + latest + '\n\n' + update;
-  SpreadsheetApp.getUi().alert('Which version is this?',
-    'Build: ' + build + '\n\n' + status + '\n\n' + ABOUT_LINE,
+  try { loadConfig(SpreadsheetApp.getActive()); latest = short(CFG && CFG.LATEST_BUILD); } catch (e) { /* not linked yet */ }
+  const status = !latest ? '' : latest === build ? '\u2713 Up to date.\n\n' : 'New build available: ' + latest + '\n\n';
+  SpreadsheetApp.getUi().alert('Code.gs build ' + build,
+    status +
+    'Newest build: top of the copy page\n' + COPY_PAGE_URL.replace(/^https:\/\//, '') + '\n\n' +
+    'Different? Paste that page over Code.gs in the Folio Review Library, then save.\n\n' + ABOUT_LINE,
     SpreadsheetApp.getUi().ButtonSet.OK);
 }
 
