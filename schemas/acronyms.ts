@@ -9,6 +9,7 @@
  * glossary by this module: a person decides, as for every candidate term
  * (bean `lqo9`).
  *
+ * @graphNode none — functions that find acronyms in prose; no schema
  * @module folio-assistant-core/schemas/acronyms
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";

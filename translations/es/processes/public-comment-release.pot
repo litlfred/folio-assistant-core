@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: public-comment-release\n"
-"POT-Creation-Date: 2026-10-31T16:31:59.531Z\n"
+"POT-Creation-Date: 2026-11-01T08:55:59.638Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: es\n"
@@ -76,7 +76,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/public-comment-release.bpmn:72
 #. Diagram element documentation
-msgid "Freeze the draft as \"Draft for Public Comment Release vX\": a PDF with fixed line numbers and a site copy under a permanent PC/<version>/ path (not STAGING, never deleted on merge). Every channel cites this release's pages, lines and block ids. Line numbers run continuously through the document. Run `bun run cat pc:pdf` for the line-numbered PDF and its line map, then `bun run cat pc:release freeze` for the write-once copy under PC/<version>/. Skill: document-publishing."
+msgid "Freeze the draft as \"Draft for Public Comment Release vX\": a PDF with fixed line numbers and a site copy under a permanent PC/<version>/ path (not STAGING, never deleted on merge). Every channel cites this release's pages, lines and block ids. Line numbers run continuously through the document. Freeze from a FULL build (owner, 2026-11-01): dispatch the preview workflow for the branch with build_type: full first, because a preview borrows main's search index and slices; pc:release freeze refuses a preview build. Run `bun run cat pc:pdf` for the line-numbered PDF and its line map, then `bun run cat pc:release freeze` for the write-once copy under PC/<version>/. Skill: document-publishing."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/public-comment-release.bpmn:49

@@ -7,7 +7,7 @@
  *     --document <name> --l1 <library entry dir> [--folio folio/<name>] \
  *     [--exclusions folio/<name>/l1-coverage.exclusions.json] \
  *     [--quotes folio/<name>/l1-coverage.quotes.json] \
- *     [--out folio/<name>/l1-coverage.json] [--check]
+ *     [--glossary glossary] [--out folio/<name>/l1-coverage.json] [--check]
  *
  * Each DTH used to carry its own copy of this wiring (bean cysv, stage 1).
  * The copies read the L1 pages, collected the folio's text, and called
@@ -23,6 +23,11 @@
  *   the whole file, the file with Markdown markup removed, and each line and
  *   sentence of it. A fragment shorter than 25 characters is not used, so a
  *   short phrase cannot capture a long sentence by appearing inside it.
+ * - Every string in the `*.json` files of the glossary directory (`glossary/`
+ *   unless `--glossary` names another): the glossary is published with the
+ *   handbook, so a definition it quotes is held. Words are also matched with
+ *   their inner hyphens removed, because the L1 extraction drops the hyphen of
+ *   a word broken across lines.
  * - The quotes file, if there is one: `[{ "block", "quote", "location"?,
  *   "note"? }]`. A quote is a declared capture, for a sentence the folio holds
  *   in other words or split differently (a step number dropped from a
@@ -105,6 +110,56 @@ function walk(dir: string): string[] {
     );
 }
 
+/**
+ * The text with hyphens inside words removed: the L1 text extraction often
+ * drops the hyphen of a word broken across a line ("open- source" becomes
+ * "opensource"), so the folio's "open-source" would otherwise not match.
+ */
+export function unhyphenated(s: string): string {
+  return s.replace(/(\w)[-‐‑]\s*(\w)/g, "$1$2");
+}
+
+/** Every string value in a JSON document, depth first. */
+function jsonStrings(v: unknown, out: string[] = []): string[] {
+  if (typeof v === "string") out.push(v);
+  else if (Array.isArray(v)) for (const x of v) jsonStrings(x, out);
+  else if (v && typeof v === "object") for (const x of Object.values(v)) jsonStrings(x, out);
+  return out;
+}
+
+/**
+ * The glossary's text as captured statements: every string value of every
+ * `*.json` under the glossary directory (definitions, scope notes, quoted
+ * candidates). The glossary is published with the handbook, so a sentence it
+ * holds is held, not left out (owner, 2026-11-01).
+ */
+export function glossaryCaptured(glossaryDir: string): Captured[] {
+  if (!existsSync(glossaryDir)) return [];
+  const out: Captured[] = [];
+  const files = readdirSync(glossaryDir, { recursive: true, encoding: "utf8" }).filter((f) => f.endsWith(".json")).sort();
+  for (const f of files) {
+    const id = `glossary/${f.replace(/\.json$/, "")}`;
+    let doc: unknown;
+    try {
+      doc = JSON.parse(readFileSync(join(glossaryDir, f), "utf8"));
+    } catch {
+      continue;
+    }
+    const seen = new Set<string>();
+    for (const str of jsonStrings(doc)) {
+      for (const t of [str, ...sentencesOf(str)]) {
+        for (const v of [t.trim(), unhyphenated(t.trim())]) {
+          if (v.length >= MIN_FRAGMENT && !seen.has(v)) {
+            seen.add(v);
+            out.push({ id, text: v });
+          }
+        }
+      }
+    }
+  }
+  return out;
+}
+
 /** Every fragment of the folio's text that can capture an L1 sentence. */
 export function folioCaptured(folioDir: string): Captured[] {
   const out: Captured[] = [];
@@ -114,9 +169,11 @@ export function folioCaptured(folioDir: string): Captured[] {
     const seen = new Set<string>();
     const add = (t: string) => {
       const s = t.trim();
-      if (s.length >= MIN_FRAGMENT && !seen.has(s)) {
-        seen.add(s);
-        out.push({ id, text: s });
+      for (const v of [s, unhyphenated(s)]) {
+        if (v.length >= MIN_FRAGMENT && !seen.has(v)) {
+          seen.add(v);
+          out.push({ id, text: v });
+        }
       }
     };
     add(raw);
@@ -144,6 +201,8 @@ export interface FolioCoverageOptions {
   folioDir: string;
   exclusions?: (Exclusion & { note?: string })[];
   quotes?: Quote[];
+  /** The folio's glossary directory; its text counts as captured. */
+  glossaryDir?: string;
 }
 
 /** Declared captures, each checked against its block's text. */
@@ -167,7 +226,11 @@ export function quoteCaptures(folioDir: string, quotes: Quote[], problems: strin
 export function folioCoverage(o: FolioCoverageOptions) {
   const sections = readL1Sections(o.l1Dir);
   const problems: string[] = [];
-  const captured = [...quoteCaptures(o.folioDir, o.quotes ?? [], problems), ...folioCaptured(o.folioDir)];
+  const captured = [
+    ...quoteCaptures(o.folioDir, o.quotes ?? [], problems),
+    ...folioCaptured(o.folioDir),
+    ...(o.glossaryDir ? glossaryCaptured(o.glossaryDir) : []),
+  ];
   const report = coverage(sections, captured, o.exclusions ?? []);
   report.problems.push(...problems);
   const { generatedAt: _drop, ...rest } = report;
@@ -190,7 +253,7 @@ if (import.meta.main) {
   const doc = at("--document");
   const l1Dir = at("--l1");
   if (!doc || !l1Dir) {
-    console.error("usage: folio-l1-coverage.ts --document <name> --l1 <dir> [--folio <dir>] [--exclusions <file>] [--quotes <file>] [--out <file>] [--check]");
+    console.error("usage: folio-l1-coverage.ts --document <name> --l1 <dir> [--folio <dir>] [--exclusions <file>] [--quotes <file>] [--glossary <dir>] [--out <file>] [--check]");
     process.exit(2);
   }
   const folioDir = at("--folio") ?? join("folio", doc);
@@ -199,7 +262,8 @@ if (import.meta.main) {
   const quFile = at("--quotes") ?? join(folioDir, "l1-coverage.quotes.json");
   const exclusions = existsSync(exFile) ? JSON.parse(readFileSync(exFile, "utf8")) : [];
   const quotes = existsSync(quFile) ? JSON.parse(readFileSync(quFile, "utf8")) : [];
-  const { _report, ...out } = folioCoverage({ l1Dir, folioDir, exclusions, quotes });
+  const glossaryDir = at("--glossary") ?? "glossary";
+  const { _report, ...out } = folioCoverage({ l1Dir, folioDir, exclusions, quotes, glossaryDir });
   const json = JSON.stringify(out, null, 2) + "\n";
   const t = out.totals;
   for (const s of out.sentences.filter((x) => x.state === "unaccounted")) {

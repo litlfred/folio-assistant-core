@@ -325,8 +325,22 @@ function placeBefore(sh, name, before) {
   if (!sh) return false;
   const s = readSheet(sh), a = s.header.indexOf(name), b = s.header.indexOf(before);
   if (a < 0 || b < 0 || a === b - 1) return false;
+  // Sheets refuses to move part of a merged cell, and the title row's B1 is
+  // merged across the header (owner, 2026-11-01: the move silently failed on
+  // the Contributor Log and template). Unmerge the rows above the header,
+  // move, then merge the same cells again with their text kept.
+  const above = s.top - 2;
+  const merged = above > 0 && sh.getRange(1, 1, above, sh.getLastColumn()).getMergedRanges
+    ? sh.getRange(1, 1, above, sh.getLastColumn()).getMergedRanges() : [];
+  const kept = merged.map(m => ({ a1: m.getA1Notation(), rich: m.getCell(1, 1).getRichTextValue() }));
+  merged.forEach(m => m.breakApart());
   // moveColumns' destination is the index BEFORE the move, 1-based.
   sh.moveColumns(sh.getRange(1, a + 1, 1, 1), b + 1);
+  kept.forEach(k => {
+    const r = sh.getRange(k.a1);
+    r.merge();
+    if (k.rich) r.getCell(1, 1).setRichTextValue(k.rich);
+  });
   return true;
 }
 
@@ -2073,6 +2087,8 @@ function refreshDraft(rows) {
   // Agentic status sits just left of its filter column (owner, 2026-10-31).
   // Moved here, inside the locked run, before any column is read by position.
   try { placeBefore(ss.getSheetByName(CFG.FEEDBACK), COLS.draft.agentic || 'Agentic status', COLS.draft.status || 'Agentic status (filter)'); } catch (err) { /* the refresh still runs */ }
+  // Issue sits just left of Disposition (agent) (owner, 2026-11-01).
+  try { placeBefore(ss.getSheetByName(CFG.FEEDBACK), COLS.draft.issue || 'Issue', 'Disposition (agent)'); } catch (err) { /* the refresh still runs */ }
   const fb = readSheet(ss.getSheetByName(CFG.FEEDBACK));
   const agentSh = ss.getSheetByName(CFG.AGENT);
   const agent = agentSh ? readSheet(agentSh) : { header: [], rows: [] };
