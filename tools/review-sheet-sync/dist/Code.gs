@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 d15faf4abe76d677.
+// folio-assistant-core tools/review-sheet-sync at template sha256 b9c70e3ffe92810d.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 d15faf4abe76d677';
+const SCRIPT_VERSION = 'template sha256 b9c70e3ffe92810d';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -1333,7 +1333,8 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) 
     const cs = String(r[csCol]).trim();
     const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[cs]);
     const cur = t === null ? String(r[ag]) : t;
-    const L = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? lineOf[cs] : undefined;
+    const L0 = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? lineOf[cs] : undefined;
+    const L = L0 === undefined ? L0 : askChecked(L0, cur);
     const fin = L !== undefined ? withProgress(cur, L) : cur;
     if (fin !== String(r[ag])) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(fin)]]);
     unready(s, r, k, r[ag], t);
@@ -1541,6 +1542,35 @@ function statusBlock(line, status, prs) {
     text += p.t;
   });
   return { text: text, links: links };
+}
+/**
+ * "Needs you" only when there is a question to answer (owner, 2026-11-01:
+ * "these feedback are not at all clear what agent asking contributors to
+ * respond about"; Q-FBK-1 A). The status said "answer the Decision needed
+ * below" on rows whose feedback held no Decision needed block. Without one,
+ * the line says the question is missing and the "\u21b3 Needs you" line goes.
+ */
+const NO_ASK = PROGRESS + '\u26a0 Marked as needing you, but the agent has not written its question here yet. Nothing to answer until it does.';
+function hasAsk(text) {
+  return /(^|\n)Decision needed\b[^\n]*:/.test(String(text || ''));
+}
+function askChecked(line, text) {
+  const t = line && typeof line === 'object' ? line.text : String(line || '');
+  if (t.indexOf('Needs you') < 0 || hasAsk(text)) return line;
+  const kept = t.split('\n')
+    .filter((l, i) => !(i > 0 && l.indexOf(STATUS_SUB + NEEDS_YOU) === 0))
+    .map((l, i) => (i === 0 && l.indexOf(PROGRESS + 'Needs you') === 0 ? NO_ASK : l));
+  return line && typeof line === 'object' ? reLink(t, kept.join('\n'), line.links) : kept.join('\n');
+}
+/** Move each link [a, z, url] of `from` to where its text sits in `to` (links are on PR labels, which stay). */
+function reLink(from, to, links) {
+  let at = 0;
+  const moved = [];
+  links.forEach(([a, z, u]) => {
+    const i = to.indexOf(from.slice(a, z), at);
+    if (i >= 0) { moved.push([i, i + (z - a), u]); at = i + (z - a); }
+  });
+  return { text: to, links: moved };
 }
 /** The text with its status (progress line, or block) replaced, or removed when line is ''. */
 function withProgress(text, line) {

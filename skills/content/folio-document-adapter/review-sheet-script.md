@@ -47,21 +47,45 @@ comment).
 **A question to people goes in the sheet, not only in chat** (owner,
 2026-10-31: "how would the editor / feedback committee / review committee
 know if there was a card ... should be there and in the agent column").
-When the agent needs a person to decide something about a change set, it
-writes the question into that row's agent column, under its proposal, as
+**The agent's feedback cell has a fixed layout** (owner, 2026-11-01: "these
+feedback are not at all clear what agent asking contributors to respond about
+... only a tag like \"Decision needed:\" should be bold"; Q-FBK-1 A). The
+agent writes, in this order and nothing else:
 
 ```
-Decision needed: <the question>
+Decision needed: <one question, in plain words, naming what it is about>
   A. <option> (recommended)
   B. <option>
-Answer in your Blue column, or ask an Editor to set Ready for agent.
+Answer in your feedback column, then an Editor sets Ready for agent to Yes.
+
+Proposal: <what the agent proposes or did, in one to three lines>
+Next: <what happens next, and who does it>
 ```
 
-and sets the row's Agentic status to `Needs human` on the Agent tab. The
-script shows the whole "Decision needed" block, up to the next blank line,
-in bold, black, in the agent's feedback cell (owner, 2026-10-31: "decision
-needed should be bold highlighted ... so clear"; red was tried and was too
-glaring). The sheet never shows those words (owner, 2026-10-31: "unclear: needs human to do
+- The ask comes first, so a reader sees at once what they are asked. Leave
+  the Decision needed block out when nothing is asked; the cell then opens
+  with `Proposal:`.
+- One option says `(recommended)`; options are lettered so people answer
+  with one letter.
+- Tags (`Decision needed:`, `Proposal:`, `Next:`) are the only bold text. The
+  script bolds them; never write Markdown `**`.
+- Say only what stands now. History ("Step 2", "Already done", "Decided
+  (Q1 ...)") goes to Disposition (agent), never here. Pull request state
+  comes from the script's ⏳ line, so the agent does not restate it.
+- At most 10 lines, so the row shows it whole.
+
+The watcher checks every row against this layout on each poll
+(`tools/review-log-watch/lint.ts`, skill `review-log-watch`) and fixes any
+cell it flags.
+
+When the agent needs a person to decide something about a change set, it
+writes the question into that row's agent column as the Decision needed block
+above, and sets the row's Agentic status to `Needs human` on the Agent tab. The
+script bolds only the tags (`Decision needed:` and other line-start
+labels), in black (owner, 2026-11-01, replacing the 2026-10-31 bold block). It
+says "Needs you" on the ⏳ line only when the cell holds a Decision needed
+block; with none it says the question is missing, so people are never told to
+answer a question that is not there. The sheet never shows those words (owner, 2026-10-31: "unclear: needs human to do
 what?"): Agentic status opens with **Needs you: answer the agent's question**,
 saying where the question is and what to do, and Agentic status (filter)
 reads `Needs you: answer the agent's question`, so the "Needs you" filter view

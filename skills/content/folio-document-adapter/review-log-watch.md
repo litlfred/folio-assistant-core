@@ -102,6 +102,27 @@ reason about the rows, edit anything or post anything.
    still differs from the stored state, so it comes back on the next wake.
 7. Queue the next wake.
 
+## Lint each poll (owner, 2026-11-01; Q-FBK-1 A)
+
+After the change check, run `bun tools/review-log-watch/lint.ts --feedback
+<Contributor Feedback values.json> --agent <Agent values.json>`. It reads
+each Agent row's pull requests from GitHub and prints, per change set, what
+breaks the feedback layout in `review-sheet-script` ("The agent's feedback
+cell has a fixed layout"):
+
+- Needs human with no `Decision needed:` question, or a question without
+  Needs human;
+- the question not first, fewer than two lettered options, no single
+  `(recommended)`, or no line saying where to answer;
+- history in the cell (`Decided`, `Step n`, `Already done`), Markdown `**`,
+  more than 10 lines;
+- a PR that GitHub says is merged or closed while the Agent tab's status
+  still says open (CS-001 showed "dth-hrh#61 open" after it merged).
+
+Exit 0 is clean. Exit 10 lists problems: the watcher fixes the Agent tab
+status or rewrites the cell to the layout in the same wake, and records the
+Agent step. The lint writes nothing itself.
+
 ## What counts as a change
 
 - **Issues:** the repository's issues, open and closed, with their state and

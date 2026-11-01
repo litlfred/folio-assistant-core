@@ -1682,3 +1682,29 @@ describe("column names in Instructions text are coloured like their column", () 
     expect(fns.instructionRuns("Change-sets are kept.", heads)).toEqual([]);
   });
 });
+
+describe("Needs you only with a question (Q-FBK-1 A)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { askChecked, statusBlock, progressLine };`)({}) as {
+    askChecked: (l: unknown, t: string) => any;
+    statusBlock: (l: string, s: string, p: object[]) => { text: string; links: [number, number, string][] };
+    progressLine: (o: object) => string;
+  };
+  const line = fns.progressLine({ status: "Needs human" });
+  test("keeps the line when the feedback holds a Decision needed block", () => {
+    expect(fns.askChecked(line, "Decision needed: which title?\nA. Short (recommended)\nB. Long")).toBe(line);
+  });
+  test("says the question is missing when there is none", () => {
+    const out = fns.askChecked(line, "Draft PR dth-hrh#81: 6 BPMN processes.");
+    expect(out).toMatch(/^⏳ ⚠ Marked as needing you, but the agent has not written its question here yet/);
+    expect(out).not.toMatch(/Decision needed below/);
+  });
+  test("drops the Needs you sub-line and keeps the PR link on the right text", () => {
+    const url = "https://github.com/litlfred/dth-hrh/pull/81";
+    const b = fns.statusBlock(line, "Needs human", [{ url, done: "2026-11-01 19:00Z" }]);
+    const out = fns.askChecked(b, "no question here");
+    expect(out.text).not.toMatch(/answer the agent's question: under/);
+    const [a, z, u] = out.links[0];
+    expect(u).toBe(url);
+    expect(out.text.slice(a, z)).toBe("dth-hrh#81");
+  });
+});
