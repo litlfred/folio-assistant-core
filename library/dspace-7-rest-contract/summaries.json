@@ -3877,6 +3877,956 @@
           "drafted_at": "2026-11-01"
         }
       ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s205-create-new-eperson-group",
+      "source": "sections/s205-create-new-eperson-group.md",
+      "source_hash": "d849b5f726c8206d68f947f521c4eefc493f2a58c3328550b5f035664de1eb68",
+      "narrative": [
+        {
+          "text": "Specifies creating an EPerson group as an admin by POSTing its name and metadata, returning 422 if the name is missing or taken or permanent is true.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s206-deleting-an-eperson-group",
+      "source": "sections/s206-deleting-an-eperson-group.md",
+      "source_hash": "58ecc56df7fa715c0154adf8fd0d90d4e6a4bf0b677bfed6f067dc4bea1caf21",
+      "narrative": [
+        {
+          "text": "Specifies DELETE of an EPerson group by general admins, returning 422 for a permanent group or one tied to a community or collection role, which have their own delete endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s207-patch-operations",
+      "source": "sections/s207-patch-operations.md",
+      "source_hash": "a4dce717bf6a75bbb69c96161b9f8fead4a3d5d3a5e5837b88b0eb6f817923cf",
+      "narrative": [
+        {
+          "text": "Says EPerson group metadata is changed through Patch as described in the metadata patch page, and that further properties can be changed as described below.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s208-replace",
+      "source": "sections/s208-replace.md",
+      "source_hash": "d35007704d0a1f7906c7f407cd6b770bf6b912d2d0f1483871a6cd368c1264e6",
+      "narrative": [
+        {
+          "text": "Specifies the PATCH replace operation on an EPerson group, which can change only its name and only by general admins, returning 422 if the group is permanent or belongs to a DSpace object.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s209-sub-groups-in-a-single-parent-eperson-group",
+      "source": "sections/s209-sub-groups-in-a-single-parent-eperson-group.md",
+      "source_hash": "abff26a12fe4c87e02d8dceabecfe9b5560edafdf6b2e754db10245fb72aeea2",
+      "narrative": [
+        {
+          "text": "Heading for the sub-groups of an EPerson group; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s210-get-sub-groups-in-a-single-parent-eperson-group",
+      "source": "sections/s210-get-sub-groups-in-a-single-parent-eperson-group.md",
+      "source_hash": "754d58e4cc270ebe07e43e4bfc288806481229654e0075b5f0f2e230b4cdae9e",
+      "narrative": [
+        {
+          "text": "Specifies GET of a group's subgroups, which returns its direct child groups only, as a paginated list.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s211-changing-subgroups",
+      "source": "sections/s211-changing-subgroups.md",
+      "source_hash": "0ce254ea736e9ebf663fd00510f783ccc2a10ce392d7b8e9591dc25a11820be0",
+      "narrative": [
+        {
+          "text": "Says replacing or removing all sub-groups at once with PUT is unsupported; child groups are removed one at a time with DELETE.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s212-add-a-group-to-a-parent-group",
+      "source": "sections/s212-add-a-group-to-a-parent-group.md",
+      "source_hash": "7242bb80464de8c5f835d76a6af5393b6a6f153b08f8ac1497aa9c6750489c1b",
+      "narrative": [
+        {
+          "text": "Specifies adding a child group to a parent group as an admin by POSTing its URI as text/uri-list, returning 204, or 422 if the group is not found or adding it would create a cycle.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s213-remove-a-group-from-a-parent-group",
+      "source": "sections/s213-remove-a-group-from-a-parent-group.md",
+      "source_hash": "12ffc35478e98687ce883bd452b06634e2ea2698c3880e55b9ba44387bae7b46",
+      "narrative": [
+        {
+          "text": "Specifies DELETE of a sub-group from a parent group, which removes only the mapping and returns 204 even if it was not a member, or 422 if the child group does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s214-epeople-in-a-single-eperson-group",
+      "source": "sections/s214-epeople-in-a-single-eperson-group.md",
+      "source_hash": "a83cb94e90105ac972418a575b59b62fb1a1d3018ee016f4288f9a8efa8ef5b3",
+      "narrative": [
+        {
+          "text": "Heading for the members of an EPerson group; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s215-get-epeople-for-a-single-eperson-group",
+      "source": "sections/s215-get-epeople-for-a-single-eperson-group.md",
+      "source_hash": "eeacc4f2077ce32af166146ea397c6d059295aa654b41e70cf8efabd5fafbb52",
+      "narrative": [
+        {
+          "text": "Specifies GET of a group's epersons, which returns its direct member epersons only, as a paginated list with their metadata, email and login flags.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s216-changing-epeople-in-a-group",
+      "source": "sections/s216-changing-epeople-in-a-group.md",
+      "source_hash": "13b11d965d58d8f29e8cab5e38c98c2d4f3b76c19ea710ed6dae4f9f7eef87fb",
+      "narrative": [
+        {
+          "text": "Says replacing or removing all members at once with PUT is unsupported; epersons are removed one at a time with DELETE.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s217-add-an-eperson-to-a-parent-group",
+      "source": "sections/s217-add-an-eperson-to-a-parent-group.md",
+      "source_hash": "f1800ff3f613559ec94af2590d9fbbb97fc9dfaf1c093681a2d97cf4d6999289",
+      "narrative": [
+        {
+          "text": "Specifies adding an eperson to a group as an admin by POSTing its URI as text/uri-list, returning 204, or 422 if the eperson is not found.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s218-remove-an-eperson-from-a-parent-group",
+      "source": "sections/s218-remove-an-eperson-from-a-parent-group.md",
+      "source_hash": "a8e0adde1596476b3cefb36d15f10d17f2a0cc8acc2226046bbb4ab0e256f91a",
+      "narrative": [
+        {
+          "text": "Specifies DELETE of an eperson from a group as an admin, which removes the membership and returns 204 even if it was not a member, or 422 if the group or eperson does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s219-search-methods",
+      "source": "sections/s219-search-methods.md",
+      "source_hash": "2d9384f78a20622aa31d17b66744942adeb0cc45483a6fc7572b71d25b091a2c",
+      "narrative": [
+        {
+          "text": "Heading for the EPerson group search methods; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s220-bymetadata",
+      "source": "sections/s220-bymetadata.md",
+      "source_hash": "5ede4885e7c258f352026efc1823259654e43efc627354f0b4cea74bf2b043e7",
+      "narrative": [
+        {
+          "text": "Specifies the group byMetadata search, which matches a query against group UUIDs exactly and against group names, open only to system, community and collection administrators.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s221-isnotmemberof",
+      "source": "sections/s221-isnotmemberof.md",
+      "source_hash": "3368f2731531deff9c5642fb1cebfc4d3f61aa9f4f44dc2e4978a3ebf48ab1e7",
+      "narrative": [
+        {
+          "text": "Specifies the group isNotMemberOf search, which matches a query against groups that are not yet sub-groups of a given group, open only to system, community and collection administrators.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s222-related-dspace-object-of-group",
+      "source": "sections/s222-related-dspace-object-of-group.md",
+      "source_hash": "71bad19c6bffdf851d4dc00507d41eb379ae65bcb93b4e02dddf156a3423473d",
+      "narrative": [
+        {
+          "text": "Specifies the read-only object link of a group, which returns the community or collection a role group, such as Community Administrator or Collection Submitter, belongs to.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s223-eperson-registration-endpoints",
+      "source": "sections/s223-eperson-registration-endpoints.md",
+      "source_hash": "c2c9f3b48644bd8091686d9e1d2b9aadc8625df1a50d36b35f145804c77e749e",
+      "narrative": [
+        {
+          "text": "Heading for the EPerson registration endpoints, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s224-main-endpoint",
+      "source": "sections/s224-main-endpoint.md",
+      "source_hash": "46fd8c1e1c2dad09713654870ce3dacca42b95adf9a2ac1c4733b57be7da7fd6",
+      "narrative": [
+        {
+          "text": "Says the main /api/eperson/registrations endpoint is not implemented and returns 405, since there is no use case for listing registrations.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s225-single-eperson-registration",
+      "source": "sections/s225-single-eperson-registration.md",
+      "source_hash": "a52568fcb6579c3167a5b0a91eeba32e0ba40aa1d046c5af923cf320d529ac76",
+      "narrative": [
+        {
+          "text": "Says the single EPerson registration endpoint is not implemented and returns 405, since there is no use case for retrieving a registration by email.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s226-search-eperson-registration",
+      "source": "sections/s226-search-eperson-registration.md",
+      "source_hash": "150a56ef1984760ef5aebb425ae894ac186abdf1b412dbda2aa7399aa5427f2d",
+      "narrative": [
+        {
+          "text": "Specifies the findByToken search on registrations, which returns the email address for a token and a user id when it is a password reset rather than a new registration.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s227-create-new-eperson-registration",
+      "source": "sections/s227-create-new-eperson-registration.md",
+      "source_hash": "ce661bb0124ade3e962abf16686e2c27d916dd2cfc2a51b11b748e7c61447398",
+      "narrative": [
+        {
+          "text": "Specifies creating an EPerson registration without logging in by POSTing an email with accountRequestType set to register or forgot, which emails the user a token to continue. It returns 400 for a bad request type, 401 when registration is disabled and 422 for a missing email or a domain not allowed by configuration.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s228-forgot-password",
+      "source": "sections/s228-forgot-password.md",
+      "source_hash": "ca4f5c1910cd392bb1232457f27c8c922f7541d0d848466d3e8ce4da4b07befb",
+      "narrative": [
+        {
+          "text": "Says forgotten passwords use the same endpoint as new registrations, so a malicious user cannot learn which email addresses are registered.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s229-epersons-endpoints",
+      "source": "sections/s229-epersons-endpoints.md",
+      "source_hash": "75a53812ba604a75b6a48c9d91b593d4df9f01a882463f2b010d09e9c76a3a12",
+      "narrative": [
+        {
+          "text": "Heading for the EPersons endpoints, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s230-main-endpoint",
+      "source": "sections/s230-main-endpoint.md",
+      "source_hash": "f91b17f5055d526d9abb10b15e3e375a45818a0258a30f9975805023d9ecbbab",
+      "narrative": [
+        {
+          "text": "Names the main endpoint GET /api/eperson/epersons; the block gives no further detail.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s231-single-eperson",
+      "source": "sections/s231-single-eperson.md",
+      "source_hash": "77aeb9bde5789ad8dcd03ee13a9e22296d32327c5a252f9aff0feef387bf22b1",
+      "narrative": [
+        {
+          "text": "Specifies GET of a single eperson, returning its name, first name, last name and language metadata, netid, last activity, login and certificate flags, email and self-registration flag, with a link to its groups.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s232-search-methods",
+      "source": "sections/s232-search-methods.md",
+      "source_hash": "7d8af4ac799f5ea877a92826131c552408861d1397c3a6e58113e551d1f2da7b",
+      "narrative": [
+        {
+          "text": "Heading for the eperson search methods; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s233-byemail",
+      "source": "sections/s233-byemail.md",
+      "source_hash": "2a59b2f33eb8d4a6930a1f75cf94594731fc62742b730b61e3178b8ffc8e38ed",
+      "narrative": [
+        {
+          "text": "Specifies the byEmail search, which returns the eperson with a given email address or 204 if there is none, open to system administrators and users with read rights on that eperson.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s234-bymetadata",
+      "source": "sections/s234-bymetadata.md",
+      "source_hash": "73aad7650267af666dd21a8c15fd65e9daf83c6919794751de1bf7597e9d8ead",
+      "narrative": [
+        {
+          "text": "Specifies the eperson byMetadata search, which matches a query against UUIDs exactly and against first name, last name and email, open only to system, community and collection administrators.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s235-isnotmemberof",
+      "source": "sections/s235-isnotmemberof.md",
+      "source_hash": "a6a1f5bc9a2b1d1b42e143e62c76353752db6c8793e3bab894c6b73cf4b0dccd",
+      "narrative": [
+        {
+          "text": "Specifies the eperson isNotMemberOf search, which matches a query against epersons not yet members of a given group, open only to system, community and collection administrators.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s236-patch-operations",
+      "source": "sections/s236-patch-operations.md",
+      "source_hash": "a759127af397db714b2fe750cf04085487603fa03dee4b6df4b6e344cee569c5",
+      "narrative": [
+        {
+          "text": "Says eperson metadata is changed through Patch as described in the metadata patch page, and that further properties can be changed as described below.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s237-replace",
+      "source": "sections/s237-replace.md",
+      "source_hash": "bc986aeae3a3ce8827cdfec35d600c5d96f6d68a4012f2dd210aab0f3b15f8d0",
+      "narrative": [
+        {
+          "text": "Says the PATCH replace operation replaces only existing information, and using it on a value not yet set must return an error.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s238-these-operations-can-be-performed-by-administrat",
+      "source": "sections/s238-these-operations-can-be-performed-by-administrat.md",
+      "source_hash": "fe71fe0021ea7be23c1e91781aa171945652dc2462c31bcd009866b0c42d6dc1",
+      "narrative": [
+        {
+          "text": "Shows the admin-only PATCH replace operations on an eperson, which set the certificate-required flag, the canLogin flag, the netid or the email, each with a before and after example.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s239-these-operations-can-be-performed-by-administrat",
+      "source": "sections/s239-these-operations-can-be-performed-by-administrat.md",
+      "source_hash": "8ad96aab3228fffe2b0aa185dcbbdf7f0e4fbef0f85614fb0655a335a28b9278",
+      "narrative": [
+        {
+          "text": "Says the authenticated user may change their own eperson metadata, such as names, phone and language, and an administrator may change anyone's.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s240-add",
+      "source": "sections/s240-add.md",
+      "source_hash": "87bdbaa25f9f754d3b91c7f62fb083913bbaba856d3f5b45fb97b297447d5747",
+      "narrative": [
+        {
+          "text": "Says the PATCH add operation adds or replaces eperson information, and password changes must currently use it.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s241-these-operations-can-be-performed-by-administrat",
+      "source": "sections/s241-these-operations-can-be-performed-by-administrat.md",
+      "source_hash": "79cbd210dd00a9c52559ececcca59a4626f326e336e14ffe00632ccc63bfa04a",
+      "narrative": [
+        {
+          "text": "Specifies changing a password with a PATCH add on /password, sending the new and current password when logged in, or only the new one with a registration token. A wrong current password gives 403, a password failing the configured rules gives 422, and the new password is currently echoed back in the response.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s242-create-new-eperson-requires-admin-permissions",
+      "source": "sections/s242-create-new-eperson-requires-admin-permissions.md",
+      "source_hash": "083ca7b8f8fb25eed223d0eeb98ac5ec489db879660b8bce2469846d78cd6fe6",
+      "narrative": [
+        {
+          "text": "Specifies creating an eperson as an admin by POSTing its name, metadata, login and certificate flags and email, returning 422 if the email is missing or already exists.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s243-create-new-eperson-based-on-registration-token",
+      "source": "sections/s243-create-new-eperson-based-on-registration-token.md",
+      "source_hash": "31848033ce0a144e3049098402c4d27ec798d501aae4b5777ba48dfac05d7108",
+      "narrative": [
+        {
+          "text": "Specifies creating an eperson from an emailed registration token, where first and last name are mandatory and any email or selfRegistered value must match the registration. It returns 400 for a mismatched, existing, unknown or expired token or email, 401 if the token does not allow it and 422 for a password breaking the rules.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s244-linked-entities",
+      "source": "sections/s244-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for an eperson's linked entities; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s245-groups",
+      "source": "sections/s245-groups.md",
+      "source_hash": "bbf496ee10db04f3cc216bc0e7cfccd25e13267273890f901288c7c128b369c4",
+      "narrative": [
+        {
+          "text": "Specifies the groups link of an eperson, which returns a paginated list of the groups it is a direct member of, and notes as a to-do the need to also return indirect groups.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s246-external-sources-endpoints",
+      "source": "sections/s246-external-sources-endpoints.md",
+      "source_hash": "6888b51272d660da4f9535cb3530cb1ab4fee9bb5c97077e5beaad09d2150686",
+      "narrative": [
+        {
+          "text": "Heading for the external sources endpoints, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s247-main-endpoint",
+      "source": "sections/s247-main-endpoint.md",
+      "source_hash": "8d7263950476e7c326fab5829e7a01920ccf35a089ecb996961e21f9c453eb97",
+      "narrative": [
+        {
+          "text": "Specifies /api/integration/externalsources, which lists the configured external sources, such as orcid, each with an id, name, hierarchical flag and links to its entries and entity types.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s248-single-authority",
+      "source": "sections/s248-single-authority.md",
+      "source_hash": "c5beb861ff7ee1f82a2ac12ecb37d78659c7acfb950e3c78c8b2d860b7231550",
+      "narrative": [
+        {
+          "text": "Specifies GET of a single external source, returning its id, name and hierarchical flag, with links to the values it manages and the entity types it is compatible with.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s249-linked-entities",
+      "source": "sections/s249-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for an external source's linked entities; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s250-external-source-entries",
+      "source": "sections/s250-external-source-entries.md",
+      "source_hash": "ed40a545bdb65cd96972fb88715ae649e0c899eacbed5d5dcecbca968a905c94",
+      "narrative": [
+        {
+          "text": "Specifies the entries link of an external source, which searches it with a mandatory query, an optional parent key for hierarchical sources, and pagination where the source supports it. An ORCID example returns matching people with their ORCID, URI and name metadata and links to the matching entity and source.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s251-single-entry",
+      "source": "sections/s251-single-entry.md",
+      "source_hash": "88c743e151c26b5a7f5f6a0b645241a95b97aa202237ddefad7e7298e81b9d81",
+      "narrative": [
+        {
+          "text": "Specifies GET of a single entry in an external source by id, returning its display value and metadata, as shown for an ORCID record, with links to the matching entity, the source and itself.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s252-supported-entity-types",
+      "source": "sections/s252-supported-entity-types.md",
+      "source_hash": "40efdb5a464befeac648a696b1cdf4247fb35fc35c79156a1f568e1b9fce85a8",
+      "narrative": [
+        {
+          "text": "Specifies the entityTypes link of an external source, which lists the entity types it supports, for example Publication and Dataset for a PubMed provider.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s253-search-methods",
+      "source": "sections/s253-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the external source search methods; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s254-findbyentitytype",
+      "source": "sections/s254-findbyentitytype.md",
+      "source_hash": "e779f70cfc9faaf4bc30a7cb40dfa297874384f7c447b63b11f96991a3ee6abf",
+      "narrative": [
+        {
+          "text": "Specifies the findByEntityType search, which lists the external sources that support a given entity type, possibly none, returning 400 if the entityType parameter is missing.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt9ASjBS6Ee3g12CWge"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
