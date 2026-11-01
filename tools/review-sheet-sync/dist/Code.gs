@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 70506ec1c2f3a256.
+// folio-assistant-core tools/review-sheet-sync at template sha256 8c31a341f643e9b2.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 70506ec1c2f3a256';
+const SCRIPT_VERSION = 'template sha256 8c31a341f643e9b2';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -505,6 +505,7 @@ function refreshIfDirty() {
     checkSheet(SpreadsheetApp.getActive());
     refreshDraft(full ? null : rows);
     try { capRows(SpreadsheetApp.getActive(), [CFG.FEEDBACK]); } catch (err) { /* cosmetic only */ }
+    writeWatchHash(SpreadsheetApp.getActive());
   } finally {
     props.setProperty('lastMs', String(Date.now() - t0));
     lock.releaseLock();
@@ -538,7 +539,11 @@ function refreshLocked() {
   {
     loadConfig(SpreadsheetApp.getActive());
     checkSheet(SpreadsheetApp.getActive());
-    if (DRAFTING) return refreshDraft();
+    if (DRAFTING) {
+      const out = refreshDraft();
+      writeWatchHash(SpreadsheetApp.getActive());
+      return out;
+    }
     const ss = SpreadsheetApp.getActive();
     // Added inside the run, under its lock, so no other refresh writes by a
     // column position this changes (memory: never move columns mid-refresh).
@@ -983,6 +988,44 @@ function writeRows(s, c, only, f) {
 function asText(v) {
   const t = String(v == null ? '' : v);
   return /^[=+\-@]/.test(t) ? "'" + t : t;
+}
+
+// ---------- Watch hash: one cell a watcher reads instead of the log ----------
+
+/**
+ * The headers people set on Contributor Feedback (Blue and Orange). Tool
+ * review-log-watch watches the same ones (watch.ts watchedHeader).
+ */
+function watchedHeader_(h) {
+  return h === 'Title' || h === 'Selected Sections' || h === 'Disposition' ||
+    h === 'Ready for agent' || h === 'Ready for merge' || h === 'Dispositions confirmed' ||
+    (h.indexOf('Contributor Feedback') === 0 && h !== 'Contributor Feedback (agent)');
+}
+
+/**
+ * Write a hash of every non-empty person-set cell of Contributor Feedback to
+ * the hidden Watch tab, F1 "Cells hash" and G1 the hash, H1 "Checked (UTC)"
+ * and I1 when. A review-log watcher reads Watch!F1:I1 and the Issue column
+ * on each poll, instead of the whole log, and passes the hash to Tool
+ * review-log-watch (`--sheet-hash`); a different hash means a person changed
+ * something (owner, 2026-11-01, Q-WATCH4 A). Columns A to D are left to any
+ * other Watch writer. Never stops the refresh.
+ */
+function writeWatchHash(ss) {
+  try {
+    const s = readSheet(ss.getSheetByName(CFG.FEEDBACK));
+    const lines = [];
+    s.rows.forEach((r, k) => s.header.forEach((h, c) => {
+      const v = String(r[c] == null ? '' : r[c]).trim();
+      if (v && watchedHeader_(String(h).trim())) lines.push(k + ':' + String(h).trim() + '=' + v);
+    }));
+    let sh = ss.getSheetByName('Watch');
+    if (!sh) { sh = ss.insertSheet('Watch'); sh.hideSheet(); }
+    const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
+    sh.getRange(1, 6, 1, 4).setValues([['Cells hash', hashOf(lines.join('\n')), 'Checked (UTC)', now]]);
+  } catch (err) {
+    // A Watch tab that cannot be written must never stop the refresh.
+  }
 }
 
 /** A string inside a formula's double quotes: each " doubled (finding F2). */
