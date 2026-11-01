@@ -1590,10 +1590,11 @@ function decisionSpans(text) {
   // "all text is bold which is ugly. only a tag like \"Decisions Needed:\"
   // should be bold"). A tag is a short label ending in a colon: at the start
   // of a line ("Decision needed (No. 1):", "Status:", "Next:"), or right
-  // after the script's \u23f3 mark ("Needs you:"). Comment numbers stay bold.
+  // after the script's \u23f3 mark ("Needs you:"). Option lines ("A. ...") are not tags.
+  // Comment numbers stay bold.
   const t = String(text), spans = [];
   let m;
-  const lab = /(^|\n)(\u26a0 |\u23f3 )?([A-Z][A-Za-z0-9 ()\-.]{1,40}:)(?=\s|$)/g;
+  const lab = /(^|\n)(\u26a0 |\u23f3 )?([A-Z][a-z][A-Za-z0-9 ()\-.]{0,40}:)(?=\s|$)/g;
   while ((m = lab.exec(t))) {
     const a = m.index + m[1].length + (m[2] || '').length;
     spans.push([a, a + m[3].length]);

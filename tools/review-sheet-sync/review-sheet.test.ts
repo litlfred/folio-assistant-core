@@ -1334,6 +1334,7 @@ describe("only the tags are bold in the agent's feedback (owner, 2026-11-01)", (
     const st = "\u26a0 Stale: x\n\u23f3 Needs you: answer it.\nStatus: draft.\nNext: review it.";
     expect(bold(st)).toEqual(["Stale:", "Needs you:", "Status:", "Next:"]);
     expect(bold("\u23f3 r#1 open.\nProposal")).toEqual([]);
+    expect(bold("Decision needed: which?\nA. All 16 (recommended: none)\nB. None")).toEqual(["Decision needed:"]);
   });
 });
 

@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 1fa0412246a01498.
+// folio-assistant-core tools/review-sheet-sync at template sha256 d15faf4abe76d677.
 
 /**
  * Run this one, once, from the editor (or Review links, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 1fa0412246a01498';
+const SCRIPT_VERSION = 'template sha256 d15faf4abe76d677';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
@@ -1590,10 +1590,11 @@ function decisionSpans(text) {
   // "all text is bold which is ugly. only a tag like \"Decisions Needed:\"
   // should be bold"). A tag is a short label ending in a colon: at the start
   // of a line ("Decision needed (No. 1):", "Status:", "Next:"), or right
-  // after the script's \u23f3 mark ("Needs you:"). Comment numbers stay bold.
+  // after the script's \u23f3 mark ("Needs you:"). Option lines ("A. ...") are not tags.
+  // Comment numbers stay bold.
   const t = String(text), spans = [];
   let m;
-  const lab = /(^|\n)(\u26a0 |\u23f3 )?([A-Z][A-Za-z0-9 ()\-.]{1,40}:)(?=\s|$)/g;
+  const lab = /(^|\n)(\u26a0 |\u23f3 )?([A-Z][a-z][A-Za-z0-9 ()\-.]{0,40}:)(?=\s|$)/g;
   while ((m = lab.exec(t))) {
     const a = m.index + m[1].length + (m[2] || '').length;
     spans.push([a, a + m[3].length]);
