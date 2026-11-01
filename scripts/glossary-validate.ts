@@ -20,7 +20,12 @@
  *   IRI into a mounted namespace outside its `glossary/` (a vocabulary class);
  * - every concept a block names in `meta.glossary` exists, here or in a mount;
  * - every ArchiMate element or view a block names in `meta.archimate`, and
- *   every figure-to-view mapping, exists in a mounted instance's model;
+ *   every figure-to-view mapping, exists in a mounted instance's model, or,
+ *   for an IRI under this instance's own `iriBase`, in its own model;
+ * - the overlay rule, for an instance whose own `archimate/` model tags its
+ *   items `overlay:base` or `overlay:owner` (a DTH's overlay on smart-ra): every
+ *   element and relationship is a reference copy of a mounted item (same id,
+ *   named by IRI) or owned by this instance and not in the base model;
  * - with `--capitalized`, every prefLabel starts with a capital (the DTH rule
  *   that KG concepts are Capitalized; owner, 2026-10-31).
  *
@@ -40,6 +45,8 @@ export interface Instance {
   name: string;
   ns: string;
   root: string;
+  /** The declared `iriBase`, under which the instance's own ArchiMate IRIs sit. */
+  iriBase?: string;
 }
 
 type Glossary = ReturnType<typeof GlossarySchema.parse>;
@@ -51,7 +58,7 @@ export interface Report {
 
 function instanceAt(root: string, file: string): Instance {
   const d = JSON.parse(readFileSync(join(root, file), "utf-8"));
-  return { name: d.name, ns: instanceNs(d.name, d.stub, d), root };
+  return { name: d.name, ns: instanceNs(d.name, d.stub, d), root, iriBase: d.iriBase };
 }
 
 /** Every term and scheme IRI an instance's `glossary/` declares. */
@@ -189,29 +196,91 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
     notes.push(`${f}: ${g.terms.length} terms (${linked} matched to another scheme)`);
   }
 
-  // ArchiMate models of every mounted instance, keyed by model id.
-  const models = new Map<string, { elements: Set<string>; views: Set<string> }>();
-  const withModels = mounted.filter((m) => existsSync(join(m.root, "archimate/cat-archimate.config.json")));
-  if (withModels.length) {
+  // ArchiMate models of every mounted instance, keyed by model id, and this
+  // instance's own models (a DTH's overlay, linked under its own IRI base).
+  type Ids = { elements: Set<string>; relationships: Set<string>; views: Set<string> };
+  type Item = { id: string; name?: string; properties: Array<{ key: string; value: string }> };
+  type Loaded = { id: string; ids: Ids; items: Record<keyof Ids, Item[]> };
+  const models = new Map<string, Ids>();
+  const unmountedModels = new Map<string, number>();
+  const loadModels = async (root: string): Promise<Loaded[]> => {
+    const cfgPath = join(root, "archimate/cat-archimate.config.json");
+    if (!existsSync(cfgPath)) return [];
     const { readArchimate } = await import("../../cat-harness-tools/archimate/schemas/archimate.ts");
-    for (const m of withModels) {
-      const cfg = JSON.parse(readFileSync(join(m.root, "archimate/cat-archimate.config.json"), "utf-8"));
-      for (const cm of cfg.models ?? []) {
-        const p = join(m.root, "archimate", cm.file);
-        if (!existsSync(p)) continue;
-        const model = readArchimate(readFileSync(p));
-        models.set(cm.id, {
-          elements: new Set(model.elements.map((e: { id: string }) => e.id)),
-          views: new Set(model.views.map((v: { id: string }) => v.id)),
-        });
+    const out: Loaded[] = [];
+    for (const cm of JSON.parse(readFileSync(cfgPath, "utf-8")).models ?? []) {
+      const p = join(root, "archimate", cm.file);
+      if (!existsSync(p)) continue;
+      const model = readArchimate(readFileSync(p));
+      const items = { elements: model.elements, relationships: model.relationships, views: model.views } as Record<keyof Ids, Item[]>;
+      const ids = {
+        elements: new Set(items.elements.map((e) => e.id)),
+        relationships: new Set(items.relationships.map((e) => e.id)),
+        views: new Set(items.views.map((e) => e.id)),
+      };
+      out.push({ id: String(cm.id), ids, items });
+    }
+    return out;
+  };
+  for (const m of mounted) for (const l of await loadModels(m.root)) models.set(l.id, l.ids);
+  const ownModels = await loadModels(repo);
+  const own = new Map(ownModels.map((l) => [l.id, l.ids]));
+  const ownBase = self.iriBase ? `${self.iriBase.replace(/\/?$/, "/")}archimate/` : undefined;
+
+  // The overlay rule: a DTH builds an overlay on the reference architecture
+  // and does not add to it. Every element and relationship of its own model is
+  // a reference copy (`overlay:base`, the mounted item's IRI, same id) or its
+  // own (`overlay:owner` = this instance), and an item it owns is not already
+  // in a mounted model. A view may carry either tag. Checked only for a model
+  // that tags at least one item, so an instance that is not an overlay passes.
+  const baseRe = /\/archimate\/([^/]+)\/(elements|relationships|views)\/([^/]+)\.jsonld$/;
+  for (const l of ownModels) {
+    const all = [...l.items.elements, ...l.items.relationships, ...l.items.views];
+    if (!all.some((x) => x.properties.some((p) => p.key.startsWith("overlay:")))) {
+      if (models.size) notes.push(`${self.name} archimate ${l.id}: no overlay:base or overlay:owner tags, overlay rule not checked`);
+      continue;
+    }
+    // The base versions are the mounted models its reference copies name. An
+    // owned item must not be in them; one that is in another mounted version
+    // (a newer draft still to drop it) is noted.
+    const baseVersions = new Set(
+      all.map((x) => x.properties.find((p) => p.key === "overlay:base")?.value?.match(baseRe)?.[1]).filter((v): v is string => !!v),
+    );
+    const elsewhere = new Map<string, number>();
+    let base = 0;
+    let owned = 0;
+    for (const kind of ["elements", "relationships", "views"] as const) {
+      for (const x of l.items[kind]) {
+        const ctx = `${self.name} archimate ${l.id}: ${kind.slice(0, -1)} '${x.name ?? x.id}' (${x.id})`;
+        const b = x.properties.find((p) => p.key === "overlay:base")?.value;
+        const o = x.properties.find((p) => p.key === "overlay:owner")?.value;
+        if (b) {
+          const hit = b.match(baseRe);
+          if (!hit || hit[2] !== kind) errors.push(`${ctx}: overlay:base is not an ArchiMate ${kind.slice(0, -1)} IRI: ${b}`);
+          else if (hit[3] !== x.id) errors.push(`${ctx}: overlay:base names ${hit[3]}, not its own id`);
+          else if (!models.has(hit[1])) unmountedModels.set(hit[1], (unmountedModels.get(hit[1]) ?? 0) + 1);
+          else if (!models.get(hit[1])![kind].has(x.id)) errors.push(`${ctx}: overlay:base names an item mounted model ${hit[1]} does not hold`);
+          else base++;
+        } else if (o) {
+          if (o !== self.name) errors.push(`${ctx}: overlay:owner is ${o}, not ${self.name}`);
+          for (const [v, ids] of models) {
+            if (!ids[kind].has(x.id)) continue;
+            if (baseVersions.has(v)) errors.push(`${ctx}: owned by the overlay, but its base model ${v} already holds it; tag it overlay:base`);
+            else elsewhere.set(v, (elsewhere.get(v) ?? 0) + 1);
+          }
+          owned++;
+        } else if (kind !== "views") {
+          errors.push(`${ctx}: has neither overlay:base nor overlay:owner=${self.name}`);
+        }
       }
     }
+    notes.push(`${self.name} archimate ${l.id} overlay on ${[...baseVersions].join(", ") || "no base"}: ${owned} owned, ${base} reference copies checked`);
+    for (const [v, n] of elsewhere) notes.push(`${n} item(s) the ${self.name} overlay owns are also in mounted model ${v}, which it does not overlay`);
   }
   const iriRe = /\/archimate\/([^/]+)\/(elements|views)\/([^/]+)\.jsonld$/;
   let glosLinks = 0;
   let archLinks = 0;
   let unchecked = 0;
-  const unmountedModels = new Map<string, number>();
   for (const file of walkTs(join(repo, "folio", instance))) {
     const src = readFileSync(file, "utf-8");
     // As keys: a chapter manifest's `dir: "glossary"` is not a link.
@@ -230,12 +299,21 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
     }
     const a = meta.archimate;
     if (!a) continue;
-    if (!models.size) {
-      unchecked++;
-      continue;
-    }
     for (const x of [...(a.elements ?? []), ...(a.views ?? [])]) {
       const hit = String(x.iri).match(iriRe);
+      // A link into this instance's own model (its overlay).
+      if (ownBase && hit && String(x.iri).startsWith(ownBase)) {
+        archLinks++;
+        if (!own.has(hit[1])) errors.push(`${file}: ${x.iri} (${x.name}) names model ${hit[1]}, which ${self.name} does not hold`);
+        else if (!own.get(hit[1])![hit[2] as "elements" | "views"].has(hit[3])) {
+          errors.push(`${file}: ${x.iri} (${x.name}) is not in ${self.name}'s ArchiMate model ${hit[1]}`);
+        }
+        continue;
+      }
+      if (!models.size) {
+        unchecked++;
+        continue;
+      }
       if (hit && !models.has(hit[1])) {
         // A model version the mount does not hold (an older pin): not checked.
         unmountedModels.set(hit[1], (unmountedModels.get(hit[1]) ?? 0) + 1);
@@ -246,7 +324,7 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
         errors.push(`${file}: ${x.iri} (${x.name}) is not in a mounted ArchiMate model`);
       }
     }
-    for (const fm of a.figures ?? []) {
+    for (const fm of models.size ? (a.figures ?? []) : []) {
       if (!models.has(String(fm.model))) {
         unmountedModels.set(String(fm.model), (unmountedModels.get(String(fm.model)) ?? 0) + 1);
         continue;
@@ -264,7 +342,7 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
   for (const [model, n] of unmountedModels) {
     notes.push(`${n} ArchiMate link(s) name model ${model}, which no mounted instance holds (repin it to check them): not checked`);
   }
-  if (unchecked) notes.push(`${unchecked} block(s) name ArchiMate elements, but no mounted instance holds a model: not checked`);
+  if (unchecked) notes.push(`${unchecked} ArchiMate link(s) from blocks, but no mounted instance holds a model: not checked`);
   notes.push(`mounted instances: ${mounted.map((m) => m.name).join(", ") || "none"}`);
   return { errors, notes };
 }

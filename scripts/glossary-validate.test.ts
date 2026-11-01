@@ -72,6 +72,63 @@ describe("glossary-validate", () => {
   });
 });
 
+/** A plain-XML Archi model: elements `[id, name, props]`, one relationship. */
+function archi(elements: Array<[string, string, Record<string, string>]>, rel?: [string, string, string, Record<string, string>]): string {
+  const props = (p: Record<string, string>) => Object.entries(p).map(([k, v]) => `<property key="${k}" value="${v}"/>`).join("");
+  const els = elements.map(([id, n, p]) => `<element xsi:type="archimate:ApplicationComponent" id="${id}" name="${n}">${props(p)}</element>`).join("");
+  const r = rel ? `<element xsi:type="archimate:ServingRelationship" id="${rel[0]}" source="${rel[1]}" target="${rel[2]}">${props(rel[3])}</element>` : "";
+  return `<?xml version="1.0" encoding="UTF-8"?><archimate:model xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:archimate="http://www.archimatetool.com/archimate" name="m" id="m"><folder name="Application" type="application">${els}</folder><folder name="Relations" type="relations">${r}</folder><folder name="Views" type="diagrams"/></archimate:model>`;
+}
+
+function withModel(root: string, id: string, xml: string) {
+  mkdirSync(join(root, "archimate", id), { recursive: true });
+  writeFileSync(join(root, "archimate", id, "m.archimate"), xml);
+  writeFileSync(join(root, "archimate/cat-archimate.config.json"), JSON.stringify({ models: [{ id, file: `${id}/m.archimate` }] }));
+}
+
+/** `pc` (iriBase pc/) overlays `sc` (iriBase sc/), whose model 1.0 holds e1 and e2 serving e1. */
+function overlayFixture(pc: string, block?: object): string {
+  const repo = fixture([term("trade-item", "Trade Item")], block);
+  writeFileSync(join(repo, "pc.json"), JSON.stringify({ name: "pc", iriBase: "https://x/pc/", version: "0.1.0" }));
+  writeFileSync(join(repo, "sc/sc.json"), JSON.stringify({ name: "sc", iriBase: "https://x/sc/", version: "1.0.0" }));
+  withModel(join(repo, "sc"), "1.0", archi([["e1", "One", {}], ["e2", "Two", {}]], ["r1", "e2", "e1", {}]));
+  withModel(repo, "0.1", pc);
+  return repo;
+}
+
+const base = (kind: string, id: string) => ({ "overlay:base": `https://x/sc/archimate/1.0/${kind}/${id}.jsonld` });
+const mine = { "overlay:owner": "pc" };
+
+describe("glossary-validate: the overlay rule and links into the instance's own model", () => {
+  test("an overlay of reference copies and owned items passes, and links into it are checked", async () => {
+    const pc = archi([["e1", "One", base("elements", "e1")], ["p1", "Mine", mine]], ["pr1", "p1", "e1", mine]);
+    const repo = overlayFixture(pc, {
+      archimate: { elements: [{ iri: "https://x/pc/archimate/0.1/elements/p1.jsonld", name: "Mine" }, { iri: "https://x/sc/archimate/1.0/elements/e2.jsonld", name: "Two" }] },
+    });
+    const r = await validate(repo, "pc");
+    expect(r.errors).toEqual([]);
+    expect(r.notes.join("\n")).toContain("pc archimate 0.1 overlay on 1.0: 2 owned, 1 reference copies checked");
+    expect(r.notes.join("\n")).not.toContain("not checked\n· pc");
+  });
+
+  test("an untagged item, an owned item the base already holds, and a copy the base lacks fail", async () => {
+    const pc = archi([["e1", "One", mine], ["x9", "Gone", base("elements", "x9")], ["p1", "Bare", {}]], ["pr1", "p1", "e1", { "overlay:owner": "hr" }]);
+    const r = await validate(overlayFixture(pc), "pc");
+    const all = r.errors.join("\n");
+    expect(all).toContain("its base model 1.0 already holds it; tag it overlay:base");
+    expect(all).toContain("overlay:base names an item mounted model 1.0 does not hold");
+    expect(all).toContain("has neither overlay:base nor overlay:owner=pc");
+    expect(all).toContain("overlay:owner is hr, not pc");
+  });
+
+  test("a block link into the own model that names no item fails", async () => {
+    const pc = archi([["p1", "Mine", mine]]);
+    const r = await validate(overlayFixture(pc, { archimate: { elements: [{ iri: "https://x/pc/archimate/0.1/elements/nope.jsonld", name: "No" }] } }), "pc");
+    expect(r.errors).toHaveLength(1);
+    expect(r.errors[0]).toContain("is not in pc's ArchiMate model 0.1");
+  });
+});
+
 describe("metaOf reads a block's meta", () => {
   test("on one line or pretty-printed, and not from a string's braces", async () => {
     const { metaOf } = await import("./glossary-validate");
