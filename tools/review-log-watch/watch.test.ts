@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { issueRow, linkedIssues, sheetCells, summary, watch, type Issue } from "./watch.js";
+import { feedbackCell, issueRow, linkedIssues, richSummary, sheetCells, summary, watch, type Issue } from "./watch.js";
 
 const repo = "litlfred/dth-phc";
 const header = ["Change-set", "Title", "Selected Sections", "Section links", "Contributor Feedback (initials/name)", "Contributor Feedback (initials/name)", "Disposition", "Ready for agent", "Ready for merge", "Feedback (agent)", "Issue"];
@@ -93,5 +93,24 @@ describe("review-log-watch", () => {
     expect(summary("x".repeat(400)).length).toBe(300);
     expect(summary(null)).toBe("");
     expect(summary("**Content:** `dth-hrh` **Block:** `fig:x`")).toBe("Content: dth-hrh Block: fig:x");
+  });
+
+  test("Markdown links become clickable runs over their label; bare URLs link themselves", () => {
+    const r = richSummary("_Requested by litlfred · [project thread](https://claude.ai/x?y=1)_");
+    expect(r.text).toBe("Requested by litlfred · project thread");
+    expect(r.links).toEqual([{ start: 24, end: 38, url: "https://claude.ai/x?y=1" }]);
+    expect(r.text.slice(r.links[0].start, r.links[0].end)).toBe("project thread");
+    const bare = richSummary("*Source:* see https://example.org/a_b. Then **more**.");
+    expect(bare.text).toBe("Source: see https://example.org/a_b. Then more.");
+    expect(bare.text.slice(bare.links[0].start, bare.links[0].end)).toBe("https://example.org/a_b");
+    const cell = feedbackCell(issue(1, { body: "Plan: [`docs/workplan.md`](https://github.com/o/r/blob/main/docs/workplan.md)." }));
+    expect(cell.text).toBe("@alice (#1): Plan: docs/workplan.md.");
+    expect(cell.text.slice(cell.links[0].start, cell.links[0].end)).toBe("docs/workplan.md");
+  });
+
+  test("an appended row carries its feedback cell's links", () => {
+    const r = watch(sheet([]), [issue(3, { body: "See [it](https://x.org/y)." })], repo, undefined);
+    if (r.status !== "changed") throw new Error("expected changed");
+    expect(r.append[0].links).toEqual({ column: 4, runs: [{ start: 17, end: 19, url: "https://x.org/y" }] });
   });
 });

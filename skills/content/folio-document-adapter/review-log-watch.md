@@ -69,6 +69,12 @@ reason about the rows, edit anything or post anything.
    - **First Contributor Feedback column:** `@login (#N): first paragraph`.
    - **Issue:** the issue's URL.
 
+   The issue's Markdown is turned into plain cell text: a `[label](url)`
+   shows its label, and bold, italic and code marks are dropped. Its links
+   are in `append[].links` (the column and each link's start, end and URL).
+   Write the cell with those as `textFormatRuns` (`updateCells`), so each
+   link is clickable (owner, 2026-11-01 10:51Z: "shiud be links").
+
    Every other cell stays empty. The script assigns the Change-set id. This
    tool is the only thing that adds issue rows, so nobody adds them by hand.
    A row with `closed: true` is appended like the others and then treated as
@@ -127,5 +133,6 @@ opened, and appends rows only for issues that no row links yet.
 - The tool reads one tab and one repository, from the issues API (up to 100
   issues a page, every page). It never writes the sheet or
   GitHub.
-- The summary is the issue's first paragraph, cut to 300 characters.
+- The summary is the issue's first paragraph, cut to 300 characters. A link
+  the cut runs through keeps its target on the part that is left.
   Committee members may rewrite the Title and their own column.

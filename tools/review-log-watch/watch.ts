@@ -47,7 +47,11 @@ export type Change =
   | { kind: "cell"; row: number; header: string; from: string; to: string };
 
 /** A row to append. A closed issue's row is appended hidden, its text struck through. */
-export type AppendRow = { issue: number; url: string; closed: boolean; row: string[] };
+export type AppendRow = {
+  issue: number; url: string; closed: boolean; row: string[];
+  /** The links in the feedback cell (`column`, 0-based), to write as rich text so they are clickable. */
+  links: { column: number; runs: CellLink[] };
+};
 
 export type WatchResult =
   | { status: "unchanged"; digest: string }
@@ -115,14 +119,88 @@ export function linkedIssues(values: string[][], repo: string): Map<number, numb
 
 const labelNames = (i: Issue) => (i.labels ?? []).map((l) => (typeof l === "string" ? l : l.name));
 
-/** The issue's first paragraph, without form headings, bold or code marks, cut to `max` characters. */
-export function summary(body: string | null | undefined, max = 300): string {
-  const text = String(body ?? "")
+/** A link inside a cell's text: characters [start, end) (UTF-16, as Sheets counts) go to `url`. */
+export type CellLink = { start: number; end: number; url: string };
+
+/** Cell text with its links, for a Sheets `textFormatRuns` write. */
+export type RichText = { text: string; links: CellLink[] };
+
+const URL_RE = /https?:\/\/[^\s<>()\]]+[^\s<>()\].,;:!?'"]/g;
+
+/**
+ * Markdown inline text as plain cell text plus its links: `[label](url)` keeps
+ * the label and links it, a bare URL links itself, and bold, italic and code
+ * marks are dropped. Owner, 2026-11-01 10:51Z: imported comments "shiud be links".
+ */
+export function richInline(md: string): RichText {
+  let text = "";
+  const links: CellLink[] = [];
+  const re = /\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g;
+  let last = 0;
+  const plain = (t: string) => {
+    const base = text.length;
+    for (const m of t.matchAll(URL_RE)) links.push({ start: base + m.index!, end: base + m.index! + m[0].length, url: m[0] });
+    text += t;
+  };
+  for (const m of md.matchAll(re)) {
+    plain(md.slice(last, m.index));
+    const start = text.length;
+    text += m[1].replace(/\*\*|__|`/g, "");
+    links.push({ start, end: text.length, url: m[2] });
+    last = m.index! + m[0].length;
+  }
+  plain(md.slice(last));
+  // Emphasis marks, keeping link offsets right: drop a mark only outside links.
+  const marks = /\*\*|__|`|(?<![\w*])\*(?=\S)|(?<=\S)\*(?![\w*])|(?<![\w])_(?=\S)|(?<=\S)_(?![\w])/g;
+  let out = "";
+  let pos = 0;
+  const shift: number[] = [];
+  for (const m of text.matchAll(marks)) {
+    const i = m.index!;
+    if (links.some((l) => i >= l.start && i < l.end)) continue;
+    out += text.slice(pos, i);
+    shift.push(i, m[0].length);
+    pos = i + m[0].length;
+  }
+  out += text.slice(pos);
+  const moved = (n: number) => { let d = 0; for (let k = 0; k < shift.length; k += 2) if (shift[k] < n) d += shift[k + 1]; return n - d; };
+  return { text: out, links: links.map((l) => ({ ...l, start: moved(l.start), end: moved(l.end) })) };
+}
+
+/** The issue's first paragraph, without form headings, emphasis or code marks, with its links, cut to `max` characters. */
+export function richSummary(body: string | null | undefined, max = 300): RichText {
+  const para = String(body ?? "")
     .replace(/<!--[\s\S]*?-->/g, "")
     .split(/\n\s*\n/)
-    .map((p) => p.replace(/^#+\s.*$/gm, "").replace(/\*\*|__|`/g, "").replace(/\s+/g, " ").trim())
+    .map((p) => p.replace(/^#+\s.*$/gm, "").replace(/\s+/g, " ").trim())
     .find((p) => p && p !== "_No response_") ?? "";
-  return text.length > max ? text.slice(0, max - 1).trimEnd() + "…" : text;
+  const r = richInline(para);
+  const text = r.text.trim();
+  const lead = r.text.length - r.text.trimStart().length;
+  const links = r.links.map((l) => ({ ...l, start: l.start - lead, end: l.end - lead }));
+  if (text.length <= max) return { text, links };
+  const cut = text.slice(0, max - 1).trimEnd();
+  return { text: cut + "…", links: links.filter((l) => l.start < cut.length).map((l) => ({ ...l, end: Math.min(l.end, cut.length) })) };
+}
+
+/** The issue's first paragraph as plain text (see `richSummary`). */
+export function summary(body: string | null | undefined, max = 300): string {
+  return richSummary(body, max).text;
+}
+
+/** The first Contributor Feedback cell for an issue: "@login (#N): summary", with its links. */
+export function feedbackCell(issue: Issue): RichText {
+  const prefix = `@${issue.user?.login ?? "unknown"} (#${issue.number}): `;
+  const s = richSummary(issue.body);
+  return {
+    text: (prefix + s.text).trimEnd(),
+    links: s.links.map((l) => ({ ...l, start: l.start + prefix.length, end: l.end + prefix.length })),
+  };
+}
+
+/** The column of the first Contributor Feedback column a person writes, or -1. */
+export function feedbackColumn(header: string[]): number {
+  return header.findIndex((h) => h.trim().startsWith("Contributor Feedback") && h.trim() !== "Contributor Feedback (agent)");
 }
 
 /**
@@ -134,9 +212,9 @@ export function summary(body: string | null | undefined, max = 300): string {
 export function issueRow(issue: Issue, header: string[]): string[] {
   const row = header.map(() => "");
   const at = (name: string) => header.findIndex((h) => h.trim() === name);
-  const fb = header.findIndex((h) => h.trim().startsWith("Contributor Feedback") && h.trim() !== "Contributor Feedback (agent)");
+  const fb = feedbackColumn(header);
   if (at("Title") >= 0) row[at("Title")] = issue.title;
-  if (fb >= 0) row[fb] = `@${issue.user?.login ?? "unknown"} (#${issue.number}): ${summary(issue.body)}`.trimEnd();
+  if (fb >= 0) row[fb] = feedbackCell(issue).text;
   if (at("Issue") >= 0) row[at("Issue")] = issue.html_url;
   return row;
 }
@@ -207,7 +285,7 @@ export function watch(
   const append = hi < 0 ? [] : tracked
     .filter((i) => !linked.has(i.number))
     .sort((a, b) => a.number - b.number)
-    .map((i) => ({ issue: i.number, url: i.html_url, closed: isClosed(i), row: issueRow(i, header) }));
+    .map((i) => ({ issue: i.number, url: i.html_url, closed: isClosed(i), row: issueRow(i, header), links: { column: feedbackColumn(header), runs: feedbackCell(i).links } }));
   const closedRows = tracked
     .filter(isClosed)
     .flatMap((i) => linked.get(i.number) ?? [])
