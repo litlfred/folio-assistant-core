@@ -1,0 +1,975 @@
+{
+  "$schema": "folio-block-summaries/v1",
+  "entry": "dspace-7-rest-contract",
+  "summaries": [
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s662-get-version-history",
+      "source": "sections/s662-get-version-history.md",
+      "source_hash": "1eee9b567b061d020811aefa1f2bf3c09e2c2c6992e2616b2a213c65a8ea73d0",
+      "narrative": [
+        {
+          "text": "GET /api/versioning/versionhistories/<versionHistoryId> returns one version history, with its id and draftVersion, which is true when the latest version's item is still in progress (workspace or workflow) and is shown only to users allowed to create a new version in that history. Status codes: 200 OK; 401 or 403 when versioning is not public and the caller is unauthenticated or lacks permission; 404 if a permitted user asks for a history that does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s663-linked-entities",
+      "source": "sections/s663-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a version history.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s664-versions",
+      "source": "sections/s664-versions.md",
+      "source_hash": "c0e8bbd546202ecfd8f710e89136c1d491fbaa7d94d4408f8ba36097fd32632e",
+      "narrative": [
+        {
+          "text": "GET /api/versioning/versionhistories/<versionHistoryId>/versions returns a paginated list of the history's versions, newest version number first, with attributes secured as for a single version. Only versions of archived or withdrawn items are listed, so the latest version is left out until it is archived. Return codes: 200 OK; 401 or 403 when versioning is not public.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s665-draftversion",
+      "source": "sections/s665-draftversion.md",
+      "source_hash": "5729568cfc8e4bf2153e60be4b4c6159725fcade30dbbaba83a2410aa8019973",
+      "narrative": [
+        {
+          "text": "GET /api/versioning/versionhistories/<versionHistoryId>/draftVersion gives access to the workspace or workflow item of the latest version when it is not yet archived. It follows the security of those endpoints, so a user allowed to create versions may still not see it; the draftVersion flag lets the UI turn off the create-new-version button in that case, and anonymous users cannot learn that a new version is under review.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s666-controlled-vocabularies-endpoints",
+      "source": "sections/s666-controlled-vocabularies-endpoints.md",
+      "source_hash": "14f1afd17cb67e05d0ddffec877331331ac7ccfbcf082a7d6b4f0c60d413909e",
+      "narrative": [
+        {
+          "text": "Introduction to the Controlled Vocabularies endpoints. All of them are open to anonymous users.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s667-main-endpoint",
+      "source": "sections/s667-main-endpoint.md",
+      "source_hash": "4dbf51a6f0f49348e65fdc42dd27d9f9d10fc039932eef0b33324b9c136e3f6a",
+      "narrative": [
+        {
+          "text": "/api/submission/vocabularies lists the configured controlled vocabularies, as a paginated list in which each vocabulary (for example srsc) has its scrollable, hierarchical and preloadLevel settings and an entries link.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s668-single-vocabulary",
+      "source": "sections/s668-single-vocabulary.md",
+      "source_hash": "eef20804cdf64fd6a90eb6708a0f8e7ecfa2c55e48f8151ef431b9a864fc1a19",
+      "narrative": [
+        {
+          "text": "/api/submission/vocabularies/<vocabulary-name> returns one controlled vocabulary. id and name are the same alphanumeric value; scrollable means all entries can be browsed without a filter; hierarchical means entries form a tree; preloadLevel, for hierarchical vocabularies, is the depth to which the tree should be preloaded (0 for top nodes only, 1 to include their children, and so on). An entries link gives the vocabulary's entries.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s669-linked-entities",
+      "source": "sections/s669-linked-entities.md",
+      "source_hash": "6281a63dd06a33cc5a9c35a46a9343b8183193eb7e3ab9c28f452786a2095925",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a controlled vocabulary.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s670-controlled-vocabulary-entries",
+      "source": "sections/s670-controlled-vocabulary-entries.md",
+      "source_hash": "7d4cbbc5f9bea8105ab3b186a6e1c1eef9db61963a44cbccc4d06d57ccb78379",
+      "narrative": [
+        {
+          "text": "/api/submission/vocabularies/<vocabulary-name>/entries returns vocabulary entries for a user's input or as a scrollable list. Parameters: page and size, filter (terms, keywords or a prefix), exact (true to match the filter exactly; default false) and entryID (the entries for one vocabulary entry id). Exactly one of filter and entryID must be given, except for scrollable vocabularies, which can be browsed freely. Return codes: 200 OK; 400 if both filter and entryID are given, or exact is invalid or given without filter; 401 if not authenticated; 422 if neither is given and the vocabulary is not scrollable. Samples show the common_types value-pairs vocabulary (paged, and filtered by Book), the hierarchical srsc vocabulary filtered by Research, and an authority vocabulary (SolrAuthorAuthority) whose entries carry an authority key.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s671-search-methods",
+      "source": "sections/s671-search-methods.md",
+      "source_hash": "7d8af4ac799f5ea877a92826131c552408861d1397c3a6e58113e551d1f2da7b",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the controlled vocabularies endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s672-get-controlled-vocabulary-by-metadata-and-collec",
+      "source": "sections/s672-get-controlled-vocabulary-by-metadata-and-collec.md",
+      "source_hash": "8c8493618b8e68700695d6649fb9ca528cdd6d57c5848b62cbd3dc4a8f9122e5",
+      "narrative": [
+        {
+          "text": "Search method byMetadataAndCollection, /api/submission/vocabularies/search/byMetadataAndCollection?metadata=<schema.element[.qualifier]>&collection=<collection-uuid>, returns the controlled vocabulary configured for that metadata field and collection, in the same form as a single vocabulary, or an empty body if there is none. Return codes: 200 OK with a vocabulary; 204 No content if none is configured; 400 for missing or malformed parameters; 401 if not authenticated; 422 if the metadata field or collection does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s673-vocabulary-entries-endpoints",
+      "source": "sections/s673-vocabulary-entries-endpoints.md",
+      "source_hash": "ed336f8a6723b5b43b200fd796b99f0cdac247d00b3daad5e5b81ae989bea25f",
+      "narrative": [
+        {
+          "text": "Introduction to the Vocabulary Entries endpoints. All of them are open to anonymous users.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s674-main-endpoint",
+      "source": "sections/s674-main-endpoint.md",
+      "source_hash": "c801e55bbbf26e92096938c409283acd97d4519418765caefa8207283ffe4821",
+      "narrative": [
+        {
+          "text": "/api/submission/vocabularyEntryDetails, the main vocabulary entries endpoint, is not allowed: entries can only be fetched in subsets through the filters described next.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s675-single-authority",
+      "source": "sections/s675-single-authority.md",
+      "source_hash": "a69543138882c1a4ac7451bf9671fe4a9faf9655f70c9e438fe5759b0c774d8a",
+      "narrative": [
+        {
+          "text": "/api/submission/vocabularyEntryDetails/<vocabulary-name>:<entry-id> returns one vocabulary entry: its unique id, value (the preferred value to store), display (the preferred value to show), selectable (a hierarchical vocabulary may allow only leaves to be chosen) and otherInformation (a map of extra strings that give the UI more context). It links to its vocabulary and, in hierarchical vocabularies, to its parent and children. Return codes: 200 OK; 404 if the entry is missing or the id malformed; 401 if not authenticated.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s676-search-methods",
+      "source": "sections/s676-search-methods.md",
+      "source_hash": "7d8af4ac799f5ea877a92826131c552408861d1397c3a6e58113e551d1f2da7b",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the vocabulary entries endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s677-top",
+      "source": "sections/s677-top.md",
+      "source_hash": "b785cb54c37dea23514d20c15fed0f192b77407f6eee679531bd096a7f8f22c4",
+      "narrative": [
+        {
+          "text": "Search method top, /api/submission/vocabularyEntryDetails/search/top?vocabulary=<vocabulary-id>, returns a paginated list of the top entries of a hierarchical vocabulary; the example lists top entries of srsc such as HUMANITIES and RELIGION. Return codes: 200 OK; 400 for a missing or invalid vocabulary; 401 if not authenticated; 422 if the vocabulary exists but is not hierarchical.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s678-workflow-actions-endpoints",
+      "source": "sections/s678-workflow-actions-endpoints.md",
+      "source_hash": "fdc132a5b29c04d660bfbd448d481d1520d06b87324401d08a0d539d801a7161",
+      "narrative": [
+        {
+          "text": "Introduction to the Workflow Actions endpoints. A workflow action is one action in the review process, such as accept or reject. The endpoints need authentication but no specific permission.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s679-main-endpoint",
+      "source": "sections/s679-main-endpoint.md",
+      "source_hash": "6ab11e481fda8f4365c4adde7f5c6549d7f39400e2530acb3e618eee06fa9329",
+      "narrative": [
+        {
+          "text": "/api/config/workflowactions, the main workflow actions endpoint, is not implemented and returns 405.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s680-single-workflow-action-definition",
+      "source": "sections/s680-single-workflow-action-definition.md",
+      "source_hash": "1b4c4007b0a9808d6fed613e1241af1d9022803bc23860388561b86d22061b61",
+      "narrative": [
+        {
+          "text": "/api/config/workflowactions/<action-name> returns one workflow action. Its options are the actions the user may take in the step: edit_metadata means the user can PATCH the workflow item's submission sections, and the others are commands POSTed to the claimed task. advanced is false by default and true when advancedOptions is not empty, meaning the action needs more than plain buttons; advancedInfo carries the extra details those options need, supplied through an ActionAdvancedInfo implementation and configured in workflow-actions.xml. Examples are assign_eperson (an EPerson lookup on the task page) and rating (a score). edit_metadata predates this framework and does not fit it. Two samples follow: selectrevieweraction, performed by POSTing submit_select_reviewer with one or more eperson ids to the claimed task, and scorereviewaction (maximum score and whether a description is required), performed by POSTing rating with a score and an optional description.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s681-workflow-definitions-endpoints",
+      "source": "sections/s681-workflow-definitions-endpoints.md",
+      "source_hash": "0b08646d45faa7dc7ceb62ffb7df5404034203cc16bbfe03e447fbe1c9b752b6",
+      "narrative": [
+        {
+          "text": "Introduction to the Workflow Definitions endpoints. A workflow definition is set globally or per collection and gives the list of workflow steps for each collection and the default steps. The endpoints need authentication but no specific permission.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s682-main-endpoint",
+      "source": "sections/s682-main-endpoint.md",
+      "source_hash": "b6fc2f70343e6b41487fc9a6bcaf6d55d988797508827b1921124f1bc1551286",
+      "narrative": [
+        {
+          "text": "/api/config/workflowdefinitions lists the configured workflow definitions.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s683-single-workflow-definition",
+      "source": "sections/s683-single-workflow-definition.md",
+      "source_hash": "13d77bfd7654ab32794fc861dcf7abf5a83c69ab5482f966f7607e86c96f19d3",
+      "narrative": [
+        {
+          "text": "/api/config/workflowdefinitions/<definition-name> returns one workflow definition, with its name (for example default), whether it is the default, and its type. It links to collections, the collections that explicitly use it, and steps, the workflow steps it includes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s684-search-methods",
+      "source": "sections/s684-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the workflow definitions endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s685-findbycollection",
+      "source": "sections/s685-findbycollection.md",
+      "source_hash": "2ca6f2b5c9f63f9fb727ed1becd301bf2888877a53e27f3880b445742271dd8e",
+      "narrative": [
+        {
+          "text": "Search method findByCollection, /api/config/workflowdefinitions/search/findByCollection?uuid=<collection-uuid>, returns the workflow definition that applies to a collection, falling back to the default configuration.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s686-linked-entities",
+      "source": "sections/s686-linked-entities.md",
+      "source_hash": "26d243fd109b64c783bd0ec0b475eaf3071890d5378a73bd878dc579fd34fbe9",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a workflow definition.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s687-collections",
+      "source": "sections/s687-collections.md",
+      "source_hash": "b73d3f727381494f3be6f1ae0e64cea6987f48dc2292949cc6a45c2c27b07641",
+      "narrative": [
+        {
+          "text": "/api/config/workflowdefinitions/<definition-name>/collections lists the collections that explicitly use the workflow definition. A collection that names none gets the default mapping but is not listed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s688-steps",
+      "source": "sections/s688-steps.md",
+      "source_hash": "e6b3f60e49d4bd0b87ec22e94e619d734bd3adb8b9b8be65a1e30b6b274b9c46",
+      "narrative": [
+        {
+          "text": "/api/config/workflowdefinitions/<definition-name>/steps lists the workflow steps used in the definition, as described on the workflow steps page.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s689-workflowitem-endpoints",
+      "source": "sections/s689-workflowitem-endpoints.md",
+      "source_hash": "bd48947b6ebec440032738a74f878d36fc522ed6b20a10d7e0be6434f9e82560",
+      "narrative": [
+        {
+          "text": "Title of the WorkflowItem Endpoints page, with a link back to the list of all endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s690-main-endpoint",
+      "source": "sections/s690-main-endpoint.md",
+      "source_hash": "d39e1dc7d7d167643b1e6418259dc0d8df4d2658a78b639799d0c3d1db4ff97d",
+      "narrative": [
+        {
+          "text": "/api/workflow/workflowitems lists the workflow items. The example is still to be provided.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s691-single-workflow-item",
+      "source": "sections/s691-single-workflow-item.md",
+      "source_hash": "04613ae4befeec26890a6337d3cc8205b90492e0bd662708c7584752c3dd77ba",
+      "narrative": [
+        {
+          "text": "/api/workflow/workflowitems/<id> returns one workflow item. As with a workspace item, the in-progress submission's data sit in a sections map that follows the submission definition and is open for extension (each section type has its own JSON structure, for example collection, form pages, license, cclicense and uploads with their access conditions); a step attribute gives the workflow step reached. It links to step, collection (where the item will be created), item (which holds the submission data) and submissionDefinition.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s692-linked-entities",
+      "source": "sections/s692-linked-entities.md",
+      "source_hash": "26d243fd109b64c783bd0ec0b475eaf3071890d5378a73bd878dc579fd34fbe9",
+      "narrative": [
+        {
+          "text": "Heading for the linked entities of a workflow item.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s693-collection",
+      "source": "sections/s693-collection.md",
+      "source_hash": "d78a3a285bb5ac96b7f3fa7df06e7ba005ff04b87281feae91f52e1248dcb742",
+      "narrative": [
+        {
+          "text": "/api/workflow/workflowitems/<id>/collection is read-only and returns the collection the in-progress submission belongs to. The collection cannot be changed directly once the submission exists; a section such as the enhanced select-collection section planned for DSpace 7 could change it through the sections data. The example is still to be provided.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s694-item",
+      "source": "sections/s694-item.md",
+      "source_hash": "000e35191975dd559e507815eebbb803e096f68b68135364f4f6d458503e1deb",
+      "narrative": [
+        {
+          "text": "/api/workflow/workflowitems/<id>/item is read-only and returns the backend item held by the submission. The item cannot be replaced once the submission exists; changes to it show up in the submission automatically but are not checked by submission validation, as they are administrative edits. The example is still to be provided.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s695-submissiondefinition",
+      "source": "sections/s695-submissiondefinition.md",
+      "source_hash": "f028282f2ca83a5bc9cb5e457aed27fe456ba039066c2b17a9d77663057f8256",
+      "narrative": [
+        {
+          "text": "/api/workflow/workflowitems/<id>/submissionDefinition is read-only and returns the submission definition used by the in-progress submission, which by default is derived from its collection and follows any change of collection. The same definition can be had from /api/config/submissiondefinitions/search/findByCollection, but this link saves a separate call and leaves room to change the one-to-one link between collections and definitions later without breaking clients. The example is still to be provided.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s696-workflow-step",
+      "source": "sections/s696-workflow-step.md",
+      "source_hash": "b32c86a5acdbe0480b96002fdba6e844a84a55eb3943021c3ab84f1884a6955c",
+      "narrative": [
+        {
+          "text": "/api/workflow/workflowitems/<id>/step is read-only and returns the workflow step of the workflow item, as described on the workflow steps page.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s697-search-methods",
+      "source": "sections/s697-search-methods.md",
+      "source_hash": "a61e032c5f79a4fb3ff1d49cab4dd34130fe6b093a0713a08f4d07fafc6f8ba3",
+      "narrative": [
+        {
+          "text": "Heading for the search methods of the workflow items endpoint.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s698-findbysubmitter",
+      "source": "sections/s698-findbysubmitter.md",
+      "source_hash": "fda0d23d659f8a277dcde837ef7a8925cf7a0b644ae64476daa65d01573f665e",
+      "narrative": [
+        {
+          "text": "Search method findBySubmitter, /api/workflow/workflowitems/search/findBySubmitter?uuid=<submitter-uuid>, returns the workflow items created by that submitter.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s699-get-single-workflow-item-from-item-uuid",
+      "source": "sections/s699-get-single-workflow-item-from-item-uuid.md",
+      "source_hash": "0d86f4e7a66c29eb4543a4e6d16b2f2dbbac2459c2db26732ba7335bef73cae4",
+      "narrative": [
+        {
+          "text": "Search method item, /api/workflow/workflowitems/search/item?uuid=<item-uuid>, returns the workflow item for an item; uuid is mandatory, and since an item has at most one workflow item, the result is a single object, not a list. Responses: 200 OK with the workflow item; 401 if not authenticated; 403 without permission to view it; 204 if there is none.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s700-post-method",
+      "source": "sections/s700-post-method.md",
+      "source_hash": "f8119e1c77146b92f0a96149af632c7e3f22182150df6f913bcb0f50097907d9",
+      "narrative": [
+        {
+          "text": "Starting a workflow: POST the WorkspaceItem's URI, as text/uri-list, to /api/workflow/workflowitems, as in the curl example. Responses: 201 with the new workflow item in the body, or an empty body when no workflow is enabled and the item is available at once; 401 if not authenticated; 403 if the user is not the workspace item's submitter; 422 if the workspace item has validation errors and is not ready for workflow.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s701-multipart-post-method",
+      "source": "sections/s701-multipart-post-method.md",
+      "source_hash": "44c54215abb27052037ea96fc8e290cdb3cb338fbf703b555407e4769cb5f282",
+      "narrative": [
+        {
+          "text": "A multipart POST to a workflow item usually adds a new file to the section named by the upload variable (uploads by default), handled by that section's implementation. On success it returns 201 with the workflow item's new state.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s702-delete-method",
+      "source": "sections/s702-delete-method.md",
+      "source_hash": "67c6427f6aa4617cd8276e61aebac5532fa6b17fb715b5edd064e3e6ad958424",
+      "narrative": [
+        {
+          "text": "DELETE /api/workflow/workflowitems/<id> resets the workflow and sends the item back to the workspace, whatever step it had reached; with ?expunge=true the workflow item is deleted instead. Responses: 204 No content; 401 if not authenticated; 403 for non-administrators; 404 if the workflow does not exist.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s703-workflow-steps-endpoints",
+      "source": "sections/s703-workflow-steps-endpoints.md",
+      "source_hash": "5cfd3438ca25fc6bdaab20381fd625a4ef4f22ebab4b391edb51941041108536",
+      "narrative": [
+        {
+          "text": "Introduction to the Workflow Steps endpoints. A workflow step is one step in the review process, such as the accept/reject step. The endpoints need authentication but no specific permission.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s704-main-endpoint",
+      "source": "sections/s704-main-endpoint.md",
+      "source_hash": "e8deaaf5cba5523b9351c43af62c5626f1984d19e987e92f4de8d070419f0721",
+      "narrative": [
+        {
+          "text": "/api/config/workflowsteps, the main workflow steps endpoint, is not implemented and returns 405.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s705-single-workflow-step-definition",
+      "source": "sections/s705-single-workflow-step-definition.md",
+      "source_hash": "e67eb5780c2e5c98249ad88dff82d992552745003910074dd928f664e797d1c3",
+      "narrative": [
+        {
+          "text": "/api/config/workflowsteps/<step-name> returns one workflow step, for example editstep, with the list of workflow actions it uses, embedded and linked; see the workflow actions endpoints.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s706-workspaceitem-data-of-access-sectiontype",
+      "source": "sections/s706-workspaceitem-data-of-access-sectiontype.md",
+      "source_hash": "451c09f4ccf1ea033a418c2d102a277e5e8117391fa0d3a53284d7489452de9e",
+      "narrative": [
+        {
+          "text": "The access section of a WorkspaceItem holds the item's access conditions. The section has the same name as its configuration under /api/config/submissionaccessoptions (a section named itemAccessConditions matches /api/config/submissionaccessoptions/itemAccessConditions). Its data are discoverable (when false, the item is hidden from search, browse and OAI and can be reached only by direct link) and accessConditions (every policy the user applied to the item, each with a name and, where required, start and end dates).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s707-patch-operations",
+      "source": "sections/s707-patch-operations.md",
+      "source_hash": "76588eb69d6ec337b7f34662005abaa11ac9754456cfbcbc581b9f782ed53511",
+      "narrative": [
+        {
+          "text": "Patch operations on a workspace item take a JSON Patch body (RFC 6902); each successful one returns 200 with the new workspace item. The general patch rules apply.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s708-add-access-condition",
+      "source": "sections/s708-add-access-condition.md",
+      "source_hash": "e452d534388c68c2a10eedc4530cf685abe87215c2ee5eaf95f8ea7f9eca9758",
+      "narrative": [
+        {
+          "text": "Adding an access condition: a PATCH add on /sections/<form-name>/accessConditions/- appends one, and an add on /sections/<form-name>/accessConditions with an array replaces them all. The attributes required depend on the condition's name, as configured in submissionaccessoptions: for example openaccess needs nothing more, while embargo is rejected without a startDate. Adding at a specific index makes no sense, and the array is never null (at worst empty), so clients can always append.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s709-remove-access-condition",
+      "source": "sections/s709-remove-access-condition.md",
+      "source_hash": "0af34fbb656660d073542877e291b0be3634e7699881521a9b324715ef47c0f8",
+      "narrative": [
+        {
+          "text": "Removing an access condition: a PATCH remove on /sections/<form-name>/accessConditions/<index> removes one, and a remove on /sections/<form-name>/accessConditions resets them to an empty array.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s710-replace",
+      "source": "sections/s710-replace.md",
+      "source_hash": "0bddade96104af3723b7a81cfa8570a2f39f8a774959c423cefc452e45ca8ba9",
+      "narrative": [
+        {
+          "text": "The replace operation replaces existing information; using it where there is no previous value is an error, per the general patch rules.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s711-discoverable",
+      "source": "sections/s711-discoverable.md",
+      "source_hash": "7845bad2e143a28e16f724b850e47f77fbc96b1c5f78c8d2bccd53d41d42205a",
+      "narrative": [
+        {
+          "text": "Replacing the discoverable flag: a PATCH replace on /sections/<form-name>/discoverable with true or false, for example changing true to false. If the access configuration does not let the user set the item's visibility, the server answers 422.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/dspace-7-rest-contract/blocks/prose-s712-access-condition",
+      "source": "sections/s712-access-condition.md",
+      "source_hash": "87b84c0ec46a36af2762871a52003994058023db4e3bff9be29ffec9bb9fa352",
+      "narrative": [
+        {
+          "text": "Replacing an access condition: a PATCH replace can swap a condition for a new one (for example /accessConditions/0 with an embargo and its startDate), change one setting (such as /accessConditions/0/startDate), or change its name (for example openaccess to administrator). The new settings must be valid for the condition's name in submissionaccessoptions; the backend removes the old policy and creates a new one, and a name change works only when both conditions need the same settings, otherwise it fails with 422.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "not-disclosed",
+            "session": "https://claude.ai/code/session_01Qmmkt8n45nmwCHCTpc28EY"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    }
+  ]
+}
