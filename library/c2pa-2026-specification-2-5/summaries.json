@@ -761,6 +761,1013 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s512-16-9-1-7-review-ratings",
+      "source": "sections/s512-16-9-1-7-review-ratings.md",
+      "source_hash": "b84ca0632c2093eb8d04723ec51dc3b3e9257d4874532a9903eb3686c2120b1c",
+      "narrative": [
+        {
+          "text": "The optional reviewRatings array lets a claim generator attach one or more rating objects judging the quality of an assertion, and it shall not be present when a dataSource of type humanEntry.anonymous or humanEntry.credentialed is present. Each rating shall carry an integer value from 1 (worst) to 5 (best), with an optional human-readable explanation and an optional machine-readable code, drawn either from Table 11 (such as actions.unknownActionsPerformed, ingredient.notVisible or thumbnail.primaryMismatch) or from entity-specific namespaces.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s513-16-9-1-8-references",
+      "source": "sections/s513-16-9-1-8-references.md",
+      "source_hash": "dc86ed65681875cab79a09fedaeb61fcdcfbd05f10fcc2f58b94b3d21db796ec",
+      "narrative": [
+        {
+          "text": "Because the reference field of an assertion metadata assertion is a standard hashed_uri, it can point to assertions, and likewise claims, in manifests other than the active one, such as a c2pa.metadata assertion in an ingredient's manifest.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s514-16-9-1-9-process-time",
+      "source": "sections/s514-16-9-1-9-process-time.md",
+      "source_hash": "8dc618c7ed27438928da31ba29299b9d74b46e32f0d2d790210030bab55c4882",
+      "narrative": [
+        {
+          "text": "The optional processStart and processEnd fields describe the time span of the overall process behind the enclosing assertion, using generator lower-bound and upper-bound time types respectively, with processStart required to be no later than processEnd; a note says these are claim-generator timestamps, not trusted ones.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s515-16-9-1-10-localization",
+      "source": "sections/s515-16-9-1-10-localization.md",
+      "source_hash": "e32f3588a15d4509283a6462c1a4c61934ccd9b52749539d87f4a622aeba273a",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.9.1.10, Localization; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s516-16-9-1-10-1-general",
+      "source": "sections/s516-16-9-1-10-1-general.md",
+      "source_hash": "2e393a2fab383fc7305ed97a6813a9b098ebec25706ade6b3881afba6e559b08",
+      "narrative": [
+        {
+          "text": "The general localization text explains that, so consumers can read manifest information in their own language, localization information for an assertion can be added as a dictionary in the assertion's metadata.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s517-16-9-1-10-2-localization-dictionary",
+      "source": "sections/s517-16-9-1-10-2-localization-dictionary.md",
+      "source_hash": "12c19beb0965bda58549fa66c07293fa23d806f364615d4d6e4a48c5049e3cdf",
+      "narrative": [
+        {
+          "text": "A localization dictionary shall be a single object whose keys map to translations indexed by language in the JSON-LD style, with dot notation used for nested keys and [n] array indexing for array elements, as shown in examples translating dc:title and actions[0].softwareAgent. Third-party keys and values must be namespaced (for example com.litware), and claim generators should supply their human-readable strings this way, as in an example localizing custom actions in a c2pa.actions assertion's metadata.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s518-16-9-2-regions-of-interest",
+      "source": "sections/s518-16-9-2-regions-of-interest.md",
+      "source_hash": "e5fc3711cabfc3a84ed908490f95c464e8aae721346af374eb2a448fbccd8824",
+      "narrative": [
+        {
+          "text": "Heading that opens Section 16.9.2, Regions of Interest; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s519-16-9-2-1-description",
+      "source": "sections/s519-16-9-2-1-description.md",
+      "source_hash": "712c3237804e7d3a4a2dfc4191db43433e8be09c6b316a8c05940df8dbb8cb10",
+      "narrative": [
+        {
+          "text": "The description explains that some assertions, such as an actions assertion, apply only to part of an asset, and that a region definition is used to describe that temporal, spatial, textual or combined portion.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s520-16-9-2-2-common",
+      "source": "sections/s520-16-9-2-2-common.md",
+      "source_hash": "d4df5435112371baf2c2e80ab27b56b7c4a39fb5975e78585efcaad9540567c0",
+      "narrative": [
+        {
+          "text": "The central part of a region is its range field, which may describe temporal, spatial, frame or textual ranges or a combination, though a note says how consumers use combinations is not yet defined. A region may also carry the common fields name, identifier, type (from a controlled vocabulary such as IPTC's or an entity-specific value) and description, while the older role field is deprecated and shall no longer be generated.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s521-16-9-2-2-1-ranges",
+      "source": "sections/s521-16-9-2-2-1-ranges.md",
+      "source_hash": "e52eced4d69d01a07706ee0c62862415e9f570b93372c2ca45c11cd44ba512b4",
+      "narrative": [
+        {
+          "text": "Every range has a type of spatial, temporal, frame, textual or identified, and shall contain the matching data object: shape, time, frame, text or item.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s522-16-9-2-2-2-spatial",
+      "source": "sections/s522-16-9-2-2-2-spatial.md",
+      "source_hash": "63999b4332d955367a39b8394d4d17ad1e8cf7345e9702ae0e36c875ab3b88b9",
+      "narrative": [
+        {
+          "text": "Spatial ranges use a shape object that can represent a rectangle, circle or polygon, modelled on the IPTC Region Boundary Structure.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s523-16-9-2-2-3-temporal",
+      "source": "sections/s523-16-9-2-2-3-temporal.md",
+      "source_hash": "8e7da82f5e0d9bd1d50cdf3336e95d359fef0698a1b26469da51377d8bf6c761",
+      "narrative": [
+        {
+          "text": "Temporal ranges use a time object running from a start to an end, expressed either as Normal Play Time (npt) relative to the start of the media or as absolute wall-clock time in RFC 3339 format, with npt the default and missing start or end values meaning the beginning or end of the asset; starts are inclusive and ends exclusive unless endInclusivity is set to inclusive. For wallClock ranges the end shall not precede the start and at least one shall be given, with the missing bound derived from the asset duration or, if unknown as in live streams, left open, and implementations should use minimal decimal precision and snap to the nearest earlier sample or frame where alignment matters.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s524-16-9-2-2-4-frames",
+      "source": "sections/s524-16-9-2-2-4-frames.md",
+      "source_hash": "914347c0573271cb91e0225c135213b3612f9bd984b44e5db9b4186a8d445810",
+      "narrative": [
+        {
+          "text": "A frame object defines an inclusive range of zero-based frames or pages, defaulting to the whole asset when start or end are absent, and while often used for document pages it may serve other media, though temporal ranges are recommended for time-based media where possible.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s525-16-9-2-2-5-textual",
+      "source": "sections/s525-16-9-2-2-5-textual.md",
+      "source_hash": "67abc6aa54640f8a56feaef21b87571cb63eb1657fcdeb99d35f47e04c0092ff",
+      "narrative": [
+        {
+          "text": "A text object defines a range using one or more W3C Web Annotation fragment identifiers, optionally refined by inclusive start and end character offsets that default to the whole fragment. A text-selector-range-map pairs a selector with an optional end selector to form a contiguous range, and multiple pairs can describe a non-contiguous range.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s526-16-9-2-2-6-identified",
+      "source": "sections/s526-16-9-2-2-6-identified.md",
+      "source_hash": "d3e14aab618ea204eca0a49c217a1a53386787e01b5cedfaf49f3ad35b2b9786",
+      "narrative": [
+        {
+          "text": "An item object identifies a track, media item or other discrete content item in the asset's container, using an identifier that should follow the container's naming scheme (track_id for MP4, item_ID for HEIF) and a value, so that for example track 2 of an MP4 could be singled out. Identified ranges can also name a region by a semantic value from an ontology such as the Foundational Model of Anatomy, in which case the identifier shall be the URL or URI of that schema.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s527-16-9-2-3-schema",
+      "source": "sections/s527-16-9-2-3-schema.md",
+      "source_hash": "59f6804111c730390c72541f293655509a40dcbe62ce564fb433ed7c257c0af6",
+      "narrative": [
+        {
+          "text": "The block gives the CDDL schema for the region-map rule, pointing to Section G.5.10 for the complete normative version. It defines region-map with a required array of range-map entries plus optional name, identifier, type, deprecated role, description and metadata, and range-map with a type choice of spatial, temporal, frame, textual or identified and the corresponding shape, time, frame, text or item objects. Supporting rules define shape-map (rectangle, circle or polygon in pixel or percent units with origin, size, inside and vertices), npt and wallClock time maps with regex-constrained start and end and endInclusivity, frame-map, the text selector maps, and item-map with identifier and value.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s528-16-9-2-4-examples",
+      "source": "sections/s528-16-9-2-4-examples.md",
+      "source_hash": "70d7f492f71e149d4e9cee683be8103ee25a481efc466832893ab218b06dd84e",
+      "narrative": [
+        {
+          "text": "The block gives a series of region examples in CBOR diagnostic notation. They cover a combined temporal and spatial range in a video, textual ranges in DOCX, tagged and untagged PDF, Excel cells and table cells, a frame range for deleted PDF pages, a specific video track via an identified range, and an anatomy-based identified range spanning the whole asset.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s529-17-patent-policy",
+      "source": "sections/s529-17-patent-policy.md",
+      "source_hash": "9cd5b9535b1df594e3a104bc825ee6a429b00ffe6aebaef753d396aa20b7fc2b",
+      "narrative": [
+        {
+          "text": "The patent policy states that the C2PA follows the W3C Patent Policy (2004), with each Working Group Participant committing to license its Essential Claims in Approved Deliverables on W3C royalty-free terms, while source code is covered by the Working Group charter licence. Before a draft is approved a participant may exclude Essential Claims by written Exclusion Notice to the chair, identifying the patents or applications concerned, with any claims not listed remaining under the commitment and the chair publishing the notices.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s530-appendix-a-embedding-manifests",
+      "source": "sections/s530-appendix-a-embedding-manifests.md",
+      "source_hash": "cd5c2537373959a99e77d3a9361591e48d619c36cb4480ea179be094fa1b14f8",
+      "narrative": [
+        {
+          "text": "Heading that opens Appendix A, Embedding manifests; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s531-a-1-supported-formats",
+      "source": "sections/s531-a-1-supported-formats.md",
+      "source_hash": "fa003c7969c8e3073fdac7d95234755bbf5e008fbd767cf5b8fc49277ac99f82",
+      "narrative": [
+        {
+          "text": "The supported formats section says a C2PA Manifest is embedded as part of the asset's C2PA Manifest Store, whose location depends on the asset's format. It provides an alphabetical table mapping each well-known format, from append-only text files, AVI and DNG through JPEG, MP4, PDF, PNG, SVG, TTML, WARC, WebP and WebVTT, to its IANA media type, normative reference and the specification section that defines its embedding. Notes say native FLAC is under consideration and explain that a dash means no registered IANA media type or no cited normative reference.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s532-a-2-embedding-manifests-in-multi-part-assets",
+      "source": "sections/s532-a-2-embedding-manifests-in-multi-part-assets.md",
+      "source_hash": "42e6c748f93fe27b221420452f29777381cd2a4fa14aaee2e22edcc3e6833f6e",
+      "narrative": [
+        {
+          "text": "For a multi-part asset, a C2PA Manifest Store shall be embedded in the primary part, containing the active manifest, whose multi-asset hash assertion shall give the location and hash of each part and should describe the provenance of the whole, while other parts may carry their own stores.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s533-a-3-embedding-manifests-into-non-bmff-based-asse",
+      "source": "sections/s533-a-3-embedding-manifests-into-non-bmff-based-asse.md",
+      "source_hash": "57e236e44646c48ab82133e8a33b0c26fa0ef5e1b1ad9b531a3264ada25b4f81",
+      "narrative": [
+        {
+          "text": "Heading that opens Section A.3, Embedding manifests into non-BMFF-based assets; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s534-a-3-1-embedding-manifests-into-jpeg-1",
+      "source": "sections/s534-a-3-1-embedding-manifests-into-jpeg-1.md",
+      "source_hash": "52138303f830f9f897fcd95f8aee2695a572a1d8455819285bc9007117f93053",
+      "narrative": [
+        {
+          "text": "In JPEG 1 the C2PA Manifest Store shall be carried in APP11 marker segments, written as multiple sequential, contiguous segments when it exceeds the 64K segment limit, with the same method applied to Exif compressed files and, for CIPA Multi-Picture Format assets, to the APP11 segment of the first image.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s535-a-3-2-embedding-manifests-into-png",
+      "source": "sections/s535-a-3-2-embedding-manifests-into-png.md",
+      "source_hash": "fd876da146514862b25574948b64ce9059e54bfbedee8c30e2e5362d86b8cd5f",
+      "narrative": [
+        {
+          "text": "In PNG the C2PA Manifest Store shall be embedded in an ancillary, private, not-safe-to-copy chunk of type caBX that precedes the IDAT chunks.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s536-a-3-3-embedding-manifests-into-svg",
+      "source": "sections/s536-a-3-3-embedding-manifests-into-svg.md",
+      "source_hash": "0afb85514c5af29a053590a90e18b32265a1fba372f38645ceea5d011f796b24",
+      "narrative": [
+        {
+          "text": "For SVG, the binary C2PA Manifest Store must be Base64-encoded, though an external manifest is preferred. When embedded it shall be the value of a c2pa:manifest element inside the SVG metadata element, and an xmlns:c2pa namespace declaration should be added to the svg element, as an example shows.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s537-a-3-4-embedding-manifests-into-ttml",
+      "source": "sections/s537-a-3-4-embedding-manifests-into-ttml.md",
+      "source_hash": "86e62311f5c605757361a197369928b222ea1bd9358f1b039c3aca3229ffa836",
+      "narrative": [
+        {
+          "text": "For standalone TTML files (application/ttml+xml) the C2PA Manifest Store shall be Base64-encoded in a c2pa:manifest element at /tt:tt/tt:head/tt:metadata/c2pa:manifest with the c2pa namespace declared on the root element, whereas TTML carried inside a BMFF container uses the BMFF embedding instead, and an external manifest is preferred where toolchains drop foreign-namespace elements. Implementations shall not treat this element as a conformance error even in constrained profiles such as IMSC or EBU-TT-D, and the claim generator shall include a c2pa.hash.data assertion whose single exclusion range covers the c2pa:manifest element from opening to closing tag.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s538-a-3-5-embedding-manifests-into-id3",
+      "source": "sections/s538-a-3-5-embedding-manifests-into-id3.md",
+      "source_hash": "5a40471a3bcf2ccc64b6abe71db90506476f4b6e02ca5c1bcaeb26d92d1364da",
+      "narrative": [
+        {
+          "text": "In ID3v2-compatible audio files such as MP3 or FLAC, the C2PA Manifest Store shall be embedded as the encapsulated data of a General Encapsulated Object (GEOB) whose MIME type field is set to the JUMBF media type.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s539-a-3-6-embedding-manifests-into-standard-midi-fil",
+      "source": "sections/s539-a-3-6-embedding-manifests-into-standard-midi-fil.md",
+      "source_hash": "90bfee602c03103f939f88e5e9e3fadae42de3656262f9dd93a6eda6b0c04d77",
+      "narrative": [
+        {
+          "text": "The section introduces embedding in Standard MIDI Files, describing their MThd header and MTrk track chunks and the Sequencer-Specific Meta Event (FF 7F) for application data, and notes that MIDI 2.0 Clip Files are not covered.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s540-a-3-6-1-c2pa-manifest-store-embedding",
+      "source": "sections/s540-a-3-6-1-c2pa-manifest-store-embedding.md",
+      "source_hash": "c129bd099d79504a925644a76ea07961e7075115bc8bf16f06c636979d757cae",
+      "narrative": [
+        {
+          "text": "The C2PA Manifest Store shall be embedded as an FF 7F Sequencer-Specific Meta Event placed just before the End of Track event in a designated track (the sole track for Format 0, the last for Format 1, the first for Format 2), with its data starting with the extended manufacturer identifier 0x00 0x43 0x32 followed by the store bytes. Only one such event is allowed, with duplicates meaning no manifest is treated as located, and the inserted event shall have delta-time 0 while any non-zero delta-time from the original End of Track moves to the following FF 2F event so track duration is unchanged.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s541-a-3-6-2-locating-the-manifest-store",
+      "source": "sections/s541-a-3-6-2-locating-the-manifest-store.md",
+      "source_hash": "058e63f8d8273b670111e52d58a0f5f184f7ec435f548603f4073c668804137b",
+      "narrative": [
+        {
+          "text": "A validator shall locate the manifest store by parsing MThd for the file format, picking the designated track, scanning it to End of Track for an FF 7F event starting with 0x00 0x43 0x32 whose remaining bytes are the store, and treating the asset as having no manifest if none is found.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s542-a-3-6-3-data-hash-binding",
+      "source": "sections/s542-a-3-6-3-data-hash-binding.md",
+      "source_hash": "cbe54c6e617e6c49c0bc9a5a67d948649228e5ca55e912e8de25fb7f26a6bed9",
+      "narrative": [
+        {
+          "text": "A claim generator shall include a c2pa.hash.data assertion whose single exclusion range covers only the C2PA Manifest Store bytes following the manufacturer identifier, while the FF 7F status bytes, length field and identifier stay inside the hash and unchanged between passes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s543-a-3-6-4-writing-a-manifest-store",
+      "source": "sections/s543-a-3-6-4-writing-a-manifest-store.md",
+      "source_hash": "e8d51389cc788d39bbfb24b6f77543c6f6ca97278b3f41578e591e15b435d30e",
+      "narrative": [
+        {
+          "text": "Writing a manifest store into a MIDI file reserves a placeholder FF 7F event before End of Track, hashes the file excluding the placeholder, signs, and then replaces the placeholder with the signed store of identical length, keeping the event's length field and its encoding unchanged.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s544-a-3-6-5-re-embedding-a-manifest-store",
+      "source": "sections/s544-a-3-6-5-re-embedding-a-manifest-store.md",
+      "source_hash": "8da553aa78a1968cec1559faaf520dfaf746c7a894a90ec8f7afe21c2bb359d6",
+      "narrative": [
+        {
+          "text": "When re-embedding a manifest store of a different size, the existing FF 7F event cannot be patched in place, so the claim generator shall remove it, reserve a new one before End of Track, recompute the designated track chunk's 4-byte length, and repeat the two-pass hash, sign and replace flow. A note explains that because offsets are recomputed each pass, update manifests need not stay at a fixed file offset, unlike TIFF.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s545-a-3-7-embedding-manifests-into-ogg-vorbis",
+      "source": "sections/s545-a-3-7-embedding-manifests-into-ogg-vorbis.md",
+      "source_hash": "ab92386e266000a320d2a7ceefaf6d715e8d6027ab29e9ffb4cff0c5d426745d",
+      "narrative": [
+        {
+          "text": "In Ogg Vorbis the C2PA Manifest Store shall be embedded in its own logical bitstream whose first packet begins with the 5-byte identifier \\x00c2pa followed by the store data.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s546-a-3-8-embedding-manifests-into-tiff-based-assets",
+      "source": "sections/s546-a-3-8-embedding-manifests-into-tiff-based-assets.md",
+      "source_hash": "2a7f302ae83288ab67ee4f84f69fe9625e7ed07255e63f0fdf1ea5e16a2aed8a",
+      "narrative": [
+        {
+          "text": "For TIFF-based files, including Exif uncompressed, TIFF/EP, DNG and other TIFF-based RAW formats, the C2PA Manifest Store shall be embedded as the data of tag 52545 (0xCD41) with tag type 7, and the TIFF ByteOrder does not govern its endianness. There shall be only one store per asset, placed in the last IFD of the main chain (in the single main IFD or a new IFD after it, otherwise as the only entry in its IFD), and it should sit at the end of the file to support update manifests without disturbing other offsets.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s547-a-3-9-embedding-manifests-into-riff-based-assets",
+      "source": "sections/s547-a-3-9-embedding-manifests-into-riff-based-assets.md",
+      "source_hash": "4eed17b76734a867b44bb368037803732f97952ac16d9678d385f99b7dab3fa8",
+      "narrative": [
+        {
+          "text": "In RIFF-based files such as WAV, BWF, AVI and WebP, the C2PA Manifest Store shall be embedded as the data of a chunk with identifier C2PA that is the last sub-chunk of the first RIFF header chunk.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s548-a-3-10-embedding-manifests-into-gifs",
+      "source": "sections/s548-a-3-10-embedding-manifests-into-gifs.md",
+      "source_hash": "586b19925b8a36bd3af095899de88134972ae81bed2fea7b8dc9eed8789b9430",
+      "narrative": [
+        {
+          "text": "In GIF the C2PA Manifest Store shall be split into data sub-blocks of at most 255 bytes inside a single Application Extension block with identifier C2PA_GIF, whose Application Authentication Code serves as a block version (initially 1.0). The block layout is given in full and the block shall be placed after the header and before the first image descriptor.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s549-a-3-11-embedding-manifests-into-jpeg-xl",
+      "source": "sections/s549-a-3-11-embedding-manifests-into-jpeg-xl.md",
+      "source_hash": "ca65ade4e25faea9372c607239ff77d9c0d4ee0ccff7c7f4fc2e3e59308c095a",
+      "narrative": [
+        {
+          "text": "A JPEG XL file using the box structure shall contain at most one top-level JUMBF superbox holding the C2PA Manifest Store, not shared with other JUMBF boxes, while a bare JPEG XL codestream cannot carry an embedded manifest, as an accompanying figure illustrates.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s550-a-3-12-embedding-manifests-into-fonts",
+      "source": "sections/s550-a-3-12-embedding-manifests-into-fonts.md",
+      "source_hash": "108304ff7a4baa28d637a56b632d1a5075fe67d6f4894518b5e5cf75e8e07324",
+      "narrative": [
+        {
+          "text": "Fonts conforming to Open Font Format or OpenType may include a C2PA table holding an embedded manifest, a remote manifest URI or both, and the block notes that the table's definition that follows is preliminary.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s551-a-3-12-1-table-tag",
+      "source": "sections/s551-a-3-12-1-table-tag.md",
+      "source_hash": "d13e5b93d5e2ad4987871438e9109c7a059edf8b5e05344af00696642e36bc9b",
+      "narrative": [
+        {
+          "text": "The C2PA font table is identified by the table tag C2PA.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s552-a-3-12-2-table-record",
+      "source": "sections/s552-a-3-12-2-table-record.md",
+      "source_hash": "1f366aa8ce05471c51f7c3ed894475be96b42c897f8eb726c97dcde0f3c126b7",
+      "narrative": [
+        {
+          "text": "The C2PA font table record, given in Table 12, supports embedded, remote or both kinds of manifest store through the fields majorVersion, minorVersion, activeManifestUriOffset, activeManifestUriLength, reserved, manifestStoreOffset and manifestStoreLength, with a NULL offset recommended when a URI or store is absent. A non-embedded manifest may be remote or on the same storage system, and a JUMBF URI reference should be valid within the store.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s553-a-3-13-embedding-manifests-into-facti-facta-fact",
+      "source": "sections/s553-a-3-13-embedding-manifests-into-facti-facta-fact.md",
+      "source_hash": "058138f8805372bd8f22ec05142c84124be71f76872bae5ee58d454d823176e7",
+      "narrative": [
+        {
+          "text": "The section introduces the IANA-registered BlockFact container formats .facti, .facta and .factv, listing their media types and describing their layout of a fixed header, JSON metadata with format_version and media_length, a media payload and typed extension blocks.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s554-a-3-13-1-c2pa-manifest-store-embedding",
+      "source": "sections/s554-a-3-13-1-c2pa-manifest-store-embedding.md",
+      "source_hash": "32494bbcab542fa00115498609eca83d721dc579389ba9db44b5749d6debc6c2",
+      "narrative": [
+        {
+          "text": "In these formats the C2PA Manifest Store shall be stored, without extra framing, as the data of an extension block of type C2PA.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s555-a-3-13-2-locating-the-manifest-store",
+      "source": "sections/s555-a-3-13-2-locating-the-manifest-store.md",
+      "source_hash": "b8569d91072051e456a708fc5544a7699e335219643dd81f288dc1d552e6adfb",
+      "narrative": [
+        {
+          "text": "Extracting the manifest store involves reading the magic bytes and metadata length, parsing the JSON metadata for media_length, skipping the media payload, and iterating the extension blocks to find the one of type C2PA.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s556-a-3-13-3-data-hash-binding",
+      "source": "sections/s556-a-3-13-3-data-hash-binding.md",
+      "source_hash": "e1d1e61c05d12da161be1c367bab87f3430454925c440782b9e5a0477578e735",
+      "narrative": [
+        {
+          "text": "The c2pa.hash.data assertion shall cover the whole file with a single exclusion range spanning the C2PA block's data, beginning just after its type and length fields.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s557-a-3-13-4-writing-a-manifest-store",
+      "source": "sections/s557-a-3-13-4-writing-a-manifest-store.md",
+      "source_hash": "88c8f66eee4115ae712059f6120c09de31dc2f31b9a2958a4d0b937e5d44c13e",
+      "narrative": [
+        {
+          "text": "Writing follows the usual placeholder, hash, sign and same-length replace flow, only one C2PA block is allowed per file (duplicates mean no manifest is treated as located), and consumers shall ignore unrecognised extension block types.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s558-a-3-14-embedding-manifests-into-parquet",
+      "source": "sections/s558-a-3-14-embedding-manifests-into-parquet.md",
+      "source_hash": "aed4ce05b53adb1367fedcb63167b4ad5168e6fff2bb0424e2f9dcc08d5a5a5f",
+      "narrative": [
+        {
+          "text": "The section introduces Apache Parquet, describing its row groups and Thrift-encoded FileMetaData footer with optional key_value_metadata and trailing length and PAR1 magic number, and notes that manifests can only be embedded in non-encrypted Parquet files.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s559-a-3-14-1-c2pa-manifest-store-embedding",
+      "source": "sections/s559-a-3-14-1-c2pa-manifest-store-embedding.md",
+      "source_hash": "fecbd99776c97b250e7f5105294ff1939cf43cb1dbbaaff4c09062e3095dd5ea",
+      "narrative": [
+        {
+          "text": "In Parquet the C2PA Manifest Store shall be Base64-encoded and stored as the value of a single key_value_metadata entry with key c2pa:manifest in the footer's FileMetaData, with more than one such entry meaning no manifest is treated as located.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s560-a-3-14-2-data-hash-binding",
+      "source": "sections/s560-a-3-14-2-data-hash-binding.md",
+      "source_hash": "02b1fd0cae70c43f480ce7090254c0e75fc3b0f5ba961155542fde48a6a528be",
+      "narrative": [
+        {
+          "text": "A claim generator shall include a c2pa.hash.data assertion whose single exclusion range covers only the Base64-encoded value bytes of the c2pa:manifest entry in the serialized footer.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s561-a-3-14-3-writing-a-manifest-store",
+      "source": "sections/s561-a-3-14-3-writing-a-manifest-store.md",
+      "source_hash": "c4b1f34bef2f01f75d972281ccafe1748d9d744da6e0ca566f567e4fa9c16e4c",
+      "narrative": [
+        {
+          "text": "Writing a manifest into Parquet reserves a placeholder c2pa:manifest entry, hashes the file with the placeholder excluded, signs, and replaces the value with the same-length encoded manifest, so the footer length stays valid. Since Parquet libraries usually rewrite footers wholesale, claim generators should check that their writer preserves the entry's exact byte length and the order of key_value_metadata entries.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s562-a-3-15-embedding-manifests-into-onnx",
+      "source": "sections/s562-a-3-15-embedding-manifests-into-onnx.md",
+      "source_hash": "aae3b62af9af0faaa7381d22f282c30d5d9a288495d4b1155004dbd431441167",
+      "narrative": [
+        {
+          "text": "The section introduces ONNX as a format for trained machine learning models, consisting of a Protocol Buffers-encoded ModelProto whose metadata_props field holds key/value pairs.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s563-a-3-15-1-c2pa-manifest-store-embedding",
+      "source": "sections/s563-a-3-15-1-c2pa-manifest-store-embedding.md",
+      "source_hash": "47c97e94f72f798790a440f6b85a70cc40b7e3f17a798b2921c1cf32002fbeae",
+      "narrative": [
+        {
+          "text": "In ONNX the C2PA Manifest Store shall be Base64-encoded and stored as the value of a single metadata_props entry with key c2pa:manifest, with more than one such entry meaning no manifest is treated as located.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s564-a-3-15-2-data-hash-binding",
+      "source": "sections/s564-a-3-15-2-data-hash-binding.md",
+      "source_hash": "042e497309d8c0bc32a4585823cad236ae1d3acc1783f2c195cf7d1daa943277",
+      "narrative": [
+        {
+          "text": "A claim generator embedding a manifest in ONNX shall include a c2pa.hash.data assertion whose single exclusion range covers the Base64-encoded value bytes of the c2pa:manifest entry in the serialized ModelProto.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
