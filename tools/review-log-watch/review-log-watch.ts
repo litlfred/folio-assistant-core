@@ -25,6 +25,7 @@ export default toolFactory((t) =>
     },
     satisfies: ["review-log-watch"],
     requires: { runtime: ["bun"], network: true },
+    remedies: [{ host: "api.github.com", none: "The issues are held by GitHub. Without it, pass `--issues` with a saved copy of the issues API answer; the check then compares the sheet against that copy." }],
     selection: {
       when: "On every poll of a review-log watcher, before any agent work: the agent pass runs only when this reports `changed`.",
       limits: "Reads one tab and one repository's open issues; it never writes the sheet or GitHub. It sees an edit only in the watched headers, so the agent's own Green columns and the script's Grey ones never wake the watcher.",
