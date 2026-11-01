@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: review-log-watch\n"
-"POT-Creation-Date: 2026-11-01T12:02:40.480Z\n"
+"POT-Creation-Date: 2026-11-01T21:47:49.387Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: zh\n"
@@ -14,44 +14,54 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:85
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:99
 #. Diagram label
 msgid "Accept the new state"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:79
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:87
 #. Diagram label
 msgid "Agent pass on the changed rows"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:73
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:81
 #. Diagram label
 msgid "Append rows for new issues; hide closed ones"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:102
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:117
 #. Diagram label
 msgid "changed"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:91
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:105
 #. Diagram label
 msgid "Changes handled"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:50
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:52
 #. Diagram label
-msgid "Every 3 minutes"
+msgid "Every minute"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:80
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:88
 #. Diagram element documentation
 msgid "For each changed row, the agent pass of Contributor feedback on a working draft: a new or edited row gets a proposal, Ready for agent = Yes gets its edit, Ready for merge = Yes its merge, and a Blue answer to a Decision needed question is taken up. The agent records its step on the Agent tab at once, with the real time."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:74
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:82
 #. Diagram element documentation
 msgid "For each row in the tool's append list (one per issue that no row's Issue cell links yet; owner, Q-WATCH2 B), appends it below the last row of Contributor Feedback: Title is the issue's title, the first Contributor Feedback column @login (#N): the issue's first paragraph, Issue its URL. The script gives each new row its Change-set id. No other writer adds issue rows. Then each row linking a closed issue (the tool's closedRows, and the rows just appended as closed) is hidden and its text struck through (owner, 2026-11-01 10:18Z)."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:94
+#. Diagram element documentation
+msgid "For every row the pass or the stall check wrote, Record agent step: the Agent tab row first (status, pull request, preview, step), then Feedback (agent) from it, then read back Agentic status and Staging review. A row whose Feedback (agent) names a pull request or preview its Agent row does not, or whose Agent step is not \"<step> <time>\", is fixed here (owner, 2026-11-01)."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:69
+#. Diagram label
+msgid "Hand new feedback to the row's agent; take over stalled rows"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/review-log-watch.bpmn:36
@@ -59,14 +69,19 @@ msgstr ""
 msgid "Log watcher (authoring agent)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:95
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:109
 #. Diagram element documentation
 msgid "No agent work: the next wake is queued and the poll ends."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:94
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:108
 #. Diagram label
 msgid "Nothing changed"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:70
+#. Diagram element documentation
+msgid "On every poll, changed or not, new Blue feedback goes verbatim to the agent working the row, and a stalled row is restarted or taken over, on the owner's rule of 2026-11-01 21:08Z. For each row: new Blue feedback goes, verbatim and in the same poll, to the thread that owns the row (named in its Agent row or Feedback (agent)), and Feedback (agent) says who has it. A row is stalled when its Blue cells changed, or Ready for agent turned Yes, more than 10 minutes ago and no Agent step was recorded since; or when its agent recorded no step for 2 hours. A stalled row's owning thread is asked once; with no answer within 10 minutes, or a thread that is done or stopped, the watcher takes the row over, or asks the coordinator for a new thread, and writes the new owner, the step and a link into Feedback (agent). The owner's words: \"when new feedback check if current agent is still working and provide it to them. if not try and pick up\"; \"agent should also watch for stalled and restart as needed\"."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/review-log-watch.bpmn:28
@@ -74,14 +89,19 @@ msgstr ""
 msgid "One poll of one drafting review log (a Contributor Feedback sheet) and its folio repository. A tool decides, with no agent judgement, whether anything a person set in the sheet or any open issue changed since the last poll. Only then does the agent append rows for new issues and do its pass. Skill: review-log-watch."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:55
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:57
 #. Diagram label
 msgid "Read the Contributor Feedback tab"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:56
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:58
 #. Diagram element documentation
 msgid "Reads Watch!F1:I1, the hash of the person-set cells that the sheet script writes on every refresh (Q-WATCH4 A), and Contributor Feedback's header row and Issue column, and saves them as JSON for the check. A sheet without the Watch hash yet is read whole. Reading is not agent work: it changes nothing."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:93
+#. Diagram label
+msgid "Record agent step on each row it wrote"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/review-log-watch.bpmn:27
@@ -94,22 +114,22 @@ msgstr ""
 msgid "Review-log watch — one poll of one log"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:61
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:63
 #. Diagram label
 msgid "Run the review-log-watch check"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:86
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:100
 #. Diagram element documentation
 msgid "Runs the check again with --accept, so the state file holds what was just handled and the next poll compares against it. A row the pass could not finish stays changed and is picked up on the next poll."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:62
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:64
 #. Diagram element documentation
 msgid "Runs Tool review-log-watch with the folio repository, the saved values and the log's state file. The tool reads the repository's open and closed issues (no pull requests, no issue labelled no-sheet) and compares a digest of them and of the cells people set (Title, Selected Sections, Contributor Feedback, Disposition, Ready for agent, Ready for merge, Dispositions confirmed) with the last check's. It writes nothing."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:67
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:75
 #. Diagram label
 msgid "Sheet or issues changed?"
 msgstr ""
@@ -119,17 +139,17 @@ msgstr ""
 msgid "The agent thread that watches the log. Until the check says changed it only reads and runs the tool."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:68
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:76
 #. Diagram element documentation
-msgid "The tool's status. unchanged (exit 0): the poll ends and no agent work starts. changed (exit 10): its changes and the rows to append go on."
+msgid "The tool's status. unchanged (exit 0): the poll ends and no other agent work starts. changed (exit 10): its changes and the rows to append go on."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:51
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:53
 #. Diagram element documentation
-msgid "The watcher's poll: a chain of 3-minute delayed wakes, each queuing the next, with an hourly scheduled task that restarts the chain if it breaks (owner, 2026-11-01 10:20Z: \"instead of 1-minute lets do 3\")."
+msgid "The watcher's poll: a chain of 1-minute delayed wakes, each queuing the next before it reads anything, with an hourly scheduled task that restarts the chain if it breaks (owner, 2026-11-01 19:47Z: every 1 minute, never skipping a poll during long work; it was 3 minutes from 10:20Z)."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:103
+#: ../folio-assistant-core/processes/content/review-log-watch.bpmn:118
 #. Diagram label
 msgid "unchanged"
 msgstr ""

@@ -57,6 +57,7 @@
         <bpmn:flowNodeRef>Task_Propose</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_EditInPullRequest</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Merge</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_CloseChangeSet</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Merged</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Editor" name="Editor" partitionElementRef="editor">
@@ -81,7 +82,7 @@
       <bpmn:outgoing>CF02</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:serviceTask id="Task_Propose" name="Propose a direction">
-      <bpmn:documentation>Reads: the row (Title, Selected Sections, the Contributor Feedback columns, Disposition) and the sections it names. Writes: a proposed direction in Feedback (agent) (Green), and the row's feedback basis on the Agent tab, so the script can tell when the feedback has moved on. A question for people goes in Feedback (agent) as a Decision needed block with options and a recommendation, and the row's Agentic status becomes Needs human; a chat card may repeat it, but the sheet is the record. An answered question leaves the feedback: its decision is added to the change set's Disposition (change set) on the Agent tab, shown in Disposition (agent), whose decision history is appended to and never removed (owner, 2026-10-31).</bpmn:documentation>
+      <bpmn:documentation>Reads: the row (Title, Selected Sections, the Contributor Feedback columns, Disposition) and the sections it names. Writes: a proposed direction in Feedback (agent) (Green), and the row's feedback basis on the Agent tab, so the script can tell when the feedback has moved on. A question for people goes in Feedback (agent) as a Decision needed block with options and a recommendation, and the row's Agentic status becomes Needs human; a chat card may repeat it, but the sheet is the record. An answered question leaves the feedback: its decision is added to the change set's Disposition (change set) on the Agent tab, shown in Disposition (agent), whose decision history is appended to and never removed (owner, 2026-10-31). It ends with Record agent step (record-agent-step.bpmn): the Agent tab row first, then Feedback (agent) from it, then the sheet read back, never Feedback (agent) alone (owner, 2026-11-01).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF02</bpmn:incoming>
       <bpmn:incoming>CF07</bpmn:incoming>
@@ -94,7 +95,7 @@
       <bpmn:outgoing>CF04</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:serviceTask id="Task_EditInPullRequest" name="Edit the document in the row's pull request">
-      <bpmn:documentation>One row, one branch, one active pull request (owner, 2026-10-31): the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again. A closed pull request the committee wants back is reopened, or replaced by a new one on the same branch; earlier ones stay listed in Agentic status. Agentic status (Green) says where it is, and Staging review opens the preview's what-changed page. Before the preview is staged, the agent writes the change set's Disposition (change set) on the Agent tab: one line per feedback item, starting from the people's Blue Disposition, after an optional Overall statement; the sheet shows it in Disposition (agent) and flags any item without a disposition, or one that differs from the people's (owner, 2026-10-31).</bpmn:documentation>
+      <bpmn:documentation>One row, one branch, one active pull request (owner, 2026-10-31): the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again. A closed pull request the committee wants back is reopened, or replaced by a new one on the same branch; earlier ones stay listed in Agentic status. Agentic status (Green) says where it is, and Staging review opens the preview's what-changed page. Before the preview is staged, the agent writes the change set's Disposition (change set) on the Agent tab: one line per feedback item, starting from the people's Blue Disposition, after an optional Overall statement; the sheet shows it in Disposition (agent) and flags any item without a disposition, or one that differs from the people's (owner, 2026-10-31). It ends with Record agent step (record-agent-step.bpmn): the Agent tab row first, then Feedback (agent) from it, then the sheet read back, never Feedback (agent) alone (owner, 2026-11-01).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF04</bpmn:incoming>
       <bpmn:incoming>CF12</bpmn:incoming>
@@ -113,7 +114,7 @@
       <bpmn:outgoing>CF08</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:serviceTask id="Task_QaGate" name="QA gate: review dispositions against the people and the pull request">
-      <bpmn:documentation>Reads: the change set's Disposition (change set), the people's Blue Disposition and feedback, the pull request's diff at its head commit, and the staging QA report. Checks that every feedback item has one disposition; that each agrees with the people's Blue Disposition; that each Accepted or Partially accepted item has the change in the diff, and a Not accepted, Noted, Duplicate or Out of scope item has none; that the diff changes nothing no disposition accounts for; and that the QA report for the staged commit has no failing gate. Writes: QA gate (change set) on the Agent tab, first line "Passed &lt;head sha&gt;: …" or "Failed &lt;head sha&gt;: &lt;why&gt;", and QA report (change set), the report's link. The sheet shows the gate under Staging review; a pass for an older commit reads as stale (owner, 2026-10-31).</bpmn:documentation>
+      <bpmn:documentation>Reads: the change set's Disposition (change set), the people's Blue Disposition and feedback, the pull request's diff at its head commit, and the staging QA report. Checks that every feedback item has one disposition; that each agrees with the people's Blue Disposition; that each Accepted or Partially accepted item has the change in the diff, and a Not accepted, Noted, Duplicate or Out of scope item has none; that the diff changes nothing no disposition accounts for; and that the QA report for the staged commit has no failing gate. Writes: QA gate (change set) on the Agent tab, first line "Passed &lt;head sha&gt;: …" or "Failed &lt;head sha&gt;: &lt;why&gt;", and QA report (change set), the report's link. The sheet shows the gate under Staging review; a pass for an older commit reads as stale (owner, 2026-10-31). It ends with Record agent step (record-agent-step.bpmn): the Agent tab row first, then Feedback (agent) from it, then the sheet read back, never Feedback (agent) alone (owner, 2026-11-01).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF08</bpmn:incoming>
       <bpmn:outgoing>CF11</bpmn:outgoing>
@@ -130,13 +131,19 @@
       <bpmn:outgoing>CF09</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:serviceTask id="Task_Merge" name="Merge the pull request">
-      <bpmn:documentation>The agent merges the row's pull request, and Agentic status says merged. The change set's Dispositions blurb, as it stands when Ready for merge is set to Yes, is the summary: it goes into the merge, and closes the change set's issue (owner, 2026-10-31).</bpmn:documentation>
+      <bpmn:documentation>The agent merges the row's pull request, and Agentic status says merged. The change set's Dispositions blurb, as it stands when Ready for merge is set to Yes, is the summary: it goes into the merge, and closes the change set's issue (owner, 2026-10-31). It ends with Record agent step (record-agent-step.bpmn): the Agent tab row first, then Feedback (agent) from it, then the sheet read back, never Feedback (agent) alone (owner, 2026-11-01).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-script"/></bpmn:extensionElements>
       <bpmn:incoming>CF09</bpmn:incoming>
       <bpmn:outgoing>CF10</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:endEvent id="EndEvent_Merged" name="Change merged">
+    <bpmn:serviceTask id="Task_CloseChangeSet" name="Close the change set: the issue, then the sheet row">
+      <bpmn:documentation>Closing is one step with two tools, GitHub and the review sheet (owner, 2026-11-01 21:50Z: "if agent close it, that is part of close process (github issue and google sheet as tools)"). The agent closes the change set's issue on GitHub, with the merge or the reason it closed unmerged, then records Agentic status Closed (or Change merged) on the Agent tab through Record agent step (record-agent-step.bpmn). The sheet script then hides the row and strikes the whole row through ("make sure complete changeset rows are hidden so not cluttered and that text of that whole row is crossed out"). The agent never hides or strikes a row by hand, and never deletes one: reopening the issue and writing a new status shows it again. Hiding and striking are formatting only, which the review-log watcher ignores. A change set closed without a merge, at a person's request, takes this step too.</bpmn:documentation>
+      <bpmn:extensionElements><bootstrap.processes:skill ref="review-sheet-agent-columns"/></bpmn:extensionElements>
       <bpmn:incoming>CF10</bpmn:incoming>
+      <bpmn:outgoing>CF14</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:endEvent id="EndEvent_Merged" name="Change merged and closed">
+      <bpmn:incoming>CF14</bpmn:incoming>
     </bpmn:endEvent>
 
     <bpmn:sequenceFlow id="CF01" sourceRef="StartEvent_Feedback" targetRef="Task_StartRow" />
@@ -151,25 +158,26 @@
     <bpmn:sequenceFlow id="CF12" name="failed" sourceRef="Gateway_QaPassed" targetRef="Task_EditInPullRequest" />
     <bpmn:sequenceFlow id="CF13" name="passed" sourceRef="Gateway_QaPassed" targetRef="Task_ReadyForMerge" />
     <bpmn:sequenceFlow id="CF09" sourceRef="Task_ReadyForMerge" targetRef="Task_Merge" />
-    <bpmn:sequenceFlow id="CF10" sourceRef="Task_Merge" targetRef="EndEvent_Merged" />
+    <bpmn:sequenceFlow id="CF10" sourceRef="Task_Merge" targetRef="Task_CloseChangeSet" />
+    <bpmn:sequenceFlow id="CF14" sourceRef="Task_CloseChangeSet" targetRef="EndEvent_Merged" />
   </bpmn:process>
 
   <bpmndi:BPMNDiagram id="BPMNDiagram_ContributorFeedback">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_ContributorFeedback">
       <bpmndi:BPMNShape id="Participant_ContributorFeedback_di" bpmnElement="Participant_ContributorFeedback" isHorizontal="true">
-        <dc:Bounds x="160" y="60" width="1956" height="660" />
+        <dc:Bounds x="160" y="60" width="2136" height="660" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Committee_di" bpmnElement="Lane_Committee" isHorizontal="true">
-        <dc:Bounds x="190" y="60" width="1926" height="180" />
+        <dc:Bounds x="190" y="60" width="2106" height="180" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Agent_di" bpmnElement="Lane_Agent" isHorizontal="true">
-        <dc:Bounds x="190" y="240" width="1926" height="160" />
+        <dc:Bounds x="190" y="240" width="2106" height="160" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Editor_di" bpmnElement="Lane_Editor" isHorizontal="true">
-        <dc:Bounds x="190" y="400" width="1926" height="160" />
+        <dc:Bounds x="190" y="400" width="2106" height="160" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_QaReviewer_di" bpmnElement="Lane_QaReviewer" isHorizontal="true">
-        <dc:Bounds x="190" y="560" width="1926" height="160" />
+        <dc:Bounds x="190" y="560" width="2106" height="160" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_QaGate_di" bpmnElement="Task_QaGate">
         <dc:Bounds x="1406" y="580" width="180" height="120" />
@@ -208,9 +216,12 @@
         <dc:Bounds x="1856" y="275" width="130" height="90" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Merged_di" bpmnElement="EndEvent_Merged">
-        <dc:Bounds x="2036" y="302" width="36" height="36" />
+        <dc:Bounds x="2216" y="302" width="36" height="36" />
         
-      <bpmndi:BPMNLabel><dc:Bounds x="2009" y="342" width="90" height="20" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNLabel><dc:Bounds x="2189" y="342" width="90" height="30" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_CloseChangeSet_di" bpmnElement="Task_CloseChangeSet">
+        <dc:Bounds x="2036" y="275" width="130" height="90" />
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="CF01_di" bpmnElement="CF01">
         <di:waypoint x="276" y="160" />
         <di:waypoint x="316" y="160" />
@@ -264,6 +275,10 @@
       <bpmndi:BPMNEdge id="CF10_di" bpmnElement="CF10">
         <di:waypoint x="1986" y="320" />
         <di:waypoint x="2036" y="320" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="CF14_di" bpmnElement="CF14">
+        <di:waypoint x="2166" y="320" />
+        <di:waypoint x="2216" y="320" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="CF11_di" bpmnElement="CF11">
         <di:waypoint x="1586" y="640" />

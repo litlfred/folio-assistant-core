@@ -87,8 +87,16 @@ A document is still being written, and the Authoring Committee gives feedback on
 - Skill: `review-sheet-script`.
 - What: The agent merges the row's pull request, and Agentic status says merged.
 - Record it: `workflow_complete` with `node: "Task_Merge"`.
-- next: → `EndEvent_Merged` (Change merged)
+- next: → `Task_CloseChangeSet` (Close the change set: the issue, then the sheet row)
 
-## Done — Change merged (`EndEvent_Merged`)
+### 9. Close the change set: the issue, then the sheet row (`Task_CloseChangeSet`)
+
+- Who: the `Authoring agent` lane (role `authoring-agent`).
+- Skill: `review-sheet-agent-columns`.
+- What: Closing is one step with two tools, GitHub and the review sheet (owner, 2026-11-01 21:50Z: "if agent close it, that is part of close process (github issue and google sheet as tools)").
+- Record it: `workflow_complete` with `node: "Task_CloseChangeSet"`.
+- next: → `EndEvent_Merged` (Change merged and closed)
+
+## Done — Change merged and closed (`EndEvent_Merged`)
 
 - The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.

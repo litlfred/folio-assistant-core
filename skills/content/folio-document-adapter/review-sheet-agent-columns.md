@@ -56,6 +56,44 @@ way, by header.
 
 ## When to write
 
+**One move, one Record agent step** (owner, 2026-11-01: "what to fix in
+process and skills so doesnt happen again?"). Every move in the table below
+is the subprocess `processes/content/record-agent-step.bpmn`, in this order:
+
+1. Write the change set's Agent row: Agentic status, Pull request, Staging
+   review page, the build columns, and Agent step.
+2. Write Feedback (agent) from that row, linking the same pull request and
+   preview.
+3. Read back Agentic status, Agentic status (filter) and Staging review after
+   the script's next run. If they disagree with Feedback (agent), fix the
+   Agent row, never the copied columns.
+
+**A preview link goes in only when it is live** (owner, 2026-11-01: the
+CS-007 review page answered 404, "so user is confused"). Live means the
+GitHub Pages deploy of a gh-pages commit at or after the preview's publish
+succeeded (`pages-build-deployment` run, conclusion success), and an HTTP GET
+of each link answers 200 where the agent can reach the site. A publish that is
+only on the gh-pages branch is not live: deploys queue, and the next push
+cancels a queued one. Until then leave Staging review page empty, set Staging
+deploy to `deploying`, and write "Preview deploying" in Feedback (agent) with
+no preview link. Link the pull request instead.
+
+How to tell it is live, from where the agent runs (agents can be firewalled
+from github.io): `gh api repos/<owner>/<repo>/actions/workflows/pages-build-deployment/runs`
+and take the newest run whose gh-pages commit is at or after the preview's
+publish; `completed` with `success` is live, `queued`, `in_progress` or
+`cancelled` is not. Then write `deployed` in Staging deploy. The sheet script
+does not fetch pages (it has no network permission, by its security review);
+it shows the link only when Staging deploy says `deployed`.
+
+Never write Feedback (agent) alone. The script builds Agentic status and
+Staging review only from the Agent tab, so a preview link written only in
+Feedback (agent) leaves Staging review empty and Agentic status naming the
+old pull request (CS-007, 2026-11-01). Agent step must be exactly
+`<step> <YYYY-MM-DD HH:MMZ>` with a step from the fixed list; prose there is
+not read, and the row then warns "no agent has picked this up" however much
+work was done. A row waiting for people is `idle <time>`.
+
 Write as each step completes, not once at the end. Times, heads and steps
 come from `bun run folio-assistant-core/tools/review-sheet-sync/agent-record.ts`,
 never typed.
@@ -69,12 +107,41 @@ never typed.
 | Ready for agent acted on, no new commit | date actioned | Agent completed from `agent-record.ts done` |
 | blocked on a decision | *Needs human*, and what is needed in action taken | Agent step `idle` |
 | ready for review | *Ready for review* | Agent completed; Agent step `qa-review` or `idle` |
-| merged | *Change merged* | clear the Staging review page (a merged branch's preview 404s); Agent step `idle` |
+| merged | *Change merged* | clear the Staging review page (a merged branch's preview 404s); Agent step `idle`; then close the change set (below) |
 | closed unmerged | *Not started*, and say so in action taken | remove that PR's line from Pull request, What the PRs changed, Agent completed and PR head; Agent step `idle` |
+
+**Adding change sets: write the Agent tab only** (2026-11-01). On a
+public-comment log, Review Change Sets columns A:B (Change-set, Title) are a
+spill, `=FILTER('Agent - Change Sets'!A3:B, ...)` in A3, so a new change set
+is a new row at the end of Agent - Change Sets and nothing else. A value typed
+into Review Change Sets A:B blocks the spill: every id shows #REF! and the
+tab looks empty (the 82 DPI-H rows written to A210:B291 did this until they
+were cleared). Before writing any cell, read its formula; never write over or
+below a formula's spill range.
+
+**Closing a change set is one step with two tools** (owner, 2026-11-01
+21:50Z: "if agent close it, that is part of close process (githu b issue and
+google sheet as tools)"). Task `Task_CloseChangeSet` of
+`processes/content/contributor-feedback.bpmn`: close the GitHub issue (with
+the merge, or the reason it closed unmerged), then set the Agent row's
+Agentic status to *Closed* (or *Change merged*) through Record agent step.
+The sheet script hides that row and strikes the whole row through; reopening
+the issue and writing a new status shows it again. Never hide, strike or
+delete a row by hand.
 
 A disposition for the change set is written only from
 `agent-record.ts dispositions` (`review-sheet-script`, "Writing the Agent
 tab with the tool").
+
+**New feedback while you work, and stalls** (owner, 2026-11-01 21:08Z).
+The log watcher (skill [`review-log-watch`](review-log-watch.md), "Every
+poll") sends new Blue feedback on your row to you, verbatim. Answer it in the
+same turn: record the Agent step (`reading` at least), and tell the watcher
+your step and links, so the row shows who has it. Record a step at least
+every time you finish one: a row with no new step 10 minutes after its
+feedback changed, or none for 2 hours, counts as stalled, and the watcher
+restarts it or takes it over. Name your thread in the row's Feedback (agent)
+so the watcher knows whom to ask.
 
 ## What to write
 

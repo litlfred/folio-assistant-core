@@ -6,9 +6,9 @@
 
 One poll of one drafting review log (a Contributor Feedback sheet) and its folio repository.
 
-## Begin — Every 3 minutes (`StartEvent_Poll`)
+## Begin — Every minute (`StartEvent_Poll`)
 
-- Begin here: The watcher's poll: a chain of 3-minute delayed wakes, each queuing the next, with an hourly scheduled task that restarts the chain if it breaks (owner, 2026-11-01 10:20Z: "instead of 1-minute lets do 3").
+- Begin here: The watcher's poll: a chain of 1-minute delayed wakes, each queuing the next before it reads anything, with an hourly scheduled task that restarts the chain if it breaks (owner, 2026-11-01 19:47Z: every 1 minute, never skipping a poll during long work; it was 3 minutes from 10:20Z).
 - Call `workflow_start` with `process: "Process_ReviewLogWatch"` and the subject this run is about; keep the instance id it returns.
 - next: → `Task_ReadSheet` (Read the Contributor Feedback tab)
 
@@ -26,6 +26,14 @@ One poll of one drafting review log (a Contributor Feedback sheet) and its folio
 - Skill: `review-log-watch`.
 - What: Runs Tool review-log-watch with the folio repository, the saved values and the log's state file.
 - Record it: `workflow_complete` with `node: "Task_RunCheck"`.
+- next: → `Task_StallCheck` (Hand new feedback to the row's agent; take over stalled rows)
+
+### 3. Hand new feedback to the row's agent; take over stalled rows (`Task_StallCheck`)
+
+- Who: the `Log watcher (authoring agent)` lane (role `authoring-agent`).
+- Skill: `review-log-watch`.
+- What: On every poll, changed or not, new Blue feedback goes verbatim to the agent working the row, and a stalled row is restarted or taken over, on the owner's rule of 2026-11-01 21:08Z.
+- Record it: `workflow_complete` with `node: "Task_StallCheck"`.
 - next: → `Gateway_Changed` (Sheet or issues changed?)
 
 ### Decide — Sheet or issues changed? (`Gateway_Changed`)
@@ -35,7 +43,7 @@ One poll of one drafting review log (a Contributor Feedback sheet) and its folio
   - «changed» → `Task_AppendRows` (Append rows for new issues; hide closed ones)
   - «unchanged» → `EndEvent_NoWork` (Nothing changed)
 
-### 3. Append rows for new issues; hide closed ones (`Task_AppendRows`)
+### 4. Append rows for new issues; hide closed ones (`Task_AppendRows`)
 
 - Who: the `Log watcher (authoring agent)` lane (role `authoring-agent`).
 - Skill: `review-log-watch`.
@@ -47,15 +55,23 @@ One poll of one drafting review log (a Contributor Feedback sheet) and its folio
 
 - The instance completes here: No agent work: the next wake is queued and the poll ends. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
-### 4. Agent pass on the changed rows (`Task_AgentPass`)
+### 5. Agent pass on the changed rows (`Task_AgentPass`)
 
 - Who: the `Log watcher (authoring agent)` lane (role `authoring-agent`).
 - Skill: `review-sheet-script`.
 - What: For each changed row, the agent pass of Contributor feedback on a working draft: a new or edited row gets a proposal, Ready for agent = Yes gets its edit, Ready for merge = Yes its merge, and a Blue answer to a Decision needed question is taken up.
 - A subprocess (`Process_ContributorFeedback`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `Task_RecordStep` (Record agent step on each row it wrote)
+
+### 6. Record agent step on each row it wrote (`Task_RecordStep`)
+
+- Who: the `Log watcher (authoring agent)` lane (role `authoring-agent`).
+- Skill: `review-sheet-agent-columns`.
+- What: For every row the pass or the stall check wrote, Record agent step: the Agent tab row first (status, pull request, preview, step), then Feedback (agent) from it, then read back Agentic status and Staging review.
+- A subprocess (`Process_RecordAgentStep`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Task_Accept` (Accept the new state)
 
-### 5. Accept the new state (`Task_Accept`)
+### 7. Accept the new state (`Task_Accept`)
 
 - Who: the `Log watcher (authoring agent)` lane (role `authoring-agent`).
 - Skill: `review-log-watch`.
