@@ -231,7 +231,7 @@ account, because Google asks the owner to authorise the script:
 3. In the function list beside **Run** and **Debug**, pick
    **installTriggers** (not `onOpen`, which only adds the menu), and press
    **Run**. Allow access when asked.
-4. Reload the sheet. A **Review links** menu appears.
+4. Reload the sheet. A **Folio Assistant** menu appears.
 
 `installTriggers` runs a full refresh, then installs two triggers: every edit
 of the three tabs marks the sheet dirty, and every minute a dirty sheet
@@ -250,7 +250,7 @@ the script keeps a short hash per change set to notice). A new table of
 contents in Config, an edit of the header row, or Refresh now rebuilds
 everything. A public-comment sheet rebuilds whole, since a comment feeds its
 change sets: at once while a rebuild takes under 5 s, otherwise gathered for
-the timer. **Review links → Refresh now** rebuilds at once.
+the timer. **Folio Assistant → Refresh now** rebuilds at once.
 
 **Stale staging previews** (owner, 2026-10-31, option C: sheet and page).
 The agent records when it built a change set's preview in the Agent tab's
@@ -878,7 +878,7 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    sheet). The first line of each tab's Instructions starts with ⚠ and
    names the next step: "Not set up yet. Step 1 of 2: ask the agent to link
    this sheet …" (the templates carry it, so a copy starts with it), then,
-   once linked, "Almost set up. Step 2 of 2: choose Review links, then
+   once linked, "Almost set up. Step 2 of 2: choose Folio Assistant, then
    Install". A short toast says the same when the sheet opens, and every
    run of an unlinked sheet stops with "Ask the agent to link this sheet to
    its document: give it this sheet's link (ID …)". Once installed (the
@@ -902,7 +902,7 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    in your Google Account." This is expected for a sheet's own bound script,
    which Google never verifies: choose Advanced, then "Go to <project>
    (unsafe)", then Allow ([Google's explanation](https://support.google.com/cloud/answer/7454865);
-   owner, 2026-10-31: "explain they will see ... and provide link to info"). Reload the sheet: a **Review links**
+   owner, 2026-10-31: "explain they will see ... and provide link to info"). Reload the sheet: a **Folio Assistant**
    menu appears. A copy of the template already holds the script, so the
    paste is needed only when the script changes; **installTriggers is needed
    in every copy**, because triggers and the owner's permission do not copy.
@@ -975,7 +975,7 @@ Install script` row carries the same steps and links here.
 4. **Paste.** Click **Code.gs** in the Files list on the left. Select all
    (Ctrl+A, or Cmd+A on a Mac), delete, paste, and save (Ctrl+S or Cmd+S,
    or the disk icon).
-5. **Run installTriggers.** Reload the sheet and choose **Review links**,
+5. **Run installTriggers.** Reload the sheet and choose **Folio Assistant**,
    then **Install**. Or, in the editor, the function list next to **Run**
    and **Debug** shows **installTriggers** (it is the first function, so the
    default); press **Run**.
@@ -985,21 +985,21 @@ Install script` row carries the same steps and links here.
    own script: press **Advanced**, then **Go to <project name> (unsafe)**,
    then **Allow** ([why](https://support.google.com/cloud/answer/7454865)).
 7. **Check it.** The log shows "Execution completed". Back in the sheet tab,
-   reload: a **Review links** menu appears; **Review links**, then
+   reload: a **Folio Assistant** menu appears; **Folio Assistant**, then
    **Refresh now**, checks it.
 8. **Drafting sheets only:** tick **Allow multiple selections** on the
    Selected Sections dropdown (Data, then Data validation, open the rule).
 
-**Updating later:** steps 1, 2 and 4, then Review links, then Refresh now;
+**Updating later:** steps 1, 2 and 4, then Folio Assistant, then Refresh now;
 the automatic refresh stays installed. Sheets drift, and that is accepted
 (owner, 2026-10-31: "sheets likely to drift anyways ... they need to know
-where to see latest published"): **Review links, then Which version is
+where to see latest published"): **Folio Assistant, then Which version is
 this?** shows the build the sheet runs (`SCRIPT_VERSION`, the stamp on the
 script's header line) and the link to the latest `dist/Code.gs`, whose
 header carries its own stamp to compare.
 
 **A copy of the template needs none of this** (owner, 2026-10-31, option
-A): the script came with the file. Reload the copy, choose **Review links**,
+A): the script came with the file. Reload the copy, choose **Folio Assistant**,
 then **Install**, and allow it as in step 6. The menu runs installTriggers,
 so the editor is never opened. Only renaming the bound project (step 3) is
 left, and it is optional: a copied project is named "Copy of ..." by
@@ -1030,7 +1030,7 @@ Each sheet, once (templates first, so copies inherit it):
 1. Extensions, then Apps Script. Replace Code.gs with `dist/Stub.gs`; save.
 2. **Libraries +**: paste the Script ID, **Look up**, Version **HEAD
    (Development mode)**, Identifier `Review`, **Add**.
-3. In the sheet, **Review links > Install**.
+3. In the sheet, **Folio Assistant > Install**.
 
 An update needs no paste (owner, 2026-10-31, option B: "Update from GitHub,
 one click"). The library also holds
@@ -1126,7 +1126,7 @@ or separated by commas or semicolons. The cell's format is spelled out, with
 an example, in the `Instructions - Editors` row and in a note on the cell
 itself (owner, 2026-10-31: "no instructions on how editors row should look
 like, how separated"). Anything that is not an email is left out, and the
-refresh names it in a toast rather than dropping it silently. installTriggers and Review links > Refresh now lock each
+refresh names it in a toast rather than dropping it silently. installTriggers and Folio Assistant > Refresh now lock each
 `Ready for ...` column to the owner plus those emails, under a protection the
 script owns and rebuilds each time (other protections are left alone). An
 empty row locks them to the owner alone, which is how every new sheet starts
@@ -1268,7 +1268,7 @@ cell carries links: Sections must be plain text, the links belong in Section
 links. Older scripts linked the column; clear its formatting (Format > Clear
 formatting) and the current script keeps it plain.
 
-**Check it.** Review links > Refresh now. In drafting mode a filled-in row
+**Check it.** Folio Assistant > Refresh now. In drafting mode a filled-in row
 gets a CS id and its picked sections appear, linked, in Section links;
 in public-comment mode each No. becomes a link. An error names what is
 missing: no Config tab, a Config row, or a tab the Config names.
