@@ -761,6 +761,880 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s133-11-7-2-create-a-temporary-claim-and-signature",
+      "source": "sections/s133-11-7-2-create-a-temporary-claim-and-signature.md",
+      "source_hash": "d096942bb2e22fb6e7f918c081670766da3062fba64b1813213d013e25502922",
+      "narrative": [
+        {
+          "text": "Describes adding the data hash assertion reference to the claim's assertion list with a temporary hash value, such as empty spaces, after which the temporary claim can be added to the C2PA Manifest. Because the temporary claim cannot be signed yet, it describes building a temporary COSE_Sign1_Tagged structure so the claim signature box holds valid CBOR. The four-element array consists of an empty protected header bucket (a zero-length bstr), an unprotected header map with one pad entry holding a zero-filled bstr of the desired padding size (25 kilobytes is recommended initially), a nil payload, and a zero-length bstr signature.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s134-11-7-3-complete-the-c2pa-manifest",
+      "source": "sections/s134-11-7-3-complete-the-c2pa-manifest.md",
+      "source_hash": "d56ce96b47a2c9712c93a73b468f074538bdc50fc36765fc73917993dae682ce",
+      "narrative": [
+        {
+          "text": "Describes completing the C2PA Manifest by assembling all its boxes into final form and combining the asset's manifest with the manifests of any ingredients into the complete C2PA Manifest Store. Requires the active manifest to be the last C2PA Manifest superbox in the C2PA Manifest Store superbox, after which the store can be embedded into the asset as discussed in Appendix A, Embedding manifests.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s135-11-7-4-going-back-and-filling-in",
+      "source": "sections/s135-11-7-4-going-back-and-filling-in.md",
+      "source_hash": "c810071817cae87070eb365353c72863c02145d79431b8a9dd9636113972ad04",
+      "narrative": [
+        {
+          "text": "Describes updating the data hash assertion with the active manifest's starting offset and length after embedding, without changing the assertion box's size, by adjusting the pad field; a note explains that some padding sizes cannot be expressed in pad alone and can be split between pad and pad2. The updated assertion is then hashed into the reserved space, and the claim is hashed and signed per Section 10.3.2.4, Signing a Claim, with the unprotected pad header shrunk so the claim signature box keeps its size. Requires repeating the multiple step processing with larger padding chosen in Section 11.7.2 if the serialized COSE_Sign1_Tagged exceeds the reserved size, noting that still-valid revocation information should be reusable but a new time stamp will be required. Recommends that claim generators use padding before assertion creation when assertions defined outside this specification may depend on file layout.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s136-11-8-external-manifests",
+      "source": "sections/s136-11-8-external-manifests.md",
+      "source_hash": "5cb33d02d5c3450c7205389dcb6f9e012c279e3608cb27019600642ce7470a48",
+      "narrative": [
+        {
+          "text": "Describes keeping C2PA Manifests external to the asset, in a manifest repository easily locatable by a Manifest Consumer (such as by reference or URI), when embedding is not possible or practical. Requires the C2PA Manifest Store to be served with the media type application/c2pa, noting that application/x-c2pa-manifest-store is deprecated. Lists common reasons for external manifests: embedding may be technically impossible, impractical when the manifest store is larger than the asset's digital content, or inappropriate when the asset cannot be modified.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s137-11-8-1-embedding-a-reference-to-an-external-mani",
+      "source": "sections/s137-11-8-1-embedding-a-reference-to-an-external-mani.md",
+      "source_hash": "a93ffded4d6652ba074dc2af182cc92f9f361e56eecdabba0e367ed8d6b06d42",
+      "narrative": [
+        {
+          "text": "Recommends that, when an asset has embedded XMP and its C2PA Manifest Store is stored externally, the claim generator add a dcterms:provenance key to the XMP whose value is a URI reference to the manifest store. Notes that this mechanism is now only for external manifests, and that fonts, which do not support XMP, use an equivalent method described in the clause on fonts.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s138-12-cryptography",
+      "source": "sections/s138-12-cryptography.md",
+      "source_hash": "c3d0edfa2e82ab95be024731bffa36c042a4cdfc9922703f0a545ad97a9d9ee0",
+      "narrative": [
+        {
+          "text": "Heading that opens Chapter 12, Cryptography; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s139-12-1-hashing",
+      "source": "sections/s139-12-1-hashing.md",
+      "source_hash": "46691faf27259d3a439c7a9e5d41beca7f67384b368a4de0a81548903e5b615a",
+      "narrative": [
+        {
+          "text": "Requires all cryptographic hashes used in creating and validating C2PA Manifests to use algorithms from an allowed list (generators should use, validators shall support) or a deprecated list (validators should support, generators shall not produce), excluding soft bindings and custom assertions. Requires that an algorithm appear in at most one list, that each output length be listed separately, and that unlisted algorithms be forbidden and not supported optionally. Requires hash outputs to be stored as CBOR byte strings with an algorithm identifier (alg) in the same structure, an enclosing structure, or the claim-map or claim-map-v2, with the nearest identifier taking precedence and the claim-map alg used as the fallback. The allowed list is SHA2-256 (sha256), SHA2-384 (sha384) and SHA2-512 (sha512); SHA-3 is excluded for consistency with the signature algorithm list, and the deprecated list is empty.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s140-12-2-binding-to-content",
+      "source": "sections/s140-12-2-binding-to-content.md",
+      "source_hash": "e6ca44ee1d627a0688eef987a73d6561dc14c982ecc1d58475d456e485df9ae0",
+      "narrative": [
+        {
+          "text": "Heading that opens section 12.2 Binding to Content; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s141-12-2-1-overview",
+      "source": "sections/s141-12-2-1-overview.md",
+      "source_hash": "ec85cb244cc4d98e29c46d9345729a9f7e2016c136f5fd9b0e72ef95c6e5685b",
+      "narrative": [
+        {
+          "text": "Describes content bindings in a standard C2PA manifest, distinguishing hard (cryptographic) bindings, which let a validator confirm the manifest belongs to this asset and that the asset is unmodified, from soft bindings, which are computed from the digital content and help identify derived assets and renditions. Requires that a single manifest contain no more than one hard binding assertion, while allowing zero or more soft binding assertions.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s142-12-2-2-hard-bindings",
+      "source": "sections/s142-12-2-2-hard-bindings.md",
+      "source_hash": "45e5133966519b195301cebda01a8e1b41a037c4d6db29b6a8a0a0e8f0003d64",
+      "narrative": [
+        {
+          "text": "States that every hard binding assertion is built from the hash algorithms defined in Section 12.1, Hashing, and that the specific hard binding assertion used depends on the asset's format and structure, as described in the following subsections.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s143-12-2-2-1-hashing-using-byte-ranges",
+      "source": "sections/s143-12-2-2-1-hashing-using-byte-ranges.md",
+      "source_hash": "2b77a888cd055fbd1b79f82d2dda4c6a222aa4cbcf2b0023ff546feec4fdc159",
+      "narrative": [
+        {
+          "text": "Describes the simplest hard binding as a cryptographic hash over some or all bytes of an asset, usable on any asset type but recommended only for formats that do not support box-based hashing. Specifies that a data hash assertion defines which byte ranges are hashed, works for single binaries or multi-chunk assets, and binds a C2PA Manifest to the codec configuration of live media over Enhanced RTMP (V2), as described in Section 15.5.3.3, Initialization data binding.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s144-12-2-2-2-hashing-using-a-general-box-hash",
+      "source": "sections/s144-12-2-2-2-hashing-using-a-general-box-hash.md",
+      "source_hash": "d313134bdd2f7be28ac5e8f7b033f9de8af11e1f7f67b708f453dfe753c84988",
+      "narrative": [
+        {
+          "text": "Recommends using a general box hash assertion for non-BMFF box-based formats such as JPEG 1, PNG and GIF. Describes the assertion as an array of structures, each listing one or more boxes by name or identifier with a hash covering those boxes (and any data between them) and the hashing algorithm used.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s145-12-2-2-3-hashing-a-bmff-formatted-asset",
+      "source": "sections/s145-12-2-2-3-hashing-a-bmff-formatted-asset.md",
+      "source_hash": "639a520aec4b2c3bd8f0fa17a5e841056e57ac37b04bd751bd5011b558ce4a0c",
+      "narrative": [
+        {
+          "text": "Permits ISO BMFF-based assets to use BMFF-based hash assertions instead, which for a monolithic MP4 with mdat validated as a unit work nearly like a data hash assertion but use a box exclusion list rather than byte ranges. Requires that, for fragmented MP4 files, the assertion be combined with chunk-specific hashing information located as specified in Section A.5, Embedding manifests into BMFF-based assets, and points to the live media section for hashing individual segments.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s146-12-2-2-4-hashing-unstructured-text-assets",
+      "source": "sections/s146-12-2-2-4-hashing-unstructured-text-assets.md",
+      "source_hash": "a7f00c80a478fa786ace0fea47c7f7c023d680a06fa7a735de75a13307a6d37f",
+      "narrative": [
+        {
+          "text": "Requires a data hash assertion for unstructured text assets whose C2PA Manifest is embedded using Unicode Variation Selectors as described in Section A.8, Embedding Manifests into Unstructured Text. The hashing follows the text-specific normalization rules defined in Validating a text data hash.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s147-12-2-2-5-hashing-structured-text-assets",
+      "source": "sections/s147-12-2-2-5-hashing-structured-text-assets.md",
+      "source_hash": "240f6e82bb8f2356d93abbddac5c16b3e5c57235d6a43d609e3cafa58ad7d126",
+      "narrative": [
+        {
+          "text": "Requires a data hash assertion for structured text assets associated with a C2PA Manifest using ASCII armour-style delimiters as described in Section A.9, Embedding Manifests into Structured Text. The exclusion range covers the manifest block so the hash is computed without the manifest reference, with details in Section A.9.5, Hard Binding.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s148-12-2-2-6-hashing-append-only-text-assets",
+      "source": "sections/s148-12-2-2-6-hashing-append-only-text-assets.md",
+      "source_hash": "be3227108853220c20b8b9c40a1c1d255083deeb35c1ae10128192b51b343c6a",
+      "narrative": [
+        {
+          "text": "Requires a segment hash assertion for files written only by appending complete lines, such as application logs, event logs and JSON Lines streams, as described in Section A.3.17, Embedding manifests into append-only text files. Each assertion is a hard binding over one bounded segment, and the segments are linked into a chain of checkpoints so the file's complete history can be verified.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s149-12-2-2-7-hashing-a-collection",
+      "source": "sections/s149-12-2-2-7-hashing-a-collection.md",
+      "source_hash": "073a89179e1b8cdd6be7ef2b40e05a273272ffbf2d771bfe3d175a47d50d0b7b",
+      "narrative": [
+        {
+          "text": "Requires the collection data hash assertion to be used to specify hard bindings when a C2PA Manifest refers to a collection of assets rather than a single asset. A note gives the example of describing each folder of an AI/ML training data set.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s150-12-2-2-8-hashing-assets-with-multiple-parts",
+      "source": "sections/s150-12-2-2-8-hashing-assets-with-multiple-parts.md",
+      "source_hash": "71231aca7360c4fea844f13858a9c50a9734549b5b2fa7f2c664962a78c158e6",
+      "narrative": [
+        {
+          "text": "Requires the multi-asset hash assertion, alongside the whole-file hard binding assertion, for formats that aggregate multiple independently verifiable parts, such as CIPA Multi-Picture Format (MPF) or Android Ultra HDR, recording a hash for each part. States that a multi-asset hash assertion modifies how a hard binding is validated but is not itself a hard binding.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s151-12-2-2-9-binding-non-c2pa-asset-metadata",
+      "source": "sections/s151-12-2-2-9-binding-non-c2pa-asset-metadata.md",
+      "source_hash": "c9c6849f5c5e4b8675ee1f73f1ef3aecddfaaba2ef8edecb91b17780773c2060",
+      "narrative": [
+        {
+          "text": "Recommends that a Claim Generator, where possible, include asset metadata outside the C2PA Manifest, such as EXIF or XMP, in the hard binding to protect its integrity. A note clarifies that only signed C2PA created_assertions are attributed to the signer, so metadata covered only by a hard binding is not, whereas serializing it into a c2pa.metadata assertion in created_assertions explicitly signals that the signer asserts it. Recommends copying asset metadata values supported by the common metadata assertion, as described in Appendix C, into such an assertion when the signer can assert them.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s152-12-2-3-soft-bindings",
+      "source": "sections/s152-12-2-3-soft-bindings.md",
+      "source_hash": "087064dde039519834f18d33d75b76f54d2d7d00c767149dc73302cf5c8c33dd",
+      "narrative": [
+        {
+          "text": "Heading that opens section 12.2.3 Soft Bindings; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s153-12-2-3-1-general",
+      "source": "sections/s153-12-2-3-1-general.md",
+      "source_hash": "3353c4c06bd8d0cf926efd4edcbf7d4db3a564ef49ac13dc5b7bfe6333bcf804",
+      "narrative": [
+        {
+          "text": "Describes soft bindings, expressed through soft binding assertions such as a fingerprint of the digital content or an invisible watermark, as enabling digital content to be matched even when the underlying bits differ, for example in another resolution or encoding. Notes that if a manifest is removed from an asset but a copy remains in a provenance store, soft bindings may be used to match the two. Requires that a soft binding not be used as a hard binding.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s154-12-2-3-2-referenced-list-of-soft-binding-algorit",
+      "source": "sections/s154-12-2-3-2-referenced-list-of-soft-binding-algorit.md",
+      "source_hash": "93db8d4fe3051f6196d7b10182e3869458ba5247700ec3d2ef865181f929da45",
+      "narrative": [
+        {
+          "text": "Specifies that soft bindings are generated by an algorithm named in the alg field of the soft binding assertion, and recommends that the name be among those in the soft binding algorithm list supported by this specification.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s155-12-3-digital-signatures",
+      "source": "sections/s155-12-3-digital-signatures.md",
+      "source_hash": "965422e6efc249ad2982cc9689e5941273fef3e218d188082754f24066eda16d",
+      "narrative": [
+        {
+          "text": "Requires all claim signatures to use digital signature algorithms and key types from an allowed list (generators should use, validators shall support) or a deprecated list (validators should support, generators shall not use), excluding custom assertions and time stamps. Specifies that the lists reference COSE algorithm identifiers from standards such as RFC 9052, RFC 9053, RFC 8230 and RFC 9964, which also specify the hash used in each signature scheme. Requires that Section 12.1, Hashing, not apply to those hash algorithms, whose use is allowed and followed for any listed signature algorithm.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s156-12-3-1-signature-algorithms",
+      "source": "sections/s156-12-3-1-signature-algorithms.md",
+      "source_hash": "144dcef951a1d9e81bc0186818bdee1920de38035ea7c15db02cfd24549e3f3f",
+      "narrative": [
+        {
+          "text": "Lists the allowed claim signature algorithms: ES256, ES384, ES512, ESP256, ESP384, ESP512, PS256, PS384, PS512, EdDSA (Ed25519 only), and ML-DSA-44, ML-DSA-65 and ML-DSA-87 (COSE identifiers -48, -49, -50); the deprecated list is empty. Notes cover ML-DSA's larger signature and key sizes, the fully-specified ESP identifiers binding each hash to one curve, and that certificate signing algorithms are governed separately by Section 13.5.1.1, General Requirements. Requires implementations to check that keys are correct for the chosen algorithm (P-256/P-384/P-521 curves paired with the matching ECDSA algorithms, edwards25519 for Ed25519, RSA moduli of at least 2048 bits, and ML-DSA parameter sets matching the identifier) and to refuse incorrect keys, while allowing refusal of RSA keys over 16384 bits. Recommends deterministic signature algorithms for live media streaming so segment caching is not harmed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s157-12-3-2-use-of-cose",
+      "source": "sections/s157-12-3-2-use-of-cose.md",
+      "source_hash": "a5a46c60a34bc5ab4a0c4445f6a3f07ddaab2874276e5187f5f0715ea078b532",
+      "narrative": [
+        {
+          "text": "Specifies that the CBOR-encoded claim is signed using COSE as described in RFC 9052, sections 4.2 and 4.4, noting that payloads may be embedded or detached, in which case the COSE_Sign1_Tagged payload field is nil. Requires that the payload field of the in-memory Sig_structure always be populated with the relevant external data and never be nil. For standard or update manifests, that payload is the contents of the claim JUMBF box, as described in Section 10.3.2.4, Signing a Claim, and Section 11.5, Serialization.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s158-12-3-3-computing-the-signature",
+      "source": "sections/s158-12-3-3-computing-the-signature.md",
+      "source_hash": "e0292c8237ce5194c5d945e5623a96e9e2a6ca3a56d01c2002ce780b61964dcc",
+      "narrative": [
+        {
+          "text": "Specifies additional requirements for building Sig_structure under RFC 9052, section 4.4: the context shall be Signature1 (or CounterSignature where specified, never Signature), external_aad shall be a zero-length bstr, the payload is set by each use, and the alg header shall be in body_protected. Requires all C2PA digital signatures to be COSE_Sign1_Tagged structures with the same alg header in the protected bucket. Requires a detached payload to be nil and an embedded payload to be stored as a bstr, noting that a zero-length byte array cannot indicate detached content.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s159-12-3-4-adding-a-claimed-time-of-signing",
+      "source": "sections/s159-12-3-4-adding-a-claimed-time-of-signing.md",
+      "source_hash": "47327ab8c5c45800b235dfffa77da949ae437fb0e89845b7fae6f5bb068f617f",
+      "narrative": [
+        {
+          "text": "Permits a claim generator to add an iat protected header with a NumericDate value as a claimed time of signing, which, if present, shall represent when the signature was generated. Notes that NumericDate is a CBOR numeric date without the leading tag 1, and that the recommendation is based on in-process JAdES updates for a generator-provided timestamp useful when no trusted time source is available but not used for certificate validity checking.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s160-12-3-5-signature-validation",
+      "source": "sections/s160-12-3-5-signature-validation.md",
+      "source_hash": "98032a333a729430d5cbfa9cbb1479d109e91842b4fb27b621eff1323e0930e0",
+      "narrative": [
+        {
+          "text": "Recommends that a claim generator able to act as a validator check that its signing credential is acceptable under Chapter 13, Trust Model, and warn if it is not. Permits signing with that credential anyway, for instance when the local validator's configuration differs from that of validators used by the asset's expected audience.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s161-12-3-6-cryptographic-validation",
+      "source": "sections/s161-12-3-6-cryptographic-validation.md",
+      "source_hash": "fd634baff4ddcc14e58dab5edd8b862146eaa63ee2ad570b7973f4c7896ee904",
+      "narrative": [
+        {
+          "text": "Describes building an in-memory Sig_structure when verifying a signature, with body_protected filled from the COSE_Sign1_Tagged protected header bucket and the payload taken from the COSE_Sign1_Tagged payload field when present. Requires that, when the payload is detached (nil), the Sig_structure payload be populated from the same external source used when generating the signature, as defined where each signature is used.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s162-12-3-7-inclusion-of-signer-icons",
+      "source": "sections/s162-12-3-7-inclusion-of-signer-icons.md",
+      "source_hash": "035d23307148fa81f63aed4a07853a0730965a7333bae1b9cdc1a79517fa76c5",
+      "narrative": [
+        {
+          "text": "Requires a C2PA Manifest Consumer that wants to display a signer icon or logo to look for a logotype, as defined in RFC 9399, inside the embedded certificate. If none is present, the consumer may use icons or logos from other sources in an implementation-dependent manner.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s163-13-trust-model",
+      "source": "sections/s163-13-trust-model.md",
+      "source_hash": "0b9332a92e48c22b2f8ceaa26be2f5f7fb68372a2b9a64c3896d5c545d30543f",
+      "narrative": [
+        {
+          "text": "Heading that opens Chapter 13, Trust Model, with a note that \"user\" in this chapter refers to human actors using C2PA-compliant validators in consumption and authoring scenarios.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s164-13-1-overview",
+      "source": "sections/s164-13-1-overview.md",
+      "source_hash": "eec658c0dc0891445b908b8a37b1bac6ea4ff54bab817e7309ba05f559c97397",
+      "narrative": [
+        {
+          "text": "Presents Figure 11, the C2PA Trust Model Diagram, showing the three entities specified in the trust model, which concerns trust in a signer's identity. Describes the consumer, who is not specified in the trust model, as using the signer's identity along with other trust signals to decide whether assertions about an asset are true.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s165-13-2-identity-of-signers",
+      "source": "sections/s165-13-2-identity-of-signers.md",
+      "source_hash": "22524dd3f7b7da6bd915255900c761195407e451631d0af913bd037741ae9080",
+      "narrative": [
+        {
+          "text": "Defines identity in the trust model as the means of associating a signing key (credential) with the signer for trust decisions about anything signed with that key. Requires the credential to be listed in the COSE protected headers of the COSE_Sign1_Tagged structure, with exactly one credential across protected and unprotected headers, and requires rejecting structures with none or with two or more, including repeats of the same credential. An exception treats the same X.509 chain under both the x5chain string label and integer label 33 as a single credential, with further details in Section 13.5, X.509 Certificates.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s166-13-3-validation-states",
+      "source": "sections/s166-13-3-validation-states.md",
+      "source_hash": "74c57883892aa5a0ab5b7beaa891542273b1424f94f68bc383532a534b986ebb",
+      "narrative": [
+        {
+          "text": "Heading that opens section 13.3 Validation states; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s167-13-3-1-general",
+      "source": "sections/s167-13-3-1-general.md",
+      "source_hash": "027cf15567be6ae9740ec61d6573ea37954b721752103b9c95e62fd6e1b24cf4",
+      "narrative": [
+        {
+          "text": "Describes a validator as a Manifest Consumer that makes validation statements about an asset and its active manifest, following the process in the validation section. The actor consuming the asset, usually through a user agent, then interprets those statements and the asset's contents to reach their own conclusions about its provenance.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s168-13-3-2-manifest-states",
+      "source": "sections/s168-13-3-2-manifest-states.md",
+      "source_hash": "612e0eb8a11a8fed65e43dc91c6b82aef6f16ff6f0e562859635ea3c268e14b4",
+      "narrative": [
+        {
+          "text": "Lists the states a C2PA Manifest may have based on validation statements: Well-Formed, Valid and Trusted. Notes that any Trusted manifest is also Valid, and any Valid manifest is also Well-Formed.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s169-13-3-3-asset-states",
+      "source": "sections/s169-13-3-3-asset-states.md",
+      "source_hash": "3722a9934314272394e6f75daccf03d0c82c893ea760d8a46daf69554d3d44e6",
+      "narrative": [
+        {
+          "text": "Defines a Valid asset as one whose content-binding-covered portions a validator reports as unmodified since the active manifest was produced (per Section 14.12, Validate the Asset's Content) and whose active manifest is Valid or Trusted.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s170-13-3-4-well-formed-manifest",
+      "source": "sections/s170-13-3-4-well-formed-manifest.md",
+      "source_hash": "808e5ffa82c9e266807c975263e1328c766ca8a6df83313f8b4aa91a5d5557ba",
+      "narrative": [
+        {
+          "text": "Defines a Well-Formed C2PA Manifest as one where validation determines that its contents meet the normative requirements checked by the validation process, only assertions allowed for its manifest type are present (Section 14.10.1), its assertions meet all assertion requirements (Section 14.10.4), and any ingredients meet all ingredient requirements (Section 14.11).",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s171-13-3-5-valid-manifest",
+      "source": "sections/s171-13-3-5-valid-manifest.md",
+      "source_hash": "266237208f18aae37845c0c65214ea934eed7cba46bd0710cf29273dbdb89b69",
+      "narrative": [
+        {
+          "text": "Defines a Valid C2PA Manifest as one that is Well-Formed, unmodified since signing, has a claim signature with success code claimSignature.validated, receives claimSignature.insideValidity for the signature validity period, and whose signer credential is not rejected with signingCredential.ocsp.revoked. States that a Valid manifest's claim can be attributed to the claim generator identified by the claim's claim_generator_info field.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s172-13-3-6-trusted-manifest",
+      "source": "sections/s172-13-3-6-trusted-manifest.md",
+      "source_hash": "9d8c183fcee337b91295c0d42be70d31628bd113555f5511d3145c0f0eb595f4",
+      "narrative": [
+        {
+          "text": "Defines a Trusted C2PA Manifest as one that is Valid and whose signing credential receives the success code signingCredential.trusted under Section 14.7, Validate the Signature.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s173-13-4-trust-lists",
+      "source": "sections/s173-13-4-trust-lists.md",
+      "source_hash": "c45fb810cb4fbe8a3ae8d5666825305ae244fd0e7d26509663d32ac603a0d434",
+      "narrative": [
+        {
+          "text": "Heading that opens section 13.4 Trust Lists; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s174-13-4-1-c2pa-signers",
+      "source": "sections/s174-13-4-1-c2pa-signers.md",
+      "source_hash": "e8a3192a83c6877bc22afa85a0810261738d2564fd1135d549735489fc79dc6d",
+      "narrative": [
+        {
+          "text": "Requires a validator to maintain a list of accepted Extended Key Usage (EKU) values and, for each, a list of trust anchor configurations, each including the trust anchor's X.509 certificate and recommended to include notBefore and (when trust has ended) notAfter date/times. Requires that a configuration not be used for claim signatures whose timestamp, or the current time if none, falls before notBefore or after notAfter. Requires the list for the c2pa-kp-claimSigning EKU to include the C2PA Trust List, and recommends letting users configure additional anchors for that or other EKUs and offering default or externally maintained lists. Notes that including id-kp-emailProtection or id-kp-documentSigning alongside c2pa-kp-claimSigning can improve compatibility with older validators.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s175-13-4-2-time-stamping-authorities",
+      "source": "sections/s175-13-4-2-time-stamping-authorities.md",
+      "source_hash": "5213b9aeef7b262326699e7c63f5f432fe733fc0e5d3f98aabeee1d270aec721",
+      "narrative": [
+        {
+          "text": "Requires a validator to maintain trust anchor configurations for Time Stamping Authorities (TSAs) separately from the C2PA signer lists, each including the X.509 certificate and recommended to include notBefore and notAfter date/times. Requires that a configuration not be used for time-stamps asserting times outside those bounds, and that the list include the C2PA TSA Trust List. Recommends allowing users to configure additional TSA trust anchor stores, and permits offering default or externally maintained lists.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s176-13-4-3-private-credential-storage",
+      "source": "sections/s176-13-4-3-private-credential-storage.md",
+      "source_hash": "78c400fb1a210b0a0ffa222787b504f77f7316201eabfeb6f246d73f40c5f51a",
+      "narrative": [
+        {
+          "text": "Permits a validator to let users maintain a private credential store, an address book of signing credentials trusted through out-of-band relationships. Requires that the store apply only to validating signed C2PA manifests (not time stamps), trust only signer credentials directly, and never act as trust anchors. Requires that the store not be pre-configured and that entries be added or removed only at the user's request.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s177-13-5-x-509-certificates",
+      "source": "sections/s177-13-5-x-509-certificates.md",
+      "source_hash": "a5591501e3e27f6085bcaea8be4ab891a4888b0d27d8f5a48a2e83a01b78ed2a",
+      "narrative": [
+        {
+          "text": "Specifies that X.509 certificates are stored per RFC 9360, quoting its x5chain definition, and adds requirements beyond it. Requires claim generators to include the signer's certificate and all intermediate CA certificates in x5chain, recommends omitting the root certificate, and notes that the first certificate's public key validates the signature. Requires claim generators to use only integer label 33 (the string label x5chain is deprecated) and to place the header only in the protected bucket. Requires validators to accept either label from either bucket, treat both labels together as one credential using label 33, and reject the signature as malformed if the same label appears in both buckets.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s178-13-5-1-certificate-profiles",
+      "source": "sections/s178-13-5-1-certificate-profiles.md",
+      "source_hash": "d61c141148e30e19096a7e8ca97d7b239de159d19d8be515a6d045f93804cd58",
+      "narrative": [
+        {
+          "text": "Heading that opens section 13.5.1 Certificate Profiles; it carries no text of its own.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt4pK9aBsEpAYpwa1z4"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
