@@ -761,6 +761,1013 @@
           "drafted_at": "2026-10-31"
         }
       ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s671-b-3-threats-and-security-considerations",
+      "source": "sections/s671-b-3-threats-and-security-considerations.md",
+      "source_hash": "a1c0c25effad6eda3dae8b9592c30433950d48ad704003d56b9c79ab138fd63d",
+      "narrative": [
+        {
+          "text": "Introduces the threats and security considerations section, stating that information security and privacy are principal concerns of C2PA and that this section is a non-normative summary, with the threat model, implementer considerations and best practices maintained in a separate Security Considerations document.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s672-b-3-1-resource-exhaustion-when-hashing-compresse",
+      "source": "sections/s672-b-3-1-resource-exhaustion-when-hashing-compresse.md",
+      "source_hash": "5c52ed3f225fc5cf5025ff2814b0ef1b1a773472d9b014f8b52c95cab0735dd2",
+      "narrative": [
+        {
+          "text": "Explains that when a hard binding is computed over the uncompressed bytes of a compressed member, a highly compressed member can make validation consume unbounded memory or time, for example with per-record compressed WARC files. Before evaluating the signature, a validator shall enforce an implementation-defined maximum decompressed member size and shall reject any member whose decompressed length disagrees with the length declared in its own metadata, checks a note says exist for adversarial input so that hashing uncompressed bytes stays safe.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s673-b-3-2-unicode-security-in-text-fields",
+      "source": "sections/s673-b-3-2-unicode-security-in-text-fields.md",
+      "source_hash": "fbfba4e95372cdf4d89aa69cb2e30b0b9fadf461f85322c11f39fe41df4a9edc",
+      "narrative": [
+        {
+          "text": "Notes that manifest text fields shown to users or compared programmatically, such as dc:title, description, claim generator identifiers and action reason values, are open to Unicode-based attacks that can mislead users or undermine provenance integrity.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s674-b-3-2-1-bidirectional-overrides",
+      "source": "sections/s674-b-3-2-1-bidirectional-overrides.md",
+      "source_hash": "688e7b4a44d3584d21706be42611411682bdb4799db4d05ab89f3d7fed39e05a",
+      "narrative": [
+        {
+          "text": "Claim generators shall not include bidirectional override characters (U+202A to U+202E) in text fields, since they can reorder displayed text as in the Trojan Source attack, though bidirectional isolate characters (U+2066 to U+2069) are permitted in mixed-direction text.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s675-b-3-2-2-confusable-characters",
+      "source": "sections/s675-b-3-2-2-confusable-characters.md",
+      "source_hash": "a0b0874b14923802ba784812ade60ad930494f6fb2967feb0d58dbdd9cb32ea0",
+      "narrative": [
+        {
+          "text": "Manifest consumers that display identity-bearing fields such as the claim generator name, dc:title or signer identity should apply confusable detection per Unicode Technical Standard #39, because look-alike characters from other scripts can impersonate legitimate identifiers.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s676-b-3-2-3-normalization",
+      "source": "sections/s676-b-3-2-3-normalization.md",
+      "source_hash": "d0ff7ffeb2229e61f886e6fb750d95eeb5a0184669dc0da7d49d518f07648880",
+      "narrative": [
+        {
+          "text": "Claim generators should produce text string fields in Unicode Normalization Form C (NFC), since inconsistent normalization can give semantically identical text different hash values and disrupt search, comparison and deduplication.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s677-b-3-2-4-adversarial-control-characters",
+      "source": "sections/s677-b-3-2-4-adversarial-control-characters.md",
+      "source_hash": "3662fdcfc4b83ddeba6b63434a8440d3558132a88561c87b480175a493816558",
+      "narrative": [
+        {
+          "text": "Claim generators shall not include tag characters, C1 control characters, interlinear annotation characters, or variation selector sequences on non-varying base characters in text fields, as these have no legitimate use there.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s678-b-3-3-retrieval-of-externally-referenced-data",
+      "source": "sections/s678-b-3-3-retrieval-of-externally-referenced-data.md",
+      "source_hash": "c013349312bfc7ff981eaaf8da45c9120199c20188275a9f1ec0f571aee67d7c",
+      "narrative": [
+        {
+          "text": "Explains that cloud data assertions, hashed external references and linked resource integrity assertions carry author-chosen URIs, so a validator resolving them makes requests to destinations picked by a potentially adversarial party. Without countermeasures this risks server-side request forgery (including via redirects or changing DNS answers), credential leakage, connection downgrade, resource exhaustion, and false hash mismatches, with countermeasures referred to Section 14.10.5.3, Retrieval Security.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s679-b-3-4-references",
+      "source": "sections/s679-b-3-4-references.md",
+      "source_hash": "241dd4409667b1680205f1523e24b371039b0e48340ecff06afcaf09925fa818",
+      "narrative": [
+        {
+          "text": "Lists a subset of public references that inform C2PA threat modelling, including IETF security and privacy considerations guidance, the W3C security and privacy self-review questionnaire, the OAuth2 threat model, and threat modelling resources from Shostack, OWASP and Microsoft.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s680-b-4-harms-misuse-and-abuse",
+      "source": "sections/s680-b-4-harms-misuse-and-abuse.md",
+      "source_hash": "badc068be139cd4f07e6c9e6ea73034765d37f338e3816825273d91eb115406a",
+      "narrative": [
+        {
+          "text": "States that, under the C2PA Guiding Principles, specifications shall be reviewed for potential misuse or abuse causing unintended harms, threats to human rights or disproportionate risks to vulnerable groups, and that this non-normative summary defers to separate documents such as the Security Considerations, Harms Modelling documentation, Explainer, implementer guidance and user experience guidance.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s681-appendix-c-implementation-details-for-c2pa-metad",
+      "source": "sections/s681-appendix-c-implementation-details-for-c2pa-metad.md",
+      "source_hash": "7a0744d4a4ac80d1e0e0ad818c12cd09caebdf8c206af6c24988e7fb97a1924a",
+      "narrative": [
+        {
+          "text": "Opens the c2pa.metadata implementation appendix, stating that the c2pa.metadata assertion shall contain only the listed subset of schemas and fields (while custom metadata assertions may contain any values) and that its values, whether unique or taken from the asset's metadata blocks, shall be serialized per the JSON-LD serialization of XMP.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s682-c-1-completely-supported-schemas",
+      "source": "sections/s682-c-1-completely-supported-schemas.md",
+      "source_hash": "b91404f963af39e168785eaf3e27af5909ecaf10f3e79174f2268a4ef9117203",
+      "narrative": [
+        {
+          "text": "Lists in Table 14 the schemas supported in full by any signer for c2pa.metadata: XMP Basic, XMP Media Management, XMP Paged-Text, Camera Raw and PDF, each with its namespace URI.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s683-c-2-partially-supported-schemas",
+      "source": "sections/s683-c-2-partially-supported-schemas.md",
+      "source_hash": "2be48c34850fdf17529fe7c4f9292d51e07c9cdf8189c29c8a149eb77f90cd06",
+      "narrative": [
+        {
+          "text": "Lists in Table 15 the schemas only partially supported for c2pa.metadata, with their namespaces: Dublin Core, IPTC Core, IPTC Extension, Exif, ExifEx, Photoshop, TIFF, XMP Dynamic Media and PLUS.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s684-c-2-1-dublin-core-dc",
+      "source": "sections/s684-c-2-1-dublin-core-dc.md",
+      "source_hash": "ecc4704c35d7d49ce54abb05759af36a66e8ea232841767d8ac28680786bc7f6",
+      "narrative": [
+        {
+          "text": "Lists the only Dublin Core properties supported: dc:coverage, dc:created, dc:date, dc:format, dc:identifier, dc:language, dc:modified, dc:relation, dc:title and dc:type.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s685-c-2-2-iptc-core",
+      "source": "sections/s685-c-2-2-iptc-core.md",
+      "source_hash": "2478eef184de91b9492b43f78d92563b3f4e7752df69f1dcd8309a986da0af20",
+      "narrative": [
+        {
+          "text": "States that the only supported IPTC Core property is Iptc4xmpCore:Scene, noting that some IPTC Core properties have been superseded in the IPTC Extension schema.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s686-c-2-3-iptc-extension",
+      "source": "sections/s686-c-2-3-iptc-extension.md",
+      "source_hash": "5fbe73d89a52dbba5892eea8eba0e5eaac9b4afa1b1c8c466e6b5e69dfce9966",
+      "narrative": [
+        {
+          "text": "Lists the only supported IPTC Extension properties, such as Iptc4xmpExt:DigitalSourceType, DigImageGUID, ImageRegion, LocationCreated, LocationShown and MaxAvailHeight/MaxAvailWidth, with a link to the IPTC specification.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s687-c-2-4-exif",
+      "source": "sections/s687-c-2-4-exif.md",
+      "source_hash": "dea6ceccfe6b00292847df8c317d5e3bee92f8dfa0f003e433d5375eb59783f4",
+      "narrative": [
+        {
+          "text": "Table 16 lists the only Exif properties supported in c2pa.metadata. They cover exposure and capture settings such as exif:ApertureValue, exif:ExposureTime, exif:Flash and exif:FocalLength, image attributes such as exif:PixelXDimension, and a full set of GPS fields such as exif:GPSLatitude, exif:GPSLongitude and exif:GPSTimeStamp.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s688-c-2-5-exifex",
+      "source": "sections/s688-c-2-5-exifex.md",
+      "source_hash": "a95fd38fe7104b278391cded84a98b77bf3c56169275322eff00ed6e446f2adb",
+      "narrative": [
+        {
+          "text": "Lists the only supported ExifEx properties, including camera and lens identifiers (exifEX:BodySerialNumber, exifEX:LensModel), editing software fields, composite image fields, and environmental readings such as exifEX:Temperature and exifEX:WaterDepth, with a link to the CIPA specification.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s689-c-2-6-photoshop",
+      "source": "sections/s689-c-2-6-photoshop.md",
+      "source_hash": "abe65ec97a39e4cc30746dbbc1a89c0637b757f120651f31ae99a3b1f9ba86a0",
+      "narrative": [
+        {
+          "text": "Lists the only supported Photoshop properties, such as photoshop:City, photoshop:Country, photoshop:DateCreated, photoshop:History, photoshop:ICCProfile and photoshop:TextLayers.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s690-c-2-7-tiff",
+      "source": "sections/s690-c-2-7-tiff.md",
+      "source_hash": "a6d8209d5cba74daaff8658665270f99501a2e5d7999ee33388f69bd53df7e8a",
+      "narrative": [
+        {
+          "text": "Lists the only supported TIFF properties, covering image structure and colour fields such as tiff:ImageWidth, tiff:ImageLength, tiff:Compression, tiff:Orientation, tiff:Make, tiff:Model and the YCbCr fields.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s691-c-2-8-xmp-dynamic-media",
+      "source": "sections/s691-c-2-8-xmp-dynamic-media.md",
+      "source_hash": "0cdf3d00b556507e9901e7d73956dcc8464a6a45ca35035857676df46fe0bbfa",
+      "narrative": [
+        {
+          "text": "Table 17 lists the only XMP Dynamic Media (xmpDM) properties supported in c2pa.metadata. They span audio fields such as xmpDM:audioSampleRate, production and shot fields such as xmpDM:shotDate and xmpDM:takeNumber, music fields such as xmpDM:album and xmpDM:tempo, and video fields such as xmpDM:videoFrameRate and xmpDM:videoCompressor.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s692-c-2-9-plus",
+      "source": "sections/s692-c-2-9-plus.md",
+      "source_hash": "3521f13c02fea256739ba02bb36689f18dfc51cdf6eded8dc3d14bc126d09a4e",
+      "narrative": [
+        {
+          "text": "Lists the only supported PLUS properties, such as plus:FileNameAsDelivered, plus:FirstPublicationDate, plus:ImageType and plus:Version, with a link to the PLUS specification.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s693-appendix-d-standard-validation-status-codes",
+      "source": "sections/s693-appendix-d-standard-validation-status-codes.md",
+      "source_hash": "fd330f6404c37c7da1956b862b8dc755afb7d046b0fc1aa993cf80e1fd086b87",
+      "narrative": [
+        {
+          "text": "Heading that opens Appendix D, Standard Validation Status Codes; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s694-d-1-success-codes",
+      "source": "sections/s694-d-1-success-codes.md",
+      "source_hash": "f894b989ad8a0340e645fe8b4c026e17dce7a7179678ce2eb85ec06030bd7e08",
+      "narrative": [
+        {
+          "text": "Table 18 defines the validation success codes, each with its meaning and what its url refers to. They include hash match codes such as assertion.dataHash.match, assertion.bmffHash.match and assertion.hashedURI.match, ingredient manifest and signature validation codes, and signature, credential and time stamp codes such as claimSignature.validated, signingCredential.trusted and timeStamp.validated.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s695-d-2-informational-codes",
+      "source": "sections/s695-d-2-informational-codes.md",
+      "source_hash": "62b815385d2339f335f6412ac76dec9fc433b3789ea8ff2fb4092a8ea6b962c0",
+      "narrative": [
+        {
+          "text": "Table 19 defines informational validation codes, each with its meaning and url usage. They cover deprecated algorithms, additional exclusion ranges in hash assertions, linked resource integrity mismatches or skipped retrievals, redacted assertions, ingredients without a manifest, OCSP outcomes that were inaccessible, skipped or unknown, and time of signing and time stamp conditions such as timeStamp.malformed and timeStamp.untrusted.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s696-d-3-failure-codes",
+      "source": "sections/s696-d-3-failure-codes.md",
+      "source_hash": "a7fcfa4f3fb46042cf7f4508741dfc58853a9400c2815549f3f3cadce8e6343a",
+      "narrative": [
+        {
+          "text": "Table 20 defines the validation failure codes, each with its meaning and the structure its url refers to, starting with algorithm.unsupported and a large set of assertion-level codes. These cover malformed or mismatched hard binding assertions (data, BMFF, boxes, collection, multi-asset and segment hash), action and ingredient reference problems, cloud data and external reference errors, linked resource integrity problems, missing, undeclared or wrongly redacted assertions, and multiple hard bindings. Claim and signature failures include claim.missing, claim.multiple, claim.hardBindings.missing, claim.actions.missing, claimSignature.mismatch and claimSignature.outsideValidity, alongside hashed URI and ingredient manifest or signature mismatches. Further codes address live video sessions, segments, initialization and session keys (with enumerated conditions for BMFF/CMAF and Enhanced RTMP), manifest-level problems such as inaccessible, encrypted or malformed manifest stores, multiple parents and invalid update manifests, and signing credential problems such as revocation or absence from trust lists, plus a catch-all general.error.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s697-appendix-e-considerations-for-deprecation",
+      "source": "sections/s697-appendix-e-considerations-for-deprecation.md",
+      "source_hash": "cea15d3c82a20651c6d8e14af9e73548e638c57a5355bf2326fd37e8ba1270e5",
+      "narrative": [
+        {
+          "text": "Heading that opens Appendix E, Considerations for Deprecation; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s698-e-1-status-of-constructs",
+      "source": "sections/s698-e-1-status-of-constructs.md",
+      "source_hash": "c609f72c9e7631e742fa65a9df50b63733d8927dfc2b70bb618080cf5e1b96b5",
+      "narrative": [
+        {
+          "text": "Defines three status values for constructs whose status has changed: DEPRECATED (claim generators are required not to produce it while validators are encouraged to accept it), UNDEFINED (validators are required to ignore it), and blank for fully supported. Table 21 then gives the status of each manifest type, label, timestamp, assertion, field, digital source type, action, status code and claim field across versions 1.3 to 2.5, for example showing c2pa.claim, older ingredient and BMFF hash versions, stds.iptc and stds.exif as deprecated, with c2pa.hash.segment becoming defined only in 2.5. In 2.5 it newly deprecates templateParameters in action-template-map-v2, the string label x5chain COSE header, trustListUri and the c2pa.removed action.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s699-appendix-f-version-history",
+      "source": "sections/s699-appendix-f-version-history.md",
+      "source_hash": "595d00c78847bc326403f42cf7f93b322b505992e2cfd75bc8e6953b23807c24",
+      "narrative": [
+        {
+          "text": "Heading that opens Appendix F, Version History; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s700-f-1-2-5-october-2026",
+      "source": "sections/s700-f-1-2-5-october-2026.md",
+      "source_hash": "d91a32bd5ef3ebd89daa091444663805f97de832354552b18e179cf47bff2b24",
+      "narrative": [
+        {
+          "text": "Summarizes version 2.5 (October 2026) as expanding asset format and live media support, adding provenance capabilities and clarifying validation, cryptography and content binding. It lists new embedding for formats such as append-only text, WARC, MIDI, TTML, ONNX, SafeTensors and Parquet, the Linked Resource Integrity assertion, new actions and the deprecation of c2pa.removed, Enhanced RTMP live media carriage, ML-DSA signatures, retrieval security countermeasures, crJSON and Soft Binding Resolution API clarifications, and new annexes for CDDL schemas and validation status codes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s701-f-2-2-4-april-2026",
+      "source": "sections/s701-f-2-2-4-april-2026.md",
+      "source_hash": "afbdc803c55f1c3ca9c13b62d3d351a6d66c8e3cfa818c4323e9b8c1747fa925",
+      "narrative": [
+        {
+          "text": "Summarizes version 2.4 (April 2026) as introducing new asset format support, new assertions and the crJSON serialization, a derived JSON-LD view of a Manifest Store not intended as an input format. It lists the new repository receipt, environmental sustainability and AI disclosure assertions, HTML and structured text embedding, tighter rules for actions (such as c2pa.opened referencing its ingredient and the new relatedAssertions field), live video coverage of dynamically packaged content, moving specVersion into claim_generator_info, external reference clarifications, asset type corrections and soft binding repository routes; the extracted list repeats an empty External Reference Assertion Improvements bullet.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s702-f-3-2-3-december-2025",
+      "source": "sections/s702-f-3-2-3-december-2025.md",
+      "source_hash": "0881bb9a5a57792469dab239caa71cc8e9aba204785d3ea292021b6c3fc39a01",
+      "narrative": [
+        {
+          "text": "Summarizes version 2.3 (December 2025) as focused on wider asset type support, better validation and refined assertions and actions, including live video streaming, unstructured text, OGG Vorbis, AVIX and Exif original preservation image embedding. It also lists a revised Cloud Data Assertion and a new External Reference Assertion, declaring the specification version and trust list used, new and gathered actions with deprecation of old action and ingredient versions, exclusion ranges for box hashing, content binding and validation clarifications, and deprecation of box hashing for TIFF.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s703-f-4-2-2-may-2025",
+      "source": "sections/s703-f-4-2-2-may-2025.md",
+      "source_hash": "65dc635ae9c127abac925a4388f811a05235e277e06fa71cd4920c77ccc915fe",
+      "narrative": [
+        {
+          "text": "Summarizes version 2.2 (May 2025) as clarifying 2.1 features and addressing implementer requests. It lists the Soft Binding Resolution API, soft binding manifest recovery fields in ingredients, multi-part assets, time stamps and revocation information in update manifests replacing time-stamp manifests, the c2pa-kp-claimSigning EKU and its use with the C2PA Trust List, new digitalSourceType URIs, embedded data assertions replacing data boxes, and various clarifications to hard bindings, redaction, terminology and validation.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s704-f-5-2-1-september-2024",
+      "source": "sections/s704-f-5-2-1-september-2024.md",
+      "source_hash": "b0bd4eb01c60c6c1b373f96ab34a09c5514cd484edb20faab9a0b218421c3b93",
+      "narrative": [
+        {
+          "text": "Summarizes version 2.1 (September 2024) as improving the security and reliability of Content Credentials, saying all publicly disclosed vulnerabilities were addressed. It lists definitions of well-formed, valid and trusted manifests and valid assets, deprecation and versioning processes, the c2pa URN namespace, the ingredients v3 and c2pa.hash.bmff.v3 assertions, time-stamp manifests and sigTst2 with a TSA trust list, detailed validation requirements and new status codes, hashing improvements, a separate embedding annex with JPEG-XL, action assertion changes, and editorial work towards ISO standardization.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s705-f-6-2-0-january-2024",
+      "source": "sections/s705-f-6-2-0-january-2024.md",
+      "source_hash": "f79b728abb4edb3350b537ed4dbb279ac9cb8015b8f2253a38127151c3f5b035",
+      "narrative": [
+        {
+          "text": "Summarizes version 2.0 (January 2024) as shifting trust decisions away from identifying humans or organizations toward hardware and software identified by X.509 certificates, adding a default C2PA Trust List and allowing only X.509 certificates for signing. It lists the well-formed and valid manifest concepts, the reworked c2pa.metadata approach replacing the Exif, IPTC and Schema.org assertions, removal of W3C Verifiable Credentials, actors, training and data mining and endorsement assertions, a v2 claim with created_assertions and gathered_assertions and a single claim generator, and other changes such as removing c2pa.hash.bmff and adding c2pa.watermarked.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s706-f-7-1-4-november-2023",
+      "source": "sections/s706-f-7-1-4-november-2023.md",
+      "source_hash": "3ca4dba3b30ed0a3c32a8bb0c9e5b324cf4199ae4ed9943cfc1818084177951a",
+      "narrative": [
+        {
+          "text": "Lists the version 1.4 (November 2023) changes, including ZIP-based format embedding, compressed manifests in a brob box, collection hashing, text regions of interest, the c2pa.metadata assertion, TIFF, font and PDF object-level embedding, and signing and box hashing clarifications.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s707-f-8-1-3-april-2023",
+      "source": "sections/s707-f-8-1-3-april-2023.md",
+      "source_hash": "80347ca5bb5e7878ab4cb8a51a3fac2aa3bdbcf9e7617e09156742ba9d55d451",
+      "narrative": [
+        {
+          "text": "Lists the version 1.3 (April 2023) changes, including v2 actions and ingredient assertions, asset reference and asset type assertions, data boxes, general box hashing, regions of interest, the digitalSourceType field and the document signing EKU fallback. It also notes support for formats such as MPF, WebP, AIFF, AVI and GIF, the RFC 9360 COSE header update, deprecation of v1 BMFF hashing, and clarifications on JUMBF, intermediate certificates and the indefinite validity of time-stamps.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s708-f-9-1-2-october-2022",
+      "source": "sections/s708-f-9-1-2-october-2022.md",
+      "source_hash": "2a6fe1861b77cfaf6a223bc8a4e8d9536c94d47d743fb46ce335fe0ac16a8ba2",
+      "narrative": [
+        {
+          "text": "Lists the version 1.2 (October 2022) changes: DNG and TIFF embedding, a digitalSourceType field for actions, renaming stds.iptc.photometadata to stds.iptc, and clarified assertion versioning for optional fields.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s709-f-10-1-1-september-2022",
+      "source": "sections/s709-f-10-1-1-september-2022.md",
+      "source_hash": "c459b8648bc2430f9740b585eb4eee3a1e3051b1c74ed0b64503f006598534c7",
+      "narrative": [
+        {
+          "text": "Lists the version 1.1 (September 2022) changes, including salted box hashing, the c2pa.hash.bmff.v2 assertion, claim_generator_info replacing claim_generator_hints, an Endorsements assertion, c2pa-prefixed status codes, W3C VC redaction, EKU validation, and schema, figure and reference updates.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s710-f-11-1-0-december-2021",
+      "source": "sections/s710-f-11-1-0-december-2021.md",
+      "source_hash": "f598f98b2fd40e5ea5b455be90098a31cf7051cadc34d26f3748b113123fa240",
+      "narrative": [
+        {
+          "text": "Records version 1.0 (December 2021) as the initial release.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s711-appendix-g-cddl-schemas",
+      "source": "sections/s711-appendix-g-cddl-schemas.md",
+      "source_hash": "7569121f118feb2d50921189f111a613cb0327ec0eb2fc6c06a9f82c0d3ec762",
+      "narrative": [
+        {
+          "text": "States that Appendix G is the definitive, normative source for every CDDL schema in the specification, including deprecated and earlier versions, with a note that inline schemas elsewhere are for convenience and this annex is authoritative.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s712-g-1-index",
+      "source": "sections/s712-g-1-index.md",
+      "source_hash": "c1a829d0ec1a358189915d77b97811801adf209a3d784e4d8b50a62bb5950d9e",
+      "narrative": [
+        {
+          "text": "An index table maps each CDDL schema to its annex section and file name. It covers core claim and timestamp schemas, URI types, hash assertions (data, BMFF, Merkle, boxes, collection, multi-asset, segment), standard assertions such as actions, ingredient, soft binding, AI disclosure and linked resource integrity, certificate status, session keys and time stamp structures, metadata and validation result types, and live media and Enhanced RTMP structures.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s713-g-2-core-schemas",
+      "source": "sections/s713-g-2-core-schemas.md",
+      "source_hash": "b0bd37e15bf2e1082f3ac6ef5cdf9ff40c68e9d419100f0e662a5152f8be0f3c",
+      "narrative": [
+        {
+          "text": "Heading that opens Section G.2, Core Schemas; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s714-g-2-1-claim",
+      "source": "sections/s714-g-2-1-claim.md",
+      "source_hash": "b4f8429ffb533424b03b94c1d68eb8420ce6406fb15fcb788de6800073e1f1a8",
+      "narrative": [
+        {
+          "text": "Gives the CDDL for claim-map-v2, which requires instanceID, claim_generator_info, signature and created_assertions and optionally carries gathered_assertions, dc:title, redacted_assertions, alg, alg_soft and the deprecated specVersion and metadata. It also defines the deprecated claim-map (with claim_generator, assertions and dc:format) and generator-info-map, which holds a required name plus optional version, icon, operating_system, specVersion and extra fields.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s715-g-2-2-timestamp-container",
+      "source": "sections/s715-g-2-2-timestamp-container.md",
+      "source_hash": "3817f4e25f7e0252ca52ef8440aad13913d1753d0dbaae8a353458de477fa7b2",
+      "narrative": [
+        {
+          "text": "Gives the CDDL for tstContainer, a map whose tstTokens array holds one or more tokens, each carrying a byte string val, noting it is a CBOR adaptation of part of the JAdES schema with val as a byte string rather than Base64.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s716-g-3-uri-types",
+      "source": "sections/s716-g-3-uri-types.md",
+      "source_hash": "8939207e3938fa2aea1c263e247f533a4f9ed87ff2b23db85e4cd091f0ffb414",
+      "narrative": [
+        {
+          "text": "Heading that opens Section G.3, URI Types; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s717-g-3-1-hashed-uri",
+      "source": "sections/s717-g-3-1-hashed-uri.md",
+      "source_hash": "6b0e8bf4d24f2cbeedbf6f046b7a5115c58d67242b67b4a652075a1642ded361",
+      "narrative": [
+        {
+          "text": "Gives the CDDL for $hashed-uri-map, a reference to a location within the same JUMBF holding a url, an optional alg and a required hash, where alg falls back to an enclosing structure and the structure is invalid if no algorithm is found anywhere. It also defines jumbf-uri-type as a self#jumbf= string pattern, noting that &cbor= extensions were added in 2.5.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s718-g-3-2-hashed-external-uri",
+      "source": "sections/s718-g-3-2-hashed-external-uri.md",
+      "source_hash": "ffa304c0f844ee5eae70402b097d46dc90b41e08abac232f82c888d7d1e983d8",
+      "narrative": [
+        {
+          "text": "Gives the CDDL for $hashed-ext-uri-map, which references an external http or https URL with a mandatory alg and hash plus optional dc:format, size and data_types. It also defines ext-url-type as a regular expression for http and https URLs.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s719-g-3-3-unhashed-external-uri",
+      "source": "sections/s719-g-3-3-unhashed-external-uri.md",
+      "source_hash": "ad5f2d86e7ae8c1248d24970891accf90a3b9edcd9d73cabd5a847a1f33fcbac",
+      "narrative": [
+        {
+          "text": "Gives the CDDL for unhashed-ext-uri-map, a reference to an external URI without a hash (for example an http link or a CAIP-10 smart contract reference) with optional dc:format, size and data_types.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s720-g-3-4-uri-hashed-data",
+      "source": "sections/s720-g-3-4-uri-hashed-data.md",
+      "source_hash": "ccef6c2b3aead77ef2e90aa05c218c4306eb79218e2cb6d213ca0460922cdaf2",
+      "narrative": [
+        {
+          "text": "Gives the CDDL for $uri-hashed-data-map, which pairs a relative uri with a hash and optional size, dc:format and data_types. It defines relative-url-type as an RFC 3986 relative reference with no scheme or authority, noting that percent-encoded traversal sequences are syntactically allowed and that rejecting them is left to validation rather than the schema.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s721-g-4-hash-assertions",
+      "source": "sections/s721-g-4-hash-assertions.md",
+      "source_hash": "2404cdb3c1971affaabae79c00a3f42c0ce9e98581d2614158a216b22ba02344",
+      "narrative": [
+        {
+          "text": "Heading that opens Section G.4, Hash Assertions; the block holds no text beyond the heading.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s722-g-4-1-data-hash",
+      "source": "sections/s722-g-4-1-data-hash.md",
+      "source_hash": "a8fe7288b7e939eac0f12f9fe0a3f6018c2e0302dea9e385babf145cc49606a1",
+      "narrative": [
+        {
+          "text": "Gives the CDDL for data-hash-map, which holds optional exclusions (non-overlapping ranges with increasing start values), an optional alg falling back to the enclosing structure, a required hash, a zero-filled pad and optional pad2, an optional name, and a deprecated url. Each EXCLUSION_RANGE-map gives a start byte and a length to exclude.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
+    },
+    {
+      "block": "library/c2pa-2026-specification-2-5/blocks/prose-s723-g-4-2-bmff-hash",
+      "source": "sections/s723-g-4-2-bmff-hash.md",
+      "source_hash": "fc16fa590030b3d55c5a6db44607273a52ddcde2c6a28647080c8c40a5ca5cd0",
+      "narrative": [
+        {
+          "text": "Gives the CDDL for bmff-hash-map, which holds required exclusions, an optional alg, an optional hash whose coverage depends on whether the MP4 is non-fragmented, Merkle-validated fragmented or a live segment, optional merkle rows, name, deprecated url and a live-workflow sequenceNumber. Each exclusions-map identifies boxes by a constrained xpath and can narrow the match by length, data at offsets, version, 3-byte flags and exact matching, or exclude only subset ranges within a box. Each merkle-map carries uniqueId, localId, leaf count, optional alg, an initHash whose presence depends on the MP4 layout, a row of hashes, and optional fixedBlockSize or variableBlockSizes for piecewise validation of non-fragmented mdat boxes.",
+          "lang": "en",
+          "state": "draft",
+          "drafted_by": {
+            "kind": "agent",
+            "id": "claude-code",
+            "model": "claude-opus-5-5",
+            "session": "https://claude.ai/code/session_01Qmmkt7qvDkBsRp92pWjSvJ"
+          },
+          "drafted_at": "2026-11-01"
+        }
+      ]
     }
   ]
 }
