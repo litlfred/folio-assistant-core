@@ -77,6 +77,7 @@
     "glossary:page": "bun run folio-assistant-core/scripts/glossary-page.ts",
     "glossary:from-source": "bun run folio-assistant-core/scripts/glossary-from-source.ts",
     "glossary:table": "bun run folio-assistant-core/scripts/glossary-table.ts",
+    "archimate:from-glossary": "bun run folio-assistant-core/scripts/archimate-from-glossary.ts",
     "glossary:pot": "bun run folio-assistant-core/scripts/glossary-pot.ts --extract",
     "glossary:acronyms": "bun run folio-assistant-core/scripts/glossary-acronyms.ts --folio folio",
     "glossary:pot:check": "bun run folio-assistant-core/scripts/glossary-pot.ts --check",

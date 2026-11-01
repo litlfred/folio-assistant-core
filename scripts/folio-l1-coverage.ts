@@ -32,7 +32,9 @@
  *   "note"? }]`. A quote is a declared capture, for a sentence the folio holds
  *   in other words or split differently (a step number dropped from a
  *   heading, say). The quote must occur in the block's text, else it is a
- *   problem; it then captures any L1 sentence it occurs in.
+ *   problem; it then captures any L1 sentence it occurs in. With `"l1"`, the
+ *   quote stands for that L1 sentence instead (a source typo the folio
+ *   corrected), as a declared mapping a person decided.
  * - The exclusions file, if there is one: `[{ "text" | "location", "reason",
  *   "signedOffBy"?, "signedOffAt"?, "note"? }]`. `text` is preferred, because
  *   a location moves when a section's text does. As in `l1-coverage`, an
@@ -192,6 +194,13 @@ export function folioCaptured(folioDir: string): Captured[] {
 export interface Quote {
   block: string;
   quote: string;
+  /**
+   * The L1 sentence this quote stands for, when the folio holds it in
+   * corrected words (a typo in the source fixed, say). The quote must still
+   * occur in the block; the capture is then this L1 text. A person decides
+   * that the two say the same, so the mapping is declared, not inferred.
+   */
+  l1?: string;
   location?: string;
   note?: string;
 }
@@ -218,7 +227,7 @@ export function quoteCaptures(folioDir: string, quotes: Quote[], problems: strin
       problems.push(`quote for ${q.block}: not found in ${relative(".", file)}: ${q.quote}`);
       continue;
     }
-    out.push({ id: q.block, text: q.quote });
+    out.push({ id: q.block, text: q.l1 ?? q.quote });
   }
   return out;
 }

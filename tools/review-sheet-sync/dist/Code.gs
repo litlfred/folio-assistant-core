@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 f2b23d2046d6d1b5.
+// folio-assistant-core tools/review-sheet-sync at template sha256 c5f119472c4ae036.
 
 /**
  * Run this one, once, from the editor (or Folio Assistant, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 f2b23d2046d6d1b5';
+const SCRIPT_VERSION = 'template sha256 c5f119472c4ae036';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
 // The menu's name and the page it points to for more (owner, 2026-11-01:
@@ -1164,8 +1164,16 @@ function hashOf(text) {
  * initials) changes no row's basis. Returns that hash first, then the older
  * one that kept empty cells, so a basis an agent wrote before the change still
  * matches until it next writes one.
+ *
+ * A basis written as "2:<hash>" also covers the row's grey content columns
+ * (basisGrey), so a change to the comments a change set joins marks its
+ * proposal stale too (owner, 2026-10-31: "changed blue human (or mechanical
+ * grey) content"). `written` is the stored basis: its form says which hash
+ * to compare with, so old bases keep matching until the agent rewrites them.
  */
-function basisOf(header, row, exact, prefix) {
+function basisOf(header, row, exact, prefix, written) {
+  const v2 = /^2:/.test(String(written || ''));
+  if (v2) exact = exact.concat(basisGrey());
   const parts = [], legacy = [];
   header.forEach((h, i) => {
     let v = String(row[i] == null ? '' : row[i]).trim();
@@ -1177,9 +1185,22 @@ function basisOf(header, row, exact, prefix) {
       if (v) parts.push(h + '=' + v);
     }
   });
+  const pfx = v2 ? '2:' : '';
   // A basis written before a rename (RENAMED) names the columns the old way.
   const was = t => t.map(x => { const a = aliasOf(x.split('=')[0]); return a === null || x.indexOf('Committee') !== 0 ? x : a + x.slice(x.indexOf('=')); });
-  return [hashOf(parts.join('\n')), hashOf(legacy.join('\n')), hashOf(was(parts).join('\n')), hashOf(was(legacy).join('\n'))];
+  return [pfx + hashOf(parts.join('\n')), pfx + hashOf(legacy.join('\n')), pfx + hashOf(was(parts).join('\n')), pfx + hashOf(was(legacy).join('\n'))];
+}
+
+/**
+ * The grey (mechanical) content columns a proposal also rests on: in a
+ * public-comment sheet, what Review Change Sets joins from its comments.
+ * Not the agent's own columns (Agentic status, Staging review page), so the
+ * agent's writes never make its proposals stale.
+ */
+function basisGrey() {
+  if (DRAFTING) return [];
+  const c = COLS.rcs;
+  return [c.sections, c.pages, c.comments, c.revisions, c.feedback, c.dispositions, 'TWG (PCs)'].filter(Boolean);
 }
 
 /** "2026-10-30 22:30Z" (or ISO) -> ms, or NaN. */
@@ -1384,7 +1405,8 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) 
   s.rows.forEach((r, k) => {
     if (want && !want(k)) return;
     const cs = String(r[csCol]).trim();
-    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[cs]);
+    const w = basisOfCs[cs];
+    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix, w), w);
     const cur = t === null ? String(r[ag]) : t;
     const L = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? lineOf[cs] : undefined;
     const fin = L !== undefined ? withProgress(cur, L) : cur;

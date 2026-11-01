@@ -42,7 +42,10 @@
  * - `missing`: no block names it, and no signed-off block exclusion.
  * - `excluded`: no block, by a signed-off `scope: "block"` exclusion.
  * - `picture`: only blocks whose source method is a crop or image.
- * - `linked`: a picture whose block links a model view (`meta.figureViews`).
+ * - `linked`: a picture whose block links a model view (`meta.figureViews`),
+ *   or names the publication it reproduces (`meta.reproduces` with a
+ *   `source` and a `component`, as the figure-rebuild skill asks: linked,
+ *   never redrawn; core#486).
  * - `computable`: a `diagram` block, a `table` block, or a figure block whose
  *   `meta.source.method` is one of {@link COMPUTABLE_METHODS}.
  * - `cited`: a picture by a signed-off `scope: "rebuild"` exclusion.
@@ -80,6 +83,8 @@ export interface FigureBlock {
   figures: string[];
   method: string | null;
   linkedViews: number;
+  /** The block reproduces a figure of another publication and names it. */
+  reproduces?: boolean;
 }
 
 export interface Exclusion {
@@ -153,12 +158,16 @@ export function readBlocks(folioDir: string): FigureBlock[] {
     const meta = (doc.meta ?? {}) as Record<string, unknown>;
     const source = (meta.source ?? {}) as Record<string, unknown>;
     const views = Array.isArray(meta.figureViews) ? meta.figureViews.length : 0;
+    const rep = (meta.reproduces ?? null) as Record<string, unknown> | null;
+    const named = (v: unknown) => typeof v === "string" && v.trim() !== "";
+    const reproduces = rep !== null && typeof rep === "object" && named(rep.source) && named(rep.component);
     blocks.push({
       file: path.slice(folioDir.length).replace(/^\/+/, ""),
       kind,
       figures,
       method: typeof source.method === "string" ? source.method : null,
       linkedViews: views,
+      reproduces,
     });
   }
   return blocks;
@@ -203,7 +212,7 @@ export function coverage(
     }
     if (own.some(isComputable)) row.state = "computable";
     else if (signed.has(`rebuild:${figure}`)) Object.assign(row, { state: "cited", reason: signed.get(`rebuild:${figure}`)!.reason });
-    else if (own.some((b) => b.linkedViews > 0)) row.state = "linked";
+    else if (own.some((b) => b.linkedViews > 0 || b.reproduces === true)) row.state = "linked";
     else row.state = "picture";
     return row;
   });
