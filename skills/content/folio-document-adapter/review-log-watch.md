@@ -128,8 +128,9 @@ reason about the rows, edit anything or post anything.
 
 ## Lint each poll (owner, 2026-11-01; Q-FBK-1 A)
 
-After the change check, run `bun tools/review-log-watch/lint.ts --feedback
-<Contributor Feedback values.json> --agent <Agent values.json>`. It reads
+After the change check, run
+`bun tools/review-log-watch/lint.ts --feedback <Contributor Feedback values.json> --agent <Agent values.json>`.
+It reads
 each Agent row's pull requests from GitHub and prints, per change set, what
 breaks the feedback layout in `review-sheet-script` ("The agent's feedback
 cell has a fixed layout"):
