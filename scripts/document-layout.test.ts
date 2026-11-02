@@ -49,7 +49,10 @@ function unscopedSelectors(html: string, wrapper: string): string[] {
     const sel = m[1]!.trim();
     if (sel === "" || sel.startsWith("@")) continue;
     for (const part of sel.split(",").map((p) => p.trim())) {
-      if (!(part === wrapper || [" ", ".", ":", "[", ">"].some((c) => part.startsWith(wrapper + c)))) out.push(part);
+      // The block panel lives on body, outside the page; a root state class keeps the page scope after it.
+      if (/(^|\s)\.fa-block-panel(?![\w-])/.test(part)) continue;
+      const rest = part.replace(/^(?::root|html|body)[.:[][^\s>+~]*\s+/, "");
+      if (!(rest === wrapper || [" ", ".", ":", "[", ">"].some((c) => rest.startsWith(wrapper + c)))) out.push(part);
     }
   }
   return out;
@@ -136,6 +139,18 @@ describe("--document-layout", () => {
     expect(css).toContain(".s { y:2 }");
     expect(css).toContain(".s .c { z:3 }");
     expect(unscopedSelectors(`<style>${css}</style>`, ".s")).toEqual([]);
+  });
+
+  test("scopeCss keeps a root state class on the root and leaves the block panel global", () => {
+    // `.s html.fa-bp .block-actions` matched nothing, so on a themed page the
+    // block panel's rules never applied and the panel opened unstyled at the
+    // foot of the page (smart-ra, 2026-11-02).
+    const css = scopeCss("html.fa-bp .block-actions, html.fa-bp p:hover + .block-actions { a:1 } .fa-block-panel { b:1 } html.fa-bp .fa-block-panel .block-actions > a { c:1 } .fa-block-panelx { d:1 }", ".s");
+    expect(css).toContain("html.fa-bp .s .block-actions, html.fa-bp .s p:hover + .block-actions { a:1 }");
+    expect(css).toContain(".fa-block-panel { b:1 }");
+    expect(css).toContain("html.fa-bp .fa-block-panel .block-actions > a { c:1 }");
+    expect(css).toContain(".s .fa-block-panelx { d:1 }");
+    expect(css).not.toContain(".s html");
   });
 });
 
