@@ -1901,3 +1901,46 @@ describe("finished change sets are hidden and struck through", () => {
     expect(log).toEqual(["line 6 5 none", "show 6"]);
   });
 });
+
+describe("people make change sets (Q-CS-1 C)", () => {
+  const f = new Function("SpreadsheetApp", `${code}\nCFG = { RCS: "Review Change Sets" };\nreturn { csRowsPlan, humanCs };`)({}) as {
+    csRowsPlan(rows: string[][], agent: string[][]): { give: Record<string, string>; append: string[][] };
+    humanCs(v: string, known: Record<string, number>): { ids: string[]; note: string } | null;
+  };
+  test("a row with only a Title gets the next id over both tabs", () => {
+    const p = f.csRowsPlan([["CS-001", "A"], ["", "Split of A"], ["", ""]], [["CS-001", "A"], ["CS-004", "B"]]);
+    expect(p.give).toEqual({ 1: "CS-005" });
+    expect(p.append).toEqual([["CS-004", "B"]]);
+  });
+  test("an agent change set already on the sheet is not added again, and a typed Title is kept", () => {
+    const p = f.csRowsPlan([["CS-001", "People's title"]], [["CS-001", "Agent title"]]);
+    expect(p).toEqual({ give: {}, append: [] });
+  });
+  test("Change Set (human) takes ids, several ids or new", () => {
+    const known = { "CS-001": 1, "CS-004": 1 };
+    expect(f.humanCs("", known)).toBeNull();
+    expect(f.humanCs("cs-4", known)).toEqual({ ids: ["CS-004"], note: "" });
+    expect(f.humanCs("CS-001, CS-004", known)?.ids).toEqual(["CS-001", "CS-004"]);
+    expect(f.humanCs("new", known)).toEqual({ ids: [], note: "new: the agent makes a change set for this comment" });
+    expect(f.humanCs("CS-009", known)?.note).toMatch(/CS-009 is not a change set on Review Change Sets/);
+  });
+});
+
+describe("Review Change Sets rows people start, in a run", () => {
+  test("a Title-only row gets an id and a new agent change set is added at the end", () => {
+    const t = tabs();
+    t["Review Change Sets"].rows = [
+      ["Change-set", "Title", "Sections", "Pages", "Public Comments", "Suggested Revisions", "PC Committee Feedback", "Dispositions", "Agentic status"],
+      ["CS-001", "Fix scope", "", "", "", "", "", "", ""],
+      ["CS-002", "Other", "", "", "", "", "", "", ""],
+      ["", "Split out the typo", "", "", "", "", "", "", ""],
+    ];
+    t["Agent - Change Sets"].rows.push(["CS-007", "From an issue form", "", "", ""]);
+    const rt = runtime(withConfig(t, configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"))));
+    load(code, rt.g).refreshAll();
+    const ids = rt.written["Review Change Sets"]["Change-set"].map((r) => T((r as unknown[])[0]));
+    expect(ids[2]).toBe("CS-008");
+    expect(ids[3]).toBe("CS-007");
+    expect(T((rt.written["Review Change Sets"]["Title"][3] as unknown[])[0])).toBe("From an issue form");
+  });
+});
