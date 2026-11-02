@@ -59,6 +59,67 @@ The same stylesheet drives both outputs, so a print rule (`@page`, page
 breaks, running heads) belongs in it alongside the screen rules rather than in
 a second file that drifts.
 
+## Release files: the public-comment PDF and the offline .docx
+
+`scripts/document-export.ts` is the publication pipeline's FILE step. It
+runs the same assembly as `document_render_md`, and it gives the same result
+locally as on any CI runner, because the commit is the only input that
+changes:
+
+```sh
+bun run folio-assistant-core/scripts/document-export.ts release --document <slug> [--out build/export] [--release <id>] [--date YYYY-MM-DD]
+```
+
+| file | what it is |
+|---|---|
+| `<slug>-public-comment-<sha7>-<date>.pdf` | the frozen, line-numbered review draft |
+| `<slug>-public-comment-<sha7>-<date>.docx` | the same draft as Word, whose sha256 goes in the release references (`public-comment-channels`) |
+| `<slug>-offline-<sha7>.docx` | the editing copy: Track Changes on, one Word bookmark per chapter, section and block |
+| `<slug>-export-<sha7>.json` | `document-export/v1`: commit, date, tool versions, and each file's sha256, pages, lines and bookmarks |
+
+`pdf` or `docx` builds only that half. The **PDF is the .docx laid out by
+LibreOffice** (`soffice --headless`), not a print of the site. That way the
+two files have the same pages and line numbers (Word line numbering,
+continuous), and `pdf-line-map.py` reads the PDF as it reads a Word-made
+review PDF. It needs pandoc, LibreOffice and poppler (`pdfinfo`,
+`pdftotext`), and never TeX.
+
+It refuses a working tree with uncommitted changes under `folio/`, because
+the stamp would name a commit the file does not come from (`--allow-dirty`
+marks the stamp `-dirty`). The date defaults to the commit's date, so two
+runs at one commit write the same .docx bytes. The PDF differs only in
+LibreOffice's creation timestamp.
+
+### Bringing an offline edit back
+
+An author edits the offline copy in Word with Track Changes on and returns
+it **with every change still pending**. A change accepted before upload looks
+like the original text and carries no author.
+
+```sh
+python3 -I folio-assistant-core/scripts/docx-offline.py changes <edited.docx> --repo . \
+    --out changes.json --summary pr-body.md [--apply [--commit]]
+```
+
+- The file's `folio-source-commit` must exist in the repository, or nothing
+  is merged (exit 2).
+- Each paragraph belongs to the last `folio_<sha1(label)[:16]>` bookmark
+  before it. The name is recomputed from the source commit's
+  `review-anchors.json`, so run `bun run review:anchors` before exporting.
+- `--apply` edits the block's `.md` in the working tree, carrying each
+  insertion and deletion onto the matching line or table cell so emphasis,
+  links and list markers around it survive. A block whose `.md` changed
+  since the source commit is a `conflict` and is left alone. A paragraph
+  that matches no line (a heading, a split or merged paragraph) is `manual`.
+  Neither is guessed at; both are listed in the summary with the original
+  and the proposed text.
+- `--commit` makes one commit per block (`offline edit: <label> (<author>,
+  <date>)`), so a review can take or drop each. Run it on a branch
+  `offline-edit/<sha7>/<author>`, and open the pull request with
+  `--summary`'s file as its body.
+- Word comments come back on their block, in the report and the summary.
+  Formatting-only changes are ignored.
+
 ## A large document loads its text as data
 
 `build-document-site.ts` publishes a document of 200 or more blocks
