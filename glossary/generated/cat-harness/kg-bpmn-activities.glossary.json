@@ -2253,6 +2253,38 @@
       "status": "candidate"
     },
     {
+      "id": "process_mergemanagerwatch.call_meta",
+      "prefLabel": "Saturation meta-merge",
+      "definition": "Offer the card and land only on the owner's tap.",
+      "notation": "Call_Meta",
+      "source": "cat-harness/processes/sdlc/merge-manager-watch.bpmn#Call_Meta",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergemanagerwatch.call_stalled",
+      "prefLabel": "Stalled-agent triage",
+      "definition": "Tell the owner, then take the stalled PR over.",
+      "notation": "Call_Stalled",
+      "source": "cat-harness/processes/sdlc/merge-manager-watch.bpmn#Call_Stalled",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergemanagerwatch.call_train",
+      "prefLabel": "Merge train",
+      "definition": "Ready PRs that stack land as a train through merge:guard.",
+      "notation": "Call_Train",
+      "source": "cat-harness/processes/sdlc/merge-manager-watch.bpmn#Call_Train",
+      "status": "candidate"
+    },
+    {
+      "id": "process_mergemanagerwatch.task_read",
+      "prefLabel": "Read PRs, runner queue, main verdict and owners",
+      "definition": "Read live, never from a stored copy: the open PRs (draft, head, mergeable, owed checks, open owner decisions), the queued and running runs with the age of the oldest, the latest main push run, and each PR owner's last push or comment.",
+      "notation": "Task_Read",
+      "source": "cat-harness/processes/sdlc/merge-manager-watch.bpmn#Task_Read",
+      "status": "candidate"
+    },
+    {
       "id": "process_mergerefusal.call_beanclose_2",
       "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
@@ -3494,6 +3526,70 @@
       "definition": "A trial goes to the kept trashcan: addressable, exported, never published. Its node declares `$schema: folio-fsh-guts/v1` and carries the bean or issue it was written under, since it was never moved from anywhere and a `movedFrom` would be invented provenance. It is NOT refreshed: a trial records what the source looked like when it was tried. Promoting a trial means running this process again with permanent = yes, so the gates are asked afresh.",
       "notation": "Task_Trial",
       "source": "cat-harness/processes/library/sample-import.bpmn#Task_Trial",
+      "status": "candidate"
+    },
+    {
+      "id": "process_saturationmetamerge.task_ask",
+      "prefLabel": "Dry-run, then ask the owner naming every PR",
+      "definition": "Stack the PRs on a meta-merge branch without pushing. Then post the full question (include, leave out with the reason, merge method, per repository), followed by the card: A go, B also the red ones, C dry run only, D cancel.",
+      "notation": "Task_Ask",
+      "source": "cat-harness/processes/sdlc/saturation-meta-merge.bpmn#Task_Ask",
+      "status": "candidate"
+    },
+    {
+      "id": "process_saturationmetamerge.task_done",
+      "prefLabel": "Post done to every held sibling",
+      "definition": "Post done with what landed and what is still open, also when nothing was merged. A hold with no done is an outage.",
+      "notation": "Task_Done",
+      "source": "cat-harness/processes/sdlc/saturation-meta-merge.bpmn#Task_Done",
+      "status": "candidate"
+    },
+    {
+      "id": "process_saturationmetamerge.task_hold",
+      "prefLabel": "Broadcast the hold to siblings",
+      "definition": "Message every sibling that pushes to the repositories involved: what is about to land, and hold pushes, merges and run cancels until done. Ask the coordinator to pass it on to any thread that cannot be reached.",
+      "notation": "Task_Hold",
+      "source": "cat-harness/processes/sdlc/saturation-meta-merge.bpmn#Task_Hold",
+      "status": "candidate"
+    },
+    {
+      "id": "process_saturationmetamerge.task_land",
+      "prefLabel": "Cancel queued PR runs; build, push, merge",
+      "definition": "Never cancel a main push run that has started. Build from fresh main with merge commits, skipping conflicts, .github/workflows/ and subscriptions/. Open one PR per repository, merge it with a merge commit, and comment on each member PR with the link.",
+      "notation": "Task_Land",
+      "source": "cat-harness/processes/sdlc/saturation-meta-merge.bpmn#Task_Land",
+      "status": "candidate"
+    },
+    {
+      "id": "process_saturationmetamerge.task_mainrun",
+      "prefLabel": "Run main's checks",
+      "definition": "The merge starts main's checks. Until tools#1384, a closed PR's run can cancel them, so the steward re-runs a cancelled main run.",
+      "notation": "Task_MainRun",
+      "source": "cat-harness/processes/sdlc/saturation-meta-merge.bpmn#Task_MainRun",
+      "status": "candidate"
+    },
+    {
+      "id": "process_saturationmetamerge.task_owner",
+      "prefLabel": "Choose A, B, C or D",
+      "definition": "Only the owner's own tap or words approve the landing. A PR the card does not name gets no merge from it.",
+      "notation": "Task_Owner",
+      "source": "cat-harness/processes/sdlc/saturation-meta-merge.bpmn#Task_Owner",
+      "status": "candidate"
+    },
+    {
+      "id": "process_saturationmetamerge.task_report",
+      "prefLabel": "Report what landed and main's verdict",
+      "definition": "One message to the owner: what merged, main's verdict per repository, and any open decision. On red, the fix goes to main as its own PR.",
+      "notation": "Task_Report",
+      "source": "cat-harness/processes/sdlc/saturation-meta-merge.bpmn#Task_Report",
+      "status": "candidate"
+    },
+    {
+      "id": "process_saturationmetamerge.task_sibhold",
+      "prefLabel": "Hold, and name the heads to merge",
+      "definition": "A sibling that owns a PR in the batch names the head it wants merged.",
+      "notation": "Task_SibHold",
+      "source": "cat-harness/processes/sdlc/saturation-meta-merge.bpmn#Task_SibHold",
       "status": "candidate"
     },
     {
