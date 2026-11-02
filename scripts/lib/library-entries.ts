@@ -71,3 +71,18 @@ export function libraryEntries(lib: string): LibraryEntry[] {
   const cmp = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
   return out.sort((a, b) => cmp(a.slug, b.slug) || cmp(a.dir, b.dir));
 }
+
+/**
+ * The directory of entry `slug` in `lib`: unfiled at `<lib>/<slug>/`, else in
+ * the one declared group that holds it, else `undefined`. The lookup a reader
+ * makes when it already knows the slug, so it need not list the library.
+ */
+export function libraryEntryDir(lib: string, slug: string): string | undefined {
+  const flat = join(lib, slug);
+  if (isDirectory(flat)) return flat;
+  for (const g of declaredLibraryGroups(lib)) {
+    const d = join(lib, g, slug);
+    if (isDirectory(d)) return d;
+  }
+  return undefined;
+}

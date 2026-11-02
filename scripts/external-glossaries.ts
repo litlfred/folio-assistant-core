@@ -10,7 +10,7 @@
  * An instance names an external glossary the way it names any graph it does
  * not hold: a `remoteGraphs` entry with `graphTypologies: ["glossary"]` in its
  * declaration (the platform glossary page already lists those). An ingested
- * library entry's glossary (for example who-iris's SKOS scheme for a WHO
+ * library entry's glossary (for example an L1 catalogue's SKOS scheme for a WHO
  * guide) is declared the same way, by its published address. This module
  * reads those entries and puts one short note above the document's first
  * glossary entry, so a reader sees the external glossaries next to the

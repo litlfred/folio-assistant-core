@@ -108,8 +108,8 @@ namespace is `<publication root><instance stub>/ns#` (`instanceNs` in
 
 | instance | namespace |
 |---|---|
-| `folio-assistant-core` | `https://litlfred.github.io/folio-assistant-core/v0/ns#` |
-| `ihris` (its own site) | `https://litlfred.github.io/ihris/ihris/ns#` |
+| `folio-assistant-core` | `https://litlfred.github.io/folio-assistant-core/v0/ns/` |
+| `ihris` (its own site) | `https://litlfred.github.io/ihris/ihris/ns/` |
 
 The namespace is never the asset's path: moving the asset must not move the
 term (bean `lqo9`, 2026-09-21).
@@ -449,14 +449,23 @@ is removed only with `--prune`. Archi keeps the layout: no box moves. Its
 report counts the elements that still point at no term. That is the part of
 the model not yet in the graph.
 
-To start from a model that already exists, run it once with `--seed`
-(`--seed --write` to write). Every term an element already points at, and
-that has no `focus` yet, takes the element's type and its relationships to
-the other linked elements. From then on, the glossary is the source.
+**An authored ArchiMate model is never a source of the glossary.** Owner,
+2026-11-02: *"i dont want ArchiMate to be source of SKOS (unless it was
+ingested)"*. Never write a term, label, definition, `focus` or relationship
+into a glossary from a model someone authored in Archi. The words come from
+the source documents; the model only depicts them.
 
-This reverses the direction for the elements the graph holds. The
-`glossary-archimate` page links still read the model's `skosConcept`, which now
-points back at the term the element was drawn from.
+The one exception is a model that was **ingested**: received from elsewhere
+and held as a source under the instance's `library/`. Such a model can seed
+the glossary once with `--seed --from library/<entry>/<file>.archimate`
+(`--write` to write). Every term an element of it already points at, and
+that has no `focus` yet, takes the element's type and its relationships to
+the other linked elements. From then on, the glossary is the source. The
+Tool refuses `--seed` on any model outside `library/`.
+
+The read-only "depicted by" links on a term's page (`glossary-archimate`)
+read the model's `skosConcept` on each build and write nothing into the
+glossary, so they are allowed.
 
 ## Not here
 
