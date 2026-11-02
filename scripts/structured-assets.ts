@@ -97,19 +97,33 @@ export function fieldHeading(key: string): string {
 /** The heading a kind's table wears, plural. */
 const plural = (h: string): string => (/(s|x|ch|sh)$/i.test(h) ? `${h}es` : /[^aeiou]y$/i.test(h) ? `${h.slice(0, -1)}ies` : `${h}s`);
 
+/** An enum-like value (one word: "must", "person", "to-be-prioritized") shows as a tag. */
+const cellValue = (v: string): string => (v && v.length <= 24 && !/\s/.test(v) ? `<span class="fa-assets-tag">${esc(v)}</span>` : esc(v));
+
 /**
- * The page body: a summary line, then one sortable table per kind, in the
- * order the kinds first appear in the document. `toDoc` is the document
- * page's path relative to this page (`../`).
+ * The page body: a title, one tile per kind (its count, linking to its
+ * table), a filter box, then one sortable table per kind, in the order the
+ * kinds first appear in the document. `toDoc` is the document page's path
+ * relative to this page (`../`).
+ *
+ * Tables wear the site's poster table style (`tableStyle`, the same as every
+ * table in the document); the rest is `currentColor` tints, so the page takes
+ * the theme's type and colours, light or dark, standalone or themed.
  */
 export function structuredAssetsBody(title: string, assets: readonly StructuredAsset[], toDoc = "../"): string {
   const byKind = new Map<string, StructuredAsset[]>();
   for (const a of assets) byKind.set(a.kind, [...(byKind.get(a.kind) ?? []), a]);
   const titleOf = new Map(assets.map((a) => [a.label, a.title ?? a.label]));
-  const link = (label: string, text: string) => `<a href="${esc(toDoc)}#${esc(encodeURIComponent(label))}">${esc(text)}</a>`;
+  const link = (label: string, text: string, cls = "") => `<a${cls ? ` class="${cls}"` : ""} href="${esc(toDoc)}#${esc(encodeURIComponent(label))}">${esc(text)}</a>`;
   const parts: string[] = [
-    `<h1>${esc(title)}: structured assets</h1>`,
-    `<p class="fa-assets-summary">${[...byKind].map(([k, v]) => `<a href="#${esc(k)}">${esc(plural(kindHeading(k, "en")))}</a> (${v.length})`).join(" · ")}. <a href="${esc(toDoc)}">Back to the document</a>.</p>`,
+    `<div class="fa-assets-page">`,
+    `<p class="fa-assets-eyebrow"><a href="${esc(toDoc)}">${esc(title)}</a></p>`,
+    `<h1>Structured assets</h1>`,
+    `<nav class="fa-assets-tiles" aria-label="Kinds">${[...byKind]
+      .map(([k, v]) => `<a class="fa-assets-tile" href="#${esc(k)}"><span class="fa-assets-n">${v.length}</span><span class="fa-block-kind">${esc(plural(kindHeading(k, "en")))}</span></a>`)
+      .join("")}</nav>`,
+    `<p class="fa-assets-filter"><label>Filter <input type="search" placeholder="id, title, persona, section…" aria-controls="fa-assets-tables"></label></p>`,
+    `<div id="fa-assets-tables">`,
   ];
   for (const [kind, rows] of byKind) {
     const keys = [...new Set(rows.flatMap((r) => Object.keys(r.fields)))];
@@ -118,48 +132,79 @@ export function structuredAssetsBody(title: string, assets: readonly StructuredA
     const head = [hasId ? "Id" : "", "Title", ...keys.map(fieldHeading), hasPersonas ? "Personas" : "", "Section"].filter(Boolean);
     const body = rows.map((r) => {
       const cells = [
-        ...(hasId ? [r.id ? link(r.label, r.id) : ""] : []),
+        ...(hasId ? [r.id ? link(r.label, r.id, "fa-block-id") : ""] : []),
         link(r.label, r.title ?? r.label),
-        ...keys.map((k) => esc(r.fields[k] ?? "")),
+        ...keys.map((k) => cellValue(r.fields[k] ?? "")),
         ...(hasPersonas ? [r.personas.map((p) => link(p, titleOf.get(p) ?? p)).join(", ")] : []),
-        esc(r.section),
+        `<span class="fa-assets-section">${esc(r.section)}</span>`,
       ];
       return `<tr>${cells.map((c) => `<td>${c}</td>`).join("")}</tr>`;
     });
     parts.push(
-      `<h2 id="${esc(kind)}">${esc(plural(kindHeading(kind, "en")))} <span class="fa-assets-count">(${rows.length})</span></h2>`,
-      `<div class="table-wrapper"><table class="fa-assets"><thead><tr>${head.map((h) => `<th scope="col" aria-sort="none"><button type="button">${esc(h)}</button></th>`).join("")}</tr></thead>`,
-      `<tbody>\n${body.join("\n")}\n</tbody></table></div>`,
+      `<section class="fa-assets-kind" aria-labelledby="${esc(kind)}">`,
+      `<h2 id="${esc(kind)}">${esc(plural(kindHeading(kind, "en")))} <span class="fa-assets-count">${rows.length}</span></h2>`,
+      `<table class="fa-assets"><thead><tr>${head.map((h) => `<th scope="col" aria-sort="none"><button type="button">${esc(h)}</button></th>`).join("")}</tr></thead>`,
+      `<tbody>\n${body.join("\n")}\n</tbody></table>`,
+      `</section>`,
     );
   }
-  parts.push(SORT_SCRIPT);
+  parts.push(`</div>`, `<p class="fa-assets-back"><a href="${esc(toDoc)}">← Back to the document</a></p>`, `</div>`, ASSETS_STYLE, SORT_SCRIPT);
   return parts.join("\n");
 }
 
-/** Click a column heading to sort by it; again to reverse. Text compare, numbers as numbers. */
-const SORT_SCRIPT = `<style>
-.fa-assets th button { all: unset; cursor: pointer; font-weight: 600; }
+/** The page's own look: tiles, tags and chips in currentColor tints, so any theme carries them. */
+const ASSETS_STYLE = `<style>
+.fa-assets-page { --fa-tint: color-mix(in srgb, currentColor 4%, transparent); --fa-line: color-mix(in srgb, currentColor 18%, transparent); }
+.fa-assets-eyebrow { margin: 0 0 .2rem; font-size: .85rem; }
+.fa-assets-eyebrow a { text-decoration: none; opacity: .75; }
+.fa-assets-page h1 { margin-top: 0; }
+.fa-assets-tiles { display: flex; flex-wrap: wrap; gap: .6rem; margin: 1rem 0 1.2rem; }
+.fa-assets-tile { display: flex; flex-direction: column; gap: .15rem; min-width: 8.5rem; padding: .55rem .8rem; border-left: 3px solid var(--fa-line); border-radius: 0 6px 6px 0; background: var(--fa-tint); color: inherit; text-decoration: none; }
+.fa-assets-tile:hover, .fa-assets-tile:focus-visible { background: color-mix(in srgb, currentColor 8%, transparent); }
+.fa-assets-n { font-size: 1.6rem; font-weight: 700; line-height: 1.1; }
+.fa-assets-page .fa-block-kind { font-size: .72em; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; opacity: .7; }
+.fa-assets-filter input { font: inherit; padding: .3rem .6rem; margin-left: .4rem; min-width: min(22rem, 70vw); border: 1px solid var(--fa-line); border-radius: 4px; background: transparent; color: inherit; }
+.fa-assets-kind { margin-top: 1.8rem; }
+.fa-assets-kind h2 { display: flex; align-items: baseline; gap: .5rem; }
+.fa-assets-count { font-size: .7em; font-weight: 600; padding: .05em .5em; border-radius: 999px; background: var(--fa-tint); border: 1px solid var(--fa-line); }
+.fa-assets th button { all: unset; cursor: pointer; }
+.fa-assets th button:focus-visible { outline: 2px solid currentColor; outline-offset: 2px; }
 .fa-assets th[aria-sort="ascending"] button::after { content: " \\25B4"; }
 .fa-assets th[aria-sort="descending"] button::after { content: " \\25BE"; }
-.fa-assets td, .fa-assets th { vertical-align: top; text-align: left; }
-.fa-assets-count { font-weight: normal; opacity: .65; font-size: .8em; }
-</style>
-<script>
-document.querySelectorAll("table.fa-assets").forEach(function (t) {
-  t.querySelectorAll("th").forEach(function (th, i) {
-    th.querySelector("button").addEventListener("click", function () {
-      var dir = th.getAttribute("aria-sort") === "ascending" ? -1 : 1;
-      t.querySelectorAll("th").forEach(function (h) { h.setAttribute("aria-sort", "none"); });
-      th.setAttribute("aria-sort", dir > 0 ? "ascending" : "descending");
-      var body = t.tBodies[0];
-      Array.from(body.rows).sort(function (a, b) {
-        var x = a.cells[i].textContent.trim(), y = b.cells[i].textContent.trim();
-        var nx = Number(x), ny = Number(y);
-        return dir * (x !== "" && y !== "" && !isNaN(nx) && !isNaN(ny) ? nx - ny : x.localeCompare(y, undefined, { numeric: true }));
-      }).forEach(function (r) { body.appendChild(r); });
+.fa-assets .fa-block-id { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .85em; font-weight: 600; white-space: nowrap; }
+.fa-assets-tag { display: inline-block; font-size: .8em; padding: 0 .45em; border-radius: 3px; border: 1px solid #c9cfd8; white-space: nowrap; }
+.fa-assets-section { opacity: .75; font-size: .9em; }
+.fa-assets tr[hidden] { display: none; }
+</style>`;
+
+/** Click a column heading to sort by it, again to reverse; the filter hides rows (and empty tables) that do not match. */
+const SORT_SCRIPT = `<script>
+(function () {
+  document.querySelectorAll("table.fa-assets").forEach(function (t) {
+    t.querySelectorAll("th").forEach(function (th, i) {
+      th.querySelector("button").addEventListener("click", function () {
+        var dir = th.getAttribute("aria-sort") === "ascending" ? -1 : 1;
+        t.querySelectorAll("th").forEach(function (h) { h.setAttribute("aria-sort", "none"); });
+        th.setAttribute("aria-sort", dir > 0 ? "ascending" : "descending");
+        var body = t.tBodies[0];
+        Array.from(body.rows).sort(function (a, b) {
+          var x = a.cells[i].textContent.trim(), y = b.cells[i].textContent.trim();
+          var nx = Number(x), ny = Number(y);
+          return dir * (x !== "" && y !== "" && !isNaN(nx) && !isNaN(ny) ? nx - ny : x.localeCompare(y, undefined, { numeric: true }));
+        }).forEach(function (r) { body.appendChild(r); });
+      });
     });
   });
-});
+  var box = document.querySelector(".fa-assets-filter input");
+  if (box) box.addEventListener("input", function () {
+    var q = box.value.trim().toLowerCase();
+    document.querySelectorAll(".fa-assets-kind").forEach(function (s) {
+      var shown = 0;
+      s.querySelectorAll("tbody tr").forEach(function (r) { var hit = !q || r.textContent.toLowerCase().indexOf(q) >= 0; r.hidden = !hit; if (hit) shown++; });
+      s.hidden = shown === 0;
+    });
+  });
+})();
 </script>`;
 
 /**
@@ -173,4 +218,49 @@ export function linkKindLabels(html: string, kinds: ReadonlySet<string>, toAsset
     (all, before: string, kind: string, text: string) =>
       kinds.has(kind) ? `${before}<a class="fa-block-kind" href="${toAssets}#${kind}" title="Every ${esc(text.toLowerCase())} in this document">${text}</a>` : all,
   );
+}
+
+/** A glossary entry a card can link to: its label and its page, relative to the document page. */
+export interface GlossaryEntryLink {
+  label: string;
+  href: string;
+  title?: string;
+}
+
+/**
+ * Data element cards, kept light (owner, 2026-11-02: "data element is a bit
+ * heavy on the table... link to glossary for more technical info"; Q-DE-1 A).
+ * In each `.fa-block-data-element` card the first table folds behind a
+ * "Technical details" toggle, and the element's bold name links to its
+ * glossary entry when one has that label (exactly, or as the part before a
+ * colon: "Employment status: full-time, …"). Nothing is removed: the table is
+ * one click away and stays in the page for search and print.
+ */
+export function lightenDataElements(html: string, glossary: readonly GlossaryEntryLink[] = []): string {
+  const byName = new Map<string, GlossaryEntryLink>();
+  for (const g of glossary) {
+    const full = g.label.trim().toLowerCase();
+    const head = full.split(":")[0]!.trim();
+    if (!byName.has(full)) byName.set(full, g);
+    if (!byName.has(head)) byName.set(head, g);
+  }
+  const OPEN = '<div class="fa-block fa-block-data-element"';
+  if (!html.includes(OPEN)) return html;
+  const parts = html.split(OPEN);
+  return parts
+    .map((part, i) => {
+      if (i === 0) return part;
+      // This card's text runs to the next card of any kind.
+      const end = part.indexOf('<div class="fa-block ');
+      let card = end < 0 ? part : part.slice(0, end);
+      const rest = end < 0 ? "" : part.slice(end);
+      card = card.replace(/(<div class="table-wrapper">\s*)?<table>[\s\S]*?<\/table>(\s*<\/div>)?/, (t) =>
+        `<details class="fa-block-details"><summary>Technical details</summary>\n${t}\n</details>`);
+      card = card.replace(/(<(?:span|a) class="fa-block-kind"[^>]*>[^<]*<\/(?:span|a)>\s*)<strong>([^<]+)<\/strong>/, (all, kind: string, name: string) => {
+        const g = byName.get(name.replace(/\.\s*$/, "").trim().toLowerCase());
+        return g ? `${kind}<strong><a href="${esc(g.href)}"${g.title ? ` title="${esc(g.title)}"` : ""}>${name}</a></strong>` : all;
+      });
+      return OPEN + card + rest;
+    })
+    .join("");
 }

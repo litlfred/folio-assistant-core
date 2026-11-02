@@ -85,7 +85,7 @@ import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts
 import { visualiserNavDeclaration, type VisualiserNavEntry } from "@litlfred/cat-harness-tools/scripts/lib/navbar.js";
 import { wrapRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 import { scopeCss } from "./scope-css.js";
-import { linkKindLabels, structuredAssets, structuredAssetsBody } from "./structured-assets.ts";
+import { lightenDataElements, linkKindLabels, structuredAssets, structuredAssetsBody } from "./structured-assets.ts";
 
 /** The structured-assets page's folder, beside the document page. */
 const ASSETS_DIR = "assets";
@@ -885,9 +885,11 @@ export async function buildDocumentSite(
     // kind label links to its table (owner, card Q-SAV-1 = A, 2026-11-02).
     const assets = await structuredAssets(d.path);
     const assetKinds = new Set(assets.map((a) => a.kind));
+    // Data element cards fold their table and link their glossary entry (Q-DE-1 A).
+    const entryLinks = assetKinds.has("data-element") ? (termLinks ?? (await glossaryTermLinks(repoRoot, documentPageDir(d.slug)))) : [];
     const render = async (md: string) => {
       const h = withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks }), live);
-      return assetKinds.size ? linkKindLabels(h, assetKinds) : h;
+      return assetKinds.size ? lightenDataElements(linkKindLabels(h, assetKinds), entryLinks) : h;
     };
     const html = await render(built.markdown);
     // The page under the locale, its data where it was (document-site-route.ts).

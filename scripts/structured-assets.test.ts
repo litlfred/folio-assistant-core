@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { fieldHeading, linkKindLabels, structuredAssetsBody, type StructuredAsset } from "./structured-assets.ts";
+import { fieldHeading, lightenDataElements, linkKindLabels, structuredAssetsBody, type StructuredAsset } from "./structured-assets.ts";
 
 const fr: StructuredAsset = { kind: "functional-requirement", label: "freq:FR-AN-01", id: "FR-AN-01", title: "Standard reports", section: "7.5 Analytics", fields: { priority: "must" }, personas: [] };
 const pers: StructuredAsset = { kind: "persona", label: "pers:officer", title: "Registration officer", section: "5.1 Personas", fields: { personaType: "person" }, personas: [] };
@@ -12,10 +12,10 @@ describe("the structured-assets page", () => {
     expect(html.indexOf('id="persona"')).toBeLessThan(html.indexOf('id="user-scenario"'));
     expect(html.indexOf('id="user-scenario"')).toBeLessThan(html.indexOf('id="functional-requirement"'));
     expect(html).toContain("Functional requirements");
-    expect(html).toContain("(1)");
+    expect(html).toContain('<span class="fa-assets-count">1</span>');
   });
   test("every row links to its card in the document", () => {
-    expect(html).toContain('<a href="../#freq%3AFR-AN-01">FR-AN-01</a>');
+    expect(html).toContain('<a class="fa-block-id" href="../#freq%3AFR-AN-01">FR-AN-01</a>');
     expect(html).toContain('<a href="../#pers%3Aofficer">Registration officer</a>');
   });
   test("a scenario's personas are named by title and linked", () => {
@@ -35,5 +35,23 @@ describe("kind labels link to the assets page", () => {
   });
   test("a kind the page does not list stays plain", () => {
     expect(linkKindLabels(card("remark"), new Set(["persona"]))).toContain('<span class="fa-block-kind">K</span>');
+  });
+});
+
+describe("data element cards stay light", () => {
+  const de = (name: string) =>
+    `<div class="fa-block fa-block-data-element" markdown="1">\n<p><a id="de:x"></a>\n<span class="fa-block-kind">Data element</span> <strong>${name}</strong> — element 8.</p>\n<table><tr><td>to draft</td></tr></table>\n</div>`;
+  const glossary = [{ label: "Employment status: full-time, part-time", href: "../glossary/es/", title: "How a worker is employed." }];
+  test("the table folds behind Technical details", () => {
+    const h = lightenDataElements(de("Name"));
+    expect(h).toContain('<details class="fa-block-details"><summary>Technical details</summary>\n<table>');
+  });
+  test("the name links to a glossary entry with that label, or that label before a colon", () => {
+    expect(lightenDataElements(de("Employment status"), glossary)).toContain('<strong><a href="../glossary/es/" title="How a worker is employed.">Employment status</a></strong>');
+  });
+  test("no entry, no link; other kinds untouched", () => {
+    expect(lightenDataElements(de("Name"), glossary)).toContain("<strong>Name</strong>");
+    const p = '<div class="fa-block fa-block-persona"><table></table></div>';
+    expect(lightenDataElements(p, glossary)).toBe(p);
   });
 });
