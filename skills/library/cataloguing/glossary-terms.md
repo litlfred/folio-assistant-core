@@ -108,8 +108,8 @@ namespace is `<publication root><instance stub>/ns#` (`instanceNs` in
 
 | instance | namespace |
 |---|---|
-| `folio-assistant-core` | `https://litlfred.github.io/folio-assistant-core/v0/ns#` |
-| `ihris` (its own site) | `https://litlfred.github.io/ihris/ihris/ns#` |
+| `folio-assistant-core` | `https://litlfred.github.io/folio-assistant-core/v0/ns/` |
+| `ihris` (its own site) | `https://litlfred.github.io/ihris/ihris/ns/` |
 
 The namespace is never the asset's path: moving the asset must not move the
 term (bean `lqo9`, 2026-09-21).
