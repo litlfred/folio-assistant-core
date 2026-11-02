@@ -1817,9 +1817,10 @@ describe("Needs you only with a question (Q-FBK-1 A)", () => {
 });
 
 describe("Where to review and PR links (Q-FBK-3 A)", () => {
-  const fns = new Function("SpreadsheetApp", "CFG", `${code.replace(/^(const|let) CFG\b.*$/m, "")}\nreturn { whereLine, previewSection, autoLinks, withWhere };`)({}, { REPO_URL: "https://github.com/litlfred/dth-hrh" }) as {
+  const fns = new Function("SpreadsheetApp", "CFG", `${code.replace(/^(const|let) CFG\b.*$/m, "")}\nreturn { whereLine, whereFor, previewSection, autoLinks, withWhere };`)({}, { REPO_URL: "https://github.com/litlfred/dth-hrh" }) as {
     whereLine: (picked: string[], toc: Record<string, string>, staging: string) => { text: string; links: [number, number, string][] };
     autoLinks: (t: string, taken: [number, number, string][]) => [number, number, string][];
+    whereFor: (picked: string[], toc: Record<string, string>, staging: string, status: string) => { text: string } | null;
   };
   const toc = { "4.1 Scope": "https://litlfred.github.io/dth-hrh/en/dth-hrh/#sec-4-1" };
   test("links each selected section on the preview while there is one", () => {
@@ -1831,6 +1832,11 @@ describe("Where to review and PR links (Q-FBK-3 A)", () => {
   test("falls back to the published draft, and flags no section", () => {
     expect(fns.whereLine(["4.1 Scope"], toc, "").links[0][2]).toBe(toc["4.1 Scope"]);
     expect(fns.whereLine([], toc, "").text).toMatch(/No section selected/);
+  });
+  test("a finished row with no section gets no warning; an open one does", () => {
+    expect(fns.whereFor([], toc, "", "Closed")).toBeNull();
+    expect(fns.whereFor([], toc, "", "Needs human")?.text).toMatch(/No section selected/);
+    expect(fns.whereFor(["4.1 Scope"], toc, "", "Reverted")?.text).toMatch(/Where to review: 4.1 Scope/);
   });
   test("every repo#n becomes a link", () => {
     const t = "Draft PR dth-hrh#82 and smart-ra#198.";

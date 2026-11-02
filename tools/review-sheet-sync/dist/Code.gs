@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 3652cf622c134479.
+// folio-assistant-core tools/review-sheet-sync at template sha256 3410e6293ecc5f75.
 
 /**
  * Run this one, once, from the editor (or Folio Assistant, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 3652cf622c134479';
+const SCRIPT_VERSION = 'template sha256 3410e6293ecc5f75';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
 // The menu's name and the page it points to for more (owner, 2026-11-01:
@@ -1687,6 +1687,17 @@ function whereLine(picked, tocUrl, staging) {
   });
   return { text: text, links: links };
 }
+/**
+ * The Where to review line for a row, or null. A finished row (closed,
+ * merged, reverted, withdrawn) with no section picked gets none: nothing is
+ * left to review there, and the warning was noise on the DTH-HRH log's
+ * closed re-pin rows (owner, 2026-11-02: after pasting the new Code.gs).
+ */
+function whereFor(picked, tocUrl, staging, status) {
+  const finished = /closed|merged|reverted|withdrawn/i.test(String(status || ''));
+  if (finished && !picked.some(n => tocUrl[n])) return null;
+  return whereLine(picked, tocUrl, staging);
+}
 function withWhere(line, where) {
   const l = line && typeof line === 'object' ? line : { text: String(line || ''), links: [] };
   if (!l.text) return where;
@@ -2401,7 +2412,8 @@ function refreshDraft(rows) {
     if (!cs) return;
     const base = c.agentic < 0 ? statusBlock(line, stOf[cs] || '', prOf[cs] || []) : line;
     const picked = c.sections >= 0 ? String(r[c.sections]).split(',').map(bareName).filter(Boolean) : null;
-    lineOf[cs] = picked ? withWhere(base, whereLine(picked, tocUrl, stagingOf[cs])) : base;
+    const where = picked ? whereFor(picked, tocUrl, stagingOf[cs], stOf[cs] || '') : null;
+    lineOf[cs] = where ? withWhere(base, where) : base;
   });
   markStale(fb, c.cs, basisOfCs, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback, COLS.draft.agentFeedback || 'Feedback (agent)', lineOf, want);
   completeReady(fb, c.cs, prOf, stagingOf, builtOf, readyAt);

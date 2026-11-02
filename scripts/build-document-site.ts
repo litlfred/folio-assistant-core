@@ -85,8 +85,13 @@ import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts
 import { visualiserNavDeclaration, type VisualiserNavEntry } from "@litlfred/cat-harness-tools/scripts/lib/navbar.js";
 import { wrapRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 import { scopeCss } from "./scope-css.js";
+import { lightenDataElements, linkKindLabels, structuredAssets, structuredAssetsBody } from "./structured-assets.ts";
+
+/** The structured-assets page's folder, beside the document page. */
+const ASSETS_DIR = "assets";
 import { liveFigures, withLiveFigures } from "./live-figures.js";
 import { linkTerms, termLinks as glossaryTermLinks, type TermLink } from "./glossary-term-links.ts";
+import { externalGlossaries, firstGlossaryLabel, withExternalGlossaries } from "./external-glossaries.ts";
 import { referenceAnchor } from "../schemas/reference.ts";
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 
@@ -104,15 +109,15 @@ const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 export function tableStyle(scope = ""): string {
   const s = scope ? `${scope} ` : "";
   return `
-  ${s}table { display: block; box-sizing: border-box; width: max-content; max-width: min(100%, 100vw - 7rem); overflow-x: auto; margin: 1.5rem 0; border-collapse: collapse;
+  ${s}table { display: block; box-sizing: border-box; width: max-content; max-width: 100%; overflow-x: auto; margin: 1.5rem 0; border-collapse: collapse;
     background: #fff; color: #2d3748; border: 1px solid #14213d; border-radius: 6px; box-shadow: 0 1px 4px rgba(20, 33, 61, .18); font-size: .92em; }
   ${s}th, ${s}td { border: 1px solid #c9cfd8; padding: .4rem .65rem; text-align: left; vertical-align: top; }
   ${s}thead th { background: #14213d; color: #fff; font-weight: 600; border-color: #14213d; }
   ${s}tbody tr:nth-child(even) > td { background: #f3f4f6; }
   ${s}table a { color: #0b5cad; }
   ${s}table code { color: inherit; background: none; padding: 0; }
-  /* A table wider than the reading column grows past it, centred on it, up to the window; only then does it scroll. */
-  @media (min-width: 50rem) { ${s}table { max-width: calc(100vw - 7rem); position: relative; left: 50%; transform: translateX(-50%); } }
+  /* Tables sit at the start of the reading column, never centred or pushed past it ("tables should be left aligned",
+     2026-11-02); a table wider than the column scrolls inside it. */
 `;
 }
 
@@ -820,7 +825,8 @@ export function defaultBlockActions(repoRoot: string, over: Partial<BlockActions
 
 export interface SiteBuildResult {
   /** `title`: the manifest's title, with its `meta.status` (e.g. "Working Draft") when it declares one. */
-  documents: { slug: string; title: string; blocks: number; page: string }[];
+  /** `assets`: the structured-assets page, relative to the site root, when the document has any structured block. */
+  documents: { slug: string; title: string; blocks: number; page: string; assets?: string }[];
   errors: string[];
 }
 
@@ -875,7 +881,25 @@ export async function buildDocumentSite(
     // A figure that is a view of the instance's ArchiMate model is drawn from
     // the model, linked to the view's page (live-figures.ts); the PNG stays the fallback.
     const live = liveFigures(repoRoot, documentPageDir(d.slug));
-    const render = async (md: string) => withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks }), live);
+    // The structured-assets page (structured-assets.ts): every requirement,
+    // persona, scenario and data element in one table per kind; each card's
+    // kind label links to its table (owner, card Q-SAV-1 = A, 2026-11-02).
+    const assets = await structuredAssets(d.path);
+    const assetKinds = new Set(assets.map((a) => a.kind));
+    // Data element cards fold their table and link their glossary entry (Q-DE-1 A).
+    const entryLinks = assetKinds.has("data-element") ? (termLinks ?? (await glossaryTermLinks(repoRoot, documentPageDir(d.slug)))) : [];
+    // External glossaries the instance cites, noted above the document's own
+    // glossary (owner, 2026-11-02; external-glossaries.ts).
+    const extGlossaries = externalGlossaries(repoRoot);
+    const firstEntry = extGlossaries.length ? await firstGlossaryLabel(d.path) : undefined;
+    const render = async (md: string) => {
+      const h = withExternalGlossaries(
+        withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks }), live),
+        firstEntry,
+        extGlossaries,
+      );
+      return assetKinds.size ? lightenDataElements(linkKindLabels(h, assetKinds), entryLinks) : h;
+    };
     const html = await render(built.markdown);
     // The page under the locale, its data where it was (document-site-route.ts).
     const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
@@ -936,6 +960,13 @@ export async function buildDocumentSite(
       if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, note + headingIds(shellHtml), mathOpts, loader), true)));
       else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(shellHtml) + note + shellHtml, mathOpts, loader), true));
     }
+    if (assets.length) {
+      const assetsDir = join(dir, ASSETS_DIR);
+      mkdirSync(assetsDir, { recursive: true });
+      const body = structuredAssetsBody(title, assets);
+      const assetsTitle = `${title}: structured assets`;
+      writeFileSync(join(assetsDir, "index.html"), themed ? themedDocumentPage(themed, assetsTitle, page(assetsTitle, body)) : page(assetsTitle, body));
+    }
     // A document's images live in `folio/<slug>/media/` and its blocks link
     // them as `media/<file>`, relative to the document's page, so they go
     // beside the page. Copied, so a figure in the preview is the figure in the folio.
@@ -950,11 +981,11 @@ export async function buildDocumentSite(
     writeFileSync(join(data, "graph.jsonld"), JSON.stringify({ "@graph": graph.nodes.map((n) => JSON.parse(n.text) as unknown) }) + "\n");
     const media = join(dirname(d.path), "media");
     if (existsSync(media)) cpSync(media, join(dir, "media"), { recursive: true });
-    result.documents.push({ slug: d.slug, title, blocks: built.blockCount, page: documentPage(d.slug) });
+    result.documents.push({ slug: d.slug, title, blocks: built.blockCount, page: documentPage(d.slug), ...(assets.length ? { assets: `${documentPageDir(d.slug)}/${ASSETS_DIR}/index.html` } : {}) });
   }
   const list = result.documents
     // A reader looks for the document by its title, not its folder name (owner, 2026-11-01).
-    .map((d) => `<li><a href="${esc(d.page)}">${esc(d.title)}</a></li>`)
+    .map((d) => `<li><a href="${esc(d.page)}">${esc(d.title)}</a>${d.assets ? ` · <a href="${esc(d.assets)}">structured assets</a>` : ""}</li>`)
     .join("\n");
   const outline: Outline = { $schema: OUTLINE_SCHEMA, documents: [] };
   for (const d of docs) {
