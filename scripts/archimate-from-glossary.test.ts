@@ -5,7 +5,7 @@
  */
 import { describe, expect, test } from "bun:test";
 
-import { applyPlan, plan, seedFrom, type GraphElement } from "./archimate-from-glossary.ts";
+import { applyPlan, isIngested, plan, seedFrom, type GraphElement } from "./archimate-from-glossary.ts";
 
 const am = "../../cat-harness-tools/archimate";
 const { parseArchimate, layerOf } = await import(`${am}/schemas/archimate.ts`);
@@ -98,5 +98,12 @@ describe("archimate-from-glossary", () => {
     expect(seeds).toEqual([{ file: "ra.glossary.json", focus: [{ termId: "client-registry", focus: { archimate: "ApplicationComponent" } }] }]);
     const both = seedFrom(model, [{ file: "ra.glossary.json", id: "ra", terms: [{ id: "client-registry" }, { id: "client-lookup" }] }]);
     expect(both[0]!.focus.find((x) => x.termId === "client-lookup")!.focus).toEqual({ archimate: "ApplicationService", relationships: [{ type: "Serving", target: "client-registry" }] });
+  });
+
+  test("--seed reads only an ingested model, held under library/", () => {
+    expect(isIngested("/r", "/r/library/who-ra-2024/model.archimate")).toBe(true);
+    expect(isIngested("/r", "/r/archimate/0.3.0-draft.1/WHOBaseFile.archimate")).toBe(false);
+    expect(isIngested("/r", "/r/library-copy/model.archimate")).toBe(false);
+    expect(isIngested("/r", "/elsewhere/library/model.archimate")).toBe(false);
   });
 });

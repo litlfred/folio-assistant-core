@@ -26,16 +26,20 @@
  * The model file keeps every byte this does not change. Archi's zipped
  * archive is written back as a zip.
  *
- * **Seeding, once.** `--seed` goes the other way, one time, to move a
- * model's existing knowledge into the graph: every term an element already
- * points at (`skosConcept`) and that has no `focus` yet gets one, with the
- * element's type and its relationships to the other linked elements. After
- * that the glossary is the source, and this Tool keeps the model agreeing.
- * A term that already has a focus is never overwritten.
+ * **Seeding, once, from an ingested model only.** `--seed` goes the other
+ * way, one time: every term an element already points at (`skosConcept`) and
+ * that has no `focus` yet gets one, with the element's type and its
+ * relationships to the other linked elements. A term that already has a focus
+ * is never overwritten. Owner, 2026-11-02: "i dont want ArchiMate to be source
+ * of SKOS (unless it was ingested)", then card B. So `--seed` reads only a
+ * model held in the instance's `library/` (a source as received), named with
+ * `--from <path>` or as the configured model's file, and refuses an authored
+ * model. After a seed the glossary is the source, and this Tool keeps the
+ * model agreeing.
  *
  * Usage:
  *   bun run cat archimate:from-glossary --instance <dir> --model <model id> [--write] [--prune] [--check] [--json]
- *   bun run cat archimate:from-glossary --instance <dir> --model <model id> --seed [--write]
+ *   bun run cat archimate:from-glossary --instance <dir> --seed --from library/<entry>/<file>.archimate [--write]
  *
  * Without `--write` it reports what it would change. `--check` fails when
  * anything would change, or a type disagrees. The report also counts the
@@ -46,7 +50,7 @@
  */
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync, readdirSync, writeFileSync } from "node:fs";
-import { basename, join, resolve } from "node:path";
+import { basename, isAbsolute, join, relative, resolve, sep } from "node:path";
 
 import { ARCHIMATE_RELATIONSHIPS, GlossarySchema, isArchimateFocus, type ArchimateFocus, type ArchimateRelationshipType, type LangText } from "../schemas/glossary.ts";
 
@@ -323,6 +327,16 @@ export function report(p: Plan, model: string): string {
   return lines.join("\n");
 }
 
+/**
+ * Whether a model file is ingested: held under the instance's `library/`,
+ * where sources are kept as received. Only such a model may seed the
+ * glossary; an authored model never does.
+ */
+export function isIngested(root: string, file: string): boolean {
+  const rel = relative(resolve(root), resolve(file));
+  return !rel.startsWith("..") && !isAbsolute(rel) && rel.split(sep)[0] === "library";
+}
+
 function arg(name: string): string | undefined {
   const i = process.argv.indexOf(`--${name}`);
   return i >= 0 ? process.argv[i + 1] : undefined;
@@ -330,9 +344,12 @@ function arg(name: string): string | undefined {
 
 if (import.meta.main) {
   const instance = arg("instance");
-  const modelId = arg("model");
+  const seeding = process.argv.includes("--seed");
+  const from = arg("from");
+  const modelId = arg("model") ?? (seeding && from ? basename(from) : undefined);
   if (!instance || !modelId) {
     console.error("usage: archimate-from-glossary.ts --instance <dir> --model <model id> [--write] [--prune] [--check] [--json]");
+    console.error("       archimate-from-glossary.ts --instance <dir> --seed --from library/<entry>/<file>.archimate [--write]");
     process.exit(2);
   }
   const root = resolve(instance);
@@ -340,15 +357,26 @@ if (import.meta.main) {
   const { readArchimate, modelXmlOf, layerOf } = await import(`${am}/schemas/archimate.ts`);
   const { readConfig, archimateDir } = await import(`${am}/scripts/check-archimate.ts`);
   const { withModelXml } = await import(`${am}/scripts/archimate-detangle.ts`);
-  const config = readConfig(root) as { models: Array<{ id: string; file: string }> };
-  const m = config.models.find((x) => x.id === modelId);
-  if (!m) {
-    console.error(`✗ no model "${modelId}" in ${basename(root)}'s ArchiMate config`);
+  let file: string;
+  if (seeding && from) {
+    file = resolve(root, from);
+  } else {
+    const config = readConfig(root) as { models: Array<{ id: string; file: string }> };
+    const m = config.models.find((x) => x.id === modelId);
+    if (!m) {
+      console.error(`✗ no model "${modelId}" in ${basename(root)}'s ArchiMate config`);
+      process.exit(2);
+    }
+    file = join(archimateDir(root, config), m.file);
+  }
+  if (seeding && !isIngested(root, file)) {
+    console.error(`✗ --seed refused: ${relative(root, file)} is an authored model, not an ingested one.`);
+    console.error("  An authored ArchiMate model is never a source of the glossary (owner, 2026-11-02).");
+    console.error("  Only a model held under library/ (a source as received) may seed terms: pass it with --from.");
     process.exit(2);
   }
-  const file = join(archimateDir(root, config), m.file);
   const bytes = readFileSync(file);
-  if (process.argv.includes("--seed")) {
+  if (seeding) {
     const dir = join(root, "glossary");
     const files = existsSync(dir) ? readdirSync(dir).filter((x) => x.endsWith(".glossary.json")).sort() : [];
     const raw = new Map(files.map((f) => [f, JSON.parse(readFileSync(join(dir, f), "utf8")) as { id: string; terms: Array<Record<string, unknown> & { id: string }> }]));
