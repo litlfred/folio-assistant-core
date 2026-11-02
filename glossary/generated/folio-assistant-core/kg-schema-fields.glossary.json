@@ -931,6 +931,13 @@
       "status": "candidate"
     },
     {
+      "id": "reference.referencenodeschema.printed",
+      "prefLabel": "ReferenceNodeSchema.printed",
+      "definition": "The entry exactly as the citing document prints it, when no citation style reproduces that wording (a committee's own short form, two works in one entry). A reference list drawn from the node (`scripts/references-render.ts`) prints this text verbatim instead of formatting the CSL fields, so the KG stays the one source without changing a word. Not CSL: dropped from CSL-JSON exports.",
+      "source": "folio-assistant-core/schemas/reference.ts#ReferenceNodeSchema.printed",
+      "status": "candidate"
+    },
+    {
       "id": "reference.referencenodeschema.provenance",
       "prefLabel": "ReferenceNodeSchema.provenance",
       "definition": "Where the reference came from. Absent means `authored`.",
