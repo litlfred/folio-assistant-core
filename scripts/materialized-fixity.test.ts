@@ -235,3 +235,47 @@ describe("the backfill records a baseline, and says so", () => {
     expect(fx.digest).toBe("original");
   });
 });
+
+describe("a mounted instance's bytes outside its declared directories", () => {
+  // fa's Pages deploy, 2026-11-01: smart-trust's catalogue records its GDHCN
+  // Framework PDF at input/images/, which smart-trust commits but does not
+  // declare, so the index's mount does not carry it.
+  const rec = (outsideMount?: boolean) => ({
+    source: "x/catalogue/nodes/a.json",
+    localPath: "input/images/a.pdf",
+    abs: "/nonexistent/input/images/a.pdf",
+    digest: "0".repeat(64),
+    ...(outsideMount ? { outsideMount } : {}),
+  });
+
+  it("are unverifiable here, with the reason, not absent", () => {
+    const v = verify(rec(true));
+    expect(v.kind).toBe("unverifiable");
+    expect(v.kind === "unverifiable" && v.why).toContain("does not mount it");
+  });
+
+  it("are still absent when the instance is not a mount", () => {
+    expect(verify(rec()).kind).toBe("absent");
+  });
+
+  it("collect() marks them only for a mounted instance, and only outside its directories", () => {
+    const root = mkdtempSync(join(tmpdir(), "fixity-mount-"));
+    try {
+      const inst = join(root, "lay");
+      mkdirSync(join(inst, "catalogue"), { recursive: true });
+      writeFileSync(join(inst, "lay.json"), JSON.stringify({ name: "lay", directories: [{ path: "catalogue/" }] }));
+      const m = (p: string) => ({ materialization: { state: "materialized", localPath: p, fixity: { algorithm: "sha256", digest: "0".repeat(64) } } });
+      writeFileSync(join(inst, "catalogue", "n.json"), JSON.stringify({ bitstreams: [m("input/images/a.pdf"), m("catalogue/b.pdf")] }));
+      const standalone = collect(root).filter((r) => r.source.startsWith("lay/"));
+      expect(standalone.length).toBe(2);
+      expect(standalone.some((r) => r.outsideMount)).toBe(false);
+      writeFileSync(join(root, "index.lock.json"), JSON.stringify({ instances: [{ instance: "lay", path: "lay" }] }));
+      const mounted = collect(root).filter((r) => r.source.startsWith("lay/"));
+      expect(mounted.find((r) => r.localPath === "input/images/a.pdf")?.outsideMount).toBe(true);
+      expect(mounted.find((r) => r.localPath === "catalogue/b.pdf")?.outsideMount).toBeUndefined();
+      expect(verify(mounted.find((r) => r.localPath === "catalogue/b.pdf")!).kind).toBe("absent");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
+  });
+});
