@@ -128,6 +128,15 @@ export const ReferenceNodeSchema = z
     derivedFrom: z.string().min(1).optional(),
     /** The library asset that holds a copy of the work, when one is held. Repo-relative path or IRI. */
     heldAt: z.string().min(1).optional(),
+    /**
+     * The entry exactly as the citing document prints it, when no citation
+     * style reproduces that wording (a committee's own short form, two works
+     * in one entry). A reference list drawn from the node
+     * (`scripts/references-render.ts`) prints this text verbatim instead of
+     * formatting the CSL fields, so the KG stays the one source without
+     * changing a word. Not CSL: dropped from CSL-JSON exports.
+     */
+    printed: z.string().min(1).optional(),
   })
   .passthrough();
 export type ReferenceNode = z.infer<typeof ReferenceNodeSchema>;
@@ -159,6 +168,7 @@ const NODE_FIELDS = new Set([
   "provenance",
   "derivedFrom",
   "heldAt",
+  "printed",
   "library",
   "_comment",
   "_generated",

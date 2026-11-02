@@ -34,6 +34,7 @@
     "schemas/review-comment.ts",
     "schemas/review-verdict.ts",
     "scripts/glossary-table.ts",
+    "scripts/references-render.ts",
     "scripts/tabular-columns.ts"
   ]
 }
