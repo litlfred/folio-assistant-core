@@ -465,14 +465,14 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
       colours,
       "One row per public comment, as received:",
       `   1. The Feedback Review Committee adds ${pcFb}, TWG (human), Comment type, Disposition and Status.`,
-      `   2. The agent puts the comment in a Change Set (linked to ${t.RCS}) and suggests a TWG (agent).`,
+      `   2. The agent suggests a Change Set (linked to ${t.RCS}) and a TWG (agent). To move a comment, type another change set's id, or "new", in Change Set (human).`,
       `   3. Edits are decided per change set, on ${t.RCS}. Agentic status and ${staging} here follow the change set.`,
       ...footer,
     ].join("\n");
     out[t.RCS] = [
       colours,
       `One row per change set, joining its comments from ${t.RPC}:`,
-      `   1. The Feedback Review Committee gives ${pcFb} on the change set and picks its TWG (CS).`,
+      `   1. The Feedback Review Committee gives ${pcFb} on the change set and picks its TWG (CS). To make a change set, type a Title on an empty row (the script adds the Change-set id) or open a change-set issue. To split or merge one, say so in ${pcFb}: the agent proposes how.`,
       `   2. The agent proposes a direction in ${c.COLS.rcs?.agentFeedback || "Change Set Feedback (agent)"}. ${ask}`,
       ...changeSet,
       ...footer,

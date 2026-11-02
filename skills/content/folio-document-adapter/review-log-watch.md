@@ -151,6 +151,50 @@ Exit 0 is clean. Exit 10 lists problems: the watcher fixes the Agent tab
 status or rewrites the cell to the layout in the same wake, and records the
 Agent step. The lint writes nothing itself.
 
+## Change sets people make (owner, 2026-11-02; Q-CS-1 C)
+
+People make change sets, the way they open issues; how one came about does
+not matter once people have adjudicated it. On a public-comment log the
+watcher finds four kinds of request on each poll, and answers each in the
+same wake:
+
+- **A row with only a Title** on Review Change Sets. The sheet script gives
+  it the next Change-set id. The watcher adds the matching row on Agent -
+  Change Sets (same id and Title) and a change-set record, and proposes a
+  direction in Change Set Feedback (agent), as for any change set.
+- **A `change-set` issue** (form `templates/issue-forms/change-set.yml`,
+  label `change-set`). `bun tools/review-log-watch/cs-requests.ts issue --body <file>`
+  reads its fields. For "New change set" the watcher adds the Agent - Change
+  Sets row, and the script then adds the Review Change Sets row with that
+  Title. Split, merge and move go as below.
+- **Feedback that asks for it**, e.g. "this CS needs to be split" (owner,
+  07:17Z: "part of agentic watch"). Run
+  `bun tools/review-log-watch/cs-requests.ts request --text <the person's feedback>`
+  on every changed feedback cell; only the person's words, never the agent's
+  or the script's lines. For a split, merge, move or new request, write a
+  `Decision needed:` question naming the change sets and which comments go
+  where, with lettered options and one recommended. Make them only once an
+  Editor sets Ready for agent to Yes.
+- **Change Set (human)** on Review Public Comments: a person typed another
+  change set's id, several ids, or `new`. The script already counts the
+  comment in its new change set; the watcher records the move on Agent -
+  Comments (Change-sets) and on the change-set records, and for `new` makes a
+  change set for the comment and proposes a Title.
+
+**Triage each new comment.** A comment with no change set yet gets the
+agent's suggestion: run `cs-requests.ts triage --input <json>` with the
+comment's sections and the open change sets (id, sections, TWGs, status). It
+ranks the open change sets that share its sections and always offers `new`.
+Write the first as the comment's Change-sets on Agent - Comments and its
+committees as TWG (agent). These are suggestions: a person's Change Set
+(human) or TWG (human) always wins, and the watcher never overwrites a Blue
+cell.
+
+**Sheet comments.** People without edit rights use Insert, then Comment.
+Neither the Sheets API nor the script reads those comments yet, so the
+watcher does not see them; ask the person to copy the request into a
+feedback cell, or open the change-set form.
+
 ## What counts as a change
 
 - **Issues:** the repository's issues, open and closed, with their state and
@@ -162,8 +206,8 @@ Agent step. The lint writes nothing itself.
   change shows as one change on `#hash`; the watcher then reads the rows to
   see which changed. Without it, the tool compares the cells itself. Either
   way, only the cells people set count, under these headers:
-  - Title, Selected Sections, every Contributor Feedback column, and
-    Disposition (Blue);
+  - Title, Selected Sections, every Contributor Feedback column,
+    Disposition and Change Set (human) (Blue);
   - Ready for agent, Ready for merge and Dispositions confirmed (Orange).
 
   The agent's Green columns and the script's Grey ones are not watched, so
