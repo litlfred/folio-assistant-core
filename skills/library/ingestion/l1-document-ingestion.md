@@ -277,28 +277,28 @@ entry's graph, `derivedFrom` its L1 section. A folio's requirement block then
 CITES that node. It does not restate it with an id of its own.
 
 **The mount is the gate.** The `requirements` aspect lives in the DAK layer
-(smart-base, `scripts/extractors/dak-requirements.py`), so it runs in DAK and
+(its `scripts/extractors/dak-requirements.py`), so it runs in DAK and
 DTH repositories and nowhere else. With no aspect mounted the arm writes
 nothing.
 
 **No new schema: the existing kind that fits the source.** Requirement schemas
 come in more than one style (owner, 2026-11-01), some core and some
-smart-base:
+the DAK layer's:
 
 | the source prints | kind | layer |
 |---|---|---|
-| a DAK requirement row, `<CODE>.FXREQ.<n>` / `.NFXREQ.<n>` | `functional-requirement` / `non-functional-requirement` | smart-base |
-| a system's `shall`/`must`/`should` in prose ("The registry shall …") | `functional-requirement`, no id | smart-base |
-| a row of a table of system functions | `functional-requirement`, `source_kind: function-table-row` (by hand today) | smart-base |
-| a row of a table of information needs, an item of a list of reports or functions, a figure caption naming a function | `functional-requirement`, `source_kind`: `information-need-table-row`, `function-list-item`, `figure-caption` (by hand today; first used on who-iris#167) | smart-base |
-| an indicator | `indicator` | smart-base |
+| a DAK requirement row, `<CODE>.FXREQ.<n>` / `.NFXREQ.<n>` | `functional-requirement` / `non-functional-requirement` | DAK layer |
+| a system's `shall`/`must`/`should` in prose ("The registry shall …") | `functional-requirement`, no id | DAK layer |
+| a row of a table of system functions | `functional-requirement`, `source_kind: function-table-row` (by hand today) | DAK layer |
+| a row of a table of information needs, an item of a list of reports or functions, a figure caption naming a function | `functional-requirement`, `source_kind`: `information-need-table-row`, `function-list-item`, `figure-caption` (by hand today) | DAK layer |
+| an indicator | `indicator` | DAK layer |
 | any other normative sentence | [`recommendation`](../../content/folio-document-adapter/normative-statements.md), strength in `rfc2119-requirement-level` or `grade-recommendation-strength` | core |
 
 **Ids come from the source or there are none.** `number` is the id exactly as
 printed, and it lands in the node's `meta.source_number`. A requirement that
 prints no id has none. The node's `@id` is derived from the section and the
 order the items appear in (`<kind>-<section>-NN`), never from a made-up label.
-dth-hrh's `FR-xx` ids, which an agent assigned and no source shows, are
+A DTH folio's `FR-xx` ids, which an agent assigned and no source shows, are
 the failure this prevents.
 
 **A requirement from a source is a reference, not a definition.** Owner,
