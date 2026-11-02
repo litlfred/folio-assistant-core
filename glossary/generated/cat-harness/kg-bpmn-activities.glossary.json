@@ -136,7 +136,7 @@
     },
     {
       "id": "process_actorroleadministration.callactivity_codechangereview",
-      "prefLabel": "Branch, gates, PR and review [code-change-review]",
+      "prefLabel": "Branch, gates, PR and review",
       "definition": "Called rather than restated. The mechanics of getting an edit reviewed and merged are not specific to the role graph, and a second description of them is a second thing free to disagree with the first.",
       "notation": "CallActivity_CodeChangeReview",
       "source": "cat-harness/processes/process/actor-role-administration.bpmn#CallActivity_CodeChangeReview",
@@ -176,7 +176,7 @@
     },
     {
       "id": "process_actorroleadministration.task_runkgaudit",
-      "prefLabel": "Audit the graph [kg:audit]",
+      "prefLabel": "Audit the graph",
       "definition": "AFTER the change, not before. Every criterion here is a join — role to lane, actor to role, activity to skill — so what an administrative edit breaks is not in the file it edited. The sidecars under `test/results/kg-qa/` are committed for the reason a printed verdict is not: without them, \"unbound since it was drawn\" and \"broken by this change\" are indistinguishable.",
       "notation": "Task_RunKgAudit",
       "source": "cat-harness/processes/process/actor-role-administration.bpmn#Task_RunKgAudit",
@@ -296,7 +296,7 @@
     },
     {
       "id": "process_beandrain.drain_close",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose on the bean just worked: complete and archive it on evidence, scrap it with its reasons, or record its blocker and hand it back to `todo`. On every bean copy. More of the drain follows, so on the drain's own bean the engine notes rather than resolves (see the process comment); then the drainer takes the next bean.",
       "notation": "Drain_Close",
       "source": "cat-harness/processes/sdlc/bean-drain.bpmn#Drain_Close",
@@ -304,7 +304,7 @@
     },
     {
       "id": "process_beandrain.drain_open",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Process_BeanOpen on the bean just taken: check it, find out whose it is, and claim it — or leave it alone when another agent holds it. OPEN's check is where the drain's claim check runs (the `bean-claim-check` Tool, bean n7x7): recent commits on every bean copy and any open PR naming the bean, before the claim. The gateway after this reads which end OPEN reached.",
       "notation": "Drain_Open",
       "source": "cat-harness/processes/sdlc/bean-drain.bpmn#Drain_Open",
@@ -344,7 +344,7 @@
     },
     {
       "id": "process_beanlifecycle.call_beanclose",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "End the bean in a state that says why: done is completed and archived, not wanted is scrapped with its reasons and archived, blocked records what it waits on and goes back to `todo`. Process_BeanClose is the one place resolve and archive are drawn.",
       "notation": "Call_BeanClose",
       "source": "cat-harness/processes/sdlc/bean-lifecycle.bpmn#Call_BeanClose",
@@ -352,7 +352,7 @@
     },
     {
       "id": "process_beanlifecycle.call_beanopen",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Check before you create (exact-title search), create the bean when none exists, find out whose it is, and claim it — or leave it alone when a sibling holds it. Process_BeanOpen is the one place a claim is drawn.",
       "notation": "Call_BeanOpen",
       "source": "cat-harness/processes/sdlc/bean-lifecycle.bpmn#Call_BeanOpen",
@@ -440,7 +440,7 @@
     },
     {
       "id": "process_codechangereview.task_archivebean",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Task_ArchiveBean",
       "source": "cat-harness/processes/sdlc/code-change-review.bpmn#Task_ArchiveBean",
@@ -456,7 +456,7 @@
     },
     {
       "id": "process_codechangereview.task_claimbean",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
       "notation": "Task_ClaimBean",
       "source": "cat-harness/processes/sdlc/code-change-review.bpmn#Task_ClaimBean",
@@ -648,7 +648,7 @@
     },
     {
       "id": "process_contentacquisition.a_pointtoupload",
-      "prefLabel": "Point at the upload target [scripts/upload-url.ts]",
+      "prefLabel": "Point at the upload target",
       "definition": "Composed from the declaration, never written by hand. The queue is declared with INSTANCE scope, so its declared path is missing the segment a repository-relative forge URL needs: /upload/main/uploads is a 404 and /upload/main/cat-harness/uploads is not, verified against GitHub 2026-09-20. Every failure is named — no origin remote, a non-GitHub forge, a declared-but-absent queue — because a URL is believed, and somebody sent to a wrong one cannot tell it from an empty directory. On failure, fall back to the conversation.",
       "notation": "A_PointToUpload",
       "source": "cat-harness/processes/library/content-acquisition.bpmn#A_PointToUpload",
@@ -800,7 +800,7 @@
     },
     {
       "id": "process_crdm.call_beanclose",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose",
       "source": "cat-harness/processes/process/crdm-requirements.bpmn#Call_BeanClose",
@@ -808,7 +808,7 @@
     },
     {
       "id": "process_crdm.call_beanopen",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
       "notation": "Call_BeanOpen",
       "source": "cat-harness/processes/process/crdm-requirements.bpmn#Call_BeanOpen",
@@ -896,7 +896,7 @@
     },
     {
       "id": "process_crdm_close.call_mergetomain",
-      "prefLabel": "Land the feature's PRs [merge-to-main]",
+      "prefLabel": "Land the feature's PRs",
       "definition": "Phase 6's \"explicit confirmation before merging to main\", made a step that can refuse. Once per pull request the feature still has open, after the sign-off is recorded and before the issue is closed: an issue is not closed on a feature that is not on `main`. `merge-to-main.bpmn` reads each head's evidence live, establishes that the owner authorised THAT merge (a stakeholder sign-off or the BA's confirmation is acceptance of the feature, not authorisation to merge it, unless the owner's own words say so), records the authorisation, merges, and confirms the base. A PR the owner holds or refuses stays open, and A_Close then waits: the BA's authorisation to close does not cover a feature that did not land. An increment the owner asked to land earlier in Phase 6 went through the same sub-process at that time.",
       "notation": "Call_MergeToMain",
       "source": "cat-harness/processes/process/crdm-close.bpmn#Call_MergeToMain",
@@ -1224,7 +1224,7 @@
     },
     {
       "id": "process_docssite.call_alert",
-      "prefLabel": "Alert the publication manager [publish-verification]",
+      "prefLabel": "Alert the publication manager",
       "definition": "Process_PublishAlert — the ONE alert every failing step after the publish button goes through, whichever step it was.",
       "notation": "Call_Alert",
       "source": "cat-harness/processes/sdlc/docs-site-publish.bpmn#Call_Alert",
@@ -1232,7 +1232,7 @@
     },
     {
       "id": "process_docssite.call_verify",
-      "prefLabel": "Verify the export [publish-verification]",
+      "prefLabel": "Verify the export",
       "definition": "Process_PublishVerification: the verifier set over the built tree, before anything is deployed. Owner, 2026-09-23: before deployment, blocking.",
       "notation": "Call_Verify",
       "source": "cat-harness/processes/sdlc/docs-site-publish.bpmn#Call_Verify",
@@ -1264,7 +1264,7 @@
     },
     {
       "id": "process_docssite.task_publish",
-      "prefLabel": "Push to the CDN [render-kg-to-cdn] gh-pages, FULL REPLACE",
+      "prefLabel": "Push to the CDN gh-pages, FULL REPLACE",
       "definition": "THIS SITE IS ONE INSTANCE OF THE GENERAL STEP (owner, 2026-09-30: gh-pages is \"one specific tool of general 'publish to CDN'\"). Process_RenderKgToCdn, entered with the tree this build already rendered and verified, the site root as the publication root URL, and GitHub Pages as the target — so its `gh-pages` Tool pushes. Here that push is a FULL REPLACE of the `gh-pages` branch: anything on it this build did not produce is gone unless the restore put it back, which is why the restore and the survival check either side of this call stay in THIS process rather than in the general one. The call returns the push's status and message (the gh-pages merge commit and the QA result); a status other than `pushed` takes the `no` branch of Did the deploy succeed?.",
       "notation": "Task_Publish",
       "source": "cat-harness/processes/sdlc/docs-site-publish.bpmn#Task_Publish",
@@ -1288,7 +1288,7 @@
     },
     {
       "id": "process_docssite.task_securitygate",
-      "prefLabel": "Run the release security gate [security:gate]",
+      "prefLabel": "Run the release security gate",
       "definition": "`bun run cat security:gate`, before anything is built (bean `ieum`, owner 2026-10-07: \"security check before release\"). It runs every security check this repository has by name: workflow injection, secret leaks, lockfile and toolchain pins, QA reviewer permission, materialised fixity, and third-party action SHA pinning outside staging-only workflows. Each is reported as pass, fail or unknown. A blocking fail OR unknown refuses the publish, because could-not-check is never clean. Until this step existed, no publish or merge process named any security check; they ran only inside the CI gate set.",
       "notation": "Task_SecurityGate",
       "source": "cat-harness/processes/sdlc/docs-site-publish.bpmn#Task_SecurityGate",
@@ -1320,7 +1320,7 @@
     },
     {
       "id": "process_featurestaging.task_deploy",
-      "prefLabel": "Push to the CDN at STAGING/&lt;slug&gt;/ [render-kg-to-cdn]",
+      "prefLabel": "Push to the CDN at STAGING/&lt;slug&gt;/",
       "definition": "A PREVIEW IS THE GENERAL STEP WITH A DIFFERENT ROOT (owner, 2026-09-30: \"independent of staging vs publication … just rendering\"). Process_RenderKgToCdn, entered with the tree Task_Build rendered, `STAGING/<slug>/` under the site root as the publication root URL, and GitHub Pages as the target, so its `gh-pages` Tool pushes. For this target the push is `keep_files: true` with a `destination_dir`, so it adds one directory beside whatever else is on the branch; it is also RETRIED once: five other workflows push to `gh-pages` without joining this one's concurrency group, and a queue does not help because GitHub CANCELS a pending job when a newer one arrives for the same group rather than queueing it. Measured 2026-09-19: three staging runs from three different branches inside 17 seconds, two cancelled. The call returns the push's status and message; the render log and the PR comment that follow are this process's own. THE PREVIEW CAP rides in the same commit (owner ruling 2026-10-02, issue #1868: \"cap the maximum number of previews (<= 10) and rotate old ones off\", amended 2026-10-04 to a SIZE budget: \"Cap by size, not count\", \"3gb\"): `staging-rotate.ts` keeps this preview plus the most recently updated others while their total fits MAX_PREVIEW_BYTES = 3 GB and removes the rest, oldest first, each with a `removed` render-log entry and its record retired into STAGING/_retired/. Every push attempt re-reads `gh-pages` and re-decides rather than rebasing, so a lost race never pushes a stale removal. A rotated-off preview is regenerated by the next push to its PR branch.",
       "notation": "Task_Deploy",
       "source": "cat-harness/processes/sdlc/feature-staging.bpmn#Task_Deploy",
@@ -1392,7 +1392,7 @@
     },
     {
       "id": "process_graphdetanglement.call_beanclose",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose",
       "source": "cat-harness/processes/kg/graph-detanglement.bpmn#Call_BeanClose",
@@ -1400,7 +1400,7 @@
     },
     {
       "id": "process_graphdetanglement.call_beanclose_2",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_2",
       "source": "cat-harness/processes/kg/graph-detanglement.bpmn#Call_BeanClose_2",
@@ -1408,7 +1408,7 @@
     },
     {
       "id": "process_graphdetanglement.call_beanclose_3",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_3",
       "source": "cat-harness/processes/kg/graph-detanglement.bpmn#Call_BeanClose_3",
@@ -1416,7 +1416,7 @@
     },
     {
       "id": "process_graphdetanglement.call_beanopen",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
       "notation": "Call_BeanOpen",
       "source": "cat-harness/processes/kg/graph-detanglement.bpmn#Call_BeanOpen",
@@ -1616,7 +1616,7 @@
     },
     {
       "id": "process_ingestion.task_cataloguereference",
-      "prefLabel": "Record it in library/ as referenced [library-ingestion]",
+      "prefLabel": "Record it in library/ as referenced",
       "definition": "The referenced branch. Nothing is fetched and no bytes are written: the catalogue record says where the asset is and that we hold none. A reference is not a fetch — it stays navigable without being held, and materializing it later is `materialize-remote.bpmn`'s decision, with its purpose and five gates, not this flow's.",
       "notation": "Task_CatalogueReference",
       "source": "cat-harness/processes/library/document-ingestion.bpmn#Task_CatalogueReference",
@@ -1624,7 +1624,7 @@
     },
     {
       "id": "process_ingestion.task_extractmetadata",
-      "prefLabel": "Extract its metadata into the KG [asset-extraction]",
+      "prefLabel": "Extract its metadata into the KG",
       "definition": "THE METADATA STEP. What enters the knowledge graph is the asset's INDEX — what it is, how big, what type, when it says it was written — and, for a container, what is in it; its contents do not go in unless somebody asks, with a reason. Owner, 2026-09-20: \"make sure you have zip ingestion skills to extract metadata of assets into KG. don't extract contents unless explict ask by user.\" The tool is `cat-harness-tools/scripts/extract-assets.ts`, writing a `folio-extraction/v1` record (`schemas/content/extraction.ts`, moved down to this layer in placement PR5). The media type is sniffed from the leading bytes, never taken from the extension.",
       "notation": "Task_ExtractMetadata",
       "source": "cat-harness/processes/library/document-ingestion.bpmn#Task_ExtractMetadata",
@@ -1632,7 +1632,7 @@
     },
     {
       "id": "process_ingestion.task_place",
-      "prefLabel": "Place it in uploads/ by a declared route [upload-routes]",
+      "prefLabel": "Place it in uploads/ by a declared route",
       "definition": "THE FIRST LINK, and it did not exist until 2026-09-30. Everything downstream of here takes a file that is already in the queue, and both ingest Tools type their first input as \"The upload to ingest, under the declared `uploads` graph\". So the act of PUTTING it there was performed by three different mechanisms and governed by none of them. WHAT THIS STEP IS. The basic flow's ACCEPT step: choosing an arrival route, writing the bytes into the declared queue of the instance that will own them, and discharging what that route does not discharge for you. The routes, what each writer owes, and the two that are mechanisms against the one that is a persona are in the `upload-routes` skill; `upload-url` composes the forge URL for the web route from the declaration rather than from a literal, because a hand-written one 404'd. WHY A PLAIN `bpmn:task` AND NOT A `userTask`. A `userTask` asserts a human performs it, and this lane is named \"Contributor (human or agent)\" precisely because both do — measured over this repository's own history, files have reached `uploads/` in commits authored by `Carl Leitner` and in commits authored by `Claude`. Asserting human-only here would be the `activity-fulfilment-kind` contradiction written deliberately: the diagram saying one thing and the lane's role graph another. A plain task asserts nothing about the performer, which is the truth. WHY THE BEAN OP IS `note` AND NOT `claim`. Placing a file claims nothing; it adds to a queue. What it owes the work plan is visibility — three batches of PDFs arrived through the forge's web UI (`c8349950fa5`, `f4ddfc65c8d`, `b8549160bb1`) with no bean, no PR and no note, and the first sibling to notice was a generator going stale. A note against the ingestion bean is what makes the queue's growth something another session can see.",
       "notation": "Task_Place",
       "source": "cat-harness/processes/library/document-ingestion.bpmn#Task_Place",
@@ -1640,7 +1640,7 @@
     },
     {
       "id": "process_ingestion.task_placeinlibrary",
-      "prefLabel": "Place the asset in library/<slug>/ [library-ingestion]",
+      "prefLabel": "Place the asset in library/<slug>/",
       "definition": "The materialized branch. The asset lands in library/<slug>/ with its metadata record, its provenance and its fixity. The folder name IS the citation key, so a citation and a directory are the same string. The upload is then RETIRED, not left and not deleted: it moves to fsh-guts/uploads/ beside a sidecar naming where it came from and when (owner, 2026-09-29), and `check:uploads-retired` finds one that was not. A refining process that derives content from the bytes does so before that retirement; `library-ingestion` carries the rule.",
       "notation": "Task_PlaceInLibrary",
       "source": "cat-harness/processes/library/document-ingestion.bpmn#Task_PlaceInLibrary",
@@ -1680,7 +1680,7 @@
     },
     {
       "id": "process_ingesttheme.task_review",
-      "prefLabel": "Theme and UI review [theme-ui-review]",
+      "prefLabel": "Theme and UI review",
       "definition": "THEME REVIEW HAPPENS HERE AND NOWHERE ELSE. Owner, 2026-09-23: \"theme review to ingestion of graphical assets in context of website or app design and determining graphical assets/UI\"; asked directly on 2026-09-24 whether that meant ONLY at ingestion: \"Yes only at ingestion\". Bean `9fdi`. So this step now CALLS `theme-ui-review.bpmn` rather than performing one automated check out of it. Until 2026-09-24 it carried a `folio:no-call` reason — \"calling it would put a human gate into an automated ingest\" — and the review ran post-MVP from `crdm-deliver.bpmn` instead. That call is gone, and the reason for not calling is withdrawn rather than left standing beside a call it contradicts. WHAT THE CALL COSTS, stated rather than hidden. The subprocess has a human step, `R_Judge`: a person looks at the ingested assets laid out in their design at a web and a mobile width. So ingesting a THEME SOURCE is attended at that step. Ingesting anything else stays unattended — `Gateway_ThemeSource` in `document-ingestion.bpmn` routes non-theme documents past this subprocess entirely. THE OLD AUTOMATED CHECK IS INSIDE THE CALL, NOT DROPPED. \"A theme sets the stripe's hue; it never sets its width to zero\" — colour alone carrying a whole signal fails WCAG SC 1.4.1, and the WHO guide agrees (\"Never red with green, never blue with yellow\"). That check is `A_Accessibility` in the called process, which measures contrast against the real ground and requires a non-colour channel wherever colour carries meaning.",
       "notation": "Task_Review",
       "source": "cat-harness/processes/ui/ingest-theme.bpmn#Task_Review",
@@ -1696,7 +1696,7 @@
     },
     {
       "id": "process_kgseparation.call_beanclose",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose",
       "source": "cat-harness/processes/kg/kg-separation.bpmn#Call_BeanClose",
@@ -1704,7 +1704,7 @@
     },
     {
       "id": "process_kgseparation.call_beanclose_2",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_2",
       "source": "cat-harness/processes/kg/kg-separation.bpmn#Call_BeanClose_2",
@@ -1712,7 +1712,7 @@
     },
     {
       "id": "process_kgseparation.call_beanclose_3",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_3",
       "source": "cat-harness/processes/kg/kg-separation.bpmn#Call_BeanClose_3",
@@ -1720,7 +1720,7 @@
     },
     {
       "id": "process_kgseparation.call_beanclose_4",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_4",
       "source": "cat-harness/processes/kg/kg-separation.bpmn#Call_BeanClose_4",
@@ -1728,7 +1728,7 @@
     },
     {
       "id": "process_kgseparation.call_beanclose_5",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_5",
       "source": "cat-harness/processes/kg/kg-separation.bpmn#Call_BeanClose_5",
@@ -1736,7 +1736,7 @@
     },
     {
       "id": "process_kgseparation.call_beanclose_6",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_6",
       "source": "cat-harness/processes/kg/kg-separation.bpmn#Call_BeanClose_6",
@@ -1744,7 +1744,7 @@
     },
     {
       "id": "process_kgseparation.call_beanopen",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
       "notation": "Call_BeanOpen",
       "source": "cat-harness/processes/kg/kg-separation.bpmn#Call_BeanOpen",
@@ -2126,7 +2126,7 @@
     },
     {
       "id": "process_mergerefusal.call_beanclose",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose",
       "source": "cat-harness/processes/sdlc/merge-refusal.bpmn#Call_BeanClose",
@@ -2134,7 +2134,7 @@
     },
     {
       "id": "process_mergerefusal.call_beanclose_2",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_2",
       "source": "cat-harness/processes/sdlc/merge-refusal.bpmn#Call_BeanClose_2",
@@ -2142,7 +2142,7 @@
     },
     {
       "id": "process_mergerefusal.call_beanclose_3",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_3",
       "source": "cat-harness/processes/sdlc/merge-refusal.bpmn#Call_BeanClose_3",
@@ -2150,7 +2150,7 @@
     },
     {
       "id": "process_mergerefusal.call_beanopen",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
       "notation": "Call_BeanOpen",
       "source": "cat-harness/processes/sdlc/merge-refusal.bpmn#Call_BeanOpen",
@@ -2236,7 +2236,7 @@
     },
     {
       "id": "process_mergetomain.call_handback",
-      "prefLabel": "Hand it back [merge-refusal]",
+      "prefLabel": "Hand it back",
       "definition": "Red CI, a conflict or a blocking review is the PR owner's to fix, not the merger's: `merge-refusal.bpmn` records the reason on the bean and returns the PR. The merger does not fix the PR to make it pass.",
       "notation": "Call_HandBack",
       "source": "cat-harness/processes/sdlc/merge-to-main.bpmn#Call_HandBack",
@@ -2340,7 +2340,7 @@
     },
     {
       "id": "process_mergetrain.call_checkspresent",
-      "prefLabel": "Find members with no CI on their head [pr-checks-present]",
+      "prefLabel": "Find members with no CI on their head",
       "definition": "GitHub runs no `pull_request` CI while a PR conflicts, so a member can arrive with nothing on its head (bean `u7be` item 3). That member is T2's first suspect if the train goes red.",
       "notation": "Call_ChecksPresent",
       "source": "cat-harness/processes/sdlc/merge-train.bpmn#Call_ChecksPresent",
@@ -2348,7 +2348,7 @@
     },
     {
       "id": "process_mergetrain.call_ejecthandback",
-      "prefLabel": "Hand the culprit back [merge-refusal]",
+      "prefLabel": "Hand the culprit back",
       "definition": "The same hand-back as a refused placement (#1888), carrying the ejection's evidence (R4). Then the train re-runs without it.",
       "notation": "Call_EjectHandBack",
       "source": "cat-harness/processes/sdlc/merge-train.bpmn#Call_EjectHandBack",
@@ -2356,7 +2356,7 @@
     },
     {
       "id": "process_mergetrain.call_gates",
-      "prefLabel": "Run the gate set on the train [code-quality-gates]",
+      "prefLabel": "Run the gate set on the train",
       "definition": "Every gate CI runs, on the combination (R2): a member that passes alone can still break `main` with another. The merge-gate epic (`nok9`, #1887) adds its gates here when they land. The release security gate (`bun run cat security:gate`, bean `ieum`) is one of them: it runs inside the gate set, so no train merges past a blocking security finding or a security check that could not run.",
       "notation": "Call_Gates",
       "source": "cat-harness/processes/sdlc/merge-train.bpmn#Call_Gates",
@@ -2364,7 +2364,7 @@
     },
     {
       "id": "process_mergetrain.call_handback",
-      "prefLabel": "Hand it back [merge-refusal]",
+      "prefLabel": "Hand it back",
       "definition": "`merge-refusal.bpmn` (PR #1888, bean `zacz`): a bean under the right epic, a hand-back to the owning session with a fail condition (agent-handoff, #1884), or a dispatch when nobody owns it. R4: the PR returns with its reason.",
       "notation": "Call_HandBack",
       "source": "cat-harness/processes/sdlc/merge-train.bpmn#Call_HandBack",
@@ -2372,7 +2372,7 @@
     },
     {
       "id": "process_mergetrain.call_mergemembers",
-      "prefLabel": "Merge each member onto the base [merge-base]",
+      "prefLabel": "Merge each member onto the base",
       "definition": "`merge-base.bpmn` once per member, in order, `--no-regen`; then ONE `bun run cat regen` over the result. Tool: `merge:train`. Always onto the current base, never a cached one (R5).",
       "notation": "Call_MergeMembers",
       "source": "cat-harness/processes/sdlc/merge-train.bpmn#Call_MergeMembers",
@@ -2380,7 +2380,7 @@
     },
     {
       "id": "process_mergetrain.call_mergetomain",
-      "prefLabel": "Land each member [merge-to-main]",
+      "prefLabel": "Land each member",
       "definition": "Once per member, in train order, at the SHA the train's gate set tested. `merge-to-main.bpmn` is where merging is a step with its own gate: it reads the head's evidence live (the train's green run is that evidence, and `merge:guard` re-evaluates it), establishes that the owner authorised THIS merge (explicitly, or by a standing ruling quoted verbatim with its date, e.g. 2026-10-01 \"you may merge green PRs\", which covers green heads only and only the queue as it stood), records the authorisation, merges pinned to the head, and then confirms `main`, re-pins downstream mounts and notes the bean. Until 2026-10-09 this was two steps here, `Task_Release` in the owner's lane bound to interaction-modality and `Task_Land` bound to prepare-merge; neither could refuse a merge, and neither said what happens when a repository has no CI. R1 still holds: what lands is exactly what CI tested. If `main` moved after the train's CI started, re-run rather than land. Each member's `trainId` is cleared, and its preview is then taken down by `feature-staging.bpmn`. A member the sub-process does not merge (held, refused, handed back) leaves the train with its reason on its queue entry.",
       "notation": "Call_MergeToMain",
       "source": "cat-harness/processes/sdlc/merge-train.bpmn#Call_MergeToMain",
@@ -2939,7 +2939,7 @@
     },
     {
       "id": "process_qapublish.task_backoff",
-      "prefLabel": "Back off [backoff-sleep]",
+      "prefLabel": "Back off",
       "definition": "Wait the same intervals `backoff-sleep.ts` uses, then go round again: fetch the new tip and splice onto it. Three attempts in all.",
       "notation": "Task_Backoff",
       "source": "cat-harness/processes/sdlc/qa-publish.bpmn#Task_Backoff",
@@ -2947,7 +2947,7 @@
     },
     {
       "id": "process_qapublish.task_buildentry",
-      "prefLabel": "Build the entry [tree + manifest]",
+      "prefLabel": "Build the entry",
       "definition": "First the working copy is produced (`qa:refresh`, bean `3hk4`): while the checkout still tracks `test/results/`, the commit's own copy is the record and nothing runs; once it does not, every declared QA writer runs into the empty tree, because the gates are in judge mode and wrote nothing a publish could carry. A refresh that leaves a writer failed, a family empty or a file unclaimed is INCOMPLETE: the job goes red and `qa:publish --completeness` refuses, so a partial tree is never stored as the commit's record — the \"Not stored\" outcome, reached before any push. Then it hashes the working copy of every declared `qa` directory (`<instance>/test/results/**`, byte-identical to the checkout's layout) into a tree through a private index, and writes `manifest.json` (`qa-reports-manifest/v1`): inputs, producers, verdict counts and the gates' result. Identical JSON is the same blob, so an unchanged family costs nothing to store again. Its git objects live in a private bare repository, never in the checkout's own store.",
       "notation": "Task_BuildEntry",
       "source": "cat-harness/processes/sdlc/qa-publish.bpmn#Task_BuildEntry",
@@ -2955,7 +2955,7 @@
     },
     {
       "id": "process_qapublish.task_derivekey",
-      "prefLabel": "Derive the key [main/<sha> or pr/<n>/<sha>]",
+      "prefLabel": "Derive the key",
       "definition": "`qa:publish --github` reads the event: a push to main publishes under `main/<sha>/`, a pull request under `pr/<n>/<head-sha>/` — the head that was tested, not the merge ref. It also reads whether the token can write, which the gateway after it routes on.",
       "notation": "Task_DeriveKey",
       "source": "cat-harness/processes/sdlc/qa-publish.bpmn#Task_DeriveKey",
@@ -2963,7 +2963,7 @@
     },
     {
       "id": "process_qapublish.task_planprune",
-      "prefLabel": "Plan the prune [planPrune]",
+      "prefLabel": "Plan the prune",
       "definition": "Keep every `main/<sha>` for 90 days and one per day after that; drop `pr/<n>` 7 days after the PR closed. The rule is `planPrune` in `scripts/qa-store.ts`, pinned by its tests, and the plan is printed whether or not it is applied.",
       "notation": "Task_PlanPrune",
       "source": "cat-harness/processes/sdlc/qa-publish.bpmn#Task_PlanPrune",
@@ -2995,7 +2995,7 @@
     },
     {
       "id": "process_qareportsigning.task_buildrun",
-      "prefLabel": "Build the test run [folio-test-run/v1]",
+      "prefLabel": "Build the test run",
       "definition": "Assemble the run record the signature will cover: the data hash and the process hash, each all-or-nothing. An UNKNOWN_HASH never reproduces another unknown, so a run that could not be hashed is signable only as what it is — unverifiable.",
       "notation": "Task_BuildRun",
       "source": "cat-harness/processes/sdlc/qa-report-signing.bpmn#Task_BuildRun",
@@ -3019,7 +3019,7 @@
     },
     {
       "id": "process_qareportsigning.task_resolvereach",
-      "prefLabel": "Resolve the performer's reach [effectiveReach + signing-api probe]",
+      "prefLabel": "Resolve the performer's reach",
       "definition": "Compute the two facts the gateway reads: effectiveReach(deployment, actor) from schemas/process/actor-reach.ts, and whether the signing-api capability is configured. Undeclared reach resolves to \"unknown\" rather than to the deployment's value — an aggregate does not determine a member.",
       "notation": "Task_ResolveReach",
       "source": "cat-harness/processes/sdlc/qa-report-signing.bpmn#Task_ResolveReach",
@@ -3138,7 +3138,7 @@
     },
     {
       "id": "process_renderkgtocdn.call_toolsubprocess",
-      "prefLabel": "Render and push with the target's Tool [its own subprocess]",
+      "prefLabel": "Render and push with the target's Tool",
       "definition": "BOUND BY THE TOOL, so no `calledElement` is written here: the activity names the skill, the Tool satisfies it, and the Tool's `subprocesses` are what this descends into — for `gh-pages`, bootstrap-tools' render-kg-to-github-pages (make sure gh-pages exists and Pages serves it, stage, check the staging, commit onto gh-pages, check what is served). A diagram that named it would make every other CDN a second copy of this process. Whatever the Tool, it returns the two outputs below.",
       "notation": "Call_ToolSubprocess",
       "source": "cat-harness/processes/process/render-kg-to-cdn.bpmn#Call_ToolSubprocess",
@@ -3578,7 +3578,7 @@
     },
     {
       "id": "process_slicesqlitepublish.call_beanclose",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose",
       "source": "cat-harness/processes/kg/slice-sqlite-publish.bpmn#Call_BeanClose",
@@ -3586,7 +3586,7 @@
     },
     {
       "id": "process_slicesqlitepublish.call_beanclose_2",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_2",
       "source": "cat-harness/processes/kg/slice-sqlite-publish.bpmn#Call_BeanClose_2",
@@ -3594,7 +3594,7 @@
     },
     {
       "id": "process_slicesqlitepublish.call_beanclose_3",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_3",
       "source": "cat-harness/processes/kg/slice-sqlite-publish.bpmn#Call_BeanClose_3",
@@ -3602,7 +3602,7 @@
     },
     {
       "id": "process_slicesqlitepublish.call_beanopen",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
       "notation": "Call_BeanOpen",
       "source": "cat-harness/processes/kg/slice-sqlite-publish.bpmn#Call_BeanOpen",
@@ -3689,7 +3689,7 @@
     },
     {
       "id": "process_subkglifecycle.call_beanclose",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose",
       "source": "cat-harness/processes/kg/sub-kg-lifecycle.bpmn#Call_BeanClose",
@@ -3697,7 +3697,7 @@
     },
     {
       "id": "process_subkglifecycle.call_beanclose_2",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_2",
       "source": "cat-harness/processes/kg/sub-kg-lifecycle.bpmn#Call_BeanClose_2",
@@ -3705,7 +3705,7 @@
     },
     {
       "id": "process_subkglifecycle.call_beanclose_3",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_3",
       "source": "cat-harness/processes/kg/sub-kg-lifecycle.bpmn#Call_BeanClose_3",
@@ -3713,7 +3713,7 @@
     },
     {
       "id": "process_subkglifecycle.call_beanclose_4",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_4",
       "source": "cat-harness/processes/kg/sub-kg-lifecycle.bpmn#Call_BeanClose_4",
@@ -3721,7 +3721,7 @@
     },
     {
       "id": "process_subkglifecycle.call_beanclose_5",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_5",
       "source": "cat-harness/processes/kg/sub-kg-lifecycle.bpmn#Call_BeanClose_5",
@@ -3729,7 +3729,7 @@
     },
     {
       "id": "process_subkglifecycle.call_beanclose_6",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_6",
       "source": "cat-harness/processes/kg/sub-kg-lifecycle.bpmn#Call_BeanClose_6",
@@ -3737,7 +3737,7 @@
     },
     {
       "id": "process_subkglifecycle.call_beanclose_7",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_7",
       "source": "cat-harness/processes/kg/sub-kg-lifecycle.bpmn#Call_BeanClose_7",
@@ -3745,7 +3745,7 @@
     },
     {
       "id": "process_subkglifecycle.call_beanopen",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
       "notation": "Call_BeanOpen",
       "source": "cat-harness/processes/kg/sub-kg-lifecycle.bpmn#Call_BeanOpen",
@@ -3881,7 +3881,7 @@
     },
     {
       "id": "process_subscribekg.call_beanclose",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose",
       "source": "cat-harness/processes/library/subscribe-kg.bpmn#Call_BeanClose",
@@ -3889,7 +3889,7 @@
     },
     {
       "id": "process_subscribekg.call_beanclose_2",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_2",
       "source": "cat-harness/processes/library/subscribe-kg.bpmn#Call_BeanClose_2",
@@ -3897,7 +3897,7 @@
     },
     {
       "id": "process_subscribekg.call_beanopen",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
       "notation": "Call_BeanOpen",
       "source": "cat-harness/processes/library/subscribe-kg.bpmn#Call_BeanOpen",
@@ -3905,7 +3905,7 @@
     },
     {
       "id": "process_subscribekg.call_materialize",
-      "prefLabel": "Materialise the part [materialize-remote]",
+      "prefLabel": "Materialise the part",
       "definition": "The ONLY way bytes arrive. Purpose first, then the five gates — size, restrictions, copyright, retention, source loss — then fetch with fixity, or stay referenced with the refusing gate's basis recorded. Both ends of that subprocess return here and the walk continues: one part refused is not the subscription refused.",
       "notation": "Call_Materialize",
       "source": "cat-harness/processes/library/subscribe-kg.bpmn#Call_Materialize",
@@ -3913,7 +3913,7 @@
     },
     {
       "id": "process_subscribekg.call_refresh",
-      "prefLabel": "Refresh the held part [refresh-materialized]",
+      "prefLabel": "Refresh the held part",
       "definition": "The shared refresh, called, not re-described: what changed upstream, what changed locally, and what to do when both did. An archival copy is fixity-checked and never re-fetched. Whatever that process decides — refreshed, kept divergent, or deferred — is the part's new state; this loop only moves to the next part.",
       "notation": "Call_Refresh",
       "source": "cat-harness/processes/library/subscribe-kg.bpmn#Call_Refresh",
@@ -4049,7 +4049,7 @@
     },
     {
       "id": "process_testdatacuration.call_beanclose",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn; placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose",
       "source": "cat-harness/processes/sdlc/test-data-curation.bpmn#Call_BeanClose",
@@ -4057,7 +4057,7 @@
     },
     {
       "id": "process_testdatacuration.call_beanopen",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn; the gateway after this reads which end it reached.",
       "notation": "Call_BeanOpen",
       "source": "cat-harness/processes/sdlc/test-data-curation.bpmn#Call_BeanOpen",
@@ -4065,7 +4065,7 @@
     },
     {
       "id": "process_testdatacuration.call_contenttypespecialisation",
-      "prefLabel": "Synthesise recipe via content-type specialisation [its own subprocess]",
+      "prefLabel": "Synthesise recipe via content-type specialisation",
       "definition": "BOUND BY THE CONTENT TYPE (`contentType` and `specialisation` in `schemas/sdlc/test-data.ts`), so no single content-type `calledElement` is hardcoded here: the activity names `test-data-sets`, and each content-type adapter supplies its own specialisation subprocess. `fhir-templating` (`FHIR_TEMPLATING_SPECIALISATION`) is one named specialisation for FHIR IG / DAK content (MeasureReport cohorts, questionnaire responses, bundle templates) — named as such, not the platform design; document folios (`markdown-fixture`), proof folios (`lean-counterexample`), and tabular cohorts (`tabular-cohort`) supply their own.",
       "notation": "Call_ContentTypeSpecialisation",
       "source": "cat-harness/processes/sdlc/test-data-curation.bpmn#Call_ContentTypeSpecialisation",
@@ -4073,7 +4073,7 @@
     },
     {
       "id": "process_testdatacuration.call_smereview",
-      "prefLabel": "SME review of cases or cohorts [sme-test-data-review]",
+      "prefLabel": "SME review of cases or cohorts",
       "definition": "Calls `Process_SmeTestDataReview` (`processes/sdlc/sme-test-data-review.bpmn`) so a human SME in a `judgementOnly` lane reviews each worked case (`decision-support`) or cohort plus expected value (`indicator-definition`) and records an attributable `sme-case-verdict/1.0.0` node.",
       "notation": "Call_SmeReview",
       "source": "cat-harness/processes/sdlc/test-data-curation.bpmn#Call_SmeReview",
@@ -4113,7 +4113,7 @@
     },
     {
       "id": "process_testplanexecution.a_binddata",
-      "prefLabel": "Bind the test data [fixed or generated]",
+      "prefLabel": "Bind the test data",
       "definition": "Per bean `vm6m`: a fixed set is a committed path and counts as evidence only once reviewed; a generated set is template + params + seed and is never materialised. Both feed the run's data hash, and nothing that feeds the process hash may feed it too.",
       "notation": "A_BindData",
       "source": "cat-harness/processes/sdlc/test-plan-execution.bpmn#A_BindData",
@@ -4129,7 +4129,7 @@
     },
     {
       "id": "process_testplanexecution.a_filecertification",
-      "prefLabel": "File the signed certification [qa-attestations/v1]",
+      "prefLabel": "File the signed certification",
       "definition": "The signed certification goes under the declared `attestations` graph on main (owner ruling D2 (a), D5 default), pointing at the report it certifies. The bean resolves here, once the process has actually finished.",
       "notation": "A_FileCertification",
       "source": "cat-harness/processes/sdlc/test-plan-execution.bpmn#A_FileCertification",
@@ -4137,7 +4137,7 @@
     },
     {
       "id": "process_testplanexecution.a_recordcertification",
-      "prefLabel": "Record the certification decision [attestations]",
+      "prefLabel": "Record the certification decision",
       "definition": "The judgement: the certifier records, under their own name, that the system meets plan P at this version on this run. It is written under the declared `attestations` graph beside the other judgements, never on the `qa-reports` branch with derived results. A user task, so no agent or pipeline can fill it.",
       "notation": "A_RecordCertification",
       "source": "cat-harness/processes/sdlc/test-plan-execution.bpmn#A_RecordCertification",
@@ -4177,7 +4177,7 @@
     },
     {
       "id": "process_testplanexecution.a_resolveplan",
-      "prefLabel": "Resolve the plan [test-plan/v1]",
+      "prefLabel": "Resolve the plan",
       "definition": "The plan parses, names at least one `req:` requirement, its `exitCriteria` resolves to a decision in a `.dmn` that exists, and its `scope.kind` is the system's facet kind. A plan that does not resolve is not run — `test-plan-resolves` audits the same join afterwards.",
       "notation": "A_ResolvePlan",
       "source": "cat-harness/processes/sdlc/test-plan-execution.bpmn#A_ResolvePlan",
@@ -4185,7 +4185,7 @@
     },
     {
       "id": "process_testplanexecution.a_writerun",
-      "prefLabel": "Write the test run and the test report [folio-test-run/v1 + test-report/v1]",
+      "prefLabel": "Write the test run and the test report",
       "definition": "The run records `plan {id, version}` and `sut {actor, version, reach}` with its data and process hashes; the report rolls up per plan, never across plans, and goes to the `qa-reports` branch at `tests/plan/sut/run/`. No verdict in it may name the system under test as its reviewer.",
       "notation": "A_WriteRun",
       "source": "cat-harness/processes/sdlc/test-plan-execution.bpmn#A_WriteRun",
@@ -4193,7 +4193,7 @@
     },
     {
       "id": "process_testplanexecution.call_beanclose",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose",
       "source": "cat-harness/processes/sdlc/test-plan-execution.bpmn#Call_BeanClose",
@@ -4201,7 +4201,7 @@
     },
     {
       "id": "process_testplanexecution.call_beanclose_2",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_2",
       "source": "cat-harness/processes/sdlc/test-plan-execution.bpmn#Call_BeanClose_2",
@@ -4209,7 +4209,7 @@
     },
     {
       "id": "process_testplanexecution.call_beanclose_3",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose_3",
       "source": "cat-harness/processes/sdlc/test-plan-execution.bpmn#Call_BeanClose_3",
@@ -4217,7 +4217,7 @@
     },
     {
       "id": "process_testplanexecution.call_beanopen",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
       "notation": "Call_BeanOpen",
       "source": "cat-harness/processes/sdlc/test-plan-execution.bpmn#Call_BeanOpen",
@@ -4401,7 +4401,7 @@
     },
     {
       "id": "process_upstreamadoption.call_beanclose",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose",
       "source": "cat-harness/processes/sdlc/upstream-version-adoption.bpmn#Call_BeanClose",
@@ -4409,7 +4409,7 @@
     },
     {
       "id": "process_upstreamadoption.call_beanopen",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
       "notation": "Call_BeanOpen",
       "source": "cat-harness/processes/sdlc/upstream-version-adoption.bpmn#Call_BeanOpen",
@@ -4473,7 +4473,7 @@
     },
     {
       "id": "process_upstreampinwatch.call_beanclose",
-      "prefLabel": "Close the bean [bean-close]",
+      "prefLabel": "Close the bean",
       "definition": "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.",
       "notation": "Call_BeanClose",
       "source": "cat-harness/processes/sdlc/upstream-pin-watch.bpmn#Call_BeanClose",
@@ -4481,7 +4481,7 @@
     },
     {
       "id": "process_upstreampinwatch.call_beanopen",
-      "prefLabel": "Open the bean [bean-open]",
+      "prefLabel": "Open the bean",
       "definition": "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.",
       "notation": "Call_BeanOpen",
       "source": "cat-harness/processes/sdlc/upstream-pin-watch.bpmn#Call_BeanOpen",

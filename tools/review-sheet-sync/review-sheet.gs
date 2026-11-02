@@ -16,7 +16,7 @@
  *
  * Install once: Extensions > Apps Script, paste this file as Code.gs (the
  * only file to paste), save, pick installTriggers in the function
- * list, press Run and allow access, then reload the sheet. A "Review links"
+ * list, press Run and allow access, then reload the sheet. A "Folio Assistant"
  * menu appears. In a drafting sheet an edit rebuilds at once; in a
  * public-comment sheet it marks the sheet dirty and a 1-minute trigger
  * rebuilds. "Refresh now" rebuilds at once. Columns are found by their header
@@ -31,7 +31,7 @@
 /*@@VERSION@@*/
 
 /**
- * Run this one, once, from the editor (or Review links, then Install automatic
+ * Run this one, once, from the editor (or Folio Assistant, then Install automatic
  * refresh): it is first in the file so the editor's Run button picks it by
  * default (owner, 2026-10-31: Run picked loadConfig and failed). Every other
  * function here is called by it, the menu or a trigger, never run by hand.
@@ -77,7 +77,12 @@ const CONFIG_TAB = 'Config';
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
 const SCRIPT_VERSION = '@@STAMP@@';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
-const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
+const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
+// The menu's name and the page it points to for more (owner, 2026-11-01:
+// "instead of Review links ... Folio Assistant ... link to the folio asst page").
+const MENU_NAME = 'Folio Assistant';
+const ABOUT_URL = 'https://litlfred.github.io/folio-assistant/';
+const ABOUT_LINE = 'More about Folio Assistant: ' + ABOUT_URL;
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
   'in the function list (next to Run and Debug), then press Run.';
 let CFG = null, COLS = null, DATA = null, DRAFTING = false, WATCHED = [], EDITORS = null, EDITORS_SKIPPED = [];
@@ -144,8 +149,8 @@ function notLinked(ss) {
 const SETUP_MARK = '\u26a0 ';
 const SETUP_STEPS = {
   unlinked: SETUP_MARK + 'Not set up yet. Step 1 of 2: ask the agent to link this sheet to its document, and give it this sheet\'s link. ' +
-    'Step 2: choose Review links, then Install.',
-  uninstalled: SETUP_MARK + 'Almost set up. Step 2 of 2: choose Review links, then Install (once), and allow it. The script then keeps this sheet current.',
+    'Step 2: choose ' + MENU_NAME + ', then Install.',
+  uninstalled: SETUP_MARK + 'Almost set up. Step 2 of 2: choose ' + MENU_NAME + ', then Install (once), and allow it. The script then keeps this sheet current.',
 };
 /** Where the sheet's setup is: 'unlinked' (no Config), 'uninstalled' (no timer yet) or 'ready'. */
 function setupState(linked) {
@@ -168,9 +173,11 @@ function markSetup(ss, state) {
     if (!LEGEND_RE.test(String(sh.getRange(1, 1).getDisplayValue()).trim())) return;
     const cell = sh.getRange(1, 2);
     const before = String(cell.getDisplayValue());
-    let lines = before.split('\n').filter(l => l.indexOf(SETUP_MARK) !== 0 && l.indexOf('Document: ') !== 0);
+    let lines = before.split('\n').filter(l => l.indexOf(SETUP_MARK) !== 0 && l.indexOf('Document: ') !== 0 &&
+      l.indexOf('More about ') !== 0);
     if (SETUP_STEPS[state]) lines.unshift(SETUP_STEPS[state]);
     if (where) lines.push(where);
+    lines.push(ABOUT_LINE);
     const text = lines.join('\n');
     if (text !== before) cell.setValue(text);
   });
@@ -179,29 +186,52 @@ function markSetup(ss, state) {
 }
 
 function showVersion() {
-  // Short and plain (owner, 2026-11-01: the old text was "long, unclear").
-  const build = String(SCRIPT_VERSION).replace(/^template sha256 /, '');
-  SpreadsheetApp.getUi().alert('Which version is this?',
-    'Build: ' + build + '\n\n' +
-    'Newest build: the "at ..." line near the top of ' + LATEST_URL + '\n\n' +
-    'Different? Ask the agent for the Code.gs copy page, paste it over Code.gs in the Folio Review Library (' + LIBRARY_URL + ') and save, ' +
-    'then choose Review links, Refresh now in each sheet.',
+  // Short, one fact per line (owner, 2026-11-01: "not pretty as requested").
+  // The copy page is the one place the newest build is published, and the
+  // Config tab's LATEST_BUILD (written by the agent with each build) says
+  // whether this sheet has it, so the script still never fetches. An alert
+  // cannot hold a link, and HtmlService stays out (see the security tests).
+  const short = v => String(v || '').replace(/^template sha256 /, '').slice(0, 8);
+  const build = short(SCRIPT_VERSION);
+  let latest = '';
+  try { loadConfig(SpreadsheetApp.getActive()); latest = short(CFG && CFG.LATEST_BUILD); } catch (e) { /* not linked yet */ }
+  const status = !latest ? '' : latest === build ? '\u2713 Up to date.\n\n' : 'New build available: ' + latest + '\n\n';
+  SpreadsheetApp.getUi().alert('Code.gs build ' + build,
+    status +
+    'Newest build: top of the copy page\n' + COPY_PAGE_URL.replace(/^https:\/\//, '') + '\n\n' +
+    'Different? Paste that page over Code.gs in the Folio Review Library, then save.\n\n' + ABOUT_LINE,
     SpreadsheetApp.getUi().ButtonSet.OK);
 }
 
-function onOpen() {
-  SpreadsheetApp.getUi().createMenu('Review links')
+function showAbout() {
+  SpreadsheetApp.getUi().alert('About ' + MENU_NAME,
+    MENU_NAME + ' keeps this review sheet linked to its document and its agents.\n\n' + ABOUT_LINE,
+    SpreadsheetApp.getUi().ButtonSet.OK);
+}
+
+/**
+ * The sheet's menu. The stub calls this too (ui handed in), so the library
+ * sets the menu's name and items and a rename needs no new stub.
+ */
+function addMenu(ui) {
+  (ui || SpreadsheetApp.getUi()).createMenu(MENU_NAME)
     .addItem('Refresh now', 'refreshAll')
     .addItem('Install (first time, or after pasting a new Code.gs)', 'installTriggers')
     .addItem('Which version is this?', 'showVersion')
+    .addSeparator()
+    .addItem('About ' + MENU_NAME, 'showAbout')
     .addToUi();
+}
+
+function onOpen() {
+  addMenu();
   try {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(CONFIG_TAB);
     const keys = sh ? sh.getRange(1, 1, Math.max(sh.getLastRow(), 1), 1).getDisplayValues().map(r => String(r[0]).trim()) : [];
     const linked = keys.includes('CFG');
     if (!linked) ss.toast('Ask the agent to link this sheet. The \u26a0 line at the top of the tab says how.', '\u26a0 Not set up yet', 30);
-    else if (setupState(true) === 'uninstalled') ss.toast('Choose Review links, then Install, to start the script.', '\u26a0 Almost set up', 30);
+    else if (setupState(true) === 'uninstalled') ss.toast('Choose ' + MENU_NAME + ', then Install, to start the script.', '\u26a0 Almost set up', 30);
     if (linked) loadConfig(ss);
     markSetup(ss, setupState(linked));
   } catch (e) { /* a toast is a courtesy; never block the menu */ }
@@ -533,7 +563,7 @@ function refreshAll() {
   if (!lock.tryLock(1000)) {
     // Refresh now pressed while a timer refresh runs: say so rather than do
     // nothing in silence (owner, 2026-10-31: "what does Refresh now do exactly?").
-    try { SpreadsheetApp.getActive().toast('Another refresh is running. Try again in a minute.', 'Review links', 5); } catch (err) { /* no UI on a timer */ }
+    try { SpreadsheetApp.getActive().toast('Another refresh is running. Try again in a minute.', MENU_NAME, 5); } catch (err) { /* no UI on a timer */ }
     return false;
   }
   const t0 = Date.now();
@@ -640,6 +670,9 @@ function refreshLocked() {
     });
     markStale(rcs, csCol, basisOfCs, ['Title', 'TWG (CS)'], 'Committee Feedback', COLS.rcs.agentFeedback || 'Change Set Feedback (agent)', lineOf);
     completeReady(rcs, csCol, prOf, stagingOf, builtOf, readyAt);
+    const csSt = {};
+    rcs.rows.forEach(r => { const cs = String(r[csCol]).trim(); if (cs) csSt[cs] = csStatus((csOf[cs] || []).map(n => stOf[n]).filter(Boolean)); });
+    finishDoneRows(rcs, csCol, csSt, docProps_());
     try { capRows(ss, [CFG.RPC, CFG.RCS]); } catch (err) { /* cosmetic only */ }
     // Staging review page, from Agent: only where Agent names a preview, so a
     // sheet whose agent writes the cell directly keeps it.
@@ -854,15 +887,67 @@ function headerNotes(ss) {
   });
 }
 const KEY_COLOURS = { blue: '#1f5fa8', green: '#2e7d32', orange: '#c25e00', grey: '#666666' };
+const KEY_ORDER = ['blue', 'green', 'orange', 'grey'];
+const KEY_LEAD_RE = /^Column colou?rs:\s*/;
 const KEY_WORD_RE = /\b(blue|green|orange|grey)\b/gi;
-function keyRuns(text) {
+/**
+ * Which key colour a header's fill is: grey when its channels are close,
+ * otherwise the strongest channel (blue, green, or red for orange). A white
+ * or unfilled head has no colour.
+ */
+function fillGroup(hex) {
+  const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(String(hex || ''));
+  if (!m) return null;
+  const [r, g, b] = [m[1], m[2], m[3]].map(x => parseInt(x, 16) / 255);
+  if (Math.min(r, g, b) > 0.95) return null;
+  if (Math.max(r, g, b) - Math.min(r, g, b) < 0.08) return 'grey';
+  return b >= r && b >= g ? 'blue' : g >= r ? 'green' : 'orange';
+}
+/**
+ * Column names to colour in the Instructions text, each with its header's
+ * key colour (owner, 2026-11-01: "make use of colors match the column
+ * headers"). A people's column with initials in its head ("Contributor
+ * Feedback (CL)") is also found by its bare name.
+ */
+function headerColours(ss) {
+  const out = {};
+  ss.getSheets().forEach(sh => {
+    if (sh.isSheetHidden() || sh.getName() === CONFIG_TAB || sh.getLastColumn() < 1) return;
+    const n = Math.min(5, sh.getLastRow());
+    if (n < 1) return;
+    const row = legendCount(sh.getRange(1, 1, n, 1).getDisplayValues().map(r => r[0])) + 1;
+    const r = sh.getRange(row, 1, 1, sh.getLastColumn());
+    const heads = r.getDisplayValues()[0], fills = r.getBackgrounds()[0];
+    heads.forEach((h, i) => {
+      const name = String(h).trim(), grp = fillGroup(fills[i]);
+      if (!name || !grp) return;
+      if (!out[name]) out[name] = grp;
+      const bare = /^(.*Feedback) \((?!agent\)).*\)$/.exec(name);
+      if (bare && !out[bare[1]]) out[bare[1]] = grp;
+    });
+  });
+  return out;
+}
+/** [start, end, colour] runs for one Instructions text. */
+function keyRuns(text, heads) {
   const runs = [];
   // A setup line (markSetup) may sit above the key: the key is then the second line.
   const at = text.indexOf(SETUP_MARK) === 0 && text.indexOf('\n') >= 0 ? text.indexOf('\n') + 1 : 0;
   const nl = text.indexOf('\n', at);
   const first = nl < 0 ? text.slice(at) : text.slice(at, nl);
   let keyEnd = 0;
-  if (/^(blue|green|orange|grey) = /i.test(first)) {
+  const lead = KEY_LEAD_RE.exec(first);
+  if (lead) {
+    // "Column colours:     your input ...     written by the agent ...": the
+    // phrases in key order, no colour named.
+    let p = at + lead[0].length, k = 0;
+    first.slice(lead[0].length).split(/(\s{3,})/).forEach(part => {
+      if (/^\s+$/.test(part)) { p += part.length; return; }
+      if (part && k < KEY_ORDER.length) runs.push([p, p + part.length, KEY_COLOURS[KEY_ORDER[k++]]]);
+      p += part.length;
+    });
+    keyEnd = at + first.length;
+  } else if (/^(blue|green|orange|grey) = /i.test(first)) {
     const seg = /(blue|green|orange|grey) = .*?(?=\s{3,}|$)/gi;
     let m;
     while ((m = seg.exec(first))) runs.push([at + m.index, at + m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
@@ -871,7 +956,19 @@ function keyRuns(text) {
   let m;
   KEY_WORD_RE.lastIndex = keyEnd;
   while ((m = KEY_WORD_RE.exec(text))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
-  return runs;
+  // Column names, longest first, whole words only, never inside a run already taken.
+  const names = Object.keys(heads || {}).sort((a, b) => b.length - a.length);
+  const taken = (a, z) => runs.some(([x, y]) => a < y && z > x);
+  const word = ch => /[A-Za-z0-9]/.test(ch || '');
+  names.forEach(name => {
+    let at = text.indexOf(name, keyEnd);
+    while (at >= 0) {
+      const z = at + name.length;
+      if (!word(text[at - 1]) && !word(text[z]) && !taken(at, z)) runs.push([at, z, KEY_COLOURS[heads[name]]]);
+      at = text.indexOf(name, z);
+    }
+  });
+  return runs.sort((a, b) => a[0] - b[0]);
 }
 /**
  * The Config tab's colours, kept by every refresh so a row the agent wrote
@@ -905,6 +1002,7 @@ function styleConfig(ss) {
 
 function colourInstructions(ss) {
   if (!ss) throw new Error(RUN_THIS);
+  const heads = headerColours(ss);
   ss.getSheets().forEach(sh => {
     const n = Math.min(5, sh.getLastRow());
     if (n < 2 || sh.getLastColumn() < 2) return;
@@ -913,8 +1011,12 @@ function colourInstructions(ss) {
       const cell = sh.getRange(r, 2);
       const now = cell.getRichTextValue();
       const text = now ? now.getText() : '';
-      const runs = keyRuns(text);
-      if (!runs.length || (now.getTextStyle(runs[0][0], runs[0][1]).getForegroundColor() || '').toLowerCase() === runs[0][2]) continue;
+      const runs = keyRuns(text, heads);
+      // Rewritten only when some run lacks its colour, so a refresh is cheap.
+      if (!runs.length || runs.every(([a, z, c]) => {
+        const st = now.getTextStyle(a, z);
+        return (st.getForegroundColor() || '').toLowerCase() === c && st.isBold();
+      })) continue;
       const b = SpreadsheetApp.newRichTextValue().setText(text);
       runs.forEach(([a, z, c]) => b.setTextStyle(a, z, SpreadsheetApp.newTextStyle().setForegroundColor(c).setBold(true).build()));
       const url = /https?:\/\/\S+/g;
@@ -1065,8 +1167,16 @@ function hashOf(text) {
  * initials) changes no row's basis. Returns that hash first, then the older
  * one that kept empty cells, so a basis an agent wrote before the change still
  * matches until it next writes one.
+ *
+ * A basis written as "2:<hash>" also covers the row's grey content columns
+ * (basisGrey), so a change to the comments a change set joins marks its
+ * proposal stale too (owner, 2026-10-31: "changed blue human (or mechanical
+ * grey) content"). `written` is the stored basis: its form says which hash
+ * to compare with, so old bases keep matching until the agent rewrites them.
  */
-function basisOf(header, row, exact, prefix) {
+function basisOf(header, row, exact, prefix, written) {
+  const v2 = /^2:/.test(String(written || ''));
+  if (v2) exact = exact.concat(basisGrey());
   const parts = [], legacy = [];
   header.forEach((h, i) => {
     let v = String(row[i] == null ? '' : row[i]).trim();
@@ -1078,9 +1188,22 @@ function basisOf(header, row, exact, prefix) {
       if (v) parts.push(h + '=' + v);
     }
   });
+  const pfx = v2 ? '2:' : '';
   // A basis written before a rename (RENAMED) names the columns the old way.
   const was = t => t.map(x => { const a = aliasOf(x.split('=')[0]); return a === null || x.indexOf('Committee') !== 0 ? x : a + x.slice(x.indexOf('=')); });
-  return [hashOf(parts.join('\n')), hashOf(legacy.join('\n')), hashOf(was(parts).join('\n')), hashOf(was(legacy).join('\n'))];
+  return [pfx + hashOf(parts.join('\n')), pfx + hashOf(legacy.join('\n')), pfx + hashOf(was(parts).join('\n')), pfx + hashOf(was(legacy).join('\n'))];
+}
+
+/**
+ * The grey (mechanical) content columns a proposal also rests on: in a
+ * public-comment sheet, what Review Change Sets joins from its comments.
+ * Not the agent's own columns (Agentic status, Staging review page), so the
+ * agent's writes never make its proposals stale.
+ */
+function basisGrey() {
+  if (DRAFTING) return [];
+  const c = COLS.rcs;
+  return [c.sections, c.pages, c.comments, c.revisions, c.feedback, c.dispositions, 'TWG (PCs)'].filter(Boolean);
 }
 
 /** "2026-10-30 22:30Z" (or ISO) -> ms, or NaN. */
@@ -1098,6 +1221,13 @@ function stagingCell(url, built, prs, readyAt, disp) {
   const w = stagingWarning(url, built, prs, readyAt);
   const dl = disp ? [{ t: '\n\u26a0 ' + disp + ': not ready for merge', bold: true }] : [];
   if (!url) return rich((w ? [{ t: w, bold: true }] : []).concat(w ? dl : []));
+  // No link until Pages has deployed it (owner, 2026-11-01: a review link
+  // that answered 404 "so user is confused"). The agent reads the Pages
+  // deployment through the GitHub API and writes Staging deploy; the script
+  // needs no internet access, so it trusts that value: building, on gh-pages
+  // or deploying shows the stage with no link, deployed shows the link.
+  const stage = deployStage((built || {}).deploy);
+  if (stage) return rich([{ t: '\u23f3 Preview not live yet: ' + stage + '. The link appears when Pages has deployed it.', bold: true }].concat(dl));
   // The staging QA report beside the preview (owner, 2026-10-31: "sheets
   // should link to QA reports for the staging"), then the QA gate.
   // "QA report" opens the viewer: the preview's review page, at its
@@ -1285,15 +1415,21 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) 
   s.rows.forEach((r, k) => {
     if (want && !want(k)) return;
     const cs = String(r[csCol]).trim();
-    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[cs]);
+    const w = basisOfCs[cs];
+    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix, w), w);
     const cur = t === null ? String(r[ag]) : t;
-    const L = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? lineOf[cs] : undefined;
+    const L0 = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? lineOf[cs] : undefined;
+    const L = L0 === undefined ? L0 : askChecked(L0, cur);
     const fin = L !== undefined ? withProgress(cur, L) : cur;
+    // Read the cell's links before a plain write wipes them (owner, 2026-11-01: "Dont know where link is").
+    const kept = keptLinks(linkRuns(s.sh.getRange(k + s.top, ag + 1, 1, 1)), fin);
     if (fin !== String(r[ag])) s.sh.getRange(k + s.top, ag + 1, 1, 1).setValues([[asText(fin)]]);
     unready(s, r, k, r[ag], t);
-    const off = fin.indexOf(STALE + '\n') === 0 ? STALE.length + 1 : 0;
-    const links = L && typeof L === 'object' ? L.links.map(x => [x[0] + off, x[1] + off, x[2]]) : [];
-    markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), fin, links);
+    // Where the status block landed: after a stale mark, and after a review ask askFirst may put first.
+    const off = L && typeof L === 'object' && L.text ? Math.max(0, fin.indexOf(L.text)) : 0;
+    const own = L && typeof L === 'object' ? L.links.map(x => [x[0] + off, x[1] + off, x[2]]) : [];
+    const links = own.concat(kept.filter(([a, z]) => !own.some(([b, y]) => a < y && b < z)));
+    markDecision(s.sh.getRange(k + s.top, ag + 1, 1, 1), fin, links.concat(autoLinks(fin, links)));
   });
 }
 
@@ -1447,6 +1583,8 @@ function progressLine(o) {
   if (/merged/i.test(o.status || '')) return '';
   // A question for a person comes first: nothing moves until it is answered.
   if (/needs/i.test(o.status || '')) return PROGRESS + 'Needs you: answer the Decision needed below, then set Ready for agent to Yes.';
+  // A revert, a split or a committee review is said as it is, not as "open".
+  if (/revert|split|committee/i.test(o.status || '')) return PROGRESS + String(o.status).trim() + '.';
   const step = agentStep(o.built && o.built.step);
   if (step && (step.name === 'merging' || !o.merge)) {
     const dones = prs.map(p => utcMs(p.done)).filter(x => !isNaN(x));
@@ -1480,7 +1618,7 @@ const STATUS_SUB = '\u21b3 ';
 function statusBlock(line, status, prs) {
   const parts = [];
   if (line) parts.push({ t: line });
-  if (/needs human/i.test(status || '')) parts.push({ t: STATUS_SUB + NEEDS_YOU + ': under "Decision needed" below. Write your answer (the letter) in your Blue feedback column, then an Editor sets Ready for agent to Yes.' });
+  if (/needs human/i.test(status || '')) parts.push({ t: STATUS_SUB + NEEDS_YOU + ': under "Decision needed" below. Write your answer (the letter) in your feedback column, then an Editor sets Ready for agent to Yes.' });
   (prs || []).forEach(p => {
     parts.push({ t: STATUS_SUB }, { t: prLabel(p.url), url: p.url },
       { t: ' (' + [status, p.done].filter(Boolean).join(', ') + ')' + (p.desc ? descText(p.desc) : '') });
@@ -1494,6 +1632,95 @@ function statusBlock(line, status, prs) {
   });
   return { text: text, links: links };
 }
+/**
+ * "Needs you" only when there is a question to answer (owner, 2026-11-01:
+ * "these feedback are not at all clear what agent asking contributors to
+ * respond about"; Q-FBK-1 A). Without a Decision needed block in the cell,
+ * the Needs you status line and the "↳ Needs you" line go, the PR lines stay
+ * with their links, and askFirst adds the review ask. The watcher's lint
+ * (tools/review-log-watch/lint.ts) flags the row so the agent writes the
+ * question or clears the status.
+ */
+function hasAsk(text) {
+  return /(^|\n)Decision needed\b[^\n]*:/.test(String(text || ''));
+}
+function askChecked(line, text) {
+  const t = line && typeof line === 'object' ? line.text : String(line || '');
+  if (t.indexOf('Needs you') < 0 || hasAsk(text)) return line;
+  const kept = t.split('\n')
+    .filter((l, i) => !(i === 0 && l.indexOf(PROGRESS + 'Needs you') === 0))
+    .filter(l => l.indexOf(STATUS_SUB + NEEDS_YOU) !== 0);
+  return line && typeof line === 'object' ? reLink(t, kept.join('\n'), line.links) : kept.join('\n');
+}
+/** Move each link [a, z, url] of `from` to where its text sits in `to` (links are on PR labels, which stay). */
+function reLink(from, to, links) {
+  let at = 0;
+  const moved = [];
+  links.forEach(([a, z, u]) => {
+    const i = to.indexOf(from.slice(a, z), at);
+    if (i >= 0) { moved.push([i, i + (z - a), u]); at = i + (z - a); }
+  });
+  return { text: to, links: moved };
+}
+/**
+ * Where to review (owner, 2026-11-01: "google sheet feedback from agent needs
+ * links ... hard to see where to review. agents did not make use of selected
+ * sections"; Q-FBK-3). One "↳ Where to review:" line under the status, each
+ * Selected Section linked to its place on the change set's preview while
+ * there is one, else on the published draft. With no section picked it says
+ * so, and the agent asks which (skill review-sheet-script).
+ */
+function previewSection(url, staging) {
+  const st = /^(.*\/STAGING\/[^/]+\/)/.exec(String(staging || ''));
+  const se = /^(https?:\/\/[^/]+\/[^/]+\/)(.*)$/.exec(String(url || ''));
+  return st && se && st[1].indexOf(se[1]) === 0 ? st[1] + se[2] : url;
+}
+function whereLine(picked, tocUrl, staging) {
+  const names = picked.filter(n => tocUrl[n]);
+  if (!names.length) return { text: STATUS_SUB + '⚠ No section selected: pick them in Selected Sections so the agent knows where to work.', links: [] };
+  let text = STATUS_SUB + 'Where to review' + (staging ? ' (preview)' : '') + ': ';
+  const links = [];
+  names.forEach((n, i) => {
+    if (i) text += ' · ';
+    links.push([text.length, text.length + n.length, previewSection(tocUrl[n], staging)]);
+    text += n;
+  });
+  return { text: text, links: links };
+}
+/**
+ * The Where to review line for a row, or null. A finished row (closed,
+ * merged, reverted, withdrawn) with no section picked gets none: nothing is
+ * left to review there, and the warning was noise on the DTH-HRH log's
+ * closed re-pin rows (owner, 2026-11-02: after pasting the new Code.gs).
+ */
+function whereFor(picked, tocUrl, staging, status) {
+  const finished = /closed|merged|reverted|withdrawn/i.test(String(status || ''));
+  if (finished && !picked.some(n => tocUrl[n])) return null;
+  return whereLine(picked, tocUrl, staging);
+}
+function withWhere(line, where) {
+  const l = line && typeof line === 'object' ? line : { text: String(line || ''), links: [] };
+  if (!l.text) return where;
+  const off = l.text.length + 1;
+  return { text: l.text + '\n' + where.text, links: l.links.concat(where.links.map(([a, z, u]) => [a + off, z + off, u])) };
+}
+/**
+ * Every "repo#n" in the agent's feedback becomes a link (owner, 2026-11-01:
+ * "needs links"). The owner comes from REPO_URL; GitHub sends /issues/n on
+ * to the pull request when n is one.
+ */
+function autoLinks(text, taken) {
+  const m0 = /github\.com\/([^/\s]+)\//.exec(String((typeof CFG !== 'undefined' && CFG && CFG.REPO_URL) || ''));
+  if (!m0) return [];
+  const out = [], re = /\b([a-z0-9][\w.-]*)#(\d+)\b/gi;
+  let m;
+  while ((m = re.exec(String(text)))) {
+    const a = m.index, z = a + m[0].length;
+    if ((taken || []).some(([x, y]) => a < y && z > x)) continue;
+    out.push([a, z, 'https://github.com/' + m0[1] + '/' + m[1] + '/issues/' + m[2]]);
+  }
+  return out;
+}
 /** The text with its status (progress line, or block) replaced, or removed when line is ''. */
 function withProgress(text, line) {
   const t = String(text);
@@ -1502,7 +1729,24 @@ function withProgress(text, line) {
   const lines = t.split('\n');
   const stale = lines[0] === STALE ? [lines.shift()] : [];
   while (lines.length && (lines[0].indexOf(PROGRESS) === 0 || lines[0].indexOf(STATUS_SUB) === 0)) lines.shift();
-  return stale.concat(l ? [l] : [], lines).join('\n');
+  return stale.concat(askFirst(l, lines), lines).join('\n');
+}
+
+/**
+ * The ask comes first, and says exactly what to answer (owner, 2026-11-01:
+ * "these feedback are not at all clear what agent asking contributors to
+ * respond about"). A "Decision needed" status line stays only when the cell
+ * has a Decision needed block; a bare proposal gets the review ask.
+ */
+const ASK_PROPOSAL = 'Please review: do you agree with the proposed direction below? Write yes, or what to change, in your feedback column. Then an Editor sets Ready for agent to Yes.';
+function askFirst(l, lines) {
+  const body = lines.join('\n');
+  const asksDecision = /Decision needed/.test(String(l || ''));
+  if (asksDecision && !/Decision needed/.test(body)) l = '';
+  const ask = /^Proposed direction/.test(body) && !/Decision needed/.test(body);
+  // With no status line of its own (only "↳" lines, such as Where to review), the review ask goes first.
+  if (ask && (!l || String(l).indexOf(PROGRESS) !== 0)) return [PROGRESS + ASK_PROPOSAL].concat(l ? [l] : []);
+  return l ? [l] : [];
 }
 
 /**
@@ -1532,40 +1776,61 @@ function readyTimes(s, csCol, prOf, want, props) {
 const isYes = (s, r, h) => { const c = col(s, h); return c >= 0 && /^yes$/i.test(String(r[c]).trim()); };
 
 /**
- * The agent's "Decision needed" block in bold, so a reader sees at once
- * that the row waits on them (owner, 2026-10-31: "decision needed should be
- * bold highlighted in change set feedback so clear"). The block runs to the
- * next blank line. Cells without one are left as they are.
+ * The tags in the agent's feedback in bold ("Decision needed:", "Status:",
+ * "Next:"), and the rest plain, so a reader sees at once what the row asks
+ * of them. Cells without a tag or link are left as they are.
  */
 const DECISION_INK = '#000000';
 function decisionSpans(text) {
-  const t = String(text), spans = [], re = /Decision needed/g;
+  // Only the tags are bold, never whole blocks or lines (owner, 2026-11-01:
+  // "all text is bold which is ugly. only a tag like \"Decisions Needed:\"
+  // should be bold"). A tag is a short label ending in a colon: at the start
+  // of a line ("Decision needed (No. 1):", "Status:", "Next:"), or right
+  // after the script's \u23f3 mark ("Needs you:"). Option lines ("A. ...") are not tags.
+  // Comment numbers stay bold.
+  const t = String(text), spans = [];
   let m;
-  while ((m = re.exec(t))) {
-    const end = t.indexOf('\n\n', m.index);
-    spans.push([m.index, end < 0 ? t.length : end]);
+  const lab = /(^|\n)(\u26a0 |\u23f3 )?([A-Z][a-z][A-Za-z0-9 ()\-.]{0,40}:)(?=\s|$)/g;
+  while ((m = lab.exec(t))) {
+    const a = m.index + m[1].length + (m[2] || '').length;
+    spans.push([a, a + m[3].length]);
   }
-  // The script's ⏳ status line is bold too, so it reads as the row's state
-  // (owner, 2026-10-31: "not bold").
-  // Labels at the start of a line ("What changed:", "Proposed direction:")
-  // and comment numbers, so the structure reads at a glance.
-  const lab = /(^|\n)([A-Z][A-Za-z ()]{2,40}:)(?=\s)/g;
-  while ((m = lab.exec(t))) spans.push([m.index + m[1].length, m.index + m[1].length + m[2].length]);
   const ref = /\bNos?\.\s*\d+(?:(?:,\s*|\s+and\s+|\s+to\s+)\d+)*/g;
   while ((m = ref.exec(t))) spans.push([m.index, m.index + m[0].length]);
-  const i = t.indexOf('\n' + PROGRESS);
-  const p = t.indexOf(PROGRESS) === 0 ? 0 : i < 0 ? -1 : i + 1;
-  if (p >= 0) {
-    const e = t.indexOf('\n', p);
-    spans.push([p, e < 0 ? t.length : e]);
-  }
   return spans;
 }
+/** The linked runs of a cell, as [{ text, url }]; [] when the cell has none or cannot say. */
+function linkRuns(range) {
+  let rt = null;
+  try { rt = range.getRichTextValue ? range.getRichTextValue() : null; } catch (e) { rt = null; }
+  if (!rt || !rt.getRuns) return [];
+  return rt.getRuns().map(x => ({ text: x.getText(), url: x.getLinkUrl ? x.getLinkUrl() : null })).filter(x => x.url && String(x.text).trim());
+}
+
+/**
+ * Where the links someone (an agent, through the Sheets API) put in a cell land
+ * in its new text, as [start, end, url]: each linked label is found again, in
+ * order, so a refresh that adds a status line keeps every link it can place.
+ */
+function keptLinks(runs, text) {
+  const t = String(text), from = {}, out = [];
+  (runs || []).forEach(x => {
+    const w = String(x.text), at = t.indexOf(w, from[w] || 0);
+    if (at < 0) return;
+    from[w] = at + w.length;
+    out.push([at, at + w.length, x.url]);
+  });
+  return out;
+}
+
 function markDecision(range, text, links) {
   const spans = decisionSpans(text);
   if (!spans.length && !(links || []).length) return;
   const b = SpreadsheetApp.newRichTextValue().setText(String(text));
   const st = SpreadsheetApp.newTextStyle().setBold(true).setForegroundColor(DECISION_INK).build();
+  // The cell's own format must not make everything bold under the tags.
+  if (String(text).length) b.setTextStyle(0, String(text).length, SpreadsheetApp.newTextStyle().setBold(false).build());
+  if (range.setFontWeight) range.setFontWeight('normal');
   spans.forEach(([a, z]) => b.setTextStyle(a, z, st));
   (links || []).forEach(([a, z, u]) => b.setLinkUrl(a, z, u));
   range.setRichTextValue(b.build());
@@ -1682,7 +1947,7 @@ function agenticCell(status, prs, o) {
   const head = stepped ? [{ t: stepLine(step).replace(PROGRESS, ''), bold: true }]
     : queued ? [{ t: 'Waiting on the agent since ' + o.readyAt + ' (Ready for agent set); it has not recorded a step yet' + unpicked(o.readyAt, o.now), bold: true }]
     : /working/i.test(status) && o.talk ? [{ t: 'An agent is working on it: ', bold: true }, { t: 'conversation', url: o.talk }]
-    : /needs human/i.test(status) ? [{ t: NEEDS_YOU + ': it is under "Decision needed" in the agent\'s feedback column. Write your answer (the letter) in your Blue feedback column, then an Editor sets Ready for agent to Yes.', bold: true }] : [];
+    : /needs human/i.test(status) ? [{ t: NEEDS_YOU + ': it is under "Decision needed" in the agent\'s feedback column. Write your answer (the letter) in your feedback column, then an Editor sets Ready for agent to Yes.', bold: true }] : [];
   const body = agenticParts(status, prs);
   return rich(head.length ? head.concat(body.length && body[0].t ? [{ t: '\n' }].concat(body) : []) : body);
 }
@@ -1915,7 +2180,8 @@ function refreshRcs(s, rpc, csOf, stOf, prOf, readyAt, builtOf) {
     const pageParts = compact(printed).map(([a, b]) => ({ t: a === b ? String(a) : a + '–' + b, url: pdfUrl(a) }));
     out.pages.push(rich(pageParts.flatMap((x, i) => (i ? [{ t: ', ' }, x] : [x]))));
 
-    out.comments.push(join(nos, '\n\n', n => {
+    // One line per comment, no blank line between (owner, 2026-11-01 18:24Z: "condense line spacing").
+    out.comments.push(join(nos, '\n', n => {
       const v = get(n, 'comment');
       if (!v) return null;
       const st = get(n, 'status');
@@ -1929,7 +2195,7 @@ function refreshRcs(s, rpc, csOf, stOf, prOf, readyAt, builtOf) {
       const v = fb.map(i => String(rowOf[n].r[i]).trim()).filter(Boolean).join(' | ');
       return v ? [ref(n), { t: ' · ' + v }] : null;
     }));
-    out.dispositions.push(join(nos, '\n\n', n => {
+    out.dispositions.push(join(nos, '\n', n => {
       const v = get(n, 'disposition');
       return v ? [ref(n), { t: ' · ' + v }] : null;
     }));
@@ -2143,10 +2409,45 @@ function refreshDraft(rows) {
   fb.rows.forEach(r => {
     const cs = String(r[c.cs]).trim();
     const line = cs ? progressLine({ readyAt: readyAt[cs], merge: isYes(fb, r, 'Ready for merge'), status: stOf[cs] || '', prs: prOf[cs] || [], staging: stagingOf[cs], built: builtOf[cs] }) : '';
-    if (cs) lineOf[cs] = c.agentic < 0 ? statusBlock(line, stOf[cs] || '', prOf[cs] || []) : line;
+    if (!cs) return;
+    const base = c.agentic < 0 ? statusBlock(line, stOf[cs] || '', prOf[cs] || []) : line;
+    const picked = c.sections >= 0 ? String(r[c.sections]).split(',').map(bareName).filter(Boolean) : null;
+    const where = picked ? whereFor(picked, tocUrl, stagingOf[cs], stOf[cs] || '') : null;
+    lineOf[cs] = where ? withWhere(base, where) : base;
   });
   markStale(fb, c.cs, basisOfCs, [COLS.draft.title, COLS.draft.sections], COLS.draft.feedback, COLS.draft.agentFeedback || 'Feedback (agent)', lineOf, want);
   completeReady(fb, c.cs, prOf, stagingOf, builtOf, readyAt);
+  finishDoneRows(fb, c.cs, stOf, props);
+}
+/**
+ * A finished change set's row is hidden, and its whole row struck through, so
+ * open work is not cluttered (owner, 2026-11-01 21:50Z: "make sure complete
+ * changeset rows are hidden so not cluttered and that text of that whole row
+ * is crossed out"). Finished means its Agentic status (Agent tab) is Change
+ * merged or Closed; closing a change set writes Closed there when it closes
+ * the issue. A row that is reopened is shown again and the line removed.
+ * Only formatting changes: no value is written, so a watcher, which compares
+ * values, never reads it as new feedback. One property per change set
+ * ("d:CS-001") records what was applied, so an unchanged row is not touched.
+ */
+const DONE_STATUS = /^(change merged|closed)\b/i;
+function isDoneStatus(st) { return DONE_STATUS.test(String(st || '').trim()); }
+function finishDoneRows(s, csCol, stOf, props) {
+  if (csCol < 0 || !s.sh || typeof s.sh.hideRows !== 'function') return;
+  const width = Math.max(s.sh.getLastColumn(), 1);
+  s.rows.forEach((r, k) => {
+    const cs = String(r[csCol]).trim();
+    if (!cs) return;
+    const done = isDoneStatus(stOf[cs]);
+    const was = props.getProperty('d:' + cs) === '1';
+    if (done === was) return;
+    const row = k + s.top;
+    try {
+      s.sh.getRange(row, 1, 1, width).setFontLine(done ? 'line-through' : 'none');
+      if (done) s.sh.hideRows(row); else s.sh.showRows(row);
+      props.setProperty('d:' + cs, done ? '1' : '0');
+    } catch (err) { /* cosmetic only: tried again on the next run */ }
+  });
 }
 /** A dropdown name without its indent (U+2800 blanks; old "\u2514 "/"\u2502 " marks) or spaces. */
 const bareName = n => String(n).replace(/^[\s\u2800\u2502\u2514]+/, '').trim();

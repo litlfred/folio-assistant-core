@@ -41,9 +41,9 @@ Extract the structure of an uploaded source: its text layer, OCR where it has no
 - Skill: `document-intake`.
 - What: Contextual retrieval: a chunk in isolation loses what makes it mean anything, so each section carries the document brief.
 - Record it: `workflow_complete` with `node: "Task_Sections"`.
-- next: → `Task_Structure` (Write structure.json (TOC, page ranges, metadata))
+- next: → `Task_Structure` (Write structure.json)
 
-### 4. Write structure.json (TOC, page ranges, metadata) (`Task_Structure`)
+### 4. Write structure.json (`Task_Structure`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.

@@ -92,6 +92,30 @@ import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, document
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
+/**
+ * Tables, set apart from the narrative in the ArchiMate poster's look
+ * (cat-harness-tools `archimate/scripts/figure-theme.ts`, THEME): a white card
+ * with a deep ink header strip, pale banded rows and light rules, centred,
+ * with room above and below. White in light and dark mode alike, as figures
+ * are, so a table reads the same on every document page. Owner, 2026-11-01:
+ * tables "run into narrative text", "use theme stylings", "smart-ra poster
+ * colors/styling". `scope` prefixes every selector (the themed page).
+ */
+export function tableStyle(scope = ""): string {
+  const s = scope ? `${scope} ` : "";
+  return `
+  ${s}table { display: block; box-sizing: border-box; width: max-content; max-width: min(100%, 100vw - 7rem); overflow-x: auto; margin: 1.5rem 0; border-collapse: collapse;
+    background: #fff; color: #2d3748; border: 1px solid #14213d; border-radius: 6px; box-shadow: 0 1px 4px rgba(20, 33, 61, .18); font-size: .92em; }
+  ${s}th, ${s}td { border: 1px solid #c9cfd8; padding: .4rem .65rem; text-align: left; vertical-align: top; }
+  ${s}thead th { background: #14213d; color: #fff; font-weight: 600; border-color: #14213d; }
+  ${s}tbody tr:nth-child(even) > td { background: #f3f4f6; }
+  ${s}table a { color: #0b5cad; }
+  ${s}table code { color: inherit; background: none; padding: 0; }
+  /* A table wider than the reading column grows past it, centred on it, up to the window; only then does it scroll. */
+  @media (min-width: 50rem) { ${s}table { max-width: calc(100vw - 7rem); position: relative; left: 50%; transform: translateX(-50%); } }
+`;
+}
+
 /** The standalone page's own stylesheet. Light and dark follow the reader's system setting. */
 const PAGE_STYLE = `<style>
   :root { color-scheme: light dark; --fg: #1b1b1b; --bg: #fdfdfb; --muted: #5b5b5b; --link: #0b5cad; }
@@ -106,8 +130,7 @@ const PAGE_STYLE = `<style>
   a { color: var(--link); }
   a:focus-visible { outline: 3px solid var(--link); outline-offset: 2px; }
   h1, h2, h3 { line-height: 1.25; }
-  table { border-collapse: collapse; } th, td { border: 1px solid var(--muted); padding: .3rem .5rem; }
-  :target { scroll-margin-top: 1rem; }
+${tableStyle()}  :target { scroll-margin-top: 1rem; }
   .katex-display { overflow-x: auto; overflow-y: hidden; }
   dfn.defterm { font-style: normal; font-weight: 600; }
   .cite { color: var(--muted); }
@@ -158,7 +181,7 @@ const THEMED_STYLE = `
 .${DOC_CLASS} .fa-blk:empty { min-height: 3rem; }
 .${DOC_CLASS} .fa-one-page { font-size: .85rem; opacity: .72; }
 .${DOC_CLASS} .pc-bar { position: static; background: none; }
-`;
+${tableStyle(`.${DOC_CLASS}`)}`;
 
 /** A layout name as front matter may carry it, or a throw. */
 function layoutName(layout: string, what: string): string {
@@ -415,12 +438,37 @@ function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Re
     for (const e of entries) if (e.isIntersecting) { io.unobserve(e.target); load(ix.of[e.target.dataset.blk]); }
   }, { rootMargin: "2000px 0px" });
   for (const ph of document.querySelectorAll(".fa-blk")) io.observe(ph);
+  // Blocks above the target fill in after it is reached (and figures and
+  // math render), pushing it down the page. So jump (not the theme's smooth
+  // scroll, which a growing page outruns) and hold the target where it
+  // landed, each frame, until the reader scrolls, clicks or types, or the
+  // page has kept still for a few seconds.
+  let unpin = () => {};
+  const pin = (el) => {
+    unpin();
+    el.scrollIntoView({ behavior: "instant" });
+    const top = el.getBoundingClientRect().top;
+    let still = performance.now(), frame;
+    const hold = (now) => {
+      const d = el.getBoundingClientRect().top - top;
+      if (Math.abs(d) > 1) { scrollBy({ top: d, behavior: "instant" }); still = now; }
+      if (now - still > 4000) unpin(); else frame = requestAnimationFrame(hold);
+    };
+    const stop = ["wheel", "touchstart", "pointerdown", "keydown"];
+    const off = () => { cancelAnimationFrame(frame); for (const t of stop) removeEventListener(t, off, true); };
+    unpin = off;
+    for (const t of stop) addEventListener(t, off, { capture: true, passive: true });
+    frame = requestAnimationFrame(hold);
+  };
   // A link to a block, or to a term inside one, loads its chunk and lands on it.
   const go = () => {
-    const id = decodeURIComponent(location.hash.slice(1));
-    const n = id ? (ix.of[id] ?? ix.ids[id]) : undefined;
-    if (n === undefined) return;
-    load(n).then(() => document.getElementById(id)?.scrollIntoView());
+    let id;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { id = location.hash.slice(1); }
+    if (!id) return;
+    const n = ix.of[id] ?? ix.ids[id];
+    const land = () => { const el = document.getElementById(id); if (el) pin(el); };
+    if (n === undefined) land();
+    else load(n).then(land);
   };
   addEventListener("hashchange", go);
   go();
@@ -771,7 +819,8 @@ export function defaultBlockActions(repoRoot: string, over: Partial<BlockActions
 }
 
 export interface SiteBuildResult {
-  documents: { slug: string; blocks: number; page: string }[];
+  /** `title`: the manifest's title, with its `meta.status` (e.g. "Working Draft") when it declares one. */
+  documents: { slug: string; title: string; blocks: number; page: string }[];
   errors: string[];
 }
 
@@ -816,13 +865,18 @@ export async function buildDocumentSite(
   for (const d of docs) {
     const built = await buildDocumentMarkdown(d.path);
     for (const i of built.issues) if (i.level === "error") result.errors.push(`${d.slug}: ${i.message}`);
+    const manifest = (await import(d.path)).default as Paper;
+    // A document with a status ("Working Draft") carries it in its title
+    // everywhere: the heading, the page title and the landing list.
+    const status = typeof manifest.meta?.status === "string" ? manifest.meta.status : undefined;
+    const title = withStatus(manifest.title ?? d.slug, status);
+    if (status && manifest.title) built.markdown = built.markdown.replace(`# ${manifest.title}\n`, `# ${title}\n`);
     const termLinks = opts.linkTerms ? await glossaryTermLinks(repoRoot, documentPageDir(d.slug)) : undefined;
     // A figure that is a view of the instance's ArchiMate model is drawn from
     // the model, linked to the view's page (live-figures.ts); the PNG stays the fallback.
     const live = liveFigures(repoRoot, documentPageDir(d.slug));
     const render = async (md: string) => withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks }), live);
     const html = await render(built.markdown);
-    const manifest = (await import(d.path)).default as Paper;
     // The page under the locale, its data where it was (document-site-route.ts).
     const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
     const data = join(outDir, ...documentDataDir(d.slug).split("/"));
@@ -853,7 +907,6 @@ export async function buildDocumentSite(
       return compact || r.inserted === 0 ? r.html : r.html.replace("</body>", `${compactActionsScript(cfg, documentPage(d.slug))}</body>`);
     };
     const lazy = opts.lazy === "always" || ((opts.lazy ?? "auto") === "auto" && blocks.length >= LAZY_THRESHOLD);
-    const title = manifest.title ?? d.slug;
     // Themed, the theme's sidebar is the page's index, built from heading ids;
     // the rail's declared contents (pageContents) would be a second one.
     if (!lazy) {
@@ -861,7 +914,7 @@ export async function buildDocumentSite(
       else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(html) + html, mathOpts)));
     } else {
       // The whole document on one page, for file://, no-JS readers and tools.
-      writeFileSync(join(dir, "index.hydrated.html"), withActions(page(manifest.title ?? d.slug, pageContents(html) + html, mathOpts)));
+      writeFileSync(join(dir, "index.hydrated.html"), withActions(page(title, pageContents(html) + html, mathOpts)));
       const split = splitBlocks(built.markdown, new Set(blocks.map((b) => b.label)));
       const index = { chunks: 0, of: {} as Record<string, number>, ids: {} as Record<string, number> };
       mkdirSync(join(data, "blocks"), { recursive: true });
@@ -897,10 +950,11 @@ export async function buildDocumentSite(
     writeFileSync(join(data, "graph.jsonld"), JSON.stringify({ "@graph": graph.nodes.map((n) => JSON.parse(n.text) as unknown) }) + "\n");
     const media = join(dirname(d.path), "media");
     if (existsSync(media)) cpSync(media, join(dir, "media"), { recursive: true });
-    result.documents.push({ slug: d.slug, blocks: built.blockCount, page: documentPage(d.slug) });
+    result.documents.push({ slug: d.slug, title, blocks: built.blockCount, page: documentPage(d.slug) });
   }
   const list = result.documents
-    .map((d) => `<li><a href="${esc(d.page)}">${esc(d.slug)}</a> (${d.blocks} blocks)</li>`)
+    // A reader looks for the document by its title, not its folder name (owner, 2026-11-01).
+    .map((d) => `<li><a href="${esc(d.page)}">${esc(d.title)}</a></li>`)
     .join("\n");
   const outline: Outline = { $schema: OUTLINE_SCHEMA, documents: [] };
   for (const d of docs) {
@@ -915,7 +969,9 @@ export async function buildDocumentSite(
   const review = join(outDir, ...REVIEW_PAGE_DIR.split("/"));
   mkdirSync(review, { recursive: true });
   writeFileSync(join(review, "index.html"), reviewPageHtml());
-  const also = landingLinks(readDeclaration(repoRoot), (p) => existsSync(join(repoRoot, p)));
+  // The documents are listed above, by title; a second "The document" link to the same page only confuses.
+  const pages = new Set(result.documents.map((d) => dirname(d.page) + "/"));
+  const also = landingLinks(readDeclaration(repoRoot), (p) => existsSync(join(repoRoot, p))).filter((l) => !pages.has(l.href.replace(/\/?$/, "/")));
   const landing =
     `<h1>Documents</h1>\n<p><a href="${esc(REVIEW_PAGE_DIR)}/index.html">What changed from main</a></p>\n<ul>\n${list}\n</ul>` +
     (also.length ? `\n<h2>Also on this site</h2>\n<ul>\n${also.map((l) => `<li><a href="${esc(l.href)}">${esc(l.title)}</a></li>`).join("\n")}\n</ul>` : "");
@@ -1033,4 +1089,9 @@ if (import.meta.main) {
     process.exit(1);
   }
   console.error(`✓ ${r.documents.length} document(s) → ${relative(repo, out) || "."}`);
+}
+
+/** A document's title with its status, "Title - Working Draft", or the title alone. */
+export function withStatus(title: string, status?: string): string {
+  return status ? `${title} - ${status}` : title;
 }

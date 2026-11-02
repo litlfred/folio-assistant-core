@@ -34,19 +34,27 @@ Build the L1 knowledge graph from what ingestion derived: Dublin Core, the manif
 - Skill: `document-intake`.
 - What: kind / role / url-or-path / checksum / retrieved.
 - Record it: `workflow_complete` with `node: "Task_Assets"`.
-- next: → `Task_Bind` (Bind the folder name to the bibliography slug)
+- next: → `Task_Bind` (Bind the folder to its bibliography slug)
 
-### 4. Bind the folder name to the bibliography slug (`Task_Bind`)
+### 4. Bind the folder to its bibliography slug (`Task_Bind`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
 - What: Bind the folder name to the document's bibliography slug, so library/<bib-slug>/ and its citation key are the same string: a citation resolves to a directory without a lookup table between them.
 - Record it: `workflow_complete` with `node: "Task_Bind"`.
+- next: → `Task_Glossary` (Read glossary and abbreviations into candidate terms)
+
+### 5. Read glossary and abbreviations into candidate terms (`Task_Glossary`)
+
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
+- Skill: `glossary-terms`.
+- What: Owner, 2026-11-01 (folio-assistant-core#498, Q-GLO-1 C): the source's glossary and abbreviations sections become candidate terms of a folio-glossary/v1 scheme with the Tool glossary-from-source, verbatim, each with source file#line, and an acronym as the notation of the term it expands.
+- Record it: `workflow_complete` with `node: "Task_Glossary"`.
 - next: → `Task_Link` (Link L1 nodes into the corpus graph)
 
-### 5. Link L1 nodes into the corpus graph (`Task_Link`)
+### 6. Link L1 nodes into the corpus graph (`Task_Link`)
 
-- Who: the `Corpus — L1 source knowledge graph` lane (role `corpus`).
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
 - What: Anything in library/ is L1 source content.
 - Record it: `workflow_complete` with `node: "Task_Link"`.

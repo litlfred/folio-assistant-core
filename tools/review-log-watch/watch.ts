@@ -38,13 +38,25 @@ export type WatchState = {
   digest: string;
   /** Issue number → "open|<updated_at>" or "closed|<updated_at>". */
   issues: Record<string, string>;
-  /** "row:Header" → cell text, for the cells a person or the script sets. */
+  /**
+   * "key:Header" → cell text, for the cells a person or the script sets. The
+   * key is the row's Change-set id (CS-004) when it has one, so a row someone
+   * inserts above it does not make every later row look changed; a row with
+   * no id is keyed by its sheet row (1-based).
+   */
   cells: Record<string, string>;
 };
 
 export type Change =
   | { kind: "issue-opened" | "issue-updated" | "issue-closed"; issue: number; title?: string }
-  | { kind: "cell"; row: number; header: string; from: string; to: string };
+  | {
+      kind: "cell";
+      /** The row as the sheet is now (1-based); 0 when the row is gone. Read the row again before writing to it. */
+      row: number;
+      /** The row's Change-set id, when it has one. */
+      cs?: string;
+      header: string; from: string; to: string;
+    };
 
 /** A row to append. A closed issue's row is appended hidden, its text struck through. */
 export type AppendRow = {
@@ -90,16 +102,31 @@ export function headerIndex(values: string[][]): number {
   return i >= 0 ? i : values.findIndex((r) => r.some((c) => String(c ?? "").trim() === "Issue"));
 }
 
-/** The watched cells, keyed by sheet row (1-based) and header. Empty cells are left out. */
+const CS_RE = /^CS-\d+$/;
+
+/** Each data row's key: its Change-set id when it has one, else its sheet row (1-based). */
+export function rowKeys(values: string[][]): { key: string; row: number }[] {
+  const hi = headerIndex(values);
+  if (hi < 0) return [];
+  const csCol = values[hi].findIndex((h) => String(h ?? "").trim() === "Change-set");
+  const out: { key: string; row: number }[] = [];
+  for (let r = hi + 1; r < values.length; r++) {
+    const id = csCol >= 0 ? String(values[r][csCol] ?? "").trim() : "";
+    out.push({ key: CS_RE.test(id) ? id : String(r + 1), row: r + 1 });
+  }
+  return out;
+}
+
+/** The watched cells, keyed by row key (see `rowKeys`) and header. Empty cells are left out. */
 export function sheetCells(values: string[][]): Record<string, string> {
   const hi = headerIndex(values);
   if (hi < 0) return {};
   const header = values[hi].map((h) => String(h ?? "").trim());
   const out: Record<string, string> = {};
-  for (let r = hi + 1; r < values.length; r++) {
+  for (const { key, row } of rowKeys(values)) {
     header.forEach((h, c) => {
-      const v = String(values[r][c] ?? "").trim();
-      if (v && watchedHeader(h)) out[`${r + 1}:${h}`] = v;
+      const v = String(values[row - 1][c] ?? "").trim();
+      if (v && watchedHeader(h)) out[`${key}:${h}`] = v;
     });
   }
   return out;
@@ -282,10 +309,18 @@ export function watch(
   // Gone from the list: deleted, transferred, labelled no-sheet, or out of the author filter.
   for (const n of Object.keys(before)) if (!(n in issueMap)) changes.push({ kind: "issue-closed", issue: Number(n) });
   const oldCells = prev?.cells ?? {};
-  for (const k of new Set([...Object.keys(oldCells), ...Object.keys(cells)])) {
+  // State written before cells were keyed by Change-set id: its row keys cannot
+  // be matched to ids, so take this check's cells as the new baseline.
+  const keyedById = (c: Record<string, string>) => Object.keys(c).some((k) => k.startsWith("CS-"));
+  const legacy = !!prev && !keyedById(oldCells) && keyedById(cells);
+  const rowOf = new Map(rowKeys(values).map(({ key, row }) => [key, row]));
+  for (const k of legacy ? [] : new Set([...Object.keys(oldCells), ...Object.keys(cells)])) {
     if ((oldCells[k] ?? "") === (cells[k] ?? "")) continue;
     const at = k.indexOf(":");
-    changes.push({ kind: "cell", row: Number(k.slice(0, at)), header: k.slice(at + 1), from: oldCells[k] ?? "", to: cells[k] ?? "" });
+    const key = k.slice(0, at);
+    const cs = CS_RE.test(key) ? key : undefined;
+    const row = cs ? rowOf.get(cs) ?? 0 : Number(key);
+    changes.push({ kind: "cell", row, ...(cs ? { cs } : {}), header: k.slice(at + 1), from: oldCells[k] ?? "", to: cells[k] ?? "" });
   }
 
   const hi = headerIndex(values);

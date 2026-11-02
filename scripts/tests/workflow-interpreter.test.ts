@@ -165,7 +165,8 @@ describe("the HCI validation gate holds", () => {
 
     const discarded = await run("discard");
     // A discard still closes the bean (Process_BeanClose) before its end.
-    drainSubprocess(discarded.model, discarded.state, "Call_BeanClose", { Close_Outcome: "not wanted" });
+    drainSubprocess(discarded.model, discarded.state, "Task_ResolveBean", { Close_Outcome: "not wanted" });
+    complete(discarded.model, discarded.state, "GW_BeanClosedHow", { outcome: "discarded" });
     // The end event consumed the only token: nothing left, and no commit.
     expect(enabled(discarded.model, discarded.state)).toEqual([]);
     expect(discarded.state.status).toBe("completed");

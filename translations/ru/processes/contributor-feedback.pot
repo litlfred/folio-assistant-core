@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: contributor-feedback\n"
-"POT-Creation-Date: 2026-10-31T19:50:58.754Z\n"
+"POT-Creation-Date: 2026-11-01T11:34:43.538Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ru\n"
@@ -129,14 +129,14 @@ msgstr ""
 msgid "QA gate passed for the PR's head?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:115
-#. Diagram label
-msgid "QA gate: review dispositions against the people and the pull request"
-msgstr ""
-
 #: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:67
 #. Diagram label
 msgid "QA reviewer (independent)"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:115
+#. Diagram label
+msgid "QA-review the dispositions"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:116
@@ -166,7 +166,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:77
 #. Diagram label
-msgid "Start a change-set row: title, sections, feedback"
+msgid "Start a change-set row"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/contributor-feedback.bpmn:133

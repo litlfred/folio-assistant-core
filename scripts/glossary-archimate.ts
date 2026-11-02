@@ -8,6 +8,11 @@
  * authored source whose elements depict concepts. So the link from a term to
  * the model is read from the model, never written into the glossary.
  *
+ * Owner, 2026-11-01 (smart-ra#166, B then A): where a term's `focus` IS an
+ * ArchiMate element, the model is drawn from the glossary instead
+ * (`archimate-from-glossary.ts`). The element's `skosConcept` still points
+ * back at the term, so this reader is unchanged.
+ *
  * An element depicts a term when
  *
  * 1. its `skosConcept` property names the term: the term's IRI, or the
