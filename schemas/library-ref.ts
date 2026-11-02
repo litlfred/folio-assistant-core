@@ -56,6 +56,7 @@ import { join, resolve } from "path";
 // declared dependency being used, not a new one being created. Owner ruling,
 // 2026-09-21, bean `jijc`.
 import { declarationPathIn } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+import { libraryEntryDir } from "../scripts/lib/library-entries.ts";
 
 /** A citation into L1 content. `instance` absent means *this* instance. */
 export interface LibraryRef {
@@ -195,12 +196,14 @@ export function resolveLibraryRef(
       failure: { kind: "no-library-graph", instance: ref.instance ?? "(this instance)", instanceRoot },
     };
   }
-  if (!existsSync(join(libraryDir, ref.libraryId, "structure.json"))) {
+  // Flat or filed in a declared concern group, `library/<group>/<id>/` (bean 6fez).
+  const entryDir = libraryEntryDir(libraryDir, ref.libraryId);
+  if (entryDir === undefined || !existsSync(join(entryDir, "structure.json"))) {
     return { ok: false, failure: { kind: "not-ingested", instanceRoot, libraryId: ref.libraryId } };
   }
   const path = ref.sectionId
-    ? join(libraryDir, ref.libraryId, "sections", `${ref.sectionId}.md`)
-    : join(libraryDir, ref.libraryId, "structure.json");
+    ? join(entryDir, "sections", `${ref.sectionId}.md`)
+    : join(entryDir, "structure.json");
   if (!existsSync(path) || !statSync(path).isFile()) {
     return { ok: false, failure: { kind: "no-such-section", path } };
   }
