@@ -6,7 +6,7 @@
  * Owner, 2026-11-01 (folio-assistant-core#498, card Q-GLO-1 C): one shared
  * ingest step for L1, DTH and DAK sources, in place of a script per handbook
  * (dth-phc's `source_candidates.py`, dth-hrh's workbook import, the GDHCN
- * framework glossary in smart-trust). "I don't want to get heavy /
+ * framework glossary of the trust-network guide). "I don't want to get heavy /
  * prescriptive": it reads what the source already prints and decides nothing.
  *
  * ## What it reads
