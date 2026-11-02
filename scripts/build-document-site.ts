@@ -186,6 +186,11 @@ const THEMED_STYLE = `
 .${DOC_CLASS} .fa-blk:empty { min-height: 3rem; }
 .${DOC_CLASS} .fa-one-page { font-size: .85rem; opacity: .72; }
 .${DOC_CLASS} .pc-bar { position: static; background: none; }
+/* The block icons sit in a right gutter of their own, so every paragraph
+   keeps one even text column; floated beside the text, they cut its first
+   lines short and left a ragged edge (owner, 2026-11-02). */
+.${DOC_CLASS} { padding-right: 2.6rem; }
+html.fa-bp .${DOC_CLASS} .block-actions:not(.ba-heading) { float: right; clear: right; width: 28px; margin: 0 -2.6rem 4px 0; }
 ${tableStyle(`.${DOC_CLASS}`)}`;
 
 /** A layout name as front matter may carry it, or a throw. */
@@ -369,6 +374,7 @@ export function splitBlocks(markdown: string, labels: Set<string>): BlockSplit {
   const ANCHOR = /^<a id="([^"]+)"><\/a>\s*$/;
   const HEADING = /^#{1,6}\s/;
   const FENCE = /^\s*(```|~~~)/;
+  const FRAME = /^<div class="fa-numbered[\s"][^>]*>\s*$/;
   const shell: string[] = [];
   const blocks: BlockSplit["blocks"] = [];
   let cur: { label: string; lines: string[] } | null = null;
@@ -382,10 +388,22 @@ export function splitBlocks(markdown: string, labels: Set<string>): BlockSplit {
       const m = line.match(ANCHOR);
       if (m) {
         close();
+        // A figure, table or diagram opens its frame (render-markdown.ts,
+        // `.fa-numbered`) before its anchor and closes it after its text. Left
+        // in the shell, the opener had no closer there, so every later block
+        // of the page sat inside that frame: its 66% caption width put the
+        // block icons mid-page (smart-ra, 2026-11-02). The opener goes with
+        // its block, so the shell and each block stay balanced.
+        let opener: string[] = [];
+        if (labels.has(m[1]!)) {
+          let k = shell.length - 1;
+          while (k >= 0 && shell[k]!.trim() === "") k--;
+          if (k >= 0 && FRAME.test(shell[k]!)) opener = shell.splice(k);
+        }
         shell.push(line);
         if (labels.has(m[1]!)) {
           shell.push("", `<div class="fa-blk" data-blk="${esc(m[1]!)}"></div>`, "");
-          cur = { label: m[1]!, lines: [] };
+          cur = { label: m[1]!, lines: opener.filter((l) => l.trim() !== "").concat("") };
         }
         continue;
       }
