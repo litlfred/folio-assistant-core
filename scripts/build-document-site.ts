@@ -91,6 +91,7 @@ import { lightenDataElements, linkKindLabels, structuredAssets, structuredAssets
 const ASSETS_DIR = "assets";
 import { liveFigures, withLiveFigures } from "./live-figures.js";
 import { linkTerms, termLinks as glossaryTermLinks, type TermLink } from "./glossary-term-links.ts";
+import { externalGlossaries, firstGlossaryLabel, withExternalGlossaries } from "./external-glossaries.ts";
 import { referenceAnchor } from "../schemas/reference.ts";
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 
@@ -887,8 +888,16 @@ export async function buildDocumentSite(
     const assetKinds = new Set(assets.map((a) => a.kind));
     // Data element cards fold their table and link their glossary entry (Q-DE-1 A).
     const entryLinks = assetKinds.has("data-element") ? (termLinks ?? (await glossaryTermLinks(repoRoot, documentPageDir(d.slug)))) : [];
+    // External glossaries the instance cites, noted above the document's own
+    // glossary (owner, 2026-11-02; external-glossaries.ts).
+    const extGlossaries = externalGlossaries(repoRoot);
+    const firstEntry = extGlossaries.length ? await firstGlossaryLabel(d.path) : undefined;
     const render = async (md: string) => {
-      const h = withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks }), live);
+      const h = withExternalGlossaries(
+        withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks }), live),
+        firstEntry,
+        extGlossaries,
+      );
       return assetKinds.size ? lightenDataElements(linkKindLabels(h, assetKinds), entryLinks) : h;
     };
     const html = await render(built.markdown);
