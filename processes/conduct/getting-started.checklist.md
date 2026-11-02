@@ -84,7 +84,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 
 ### 8. Open the bean (`Call_BeanOpen`)
 
-- Who: the `Work plan (beans)` lane (role `work-plan`).
+- Who: the `Onboarding agent (system)` lane (role `onboarding-agent`).
 - Skill: `bean-coordination`.
 - What: Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's.
 - A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
@@ -107,7 +107,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 
 ### 10. Seed the work plan (`Task_SeedPlan`)
 
-- Who: the `Work plan (beans)` lane (role `work-plan`).
+- Who: the `Onboarding agent (system)` lane (role `onboarding-agent`).
 - Skill: `todo-manager`.
 - What: The first beans: what the author said they want to get started on, one bean per top-level content object they named.
 - Record it: `workflow_complete` with `node: "Task_SeedPlan"`.

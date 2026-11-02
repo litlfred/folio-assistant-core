@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: ingest-extract-structure\n"
-"POT-Creation-Date: 2026-10-20T09:54:46.808Z\n"
+"POT-Creation-Date: 2026-11-01T11:34:43.589Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ru\n"
@@ -24,7 +24,7 @@ msgstr ""
 msgid "Binary in hand"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:99
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:98
 #. Diagram element documentation
 msgid "candidates.json holds extracted theorems and definitions. Proposals only -- never adjudicated verdicts."
 msgstr ""
@@ -44,7 +44,7 @@ msgstr ""
 msgid "Embedded text layer?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:98
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:97
 #. Diagram label
 msgid "Extract claim candidates"
 msgstr ""
@@ -69,7 +69,7 @@ msgstr ""
 msgid "Ingestion subprocess — extract structure"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:111
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:110
 #. Diagram label
 msgid "no — scanned"
 msgstr ""
@@ -84,7 +84,7 @@ msgstr ""
 msgid "Split into sections/*.md with doc_brief front-matter"
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:106
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:105
 #. Diagram label
 msgid "Structured"
 msgstr ""
@@ -99,17 +99,17 @@ msgstr ""
 msgid "Two provenance paths converge on the same Task_Sections output — an embedded text layer extracted directly, or OCR that leaves the fuller text in ocr/ with only a stub in sections/ — and which branch this lane took is invisible downstream except to a grep that knows to check the fourth tier. Task_Candidates is the last step and it stays a proposal: theorems and definitions extracted here are never adjudicated verdicts, so nothing downstream may treat this lane's output as settled."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:91
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:89
+#. Diagram label
+msgid "Write structure.json"
+msgstr ""
+
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:90
 #. Diagram element documentation
 msgid "Write structure.json (pdf-structure/v1): doc id, TOC from the PDF outline or inferred from headings, page ranges, metadata, and source{} with the sha256 and a mimetype sniffed from the bytes, never the extension. A structure that could not be determined says so in structure_note rather than being rendered as one. For OCR'd text, source.runContext cites the OCR step's run context by sha256. A title already known for the document (the catalogue's dc.title, or one given with --title) is passed through as the raw title, so the sections' doc_title does not carry a scan's misreading (bean turh)."
 msgstr ""
 
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:89
-#. Diagram label
-msgid "Write structure.json (TOC, page ranges, metadata)"
-msgstr ""
-
-#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:110
+#: ../folio-assistant-core/processes/library/ingest-extract-structure.bpmn:109
 #. Diagram label
 msgid "yes"
 msgstr ""
