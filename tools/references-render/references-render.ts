@@ -20,5 +20,10 @@ export default toolFactory((t) =>
     },
     satisfies: ["graph-rendering"],
     requires: { runtime: ["bun"], network: false },
+    selection: {
+      when: "A document's References list should come from the reference nodes its block cites. For glossary or acronyms tables use glossary-table.",
+      limits: "Only blocks with `meta.referenceList`; the whole `.md` is regenerated. A cited key with no reference node fails the run.",
+      cost: "Milliseconds per block; reads the instance's blocks and reference nodes, no network.",
+    },
   }),
 );
