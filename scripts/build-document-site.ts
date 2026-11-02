@@ -108,15 +108,15 @@ const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 export function tableStyle(scope = ""): string {
   const s = scope ? `${scope} ` : "";
   return `
-  ${s}table { display: block; box-sizing: border-box; width: max-content; max-width: min(100%, 100vw - 7rem); overflow-x: auto; margin: 1.5rem 0; border-collapse: collapse;
+  ${s}table { display: block; box-sizing: border-box; width: max-content; max-width: 100%; overflow-x: auto; margin: 1.5rem 0; border-collapse: collapse;
     background: #fff; color: #2d3748; border: 1px solid #14213d; border-radius: 6px; box-shadow: 0 1px 4px rgba(20, 33, 61, .18); font-size: .92em; }
   ${s}th, ${s}td { border: 1px solid #c9cfd8; padding: .4rem .65rem; text-align: left; vertical-align: top; }
   ${s}thead th { background: #14213d; color: #fff; font-weight: 600; border-color: #14213d; }
   ${s}tbody tr:nth-child(even) > td { background: #f3f4f6; }
   ${s}table a { color: #0b5cad; }
   ${s}table code { color: inherit; background: none; padding: 0; }
-  /* A table wider than the reading column grows past it, centred on it, up to the window; only then does it scroll. */
-  @media (min-width: 50rem) { ${s}table { max-width: calc(100vw - 7rem); position: relative; left: 50%; transform: translateX(-50%); } }
+  /* Tables sit at the start of the reading column, never centred or pushed past it ("tables should be left aligned",
+     2026-11-02); a table wider than the column scrolls inside it. */
 `;
 }
 
