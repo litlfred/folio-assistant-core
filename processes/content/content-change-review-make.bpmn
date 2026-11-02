@@ -161,25 +161,25 @@ On the trigger: reaching this call is not the same as running the whole of it. `
         <dc:Bounds x="242" y="137" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_DetectScope_di" bpmnElement="Task_DetectScope">
-        <dc:Bounds x="370" y="115" width="120" height="80" />
+        <dc:Bounds x="370" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CreateBranch_di" bpmnElement="Task_CreateBranch">
-        <dc:Bounds x="540" y="115" width="120" height="80" />
+        <dc:Bounds x="540" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_EditContent_di" bpmnElement="Task_EditContent">
-        <dc:Bounds x="710" y="115" width="120" height="80" />
+        <dc:Bounds x="710" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_EditLogic_di" bpmnElement="Task_EditLogic">
-        <dc:Bounds x="880" y="115" width="120" height="80" />
+        <dc:Bounds x="880" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_AssessImpact_di" bpmnElement="Task_AssessImpact">
-        <dc:Bounds x="1050" y="115" width="120" height="80" />
+        <dc:Bounds x="1050" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Call_OptionsAnalysis_di" bpmnElement="Call_OptionsAnalysis">
-        <dc:Bounds x="1210" y="108.5" width="160" height="93" />
+        <dc:Bounds x="1230" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CommitPush_di" bpmnElement="Task_CommitPush">
-        <dc:Bounds x="1410" y="115" width="120" height="80" />
+        <dc:Bounds x="1410" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_Agent_di" bpmnElement="End_Agent">
         <dc:Bounds x="1622" y="137" width="36" height="36" />
@@ -206,10 +206,10 @@ On the trigger: reaching this call is not the same as running the whole of it. `
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="a6_di" bpmnElement="a6">
         <di:waypoint x="1170" y="155" />
-        <di:waypoint x="1210" y="155" />
+        <di:waypoint x="1230" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="a6b_di" bpmnElement="a6b">
-        <di:waypoint x="1370" y="155" />
+        <di:waypoint x="1350" y="155" />
         <di:waypoint x="1410" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="a7_di" bpmnElement="a7">

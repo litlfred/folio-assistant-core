@@ -47,21 +47,66 @@ comment).
 **A question to people goes in the sheet, not only in chat** (owner,
 2026-10-31: "how would the editor / feedback committee / review committee
 know if there was a card ... should be there and in the agent column").
-When the agent needs a person to decide something about a change set, it
-writes the question into that row's agent column, under its proposal, as
+**The agent's feedback cell has a fixed layout** (owner, 2026-11-01: "these
+feedback are not at all clear what agent asking contributors to respond about
+... only a tag like \"Decision needed:\" should be bold"; Q-FBK-1 A). The
+agent writes, in this order and nothing else:
 
 ```
-Decision needed: <the question>
+Decision needed: <one question, in plain words, naming what it is about>
   A. <option> (recommended)
   B. <option>
-Answer in your Blue column, or ask an Editor to set Ready for agent.
+Answer in your feedback column, then an Editor sets Ready for agent to Yes.
+
+Proposed direction: <what the agent proposes or did, in one to three lines>
+Next: <what happens next, and who does it>
 ```
 
-and sets the row's Agentic status to `Needs human` on the Agent tab. The
-script shows the whole "Decision needed" block, up to the next blank line,
-in bold, black, in the agent's feedback cell (owner, 2026-10-31: "decision
-needed should be bold highlighted ... so clear"; red was tried and was too
-glaring). The sheet never shows those words (owner, 2026-10-31: "unclear: needs human to do
+- The ask comes first, so a reader sees at once what they are asked. Leave
+  the Decision needed block out when nothing is asked; the cell then opens
+  with `Proposed direction:`, and the script puts a "Please review: do you
+  agree with the proposed direction below?" ask on its status line.
+- One option says `(recommended)`; options are lettered so people answer
+  with one letter.
+- Tags (`Decision needed:`, `Proposed direction:`, `Next:`) are the only bold text. The
+  script bolds them; never write Markdown `**`.
+- Say only what stands now. History ("Step 2", "Already done", "Decided
+  (Q1 ...)") goes to Disposition (agent), never here. Pull request state
+  comes from the script's ⏳ line, so the agent does not restate it.
+- At most 10 lines, so the row shows it whole.
+- Name pull requests and issues as `repo#n` (e.g. `dth-hrh#82`). The script
+  links each one, and under its ⏳ line adds `↳ Where to review:`, one link
+  per Selected Section to that section on the change set's preview (or on
+  the published draft while there is no preview). The agent writes no URLs
+  of its own for these (owner, 2026-11-01: "google sheet feedback from agent
+  needs links ... hard to see where to review"; Q-FBK-3 A).
+
+**Selected Sections bound the work** (owner, 2026-11-01: "agents did not
+make use of selected sections. that should be controlled better with
+skills/tools"; Q-FBK-3 A). The agent reads the row's Selected Sections
+before it proposes anything, and its proposal, its edits and its PR stay
+inside them. A row with no section picked gets a `Decision needed:` question
+asking which sections (with the agent's guess as the recommended option), or,
+for a row from an issue that names its block, the agent fills them in from
+the issue. When an edit must reach outside them (a glossary term, a figure
+in another chapter), the cell says so on its own line:
+`Outside the selected sections: <which, and why>`. The watcher's lint
+(`tools/review-log-watch/lint.ts`) fails a row with feedback and no section
+picked, and a row whose PR changes a chapter none of its sections are in
+without that line.
+
+The watcher checks every row against this layout on each poll
+(`tools/review-log-watch/lint.ts`, skill `review-log-watch`) and fixes any
+cell it flags.
+
+When the agent needs a person to decide something about a change set, it
+writes the question into that row's agent column as the Decision needed block
+above, and sets the row's Agentic status to `Needs human` on the Agent tab. The
+script bolds only the tags (`Decision needed:` and other line-start
+labels), in black (owner, 2026-11-01, replacing the 2026-10-31 bold block). It
+says "Needs you" on the ⏳ line only when the cell holds a Decision needed
+block; with none it says the question is missing, so people are never told to
+answer a question that is not there. The sheet never shows those words (owner, 2026-10-31: "unclear: needs human to do
 what?"): Agentic status opens with **Needs you: answer the agent's question**,
 saying where the question is and what to do, and Agentic status (filter)
 reads `Needs you: answer the agent's question`, so the "Needs you" filter view
@@ -231,7 +276,7 @@ account, because Google asks the owner to authorise the script:
 3. In the function list beside **Run** and **Debug**, pick
    **installTriggers** (not `onOpen`, which only adds the menu), and press
    **Run**. Allow access when asked.
-4. Reload the sheet. A **Review links** menu appears.
+4. Reload the sheet. A **Folio Assistant** menu appears.
 
 `installTriggers` runs a full refresh, then installs two triggers: every edit
 of the three tabs marks the sheet dirty, and every minute a dirty sheet
@@ -250,7 +295,7 @@ the script keeps a short hash per change set to notice). A new table of
 contents in Config, an edit of the header row, or Refresh now rebuilds
 everything. A public-comment sheet rebuilds whole, since a comment feeds its
 change sets: at once while a rebuild takes under 5 s, otherwise gathered for
-the timer. **Review links → Refresh now** rebuilds at once.
+the timer. **Folio Assistant → Refresh now** rebuilds at once.
 
 **Stale staging previews** (owner, 2026-10-31, option C: sheet and page).
 The agent records when it built a change set's preview in the Agent tab's
@@ -830,7 +875,11 @@ Contributor Feedback row with a Change-set:
    verbatim, and a link back to the sheet row. Write its URL into Issue.
 3. When feedback is added to a row later, comment the new text on its issue.
 4. Propose a direction in **Feedback (agent)** whenever the
-   row changes, whoever changed it, a person or an agent. A question for
+   row changes, whoever changed it, a person or an agent, and for every new
+   row, whether it came from an issue, a person or a TWG workbook (owner,
+   2026-11-01: "agent should provide feedback whenever blue change or
+   whenever new row added"). The watcher does this on its next wake (skill
+   `review-log-watch`, step 5). A question for
    people goes there too, as a `Decision needed:` block (§"Inputs and
    outputs"). On each sync
    compute `feedbackBasis(header, row)` (`tools/review-sheet-sync/feedback-issue.ts`:
@@ -908,7 +957,7 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    sheet). The first line of each tab's Instructions starts with ⚠ and
    names the next step: "Not set up yet. Step 1 of 2: ask the agent to link
    this sheet …" (the templates carry it, so a copy starts with it), then,
-   once linked, "Almost set up. Step 2 of 2: choose Review links, then
+   once linked, "Almost set up. Step 2 of 2: choose Folio Assistant, then
    Install". A short toast says the same when the sheet opens, and every
    run of an unlinked sheet stops with "Ask the agent to link this sheet to
    its document: give it this sheet's link (ID …)". Once installed (the
@@ -932,7 +981,7 @@ The owner (informatics.avengers) does steps 1 to 6; the agent does step 3.
    in your Google Account." This is expected for a sheet's own bound script,
    which Google never verifies: choose Advanced, then "Go to <project>
    (unsafe)", then Allow ([Google's explanation](https://support.google.com/cloud/answer/7454865);
-   owner, 2026-10-31: "explain they will see ... and provide link to info"). Reload the sheet: a **Review links**
+   owner, 2026-10-31: "explain they will see ... and provide link to info"). Reload the sheet: a **Folio Assistant**
    menu appears. A copy of the template already holds the script, so the
    paste is needed only when the script changes; **installTriggers is needed
    in every copy**, because triggers and the owner's permission do not copy.
@@ -1005,7 +1054,7 @@ Install script` row carries the same steps and links here.
 4. **Paste.** Click **Code.gs** in the Files list on the left. Select all
    (Ctrl+A, or Cmd+A on a Mac), delete, paste, and save (Ctrl+S or Cmd+S,
    or the disk icon).
-5. **Run installTriggers.** Reload the sheet and choose **Review links**,
+5. **Run installTriggers.** Reload the sheet and choose **Folio Assistant**,
    then **Install**. Or, in the editor, the function list next to **Run**
    and **Debug** shows **installTriggers** (it is the first function, so the
    default); press **Run**.
@@ -1015,21 +1064,32 @@ Install script` row carries the same steps and links here.
    own script: press **Advanced**, then **Go to <project name> (unsafe)**,
    then **Allow** ([why](https://support.google.com/cloud/answer/7454865)).
 7. **Check it.** The log shows "Execution completed". Back in the sheet tab,
-   reload: a **Review links** menu appears; **Review links**, then
+   reload: a **Folio Assistant** menu appears; **Folio Assistant**, then
    **Refresh now**, checks it.
 8. **Drafting sheets only:** tick **Allow multiple selections** on the
    Selected Sections dropdown (Data, then Data validation, open the rule).
 
-**Updating later:** steps 1, 2 and 4, then Review links, then Refresh now;
+**Updating later:** steps 1, 2 and 4, then Folio Assistant, then Refresh now;
 the automatic refresh stays installed. Sheets drift, and that is accepted
 (owner, 2026-10-31: "sheets likely to drift anyways ... they need to know
-where to see latest published"): **Review links, then Which version is
+where to see latest published"): **Folio Assistant, then Which version is
 this?** shows the build the sheet runs (`SCRIPT_VERSION`, the stamp on the
-script's header line) and the link to the latest `dist/Code.gs`, whose
-header carries its own stamp to compare.
+script's header line), the Code.gs copy page, and "✓ Up to date" or "New
+build available" by comparing with the Config tab's `CFG.LATEST_BUILD`. The
+agent writes `LATEST_BUILD` (the content stamp of the build it publishes,
+`latestBuild()`) with the Config rows, so rewrite each sheet's Config when a
+new build goes out. The script never fetches (owner, 2026-11-01).
+
+**The menu** is named **Folio Assistant** and ends with **About Folio
+Assistant**, which points to https://litlfred.github.io/folio-assistant/; the
+same link is the last line of each tab's Instructions (owner, 2026-11-01).
+The library builds the menu (`addMenu`) and the stub asks it, so every sheet
+shows the same menu and a rename needs no new stub. A stub from before
+2026-11-01 builds its own "Review links" menu: paste `dist/Stub.gs` over it
+once.
 
 **A copy of the template needs none of this** (owner, 2026-10-31, option
-A): the script came with the file. Reload the copy, choose **Review links**,
+A): the script came with the file. Reload the copy, choose **Folio Assistant**,
 then **Install**, and allow it as in step 6. The menu runs installTriggers,
 so the editor is never opened. Only renaming the bound project (step 3) is
 left, and it is optional: a copied project is named "Copy of ..." by
@@ -1060,7 +1120,7 @@ Each sheet, once (templates first, so copies inherit it):
 1. Extensions, then Apps Script. Replace Code.gs with `dist/Stub.gs`; save.
 2. **Libraries +**: paste the Script ID, **Look up**, Version **HEAD
    (Development mode)**, Identifier `Review`, **Add**.
-3. In the sheet, **Review links > Install**.
+3. In the sheet, **Folio Assistant > Install**.
 
 An update needs no paste (owner, 2026-10-31, option B: "Update from GitHub,
 one click"). The library also holds
@@ -1156,7 +1216,7 @@ or separated by commas or semicolons. The cell's format is spelled out, with
 an example, in the `Instructions - Editors` row and in a note on the cell
 itself (owner, 2026-10-31: "no instructions on how editors row should look
 like, how separated"). Anything that is not an email is left out, and the
-refresh names it in a toast rather than dropping it silently. installTriggers and Review links > Refresh now lock each
+refresh names it in a toast rather than dropping it silently. installTriggers and Folio Assistant > Refresh now lock each
 `Ready for ...` column to the owner plus those emails, under a protection the
 script owns and rebuilds each time (other protections are left alone). An
 empty row locks them to the owner alone, which is how every new sheet starts
@@ -1298,7 +1358,7 @@ cell carries links: Sections must be plain text, the links belong in Section
 links. Older scripts linked the column; clear its formatting (Format > Clear
 formatting) and the current script keeps it plain.
 
-**Check it.** Review links > Refresh now. In drafting mode a filled-in row
+**Check it.** Folio Assistant > Refresh now. In drafting mode a filled-in row
 gets a CS id and its picked sections appear, linked, in Section links;
 in public-comment mode each No. becomes a link. An error names what is
 missing: no Config tab, a Config row, or a tab the Config names.

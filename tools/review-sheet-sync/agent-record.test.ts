@@ -1,7 +1,7 @@
 /** agent-record: the Agent tab cells made by a tool, checked by the sheet's own check. */
 import { describe, expect, test } from "bun:test";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { loadBlockModuleSync } from "@litlfred/cat-harness-tools/pipeline/block-module.js";
