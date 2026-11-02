@@ -16,7 +16,7 @@
  *
  * Install once: Extensions > Apps Script, paste this file as Code.gs (the
  * only file to paste), save, pick installTriggers in the function
- * list, press Run and allow access, then reload the sheet. A "Review links"
+ * list, press Run and allow access, then reload the sheet. A "Folio Assistant"
  * menu appears. In a drafting sheet an edit rebuilds at once; in a
  * public-comment sheet it marks the sheet dirty and a 1-minute trigger
  * rebuilds. "Refresh now" rebuilds at once. Columns are found by their header
@@ -28,10 +28,10 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 f0b46ed83c64f57d.
+// folio-assistant-core tools/review-sheet-sync at template sha256 c5f119472c4ae036.
 
 /**
- * Run this one, once, from the editor (or Review links, then Install automatic
+ * Run this one, once, from the editor (or Folio Assistant, then Install automatic
  * refresh): it is first in the file so the editor's Run button picks it by
  * default (owner, 2026-10-31: Run picked loadConfig and failed). Every other
  * function here is called by it, the menu or a trigger, never run by hand.
@@ -75,9 +75,14 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 f0b46ed83c64f57d';
+const SCRIPT_VERSION = 'template sha256 c5f119472c4ae036';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
-const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
+const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
+// The menu's name and the page it points to for more (owner, 2026-11-01:
+// "instead of Review links ... Folio Assistant ... link to the folio asst page").
+const MENU_NAME = 'Folio Assistant';
+const ABOUT_URL = 'https://litlfred.github.io/folio-assistant/';
+const ABOUT_LINE = 'More about Folio Assistant: ' + ABOUT_URL;
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
   'in the function list (next to Run and Debug), then press Run.';
 let CFG = null, COLS = null, DATA = null, DRAFTING = false, WATCHED = [], EDITORS = null, EDITORS_SKIPPED = [];
@@ -144,8 +149,8 @@ function notLinked(ss) {
 const SETUP_MARK = '\u26a0 ';
 const SETUP_STEPS = {
   unlinked: SETUP_MARK + 'Not set up yet. Step 1 of 2: ask the agent to link this sheet to its document, and give it this sheet\'s link. ' +
-    'Step 2: choose Review links, then Install.',
-  uninstalled: SETUP_MARK + 'Almost set up. Step 2 of 2: choose Review links, then Install (once), and allow it. The script then keeps this sheet current.',
+    'Step 2: choose ' + MENU_NAME + ', then Install.',
+  uninstalled: SETUP_MARK + 'Almost set up. Step 2 of 2: choose ' + MENU_NAME + ', then Install (once), and allow it. The script then keeps this sheet current.',
 };
 /** Where the sheet's setup is: 'unlinked' (no Config), 'uninstalled' (no timer yet) or 'ready'. */
 function setupState(linked) {
@@ -168,9 +173,11 @@ function markSetup(ss, state) {
     if (!LEGEND_RE.test(String(sh.getRange(1, 1).getDisplayValue()).trim())) return;
     const cell = sh.getRange(1, 2);
     const before = String(cell.getDisplayValue());
-    let lines = before.split('\n').filter(l => l.indexOf(SETUP_MARK) !== 0 && l.indexOf('Document: ') !== 0);
+    let lines = before.split('\n').filter(l => l.indexOf(SETUP_MARK) !== 0 && l.indexOf('Document: ') !== 0 &&
+      l.indexOf('More about ') !== 0);
     if (SETUP_STEPS[state]) lines.unshift(SETUP_STEPS[state]);
     if (where) lines.push(where);
+    lines.push(ABOUT_LINE);
     const text = lines.join('\n');
     if (text !== before) cell.setValue(text);
   });
@@ -179,29 +186,52 @@ function markSetup(ss, state) {
 }
 
 function showVersion() {
-  // Short and plain (owner, 2026-11-01: the old text was "long, unclear").
-  const build = String(SCRIPT_VERSION).replace(/^template sha256 /, '');
-  SpreadsheetApp.getUi().alert('Which version is this?',
-    'Build: ' + build + '\n\n' +
-    'Newest build: the "at ..." line near the top of ' + LATEST_URL + '\n\n' +
-    'Different? Ask the agent for the Code.gs copy page, paste it over Code.gs in the Folio Review Library (' + LIBRARY_URL + ') and save, ' +
-    'then choose Review links, Refresh now in each sheet.',
+  // Short, one fact per line (owner, 2026-11-01: "not pretty as requested").
+  // The copy page is the one place the newest build is published, and the
+  // Config tab's LATEST_BUILD (written by the agent with each build) says
+  // whether this sheet has it, so the script still never fetches. An alert
+  // cannot hold a link, and HtmlService stays out (see the security tests).
+  const short = v => String(v || '').replace(/^template sha256 /, '').slice(0, 8);
+  const build = short(SCRIPT_VERSION);
+  let latest = '';
+  try { loadConfig(SpreadsheetApp.getActive()); latest = short(CFG && CFG.LATEST_BUILD); } catch (e) { /* not linked yet */ }
+  const status = !latest ? '' : latest === build ? '\u2713 Up to date.\n\n' : 'New build available: ' + latest + '\n\n';
+  SpreadsheetApp.getUi().alert('Code.gs build ' + build,
+    status +
+    'Newest build: top of the copy page\n' + COPY_PAGE_URL.replace(/^https:\/\//, '') + '\n\n' +
+    'Different? Paste that page over Code.gs in the Folio Review Library, then save.\n\n' + ABOUT_LINE,
     SpreadsheetApp.getUi().ButtonSet.OK);
 }
 
-function onOpen() {
-  SpreadsheetApp.getUi().createMenu('Review links')
+function showAbout() {
+  SpreadsheetApp.getUi().alert('About ' + MENU_NAME,
+    MENU_NAME + ' keeps this review sheet linked to its document and its agents.\n\n' + ABOUT_LINE,
+    SpreadsheetApp.getUi().ButtonSet.OK);
+}
+
+/**
+ * The sheet's menu. The stub calls this too (ui handed in), so the library
+ * sets the menu's name and items and a rename needs no new stub.
+ */
+function addMenu(ui) {
+  (ui || SpreadsheetApp.getUi()).createMenu(MENU_NAME)
     .addItem('Refresh now', 'refreshAll')
     .addItem('Install (first time, or after pasting a new Code.gs)', 'installTriggers')
     .addItem('Which version is this?', 'showVersion')
+    .addSeparator()
+    .addItem('About ' + MENU_NAME, 'showAbout')
     .addToUi();
+}
+
+function onOpen() {
+  addMenu();
   try {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(CONFIG_TAB);
     const keys = sh ? sh.getRange(1, 1, Math.max(sh.getLastRow(), 1), 1).getDisplayValues().map(r => String(r[0]).trim()) : [];
     const linked = keys.includes('CFG');
     if (!linked) ss.toast('Ask the agent to link this sheet. The \u26a0 line at the top of the tab says how.', '\u26a0 Not set up yet', 30);
-    else if (setupState(true) === 'uninstalled') ss.toast('Choose Review links, then Install, to start the script.', '\u26a0 Almost set up', 30);
+    else if (setupState(true) === 'uninstalled') ss.toast('Choose ' + MENU_NAME + ', then Install, to start the script.', '\u26a0 Almost set up', 30);
     if (linked) loadConfig(ss);
     markSetup(ss, setupState(linked));
   } catch (e) { /* a toast is a courtesy; never block the menu */ }
@@ -533,7 +563,7 @@ function refreshAll() {
   if (!lock.tryLock(1000)) {
     // Refresh now pressed while a timer refresh runs: say so rather than do
     // nothing in silence (owner, 2026-10-31: "what does Refresh now do exactly?").
-    try { SpreadsheetApp.getActive().toast('Another refresh is running. Try again in a minute.', 'Review links', 5); } catch (err) { /* no UI on a timer */ }
+    try { SpreadsheetApp.getActive().toast('Another refresh is running. Try again in a minute.', MENU_NAME, 5); } catch (err) { /* no UI on a timer */ }
     return false;
   }
   const t0 = Date.now();

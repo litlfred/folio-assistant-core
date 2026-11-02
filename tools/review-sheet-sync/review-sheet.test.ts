@@ -1117,14 +1117,15 @@ describe("a copy that is not linked to a repository yet", () => {
   test("linked but not installed: the line moves on to Install, and the links appear", () => {
     const s = setupSheet("\u26a0 Not set up yet. Step 1 of 2: ...\nBlue = your input", sites);
     s.run("uninstalled");
-    expect(s.cell.v.split("\n")[0]).toMatch(/^\u26a0 Almost set up\. Step 2 of 2: choose Review links, then Install/);
+    expect(s.cell.v.split("\n")[0]).toMatch(/^\u26a0 Almost set up\. Step 2 of 2: choose Folio Assistant, then Install/);
   });
 
   test("once installed, the warning goes and the document's site and repository are shown", () => {
     const s = setupSheet("\u26a0 Almost set up. Step 2 of 2\nBlue = your input", sites);
     s.run("ready");
     s.run("ready");
-    expect(s.cell.v).toBe("Blue = your input\nDocument: https://o.github.io/dth/   Repository: https://github.com/o/dth");
+    expect(s.cell.v).toBe("Blue = your input\nDocument: https://o.github.io/dth/   Repository: https://github.com/o/dth\n" +
+      "More about Folio Assistant: https://litlfred.github.io/folio-assistant/");
   });
 });
 
@@ -1193,7 +1194,7 @@ describe("running the script from the editor", () => {
   test("Install never waits on a dialog, which hangs a run started from the editor (owner, 2026-10-31)", () => {
     const fns = [...code.matchAll(/^function (\w+)\([^)]*\) \{[\s\S]*?^\}/gm)];
     const withAlert = fns.filter((m) => /\.alert\(/.test(m[0])).map((m) => m[1]);
-    expect(withAlert).toEqual(["showVersion"]);
+    expect(withAlert.sort()).toEqual(["showAbout", "showVersion"]);
   });
 
   test("installTriggers is the first function, so the editor's Run button picks it", () => {
@@ -1720,5 +1721,58 @@ describe("the Selected Sections dropdown reminder (core#472)", () => {
     const body = src.slice(src.indexOf("function checkDropdown("), src.indexOf("function normalizeRows("));
     expect(body).toMatch(/console\.log\(msg\)/);
     expect(body).toMatch(/ss\.toast\(msg,/);
+  });
+});
+
+describe("the Folio Assistant menu and version check (owner, 2026-11-01)", () => {
+  const ui = () => {
+    const shown: { title: string; body: string }[] = [];
+    const menus: { name: string; items: string[] }[] = [];
+    const api = {
+      ButtonSet: { OK: "OK" },
+      alert: (title: string, body: string) => void shown.push({ title, body }),
+      createMenu: (name: string) => {
+        const m = { name, items: [] as string[] };
+        menus.push(m);
+        const b = { addItem: (_: string, fn: string) => (m.items.push(fn), b), addSeparator: () => b, addToUi: () => {} };
+        return b;
+      },
+    };
+    return { api, shown, menus };
+  };
+  const run = (config: Record<string, unknown>) => {
+    const rows = configRows(config as never);
+    const rt = runtime(withConfig(tabs(), rows));
+    const u = ui();
+    (rt.g.SpreadsheetApp as Record<string, unknown>).getUi = () => u.api;
+    const fn = new Function(...Object.keys(rt.g), `${code}\nreturn { showVersion, addMenu, SCRIPT_VERSION };`);
+    return { ...u, s: fn(...Object.values(rt.g)) as { showVersion(): void; addMenu(ui?: unknown): void; SCRIPT_VERSION: string } };
+  };
+  const pc = () => buildConfig(folio(), "review/public-comment/sheet-sync.json");
+
+  test("the menu is named Folio Assistant and has an About item", () => {
+    const r = run(pc());
+    r.s.addMenu(r.api);
+    expect(r.menus).toEqual([{ name: "Folio Assistant", items: ["refreshAll", "installTriggers", "showVersion", "showAbout"] }]);
+  });
+
+  test("the Config tab carries the newest build, and a matching sheet says it is up to date", () => {
+    const c = pc();
+    expect(c.CFG.LATEST_BUILD).toMatch(/^template sha256 [0-9a-f]{16}$/);
+    const r = run({ ...c, CFG: { ...c.CFG, LATEST_BUILD: "" } });
+    r.s.showVersion();
+    expect(r.shown[0].body).toMatch(/^Newest build: top of the copy page/);
+    const same = run({ ...c, CFG: { ...c.CFG, LATEST_BUILD: r.s.SCRIPT_VERSION } });
+    same.s.showVersion();
+    expect(same.shown[0].body).toContain("✓ Up to date.");
+    expect(same.shown[0].body).toContain("More about Folio Assistant: https://litlfred.github.io/folio-assistant/");
+  });
+
+  test("an older sheet is told a new build is available and how to get it", () => {
+    const c = pc();
+    const r = run({ ...c, CFG: { ...c.CFG, LATEST_BUILD: "template sha256 0123456789abcdef" } });
+    r.s.showVersion();
+    expect(r.shown[0].body).toContain("New build available: 01234567");
+    expect(r.shown[0].body).toContain("claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd");
   });
 });
