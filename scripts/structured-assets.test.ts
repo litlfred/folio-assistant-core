@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { fieldHeading, lightenDataElements, linkKindLabels, structuredAssetsBody, type StructuredAsset } from "./structured-assets.ts";
+import { cellValue, fieldHeading, lightenDataElements, linkKindLabels, structuredAssetsBody, type StructuredAsset } from "./structured-assets.ts";
 
 const fr: StructuredAsset = { kind: "functional-requirement", label: "freq:FR-AN-01", id: "FR-AN-01", title: "Standard reports", section: "7.5 Analytics", fields: { priority: "must" }, personas: [] };
 const pers: StructuredAsset = { kind: "persona", label: "pers:officer", title: "Registration officer", section: "5.1 Personas", fields: { personaType: "person" }, personas: [] };
@@ -53,5 +53,30 @@ describe("data element cards stay light", () => {
     expect(lightenDataElements(de("Name"), glossary)).toContain("<strong>Name</strong>");
     const p = '<div class="fa-block fa-block-persona"><table></table></div>';
     expect(lightenDataElements(p, glossary)).toBe(p);
+  });
+});
+
+describe("cellValue", () => {
+  test("every enum-like value of a list is a tag", () => {
+    expect(cellValue("HealthcareProvider; CommunityHealthWorker")).toBe(
+      '<span class="fa-assets-tag">HealthcareProvider</span> <span class="fa-assets-tag">CommunityHealthWorker</span>',
+    );
+    expect(cellValue("person")).toBe('<span class="fa-assets-tag">person</span>');
+    expect(cellValue("to be set")).toBe("to be set");
+    expect(cellValue("")).toBe("");
+  });
+});
+
+describe("indicators", () => {
+  const ind = (n: string, extra: Record<string, string> = {}): StructuredAsset => ({
+    kind: "indicator", label: `ind:${n}`, id: n, title: `Indicator ${n}`, section: "NHWA", personas: [],
+    fields: { module: "1", numerator: "Active health workers", denominator: "Total population", definition: "Long text", ...extra },
+  });
+  test("the table shows the chosen indicator columns in order, not every field", () => {
+    const html = structuredAssetsBody("Doc", [ind("1-01", { disaggregation: "sex; age" }), ind("1-02")]);
+    const head = /<section class="fa-assets-kind" aria-labelledby="indicator">[\s\S]*?<\/thead>/.exec(html)![0];
+    expect([...head.matchAll(/<button type="button">([^<]+)</g)].map((m) => m[1])).toEqual(["Id", "Title", "Module", "Numerator", "Denominator", "Disaggregation", "Section"]);
+    expect(html).toContain('<span class="fa-assets-tag">sex</span> <span class="fa-assets-tag">age</span>');
+    expect(html).not.toContain("Long text");
   });
 });
