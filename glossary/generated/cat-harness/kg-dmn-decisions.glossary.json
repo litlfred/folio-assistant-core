@@ -21,6 +21,13 @@
       "status": "candidate"
     },
     {
+      "id": "decision_materializationgate",
+      "prefLabel": "All five answered, none refused?",
+      "notation": "Decision_MaterializationGate",
+      "source": "cat-harness/processes/library/decisions/materialization-gate.dmn#Decision_MaterializationGate",
+      "status": "candidate"
+    },
+    {
       "id": "decision_mergeauthorisation",
       "prefLabel": "Is this merge authorised?",
       "notation": "Decision_MergeAuthorisation",

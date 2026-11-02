@@ -64,7 +64,7 @@
     {
       "id": "archimate-models",
       "prefLabel": "archimate-models",
-      "definition": "ArchiMate models as knowledge-graph content: how an instance declares the Archi models it holds, what the `archimate` subgraph gives every model, view, element and relationship (an IRI, a thin page, and every view drawn as SVG from the model's own diagram), how to version the models, how to wire them into a folio's staging build and navbar, and why no Java, no Archi CLI and no Archi HTML report is ever part of the pipeline. Read before adding, publishing or rendering an `.archimate` file, before citing an ArchiMate element from prose, and before reaching for Archi's own tooling in CI.",
+      "definition": "ArchiMate models as knowledge-graph content: how an instance declares the Archi models it holds, what the `archimate` subgraph gives every model, view, element and relationship (an IRI, a thin page, and every view drawn as SVG from the model's own diagram, and its metamodel derived and checked), how to version the models, how to wire them into a folio's staging build and navbar, how to count and lower the crossed lines in a view before committing it, why every view carries a plain-language key, why names are the source's own terms linked to their SKOS concepts, and why no Java, no Archi CLI and no Archi HTML report is ever part of the pipeline. Read before adding, authoring, publishing or rendering an `.archimate` file, before citing an ArchiMate element from prose, and before reaching for Archi's own tooling in CI.",
       "notation": "archimate-models",
       "source": "cat-harness/skills/ui/ui-core/archimate-models.md",
       "status": "candidate"
@@ -194,6 +194,14 @@
       "prefLabel": "bpmn-authoring",
       "notation": "bpmn-authoring",
       "source": "cat-harness/skills/process/workflow/bpmn-authoring.md",
+      "status": "candidate"
+    },
+    {
+      "id": "bpmn-detangle",
+      "prefLabel": "bpmn-detangle",
+      "definition": "Make a BPMN diagram readable at 100% without zooming, and untangle it: keep it inside the size budget, give every label a place clear of other labels, flows and boxes, remove crossings, and swap lanes when another order makes the flows between lanes shorter. Run before and after every diagram edit.",
+      "notation": "bpmn-detangle",
+      "source": "cat-harness/skills/process/workflow/bpmn-detangle.md",
       "status": "candidate"
     },
     {
@@ -756,6 +764,14 @@
       "definition": "Draw any graph in a harness (schemas, processes, a folio's block graph and any formal relation its content type adds, a detangle partition) so the picture is derived, checkable and readable. Ten rules learned on the UML overview, which engine to lay a graph out with and why, and how each graph typology here applies them.",
       "notation": "graph-rendering",
       "source": "cat-harness/skills/kg/graph-management/graph-rendering.md",
+      "status": "candidate"
+    },
+    {
+      "id": "hand-back-to-discussion",
+      "prefLabel": "hand-back-to-discussion",
+      "definition": "A sibling agent, spawned during or working beside a live agent-human discussion, hands every card, question, decision, result, blocker or piece of context back to the discussion agent that is talking with the person, and never leaves it only in its own thread. The discussion agent asks the person (ask-the-person), marks every copy answered, and routes the answer back. A review sheet or issue in play is an extra channel. Use whenever an agent that is not the one talking with the person has something the person must see.",
+      "notation": "hand-back-to-discussion",
+      "source": "cat-harness/skills/conduct/conduct-core/hand-back-to-discussion.md",
       "status": "candidate"
     },
     {
@@ -1944,6 +1960,14 @@
       "definition": "Reorganise a work plan that has outgrown one-bean-at-a-time repair — session logs typed as epics, duplicate families, generated template beans, stale claims, unparented work — through a reviewed PLAN rather than in bulk. The taxonomy is stated as data, a dry-run plan lists one row per bean (action, new parent, new status, evidence, note) with its before-state so the plan is its own inverse, the owner approves it by class or by row, and the apply is batched and reversible. Scrap, never delete. Read before changing the parent, type or status of more than a handful of beans at once.",
       "notation": "work-plan-restructure",
       "source": "cat-harness/skills/sdlc/sdlc-core/work-plan-restructure.md",
+      "status": "candidate"
+    },
+    {
+      "id": "work-plan-store",
+      "prefLabel": "work-plan-store",
+      "definition": "The contract the work plan (beans) keeps as a data store: give back a bean exactly as written, keep ids unique, keep links between beans pointing at beans that exist, keep status and type to their closed lists, lose nothing when two writers push at once, and keep the history of who changed what. A mechanical Actor plays this Role; this is what it must do.",
+      "notation": "work-plan-store",
+      "source": "cat-harness/skills/sdlc/sdlc-core/work-plan-store.md",
       "status": "candidate"
     },
     {
