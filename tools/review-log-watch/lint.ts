@@ -174,7 +174,7 @@ if (import.meta.main) {
     process.exit(2);
   }
   const feedback = valuesOf(fb), agent = valuesOf(ag);
-  let states: Record<string, PrState> = arg("prs") ? JSON.parse(readFileSync(arg("prs")!, "utf8")) : {};
+  const states: Record<string, PrState> = arg("prs") ? JSON.parse(readFileSync(arg("prs")!, "utf8")) : {};
   if (!arg("prs")) {
     const keys = new Set(rowsOf(agent).flatMap(r => (r["Pull request (change set)"] ?? "").split(/\s+/)).map(prKey).filter(Boolean) as string[]);
     for (const k of keys) {

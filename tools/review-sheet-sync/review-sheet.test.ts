@@ -1740,7 +1740,7 @@ describe("the Selected Sections dropdown reminder (core#472)", () => {
 
 describe("Needs you only with a question (Q-FBK-1 A)", () => {
   const fns = new Function("SpreadsheetApp", `${code}\nreturn { askChecked, statusBlock, progressLine };`)({}) as {
-    askChecked: (l: unknown, t: string) => any;
+    askChecked: (l: unknown, t: string) => { text: string; links: [number, number, string][] } & string;
     statusBlock: (l: string, s: string, p: object[]) => { text: string; links: [number, number, string][] };
     progressLine: (o: object) => string;
   };
@@ -1763,7 +1763,10 @@ describe("Needs you only with a question (Q-FBK-1 A)", () => {
 });
 
 describe("Where to review and PR links (Q-FBK-3 A)", () => {
-  const fns = new Function("SpreadsheetApp", "CFG", `${code.replace(/^(const|let) CFG\b.*$/m, "")}\nreturn { whereLine, previewSection, autoLinks, withWhere };`)({}, { REPO_URL: "https://github.com/litlfred/dth-hrh" }) as any;
+  const fns = new Function("SpreadsheetApp", "CFG", `${code.replace(/^(const|let) CFG\b.*$/m, "")}\nreturn { whereLine, previewSection, autoLinks, withWhere };`)({}, { REPO_URL: "https://github.com/litlfred/dth-hrh" }) as {
+    whereLine: (picked: string[], toc: Record<string, string>, staging: string) => { text: string; links: [number, number, string][] };
+    autoLinks: (t: string, taken: [number, number, string][]) => [number, number, string][];
+  };
   const toc = { "4.1 Scope": "https://litlfred.github.io/dth-hrh/en/dth-hrh/#sec-4-1" };
   test("links each selected section on the preview while there is one", () => {
     const w = fns.whereLine(["4.1 Scope"], toc, "https://litlfred.github.io/dth-hrh/STAGING/claude-x/en/review/");
@@ -1778,7 +1781,7 @@ describe("Where to review and PR links (Q-FBK-3 A)", () => {
   test("every repo#n becomes a link", () => {
     const t = "Draft PR dth-hrh#82 and smart-ra#198.";
     const l = fns.autoLinks(t, []);
-    expect(l.map((x: any) => t.slice(x[0], x[1]))).toEqual(["dth-hrh#82", "smart-ra#198"]);
+    expect(l.map(x => t.slice(x[0], x[1]))).toEqual(["dth-hrh#82", "smart-ra#198"]);
     expect(l[0][2]).toBe("https://github.com/litlfred/dth-hrh/issues/82");
   });
 });
