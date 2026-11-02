@@ -44,8 +44,9 @@ describe("What happens when it does not answer: the work plan records it, and no
     const out = [...model.flows.values()].filter((f) => f.from === "Gateway_Authoritative");
     expect(Object.fromEntries(out.map((f) => [f.name, f.to]))).toEqual({ yes: "Task_AppraiseGrade", no: "Task_RecordUnverified" });
     const bean = model.nodes.get("Task_RecordUnverified")!;
-    expect(bean.laneId).toBe("Lane_WorkPlan");
-    expect(bean.roleRef).toBe("work-plan");
+    // The work plan is a data store, not a lane: the author's step writes it.
+    expect(bean.laneId).toBe("Lane_Author");
+    expect(bean.writes).toEqual(["work-plan"]);
   });
 
   test("run with a `no`, the unverified citation is recorded — it is neither dropped nor attached", async () => {

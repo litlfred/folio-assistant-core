@@ -14,7 +14,7 @@ How the corpus becomes an officially published folio: a draft publication, its r
 
 ### 1. Open the bean (`Task_OpenReleaseBean`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Build pipeline (system)` lane (role `build-pipeline`).
 - Skill: `bean-coordination`.
 - What: Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's.
 - A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
@@ -38,7 +38,7 @@ How the corpus becomes an officially published folio: a draft publication, its r
 
 ### 2. Build the draft publication (`Task_BuildDraft`)
 
-- Who: the `Corpus + build pipeline (system)` lane (role `build-pipeline`).
+- Who: the `Build pipeline (system)` lane (role `build-pipeline`).
 - Skill: `content-publish`.
 - What: Render the corpus into the draft form of the folio: PDF, HTML site, or FHIR IG.
 - Record it: `workflow_complete` with `node: "Task_BuildDraft"`.
@@ -46,7 +46,7 @@ How the corpus becomes an officially published folio: a draft publication, its r
 
 ### 3. Run publication QA gates (`Task_PublicationQa`)
 
-- Who: the `Corpus + build pipeline (system)` lane (role `build-pipeline`).
+- Who: the `Build pipeline (system)` lane (role `build-pipeline`).
 - Skill: `content-test`, `quality-control`.
 - What: Publication-readiness QA across layers — QC reports, IG Publisher QA, proof status, broken links, build warnings.
 - Record it: `workflow_complete` with `node: "Task_PublicationQa"`.
@@ -118,7 +118,7 @@ How the corpus becomes an officially published folio: a draft publication, its r
 
 ### 9. Open beans for the change requests (`Task_OpenChangeBeans`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Publication manager` lane (role `publication-manager`).
 - Skill: `todo-manager`, `content-feedback`.
 - What: Each requested change becomes a bean, so the editors and agents picking the work up next see exactly what review asked for and what is still open.
 - Record it: `workflow_complete` with `node: "Task_OpenChangeBeans"`.
@@ -142,7 +142,7 @@ How the corpus becomes an officially published folio: a draft publication, its r
 
 ### 12. Close the release beans (`Task_CloseReleaseBeans`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Publication manager` lane (role `publication-manager`).
 - Skill: `todo-manager`.
 - What: What shipped is resolved; what slipped stays open and carries into the next cycle.
 - Record it: `workflow_complete` with `node: "Task_CloseReleaseBeans"`.
@@ -150,7 +150,7 @@ How the corpus becomes an officially published folio: a draft publication, its r
 
 ### 13. Close the bean (`Task_ArchiveReleaseBean`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Publication manager` lane (role `publication-manager`).
 - Skill: `todo-manager`.
 - What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
 - A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.

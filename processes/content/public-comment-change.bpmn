@@ -130,48 +130,50 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_ChangeDecided_di" bpmnElement="StartEvent_ChangeDecided">
         <dc:Bounds x="262" y="127" width="36" height="36" />
-        <bpmndi:BPMNLabel>
+        
+      <bpmndi:BPMNLabel>
           <dc:Bounds x="225" y="167" width="160" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_AuthorEdits_di" bpmnElement="Task_AuthorEdits">
         <dc:Bounds x="405" y="95" width="130" height="100" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_ChangeSet_di" bpmnElement="CallActivity_ChangeSet">
-        <dc:Bounds x="505" y="235" width="150" height="100" />
+        <dc:Bounds x="520" y="225" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_QaGate_di" bpmnElement="Task_QaGate">
-        <dc:Bounds x="675" y="380" width="150" height="110" />
+        <dc:Bounds x="690" y="375" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_QaPassed_di" bpmnElement="Gateway_QaPassed" isMarkerVisible="true">
         <dc:Bounds x="895" y="410" width="50" height="50" />
-        <bpmndi:BPMNLabel>
+        
+      <bpmndi:BPMNLabel>
           <dc:Bounds x="950" y="443" width="130" height="54" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Incorporate_di" bpmnElement="Task_Incorporate">
-        <dc:Bounds x="995" y="235" width="130" height="100" />
+        <dc:Bounds x="1000" y="225" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_ChangeMerged_di" bpmnElement="EndEvent_ChangeMerged">
         <dc:Bounds x="1182" y="267" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1132.5" y="307" width="135" height="36" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="1132.5" y="307" width="135" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_ToAuthor_di" bpmnElement="Flow_ToAuthor">
         <di:waypoint x="298" y="145" />
         <di:waypoint x="405" y="145" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToChangeSet_di" bpmnElement="Flow_ToChangeSet">
         <di:waypoint x="470" y="195" />
-        <di:waypoint x="470" y="285" />
-        <di:waypoint x="505" y="285" />
+        <di:waypoint x="470" y="210" />
+        <di:waypoint x="580" y="210" />
+        <di:waypoint x="580" y="225" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToQaGate_di" bpmnElement="Flow_ToQaGate">
-        <di:waypoint x="655" y="285" />
-        <di:waypoint x="750" y="285" />
-        <di:waypoint x="750" y="380" />
+        <di:waypoint x="640" y="285" />
+        <di:waypoint x="665" y="285" />
+        <di:waypoint x="665" y="435" />
+        <di:waypoint x="690" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToQaGateway_di" bpmnElement="Flow_ToQaGateway">
-        <di:waypoint x="825" y="435" />
+        <di:waypoint x="810" y="435" />
         <di:waypoint x="895" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_QaFailed_di" bpmnElement="Flow_QaFailed">
@@ -186,7 +188,7 @@
         <di:waypoint x="1060" y="335" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToMerged_di" bpmnElement="Flow_ToMerged">
-        <di:waypoint x="1125" y="285" />
+        <di:waypoint x="1120" y="285" />
         <di:waypoint x="1182" y="285" />
       </bpmndi:BPMNEdge>    </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

@@ -3,8 +3,8 @@
  * (`skills/content/content-lifecycle-ext/corpus-commit-contract.md`): what the
  * versioned store is relied on for when an accepted edit is committed.
  *
- * The contract is read off one lane of `editing-hci-validation.bpmn`, so it is
- * tested against that diagram as the harness's workflow engine reads it. Line
+ * The contract is read off the one step of `editing-hci-validation.bpmn` that
+ * writes the corpus data store, so it is tested against that diagram as the harness's workflow engine reads it. Line
  * 1 (the write arrives only on the editor's `accept`) is tested both ways: as
  * a property of the graph, and by running the process to the editor's
  * decision. Line 3's policy is checked on the task. Line 2 (the change arrives
@@ -34,15 +34,14 @@ function reachable(model: ProcessModel, without?: string): Set<string> {
   return seen;
 }
 
-describe("the lane names the corpus, and its one activity names this contract", () => {
-  test("Task_Commit sits in Lane_Corpus, which names the corpus role, and requires corpus-commit-contract", async () => {
+describe("the corpus is a data store, and the one step that writes it names this contract", () => {
+  test("Task_Commit is the only step that writes the corpus store, and requires corpus-commit-contract", async () => {
     const model = await load();
     const commit = model.nodes.get("Task_Commit")!;
-    expect(commit.laneId).toBe("Lane_Corpus");
-    expect(commit.roleRef).toBe("corpus");
+    expect(commit.writes).toEqual(["corpus"]);
     expect(commit.skills).toEqual(["corpus-commit-contract"]);
-    const held = [...model.nodes.values()].filter((n) => n.laneId === "Lane_Corpus" && n.kind === "activity").map((n) => n.id);
-    expect(held).toEqual(["Task_Commit"]);
+    const writers = [...model.nodes.values()].filter((n) => n.writes?.includes("corpus")).map((n) => n.id);
+    expect(writers).toEqual(["Task_Commit"]);
   });
 });
 
@@ -61,7 +60,11 @@ describe("1. receive the write only after the editor accepts", () => {
     const accept = [...model.flows.values()].find((f) => f.to === "Task_Commit")!;
     const rest = reachable(model, accept.id);
     expect(rest.has("Task_Commit")).toBe(false);
-    expect(rest.has("EndEvent_InCorpus")).toBe(false);
+    // The bean is closed once for every ending, so EndEvent_InCorpus is drawn
+    // after GW_BeanClosedHow, which reads how the bean ended; the run test
+    // below shows a discard never takes that branch.
+    const intoEnd = [...model.flows.values()].filter((f) => f.to === "EndEvent_InCorpus");
+    expect(intoEnd.map((f) => f.from)).toEqual(["GW_BeanClosedHow"]);
   });
 
   test("run to the editor's decision, any other answer leaves Task_Commit not enabled", async () => {

@@ -50,8 +50,8 @@ export function findings(terms: readonly TermRow[], blocks: readonly BlockRow[],
   const ids = new Set(terms.map((t) => t.id));
   for (const t of terms) {
     const path = t.source?.split("#", 1)[0];
-    // A path into a layer this checkout does not mount (`who-iris/…` without
-    // who-iris) cannot be judged here, so it is left alone.
+    // A path into a layer this checkout does not mount (its first segment
+    // names no directory here) cannot be judged here, so it is left alone.
     const mounted = path ? existsSync(join(t.root, path.split("/", 1)[0]!)) : false;
     if (path && mounted && !/^[a-z][a-z0-9+.-]*:/i.test(path) && !existsSync(join(t.root, path))) {
       out.push({ kind: "source-missing", where: `${t.instance}/${t.scheme}/${t.id}`, message: `"${t.label}": source ${t.source} is not in the checkout, so its term page cannot link the glossary row that defines it` });
