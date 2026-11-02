@@ -66,3 +66,17 @@ describe("cellValue", () => {
     expect(cellValue("")).toBe("");
   });
 });
+
+describe("indicators", () => {
+  const ind = (n: string, extra: Record<string, string> = {}): StructuredAsset => ({
+    kind: "indicator", label: `ind:${n}`, id: n, title: `Indicator ${n}`, section: "NHWA", personas: [],
+    fields: { module: "1", numerator: "Active health workers", denominator: "Total population", definition: "Long text", ...extra },
+  });
+  test("the table shows the chosen indicator columns in order, not every field", () => {
+    const html = structuredAssetsBody("Doc", [ind("1-01", { disaggregation: "sex; age" }), ind("1-02")]);
+    const head = /<section class="fa-assets-kind" aria-labelledby="indicator">[\s\S]*?<\/thead>/.exec(html)![0];
+    expect([...head.matchAll(/<button type="button">([^<]+)</g)].map((m) => m[1])).toEqual(["Id", "Title", "Module", "Numerator", "Denominator", "Disaggregation", "Section"]);
+    expect(html).toContain('<span class="fa-assets-tag">sex</span> <span class="fa-assets-tag">age</span>');
+    expect(html).not.toContain("Long text");
+  });
+});

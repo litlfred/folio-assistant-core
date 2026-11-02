@@ -22,7 +22,17 @@ import type { Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness-
 const NOT_ASSETS = new Set(["prose", "figure", "diagram", "table", "remark", "note", "example", "proof", "quote"]);
 
 /** Fields that say where a block came from, not what it is. */
-const HIDDEN_META = new Set(["source", "requirementId", "id"]);
+const HIDDEN_META = new Set(["source", "requirementId", "indicatorId", "id"]);
+
+/**
+ * Kinds whose table shows a chosen set of columns, in this order, rather than
+ * every scalar field. An indicator carries a dozen fields (definition,
+ * reporting frequency, frameworks…); its table keeps the ones a reader scans
+ * by and leaves the rest to its card. Owner, 2026-11-02, card Q-IND-1 = A.
+ */
+const KIND_COLUMNS: Readonly<Record<string, readonly string[]>> = {
+  indicator: ["module", "numerator", "denominator", "unit", "disaggregation", "dataSources"],
+};
 
 export interface StructuredAsset {
   kind: string;
@@ -66,7 +76,7 @@ export async function structuredAssets(manifestPath: string): Promise<Structured
             const s = scalar(v);
             if (s !== undefined && !HIDDEN_META.has(k)) fields[k] = s;
           }
-          const id = scalar(meta.requirementId) ?? scalar(meta.id);
+          const id = scalar(meta.requirementId) ?? scalar(meta.indicatorId) ?? scalar(meta.id);
           const title = scalar(b.title) ?? scalar(b.caption);
           out.push({
             kind: b.kind,
@@ -134,7 +144,9 @@ export function structuredAssetsBody(title: string, assets: readonly StructuredA
     `<div id="fa-assets-tables">`,
   ];
   for (const [kind, rows] of byKind) {
-    const keys = [...new Set(rows.flatMap((r) => Object.keys(r.fields)))];
+    const all = [...new Set(rows.flatMap((r) => Object.keys(r.fields)))];
+    const chosen = KIND_COLUMNS[kind];
+    const keys = chosen ? chosen.filter((k) => all.includes(k)) : all;
     const hasId = rows.some((r) => r.id);
     const hasPersonas = rows.some((r) => r.personas.length > 0);
     const head = [hasId ? "Id" : "", "Title", ...keys.map(fieldHeading), hasPersonas ? "Personas" : "", "Section"].filter(Boolean);
