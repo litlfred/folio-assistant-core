@@ -1740,7 +1740,7 @@ describe("the Selected Sections dropdown reminder (core#472)", () => {
 
 describe("Needs you only with a question (Q-FBK-1 A)", () => {
   const fns = new Function("SpreadsheetApp", `${code}\nreturn { askChecked, statusBlock, progressLine };`)({}) as {
-    askChecked: (l: unknown, t: string) => { text: string; links: [number, number, string][] } & string;
+    askChecked: (l: unknown, t: string) => unknown;
     statusBlock: (l: string, s: string, p: object[]) => { text: string; links: [number, number, string][] };
     progressLine: (o: object) => string;
   };
@@ -1754,7 +1754,7 @@ describe("Needs you only with a question (Q-FBK-1 A)", () => {
   test("drops the Needs you sub-line and keeps the PR link on the right text", () => {
     const url = "https://github.com/litlfred/dth-hrh/pull/81";
     const b = fns.statusBlock(line, "Needs human", [{ url, done: "2026-11-01 19:00Z" }]);
-    const out = fns.askChecked(b, "no question here");
+    const out = fns.askChecked(b, "no question here") as { text: string; links: [number, number, string][] };
     expect(out.text).not.toMatch(/answer the agent's question: under/);
     const [a, z, u] = out.links[0];
     expect(u).toBe(url);
