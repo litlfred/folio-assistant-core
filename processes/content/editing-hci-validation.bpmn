@@ -110,20 +110,20 @@
       <bpmn:incoming>Flow_01</bpmn:incoming>
       <bpmn:outgoing>Flow_02</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:callActivity id="Task_ClaimBean" name="Open the bean&#10;[bean-open]" calledElement="Process_BeanOpen">
+    <bpmn:callActivity id="Task_ClaimBean" name="Open the bean" calledElement="Process_BeanOpen">
       <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
           <bpmn:incoming>Flow_02</bpmn:incoming>
       <bpmn:outgoing>SF_Bean_1</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:callActivity id="CallActivity_Evidence" name="Gather and verify the evidence&#10;[evidence-retrieval]" calledElement="Process_EvidenceRetrieval">
+    <bpmn:callActivity id="CallActivity_Evidence" name="Gather and verify the evidence" calledElement="Process_EvidenceRetrieval">
       <bpmn:documentation>Before anything is drafted: the author reads the guidance ALREADY in this content, frames the question as PICO, retrieves candidates across the three evidence classes, and has each candidate's authority resolved against its publisher's own API. A recommendation reaches the drafting step with its evidence attached, or with the gap recorded.
 
 This step has nothing to do for content that carries no recommendations -- a mathematics folio has none, and a figure redrawn from its own source adds none -- and the subprocess's first gateway (Gateway_RecommendationInPlay) ends it there at its own event, recording the answer, rather than satisfying the search vacuously.</bpmn:documentation>
       <bpmn:incoming>Flow_03</bpmn:incoming>
       <bpmn:outgoing>Flow_Evidence</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:serviceTask id="Task_DraftEdit" name="Draft the block edit&#10;[content-author]">
+    <bpmn:serviceTask id="Task_DraftEdit" name="Draft the block edit">
       <bpmn:documentation>The authoring agent produces a PROPOSED change. Nothing is written to the corpus yet. For a rendered change it also produces the before/after preview (skill before-after-preview) here, before Gateway_ValidationFork, so the preview exists when the parallel review starts.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-author" />
@@ -144,7 +144,7 @@ This step has nothing to do for content that carries no recommendations -- a mat
       <bpmn:outgoing>Flow_08</bpmn:outgoing>
       <bpmn:outgoing>Flow_09</bpmn:outgoing>
     </bpmn:parallelGateway>
-    <bpmn:serviceTask id="Task_SchemaValidate" name="Schema and constraint checks&#10;[content-validate]">
+    <bpmn:serviceTask id="Task_SchemaValidate" name="Schema and constraint checks">
       <bpmn:documentation>Block schema, label prefixes, required fields, constraint rules.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-validate" />
@@ -152,7 +152,7 @@ This step has nothing to do for content that carries no recommendations -- a mat
       <bpmn:incoming>Flow_06</bpmn:incoming>
       <bpmn:outgoing>Flow_14</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_SyntaxSpell" name="Syntax, spelling and links&#10;[content-validate]">
+    <bpmn:serviceTask id="Task_SyntaxSpell" name="Syntax, spelling and links">
       <bpmn:documentation>Syntax, spelling, cross-references, citation and link resolution.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-validate" />
@@ -160,7 +160,7 @@ This step has nothing to do for content that carries no recommendations -- a mat
       <bpmn:incoming>Flow_07</bpmn:incoming>
       <bpmn:outgoing>Flow_15</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_BuildGates" name="Build and QA gates&#10;[content-test]">
+    <bpmn:serviceTask id="Task_BuildGates" name="Build and QA gates">
       <bpmn:documentation>Lean build and proof status, LaTeX compile, FHIR/SUSHI validation, QA axes.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-test" />
@@ -174,7 +174,7 @@ This step has nothing to do for content that carries no recommendations -- a mat
       <bpmn:outgoing>Flow_10</bpmn:outgoing>
       <bpmn:outgoing>Flow_11</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_AgentReview" name="Agent review of the change&#10;[content-review]">
+    <bpmn:serviceTask id="Task_AgentReview" name="Agent review of the change">
       <bpmn:documentation>A review agent judges what no checker can: accuracy, voice, exposition, whether the change says what the editor meant.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
@@ -182,7 +182,7 @@ This step has nothing to do for content that carries no recommendations -- a mat
       <bpmn:incoming>Flow_10</bpmn:incoming>
       <bpmn:outgoing>Flow_12</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:userTask id="Task_SmeReview" name="Human / SME review&#10;[content-review]">
+    <bpmn:userTask id="Task_SmeReview" name="Human / SME review">
       <bpmn:documentation>Escalated to a human reviewer or subject-matter expert when the change turns on clinical or scientific judgement. A rendered change reaches the reviewer with its before/after preview (skill before-after-preview).</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
@@ -212,7 +212,7 @@ This step has nothing to do for content that carries no recommendations -- a mat
       <bpmn:incoming>Flow_18</bpmn:incoming>
       <bpmn:outgoing>Flow_19</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_LogFindings" name="Log findings on the bean&#10;[todo-manager]">
+    <bpmn:serviceTask id="Task_LogFindings" name="Log findings on the bean">
       <bpmn:documentation>Findings are appended to the bean, so the next agent or human sees what is outstanding.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="todo-manager" />
@@ -243,7 +243,7 @@ In the Agent lane, and this diagram makes the reason sharp. `Task_RecordDecision
 
 On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — irreversibility and surprise — and leaving there is a correct outcome. A spelling fix that reached `Task_ReviewFindings` with one mechanical finding exits immediately; a revise-or-discard on a block other content depends on does not.</bpmn:documentation>
     </bpmn:callActivity>
-    <bpmn:userTask id="Task_RecordDecision" name="Record the decision and its audit note&#10;[decision-audit]">
+    <bpmn:userTask id="Task_RecordDecision" name="Record the decision and its audit note">
       <bpmn:documentation>A decision is an act ABOUT the findings, not a finding. Record the outcome, every finding it weighed, every finding it overrules — and an audit note saying why it was made, or why a finding in it was left. Each note cites corpus evidence: a witness, another finding, a QA report, a block, a file range. An overruled mechanical finding stays on the record; a gate whose findings vanish when somebody disagrees with them cannot be audited. An agent may assemble the citations and is recorded as `proposed_by`; the author is whoever decided.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="decision-audit" />
@@ -262,7 +262,7 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
       <bpmn:outgoing>Flow_24</bpmn:outgoing>
       <bpmn:outgoing>Flow_25</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_ReviseEdit" name="Revise the proposed change&#10;[content-author]">
+    <bpmn:serviceTask id="Task_ReviseEdit" name="Revise the proposed change">
       <bpmn:documentation>The editor chose revise: rework the proposed change against the findings the editor reviewed, then send it back through validation as a new proposal. The before/after preview is refreshed with it (skill before-after-preview).</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-author" />
@@ -283,7 +283,7 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
       <bpmn:incoming>Flow_25</bpmn:incoming>
       <bpmn:outgoing>Flow_26</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:callActivity id="Task_ResolveBean" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
+    <bpmn:callActivity id="Task_ResolveBean" name="Close the bean" calledElement="Process_BeanClose">
       <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
           <bpmn:incoming>Flow_26</bpmn:incoming>
@@ -302,7 +302,7 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
       <bpmn:documentation>Someone else holds the bean; this run stops without touching it.</bpmn:documentation>
       <bpmn:incoming>SF_Bean_2</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Call_BeanClose" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
+    <bpmn:callActivity id="Call_BeanClose" name="Close the bean" calledElement="Process_BeanClose">
       <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_24</bpmn:incoming>

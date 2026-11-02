@@ -46,7 +46,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:192
 #. Diagram label
-msgid "Attach the evidence to the recommendation [content-author]"
+msgid "Attach the evidence to the recommendation"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:38
@@ -111,7 +111,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:90
 #. Diagram label
-msgid "Frame the question as PICO [content-author]"
+msgid "Frame the question as PICO"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:203
@@ -146,7 +146,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:159
 #. Diagram label
-msgid "Open a bean for the unverified citation [todo-manager]"
+msgid "Open a bean for the unverified citation"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:91
@@ -166,7 +166,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:183
 #. Diagram label
-msgid "Record the evidence gap [todo-manager]"
+msgid "Record the evidence gap"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:98
@@ -176,7 +176,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:82
 #. Diagram label
-msgid "Review the guidance already in this content [content-review]"
+msgid "Review the guidance already in this content"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:112
@@ -186,7 +186,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:104
 #. Diagram label
-msgid "Search trusted SOURCES — L1 [document-intake]"
+msgid "Search trusted SOURCES — L1"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:177

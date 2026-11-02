@@ -99,7 +99,7 @@
       <bpmn:documentation>One or more content blocks have landed in the corpus through the editing process.</bpmn:documentation>
       <bpmn:outgoing>G01</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:callActivity id="Task_OpenReleaseBean" name="Open the bean&#10;[bean-open]" calledElement="Process_BeanOpen">
+    <bpmn:callActivity id="Task_OpenReleaseBean" name="Open the bean" calledElement="Process_BeanOpen">
       <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
           <bpmn:incoming>G01</bpmn:incoming>
@@ -110,7 +110,7 @@
       <bpmn:incoming>G07</bpmn:incoming>
       <bpmn:outgoing>G03</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_BuildDraft" name="Build the draft publication&#10;[content-publish]">
+    <bpmn:serviceTask id="Task_BuildDraft" name="Build the draft publication">
       <bpmn:documentation>Render the corpus into the draft form of the folio: PDF, HTML site, or FHIR IG.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-publish" />
@@ -118,7 +118,7 @@
       <bpmn:incoming>G03</bpmn:incoming>
       <bpmn:outgoing>G04</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_PublicationQa" name="Run publication QA gates&#10;[content-test]">
+    <bpmn:serviceTask id="Task_PublicationQa" name="Run publication QA gates">
       <bpmn:documentation>Publication-readiness QA across layers — QC reports, IG Publisher QA, proof status, broken links, build warnings.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-test" />
@@ -136,7 +136,7 @@
       <bpmn:outgoing>G06</bpmn:outgoing>
       <bpmn:outgoing>G08</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:callActivity id="CallActivity_Editing" name="Editing and HCI validation&#10;[content-author]" calledElement="Process_Editing">
+    <bpmn:callActivity id="CallActivity_Editing" name="Editing and HCI validation" calledElement="Process_Editing">
       <bpmn:documentation>The editing sub-process. Every change to the corpus goes through its HCI validation gate — a red draft is fixed there, never by patching the built artifact.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-author" />
@@ -146,7 +146,7 @@
       <bpmn:incoming>G17</bpmn:incoming>
       <bpmn:outgoing>G07</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:userTask id="Task_CirculateDraft" name="Circulate the draft&#10;[content-review]">
+    <bpmn:userTask id="Task_CirculateDraft" name="Circulate the draft">
       <bpmn:documentation>The draft publication is circulated to the review team for formal review.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
@@ -169,7 +169,7 @@
       <bpmn:incoming>G21</bpmn:incoming>
       <bpmn:outgoing>G22</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:userTask id="Task_ReviewDraft" name="Review the draft publication&#10;[content-review]">
+    <bpmn:userTask id="Task_ReviewDraft" name="Review the draft publication">
       <bpmn:documentation>Content reviewer, QC reviewer and technical officer review the draft as a whole — coherence, phase-gate criteria, breaking vs non-breaking change.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
@@ -178,7 +178,7 @@
       <bpmn:incoming>G10</bpmn:incoming>
       <bpmn:outgoing>G12</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:userTask id="Task_SmeSignoff" name="Clinical / scientific sign-off&#10;[content-review]">
+    <bpmn:userTask id="Task_SmeSignoff" name="Clinical / scientific sign-off">
       <bpmn:documentation>Domain sign-off: clinical SMEs for a guideline, subject-matter reviewers for a paper.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
@@ -199,7 +199,7 @@
       <bpmn:outgoing>G15</bpmn:outgoing>
       <bpmn:outgoing>G16</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:task id="Task_OpenChangeBeans" name="Open beans for the change requests&#10;[todo-manager]">
+    <bpmn:task id="Task_OpenChangeBeans" name="Open beans for the change requests">
       <bpmn:documentation>Each requested change becomes a bean, so the editors and agents picking the work up next see exactly what review asked for and what is still open.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="todo-manager" />
@@ -209,7 +209,7 @@
       <bpmn:incoming>G15</bpmn:incoming>
       <bpmn:outgoing>G17</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:userTask id="Task_AuthorizeRelease" name="Authorise the release&#10;[content-publish]">
+    <bpmn:userTask id="Task_AuthorizeRelease" name="Authorise the release">
       <bpmn:documentation>Publication requires authorisation by the programme manager or designated authority.</bpmn:documentation>
       <bpmn:extensionElements>
         <cat-harness.processes:policy relaxable="false" />
@@ -218,7 +218,7 @@
       <bpmn:incoming>G16</bpmn:incoming>
       <bpmn:outgoing>G18</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:serviceTask id="Task_PublishRelease" name="Version, tag and publish&#10;[content-publish]">
+    <bpmn:serviceTask id="Task_PublishRelease" name="Version, tag and publish">
       <bpmn:documentation>Version bump, release notes, tag, build the final artifacts, deploy to the publication platform. The deploy is the general render-kg-to-cdn step with the RELEASE root as its publication root URL — the same step a staging preview takes with a root under it; the target (GitHub Pages, or a folio's own platform) is chosen by its Tool.</bpmn:documentation>
       <bpmn:extensionElements>
         <cat-harness.processes:fulfilment kinds="person system" reason="the release runs unattended once Task_AuthorizeRelease has been given: version bump, tag, build, deploy. It sits in the publication manager’s lane because that role is ACCOUNTABLE for what goes live, not because a person performs each step — and a publication manager may still tag and push by hand." />
@@ -230,7 +230,7 @@
       <bpmn:incoming>G18</bpmn:incoming>
       <bpmn:outgoing>G19</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:task id="Task_CloseReleaseBeans" name="Close the release beans&#10;[todo-manager]">
+    <bpmn:task id="Task_CloseReleaseBeans" name="Close the release beans">
       <bpmn:documentation>What shipped is resolved; what slipped stays open and carries into the next cycle.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="todo-manager" />
@@ -239,7 +239,7 @@
       <bpmn:incoming>G19</bpmn:incoming>
       <bpmn:outgoing>G20</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:callActivity id="Task_ArchiveReleaseBean" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
+    <bpmn:callActivity id="Task_ArchiveReleaseBean" name="Close the bean" calledElement="Process_BeanClose">
       <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
           <bpmn:incoming>G20</bpmn:incoming>

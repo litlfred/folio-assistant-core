@@ -86,7 +86,7 @@
     <bpmn:startEvent id="StartEvent_Initiative" name="Folio initiative">
       <bpmn:outgoing>H01</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:userTask id="Task_Plan" name="Plan scope, team, artifacts&#10;[content-plan]">
+    <bpmn:userTask id="Task_Plan" name="Plan scope, team, artifacts">
       <bpmn:documentation>Scope the work, identify artifacts and actors, form the team, set the timeline.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-plan" />
@@ -94,11 +94,11 @@
       <bpmn:incoming>H01</bpmn:incoming>
       <bpmn:outgoing>H02</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:callActivity id="Task_SeedBeans" name="Seed the work plan&#10;[todo-manager]" calledElement="GT_SeedWorkPlan">
+    <bpmn:callActivity id="Task_SeedBeans" name="Seed the work plan" calledElement="GT_SeedWorkPlan">
       <bpmn:outgoing>H03</bpmn:outgoing>
       <bpmn:incoming>SF_Bean_1</bpmn:incoming>
     </bpmn:callActivity>
-    <bpmn:callActivity id="CallActivity_Editing" name="Editing and HCI validation&#10;[content-author]" calledElement="Process_Editing">
+    <bpmn:callActivity id="CallActivity_Editing" name="Editing and HCI validation" calledElement="Process_Editing">
       <bpmn:documentation>See editing-hci-validation.bpmn. Runs once per proposed change, not once per cycle.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-author" />
@@ -109,7 +109,7 @@
       <bpmn:incoming>H09</bpmn:incoming>
       <bpmn:outgoing>H04</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:serviceTask id="Task_Test" name="Integration test and QA sweep&#10;[content-test]">
+    <bpmn:serviceTask id="Task_Test" name="Integration test and QA sweep">
       <bpmn:documentation>Corpus-wide checks that a single-block gate cannot make: cross-references, build green, proof status, QA axes across the whole folio.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-test" />
@@ -117,7 +117,7 @@
       <bpmn:incoming>H04</bpmn:incoming>
       <bpmn:outgoing>H05</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:callActivity id="CallActivity_Publication" name="Draft, review and publish&#10;[content-publish]" calledElement="Process_Publication">
+    <bpmn:callActivity id="CallActivity_Publication" name="Draft, review and publish" calledElement="Process_Publication">
       <bpmn:documentation>See draft-to-publication.bpmn.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review" />
@@ -126,7 +126,7 @@
       <bpmn:incoming>H05</bpmn:incoming>
       <bpmn:outgoing>H06</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:userTask id="Task_Feedback" name="Triage published feedback&#10;[content-feedback]">
+    <bpmn:userTask id="Task_Feedback" name="Triage published feedback">
       <bpmn:documentation>Implementer and reader feedback on the published folio, triaged by severity and scope.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-feedback" />
@@ -134,7 +134,7 @@
       <bpmn:incoming>H06</bpmn:incoming>
       <bpmn:outgoing>H07</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:task id="Task_FeedbackBeans" name="File feedback as beans&#10;[todo-manager]">
+    <bpmn:task id="Task_FeedbackBeans" name="File feedback as beans">
       <bpmn:documentation>Triaged feedback re-enters the work plan as beans, which is how the next cycle knows what it is for.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="todo-manager" />
@@ -150,7 +150,7 @@
       <bpmn:outgoing>H09</bpmn:outgoing>
       <bpmn:outgoing>H10</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="Task_Retire" name="Retire or archive&#10;[content-retire]">
+    <bpmn:userTask id="Task_Retire" name="Retire or archive">
       <bpmn:documentation>No more content is planned: deprecate the folio. Post a deprecation notice and timeline, update its status metadata, archive it, point references at any successor, and remove it from active publication. The programme manager decides; retirement archives rather than deletes.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-retire" />
@@ -161,7 +161,7 @@
     <bpmn:endEvent id="EndEvent_Retired" name="Folio retired">
       <bpmn:incoming>SF_Bean_4</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean&#10;[bean-open]" calledElement="Process_BeanOpen">
+    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean" calledElement="Process_BeanOpen">
       <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
       <bpmn:incoming>H02</bpmn:incoming>
@@ -177,7 +177,7 @@
       <bpmn:documentation>Someone else holds the bean; this run stops without touching it.</bpmn:documentation>
       <bpmn:incoming>SF_Bean_3</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Call_BeanClose" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
+    <bpmn:callActivity id="Call_BeanClose" name="Close the bean" calledElement="Process_BeanClose">
       <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
       <bpmn:incoming>H11</bpmn:incoming>
