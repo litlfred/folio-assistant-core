@@ -91,6 +91,7 @@ import { lightenDataElements, linkKindLabels, structuredAssets, structuredAssets
 const ASSETS_DIR = "assets";
 import { liveFigures, withLiveFigures } from "./live-figures.js";
 import { linkTerms, termLinks as glossaryTermLinks, type TermLink } from "./glossary-term-links.ts";
+import { externalGlossaries, firstGlossaryLabel, withExternalGlossaries } from "./external-glossaries.ts";
 import { referenceAnchor } from "../schemas/reference.ts";
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 
@@ -108,15 +109,15 @@ const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&l
 export function tableStyle(scope = ""): string {
   const s = scope ? `${scope} ` : "";
   return `
-  ${s}table { display: block; box-sizing: border-box; width: max-content; max-width: min(100%, 100vw - 7rem); overflow-x: auto; margin: 1.5rem 0; border-collapse: collapse;
+  ${s}table { display: block; box-sizing: border-box; width: max-content; max-width: 100%; overflow-x: auto; margin: 1.5rem 0; border-collapse: collapse;
     background: #fff; color: #2d3748; border: 1px solid #14213d; border-radius: 6px; box-shadow: 0 1px 4px rgba(20, 33, 61, .18); font-size: .92em; }
   ${s}th, ${s}td { border: 1px solid #c9cfd8; padding: .4rem .65rem; text-align: left; vertical-align: top; }
   ${s}thead th { background: #14213d; color: #fff; font-weight: 600; border-color: #14213d; }
   ${s}tbody tr:nth-child(even) > td { background: #f3f4f6; }
   ${s}table a { color: #0b5cad; }
   ${s}table code { color: inherit; background: none; padding: 0; }
-  /* A table wider than the reading column grows past it, centred on it, up to the window; only then does it scroll. */
-  @media (min-width: 50rem) { ${s}table { max-width: calc(100vw - 7rem); position: relative; left: 50%; transform: translateX(-50%); } }
+  /* Tables sit at the start of the reading column, never centred or pushed past it ("tables should be left aligned",
+     2026-11-02); a table wider than the column scrolls inside it. */
 `;
 }
 
@@ -887,8 +888,16 @@ export async function buildDocumentSite(
     const assetKinds = new Set(assets.map((a) => a.kind));
     // Data element cards fold their table and link their glossary entry (Q-DE-1 A).
     const entryLinks = assetKinds.has("data-element") ? (termLinks ?? (await glossaryTermLinks(repoRoot, documentPageDir(d.slug)))) : [];
+    // External glossaries the instance cites, noted above the document's own
+    // glossary (owner, 2026-11-02; external-glossaries.ts).
+    const extGlossaries = externalGlossaries(repoRoot);
+    const firstEntry = extGlossaries.length ? await firstGlossaryLabel(d.path) : undefined;
     const render = async (md: string) => {
-      const h = withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks }), live);
+      const h = withExternalGlossaries(
+        withLiveFigures(await renderDocumentHtml(md, { math, bibliographyUrl: opts.bibliographyUrl, termLinks }), live),
+        firstEntry,
+        extGlossaries,
+      );
       return assetKinds.size ? lightenDataElements(linkKindLabels(h, assetKinds), entryLinks) : h;
     };
     const html = await render(built.markdown);

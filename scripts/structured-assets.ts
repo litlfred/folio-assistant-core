@@ -22,7 +22,17 @@ import type { Chapter, Paper, Section, SectionRef } from "@litlfred/cat-harness-
 const NOT_ASSETS = new Set(["prose", "figure", "diagram", "table", "remark", "note", "example", "proof", "quote"]);
 
 /** Fields that say where a block came from, not what it is. */
-const HIDDEN_META = new Set(["source", "requirementId", "id"]);
+const HIDDEN_META = new Set(["source", "requirementId", "indicatorId", "id"]);
+
+/**
+ * Kinds whose table shows a chosen set of columns, in this order, rather than
+ * every scalar field. An indicator carries a dozen fields (definition,
+ * reporting frequency, frameworks…); its table keeps the ones a reader scans
+ * by and leaves the rest to its card. Owner, 2026-11-02, card Q-IND-1 = A.
+ */
+const KIND_COLUMNS: Readonly<Record<string, readonly string[]>> = {
+  indicator: ["module", "numerator", "denominator", "unit", "disaggregation", "dataSources"],
+};
 
 export interface StructuredAsset {
   kind: string;
@@ -66,7 +76,7 @@ export async function structuredAssets(manifestPath: string): Promise<Structured
             const s = scalar(v);
             if (s !== undefined && !HIDDEN_META.has(k)) fields[k] = s;
           }
-          const id = scalar(meta.requirementId) ?? scalar(meta.id);
+          const id = scalar(meta.requirementId) ?? scalar(meta.indicatorId) ?? scalar(meta.id);
           const title = scalar(b.title) ?? scalar(b.caption);
           out.push({
             kind: b.kind,
@@ -98,7 +108,15 @@ export function fieldHeading(key: string): string {
 const plural = (h: string): string => (/(s|x|ch|sh)$/i.test(h) ? `${h}es` : /[^aeiou]y$/i.test(h) ? `${h.slice(0, -1)}ies` : `${h}s`);
 
 /** An enum-like value (one word: "must", "person", "to-be-prioritized") shows as a tag. */
-const cellValue = (v: string): string => (v && v.length <= 24 && !/\s/.test(v) ? `<span class="fa-assets-tag">${esc(v)}</span>` : esc(v));
+const isTag = (v: string): boolean => v.length > 0 && v.length <= 32 && !/\s/.test(v);
+/**
+ * A cell: one tag per enum-like value, so "A; B" shows two tags like "A" shows
+ * one, and a column never mixes tags with the same values as plain text.
+ */
+export const cellValue = (v: string): string => {
+  const items = v.split(/\s*[;,]\s*/).filter(Boolean);
+  return items.length > 0 && items.every(isTag) ? items.map((i) => `<span class="fa-assets-tag">${esc(i)}</span>`).join(" ") : esc(v);
+};
 
 /**
  * The page body: a title, one tile per kind (its count, linking to its
@@ -126,7 +144,9 @@ export function structuredAssetsBody(title: string, assets: readonly StructuredA
     `<div id="fa-assets-tables">`,
   ];
   for (const [kind, rows] of byKind) {
-    const keys = [...new Set(rows.flatMap((r) => Object.keys(r.fields)))];
+    const all = [...new Set(rows.flatMap((r) => Object.keys(r.fields)))];
+    const chosen = KIND_COLUMNS[kind];
+    const keys = chosen ? chosen.filter((k) => all.includes(k)) : all;
     const hasId = rows.some((r) => r.id);
     const hasPersonas = rows.some((r) => r.personas.length > 0);
     const head = [hasId ? "Id" : "", "Title", ...keys.map(fieldHeading), hasPersonas ? "Personas" : "", "Section"].filter(Boolean);
@@ -172,8 +192,13 @@ const ASSETS_STYLE = `<style>
 .fa-assets th[aria-sort="ascending"] button::after { content: " \\25B4"; }
 .fa-assets th[aria-sort="descending"] button::after { content: " \\25BE"; }
 .fa-assets .fa-block-id { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: .85em; font-weight: 600; white-space: nowrap; }
-.fa-assets-tag { display: inline-block; font-size: .8em; padding: 0 .45em; border-radius: 3px; border: 1px solid #c9cfd8; white-space: nowrap; }
-.fa-assets-section { opacity: .75; font-size: .9em; }
+.fa-assets-tag { display: inline-block; font-size: .8em; padding: 0 .45em; margin: .1em .25em .1em 0; border-radius: 3px; border: 1px solid #c9cfd8; white-space: nowrap; }
+/* Left-aligned in the reading column ("tables should be left aligned", 2026-11-02), filling it on a wide screen. */
+.fa-assets-page table.fa-assets { margin: .8rem 0 0; font-size: .86em; }
+@media (min-width: 50rem) { .fa-assets-page table.fa-assets { display: table; width: 100%; } }
+.fa-assets-page .fa-assets th { white-space: nowrap; }
+.fa-assets-page .fa-assets td { padding: .3rem .55rem; }
+.fa-assets-section { opacity: .75; white-space: nowrap; }
 .fa-assets tr[hidden] { display: none; }
 </style>`;
 
