@@ -39,7 +39,7 @@ comment).
 | Editor (the Config EDITORS list) | the whole sheet | Orange `Ready for agent`, `Ready for merge` | Green, Grey, Agent tabs, Config |
 | Owner | the whole sheet | Config `EDITORS` | anything the agent or script writes |
 | Apps Script (`review-sheet.gs`, built by Tool `review-sheet-sync`) | Config (CFG, COLS, DATA, EDITORS); the people's tabs; the Agent tab(s) | Grey columns (ids, links, joins); Green columns copied from the Agent tab(s); the STALE mark on the agent column; `Ready for agent` back to No once, on the turn to stale; the Watch tab; protections on the Ready columns; the QC problems at the top of `Disposition (agent)` | Blue columns' contents; Orange except the stale reset; the Agent tab(s) |
-| Agent (sync or watcher) | the whole sheet, and above all the people's Blue `Disposition` of each comment, which its dispositions start from; the folio's repository | the Agent tab(s) (one row per change set, and in public comment one row per comment on Agent - Comments), including `Disposition (change set)` in the format below; the agent column, `Feedback (agent)` (drafting) or `Change Set Feedback (agent)` (public comment); Config rows other than EDITORS | Blue, Orange, Grey; the Title on a drafting sheet |
+| Agent (sync or watcher) | the whole sheet, and above all the people's Blue `Disposition` of each comment, which its dispositions start from; the folio's repository | the Agent tab(s) (one row per change set, and in public comment one row per comment on Agent - Comments), including `Disposition (change set)` in the format below; the agent column, `Feedback (agent)` (drafting) or `Change Set Feedback (agent)` (public comment); Config rows other than EDITORS | Blue, Orange, Grey; the Title (on both kinds of sheet, since 2026-11-02 on public comment); Change Set (human) |
 | QA reviewer (independent: an agent session that did not write the PR, or a person) | the change set's `Disposition (change set)`, the people's Blue `Disposition` and feedback, the PR's diff at its head commit, the staging QA report | `QA gate (change set)` and `QA report (change set)` on the Agent tab, nothing else | everything else, and never a change set whose PR it wrote |
 | Tool `review-sheet-sync` | the folio's `review/*/sheet-sync.json`, anchors, line map | `Code.gs` (generic); the Config rows for one sheet (`--config ... --out rows`); a drafting sheet's TOC rows (`--toc-out rows`) | the sheet itself |
 | Script `review-anchors-from-folio.ts` | the folio's document manifests and block prose; optionally the library file it was seeded from | `folio/<doc>/review-anchors.json` (`--check` compares) | the sheet |
@@ -898,8 +898,12 @@ Contributor Feedback row with a Change-set:
    conversation**, linked. A sheet made before 2026-10-31 gains that column
    at the right of the Agent (change sets) tab; the script finds it by header.
 
-Title stays the contributors': the agent never writes it (in public-comment
-mode, by contrast, Review Change Sets' Title is agent-derived and green).
+Title stays the contributors': the agent never writes it. In public-comment
+mode Review Change Sets' Title is people's too (owner, 2026-11-02, Q-CS-1 C:
+"Title in PC Log/template should be blue"; "the making of CS is human
+controlled"): a Title-only row is a new change set, and the agent's title is
+only the first value of a row it adds (skill `review-log-watch`, "Change sets
+people make").
 
 **Feedback from the site.** A folio with
 `.github/ISSUE_TEMPLATE/block-feedback.yml` (copy the shared
