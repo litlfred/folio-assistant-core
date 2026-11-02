@@ -186,11 +186,6 @@ const THEMED_STYLE = `
 .${DOC_CLASS} .fa-blk:empty { min-height: 3rem; }
 .${DOC_CLASS} .fa-one-page { font-size: .85rem; opacity: .72; }
 .${DOC_CLASS} .pc-bar { position: static; background: none; }
-/* The block icons sit in a right gutter of their own, so every paragraph
-   keeps one even text column; floated beside the text, they cut its first
-   lines short and left a ragged edge (owner, 2026-11-02). */
-.${DOC_CLASS} { padding-right: 1.5rem; }
-html.fa-bp .${DOC_CLASS} .block-actions:not(.ba-heading) { float: right; clear: right; width: 20px; margin: 0 -1.5rem 4px 0; }
 ${tableStyle(`.${DOC_CLASS}`)}`;
 
 /** A layout name as front matter may carry it, or a throw. */
