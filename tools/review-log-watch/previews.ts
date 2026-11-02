@@ -1,15 +1,16 @@
 /**
- * A change set's preview follows main when people act on it (owner,
- * 2026-11-02 07:32Z: "log watcher should make sure all previews get updated
- * if upstream changes on main"; 07:33Z: "dont do it automatically, but on
- * human feedback"). A preview is built from its PR's head, so once main
- * moves on, a PR that lacks main's head shows a document main no longer is.
- * In the agent pass for a change set people acted on (new Blue feedback,
- * Ready for agent = Yes, or feedback that asks, see `previewRequest`), the
- * watcher runs this for its PRs, and for each one behind it merges main into
- * the branch (a merge commit, never a rebase, so nobody's checkout breaks),
- * pushes, and lets the staging build run. Never only because main moved. The sheet then shows the preview as stale until the new
- * build is live (skill `review-sheet-script`, "Checked by commit").
+ * A change set's preview follows main (owner, 2026-11-02 07:32Z: "log
+ * watcher should make sure all previews get updated if upstream changes on
+ * main"; 07:34Z: "actually automatic (as the default mode)"). A preview is
+ * built from its PR's head, so once main moves on, a PR that lacks main's
+ * head shows a document main no longer is. By default (Config
+ * PREVIEW_REFRESH `automatic`) the watcher runs this on every poll for every
+ * open change set; with `on-feedback`, only in the agent pass for a change
+ * set people acted on. People's feedback triggers it in either mode (new
+ * Blue feedback, Ready for agent = Yes, or an ask, see `previewRequest`).
+ * For each PR behind it merges main into the branch (a merge commit, never
+ * a rebase, so nobody's checkout breaks), pushes, and lets the staging
+ * build run.
  *
  * A PR is left alone when it is closed, or when its head is not in its own
  * repository (a fork: the watcher cannot push there). A conflict is not
@@ -20,6 +21,7 @@
  * ("Previews follow main"). Process: `processes/content/review-log-watch.bpmn`.
  *
  *   bun tools/review-log-watch/previews.ts --prs <owner/repo#n,...>
+ *   bun tools/review-log-watch/previews.ts --agent <Agent - Change Sets values.json>
  *   bun tools/review-log-watch/previews.ts request --text <a person's feedback>
  *
  * Exit 0: every open PR includes main's head. Exit 10: some are behind (or
@@ -51,6 +53,16 @@ export function previewSteps(prs: PrFacts[]): PreviewStep[] {
       return { key: p.key, behind: p.behind, step: "merge-main", why: `${p.behind} commit(s) behind ${p.base}: merge ${p.base} into the branch, push, and let the preview rebuild` };
     return { key: p.key, behind: 0, step: "none", why: `includes ${p.base}'s head` };
   });
+}
+
+export type RefreshMode = "automatic" | "on-feedback";
+/** The log's PREVIEW_REFRESH Config value; automatic unless it says on-feedback. */
+export function refreshMode(value?: string | null): RefreshMode {
+  return /on[- ]?feedback|manual|human/i.test(String(value ?? "")) ? "on-feedback" : "automatic";
+}
+/** Whether this poll checks a change set's previews: always in automatic mode, else only when people acted on it. */
+export function shouldCheck(mode: RefreshMode, peopleActed: boolean): boolean {
+  return mode === "automatic" || peopleActed;
 }
 
 /** Whether a person's feedback asks for the preview to be brought up to date with main. */

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { previewRequest, previewSteps } from "./previews.js";
+import { previewRequest, previewSteps, refreshMode, shouldCheck } from "./previews.js";
 
 const pr = (o: Partial<Parameters<typeof previewSteps>[0][number]>) => ({ key: "o/r#1", state: "open" as const, base: "main", behind: 0, mergeable: "clean", fork: false, ...o });
 
@@ -25,5 +25,16 @@ describe("previewRequest: people ask for a current preview", () => {
   test("other feedback is not an ask", () => {
     expect(previewRequest("update the glossary entry")).toBe(false);
     expect(previewRequest("the preview looks good")).toBe(false);
+  });
+});
+
+describe("refresh mode (owner, 07:34Z: automatic as the default)", () => {
+  test("automatic unless the Config says on-feedback", () => {
+    expect(refreshMode(undefined)).toBe("automatic");
+    expect(refreshMode("")).toBe("automatic");
+    expect(refreshMode("on-feedback")).toBe("on-feedback");
+    expect(shouldCheck("automatic", false)).toBe(true);
+    expect(shouldCheck("on-feedback", false)).toBe(false);
+    expect(shouldCheck("on-feedback", true)).toBe(true);
   });
 });

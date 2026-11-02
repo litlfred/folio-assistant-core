@@ -151,25 +151,32 @@ Exit 0 is clean. Exit 10 lists problems: the watcher fixes the Agent tab
 status or rewrites the cell to the layout in the same wake, and records the
 Agent step. The lint writes nothing itself.
 
-## Previews follow main, on people's word (owner, 2026-11-02 07:32Z)
+## Previews follow main (owner, 2026-11-02 07:32Z to 07:34Z)
 
 "log watcher should make sure all previews get updated if upstream changes on
-main", then (07:33Z) "dont do it automatically, but on human feedback". A
-preview is built from its pull request's head, so once main moves on, a
-branch that lacks main's head shows a document main no longer is. The
-watcher never updates a branch just because main moved. It does so in the
-agent pass for a change set that people acted on:
+main", then "actually automatic (as the default mode)", with people's
+feedback as a second trigger. A preview is built from its pull request's
+head, so once main moves on, a branch that lacks main's head shows a
+document main no longer is.
 
-- new or changed Blue feedback on the change set, or Ready for agent set to
-  Yes (the agent pass is already running for that row); or
-- feedback that asks for it, such as "update the preview" or "rebase on
-  main" (`bun tools/review-log-watch/previews.ts request --text <feedback>`).
+**Modes.** The log's Config tab may hold a `PREVIEW_REFRESH` row:
 
-In that pass:
+- `automatic` (the default, also when there is no row): on every poll,
+  whether or not a cell changed, check every open change-set PR. A move on
+  main changes no cell, so the change check alone would never wake it.
+- `on-feedback`: only in the agent pass for a change set people acted on.
 
-1. Run `bun tools/review-log-watch/previews.ts --prs owner/repo#n,...` for
-   that change set's PRs. It prints `merge-main`, `resolve-conflict` or
-   `none` for each PR. Exit 0 means current; exit 10 lists the work.
+**People's feedback triggers it in either mode:** new or changed Blue
+feedback on the change set, Ready for agent set to Yes, or feedback that asks,
+such as "update the preview" or "rebase on main"
+(`bun tools/review-log-watch/previews.ts request --text <feedback>`).
+
+**Each check:**
+
+1. Run `bun tools/review-log-watch/previews.ts --agent <Agent values.json>`
+   for every open change set, or `--prs owner/repo#n,...` for one. It prints
+   `merge-main`, `resolve-conflict` or `none` for each PR. Exit 0 means
+   current; exit 10 lists the work.
 2. For `merge-main`: merge main into the branch (a merge commit, never a
    rebase or force-push), regenerate generated files with the repo's own
    tooling, push, and record the push with the agent-record tool. The sheet
