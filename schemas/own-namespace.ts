@@ -30,4 +30,4 @@ export const CORE_NAMESPACE: string = instanceNamespaceOf(declaration);
  * minted: under this instance's release, beside its vocabulary, because this
  * is the layer that owns the Dublin Core model (`dublin-core.ts`).
  */
-export const DSPACE_NAMESPACE: string = CORE_NAMESPACE.replace(/ns#$/, "ns/dspace#");
+export const DSPACE_NAMESPACE: string = `${CORE_NAMESPACE}dspace/`;

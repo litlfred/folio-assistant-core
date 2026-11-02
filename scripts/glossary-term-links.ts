@@ -30,7 +30,7 @@
  * - Nothing inside a heading, a link, code, inline HTML or a directive is
  *   touched.
  * - A Markdown link whose target is a term's SKOS IRI, such as a block's
- *   "Concepts:" line (`[Stakeholder](https://…/ns#glossary/dpi-h-ra/stakeholder)`),
+ *   "Concepts:" line (`[Stakeholder](https://…/ns/glossary/dpi-h-ra/stakeholder)`),
  *   is pointed at the term's entry instead. The IRI is the identifier the
  *   Markdown keeps; the page is where this build puts it (owner, 2026-10-31,
  *   "Through the glossary"). Every term of the instances above resolves this

@@ -178,7 +178,7 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
     const inst = mounted.find((x) => r.startsWith(x.ns));
     if (!inst) return;
     // Only glossary IRIs are glossary terms; a class of the instance's own
-    // vocabulary (a `ns#BusinessProcess` class) is not checked here.
+    // vocabulary (a `ns/BusinessProcess` class) is not checked here.
     if (!r.startsWith(`${inst.ns}glossary/`)) {
       otherIris.set(inst.name, (otherIris.get(inst.name) ?? 0) + 1);
       return;

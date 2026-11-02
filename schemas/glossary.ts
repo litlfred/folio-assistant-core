@@ -182,7 +182,7 @@ export const TermSchema = z
      * glossary then DESCRIBES that concept — its labels, translations, order —
      * rather than minting a second IRI for the same term. Owner, 2026-09-30
      * (bean `xsqm`, "one SKOS", option A): bootstrap's terms are
-     * `<bootstrap>/ns#Node`, not also `…ns#glossary/terms/node`.
+     * `<bootstrap>/ns/Node`, not also `…ns/glossary/terms/node`.
      */
     iri: Iri.optional(),
     /** The thing the concept is about, an organization or an architecture element ({@link FocusSchema}): `foaf:focus`. */
