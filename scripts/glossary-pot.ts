@@ -59,8 +59,8 @@ const REPO = repoRootFor(CORE);
  * What the check compares: the template without its timestamp and without its
  * `#:` source references. A reference names the source file by its path in the
  * checkout, and a layer sits at a different path in each checkout that checks
- * it (`smart-trust/glossary/…` in folio-assistant, `glossary/…` in
- * smart-trust's own CI), so no one file passes both. Every msgid, msgctxt and
+ * it (`<layer>/glossary/…` in folio-assistant, `glossary/…` in
+ * the layer's own CI), so no one file passes both. Every msgid, msgctxt and
  * comment is still compared exactly. Owner card Q-TRAIN-8 (folio-assistant#2873).
  */
 export function potForCheck(pot: string): string {

@@ -102,8 +102,7 @@ for L1 ingestion">
       <bpmn:incoming>Flow_i2</bpmn:incoming>
       <bpmn:outgoing>Flow_i2a</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:callActivity id="CallActivity_Extract" name="Extract structure
-[document-intake]" calledElement="Process_ExtractStructure">
+    <bpmn:callActivity id="CallActivity_Extract" name="Extract structure" calledElement="Process_ExtractStructure">
       <bpmn:documentation>See ingest-extract-structure.bpmn.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
@@ -133,8 +132,7 @@ WHY IT IS A GATEWAY AND NOT A FILTER INSIDE THE SUBPROCESS. `ingest-theme.bpmn` 
       <bpmn:outgoing>Flow_theme_yes</bpmn:outgoing>
       <bpmn:outgoing>Flow_theme_no</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:callActivity id="CallActivity_IngestTheme" name="Ingest the theme
-[theme-art-intake]" calledElement="Process_IngestTheme">
+    <bpmn:callActivity id="CallActivity_IngestTheme" name="Ingest the theme" calledElement="Process_IngestTheme">
       <bpmn:documentation>See ingest-theme.bpmn. The subprocess derives one Theme node with kind sticky|webpage|publication, and refuses a source it cannot complete rather than emitting a partial theme.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="theme-art-intake" />
@@ -142,7 +140,7 @@ WHY IT IS A GATEWAY AND NOT A FILTER INSIDE THE SUBPROCESS. `ingest-theme.bpmn` 
       <bpmn:incoming>Flow_theme_yes</bpmn:incoming>
       <bpmn:outgoing>Flow_theme_join</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean&#10;[bean-open]" calledElement="Process_BeanOpen">
+    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean" calledElement="Process_BeanOpen">
       <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_i1</bpmn:incoming>
@@ -158,7 +156,7 @@ WHY IT IS A GATEWAY AND NOT A FILTER INSIDE THE SUBPROCESS. `ingest-theme.bpmn` 
       <bpmn:documentation>Someone else holds the bean; this run stops without touching it.</bpmn:documentation>
       <bpmn:incoming>SF_Bean_3</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Call_BeanClose" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
+    <bpmn:callActivity id="Call_BeanClose" name="Close the bean" calledElement="Process_BeanClose">
       <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_i11</bpmn:incoming>

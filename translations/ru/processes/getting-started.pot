@@ -71,7 +71,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/conduct/getting-started.bpmn:328
 #. Diagram label
-msgid "Close the bean [bean-close]"
+msgid "Close the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/conduct/getting-started.bpmn:267
@@ -191,7 +191,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/conduct/getting-started.bpmn:312
 #. Diagram label
-msgid "Open the bean [bean-open]"
+msgid "Open the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/conduct/getting-started.bpmn:341

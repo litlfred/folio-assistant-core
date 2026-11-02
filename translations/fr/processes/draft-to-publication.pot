@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: draft-to-publication\n"
-"POT-Creation-Date: 2026-11-01T11:34:43.542Z\n"
+"POT-Creation-Date: 2026-10-31T16:31:59.511Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: fr\n"
@@ -31,7 +31,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:212
 #. Diagram label
-msgid "Authorise the release [content-publish]"
+msgid "Authorise the release"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:254
@@ -46,12 +46,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:110
 #. Diagram label
-msgid "Build the draft publication [content-publish]"
+msgid "Build the draft publication"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:146
 #. Diagram label
-msgid "Circulate the draft [content-review]"
+msgid "Circulate the draft"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:265
@@ -71,12 +71,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:245
 #. Diagram label
-msgid "Close the bean [bean-close]"
+msgid "Close the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:233
 #. Diagram label
-msgid "Close the release beans [todo-manager]"
+msgid "Close the release beans"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:170
@@ -116,7 +116,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:136
 #. Diagram label
-msgid "Editing and HCI validation [content-author]"
+msgid "Editing and HCI validation"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:51
@@ -161,12 +161,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:199
 #. Diagram label
-msgid "Open beans for the change requests [todo-manager]"
+msgid "Open beans for the change requests"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:99
 #. Diagram label
-msgid "Open the bean [bean-open]"
+msgid "Open the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:56
@@ -246,7 +246,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:118
 #. Diagram label
-msgid "Run publication QA gates [content-test]"
+msgid "Run publication QA gates"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:87
@@ -291,7 +291,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:221
 #. Diagram label
-msgid "Version, tag and publish [content-publish]"
+msgid "Version, tag and publish"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/draft-to-publication.bpmn:234

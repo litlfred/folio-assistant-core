@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: dsa-document-lifecycle\n"
-"POT-Creation-Date: 2026-11-01T11:34:43.553Z\n"
+"POT-Creation-Date: 2026-10-30T20:01:28.955Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ar\n"
@@ -61,7 +61,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:402
 #. Diagram label
-msgid "Close the bean [bean-close]"
+msgid "Close the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:228
@@ -281,7 +281,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:126
 #. Diagram label
-msgid "Open the bean [bean-open]"
+msgid "Open the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:123
@@ -296,7 +296,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:155
 #. Diagram label
-msgid "P1.2 · Write the legal text [document-authoring]"
+msgid "P1.2 · Write the legal text"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn:161

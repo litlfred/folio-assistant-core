@@ -123,7 +123,7 @@
       <bpmn:documentation>P1 trigger: a recipient asks for data, or a programme needs a standing agreement (for example a cross-border surveillance feed).</bpmn:documentation>
       <bpmn:outgoing>F01</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean&#10;[bean-open]" calledElement="Process_BeanOpen">
+    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean" calledElement="Process_BeanOpen">
       <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
       <bpmn:incoming>F01</bpmn:incoming>
@@ -152,7 +152,7 @@
       <bpmn:incoming>F74</bpmn:incoming>
       <bpmn:outgoing>F06</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:userTask id="Task_WriteText" name="P1.2 · Write the legal text&#10;[document-authoring]">
+    <bpmn:userTask id="Task_WriteText" name="P1.2 · Write the legal text">
       <bpmn:documentation>Write the agreement as a document folio: one normative statement per clause the parties must keep, through normative-statements. The text says which governs if it and a machine-readable form disagree (suggested: the text).</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="document-authoring"/><bootstrap.processes:skill ref="normative-statements"/><bootstrap.processes:skill ref="document-structure"/></bpmn:extensionElements>
       <bpmn:incoming>F06</bpmn:incoming>
@@ -328,7 +328,7 @@
       <bpmn:documentation>P14 trigger: the parties want to change the terms, the end date is reached, or one party gives notice of termination.</bpmn:documentation>
       <bpmn:outgoing>F40</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:callActivity id="Call_BeanOpenChange" name="Open the bean&#10;[bean-open]" calledElement="Process_BeanOpen">
+    <bpmn:callActivity id="Call_BeanOpenChange" name="Open the bean" calledElement="Process_BeanOpen">
       <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
       <bpmn:incoming>F40</bpmn:incoming>
@@ -399,7 +399,7 @@
       <bpmn:incoming>F49</bpmn:incoming>
       <bpmn:outgoing>F50</bpmn:outgoing>
     </bpmn:userTask>
-    <bpmn:callActivity id="Call_BeanCloseEnded" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
+    <bpmn:callActivity id="Call_BeanCloseEnded" name="Close the bean" calledElement="Process_BeanClose">
       <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
     </bpmn:callActivity>

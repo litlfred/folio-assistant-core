@@ -153,7 +153,7 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       <bpmn:outgoing>Flow_12</bpmn:outgoing>
       <bpmn:outgoing>Flow_13</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_RecordUnverified" name="Open a bean for the unverified citation&#10;[todo-manager]">
+    <bpmn:serviceTask id="Task_RecordUnverified" name="Open a bean for the unverified citation">
       <bpmn:documentation>An unresolvable citation is not dropped and not silently kept. It becomes a tracked item, so the gap is visible in the work plan rather than surviving as a footnote nobody re-checks.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="todo-manager" />
@@ -180,7 +180,7 @@ a plausible-looking wrong answer. Left uncovered until the skill is written.</bp
       <bpmn:outgoing>Flow_16</bpmn:outgoing>
       <bpmn:outgoing>Flow_17</bpmn:outgoing>
     </bpmn:exclusiveGateway>
-    <bpmn:serviceTask id="Task_RecordGap" name="Record the evidence gap&#10;[todo-manager]">
+    <bpmn:serviceTask id="Task_RecordGap" name="Record the evidence gap">
       <bpmn:documentation>Insufficient evidence is a RESULT. It is recorded as such -- an honest gap the guideline can state -- rather than being closed by weakening the recommendation until the available evidence supports it.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="todo-manager" />

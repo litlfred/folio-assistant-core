@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: editing-hci-validation\n"
-"POT-Creation-Date: 2026-11-01T11:34:43.565Z\n"
+"POT-Creation-Date: 2026-11-02T01:00:55.030Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: es\n"
@@ -36,7 +36,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:171
 #. Diagram label
-msgid "Agent review of the change [content-review]"
+msgid "Agent review of the change"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:192
@@ -56,7 +56,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:114
 #. Diagram element documentation
-msgid "Before anything is drafted: the author reads the guidance ALREADY in this content, frames the question as PICO, retrieves candidates across the three evidence classes, and has each candidate's authority resolved against its publisher's own API. A recommendation reaches the drafting step with its evidence attached, or with the gap recorded. This step has nothing to do for content that carries no recommendations -- a mathematics folio has none -- and is skipped there rather than satisfied vacuously."
+msgid "Before anything is drafted: the author reads the guidance ALREADY in this content, frames the question as PICO, retrieves candidates across the three evidence classes, and has each candidate's authority resolved against its publisher's own API. A recommendation reaches the drafting step with its evidence attached, or with the gap recorded. This step has nothing to do for content that carries no recommendations -- a mathematics folio has none, and a figure redrawn from its own source adds none -- and the subprocess's first gateway (Gateway_RecommendationInPlay) ends it there at its own event, recording the answer, rather than satisfying the search vacuously."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:142
@@ -66,7 +66,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:157
 #. Diagram label
-msgid "Build and QA gates [content-test]"
+msgid "Build and QA gates"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:271
@@ -86,7 +86,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:286
 #. Diagram label
-msgid "Close the bean [bean-close]"
+msgid "Close the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:199
@@ -126,7 +126,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:120
 #. Diagram label
-msgid "Draft the block edit [content-author]"
+msgid "Draft the block edit"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:96
@@ -186,7 +186,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:179
 #. Diagram label
-msgid "Human / SME review [content-review]"
+msgid "Human / SME review"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:336
@@ -206,7 +206,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:209
 #. Diagram label
-msgid "Log findings on the bean [todo-manager]"
+msgid "Log findings on the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:312
@@ -261,7 +261,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:107
 #. Diagram label
-msgid "Open the bean [bean-open]"
+msgid "Open the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:232
@@ -316,7 +316,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:262
 #. Diagram label
-msgid "Revise the proposed change [content-author]"
+msgid "Revise the proposed change"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:134
@@ -331,7 +331,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:141
 #. Diagram label
-msgid "Schema and constraint checks [content-validate]"
+msgid "Schema and constraint checks"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:303
@@ -346,7 +346,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:149
 #. Diagram label
-msgid "Syntax, spelling and links [content-validate]"
+msgid "Syntax, spelling and links"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/editing-hci-validation.bpmn:150

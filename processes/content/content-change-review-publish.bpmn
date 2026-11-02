@@ -90,7 +90,7 @@ Called from content-change-review after the committee approves. Approving is the
       <bpmn:incoming>p6</bpmn:incoming>
       <bpmn:outgoing>p7</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Task_WatchMainCI" name="Note the main-branch watch&#10;[watch]">
+    <bpmn:task id="Task_WatchMainCI" name="Note the main-branch watch">
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="watch" />
         <bootstrap.processes:skill ref="todo-manager" />
