@@ -53,6 +53,7 @@
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
+import { libraryEntries } from "./lib/library-entries.ts";
 
 import { instanceDirectoryForGraph, instanceRootsIn, readDeclaration, repoRootFor, resolveDirectories } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.ts";
 import { safeHref } from "@litlfred/cat-harness-tools/schemas/ui/safe-url.ts";
@@ -259,18 +260,13 @@ export function collect(repo: string = REPO): Collected {
         }
       }
       if (kinds.includes("library")) {
-        const subdirs = readdirSync(d.absPath, { withFileTypes: true })
-          .filter((e) => e.isDirectory())
-          .map((e) => e.name)
-          .sort();
-        const standaloneAssets = subdirs.filter((slug) => {
-          const assetDir = join(d.absPath, slug);
-          return existsSync(join(assetDir, "manifest.jsonld")) && !heldByCatalogue.has(assetDir);
-        });
+        // Flat or filed in a concern group (bean `6fez`): the slug is the key either way.
+        const standaloneAssets = libraryEntries(d.absPath).filter(
+          ({ dir }) => existsSync(join(dir, "manifest.jsonld")) && !heldByCatalogue.has(dir),
+        );
         if (standaloneAssets.length > 0) {
           out.subgraphs.push({ id: d.id, instance: decl.name, kind: "library", path: rel(repo, d.absPath) });
-          for (const slug of standaloneAssets) {
-            const assetDir = join(d.absPath, slug);
+          for (const { slug, dir: assetDir } of standaloneAssets) {
             const manifestRel = rel(repo, join(assetDir, "manifest.jsonld"));
             const assetRel = rel(repo, assetDir);
             try {
