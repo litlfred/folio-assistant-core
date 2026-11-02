@@ -60,6 +60,34 @@ every path a reviewer sees, so name it for what the chapter is about rather
 than for its position. A `ch3-` prefix is a rename waiting to happen the first
 time something moves.
 
+## Back matter: glossary and acronyms go at the end
+
+Owner, 2026-11-02: every document opens on its title and summary, never on a
+reference list, and the same skeleton holds across documents:
+
+| Part | Chapters, in order |
+|---|---|
+| Front | title page and front matter (acknowledgements, publication data), executive summary or abstract, how to use |
+| Main | the numbered chapters |
+| Back | Annexes or Appendices, then **Glossary**, then References |
+
+**Acronyms are a section of the Glossary chapter, never a chapter of their
+own.** An acronym is a glossary term's SKOS `notation` (`folio-glossary/v1`), so
+the acronyms list is one view of the glossary graph: the Glossary chapter holds
+the terms first and the acronyms after them.
+
+When a source publication prints its glossary or abbreviations up front (WHO
+handbooks often do), the folio still puts them at the back. Move the section
+into the `glossary/` chapter by moving its block files (blocks resolve from
+their chapter's directory) and **keep every label**: review comments, review
+sheets and contributor logs cite them. Then regenerate or update
+`review-anchors.json`, and fix any `<chapter>/<block>` paths in L1-coverage
+or glossary-table registries.
+
+`bun run folio-assistant-core/scripts/back-matter-order.ts --document <doc>`
+warns when a document breaks this. It is warn-only: moving a chapter in an
+existing document is its editor's call.
+
 ## Reordering
 
 Move the entry in `chapters[]` — nothing else. Do **not** rename directories
