@@ -259,6 +259,22 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     expect(s.shell).toContain("## Next");
   });
 
+  test("splitBlocks moves a figure or table frame's opener into its block, so the shell stays balanced", () => {
+    // The frame opens before the anchor and closes after the text; an opener
+    // left in the shell put every later block inside it (smart-ra, 2026-11-02).
+    const md = [
+      "## Glossary", "", '<a id="sec:g"></a>', "", '<div class="fa-numbered fa-numbered-table" markdown="1">', "",
+      '<a id="tbl:g"></a>', "**Table.**", "", "| a | b |", "|---|---|", "| 1 | 2 |", "", "</div>", "",
+      '<a id="prose:after"></a>', "After.",
+    ].join("\n");
+    const s = splitBlocks(md, new Set(["tbl:g", "prose:after"]));
+    expect(s.shell).not.toContain("fa-numbered");
+    expect(s.shell).toContain('<a id="tbl:g"></a>');
+    expect(s.blocks[0]!.markdown.startsWith('<div class="fa-numbered fa-numbered-table" markdown="1">')).toBe(true);
+    expect(s.blocks[0]!.markdown).toContain("</div>");
+    for (const b of s.blocks) expect(b.markdown.split("<div").length).toBe(b.markdown.split("</div>").length);
+  });
+
   test("--lazy always: a shell, chunked block JSON, and the whole text in index.hydrated.html", async () => {
     const d = scaffold();
     appendFileSync(join(d, "folio", "handbook", "introduction", "overview.md"), "\n\n| Role | who |\n|---|---|\n| Bootstrapping Agent | you |\n");
