@@ -1053,7 +1053,7 @@ describe("the colour key in Instructions text", () => {
 
   test("column names are coloured like their header, whole words, longest first", () => {
     const later = words.slice(4);
-    for (const [w, c] of later) expect(["#1f5fa8", "#2e7d32", "#c25e00", "#666666"]).toContain(c);
+    for (const [, c] of later) expect(["#1f5fa8", "#2e7d32", "#c25e00", "#666666"]).toContain(c);
     expect(later).toContainEqual(["Ready for agent", "#c25e00"]);
     expect(later).toContainEqual(["Ready for merge", "#c25e00"]);
     expect(later).toContainEqual(["Committee Feedback", "#1f5fa8"]);
