@@ -74,7 +74,7 @@ function engineTools(root: string): Map<string, Handler> {
       async (a) => {
         const state = loadInstance(root, a.instance as string)!;
         const model = await loadProcessModel(DIAGRAM);
-        const next = complete(model, state, a.node as string, { outcome: a.outcome as string | undefined, note: a.note as string, actor: "test" });
+        const next = complete(model, state, a.node as string, { outcome: a.outcome as string | undefined, facts: a.facts as Record<string, unknown> | undefined, note: a.note as string, actor: "test" });
         saveInstance(root, next);
         return ok("done");
       },

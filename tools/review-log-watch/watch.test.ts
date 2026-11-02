@@ -40,7 +40,7 @@ describe("review-log-watch", () => {
     if (r.status !== "changed") return;
     expect(r.changes).toEqual([
       { kind: "issue-updated", issue: 5, title: "Issue 5" },
-      { kind: "cell", row: 3, header: "Ready for agent", from: "", to: "Yes" },
+      { kind: "cell", row: 3, cs: "CS-001", header: "Ready for agent", from: "", to: "Yes" },
     ]);
   });
 
@@ -83,12 +83,38 @@ describe("review-log-watch", () => {
     expect(noCs.append[0].agent).toBeUndefined();
   });
 
+  test("a row someone inserts moves the rows below it, and nothing is reported but what changed", () => {
+    const ready = [...row1]; ready[7] = "Yes";
+    const row2 = ["CS-002", "Second", "", "", "", "", "", "", "", "", "https://github.com/litlfred/dth-phc/issues/6"];
+    const first = watch(sheet([ready, row2]), [issue(5), issue(6)], repo, undefined);
+    if (first.status !== "changed") throw new Error("expected changed");
+    const blank = Array(11).fill("");
+    expect(watch(sheet([blank, ready, row2]), [issue(5), issue(6)], repo, first.state).status).toBe("unchanged");
+    const merge = [...row2]; merge[8] = "Yes";
+    const r = watch(sheet([blank, ready, merge]), [issue(5), issue(6)], repo, first.state);
+    if (r.status !== "changed") throw new Error("expected changed");
+    expect(r.changes).toEqual([{ kind: "cell", row: 5, cs: "CS-002", header: "Ready for merge", from: "", to: "Yes" }]);
+    expect(r.closedRows).toEqual([]);
+    const closed = watch(sheet([blank, ready, row2]), [issue(5, { state: "closed", updated_at: "2026-11-01T11:00:00Z" }), issue(6)], repo, first.state);
+    expect(closed.status === "changed" && closed.closedRows).toEqual([4]);
+  });
+
+  test("state from before cells were keyed by Change-set id is taken as a baseline, not as changes", () => {
+    const first = watch(sheet([row1]), [issue(5)], repo, undefined);
+    if (first.status !== "changed") throw new Error("expected changed");
+    const old = { ...first.state, digest: "older", cells: { "3:Title": "Sign off exclusions", "3:Selected Sections": "Front matter" } };
+    const r = watch(sheet([row1]), [issue(5)], repo, old);
+    expect(r.status === "changed" && r.changes).toEqual([]);
+  });
+
   test("links and cells are read from the header row, wherever it is", () => {
     expect([...linkedIssues(sheet([row1]), repo)]).toEqual([[5, [3]]]);
     expect(linkedIssues(sheet([row1]), "litlfred/dth-pc").size).toBe(0);
     const short = [...row1]; short[10] = "dth-phc#6, litlfred/dth-phc#7; dth-pc#9";
     expect([...linkedIssues(sheet([short]), repo).keys()]).toEqual([6, 7]);
-    expect(sheetCells(sheet([row1]))).toEqual({ "3:Title": "Sign off exclusions", "3:Selected Sections": "Front matter" });
+    expect(sheetCells(sheet([row1]))).toEqual({ "CS-001:Title": "Sign off exclusions", "CS-001:Selected Sections": "Front matter" });
+    const noId = [...row1]; noId[0] = "";
+    expect(sheetCells(sheet([noId]))).toEqual({ "3:Title": "Sign off exclusions", "3:Selected Sections": "Front matter" });
   });
 
   test("with the sheet script's hash, a poll needs only the Issue column", () => {

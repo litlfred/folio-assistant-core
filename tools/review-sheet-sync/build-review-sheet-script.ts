@@ -354,6 +354,7 @@ export function buildConfig(repo: string, cfgPath: string): SheetConfig {
   CFG = {
     SOURCE: cfgPath, ...(cfg.sheet ? { SHEET: cfg.sheet } : {}),
     ...(base ? { SITE_URL: base } : {}), ...(repoUrl ? { REPO_URL: repoUrl } : {}),
+    LATEST_BUILD: latestBuild(),
     ...CFG,
   };
   return { CFG, COLS, DATA: data };
@@ -373,6 +374,9 @@ const CHUNK = 40_000;
  * Instructions row above each tab's header carries the same words; the script
  * skips that row (owner, 2026-10-31).
  */
+/** How the colour key line starts; the script finds the key by it. */
+export const COLOUR_KEY_LEAD = "Column colours:     ";
+
 export function colourKey(c: SheetConfig): { blue: string; green: string; orange: string; grey: string } {
   // Process roles, not job titles: who sits on the committee is the sheet's business (owner, 2026-10-31).
   const people = c.CFG.MODE === "drafting" ? "the Authoring Committee" : "the Feedback Review Committee";
@@ -414,9 +418,15 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
   const drafting = c.CFG.MODE === "drafting";
   const t = { ...(drafting ? DRAFT_TABS : DEFAULT_TABS), ...c.CFG } as Record<string, string>;
   const k = colourKey(c);
-  const colours = [k.blue, k.green, k.orange, k.grey].map((x) => x.replace(": ", " = ")).join("     ");
+  // The key names no colour: each phrase is shown in its colour by the
+  // script (owner, 2026-11-01: "make the text colored not have the word").
+  const colours = COLOUR_KEY_LEAD + [k.blue, k.green, k.orange, k.grey].map((x) => x.replace(/^\w+: /, "")).join("     ");
   const staging = (drafting ? c.COLS.draft?.staging : c.COLS.rcs?.staging) ?? "Staging review";
   const fb = c.COLS.draft?.feedback ?? "Contributor Feedback";
+  // Column names in the steps are shown bold in their column's colour by the
+  // script, so the text never says the colour (owner, 2026-11-01).
+  const pcFb = (c.COLS.rpc?.feedback ?? "Committee Feedback (initials)").replace(/ \(.*\)$/, "");
+  const reviewersFb = drafting ? fb : pcFb;
   const people = drafting ? t.FEEDBACK : `${t.RPC} and ${t.RCS}`;
   const footer = [
     "Find your rows: Data, then Filter views, then pick a view (works for viewers too, and changes nothing for anyone else). Comment without edit rights: Insert, then Comment.",
@@ -424,43 +434,43 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
   ];
   // Steps 3 to 6, the same on every change-set tab.
   const changeSet = [
-    "   3. An Editor sets Ready for agent (Orange) to Yes once the direction is agreed.",
-    `   4. The agent edits the document in one pull request for the row. Agentic status (Green) says where it is; ${staging} opens what changed. Once the agent has finished and its preview is live, the script sets Ready for agent to Completed.`,
-    "   5. Reviewers answer in Blue. A change marks the proposal stale and sets Ready for agent (Orange) back to No; an Editor sets Yes again to have the agent update the pull request.",
-    "   6. A reviewer who did not write the change checks every disposition against the Blue Disposition and the pull request, and reads the QA report (the QA gate). Once it passes, an Editor sets Ready for merge (Orange) to Yes, and the agent merges.",
+    "   3. An Editor sets Ready for agent to Yes once the direction is agreed.",
+    `   4. The agent edits the document in one pull request for the row. Agentic status says where it is; ${staging} opens what changed. Once the agent has finished and its preview is live, the script sets Ready for agent to Completed.`,
+    `   5. Reviewers update ${reviewersFb}. A change marks the proposal stale and sets Ready for agent back to No; an Editor sets Yes again to have the agent update the pull request.`,
+    "   6. A reviewer who did not write the change checks every disposition against Disposition and the pull request, and reads the QA report (the QA gate). Once it passes, an Editor sets Ready for merge to Yes, and the agent merges.",
   ];
   const out: Record<string, string> = {
     [CONFIG_TAB]: `The script's settings. Work happens on ${people}; nothing here needs you unless you install the script. Do not edit this tab: the agent writes it, except EDITORS, which only the owner edits.`,
     [t.AGENT]: drafting || !t.AGENT_CS
-      ? `Written only by the agent: one row per ${drafting ? "change set" : "comment or change set"}, with its status, pull request and preview. Do not edit. The script copies what it needs into the green columns of ${people}.`
-      : `Written only by the agent: one row per public comment, with its status, what was done and the change set it belongs to. Do not edit. The script copies what it needs into the green columns of ${t.RPC}.`,
-    ...(!drafting && t.AGENT_CS ? { [t.AGENT_CS]: `Written only by the agent: one row per change set, with its pull requests, what they changed and its staging preview. Do not edit. The script copies what it needs into the green columns of ${t.RCS} and ${t.RPC}.` } : {}),
+      ? `Written only by the agent: one row per ${drafting ? "change set" : "comment or change set"}, with its status, pull request and preview. Do not edit. The script copies what it needs into the agent's columns of ${people}.`
+      : `Written only by the agent: one row per public comment, with its status, what was done and the change set it belongs to. Do not edit. The script copies what it needs into the agent's columns of ${t.RPC}.`,
+    ...(!drafting && t.AGENT_CS ? { [t.AGENT_CS]: `Written only by the agent: one row per change set, with its pull requests, what they changed and its staging preview. Do not edit. The script copies what it needs into the agent's columns of ${t.RCS} and ${t.RPC}.` } : {}),
     Watch: "Kept by the agent's watcher: what changed since it last looked. Do not edit.",
   };
   if (drafting) {
     out[t.FEEDBACK] = [
       colours,
       "This tab has one row per change set:",
-      `   1. The Authoring Committee starts a row: a title, the Selected Sections, and feedback in the Blue ${fb} columns. The script gives it a Change-set id.`,
-      `   2. The agent proposes a direction in ${c.COLS.draft?.agentFeedback || "Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says \"Needs you: answer the agent's question\".`,
+      `   1. The Authoring Committee starts a row: a Title, the Selected Sections, and feedback in the ${fb} columns. The script gives it a Change-set id.`,
+      `   2. The agent proposes a direction in ${c.COLS.draft?.agentFeedback || "Feedback (agent)"}. A question it needs answered is there too, with its options and recommendation, and Agentic status says \"Needs you: answer the agent's question\".`,
       ...changeSet,
       ...footer,
     ].join("\n");
   } else {
-    out["Public Comment Source"] = `The public comments as received, one row per comment. Do not edit: a correction goes in a blue column on ${t.RPC}.`;
+    out["Public Comment Source"] = `The public comments as received, one row per comment. Do not edit: a correction goes in ${pcFb} on ${t.RPC}.`;
     out[t.RPC] = [
       colours,
-      "This tab has one row per public comment, as received (Grey):",
-      "   1. The Feedback Review Committee reads the comment and adds its feedback in the Blue columns, with the TWG, comment type, disposition and status.",
-      `   2. The agent puts each comment in a change set (Green Change Set, linked to its row on ${t.RCS}) and suggests a TWG.`,
-      `   3. Decisions to edit are made per change set, on ${t.RCS} (its Orange Ready columns). Agentic status and ${staging} here follow the comment's change set.`,
+      "This tab has one row per public comment, as received:",
+      `   1. The Feedback Review Committee reads the comment and adds its feedback in the ${pcFb} columns, with the TWG (human), Comment type, Disposition and Status.`,
+      `   2. The agent puts each comment in a Change Set (linked to its row on ${t.RCS}) and suggests a TWG (agent).`,
+      `   3. Decisions to edit are made per change set, on ${t.RCS} (its Ready for agent and Ready for merge columns). Agentic status and ${staging} here follow the comment's change set.`,
       ...footer,
     ].join("\n");
     out[t.RCS] = [
       colours,
       `This tab has one row per change set, joining its public comments from ${t.RPC}:`,
-      "   1. The Feedback Review Committee gives feedback on the change set in Blue and picks its TWG.",
-      `   2. The agent proposes a direction in ${c.COLS.rcs?.agentFeedback || "Change Set Feedback (agent)"}, in Green. A question it needs answered is there too, with its options and recommendation, and Agentic status says \"Needs you: answer the agent's question\".`,
+      `   1. The Feedback Review Committee gives feedback on the change set in ${pcFb} and picks its TWG (CS).`,
+      `   2. The agent proposes a direction in ${c.COLS.rcs?.agentFeedback || "Change Set Feedback (agent)"}. A question it needs answered is there too, with its options and recommendation, and Agentic status says \"Needs you: answer the agent's question\".`,
       ...changeSet,
       ...footer,
     ].join("\n");
@@ -470,13 +480,13 @@ export function tabInstructions(c: SheetConfig): Record<string, string> {
 
 export function setupSteps(_c: SheetConfig): string[] {
   const steps = [
-    `Once per sheet, by the sheet's owner. Made with File, then Make a copy, of the template? It is already set up: choose Review links, then Install, allow it (step 5), and you are done. Otherwise (details: ${INSTALL_GUIDE_URL}):`,
+    `Once per sheet, by the sheet's owner. Made with File, then Make a copy, of the template? It is already set up: choose Folio Assistant, then Install, allow it (step 5), and you are done. Otherwise (details: ${INSTALL_GUIDE_URL}):`,
     `1. Get the short stub: open ${STUB_GS_URL} and press "Copy raw file" (the two-squares button at the top right of the code)`,
     "2. Here, choose Extensions, then Apps Script. Name the project after this sheet (click \"Untitled project\"). \"Unable to open the file\"? Use a private window signed in to the owner's account only",
     "3. Click Code.gs, select all, delete, paste the stub and save (Ctrl+S or Cmd+S)",
     `4. Next to Libraries, press +, paste the Script ID ${LIBRARY_ID}, press Look up, choose Version HEAD (Development mode), set Identifier to Review, and press Add`,
-    "5. Reload the sheet and choose Review links, then Install. Google asks to allow it, then says \"Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.\" That is expected for a sheet's own script. Choose Advanced, then Go to <project name> (unsafe), then Allow. Why: https://support.google.com/cloud/answer/7454865",
-    "6. Review links, then Refresh now, checks it",
+    "5. Reload the sheet and choose Folio Assistant, then Install. Google asks to allow it, then says \"Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.\" That is expected for a sheet's own script. Choose Advanced, then Go to <project name> (unsafe), then Allow. Why: https://support.google.com/cloud/answer/7454865",
+    "6. Folio Assistant, then Refresh now, checks it",
     `   • Updates need nothing here: the code lives once in the Folio Review Library (${LIBRARY_URL}), and every sheet runs its latest version`,
   ];
   return steps;
@@ -497,13 +507,13 @@ export function dropdownSteps(c: SheetConfig): string[] | undefined {
 /** Who may set the Ready columns, and how the owner names them in the EDITORS row. */
 export function editorSteps(): string[] {
   return [
-    "Who may set Ready for agent and Ready for merge: the emails in the orange EDITORS cell below (column B).",
+    "Who may set Ready for agent and Ready for merge: the emails in the EDITORS cell below (column B).",
     "   • Share each of them as Editor first (Share button, pick Editor)",
     "   • Type their emails in the EDITORS cell; only the owner can change it",
     "   • Format: plain emails only, no names; one per line (Ctrl+Enter, or Cmd+Enter on a Mac, starts a new line in a cell). Commas or semicolons also work",
     "   • Example, for two editors:\n        ana@example.org\n        ben@example.org",
     "   • Anything that is not an email is left out, and Refresh now says which",
-    "   • Choose Review links, then Refresh now: the two Ready columns are locked to the owner plus them",
+    "   • Choose Folio Assistant, then Refresh now: the two Ready columns are locked to the owner plus them",
     "   • Leave it empty and only the owner can set them (the default)",
   ];
 }
@@ -610,6 +620,20 @@ export function chunks(json: string): string[] {
   return out;
 }
 
+function contentStamp(template: string): string {
+  return `template sha256 ${createHash("sha256").update(template).digest("hex").slice(0, 16)}`;
+}
+
+/**
+ * The build stamp of the Code.gs this checkout publishes. The Config tab
+ * carries it as LATEST_BUILD, so "Which version is this?" can say whether the
+ * sheet is up to date without the script fetching anything (owner, 2026-11-01).
+ */
+export function latestBuild(): string {
+  const here = dirname(fileURLToPath(import.meta.url));
+  return contentStamp(readFileSync(join(here, "review-sheet.gs"), "utf8"));
+}
+
 /** The one script every review sheet runs: the template, stamped with its commit. */
 export function buildScript(opts: { stamp?: "commit" | "content" } = {}): string {
   const here = dirname(fileURLToPath(import.meta.url));
@@ -617,9 +641,7 @@ export function buildScript(opts: { stamp?: "commit" | "content" } = {}): string
   // The committed copy (dist/Code.gs) is stamped by the template's content, not
   // a commit: a file cannot name the commit it is in, and the check that it is
   // current must not change with every commit.
-  const at = opts.stamp === "content"
-    ? `template sha256 ${createHash("sha256").update(template).digest("hex").slice(0, 16)}`
-    : templateCommit(here);
+  const at = opts.stamp === "content" ? contentStamp(template) : templateCommit(here);
   return asciiOnly(template
     .replace("/*@@VERSION@@*/", `// folio-assistant-core tools/review-sheet-sync at ${at}.`)
     .replace("@@STAMP@@", at.replace(/'/g, "")));

@@ -9,21 +9,27 @@
  * settings, lock and triggers stay this sheet's.
  *
  * First time: save, then pick installTriggers in the function list and press
- * Run (or, in the sheet, Review links > Install).
+ * Run (or, in the sheet, Folio Assistant > Install).
  * @OnlyCurrentDoc
  */
 function installTriggers() { use_(); Review.installTriggers(); }
 function onOpen() {
-  // The menu is built here, so it shows even when the library cannot run
-  // before the script is allowed (a simple trigger cannot ask for that).
-  SpreadsheetApp.getUi().createMenu('Review links')
+  // The library builds the menu, so every sheet shows the same one and a
+  // rename needs no new stub. If the library cannot run yet (before the
+  // script is allowed), this fallback menu still shows.
+  const ui = SpreadsheetApp.getUi();
+  try { Review.addMenu(ui); return; } catch (e) { /* fall back below */ }
+  ui.createMenu('Folio Assistant')
     .addItem('Refresh now', 'refreshAll')
     .addItem('Install (first time)', 'installTriggers')
     .addItem('Which version is this?', 'showVersion')
+    .addSeparator()
+    .addItem('About Folio Assistant', 'showAbout')
     .addToUi();
 }
 function refreshAll() { use_(); Review.refreshAll(); }
 function markDirty(e) { use_(); Review.markDirty(e); }
 function refreshIfDirty() { use_(); Review.refreshIfDirty(); }
 function showVersion() { use_(); Review.showVersion(); }
+function showAbout() { Review.showAbout(); }
 function use_() { Review.init({ PropertiesService: PropertiesService, LockService: LockService, ScriptApp: ScriptApp }); }

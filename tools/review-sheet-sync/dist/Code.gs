@@ -16,7 +16,7 @@
  *
  * Install once: Extensions > Apps Script, paste this file as Code.gs (the
  * only file to paste), save, pick installTriggers in the function
- * list, press Run and allow access, then reload the sheet. A "Review links"
+ * list, press Run and allow access, then reload the sheet. A "Folio Assistant"
  * menu appears. In a drafting sheet an edit rebuilds at once; in a
  * public-comment sheet it marks the sheet dirty and a 1-minute trigger
  * rebuilds. "Refresh now" rebuilds at once. Columns are found by their header
@@ -28,10 +28,10 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 4a63cef7486b08c1.
+// folio-assistant-core tools/review-sheet-sync at template sha256 c5f119472c4ae036.
 
 /**
- * Run this one, once, from the editor (or Review links, then Install automatic
+ * Run this one, once, from the editor (or Folio Assistant, then Install automatic
  * refresh): it is first in the file so the editor's Run button picks it by
  * default (owner, 2026-10-31: Run picked loadConfig and failed). Every other
  * function here is called by it, the menu or a trigger, never run by hand.
@@ -75,9 +75,14 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 4a63cef7486b08c1';
+const SCRIPT_VERSION = 'template sha256 c5f119472c4ae036';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
-const LATEST_URL = 'https://github.com/litlfred/folio-assistant-core/blob/main/tools/review-sheet-sync/dist/Code.gs';
+const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
+// The menu's name and the page it points to for more (owner, 2026-11-01:
+// "instead of Review links ... Folio Assistant ... link to the folio asst page").
+const MENU_NAME = 'Folio Assistant';
+const ABOUT_URL = 'https://litlfred.github.io/folio-assistant/';
+const ABOUT_LINE = 'More about Folio Assistant: ' + ABOUT_URL;
 const RUN_THIS = 'This function is not meant to be run by hand. In the toolbar, pick installTriggers ' +
   'in the function list (next to Run and Debug), then press Run.';
 let CFG = null, COLS = null, DATA = null, DRAFTING = false, WATCHED = [], EDITORS = null, EDITORS_SKIPPED = [];
@@ -144,8 +149,8 @@ function notLinked(ss) {
 const SETUP_MARK = '\u26a0 ';
 const SETUP_STEPS = {
   unlinked: SETUP_MARK + 'Not set up yet. Step 1 of 2: ask the agent to link this sheet to its document, and give it this sheet\'s link. ' +
-    'Step 2: choose Review links, then Install.',
-  uninstalled: SETUP_MARK + 'Almost set up. Step 2 of 2: choose Review links, then Install (once), and allow it. The script then keeps this sheet current.',
+    'Step 2: choose ' + MENU_NAME + ', then Install.',
+  uninstalled: SETUP_MARK + 'Almost set up. Step 2 of 2: choose ' + MENU_NAME + ', then Install (once), and allow it. The script then keeps this sheet current.',
 };
 /** Where the sheet's setup is: 'unlinked' (no Config), 'uninstalled' (no timer yet) or 'ready'. */
 function setupState(linked) {
@@ -168,9 +173,11 @@ function markSetup(ss, state) {
     if (!LEGEND_RE.test(String(sh.getRange(1, 1).getDisplayValue()).trim())) return;
     const cell = sh.getRange(1, 2);
     const before = String(cell.getDisplayValue());
-    let lines = before.split('\n').filter(l => l.indexOf(SETUP_MARK) !== 0 && l.indexOf('Document: ') !== 0);
+    let lines = before.split('\n').filter(l => l.indexOf(SETUP_MARK) !== 0 && l.indexOf('Document: ') !== 0 &&
+      l.indexOf('More about ') !== 0);
     if (SETUP_STEPS[state]) lines.unshift(SETUP_STEPS[state]);
     if (where) lines.push(where);
+    lines.push(ABOUT_LINE);
     const text = lines.join('\n');
     if (text !== before) cell.setValue(text);
   });
@@ -179,29 +186,52 @@ function markSetup(ss, state) {
 }
 
 function showVersion() {
-  // Short and plain (owner, 2026-11-01: the old text was "long, unclear").
-  const build = String(SCRIPT_VERSION).replace(/^template sha256 /, '');
-  SpreadsheetApp.getUi().alert('Which version is this?',
-    'Build: ' + build + '\n\n' +
-    'Newest build: the "at ..." line near the top of ' + LATEST_URL + '\n\n' +
-    'Different? Ask the agent for the Code.gs copy page, paste it over Code.gs in the Folio Review Library (' + LIBRARY_URL + ') and save, ' +
-    'then choose Review links, Refresh now in each sheet.',
+  // Short, one fact per line (owner, 2026-11-01: "not pretty as requested").
+  // The copy page is the one place the newest build is published, and the
+  // Config tab's LATEST_BUILD (written by the agent with each build) says
+  // whether this sheet has it, so the script still never fetches. An alert
+  // cannot hold a link, and HtmlService stays out (see the security tests).
+  const short = v => String(v || '').replace(/^template sha256 /, '').slice(0, 8);
+  const build = short(SCRIPT_VERSION);
+  let latest = '';
+  try { loadConfig(SpreadsheetApp.getActive()); latest = short(CFG && CFG.LATEST_BUILD); } catch (e) { /* not linked yet */ }
+  const status = !latest ? '' : latest === build ? '\u2713 Up to date.\n\n' : 'New build available: ' + latest + '\n\n';
+  SpreadsheetApp.getUi().alert('Code.gs build ' + build,
+    status +
+    'Newest build: top of the copy page\n' + COPY_PAGE_URL.replace(/^https:\/\//, '') + '\n\n' +
+    'Different? Paste that page over Code.gs in the Folio Review Library, then save.\n\n' + ABOUT_LINE,
     SpreadsheetApp.getUi().ButtonSet.OK);
 }
 
-function onOpen() {
-  SpreadsheetApp.getUi().createMenu('Review links')
+function showAbout() {
+  SpreadsheetApp.getUi().alert('About ' + MENU_NAME,
+    MENU_NAME + ' keeps this review sheet linked to its document and its agents.\n\n' + ABOUT_LINE,
+    SpreadsheetApp.getUi().ButtonSet.OK);
+}
+
+/**
+ * The sheet's menu. The stub calls this too (ui handed in), so the library
+ * sets the menu's name and items and a rename needs no new stub.
+ */
+function addMenu(ui) {
+  (ui || SpreadsheetApp.getUi()).createMenu(MENU_NAME)
     .addItem('Refresh now', 'refreshAll')
     .addItem('Install (first time, or after pasting a new Code.gs)', 'installTriggers')
     .addItem('Which version is this?', 'showVersion')
+    .addSeparator()
+    .addItem('About ' + MENU_NAME, 'showAbout')
     .addToUi();
+}
+
+function onOpen() {
+  addMenu();
   try {
     const ss = SpreadsheetApp.getActive();
     const sh = ss.getSheetByName(CONFIG_TAB);
     const keys = sh ? sh.getRange(1, 1, Math.max(sh.getLastRow(), 1), 1).getDisplayValues().map(r => String(r[0]).trim()) : [];
     const linked = keys.includes('CFG');
     if (!linked) ss.toast('Ask the agent to link this sheet. The \u26a0 line at the top of the tab says how.', '\u26a0 Not set up yet', 30);
-    else if (setupState(true) === 'uninstalled') ss.toast('Choose Review links, then Install, to start the script.', '\u26a0 Almost set up', 30);
+    else if (setupState(true) === 'uninstalled') ss.toast('Choose ' + MENU_NAME + ', then Install, to start the script.', '\u26a0 Almost set up', 30);
     if (linked) loadConfig(ss);
     markSetup(ss, setupState(linked));
   } catch (e) { /* a toast is a courtesy; never block the menu */ }
@@ -533,7 +563,7 @@ function refreshAll() {
   if (!lock.tryLock(1000)) {
     // Refresh now pressed while a timer refresh runs: say so rather than do
     // nothing in silence (owner, 2026-10-31: "what does Refresh now do exactly?").
-    try { SpreadsheetApp.getActive().toast('Another refresh is running. Try again in a minute.', 'Review links', 5); } catch (err) { /* no UI on a timer */ }
+    try { SpreadsheetApp.getActive().toast('Another refresh is running. Try again in a minute.', MENU_NAME, 5); } catch (err) { /* no UI on a timer */ }
     return false;
   }
   const t0 = Date.now();
@@ -854,15 +884,67 @@ function headerNotes(ss) {
   });
 }
 const KEY_COLOURS = { blue: '#1f5fa8', green: '#2e7d32', orange: '#c25e00', grey: '#666666' };
+const KEY_ORDER = ['blue', 'green', 'orange', 'grey'];
+const KEY_LEAD_RE = /^Column colou?rs:\s*/;
 const KEY_WORD_RE = /\b(blue|green|orange|grey)\b/gi;
-function keyRuns(text) {
+/**
+ * Which key colour a header's fill is: grey when its channels are close,
+ * otherwise the strongest channel (blue, green, or red for orange). A white
+ * or unfilled head has no colour.
+ */
+function fillGroup(hex) {
+  const m = /^#?([0-9a-f]{2})([0-9a-f]{2})([0-9a-f]{2})$/i.exec(String(hex || ''));
+  if (!m) return null;
+  const [r, g, b] = [m[1], m[2], m[3]].map(x => parseInt(x, 16) / 255);
+  if (Math.min(r, g, b) > 0.95) return null;
+  if (Math.max(r, g, b) - Math.min(r, g, b) < 0.08) return 'grey';
+  return b >= r && b >= g ? 'blue' : g >= r ? 'green' : 'orange';
+}
+/**
+ * Column names to colour in the Instructions text, each with its header's
+ * key colour (owner, 2026-11-01: "make use of colors match the column
+ * headers"). A people's column with initials in its head ("Contributor
+ * Feedback (CL)") is also found by its bare name.
+ */
+function headerColours(ss) {
+  const out = {};
+  ss.getSheets().forEach(sh => {
+    if (sh.isSheetHidden() || sh.getName() === CONFIG_TAB || sh.getLastColumn() < 1) return;
+    const n = Math.min(5, sh.getLastRow());
+    if (n < 1) return;
+    const row = legendCount(sh.getRange(1, 1, n, 1).getDisplayValues().map(r => r[0])) + 1;
+    const r = sh.getRange(row, 1, 1, sh.getLastColumn());
+    const heads = r.getDisplayValues()[0], fills = r.getBackgrounds()[0];
+    heads.forEach((h, i) => {
+      const name = String(h).trim(), grp = fillGroup(fills[i]);
+      if (!name || !grp) return;
+      if (!out[name]) out[name] = grp;
+      const bare = /^(.*Feedback) \((?!agent\)).*\)$/.exec(name);
+      if (bare && !out[bare[1]]) out[bare[1]] = grp;
+    });
+  });
+  return out;
+}
+/** [start, end, colour] runs for one Instructions text. */
+function keyRuns(text, heads) {
   const runs = [];
   // A setup line (markSetup) may sit above the key: the key is then the second line.
   const at = text.indexOf(SETUP_MARK) === 0 && text.indexOf('\n') >= 0 ? text.indexOf('\n') + 1 : 0;
   const nl = text.indexOf('\n', at);
   const first = nl < 0 ? text.slice(at) : text.slice(at, nl);
   let keyEnd = 0;
-  if (/^(blue|green|orange|grey) = /i.test(first)) {
+  const lead = KEY_LEAD_RE.exec(first);
+  if (lead) {
+    // "Column colours:     your input ...     written by the agent ...": the
+    // phrases in key order, no colour named.
+    let p = at + lead[0].length, k = 0;
+    first.slice(lead[0].length).split(/(\s{3,})/).forEach(part => {
+      if (/^\s+$/.test(part)) { p += part.length; return; }
+      if (part && k < KEY_ORDER.length) runs.push([p, p + part.length, KEY_COLOURS[KEY_ORDER[k++]]]);
+      p += part.length;
+    });
+    keyEnd = at + first.length;
+  } else if (/^(blue|green|orange|grey) = /i.test(first)) {
     const seg = /(blue|green|orange|grey) = .*?(?=\s{3,}|$)/gi;
     let m;
     while ((m = seg.exec(first))) runs.push([at + m.index, at + m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
@@ -871,7 +953,19 @@ function keyRuns(text) {
   let m;
   KEY_WORD_RE.lastIndex = keyEnd;
   while ((m = KEY_WORD_RE.exec(text))) runs.push([m.index, m.index + m[0].length, KEY_COLOURS[m[1].toLowerCase()]]);
-  return runs;
+  // Column names, longest first, whole words only, never inside a run already taken.
+  const names = Object.keys(heads || {}).sort((a, b) => b.length - a.length);
+  const taken = (a, z) => runs.some(([x, y]) => a < y && z > x);
+  const word = ch => /[A-Za-z0-9]/.test(ch || '');
+  names.forEach(name => {
+    let at = text.indexOf(name, keyEnd);
+    while (at >= 0) {
+      const z = at + name.length;
+      if (!word(text[at - 1]) && !word(text[z]) && !taken(at, z)) runs.push([at, z, KEY_COLOURS[heads[name]]]);
+      at = text.indexOf(name, z);
+    }
+  });
+  return runs.sort((a, b) => a[0] - b[0]);
 }
 /**
  * The Config tab's colours, kept by every refresh so a row the agent wrote
@@ -905,6 +999,7 @@ function styleConfig(ss) {
 
 function colourInstructions(ss) {
   if (!ss) throw new Error(RUN_THIS);
+  const heads = headerColours(ss);
   ss.getSheets().forEach(sh => {
     const n = Math.min(5, sh.getLastRow());
     if (n < 2 || sh.getLastColumn() < 2) return;
@@ -913,8 +1008,12 @@ function colourInstructions(ss) {
       const cell = sh.getRange(r, 2);
       const now = cell.getRichTextValue();
       const text = now ? now.getText() : '';
-      const runs = keyRuns(text);
-      if (!runs.length || (now.getTextStyle(runs[0][0], runs[0][1]).getForegroundColor() || '').toLowerCase() === runs[0][2]) continue;
+      const runs = keyRuns(text, heads);
+      // Rewritten only when some run lacks its colour, so a refresh is cheap.
+      if (!runs.length || runs.every(([a, z, c]) => {
+        const st = now.getTextStyle(a, z);
+        return (st.getForegroundColor() || '').toLowerCase() === c && st.isBold();
+      })) continue;
       const b = SpreadsheetApp.newRichTextValue().setText(text);
       runs.forEach(([a, z, c]) => b.setTextStyle(a, z, SpreadsheetApp.newTextStyle().setForegroundColor(c).setBold(true).build()));
       const url = /https?:\/\/\S+/g;
@@ -1065,8 +1164,16 @@ function hashOf(text) {
  * initials) changes no row's basis. Returns that hash first, then the older
  * one that kept empty cells, so a basis an agent wrote before the change still
  * matches until it next writes one.
+ *
+ * A basis written as "2:<hash>" also covers the row's grey content columns
+ * (basisGrey), so a change to the comments a change set joins marks its
+ * proposal stale too (owner, 2026-10-31: "changed blue human (or mechanical
+ * grey) content"). `written` is the stored basis: its form says which hash
+ * to compare with, so old bases keep matching until the agent rewrites them.
  */
-function basisOf(header, row, exact, prefix) {
+function basisOf(header, row, exact, prefix, written) {
+  const v2 = /^2:/.test(String(written || ''));
+  if (v2) exact = exact.concat(basisGrey());
   const parts = [], legacy = [];
   header.forEach((h, i) => {
     let v = String(row[i] == null ? '' : row[i]).trim();
@@ -1078,9 +1185,22 @@ function basisOf(header, row, exact, prefix) {
       if (v) parts.push(h + '=' + v);
     }
   });
+  const pfx = v2 ? '2:' : '';
   // A basis written before a rename (RENAMED) names the columns the old way.
   const was = t => t.map(x => { const a = aliasOf(x.split('=')[0]); return a === null || x.indexOf('Committee') !== 0 ? x : a + x.slice(x.indexOf('=')); });
-  return [hashOf(parts.join('\n')), hashOf(legacy.join('\n')), hashOf(was(parts).join('\n')), hashOf(was(legacy).join('\n'))];
+  return [pfx + hashOf(parts.join('\n')), pfx + hashOf(legacy.join('\n')), pfx + hashOf(was(parts).join('\n')), pfx + hashOf(was(legacy).join('\n'))];
+}
+
+/**
+ * The grey (mechanical) content columns a proposal also rests on: in a
+ * public-comment sheet, what Review Change Sets joins from its comments.
+ * Not the agent's own columns (Agentic status, Staging review page), so the
+ * agent's writes never make its proposals stale.
+ */
+function basisGrey() {
+  if (DRAFTING) return [];
+  const c = COLS.rcs;
+  return [c.sections, c.pages, c.comments, c.revisions, c.feedback, c.dispositions, 'TWG (PCs)'].filter(Boolean);
 }
 
 /** "2026-10-30 22:30Z" (or ISO) -> ms, or NaN. */
@@ -1285,7 +1405,8 @@ function markStale(s, csCol, basisOfCs, exact, prefix, agentName, lineOf, want) 
   s.rows.forEach((r, k) => {
     if (want && !want(k)) return;
     const cs = String(r[csCol]).trim();
-    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix), basisOfCs[cs]);
+    const w = basisOfCs[cs];
+    const t = staleText(r[ag], basisOf(s.header, r, exact, prefix, w), w);
     const cur = t === null ? String(r[ag]) : t;
     const L = lineOf && Object.prototype.hasOwnProperty.call(lineOf, cs) ? lineOf[cs] : undefined;
     const fin = L !== undefined ? withProgress(cur, L) : cur;

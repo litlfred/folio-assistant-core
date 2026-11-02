@@ -247,6 +247,26 @@ The original is never touched: the library entry and the folio's nodes are
 DERIVED, and both are checked (`gen-library-jsonld --check`,
 `gen-block-jsonld --check`) so neither can drift unseen.
 
+## A source's glossary and abbreviations — candidates, read by one tool
+
+Owner, 2026-11-01 (folio-assistant-core#498, Q-GLO-1 C): every L1, DTH and DAK
+source reads its glossary the same way, with the Tool `glossary-from-source`,
+never with a script of its own:
+
+```sh
+bun run cat glossary:from-source --out glossary/<scheme>.glossary.json \
+  --id <scheme> --title "<title>" --from library/<doc-id>/sections
+```
+
+`--from` reads every section whose title names a glossary, definitions,
+terms, abbreviations or acronyms, and each numbered section under a glossary
+section (a specification that prints one term per heading). A folio block can
+be named with `--terms` or `--abbreviations`. Each row becomes a `candidate`
+term, verbatim, with `source: <file>#L<line>`; an acronym becomes the
+`notation` of the term it expands. The scheme is merged: a term a person has
+adopted or edited is never changed. Only a person moves a term to `authored`
+(`glossary-terms`). `--check` keeps the candidates in step with the L1 entry.
+
 ## An inferred chapter tree is refused, not guessed
 
 This is the rule most worth understanding, because the failure it prevents is

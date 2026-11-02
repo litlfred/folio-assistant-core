@@ -1,7 +1,7 @@
 import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { feedbackBasis, feedbackRow, parseFeedbackIssue } from "./feedback-issue.js";
+import { feedbackBasis, feedbackRow, parseFeedbackIssue, PC_BASIS_GREY } from "./feedback-issue.js";
 
 const anchors = {
   chapters: [{ dir: "ch01-why", title: "Chapter 1. Why it matters", number: 1 }],
@@ -70,5 +70,26 @@ describe("feedbackBasis", () => {
   test("ignores the agent's own proposal, the mechanical columns, Ready, and tree marks", () => {
     expect(feedbackBasis(header, row.map((v, i) => (i === 5 ? "Try Y" : i === 6 ? "dth#2" : i === 4 ? "Yes" : v)))).toBe(b);
     expect(feedbackBasis(header, row.map((v, i) => (i === 2 ? "1.1 Global challenges" : v)))).toBe(b);
+  });
+});
+
+describe("feedbackBasis with grey content (a \"2:\" basis)", () => {
+  const header = ["Change-set", "Title", "Suggested Revisions", "TWG (PCs)", "TWG (CS)", "Architect Feedback (AB)", "Architect Feedback (agent)", "Agentic status"];
+  const row = ["CS-001", "Fix scope", "No. 1 \u00b7 Lengthen it", "Editorial", "", "", "Accept", "Not started"];
+  const exact = ["Title", "TWG (CS)"];
+  const b1 = feedbackBasis(header, row, exact, "Architect Feedback");
+  const b2 = feedbackBasis(header, row, exact, "Architect Feedback", PC_BASIS_GREY);
+  test("is marked 2: and differs from the blue-only basis", () => {
+    expect(b2).toMatch(/^2:[0-9a-z]+$/);
+    expect(b1).not.toMatch(/:/);
+  });
+  test("changes when a grey content cell changes; the blue-only basis does not", () => {
+    const moved = row.map((v, i) => (i === 2 ? v + ", and add an example" : v));
+    expect(feedbackBasis(header, moved, exact, "Architect Feedback", PC_BASIS_GREY)).not.toBe(b2);
+    expect(feedbackBasis(header, moved, exact, "Architect Feedback")).toBe(b1);
+  });
+  test("ignores the agent's own columns", () => {
+    const own = row.map((v, i) => (i === 6 ? "Reject" : i === 7 ? "PR open" : v));
+    expect(feedbackBasis(header, own, exact, "Architect Feedback", PC_BASIS_GREY)).toBe(b2);
   });
 });

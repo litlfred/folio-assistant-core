@@ -54,6 +54,14 @@ describe("coverage states", () => {
     expect(exitCodeFor(r, true)).toBe(1);
   });
 
+  it("a block that names the figure it reproduces is linked (core#486)", () => {
+    const r = coverage(declared("1", "2"), [
+      block({ figures: ["1"], reproduces: true }),
+      block({ figures: ["2"], reproduces: false }),
+    ]);
+    expect(r.figures.map((f) => f.state)).toEqual(["linked", "picture"]);
+  });
+
   it("reports blocks naming undeclared figures, and bad exclusions", () => {
     const r = coverage(declared("1"), [block({ figures: ["1", "9"] })], [{ figure: "1", scope: "other", reason: "x" }]);
     expect(r.undeclared).toEqual([{ file: "ch/f.jsonld", figure: "9" }]);
@@ -80,5 +88,18 @@ describe("end to end", () => {
     expect(run.status).toBe(1);
     const report = JSON.parse(run.stdout);
     expect(report.counts).toMatchObject({ picture: 1, missing: 1 });
+  });
+
+  it("reads meta.reproduces only when it names a source and a component", () => {
+    const dir = mkdtempSync(join(tmpdir(), "figcov-rep-"));
+    const folio = join(dir, "ch10");
+    mkdirSync(folio, { recursive: true });
+    const write = (n: string, reproduces: unknown) => {
+      writeFileSync(join(folio, `f-fig-${n}.jsonld`), JSON.stringify({ kind: "figure", meta: { source: { method: "l1-vector-figure" }, reproduces } }));
+      writeFileSync(join(folio, `f-fig-${n}.md`), `![Fig. ${n}. Reproduced](media/f${n}.png)\n`);
+    };
+    write("10", { source: "WHO ANC DAK", processId: "ANC.A", component: "business-process" });
+    write("11", { source: "WHO ANC DAK" });
+    expect(readBlocks(dir).map((b) => [b.figures[0], b.reproduces])).toEqual([["10", true], ["11", false]]);
   });
 });
