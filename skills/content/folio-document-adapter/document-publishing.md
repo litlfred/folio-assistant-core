@@ -67,7 +67,7 @@ locally as on any CI runner, because the commit is the only input that
 changes:
 
 ```sh
-bun run folio-assistant-core/scripts/document-export.ts release --document <slug> [--out build/export] [--release <id>] [--date YYYY-MM-DD]
+bun run folio-assistant-core/scripts/document-export.ts release --document <slug> [--out <dir>] [--release <id>] [--date YYYY-MM-DD]
 ```
 
 | file | what it is |
@@ -98,7 +98,7 @@ like the original text and carries no author.
 
 ```sh
 python3 -I folio-assistant-core/scripts/docx-offline.py changes <edited.docx> --repo . \
-    --out changes.json --summary pr-body.md [--apply [--commit]]
+    --out <changes.json> --summary <pr-body.md> [--apply [--commit]]
 ```
 
 - The file's `folio-source-commit` must exist in the repository, or nothing
