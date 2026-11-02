@@ -108,3 +108,21 @@ describe("the glossary as captured text", () => {
     expect(state["p3:s1"]).toBe("captured");
   });
 });
+
+describe("a quote that stands for an L1 sentence", () => {
+  it("captures the named L1 sentence when the block holds the corrected words", () => {
+    const { l1, folio } = fixture();
+    writeFileSync(join(l1, "sections", "sec-c.md"), "Each row should be noted in a in separate row of the sheet.\n");
+    writeFileSync(join(folio, "ch01", "p-rows.md"), "Each row should be noted in a separate row of the sheet.\n");
+    const quote = "Each row should be noted in a separate row of the sheet.";
+    const plainQuote = folioCoverage({ l1Dir: l1, folioDir: folio, quotes: [{ block: "ch01/p-rows", quote }] });
+    expect(plainQuote.sentences.find((s) => s.location === "p3:s1")!.state).toBe("unaccounted");
+    const mapped = folioCoverage({
+      l1Dir: l1,
+      folioDir: folio,
+      quotes: [{ block: "ch01/p-rows", quote, l1: "Each row should be noted in a in separate row of the sheet." }],
+    });
+    expect(mapped.sentences.find((s) => s.location === "p3:s1")!.state).toBe("captured");
+    expect(mapped.problems).toEqual([]);
+  });
+});

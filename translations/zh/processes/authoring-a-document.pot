@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: authoring-a-document\n"
-"POT-Creation-Date: 2026-10-31T16:31:59.495Z\n"
+"POT-Creation-Date: 2026-11-01T10:39:29.124Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: zh\n"
@@ -14,277 +14,227 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:91
-#. Diagram label
-msgid "1 · Plan the document [content-plan]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:99
-#. Diagram label
-msgid "2 · Seed the work plan [todo-manager]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:103
-#. Diagram label
-msgid "3 · Scaffold the folio [folio_init]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:111
-#. Diagram label
-msgid "4 · Author blocks [document-authoring]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:122
-#. Diagram label
-msgid "5 · Check the profile [content-validate]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:136
-#. Diagram label
-msgid "6 · Validate [content-validate]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:145
-#. Diagram label
-msgid "7 · Render MD / HTML / PDF [document-publishing]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:153
-#. Diagram label
-msgid "8 · Review and feedback [content-review]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:169
-#. Diagram label
-msgid "9 · Publish [content-publish]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:131
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:120
 #. Diagram element documentation
-msgid "Answered by the profile check (step 5): does every block stay within the folio's declared content profile? `violations` sends the author back to step 4 to fix the blocks; `clean` goes on to validation."
+msgid "Answered by the profile check: does every block stay within the folio's declared content profile? `violations` sends the author back to Task_AuthorBlocks to fix the blocks; `clean` goes on to validation."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:220
-#. Diagram label
-msgid "approved"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:146
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:134
 #. Diagram element documentation
 msgid "Assemble to Markdown, then pandoc. The PDF goes through an HTML engine — never latexmk."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:51
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:30
 #. Diagram label
 msgid "Author (person)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:39
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:100
+#. Diagram label
+msgid "Author blocks"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:16
 #. Diagram label
 msgid "Authoring a document"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:37
-#. Diagram label
-msgid "Authoring a document — plan to published"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:63
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:42
 #. Diagram label
 msgid "Authoring agent (system)"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:83
-#. Diagram label
-msgid "Authoring Committee"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:222
-#. Diagram label
-msgid "Authoring Committee feedback"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:186
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:82
 #. Diagram label
 msgid "Bean claimed?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:68
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:47
 #. Diagram label
-msgid "Build pipeline — validate · render · publish"
+msgid "Build pipeline"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:224
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:111
+#. Diagram label
+msgid "Check the profile"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:169
 #. Diagram label
 msgid "claimed"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:215
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:176
 #. Diagram label
 msgid "clean"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:196
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:155
 #. Diagram label
-msgid "Close the bean [bean-close]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:123
-#. Diagram element documentation
-msgid "content_profile_check: no math kind, no lean field, no .lean sibling. This is the step a paper folio does not have, and the reason a document folio never needs Lean or TeX to publish."
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:202
-#. Diagram label
-msgid "Contributor feedback [review-sheet-script]"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:177
-#. Diagram label
-msgid "Document published"
+msgid "Close the bean"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:112
 #. Diagram element documentation
+msgid "content_profile_check: no math kind, no lean field, no .lean sibling. This is the step a paper folio does not have, and the reason a document folio never needs Lean or TeX to publish."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:142
+#. Diagram element documentation
+msgid "Core's shared review-and-publish process (Process_FolioReviewPublish): the reviewer reads the rendered folio and approves it, asks for changes, or sends a working draft to the Authoring Committee. Before 2026-11-01 each authoring process drew these steps itself (shared block G6, owner Q-BR-7 A)."
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:163
+#. Diagram label
+msgid "Document published"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:101
+#. Diagram element documentation
 msgid "Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn. A normative statement is a `recommendation` block (bean 55ao), drafted through normative-statements: one statement per block, a folio-chosen label, and its strength as a code in a declared code list, so a reviewer signs off each one individually."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:104
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:93
 #. Diagram element documentation
 msgid "folio_init writes content/, uploads/, library/, the manifests, the builder shim and AGENTS.md. Skipped when the folio already exists."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:40
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:19
 #. Diagram element documentation
-msgid "How a document folio — structured prose and policy guidance, with no Lean and no required TeX — is authored, built and reviewed end to end. folio-assistant — authoring a document end to end (no Lean, no required TeX). Source of truth: this file. The SVG under docs/assets/img/workflows/ is generated from it by `bun run cat render:bpmn` — never hand-edit the SVG. The shape is the paper process minus the Lean lane and plus one step, the profile check, which is what keeps a document folio publishable without either toolchain."
+msgid "How a document folio — structured prose and policy guidance, with no Lean and no required TeX — is authored, built and reviewed end to end. folio-assistant — authoring a document end to end (no Lean, no required TeX). Source of truth: this file. The SVG under docs/assets/img/workflows/ is generated from it by `bun run cat render:bpmn` — never hand-edit the SVG. The shape is the paper process minus the Lean lane and plus one step, the profile check, which is what keeps a document folio publishable without either toolchain. Review, publish and committee feedback are core's shared Process_FolioReviewPublish, called after rendering (shared block G6 of the BPMN guidance review, owner Q-BR-7 A, 2026-11-01). Its `no` answer, changes asked, comes back to Task_AuthorBlocks."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:219
-#. Diagram label
-msgid "iterate"
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:88
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:59
 #. Diagram label
 msgid "New document"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:226
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:182
+#. Diagram label
+msgid "no"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:170
 #. Diagram label
 msgid "not yours"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:192
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:70
 #. Diagram label
-msgid "Not yours — left alone"
+msgid "Not yours: left alone"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:180
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:74
 #. Diagram label
-msgid "Open the bean [bean-open]"
+msgid "Open the bean"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:79
-#. Diagram element documentation
-msgid "Owns the one gate that decides publish or iterate, and is deliberately unspecialised: this process relaxes the paper process's clinical-SME lane into whichever reviewer a given document actually binds, because no single expertise fits every document the way it does a guideline."
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:69
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:48
 #. Diagram element documentation
 msgid "Owns the one gate this process has that the paper process does not — the profile check — so nothing with a math kind, a lean field or a .lean sibling reaches Task_Validate or Task_Render pretending to be document content; everything downstream of Gateway_ProfileClean assumes that profile."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:197
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:62
+#. Diagram label
+msgid "Plan the document"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:156
 #. Diagram element documentation
 msgid "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:181
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:75
 #. Diagram element documentation
 msgid "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:203
-#. Diagram element documentation
-msgid "Process_ContributorFeedback: while the document is a working draft, the Authoring Committee gives feedback through the Contributor Feedback sheet, and each change set is edited and merged in its own pull request. When its changes are merged, the document is validated and rendered again (owner, 2026-10-31)."
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:149
+#. Diagram label
+msgid "Published?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:187
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:83
 #. Diagram element documentation
 msgid "Reads which end Process_BeanOpen reached. `claimed`: the bean is in progress and this process works it. `not yours`: a sibling session or a human holds it, nothing was written to it, and this process stops here rather than work a bean it does not own (bean-coordination)."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:162
-#. Diagram label
-msgid "Ready to publish?"
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:150
+#. Diagram element documentation
+msgid "Reads which end Process_FolioReviewPublish reached. `yes`: Published, so the bean is closed. `no`: Changes asked, or Feedback in, so the work goes back to Task_AuthorBlocks with the feedback."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:78
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:133
 #. Diagram label
-msgid "Reviewer / subject-matter expert"
+msgid "Render MD, HTML and PDF"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:137
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:141
+#. Diagram label
+msgid "Review and publish"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:92
+#. Diagram label
+msgid "Scaffold the folio"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:126
 #. Diagram element documentation
 msgid "Schema and constraint checks over every block."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:92
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:63
 #. Diagram element documentation
 msgid "Scope it: chapters, the blocks each needs, which statements are normative."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:170
-#. Diagram element documentation
-msgid "See draft-to-publication.bpmn for the review and release path this expands into. Release authorisation is not relaxable."
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:88
+#. Diagram label
+msgid "Seed the work plan"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:193
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:71
 #. Diagram element documentation
 msgid "Someone else holds the bean; this run stops without touching it."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:64
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:43
 #. Diagram element documentation
 msgid "Task_AuthorBlocks is where every loop in this process lands — a profile violation from Lane_Build and an iterate from Lane_Reviewer both come back here — so this lane, not either gate, is what actually turns a rejection into a fixed block; Task_Scaffold runs once, before either loop exists."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:52
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:31
 #. Diagram element documentation
 msgid "The only place a person acts before the process becomes agent- and pipeline-driven: Task_Plan sets the chapters, the blocks each needs and which statements are normative, once, before Lane_WorkPlan seeds a bean and Lane_Agent takes over every later edit, including every iteration the review and profile-check loops send back."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:84
-#. Diagram element documentation
-msgid "The people writing the document with the editor. While it is a working draft they give feedback through the Contributor Feedback sheet, one change set per row, and each row runs Process_ContributorFeedback."
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:154
-#. Diagram element documentation
-msgid "The reviewer this folio binds. authoring-document relaxes the base SME step precisely because no single lane fits every document."
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:163
-#. Diagram element documentation
-msgid "The reviewer's call after step 8. `iterate` returns to authoring with the feedback; `Authoring Committee feedback` sends a working draft to the committee through the Contributor Feedback sheet (Process_ContributorFeedback), and comes back to validation once its changes are merged; `approved` goes to publish."
-msgstr ""
-
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:57
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:37
 #. Diagram element documentation
 msgid "Touched exactly once in this process — Task_SeedPlan turns the plan into a bean right after Task_Plan, so a resumed session or a sibling agent can pick the authoring loop up without re-deriving what was decided at the top."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:214
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:125
+#. Diagram label
+msgid "Validate"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:175
 #. Diagram label
 msgid "violations"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:130
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:119
 #. Diagram label
 msgid "Within the declared profile?"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:56
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:36
 #. Diagram label
-msgid "Work plan — beans (shared by humans and agents)"
+msgid "Work plan (beans)"
+msgstr ""
+
+#: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:180
+#. Diagram label
+msgid "yes"
 msgstr ""
