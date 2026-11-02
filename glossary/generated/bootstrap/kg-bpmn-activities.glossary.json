@@ -8,7 +8,7 @@
   "terms": [
     {
       "id": "process_completeinitialization.a_askperson",
-      "prefLabel": "Ask the person to do what only they can",
+      "prefLabel": "Ask the person",
       "definition": "A step the agent cannot do or cannot check from here — switching Pages on without a signed-in `gh`, granting a permission, choosing between two ways of fixing a declaration. Asked through the one reusable discussion, with the exact step written out so it can be followed without opening anything else. A person saying \"done\" is recorded as their word, not as a check; the next run checks it.",
       "notation": "A_AskPerson",
       "source": "bootstrap/processes/complete-initialization.bpmn#A_AskPerson",
@@ -80,7 +80,7 @@
     },
     {
       "id": "process_discussion.a_askrequestor",
-      "prefLabel": "Ask the Requestor: which harness, and where?",
+      "prefLabel": "Ask which harness, and where",
       "definition": "The candidates go in as the options; the recommendation may name one; the default is NONE. What A_DetermineWhere established goes in too — the process, the two roles, the context — so the called discussion checks it rather than re-deriving it; and anything it could not establish goes in as undetermined, to be asked first. The Requestor's answer comes back as answered, or the question as still open.",
       "notation": "A_AskRequestor",
       "source": "bootstrap/processes/discussion.bpmn#A_AskRequestor",
