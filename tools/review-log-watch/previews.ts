@@ -38,7 +38,11 @@ export type PrFacts = {
   base: string;
   /** Commits on the base the head lacks (GitHub compare `behind_by`). */
   behind: number;
-  /** GitHub's mergeable_state: clean, dirty (conflict), unstable, blocked, behind, unknown. */
+  /**
+   * GitHub's mergeable_state, a hint only (bean fx5r: it can serve a stale
+   * value for a long time). Only "dirty" is used, to name a likely conflict;
+   * the merge of main into the branch is what settles it.
+   */
   mergeable: string;
   fork: boolean;
 };
@@ -83,6 +87,7 @@ export function factsOf(key: string): PrFacts {
   }
   return {
     key, state: pr.state, base: pr.base.ref, behind,
+    // A hint only, possibly stale (bean fx5r); the merge itself settles a conflict.
     mergeable: pr.mergeable_state ?? "unknown",
     fork: pr.head?.repo?.full_name !== pr.base?.repo?.full_name,
   };
