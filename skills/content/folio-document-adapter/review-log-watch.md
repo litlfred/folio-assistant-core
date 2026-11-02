@@ -151,6 +151,35 @@ Exit 0 is clean. Exit 10 lists problems: the watcher fixes the Agent tab
 status or rewrites the cell to the layout in the same wake, and records the
 Agent step. The lint writes nothing itself.
 
+## Previews follow main, on people's word (owner, 2026-11-02 07:32Z)
+
+"log watcher should make sure all previews get updated if upstream changes on
+main", then (07:33Z) "dont do it automatically, but on human feedback". A
+preview is built from its pull request's head, so once main moves on, a
+branch that lacks main's head shows a document main no longer is. The
+watcher never updates a branch just because main moved. It does so in the
+agent pass for a change set that people acted on:
+
+- new or changed Blue feedback on the change set, or Ready for agent set to
+  Yes (the agent pass is already running for that row); or
+- feedback that asks for it, such as "update the preview" or "rebase on
+  main" (`bun tools/review-log-watch/previews.ts request --text <feedback>`).
+
+In that pass:
+
+1. Run `bun tools/review-log-watch/previews.ts --prs owner/repo#n,...` for
+   that change set's PRs. It prints `merge-main`, `resolve-conflict` or
+   `none` for each PR. Exit 0 means current; exit 10 lists the work.
+2. For `merge-main`: merge main into the branch (a merge commit, never a
+   rebase or force-push), regenerate generated files with the repo's own
+   tooling, push, and record the push with the agent-record tool. The sheet
+   then shows the preview as stale until the new build is live.
+3. For `resolve-conflict`: resolve it when both sides are generated or
+   mechanical. When a person must choose, ask in the change set's feedback
+   cell (a `Decision needed:` question) and leave the branch as it is.
+4. This only brings main into the branch. Committee content is never merged
+   into main by the watcher. Closed PRs and PRs from forks are skipped.
+
 ## What counts as a change
 
 - **Issues:** the repository's issues, open and closed, with their state and
