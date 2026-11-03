@@ -33,14 +33,11 @@ plan → [ search → refine → evaluate ] → report
 - Cap alone **stops an answerable question early**, and the answer it returns
   looks exactly like a complete one.
 
-A loop carrying one of them is a different method with a failure mode the
-paper's does not have. If you implement only one, you have not implemented
-this.
+A loop with only one of them is not this method.
 
 **Say which one you stopped on.** An answer that hit `T_max` is an answer with
 known gaps; one that reached `σ ≥ τ` is not. A report that does not
-distinguish them hands the reader a confidence nobody established — the same
-shape as a QA sweep reporting clean because it could not look.
+distinguish them hands the reader a confidence nobody established.
 
 ## The four roles are four QUESTIONS, not four programs
 
@@ -52,9 +49,8 @@ shape as a QA sweep reporting clean because it could not look.
 | **report** | what does the accumulated evidence say, and where can a reader check each claim? |
 
 One actor may perform all four. The `deep-researcher` role is one swimlane
-because the accountability is one: somebody stands behind the synthesis. Do
-not read the paper's four agents as four roles — this repository's role model
-is explicit that a role is an accountability, not a step.
+because a role is an accountability, not a step: somebody stands behind the
+synthesis. Do not read the paper's four agents as four roles.
 
 ## Choose the granularity per question, and say you chose
 
@@ -66,7 +62,6 @@ same way** — which is the condition this method exists to escape.
 **This checkout is not there yet.** `l1-blocks.ts` produces blocks and sections
 exist; there is no `summary` level and no per-query choice. Until there is, say
 which granularity you searched rather than implying the corpus offered one.
-That is the honest form of a capability that is missing.
 
 ## Three things NOT to adopt with it
 
@@ -81,8 +76,7 @@ That is the honest form of a capability that is missing.
    have it adjudicated; do not bury a judgement in a number.
 3. **The paper's numbers.** 50.6% and "3.4× baselines" were measured on the
    authors' own benchmark over their own 304 documents. They say nothing about
-   this corpus, and quoting them here would be evidence for a claim nobody
-   tested.
+   this corpus.
 
 ## Say what you did not find
 

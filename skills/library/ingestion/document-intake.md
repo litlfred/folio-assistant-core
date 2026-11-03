@@ -60,11 +60,10 @@ uploads/
 
 ### The two records an upload writes
 
-Rebuilt from schemas this repository already had (#1168 B6b-2, bean `d4lb`).
 The description is a Dublin Core record; the intake records the capture and
 points at it. Both are validated by the registry (`check:kind-validators`).
 
-`intake.json` — `folio-intake/v1`, `cat-harness/schemas/intake.ts`:
+`intake.json` — `folio-intake/v1`, cat-harness-tools `schemas/library/intake.ts`:
 
 ```json
 {
@@ -105,12 +104,12 @@ Place raw files in `uploads/<document-id>/`. Create `intake.json`
 with source metadata. Files are committed to git for reproducibility.
 
 **Record the licence in `intake.json` when you know it.** The ingestion
-pipeline's licence step runs EARLY — before any extraction, by the owner's
-ruling on bean `7bg9` — because `library/` is committed content and refusing a
-source after deriving from it is a deletion nobody may take unasked. That step
-sees only the upload: the `licence` record in `intake.json` (the same
-`stated` / `unknown` record a library manifest carries in `meta.licence`,
-`schemas/source-licence.ts`) and whether a `LICENSE` file sits beside it.
+pipeline's licence step runs before any extraction, because `library/` is
+committed content and refusing a source after deriving from it is a deletion
+nobody may take unasked. That step sees only the upload: the `licence` record
+in `intake.json` (the same `stated` / `unknown` record a library manifest
+carries in `meta.licence`, cat-harness-tools `schemas/library/source-licence.ts`)
+and whether a `LICENSE` file sits beside it.
 `bun run cat ingest` prints its verdict before the first arm runs, and after the
 arms it writes a recorded licence into the staged entry's `licence.json` — the
 authored sidecar `gen-library-jsonld` carries into `meta.licence` (the manifest
@@ -164,7 +163,7 @@ python3 cat-harness-tools/scripts/pdf-extract.py FILE.pdf --diagnose   # structu
 Exit `0` = text; **exit `2` = no text layer (a scan)**; exit `3` = a parser
 problem on a file that does have text.
 
-Two failure modes it exists to prevent, both observed in practice:
+Two failure modes it prevents:
 
 * **A silent empty extraction reads exactly like a scan, a broken library, and
   a malformed PDF.** The script separates them by inspecting the PDF structure
@@ -173,9 +172,8 @@ Two failure modes it exists to prevent, both observed in practice:
 * **A broken native extension kills the whole pipeline.** `pypdf` and
   `pdfminer.six` both fail via pyo3 `PanicException` when `cryptography`'s Rust
   bindings are broken — and that is a `BaseException`, so an ordinary
-  `except Exception` does **not** catch it. Every rung is guarded accordingly.
-  The zero-dependency rung exists precisely for this case; in the container this
-  was written in it was the only rung that worked.
+  `except Exception` does **not** catch it. Every rung is guarded accordingly,
+  and the zero-dependency rung exists for this case.
 
 | Format | Extraction method |
 |--------|-------------------|
@@ -202,12 +200,9 @@ Analyze extracted text for formal environments and document structure.
 
 #### The three producers this stage actually runs
 
-**Documented here because nothing else named them**, and they are the scripts
-that built the corpus: measured on `qou`, 715 `library/*/structure.json` and 26
-`library/*/ocr/` trees exist, and until now no skill in either repo pointed at
-the programs that wrote them. An agent following Stage 2 alone reaches
-`pdf-extract.py`, which writes loose text — not the greppable `sections/` tree
-the corpus-grep checklist reads.
+These scripts build the corpus's `structure.json`, `sections/` and `ocr/`
+trees. Stage 2's `pdf-extract.py` writes loose text, not the greppable
+`sections/` tree the corpus-grep checklist reads.
 
 | script | writes | notes |
 |---|---|---|
@@ -221,8 +216,7 @@ python3 cat-harness-tools/scripts/pdf-structure.py FILE.pdf --outdir library --o
 python3 cat-harness-tools/scripts/extract-candidates.py library/<doc-id>/
 ```
 
-Three things about how they fit together, each of which has already cost
-someone time:
+How they fit together:
 
 * **`pdf-structure.py` READS OCR, it never runs it.** Its `--ocr` flag consults
   the cache `pdf-ocr.py` wrote, gated on `text_is_unusable()` (under 120
@@ -230,12 +224,9 @@ someone time:
   order is `pdf-ocr.py` first, `pdf-structure.py --ocr` second. Run them the
   other way round and the sections come out empty.
 * **An OCR'd document whose structure was never re-run is invisible to the
-  section grep.** Measured on `qou`: 26 `ocr/` directories exist but only 11
-  `structure.json` record `"text_source": "ocr"` — so roughly 15 documents have
-  their text on disk and a stub in `sections/`. A `sections/` grep misses them
-  entirely. `library/procrsoclondona92/` is the worked case: 1,916 bytes of
-  JSTOR download banner in `sections/` against 46,511 bytes of real text in
-  `ocr/`.
+  section grep.** Its text is in `ocr/` but `sections/` holds a stub, and its
+  `structure.json` does not record `"text_source": "ocr"`. Re-run
+  `pdf-structure.py --ocr` on it.
 * **The backends are optional and their absence is reported, not guessed.**
   `pdf-structure.py` prefers PyMuPDF (better text on maths, real outlines) and
   falls back to `pypdf`; the Dockerfile ships `pypdf` only, deliberately, so the
@@ -255,10 +246,8 @@ someone time:
   least 0.6, and no more than a quarter of the sections it would cut are
   empty; otherwise the entry is split one section per page
   (`granularity: "page"`, with the reason in `structure_note`) —
-  `l1-document-ingestion` §"The route `pdf-structure.py` takes itself". Measured over the 13
-  corpus PDFs that carry an outline, hidden and used as the answer key: title
-  F1 0.83 for this consensus on 20 held-out PDFs (0.92 on the development set) against 0.26 for text patterns alone (issue
-  #2302). The same artefact carries `figures` — the list of figures and
+  `l1-document-ingestion` §"The route `pdf-structure.py` takes itself". The
+  same artefact carries `figures` — the list of figures and
   tables, each caption with `confidence` and `evidence` (cited in the text,
   in its numbering run, a graphic on its page) — with numbering gaps in
   `diagnostics.figure_sequence_gaps`; and, when the document has a printed
@@ -281,18 +270,13 @@ environments, sections, cross-references.
 
 #### For structured / normative guidelines:
 
-> **Superseded for a `document` folio.** The table below predates the
-> `document` content type. Two of its mappings are now wrong there:
+> **This table is for a `paper` folio only.** In a `document` folio
 > `definition` is a **math** kind whose `lean` field is *required*, so a
-> guideline recommendation mapped onto it will not validate at all; and
+> guideline recommendation mapped onto it will not validate; and
 > `proposition` and `conjecture` are math kinds that `content_profile_check`
-> rejects outright. In a document folio, a normative statement is a
-> **`recommendation` block** (bean `55ao`), with its strength as a code in a
-> declared code list. Load `normative-statements` from the
-> `folio-document-adapter` package for the convention.
->
-> The table stands as written for a **paper** folio, which is the case it was
-> written for and where all seven kinds are available.
+> rejects. There a normative statement is a **`recommendation` block**, with
+> its strength as a code in a declared code list: load `normative-statements`
+> from the `folio-document-adapter` package.
 
 Many guideline and standards documents have a recurring normative
 structure that maps onto content-block kinds:
@@ -317,18 +301,15 @@ qualified `normativeLevel`.
 > Domain-specific guideline handling (e.g. a particular standards body's
 > recommendation grammar) belongs in a domain adapter bundle, not the
 > generic paper adapter. This skill detects the *shape* and hands off the
-> domain-specific mapping rules to the relevant adapter.
->
-> That hand-off now has somewhere to go: `folio-document-adapter` is the bundle
-> for prose folios, and `normative-statements` is where the recommendation
-> grammar belongs.
+> domain-specific mapping rules to the relevant adapter: for prose folios,
+> `folio-document-adapter`, whose `normative-statements` holds the
+> recommendation grammar.
 
 #### Tables and figures — run `cat-harness-tools/scripts/pdf-tables.py`
 
 Text extraction destroys tables. A GRADE evidence table or a boxed
-recommendation comes out of Stage 2 as a run of prose that reads exactly like
-prose, and nothing downstream can recover that it was a grid — which matters
-most for precisely the guideline documents this skill exists to process.
+recommendation comes out of Stage 2 as a run of prose, and nothing downstream
+can recover that it was a grid.
 
 ```bash
 python3 cat-harness-tools/scripts/pdf-tables.py FILE.pdf -o uploads/<document-id>/
@@ -359,7 +340,7 @@ weights. **Docling is the better parser and is not this**: its weights come
 from HuggingFace, which is 403-blocked in sandboxed sessions, so it is a
 workstation/CI stage whose artefacts get committed — the
 `docling` capability probe reports it absent here rather than letting a session
-believe it ran. See `docs/proposals/rag-document-ingestion.md` §12.26.
+believe it ran.
 
 **Output**: `extracted-blocks.json` — array of detected blocks with
 provisional kinds, titles, and content; `tables.json` for the layout-bearing
@@ -460,10 +441,8 @@ export default definition({
 
 ## Resuming Partial Processing
 
-Where processing stopped is read from what EXISTS, not from a status field.
-The old `intake.json` carried `pipeline.stage`, which the adapter wrote once
-as `uploaded` and nothing ever advanced — a status nobody maintains reads as
-authoritative and is wrong. To resume:
+Where processing stopped is read from what EXISTS, not from a status field
+(`intake.json` has none). To resume:
 
 1. `uploaded` — `intake.json` is there
 2. `extracted` — `extracted-text.md` (or an extraction record) is there

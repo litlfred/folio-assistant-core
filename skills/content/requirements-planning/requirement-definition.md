@@ -11,17 +11,10 @@ description: >
 
 # One definition of a requirement
 
-Issue [#2405](https://github.com/litlfred/folio-assistant/issues/2405) FR-007
-and FR-008. Owner, 2026-10-07: *"we need to nail down what it means to be a
-requirement - make sure each requirement has success criteria"*.
-
-Before this, the platform had three shapes that each said "requirement": the
-`req:` schema (a statement and a level, with **nothing** saying when it is
-met), CRDM's `REQ-###` (acceptance criteria, markdown only), and spec-kit's
-`FR-###` beside a separate `SC-###` list. They agreed on the statement and
-disagreed on everything that makes it checkable. This is the one definition
-both templates now use. **The methodologies stay separate** — what they share
-is the unit, not the process.
+Every requirement has success criteria. This is the one definition of a
+requirement that both the CRDM and spec-kit templates use, and the `req:`
+schema carries. **The methodologies stay separate**: what they share is the
+unit, not the process.
 
 ## The six parts
 
@@ -35,10 +28,8 @@ is the unit, not the process.
 | **sign-off owner** | who says it is met — a named person or role, not "the team" | the requirement's `actors`, or named in the document |
 
 **A requirement without a success criterion can be filed and never judged.**
-That is the defect this definition closes. In the schema the field is
-optional today and warned on by `check:requirements` (decision 3 of
-2026-10-07); the statements filed before it existed are migrated in a
-follow-up bean, and then it becomes required.
+In the schema the field is optional for now, and `check:requirements` warns
+when it is missing.
 
 **A criterion is addressable**: `req:<id>#<statement>/<criterion>`. A test
 run that checks one criterion points at it by that ref; the requirement never
@@ -57,8 +48,7 @@ lists its tests.
 ## The document is a requirement set
 
 The requirements document as a whole is a `RequirementSet`
-(`bootstrap-tools/schemas/requirement-set.ts`; issue #2405 FR-010 to FR-012,
-approved 2026-10-07): `reqset:<slug>`, its members (`req:` refs, each with its
+(`bootstrap-tools/schemas/requirement-set.ts`): `reqset:<slug>`, its members (`req:` refs, each with its
 own decision), a **stage** — `draft`, `proposed`, `approved`, `planned`,
 `in-progress`, `delivered`, `accepted`, or `rejected`, `cancelled`,
 `superseded` — its `workPlan` (bean ids) and its **sign-offs**. A sign-off is
@@ -106,7 +96,7 @@ is a gap to fix before the spec is posted.
 
 ## The work plan is beans
 
-FR-007. A work plan is **beans**, one or more per requirement — never a
+A work plan is **beans**, one or more per requirement — never a
 numbered list in chat, which nobody can claim, block or close. Each bean:
 
 1. **names the `req:` statements it delivers** in its body
@@ -115,9 +105,7 @@ numbered list in chat, which nobody can claim, block or close. Each bean:
 2. carries a **`## Done when`** whose items are **copied from those
    statements' success criteria**, one checkbox per criterion, with the
    criterion's key — so that closing the bean IS judging the criteria, and a
-   bean cannot close on a criterion nobody wrote down (issue #2405 scenario
-   P3: the bean's `## Done when` maps 1:1 to the criteria of the statements
-   it names).
+   bean cannot close on a criterion nobody wrote down.
 
 ```markdown
 Delivers: req:plan-request#detect

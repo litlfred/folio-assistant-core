@@ -32,9 +32,8 @@ and a human share a permission is deliberate: **emitting** a QA report is
 mechanical, **ruling** on it is not.
 
 `editing-hci-validation.bpmn` marks `Task_ReviewFindings` and
-`Gateway_EditorDecision` `relaxable="false"` for exactly this reason. The
-editor seeing the findings, and the decision itself, are the gate; a policy
-that relaxed them would leave "strict base" meaning nothing.
+`Gateway_EditorDecision` `relaxable="false"`: the editor seeing the findings,
+and the decision itself, are the gate.
 
 ## Compute the gate, do not assert it
 
@@ -43,8 +42,8 @@ Where a gateway carries `<cat-harness.processes:decision/>`, pass the **facts** 
 table return the branch. `workflow_complete` refuses a hand-supplied `outcome`
 at such a gateway.
 
-This is what stops "QC passed" from being an opinion. `draft-qa-gate.dmn` is
-the table; `dmn-authoring` is how to change it.
+`decisions/draft-qa-gate.dmn` is the table; `dmn-authoring` is how to change
+it.
 
 ## Severity is the gate's vocabulary
 
@@ -57,8 +56,8 @@ The corpus-wide convention, and what the tables read:
   a fake entry onto a real step is worse than the gap.
 
 **`unknown` is never counted as a pass**, and it is not promoted either — it
-counts at its own criterion's severity. A check that did not run has not
-cleared, and a QC gate is the last place that should be blurred.
+counts at its own criterion's severity: a check that did not run has not
+cleared.
 
 ## What to run
 
