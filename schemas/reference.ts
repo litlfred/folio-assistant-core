@@ -359,6 +359,17 @@ export function dublinCoreToReference(
   const spage = first("citation", "spage");
   const epage = first("citation", "epage");
   put("page", spage ? (epage ? `${spage}–${epage}` : spage) : undefined);
+  // Pass-through CSL fields the IGs' entries carry (bean djj5): CSL keeps them,
+  // and the node accepts any CSL field.
+  const extra = ref as Record<string, unknown>;
+  const place = first("publisher", "place");
+  if (place) extra["publisher-place"] = place;
+  const accessed = first("date", "accessed");
+  if (accessed) extra.accessed = dcDateToCsl(accessed);
+  const version = first("citation", "version");
+  if (version) extra.version = version;
+  const status = first("citation", "status");
+  if (status) extra.status = status;
   put("ISBN", first("identifier", "isbn"));
   put("DOI", first("identifier", "doi"));
   put("URL", first("identifier", "uri"));
@@ -460,6 +471,12 @@ export function referenceToDublinCoreRecord(ref: ReferenceNode): DublinCoreRecor
   push("contributor", "editor", (ref.editor ?? []).map(nameText));
   push("date", "issued", [dateText(ref)]);
   push("publisher", undefined, [ref.publisher]);
+  const csl = ref as Record<string, unknown>;
+  const str = (v: unknown) => (typeof v === "string" || typeof v === "number" ? String(v) : undefined);
+  push("publisher", "place", [str(csl["publisher-place"])]);
+  push("date", "accessed", [csl.accessed ? dateText({ issued: csl.accessed as ReferenceNode["issued"] }) : undefined]);
+  push("citation", "version", [str(csl.version)]);
+  push("citation", "status", [str(csl.status)]);
   push("relation", "ispartof", [ref["container-title"]]);
   push("citation", "volume", [ref.volume === undefined ? undefined : String(ref.volume)]);
   push("citation", "issue", [ref.issue === undefined ? undefined : String(ref.issue)]);

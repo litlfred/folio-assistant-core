@@ -191,6 +191,12 @@ describe("a journal article's container and locators (bean djj5)", () => {
     expect(back.author).toEqual(voo.author);
   });
 
+  test("publisher-place, accessed, version and status survive the round trip", () => {
+    const etsi = { ...voo, type: "standard", "publisher-place": "Sophia Antipolis", accessed: { "date-parts": [[2021, 6, 27]] }, version: "1.1.1", status: "forthcoming" } as ReferenceNode;
+    const back = dublinCoreToReference(DublinCoreRecordSchema.parse(referenceToDublinCoreRecord(etsi)), { key: "etsi" }) as Record<string, unknown>;
+    expect([back["publisher-place"], back.accessed, back.version, back.status]).toEqual(["Sophia Antipolis", { "date-parts": [[2021, 6, 27]] }, "1.1.1", "forthcoming"]);
+  });
+
   test("a CSL type the IGs use (webpage, standard, legislation) survives as itself", () => {
     for (const type of ["webpage", "standard", "legislation", "report", "book"]) {
       const back = dublinCoreToReference(DublinCoreRecordSchema.parse(referenceToDublinCoreRecord({ ...voo, type })), { key: "k" });
