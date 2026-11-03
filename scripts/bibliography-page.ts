@@ -650,8 +650,8 @@ export function forInstance(c: Collected, instance: string, needsOf: (name: stri
 
 /**
  * The pages and exports. `prefix` is the site path an instance's own site is
- * served under inside a composed site (`/smart-trust` for `--instance
- * smart-trust`), so each page's permalink lands where its links point.
+ * served under inside a composed site (`/<instance>` for `--instance
+ * <instance>`), so each page's permalink lands where its links point.
  */
 export function outputs(c: Collected, prefix = ""): Map<string, string> {
   const out = new Map<string, string>();
