@@ -418,9 +418,27 @@ export function linksHtml(e: Entry): string {
 }
 
 /** One entry: the citation, its key and provenance, its links, and its own export. */
-export function entryHtml(e: Entry): string {
+/**
+ * The anchors of one page, handed out in the order its entries are shown. The
+ * first entry for a key gets `ref-<key>`, which is what an in-text citation
+ * links; a later entry for the same key on the same page (the same work in two
+ * instances' catalogues, bean djj5) gets `ref-<instance>-<key>`, so no id
+ * repeats (`check:duplicate-ids`).
+ */
+export function pageAnchors(): (e: Entry) => string {
+  const used = new Set<string>();
+  return (e) => {
+    let id = anchorOf(e.ref.id);
+    if (used.has(id)) id = anchorOf(`${e.instance}-${e.ref.id}`);
+    for (let n = 2; used.has(id); n++) id = anchorOf(`${e.instance}-${e.ref.id}-${n}`);
+    used.add(id);
+    return id;
+  };
+}
+
+export function entryHtml(e: Entry, anchor: (e: Entry) => string = (x) => anchorOf(x.ref.id)): string {
   const r = e.ref;
-  const id = anchorOf(r.id);
+  const id = anchor(e);
   const dl = (fmt: string, text: string, mime: string, ext: string) =>
     `<a download="${esc(r.id)}.${ext}" href="data:${mime};charset=utf-8,${encodeURIComponent(text)}">${fmt}</a>`;
   return `<li id="${id}" data-fa-bib="${esc([r.id, r.title ?? "", ...(r.author ?? []).map(nameText), yearOf(r) ?? ""].join(" "))}">
@@ -544,10 +562,10 @@ const plural = (n: number, one: string) => `${n} ${one}${n === 1 ? "" : "s"}`;
  * the page opens on the site's own bibliography. The filter and a link to an
  * entry's anchor open the section.
  */
-export function ownAndDependenciesHtml(own: string, entries: Entry[]): string {
+export function ownAndDependenciesHtml(own: string, entries: Entry[], anchor: (e: Entry) => string = pageAnchors()): string {
   const mine = entries.filter((e) => e.instance === own);
   const layers = [...new Set(entries.filter((e) => e.instance !== own).map((e) => e.instance))].sort((a, b) => a.localeCompare(b, "en"));
-  const ownList = mine.length ? `<ol class="fa-bib">\n${mine.map(entryHtml).join("\n")}\n</ol>` : `<p>${esc(own)} has no references of its own yet.</p>`;
+  const ownList = mine.length ? `<ol class="fa-bib">\n${mine.map((e) => entryHtml(e, anchor)).join("\n")}\n</ol>` : `<p>${esc(own)} has no references of its own yet.</p>`;
   const deps = layers.length
     ? `<details class="fa-bib-deps" id="fa-bib-deps">
 <summary><strong>From dependencies</strong>: ${plural(entries.length - mine.length, "reference")} from ${plural(layers.length, "layer")} that ${esc(own)} builds on. They are not part of ${esc(own)}.</summary>
@@ -556,7 +574,7 @@ ${layers
     const ls = entries.filter((e) => e.instance === l);
     return `<h3 id="fa-bib-dep-${esc(anchorOf(l).replace(/^ref-/, ""))}">${esc(l)} <small>(dependency, ${plural(ls.length, "reference")})</small></h3>
 <ol class="fa-bib fa-bib-dep" data-fa-bib-layer="${esc(l)}">
-${ls.map(entryHtml).join("\n")}
+${ls.map((e) => entryHtml(e, anchor)).join("\n")}
 </ol>`;
   })
   .join("\n")}
@@ -573,12 +591,13 @@ export function renderPage(opts: { title: string; permalink: string; intro: stri
   const exports = EXPORTS.map(([f, label]) => `<a href="${f}">${label}</a>`).join(" · ");
   const addPanel = addReferenceHtml({ targetDir });
   const grouped = own !== undefined && entries.some((e) => e.instance !== own);
+  const anchor = pageAnchors();
   const list = entries.length
     ? `<label for="fa-bib-q">Filter references</label>
 <input id="fa-bib-q" type="search" autocomplete="off" style="min-height:44px;width:100%;max-width:32rem">
 <p aria-live="polite"><span id="fa-bib-n">${entries.length}</span> shown</p>
 
-${grouped && own !== undefined ? ownAndDependenciesHtml(own, entries) : `<ol class="fa-bib">\n${entries.map(entryHtml).join("\n")}\n</ol>`}`
+${grouped && own !== undefined ? ownAndDependenciesHtml(own, entries, anchor) : `<ol class="fa-bib">\n${entries.map((e) => entryHtml(e, anchor)).join("\n")}\n</ol>`}`
     : "<p>No references here yet.</p>";
   const ownCount = grouped ? entries.filter((e) => e.instance === own).length : entries.length;
   const exportLead = grouped

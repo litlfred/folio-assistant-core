@@ -348,3 +348,24 @@ describe("a site with its own instance (declared at the checkout root) and depen
     expect(plain).toContain("**By sub-graph:**");
   });
 });
+
+describe("one page, one id per entry (bean djj5)", () => {
+  // Two IGs' catalogues can each hold the same work under the same key
+  // (who-guideline-handbook in smart-trust-phw and smart-immunizations), and
+  // the combined page listed both as id="ref-<key>" (check:duplicate-ids).
+  const ref = ReferenceNodeSchema.parse({ $schema: "folio-reference/v1", id: "who-guideline-handbook", type: "book", title: "WHO handbook for guideline development" });
+  const a = { ref, instance: "smart-trust-phw", subgraph: "smart-trust-phw-catalogue", file: "a" };
+  const b = { ref, instance: "smart-immunizations", subgraph: "smart-immunizations-catalogue", file: "b" };
+  const ids = (html: string) => [...html.matchAll(/<li id="([^"]+)"/g)].map((m) => m[1]);
+
+  test("the first keeps ref-<key>, which a citation links; the next is qualified by its instance", () => {
+    const page = renderPage({ title: "Bibliography", permalink: "/b/", intro: "x", entries: [a, b] });
+    expect(ids(page)).toEqual(["ref-who-guideline-handbook", "ref-smart-immunizations-who-guideline-handbook"]);
+  });
+
+  test("on an own site's page the own entry keeps ref-<key>, wherever it sorts", () => {
+    const page = renderPage({ title: "Bibliography", permalink: "/b/", intro: "x", entries: [a, b], own: "smart-immunizations" });
+    expect(ids(page)).toEqual(["ref-who-guideline-handbook", "ref-smart-trust-phw-who-guideline-handbook"]);
+    expect(new Set(ids(page)).size).toBe(2);
+  });
+});
