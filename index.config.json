@@ -14,7 +14,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "4bb08ed8239158ad4dcba9c5a747f5995100cc33",
+          "ref": "3a873b5e28e1e24f9d489e78e977169761fa6a46",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -29,9 +29,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-02",
-              "ref": "4bb08ed8239158ad4dcba9c5a747f5995100cc33",
-              "evidence": "Owner litlfred, 2026-11-01 (20:41Z, MVP thread cmsg_017WNUkNK8kdDziPK58Pv6G991qa3xg86ZCWdyH2spZ7FS): 'i want to get all functional stuff done, the full repin on harnesses done and stablized as MVP goal.' Re-pin to mains for cat-harness-tools#1299 (harness drain, card Q-HDR-3 A, 2026-11-02)."
+              "on": "2026-11-03",
+              "ref": "3a873b5e28e1e24f9d489e78e977169761fa6a46",
+              "evidence": "litlfred, 2026-11-03 ~05:05Z, Claude Code session session_01EucfRmwpKymG3j2sPLyroL decision card: 'Yes, repin cat-harness' (re-pin cat-harness in folio-assistant-core to current main to clear check:reference-direction on #625/#600; cat-harness cc571bb and 36b9f0f stop naming layers above). Window: 'merge (non-consent) that is green and ready for 4 hrs' from 04:56Z."
             }
           }
         }
