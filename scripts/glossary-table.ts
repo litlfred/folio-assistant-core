@@ -43,33 +43,12 @@ import { join, resolve } from "node:path";
 import { z } from "zod";
 
 import { GlossarySchema, type Glossary, type LangText, type Term } from "../schemas/glossary.ts";
+import { GlossaryTablesSchema } from "../schemas/glossary-tables.ts";
 
 export const TOOL_ID = "glossary-table";
-export const GLOSSARY_TABLES_SCHEMA_ID = "folio-glossary-tables/v1" as const;
+export { GLOSSARY_TABLES_SCHEMA_ID, GlossaryTablesSchema, type GlossaryTables } from "../schemas/glossary-tables.ts";
 export const GLOSSARY_TABLES_FILE = "glossary/glossary-tables.json";
 
-const RelPath = z
-  .string()
-  .min(1)
-  .refine((f) => !f.startsWith("/") && !f.split("/").includes(".."), "relative to the instance root, without `..`");
-
-export const GlossaryTablesSchema = z
-  .object({
-    $schema: z.literal(GLOSSARY_TABLES_SCHEMA_ID),
-    tables: z
-      .array(
-        z
-          .object({
-            glossary: RelPath.refine((f) => f.endsWith(".json"), "a .json glossary"),
-            block: RelPath.refine((f) => f.endsWith(".md"), "a document block, a .md file"),
-            kind: z.enum(["terms", "acronyms"]),
-          })
-          .strict(),
-      )
-      .min(1),
-  })
-  .strict();
-export type GlossaryTables = z.infer<typeof GlossaryTablesSchema>;
 
 /** Text in English, or the only language given. */
 export function textOf(v: LangText | undefined): string | undefined {

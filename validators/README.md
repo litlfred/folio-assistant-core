@@ -15,6 +15,7 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `folio-assistant
 | [`catalogue.json`](catalogue.json) | data |  |
 | [`diig-phases-figure.json`](diig-phases-figure.json) | data |  |
 | [`extraction.json`](extraction.json) | data |  |
+| [`glossary-tables.json`](glossary-tables.json) | data |  |
 | [`glossary.json`](glossary.json) | data |  |
 | [`intake.json`](intake.json) | data |  |
 | [`public-comment-changeset.json`](public-comment-changeset.json) | data |  |
