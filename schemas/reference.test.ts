@@ -25,6 +25,7 @@ import {
   dublinCoreToReference,
   genReferenceJsonLd,
   jsonLdToReferenceNode,
+  referenceToDublinCoreRecord,
   libraryItemToReference,
   newReferenceUrl,
   parseBibtexOrCsl,
@@ -155,6 +156,46 @@ describe("from a Dublin Core record (who-iris)", () => {
     expect(dcDateToCsl("2014")).toEqual({ "date-parts": [[2014]] });
     expect(dcDateToCsl("2014-12")).toEqual({ "date-parts": [[2014, 12]] });
     expect(dcDateToCsl("c. 1990")).toEqual({ raw: "c. 1990" });
+  });
+});
+
+describe("a journal article's container and locators (bean djj5)", () => {
+  // Voo et al. 2021, smart-trust's one journal article: the record must carry
+  // what its CSL entry carries, or retiring references/ loses it.
+  const voo: ReferenceNode = {
+    $schema: "folio-reference/v1",
+    id: "voo2021",
+    type: "article-journal",
+    title: "Immunity certification for COVID-19: ethical considerations",
+    author: [{ family: "Voo", given: "TC" }],
+    "container-title": "Bulletin of the World Health Organization",
+    issued: { "date-parts": [[2021]] },
+    volume: "99",
+    issue: "2",
+    page: "155–61",
+    DOI: "10.2471/BLT.20.280701",
+  };
+
+  test("CSL → Dublin Core writes dc.relation.ispartof and dc.citation.*", () => {
+    const rec = referenceToDublinCoreRecord(voo);
+    const f = (e: string, q: string) => rec.fields.find((x) => x.element === e && x.qualifier === q)?.values[0]?.value;
+    expect(f("relation", "ispartof")).toBe("Bulletin of the World Health Organization");
+    expect([f("citation", "volume"), f("citation", "issue"), f("citation", "spage"), f("citation", "epage")]).toEqual(["99", "2", "155", "61"]);
+  });
+
+  test("Dublin Core → CSL reads them back: the round trip keeps container, volume, issue and pages", () => {
+    const back = dublinCoreToReference(DublinCoreRecordSchema.parse(referenceToDublinCoreRecord(voo)), { key: "voo2021" });
+    expect(back["container-title"]).toBe(voo["container-title"]);
+    expect([back.volume, back.issue, back.page]).toEqual(["99", "2", "155–61"]);
+    expect(back.type).toBe("article-journal");
+    expect(back.author).toEqual(voo.author);
+  });
+
+  test("a CSL type the IGs use (webpage, standard, legislation) survives as itself", () => {
+    for (const type of ["webpage", "standard", "legislation", "report", "book"]) {
+      const back = dublinCoreToReference(DublinCoreRecordSchema.parse(referenceToDublinCoreRecord({ ...voo, type })), { key: "k" });
+      expect(back.type).toBe(type);
+    }
   });
 });
 
