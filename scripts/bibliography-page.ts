@@ -625,7 +625,35 @@ ${FILTER_SCRIPT}
 }
 
 /** Every file this generator owns, path → content. */
-export function outputs(c: Collected): Map<string, string> {
+/**
+ * One instance's bibliography, as its own site lists it (owner, 2026-11-03:
+ * a page per IG, bean djj5): its own references and those of the layers it
+ * `needs`, transitively, with `own` set to it. Everything else in the
+ * checkout belongs to other sites.
+ */
+export function forInstance(c: Collected, instance: string, needsOf: (name: string) => readonly string[]): Collected {
+  const keep = new Set<string>();
+  const visit = (n: string) => {
+    if (keep.has(n)) return;
+    keep.add(n);
+    for (const d of needsOf(n)) visit(d);
+  };
+  visit(instance);
+  return {
+    ...c,
+    own: instance,
+    entries: c.entries.filter((e) => keep.has(e.instance)),
+    subgraphs: c.subgraphs.filter((s) => keep.has(s.instance)),
+    assets: (c.assets ?? []).filter((a) => keep.has(a.instance)),
+  };
+}
+
+/**
+ * The pages and exports. `prefix` is the site path an instance's own site is
+ * served under inside a composed site (`/smart-trust` for `--instance
+ * smart-trust`), so each page's permalink lands where its links point.
+ */
+export function outputs(c: Collected, prefix = ""): Map<string, string> {
   const out = new Map<string, string>();
   const write = (dir: string, page: string, entries: Entry[]) => {
     out.set(join(dir, "index.md"), page);
@@ -651,7 +679,7 @@ export function outputs(c: Collected): Map<string, string> {
     ROOT,
     renderPage({
       title: "Bibliography",
-      permalink: `/${ROUTE}/`,
+      permalink: `${prefix}/${ROUTE}/`,
       intro:
         (own === undefined
           ? "Every reference in the knowledge graph: the bibliographies folios declare (`references` directories, one `folio-reference/v1` node each), the Dublin Core records of catalogues (`catalogue` directories), and the ingested items of libraries (`library` directories), as one list."
@@ -674,7 +702,7 @@ export function outputs(c: Collected): Map<string, string> {
       join(ROOT, s.slug),
       renderPage({
         title: `Bibliography: ${s.slug}`,
-        permalink: `/${ROUTE}/${s.slug}/`,
+        permalink: `${prefix}/${ROUTE}/${s.slug}/`,
         intro: `The references of \`${s.path}/\` (${s.instance}${own !== undefined && s.instance !== own ? `, a dependency of ${own}` : ""}, a \`${s.kind}\` directory). [All references](../).`,
         entries,
         nav: assetNav,
@@ -688,7 +716,7 @@ export function outputs(c: Collected): Map<string, string> {
       join(ROOT, a.slug, a.asset),
       renderPage({
         title: `Bibliography: ${a.slug}/${a.asset}`,
-        permalink: `/${ROUTE}/${a.slug}/${a.asset}/`,
+        permalink: `${prefix}/${ROUTE}/${a.slug}/${a.asset}/`,
         intro: `The reference for \`${a.path}\` (${a.instance}${own !== undefined && a.instance !== own ? `, a dependency of ${own}` : ""}) and any references extracted from it. [${a.slug}](../) · [All references](../../).`,
         entries: a.entries,
       }),
@@ -705,13 +733,35 @@ function filesUnder(dir: string): string[] {
 
 if (import.meta.main) {
   const check = process.argv.includes("--check");
-  const c = collect();
+  // `--instance <name>`: that instance's own bibliography, written under
+  // `--site` with permalinks under `/<name>/`, for a site that composes the
+  // instance's pages inside its own (an index staging an IG at `/<name>/`).
+  const ii = process.argv.indexOf("--instance");
+  const instance = ii >= 0 ? process.argv[ii + 1] : undefined;
+  if (ii >= 0 && !instance) {
+    console.error("✗ --instance needs an instance name");
+    process.exit(2);
+  }
+  const all = collect();
+  let c = all;
+  if (instance !== undefined) {
+    const needs = new Map<string, readonly string[]>();
+    for (const root of instanceRootsIn(REPO)) {
+      const d = readDeclaration(root) as { name?: string; needs?: string[] } | undefined;
+      if (d?.name) needs.set(d.name, d.needs ?? []);
+    }
+    if (!needs.has(instance)) {
+      console.error(`✗ --instance ${instance}: no instance of that name in this checkout`);
+      process.exit(2);
+    }
+    c = forInstance(all, instance, (n) => needs.get(n) ?? []);
+  }
   if (c.invalid.length) {
     console.error(`✗ ${c.invalid.length} reference(s) do not validate:`);
     for (const f of c.invalid) console.error(`  ${f}`);
     process.exit(1);
   }
-  const files = outputs(c);
+  const files = outputs(c, instance !== undefined ? `/${instance}` : "");
   const orphans = filesUnder(ROOT).filter((p) => !files.has(p));
   const stale = [...files].filter(([p, s]) => !existsSync(p) || readFileSync(p, "utf-8") !== s).map(([p]) => p);
   const summary = `${c.entries.length} reference(s) in ${c.subgraphs.length} sub-graph(s)`;
