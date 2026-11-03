@@ -9,7 +9,7 @@
     {
       "id": "archimate-from-glossary",
       "prefLabel": "ArchiMate model from the glossary",
-      "definition": "Make an ArchiMate model agree with the instance's folio-glossary/v1 terms whose `focus` is an ArchiMate element: elements matched by their `skosConcept` property (never by name) take the term's prefLabel and definition, a term with no element gets one on no view, and the relationships the terms list are added. A type that disagrees is reported, never changed. A relationship between two linked elements that no term lists is reported, and removed with `--prune` along with the lines that draw it. No box or line is moved. Without `--write` it only reports; `--check` fails when anything would change.",
+      "definition": "Make an ArchiMate model agree with the instance's folio-glossary/v1 terms whose `focus` is an ArchiMate element: elements matched by their `skosConcept` property (never by name) take the term's prefLabel and definition, a term with no element gets one on no view, and the relationships the terms list are added. A type that disagrees is reported, never changed. A relationship between two linked elements that no term lists is reported, and removed with `--prune` along with the lines that draw it. No box or line is moved. Without `--write` it only reports; `--check` fails when anything would change. `--seed` goes the other way once, and only from an ingested model held under `library/` (`--from`): an authored model is never a source of the glossary.",
       "notation": "archimate-from-glossary",
       "source": "folio-assistant-core/tools/archimate-from-glossary/archimate-from-glossary.ts#archimate-from-glossary",
       "status": "candidate"

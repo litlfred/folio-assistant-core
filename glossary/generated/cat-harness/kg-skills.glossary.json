@@ -1076,6 +1076,14 @@
       "status": "candidate"
     },
     {
+      "id": "merge-manager-watcher",
+      "prefLabel": "merge-manager-watcher",
+      "definition": "The merge manager agent's watch loop: what wakes it, how often it looks, how it tells whether it is the active merge manager, what it reads each time, which process each reading sends it to (merge train, saturation meta-merge, stalled-agent takeover), and how it keeps the swarm in step with hold and done broadcasts. Use for \"be the merge manager\", \"watch the queue\", \"who merges\", \"the queue is stuck\", and when starting or handing over the merge-steward lane.",
+      "notation": "merge-manager-watcher",
+      "source": "cat-harness/skills/sdlc/sdlc-core/merge-manager-watcher.md",
+      "status": "candidate"
+    },
+    {
       "id": "merge-queue",
       "prefLabel": "merge-queue",
       "definition": "Order the ready PRs and land them as a train: read each PR's live facts, let the reprioritisation table place it, merge the members together, run the gate set on the combination, and on red attribute and eject the culprit rather than reject the train. Every merge goes through `merge:guard`. Use for \"merge the ready PRs\", \"land this PR\", \"what lands next\", \"run a merge train\", \"why was my PR ejected\", \"move this PR up\", and when tuning the train's order or size.",
@@ -1445,6 +1453,14 @@
       "definition": "Testing an import of a SAMPLE of a remote source into a knowledge graph or other structured store: scope it, let materialize-remote gate it, land it in the library (permanent) or the kept, unpublished trashcan (trial), import it, and test the import. The gates are called, never copied.",
       "notation": "sample-import",
       "source": "cat-harness/skills/library/large-datasets/sample-import.md",
+      "status": "candidate"
+    },
+    {
+      "id": "saturation-meta-merge",
+      "prefLabel": "saturation-meta-merge",
+      "definition": "When the CI runners have been full for a long time, drain a repository's ready PRs in one step: hold the swarm, cancel the queued PR runs, stack every admitted PR onto one meta-merge branch with merge commits, and land that branch on `main` without waiting for CI, on the owner's card that names each PR. Then re-run main's checks and report. Use for \"runners are full\", \"cancel everything and merge what's ready\", \"meta-merge\", \"consolidate the queue\", and when the queue has not moved for an hour or more.",
+      "notation": "saturation-meta-merge",
+      "source": "cat-harness/skills/sdlc/sdlc-core/saturation-meta-merge.md",
       "status": "candidate"
     },
     {
