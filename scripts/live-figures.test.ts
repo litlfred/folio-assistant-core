@@ -25,11 +25,15 @@ describe("a figure that is a model view is drawn from the model", () => {
     expect(live.get("media/image1.png")).toMatchObject({ svg: "../../archimate/1.0.0/views/id-v1.svg", page: "../inst/archimate/1.0.0/views/overview/" });
   });
 
-  it("points the image at the drawing, links the view, and keeps the PNG as the fallback", () => {
+  it("embeds the drawing as an object, so its links work, and keeps the PNG as the fallback", () => {
     const html = withLiveFigures(`<p><img src="media/image1.png" alt="Figure"></p>\n<p><img src="media/other.png" alt="x"></p>`, live);
-    expect(html).toContain(`<a class="fa-live-figure" href="../inst/archimate/1.0.0/views/overview/"><img src="../../archimate/1.0.0/views/id-v1.svg"`);
-    expect(html).toContain(`onerror="this.onerror=null;this.src=&quot;media/image1.png&quot;"`);
-    expect(html).toContain(`view &ldquo;Overview&rdquo;</a> (1.0.0)`);
+    expect(html).toContain(`<object class="fa-live-figure" type="image/svg+xml" data="../../archimate/1.0.0/views/id-v1.svg"`);
+    // A link inside an SVG loaded through <img> is never clickable, and a link
+    // around the drawing would take every click to the view page instead.
+    expect(html).not.toContain(`<img src="../../archimate/1.0.0/views/id-v1.svg"`);
+    expect(html).not.toContain(`<a class="fa-live-figure"`);
+    expect(html).toContain(`><img src="media/image1.png" alt="Figure 1: view &quot;Overview&quot; of ArchiMate model 1.0.0, drawn from the model" loading="lazy"></object>`);
+    expect(html).toContain(`<a href="../inst/archimate/1.0.0/views/overview/">view &ldquo;Overview&rdquo;</a> (1.0.0)`);
     expect(html).toContain(`<img src="media/other.png" alt="x">`);
   });
 

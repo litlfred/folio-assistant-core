@@ -141,7 +141,7 @@ ${tableStyle()}  :target { scroll-margin-top: 1rem; }
   .cite { color: var(--muted); }
   .fa-blk:empty { min-height: 3rem; }
   .fa-one-page { font-size: .85rem; color: var(--muted); }
-  .fa-live-figure img { max-width: 100%; height: auto; }
+  .fa-live-figure, .fa-live-figure img { display: block; max-width: 100%; height: auto; }
   .fa-live-figure-note { display: block; font-size: .85rem; color: var(--muted); }
 </style>`;
 

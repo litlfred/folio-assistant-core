@@ -6,10 +6,13 @@
  * (smart-ra#166, follow-up D3b). The instance's ArchiMate config maps a
  * figure's block to the view it shows (`figures` in `cat-archimate.config.json`,
  * cat-harness-tools#1064), and `archimate-pages --out` draws every view as SVG
- * into the same site. Here each `<img>` in a mapped block is pointed at that
- * SVG, wrapped in a link to the view's page, with a line saying where it is
- * drawn from. The PNG stays in `media/` as the fallback: `onerror` swaps back
- * to it when a build ran without the ArchiMate step.
+ * into the same site. Here each `<img>` in a mapped block is replaced by that
+ * SVG, with a line saying where it is drawn from and linking the view's page.
+ *
+ * The drawing is an `<object>`, never an `<img>`: every box in it links to its
+ * element's page (`target="_top"`), and a browser makes no link inside an SVG
+ * loaded through `<img>` clickable. The PNG in `media/` is the object's
+ * fallback content, shown when a build ran without the ArchiMate step.
  *
  * @module folio-assistant-core/scripts/live-figures
  */
@@ -129,7 +132,7 @@ export function liveFigures(repoRoot: string, pageDir: string): Map<string, Live
 
 const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]!);
 
-/** Rendered HTML with every mapped `<img>` drawn from the model, linked to its view. */
+/** Rendered HTML with every mapped `<img>` drawn from the model, its boxes linked to their elements. */
 export function withLiveFigures(html: string, figures: Map<string, LiveFigure>): string {
   if (figures.size === 0) return html;
   return html.replace(/<img\b[^>]*>/g, (tag) => {
@@ -137,10 +140,10 @@ export function withLiveFigures(html: string, figures: Map<string, LiveFigure>):
     const f = src === undefined ? undefined : figures.get(src);
     if (f === undefined) return tag;
     const alt = `${f.label}: view "${f.viewName}" of ArchiMate model ${f.model}, drawn from the model`;
-    // The swap back runs only when the drawing is missing; the URL is the page's own `media/` copy.
-    const fallback = `this.onerror=null;this.src=${JSON.stringify(f.src)}`;
+    // An <object>, so the drawing's own links work; its content (the page's own
+    // `media/` copy) shows only when the drawing is missing.
     return (
-      `<a class="fa-live-figure" href="${esc(f.page)}"><img src="${esc(f.svg)}" alt="${esc(alt)}" loading="lazy" onerror="${esc(fallback)}"></a>` +
+      `<object class="fa-live-figure" type="image/svg+xml" data="${esc(f.svg)}" aria-label="${esc(alt)}"><img src="${esc(f.src)}" alt="${esc(alt)}" loading="lazy"></object>` +
       `<span class="fa-live-figure-note">Drawn from the ArchiMate model: <a href="${esc(f.page)}">view &ldquo;${esc(f.viewName)}&rdquo;</a> (${esc(f.model)})</span>`
     );
   });
