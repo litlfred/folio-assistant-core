@@ -23,6 +23,7 @@ import {
   linksHtml,
   newReferenceUrl,
   outputs,
+  forInstance,
   renderPage,
 } from "./bibliography-page.ts";
 
@@ -346,5 +347,60 @@ describe("a site with its own instance (declared at the checkout root) and depen
     const plain = [...outputs(collect(checkout()))].find(([p]) => p.endsWith("bibliography/index.md"))![1];
     expect(plain).not.toContain("<details class=\"fa-bib-deps\"");
     expect(plain).toContain("**By sub-graph:**");
+  });
+});
+
+describe("one page, one id per entry (bean djj5)", () => {
+  // Two IGs' catalogues can each hold the same work under the same key
+  // (who-guideline-handbook in smart-trust-phw and smart-immunizations), and
+  // the combined page listed both as id="ref-<key>" (check:duplicate-ids).
+  const ref = ReferenceNodeSchema.parse({ $schema: "folio-reference/v1", id: "who-guideline-handbook", type: "book", title: "WHO handbook for guideline development" });
+  const a = { ref, instance: "smart-trust-phw", subgraph: "smart-trust-phw-catalogue", file: "a" };
+  const b = { ref, instance: "smart-immunizations", subgraph: "smart-immunizations-catalogue", file: "b" };
+  const ids = (html: string) => [...html.matchAll(/<li id="([^"]+)"/g)].map((m) => m[1]);
+
+  test("the first keeps ref-<key>, which a citation links; the next is qualified by its instance", () => {
+    const page = renderPage({ title: "Bibliography", permalink: "/b/", intro: "x", entries: [a, b] });
+    expect(ids(page)).toEqual(["ref-who-guideline-handbook", "ref-smart-immunizations-who-guideline-handbook"]);
+  });
+
+  test("on an own site's page the own entry keeps ref-<key>, wherever it sorts", () => {
+    const page = renderPage({ title: "Bibliography", permalink: "/b/", intro: "x", entries: [a, b], own: "smart-immunizations" });
+    expect(ids(page)).toEqual(["ref-who-guideline-handbook", "ref-smart-trust-phw-who-guideline-handbook"]);
+    expect(new Set(ids(page)).size).toBe(2);
+  });
+});
+
+describe("one instance's own bibliography, for its page inside a composed site (bean djj5)", () => {
+  // Owner, 2026-11-03: build a bibliography page per IG. An IG's pages link
+  // `en/folio-assistant-core/bibliography/` relative to the IG's site, which
+  // an index composes at `/<ig>/`.
+  const mk = (id: string, instance: string) => ({
+    ref: ReferenceNodeSchema.parse({ $schema: "folio-reference/v1", id, type: "webpage", title: id }),
+    instance,
+    subgraph: `${instance}-catalogue`,
+    file: id,
+  });
+  const c = {
+    entries: [mk("a", "smart-trust"), mk("b", "smart-base"), mk("c", "smart-immunizations")],
+    subgraphs: ["smart-trust", "smart-base", "smart-immunizations"].map((i) => ({ id: `${i}-catalogue`, instance: i, kind: "catalogue" as const, path: `${i}/catalogue`, slug: `${i}-catalogue` })),
+    assets: [],
+    invalid: [],
+  };
+  const needs: Record<string, string[]> = { "smart-trust": ["smart-base"], "smart-base": [], "smart-immunizations": ["smart-base"] };
+
+  test("keeps the instance and what it needs, transitively, and makes it own", () => {
+    const own = forInstance(c, "smart-trust", (n) => needs[n] ?? []);
+    expect(own.own).toBe("smart-trust");
+    expect(own.entries.map((e) => e.ref.id)).toEqual(["a", "b"]);
+    expect(own.subgraphs.map((s) => s.instance)).toEqual(["smart-trust", "smart-base"]);
+  });
+
+  test("its pages are served under /<instance>/", () => {
+    const pages = outputs(forInstance(c, "smart-trust", (n) => needs[n] ?? []), "/smart-trust");
+    const root = [...pages].find(([p]) => p.endsWith("bibliography/index.md"))![1];
+    expect(root).toContain("permalink: /smart-trust/en/folio-assistant-core/bibliography/");
+    const sub = [...pages].find(([p]) => p.endsWith("smart-trust-catalogue/index.md"))![1];
+    expect(sub).toContain("permalink: /smart-trust/en/folio-assistant-core/bibliography/smart-trust-catalogue/");
   });
 });
