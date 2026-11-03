@@ -15,6 +15,7 @@
  * validator node can name it the way every other one names a `schemas/` file.
  *
  * @module folio-assistant-core/schemas/glossary-tables
+ * @graphNode schema
  */
 import { z } from "zod";
 
