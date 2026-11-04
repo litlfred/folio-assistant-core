@@ -33,21 +33,21 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 - Skill: `library-ingestion`.
 - What: The harness's `document-ingestion.bpmn`: accept the upload by a declared route, extract its metadata into the KG, and catalogue the asset in library/ — placed if materialized, recorded as referenced if not.
 - A subprocess (`Process_Ingestion`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
-- next: → `Task_Detect` (Detect media type and mint a doc id)
+- next: → `Task_Detect` (Detect media type, mint a doc id)
 
 ## Done — Not yours — left alone (`End_BeanNotYours`)
 
 - The instance completes here: Someone else holds the bean; this run stops without touching it. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
-### 3. Detect media type and mint a doc id (`Task_Detect`)
+### 3. Detect media type, mint a doc id (`Task_Detect`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
 - What: Sniff the media type rather than trusting the extension, and mint the doc id from the page-1 arXiv stamp where there is one, else from the filename.
 - Record it: `workflow_complete` with `node: "Task_Detect"`.
-- next: → `Task_Licence` (Establish the licence from the upload alone)
+- next: → `Task_Licence` (Establish the licence from the upload)
 
-### 4. Establish the licence from the upload alone (`Task_Licence`)
+### 4. Establish the licence from the upload (`Task_Licence`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
@@ -111,7 +111,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 
 ### 10. Record the gap as a bean (`Task_OpenBean`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `todo-manager`.
 - What: A missing derived artefact is a tracked gap, not a silent omission.
 - Record it: `workflow_complete` with `node: "Task_OpenBean"`.
@@ -123,9 +123,9 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 - Skill: `document-intake`.
 - What: The folder name IS the bibliography citation key, so a citation and a directory are the same string.
 - Record it: `workflow_complete` with `node: "Task_Promote"`.
-- next: → `Task_SummaryQueue` (Prose blocks enter the summary queue)
+- next: → `Task_SummaryQueue` (Queue prose blocks for summary)
 
-### 12. Prose blocks enter the summary queue (`Task_SummaryQueue`)
+### 12. Queue prose blocks for summary (`Task_SummaryQueue`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `l1-document-ingestion`.
@@ -135,7 +135,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 
 ### 13. Available to cite as an L1 source (`Task_Citeable`)
 
-- Who: the `Corpus — L1 source knowledge graph` lane (role `corpus`).
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
 - What: Every knowledge-graph reference to this source now resolves through library/.
 - Record it: `workflow_complete` with `node: "Task_Citeable"`.
@@ -143,7 +143,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 
 ### 14. Close the bean (`Call_BeanClose`)
 
-- Who: the `Corpus — L1 source knowledge graph` lane (role `corpus`).
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `todo-manager`.
 - What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
 - A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.

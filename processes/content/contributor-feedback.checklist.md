@@ -10,9 +10,9 @@ A document is still being written, and the Authoring Committee gives feedback on
 
 - Begin here.
 - Call `workflow_start` with `process: "Process_ContributorFeedback"` and the subject this run is about; keep the instance id it returns.
-- next: → `Task_StartRow` (Start a change-set row: title, sections, feedback)
+- next: → `Task_StartRow` (Start a change-set row)
 
-### 1. Start a change-set row: title, sections, feedback (`Task_StartRow`)
+### 1. Start a change-set row (`Task_StartRow`)
 
 - Who: the `Authoring Committee` lane (role `authoring-committee`).
 - Skill: `review-sheet-script`.
@@ -57,9 +57,9 @@ A document is still being written, and the Authoring Committee gives feedback on
 - Answered by the script, which compares the row's Blue cells with the basis the agent wrote.
 - Call `workflow_complete` with `node: "Gateway_FeedbackChanged"` and `outcome` set to the label that holds:
   - «changed» → `Task_Propose` (Propose a direction)
-  - «agreed» → `Task_QaGate` (QA gate: review dispositions against the people and the pull request)
+  - «agreed» → `Task_QaGate` (QA-review the dispositions)
 
-### 6. QA gate: review dispositions against the people and the pull request (`Task_QaGate`)
+### 6. QA-review the dispositions (`Task_QaGate`)
 
 - Who: the `QA reviewer (independent)` lane (role `qc-reviewer`).
 - Skill: `review-sheet-script`.

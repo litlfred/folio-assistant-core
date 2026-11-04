@@ -26,6 +26,7 @@
     "schemas/changeset.ts",
     "schemas/dublin-core.ts",
     "schemas/figure-data.ts",
+    "schemas/glossary-tables.ts",
     "schemas/glossary.ts",
     "schemas/kg-materialization.ts",
     "schemas/materialization.ts",

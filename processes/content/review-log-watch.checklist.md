@@ -51,7 +51,7 @@ One poll of one drafting review log (a Contributor Feedback sheet) and its folio
 
 - Who: the `Log watcher (authoring agent)` lane (role `authoring-agent`).
 - Skill: `review-sheet-script`.
-- What: For each changed row, the agent pass of Contributor feedback on a working draft: a new or edited row gets a proposal, Ready for agent = Yes gets its edit, Ready for merge = Yes its merge, and a Blue answer to a Decision needed question is taken up.
+- What: For each changed row, the agent pass of Contributor feedback on a working draft: Ready for agent = Yes gets its edit, Ready for merge = Yes its merge, and a Blue answer to a Decision needed question is taken up.
 - A subprocess (`Process_ContributorFeedback`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Task_Accept` (Accept the new state)
 
