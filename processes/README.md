@@ -4,12 +4,13 @@
 
 # core-processes
 
-The BPMN core owns -- `deep-document-research`, Doc-Researcher's iterative loop as an executable process. A TOP-LEVEL directory rather than `methodologies/processes/`, which is where it was first put: `check:layout-norms` refused that as a package subdirectory of an already-declared graph, declaring the same directory twice. `smart-base` carries the nested shape and is baselined, but the harness's own diagrams live in a top-level `processes/` and so do these. That satisfies bean `g43o` -- `workflowDirs` resolves from a DECLARED directory -- without the double declaration, which is strictly better than baselining a third instance of a tolerated exception.
+The BPMN core owns, by area: `content/` (authoring, editing and HCI validation, draft to publication, the content lifecycle, change review, evidence retrieval, contributor feedback), `library/` (L1 document ingestion and `deep-document-research`, Doc-Researcher's iterative loop), `conduct/` (getting started) and `ui/` (board interactions), with their DMN tables in each area's `decisions/`. A TOP-LEVEL directory, as the harness's diagrams are: `check:layout-norms` refuses a package subdirectory of an already-declared graph such as `methodologies/processes/`, and `workflowDirs` resolves only from a DECLARED directory.
 
 Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-processes`, holding `processes`.
 
 | file | what it is | used by |
 |---|---|---|
+| [`global-tasks.bpmn`](global-tasks.bpmn) | 1 global task, the steps several [Processes](https://litlfred.github.io/bootstrap/schemas/#process) share |  |
 | [`processes.json`](processes.json) | data |  |
 | [`conduct/`](conduct/) | _nothing declares what this holds_ | |
 | [`content/`](content/) | _nothing declares what this holds_ | |

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: content-change-review-publish\n"
-"POT-Creation-Date: 2026-10-31T10:06:51.393Z\n"
+"POT-Creation-Date: 2026-11-04T12:14:26.124Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: es\n"
@@ -24,7 +24,7 @@ msgstr ""
 msgid "CI/CD Pipeline"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:116
+#: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:114
 #. Diagram label
 msgid "Deployment complete"
 msgstr ""
@@ -36,7 +36,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:29
 #. Diagram element documentation
-msgid "GW_Merged sits downstream of Task_Approve in the Reviewer's lane, so it is checking whether that approval actually resulted in a merge rather than deciding whether to approve one, and a \"No\" ends the pipeline quietly instead of looping back into review."
+msgid "GW_Merged checks whether the approval resulted in a merge; it does not decide whether to approve one, and a \"No\" ends the run instead of looping back into review."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:15
@@ -56,10 +56,10 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:19
 #. Diagram element documentation
-msgid "Merging an approved content change on the owner's explicit confirmation and publishing it: remove the staging preview, rebuild the main site and watch it. A change that is not merged keeps its preview. Called from content-change-review after the committee approves. Approving is the committee's judgement and merging is a separate, confirmed act (bean en2d), which is why the merge opens this phase rather than closing the review."
+msgid "Merging an approved content change on the owner's explicit confirmation and publishing it: remove the staging preview, rebuild the main site and watch it. A change that is not merged keeps its preview. Called from content-change-review after the committee approves. Approving is the committee's judgement and merging is a separate, confirmed act, which is why the merge opens this phase rather than closing the review."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:123
+#: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:121
 #. Diagram label
 msgid "No"
 msgstr ""
@@ -96,7 +96,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:100
 #. Diagram element documentation
-msgid "Second dispatch point: the change was approved and merged, and the root of the site has been rebuilt from main. This is the moment docs-site.yml failed all 30 times over two months (bean xom7) while looking exactly like a green run from inside the repo. `note` rather than `claim`, and the difference is not cosmetic. By here the branch-watch bean already exists, and whether the publish SUCCEEDED is a judgement this step cannot make -- the build reports its own exit code, and xom7 is the record of that being believed. AGENTS.md: a bean is not closed on someone else's say-so. So the step records what it observed and leaves the verdict to the watcher."
+msgid "Second dispatch point: the change was approved and merged, and the root of the site has been rebuilt from main. A failing main build can look like a green run from inside the repo. `note` rather than `claim`: the branch-watch bean already exists, and whether the publish SUCCEEDED is not this step's judgement (the build reports its own exit code). A bean is not closed on someone else's say-so, so the step records what it observed and leaves the verdict to the watcher."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:64
@@ -119,7 +119,7 @@ msgstr ""
 msgid "When the PR is merged or closed, the cleanup job removes the STAGING/<slug>/ directory from gh-pages so stale previews don't accumulate."
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:122
+#: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:120
 #. Diagram label
 msgid "Yes"
 msgstr ""

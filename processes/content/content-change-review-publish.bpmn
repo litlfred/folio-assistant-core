@@ -18,7 +18,7 @@
   <bpmn:process id="Process_ContentChangeReviewPublish" name="Merge and publish a content change" isExecutable="false">
     <bpmn:documentation>Merging an approved content change on the owner's explicit confirmation and publishing it: remove the staging preview, rebuild the main site and watch it. A change that is not merged keeps its preview.
 
-Called from content-change-review after the committee approves. Approving is the committee's judgement and merging is a separate, confirmed act (bean en2d), which is why the merge opens this phase rather than closing the review.</bpmn:documentation>
+Called from content-change-review after the committee approves. Approving is the committee's judgement and merging is a separate, confirmed act, which is why the merge opens this phase rather than closing the review.</bpmn:documentation>
     <bpmn:laneSet id="LaneSet_ContentChangeReviewPublish">
       <bpmn:lane id="Lane_Reviewer" name="Review Committee" partitionElementRef="reviewer">
         <bpmn:documentation>Merges only on the owner's explicit confirmation.</bpmn:documentation>
@@ -26,7 +26,7 @@ Called from content-change-review after the committee approves. Approving is the
         <bpmn:flowNodeRef>Task_Merge</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Pipeline" name="CI/CD Pipeline" partitionElementRef="build-pipeline">
-        <bpmn:documentation>GW_Merged sits downstream of Task_Approve in the Reviewer's lane, so it is checking whether that approval actually resulted in a merge rather than deciding whether to approve one, and a "No" ends the pipeline quietly instead of looping back into review.</bpmn:documentation>
+        <bpmn:documentation>GW_Merged checks whether the approval resulted in a merge; it does not decide whether to approve one, and a "No" ends the run instead of looping back into review.</bpmn:documentation>
         <bpmn:flowNodeRef>GW_Merged</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>End_NotMerged</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_CleanupStaging</bpmn:flowNodeRef>
@@ -99,16 +99,14 @@ Called from content-change-review after the committee approves. Approving is the
 
       <bpmn:documentation>
         Second dispatch point: the change was approved and merged, and the
-        root of the site has been rebuilt from main. This is the moment
-        docs-site.yml failed all 30 times over two months (bean xom7) while
-        looking exactly like a green run from inside the repo.
+        root of the site has been rebuilt from main. A failing main build
+        can look like a green run from inside the repo.
 
-        `note` rather than `claim`, and the difference is not cosmetic. By
-        here the branch-watch bean already exists, and whether the publish
-        SUCCEEDED is a judgement this step cannot make -- the build reports
-        its own exit code, and xom7 is the record of that being believed.
-        AGENTS.md: a bean is not closed on someone else's say-so. So the step
-        records what it observed and leaves the verdict to the watcher.
+        `note` rather than `claim`: the branch-watch bean already exists, and
+        whether the publish SUCCEEDED is not this step's judgement (the build
+        reports its own exit code). A bean is not closed on someone else's
+        say-so, so the step records what it observed and leaves the verdict
+        to the watcher.
       </bpmn:documentation>
       <bpmn:incoming>p7</bpmn:incoming>
       <bpmn:outgoing>p7b</bpmn:outgoing>

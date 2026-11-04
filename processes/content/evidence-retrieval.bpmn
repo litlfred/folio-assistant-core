@@ -3,9 +3,8 @@
   folio-assistant — Editing subprocess — evidence for a recommendation.
 
   STRAWPERSON. The shape is real and renders; the concrete registry list, the
-  grading system and the API bindings are deliberately NOT fixed here. A
-  separate process refines requirements; this file exists so there is something
-  to refine instead of a conversation.
+  grading system and the API bindings are deliberately NOT fixed here; a
+  separate process refines them.
 
   Source of truth: this file. Open it in bpmn.io, Camunda Modeler, or any other
   BPMN 2.0 tool. The SVG under docs/assets/img/workflows/ is generated from it
@@ -33,10 +32,10 @@
     <bpmn:participant id="Participant_EvidenceRetrieval" name="Editing subprocess — evidence for a recommendation" processRef="Process_EvidenceRetrieval" />
   </bpmn:collaboration>
   <bpmn:process id="Process_EvidenceRetrieval" name="Evidence for a recommendation" isExecutable="false">
-    <bpmn:documentation>Frame a question for a recommendation, retrieve and appraise evidence from trusted sources, and either attach it or record the gap; a change that states or alters no recommendation ends at its own event before any search. The author reviews the guidance already in their content, frames the question as PICO, retrieves candidate evidence across three classes (trusted L1 sources, trusted L2/L3 content, data repositories), verifies each candidate's authority against the publishing body's own API, grades the body of evidence, and either attaches it to the recommendation or records the gap. STRAWPERSON: registries, grading system and API bindings are not fixed here.</bpmn:documentation>
+    <bpmn:documentation>Frame a question for a recommendation, retrieve and appraise evidence from trusted sources, and either attach it or record the gap; a change that states or alters no recommendation ends at its own event before any search. Evidence comes from three classes (trusted L1 sources, trusted L2/L3 content, data repositories), and each candidate's authority is verified against the publishing body's own API. STRAWPERSON: registries, grading system and API bindings are not fixed here.</bpmn:documentation>
     <bpmn:laneSet id="LaneSet_EvidenceRetrieval">
       <bpmn:lane id="Lane_Author" name="Author / guideline developer (person)" partitionElementRef="author">
-        <bpmn:documentation>Brackets the machine work rather than doing it: frames the PICO before Lane_Agent fans out across evidence classes, then is the only lane that grades what comes back and decides whether it is sufficient for a recommendation — retrieval and authority-checking are delegated, but the judgement that turns evidence into a claim never leaves this lane.</bpmn:documentation>
+        <bpmn:documentation>Brackets the machine work rather than doing it: frames the PICO before Lane_Agent fans out across evidence classes, then is the only lane that grades what comes back and decides whether it is sufficient for a recommendation; retrieval and authority-checking are delegated.</bpmn:documentation>
         <bpmn:flowNodeRef>StartEvent_Recommendation</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_RecommendationInPlay</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_NoRecommendation</bpmn:flowNodeRef>
@@ -51,7 +50,7 @@
         <bpmn:flowNodeRef>EndEvent_GapRecorded</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Agent" name="Evidence agent (system)" partitionElementRef="evidence-agent">
-        <bpmn:documentation>The appraisal in the role's own description happens elsewhere in this diagram: this lane only fans out in parallel across the three evidence classes and joins the candidates, while grading is Lane_Author's call and authority is Lane_Trusted's — so what it owns here is coverage, not judgement.</bpmn:documentation>
+        <bpmn:documentation>Fans out in parallel across the three evidence classes and joins the candidates. It owns coverage, not judgement: grading is Lane_Author's call and authority is Lane_Trusted's.</bpmn:documentation>
         <bpmn:flowNodeRef>Gateway_RetrievalFork</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_L1Sources</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_L2L3Content</bpmn:flowNodeRef>
@@ -59,7 +58,7 @@
         <bpmn:flowNodeRef>Gateway_RetrievalJoin</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Trusted" name="Trusted registries and observatories (external)" partitionElementRef="external-registry">
-        <bpmn:documentation>Task_VerifyAuthority and its gateway sit here rather than with Lane_Agent because the decision is not this instance's call — it is a readout of what the external API returns, and the moment that answer is uncertain or absent, Lane_WorkPlan opens a bean rather than this lane inventing a verdict.</bpmn:documentation>
+        <bpmn:documentation>Task_VerifyAuthority and its gateway sit here rather than with Lane_Agent because the decision is a readout of what the external API returns, not this instance's call; when that answer is uncertain or absent, a bean is opened rather than a verdict invented.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_VerifyAuthority</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Authoritative</bpmn:flowNodeRef>
       </bpmn:lane>
@@ -109,11 +108,9 @@
     <bpmn:serviceTask id="Task_L2L3Content" name="Search trusted L2 and L3 content">
       <bpmn:documentation>Already-adjudicated guidance: WHO SMART DAKs at L2 and FHIR Implementation Guides at L3. A recommendation adopted in a published DAK is evidence of a different kind from a primary study -- it is a prior decision, with its own provenance, and must be cited as that rather than laundered into primary evidence.
 
-NOT YET SKILL-BACKED. This step named `corpus-search`, which has never
-existed. It is not `corpus-grep`, whose job is the pre-declaration check
-that something really is an open gap — searching adjudicated L2/L3 content
-for evidence is a different task, so pointing the ref there would have been
-a plausible-looking wrong answer. Left uncovered until the skill is written.</bpmn:documentation>
+NOT YET SKILL-BACKED: no skill searches adjudicated L2/L3 content for
+evidence. `corpus-grep` is a different task (checking that a gap is really
+open).</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
         <bootstrap.processes:skill ref="document-intake" />

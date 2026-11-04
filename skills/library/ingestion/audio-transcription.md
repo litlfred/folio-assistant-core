@@ -14,14 +14,12 @@ allowed-tools: Read Grep Glob Bash
 
 # Audio transcription: which recogniser, when, and how to check it
 
-Bean `1r0p`. The first real recording is the smart-ra meeting:
-`smart-ra/uploads/output.mp4`, 17:09, H.264 1080p with AAC mono 16 kHz audio,
-English, two speakers. It arrived with two transcripts. Both are Microsoft
-Teams exports: a `.vtt` with 275 cues and the "Download as .docx" export, about
-2,600 words.
+The default independent recogniser is **whisper.cpp**.
 
-**Owner ruling, 2026-10-10:** the default independent recogniser is
-**whisper.cpp**.
+The worked example below is the smart-ra meeting:
+`smart-ra/uploads/output.mp4`, 17:09, H.264 1080p with AAC mono 16 kHz audio,
+English, two speakers, with two Microsoft Teams exports: a `.vtt` with 275
+cues and the "Download as .docx" export, about 2,600 words.
 
 ## 1. Always: extract the audio first
 
@@ -49,9 +47,8 @@ is for.
 
 ## 3. Choose by constraint
 
-The licences, language coverage and sizes below were researched on
-2026-10-10. Verify them against the project's release page before pinning a
-version.
+Verify the licences, language coverage and sizes below against the project's
+release page before pinning a version.
 
 | situation | use | why |
 |---|---|---|
@@ -69,7 +66,7 @@ from Arabic audio is worse than no transcript.
 
 Whisper's `translate` task goes **into English only**. To make an English
 transcript into ar, zh, fr, ru or es, run a machine-translation tool, then the
-round-trip QA (`ktt2`, the `untainted-verification` skill): a back-translator
+round-trip QA (the `untainted-verification` skill): a back-translator
 that sees only the target text, and an adjudicator that never sees it. The
 open-source MT options found were MADLAD-400 (Apache-2.0), Opus-MT
 (CC-BY-4.0) and Argos Translate (MIT). NLLB's weights are non-commercial;
@@ -106,8 +103,7 @@ hosted on huggingface.co too, so that remedy fails in the same environment.
 
 ## 7. File it in the library
 
-A recording becomes a library entry with one transcript per language (bean
-`1r0p`):
+A recording becomes a library entry with one transcript per language:
 
 ```
 library/<slug>/
@@ -141,7 +137,7 @@ library/<slug>/
 
 | piece | where |
 |---|---|
-| Tool nodes (declared, not installed; bean `r279`) | cat-harness `tools/index.ts`: `transcribe-whisper-cpp`, `transcribe-faster-whisper`, `transcribe-vosk` |
+| Tool nodes (declared, not installed) | cat-harness `tools/index.ts`: `transcribe-whisper-cpp`, `transcribe-faster-whisper`, `transcribe-vosk` |
 | extract, parse VTT/DOCX, compare, frames, Vosk transcribe | `cat-harness-tools/scripts/meeting-recording.py` |
 | library entry: record, transcript, segments digest | `cat-harness-tools/scripts/recording-transcript.py`; schemas in cat-harness `schemas/library/recording.ts` |
 | walkthrough method (requirements from a recording) | cat-harness `sdlc/skills/crdm/crdm-recorded-walkthrough.md` |

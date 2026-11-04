@@ -18,7 +18,7 @@
           "sourceLinks": [
             {
               "text": "BPMN 2.0 source",
-              "href": "https://github.com/litlfred/folio-assistant/blob/main/processes/authoring-a-document.bpmn"
+              "href": "https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/authoring-a-document.bpmn"
             },
             {
               "text": "full-size SVG",

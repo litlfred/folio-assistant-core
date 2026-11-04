@@ -4,7 +4,7 @@
 
 > **Generated, and not the authority.** This is `folio-assistant-core/processes/conduct/getting-started.bpmn` (process `Process_GettingStarted`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
 
-Somebody said "create a folio": work out which request they meant, with the branch computed by a decision table that may answer "ask", and what has to be true before anything is written.
+Somebody said "create a folio": work out which request they meant, with the branch computed by a decision table that may answer "ask", and what has to be true before anything is written, through to a live site.
 
 ## Begin — "create a folio" (`StartEvent_AskToStart`)
 
@@ -70,7 +70,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 
 - Who: the `Onboarding agent (system)` lane (role `onboarding-agent`).
 - Skill: `getting-started`.
-- What: content/, uploads/, library/, the first manifests, <slug>.json and index.config.json (the instance's config inline in its entry; no <slug>.config.json, bean ymvt), the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store.
+- What: content/, uploads/, library/, the first manifests, <slug>.json and index.config.json (the instance's config inline in its entry; no <slug>.config.json), the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store.
 - Record it: `workflow_complete` with `node: "Task_Scaffold"`.
 - next: → `Call_BeanOpen` (Open the bean)
 
@@ -78,7 +78,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 
 - Who: the `User (person)` lane (role `user`).
 - Skill: `repo-conversion`, `interaction-modality`.
-- What: The person picks which of the content markers the scan found the harness declares in index.config.json, and nothing is declared unpicked.
+- What: A PERSON'S STEP: the scan's `markers` that are not yet declared are offered as selectable options — one per marker, each with its paths and what declaring it means, plus "none of these" — and the person picks which parts of the repository to load into the KG.
 - A subprocess (`Process_AskThePerson`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Task_ConfirmImport` (Import what, where, and who does it)
 

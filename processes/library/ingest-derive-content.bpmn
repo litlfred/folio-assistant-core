@@ -25,21 +25,13 @@
     <bpmn:participant id="Participant_DeriveContent" name="Ingestion subprocess — derive content from the assets" processRef="Process_DeriveContent" />
   </bpmn:collaboration>
   <bpmn:process id="Process_DeriveContent" name="Ingestion subprocess — derive content from the assets" isExecutable="false">
-    <bpmn:documentation>Derive content from an ingested source's assets: the archive, technical metadata, images, audio, tabular data and provenance. folio-assistant — Ingestion subprocess — derive content from the assets.
-
-  Source of truth: this file. Open it in bpmn.io, Camunda Modeler, or any other
-  BPMN 2.0 tool. The SVG under docs/assets/img/workflows/ is generated from it
-  by `bun run cat render:bpmn` — never hand-edit the SVG.
-
-  The &lt;bootstrap.processes:skill&gt; extension on an activity names the folio-assistant skill
-  that implements it; &lt;cat-harness.processes:bean&gt; marks a step that reads or writes the shared
-  work plan in beans/.</bpmn:documentation>
+    <bpmn:documentation>Derive content from an ingested source's assets: the archive, technical metadata, images, audio, tabular data and provenance.</bpmn:documentation>
     <bpmn:extensionElements>
       <cat-harness.processes:policy enforcement="advisory" />
     </bpmn:extensionElements>
     <bpmn:laneSet id="Process_DeriveContent_LaneSet">
       <bpmn:lane id="Lane_0" name="Ingestion Engine (agent, runs unattended)" partitionElementRef="ingestion-agent">
-        <bpmn:documentation>The only lane in this subprocess, so nothing produced here is checked by a different party before it reaches the L1 graph. Five of these six tasks carry their own NOT IMPLEMENTED note; Task_Provenance does not, and its citation of who or what wrote each narrative is what is meant to stand between a generated description and its being treated as source material.</bpmn:documentation>
+        <bpmn:documentation>The only lane in this subprocess, so nothing produced here is checked by a different party before it reaches the L1 graph. Three of these six tasks are NOT IMPLEMENTED; Task_Provenance's citation of who or what wrote each narrative is what is meant to stand between a generated description and its being treated as source material.</bpmn:documentation>
         <bpmn:flowNodeRef>StartEvent_Assets</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Fan</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Archive</bpmn:flowNodeRef>
@@ -69,7 +61,7 @@ contents manifest">
         <bootstrap.processes:skill ref="document-intake"/>
       </bpmn:extensionElements>
 
-      <bpmn:documentation>NOT IMPLEMENTED. Tracked as a bean; see docs/document-ingestion.md. Tar/zip is opaque to every grep in the corpus until its contents are listed as data.</bpmn:documentation>
+      <bpmn:documentation>NOT IMPLEMENTED; see docs/document-ingestion.md. Tar/zip is opaque to every grep in the corpus until its contents are listed as data.</bpmn:documentation>
       <bpmn:incoming>Flow_d2</bpmn:incoming>
       <bpmn:outgoing>Flow_d7</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -79,7 +71,7 @@ timestamps, mimetype">
         <bootstrap.processes:skill ref="document-intake"/>
       </bpmn:extensionElements>
 
-      <bpmn:documentation>NOT IMPLEMENTED. Tracked as a bean; see docs/document-ingestion.md. Mechanical and cheap; the checksum is what makes a remote asset verifiable.</bpmn:documentation>
+      <bpmn:documentation>NOT IMPLEMENTED; see docs/document-ingestion.md. Mechanical and cheap; the checksum is what makes a remote asset verifiable.</bpmn:documentation>
       <bpmn:incoming>Flow_d3</bpmn:incoming>
       <bpmn:outgoing>Flow_d8</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -89,7 +81,7 @@ per image, localized">
         <bootstrap.processes:skill ref="document-intake"/>
       </bpmn:extensionElements>
 
-      <bpmn:documentation>NOT IMPLEMENTED. Tracked as a bean; see docs/document-ingestion.md. Applies equally to an image EXTRACTED FROM A PDF, not only to an uploaded one.</bpmn:documentation>
+      <bpmn:documentation>NOT IMPLEMENTED; see docs/document-ingestion.md. Applies equally to an image EXTRACTED FROM A PDF, not only to an uploaded one.</bpmn:documentation>
       <bpmn:incoming>Flow_d4</bpmn:incoming>
       <bpmn:outgoing>Flow_d9</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -99,7 +91,7 @@ translate audio">
         <bootstrap.processes:skill ref="document-intake"/>
       </bpmn:extensionElements>
 
-      <bpmn:documentation>NOT IMPLEMENTED. Tracked as a bean; see docs/document-ingestion.md.</bpmn:documentation>
+      <bpmn:documentation>No Tool yet; the method, and the choice of recogniser, is skill audio-transcription.</bpmn:documentation>
       <bpmn:incoming>Flow_d5</bpmn:incoming>
       <bpmn:outgoing>Flow_d10</bpmn:outgoing>
     </bpmn:serviceTask>
@@ -109,7 +101,7 @@ shape, narrative">
         <bootstrap.processes:skill ref="document-intake"/>
       </bpmn:extensionElements>
 
-      <bpmn:documentation>NOT IMPLEMENTED. Tracked as a bean; see docs/document-ingestion.md. CSV and spreadsheet: tabs, column and row headers, sizes, and what the dataset is about.</bpmn:documentation>
+      <bpmn:documentation>Tools tabular-csv and tabular-xlsx, as CSVW (skill tabular-metadata). CSV and spreadsheet: tabs, column and row headers, sizes, and what the dataset is about.</bpmn:documentation>
       <bpmn:incoming>Flow_d6</bpmn:incoming>
       <bpmn:outgoing>Flow_d11</bpmn:outgoing>
     </bpmn:serviceTask>

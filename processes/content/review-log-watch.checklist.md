@@ -8,7 +8,7 @@ One poll of one drafting review log (a Contributor Feedback sheet) and its folio
 
 ## Begin — Every 3 minutes (`StartEvent_Poll`)
 
-- Begin here: The watcher's poll: a chain of 3-minute delayed wakes, each queuing the next, with an hourly scheduled task that restarts the chain if it breaks (owner, 2026-11-01 10:20Z: "instead of 1-minute lets do 3").
+- Begin here: The watcher's poll: a chain of 3-minute delayed wakes, each queuing the next, with an hourly scheduled task that restarts the chain if it breaks.
 - Call `workflow_start` with `process: "Process_ReviewLogWatch"` and the subject this run is about; keep the instance id it returns.
 - next: → `Task_ReadSheet` (Read the Contributor Feedback tab)
 
@@ -16,7 +16,7 @@ One poll of one drafting review log (a Contributor Feedback sheet) and its folio
 
 - Who: the `Log watcher (authoring agent)` lane (role `authoring-agent`).
 - Skill: `review-log-watch`.
-- What: Reads Watch!F1:I1, the hash of the person-set cells that the sheet script writes on every refresh (Q-WATCH4 A), and Contributor Feedback's header row and Issue column, and saves them as JSON for the check.
+- What: Reads Watch!F1:I1, the hash of the person-set cells that the sheet script writes on every refresh, and Contributor Feedback's header row and Issue column, and saves them as JSON for the check.
 - Record it: `workflow_complete` with `node: "Task_ReadSheet"`.
 - next: → `Task_RunCheck` (Run the review-log-watch check)
 
@@ -39,7 +39,7 @@ One poll of one drafting review log (a Contributor Feedback sheet) and its folio
 
 - Who: the `Log watcher (authoring agent)` lane (role `authoring-agent`).
 - Skill: `review-log-watch`.
-- What: For each row in the tool's append list (one per issue that no row's Issue cell links yet; owner, Q-WATCH2 B), appends it below the last row of Contributor Feedback: Title is the issue's title, the first Contributor Feedback column @login (#N): the issue's first paragraph, Issue its URL.
+- What: For each row in the tool's append list (one per issue that no row's Issue cell links yet), appends it below the last row of Contributor Feedback: Title is the issue's title, the first Contributor Feedback column @login (#N): the issue's first paragraph, Issue its URL.
 - Record it: `workflow_complete` with `node: "Task_AppendRows"`.
 - next: → `Task_AgentPass` (Agent pass on the changed rows)
 

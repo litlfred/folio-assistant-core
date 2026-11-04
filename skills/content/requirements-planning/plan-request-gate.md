@@ -12,20 +12,11 @@ description: >
 
 # A plan request stops at a signed-off plan
 
-Issue [#2405](https://github.com/litlfred/folio-assistant/issues/2405), owner
-2026-10-07, verbatim: *"if we make a request for a plan you should ALWAYS have
-created a requirements document and work plan for us to review before
-implementation. the links should shared to the user"*. Decisions accepted the
-same day ([comment](https://github.com/litlfred/folio-assistant/issues/2405#issuecomment-6035163987)):
-this **operation** lives in folio-assistant-core; the **methods** that say
-how requirements are gathered (`crdm`, `spec-kit`) stay in cat-harness, and
-each points here.
-
-**The trigger incident.** A plan was given only in chat, and implementation
-started ([litlfred/test#2](https://github.com/litlfred/test/pull/2)) before any
-requirements document existed. The document was written afterwards. Nothing
-was wrong with the plan; the owner had no artefact to review before work
-began, and so no point at which to say no.
+A request for a plan always gets a requirements document and a work plan,
+handed to the user as links for review before any implementation. This
+**operation** lives in folio-assistant-core; the **methods** that say how
+requirements are gathered (`crdm`, `spec-kit`) stay in cat-harness, and each
+points here.
 
 ## The trigger — a request for a plan
 
@@ -38,7 +29,7 @@ Any of these, in the owner's or a stakeholder's words, is a plan request:
 - "come up with …"
 
 **Always — content requests included.** "Plan the edits to chapter 3" is a
-plan request exactly as "plan the new validator" is (decision 2). What
+plan request exactly as "plan the new validator" is. What
 changes between them is which methodology governs, never whether the gate
 applies.
 
@@ -83,7 +74,7 @@ https://github.com/<owner>/<repo>/blob/<sha>/<path>
 ```
 
 — with the commit **sha**, never a branch name, and never a repo-relative
-path. Two reasons, both observed in the trigger session:
+path:
 
 - **A repo-relative path is not a link.** `docs/proposals/x.md` in chat is
   clickable only when the reader's working directory is that repository, and
@@ -110,9 +101,9 @@ is **recorded on the issue**: a comment from the sign-off owner (or quoting
 them verbatim, with date) saying the plan is approved, or approving it with
 changes — and the decision is then **recorded** as a `requirement-signoff`
 attestation that moves the set to `approved`, which `check:requirements`
-refuses unless the signer is a human. Silence is not sign-off. A reaction is not sign-off. An approval in
-chat is real but not yet recorded: the agent quotes it on the issue, dated,
-before starting.
+refuses unless the signer is a human. Silence is not sign-off. A reaction is
+not sign-off. An approval in chat is real but not yet recorded: the agent
+quotes it on the issue, dated, before starting.
 
 What is allowed before sign-off: the requirements document and its revisions
 (`docs/proposals/` or the issue), the beans that ARE the work plan, and the
@@ -127,12 +118,10 @@ request reaches them, not a second set of them.
 
 ### A breach is detectable
 
-The test that makes it so (issue #2405 scenario P1): **no commit outside
-`docs/proposals/` and `beans/` lands on the branch before the sign-off
-comment's timestamp.** Compare `git log --format='%cI %H' --name-only` on the
-branch against the sign-off comment's `created_at`. Extending bean `4kq7`'s
-spec-before-code gate to run that comparison mechanically is that bean's
-work; until it lands, a reviewer runs it by hand.
+**No commit outside `docs/proposals/` and `beans/` lands on the branch before
+the sign-off comment's timestamp.** A reviewer checks it by hand: compare
+`git log --format='%cI %H' --name-only` on the branch against the sign-off
+comment's `created_at`.
 
 ## What this does NOT mean
 

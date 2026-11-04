@@ -16,8 +16,7 @@ tested-by:
 `corpus` (declared below this layer) is played by a **mechanical** actor: the
 versioned content store, which is written to and decides nothing. A role
 played by a machine is still a role, and its skills are its **contract**: the
-responsibilities it must perform, which a test can hold it to (owner,
-2026-10-16). This skill is the part of that contract this layer's diagrams
+responsibilities it must perform, which a test can hold it to. This skill is the part of that contract this layer's diagrams
 rely on, and nothing more.
 
 ## Where the diagrams lean on it
@@ -54,6 +53,3 @@ workflow engine and checks line 1 (the commit is enabled only after `accept`),
 and checks that the diagram binds the lane to this role and carries line 3's
 policy. Line 2 and the content of the commit-hygiene statements are not
 exercised: no code in this layer performs the commit.
-
-**Needs the owner's review:** this contract is read off one lane of one
-diagram.

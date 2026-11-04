@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: authoring-a-document\n"
-"POT-Creation-Date: 2026-11-01T10:39:29.123Z\n"
+"POT-Creation-Date: 2026-11-04T12:14:26.119Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ru\n"
@@ -76,12 +76,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:112
 #. Diagram element documentation
-msgid "content_profile_check: no math kind, no lean field, no .lean sibling. This is the step a paper folio does not have, and the reason a document folio never needs Lean or TeX to publish."
+msgid "content_profile_check: no math kind, no lean field, no .lean sibling. A paper folio has no such step; this is why a document folio needs neither Lean nor TeX to publish."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:142
 #. Diagram element documentation
-msgid "Core's shared review-and-publish process (Process_FolioReviewPublish): the reviewer reads the rendered folio and approves it, asks for changes, or sends a working draft to the Authoring Committee. Before 2026-11-01 each authoring process drew these steps itself (shared block G6, owner Q-BR-7 A)."
+msgid "Core's shared review-and-publish process (Process_FolioReviewPublish): the reviewer reads the rendered folio and approves it, asks for changes, or sends a working draft to the Authoring Committee."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:163
@@ -91,7 +91,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:101
 #. Diagram element documentation
-msgid "Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn. A normative statement is a `recommendation` block (bean 55ao), drafted through normative-statements: one statement per block, a folio-chosen label, and its strength as a code in a declared code list, so a reviewer signs off each one individually."
+msgid "Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn. A normative statement is a `recommendation` block, drafted through normative-statements: one statement per block, a folio-chosen label, and its strength as a code in a declared code list, so a reviewer signs off each one individually."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:93
@@ -101,7 +101,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:19
 #. Diagram element documentation
-msgid "How a document folio — structured prose and policy guidance, with no Lean and no required TeX — is authored, built and reviewed end to end. folio-assistant — authoring a document end to end (no Lean, no required TeX). Source of truth: this file. The SVG under docs/assets/img/workflows/ is generated from it by `bun run cat render:bpmn` — never hand-edit the SVG. The shape is the paper process minus the Lean lane and plus one step, the profile check, which is what keeps a document folio publishable without either toolchain. Review, publish and committee feedback are core's shared Process_FolioReviewPublish, called after rendering (shared block G6 of the BPMN guidance review, owner Q-BR-7 A, 2026-11-01). Its `no` answer, changes asked, comes back to Task_AuthorBlocks."
+msgid "How a document folio — structured prose and policy guidance, with no Lean and no required TeX — is authored, built and reviewed end to end. Source of truth: this file. The SVG under docs/assets/img/workflows/ is generated from it by `bun run cat render:bpmn` — never hand-edit the SVG. The shape is the paper process minus the Lean lane and plus one step, the profile check, which is what keeps a document folio publishable without either toolchain. Review, publish and committee feedback are core's shared Process_FolioReviewPublish, called after rendering. Its `no` answer, changes asked, comes back to Task_AuthorBlocks."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:59
@@ -141,12 +141,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:156
 #. Diagram element documentation
-msgid "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step."
+msgid "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn; placed straight before the end so the engine's resolve sees nothing left but the archive step."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:75
 #. Diagram element documentation
-msgid "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached."
+msgid "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn; the gateway after this reads which end it reached."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/authoring-a-document.bpmn:149

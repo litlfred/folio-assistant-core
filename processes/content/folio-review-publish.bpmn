@@ -15,7 +15,7 @@
     <bpmn:participant id="Participant_Process_FolioReviewPublish" name="Review and publish a folio" processRef="Process_FolioReviewPublish"/>
   </bpmn:collaboration>
   <bpmn:process id="Process_FolioReviewPublish" name="Review and publish a folio" isExecutable="false">
-    <bpmn:documentation>Review a rendered folio and publish it, or send it back with changes. Shared by every authoring process: authoring-a-document (this instance) and authoring-a-paper (folio-assistant-sci) call it after they validate and render, so review, publish and committee feedback are drawn once (shared block G6 of the BPMN guidance review, owner Q-BR-7 A, 2026-11-01). What differs by folio kind stays with the caller: its writing loop, its own check (the content profile for a document, the Lean build for a paper), and its renderer. It ends one of three ways. `Published`: the caller closes its bean. `Changes asked` and `Feedback in: changes asked`: the caller goes back to its writing loop.</bpmn:documentation>
+    <bpmn:documentation>Review a rendered folio and publish it, or send it back with changes. Shared by every authoring process: authoring-a-document (this instance) and authoring-a-paper (folio-assistant-sci) call it after they validate and render, so review, publish and committee feedback are drawn once. What differs by folio kind stays with the caller: its writing loop, its own check (the content profile for a document, the Lean build for a paper), and its renderer. It ends one of three ways. `Published`: the caller closes its bean. `Changes asked` and `Feedback in: changes asked`: the caller goes back to its writing loop.</bpmn:documentation>
     <bpmn:extensionElements>
       <cat-harness.processes:policy enforcement="advisory"/>
     </bpmn:extensionElements>
@@ -43,7 +43,7 @@
       <bpmn:outgoing>F1</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:userTask id="Task_Review" name="Review and record feedback">
-      <bpmn:documentation>The reviewer this folio binds. authoring-document relaxes the base SME step precisely because no single lane fits every document. Review the rendered paper, not a description of it, and record the feedback. The outcome is iterate — back to authoring — or approved for the publication path.</bpmn:documentation>
+      <bpmn:documentation>The reviewer this folio binds. authoring-document relaxes the base SME step precisely because no single lane fits every document. Review the rendered folio, not a description of it, and record the feedback. The outcome is iterate — back to authoring — or approved for the publication path.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review"/>
         <bootstrap.processes:skill ref="staging-review"/>
@@ -74,7 +74,7 @@
       <bpmn:incoming>F5</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:callActivity id="Call_ContributorFeedback" name="Contributor feedback" calledElement="Process_ContributorFeedback">
-      <bpmn:documentation>Process_ContributorFeedback: while the document is a working draft, the Authoring Committee gives feedback through the Contributor Feedback sheet, and each change set is edited and merged in its own pull request. When its changes are merged, the document is validated and rendered again (owner, 2026-10-31).</bpmn:documentation>
+      <bpmn:documentation>Process_ContributorFeedback: while the document is a working draft, the Authoring Committee gives feedback through the Contributor Feedback sheet, and each change set is edited and merged in its own pull request. When its changes are merged, the document is validated and rendered again.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="review-sheet-script"/>
       </bpmn:extensionElements>

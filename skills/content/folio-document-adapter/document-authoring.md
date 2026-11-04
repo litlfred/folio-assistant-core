@@ -14,8 +14,8 @@ checked mathematics.
 The same content model as a paper, minus the formal layer:
 
 ```
-content/<slug>/
-  <slug>.ts                 the document manifest (chapters, in order)
+folio/<slug>/
+  <slug>.ts                   the document manifest (chapters, in order)
   <chapter-dir>/
     <chapter-dir>.ts        the chapter manifest (sections, in order)
     <block-root>.ts         one block manifest
@@ -29,8 +29,9 @@ are separate files so a reviewer's diff is over prose, not over a manifest.
 
 ## The kinds you may use
 
-`prose`, `example`, `remark`, `algorithm`, `simulator`, `equation`,
-`diagram`, `table`.
+`prose`, `recommendation`, `example`, `remark`, `algorithm`, `simulator`,
+`equation`, `diagram`, `figure`, `table` (the `document`-profile nodes in
+`block-kinds/`).
 
 **Not** `definition`, `theorem`, `lemma`, `proposition`, `corollary`,
 `conjecture`, `proof`. Those seven are the paper profile: their assertion is a
@@ -45,7 +46,7 @@ If you find yourself wanting a `theorem`, you want one of two things:
   before reaching for a math kind.
 - an actual theorem — in which case this folio is a paper. Change the
   instance's `index.config.json` entry to `"contentType": "paper"`
-  deliberately (the index is the one config, bean `ymvt`), and know that
+  deliberately (the index is the one config), and know that
   you are taking on Lean and TeX as dependencies.
 
 ## Adding a block
@@ -68,10 +69,9 @@ If you find yourself wanting a `theorem`, you want one of two things:
 one. It is a judgement about narrative order, not a mechanical fact — nothing
 derives it and nothing should. In a paper folio there is a machine-derived
 formal graph alongside it; in a document folio there is not, so `uses[]` is
-the *only* dependency signal the corpus carries. That makes it more load-
-bearing here, not less: every ordering metric, every impact question ("what
-has to change if this recommendation changes?"), and the reading-order review
-all read it.
+the *only* dependency signal the corpus carries. Every ordering metric, every
+impact question ("what has to change if this recommendation changes?"), and
+the reading-order review read it.
 
 List **direct** neighbours only. If A needs B and B needs C, A lists B.
 
@@ -81,8 +81,7 @@ List **direct** neighbours only. If A needs B and B needs C, A lists B.
 to inspect ordering before you render anything else. `document_render_html`
 and `document_render_pdf` go through pandoc; the PDF path uses an HTML engine
 (weasyprint, prince, wkhtmltopdf) and **never** falls back to LaTeX. If no
-engine is installed it says so, because a document folio that quietly needed
-TeX to publish would be a paper folio wearing the wrong label.
+engine is installed it says so.
 
 ## What belongs in the folio, and what belongs here
 

@@ -6,13 +6,13 @@
   Source of truth: this file. The SVG under docs/assets/img/workflows/ is
   generated from it by `bun run cat render:bpmn`, so never hand-edit the SVG.
 
-  Owner, 2026-11-01: re-pins happen a lot in rapid development, and a re-pin
-  is also a review step. A country taking up a new version of a WHO guideline
+  Re-pins happen a lot in rapid development, and a re-pin is also a review
+  step. A country taking up a new version of a WHO guideline
   compares the current guideline, the new one and its existing adaptations,
   then decides the impact and which adaptations to revise. This process holds
   both sides: the people (who reviews, who decides) and the technical steps
   (re-pin in dependency order, impact report, merge). The planner is
-  cat-harness-tools `mount:repin:cone` (cat-harness-tools#1301).
+  cat-harness-tools `mount:repin:cone`.
 -->
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"

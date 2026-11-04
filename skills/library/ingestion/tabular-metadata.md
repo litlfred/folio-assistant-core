@@ -10,16 +10,14 @@ allowed-tools: Read Grep Glob Bash
 
 # Tabular metadata — CSVW, annotated, and honest about what it could not read
 
-**The model is CSVW and nothing custom.** Bean `ulqj`, decided by the owner:
-*"not new/custom thing."* This graph already speaks doco, deo, cito, oa, prov,
-skos, dcterms and fhir — eight published vocabularies, zero folio inventions.
-`folio-tabular-records/v1` was the one exception and is being retired.
+**The model is CSVW and nothing custom.** This graph already speaks doco, deo,
+cito, oa, prov, skos, dcterms and fhir — published vocabularies, no folio
+inventions. `folio-tabular-records/v1` is the one exception and is being
+retired.
 
 CSVW is a W3C Recommendation, it is already JSON-LD, and it models
-**table → column → datatype** and nothing else. That last part is the feature:
-*"no full Excel complexity"* is a property of the vocabulary, not a rule anyone
-has to remember. CSVW cannot express a formula, a merged cell or a fill colour,
-so nobody can add one by accident.
+**table → column → datatype** and nothing else. CSVW cannot express a formula,
+a merged cell or a fill colour, so nobody can add one by accident.
 
 ## The one thing CSVW cannot say, and the only place we extend it
 
@@ -36,27 +34,22 @@ column), `fac:headerRow`, `fac:extent`.
 
 > **The record is JSON; the CSVW is derived from it.** The annotations live in
 > `tabular.csvw.json` — plain JSON, deliberately not `.jsonld` — and
-> `toCsvw()` in `schemas/tabular-csvw.ts` produces the genuine CSVW metadata
-> document from it: the CSVW `@context`, CSVW's own keys, nothing of ours at
-> any level. A standard reader is handed that document and gets a correct
-> table description. That property is the entire reason for adopting a
-> standard rather than inventing a schema, so it is **tested** — the export is
-> walked key by key against `CSVW_KEYS` — rather than asserted.
+> `toCsvw()` in cat-harness-tools `schemas/library/tabular-csvw.ts` produces
+> the genuine CSVW metadata document from it: the CSVW `@context`, CSVW's own
+> keys, nothing of ours at any level. A standard reader is handed that
+> document and gets a correct table description. This is **tested**: the
+> export is walked key by key against `CSVW_KEYS`.
 
 Adding a fourth `fac:` term is the moment to stop and ask whether CSVW really
 cannot express it. Usually it can.
 
-### Why JSON and not JSON-LD — bean `792y`
+### Why JSON and not JSON-LD
 
-This section used to claim the record WAS a valid CSVW document that a
-standard parser would read while ignoring the `fac:` keys. It was not. The
-record had no `@context`, so a CSVW parser rejects it, and a JSON-LD processor
-keeps only the `fac:` keys, read as IRIs in a URI scheme called `fac`. No
-spelling of the prefix fixes that inside CSVW, whose metadata documents may
-put only `@language` and `@base` in a local context — see
+A record carrying the `fac:` keys cannot itself be valid CSVW: CSVW metadata
+documents may put only `@language` and `@base` in a local context, so a CSVW
+parser rejects any context of ours, and without one a JSON-LD processor reads
+the `fac:` keys as IRIs in a URI scheme called `fac` — see
 [`kg-export`](../../../../cat-harness/skills/kg/kg-core/kg-export.md) §"A prefix is the stub".
-
-The owner chose (2026-09-23) between three answers:
 
 | | the record | the cost |
 |---|---|---|
@@ -64,24 +57,22 @@ The owner chose (2026-09-23) between three answers:
 | full-IRI terms | real CSVW, annotations as ~12 flattened IRI terms, each defined in the vocabulary | JSON-LD drops `null`, so a DETERMINED null — a CSV has no sheet — becomes indistinguishable from "never recorded" |
 | our own context | JSON-LD with a context binding our prefix | a CSVW reader still rejects it |
 
-Two facts decided it. **Nothing reads the annotations as linked data** — the
-graph projection reads `anchor.sheet` from the JSON — and
+**Nothing reads the annotations as linked data** — the graph projection reads
+`anchor.sheet` from the JSON — and
 [`directory-conventions`](../../../../cat-harness/skills/kg/kg-core/directory-conventions.md) says to generate as many
 renderings as have a consumer, and no more. And **the three-state rule below
 needs `null` to mean something**, which RDF cannot keep. If a consumer ever
-needs placement as linked data, the full-IRI answer is the one to revisit,
-and its cost is already written down here.
+needs placement as linked data, revisit the full-IRI answer.
 
 **The `fac:` in the key names is a JSON name, not a prefix.** It marks our
-fields apart from CSVW's in the file. It is safe exactly because the file is
-not JSON-LD — rename the file back to `.jsonld` and it dangles again, which
-`check:context-emission` would then catch.
+fields apart from CSVW's in the file. It is safe only because the file is not
+JSON-LD — rename the file to `.jsonld` and it dangles, which
+`check:context-emission` would catch.
 
 ## "As best as can" means three states, never two
 
-The owner's phrase, and this repository's oldest rule wearing different
-clothes. Every field is **determined**, or **explicitly undetermined with a
-reason**. Nothing defaults.
+Every field is **determined**, or **explicitly undetermined with a reason**.
+Nothing defaults.
 
 | field | determined when | undetermined looks like |
 |---|---|---|
@@ -90,17 +81,16 @@ reason**. Nothing defaults.
 | `fac:anchor.sheet` | the format has sheets | `null` — a CSV has none, and that is DETERMINED |
 | `fac:anchor.cell` | the format has A1 refs | `null` for a CSV |
 
-Two of those nulls are worth separating carefully. **A CSV's `sheet: null` is a
-determined answer** — a CSV genuinely has no sheet, and writing `"Sheet1"`
-would invent one. An `undetermined` extent is the opposite: we looked and could
-not tell. The schema enforces the difference; `source` is what tells them
-apart, and a half-known extent is refused outright because it reads as a
-measurement.
+**A CSV's `sheet: null` is a determined answer** — a CSV has no sheet, and
+writing `"Sheet1"` would invent one. An `undetermined` extent is the opposite:
+we looked and could not tell. The schema enforces the difference; `source` is
+what tells them apart, and a half-known extent is refused outright because it
+reads as a measurement.
 
 **Never guess a datatype to avoid an `undetermined`.** A column of `1, 2, 3,
 N/A` is not an integer column. `any` with a recorded reason is a better answer
-than `integer` with a silent coercion, because the second one is indis-
-tinguishable from a correct reading.
+than `integer` with a silent coercion, which is indistinguishable from a
+correct reading.
 
 ## Generic workflow, format-specific tools
 
@@ -116,55 +106,34 @@ table and no cells outside it; a workbook has sheets, possibly several tables
 per sheet, and a table that may start anywhere. That difference lives in the
 tool, never in the workflow and never in the schema.
 
-Routing a CSV is **not** a sniff: a CSV has no magic bytes, and bean `p67i`
-established that it must not become an extension guess either. The content
-question is the only one available — do the first rows split into the same
-number of fields, more than one?
+Routing a CSV is **not** a sniff: a CSV has no magic bytes, and it must not
+become an extension guess either. The only question is about content — do the
+first rows split into the same number of fields, more than one?
 
 ## What a sheet IS in the graph — model reality, do not force conformance
 
-The owner, 2026-09-20, asked to choose between *sheet as a `table` block* and
-*sheet as a grouping node*: **"both, sheet in grouping and single sheet. should
-model reality. not force conformance."**
-
-So the shape follows the SOURCE:
+The shape follows the SOURCE:
 
 | source | graph |
 |---|---|
 | multi-sheet workbook | `manifest.contains → sheet → table block(s)` |
 | single-sheet CSV | `manifest.contains → table block` |
 
-**This was already decided one level down.** `fac:anchor.sheet` is `null` for a
-CSV because *a CSV genuinely has no sheet, and writing `"Sheet1"` would invent
-one*. Wrapping a CSV in a sheet node invents the same sheet; flattening a
-workbook discards a real one. Both uniform options were a choice of which lie
-to tell consistently.
+Wrapping a CSV in a sheet node invents a sheet, just as `"Sheet1"` would;
+flattening a workbook discards a real one. A graph that cannot express *sheet
+contains tables* contradicts `fac:anchor`, which already says a table may not
+start at A1 and a sheet may hold more than one.
 
-It is also why `fac:anchor` exists: a table may not start at A1 and a sheet may
-hold more than one. A graph that cannot express *sheet contains tables*
-contradicts a constraint the schema already carries.
-
-**Special-casing common scenarios is explicitly fine** (the owner, same turn).
-The instinct when two shapes exist is to find the abstraction covering both — a
-`depth` parameter, a container that is sometimes elided, a walker that handles
-N levels. That instinct produces a model nobody can read. Two legible branches
-beat one clever one, and a third source type gets a third branch; unifying them
-is a measurement to take later, not a prediction to make now.
-
+**Special-casing common scenarios is fine.** Two legible branches beat one
+clever abstraction (a `depth` parameter, a container that is sometimes elided,
+a walker that handles N levels); a third source type gets a third branch.
 The limit: **a special case must still be a special case of something TRUE.**
-Flattening a workbook because single-sheet is the common case would not be
-special-casing, it would be forced conformance wearing the licence as cover.
+Flattening a workbook because single-sheet is the common case is forced
+conformance, not special-casing. One shape for everything is a wrong answer
+applied evenly — for instance, demanding `structure.json`, `sections/` and
+`images.json` of a CSV in `check:l1-complete`.
 
-> The same reflex, gone wrong, is what made `check:l1-complete` demand
-> `structure.json`, `sections/` and `images.json` of a CSV — and `pn6j`'s
-> promotion gate turned that wrong report into a permanent blocker (#499). One
-> shape for everything is not simplicity; it is a wrong answer applied evenly.
-
-## A stub must be impossible to mistake for a result
-
-**Both extractors ship.** The owner first said *"no tooling needed, stub out,
-make QA to catch absence"*, then ruled on 2026-10-06 to build both extractors
-in folio-assistant-core after the content split.
+## The extractors, and stubs for formats not yet built
 
 `scripts/tabular-xlsx.ts` reads a workbook with no new dependency: a ZIP read
 with `node:zlib`, and SpreadsheetML read with `fast-xml-parser`. Each sheet is
@@ -181,40 +150,25 @@ When every column is text, nothing separates a header from a first data row,
 and it takes CSVW's declared default, `header: true` (CSVW Dialect §5.9). That
 is a stated convention, not a measurement.
 
-The stub rules below still hold for any FUTURE format. A tool that has not been built records `fac:stub` with the
-tool's name, a reason, and a **date** — undated, a stub cannot be told from
-abandoned work, which is the same argument `bean-blocking` makes for an expiry.
-
-Three rules, each one paid for:
+A tool for any other format that has not been built records `fac:stub` with
+the tool's name, a reason, and a **date** — undated, a stub cannot be told
+from abandoned work. Three rules:
 
 1. **A stub is never `met`.** It is `not-derivable`, naming the tool. A stub
    that reports success is worse than no tool at all.
 2. **A half-stub is refused.** `fac:stub` alongside non-empty `columns` fails
-   schema validation, because a thin-but-present extraction reads as a working
-   one. This is the `6xaz` shape: sheet names right, headers empty, output
-   looking like a workbook that simply had no headers.
+   schema validation, because a thin-but-present extraction (sheet names
+   right, headers empty) reads as a working one.
 3. **A stub expires.** When the real tool lands, `fac:stub` must go. `bun run
    check:tabular-stubs` fails CI when a record carries both a stub and real
    columns, and reports every outstanding stub on every run.
 
-Rule 3 is the one that rots if nobody writes it down. This session fixed the
-same defect four times — a restated list, a reason in a YAML comment, a
-backlog keyed to the wrong thing, a third state with no expiry — and then
-introduced a fifth: a probe that looked for `transcript.json` when the arm
-writes `transcript/`, so the ratchet could never have fired. **A declared
-exception must carry something a test can re-derive.**
+**A declared exception must carry something a test can re-derive.**
 
 ## What this skill does not cover
 
-- **The narrative** — what a dataset is *about*. That needs an author; bean
-  `p67i` stopped there deliberately, and the headers being right there is
-  exactly why assembling one from them would be fabrication.
-- **Migrating `folio-tabular-records/v1`.** Bean `eief` carries it.
-- **Emitting the manifest.** Done — `pipeline/tabular-nodes.ts` builds
-  the nodes and `gen-library-jsonld.ts` calls it from `buildEntryNodes`. What
-  the wiring cost is worth knowing, because all three defects were invisible
-  while nothing called the emitter: the nodes carried no `@context`;
-  `orphanedBlocks` scanned `sections/` alone, so every table block of a
-  tabular entry read as orphaned and `--prune` would have deleted them; and a
-  fully-ingested tabular entry was reported *"no structure.json — not
-  ingested"*. **A tested function nothing calls is not a tested function.**
+- **The narrative** — what a dataset is *about*. That needs an author;
+  assembling one from the headers would be fabrication.
+- **Migrating `folio-tabular-records/v1`.**
+- **Emitting the manifest.** `pipeline/tabular-nodes.ts` builds the nodes and
+  `gen-library-jsonld.ts` calls it from `buildEntryNodes`.

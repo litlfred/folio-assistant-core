@@ -12,7 +12,7 @@ export default toolFactory((t) =>
     io: {
       inputs: [
         { name: "id", schema: t("NodeId"), required: true, arg: { flag: "--id" }, description: "The review comment's id, `review-pr<N>-c<commentId>`." },
-        { name: "to", schema: t("NodeId"), required: true, arg: { flag: "--to" }, description: "The status to move it to: open, addressed, resolved, adjudicated or withdrawn. Checked against the closed list by the script; the list is core vocabulary, so it is not a harness Tool type." },
+        { name: "to", schema: t("NodeId"), required: true, arg: { flag: "--to" }, description: "The status to move it to: open, addressed, resolved, adjudicated or withdrawn, checked by the script against that closed list." },
         { name: "process", schema: t("ProcessId"), required: true, arg: { flag: "--process" }, description: "The BPMN process whose task is making the move." },
         { name: "task", schema: t("NodeId"), required: true, arg: { flag: "--task" }, description: "The task, in that process, making the move." },
         { name: "decision", schema: t("NodeId"), required: false, arg: { flag: "--decision" }, description: "The Decision that closes it. Required to resolve or adjudicate." },
