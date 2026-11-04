@@ -25,8 +25,8 @@ profiles instantiate those rules.
 - A **`document`** folio is structured prose: policy guidance, a standard, or a
   technical report ([`document-structure`](document-structure.md)).
 - A **`paper`** folio extends `document` with block kinds whose assertion is a
-  formal mathematical claim (`theorem`, `lemma`, `proposition`, `corollary`,
-  `proof`, `conjecture`, `equation`), backed by machine-checkable `.lean`
+  formal mathematical claim (`definition`, `theorem`, `lemma`, `proposition`,
+  `corollary`, `proof`, `conjecture`), backed by machine-checkable `.lean`
   siblings and a TeX pipeline.
 - Every block kind is a `folio-block-kind/v1` node in its owning layer's
   `block-kinds/` graph with a required two-valued `profile` field (`document`
@@ -43,6 +43,5 @@ profiles instantiate those rules.
 - **TeX-free document render path:** `document_render_{md,html,pdf}` assemble
   the folio to Markdown and drive Pandoc (with `weasyprint`, `prince`, or
   `wkhtmltopdf` for PDF), never falling back to `latexmk`.
-- **Normative statements:** carried by labelled, titled `prose` blocks per
-  [`normative-statements`](../folio-document-adapter/normative-statements.md),
-  never by `definition` or an unimplemented `recommendation` kind.
+- **Normative statements:** carried by `recommendation` blocks per
+  [`normative-statements`](normative-statements.md), never by `definition`.

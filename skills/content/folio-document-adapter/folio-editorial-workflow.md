@@ -25,9 +25,9 @@ core-layer routing rules alongside them.
   [`ontologist`](../../library/cataloguing/ontologist.md) to register a
   glossary entry and verify notation-register compliance; when it introduces a
   new domain concept, author a definition block.
-- ** `:defterm` / `:refterm` backfilling (`md-authoring`):** use
-  [`glossary-build`](../../library/cataloguing/glossary-build.md) (`pipeline/codemod-refterm.ts`)
-  to backfill `:refterm[…]` directives from bare-text mentions of defined
+- **`:defterm` / `:refterm` backfilling (`md-authoring`):** use
+  [`glossary-build`](../../library/cataloguing/glossary-build.md)
+  (`folio-assistant-core/scripts/codemod-refterm.ts`) to backfill `:refterm[…]` directives from bare-text mentions of defined
   slugs.
 - **Ordered glossaries (`uses-editorial-review`, `render-order`):** a glossary
   term's `requires` relation follows the same authored-never-inferred
