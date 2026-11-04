@@ -1,5 +1,5 @@
-Some of it, and it is worth being exact about which, because the answer decides
-whether a field is a `dcterms` term or something this project invents.
+Some of it. The answer decides whether a field is a `dcterms` term or one in
+this project's own namespace.
 
 **Dublin Core covers the bibliographic layer well** — `dcterms:title`,
 `creator`, `date`, `language`, `identifier`, `hasPart`, `format`, `extent`. The

@@ -11,7 +11,7 @@
   expire) of the DSA process catalogue. The server, wallet and consent
   processes (P3 to P13, P15) are real-world business processes between
   organisations, not harness work, and belong in the trust IG layer
-  (https://github.com/litlfred/smart-trust) and its siblings (owner's option B13-B, 2026-10-30).
+  (https://github.com/litlfred/smart-trust) and its siblings.
 
   A step no skill covers yet is a user task with a
   <cat-harness.processes:no-skill reason="Gap: …"/>. No skill was invented.
@@ -42,8 +42,8 @@
       How a data sharing agreement is drafted, negotiated, signed, published with a version, a hash and a catalogue record, and later amended, renewed or ended. It covers the agreement as a document folio only: processes P1, P2 and P14 of the DSA process catalogue.
       Two entry points: a request for an agreement (P1, then P2), and a change to one in force (P14). An amendment or a renewal with a new end date runs P1 and P2 again and publishes a new version linked to the old one; the old version stays readable.
       Standards named: ODRL 2.2 (the Agreement), DCAT 3 (catalogue record, distributions, checksums, versions) and DCMI Terms (dcterms:source from the policy to the text). No field is defined here.
-      Steps no skill covers yet are user tasks with a no-skill reason starting "Gap:". Owner's option B13-B, 2026-10-30; folio-assistant#2702.
-      Consent rules (owner, 2026-10-30), which every agreement drawn here keeps. 1. Legal basis: an agreement carries the odrl:obtainConsent duty only when consent is its legal basis; treatment, public-health law and research waivers do not rest on consent (P1.2a, P1.3). 2. Version pinning: a Consent cites the agreement's fixed-version URL and hash (FHIR R4 Consent.policy.uri), and for a computable agreement the ODRL policy uid is that same URL (P2.1, P2.2b, P2.3); an amendment that widens use needs new consent, one that narrows use does not (P14.3). 3. Plain language: every agreement that needs consent publishes a plain-language summary, hashed with the agreement, and that summary is what the person consents to (P1.2b, P2.2a). How a person gives, withdraws or is asked again for consent is the trust layer's, not this diagram's.
+      Steps no skill covers yet are user tasks with a no-skill reason starting "Gap:".
+      Consent rules, which every agreement drawn here keeps. 1. Legal basis: an agreement carries the odrl:obtainConsent duty only when consent is its legal basis; treatment, public-health law and research waivers do not rest on consent (P1.2a, P1.3). 2. Version pinning: a Consent cites the agreement's fixed-version URL and hash (FHIR R4 Consent.policy.uri), and for a computable agreement the ODRL policy uid is that same URL (P2.1, P2.2b, P2.3); an amendment that widens use needs new consent, one that narrows use does not (P14.3). 3. Plain language: every agreement that needs consent publishes a plain-language summary, hashed with the agreement, and that summary is what the person consents to (P1.2b, P2.2a). How a person gives, withdraws or is asked again for consent is the trust layer's, not this diagram's.
     </bpmn:documentation>
     <bpmn:extensionElements>
       <cat-harness.processes:policy enforcement="advisory" />
@@ -124,7 +124,7 @@
       <bpmn:outgoing>F01</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:callActivity id="Call_BeanOpen" name="Open the bean" calledElement="Process_BeanOpen">
-      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
+      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn; the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
       <bpmn:incoming>F01</bpmn:incoming>
       <bpmn:outgoing>F02</bpmn:outgoing>
@@ -329,7 +329,7 @@
       <bpmn:outgoing>F40</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:callActivity id="Call_BeanOpenChange" name="Open the bean" calledElement="Process_BeanOpen">
-      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
+      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn; the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
       <bpmn:incoming>F40</bpmn:incoming>
       <bpmn:outgoing>F41</bpmn:outgoing>
@@ -400,7 +400,7 @@
       <bpmn:outgoing>F50</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:callActivity id="Call_BeanCloseEnded" name="Close the bean" calledElement="Process_BeanClose">
-      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
+      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn; placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
     </bpmn:callActivity>
     <bpmn:exclusiveGateway id="GW_BeanClosedHow" name="How did it end?">

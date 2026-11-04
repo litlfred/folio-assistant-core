@@ -13,11 +13,11 @@ allowed-tools: Read Write Edit Bash Grep Glob
 
 ## Overview
 
-This skill acts as the **Gatekeeper** for definitions. Before any
-narrative-to-formal translation can proceed, every term must have a
-unique identity (and, where the project has a formal layer, a unique
-type assignment). The Ontologist detects ambiguities, maintains the
-formal glossary, and produces the machine-readable mapping.
+The **Gatekeeper** for definitions: before any narrative-to-formal
+translation proceeds, every term has a unique identity (and, where the
+project has a formal layer, a unique type assignment). The Ontologist detects
+ambiguities, maintains the formal glossary, and produces the machine-readable
+mapping.
 
 ## Formal-layer tooling (when available)
 
@@ -35,13 +35,15 @@ tooling, **prefer those tools for type checking** over re-building:
 
 ### Consistency loop
 
-When the diagnostics tool reports a type mismatch:
+When the formal build or the diagnostics tool reports a type mismatch:
 
-1. Hover the mismatched symbol → see expected vs actual type.
-2. Search for the intended type → find the correct import.
-3. Read the actual definition to understand the mismatch.
-4. Update the glossary with the corrected assignment.
-5. Regenerate the formal glossary and re-check diagnostics.
+1. Identify the glossary entries involved and flag them as ambiguous.
+2. Hover the mismatched symbol → see expected vs actual type.
+3. Search for the intended type → find the correct import.
+4. Read the actual definition to understand the mismatch.
+5. Update the glossary with the corrected assignment.
+6. Regenerate the formal glossary, re-run the scan with the error context,
+   and re-check diagnostics.
 
 ## When to Use This Skill
 
@@ -100,26 +102,15 @@ registry — never edit them directly.)
 
 ### Standing disambiguation rulings
 
-The project maintains a table of author-resolved terms. Agents MUST
-apply these rulings when scanning narrative text. A ruling fixes the
-canonical term, any banned synonyms or notations, and a note on when a
-qualifier is required. Maintain this table in the project's notation /
-terminology register; treat banned notations and "always qualify"
-entries as hard rules.
+The project's notation / terminology register holds a table of
+author-resolved terms; agents MUST apply them when scanning. A ruling fixes the
+canonical term, any banned synonyms or notations, and when a qualifier is
+required. Banned notations and "always qualify" entries are hard rules.
 
 When an ambiguity is detected, the Ontologist outputs a record naming
 the narrative term, a message describing the ambiguity, the candidate
 resolutions, and a `resolved_to` field that is null until the author
 fills it. The pipeline **halts** until `resolved_to` is filled.
-
-## Consistency Loop
-
-If the formal build fails:
-
-1. Parse the error log for type-mismatch messages.
-2. Identify which glossary entries are involved.
-3. Flag those entries as ambiguous in the glossary.
-4. Re-run the scan with the error context.
 
 ## Output Files
 

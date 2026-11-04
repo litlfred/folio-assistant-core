@@ -16,7 +16,7 @@ tested-by:
 `external-registry` (declared below this layer) is played by an **external**
 actor: trusted registries and observatories outside this instance's control. A
 role played by something we do not run is still a role, and its skills are its
-**contract**: what we rely on it to do (owner, 2026-10-16). This skill is the
+**contract**: what we rely on it to do. This skill is the
 part of that contract this layer's evidence diagram relies on, and nothing
 more. The registry list, its endpoints and the API bindings are not settled
 (the diagram is a STRAWPERSON), so no registry is named here.
@@ -51,6 +51,3 @@ workflow engine and checks that a `no` from `Gateway_Authoritative` leads to
 the bean for the unverified citation and that no step in the registry's lane is
 a decision of this instance's. Lines 1 and 2 are the registry's own behaviour,
 on endpoints not yet chosen, and are not exercised.
-
-**Needs the owner's review:** this contract is read off one lane of one
-strawperson diagram.

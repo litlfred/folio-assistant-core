@@ -14,7 +14,7 @@ A frozen, line-numbered draft went out for public review.
 
 ## Begin — Feedback on one block ([feedback] link) (`StartEvent_BlockFeedback`)
 
-- Begin here: A reader presses [feedback] on a block of the rendered document and opens a GitHub issue about that block, from the folio's block-feedback issue form when it has one (skill block-actions, REQ-17).
+- Begin here: A reader presses [feedback] on a block of the rendered document and opens a GitHub issue about that block, from the folio's block-feedback issue form when it has one (skill block-actions).
 - Call `workflow_start` with `process: "Process_PublicComment"` and the subject this run is about; keep the instance id it returns.
 - next: → `Task_Ingest` (Ingest and place each comment)
 
@@ -97,7 +97,7 @@ A frozen, line-numbered draft went out for public review.
 
 - Who: the `Review committee` lane (role `reviewer`).
 - Skill: `public-comment`.
-- What: public-comment-changesets reroute, or cs-committee: <TWG> — <why> on GitHub from a person in the committee or editor lane (bean se3i, issue #197).
+- What: public-comment-changesets reroute, or cs-committee: <TWG> — <why> on GitHub from a person in the committee or editor lane.
 - Record it: `workflow_complete` with `node: "Task_RerouteChangeSet"`.
 - next: → `Task_Assign` (Assign to committee members)
 

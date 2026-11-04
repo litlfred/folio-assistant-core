@@ -1,14 +1,12 @@
 A recommendation, requirement or rule is the block readers cite and
 implementers trace to. It wants a label, a stable identity and a place in the
-dependency graph — everything a `theorem` has — and it is emphatically not a
-theorem, because nothing proves it.
+dependency graph — everything a `theorem` has — but nothing proves it; its
+authority is the issuing body's.
 
-There is **no first-class `recommendation` block kind**. Today the carrier is a
-`prose` block with a label and a title; the
+Its carrier is the **`recommendation` block kind**: one statement per block,
+with a label, a title, and its strength as a code in a declared code list. The
 [`normative-statements`]({{ '/reference/skill-instructions/normative-statements.html' | relative_url }})
-skill states the convention and its limits. Earlier guidance in
-`document-intake` mapped guideline recommendations onto `definition` — that
-predates this content type and is wrong for a document folio, where
-`definition` is a math kind whose `lean` field is required.
+skill states the convention. Do not use `definition`: it is a math kind whose
+`lean` field is required.
 
 ---

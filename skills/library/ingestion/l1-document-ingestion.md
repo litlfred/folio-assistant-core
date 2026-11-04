@@ -23,43 +23,35 @@ the asset is a document whose text and structure are wanted as L1 source
 content**: reading it into sections, blocks and sidecars that `check:l1-complete`
 can judge.
 
-Placement PR6 (bean `apcg`, owner ruling 3 of 2026-09-30) moved these sections
-here from the harness skill: *"only basic doc ingestion high level workflow in
-cat-harness … more detailed doc ingestion/cataloguing methodologies in
-folio-asst-core."* **The rung code did not move** — `scripts/ingest-document.ts`,
-the `pdf-*.py` rungs and `notebook-structure.ts` stay in the harness, and the
-owner's standing instruction that **OCR stays there** stands. This skill is the
+The rung code — `scripts/ingest-document.ts`, the `pdf-*.py` rungs,
+`notebook-structure.ts` and OCR — lives in the harness. This skill is the
 METHOD that chooses among them; invoking harness code from here is a downward
 edge. The executable form is `processes/library/l1-document-ingestion.bpmn`,
 which calls the harness's basic `Process_Ingestion` first and then the four
 `ingest-*` phases beside it.
 
-## The whole path is two commands (bean `apui`)
+## The whole path is two commands
 
 ```sh
 bun run cat ingest uploads/FILE.pdf --library <lib>            # rung + every derived arm, into ingest-staging/
 bun run cat ingest uploads/FILE.pdf --library <lib> --promote  # the L1 gate, then into <lib>/<slug>/
 ```
 
-Staging prints the second line for you, built from **your own arguments** — it
-used to recompose the path relative to the instance root, which is "not there"
-from where `bun run` runs, and to drop `--library`.
+Staging prints the second line for you, built from **your own arguments**.
 
 **`--promote` writes the entry's JSON-LD nodes**, for that entry only, with the
 same `buildEntryNodes` the corpus generator uses. They are minted for the
 **destination**, not for staging: an entry's instance is read off where it sits,
-and `ingest-staging/` belongs to whichever instance holds it. Before this, an
-entry promoted into a sibling library named the wrong instance in its manifest
-`@id`, and `gen-library-jsonld --check` failed on it until somebody ran the
-corpus-wide generator by hand. You do **not** need `gen-library-jsonld` or
-`check:l1-complete --write` after promoting — the first is done, and the
-second's verdicts live on the `qa-reports` branch rather than on `main`.
+and `ingest-staging/` belongs to whichever instance holds it. You do **not**
+need `gen-library-jsonld` or `check:l1-complete --write` after promoting — the
+first is done, and the second's verdicts live on the `qa-reports` branch rather
+than on `main`.
 
 ## Which rung, and why there is more than one
 
 | rung | when | what it produces |
 |---|---|---|
-| `pdf-structure.py` | any PDF with a text layer | the **outline**'s chapters; with no outline, the **inferred** contents when it is trusted, else one section per **page** (issue #2302) |
+| `pdf-structure.py` | any PDF with a text layer | the **outline**'s chapters; with no outline, the **inferred** contents when it is trusted, else one section per **page** |
 | `pdf-pages.py` | a page tree by hand: `--first-page-label`, or `--from-ocr` text | one section per **page** |
 | `pdf-ocr.py` | text extraction yields almost nothing | a text layer to then page-split |
 | `pdf-tables.py` | tables or figures matter | what `pdf-structure/v1`'s Section does not carry |
@@ -68,29 +60,25 @@ second's verdicts live on the `qa-reports` branch rather than on `main`.
 | `text-structure.ts` | the source is **text files** — Markdown, MDX, XML — usually fetched from a repository at a commit | `text-structure/v1`: a Markdown file divided by its own ATX headings outside fenced code, any other file one verbatim section, located by **file and line range**; images recorded by digest, never sectioned |
 | `notebook-structure.ts` | the file is JSON with a numeric `nbformat` and a `cells` array — a **Jupyter notebook**, decided by content, never by the `.ipynb` name | `notebook-structure/v1`: one section per markdown heading, located by **cell** range; code kept as fenced code and never run; outputs not kept, and `structure_note` says so |
 
-**A notebook is a variant, not a PDF with odd pages** (bean `rkqp`, owner
-2026-09-30, "A+B"). `structure.json` has a shared base
-(`schemas/document-structure.ts`): the PDF format is one variant, unchanged, and
-the notebook format is the other. A reader that needs only sections reads either
-through `structureOf()`, which says where a section is as `{pages}` or
-`{cells}`. A page-aware reader gets nothing from a notebook, rather than a cell
-index mistaken for a page number.
+**A notebook is a variant, not a PDF with odd pages.** `structure.json` has a
+shared base (cat-harness-tools `schemas/content/document-structure.ts`): the PDF
+format is one variant, unchanged, and the notebook format is the other. A reader
+that needs only sections reads either through `structureOf()`, which says where
+a section is as `{pages}` or `{cells}`. A page-aware reader gets nothing from a
+notebook, rather than a cell index mistaken for a page number.
 
-**The decision is mechanical, and the corpus shows all three paths.** Measured
-2026-09-19 over the four entries in `library/`:
+**The decision is mechanical:**
 
 - `toc_source: outline` → `pdf-structure` (`9789241548960-eng`, 250 sections)
 - `toc_source: none`, `source.text_source: embedded` → `pdf-structure`, which
   keeps its inferred contents only when they pass the trust tests and otherwise
-  writes pages (`wpr-rdo-2020-003-eng` lands on pages that way). The router
-  sent this case to `pdf-pages` until 2026-10-07 (bean `mffs`), so #2388's tests
-  never ran from `bun run cat ingest`
-- a junk outline (`milnorlink`, bean `8shg`) → `pdf-pages`: `pdf-structure`
+  writes pages (`wpr-rdo-2020-003-eng` lands on pages that way)
+- a junk outline (`milnorlink`) → `pdf-pages`: `pdf-structure`
   would read the outline it found rather than infer one
 - `toc_source: none`, `source.text_source: ocr` → `pdf-ocr` then `pdf-pages --from-ocr`
   (`who-pub-tps-931`)
 
-## Slide decks — PPTX and ODP (bean `scfh`, issue #1614)
+## Slide decks — PPTX and ODP
 
 A deck is a zip that **declares** its type (`[Content_Types].xml`, or ODF's
 `mimetype` member), so it routes on the sniff, before the archive rung, exactly
@@ -98,8 +86,7 @@ as a workbook does. `slides-structure.py` writes the same `pdf-structure/v1`
 shape a paged PDF gets — one section per slide,
 `page_start == page_end == <slide>`, `granularity: "slide"` — so
 `l1-blocks.ts`, the manifest and
-`check:l1-complete` read it unchanged. Two differences from the PDF rungs, both
-measured on the #1614 deck:
+`check:l1-complete` read it unchanged. Two differences from the PDF rungs:
 
 - **A slide's title is its title placeholder, or it is `Slide N`.** Never the
   largest text box: that is the inferred-TOC failure below in a new format. It is
@@ -123,18 +110,17 @@ and nothing supports that weighting.
 python3 cat-harness-tools/scripts/slides-structure.py --a11y-only DECK.pptx DECK.odp
 ```
 
-On #1614 the two were Google Slides exports with identical image bytes. The PPTX
-kept per-run `lang` and the author's few alt texts; the ODP export dropped **all**
-alt text and kept the language only on the default style. Prefer the copy that
-wins the per-check comparison. An export can lose what the author wrote, and the
-format's reputation does not tell you which way this particular export went.
+Prefer the copy that wins the per-check comparison. An export can lose what the
+author wrote (an ODP export of Google Slides can drop **all** alt text and keep
+the language only on the default style), and the format's reputation does not
+tell you which way a particular export went.
 
 Image descriptions go in the library's `image-verdicts.json` as for a PDF. Put
 the inspector in `attribution.<doc-id>` when they are not the file's
 `inspected_by`; without it the deck inherits the first inspector's name and
 date.
 
-## A source whose licence forbids a copy — record it, do not ingest it (bean `scfh`)
+## A source whose licence forbids a copy — record it, do not ingest it
 
 Some sources may be read but not reposted. The OMG BPMN and DMN specifications
 permit use on condition that a copy "will not be copied or posted on any
@@ -159,7 +145,7 @@ posting is a reading of the licence, not of the bytes. `check:l1-complete`
 knows the kind, and **refuses** a `referenced` entry that holds `sections/`,
 `blocks/` or `images/`. That would be the copy this kind exists not to make.
 
-**A publication, not a file — an external reference (owner, 2026-10-02).** A
+**A publication, not a file — an external reference.** A
 FHIR implementation guide is a website and a package, not one PDF, so there are
 no bytes to hash. Its `referenced.json` takes the `published` variant of
 `source` (`schemas/referenced-source.ts`): `kind: "published"`, `url`,
@@ -170,13 +156,13 @@ one. `links` names where a reader goes instead (the publisher's page, and a
 library viewer shows them on the entry's row. Write it by hand — there is no
 file to run `referenced-source.py` on — then `gen-library-jsonld.ts --entry`
 for the manifest. The licence follows the usual rule: `stated` only with a
-basis, else `unknown` with where you looked. First case:
-the WHO SMART Trust IG's entry in the DAK layer's `library/`.
+basis, else `unknown` with where you looked. Example: the WHO SMART Trust IG's
+entry in the DAK layer's `library/`.
 
-## A source published as text in a repository — read it at a commit (bean `y4uj`)
+## A source published as text in a repository — read it at a commit
 
 The Gherkin reference, the MCP specification, the `hmans/beans` README and
-FHIR R5's TestPlan resource (issue #1614 item 4) are published as Markdown or
+FHIR R5's TestPlan resource are published as Markdown or
 XML in git repositories. Printing one to PDF so a PDF rung can read it makes
 the recorded sha256 identify a rendering nobody published, so they take their
 own rung instead:
@@ -187,14 +173,13 @@ bun run cat ingest uploads/FILE.md --text --library <lib> --promote  # the L1 ga
 ```
 
 `--text` is the CALLER's statement that the file is text: text has no magic
-bytes, so the extension is never read, and a binary handed in as text is
-refused as `undetermined`. Through `cat ingest` it takes the notebook's derived
-arm (`l1-blocks`), and `--promote` writes the entry's JSON-LD nodes, as for
-every rung. **Do not stop at the rung.** Run alone, `text-structure.ts` leaves
-an entry with no `manifest.jsonld` and no section or block nodes, which is how
-litlfred/dth-hrh's Markdown outline reached `library/` with no knowledge graph
-(2026-10-14). A source read at a commit, with its `upstream.json` and several
-files, still runs the rung directly:
+bytes, so the extension is never read, and a binary handed in as text is refused
+as `undetermined`. Through `cat ingest` it takes the notebook's derived arm
+(`l1-blocks`), and `--promote` writes the entry's JSON-LD nodes, as for every
+rung. **Do not stop at the rung.** Run alone, `text-structure.ts` leaves an
+entry with no `manifest.jsonld` and no section or block nodes. A source read at
+a commit, with its `upstream.json` and several files, still runs the rung
+directly:
 
 ```sh
 bun run cat-harness-tools/scripts/text-structure.ts -o <library> --doc-id <slug> \
@@ -220,9 +205,6 @@ and then, without fail, `l1-blocks.ts -o <entry>` and
   listing, so `sha256sum -c` against a checkout verifies the entry without
   this code.
 
-Routing a dropped `.md` was decided on 2026-10-14 (owner): by `--text`, never
-by the extension.
-
 ## From a library entry to a folio document — seed it, and its graph comes with it
 
 A folio whose working document starts from a source (an outline, a draft, a
@@ -239,8 +221,8 @@ one `prose` block. No kind is guessed: a persona or a requirement is the
 folio's own enrichment step. Every block carries `meta.source` (library,
 section, locator, `method: "library-seed"`), and the seed ENDS by writing each
 block's `.jsonld` with `gen-block-jsonld`'s own code. A folio-specific seed
-script that writes blocks must end the same way. The one litlfred/dth-hrh used
-did not, and its site published no graph. A seed is one-time: an existing
+script that writes blocks must end the same way, or its site publishes no
+graph. A seed is one-time: an existing
 document is refused unless `--force`, which discards hand edits.
 
 The original is never touched: the library entry and the folio's nodes are
@@ -249,9 +231,8 @@ DERIVED, and both are checked (`gen-library-jsonld --check`,
 
 ## A source's glossary and abbreviations — candidates, read by one tool
 
-Owner, 2026-11-01 (folio-assistant-core#498, Q-GLO-1 C): every L1, DTH and DAK
-source reads its glossary the same way, with the Tool `glossary-from-source`,
-never with a script of its own:
+Every L1, DTH and DAK source reads its glossary the same way, with the Tool
+`glossary-from-source`, never with a script of its own:
 
 ```sh
 bun run cat glossary:from-source --out glossary/<scheme>.glossary.json \
@@ -269,12 +250,12 @@ adopted or edited is never changed. Only a person moves a term to `authored`
 
 ## Requirements and normative statements — every DAK and DTH source
 
-Owner, 2026-11-01: requirement extraction "should be a general part of L1
-ingestion for DAK and DTH". It is a Stage B **aspect** (cat-harness-tools#1357):
-`cat ingest` runs `extract-candidates.py --aspects-only` on every staged
-entry, and each requirement the source states becomes a typed node in the
-entry's graph, `derivedFrom` its L1 section. A folio's requirement block then
-CITES that node. It does not restate it with an id of its own.
+Requirement extraction is a general part of L1 ingestion for DAK and DTH
+sources, as a Stage B **aspect**: `cat ingest` runs `extract-candidates.py
+--aspects-only` on every staged entry, and each requirement the source states
+becomes a typed node in the entry's graph, `derivedFrom` its L1 section. A
+folio's requirement block then CITES that node. It does not restate it with an
+id of its own.
 
 **The mount is the gate.** The `requirements` aspect lives in the DAK layer
 (its `scripts/extractors/dak-requirements.py`), so it runs in DAK and
@@ -282,8 +263,7 @@ DTH repositories and nowhere else. With no aspect mounted the arm writes
 nothing.
 
 **No new schema: the existing kind that fits the source.** Requirement schemas
-come in more than one style (owner, 2026-11-01), some core and some
-the DAK layer's:
+come in more than one style, some core and some the DAK layer's:
 
 | the source prints | kind | layer |
 |---|---|---|
@@ -297,13 +277,11 @@ the DAK layer's:
 **Ids come from the source or there are none.** `number` is the id exactly as
 printed, and it lands in the node's `meta.source_number`. A requirement that
 prints no id has none. The node's `@id` is derived from the section and the
-order the items appear in (`<kind>-<section>-NN`), never from a made-up label.
-A DTH folio's `FR-xx` ids, which an agent assigned and no source shows, are
-the failure this prevents.
+order the items appear in (`<kind>-<section>-NN`), never from a made-up label
+such as an agent-assigned `FR-xx`.
 
-**A requirement from a source is a reference, not a definition.** Owner,
-2026-11-01, on the WHO 2015 HRHIS guide: its system requirements are "not
-definitional but contribute to a definition". The nodes carry
+**A requirement from a source is a reference, not a definition:** it
+contributes to a definition but does not make one. The nodes carry
 `provenance: ingested` and `route_to: l2-dak-authoring`. The folio that cites
 one decides what it means for its own system, and a person promotes it.
 
@@ -321,12 +299,11 @@ manifest reads them as such. Then run `gen-library-jsonld --entry`.
 
 ## An inferred chapter tree is refused, not guessed
 
-This is the rule most worth understanding, because the failure it prevents is
-**silent**.
+The failure this rule prevents is **silent**.
 
 Without an outline, a heading-detector *can* infer a table of contents — and an
 inferred TOC is confidently wrong in a way the output does not show. Two
-measured cases, both recorded in bean `6xaz`:
+cases:
 
 - `WPR-RDO-2020-003-eng.pdf` — 11 of 13 inferred sections were named after a
   **different publication**, because page 22 reproduces a sample table from one
@@ -340,17 +317,17 @@ page is a determined division; an inferred chapter was not.** Same third-state
 rule the rest of this repository keeps: a structure that could not be determined
 is never rendered as one that was.
 
-### The route `pdf-structure.py` takes itself (issue #2302, owner 2026-10-07)
+### The route `pdf-structure.py` takes itself
 
 With no outline, the inferred contents is used only when it passes **all three**
 tests, in order (`inferred_toc_trust`):
 
-1. **concentration** (`6xaz`): at most 60% of its entries may start on the two
+1. **concentration**: at most 60% of its entries may start on the two
    commonest pages — a list read off a page is not the document's structure;
 2. **mean confidence ≥ 0.6** (`TOC_MIN_MEAN_CONFIDENCE`), each entry's
    confidence being how much independent evidence agreed — a contents page,
    the body, a heading style, a numbering run;
-3. **headings with bodies** (owner, 2026-10-07): from 5 sections up, no more
+3. **headings with bodies**: from 5 sections up, no more
    than 25% of the sections the tree would cut may hold under 50 characters
    (`TOC_MAX_EMPTY_SHARE`, `TOC_EMPTY_SECTION_CHARS`), front matter not
    counted — a tree of empty sections is logo lettering, a sample table's
@@ -362,25 +339,15 @@ page** (`page-001`, "Page 1", the shape `pdf-pages.py` writes), with
 `toc_undetermined_reason`, and a `structure_note` saying why. Both inputs are
 recorded whether or not they passed: `diagnostics.toc_inferred_entries` and
 `diagnostics.toc_inferred_mean_confidence` and
-`diagnostics.toc_inferred_empty_share`. It used to emit **one** section
-holding the whole document, which is determined but uncitable.
+`diagnostics.toc_inferred_empty_share`.
 
-**What the floor does and does not catch**, measured 2026-10-07 on the 40
-corpus PDFs with no outline and the 35 with one (outline hidden): every
-consensus TOC scored a mean between 0.60 and 0.94, and the mean is a weak
-predictor of quality — W3C PROV-O scored 0.72 at title F1 0.23. A mean of
-**exactly 0.60** means no entry was corroborated by anything but its style;
-"at least 0.6" lets those through (8 outline-less documents, some fine, some
-not), so read a `font` TOC at 0.60 before citing it. The floor's real work is
-on the `regex` fallback, whose entries carry no confidence and count as 0.
-
-**The third test is the one that catches a poor font tree**, measured on 72
-corpus PDFs the same day: every inferred tree with title F1 ≥ 0.7 had at most
-20% empty sections, and the only document newly refused at 25% was
-`WPR-RDO-2020-003-eng` (48%: 18 empty sections of logo text and table heads,
-mean confidence 0.602, which the first two tests passed). Known miss: a poor
-tree at 22.5% (`strauch-carbno`, title F1 0.36) is too close to the good ones
-to separate by this measure.
+**What the floor does and does not catch.** The mean is a weak predictor of
+quality. A mean of **exactly 0.60** means no entry was corroborated by anything
+but its style, and "at least 0.6" lets it through, so read a `font` TOC at 0.60
+before citing it. The floor's real work is on the `regex` fallback, whose
+entries carry no confidence and count as 0. The third test is the one that
+catches a poor `font` tree; a poor tree with an empty share just under 25% is
+too close to good ones to separate by this measure.
 
 ## What a complete L1 entry holds
 
@@ -399,12 +366,11 @@ library/<bib-slug>/
 `bun run cat check:l1-complete` is the gate. It reports three states, never two: a
 requirement **met**, **unmet**, or **not yet derivable** — the last because the
 per-format arms (images, audio, tables, archives) are tracked separately and a
-check that cannot run must not read as a pass. Bean `pn6j`.
+check that cannot run must not read as a pass.
 
 ## A manifest's title — the authority order, and never the page-1 parse
 
-The owner's ruling of 2026-10-01 (issue #1794, option 2 of 4). A library
-entry's `manifest.jsonld` `title` is the first of these the entry has:
+A library entry's `manifest.jsonld` `title` is the first of these the entry has:
 
 | rank | `meta.title_source` | read from |
 |---|---|---|
@@ -416,11 +382,10 @@ entry's `manifest.jsonld` `title` is the first of these the entry has:
 
 **The page-1 front-matter parse is NEVER a title.** On a `pdf-structure/v1`,
 `metadata.title` is `parse_front_matter`'s guess at which lines of page 1 are
-the title. It guessed *Abies* for the WHO editorial style manual, *LeanArchitect
-LeanArchitect*, *Algorithmic Approaches to*, and the whole W3C status block for
-three specifications. A plausible wrong title passes every check that has no
-second source. A slug is honest about being a placeholder and gets flagged.
-The parse may still feed search and the section files' `doc_title`.
+the title, and it guesses wrong (a running head, a repeated word, a status
+block). A plausible wrong title passes every check that has no second source. A
+slug is honest about being a placeholder and gets flagged. The parse may still
+feed search and the section files' `doc_title`.
 
 `text-heading` shares rank 3 because it is the same kind of fact as `/Title`
 (the source naming itself, in its format's own metadata). The two are exclusive
@@ -434,9 +399,8 @@ source's file name or stem; the slug. A junk value falls through to the next
 source. It never becomes the title. Records (ranks 1–2) are taken as written,
 because a cataloguer's choice is not a program's default.
 
-**Record the Info dictionary at ingest.** `pdf-structure.py` writes
-`metadata.docinfo`. `pdf-pages.py` did not until #1794, which left 20
-page-granular entries with no `/Title` to read. Backfill an older entry with
+**Record the Info dictionary at ingest.** `pdf-structure.py` and `pdf-pages.py`
+write `metadata.docinfo`. Backfill an older entry with
 `python3 cat-harness-tools/scripts/pdf-pages.py --docinfo-into <entry> <pdf>`. It
 refuses unless the PDF's sha256 is the one the entry recorded.
 
@@ -453,30 +417,22 @@ Every rung writes `source` on `structure.json`, from the single definition in
 `scripts/_tech_meta.py`: `file`, full 64-hex `sha256`, `bytes`, `mtime` (the
 SOURCE's, UTC to the second — not the ingest time, because what tells you a
 re-fetch got something new is the file changing), `mimetype_sniffed` and
-`mimetype_source`. Both rungs add `text_source`, `embedded` or `ocr`: ONE field and ONE
-vocabulary for where the section text came from (issue #1121; `pdf-pages` used to write a
-top-level `text-layer`). `pdf-structure` also adds `pages` and `extractor`.
+`mimetype_source`. Both rungs add `text_source`, `embedded` or `ocr`: ONE field
+and ONE vocabulary for where the section text came from. `pdf-structure` also
+adds `pages` and `extractor`.
 
 **The mimetype is sniffed from the leading bytes and never falls back to the
 extension.** An extension is a claim by whoever named the file; the magic bytes
 are what the content is, and a `.pdf` that is really an HTML error page
 extracts to nothing while every downstream verdict is about the wrong document.
 Unrecognised bytes give `mimetype_sniffed: null` with `mimetype_source:
-"unrecognised"` — the third state again, and it is load-bearing: a guess that
-agrees with the filename is indistinguishable from a real sniff, which would
-make the field worthless for the one case it exists to catch.
-
-This was a **gap in the no-outline rung**, not a new requirement.
-`pdf-structure.py` wrote `source`; `pdf-pages.py` wrote none and merged into
-whatever file already existed — so `library/milnorlink/`, the one entry
-`pdf-structure` never touched, carried no technical metadata at all, and the
-other page-granularity entries had it only because `pdf-structure` ran on them
-first. Bean `nso8`.
+"unrecognised"`: a guess that agrees with the filename is indistinguishable
+from a real sniff.
 
 `bun run scripts/ingest-document.ts <pdf> --refresh-meta` backfills an existing
 entry. It **reads the indent off the file** rather than choosing one: the two
 rungs write at different widths, and hardcoding either reformats every entry
-the other authored — measured at 4 349 changed lines to add three fields.
+the other authored.
 
 ## `provenance` — who wrote it, and the closed union that makes omission impossible
 
@@ -488,12 +444,10 @@ Every block declares how its text came to be. The vocabulary is
 - an `Attribution` — `kind` (`script | agent | human`), `id`, and optionally
   `version`, `model`, `session`, `date`, `skill`.
 
-**An `agent` must name its `model`, structurally.** A narrative is a claim by
-somebody, and the difference between "a curator described this figure" and "a
-model described it, version X" is exactly what a reader needs in order to weigh
-it — and what makes the set re-generatable when that model is superseded. An
-agent attribution with no model records that a machine wrote it while losing
-the only part anyone can act on, so `AttributionSchema` refuses it.
+**An `agent` must name its `model`, structurally.** "A model described it,
+version X" is what a reader needs to weigh a narrative, and what makes the set
+re-generatable when that model is superseded, so `AttributionSchema` refuses an
+agent attribution with no model.
 
 **The vocabulary is the QA reviewer's, not a second one.** `block-qa.ts`
 re-exports `ATTRIBUTION_KINDS` as `QA_REVIEWER_KINDS`; the same three
@@ -517,12 +471,10 @@ Closing the union does not stop an arm asserting something false. It makes the
 **omission** impossible: a new arm has to choose, and choosing `"ingested"` for
 a generated description is a false statement rather than a missing field.
 
-**Today every one of the 424 blocks is extracted prose**, so the narrative count
-is a real, reported zero — never silence. The authored branch is proved to fire
-by fixtures in `scripts/tests/attribution.test.ts`, not by the corpus: a checker
-that returned "fine" unconditionally would pass the corpus just as well. Each of
-the three branches is mutation-checked — removing it fails a named test. Bean
-`iqim`.
+A zero narrative count is reported, never silent. The authored branch is
+proved to fire by fixtures in `scripts/tests/attribution.test.ts`, not by the
+corpus, and each of the three branches is mutation-checked — removing it fails
+a named test.
 
 ## Archives — the entry list is data, and the rung is chosen by CONTENT
 
@@ -549,12 +501,9 @@ A file the sniffer does not recognise as an archive is **refused** — an empty
 
 ### The rung is chosen before anything opens the file as a PDF
 
-`planFor` sniffs first. Handing it a zip used to answer `undetermined` with
-`why: "no PDF backend: No module named 'fitz'"` — the **refusal was right and
-the diagnosis was wrong**: it reported a missing tool when the fact was that
-the file is not a PDF, and a reader would go install PyMuPDF and fail again.
-A file *named* `.pdf` that is really a zip now takes the archive rung, which is
-the case only a sniff can decide.
+`planFor` sniffs first, so a zip is never reported as a PDF with a missing
+backend. A file *named* `.pdf` that is really a zip takes the archive rung,
+which is the case only a sniff can decide.
 
 ### What the gate checks, and the determined zero
 
@@ -563,12 +512,11 @@ mimetype_sniffed` is already on every entry, so "this came from a zip" is a
 recorded fact. An archive entry must carry a `contents.jsonld` that validates
 against the declared schema.
 
-`uploads/` holds four PDFs and **no archives**, so every entry reports
-`not an archive (application/pdf)` — said out loud rather than passed in
-silence, because "nothing to check here" and "the check never ran" are
-different facts. The requirement is proved to fire by fixture archives built in
-`scripts/tests/archive-contents.test.ts`, and each of its four branches is
-mutation-checked. Bean `twqe`.
+An entry that is not an archive reports `not an archive (<mimetype>)` — said
+out loud rather than passed in silence, because "nothing to check here" and
+"the check never ran" are different facts. The requirement is proved to fire by
+fixture archives built in `scripts/tests/archive-contents.test.ts`, and each of
+its four branches is mutation-checked.
 
 ## Datasets — findable by their headers, and the narrative nobody wrote
 
@@ -578,9 +526,8 @@ union across sheets, and it is the field a `grep` for a column name lands in —
 without it a dataset is stored but not findable, and a failed search is
 indistinguishable from the dataset not having that column.
 
-**The record is real JSON-LD, and so is `contents.jsonld`** (bean `yh6u`).
-Both used to be named `.jsonld` with an `@id` and no `@context`, so a JSON-LD
-processor dropped every key they wrote. Both arms now emit the published
+**The record is real JSON-LD, and so is `contents.jsonld`.** Both arms emit the
+published
 content context (the URL lives once, in `scripts/_content_context.py`, pinned
 to `CONTENT_CONTEXT_URL` by a test), and every key is a declared term. The
 facts a consumer queries across documents — `format`, the counts,
@@ -588,53 +535,44 @@ facts a consumer queries across documents — `format`, the counts,
 `sheets`, `entries`, the technical metadata, the `narrative` — are `@json`
 literals, **because that is how their nulls survive**: `rows: null` means
 "could not be counted" and `narrative.text: null` means "nobody has written
-one", and JSON-LD drops a null anywhere else. Records written before this
-carry no `@context`; the schemas accept that, since folio repositories hold
-them.
+one", and JSON-LD drops a null anywhere else. The schemas still accept an
+older record with no `@context`, since folio repositories hold them.
 
 **Stdlib only** (`zipfile` + `xml.etree`, `csv`). This repository declares no
 Python dependencies — no `requirements.txt`, and CI installs only `ruff` — so a
 tool needing openpyxl would pass locally and fail there. Everything this arm
-needs is in `xl/workbook.xml` and each sheet's `<dimension>`. Verified by
-reading back a workbook openpyxl itself wrote, **with openpyxl uninstalled**.
+needs is in `xl/workbook.xml` and each sheet's `<dimension>`.
 
 ### The narrative is a state machine — drafted by an agent, confirmed by a person
 
-`schemas/narrative.ts`: `not-authored` → `draft` → `confirmed`, with `rejected`
-as a real fourth state. The owner chose this (2026-09-19) over plain agent
-attribution and over writing every narrative by hand.
+cat-harness-tools `schemas/content/narrative.ts`: `not-authored` → `draft` →
+`confirmed`, with `rejected` as a real fourth state.
 
 **Two attributions, because they are two acts.** `drafted_by` is who wrote the
 words; `confirmed_by` is who accepted them. The question a reader most wants
 answered is not "did a machine touch this" but "has a person agreed to it".
 
 **An agent cannot confirm its own draft** — `confirmed_by.kind` must be
-`"human"`, structurally. That one refinement is the entire difference between
-the chosen design and the one it replaced: without it, `confirmed` degrades
-into "an agent said so twice".
+`"human"`, structurally. Without that, `confirmed` degrades into "an agent said
+so twice".
 
 **But a rule about who may act cannot be enforced by a rule about what is
-written.** Driving the CLI in an agent container wrote
-`"rejected_by": {"kind": "human", "id": "Claude"}` — `git config user.name` is
-the agent's, so it recorded *itself* as the reviewer, and the schema could not
-see it. `reviewer()` therefore refuses outside a terminal: a person confirming
-at a prompt has one, an agent's subprocess and CI do not. **This stops accident,
-not fraud** — an agent that set out to forge a confirmation could allocate a pty
-— but it makes it impossible to confirm a narrative *while going about other
-work*, which is the failure that would actually have happened.
+written.** In an agent container `git config user.name` is the agent's, so the
+CLI could record the agent as a `human` reviewer and the schema could not see
+it. `reviewer()` therefore refuses outside a terminal: a person confirming at a
+prompt has one, an agent's subprocess and CI do not. **This stops accident, not
+fraud** — it makes it impossible to confirm a narrative *while going about
+other work*.
 
 **`rejected` keeps its reasons.** A rejected draft silently re-offered wastes
 the reviewer's time; one that vanishes lets the next agent redraft the identical
-thing — the argument `scrapped` wins on for beans, and the one
-`qa-review.ts`'s `Decision` makes by requiring a note saying why this outcome
-and not another.
+thing.
 
 ### Reviewing: `bun run cat narratives`
 
-Numbered list, numbered reasons, because the owner has very limited hand
-function and a review step that demands a typed sentence is one that will not
-happen — at which point `confirmed` means "nobody got round to objecting",
-which is worse than not having the state.
+Numbered list, numbered reasons: a review step that demands a typed sentence
+is one that will not happen, and then `confirmed` means "nobody got round to
+objecting".
 
 ```sh
 bun run cat narratives                     # what is waiting on you
@@ -650,10 +588,6 @@ A null `rows`/`columns` is likewise not an empty sheet: `shape_source` says
 whether the shape was read, counted, or `undetermined`.
 
 ### Summarising prose blocks — a QA sidecar, drained slowly
-
-Owner, 2026-09-24: *"on library/ page, the extract of a node is shown, but no
-agentic summary"*, and on scope: *"Make as QA sidecar as part of general doc
-ingestion to slowly drain."*
 
 **The block stays verbatim.** A prose block is the source's text,
 `provenance: "ingested"`, and re-ingestion regenerates it. A summary is an
@@ -688,8 +622,7 @@ longer matches, and a block that already has a current summary.
 unreviewed drafts at once is a buried reviewer. Write in your own words, from
 the block's text only, adding nothing from outside it.
 
-**Length scales with the source** (owner, 2026-10-06: *"summaries 1-4
-short-medium-long sentences depending on length of source content"*):
+**Length scales with the source:**
 
 | source text | summary |
 |---|---|
@@ -698,15 +631,13 @@ short-medium-long sentences depending on length of source content"*):
 | ~600–2,000 words | 3 medium sentences |
 | over ~2,000 words | 4 sentences, medium to long |
 
-A one-paragraph section does not earn four sentences, and a chapter is not
-done justice by one. If the
-extraction put the wrong text under a heading, summarise what is there and say
-so. The backlog is reported by `check:l1-complete` (`block-summaries`) and on
-the library page. It is advisory, never a gate. What the gate does fail is a
-sidecar that does not parse, names another entry, or holds a record for a block
-or source that is not there.
+If the extraction put the wrong text under a heading, summarise what is there
+and say so. The backlog is reported by `check:l1-complete` (`block-summaries`)
+and on the library page. It is advisory, never a gate. What the gate does fail
+is a sidecar that does not parse, names another entry, or holds a record for a
+block or source that is not there.
 
-### The Document panel — what a reader browses (issue #2302)
+### The Document panel — what a reader browses
 
 Every entry carrying a `structure.json` gets a **Document** panel in the
 library viewer, built from the ingestion schema by
@@ -722,10 +653,10 @@ schema, a new field in `structure.json` reaches every library at once; a field
 an older ingestion lacks shows "not recorded — re-ingest", never an empty table.
 
 For a withheld entry the panel keeps structure, page labels, figure and table
-**captions** (labels, like TOC titles — owner, 2026-10-06) and our summaries,
+**captions** (labels, like TOC titles) and our summaries,
 and omits only section body extracts.
 
-### Keywords — from the LSI weights, per section and per document (issue #2302)
+### Keywords — from the LSI weights, per section and per document
 
 `bun run cat library:keywords` writes `library/<slug>/keywords.json`
 (`folio-keywords/v1`) for every entry of every declared library: up to 12 for
@@ -739,7 +670,7 @@ them as chips, green where a heading also names the term (`evidence:
 ["heading"]`) — the document saying it of itself. Withheld entries show them:
 they are derived terms, like captions, not the text.
 
-What the scoring does, each measured on the IRIS catalogue's handbook (2026-10-06):
+What the scoring does:
 
 - **Two-word phrases** from truly adjacent tokens said at least twice; a stop
   word, punctuation, or a line break before a capital (a table cell, a heading)
@@ -754,15 +685,11 @@ What the scoring does, each measured on the IRIS catalogue's handbook (2026-10-0
 Limits: no part-of-speech tagging, so a rare verb can still surface in a short
 section; a library of fewer than 3 sections gets none.
 
-### A WITHHELD entry in the viewer — its summary, else the gate, never "no content" (issue #1794)
+### A WITHHELD entry in the viewer — its summary, else the gate, never "no content"
 
-An entry whose library root's `withheld.json` names it (bean `cw35`) is listed
-but publishes no verbatim text: `gen-library-viz` reads its blocks with
-`verbatim: false`. Until 2026-10-01 every such row then read **"(no content
-carried)"** — 121 of 121 rows of `who-pub-tps-931`, 250 of 250 of
-`9789241548960-eng` — which is what a page-scan with no text says, so "not ours
-to show" looked exactly like "nothing was extracted". The owner's ruling
-(option 1 of 4, *"Fix the viewer now"*) is the rule:
+An entry whose library root's `withheld.json` names it is listed but publishes
+no verbatim text: `gen-library-viz` reads its blocks with `verbatim: false`.
+"Not ours to show" must not look like "nothing was extracted":
 
 1. **A row shows the section's summary when one exists**, labelled as a summary
    and never as the source text. Summaries are our writing and stay published.
@@ -786,7 +713,7 @@ carries only the sentence still works: the row then says the sentence.
 The row and banner code is `scripts/lib/library-withheld-view.ts`, embedded in
 the page verbatim so `library-withheld-view.test.ts` runs the same text the
 browser does; `library-withheld-viewer.e2e.ts` opens the rendered page.
-Drafting the summaries is a separate backlog (bean `r96p`):
+Drafting the summaries is a separate backlog:
 `bun run cat summaries:next -- --entry <slug>` serves a withheld entry's text to the
 summariser like any other.
 
@@ -805,18 +732,13 @@ bun run cat ingest uploads/FILE.pdf --library <lib>   # re-stage: the arm applie
 bun run cat ingest uploads/FILE.pdf --library <lib> --promote
 ```
 
-**Re-running `ingest` is the second step, not a separate apply command**, and
-that is the whole design rather than a convenience. Bean `8suc`:
-
-- `--promote` refuses an entry whose `image-descriptions` requirement is unmet;
-- both writers of a narrative — `apply-image-verdicts.ts` and `narratives.ts` —
-  resolved their targets through `directoriesForGraph(root, "library")`.
-
-So a document with describable images could not be promoted without
-descriptions, and could not be given descriptions without being promoted. A
-cycle, and every staged document sat in it. It went unnoticed because every
-entry carrying applied verdicts predated the gate, so the tool always found
-it — the path that fails was the one nothing had walked.
+**Re-running `ingest` is the second step, not a separate apply command.**
+`--promote` refuses an entry whose `image-descriptions` requirement is unmet,
+and the stand-alone narrative writers (`apply-image-verdicts.ts`,
+`narratives.ts`) resolve their targets through
+`directoriesForGraph(root, "library")`, i.e. only in promoted libraries.
+Applying the verdicts as an arm in staging is what lets a document be both
+described and promoted.
 
 **Applying by hand works exactly once.** `pdf-images.py` opens the sidecar with
 `"w"` — no existence check, no merge — so the next `ingest` overwrites the
@@ -828,8 +750,8 @@ over it.
 
 `--staging <entry-dir> --library <lib-dir>` is available directly if you need
 it, and `--library` is **required**: a staging directory does not say which
-library a document is being promoted into (`v1hw` — a queue does not determine
-a library). An absent verdicts file exits **0**, because the first ingest
+library a document is being promoted into (a queue does not determine a
+library). An absent verdicts file exits **0**, because the first ingest
 necessarily runs before anybody has looked at the images; `image-descriptions`
 is the gate that refuses, not that script. An *orphaned* verdict — one naming
 an image the sidecar does not have — still fails, in either mode.
@@ -838,29 +760,22 @@ Every narrative it writes lands as `draft`. Only a person confirms one.
 
 #### A role threshold is OPTIONAL, and its default is NONE
 
-Owner, 2026-10-03, verbatim: *"an optional one can be set, default none"*.
-That settles the second question bean `m4xy` held open: whether a coverage
-cutoff may sort images into roles (figure vs furniture).
+A coverage cutoff may sort images into roles (figure vs furniture) only when
+a caller supplies one.
 
 - **By default nothing is thresholded.** With no value supplied, every role
   call comes from an inspection verdict as above, naming who looked.
 - **A caller may supply one.** An image whose role it decides must record
   that basis: the value, and that the value was caller-supplied rather than
-  inspected. A thresholded role must never be readable as an inspected one,
-  for the same reason a silently placed image is the `d5f1` defect.
+  inspected. A thresholded role must never be readable as an inspected one.
 - **Ship no number.** No config default, and no value in docs, tests or
-  examples presented as recommended. The evidence for that is measured, not
-  suspected (`m4xy`, `j820`, 29 documents in 5 libraries):
-  - per-image coverage does not separate the classes;
-  - the one empty stretch in the WHO corpus is specific to that corpus, so a
-    cutoff placed in it was fitted to these documents and says nothing about
-    others. `m4xy` records the figures.
-
-  A number chosen after seeing a corpus is a number chosen to fit the answer.
+  examples presented as recommended. Per-image coverage does not separate the
+  classes, and a cutoff placed in one corpus's empty stretch is fitted to that
+  corpus and says nothing about others.
 
 #### Reading a figure: the text layer is not the figure
 
-Two findings from `xeg6`, both of which would have shipped as descriptions:
+Two traps, both of which produce a wrong description:
 
 **A diverging axis's SIGN cannot be read from the text layer.** `get_text`
 returned `0.2 0.4 0.6` below the zero of a `Delta Pass Rate` bar with **no
@@ -876,9 +791,7 @@ original sentence reads every heatmap in the paper inverted — **worse than no
 description**, because a missing one is visibly missing.
 
 So: render the region and read the ticks. Two images that look alike need the
-same check each — the same record called three bars one repeated legend when
-the third was a different, signed scale, and it had the disconfirming datum
-(5188 bytes against 5167 twice) already written down beside the claim.
+same check each: a third "repeated legend" can be a different, signed scale.
 
 ### The figure that is DRAWN — `pdf-vector-labels.py`, the other arm
 
@@ -888,15 +801,14 @@ operators and text, so it places nothing, and the raster arm is silent about
 it truthfully. `9789240120747-eng` declares six captioned figures, places zero
 images, and `image-descriptions` reported *"0 image(s), 0 describable and all
 described"* over it: **a determined empty that is true about raster and
-misleading about figures.** Bean `m4xy`.
+misleading about figures.**
 
-The vector arm (bean `a8wy`) runs beside the raster one in `withDerivedArms`
+The vector arm runs beside the raster one in `withDerivedArms`
 and writes `vector-labels.json` — every positioned text line on a page that
 declares a figure, with its rectangle in the visible frame, its fonts and
 sizes, and whether it intersects a drawing.
 
-**Read the sidecar, not a count.** Three things it deliberately does not do,
-each because the obvious version of it was tried and failed on a real page:
+**Read the sidecar, not a count.** Three things it deliberately does not do:
 
 - **It does not say which labels belong to the figure.** `intersectsDrawing`
   is recorded and never filtered on. On `9789240120747-eng` page 34 it
@@ -905,8 +817,8 @@ each because the obvious version of it was tried and failed on a real page:
   *between* the drawn boxes.
 - **It does not group above the MuPDF LINE.** A block on that same page holds
   six circled numerals 200 pt apart across three different diagrams.
-- **It does not compare its counts to anything.** `m4xy`'s rule: declared
-  figures and recovered labels are not commensurable.
+- **It does not compare its counts to anything.** Declared figures and
+  recovered labels are not commensurable.
 
 So when you describe such a figure, the labels are your evidence and the
 grouping is your judgement — which is the same split as
@@ -918,21 +830,19 @@ clockwise.
 The determined empty is still meaningful: `who-rhr-1806-eng` records zero
 pages because it contains no `Fig.` or `Figure` mention at all. A document with
 **no text layer** returns `pages: null` with a reason instead — the one place
-this arm could otherwise report a clean run over an unread scan (`dh4f`).
+this arm could otherwise report a clean run over an unread scan.
 
-### An `.xlsx` IS a zip, and that broke the archive routing
+### An `.xlsx` IS a zip — ask the container
 
 The magic bytes of an OOXML or ODF document say `application/zip`, which is
-true and useless: it sent every spreadsheet to the archive rung to be listed as
-a bag of XML parts. The magic cannot tell them apart, so
+true and useless: it would send every spreadsheet to the archive rung to be
+listed as a bag of XML parts. The magic cannot tell them apart, so
 `_tech_meta.sniff_zip_package` asks the **container**, which declares itself —
 OOXML by `[Content_Types].xml` plus the part names, ODF by its `mimetype`
 member. Same principle as the byte sniff, one level in.
 
-`sniff_effective_mimetype` is the single answer the router and the recorder
-both ask. They disagreed for one commit — `planFor` called the magic-only
-function, so an `.xlsx` routed as an archive while its own `source` block
-correctly called it a workbook.
+`sniff_effective_mimetype` is the single answer the router (`planFor`) and the
+recorder both ask, so they cannot disagree.
 
 **A CSV has no magic bytes at all**, so routing one cannot be a sniff and must
 not become an extension guess. `is_tabular_text` asks the only content question
@@ -941,7 +851,6 @@ one? Prose, a single column and anything ragged all answer no — a one-column
 "table" is indistinguishable from a list of lines.
 
 Proved on fixtures built at test time, all five branches mutation-checked.
-Bean `p67i`.
 
 ## Related
 

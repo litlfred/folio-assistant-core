@@ -7,12 +7,14 @@ generated: "scripts/subgraph-readmes.ts of the bootstrap toolset (https://github
 
 # core-scripts
 
-Core's own executable surface, with every test beside its subject: the review-comment Tool and its move helper, the glossary extractors, the sample-import pair, and — since bean `yj6r`, 2026-09-30 — two tranches of escapes that moved UP out of `cat-harness/`. The materialisation trio (`check-materialized-fixity`, `backfill-materialized-fixity`, `cache-index`) and the FHIR IG artefact-index pair (`ingest-ig-artifacts`, `check-artifact-index`) came first, to sit beside the `schemas/materialization.ts` and `schemas/fhir-artifact-index.ts` they read. The glossary CLUSTER followed — `build-glossary.ts`, its `:refterm` codemod `codemod-refterm.ts`, and all three of their tests — because walking a paper's blocks to collect `defines[]` and emit a `folio-glossary/v1` scheme is CONTENT machinery, and the harness (`needs: ["bootstrap"]`) was importing upward into this instance's `schemas/glossary.ts` and `scripts/glossary-page.ts` — an import against its own declaration, and a circular dependency between repositories after the split. The partition rules already classified `content/pipeline/` as core, so the classification did not change; the DIRECTORY caught up with it. They are still addressed as pipeline scripts by id, and `resolvePipelineScript` searches the folio, then the platform, then here. The LAST FOUR clusters followed on the same day and in the same tranche, taking the `cat-harness ->` sibling-import count from 5 to 2: `extract-assets.ts` (a container a folio was given → a `folio-extraction/v1` record, reading `schemas/extraction.ts` — both moved DOWN again on 2026-10-02 by owner ruling 2 of the placement proposal, bean `tlat`: the script to `cat-harness-tools/scripts/`, the schema to `cat-harness/schemas/`, as the tool behind the harness's own `asset-extraction` skill), `check-voices.ts` (every voice rule's citation resolved through `schemas/library-ref.ts` into a folio's `library/`), and `build-document-site.ts` WITH its test, which reads `schemas/changeset.ts`. The last is the one with an invocation surface: a DOCUMENT folio's generated staging workflow names it by path, so `init-folio.ts` now writes `folio-assistant-core/scripts/build-document-site.ts` and `init-folio.test.ts` pins that string — the same instance-relative property this entry records for `review-comments.ts`, arrived at from the other direction. The partition rules had already classified all four `core` by exact entry, so again only the DIRECTORY moved; each dead entry was removed with its reasoning kept in place, because a rule naming a path its own scan can no longer see fires on nothing while reading as an adjudication. The adapters closure followed on the same day: `adapters/document/` and its SIX consuming tests are now here and in `adapters/`, taking the count 2 -> 0 (bean `ybp4`). This sentence previously read "What did NOT move, and deliberately" of those two files, and recorded that the closure "needs its own ruling" — it got one, and `r0tm`'s re-derivation also corrected the deterrent measurement: the 15 created escapes were 16, and paper-first is FREE, which is what turned an all-or-nothing three-instance move into two ordinary steps. This sentence listed only the review-comment pair until then, by which point four other tools were already here — a directory description that names its founding file rather than its contents goes stale the first time anything lands. Core declared its `schemas/`, its `folios/`, its `voices/` and its `tools/` and left `scripts/` undeclared, which is the `ylj7` shape: the directories that hold what is DESCRIBED were declared and the one holding what RUNS was not. Declared where it is: `review-comments.ts` is invoked by path from `folio-staging.yml`, so relocating it is an invocation surface `check:workflow-paths` would have to re-guard for nothing the declaration does not already buy.
+Core's own executable surface, with every test beside its subject: the review-comment Tool and its move helper, the glossary extractors and builder (`build-glossary.ts`, its `:refterm` codemod `codemod-refterm.ts`), the sample-import pair, the materialisation trio (`check-materialized-fixity`, `backfill-materialized-fixity`, `cache-index`), `check-voices.ts` (every voice rule's citation resolved through `schemas/library-ref.ts` into a folio's `library/`), `build-document-site.ts` (which reads `schemas/changeset.ts`), and the document, bibliography, public-comment and tabular tools. Pipeline scripts are addressed by id, and `resolvePipelineScript` searches the folio, then the platform, then here. Two scripts are invocation surfaces, named by path and so not to be moved without updating their callers: `build-document-site.ts`, which a DOCUMENT folio's generated staging workflow names (`init-folio.ts` writes `folio-assistant-core/scripts/build-document-site.ts` and `init-folio.test.ts` pins it), and `review-comments.ts`, invoked by path from `folio-staging.yml`.
 
 Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, holding `code`.
 
 | file | what it is | used by |
 |---|---|---|
+| [`archimate-from-glossary.test.ts`](archimate-from-glossary.test.ts) | a file |  |
+| [`archimate-from-glossary.ts`](archimate-from-glossary.ts) | a file |  |
 | [`backfill-materialized-fixity.ts`](backfill-materialized-fixity.ts) | a file |  |
 | [`bibliography-page.test.ts`](bibliography-page.test.ts) | a file |  |
 | [`bibliography-page.ts`](bibliography-page.ts) | a file |  |
@@ -34,11 +36,15 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`check-catalogue.ts`](check-catalogue.ts) | a file |  |
 | [`check-dsa-hash.ts`](check-dsa-hash.ts) | a file |  |
 | [`check-materialized-fixity.ts`](check-materialized-fixity.ts) | a file |  |
+| [`check-security-gate.test.ts`](check-security-gate.test.ts) | a file |  |
+| [`check-security-gate.ts`](check-security-gate.ts) | a file |  |
 | [`check-voices.ts`](check-voices.ts) | a file |  |
 | [`codemod-refterm-usage.test.ts`](codemod-refterm-usage.test.ts) | a file |  |
 | [`codemod-refterm.test.ts`](codemod-refterm.test.ts) | a file |  |
 | [`codemod-refterm.ts`](codemod-refterm.ts) | a file |  |
 | [`dc-render.ts`](dc-render.ts) | a file |  |
+| [`diig-phases-svg.test.ts`](diig-phases-svg.test.ts) | a file |  |
+| [`diig-phases-svg.ts`](diig-phases-svg.ts) | a file |  |
 | [`document-export.lua`](document-export.lua) | a file |  |
 | [`document-export.ts`](document-export.ts) | a file |  |
 | [`document-layout.test.ts`](document-layout.test.ts) | a file |  |
@@ -52,31 +58,54 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`docx-to-folio.test.ts`](docx-to-folio.test.ts) | a file |  |
 | [`docx-to-folio.ts`](docx-to-folio.ts) | a file |  |
 | [`dsa-hash.test.ts`](dsa-hash.test.ts) | a file |  |
+| [`dth-block-check.test.ts`](dth-block-check.test.ts) | a file |  |
+| [`dth-block-check.ts`](dth-block-check.ts) | a file |  |
+| [`external-glossaries.test.ts`](external-glossaries.test.ts) | a file |  |
+| [`external-glossaries.ts`](external-glossaries.ts) | a file |  |
 | [`fetch-dspace-item.test.ts`](fetch-dspace-item.test.ts) | a file |  |
 | [`fetch-dspace-item.ts`](fetch-dspace-item.ts) | a file |  |
 | [`fetch-who-publication.test.ts`](fetch-who-publication.test.ts) | a file |  |
 | [`fetch-who-publication.ts`](fetch-who-publication.ts) | a file |  |
 | [`figure-coverage.test.ts`](figure-coverage.test.ts) | a file |  |
 | [`figure-coverage.ts`](figure-coverage.ts) | a file |  |
+| [`folio-l1-coverage.test.ts`](folio-l1-coverage.test.ts) | a file |  |
+| [`folio-l1-coverage.ts`](folio-l1-coverage.ts) | a file |  |
 | [`folio-site-blocks.test.ts`](folio-site-blocks.test.ts) | a file |  |
 | [`folio-site-blocks.ts`](folio-site-blocks.ts) | a file |  |
 | [`folio-site-chrome-check.ts`](folio-site-chrome-check.ts) | a file |  |
 | [`folio-site-qa.ts`](folio-site-qa.ts) | a file |  |
 | [`gen-covers.test.ts`](gen-covers.test.ts) | a file |  |
 | [`gen-covers.ts`](gen-covers.ts) | a file |  |
+| [`glossary-acronyms.ts`](glossary-acronyms.ts) | a file |  |
+| [`glossary-archimate.test.ts`](glossary-archimate.test.ts) | a file |  |
+| [`glossary-archimate.ts`](glossary-archimate.ts) | a file |  |
 | [`glossary-extract.ts`](glossary-extract.ts) | a file |  |
+| [`glossary-from-source.test.ts`](glossary-from-source.test.ts) | a file |  |
+| [`glossary-from-source.ts`](glossary-from-source.ts) | a file |  |
+| [`glossary-links.test.ts`](glossary-links.test.ts) | a file |  |
+| [`glossary-links.ts`](glossary-links.ts) | a file |  |
 | [`glossary-mapping-block.test.ts`](glossary-mapping-block.test.ts) | a file |  |
 | [`glossary-one-concept.test.ts`](glossary-one-concept.test.ts) | a file |  |
 | [`glossary-page.ts`](glossary-page.ts) | a file |  |
 | [`glossary-pot.test.ts`](glossary-pot.test.ts) | a file |  |
 | [`glossary-pot.ts`](glossary-pot.ts) | a file |  |
+| [`glossary-related.test.ts`](glossary-related.test.ts) | a file |  |
 | [`glossary-skos-automated.test.ts`](glossary-skos-automated.test.ts) | a file |  |
+| [`glossary-table.test.ts`](glossary-table.test.ts) | a file |  |
+| [`glossary-table.ts`](glossary-table.ts) | a file |  |
+| [`glossary-term-links.test.ts`](glossary-term-links.test.ts) | a file |  |
+| [`glossary-term-links.ts`](glossary-term-links.ts) | a file |  |
+| [`glossary-term-page.test.ts`](glossary-term-page.test.ts) | a file |  |
+| [`glossary-validate.test.ts`](glossary-validate.test.ts) | a file |  |
+| [`glossary-validate.ts`](glossary-validate.ts) | a file |  |
 | [`intake-rows.py`](intake-rows.py) | a file |  |
 | [`kg-materialize.test.ts`](kg-materialize.test.ts) | a file |  |
 | [`kg-materialize.ts`](kg-materialize.ts) | a file |  |
 | [`l1-coverage.test.ts`](l1-coverage.test.ts) | a file |  |
 | [`l1-coverage.ts`](l1-coverage.ts) | a file |  |
 | [`landing-links.test.ts`](landing-links.test.ts) | a file |  |
+| [`live-figures.test.ts`](live-figures.test.ts) | a file |  |
+| [`live-figures.ts`](live-figures.ts) | a file |  |
 | [`local-path.test.ts`](local-path.test.ts) | a file |  |
 | [`lsi-blocks.test.ts`](lsi-blocks.test.ts) | a file |  |
 | [`lsi-blocks.ts`](lsi-blocks.ts) | a file |  |
@@ -84,6 +113,8 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`pdf-line-map.py`](pdf-line-map.py) | a file |  |
 | [`platform.ts`](platform.ts) | a file |  |
 | [`public-comment-changesets.ts`](public-comment-changesets.ts) | a file |  |
+| [`public-comment-channels.test.ts`](public-comment-channels.test.ts) | a file |  |
+| [`public-comment-channels.ts`](public-comment-channels.ts) | a file |  |
 | [`public-comment-pages.test.ts`](public-comment-pages.test.ts) | a file |  |
 | [`public-comment-pages.ts`](public-comment-pages.ts) | a file |  |
 | [`public-comment-route.ts`](public-comment-route.ts) | a file |  |
@@ -93,26 +124,39 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`public-comment-site.ts`](public-comment-site.ts) | a file |  |
 | [`public-comment.test.ts`](public-comment.test.ts) | a file |  |
 | [`public-comment.ts`](public-comment.ts) | a file |  |
+| [`references-render.test.ts`](references-render.test.ts) | a file |  |
+| [`references-render.ts`](references-render.ts) | a file |  |
+| [`review-anchors-from-folio.test.ts`](review-anchors-from-folio.test.ts) | a file |  |
+| [`review-anchors-from-folio.ts`](review-anchors-from-folio.ts) | a file |  |
 | [`review-comment-move.test.ts`](review-comment-move.test.ts) | a file |  |
 | [`review-comment-move.ts`](review-comment-move.ts) | a file |  |
 | [`review-comments.test.ts`](review-comments.test.ts) | a file |  |
 | [`review-comments.ts`](review-comments.ts) | a file |  |
 | [`review-coverage.test.ts`](review-coverage.test.ts) | a file |  |
 | [`review-coverage.ts`](review-coverage.ts) | a file |  |
+| [`review-sheet-site.test.ts`](review-sheet-site.test.ts) | a file |  |
+| [`review-sheet-site.ts`](review-sheet-site.ts) | a file |  |
 | [`sample-import-check.ts`](sample-import-check.ts) | a file |  |
 | [`sample-import-run.test.ts`](sample-import-run.test.ts) | a file |  |
 | [`sample-import-run.ts`](sample-import-run.ts) | a file |  |
 | [`scope-css.ts`](scope-css.ts) | a file |  |
 | [`site-reads.test.ts`](site-reads.test.ts) | a file |  |
+| [`smart-approach-svg.test.ts`](smart-approach-svg.test.ts) | a file |  |
+| [`smart-approach-svg.ts`](smart-approach-svg.ts) | a file |  |
 | [`source-liveness.test.ts`](source-liveness.test.ts) | a file |  |
 | [`source-liveness.ts`](source-liveness.ts) | a file |  |
+| [`stage-folio-local.test.ts`](stage-folio-local.test.ts) | a file |  |
 | [`stage-folio-local.ts`](stage-folio-local.ts) | a file |  |
+| [`structured-assets.test.ts`](structured-assets.test.ts) | a file |  |
+| [`structured-assets.ts`](structured-assets.ts) | a file |  |
 | [`tabular-columns.ts`](tabular-columns.ts) | a file |  |
 | [`tabular-csv.test.ts`](tabular-csv.test.ts) | a file |  |
 | [`tabular-csv.ts`](tabular-csv.ts) | a file |  |
 | [`tabular-dak.ts`](tabular-dak.ts) | a file |  |
 | [`tabular-xlsx.test.ts`](tabular-xlsx.test.ts) | a file |  |
 | [`tabular-xlsx.ts`](tabular-xlsx.ts) | a file |  |
+| [`term-passages.test.ts`](term-passages.test.ts) | a file |  |
+| [`term-passages.ts`](term-passages.ts) | a file |  |
 | [`folio-site-assets/`](folio-site-assets/) | _nothing declares what this holds_ | |
 | [`lib/`](lib/) | _nothing declares what this holds_ | |
 | [`test-fixtures/`](test-fixtures/) | _nothing declares what this holds_ | |

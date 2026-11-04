@@ -22,29 +22,17 @@ watcher does on each wake. Process:
 [`processes/content/review-log-watch.bpmn`](../../../processes/content/review-log-watch.bpmn)
 (checklist beside it).
 
-## Why mechanical (owner, 2026-11-01)
+## Why mechanical
 
-"watch agents should look for new issues and update google sheets with
-summary … this one should be mechanical skill run on same polling that kicks
-of watcher agent review … should not trigger any agentic activity unless a
-change to google sheet or issues … make sure fully documented as
-tools/skills/processes".
-
-The owner's answers:
-
-- **Q-WATCH1 B.** The watcher runs a core tool on every poll.
-- **Q-WATCH2 B.** Each issue gets a row on Contributor Feedback.
-- **10:18Z.** "current google sheets should be reviewed to add in existing
-  issues. if issue is closed it correpsonds to hidden row that text has line
-  through it/hidden".
-
-The poll still wakes the watcher thread every 3 minutes. Until the tool says
-`changed`, though, the watcher only reads and runs the tool. It does not
-reason about the rows, edit anything or post anything.
+The watcher runs a core tool on every poll, and each issue gets a row on
+Contributor Feedback, including existing issues; a closed issue's row is
+hidden, its text struck through. The poll wakes the watcher thread every 3
+minutes. Until the tool says `changed`, the watcher only reads and runs the
+tool. It does not reason about the rows, edit anything or post anything.
 
 ## Each wake
 
-1. **Read** two small ranges (Q-WATCH4 A, owner 2026-11-01 10:36Z):
+1. **Read** two small ranges:
    - `Watch!F1:I1`, where the sheet script writes `Cells hash`, the hash
      itself, and the time it last checked. The script rewrites it on every
      refresh and every timer tick, from the cells people set.
@@ -74,7 +62,7 @@ reason about the rows, edit anything or post anything.
    reports nothing. A cell change carries `cs` and the row it is on now. Every
    row number in the output (`changes[].row`, `closedRows`) is from this
    read, so write only from the read you just checked, never from a row
-   number kept from an earlier check (owner question, 2026-11-01 18:12Z).
+   number kept from an earlier check.
 3. **Append** each `append[].row` below the last row of Contributor Feedback.
    The row is already lined up with the header:
    - **Change-set:** the next id, also in `append[].agent.csId`.
@@ -86,14 +74,13 @@ reason about the rows, edit anything or post anything.
    shows its label, and bold, italic and code marks are dropped. Its links
    are in `append[].links` (the column and each link's start, end and URL).
    Write the cell with those as `textFormatRuns` (`updateCells`), so each
-   link is clickable (owner, 2026-11-01 10:51Z: "shiud be links").
+   link is clickable.
 
    Then write `append[].agent` to the **Agent** tab as a new row: its
    Change-set and Issue columns. The script fills Contributor Feedback's
-   Issue column from the Agent tab, by Change-set, on every refresh. An
-   Issue written only on Contributor Feedback is cleared on the next refresh,
-   which is how every issue link vanished from the four DTH logs on
-   2026-11-01 15:30Z.
+   Issue column from the Agent tab, by Change-set, on every refresh, so an
+   Issue written only on Contributor Feedback is cleared on the next
+   refresh.
 
    Every other cell stays empty. This tool is the only thing that adds issue
    rows, so nobody adds them by hand.
@@ -108,14 +95,11 @@ reason about the rows, edit anything or post anything.
    Ready for agent = Yes gets its edit, and a Ready for merge = Yes gets its
    merge. A Blue answer to a Decision needed question is taken up.
 
-   **Feedback on every Blue change and every new row** (owner, 2026-11-01:
-   "agent should provide feedback whenever blue change or whenever new row
-   added"). In every log the watcher keeps, the agent writes or rewrites
+   **Feedback on every Blue change and every new row.** In every log the watcher keeps, the agent writes or rewrites
    Feedback (agent), in the layout of `review-sheet-script` ("The agent's
    feedback cell has a fixed layout"), for each row that:
    - is new, however it got there: from a GitHub issue (step 3), typed by a
-     person, or copied from a TWG workbook (DTH-HRH CS-002 and CS-003 came
-     that way, with no issue);
+     person, or copied from a TWG workbook;
    - has an empty Feedback (agent) cell; or
    - has Blue cells (Title, Selected Sections, any Contributor Feedback
      column, Disposition) that no longer match the Agent tab's Feedback
@@ -129,7 +113,7 @@ reason about the rows, edit anything or post anything.
    still differs from the stored state, so it comes back on the next wake.
 7. Queue the next wake.
 
-## Public-comment logs (owner, 2026-11-04)
+## Public-comment logs
 
 A log whose Config has `MODE` `public-comment` has Review Public Comments,
 Review Change Sets, Agent - Comments and Agent - Change Sets instead of
@@ -157,7 +141,7 @@ differences:
   of step 5 is the change-set work of
   [Public comment](../../../processes/content/public-comment.bpmn).
 
-## Lint each poll (owner, 2026-11-01; Q-FBK-1 A)
+## Lint each poll
 
 After the change check, run
 `bun tools/review-log-watch/lint.ts --feedback <Contributor Feedback values.json> --agent <Agent values.json>`.
@@ -173,22 +157,20 @@ cell has a fixed layout"):
 - history in the cell (`Decided`, `Step n`, `Already done`), Markdown `**`,
   more than 10 lines;
 - a PR that GitHub says is merged or closed while the Agent tab's status
-  still says open (CS-001 showed "dth-hrh#61 open" after it merged).
+  still says open;
 - feedback on a row with no Selected Sections and no question asking which,
   or a PR that changes a chapter outside the Selected Sections without an
-  `Outside the selected sections:` line (Q-FBK-3 A).
+  `Outside the selected sections:` line.
 
 Exit 0 is clean. Exit 10 lists problems: the watcher fixes the Agent tab
 status or rewrites the cell to the layout in the same wake, and records the
 Agent step. The lint writes nothing itself.
 
-## Previews follow main (owner, 2026-11-02 07:32Z to 07:34Z)
+## Previews follow main
 
-"log watcher should make sure all previews get updated if upstream changes on
-main", then "actually automatic (as the default mode)", with people's
-feedback as a second trigger. A preview is built from its pull request's
-head, so once main moves on, a branch that lacks main's head shows a
-document main no longer is.
+A preview is built from its pull request's head, so once main moves on, a
+branch that lacks main's head shows a document main no longer is. The
+watcher brings main into every open change-set branch.
 
 **Modes.** The log's Config tab may hold a `PREVIEW_REFRESH` row:
 
@@ -218,7 +200,7 @@ such as "update the preview" or "rebase on main"
 4. This only brings main into the branch. Committee content is never merged
    into main by the watcher. Closed PRs and PRs from forks are skipped.
 
-## Change sets people make (owner, 2026-11-02; Q-CS-1 C)
+## Change sets people make
 
 People make change sets, the way they open issues; how one came about does
 not matter once people have adjudicated it. On a public-comment log the
@@ -234,8 +216,7 @@ same wake:
   reads its fields. For "New change set" the watcher adds the Agent - Change
   Sets row, and the script then adds the Review Change Sets row with that
   Title. Split, merge and move go as below.
-- **Feedback that asks for it**, e.g. "this CS needs to be split" (owner,
-  07:17Z: "part of agentic watch"). Run
+- **Feedback that asks for it**, e.g. "this CS needs to be split". Run
   `bun tools/review-log-watch/cs-requests.ts request --text <the person's feedback>`
   on every changed feedback cell; only the person's words, never the agent's
   or the script's lines. For a split, merge, move or new request, write a
@@ -292,7 +273,7 @@ feedback cell, or open the change-set form.
 A log is not set up until a watcher has both of these wakes:
 
 - a chain of **3-minute** delayed wakes (`send_later`), each of which queues
-  the next (owner, 2026-11-01 10:20Z: "instead of 1-minute lets do 3");
+  the next;
 - an hourly scheduled task that restarts the chain if it breaks.
 
 Keep the state file outside the repository, one per sheet. Without it, a fresh

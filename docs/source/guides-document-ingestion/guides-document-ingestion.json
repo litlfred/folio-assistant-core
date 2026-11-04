@@ -49,7 +49,7 @@
           "sourceLinks": [
             {
               "text": "Open the BPMN source",
-              "href": "https://github.com/litlfred/folio-assistant/blob/main/folio-assistant-core/processes/library/l1-document-ingestion.bpmn"
+              "href": "https://github.com/litlfred/folio-assistant-core/blob/main/processes/library/l1-document-ingestion.bpmn"
             }
           ],
           "linkStyle": "button"
@@ -68,7 +68,7 @@
           "sourceLinks": [
             {
               "text": "Open the BPMN source",
-              "href": "https://github.com/litlfred/folio-assistant/blob/main/folio-assistant-core/processes/library/ingest-extract-structure.bpmn"
+              "href": "https://github.com/litlfred/folio-assistant-core/blob/main/processes/library/ingest-extract-structure.bpmn"
             }
           ],
           "linkStyle": "button"
@@ -87,7 +87,7 @@
           "sourceLinks": [
             {
               "text": "Open the BPMN source",
-              "href": "https://github.com/litlfred/folio-assistant/blob/main/folio-assistant-core/processes/library/ingest-derive-content.bpmn"
+              "href": "https://github.com/litlfred/folio-assistant-core/blob/main/processes/library/ingest-derive-content.bpmn"
             }
           ],
           "linkStyle": "button"
@@ -125,7 +125,7 @@
           "sourceLinks": [
             {
               "text": "Open the BPMN source",
-              "href": "https://github.com/litlfred/folio-assistant/blob/main/folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn"
+              "href": "https://github.com/litlfred/folio-assistant-core/blob/main/processes/library/ingest-build-l1-kg.bpmn"
             }
           ],
           "linkStyle": "button"
@@ -144,7 +144,7 @@
           "sourceLinks": [
             {
               "text": "Open the BPMN source",
-              "href": "https://github.com/litlfred/folio-assistant/blob/main/folio-assistant-core/processes/library/ingest-l1-completeness-gate.bpmn"
+              "href": "https://github.com/litlfred/folio-assistant-core/blob/main/processes/library/ingest-l1-completeness-gate.bpmn"
             }
           ],
           "linkStyle": "button"
@@ -153,7 +153,7 @@
       },
       {
         "id": "what-is-not-built-yet",
-        "title": "What is not built yet",
+        "title": "Running it",
         "block": "what-is-not-built-yet"
       },
       {

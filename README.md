@@ -14,7 +14,6 @@ the wrong way.
 <!-- readme:toc:begin -->
 
 - [Scope, stated so the boundary is checkable](#scope-stated-so-the-boundary-is-checkable)
-- [This instance is PRE-SPLIT](#this-instance-is-pre-split)
 - [What is here today](#what-is-here-today)
 - [Three states, and there is no default](#three-states-and-there-is-no-default)
 - [Why this is not in cat-harness/](#why-this-is-not-in-cat-harness)
@@ -27,26 +26,11 @@ the wrong way.
 |---|---|
 | the content-object model: what a block, a chapter, a document IS | the skills, schemas and MCP server that *operate* on it — those are the harness's |
 | the `folio` graph typology, and its registration | any particular folio's chapters, constants or vocabularies — those live in the folio's own repository |
-| content adapters (`document`, `paper`) and the profiles that nest inside them | the pipeline's transport and the tool surface |
+| the `document` content adapter and the block kinds it declares (a higher layer adds its own, such as the science layer's `paper`) | the pipeline's transport and the tool surface |
 
-The rule the whole repository turns on: **this is the platform, not the
-content.** If you are about to write subject matter here, you are either in the
-wrong repository or writing something that belongs in a folio as data.
-
-## This instance is PRE-SPLIT
-
-The modules this layer will own are currently interleaved with the harness's
-under `cat-harness/`. `scripts/repo-partition.ts` is the machine-readable
-statement of which module belongs where, and it reports the counts and every
-wrong-direction edge on demand.
-
-So this directory declares itself and contributes its card to the landing
-board; it does not yet declare graph directories, because it does not yet hold
-any. **Declaring a directory that is not there is worse than declaring none** —
-every consumer then scans nothing and reports a clean run over it (bean `dh4f`).
-
-Issue [#223](https://github.com/litlfred/folio-assistant/issues/223) tracks the
-split.
+**This is the platform, not the content.** If you are about to write subject
+matter here, you are either in the wrong repository or writing something that
+belongs in a folio as data.
 
 ## What is here today
 
@@ -56,18 +40,16 @@ split.
 | [`schemas/catalogue.ts`](schemas/catalogue.ts) | what collection does it sit in, and how big is that collection? |
 | [`schemas/materialization.ts`](schemas/materialization.ts) | are the bytes here, and who decided they were allowed to be? |
 
-They are one chain, read in that order. The third is the load-bearing one:
-**materialising remote content is a process this repository already runs twice
-and has never named** — the IRIS catalogue instance taking three items out of 361.55 GB, and
-`bootstrap` fetching a harness and landing it locally. `upstream-pins.json` is
-half of that second one's refresh.
+They are one chain, read in that order. The third names one process wherever
+remote content is held locally: a catalogue instance holding a few items of a
+large collection, or `bootstrap` fetching a harness and landing it locally.
 
-Outside that chain, and answering a different question:
+Outside that chain:
 
 | node | question it answers |
 |---|---|
-| [`schemas/changeset.ts`](schemas/changeset.ts) | what changed in a folio between two refs, **block by block**: added, removed, renamed, reworded or moved? Keyed on the block label, which the `id-unique` / `id-stable` QA criteria guard. Read by the review page (epic `q4jm`). |
-| [`schemas/review-comment.ts`](schemas/review-comment.ts) | a reviewer's comment on one block, as a **todo kind** (`folio-review-comment/v1`, parent: the harness todo). It is required to name its block, has a closed lifecycle that only review-process tasks may move, is ingested idempotently from tagged PR comments, and follows renames. A removed block's comments are kept as orphaned (bean `423d`). |
+| [`schemas/changeset.ts`](schemas/changeset.ts) | what changed in a folio between two refs, **block by block**: added, removed, renamed, reworded or moved? Keyed on the block label, which the `id-unique` / `id-stable` QA criteria guard. Read by the review page. |
+| [`schemas/review-comment.ts`](schemas/review-comment.ts) | a reviewer's comment on one block, as a **todo kind** (`folio-review-comment/v1`, parent: the harness todo). It must name its block, has a closed lifecycle that only review-process tasks may move, is ingested idempotently from tagged PR comments, and follows renames. A removed block's comments are kept as orphaned. |
 
 ## Three states, and there is no default
 
@@ -78,21 +60,18 @@ A node that does not declare its state is **invalid**, not `unknown` — "the
 author did not say" and "the author said they could not tell" are different
 facts, and only the second is something somebody can act on.
 
-**The vocabulary itself lives one layer down**, in
+The state names and `FixitySchema` live one layer down, in
 [`cat-harness-tools/schemas/kg/materialization-state.ts`](../cat-harness-tools/schemas/kg/materialization-state.ts),
-with `FixitySchema` beside it, and `schemas/materialization.ts` re-exports both.
-Owner ruling 2 of the placement proposal (2026-09-30, option A, bean `tlat`):
-only the states and fixity moved; the five gates, the purposes and the record
-stay here, because each gate is a decision about content. The same ruling adds
-that a remote-KG subscription is a materialization whose minimum is the chosen
-subgraphs' metadata under `library/<source>/` — recorded there as vocabulary.
+and `schemas/materialization.ts` re-exports both. The five gates, the purposes
+and the record stay here, because each gate is a decision about content. A
+remote-KG subscription is a materialization whose minimum is the chosen
+subgraphs' metadata under `library/<source>/`.
 
 ## Why this is not in `cat-harness/`
 
-The owner, 2026-09-20: *"not in cat-harness, in folio-assitant-core/ as a named
-subgraph."* `BASE_GRAPH_TYPOLOGIES` already carries the rule — *"skills/ schemas
-beans all in cat-harness, voices, uploads library in folio-asst-core"* — and a
-Dublin Core record is on the same side of that line as the library entry it
-describes. The harness layer must not own a vocabulary for content it cannot
-render, which is the argument `schemas/folio-graph-typology.ts` makes for `folio`
+`BASE_GRAPH_TYPOLOGIES` carries the rule — *"skills/ schemas beans all in
+cat-harness, voices, uploads library in folio-asst-core"* — and a Dublin Core
+record is on the same side of that line as the library entry it describes. The
+harness layer must not own a vocabulary for content it cannot render, which is
+the argument `cat-harness/schemas/folio-graph-typology.ts` makes for `folio`
 itself.

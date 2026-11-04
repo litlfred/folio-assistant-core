@@ -15,16 +15,14 @@ graph-typologies:
 
 # Glossary terms
 
-The owner, 2026-09-23: *"put glossary into folio-assistant-core"*, *"it should
-be part of general pracice w/ glossary/ page. check harnesses"*, and *"can
-glossary be refefences to external skos schema?"*. Yes, and that is the
-preferred way.
+A glossary can reference external SKOS schemes, and that is the preferred
+way.
 
 ## Where terms go
 
-Core's `glossary` graph typology. Core declares `glossary/` with
-`dependents: reproduce`, so every folio built on core has one. Each
-`*.glossary.json` is one SKOS concept scheme, `$schema: "folio-glossary/v1"`
+Core declares the `glossary` directory in `folio-assistant-core.json`. Its
+graph typology is `perInstance`, so every folio built on core has a
+`glossary/`. Each `*.glossary.json` is one SKOS concept scheme, `$schema: "folio-glossary/v1"`
 (`folio-assistant-core/schemas/glossary.ts`).
 
 ## Reference first, define second
@@ -36,7 +34,7 @@ Core's `glossary` graph typology. Core declares `glossary/` with
 | a whole external scheme | a `remoteGraphs` entry in the declaration with `graphTypologies: ["glossary"]`: known about, not held |
 | a term only this folio defines | a local term with `prefLabel`, `definition`, and `notation` for its code |
 
-## Three states, never two (bean `lqo9`)
+## Three states, never two
 
 - `authored`: a person wrote or approved the definition. It must have one.
 - `candidate`: extracted from a source and not yet curated. It may have no
@@ -51,10 +49,8 @@ counts as that person: its author wrote the definition and marked it (see
 
 ## How a term is linked: the workflow
 
-Owner, 2026-11-01 (folio-assistant-core#498; cards Q-GLO-1 C, Q-GLO-2 A,
-Q-GLO-3 C): link terms across the glossary, the narrative and the knowledge
-graph with a few shared joins, not a framework. "I don't want to get heavy /
-prescriptive."
+Terms are linked across the glossary, the narrative and the knowledge graph
+with a few shared joins, not a framework.
 
 **One join key: the SKOS term** (its id, or its IRI from another instance).
 Everything else points at it, and nothing copies it.
@@ -62,7 +58,7 @@ Everything else points at it, and nothing copies it.
 | thing | how it names the term |
 |---|---|
 | the defining site | the term's `source`: its glossary row (an L1 section line, or the document's glossary table block). One node-kind structure for every term. |
-| a narrative block that explains the term at length | the block's `defines: [<term id>]` (and `:defterm[...]{#id}` inline). Provenance, not a second definition (Q-IV-8 A). |
+| a narrative block that explains the term at length | the block's `defines: [<term id>]` (and `:defterm[...]{#id}` inline). Provenance, not a second definition. |
 | other uses in prose | nothing to write: matched at build time (`term-passages.ts`) and linked by `--link-terms` |
 | an acronym | `notation` on the term, never a second list. The acronyms table is drawn from it (`glossary:table`). |
 | an organization | `focus` (W3C ORG), shared ones in smart-ra `organizations.glossary.json` |
@@ -97,14 +93,14 @@ With `--all` it also lists terms the narrative never uses. The acronym report is
 
 ## Conventions
 
-The owner, 2026-09-24: *"What does folio-assistant do? B should follow. Update
-skills so known."* Every folio follows these; none re-decides them.
+Every folio follows these; none re-decides them.
 
 **The instance namespace.** A term's IRI is
-`<instance namespace>glossary/<scheme id>/<term id>`, and the instance
-namespace is `<publication root><instance stub>/ns#` (`instanceNs` in
-`folio-assistant-core/scripts/glossary-page.ts`; `schemeIri` and `termIri` in
-`folio-assistant-core/schemas/glossary.ts`). For example:
+`<instance namespace>glossary/<scheme id>/<term id>`. The instance namespace is
+built from the instance's declaration (`iriBase`, `version`, and the stub of a
+sub-instance) by `instanceNs` in `folio-assistant-core/scripts/glossary-page.ts`;
+`schemeIri` and `termIri` are in `folio-assistant-core/schemas/glossary.ts`.
+For example:
 
 | instance | namespace |
 |---|---|
@@ -112,11 +108,9 @@ namespace is `<publication root><instance stub>/ns#` (`instanceNs` in
 | `ihris` (its own site) | `https://litlfred.github.io/ihris/ihris/ns/` |
 
 The namespace is never the asset's path: moving the asset must not move the
-term (bean `lqo9`, 2026-09-21).
+term.
 
-**A term is minted by the instance that owns its source.** Owner,
-2026-09-24: *"make sure all glossary terms properly localed to ihris so [no]
-collision w/ other subgraphs. general rule/skill"*. A scheme and its terms live
+**A term is minted by the instance that owns its source.** A scheme and its terms live
 in the namespace of the instance whose root holds the SOURCE ASSET, not of the
 instance whose `glossary/` directory holds the file:
 - In a folio with sub-instances, that is the sub-instance
@@ -136,10 +130,9 @@ instance whose `glossary/` directory holds the file:
   instance.
 
 `check:glossary` enforces all of this (`schemeOwner` and `collect` in
-`glossary-page.ts`, and the checks in `glossary.test.ts`). An extracted term
-follows the same rule, because `glossary-extract.ts` mints it in the namespace
-of the instance whose root holds the asset. When a check fails, fix the
-generator or split the authored scheme. Never edit the output.
+`glossary-page.ts`, and the checks in `glossary.test.ts`); `glossary-extract.ts`
+mints extracted terms by the same rule. When a check fails, fix the generator
+or split the authored scheme. Never edit the output.
 
 **One ConceptScheme per code list.** This follows `schemas/code-list.ts`
 (`codeListToSkos`): *"a code is addressable and two lists may share a code
@@ -156,15 +149,13 @@ equivalence implies one:
 
 Any other basis needs the owner's explicit acceptance. One example is a
 `ValueSet` that binds a local code list to the external code system itself,
-so that the local code *is* the external code. When the owner accepts such a
-basis:
+so that the local code *is* the external code. Once accepted:
 - the scheme's `description` names the basis and the ruling;
 - the builder lists the accepted systems explicitly;
 - QA recomputes the matches from the same source.
 
-ihris's ISCO-08 lists to ESCO are the worked example (owner, 2026-09-24,
-litlfred/ihris#19). An IRI built from a publisher's pattern but never
-dereferenced says so.
+ihris's ISCO-08 lists to ESCO are the worked example. An IRI built from a
+publisher's pattern but never dereferenced says so.
 
 ## Then
 
@@ -179,15 +170,13 @@ check:glossary` is the gate: it fails on a document that does not validate, on
 a stale page, and on a page over its size budget (64 KB for the index, 1 MB
 for an asset type's page).
 
-**A page over budget is split further, never given a bigger budget.** The
-owner chose *"Split per asset type"* (2026-09-24) when extraction took the
-single page to 1.4 MB; the budgets are what keeps that choice true.
+**A page over budget is split further, never given a bigger budget.**
 
 The harness's swimlane-role terms (`swimlane-glossary`, the
 [`swimlane-glossary`](../../../../cat-harness/skills/process/process-core/swimlane-glossary.md) skill) are one more source the page
 links to, not copies of.
 
-## Extracted terms (bean `lqo9`, piece 1)
+## Extracted terms
 
 `glossary:page` also extracts a `candidate` term from every knowledge-graph
 asset that carries a title and a description
@@ -209,11 +198,10 @@ comment. One scheme per asset type per instance (`kg-skills`, `kg-tools`,
   each carries the "candidate, extracted" badge. Only authored terms go into
   the schema.org `DefinedTermSet`, which is on the index.
 
-## Ordered glossaries — logical order, not A–Z (owner, 2026-09-29)
+## Ordered glossaries — logical order, not A–Z
 
-Some glossaries are read top to bottom: each term is defined only by terms
-above it, and never itself. Bootstrap's are the first. Sorting those A–Z
-throws away the one property the definitions were written to have.
+Some glossaries (bootstrap's, for one) are read top to bottom: each term is
+defined only by terms above it, and never by itself. Do not sort them A–Z.
 
 - **`ordered: true`** on a glossary says its `terms` array IS the order. Each
   term's **`requires`** lists the local ids its definition uses; the schema
@@ -229,20 +217,19 @@ throws away the one property the definitions were written to have.
   `termsOfSchema` in `glossary-page.ts`: the definitions stay in one place,
   the schema, and the glossary cannot drift from it. They are `authored`,
   not `candidate`: a person wrote and approved them in the schema's source,
-  and the collector only reads them out. That is not an extractor promoting
-  its own output, which the rule above still forbids.
+  and the collector only reads them out.
 - **The uses list is authored, not inferred.** A text matcher over the
   definitions is a guard that the list and the prose agree (`graph.test.ts`);
   a word can appear without being used as a term.
 
-## Translation: authored terms only (bean `lqo9`, owner 2026-09-24)
+## Translation: authored terms only
 
 `bun run cat glossary:pot` writes one gettext template per scheme that has an
 authored term, to `translations/<locale>/glossary/<instance>--<scheme>.pot`
 under cat-harness's declared `translation-sources` directory, beside the BPMN
-templates in `processes/`. It is the same pipeline: `formatPot`, the same
-timestamp-blind comparison, and the translation status page counts the new
-templates with no change of its own. `bun run cat glossary:pot:check` is the gate.
+templates in `processes/`, through the same pipeline (`formatPot`, the same
+timestamp-blind comparison); the translation status page counts them.
+`bun run cat glossary:pot:check` is the gate.
 
 - Only `authored` terms are extracted: `prefLabel`, each `altLabel`, and the
   `definition`, in the source language (`en` when given per language). A
@@ -252,13 +239,12 @@ templates with no change of its own. `bun run cat glossary:pot:check` is the gat
 - `translations/<locale>/glossary.po` is a different file (terminology hints
   for `translation-block-qa`). Do not confuse it with the `glossary/` directory.
 
-### Translations and the per-locale pages (bean `c592`, owner 2026-09-30)
+### Translations and the per-locale pages
 
 A translation is a `.po` **beside its template**:
 `translations/<locale>/glossary/<instance>--<scheme>.po`. `bun run
 glossary:page` reads every such file (`readGlossaryTranslations`, through
-`glossary-pot.ts`'s own `potPath`, so the reader and the writer cannot
-disagree about where it is) and produces two things:
+`glossary-pot.ts`'s `potPath`) and produces two things:
 
 - **a page per locale**, `docs/<locale>/glossary/index.md`, listing every
   authored term with its translated label, alternative labels and
@@ -271,21 +257,18 @@ disagree about where it is) and produces two things:
 
 `check:glossary` covers both, stale and orphan alike.
 
-**A translation is UNOFFICIAL until a person signs it off** (issue #206).
+**A translation is UNOFFICIAL until a person signs it off.**
 Every glossary `.po` says so in its header and records
 `Last-Translator: folio-assistant agent (drafted, unofficial)` when an agent
 drafted it; every locale page carries `translation_status: unverified`.
 Keep code, identifiers and standard names (BPMN, SKOS, ODRL, PROV-O, JSON,
 IRI, `$schema`, `needs`) as written, and give each capitalised defined term
-ONE rendering per locale across every scheme — a term translated two ways
-reads as two concepts.
+ONE rendering per locale across every scheme.
 
-## Source glossary first (owner, 2026-10-31)
+## Source glossary first
 
 When a folio is written from a source document (a WHO handbook, say), its terms
-come from **that source's own glossary** before anyone writes one. Owner, on
-the NHWA view: *"dont need to use my words ... words already in nhwa handbook.
-most recent edition needs glossary / skos extracted for use."*
+come from **that source's own glossary** before anyone writes one.
 
 1. **Latest edition.** Use the most recent edition in the library. If it
    lacks something an older edition has, use the older one and say so on the
@@ -305,8 +288,7 @@ most recent edition needs glossary / skos extracted for use."*
    not a definition we write.
 6. **Place the scheme with the source.** It lives beside the document's
    library entry (for WHO publications, in the WHO publications IG), so every
-   folio that cites the source shares one scheme. Example, NHWA handbook 2nd ed.:
-   https://github.com/litlfred/who-iris/pull/136
+   folio that cites the source shares one scheme.
 7. **Use the source's words downstream.** Blocks, diagrams and ArchiMate names
    use the source's terms and link to their concepts, not a paraphrase.
 
@@ -316,13 +298,11 @@ is chosen by the agent.
 
 ## Deprecating a term: a change set, decided later
 
-Replacing one term with another (dth-hrh CS-001: "Core Data Element" and
-"CDE-HRH" replace "MDS-HRH", because the old term causes confusion and is not
-precise) is **proposed, not applied**. The agent records a change set with the
+Replacing one term with another (for example "Core Data Element" replacing
+"MDS-HRH") is **proposed, not applied**. The agent records a change set with the
 old term, the new term, the reason, and every place the old term appears. It
-changes no text and no glossary entry. Later an editor starts an agent review
-that decides it (owner, 2026-10-31: *"that is for later when editor kicks off
-agent review to decide"*). Once decided:
+changes no text and no glossary entry. An agent review, started later by an
+editor, decides it. Once decided:
 
 - the old term stays in the scheme, so old links still resolve, with a
   `scopeNote` saying it is deprecated and why, and `related` to the new term
@@ -332,7 +312,7 @@ agent review to decide"*). Once decided:
 - **quoted source text is never changed**: a quote keeps the term it was
   published with.
 
-## A paper's glossary (bean `lqo9`, ruling 2: converge on SKOS)
+## A paper's glossary
 
 The paper builder (`folio-assistant-core/scripts/build-glossary.ts`, skill
 `glossary-build`) also writes the paper's terms as one
@@ -349,11 +329,10 @@ namespace (a sub-instance's for a paper in a sub-instance, never the root's).
 
 The definition is the `:defterm` paragraph, verbatim, with directives replaced
 by their labels. The slug is the term's `notation`. Never edit the scheme:
-edit the paper and re-run the builder. `glossary.json` and `glossary.tex` are
-unchanged. An instance that declares no glossary directory gets a notice and
+edit the paper and re-run the builder. An instance that declares no glossary directory gets a notice and
 no scheme; add `{ "id": "glossary", "path": "glossary/", "dependents": "reproduce", "graphTypologies": ["glossary"] }`.
 
-## Organizations and acronyms (owner, 2026-10-31, option B)
+## Organizations and acronyms
 
 An organization (WHO, HL7, ISO, GS1, a national regulator) is a glossary term
 like any other, plus a `focus`: SKOS's `foaf:focus` link from the concept to
@@ -406,12 +385,11 @@ Each row is a candidate for a person to decide on. Words set in capitals
 (`RESOURCES` in a figure), plural forms (`GTINs`) and the folio's own ids
 (`PC-R-05`) are left out.
 
-## Architecture elements: the model drawn from the graph (owner, 2026-11-01)
+## Architecture elements: the model drawn from the graph
 
 A reference architecture's elements live in the knowledge graph, and the
-ArchiMate model is drawn from it (smart-ra#166: "much of models should be
-rendered from KG content", option B, with the relationships "on each glossary
-term", option A). A term that names an element is a glossary term like any
+ArchiMate model is drawn from it, with the relationships on each glossary
+term. A term that names an element is a glossary term like any
 other, plus a `focus` that is the element: its ArchiMate type, and its
 relationships to other terms' elements.
 
@@ -446,12 +424,9 @@ model lacks (on no view: place it in Archi, or with `archimate-detangle`), and
 adds the relationships the terms list. A type that disagrees is reported, and
 a person decides. A relationship between linked elements that no term lists
 is removed only with `--prune`. Archi keeps the layout: no box moves. Its
-report counts the elements that still point at no term. That is the part of
-the model not yet in the graph.
+report counts the elements that still point at no term.
 
-**An authored ArchiMate model is never a source of the glossary.** Owner,
-2026-11-02: *"i dont want ArchiMate to be source of SKOS (unless it was
-ingested)"*. Never write a term, label, definition, `focus` or relationship
+**An authored ArchiMate model is never a source of the glossary.** Never write a term, label, definition, `focus` or relationship
 into a glossary from a model someone authored in Archi. The words come from
 the source documents; the model only depicts them.
 
@@ -469,6 +444,6 @@ glossary, so they are allowed.
 
 ## Not here
 
-A clinical code system is FHIR `CodeSystem`/`ValueSet`, not a glossary (bean
-`lqo9`, "convergence stops at SKOS"). A glossary term may `exactMatch` a
+A clinical code system is FHIR `CodeSystem`/`ValueSet`, not a glossary:
+convergence stops at SKOS. A glossary term may `exactMatch` a
 clinical concept; it does not become one.

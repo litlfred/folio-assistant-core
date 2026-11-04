@@ -4,7 +4,7 @@
 
 # memory
 
-Agent memory about content authoring, review and publication: lessons (block kinds, the document render path, normative statements, locale directories) an agent carries between sessions, one `"$schema": "folio-memory/v1"` node each. Read by cat-harness's `agent-memory` assembler alongside every other instance's declared `memory` directory. Split from the repository root's `memory/` on the owner's ruling of 2026-10-06 (bean `ar1s`).
+Agent memory about content authoring, review and publication: lessons (block kinds, the document render path, normative statements, locale directories) an agent carries between sessions, one `"$schema": "folio-memory/v1"` node each. Read by cat-harness's `agent-memory` assembler alongside every other instance's declared `memory` directory.
 
 Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `memory`, holding `memory`.
 

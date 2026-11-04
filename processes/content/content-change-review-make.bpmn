@@ -20,7 +20,7 @@
 Called from content-change-review once the bean is claimed; it runs on its caller's bean. Revisions after the first push are Task_Iterate in the caller, not a second run of this phase.</bpmn:documentation>
     <bpmn:laneSet id="LaneSet_ContentChangeReviewMake">
       <bpmn:lane id="Lane_Agent" name="Folio-Assistant Agent" partitionElementRef="authoring-agent">
-        <bpmn:documentation>Owns the entire technical execution of the change end to end — scoping impact, branching, editing both narrative content and deterministic logic, assessing what else it touches, weighing how to absorb that, and pushing. It is also the single re-entry point for both the author's and the committee's feedback, which is why Task_Iterate has two incoming edges rather than the diagram forking a second revision path.</bpmn:documentation>
+        <bpmn:documentation>Owns the technical execution of the change: scoping, branching, editing narrative and deterministic logic, assessing what else it touches, weighing how to absorb that, and pushing. It is also the single re-entry point for the author's and the committee's feedback (Task_Iterate in the caller).</bpmn:documentation>
         <bpmn:flowNodeRef>Start_Agent</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_DetectScope</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_CreateBranch</bpmn:flowNodeRef>
@@ -38,7 +38,7 @@ Called from content-change-review once the bean is claimed; it runs on its calle
     </bpmn:startEvent>
     <bpmn:task id="Task_DetectScope" name="Detect change scope &amp; impact">
       <bpmn:extensionElements>
-        <cat-harness.processes:no-skill reason="No skill at this layer computes a change&apos;s scope generically. Content-type layers supply one through the role-graph overlay rather than a binding here: folio-assistant-sci extends authoring-agent, this lane&apos;s role, with semantic-review-scoping for papers. This task bound that skill directly until bean mlux (owner, 2026-10-03, &quot;Drop from core; sci adds it&quot;), which was an upward edge from core to sci."/>
+        <cat-harness.processes:no-skill reason="No skill at this layer computes a change&apos;s scope generically. Content-type layers supply one through the role-graph overlay rather than a binding here: folio-assistant-sci extends authoring-agent, this lane&apos;s role, with semantic-review-scoping for papers."/>
       </bpmn:extensionElements>
 
       <bpmn:documentation>
@@ -111,11 +111,11 @@ Called from content-change-review once the bean is claimed; it runs on its calle
     <bpmn:callActivity id="Call_OptionsAnalysis" name="Options analysis&#10;how to absorb the impact" calledElement="Process_OptionsAnalysis">
       <bpmn:documentation>On the edge OUT of `Task_AssessImpact` and before `Task_CommitPush`, because the impact assessment is the evidence the options are weighed against. An analysis before it would compare ways of absorbing a downstream effect nobody has measured yet; one after the commit would be a rationalisation of a choice already pushed.
 
-NOT between `Task_AssessImpact` and `Task_ReviewImpact`, although that is the handoff the work-plan named. Those two tasks are in DIFFERENT LANES with no sequence flow between them — the agent's assessment reaches the committee through `Task_CompareBeforeAfter`, not directly — so there was no edge there to interpose on. The conceptual handoff is real; the edge was not.
+Not between `Task_AssessImpact` and `Task_ReviewImpact`: those are in different processes with no sequence flow between them; the assessment reaches the committee through `Task_CompareBeforeAfter`.
 
-In the Agent lane, matching `upstream-version-adoption`: this step produces the options and their trade-offs, and `GW_Approved` in the Review Committee lane is where a decision is taken. A subprocess in the reviewer's lane would read as the committee analysing its own options, which is a different process.
+In the Agent lane, matching `upstream-version-adoption`: this step produces the options and their trade-offs, and `GW_Approved` in the committee review is where a decision is taken.
 
-On the trigger: reaching this call is not the same as running the whole of it. `Process_OptionsAnalysis` opens with `A_Frame`, whose trigger is `opening-brief`'s — irreversibility and surprise, not size — and leaving at that first activity is a correct outcome rather than a skipped step. A copy-edit exits immediately; a logic change that moves an indicator does not, and this is the diagram where that distinction has teeth, since `Task_EditLogic` feeds straight into the assessment.</bpmn:documentation>
+On the trigger: reaching this call is not the same as running the whole of it. `Process_OptionsAnalysis` opens with `A_Frame`, whose trigger is `opening-brief`'s — irreversibility and surprise, not size — and leaving at that first activity is a correct outcome rather than a skipped step. A copy-edit exits immediately; a logic change that moves an indicator (from `Task_EditLogic`) does not.</bpmn:documentation>
       <bpmn:incoming>a6</bpmn:incoming>
       <bpmn:outgoing>a6b</bpmn:outgoing>
     </bpmn:callActivity>

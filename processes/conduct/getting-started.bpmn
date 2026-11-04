@@ -26,9 +26,7 @@
   gh-pages branch exists, so Pages cannot be switched on to serve it. Every
   publishing path (new-repo, overlay, add-folio, and an overlay or new repo that
   remote-mounts its dependencies) passes Task_ProvisionGhPages before
-  Task_PagesBootstrap, and `unprovisioned` routes back to it. Owner,
-  2026-10-01: "need to create gh-pages branch before can turn on"; 2026-10-07:
-  "need to create gh-pages before can deploy" (issue #2417).
+  Task_PagesBootstrap, and `unprovisioned` routes back to it.
 
   Enforcement is strict. Three steps are non-relaxable and each for the same
   kind of reason — they are the points where the process is acting on somebody
@@ -36,14 +34,10 @@
 
     Task_ReadFacts       scaffolding without looking first is how a folio gets
                          written over somebody's project
-    Gateway_Intent       the triage itself; relaxing it restores the bug
+    Gateway_Intent       the triage itself; relaxing it lets the agent guess
     Task_ConfirmImport   nobody's files are moved or imported on inference
     Task_ChooseHarnessed nothing in the repository is declared to the harness
                          on inference: the scan suggests, the person picks
-                         (owner, 2026-10-30T12:41Z: "a harness can point to a
-                         repo, but doesnt want to automatically slurpo up all
-                         content in a repo. harness desclares what it it pays
-                         attention to in the repo.")
 
   The <bootstrap.processes:skill> extension on an activity names the folio-assistant skill
   that implements it; <cat-harness.processes:bean> marks a step that reads or writes the shared
@@ -67,7 +61,7 @@
     <bpmn:participant id="Participant_GettingStarted" name="Getting started — &quot;create a folio&quot; to a live site" processRef="Process_GettingStarted" />
   </bpmn:collaboration>
   <bpmn:process id="Process_GettingStarted" name="Getting started" isExecutable="false">
-    <bpmn:documentation>Somebody said "create a folio": work out which request they meant, with the branch computed by a decision table that may answer "ask", and what has to be true before anything is written. folio-assistant — getting started: from "create a folio" to a live site.
+    <bpmn:documentation>Somebody said "create a folio": work out which request they meant, with the branch computed by a decision table that may answer "ask", and what has to be true before anything is written, through to a live site.
 
       "Create a folio" is five different requests. Gateway_Intent computes which one
       from decisions/folio-intent.dmn rather than letting the agent assume, and `ask`
@@ -88,7 +82,7 @@
         <bpmn:flowNodeRef>Task_ConfirmImport</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Agent" name="Onboarding agent (system)" partitionElementRef="onboarding-agent">
-        <bpmn:documentation>Every write in this diagram belongs to this lane, and each sits behind the non-relaxable read-first gate: nothing is created or scaffolded until Gateway_Intent has classified what was actually asked for, which is what stands between this lane and writing over somebody's existing project.</bpmn:documentation>
+        <bpmn:documentation>Every write in this diagram belongs to this lane, and each sits behind the non-relaxable read-first gate: nothing is created or scaffolded until Gateway_Intent has classified what was actually asked for.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_DetectModality</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReadFacts</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Intent</bpmn:flowNodeRef>
@@ -102,7 +96,7 @@
         <bpmn:flowNodeRef>End_BeanNotYours</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Publish" name="Publish — GitHub Pages" partitionElementRef="publish-target">
-        <bpmn:documentation>Provisions the gh-pages branch before Pages is switched on (Task_ProvisionGhPages, #2417), derives the URL, and holds the report that follows it: "unprovisioned" routes back to provisioning, and "live", "not-yet" and "unknown" are reached by exclusive branches of one DMN-computed gateway, and this lane is what keeps a failed probe from being reported as the softer "not-yet" it would be tempting to default to.</bpmn:documentation>
+        <bpmn:documentation>Provisions the gh-pages branch before Pages is switched on (Task_ProvisionGhPages), derives the URL, and holds the report that follows it: "unprovisioned" routes back to provisioning, and "live", "not-yet" and "unknown" are exclusive branches of one DMN-computed gateway, so a failed probe is reported as "unknown", never as "not-yet".</bpmn:documentation>
         <bpmn:flowNodeRef>Task_ProvisionGhPages</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_PagesBootstrap</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Live</bpmn:flowNodeRef>
@@ -142,7 +136,7 @@ facts">
 
     <bpmn:exclusiveGateway id="Gateway_Intent" name="What is the user
 asking for?">
-      <bpmn:documentation>Computed, not chosen. decisions/folio-intent.dmn returns one of five branches from statedIntent, isFolio and repoHasContent. Non-relaxable: this gateway IS the fix.</bpmn:documentation>
+      <bpmn:documentation>Computed, not chosen. decisions/folio-intent.dmn returns one of five branches from statedIntent, isFolio and repoHasContent. Non-relaxable.</bpmn:documentation>
       <bpmn:extensionElements>
         <cat-harness.processes:policy relaxable="false" />
         <cat-harness.processes:decision ref="decisions/folio-intent.dmn#Decision_FolioIntent" />
@@ -179,7 +173,7 @@ content worth importing">
 
     <bpmn:callActivity id="Task_ChooseHarnessed" calledElement="Process_AskThePerson" name="Choose what the
 harness reads">
-      <bpmn:documentation>The person picks which of the content markers the scan found the harness declares in index.config.json, and nothing is declared unpicked. A PERSON'S STEP: the scan's `markers` that are not yet declared are offered as selectable options — one per marker, each with its paths and what declaring it means, plus "none of these" — and the person picks which parts of the repository to load into the KG. A tap card where the host has one; otherwise a numbered pick-list with a stated default. Never a typed reply. The default declares NOTHING: a harness that declared every marker it found would be slurping the repository, which is what this step exists to prevent. Only the picks reach Task_Scaffold, which declares exactly those in index.config.json. With no undeclared marker found, nothing is asked. The same question is put after setup by running the scan with `--markers` (repo-conversion §2a).</bpmn:documentation>
+      <bpmn:documentation>A PERSON'S STEP: the scan's `markers` that are not yet declared are offered as selectable options — one per marker, each with its paths and what declaring it means, plus "none of these" — and the person picks which parts of the repository to load into the KG. A tap card where the host has one; otherwise a numbered pick-list with a stated default. Never a typed reply. The default declares NOTHING. Only the picks reach Task_Scaffold, which declares exactly those in index.config.json. With no undeclared marker found, nothing is asked. The same question is put after setup by running the scan with `--markers` (repo-conversion §2a).</bpmn:documentation>
       <bpmn:extensionElements>
         <cat-harness.processes:policy relaxable="false" />
         <bootstrap.processes:skill ref="repo-conversion" />
@@ -213,13 +207,13 @@ repository">
 
     <bpmn:endEvent id="EndEvent_HandOff" name="Handed to content
 authoring">
-      <bpmn:documentation>The misspeak case. The user has a folio and wants a document in it; this process ends and authoring-a-document.bpmn or authoring-a-paper.bpmn begins. Ending here rather than scaffolding is the whole value of the triage.</bpmn:documentation>
+      <bpmn:documentation>The misspeak case. The user has a folio and wants a document in it; this process ends and authoring-a-document.bpmn or authoring-a-paper.bpmn begins.</bpmn:documentation>
       <bpmn:incoming>Flow_newcontent</bpmn:incoming>
     </bpmn:endEvent>
 
     <bpmn:serviceTask id="Task_Scaffold" name="Scaffold the folio
 (folio_init)">
-      <bpmn:documentation>content/, uploads/, library/, the first manifests, &lt;slug&gt;.json and index.config.json (the instance's config inline in its entry; no &lt;slug&gt;.config.json, bean ymvt), the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store. On the overlay path it declares in index.config.json exactly the markers picked at Task_ChooseHarnessed, and none it was not given. Refuses rather than overwrites when a folio is already present.</bpmn:documentation>
+      <bpmn:documentation>content/, uploads/, library/, the first manifests, &lt;slug&gt;.json and index.config.json (the instance's config inline in its entry; no &lt;slug&gt;.config.json), the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store. On the overlay path it declares in index.config.json exactly the markers picked at Task_ChooseHarnessed, and none it was not given. Refuses rather than overwrites when a folio is already present.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="getting-started" />
       </bpmn:extensionElements>
@@ -243,7 +237,7 @@ authoring">
     </bpmn:serviceTask>
 
     <bpmn:serviceTask id="Task_ProvisionGhPages" name="Provision gh-pages">
-      <bpmn:documentation>Before Pages is switched on, make sure the gh-pages branch exists — the semantics of A_Provision in bootstrap-tools' render-kg-to-github-pages.bpmn, first half. `git ls-remote --heads origin gh-pages`; if absent, `bun run cat-harness/scripts/pages-bootstrap.ts --provision` pushes an orphan gh-pages holding a placeholder index.html and .nojekyll (idempotent; never forced; the script creates no remote branch without the flag). Then Settings → Pages → "Deploy from a branch: gh-pages, / (root)" — not "GitHub Actions" when the publish workflow pushes gh-pages. Every publishing path reaches this step: new-repo, overlay and add-folio, and an overlay or new repo that remote-mounts its dependencies (litlfred/test, provisioned at 860f9c2). Owner, 2026-10-01: "need to create gh-pages branch before can turn on"; 2026-10-07: "need to create gh-pages before can deploy" (#2417).</bpmn:documentation>
+      <bpmn:documentation>Before Pages is switched on, make sure the gh-pages branch exists — the semantics of A_Provision in bootstrap-tools' render-kg-to-github-pages.bpmn, first half. `git ls-remote --heads origin gh-pages`; if absent, `bun run cat-harness/scripts/pages-bootstrap.ts --provision` pushes an orphan gh-pages holding a placeholder index.html and .nojekyll (idempotent; never forced; the script creates no remote branch without the flag). Then Settings → Pages → "Deploy from a branch: gh-pages, / (root)" — not "GitHub Actions" when the publish workflow pushes gh-pages. Every publishing path reaches this step: new-repo, overlay and add-folio, and an overlay or new repo that remote-mounts its dependencies.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="getting-started" />
       </bpmn:extensionElements>
@@ -287,7 +281,7 @@ live link">
 
     <bpmn:serviceTask id="Task_ReportPending" name="Say where it
 will be">
-      <bpmn:documentation>A measured 404. The author is told the address and that the first build has not landed there yet — which is useful, and is not the same as being told it is live.</bpmn:documentation>
+      <bpmn:documentation>A measured 404. The author is told the address and that the first build has not landed there yet.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="getting-started" />
       </bpmn:extensionElements>
@@ -310,7 +304,7 @@ be confirmed">
     </bpmn:endEvent>
 
     <bpmn:callActivity id="Call_BeanOpen" name="Open the bean" calledElement="Process_BeanOpen">
-      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
+      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn; the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_seed</bpmn:incoming>
       <bpmn:outgoing>SF_Bean_2</bpmn:outgoing>
@@ -326,7 +320,7 @@ be confirmed">
       <bpmn:incoming>SF_Bean_3</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:callActivity id="Call_BeanClose" name="Close the bean" calledElement="Process_BeanClose">
-      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
+      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn; placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_done1</bpmn:incoming>
       <bpmn:incoming>Flow_done2</bpmn:incoming>

@@ -51,7 +51,7 @@ export default toolFactory((t) =>
     selection: {
       when: "A staging preview is being built and its review page's heat map should show QA per section, from what the folio's QA sweep last recorded.",
       limits:
-        "Reports the LAST sweep: in a staging build, the sweep the job ran just before it (bean tw61); otherwise the committed verdicts. A folio never swept reads unaudited throughout. The instance root is found from --folio exactly as the sweep finds it, so a folio in a subfolder is read at its own root; the folio directory is read second, for folios swept before bean s3p2's fix.",
+        "Reports the LAST sweep: in a staging build, the sweep the job ran just before it; otherwise the committed verdicts. A folio never swept reads unaudited throughout. Verdicts are read at the instance root, so a folio in a subfolder is read at its own root, then in the folio directory.",
       cost: "One text walk of the folio and one read per sidecar. No network.",
     },
     requires: { runtime: ["bun"], network: false },

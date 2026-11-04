@@ -4,6 +4,5 @@ text in `ocr/page-*.txt` and only a **stub** in `sections/` — so the documente
 corpus-grep checklist has a fourth tier, and why a clean `sections/` grep is not
 evidence that the library lacks a topic.
 
-Each section file carries the document brief in its front-matter. That is
-contextual retrieval: a chunk in isolation loses what makes it mean anything, so
-a hit is interpretable without opening anything else.
+Each section file carries the document brief in its front-matter (contextual
+retrieval), so a hit is interpretable without opening anything else.

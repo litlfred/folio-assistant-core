@@ -28,7 +28,7 @@
           "sourceLinks": [
             {
               "text": "BPMN 2.0 source",
-              "href": "https://github.com/litlfred/folio-assistant/blob/main/processes/evidence-retrieval.bpmn"
+              "href": "https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/evidence-retrieval.bpmn"
             },
             {
               "text": "full-size SVG",

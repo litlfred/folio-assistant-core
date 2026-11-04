@@ -48,7 +48,7 @@ Build the L1 knowledge graph from what ingestion derived: Dublin Core, the manif
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `glossary-terms`.
-- What: Owner, 2026-11-01 (folio-assistant-core#498, Q-GLO-1 C): the source's glossary and abbreviations sections become candidate terms of a folio-glossary/v1 scheme with the Tool glossary-from-source, verbatim, each with source file#line, and an acronym as the notation of the term it expands.
+- What: The source's glossary and abbreviations sections become candidate terms of a folio-glossary/v1 scheme with the Tool glossary-from-source, verbatim, each with source file#line, and an acronym as the notation of the term it expands.
 - Record it: `workflow_complete` with `node: "Task_Glossary"`.
 - next: → `Task_Link` (Link L1 nodes into the corpus graph)
 

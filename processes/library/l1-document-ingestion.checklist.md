@@ -4,7 +4,7 @@
 
 > **Generated, and not the authority.** This is `folio-assistant-core/processes/library/l1-document-ingestion.bpmn` (process `Process_L1DocumentIngestion`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
 
-folio-assistant — L1 document ingestion — a document to the L1 source knowledge graph.
+L1 document ingestion — a document to the L1 source knowledge graph.
 
 ## Begin — A document is offered for L1 ingestion (`StartEvent_Document`)
 
@@ -51,7 +51,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
-- What: EARLY, by the owner's ruling on bean 7bg9 (2026-09-20): before any derivation, because library/ is holds: content and anything derived first is committed, so refusing it later is a deletion nobody may take unasked.
+- What: EARLY: before any derivation, because library/ is holds: content and anything derived first is committed, so refusing it later is a deletion nobody may take unasked.
 - Record it: `workflow_complete` with `node: "Task_Licence"`.
 - next: → `CallActivity_Extract` (Extract structure)
 
@@ -73,7 +73,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 
 ### Decide — A theme source? (author's judgement) (`Gateway_ThemeSource`)
 
-- Wired 2026-09-23 on the owner's ruling for bean `j66n`, choosing "human/agentic judgement at the gateway" over a declared predicate.
+- Human or agentic judgement at the gateway, not a declared predicate.
 - Call `workflow_complete` with `node: "Gateway_ThemeSource"` and `outcome` set to the label that holds:
   - «yes» → `CallActivity_IngestTheme` (Ingest the theme)
   - «no» → `CallActivity_BuildKg` (Build the L1 knowledge graph)
@@ -129,7 +129,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `l1-document-ingestion`.
-- What: Owner, 2026-09-24: "Make as QA sidecar as part of general doc ingestion to slowly drain." Nothing is written to ENQUEUE a block: the queue is derived (every prose block in every declared library, minus those whose summaries.json record is a current draft or confirmation), so a promoted entry is in i
+- What: A QA sidecar of general document ingestion, drained slowly.
 - Record it: `workflow_complete` with `node: "Task_SummaryQueue"`.
 - next: → `Task_Citeable` (Available to cite as an L1 source)
 

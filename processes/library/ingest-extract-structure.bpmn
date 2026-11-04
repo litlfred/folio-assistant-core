@@ -25,21 +25,13 @@
     <bpmn:participant id="Participant_ExtractStructure" name="Ingestion subprocess — extract structure" processRef="Process_ExtractStructure" />
   </bpmn:collaboration>
   <bpmn:process id="Process_ExtractStructure" name="Ingestion subprocess — extract structure" isExecutable="false">
-    <bpmn:documentation>Extract the structure of an uploaded source: its text layer, OCR where it has none, sections, structure and claim candidates. folio-assistant — Ingestion subprocess — extract structure.
-
-  Source of truth: this file. Open it in bpmn.io, Camunda Modeler, or any other
-  BPMN 2.0 tool. The SVG under docs/assets/img/workflows/ is generated from it
-  by `bun run cat render:bpmn` — never hand-edit the SVG.
-
-  The &lt;bootstrap.processes:skill&gt; extension on an activity names the folio-assistant skill
-  that implements it; &lt;cat-harness.processes:bean&gt; marks a step that reads or writes the shared
-  work plan in beans/.</bpmn:documentation>
+    <bpmn:documentation>Extract the structure of an uploaded source: its text layer, OCR where it has none, sections, structure and claim candidates.</bpmn:documentation>
     <bpmn:extensionElements>
       <cat-harness.processes:policy enforcement="advisory" />
     </bpmn:extensionElements>
     <bpmn:laneSet id="Process_ExtractStructure_LaneSet">
       <bpmn:lane id="Lane_0" name="Ingestion Engine (agent, runs unattended)" partitionElementRef="ingestion-agent">
-        <bpmn:documentation>Two provenance paths converge on the same Task_Sections output — an embedded text layer extracted directly, or OCR that leaves the fuller text in ocr/ with only a stub in sections/ — and which branch this lane took is invisible downstream except to a grep that knows to check the fourth tier. Task_Candidates is the last step and it stays a proposal: theorems and definitions extracted here are never adjudicated verdicts, so nothing downstream may treat this lane's output as settled.</bpmn:documentation>
+        <bpmn:documentation>Two provenance paths converge on the same Task_Sections output — an embedded text layer extracted directly, or OCR that leaves the fuller text in ocr/ with only a stub in sections/ — and which branch this lane took is invisible downstream except to a grep that knows to check the fourth tier. Task_Candidates stays a proposal: nothing downstream may treat it as an adjudicated verdict.</bpmn:documentation>
         <bpmn:flowNodeRef>StartEvent_Binary</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_HasText</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ExtractText</bpmn:flowNodeRef>
@@ -69,7 +61,7 @@ text layer?">
       <bpmn:outgoing>Flow_e4</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_Ocr" name="OCR to ocr/page-*.txt">
-      <bpmn:documentation>A document ingested this way keeps its text in ocr/ and only a stub in sections/, which the documented sections/ grep cannot see. That asymmetry is why the corpus-grep checklist has a fourth tier. The run also records WHICH SOFTWARE made the pages, in ocr/run-context.json: a folio-run-context/v1 (cat-harness schemas/run-context.ts, the record test runs and QA reports use for the same question), naming the OCR engine, the rasteriser and each language model with its version and the sha256 of the bytes that ran. Two OCRs of one scan can read differently ("Manual" and "Manval", bean turh), and without it neither could be told from the other or reproduced.</bpmn:documentation>
+      <bpmn:documentation>A document ingested this way keeps its text in ocr/ and only a stub in sections/, which the documented sections/ grep cannot see. That asymmetry is why the corpus-grep checklist has a fourth tier. The run also records WHICH SOFTWARE made the pages, in ocr/run-context.json: a folio-run-context/v1 (cat-harness schemas/run-context.ts, the record test runs and QA reports use for the same question), naming the OCR engine, the rasteriser and each language model with its version and the sha256 of the bytes that ran. Two OCRs of one scan can read differently ("Manual" and "Manval"), and without it neither could be told from the other or reproduced.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
       </bpmn:extensionElements>
@@ -87,7 +79,7 @@ with doc_brief front-matter">
       <bpmn:outgoing>Flow_e6</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_Structure" name="Write structure.json">
-      <bpmn:documentation>Write structure.json (pdf-structure/v1): doc id, TOC from the PDF outline or inferred from headings, page ranges, metadata, and source{} with the sha256 and a mimetype sniffed from the bytes, never the extension. A structure that could not be determined says so in structure_note rather than being rendered as one. For OCR'd text, source.runContext cites the OCR step's run context by sha256. A title already known for the document (the catalogue's dc.title, or one given with --title) is passed through as the raw title, so the sections' doc_title does not carry a scan's misreading (bean turh).</bpmn:documentation>
+      <bpmn:documentation>Write structure.json (pdf-structure/v1): doc id, TOC from the PDF outline or inferred from headings, page ranges, metadata, and source{} with the sha256 and a mimetype sniffed from the bytes, never the extension. A structure that could not be determined says so in structure_note rather than being rendered as one. For OCR'd text, source.runContext cites the OCR step's run context by sha256. A title already known for the document (the catalogue's dc.title, or one given with --title) is passed through as the raw title, so the sections' doc_title does not carry a scan's misreading.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
       </bpmn:extensionElements>

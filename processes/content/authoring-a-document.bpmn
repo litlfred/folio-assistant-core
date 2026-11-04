@@ -16,13 +16,13 @@
     <bpmn:participant id="Participant_Process_DocumentAuthoring" name="Authoring a document" processRef="Process_DocumentAuthoring"/>
   </bpmn:collaboration>
   <bpmn:process id="Process_DocumentAuthoring" name="Authoring a document" isExecutable="false">
-    <bpmn:documentation>How a document folio — structured prose and policy guidance, with no Lean and no required TeX — is authored, built and reviewed end to end. folio-assistant — authoring a document end to end (no Lean, no required TeX).
+    <bpmn:documentation>How a document folio — structured prose and policy guidance, with no Lean and no required TeX — is authored, built and reviewed end to end.
       Source of truth: this file. The SVG under docs/assets/img/workflows/ is generated
       from it by `bun run cat render:bpmn` — never hand-edit the SVG.
       The shape is the paper process minus the Lean lane and plus one step, the profile
       check, which is what keeps a document folio publishable without either toolchain.
 
-Review, publish and committee feedback are core's shared Process_FolioReviewPublish, called after rendering (shared block G6 of the BPMN guidance review, owner Q-BR-7 A, 2026-11-01). Its `no` answer, changes asked, comes back to Task_AuthorBlocks.</bpmn:documentation>
+Review, publish and committee feedback are core's shared Process_FolioReviewPublish, called after rendering. Its `no` answer, changes asked, comes back to Task_AuthorBlocks.</bpmn:documentation>
     <bpmn:extensionElements>
       <cat-harness.processes:policy enforcement="advisory"/>
     </bpmn:extensionElements>
@@ -72,7 +72,7 @@ Review, publish and committee feedback are core's shared Process_FolioReviewPubl
       <bpmn:incoming>A05</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:callActivity id="Call_BeanOpen" name="Open the bean" calledElement="Process_BeanOpen">
-      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
+      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn; the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="bean-coordination"/>
       </bpmn:extensionElements>
@@ -98,7 +98,7 @@ Review, publish and committee feedback are core's shared Process_FolioReviewPubl
       <bpmn:outgoing>A07</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_AuthorBlocks" name="Author blocks">
-      <bpmn:documentation>Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn. A normative statement is a `recommendation` block (bean 55ao), drafted through normative-statements: one statement per block, a folio-chosen label, and its strength as a code in a declared code list, so a reviewer signs off each one individually.</bpmn:documentation>
+      <bpmn:documentation>Every block edit runs the HCI validation gate — see editing-hci-validation.bpmn. A normative statement is a `recommendation` block, drafted through normative-statements: one statement per block, a folio-chosen label, and its strength as a code in a declared code list, so a reviewer signs off each one individually.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-authoring"/>
         <bootstrap.processes:skill ref="normative-statements"/>
@@ -109,7 +109,7 @@ Review, publish and committee feedback are core's shared Process_FolioReviewPubl
       <bpmn:outgoing>A08</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_ProfileCheck" name="Check the profile">
-      <bpmn:documentation>content_profile_check: no math kind, no lean field, no .lean sibling. This is the step a paper folio does not have, and the reason a document folio never needs Lean or TeX to publish.</bpmn:documentation>
+      <bpmn:documentation>content_profile_check: no math kind, no lean field, no .lean sibling. A paper folio has no such step; this is why a document folio needs neither Lean nor TeX to publish.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-validate"/>
       </bpmn:extensionElements>
@@ -139,7 +139,7 @@ Review, publish and committee feedback are core's shared Process_FolioReviewPubl
       <bpmn:outgoing>A13</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:callActivity id="Call_ReviewPublish" name="Review and publish" calledElement="Process_FolioReviewPublish">
-      <bpmn:documentation>Core's shared review-and-publish process (Process_FolioReviewPublish): the reviewer reads the rendered folio and approves it, asks for changes, or sends a working draft to the Authoring Committee. Before 2026-11-01 each authoring process drew these steps itself (shared block G6, owner Q-BR-7 A).</bpmn:documentation>
+      <bpmn:documentation>Core's shared review-and-publish process (Process_FolioReviewPublish): the reviewer reads the rendered folio and approves it, asks for changes, or sends a working draft to the Authoring Committee.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="content-review"/>
       </bpmn:extensionElements>
@@ -153,7 +153,7 @@ Review, publish and committee feedback are core's shared Process_FolioReviewPubl
       <bpmn:outgoing>A17</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:callActivity id="Call_BeanClose" name="Close the bean" calledElement="Process_BeanClose">
-      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
+      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn; placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="todo-manager"/>
       </bpmn:extensionElements>
