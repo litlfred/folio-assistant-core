@@ -49,7 +49,7 @@ The review committee's review of one staged content change, ending in an approva
 - Asked after the slices are reviewed: did a reviewer withdraw a comment?
 - Call `workflow_complete` with `node: "GW_Withdraw"` and `outcome` set to the label that holds:
   - «Yes» → `Task_WithdrawComment` (Withdraw a review comment)
-  - «No» → `GW_Disputed` (A finding disputed?)
+  - «No» → `GW_Disputed_Join`
 
 ### 5. Withdraw a review comment (`Task_WithdrawComment`)
 
@@ -57,6 +57,11 @@ The review committee's review of one staged content change, ending in an approva
 - Skill: `review-comments`.
 - What: The reviewer who made a comment takes it back (it was a misreading, or a later slice answered it).
 - Record it: `workflow_complete` with `node: "Task_WithdrawComment"`.
+- next: → `GW_Disputed_Join`
+
+### Merge — `GW_Disputed_Join`
+
+- Nothing to do or decide: the paths meet here and the engine passes through.
 - next: → `GW_Disputed` (A finding disputed?)
 
 ### Decide — A finding disputed? (`GW_Disputed`)
@@ -64,7 +69,7 @@ The review committee's review of one staged content change, ending in an approva
 - Is any finding disputed between author and reviewer?
 - Call `workflow_complete` with `node: "GW_Disputed"` and `outcome` set to the label that holds:
   - «Yes» → `Call_Adjudication` (Adjudicate the disagreement)
-  - «No» → `GW_Covered` (Every changed block and page reviewed?)
+  - «No» → `GW_Covered_Join`
 
 ### 6. Adjudicate the disagreement (`Call_Adjudication`)
 
@@ -72,6 +77,11 @@ The review committee's review of one staged content change, ending in an approva
 - Skill: `adjudication`.
 - What: adjudication.bpmn.
 - A subprocess (`Process_Adjudication`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
+- next: → `GW_Covered_Join`
+
+### Merge — `GW_Covered_Join`
+
+- Nothing to do or decide: the paths meet here and the engine passes through.
 - next: → `GW_Covered` (Every changed block and page reviewed?)
 
 ### Decide — Every changed block and page reviewed? (`GW_Covered`)

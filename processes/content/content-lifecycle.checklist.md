@@ -22,7 +22,7 @@ One cycle of a folio from plan to retirement, calling editing and the draft-to-p
 
 ### 2. Open the bean (`Call_BeanOpen`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Editors + authoring agents` lane (role `editor`).
 - Skill: `bean-coordination`.
 - What: Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's.
 - A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
@@ -37,7 +37,7 @@ One cycle of a folio from plan to retirement, calling editing and the draft-to-p
 
 ### 3. Seed the work plan (`Task_SeedBeans`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Editors + authoring agents` lane (role `editor`).
 - Skill: `todo-manager`.
 - What: The plan becomes beans, so a resumed session or a sibling agent can pick it up.
 - Shared step `GT_SeedWorkPlan`.
@@ -82,7 +82,7 @@ One cycle of a folio from plan to retirement, calling editing and the draft-to-p
 
 ### 8. File feedback as beans (`Task_FeedbackBeans`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Editors + authoring agents` lane (role `editor`).
 - Skill: `todo-manager`, `content-feedback`.
 - What: Triaged feedback re-enters the work plan as beans, which is how the next cycle knows what it is for.
 - Record it: `workflow_complete` with `node: "Task_FeedbackBeans"`.

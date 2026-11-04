@@ -85,7 +85,7 @@ A frozen, line-numbered draft went out for public review.
 - Skill: `public-comment`.
 - What: A change-set gets its primary GitHub issue the first time somebody engages with it (the Discuss form, a recommendation or decision on one of its comments, a mention, a PR), opened by the folio's public-comment workflow; any number of other issues may discuss it and are linked.
 - Record it: `workflow_complete` with `node: "Task_GroupChangeSets"`.
-- next: → `Task_RerouteChangeSet` (Re-route a change-set to another committee, with a reason)
+- next: → `Task_RerouteChangeSet` (Re-route to another committee)
 
 ### Decide — Does the decision change the document? (`Gateway_ChangesDocument`)
 
@@ -93,7 +93,7 @@ A frozen, line-numbered draft went out for public review.
   - «no: not accepted, noted, deferred» → `EndEvent_Decided` (Decided, answer recorded)
   - «yes: accepted» → `CallActivity_MakeChange` (Make the change, check it and merge it)
 
-### 7. Re-route a change-set to another committee, with a reason (`Task_RerouteChangeSet`)
+### 7. Re-route to another committee (`Task_RerouteChangeSet`)
 
 - Who: the `Review committee` lane (role `reviewer`).
 - Skill: `public-comment`.
