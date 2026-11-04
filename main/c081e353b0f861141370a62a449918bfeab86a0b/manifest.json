@@ -1,0 +1,15 @@
+{
+  "$schema": "qa-reports-manifest/v1",
+  "key": "main/c081e353b0f861141370a62a449918bfeab86a0b",
+  "source": "c081e353b0f861141370a62a449918bfeab86a0b",
+  "written_at": "2026-11-04T12:53:33.721Z",
+  "producer": {
+    "run": "https://github.com/litlfred/folio-assistant-core/actions/runs/41832689211"
+  },
+  "roots": [
+    "folio-assistant-core/test/results"
+  ],
+  "payloadTree": "af2f0fa9f47846f1af81c1c40b53db20931d624a",
+  "files": 111,
+  "bytes": 269915
+}
