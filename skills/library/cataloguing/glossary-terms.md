@@ -20,10 +20,9 @@ way.
 
 ## Where terms go
 
-Core's `glossary` graph typology. It is `perInstance`
-(`typologies/glossary.json`), so every folio built on core has a `glossary/`.
-Each
-`*.glossary.json` is one SKOS concept scheme, `$schema: "folio-glossary/v1"`
+Core declares the `glossary` directory in `folio-assistant-core.json`. Its
+graph typology is `perInstance`, so every folio built on core has a
+`glossary/`. Each `*.glossary.json` is one SKOS concept scheme, `$schema: "folio-glossary/v1"`
 (`folio-assistant-core/schemas/glossary.ts`).
 
 ## Reference first, define second
