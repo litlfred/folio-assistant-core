@@ -2,14 +2,14 @@
 # folio-core-2pbr
 $schema: bean/1.0.0
 title: 'Docs QA: cut provenance, history and repetition from reader docs'
-status: in-progress
+status: completed
 type: task
 priority: normal
 tags:
     - docs
     - docs-qa
 created_at: 2026-11-03T00:00:00Z
-updated_at: 2026-11-03T00:00:00Z
+updated_at: 2026-11-04T08:00:00Z
 ---
 
 Review every reader-facing text in folio-assistant-core (the Markdown sources
@@ -27,7 +27,16 @@ their sources.
 
 ## Done when
 
-- [ ] findings recorded as JSON and published as the QA report
-- [ ] findings applied, wrong facts first
-- [ ] the repository's fast checks run on what changed
-- [ ] one pull request opened, linking the report, with the word totals
+- [x] findings recorded as JSON and published as the QA report
+- [x] findings applied, wrong facts first
+- [x] the repository's fast checks run on what changed
+- [x] one pull request opened, linking the report, with the word totals
+
+## Summary of Changes
+
+800 findings applied across 154 reader texts (skills, doc sources, BPMN
+documentation, Tool node text, README, AGENTS.md and the directory
+descriptions in `folio-assistant-core.json`): 123,327 words to 111,116.
+QA report: https://claude.ai/artifact/EtC9iypiLtZw5QpAm5biC7. The English
+doc pages, 13 BPMN checklists and the directory READMEs were regenerated;
+translations are left to the translation pipeline.
