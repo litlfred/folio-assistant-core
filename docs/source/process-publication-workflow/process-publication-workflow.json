@@ -54,7 +54,7 @@
           "sourceLinks": [
             {
               "text": "Open the BPMN source",
-              "href": "https://github.com/litlfred/folio-assistant/blob/main/processes/editing-hci-validation.bpmn"
+              "href": "https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/editing-hci-validation.bpmn"
             }
           ],
           "linkStyle": "button"
@@ -90,7 +90,7 @@
           "sourceLinks": [
             {
               "text": "Open the BPMN source",
-              "href": "https://github.com/litlfred/folio-assistant/blob/main/processes/draft-to-publication.bpmn"
+              "href": "https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/draft-to-publication.bpmn"
             }
           ],
           "linkStyle": "button"
@@ -109,7 +109,7 @@
           "sourceLinks": [
             {
               "text": "Open the BPMN source",
-              "href": "https://github.com/litlfred/folio-assistant/blob/main/processes/content-lifecycle.bpmn"
+              "href": "https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/content-lifecycle.bpmn"
             }
           ],
           "linkStyle": "button"
