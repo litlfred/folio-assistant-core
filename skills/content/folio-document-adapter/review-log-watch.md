@@ -1,8 +1,9 @@
 ---
 name: review-log-watch
 description: >
-  Poll a drafting review log (a Contributor Feedback sheet) and its folio
-  repository's issues mechanically, with Tool `review-log-watch`, and
+  Poll a review log (a drafting Contributor Feedback sheet, or a
+  public-comment sheet's Review Change Sets) and its folio repository's
+  issues mechanically, with Tool `review-log-watch`, and
   start agent work only when a cell people set or an open issue changed.
   Each issue that no row links yet becomes a Contributor Feedback row, and a
   closed issue's row is hidden with its text struck through.
@@ -12,8 +13,10 @@ description: >
 
 # Review-log watch
 
-A review log is a drafting sheet (skill
-[`review-sheet-script`](review-sheet-script.md)) for one folio repository. A
+A review log is a drafting or public-comment sheet (skill
+[`review-sheet-script`](review-sheet-script.md)) for one folio repository.
+The steps below are for a drafting log; a public-comment log differs as
+set out in "Public-comment logs". A
 watcher is the agent thread that keeps it moving. This skill is what the
 watcher does on each wake. Process:
 [`processes/content/review-log-watch.bpmn`](../../../processes/content/review-log-watch.bpmn)
@@ -125,6 +128,34 @@ reason about the rows, edit anything or post anything.
    the state file records what was handled. A row the pass could not finish
    still differs from the stored state, so it comes back on the next wake.
 7. Queue the next wake.
+
+## Public-comment logs (owner, 2026-11-04)
+
+A log whose Config has `MODE` `public-comment` has Review Public Comments,
+Review Change Sets, Agent - Comments and Agent - Change Sets instead of
+Contributor Feedback and Agent. The watcher runs the same check, with these
+differences:
+
+- **Hash.** `Watch!G1` covers the cells people set on both people's tabs:
+  on Review Change Sets Title, TWG (CS), every Committee Feedback column,
+  Ready for agent, Dispositions confirmed, Ready for merge and Change Set
+  (human); on Review Public Comments every Committee Feedback column,
+  Disposition, Change Set (human) and TWG (human). Lines are keyed by
+  Change-set id and comment No., so an inserted row changes nothing. The
+  script writes it on every refresh, and the timer refreshes only after an
+  edit or an Agent tab change, so `Checked (UTC)` can be old on a quiet
+  sheet.
+- **Read.** Review Change Sets' header row and Change-set column, as
+  `--sheet`. It has no Issue column, so the tool tracks only issues
+  labelled `change-set` (`--label` overrides) and appends no rows: each open
+  one comes back as an `issue-unlinked` change. Handle those as in "Change
+  sets people make" below.
+- **Without a Watch tab**, read Review Change Sets whole. The tool then
+  compares its cells itself; Review Public Comments' cells are seen only
+  through the hash.
+- **Steps 3 and 4** (append, hide closed rows) do not apply. The agent pass
+  of step 5 is the change-set work of
+  [Public comment](../../../processes/content/public-comment.bpmn).
 
 ## Lint each poll (owner, 2026-11-01; Q-FBK-1 A)
 
@@ -244,7 +275,9 @@ feedback cell, or open the change-set form.
   way, only the cells people set count, under these headers:
   - Title, Selected Sections, every Contributor Feedback column,
     Disposition and Change Set (human) (Blue);
-  - Ready for agent, Ready for merge and Dispositions confirmed (Orange).
+  - Ready for agent, Ready for merge and Dispositions confirmed (Orange);
+  - on a public-comment log also every Committee Feedback column, TWG (CS),
+    TWG (human) and Change Set (human).
 
   The agent's Green columns and the script's Grey ones are not watched, so
   the watcher's own writes never wake it.

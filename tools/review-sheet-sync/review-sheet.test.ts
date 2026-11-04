@@ -1206,6 +1206,41 @@ describe("running the script from the editor", () => {
   });
 });
 
+describe("the Watch hash on a public-comment sheet (owner, 2026-11-04)", () => {
+  const pcRows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
+  const watchCells = (edit?: (t: ReturnType<typeof tabs>) => void) => {
+    const t = tabs();
+    t["Review Change Sets"].rows = [
+      ["Change-set", "Title", "Sections", "TWG (CS)", "Committee Feedback (CL)", "Ready for agent", "Ready for merge", "Change Set Feedback (agent)"],
+      ["CS-001", "Fix scope", "", "TWG-A", "CL agrees", "", "", "A proposal"],
+      ["CS-002", "Other", "", "", "", "", "", ""],
+    ];
+    edit?.(t);
+    const rt = runtime({ ...withConfig(t, pcRows), Watch: { id: 98, rows: [["A", "B", "C", "D", "E", "F", "G", "H", "I"]] } });
+    load(code, rt.g).refreshAll();
+    return rt.written.Watch?.F?.[0] as string[];
+  };
+  const base = watchCells();
+  const hash = (edit: (t: ReturnType<typeof tabs>) => void) => watchCells(edit)[1];
+
+  test("the refresh writes Cells hash to Watch!F1:I1", () => {
+    expect(base[0]).toBe("Cells hash");
+    expect(base[1]).toMatch(/^[0-9a-z]+$/);
+    expect(base[2]).toBe("Checked (UTC)");
+  });
+  test("a person-set cell on either tab changes it", () => {
+    expect(hash((t) => (t["Review Change Sets"].rows[2][5] = "Yes"))).not.toBe(base[1]);
+    expect(hash((t) => (t["Review Change Sets"].rows[1][3] = "TWG-B"))).not.toBe(base[1]);
+    expect(hash((t) => (t["Review Public Comments"].rows[2][6] = "CL: no"))).not.toBe(base[1]);
+    expect(hash((t) => (t["Review Public Comments"].rows[3][7] = "Rejected"))).not.toBe(base[1]);
+  });
+  test("an inserted row, the agent's columns and the script's do not", () => {
+    expect(hash((t) => t["Review Change Sets"].rows.splice(2, 0, Array(8).fill("")))).toBe(base[1]);
+    expect(hash((t) => (t["Review Change Sets"].rows[1][7] = "Another proposal"))).toBe(base[1]);
+    expect(hash((t) => (t["Review Public Comments"].rows[1][8] = "Done"))).toBe(base[1]);
+  });
+});
+
 describe("the committed Code.gs people copy", () => {
   test("dist/Code.gs is current: run build-review-sheet-script.ts --dist after changing review-sheet.gs", () => {
     const committed = readText(join(import.meta.dir, "dist", "Code.gs"), "utf8");
