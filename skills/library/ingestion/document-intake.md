@@ -142,7 +142,7 @@ See `paper-importer.md §Phase 1` (in the science layer)
 for the per-tool routing table. Sandboxed Claude-Code-on-the-web
 sessions (github-only allowlist) cannot reach those hosts; in
 those sessions, queue the fetch onto a normal-network machine
-per [`bib-qa.md §Batch intake pipeline`](../cataloguing/bib-qa.md#batch-intake-pipeline).
+per [`bib-qa/qa-tags.md` §Batch intake pipeline](../cataloguing/bib-qa/qa-tags.md#batch-intake-pipeline).
 
 ### Stage 2: Extraction (→ `extracted`)
 

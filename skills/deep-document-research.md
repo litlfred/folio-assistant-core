@@ -67,8 +67,9 @@ which granularity you searched rather than implying the corpus offered one.
 
 1. **Machine descriptions as fact.** The paper converts figures to text with a
    VLM and uses the output. Here an agent's description is a `draft` and only a
-   person confirms it (`apply-image-verdicts.ts`, `schemas/narrative.ts`): *"an
-   uncited narrative is indistinguishable from a transcription of the source."*
+   person confirms it (`apply-image-verdicts.ts`, cat-harness-tools
+   `schemas/content/narrative.ts`): *"an uncited narrative is
+   indistinguishable from a transcription of the source."*
    Search over drafts if you must — and never report a draft as what the figure
    shows.
 2. **A sufficiency function you invented.** The paper gives σ a symbol and a

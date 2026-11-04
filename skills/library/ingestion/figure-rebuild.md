@@ -50,9 +50,9 @@ The rebuild form is picked by figure type (step 2).
    | a table of values drawn as a picture | a **table** block | the block |
    | a country example, a photograph, a screenshot, a third-party figure | **keep the cited picture** (`scope: "rebuild"` exclusion, signed off) | unchanged |
 
-   **One source, never a copy.** Every rebuilt figure is generated from, or links to, ONE
-   schema-backed source: an ArchiMate model, a BPMN or DMN file, a FHIR
-   logical model, or a data file whose labels are glossary IRIs. A figure
+   **One source, never a copy.** Every rebuilt figure is generated from, or
+   links to, ONE schema-backed source: an ArchiMate model, a BPMN or DMN file,
+   a FHIR logical model, or a data file whose labels are glossary IRIs. A figure
    that appears in several publications (the DIIG phases chart, the SMART
    Guidelines layers, the ANC workflow) has one source in the layer they all
    mount, and each folio points at it. Content that already lives upstream
