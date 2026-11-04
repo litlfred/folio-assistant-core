@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: content-change-review-stage\n"
-"POT-Creation-Date: 2026-11-04T12:14:26.125Z\n"
+"POT-Creation-Date: 2026-11-04T14:09:41.193Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: fr\n"
@@ -46,7 +46,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:93
 #. Diagram element documentation
-msgid "First dispatch point for a CI watcher: the feature branch has changed and a staging build now exists to watch. The watcher is DISPATCHED BY OPENING A BEAN, not by a workflow_dispatch: this is a task/workflow initiation. A bean makes the watch durable past the session that opened it: the container is reclaimed, and what survives is the claim. Starting the watcher and recording that it is running are ONE declared step, so the two cannot disagree about whether anything is watching. Claim rather than note: the watch is work in progress, and it is idempotent, so re-entering on a subsequent push does not duplicate it."
+msgid "First dispatch point for a CI watcher: the feature branch has changed and a staging build now exists to watch. The watcher is DISPATCHED BY OPENING A BEAN, not by a workflow_dispatch: this is a task/workflow initiation. A bean makes the watch durable past the session that opened it: the container is reclaimed, and what survives is the bean. Starting the watcher and recording that it is running are ONE declared step, so the two cannot disagree about whether anything is watching. It notes the watch on the bean rather than claiming it: only Process_BeanOpen claims a bean. The note is idempotent, so re-entering on a later push does not duplicate it."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:86
@@ -74,7 +74,7 @@ msgstr ""
 msgid "Stage the content change"
 msgstr ""
 
-#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:110
+#: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:111
 #. Diagram label
 msgid "Staged for review"
 msgstr ""
