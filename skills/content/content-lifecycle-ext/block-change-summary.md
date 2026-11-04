@@ -11,11 +11,11 @@ description: >-
 # Block Change Summary
 
 > Skill id: `block-change-summary` · Package: `content-lifecycle-ext` ·
-> Refines [`delivery-summary`](../../../../cat-harness/skills/sdlc/sdlc-core/delivery-summary.md) for content folios (placement PR2, bean `pzwb`).
+> Refines [`delivery-summary`](../../../../cat-harness/sdlc/skills/sdlc-core/delivery-summary.md) for content folios (placement PR2, bean `pzwb`).
 
 When delivering changes in a content folio (alongside the server restart
 command, commit/diff links, and staging links from
-[`delivery-summary`](../../../../cat-harness/skills/sdlc/sdlc-core/delivery-summary.md)),
+[`delivery-summary`](../../../../cat-harness/sdlc/skills/sdlc-core/delivery-summary.md)),
 list every content block that changed, with a clickable link and a short
 explanation of what changed.
 
@@ -102,7 +102,7 @@ Explain the nature of changes — don't just list files. Common categories:
 
 ## Example block table in a delivery summary
 
-Combined with [`delivery-summary`](../../../../cat-harness/skills/sdlc/sdlc-core/delivery-summary.md) and [`staging-review`](../../../../cat-harness/skills/sdlc/sdlc-core/staging-review.md):
+Combined with [`delivery-summary`](../../../../cat-harness/sdlc/skills/sdlc-core/delivery-summary.md) and [`staging-review`](../../../../cat-harness/sdlc/skills/sdlc-core/staging-review.md):
 
 > ### Changed content blocks
 >
