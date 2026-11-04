@@ -77,7 +77,7 @@ How the corpus becomes an officially published folio: a draft publication, its r
 
 ### Do all of — Draft under review (`Gateway_ReviewFork`)
 
-- Work every branch; none is optional. Branches: → `Task_ReviewDraft` (Review the draft publication), → `Task_SmeSignoff` (Clinical / scientific sign-off), → `CallActivity_PublicComment` (Release for public comment)
+- Work every branch; none is optional. Branches: → `Task_ReviewDraft` (Review the draft publication), → `Task_SmeSignoff` (Clinical or scientific sign-off), → `CallActivity_PublicComment` (Release for public comment)
 - The engine passes through this gateway itself; there is nothing to record here.
 
 ### 6. Review the draft publication (`Task_ReviewDraft`)
@@ -88,7 +88,7 @@ How the corpus becomes an officially published folio: a draft publication, its r
 - Record it: `workflow_complete` with `node: "Task_ReviewDraft"`.
 - next: → `Gateway_ReviewJoin`
 
-### 7. Clinical / scientific sign-off (`Task_SmeSignoff`)
+### 7. Clinical or scientific sign-off (`Task_SmeSignoff`)
 
 - Who: the `Clinical / scientific SMEs` lane (role `clinical-sme`).
 - Skill: `content-review`, `staging-review`.

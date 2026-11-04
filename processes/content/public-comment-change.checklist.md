@@ -24,7 +24,7 @@ Called by Process_PublicComment (CallActivity_MakeChange) once the editor's deci
 
 - Who: the `Change set — feature branch and staging` lane (role `build-pipeline`).
 - Skill: `staging-review`.
-- What: The existing content-change review, unchanged, of the author's branch: its PR lists the PC refs it answers, and its staging preview is the after side of every deep link.
+- What: The content-change review of the author's branch: its PR lists the PC refs it answers, and its staging preview is the after side of every deep link.
 - A subprocess (`Process_ContentChangeReview`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Task_QaGate` (QA gate: check dispositions against the people and the pull request)
 
