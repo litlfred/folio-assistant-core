@@ -115,13 +115,11 @@ recorded in §2. Nothing goes out until every link has been opened once.
 
 ## 4. Who submitted: the Public Comment Source tab
 
-Submitters are recorded the way the DPI-H Reference Architecture review
-records them (owner, 2026-10-31): in the review sheet's **Public Comment
-Source** tab, one row per public comment. The columns are No., date received,
-channel, reviewer name, organisation, country / region, stakeholder type,
-email, and "Acknowledge by name (Yes/No)". Every column is **Grey**,
-because the tab is the external source, copied in mechanically (owner,
-2026-10-31). The tab is locked, and it is the
+Submitters are recorded in the review sheet's **Public Comment Source** tab,
+one row per public comment. The columns are No., date received, channel,
+reviewer name, organisation, country / region, stakeholder type, email, and
+"Acknowledge by name (Yes/No)". Every column is **Grey**: the tab is the
+external source, copied in mechanically. The tab is locked, and it is the
 only place a submitter's name and email are kept (the `public-comment`
 skill, §"The live review sheet").
 
@@ -136,7 +134,7 @@ skill, §"The live review sheet").
   with the same email is therefore one reviewer.
 - The repository gets only that id, the organisation and the country. It
   gets the name **only** when the submitter answered Yes to "Acknowledge by
-  name", and never the email. The importer already follows this rule (the
+  name", and never the email. The importer follows this rule (the
   `public-comment` skill, §"Privacy").
 - Submitter details are not configuration, so they never go in the Config
   tab. That tab holds the script's settings and is written by the agent.
