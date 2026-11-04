@@ -43,11 +43,11 @@
     </bpmn:extensionElements>
     <bpmn:laneSet id="Process_Publication_LaneSet">
       <bpmn:lane id="Lane_Editors" name="Editors + authoring agents" partitionElementRef="editor">
-        <bpmn:documentation>The one call activity both rejection paths loop back to — a red QA gate directly, and a review rejection only once the publication manager has turned each finding into a bean — so a fix here never needs to know which failure sent it back.</bpmn:documentation>
+        <bpmn:documentation>Where both rejection paths loop back to: a red QA gate directly, and a review rejection once each finding has become a bean.</bpmn:documentation>
         <bpmn:flowNodeRef>CallActivity_Editing</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Build" name="Build pipeline (system)" partitionElementRef="build-pipeline">
-        <bpmn:documentation>Owns the one gate that decides whether the draft is fit to be circulated: Task_BuildDraft turns the corpus into a draft and the DMN-backed Gateway_QaGreen decides whether Task_CirculateDraft ever runs, so a red result here is caught before Lane_ReviewTeam or Lane_Sme spend time on a draft that was never fit to review.</bpmn:documentation>
+        <bpmn:documentation>Owns the one gate that decides whether the draft is fit to be circulated: Task_BuildDraft turns the corpus into a draft and the DMN-backed Gateway_QaGreen decides whether Task_CirculateDraft runs, so a red draft never reaches Lane_ReviewTeam or Lane_Sme.</bpmn:documentation>
         <bpmn:flowNodeRef>StartEvent_CorpusUpdated</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_OpenReleaseBean</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>GW_BeanYours</bpmn:flowNodeRef>
@@ -58,7 +58,7 @@
         <bpmn:flowNodeRef>Gateway_QaGreen</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_PubMgr" name="Publication manager" partitionElementRef="publication-manager">
-        <bpmn:documentation>Fans the QA-gated draft out to review and SME sign-off in parallel, then — once the programme manager authorises — is the only lane that actually presses publish, so both the review verdict and the release authority pass through this one hand before anything goes live.</bpmn:documentation>
+        <bpmn:documentation>Fans the QA-gated draft out to review and SME sign-off in parallel, then, once the programme manager authorises, is the only lane that publishes.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_CirculateDraft</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ReviewFork</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ReviewJoin</bpmn:flowNodeRef>
@@ -69,7 +69,7 @@
         <bpmn:flowNodeRef>EndEvent_Published</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_ReviewTeam" name="Review team (content · QC · technical officer)" partitionElementRef="reviewer">
-        <bpmn:documentation>Owns the single approved/not-approved gateway the whole review rests on: it fires only after Lane_Sme's sign-off has also reached the join, but the call is this lane's alone, and a rejection here is what turns into the change beans Lane_WorkPlan opens next.</bpmn:documentation>
+        <bpmn:documentation>Owns the approved/not-approved gateway: it fires after Lane_Sme's sign-off has also reached the join, but the call is this lane's alone, and a rejection becomes the change beans Lane_WorkPlan opens next.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_ReviewDraft</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ReviewOutcome</bpmn:flowNodeRef>
       </bpmn:lane>
@@ -78,11 +78,11 @@
         <bpmn:flowNodeRef>CallActivity_PublicComment</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Sme" name="Clinical / scientific SMEs" partitionElementRef="clinical-sme">
-        <bpmn:documentation>Runs in parallel with Lane_ReviewTeam, not after it — Gateway_ReviewJoin waits on both — but does not own the approve/reject gateway that follows: sign-off here is necessary for the join to complete and nothing more, which keeps a clinical judgement from also becoming the phase-gate call.</bpmn:documentation>
+        <bpmn:documentation>Runs in parallel with Lane_ReviewTeam (Gateway_ReviewJoin waits on both) but does not own the approve/reject gateway that follows: sign-off here is needed for the join to complete, and nothing more.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_SmeSignoff</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_ProgMgr" name="Programme manager (release authority)" partitionElementRef="programme-manager">
-        <bpmn:documentation>Sits between review's approval and the actual publish — a second, distinct gate on an already-approved draft, because content being right and a release being authorised to ship are two different questions, and only this lane answers the second one.</bpmn:documentation>
+        <bpmn:documentation>Sits between review's approval and the publish: a second gate on an approved draft, answering whether the release is authorised to ship.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_AuthorizeRelease</bpmn:flowNodeRef>
       </bpmn:lane>
     </bpmn:laneSet>
@@ -91,7 +91,7 @@
       <bpmn:outgoing>G01</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:callActivity id="Task_OpenReleaseBean" name="Open the bean" calledElement="Process_BeanOpen">
-      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
+      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn; the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
           <bpmn:incoming>G01</bpmn:incoming>
       <bpmn:outgoing>SF_Bean_1</bpmn:outgoing>
@@ -153,7 +153,7 @@
       <bpmn:outgoing>G21</bpmn:outgoing>
     </bpmn:parallelGateway>
     <bpmn:callActivity id="CallActivity_PublicComment" name="Release for public comment" calledElement="Process_PublicCommentRelease">
-      <bpmn:documentation>When the draft goes out for public comment: the release date is agreed, the draft is frozen as a line-numbered public comment release, every channel is set up against it and announced, and the comments that come back are placed, triaged, recommended on by the review committee and decided by the editor (Process_PublicCommentRelease, which calls Process_PublicComment). Bean v26p, issue #197.</bpmn:documentation>
+      <bpmn:documentation>When the draft goes out for public comment: the release date is agreed, the draft is frozen as a line-numbered public comment release, every channel is set up against it and announced, and the comments that come back are placed, triaged, recommended on by the review committee and decided by the editor (Process_PublicCommentRelease, which calls Process_PublicComment).</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="public-comment" />
       </bpmn:extensionElements>
@@ -237,7 +237,7 @@
       </bpmn:dataOutputAssociation>
     </bpmn:task>
     <bpmn:callActivity id="Task_ArchiveReleaseBean" name="Close the bean" calledElement="Process_BeanClose">
-      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
+      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn; placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
           <bpmn:incoming>G20</bpmn:incoming>
           <bpmn:outgoing>G_Archive</bpmn:outgoing>

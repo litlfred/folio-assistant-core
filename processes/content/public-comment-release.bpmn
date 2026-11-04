@@ -5,8 +5,7 @@
   Source of truth: this file. The SVG under docs/assets/img/workflows/ is
   generated from it by `bun run cat render:bpmn` — never hand-edit the SVG.
 
-  Owner, 2026-10-31: public comment is a cycle that starts before any comment
-  arrives. The release is agreed, frozen with fixed line numbers, every
+  Public comment is a cycle that starts before any comment arrives. The release is agreed, frozen with fixed line numbers, every
   channel is set up against it, the public is told, and only then do comments
   come back (Process_PublicComment). The release is archived at the end.
 -->
@@ -69,7 +68,7 @@
       <bpmn:outgoing>Flow_AgreeReleaseDate_To_BuildPcRelease</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Task_BuildPcRelease" name="Build the public comment release">
-      <bpmn:documentation>Freeze the draft as &quot;Draft for Public Comment Release vX&quot;: a PDF with fixed line numbers and a site copy under a permanent PC/&lt;version&gt;/ path (not STAGING, never deleted on merge). Every channel cites this release's pages, lines and block ids. Line numbers run continuously through the document. Freeze from a FULL build (owner, 2026-11-01): dispatch the preview workflow for the branch with build_type: full first, because a preview borrows main's search index and slices; pc:release freeze refuses a preview build. Run `bun run cat pc:pdf` for the line-numbered PDF and its line map, then `bun run cat pc:release freeze` for the write-once copy under PC/&lt;version&gt;/. Skill: document-publishing.</bpmn:documentation>
+      <bpmn:documentation>Freeze the draft as &quot;Draft for Public Comment Release vX&quot;: a PDF with fixed line numbers and a site copy under a permanent PC/&lt;version&gt;/ path (not STAGING, never deleted on merge). Every channel cites this release's pages, lines and block ids. Line numbers run continuously through the document. Freeze from a FULL build: dispatch the preview workflow for the branch with build_type: full first, because a preview borrows main's search index and slices; pc:release freeze refuses a preview build. Run `bun run cat pc:pdf` for the line-numbered PDF and its line map, then `bun run cat pc:release freeze` for the write-once copy under PC/&lt;version&gt;/. Skill: document-publishing.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="document-publishing"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_AgreeReleaseDate_To_BuildPcRelease</bpmn:incoming>
       <bpmn:outgoing>Flow_BuildPcRelease_To_SetUpChannels</bpmn:outgoing>

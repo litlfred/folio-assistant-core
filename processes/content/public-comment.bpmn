@@ -8,7 +8,7 @@
   Every task here is a transition in PUBLIC_COMMENT_TRANSITIONS
   (folio-assistant-core/schemas/public-comment.ts), and a test holds the two
   to each other: a comment's status moves only through a task that exists in
-  this diagram. Bean v26p, issue #197.
+  this diagram.
 -->
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
@@ -86,7 +86,7 @@
       <bpmn:outgoing>Flow_ToIngest</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:startEvent id="StartEvent_BlockFeedback" name="Feedback on one block ([feedback] link)">
-      <bpmn:documentation>A reader presses [feedback] on a block of the rendered document and opens a GitHub issue about that block, from the folio's block-feedback issue form when it has one (skill block-actions, REQ-17). The issue names the block, so it arrives already placed. Intake records it like any other comment; a reader who would rather propose the wording presses [edit], which is a pull request, reviewed as a content change.</bpmn:documentation>
+      <bpmn:documentation>A reader presses [feedback] on a block of the rendered document and opens a GitHub issue about that block, from the folio's block-feedback issue form when it has one (skill block-actions). The issue names the block, so it arrives already placed. Intake records it like any other comment; a reader who would rather propose the wording presses [edit], which is a pull request, reviewed as a content change.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="block-actions"/></bpmn:extensionElements>
       <bpmn:outgoing>Flow_BlockFeedbackToIngest</bpmn:outgoing>
     </bpmn:startEvent>
@@ -113,19 +113,19 @@
       <bpmn:incoming>Flow_Duplicate</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:task id="Task_ProposeChangeSets" name="Propose change-sets, as records with no issue yet">
-      <bpmn:documentation>public-comment-changesets seed / propose: the agent groups the comments to be weighed into change-sets, one per change the document may need, each a record under changesets/ with its requirements and members. A PROPOSAL: nothing is decided, no GitHub issue is opened, and a comment may sit in zero, one or several change-sets. The record is the only one; everything shown about a change-set is rendered from it. A comment that arrives later is triaged the same way (Tool review-log-watch, cs-requests.ts triage): the agent suggests an open change-set that shares its sections, or a new one, and the committees (TWG) of that change-set, as its own suggestion only; a person's Change Set (human) or TWG (human) on the review sheet always wins. How a change-set came about does not matter: people adjudicate it (owner, 2026-11-02).</bpmn:documentation>
+      <bpmn:documentation>public-comment-changesets seed / propose: the agent groups the comments to be weighed into change-sets, one per change the document may need, each a record under changesets/ with its requirements and members. A PROPOSAL: nothing is decided, no GitHub issue is opened, and a comment may sit in zero, one or several change-sets. The record is the only one; everything shown about a change-set is rendered from it. A comment that arrives later is triaged the same way (Tool review-log-watch, cs-requests.ts triage): the agent suggests an open change-set that shares its sections, or a new one, and the committees (TWG) of that change-set, as its own suggestion only; a person's Change Set (human) or TWG (human) on the review sheet always wins. How a change-set came about does not matter: people adjudicate it.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToAssign</bpmn:incoming>
       <bpmn:outgoing>Flow_ToGroup</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Task_GroupChangeSets" name="Agree each change-set's requirements on its issue">
-      <bpmn:documentation>A change-set gets its primary GitHub issue the first time somebody engages with it (the Discuss form, a recommendation or decision on one of its comments, a mention, a PR), opened by the folio's public-comment workflow; any number of other issues may discuss it and are linked. People agree the requirements there, and the committee or editor changes the record with cs-add / cs-remove / cs-title / cs-requirements / cs-committee / cs-merge / cs-split / cs-close / cs-new. Making change-sets is people's (owner, 2026-11-02, Q-CS-1 C), in any of three ways, each like opening an issue: a row on the review sheet's Review Change Sets with only a Title (the sheet script gives it the next id), a change-set issue from the folio's change-set issue form, or feedback that says a change-set should be split, merged or moved. For the last two the agent proposes the change-sets and which comments go where, as a Decision needed question, and makes them only once an Editor sets Ready for agent to Yes. A comment is moved by typing another change-set's id, or new, in Change Set (human). The issue's change-set section is rendered from the record and put back if hand-edited; the nightly reconcile keeps every issue in line. The issue is for requirements; the PR that closes it is for preview, review and approval.</bpmn:documentation>
+      <bpmn:documentation>A change-set gets its primary GitHub issue the first time somebody engages with it (the Discuss form, a recommendation or decision on one of its comments, a mention, a PR), opened by the folio's public-comment workflow; any number of other issues may discuss it and are linked. People agree the requirements there, and the committee or editor changes the record with cs-add / cs-remove / cs-title / cs-requirements / cs-committee / cs-merge / cs-split / cs-close / cs-new. Making change-sets is people's, in any of three ways, each like opening an issue: a row on the review sheet's Review Change Sets with only a Title (the sheet script gives it the next id), a change-set issue from the folio's change-set issue form, or feedback that says a change-set should be split, merged or moved. For the last two the agent proposes the change-sets and which comments go where, as a Decision needed question, and makes them only once an Editor sets Ready for agent to Yes. A comment is moved by typing another change-set's id, or new, in Change Set (human). The issue's change-set section is rendered from the record and put back if hand-edited; the nightly reconcile keeps every issue in line. The issue is for requirements; the PR that closes it is for preview, review and approval.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToGroup</bpmn:incoming>
       <bpmn:outgoing>Flow_ToReroute</bpmn:outgoing>
     </bpmn:task>
     <bpmn:userTask id="Task_RerouteChangeSet" name="Re-route to another committee">
-      <bpmn:documentation>public-comment-changesets reroute, or cs-committee: &lt;TWG&gt; — &lt;why&gt; on GitHub from a person in the committee or editor lane (bean se3i, issue #197). Moves the change-set to another TWG review committee and records who, when, from, to and why on the change-set record, so re-ingesting comments never resets it. Person-only (userTask): agents cannot re-route a change-set on their own.</bpmn:documentation>
+      <bpmn:documentation>public-comment-changesets reroute, or cs-committee: &lt;TWG&gt; — &lt;why&gt; on GitHub from a person in the committee or editor lane. Moves the change-set to another TWG review committee and records who, when, from, to and why on the change-set record, so re-ingesting comments never resets it. Person-only (userTask): agents cannot re-route a change-set on their own.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToReroute</bpmn:incoming>
       <bpmn:outgoing>Flow_GroupedToAssign</bpmn:outgoing>
@@ -169,9 +169,7 @@
 
     <!-- Withdrawal can happen at ANY open status, so it is an event
          subprocess with an interrupting start: whichever step the comment
-         is at stops, and the comment ends withdrawn. As a second top-level
-         start it hung unconnected, and the diagram did not say what it
-         stopped (owner, 2026-10-31: "why record withdrawal not connected"). -->
+         is at stops, and the comment ends withdrawn. -->
     <bpmn:subProcess id="SubProcess_Withdraw" name="Withdrawal, at any open status" triggeredByEvent="true">
       <bpmn:documentation>The commenter may withdraw a comment at any time before it is resolved. The withdrawal interrupts the comment wherever it is (triage, committee, editor, author or change set) and closes it as withdrawn, telling the coordinator and any assigned committee members.</bpmn:documentation>
       <bpmn:startEvent id="StartEvent_WithdrawRequested" name="Commenter withdraws a comment" isInterrupting="true">
