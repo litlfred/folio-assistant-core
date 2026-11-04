@@ -97,12 +97,13 @@ Called from content-change-review after the first push and after every revision,
         initiation.
 
         A bean makes the watch durable past the session that opened it: the
-        container is reclaimed, and what survives is the claim. Starting the
+        container is reclaimed, and what survives is the bean. Starting the
         watcher and recording that it is running are ONE declared step, so the
         two cannot disagree about whether anything is watching.
 
-        Claim rather than note: the watch is work in progress, and it is
-        idempotent, so re-entering on a subsequent push does not duplicate it.
+        It notes the watch on the bean rather than claiming it: only
+        Process_BeanOpen claims a bean. The note is idempotent, so re-entering
+        on a later push does not duplicate it.
       </bpmn:documentation>
       <bpmn:incoming>p4</bpmn:incoming>
       <bpmn:outgoing>p4b</bpmn:outgoing>
