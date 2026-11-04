@@ -1,0 +1,419 @@
+{
+  "$schema": "kg-qa/v1",
+  "subject": {
+    "kind": "process",
+    "id": "Process_DsaDocumentLifecycle",
+    "path": "processes/content/dsa-document-lifecycle.bpmn"
+  },
+  "source_hash": "sha256:3b87973450dc8c27555cec8ab08e67ed1a121262c8aafd9fc3e432f6894eab69",
+  "criteria": {
+    "raci-role-resolves": {
+      "result": "n/a",
+      "findings": []
+    },
+    "raci-single-accountable": {
+      "result": "n/a",
+      "findings": []
+    },
+    "raci-accountable-not-consulted": {
+      "result": "n/a",
+      "findings": []
+    },
+    "convention-ref-resolves": {
+      "result": "n/a",
+      "findings": []
+    },
+    "skill-ref-resolves": {
+      "result": "pass",
+      "findings": []
+    },
+    "skill-servable": {
+      "result": "pass",
+      "findings": []
+    },
+    "activity-skill-has-tool": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "Task_WriteText",
+          "detail": "names skill \"document-authoring\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_WriteText",
+          "detail": "names skill \"normative-statements\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_WriteText",
+          "detail": "names skill \"document-structure\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_RecordLegalBasis",
+          "detail": "names skill \"normative-statements\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_PlainSummary",
+          "detail": "names skill \"document-authoring\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_CheckOdrl",
+          "detail": "names skill \"content-review\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_Review",
+          "detail": "names skill \"content-review\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Call_PublicComment",
+          "detail": "names skill \"public-comment\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_Render",
+          "detail": "names skill \"document-publishing\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_AssignVersion",
+          "detail": "names skill \"content-publish\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_ConsentCitation",
+          "detail": "names skill \"content-publish\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        },
+        {
+          "where": "Task_Publish",
+          "detail": "names skill \"content-publish\", which no Tool declares `satisfies` for — the step's mechanism is still prose."
+        }
+      ]
+    },
+    "decision-ref-resolves": {
+      "result": "n/a",
+      "findings": []
+    },
+    "role-ref-resolves": {
+      "result": "pass",
+      "findings": []
+    },
+    "activity-in-lane": {
+      "result": "pass",
+      "findings": []
+    },
+    "lane-binds-role": {
+      "result": "pass",
+      "findings": []
+    },
+    "variable-performer-declared-alone": {
+      "result": "n/a",
+      "findings": []
+    },
+    "role-carries-activity-skill": {
+      "result": "pass",
+      "findings": []
+    },
+    "lane-role-legacy-binding": {
+      "result": "pass",
+      "findings": []
+    },
+    "task-skill-outside-lane-role": {
+      "result": "pass",
+      "findings": []
+    },
+    "activity-names-skill": {
+      "result": "pass",
+      "findings": []
+    },
+    "activity-fulfilment-kind": {
+      "result": "n/a",
+      "findings": []
+    },
+    "call-activity-resolves": {
+      "result": "pass",
+      "findings": [
+        {
+          "where": "Call_BeanOpen",
+          "detail": "calls \"Process_BeanOpen\", hosted by instance \"cat-harness\"."
+        },
+        {
+          "where": "Call_BeanOpenChange",
+          "detail": "calls \"Process_BeanOpen\", hosted by instance \"cat-harness\"."
+        },
+        {
+          "where": "Call_BeanCloseEnded",
+          "detail": "calls \"Process_BeanClose\", hosted by instance \"cat-harness\"."
+        }
+      ]
+    },
+    "process-diagram-published": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "Process_DsaDocumentLifecycle",
+          "detail": "no rendered diagram at dsa-document-lifecycle.svg — run `bun run cat render:bpmn`."
+        }
+      ]
+    },
+    "activity-documented": {
+      "result": "pass",
+      "findings": []
+    },
+    "activity-calls-skill-process": {
+      "result": "pass",
+      "findings": []
+    },
+    "gateway-documented": {
+      "result": "pass",
+      "findings": []
+    },
+    "gateway-branches-named": {
+      "result": "pass",
+      "findings": []
+    },
+    "node-reachable": {
+      "result": "pass",
+      "findings": []
+    },
+    "node-has-exit": {
+      "result": "pass",
+      "findings": []
+    },
+    "activity-implicit-split": {
+      "result": "pass",
+      "findings": []
+    },
+    "gateway-mixed": {
+      "result": "pass",
+      "findings": []
+    },
+    "process-size": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "Process_DsaDocumentLifecycle",
+          "detail": "51 flow nodes, past the 20 at which bpmn-authoring asks for a split by phase into call activities."
+        }
+      ]
+    },
+    "process-decompose": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "Process_DsaDocumentLifecycle",
+          "detail": "51 flow nodes, past 7PMG's 50 (G7), above which error probability tends to exceed 50%."
+        }
+      ]
+    },
+    "process-single-start": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "Process_DsaDocumentLifecycle",
+          "detail": "2 start events (Start_Request, Start_Change). One entry point per process level, or a call activity per entry."
+        }
+      ]
+    },
+    "decision-label-question": {
+      "result": "pass",
+      "findings": []
+    },
+    "activity-label-verb-first": {
+      "result": "pass",
+      "findings": []
+    },
+    "edge-rectilinear": {
+      "result": "pass",
+      "findings": []
+    },
+    "edge-crossing": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "F10×F19",
+          "detail": "flows F10 and F19 cross."
+        },
+        {
+          "where": "F11×F19",
+          "detail": "flows F11 and F19 cross."
+        },
+        {
+          "where": "F13×F19",
+          "detail": "flows F13 and F19 cross."
+        },
+        {
+          "where": "F21×F74",
+          "detail": "flows F21 and F74 cross."
+        },
+        {
+          "where": "F22×F74",
+          "detail": "flows F22 and F74 cross."
+        },
+        {
+          "where": "F30×F47",
+          "detail": "flows F30 and F47 cross."
+        },
+        {
+          "where": "F30×F49",
+          "detail": "flows F30 and F49 cross."
+        },
+        {
+          "where": "F40×F74",
+          "detail": "flows F40 and F74 cross."
+        },
+        {
+          "where": "F43×F74",
+          "detail": "flows F43 and F74 cross."
+        },
+        {
+          "where": "F47×F74",
+          "detail": "flows F47 and F74 cross."
+        }
+      ]
+    },
+    "edge-through-node": {
+      "result": "pass",
+      "findings": []
+    },
+    "diagram-too-wide": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "diagram",
+          "detail": "7006 wide, budget 1400: text shows at 2.7px in a 1200px band. Close the gaps between columns, stack steps of different lanes in one column, or split by phase."
+        }
+      ]
+    },
+    "diagram-too-tall": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "diagram",
+          "detail": "1080 tall, budget 900: a reader scrolls to see it whole. Shrink lanes to their content, or split by phase."
+        }
+      ]
+    },
+    "label-overlap": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "GW_Computable+GW_ConsentBasisJoin",
+          "detail": "label \"Computable agreement?\" overlaps \"\". Give one a BPMNLabel position clear of the other (a gateway's question above it, its answers beside their flows)."
+        },
+        {
+          "where": "GW_CommentJoin+GW_ReadyToSign",
+          "detail": "label \"\" overlaps \"Ready to sign?\". Give one a BPMNLabel position clear of the other (a gateway's question above it, its answers beside their flows)."
+        },
+        {
+          "where": "GW_CiteComputable+GW_ConsentPublishJoin",
+          "detail": "label \"ODRL to update?\" overlaps \"\". Give one a BPMNLabel position clear of the other (a gateway's question above it, its answers beside their flows)."
+        }
+      ]
+    },
+    "label-on-edge": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "End_BeanNotYours/F04",
+          "detail": "label \"Not yours —&#10;left alone\" sits on flow F04. Move the label off the line (`bpmn:detangle --write` does it)."
+        },
+        {
+          "where": "GW_DraftMerge/F19",
+          "detail": "label \"\" sits on flow F19. Move the label off the line (`bpmn:detangle --write` does it)."
+        },
+        {
+          "where": "GW_ComputableJoin/F11",
+          "detail": "label \"\" sits on flow F11. Move the label off the line (`bpmn:detangle --write` does it)."
+        },
+        {
+          "where": "GW_CommentJoin/F17",
+          "detail": "label \"\" sits on flow F17. Move the label off the line (`bpmn:detangle --write` does it)."
+        },
+        {
+          "where": "GW_ReadyToSign/F20",
+          "detail": "label \"Ready to sign?\" sits on flow F20. Move the label off the line (`bpmn:detangle --write` does it)."
+        },
+        {
+          "where": "GW_CiteJoin/F28",
+          "detail": "label \"\" sits on flow F28. Move the label off the line (`bpmn:detangle --write` does it)."
+        },
+        {
+          "where": "End_BeanNotYoursChange/F43",
+          "detail": "label \"Not yours —&#10;left alone\" sits on flow F43. Move the label off the line (`bpmn:detangle --write` does it)."
+        },
+        {
+          "where": "GW_ConsentPublishJoin/F66",
+          "detail": "label \"\" sits on flow F66. Move the label off the line (`bpmn:detangle --write` does it)."
+        },
+        {
+          "where": "GW_WidensUse/F74",
+          "detail": "label \"Consent-based: does the amendment widen use?\" sits on flow F74. Move the label off the line (`bpmn:detangle --write` does it)."
+        },
+        {
+          "where": "GW_WidensJoin/F71",
+          "detail": "label \"\" sits on flow F71. Move the label off the line (`bpmn:detangle --write` does it)."
+        }
+      ]
+    },
+    "label-on-shape": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "End_RenewedByGrant/Task_DecideChange",
+          "detail": "label \"Renewed by a new grant\" covers \"Decide: amend, renew or end\"."
+        },
+        {
+          "where": "GW_WidensUse/Task_DecideGrants",
+          "detail": "label \"Consent-based: does the amendment widen use?\" covers \"P14.2 · Decide what happens to existing grants\"."
+        }
+      ]
+    },
+    "label-on-lane-line": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "End_InForce/Participant_DsaDocumentLifecycle",
+          "detail": "label \"Version published — agreement in force\" is drawn across the edge of \"Data sharing agreement — the document, from request to end\". Move it inside one lane (`bpmn:detangle --write` does it)."
+        },
+        {
+          "where": "GW_BeanClosedHow/Participant_DsaDocumentLifecycle",
+          "detail": "label \"How did it end?\" is drawn across the edge of \"Data sharing agreement — the document, from request to end\". Move it inside one lane (`bpmn:detangle --write` does it)."
+        },
+        {
+          "where": "End_Ended/Participant_DsaDocumentLifecycle",
+          "detail": "label \"Agreement ended\" is drawn across the edge of \"Data sharing agreement — the document, from request to end\". Move it inside one lane (`bpmn:detangle --write` does it)."
+        },
+        {
+          "where": "F31/Participant_DsaDocumentLifecycle",
+          "detail": "label \"published\" is drawn across the edge of \"Data sharing agreement — the document, from request to end\". Move it inside one lane (`bpmn:detangle --write` does it)."
+        },
+        {
+          "where": "F51/Participant_DsaDocumentLifecycle",
+          "detail": "label \"ended\" is drawn across the edge of \"Data sharing agreement — the document, from request to end\". Move it inside one lane (`bpmn:detangle --write` does it)."
+        }
+      ]
+    },
+    "shape-overlap": {
+      "result": "pass",
+      "findings": []
+    },
+    "lane-order": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "lanes",
+          "detail": "flows cross 44 lane boundaries; ordering the lanes Public review (commenters, review committee, editor) / Reviewer (legal, policy) / Author and policy author / Parties and signatories (provider, recipient) / Publisher (data provider's publication manager) / Build pipeline (system) makes it 30. Run `bun run cat bpmn:detangle <file> --write`."
+        }
+      ]
+    },
+    "prose-reviewed-since-code-changed": {
+      "result": "n/a",
+      "findings": []
+    },
+    "prose-claims-resolve": {
+      "result": "n/a",
+      "findings": []
+    }
+  },
+  "totals": {
+    "pass": 23,
+    "fail": 13,
+    "n/a": 9,
+    "unknown": 0
+  }
+}
