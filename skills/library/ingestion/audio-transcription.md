@@ -140,5 +140,5 @@ library/<slug>/
 | Tool nodes (declared, not installed) | cat-harness `tools/index.ts`: `transcribe-whisper-cpp`, `transcribe-faster-whisper`, `transcribe-vosk` |
 | extract, parse VTT/DOCX, compare, frames, Vosk transcribe | `cat-harness-tools/scripts/meeting-recording.py` |
 | library entry: record, transcript, segments digest | `cat-harness-tools/scripts/recording-transcript.py`; schemas in cat-harness `schemas/library/recording.ts` |
-| walkthrough method (requirements from a recording) | cat-harness `skills/sdlc/crdm/crdm-recorded-walkthrough.md` |
+| walkthrough method (requirements from a recording) | cat-harness `sdlc/skills/crdm/crdm-recorded-walkthrough.md` |
 | translation QA | the `untainted-verification` skill; `translation-roundtrip-record` Tool |
