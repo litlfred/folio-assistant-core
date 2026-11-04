@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: review-log-watch\n"
-"POT-Creation-Date: 2026-11-01T12:02:40.480Z\n"
+"POT-Creation-Date: 2026-11-04T11:48:15.776Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: es\n"
@@ -71,7 +71,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/review-log-watch.bpmn:28
 #. Diagram element documentation
-msgid "One poll of one drafting review log (a Contributor Feedback sheet) and its folio repository. A tool decides, with no agent judgement, whether anything a person set in the sheet or any open issue changed since the last poll. Only then does the agent append rows for new issues and do its pass. Skill: review-log-watch."
+msgid "One poll of one review log (a drafting Contributor Feedback sheet, or a public-comment sheet's Review Change Sets) and its folio repository. A tool decides, with no agent judgement, whether anything a person set in the sheet or any open issue changed since the last poll. Only then does the agent append rows for new issues and do its pass. Skill: review-log-watch."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/review-log-watch.bpmn:55
@@ -81,7 +81,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/review-log-watch.bpmn:56
 #. Diagram element documentation
-msgid "Reads Watch!F1:I1, the hash of the person-set cells that the sheet script writes on every refresh (Q-WATCH4 A), and Contributor Feedback's header row and Issue column, and saves them as JSON for the check. A sheet without the Watch hash yet is read whole. Reading is not agent work: it changes nothing."
+msgid "Reads Watch!F1:I1, the hash of the person-set cells that the sheet script writes on every refresh (Q-WATCH4 A), and Contributor Feedback's header row and Issue column (a public-comment log: Review Change Sets' header row and Change-set column), and saves them as JSON for the check. A sheet without the Watch hash yet is read whole. Reading is not agent work: it changes nothing."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/review-log-watch.bpmn:27
@@ -106,7 +106,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/review-log-watch.bpmn:62
 #. Diagram element documentation
-msgid "Runs Tool review-log-watch with the folio repository, the saved values and the log's state file. The tool reads the repository's open and closed issues (no pull requests, no issue labelled no-sheet) and compares a digest of them and of the cells people set (Title, Selected Sections, Contributor Feedback, Disposition, Ready for agent, Ready for merge, Dispositions confirmed) with the last check's. It writes nothing."
+msgid "Runs Tool review-log-watch with the folio repository, the saved values and the log's state file. The tool reads the repository's open and closed issues (no pull requests, no issue labelled no-sheet) and compares a digest of them and of the cells people set (Title, Selected Sections, Contributor Feedback, Disposition, Ready for agent, Ready for merge, Dispositions confirmed; on a public-comment log also Committee Feedback, TWG (CS), TWG (human), Change Set (human)) with the last check's. A read with no Issue column tracks only change-set issues and appends no rows, reporting them as issue-unlinked. It writes nothing."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/review-log-watch.bpmn:67
