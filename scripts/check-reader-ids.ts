@@ -5,7 +5,7 @@
  *   bun run folio-assistant-core/scripts/check-reader-ids.ts \
  *     --document <name> [--folio folio/<name>] [--strict] [--json <file>]
  *
- * The rule is `refer-by-number-and-title-not-by-id` in smart-base's
+ * The rule is `refer-by-number-and-title-not-by-id` in the
  * who-digital-transformation-handbook voice: point the reader to another part
  * by its number or title, linked, and keep the id in the link target and the
  * model files. This is that rule's script check (owner choice Q-IDS-1 A).
@@ -52,16 +52,37 @@ export const PATTERNS: Record<Kind, RegExp> = {
 
 export const ALLOW_MARKER = "<!-- reader-ids: allow -->";
 
+/** Replace HTML comment spans (`<!-- ... -->`) with spaces while preserving newlines. */
+export function stripComments(text: string): string {
+  let out = "";
+  let pos = 0;
+  while (pos < text.length) {
+    const start = text.indexOf("<!--", pos);
+    if (start < 0) {
+      out += text.slice(pos);
+      break;
+    }
+    out += text.slice(pos, start);
+    const end = text.indexOf("-->", start + 4);
+    const stop = end < 0 ? text.length : end + 3;
+    for (let i = start; i < stop; i++) {
+      out += text[i] === "\n" ? "\n" : " ";
+    }
+    pos = stop;
+  }
+  return out;
+}
+
 /** Link targets (`](...)`) and HTML comments removed: they are not shown. */
 export function shown(line: string): string {
-  return line.replace(/\]\([^)]*\)/g, "]").replace(/<!--.*?-->/g, " ");
+  return stripComments(line).replace(/\]\([^)]*\)/g, "]");
 }
 
 /** The findings in one block's Markdown. */
 export function scan(md: string, file = ""): Finding[] {
   if (md.includes(ALLOW_MARKER)) return [];
   const out: Finding[] = [];
-  md.split("\n").forEach((raw, i) => {
+  stripComments(md).split("\n").forEach((raw, i) => {
     const line = shown(raw);
     for (const [kind, rx] of Object.entries(PATTERNS) as Array<[Kind, RegExp]>) {
       for (const m of line.matchAll(rx)) out.push({ file, line: i + 1, kind, text: m[0] });

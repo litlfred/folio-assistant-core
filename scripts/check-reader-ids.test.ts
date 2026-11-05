@@ -37,4 +37,9 @@ describe("check-reader-ids", () => {
   it("reports the line", () => {
     expect(scan("ok\nsee pers:x", "a.md")).toEqual([{ file: "a.md", line: 2, kind: "label", text: "pers:x" }]);
   });
+  it("ignores single-line and multiline HTML comments while keeping line numbers", () => {
+    expect(scan("<!-- pers:hidden -->\n<!--\nTask_1_Hidden\n-->\nsee pers:visible", "a.md")).toEqual([
+      { file: "a.md", line: 5, kind: "label", text: "pers:visible" },
+    ]);
+  });
 });
