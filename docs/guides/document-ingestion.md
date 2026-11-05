@@ -30,8 +30,7 @@ _This page is generated from [`docs/source/guides-document-ingestion/`](https://
 [✎ Edit](https://github.com/litlfred/folio-assistant-core/edit/main/docs/source/guides-document-ingestion/overview.md){: .fa-node-edit title="Edit docs/source/guides-document-ingestion/overview.md" data-fa-link="edit" data-src="docs/source/guides-document-ingestion/overview.md" data-repo="litlfred/folio-assistant-core" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" lang="en" dir="ltr" data-qa-family="block" data-qa-key="overview.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-document-ingestion/overview.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-document-ingestion/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-translation" lang="en" dir="ltr" data-qa-family="translation" data-qa-key="overview.translation" data-qa-label="Translation QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-document-ingestion/overview.translation.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-document-ingestion/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Translation QA: loading the verdict…" aria-label="Translation QA: loading the verdict…"><span class="fa-qa-tag">TR</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button></span>
 
 How a dropped file becomes an **L1 source** the corpus can cite — expressed as
-**BPMN 2.0 swimlane diagrams**, with the Ingestion Engine as a named actor and
-every not-yet-built step linked to the bean that tracks it.
+**BPMN 2.0 swimlane diagrams**, with the Ingestion Engine as a named actor.
 
 ---
 
@@ -47,8 +46,7 @@ every not-yet-built step linked to the bean that tracks it.
 
 [Open the BPMN source](https://github.com/litlfred/folio-assistant/blob/main/cat-harness/processes/library/document-ingestion.bpmn){: .btn .btn-outline }
 
-They are not the same directory under two names, and the distinction is
-load-bearing:
+They are not the same directory under two names:
 
 | | `uploads/` | `library/<bib-slug>/` |
 |---|---|---|
@@ -56,11 +54,10 @@ load-bearing:
 | stage | incoming queue | **L1 source content** |
 | greppable by the corpus checklist | **no** | yes |
 
-That last row is the one that costs sessions. The corpus-grep checklist
-searches `library/` only — so a paper still sitting in `uploads/` does not
-merely go unread, it makes a **clean grep** read as *"nobody has done this"*
-while the source is sitting on disk. An un-ingested source is worse than an
-absent one, because it produces false confidence rather than a gap.
+The corpus-grep checklist searches `library/` only, so a source still sitting
+in `uploads/` makes a **clean grep** read as *"nobody has done this"*. An
+un-ingested source is worse than an absent one: it produces false confidence
+rather than a gap.
 
 ## `library/` is L1
 {: #library-is-l1 data-fa-label="sec:document-ingestion-library-is-l1" }
@@ -88,15 +85,13 @@ placed there is silently dropped.
        alt="BPMN swimlane diagram: the basic ingestion flow is called first — the upload is accepted, its metadata goes into the knowledge graph and the asset is catalogued in library; the Ingestion Engine then detects its media type and mints a doc id, then calls four subprocesses in turn — extract structure, derive content, build the L1 knowledge graph, and the L1 completeness gate; an incomplete result opens a bean on the shared work plan and returns to the derive step, while a complete one is moved into library under its bibliography slug and becomes citeable as an L1 source.">
 </div>
 
-[Open the BPMN source](https://github.com/litlfred/folio-assistant/blob/main/folio-assistant-core/processes/library/l1-document-ingestion.bpmn){: .btn .btn-outline }
-
-Five things in that diagram are worth reading closely.
+[Open the BPMN source](https://github.com/litlfred/folio-assistant-core/blob/main/processes/library/l1-document-ingestion.bpmn){: .btn .btn-outline }
 
 **It begins by calling the basic flow.** The first step is a call into
 `document-ingestion.bpmn`, the basic ingestion flow every asset takes: the
 upload is accepted, its metadata goes into the knowledge graph, and the asset is
 catalogued in `library/`. That flow makes no content-type decision; everything
-after the call is the document-specific refinement (placement PR6).
+after the call is the document-specific refinement.
 
 **The Ingestion Engine is an actor, not a script.** It runs unattended. A drop
 during an editing session triggers ingestion in the background — the
@@ -108,8 +103,7 @@ a missing derived artefact, the engine opens a bean and the document **stays in
 `uploads/`**. It does not land half-ingested in `library/` looking finished.
 
 **Each subprocess is its own file**, called with `bpmn:callActivity` and
-declared with `bpmn:import`. Open any of them on its own in bpmn.io; the parent
-stays readable because it does not inline them.
+declared with `bpmn:import`, so each opens on its own in bpmn.io.
 
 **The end is where authoring begins.** "Available to cite as an L1 source" is
 the hand-off into [the publication workflow](../process/publication-workflow.html) — the
@@ -125,7 +119,7 @@ same corpus an author edits and a reviewer reviews.
        alt="BPMN diagram: from a binary, an exclusive gateway asks whether there is an embedded text layer; if yes the text layer is extracted, if no the document is OCR'd to per-page text files; both paths split the result into section markdown files carrying a document brief, then write structure.json and extract claim candidates.">
 </div>
 
-[Open the BPMN source](https://github.com/litlfred/folio-assistant/blob/main/folio-assistant-core/processes/library/ingest-extract-structure.bpmn){: .btn .btn-outline }
+[Open the BPMN source](https://github.com/litlfred/folio-assistant-core/blob/main/processes/library/ingest-extract-structure.bpmn){: .btn .btn-outline }
 
 The OCR branch is the one to know about. A document ingested that way keeps its
 text in `ocr/page-*.txt` and only a **stub** in `sections/` — so the documented
@@ -133,9 +127,8 @@ text in `ocr/page-*.txt` and only a **stub** in `sections/` — so the documente
 corpus-grep checklist has a fourth tier, and why a clean `sections/` grep is not
 evidence that the library lacks a topic.
 
-Each section file carries the document brief in its front-matter. That is
-contextual retrieval: a chunk in isolation loses what makes it mean anything, so
-a hit is interpretable without opening anything else.
+Each section file carries the document brief in its front-matter (contextual
+retrieval), so a hit is interpretable without opening anything else.
 
 ### Derive content
 {: #derive-content data-fa-label="sec:document-ingestion-derive-content" }
@@ -147,18 +140,13 @@ a hit is interpretable without opening anything else.
        alt="BPMN diagram: a parallel gateway fans out per asset kind — archive contents manifest, technical file metadata, localized image descriptions, audio transcription and translation, and tabular metadata — then joins, and every generated narrative is stamped with the human or agent that authored it.">
 </div>
 
-[Open the BPMN source](https://github.com/litlfred/folio-assistant/blob/main/folio-assistant-core/processes/library/ingest-derive-content.bpmn){: .btn .btn-outline }
+[Open the BPMN source](https://github.com/litlfred/folio-assistant-core/blob/main/processes/library/ingest-derive-content.bpmn){: .btn .btn-outline }
 
-**This subprocess is mostly not built yet.** Every task in it is tracked; see
-the table below. It is drawn in full anyway, because the shape of the pipeline
-is the thing being agreed, and a diagram that shows only what already exists
-cannot be used to decide what to build.
-
-The step that is easy to skip and expensive to retrofit is the last one. A
-generated description is **a claim by someone**, not a property of the file.
-Recording whether a human or an agent wrote it — and for an agent, which model
-version — is what lets a reader weigh it, and what makes a superseded model's
-descriptions findable as a set later. It is unrecoverable once lost.
+The last step is the one that cannot be retrofitted. A generated description
+is **a claim by someone**, not a property of the file. Recording whether a
+human or an agent wrote it — and for an agent, which model version — lets a
+reader weigh it and makes a superseded model's descriptions findable as a set.
+It is unrecoverable once lost.
 
 ### Ingest the theme
 {: #ingest-the-theme data-fa-label="sec:document-ingestion-ingest-the-theme" }
@@ -175,15 +163,13 @@ descriptions findable as a set later. It is unrecoverable once lost.
 **Only some sources are themes, and a person decides which.** After content is
 derived, the gateway *A theme source?* asks whoever is ingesting whether this
 document also carries a theme: a deployed site that serves one, or a style
-guide that states one. There is deliberately no rule that computes the answer.
-Whether a branded document is a theme source is an authoring judgement, and
-the owner ruled it so for bean `j66n`. A source that is not a theme skips
-straight to building the knowledge graph.
+guide that states one. No rule computes the answer: whether a branded document is a theme source is
+an authoring judgement. A source that is not a theme skips straight to
+building the knowledge graph.
 
 The decision sits at a gateway, not inside the subprocess, because "this is
-not a theme" and "this theme is malformed" are different outcomes. The first
-is the normal case. The second is a defect, and the subprocess reports it by
-refusing.
+not a theme" (the normal case) and "this theme is malformed" (a defect, which
+the subprocess reports by refusing) are different outcomes.
 
 Inside, the two kinds of source differ in one step only: a deployment's
 **served** stylesheet is read for its declarations, while a guide's **stated**
@@ -198,8 +184,8 @@ rules are read as it writes them. After that the paths join:
   producing a theme quietly degraded to the layouts it was given.
 
 A complete theme goes to the theme and UI review, and the result is one Theme
-node. It is one node kind, not three, because the palette vocabulary is shared
-and only the geometry varies between a sticky, a webpage and a publication.
+node: one kind, because the palette vocabulary is shared and only the geometry
+varies between a sticky, a webpage and a publication.
 
 ### Build the L1 knowledge graph
 {: #build-the-l1-knowledge-graph data-fa-label="sec:document-ingestion-build-the-l1-knowledge-graph" }
@@ -211,7 +197,7 @@ and only the geometry varies between a sticky, a webpage and a publication.
        alt="BPMN diagram: the engine writes a Dublin Core record, then a manifest referencing it, then the assets array with local paths or remote URLs, then binds the folder name to the bibliography slug; the corpus lane links the resulting L1 nodes into the knowledge graph.">
 </div>
 
-[Open the BPMN source](https://github.com/litlfred/folio-assistant/blob/main/folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn){: .btn .btn-outline }
+[Open the BPMN source](https://github.com/litlfred/folio-assistant-core/blob/main/processes/library/ingest-build-l1-kg.bpmn){: .btn .btn-outline }
 
 Each folder gets a **standalone `dublin-core.jsonld`** as its record of truth,
 referenced from `manifest.jsonld`. `dcterms` is already this corpus's JSON-LD
@@ -230,48 +216,47 @@ directory are the same string.
        alt="BPMN swimlane diagram: the engine checks that every derived artefact is present, runs round-trip translation QA, and an exclusive gateway routes drift or bad terminology to a reviewer for adjudication before the L1 completeness verdict is recorded.">
 </div>
 
-[Open the BPMN source](https://github.com/litlfred/folio-assistant/blob/main/folio-assistant-core/processes/library/ingest-l1-completeness-gate.bpmn){: .btn .btn-outline }
+[Open the BPMN source](https://github.com/litlfred/folio-assistant-core/blob/main/processes/library/ingest-l1-completeness-gate.bpmn){: .btn .btn-outline }
 
-Without this gate every derivation step above is optional in practice: the
-document lands in `library/`, reads as ingested, and the gap surfaces whenever
-someone next needs the missing artefact — long after the context is gone.
+The gate makes every derivation step above obligatory: an incomplete document
+is refused promotion and stays out of `library/`.
 
-The **round trip** is why the translation check is shaped the way it is. A
-forward-only check asks whether the target-language text reads well, which a
-confident mistranslation passes. Back-translating and comparing asks whether the
-*meaning* survived, which is the property actually wanted, and needs no
-reference translation. What it cannot do is decide which reading is right —
-that edge goes to a reviewer.
+The translation check is a **round trip**. A forward-only check asks whether
+the target-language text reads well, which a confident mistranslation passes.
+Back-translating and comparing asks whether the *meaning* survived, and needs
+no reference translation. It cannot decide which reading is right; that goes to
+a reviewer.
 
 ---
 
-## What is not built yet
+## Running it
 {: #what-is-not-built-yet data-fa-label="sec:document-ingestion-what-is-not-built-yet" }
 
 [✎ Edit](https://github.com/litlfred/folio-assistant-core/edit/main/docs/source/guides-document-ingestion/what-is-not-built-yet.md){: .fa-node-edit title="Edit docs/source/guides-document-ingestion/what-is-not-built-yet.md" data-fa-link="edit" data-src="docs/source/guides-document-ingestion/what-is-not-built-yet.md" data-repo="litlfred/folio-assistant-core" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" lang="en" dir="ltr" data-qa-family="block" data-qa-key="what-is-not-built-yet.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-document-ingestion/what-is-not-built-yet.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-document-ingestion/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-translation" lang="en" dir="ltr" data-qa-family="translation" data-qa-key="what-is-not-built-yet.translation" data-qa-label="Translation QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-document-ingestion/what-is-not-built-yet.translation.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-document-ingestion/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Translation QA: loading the verdict…" aria-label="Translation QA: loading the verdict…"><span class="fa-qa-tag">TR</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button></span>
 
-Every one of these is drawn in the diagrams above and tracked as a bean. None is
-implemented.
+The path is two commands, and `check:l1-complete` is the gate between them:
 
-| Step | Bean | Notes |
-|---|---|---|
-| One pipeline entry point | [`folio-assistant-apui`](https://github.com/litlfred/folio-assistant/blob/main/beans/defs/folio-assistant-apui--ingest-one-pipeline-entry-point-uploads-to-library.md) | Today the move is a script plus whatever the agent remembers |
-| Archive contents manifest | [`folio-assistant-twqe`](https://github.com/litlfred/folio-assistant/blob/main/beans/defs/folio-assistant-twqe--ingest-archives-extract-a-standardized-greppable-c.md) | A tar is opaque to every grep until listed as data |
-| Technical file metadata | [`folio-assistant-nso8`](https://github.com/litlfred/folio-assistant/blob/main/beans/defs/folio-assistant-nso8--ingest-technical-file-metadata-fileinfo-sizes-hash.md) | The checksum is what makes a remote asset verifiable |
-| Image descriptions, localized | [`folio-assistant-d5f1`](https://github.com/litlfred/folio-assistant/blob/main/beans/defs/folio-assistant-d5f1--ingest-narrative-description-per-image-localized-i.md) | **Including images extracted from PDFs** |
-| Audio transcription + translation | [`folio-assistant-1r0p`](https://github.com/litlfred/folio-assistant/blob/main/beans/defs/folio-assistant-1r0p--ingest-audio-transcription-and-translation.md) | |
-| Tabular metadata | [`folio-assistant-p67i`](https://github.com/litlfred/folio-assistant/blob/main/beans/defs/folio-assistant-p67i--ingest-csv-and-spreadsheet-sheet-names-headers-sha.md) | Sheets, headers, shape, narrative |
-| Narrative provenance | [`folio-assistant-iqim`](https://github.com/litlfred/folio-assistant/blob/main/beans/defs/folio-assistant-iqim--ingest-narrative-provenance-cite-the-human-or-agen.md) | Human or agent + **model version** |
-| L1 completeness gate | [`folio-assistant-pn6j`](https://github.com/litlfred/folio-assistant/blob/main/beans/defs/folio-assistant-pn6j--ingest-l1-completeness-gate-derived-content-must-b.md) | Makes the rest obligatory rather than aspirational |
-| Round-trip translation QA | [`folio-assistant-ktt2`](https://github.com/litlfred/folio-assistant/blob/main/beans/defs/folio-assistant-ktt2--ingest-round-trip-translation-qa-back-translate-to.md) | Detects drift; a human adjudicates it |
+```sh
+bun run cat ingest uploads/FILE.pdf --library <lib>            # rung + every derived arm, into ingest-staging/
+bun run cat ingest uploads/FILE.pdf --library <lib> --promote  # the L1 gate, then into <lib>/<slug>/
+```
+
+The gate reports each requirement as **met**, **unmet** or **not yet
+derivable**: a per-format arm (images, audio, tables, archives) that cannot run
+does not read as a pass. The method, rung by rung, is the
+[`l1-document-ingestion`]({{ '/reference/skill-instructions/l1-document-ingestion.html' | relative_url }})
+skill; audio and tables have their own,
+[`audio-transcription`]({{ '/reference/skill-instructions/audio-transcription.html' | relative_url }})
+and
+[`tabular-metadata`]({{ '/reference/skill-instructions/tabular-metadata.html' | relative_url }}).
 
 ## How much of this does Dublin Core carry?
 {: #how-much-of-this-does-dublin-core-carry data-fa-label="sec:document-ingestion-how-much-of-this-does-dublin-core-carry" }
 
 [✎ Edit](https://github.com/litlfred/folio-assistant-core/edit/main/docs/source/guides-document-ingestion/how-much-of-this-does-dublin-core-carry.md){: .fa-node-edit title="Edit docs/source/guides-document-ingestion/how-much-of-this-does-dublin-core-carry.md" data-fa-link="edit" data-src="docs/source/guides-document-ingestion/how-much-of-this-does-dublin-core-carry.md" data-repo="litlfred/folio-assistant-core" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" lang="en" dir="ltr" data-qa-family="block" data-qa-key="how-much-of-this-does-dublin-core-carry.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-document-ingestion/how-much-of-this-does-dublin-core-carry.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-document-ingestion/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-translation" lang="en" dir="ltr" data-qa-family="translation" data-qa-key="how-much-of-this-does-dublin-core-carry.translation" data-qa-label="Translation QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-document-ingestion/how-much-of-this-does-dublin-core-carry.translation.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-document-ingestion/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Translation QA: loading the verdict…" aria-label="Translation QA: loading the verdict…"><span class="fa-qa-tag">TR</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button></span>
 
-Some of it, and it is worth being exact about which, because the answer decides
-whether a field is a `dcterms` term or something this project invents.
+Some of it. The answer decides whether a field is a `dcterms` term or one in
+this project's own namespace.
 
 **Dublin Core covers the bibliographic layer well** — `dcterms:title`,
 `creator`, `date`, `language`, `identifier`, `hasPart`, `format`, `extent`. The
@@ -300,6 +285,6 @@ review consume them through the ordinary flow in
 [the publication workflow](../process/publication-workflow.html), where a change to a
 content block goes through validation, findings, and an editor's decision.
 
-The one coupling worth stating: a drop into `uploads/` **during** an editing
+One coupling: a drop into `uploads/` **during** an editing
 session starts ingestion in the background. The editor is not blocked, and the
 new source becomes citeable when the gate passes — not before.

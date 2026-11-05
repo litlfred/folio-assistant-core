@@ -4,21 +4,32 @@
 
 > **Generated, and not the authority.** This is `folio-assistant-core/processes/content/evidence-retrieval.bpmn` (process `Process_EvidenceRetrieval`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
 
-Frame a question for a recommendation, retrieve and appraise evidence from trusted sources, and either attach it or record the gap.
+Frame a question for a recommendation, retrieve and appraise evidence from trusted sources, and either attach it or record the gap; a change that states or alters no recommendation ends at its own event before any search.
 
-## Begin — A recommendation is in play (`StartEvent_Recommendation`)
+## Begin — An edit is about to be drafted (`StartEvent_Recommendation`)
 
 - Begin here.
 - Call `workflow_start` with `process: "Process_EvidenceRetrieval"` and the subject this run is about; keep the instance id it returns.
-- next: → `Task_ReviewExisting` (Review the guidance already in this content)
+- next: → `Gateway_RecommendationInPlay` (Does the change state or alter a recommendation?)
 
-### 1. Review the guidance already in this content (`Task_ReviewExisting`)
+### Decide — Does the change state or alter a recommendation? (`Gateway_RecommendationInPlay`)
+
+- The author answers before any search starts.
+- Call `workflow_complete` with `node: "Gateway_RecommendationInPlay"` and `outcome` set to the label that holds:
+  - «yes» → `Task_ReviewExisting` (Review the existing guidance)
+  - «no» → `EndEvent_NoRecommendation` (No recommendation in this change)
+
+### 1. Review the existing guidance (`Task_ReviewExisting`)
 
 - Who: the `Author / guideline developer (person)` lane (role `author`).
 - Skill: `content-review`.
 - What: The author reads what the document, DAK or IG ALREADY says on this question, before looking outward.
 - Record it: `workflow_complete` with `node: "Task_ReviewExisting"`.
 - next: → `Task_FramePico` (Frame the question as PICO)
+
+## Done — No recommendation in this change (`EndEvent_NoRecommendation`)
+
+- The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
 ### 2. Frame the question as PICO (`Task_FramePico`)
 
@@ -30,10 +41,10 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 
 ### Do all of — Retrieve across evidence classes (`Gateway_RetrievalFork`)
 
-- Work every branch; none is optional. Branches: → `Task_L1Sources` (Search trusted SOURCES — L1), → `Task_L2L3Content` (Search trusted CONTENT — L2 DAKs, L3 IGs), → `Task_DataRepos` (Query data repositories and statistical datasets)
+- Work every branch; none is optional. Branches: → `Task_L1Sources` (Search trusted L1 sources), → `Task_L2L3Content` (Search trusted L2 and L3 content), → `Task_DataRepos` (Query data repositories and statistical datasets)
 - The engine passes through this gateway itself; there is nothing to record here.
 
-### 3. Search trusted SOURCES — L1 (`Task_L1Sources`)
+### 3. Search trusted L1 sources (`Task_L1Sources`)
 
 - Who: the `Evidence agent (system)` lane (role `evidence-agent`).
 - Skill: `document-intake`.
@@ -41,7 +52,7 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 - Record it: `workflow_complete` with `node: "Task_L1Sources"`.
 - next: → `Gateway_RetrievalJoin` (Candidates assembled)
 
-### 4. Search trusted CONTENT — L2 DAKs, L3 IGs (`Task_L2L3Content`)
+### 4. Search trusted L2 and L3 content (`Task_L2L3Content`)
 
 - Who: the `Evidence agent (system)` lane (role `evidence-agent`).
 - Skill: `document-intake`, `document-intake`, `document-intake`.
@@ -60,9 +71,9 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 ### Wait for all — Candidates assembled (`Gateway_RetrievalJoin`)
 
 - Continue only when every one of the 3 incoming branches is done; the engine passes through itself.
-- next: → `Task_VerifyAuthority` (Verify authority against the observatory / registry API)
+- next: → `Task_VerifyAuthority` (Verify authority against the registry)
 
-### 6. Verify authority against the observatory / registry API (`Task_VerifyAuthority`)
+### 6. Verify authority against the registry (`Task_VerifyAuthority`)
 
 - Who: the `Trusted registries and observatories (external)` lane (role `external-registry`).
 - Skill: `registry-authority-contract`.
@@ -79,7 +90,7 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 
 ### 7. Open a bean for the unverified citation (`Task_RecordUnverified`)
 
-- Who: the `Work plan — beans (shared)` lane (role `work-plan`).
+- Who: the `Author / guideline developer (person)` lane (role `author`).
 - Skill: `todo-manager`.
 - What: An unresolvable citation is not dropped and not silently kept.
 - Record it: `workflow_complete` with `node: "Task_RecordUnverified"`.
@@ -98,17 +109,17 @@ Frame a question for a recommendation, retrieve and appraise evidence from trust
 - Answered by the appraisal: is the graded evidence enough to support a recommendation?
 - Call `workflow_complete` with `node: "Gateway_Sufficient"` and `outcome` set to the label that holds:
   - «no» → `Task_RecordGap` (Record the evidence gap)
-  - «yes» → `Task_AttachEvidence` (Attach the evidence to the recommendation)
+  - «yes» → `Task_AttachEvidence` (Attach the evidence)
 
 ### 9. Record the evidence gap (`Task_RecordGap`)
 
-- Who: the `Work plan — beans (shared)` lane (role `work-plan`).
+- Who: the `Author / guideline developer (person)` lane (role `author`).
 - Skill: `todo-manager`.
 - What: Insufficient evidence is a RESULT.
 - Record it: `workflow_complete` with `node: "Task_RecordGap"`.
 - next: → `EndEvent_GapRecorded` (Gap recorded, no recommendation)
 
-### 10. Attach the evidence to the recommendation (`Task_AttachEvidence`)
+### 10. Attach the evidence (`Task_AttachEvidence`)
 
 - Who: the `Author / guideline developer (person)` lane (role `author`).
 - Skill: `content-author`.

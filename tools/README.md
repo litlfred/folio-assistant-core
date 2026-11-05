@@ -7,7 +7,7 @@ generated: "scripts/subgraph-readmes.ts of the bootstrap toolset (https://github
 
 # core-tools
 
-The content layer's Tool nodes. Declared 2026-09-22 with the first one, `folio-changeset` (bean jwox, epic q4jm), which exposes `schemas/changeset.ts`. Reached by the harness through tool auto-discovery (bean p0za, owner ruling 2026-09-22), never by an import: the harness may not import core, and a Tool node is a declaration loaded by path.
+The content layer's Tool nodes, such as `folio-changeset`, which exposes `schemas/changeset.ts`. Reached by the harness through tool auto-discovery, never by an import: the harness may not import core, and a Tool node is a declaration loaded by path.
 
 Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-tools`, holding `tools`.
 
@@ -15,11 +15,14 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-tools`, ho
 |---|---|---|
 | [`index.ts`](index.ts) | a file |  |
 | [`tabular-tools.test.ts`](tabular-tools.test.ts) | a file |  |
+| [`archimate-from-glossary/`](archimate-from-glossary/) | _nothing declares what this holds_ | |
 | [`bibliography-page/`](bibliography-page/) | _nothing declares what this holds_ | |
 | [`block-actions/`](block-actions/) | _nothing declares what this holds_ | |
 | [`catalogue-from-references/`](catalogue-from-references/) | _nothing declares what this holds_ | |
 | [`check-dsa-hash/`](check-dsa-hash/) | _nothing declares what this holds_ | |
+| [`diig-phases-svg/`](diig-phases-svg/) | _nothing declares what this holds_ | |
 | [`dublin-core-render/`](dublin-core-render/) | _nothing declares what this holds_ | |
+| [`figure-coverage/`](figure-coverage/) | _nothing declares what this holds_ | |
 | [`folio-block-qa-summary/`](folio-block-qa-summary/) | _nothing declares what this holds_ | |
 | [`folio-block-screenshots/`](folio-block-screenshots/) | _nothing declares what this holds_ | |
 | [`folio-changeset/`](folio-changeset/) | _nothing declares what this holds_ | |
@@ -27,10 +30,14 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-tools`, ho
 | [`folio-review-comments/`](folio-review-comments/) | _nothing declares what this holds_ | |
 | [`folio-review-coverage/`](folio-review-coverage/) | _nothing declares what this holds_ | |
 | [`glossary-build/`](glossary-build/) | _nothing declares what this holds_ | |
+| [`glossary-from-source/`](glossary-from-source/) | _nothing declares what this holds_ | |
 | [`glossary-page/`](glossary-page/) | _nothing declares what this holds_ | |
 | [`glossary-table/`](glossary-table/) | _nothing declares what this holds_ | |
 | [`l1-coverage/`](l1-coverage/) | _nothing declares what this holds_ | |
+| [`references-render/`](references-render/) | _nothing declares what this holds_ | |
+| [`review-log-watch/`](review-log-watch/) | _nothing declares what this holds_ | |
 | [`review-sheet-sync/`](review-sheet-sync/) | _nothing declares what this holds_ | |
+| [`smart-approach-svg/`](smart-approach-svg/) | _nothing declares what this holds_ | |
 | [`tabular-csv/`](tabular-csv/) | _nothing declares what this holds_ | |
 | [`tabular-xlsx/`](tabular-xlsx/) | _nothing declares what this holds_ | |
 

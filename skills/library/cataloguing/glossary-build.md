@@ -11,13 +11,13 @@ Maintain the project-wide glossary of defined terms. Builds the
 generates the `chapters/glossary.tex` chapter, writes the same terms as a
 SKOS scheme for the glossary page, and gates CI with `--check` mode.
 
-## The SKOS scheme (bean `lqo9`, ruling 2: converge on SKOS)
+## The SKOS scheme
 
 The builder also writes `<glossary dir>/paper-<paper>.glossary.json`, a
 `folio-glossary/v1` scheme, into the glossary directory declared by the
 instance that holds the paper. Core's glossary page reads it through
-`collect()`, so the paper's terms are on the page, in the instance's
-namespace, beside every other scheme. The rules (status by provenance,
+`collect()` and shows the paper's terms, in the instance's namespace, beside
+every other scheme. The rules (status by provenance,
 verbatim definitions, the slug as `notation`) are in
 [`glossary-terms`](glossary-terms.md).
 
@@ -28,9 +28,7 @@ glossaries" — do not sort one of those.
 
 `--check` also fails when the scheme is stale, when two slugs would mint
 one term IRI, or when another document in the directory holds the scheme id.
-A scheme not written yet is reported and does not fail, so a paper that has
-not regenerated since the change keeps a green gate. `glossary.json` and
-`glossary.tex` are unchanged.
+A scheme not written yet is reported and does not fail.
 
 ## When to invoke
 
@@ -55,15 +53,12 @@ not regenerated since the change keeps a green gate. `glossary.json` and
 | `cd content && bun run validate <paper-dir>` | Includes the five glossary-term validation rules |
 | `cd content && bun run validate <paper-dir> --strict` | Adds `term-mention-coverage` (bare-text mentions) |
 
-**`pipeline/…` above is the FOLIO's own path.** The two glossary scripts moved
-out of the platform on 2026-09-30 (bean `yj6r`): `build-glossary.ts` and
-`codemod-refterm.ts` now live in `folio-assistant-core/scripts/`, beside the
-`schemas/glossary.ts` they read, because walking a paper's blocks is content
-machinery and `cat-harness` may not import upward into the content layer. A
-folio that vendors its own `content/pipeline/` is unaffected — its copy still
-wins. A folio that does not reaches them through the `glossary_check` and
-`codemod` MCP tools, whose resolver searches the folio, then the platform, then
-`folio-assistant-core/scripts/`.
+**`pipeline/…` above is the FOLIO's own path.** `build-glossary.ts` and
+`codemod-refterm.ts` live in `folio-assistant-core/scripts/`, beside the
+`schemas/glossary.ts` they read. A folio that vendors its own
+`content/pipeline/` copy uses it. A folio that does not reaches them through
+the `glossary_check` and `codemod` MCP tools, whose resolver searches the folio,
+then the platform, then `folio-assistant-core/scripts/`.
 
 ### Curator web UI (Phase C)
 
@@ -95,8 +90,8 @@ wrapped at every occurrence:
   project): `:refterm[Visible]` / `:refterm[Visible]{#slug}` in `.md`;
   `\refterm{slug}[{Visible}]` in `.tex`.
 
-Plain text and `\emph{}` are no longer permitted for defined terms once
-the slug appears in any `defines[]` list.
+Plain text and `\emph{}` are not permitted for a defined term once its slug
+appears in any `defines[]` list.
 
 ## Validation rules (Phase B)
 
@@ -112,7 +107,7 @@ the slug appears in any `defines[]` list.
 
 If the project has a formal-proof pipeline (e.g. Lean), the glossary
 build can regenerate a synonyms module from `glossary.json`, emitting
-`abbrev`s to library synonyms (owner-recorded decision):
+`abbrev`s to library synonyms:
 
 ```lean
 -- Auto-generated from glossary.json — do not edit by hand.
@@ -126,13 +121,11 @@ end Project.Glossary
 ```
 
 `abbrev` is preferred over `def` so that elaboration sees the library
-type definitionally. The formal-proof CI should re-run `--check` after
-this file is regenerated to ensure the JSON-to-source mapping is in
-sync.
+type definitionally. The formal-proof CI re-runs `--check` after this file is
+regenerated.
 
-The strict-mode validator (`--strict`) is enabled in CI **after** the
-first backfill batch lands, to avoid an avalanche of
-`term-mention-coverage` warnings on existing prose.
+Enable the strict-mode validator (`--strict`) in CI only **after** the first
+`:refterm` backfill batch lands.
 
 ## See also
 

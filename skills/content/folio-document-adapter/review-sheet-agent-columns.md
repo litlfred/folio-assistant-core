@@ -11,13 +11,12 @@ description: >
 
 # Keep the review sheet's Agent columns current
 
-The owner's rule, 2026-10-31: "if agent works on a CS via google sheet Tool
-is enabled for PC, then it updates the necessary columns". It is part of the
-process, not a courtesy at the end. The sheet's views (Agentic status,
-Staging review and the ⏳ line on Review Public Comments and Review Change
-Sets, or on Contributor Feedback in a drafting sheet) are built from the
-Agent tabs, so a change set worked without writing them shows reviewers
-nothing, or shows them something old as current.
+When an agent works on a change set of a sheet that has the Tool enabled,
+it updates the Agent columns as part of the process. The sheet's views
+(Agentic status, Staging review and the ⏳ line on Review Public Comments and
+Review Change Sets, or on Contributor Feedback in a drafting sheet) are built
+from the Agent tabs, so a change set worked without writing them shows
+reviewers nothing, or something old as current.
 
 The tabs, their columns and who writes each are the
 [`public-comment`](public-comment.md) skill's (§"The live review sheet")
@@ -50,9 +49,9 @@ the reply that the sheet was not updated and why.
   completed, Feedback basis, Staging built, PR head, Staging built from,
   Staging deploy and Agent step (each header ends "(change set)").
 
-An older public-comment sheet may still have the one `Agent` tab (comments
-left, change sets right, the Config's `AGENT_CS` empty). Write it the same
-way, by header.
+A public-comment sheet may instead have one `Agent` tab (comments left,
+change sets right, the Config's `AGENT_CS` empty). Write it the same way, by
+header.
 
 ## When to write
 
@@ -113,8 +112,8 @@ tab with the tool").
 ## Checking it
 
 After writing, read the change set's row on Review Change Sets (or
-Contributor Feedback) back. Once the Apps Script has refreshed (within five
-minutes of an edit), its Agentic status shows
+Contributor Feedback) back. Once the Apps Script has refreshed (its timer
+runs every minute), its Agentic status shows
 `<repo>#n (status, completed) · what it changed` for each PR, and Staging
 review shows no ⚠ unless the preview really is behind. A missing or wrong
 line there means an Agent cell is missing or out of step.

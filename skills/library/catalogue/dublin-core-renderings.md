@@ -12,11 +12,6 @@ description: >
 
 # Dublin Core renderings
 
-Bean `7eak`. The owner, 2026-09-30: *"do we render the proper xml for dublin
-core? it should be in rendering ppiple as skill and tool … and then pushed to
-gh-pages"*; and, paraphrased, the owner asked that a catalogue instance above
-this layer link to its JSON and XML renderings.
-
 | piece | where |
 |---|---|
 | the mapping (the code this skill governs) | `folio-assistant-core/schemas/dublin-core-render.ts` |
@@ -27,45 +22,31 @@ this layer link to its JSON and XML renderings.
 
 ## Which records get a rendering
 
-**Exactly the records a catalogue ITEM names through `metadataRef`.** That is
-the record the item's page describes, so a rendering of it has a page to sit
-next to.
-
-- A record that no item names gets no rendering, because it would sit next to
-  no page.
-- A `metadataRef` that does not resolve is reported by `check:catalogue`, not
-  here. That is one finding with one owner.
+**Exactly the records a catalogue ITEM names through `metadataRef`**, the
+record the item's page describes. A record no item names gets no rendering. A
+`metadataRef` that does not resolve is reported by `check:catalogue`, not here.
 
 ## Where they go
 
 `<published root>/dublin-core/<stem>.dc.xml` and `<stem>.dc.jsonld`.
 
 - The **published root** is the directory the instance declares with
-  `instanceRoot: true`. For an IRIS mirror that is `site/`, which is served at
-  `/<instance>/`. The mount copies that directory whole, so the renderings are
-  published next to the item pages with no extra pipeline step.
+  `instanceRoot: true` (for an IRIS mirror, `site/`, served at `/<instance>/`).
+  The mount copies it whole, so the renderings publish beside the item pages.
 - `<stem>` is the record's own filename without `.dc.json`.
 - An instance that declares no published root is **refused**, not given a
   guessed one.
 
-The item page links both files, and links them only when they exist. A link to
-a rendering that was never written looks exactly like a working one.
+The item page links both files, and only when they exist.
 
 ## Two renderings, and why the existing projection is not one of them
 
 `dublinCoreToJsonLd` in `dublin-core.ts` is the **lossless** DSpace graph:
 
-- every qualified field goes to a minted `dspace:` predicate;
-- every value sits in an `@list`.
-
-Both choices are right for what that projection is for. Both are wrong for
-something a stranger reads:
-
-- A DCMI-aware consumer would find no `dcterms:issued`.
-- `dcterms:title` would point at an RDF list instead of a literal.
-
-So the renderings are a second projection with a different job, and the first
-one is left alone.
+every qualified field goes to a minted `dspace:` predicate and every value sits
+in an `@list`. A DCMI-aware consumer would find no `dcterms:issued` there, and
+`dcterms:title` would be an RDF list, not a literal. The renderings are a second
+projection for outside readers; the first is left unchanged.
 
 ### DC XML: qualified DC, per DCMI's XML guidelines
 
@@ -77,9 +58,9 @@ implementing Dublin Core in XML* (2003-04-02):
 - `xml:lang` for a value's language;
 - `xsi:type="dcterms:<Scheme>"` for an encoding scheme.
 
-It is **not `oai_dc`**, the simple-DC form an OAI-PMH endpoint serves. That form
-needs the OAI namespace and an endpoint, and nobody has asked for either. If
-one is wanted, it is a third rendering, not a change to this one.
+It is **not `oai_dc`**, the simple-DC form an OAI-PMH endpoint serves (that
+needs the OAI namespace and an endpoint). An `oai_dc` form would be a third
+rendering, not a change to this one.
 
 ### JSON-LD: bound to DCMI Terms, following the `linked-data` voice
 
@@ -104,13 +85,13 @@ the vocabulary, not from the value's shape.
   therefore emits a node with the text as `rdf:value`. That is DCMI's own
   "value string" pattern, from *Expressing Dublin Core metadata using RDF*
   (2008).
-- Emitting the bare string would make the creator a literal. Minting an IRI
-  would invent an address. Both are worse for a standalone metadata document.
-- **For multi-graph static edge search**, however, anonymous nodes become blank
-  nodes (`_:`), causing variable collisions when merging thousands of records.
-  In that pipeline, [`oxigraph-catalogue-search`](oxigraph-catalogue-search.md)
-  governs: compound resources must be deterministically skolemized into stable,
-  content-addressed URIs (`https://<domain>/entity/item/{handle}#{prop}_{idx}`).
+  A bare string would make the creator a literal; a minted IRI would invent an
+  address.
+- **For multi-graph static edge search**, those anonymous nodes would become
+  colliding blank nodes, so there
+  [`oxigraph-catalogue-search`](oxigraph-catalogue-search.md) governs: compound
+  resources are skolemized into content-addressed URIs
+  (`https://<domain>/entity/item/{handle}#{prop}_{idx}`).
 
 **Second fact: which encoding scheme, if any.**
 
@@ -151,8 +132,7 @@ What happens to such a field depends on the form:
 
 - a rendering that is **missing**;
 - a rendering that is **stale**, meaning its bytes differ from a fresh render;
-- an **orphan**, meaning a file in the directory that no record produces. The
-  item it described is gone, but a reader would still find it.
+- an **orphan**, meaning a file in the directory that no record produces.
 
 `bun run cat dc:render` regenerates. Renderings are generated files: never edit
 one by hand.

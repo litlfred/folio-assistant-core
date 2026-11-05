@@ -20,8 +20,7 @@ Why it is modelled as a lane rather than a note:
 - **Claiming is how two workers avoid the same item.** Claim before you work,
   and never resolve someone else's bean.
 - **`beans create` is not idempotent.** Check for an existing bean by exact
-  title before creating one — the guard, and the incident that motivates it,
-  are in
+  title before creating one; the guard is in
   [`todo-manager`]({{ '/reference/skill-instructions/todo-manager.html' | relative_url }}).
 - **Beans are not sidecars.** Machine-generated queues (QA `*.qa.json`, witness
   files, watcher queues) stay bulk JSON; they never become beans.

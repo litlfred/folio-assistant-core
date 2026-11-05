@@ -13,7 +13,6 @@ description: >
 > `folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn`
 > (`Task_OdrlCitesText`, P2.3) · Checker:
 > `folio-assistant-core/scripts/check-dsa-hash.ts` (`bun run cat check:dsa-hash`)
-> · Bean: `folio-assistant-2z1t`.
 
 When a Data Sharing Agreement carries a computable W3C ODRL 2.2 `Agreement`
 beside its signed legal text, the policy must cite the exact versioned legal

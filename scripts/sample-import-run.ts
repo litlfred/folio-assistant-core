@@ -113,6 +113,17 @@ function gateNote(node: CatalogueNode, gate: string): { permitted: boolean; text
   return { permitted, text: `READ from the recorded materialization, not re-decided. ${lines.join(" | ")}` };
 }
 
+/** One gate's verdict over every bitstream: `permitted` only when each one is; otherwise `refused` if any is, else `unknown`. */
+function gateVerdict(node: CatalogueNode, gate: string): "permitted" | "refused" | "unknown" {
+  const vs = node.bitstreams.map(
+    (b) => (b.materialization?.gates as Record<string, { verdict?: string }> | undefined)?.[gate]?.verdict ?? "unknown",
+  );
+  if (vs.length > 0 && vs.every((v) => v === "permitted")) return "permitted";
+  return vs.includes("refused") ? "refused" : "unknown";
+}
+
+const GATES = ["size", "restrictions", "copyright", "retention", "sourceLoss"] as const;
+
 export async function runSampleImport(opts: RunOptions): Promise<RunResult> {
   const root = resolve(opts.root);
   const instanceRoot = join(root, opts.instance);
@@ -149,6 +160,8 @@ export async function runSampleImport(opts: RunOptions): Promise<RunResult> {
     const here = positionOf(state).at(-1)?.split(" ▸ ").at(-1);
     if (!here) break;
     let outcome: string | undefined;
+    let facts: Record<string, unknown> | undefined;
+    let computed: string | undefined; // a computed gateway's branch, for the run's own record
     let note: string;
 
     switch (here) {
@@ -167,19 +180,27 @@ export async function runSampleImport(opts: RunOptions): Promise<RunResult> {
           (opts.bundles ? `to bundle(s) ${opts.bundles.join(", ")}` : "none — every bitstream is sampled") +
           `: ${node.bitstreams.map((b) => `${b.name} (${b.bundle}, ${b.bytes ?? "?"} bytes)`).join("; ")}.`;
         break;
-      case "Task_Size":
-      case "Task_Restrictions":
-      case "Task_Copyright":
-      case "Task_Retention":
-      case "Task_SourceLoss": {
-        const gate = { Task_Size: "size", Task_Restrictions: "restrictions", Task_Copyright: "copyright", Task_Retention: "retention", Task_SourceLoss: "sourceLoss" }[here]!;
-        const g = gateNote(node, gate);
+      case "Task_Size": {
+        const g = gateNote(node, "size");
         if (!g.permitted) gatesOk = false;
         note = g.text;
         break;
       }
+      case "Task_AnswerGates": {
+        // The other four gates, answered in one step (shared block G10).
+        const parts: string[] = [];
+        for (const gate of ["restrictions", "copyright", "retention", "sourceLoss"]) {
+          const g = gateNote(node, gate);
+          if (!g.permitted) gatesOk = false;
+          parts.push(`${gate}: ${g.text.replace(/^READ from the recorded materialization, not re-decided\. /, "")}`);
+        }
+        note = `READ from the recorded materialization, not re-decided. ${parts.join(" || ")}`;
+        break;
+      }
       case "Gateway_Gates":
-        outcome = gatesOk ? "yes" : "no, or unknown";
+        // Computed by materialization-gate.dmn from the five verdicts, never chosen here.
+        facts = Object.fromEntries(GATES.map((g) => [g, gateVerdict(node, g)]));
+        computed = gatesOk ? "yes" : "no, or unknown";
         note = gatesOk
           ? `every gate reads permitted on every bitstream (publication gates ${PUBLICATION_GATES.join(", ")} included)`
           : "at least one gate is not permitted — the diagram's refusal branch";
@@ -292,7 +313,7 @@ export async function runSampleImport(opts: RunOptions): Promise<RunResult> {
         note = passed ? "all four checks passed" : "a check failed or could not run";
         break;
       case "Task_StayRef": {
-        const held = ["size", "restrictions", "copyright", "retention", "sourceLoss"]
+        const held = [...GATES]
           .map((g) => ({ g, n: gateNote(node, g) }))
           .filter((x) => !x.n.permitted)
           .map((x) => `${x.g}: ${x.n.text.replace(/^READ from the recorded materialization, not re-decided\. /, "")}`);
@@ -309,8 +330,8 @@ export async function runSampleImport(opts: RunOptions): Promise<RunResult> {
         );
     }
 
-    await call("workflow_complete", { instance: id, node: here, outcome, actor, note, target: opts.item });
-    steps.push({ node: here, outcome, note });
+    await call("workflow_complete", { instance: id, node: here, outcome, facts, actor, note, target: opts.item });
+    steps.push({ node: here, outcome: outcome ?? computed, note });
   }
 
   const final = loadInstance(root, id)!;

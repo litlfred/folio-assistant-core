@@ -13,22 +13,17 @@ allowed-tools: Read Grep Glob
 
 # Review: a pointer to the review skills
 
-Bean `0jtl`. The owner asked for review skills "for document review for large
-things like a DAK or L1 digital transofrmation hadbook", to go in
-folio-assistant-core. On 2026-10-06 the owner ruled where they live: **leave
-them in cat-harness and point to them from core.** Nothing moved. This file
-is the pointer.
-
-So this skill holds no rules of its own. Each rule below belongs to the skill
-it names, and that skill is the one to read and change.
+This skill holds no rules of its own. The review skills live in cat-harness
+(and one in core); each rule below belongs to the skill it names, and that
+skill is the one to read and change.
 
 ## The skills, in the order a review uses them
 
 | step | question it answers | skill | lives in |
 |---|---|---|---|
-| 1. What changed | Which blocks did this edit-set add, change, move or remove? | [`staging-review`](../../../cat-harness/skills/sdlc/sdlc-core/staging-review.md) | cat-harness |
+| 1. What changed | Which blocks did this edit-set add, change, move or remove? | [`staging-review`](../../../cat-harness/sdlc/skills/sdlc-core/staging-review.md) | cat-harness |
 | 2. Where to look first | Which sections changed most, have open comments, and are failing or stale on QA? | [`review-heatmap`](../../../cat-harness/skills/authoring/authoring-core/review-heatmap.md) | cat-harness |
-| 3. What it looks like | Before/after pictures of a rendered change, and a measured count | [`before-after-preview`](../../../cat-harness/skills/sdlc/sdlc-core/before-after-preview.md), [`visual-diff`](../../../cat-harness/skills/sdlc/sdlc-core/visual-diff.md) | cat-harness |
+| 3. What it looks like | Before/after pictures of a rendered change, and a measured count | [`before-after-preview`](../../../cat-harness/sdlc/skills/sdlc-core/before-after-preview.md), [`visual-diff`](../../../cat-harness/sdlc/skills/sdlc-core/visual-diff.md) | cat-harness |
 | 4. Saying something | How a reviewer comments on a block, and how the comment follows a renamed block | [`review-comments`](../content/content-lifecycle-ext/review-comments.md) | core |
 | 5. The gate | Who reviews, and what passing means: Technical Officer first pass, Clinical SME clinical sign-off, Content Reviewer approval | [`content-review`](../../../cat-harness/skills/authoring/content-lifecycle/content-review.md) | cat-harness |
 
@@ -49,11 +44,9 @@ read as, is in `review-heatmap`, not here.
 
 ## What is not here yet
 
-The bean originally asked for three skills. The 2026-10-06 ruling narrowed it
-to this pointer. None of the following exists as a skill, and none should be
-written in this package without a new owner decision:
+None of the following exists as a skill, and none should be written in this
+package without a new owner decision:
 - `large-document-review`: the method, covering slicing by the folio/ graph,
   role assignment, stop rules and sign-off per slice.
 - `review-navigation`: how an agent drives the review page for a person.
-- Rules mined from the WHO IG starter-kit SOPs (bean `sopq`) or from
-  IEEE 1028.
+- Rules mined from the WHO IG starter-kit SOPs or from IEEE 1028.

@@ -10,9 +10,9 @@ A document is still being written, and the Authoring Committee gives feedback on
 
 - Begin here.
 - Call `workflow_start` with `process: "Process_ContributorFeedback"` and the subject this run is about; keep the instance id it returns.
-- next: → `Task_StartRow` (Start a change-set row: title, sections, feedback)
+- next: → `Task_StartRow` (Start a change-set row)
 
-### 1. Start a change-set row: title, sections, feedback (`Task_StartRow`)
+### 1. Start a change-set row (`Task_StartRow`)
 
 - Who: the `Authoring Committee` lane (role `authoring-committee`).
 - Skill: `review-sheet-script`.
@@ -40,7 +40,7 @@ A document is still being written, and the Authoring Committee gives feedback on
 
 - Who: the `Authoring agent` lane (role `authoring-agent`).
 - Skill: `review-sheet-script`.
-- What: One row, one branch, one active pull request (owner, 2026-10-31): the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again.
+- What: One row, one branch, one active pull request: the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again.
 - Record it: `workflow_complete` with `node: "Task_EditInPullRequest"`.
 - next: → `Task_AnswerPreview` (Review the preview and answer)
 
@@ -57,17 +57,31 @@ A document is still being written, and the Authoring Committee gives feedback on
 - Answered by the script, which compares the row's Blue cells with the basis the agent wrote.
 - Call `workflow_complete` with `node: "Gateway_FeedbackChanged"` and `outcome` set to the label that holds:
   - «changed» → `Task_Propose` (Propose a direction)
-  - «agreed» → `Task_ReadyForMerge` (Set Ready for merge to Yes)
+  - «agreed» → `Task_QaGate` (QA-review the dispositions)
 
-### 6. Set Ready for merge to Yes (`Task_ReadyForMerge`)
+### 6. QA-review the dispositions (`Task_QaGate`)
+
+- Who: the `QA reviewer (independent)` lane (role `qc-reviewer`).
+- Skill: `review-sheet-script`.
+- What: Reads: the change set's Disposition (change set), the people's Blue Disposition and feedback, the pull request's diff at its head commit, and the staging QA report.
+- Record it: `workflow_complete` with `node: "Task_QaGate"`.
+- next: → `Gateway_QaPassed` (QA gate passed for the PR's head?)
+
+### Decide — QA gate passed for the PR's head? (`Gateway_QaPassed`)
+
+- Call `workflow_complete` with `node: "Gateway_QaPassed"` and `outcome` set to the label that holds:
+  - «failed» → `Task_EditInPullRequest` (Edit the document in the row's pull request)
+  - «passed» → `Task_ReadyForMerge` (Set Ready for merge to Yes)
+
+### 7. Set Ready for merge to Yes (`Task_ReadyForMerge`)
 
 - Who: the `Editor` lane (role `editor`).
 - Skill: `review-sheet-script`.
-- What: An Editor sets the row's Ready for merge (Orange) to Yes.
+- What: An Editor sets the row's Ready for merge (Orange) to Yes once the QA gate has passed for the pull request's head commit.
 - Record it: `workflow_complete` with `node: "Task_ReadyForMerge"`.
 - next: → `Task_Merge` (Merge the pull request)
 
-### 7. Merge the pull request (`Task_Merge`)
+### 8. Merge the pull request (`Task_Merge`)
 
 - Who: the `Authoring agent` lane (role `authoring-agent`).
 - Skill: `review-sheet-script`.

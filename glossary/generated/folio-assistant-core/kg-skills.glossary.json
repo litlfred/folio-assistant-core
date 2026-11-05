@@ -156,6 +156,14 @@
       "status": "candidate"
     },
     {
+      "id": "figure-rebuild",
+      "prefLabel": "figure-rebuild",
+      "definition": "Turn a source publication's figures into computable diagrams when a folio is built from its L1 entry. Every declared figure gets a block, and each one is rebuilt in the form its type calls for: an ArchiMate view, BPMN, DMN, a FHIR logical model, or an SVG generated from data, always from one schema-backed source. The PDF crop stays beside the rebuild as the cited source. The figure-coverage check counts what is missing and what is still only a picture.",
+      "notation": "figure-rebuild",
+      "source": "folio-assistant-core/skills/library/ingestion/figure-rebuild.md",
+      "status": "candidate"
+    },
+    {
       "id": "filing-dublin-core",
       "prefLabel": "filing-dublin-core",
       "definition": "Cataloguing a source as it arrives — which facts are `dcterms`, which are this project's own, and why the line is drawn by the vocabulary rather than by convenience. The bibliographic layer only; the derived layer belongs to ingestion.",
@@ -289,6 +297,14 @@
       "status": "candidate"
     },
     {
+      "id": "public-comment-channels",
+      "prefLabel": "public-comment-channels",
+      "definition": "Set up the channels a public-comment release goes out on (an offline Excel sheet, a Google Form, a GitHub issue form, and the review sheet), each limited to the release's fixed references, with the editor's instructions and the announcement, and bring every channel back in through one intake path that ends in agent triage into thematic change-sets. Use when a draft is released for public comment, when a channel is added to a running review, or when returned comments arrive from any channel.",
+      "notation": "public-comment-channels",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/public-comment-channels.md",
+      "status": "candidate"
+    },
+    {
       "id": "quality-control",
       "prefLabel": "quality-control",
       "notation": "quality-control",
@@ -325,6 +341,22 @@
       "definition": "Reviewer comments on a folio's edit-set, from a tagged pull-request comment to a structured todo on the review page. Covers the tag a reviewer types, how the comments are ingested into `review-comment/1.0.0` todos, where the published `review-comments.json` comes from and when it refreshes, how a comment follows a renamed block and survives a removed one, who may change a comment's status, and how to change this process. Use when a reviewer asks how to comment on a block, when the review page shows no comments or a wrong one, when editing the ingestion, or when a folio's staging workflow is set up.",
       "notation": "review-comments",
       "source": "folio-assistant-core/skills/content/content-lifecycle-ext/review-comments.md",
+      "status": "candidate"
+    },
+    {
+      "id": "review-log-watch",
+      "prefLabel": "review-log-watch",
+      "definition": "Poll a review log (a drafting Contributor Feedback sheet, or a public-comment sheet's Review Change Sets) and its folio repository's issues mechanically, with Tool `review-log-watch`, and start agent work only when a cell people set or an open issue changed. Each issue that no row links yet becomes a Contributor Feedback row, and a closed issue's row is hidden with its text struck through. Use on every wake of a review-log watcher, and when setting up a watcher for a new log.",
+      "notation": "review-log-watch",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/review-log-watch.md",
+      "status": "candidate"
+    },
+    {
+      "id": "review-sheet-agent-columns",
+      "prefLabel": "review-sheet-agent-columns",
+      "definition": "Whenever an agent works on a change set of a folio whose review sheet is kept by the Tool `review-sheet-sync`, it writes the Agent tabs' columns for that change set and its comments as it goes: status, step, what it did, the PR, the staging page and its build, what the PR changed and when it finished. Use on every change-set edit, draft, PR, push, merge or close, in a sheet sync or not.",
+      "notation": "review-sheet-agent-columns",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/review-sheet-agent-columns.md",
       "status": "candidate"
     },
     {

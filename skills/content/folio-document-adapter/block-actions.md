@@ -12,13 +12,10 @@ description: >
 
 # Block actions: [edit] and [feedback] on every block
 
-A reader who finds something wrong in a block should be one click from
-proposing the fix or saying what is wrong, and that click should land on the
-block, not on the repository. The owner asked for it on 2026-10-06, looking at
-the DPI-H document on staging, *"like smart-immiz does"* (the IG builder puts
-"Edit this page on GitHub" and a 📣 feedback icon on every heading). This is
-the same affordance per **block**, because a block is what a comment, a
-change-set and an edit are about. Bean `uphx`, REQ-17.
+A reader who finds something wrong in a block is one click from proposing the
+fix or saying what is wrong, and the click lands on the block, not on the
+repository. The links are per **block**, because a block is what a comment, a
+change-set and an edit are about.
 
 The code is `folio-assistant-core/scripts/block-actions.ts`; the Tool is
 `block-actions`; the document build (`build-document-site.ts`) draws the links
@@ -41,8 +38,7 @@ title reads `Feedback [dpi-h-ra]: <section> — <block>` and the body opens with
 that takes issues about more than one thing, can then sort feedback by what it
 is about without opening it. The code is in the **title** rather than only a
 label because GitHub silently drops a prefilled label when the reporter has
-no triage rights, and most public reviewers do not (owner, 2026-10-06:
-*"plain issues + coding for content slug"*).
+no triage rights, and most public reviewers do not.
 
 ## The issue form is the folio's, and optional
 
@@ -84,8 +80,8 @@ them off for a build that should have none.
   JavaScript.
 - **Compact** (`compactActionsHtml` + `compactActionsScript`): the block's
   facts as data attributes, and the hrefs built in the browser when a pointer
-  or focus reaches them. Used on a lazy page's shell, where 933 prefilled
-  feedback URLs cost 864 KB. The browser builder, `BLOCK_URLS_JS`, is held
+  or focus reaches them. Used on a lazy page's shell, where a prefilled URL
+  per block would bloat the page. The browser builder, `BLOCK_URLS_JS`, is held
   equal to `editUrl` and `feedbackUrl` by `block-actions.test.ts`; change both
   together or the test fails.
 
@@ -101,20 +97,19 @@ Three places keep their own link on purpose: the public-comment dashboard's
 **Discuss** (it opens a change-set discussion, not feedback on a block), the
 bootstrap site's **Improve this page** (`bootstrap-tools` may import nothing
 outside itself), and an IG page's per-**section** ✎ / 📣 (`SOURCE_LINKS_JS`
-in `build-ig-site.ts`): a section's heading can live in an included file
-(bean `x78e`), and its issue is titled after the section with the page apart.
+in `build-ig-site.ts`): a section's heading can live in an included file,
+and its issue is titled after the section with the page apart.
 The IG page's own *Edit this page* link does use the recipe.
 
 **Any page that shows edit or feedback links uses these,** not a URL of its
 own: one recipe, so a change to the issue form or the branch reaches every
-page at once (owner, 2026-10-06: *"make sure feedback/edit links are changed
-across all harness/visualizers to be dynamic"*).
+page at once.
 
 ## In the library: edit opens the folio, never the source
 
 A library entry is a frozen source: the version published for public comment
 stays in `library/` exactly as circulated, and the changes the review asks
-for are made in `folio/` (owner, 2026-10-07). So the library's Document view
+for are made in `folio/`. So the library's Document view
 (`cat-harness-tools/scripts/lib/library-document.ts`, drawn by the platform viewer
 and by `build-library-site.ts` on a folio's site) shows:
 

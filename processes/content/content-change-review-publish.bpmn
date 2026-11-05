@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns#"
- xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/v0/processes/ns#" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
+<bpmn:definitions xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns/"
+ xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/v0/processes/ns/" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
                   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
                   id="Definitions_ContentChangeReviewPublish"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="0.1.0">
-  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns#" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns/" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
   <bpmn:resource id="build-pipeline" name="Build pipeline"/>
   <bpmn:resource id="reviewer" name="Reviewer / SME"/>
 
@@ -18,7 +18,7 @@
   <bpmn:process id="Process_ContentChangeReviewPublish" name="Merge and publish a content change" isExecutable="false">
     <bpmn:documentation>Merging an approved content change on the owner's explicit confirmation and publishing it: remove the staging preview, rebuild the main site and watch it. A change that is not merged keeps its preview.
 
-Called from content-change-review after the committee approves. Approving is the committee's judgement and merging is a separate, confirmed act (bean en2d), which is why the merge opens this phase rather than closing the review.</bpmn:documentation>
+Called from content-change-review after the committee approves. Approving is the committee's judgement and merging is a separate, confirmed act, which is why the merge opens this phase rather than closing the review.</bpmn:documentation>
     <bpmn:laneSet id="LaneSet_ContentChangeReviewPublish">
       <bpmn:lane id="Lane_Reviewer" name="Review Committee" partitionElementRef="reviewer">
         <bpmn:documentation>Merges only on the owner's explicit confirmation.</bpmn:documentation>
@@ -26,7 +26,7 @@ Called from content-change-review after the committee approves. Approving is the
         <bpmn:flowNodeRef>Task_Merge</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Pipeline" name="CI/CD Pipeline" partitionElementRef="build-pipeline">
-        <bpmn:documentation>GW_Merged sits downstream of Task_Approve in the Reviewer's lane, so it is checking whether that approval actually resulted in a merge rather than deciding whether to approve one, and a "No" ends the pipeline quietly instead of looping back into review.</bpmn:documentation>
+        <bpmn:documentation>GW_Merged checks whether the approval resulted in a merge; it does not decide whether to approve one, and a "No" ends the run instead of looping back into review.</bpmn:documentation>
         <bpmn:flowNodeRef>GW_Merged</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>End_NotMerged</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_CleanupStaging</bpmn:flowNodeRef>
@@ -90,7 +90,7 @@ Called from content-change-review after the committee approves. Approving is the
       <bpmn:incoming>p6</bpmn:incoming>
       <bpmn:outgoing>p7</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Task_WatchMainCI" name="Note the main-branch watch&#10;[watch]">
+    <bpmn:task id="Task_WatchMainCI" name="Note the main-branch watch">
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="watch" />
         <bootstrap.processes:skill ref="todo-manager" />
@@ -99,16 +99,14 @@ Called from content-change-review after the committee approves. Approving is the
 
       <bpmn:documentation>
         Second dispatch point: the change was approved and merged, and the
-        root of the site has been rebuilt from main. This is the moment
-        docs-site.yml failed all 30 times over two months (bean xom7) while
-        looking exactly like a green run from inside the repo.
+        root of the site has been rebuilt from main. A failing main build
+        can look like a green run from inside the repo.
 
-        `note` rather than `claim`, and the difference is not cosmetic. By
-        here the branch-watch bean already exists, and whether the publish
-        SUCCEEDED is a judgement this step cannot make -- the build reports
-        its own exit code, and xom7 is the record of that being believed.
-        AGENTS.md: a bean is not closed on someone else's say-so. So the step
-        records what it observed and leaves the verdict to the watcher.
+        `note` rather than `claim`: the branch-watch bean already exists, and
+        whether the publish SUCCEEDED is not this step's judgement (the build
+        reports its own exit code). A bean is not closed on someone else's
+        say-so, so the step records what it observed and leaves the verdict
+        to the watcher.
       </bpmn:documentation>
       <bpmn:incoming>p7</bpmn:incoming>
       <bpmn:outgoing>p7b</bpmn:outgoing>
@@ -141,23 +139,23 @@ Called from content-change-review after the committee approves. Approving is the
         <dc:Bounds x="242" y="137" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Merge_di" bpmnElement="Task_Merge">
-        <dc:Bounds x="370" y="115" width="120" height="80" />
+        <dc:Bounds x="370" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Merged_di" bpmnElement="GW_Merged">
         <dc:Bounds x="575" y="280" width="50" height="50" />
-        <bpmndi:BPMNLabel><dc:Bounds x="555" y="258" width="90" height="18" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="555" y="258" width="90" height="18" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_NotMerged_di" bpmnElement="End_NotMerged">
         <dc:Bounds x="582" y="417" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CleanupStaging_di" bpmnElement="Task_CleanupStaging">
-        <dc:Bounds x="710" y="265" width="120" height="80" />
+        <dc:Bounds x="710" y="245" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_RebuildMain_di" bpmnElement="Task_RebuildMain">
-        <dc:Bounds x="880" y="265" width="120" height="80" />
+        <dc:Bounds x="880" y="245" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_WatchMainCI_di" bpmnElement="Task_WatchMainCI">
-        <dc:Bounds x="1050" y="265" width="120" height="80" />
+        <dc:Bounds x="1050" y="245" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_Pipeline_di" bpmnElement="End_Pipeline">
         <dc:Bounds x="1262" y="287" width="36" height="36" />

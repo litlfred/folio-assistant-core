@@ -20,7 +20,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 
 ### 1. Open the bean (`Call_BeanOpen`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Author and policy author` lane (role `author`).
 - Skill: `bean-coordination`.
 - What: Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's.
 - A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
@@ -28,7 +28,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 
 ### 2. Open the bean (`Call_BeanOpenChange`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Author and policy author` lane (role `author`).
 - Skill: `bean-coordination`.
 - What: Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's.
 - A subprocess (`Process_BeanOpen`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
@@ -39,7 +39,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Reads which end Process_BeanOpen reached.
 - Call `workflow_complete` with `node: "GW_BeanYours"` and `outcome` set to the label that holds:
   - «not yours» → `End_BeanNotYours` (Not yours — left alone)
-  - «claimed» → `Task_AgreeTerms` (P1.1 · Agree purpose, datasets, period, duties and trust anchors)
+  - «claimed» → `Task_AgreeTerms` (P1.1 · Agree the terms)
 
 ### Decide — Bean claimed? (`GW_BeanYoursChange`)
 
@@ -52,7 +52,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 
 - The instance completes here: Someone else holds the bean; this run stops without touching it. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
-### 3. P1.1 · Agree purpose, datasets, period, duties and trust anchors (`Task_AgreeTerms`)
+### 3. P1.1 · Agree the terms (`Task_AgreeTerms`)
 
 - Who: the `Parties and signatories (provider, recipient)` lane (role `stakeholder`).
 - What: The parties agree the purpose, the datasets, the period, the conditions and duties, which trust anchors each side accepts, and the legal basis the sharing rests on (consent, treatment, public-health law or a research waiver).
@@ -81,7 +81,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Call `workflow_complete` with `node: "GW_ChangeKind"` and `outcome` set to the label that holds:
   - «new version» → `Task_DecideGrants` (P14.2 · Decide what happens to existing grants)
   - «renew by grant» → `End_RenewedByGrant` (Renewed by a new grant)
-  - «end» → `Task_SetStatus` (P14.5 · Set the catalogue status to ended)
+  - «end» → `Task_SetStatus` (P14.5 · Set the status to ended)
 
 ### 5. P1.2 · Write the legal text (`Task_WriteText`)
 
@@ -102,7 +102,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 
 - The instance completes here: The version has no end date, so renewal is a new grant under the same version. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
-### 7. P14.5 · Set the catalogue status to ended (`Task_SetStatus`)
+### 7. P14.5 · Set the status to ended (`Task_SetStatus`)
 
 - Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
 - Skill: `dsa-catalogue-status`.
@@ -122,7 +122,7 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 
 - Consent rule 2, for a new version only.
 - Call `workflow_complete` with `node: "GW_WidensUse"` and `outcome` set to the label that holds:
-  - «widens use» → `Task_NewConsentNeeded` (P14.3 · Record that new consent is needed)
+  - «widens use» → `Task_NewConsentNeeded` (P14.3 · New consent needed)
   - «narrows use» → `GW_WidensJoin`
   - «not consent-based» → `GW_WidensJoin`
 
@@ -137,10 +137,10 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 
 - Reads the legal basis recorded in P1.2a.
 - Call `workflow_complete` with `node: "GW_ConsentBasis"` and `outcome` set to the label that holds:
-  - «consent» → `Task_PlainSummary` (P1.2b · Draft the plain-language summary)
+  - «consent» → `Task_PlainSummary` (P1.2b · Draft the plain summary)
   - «treatment, law or waiver» → `GW_ConsentBasisJoin`
 
-### 10. P14.3 · Record that new consent is needed (`Task_NewConsentNeeded`)
+### 10. P14.3 · New consent needed (`Task_NewConsentNeeded`)
 
 - Who: the `Parties and signatories (provider, recipient)` lane (role `stakeholder`).
 - What: The amendment widens use, so a Consent citing the old version's URL and hash does not cover the new version (consent rule 2).
@@ -154,13 +154,13 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 
 ### 11. Close the bean (`Call_BeanCloseEnded`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Author and policy author` lane (role `author`).
 - Skill: `todo-manager`.
 - What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
 - A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
-- next: → `End_Ended` (Agreement ended)
+- next: → `GW_BeanClosedHow` (How did it end?)
 
-### 12. P1.2b · Draft the plain-language summary (`Task_PlainSummary`)
+### 12. P1.2b · Draft the plain summary (`Task_PlainSummary`)
 
 - Who: the `Author and policy author` lane (role `author`).
 - Skill: `document-authoring`.
@@ -173,9 +173,12 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Nothing to do or decide: the paths meet here and the engine passes through.
 - next: → `GW_Computable` (Computable agreement?)
 
-## Done — Agreement ended (`End_Ended`)
+### Decide — How did it end? (`GW_BeanClosedHow`)
 
-- The instance completes here: The agreement has expired or been terminated, its catalogue status says so, and its versions stay readable. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+- Which outcome the bean was closed with, so each ends at its own named end event.
+- Call `workflow_complete` with `node: "GW_BeanClosedHow"` and `outcome` set to the label that holds:
+  - «published» → `End_InForce` (Version published — agreement in force)
+  - «ended» → `End_Ended` (Agreement ended)
 
 ### Decide — Computable agreement? (`GW_Computable`)
 
@@ -183,6 +186,14 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Call `workflow_complete` with `node: "GW_Computable"` and `outcome` set to the label that holds:
   - «yes» → `Task_DeriveOdrl` (P1.3 · Derive the ODRL 2.2 Agreement)
   - «document only» → `GW_ComputableJoin`
+
+## Done — Version published — agreement in force (`End_InForce`)
+
+- The instance completes here: The signed version is at its immutable URL, with its hash and catalogue record. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+
+## Done — Agreement ended (`End_Ended`)
+
+- The instance completes here: The agreement has expired or been terminated, its catalogue status says so, and its versions stay readable. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
 ### 13. P1.3 · Derive the ODRL 2.2 Agreement (`Task_DeriveOdrl`)
 
@@ -244,9 +255,9 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - The reviewers' call.
 - Call `workflow_complete` with `node: "GW_ReadyToSign"` and `outcome` set to the label that holds:
   - «changes needed» → `GW_DraftMerge`
-  - «ready» → `Task_Render` (Render the text to HTML / PDF)
+  - «ready» → `Task_Render` (Render the text to HTML and PDF)
 
-### 18. Render the text to HTML / PDF (`Task_Render`)
+### 18. Render the text to HTML and PDF (`Task_Render`)
 
 - Who: the `Build pipeline (system)` lane (role `build-pipeline`).
 - Skill: `document-publishing`.
@@ -259,17 +270,17 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Who: the `Parties and signatories (provider, recipient)` lane (role `stakeholder`).
 - What: The signatories sign: wet ink, or an electronic signature under national law.
 - Record it: `workflow_complete` with `node: "Task_Sign"`.
-- next: → `Task_AssignVersion` (P2.1 · Assign the version and its immutable URL)
+- next: → `Task_AssignVersion` (P2.1 · Assign version and fixed URL)
 
-### 20. P2.1 · Assign the version and its immutable URL (`Task_AssignVersion`)
+### 20. P2.1 · Assign version and fixed URL (`Task_AssignVersion`)
 
 - Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
 - Skill: `content-publish`, `package-release`.
 - What: Each signed version gets its own immutable URL (for example /dsa/42/v3).
 - Record it: `workflow_complete` with `node: "Task_AssignVersion"`.
-- next: → `Task_Hash` (P2.2 · Record the SHA-256 of each file)
+- next: → `Task_Hash` (P2.2 · Record each file's SHA-256)
 
-### 21. P2.2 · Record the SHA-256 of each file (`Task_Hash`)
+### 21. P2.2 · Record each file's SHA-256 (`Task_Hash`)
 
 - Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
 - Skill: `dsa-checksum`.
@@ -281,23 +292,23 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 
 - The legal basis recorded in P1.2a.
 - Call `workflow_complete` with `node: "GW_ConsentPublish"` and `outcome` set to the label that holds:
-  - «consent» → `Task_HashSummary` (P2.2a · Hash the plain-language summary with the agreement)
+  - «consent» → `Task_HashSummary` (P2.2a · Hash the plain summary)
   - «not consent-based» → `GW_ConsentPublishJoin`
 
-### 22. P2.2a · Hash the plain-language summary with the agreement (`Task_HashSummary`)
+### 22. P2.2a · Hash the plain summary (`Task_HashSummary`)
 
 - Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
 - Skill: `dsa-checksum`.
 - What: Consent-based only.
 - Record it: `workflow_complete` with `node: "Task_HashSummary"`.
-- next: → `Task_ConsentCitation` (P2.2b · State the fixed-version URL and hash a Consent cites)
+- next: → `Task_ConsentCitation` (P2.2b · State the URL and hash to cite)
 
 ### Merge — `GW_ConsentPublishJoin`
 
 - Nothing to do or decide: the paths meet here and the engine passes through.
 - next: → `GW_CiteComputable` (ODRL to update?)
 
-### 23. P2.2b · State the fixed-version URL and hash a Consent cites (`Task_ConsentCitation`)
+### 23. P2.2b · State the URL and hash to cite (`Task_ConsentCitation`)
 
 - Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
 - Skill: `content-publish`.
@@ -309,10 +320,10 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 
 - Is there an ODRL Agreement for this version?
 - Call `workflow_complete` with `node: "GW_CiteComputable"` and `outcome` set to the label that holds:
-  - «yes» → `Task_OdrlCitesText` (P2.3 · Make the ODRL cite the text by URL and hash)
+  - «yes» → `Task_OdrlCitesText` (P2.3 · Make the ODRL cite the text)
   - «document only» → `GW_CiteJoin`
 
-### 24. P2.3 · Make the ODRL cite the text by URL and hash (`Task_OdrlCitesText`)
+### 24. P2.3 · Make the ODRL cite the text (`Task_OdrlCitesText`)
 
 - Who: the `Author and policy author` lane (role `author`).
 - Skill: `dsa-odrl-source`.
@@ -331,24 +342,12 @@ How a data sharing agreement is drafted, negotiated, signed, published with a ve
 - Skill: `content-publish`.
 - What: Publish the files at the version's immutable URL.
 - Record it: `workflow_complete` with `node: "Task_Publish"`.
-- next: → `Task_Catalogue` (P2.4–5 · Write the DCAT 3 record and link versions)
+- next: → `Task_Catalogue` (P2.4–5 · Write the DCAT 3 record)
 
-### 26. P2.4–5 · Write the DCAT 3 record and link versions (`Task_Catalogue`)
+### 26. P2.4–5 · Write the DCAT 3 record (`Task_Catalogue`)
 
 - Who: the `Publisher (data provider's publication manager)` lane (role `publication-manager`).
 - Skill: `dsa-dcat-record`.
 - What: One DCAT 3 record: the agreement as a catalogued resource, each file a dcat:Distribution with dcat:downloadURL and spdx:checksum; datasets it covers carry odrl:hasPolicy.
 - Record it: `workflow_complete` with `node: "Task_Catalogue"`.
-- next: → `Call_BeanClosePublished` (Close the bean)
-
-### 27. Close the bean (`Call_BeanClosePublished`)
-
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
-- Skill: `todo-manager`.
-- What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
-- A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
-- next: → `End_InForce` (Version published — agreement in force)
-
-## Done — Version published — agreement in force (`End_InForce`)
-
-- The instance completes here: The signed version is at its immutable URL, with its hash and catalogue record. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
+- next: → `Call_BeanCloseEnded` (Close the bean)

@@ -357,3 +357,16 @@ is current.
   theme's site header, not part of the navbar component, and it uses the same
   solved `avatarRegion` crop as the rail's `mark()`: one declaration, two
   renderers. Worth a bean only if the two marks are ever seen to differ.
+
+## Retired: home at the bottom (2026-11-02)
+
+Owner, 2026-10-30: *"dont need home on bottomof harnes navbars"*, and
+2026-11-02: *"home icon at bottom on LHS navbar no longer needed. excise.
+use home icon as default avatar at top navbar next to harness title"*.
+
+The fixed-bottom home row asked for above ("keep home at bottom for who iris",
+gap 5) is retired. The bottom region holds the harnesses only. The way home is
+the header: the instance's mark and name link to the landing page, and when the
+instance declares no avatar or glyph the mark is a house (`HOME_GLYPH` in
+cat-harness-tools `scripts/lib/navbar.ts`; the Liquid `title.html` draws the
+same house in place of the initial letter).

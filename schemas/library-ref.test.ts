@@ -7,12 +7,13 @@
  * text in another repo would cite evidence its own instance cannot resolve."*
  */
 import { describe, expect, it } from "bun:test";
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync } from "fs";
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join, resolve } from "path";
 import { explainFailure, instanceRoots, libraryDirOf, resolveLibraryRef } from "./library-ref.js";
 import { declarationPathIn } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { writeDeclaration } from "../../cat-harness-tools/test/support/instance-fixture.js";
+import { libraryEntries } from "../scripts/lib/library-entries.ts";
 
 const REPO = resolve(import.meta.dir, "../..");
 const PLATFORM = resolve(REPO, "cat-harness");
@@ -121,9 +122,9 @@ describe("library location is read from the declaration", () => {
     //
     // NOT a weakening. Folio content arriving in this library still arrives as
     // an entry directory, which is exactly what is still counted.
-    const entries = readdirSync(dir!, { withFileTypes: true })
-      .filter((e) => e.isDirectory() && !e.name.startsWith("."))
-      .map((e) => e.name);
+    // Flat or filed in a declared concern group (bean 6fez): a group folder
+    // is not an entry, the entries filed in it are.
+    const entries = libraryEntries(dir!).map((e) => e.slug);
 
     // `evidence:` lines across the methodology graph, as bib-slugs.
     const methodologies = resolve(PLATFORM, "methodologies");
@@ -340,5 +341,35 @@ describe("an instance's library is ITS OWN, not the first one declared", () => {
     // `who-style-guide` (voices, no corpus) until it became a subgraph of
     // who-iris (bean qsx4); `smart-l1` declares no library either.
     expect(libraryDirOf(resolve(REPO, "smart-l1"))).toBeUndefined();
+  });
+});
+
+describe("an entry filed in a concern group resolves (bean 6fez)", () => {
+  // Measured 2026-11-02: cat-harness filed its library into groups,
+  // `library/<group>/<id>/`, and check:voices reported every one of its
+  // sources "not ingested", because only `library/<id>/` was looked at.
+  it("finds `library/<group>/<id>/` when the library declares the group, and only then", () => {
+    const root = mkdtempSync(join(tmpdir(), "grouped-ref-"));
+    try {
+      mkdirSync(join(root, "library", "kg", "doc", "sections"), { recursive: true });
+      mkdirSync(join(root, "library", "stray", "other"), { recursive: true });
+      writeFileSync(join(root, "library", "kg", "doc", "structure.json"), "{}");
+      writeFileSync(join(root, "library", "kg", "doc", "sections", "sec-001.md"), "x\n");
+      writeFileSync(join(root, "library", "stray", "other", "structure.json"), "{}");
+      writeFileSync(join(root, "library", "library.json"), JSON.stringify({ $schema: "concern-groups/v1", groups: ["kg"] }));
+      writeDeclaration(root, JSON.stringify({ name: "x", directories: [{ id: "library", path: "library/", graphTypologies: ["library"] }] }));
+
+      const doc = resolveLibraryRef({ libraryId: "doc" }, root, root);
+      expect(doc.ok).toBe(true);
+      if (doc.ok) expect(doc.path).toBe(join(resolve(root, "library"), "kg", "doc", "structure.json"));
+      const sec = resolveLibraryRef({ libraryId: "doc", sectionId: "sec-001" }, root, root);
+      expect(sec.ok).toBe(true);
+      // A folder the library does not declare as a group is not searched.
+      const stray = resolveLibraryRef({ libraryId: "other" }, root, root);
+      expect(stray.ok).toBe(false);
+      if (!stray.ok) expect(stray.failure.kind).toBe("not-ingested");
+    } finally {
+      rmSync(root, { recursive: true, force: true });
+    }
   });
 });

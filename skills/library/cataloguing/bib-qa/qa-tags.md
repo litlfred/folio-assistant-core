@@ -7,8 +7,7 @@ description: >
 
 # bib-qa — the QA tag vocabulary
 
-Every tag a reference can carry, with what it means and when to apply it. A
-lookup table: you come here to check one tag, not to read it through.
+Every tag a reference can carry, with what it means and when to apply it.
 
 ## QA Tags (per reference)
 
@@ -29,15 +28,14 @@ The **score** is the count of passing tags.
 
 ### Verification status model (`bib-qa-verifications.json`)
 
-`content/bib-qa-verifications.json` is the hand-curated sidecar
-recording per-paper verification metadata. Loaded by `bib-qa.ts`
-and surfaced both as the `verification_status` QA tag and in
-each entry's `.verification` field of `bib-qa.json` (which
-flows through to the standalone `bib-qa.html` dashboard).
+`content/bib-qa-verifications.json` is the hand-curated per-paper
+verification sidecar. `bib-qa.ts` loads it and surfaces it as the
+`verification_status` QA tag and in each entry's `.verification` field of
+`bib-qa.json` (shown by the `bib-qa.html` dashboard).
 
-Verification is orthogonal to bibliographic correctness —
-"verified" means **someone has read the PDF and confirmed the
-citation sites' descriptions match the cited paper's content**:
+"Verified" is separate from bibliographic correctness: it means **someone has
+read the PDF and confirmed the citation sites' descriptions match the cited
+paper's content**:
 
 ```json
 {
@@ -66,12 +64,8 @@ consumers AND author hasn't claimed it; decision pending),
 `paper-mismatch` (local PDF ≠ references.ts metadata; escalate),
 `unfetchable` (not in `uploads/`).
 
-The distinction `pending-placement` vs `uncited` matters: both
-have 0 citation sites, but `pending-placement` says "keep this
-entry, I'll find a citation site later" while `uncited` says
-"unclaimed orphan — may be removable". Author triage moves
-entries from `uncited` → `pending-placement` (or
-`verified-clean` if a citation gets added in the same triage).
+Author triage moves an `uncited` entry to `pending-placement` (or
+`verified-clean` if a citation is added in the same triage).
 
 The `verification_status` tag passes for `verified-clean` /
 `partial` / `fixed`, warns for `pending` / `uncited` /
@@ -81,12 +75,11 @@ When verifying a paper:
 1. Update the entry's `status`, `verified_at`, `verified_by`,
    `fixes_applied`, `fix_commit` in
    `content/bib-qa-verifications.json`.
-2. Append a row to the markdown ledger's "Verification log" table
-   (`docs/coordination/<date>-bib-verification-ledger.md`).
-3. Commit both files alongside any `-- Ref:` fixes (one commit
-   per paper is the suggested granularity).
+2. Append a row to the "Verification log" table of
+   `docs/coordination/<date>-bib-verification-ledger.md`.
+3. Commit both with any `-- Ref:` fixes, one commit per paper.
 4. Re-run `cd content && bun run pipeline/bib-qa.ts` to regenerate
-   `bib-qa.json` (gitignored — but useful for the dashboard).
+   `bib-qa.json`.
 
 ### Intake & local evidence (`uploads/` workflow)
 
@@ -120,18 +113,16 @@ bash scripts/upload-bib-papers.sh --dry-run # preview
 bash scripts/upload-bib-papers.sh --pr      # download + commit + push + open PR
 ```
 
-The script uses `git push --force-with-lease` so re-runs after a fix
-(URL pattern update, etc.) cleanly replace the prior branch tip
-without manual force-push intervention.
+The script pushes with `git push --force-with-lease`, so a re-run replaces the
+prior branch tip.
 
 #### MCP services for intake + reaudit
 
-If `.mcp.json` ships paper/scholar MCP servers, the bib-QA agent
-should leverage them when they are live (i.e. the session's network
-policy allows `arxiv.org` / `api.openalex.org`). Such servers fail
-soft in sandboxed sessions whose allowlist only permits
-`github.com` — in those sessions, fall back to the offline pipeline
-above and hand the download step to a normal-network machine.
+If `.mcp.json` ships paper/scholar MCP servers and the session's network
+policy allows `arxiv.org` / `api.openalex.org`, use them. Where the allowlist
+blocks those hosts they fail soft: use the offline pipeline above
+(`gen-bib-papers-list.py` + `upload-bib-papers.sh`) and run the download on a
+normal-network machine. The servers are an accelerator, not a replacement.
 
 | Server (`.mcp.json` key) | Tools (most useful) | Use for |
 |--------------------------|---------------------|---------|
@@ -156,7 +147,7 @@ above and hand the download step to a normal-network machine.
    `pending`, `read_arxiv_paper(arxiv_id)` returns the parsed
    body. Grep the cited `-- Ref: [<id>] <description>` keywords
    against that body to confirm the description anchors a real
-   passage. Beats opening the PDF in a viewer.
+   passage.
 
 3. **Author-ID-based wrong-work resolution** — when a single
    bib key citation-splits across two unrelated works, OpenAlex
@@ -164,19 +155,12 @@ above and hand the download step to a normal-network machine.
 
 4. **Metadata enrichment for paywalled entries** — for `doi.org`
    URLs we can't fetch, OpenAlex `get_work(doi=…)` returns
-   canonical title/author/year/venue without paywall. Useful for
-   filling `references.ts` gaps without ever downloading the PDF.
-
-**When the new MCP services are NOT available**: drop back to the
-offline pipeline (`gen-bib-papers-list.py` + `upload-bib-papers.sh`
-on a normal-network machine). The new services are an
-accelerator, not a replacement.
+   canonical title/author/year/venue without paywall, filling
+   `references.ts` gaps without downloading the PDF.
 
 **Local CLI wrapper for both paths**: a CLI such as
 `cat-harness-tools/adapters/bib-mcp-cli.py` can drive the same `paper-search-mcp` /
-`pyalex` libraries as a normal Python CLI — no MCP server needed.
-Designed to run from a normal-network machine when the sandbox
-allowlist blocks arxiv/openalex/scholar:
+`pyalex` libraries without an MCP server, from a normal-network machine:
 
 ```bash
 # Prereqs (one-time):
@@ -206,13 +190,12 @@ cat-harness-tools/adapters/bib-mcp-cli.py scholar-snapshot --apply
 cat-harness-tools/adapters/bib-mcp-cli.py audit
 ```
 
-Each subcommand is idempotent: re-running skips entries already
-done. Network probes fail-fast with a friendly error when the
-required host is in the deny-list. The `snapshot` /
+Each subcommand is idempotent (re-running skips entries already done), and
+fails fast when the required host is denied. The `snapshot` /
 `scholar-snapshot` outputs land in `content/bib-qa-evidence/<refid>/`
 as `<utc>-<source>.{html,pdf}` + `<utc>-<source>.meta.json` (the
-"as-viewed-on" provenance record) — humans can review the
-snapshot to validate the citation without re-fetching.
+"as-viewed-on" provenance record), which a reviewer can check without
+re-fetching.
 
 #### `validate-bib` — comprehensive correctness audit
 
@@ -231,12 +214,11 @@ selectable modes:
 | `--strict` | Exit non-zero on any failure (default: warn-only) | n/a |
 
 Network requirement: `--doi` / `--crossref` / `--arxiv` modes need
-outbound HTTPS to doi.org / api.crossref.org / arxiv.org respectively.
-Sandboxed environments with whitelist-only egress cannot run these —
-the script reports uniform 403s and the bib remains genuinely
-unvalidated. Run from a normal-network machine.
+outbound HTTPS to doi.org / api.crossref.org / arxiv.org respectively. Behind
+an allowlist-only proxy they report uniform 403s and validate nothing; run them
+from a normal-network machine.
 
 The `--cross-check` heuristic uses a small set of tunable parameters
 (prose word threshold, title-word length threshold, stopword list)
-documented inline in `validate-bib.ts` to keep false-positives low.
+documented inline in `validate-bib.ts`.
 

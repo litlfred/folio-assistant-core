@@ -23,17 +23,9 @@ The skill operates at two levels:
    QC, the agent performs deeper checks that require network access or
    content understanding.
 
-
-## Where the tag vocabulary went
-
-This skill was 571 lines, and 229 of them were the per-reference tag table — a
-lookup you consult one row of, loaded in full on every invocation. It now sits
-beside this file. Nothing was deleted.
-
-| what | where |
-|---|---|
-| purpose, when to invoke, workflow, file layout, checklists, output format, the verification classes | **here** |
-| the QA tag vocabulary, per reference | [`bib-qa/qa-tags.md`](bib-qa/qa-tags.md) — consult a row when tagging |
+The per-reference QA tag vocabulary, the verification status model and the
+intake tooling are in [`bib-qa/qa-tags.md`](bib-qa/qa-tags.md); consult a row
+when tagging.
 
 ## When to Invoke
 
@@ -96,8 +88,7 @@ For each failing reference, the agent should:
 cd content && bun run pipeline/bib-qa.ts --check-urls
 ```
 
-References should score well across the machine-checkable tags
-(screenshot is optional for non-critical references).
+Screenshots are optional for non-critical references.
 
 ## File Layout
 
@@ -263,16 +254,11 @@ both:
 
 ## Always cross-check arxiv for mirror preprints
 
-When verifying a published-journal paper, always check arxiv.org for
-a freely-accessible mirror. Most math/physics authors deposit the
-preprint version to arxiv either before or after journal publication.
-The mirror URL is the right intake target for `uploads/` because:
-
-- arxiv mirrors are stable + freely-accessible (no doi.org paywall).
-- Content is usually the same as the published version (modulo
-  copy-editing differences in section numbering).
-- `gen-bib-papers-list.py` already handles `arxiv.org/abs/<id>` →
-  `arxiv.org/pdf/<id>` conversion automatically.
+When verifying a published-journal paper, check arxiv.org for a free
+preprint mirror and use it as the `uploads/` intake target: it is stable and
+unpaywalled, its content usually matches the published version (section
+numbering may differ), and `gen-bib-papers-list.py` converts
+`arxiv.org/abs/<id>` → `arxiv.org/pdf/<id>`.
 
 Workflow when adding/auditing an entry whose primary URL is a
 publisher landing page (doi.org, journal site, etc.):
@@ -281,14 +267,12 @@ publisher landing page (doi.org, journal site, etc.):
    preprint by the same authors.
 2. If found, add `URL: https://arxiv.org/abs/<id>` to the
    `references.ts` entry (alongside, not instead of, the DOI).
-3. The auto-extracted batch intake will then pick up the arxiv URL
-   automatically on next regen.
+3. The batch intake picks up the arxiv URL on the next regen.
 
 ## Paper-mismatch class: PDF resolves to wrong content
 
-A failure mode to watch for: the `gen-bib-papers-list.py` URL converter
-can yield a syntactically-valid PDF that contains the WRONG content.
-Two common cases:
+The `gen-bib-papers-list.py` URL converter can yield a valid PDF with the
+WRONG content. Two common cases:
 
 - **numdam volume prelims**: `numdam.org/item/AST_YYYY__VOL__R1_0/`
   resolves to the volume's PRELIMINARY PAGES (front matter), NOT a
@@ -347,7 +331,6 @@ Skill outputs:
   `cd content && bun run pipeline/bib-qa.ts`) carries the
   `verification` field on each entry, including `status`,
   `verified_at`, `verified_by`, `fixes_applied`, `fix_commit`, `note`.
-- The `verification_status` QA tag passes for verified-clean /
-  partial / fixed; warns for pending / uncited / unfetchable; fails
-  for paper-mismatch.
+- The `verification_status` QA tag (see
+  [`bib-qa/qa-tags.md`](bib-qa/qa-tags.md)).
 

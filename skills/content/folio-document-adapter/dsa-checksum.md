@@ -13,7 +13,7 @@ description: >
 > Skill id: `dsa-checksum` · Package: `folio-document-adapter` · Process:
 > `folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn`
 > (`Task_Hash`, P2.2) · Checker: `folio-assistant-core/scripts/check-dsa-hash.ts`
-> (`bun run cat check:dsa-hash`) · Bean: `folio-assistant-2z1t`.
+> (`bun run cat check:dsa-hash`)
 
 Every signed version of a Data Sharing Agreement (DSA) is published at its own
 immutable URL and carries a cryptographic digest of the exact signed legal text

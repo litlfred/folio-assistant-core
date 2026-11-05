@@ -9,12 +9,11 @@ layer — and therefore minus the two toolchains that serve it.
 - **Source model** — the same tree of typed *blocks* as a paper, restricted to
   the kinds whose content is prose rather than a formal claim: `prose`,
   `example`, `remark`, `algorithm`, `simulator`, `equation`, `diagram`,
-  `table`.
+  `table`, `figure`, `recommendation`.
 - **Rendering** — `document_render_md` assembles the folio into one Markdown
   file; `document_render_html` and `document_render_pdf` take it through
   pandoc. The PDF path uses an HTML engine (weasyprint, prince, wkhtmltopdf)
-  and **never** falls back to `latexmk`, so "no TeX required" stays true rather
-  than becoming true-until-someone-has-TeX-installed.
+  and **never** falls back to `latexmk`.
 - **Enforcement** — `content_profile_check` rejects a math kind, a `lean`
   field or a `.lean` sibling, and runs on every `content_validate`.
 

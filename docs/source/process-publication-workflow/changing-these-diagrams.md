@@ -1,7 +1,7 @@
 The `.bpmn` files are the source of truth.
 
 ```sh
-# 1. edit processes/<diagram>.bpmn — in a modeler, or by hand
+# 1. edit processes/<area>/<diagram>.bpmn — in a modeler, or by hand
 # 2. regenerate the SVGs
 bun run cat render:bpmn
 # 3. or, in CI, just check they are not stale
@@ -15,5 +15,5 @@ point at it with `CHROMIUM_PATH=/path/to/chrome`.
 
 When you add an activity, add its `<bootstrap.processes:skill ref="…"/>` extension (and
 `<cat-harness.processes:bean store="beans/"/>` if it touches the work plan) and the matching
-row in the tables above — the diagram and the skill list drifting apart is the
-failure this page exists to prevent.
+row in the tables above, so the diagram and the skill list do not drift
+apart.

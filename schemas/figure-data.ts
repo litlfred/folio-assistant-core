@@ -14,6 +14,8 @@
  * `graph-typology-registry.ts`); `validators/` names these schemas for them.
  * The generators keep their own TypeScript interfaces; these schemas check the
  * same fields, and the tests check these schemas against small inline fixtures.
+ *
+ * @graphNode schema
  */
 import { z } from "zod";
 import { nodeKind } from "@litlfred/cat-harness-tools/schemas/kg/node-kind.ts";

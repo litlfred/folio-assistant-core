@@ -40,12 +40,11 @@ layer — and therefore minus the two toolchains that serve it.
 - **Source model** — the same tree of typed *blocks* as a paper, restricted to
   the kinds whose content is prose rather than a formal claim: `prose`,
   `example`, `remark`, `algorithm`, `simulator`, `equation`, `diagram`,
-  `table`.
+  `table`, `figure`, `recommendation`.
 - **Rendering** — `document_render_md` assembles the folio into one Markdown
   file; `document_render_html` and `document_render_pdf` take it through
   pandoc. The PDF path uses an HTML engine (weasyprint, prince, wkhtmltopdf)
-  and **never** falls back to `latexmk`, so "no TeX required" stays true rather
-  than becoming true-until-someone-has-TeX-installed.
+  and **never** falls back to `latexmk`.
 - **Enforcement** — `content_profile_check` rejects a math kind, a `lean`
   field or a `.lean` sibling, and runs on every `content_validate`.
 
@@ -60,7 +59,7 @@ Relevant skill schemas:
        alt="BPMN swimlane diagram of document authoring: the author plans, the plan is seeded as beans, an agent scaffolds the folio and authors blocks, the build pipeline checks the declared profile before validating and rendering to Markdown, HTML and PDF, and a reviewer gates publication.">
 </div>
 
-[BPMN 2.0 source](https://github.com/litlfred/folio-assistant/blob/main/processes/authoring-a-document.bpmn) · [full-size SVG]({{ '/assets/img/workflows/authoring-a-document.svg' | relative_url }})
+[BPMN 2.0 source](https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/authoring-a-document.bpmn) · [full-size SVG]({{ '/assets/img/workflows/authoring-a-document.svg' | relative_url }})
 {: .bpmn-source }
 
 ### Carrying a normative statement
@@ -70,15 +69,13 @@ Relevant skill schemas:
 
 A recommendation, requirement or rule is the block readers cite and
 implementers trace to. It wants a label, a stable identity and a place in the
-dependency graph — everything a `theorem` has — and it is emphatically not a
-theorem, because nothing proves it.
+dependency graph — everything a `theorem` has — but nothing proves it; its
+authority is the issuing body's.
 
-There is **no first-class `recommendation` block kind**. Today the carrier is a
-`prose` block with a label and a title; the
+Its carrier is the **`recommendation` block kind**: one statement per block,
+with a label, a title, and its strength as a code in a declared code list. The
 [`normative-statements`]({{ '/reference/skill-instructions/normative-statements.html' | relative_url }})
-skill states the convention and its limits. Earlier guidance in
-`document-intake` mapped guideline recommendations onto `definition` — that
-predates this content type and is wrong for a document folio, where
-`definition` is a math kind whose `lean` field is required.
+skill states the convention. Do not use `definition`: it is a math kind whose
+`lean` field is required.
 
 ---

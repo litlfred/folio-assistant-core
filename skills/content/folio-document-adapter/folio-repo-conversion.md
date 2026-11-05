@@ -50,5 +50,5 @@ Once the author has answered Q1–Q3 and chosen the declared `markers` in
   (`processes/library/l1-document-ingestion.bpmn`).
 - **`content` bucket:** hand the author's own chapters and prose to
   [`document-authoring`](document-authoring.md)
-  and [`document-structure`](../../content/folio-document-adapter/document-structure.md)
+  and [`document-structure`](document-structure.md)
   (or the active content type's adapter skills).

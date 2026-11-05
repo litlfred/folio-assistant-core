@@ -12,20 +12,11 @@ description: >
 
 # A plan request stops at a signed-off plan
 
-Issue [#2405](https://github.com/litlfred/folio-assistant/issues/2405), owner
-2026-10-07, verbatim: *"if we make a request for a plan you should ALWAYS have
-created a requirements document and work plan for us to review before
-implementation. the links should shared to the user"*. Decisions accepted the
-same day ([comment](https://github.com/litlfred/folio-assistant/issues/2405#issuecomment-6035163987)):
-this **operation** lives in folio-assistant-core; the **methods** that say
-how requirements are gathered (`crdm`, `spec-kit`) stay in cat-harness, and
-each points here.
-
-**The trigger incident.** A plan was given only in chat, and implementation
-started ([litlfred/test#2](https://github.com/litlfred/test/pull/2)) before any
-requirements document existed. The document was written afterwards. Nothing
-was wrong with the plan; the owner had no artefact to review before work
-began, and so no point at which to say no.
+A request for a plan always gets a requirements document and a work plan,
+handed to the user as links for review before any implementation. This
+**operation** lives in folio-assistant-core; the **methods** that say how
+requirements are gathered (`crdm`, `spec-kit`) stay in cat-harness, and each
+points here.
 
 ## The trigger — a request for a plan
 
@@ -38,13 +29,13 @@ Any of these, in the owner's or a stakeholder's words, is a plan request:
 - "come up with …"
 
 **Always — content requests included.** "Plan the edits to chapter 3" is a
-plan request exactly as "plan the new validator" is (decision 2). What
+plan request exactly as "plan the new validator" is. What
 changes between them is which methodology governs, never whether the gate
 applies.
 
 A request to *do* a thing is not a plan request, and does not acquire one by
 being large. That is the opening brief's job
-([`opening-brief`](../../../../cat-harness/skills/sdlc/sdlc-core/opening-brief.md)),
+([`opening-brief`](../../../../cat-harness/sdlc/skills/sdlc-core/opening-brief.md)),
 which is said in chat and does not stop.
 
 ## What to produce — two artefacts
@@ -62,7 +53,7 @@ which is said in chat and does not stop.
 ## Where they go — the methodology decides, the gate does not
 
 Which methodology governs is decided by the existing fork in
-[`crdm-detect`](../../../../cat-harness/skills/sdlc/crdm/crdm-detect.md) §"Which
+[`crdm-detect`](../../../../cat-harness/sdlc/skills/crdm/crdm-detect.md) §"Which
 requirements methodology". This skill does not re-decide it, and **never
 blends the two** (`methodology-adoption`).
 
@@ -83,7 +74,7 @@ https://github.com/<owner>/<repo>/blob/<sha>/<path>
 ```
 
 — with the commit **sha**, never a branch name, and never a repo-relative
-path. Two reasons, both observed in the trigger session:
+path:
 
 - **A repo-relative path is not a link.** `docs/proposals/x.md` in chat is
   clickable only when the reader's working directory is that repository, and
@@ -96,7 +87,7 @@ Get the sha after pushing: `git rev-parse HEAD`, then compose
 `https://github.com/<owner>/<repo>/blob/<sha>/<path>`. An issue comment is
 already absolute (`…/issues/<n>#issuecomment-<id>`). This binds every
 hand-over — a turn report, a PR body, an issue comment — not only a plan;
-[`turn-reporting`](../../../../cat-harness/skills/sdlc/sdlc-core/turn-reporting.md)
+[`turn-reporting`](../../../../cat-harness/sdlc/skills/sdlc-core/turn-reporting.md)
 rule 8 points here.
 
 ## Then STOP until sign-off is recorded on the issue (STRICT)
@@ -110,14 +101,14 @@ is **recorded on the issue**: a comment from the sign-off owner (or quoting
 them verbatim, with date) saying the plan is approved, or approving it with
 changes — and the decision is then **recorded** as a `requirement-signoff`
 attestation that moves the set to `approved`, which `check:requirements`
-refuses unless the signer is a human. Silence is not sign-off. A reaction is not sign-off. An approval in
-chat is real but not yet recorded: the agent quotes it on the issue, dated,
-before starting.
+refuses unless the signer is a human. Silence is not sign-off. A reaction is
+not sign-off. An approval in chat is real but not yet recorded: the agent
+quotes it on the issue, dated, before starting.
 
 What is allowed before sign-off: the requirements document and its revisions
 (`docs/proposals/` or the issue), the beans that ARE the work plan, and the
 branch and draft PR that carry them —
-[`continual-progress`](../../../../cat-harness/skills/sdlc/sdlc-core/continual-progress.md)
+[`continual-progress`](../../../../cat-harness/sdlc/skills/sdlc-core/continual-progress.md)
 still applies to the plan itself.
 
 **This gate does not replace the methodology's own sign-off steps.** CRDM's
@@ -127,12 +118,10 @@ request reaches them, not a second set of them.
 
 ### A breach is detectable
 
-The test that makes it so (issue #2405 scenario P1): **no commit outside
-`docs/proposals/` and `beans/` lands on the branch before the sign-off
-comment's timestamp.** Compare `git log --format='%cI %H' --name-only` on the
-branch against the sign-off comment's `created_at`. Extending bean `4kq7`'s
-spec-before-code gate to run that comparison mechanically is that bean's
-work; until it lands, a reviewer runs it by hand.
+**No commit outside `docs/proposals/` and `beans/` lands on the branch before
+the sign-off comment's timestamp.** A reviewer checks it by hand: compare
+`git log --format='%cI %H' --name-only` on the branch against the sign-off
+comment's `created_at`.
 
 ## What this does NOT mean
 
@@ -146,5 +135,5 @@ work; until it lands, a reviewer runs it by hand.
 ## Cross-references
 
 - [`requirement-definition`](requirement-definition.md) — the one definition of a requirement, and the work-plan rule
-- [`crdm-detect`](../../../../cat-harness/skills/sdlc/crdm/crdm-detect.md), [`spec-kit`](../../../../cat-harness/skills/sdlc/spec-kit/spec-kit.md) — the methods, which point here
-- [`issue-working`](../../../../cat-harness/skills/sdlc/sdlc-core/issue-working.md) — what an issue is for, against a PR and a bean
+- [`crdm-detect`](../../../../cat-harness/sdlc/skills/crdm/crdm-detect.md), [`spec-kit`](../../../../cat-harness/sdlc/skills/spec-kit/spec-kit.md) — the methods, which point here
+- [`issue-working`](../../../../cat-harness/sdlc/skills/sdlc-core/issue-working.md) — what an issue is for, against a PR and a bean

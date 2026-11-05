@@ -4,7 +4,7 @@
 
 > **Generated, and not the authority.** This is `folio-assistant-core/processes/library/l1-document-ingestion.bpmn` (process `Process_L1DocumentIngestion`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
 
-folio-assistant — L1 document ingestion — a document to the L1 source knowledge graph.
+L1 document ingestion — a document to the L1 source knowledge graph.
 
 ## Begin — A document is offered for L1 ingestion (`StartEvent_Document`)
 
@@ -33,25 +33,25 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 - Skill: `library-ingestion`.
 - What: The harness's `document-ingestion.bpmn`: accept the upload by a declared route, extract its metadata into the KG, and catalogue the asset in library/ — placed if materialized, recorded as referenced if not.
 - A subprocess (`Process_Ingestion`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
-- next: → `Task_Detect` (Detect media type and mint a doc id)
+- next: → `Task_Detect` (Detect media type, mint a doc id)
 
 ## Done — Not yours — left alone (`End_BeanNotYours`)
 
 - The instance completes here: Someone else holds the bean; this run stops without touching it. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.
 
-### 3. Detect media type and mint a doc id (`Task_Detect`)
+### 3. Detect media type, mint a doc id (`Task_Detect`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
 - What: Sniff the media type rather than trusting the extension, and mint the doc id from the page-1 arXiv stamp where there is one, else from the filename.
 - Record it: `workflow_complete` with `node: "Task_Detect"`.
-- next: → `Task_Licence` (Establish the licence from the upload alone)
+- next: → `Task_Licence` (Establish the licence from the upload)
 
-### 4. Establish the licence from the upload alone (`Task_Licence`)
+### 4. Establish the licence from the upload (`Task_Licence`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
-- What: EARLY, by the owner's ruling on bean 7bg9 (2026-09-20): before any derivation, because library/ is holds: content and anything derived first is committed, so refusing it later is a deletion nobody may take unasked.
+- What: EARLY: before any derivation, because library/ is holds: content and anything derived first is committed, so refusing it later is a deletion nobody may take unasked.
 - Record it: `workflow_complete` with `node: "Task_Licence"`.
 - next: → `CallActivity_Extract` (Extract structure)
 
@@ -73,7 +73,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 
 ### Decide — A theme source? (author's judgement) (`Gateway_ThemeSource`)
 
-- Wired 2026-09-23 on the owner's ruling for bean `j66n`, choosing "human/agentic judgement at the gateway" over a declared predicate.
+- Human or agentic judgement at the gateway, not a declared predicate.
 - Call `workflow_complete` with `node: "Gateway_ThemeSource"` and `outcome` set to the label that holds:
   - «yes» → `CallActivity_IngestTheme` (Ingest the theme)
   - «no» → `CallActivity_BuildKg` (Build the L1 knowledge graph)
@@ -111,7 +111,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 
 ### 10. Record the gap as a bean (`Task_OpenBean`)
 
-- Who: the `Work plan — beans (shared by humans and agents)` lane (role `work-plan`).
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `todo-manager`.
 - What: A missing derived artefact is a tracked gap, not a silent omission.
 - Record it: `workflow_complete` with `node: "Task_OpenBean"`.
@@ -123,19 +123,19 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 - Skill: `document-intake`.
 - What: The folder name IS the bibliography citation key, so a citation and a directory are the same string.
 - Record it: `workflow_complete` with `node: "Task_Promote"`.
-- next: → `Task_SummaryQueue` (Prose blocks enter the summary queue)
+- next: → `Task_SummaryQueue` (Queue prose blocks for summary)
 
-### 12. Prose blocks enter the summary queue (`Task_SummaryQueue`)
+### 12. Queue prose blocks for summary (`Task_SummaryQueue`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `l1-document-ingestion`.
-- What: Owner, 2026-09-24: "Make as QA sidecar as part of general doc ingestion to slowly drain." Nothing is written to ENQUEUE a block: the queue is derived (every prose block in every declared library, minus those whose summaries.json record is a current draft or confirmation), so a promoted entry is in i
+- What: A QA sidecar of general document ingestion, drained slowly.
 - Record it: `workflow_complete` with `node: "Task_SummaryQueue"`.
 - next: → `Task_Citeable` (Available to cite as an L1 source)
 
 ### 13. Available to cite as an L1 source (`Task_Citeable`)
 
-- Who: the `Corpus — L1 source knowledge graph` lane (role `corpus`).
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
 - What: Every knowledge-graph reference to this source now resolves through library/.
 - Record it: `workflow_complete` with `node: "Task_Citeable"`.
@@ -143,7 +143,7 @@ folio-assistant — L1 document ingestion — a document to the L1 source knowle
 
 ### 14. Close the bean (`Call_BeanClose`)
 
-- Who: the `Corpus — L1 source knowledge graph` lane (role `corpus`).
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `todo-manager`.
 - What: Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back.
 - A subprocess (`Process_BeanClose`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.

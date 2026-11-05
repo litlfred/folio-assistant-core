@@ -13,21 +13,18 @@ graph-typologies:
 
 # Figure rebuild: a figure is data, not a picture
 
-Owner, 2026-10-31, after reading the ingested product catalogue and supply
-chain handbooks (litlfred/dth-pc, litlfred/dth-sc): *"the ingested dth-pc and
-dth-sc did not have any of the figures that i could see.... where they
-extracted into KG? can we recreate them computably?"* The owner then chose to
-**pick the form by figure type** (option A).
+A folio built from an L1 entry must carry every figure its source declares,
+and carry it as data rather than as a picture. Two things go wrong otherwise:
 
-Two separate failures sat behind that question:
+1. **Figures go missing silently.** A vector arm that matches only `Fig.` and
+   `Figure` misses a handbook that writes `Fig 1.`, and nothing compares the
+   publication's declared figures with the folio's blocks unless
+   `figure:coverage` does.
+2. **Figures arrive as pictures.** A `figure` block whose `file` is
+   `vfig-pNNN.png` has a caption, a page and glossary links in the KG. Its
+   boxes, arrows and labels are pixels: no query can reach them.
 
-1. **Figures went missing silently.** The vector arm matched only `Fig.` and
-   `Figure`, and the supply chain handbook writes `Fig 1.`, so nine of its 32
-   figures had no render and no block (cat-harness-tools#1119). Nothing
-   compared the publication's declared figures with the folio's blocks.
-2. **The figures that did arrive were pictures.** A `figure` block whose
-   `file` is `vfig-pNNN.png` has a caption, a page and glossary links in the
-   KG. Its boxes, arrows and labels are pixels: no query can reach them.
+The rebuild form is picked by figure type (step 2).
 
 ## The steps, after the folio is seeded
 
@@ -49,14 +46,13 @@ Two separate failures sat behind that question:
    | a decision or a transition rule | **DMN 1.3** | `processes/decisions/` |
    | classes, attributes, cardinalities | **FHIR logical models** (FSH), drawn as a UML class diagram generated from them | the upstream IG (e.g. smart-pcmt), else a litlfred FSH repo |
    | a graph of named boxes and arrows | find what the boxes ARE (processes, actors, systems) and model it as **ArchiMate** elements and relationships | the reference architecture |
-   | phases, layers, nested shapes, a tree, a staircase | an **SVG generated from data**: a data file plus a generator Tool. The DIIG phases chart is the worked example: `diig-phases-figure/v1` data on the who-iris library entry of each publication that prints it, drawn by Tool `diig-phases-svg` | the data on the source's who-iris library entry; the folio commits the SVG, and adds only its own tiles in a `diig-phases-adaptation/v1` file |
+   | phases, layers, nested shapes, a tree, a staircase | an **SVG generated from data**: a data file plus a generator Tool. The DIIG phases chart is the worked example: `diig-phases-figure/v1` data on the L1 library entry of each publication that prints it, drawn by Tool `diig-phases-svg` | the data on the source's L1 library entry; the folio commits the SVG, and adds only its own tiles in a `diig-phases-adaptation/v1` file |
    | a table of values drawn as a picture | a **table** block | the block |
    | a country example, a photograph, a screenshot, a third-party figure | **keep the cited picture** (`scope: "rebuild"` exclusion, signed off) | unchanged |
 
-   **One source, never a copy (owner, 2026-10-31: "dont want to duplicate
-   content").** Every rebuilt figure is generated from, or links to, ONE
-   schema-backed source: an ArchiMate model, a BPMN or DMN file, a FHIR
-   logical model, or a data file whose labels are glossary IRIs. A figure
+   **One source, never a copy.** Every rebuilt figure is generated from, or
+   links to, ONE schema-backed source: an ArchiMate model, a BPMN or DMN file,
+   a FHIR logical model, or a data file whose labels are glossary IRIs. A figure
    that appears in several publications (the DIIG phases chart, the SMART
    Guidelines layers, the ANC workflow) has one source in the layer they all
    mount, and each folio points at it. Content that already lives upstream
@@ -82,9 +78,6 @@ Two separate failures sat behind that question:
 
 ## Routes by figure type, in detail
 
-The owner asked for each of these on 2026-10-31 while reading dth-pc and
-dth-sc.
-
 ### A workflow picture becomes BPMN XML
 
 A figure drawn in BPMN notation (lanes, events, gateways, tasks, groups,
@@ -93,9 +86,8 @@ transcribed into a `.bpmn` file.
 
 1. **Look for the source's own BPMN first.** If the publication it is adapted
    from (a DAK, a DTH, an IG) publishes the process as `.bpmn`, mount or cite
-   that file; never redraw it. WHO smart-anc, checked 2026-10-31, publishes no
-   `.bpmn` for its ANC workflow, only PlantUML pictures of other processes. So
-   that figure is transcribed.
+   that file; never redraw it. Otherwise transcribe it: WHO smart-anc, for
+   example, publishes no `.bpmn` for its ANC workflow.
 2. Transcribe exactly what is drawn. Keep the source's activity numbers and
    names as task ids and names (`10.5 Nutrition supplementation`), the lanes,
    the gateway labels on their flows, a group as `bpmn:group`, and a
@@ -116,7 +108,7 @@ A class diagram with attributes and cardinalities (dth-pc Fig. 9: Generic
 Product, Trade Item, Regulated Trade Item) is a data model.
 
 1. **Find the newer computable source first.** dth-pc's data model is carried
-   forward in smart-pcmt (owner, 2026-10-31): `Product` and
+   forward in smart-pcmt: `Product` and
    `ProductAuthorization` logical models. Link to those, cite the handbook
    figure as the original, and list the differences rather than hiding them.
    Read WHO and smart-* repositories; never change them.
@@ -124,7 +116,7 @@ Product, Trade Item, Regulated Trade Item) is a data model.
    litlfred repository. sushi must run without errors before the commit.
 3. Draw the figure as a UML class diagram generated from the
    StructureDefinitions, never from the picture. Show each entity as an
-   IG-style structure tree, using fhir-harness `logical-model-schemas` and
+   IG-style structure tree, using the FHIR layer's `logical-model-schemas` and
    `ig-ast-render`.
 4. In mapping tables, every FHIR path links to the spec page for its version
    (`https://hl7.org/fhir/R5/<resource>-definitions.html#<Resource.path>`), and
@@ -137,11 +129,11 @@ Product, Trade Item, Regulated Trade Item) is a data model.
 Charts such as the SMART Guidelines L1–L5 layers, the DIIG phases, nested
 strategies or a cost tree are not graphs. Write their content as a data file:
 layers, boxes, their text, and which feeds which. Then generate the SVG with a
-Tool. The DIIG phases chart is the worked example (owner, 2026-10-31, "B in
-who-iris"):
+Tool. The DIIG phases chart is the worked example; the data lives in the L1
+library:
 
 - Each published version is transcribed once, as `diig-phases-figure/v1`
-  data on that publication's who-iris library entry, under `figure-data/`.
+  data on that publication's L1 library entry, under `figure-data/`.
   DIIG Fig. 1.1.1 lives on `9789240010567-eng`, and the product catalogue
   handbook's Fig. 4 lives on `9789240116191-eng`.
 - A folio that adds its own tiles (dth-hrh) writes only those tiles in a
@@ -154,14 +146,10 @@ who-iris"):
   drawn by Tool `smart-approach-svg` (`bun run figure:smart-approach`).
 - A source's own wording stays as printed, typos included ("prioritise
   outcomes"); a correction is a review comment, not an edit to the data.
-
 - Labels are SVG `<text>`, never pixels, so they can be searched,
   translated and read aloud.
 - A label that names a glossary concept (L1 Narrative, Digital adaptation
   kit, Localisation) links to the SKOS term, an `<a href>` around the text.
-- A chart that appears in several publications is transcribed once per
-  published version, on its library entry. Each version is never copied
-  into a folio.
 
 ### Mermaid is a rendering, never a source
 
@@ -207,7 +195,7 @@ dth-pc Fig. 11 (packaging variations) and the NPC01101001 table. Write
 the records once as FSH `Instance:`s of the upstream logical model
 (`InstanceOf: Product`, `Usage: #example`) beside that model. The figure or
 table is then generated from the compiled instances. For dth-pc these instances
-are in litlfred/smart-pcmt (owner chose this place on 2026-10-31). The
+are in litlfred/smart-pcmt. The
 instances carry only what the source prints:
 
 - A value the model requires but the source omits gets
@@ -225,9 +213,9 @@ names, and nothing is typed into the bar.
 
 ## Reviewing the classification
 
-An agent proposes, and a person decides. The owner chose on 2026-10-31 that
-review can happen either in the folio's Contributor Log sheet or in a GitHub
-issue, and the result always lands in the folio's `figures.json` by a PR.
+An agent proposes, and a person decides. Review happens either in the folio's
+Contributor Log sheet or in a GitHub issue, and the result always lands in the
+folio's `figures.json` by a PR.
 
 1. **Propose.** An agent looks at each figure's render and vector-layer
    structure. It proposes a route from the table in step 2 and an upstream

@@ -20,5 +20,10 @@ export default toolFactory((t) =>
     },
     satisfies: ["graph-rendering"],
     requires: { runtime: ["bun"], network: false },
+    selection: {
+      when: "A document's glossary or acronyms tables should come from its SKOS glossaries. For a References list use references-render.",
+      limits: "Only the tables `glossary/glossary-tables.json` names; captions and footnotes are left alone.",
+      cost: "Milliseconds per table; reads the instance's glossary schemes, no network.",
+    },
   }),
 );
