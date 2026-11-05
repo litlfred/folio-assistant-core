@@ -17,11 +17,11 @@
                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
                   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns#"
+                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns/"
                   id="Definitions_RecordAgentStep"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
-  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns#" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns/" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
   <bpmn:resource id="authoring-agent" name="Authoring agent"/>
 
   <bpmn:collaboration id="Collaboration_RecordAgentStep">
@@ -37,6 +37,7 @@
     </bpmn:documentation>
     <bpmn:laneSet id="Process_RecordAgentStep_LaneSet">
       <bpmn:lane id="Lane_Agent" name="Authoring agent" partitionElementRef="authoring-agent">
+        <bpmn:documentation>The agent working the change set (or the log watcher writing on its behalf). Writes the Agent row first, then Feedback (agent) from that row, and reads back the sheet so the copied columns agree.</bpmn:documentation>
         <bpmn:flowNodeRef>StartEvent_Moved</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_WriteAgentRow</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_WriteFeedback</bpmn:flowNodeRef>
