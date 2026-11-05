@@ -47,6 +47,7 @@ import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts";
 import { escapeForRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
+import { previewPath } from "@litlfred/cat-harness-tools/scripts/lib/preview-prefix.ts";
 import { scopeCss } from "./scope-css.js";
 
 /** `folio-staging.yml`'s slug rule, step `slug`. */
@@ -60,7 +61,7 @@ export const stagingSlug = (branch: string) =>
  * recorded `stagingUrl`, that preview's own review page.
  */
 export const stagingReviewUrl = (site: string | undefined, branch: string, stagingUrl?: string): string | undefined => {
-  const base = stagingUrl ? stagingUrl.replace(/\/$/, "") : site ? `${site.replace(/\/$/, "")}/STAGING/${stagingSlug(branch)}` : undefined;
+  const base = stagingUrl ? stagingUrl.replace(/\/$/, "") : site ? `${site.replace(/\/$/, "")}/${previewPath(stagingSlug(branch))}` : undefined;
   return base === undefined ? undefined : `${base}/${REVIEW_PAGE_DIR}/`;
 };
 
@@ -184,7 +185,7 @@ export function siteComments(
       links: {
         ...(c.targetLabel ? { document: `${toRoot}${documentPage(opts.slug)}${frag}` } : {}),
         ...(site && c.targetLabel && cs ? { before: `${site}/${documentPage(opts.slug)}${frag}` } : {}),
-        ...(cs ? { after: cs.stagingUrl ? `${cs.stagingUrl.replace(/\/$/, "")}/${documentPage(opts.slug)}${frag}` : site ? `${site}/STAGING/${stagingSlug(cs.branch)}/${documentPage(opts.slug)}${frag}` : undefined } : {}),
+        ...(cs ? { after: cs.stagingUrl ? `${cs.stagingUrl.replace(/\/$/, "")}/${documentPage(opts.slug)}${frag}` : site ? `${site}/${previewPath(stagingSlug(cs.branch))}/${documentPage(opts.slug)}${frag}` : undefined } : {}),
         ...(cs?.pr && opts.repo ? { pr: `https://github.com/${opts.repo}/pull/${cs.pr}` } : {}),
         // The staging review page: the comment's own change's, else that of
         // the first change-set it is in that has a pull request.
