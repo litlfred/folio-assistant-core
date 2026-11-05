@@ -501,7 +501,14 @@ from Yes or Completed. The agent never writes the Orange columns.
   when it reports a change. For that check the script writes, in a drafting
   sheet, a hash of every cell people set on Contributor Feedback to the
   hidden Watch tab (`F1:I1`: `Cells hash`, the hash, `Checked (UTC)`, the
-  time), on every refresh and timer tick. Without a watcher, a Ready for
+  time), on every refresh and timer tick. In a public-comment sheet it covers
+  Review Change Sets (Title, TWG (CS), every Committee Feedback column,
+  Ready for agent, Dispositions confirmed, Ready for merge, Change Set
+  (human)) and Review Public Comments (every Committee Feedback column,
+  Disposition, Change Set (human), TWG (human)), keyed by Change-set id and
+  comment No., so an inserted row changes nothing; it is written on every
+  refresh, which the timer runs only when an edit or the Agent tab changed.
+  Without a watcher, a Ready for
   agent waits until somebody happens to ask.
 
 ## One agent column, status on top

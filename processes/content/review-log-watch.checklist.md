@@ -4,7 +4,7 @@
 
 > **Generated, and not the authority.** This is `folio-assistant-core/processes/content/review-log-watch.bpmn` (process `Process_ReviewLogWatch`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
 
-One poll of one drafting review log (a Contributor Feedback sheet) and its folio repository.
+One poll of one review log (a drafting Contributor Feedback sheet, or a public-comment sheet's Review Change Sets) and its folio repository.
 
 ## Begin — Every 3 minutes (`StartEvent_Poll`)
 
@@ -16,7 +16,7 @@ One poll of one drafting review log (a Contributor Feedback sheet) and its folio
 
 - Who: the `Log watcher (authoring agent)` lane (role `authoring-agent`).
 - Skill: `review-log-watch`.
-- What: Reads Watch!F1:I1, the hash of the person-set cells that the sheet script writes on every refresh, and Contributor Feedback's header row and Issue column, and saves them as JSON for the check.
+- What: Reads Watch!F1:I1, the hash of the person-set cells that the sheet script writes on every refresh, and Contributor Feedback's header row and Issue column (a public-comment log: Review Change Sets' header row and Change-set column), and saves them as JSON for the check.
 - Record it: `workflow_complete` with `node: "Task_ReadSheet"`.
 - next: → `Task_RunCheck` (Run the review-log-watch check)
 

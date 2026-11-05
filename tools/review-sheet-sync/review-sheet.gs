@@ -697,6 +697,7 @@ function refreshLocked() {
       const id = String(r[rCs]).trim();
       if (stagingOf[id] || awaitsPreview(prOf[id])) rcs.sh.getRange(k + rcs.top, rSt + 1, 1, 1).setRichTextValues([[stagingCell(stagingOf[id], builtOf[id], prOf[id], readyAt[id], dispBlock[id])]]);
     });
+     writeWatchHash(ss);
   }
 }
 // ---------- sheet helpers ----------
@@ -1137,22 +1138,53 @@ function watchedHeader_(h) {
 }
 
 /**
- * Write a hash of every non-empty person-set cell of Contributor Feedback to
- * the hidden Watch tab, F1 "Cells hash" and G1 the hash, H1 "Checked (UTC)"
- * and I1 when. A review-log watcher reads Watch!F1:I1 and the Issue column
- * on each poll, instead of the whole log, and passes the hash to Tool
- * review-log-watch (`--sheet-hash`); a different hash means a person changed
- * something (owner, 2026-11-01, Q-WATCH4 A). Columns A to D are left to any
- * other Watch writer. Never stops the refresh.
+ * Public comment's person-set cells, one line each (owner, 2026-11-04): on
+ * Review Change Sets Title, TWG (CS), every Committee Feedback column, Ready
+ * for agent, Dispositions confirmed, Ready for merge and Change Set (human);
+ * on Review Public Comments every Committee Feedback column, Disposition,
+ * Change Set (human) and TWG (human). A line is keyed by its row's
+ * Change-set id or comment No., and the lines are sorted, so a row someone
+ * inserts changes nothing; a row with neither is keyed by its place.
+ */
+function pcWatchLines_(ss) {
+  const lines = [];
+  [[CFG.RCS, 'Change-set', ['Title', 'TWG (CS)', 'Ready for agent', CONFIRMED, 'Ready for merge', CS_HUMAN]],
+    [CFG.RPC, COLS.rpc.no, [COLS.rpc.disposition || 'Disposition', CS_HUMAN, 'TWG (human)']]].forEach(([name, key, heads]) => {
+    const s = readSheet(ss.getSheetByName(name));
+    const kc = col(s, key);
+    const cs = heads.map(h => col(s, h)).concat(colsLike(s, 'Committee Feedback')).filter((c, i, a) => c >= 0 && a.indexOf(c) === i);
+    s.rows.forEach((r, k) => {
+      const id = kc >= 0 ? String(r[kc]).trim() : '';
+      cs.forEach(c => {
+        const v = String(r[c] == null ? '' : r[c]).trim();
+        if (v) lines.push(name + '|' + (id || '#' + k) + ':' + s.header[c] + '=' + v);
+      });
+    });
+  });
+  return lines.sort();
+}
+
+/**
+ * Write a hash of every non-empty person-set cell to the hidden Watch tab, F1
+ * "Cells hash" and G1 the hash, H1 "Checked (UTC)" and I1 when: Contributor
+ * Feedback's on a drafting sheet, Review Change Sets' and Review Public
+ * Comments' on a public-comment one (pcWatchLines_). A review-log watcher
+ * reads Watch!F1:I1 and the Issue column on each poll, instead of the whole
+ * log, and passes the hash to Tool review-log-watch (`--sheet-hash`); a
+ * different hash means a person changed something (owner, 2026-11-01,
+ * Q-WATCH4 A). Columns A to D are left to any other Watch writer. Never stops
+ * the refresh.
  */
 function writeWatchHash(ss) {
   try {
-    const s = readSheet(ss.getSheetByName(CFG.FEEDBACK));
-    const lines = [];
-    s.rows.forEach((r, k) => s.header.forEach((h, c) => {
-      const v = String(r[c] == null ? '' : r[c]).trim();
-      if (v && watchedHeader_(String(h).trim())) lines.push(k + ':' + String(h).trim() + '=' + v);
-    }));
+    const lines = DRAFTING ? [] : pcWatchLines_(ss);
+    if (DRAFTING) {
+      const s = readSheet(ss.getSheetByName(CFG.FEEDBACK));
+      s.rows.forEach((r, k) => s.header.forEach((h, c) => {
+        const v = String(r[c] == null ? '' : r[c]).trim();
+        if (v && watchedHeader_(String(h).trim())) lines.push(k + ':' + String(h).trim() + '=' + v);
+      }));
+    }
     let sh = ss.getSheetByName('Watch');
     if (!sh) { sh = ss.insertSheet('Watch'); sh.hideSheet(); }
     const now = new Date().toISOString().slice(0, 16).replace('T', ' ') + 'Z';
