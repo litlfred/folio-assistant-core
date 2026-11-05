@@ -7,12 +7,13 @@ generated: "scripts/subgraph-readmes.ts of the bootstrap toolset (https://github
 
 # core-templates
 
-Files this layer's tools WRITE INTO a folio that opts in, kept as real files rather than strings inside a script. `public-comment/github/` holds the issue forms and the two workflows that `scripts/public-comment-changesets.ts install` copies into a folio's `.github/` (`TEMPLATE_DIR`). They moved up here from the tools layer's `templates/public-comment/` (move M10, folio-assistant#2598), because this layer is the only one that installs them.
+Files this layer's tools WRITE INTO a folio that opts in, kept as real files rather than strings inside a script. `public-comment/github/` holds the issue forms and the two workflows that `scripts/public-comment-changesets.ts install` copies into a folio's `.github/` (`TEMPLATE_DIR`). They live here because this layer is the only one that installs them.
 
 Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-templates`, holding `code`.
 
 | file | what it is | used by |
 |---|---|---|
+| [`issue-forms/`](issue-forms/) | _nothing declares what this holds_ | |
 | [`public-comment/`](public-comment/) | _nothing declares what this holds_ | |
 
 <!-- kg:subgraph:end -->

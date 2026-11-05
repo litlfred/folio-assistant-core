@@ -14,14 +14,13 @@ is an ordered list:
 
 | File | Holds | Order means |
 |---|---|---|
-| `content/<slug>/<slug>.ts` | `chapters: ChapterRef[]` | reading order of chapters |
+| `folio/<slug>/<slug>.ts` | `chapters: ChapterRef[]` | reading order of chapters |
 | `<chapter>/<chapter>.ts` | `sections: Section[]` | reading order within the chapter |
 | a section's `blocks: string[]` | block root names | reading order within the section |
 
-A block reaches the output **iff** some section names it. This is the single
-most common way work disappears: the `.ts` and `.md` are written, committed,
-and reviewed, and the block renders nowhere because nothing lists it. Adding
-the name to `blocks[]` is part of adding a block, not a follow-up.
+A block reaches the output **iff** some section names it: a block whose
+`.ts` and `.md` exist but that no `blocks[]` lists renders nowhere. Adding the
+name to `blocks[]` is part of adding a block.
 
 ## Sections may nest exactly one level
 
@@ -34,12 +33,11 @@ need a third level, you need another chapter.
 
 A chapter is the unit a reviewer is asked to read in one sitting, and the unit
 the work plan tracks. Prefer more, smaller chapters over few large ones: a
-chapter is also the unit that gets *rewritten*, and a 40-block chapter is one
-nobody will re-order.
+chapter is also the unit that gets *rewritten*.
 
 ## Adding a chapter
 
-1. `mkdir content/<slug>/<chapter-dir>`
+1. `mkdir folio/<slug>/<chapter-dir>`
 2. Write `<chapter-dir>/<chapter-dir>.ts` — title, optional `label`, and
    `sections[]` (which may start empty).
 3. Add `{ dir: "<chapter-dir>" }` to the document manifest's `chapters[]`, in
@@ -52,7 +50,7 @@ nobody will re-order.
 from its first commit** (`review-anchors-from-folio.ts --document <doc>`;
 the `--library`/`--source` flags only when it was seeded from a library
 file). The section list is what a review sheet's dropdown reads; a folio
-without it leaves a linked sheet empty (owner, 2026-10-31, DTH-PC). See
+without it leaves a linked sheet empty. See
 `review-sheet-script`, "Linking a sheet to a repository".
 
 The directory name is the chapter's slug; it appears in build output and in

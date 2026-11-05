@@ -671,6 +671,11 @@ export function overlaySnippet(rows: SiteComment[], opts: { repo?: string; issue
     border:1px solid #8886; border-radius:8px; box-shadow:0 8px 24px #0003; }
   .fa-block-panel .pc-list { margin:0; padding-left:1.1rem; }
   .fa-block-panel .pc-list li { margin:.45rem 0; }
+  .fa-block-panel .pc-chips { display:flex; flex-wrap:wrap; gap:4px; margin:.3rem 0; }
+  .fa-block-panel .pc-chips button { font:inherit; font-size:.78rem; padding:.1rem .5rem; border:1px solid #8886; border-radius:999px; background:none; color:inherit; cursor:pointer; }
+  .fa-block-panel .pc-chips button[aria-pressed=true] { background:var(--link,#0b5cad); border-color:var(--link,#0b5cad); color:#fff; }
+  .fa-block-panel .pc-q { width:100%; box-sizing:border-box; margin:.3rem 0; padding:.3rem .5rem; font:inherit; font-size:.82rem; border:1px solid #8886; border-radius:6px; background:none; color:inherit; }
+  .fa-block-panel .pc-more { font:inherit; font-size:.8rem; padding:.25rem .6rem; border:1px solid #8886; border-radius:6px; background:none; color:inherit; cursor:pointer; }
   .pc-bar { position:sticky; top:0; z-index:1; padding:.4rem 0; background:var(--bg,#fdfdfb); border-bottom:1px solid #8884; margin-bottom:1rem; }
 </style>
 <script type="application/json" id="pc-data">${json}</script>
@@ -692,7 +697,6 @@ export function overlaySnippet(rows: SiteComment[], opts: { repo?: string; issue
   // re-scrolled to once at the end because the notes above it moved it.
   const item = (c) => "<li><a href=\\"" + esc(meta.dashboard) + "#" + esc(c.ref) + "\\">" + esc(c.ref) + "</a> · " + esc(c.status) +
     (c.type ? " · " + esc(c.type) : "") + (c.decision ? " · <b>" + esc(c.decision.label) + "</b>" : "") +
-    (c.sets ? " · " + c.sets.map((id) => "<a href=\\"" + esc(meta.dashboard) + "#" + esc(id) + "\\">" + esc(id) + "</a>").join(" ") : "") +
     " — " + esc(c.summary) + "</li>";
   const note = (label, h) => {
     const a = document.getElementById(label);
@@ -744,15 +748,66 @@ export function overlaySnippet(rows: SiteComment[], opts: { repo?: string; issue
     const bp = window.faBlockPanel;
     if (!bp || bpReady) return bp;
     bpReady = true;
+    // Owner, 2026-11-02: "only show the PCs ... applicable to selected
+    // section. PCs only. filter + show more". The pane lists this block's
+    // public comments only (no change-set links), with filter chips, a search
+    // box once the list is long, and the first few with "Show more".
     bp.pane("comments", { icon: "\u{1F4AC}", title: "Public comments", render: (label, body) => {
       const h = data[label] || { n: 0, o: 0 };
       const sum = document.createElement("p");
+      sum.className = "pc-sum";
       sum.innerHTML = h.n + " comment" + (h.n === 1 ? "" : "s") + (h.o ? ", " + h.o + " open" : "") + " \\u00b7 <a href=\\"" + esc(meta.dashboard) + "\\">all public comments</a>";
       const ul = document.createElement("ul");
       ul.className = "pc-list";
       ul.innerHTML = "<li>Loading…</li>";
       body.append(sum, ul);
-      listOf(label).then((list) => { ul.innerHTML = list.map(item).join("") || "<li>Could not load the comments.</li>"; });
+      listOf(label).then((list) => {
+        if (!list.length) { ul.innerHTML = "<li>Could not load the comments.</li>"; return; }
+        const STEP = 5;
+        let shown = STEP, chip = "all", q = "";
+        const chips = [["all", "All", list.length], ["open", "Open", list.filter((c) => c.phase === "open").length]];
+        for (const t of [...new Set(list.map((c) => c.type).filter(Boolean))].sort()) chips.push(["t:" + t, t, list.filter((c) => c.type === t).length]);
+        const bar = document.createElement("div");
+        bar.className = "pc-chips";
+        if (chips.length > 2 || chips[1][2] !== list.length) for (const [k, txt, n] of chips) {
+          if (!n) continue;
+          const b = document.createElement("button");
+          b.type = "button";
+          b.dataset.k = k;
+          b.textContent = txt + " " + n;
+          b.setAttribute("aria-pressed", String(k === chip));
+          bar.append(b);
+        }
+        const box = document.createElement("input");
+        box.type = "search";
+        box.className = "pc-q";
+        box.placeholder = "Filter these comments";
+        box.setAttribute("aria-label", "Filter these comments");
+        const more = document.createElement("button");
+        more.type = "button";
+        more.className = "pc-more";
+        const draw = () => {
+          const hit = list.filter((c) => (chip === "all" || (chip === "open" ? c.phase === "open" : c.type === chip.slice(2))) &&
+            (!q || (c.ref + " " + c.status + " " + (c.type || "") + " " + c.summary).toLowerCase().includes(q)));
+          ul.innerHTML = hit.slice(0, shown).map(item).join("") || "<li>No comment matches.</li>";
+          more.hidden = hit.length <= shown;
+          more.textContent = "Show " + Math.min(STEP * 4, hit.length - shown) + " more (" + (hit.length - shown) + " left)";
+        };
+        bar.addEventListener("click", (e) => {
+          const b = e.target.closest("button");
+          if (!b) return;
+          chip = b.dataset.k;
+          shown = STEP;
+          for (const x of bar.children) x.setAttribute("aria-pressed", String(x === b));
+          draw();
+        });
+        box.addEventListener("input", () => { q = box.value.trim().toLowerCase(); shown = STEP; draw(); });
+        more.addEventListener("click", () => { shown += STEP * 4; draw(); });
+        if (bar.children.length) ul.before(bar);
+        if (list.length > 8) ul.before(box);
+        ul.after(more);
+        draw();
+      });
     } });
     return bp;
   };

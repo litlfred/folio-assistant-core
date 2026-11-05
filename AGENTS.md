@@ -1,7 +1,6 @@
 # AGENTS.md — folio-assist-core
 
-This directory is a **staged instance**, not a repository yet. The agent
-guidance that governs work here is the root
+The agent guidance that governs work here is the root
 [`AGENTS.md`](../AGENTS.md); everything it says about beans, briefs, process
 state and continual progress applies unchanged.
 
@@ -12,16 +11,15 @@ What is specific to this layer, and it is one rule:
 > is actually PRESENT belongs here. A schema describing skills, workflows,
 > roles or tools belongs in `cat-harness/`.
 
-The line is not stylistic. `BASE_GRAPH_TYPOLOGIES` in
-`cat-harness/schemas/cat-harness.ts` records the owner's own phrasing of it, and
-`schemas/folio-graph-typology.ts` shows what goes wrong when a layer owns a kind it
-cannot serve.
+`BASE_GRAPH_TYPOLOGIES` in `cat-harness/schemas/cat-harness.ts` records the
+rule, and `cat-harness/schemas/folio-graph-typology.ts` shows what goes wrong
+when a layer owns a kind it cannot serve.
 
 **Before adding anything here**, read [`README.md`](README.md) — in particular
 the three materialisation states, which have no default and are checked rather
-than assumed. The state NAMES (and fixity) are the one owner-ruled
-exception to the rule above: they live in `cat-harness-tools/schemas/kg/materialization-state.ts`
-(bean `tlat`), and the gates that judge content stay here.
+than assumed. The state names (and fixity) are the one exception to the rule
+above: they live in `cat-harness-tools/schemas/kg/materialization-state.ts`,
+and the gates that judge content stay here.
 
 ## The skills this layer publishes
 
@@ -67,7 +65,7 @@ _47 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`normative-statements`](skills/content/folio-document-adapter/normative-statements.md) | Carry a **recommendation, requirement or rule** in a document folio — the thing an L1 health-policy guidance note, a standard, or a terms-of-reference document exists to state. |
 | [`public-comment-channels`](skills/content/folio-document-adapter/public-comment-channels.md) | Set up the channels a public-comment release goes out on (an offline Excel sheet, a Google Form, a GitHub issue form, and the review sheet), each limited to the release's fixed references, with the… |
 | [`public-comment`](skills/content/folio-document-adapter/public-comment.md) | Run a **public review** of a document folio. |
-| [`review-log-watch`](skills/content/folio-document-adapter/review-log-watch.md) | Poll a drafting review log (a Contributor Feedback sheet) and its folio repository's issues mechanically, with Tool `review-log-watch`, and start agent work only when a cell people set or an open… |
+| [`review-log-watch`](skills/content/folio-document-adapter/review-log-watch.md) | Poll a review log (a drafting Contributor Feedback sheet, or a public-comment sheet's Review Change Sets) and its folio repository's issues mechanically, with Tool `review-log-watch`, and start… |
 | [`review-sheet-agent-columns`](skills/content/folio-document-adapter/review-sheet-agent-columns.md) | Whenever an agent works on a change set of a folio whose review sheet is kept by the Tool `review-sheet-sync`, it writes the Agent tabs' columns for that change set and its comments as it goes:… |
 | [`review-sheet-script`](skills/content/folio-document-adapter/review-sheet-script.md) | Build, install and reuse the Google Apps Script that keeps a review sheet's links and joined columns current (Tool `review-sheet-sync`). |
 

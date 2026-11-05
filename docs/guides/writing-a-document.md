@@ -44,17 +44,17 @@ What it does not have is the seven block kinds whose assertion is a formal
 mathematical claim — and therefore neither of the two toolchains that serve
 them. No Lean. No LaTeX.
 
-> **A paper is a document plus Lean-bearing blocks.** That is not a metaphor:
-> `PaperContentAdapter` extends `DocumentContentAdapter` in code, and adds the
-> Lean lifecycle and the LaTeX renderer on top. If you find yourself wanting a
-> feature "the paper adapter has", check first — you probably already have it.
+> **A paper is a document plus Lean-bearing blocks.** `PaperContentAdapter`
+> extends `DocumentContentAdapter` in code, and adds the Lean lifecycle and the
+> LaTeX renderer on top, so a feature "the paper adapter has" is usually
+> already here.
 
 <div class="bpmn-figure" id="figure-what-a-document-folio-is">
   <img src="{{ '/assets/img/workflows/authoring-a-document.svg' | relative_url }}"
        alt="BPMN swimlane diagram of document authoring, plan to published.">
 </div>
 
-[BPMN 2.0 source](https://github.com/litlfred/folio-assistant/blob/main/processes/authoring-a-document.bpmn)
+[BPMN 2.0 source](https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/authoring-a-document.bpmn)
 {: .bpmn-source }
 
 ---
@@ -109,9 +109,8 @@ content/cold-chain-guidance/
 ```
 
 Three ordered lists hold the whole structure, and **a block reaches the output
-only if some section's `blocks[]` names it**. This is the single most common way
-authored work disappears: the `.ts` and `.md` are written, committed and
-reviewed, and the block renders nowhere because nothing lists it.
+only if some section's `blocks[]` names it**. A block whose `.ts` and `.md` are
+committed but that no section lists renders nowhere.
 
 ### The kinds you may use
 {: #the-kinds-you-may-use data-fa-label="sec:guides-writing-a-document-the-kinds-you-may-use" }
@@ -119,12 +118,11 @@ reviewed, and the block renders nowhere because nothing lists it.
 [✎ Edit](https://github.com/litlfred/folio-assistant-core/edit/main/docs/source/guides-writing-a-document/the-kinds-you-may-use.md){: .fa-node-edit title="Edit docs/source/guides-writing-a-document/the-kinds-you-may-use.md" data-fa-link="edit" data-src="docs/source/guides-writing-a-document/the-kinds-you-may-use.md" data-repo="litlfred/folio-assistant-core" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" lang="en" dir="ltr" data-qa-family="block" data-qa-key="the-kinds-you-may-use.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/the-kinds-you-may-use.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-translation" lang="en" dir="ltr" data-qa-family="translation" data-qa-key="the-kinds-you-may-use.translation" data-qa-label="Translation QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/the-kinds-you-may-use.translation.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Translation QA: loading the verdict…" aria-label="Translation QA: loading the verdict…"><span class="fa-qa-tag">TR</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button></span>
 
 `prose`, `example`, `remark`, `algorithm`, `simulator`, `equation`, `diagram`,
-`table`.
+`table`, `figure`, `recommendation`.
 
 Not `definition`, `theorem`, `lemma`, `proposition`, `corollary`, `conjecture`
 or `proof`. `content_profile_check` rejects them, and runs on every
-`content_validate` — so the failure arrives while you are writing rather than
-when you try to publish.
+`content_validate`.
 
 ### `uses[]` matters more here than in a paper
 {: #uses-matters-more-here-than-in-a-paper data-fa-label="sec:guides-writing-a-document-uses-matters-more-here-than-in-a-paper" }
@@ -132,13 +130,12 @@ when you try to publish.
 [✎ Edit](https://github.com/litlfred/folio-assistant-core/edit/main/docs/source/guides-writing-a-document/uses-matters-more-here-than-in-a-paper.md){: .fa-node-edit title="Edit docs/source/guides-writing-a-document/uses-matters-more-here-than-in-a-paper.md" data-fa-link="edit" data-src="docs/source/guides-writing-a-document/uses-matters-more-here-than-in-a-paper.md" data-repo="litlfred/folio-assistant-core" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" lang="en" dir="ltr" data-qa-family="block" data-qa-key="uses-matters-more-here-than-in-a-paper.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/uses-matters-more-here-than-in-a-paper.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-translation" lang="en" dir="ltr" data-qa-family="translation" data-qa-key="uses-matters-more-here-than-in-a-paper.translation" data-qa-label="Translation QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/uses-matters-more-here-than-in-a-paper.translation.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Translation QA: loading the verdict…" aria-label="Translation QA: loading the verdict…"><span class="fa-qa-tag">TR</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button></span>
 
 `uses[]` lists the blocks a **reader** must already have read to follow this
-one. It is an editorial judgement — nothing derives it, and nothing should.
+one. It is an editorial judgement; nothing derives it.
 
-In a paper folio there is a second, machine-derived dependency graph beside it
-(from `lean.ref`). In a document folio there is not. So `uses[]` is the *only*
-dependency signal the corpus carries, and every ordering metric, every "what
-else changes if this changes?" question, and the reading-order review all read
-it. List direct neighbours only.
+A paper folio has a second, machine-derived dependency graph (from
+`lean.ref`); a document folio does not. So `uses[]` is the *only* dependency
+signal, and every ordering metric, every "what else changes if this changes?"
+question, and the reading-order review read it. List direct neighbours only.
 
 ---
 
@@ -170,32 +167,30 @@ Reads `uses[]` and the content graph.
 [✎ Edit](https://github.com/litlfred/folio-assistant-core/edit/main/docs/source/guides-writing-a-document/carrying-a-recommendation.md){: .fa-node-edit title="Edit docs/source/guides-writing-a-document/carrying-a-recommendation.md" data-fa-link="edit" data-src="docs/source/guides-writing-a-document/carrying-a-recommendation.md" data-repo="litlfred/folio-assistant-core" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" lang="en" dir="ltr" data-qa-family="block" data-qa-key="carrying-a-recommendation.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/carrying-a-recommendation.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-translation" lang="en" dir="ltr" data-qa-family="translation" data-qa-key="carrying-a-recommendation.translation" data-qa-label="Translation QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/carrying-a-recommendation.translation.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Translation QA: loading the verdict…" aria-label="Translation QA: loading the verdict…"><span class="fa-qa-tag">TR</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button></span>
 
 A normative statement is the block readers cite and implementers trace to. It
-wants a label, a stable identity and a place in the dependency graph.
-
-There is **no first-class `recommendation` block kind** yet. The carrier today
-is a `prose` block with a label and a title:
+wants a label, a stable identity and a place in the dependency graph. Its
+carrier is a `recommendation` block:
 
 ```ts
-export default prose({
+export default recommendation({
   label: "rec:cold-chain-audit",
   title: "Audit the cold chain quarterly",
+  strength: { list: "grade-recommendation-strength", code: "conditional" },
   uses: ["rec:scope", "prose:cold-chain-terms"],
 });
 ```
 
-Rules that make this work rather than merely compile:
-
 - **One statement per block.** A block holding three cannot be cited, reviewed,
   superseded or traced individually.
-- **State the strength in the prose** (*must*, *should*, the issuing body's own
-  grading). Nothing in the block structure encodes it.
-- **Keep the published number out of the label.** Numbers are renumbered
-  between editions; the label has to survive that. Put it in the title.
+- **State the strength as a code** in a declared code list:
+  `grade-recommendation-strength` (`strong`, `conditional`) or
+  `rfc2119-requirement-level` (`must`, `should`, `may`, …), or the folio's own
+  `folio-code-list/v1` when its issuing body grades differently.
+- **Keep the published number out of the label.** Numbers change between
+  editions; the label must not. Put the number in the title.
 - **Do not use `definition`.** Its `lean` field is required, so it will not
-  validate here at all. Earlier guidance in `document-intake` suggested that
-  mapping — it predates this content type.
+  validate here at all.
 
-The full convention, and what it is missing, is in the
+The full convention is in the
 [`normative-statements`]({{ '/reference/skill-instructions/normative-statements.html' | relative_url }})
 skill.
 
@@ -212,9 +207,8 @@ content_profile_check     profile conformance alone, over the whole folio
 qa_sweep                  the QA axes, per block
 ```
 
-Profile conformance is the check a paper folio does not have. It catches two
-things schema validation structurally cannot, because a `theorem` is a valid
-`theorem` whatever folio it sits in:
+Profile conformance catches two things schema validation cannot, because a
+`theorem` is a valid `theorem` whatever folio it sits in:
 
 1. a block whose kind is outside the declared profile; and
 2. a `lean` field or a `.lean` sibling on a kind the profile otherwise allows —
@@ -237,10 +231,9 @@ content/**  →  document_render_md   →  build/<slug>.md
                                     →  document_render_pdf   →  build/<slug>.pdf
 ```
 
-**Read the Markdown first.** It is the only place the whole document appears in
-reading order in one file, and ordering problems are invisible block-by-block.
-Look for sections that came out empty, blocks in an order that does not read,
-and the `> **Missing block:**` marker.
+**Read the Markdown first.** It is the only file with the whole document in
+reading order. Look for sections that came out empty, blocks in an order that
+does not read, and the `> **Missing block:**` marker.
 
 HTML needs only `pandoc`. PDF additionally needs one TeX-free engine —
 `weasyprint` (recommended), `prince`, or `wkhtmltopdf`:
@@ -251,30 +244,29 @@ pip install weasyprint
 ```
 
 If none is installed, `document_render_pdf` says which are missing and stops.
-It does **not** fall back to `latexmk`, even where TeX is present: a PDF that
-silently came out of LaTeX would misreport what the folio needs to build, and
-the next person on a clean machine pays for that.
+It does **not** fall back to `latexmk`, even where TeX is present.
 
 Both renderers take a `css` path relative to the repo root. Keep the stylesheet
-in the folio — a house style is content — and put the print rules (`@page`,
-page breaks, running heads) in the same file as the screen rules, so the two
-outputs cannot drift.
+in the folio, and put the print rules (`@page`, page breaks, running heads) in
+the same file as the screen rules, so the two outputs cannot drift.
 
 ### Not implemented
 {: #not-implemented data-fa-label="sec:guides-writing-a-document-not-implemented" }
 
 [✎ Edit](https://github.com/litlfred/folio-assistant-core/edit/main/docs/source/guides-writing-a-document/not-implemented.md){: .fa-node-edit title="Edit docs/source/guides-writing-a-document/not-implemented.md" data-fa-link="edit" data-src="docs/source/guides-writing-a-document/not-implemented.md" data-repo="litlfred/folio-assistant-core" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" lang="en" dir="ltr" data-qa-family="block" data-qa-key="not-implemented.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/not-implemented.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-translation" lang="en" dir="ltr" data-qa-family="translation" data-qa-key="not-implemented.translation" data-qa-label="Translation QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/not-implemented.translation.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/guides-writing-a-document/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Translation QA: loading the verdict…" aria-label="Translation QA: loading the verdict…"><span class="fa-qa-tag">TR</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button></span>
 
-No citations, no bibliography, no glossary, no automatic cross-reference
-numbering. `\cite{…}` passes through **verbatim**, visible in the output rather
-than silently dropped, so a folio that needs references today should write them
-as Markdown links or footnotes.
+The pandoc renderers (`document_render_*`) have no citations, no bibliography,
+no glossary and no automatic cross-reference numbering: `\cite{…}` passes
+through **verbatim**, so on that path write references as Markdown links or
+footnotes. The site build (`build-document-site.ts`) renders `\cite{a,b}` as
+`[a, b]`, each key linked to its entry with `--bibliography-url`, and
+`:defterm` / `:refterm` as a term and its link; it has no cross-reference
+numbering either.
 
 Cross-references do work: every labelled block emits an HTML anchor, so
 `[see the scope statement](#rec:scope)` resolves in both HTML and PDF. Use the
-block's `label`, never a heading-derived anchor — the heading anchor changes
-whenever the title is edited, which is exactly when the link most needs to keep
-working.
+block's `label`, never a heading-derived anchor, which changes whenever the
+title is edited.
 
 ---
 
@@ -303,7 +295,7 @@ lists exactly what is in the way.
 |---|---|
 | Skills | [`document-authoring`]({{ site.baseurl }}/reference/skill-instructions/document-authoring.html) · [`document-structure`]({{ site.baseurl }}/reference/skill-instructions/document-structure.html) · [`normative-statements`]({{ site.baseurl }}/reference/skill-instructions/normative-statements.html) · [`document-publishing`]({{ site.baseurl }}/reference/skill-instructions/document-publishing.html) |
 | Typed contracts | [schema reference]({{ site.baseurl }}/reference/skills/) |
-| Skill package | the content core's `skills/content/folio-document-adapter/package-manifest.json` |
+| Skill package | `skills/content/folio-document-adapter/package-manifest.json` |
 | Adapter | `adapters/document/` |
-| Vocabulary | `schemas/block-kinds.ts` — `DOCUMENT_BLOCK_KINDS`, `MATH_BLOCK_KINDS` |
-| Process | [`authoring-a-document.bpmn`](https://github.com/litlfred/folio-assistant/blob/main/processes/authoring-a-document.bpmn) |
+| Vocabulary | `block-kinds/` — one `folio-block-kind/v1` node per kind |
+| Process | [`authoring-a-document.bpmn`](https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/authoring-a-document.bpmn) |

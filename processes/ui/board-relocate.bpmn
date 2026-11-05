@@ -13,12 +13,9 @@
 
   <!-- ═══════════════════════════════════════════════════════════
        The fishbone — relocating content into fsh-guts
-       Bean: folio-assistant-sd8x (authoring), folio-assistant-0jtj (build)
-
-       Owner, 2026-09-21: "have fsh-guts to throw stuff into", "confrim
-       arctions [fishbones] on open content puts in fsh guts", and, when
-       asked what the fishbone does to the thing it takes:
-       "Relocate the content itself — delete becomes move".
+       fsh-guts is where content is thrown. The fishbone on open content,
+       once confirmed, relocates the content itself into fsh-guts: delete
+       becomes move.
 
        WHY THIS IS A DIAGRAM AND NOT A HANDLER. The fishbone LOOKS like
        a delete and is not one, which is exactly the confusion a drawn
@@ -33,9 +30,8 @@
             would take away on its own initiative.
 
        THE EXPORTED LABELS SAY "the trashcan", NOT THE DIRECTORY NAME, and
-       that is not squeamishness — owner, 2026-09-19: "NEVER include
-       fsh-guts, references to fsh-guts stripped out of KG before sending to
-       publication." A task name is a published node, an XML comment is not,
+       that is not squeamishness: fsh-guts is NEVER published, and references
+       to it are stripped out of the KG before publication. A task name is a published node, an XML comment is not,
        so the directory is named here and nowhere a consumer can follow.
        `fsh-guts-unpublished.test.ts` is what catches a rename back.
 
@@ -65,7 +61,7 @@ The order of the two writes is the content of the diagram. The CONTENT relocates
         <bpmn:flowNodeRef>End_Unchanged</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Renderer" name="Board renderer" partitionElementRef="board-renderer">
-        <bpmn:documentation>The order of its five tasks is load-bearing: the folio move lands before the layer update, so an interruption between the two leaves the semantic content already relocated rather than the presentation layer half-updated against a folio it no longer matches. On "no", the only action taken is to leave everything untouched — this process, unlike board-open-close, is strict, because a step that edits the folio and has not been confirmed must be refused rather than merely discouraged.</bpmn:documentation>
+        <bpmn:documentation>The order of its five tasks is load-bearing: the folio move lands before the layer update, so an interruption between the two leaves the semantic content already relocated rather than the presentation layer half-updated against a folio it no longer matches. On "no", everything is left untouched.</bpmn:documentation>
         <bpmn:flowNodeRef>A_Cancel</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>A_AskConfirm</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>A_MoveContent</bpmn:flowNodeRef>

@@ -54,15 +54,12 @@ diagram's own `bpmn:documentation`, carried on its `Process` node as
 instance's corpus of diagrams with their lanes and skills.
 
 **Bootstrap's diagrams are in the table, read from bootstrap's own graph.**
-`bootstrap` and `bootstrap-tools` sit below this instance, and their processes
-are kept out of its graph on purpose (`pve3`): they publish their own named
-subgraphs at their own sites, and the repository index here links each with
-`seeAlso`. The table follows those links, so a row for a bootstrap diagram is
-read from bootstrap's site — and if that site cannot be read, the page says so
-beside the table rather than drawing a shorter one.
+`bootstrap` and `bootstrap-tools` sit below this instance and publish their own
+named subgraphs at their own sites; the repository index here links each with
+`seeAlso`, and the table follows those links. If that site cannot be read, the
+page says so beside the table rather than drawing a shorter one.
 
-What the table cannot tell you is which of two neighbouring processes you are
-in, so that is the only thing said here:
+Which of two neighbouring processes you are in:
 
 - **Before anything else.** `initialize-harness` is the one bootstrap process
   an actor starts; every other bootstrap diagram is a sub-process reached from it.
@@ -114,30 +111,27 @@ bootstrap's, which are in its own <code>processes/</code> directory.</p>
 
 [✎ Edit](https://github.com/litlfred/folio-assistant-core/edit/main/docs/source/process-publication-workflow/they-also-run.md){: .fa-node-edit title="Edit docs/source/process-publication-workflow/they-also-run.md" data-fa-link="edit" data-src="docs/source/process-publication-workflow/they-also-run.md" data-repo="litlfred/folio-assistant-core" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" lang="en" dir="ltr" data-qa-family="block" data-qa-key="they-also-run.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/process-publication-workflow/they-also-run.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/process-publication-workflow/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-translation" lang="en" dir="ltr" data-qa-family="translation" data-qa-key="they-also-run.translation" data-qa-label="Translation QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/process-publication-workflow/they-also-run.translation.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/process-publication-workflow/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Translation QA: loading the verdict…" aria-label="Translation QA: loading the verdict…"><span class="fa-qa-tag">TR</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button></span>
 
-Since bean `fq0b` these files are not only pictures. The MCP server interprets
-them: `workflow_start` opens an instance for a subject, `workflow_next` reports
+These files are not only pictures. The MCP server interprets them: `workflow_start` opens an instance for a subject, `workflow_next` reports
 what is enabled *now* — with the lane that performs it and the skill that
 implements it — and `workflow_complete` refuses a step the process has not
 reached. `Commit into the corpus` cannot be reported done before the editor's
 decision is recorded, because there is no token on it until then.
 
-That is ordering, not enforcement: nothing yet stops an agent calling a
-capability tool directly. The case for making it binding — and the argument
-that the commit boundary is the right place — is in
-[Proposal: workflow orchestration](https://github.com/litlfred/folio-assistant/issues/200).
+That is ordering, not enforcement: nothing stops an agent calling a capability
+tool directly. Enforcement is at the commit boundary (see below).
 
 ### Some decisions are computed, not judged
 {: #some-decisions-are-computed-not-judged data-fa-label="sec:publication-workflow-some-decisions-are-computed-not-judged" }
 
 [✎ Edit](https://github.com/litlfred/folio-assistant-core/edit/main/docs/source/process-publication-workflow/some-decisions-are-computed-not-judged.md){: .fa-node-edit title="Edit docs/source/process-publication-workflow/some-decisions-are-computed-not-judged.md" data-fa-link="edit" data-src="docs/source/process-publication-workflow/some-decisions-are-computed-not-judged.md" data-repo="litlfred/folio-assistant-core" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-block" lang="en" dir="ltr" data-qa-family="block" data-qa-key="some-decisions-are-computed-not-judged.block" data-qa-label="Content QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/process-publication-workflow/some-decisions-are-computed-not-judged.block.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/process-publication-workflow/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Content QA: loading the verdict…" aria-label="Content QA: loading the verdict…"><span class="fa-qa-tag">QA</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button> <button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-translation" lang="en" dir="ltr" data-qa-family="translation" data-qa-key="some-decisions-are-computed-not-judged.translation" data-qa-label="Translation QA" data-qa-noun="block" data-qa-src="{{ '/assets/qa/folio-assistant-core/process-publication-workflow/some-decisions-are-computed-not-judged.translation.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/process-publication-workflow/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Translation QA: loading the verdict…" aria-label="Translation QA: loading the verdict…"><span class="fa-qa-tag">TR</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button></span>
 
-Ten exclusive gateways sit across the six diagrams, and they are not all the
-same kind of question. `Accept, revise or discard?` is the editor's call.
+Exclusive gateways do not all ask the same kind of question. `Accept, revise or discard?` is the editor's call.
 `Build green, no sorries?` is arithmetic over `lean_build` and `proof_status`.
 
 A gateway carrying `<cat-harness.processes:decision ref="decisions/x.dmn#Decision_Id"/>` has its
 outcome computed from a **DMN decision table** under
-[`processes/decisions/`](https://github.com/litlfred/folio-assistant/tree/main/processes/decisions).
+a `decisions/` directory beside the diagram (here,
+[`processes/content/decisions/`](https://github.com/litlfred/folio-assistant-core/tree/main/processes/content/decisions)).
 The agent supplies facts — `{ failCritical: 0, failMajor: 2 }` — and the table
 returns the branch; `workflow_complete` refuses a hand-supplied outcome there,
 and records which rule fired.
@@ -147,9 +141,8 @@ and records which rule fired.
 | `Build green, no sorries?` | `lean-build-gate.dmn` | `buildOk`, `deferredSorries` |
 | `Draft QA green?` | `draft-qa-gate.dmn` | `failCritical`, `failMajor` |
 
-`QC clean?` and `FHIR valid?` are equally mechanical and equally deserve
-tables — they wait on a WHO/FHIR adapter, because a table keyed to facts no
-tool emits looks authoritative and is not.
+`QC clean?` and `FHIR valid?` are equally mechanical but have no table yet: no
+tool emits the facts one would read.
 
 ### The base processes are strict
 {: #the-base-processes-are-strict data-fa-label="sec:publication-workflow-the-base-processes-are-strict" }
@@ -164,19 +157,16 @@ different questions, and the package that knows the domain should answer them.
 
 A content package may relax a base step by declaring it in
 `skills/<package>/workflow-policy.json` **with a reason** — an unexplained
-relaxation does not load, so the file is the record of what was waived and why.
+relaxation does not load.
 Five steps refuse to be relaxed at all: `Task_ReviewFindings`,
 `Gateway_EditorDecision` and `Task_Commit` (the editor seeing the findings, the
 decision, the write), plus `Task_AuthorizeRelease` and `Task_PublishRelease`
-(the `publish-authorized` SHALL). If those were negotiable the base would not be
-strict, it would be a suggestion.
+(the `publish-authorized` SHALL).
 
-`bun run cat check:workflow-policy` lists the policy and validates every relaxation;
-it runs in CI, so one that has stopped applying is a build failure rather than a
-discovery on the day it is needed.
+`bun run cat check:workflow-policy` lists the policy and validates every
+relaxation; it runs in CI.
 
-**The commit boundary is where this is enforced rather than merely answerable.**
-`scripts/check-corpus-gate.ts`, run in the folio repo from a pre-commit hook or
+**The commit boundary is where this is enforced.** `scripts/check-corpus-gate.ts`, run in the folio repo from a pre-commit hook or
 CI, refuses a changed content block that no instance records the editor having
 authorised. `workflow_gate` answers an agent that asks; the hook does not depend
 on anyone asking.
@@ -218,7 +208,7 @@ content block**.
        alt="BPMN swimlane diagram: an editor describes a change, an authoring agent drafts it, the proposed change fans out through mechanical and non-mechanical validation, the findings are shown to the editor, and only an accepted change is committed to the corpus.">
 </div>
 
-[Open the BPMN source](https://github.com/litlfred/folio-assistant/blob/main/processes/editing-hci-validation.bpmn){: .btn .btn-outline }
+[Open the BPMN source](https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/editing-hci-validation.bpmn){: .btn .btn-outline }
 
 ### The one rule this diagram exists to state
 {: #the-one-rule-this-diagram-exists-to-state data-fa-label="sec:publication-workflow-the-one-rule-this-diagram-exists-to-state" }
@@ -299,7 +289,7 @@ whole by the review team, and only then released.
        alt="BPMN swimlane diagram: the corpus is built into a draft publication, QA gates run, the publication manager circulates it, the review team and SMEs review in parallel, change requests become beans that re-enter editing, and an approved draft is authorised by the programme manager and published.">
 </div>
 
-[Open the BPMN source](https://github.com/litlfred/folio-assistant/blob/main/processes/draft-to-publication.bpmn){: .btn .btn-outline }
+[Open the BPMN source](https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/draft-to-publication.bpmn){: .btn .btn-outline }
 
 Three things to note:
 
@@ -311,10 +301,9 @@ Three things to note:
    reviewer, QC reviewer, technical officer) reviews the draft as a publication;
    the clinical or scientific SMEs sign off on the domain content. The join
    waits for both.
-3. **Change requests become beans.** A `changes requested` outcome does not
-   evaporate into a review thread — each request is opened as a bean, so
-   whoever picks the work up next (human or agent) sees exactly what review
-   asked for.
+3. **Change requests become beans.** Each `changes requested` item is opened
+   as a bean, so whoever picks the work up next sees exactly what review asked
+   for.
 
 | Activity | Lane | Skill |
 |----------|------|-------|
@@ -350,7 +339,7 @@ activities.
        alt="BPMN swimlane diagram: the programme manager plans, the plan is seeded as beans, editing and HCI validation runs, integration test and QA sweep, draft-review-publish, feedback is triaged and filed as beans, then either another cycle or retirement.">
 </div>
 
-[Open the BPMN source](https://github.com/litlfred/folio-assistant/blob/main/processes/content-lifecycle.bpmn){: .btn .btn-outline }
+[Open the BPMN source](https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/content-lifecycle.bpmn){: .btn .btn-outline }
 
 This is the same lifecycle as the linear
 [plan → author → validate → review → test → publish → feedback → retire]({{ '/folio-assistant-core/concepts/content-lifecycle.html#the-content-lifecycle' | relative_url }})
@@ -387,8 +376,7 @@ Why it is modelled as a lane rather than a note:
 - **Claiming is how two workers avoid the same item.** Claim before you work,
   and never resolve someone else's bean.
 - **`beans create` is not idempotent.** Check for an existing bean by exact
-  title before creating one — the guard, and the incident that motivates it,
-  are in
+  title before creating one; the guard is in
   [`todo-manager`]({{ '/reference/skill-instructions/todo-manager.html' | relative_url }}).
 - **Beans are not sidecars.** Machine-generated queues (QA `*.qa.json`, witness
   files, watcher queues) stay bulk JSON; they never become beans.
@@ -405,8 +393,7 @@ The roles in the lanes, and the actor definition each one maps to. Roles
 **do** is not a property of its role: it is an ODRL rule in `policies/`, and
 before every task the BPMN executor checks that the actor is authenticated,
 eligible for the lane's role, permitted by policy and allowed to touch the
-content ([`task-authorization`](../../skills/process/process-core/task-authorization.md),
-issue #1207).
+content ([`task-authorization`](../../skills/process/process-core/task-authorization.md)).
 
 ### People
 {: #people data-fa-label="sec:publication-workflow-people" }
@@ -459,7 +446,7 @@ see [Skills & roles]({{ '/docs/cat-harness/concepts/skills.html#roles-actors' | 
 The `.bpmn` files are the source of truth.
 
 ```sh
-# 1. edit processes/<diagram>.bpmn — in a modeler, or by hand
+# 1. edit processes/<area>/<diagram>.bpmn — in a modeler, or by hand
 # 2. regenerate the SVGs
 bun run cat render:bpmn
 # 3. or, in CI, just check they are not stale
@@ -473,8 +460,8 @@ point at it with `CHROMIUM_PATH=/path/to/chrome`.
 
 When you add an activity, add its `<bootstrap.processes:skill ref="…"/>` extension (and
 `<cat-harness.processes:bean store="beans/"/>` if it touches the work plan) and the matching
-row in the tables above — the diagram and the skill list drifting apart is the
-failure this page exists to prevent.
+row in the tables above, so the diagram and the skill list do not drift
+apart.
 
 ### Which diagrams are BPMN, and which are not
 {: #which-diagrams-are-bpmn-and-which-are-not data-fa-label="sec:publication-workflow-which-diagrams-are-bpmn-and-which-are-not" }

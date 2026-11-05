@@ -16,7 +16,7 @@ allowed-tools: Bash(bun run folio-assistant-core/scripts/review-comments.ts*) Re
 # Review comments — from a PR comment to a structured todo
 
 > Skill id: `review-comments` · Package: `content-lifecycle-ext`
-> Tools: `folio-review-comments` (ingest), `folio-review-comment-move` (record a decision) · Bean: `423d` · Epic: `q4jm`
+> Tools: `folio-review-comments` (ingest), `folio-review-comment-move` (record a decision)
 
 A reviewer comments on **one block** of a folio by writing an ordinary comment
 on the edit-set's pull request, starting with a tag that names the block. The
@@ -24,20 +24,16 @@ review process turns each tagged comment into a **todo of a special kind**,
 `review-comment/1.0.0`. The review page lists those todos beside the
 blocks they are about.
 
-## The rulings this rests on
+## Design
 
-The owner decided three things on 2026-09-23, and each has a reason:
+| rule | why |
+|---|---|
+| The channel is a **PR conversation comment tagged with the block label** | Needs nothing installed, sits beside the approve, and is anchored by LABEL, so it survives a block moving. A line review comment is anchored to a file line and is lost when the block moves. |
+| The record is a **todo subtype declared by core, in the dynamic KG** | A board, heat map or reader that understands todos reads a review comment without knowing about review. |
+| The preview gets comments from a **file the workflow writes** | Works for private and public repositories, and no token ever reaches a browser. |
+| A status change is **committed to the folio's `todos/` on the edit-set's feature branch** | Reviewed with the edit it is about, lands on `main` only when that branch merges, and is part of the KG. |
 
-| ruling | owner's words | why |
-|---|---|---|
-| The channel is a **PR conversation comment tagged with the block label** | (option 1 of four) | Needs nothing installed, sits beside the approve, and is anchored by LABEL, so it survives a block moving. A line review comment is anchored to a file line and is lost when the block moves. |
-| The record is a **todo subtype declared by core, in the dynamic KG** | *"reviewers comment in dynamic KG content. folio-asst-core should declare as special type of todo. more structured."* and *"more restruicted process use"* | A board, heat map or reader that understands todos reads a review comment without knowing about review. |
-| The preview gets comments from a **file the workflow writes** | *"JSON is the todo kind? then yes do 1. make sure it is a Skill/Tool so process can be modified later."* | Works for private and public repositories, and no token ever reaches a browser. |
-| A status change is **committed to the folio's `todos/` on the edit-set's feature branch** | option 1 of three, then *"more accurate.. commit to feature branch"* | Reviewed with the edit it is about, lands on `main` only when that branch merges, and is part of the KG. |
-
-The first two rulings do not say how they fit together. Reading the PR comment
-as the **write channel** and the todo as the **canonical record** is the
-agent's reconciliation, recorded as such on bean `423d`.
+The PR comment is the **write channel**; the todo is the **canonical record**.
 
 ## Writing a comment: the tag
 
@@ -76,7 +72,7 @@ comment box, so copying the line is the one manual step.
 
 `review-comment/1.0.0`, in
 `folio-assistant-core/schemas/review-comment.ts`. It is declared with
-`nodeKind` (bean `a1lq`) and its one parent is the harness todo, which itself
+`nodeKind` and its one parent is the harness todo, which itself
 is `carried-note` + `themed`. So it IS a todo:
 
 - **`targetLabel` is required.** A general todo may float free; a review
@@ -105,14 +101,12 @@ only along a row of `REVIEW_TRANSITIONS`. Anything else throws.
 | adjudicate | open, addressed | adjudicated | `Process_Adjudication#A_RecordEntry` | yes |
 | withdraw | open, addressed | withdrawn | `Process_ContentChangeReviewCommittee#Task_WithdrawComment` | |
 
-**Why so strict.** A comment's status is what the coverage gate will count.
-A comment closed by hand, outside the process, would count as reviewed when
-nobody in a review lane decided anything.
-
-A test holds every row to a task that exists in its `.bpmn`. Ingestion is
-the review coordinator's first step in `content-change-review.bpmn`'s committee phase, `content-change-review-committee.bpmn`.
-Withdrawal is the reviewer's step after the slices come back. Bean `en2d`
-added both there, rather than in a separate large-document diagram.
+A comment's status is what the coverage gate counts, so a comment closed
+outside the process would count as reviewed when nobody decided anything. A
+test holds every row to a task that exists in its `.bpmn`. Ingestion is the
+review coordinator's first step in `content-change-review.bpmn`'s committee
+phase, `content-change-review-committee.bpmn`; withdrawal is the reviewer's
+step there after the slices come back.
 
 ## Ingestion: the Tool
 
@@ -124,7 +118,8 @@ bun run folio-assistant-core/scripts/review-comments.ts \
 ```
 
 Declared as the Tool `folio-review-comments` in
-`folio-assistant-core/tools/index.ts`, whose `satisfies` names this skill.
+`folio-assistant-core/tools/folio-review-comments/`, whose `satisfies` names
+this skill.
 
 1. **Read the comments.** All pages of the PR's conversation comments, with
    `GITHUB_TOKEN` when set. `--comments <file>` reads them from a file
@@ -152,7 +147,7 @@ Declared as the Tool `folio-review-comments` in
 **Why re-anchor against `renamedFrom` and not the ChangeSet.** A ChangeSet
 compares against `main`. A block ADDED in the pull request and then renamed
 inside it is "added" both times, so the comment made on its first label
-would be orphaned. The block's own `renamedFrom` (bean `5xzc`, guarded by
+would be orphaned. The block's own `renamedFrom` (guarded by
 `id-stable`) says where it came from whatever the base. `reanchor()` over a
 ChangeSet also exists, for a caller that has only that.
 
@@ -201,14 +196,14 @@ between the two.
 **What it costs.** One extra commit on the edit-set's branch per decision,
 and a PR from a fork cannot be written to by anyone but its author.
 
-## Verdicts: "I read this version" (bean `px0t`)
+## Verdicts: "I read this version"
 
 A comment asks for something. A **verdict** records that a reviewer read a
 block, and what they judged. The coverage gate needs verdicts, because
 comments cannot say whether a block with none was read.
 
-The owner chose the channel (2026-09-23, option 1 of 3): **the same tagged
-PR comment**, with a `verdict:` or `waive:` line instead of `kind:`.
+The channel is **the same tagged PR comment**, with a `verdict:` or `waive:`
+line instead of `kind:`.
 
 ```
 block: prose:dose prose:schedule
@@ -232,7 +227,7 @@ role: clinical-sme
   touched. The old verdict is kept and shown as "on an earlier version".
 - A verdict on a label the head does not carry is malformed, not recorded.
 
-**Pages and inputs no block reaches** (bean `bnjs`). A page changed by a
+**Pages and inputs no block reaches.** A page changed by a
 manifest or media file, the comment pages and every FHIR IG page have no
 block to give a verdict on, and an input no renderer could place may have
 changed any page. The same tag takes them, beside or instead of `block:`:
@@ -252,7 +247,7 @@ build measured and the prediction missed; `input:` names one of its
 undetermined inputs. Each is pinned to that file's `hash` there, so it
 reopens when an input that reaches it is edited. A page or input the build
 does not list, or a build that published no rendered impact, is reported
-malformed with the reason. See [`rendered-impact`](../../../../cat-harness/skills/sdlc/sdlc-core/rendered-impact.md).
+malformed with the reason. See [`rendered-impact`](../../../../cat-harness/sdlc/skills/sdlc-core/rendered-impact.md).
 
 The `folio-review-comments` Tool ingests verdicts into the same
 `review-comments.json`, as its `verdicts` array
@@ -262,10 +257,10 @@ The `folio-review-comments` Tool ingests verdicts into the same
 `GW_Covered` reads (`uncoveredBlocks`, `openDefects`, and, with `--rendered`
 and `--measured`, the page counts with their `rendered` and `measured`
 statuses) and prints them as JSON on stdout, ready for `workflow_complete`.
-Every fact is always printed, because the engine refuses a missing one. With `--todos <root> --commit` it
-writes the verdicts into the todos graph's declared `review-verdicts`
-directory and commits them to the **feature branch**, as comment statuses
-are, and it refuses the base branch and a detached HEAD. `init-folio`
+Every fact is always printed, because the engine refuses a missing one.
+With `--todos <root> --commit` it writes the verdicts into the todos graph's
+declared `review-verdicts` directory and commits them to the **feature
+branch**, as comment statuses are, and it refuses the base branch and a detached HEAD. `init-folio`
 declares that directory (`todos/verdicts/`) for every new folio.
 
 ## Publication: where the file comes from, and when
@@ -320,8 +315,8 @@ Nothing refreshes on a comment when there is no preview yet (no
 
 ## Changing this process
 
-That is why it is a Skill and a Tool rather than YAML steps. Where each kind
-of change goes:
+The process is a Skill and a Tool rather than YAML steps, so it can be
+changed here:
 
 | to change | edit | and |
 |---|---|---|
@@ -334,8 +329,8 @@ of change goes:
 
 ## Deciding from the review page: a `resolve:` comment
 
-Owner, 2026-10-15: the page decides through the same channel it comments
-through. Under each open or addressed comment it shows the tag to post as a
+The page decides through the same channel it comments through. Under each
+open or addressed comment it shows the tag to post as a
 pull-request conversation comment, with the words that comment's status
 allows:
 
@@ -372,11 +367,9 @@ to commit.
 
 ## Not yet decided
 
-- **Committing a page decision to an in-tree todos graph automatically.** A
-  branch-kept todos graph is pushed by `stage-local`; one in the feature
-  branch's tree is written but committed by the editor.
+- **Committing a page decision to an in-tree todos graph automatically.**
 - **A reviewer who edits a comment after ingest.** The edit is not re-read, so
   a record an editor has already acted on is not silently rewritten. Whether
   an edit should reopen the comment is open.
-- **Line review comments** are not read, by the owner's ruling. A reviewer
+- **Line review comments** are not read. A reviewer
   who uses one gets no todo.

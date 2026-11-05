@@ -141,7 +141,7 @@ ${tableStyle()}  :target { scroll-margin-top: 1rem; }
   .cite { color: var(--muted); }
   .fa-blk:empty { min-height: 3rem; }
   .fa-one-page { font-size: .85rem; color: var(--muted); }
-  .fa-live-figure img { max-width: 100%; height: auto; }
+  .fa-live-figure, .fa-live-figure img { display: block; max-width: 100%; height: auto; }
   .fa-live-figure-note { display: block; font-size: .85rem; color: var(--muted); }
 </style>`;
 
@@ -369,6 +369,7 @@ export function splitBlocks(markdown: string, labels: Set<string>): BlockSplit {
   const ANCHOR = /^<a id="([^"]+)"><\/a>\s*$/;
   const HEADING = /^#{1,6}\s/;
   const FENCE = /^\s*(```|~~~)/;
+  const FRAME = /^<div class="fa-numbered[\s"][^>]*>\s*$/;
   const shell: string[] = [];
   const blocks: BlockSplit["blocks"] = [];
   let cur: { label: string; lines: string[] } | null = null;
@@ -382,10 +383,22 @@ export function splitBlocks(markdown: string, labels: Set<string>): BlockSplit {
       const m = line.match(ANCHOR);
       if (m) {
         close();
+        // A figure, table or diagram opens its frame (render-markdown.ts,
+        // `.fa-numbered`) before its anchor and closes it after its text. Left
+        // in the shell, the opener had no closer there, so every later block
+        // of the page sat inside that frame: its 66% caption width put the
+        // block icons mid-page (smart-ra, 2026-11-02). The opener goes with
+        // its block, so the shell and each block stay balanced.
+        let opener: string[] = [];
+        if (labels.has(m[1]!)) {
+          let k = shell.length - 1;
+          while (k >= 0 && shell[k]!.trim() === "") k--;
+          if (k >= 0 && FRAME.test(shell[k]!)) opener = shell.splice(k);
+        }
         shell.push(line);
         if (labels.has(m[1]!)) {
           shell.push("", `<div class="fa-blk" data-blk="${esc(m[1]!)}"></div>`, "");
-          cur = { label: m[1]!, lines: [] };
+          cur = { label: m[1]!, lines: opener.filter((l) => l.trim() !== "").concat("") };
         }
         continue;
       }

@@ -9,15 +9,14 @@
 | feedback | `content-feedback` | Capture and route reviewer feedback |
 | retire | `content-retire` | Deprecate or archive an artifact |
 
-The lifecycle stages are the same regardless of content type — what differs is
-the *authoring* skills and the *artifacts* each type produces. For the full list
+The stages are the same for every content type; what differs is the
+*authoring* skills and the *artifacts* each type produces. For the full list
 of skills and the roles that drive them, see **[Skills & roles]({{ '/docs/cat-harness/concepts/skills.html' | relative_url }})**.
 
-Two things the eight stage names hide, and the diagram does not: `author` and
-`validate` are not consecutive phases but a *loop* — every proposed change runs
-the HCI validation gate, and the editor sees the findings before anything is
-committed — and `review` happens twice, once per change and once over the
-assembled draft. Both expand into their own diagrams on the
-**[publication workflow](../process/publication-workflow.html)** page.
+The strip hides two loops. `author` and `validate` are a loop, not consecutive
+phases: every proposed change runs the HCI validation gate, and the editor sees
+the findings before anything is committed. `review` happens twice, once per
+change and once over the assembled draft. Both expand into their own diagrams
+on the **[publication workflow](../process/publication-workflow.html)** page.
 
 ---

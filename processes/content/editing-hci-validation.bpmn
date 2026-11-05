@@ -32,13 +32,7 @@
   </bpmn:collaboration>
   <bpmn:process id="Process_Editing" name="Editing and HCI validation" isExecutable="false">
     <bpmn:documentation>
-      What happens to one proposed change to one content block: drafted, validated mechanically and by review, shown to the editor, and committed to the corpus only if accepted. folio-assistant — editing a content block and its HCI validation gate.
-      Source of truth: this file. Open it in bpmn.io, Camunda Modeler, or any other
-      BPMN 2.0 tool. The SVG under docs/assets/img/workflows/ is generated from it
-      by `bun run cat render:bpmn` — never hand-edit the SVG.
-      The &lt;bootstrap.processes:skill&gt; extension on an activity names the folio-assistant skill
-      that implements it; &lt;cat-harness.processes:bean&gt; marks a step that reads or writes the shared
-      work plan in beans/.
+      What happens to one proposed change to one content block: drafted, validated mechanically and by review, shown to the editor, and committed to the corpus only if accepted.
     </bpmn:documentation>
     <bpmn:extensionElements>
       <cat-harness.processes:policy enforcement="strict" />
@@ -49,7 +43,7 @@
     </bpmn:extensionElements>
     <bpmn:laneSet id="Process_Editing_LaneSet">
       <bpmn:lane id="Lane_Editor" name="Editor / author (person)" partitionElementRef="author">
-        <bpmn:documentation>Every act the requesting party performs personally rather than through the agent lands here: stating the change, retrieving its evidence, and — once every validation path has reported — ruling on it. The gate sits at Task_ReviewFindings rather than earlier because a decision taken before the findings exist would not be a decision about the change that was actually built.</bpmn:documentation>
+        <bpmn:documentation>Every act the requesting party performs personally rather than through the agent lands here: stating the change, retrieving its evidence, and — once every validation path has reported — ruling on it. The gate sits at Task_ReviewFindings, once the findings exist.</bpmn:documentation>
         <bpmn:flowNodeRef>StartEvent_EditRequested</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_DescribeChange</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReviewFindings</bpmn:flowNodeRef>
@@ -59,7 +53,7 @@
               <bpmn:flowNodeRef>CallActivity_Evidence</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Agent" name="Authoring agent (system)" partitionElementRef="authoring-agent">
-        <bpmn:documentation>Produces the proposed change and, once findings exist, weighs the options for it — accept, revise, discard — but stops short of choosing: Call_OptionsAnalysis records that the options were weighed, Task_RecordDecision in the editor's lane records what was chosen, and collapsing the two would let the same party both analyse and decide.</bpmn:documentation>
+        <bpmn:documentation>Produces the proposed change and, once findings exist, weighs the options for it — accept, revise, discard — but stops short of choosing: Call_OptionsAnalysis records that the options were weighed, Task_RecordDecision in the editor's lane records what was chosen, so one party never both analyses and decides.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_DraftEdit</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ProposalReady</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReviseEdit</bpmn:flowNodeRef>
@@ -74,13 +68,13 @@
         <bpmn:flowNodeRef>EndEvent_InCorpus</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Pipeline" name="HCI validation pipeline (system)" partitionElementRef="validation-pipeline">
-        <bpmn:documentation>Forks validation into its four parallel paths and, once every one reports, collates mechanical results and review findings into a single report. It is the aggregation point rather than a checker itself — its only job is making sure none of the four is missing before the editor sees anything.</bpmn:documentation>
+        <bpmn:documentation>Forks validation into its four parallel paths and, once every one reports, collates mechanical results and review findings into a single report. It checks nothing itself; it makes sure none of the four is missing before the editor sees anything.</bpmn:documentation>
         <bpmn:flowNodeRef>Gateway_ValidationFork</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_ValidationJoin</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_CollateFindings</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Mechanical" name="Mechanical validation (system)" partitionElementRef="validation-pipeline">
-        <bpmn:documentation>Runs the three checks that need no judgement call — schema and constraints, syntax and link resolution, build and QA gates — in parallel with the non-mechanical review rather than gating on it, so a spelling error is never held up behind a pending SME review, or the reverse.</bpmn:documentation>
+        <bpmn:documentation>Runs the three checks that need no judgement call — schema and constraints, syntax and link resolution, build and QA gates — in parallel with the non-mechanical review rather than gating on it.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_SchemaValidate</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_SyntaxSpell</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_BuildGates</bpmn:flowNodeRef>
@@ -105,7 +99,7 @@
       <bpmn:outgoing>Flow_02</bpmn:outgoing>
     </bpmn:userTask>
     <bpmn:callActivity id="Task_ClaimBean" name="Open the bean" calledElement="Process_BeanOpen">
-      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
+      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn; the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
           <bpmn:incoming>Flow_02</bpmn:incoming>
       <bpmn:outgoing>SF_Bean_1</bpmn:outgoing>
@@ -232,11 +226,9 @@ This step has nothing to do for content that carries no recommendations -- a mat
     <bpmn:callActivity id="Call_OptionsAnalysis" name="Options analysis&#10;accept · revise · discard" calledElement="Process_OptionsAnalysis">
       <bpmn:documentation>On the edge out of `Task_ReviewFindings` and before `Task_RecordDecision`: the findings are the evidence, so the options can only be weighed once they exist, and after `Task_RecordDecision` the decision is already written down.
 
-NOT between `Gateway_EditorDecision` and `Task_RecordDecision`, which is the pair the work-plan named — in this diagram those run the OTHER WAY ROUND. `Flow_21b` goes `Task_RecordDecision` -&gt; `Gateway_EditorDecision`, so the gateway reads a decision that has already been recorded, and interposing there would analyse options after the choice was made.
+Not between `Gateway_EditorDecision` and `Task_RecordDecision`: `Flow_21b` runs `Task_RecordDecision` -&gt; `Gateway_EditorDecision`, so the gateway reads a decision already recorded.
 
-In the Agent lane, and this diagram makes the reason sharp. `Task_RecordDecision` is a `userTask` in `Lane_Editor` that already names `decision-audit`, and `Process_OptionsAnalysis` ends with its own `decision-audit` note. Those are two different acts — the subprocess records that the options were WEIGHED, the editor records WHAT WAS CHOSEN — and putting the analysis in the editor's lane would collapse them, making the same party both analyse and decide. The subprocess's own documentation refuses that: it produces options and a recommendation, and the authorisation belongs to the calling step.
-
-`CallActivity_Evidence` sits in `Lane_Editor` instead, and that is not an inconsistency: the author performs the evidence retrieval, whereas here the point is that the analyst is not the decider.
+In the Agent lane: the subprocess records that the options were WEIGHED (its own `decision-audit` note), and `Task_RecordDecision` in `Lane_Editor` records WHAT WAS CHOSEN. The analyst is not the decider. (`CallActivity_Evidence` is in `Lane_Editor` because the author performs the retrieval.)
 
 On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — irreversibility and surprise — and leaving there is a correct outcome. A spelling fix that reached `Task_ReviewFindings` with one mechanical finding exits immediately; a revise-or-discard on a block other content depends on does not.</bpmn:documentation>
     </bpmn:callActivity>
@@ -284,7 +276,7 @@ On the trigger: `A_Frame` opens the subprocess on `opening-brief`'s trigger — 
       </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
     <bpmn:callActivity id="Task_ResolveBean" name="Close the bean" calledElement="Process_BeanClose">
-      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
+      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn; placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
     </bpmn:callActivity>
     <bpmn:exclusiveGateway id="GW_BeanClosedHow" name="How did it end?">

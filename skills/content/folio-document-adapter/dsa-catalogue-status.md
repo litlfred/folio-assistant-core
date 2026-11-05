@@ -14,7 +14,6 @@ description: >
 > Process: `folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn`
 > (`Task_SetStatus`, P14.5) · Checker:
 > `folio-assistant-core/scripts/check-dsa-hash.ts` (`bun run cat check:dsa-hash`)
-> · Bean: `folio-assistant-2z1t`.
 
 When a Data Sharing Agreement is amended, renewed, terminated or expires (P14
 in `dsa-document-lifecycle.bpmn`), its W3C DCAT 3 catalogue record must reflect

@@ -33,7 +33,7 @@ export default toolFactory((t) =>
     requires: { runtime: ["bun"], network: false },
     selection: {
       when:
-        "Verifying a Data Sharing Agreement's SHA-256 checksum (`spdx:checksum`), ODRL 2.2 citation (`dcterms:source` and fixed-version `uid`), DCAT 3 record and `dcat:previousVersion` chain, or `adms:status` against the pinned official ODRL 2.2, DCAT 3, SPDX 2.2.2, and DCMI Metadata Terms vocabularies.",
+        "Verifying a Data Sharing Agreement's checksum, ODRL citation, DCAT 3 record and `dcat:previousVersion` chain, or `adms:status`.",
       limits:
         "Checks structural, cryptographic, and vocabulary conformance of `agreement.md`, `dcat.jsonld`, and `agreement.jsonld`; does not evaluate legal prose semantics or sign Verifiable Credentials.",
       cost: "Local file reads and SHA-256 hashing; runs in milliseconds with no network access.",

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: folio-review-publish\n"
-"POT-Creation-Date: 2026-11-01T10:39:29.177Z\n"
+"POT-Creation-Date: 2026-11-04T12:14:26.156Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: zh\n"
@@ -66,7 +66,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/folio-review-publish.bpmn:77
 #. Diagram element documentation
-msgid "Process_ContributorFeedback: while the document is a working draft, the Authoring Committee gives feedback through the Contributor Feedback sheet, and each change set is edited and merged in its own pull request. When its changes are merged, the document is validated and rendered again (owner, 2026-10-31)."
+msgid "Process_ContributorFeedback: while the document is a working draft, the Authoring Committee gives feedback through the Contributor Feedback sheet, and each change set is edited and merged in its own pull request. When its changes are merged, the document is validated and rendered again."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/folio-review-publish.bpmn:65
@@ -96,7 +96,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/folio-review-publish.bpmn:18
 #. Diagram element documentation
-msgid "Review a rendered folio and publish it, or send it back with changes. Shared by every authoring process: authoring-a-document (this instance) and authoring-a-paper (folio-assistant-sci) call it after they validate and render, so review, publish and committee feedback are drawn once (shared block G6 of the BPMN guidance review, owner Q-BR-7 A, 2026-11-01). What differs by folio kind stays with the caller: its writing loop, its own check (the content profile for a document, the Lean build for a paper), and its renderer. It ends one of three ways. `Published`: the caller closes its bean. `Changes asked` and `Feedback in: changes asked`: the caller goes back to its writing loop."
+msgid "Review a rendered folio and publish it, or send it back with changes. Shared by every authoring process: authoring-a-document (this instance) and authoring-a-paper (folio-assistant-sci) call it after they validate and render, so review, publish and committee feedback are drawn once. What differs by folio kind stays with the caller: its writing loop, its own check (the content profile for a document, the Lean build for a paper), and its renderer. It ends one of three ways. `Published`: the caller closes its bean. `Changes asked` and `Feedback in: changes asked`: the caller goes back to its writing loop."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/folio-review-publish.bpmn:15
@@ -136,7 +136,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/folio-review-publish.bpmn:46
 #. Diagram element documentation
-msgid "The reviewer this folio binds. authoring-document relaxes the base SME step precisely because no single lane fits every document. Review the rendered paper, not a description of it, and record the feedback. The outcome is iterate — back to authoring — or approved for the publication path."
+msgid "The reviewer this folio binds. authoring-document relaxes the base SME step precisely because no single lane fits every document. Review the rendered folio, not a description of it, and record the feedback. The outcome is iterate — back to authoring — or approved for the publication path."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/folio-review-publish.bpmn:55

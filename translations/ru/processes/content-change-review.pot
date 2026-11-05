@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: content-change-review\n"
-"POT-Creation-Date: 2026-10-31T10:06:51.401Z\n"
+"POT-Creation-Date: 2026-11-04T12:14:26.127Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: ru\n"
@@ -131,7 +131,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review.bpmn:21
 #. Diagram element documentation
-msgid "Getting a change to a folio's CONTENT from a request into a published rendering: the author says what they want, an agent works out its scope and makes it, a review committee accepts or refuses it, and the pipeline deploys. You are in this process when what is changing is a folio — a chapter, a block, a piece of deterministic logic — rather than the platform that renders it. `code-change-review` is the same shape for the other side of that line, and the distinction matters because a content change is accepted by a REVIEW COMMITTEE on editorial grounds while a platform change is accepted by a code reviewer on engineering ones. Two things this is not. It is not the feedback workflow: `todo-review` triages what readers said about content that already exists. And the rendering the author reviews is a STAGED one, because a person cannot assess a rendered artefact from a description of it. The diagram shows the phases and the hand-offs between them; each phase is its own process. Making the change is content-change-review-make, staging it is content-change-review-stage, the committee's review is content-change-review-committee, and merging and deploying is content-change-review-publish. The page was one diagram of 43 steps in five lanes until the owner found it \"long and hard to read\" (2026-10-31); the split follows bpmn-authoring's rule of one phase per call activity."
+msgid "Getting a change to a folio's CONTENT from a request into a published rendering: the author says what they want, an agent works out its scope and makes it, a review committee accepts or refuses it, and the pipeline deploys. You are in this process when what is changing is a folio — a chapter, a block, a piece of deterministic logic — rather than the platform that renders it. `code-change-review` is the same shape for the platform: a content change is accepted by a REVIEW COMMITTEE on editorial grounds, a platform change by a code reviewer on engineering ones. Two things this is not. It is not the feedback workflow: `todo-review` triages what readers said about content that already exists. And the rendering the author reviews is a STAGED one, because a person cannot assess a rendered artefact from a description of it. The diagram shows the phases and the hand-offs between them; each phase is its own process. Making the change is content-change-review-make, staging it is content-change-review-stage, the committee's review is content-change-review-committee, and merging and deploying is content-change-review-publish. This follows bpmn-authoring's rule of one phase per call activity."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review.bpmn:135
@@ -141,7 +141,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review.bpmn:30
 #. Diagram element documentation
-msgid "Judges the staged rendering against what was asked for and either sends it back for another iteration or submits it onward. Unlike editing-hci-validation's equivalent lane, acceptance itself is not this lane's call — that is Task_Approve, downstream in the Review Committee's lane."
+msgid "Judges the staged rendering against what was asked for and either sends it back for another iteration or submits it onward. Unlike editing-hci-validation's equivalent lane, acceptance itself is not this lane's call — that is the committee's, inside Call_CommitteeReview."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review.bpmn:90
@@ -181,12 +181,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review.bpmn:183
 #. Diagram element documentation
-msgid "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step."
+msgid "Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn; placed straight before the end so the engine's resolve sees nothing left but the archive step."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review.bpmn:75
 #. Diagram element documentation
-msgid "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached."
+msgid "Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn; the gateway after this reads which end it reached."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review.bpmn:171

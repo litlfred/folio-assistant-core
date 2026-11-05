@@ -45,8 +45,7 @@ Called from content-change-review after the first push and after every revision,
         3. Stamp build with commit SHA + timestamp + branch
         4. Build Jekyll site with STAGING/ baseurl
         5. Inject yellow staging banner into every HTML page
-        A draft pull request is staged too, from its first push (owner,
-        2026-10-31, "drafts get previews"; folio-assistant#2836). A build
+        A draft pull request is staged too, from its first push. A build
         takes about 22 minutes, and GitHub Pages about 3 to 4 more.
       </bpmn:documentation>
       <bpmn:incoming>p1</bpmn:incoming>
@@ -60,7 +59,7 @@ Called from content-change-review after the first push and after every revision,
       <bpmn:documentation>
         The stage job copies the built site into gh-pages under
         STAGING/&lt;branch-slug&gt;/, then `staging-share.ts apply` keeps only
-        the files that differ from the live site (cat-harness-tools#1115).
+        the files that differ from the live site.
         The preview's staging-sw.js serves every other file from the live
         site and puts the staging banner back on it. Other previews and the
         main site are left as they are.
@@ -94,17 +93,17 @@ Called from content-change-review after the first push and after every revision,
       <bpmn:documentation>
         First dispatch point for a CI watcher: the feature branch has changed
         and a staging build now exists to watch. The watcher is DISPATCHED BY
-        OPENING A BEAN, not by a workflow_dispatch -- per the owner on bean
-        29ij, this is a task/workflow initiation.
+        OPENING A BEAN, not by a workflow_dispatch: this is a task/workflow
+        initiation.
 
-        That is the whole reason it is an activity rather than a line of prose.
         A bean makes the watch durable past the session that opened it: the
-        container is reclaimed, and what survives is the claim. Starting the
+        container is reclaimed, and what survives is the bean. Starting the
         watcher and recording that it is running are ONE declared step, so the
         two cannot disagree about whether anything is watching.
 
-        Claim rather than note: the watch is work in progress, and it is
-        idempotent, so re-entering on a subsequent push does not duplicate it.
+        It notes the watch on the bean rather than claiming it: only
+        Process_BeanOpen claims a bean. The note is idempotent, so re-entering
+        on a later push does not duplicate it.
       </bpmn:documentation>
       <bpmn:incoming>p4</bpmn:incoming>
       <bpmn:outgoing>p4b</bpmn:outgoing>

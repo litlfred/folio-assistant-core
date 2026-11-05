@@ -31,17 +31,9 @@
     <bpmn:participant id="Participant_L1DocumentIngestion" name="L1 document ingestion — a document to the L1 source knowledge graph" processRef="Process_L1DocumentIngestion" />
   </bpmn:collaboration>
   <bpmn:process id="Process_L1DocumentIngestion" name="L1 document ingestion — a document to the L1 source knowledge graph" isExecutable="false">
-    <bpmn:documentation>folio-assistant — L1 document ingestion — a document to the L1 source knowledge graph.
+    <bpmn:documentation>L1 document ingestion — a document to the L1 source knowledge graph.
 
-  Source of truth: this file. Open it in bpmn.io, Camunda Modeler, or any other
-  BPMN 2.0 tool. The SVG under docs/assets/img/workflows/ is generated from it
-  by `bun run cat render:bpmn` — never hand-edit the SVG.
-
-  The &lt;bootstrap.processes:skill&gt; extension on an activity names the folio-assistant skill
-  that implements it; &lt;cat-harness.processes:bean&gt; marks a step that reads or writes the shared
-  work plan in beans/.
-
-CARRIES THE BODY `document-ingestion.bpmn` HAD until placement PR6 (bean `apcg`; owner ruling 3, 2026-09-30: "only basic doc ingestion high level workflow in cat-harness … more detailed doc ingestion/cataloguing methodologies in folio-asst-core"). Every activity id is unchanged, so a reference to `Task_Detect` or `CallActivity_Extract` means what it meant.
+The harness holds only the basic, high-level document-ingestion flow; the detailed ingestion and cataloguing method is here.
 
 IT REFINES THE HARNESS FLOW BY CALLING IT. CallActivity_Basic runs the harness's `Process_Ingestion` first — accept the upload, put its metadata into the KG, catalogue the asset in library/ — and this process then reads the document into a complete L1 entry. That is the inversion the harness skill `library-ingestion` describes: the call points DOWN, from core to the harness, and nothing in the harness names this process. The theme branch's call into the harness's `ingest-theme.bpmn` is downward for the same reason; the four `ingest-*` phases sit beside this file. The method is the `l1-document-ingestion` skill.</bpmn:documentation>
     <bpmn:extensionElements>
@@ -49,7 +41,7 @@ IT REFINES THE HARNESS FLOW BY CALLING IT. CallActivity_Basic runs the harness's
     </bpmn:extensionElements>
     <bpmn:laneSet id="Process_L1DocumentIngestion_LaneSet">
       <bpmn:lane id="Lane_1" name="Ingestion Engine (agent, runs unattended)" partitionElementRef="ingestion-agent">
-        <bpmn:documentation>Runs the whole pipeline from CallActivity_Basic through Task_Promote, and then Task_SummaryQueue, where it drains a few prose blocks of the advisory summary queue — including the theme branch, which stays in THIS lane rather than dipping into Lane_2: deciding a document is a theme source is the engine asking its author a question, not a write to the shared work plan. It does not stop at a gap: Gateway_Complete's 'gap' branch leaves this lane only long enough for Lane_2 to record the bean, then Flow_i8 returns control here at CallActivity_Derive rather than ending the run — so an incomplete L1 build is this lane's problem to keep working until Gateway_Complete says otherwise.</bpmn:documentation>
+        <bpmn:documentation>Runs the whole pipeline from CallActivity_Basic through Task_Promote, and then Task_SummaryQueue, where it drains a few prose blocks of the advisory summary queue — including the theme branch, which stays in THIS lane rather than dipping into Lane_2: deciding a document is a theme source is the engine asking its author a question, not a write to the shared work plan. It does not stop at a gap: Gateway_Complete's 'gap' branch leaves this lane only for Lane_2 to record the bean, then Flow_i8 returns here at CallActivity_Derive, until Gateway_Complete says complete.</bpmn:documentation>
         <bpmn:flowNodeRef>StartEvent_Document</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>CallActivity_Basic</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Call_BeanOpen</bpmn:flowNodeRef>
@@ -79,7 +71,7 @@ for L1 ingestion">
     </bpmn:startEvent>
     <bpmn:callActivity id="CallActivity_Basic" name="Basic ingestion
 (harness)" calledElement="Process_Ingestion">
-      <bpmn:documentation>The harness's `document-ingestion.bpmn`: accept the upload by a declared route, extract its metadata into the KG, and catalogue the asset in library/ — placed if materialized, recorded as referenced if not. Everything below refines that result for a document. Called, not copied: this was Lane_0 and Task_Place of this diagram until placement PR6 moved them down as the basic flow.</bpmn:documentation>
+      <bpmn:documentation>The harness's `document-ingestion.bpmn`: accept the upload by a declared route, extract its metadata into the KG, and catalogue the asset in library/ — placed if materialized, recorded as referenced if not. Everything below refines that result for a document. Called, not copied.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="library-ingestion" />
       </bpmn:extensionElements>
@@ -95,7 +87,7 @@ for L1 ingestion">
       <bpmn:outgoing>Flow_i2</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_Licence" name="Establish the licence from the upload">
-      <bpmn:documentation>EARLY, by the owner's ruling on bean 7bg9 (2026-09-20): before any derivation, because library/ is holds: content and anything derived first is committed, so refusing it later is a deletion nobody may take unasked. This step sees only the upload itself — the licence recorded in its intake.json (the same stated / unknown record a library manifest carries) and whether a LICENSE file sits beside it. It never infers a licence from extracted text. The verdict is stated, unknown, or UNDETERMINED, and undetermined is never reported as cleared: the pipeline proceeds and says so, because a licence that only extraction can reveal is a later check's to find.</bpmn:documentation>
+      <bpmn:documentation>EARLY: before any derivation, because library/ is holds: content and anything derived first is committed, so refusing it later is a deletion nobody may take unasked. This step sees only the upload itself — the licence recorded in its intake.json (the same stated / unknown record a library manifest carries) and whether a LICENSE file sits beside it. It never infers a licence from extracted text. The verdict is stated, unknown, or UNDETERMINED, and undetermined is never reported as cleared: the pipeline proceeds and says so, because a licence that only extraction can reveal is a later check's to find.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="document-intake" />
       </bpmn:extensionElements>
@@ -121,9 +113,7 @@ for L1 ingestion">
     </bpmn:callActivity>
     <bpmn:exclusiveGateway id="Gateway_ThemeSource" name="A theme source?
 (author's judgement)">
-      <bpmn:documentation>Wired 2026-09-23 on the owner's ruling for bean `j66n`, choosing "human/agentic judgement at the gateway" over a declared predicate.
-
-THE PREDICATE IS DELIBERATELY ABSENT. The alternative on offer was a testable rule — a captured web deployment, or a document that STATES palette and typography rules — and it was refused for the reason the owner had already given when withdrawing `xffc`/`d3yq`: "no formal role/theme mapping per se. that is authoring (human/agentic) decision/judgement."
+      <bpmn:documentation>Human or agentic judgement at the gateway, not a declared predicate. THE PREDICATE IS DELIBERATELY ABSENT: no testable rule (a captured web deployment, or a document that STATES palette and typography rules) decides it, because whether a source is a theme is an authoring decision.
 
 So this gateway is answered by whoever is ingesting, not computed. An arbitrary branded PDF is not a theme source because a rule says so; it is not one because the author says it is not.
 
@@ -141,7 +131,7 @@ WHY IT IS A GATEWAY AND NOT A FILTER INSIDE THE SUBPROCESS. `ingest-theme.bpmn` 
       <bpmn:outgoing>Flow_theme_join</bpmn:outgoing>
     </bpmn:callActivity>
     <bpmn:callActivity id="Call_BeanOpen" name="Open the bean" calledElement="Process_BeanOpen">
-      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
+      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn; the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_i1</bpmn:incoming>
       <bpmn:outgoing>SF_Bean_2</bpmn:outgoing>
@@ -157,7 +147,7 @@ WHY IT IS A GATEWAY AND NOT A FILTER INSIDE THE SUBPROCESS. `ingest-theme.bpmn` 
       <bpmn:incoming>SF_Bean_3</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:callActivity id="Call_BeanClose" name="Close the bean" calledElement="Process_BeanClose">
-      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
+      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn; placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_i11</bpmn:incoming>
       <bpmn:outgoing>SF_Bean_4</bpmn:outgoing>
@@ -177,10 +167,9 @@ WHY IT IS A GATEWAY AND NOT A FILTER INSIDE THE SUBPROCESS. `ingest-theme.bpmn` 
     <bpmn:callActivity id="CallActivity_Gate" name="L1 completeness gate" calledElement="Process_L1Gate">
       <bpmn:documentation>See ingest-l1-completeness-gate.bpmn.
 
-Skill-backed by `l1-document-ingestion` (2026-09-30, bean 7bg9; the section moved there from the harness's `library-ingestion` in placement PR6): its section
+Skill-backed by `l1-document-ingestion`: its section
 "What a complete L1 entry holds" names `check:l1-complete` as the gate and
-states its three results. Until then this step named `paper-relevance-triage`,
-which never existed, and was left uncovered rather than bound to a guess.
+states its three results.
 
 The gate contains one adjudication (Task_FlagDrift: `real`, `spurious` or `source-wrong`), and its own Task_Verdict records the answer as a reason against the verdict before returning. So both answers reach this step, and nothing here branches on them; Gateway_Complete branches on the gate's completeness verdict instead.</bpmn:documentation>
       <bpmn:extensionElements>
@@ -219,7 +208,7 @@ library/&lt;bib-slug&gt;/">
       <bpmn:outgoing>Flow_i10</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_SummaryQueue" name="Queue prose blocks for summary">
-      <bpmn:documentation>Owner, 2026-09-24: "Make as QA sidecar as part of general doc ingestion to slowly drain."
+      <bpmn:documentation>A QA sidecar of general document ingestion, drained slowly.
 
 Nothing is written to ENQUEUE a block: the queue is derived (every prose block in every declared library, minus those whose summaries.json record is a current draft or confirmation), so a promoted entry is in it the moment its blocks are. A re-ingested document whose text changed re-enters it on its own, because the record's source_hash no longer matches.
 
