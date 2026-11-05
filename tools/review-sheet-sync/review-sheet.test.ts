@@ -1234,6 +1234,22 @@ describe("the Watch hash on a public-comment sheet (owner, 2026-11-04)", () => {
     expect(hash((t) => (t["Review Public Comments"].rows[2][6] = "CL: no"))).not.toBe(base[1]);
     expect(hash((t) => (t["Review Public Comments"].rows[3][7] = "Rejected"))).not.toBe(base[1]);
   });
+  test("an edit writes it at once, even when a slow sheet leaves the rebuild to the timer (owner, 2026-11-05)", () => {
+    const rt = runtime({ ...withConfig(tabs(), pcRows), Watch: { id: 98, rows: [["A", "B", "C", "D", "E", "F", "G", "H", "I"]] } });
+    rt.props.lastMs = "20000";
+    load(code, rt.g).markDirty({ range: { getSheet: () => rt.sheet("Review Change Sets") } });
+    expect(rt.props.dirty).toBe("1");
+    expect((rt.written.Watch?.F?.[0] as string[])[0]).toBe("Cells hash");
+  });
+  test("a timer tick with nothing to rebuild still writes it, as a heartbeat", () => {
+    const rt = runtime({ ...withConfig(tabs(), pcRows), Watch: { id: 98, rows: [["A", "B", "C", "D", "E", "F", "G", "H", "I"]] } });
+    const s = load(code, rt.g);
+    s.refreshIfDirty(); // the first tick rebuilds and records the Agent tabs' hash
+    delete rt.written.Watch;
+    s.refreshIfDirty();
+    expect(rt.props.dirty).toBeUndefined();
+    expect((rt.written.Watch?.F?.[0] as string[])[0]).toBe("Cells hash");
+  });
   test("an inserted row, the agent's columns and the script's do not", () => {
     expect(hash((t) => t["Review Change Sets"].rows.splice(2, 0, Array(8).fill("")))).toBe(base[1]);
     expect(hash((t) => (t["Review Change Sets"].rows[1][7] = "Another proposal"))).toBe(base[1]);
