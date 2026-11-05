@@ -24,7 +24,7 @@ The whole public comment cycle around the comments themselves.
 
 - Who: the `Release build and archive (pipeline)` lane (role `build-pipeline`).
 - Skill: `document-publishing`.
-- What: Freeze the draft as "Draft for Public Comment Release vX": a PDF with fixed line numbers and a site copy under a permanent PC/<version>/ path (not STAGING, never deleted on merge).
+- What: Freeze the draft as "Draft for Public Comment Release vX": a PDF with fixed line numbers and a site copy under a permanent PC/<version>/ path (not branches/, never deleted on merge).
 - Record it: `workflow_complete` with `node: "Task_BuildPcRelease"`.
 - next: → `Task_SetUpChannels` (Set up the comment channels, with instructions and links)
 

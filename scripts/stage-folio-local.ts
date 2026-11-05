@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * stage-folio-local — a folio's STAGING preview built and published from a
+ * stage-folio-local — a folio's branches/ preview built and published from a
  * checkout, running the same steps as `.github/workflows/folio-staging.yml`
  * in the same order, for when Actions are unavailable.
  *
@@ -23,7 +23,7 @@
  *   2. Give every page the harness navbar and rail   rail-standalone-pages.ts --foreign-site
  *   3. Inject staging banner             staging-banner.ts
  *   4. Check the chrome in a browser     folio-site-chrome-check.ts (refuses to publish on a failure)
- *   5. Deploy the preview                `--deploy`: STAGING/<slug>/ on the publish branch, replaced whole
+ *   5. Deploy the preview                `--deploy`: branches/<slug>/ on the publish branch, replaced whole
  *
  * `--slug` is refused (exit 2) unless it is one staging-slug segment
  * ({@link stagingSlugProblem}), and the check server answers only files that
@@ -48,6 +48,12 @@ import { realPathWithin, resolveWithin } from "@litlfred/cat-harness-tools/src/c
 
 import { checkChrome } from "./folio-site-chrome-check.js";
 
+// The preview directory (cat-harness-tools `schemas/sdlc/preview-prefix.ts`),
+// named here rather than imported so this layer does not wait on that
+// module's release.
+const PREVIEW_PREFIX = "branches";
+const previewPath = (slug: string): string => `${PREVIEW_PREFIX}/${slug}`;
+
 /**
  * The shape a staging slug must have, the same rule `feature-staging.yml`
  * (folio-assistant) applies to the slug it derives from a branch: one path
@@ -62,7 +68,7 @@ export const STAGING_SLUG_MAX = 100;
 /**
  * Why `slug` is not a staging slug, or `undefined` when it is.
  *
- * The slug names `STAGING/<slug>/` in the publish branch: the directory that is
+ * The slug names `branches/<slug>/` in the publish branch: the directory that is
  * removed with `git rm -r`, the copy's destination and the commit that is
  * pushed. So it is checked by value and refused, never repaired: a repaired
  * value would silently name a different preview.
@@ -197,7 +203,7 @@ async function main(): Promise<void> {
 
   // 5. Deploy
   if (!process.argv.includes("--deploy")) {
-    console.error(`built and checked in ${site}; pass --deploy to publish STAGING/${slug}/`);
+    console.error(`built and checked in ${site}; pass --deploy to publish ${previewPath(slug)}/`);
     process.exit(0);
   }
   const branch = arg("publish-branch") ?? "gh-pages";
@@ -205,15 +211,15 @@ async function main(): Promise<void> {
   try {
     // Partial, sparse: the publish branch can hold tens of thousands of files, none of which we need.
     run("git", ["clone", "-q", "--depth=1", "--filter=blob:none", "--no-checkout", "--single-branch", "-b", branch, `https://github.com/${publishRepo}`, work], repo);
-    run("git", ["sparse-checkout", "set", "--no-cone", `/STAGING/${slug}/`], work);
+    run("git", ["sparse-checkout", "set", "--no-cone", `/${previewPath(slug)}/`], work);
     run("git", ["checkout", "-q", branch], work);
-    const dest = join(work, "STAGING", slug);
-    if (existsSync(dest)) run("git", ["rm", "-r", "-q", `STAGING/${slug}`], work);
+    const dest = join(work, PREVIEW_PREFIX, slug);
+    if (existsSync(dest)) run("git", ["rm", "-r", "-q", previewPath(slug)], work);
     cpSync(site, dest, { recursive: true });
-    run("git", ["add", "-A", "STAGING"], work);
+    run("git", ["add", "-A", PREVIEW_PREFIX], work);
     run("git", ["-c", "gc.auto=0", "commit", "-q", "-m", `staging: ${slug} @ ${sha} (stage-folio-local)\n\n${arg("message") ?? ""}`.trim()], work);
     run("git", ["-c", "gc.auto=0", "push", "-q", "origin", branch], work);
-    console.error(`✓ published STAGING/${slug}/ to ${publishRepo}@${branch}`);
+    console.error(`✓ published ${previewPath(slug)}/ to ${publishRepo}@${branch}`);
   } finally {
     rmSync(work, { recursive: true, force: true });
   }

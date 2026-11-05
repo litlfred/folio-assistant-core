@@ -43,7 +43,7 @@ Called from content-change-review after the first push and after every revision,
         1. Regenerate docs (schema, skills, content-backed pages)
         2. Render BPMN diagrams
         3. Stamp build with commit SHA + timestamp + branch
-        4. Build Jekyll site with STAGING/ baseurl
+        4. Build Jekyll site with branches/ baseurl
         5. Inject yellow staging banner into every HTML page
         A draft pull request is staged too, from its first push. A build
         takes about 22 minutes, and GitHub Pages about 3 to 4 more.
@@ -51,14 +51,14 @@ Called from content-change-review after the first push and after every revision,
       <bpmn:incoming>p1</bpmn:incoming>
       <bpmn:outgoing>p2</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:task id="Task_DeployStaging" name="Deploy to STAGING/&lt;slug&gt;/">
+    <bpmn:task id="Task_DeployStaging" name="Deploy to branches/&lt;slug&gt;/">
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="feature-staging"/>
       </bpmn:extensionElements>
 
       <bpmn:documentation>
         The stage job copies the built site into gh-pages under
-        STAGING/&lt;branch-slug&gt;/, then `staging-share.ts apply` keeps only
+        branches/&lt;branch-slug&gt;/, then `staging-share.ts apply` keeps only
         the files that differ from the live site.
         The preview's staging-sw.js serves every other file from the live
         site and puts the staging banner back on it. Other previews and the

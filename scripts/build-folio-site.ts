@@ -58,7 +58,7 @@
  * ## Links work from any depth, and under a staging prefix
  *
  * A shell names its own depth (`data-root`, relative), so the same tree works
- * at `/`, under `/STAGING/<branch>/` and from a local file server. Nothing
+ * at `/`, under `/branches/<branch>/` and from a local file server. Nothing
  * absolute is baked in.
  */
 import { editLinksAsset } from "@litlfred/cat-harness-tools/src/core/edit-links.js";

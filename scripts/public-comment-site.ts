@@ -25,7 +25,7 @@
  *
  * A comment whose decision names a change set gets two links to its anchor:
  * BEFORE on the published `main` site, and AFTER on the change set's staging
- * preview, `STAGING/<slug>/`. The slug is computed exactly as
+ * preview, `branches/<slug>/`. The slug is computed exactly as
  * `folio-staging.yml` computes it, so the link is where the preview is. A
  * comment with a discussion URL links it. Every comment also links a GitHub
  * search for its reference, which finds every issue and PR that mentions it.
@@ -50,18 +50,23 @@ import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts
 import { escapeForRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 import { scopeCss } from "./scope-css.js";
 
+// The preview directory (cat-harness-tools `schemas/sdlc/preview-prefix.ts`),
+// named here rather than imported so this layer does not wait on that
+// module's release.
+const previewPath = (slug: string): string => `branches/${slug}`;
+
 /** `folio-staging.yml`'s slug rule, step `slug`. */
 export const stagingSlug = (branch: string) =>
   branch.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
 
 /**
  * The change-set review page of a branch's staging preview:
- * `<site>/STAGING/<slug>/en/review/` (owner, 2026-10-30: a comment or
+ * `<site>/branches/<slug>/en/review/` (owner, 2026-10-30: a comment or
  * change-set with a pull request links its staging review page). With a
  * recorded `stagingUrl`, that preview's own review page.
  */
 export const stagingReviewUrl = (site: string | undefined, branch: string, stagingUrl?: string): string | undefined => {
-  const base = stagingUrl ? stagingUrl.replace(/\/$/, "") : site ? `${site.replace(/\/$/, "")}/STAGING/${stagingSlug(branch)}` : undefined;
+  const base = stagingUrl ? stagingUrl.replace(/\/$/, "") : site ? `${site.replace(/\/$/, "")}/${previewPath(stagingSlug(branch))}` : undefined;
   return base === undefined ? undefined : `${base}/${REVIEW_PAGE_DIR}/`;
 };
 
@@ -185,7 +190,7 @@ export function siteComments(
       links: {
         ...(c.targetLabel ? { document: `${toRoot}${documentPage(opts.slug)}${frag}` } : {}),
         ...(site && c.targetLabel && cs ? { before: `${site}/${documentPage(opts.slug)}${frag}` } : {}),
-        ...(cs ? { after: cs.stagingUrl ? `${cs.stagingUrl.replace(/\/$/, "")}/${documentPage(opts.slug)}${frag}` : site ? `${site}/STAGING/${stagingSlug(cs.branch)}/${documentPage(opts.slug)}${frag}` : undefined } : {}),
+        ...(cs ? { after: cs.stagingUrl ? `${cs.stagingUrl.replace(/\/$/, "")}/${documentPage(opts.slug)}${frag}` : site ? `${site}/${previewPath(stagingSlug(cs.branch))}/${documentPage(opts.slug)}${frag}` : undefined } : {}),
         ...(cs?.pr && opts.repo ? { pr: `https://github.com/${opts.repo}/pull/${cs.pr}` } : {}),
         // The staging review page: the comment's own change's, else that of
         // the first change-set it is in that has a pull request.

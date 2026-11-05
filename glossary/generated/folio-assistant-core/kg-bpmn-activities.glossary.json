@@ -257,7 +257,7 @@
     {
       "id": "process_contentchangereview.task_reviewstaging",
       "prefLabel": "Review staged rendering",
-      "definition": "Author reviews the rendered feature branch at <pages-url>/STAGING/<branch-slug>/ and compares against the main site. The staging banner shows the commit SHA. The agent's before/after preview (skill before-after-preview) sits beside the URLs, with its counts and status line.",
+      "definition": "Author reviews the rendered feature branch at <pages-url>/branches/<branch-slug>/ and compares against the main site. The staging banner shows the commit SHA. The agent's before/after preview (skill before-after-preview) sits beside the URLs, with its counts and status line.",
       "notation": "Task_ReviewStaging",
       "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_ReviewStaging",
       "status": "candidate"
@@ -265,7 +265,7 @@
     {
       "id": "process_contentchangereview.task_submitforreview",
       "prefLabel": "Submit to review committee",
-      "definition": "Author submits the PR for formal review by the guidance review committee. The STAGING URL is the review surface.",
+      "definition": "Author submits the PR for formal review by the guidance review committee. The branches/ URL is the review surface.",
       "notation": "Task_SubmitForReview",
       "source": "folio-assistant-core/processes/content/content-change-review.bpmn#Task_SubmitForReview",
       "status": "candidate"
@@ -297,7 +297,7 @@
     {
       "id": "process_contentchangereviewcommittee.task_comparebeforeafter",
       "prefLabel": "Compare main vs staging",
-      "definition": "The review starts from the Change Set's RENDERED list (skill rendered-impact): every rendered file the change alters, predicted from each renderer's dependency cone and checked against the build. The reviewer opens every content page on it, not only the pages the author mentions; index files are listed but not reviewed. An input the renderer could not place is shown as not known, never as no change. Review committee opens both URLs side by side: - Main site: <pages-url>/ (current published state) - Staging: <pages-url>/STAGING/<branch-slug>/ The staging banner shows the commit SHA so they can verify what they are reviewing matches the PR. A changed figure, diagram or table is also pictured before and after on the review page, with the share of changed pixels in words (skill visual-diff, Tool folio-block-screenshots). Anything the staging job cannot picture (page chrome, scroll behaviour, a PDF page, an IG page) is in the agent's before/after preview (skill before-after-preview).",
+      "definition": "The review starts from the Change Set's RENDERED list (skill rendered-impact): every rendered file the change alters, predicted from each renderer's dependency cone and checked against the build. The reviewer opens every content page on it, not only the pages the author mentions; index files are listed but not reviewed. An input the renderer could not place is shown as not known, never as no change. Review committee opens both URLs side by side: - Main site: <pages-url>/ (current published state) - Staging: <pages-url>/branches/<branch-slug>/ The staging banner shows the commit SHA so they can verify what they are reviewing matches the PR. A changed figure, diagram or table is also pictured before and after on the review page, with the share of changed pixels in words (skill visual-diff, Tool folio-block-screenshots). Anything the staging job cannot picture (page chrome, scroll behaviour, a PDF page, an IG page) is in the agent's before/after preview (skill before-after-preview).",
       "notation": "Task_CompareBeforeAfter",
       "source": "folio-assistant-core/processes/content/content-change-review-committee.bpmn#Task_CompareBeforeAfter",
       "status": "candidate"
@@ -369,7 +369,7 @@
     {
       "id": "process_contentchangereviewmake.task_commitpush",
       "prefLabel": "Commit, push, update PR",
-      "definition": "Agent commits all changes to the feature branch and pushes. The feature-staging.yml workflow automatically deploys to STAGING/<branch-slug>/ and comments the URL on the PR. For a rendered change the agent also produces the before/after preview (skill before-after-preview) and links it in the PR body.",
+      "definition": "Agent commits all changes to the feature branch and pushes. The feature-staging.yml workflow automatically deploys to branches/<branch-slug>/ and comments the URL on the PR. For a rendered change the agent also produces the before/after preview (skill before-after-preview) and links it in the PR body.",
       "notation": "Task_CommitPush",
       "source": "folio-assistant-core/processes/content/content-change-review-make.bpmn#Task_CommitPush",
       "status": "candidate"
@@ -408,8 +408,8 @@
     },
     {
       "id": "process_contentchangereviewpublish.task_cleanupstaging",
-      "prefLabel": "Remove STAGING/<slug>/",
-      "definition": "When the PR is merged or closed, the cleanup job removes the STAGING/<slug>/ directory from gh-pages so stale previews don't accumulate.",
+      "prefLabel": "Remove branches/<slug>/",
+      "definition": "When the PR is merged or closed, the cleanup job removes the branches/<slug>/ directory from gh-pages so stale previews don't accumulate.",
       "notation": "Task_CleanupStaging",
       "source": "folio-assistant-core/processes/content/content-change-review-publish.bpmn#Task_CleanupStaging",
       "status": "candidate"
@@ -441,7 +441,7 @@
     {
       "id": "process_contentchangereviewstage.task_buildstaging",
       "prefLabel": "Build staging site",
-      "definition": "feature-staging.yml triggers: 1. Regenerate docs (schema, skills, content-backed pages) 2. Render BPMN diagrams 3. Stamp build with commit SHA + timestamp + branch 4. Build Jekyll site with STAGING/ baseurl 5. Inject yellow staging banner into every HTML page A draft pull request is staged too, from its first push (owner, 2026-10-31, \"drafts get previews\"; folio-assistant#2836). A build takes about 22 minutes, and GitHub Pages about 3 to 4 more.",
+      "definition": "feature-staging.yml triggers: 1. Regenerate docs (schema, skills, content-backed pages) 2. Render BPMN diagrams 3. Stamp build with commit SHA + timestamp + branch 4. Build Jekyll site with branches/ baseurl 5. Inject yellow staging banner into every HTML page A draft pull request is staged too, from its first push (owner, 2026-10-31, \"drafts get previews\"; folio-assistant#2836). A build takes about 22 minutes, and GitHub Pages about 3 to 4 more.",
       "notation": "Task_BuildStaging",
       "source": "folio-assistant-core/processes/content/content-change-review-stage.bpmn#Task_BuildStaging",
       "status": "candidate"
@@ -456,8 +456,8 @@
     },
     {
       "id": "process_contentchangereviewstage.task_deploystaging",
-      "prefLabel": "Deploy to STAGING/<slug>/",
-      "definition": "The stage job copies the built site into gh-pages under STAGING/<branch-slug>/, then `staging-share.ts apply` keeps only the files that differ from the live site (cat-harness-tools#1115). The preview's staging-sw.js serves every other file from the live site and puts the staging banner back on it. Other previews and the main site are left as they are.",
+      "prefLabel": "Deploy to branches/<slug>/",
+      "definition": "The stage job copies the built site into gh-pages under branches/<branch-slug>/, then `staging-share.ts apply` keeps only the files that differ from the live site (cat-harness-tools#1115). The preview's staging-sw.js serves every other file from the live site and puts the staging banner back on it. Other previews and the main site are left as they are.",
       "notation": "Task_DeployStaging",
       "source": "folio-assistant-core/processes/content/content-change-review-stage.bpmn#Task_DeployStaging",
       "status": "candidate"
@@ -1841,7 +1841,7 @@
     {
       "id": "process_publiccommentrelease.task_buildpcrelease",
       "prefLabel": "Build the public comment release",
-      "definition": "Freeze the draft as \"Draft for Public Comment Release vX\": a PDF with fixed line numbers and a site copy under a permanent PC/<version>/ path (not STAGING, never deleted on merge). Every channel cites this release's pages, lines and block ids. Line numbers run continuously through the document. Freeze from a FULL build (owner, 2026-11-01): dispatch the preview workflow for the branch with build_type: full first, because a preview borrows main's search index and slices; pc:release freeze refuses a preview build. Run `bun run cat pc:pdf` for the line-numbered PDF and its line map, then `bun run cat pc:release freeze` for the write-once copy under PC/<version>/. Skill: document-publishing.",
+      "definition": "Freeze the draft as \"Draft for Public Comment Release vX\": a PDF with fixed line numbers and a site copy under a permanent PC/<version>/ path (not branches/, never deleted on merge). Every channel cites this release's pages, lines and block ids. Line numbers run continuously through the document. Freeze from a FULL build (owner, 2026-11-01): dispatch the preview workflow for the branch with build_type: full first, because a preview borrows main's search index and slices; pc:release freeze refuses a preview build. Run `bun run cat pc:pdf` for the line-numbered PDF and its line map, then `bun run cat pc:release freeze` for the write-once copy under PC/<version>/. Skill: document-publishing.",
       "notation": "Task_BuildPcRelease",
       "source": "folio-assistant-core/processes/content/public-comment-release.bpmn#Task_BuildPcRelease",
       "status": "candidate"
