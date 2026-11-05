@@ -47,8 +47,12 @@ import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts";
 import { escapeForRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
-import { previewPath } from "@litlfred/cat-harness-tools/scripts/lib/preview-prefix.ts";
 import { scopeCss } from "./scope-css.js";
+
+// The preview directory (cat-harness-tools `schemas/sdlc/preview-prefix.ts`),
+// named here rather than imported so this layer does not wait on that
+// module's release.
+const previewPath = (slug: string): string => `branches/${slug}`;
 
 /** `folio-staging.yml`'s slug rule, step `slug`. */
 export const stagingSlug = (branch: string) =>

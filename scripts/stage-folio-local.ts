@@ -45,9 +45,14 @@ import { tmpdir } from "node:os";
 import { extname, join, resolve } from "node:path";
 
 import { realPathWithin, resolveWithin } from "@litlfred/cat-harness-tools/src/core/safe-path.js";
-import { PREVIEW_PREFIX, previewPath } from "@litlfred/cat-harness-tools/scripts/lib/preview-prefix.ts";
 
 import { checkChrome } from "./folio-site-chrome-check.js";
+
+// The preview directory (cat-harness-tools `schemas/sdlc/preview-prefix.ts`),
+// named here rather than imported so this layer does not wait on that
+// module's release.
+const PREVIEW_PREFIX = "branches";
+const previewPath = (slug: string): string => `${PREVIEW_PREFIX}/${slug}`;
 
 /**
  * The shape a staging slug must have, the same rule `feature-staging.yml`
