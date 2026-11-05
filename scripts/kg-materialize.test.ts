@@ -463,7 +463,7 @@ describe("the subscriptions page draws a part from its record", () => {
 
 /**
  * A substrate that publishes subgraph files. Named `cat-harness` so the hit
- * can be served THIS repository's own generated `skills/sdlc` hydrated file —
+ * can be served THIS repository's own generated `sdlc/skills` hydrated file —
  * the consumer is tested against what the producer actually writes, not
  * against a hand-made imitation of it.
  */
@@ -472,16 +472,17 @@ const NODES_SUBSTRATE = {
   title: "C@T Harness",
   directories: [
     { id: "skills", path: "skills/", graphTypologies: ["skills"] },
+    { id: "sdlc", path: "sdlc/", graphTypologies: ["skills"] },
     { id: "docs", path: "docs/", graphTypologies: ["docs"] },
   ],
 };
-const SDLC_HYDRATED_PATH = "docs/subgraph/cat-harness/skills/sdlc/index.hydrated.jsonld";
+const SDLC_HYDRATED_PATH = "docs/subgraph/cat-harness/sdlc/skills/index.hydrated.jsonld";
 const SDLC_HYDRATED = readFileSync(join(import.meta.dir, "..", "..", "cat-harness", SDLC_HYDRATED_PATH), "utf8");
 const NODES_UPSTREAM: Record<string, string> = {
   "cat-harness.json": JSON.stringify(NODES_SUBSTRATE),
   [SDLC_HYDRATED_PATH]: SDLC_HYDRATED,
   "docs/subgraph/cat-harness/index.jsonld": JSON.stringify({ "@context": "https://example.org/ns/subgraph/v1.jsonld", "@id": "https://example.org/subgraph/cat-harness/" }),
-  "skills/sdlc/sdlc-core/todo-manager.md": "# the bytes metadata mode never fetches\n",
+  "sdlc/skills/sdlc-core/todo-manager.md": "# the bytes metadata mode never fetches\n",
 };
 const nodesCheckout = (opts: { snapshotRef?: string } = {}) =>
   checkout({ id: "cat", subgraphs: [] }, { ...opts, substrate: { file: "cat-harness.json", raw: NODES_UPSTREAM["cat-harness.json"]! } });
@@ -506,16 +507,16 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
   test("a hit: the file lands beside a sha256 record, and --check holds it", async () => {
     const { inst, snapDir } = nodesCheckout();
     const f = nodesFixture();
-    const r = await materializeNodes({ instance: inst, subscription: "cat", path: "skills/sdlc", fetch: f, now: NOW });
+    const r = await materializeNodes({ instance: inst, subscription: "cat", path: "sdlc/skills", fetch: f, now: NOW });
     expect(r.state).toBe("materialized");
     if (r.state !== "materialized") return;
     // One file asked for, at the declared docs path: never the subgraph's own bytes.
     expect(f.paths).toEqual([SDLC_HYDRATED_PATH]);
-    const dir = join(snapDir, "cat", "nodes", "skills", "sdlc");
+    const dir = join(snapDir, "cat", "nodes", "sdlc", "skills");
     expect(readFileSync(join(dir, "index.hydrated.jsonld"), "utf8")).toBe(SDLC_HYDRATED);
     const rec = KgNodesRecordSchema.parse(JSON.parse(readFileSync(join(dir, "nodes.json"), "utf8")));
     expect(rec.ref).toBe(SHA);
-    expect(rec.subgraph.iri).toMatch(/\/subgraph\/cat-harness\/skills\/sdlc\/$/);
+    expect(rec.subgraph.iri).toMatch(/\/subgraph\/cat-harness\/sdlc\/skills\/$/);
     expect(rec.file!.fixity.digest).toBe(createHash("sha256").update(SDLC_HYDRATED).digest("hex"));
     expect(rec.file!.upstream).toBe(`https://github.com/litlfred/ihris-kb/blob/${SHA}/${SDLC_HYDRATED_PATH}`);
     expect(rec.size.verdict).toBe("permitted");
@@ -528,7 +529,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     expect(report.nodesHeld).toBe(1);
     expect(partRecordsIn(snapDir, "cat").strays).toEqual([]);
     // Idempotent at the same pin.
-    const again = await materializeNodes({ instance: inst, subscription: "cat", path: "skills/sdlc/", fetch: nodesFixture(), now: NOW });
+    const again = await materializeNodes({ instance: inst, subscription: "cat", path: "sdlc/skills/", fetch: nodesFixture(), now: NOW });
     expect(again.state === "materialized" && again.changed).toBe(false);
   });
 
@@ -578,13 +579,13 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     const r = await materializeNodes({
       instance: inst,
       subscription: "cat",
-      path: "skills/sdlc",
+      path: "sdlc/skills",
       fetch: nodesFixture(withoutFile),
       indexPackage: servedPackage({ [SDLC_HYDRATED_PATH]: SDLC_HYDRATED }),
       now: NOW,
     });
     expect(r.state).toBe("materialized");
-    const dir = join(snapDir, "cat", "nodes", "skills", "sdlc");
+    const dir = join(snapDir, "cat", "nodes", "sdlc", "skills");
     expect(readFileSync(join(dir, "index.hydrated.jsonld"), "utf8")).toBe(SDLC_HYDRATED);
     const rec = KgNodesRecordSchema.parse(JSON.parse(readFileSync(join(dir, "nodes.json"), "utf8")));
     expect(rec.file!.upstream).toMatch(new RegExp(`/cat-harness-subgraph-index-.*\\.tgz#${SDLC_HYDRATED_PATH.replace(/\./g, "\\.")}$`));
@@ -597,7 +598,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     const r = await materializeNodes({
       instance: inst,
       subscription: "cat",
-      path: "skills/sdlc",
+      path: "sdlc/skills",
       fetch: nodesFixture(withoutFile),
       indexPackage: servedPackage({ "docs/subgraph/cat-harness/skills/other/index.hydrated.jsonld": SDLC_HYDRATED }),
     });
@@ -612,7 +613,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     const r = await materializeNodes({
       instance: inst,
       subscription: "cat",
-      path: "skills/sdlc",
+      path: "sdlc/skills",
       fetch: nodesFixture(withoutFile),
       indexPackage: (a) => ({ state: "could-not-determine", pkg: { name: "", version: "", tag: "", tarball: "", record: "", tarballUrl: "", recordUrl: "" }, detail: `offline (${a.harness})` }),
     });
@@ -633,32 +634,32 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     const { inst, snapDir } = nodesCheckout();
     const bad = JSON.parse(SDLC_HYDRATED) as Record<string, unknown>;
     bad["@context"] = { inlined: "https://example.org/" }; // the contract: the context is never inlined
-    const r = await materializeNodes({ instance: inst, subscription: "cat", path: "skills/sdlc", fetch: nodesFixture({ ...NODES_UPSTREAM, [SDLC_HYDRATED_PATH]: JSON.stringify(bad) }) });
+    const r = await materializeNodes({ instance: inst, subscription: "cat", path: "sdlc/skills", fetch: nodesFixture({ ...NODES_UPSTREAM, [SDLC_HYDRATED_PATH]: JSON.stringify(bad) }) });
     expect(r.state).toBe("refused");
     expect(r.state === "refused" && r.reason).toMatch(/not a valid hydrated subgraph file: @context/);
-    const notJson = await materializeNodes({ instance: inst, subscription: "cat", path: "skills/sdlc", fetch: nodesFixture({ ...NODES_UPSTREAM, [SDLC_HYDRATED_PATH]: "{oops" }) });
+    const notJson = await materializeNodes({ instance: inst, subscription: "cat", path: "sdlc/skills", fetch: nodesFixture({ ...NODES_UPSTREAM, [SDLC_HYDRATED_PATH]: "{oops" }) });
     expect(notJson.state === "refused" && notJson.reason).toMatch(/is not JSON/);
     // Valid, but published under the wrong path: it names another subgraph.
     const elsewhere = { ...JSON.parse(SDLC_HYDRATED), "@id": "https://example.org/subgraph/cat-harness/skills/other/" };
-    const wrong = await materializeNodes({ instance: inst, subscription: "cat", path: "skills/sdlc", fetch: nodesFixture({ ...NODES_UPSTREAM, [SDLC_HYDRATED_PATH]: JSON.stringify(elsewhere) }) });
-    expect(wrong.state === "refused" && wrong.reason).toMatch(/not the subgraph `…\/subgraph\/cat-harness\/skills\/sdlc\/`/);
+    const wrong = await materializeNodes({ instance: inst, subscription: "cat", path: "sdlc/skills", fetch: nodesFixture({ ...NODES_UPSTREAM, [SDLC_HYDRATED_PATH]: JSON.stringify(elsewhere) }) });
+    expect(wrong.state === "refused" && wrong.reason).toMatch(/not the subgraph `…\/subgraph\/cat-harness\/sdlc\/skills\/`/);
     expect(existsSync(join(snapDir, "cat"))).toBe(false);
   });
 
   test("the pin: a snapshot at another pin, a copy held at another pin, and a remote serving another commit", async () => {
     const stale = nodesCheckout({ snapshotRef: SHA2 });
     const f = nodesFixture();
-    const r1 = await materializeNodes({ instance: stale.inst, subscription: "cat", path: "skills/sdlc", fetch: f });
+    const r1 = await materializeNodes({ instance: stale.inst, subscription: "cat", path: "sdlc/skills", fetch: f });
     expect(r1.state === "refused" && r1.reason).toMatch(/re-subscribe/);
     expect(f.calls).toBe(0);
 
     const { inst, decl, snapDir } = nodesCheckout();
-    await materializeNodes({ instance: inst, subscription: "cat", path: "skills/sdlc", fetch: nodesFixture(), now: NOW });
+    await materializeNodes({ instance: inst, subscription: "cat", path: "sdlc/skills", fetch: nodesFixture(), now: NOW });
     // Move the pin under the held copy (and the snapshot with it): moving is refresh-materialized.
     setSubscription(decl, { ref: SHA2 });
     const snapFile = join(snapDir, `cat${SNAPSHOT_SUFFIX}`);
     writeFileSync(snapFile, readFileSync(snapFile, "utf8").replace(SHA, SHA2));
-    const r2 = await materializeNodes({ instance: inst, subscription: "cat", path: "skills/sdlc", fetch: nodesFixture() });
+    const r2 = await materializeNodes({ instance: inst, subscription: "cat", path: "sdlc/skills", fetch: nodesFixture() });
     expect(r2.state === "refused" && r2.reason).toMatch(/held at 0123456789ab .* `refresh-materialized`/);
     expect(checkMaterializations(inst).findings.some((x) => /held at 0123456789ab, and the subscription pins 89abcdef0123/.test(x))).toBe(true);
 
@@ -667,7 +668,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     const r3 = await materializeNodes({
       instance: fresh.inst,
       subscription: "cat",
-      path: "skills/sdlc",
+      path: "sdlc/skills",
       fetch: () => {
         throw new Error(`the remote served ${SHA2} for ${SHA}`);
       },
@@ -678,9 +679,9 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
 
   test("the size cap: over maxBytes stays referenced, with a record and no file", async () => {
     const { inst, snapDir } = nodesCheckout();
-    const r = await materializeNodes({ instance: inst, subscription: "cat", path: "skills/sdlc", maxBytes: 1024, fetch: nodesFixture(), now: NOW });
+    const r = await materializeNodes({ instance: inst, subscription: "cat", path: "sdlc/skills", maxBytes: 1024, fetch: nodesFixture(), now: NOW });
     expect(r.state).toBe("stayed-referenced");
-    const dir = join(snapDir, "cat", "nodes", "skills", "sdlc");
+    const dir = join(snapDir, "cat", "nodes", "sdlc", "skills");
     expect(existsSync(join(dir, "index.hydrated.jsonld"))).toBe(false);
     const rec = KgNodesRecordSchema.parse(JSON.parse(readFileSync(join(dir, "nodes.json"), "utf8")));
     expect(rec.state).toBe("referenced");
@@ -690,13 +691,13 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
 
   test("--check: an edit in place, and a file no record accounts for, are findings", async () => {
     const { inst, snapDir } = nodesCheckout();
-    await materializeNodes({ instance: inst, subscription: "cat", path: "skills/sdlc", fetch: nodesFixture(), now: NOW });
-    const dir = join(snapDir, "cat", "nodes", "skills", "sdlc");
+    await materializeNodes({ instance: inst, subscription: "cat", path: "sdlc/skills", fetch: nodesFixture(), now: NOW });
+    const dir = join(snapDir, "cat", "nodes", "sdlc", "skills");
     appendFileSync(join(dir, "index.hydrated.jsonld"), " ");
     writeFileSync(join(dir, "extra.txt"), "x");
     const findings = checkMaterializations(inst).findings;
     expect(findings.some((x) => /does not hash to its record/.test(x))).toBe(true);
-    expect(findings.some((x) => /nodes\/skills\/sdlc\/extra\.txt` is in the subscription's directory with no record/.test(x))).toBe(true);
+    expect(findings.some((x) => /nodes\/sdlc\/skills\/extra\.txt` is in the subscription's directory with no record/.test(x))).toBe(true);
   });
 });
 

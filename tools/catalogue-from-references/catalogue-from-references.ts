@@ -15,6 +15,7 @@ export default toolFactory((t) =>
         { name: "apply", schema: t("Flag"), required: false, arg: { flag: "--apply" }, description: "Write the records and nodes, and remove this tool's stale ones. Without it the run is a dry run." },
         { name: "check", schema: t("Flag"), required: false, arg: { flag: "--check" }, description: "Write nothing. Exit 1 if any record or node on disk differs from what the bibliography gives." },
         { name: "json", schema: t("Flag"), required: false, arg: { flag: "--json" }, description: "Print the plan as JSON." },
+        { name: "baseUrl", schema: t("Url"), required: false, arg: { flag: "--base-url" }, description: "Where the bibliography is published. With `--apply`, writes `catalogue.json` when the catalogue directory has none; without it such a run is refused." },
       ],
       outputs: [
         { name: "catalogue", schema: t("RepoPath"), description: "`<catalogue>/records/<slug>.dc.json` and `<catalogue>/nodes/item-<slug>.json` per joined entry; `catalogue.json` when absent and `--base-url` is given. A summary of joined and left-alone entries goes to stdout." },

@@ -346,7 +346,7 @@
     {
       "id": "review-log-watch",
       "prefLabel": "review-log-watch",
-      "definition": "Poll a drafting review log (a Contributor Feedback sheet) and its folio repository's issues mechanically, with Tool `review-log-watch`, and start agent work only when a cell people set or an open issue changed. Each issue that no row links yet becomes a Contributor Feedback row, and a closed issue's row is hidden with its text struck through. Use on every wake of a review-log watcher, and when setting up a watcher for a new log.",
+      "definition": "Poll a review log (a drafting Contributor Feedback sheet, or a public-comment sheet's Review Change Sets) and its folio repository's issues mechanically, with Tool `review-log-watch`, and start agent work only when a cell people set or an open issue changed. Each issue that no row links yet becomes a Contributor Feedback row, and a closed issue's row is hidden with its text struck through. Use on every wake of a review-log watcher, and when setting up a watcher for a new log.",
       "notation": "review-log-watch",
       "source": "folio-assistant-core/skills/content/folio-document-adapter/review-log-watch.md",
       "status": "candidate"

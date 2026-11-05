@@ -12,6 +12,10 @@
  * reviewed to add in existing issues. if issue is closed it correpsonds to
  * hidden row that text has line through it/hidden".
  *
+ * Owner, 2026-11-04: it watches public-comment logs too. Read their Review
+ * Change Sets, which has no Issue column: only `change-set` issues count
+ * there, and an issue no row links is reported, never appended.
+ *
  * Skill: `review-log-watch`. Process: `processes/content/review-log-watch.bpmn`.
  */
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -49,6 +53,8 @@ export type WatchState = {
 
 export type Change =
   | { kind: "issue-opened" | "issue-updated" | "issue-closed"; issue: number; title?: string }
+  /** An open issue no row links, on a read with no Issue column, where no row is appended: link it by hand or on the Agent tab. */
+  | { kind: "issue-unlinked"; issue: number; title: string }
   | {
       kind: "cell";
       /** The row as the sheet is now (1-based); 0 when the row is gone. Read the row again before writing to it. */
@@ -84,12 +90,18 @@ export type WatchResult =
       state: WatchState;
     };
 
-/** The headers whose cells wake the agent: what people (Blue, Orange) set. */
+/**
+ * The headers whose cells wake the agent: what people (Blue, Orange) set, on a
+ * drafting log's Contributor Feedback and a public-comment log's Review
+ * Change Sets and Review Public Comments (owner, 2026-11-04).
+ */
 export function watchedHeader(h: string): boolean {
   return (
     h === "Title" || h === "Selected Sections" || h === "Disposition" ||
     h === "Ready for agent" || h === "Ready for merge" || h === "Dispositions confirmed" ||
-    (h.startsWith("Contributor Feedback") && h !== "Contributor Feedback (agent)")
+    h === "TWG (CS)" || h === "TWG (human)" || h === "Change Set (human)" ||
+    (h.startsWith("Contributor Feedback") && h !== "Contributor Feedback (agent)") ||
+    (h.startsWith("Committee Feedback") && h !== "Committee Feedback (agent)")
   );
 }
 
@@ -269,15 +281,25 @@ export function digestOf(issues: Record<string, string>, cells: Record<string, s
  * Issue column instead of the log; a change is then reported as one `cell`
  * change on header `#hash`, and the watcher reads the rows it needs.
  */
-export type WatchOptions = { skipLabel?: string; author?: string; sheetHash?: string };
+export type WatchOptions = {
+  skipLabel?: string; author?: string; sheetHash?: string;
+  /**
+   * Only issues with this label are tracked. Default: none on a read with an
+   * Issue column, and `change-set` on one without (a public-comment log's
+   * Review Change Sets), whose issues are the change sets people ask for.
+   */
+  label?: string;
+};
 
 const isClosed = (i: Issue) => i.state === "closed";
 
 /**
  * Compare this check with the last one, over the repository's open AND
  * closed issues. Pull requests are left out (the issues API lists them too),
- * and so are issues with the `skipLabel` and, when `author` is given, issues
- * someone else opened.
+ * and so are issues with the `skipLabel`, issues without the `label` and,
+ * when `author` is given, issues someone else opened. A read with no Issue
+ * column gets no rows to append: its unlinked open issues are reported as
+ * `issue-unlinked` changes instead.
  */
 export function watch(
   values: string[][],
@@ -287,8 +309,13 @@ export function watch(
   opts: WatchOptions = {},
 ): WatchResult {
   const skipLabel = opts.skipLabel ?? "no-sheet";
+  const hi = headerIndex(values);
+  const header = hi < 0 ? [] : values[hi].map((h) => String(h ?? ""));
+  const hasIssue = header.some((h) => h.trim() === "Issue");
+  const label = opts.label ?? (hasIssue ? undefined : "change-set");
   const tracked = issues.filter((i) =>
-    !i.pull_request && !labelNames(i).includes(skipLabel) && (!opts.author || i.user?.login === opts.author));
+    !i.pull_request && !labelNames(i).includes(skipLabel) && (!label || labelNames(i).includes(label)) &&
+    (!opts.author || i.user?.login === opts.author));
   const issueMap: Record<string, string> = {};
   for (const i of tracked) issueMap[String(i.number)] = `${isClosed(i) ? "closed" : "open"}|${i.updated_at}`;
   const cells = opts.sheetHash !== undefined ? { "0:#hash": opts.sheetHash } : sheetCells(values);
@@ -323,15 +350,16 @@ export function watch(
     changes.push({ kind: "cell", row, ...(cs ? { cs } : {}), header: k.slice(at + 1), from: oldCells[k] ?? "", to: cells[k] ?? "" });
   }
 
-  const hi = headerIndex(values);
-  const header = hi < 0 ? [] : values[hi].map((h) => String(h ?? ""));
   const linked = linkedIssues(values, repo);
   const csCol = header.findIndex((h) => h.trim() === "Change-set");
   let next = 1 + values.slice(hi + 1).reduce((m, r) => {
     const x = /^CS-(\d+)$/.exec(String(r[csCol] ?? "").trim());
     return x ? Math.max(m, Number(x[1])) : m;
   }, 0);
-  const append: AppendRow[] = hi < 0 ? [] : tracked
+  if (!hasIssue) {
+    for (const i of tracked) if (!isClosed(i)) changes.push({ kind: "issue-unlinked", issue: i.number, title: i.title });
+  }
+  const append: AppendRow[] = !hasIssue ? [] : tracked
     .filter((i) => !linked.has(i.number))
     .sort((a, b) => a.number - b.number)
     .map((i) => {
@@ -368,14 +396,14 @@ if (import.meta.main) {
   const sheet = arg("sheet");
   const statePath = arg("state");
   if (!repo || !sheet || !statePath) {
-    console.error("usage: watch.ts --repo owner/name --sheet values.json --state state.json [--issues issues.json] [--skip-label no-sheet] [--author login] [--sheet-hash h] [--accept]");
+    console.error("usage: watch.ts --repo owner/name --sheet values.json --state state.json [--issues issues.json] [--skip-label no-sheet] [--label change-set] [--author login] [--sheet-hash h] [--accept]");
     process.exit(2);
   }
   const raw = JSON.parse(readFileSync(sheet, "utf8"));
   const values: string[][] = Array.isArray(raw) ? raw : raw.values ?? [];
   const issues: Issue[] = arg("issues") ? JSON.parse(readFileSync(arg("issues")!, "utf8")) : fetchIssues(repo);
   const prev: WatchState | undefined = existsSync(statePath) ? JSON.parse(readFileSync(statePath, "utf8")) : undefined;
-  const result = watch(values, issues, repo, prev, { skipLabel: arg("skip-label"), author: arg("author"), sheetHash: arg("sheet-hash") });
+  const result = watch(values, issues, repo, prev, { skipLabel: arg("skip-label"), label: arg("label"), author: arg("author"), sheetHash: arg("sheet-hash") });
   if (result.status === "changed" && process.argv.includes("--accept")) {
     mkdirSync(dirname(statePath), { recursive: true });
     writeFileSync(statePath, JSON.stringify(result.state, null, 2) + "\n");

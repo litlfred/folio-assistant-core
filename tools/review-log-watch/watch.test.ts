@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { feedbackCell, issueRow, linkedIssues, richSummary, sheetCells, summary, watch, type Issue } from "./watch.js";
+import { feedbackCell, issueRow, linkedIssues, richSummary, sheetCells, summary, watch, watchedHeader, type Issue } from "./watch.js";
 
 const repo = "litlfred/dth-phc";
 const header = ["Change-set", "Title", "Selected Sections", "Section links", "Contributor Feedback (initials/name)", "Contributor Feedback (initials/name)", "Disposition", "Ready for agent", "Ready for merge", "Feedback (agent)", "Issue"];
@@ -125,6 +125,30 @@ describe("review-log-watch", () => {
     expect(watch(issuesOnly, [issue(5), issue(8)], repo, first.state, { sheetHash: "abc" }).status).toBe("unchanged");
     const r = watch(issuesOnly, [issue(5), issue(8)], repo, first.state, { sheetHash: "xyz" });
     expect(r.status === "changed" && r.changes).toEqual([{ kind: "cell", row: 0, header: "#hash", from: "abc", to: "xyz" }]);
+  });
+
+  test("a public-comment log: its people's columns wake it, the agent's do not (owner, 2026-11-04)", () => {
+    for (const h of ["Committee Feedback (CL)", "TWG (CS)", "TWG (human)", "Change Set (human)", "Dispositions confirmed"]) expect([h, watchedHeader(h)]).toEqual([h, true]);
+    for (const h of ["Committee Feedback (agent)", "PC Committee Feedback", "Change Set Feedback (agent)", "TWG (agent)", "TWG (PCs)"]) expect([h, watchedHeader(h)]).toEqual([h, false]);
+  });
+
+  test("a read with no Issue column tracks only change-set issues, and reports them rather than appending rows", () => {
+    const rcs = [["Instructions"], ["Change-set", "Title", "TWG (CS)", "Committee Feedback (CL)", "Ready for agent", "Change Set Feedback (agent)"], ["CS-001", "Fix scope", "TWG-A", "", "", "Proposal"]];
+    const cs = { labels: [{ name: "change-set" }] };
+    const r = watch(rcs, [issue(5), issue(6, cs), issue(7, { ...cs, state: "closed" })], repo, undefined);
+    if (r.status !== "changed") throw new Error("expected changed");
+    expect(r.append).toEqual([]);
+    expect(r.closedRows).toEqual([]);
+    expect(Object.keys(r.state.issues)).toEqual(["6", "7"]);
+    expect(r.changes.filter((c) => c.kind === "issue-unlinked")).toEqual([{ kind: "issue-unlinked", issue: 6, title: "Issue 6" }]);
+    expect(r.state.cells).toEqual({ "CS-001:Title": "Fix scope", "CS-001:TWG (CS)": "TWG-A" });
+    const twg = rcs.map((row) => [...row]); twg[2][3] = "CL: agree";
+    const next = watch(twg, [issue(5), issue(6, cs), issue(7, { ...cs, state: "closed" })], repo, r.state);
+    expect(next.status === "changed" && next.changes.filter((c) => c.kind === "cell")).toEqual([
+      { kind: "cell", row: 3, cs: "CS-001", header: "Committee Feedback (CL)", from: "", to: "CL: agree" },
+    ]);
+    const labelled = watch(sheet([row1]), [issue(5), issue(8), issue(9, cs)], repo, undefined, { label: "change-set" });
+    expect(labelled.status === "changed" && labelled.append.map((a) => a.issue)).toEqual([9]);
   });
 
   test("summary skips form headings and empty answers, and cuts long text", () => {

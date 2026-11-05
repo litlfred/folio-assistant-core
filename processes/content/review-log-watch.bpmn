@@ -26,8 +26,8 @@
   </bpmn:collaboration>
   <bpmn:process id="Process_ReviewLogWatch" name="Review-log watch" isExecutable="false">
     <bpmn:documentation>
-      One poll of one drafting review log (a Contributor Feedback sheet) and
-      its folio repository. A tool decides, with no agent judgement, whether
+      One poll of one review log (a drafting Contributor Feedback sheet, or a
+      public-comment sheet's Review Change Sets) and its folio repository. A tool decides, with no agent judgement, whether
       anything a person set in the sheet or any open issue changed since the
       last poll. Only then does the agent append rows for new issues and do
       its pass. Skill: review-log-watch.
@@ -53,13 +53,13 @@
       <bpmn:timerEventDefinition id="Timer_Poll"><bpmn:timeCycle>R/PT3M</bpmn:timeCycle></bpmn:timerEventDefinition>
     </bpmn:startEvent>
     <bpmn:serviceTask id="Task_ReadSheet" name="Read the Contributor Feedback tab">
-      <bpmn:documentation>Reads Watch!F1:I1, the hash of the person-set cells that the sheet script writes on every refresh, and Contributor Feedback's header row and Issue column, and saves them as JSON for the check. A sheet without the Watch hash yet is read whole. Reading is not agent work: it changes nothing.</bpmn:documentation>
+      <bpmn:documentation>Reads Watch!F1:I1, the hash of the person-set cells that the sheet script writes on every refresh, and Contributor Feedback's header row and Issue column (a public-comment log: Review Change Sets' header row and Change-set column), and saves them as JSON for the check. A sheet without the Watch hash yet is read whole. Reading is not agent work: it changes nothing.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-log-watch"/></bpmn:extensionElements>
       <bpmn:incoming>WF01</bpmn:incoming>
       <bpmn:outgoing>WF02</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:serviceTask id="Task_RunCheck" name="Run the review-log-watch check">
-      <bpmn:documentation>Runs Tool review-log-watch with the folio repository, the saved values and the log's state file. The tool reads the repository's open and closed issues (no pull requests, no issue labelled no-sheet) and compares a digest of them and of the cells people set (Title, Selected Sections, Contributor Feedback, Disposition, Ready for agent, Ready for merge, Dispositions confirmed) with the last check's. It writes nothing.</bpmn:documentation>
+      <bpmn:documentation>Runs Tool review-log-watch with the folio repository, the saved values and the log's state file. The tool reads the repository's open and closed issues (no pull requests, no issue labelled no-sheet) and compares a digest of them and of the cells people set (Title, Selected Sections, Contributor Feedback, Disposition, Ready for agent, Ready for merge, Dispositions confirmed; on a public-comment log also Committee Feedback, TWG (CS), TWG (human), Change Set (human)) with the last check's. A read with no Issue column tracks only change-set issues and appends no rows, reporting them as issue-unlinked. It writes nothing.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="review-log-watch"/></bpmn:extensionElements>
       <bpmn:incoming>WF02</bpmn:incoming>
       <bpmn:outgoing>WF03</bpmn:outgoing>
