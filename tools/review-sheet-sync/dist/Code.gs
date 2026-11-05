@@ -28,7 +28,7 @@
  * so a pasted copy can be checked (skill review-sheet-script, "Trusting the
  * script").
  */
-// folio-assistant-core tools/review-sheet-sync at template sha256 d432d3e30d43b244.
+// folio-assistant-core tools/review-sheet-sync at template sha256 c8096bfe73c0560d.
 
 /**
  * Run this one, once, from the editor (or Folio Assistant, then Install automatic
@@ -75,7 +75,7 @@ const CONFIG_TAB = 'Config';
 // Which build this is, and where the latest is published (owner, 2026-10-31:
 // "sheets likely to drift anyways ... they need to know where to see latest
 // published"). The build stamps SCRIPT_VERSION; the script never fetches.
-const SCRIPT_VERSION = 'template sha256 d432d3e30d43b244';
+const SCRIPT_VERSION = 'template sha256 c8096bfe73c0560d';
 const LIBRARY_URL = 'https://script.google.com/home/projects/1us7_ApIq_XvDG-V1XtqdcyHucF0hSlST0qracv1Tw9KTb4-lAFvK1bMQ/edit';
 const COPY_PAGE_URL = 'https://claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd';
 // The menu's name and the page it points to for more (owner, 2026-11-01:
@@ -439,6 +439,10 @@ function markDirty(e) {
     return refreshIfDirty();
   }
   props.setProperty('dirty', '1');
+  // The watch hash is written at once, before any rebuild, so a review-log
+  // watcher sees the edit even while a slow sheet waits for the timer
+  // (owner, 2026-11-05: "make the hash update on edit, not just refresh").
+  writeWatchHash(SpreadsheetApp.getActive());
   // Public-comment mode rebuilds the whole sheet, since a comment's row feeds
   // its change sets' rows. It does so at once while that is quick; once a
   // rebuild takes longer than FAST_MS (an 800-row log takes about 20 s),
@@ -527,7 +531,12 @@ function refreshIfDirty() {
       return a ? a.getRange(1, 1, Math.max(a.getLastRow(), 1), Math.max(a.getLastColumn(), 1)).getDisplayValues() : [];
     }).concat([agentColumnText()])));
     const moved = seen !== (props.getProperty('agentHash') || '');
-    if (props.getProperty('dirty') !== '1' && !moved) return;
+    if (props.getProperty('dirty') !== '1' && !moved) {
+      // Nothing to rebuild: still rewrite the watch hash, so Checked (UTC) is
+      // a heartbeat and an edit no trigger saw still changes the hash.
+      writeWatchHash(SpreadsheetApp.getActive());
+      return;
+    }
     // Cleared before the run, so an edit made during it marks it dirty
     // again; put back when the run could not start or failed, so the edit is
     // not lost but retried on the next tick.
