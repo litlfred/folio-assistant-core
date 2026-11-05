@@ -40,7 +40,8 @@ import { join, relative, resolve } from "node:path";
 import type { ReviewAnchors } from "./docx-to-folio.js";
 import { type ChangeSet, DECISION_LABELS, IN_EDIT_STATUSES, OPEN_STATUSES, type PublicComment } from "../schemas/public-comment.js";
 import { changeSets, discussUrl } from "./public-comment-changesets.js";
-import { Store } from "./public-comment.js";
+import { Store, storeDirOf } from "./public-comment.js";
+import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { BLOCK_ACTIONS_CSS, compactActionsHtml, compactActionsScript, DEFAULT_TEMPLATE, readIssueForm, type BlockActionsConfig } from "./block-actions.js";
 import { changeSetRouting, commentRouting, type Routing, type RoutingFile, TWG_GROUPS } from "./public-comment-routing.js";
 import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
@@ -888,8 +889,8 @@ export function buildPublicCommentSite(repo: string, out: string, storeDir?: str
     slug: cfg.document,
     site: cfg.site,
     repo: cfg.repo,
-    storeDir: storeDir ?? "review/public-comment",
-    ...((f) => (existsSync(f) ? { routing: JSON.parse(readFileSync(f, "utf-8")) as RoutingFile } : {}))(join(repo, storeDir ?? "review/public-comment", "routing.json")),
+    storeDir: relative(repo, store.dir).split("\\").join("/"),
+    ...((f) => (existsSync(f) ? { routing: JSON.parse(readFileSync(f, "utf-8")) as RoutingFile } : {}))(join(store.dir, "routing.json")),
   });
   const docPage = join(out, ...documentPage(cfg.document).split("/"));
   if (!existsSync(docPage)) throw new Error(`${docPage} is missing: run build-document-site.ts --out ${out} first`);
@@ -947,7 +948,8 @@ export function siteReads(repoRoot: string, args: string[] = []): string[] {
   };
   const repo = resolve(repoRoot, opt("repo") ?? ".");
   const rel = (p: string) => relative(repoRoot, p).split("\\").join("/");
-  return [rel(resolve(repo, opt("store") ?? "review/public-comment")), rel(join(repo, "folio"))];
+  const store = opt("store");
+  return [rel(store === undefined ? storeDirOf(repo) : resolve(repo, store)), rel(folioDir(repo))];
 }
 
 if (import.meta.main) {

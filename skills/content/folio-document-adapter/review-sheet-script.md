@@ -219,7 +219,12 @@ bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.t
 # one document's Config rows, from the folio's repository root
 bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts \
   --repo . --config review/public-comment/sheet-sync.json --out config-rows.json
-# a drafting sheet also gets its TOC tab (the Selected Sections dropdown)
+```
+
+A drafting sheet also gets its TOC tab (the Selected Sections dropdown):
+
+<!-- command-path-ok: run IN A DRAFTING FOLIO — review/drafting/sheet-sync.json is the file `--link` writes (§"Linking a sheet to a repository", step 2), so a folio with no drafting sheet has none -->
+```sh
 bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts \
   --repo . --config review/drafting/sheet-sync.json --out config-rows.json --toc-out toc-rows.json
 ```

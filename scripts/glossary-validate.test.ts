@@ -88,14 +88,20 @@ function archi(elements: Array<[string, string, Record<string, string>]>, rel?: 
 function withModel(root: string, id: string, xml: string) {
   mkdirSync(join(root, "archimate", id), { recursive: true });
   writeFileSync(join(root, "archimate", id, "m.archimate"), xml);
-  writeFileSync(join(root, "archimate/cat-archimate.config.json"), JSON.stringify({ models: [{ id, file: `${id}/m.archimate` }] }));
+  writeFileSync(
+    join(root, "archimate/cat-archimate.config.json"),
+    JSON.stringify({ $schema: "cat-archimate-config/v1", directory: "archimate", models: [{ id, file: `${id}/m.archimate` }] }),
+  );
 }
+
+/** The `archimate` directory an instance holding a model declares: the config is found through it. */
+const ARCHIMATE_DIRS = [{ id: "archimate", path: "archimate/", graphTypologies: ["archimate"] }];
 
 /** `pc` (iriBase pc/) overlays `sc` (iriBase sc/), whose model 1.0 holds e1 and e2 serving e1. */
 function overlayFixture(pc: string, block?: object): string {
   const repo = fixture([term("trade-item", "Trade Item")], block);
-  writeFileSync(join(repo, "pc.json"), JSON.stringify({ name: "pc", iriBase: "https://x/pc/", version: "0.1.0" }));
-  writeFileSync(join(repo, "sc/sc.json"), JSON.stringify({ name: "sc", iriBase: "https://x/sc/", version: "1.0.0" }));
+  writeFileSync(join(repo, "pc.json"), JSON.stringify({ name: "pc", iriBase: "https://x/pc/", version: "0.1.0", directories: ARCHIMATE_DIRS }));
+  writeFileSync(join(repo, "sc/sc.json"), JSON.stringify({ name: "sc", iriBase: "https://x/sc/", version: "1.0.0", directories: ARCHIMATE_DIRS }));
   withModel(join(repo, "sc"), "1.0", archi([["e1", "One", {}], ["e2", "Two", {}]], ["r1", "e2", "e1", {}]));
   withModel(repo, "0.1", pc);
   return repo;

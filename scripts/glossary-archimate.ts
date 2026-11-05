@@ -28,7 +28,25 @@
  */
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
-import { instanceRootsIn, readDeclaration } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+import { directoriesForGraph, instanceRootsIn, readDeclaration } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+
+const ARCHIMATE_CONFIG = "cat-archimate.config.json";
+
+/**
+ * An instance's `cat-archimate.config.json`: at its root, or inside a
+ * directory it declares with graph typology `archimate`; undefined when
+ * neither holds one. The rule of `configPath` in cat-harness-tools'
+ * `archimate/scripts/check-archimate.ts`, restated because that module is
+ * reached only by a relative import, and whether there is a config at all is
+ * asked BEFORE importing it, so a checkout with no ArchiMate model never needs it.
+ */
+export function archimateConfigPath(root: string): string | undefined {
+  const atRoot = join(root, ARCHIMATE_CONFIG);
+  if (existsSync(atRoot)) return atRoot;
+  return directoriesForGraph(root, "archimate")
+    .map((d) => join(d, ARCHIMATE_CONFIG))
+    .find((p) => existsSync(p));
+}
 
 export interface Depicted {
   name: string;
@@ -80,7 +98,7 @@ export async function archimateDepictions(repo: string, terms: readonly TermRef[
   const byLabel = new Map(terms.filter((t) => labelCount.get(t.label) === 1).map((t) => [t.label, t.anchor]));
   const conceptOf = (v: string): string | undefined => byIri.get(v) ?? [...byFile].find(([k]) => v.endsWith(`/${k}`))?.[1];
 
-  const roots = instanceRootsIn(repo).filter((r) => existsSync(join(r, "archimate", "cat-archimate.config.json")));
+  const roots = instanceRootsIn(repo).filter((r) => archimateConfigPath(r) !== undefined);
   if (!roots.length) return out;
   // The ArchiMate reader is in cat-harness-tools' archimate/, which its package does not export.
   const am = "../../cat-harness-tools/archimate";

@@ -145,6 +145,7 @@ All four channels end in the same importer (`public-comment.ts import`),
 because each returns a table whose headers are the importer's own. Before
 importing, check that every reference is in the release:
 
+<!-- command-path-ok: run IN A FOLIO after §1 — release-references.json is the file §1's `refs --out` writes and step 2 of the checklist commits, so it does not exist before a release is made -->
 ```sh
 bun run folio-assistant-core/scripts/public-comment-channels.ts check <returned file> --refs review/public-comment/release-references.json
 ```
