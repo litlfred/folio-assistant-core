@@ -66,6 +66,7 @@
     "catalogue:from-references": "bun run folio-assistant-core/scripts/catalogue-from-references.ts",
     "check:bibliography": "bun run cat-harness-tools/scripts/publish-check.ts bibliography:page",
     "check:glossary": "bun run cat-harness-tools/scripts/publish-check.ts glossary:page",
+    "report:back-matter": "bun run scripts/back-matter-order.ts",
     "check:materialized-fixity": "bun run folio-assistant-core/scripts/check-materialized-fixity.ts",
     "check:voices": "bun run folio-assistant-core/scripts/check-voices.ts",
     "l1:coverage": "bun run folio-assistant-core/scripts/l1-coverage.ts",

@@ -466,6 +466,7 @@ export function refusedGates(g: Gates): Array<keyof Gates> {
 export function recordMaterializationRead(record: Materialization, at?: Date): Materialization {
   const updated: Materialization = {
     ...record,
+    // input-site: inert #607e310b — stamps when a copy was last read; the timestamp is recorded data, never part of a check's answer
     lastReadAt: (at ?? new Date()).toISOString(),
   };
   return MaterializationSchema.parse(updated);
