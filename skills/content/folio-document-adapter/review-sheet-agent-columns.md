@@ -88,7 +88,7 @@ tab with the tool").
   sections or blocks changed); Agentic handled by (the agent and its
   session); Agentic date actioned (`YYYY-MM-DD HH:MMZ`, UTC, from the clock).
 - **Per change set:** Pull request (one PR URL per line); Staging review
-  page (`STAGING/<slug>/en/review/` while the PR is open); What the PRs
+  page (`branches/<slug>/en/review/` while the PR is open); What the PRs
   changed (one line per PR, in the same order as the URLs: what that PR
   changes in the document, in a reader's words); Agent completed and PR
   head (one line per PR, same order). A change set may have several PRs, and
@@ -96,7 +96,7 @@ tab with the tool").
   request.
 - **Staging built** and **Staging built from**: when, and from which commit,
   the preview was last built, read from the newest gh-pages commit under
-  `STAGING/<slug>/`. Write them on every rebuild. The script compares them
+  `branches/<slug>/`. Write them on every rebuild. The script compares them
   with Agent completed and PR head and flags a preview built before the last
   push as stale.
 - **Agent step**: write `idle` (or the next step) before leaving a change

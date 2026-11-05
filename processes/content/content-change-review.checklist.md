@@ -58,7 +58,7 @@ Getting a change to a folio's CONTENT from a request into a published rendering:
 
 - Who: the `Content Author` lane (role `author`).
 - Skill: `staging-review`.
-- What: Author reviews the rendered feature branch at <pages-url>/STAGING/<branch-slug>/ and compares against the main site.
+- What: Author reviews the rendered feature branch at <pages-url>/branches/<branch-slug>/ and compares against the main site.
 - Record it: `workflow_complete` with `node: "Task_ReviewStaging"`.
 - next: → `GW_AuthorSatisfied` (Satisfied with changes?)
 

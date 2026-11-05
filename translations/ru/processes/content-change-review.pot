@@ -46,12 +46,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review.bpmn:108
 #. Diagram element documentation
-msgid "Author reviews the rendered feature branch at <pages-url>/STAGING/<branch-slug>/ and compares against the main site. The staging banner shows the commit SHA. The agent's before/after preview (skill before-after-preview) sits beside the URLs, with its counts and status line."
+msgid "Author reviews the rendered feature branch at <pages-url>/branches/<branch-slug>/ and compares against the main site. The staging banner shows the commit SHA. The agent's before/after preview (skill before-after-preview) sits beside the URLs, with its counts and status line."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review.bpmn:154
 #. Diagram element documentation
-msgid "Author submits the PR for formal review by the guidance review committee. The STAGING URL is the review surface."
+msgid "Author submits the PR for formal review by the guidance review committee. The branches/ URL is the review surface."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review.bpmn:80

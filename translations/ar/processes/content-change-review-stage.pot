@@ -36,12 +36,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:54
 #. Diagram label
-msgid "Deploy to STAGING/<slug>/"
+msgid "Deploy to branches/<slug>/"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:41
 #. Diagram element documentation
-msgid "feature-staging.yml triggers: 1. Regenerate docs (schema, skills, content-backed pages) 2. Render BPMN diagrams 3. Stamp build with commit SHA + timestamp + branch 4. Build Jekyll site with STAGING/ baseurl 5. Inject yellow staging banner into every HTML page A draft pull request is staged too, from its first push. A build takes about 22 minutes, and GitHub Pages about 3 to 4 more."
+msgid "feature-staging.yml triggers: 1. Regenerate docs (schema, skills, content-backed pages) 2. Render BPMN diagrams 3. Stamp build with commit SHA + timestamp + branch 4. Build Jekyll site with branches/ baseurl 5. Inject yellow staging banner into every HTML page A draft pull request is staged too, from its first push. A build takes about 22 minutes, and GitHub Pages about 3 to 4 more."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:93
@@ -81,5 +81,5 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-stage.bpmn:59
 #. Diagram element documentation
-msgid "The stage job copies the built site into gh-pages under STAGING/<branch-slug>/, then `staging-share.ts apply` keeps only the files that differ from the live site. The preview's staging-sw.js serves every other file from the live site and puts the staging banner back on it. Other previews and the main site are left as they are."
+msgid "The stage job copies the built site into gh-pages under branches/<branch-slug>/, then `staging-share.ts apply` keeps only the files that differ from the live site. The preview's staging-sw.js serves every other file from the live site and puts the staging banner back on it. Other previews and the main site are left as they are."
 msgstr ""

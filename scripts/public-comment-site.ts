@@ -25,7 +25,7 @@
  *
  * A comment whose decision names a change set gets two links to its anchor:
  * BEFORE on the published `main` site, and AFTER on the change set's staging
- * preview, `STAGING/<slug>/`. The slug is computed exactly as
+ * preview, `branches/<slug>/`. The slug is computed exactly as
  * `folio-staging.yml` computes it, so the link is where the preview is. A
  * comment with a discussion URL links it. Every comment also links a GitHub
  * search for its reference, which finds every issue and PR that mentions it.
@@ -40,7 +40,8 @@ import { join, relative, resolve } from "node:path";
 import type { ReviewAnchors } from "./docx-to-folio.js";
 import { type ChangeSet, DECISION_LABELS, IN_EDIT_STATUSES, OPEN_STATUSES, type PublicComment } from "../schemas/public-comment.js";
 import { changeSets, discussUrl } from "./public-comment-changesets.js";
-import { Store } from "./public-comment.js";
+import { Store, storeDirOf } from "./public-comment.js";
+import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { BLOCK_ACTIONS_CSS, compactActionsHtml, compactActionsScript, DEFAULT_TEMPLATE, readIssueForm, type BlockActionsConfig } from "./block-actions.js";
 import { changeSetRouting, commentRouting, type Routing, type RoutingFile, TWG_GROUPS } from "./public-comment-routing.js";
 import { dashboardPageRoute, dashboardRoute, toSiteRoot } from "./public-comment-route.js";
@@ -49,18 +50,23 @@ import { darkRules } from "@litlfred/cat-harness-tools/scripts/lib/scheme-css.ts
 import { escapeForRaw } from "@litlfred/cat-harness-tools/scripts/lib/liquid-raw.ts";
 import { scopeCss } from "./scope-css.js";
 
+// The preview directory (cat-harness-tools `schemas/sdlc/preview-prefix.ts`),
+// named here rather than imported so this layer does not wait on that
+// module's release.
+const previewPath = (slug: string): string => `branches/${slug}`;
+
 /** `folio-staging.yml`'s slug rule, step `slug`. */
 export const stagingSlug = (branch: string) =>
   branch.replace(/[^a-zA-Z0-9._-]/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
 
 /**
  * The change-set review page of a branch's staging preview:
- * `<site>/STAGING/<slug>/en/review/` (owner, 2026-10-30: a comment or
+ * `<site>/branches/<slug>/en/review/` (owner, 2026-10-30: a comment or
  * change-set with a pull request links its staging review page). With a
  * recorded `stagingUrl`, that preview's own review page.
  */
 export const stagingReviewUrl = (site: string | undefined, branch: string, stagingUrl?: string): string | undefined => {
-  const base = stagingUrl ? stagingUrl.replace(/\/$/, "") : site ? `${site.replace(/\/$/, "")}/STAGING/${stagingSlug(branch)}` : undefined;
+  const base = stagingUrl ? stagingUrl.replace(/\/$/, "") : site ? `${site.replace(/\/$/, "")}/${previewPath(stagingSlug(branch))}` : undefined;
   return base === undefined ? undefined : `${base}/${REVIEW_PAGE_DIR}/`;
 };
 
@@ -184,7 +190,7 @@ export function siteComments(
       links: {
         ...(c.targetLabel ? { document: `${toRoot}${documentPage(opts.slug)}${frag}` } : {}),
         ...(site && c.targetLabel && cs ? { before: `${site}/${documentPage(opts.slug)}${frag}` } : {}),
-        ...(cs ? { after: cs.stagingUrl ? `${cs.stagingUrl.replace(/\/$/, "")}/${documentPage(opts.slug)}${frag}` : site ? `${site}/STAGING/${stagingSlug(cs.branch)}/${documentPage(opts.slug)}${frag}` : undefined } : {}),
+        ...(cs ? { after: cs.stagingUrl ? `${cs.stagingUrl.replace(/\/$/, "")}/${documentPage(opts.slug)}${frag}` : site ? `${site}/${previewPath(stagingSlug(cs.branch))}/${documentPage(opts.slug)}${frag}` : undefined } : {}),
         ...(cs?.pr && opts.repo ? { pr: `https://github.com/${opts.repo}/pull/${cs.pr}` } : {}),
         // The staging review page: the comment's own change's, else that of
         // the first change-set it is in that has a pull request.
@@ -888,8 +894,8 @@ export function buildPublicCommentSite(repo: string, out: string, storeDir?: str
     slug: cfg.document,
     site: cfg.site,
     repo: cfg.repo,
-    storeDir: storeDir ?? "review/public-comment",
-    ...((f) => (existsSync(f) ? { routing: JSON.parse(readFileSync(f, "utf-8")) as RoutingFile } : {}))(join(repo, storeDir ?? "review/public-comment", "routing.json")),
+    storeDir: relative(repo, store.dir).split("\\").join("/"),
+    ...((f) => (existsSync(f) ? { routing: JSON.parse(readFileSync(f, "utf-8")) as RoutingFile } : {}))(join(store.dir, "routing.json")),
   });
   const docPage = join(out, ...documentPage(cfg.document).split("/"));
   if (!existsSync(docPage)) throw new Error(`${docPage} is missing: run build-document-site.ts --out ${out} first`);
@@ -947,7 +953,8 @@ export function siteReads(repoRoot: string, args: string[] = []): string[] {
   };
   const repo = resolve(repoRoot, opt("repo") ?? ".");
   const rel = (p: string) => relative(repoRoot, p).split("\\").join("/");
-  return [rel(resolve(repo, opt("store") ?? "review/public-comment")), rel(join(repo, "folio"))];
+  const store = opt("store");
+  return [rel(store === undefined ? storeDirOf(repo) : resolve(repo, store)), rel(folioDir(repo))];
 }
 
 if (import.meta.main) {

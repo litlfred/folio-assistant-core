@@ -33,6 +33,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
+import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { loadDecisionTable, unreadableExpressions } from "@litlfred/cat-harness-tools/src/workflow/decision-table.ts";
 
 import { metaOf } from "./glossary-validate.ts";
@@ -71,7 +72,7 @@ function companion(file: string, named: unknown, ext: string): string {
 export async function check(repo: string, instance: string): Promise<Report> {
   const errors: string[] = [];
   const counts = { personas: 0, processes: 0, lanes: 0, decisionTables: 0, rules: 0 };
-  const files = walkTs(join(repo, "folio", instance)).map((f) => ({ f, src: readFileSync(f, "utf-8") }));
+  const files = walkTs(join(folioDir(repo), instance)).map((f) => ({ f, src: readFileSync(f, "utf-8") }));
   const rel = (p: string) => (p.startsWith(repo + "/") ? p.slice(repo.length + 1) : p);
 
   // Personas first: a process lane must name one of them.
@@ -122,7 +123,7 @@ export async function check(repo: string, instance: string): Promise<Report> {
           else if (!personaLabels.has(l.ref)) errors.push(`${rel(bpmn)}: lane ${l.id ?? "?"} names persona "${l.ref}", which no persona block declares`);
         }
       }
-      const svg = typeof meta.svgFile === "string" ? join(repo, "folio", instance, meta.svgFile) : "";
+      const svg = typeof meta.svgFile === "string" ? join(folioDir(repo), instance, meta.svgFile) : "";
       if (!svg || !existsSync(svg)) errors.push(`${rel(f)}: rendered SVG ${String(meta.svgFile ?? "(meta.svgFile not set)")} does not exist`);
     }
 

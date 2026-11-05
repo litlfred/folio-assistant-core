@@ -107,7 +107,7 @@ The diagram shows the phases and the hand-offs between them; each phase is its o
 
       <bpmn:documentation>
         Author reviews the rendered feature branch at
-        &lt;pages-url&gt;/STAGING/&lt;branch-slug&gt;/ and compares
+        &lt;pages-url&gt;/branches/&lt;branch-slug&gt;/ and compares
         against the main site. The staging banner shows the commit SHA.
         The agent's before/after preview (skill before-after-preview) sits
         beside the URLs, with its counts and status line.
@@ -153,7 +153,7 @@ The diagram shows the phases and the hand-offs between them; each phase is its o
     <bpmn:task id="Task_SubmitForReview" name="Submit to review committee">
       <bpmn:documentation>
         Author submits the PR for formal review by the guidance review committee.
-        The STAGING URL is the review surface.
+        The branches/ URL is the review surface.
       </bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="staging-review" />

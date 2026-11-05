@@ -7254,7 +7254,7 @@
     {
       "id": "harness-config.folioassistantdependencyschema.ref",
       "prefLabel": "FolioAssistantDependencySchema.ref",
-      "definition": "HOW TO FETCH WHILE STAGING, and the provenance of the bytes — not what is depended on.",
+      "definition": "HOW TO FETCH WHILE branches/, and the provenance of the bytes — not what is depended on.",
       "source": "cat-harness-tools/schemas/kg/harness-config.ts#FolioAssistantDependencySchema.ref",
       "status": "candidate"
     },
@@ -10460,7 +10460,7 @@
     {
       "id": "ref-window.writerequestschema.route",
       "prefLabel": "WriteRequestSchema.route",
-      "definition": "The route this write owns — `/` for the published site, `STAGING/<slug>/` for a preview. Composition is per route: two different routes compose by union, two of the same route take the newer.",
+      "definition": "The route this write owns — `/` for the published site, `branches/<slug>/` for a preview. Composition is per route: two different routes compose by union, two of the same route take the newer.",
       "source": "cat-harness-tools/schemas/sdlc/ref-window.ts#WriteRequestSchema.route",
       "status": "candidate"
     },
@@ -10768,7 +10768,7 @@
     {
       "id": "render-log.rendersubjectschema.path",
       "prefLabel": "RenderSubjectSchema.path",
-      "definition": "The path on the publish branch — `STAGING/<slug>`, or `/` for the site.",
+      "definition": "The path on the publish branch — `branches/<slug>`, or `/` for the site.",
       "source": "cat-harness-tools/schemas/ui/render-log.ts#RenderSubjectSchema.path",
       "status": "candidate"
     },
@@ -12105,7 +12105,7 @@
     {
       "id": "staging-preview.stagingdeployfactsschema.slug",
       "prefLabel": "StagingDeployFactsSchema.slug",
-      "definition": "The `STAGING/<slug>` path segment. Derived, never reversed.",
+      "definition": "The `branches/<slug>` path segment. Derived, never reversed.",
       "source": "cat-harness-tools/schemas/sdlc/staging-preview.ts#StagingDeployFactsSchema.slug",
       "status": "candidate"
     },

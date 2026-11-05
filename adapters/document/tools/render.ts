@@ -20,6 +20,7 @@
  */
 
 import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+import { referenceDirs } from "@litlfred/cat-harness-tools/pipeline/reference-entries.ts";
 import { realPathWithin, resolveWithin, safeSegment } from "@litlfred/cat-harness-tools/src/core/safe-path.js";
 import { z } from "zod";
 import { execSync, spawnSync } from "child_process";
@@ -164,7 +165,7 @@ export function registerLatexRenderTools(server: McpServer): void {
           );
           const texContent = generateBlockStandaloneTex(
             paper, block, mdContent, target, sourceDir,
-            { preamblePath, bibliographyPath: join(REPO_ROOT, "references") },
+            { preamblePath, bibliographyPath: referenceDirs(REPO_ROOT)[0] },
           );
           const texPath = join(blockPdfsDir, `${target}.tex`);
           writeFileSync(texPath, texContent);

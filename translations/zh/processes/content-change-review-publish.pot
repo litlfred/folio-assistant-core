@@ -86,7 +86,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:67
 #. Diagram label
-msgid "Remove STAGING/<slug>/"
+msgid "Remove branches/<slug>/"
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:23
@@ -101,7 +101,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:64
 #. Diagram element documentation
-msgid "The approval did not end in a merge. Nothing is deployed and STAGING/<slug>/ is left up; a later push to the branch starts a new run of this process."
+msgid "The approval did not end in a merge. Nothing is deployed and branches/<slug>/ is left up; a later push to the branch starts a new run of this process."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:43
@@ -111,12 +111,12 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:58
 #. Diagram element documentation
-msgid "Was the PR merged? `Yes` removes the STAGING/<slug>/ preview; `No` ends this run at End_NotMerged without deploying and without looping back into review (the lane note says why); the preview stays in place, and the next push starts a new run."
+msgid "Was the PR merged? `Yes` removes the branches/<slug>/ preview; `No` ends this run at End_NotMerged without deploying and without looping back into review (the lane note says why); the preview stays in place, and the next push starts a new run."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:72
 #. Diagram element documentation
-msgid "When the PR is merged or closed, the cleanup job removes the STAGING/<slug>/ directory from gh-pages so stale previews don't accumulate."
+msgid "When the PR is merged or closed, the cleanup job removes the branches/<slug>/ directory from gh-pages so stale previews don't accumulate."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-publish.bpmn:120
