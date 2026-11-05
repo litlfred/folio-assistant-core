@@ -1,6 +1,6 @@
 #!/usr/bin/env bun
 /**
- * stage-folio-local — a folio's STAGING preview built and published from a
+ * stage-folio-local — a folio's branches/ preview built and published from a
  * checkout, running the same steps as `.github/workflows/folio-staging.yml`
  * in the same order, for when Actions are unavailable.
  *
@@ -23,7 +23,7 @@
  *   2. Give every page the harness navbar and rail   rail-standalone-pages.ts --foreign-site
  *   3. Inject staging banner             staging-banner.ts
  *   4. Check the chrome in a browser     folio-site-chrome-check.ts (refuses to publish on a failure)
- *   5. Deploy the preview                `--deploy`: STAGING/<slug>/ on the publish branch, replaced whole
+ *   5. Deploy the preview                `--deploy`: branches/<slug>/ on the publish branch, replaced whole
  *
  * `--slug` is refused (exit 2) unless it is one staging-slug segment
  * ({@link stagingSlugProblem}), and the check server answers only files that
@@ -63,7 +63,7 @@ export const STAGING_SLUG_MAX = 100;
 /**
  * Why `slug` is not a staging slug, or `undefined` when it is.
  *
- * The slug names `STAGING/<slug>/` in the publish branch: the directory that is
+ * The slug names `branches/<slug>/` in the publish branch: the directory that is
  * removed with `git rm -r`, the copy's destination and the commit that is
  * pushed. So it is checked by value and refused, never repaired: a repaired
  * value would silently name a different preview.

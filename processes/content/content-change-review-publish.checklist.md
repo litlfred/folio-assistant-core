@@ -24,14 +24,14 @@ Merging an approved content change on the owner's explicit confirmation and publ
 
 - Was the PR merged?
 - Call `workflow_complete` with `node: "GW_Merged"` and `outcome` set to the label that holds:
-  - «Yes» → `Task_CleanupStaging` (Remove STAGING/<slug>/)
+  - «Yes» → `Task_CleanupStaging` (Remove branches/<slug>/)
   - «No» → `End_NotMerged` (Not merged: preview kept)
 
-### 2. Remove STAGING/<slug>/ (`Task_CleanupStaging`)
+### 2. Remove branches/<slug>/ (`Task_CleanupStaging`)
 
 - Who: the `CI/CD Pipeline` lane (role `build-pipeline`).
 - Skill: `feature-staging`.
-- What: When the PR is merged or closed, the cleanup job removes the STAGING/<slug>/ directory from gh-pages so stale previews don't accumulate.
+- What: When the PR is merged or closed, the cleanup job removes the branches/<slug>/ directory from gh-pages so stale previews don't accumulate.
 - Record it: `workflow_complete` with `node: "Task_CleanupStaging"`.
 - next: → `Task_RebuildMain` (Rebuild main site)
 

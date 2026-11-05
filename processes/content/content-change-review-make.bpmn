@@ -128,7 +128,7 @@ On the trigger: reaching this call is not the same as running the whole of it. `
       <bpmn:documentation>
         Agent commits all changes to the feature branch and pushes.
         The feature-staging.yml workflow automatically deploys to
-        STAGING/&lt;branch-slug&gt;/ and comments the URL on the PR.
+        branches/&lt;branch-slug&gt;/ and comments the URL on the PR.
         For a rendered change the agent also produces the before/after
         preview (skill before-after-preview) and links it in the PR body.
       </bpmn:documentation>

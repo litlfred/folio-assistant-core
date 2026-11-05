@@ -68,7 +68,7 @@ them against the frozen draft and reports a miss.
 recorded for the announcement:
 
 1. The release is published: the line-numbered PDF and the comment-period
-   site (its address says it is the public comment release, not `STAGING`, and
+   site (its address says it is the public comment release, not `branches/`, and
    it is kept, not deleted on merge to `main`). Record both links.
 2. `release-references.json` is made and committed.
 3. Each chosen channel is made from it, as above. Record each channel's link:

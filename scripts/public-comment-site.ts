@@ -25,7 +25,7 @@
  *
  * A comment whose decision names a change set gets two links to its anchor:
  * BEFORE on the published `main` site, and AFTER on the change set's staging
- * preview, `STAGING/<slug>/`. The slug is computed exactly as
+ * preview, `branches/<slug>/`. The slug is computed exactly as
  * `folio-staging.yml` computes it, so the link is where the preview is. A
  * comment with a discussion URL links it. Every comment also links a GitHub
  * search for its reference, which finds every issue and PR that mentions it.
@@ -56,7 +56,7 @@ export const stagingSlug = (branch: string) =>
 
 /**
  * The change-set review page of a branch's staging preview:
- * `<site>/STAGING/<slug>/en/review/` (owner, 2026-10-30: a comment or
+ * `<site>/branches/<slug>/en/review/` (owner, 2026-10-30: a comment or
  * change-set with a pull request links its staging review page). With a
  * recorded `stagingUrl`, that preview's own review page.
  */

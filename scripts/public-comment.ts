@@ -107,7 +107,7 @@ export interface StoreConfig {
    * `author_association`. Present: exactly these logins.
    */
   committee?: string[];
-  /** Base URL of the published site, for deep links (main and STAGING/<slug>/). */
+  /** Base URL of the published site, for deep links (main and branches/<slug>/). */
   site?: string;
   /** "owner/name" on GitHub: where change-set issues are opened. */
   repo?: string;

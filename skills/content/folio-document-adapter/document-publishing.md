@@ -174,7 +174,7 @@ review, then take the release decision through the workflow —
 
 ### A public comment release is a full build
 
-A site build is a `preview` (a pull request's `STAGING/<slug>/`: only what the
+A site build is a `preview` (a pull request's `branches/<slug>/`: only what the
 change reaches, every whole-corpus index borrowed from main) or `full` (the
 main deploy, a public comment release, a release: every index rebuilt). See
 cat-harness skill `feature-staging`, section "Build types".

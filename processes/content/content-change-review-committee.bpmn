@@ -67,7 +67,7 @@ Called from content-change-review when the author submits. Which end it reaches 
         change.
         Review committee opens both URLs side by side:
         - Main site: &lt;pages-url&gt;/ (current published state)
-        - Staging: &lt;pages-url&gt;/STAGING/&lt;branch-slug&gt;/
+        - Staging: &lt;pages-url&gt;/branches/&lt;branch-slug&gt;/
         The staging banner shows the commit SHA so they can verify
         what they are reviewing matches the PR. A changed figure, diagram
         or table is also pictured before and after on the review page,

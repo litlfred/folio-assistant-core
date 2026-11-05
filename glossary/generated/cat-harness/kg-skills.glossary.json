@@ -681,7 +681,7 @@
     {
       "id": "feature-staging",
       "prefLabel": "feature-staging",
-      "definition": "Manages feature-branch staging deployments under gh-pages/STAGING/<branch-slug>/ for before/after publication review comparison. Handles branch creation, staging deployment, commit SHA stamping, and cleanup.",
+      "definition": "Manages feature-branch staging deployments under gh-pages/branches/<branch-slug>/ for before/after publication review comparison. Handles branch creation, staging deployment, commit SHA stamping, and cleanup.",
       "notation": "feature-staging",
       "source": "cat-harness/skills/sdlc/sdlc-core/feature-staging.md",
       "status": "candidate"
@@ -1600,7 +1600,7 @@
     {
       "id": "staging-review",
       "prefLabel": "staging-review",
-      "definition": "Staging preview and before/after comparison for content review. Takes one optional string — what the reader wants to look at, in their own words — and returns a list of URLs, each looked up in the publish ref, with what is published at it and what to review there. Provides before (MAIN) and after (STAGING) pairs so reviewers can compare rather than guess. Used by the CRDM feature development workflow, content authoring review sessions, and whenever a staging preview deploys or someone asks to see it.",
+      "definition": "Staging preview and before/after comparison for content review. Takes one optional string — what the reader wants to look at, in their own words — and returns a list of URLs, each looked up in the publish ref, with what is published at it and what to review there. Provides before (MAIN) and after (branches/) pairs so reviewers can compare rather than guess. Used by the CRDM feature development workflow, content authoring review sessions, and whenever a staging preview deploys or someone asks to see it.",
       "notation": "staging-review",
       "source": "cat-harness/skills/sdlc/sdlc-core/staging-review.md",
       "status": "candidate"
