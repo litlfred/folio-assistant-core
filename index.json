@@ -1,6 +1,10 @@
 {
   "$schema": "qa-reports-index/v1",
   "pr": {
+    "622": {
+      "sha": "377c6e9795fee7272d4b99ed9c05ee37b55977f0",
+      "written_at": "2026-11-05T06:37:07.775Z"
+    },
     "627": {
       "sha": "2263d8de3a21a3760959cc67bebb30d19eb6b309",
       "written_at": "2026-11-03T05:59:23.512Z"
