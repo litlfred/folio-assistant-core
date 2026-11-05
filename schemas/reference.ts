@@ -728,7 +728,13 @@ export function genReferenceJsonLd(
   opts: { outDir?: string; check?: boolean } = {},
 ): { written: string[]; stale: string[] } {
   const entries = referenceEntries(repoRoot).filter((e) => !e.file.endsWith(".jsonld"));
-  const targetDir = opts.outDir ?? referenceDirs(repoRoot)[0] ?? join(repoRoot, "references");
+  const targetDir =
+    opts.outDir ??
+    referenceDirs(repoRoot)[0] ??
+    // declared-path-literal: the convention fallback for a WRITE target, when the
+    // folio declares no `references` directory and has none yet: this generator
+    // creates it, so resolving to nothing would make the first run impossible.
+    join(repoRoot, "references");
   const written: string[] = [];
   const stale: string[] = [];
   if (!opts.check && entries.length > 0) {

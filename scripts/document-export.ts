@@ -54,6 +54,8 @@ import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, renameS
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
+import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+
 const HERE = import.meta.dir;
 export const LUA_FILTER = join(HERE, "document-export.lua");
 export const DOCX_OFFLINE = join(HERE, "docx-offline.py");
@@ -264,7 +266,7 @@ export function pdfFacts(pdf: string): { pages: number; lines: number } {
 
 export async function exportDocument(o: ExportOptions): Promise<ExportManifest> {
   const repo = resolve(o.repo);
-  const manifestPath = join(repo, "folio", o.document, `${o.document}.ts`);
+  const manifestPath = join(folioDir(repo), o.document, `${o.document}.ts`);
   if (!/^[A-Za-z0-9_-]+$/.test(o.document) || !existsSync(manifestPath)) {
     throw new Error(`no document manifest folio/${o.document}/${o.document}.ts in ${repo}`);
   }
@@ -300,7 +302,7 @@ export async function exportDocument(o: ExportOptions): Promise<ExportManifest> 
   try {
     const md = join(work, `${o.document}.md`);
     const images = has("soffice")
-      ? rasterizeSvgImages(assembled.markdown, [join(repo, "folio", o.document), repo], work, env)
+      ? rasterizeSvgImages(assembled.markdown, [join(folioDir(repo), o.document), repo], work, env)
       : { markdown: assembled.markdown, converted: 0 };
     writeFileSync(md, images.markdown, "utf-8");
     const short = commit.slice(0, 7) + (dirty ? "-dirty" : "");

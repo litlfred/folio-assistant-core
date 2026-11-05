@@ -32,6 +32,8 @@ import { createHash } from "node:crypto";
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import { join, resolve } from "node:path";
 
+import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+
 import { ANCHORS_SCHEMA } from "./docx-to-folio.ts";
 
 type Sec = { title: string; label?: string; blocks: string[]; subsections?: Sec[] };
@@ -52,7 +54,7 @@ const plain = (md: string) =>
 
 /** The anchors file's text, built from the folio at `repo/folio/<document>/`. */
 export async function folioAnchors(o: FolioAnchorsOptions): Promise<string> {
-  const folio = join(o.repo, "folio", o.document);
+  const folio = join(folioDir(o.repo), o.document);
   const paper = (await import(join(folio, `${o.document}.ts`))).default as { chapters: Array<{ dir: string }> };
   const chapters: Array<{ dir: string; title: string; number?: number; label: string }> = [];
   const sections: Array<{ label: string; number?: string; title: string; chapter: string; parent?: string }> = [];
@@ -127,7 +129,7 @@ if (import.meta.main) {
     process.exit(2);
   }
   const repo = resolve(arg("repo") ?? ".");
-  const out = join(repo, "folio", document, "review-anchors.json");
+  const out = join(folioDir(repo), document, "review-anchors.json");
   const text = await folioAnchors({ repo, document, library, source, sourceLabel });
   if (process.argv.includes("--check")) {
     const ok = existsSync(out) && readFileSync(out, "utf-8") === text;
