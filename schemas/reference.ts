@@ -128,6 +128,15 @@ export const ReferenceNodeSchema = z
     derivedFrom: z.string().min(1).optional(),
     /** The library asset that holds a copy of the work, when one is held. Repo-relative path or IRI. */
     heldAt: z.string().min(1).optional(),
+    /**
+     * The entry exactly as the citing document prints it, when no citation
+     * style reproduces that wording (a committee's own short form, two works
+     * in one entry). A reference list drawn from the node
+     * (`scripts/references-render.ts`) prints this text verbatim instead of
+     * formatting the CSL fields, so the KG stays the one source without
+     * changing a word. Not CSL: dropped from CSL-JSON exports.
+     */
+    printed: z.string().min(1).optional(),
   })
   .passthrough();
 export type ReferenceNode = z.infer<typeof ReferenceNodeSchema>;
@@ -159,6 +168,7 @@ const NODE_FIELDS = new Set([
   "provenance",
   "derivedFrom",
   "heldAt",
+  "printed",
   "library",
   "_comment",
   "_generated",
@@ -279,9 +289,16 @@ const DC_TYPE_TO_CSL: Readonly<Record<string, string>> = {
   "technical report": "report",
   thesis: "thesis",
   "web page": "webpage",
+  webpage: "webpage",
+  standard: "standard",
+  legislation: "legislation",
+  document: "document",
   "technical documents": "report",
   publications: "book",
 };
+
+/** A `dc.type` already spelled as the CSL type it maps to, as {@link referenceToDublinCoreRecord} writes it. */
+const CSL_TYPES_FROM_DC: ReadonlySet<string> = new Set(Object.values(DC_TYPE_TO_CSL));
 
 /**
  * A DC creator as a CSL name. `Family, Given` splits on the first comma, which
@@ -319,7 +336,9 @@ export function dublinCoreToReference(
   const ref: ReferenceNode = {
     $schema: REFERENCE_SCHEMA_TAG,
     id: opts.key,
-    type: (dcType && DC_TYPE_TO_CSL[dcType]) ?? (all("identifier", "isbn").length ? "book" : "document"),
+    type:
+      (dcType && (DC_TYPE_TO_CSL[dcType] ?? (CSL_TYPES_FROM_DC.has(dcType) ? dcType : undefined))) ??
+      (all("identifier", "isbn").length ? "book" : "document"),
     provenance: "catalogue",
   };
   const put = <K extends keyof ReferenceNode>(k: K, v: ReferenceNode[K] | undefined) => {
@@ -331,6 +350,26 @@ export function dublinCoreToReference(
   const issued = first("date", "issued");
   put("issued", issued ? dcDateToCsl(issued) : undefined);
   put("publisher", first("publisher"));
+  // A journal article's container and locators: qualified DC as DSpace stores
+  // them (`dc.relation.ispartof`, `dc.citation.*`), so a work that is no
+  // library entry (bean djj5) can be cited from its record alone.
+  put("container-title", first("relation", "ispartof"));
+  put("volume", first("citation", "volume"));
+  put("issue", first("citation", "issue"));
+  const spage = first("citation", "spage");
+  const epage = first("citation", "epage");
+  put("page", spage ? (epage ? `${spage}–${epage}` : spage) : undefined);
+  // Pass-through CSL fields the IGs' entries carry (bean djj5): CSL keeps them,
+  // and the node accepts any CSL field.
+  const extra = ref as Record<string, unknown>;
+  const place = first("publisher", "place");
+  if (place) extra["publisher-place"] = place;
+  const accessed = first("date", "accessed");
+  if (accessed) extra.accessed = dcDateToCsl(accessed);
+  const version = first("citation", "version");
+  if (version) extra.version = version;
+  const status = first("citation", "status");
+  if (status) extra.status = status;
   put("ISBN", first("identifier", "isbn"));
   put("DOI", first("identifier", "doi"));
   put("URL", first("identifier", "uri"));
@@ -429,10 +468,21 @@ export function referenceToDublinCoreRecord(ref: ReferenceNode): DublinCoreRecor
   };
   push("title", undefined, [ref.title ?? ref.id], true);
   push("contributor", "author", (ref.author ?? []).map(nameText));
-  push("contributor", undefined, (ref.editor ?? []).map(nameText));
+  push("contributor", "editor", (ref.editor ?? []).map(nameText));
   push("date", "issued", [dateText(ref)]);
   push("publisher", undefined, [ref.publisher]);
-  push("relation", undefined, [ref["container-title"]]);
+  const csl = ref as Record<string, unknown>;
+  const str = (v: unknown) => (typeof v === "string" || typeof v === "number" ? String(v) : undefined);
+  push("publisher", "place", [str(csl["publisher-place"])]);
+  push("date", "accessed", [csl.accessed ? dateText({ issued: csl.accessed as ReferenceNode["issued"] }) : undefined]);
+  push("citation", "version", [str(csl.version)]);
+  push("citation", "status", [str(csl.status)]);
+  push("relation", "ispartof", [ref["container-title"]]);
+  push("citation", "volume", [ref.volume === undefined ? undefined : String(ref.volume)]);
+  push("citation", "issue", [ref.issue === undefined ? undefined : String(ref.issue)]);
+  const [spage, epage] = (ref.page ?? "").split(/\s*[–-]\s*/, 2);
+  push("citation", "spage", [spage]);
+  push("citation", "epage", [epage]);
   push("identifier", "doi", [ref.DOI]);
   push("identifier", "isbn", [ref.ISBN]);
   push("identifier", "uri", [ref.URL ?? (ref.DOI ? `https://doi.org/${ref.DOI}` : undefined)]);
@@ -595,10 +645,12 @@ export function libraryItemToReference(
     (arxivId ? `https://arxiv.org/abs/${arxivId}` : undefined) ??
     (doi ? `https://doi.org/${doi}` : undefined);
 
+  // Never `ingestedAt`: that is when the copy was made, not when the work was
+  // published, and a bibliography that dates a 2004 paper 2026 is wrong
+  // (bean djj5). No date is better than that one.
   const dateCandidate =
     arxivDate ||
     docinfoStr("CreationDate")?.slice(0, 10) ||
-    (typeof manifest.ingestedAt === "string" ? manifest.ingestedAt.slice(0, 10) : undefined) ||
     (/\b((?:19|20)\d{2})\b/.exec(key)?.[1] ?? undefined);
 
   const ref: ReferenceNode = {

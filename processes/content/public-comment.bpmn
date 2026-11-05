@@ -8,18 +8,18 @@
   Every task here is a transition in PUBLIC_COMMENT_TRANSITIONS
   (folio-assistant-core/schemas/public-comment.ts), and a test holds the two
   to each other: a comment's status moves only through a task that exists in
-  this diagram. Bean v26p, issue #197.
+  this diagram.
 -->
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
                   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns#"
-                  xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/v0/processes/ns#"
+                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns/"
+                  xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/v0/processes/ns/"
                   id="Definitions_PublicComment"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
-  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns#" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns/" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
   <bpmn:resource id="editor" name="Editor"/>
   <bpmn:resource id="feedback-provider" name="Feedback provider"/>
   <bpmn:resource id="ingestion-agent" name="Ingestion engine"/>
@@ -86,7 +86,7 @@
       <bpmn:outgoing>Flow_ToIngest</bpmn:outgoing>
     </bpmn:startEvent>
     <bpmn:startEvent id="StartEvent_BlockFeedback" name="Feedback on one block ([feedback] link)">
-      <bpmn:documentation>A reader presses [feedback] on a block of the rendered document and opens a GitHub issue about that block, from the folio's block-feedback issue form when it has one (skill block-actions, REQ-17). The issue names the block, so it arrives already placed. Intake records it like any other comment; a reader who would rather propose the wording presses [edit], which is a pull request, reviewed as a content change.</bpmn:documentation>
+      <bpmn:documentation>A reader presses [feedback] on a block of the rendered document and opens a GitHub issue about that block, from the folio's block-feedback issue form when it has one (skill block-actions). The issue names the block, so it arrives already placed. Intake records it like any other comment; a reader who would rather propose the wording presses [edit], which is a pull request, reviewed as a content change.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="block-actions"/></bpmn:extensionElements>
       <bpmn:outgoing>Flow_BlockFeedbackToIngest</bpmn:outgoing>
     </bpmn:startEvent>
@@ -113,19 +113,19 @@
       <bpmn:incoming>Flow_Duplicate</bpmn:incoming>
     </bpmn:endEvent>
     <bpmn:task id="Task_ProposeChangeSets" name="Propose change-sets, as records with no issue yet">
-      <bpmn:documentation>public-comment-changesets seed / propose: the agent groups the comments to be weighed into change-sets, one per change the document may need, each a record under changesets/ with its requirements and members. A PROPOSAL: nothing is decided, no GitHub issue is opened, and a comment may sit in zero, one or several change-sets. The record is the only one; everything shown about a change-set is rendered from it.</bpmn:documentation>
+      <bpmn:documentation>public-comment-changesets seed / propose: the agent groups the comments to be weighed into change-sets, one per change the document may need, each a record under changesets/ with its requirements and members. A PROPOSAL: nothing is decided, no GitHub issue is opened, and a comment may sit in zero, one or several change-sets. The record is the only one; everything shown about a change-set is rendered from it. A comment that arrives later is triaged the same way (Tool review-log-watch, cs-requests.ts triage): the agent suggests an open change-set that shares its sections, or a new one, and the committees (TWG) of that change-set, as its own suggestion only; a person's Change Set (human) or TWG (human) on the review sheet always wins. How a change-set came about does not matter: people adjudicate it.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToAssign</bpmn:incoming>
       <bpmn:outgoing>Flow_ToGroup</bpmn:outgoing>
     </bpmn:task>
     <bpmn:task id="Task_GroupChangeSets" name="Agree each change-set's requirements on its issue">
-      <bpmn:documentation>A change-set gets its primary GitHub issue the first time somebody engages with it (the Discuss form, a recommendation or decision on one of its comments, a mention, a PR), opened by the folio's public-comment workflow; any number of other issues may discuss it and are linked. People agree the requirements there, and the committee or editor changes the record with cs-add / cs-remove / cs-title / cs-requirements / cs-committee / cs-merge / cs-split / cs-close / cs-new. The issue's change-set section is rendered from the record and put back if hand-edited; the nightly reconcile keeps every issue in line. The issue is for requirements; the PR that closes it is for preview, review and approval.</bpmn:documentation>
+      <bpmn:documentation>A change-set gets its primary GitHub issue the first time somebody engages with it (the Discuss form, a recommendation or decision on one of its comments, a mention, a PR), opened by the folio's public-comment workflow; any number of other issues may discuss it and are linked. People agree the requirements there, and the committee or editor changes the record with cs-add / cs-remove / cs-title / cs-requirements / cs-committee / cs-merge / cs-split / cs-close / cs-new. Making change-sets is people's, in any of three ways, each like opening an issue: a row on the review sheet's Review Change Sets with only a Title (the sheet script gives it the next id), a change-set issue from the folio's change-set issue form, or feedback that says a change-set should be split, merged or moved. For the last two the agent proposes the change-sets and which comments go where, as a Decision needed question, and makes them only once an Editor sets Ready for agent to Yes. A comment is moved by typing another change-set's id, or new, in Change Set (human). The issue's change-set section is rendered from the record and put back if hand-edited; the nightly reconcile keeps every issue in line. The issue is for requirements; the PR that closes it is for preview, review and approval.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToGroup</bpmn:incoming>
       <bpmn:outgoing>Flow_ToReroute</bpmn:outgoing>
     </bpmn:task>
-    <bpmn:userTask id="Task_RerouteChangeSet" name="Re-route a change-set to another committee, with a reason">
-      <bpmn:documentation>public-comment-changesets reroute, or cs-committee: &lt;TWG&gt; — &lt;why&gt; on GitHub from a person in the committee or editor lane (bean se3i, issue #197). Moves the change-set to another TWG review committee and records who, when, from, to and why on the change-set record, so re-ingesting comments never resets it. Person-only (userTask): agents cannot re-route a change-set on their own.</bpmn:documentation>
+    <bpmn:userTask id="Task_RerouteChangeSet" name="Re-route to another committee">
+      <bpmn:documentation>public-comment-changesets reroute, or cs-committee: &lt;TWG&gt; — &lt;why&gt; on GitHub from a person in the committee or editor lane. Moves the change-set to another TWG review committee and records who, when, from, to and why on the change-set record, so re-ingesting comments never resets it. Person-only (userTask): agents cannot re-route a change-set on their own.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToReroute</bpmn:incoming>
       <bpmn:outgoing>Flow_GroupedToAssign</bpmn:outgoing>
@@ -169,9 +169,7 @@
 
     <!-- Withdrawal can happen at ANY open status, so it is an event
          subprocess with an interrupting start: whichever step the comment
-         is at stops, and the comment ends withdrawn. As a second top-level
-         start it hung unconnected, and the diagram did not say what it
-         stopped (owner, 2026-10-31: "why record withdrawal not connected"). -->
+         is at stops, and the comment ends withdrawn. -->
     <bpmn:subProcess id="SubProcess_Withdraw" name="Withdrawal, at any open status" triggeredByEvent="true">
       <bpmn:documentation>The commenter may withdraw a comment at any time before it is resolved. The withdrawal interrupts the comment wherever it is (triage, committee, editor, author or change set) and closes it as withdrawn, telling the coordinator and any assigned committee members.</bpmn:documentation>
       <bpmn:startEvent id="StartEvent_WithdrawRequested" name="Commenter withdraws a comment" isInterrupting="true">
@@ -214,187 +212,193 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_PublicComment">
     <bpmndi:BPMNPlane id="BPMNPlane_PublicComment" bpmnElement="Collaboration_PublicComment">
       <bpmndi:BPMNShape id="Participant_PublicComment_di" bpmnElement="Participant_PublicComment" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="1360" height="760" />
+        <dc:Bounds x="160" y="80" width="1360" height="840" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Commenter_di" bpmnElement="Lane_Commenter" isHorizontal="true">
-        <dc:Bounds x="190" y="80" width="1330" height="140" />
+        <dc:Bounds x="190" y="80" width="1330" height="152" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Intake_di" bpmnElement="Lane_Intake" isHorizontal="true">
-        <dc:Bounds x="190" y="220" width="1330" height="110" />
+        <dc:Bounds x="190" y="232" width="1330" height="144" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Coordinator_di" bpmnElement="Lane_Coordinator" isHorizontal="true">
-        <dc:Bounds x="190" y="330" width="1330" height="160" />
+        <dc:Bounds x="190" y="376" width="1330" height="160" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Committee_di" bpmnElement="Lane_Committee" isHorizontal="true">
-        <dc:Bounds x="190" y="490" width="1330" height="110" />
+        <dc:Bounds x="190" y="536" width="1330" height="144" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Editor_di" bpmnElement="Lane_Editor" isHorizontal="true">
-        <dc:Bounds x="190" y="600" width="1330" height="240" />
+        <dc:Bounds x="190" y="680" width="1330" height="240" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_CommentsReturned_di" bpmnElement="StartEvent_CommentsReturned">
         <dc:Bounds x="272" y="170" width="36" height="36" />
-        <bpmndi:BPMNLabel>
+        
+      <bpmndi:BPMNLabel>
           <dc:Bounds x="245" y="98" width="90" height="70" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_BlockFeedback_di" bpmnElement="StartEvent_BlockFeedback">
         <dc:Bounds x="342" y="170" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="382" y="94" width="90.91" height="72" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="382" y="94" width="90.91" height="72" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="SubProcess_Withdraw_di" bpmnElement="SubProcess_Withdraw" isExpanded="true">
-        <dc:Bounds x="892" y="86" width="298" height="128" />
+        <dc:Bounds x="892" y="92" width="298" height="128" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_WithdrawRequested_di" bpmnElement="StartEvent_WithdrawRequested">
         <dc:Bounds x="902" y="142" width="36" height="36" />
-        <bpmndi:BPMNLabel>
+        
+      <bpmndi:BPMNLabel>
           <dc:Bounds x="794" y="133" width="90" height="54" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Withdraw_di" bpmnElement="Task_Withdraw">
-        <dc:Bounds x="975" y="125" width="130" height="70" />
+        <dc:Bounds x="980" y="100" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Withdrawn_di" bpmnElement="EndEvent_Withdrawn">
         <dc:Bounds x="1147" y="142" width="36" height="36" />
-        <bpmndi:BPMNLabel>
+        
+      <bpmndi:BPMNLabel>
           <dc:Bounds x="1196" y="133" width="110" height="54" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Ingest_di" bpmnElement="Task_Ingest">
-        <dc:Bounds x="260" y="230" width="130" height="90" />
+        <dc:Bounds x="265" y="244" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Triage_di" bpmnElement="Task_Triage">
-        <dc:Bounds x="260" y="345" width="130" height="90" />
+        <dc:Bounds x="265" y="388" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_Triage_di" bpmnElement="Gateway_Triage" isMarkerVisible="true">
-        <dc:Bounds x="425" y="365" width="50" height="50" />
-        <bpmndi:BPMNLabel><dc:Bounds x="479" y="419" width="110" height="54" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        <dc:Bounds x="425" y="411" width="50" height="50" />
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="479" y="465" width="110" height="54" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Duplicate_di" bpmnElement="EndEvent_Duplicate">
-        <dc:Bounds x="572" y="372" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="612" y="372" width="90" height="36" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        <dc:Bounds x="572" y="418" width="36" height="36" />
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="556.33" y="377.5" width="90" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ProposeChangeSets_di" bpmnElement="Task_ProposeChangeSets">
-        <dc:Bounds x="520" y="225" width="130" height="100" />
+        <dc:Bounds x="525" y="244" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_GroupChangeSets_di" bpmnElement="Task_GroupChangeSets">
-        <dc:Bounds x="640" y="495" width="130" height="100" />
+        <dc:Bounds x="645" y="548" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_RerouteChangeSet_di" bpmnElement="Task_RerouteChangeSet">
-        <dc:Bounds x="785" y="495" width="130" height="100" />
+        <dc:Bounds x="790" y="548" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Assign_di" bpmnElement="Task_Assign">
-        <dc:Bounds x="785" y="345" width="130" height="90" />
+        <dc:Bounds x="790" y="388" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CommitteeRecommends_di" bpmnElement="Task_CommitteeRecommends">
-        <dc:Bounds x="935" y="500" width="130" height="90" />
+        <dc:Bounds x="940" y="548" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_EditorDecides_di" bpmnElement="Task_EditorDecides">
-        <dc:Bounds x="925" y="635" width="150" height="90" />
+        <dc:Bounds x="940" y="700" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_ChangesDocument_di" bpmnElement="Gateway_ChangesDocument" isMarkerVisible="true">
-        <dc:Bounds x="1105" y="655" width="50" height="50" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1010" y="732" width="115" height="54" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        <dc:Bounds x="1105" y="735" width="50" height="50" />
+        
+      <bpmndi:BPMNLabel>
+          <dc:Bounds x="1010" y="812" width="115" height="54" />
+        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Decided_di" bpmnElement="EndEvent_Decided">
-        <dc:Bounds x="1432" y="762" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1390" y="800" width="120" height="36" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        <dc:Bounds x="1432" y="842" width="36" height="36" />
+        
+      <bpmndi:BPMNLabel>
+          <dc:Bounds x="1390" y="880" width="120" height="36" />
+        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_MakeChange_di" bpmnElement="CallActivity_MakeChange">
-        <dc:Bounds x="1235" y="630" width="170" height="100" />
+        <dc:Bounds x="1260" y="700" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Incorporated_di" bpmnElement="EndEvent_Incorporated">
-        <dc:Bounds x="1432" y="662" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1405" y="702" width="90" height="54" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        <dc:Bounds x="1432" y="742" width="36" height="36" />
+        
+      <bpmndi:BPMNLabel>
+          <dc:Bounds x="1405" y="782" width="90" height="54" />
+        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_ToIngest_di" bpmnElement="Flow_ToIngest">
         <di:waypoint x="290" y="206" />
-        <di:waypoint x="290" y="230" />
+        <di:waypoint x="290" y="225" />
+        <di:waypoint x="325" y="225" />
+        <di:waypoint x="325" y="244" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_BlockFeedbackToIngest_di" bpmnElement="Flow_BlockFeedbackToIngest">
         <di:waypoint x="360" y="206" />
-        <di:waypoint x="360" y="230" />
+        <di:waypoint x="360" y="225" />
+        <di:waypoint x="325" y="225" />
+        <di:waypoint x="325" y="244" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToTriage_di" bpmnElement="Flow_ToTriage">
-        <di:waypoint x="325" y="320" />
-        <di:waypoint x="325" y="345" />
+        <di:waypoint x="325" y="332" />
+        <di:waypoint x="325" y="391" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToTriageGateway_di" bpmnElement="Flow_ToTriageGateway">
-        <di:waypoint x="390" y="390" />
-        <di:waypoint x="425" y="390" />
+        <di:waypoint x="385" y="448" />
+        <di:waypoint x="405" y="448" />
+        <di:waypoint x="405" y="436" />
+        <di:waypoint x="425" y="436" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_Duplicate_di" bpmnElement="Flow_Duplicate">
-        <di:waypoint x="475" y="390" />
-        <di:waypoint x="572" y="390" />
+        <di:waypoint x="475" y="436" />
+        <di:waypoint x="572" y="436" />
+        <bpmndi:BPMNLabel><dc:Bounds x="478.5" y="439" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToAssign_di" bpmnElement="Flow_ToAssign">
-        <di:waypoint x="450" y="365" />
-        <di:waypoint x="450" y="275" />
-        <di:waypoint x="520" y="275" />
-        <bpmndi:BPMNLabel><dc:Bounds x="422.5" y="236" width="90" height="36" /></bpmndi:BPMNLabel>
+        <di:waypoint x="475" y="436" />
+        <di:waypoint x="500" y="436" />
+        <di:waypoint x="500" y="304" />
+        <di:waypoint x="525" y="304" />
+        <bpmndi:BPMNLabel><dc:Bounds x="406" y="319" width="90" height="36" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_EditorialDirect_di" bpmnElement="Flow_EditorialDirect">
-        <di:waypoint x="450" y="415" />
-        <di:waypoint x="450" y="680" />
-        <di:waypoint x="925" y="680" />
-        <bpmndi:BPMNLabel><dc:Bounds x="454" y="538.5" width="90" height="18" /></bpmndi:BPMNLabel>
+        <di:waypoint x="450" y="461" />
+        <di:waypoint x="450" y="760" />
+        <di:waypoint x="940" y="760" />
+        <bpmndi:BPMNLabel><dc:Bounds x="454" y="601.5" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToGroup_di" bpmnElement="Flow_ToGroup">
-        <di:waypoint x="650" y="275" />
-        <di:waypoint x="705" y="275" />
-        <di:waypoint x="705" y="495" />
+        <di:waypoint x="645" y="304" />
+        <di:waypoint x="645" y="304" />
+        <di:waypoint x="645" y="608" />
+        <di:waypoint x="645" y="608" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToReroute_di" bpmnElement="Flow_ToReroute">
-        <di:waypoint x="770" y="545" />
-        <di:waypoint x="785" y="545" />
+        <di:waypoint x="765" y="608" />
+        <di:waypoint x="790" y="608" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_GroupedToAssign_di" bpmnElement="Flow_GroupedToAssign">
-        <di:waypoint x="850" y="495" />
-        <di:waypoint x="850" y="435" />
+        <di:waypoint x="850" y="548" />
+        <di:waypoint x="850" y="508" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToRecommend_di" bpmnElement="Flow_ToRecommend">
-        <di:waypoint x="915" y="390" />
-        <di:waypoint x="1000" y="390" />
-        <di:waypoint x="1000" y="500" />
+        <di:waypoint x="910" y="448" />
+        <di:waypoint x="925" y="448" />
+        <di:waypoint x="925" y="608" />
+        <di:waypoint x="940" y="608" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToDecide_di" bpmnElement="Flow_ToDecide">
-        <di:waypoint x="1000" y="590" />
-        <di:waypoint x="1000" y="635" />
+        <di:waypoint x="1000" y="636" />
+        <di:waypoint x="1000" y="715" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToChangesGateway_di" bpmnElement="Flow_ToChangesGateway">
-        <di:waypoint x="1075" y="680" />
-        <di:waypoint x="1105" y="680" />
+        <di:waypoint x="1060" y="760" />
+        <di:waypoint x="1105" y="760" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_NoChange_di" bpmnElement="Flow_NoChange">
-        <di:waypoint x="1130" y="705" />
-        <di:waypoint x="1130" y="780" />
-        <di:waypoint x="1432" y="780" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1160" y="738" width="200" height="38" />
-        </bpmndi:BPMNLabel>
+        <di:waypoint x="1130" y="785" />
+        <di:waypoint x="1130" y="860" />
+        <di:waypoint x="1432" y="860" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1134" y="787" width="90" height="71" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToMakeChange_di" bpmnElement="Flow_ToMakeChange">
-        <di:waypoint x="1155" y="680" />
-        <di:waypoint x="1235" y="680" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="1160" y="640" width="70" height="36" />
-        </bpmndi:BPMNLabel>
+        <di:waypoint x="1155" y="760" />
+        <di:waypoint x="1260" y="760" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1162.5" y="721" width="90" height="36" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToIncorporated_di" bpmnElement="Flow_ToIncorporated">
-        <di:waypoint x="1405" y="680" />
-        <di:waypoint x="1432" y="680" />
+        <di:waypoint x="1380" y="760" />
+        <di:waypoint x="1432" y="760" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToWithdraw_di" bpmnElement="Flow_ToWithdraw">
         <di:waypoint x="938" y="160" />
-        <di:waypoint x="975" y="160" />
+        <di:waypoint x="980" y="160" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToWithdrawn_di" bpmnElement="Flow_ToWithdrawn">
-        <di:waypoint x="1105" y="160" />
+        <di:waypoint x="1100" y="160" />
         <di:waypoint x="1147" y="160" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>

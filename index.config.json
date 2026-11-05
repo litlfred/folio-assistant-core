@@ -14,7 +14,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "6dff1e1a31e47a56c935b33aee010f54d34dbc6e",
+          "ref": "5e07b091c84dc75a0a2bf671a775590fe6d756f2",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -29,9 +29,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-10-30",
-              "ref": "6dff1e1a31e47a56c935b33aee010f54d34dbc6e",
-              "evidence": "Owner litlfred, 2026-10-30: card 'A. One coordinated move' (bean 8lcl), merge window to 19:38Z"
+              "on": "2026-11-04",
+              "ref": "5e07b091c84dc75a0a2bf671a775590fe6d756f2",
+              "evidence": "litlfred, 2026-11-04, Claude Code session session_01EucfRpQZx7mVyrxsxxbSCF decision card: '1. Yes, re-pin (Rec.)' (re-pin cat-harness in folio-assistant-core to current main, past the sdlc/work-plan folder move of cat-harness#1014, so core's links to the moved skills resolve; cat-harness#991 step 23.4)."
             }
           }
         }
@@ -42,7 +42,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "c98abe5569f94df167173def9239a8128dd2cd0e",
+          "ref": "e09d8154af9e12b070f5460635c87a66ea649f73",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -54,9 +54,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-10-30",
-              "ref": "c98abe5569f94df167173def9239a8128dd2cd0e",
-              "evidence": "Owner litlfred, 2026-10-30: card 'A. One coordinated move' (bean 8lcl), merge window to 19:38Z"
+              "on": "2026-11-02",
+              "ref": "e09d8154af9e12b070f5460635c87a66ea649f73",
+              "evidence": "Owner litlfred, 2026-11-01 (20:41Z, MVP thread cmsg_017WNUkNK8kdDziPK58Pv6G991qa3xg86ZCWdyH2spZ7FS): 'i want to get all functional stuff done, the full repin on harnesses done and stablized as MVP goal.' Re-pin to mains for cat-harness-tools#1299 (harness drain, card Q-HDR-3 A, 2026-11-02)."
             }
           }
         }
@@ -67,7 +67,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/bootstrap",
-          "ref": "9ecfb729b38b9196063fee76c6f7932f92502353",
+          "ref": "c90ef456067a874fd7017a370232908ba62e9fcd",
           "overrides": {
             "bootstrap": {
               "whole": true
@@ -76,9 +76,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-10-15",
-              "ref": "9ecfb729b38b9196063fee76c6f7932f92502353",
-              "evidence": "Owner litlfred, 2026-10-15 (17:30Z): 'merge and repin for next 3 hrs. keep draining'"
+              "on": "2026-11-02",
+              "ref": "c90ef456067a874fd7017a370232908ba62e9fcd",
+              "evidence": "Owner litlfred, 2026-11-01 (20:41Z, MVP thread cmsg_017WNUkNK8kdDziPK58Pv6G991qa3xg86ZCWdyH2spZ7FS): 'i want to get all functional stuff done, the full repin on harnesses done and stablized as MVP goal.' Re-pin to mains for cat-harness-tools#1299 (harness drain, card Q-HDR-3 A, 2026-11-02)."
             }
           }
         }
@@ -89,7 +89,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/bootstrap-tools",
-          "ref": "7dc55773590bbc3158c877a3d61222aa7864006c",
+          "ref": "076173fe036f16300e8e2767dd35ab81411b46ab",
           "overrides": {
             "bootstrap-tools": {
               "whole": true
@@ -101,9 +101,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-10-15",
-              "ref": "7dc55773590bbc3158c877a3d61222aa7864006c",
-              "evidence": "Owner litlfred, 2026-10-15 (17:30Z): 'merge and repin for next 3 hrs. keep draining'"
+              "on": "2026-11-02",
+              "ref": "076173fe036f16300e8e2767dd35ab81411b46ab",
+              "evidence": "Owner litlfred, 2026-11-01 (20:41Z, MVP thread cmsg_017WNUkNK8kdDziPK58Pv6G991qa3xg86ZCWdyH2spZ7FS): 'i want to get all functional stuff done, the full repin on harnesses done and stablized as MVP goal.' Re-pin to mains for cat-harness-tools#1299 (harness drain, card Q-HDR-3 A, 2026-11-02)."
             }
           }
         }

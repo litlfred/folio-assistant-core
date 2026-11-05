@@ -8,10 +8,9 @@ Three things to note:
    reviewer, QC reviewer, technical officer) reviews the draft as a publication;
    the clinical or scientific SMEs sign off on the domain content. The join
    waits for both.
-3. **Change requests become beans.** A `changes requested` outcome does not
-   evaporate into a review thread — each request is opened as a bean, so
-   whoever picks the work up next (human or agent) sees exactly what review
-   asked for.
+3. **Change requests become beans.** Each `changes requested` item is opened
+   as a bean, so whoever picks the work up next sees exactly what review asked
+   for.
 
 | Activity | Lane | Skill |
 |----------|------|-------|

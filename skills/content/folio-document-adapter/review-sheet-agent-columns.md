@@ -11,13 +11,12 @@ description: >
 
 # Keep the review sheet's Agent columns current
 
-The owner's rule, 2026-10-31: "if agent works on a CS via google sheet Tool
-is enabled for PC, then it updates the necessary columns". It is part of the
-process, not a courtesy at the end. The sheet's views (Agentic status,
-Staging review and the ⏳ line on Review Public Comments and Review Change
-Sets, or on Contributor Feedback in a drafting sheet) are built from the
-Agent tabs, so a change set worked without writing them shows reviewers
-nothing, or shows them something old as current.
+When an agent works on a change set of a sheet that has the Tool enabled,
+it updates the Agent columns as part of the process. The sheet's views
+(Agentic status, Staging review and the ⏳ line on Review Public Comments and
+Review Change Sets, or on Contributor Feedback in a drafting sheet) are built
+from the Agent tabs, so a change set worked without writing them shows
+reviewers nothing, or something old as current.
 
 The tabs, their columns and who writes each are the
 [`public-comment`](public-comment.md) skill's (§"The live review sheet")
@@ -50,14 +49,13 @@ the reply that the sheet was not updated and why.
   completed, Feedback basis, Staging built, PR head, Staging built from,
   Staging deploy and Agent step (each header ends "(change set)").
 
-An older public-comment sheet may still have the one `Agent` tab (comments
-left, change sets right, the Config's `AGENT_CS` empty). Write it the same
-way, by header.
+A public-comment sheet may instead have one `Agent` tab (comments left,
+change sets right, the Config's `AGENT_CS` empty). Write it the same way, by
+header.
 
 ## When to write
 
-**One move, one Record agent step** (owner, 2026-11-01: "what to fix in
-process and skills so doesnt happen again?"). Every move in the table below
+**One move, one Record agent step.** Every move in the table below
 is the subprocess `processes/content/record-agent-step.bpmn`, in this order:
 
 1. Write the change set's Agent row: Agentic status, Pull request, Staging
@@ -68,8 +66,8 @@ is the subprocess `processes/content/record-agent-step.bpmn`, in this order:
    the script's next run. If they disagree with Feedback (agent), fix the
    Agent row, never the copied columns.
 
-**A preview link goes in only when it is live** (owner, 2026-11-01: the
-CS-007 review page answered 404, "so user is confused"). Live means the
+**A preview link goes in only when it is live**, so a reader never gets a
+404. Live means the
 GitHub Pages deploy of a gh-pages commit at or after the preview's publish
 succeeded (`pages-build-deployment` run, conclusion success), and an HTTP GET
 of each link answers 200 where the agent can reach the site. A publish that is
@@ -119,9 +117,8 @@ tab looks empty (the 82 DPI-H rows written to A210:B291 did this until they
 were cleared). Before writing any cell, read its formula; never write over or
 below a formula's spill range.
 
-**Closing a change set is one step with two tools** (owner, 2026-11-01
-21:50Z: "if agent close it, that is part of close process (githu b issue and
-google sheet as tools)"). Task `Task_CloseChangeSet` of
+**Closing a change set is one step with two tools**, GitHub and the review
+sheet. Task `Task_CloseChangeSet` of
 `processes/content/contributor-feedback.bpmn`: close the GitHub issue (with
 the merge, or the reason it closed unmerged), then set the Agent row's
 Agentic status to *Closed* (or *Change merged*) through Record agent step.
@@ -133,7 +130,7 @@ A disposition for the change set is written only from
 `agent-record.ts dispositions` (`review-sheet-script`, "Writing the Agent
 tab with the tool").
 
-**New feedback while you work, and stalls** (owner, 2026-11-01 21:08Z).
+**New feedback while you work, and stalls.**
 The log watcher (skill [`review-log-watch`](review-log-watch.md), "Every
 poll") sends new Blue feedback on your row to you, verbatim. Answer it in the
 same turn: record the Agent step (`reading` at least), and tell the watcher
@@ -180,8 +177,8 @@ so the watcher knows whom to ask.
 ## Checking it
 
 After writing, read the change set's row on Review Change Sets (or
-Contributor Feedback) back. Once the Apps Script has refreshed (within five
-minutes of an edit), its Agentic status shows
+Contributor Feedback) back. Once the Apps Script has refreshed (its timer
+runs every minute), its Agentic status shows
 `<repo>#n (status, completed) · what it changed` for each PR, and Staging
 review shows no ⚠ unless the preview really is behind. A missing or wrong
 line there means an Agent cell is missing or out of step.

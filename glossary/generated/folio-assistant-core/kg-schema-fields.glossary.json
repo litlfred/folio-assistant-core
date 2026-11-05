@@ -462,9 +462,23 @@
       "status": "candidate"
     },
     {
+      "id": "glossary.termschema.editorialnote",
+      "prefLabel": "TermSchema.editorialNote",
+      "definition": "A note for the editors, not part of the meaning (`skos:editorialNote`): the document's own marks such as \"Under review\" or \"To be included before publication\". A table drawn from the glossary prints it in brackets after the definition, as the document does (smart-ra Q-RAC-8 A).",
+      "source": "folio-assistant-core/schemas/glossary.ts#TermSchema.editorialNote",
+      "status": "candidate"
+    },
+    {
+      "id": "glossary.termschema.focus",
+      "prefLabel": "TermSchema.focus",
+      "definition": "The thing the concept is about, an organization or an architecture element ({@link FocusSchema}): `foaf:focus`.",
+      "source": "folio-assistant-core/schemas/glossary.ts#TermSchema.focus",
+      "status": "candidate"
+    },
+    {
       "id": "glossary.termschema.iri",
       "prefLabel": "TermSchema.iri",
-      "definition": "The concept's IRI when its defining vocabulary already mints one. The glossary then DESCRIBES that concept — its labels, translations, order — rather than minting a second IRI for the same term. Owner, 2026-09-30 (bean `xsqm`, \"one SKOS\", option A): bootstrap's terms are `<bootstrap>/ns#Node`, not also `…ns#glossary/terms/node`.",
+      "definition": "The concept's IRI when its defining vocabulary already mints one. The glossary then DESCRIBES that concept — its labels, translations, order — rather than minting a second IRI for the same term. Owner, 2026-09-30 (bean `xsqm`, \"one SKOS\", option A): bootstrap's terms are `<bootstrap>/ns/Node`, not also `…ns/glossary/terms/node`.",
       "source": "folio-assistant-core/schemas/glossary.ts#TermSchema.iri",
       "status": "candidate"
     },
@@ -914,6 +928,13 @@
       "prefLabel": "ReferenceNodeSchema.heldAt",
       "definition": "The library asset that holds a copy of the work, when one is held. Repo-relative path or IRI.",
       "source": "folio-assistant-core/schemas/reference.ts#ReferenceNodeSchema.heldAt",
+      "status": "candidate"
+    },
+    {
+      "id": "reference.referencenodeschema.printed",
+      "prefLabel": "ReferenceNodeSchema.printed",
+      "definition": "The entry exactly as the citing document prints it, when no citation style reproduces that wording (a committee's own short form, two works in one entry). A reference list drawn from the node (`scripts/references-render.ts`) prints this text verbatim instead of formatting the CSL fields, so the KG stays the one source without changing a word. Not CSL: dropped from CSL-JSON exports.",
+      "source": "folio-assistant-core/schemas/reference.ts#ReferenceNodeSchema.printed",
       "status": "candidate"
     },
     {

@@ -4,7 +4,7 @@
 
 # core-skills
 
-The skills core owns. `skills/voices/` is declared separately above as the `voices` kind: a voice partitions how prose READS and is a different graph from an instruction body, so the nesting is two kinds in one place rather than one kind declared twice.
+The skills core owns, including `skills/voices/`: a voice partitions how prose READS and is a different graph from an instruction body.
 
 Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-skills`, holding `skills`.
 
@@ -14,6 +14,7 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-skills`, h
 | [`skills.json`](skills.json) | data |  |
 | [`content/`](content/) | [Content](https://litlfred.github.io/bootstrap/schemas/#content)-type skill packages: how a folio of a given content type is authored, reviewed, validated and published. Declared HERE because this is the lowest instance holding a `skills/content/` directory (placement PR1, bean ybwt): the same-named directory of every instance stacked on this one is a MEMBER of it (bean 1g4s, option A), never a group of its own. When placement PR2 regroups the harness's `authoring` topic as `content`, the declaration moves down to the harness and this entry is removed. | |
 | [`library/`](library/) | _nothing declares what this holds_ | |
+| [`review/`](review/) | _nothing declares what this holds_ | |
 | [`skill-definitions/`](skill-definitions/) | _nothing declares what this holds_ | |
 | [`voices/`](voices/README.md) | described in its own README | |
 

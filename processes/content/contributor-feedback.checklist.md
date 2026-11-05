@@ -10,9 +10,9 @@ A document is still being written, and the Authoring Committee gives feedback on
 
 - Begin here.
 - Call `workflow_start` with `process: "Process_ContributorFeedback"` and the subject this run is about; keep the instance id it returns.
-- next: → `Task_StartRow` (Start a change-set row: title, sections, feedback)
+- next: → `Task_StartRow` (Start a change-set row)
 
-### 1. Start a change-set row: title, sections, feedback (`Task_StartRow`)
+### 1. Start a change-set row (`Task_StartRow`)
 
 - Who: the `Authoring Committee` lane (role `authoring-committee`).
 - Skill: `review-sheet-script`.
@@ -40,7 +40,7 @@ A document is still being written, and the Authoring Committee gives feedback on
 
 - Who: the `Authoring agent` lane (role `authoring-agent`).
 - Skill: `review-sheet-script`.
-- What: One row, one branch, one active pull request (owner, 2026-10-31): the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again.
+- What: One row, one branch, one active pull request: the agent edits on the row's branch and opens its pull request, or updates it when the row comes round again.
 - Record it: `workflow_complete` with `node: "Task_EditInPullRequest"`.
 - next: → `Task_AnswerPreview` (Review the preview and answer)
 
@@ -93,7 +93,7 @@ A document is still being written, and the Authoring Committee gives feedback on
 
 - Who: the `Authoring agent` lane (role `authoring-agent`).
 - Skill: `review-sheet-agent-columns`.
-- What: Closing is one step with two tools, GitHub and the review sheet (owner, 2026-11-01 21:50Z: "if agent close it, that is part of close process (github issue and google sheet as tools)").
+- What: Closing is one step with two tools, GitHub and the review sheet.
 - Record it: `workflow_complete` with `node: "Task_CloseChangeSet"`.
 - next: → `EndEvent_Merged` (Change merged and closed)
 

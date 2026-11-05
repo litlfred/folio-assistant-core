@@ -9,6 +9,5 @@ content/cold-chain-guidance/
 ```
 
 Three ordered lists hold the whole structure, and **a block reaches the output
-only if some section's `blocks[]` names it**. This is the single most common way
-authored work disappears: the `.ts` and `.md` are written, committed and
-reviewed, and the block renders nowhere because nothing lists it.
+only if some section's `blocks[]` names it**. A block whose `.ts` and `.md` are
+committed but that no section lists renders nowhere.

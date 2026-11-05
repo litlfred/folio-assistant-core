@@ -14,7 +14,6 @@ description: >
 > `folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn`
 > (`Task_Catalogue`, P2.4–5) · Checker:
 > `folio-assistant-core/scripts/check-dsa-hash.ts` (`bun run cat check:dsa-hash`)
-> · Bean: `folio-assistant-2z1t`.
 
 Whereas [`filing-dublin-core`](../../library/cataloguing/filing-dublin-core.md)
 covers DCMI Metadata Terms on ingested library sources, a published Data
@@ -59,7 +58,7 @@ normative SPDX checksum terms in §6.8.12 and ADMS status terms in §6.4.30),
    `dcat:previousVersion` naming the fixed-version URL of the version it
    amends, that is, the prior version's `dcat:Resource` `@id` (`v2` points
    to `v1`). Consent processing walks this chain to carry older Consents
-   across a narrowing amendment (https://github.com/litlfred/fhir-harness/pull/228), so a missing or wrong
-   link fails `check:dsa-hash`.
+   across a narrowing amendment, so a missing or wrong link fails
+   `check:dsa-hash`.
 3. **No custom properties:** `check:dsa-hash` rejects any property not defined
    in ODRL 2.2, DCAT 3, or DCMI Terms.

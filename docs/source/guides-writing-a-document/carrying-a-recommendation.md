@@ -1,30 +1,28 @@
 A normative statement is the block readers cite and implementers trace to. It
-wants a label, a stable identity and a place in the dependency graph.
-
-There is **no first-class `recommendation` block kind** yet. The carrier today
-is a `prose` block with a label and a title:
+wants a label, a stable identity and a place in the dependency graph. Its
+carrier is a `recommendation` block:
 
 ```ts
-export default prose({
+export default recommendation({
   label: "rec:cold-chain-audit",
   title: "Audit the cold chain quarterly",
+  strength: { list: "grade-recommendation-strength", code: "conditional" },
   uses: ["rec:scope", "prose:cold-chain-terms"],
 });
 ```
 
-Rules that make this work rather than merely compile:
-
 - **One statement per block.** A block holding three cannot be cited, reviewed,
   superseded or traced individually.
-- **State the strength in the prose** (*must*, *should*, the issuing body's own
-  grading). Nothing in the block structure encodes it.
-- **Keep the published number out of the label.** Numbers are renumbered
-  between editions; the label has to survive that. Put it in the title.
+- **State the strength as a code** in a declared code list:
+  `grade-recommendation-strength` (`strong`, `conditional`) or
+  `rfc2119-requirement-level` (`must`, `should`, `may`, …), or the folio's own
+  `folio-code-list/v1` when its issuing body grades differently.
+- **Keep the published number out of the label.** Numbers change between
+  editions; the label must not. Put the number in the title.
 - **Do not use `definition`.** Its `lean` field is required, so it will not
-  validate here at all. Earlier guidance in `document-intake` suggested that
-  mapping — it predates this content type.
+  validate here at all.
 
-The full convention, and what it is missing, is in the
+The full convention is in the
 [`normative-statements`]({{ '/reference/skill-instructions/normative-statements.html' | relative_url }})
 skill.
 

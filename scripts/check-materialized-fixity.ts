@@ -92,6 +92,14 @@ export interface MaterializedRecord {
   readonly algorithm?: string;
   readonly digest?: string;
   /**
+   * The bytes sit outside every directory the declaring instance names, and
+   * that instance is MOUNTED into this checkout from its own repository
+   * (`index.lock.json`). A mount carries only declared directories, so the
+   * bytes are not here by construction, not by loss: the instance's own
+   * checkout still holds and verifies them.
+   */
+  readonly outsideMount?: boolean;
+  /**
    * The whole materialization object as the corpus wrote it. Carried so a
    * second reader (`cache-index.ts`, bean `54rk`) gets `bytes`, `purpose`,
    * `materializedAt` and `expiresAt` from THIS walk rather than writing its
@@ -229,9 +237,33 @@ export function materializationsIn(doc: unknown, source: string, inheritedId?: s
   return out;
 }
 
+/** Instance paths, repo-relative, that this checkout mounts from their own repositories. */
+export function mountedInstancePaths(repo = REPO): Set<string> {
+  const out = new Set<string>();
+  try {
+    const lock = JSON.parse(readFileSync(join(repo, "index.lock.json"), "utf-8")) as {
+      instances?: { path?: string }[];
+    };
+    for (const i of lock.instances ?? []) if (typeof i.path === "string") out.add(i.path.replace(/\/+$/, ""));
+  } catch {
+    // No lock: a standalone checkout, which holds all of its own bytes.
+  }
+  return out;
+}
+
+/** Is an instance-relative path inside one of the directories the instance declares? */
+export function underDeclared(localPath: string, dirs: readonly string[]): boolean {
+  const p = localPath.replace(/^\.\//, "");
+  return dirs.some((d) => {
+    const dir = d.replace(/^\.\//, "").replace(/\/+$/, "");
+    return dir === "" || p === dir || p.startsWith(`${dir}/`);
+  });
+}
+
 /** Every materialized artefact declared anywhere in the checkout. */
 export function collect(repo = REPO): MaterializedRecord[] {
   const out: MaterializedRecord[] = [];
+  const mounted = mountedInstancePaths(repo);
   for (const declPath of instanceDeclarations(repo)) {
     const instanceRoot = join(declPath, "..");
     let d: { directories?: { path?: string; scope?: string }[] };
@@ -242,6 +274,10 @@ export function collect(repo = REPO): MaterializedRecord[] {
       // would report one defect under two names.
       continue;
     }
+    const isMount = mounted.has(relative(repo, instanceRoot));
+    const ownDirs = (d.directories ?? [])
+      .filter((e) => e.path && e.scope !== "repository")
+      .map((e) => e.path as string);
     for (const entry of d.directories ?? []) {
       if (!entry.path) continue;
       const root = entry.scope === "repository" ? repo : instanceRoot;
@@ -261,7 +297,8 @@ export function collect(repo = REPO): MaterializedRecord[] {
           // 2026-09-22, each time returning a believable answer rather than
           // an error.
           const abs = rec.localPath ? join(instanceRoot, rec.localPath) : undefined;
-          out.push({ ...rec, ...(abs ? { abs } : {}) });
+          const outsideMount = isMount && rec.localPath !== undefined && !underDeclared(rec.localPath, ownDirs);
+          out.push({ ...rec, ...(abs ? { abs } : {}), ...(outsideMount ? { outsideMount } : {}) });
         }
       }
     }
@@ -313,7 +350,19 @@ export function verify(rec: MaterializedRecord, all: readonly MaterializedRecord
   // whatever its fixity says. Asking about the digest first let the absence
   // hide inside a softer category, which is the same shape as reporting an
   // unverifiable artefact as a verified one.
-  if (!rec.abs || !existsSync(rec.abs)) return { kind: "absent", record: rec };
+  if (!rec.abs || !existsSync(rec.abs)) {
+    // Absent BECAUSE a mount carries only declared directories is not a broken
+    // claim: the declaring repository holds the bytes and its own run of this
+    // gate verifies them. Said as its own reason, never folded into verified.
+    if (rec.outsideMount) {
+      return {
+        kind: "unverifiable",
+        record: rec,
+        why: "outside the directories its instance declares, so this index does not mount it; its own repository verifies it",
+      };
+    }
+    return { kind: "absent", record: rec };
+  }
   if (!rec.digest) {
     return { kind: "unverifiable", record: rec, why: "no fixity digest recorded" };
   }

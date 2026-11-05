@@ -21,7 +21,7 @@ Derive content from an ingested source's assets: the archive, technical metadata
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
-- What: NOT IMPLEMENTED.
+- What: NOT IMPLEMENTED; see docs/document-ingestion.md.
 - Record it: `workflow_complete` with `node: "Task_Archive"`.
 - next: → `Gateway_Join` (All kinds done)
 
@@ -29,7 +29,7 @@ Derive content from an ingested source's assets: the archive, technical metadata
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
-- What: NOT IMPLEMENTED.
+- What: NOT IMPLEMENTED; see docs/document-ingestion.md.
 - Record it: `workflow_complete` with `node: "Task_TechMeta"`.
 - next: → `Gateway_Join` (All kinds done)
 
@@ -37,7 +37,7 @@ Derive content from an ingested source's assets: the archive, technical metadata
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
-- What: NOT IMPLEMENTED.
+- What: NOT IMPLEMENTED; see docs/document-ingestion.md.
 - Record it: `workflow_complete` with `node: "Task_Image"`.
 - next: → `Gateway_Join` (All kinds done)
 
@@ -45,7 +45,7 @@ Derive content from an ingested source's assets: the archive, technical metadata
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
-- What: NOT IMPLEMENTED.
+- What: No Tool yet; the method, and the choice of recogniser, is skill audio-transcription.
 - Record it: `workflow_complete` with `node: "Task_Audio"`.
 - next: → `Gateway_Join` (All kinds done)
 
@@ -53,7 +53,7 @@ Derive content from an ingested source's assets: the archive, technical metadata
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
-- What: NOT IMPLEMENTED.
+- What: Tools tabular-csv and tabular-xlsx, as CSVW (skill tabular-metadata).
 - Record it: `workflow_complete` with `node: "Task_Tabular"`.
 - next: → `Gateway_Join` (All kinds done)
 

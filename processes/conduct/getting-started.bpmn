@@ -26,9 +26,7 @@
   gh-pages branch exists, so Pages cannot be switched on to serve it. Every
   publishing path (new-repo, overlay, add-folio, and an overlay or new repo that
   remote-mounts its dependencies) passes Task_ProvisionGhPages before
-  Task_PagesBootstrap, and `unprovisioned` routes back to it. Owner,
-  2026-10-01: "need to create gh-pages branch before can turn on"; 2026-10-07:
-  "need to create gh-pages before can deploy" (issue #2417).
+  Task_PagesBootstrap, and `unprovisioned` routes back to it.
 
   Enforcement is strict. Three steps are non-relaxable and each for the same
   kind of reason — they are the points where the process is acting on somebody
@@ -36,14 +34,10 @@
 
     Task_ReadFacts       scaffolding without looking first is how a folio gets
                          written over somebody's project
-    Gateway_Intent       the triage itself; relaxing it restores the bug
+    Gateway_Intent       the triage itself; relaxing it lets the agent guess
     Task_ConfirmImport   nobody's files are moved or imported on inference
     Task_ChooseHarnessed nothing in the repository is declared to the harness
                          on inference: the scan suggests, the person picks
-                         (owner, 2026-10-30T12:41Z: "a harness can point to a
-                         repo, but doesnt want to automatically slurpo up all
-                         content in a repo. harness desclares what it it pays
-                         attention to in the repo.")
 
   The <bootstrap.processes:skill> extension on an activity names the folio-assistant skill
   that implements it; <cat-harness.processes:bean> marks a step that reads or writes the shared
@@ -53,12 +47,12 @@
                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
                   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns#"
-                  xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/v0/processes/ns#"
+                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns/"
+                  xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/v0/processes/ns/"
                   id="Definitions_GettingStarted"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
-  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns#" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns/" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
   <bpmn:resource id="onboarding-agent" name="Onboarding agent"/>
   <bpmn:resource id="publish-target" name="Publish target"/>
   <bpmn:resource id="user" name="User"/>
@@ -67,7 +61,7 @@
     <bpmn:participant id="Participant_GettingStarted" name="Getting started — &quot;create a folio&quot; to a live site" processRef="Process_GettingStarted" />
   </bpmn:collaboration>
   <bpmn:process id="Process_GettingStarted" name="Getting started" isExecutable="false">
-    <bpmn:documentation>Somebody said "create a folio": work out which request they meant, with the branch computed by a decision table that may answer "ask", and what has to be true before anything is written. folio-assistant — getting started: from "create a folio" to a live site.
+    <bpmn:documentation>Somebody said "create a folio": work out which request they meant, with the branch computed by a decision table that may answer "ask", and what has to be true before anything is written, through to a live site.
 
       "Create a folio" is five different requests. Gateway_Intent computes which one
       from decisions/folio-intent.dmn rather than letting the agent assume, and `ask`
@@ -88,7 +82,7 @@
         <bpmn:flowNodeRef>Task_ConfirmImport</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Agent" name="Onboarding agent (system)" partitionElementRef="onboarding-agent">
-        <bpmn:documentation>Every write in this diagram belongs to this lane, and each sits behind the non-relaxable read-first gate: nothing is created or scaffolded until Gateway_Intent has classified what was actually asked for, which is what stands between this lane and writing over somebody's existing project.</bpmn:documentation>
+        <bpmn:documentation>Every write in this diagram belongs to this lane, and each sits behind the non-relaxable read-first gate: nothing is created or scaffolded until Gateway_Intent has classified what was actually asked for.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_DetectModality</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_ReadFacts</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Intent</bpmn:flowNodeRef>
@@ -96,16 +90,13 @@
         <bpmn:flowNodeRef>Task_CreateRepo</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_HandOff</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Scaffold</bpmn:flowNodeRef>
-      </bpmn:lane>
-      <bpmn:lane id="Lane_WorkPlan" name="Work plan (beans)" partitionElementRef="work-plan">
-        <bpmn:documentation>Seeds one bean per top-level content object the author named, positioned after scaffolding but before the Pages probe — a work plan exists for a folio whose publication status is not yet known, rather than waiting on that answer.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_SeedPlan</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Call_BeanOpen</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>GW_BeanYours</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>End_BeanNotYours</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_Publish" name="Publish — GitHub Pages" partitionElementRef="publish-target">
-        <bpmn:documentation>Provisions the gh-pages branch before Pages is switched on (Task_ProvisionGhPages, #2417), derives the URL, and holds the report that follows it: "unprovisioned" routes back to provisioning, and "live", "not-yet" and "unknown" are reached by exclusive branches of one DMN-computed gateway, and this lane is what keeps a failed probe from being reported as the softer "not-yet" it would be tempting to default to.</bpmn:documentation>
+        <bpmn:documentation>Provisions the gh-pages branch before Pages is switched on (Task_ProvisionGhPages), derives the URL, and holds the report that follows it: "unprovisioned" routes back to provisioning, and "live", "not-yet" and "unknown" are exclusive branches of one DMN-computed gateway, so a failed probe is reported as "unknown", never as "not-yet".</bpmn:documentation>
         <bpmn:flowNodeRef>Task_ProvisionGhPages</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_PagesBootstrap</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Live</bpmn:flowNodeRef>
@@ -145,7 +136,7 @@ facts">
 
     <bpmn:exclusiveGateway id="Gateway_Intent" name="What is the user
 asking for?">
-      <bpmn:documentation>Computed, not chosen. decisions/folio-intent.dmn returns one of five branches from statedIntent, isFolio and repoHasContent. Non-relaxable: this gateway IS the fix.</bpmn:documentation>
+      <bpmn:documentation>Computed, not chosen. decisions/folio-intent.dmn returns one of five branches from statedIntent, isFolio and repoHasContent. Non-relaxable.</bpmn:documentation>
       <bpmn:extensionElements>
         <cat-harness.processes:policy relaxable="false" />
         <cat-harness.processes:decision ref="decisions/folio-intent.dmn#Decision_FolioIntent" />
@@ -182,7 +173,7 @@ content worth importing">
 
     <bpmn:callActivity id="Task_ChooseHarnessed" calledElement="Process_AskThePerson" name="Choose what the
 harness reads">
-      <bpmn:documentation>The person picks which of the content markers the scan found the harness declares in index.config.json, and nothing is declared unpicked. A PERSON'S STEP: the scan's `markers` that are not yet declared are offered as selectable options — one per marker, each with its paths and what declaring it means, plus "none of these" — and the person picks which parts of the repository to load into the KG. A tap card where the host has one; otherwise a numbered pick-list with a stated default. Never a typed reply. The default declares NOTHING: a harness that declared every marker it found would be slurping the repository, which is what this step exists to prevent. Only the picks reach Task_Scaffold, which declares exactly those in index.config.json. With no undeclared marker found, nothing is asked. The same question is put after setup by running the scan with `--markers` (repo-conversion §2a).</bpmn:documentation>
+      <bpmn:documentation>A PERSON'S STEP: the scan's `markers` that are not yet declared are offered as selectable options — one per marker, each with its paths and what declaring it means, plus "none of these" — and the person picks which parts of the repository to load into the KG. A tap card where the host has one; otherwise a numbered pick-list with a stated default. Never a typed reply. The default declares NOTHING. Only the picks reach Task_Scaffold, which declares exactly those in index.config.json. With no undeclared marker found, nothing is asked. The same question is put after setup by running the scan with `--markers` (repo-conversion §2a).</bpmn:documentation>
       <bpmn:extensionElements>
         <cat-harness.processes:policy relaxable="false" />
         <bootstrap.processes:skill ref="repo-conversion" />
@@ -216,13 +207,13 @@ repository">
 
     <bpmn:endEvent id="EndEvent_HandOff" name="Handed to content
 authoring">
-      <bpmn:documentation>The misspeak case. The user has a folio and wants a document in it; this process ends and authoring-a-document.bpmn or authoring-a-paper.bpmn begins. Ending here rather than scaffolding is the whole value of the triage.</bpmn:documentation>
+      <bpmn:documentation>The misspeak case. The user has a folio and wants a document in it; this process ends and authoring-a-document.bpmn or authoring-a-paper.bpmn begins.</bpmn:documentation>
       <bpmn:incoming>Flow_newcontent</bpmn:incoming>
     </bpmn:endEvent>
 
     <bpmn:serviceTask id="Task_Scaffold" name="Scaffold the folio
 (folio_init)">
-      <bpmn:documentation>content/, uploads/, library/, the first manifests, &lt;slug&gt;.json and index.config.json (the instance's config inline in its entry; no &lt;slug&gt;.config.json, bean ymvt), the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store. On the overlay path it declares in index.config.json exactly the markers picked at Task_ChooseHarnessed, and none it was not given. Refuses rather than overwrites when a folio is already present.</bpmn:documentation>
+      <bpmn:documentation>content/, uploads/, library/, the first manifests, &lt;slug&gt;.json and index.config.json (the instance's config inline in its entry; no &lt;slug&gt;.config.json), the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store. On the overlay path it declares in index.config.json exactly the markers picked at Task_ChooseHarnessed, and none it was not given. Refuses rather than overwrites when a folio is already present.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="getting-started" />
       </bpmn:extensionElements>
@@ -240,10 +231,13 @@ authoring">
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_provision</bpmn:outgoing>
       <bpmn:incoming>SF_Bean_1</bpmn:incoming>
+      <bpmn:dataOutputAssociation id="DOA_Task_SeedPlan">
+        <bpmn:targetRef>DSR_work_plan</bpmn:targetRef>
+      </bpmn:dataOutputAssociation>
     </bpmn:serviceTask>
 
     <bpmn:serviceTask id="Task_ProvisionGhPages" name="Provision gh-pages">
-      <bpmn:documentation>Before Pages is switched on, make sure the gh-pages branch exists — the semantics of A_Provision in bootstrap-tools' render-kg-to-github-pages.bpmn, first half. `git ls-remote --heads origin gh-pages`; if absent, `bun run cat-harness/scripts/pages-bootstrap.ts --provision` pushes an orphan gh-pages holding a placeholder index.html and .nojekyll (idempotent; never forced; the script creates no remote branch without the flag). Then Settings → Pages → "Deploy from a branch: gh-pages, / (root)" — not "GitHub Actions" when the publish workflow pushes gh-pages. Every publishing path reaches this step: new-repo, overlay and add-folio, and an overlay or new repo that remote-mounts its dependencies (litlfred/test, provisioned at 860f9c2). Owner, 2026-10-01: "need to create gh-pages branch before can turn on"; 2026-10-07: "need to create gh-pages before can deploy" (#2417).</bpmn:documentation>
+      <bpmn:documentation>Before Pages is switched on, make sure the gh-pages branch exists — the semantics of A_Provision in bootstrap-tools' render-kg-to-github-pages.bpmn, first half. `git ls-remote --heads origin gh-pages`; if absent, `bun run cat-harness/scripts/pages-bootstrap.ts --provision` pushes an orphan gh-pages holding a placeholder index.html and .nojekyll (idempotent; never forced; the script creates no remote branch without the flag). Then Settings → Pages → "Deploy from a branch: gh-pages, / (root)" — not "GitHub Actions" when the publish workflow pushes gh-pages. Every publishing path reaches this step: new-repo, overlay and add-folio, and an overlay or new repo that remote-mounts its dependencies.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="getting-started" />
       </bpmn:extensionElements>
@@ -287,7 +281,7 @@ live link">
 
     <bpmn:serviceTask id="Task_ReportPending" name="Say where it
 will be">
-      <bpmn:documentation>A measured 404. The author is told the address and that the first build has not landed there yet — which is useful, and is not the same as being told it is live.</bpmn:documentation>
+      <bpmn:documentation>A measured 404. The author is told the address and that the first build has not landed there yet.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="getting-started" />
       </bpmn:extensionElements>
@@ -309,8 +303,8 @@ be confirmed">
       <bpmn:incoming>SF_Bean_4</bpmn:incoming>
     </bpmn:endEvent>
 
-    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean&#10;[bean-open]" calledElement="Process_BeanOpen">
-      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn (bean m8gz, owner 2026-10-24); the gateway after this reads which end it reached.</bpmn:documentation>
+    <bpmn:callActivity id="Call_BeanOpen" name="Open the bean" calledElement="Process_BeanOpen">
+      <bpmn:documentation>Process_BeanOpen: check before you create, find out whose the bean is, and claim it — or leave it alone when it is someone else's. The one place a claim is drawn; the gateway after this reads which end it reached.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="bean-coordination"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_seed</bpmn:incoming>
       <bpmn:outgoing>SF_Bean_2</bpmn:outgoing>
@@ -325,8 +319,8 @@ be confirmed">
       <bpmn:documentation>Someone else holds the bean; this run stops without touching it.</bpmn:documentation>
       <bpmn:incoming>SF_Bean_3</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:callActivity id="Call_BeanClose" name="Close the bean&#10;[bean-close]" calledElement="Process_BeanClose">
-      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn (bean m8gz, owner 2026-10-24); placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
+    <bpmn:callActivity id="Call_BeanClose" name="Close the bean" calledElement="Process_BeanClose">
+      <bpmn:documentation>Process_BeanClose: end the bean in a state that says why — complete and archive it, scrap it with its reasons and archive it, or record the blocker and hand it back. The one place resolve and archive are drawn; placed straight before the end so the engine's resolve sees nothing left but the archive step.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="todo-manager"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_done1</bpmn:incoming>
       <bpmn:incoming>Flow_done2</bpmn:incoming>
@@ -361,47 +355,61 @@ be confirmed">
     <bpmn:sequenceFlow id="SF_Bean_2" sourceRef="Call_BeanOpen" targetRef="GW_BeanYours"/>
     <bpmn:sequenceFlow id="SF_Bean_3" name="not yours" sourceRef="GW_BeanYours" targetRef="End_BeanNotYours"/>
     <bpmn:sequenceFlow id="SF_Bean_4" sourceRef="Call_BeanClose" targetRef="EndEvent_Ready"/>
+    <bpmn:dataStoreReference id="DSR_work_plan" name="Work plan (beans)" dataStoreRef="work-plan"/>
   </bpmn:process>
 
   <bpmndi:BPMNDiagram id="Diagram_GettingStarted">
     <bpmndi:BPMNPlane id="Plane_GettingStarted" bpmnElement="Collaboration_GettingStarted">
       <bpmndi:BPMNShape id="Participant_GettingStarted_di" bpmnElement="Participant_GettingStarted" isHorizontal="true"><dc:Bounds x="160" y="80" width="2375" height="1240" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_User_di" bpmnElement="Lane_User" isHorizontal="true"><dc:Bounds x="190" y="80" width="2345" height="150" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_Agent_di" bpmnElement="Lane_Agent" isHorizontal="true"><dc:Bounds x="190" y="230" width="2345" height="360" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Lane_WorkPlan_di" bpmnElement="Lane_WorkPlan" isHorizontal="true"><dc:Bounds x="190" y="590" width="2345" height="390" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Lane_Agent_di" bpmnElement="Lane_Agent" isHorizontal="true"><dc:Bounds x="190" y="230" width="2345" height="750" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Publish_di" bpmnElement="Lane_Publish" isHorizontal="true"><dc:Bounds x="190" y="980" width="2345" height="340" /></bpmndi:BPMNShape>
 
       <bpmndi:BPMNShape id="StartEvent_AskToStart_di" bpmnElement="StartEvent_AskToStart"><dc:Bounds x="240" y="137" width="36" height="36" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_AskIntent_di" bpmnElement="Task_AskIntent"><dc:Bounds x="790" y="115" width="180" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ChooseHarnessed_di" bpmnElement="Task_ChooseHarnessed"><dc:Bounds x="1010" y="115" width="150" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ConfirmImport_di" bpmnElement="Task_ConfirmImport"><dc:Bounds x="1190" y="114.5" width="180" height="81" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_DetectModality_di" bpmnElement="Task_DetectModality"><dc:Bounds x="330" y="260" width="150" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ReadFacts_di" bpmnElement="Task_ReadFacts"><dc:Bounds x="520" y="260" width="150" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_AskIntent_di" bpmnElement="Task_AskIntent"><dc:Bounds x="820" y="95" width="120" height="120" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ChooseHarnessed_di" bpmnElement="Task_ChooseHarnessed"><dc:Bounds x="1025" y="95" width="120" height="120" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ConfirmImport_di" bpmnElement="Task_ConfirmImport"><dc:Bounds x="1220" y="95" width="120" height="120" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_DetectModality_di" bpmnElement="Task_DetectModality"><dc:Bounds x="345" y="242" width="120" height="120" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ReadFacts_di" bpmnElement="Task_ReadFacts"><dc:Bounds x="535" y="242" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_Intent_di" bpmnElement="Gateway_Intent" isMarkerVisible="true"><dc:Bounds x="730" y="275" width="50" height="50" /><bpmndi:BPMNLabel><dc:Bounds x="784" y="235" width="140" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ScanRepo_di" bpmnElement="Task_ScanRepo"><dc:Bounds x="880" y="350" width="180" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CreateRepo_di" bpmnElement="Task_CreateRepo"><dc:Bounds x="895" y="440" width="150" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_HandOff_di" bpmnElement="EndEvent_HandOff"><dc:Bounds x="915" y="537" width="36" height="36" />
         
       <bpmndi:BPMNLabel><dc:Bounds x="955" y="528" width="90" height="54" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Scaffold_di" bpmnElement="Task_Scaffold"><dc:Bounds x="1380" y="260" width="180" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Scaffold_di" bpmnElement="Task_Scaffold"><dc:Bounds x="1410" y="242" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_SeedPlan_di" bpmnElement="Task_SeedPlan"><dc:Bounds x="1395" y="885" width="150" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ProvisionGhPages_di" bpmnElement="Task_ProvisionGhPages"><dc:Bounds x="1395" y="1000" width="150" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_PagesBootstrap_di" bpmnElement="Task_PagesBootstrap"><dc:Bounds x="1620" y="999.5" width="180" height="81" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ProvisionGhPages_di" bpmnElement="Task_ProvisionGhPages"><dc:Bounds x="1410" y="992" width="120" height="120" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_PagesBootstrap_di" bpmnElement="Task_PagesBootstrap"><dc:Bounds x="1650" y="992" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_Live_di" bpmnElement="Gateway_Live" isMarkerVisible="true"><dc:Bounds x="1865" y="1015" width="50" height="50" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1789.5" y="1080.5" width="90" height="36" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_ReportUrl_di" bpmnElement="Task_ReportUrl"><dc:Bounds x="1975" y="1000" width="150" height="80" /></bpmndi:BPMNShape>
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="1789.5" y="1080.5" width="90" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_ReportUrl_di" bpmnElement="Task_ReportUrl"><dc:Bounds x="1990" y="992" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReportPending_di" bpmnElement="Task_ReportPending"><dc:Bounds x="1975" y="1110" width="150" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReportUnknown_di" bpmnElement="Task_ReportUnknown"><dc:Bounds x="1960" y="1220" width="180" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Ready_di" bpmnElement="EndEvent_Ready"><dc:Bounds x="2435" y="1022" width="36" height="36" /></bpmndi:BPMNShape>
 
-      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1"><di:waypoint x="276" y="155" /><di:waypoint x="405" y="155" /><di:waypoint x="405" y="260" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2"><di:waypoint x="480" y="300" /><di:waypoint x="520" y="300" /></bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3"><di:waypoint x="670" y="300" /><di:waypoint x="730" y="300" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_1_di" bpmnElement="Flow_1">
+        <di:waypoint x="276" y="155" />
+        <di:waypoint x="405" y="155" />
+        <di:waypoint x="405" y="260" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_2_di" bpmnElement="Flow_2">
+        <di:waypoint x="465" y="302" />
+        <di:waypoint x="535" y="302" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_3_di" bpmnElement="Flow_3">
+        <di:waypoint x="655" y="302" />
+        <di:waypoint x="692.5" y="302" />
+        <di:waypoint x="692.5" y="300" />
+        <di:waypoint x="730" y="300" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ask_di" bpmnElement="Flow_ask">
-        <di:waypoint x="755" y="275" />
-        <di:waypoint x="755" y="155" />
-        <di:waypoint x="805" y="155" />
+        <di:waypoint x="780" y="300" />
+        <di:waypoint x="800" y="300" />
+        <di:waypoint x="800" y="155" />
+        <di:waypoint x="820" y="155" />
+        <bpmndi:BPMNLabel><dc:Bounds x="706" y="255.25" width="90" height="17" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_answer_di" bpmnElement="Flow_answer">
         <di:waypoint x="880" y="195" />
@@ -429,8 +437,10 @@ be confirmed">
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_addfolio_di" bpmnElement="Flow_addfolio">
         <di:waypoint x="780" y="300" />
-        <di:waypoint x="1380" y="300" />
-        <bpmndi:BPMNLabel><dc:Bounds x="885" y="280" width="90" height="17" /></bpmndi:BPMNLabel>
+        <di:waypoint x="1095" y="300" />
+        <di:waypoint x="1095" y="302" />
+        <di:waypoint x="1410" y="302" />
+        <bpmndi:BPMNLabel><dc:Bounds x="892.5" y="280" width="90" height="17" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_scan_di" bpmnElement="Flow_scan">
         <di:waypoint x="1060" y="390" />
@@ -438,13 +448,14 @@ be confirmed">
         <di:waypoint x="1085" y="195" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_chosen_di" bpmnElement="Flow_chosen">
-        <di:waypoint x="1160" y="155" />
-        <di:waypoint x="1190" y="155" />
+        <di:waypoint x="1145" y="155" />
+        <di:waypoint x="1220" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_confirm_di" bpmnElement="Flow_confirm">
-        <di:waypoint x="1370" y="155" />
-        <di:waypoint x="1470" y="155" />
-        <di:waypoint x="1470" y="260" />
+        <di:waypoint x="1340" y="155" />
+        <di:waypoint x="1375" y="155" />
+        <di:waypoint x="1375" y="302" />
+        <di:waypoint x="1410" y="302" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_created_di" bpmnElement="Flow_created">
         <di:waypoint x="1045" y="480" />
@@ -462,16 +473,20 @@ be confirmed">
         <di:waypoint x="1470" y="1000" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_pages_di" bpmnElement="Flow_pages">
-        <di:waypoint x="1545" y="1040" />
-        <di:waypoint x="1620" y="1040" />
+        <di:waypoint x="1530" y="1052" />
+        <di:waypoint x="1650" y="1052" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_probe_di" bpmnElement="Flow_probe">
-        <di:waypoint x="1800" y="1040" />
+        <di:waypoint x="1770" y="1052" />
+        <di:waypoint x="1817.5" y="1052" />
+        <di:waypoint x="1817.5" y="1040" />
         <di:waypoint x="1865" y="1040" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_live_di" bpmnElement="Flow_live">
         <di:waypoint x="1915" y="1040" />
-        <di:waypoint x="1975" y="1040" />
+        <di:waypoint x="1952.5" y="1040" />
+        <di:waypoint x="1952.5" y="1052" />
+        <di:waypoint x="1990" y="1052" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_notyet_di" bpmnElement="Flow_notyet">
         <di:waypoint x="1890" y="1065" />
@@ -490,25 +505,25 @@ be confirmed">
         <di:waypoint x="1890" y="990" />
         <di:waypoint x="1515" y="990" />
         <di:waypoint x="1515" y="1000" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1658" y="940.5" width="90" height="35" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel><dc:Bounds x="1894" y="978.75" width="90" height="35" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_done1_di" bpmnElement="Flow_done1">
-        <di:waypoint x="2125" y="1040" />
-        <di:waypoint x="2235" y="1040" />
+        <di:waypoint x="2110" y="1052" />
+        <di:waypoint x="2255" y="1052" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_done2_di" bpmnElement="Flow_done2">
         <di:waypoint x="2125" y="1150" />
-        <di:waypoint x="2195" y="1150" />
-        <di:waypoint x="2195" y="1040" />
-        <di:waypoint x="2235" y="1040" />
+        <di:waypoint x="2190" y="1150" />
+        <di:waypoint x="2190" y="1052" />
+        <di:waypoint x="2255" y="1052" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_done3_di" bpmnElement="Flow_done3">
         <di:waypoint x="2140" y="1260" />
-        <di:waypoint x="2225" y="1260" />
-        <di:waypoint x="2225" y="1040" />
-        <di:waypoint x="2235" y="1040" />
+        <di:waypoint x="2197.5" y="1260" />
+        <di:waypoint x="2197.5" y="1052" />
+        <di:waypoint x="2255" y="1052" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Call_BeanOpen_di" bpmnElement="Call_BeanOpen"><dc:Bounds x="1410" y="605" width="120" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Call_BeanOpen_di" bpmnElement="Call_BeanOpen"><dc:Bounds x="1410" y="585" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SF_Bean_1_di" bpmnElement="SF_Bean_1">
         <di:waypoint x="1470" y="765" />
         <di:waypoint x="1470" y="885" />
@@ -525,13 +540,19 @@ be confirmed">
       <bpmndi:BPMNEdge id="SF_Bean_3_di" bpmnElement="SF_Bean_3">
         <di:waypoint x="1495" y="740" />
         <di:waypoint x="1525" y="740" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1497" y="698.5" width="90" height="18" /></bpmndi:BPMNLabel>
+        <bpmndi:BPMNLabel><dc:Bounds x="1529" y="698.5" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Call_BeanClose_di" bpmnElement="Call_BeanClose"><dc:Bounds x="2235" y="1000" width="160" height="80" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Call_BeanClose_di" bpmnElement="Call_BeanClose"><dc:Bounds x="2255" y="992" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SF_Bean_4_di" bpmnElement="SF_Bean_4">
-        <di:waypoint x="2395" y="1040" />
+        <di:waypoint x="2375" y="1052" />
+        <di:waypoint x="2405" y="1052" />
+        <di:waypoint x="2405" y="1040" />
         <di:waypoint x="2435" y="1040" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="Shape_DSR_work_plan" bpmnElement="DSR_work_plan"><dc:Bounds x="1445" y="1360" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1499" y="1367" width="90" height="36" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="Edge_DOA_Task_SeedPlan" bpmnElement="DOA_Task_SeedPlan"><di:waypoint x="1470" y="965"/><di:waypoint x="1470" y="1360"/></bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>

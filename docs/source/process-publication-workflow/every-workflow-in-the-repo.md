@@ -13,15 +13,12 @@ diagram's own `bpmn:documentation`, carried on its `Process` node as
 instance's corpus of diagrams with their lanes and skills.
 
 **Bootstrap's diagrams are in the table, read from bootstrap's own graph.**
-`bootstrap` and `bootstrap-tools` sit below this instance, and their processes
-are kept out of its graph on purpose (`pve3`): they publish their own named
-subgraphs at their own sites, and the repository index here links each with
-`seeAlso`. The table follows those links, so a row for a bootstrap diagram is
-read from bootstrap's site — and if that site cannot be read, the page says so
-beside the table rather than drawing a shorter one.
+`bootstrap` and `bootstrap-tools` sit below this instance and publish their own
+named subgraphs at their own sites; the repository index here links each with
+`seeAlso`, and the table follows those links. If that site cannot be read, the
+page says so beside the table rather than drawing a shorter one.
 
-What the table cannot tell you is which of two neighbouring processes you are
-in, so that is the only thing said here:
+Which of two neighbouring processes you are in:
 
 - **Before anything else.** `initialize-harness` is the one bootstrap process
   an actor starts; every other bootstrap diagram is a sub-process reached from it.

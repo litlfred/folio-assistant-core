@@ -16,34 +16,41 @@ graph-typologies:
 
 # Oxigraph Multi-Graph Static Search & Catalog Discovery
 
-This skill defines the generic, platform-level architecture for querying library catalogue hierarchy and Qualified Dublin Core bibliographic metadata statically using **Oxigraph** (in-memory WebAssembly in browsers, and native CLI in Node/Bun on build servers).
-
-It solves the primary limitation of traditional repository discovery APIs (such as DSpace REST): **traditional search endpoints only support isolated keyword lookups or single-facet queries; they cannot perform combined boolean searches across disparate metadata schemes or join bitstream access rights with Dublin Core properties in a single call.**
+This skill defines how to query a library catalogue hierarchy and its
+Qualified Dublin Core metadata statically with **Oxigraph** (in-memory
+WebAssembly in browsers, native CLI in Node/Bun on build servers). Unlike a
+repository search API such as DSpace REST, which answers one keyword or one
+facet at a time, SPARQL over the compiled graph can combine conditions across
+metadata schemes and join bitstream access rights with Dublin Core properties
+in one query.
 
 ---
 
 ## 1. Architectural Principles
 
 ### 1.1 The Binary Asset Invariant
-**Binary assets are never stored in the RDF graph.**
-- Scanned PDF documents, TIFF/JPEG page images, and archive payloads are **not** represented as base64 literals or RDF data.
-- The RDF graph holds strictly lightweight descriptors:
+**Binary assets are never stored in the RDF graph.** PDFs, page images and
+archive payloads are served from static object storage or CDN routes. The graph
+holds only descriptors:
   - Canonical identifier (Handle / DOI)
   - `dspace:fileName`: file name string (e.g. `"report-2024.pdf"`)
   - `dspace:mediaType`: MIME type (e.g. `"application/pdf"`)
   - `dspace:fileBytes`: integer file size in bytes
   - `dspace:copyrightGate`: rights evaluation verdict (`"permitted"`, `"refused"`)
   - `dspace:fixity`: cryptographic checksum algorithm and digest
-- All actual binary file downloads resolve against static object storage or CDN routes.
 
 ### 1.2 Zero Blank Nodes via Upstream Skolemization
-- Merging multiple JSON-LD records into an RDF triplestore causes blank node collisions (`_:b0` in Document A clobbers `_:b0` in Document B).
-- **Rule**: All compound resource structures (authors with taxonomy authorities, MeSH subject concepts, bitstream descriptors) must be deterministically skolemized into stable, content-addressed URIs at intake (`https://<domain>/entity/item/{handle_slug}#{property}_{index}`).
-- Guarantees zero blank nodes (`_:`) in compiled N-Quads datasets, external referencability, and deterministic git diffs.
+**Rule**: every compound structure (authors with taxonomy authorities, MeSH
+subject concepts, bitstream descriptors) is skolemized at intake into a stable,
+content-addressed URI
+(`https://<domain>/entity/item/{handle_slug}#{property}_{index}`). Compiled
+N-Quads contain no `_:` blank nodes, so merged records cannot collide (`_:b0`
+in one record clobbering `_:b0` in another) and git diffs are deterministic.
 
 ### 1.3 Append-Only Streaming Partitions
-- Large institutional repositories (e.g., 300,000 items) cannot accumulate uncompressed graphs in memory without exceeding heap limits.
-- **Rule**: The compiler must stream quads directly to partition file streams (`spine.nq`, `partition_{id}.nq`) in a single linear pass over the intake records, guaranteeing an O(1) memory bound (< 250 MB heap).
+**Rule**: the compiler streams quads straight to the partition files
+(`spine.nq`, `community_{id}.nq`) in one linear pass over the intake records,
+keeping memory bounded (< 250 MB heap) at 300,000-item scale.
 
 ---
 
@@ -51,42 +58,41 @@ It solves the primary limitation of traditional repository discovery APIs (such 
 
 | # | Requirement | Why, in one line |
 |---|---|---|
-| **OX-1** | **Upstream Skolemization at the Extractor (Zero-Pass Minting)** (`https://<domain>/entity/item/{handle}#{prop}_{idx}`) | Eliminates blank nodes entirely at extraction; prevents multi-document collisions, enables external addressability, and avoids expensive downstream normalizer passes |
-| **OX-2** | **Store zero binary bytes in RDF** | Avoids WASM memory bloat; binaries are served as static files via CDN |
+| **OX-1** | **Skolemize at the extractor** (§1.2) | No blank-node collisions; every node externally addressable; no downstream normalizer pass |
+| **OX-2** | **Store zero binary bytes in RDF** (§1.1) | Keeps the WASM store small |
 | **OX-3** | **Join across named graphs via explicit `GRAPH` blocks** | Separates archival containment rights from bibliographic description |
-| **OX-4** | **Use canonical Handle/DOI URIs as primary subject** (`https://hdl.handle.net/...`) | Guarantees permanent identity resolution outside local server infrastructure |
-| **OX-5** | **Treat bitstream rights as access gates** | Allows filtering search results by whether the client is permitted to download the PDF |
-| **OX-6** | **Partition subgraphs by administrative community** | Enables sub-second edge loading by only fetching the needed community slice |
-| **OX-7** | **Never perform whole-corpus text scans in SPARQL** | SPARQL is graph pattern matching; full text is indexed via static inverted indexes |
-| **OX-8** | **Preserve controlled vocabulary authorities** (`dspace:authority`) | Distinguishes controlled MeSH/thesaurus headings from unstructured keyword literals |
-| **OX-9** | **Append-only streaming partition emission** | Single-pass streaming directly to tier partition streams (`spine.nq`, `partition_{id}.nq`); guarantees O(1) memory footprint during build at 300,000 scale |
+| **OX-4** | **Use canonical Handle/DOI URIs as primary subject** (`https://hdl.handle.net/...`) | Identity resolves outside local infrastructure |
+| **OX-5** | **Treat bitstream rights as access gates** | Results can be filtered by whether the client may download the PDF |
+| **OX-6** | **Partition subgraphs by administrative community** | The edge loads only the community slice it needs |
+| **OX-7** | **Never perform whole-corpus text scans in SPARQL** | Full text is indexed via static inverted indexes |
+| **OX-8** | **Preserve controlled vocabulary authorities** (`dspace:authority`) | Distinguishes controlled MeSH/thesaurus headings from free keywords |
+| **OX-9** | **Append-only streaming partition emission** (§1.3) | Bounded build memory at 300,000 scale |
 
 ---
 
 ## 3. The 2-Tier On-Demand Loading Topology
 
-To achieve instant startup (< 200 ms) in client browsers without downloading the full multi-gigabyte repository graph, metadata is partitioned into two tiers:
+So a browser starts in < 200 ms without downloading the whole graph, metadata is partitioned into two tiers:
 
 ```
 Distribution Directory:
-  ├── who-iris-spine.nq.gz               [Tier 1: Global Routing Spine (< 20 KB)]
-  ├── subgraph-manifest.json             [Topology Manifest]
-  ├── iris_who_int_graph_community_1.nq.gz [Tier 2: Community 1 Deep Metadata]
-  ├── iris_who_int_graph_community_2.nq.gz [Tier 2: Community 2 Deep Metadata]
-  └── queries.json                       [Pre-Compiled Query Manifest]
+  ├── spine.nq.gz                 [Tier 1: Global Routing Spine]
+  ├── subgraph-manifest.json      [Topology Manifest]
+  ├── community_{id}.nq.gz        [Tier 2: one per community]
+  └── queries.json                [Pre-Compiled Query Manifest]
 ```
 
 ### Tier 1: Global Routing Spine
 - **Graph IRI**: `<https://<domain>/graph/spine>`
 - **Files**: `spine.nq`, `spine.nq.gz`
 - **Scope**: Contains the complete containment tree (`Community` &rarr; `Collection` &rarr; `Item`), item handles, title, primary creator, publication year, and bitstream copyright gate verdicts.
-- **Role**: Lightweight bootstrap payload (< 20 KB for hundreds of items; ~18–22 MB compressed for 300,000 items). Enables immediate catalog browsing, keyword search in titles, date range filtering, and open-access rights filtering.
+- **Role**: Bootstrap payload (< 20 KB for hundreds of items; ~18–22 MB compressed for 300,000). Enough for catalogue browsing, title keyword search, date-range filtering and open-access filtering.
 
 ### Tier 2: Partitioned Community Subgraphs
 - **Graph IRI**: `<https://<domain>/graph/community/{id}>`
 - **Files**: `community_{id}.nq.gz`
 - **Scope**: Contains deep Qualified Dublin Core metadata: taxonomy authorities (`dcterms:subject`, `dspace:authority`), abstracts (`dcterms:abstract`), spatial coverage (`dcterms:spatial`), official government document identifiers, and ISBNs.
-- **Role**: Lazily downloaded and mounted additively into the WASM store only when a user navigates to a community, activates cross-community facet filtering, or queries deep metadata fields.
+- **Role**: Downloaded and mounted additively into the WASM store only when a user opens a community, filters across communities, or queries deep metadata fields.
 
 ### Topology Manifest (`subgraph-manifest.json`)
 The manifest catalogues all available partitions:
@@ -167,8 +173,6 @@ ORDER BY DESC(?year)
 ---
 
 ## 5. Client-Side WASM Execution Pattern
-
-In modern edge/browser static web applications:
 
 ```typescript
 import oxigraph from 'oxigraph';

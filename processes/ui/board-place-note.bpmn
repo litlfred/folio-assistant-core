@@ -3,22 +3,19 @@
                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
                   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns#"
-                  xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/v0/processes/ns#"
+                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns/"
+                  xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/v0/processes/ns/"
                   id="Definitions_BoardPlaceNote"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows">
-  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns#" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns/" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
   <bpmn:resource id="author" name="Author"/>
   <bpmn:resource id="corpus" name="Corpus"/>
 
   <!-- ═══════════════════════════════════════════════════════════
        Placing a note on a board — folio-assistant
-       Bean: folio-assistant-sd8x (authoring), folio-assistant-1rta (build)
-
-       Owner, 2026-09-21: "create new stickt notes (this is tile) this
-       dymanic moving state is overlayed, its an \"extra\". on stndard
-       folio just simple tile based listing", and, on the arrows:
-       "notes exist lower down than folio. make sure arrows correct."
+       The moving board is an overlay, an extra; a standard folio shows a
+       plain tile listing. Notes sit below the folio in the dependency
+       arrows.
 
        THE POINT OF DRAWING THIS is that creating a sticky and placing
        one are TWO WRITES TO TWO GRAPHS, and the common bug is to make
@@ -49,7 +46,7 @@ The rule the diagram holds is in the first activity's own wording: the note goes
 
     <bpmn:laneSet id="LaneSet_BoardPlaceNote">
       <bpmn:lane id="Lane_Author" name="Author" partitionElementRef="author">
-        <bpmn:documentation>Reached only on the `new sticky` branch of GW_Exists — dragging an existing card never re-enters this lane, because A_CreateNote is the one write to the folio and everything after it is positioning. Leaving out `x`, `y` and `board` here is what lets one note sit on several boards without this lane arbitrating between them; arbitration would make placement an authoring decision, which it is not.</bpmn:documentation>
+        <bpmn:documentation>Reached only on the `new sticky` branch of GW_Exists — dragging an existing card never re-enters this lane, because A_CreateNote is the one write to the folio and everything after it is positioning. Placement is not an authoring decision.</bpmn:documentation>
         <bpmn:flowNodeRef>Start_Place</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>GW_Exists</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>A_CreateNote</bpmn:flowNodeRef>
@@ -57,7 +54,7 @@ The rule the diagram holds is in the first activity's own wording: the note goes
       <!-- The layout layer. It is written every time and read by nothing
            that decides anything — losing it loses where, never what. -->
       <bpmn:lane id="Lane_Layer" name="Layout layer" partitionElementRef="corpus">
-        <bpmn:documentation>Every placement writes here, and nothing that decides anything reads it back — losing this graph loses WHERE a note sits, never WHAT it says. That asymmetry is why A_SweepOrphans cleans stray positions from this lane's own file rather than touching the note itself: the easy direction is removing a position whose note is gone, never removing a note because its position is.</bpmn:documentation>
+        <bpmn:documentation>Every placement writes here, and nothing that decides anything reads it back — losing this graph loses WHERE a note sits, never WHAT it says. So A_SweepOrphans removes a position whose note is gone, never a note whose position is.</bpmn:documentation>
         <bpmn:flowNodeRef>A_Place</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>A_SweepOrphans</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>End_Placed</bpmn:flowNodeRef>
@@ -122,34 +119,34 @@ The rule the diagram holds is in the first activity's own wording: the note goes
   <bpmndi:BPMNDiagram id="BPMNDiagram_BoardPlaceNote">
     <bpmndi:BPMNPlane id="BPMNPlane_BoardPlaceNote" bpmnElement="Collab_BoardPlaceNote">
       <bpmndi:BPMNShape id="Shape_Participant_BoardPlaceNote" bpmnElement="Participant_BoardPlaceNote" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="920" height="400"/>
+        <dc:Bounds x="160" y="80" width="920" height="400" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Lane_Author" bpmnElement="Lane_Author" isHorizontal="true">
-        <dc:Bounds x="190" y="80" width="890" height="200"/>
+        <dc:Bounds x="190" y="80" width="890" height="200" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Lane_Layer" bpmnElement="Lane_Layer" isHorizontal="true">
-        <dc:Bounds x="190" y="280" width="890" height="200"/>
+        <dc:Bounds x="190" y="280" width="890" height="200" />
       </bpmndi:BPMNShape>
 
       <bpmndi:BPMNShape id="Shape_Start_Place" bpmnElement="Start_Place">
-        <dc:Bounds x="220" y="162" width="36" height="36"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="219.09" y="197.5" width="90" height="54" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        <dc:Bounds x="220" y="162" width="36" height="36" />
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="219.09" y="197.5" width="90" height="54" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_GW_Exists" bpmnElement="GW_Exists" isMarkerVisible="true">
-        <dc:Bounds x="320" y="155" width="50" height="50"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="277.5" y="97" width="135" height="54" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        <dc:Bounds x="320" y="155" width="50" height="50" />
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="277.5" y="97" width="135" height="54" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_CreateNote" bpmnElement="A_CreateNote">
-        <dc:Bounds x="430" y="140" width="140" height="80"/>
+        <dc:Bounds x="440" y="120" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_Place" bpmnElement="A_Place">
-        <dc:Bounds x="620" y="340" width="140" height="80"/>
+        <dc:Bounds x="630" y="320" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_SweepOrphans" bpmnElement="A_SweepOrphans">
-        <dc:Bounds x="820" y="340" width="140" height="80"/>
+        <dc:Bounds x="830" y="320" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_End_Placed" bpmnElement="End_Placed">
-        <dc:Bounds x="1000" y="362" width="36" height="36"/>
+        <dc:Bounds x="1000" y="362" width="36" height="36" />
       </bpmndi:BPMNShape>
 
       <bpmndi:BPMNEdge id="Edge_F_1" bpmnElement="F_1">
@@ -157,28 +154,28 @@ The rule the diagram holds is in the first activity's own wording: the note goes
         <di:waypoint x="320" y="180"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_New" bpmnElement="F_New">
-        <di:waypoint x="370" y="180"/>
-        <di:waypoint x="430" y="180"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="339.25" y="138.5" width="90" height="18" /></bpmndi:BPMNLabel>
+        <di:waypoint x="370" y="180" />
+        <di:waypoint x="440" y="180" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Existing" bpmnElement="F_Existing">
-        <di:waypoint x="345" y="205"/>
-        <di:waypoint x="345" y="380"/>
-        <di:waypoint x="620" y="380"/>
+        <di:waypoint x="345" y="205" />
+        <di:waypoint x="345" y="380" />
+        <di:waypoint x="630" y="380" />
         <bpmndi:BPMNLabel><dc:Bounds x="349" y="300.25" width="90" height="72" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Created" bpmnElement="F_Created">
-        <di:waypoint x="570" y="180"/>
-        <di:waypoint x="690" y="180"/>
-        <di:waypoint x="690" y="340"/>
+        <di:waypoint x="560" y="180" />
+        <di:waypoint x="595" y="180" />
+        <di:waypoint x="595" y="380" />
+        <di:waypoint x="630" y="380" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_2" bpmnElement="F_2">
-        <di:waypoint x="760" y="380"/>
-        <di:waypoint x="820" y="380"/>
+        <di:waypoint x="750" y="380" />
+        <di:waypoint x="830" y="380" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_3" bpmnElement="F_3">
-        <di:waypoint x="960" y="380"/>
-        <di:waypoint x="1000" y="380"/>
+        <di:waypoint x="950" y="380" />
+        <di:waypoint x="1000" y="380" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

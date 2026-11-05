@@ -118,7 +118,7 @@ describe("JSON-LD bound to DCMI Terms — expanded by a real processor", () => {
     expect(subjects.length).toBeGreaterThan(0);
     for (const s of subjects) {
       expect(s[`${DCAM_NS}memberOf`]).toEqual([{ "@id": `${DCTERMS_NS}MESH` }]);
-      expect((s[Object.keys(s).find((k) => k.endsWith("#authority"))!] as unknown[])[0]).toEqual({
+      expect((s[Object.keys(s).find((k) => k.endsWith("/authority"))!] as unknown[])[0]).toEqual({
         "@id": "https://id.nlm.nih.gov/mesh/",
       });
     }

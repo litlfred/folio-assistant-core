@@ -1,8 +1,9 @@
 ---
 name: review-log-watch
 description: >
-  Poll a drafting review log (a Contributor Feedback sheet) and its folio
-  repository's issues mechanically, with Tool `review-log-watch`, and
+  Poll a review log (a drafting Contributor Feedback sheet, or a
+  public-comment sheet's Review Change Sets) and its folio repository's
+  issues mechanically, with Tool `review-log-watch`, and
   start agent work only when a cell people set or an open issue changed.
   Each issue that no row links yet becomes a Contributor Feedback row, and a
   closed issue's row is hidden with its text struck through.
@@ -12,36 +13,27 @@ description: >
 
 # Review-log watch
 
-A review log is a drafting sheet (skill
-[`review-sheet-script`](review-sheet-script.md)) for one folio repository. A
+A review log is a drafting or public-comment sheet (skill
+[`review-sheet-script`](review-sheet-script.md)) for one folio repository.
+The steps below are for a drafting log; a public-comment log differs as
+set out in "Public-comment logs". A
 watcher is the agent thread that keeps it moving. This skill is what the
 watcher does on each wake. Process:
 [`processes/content/review-log-watch.bpmn`](../../../processes/content/review-log-watch.bpmn)
 (checklist beside it).
 
-## Why mechanical (owner, 2026-11-01)
+## Why mechanical
 
-"watch agents should look for new issues and update google sheets with
-summary … this one should be mechanical skill run on same polling that kicks
-of watcher agent review … should not trigger any agentic activity unless a
-change to google sheet or issues … make sure fully documented as
-tools/skills/processes".
-
-The owner's answers:
-
-- **Q-WATCH1 B.** The watcher runs a core tool on every poll.
-- **Q-WATCH2 B.** Each issue gets a row on Contributor Feedback.
-- **10:18Z.** "current google sheets should be reviewed to add in existing
-  issues. if issue is closed it correpsonds to hidden row that text has line
-  through it/hidden".
-
-The poll wakes the watcher thread every minute. Until the tool says
-`changed`, the watcher only reads, runs the tool and does the stall pass
-("Every poll", below). It does not otherwise reason about the rows.
+The watcher runs a core tool on every poll, and each issue gets a row on
+Contributor Feedback, including existing issues; a closed issue's row is
+hidden, its text struck through. The poll wakes the watcher thread every
+minute. Until the tool says `changed`, the watcher only reads, runs the tool
+and does the stall pass ("Every poll", below). It does not otherwise reason
+about the rows.
 
 ## Each wake
 
-1. **Read** two small ranges (Q-WATCH4 A, owner 2026-11-01 10:36Z):
+1. **Read** two small ranges:
    - `Watch!F1:I1`, where the sheet script writes `Cells hash`, the hash
      itself, and the time it last checked. The script rewrites it on every
      refresh and every timer tick, from the cells people set.
@@ -65,6 +57,14 @@ The poll wakes the watcher thread every minute. Until the tool says
      stop. The next wake was queued first.
    - Exit 10 is `changed`. The output has `changes` (an issue opened, updated
      or closed, or a cell's old and new text) and `append`.
+
+   **Inserted rows.** People may insert a row anywhere. The state keys each
+   cell by its row's Change-set id (`CS-004:Ready for agent`), and by sheet
+   row only for a row with no id, so an insert moves no change set and
+   reports nothing. A cell change carries `cs` and the row it is on now. Every
+   row number in the output (`changes[].row`, `closedRows`) is from this
+   read, so write only from the read you just checked, never from a row
+   number kept from an earlier check.
 3. **Append** each `append[].row` below the last row of Contributor Feedback.
    The row is already lined up with the header:
    - **Change-set:** the next id, also in `append[].agent.csId`.
@@ -76,14 +76,13 @@ The poll wakes the watcher thread every minute. Until the tool says
    shows its label, and bold, italic and code marks are dropped. Its links
    are in `append[].links` (the column and each link's start, end and URL).
    Write the cell with those as `textFormatRuns` (`updateCells`), so each
-   link is clickable (owner, 2026-11-01 10:51Z: "shiud be links").
+   link is clickable.
 
    Then write `append[].agent` to the **Agent** tab as a new row: its
    Change-set and Issue columns. The script fills Contributor Feedback's
-   Issue column from the Agent tab, by Change-set, on every refresh. An
-   Issue written only on Contributor Feedback is cleared on the next refresh,
-   which is how every issue link vanished from the four DTH logs on
-   2026-11-01 15:30Z.
+   Issue column from the Agent tab, by Change-set, on every refresh, so an
+   Issue written only on Contributor Feedback is cleared on the next
+   refresh.
 
    Every other cell stays empty. This tool is the only thing that adds issue
    rows, so nobody adds them by hand.
@@ -94,10 +93,23 @@ The poll wakes the watcher thread every minute. Until the tool says
    striking are formatting only, so the row's text and history stay. A
    reopened issue's row is shown again, without the strike-through, by hand.
 5. **Agent pass.** Run [Contributor feedback](../../../processes/content/contributor-feedback.bpmn)
-   on each changed row, and record the step on the Agent tab at once. A new
-   row gets a proposal. A Ready for agent = Yes gets its edit, and a Ready for
-   merge = Yes gets its merge. A Blue answer to a Decision needed question is
-   taken up.
+   on each changed row, and record the step on the Agent tab at once. A
+   Ready for agent = Yes gets its edit, and a Ready for merge = Yes gets its
+   merge. A Blue answer to a Decision needed question is taken up.
+
+   **Feedback on every Blue change and every new row.** In every log the watcher keeps, the agent writes or rewrites
+   Feedback (agent), in the layout of `review-sheet-script` ("The agent's
+   feedback cell has a fixed layout"), for each row that:
+   - is new, however it got there: from a GitHub issue (step 3), typed by a
+     person, or copied from a TWG workbook;
+   - has an empty Feedback (agent) cell; or
+   - has Blue cells (Title, Selected Sections, any Contributor Feedback
+     column, Disposition) that no longer match the Agent tab's Feedback
+     basis (`feedbackBasis()`), which is when the script shows "⚠ Stale".
+   It does this in the same wake, before accepting the state. A row it cannot
+   finish keeps its stale mark and comes back on the next wake. The digest
+   covers every row, not only issue rows, so a row with no issue still wakes
+   the watcher.
 6. **Accept.** Run the check again with the same inputs plus `--accept`, so
    the state file records what was handled. A row the pass could not finish
    still differs from the stored state, so it comes back on the next wake.
@@ -105,11 +117,8 @@ The poll wakes the watcher thread every minute. Until the tool says
 
 ## Every poll: hand new feedback on, and catch stalled rows
 
-The owner's rule, 2026-11-01 21:08Z: "when new feedback check if current
-agent is still working and provide it to them. if not try and pick up", and
-"agent should also watch for stalled and restart as needed". DTH-HRH CS-007
-showed why: a contributor wrote twice in their column, and the agent working
-the row never heard of it, because nothing passed it on.
+New feedback goes to the agent working the row, and a stalled row is
+restarted or taken over; otherwise a contributor's note can reach no one.
 
 This pass runs on **every** poll, changed or not, after the check:
 
@@ -147,17 +156,15 @@ A row that fails is fixed through Record agent step
 (`processes/content/record-agent-step.bpmn`): the Agent row first, then
 Feedback (agent), then a read-back. Another thread that owns the row sends the
 watcher its step and links; the watcher writes them, because one watcher owns
-each log (owner, 2026-11-01: "why not column P? Column O was not updated for
-row 11").
+each log.
 
 ## Finished rows: hidden and struck through, and not feedback
 
 A finished change set's row (Agentic status *Change merged* or *Closed*) is
-hidden and its whole row struck through by the sheet script (owner,
-2026-11-01 21:50Z: "this visual change should be ignored by the watchers").
-The check compares cell values only, so hiding, unhiding and the line are
-never a change, and a hidden row still counts as a row: never append it
-again. When the check lists `closedRows` (rows linking a closed issue), the
+hidden and its whole row struck through by the sheet script. Watchers ignore
+that visual change: the check compares cell values only, so hiding, unhiding
+and the line are never a change, and a hidden row still counts as a row: never
+append it again. When the check lists `closedRows` (rows linking a closed issue), the
 watcher closes each through Record agent step with Agentic status *Closed*;
 the script does the hiding.
 
@@ -172,9 +179,11 @@ the script does the hiding.
   change shows as one change on `#hash`; the watcher then reads the rows to
   see which changed. Without it, the tool compares the cells itself. Either
   way, only the cells people set count, under these headers:
-  - Title, Selected Sections, every Contributor Feedback column, and
-    Disposition (Blue);
-  - Ready for agent, Ready for merge and Dispositions confirmed (Orange).
+  - Title, Selected Sections, every Contributor Feedback column,
+    Disposition and Change Set (human) (Blue);
+  - Ready for agent, Ready for merge and Dispositions confirmed (Orange);
+  - on a public-comment log also every Committee Feedback column, TWG (CS),
+    TWG (human) and Change Set (human).
 
   The agent's Green columns and the script's Grey ones are not watched, so
   the watcher's own writes never wake it.
@@ -189,8 +198,7 @@ the script does the hiding.
 A log is not set up until a watcher has both of these wakes:
 
 - a chain of **1-minute** delayed wakes (`send_later`), each of which queues
-  the next before it reads anything (owner, 2026-11-01 19:47Z: every minute,
-  never skipping a poll during long work; it was 3 minutes from 10:20Z). A
+  the next before it reads anything, so no poll is skipped during long work. A
   `send_later` fires once, so a wake that does not queue the next ends the
   chain;
 - an hourly scheduled task that restarts the chain if it breaks.

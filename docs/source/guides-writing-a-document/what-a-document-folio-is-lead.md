@@ -6,7 +6,7 @@ What it does not have is the seven block kinds whose assertion is a formal
 mathematical claim — and therefore neither of the two toolchains that serve
 them. No Lean. No LaTeX.
 
-> **A paper is a document plus Lean-bearing blocks.** That is not a metaphor:
-> `PaperContentAdapter` extends `DocumentContentAdapter` in code, and adds the
-> Lean lifecycle and the LaTeX renderer on top. If you find yourself wanting a
-> feature "the paper adapter has", check first — you probably already have it.
+> **A paper is a document plus Lean-bearing blocks.** `PaperContentAdapter`
+> extends `DocumentContentAdapter` in code, and adds the Lean lifecycle and the
+> LaTeX renderer on top, so a feature "the paper adapter has" is usually
+> already here.

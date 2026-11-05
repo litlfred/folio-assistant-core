@@ -44,6 +44,23 @@ describe("build-document-site", () => {
     const landing = readFileSync(join(out, "index.html"), "utf-8");
     expect(landing).toContain('href="en/handbook/index.html"');
     expect(landing).toContain('href="en/review/index.html"');
+    // Listed by its title, not its folder name or a block count.
+    expect(r.documents.map((x) => x.title)).toEqual(["Handbook"]);
+    expect(landing).toContain('<a href="en/handbook/index.html">Handbook</a>');
+    expect(landing).not.toContain("blocks)");
+  });
+
+  test("a document's status is part of its title: heading, page title and landing list", async () => {
+    const d = scaffold();
+    const manifest = join(d, "folio", "handbook", "handbook.ts");
+    writeFileSync(manifest, readFileSync(manifest, "utf-8").replace('title: "Handbook",', 'title: "Handbook",\n  meta: { status: "Working Draft" },'));
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out);
+    expect(r.errors).toEqual([]);
+    expect(r.documents.map((x) => x.title)).toEqual(["Handbook - Working Draft"]);
+    const html = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
+    expect(html).toMatch(/<h1[^>]*>\s*Handbook - Working Draft\s*<\/h1>/);
+    expect(html).toContain("<title>Handbook - Working Draft");
   });
 
   test("every block's KG node is published, one per block and as the document's graph", async () => {
@@ -240,6 +257,22 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     expect(s.shell).toContain('<div class="fa-blk" data-blk="prose:a"></div>');
     expect(s.shell).not.toContain("Block A text.");
     expect(s.shell).toContain("## Next");
+  });
+
+  test("splitBlocks moves a figure or table frame's opener into its block, so the shell stays balanced", () => {
+    // The frame opens before the anchor and closes after the text; an opener
+    // left in the shell put every later block inside it (smart-ra, 2026-11-02).
+    const md = [
+      "## Glossary", "", '<a id="sec:g"></a>', "", '<div class="fa-numbered fa-numbered-table" markdown="1">', "",
+      '<a id="tbl:g"></a>', "**Table.**", "", "| a | b |", "|---|---|", "| 1 | 2 |", "", "</div>", "",
+      '<a id="prose:after"></a>', "After.",
+    ].join("\n");
+    const s = splitBlocks(md, new Set(["tbl:g", "prose:after"]));
+    expect(s.shell).not.toContain("fa-numbered");
+    expect(s.shell).toContain('<a id="tbl:g"></a>');
+    expect(s.blocks[0]!.markdown.startsWith('<div class="fa-numbered fa-numbered-table" markdown="1">')).toBe(true);
+    expect(s.blocks[0]!.markdown).toContain("</div>");
+    for (const b of s.blocks) expect(b.markdown.split("<div").length).toBe(b.markdown.split("</div>").length);
   });
 
   test("--lazy always: a shell, chunked block JSON, and the whole text in index.hydrated.html", async () => {

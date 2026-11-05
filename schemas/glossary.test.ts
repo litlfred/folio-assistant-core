@@ -150,7 +150,7 @@ describe("this repository", () => {
     // read through it, as every other instance's is below.
     const decl = readDeclaration(join(REPO_ROOT_FOR_NS, "folio-assistant-core"))!;
     expect(core.ns).toBe(instanceNs(decl.name, decl.stub, decl));
-    expect(core.ns).toBe("https://litlfred.github.io/folio-assistant-core/v0/ns#");
+    expect(core.ns).toBe("https://litlfred.github.io/folio-assistant-core/v0/ns/");
   });
 
   test("the page lists every term once, and SKOS is published for every scheme", () => {
@@ -315,6 +315,10 @@ describe("extracted KG terms", () => {
   const terms = extracted.flatMap((s) => s.glossary.terms.map((t) => ({ s, t })));
   const pathOf = (src: string) => src.split("#", 2)[0]!;
   const anchorOf = (src: string) => src.split("#", 2)[1];
+  // The pages, rendered once for this block, as `collect()` above is: a
+  // render takes seconds, and a test rendering its own pushed it past bun's
+  // 5 s per-test limit on CI (5098-5140 ms, folio-assistant run 41358487974).
+  const rendered = renderPages(c);
 
   test("each asset type contributes terms, above a floor (a vacuity guard, not an exact count)", () => {
     const floors: Record<AssetType, number> = {
@@ -445,11 +449,11 @@ describe("extracted KG terms", () => {
       lanes.get(p)!);
     const fromLanes = terms.filter(({ t }) => pathOf(t.source!).endsWith(".bpmn") && laneIds(pathOf(t.source!)).has(anchorOf(t.source!)!));
     expect(fromLanes.map(({ t }) => t.source)).toEqual([]);
-    expect(renderPages(c).get("index")).toContain("auto-docs/glossary/swimlane-glossary/");
+    expect(rendered.get("index")).toContain("auto-docs/glossary/swimlane-glossary/");
   });
 
   test("the pages tell extracted from authored, and only authored terms reach schema.org", () => {
-    const pages = renderPages(c);
+    const pages = rendered;
     const all = [...pages.values()].join("\n");
     const n = counts(c);
     expect(n.extracted).toBe(terms.length);

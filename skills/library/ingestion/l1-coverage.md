@@ -12,23 +12,19 @@ graph-typologies:
 
 # L1 coverage — nothing normative goes missing silently
 
-Issue [#2405](https://github.com/litlfred/folio-assistant/issues/2405) FR-009:
-*any L1 extraction SHALL produce a coverage QA report; every normative
+Any L1 extraction SHALL produce a coverage QA report: every normative
 sentence in the source is captured, or excluded for a reason from a fixed
-list; the target is 100 % accounted for.* Generic authoring and review, so it
-lives here in core (decision 1 of 2026-10-07). The report's fields and what
-its numbers mean are fixed by smart-kg's `docs/COVERAGE.md`; this is the
+list; the target is 100 % accounted for. The report's fields and what its
+numbers mean are fixed by smart-kg's `docs/COVERAGE.md`; this is the
 implementation that contract says core owns.
 
 ## Why
 
 An extraction — by hand or by a tool — fails silently: a recommendation that
-never became a node leaves no trace in the graph, because the graph cannot
-report what it does not hold. Bean `8pzh` measured the sharpest case: a
-label-based extractor found **0** recommendations in a WHO position paper
-(WER 92(17), measles, 2017) because position papers print no
-"Recommendation N" labels. Only a check that reads the **source** catches
-that.
+never became a node leaves no trace in the graph. For example, a label-based
+extractor finds **0** recommendations in a WHO position paper (WER 92(17),
+measles, 2017) because position papers print no "Recommendation N" labels.
+Only a check that reads the **source** catches that.
 
 ## Run it
 
@@ -57,8 +53,7 @@ goes to stderr, the report to `--out` or stdout.
   low captured %.
 - **A proposed exclusion is not an exclusion.** Without `signedOffBy` the
   sentence stays unaccounted. An agent may PROPOSE an exclusion; only a
-  person signs it off — the same rule as every other judgement
-  (`req:agent-workflow` → `judgement-stays-human`).
+  person signs it off (`req:agent-workflow` → `judgement-stays-human`).
 - **The reasons are fixed**: `background-fact`, `manufacturer-statement`,
   `editorial`, `research-question`, `duplicate-of:<captured id>`. A sentence
   that fits none is either a missing capture or a missing reason, and both go
@@ -70,6 +65,16 @@ goes to stderr, the report to `--out` or stdout.
   `shall`, `must`, `recommend*`, `should not`, `is not a reason`, `are not a
   contraindication`, and `may be` + given/administered/offered/considered/
   used/co-administered/implemented. Bare `may` does not count.
+
+## Where `--captured` comes from in a DAK or DTH
+
+From the entry's own `candidates.json`. The `requirements` aspect proposes
+every sentence carrying one of the markers above
+([`l1-document-ingestion`](l1-document-ingestion.md#requirements-and-normative-statements--every-dak-and-dth-source)),
+verbatim, so `jq '[.candidates[] | {id: (.number // .section_file), text: .statement}]'`
+over it is a `--captured` file. A sentence the aspect proposed matches. One it
+missed (split across a page or a table cell) shows as unaccounted, and goes to
+a person.
 
 ## Where it sits
 

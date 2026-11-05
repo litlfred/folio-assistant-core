@@ -18,6 +18,10 @@
     },
     {
       "typology": "glossary",
+      "family": "folio-glossary-tables/v1"
+    },
+    {
+      "typology": "glossary",
       "family": "folio-glossary/v1"
     },
     {

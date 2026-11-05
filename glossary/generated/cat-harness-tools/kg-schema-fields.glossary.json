@@ -63,6 +63,48 @@
       "status": "candidate"
     },
     {
+      "id": "archimate.archimateconfigfigureschema.basis",
+      "prefLabel": "ArchimateConfigFigureSchema.basis",
+      "definition": "How the match was made: `same-elements` when the figure shows exactly the view's elements, `by-eye` when a person compared the two pictures.",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateConfigFigureSchema.basis",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigfigureschema.block",
+      "prefLabel": "ArchimateConfigFigureSchema.block",
+      "definition": "The document block holding the figure, relative to the instance root.",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateConfigFigureSchema.block",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigfigureschema.label",
+      "prefLabel": "ArchimateConfigFigureSchema.label",
+      "definition": "What the document calls it, e.g. `Figure 3.7.1`.",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateConfigFigureSchema.label",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigfigureschema.model",
+      "prefLabel": "ArchimateConfigFigureSchema.model",
+      "definition": "The model's id, as in `models`.",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateConfigFigureSchema.model",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigfigureschema.svg",
+      "prefLabel": "ArchimateConfigFigureSchema.svg",
+      "definition": "Where `archimate-blocks` writes the view as SVG, relative to the instance root, so the block can show the model's own drawing instead of a picture of it. Absent, the figure is only linked to the view.",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateConfigFigureSchema.svg",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigfigureschema.view",
+      "prefLabel": "ArchimateConfigFigureSchema.view",
+      "definition": "The view's Archi id.",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateConfigFigureSchema.view",
+      "status": "candidate"
+    },
+    {
       "id": "archimate.archimateconfigmodelschema.description",
       "prefLabel": "ArchimateConfigModelSchema.description",
       "definition": "One sentence on what this model is and why the instance holds it.",
@@ -98,94 +140,157 @@
       "status": "candidate"
     },
     {
-      "id": "archimate.archimateelement.folder",
-      "prefLabel": "ArchimateElement.folder",
+      "id": "archimate.archimateconfigschema.figures",
+      "prefLabel": "ArchimateConfigSchema.figures",
+      "definition": "The document's figures that are views of these models.",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateConfigSchema.figures",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigschema.poster",
+      "prefLabel": "ArchimateConfigSchema.poster",
+      "definition": "How banded views are drawn as posters (`render-poster.ts`): the element property holding a card's short text, the property that stars a card, and the words for a star. Absent, the poster defaults apply.",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateConfigSchema.poster",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigschema.tables",
+      "prefLabel": "ArchimateConfigSchema.tables",
+      "definition": "The document's tables that are drawn from data (`archimate-blocks`).",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateConfigSchema.tables",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigtableschema.block",
+      "prefLabel": "ArchimateConfigTableSchema.block",
+      "definition": "The document block holding the table, relative to the instance root.",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateConfigTableSchema.block",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigtableschema.label",
+      "prefLabel": "ArchimateConfigTableSchema.label",
+      "definition": "What the document calls it, e.g. `Table 3.3`.",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateConfigTableSchema.label",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigtableschema.model",
+      "prefLabel": "ArchimateConfigTableSchema.model",
+      "definition": "The model whose relationships are checked against the rules (`archimate-blocks --check`).",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateConfigTableSchema.model",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateconfigtableschema.rules",
+      "prefLabel": "ArchimateConfigTableSchema.rules",
+      "definition": "The `archimate-relationship-rules/v1` file, relative to the archimate directory.",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateConfigTableSchema.rules",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateelementschema.folder",
+      "prefLabel": "ArchimateElementSchema.folder",
       "definition": "The folder path it is filed under in the model tree.",
-      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateElement.folder",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateElementSchema.folder",
       "status": "candidate"
     },
     {
-      "id": "archimate.archimateelement.type",
-      "prefLabel": "ArchimateElement.type",
+      "id": "archimate.archimateelementschema.type",
+      "prefLabel": "ArchimateElementSchema.type",
       "definition": "The ArchiMate type without Archi's prefix: `ApplicationComponent`.",
-      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateElement.type",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateElementSchema.type",
       "status": "candidate"
     },
     {
-      "id": "archimate.archimatemodel.archiversion",
-      "prefLabel": "ArchimateModel.archiVersion",
+      "id": "archimate.archimatemodelschema.archiversion",
+      "prefLabel": "ArchimateModelSchema.archiVersion",
       "definition": "Archi's model `version` attribute — the tool's file version, not the model's.",
-      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateModel.archiVersion",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateModelSchema.archiVersion",
       "status": "candidate"
     },
     {
-      "id": "archimate.archimaterelationship.accesstype",
-      "prefLabel": "ArchimateRelationship.accessType",
+      "id": "archimate.archimaterelationshipschema.accesstype",
+      "prefLabel": "ArchimateRelationshipSchema.accessType",
       "definition": "Access only: `write` (Archi's default), `read`, `access` or `readwrite`.",
-      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateRelationship.accessType",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateRelationshipSchema.accessType",
       "status": "candidate"
     },
     {
-      "id": "archimate.archimaterelationship.directed",
-      "prefLabel": "ArchimateRelationship.directed",
+      "id": "archimate.archimaterelationshipschema.directed",
+      "prefLabel": "ArchimateRelationshipSchema.directed",
       "definition": "Association only.",
-      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateRelationship.directed",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateRelationshipSchema.directed",
       "status": "candidate"
     },
     {
-      "id": "archimate.archimaterelationship.strength",
-      "prefLabel": "ArchimateRelationship.strength",
+      "id": "archimate.archimaterelationshipschema.source",
+      "prefLabel": "ArchimateRelationshipSchema.source",
+      "definition": "An element's id, or another relationship's.",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateRelationshipSchema.source",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimaterelationshipschema.strength",
+      "prefLabel": "ArchimateRelationshipSchema.strength",
       "definition": "Influence only: the strength, e.g. `+` or `--`.",
-      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateRelationship.strength",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateRelationshipSchema.strength",
       "status": "candidate"
     },
     {
-      "id": "archimate.archimaterelationship.type",
-      "prefLabel": "ArchimateRelationship.type",
+      "id": "archimate.archimaterelationshipschema.type",
+      "prefLabel": "ArchimateRelationshipSchema.type",
       "definition": "The relationship type without prefix or suffix: `Composition`, `Serving`.",
-      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateRelationship.type",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateRelationshipSchema.type",
       "status": "candidate"
     },
     {
-      "id": "archimate.archimateviewconnection.bendpoints",
-      "prefLabel": "ArchimateViewConnection.bendpoints",
+      "id": "archimate.archimateviewconnectionschema.bendpoints",
+      "prefLabel": "ArchimateViewConnectionSchema.bendpoints",
       "definition": "Archi's relative bendpoints: offsets from the source's and the target's centres.",
-      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateViewConnection.bendpoints",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateViewConnectionSchema.bendpoints",
       "status": "candidate"
     },
     {
-      "id": "archimate.archimateviewconnection.relationship",
-      "prefLabel": "ArchimateViewConnection.relationship",
+      "id": "archimate.archimateviewconnectionschema.relationship",
+      "prefLabel": "ArchimateViewConnectionSchema.relationship",
       "definition": "The relationship it shows; absent for a plain line between a note and a box.",
-      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateViewConnection.relationship",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateViewConnectionSchema.relationship",
       "status": "candidate"
     },
     {
-      "id": "archimate.archimateviewnode.alternate",
-      "prefLabel": "ArchimateViewNode.alternate",
+      "id": "archimate.archimateviewnodeschema.alternate",
+      "prefLabel": "ArchimateViewNodeSchema.alternate",
       "definition": "Archi's `type=\"1\"`: the element drawn as its figure's alternate.",
-      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateViewNode.alternate",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateViewNodeSchema.alternate",
       "status": "candidate"
     },
     {
-      "id": "archimate.archimateviewnode.parent",
-      "prefLabel": "ArchimateViewNode.parent",
+      "id": "archimate.archimateviewnodeschema.parent",
+      "prefLabel": "ArchimateViewNodeSchema.parent",
       "definition": "The diagram object it is drawn inside, if any.",
-      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateViewNode.parent",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateViewNodeSchema.parent",
       "status": "candidate"
     },
     {
-      "id": "archimate.archimateviewnode.ref",
-      "prefLabel": "ArchimateViewNode.ref",
+      "id": "archimate.archimateviewnodeschema.ref",
+      "prefLabel": "ArchimateViewNodeSchema.ref",
       "definition": "The element it shows (`element`), or the view it refers to (`view-ref`).",
-      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateViewNode.ref",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateViewNodeSchema.ref",
       "status": "candidate"
     },
     {
-      "id": "archimate.archimateviewnode.text",
-      "prefLabel": "ArchimateViewNode.text",
+      "id": "archimate.archimateviewnodeschema.text",
+      "prefLabel": "ArchimateViewNodeSchema.text",
       "definition": "A group's label, or a note's text.",
-      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateViewNode.text",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateViewNodeSchema.text",
+      "status": "candidate"
+    },
+    {
+      "id": "archimate.archimateviewschema.properties",
+      "prefLabel": "ArchimateViewSchema.properties",
+      "definition": "The view's own properties — a `slug` one chooses its page path (`slugs.ts`).",
+      "source": "cat-harness-tools/archimate/schemas/archimate.ts#ArchimateViewSchema.properties",
       "status": "candidate"
     },
     {
@@ -2198,6 +2303,13 @@
       "status": "candidate"
     },
     {
+      "id": "built-at-publish.builtatpublishschema.index",
+      "prefLabel": "BuiltAtPublishSchema.index",
+      "definition": "A whole-corpus INDEX (search, LSI, SQLite slices, a handler index), not a page a reviewer reads. A `preview` build puts back main's copy instead of running its writer; a `full` build (main, public comment, release) always runs it (owner, 2026-11-01: \"preview\" = no reindex, only changes). A writer is borrowed only when EVERY entry it writes says so, so marking one of a writer's pages does not skip the others. `cat-harness-tools/scripts/lib/build-type.ts`.",
+      "source": "cat-harness-tools/schemas/kg/built-at-publish.ts#BuiltAtPublishSchema.index",
+      "status": "candidate"
+    },
+    {
       "id": "built-at-publish.builtatpublishschema.path",
       "prefLabel": "BuiltAtPublishSchema.path",
       "definition": "Instance-relative; a directory ends in `/`.",
@@ -2828,6 +2940,13 @@
       "status": "candidate"
     },
     {
+      "id": "cat-harness.contentdirectory.awaitingcitation",
+      "prefLabel": "ContentDirectory.awaitingCitation",
+      "definition": "Entry slugs of a `library` admitted while no methodology cites them yet; their summaries still drain. See the schema field (bean `e0jh`).",
+      "source": "cat-harness-tools/schemas/kg/cat-harness.ts#ContentDirectory.awaitingCitation",
+      "status": "candidate"
+    },
+    {
       "id": "cat-harness.contentdirectory.coverage",
       "prefLabel": "ContentDirectory.coverage",
       "definition": "What makes this subgraph reachable — a renderer, a documentation entry, and a governing skill — or the reasons it does not need one.",
@@ -2902,6 +3021,13 @@
       "prefLabel": "ContentDirectory.writer",
       "definition": "The GENERATOR that writes this directory: repo-relative script files, and directories ending in `/` for what a generator READS rather than imports (its templates). The other half of `derivedFrom`: that names the DATA a derived graph is computed from, this names the CODE (owner, 2026-10-04, bean `4j86`, option 1 of 3).",
       "source": "cat-harness-tools/schemas/kg/cat-harness.ts#ContentDirectory.writer",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.contentdirectoryshape.awaitingcitation",
+      "prefLabel": "ContentDirectoryShape.awaitingCitation",
+      "definition": "Entry slugs of a `library` the owner asked to hold that no methodology cites YET. The platform library holds only sources its methodologies cite (`library-ref.test.ts` in the content core); a source ingested ahead of the methodology text that will cite it is listed here, by name, until it is cited and leaves the list. Unlike {@link heldEntries} this does NOT hold the entry's summaries back: its blocks still drain. Listed, never derived, so a source cannot become admitted by accident (bean `e0jh`).",
+      "source": "cat-harness-tools/schemas/kg/cat-harness.ts#ContentDirectoryShape.awaitingCitation",
       "status": "candidate"
     },
     {
@@ -5014,7 +5140,7 @@
     {
       "id": "diff-renderers.diffrendererschema.defaultfor",
       "prefLabel": "DiffRendererSchema.defaultFor",
-      "definition": "Block kinds this renderer is the DEFAULT for, from `BLOCK_KINDS`. `*` is the fallback, and exactly one renderer carries it. {@link STRUCTURED} is any block with structured sides, and comes before its kind. Two renderers may list the same kind: order is preference, and the page takes the first one that can run on the block. A test holds every other entry to a kind that exists, so a renamed kind cannot silently lose its default.",
+      "definition": "Block kinds this renderer is the DEFAULT for, from `BLOCK_KINDS`. `*` is the fallback, and exactly one renderer carries it. {@link STRUCTURED} is any block with structured sides, and comes after its kind and `*`: it is chosen only when those cannot run on the block. Two renderers may list the same kind: order is preference, and the page takes the first one that can run on the block. A test holds every other entry to a kind that exists, so a renamed kind cannot silently lose its default.",
       "source": "cat-harness-tools/schemas/ui/diff-renderers.ts#DiffRendererSchema.defaultFor",
       "status": "candidate"
     },
@@ -5037,6 +5163,13 @@
       "prefLabel": "DiffRendererSchema.label",
       "definition": "What the selector shows. Words, never an icon alone.",
       "source": "cat-harness-tools/schemas/ui/diff-renderers.ts#DiffRendererSchema.label",
+      "status": "candidate"
+    },
+    {
+      "id": "discovered-vocabulary.discoveredvocabulary.graph",
+      "prefLabel": "DiscoveredVocabulary.graph",
+      "definition": "The node graph its members are declared in, by graph typology (`block-kinds`).",
+      "source": "cat-harness-tools/schemas/kg/discovered-vocabulary.ts#DiscoveredVocabulary.graph",
       "status": "candidate"
     },
     {
@@ -6643,6 +6776,76 @@
       "status": "candidate"
     },
     {
+      "id": "gates-report.gatesreportschema.gates",
+      "prefLabel": "GatesReportSchema.gates",
+      "definition": "How many gates the set holds, and how many declared writers ran after them.",
+      "source": "cat-harness-tools/schemas/sdlc/gates-report.ts#GatesReportSchema.gates",
+      "status": "candidate"
+    },
+    {
+      "id": "gates-report.gatesreportschema.mutatedby",
+      "prefLabel": "GatesReportSchema.mutatedBy",
+      "definition": "Gates that changed the tree while it was being judged.",
+      "source": "cat-harness-tools/schemas/sdlc/gates-report.ts#GatesReportSchema.mutatedBy",
+      "status": "candidate"
+    },
+    {
+      "id": "gates-report.gatesreportschema.set",
+      "prefLabel": "GatesReportSchema.set",
+      "definition": "`fast` (no browser jobs) or `whole` (`--all`).",
+      "source": "cat-harness-tools/schemas/sdlc/gates-report.ts#GatesReportSchema.set",
+      "status": "candidate"
+    },
+    {
+      "id": "gates-report.gatesreportschema.skipped",
+      "prefLabel": "GatesReportSchema.skipped",
+      "definition": "Not asked: inputs unchanged since each last passed. Never counted as a pass.",
+      "source": "cat-harness-tools/schemas/sdlc/gates-report.ts#GatesReportSchema.skipped",
+      "status": "candidate"
+    },
+    {
+      "id": "gates-report.gatesreportschema.unclassified",
+      "prefLabel": "GatesReportSchema.unclassified",
+      "definition": "Steps CI runs that the local set does not.",
+      "source": "cat-harness-tools/schemas/sdlc/gates-report.ts#GatesReportSchema.unclassified",
+      "status": "candidate"
+    },
+    {
+      "id": "gates-report.gatesreportschema.undetermined",
+      "prefLabel": "GatesReportSchema.undetermined",
+      "definition": "Lines saying what could not be read, when anything could not.",
+      "source": "cat-harness-tools/schemas/sdlc/gates-report.ts#GatesReportSchema.undetermined",
+      "status": "candidate"
+    },
+    {
+      "id": "gates-report.gatesreportschema.unrun",
+      "prefLabel": "GatesReportSchema.unrun",
+      "definition": "Check scripts no workflow runs.",
+      "source": "cat-harness-tools/schemas/sdlc/gates-report.ts#GatesReportSchema.unrun",
+      "status": "candidate"
+    },
+    {
+      "id": "gates-report.mergedgatesreportschema.behind",
+      "prefLabel": "MergedGatesReportSchema.behind",
+      "definition": "Base commits not yet in this branch.",
+      "source": "cat-harness-tools/schemas/sdlc/gates-report.ts#MergedGatesReportSchema.behind",
+      "status": "candidate"
+    },
+    {
+      "id": "gates-report.mergedgatesreportschema.gates",
+      "prefLabel": "MergedGatesReportSchema.gates",
+      "definition": "The gate run on the merged tree, when it ran and wrote its report.",
+      "source": "cat-harness-tools/schemas/sdlc/gates-report.ts#MergedGatesReportSchema.gates",
+      "status": "candidate"
+    },
+    {
+      "id": "gates-report.mergedgatesreportschema.why",
+      "prefLabel": "MergedGatesReportSchema.why",
+      "definition": "One line on why, for every outcome but `pass`.",
+      "source": "cat-harness-tools/schemas/sdlc/gates-report.ts#MergedGatesReportSchema.why",
+      "status": "candidate"
+    },
+    {
       "id": "graph-typology-node.graphtypologynodeschema.description",
       "prefLabel": "GraphTypologyNodeSchema.description",
       "definition": "What a directory of this kind holds: the kind table's `contents`, generated from here.",
@@ -6701,7 +6904,7 @@
     {
       "id": "graph-typology-registry.declaringinstance.namespace",
       "prefLabel": "DeclaringInstance.namespace",
-      "definition": "`<iriBase>v<major>/ns#` — {@link instanceNamespaceOf}.",
+      "definition": "`<iriBase>v<major>/ns/` — {@link instanceNamespaceOf}.",
       "source": "cat-harness-tools/schemas/kg/graph-typology-registry.ts#DeclaringInstance.namespace",
       "status": "candidate"
     },
@@ -7417,6 +7620,20 @@
       "prefLabel": "IndexSiteSchema.workflows",
       "definition": "The workflow files that publish this repository's site and stage a preview of it, by file name under `.github/workflows/`. The `pages-publish` and `feature-staging` Tools run them through `bun run cat site:workflow publish|stage`, so a Tool names no repository's file (owner, 2026-10-30, \"Make them generic\"). An agent-run repository declares none: `stage-local.ts` is its path. `check:tools` fails when a file named here does not exist.",
       "source": "cat-harness-tools/schemas/kg/index-config.ts#IndexSiteSchema.workflows",
+      "status": "candidate"
+    },
+    {
+      "id": "ingest-candidates.ingestcandidateschema.aspect",
+      "prefLabel": "IngestCandidateSchema.aspect",
+      "definition": "The aspect that proposed it; absent for a class extractor's or a hand-written candidate.",
+      "source": "cat-harness-tools/schemas/library/ingest-candidates.ts#IngestCandidateSchema.aspect",
+      "status": "candidate"
+    },
+    {
+      "id": "ingest-candidates.ingestcandidateschema.number",
+      "prefLabel": "IngestCandidateSchema.number",
+      "definition": "The source's OWN number for the item, or null. Never one an agent made up.",
+      "source": "cat-harness-tools/schemas/library/ingest-candidates.ts#IngestCandidateSchema.number",
       "status": "candidate"
     },
     {
@@ -8407,6 +8624,76 @@
       "status": "candidate"
     },
     {
+      "id": "metamodel.metamodel.notallowed",
+      "prefLabel": "Metamodel.notAllowed",
+      "definition": "Relationships following a pattern ArchiMate does not allow.",
+      "source": "cat-harness-tools/archimate/schemas/metamodel.ts#Metamodel.notAllowed",
+      "status": "candidate"
+    },
+    {
+      "id": "metamodel.metamodel.placeholderrelationships",
+      "prefLabel": "Metamodel.placeholderRelationships",
+      "definition": "Relationships with a placeholder at either end: the hand-drawn metamodel, left out of `patterns`.",
+      "source": "cat-harness-tools/archimate/schemas/metamodel.ts#Metamodel.placeholderRelationships",
+      "status": "candidate"
+    },
+    {
+      "id": "metamodel.metamodelpattern.allowed",
+      "prefLabel": "MetamodelPattern.allowed",
+      "definition": "Allowed by ArchiMate's table; undefined when the table does not know a type.",
+      "source": "cat-harness-tools/archimate/schemas/metamodel.ts#MetamodelPattern.allowed",
+      "status": "candidate"
+    },
+    {
+      "id": "metamodel.metamodelpattern.relationship",
+      "prefLabel": "MetamodelPattern.relationship",
+      "definition": "The relationship type as the model reader gives it, e.g. `Realization`.",
+      "source": "cat-harness-tools/archimate/schemas/metamodel.ts#MetamodelPattern.relationship",
+      "status": "candidate"
+    },
+    {
+      "id": "metamodel.metamodelpattern.relationships",
+      "prefLabel": "MetamodelPattern.relationships",
+      "definition": "The relationships that follow it, by id, in model order.",
+      "source": "cat-harness-tools/archimate/schemas/metamodel.ts#MetamodelPattern.relationships",
+      "status": "candidate"
+    },
+    {
+      "id": "metamodel.metamodeltype.elements",
+      "prefLabel": "MetamodelType.elements",
+      "definition": "Elements of this type, placeholders not counted.",
+      "source": "cat-harness-tools/archimate/schemas/metamodel.ts#MetamodelType.elements",
+      "status": "candidate"
+    },
+    {
+      "id": "metamodel.metamodeltype.ids",
+      "prefLabel": "MetamodelType.ids",
+      "definition": "Their ids, in model order: what a reader opens from the type's box.",
+      "source": "cat-harness-tools/archimate/schemas/metamodel.ts#MetamodelType.ids",
+      "status": "candidate"
+    },
+    {
+      "id": "metamodel.relationshiptableschema.allowed",
+      "prefLabel": "RelationshipTableSchema.allowed",
+      "definition": "Source type → target type → the key letters allowed between them.",
+      "source": "cat-harness-tools/archimate/schemas/metamodel.ts#RelationshipTableSchema.allowed",
+      "status": "candidate"
+    },
+    {
+      "id": "metamodel.relationshiptableschema.archimateversion",
+      "prefLabel": "RelationshipTableSchema.archimateVersion",
+      "definition": "The ArchiMate version the table encodes (Archi's `<relationships version>`).",
+      "source": "cat-harness-tools/archimate/schemas/metamodel.ts#RelationshipTableSchema.archimateVersion",
+      "status": "candidate"
+    },
+    {
+      "id": "metamodel.relationshiptableschema.keys",
+      "prefLabel": "RelationshipTableSchema.keys",
+      "definition": "Key letter → Archi relationship type, e.g. `r` → `RealizationRelationship`.",
+      "source": "cat-harness-tools/archimate/schemas/metamodel.ts#RelationshipTableSchema.keys",
+      "status": "candidate"
+    },
+    {
       "id": "methodology.methodologyfrontmatterschema.applies-when",
       "prefLabel": "MethodologyFrontMatterSchema.applies-when",
       "definition": "When this methodology applies, phrased so `methodology-adoption`'s selection question can reach it — and saying what it is NOT for.",
@@ -9114,10 +9401,24 @@
       "status": "candidate"
     },
     {
+      "id": "pdf-structure.pdfdiagnosticsschema.furniture_lines_stripped",
+      "prefLabel": "PdfDiagnosticsSchema.furniture_lines_stripped",
+      "definition": "Running heads, footers, folios and side tabs `strip_furniture` took out before the split.",
+      "source": "cat-harness-tools/schemas/ui/pdf-structure.ts#PdfDiagnosticsSchema.furniture_lines_stripped",
+      "status": "candidate"
+    },
+    {
       "id": "pdf-structure.pdfdiagnosticsschema.latex_overlay",
       "prefLabel": "PdfDiagnosticsSchema.latex_overlay",
       "definition": "What `latex-math-overlay.py` did: the main `.tex` file it read, how many sections it found there and how many PDF sections took their text from it, the three gates it applied, and a per-section record of each match.",
       "source": "cat-harness-tools/schemas/ui/pdf-structure.ts#PdfDiagnosticsSchema.latex_overlay",
+      "status": "candidate"
+    },
+    {
+      "id": "pdf-structure.pdfdiagnosticsschema.outline_reordered",
+      "prefLabel": "PdfDiagnosticsSchema.outline_reordered",
+      "definition": "The flat outline ran against its own pages and `repair_outline` put it in page order. Absent when not.",
+      "source": "cat-harness-tools/schemas/ui/pdf-structure.ts#PdfDiagnosticsSchema.outline_reordered",
       "status": "candidate"
     },
     {
@@ -9387,6 +9688,13 @@
       "status": "candidate"
     },
     {
+      "id": "prov.provactivityobjectschema.prov-wasinformedby",
+      "prefLabel": "ProvActivityObjectSchema.prov:wasInformedBy",
+      "definition": "W3C PROV-O `prov:wasInformedBy`: the activity (or activities) this one was informed by, by `@id`. The workflow engine writes it on a Tool activity kept on a step, naming the step's own activity (bean `w1gy`, folio-assistant#875 FR-005). An array when several, as JSON-LD writes several values of one property.",
+      "source": "cat-harness-tools/schemas/content/prov.ts#ProvActivityObjectSchema.prov:wasInformedBy",
+      "status": "candidate"
+    },
+    {
       "id": "prov.provchainverifyoptions.consentpolicyuids",
       "prefLabel": "ProvChainVerifyOptions.consentPolicyUids",
       "definition": "Policy UIDs that require Consent (e.g. policies with an `odrl:obtainConsent` duty). Any record evaluated under one of these policies must cite `cat-harness:consent` (`id` + `versionId`).",
@@ -9503,6 +9811,13 @@
       "prefLabel": "PairAttestationSchema.by",
       "definition": "`baseline` counts as a judgement (owner, 2026-10-01): it records the state the drift is measured from.",
       "source": "cat-harness-tools/schemas/sdlc/qa-attestations.ts#PairAttestationSchema.by",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-attestations.storedadversarialreviews.path",
+      "prefLabel": "StoredAdversarialReviews.path",
+      "definition": "Absolute path of the attestation file.",
+      "source": "cat-harness-tools/schemas/sdlc/qa-attestations.ts#StoredAdversarialReviews.path",
       "status": "candidate"
     },
     {
@@ -10661,6 +10976,13 @@
       "status": "candidate"
     },
     {
+      "id": "role-graph.roledef.store",
+      "prefLabel": "RoleDef.store",
+      "definition": "Present when this role is a DATA STORE: a place where things are kept, played by a mechanical actor (owner, 2026-11-01, Q-DS-1 A). It stays a Role, so its `skills` are still its contract (owner, 2026-10-16), and the role id is the store id a diagram's `dataStoreReference` points at (Q-DS-3 A). See {@link StoreDef}.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#RoleDef.store",
+      "status": "candidate"
+    },
+    {
       "id": "role-graph.roledef.title",
       "prefLabel": "RoleDef.title",
       "definition": "Display text, and the `name` of that `<bpmn:resource>`. Not used for matching: a lane binds by id.",
@@ -10749,6 +11071,146 @@
       "prefLabel": "SkillProvenance.via",
       "definition": "The role that declared it — may be an ancestor, not the role asked for.",
       "source": "cat-harness-tools/schemas/process/role-graph.ts#SkillProvenance.via",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.storeapi.document",
+      "prefLabel": "StoreApi.document",
+      "definition": "The API's own document: a URL or an instance-relative path. Held as the API's authors wrote it, never restated (the `openapi` subgraph's rule). Absent for `cli`, which names its tools instead.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#StoreApi.document",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.storeapi.tools",
+      "prefLabel": "StoreApi.tools",
+      "definition": "For `cli`: the harness tool ids that read or write the store.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#StoreApi.tools",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.storedef.api",
+      "prefLabel": "StoreDef.api",
+      "definition": "Its interfaces, one per transport.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#StoreDef.api",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.storedef.holds",
+      "prefLabel": "StoreDef.holds",
+      "definition": "The typologies (graph kinds) it holds, by id, e.g. `bean-defs`.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#StoreDef.holds",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.storedef.published",
+      "prefLabel": "StoreDef.published",
+      "definition": "Whether what it keeps reaches a published graph. The activity log does not.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#StoreDef.published",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.storedef.realisedby",
+      "prefLabel": "StoreDef.realisedBy",
+      "definition": "The actor that plays it, e.g. `beans`, `git`, `google-sheets`.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#StoreDef.realisedBy",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.relationshipruleschema.note",
+      "prefLabel": "RelationshipRuleSchema.note",
+      "definition": "Why the rule is there, in the document's words.",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RelationshipRuleSchema.note",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.relationshiprulesschema.source",
+      "prefLabel": "RelationshipRulesSchema.source",
+      "definition": "Where the rules were taken from: a document block, an IRI.",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RelationshipRulesSchema.source",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.relationshiptypeentryschema.icon",
+      "prefLabel": "RelationshipTypeEntrySchema.icon",
+      "definition": "The notation picture, relative to the block, shown in the relationship-types table.",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RelationshipTypeEntrySchema.icon",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.relationshiptypeentryschema.meaning",
+      "prefLabel": "RelationshipTypeEntrySchema.meaning",
+      "definition": "What it represents, in the document's words (Markdown). Only entries with a meaning are rows of the relationship-types table; a type the rules use with no meaning is reported, since the document then uses a relationship it never explains.",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RelationshipTypeEntrySchema.meaning",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.relationshiptypeentryschema.name",
+      "prefLabel": "RelationshipTypeEntrySchema.name",
+      "definition": "What the document calls it in a rule: `Realisation`.",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RelationshipTypeEntrySchema.name",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.relationshiptypeentryschema.type",
+      "prefLabel": "RelationshipTypeEntrySchema.type",
+      "definition": "The ArchiMate relationship type, without `Relationship`: `Realization`.",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RelationshipTypeEntrySchema.type",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.relationshiptypeentryschema.verb",
+      "prefLabel": "RelationshipTypeEntrySchema.verb",
+      "definition": "The verb the relationship-types table shows: `Realises`. Default: `name`.",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RelationshipTypeEntrySchema.verb",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.rulepattern.relationships",
+      "prefLabel": "RulePattern.relationships",
+      "definition": "The relationships' ids.",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RulePattern.relationships",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.rulescheck.checked",
+      "prefLabel": "RulesCheck.checked",
+      "definition": "Relationships counted (those between two elements, Grouping's left out).",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RulesCheck.checked",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.rulescheck.notallowed",
+      "prefLabel": "RulesCheck.notAllowed",
+      "definition": "Rules ArchiMate's own relationship table does not allow.",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RulesCheck.notAllowed",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.rulescheck.uncovered",
+      "prefLabel": "RulesCheck.uncovered",
+      "definition": "Model patterns no rule covers, most used first.",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RulesCheck.uncovered",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.rulescheck.uncoveredcount",
+      "prefLabel": "RulesCheck.uncoveredCount",
+      "definition": "How many relationships those patterns hold.",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RulesCheck.uncoveredCount",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.rulescheck.unexplained",
+      "prefLabel": "RulesCheck.unexplained",
+      "definition": "Relationship types a rule uses that have no `meaning`, so the document never explains them.",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RulesCheck.unexplained",
+      "status": "candidate"
+    },
+    {
+      "id": "rules.rulescheck.used",
+      "prefLabel": "RulesCheck.used",
+      "definition": "Each rule and how often the model follows it; a count of 0 is a rule the model never uses.",
+      "source": "cat-harness-tools/archimate/schemas/rules.ts#RulesCheck.used",
       "status": "candidate"
     },
     {

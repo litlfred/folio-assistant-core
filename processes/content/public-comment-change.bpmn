@@ -8,18 +8,18 @@
   Every task here is a transition in PUBLIC_COMMENT_TRANSITIONS
   (folio-assistant-core/schemas/public-comment.ts), and a test holds the two
   to each other: a comment's status moves only through a task that exists in
-  this diagram. Bean v26p, issue #197.
+  this diagram.
 -->
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                   xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
                   xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
                   xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
-                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns#"
-                  xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/v0/processes/ns#"
+                  xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns/"
+                  xmlns:cat-harness.processes="https://litlfred.github.io/cat-harness/v0/processes/ns/"
                   id="Definitions_PublicCommentChange"
                   targetNamespace="https://litlfred.github.io/folio-assistant/workflows"
                   exporter="folio-assistant" exporterVersion="1">
-  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns#" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
+  <bpmn:import namespace="https://litlfred.github.io/bootstrap/v0/processes/ns/" location="https://litlfred.github.io/bootstrap/v0/processes/ns.jsonld" importType="http://www.w3.org/ns/json-ld"/>
   <bpmn:resource id="author" name="Author"/>
   <bpmn:resource id="build-pipeline" name="Build pipeline"/>
   <bpmn:resource id="qc-reviewer" name="QA reviewer (independent)"/>
@@ -36,7 +36,7 @@
       preview as any content change (Process_ContentChangeReview), an
       independent QA gate checks the dispositions against the pull request,
       and each comment the change set answers is marked incorporated when it
-      merges. Drawn on its own page so that each phase fits the screen.
+      merges.
       Skill: public-comment.
     </bpmn:documentation>
     <bpmn:extensionElements>
@@ -55,7 +55,7 @@
         <bpmn:flowNodeRef>EndEvent_ChangeMerged</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_QaReviewer" name="QA reviewer (independent)" partitionElementRef="qc-reviewer">
-        <bpmn:documentation>Whoever runs the QA gate: an agent session that did not author the change set, or a person; never the author's own session (owner, 2026-10-31: "add review (agent-independent) before ready for merge"). Writes only QA gate (change set) and QA report (change set) on Agent - Change Sets.</bpmn:documentation>
+        <bpmn:documentation>Whoever runs the QA gate: an agent session that did not author the change set, or a person; never the author's own session. Writes only QA gate (change set) and QA report (change set) on Agent - Change Sets.</bpmn:documentation>
         <bpmn:flowNodeRef>Task_QaGate</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_QaPassed</bpmn:flowNodeRef>
       </bpmn:lane>
@@ -67,7 +67,7 @@
     </bpmn:startEvent>
 
     <bpmn:task id="Task_AuthorEdits" name="Edit the document as decided, on a feature branch">
-      <bpmn:documentation>public-comment edit --branch: the author (human, or an agent in the author role) edits the folio's blocks as the decision says, on a feature branch for one change-set. Its PR says Closes #N for the change-set issue, and opening it moves that issue's accepted comments to editing. Before its preview is staged, the author writes the change set's Disposition (change set) on the Agent tab: one line per comment (No. 136: Accepted. ...), starting from each comment's Blue Disposition on Review Public Comments, after an optional Overall statement. Quality check: every comment number in the change set has a disposition; the sheet flags gaps and words that differ from the people's (owner, 2026-10-31).</bpmn:documentation>
+      <bpmn:documentation>public-comment edit --branch: the author (human, or an agent in the author role) edits the folio's blocks as the decision says, on a feature branch for one change-set. Its PR says Closes #N for the change-set issue, and opening it moves that issue's accepted comments to editing. Before its preview is staged, the author writes the change set's Disposition (change set) on the Agent tab: one line per comment (No. 136: Accepted. ...), starting from each comment's Blue Disposition on Review Public Comments, after an optional Overall statement. Quality check: every comment number in the change set has a disposition; the sheet flags gaps and words that differ from the people's.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToAuthor</bpmn:incoming>
       <bpmn:incoming>Flow_QaFailed</bpmn:incoming>
@@ -75,7 +75,7 @@
     </bpmn:task>
 
     <bpmn:callActivity id="CallActivity_ChangeSet" name="Review the change set on its staging preview" calledElement="Process_ContentChangeReview">
-      <bpmn:documentation>The existing content-change review, unchanged, of the author's branch: its PR lists the PC refs it answers, and its staging preview is the after side of every deep link. A change the reviewers send back returns to the author inside that process.</bpmn:documentation>
+      <bpmn:documentation>The content-change review of the author's branch: its PR lists the PC refs it answers, and its staging preview is the after side of every deep link. A change the reviewers send back returns to the author inside that process.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="staging-review"/>
       </bpmn:extensionElements>
@@ -84,7 +84,7 @@
     </bpmn:callActivity>
 
     <bpmn:task id="Task_QaGate" name="QA gate: check dispositions against the people and the pull request">
-      <bpmn:documentation>Before Ready for merge. Reads: the change set's Disposition (change set), each comment's Blue Disposition on Review Public Comments, the PR's diff at its head commit, and the staging QA report. Checks that every comment number has one disposition; that each agrees with the people's Blue Disposition; that each Accepted or Partially accepted comment has its change in the diff, and a Not accepted, Noted, Deferred, Duplicate or Out of scope one has none; that the diff changes nothing no disposition accounts for; and that the QA report for the staged commit has no failing gate. Writes: QA gate (change set), first line "Passed &lt;head sha&gt;: …" or "Failed &lt;head sha&gt;: &lt;why&gt;", and QA report (change set), the report's link. The sheet shows both under Staging review; a pass for an older commit reads as stale (owner, 2026-10-31).</bpmn:documentation>
+      <bpmn:documentation>Before Ready for merge. Reads: the change set's Disposition (change set), each comment's Blue Disposition on Review Public Comments, the PR's diff at its head commit, and the staging QA report. Checks that every comment number has one disposition; that each agrees with the people's Blue Disposition; that each Accepted or Partially accepted comment has its change in the diff, and a Not accepted, Noted, Deferred, Duplicate or Out of scope one has none; that the diff changes nothing no disposition accounts for; and that the QA report for the staged commit has no failing gate. Writes: QA gate (change set), first line "Passed &lt;head sha&gt;: …" or "Failed &lt;head sha&gt;: &lt;why&gt;", and QA report (change set), the report's link. The sheet shows both under Staging review; a pass for an older commit reads as stale.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToQaGate</bpmn:incoming>
       <bpmn:outgoing>Flow_ToQaGateway</bpmn:outgoing>
@@ -97,7 +97,7 @@
     </bpmn:exclusiveGateway>
 
     <bpmn:task id="Task_Incorporate" name="Mark incorporated when the change set merges">
-      <bpmn:documentation>public-comment incorporate, naming the branch, PR and staging URL; done by the folio's workflow when the PR that closes a change-set issue merges. A PR closed unmerged moves nothing. Ready for merge is set only once the QA gate has passed for the PR's head commit; set earlier, the agent does not merge until it passes. The change set's Dispositions blurb, as it stands when Ready for merge is set to Yes, is the summary that closes its issue (owner, 2026-10-31).</bpmn:documentation>
+      <bpmn:documentation>public-comment incorporate, naming the branch, PR and staging URL; done by the folio's workflow when the PR that closes a change-set issue merges. A PR closed unmerged moves nothing. Ready for merge is set only once the QA gate has passed for the PR's head commit; set earlier, the agent does not merge until it passes. The change set's Dispositions blurb, as it stands when Ready for merge is set to Yes, is the summary that closes its issue.</bpmn:documentation>
       <bpmn:extensionElements><bootstrap.processes:skill ref="public-comment"/></bpmn:extensionElements>
       <bpmn:incoming>Flow_ToIncorporate</bpmn:incoming>
       <bpmn:outgoing>Flow_ToMerged</bpmn:outgoing>
@@ -130,48 +130,50 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_ChangeDecided_di" bpmnElement="StartEvent_ChangeDecided">
         <dc:Bounds x="262" y="127" width="36" height="36" />
-        <bpmndi:BPMNLabel>
+        
+      <bpmndi:BPMNLabel>
           <dc:Bounds x="225" y="167" width="160" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_AuthorEdits_di" bpmnElement="Task_AuthorEdits">
         <dc:Bounds x="405" y="95" width="130" height="100" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_ChangeSet_di" bpmnElement="CallActivity_ChangeSet">
-        <dc:Bounds x="505" y="235" width="150" height="100" />
+        <dc:Bounds x="520" y="225" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_QaGate_di" bpmnElement="Task_QaGate">
-        <dc:Bounds x="675" y="380" width="150" height="110" />
+        <dc:Bounds x="690" y="375" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_QaPassed_di" bpmnElement="Gateway_QaPassed" isMarkerVisible="true">
         <dc:Bounds x="895" y="410" width="50" height="50" />
-        <bpmndi:BPMNLabel>
+        
+      <bpmndi:BPMNLabel>
           <dc:Bounds x="950" y="443" width="130" height="54" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Incorporate_di" bpmnElement="Task_Incorporate">
-        <dc:Bounds x="995" y="235" width="130" height="100" />
+        <dc:Bounds x="1000" y="225" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_ChangeMerged_di" bpmnElement="EndEvent_ChangeMerged">
         <dc:Bounds x="1182" y="267" width="36" height="36" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1132.5" y="307" width="135" height="36" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
+        
+      <bpmndi:BPMNLabel><dc:Bounds x="1132.5" y="307" width="135" height="36" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_ToAuthor_di" bpmnElement="Flow_ToAuthor">
         <di:waypoint x="298" y="145" />
         <di:waypoint x="405" y="145" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToChangeSet_di" bpmnElement="Flow_ToChangeSet">
         <di:waypoint x="470" y="195" />
-        <di:waypoint x="470" y="285" />
-        <di:waypoint x="505" y="285" />
+        <di:waypoint x="470" y="210" />
+        <di:waypoint x="580" y="210" />
+        <di:waypoint x="580" y="225" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToQaGate_di" bpmnElement="Flow_ToQaGate">
-        <di:waypoint x="655" y="285" />
-        <di:waypoint x="750" y="285" />
-        <di:waypoint x="750" y="380" />
+        <di:waypoint x="640" y="285" />
+        <di:waypoint x="665" y="285" />
+        <di:waypoint x="665" y="435" />
+        <di:waypoint x="690" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToQaGateway_di" bpmnElement="Flow_ToQaGateway">
-        <di:waypoint x="825" y="435" />
+        <di:waypoint x="810" y="435" />
         <di:waypoint x="895" y="435" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_QaFailed_di" bpmnElement="Flow_QaFailed">
@@ -186,7 +188,7 @@
         <di:waypoint x="1060" y="335" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_ToMerged_di" bpmnElement="Flow_ToMerged">
-        <di:waypoint x="1125" y="285" />
+        <di:waypoint x="1120" y="285" />
         <di:waypoint x="1182" y="285" />
       </bpmndi:BPMNEdge>    </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
