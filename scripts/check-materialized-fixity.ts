@@ -265,7 +265,7 @@ export function underDeclared(localPath: string, dirs: readonly string[]): boole
  * Every materialized artefact declared anywhere in the checkout, or, in a
  * layer's PR checks, only those recorded in files the caller commits (owner
  * ruling 2026-11-05, "Move the checks"; cat-harness-tools `lib/gate-own.ts`).
- * smart-ra#228 went red on who-iris's catalogue nodes: a mounted layer's
+ * smart-ra#228 went red on a mounted lower layer's catalogue nodes: its
  * records are judged by that layer's own CI. `owns` takes a repo-relative
  * path; unset, every file is the caller's.
  */
