@@ -216,6 +216,10 @@ reads the short names `K`, `ABBR`, `LP`, `OFFSET` and `MAX`.
 ```sh
 # the script, once per platform version
 bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts --script Code.gs
+```
+
+<!-- command-path-ok: run IN A PUBLIC-COMMENT FOLIO — review/public-comment/sheet-sync.json is the file `--link` writes (§"Linking a sheet to a repository", step 2), so a folio with no public-comment sheet has none -->
+```sh
 # one document's Config rows, from the folio's repository root
 bun run folio-assistant-core/tools/review-sheet-sync/build-review-sheet-script.ts \
   --repo . --config review/public-comment/sheet-sync.json --out config-rows.json

@@ -74,6 +74,7 @@ import { declarationPathIn } from "@litlfred/cat-harness-tools/schemas/kg/cat-ha
 import { isFrozenSubtree } from "@litlfred/cat-harness-tools/schemas/kg/fsh-guts.js";
 import { KG_PART_RECORD_SCHEMA } from "@litlfred/cat-harness-tools/schemas/kg/substrate-snapshot.js";
 import { PART_RECORD_FILE, PART_TREE } from "@litlfred/cat-harness-tools/scripts/kg-subscribe.js";
+import { gateOwnsFile } from "@litlfred/cat-harness-tools/scripts/lib/gate-own.ts";
 
 const REPO = resolve(import.meta.dir, "..", "..");
 
@@ -260,8 +261,15 @@ export function underDeclared(localPath: string, dirs: readonly string[]): boole
   });
 }
 
-/** Every materialized artefact declared anywhere in the checkout. */
-export function collect(repo = REPO): MaterializedRecord[] {
+/**
+ * Every materialized artefact declared anywhere in the checkout, or, in a
+ * layer's PR checks, only those recorded in files the caller commits (owner
+ * ruling 2026-11-05, "Move the checks"; cat-harness-tools `lib/gate-own.ts`).
+ * smart-ra#228 went red on a mounted lower layer's catalogue nodes: its
+ * records are judged by that layer's own CI. `owns` takes a repo-relative
+ * path; unset, every file is the caller's.
+ */
+export function collect(repo = REPO, owns: (rel: string) => boolean = (rel) => gateOwnsFile(rel) !== false): MaterializedRecord[] {
   const out: MaterializedRecord[] = [];
   const mounted = mountedInstancePaths(repo);
   for (const declPath of instanceDeclarations(repo)) {
@@ -284,6 +292,7 @@ export function collect(repo = REPO): MaterializedRecord[] {
       const dir = join(root, entry.path);
       if (!existsSync(dir)) continue;
       for (const f of jsonFilesUnder(dir)) {
+        if (!owns(relative(repo, f))) continue;
         let parsed: unknown;
         try {
           parsed = JSON.parse(readFileSync(f, "utf-8"));
