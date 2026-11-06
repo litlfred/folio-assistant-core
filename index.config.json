@@ -42,7 +42,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "df04aaa4f1cccece334c4e93b2fac5ba4a3ce27e",
+          "ref": "7e6976d3ecf5b42f9c11a6010958103e99e74cff",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -55,7 +55,7 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-06",
-              "ref": "df04aaa4f1cccece334c4e93b2fac5ba4a3ce27e",
+              "ref": "7e6976d3ecf5b42f9c11a6010958103e99e74cff",
               "evidence": "litlfred, 2026-11-06, Claude Code session session_01VQDpPeA2N8L3orQCPPMAas: 'align pins' (re-pin every layer bottom-up to the current mains of the layers below it, after cat-harness#1097 aligned cat-harness's own pins; bean cat-tools-sm8r)."
             }
           }
