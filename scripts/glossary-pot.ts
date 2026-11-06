@@ -49,6 +49,7 @@ import { directoryForGraph, repoRootFor } from "@litlfred/cat-harness-tools/sche
 import { declaredDirectories } from "@litlfred/cat-harness-tools/schemas/kg/declared-nodes.ts";
 import { findDeclarationFile, instanceRootsIn } from "@litlfred/cat-harness-tools/schemas/kg/instance-roots.ts";
 import { formatPot, potWithoutTimestamp, type PotEntry } from "@litlfred/cat-harness-tools/pipeline/pot-extract.ts";
+import { gateOwnsFile } from "@litlfred/cat-harness-tools/scripts/lib/gate-own.ts";
 import { termIri, type LangText } from "../schemas/glossary.ts";
 import { LOCALE_PAGE_STRINGS, LOCALE_PAGE_TEMPLATE, collect, type GlossarySource } from "./glossary-page.ts";
 
@@ -242,13 +243,20 @@ if (import.meta.main) {
   const render = (name: string, loc: string) => formatPot(tpl.get(name)!, { projectName: name, locale: loc });
 
   if (wantCheck) {
+    // In a layer's PR checks only the catalogues the caller commits are judged
+    // (owner ruling 2026-11-05, "Move the checks"; cat-harness-tools
+    // `lib/gate-own.ts`): a mounted layer's .pot files are its own CI's.
+    // Unset, every file is the caller's.
     const bad: string[] = [];
+    const report = (finding: string, rel: string): void => {
+      if (gateOwnsFile(rel) !== false) bad.push(finding);
+    };
     for (const loc of locales) {
       for (const name of tpl.keys()) {
         const p = potPath(placed.get(name)!.dir, loc, name);
         const rel = relative(REPO, p);
-        if (!existsSync(p)) bad.push(`never extracted: ${rel}`);
-        else if (potForCheck(readFileSync(p, "utf-8")) !== potForCheck(render(name, loc))) bad.push(`out of date: ${rel}`);
+        if (!existsSync(p)) report(`never extracted: ${rel}`, rel);
+        else if (potForCheck(readFileSync(p, "utf-8")) !== potForCheck(render(name, loc))) report(`out of date: ${rel}`, rel);
       }
       for (const dir of dirs) {
         const sub = join(dir, loc, GLOSSARY_SUBDIR);
@@ -257,9 +265,9 @@ if (import.meta.main) {
           const name = f.replace(/\.pot?$/, "");
           const rel = relative(REPO, join(sub, f));
           if (!tpl.has(name)) {
-            if (f.endsWith(".pot")) bad.push(`no authored scheme: ${rel}`);
+            if (f.endsWith(".pot")) report(`no authored scheme: ${rel}`, rel);
           } else if (resolve(placed.get(name)!.dir) !== resolve(dir)) {
-            bad.push(`misplaced — ${templateOwner(name)} owns it, so it belongs in ${relative(REPO, placed.get(name)!.dir)}: ${rel}`);
+            report(`misplaced — ${templateOwner(name)} owns it, so it belongs in ${relative(REPO, placed.get(name)!.dir)}: ${rel}`, rel);
           }
         }
       }
