@@ -127,15 +127,15 @@ interface RawEntry {
  */
 const treeDatesByRoot = new Map<string, Readonly<Record<string, string>>>();
 function treeDatesFor(repoRoot: string): Readonly<Record<string, string>> {
-  let d = treeDatesByRoot.get(repoRoot);
-  if (!d) {
-    try {
-      d = readTreeCommitIndex(repoRoot).dates ?? {};
-    } catch {
-      d = {};
-    }
-    treeDatesByRoot.set(repoRoot, d);
+  const cached = treeDatesByRoot.get(repoRoot);
+  if (cached) return cached;
+  let d: Readonly<Record<string, string>>;
+  try {
+    d = readTreeCommitIndex(repoRoot).dates ?? {};
+  } catch {
+    d = {};
   }
+  treeDatesByRoot.set(repoRoot, d);
   return d;
 }
 
