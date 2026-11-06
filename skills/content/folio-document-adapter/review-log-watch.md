@@ -26,9 +26,10 @@ watcher does on each wake. Process:
 
 The watcher runs a core tool on every poll, and each issue gets a row on
 Contributor Feedback, including existing issues; a closed issue's row is
-hidden, its text struck through. The poll wakes the watcher thread every 3
-minutes. Until the tool says `changed`, the watcher only reads and runs the
-tool. It does not reason about the rows, edit anything or post anything.
+hidden, its text struck through. The poll wakes the watcher thread every
+minute. Until the tool says `changed`, the watcher only reads, runs the tool
+and does the stall pass ("Every poll", below). It does not otherwise reason
+about the rows.
 
 ## Each wake
 
@@ -52,7 +53,8 @@ tool. It does not reason about the rows, edit anything or post anything.
      --sheet-hash <Watch!G1>
    ```
 
-   - Exit 0 is `{"status":"unchanged"}`. Queue the next wake and stop.
+   - Exit 0 is `{"status":"unchanged"}`. Do the stall pass (below), then
+     stop. The next wake was queued first.
    - Exit 10 is `changed`. The output has `changes` (an issue opened, updated
      or closed, or a cell's old and new text) and `append`.
 
@@ -113,135 +115,58 @@ tool. It does not reason about the rows, edit anything or post anything.
    still differs from the stored state, so it comes back on the next wake.
 7. Queue the next wake.
 
-## Public-comment logs
+## Every poll: hand new feedback on, and catch stalled rows
 
-A log whose Config has `MODE` `public-comment` has Review Public Comments,
-Review Change Sets, Agent - Comments and Agent - Change Sets instead of
-Contributor Feedback and Agent. The watcher runs the same check, with these
-differences:
+New feedback goes to the agent working the row, and a stalled row is
+restarted or taken over; otherwise a contributor's note can reach no one.
 
-- **Hash.** `Watch!G1` covers the cells people set on both people's tabs:
-  on Review Change Sets Title, TWG (CS), every Committee Feedback column,
-  Ready for agent, Dispositions confirmed, Ready for merge and Change Set
-  (human); on Review Public Comments every Committee Feedback column,
-  Disposition, Change Set (human) and TWG (human). Lines are keyed by
-  Change-set id and comment No., so an inserted row changes nothing. The
-  script writes it on every refresh, and the timer refreshes only after an
-  edit or an Agent tab change, so `Checked (UTC)` can be old on a quiet
-  sheet.
-- **Read.** Review Change Sets' header row and Change-set column, as
-  `--sheet`. It has no Issue column, so the tool tracks only issues
-  labelled `change-set` (`--label` overrides) and appends no rows: each open
-  one comes back as an `issue-unlinked` change. Handle those as in "Change
-  sets people make" below.
-- **Without a Watch tab**, read Review Change Sets whole. The tool then
-  compares its cells itself; Review Public Comments' cells are seen only
-  through the hash.
-- **Steps 3 and 4** (append, hide closed rows) do not apply. The agent pass
-  of step 5 is the change-set work of
-  [Public comment](../../../processes/content/public-comment.bpmn).
+This pass runs on **every** poll, changed or not, after the check:
 
-## Lint each poll
+1. **New feedback goes to the row's agent.** For each row whose Blue cells
+   changed, find the thread that owns it: the one named in its Agent row or
+   its Feedback (agent) cell, or else ask the coordinator. Send it the new
+   text verbatim, with the CS id, the cell and the time. Then write in
+   Feedback (agent) who has it and what happens next, so the contributor sees
+   at once that it was heard.
+2. **Find stalled rows.** A row is stalled when
+   - its Blue cells changed, or Ready for agent turned Yes, more than
+     **10 minutes** ago, and no Agent step has been recorded since; or
+   - its agent has recorded no step for **2 hours** while the row is open.
+3. **Restart or take over.** Ask the owning thread once. If it gives no
+   answer within 10 minutes, or it is done or stopped, take the row over
+   yourself, or ask the coordinator for a new thread. Either way, write the
+   new owner, its current step and a link into Feedback (agent).
 
-After the change check, run
-`bun tools/review-log-watch/lint.ts --feedback <Contributor Feedback values.json> --agent <Agent values.json>`.
-It reads
-each Agent row's pull requests from GitHub and prints, per change set, what
-breaks the feedback layout in `review-sheet-script` ("The agent's feedback
-cell has a fixed layout"):
+A row whose agent is working, but that shows nothing new, is not stalled:
+say what it is doing in Feedback (agent), with links to its pull requests,
+so the row stops looking stuck.
 
-- Needs human with no `Decision needed:` question, or a question without
-  Needs human;
-- the question not first, fewer than two lettered options, no single
-  `(recommended)`, or no line saying where to answer;
-- history in the cell (`Decided`, `Step n`, `Already done`), Markdown `**`,
-  more than 10 lines;
-- a PR that GitHub says is merged or closed while the Agent tab's status
-  still says open;
-- feedback on a row with no Selected Sections and no question asking which,
-  or a PR that changes a chapter outside the Selected Sections without an
-  `Outside the selected sections:` line.
+## Every poll: check each row against its Agent row
 
-Exit 0 is clean. Exit 10 lists problems: the watcher fixes the Agent tab
-status or rewrites the cell to the layout in the same wake, and records the
-Agent step. The lint writes nothing itself.
+After the stall pass, the watcher checks, for every row with a Feedback
+(agent) cell:
 
-## Previews follow main
+- a pull request or preview named in Feedback (agent) is the one in the
+  row's Agent row (Pull request, Staging review page);
+- Agent step reads `<step> <YYYY-MM-DD HH:MMZ>`, not prose;
+- Agentic status shows no "no agent has picked this up" warning while the
+  row's thread is working.
 
-A preview is built from its pull request's head, so once main moves on, a
-branch that lacks main's head shows a document main no longer is. The
-watcher brings main into every open change-set branch.
+A row that fails is fixed through Record agent step
+(`processes/content/record-agent-step.bpmn`): the Agent row first, then
+Feedback (agent), then a read-back. Another thread that owns the row sends the
+watcher its step and links; the watcher writes them, because one watcher owns
+each log.
 
-**Modes.** The log's Config tab may hold a `PREVIEW_REFRESH` row:
+## Finished rows: hidden and struck through, and not feedback
 
-- `automatic` (the default, also when there is no row): on every poll,
-  whether or not a cell changed, check every open change-set PR. A move on
-  main changes no cell, so the change check alone would never wake it.
-- `on-feedback`: only in the agent pass for a change set people acted on.
-
-**People's feedback triggers it in either mode:** new or changed Blue
-feedback on the change set, Ready for agent set to Yes, or feedback that asks,
-such as "update the preview" or "rebase on main"
-(`bun tools/review-log-watch/previews.ts request --text <feedback>`).
-
-**Each check:**
-
-1. Run `bun tools/review-log-watch/previews.ts --agent <Agent values.json>`
-   for every open change set, or `--prs owner/repo#n,...` for one. It prints
-   `merge-main`, `resolve-conflict` or `none` for each PR. Exit 0 means
-   current; exit 10 lists the work.
-2. For `merge-main`: merge main into the branch (a merge commit, never a
-   rebase or force-push), regenerate generated files with the repo's own
-   tooling, push, and record the push with the agent-record tool. The sheet
-   then shows the preview as stale until the new build is live.
-3. For `resolve-conflict`: resolve it when both sides are generated or
-   mechanical. When a person must choose, ask in the change set's feedback
-   cell (a `Decision needed:` question) and leave the branch as it is.
-4. This only brings main into the branch. Committee content is never merged
-   into main by the watcher. Closed PRs and PRs from forks are skipped.
-
-## Change sets people make
-
-People make change sets, the way they open issues; how one came about does
-not matter once people have adjudicated it. On a public-comment log the
-watcher finds four kinds of request on each poll, and answers each in the
-same wake:
-
-- **A row with only a Title** on Review Change Sets. The sheet script gives
-  it the next Change-set id. The watcher adds the matching row on Agent -
-  Change Sets (same id and Title) and a change-set record, and proposes a
-  direction in Change Set Feedback (agent), as for any change set.
-- **A `change-set` issue** (form `templates/issue-forms/change-set.yml`,
-  label `change-set`). `bun tools/review-log-watch/cs-requests.ts issue --body <file>`
-  reads its fields. For "New change set" the watcher adds the Agent - Change
-  Sets row, and the script then adds the Review Change Sets row with that
-  Title. Split, merge and move go as below.
-- **Feedback that asks for it**, e.g. "this CS needs to be split". Run
-  `bun tools/review-log-watch/cs-requests.ts request --text <the person's feedback>`
-  on every changed feedback cell; only the person's words, never the agent's
-  or the script's lines. For a split, merge, move or new request, write a
-  `Decision needed:` question naming the change sets and which comments go
-  where, with lettered options and one recommended. Make them only once an
-  Editor sets Ready for agent to Yes.
-- **Change Set (human)** on Review Public Comments: a person typed another
-  change set's id, several ids, or `new`. The script already counts the
-  comment in its new change set; the watcher records the move on Agent -
-  Comments (Change-sets) and on the change-set records, and for `new` makes a
-  change set for the comment and proposes a Title.
-
-**Triage each new comment.** A comment with no change set yet gets the
-agent's suggestion: run `cs-requests.ts triage --input <json>` with the
-comment's sections and the open change sets (id, sections, TWGs, status). It
-ranks the open change sets that share its sections and always offers `new`.
-Write the first as the comment's Change-sets on Agent - Comments and its
-committees as TWG (agent). These are suggestions: a person's Change Set
-(human) or TWG (human) always wins, and the watcher never overwrites a Blue
-cell.
-
-**Sheet comments.** People without edit rights use Insert, then Comment.
-Neither the Sheets API nor the script reads those comments yet, so the
-watcher does not see them; ask the person to copy the request into a
-feedback cell, or open the change-set form.
+A finished change set's row (Agentic status *Change merged* or *Closed*) is
+hidden and its whole row struck through by the sheet script. Watchers ignore
+that visual change: the check compares cell values only, so hiding, unhiding
+and the line are never a change, and a hidden row still counts as a row: never
+append it again. When the check lists `closedRows` (rows linking a closed issue), the
+watcher closes each through Record agent step with Agentic status *Closed*;
+the script does the hiding.
 
 ## What counts as a change
 
@@ -272,8 +197,10 @@ feedback cell, or open the change-set form.
 
 A log is not set up until a watcher has both of these wakes:
 
-- a chain of **3-minute** delayed wakes (`send_later`), each of which queues
-  the next;
+- a chain of **1-minute** delayed wakes (`send_later`), each of which queues
+  the next before it reads anything, so no poll is skipped during long work. A
+  `send_later` fires once, so a wake that does not queue the next ends the
+  chain;
 - an hourly scheduled task that restarts the chain if it breaks.
 
 Keep the state file outside the repository, one per sheet. Without it, a fresh

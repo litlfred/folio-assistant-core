@@ -5,7 +5,8 @@
  */
 import { expect, test } from "bun:test";
 
-import { humanBytes, latestNames, renderExportIndex, type ExportManifest } from "./document-export.js";
+import { readFileSync } from "node:fs";
+import { humanBytes, latestNames, REFERENCE_DOCX, renderExportIndex, type ExportManifest } from "./document-export.js";
 
 const manifest: ExportManifest = {
   $schema: "document-export/v1",
@@ -60,4 +61,13 @@ test("the Export page lists every file with its details and both links", () => {
   // the title is escaped, not injected
   expect(html).toContain("&lt;HRH&gt;");
   expect(html).not.toContain("<HRH>");
+  // the content sits in its own padded <main>, so a site's rail and body styles leave it a gutter
+  expect(html).toContain('<main class="export">');
+  expect(html).toContain('<h2 id="details">');
+});
+
+test("the Word template ships with the script, so the pandoc version cannot pick the fonts", () => {
+  const docx = readFileSync(REFERENCE_DOCX);
+  expect(docx.subarray(0, 2).toString("latin1")).toBe("PK"); // a .docx is a zip
+  expect(docx.toString("latin1")).toContain("word/theme/theme1.xml");
 });

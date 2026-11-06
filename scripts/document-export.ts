@@ -11,6 +11,7 @@
  *
  *   folio/<slug>/**  →  buildDocumentMarkdown (the same assembly document_render_md writes)
  *                    →  pandoc + document-export.lua      one Word bookmark per chapter, section, block
+ *                       styled from document-export-reference.docx   fixed fonts, whatever the pandoc version
  *                    →  docx-offline.py finish            Word line numbering; Track Changes on (offline copy)
  *                    →  soffice --convert-to pdf          the PDF is the .docx, laid out
  *
@@ -58,6 +59,16 @@ import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js"
 
 const HERE = import.meta.dir;
 export const LUA_FILTER = join(HERE, "document-export.lua");
+/**
+ * The Word template every export is styled from (pandoc --reference-doc). It
+ * is pandoc 3.1.3's own default, kept here so that the pandoc version cannot
+ * change the fonts: pandoc 3.7's default names Aptos, which a Linux runner
+ * lacks, and the same commit's PDF came out at 169 pages instead of 143. Body
+ * text is Cambria and headings Calibri, which fontconfig resolves to the
+ * metric-compatible Caladea and Carlito (fonts-crosextra-*), so the page and
+ * line a comment cites is the same wherever the PDF is built (bean 2akf).
+ */
+export const REFERENCE_DOCX = join(HERE, "document-export-reference.docx");
 export const DOCX_OFFLINE = join(HERE, "docx-offline.py");
 
 export type ExportKind = "release" | "pdf" | "docx";
@@ -158,13 +169,14 @@ export function renderExportIndex(m: ExportManifest): string {
 <style>
 :root{--fg:#1b1f24;--muted:#57606a;--line:#d0d7de;--bg:#fff;--head:#f6f8fa;--link:#0969da}
 @media (prefers-color-scheme: dark){:root{--fg:#e6edf3;--muted:#9da7b3;--line:#30363d;--bg:#0d1117;--head:#161b22;--link:#4493f8}}
-body{font:16px/1.5 system-ui,sans-serif;color:var(--fg);background:var(--bg);margin:0 auto;max-width:72rem;padding:1rem 16px}
+body{font:16px/1.5 system-ui,sans-serif;color:var(--fg);background:var(--bg);margin:0}
+main.export{box-sizing:border-box;max-width:72rem;margin:0 auto;padding:1rem 32px}@media (max-width:700px){main.export{padding:1rem 16px}}
 a{color:var(--link)}.muted{color:var(--muted);font-size:.9em}.num{text-align:right;white-space:nowrap}.nowrap{white-space:nowrap}
 .wrap{overflow-x:auto}table{border-collapse:collapse;width:100%}th,td{border:1px solid var(--line);padding:.5rem;vertical-align:top;text-align:left}
 th{background:var(--head)}
 @media (max-width:700px){thead{display:none}table,tbody,tr,td{display:block;width:auto}tr{border:1px solid var(--line);margin:0 0 1rem}td{border:0;border-top:1px solid var(--line)}td:first-child{border-top:0}td::before{content:attr(data-label);display:block;font-weight:600;color:var(--muted);font-size:.8em}.num{text-align:left}}ol,ul{margin:0;padding-left:1.2rem}code{font-size:.9em}.sha{font-family:ui-monospace,monospace;font-size:.8em}
-</style></head><body>
-<h1>Export</h1>
+</style></head><body><main class="export">
+<h1 id="export">Export</h1>
 <p><b>${esc(m.title)}</b> (<code>${esc(m.document)}</code>), ${plural(m.blocks, "block")}, exported ${esc(m.date)} from commit <code>${esc(short)}</code>${m.release ? `, release <b>${esc(m.release)}</b>` : ""}.</p>
 <p>Each file below can be downloaded in two ways. <b>Latest</b> is a stable link that always gives the newest export — use it to bookmark or share. <b>This export</b> is the file from this commit only; cite it when a comment must point at an exact page and line.</p>
 <div class="wrap"><table>
@@ -172,13 +184,13 @@ th{background:var(--head)}
 <tbody>
 ${rows}
 </tbody></table></div>
-<h2>Details</h2>
+<h2 id="details">Details</h2>
 <ul>
 <li>Machine-readable list of these files: <a href="${esc(latest.manifest)}">${esc(latest.manifest)}</a> (<code>document-export/v1</code>).</li>
 <li>Every file carries the custom properties <code>folio-source-commit</code>, <code>folio-document</code> and <code>folio-export-date</code>, so an edited copy can be merged back.</li>
 <li>Tools: <ul>${tools}</ul></li>
 </ul>
-</body></html>
+</main></body></html>
 `;
 }
 
@@ -307,11 +319,13 @@ export async function exportDocument(o: ExportOptions): Promise<ExportManifest> 
     writeFileSync(md, images.markdown, "utf-8");
     const short = commit.slice(0, 7) + (dirty ? "-dirty" : "");
     const latest = latestNames(o.document);
+    const referenceSha = createHash("sha256").update(readFileSync(REFERENCE_DOCX)).digest("hex");
     // What every file went through, and the settings every file shares — the Export page lists both.
     const common = [
       "assembled from folio/" + o.document + " (one Markdown, as document_render_md writes it)",
       ...(images.converted ? [`${images.converted} SVG figure(s) rasterised to PNG at 2×`] : []),
       "pandoc with document-export.lua: one Word bookmark per chapter, section and block",
+      `styled from document-export-reference.docx (sha256 ${referenceSha.slice(0, 12)}…: Cambria body, Calibri headings)`,
     ];
     const params: Record<string, string> = {
       document: o.document,
@@ -340,6 +354,7 @@ export async function exportDocument(o: ExportOptions): Promise<ExportManifest> 
       "--from", "gfm-gfm_auto_identifiers+raw_html",
       "--shift-heading-level-by=-1",
       "--lua-filter", LUA_FILTER,
+      "--reference-doc", REFERENCE_DOCX,
       `--resource-path=${work}:${join(repo, "folio", o.document)}:${repo}`,
       ...meta(subtitle),
     ], { cwd: repo, env });
