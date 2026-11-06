@@ -35,8 +35,8 @@ describe("QA report", () => {
   test("each criterion shows its MOST RECENT verdict, whether a writer appended or prepended it", () => {
     expect(latestEntryIndex([{ reviewed_at: "2026-01-01" }, { reviewed_at: "2026-02-01" }])).toBe(1);
     expect(latestEntryIndex([{ reviewed_at: "2026-03-01" }, { reviewed_at: "2026-02-01" }])).toBe(0);
-    // No dates: the later position supersedes.
-    expect(latestEntryIndex([{}, {}])).toBe(1);
+    // A tie keeps position: list[0] is the effective verdict.
+    expect(latestEntryIndex([{}, {}])).toBe(0);
     // Derived on read (owner rulings 2026-11-06, "QA dates" / "Date source"):
     // an entry that records no date is dated by its reviewed tree's commit.
     const T = (c: string) => c.repeat(40);

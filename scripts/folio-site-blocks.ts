@@ -141,9 +141,11 @@ function treeDatesFor(repoRoot: string): Readonly<Record<string, string>> {
 
 /**
  * Index of the most recent entry by its date (`entryDate`: the reviewed tree's
- * commit date from `treeDates`, else a legacy `reviewed_at`); on a tie or a
- * missing date, the later position (an appended review supersedes the one
- * before it).
+ * commit date from `treeDates`, else a legacy `reviewed_at`). On a tie or a
+ * missing date, the EARLIER position: order is the verdict (`list[0]` is a
+ * criterion's effective result in the platform's `qa-witness.ts`, and a new
+ * adjudication is inserted at the front). Verdicts on one tree share its date,
+ * so the tie is the common case once writers stamp no clock.
  */
 export function latestEntryIndex(
   entries: readonly { reviewed_at?: string; reviewed_tree?: string }[],
@@ -153,7 +155,7 @@ export function latestEntryIndex(
   let bestAt = "";
   entries.forEach((e, i) => {
     const at = entryDate(e, treeDates) ?? "";
-    if (best < 0 || at >= bestAt) {
+    if (best < 0 || at > bestAt) {
       best = i;
       bestAt = at;
     }
