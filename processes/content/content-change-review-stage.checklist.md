@@ -18,13 +18,13 @@ Putting one push of a content change where a person can look at it: build the st
 - Skill: `feature-staging`.
 - What: feature-staging.yml triggers: 1.
 - Record it: `workflow_complete` with `node: "Task_BuildStaging"`.
-- next: → `Task_DeployStaging` (Deploy to STAGING/<slug>/)
+- next: → `Task_DeployStaging` (Deploy to branches/<slug>/)
 
-### 2. Deploy to STAGING/<slug>/ (`Task_DeployStaging`)
+### 2. Deploy to branches/<slug>/ (`Task_DeployStaging`)
 
 - Who: the `CI/CD Pipeline` lane (role `build-pipeline`).
 - Skill: `feature-staging`.
-- What: The stage job copies the built site into gh-pages under STAGING/<branch-slug>/, then `staging-share.ts apply` keeps only the files that differ from the live site.
+- What: The stage job copies the built site into gh-pages under branches/<branch-slug>/, then `staging-share.ts apply` keeps only the files that differ from the live site.
 - Record it: `workflow_complete` with `node: "Task_DeployStaging"`.
 - next: → `Task_CommentPR` (Comment staging URL on PR)
 

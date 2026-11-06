@@ -9,7 +9,7 @@
     {
       "id": "bootstrap-graph-emission",
       "prefLabel": "bootstrap-graph-emission",
-      "definition": "What bootstrap's own Knowledge Graph must be when it is written out as a data file, `.jsonld` with a `.json` copy. bootstrap renders no pages for a person to browse, so this file is how it shows it is a Knowledge Graph at all.",
+      "definition": "What bootstrap's own Knowledge Graph must be when it is written out as a data file, `.jsonld` with a `.json` copy.",
       "notation": "bootstrap-graph-emission",
       "source": "bootstrap/skills/bootstrap-graph-emission.md",
       "status": "candidate"
@@ -25,7 +25,7 @@
     {
       "id": "bootstrap-kg-navigation",
       "prefLabel": "bootstrap-kg-navigation",
-      "definition": "Read and navigate a knowledge graph with nothing installed — no MCP server, no tools, no harness. The first skill bootstrap hands you, because the second step of the handoff cannot be followed without it. Named `bootstrap-` so it cannot be confused with a navigation Skill of a Harness that is installed.",
+      "definition": "Read and navigate a knowledge graph with nothing installed — no MCP server, no tools, no harness. Named `bootstrap-` so it cannot be confused with a navigation Skill of a Harness that is installed.",
       "notation": "bootstrap-kg-navigation",
       "source": "bootstrap/skills/bootstrap-kg-navigation.md",
       "status": "candidate"
@@ -41,6 +41,7 @@
     {
       "id": "discussion",
       "prefLabel": "discussion",
+      "definition": "Settle which harness, and which repositories, when no file says: the output is a document conforming to `discussion.output.schema.json`.",
       "notation": "discussion",
       "source": "bootstrap/skills/discussion.md",
       "status": "candidate"
@@ -48,7 +49,7 @@
     {
       "id": "human-agent-discussion",
       "prefLabel": "human-agent-discussion",
-      "definition": "Ask a person (or a sibling agent) for what no file holds. First determine where you are — the context, the Role you act as and theirs, the Process and task (or that you are idle) — and ask about whichever you cannot determine before anything else. Then context, the options, a recommendation and what happens with no answer, then ONE question. The reusable discussion every bootstrap diagram calls when it needs a person; it records the answer, an applied default, or what is still open, and never a guess.",
+      "definition": "Ask a person (or a sibling agent) for what no file holds. First determine where you are — the context, the Role you act as and theirs, the Process and task (or that you are idle) — and ask about whichever you cannot determine before anything else. Then context, the options, a recommendation and what happens with no answer, then ONE question.",
       "notation": "human-agent-discussion",
       "source": "bootstrap/skills/human-agent-discussion.md",
       "status": "candidate"

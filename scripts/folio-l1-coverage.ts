@@ -52,6 +52,8 @@
  */
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join, relative } from "node:path";
+
+import { folioDir as declaredFolioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { readStructure, STRUCTURE_FILENAME } from "@litlfred/cat-harness-tools/schemas/content/document-structure.js";
 import { coverage, exitCodeFor, normalise, sentencesOf, type Captured, type Exclusion, type Page } from "./l1-coverage.ts";
 
@@ -265,7 +267,7 @@ if (import.meta.main) {
     console.error("usage: folio-l1-coverage.ts --document <name> --l1 <dir> [--folio <dir>] [--exclusions <file>] [--quotes <file>] [--glossary <dir>] [--out <file>] [--check]");
     process.exit(2);
   }
-  const folioDir = at("--folio") ?? join("folio", doc);
+  const folioDir = at("--folio") ?? join(relative(process.cwd(), declaredFolioDir(process.cwd())), doc);
   const exFile = at("--exclusions") ?? join(folioDir, "l1-coverage.exclusions.json");
   const outFile = at("--out") ?? join(folioDir, "l1-coverage.json");
   const quFile = at("--quotes") ?? join(folioDir, "l1-coverage.quotes.json");

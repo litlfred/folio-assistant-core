@@ -18,6 +18,8 @@
  */
 import { join, resolve } from "node:path";
 
+import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+
 export interface OutlineSection { title: string; label?: string }
 export interface OutlineChapter { dir: string; title: string; label?: string; sections: OutlineSection[] }
 export interface BackMatterFinding { code: "glossary-before-main" | "acronyms-own-chapter" | "acronyms-outside-glossary"; chapter: string; message: string }
@@ -57,9 +59,9 @@ export function backMatterFindings(chapters: OutlineChapter[]): BackMatterFindin
   return out;
 }
 
-/** The outline of `repo/folio/<document>/`, read from its manifests. */
+/** The outline of `<folio dir>/<document>/`, read from its manifests; the folio directory is the one the repo declares. */
 export async function loadOutline(repo: string, document: string): Promise<OutlineChapter[]> {
-  const folio = join(repo, "folio", document);
+  const folio = join(folioDir(repo), document);
   const paper = (await import(join(folio, `${document}.ts`))).default as { chapters: Array<{ dir: string }> };
   const out: OutlineChapter[] = [];
   for (const { dir } of paper.chapters) {

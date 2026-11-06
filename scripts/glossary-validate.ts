@@ -39,7 +39,9 @@
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
+import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { GlossarySchema } from "../schemas/glossary.ts";
+import { archimateConfigPath } from "./glossary-archimate.ts";
 import { instanceNs } from "./glossary-page.ts";
 
 const MATCHES = ["exactMatch", "closeMatch", "broadMatch", "narrowMatch"] as const;
@@ -210,12 +212,22 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
   const models = new Map<string, Ids>();
   const unmountedModels = new Map<string, number>();
   const loadModels = async (root: string): Promise<Loaded[]> => {
-    const cfgPath = join(root, "archimate/cat-archimate.config.json");
-    if (!existsSync(cfgPath)) return [];
+    // The config and the directory it names, as the instance declares them,
+    // not a spelled `archimate/`.
+    const cfgPath = archimateConfigPath(root);
+    if (cfgPath === undefined) return [];
+    const { archimateDir } = await import("../../cat-harness-tools/archimate/scripts/check-archimate.ts");
+    const cfg = JSON.parse(readFileSync(cfgPath, "utf-8"));
+    let dir: string;
+    try {
+      dir = archimateDir(root, cfg);
+    } catch {
+      return [];
+    }
     const { readArchimate } = await import("../../cat-harness-tools/archimate/schemas/archimate.ts");
     const out: Loaded[] = [];
-    for (const cm of JSON.parse(readFileSync(cfgPath, "utf-8")).models ?? []) {
-      const p = join(root, "archimate", cm.file);
+    for (const cm of cfg.models ?? []) {
+      const p = join(dir, cm.file);
       if (!existsSync(p)) continue;
       const model = readArchimate(readFileSync(p));
       const items = { elements: model.elements, relationships: model.relationships, views: model.views } as Record<keyof Ids, Item[]>;
@@ -292,7 +304,7 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
   let glosLinks = 0;
   let archLinks = 0;
   let unchecked = 0;
-  for (const file of walkTs(join(repo, "folio", instance))) {
+  for (const file of walkTs(join(folioDir(repo), instance))) {
     const src = readFileSync(file, "utf-8");
     // As keys: a chapter manifest's `dir: "glossary"` is not a link.
     if (!/"(archimate|glossary|glossaryTerms)"\s*:/.test(src)) continue;

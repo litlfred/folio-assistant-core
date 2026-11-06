@@ -71,7 +71,9 @@ bun run folio-assistant-core/scripts/document-export.ts release --document <slug
 | `<slug>-public-comment-<sha7>-<date>.pdf` | the frozen, line-numbered review draft |
 | `<slug>-public-comment-<sha7>-<date>.docx` | the same draft as Word, whose sha256 goes in the release references (`public-comment-channels`) |
 | `<slug>-offline-<sha7>.docx` | the editing copy: Track Changes on, one Word bookmark per chapter, section and block |
-| `<slug>-export-<sha7>.json` | `document-export/v1`: commit, date, tool versions, and each file's sha256, pages, lines and bookmarks |
+| `<slug>-export-<sha7>.json` | `document-export/v1`: commit, date, tool versions, and each file's format, filters, parameters, sha256, pages, lines and bookmarks |
+| `<slug>-…-latest.{pdf,docx,json}` | the same files under stable names, overwritten by every export, so a link to one always serves the newest |
+| `index.html` | the Export page: every file above with its format, the filters and parameters it was made with, size, date, and links to this export and to its latest copy |
 
 `pdf` or `docx` builds only that half. The **PDF is the .docx laid out by
 LibreOffice** (`soffice --headless`), not a print of the site. That way the
@@ -174,7 +176,7 @@ review, then take the release decision through the workflow —
 
 ### A public comment release is a full build
 
-A site build is a `preview` (a pull request's `STAGING/<slug>/`: only what the
+A site build is a `preview` (a pull request's `branches/<slug>/`: only what the
 change reaches, every whole-corpus index borrowed from main) or `full` (the
 main deploy, a public comment release, a release: every index rebuilt). See
 cat-harness skill `feature-staging`, section "Build types".

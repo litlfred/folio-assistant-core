@@ -2681,6 +2681,13 @@
       "status": "candidate"
     },
     {
+      "id": "cat-harness.catharnessdeclaration.enablesubgraphs",
+      "prefLabel": "CatHarnessDeclaration.enableSubgraphs",
+      "definition": "The opt-in sub-graphs this instance switches on FOR ITSELF, qualified `<instance>.<directory id>` — see the schema field and `schemas/kg/opt-in-subgraphs.ts`. Not inherited by the layers above.",
+      "source": "cat-harness-tools/schemas/kg/cat-harness.ts#CatHarnessDeclaration.enableSubgraphs",
+      "status": "candidate"
+    },
+    {
       "id": "cat-harness.catharnessdeclaration.gateexemptions",
       "prefLabel": "CatHarnessDeclaration.gateExemptions",
       "definition": "The CI steps and check scripts of THIS instance that the local gate set deliberately does not run, each with its reason — the rows `cat-harness-tools/scripts/gates.ts` holds as `STEP_EXEMPTIONS` and `SCRIPT_EXEMPTIONS` for the harness's own. Same contract: a reason is required, a step `match` is a substring of the workflow command, a script name is matched exactly. Declared by the owner so the harness need not name a layer above itself (bean `0r7u` step 0).",
@@ -2975,6 +2982,13 @@
       "status": "candidate"
     },
     {
+      "id": "cat-harness.contentdirectory.optin",
+      "prefLabel": "ContentDirectory.optIn",
+      "definition": "A named sub-graph that is OFF in every layer, its own included, unless that layer enables it. See the schema field and `opt-in-subgraphs.ts`.",
+      "source": "cat-harness-tools/schemas/kg/cat-harness.ts#ContentDirectory.optIn",
+      "status": "candidate"
+    },
+    {
       "id": "cat-harness.contentdirectory.readonly",
       "prefLabel": "ContentDirectory.readOnly",
       "definition": "This directory holds MATERIALIZED content: readable, and not editable here.",
@@ -3070,6 +3084,13 @@
       "prefLabel": "ContentDirectoryShape.kindRouteRedirect",
       "definition": "`/<kind>/<instance>/` for this directory is a ONE-FILE REDIRECT to the directory's declared viewer, because the directory itself is not mounted.",
       "source": "cat-harness-tools/schemas/kg/cat-harness.ts#ContentDirectoryShape.kindRouteRedirect",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.contentdirectoryshape.optin",
+      "prefLabel": "ContentDirectoryShape.optIn",
+      "definition": "A named sub-graph that is OFF in every layer — including the one that declares it — unless that layer enables it, by listing `<instance>.<id>` in its own `enableSubgraphs` (cat-harness#991 step 23.1; owner, 2026-11-03: `sdlc` and `work-plan` are off in every layer above cat-harness unless it enables them). Switched off, it and everything declared from within it are invisible to the resolved directories, the skill overlay, the served Tools and a mount's default list. `true` or absent: an entry that is on everywhere says nothing. See `schemas/kg/opt-in-subgraphs.ts`.",
+      "source": "cat-harness-tools/schemas/kg/cat-harness.ts#ContentDirectoryShape.optIn",
       "status": "candidate"
     },
     {
@@ -3577,6 +3598,13 @@
       "status": "candidate"
     },
     {
+      "id": "cat-harness.resolveddirectory.optinsubgraph",
+      "prefLabel": "ResolvedDirectory.optInSubgraph",
+      "definition": "The nearest opt-in sub-graph this entry is, or sits within, qualified `<instance>.<id>` (`opt-in-subgraphs.ts`). Absent for an entry outside every opt-in sub-graph — which, while nothing is opt-in, is every entry. Only entries of sub-graphs switched ON are ever resolved at all.",
+      "source": "cat-harness-tools/schemas/kg/cat-harness.ts#ResolvedDirectory.optInSubgraph",
+      "status": "candidate"
+    },
+    {
       "id": "cat-harness.resolveddirectory.own",
       "prefLabel": "ResolvedDirectory.own",
       "definition": "True when this entry is the ROOT instance's — its own declaration, or its own member of an inherited subgraph.",
@@ -3588,6 +3616,13 @@
       "prefLabel": "ResolvedDirectory.within",
       "definition": "The id of the directory that declared this one FROM WITHIN (bean `cmsl`, owner 2026-09-30): an entry of its kind's declaration file, e.g. `skills/skills.json` naming `voices/`. Absent for an instance-level entry. `check:layout-norms` reads it: nesting declared this way is the sanctioned shape, not a root declaration reaching down.",
       "source": "cat-harness-tools/schemas/kg/cat-harness.ts#ResolvedDirectory.within",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.resolveoptions.enabledsubgraphs",
+      "prefLabel": "ResolveOptions.enabledSubgraphs",
+      "definition": "The opt-in sub-graphs switched on. Absent: the chain ROOT's own `enableSubgraphs`, adjusted by `CAT_SUBGRAPHS` — the root is who the resolution is for. `\"all\"` for a reader enumerating what is declared.",
+      "source": "cat-harness-tools/schemas/kg/cat-harness.ts#ResolveOptions.enabledSubgraphs",
       "status": "candidate"
     },
     {
@@ -4722,6 +4757,13 @@
       "prefLabel": "DependsOnRecord.version",
       "definition": "Its exact `version`. Never a range, never a SHA (§3.3).",
       "source": "cat-harness-tools/schemas/kg/depends-on.ts#DependsOnRecord.version",
+      "status": "candidate"
+    },
+    {
+      "id": "deployment-description.deploymentdescription.stores",
+      "prefLabel": "DeploymentDescription.stores",
+      "definition": "The Tool that backs each store Role in this deployment, keyed by the Role's id: `{ \"work-plan\": \"beans-git-branch\" }` (owner, 2026-11-02, cat-harness#991 Q-BSD-2 A). A Role left out uses its default Tool.",
+      "source": "cat-harness-tools/schemas/process/deployment-description.ts#DeploymentDescription.stores",
       "status": "candidate"
     },
     {
@@ -6776,10 +6818,24 @@
       "status": "candidate"
     },
     {
+      "id": "gates-report.gatesreportschema.commands",
+      "prefLabel": "GatesReportSchema.commands",
+      "definition": "Every gate command in the set, in workflow order — what the run was asked to judge, so a record of it (`scripts/gate-record.ts`) names what it covers rather than only how many. Absent from reports written before it.",
+      "source": "cat-harness-tools/schemas/sdlc/gates-report.ts#GatesReportSchema.commands",
+      "status": "candidate"
+    },
+    {
       "id": "gates-report.gatesreportschema.gates",
       "prefLabel": "GatesReportSchema.gates",
       "definition": "How many gates the set holds, and how many declared writers ran after them.",
       "source": "cat-harness-tools/schemas/sdlc/gates-report.ts#GatesReportSchema.gates",
+      "status": "candidate"
+    },
+    {
+      "id": "gates-report.gatesreportschema.heldout",
+      "prefLabel": "GatesReportSchema.heldOut",
+      "definition": "Gates of the set this run was told not to run (`--except`), so a record of it never claims them. CI runs them. Absent when none was held out.",
+      "source": "cat-harness-tools/schemas/sdlc/gates-report.ts#GatesReportSchema.heldOut",
       "status": "candidate"
     },
     {
@@ -7198,7 +7254,7 @@
     {
       "id": "harness-config.folioassistantdependencyschema.ref",
       "prefLabel": "FolioAssistantDependencySchema.ref",
-      "definition": "HOW TO FETCH WHILE STAGING, and the provenance of the bytes — not what is depended on.",
+      "definition": "HOW TO FETCH WHILE branches/, and the provenance of the bytes — not what is depended on.",
       "source": "cat-harness-tools/schemas/kg/harness-config.ts#FolioAssistantDependencySchema.ref",
       "status": "candidate"
     },
@@ -7564,6 +7620,13 @@
       "prefLabel": "IndexConfigSchema.description",
       "definition": "One paragraph under that title, saying what the checkout is for.",
       "source": "cat-harness-tools/schemas/kg/index-config.ts#IndexConfigSchema.description",
+      "status": "candidate"
+    },
+    {
+      "id": "index-config.indexconfigschema.enablesubgraphs",
+      "prefLabel": "IndexConfigSchema.enableSubgraphs",
+      "definition": "The opt-in named sub-graphs switched on for THIS checkout, each `<instance>.<directory id>` (cat-harness#991 step 23.4). An index root declares no instance, so this is where it says what a layer's declaration says in its own `enableSubgraphs` (`schemas/kg/opt-in-subgraphs.ts`). Not inherited by any layer.",
+      "source": "cat-harness-tools/schemas/kg/index-config.ts#IndexConfigSchema.enableSubgraphs",
       "status": "candidate"
     },
     {
@@ -9093,10 +9156,24 @@
       "status": "candidate"
     },
     {
+      "id": "node-kind.nodekind.summary",
+      "prefLabel": "NodeKind.summary",
+      "definition": "One sentence saying what a node of this kind is: the glossary's definition.",
+      "source": "cat-harness-tools/schemas/kg/node-kind.ts#NodeKind.summary",
+      "status": "candidate"
+    },
+    {
       "id": "node-kind.nodekind.tag",
       "prefLabel": "NodeKind.tag",
       "definition": "`<id>/<version>`: what a writer stamps in `$schema`. Absent when unversioned.",
       "source": "cat-harness-tools/schemas/kg/node-kind.ts#NodeKind.tag",
+      "status": "candidate"
+    },
+    {
+      "id": "node-kind.nodekind.term",
+      "prefLabel": "NodeKind.term",
+      "definition": "What ONE node of this kind is called, in the words a reader meets: \"Work item\" for `bean`. The glossary's label for the kind; absent, the glossary reads the id (`memory-record-core` → \"Memory record core\"). Work item folio-assistant-dkqd: the id stays, the word a reader sees need not be it.",
+      "source": "cat-harness-tools/schemas/kg/node-kind.ts#NodeKind.term",
       "status": "candidate"
     },
     {
@@ -9342,6 +9419,34 @@
       "prefLabel": "OpenApiSourceSchema.repository",
       "definition": "`owner/repo` on GitHub.",
       "source": "cat-harness-tools/openapi/schemas/openapi.ts#OpenApiSourceSchema.repository",
+      "status": "candidate"
+    },
+    {
+      "id": "opt-in-subgraphs.declaredoptins.directories",
+      "prefLabel": "DeclaredOptIns.directories",
+      "definition": "Every directory the instance declares — top level and from within — with its `optIn`.",
+      "source": "cat-harness-tools/schemas/kg/opt-in-subgraphs.ts#DeclaredOptIns.directories",
+      "status": "candidate"
+    },
+    {
+      "id": "opt-in-subgraphs.optincarrier.declaredby",
+      "prefLabel": "OptInCarrier.declaredBy",
+      "definition": "The instance whose declaration (or declaration file from within) wrote the entry.",
+      "source": "cat-harness-tools/schemas/kg/opt-in-subgraphs.ts#OptInCarrier.declaredBy",
+      "status": "candidate"
+    },
+    {
+      "id": "opt-in-subgraphs.optincarrier.optinsubgraph",
+      "prefLabel": "OptInCarrier.optInSubgraph",
+      "definition": "Set by `resolveDirectories`: the nearest enclosing opt-in sub-graph, qualified.",
+      "source": "cat-harness-tools/schemas/kg/opt-in-subgraphs.ts#OptInCarrier.optInSubgraph",
+      "status": "candidate"
+    },
+    {
+      "id": "opt-in-subgraphs.optincarrier.within",
+      "prefLabel": "OptInCarrier.within",
+      "definition": "The id of the entry this one was declared from within.",
+      "source": "cat-harness-tools/schemas/kg/opt-in-subgraphs.ts#OptInCarrier.within",
       "status": "candidate"
     },
     {
@@ -10355,7 +10460,7 @@
     {
       "id": "ref-window.writerequestschema.route",
       "prefLabel": "WriteRequestSchema.route",
-      "definition": "The route this write owns — `/` for the published site, `STAGING/<slug>/` for a preview. Composition is per route: two different routes compose by union, two of the same route take the newer.",
+      "definition": "The route this write owns — `/` for the published site, `branches/<slug>/` for a preview. Composition is per route: two different routes compose by union, two of the same route take the newer.",
       "source": "cat-harness-tools/schemas/sdlc/ref-window.ts#WriteRequestSchema.route",
       "status": "candidate"
     },
@@ -10663,7 +10768,7 @@
     {
       "id": "render-log.rendersubjectschema.path",
       "prefLabel": "RenderSubjectSchema.path",
-      "definition": "The path on the publish branch — `STAGING/<slug>`, or `/` for the site.",
+      "definition": "The path on the publish branch — `branches/<slug>`, or `/` for the site.",
       "source": "cat-harness-tools/schemas/ui/render-log.ts#RenderSubjectSchema.path",
       "status": "candidate"
     },
@@ -12000,7 +12105,7 @@
     {
       "id": "staging-preview.stagingdeployfactsschema.slug",
       "prefLabel": "StagingDeployFactsSchema.slug",
-      "definition": "The `STAGING/<slug>` path segment. Derived, never reversed.",
+      "definition": "The `branches/<slug>` path segment. Derived, never reversed.",
       "source": "cat-harness-tools/schemas/sdlc/staging-preview.ts#StagingDeployFactsSchema.slug",
       "status": "candidate"
     },
