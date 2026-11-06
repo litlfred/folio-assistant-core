@@ -42,7 +42,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "e09d8154af9e12b070f5460635c87a66ea649f73",
+          "ref": "8205c6a49b3a0f04172f750da10e7cba2fa81b77",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -54,9 +54,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-02",
-              "ref": "e09d8154af9e12b070f5460635c87a66ea649f73",
-              "evidence": "Owner litlfred, 2026-11-01 (20:41Z, MVP thread cmsg_017WNUkNK8kdDziPK58Pv6G991qa3xg86ZCWdyH2spZ7FS): 'i want to get all functional stuff done, the full repin on harnesses done and stablized as MVP goal.' Re-pin to mains for cat-harness-tools#1299 (harness drain, card Q-HDR-3 A, 2026-11-02)."
+              "on": "2026-11-05",
+              "ref": "8205c6a49b3a0f04172f750da10e7cba2fa81b77",
+              "evidence": "litlfred, 2026-11-05, Claude Code session session_01VQDpPcbpLjEo8EuzFLVq5Z decision card 'Core re-pin': '1. Re-pin here (Recommended)' (re-pin cat-harness-tools in folio-assistant-core to current main, past cat-harness-tools#1529, so check:materialized-fixity can import scripts/lib/gate-own.ts; bean folio-assistant-70hd)."
             }
           }
         }
