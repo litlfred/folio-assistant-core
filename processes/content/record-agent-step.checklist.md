@@ -15,6 +15,7 @@ The one way an agent reports a move on a change set.
 ### 1. Write the change set's Agent row (`Task_WriteAgentRow`)
 
 - Who: the `Authoring agent` lane (role `authoring-agent`).
+- Skill: `review-sheet-agent-columns`.
 - What: On the Agent tab, the change set's row: Agentic status (Not started, Working, PR open, Ready for review, Change merged or Needs human); Pull request; Staging review page; Staging built, PR head, Staging built from and Staging deploy from `agent-record.ts push`; and Agent step from `agent-record.ts s
 - Record it: `workflow_complete` with `node: "Task_WriteAgentRow"`.
 - next: → `Task_WriteFeedback` (Write Feedback (agent) from that row)
@@ -22,6 +23,7 @@ The one way an agent reports a move on a change set.
 ### 2. Write Feedback (agent) from that row (`Task_WriteFeedback`)
 
 - Who: the `Authoring agent` lane (role `authoring-agent`).
+- Skill: `review-sheet-script`.
 - What: Feedback (agent) in the fixed layout (the ask first, then Status: and Next:), linking the same pull request and preview the Agent row now names.
 - Record it: `workflow_complete` with `node: "Task_WriteFeedback"`.
 - next: → `Task_ReadBack` (Read back Agentic status and Staging review)
@@ -29,6 +31,7 @@ The one way an agent reports a move on a change set.
 ### 3. Read back Agentic status and Staging review (`Task_ReadBack`)
 
 - Who: the `Authoring agent` lane (role `authoring-agent`).
+- Skill: `review-log-watch`.
 - What: After the script's next run, read the row's Agentic status, Agentic status (filter) and Staging review.
 - Record it: `workflow_complete` with `node: "Task_ReadBack"`.
 - next: → `Gateway_Agrees` (Sheet agrees with Feedback (agent)?)
