@@ -14,7 +14,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "5e07b091c84dc75a0a2bf671a775590fe6d756f2",
+          "ref": "43d76484684cbc5b6dfe9b460f116b3fb79c301d",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -29,9 +29,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-04",
-              "ref": "5e07b091c84dc75a0a2bf671a775590fe6d756f2",
-              "evidence": "litlfred, 2026-11-04, Claude Code session session_01EucfRpQZx7mVyrxsxxbSCF decision card: '1. Yes, re-pin (Rec.)' (re-pin cat-harness in folio-assistant-core to current main, past the sdlc/work-plan folder move of cat-harness#1014, so core's links to the moved skills resolve; cat-harness#991 step 23.4)."
+              "on": "2026-11-06",
+              "ref": "43d76484684cbc5b6dfe9b460f116b3fb79c301d",
+              "evidence": "litlfred, 2026-11-06, Claude Code session session_01VQDpPeA2N8L3orQCPPMAas: 'align pins' (re-pin every layer bottom-up to the current mains of the layers below it, after cat-harness#1097 aligned cat-harness's own pins; bean cat-tools-sm8r)."
             }
           }
         }
@@ -42,7 +42,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "8205c6a49b3a0f04172f750da10e7cba2fa81b77",
+          "ref": "7e6976d3ecf5b42f9c11a6010958103e99e74cff",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -54,9 +54,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-05",
-              "ref": "8205c6a49b3a0f04172f750da10e7cba2fa81b77",
-              "evidence": "litlfred, 2026-11-05, Claude Code session session_01VQDpPcbpLjEo8EuzFLVq5Z decision card 'Core re-pin': '1. Re-pin here (Recommended)' (re-pin cat-harness-tools in folio-assistant-core to current main, past cat-harness-tools#1529, so check:materialized-fixity can import scripts/lib/gate-own.ts; bean folio-assistant-70hd)."
+              "on": "2026-11-06",
+              "ref": "7e6976d3ecf5b42f9c11a6010958103e99e74cff",
+              "evidence": "litlfred, 2026-11-06, Claude Code session session_01VQDpPeA2N8L3orQCPPMAas: 'align pins' (re-pin every layer bottom-up to the current mains of the layers below it, after cat-harness#1097 aligned cat-harness's own pins; bean cat-tools-sm8r)."
             }
           }
         }
@@ -67,7 +67,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/bootstrap",
-          "ref": "c90ef456067a874fd7017a370232908ba62e9fcd",
+          "ref": "12fa6d57dfad06ae73e234f116145dfc8d77ad50",
           "overrides": {
             "bootstrap": {
               "whole": true
@@ -76,9 +76,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-02",
-              "ref": "c90ef456067a874fd7017a370232908ba62e9fcd",
-              "evidence": "Owner litlfred, 2026-11-01 (20:41Z, MVP thread cmsg_017WNUkNK8kdDziPK58Pv6G991qa3xg86ZCWdyH2spZ7FS): 'i want to get all functional stuff done, the full repin on harnesses done and stablized as MVP goal.' Re-pin to mains for cat-harness-tools#1299 (harness drain, card Q-HDR-3 A, 2026-11-02)."
+              "on": "2026-11-06",
+              "ref": "12fa6d57dfad06ae73e234f116145dfc8d77ad50",
+              "evidence": "litlfred, 2026-11-06, Claude Code session session_01VQDpPeA2N8L3orQCPPMAas: 'align pins' (re-pin every layer bottom-up to the current mains of the layers below it, after cat-harness#1097 aligned cat-harness's own pins; bean cat-tools-sm8r)."
             }
           }
         }
@@ -89,7 +89,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/bootstrap-tools",
-          "ref": "076173fe036f16300e8e2767dd35ab81411b46ab",
+          "ref": "9f478d4d9fcd87842e9a4f5b886232ec806e657e",
           "overrides": {
             "bootstrap-tools": {
               "whole": true
@@ -101,9 +101,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-02",
-              "ref": "076173fe036f16300e8e2767dd35ab81411b46ab",
-              "evidence": "Owner litlfred, 2026-11-01 (20:41Z, MVP thread cmsg_017WNUkNK8kdDziPK58Pv6G991qa3xg86ZCWdyH2spZ7FS): 'i want to get all functional stuff done, the full repin on harnesses done and stablized as MVP goal.' Re-pin to mains for cat-harness-tools#1299 (harness drain, card Q-HDR-3 A, 2026-11-02)."
+              "on": "2026-11-06",
+              "ref": "9f478d4d9fcd87842e9a4f5b886232ec806e657e",
+              "evidence": "litlfred, 2026-11-06, Claude Code session session_01VQDpPeA2N8L3orQCPPMAas: 'align pins' (re-pin every layer bottom-up to the current mains of the layers below it, after cat-harness#1097 aligned cat-harness's own pins; bean cat-tools-sm8r)."
             }
           }
         }
