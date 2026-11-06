@@ -60,4 +60,7 @@ test("the Export page lists every file with its details and both links", () => {
   // the title is escaped, not injected
   expect(html).toContain("&lt;HRH&gt;");
   expect(html).not.toContain("<HRH>");
+  // the content sits in its own padded <main>, so a site's rail and body styles leave it a gutter
+  expect(html).toContain('<main class="export">');
+  expect(html).toContain('<h2 id="details">');
 });
