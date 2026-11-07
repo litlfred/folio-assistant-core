@@ -14,7 +14,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "1bbce613283406c8667094114d83e0105fba993c",
+          "ref": "3cd95b95d834707e28ea6b289efaa8a3cd5d553a",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -30,8 +30,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-07",
-              "ref": "1bbce613283406c8667094114d83e0105fba993c",
-              "evidence": "owner litlfred, 2026-11-07, card 'Stack pins' option 1 in session_01VQDpPg681u1Pt3MCpbmx8J: record consent on the stacked pins; cat-harness#1032 head (contains core main's b606cb7) after core main moved to 204b906; merge manager merges bottom-up"
+              "ref": "3cd95b95d834707e28ea6b289efaa8a3cd5d553a",
+              "evidence": "owner litlfred, 2026-11-07, card 'Stack pins' option 1 in session_01VQDpPg681u1Pt3MCpbmx8J: record consent on the stacked pins; cat-harness#1032 head 3cd95b9 (contains cat-harness main f538f18, which folio-assistant#2985 pins); merge manager merges bottom-up"
             }
           }
         }

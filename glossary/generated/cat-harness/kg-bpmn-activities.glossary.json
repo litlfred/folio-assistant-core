@@ -4360,7 +4360,7 @@
       "prefLabel": "Check glossary terms (translation:glossary:check)",
       "definition": "After translating: run `translation:glossary:check --instance <dir> --locale <locale>`, fix the violations, and include its glossary section in the KG QA report. A term translated against the term base is a terminology miss, so it takes the drift branch to the adjudicator.",
       "notation": "Task_GlossaryCheck",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_GlossaryCheck",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_GlossaryCheck",
       "status": "candidate"
     },
     {
@@ -4408,7 +4408,7 @@
       "prefLabel": "Build and review the locale term base",
       "definition": "Before translating: build the locale term base from the layered glossaries, review it, and translate with it. Precedence, within one subject area (the scheme's `subject`): the more authoritative (lower) layer fixes a term's translation; an instance layer only adds. A match in another subject area is a sense check, not a violation. Each layer's glossary is the directory it declares with the `glossary` graph typology. A fixed translation is an authored term with a non-empty, non-fuzzy msgstr in its scheme's catalogue.",
       "notation": "Task_TermBase",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_TermBase",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_TermBase",
       "status": "candidate"
     },
     {
