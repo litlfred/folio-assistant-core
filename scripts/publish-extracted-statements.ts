@@ -170,9 +170,13 @@ export interface RenderOptions {
   tableAttr?: string;
 }
 
-/** A table cell: one line, its pipes escaped. */
-function cell(text: string): string {
-  return text.replace(/\s*\n\s*/g, " ").replace(/\|/g, "\\|").trim();
+/**
+ * A table cell: one line, with its backslashes escaped BEFORE its pipes, so a
+ * statement ending in `\` cannot turn the escape of the next pipe into a
+ * literal backslash and break the row.
+ */
+export function cell(text: string): string {
+  return text.replace(/\s*\n\s*/g, " ").replace(/\\/g, "\\\\").replace(/\|/g, "\\|").trim();
 }
 
 function trimSlash(s: string): string {

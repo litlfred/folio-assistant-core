@@ -4,7 +4,7 @@ import type { BaseSection } from "@litlfred/cat-harness-tools/schemas/content/do
 import { mkdtempSync, readFileSync, writeFileSync, existsSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { locatorLabel, publishPage, renderPage, resolveSource, sectionForPage } from "./publish-extracted-statements.ts";
+import { cell, locatorLabel, publishPage, renderPage, resolveSource, sectionForPage } from "./publish-extracted-statements.ts";
 import { EXTRACTED_STATEMENTS_SCHEMA_ID, ExtractedStatementsSchema } from "../schemas/extracted-statement.ts";
 
 const REPO = resolve(import.meta.dir, "../..");
@@ -36,6 +36,14 @@ describe("the section a page falls in", () => {
 
   it("is none before the first section", () => {
     expect(sectionForPage([paged("x", "X", 4, 5)], 2)).toBeUndefined();
+  });
+});
+
+describe("a table cell", () => {
+  it("escapes backslashes before pipes, so a trailing backslash cannot unescape a pipe", () => {
+    expect(cell("a\\|b")).toBe("a\\\\\\|b");
+    expect(cell("x | y")).toBe("x \\| y");
+    expect(cell("one\n  two")).toBe("one two");
   });
 });
 
