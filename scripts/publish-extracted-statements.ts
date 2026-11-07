@@ -37,7 +37,9 @@
  * source share boundary pages, so "contains the page" is ambiguous and
  * "starts at or before" is not. When several sections start on that same page
  * (a one-page poster, cut into many short sections), none of them is the
- * section, and the label names only the page.
+ * section, and the label names only the page. The front matter the PDF rung
+ * synthesises (`sec-front-matter`) is never the section while an authored one
+ * starts at or before the page.
  */
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { dirname, relative, resolve } from "node:path";
@@ -67,7 +69,22 @@ export function unitOf(structure: BaseStructure): { one: string; many: string } 
  * The section a page falls in: the one that starts latest at or before it,
  * or none when several start on that page. Only paged sources have pages.
  */
+/**
+ * The section `pdf-structure.py` synthesises for the pages before the first
+ * real one. It is not a section the author wrote, so a statement is placed in
+ * it only when no authored section starts at or before its page.
+ */
+export const FRONT_MATTER_SECTION_ID = "sec-front-matter";
+
 export function sectionForPage(sections: BaseSection[], page: number): BaseSection | undefined {
+  const authored = sections.filter((s) => s.id !== FRONT_MATTER_SECTION_ID);
+  const hit = startsLatestAtOrBefore(authored, page);
+  if (hit !== null) return hit;
+  return startsLatestAtOrBefore(sections.filter((s) => s.id === FRONT_MATTER_SECTION_ID), page) ?? undefined;
+}
+
+/** `null` when no section starts at or before the page; `undefined` when several tie. */
+function startsLatestAtOrBefore(sections: BaseSection[], page: number): BaseSection | undefined | null {
   let bestStart = -Infinity;
   let best: BaseSection[] = [];
   for (const s of sections) {
@@ -81,6 +98,7 @@ export function sectionForPage(sections: BaseSection[], page: number): BaseSecti
       best.push(s);
     }
   }
+  if (best.length === 0) return null;
   return best.length === 1 ? best[0] : undefined;
 }
 

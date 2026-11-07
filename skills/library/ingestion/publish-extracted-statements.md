@@ -97,7 +97,9 @@ each statement's `id`, its text verbatim, its `kind` and `status` as the
 extraction records them, and its `source`, a library reference with either a
 `sectionId` or the `page` (or slide) it was read from. With only a page, the
 section is the one that starts latest at or before it. When several sections
-start on that page (a one-page poster), the label names only the page.
+start on that page (a one-page poster), the label names only the page. The front
+matter the PDF rung synthesises (`sec-front-matter`) is used only when no
+authored section starts at or before the page.
 
 **A collector writes the list, and the collector is not core's.** A folio's
 extraction has its own format (a guideline's recommendation rows, a DAK

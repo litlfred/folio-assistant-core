@@ -28,6 +28,12 @@ describe("the section a page falls in", () => {
     expect(sectionForPage(poster, 1)).toBeUndefined();
   });
 
+  it("skips the rung's synthesised front matter while an authored section applies", () => {
+    const withFront = [paged("sec-front-matter", "Front matter", 1, 2), paged("s1", "Schedule", 1, 3)];
+    expect(sectionForPage(withFront, 1)?.id).toBe("s1");
+    expect(sectionForPage([paged("sec-front-matter", "Front matter", 1, 2), paged("s1", "Schedule", 3, 4)], 2)?.id).toBe("sec-front-matter");
+  });
+
   it("is none before the first section", () => {
     expect(sectionForPage([paged("x", "X", 4, 5)], 2)).toBeUndefined();
   });
