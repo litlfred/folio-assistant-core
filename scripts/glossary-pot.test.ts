@@ -42,16 +42,16 @@ describe("glossary .pot: authored terms only", () => {
     [...tpl.entries()].filter(([name]) => name !== LOCALE_PAGE_TEMPLATE).flatMap(([, es]) => es.map((e) => e.msgid)),
   );
 
-  it("has a floor: at least the 7 core terms, each with a label and a definition", () => {
+  it("floorOfCoreTerms", () => {
     expect(authored.length).toBeGreaterThanOrEqual(7);
     expect(got.size).toBeGreaterThanOrEqual(14);
   });
 
-  it("holds exactly the authored terms' labels and definitions", () => {
+  it("exactlyAuthoredText", () => {
     expect([...got].sort()).toEqual([...expected].sort());
   });
 
-  it("holds no candidate text, and no extracted scheme has a template", () => {
+  it("noCandidateText", () => {
     for (const s of c.glossaries.filter((s) => s.extracted)) expect(tpl.has(templateName(s))).toBe(false);
     const candidateOnly = c.glossaries
       .flatMap((s) => s.glossary.terms.filter((t) => t.status !== "authored"))
@@ -62,13 +62,13 @@ describe("glossary .pot: authored terms only", () => {
     for (const m of candidateOnly) expect(got.has(m)).toBe(false);
   });
 
-  it("every term IRI is the translator comment, and is unique", () => {
+  it("termIriIsComment", () => {
     const iris = [...tpl.values()].flat().filter((e) => e.comment?.startsWith("Glossary term label:")).map((e) => e.comment!);
     expect(iris.length).toBe(authored.length);
     expect(new Set(iris).size).toBe(iris.length);
   });
 
-  it("the committed templates in every locale carry that set", () => {
+  it("everyLocaleCarriesSet", () => {
     for (const loc of ["ar", "es", "fr", "ru", "zh"]) {
       for (const [name, entries] of tpl) {
         const p = potPath(catalogueDir(name).dir, loc, name);
@@ -80,7 +80,7 @@ describe("glossary .pot: authored terms only", () => {
 });
 
 describe("the locale page's chrome template (bean c592)", () => {
-  it("holds exactly the page's own strings, as ui-strings, and no term text", () => {
+  it("localePageChromeTemplate", () => {
     const page = tpl.get(LOCALE_PAGE_TEMPLATE) ?? [];
     expect(page.map((e) => e.msgid).sort()).toEqual(Object.values(LOCALE_PAGE_STRINGS).sort());
     expect(page.every((e) => e.kind === "ui-string")).toBe(true);
@@ -99,7 +99,7 @@ describe("potEntries on a mixed scheme", () => {
     ],
   });
   const s: GlossarySource = { instance: "x", ns: "https://example.org/x/ns#", file: "none.glossary.json", glossary: g };
-  it("extracts the authored term's source-language label, alt label and definition, and nothing else", () => {
+  it("mixedSchemeAuthoredOnly", () => {
     expect(potEntries(s).map((e) => e.msgid).sort()).toEqual(["The first.", "alpha", "first"]);
   });
 });
@@ -108,11 +108,11 @@ describe("the check is blind to where a layer sits in the checkout (owner card Q
   const at = (ref: string, msgid = "Trust domain") =>
     `msgid ""\nmsgstr ""\n"POT-Creation-Date: 2026-11-01T09:14:41.045Z\\n"\n\n#. Glossary term label\n#: ${ref}:83\nmsgid "${msgid}"\nmsgstr ""\n`;
 
-  it("the same template, checked out under a different path, is current", () => {
+  it("checkBlindToPath", () => {
     expect(potForCheck(at("glossary/gdhcn.glossary.json"))).toBe(potForCheck(at("smart-trust/glossary/gdhcn.glossary.json")));
   });
 
-  it("a changed msgid is still out of date", () => {
+  it("changedMsgidOutOfDate", () => {
     expect(potForCheck(at("glossary/g.json", "Trust domain"))).not.toBe(potForCheck(at("glossary/g.json", "Trust network")));
   });
 });

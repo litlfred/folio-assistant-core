@@ -86,7 +86,7 @@ const quads = async (d: object): Promise<Quad[]> =>
   (await jsonld.toRDF(d as never, { documentLoader: loader } as never)) as unknown as Quad[];
 
 describe("automatedMatches — the record, resolved to links or left out", () => {
-  test("exactConcepts become exactMatch; every other matched concept is closeMatch", () => {
+  test("exactAndCloseMatches", () => {
     const got = bySource.get(sourceKey(tools))!;
     expect(got.find((m) => m.term === "policy")).toEqual({ term: "policy", exactMatch: [ODRL], closeMatch: [] });
     // merged across targets: skos gave the in-repo concept, fhir the code
@@ -97,12 +97,12 @@ describe("automatedMatches — the record, resolved to links or left out", () =>
     });
   });
 
-  test("an in-repo id two instances hold is NOT published, and is reported", () => {
+  test("twoInstanceIdNotPublished", () => {
     expect(bySource.get(sourceKey(tools))!.some((m) => m.term === "participant")).toBe(false);
     expect(unresolved.some((u) => u.includes("platform:actor") && u.includes("2 authored terms"))).toBe(true);
   });
 
-  test("the same scheme and term id in another instance is another key: the row goes to its own instance only (bean q3n9)", () => {
+  test("otherInstanceOwnKey", () => {
     const other = source("b", NS_B, glossary("kg-tools", [{ id: "policy", prefLabel: "Policy", status: "candidate" }]));
     const r = automatedMatches(states, [...sources, other]);
     expect(r.bySource.get(sourceKey(tools))!.some((m) => m.term === "policy")).toBe(true);
@@ -110,14 +110,14 @@ describe("automatedMatches — the record, resolved to links or left out", () =>
     expect(r.unresolved.some((u) => u.includes("candidate entries"))).toBe(false);
   });
 
-  test("a candidate key two schemes of ONE instance share cannot be placed, so it is reported, never published twice", () => {
+  test("sharedCandidateKeyReported", () => {
     const twin = { ...source("a", NS_A, glossary("kg-tools", [{ id: "policy", prefLabel: "Policy", status: "candidate" }])), file: "twin.json" };
     const r = automatedMatches(states, [...sources, twin]);
     expect([...r.bySource.values()].flat().some((m) => m.term === "policy")).toBe(false);
     expect(r.unresolved.some((u) => u.includes("`policy`") && u.includes("2 candidate entries"))).toBe(true);
   });
 
-  test("no committed result publishes nothing", () => {
+  test("noResultPublishesNothing", () => {
     expect(automatedMatches(undefined, sources).bySource.size).toBe(0);
   });
 });
@@ -141,7 +141,7 @@ describe("the emitted SKOS, read through jsonld.js", () => {
     return { "@context": context, _generated: "generated — do not hand-edit", ...rest };
   };
 
-  test("the PROV context adds no warning beyond the `_generated` drop today's files already have", async () => {
+  test("provAddsNoWarning", async () => {
     // `_generated` is an unmapped key, dropped by design (see `outputs()`),
     // and jsonld.js reports the drop as "invalid property" under the plain
     // context today. The PROV context must not add anything to that.
@@ -150,7 +150,7 @@ describe("the emitted SKOS, read through jsonld.js", () => {
     expect(after.events).toEqual(before.events);
   });
 
-  test("it expands with no warning, and no match is a literal", async () => {
+  test("expandsWithoutWarning", async () => {
     const { ex, events } = await eventsOf(doc);
     expect(events).toEqual([]);
     const text = JSON.stringify(ex);
@@ -165,7 +165,7 @@ describe("the emitted SKOS, read through jsonld.js", () => {
     }
   });
 
-  test("exactMatch and closeMatch are IRIs in the automated named graph, and none is in the default graph", async () => {
+  test("matchesInNamedGraph", async () => {
     const q = await quads(doc);
     const matches = q.filter((x) => x.predicate.value === `${SKOS}exactMatch` || x.predicate.value === `${SKOS}closeMatch`);
     expect(matches.length).toBe(3);
@@ -180,7 +180,7 @@ describe("the emitted SKOS, read through jsonld.js", () => {
     ]);
   });
 
-  test("the named graph carries the automated marker: Generation → Activity → Association → SoftwareAgent", async () => {
+  test("namedGraphProvChain", async () => {
     const q = (await quads(doc)).filter((x) => x.graph.termType === "DefaultGraph");
     const obj = (s: string, p: string) => q.filter((x) => x.subject.value === s && x.predicate.value === p).map((x) => x.object);
     expect(obj(graph, RDF_TYPE).map((o) => o.value)).toContain(`${PROV}Entity`);
@@ -197,18 +197,18 @@ describe("the emitted SKOS, read through jsonld.js", () => {
     expect(obj(AGENT, RDF_TYPE).map((o) => o.value)).toEqual([`${PROV}SoftwareAgent`]);
   });
 
-  test("an agent with no release address is a typed blank node, never a string", async () => {
+  test("agentWithoutAddressBlank", async () => {
     const d = toSkos(tools.glossary, tools.ns, { matches: bySource.get(sourceKey(tools))!, agent: undefined });
     const q = (await quads(d)).filter((x) => x.predicate.value === `${PROV}agent`);
     expect(q.length).toBe(1);
     expect(q[0]!.object.termType).toBe("BlankNode");
   });
 
-  test("the run is a blank node, so no address is minted for it", () => {
+  test("runIsBlankNode", () => {
     expect(AUTOMATED_RUN.startsWith("_:")).toBe(true);
   });
 
-  test("no matches leaves the document exactly as before: one inline context, no PROV", () => {
+  test("noMatchesUnchanged", () => {
     const plain = toSkos(tools.glossary, tools.ns);
     expect(toSkos(tools.glossary, tools.ns, { matches: [], agent: AGENT })).toEqual(plain);
     expect(Array.isArray(plain["@context"])).toBe(false);
@@ -216,7 +216,7 @@ describe("the emitted SKOS, read through jsonld.js", () => {
 });
 
 describe("the matching agent is a declared actor with a release address", () => {
-  test(`\`${MATCHING_AGENT}\` resolves to a link in this checkout`, () => {
+  test("matchingAgentResolves", () => {
     const iri = matchingAgentIri(REPO);
     expect(iri).toBeDefined();
     expect(iri!).toMatch(new RegExp(`/scenarios/actors/${MATCHING_AGENT}$`));

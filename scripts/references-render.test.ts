@@ -24,13 +24,13 @@ const diig = node({
 });
 
 describe("whoEntry", () => {
-  test("a book: Title. Place: Publisher; Year (URL).", () => {
+  test("whoBookEntry", () => {
     expect(whoEntry(diig)).toBe(
       "Digital implementation investment guide (DIIG): integrating digital interventions into health programmes. Geneva: World Health Organization; 2020 (https://iris.who.int/handle/10665/334306).",
     );
   });
 
-  test("a web page in a site, with its access date; or without it when the list states it once", () => {
+  test("whoWebPageEntry", () => {
     const page = node({
       type: "webpage",
       title: "Health workforce",
@@ -47,7 +47,7 @@ describe("whoEntry", () => {
     expect(whoEntry(page, { accessed: false })).toContain("(https://www.who.int/health-topics/health-workforce).");
   });
 
-  test("a journal article: Authors. Title. Journal. Year;Vol(Issue):Pages. doi:", () => {
+  test("whoJournalEntry", () => {
     const art = node({
       type: "article-journal",
       title: "Digitalization of routine health information systems: Bangladesh, Indonesia, Pakistan",
@@ -64,7 +64,7 @@ describe("whoEntry", () => {
     );
   });
 
-  test("seven authors list six, then et al; editors are named as editors", () => {
+  test("sevenAuthorsEtAlEditors", () => {
     const seven = Array.from({ length: 7 }, (_, i) => ({ family: `A${i}`, given: "B" }));
     expect(whoEntry(node({ title: "T", author: seven }))).toStartWith("A0 B, A1 B, A2 B, A3 B, A4 B, A5 B et al. T.");
     const ed = node({
@@ -81,21 +81,21 @@ describe("whoEntry", () => {
 });
 
 describe("shortEntry and printed", () => {
-  test("short: Authors. Title. Year., with no year when the node has none", () => {
+  test("shortEntry", () => {
     expect(shortEntry(node({ title: "Global strategy on human resources for health: Workforce 2030", author: [{ literal: "WHO" }], issued: { "date-parts": [[2016]] } }))).toBe(
       "WHO. Global strategy on human resources for health: Workforce 2030. 2016.",
     );
     expect(shortEntry(node({ title: "Global strategy on digital health 2020–2025", author: [{ literal: "WHO" }] }))).toBe("WHO. Global strategy on digital health 2020–2025.");
   });
 
-  test("a node's printed text is printed verbatim, whatever the style, and is not CSL", () => {
+  test("printedVerbatim", () => {
     const r = node({ title: "SMART Guidelines", author: [{ literal: "WHO" }], printed: "WHO SMART Guidelines." });
     expect(entryText(r, { style: "short" })).toBe("WHO SMART Guidelines.");
     expect(entryText(r, { style: "who" })).toBe("WHO SMART Guidelines.");
     expect(toCslItem(r)).not.toHaveProperty("printed");
   });
 
-  test("the list is numbered, or bulleted, one entry per line", () => {
+  test("numberedOrBulleted", () => {
     const a = node({ id: "a", title: "A", printed: "A." });
     const b = node({ id: "b", title: "B", printed: "B." });
     expect(renderReferenceList([a, b])).toBe("1. A.\n2. B.\n");
@@ -128,7 +128,7 @@ describe("referenceListsOf", () => {
     return root;
   }
 
-  test("draws the block's .md from the nodes it cites, in cites order", async () => {
+  test("listFromCitedNodes", async () => {
     const root = instance(["b", "a"], { referenceList: { style: "short", list: "bullet" } });
     expect(await referenceListsOf(root)).toEqual([
       {
@@ -139,7 +139,7 @@ describe("referenceListsOf", () => {
     ]);
   });
 
-  test("a key no node holds, an empty list or an unknown option is an error", async () => {
+  test("badKeyEmptyUnknownOption", async () => {
     await expect(referenceListsOf(instance(["a", "nope"], { referenceList: {} }))).rejects.toThrow(/"nope", which no reference node/);
     await expect(referenceListsOf(instance([], { referenceList: {} }))).rejects.toThrow(/cites nothing/);
     await expect(referenceListsOf(instance(["a"], { referenceList: { style: "apa" } }))).rejects.toThrow(/meta.referenceList/);

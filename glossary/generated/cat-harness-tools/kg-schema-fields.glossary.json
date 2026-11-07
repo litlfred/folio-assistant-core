@@ -7273,6 +7273,13 @@
       "status": "candidate"
     },
     {
+      "id": "graph-typology-node.graphtypologynodeschema.specialises",
+      "prefLabel": "GraphTypologyNodeSchema.specialises",
+      "definition": "The block kind a node of this kind IS, read through the kind module's view of it.",
+      "source": "cat-harness-tools/schemas/kg/graph-typology-node.ts#GraphTypologyNodeSchema.specialises",
+      "status": "candidate"
+    },
+    {
       "id": "graph-typology-node.graphtypologynodeschema.tileicon",
       "prefLabel": "GraphTypologyNodeSchema.tileIcon",
       "definition": "The navbar tile icon (an icon name, as `graph-tiles.ts` spells it).",
@@ -7417,6 +7424,13 @@
       "prefLabel": "GraphTypologyDef.skillBearing",
       "definition": "The kind's directory may be scanned for SKILL BODIES (`*.md` with a `name:` front matter). Was `SKILL_BEARING_GRAPH_TYPOLOGIES` (sod4 #5).",
       "source": "cat-harness-tools/schemas/kg/graph-typology-registry.ts#GraphTypologyDef.skillBearing",
+      "status": "candidate"
+    },
+    {
+      "id": "graph-typology-registry.graphtypologydef.specialises",
+      "prefLabel": "GraphTypologyDef.specialises",
+      "definition": "The BLOCK KIND (a `folio-block-kind/v1` node's `kind`, in whichever layer declares it) that a node of this kind IS, read through the kind module's view of it: a journey is a DAK user scenario.",
+      "source": "cat-harness-tools/schemas/kg/graph-typology-registry.ts#GraphTypologyDef.specialises",
       "status": "candidate"
     },
     {
@@ -7998,6 +8012,13 @@
       "prefLabel": "IndexSiteSchema.landing",
       "definition": "An instance name, or {@link HUB_LANDING}. Must name an instance this file lists.",
       "source": "cat-harness-tools/schemas/kg/index-config.ts#IndexSiteSchema.landing",
+      "status": "candidate"
+    },
+    {
+      "id": "index-config.indexsiteschema.taskskills",
+      "prefLabel": "IndexSiteSchema.taskSkills",
+      "definition": "Whether the ⓘ task panel on this site's BPMN drawings shows skills: the skills a task requires and the skills its lane's role has. Absent or `true` shows them, as every knowledge-graph site does; `false` hides them, for a site whose processes are not modelled with skills, such as an implementation guide's business processes (owner, 2026-11-06: \"i dont think skills are modelled in DAK ... dont necc turn those on but i want common styling\"; \"maybe in future DAK personas get skills\"). The rest of the panel (the step, its lane and role, the process, a called process) is shown either way. A fact about how THIS checkout publishes, so it sits on the index's `site` beside `landing` and `agentRun`. Read by `task-panel.ts` `taskSkillsDeclared`.",
+      "source": "cat-harness-tools/schemas/kg/index-config.ts#IndexSiteSchema.taskSkills",
       "status": "candidate"
     },
     {
@@ -9006,6 +9027,20 @@
       "prefLabel": "MemberFactsSchema.unblocks",
       "definition": "Open PRs or beans this unblocks, or tangle edges it removes — input (b).",
       "source": "cat-harness-tools/schemas/sdlc/merge-queue.ts#MemberFactsSchema.unblocks",
+      "status": "candidate"
+    },
+    {
+      "id": "merge-queue.mergerequestschema.fulltiergreen",
+      "prefLabel": "MergeRequestSchema.fullTierGreen",
+      "definition": "The sender's statement that the full tier is green as judged (every judge).",
+      "source": "cat-harness-tools/schemas/sdlc/merge-queue.ts#MergeRequestSchema.fullTierGreen",
+      "status": "candidate"
+    },
+    {
+      "id": "merge-queue.mergerequestschema.lookfor",
+      "prefLabel": "MergeRequestSchema.lookFor",
+      "definition": "What to look for in the preview. Required when there is one.",
+      "source": "cat-harness-tools/schemas/sdlc/merge-queue.ts#MergeRequestSchema.lookFor",
       "status": "candidate"
     },
     {
@@ -10425,7 +10460,7 @@
     {
       "id": "qa-record-shapes.translationblockqareport.paths",
       "prefLabel": "TranslationBlockQaReport.paths",
-      "definition": "Repo-relative paths of the block's files.",
+      "definition": "Repo-relative paths of the subject's files: a block's or page's `.md` (and `.ts`), or — for a catalogue measured against its template, which has no page of its own here (an IG page, a glossary) — the `.pot`.",
       "source": "cat-harness-tools/schemas/kg/qa-record-shapes.ts#TranslationBlockQaReport.paths",
       "status": "candidate"
     },
@@ -11270,6 +11305,90 @@
       "status": "candidate"
     },
     {
+      "id": "role-graph.holdercandidate.createdat",
+      "prefLabel": "HolderCandidate.createdAt",
+      "definition": "ISO 8601 creation time, as `list_sessions` reports it.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#HolderCandidate.createdAt",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.holdercandidate.minutessinceanswer",
+      "prefLabel": "HolderCandidate.minutesSinceAnswer",
+      "definition": "Minutes since it last answered or posted a heartbeat; unknown counts as live.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#HolderCandidate.minutesSinceAnswer",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.holdercandidate.ownsp0",
+      "prefLabel": "HolderCandidate.ownsP0",
+      "definition": "It owns a P0 PR: the fix for a red main, or a link of the re-pin chain.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#HolderCandidate.ownsP0",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.laneholdingschema.announce",
+      "prefLabel": "LaneHoldingSchema.announce",
+      "definition": "What the holder announces to every sibling and the owner, e.g. `merge manager: <session id>`.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#LaneHoldingSchema.announce",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.laneholdingschema.election",
+      "prefLabel": "LaneHoldingSchema.election",
+      "definition": "Applied in order by {@link electHolder}.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#LaneHoldingSchema.election",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.laneholdingschema.heartbeatminutes",
+      "prefLabel": "LaneHoldingSchema.heartbeatMinutes",
+      "definition": "The holder acknowledges each request, and posts a heartbeat, within this many minutes.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#LaneHoldingSchema.heartbeatMinutes",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.laneholdingschema.lonesessionholds",
+      "prefLabel": "LaneHoldingSchema.loneSessionHolds",
+      "definition": "A session alone in its coordination group holds the lane for itself.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#LaneHoldingSchema.loneSessionHolds",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.laneholdingschema.stalledafterminutes",
+      "prefLabel": "LaneHoldingSchema.stalledAfterMinutes",
+      "definition": "A session silent for longer than this is stalled: not a candidate, and its lane is vacant.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#LaneHoldingSchema.stalledAfterMinutes",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.lanereading.activesessions",
+      "prefLabel": "LaneReading.activeSessions",
+      "definition": "Active sessions with ready PRs in the same repositories.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#LaneReading.activeSessions",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.lanereading.conflictingprs",
+      "prefLabel": "LaneReading.conflictingPrs",
+      "definition": "Open PRs that conflict with or supersede another open PR.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#LaneReading.conflictingPrs",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.lanereading.oldestqueuedminutes",
+      "prefLabel": "LaneReading.oldestQueuedMinutes",
+      "definition": "Age of the oldest queued run, in minutes (0 with none queued).",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#LaneReading.oldestQueuedMinutes",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.lanereading.queuedruns",
+      "prefLabel": "LaneReading.queuedRuns",
+      "definition": "The most queued runs on any one of those repositories.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#LaneReading.queuedRuns",
+      "status": "candidate"
+    },
+    {
       "id": "role-graph.laneroleread.performervaries",
       "prefLabel": "LaneRoleRead.performerVaries",
       "definition": "`<bootstrap.processes:role variable=\"true\"/>`: the performer is whoever invoked the process.",
@@ -11365,6 +11484,13 @@
       "prefLabel": "RoleDef.formerNames",
       "definition": "Names this role was known by and no longer is, each with the date it was retired — `Initiator` became `Bootstrapping Agent` on 2026-09-23. Published as `skos:hiddenLabel` on this role, and the old name's concept is `owl:deprecated` and `dcterms:isReplacedBy` this role, so a reader holding the old name is sent to the new one. Authored here, beside the definition, rather than only remembered by the harness's glossary ledger: a retired name is part of what the role IS to a reader of old text.",
       "source": "cat-harness-tools/schemas/process/role-graph.ts#RoleDef.formerNames",
+      "status": "candidate"
+    },
+    {
+      "id": "role-graph.roledef.holding",
+      "prefLabel": "RoleDef.holding",
+      "definition": "For a lane one session holds at a time, such as the merge steward: when the lane is needed at all, how sibling sessions choose its holder, and whether a lone session holds it for itself (owner rulings, 2026-11-07). See {@link LaneHolding}, {@link laneNeeded} and {@link electHolder}.",
+      "source": "cat-harness-tools/schemas/process/role-graph.ts#RoleDef.holding",
       "status": "candidate"
     },
     {
@@ -12009,6 +12135,13 @@
       "prefLabel": "BeanIndexSchema.plan",
       "definition": "The milestone rollup the board renders. OPTIONAL, because an index written before this field existed is still a valid index — and because \"no plan in the projection\" is a state the renderer distinguishes from \"a plan with nothing done\".",
       "source": "cat-harness-tools/schemas/ui/site-indexes.ts#BeanIndexSchema.plan",
+      "status": "candidate"
+    },
+    {
+      "id": "site-indexes.beanindexschema.planfindings",
+      "prefLabel": "BeanIndexSchema.planFindings",
+      "definition": "Work plans filed wrong: an item naming a process that is not an epic or a milestone, or a proposal naming no process (`workPlanFindings`, `schemas/sdlc/work-plan.ts`). Written by `gen-docs-pages.ts` since 089be6f8, which left this schema rejecting the index it wrote (check:kind-validators, dth-hrh run 42343581318). OPTIONAL, as `plan` is: an index written before the field is still valid.",
+      "source": "cat-harness-tools/schemas/ui/site-indexes.ts#BeanIndexSchema.planFindings",
       "status": "candidate"
     },
     {
@@ -13470,7 +13603,7 @@
     {
       "id": "test-plan.testplancaseschema.feature",
       "prefLabel": "TestPlanCaseSchema.feature",
-      "definition": "Optional Gherkin `.feature` file the case is written in.",
+      "definition": "The Gherkin `.feature` file the case is written in. Required under `test-plan/v1.1` — enforced on the plan, since a case does not know its plan's version — and optional only in a `test-plan/v1` plan.",
       "source": "cat-harness-tools/schemas/sdlc/test-plan.ts#TestPlanCaseSchema.feature",
       "status": "candidate"
     },
@@ -15638,6 +15771,13 @@
       "status": "candidate"
     },
     {
+      "id": "user-scenario.dakuserscenario.personas",
+      "prefLabel": "DakUserScenario.personas",
+      "definition": "Role ids, in the order the journey's personas first reach them.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#DakUserScenario.personas",
+      "status": "candidate"
+    },
+    {
       "id": "user-scenario.experienceschema.emotion",
       "prefLabel": "ExperienceSchema.emotion",
       "definition": "-2 distressed, -1 worried, 0 neutral, 1 reassured, 2 delighted.",
@@ -15785,6 +15925,27 @@
       "status": "candidate"
     },
     {
+      "id": "user-scenario.partschema.optional",
+      "prefLabel": "PartSchema.optional",
+      "definition": "The story may skip it.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#PartSchema.optional",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.partschema.repeats",
+      "prefLabel": "PartSchema.repeats",
+      "definition": "It may happen more than once.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#PartSchema.repeats",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.partschema.scenario",
+      "prefLabel": "PartSchema.scenario",
+      "definition": "The journey that is this part.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#PartSchema.scenario",
+      "status": "candidate"
+    },
+    {
       "id": "user-scenario.preconditionschema.description",
       "prefLabel": "PreconditionSchema.description",
       "definition": "Markdown.",
@@ -15810,6 +15971,13 @@
       "prefLabel": "RecordSchema.state",
       "definition": "A code of the scenario's `trustLadder` code list.",
       "source": "cat-harness-tools/schemas/process/user-scenario.ts#RecordSchema.state",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.referenceschema.href",
+      "prefLabel": "ReferenceSchema.href",
+      "definition": "A URL (`https:`, `mailto:` …), an absolute path or a `#fragment` as it is; anything else is a path from the SITE'S ROOT (`vaxlink/`, `journeys.html#j1`), resolved the same way on the journey page and the workshop pages (`fromSite`, `scripts/journeys/read.ts`).",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#ReferenceSchema.href",
       "status": "candidate"
     },
     {
@@ -16867,6 +17035,20 @@
       "prefLabel": "WorkshopPresentationSchema.badge",
       "definition": "A short badge beside the name (\"Interactive Spec\").",
       "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.badge",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.cast",
+      "prefLabel": "WorkshopPresentationSchema.cast",
+      "definition": "The order the cast is listed in, everywhere it is listed (the overview, the journey map's lanes, the persona lens): actor ids. An actor a step names and this list does not follows, in order of first appearance; an id no step names is not drawn. Absent: order of first appearance.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.cast",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.chaptertitles",
+      "prefLabel": "WorkshopPresentationSchema.chapterTitles",
+      "definition": "A chapter's title in the room, by the id of the journey the chapter is (`\"j4-family-records-abroad\": \"Crossing back\"`). Absent: the journey's title without its code in front.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.chapterTitles",
       "status": "candidate"
     },
     {

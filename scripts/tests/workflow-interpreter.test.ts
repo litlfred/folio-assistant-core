@@ -41,7 +41,7 @@ function openBean(model: Awaited<ReturnType<typeof loadProcessModel>>, state: Pa
 }
 
 describe("the model carries what the diagram already knew", () => {
-  test("skills and work-plan marks come off the folio: extensions", async () => {
+  test("modelCarriesExtensions", async () => {
     const model = await loadProcessModel(bpmn("editing-hci-validation"));
     const draft = model.nodes.get("Task_DraftEdit")!;
     expect(draft.skills).toEqual(["content-author", "before-after-preview"]);
@@ -56,7 +56,7 @@ describe("the model carries what the diagram already knew", () => {
     expect(model.nodes.get("Task_LogFindings")!.touchesWorkPlan).toBe(true);
   });
 
-  test("a call activity reports the process it expands into", async () => {
+  test("callActivityReportsProcess", async () => {
     const model = await loadProcessModel(bpmn("content-lifecycle"));
     expect(model.nodes.get("CallActivity_Editing")!.calledElement).toBe("Process_Editing");
   });
@@ -65,7 +65,7 @@ describe("the model carries what the diagram already knew", () => {
 describe("the HCI validation gate holds", () => {
   const editing = async () => loadProcessModel(bpmn("editing-hci-validation"));
 
-  test("a fresh instance enables exactly the first step", async () => {
+  test("freshInstanceFirstStep", async () => {
     const model = await editing();
     const state = startInstance(model, { id: "t1", subject: "def:x" });
     expect(names(model, enabled(model, state).map((e) => e.node))).toEqual([
@@ -73,7 +73,7 @@ describe("the HCI validation gate holds", () => {
     ]);
   });
 
-  test("committing cannot be reported before the editor has decided", async () => {
+  test("commitBeforeDecisionRefused", async () => {
     const model = await editing();
     const state = startInstance(model, { id: "t2", subject: "def:x" });
     // The whole point. Nothing has been drafted, let alone validated.
@@ -81,7 +81,7 @@ describe("the HCI validation gate holds", () => {
     expect(() => complete(model, state, "Task_Commit")).toThrow(/not enabled/);
   });
 
-  test("a change with no recommendation skips the evidence search, and says so", async () => {
+  test("noRecommendationSkipsEvidence", async () => {
     // Gateway_RecommendationInPlay (folio-assistant-core#505): a figure redrawn
     // from its own source carries no recommendation, so there is no PICO to
     // frame. The `no` branch ends the subprocess at its own event; drafting is
@@ -97,7 +97,7 @@ describe("the HCI validation gate holds", () => {
     expect(walked).not.toContain("Task_FramePico");
   });
 
-  test("both validation branches must report before the findings are collated", async () => {
+  test("bothBranchesBeforeCollation", async () => {
     const model = await editing();
     const state = startInstance(model, { id: "t3", subject: "def:x" });
     const step = (n: string, outcome?: string) => complete(model, state, n, { outcome });
@@ -133,7 +133,7 @@ describe("the HCI validation gate holds", () => {
     ]);
   });
 
-  test("accept reaches the corpus; discard does not", async () => {
+  test("acceptReachesCorpus", async () => {
     const run = async (decision: string) => {
       const model = await editing();
       const state = startInstance(model, { id: `t-${decision}`, subject: "def:x" });
@@ -173,7 +173,7 @@ describe("the HCI validation gate holds", () => {
     expect(discarded.state.history.some((h) => h.node === "Task_Commit")).toBe(false);
   });
 
-  test("revise loops back to the agent and re-runs validation", async () => {
+  test("reviseLoopsBack", async () => {
     const model = await editing();
     const state = startInstance(model, { id: "t5", subject: "def:x" });
     const step = (n: string, outcome?: string) => complete(model, state, n, { outcome });
@@ -208,7 +208,7 @@ describe("the HCI validation gate holds", () => {
 });
 
 describe("decisions are asked for, not guessed", () => {
-  test("completing a gateway without an outcome refuses, and lists the outcomes", async () => {
+  test("gatewayNeedsOutcome", async () => {
     const model = await loadProcessModel(bpmn("editing-hci-validation"));
     const state = startInstance(model, { id: "t6", subject: "def:x" });
     complete(model, state, "Task_DescribeChange");
@@ -224,7 +224,7 @@ describe("decisions are asked for, not guessed", () => {
 });
 
 describe("instance state survives the process it was made in", () => {
-  test("an instance round-trips through the store under a derived id", async () => {
+  test("instanceRoundTrips", async () => {
     const repo = mkdtempSync(join(tmpdir(), "wf-store-"));
     const model = await loadProcessModel(bpmn("editing-hci-validation"));
     const id = instanceId(model.id, "def:carbon-valence");

@@ -37,7 +37,7 @@ const map: LineMap = {
 for (const a of map.alignment) if ([10, 12, 13].includes(a.seq)) Object.assign(a, { lineStart: undefined, lineEnd: undefined, method: "inherited-page" });
 
 describe("splitNumber", () => {
-  test("reads the printed number off a heading", () => {
+  test("splitNumberReadsHeadingNumber", () => {
     expect(splitNumber("3.4.5 Semantic Governance")).toEqual({ number: "3.4.5", title: "Semantic Governance" });
     expect(splitNumber("5.1 Emerging technologies")).toEqual({ number: "5.1", title: "Emerging technologies" });
     expect(splitNumber("D.1  Illustrative tools")).toEqual({ number: "D.1", title: "Illustrative tools" });
@@ -50,27 +50,27 @@ describe("convert", () => {
   const r = convert(structure, map, { slug: "doc", library: "lib-entry" });
   const file = (p: string) => r.files.find((f) => f.path === p)?.content ?? "";
 
-  test("the cover title and subtitle are the document's, not a chapter", () => {
+  test("coverIsDocument", () => {
     expect(r.anchors.chapters.map((c) => c.dir)).toEqual(["executive-summary", "ch1-introduction"]);
     expect(file("doc.ts")).toContain(`subtitle: "A subtitle"`);
   });
 
-  test("Heading 1 is numbered from its chapter when Word numbers it automatically", () => {
+  test("heading1NumberedFromChapter", () => {
     const n = r.anchors.sections.filter((s) => s.number).map((s) => s.number);
     expect(n).toEqual(["1.1", "1.1.1", "1.2"]);
   });
 
-  test("Heading 3 nests under Heading 1, so 1.1.1 is a subsection of 1.1", () => {
+  test("heading3NestsUnderHeading1", () => {
     expect(r.anchors.sections.find((s) => s.number === "1.1.1")?.parent).toBe("sec:1-1");
     expect(file("ch1-introduction/ch1-introduction.ts")).toMatch(/label: "sec:1-1",[\s\S]*subsections: \[[\s\S]*"sec:1-1-1"/);
   });
 
-  test("text before a chapter's first heading is a LEAD section titled as the chapter", () => {
+  test("leadSectionTitledAsChapter", () => {
     expect(file("executive-summary/executive-summary.ts")).toContain("lead: true");
     expect(file("executive-summary/executive-summary.ts")).toContain(`title: "Executive Summary"`);
   });
 
-  test("a caption names its table and figure, and lends them its line", () => {
+  test("captionNamesTableAndFigure", () => {
     const t = r.anchors.blocks.find((b) => b.kind === "table")!;
     expect(t.label).toBe("tbl:1-1");
     expect(t.caption).toBe("Table 1.1");
@@ -82,24 +82,24 @@ describe("convert", () => {
     expect(r.media).toEqual(["media/image1.png"]);
   });
 
-  test("a one-cell table is a boxed quote, not a table", () => {
+  test("oneCellTableIsQuote", () => {
     const box = r.anchors.blocks.find((b) => b.excerpt.startsWith("A boxed"))!;
     expect(box.kind).toBe("prose");
     expect(file(`ch1-introduction/${box.root}.md`).startsWith("> A boxed definition.")).toBe(true);
   });
 
-  test("a footnote is defined in the block that cites it", () => {
+  test("footnoteInCitingBlock", () => {
     const b = r.anchors.blocks.find((x) => x.excerpt === "It is a blueprint.")!;
     expect(file(`ch1-introduction/${b.root}.md`)).toContain("[^3]: A cited source.");
   });
 
-  test("every block carries page, printed page and lines from the review PDF", () => {
+  test("blockCarriesPagesAndLines", () => {
     const b = r.anchors.blocks.find((x) => x.excerpt === "It is a blueprint.")!;
     expect(b).toMatchObject({ page: 3, printedPage: "2", lineStart: 8, lineEnd: 8, method: "numbered" });
     expect(file(`ch1-introduction/${b.root}.ts`)).toContain(`"library":"lib-entry"`);
   });
 
-  test("labels are content-derived and survive an inserted paragraph", () => {
+  test("labelsSurviveInsertion", () => {
     const again = convert(
       {
         ...structure,
@@ -132,7 +132,7 @@ describe("renderSectionMarkdown nests subsections", () => {
     subsections: [{ title: "1.1.1 Mid", label: "sec:1-1-1", blocks: ["b"], subsections: [{ title: "1.1.1.1 Deep", blocks: ["c"] }] }],
   };
 
-  test("each subsection keeps its heading, one level deeper, at any depth", () => {
+  test("subsectionsNestDeeper", () => {
     const md = renderSectionMarkdown(sec, blocks, { baseHeadingLevel: 2 });
     expect(md).toContain("### 1.1 Top");
     expect(md).toContain("#### 1.1.1 Mid");
@@ -142,7 +142,7 @@ describe("renderSectionMarkdown nests subsections", () => {
     expect(md).toContain("Gamma.");
   });
 
-  test("a lead section has an anchor and no heading", () => {
+  test("leadHasAnchorNoHeading", () => {
     const md = renderSectionMarkdown({ title: "Executive Summary", label: "sec:es-lead", lead: true, blocks: ["a"] }, blocks, {});
     expect(md).toContain(`<a id="sec:es-lead"></a>`);
     expect(md).not.toContain("Executive Summary");

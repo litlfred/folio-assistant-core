@@ -10,7 +10,7 @@ import {
 } from "./check-security-gate.js";
 
 describe("coreSecurityGate (bean folio-core-0dy3)", () => {
-  test("passes all blocking checks on folio-assistant-core's own root", () => {
+  test("passesOnOwnRoot", () => {
     const results = coreSecurityGate(CORE_ROOT);
     const blockingFailures = blocks(results);
     expect(blockingFailures).toEqual([]);
@@ -19,7 +19,7 @@ describe("coreSecurityGate (bean folio-core-0dy3)", () => {
     }
   });
 
-  test("reports unknown (and blocks) when .github/workflows and package.json are absent", () => {
+  test("unknownWhenAbsent", () => {
     const emptyRoot = mkdtempSync(join(tmpdir(), "core-sec-empty-"));
     try {
       const results = coreSecurityGate(emptyRoot);
@@ -34,7 +34,7 @@ describe("coreSecurityGate (bean folio-core-0dy3)", () => {
     }
   });
 
-  test("detects unpinned action, workflow injection, unpinned bun install, and secret leak in a target root", () => {
+  test("detectsBadRoot", () => {
     const badRoot = mkdtempSync(join(tmpdir(), "core-sec-bad-"));
     try {
       mkdirSync(join(badRoot, ".github", "workflows"), { recursive: true });

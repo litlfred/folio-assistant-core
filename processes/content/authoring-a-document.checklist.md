@@ -85,9 +85,17 @@ How a document folio — structured prose and policy guidance, with no Lean and 
 - Skill: `content-validate`.
 - What: Schema and constraint checks over every block.
 - Record it: `workflow_complete` with `node: "Task_Validate"`.
+- next: → `Call_PublishStatements` (Publish extracted statements)
+
+### 8. Publish extracted statements (`Call_PublishStatements`)
+
+- Who: the `Build pipeline` lane (role `build-pipeline`).
+- Skill: `publish-extracted-statements`.
+- What: The document draws on library sources; every statement extracted from them is published in the document's own pages and in the shared extraction viewer, each linked to its library entry and section, before the document is rendered.
+- A subprocess (`Process_PublishExtractedStatements`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Task_Render` (Render MD, HTML and PDF)
 
-### 8. Render MD, HTML and PDF (`Task_Render`)
+### 9. Render MD, HTML and PDF (`Task_Render`)
 
 - Who: the `Build pipeline` lane (role `build-pipeline`).
 - Skill: `document-publishing`.
@@ -95,7 +103,7 @@ How a document folio — structured prose and policy guidance, with no Lean and 
 - Record it: `workflow_complete` with `node: "Task_Render"`.
 - next: → `Call_ReviewPublish` (Review and publish)
 
-### 9. Review and publish (`Call_ReviewPublish`)
+### 10. Review and publish (`Call_ReviewPublish`)
 
 - Who: the `Build pipeline` lane (role `build-pipeline`).
 - Skill: `content-review`.
@@ -110,7 +118,7 @@ How a document folio — structured prose and policy guidance, with no Lean and 
   - «yes» → `Call_BeanClose` (Close the bean)
   - «no» → `Task_AuthorBlocks` (Author blocks)
 
-### 10. Close the bean (`Call_BeanClose`)
+### 11. Close the bean (`Call_BeanClose`)
 
 - Who: the `Build pipeline` lane (role `build-pipeline`).
 - Skill: `todo-manager`.

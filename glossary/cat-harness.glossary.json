@@ -7,6 +7,7 @@
   "modified": "2026-09-30",
   "license": "CC-BY-4.0",
   "source": "cat-harness/cat-harness.json",
+  "subject": "harness-vocabulary",
   "terms": [
     {
       "id": "associated-harness",

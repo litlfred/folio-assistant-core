@@ -59,19 +59,19 @@ describe("MCP document tools path containment (bean folio-core-ho43)", () => {
     registerTransformTools,
   );
 
-  test("autoPaper refuses ../ traversal segments", () => {
+  test("autoPaperRefusesTraversal", () => {
     expect(autoPaper("../etc")).toBeUndefined();
     expect(autoPaper("a/b")).toBeUndefined();
     expect(autoPaper("..")).toBeUndefined();
     expect(autoPaper("valid-paper")).toBe("valid-paper");
   });
 
-  test("bib_export refuses ../ output path", async () => {
+  test("bibExportRefuses", async () => {
     const res = await handlers["bib_export"]({ out: "../escaped.bib" });
     expectRefused(res);
   });
 
-  test("content_export refuses ../ output directory and ../ paper", async () => {
+  test("contentExportRefuses", async () => {
     const outRes = await handlers["content_export"]({ out: "../../escaped-viewer" });
     expectRefused(outRes);
 
@@ -79,14 +79,14 @@ describe("MCP document tools path containment (bean folio-core-ho43)", () => {
     expectRefused(paperRes);
   });
 
-  test("qa_sweep, glossary_check, proof_status, and status_sections_audit refuse ../ paper", async () => {
+  test("paperToolsRefuse", async () => {
     for (const toolName of ["qa_sweep", "glossary_check", "proof_status", "status_sections_audit"]) {
       const res = await handlers[toolName]({ paper: "../escaped" });
       expectRefused(res);
     }
   });
 
-  test("content_validate refuses ../ paper and ../ chapter", async () => {
+  test("contentValidateRefuses", async () => {
     const paperRes = await handlers["content_validate"]({ paper: "../escaped" });
     expectRefused(paperRes);
 
@@ -97,7 +97,7 @@ describe("MCP document tools path containment (bean folio-core-ho43)", () => {
     expectRefused(chapterRes);
   });
 
-  test("content_profile_check and content_list refuse ../ segment", async () => {
+  test("profileAndListRefuse", async () => {
     const profRes = await handlers["content_profile_check"]({ document: "../escaped" });
     expectRefused(profRes);
 
@@ -105,7 +105,7 @@ describe("MCP document tools path containment (bean folio-core-ho43)", () => {
     expectRefused(listRes);
   });
 
-  test("content_build refuses ../ output_dir and ../ paper", async () => {
+  test("contentBuildRefuses", async () => {
     const outRes = await handlers["content_build"]({ output_dir: "../../escaped-chapters" });
     expectRefused(outRes);
 
@@ -113,7 +113,7 @@ describe("MCP document tools path containment (bean folio-core-ho43)", () => {
     expectRefused(paperRes);
   });
 
-  test("document_render_md, document_render_html, and document_render_pdf refuse ../ document and ../ css", async () => {
+  test("renderToolsRefuse", async () => {
     for (const toolName of ["document_render_md", "document_render_html", "document_render_pdf"]) {
       const docRes = await handlers[toolName]({ document: "../escaped" });
       expectRefused(docRes);
@@ -140,7 +140,7 @@ describe("MCP document tools path containment (bean folio-core-ho43)", () => {
     expectRefused(absCssRes);
   });
 
-  test("paper_render_pdf and paper_render_html refuse ../ target", async () => {
+  test("paperRenderRefuses", async () => {
     const pdfRes = await handlers["paper_render_pdf"]({
       scope: "chapter",
       target: "../escaped",
@@ -159,7 +159,7 @@ describe("MCP document tools path containment (bean folio-core-ho43)", () => {
     expectRefused(htmlRes);
   });
 
-  test("formula_render refuses ../ in package names and file/shell TeX primitives in latex", async () => {
+  test("formulaRenderRefuses", async () => {
     const pkgRes = await handlers["formula_render"]({
       latex: "x^2",
       display_math: true,
@@ -185,7 +185,7 @@ describe("MCP document tools path containment (bean folio-core-ho43)", () => {
     expectRefused(write18Res);
   });
 
-  test("codemod refuses ../ target", async () => {
+  test("codemodRefuses", async () => {
     const res = await handlers["codemod"]({
       name: "refterm",
       target: "../escaped",

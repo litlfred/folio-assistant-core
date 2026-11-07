@@ -7,20 +7,20 @@ import { BLOCK_URLS_JS, blockActionsHtml, editUrl, feedbackUrl, injectBlockActio
 const block = { label: "prose:2-1-2-ab12", source: "folio/doc/ch2/p-2-1-2.md", section: "2.1.2 Business services layer", page: "doc/index.html" };
 
 describe("block-actions (REQ-17, bean uphx)", () => {
-  test("[edit] opens the block's source in GitHub's editor on main", () => {
+  test("editOpensGithubEditor", () => {
     expect(editUrl({ repo: "o/r" }, block.source)).toBe("https://github.com/o/r/edit/main/folio/doc/ch2/p-2-1-2.md");
     expect(editUrl({ repo: "o/r", branch: "draft" }, block.source)).toBe("https://github.com/o/r/edit/draft/folio/doc/ch2/p-2-1-2.md");
     expect(sourceUrl({ repo: "o/r" }, block.source)).toBe("https://github.com/o/r/blob/main/folio/doc/ch2/p-2-1-2.md");
   });
 
-  test("no repository, no links: nothing is drawn rather than a broken link", () => {
+  test("noRepoNoLinks", () => {
     expect(editUrl({}, block.source)).toBeUndefined();
     expect(blockActionsHtml({}, block)).toBe("");
     const html = '<html><head></head><body><a id="prose:2-1-2-ab12"></a><p>x</p></body></html>';
     expect(injectBlockActions(html, [block], {})).toEqual({ html, inserted: 0 });
   });
 
-  test("[feedback] without a form puts the block's facts in the body", () => {
+  test("feedbackWithoutFormBody", () => {
     const u = new URL(feedbackUrl({ repo: "o/r", siteUrl: "https://o.github.io/r/" }, block)!);
     expect(u.pathname).toBe("/o/r/issues/new");
     expect(u.searchParams.get("template")).toBeNull();
@@ -31,7 +31,7 @@ describe("block-actions (REQ-17, bean uphx)", () => {
     expect(body).toContain("https://o.github.io/r/doc/index.html#prose%3A2-1-2-ab12");
   });
 
-  test("[feedback] is coded with the content slug: title, body, and a form's content field", () => {
+  test("feedbackCodedWithContent", () => {
     const plain = new URL(feedbackUrl({ repo: "o/r", content: "dpi-h-ra" }, block)!);
     expect(plain.searchParams.get("title")).toBe("Feedback [dpi-h-ra]: 2.1.2 Business services layer — prose:2-1-2-ab12");
     expect(plain.searchParams.get("body")!.startsWith("**Content:** `dpi-h-ra`\n**Block:**")).toBe(true);
@@ -39,7 +39,7 @@ describe("block-actions (REQ-17, bean uphx)", () => {
     expect(form.searchParams.get("content")).toBe("dpi-h-ra");
   });
 
-  test("[feedback] with a form prefills only the fields the form declares", () => {
+  test("formPrefillsDeclaredFields", () => {
     const u = new URL(feedbackUrl({ repo: "o/r", template: "block-feedback.yml", templateFields: ["block", "source"], labels: ["feedback"] }, block)!);
     expect(u.searchParams.get("template")).toBe("block-feedback.yml");
     expect(u.searchParams.get("block")).toBe("prose:2-1-2-ab12");
@@ -49,7 +49,7 @@ describe("block-actions (REQ-17, bean uphx)", () => {
     expect(u.searchParams.get("labels")).toBe("feedback");
   });
 
-  test("the form's field ids are read from the folio's issue form, and its absence is undefined", () => {
+  test("formFieldsReadFromIssueForm", () => {
     const root = mkdtempSync(join(tmpdir(), "ba-"));
     expect(readIssueForm(root)).toBeUndefined();
     mkdirSync(join(root, ".github", "ISSUE_TEMPLATE"), { recursive: true });
@@ -60,7 +60,7 @@ describe("block-actions (REQ-17, bean uphx)", () => {
     expect(readIssueForm(root)).toEqual(["block", "feedback"]);
   });
 
-  test("the links go right after the block's anchor, once, and the style once", () => {
+  test("linksAfterAnchorOnce", () => {
     const html = '<html><head></head><body><a id="prose:2-1-2-ab12"></a><p>x</p><a id="other"></a></body></html>';
     const r = injectBlockActions(html, [block, { ...block, label: "missing" }], { repo: "o/r" });
     expect(r.inserted).toBe(1);
@@ -84,13 +84,13 @@ describe("the browser builds the same URLs (bean v433)", () => {
   ];
   for (const cfg of cases)
     for (const b of [block, { ...block, section: undefined }, { ...block, label: "tbl:a b&c" }])
-      test(`${JSON.stringify(cfg)} ${b.label} ${b.section ?? "(no section)"}`, () => {
+      test(`browserBuildsSameUrls[${[JSON.stringify(cfg), b.label, b.section ?? "(no section)"].join("|").replace(/\s+/g, "_")}]`, () => {
         const u = faBlockUrls(cfg, b);
         expect(u.edit).toBe(editUrl(cfg, b.source)!);
         expect(u.feedback).toBe(feedbackUrl(cfg, b)!);
       });
 
-  test("the compact form carries the facts, not the URLs, and adds the filler once", () => {
+  test("compactCarriesFacts", () => {
     const html = '<html><head></head><body><a id="prose:2-1-2-ab12"></a><p>x</p></body></html>';
     const r = injectBlockActions(html, [block], { repo: "o/r" }, { compact: true });
     expect(r.html).toContain('data-src="folio/doc/ch2/p-2-1-2.md"');

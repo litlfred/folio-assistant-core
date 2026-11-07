@@ -77,7 +77,7 @@ const ABC: Blk[] = [
 const LAYOUT = { "sec:one": ["a", "b", "c"], "sec:two": ["d"] };
 
 describe("ChangeSet", () => {
-  it("no edits: no changes, every block counted unchanged", () => {
+  it("noEditsNoChanges", () => {
     const f = fixture(LAYOUT, ABC);
     const cs = f.run();
     expect(cs.changes).toEqual([]);
@@ -85,14 +85,14 @@ describe("ChangeSet", () => {
     expect(ChangeSetSchema.safeParse(cs).success).toBe(true);
   });
 
-  it("a prose edit is `prose` only", () => {
+  it("proseEditIsProseOnly", () => {
     const f = fixture(LAYOUT, ABC);
     f.put({ slug: "b", label: "def:b", prose: "Reworded.\n" });
     const [c] = f.run().changes;
     expect(c).toMatchObject({ change: "changed", label: "def:b", aspects: ["prose"] });
   });
 
-  it("inserting a block at the top of a section moves NOTHING — moved is relative", () => {
+  it("topInsertMovesNothing", () => {
     const f = fixture(LAYOUT, ABC);
     f.put({ slug: "z", label: "def:z" });
     f.layout({ "sec:one": ["z", "a", "b", "c"], "sec:two": ["d"] });
@@ -101,7 +101,7 @@ describe("ChangeSet", () => {
     expect(cs.changes[0]).toMatchObject({ change: "added", label: "def:z" });
   });
 
-  it("swapping two neighbours moves exactly one of them", () => {
+  it("swapMovesExactlyOne", () => {
     const f = fixture(LAYOUT, ABC);
     f.layout({ "sec:one": ["b", "a", "c"], "sec:two": ["d"] });
     const cs = f.run();
@@ -109,7 +109,7 @@ describe("ChangeSet", () => {
     expect(cs.changes).toHaveLength(1);
   });
 
-  it("moving a block to another section is `moved`, with both positions", () => {
+  it("crossSectionMoveHasBothPositions", () => {
     const f = fixture(LAYOUT, ABC);
     f.layout({ "sec:one": ["a", "b"], "sec:two": ["c", "d"] });
     const cs = f.run();
@@ -121,7 +121,7 @@ describe("ChangeSet", () => {
     expect(c.head.section).toBe("ch::sec:two");
   });
 
-  it("a declared rename is `renamed` and NOT also `manifest`", () => {
+  it("declaredRenameNotManifest", () => {
     const f = fixture(LAYOUT, ABC);
     f.put({ slug: "a", label: "def:a2", renamedFrom: ["def:a"], prose: "Prose of def:a.\n" });
     const cs = f.run();
@@ -130,14 +130,14 @@ describe("ChangeSet", () => {
     ]);
   });
 
-  it("an undeclared rename is a removal plus an addition — the failure 5xzc's id-stable catches", () => {
+  it("undeclaredRenameIsRemoveAdd", () => {
     const f = fixture(LAYOUT, ABC);
     f.put({ slug: "a", label: "def:a2" });
     const kinds = f.run().changes.map((c) => `${c.change}:${c.label}`);
     expect(kinds.sort()).toEqual(["added:def:a2", "removed:def:a"]);
   });
 
-  it("a removal reports the base position", () => {
+  it("removalReportsBasePosition", () => {
     const f = fixture(LAYOUT, ABC);
     f.drop("d");
     f.layout({ "sec:one": ["a", "b", "c"], "sec:two": [] });
@@ -147,12 +147,12 @@ describe("ChangeSet", () => {
     ]);
   });
 
-  it("an unresolvable base throws — it is not 'no changes'", () => {
+  it("unresolvableBaseThrows", () => {
     const f = fixture(LAYOUT, ABC);
     expect(() => computeChangeSet({ repoRoot: f.repo, folio: "folio", base: "no-such-ref" })).toThrow();
   });
 
-  it("a folio absent at the base makes every head block an addition", () => {
+  it("absentFolioAllAdditions", () => {
     // Exercises git archive on a path the base does not have: that is an
     // empty base, not an error, because the folio genuinely did not exist.
     const repo = mkdtempSync(join(tmpdir(), "cs-empty-"));
@@ -173,7 +173,7 @@ describe("ChangeSet", () => {
 });
 
 describe("changeset-text (bean d903): what the diff renderers read", () => {
-  it("carries both sides of a changed block, the head of an added one, the base of a removed one — and nothing unchanged", () => {
+  it("textCarriesChangedSidesOnly", () => {
     const f = fixture(LAYOUT, ABC);
     f.put({ slug: "b", label: "def:b", prose: "Reworded **now**.\n" });
     f.put({ slug: "z", label: "def:z", prose: "New block.\n" });
@@ -191,7 +191,7 @@ describe("changeset-text (bean d903): what the diff renderers read", () => {
     expect(t["def:a"]).toBeUndefined();
   });
 
-  it("a table's prose is rendered as a table, not left as pipes", () => {
+  it("tableProseRenderedAsTable", () => {
     const f = fixture(LAYOUT, ABC);
     f.put({ slug: "b", label: "def:b", prose: "| A | B |\n|---|---|\n| 1 | 2 |\n" });
     const base = git(f.repo, "rev-parse", "HEAD");
@@ -202,7 +202,7 @@ describe("changeset-text (bean d903): what the diff renderers read", () => {
     expect(html).not.toContain("|");
   });
 
-  it("a renamed block's base text is read under its OLD label and filed under the new one", () => {
+  it("renamedBaseReadUnderOldLabel", () => {
     const f = fixture(LAYOUT, ABC);
     f.put({ slug: "b", label: "def:bee", renamedFrom: ["def:b"], prose: "Renamed and reworded.\n" });
     const base = git(f.repo, "rev-parse", "HEAD");
@@ -211,7 +211,7 @@ describe("changeset-text (bean d903): what the diff renderers read", () => {
     expect(text!.blocks["def:bee"]!.head!.prose).toBe("Renamed and reworded.\n");
   });
 
-  it("the ChangeSet itself never carries the prose path", () => {
+  it("changesetOmitsProsePath", () => {
     const f = fixture(LAYOUT, ABC);
     f.put({ slug: "b", label: "def:b", prose: "x\n" });
     expect(JSON.stringify(f.run())).not.toContain("mdPath");

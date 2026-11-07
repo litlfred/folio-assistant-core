@@ -16,7 +16,7 @@ section_title: "Abbreviations"
 | ANC | antenatal care |`;
 
 describe("glossary-from-source (folio-assistant-core#498)", () => {
-  test("reads table rows and definition lines, skipping the header, with their lines", () => {
+  test("readsRowsWithLines", () => {
     expect(readRows(terms).map((r) => [r.head, r.line])).toEqual([
       ["Care pathway", 3],
       ["Digital adaptation kits (DAKs)", 4],
@@ -26,19 +26,19 @@ describe("glossary-from-source (folio-assistant-core#498)", () => {
     expect(readRows(terms)[0]!.body).toBe("A complex intervention.\nWith parts.");
   });
 
-  test("a section's kind comes from its title", () => {
+  test("sectionKindFromTitle", () => {
     expect(sectionKind(abbrev)).toBe("abbreviations");
     expect(sectionKind("## Glossary\n")).toBe("terms");
     expect(sectionKind("## Introduction\n")).toBeUndefined();
   });
 
-  test("a bracketed acronym is the notation; ids are slugs", () => {
+  test("bracketedAcronymNotation", () => {
     expect(splitAcronym("Digital adaptation kits (DAKs)")).toEqual({ label: "Digital adaptation kits", acronym: "DAK" });
     expect(splitAcronym("Care (general)")).toEqual({ label: "Care (general)" });
     expect(termId("Person-centred point of service")).toBe("person-centred-point-of-service");
   });
 
-  test("acronyms fold into the term they expand; the rest become terms of their own, without a definition", () => {
+  test("acronymsFoldIntoTerms", () => {
     const t = candidates([
       { path: "g.md", kind: "terms", md: terms },
       { path: "a.md", kind: "abbreviations", md: abbrev },
@@ -50,13 +50,13 @@ describe("glossary-from-source (folio-assistant-core#498)", () => {
     expect(t.every((x) => x.status === "candidate")).toBe(true);
   });
 
-  test("a term printed as a heading of its own is one row, on its paragraph's line", () => {
+  test("headingTermOneRow", () => {
     const md = `---\nsection_title: "2.1.1. Actor"\n---\n### 2.1.1. Actor\n\n<a id="x"></a>\n\nA human or [tool](#t) in the system.\n\n> NOTE`;
     const row = readRows(termSection(md)!)[0]!;
     expect([row.head, row.body, row.line]).toEqual(["Actor", "A human or tool in the system.", 8]);
   });
 
-  test("merging keeps what a person owns and refreshes only the tool's own candidates", () => {
+  test("mergeKeepsPersonOwned", () => {
     const found = candidates([{ path: "g.md", kind: "terms", md: terms }]);
     const first = merge(undefined, found, { id: "s", title: "S" });
     const edited = {

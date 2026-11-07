@@ -14,13 +14,13 @@ import { BUILTIN_ADAPTERS, resolveBuiltinAdapter } from "@litlfred/cat-harness-t
 import { DocumentContentAdapter } from "./index.ts";
 
 describe("document adapter declaration", () => {
-  test("is discovered from this instance's declaration", () => {
+  test("discoveredFromInstanceDeclaration", () => {
     const doc = BUILTIN_ADAPTERS.find((a) => a.contentType === "document");
     expect(doc).toMatchObject({ instance: "folio-assistant-core", className: "DocumentContentAdapter" });
     expect(doc?.extends).toBeUndefined();
   });
 
-  test("resolves to the class this directory exports", async () => {
+  test("resolvesToExportedClass", async () => {
     const r = await resolveBuiltinAdapter("document");
     expect(r.fallbackReason).toBeUndefined();
     expect(r.ctor).toBe(DocumentContentAdapter as never);

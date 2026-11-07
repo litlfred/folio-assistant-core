@@ -43,20 +43,20 @@ describe("term pages", () => {
   );
   const page = renderTermPage(c, hb, hb.glossary.terms[0]!);
 
-  test("one page per term, under its instance's page", () => {
+  test("onePagePerTerm", () => {
     expect(termPermalink(hb, "component")).toMatch(/\/instance\/hb\/hb\/component\/$/);
     expect([...termPagesOf(c).keys()].map((p) => p.split("/").slice(-3, -1).join("/"))).toEqual(["hb/component", "hb/element", "hb/service"]);
     expect(page).toContain(`permalink: ${termPermalink(hb, "component")}`);
     expect(page).toContain("nav_exclude: true");
   });
 
-  test("the defining site is the glossary row, in the document and on the glossary page", () => {
+  test("definingSiteIsRow", () => {
     expect(page).toContain("<h2>Defined in</h2>");
     expect(page).toContain("{{ '/en/doc/index.html#tbl:glossary' | relative_url }}");
     expect(page).toContain("#hb--hb--component' | relative_url }}\">glossary entry</a>");
   });
 
-  test("broader, the computed narrower, and related terms link to their pages", () => {
+  test("broaderNarrowerRelatedLink", () => {
     expect(page).toContain("<h2>Broader</h2>");
     expect(page).toContain(`{{ '${termPermalink(hb, "element")}' | relative_url }}`);
     expect(page).toContain("<h2>Related</h2>");
@@ -65,7 +65,7 @@ describe("term pages", () => {
     expect(element).toContain(`{{ '${termPermalink(hb, "component")}' | relative_url }}`);
   });
 
-  test("the narrative passages are provenance: explained first, then used, in the page and its JSON-LD", () => {
+  test("passagesAsProvenance", () => {
     expect(page.indexOf("Explained in:")).toBeLessThan(page.indexOf("Used in:"));
     expect(page).toContain("{{ '/en/doc/index.html#p-c1' | relative_url }}");
     expect(page).toContain('"prov:wasDerivedFrom"');
@@ -73,11 +73,11 @@ describe("term pages", () => {
     expect(page).toContain(`"@id": "${ns}glossary/hb/component"`);
   });
 
-  test("a term no passage names says so", () => {
+  test("noPassageSaysSo", () => {
     expect(renderTermPage(c, hb, hb.glossary.terms[2]!)).toContain("No passage of a document in this folio names this term.");
   });
 
-  test("the glossary row links to the term page", () => {
+  test("glossaryRowLinksTermPage", () => {
     expect(renderAuthoredPage(c, "@hb")).toContain(`<a href="{{ '${termPermalink(hb, "component")}' | relative_url }}">Term page</a>`);
   });
 });

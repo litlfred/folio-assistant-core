@@ -265,6 +265,30 @@ Keep code, identifiers and standard names (BPMN, SKOS, ODRL, PROV-O, JSON,
 IRI, `$schema`, `needs`) as written, and give each capitalised defined term
 ONE rendering per locale across every scheme.
 
+### Subject areas and fixed translations
+
+Owner, 2026-11-07 (glossary review, "scoped fixed terms"). Three fields and
+one rule, in `schemas/glossary.ts`:
+
+| field | where | meaning |
+|---|---|---|
+| `subject` | scheme, optionally a term | the subject area the translations bind in (`dcterms:subject`), a local id: `harness-vocabulary`, `digital-health-trust`, `who-health-guidance`. A term's overrides its scheme's; with neither, the term binds only within its own scheme. |
+| `translationStatus` | term | per locale, `official` or `unofficial`; a locale not listed is `unofficial`. It records sign-off, never the translation. |
+| (none) | the scheme's `.po` | the translation itself. |
+
+**A fixed translation is derived, never flagged**: an `authored` term whose
+scheme catalogue holds a non-empty, non-fuzzy `msgstr` for its `prefLabel`
+(`isFixedTranslation`). There is no `#, fixed` flag and no label in the JSON,
+so the `.po` stays the one place a translation lives.
+
+**Precedence applies within a subject area.** Across the layers an instance
+`needs`, the more authoritative (lower) layer fixes a term's translation for
+its subject area, and an instance layer only adds. A match in a different
+subject area — the harness's `policy` (`策略`) in a health guide's sentence
+(`政策`) — is a **sense check** note for a person, never a violation.
+`translation:glossary:check` reads these fields. Use `scopeNote` for the
+prose a reader needs; it is never compared.
+
 ## Source glossary first
 
 When a folio is written from a source document (a WHO handbook, say), its terms

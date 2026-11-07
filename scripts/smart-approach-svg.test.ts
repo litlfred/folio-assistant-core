@@ -21,7 +21,7 @@ const fig: SmartApproachFigure = {
 };
 
 describe("smart-approach-svg", () => {
-  test("every label comes from the data", () => {
+  test("labelsFromData", () => {
     const svg = renderSvg(fig);
     for (const s of ["TOP BAND", "MIDDLE BAND", "BOTTOM BAND", "EVIDENCE LOOP", "L1: Narrative", "Words:", "Guidelines", "L2: Adaptation", "Local requirements", "Knowledge", "Country"]) {
       expect(svg).toContain(s);
@@ -29,14 +29,14 @@ describe("smart-approach-svg", () => {
     expect(svg).toContain('id="cell-l2-operational"');
   });
 
-  test("a row naming an unknown band is refused", () => {
+  test("unknownBandRefused", () => {
     const dir = mkdtempSync(join(tmpdir(), "smart-approach-"));
     const p = join(dir, "bad.json");
     writeFileSync(p, JSON.stringify({ ...fig, rows: [{ ...fig.rows[0], to: "nowhere" }, fig.rows[1]] }));
     expect(() => loadFigure(p)).toThrow(/unknown band nowhere/);
   });
 
-  test("text wraps to the card width", () => {
+  test("textWraps", () => {
     for (const line of wrap("Software that is able to execute static algorithms and interoperable digital components")) {
       expect(line.length).toBeLessThanOrEqual(19);
     }

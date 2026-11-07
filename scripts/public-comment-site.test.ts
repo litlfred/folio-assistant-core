@@ -39,12 +39,12 @@ const comment = (over: Record<string, unknown> = {}) =>
   });
 
 describe("public-comment-site", () => {
-  test("the staging slug is folio-staging.yml's", () => {
+  test("stagingSlugMatchesWorkflow", () => {
     expect(stagingSlug("pc/1.1 definitions")).toBe("pc-1.1-definitions");
     expect(stagingSlug("--a//b--")).toBe("a-b");
   });
 
-  test("before, after and PR links point at the anchor", () => {
+  test("linksPointAtAnchor", () => {
     const [r] = siteComments([comment()], anchors, { slug: "doc", site: "https://o.github.io/r/", repo: "o/r", storeDir: "review/public-comment", openPrs: new Set([7]) });
     expect(r.phase).toBe("editing");
     expect(r.section).toBe("1.1");
@@ -58,7 +58,7 @@ describe("public-comment-site", () => {
     });
   });
 
-  test("a comment or change-set with a pull request links its staging review page (owner, 2026-10-30)", () => {
+  test("prLinksStagingReview", () => {
     expect(stagingReviewUrl("https://o.github.io/r/", "claude/x y")).toBe("https://o.github.io/r/branches/claude-x-y/en/review/");
     expect(stagingReviewUrl(undefined, "b", "https://p.example/STAGING/b/")).toBe("https://p.example/STAGING/b/en/review/");
     expect(stagingReviewUrl(undefined, "b")).toBeUndefined();
@@ -83,7 +83,7 @@ describe("public-comment-site", () => {
     expect(siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r" })[0]!.links.review).toBeUndefined();
   });
 
-  test("the dashboard's page is under the locale and reads its records where they stay (#2527)", () => {
+  test("dashboardUnderLocale", () => {
     const route = dashboardRoute("/r", "doc");
     const page = dashboardPageRoute("/r", "doc");
     expect(page).toBe(`en/${route}`);
@@ -95,13 +95,13 @@ describe("public-comment-site", () => {
     expect(dashboardHtml([], { title: "T", slug: "doc", generated: "g" })).toContain('fetch("comments.json")');
   });
 
-  test("comment text is escaped in the dashboard and cannot close the overlay's script", () => {
+  test("commentTextEscaped", () => {
     const rows = siteComments([comment({ summary: "</script><b>x" })], anchors, { slug: "doc" });
     expect(dashboardHtml(rows, { title: "T", slug: "doc", generated: "g" })).not.toContain("<the>");
     expect(overlaySnippet(rows, { dashboard: "../d/index.html" })).not.toContain("</script><b>");
   });
 
-  test("only http(s), relative and fragment URLs from the record become links", () => {
+  test("onlySafeHrefs", () => {
     expect(safeHref("https://github.com/o/r/issues/1")).toBe("https://github.com/o/r/issues/1");
     expect(safeHref("HTTP://x.example/")).toBe("HTTP://x.example/");
     expect(safeHref("../en/doc/index.html#a")).toBe("../en/doc/index.html#a");
@@ -121,14 +121,14 @@ describe("public-comment-site", () => {
     expect(html).toContain('<span class="muted">chine, 2026-10-16</span>');
   });
 
-  test("a comment's status and type are escaped when the dashboard script lists a change-set's comments", () => {
+  test("statusTypeEscapedInScript", () => {
     const html = dashboardHtml(siteComments([comment()], anchors, { slug: "doc" }), { title: "T", slug: "doc", generated: "g" });
     expect(html).toContain("h(c[2].textContent)");
     expect(html).toContain("h(c[3].textContent)");
     expect(html).not.toMatch(/\+ c\[[23]\]\.textContent/);
   });
 
-  test("the count tiles are toggles, and every row carries what they filter on (owner, 2026-10-05)", () => {
+  test("tilesAreToggles", () => {
     const html = dashboardHtml(siteComments([comment({})], anchors, { slug: "doc" }), { title: "T", slug: "doc", generated: "g" });
     for (const key of ["all", "open", "unplaced", "editing", "decided", "incorporated"]) {
       expect(html).toMatch(new RegExp(`<button type="button" class="tile" data-tile="${key}" aria-pressed="false"`));
@@ -136,13 +136,13 @@ describe("public-comment-site", () => {
     expect(html).toMatch(/<tr id="PC-0001" data-phase="\w+" data-status="\w+" data-placed="[01]"/);
   });
 
-  test("the dashboard script pre-indexes comments and debounces search input for fast filtering", () => {
+  test("searchPreindexedDebounced", () => {
     const html = dashboardHtml(siteComments([comment({})], anchors, { slug: "doc" }), { title: "T", slug: "doc", generated: "g" });
     expect(html).toContain("const commentItems = rows.map((r) =>");
     expect(html).toContain("searchDebounceTimer = setTimeout(() => { apply(); save(false); }, 75)");
     expect(html).toContain("if (it.el.hidden !== !ok) it.el.hidden = !ok");
   });
-  test("each change-set shows its committee, rolled up from its comments' TWG routing (owner, 2026-10-13)", () => {
+  test("committeeRolledUp", () => {
     const routed = (ref: string, cat: string) => {
       const c = comment();
       return PublicCommentSchema.parse({ ...c, id: ref.toLowerCase(), public: { ...c.public, ref, labels: { "TWG consideration? AI categorisation": cat } } });
@@ -157,7 +157,7 @@ describe("public-comment-site", () => {
     expect(html).toContain('<label>Committee<select id="f-committee">');
     expect(html).toMatch(/<tr id="PC-0003"[^>]*data-committee="Core architects"/);
   });
-  test("a manually re-routed change-set shows the new committee and its move history on the dashboard (bean se3i, issue #197)", () => {
+  test("reroutedShowsHistory", () => {
     const routed = (ref: string, cat: string) => {
       const c = comment();
       return PublicCommentSchema.parse({ ...c, id: ref.toLowerCase(), public: { ...c.public, ref, labels: { "TWG consideration? AI categorisation": cat } } });
@@ -191,7 +191,7 @@ describe("public-comment-site", () => {
     // The Committee filter dropdown includes Clinical even though no individual comment is routed to Clinical.
     expect(html).toContain("<option>Clinical</option>");
   });
-  test("every comment has [edit] and [feedback], built in the page from its record (owner, 2026-10-13)", () => {
+  test("editAndFeedbackPerComment", () => {
     const rows = siteComments([comment()], anchors, { slug: "doc", repo: "o/r", storeDir: "review/public-comment" });
     expect(rows[0]!.source).toBe("review/public-comment/comments/PC-0001.json");
     const html = dashboardHtml(rows, { title: "T", slug: "doc", generated: "g", repo: "o/r", actions: { repo: "o/r", branch: "main", content: "doc" }, page: "en/d/index.html" });

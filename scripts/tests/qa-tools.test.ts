@@ -34,7 +34,7 @@ type ToolHandler = (
 
 
 describe("_pipeline helper", () => {
-  test("pipelineScriptPath names a folio path and appends .ts", () => {
+  test("pipelineScriptPathAppendsTs", () => {
     const p = pipelineScriptPath("qa-sweep");
     expect(p.endsWith("/content/pipeline/qa-sweep.ts")).toBe(true);
     expect(pipelineScriptPath("x.ts").endsWith("/content/pipeline/x.ts")).toBe(true);
@@ -60,7 +60,7 @@ describe("_pipeline helper", () => {
   // This fails if anyone "fixes" pipelineScriptPath to do an existence check
   // (making it silently a second resolver), or if resolvePipelineScript
   // regresses to returning a path blindly. Bean folio-assistant-a39g.
-  test("pipelineScriptPath vs resolvePipelineScript: the deprecation contract", () => {
+  test("deprecationContract", () => {
     const nowhere = "definitely-not-a-real-pipeline-script-a39g";
 
     // The deprecated one never consults the filesystem: it answers for a
@@ -78,21 +78,21 @@ describe("_pipeline helper", () => {
     expect(res.error).toContain("pipeline script not found");
   });
 
-  test("tryParseJson extracts JSON after a banner, else undefined", () => {
+  test("tryParseJsonAfterBanner", () => {
     expect(tryParseJson('banner\n{"a":1}')).toEqual({ a: 1 });
     expect(tryParseJson("[1,2,3]")).toEqual([1, 2, 3]);
     expect(tryParseJson("no json here")).toBeUndefined();
     expect(tryParseJson("")).toBeUndefined();
   });
 
-  test("runPipeline returns a structured error for a missing script (never throws)", () => {
+  test("runPipelineStructuredError", () => {
     const r = runPipeline("definitely-not-a-real-script-xyz", ["--json"]);
     expect(r.ok).toBe(false);
     expect(r.error).toContain("not found");
     expect(r.json).toBeUndefined();
   });
 
-  test("asToolText renders error and JSON results as MCP text content", () => {
+  test("asToolTextRenders", () => {
     const errRes = asToolText("t", {
       ok: false, script: "s", exitCode: null, stdout: "", stderr: "", error: "boom",
     });
@@ -118,7 +118,7 @@ function record(register: (s: McpServer) => void): Record<string, { desc: string
 }
 
 describe("registerQaTools", () => {
-  test("registers the expected mechanical tools with handlers", () => {
+  test("registersMechanicalTools", () => {
     // Both halves together must still cover the module's whole table — that is
     // a property of the table, not of either adapter, and splitting the
     // registration must not let an entry fall out of coverage.
@@ -138,7 +138,7 @@ describe("registerQaTools", () => {
     }
   });
 
-  test("the paper-only QA tools are NOT in the document half", () => {
+  test("paperOnlyNotInDocument", () => {
     // `proof_status` counts sorries in Lean files and `latex_preflight` parses
     // .tex source. On a document folio both would report clean forever, and a
     // check that never looked is indistinguishable from one that passed.
@@ -151,7 +151,7 @@ describe("registerQaTools", () => {
     }
   });
 
-  test("glossary_check returns a graceful message when no paper resolves", async () => {
+  test("glossaryCheckGraceful", async () => {
     const registered: Record<string, ToolHandler> = {};
     const stub = { tool(name: string, _d: string, _s: unknown, h: ToolHandler) { registered[name] = h; } };
     // eslint-disable-next-line @typescript-eslint/no-explicit-any

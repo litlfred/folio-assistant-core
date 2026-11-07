@@ -41,7 +41,7 @@ describe("registerAuditTools", () => {
     "tex_validate", "proof_narrative_equiv", "status_sections_audit",
   ];
 
-  test("registers all audit tools with handlers + descriptions", () => {
+  test("registersAllAuditTools", () => {
     for (const name of expected) {
       expect(reg[name]).toBeDefined();
       expect(typeof reg[name].handler).toBe("function");
@@ -63,13 +63,13 @@ describe("the audit split by content type", () => {
   const paper = record(registerPaperAuditTools);
   const all = record(registerAuditTools);
 
-  test("the two halves partition the table — nothing lost, nothing duplicated", () => {
+  test("halvesPartition", () => {
     for (const n of doc) expect(paper.has(n)).toBe(false);
     expect(doc.size + paper.size).toBe(all.size);
     expect(new Set([...doc, ...paper])).toEqual(all);
   });
 
-  test("audits that read .tex, .lean or a math kind are paper-only", () => {
+  test("texLeanMathPaperOnly", () => {
     // On a document folio each of these answers nothing, forever. Registering
     // one there means an agent can run it, get a clean report, and conclude
     // its corpus was checked.
@@ -84,7 +84,7 @@ describe("the audit split by content type", () => {
     }
   });
 
-  test("content-agnostic audits stay available to a document folio", () => {
+  test("agnosticForDocuments", () => {
     for (const n of [
       "qa_staleness", "section_title_audit", "defterm_validate",
       "value_validate", "glossary_candidates", "wiring_audit",

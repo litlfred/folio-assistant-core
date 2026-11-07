@@ -57,7 +57,7 @@ describe("archimate-from-glossary", () => {
   const model = parseArchimate(XML);
   const p = plan(model, TERMS, "m");
 
-  test("plans by link: renames, documents, creates the missing element, adds the listed relationship", () => {
+  test("plansByLink", () => {
     expect(p.linked).toBe(2);
     expect(p.unlinked).toBe(1);
     expect(p.update).toEqual([{ id: "id-cr", term: TERMS[0], name: "Client Registry", documentation: "Holds who the clients are." }, { id: "id-ls", term: TERMS[1], name: "Client lookup" }]);
@@ -68,12 +68,12 @@ describe("archimate-from-glossary", () => {
     expect(plan(model, TERMS, "m")).toEqual(p);
   });
 
-  test("a type that disagrees is reported, never changed", () => {
+  test("typeDisagreementReported", () => {
     const wrong = plan(model, [term("client-registry", "Client Registry", { archimate: "ApplicationService" })], "m");
     expect(wrong.problems[0]).toContain("is a ApplicationComponent, the graph says ApplicationService");
   });
 
-  test("written back: the model then agrees, and no box moved", () => {
+  test("writtenBackAgrees", () => {
     const xml = applyPlan(XML, p, layerOf);
     const after = parseArchimate(xml);
     const again = plan(after, TERMS, "m");
@@ -84,7 +84,7 @@ describe("archimate-from-glossary", () => {
     expect(xml).toContain(`archimateRelationship="id-old"`);
   });
 
-  test("--prune removes the unlisted relationship and the line that draws it", () => {
+  test("pruneRemovesUnlisted", () => {
     const xml = applyPlan(XML, p, layerOf, { prune: true });
     expect(xml).not.toContain("id-old");
     expect(xml).not.toContain("id-c1");
@@ -93,14 +93,14 @@ describe("archimate-from-glossary", () => {
     expect(plan(after, TERMS, "m").extra).toEqual([]);
   });
 
-  test("--seed moves a model's linked elements into the graph once, never over an existing focus", () => {
+  test("seedMovesLinkedOnce", () => {
     const seeds = seedFrom(model, [{ file: "ra.glossary.json", id: "ra", terms: [{ id: "client-registry" }, { id: "client-lookup", focus: { archimate: "ApplicationService" } }] }]);
     expect(seeds).toEqual([{ file: "ra.glossary.json", focus: [{ termId: "client-registry", focus: { archimate: "ApplicationComponent" } }] }]);
     const both = seedFrom(model, [{ file: "ra.glossary.json", id: "ra", terms: [{ id: "client-registry" }, { id: "client-lookup" }] }]);
     expect(both[0]!.focus.find((x) => x.termId === "client-lookup")!.focus).toEqual({ archimate: "ApplicationService", relationships: [{ type: "Serving", target: "client-registry" }] });
   });
 
-  test("--seed reads only an ingested model, held under library/", () => {
+  test("seedOnlyIngestedModel", () => {
     expect(isIngested("/r", "/r/library/who-ra-2024/model.archimate")).toBe(true);
     expect(isIngested("/r", "/r/archimate/0.3.0-draft.1/WHOBaseFile.archimate")).toBe(false);
     expect(isIngested("/r", "/r/library-copy/model.archimate")).toBe(false);
