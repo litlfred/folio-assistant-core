@@ -455,6 +455,13 @@
       "status": "candidate"
     },
     {
+      "id": "glossary.glossaryschema.subject",
+      "prefLabel": "GlossarySchema.subject",
+      "definition": "The subject area this scheme's translations bind in ({@link SubjectSchema}): `dcterms:subject`.",
+      "source": "folio-assistant-core/schemas/glossary.ts#GlossarySchema.subject",
+      "status": "candidate"
+    },
+    {
       "id": "glossary.termschema.broader",
       "prefLabel": "TermSchema.broader",
       "definition": "Local term ids or absolute IRIs.",
@@ -515,6 +522,20 @@
       "prefLabel": "TermSchema.source",
       "definition": "Where the term came from: a repository path (with #anchor) or an IRI.",
       "source": "folio-assistant-core/schemas/glossary.ts#TermSchema.source",
+      "status": "candidate"
+    },
+    {
+      "id": "glossary.termschema.subject",
+      "prefLabel": "TermSchema.subject",
+      "definition": "Overrides the scheme's {@link SubjectSchema subject area} for this term.",
+      "source": "folio-assistant-core/schemas/glossary.ts#TermSchema.subject",
+      "status": "candidate"
+    },
+    {
+      "id": "glossary.termschema.translationstatus",
+      "prefLabel": "TermSchema.translationStatus",
+      "definition": "Per locale, whether this term's translation is signed off. The translation itself is in the scheme's `.po`, never here: this records only who stands behind it. A locale not listed is `unofficial`.",
+      "source": "folio-assistant-core/schemas/glossary.ts#TermSchema.translationStatus",
       "status": "candidate"
     },
     {
