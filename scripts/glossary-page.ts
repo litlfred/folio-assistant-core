@@ -373,6 +373,11 @@ export function termsOfSchema(
       `Read from the schema that defines them, ${rel}, so this glossary cannot say anything that schema does not.`,
     ...(decl.version ? { hasVersion: decl.version } : {}),
     source: rel,
+    // A schema's `$defs` terms name the kinds of node that schema defines: the
+    // harness's own vocabulary (bootstrap's Actor, Role, Reference…), so their
+    // fixed translations bind harness text and not a health guide's "reference"
+    // (owner, 2026-11-07, scoped fixed terms).
+    subject: "harness-vocabulary",
     ordered: true,
     terms: defs.map(([key, v]) => ({
       id: id(key),

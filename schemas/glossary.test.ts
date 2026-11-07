@@ -7,7 +7,7 @@ import { describe, expect, test } from "bun:test";
 import { existsSync, readFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
 
-import { GlossarySchema, licenceTerms, schemeIri, termIri, toSkos, type Glossary } from "./glossary.ts";
+import { GlossarySchema, isFixedTranslation, licenceTerms, schemeIri, subjectOf, termIri, toSkos, translationStatusOf, type Glossary } from "./glossary.ts";
 import {
   LETTER_PARTS,
   PAGE_KEYS,
@@ -688,5 +688,58 @@ describe("D4: a glossary's licence comes from the licence-naming row (bean gzkt)
 
   test("no licence: nothing written", () => {
     expect(licenceTerms(undefined)).toEqual({});
+  });
+});
+
+describe("scoped fixed terms: subject area and translation status (owner, 2026-11-07)", () => {
+  const base = {
+    $schema: "folio-glossary/v1",
+    id: "s",
+    title: "S",
+    subject: "harness-vocabulary",
+    terms: [
+      { id: "policy", prefLabel: "policy", definition: "d", status: "authored", translationStatus: { fr: "official" } },
+      { id: "role", prefLabel: "role", definition: "d", status: "authored", subject: "process-modelling" },
+      { id: "draft", prefLabel: "draft", status: "candidate" },
+    ],
+  };
+
+  test("a scheme and a term may name a subject area; a term's overrides its scheme's", () => {
+    const g = GlossarySchema.parse(base);
+    expect(subjectOf(g, g.terms[0]!)).toBe("harness-vocabulary");
+    expect(subjectOf(g, g.terms[1]!)).toBe("process-modelling");
+    expect(subjectOf({}, {})).toBeUndefined();
+  });
+
+  test("a subject area is a local id, not prose", () => {
+    expect(GlossarySchema.safeParse({ ...base, subject: "Harness vocabulary" }).success).toBe(false);
+  });
+
+  test("translation status is official or unofficial per locale, and unofficial when absent", () => {
+    const g = GlossarySchema.parse(base);
+    expect(translationStatusOf(g.terms[0]!, "fr")).toBe("official");
+    expect(translationStatusOf(g.terms[0]!, "zh")).toBe("unofficial");
+    const bad = structuredClone(base);
+    (bad.terms[0] as Record<string, unknown>).translationStatus = { fr: "signed" };
+    expect(GlossarySchema.safeParse(bad).success).toBe(false);
+  });
+
+  test("a fixed translation is derived from the catalogue: authored, non-empty, not fuzzy", () => {
+    const g = GlossarySchema.parse(base);
+    expect(isFixedTranslation(g.terms[0]!, "politique")).toBe(true);
+    expect(isFixedTranslation(g.terms[0]!, "")).toBe(false);
+    expect(isFixedTranslation(g.terms[0]!, undefined)).toBe(false);
+    expect(isFixedTranslation(g.terms[0]!, "politique", true)).toBe(false);
+    expect(isFixedTranslation(g.terms[2]!, "brouillon")).toBe(false);
+  });
+
+  test("the subject is published as dcterms:subject on the scheme and on an overriding term", () => {
+    const sk = toSkos(GlossarySchema.parse(base), "https://example.org/ns/") as { "@graph": Record<string, unknown>[] };
+    const nodes = sk["@graph"];
+    expect(nodes.find((n) => n["@type"] === "skos:ConceptScheme")!["dcterms:subject"]).toBe("harness-vocabulary");
+    const role = nodes.find((n) => String(n["@id"]).endsWith("/role"))!;
+    expect(role["dcterms:subject"]).toBe("process-modelling");
+    const policy = nodes.find((n) => String(n["@id"]).endsWith("/policy"))!;
+    expect(policy["dcterms:subject"]).toBeUndefined();
   });
 });
