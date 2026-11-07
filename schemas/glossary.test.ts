@@ -32,6 +32,7 @@ import {
   ROUTE,
   LEGACY_ROUTE,
   localePagePath,
+  termsOfSchema,
 } from "../scripts/glossary-page.ts";
 import {
   ASSET_TYPES,
@@ -741,5 +742,25 @@ describe("scoped fixed terms: subject area and translation status (owner, 2026-1
     expect(role["dcterms:subject"]).toBe("process-modelling");
     const policy = nodes.find((n) => String(n["@id"]).endsWith("/policy"))!;
     expect(policy["dcterms:subject"]).toBeUndefined();
+  });
+});
+
+describe("a schema's terms take the subject area the schema publishes (owner, 2026-11-07: \"do it in the schema\")", () => {
+  const { mkdtempSync, writeFileSync } = require("node:fs") as typeof import("node:fs");
+  const { tmpdir } = require("node:os") as typeof import("node:os");
+  const schema = (extra: Record<string, unknown>) => {
+    const f = join(mkdtempSync(join(tmpdir(), "terms-")), "graph.schema.json");
+    writeFileSync(f, JSON.stringify({ $id: "https://example.org/graph.schema.json", ...extra, $defs: { Node: { description: "A file.", uses: [] } } }));
+    return f;
+  };
+
+  test("read from the schema's `subject`, not assumed", () => {
+    const g = termsOfSchema(schema({ subject: "harness-vocabulary" }), "schemas/graph.schema.json", { name: "bootstrap" });
+    expect(g?.subject).toBe("harness-vocabulary");
+    expect(GlossarySchema.safeParse(g).success).toBe(true);
+  });
+
+  test("a schema that publishes none leaves the scheme without one", () => {
+    expect(termsOfSchema(schema({}), "schemas/graph.schema.json", { name: "bootstrap" })?.subject).toBeUndefined();
   });
 });

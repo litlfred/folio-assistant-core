@@ -349,7 +349,7 @@ export function termsOfSchema(
   decl: { name: string; title?: string; version?: string },
   concepts: ReadonlyMap<string, string> = new Map(),
 ): Glossary | undefined {
-  let doc: { $id?: string; $defs?: Record<string, { description?: string; uses?: unknown; isDefinedBy?: unknown }> };
+  let doc: { $id?: string; subject?: unknown; $defs?: Record<string, { description?: string; uses?: unknown; isDefinedBy?: unknown }> };
   try {
     doc = JSON.parse(readFileSync(abs, "utf-8"));
   } catch {
@@ -373,11 +373,11 @@ export function termsOfSchema(
       `Read from the schema that defines them, ${rel}, so this glossary cannot say anything that schema does not.`,
     ...(decl.version ? { hasVersion: decl.version } : {}),
     source: rel,
-    // A schema's `$defs` terms name the kinds of node that schema defines: the
-    // harness's own vocabulary (bootstrap's Actor, Role, Reference…), so their
-    // fixed translations bind harness text and not a health guide's "reference"
-    // (owner, 2026-11-07, scoped fixed terms).
-    subject: "harness-vocabulary",
+    // The subject area the schema publishes beside its terms (bootstrap's
+    // `graph.schema.json`: `harness-vocabulary`), read as data, never assumed
+    // here (owner, 2026-11-07: "do it in the schema"). A schema that publishes
+    // none leaves its terms bound to their own scheme.
+    ...(typeof doc.subject === "string" ? { subject: doc.subject } : {}),
     ordered: true,
     terms: defs.map(([key, v]) => ({
       id: id(key),
