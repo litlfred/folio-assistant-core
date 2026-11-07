@@ -41,7 +41,7 @@ IT REFINES THE HARNESS FLOW BY CALLING IT. CallActivity_Basic runs the harness's
     </bpmn:extensionElements>
     <bpmn:laneSet id="Process_L1DocumentIngestion_LaneSet">
       <bpmn:lane id="Lane_1" name="Ingestion Engine (agent, runs unattended)" partitionElementRef="ingestion-agent">
-        <bpmn:documentation>Runs the whole pipeline from CallActivity_Basic through Task_Promote, and then Task_SummaryQueue, where it drains a few prose blocks of the advisory summary queue — including the theme branch, which stays in THIS lane rather than dipping into Lane_2: deciding a document is a theme source is the engine asking its author a question, not a write to the shared work plan. It does not stop at a gap: Gateway_Complete's 'gap' branch leaves this lane only for Lane_2 to record the bean, then Flow_i8 returns here at CallActivity_Derive, until Gateway_Complete says complete.</bpmn:documentation>
+        <bpmn:documentation>Runs the whole pipeline from CallActivity_Basic through Task_Promote and CallActivity_PublishStatements, and then Task_SummaryQueue, where it drains a few prose blocks of the advisory summary queue — including the theme branch, which stays in THIS lane rather than dipping into Lane_2: deciding a document is a theme source is the engine asking its author a question, not a write to the shared work plan. It does not stop at a gap: Gateway_Complete's 'gap' branch leaves this lane only for Lane_2 to record the bean, then Flow_i8 returns here at CallActivity_Derive, until Gateway_Complete says complete.</bpmn:documentation>
         <bpmn:flowNodeRef>StartEvent_Document</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>CallActivity_Basic</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Call_BeanOpen</bpmn:flowNodeRef>
@@ -57,6 +57,7 @@ IT REFINES THE HARNESS FLOW BY CALLING IT. CallActivity_Basic runs the harness's
         <bpmn:flowNodeRef>CallActivity_Gate</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Gateway_Complete</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Promote</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>CallActivity_PublishStatements</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_SummaryQueue</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_OpenBean</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Citeable</bpmn:flowNodeRef>
@@ -207,6 +208,19 @@ library/&lt;bib-slug&gt;/">
       <bpmn:incoming>Flow_i9</bpmn:incoming>
       <bpmn:outgoing>Flow_i10</bpmn:outgoing>
     </bpmn:serviceTask>
+    <bpmn:callActivity id="CallActivity_PublishStatements" name="Publish the extracted
+statements with source links" calledElement="Process_PublishExtractedStatements">
+      <bpmn:documentation>THE ENTRY IS COMPLETE HERE, so its statements are published here. Every statement the extraction captured from this entry (a recommendation, a requirement, a candidate a person still has to rule on) becomes readable in two places: the folio's working artifact, in the pages its content profile renders, and the shared extraction viewer. Each one links back to the library entry and to the section it came from.
+
+WHY IN INGESTION AND NOT LATER. A statement nobody can read beside its source is reviewed from memory, or not at all. Publishing when the entry is promoted means a reviewer can check every extracted statement against its source the moment it exists.
+
+The sub-process is the same for every content type. The content type decides only how its pages look, through its adapter. An entry that yields no statements (a referenced source, a dataset) passes through it with nothing to publish, and says so.</bpmn:documentation>
+      <bpmn:extensionElements>
+        <bootstrap.processes:skill ref="publish-extracted-statements" />
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_i10</bpmn:incoming>
+      <bpmn:outgoing>Flow_i10b</bpmn:outgoing>
+    </bpmn:callActivity>
     <bpmn:serviceTask id="Task_SummaryQueue" name="Queue prose blocks for summary">
       <bpmn:documentation>A QA sidecar of general document ingestion, drained slowly.
 
@@ -218,7 +232,7 @@ ADVISORY, never a gate: this step does not hold up Task_Citeable, and check:l1-c
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="l1-document-ingestion"/>
       </bpmn:extensionElements>
-      <bpmn:incoming>Flow_i10</bpmn:incoming>
+      <bpmn:incoming>Flow_i10b</bpmn:incoming>
       <bpmn:outgoing>Flow_i12</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:task id="Task_Citeable" name="Available to cite
@@ -247,7 +261,8 @@ as an L1 source">
     <bpmn:sequenceFlow id="Flow_i7" name="gap" sourceRef="Gateway_Complete" targetRef="Task_OpenBean" />
     <bpmn:sequenceFlow id="Flow_i8" sourceRef="Task_OpenBean" targetRef="CallActivity_Derive" />
     <bpmn:sequenceFlow id="Flow_i9" name="complete" sourceRef="Gateway_Complete" targetRef="Task_Promote" />
-    <bpmn:sequenceFlow id="Flow_i10" sourceRef="Task_Promote" targetRef="Task_SummaryQueue" />
+    <bpmn:sequenceFlow id="Flow_i10" sourceRef="Task_Promote" targetRef="CallActivity_PublishStatements" />
+    <bpmn:sequenceFlow id="Flow_i10b" sourceRef="CallActivity_PublishStatements" targetRef="Task_SummaryQueue" />
     <bpmn:sequenceFlow id="Flow_i12" sourceRef="Task_SummaryQueue" targetRef="Task_Citeable" />
     <bpmn:sequenceFlow id="Flow_i11" sourceRef="Task_Citeable" targetRef="Call_BeanClose" />
     <bpmn:sequenceFlow id="SF_Bean_1" name="claimed" sourceRef="GW_BeanYours" targetRef="CallActivity_Basic"/>
@@ -343,9 +358,15 @@ as an L1 source">
         <di:waypoint x="2390" y="170" />
         <di:waypoint x="2525" y="170" />
       </bpmndi:BPMNEdge>
+      <bpmndi:BPMNShape id="CallActivity_PublishStatements_di" bpmnElement="CallActivity_PublishStatements"><dc:Bounds x="2525" y="310" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_i10_di" bpmnElement="Flow_i10">
-        <di:waypoint x="2645" y="170" />
-        <di:waypoint x="2745" y="170" />
+        <di:waypoint x="2585" y="230" />
+        <di:waypoint x="2585" y="310" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_i10b_di" bpmnElement="Flow_i10b">
+        <di:waypoint x="2645" y="370" />
+        <di:waypoint x="2805" y="370" />
+        <di:waypoint x="2805" y="230" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_i12_di" bpmnElement="Flow_i12">
         <di:waypoint x="2865" y="170" />

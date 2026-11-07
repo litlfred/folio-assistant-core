@@ -25,7 +25,7 @@ and the gates that judge content stay here.
 
 <!-- skills:index:begin -->
 
-_47 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
+_48 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
 
 **`skills/`** (1)
 
@@ -97,7 +97,7 @@ _47 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`glossary-terms`](skills/library/cataloguing/glossary-terms.md) | Add terms to an instance's glossary: local SKOS terms (folio-glossary/v1) with a definition, a code and links to external SKOS concepts, and references to whole external schemes. |
 | [`ontologist`](skills/library/cataloguing/ontologist.md) | Semantic Ontologist — scans narrative text for ambiguous terms, generates a formal glossary/registry, and produces a mapping linking narrative strings to formal identifiers. |
 
-**`skills/library/ingestion/`** (6)
+**`skills/library/ingestion/`** (7)
 
 | Skill | What it is for |
 |---|---|
@@ -106,6 +106,7 @@ _47 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`figure-rebuild`](skills/library/ingestion/figure-rebuild.md) | Turn a source publication's figures into computable diagrams when a folio is built from its L1 entry. |
 | [`l1-coverage`](skills/library/ingestion/l1-coverage.md) | Check that an L1 extraction accounted for every normative sentence in its source publication — captured as a node, or excluded for a fixed-list reason a person signed off. |
 | [`l1-document-ingestion`](skills/library/ingestion/l1-document-ingestion.md) | The detailed method for turning a DOCUMENT in `uploads/` into a complete L1 entry in `library/<bib-slug>/` — which rung reads it and why, what a complete L1 entry holds, why an inferred structure is… |
+| [`publish-extracted-statements`](skills/library/ingestion/publish-extracted-statements.md) | The standard step of adding source documents to a folio's working artifact: every statement extracted from a library source is published readably in the artifact's own pages AND in the shared extraction viewer, each with a link to its library entry and to the section it came from, and CI fails… |
 | [`tabular-metadata`](skills/library/ingestion/tabular-metadata.md) | Extract tabular metadata from a CSV or spreadsheet as CSVW — tables, rows, headers, columns, datatypes and location on sheet — recording every field as determined or explicitly undetermined. |
 
 **`skills/review/`** (1)
