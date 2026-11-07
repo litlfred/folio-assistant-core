@@ -84,3 +84,8 @@ extraction is reviewed or promoted. `check:l1-complete` asks whether an L1
 entry is structurally complete; this asks whether its **normative content**
 was all accounted for. They are different questions and neither implies the
 other.
+
+Once the extraction is reviewed, its statements are published with links to
+their sources by [`publish-extracted-statements`](publish-extracted-statements.md):
+coverage says everything was captured, publication makes what was captured
+readable and traceable.

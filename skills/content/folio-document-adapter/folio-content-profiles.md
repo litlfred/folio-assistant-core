@@ -45,3 +45,10 @@ profiles instantiate those rules.
   `wkhtmltopdf` for PDF), never falling back to `latexmk`.
 - **Normative statements:** carried by `recommendation` blocks per
   [`normative-statements`](normative-statements.md), never by `definition`.
+- **Extracted-statement pages:** when source documents are added to the
+  folio's working artifact, the standard step
+  [`publish-extracted-statements`](../../library/ingestion/publish-extracted-statements.md)
+  publishes every statement extracted from them, each linked to its library
+  entry and section. The step is the same for every profile; the profile's
+  adapter decides only how those pages look in its artifact (pages of a
+  document, an appendix of a paper, pages of an implementation guide).
