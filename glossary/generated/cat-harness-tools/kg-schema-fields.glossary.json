@@ -7224,6 +7224,55 @@
       "status": "candidate"
     },
     {
+      "id": "glossary-sense.glossarysenseverdictschema.decidedat",
+      "prefLabel": "GlossarySenseVerdictSchema.decidedAt",
+      "definition": "When, as an ISO date.",
+      "source": "cat-harness-tools/schemas/kg/glossary-sense.ts#GlossarySenseVerdictSchema.decidedAt",
+      "status": "candidate"
+    },
+    {
+      "id": "glossary-sense.glossarysenseverdictschema.decidedby",
+      "prefLabel": "GlossarySenseVerdictSchema.decidedBy",
+      "definition": "The agent or person that ruled: an id, never a model name.",
+      "source": "cat-harness-tools/schemas/kg/glossary-sense.ts#GlossarySenseVerdictSchema.decidedBy",
+      "status": "candidate"
+    },
+    {
+      "id": "glossary-sense.glossarysenseverdictschema.label",
+      "prefLabel": "GlossarySenseVerdictSchema.label",
+      "definition": "The label that matched, for a reader.",
+      "source": "cat-harness-tools/schemas/kg/glossary-sense.ts#GlossarySenseVerdictSchema.label",
+      "status": "candidate"
+    },
+    {
+      "id": "glossary-sense.glossarysenseverdictschema.msgid",
+      "prefLabel": "GlossarySenseVerdictSchema.msgid",
+      "definition": "The source sentence, for a reader; the hash is what is compared.",
+      "source": "cat-harness-tools/schemas/kg/glossary-sense.ts#GlossarySenseVerdictSchema.msgid",
+      "status": "candidate"
+    },
+    {
+      "id": "glossary-sense.glossarysenseverdictschema.msgidsha256",
+      "prefLabel": "GlossarySenseVerdictSchema.msgidSha256",
+      "definition": "SHA-256 (hex) of the msgid, exactly as the catalogue holds it.",
+      "source": "cat-harness-tools/schemas/kg/glossary-sense.ts#GlossarySenseVerdictSchema.msgidSha256",
+      "status": "candidate"
+    },
+    {
+      "id": "glossary-sense.glossarysenseverdictschema.reason",
+      "prefLabel": "GlossarySenseVerdictSchema.reason",
+      "definition": "One line: why. For an `exception`, why the fixed translation is wrong here.",
+      "source": "cat-harness-tools/schemas/kg/glossary-sense.ts#GlossarySenseVerdictSchema.reason",
+      "status": "candidate"
+    },
+    {
+      "id": "glossary-sense.glossarysenseverdictschema.term",
+      "prefLabel": "GlossarySenseVerdictSchema.term",
+      "definition": "The term's id: its IRI, or `<subject area>#<label>` for a terminology pin.",
+      "source": "cat-harness-tools/schemas/kg/glossary-sense.ts#GlossarySenseVerdictSchema.term",
+      "status": "candidate"
+    },
+    {
       "id": "graph-typology-node.graphtypologynodeschema.description",
       "prefLabel": "GraphTypologyNodeSchema.description",
       "definition": "What a directory of this kind holds: the kind table's `contents`, generated from here.",
