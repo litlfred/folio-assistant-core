@@ -25,6 +25,7 @@
     "schemas/catalogue.ts",
     "schemas/changeset.ts",
     "schemas/dublin-core.ts",
+    "schemas/extracted-statement.ts",
     "schemas/figure-data.ts",
     "schemas/glossary-tables.ts",
     "schemas/glossary.ts",
