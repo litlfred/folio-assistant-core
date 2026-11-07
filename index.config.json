@@ -14,7 +14,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "3cd95b95d834707e28ea6b289efaa8a3cd5d553a",
+          "ref": "6eed239af4a5a97ba8307cb0ef72a8c899f8eeb4",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -30,8 +30,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-07",
-              "ref": "3cd95b95d834707e28ea6b289efaa8a3cd5d553a",
-              "evidence": "owner litlfred, 2026-11-07, card 'Stack pins' option 1 in session_01VQDpPg681u1Pt3MCpbmx8J: record consent on the stacked pins; cat-harness#1032 head 3cd95b9 (contains cat-harness main f538f18, which folio-assistant#2985 pins); merge manager merges bottom-up"
+              "ref": "6eed239af4a5a97ba8307cb0ef72a8c899f8eeb4",
+              "evidence": "litlfred, 2026-11-07, via the merge manager (session_01VQDpPffYARDQ8juksAZScf): card 'Pin target' 'A. Never move back'; 'repin as needed'; window extended to 05:27Z. Follow-up: cat-harness past the journey-maps.md markup fix (6eed239), cat-harness-tools and bootstrap-tools at the newest commit any lock pins."
             }
           }
         }
@@ -42,7 +42,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "9a4ccd9c7fbb089e58fbcdcdd0e0db7a404b50e2",
+          "ref": "fa5fb43f973a89581ca3f32145cd11c9137baa26",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -55,8 +55,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-07",
-              "ref": "9a4ccd9c7fbb089e58fbcdcdd0e0db7a404b50e2",
-              "evidence": "litlfred, 2026-11-07, via the merge manager (session_01VQDpPffYARDQ8juksAZScf): card 'Pin target' 'A. Never move back', and 'repin + merge open 12 hrs'; earlier in this session: 'align pins'. Align against folio-assistant#2985's pins, never moving a pin back; bean cat-tools-sm8r."
+              "ref": "fa5fb43f973a89581ca3f32145cd11c9137baa26",
+              "evidence": "litlfred, 2026-11-07, via the merge manager (session_01VQDpPffYARDQ8juksAZScf): card 'Pin target' 'A. Never move back'; 'repin as needed'; window extended to 05:27Z. Follow-up: cat-harness past the journey-maps.md markup fix (6eed239), cat-harness-tools and bootstrap-tools at the newest commit any lock pins."
             }
           }
         }
@@ -89,7 +89,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/bootstrap-tools",
-          "ref": "9f478d4d9fcd87842e9a4f5b886232ec806e657e",
+          "ref": "1dc08c906f3a9377534b753fed493b811e040ad7",
           "overrides": {
             "bootstrap-tools": {
               "whole": true
@@ -101,9 +101,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-06",
-              "ref": "9f478d4d9fcd87842e9a4f5b886232ec806e657e",
-              "evidence": "this session's user (litlfred), 2026-11-06 ~08:40Z: \"repin as needed. merge when green and ready for all your PRs within 6hr window\" — re-pin to mains for folio-assistant-core#654, which needs cat-harness-tools#1564 (https://claude.ai/code/session_01VQDpPfJKxVERPVKKWBTY8z)"
+              "on": "2026-11-07",
+              "ref": "1dc08c906f3a9377534b753fed493b811e040ad7",
+              "evidence": "litlfred, 2026-11-07, via the merge manager (session_01VQDpPffYARDQ8juksAZScf): card 'Pin target' 'A. Never move back'; 'repin as needed'; window extended to 05:27Z. Follow-up: cat-harness past the journey-maps.md markup fix (6eed239), cat-harness-tools and bootstrap-tools at the newest commit any lock pins."
             }
           }
         }
