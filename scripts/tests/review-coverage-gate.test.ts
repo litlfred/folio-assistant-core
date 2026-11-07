@@ -12,15 +12,15 @@ const clean = { uncoveredBlocks: 0, openDefects: 0, rendered: "known", unreviewe
 const decide = (f: Partial<typeof clean>) => evaluate(table, { ...clean, ...f });
 
 describe("review-coverage-gate.dmn", () => {
-  it("every expression in it can be read by the engine", () => {
+  it("everyExpressionReadable", () => {
     expect(unreadableExpressions(table)).toEqual([]);
   });
 
-  it("covered when nothing is owed", () => {
+  it("coveredWhenNothingOwed", () => {
     expect(decide({}).outcome).toBe("yes");
   });
 
-  it("each count it reads keeps the review open, and says which rule", () => {
+  it("eachCountKeepsOpen", () => {
     expect(decide({ uncoveredBlocks: 1 }).rule).toBe("Rule_Uncovered");
     expect(decide({ openDefects: 1 }).rule).toBe("Rule_OpenDefect");
     expect(decide({ unreviewedPages: 2 }).rule).toBe("Rule_UnreviewedPage");
@@ -29,13 +29,13 @@ describe("review-coverage-gate.dmn", () => {
     for (const f of [{ unreviewedPages: 2 }, { undeterminedInputs: 1 }, { missedPages: 1 }]) expect(decide(f).outcome).toBe("no");
   });
 
-  it("a page count that was not computed is not read: an absent rendered impact or a not-base measurement", () => {
+  it("uncomputedPageCountNotRead", () => {
     expect(decide({ rendered: "absent", unreviewedPages: 0, undeterminedInputs: 0 }).outcome).toBe("yes");
     expect(decide({ measured: "not-base", missedPages: 3 }).outcome).toBe("yes");
     expect(decide({ measured: "absent", missedPages: 0 }).outcome).toBe("yes");
   });
 
-  it("refuses to decide without every fact, rather than reading a missing one as 0", () => {
+  it("refusesMissingFact", () => {
     expect(() => evaluate(table, { uncoveredBlocks: 0, openDefects: 0 })).toThrow();
   });
 });

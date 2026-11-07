@@ -12,7 +12,7 @@ import { readRefFacts } from "./relevance.ts";
 const made: string[] = [];
 afterAll(() => made.forEach((d) => rmSync(d, { recursive: true, force: true })));
 
-test("facts come from per-entry files and from ref({…}) left in the module", () => {
+test("factsFromFilesAndRefs", () => {
   const root = mkdtempSync(join(tmpdir(), "relevance-"));
   made.push(root);
   mkdirSync(join(root, "folio", "references"), { recursive: true });

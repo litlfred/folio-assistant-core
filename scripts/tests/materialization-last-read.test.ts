@@ -32,7 +32,7 @@ const baseWorkingRecord: Materialization = {
 };
 
 describe("MaterializationSchema with and without lastReadAt", () => {
-  test("validates without lastReadAt", () => {
+  test("validatesWithoutLastRead", () => {
     const parsed = MaterializationSchema.safeParse(baseWorkingRecord);
     expect(parsed.success).toBe(true);
     if (parsed.success) {
@@ -40,7 +40,7 @@ describe("MaterializationSchema with and without lastReadAt", () => {
     }
   });
 
-  test("validates with valid lastReadAt string", () => {
+  test("validatesWithLastRead", () => {
     const withRead: Materialization = {
       ...baseWorkingRecord,
       lastReadAt: "2026-10-09T18:00:00.000Z",
@@ -52,7 +52,7 @@ describe("MaterializationSchema with and without lastReadAt", () => {
     }
   });
 
-  test("rejects empty lastReadAt string", () => {
+  test("rejectsEmptyLastRead", () => {
     const invalid = {
       ...baseWorkingRecord,
       lastReadAt: "",
@@ -63,7 +63,7 @@ describe("MaterializationSchema with and without lastReadAt", () => {
 });
 
 describe("touchMaterializedRead and recordMaterializationRead", () => {
-  test("touchMaterializedRead updates lastReadAt with ISO 8601 string", () => {
+  test("touchSetsIsoNow", () => {
     const before = new Date().toISOString();
     const updated = touchMaterializedRead(baseWorkingRecord);
     const after = new Date().toISOString();
@@ -80,20 +80,20 @@ describe("touchMaterializedRead and recordMaterializationRead", () => {
     expect(updated.bytes).toBe(baseWorkingRecord.bytes);
   });
 
-  test("recordMaterializationRead accepts explicit Date", () => {
+  test("recordAcceptsDate", () => {
     const targetDate = new Date("2026-05-15T10:30:00.000Z");
     const updated = recordMaterializationRead(baseWorkingRecord, targetDate);
 
     expect(updated.lastReadAt).toBe("2026-05-15T10:30:00.000Z");
   });
 
-  test("touchMaterializedRead and recordMaterializationRead are aliases", () => {
+  test("touchAndRecordAliases", () => {
     expect(touchMaterializedRead).toBe(recordMaterializationRead);
   });
 });
 
 describe("cacheRows() populates lastReadAt", () => {
-  test("reads lastReadAt when present and preserves undefined when absent", () => {
+  test("cacheRowsReadLastRead", () => {
     const mockRecords: MaterializedRecord[] = [
       {
         source: "item-with-read.json",
@@ -128,7 +128,7 @@ describe("cacheRows() populates lastReadAt", () => {
 });
 
 describe("eviction candidate ranking accounts for lastReadAt", () => {
-  test("least recently read copies prioritized for eviction over more recently read copies", () => {
+  test("leastRecentlyReadFirst", () => {
     const olderRead: CacheRow = {
       source: "a.json",
       id: "older",
@@ -155,7 +155,7 @@ describe("eviction candidate ranking accounts for lastReadAt", () => {
     expect(candidates.map((c) => c.row.id)).toEqual(["older", "newer"]);
   });
 
-  test("recorded lastReadAt prioritized for eviction over missing lastReadAt", () => {
+  test("recordedBeforeMissing", () => {
     const recordedRead: CacheRow = {
       source: "a.json",
       id: "recorded",
@@ -182,7 +182,7 @@ describe("eviction candidate ranking accounts for lastReadAt", () => {
     expect(candidates.map((c) => c.row.id)).toEqual(["recorded", "unrecorded"]);
   });
 
-  test("expired copies sort before no-expiry regardless of lastReadAt", () => {
+  test("expiredFirstRegardless", () => {
     const expiredRecentRead: CacheRow = {
       source: "exp.json",
       id: "expired",
@@ -211,7 +211,7 @@ describe("eviction candidate ranking accounts for lastReadAt", () => {
     expect(candidates[1].row.id).toBe("no-expiry");
   });
 
-  test("tied lastReadAt falls back to larger bytes first", () => {
+  test("tiedReadLargerFirst", () => {
     const small: CacheRow = {
       source: "s.json",
       id: "small",

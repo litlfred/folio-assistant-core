@@ -22,7 +22,7 @@ describe("the process says whether running it is logged", () => {
   // on it, this one included — `crdm-requirements` is cat-harness's.
   const CORPUS = join(import.meta.dir, "../../../cat-harness");
 
-  test("the three processes the owner named declare capture", async () => {
+  test("namedProcessesDeclareCapture", async () => {
     // Located through `workflowFiles`, not composed from a literal
     // directory. `crdm-requirements.bpmn` moved to its own topical subgraph
     // on 2026-09-20 and a composed path went ENOENT — which this test read
@@ -42,7 +42,7 @@ describe("the process says whether running it is logged", () => {
     }
   });
 
-  test("a capture value the engine cannot honour refuses to load", async () => {
+  test("unhonourableCaptureRefused", async () => {
     // Same discipline as `folio:bean op`: a diagram that asks for a mode the
     // engine does not have must not load and quietly log nothing. That is
     // worse here than elsewhere, because the missing artefact IS the record.
@@ -55,7 +55,7 @@ describe("the process says whether running it is logged", () => {
     await expect(loadProcessModel(p)).rejects.toThrow(/capture="sometimes" is not implemented/);
   });
 
-  test("marking a strict process did NOT change what it enforces", async () => {
+  test("markingDidNotChangeEnforcement", async () => {
     // The falsification check for taking the extension route over a call
     // activity. A call activity is a NODE in the control flow, so adding one
     // to a strict process would have inserted a step that must be completed

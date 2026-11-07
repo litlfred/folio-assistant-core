@@ -35,20 +35,20 @@ const page = renderAuthoredPage({ glossaries: [consolidated, candidates] } as ne
 const entry = (id: string) => page.slice(page.indexOf(`<dt id="hb--hb--${id}"`), page.indexOf("</dd>", page.indexOf(`<dt id="hb--hb--${id}"`)));
 
 describe("related terms on an instance's page", () => {
-  test("an open term lists its candidates, open, with definition and linked source", () => {
+  test("openTermListsCandidates", () => {
     const e = entry("attrition");
     expect(e).toContain('<details class="fa-gloss-related" open><summary>Candidate definitions (1)</summary>');
     expect(e).toContain('<a href="#hb--cands--attrition--src">Attrition</a>');
     expect(e).toContain("<p>Workers leaving.</p>");
     expect(e).toContain('<a href="https://example.org/w">example.org/w</a>');
   });
-  test("an IRI that names no collected term is left out, not drawn as a dead link", () => {
+  test("deadIriLeftOut", () => {
     expect(entry("attrition")).not.toContain("missing");
   });
-  test("an authored term keeps its candidates, collapsed", () => {
+  test("authoredKeepsCandidatesCollapsed", () => {
     expect(entry("registry")).toContain('<details class="fa-gloss-related"><summary>Candidate definitions (1)</summary>');
   });
-  test("an authored scheme's scope note is shown", () => {
+  test("scopeNoteShown", () => {
     expect(entry("attrition")).toContain('<p class="fa-gloss-note">Open for review: 1 candidate.</p>');
   });
 });

@@ -12,15 +12,15 @@ const block = (label: string, text: string, extra: Partial<{ defines: string[]; 
 });
 
 describe("term passages (folio-assistant-core#498)", () => {
-  test("prose text drops headings, code, HTML and link targets, keeps link and directive text", () => {
+  test("proseTextKeepsLinkText", () => {
     expect(proseText("# Title\n\nSee [Trade Item](x.md) and `code` <b>bold</b> :defterm[Registry]{#registry}.")).toBe("See Trade Item and bold Registry.");
   });
 
-  test("a multi-word label matches in any case and across a line break; a plural counts", () => {
+  test("multiWordAnyCase", () => {
     expect(firstUse("the application\ncomponents here", { labels: ["Application Component"] })).toBe(4);
   });
 
-  test("an acronym and a one-word label match only in their own case and as a whole word", () => {
+  test("acronymOwnCase", () => {
     expect(firstUse("a product", { labels: ["Product"] })).toBe(-1);
     expect(firstUse("a Product", { labels: ["Product"] })).toBe(2);
     expect(firstUse("DPI-H only", { labels: [], notation: "DPI" })).toBe(-1);
@@ -28,7 +28,7 @@ describe("term passages (folio-assistant-core#498)", () => {
     expect(firstUse("dpi", { labels: [], notation: "DPI" })).toBe(-1);
   });
 
-  test("a block that defines the term comes first; the glossary row itself is not a passage", () => {
+  test("definingBlockFirst", () => {
     const blocks = [
       block("p-1", "The Registry holds records."),
       block("p-2", "What it is.", { defines: ["registry"] }),
@@ -42,7 +42,7 @@ describe("term passages (folio-assistant-core#498)", () => {
     expect(m.get("k")![1]!.href).toBe("en/doc/index.html#p-1");
   });
 
-  test("mentions are capped per document; a term no block names has no entry", () => {
+  test("mentionsCapped", () => {
     const blocks = Array.from({ length: MAX_MENTIONS + 5 }, (_, i) => block(`p-${i}`, "uses Registry"));
     const m = passagesIn(blocks, [{ key: "k", labels: ["Registry"] }, { key: "none", labels: ["Nowhere"] }]);
     expect(m.get("k")!.length).toBe(MAX_MENTIONS);

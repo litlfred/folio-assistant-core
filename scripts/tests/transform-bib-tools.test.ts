@@ -35,7 +35,7 @@ function collect(register: (s: McpServer) => void) {
 
 describe("registerBibTools", () => {
   const reg = collect(registerBibTools);
-  test("registers bib tools with handlers", () => {
+  test("registersBibTools", () => {
     for (const name of ["bib_validate", "references_validate", "bib_export"]) {
       expect(reg[name]).toBeDefined();
       expect(typeof reg[name].handler).toBe("function");
@@ -48,14 +48,14 @@ describe("registerTransformTools", () => {
   const reg = collect(registerTransformTools);
   const paperReg = collect(registerPaperTransformTools);
 
-  test("migrate_lean_refs is paper-only", () => {
+  test("migrateLeanRefsPaperOnly", () => {
     // It rewrites `lean.ref` syntax, and a document folio has no `lean` field
     // on any block — there it would report success having transformed nothing.
     expect(reg["migrate_lean_refs"]).toBeUndefined();
     expect(paperReg["migrate_lean_refs"]).toBeDefined();
   });
 
-  test("registers transform tools with handlers", () => {
+  test("registersTransformTools", () => {
     // Both halves together must still cover the module's whole table.
     const all = { ...reg, ...paperReg };
     for (const name of ["codemod", "prune_deps", "migrate_lean_refs"]) {
@@ -64,7 +64,7 @@ describe("registerTransformTools", () => {
     }
   });
 
-  test("codemod degrades gracefully when no target resolves", async () => {
+  test("codemodGraceful", async () => {
     // No folio/<paper> in this repo → auto-detect yields nothing.
     const res = await reg["codemod"].handler({ name: "refterm" });
     expect(res.content[0].type).toBe("text");

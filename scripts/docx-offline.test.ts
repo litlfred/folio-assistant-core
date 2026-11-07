@@ -97,7 +97,7 @@ describe.skipIf(!hasPandoc)("offline .docx round trip", () => {
 
   const xml = (docx: string, part: string) => sh("unzip", ["-p", docx, part]).out;
 
-  test("every anchor is a bookmark named from its label; no empty anchor paragraphs", () => {
+  test("anchorsAreBookmarks", () => {
     const doc = xml(offline, "word/document.xml");
     for (const label of ["chap:ch01", "sec:1-1", "prose:ch01-objectives"]) {
       expect(doc).toContain(`w:name="${bookmark(label)}"`);
@@ -109,7 +109,7 @@ describe.skipIf(!hasPandoc)("offline .docx round trip", () => {
     expect(doc).not.toMatch(/<w:t xml:space="preserve"> Chapter objectives/);
   });
 
-  test("finish: line numbers, Track Changes on, and the same bytes twice", () => {
+  test("finishLineNumbersTrackChangesSameBytes", () => {
     expect(xml(offline, "word/document.xml")).toMatch(/<w:lnNumType [^>]*w:restart="continuous"/);
     expect(xml(offline, "word/settings.xml")).toContain("<w:trackRevisions");
     const again = join(dir, "again.docx");
@@ -119,7 +119,7 @@ describe.skipIf(!hasPandoc)("offline .docx round trip", () => {
     expect(xml(offline, "docProps/custom.xml")).toContain(sha);
   });
 
-  test("changes --apply carries each tracked change onto the Markdown line", () => {
+  test("changesApplyCarriesTrackedChange", () => {
     const out = join(dir, "changes.json");
     const r = sh("python3", ["-I", DOCX_OFFLINE, "changes", edited, "--repo", repo, "--apply", "--out", out]);
     expect(r.status).toBe(0);
@@ -141,7 +141,7 @@ describe.skipIf(!hasPandoc)("offline .docx round trip", () => {
     sh("git", ["checkout", "-q", "."], repo);
   });
 
-  test("a block changed since export is a conflict and is left alone", () => {
+  test("changedBlockIsConflict", () => {
     const md = join(repo, "folio", "doc", "ch01", "p-objectives.md");
     writeFileSync(md, BLOCK_MD + "- Added on main.\n");
     const out = join(dir, "conflict.json");
@@ -151,7 +151,7 @@ describe.skipIf(!hasPandoc)("offline .docx round trip", () => {
     sh("git", ["checkout", "-q", "."], repo);
   });
 
-  test("a file from an unknown commit is refused", () => {
+  test("unknownCommitRefused", () => {
     const other = join(dir, "other");
     mkdirSync(other);
     sh("git", ["init", "-q"], other);
@@ -161,7 +161,7 @@ describe.skipIf(!hasPandoc)("offline .docx round trip", () => {
   });
 });
 
-test("export file names carry the short commit and the date", () => {
+test("exportNamesCommitAndDate", () => {
   expect(exportNames("dth-hrh", "6748b4bb3e818b8f", "2026-11-02")).toEqual({
     pdf: "dth-hrh-public-comment-6748b4b-2026-11-02.pdf",
     reviewDocx: "dth-hrh-public-comment-6748b4b-2026-11-02.docx",

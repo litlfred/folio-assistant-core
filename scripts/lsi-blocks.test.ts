@@ -25,29 +25,29 @@ function library(blocks: Record<string, unknown>, sections: Record<string, strin
 }
 
 describe("blockText", () => {
-  test("a prose block reads the section file it points at", () => {
+  test("proseReadsSection", () => {
     const lib = library({}, { "s1.md": "Vaccines and schedules." });
     const t = blockText({ kind: "prose", title: "Intro", text: "../sections/s1.md" }, join(lib, "doc", "blocks", "p.jsonld"));
     expect(t).toEqual({ text: "Intro\n\nVaccines and schedules." });
   });
 
-  test("a figure contributes its title and narrative — the text no section holds", () => {
+  test("figureTitleAndNarrative", () => {
     expect(blockText({ kind: "figure", title: "Fig 1", narrative: { text: "A flow of doses." } }, "/x")).toEqual({ text: "Fig 1\n\nA flow of doses." });
   });
 
-  test("a figure whose narrative slot is a list reads its first entry, the single-text default", () => {
+  test("narrativeListFirstEntry", () => {
     const narrative = [{ text: "Doses over time.", lang: "en" }, { text: "Doses dans le temps.", lang: "fr" }];
     expect(blockText({ kind: "figure", title: "Fig 2", narrative }, "/x")).toEqual({ text: "Fig 2\n\nDoses over time." });
   });
 
-  test("an unknown kind or a missing section is a REASON, never empty text", () => {
+  test("unknownOrMissingIsReason", () => {
     expect("reason" in blockText({ kind: "equation" }, "/x")).toBe(true);
     expect("reason" in blockText({ kind: "prose", text: "../sections/gone.md" }, "/nowhere/blocks/b.jsonld")).toBe(true);
   });
 });
 
 describe("blockUnits", () => {
-  test("units are keyed by the block's @id, and unreadable blocks are counted, not dropped", () => {
+  test("unitsKeyedById", () => {
     const lib = library(
       {
         a: { "@id": "library/doc/blocks/a", kind: "prose", text: "../sections/s.md" },
@@ -63,7 +63,7 @@ describe("blockUnits", () => {
     expect(u.unreadable).toHaveLength(2);
   });
 
-  test("a repeated @id is reported, not allowed to overwrite the first", () => {
+  test("repeatedIdReported", () => {
     const lib = library({
       a: { "@id": "same", kind: "figure", narrative: { text: "one" } },
       b: { "@id": "same", kind: "figure", narrative: { text: "two" } },
@@ -75,7 +75,7 @@ describe("blockUnits", () => {
 });
 
 describe("lsiNearUnits (the `blocks` provider for cross-graph lsi:near)", () => {
-  test("with --root it reads that library, and each block's @id is its own explicit reference", () => {
+  test("rootLibraryOwnRefs", () => {
     const lib = library({ a: { "@id": "library/doc/blocks/a", kind: "figure", narrative: { text: "Doses over time." } } });
     const r = lsiNearUnits({ checkoutRoot: "/nowhere", roots: [lib] });
     expect(r.units.map((u) => u.id)).toEqual(["library/doc/blocks/a"]);
@@ -84,7 +84,7 @@ describe("lsiNearUnits (the `blocks` provider for cross-graph lsi:near)", () => 
     expect(r.notSearched).toBeUndefined();
   });
 
-  test("with no library declared it is not searched, never an empty index", () => {
+  test("noLibraryNotSearched", () => {
     const empty = mkdtempSync(join(tmpdir(), "lsi-blocks-empty-"));
     dirs.push(empty);
     const r = lsiNearUnits({ checkoutRoot: empty, roots: [] });

@@ -27,7 +27,7 @@ const anchors = {
 const refs = releaseReferences(anchors, { id: "demo-pc-v1", title: "Draft for Public Comment Release v1" });
 
 describe("release references", () => {
-  test("sections as a reader cites them, printed pages, captions", () => {
+  test("releaseReferences", () => {
     expect(refs.sections.map((s) => s.ref)).toEqual(["1 Introduction", "3.4.5 Governance", "Appendix C: Glossary"]);
     expect(refs.pages).toEqual(["1", "3", "4"]);
     expect(refs.captions).toEqual(["Table 3.1"]);
@@ -36,7 +36,7 @@ describe("release references", () => {
 });
 
 describe("the offline sheet comes back through the importer", () => {
-  test("a filled sheet is a comment matrix, and check flags references outside the release", () => {
+  test("offlineSheetImported", () => {
     const dir = mkdtempSync(join(tmpdir(), "pcc-"));
     const file = join(dir, "sheet.xlsx");
     writeFileSync(file, commentWorkbook(refs));
@@ -69,12 +69,12 @@ describe("GitHub issues come back as a form export", () => {
     "### Suggested revision", "", "Say X.", "",
     "### Acknowledgement", "", "- [X] Name me (my GitHub login) in the acknowledgements",
   ].join("\n");
-  test("form fields, _No response_ as empty", () => {
+  test("issueFormFields", () => {
     const f = formFields(body);
     expect(f.get("Section")).toBe("3.4.5 Governance");
     expect(f.get("Line no(s), Table or Figure")).toBe("");
   });
-  test("only this release's issues, read by the importer with consent", () => {
+  test("onlyReleaseIssues", () => {
     const csv = issuesCsv(
       [
         { number: 7, title: "[demo-pc-v1] unclear", body, user: { login: "octo" }, created_at: "2026-11-02T10:00:00Z" },
@@ -91,12 +91,12 @@ describe("GitHub issues come back as a form export", () => {
 });
 
 describe("the form and issue form offer only the release's references", () => {
-  test("issue form options", () => {
+  test("issueFormOptions", () => {
     const y = issueForm(refs);
     for (const s of refs.sections) expect(y).toContain(JSON.stringify(s.ref));
     expect(y).toContain('title: "[demo-pc-v1] "');
   });
-  test("google form script embeds the lists and parses", () => {
+  test("googleFormScript", () => {
     const gs = googleFormScript(refs);
     expect(gs).toContain('"3.4.5 Governance"');
     expect(() => new Function(gs)).not.toThrow();

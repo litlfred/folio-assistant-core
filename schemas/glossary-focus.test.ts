@@ -40,13 +40,13 @@ describe("foaf:focus", () => {
   const who = termIri(NS, glossary, "who");
   const whoOrg = `${who}/_focus`;
 
-  test("the concept points at the organization and is not typed as one", () => {
+  test("conceptPointsAtOrganization", () => {
     expect(byId.get(who)!["@type"]).toBe("skos:Concept");
     expect(byId.get(who)!["foaf:focus"]).toEqual({ "@id": whoOrg });
     expect(byId.get(who)!["skos:notation"]).toBe("WHO");
   });
 
-  test("the organization carries its ORG type, homepage, parent and sameAs", () => {
+  test("organizationCarriesOrgData", () => {
     const org = byId.get(whoOrg)!;
     expect(org["@type"]).toBe("org:FormalOrganization");
     expect(org["foaf:homepage"]).toEqual({ "@id": "https://www.who.int/" });
@@ -54,19 +54,19 @@ describe("foaf:focus", () => {
     expect(org["owl:sameAs"]).toEqual([{ "@id": "https://ror.org/example" }]);
   });
 
-  test("the prefixes are bound only when a term has a focus", () => {
+  test("prefixesBoundOnlyWithFocus", () => {
     expect(doc["@context"].org).toBe("http://www.w3.org/ns/org#");
     expect(doc["@context"].foaf).toBe("http://xmlns.com/foaf/0.1/");
     const plain = toSkos(GlossarySchema.parse({ $schema: "folio-glossary/v1", id: "x", title: "X", terms: [] }), NS) as { "@context": Record<string, string> };
     expect(plain["@context"].org).toBeUndefined();
   });
 
-  test("an organization with its own IRI is referred to by it", () => {
+  test("ownIriUsedForOrganization", () => {
     expect(focusIri("https://a/b", { iri: "https://ror.org/x" })).toBe("https://ror.org/x");
     expect(focusIri("https://a/b", {})).toBe("https://a/b/_focus");
   });
 
-  test("subOrganizationOf must name a term with a focus, or an IRI", () => {
+  test("subOrganizationNeedsFocusOrIri", () => {
     const bad = (ref: string, withFocus = false) =>
       GlossarySchema.safeParse({
         $schema: "folio-glossary/v1",
@@ -83,7 +83,7 @@ describe("foaf:focus", () => {
     expect(bad("https://example.org/org")).toBe(true);
   });
 
-  test("an unknown ORG type is refused", () => {
+  test("unknownOrgTypeRefused", () => {
     const r = GlossarySchema.safeParse({
       $schema: "folio-glossary/v1",
       id: "x",

@@ -48,7 +48,7 @@ const OUTCOME: AdjudicationOutcome = {
 };
 
 describe("who may adjudicate", () => {
-  it("excludes the MECHANICAL kind — the whole reason the step exists", () => {
+  it("excludesMechanicalKinds", () => {
     // The owner: "ONLY agentic human actor". `system` is this repository's
     // name for the mechanical kind. A judgement a script can perform is a
     // rule, and a rule belongs behind a `folio:decision` gateway.
@@ -56,7 +56,7 @@ describe("who may adjudicate", () => {
     expect(ADJUDICATOR_KINDS as readonly string[]).not.toContain("external");
   });
 
-  it("uses the HARNESS's spelling, and every excluded kind really exists", () => {
+  it("usesHarnessActorKinds", () => {
     // Without this the test above is vacuous — it would pass just as well if
     // the names were invented and excluded nothing. It caught exactly that:
     // the first draft read ["human", "agentic"], a second spelling of a
@@ -70,14 +70,14 @@ describe("who may adjudicate", () => {
     }
   });
 
-  it("matches what `adjudication.bpmn` already declares on its adjudicator step", () => {
+  it("matchesBpmnAdjudicatorStep", () => {
     // `<folio:fulfilment kinds="person agent"/>` on A_Adjudicate. The contract and
     // the diagram must not disagree about who may adjudicate, and the diagram got
     // there first.
     expect([...ADJUDICATOR_KINDS].sort()).toEqual(["agent", "person"]);
   });
 
-  it("an `agent` adjudicator must name its model", () => {
+  it("agentAdjudicatorNamesModel", () => {
     const noModel = { ...OUTCOME, by: { id: "a", kind: "agent" as const } };
     expect(AdjudicationOutcomeSchema.safeParse(noModel).success).toBe(false);
     const person = { ...OUTCOME, by: { id: "litlfred", kind: "person" as const } };
@@ -86,16 +86,16 @@ describe("who may adjudicate", () => {
 });
 
 describe("the request", () => {
-  it("accepts the worked case", () => {
+  it("acceptsWorkedRequest", () => {
     expect(AdjudicationRequestSchema.safeParse(REQUEST).success).toBe(true);
   });
 
-  it("REFUSES a single permitted answer — that is assent, not a judgement", () => {
+  it("refusesSinglePermittedAnswer", () => {
     const one = { ...REQUEST, codes: [REQUEST.codes[0]!] };
     expect(AdjudicationRequestSchema.safeParse(one).success).toBe(false);
   });
 
-  it("refuses two codes sharing a token — the outcome could not say which", () => {
+  it("refusesDuplicateCodeToken", () => {
     const dup = {
       ...REQUEST,
       codes: [...REQUEST.codes, { code: "stands", means: "again" }],
@@ -103,7 +103,7 @@ describe("the request", () => {
     expect(AdjudicationRequestSchema.safeParse(dup).success).toBe(false);
   });
 
-  it("allows NO assets, because a judgement about a process has none", () => {
+  it("allowsEmptyAssetsNotMissing", () => {
     // Empty and absent must not differ, which is why `assets` is required and
     // may be `[]` rather than optional.
     expect(AdjudicationRequestSchema.safeParse({ ...REQUEST, assets: [] }).success).toBe(true);
@@ -111,13 +111,13 @@ describe("the request", () => {
     expect(AdjudicationRequestSchema.safeParse(without).success).toBe(false);
   });
 
-  it("refuses a misspelled key rather than ignoring it", () => {
+  it("refusesMisspelledKey", () => {
     expect(AdjudicationRequestSchema.safeParse({ ...REQUEST, prompts: "x" }).success).toBe(false);
   });
 });
 
 describe("an asset says where it is, when it is anywhere", () => {
-  it("refuses `materialized` with no locator", () => {
+  it("materializedNeedsLocator", () => {
     // Presence asserted without location is the one shape the state rules out.
     expect(AdjudicationAssetSchema.safeParse({ ref: "x", state: "materialized" }).success).toBe(false);
     expect(
@@ -125,7 +125,7 @@ describe("an asset says where it is, when it is anywhere", () => {
     ).toBe(true);
   });
 
-  it("carries `unknown` as its own state, not a flavour of `referenced`", () => {
+  it("unknownIsOwnState", () => {
     // Inherited from MATERIALIZATION_STATES on purpose: an adjudicator told "here is
     // the evidence" about bytes nobody can find has been misled.
     expect(AdjudicationAssetSchema.safeParse({ ref: "x", state: "unknown" }).success).toBe(true);
@@ -133,32 +133,32 @@ describe("an asset says where it is, when it is anywhere", () => {
 });
 
 describe("the outcome", () => {
-  it("accepts the worked case, and it answers its request", () => {
+  it("acceptsWorkedOutcome", () => {
     expect(AdjudicationOutcomeSchema.safeParse(OUTCOME).success).toBe(true);
     expect(adjudicationDefects(REQUEST, OUTCOME)).toEqual([]);
   });
 
-  it("REFUSES empty reasoning — what makes an outcome sound is the reason", () => {
+  it("refusesEmptyReasoning", () => {
     expect(AdjudicationOutcomeSchema.safeParse({ ...OUTCOME, reasoning: "" }).success).toBe(false);
   });
 
-  it("refuses a code outside the enum it records", () => {
+  it("refusesCodeOutsideEnum", () => {
     expect(AdjudicationOutcomeSchema.safeParse({ ...OUTCOME, code: "invented" }).success).toBe(false);
   });
 
-  it("reports a code the REQUEST does not permit", () => {
+  it("reportsCodeNotPermitted", () => {
     const off = { ...OUTCOME, code: "other", codes: [...OUTCOME.codes, "other"] };
     const d = adjudicationDefects(REQUEST, off);
     expect(d.some((m) => m.includes("not a permitted answer"))).toBe(true);
   });
 
-  it("reports the wrong request rather than judging it silently", () => {
+  it("reportsWrongRequest", () => {
     expect(adjudicationDefects(REQUEST, { ...OUTCOME, request: "adj-2" })[0]).toContain("adj-2");
   });
 });
 
 describe("enum drift — the reason an outcome records its own enum", () => {
-  it("is REPORTED when the request's codes have since changed", () => {
+  it("reportsEnumDrift", () => {
     // The cost the layer split accepts: the enum is written in a diagram and
     // in a record. This is what makes the divergence visible instead of
     // silent — an outcome carrying only its code could not be checked at all.
@@ -173,20 +173,20 @@ describe("enum drift — the reason an outcome records its own enum", () => {
     expect(d.find((m) => m.includes("drifted"))).toContain("not wrong");
   });
 
-  it("is NOT reported for a mere reordering", () => {
+  it("reorderingIsNotDrift", () => {
     // Order is not part of the contract; treating it as one would cry wolf.
     const reordered = { ...OUTCOME, codes: ["dispensation", "stands", "scope"] };
     expect(adjudicationDefects(REQUEST, reordered)).toEqual([]);
   });
 
-  it("reports every defect, not just the first", () => {
+  it("reportsEveryDefect", () => {
     const bad = { ...OUTCOME, request: "nope", code: "other", codes: ["other", "x"] };
     expect(adjudicationDefects(REQUEST, bad).length).toBeGreaterThan(1);
   });
 });
 
 describe("it expresses the adjudication that already exists", () => {
-  it("carries `adjudication.bpmn`'s three outcomes, each keeping its meaning", () => {
+  it("carriesBpmnThreeOutcomes", () => {
     // The test the bean set itself: the generalisation must express the
     // existing diagram unchanged. Flattening the three to bare tokens would
     // drop exactly what distinguishes them, which is why a code carries
@@ -196,7 +196,7 @@ describe("it expresses the adjudication that already exists", () => {
     for (const c of REQUEST.codes) expect(c.means.length).toBeGreaterThan(0);
   });
 
-  it("can RESTRICT what the adjudicator sees — `adjudicator_sees`, not the artefact", () => {
+  it("canRestrictAdjudicatorView", () => {
     // A contract that always handed over everything would silently undo the
     // untainted-verification epic. The request names its own set, so the
     // artefact simply is not in it.
@@ -267,12 +267,12 @@ describe("SWE-Debate multi-round debate protocol integration", () => {
     },
   };
 
-  it("accepts a structured 3-round debate outcome", () => {
+  it("acceptsThreeRoundDebate", () => {
     expect(AdjudicationOutcomeSchema.safeParse(DEBATE_OUTCOME).success).toBe(true);
     expect(adjudicationDefects(REQUEST, DEBATE_OUTCOME)).toEqual([]);
   });
 
-  it("detects non-sequential debate rounds in adjudicationDefects", () => {
+  it("detectsNonSequentialRounds", () => {
     const nonSeq = {
       ...DEBATE_OUTCOME,
       debate: {

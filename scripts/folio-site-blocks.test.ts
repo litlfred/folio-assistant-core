@@ -32,14 +32,14 @@ const entry = (result: string, at: string, md: string) => ({
 });
 
 describe("QA report", () => {
-  test("each criterion shows its MOST RECENT verdict, whether a writer appended or prepended it", () => {
+  test("latestVerdictShown", () => {
     expect(latestEntryIndex([{ reviewed_at: "2026-01-01" }, { reviewed_at: "2026-02-01" }])).toBe(1);
     expect(latestEntryIndex([{ reviewed_at: "2026-03-01" }, { reviewed_at: "2026-02-01" }])).toBe(0);
     // No dates: the later position supersedes.
     expect(latestEntryIndex([{}, {}])).toBe(1);
   });
 
-  test("read from the sidecar the platform resolves; stale when the block changed since; Milnor first", () => {
+  test("sidecarStaleMilnorFirst", () => {
     const d = repo();
     const md = join(d, "folio", "p", "ch", "x.md");
     writeFileSync(md, "now\n");
@@ -73,7 +73,7 @@ describe("QA report", () => {
     expect(criterionGroup("proof-lean-compiles")).toBe("proof");
   });
 
-  test("the results tree wins over the legacy sibling, and a block with neither has no report", () => {
+  test("resultsTreeWins", () => {
     const d = repo();
     const md = join(d, "folio", "p", "ch", "x.md");
     writeFileSync(md, "t\n");
@@ -87,7 +87,7 @@ describe("QA report", () => {
 });
 
 describe("Lean", () => {
-  test("compile status is MEASURED or 'unchecked'; a measured sorry beats the text", () => {
+  test("compileMeasuredOrUnchecked", () => {
     const d = repo();
     const lean = join(d, "folio", "p", "ch", "x.lean");
     writeFileSync(lean, "theorem t : 1 = 1 := rfl\n");
@@ -99,14 +99,14 @@ describe("Lean", () => {
     expect(unmeasured).toMatchObject({ compiles: "unchecked", sorry: false, sorryBasis: "text" });
   });
 
-  test("a kind that expects Lean with none found is marked absent; a remark is not", () => {
+  test("absentLeanMarked", () => {
     const d = repo();
     const none = loadLeanStatus(undefined);
     expect(blockLean({ kind: "definition", sibling: join(d, "nope.lean"), repoRoot: d, status: none })).toEqual({ expected: true });
     expect(blockLean({ kind: "remark", sibling: join(d, "nope.lean"), repoRoot: d, status: none })).toEqual({ expected: false });
   });
 
-  test("a lean.ref resolves through the platform resolver once the folio's packages are declared", () => {
+  test("leanRefResolves", () => {
     const d = repo();
     const none = loadLeanStatus(undefined);
     mkdirSync(join(d, "folio", "p", "lean", "P"), { recursive: true });

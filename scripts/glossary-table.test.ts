@@ -30,7 +30,7 @@ const A = GlossarySchema.parse({
 });
 
 describe("glossary-table", () => {
-  it("prints labels with their altLabels, and the editorial note in brackets after the definition", () => {
+  it("termsTableLabelsNotes", () => {
     expect(termsTable(G)).toBe(
       [
         "| **Term** | **Description** |",
@@ -43,20 +43,20 @@ describe("glossary-table", () => {
     );
   });
 
-  it("lists only terms with a notation as acronyms, the first row standing as the header", () => {
+  it("acronymsTableNotationOnly", () => {
     expect(acronymsTable(A)).toBe(["| AI | Artificial Intelligence |", "| --- | --- |", "| SDG | Sustainable Development Goal |"].join("\n"));
   });
 
-  it("keeps a caption above the table and footnotes below it", () => {
+  it("keepsCaptionAndFootnotes", () => {
     expect(replaceTable("*Glossary*\n\n| a |\n| --- |\n\n[^1]: n\n", "| b |\n| --- |")).toBe("*Glossary*\n\n| b |\n| --- |\n\n[^1]: n\n");
   });
 
-  it("refuses a config path that leaves the instance", () => {
+  it("refusesEscapingPath", () => {
     const r = GlossaryTablesSchema.safeParse({ $schema: "folio-glossary-tables/v1", tables: [{ glossary: "../g.json", block: "b.md", kind: "terms" }] });
     expect(r.success).toBe(false);
   });
 
-  it("draws every table the instance's config names", () => {
+  it("drawsConfiguredTables", () => {
     const root = mkdtempSync(join(tmpdir(), "glossary-table-"));
     mkdirSync(join(root, "glossary"));
     writeFileSync(join(root, "glossary", "doc.glossary.json"), JSON.stringify(G));

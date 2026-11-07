@@ -23,18 +23,18 @@ import {
 import { resolveValidateScript } from "../../adapters/document/tools/validate";
 
 describe("resolvePipelineScript", () => {
-  test("finds a script the platform carries", () => {
+  test("findsPlatformScript", () => {
     const p = resolvePipelineScript("qa-sweep");
     expect(p).toBeDefined();
     expect(existsSync(p!)).toBe(true);
     expect(basename(p!)).toBe("qa-sweep.ts");
   });
 
-  test("accepts a name with or without the .ts suffix", () => {
+  test("nameWithOrWithoutTs", () => {
     expect(resolvePipelineScript("qa-sweep")).toBe(resolvePipelineScript("qa-sweep.ts"));
   });
 
-  test("finds a script the CONTENT LAYER carries, not the platform", () => {
+  test("findsContentLayerScript", () => {
     // Bean `yj6r`: `build-glossary` and `codemod-refterm` moved up into
     // `folio-assistant-core/scripts/`, beside the `schemas/glossary.ts` they
     // read. They are still addressed as pipeline scripts — `glossary_check` and
@@ -49,7 +49,7 @@ describe("resolvePipelineScript", () => {
     expect(p!).toContain("folio-assistant-core");
   });
 
-  test("returns undefined — not a bogus path — for a script nobody has", () => {
+  test("nobodyHasUndefined", () => {
     // The caller decides what absence means. Handing back a path that does not
     // exist is how `runPipeline` would spawn `bun run <missing>` and surface a
     // module-not-found instead of a clear "no such script".
@@ -58,7 +58,7 @@ describe("resolvePipelineScript", () => {
 });
 
 describe("runPipeline on a missing script", () => {
-  test("reports absence explicitly, and never as a successful run", () => {
+  test("missingReportsAbsence", () => {
     const r = runPipeline("no-such-pipeline-script-anywhere");
     expect(r.ok).toBe(false);
     expect(r.error).toBeDefined();
@@ -73,7 +73,7 @@ describe("runPipeline on a missing script", () => {
 });
 
 describe("content_validate shares the resolver", () => {
-  test("resolveValidateScript agrees with resolvePipelineScript('validate')", () => {
+  test("validateSharesResolver", () => {
     // These were separate copies of the same fallback for exactly one commit.
     // Pinning the agreement is cheaper than noticing the day they diverge.
     expect(resolveValidateScript()).toBe(resolvePipelineScript("validate"));

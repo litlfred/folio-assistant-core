@@ -17,7 +17,7 @@ const block = (over: Partial<FigureBlock>): FigureBlock => ({
 });
 
 describe("figureNumbers", () => {
-  it("reads Fig., Fig and Figure, and combined captions", () => {
+  it("figureNumbersRead", () => {
     expect(figureNumbers("Fig. 26. Ethiopia current; Fig. 27. Ethiopia future")).toEqual(["26", "27"]);
     expect(figureNumbers("![Fig 1. Partners](media/vfig-p011.png)")).toEqual(["1"]);
     expect(figureNumbers("Figure 2.13. m4RH")).toEqual(["2.13"]);
@@ -26,13 +26,13 @@ describe("figureNumbers", () => {
 });
 
 describe("coverage states", () => {
-  it("a declared figure with no block is missing, and fails", () => {
+  it("missingFigureFails", () => {
     const r = coverage(declared("1", "2"), [block({ figures: ["1"] })]);
     expect(r.figures.map((f) => f.state)).toEqual(["picture", "missing"]);
     expect(exitCodeFor(r)).toBe(1);
   });
 
-  it("a signed-off block exclusion is excluded; an unsigned one stays missing", () => {
+  it("signedExclusionExcluded", () => {
     const signed = coverage(declared("12"), [], [{ figure: "12", scope: "block", reason: "third-party", signedOffBy: "owner" }]);
     expect(signed.figures[0]!.state).toBe("excluded");
     expect(exitCodeFor(signed)).toBe(0);
@@ -40,7 +40,7 @@ describe("coverage states", () => {
     expect(proposed.figures[0]!.state).toBe("missing");
   });
 
-  it("orders picture < linked < computable, and cited by a rebuild exclusion", () => {
+  it("statesOrdered", () => {
     const r = coverage(declared("1", "2", "3", "4", "5"), [
       block({ figures: ["1"] }),
       block({ figures: ["2"], linkedViews: 1 }),
@@ -54,7 +54,7 @@ describe("coverage states", () => {
     expect(exitCodeFor(r, true)).toBe(1);
   });
 
-  it("a block that names the figure it reproduces is linked (core#486)", () => {
+  it("reproducesIsLinked", () => {
     const r = coverage(declared("1", "2"), [
       block({ figures: ["1"], reproduces: true }),
       block({ figures: ["2"], reproduces: false }),
@@ -62,7 +62,7 @@ describe("coverage states", () => {
     expect(r.figures.map((f) => f.state)).toEqual(["linked", "picture"]);
   });
 
-  it("reports blocks naming undeclared figures, and bad exclusions", () => {
+  it("reportsUndeclaredAndBadExclusion", () => {
     const r = coverage(declared("1"), [block({ figures: ["1", "9"] })], [{ figure: "1", scope: "other", reason: "x" }]);
     expect(r.undeclared).toEqual([{ file: "ch/f.jsonld", figure: "9" }]);
     expect(r.problems).toHaveLength(1);
@@ -71,7 +71,7 @@ describe("coverage states", () => {
 });
 
 describe("end to end", () => {
-  it("reads an entry's sections and a folio's blocks", () => {
+  it("endToEndReadsEntryAndFolio", () => {
     const dir = mkdtempSync(join(tmpdir(), "figcov-"));
     const sections = join(dir, "entry", "sections");
     const folio = join(dir, "folio", "doc", "ch01");
@@ -90,7 +90,7 @@ describe("end to end", () => {
     expect(report.counts).toMatchObject({ picture: 1, missing: 1 });
   });
 
-  it("reads meta.reproduces only when it names a source and a component", () => {
+  it("reproducesNeedsSourceAndComponent", () => {
     const dir = mkdtempSync(join(tmpdir(), "figcov-rep-"));
     const folio = join(dir, "ch10");
     mkdirSync(folio, { recursive: true });

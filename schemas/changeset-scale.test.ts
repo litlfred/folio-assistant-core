@@ -57,27 +57,27 @@ afterAll(() => {
 });
 
 describe("ChangeSet at scale (xp72)", () => {
-  it("is a valid folio-changeset/v1", () => {
+  it("isValidChangeset", () => {
     expect(ChangeSetSchema.safeParse(cs).success).toBe(true);
   });
 
-  it("matches the edit script's hand-derived counts", () => {
+  it("matchesHandDerivedCounts", () => {
     const { total: _total, ...summary } = EXPECTED;
     expect(cs.summary).toEqual(summary);
     expect(cs.summary.added + cs.summary.changed + cs.summary.unchanged).toBe(EXPECTED.total - EXPECTED.removed + EXPECTED.added);
   });
 
-  it("inserting at the top of a section moves nothing in it", () => {
+  it("topInsertMovesNothing", () => {
     const top = cs.changes.filter((c) => c.change === "changed" && c.head.section?.endsWith("::sec-00"));
     expect(top.map((c) => c.label).sort()).toEqual(Array.from({ length: 10 }, (_, c) => `def:${String(c).padStart(2, "0")}-00-08`));
   });
 
-  it("the all-at-once edit carries every aspect that applies, and only those", () => {
+  it("allAtOnceEditCarriesAspects", () => {
     const all = cs.changes.find((c) => c.label === "def:00-08-15-renamed");
     expect(all).toMatchObject({ change: "changed", from: "def:00-08-15", aspects: ["renamed", "prose", "moved"] });
   });
 
-  it("equals the committed golden ChangeSet", () => {
+  it("equalsGoldenChangeset", () => {
     const got = portable(cs);
     if (process.env.UPDATE_GOLDEN === "1" || !existsSync(GOLDEN)) {
       if (process.env.UPDATE_GOLDEN !== "1") throw new Error(`no golden file at ${GOLDEN}; run with UPDATE_GOLDEN=1`);

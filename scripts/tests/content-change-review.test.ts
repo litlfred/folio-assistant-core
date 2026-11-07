@@ -53,7 +53,7 @@ async function toCoverageGate() {
 }
 
 describe("content-change-review: sliced review and the coverage gate", () => {
-  test("ingest and slicing are the coordinator's; the slices are reviewed in review-task", async () => {
+  test("coordinatorIngestsAndSlices", async () => {
     const m = await model();
     expect(m.nodes.get("Task_IngestComments")?.lane).toBe("Review Coordinator");
     expect(m.nodes.get("Task_SliceAndAssign")?.lane).toBe("Review Coordinator");
@@ -63,30 +63,30 @@ describe("content-change-review: sliced review and the coverage gate", () => {
   });
 
 
-  test("an unreviewed changed block sends the review back to slicing", async () => {
+  test("unreviewedBlockBackToSlicing", async () => {
     const { m, s } = await toCoverageGate();
     complete(m, s, "GW_Covered", { facts: facts({ uncoveredBlocks: 2 }) });
     expect(at(m, s)).toEqual(["Task_SliceAndAssign"]);
   });
 
-  test("an open defect does too, whatever the block count says", async () => {
+  test("openDefectBackToSlicing", async () => {
     const { m, s } = await toCoverageGate();
     complete(m, s, "GW_Covered", { facts: facts({ openDefects: 1 }) });
     expect(at(m, s)).toEqual(["Task_SliceAndAssign"]);
   });
 
-  test("an unreviewed rendered page sends it back too (bean bnjs)", async () => {
+  test("unreviewedPageBackToSlicing", async () => {
     const { m, s } = await toCoverageGate();
     complete(m, s, "GW_Covered", { facts: facts({ unreviewedPages: 1 }) });
     expect(at(m, s)).toEqual(["Task_SliceAndAssign"]);
   });
 
-  test("the gate is computed: asserting the answer is refused", async () => {
+  test("gateComputedNotAsserted", async () => {
     const { m, s } = await toCoverageGate();
     expect(() => complete(m, s, "GW_Covered", { outcome: "yes" })).toThrow();
   });
 
-  test("covered goes on to sign-off, which ends at approval: merging is the next phase", async () => {
+  test("coveredToSignOff", async () => {
     const { m, s } = await toCoverageGate();
     complete(m, s, "GW_Covered", { facts: facts({}) });
     // The editorial-dependency review arrived here from the harness's
@@ -102,13 +102,13 @@ describe("content-change-review: sliced review and the coverage gate", () => {
     expect(m.nodes.has("Task_Merge")).toBe(false);
   });
 
-  test("approve and merge are separate steps: the publish phase opens with the merge", async () => {
+  test("publishOpensWithMerge", async () => {
     const m = await publish();
     const s = startInstance(m, { id: "ccr3", subject: "fixture", startNode: "Start_Publish" });
     expect(at(m, s)).toEqual(["Task_Merge"]);
   });
 
-  test("a withdrawal and a dispute each take their own step before the gate", async () => {
+  test("withdrawalAndDisputeSteps", async () => {
     const m = await model();
     const s = startInstance(m, { id: "ccr2", subject: "fixture", startNode: "Start_Reviewer" });
     complete(m, s, "Task_CompareBeforeAfter");
@@ -125,7 +125,7 @@ describe("content-change-review: sliced review and the coverage gate", () => {
 });
 
 describe("content-change-review: the top level shows phases, not steps", () => {
-  test("each phase is a call activity to its own process", async () => {
+  test("phasesAreCallActivities", async () => {
     const m = await top();
     const calls = Object.fromEntries(
       [...m.nodes.values()].filter((n) => n.calledElement).map((n) => [n.id, n.calledElement]),
@@ -138,7 +138,7 @@ describe("content-change-review: the top level shows phases, not steps", () => {
     });
   });
 
-  test("a requested change goes back to the agent, and every revision is staged again", async () => {
+  test("requestedChangeRestaged", async () => {
     const m = await top();
     const s = startInstance(m, { id: "ccr4", subject: "fixture", startNode: "Start_Author" });
     complete(m, s, "Task_DescribeChange");

@@ -38,20 +38,20 @@ describe("foaf:focus on an ArchiMate element", () => {
   const byId = new Map(doc["@graph"].map((n) => [n["@id"] as string, n]));
   const el = (id: string) => `${termIri(NS, glossary, id)}/_focus`;
 
-  test("the concept points at its element, typed in ArchiMate's namespace", () => {
+  test("conceptFocusesArchimateElement", () => {
     expect(byId.get(termIri(NS, glossary, "client-registry"))!["foaf:focus"]).toEqual({ "@id": el("client-registry") });
     expect(byId.get(el("client-registry"))!["@type"]).toBe("archimate:ApplicationComponent");
     expect(doc["@context"].archimate).toBe("http://www.opengroup.org/xsd/archimate/3.1/");
     expect(doc["@context"].org).toBeUndefined();
   });
 
-  test("each relationship is a predicate from element to element", () => {
+  test("relationshipIsElementPredicate", () => {
     expect(byId.get(el("client-registry"))!["archimate:realization"]).toEqual([{ "@id": el("client-identification") }]);
     expect(byId.get(el("point-of-service"))!["archimate:serving"]).toEqual([{ "@id": el("client-identification") }]);
     expect(byId.get(el("point-of-service"))!["archimate:access"]).toEqual([{ "@id": el("client-record") }]);
   });
 
-  test("a relationship must reach another element, and accessType only on Access", () => {
+  test("relationshipTargetMustBeElement", () => {
     const withTarget = (target: string) => ({ ...raw, terms: [{ ...raw.terms[0]!, focus: { archimate: "ApplicationComponent", relationships: [{ type: "Serving", target }] } }, ...raw.terms.slice(1), { id: "plain", prefLabel: "Plain", status: "candidate" }] });
     expect(GlossarySchema.safeParse(withTarget("plain")).error?.message).toContain("whose focus is no ArchiMate element");
     expect(GlossarySchema.safeParse(withTarget("nowhere")).error?.message).toContain("neither a term in this glossary nor an absolute IRI");

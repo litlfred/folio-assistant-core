@@ -32,7 +32,7 @@ function fixture(pcTerms: object[], block?: object): string {
 const sc = `${instanceNs("sc")}glossary/sc/`;
 
 describe("glossary-validate", () => {
-  test("a scheme whose links all resolve passes", async () => {
+  test("resolvedSchemePasses", async () => {
     const repo = fixture([
       term("trade-item", "Trade Item", { broadMatch: ["https://www.gs1.org/standards/id-keys/gtin"] }),
       term("generic-product", "Generic Product", { related: ["trade-item"], closeMatch: [`${sc}traceability`] }),
@@ -42,30 +42,30 @@ describe("glossary-validate", () => {
     expect(r.notes.join("\n")).toContain("mounted instances: sc");
   });
 
-  test("a mounted instance's IRI that names no term fails", async () => {
+  test("unknownMountedIriFails", async () => {
     const r = await validate(fixture([term("trade-item", "Trade Item", { exactMatch: [`${sc}missing`] })]), "pc");
     expect(r.errors).toHaveLength(1);
     expect(r.errors[0]).toContain("is not a term in sc");
   });
 
-  test("a scheme that does not parse is reported, not thrown", async () => {
+  test("unparsedSchemeReported", async () => {
     const r = await validate(fixture([term("trade-item", "Trade Item", { related: ["no-such"] })]), "pc");
     expect(r.errors).toHaveLength(1);
     expect(r.errors[0]).toContain("no-such");
   });
 
-  test("--capitalized refuses a lower-case prefLabel; without it, it passes", async () => {
+  test("capitalizedRefusesLowercase", async () => {
     const repo = fixture([term("trade-item", "trade item")]);
     expect((await validate(repo, "pc", { capitalized: true })).errors[0]).toContain("is not Capitalized");
     expect((await validate(repo, "pc")).errors).toEqual([]);
   });
 
-  test("--capitalized accepts a name its owner spells with a lower-case first letter, such as iHRIS", async () => {
+  test("capitalizedAcceptsOwnerSpelling", async () => {
     const repo = fixture([term("ihris", "iHRIS"), term("mhealth", "mHealth")]);
     expect((await validate(repo, "pc", { capitalized: true })).errors).toEqual([]);
   });
 
-  test("a block's meta.glossary link is checked; ArchiMate links with no model mounted are noted, not failed", async () => {
+  test("blockGlossaryLinkChecked", async () => {
     const repo = fixture([term("trade-item", "Trade Item")], {
       glossary: [{ iri: `${sc}traceability` }, { iri: `${sc}gone` }],
       archimate: { elements: [{ iri: "https://x/archimate/m/elements/e.jsonld", name: "E" }] },
@@ -111,7 +111,7 @@ const base = (kind: string, id: string) => ({ "overlay:base": `https://x/sc/arch
 const mine = { "overlay:owner": "pc" };
 
 describe("glossary-validate: the overlay rule and links into the instance's own model", () => {
-  test("an overlay of reference copies and owned items passes, and links into it are checked", async () => {
+  test("overlayPasses", async () => {
     const pc = archi([["e1", "One", base("elements", "e1")], ["p1", "Mine", mine], ["d1", "Borrowed", { "overlay:dth": "https://x/phc/archimate/0.1/elements/d1.jsonld" }]], ["pr1", "p1", "e1", mine]);
     const repo = overlayFixture(pc, {
       archimate: { elements: [{ iri: "https://x/pc/archimate/0.1/elements/p1.jsonld", name: "Mine" }, { iri: "https://x/sc/archimate/1.0/elements/e2.jsonld", name: "Two" }] },
@@ -123,7 +123,7 @@ describe("glossary-validate: the overlay rule and links into the instance's own 
     expect(r.notes.join("\n")).not.toContain("not checked\n· pc");
   });
 
-  test("an untagged item, an owned item the base already holds, and a copy the base lacks fail", async () => {
+  test("badOverlayItemsFail", async () => {
     const pc = archi([["e1", "One", mine], ["x9", "Gone", base("elements", "x9")], ["p1", "Bare", {}]], ["pr1", "p1", "e1", { "overlay:owner": "hr" }]);
     const r = await validate(overlayFixture(pc), "pc");
     const all = r.errors.join("\n");
@@ -133,7 +133,7 @@ describe("glossary-validate: the overlay rule and links into the instance's own 
     expect(all).toContain("overlay:owner is hr, not pc");
   });
 
-  test("a block link into the own model that names no item fails", async () => {
+  test("linkToMissingOwnItemFails", async () => {
     const pc = archi([["p1", "Mine", mine]]);
     const r = await validate(overlayFixture(pc, { archimate: { elements: [{ iri: "https://x/pc/archimate/0.1/elements/nope.jsonld", name: "No" }] } }), "pc");
     expect(r.errors).toHaveLength(1);
@@ -142,7 +142,7 @@ describe("glossary-validate: the overlay rule and links into the instance's own 
 });
 
 describe("metaOf reads a block's meta", () => {
-  test("on one line or pretty-printed, and not from a string's braces", async () => {
+  test("metaOfReadsMeta", async () => {
     const { metaOf } = await import("./glossary-validate");
     expect(metaOf('x({\n  meta: {"a": 1, "b": "}"},\n})')).toEqual({ a: 1, b: "}" });
     expect(metaOf('x({\n  meta: {\n    "glossaryTerms": [\n      "t"\n    ]\n  },\n})')).toEqual({ glossaryTerms: ["t"] });

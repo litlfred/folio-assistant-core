@@ -57,7 +57,7 @@ async function expand(doc: object): Promise<Record<string, unknown>> {
 }
 
 describe("the corpus this runs over", () => {
-  it("holds the three worked examples among the catalogue items that name a record", () => {
+  it("corpusHoldsWorkedExamples", () => {
     // Not an exact list. Since 2026-10-30 who-iris is the one home for every
     // IRIS item the harness layers had ingested (the owner's "pre-CDN
     // preview"), so the corpus grows as items move in. The three worked
@@ -72,12 +72,12 @@ describe("the corpus this runs over", () => {
 describe("JSON-LD bound to DCMI Terms — expanded by a real processor", () => {
   for (const { node, rec } of CASES) {
     describe(node.id, () => {
-      it("names the item at its Handle, through the inline @base", async () => {
+      it(`namesItemAtHandle[${node.id.replace(/\s+/g, "_")}]`, async () => {
         const e = await expand(dublinCoreToDcterms(rec, { handle: node.handle }));
         expect(e["@id"]).toBe(`${HANDLE_RESOLVER}${node.handle}`);
       });
 
-      it("expands every resource-ranged DCMI term to a node with rdf:value, never a literal", async () => {
+      it(`resourceTermsExpandToNodes[${node.id.replace(/\s+/g, "_")}]`, async () => {
         const e = await expand(dublinCoreToDcterms(rec, { handle: node.handle }));
         const resourceTerms = new Set(
           Object.values(DCTERMS_MAP).filter((m) => m.range === "resource").map((m) => `${DCTERMS_NS}${m.term}`),
@@ -94,7 +94,7 @@ describe("JSON-LD bound to DCMI Terms — expanded by a real processor", () => {
         expect(seen).toBeGreaterThan(0);
       });
 
-      it("carries every source value exactly once, verbatim, under the field's predicate", async () => {
+      it(`everySourceValueOnce[${node.id.replace(/\s+/g, "_")}]`, async () => {
         const e = await expand(dublinCoreToDcterms(rec, { handle: node.handle }));
         const strings = (k: string): string[] =>
           ((e[k] as Record<string, unknown>[] | undefined) ?? []).map((v) =>
@@ -111,7 +111,7 @@ describe("JSON-LD bound to DCMI Terms — expanded by a real processor", () => {
     });
   }
 
-  it("puts MeSH subjects in dcterms:MESH as a LINK, and keeps the authority as a link", async () => {
+  it("meshSubjectsAreLinks", async () => {
     const c = CASES.find((x) => x.node.handle === "10665/332098")!;
     const e = await expand(dublinCoreToDcterms(c.rec, { handle: c.node.handle }));
     const subjects = e[`${DCTERMS_NS}subject`] as Record<string, unknown>[];
@@ -124,7 +124,7 @@ describe("JSON-LD bound to DCMI Terms — expanded by a real processor", () => {
     }
   });
 
-  it("types dc.identifier.uri as dcterms:URI and keeps govdoc OFF dcterms:identifier (iris-dspace R1)", async () => {
+  it("identifierUriTypedGovdocApart", async () => {
     const c = CASES.find((x) => x.node.handle === "10665/332098")!;
     const e = await expand(dublinCoreToDcterms(c.rec, { handle: c.node.handle }));
     const ids = e[`${DCTERMS_NS}identifier`] as Record<string, unknown>[];
@@ -136,7 +136,7 @@ describe("JSON-LD bound to DCMI Terms — expanded by a real processor", () => {
     expect(e[dcPredicate({ schema: "dc", element: "identifier", qualifier: "govdoc" })]).toEqual([{ "@value": "WPR/RDO/2020/003" }]);
   });
 
-  it("asserts W3CDTF only on a value that matches it", () => {
+  it("w3cdtfOnlyOnMatchingValue", () => {
     const doc = dublinCoreToDcterms({
       $schema: "folio-dublin-core/v1",
       id: "x",
@@ -149,7 +149,7 @@ describe("JSON-LD bound to DCMI Terms — expanded by a real processor", () => {
     ]);
   });
 
-  it("with no Handle, sets no @base and uses the record's own absolute id", async () => {
+  it("noHandleNoBase", async () => {
     const { rec } = CASES[0]!;
     const doc = dublinCoreToDcterms(rec);
     expect((doc["@context"] as Record<string, unknown>)["@base"]).toBeUndefined();
@@ -164,11 +164,11 @@ describe("DC XML per DCMI's XML guidelines", () => {
   for (const { node, rec } of CASES) {
     describe(node.id, () => {
       const xml = renderDcXml(rec);
-      it("is well-formed", () => {
+      it(`xmlWellFormed[${node.id.replace(/\s+/g, "_")}]`, () => {
         expect(XMLValidator.validate(xml)).toBe(true);
       });
 
-      it("declares dc, dcterms and xsi on one namespaced container, and uses only dc:/dcterms: elements", () => {
+      it(`xmlNamespacesOnContainer[${node.id.replace(/\s+/g, "_")}]`, () => {
         const doc = parser.parse(xml) as Record<string, Record<string, unknown>[]>;
         const root = doc["metadata"]![0]!;
         expect(root["@_xmlns:dc"]).toBe(DC_ELEMENTS_NS);
@@ -181,13 +181,13 @@ describe("DC XML per DCMI's XML guidelines", () => {
         }
       });
 
-      it("uses only DCMI encoding schemes in xsi:type", () => {
+      it(`xmlOnlyDcmiSchemes[${node.id.replace(/\s+/g, "_")}]`, () => {
         for (const m of xml.matchAll(/xsi:type="([^"]+)"/g)) {
           expect(["dcterms:W3CDTF", "dcterms:URI", "dcterms:RFC4646", "dcterms:MESH", "dcterms:IMT"]).toContain(m[1]!);
         }
       });
 
-      it("carries every expressible value once, and LISTS the rest instead of dropping them", () => {
+      it(`xmlListsInexpressible[${node.id.replace(/\s+/g, "_")}]`, () => {
         const elements = [...xml.matchAll(/^ {2}<(dc|dcterms):/gm)].length;
         const expressible = rec.fields.filter((f) => dctermsFor(f) || f.schema === "dc");
         expect(elements).toBe(expressible.reduce((n, f) => n + f.values.length, 0));
@@ -198,7 +198,7 @@ describe("DC XML per DCMI's XML guidelines", () => {
     });
   }
 
-  it("escapes markup in a value rather than emitting it", () => {
+  it("xmlEscapesMarkup", () => {
     const xml = renderDcXml({
       $schema: "folio-dublin-core/v1",
       id: "x",
@@ -211,13 +211,13 @@ describe("DC XML per DCMI's XML guidelines", () => {
 });
 
 describe("the committed renderings", () => {
-  it("are byte-identical to a fresh render (what dc:render:check gates)", () => {
+  it("committedRenderingsMatchFresh", () => {
     const planned = plannedRenderings(INSTANCE);
     expect(planned.size).toBe(CASES.length * 2);
     for (const [p, body] of planned) expect(readFileSync(p, "utf-8")).toBe(body);
   });
 
-  it("are deterministic", () => {
+  it("renderingsDeterministic", () => {
     for (const { node, rec } of CASES) {
       expect(renderDcJsonLd(rec, { handle: node.handle })).toBe(renderDcJsonLd(rec, { handle: node.handle }));
       expect(renderDcXml(rec)).toBe(renderDcXml(rec));

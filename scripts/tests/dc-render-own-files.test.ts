@@ -22,19 +22,19 @@ const run = (env: Record<string, string>) => {
 };
 
 describe("dc-render --check on an instance the caller does not commit", () => {
-  test("scoped to another caller, it passes and says whose it is", () => {
+  test("foreignScopePasses", () => {
     const r = run({ CAT_GATE_OWN_PATHS: "my-layer", CAT_GATE_FOREIGN_PATHS: "some-other-layer" });
     expect(r.status).toBe(0);
     expect(r.stdout).toContain("not this caller's");
   });
 
-  test("unscoped, it judges the instance as before (here: no catalogue, a refusal)", () => {
+  test("unscopedJudged", () => {
     const r = run({});
     expect(r.status).toBe(2);
     expect(r.stderr).toContain("not a catalogue instance");
   });
 
-  test("scoped to the instance's own layer, it is judged as before", () => {
+  test("ownScopeJudged", () => {
     const r = run({ CAT_GATE_OWN_PATHS: "some-other-layer", CAT_GATE_FOREIGN_PATHS: "my-layer" });
     expect(r.status).toBe(2);
   });

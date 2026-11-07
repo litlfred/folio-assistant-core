@@ -27,14 +27,14 @@ const plainBody = [
 ].join("\n");
 
 describe("feedback issues become Contributor Feedback rows", () => {
-  test("an issue-form body parses by label; empty fields are dropped", () => {
+  test("issueFormParsed", () => {
     expect(parseFeedbackIssue(formBody)).toEqual({
       content: "dth-hrh", section: "1.1 Global challenges", block: "prose:ch01-global-challenges",
       url: "https://x/#prose%3Ach01", type: "Technical", comment: "Add shortage numbers. They matter.",
     });
   });
 
-  test("a plain body parses too, ignoring the unfilled Type prompt", () => {
+  test("plainBodyParsed", () => {
     const f = parseFeedbackIssue(plainBody);
     expect(f.block).toBe("prose:ch01-global-challenges");
     expect(f.type).toBeUndefined();
@@ -42,7 +42,7 @@ describe("feedback issues become Contributor Feedback rows", () => {
     expect(f.proposed).toBe("Say 10 million.");
   });
 
-  test("the row: Sections from the block's anchor, a draft Title, feedback signed by login", () => {
+  test("feedbackRowMade", () => {
     expect(feedbackRow({ body: formBody, url: "https://github.com/o/r/issues/7", login: "ana" }, anchors)).toEqual({
       title: "1.1 Global challenges: Add shortage numbers.",
       sections: "\u2800\u2800\u28001.1 Global challenges",
@@ -52,7 +52,7 @@ describe("feedback issues become Contributor Feedback rows", () => {
     expect(feedbackRow({ body: plainBody, url: "u", login: "bo" }, anchors).feedback).toBe("@bo: Too vague.\nProposed: Say 10 million.");
   });
 
-  test("the shared form declares every id the site's link prefills and the parser reads", () => {
+  test("sharedFormIds", () => {
     const yml = readFileSync(join(import.meta.dir, "../../templates/issue-forms/block-feedback.yml"), "utf8");
     const ids = [...yml.matchAll(/^\s+id:\s*(\S+)\s*$/gm)].map((m) => m[1]);
     expect(ids).toEqual(["content", "section", "block", "url", "source", "type", "comment", "proposed"]);
@@ -63,11 +63,11 @@ describe("feedbackBasis", () => {
   const header = ["Change-set", "Title", "Selected Sections", "Contributor Feedback (CL)", "Ready for merge", "Contributor Feedback (agent)", "Issue"];
   const row = ["CS-001", "Define registry", "\u2800\u2800\u28001.1 Global challenges", "CL: needs a definition", "No", "Try X", "dth#1"];
   const b = feedbackBasis(header, row);
-  test("changes when a person's cell changes", () => {
+  test("basisChangesWithPersonCell", () => {
     expect(feedbackBasis(header, row.map((v, i) => (i === 3 ? v + " more" : v)))).not.toBe(b);
     expect(feedbackBasis(header, row.map((v, i) => (i === 1 ? "Other" : v)))).not.toBe(b);
   });
-  test("ignores the agent's own proposal, the mechanical columns, Ready, and tree marks", () => {
+  test("basisIgnoresAgentColumns", () => {
     expect(feedbackBasis(header, row.map((v, i) => (i === 5 ? "Try Y" : i === 6 ? "dth#2" : i === 4 ? "Yes" : v)))).toBe(b);
     expect(feedbackBasis(header, row.map((v, i) => (i === 2 ? "1.1 Global challenges" : v)))).toBe(b);
   });
@@ -79,16 +79,16 @@ describe("feedbackBasis with grey content (a \"2:\" basis)", () => {
   const exact = ["Title", "TWG (CS)"];
   const b1 = feedbackBasis(header, row, exact, "Architect Feedback");
   const b2 = feedbackBasis(header, row, exact, "Architect Feedback", PC_BASIS_GREY);
-  test("is marked 2: and differs from the blue-only basis", () => {
+  test("greyBasisMarked", () => {
     expect(b2).toMatch(/^2:[0-9a-z]+$/);
     expect(b1).not.toMatch(/:/);
   });
-  test("changes when a grey content cell changes; the blue-only basis does not", () => {
+  test("greyBasisChangesWithGrey", () => {
     const moved = row.map((v, i) => (i === 2 ? v + ", and add an example" : v));
     expect(feedbackBasis(header, moved, exact, "Architect Feedback", PC_BASIS_GREY)).not.toBe(b2);
     expect(feedbackBasis(header, moved, exact, "Architect Feedback")).toBe(b1);
   });
-  test("ignores the agent's own columns", () => {
+  test("greyBasisIgnoresAgent", () => {
     const own = row.map((v, i) => (i === 6 ? "Reject" : i === 7 ? "PR open" : v));
     expect(feedbackBasis(header, own, exact, "Architect Feedback", PC_BASIS_GREY)).toBe(b2);
   });

@@ -15,7 +15,7 @@ import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.t
 describe("the split — bean `bvuk`, the owner's shape", () => {
   const diagram = (n: string): string => workflowFile(join(import.meta.dir, "../../../cat-harness"), n);
 
-  test("the other four call the shared half, reach NO outcome task, and declare their OWN answers", async () => {
+  test("callersDeclareOwnAnswers", async () => {
     // The defect this closes, asserted as reachability rather than as a name:
     // before the split every one of these ran A_ScopeCriterion's gateway. And
     // each now names the answers ITS question admits (owner, 2026-09-23; the

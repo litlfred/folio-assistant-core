@@ -18,18 +18,18 @@ const base = {
 };
 
 describe("ChangeSet, general", () => {
-  test("a change that answers no public comment is valid, with refs defaulting to empty", () => {
+  test("noCommentValidRefsDefaultEmpty", () => {
     const r = ChangeSetSchema.safeParse(base);
     expect(r.success).toBe(true);
     expect(r.success && r.data.refs).toEqual([]);
   });
 
-  test("a public-comment change-set is unchanged", () => {
+  test("publicCommentChangeSetUnchanged", () => {
     expect(ChangeSetSchema.safeParse({ ...base, refs: ["PC-0042"] }).success).toBe(true);
     expect(ChangeSetSchema.safeParse({ ...base, refs: ["not-a-ref"] }).success).toBe(false);
   });
 
-  test("it carries one rendered impact per renderer, and refuses a malformed one", () => {
+  test("carriesRenderedImpact", () => {
     const rendered = [{
       $schema: RENDERED_IMPACT_TAG,
       renderer: "fhir-ig-pages",

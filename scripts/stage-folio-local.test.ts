@@ -31,13 +31,13 @@ function fixture(): { root: string; site: string } {
 }
 
 describe("stagingSlugProblem", () => {
-  test("accepts the slugs feature-staging derives from a branch", () => {
+  test("acceptsBranchSlugs", () => {
     for (const s of ["qou", "feat-x", "v1.2.3", "a_b", "Main9", "a".repeat(STAGING_SLUG_MAX)]) {
       expect(stagingSlugProblem(s)).toBeUndefined();
     }
   });
 
-  test("refuses anything that is not one safe path segment", () => {
+  test("refusesUnsafeSlugs", () => {
     for (const s of ["", ".", "..", "../x", "a/b", "a\\b", "-x", ".hidden", "_retired", "a b", "a\0b", "a;b", "a".repeat(STAGING_SLUG_MAX + 1)]) {
       expect(stagingSlugProblem(s)).toBeString();
     }
@@ -46,20 +46,20 @@ describe("stagingSlugProblem", () => {
 });
 
 describe("resolveSitePath", () => {
-  test("resolves a page, and a directory to its index.html", () => {
+  test("resolvesPageAndDirectory", () => {
     const { site } = fixture();
     expect(resolveSitePath(site, "/")).toEndWith(join("_site", "index.html"));
     expect(resolveSitePath(site, "/a/?q=1")).toEndWith(join("_site", "a", "index.html"));
   });
 
-  test("never resolves outside the site, by spelling or by link", () => {
+  test("neverOutsideSite", () => {
     const { site } = fixture();
     for (const u of ["/../outside.txt", "/%2e%2e/outside.txt", "/a/..%2f..%2foutside.txt", "/link.txt", "/%00", "/%E0%A4%A", "/missing.html"]) {
       expect(resolveSitePath(site, u)).toBeUndefined();
     }
   });
 
-  test("the server answers 404 for a refused path, and listens on loopback only", async () => {
+  test("serverLoopback404", async () => {
     const { site } = fixture();
     const { server, port } = await serveSite(site);
     try {

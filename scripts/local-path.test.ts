@@ -18,19 +18,19 @@ import { checkLocalPath } from "./lib/local-path.ts";
 const INSTANCE = resolve(import.meta.dir, "..", "..", "who-iris");
 
 describe("checkLocalPath", () => {
-  test("a file that is there is ok", () => {
+  test("presentFileOk", () => {
     const d = mkdtempSync(join(tmpdir(), "lp-"));
     mkdirSync(join(d, "uploads"));
     writeFileSync(join(d, "uploads", "a.pdf"), "%PDF-1.4\n");
     expect(checkLocalPath(d, "uploads/a.pdf")).toEqual({ state: "ok", detail: "" });
   });
 
-  test("a path that is not there is missing, with no detail to invent", () => {
+  test("absentPathMissing", () => {
     const d = mkdtempSync(join(tmpdir(), "lp-"));
     expect(checkLocalPath(d, "uploads/gone.pdf")).toEqual({ state: "missing", detail: "" });
   });
 
-  test("a DIRECTORY is missing, not ok — localPath is where bytes landed", () => {
+  test("directoryIsMissing", () => {
     const d = mkdtempSync(join(tmpdir(), "lp-"));
     mkdirSync(join(d, "uploads", "a.pdf"), { recursive: true });
     const v = checkLocalPath(d, "uploads/a.pdf");
@@ -38,7 +38,7 @@ describe("checkLocalPath", () => {
     expect(v.detail).toContain("directory");
   });
 
-  test("UNREADABLE is its own state and is never reported as absent", () => {
+  test("unreadableIsUnknown", () => {
     // The third state, planted rather than argued: a path under a directory
     // with no execute bit cannot be stat'd, and EACCES is not ENOENT. Running
     // as root defeats the permission, so the assertion is conditional on the
@@ -59,7 +59,7 @@ describe("checkLocalPath", () => {
     expect(v.detail.length).toBeGreaterThan(0);
   });
 
-  test("it resolves against the INSTANCE and nowhere else", () => {
+  test("resolvesAgainstInstance", () => {
     // `yl5w`'s three claims name bytes that DO exist one instance over. A
     // resolver that searched the repository would call them present and make
     // the schema's "instance-relative" contract unenforceable.
@@ -76,7 +76,7 @@ describe("the who-iris catalogue's own localPath claims", () => {
     .filter((f) => f.endsWith(".json"))
     .map((f) => JSON.parse(readFileSync(join(INSTANCE, "catalogue", "nodes", f), "utf-8")));
 
-  test("every claim resolves, or the catalogue is lying about `materialized`", () => {
+  test("catalogueClaimsResolve", () => {
     const bad: string[] = [];
     for (const n of nodes) {
       for (const b of n.bitstreams ?? []) {
@@ -89,7 +89,7 @@ describe("the who-iris catalogue's own localPath claims", () => {
     expect(bad).toEqual([]);
   });
 
-  test("a materialized bitstream carries a localPath at all", () => {
+  test("materializedHasLocalPath", () => {
     // The schema already refuses the other direction; this is the corpus half,
     // so a node that slipped in unvalidated still fails here.
     for (const n of nodes) {

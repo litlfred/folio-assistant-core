@@ -121,22 +121,22 @@ const DAK = sheet({
 });
 
 describe("ZIP and references", () => {
-  it("reads stored and deflated entries alike", () => {
+  it("storedAndDeflated", () => {
     for (const stored of [true, false]) expect(readZip(zip({ "a.txt": "hello" }, stored)).get("a.txt")!.toString()).toBe("hello");
   });
 
-  it("A1 references round-trip, past Z", () => {
+  it("a1RefsRoundTrip", () => {
     expect(parseRef("B7")).toEqual({ row: 7, column: 2 });
     expect(toRef(10, 28)).toBe("AB10");
     expect(parseRef(toRef(3, 703))).toEqual({ row: 3, column: 703 });
   });
 
-  it("serials become ISO dates, and a time part makes a datetime", () => {
+  it("serialsToIso", () => {
     expect(serialToIso(46082)).toBe("2026-03-01");
     expect(serialToIso(46082.5)).toBe("2026-03-01T12:00:00Z");
   });
 
-  it("a format code is a date format only for a date token outside quotes and brackets", () => {
+  it("dateFormatTokens", () => {
     expect(isDateFormat("yyyy-mm-dd")).toBe(true);
     expect(isDateFormat("[h]:mm")).toBe(true);
     expect(isDateFormat("0.00")).toBe(false);
@@ -146,7 +146,7 @@ describe("ZIP and references", () => {
 });
 
 describe("findBlocks", () => {
-  it("splits on empty rows, then on empty columns within a band", () => {
+  it("findBlocksSplits", () => {
     const cells = new Map([["1:1", "x"], ["1:2", "y"], ["2:1", "z"], ["1:4", "w"], ["4:1", "v"]]);
     expect(findBlocks(cells)).toEqual([
       { top: 1, left: 1, bottom: 2, right: 2 },
@@ -157,7 +157,7 @@ describe("findBlocks", () => {
 });
 
 describe("extractXlsx", () => {
-  it("a comments sheet: shared and inline strings, booleans, and dates read as dates, not integers", () => {
+  it("commentsSheetTypes", () => {
     const r = extractXlsx(workbook({ Comments: COMMENTS }, { shared: ["id", "comment", "submitted"] }), opts);
     expect(TabularCsvwTablesSchema.safeParse(r).success).toBe(true);
     const t = r.tables[0]!;
@@ -172,7 +172,7 @@ describe("extractXlsx", () => {
     expect(t.url).toBe("book.xlsx#Comments!A1:D3");
   });
 
-  it("a DAK-shaped sheet: four tables, each anchored where it really starts", () => {
+  it("dakSheetFourTables", () => {
     const r = extractXlsx(workbook({ DAK }), opts);
     const placed = r.tables.map((t) => [t["fac:anchor"]!.cell, t["fac:headerRow"], t["fac:extent"].rows, t["fac:extent"].columns]);
     expect(placed).toEqual([
@@ -190,34 +190,34 @@ describe("extractXlsx", () => {
     ]);
   });
 
-  it("numeric character references decode: Excel's &#10; in a title is a line break (urat)", () => {
+  it("numericReferencesDecode", () => {
     const s = sheet({ A1: "x", B1: "y", A2: "1", B2: "2" }).replace(">x<", ">ICD-11&#10;code<").replace(">y<", ">caf&#xE9;<");
     const t = extractXlsx(workbook({ S: s }), opts).tables[0]!;
     expect(t.tableSchema.columns.map((c) => c.titles)).toEqual(["ICD-11\ncode", "café"]);
   });
 
-  it("an empty sheet produces no table, and the next sheet is still read", () => {
+  it("emptySheetNoTable", () => {
     const r = extractXlsx(workbook({ Empty: sheet({}), Comments: COMMENTS }, { shared: ["id", "comment", "submitted"] }), opts);
     expect(r.tables.map((t) => t["fac:anchor"]!.sheet)).toEqual(["Comments"]);
   });
 
-  it("stored (uncompressed) workbooks read the same as deflated ones", () => {
+  it("storedSameAsDeflated", () => {
     const a = extractXlsx(workbook({ DAK }, { stored: true }), opts);
     const b = extractXlsx(workbook({ DAK }), opts);
     expect(a).toEqual(b);
   });
 
-  it("routing is by content: no ZIP signature, or a ZIP without a workbook part, is refused", () => {
+  it("routedByContent", () => {
     expect(() => extractXlsx(Buffer.from("id,name\n1,x\n"), opts)).toThrow(NotATableError);
     expect(() => extractXlsx(zip({ "word/document.xml": "<w/>" }), opts)).toThrow(/xl\/workbook\.xml/);
   });
 
-  it("a malformed sheet part is refused, not half-read into a thinner table", () => {
+  it("malformedSheetRefused", () => {
     const broken = sheet({ A1: "h", B1: "k", A2: "x", B2: "y" }).replace("<is><t xml:space=\"preserve\">x</t>", "<is><t>< x</t>");
     expect(() => extractXlsx(workbook({ S: broken }), opts)).toThrow(/not well-formed/);
   });
 
-  it("is never a stub, and the derived CSVW carries no key of ours", () => {
+  it("neverStubNoOwnKeys", () => {
     const r = extractXlsx(workbook({ DAK }), opts);
     expect(r.tables.every((t) => !t["fac:stub"] && t.tableSchema.columns.length > 0)).toBe(true);
     expect(JSON.stringify(toCsvw(r))).not.toContain("fac:");
@@ -240,7 +240,7 @@ const withMerges = (xml: string, refs: string[]) =>
   xml.replace("</sheetData>", `</sheetData><mergeCells count="${refs.length}">${refs.map((r) => `<mergeCell ref="${r}"/>`).join("")}</mergeCells>`);
 
 describe("DAK decision tables (scn4)", () => {
-  it("reads the preamble, the section, the grouped inputs, the titled outputs and the don't-care", () => {
+  it("decisionTableRead", () => {
     const t = extractXlsx(workbook({ DTP: sheet(DT_CELLS) }), opts).tables[0]!;
     expect(t["fac:anchor"]!.cell).toBe("B2");
     expect(t["fac:preamble"]).toEqual([
@@ -261,12 +261,12 @@ describe("DAK decision tables (scn4)", () => {
     ]);
   });
 
-  it("a title row may repeat the output labels; it is still the title row", () => {
+  it("repeatedOutputLabelsTitleRow", () => {
     const cells = { ...DT_CELLS, E7: "Output", F7: "Guidance displayed to health worker" };
     expect(extractXlsx(workbook({ S: sheet(cells) }), opts).tables[0]!["fac:headerRow"]).toBe(7);
   });
 
-  it("no title row (a contraindication table): the inputs stay untitled, never guessed", () => {
+  it("noTitleRowInputsUntitled", () => {
     const cells: Record<string, Cell> = {
       B2: "Decision ID", C2: "X", B3: "Business rule", C3: "Y", B4: "Trigger", C4: "Z",
       B5: "Potential contraindications", D5: "Output",
@@ -281,26 +281,26 @@ describe("DAK decision tables (scn4)", () => {
     ]);
   });
 
-  it("a stray cell does not swallow the table: JE!A1's `7` becomes its own block", () => {
+  it("strayCellOwnBlock", () => {
     const tables = extractXlsx(workbook({ JE: sheet({ ...DT_CELLS, A1: 7 }) }), opts).tables;
     expect(tables.map((t) => t.url.split("#")[1])).toEqual(["JE!A1:A1", "JE!B2:F10"]);
     expect(tables[1]!["fac:preamble"]?.[0]?.key).toBe("Decision ID");
   });
 
-  it("merged ranges are read onto the table they fall inside, and no other", () => {
+  it("mergedRangesOntoTable", () => {
     const xml = withMerges(sheet({ ...DT_CELLS, H2: "code", I2: "display", H3: "A", I3: "B" }), ["B6:F6", "F8:F9", "H2:I2"]);
     const [dt, other] = extractXlsx(workbook({ S: xml }), opts).tables;
     expect(dt!["fac:merged"]).toEqual(["B6:F6", "F8:F9"]);
     expect(other!["fac:merged"]).toEqual(["H2:I2"]);
   });
 
-  it("a block that only starts like one falls back to the generic reading", () => {
+  it("partialStartGeneric", () => {
     expect(readDecisionTable([["Decision ID", "X"], ["Business rule", "Y"]], 1)).toBeNull();
     const t = extractXlsx(workbook({ S: sheet({ B2: "Decision ID", C2: "X", B3: "Trigger", C3: "Y" }) }), opts).tables[0]!;
     expect(t["fac:preamble"]).toBeUndefined();
   });
 
-  it("the CSVW export carries none of it", () => {
+  it("csvwCarriesNone", () => {
     const csvw = JSON.stringify(toCsvw(extractXlsx(workbook({ S: sheet(DT_CELLS) }), opts)));
     for (const k of ["fac:", "preamble", "wildcard", "Section"]) expect(csvw).not.toContain(k);
   });
