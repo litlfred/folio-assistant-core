@@ -78,9 +78,37 @@ guideline. A folio's own names for its pages (for example "L1
 Recommendations" and "Scenario Candidates" in an immunization guideline) are
 the folio's, set in its own configuration.
 
+## Run it
+
+```sh
+bun run cat statements:pages --page <spec>.json [--page <spec2>.json] [--check]
+```
+
+Each page is declared in a committed **page spec** (`folio-statement-page/v1`):
+the statement lists it publishes, the page it writes, its title and
+introduction, the URL prefixes of the library viewer (`entryBase`) and of the
+sources (`sectionBase`), and the content type's table look (`tableAttr`). A
+spec rather than flags, because those are free text, and free text is never a
+command-line word.
+
+A spec names one or more **statement lists** (`folio-extracted-statements/v1`,
+[`schemas/extracted-statement.ts`](../../../schemas/extracted-statement.ts)):
+each statement's `id`, its text verbatim, its `kind` and `status` as the
+extraction records them, and its `source`, a library reference with either a
+`sectionId` or the `page` (or slide) it was read from. With only a page, the
+section is the one that starts latest at or before it. When several sections
+start on that page (a one-page poster), the label names only the page.
+
+**A collector writes the list, and the collector is not core's.** A folio's
+extraction has its own format (a guideline's recommendation rows, a DAK
+layer's requirement candidates, a paper's quoted claims), so the content layer
+or the folio that owns the format turns it into a statement list. Core resolves,
+labels, renders and checks. Declare two specs over the same lists, one for the
+artifact's page and one for the shared viewer's, so the two cannot disagree.
+
 ## Staleness fails CI
 
-The generator has a check mode that regenerates in memory and fails on any
+`--check` regenerates in memory and fails on any
 difference from the committed pages, and on any link that does not resolve.
 CI runs it, so a change to an extraction or a library entry that was not
 republished fails the build instead of leaving a page that says something the
