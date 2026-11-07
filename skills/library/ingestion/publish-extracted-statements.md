@@ -94,7 +94,9 @@ command-line word.
 A spec names one or more **statement lists** (`folio-extracted-statements/v1`,
 [`schemas/extracted-statement.ts`](../../../schemas/extracted-statement.ts)):
 each statement's `id`, its text verbatim, its `kind` and `status` as the
-extraction records them, and its `source`, a library reference with either a
+extraction records them, optionally the id of the statement it was
+`derivedFrom` (a scenario candidate written from a recommendation names it,
+and the page shows a "Derived from" column), and its `source`, a library reference with either a
 `sectionId` or the `page` (or slide) it was read from. With only a page, the
 section is the one that starts latest at or before it. When several sections
 start on that page (a one-page poster), the label names only the page. The front

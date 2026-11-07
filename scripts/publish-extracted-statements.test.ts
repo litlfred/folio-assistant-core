@@ -145,3 +145,18 @@ describe("a page built from its spec", () => {
     expect(existsSync(join(dir, "out/page.md"))).toBe(false);
   });
 });
+
+describe("derived statements", () => {
+  const resolved = [{ libraryId: "deck", label: "slide 7" }];
+  const base = { title: "T", entryBase: "https://example.org/l", sectionBase: "https://example.org/b" };
+  const list = (derivedFrom?: string) =>
+    ExtractedStatementsSchema.parse({
+      _schema: EXTRACTED_STATEMENTS_SCHEMA_ID,
+      statements: [{ id: "S1", statement: "s", ...(derivedFrom ? { derivedFrom } : {}), source: { libraryId: "deck", page: 7 } }],
+    });
+
+  it("get a Derived from column only when the list has one", () => {
+    expect(renderPage([{ list: list("R01"), resolved }], base)).toContain("| S1 | s |  |  | R01 | [deck]");
+    expect(renderPage([{ list: list(), resolved }], base)).not.toContain("Derived from");
+  });
+});
