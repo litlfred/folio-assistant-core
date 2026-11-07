@@ -395,447 +395,447 @@ Feature: the review sheet script, built and run against a fake sheet
     When an installed sheet is set up twice
     Then the warning is gone and the document's site, repository and Folio Assistant page are shown
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::the_colour_key_under_a_setup_line::colourKeyUnderSetupLine
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_colour_key_under_a_setup_line::colourKeyUnderSetupLine
   Scenario: is still coloured segment by segment when a ⚠ line sits above it
     When the colour key sits under a setup line
     Then its runs are the same, shifted by the setup line
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::linking_a_copied_template_(owner,_2026-11-01:_make_it_mechanical)::sheetIdFromLinkOrId
+  @test:tools/review-sheet-sync/review-sheet.test.ts::linking_a_copied_template_(owner,_2026-11-01:_make_it_mechanical)::sheetIdFromLinkOrId
   Scenario: a sheet link or a bare id gives the spreadsheet id
     When a sheet link and a bare id are read
     Then both give the spreadsheet id and other text throws
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::linking_a_copied_template_(owner,_2026-11-01:_make_it_mechanical)::pagesSiteNamesRepo
+  @test:tools/review-sheet-sync/review-sheet.test.ts::linking_a_copied_template_(owner,_2026-11-01:_make_it_mechanical)::pagesSiteNamesRepo
   Scenario: a GitHub Pages site names its repository; another host names none
     When sites are read for their repository
     Then a GitHub Pages site names its repository and another host or none names nothing
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::linking_a_copied_template_(owner,_2026-11-01:_make_it_mechanical)::draftingSheetSyncFromName
+  @test:tools/review-sheet-sync/review-sheet.test.ts::linking_a_copied_template_(owner,_2026-11-01:_make_it_mechanical)::draftingSheetSyncFromName
   Scenario: a drafting sheet-sync.json follows from the document's name
     When the drafting settings are made for dth-phc and a sheet link
     Then they name the document's anchors, section URL and sheet id
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::linking_a_copied_template_(owner,_2026-11-01:_make_it_mechanical)::configShowsSiteRepoSettings
+  @test:tools/review-sheet-sync/review-sheet.test.ts::linking_a_copied_template_(owner,_2026-11-01:_make_it_mechanical)::configShowsSiteRepoSettings
   Scenario: the Config tab shows the site, the repository and the settings file, from repository or iriBase
     Given a folio declaring a GitHub Pages iriBase
     When the Config is built
     Then it carries the site and repository URLs
     And its links lines name the document, repository and settings file, before Key
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::the_Config_tab's_colours::configTabColours
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_Config_tab's_colours::configTabColours
   Scenario: Key is a Grey header, EDITORS Orange, and the agent's rows (CFG, COLS, DATA) Grey
     When the sheet is refreshed
     Then Key is grey, EDITORS orange and the agent's rows light grey, with Instructions uncoloured
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::running_the_script_from_the_editor::installNeverWaitsOnDialog
+  @test:tools/review-sheet-sync/review-sheet.test.ts::running_the_script_from_the_editor::installNeverWaitsOnDialog
   Scenario: Install never waits on a dialog, which hangs a run started from the editor (owner, 2026-10-31)
     When the script's functions are searched for alert dialogs
     Then only showAbout and showVersion use one
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::running_the_script_from_the_editor::installTriggersFirst
+  @test:tools/review-sheet-sync/review-sheet.test.ts::running_the_script_from_the_editor::installTriggersFirst
   Scenario: installTriggers is the first function, so the editor's Run button picks it
     When the script's first function is read
     Then it is installTriggers
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::running_the_script_from_the_editor::helperRunByHandSaysWhich
+  @test:tools/review-sheet-sync/review-sheet.test.ts::running_the_script_from_the_editor::helperRunByHandSaysWhich
   Scenario: a helper run by hand says which function to run instead
     When a helper is run by hand
     Then it says to pick installTriggers
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::the_Watch_hash_on_a_public-comment_sheet_(owner,_2026-11-04)::refreshWritesCellsHash
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_Watch_hash_on_a_public-comment_sheet_(owner,_2026-11-04)::refreshWritesCellsHash
   Scenario: the refresh writes Cells hash to Watch!F1:I1
     When a public-comment sheet is refreshed
     Then Watch!F1:I1 holds Cells hash, the hash and the check time
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::the_Watch_hash_on_a_public-comment_sheet_(owner,_2026-11-04)::personCellChangesHash
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_Watch_hash_on_a_public-comment_sheet_(owner,_2026-11-04)::personCellChangesHash
   Scenario: a person-set cell on either tab changes it
     When person-set cells on either tab change
     Then the hash changes
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::the_Watch_hash_on_a_public-comment_sheet_(owner,_2026-11-04)::editWritesHashAtOnce
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_Watch_hash_on_a_public-comment_sheet_(owner,_2026-11-04)::editWritesHashAtOnce
   Scenario: an edit writes it at once, even when a slow sheet leaves the rebuild to the timer (owner, 2026-11-05)
     Given a slow sheet
     When Review Change Sets is edited
     Then the sheet is marked dirty and the hash is written at once
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::the_Watch_hash_on_a_public-comment_sheet_(owner,_2026-11-04)::heartbeatHash
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_Watch_hash_on_a_public-comment_sheet_(owner,_2026-11-04)::heartbeatHash
   Scenario: a timer tick with nothing to rebuild still writes it, as a heartbeat
     When a timer tick has nothing to rebuild
     Then the hash is still written
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::the_Watch_hash_on_a_public-comment_sheet_(owner,_2026-11-04)::insertAndAgentNoHashChange
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_Watch_hash_on_a_public-comment_sheet_(owner,_2026-11-04)::insertAndAgentNoHashChange
   Scenario: an inserted row, the agent's columns and the script's do not
     When a row is inserted and the agent's and script's columns change
     Then the hash is unchanged
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::the_committed_Code.gs_people_copy::distCodeCurrent
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_committed_Code.gs_people_copy::distCodeCurrent
   Scenario: dist/Code.gs is current: run build-review-sheet-script.ts --dist after changing review-sheet.gs
     When the committed dist/Code.gs is compared with a fresh build
     Then they are equal
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::the_committed_Code.gs_people_copy::installLinksStubAndLibrary
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_committed_Code.gs_people_copy::installLinksStubAndLibrary
   Scenario: the install steps link the stub and the library, not the whole script
     When the install instructions are read
     Then they link the stub and the library, not the whole script
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::stagingWarnsReadyAfterBuild
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::stagingWarnsReadyAfterBuild
   Scenario: Staging review warns when Ready for agent was set after the build
     When the staging warning is computed with no Ready, a Ready after the build and one before
     Then only the Ready after the build warns of missing feedback
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::feedbackSaysWherePr
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::feedbackSaysWherePr
   Scenario: the agent's feedback says where the PR and preview are (owner, 2026-10-31)
     When progress lines are made for the PR and preview states
     Then each says where the PR and preview are, whether the agent is late, will merge or is waiting on the QA gate
     And a merged PR or none gives no line
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::progressReplacedInPlace
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::progressReplacedInPlace
   Scenario: the progress line is replaced in place, below a stale mark, and never added to an empty cell
     When the progress line is put into feedback cells
     Then it goes on top, replaces an old one below a stale mark, and an empty line removes it
     And an empty cell stays empty
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::agenticQueuedThenWho
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::agenticQueuedThenWho
   Scenario: Agentic status says the row is queued, then who has it
     When Agentic status is made while queued, while an agent has a step, and while working
     Then it says it is waiting since the Ready, then which agent since when
     And times are labelled today, yesterday or days ago, and an older step still reads as waiting
     And a working agent links its conversation and a done row starts with its PR
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::stubCallsExist
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::stubCallsExist
   Scenario: every library function the stub calls exists in Code.gs
     When the library functions the stub calls are looked for
     Then each exists in Code.gs
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::menuAndTriggersInStub
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::menuAndTriggersInStub
   Scenario: every menu item and trigger handler names a stub function
     When the menu items and trigger handlers are read
     Then there are more than three and each names a stub function
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::distStubCurrent
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::distStubCurrent
   Scenario: dist/Stub.gs is current
     When dist/Stub.gs is compared with stub.gs
     Then they are equal
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::the_QA_gate_before_Ready_for_merge_(owner,_2026-10-31)::qaPassOnlyForHead
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_QA_gate_before_Ready_for_merge_(owner,_2026-10-31)::qaPassOnlyForHead
   Scenario: a pass counts only for the PR's head commit
     When the QA gate is read for a pass at the head, an older commit, no commit, a failure, nothing and junk
     Then only a pass naming the PR's head commit counts, each other case saying why
     And with no PR there is nothing to say
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::the_QA_gate_before_Ready_for_merge_(owner,_2026-10-31)::stagingLinksQaReport
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_QA_gate_before_Ready_for_merge_(owner,_2026-10-31)::stagingLinksQaReport
   Scenario: Staging review links the QA report and shows the gate
     When the staging cell is made with a QA report
     Then it links the review and the QA report and shows the gate
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::the_library's_Update_from_GitHub_(owner,_2026-10-31,_option_B)::updaterDistCurrent
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_library's_Update_from_GitHub_(owner,_2026-10-31,_option_B)::updaterDistCurrent
   Scenario: dist/Updater.gs and dist/library-appsscript.json are current
     When dist/Updater.gs and dist/library-appsscript.json are compared with their sources
     Then they are equal
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::the_library's_Update_from_GitHub_(owner,_2026-10-31,_option_B)::updaterRecognisesCode
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_library's_Update_from_GitHub_(owner,_2026-10-31,_option_B)::updaterRecognisesCode
   Scenario: it recognises the published Code.gs, and nothing else
     When files are checked for being the published Code.gs
     Then only the published Code.gs is recognised
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::the_library's_Update_from_GitHub_(owner,_2026-10-31,_option_B)::updaterFetchesBuiltFile
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_library's_Update_from_GitHub_(owner,_2026-10-31,_option_B)::updaterFetchesBuiltFile
   Scenario: it fetches the file it was built beside, and the manifest grants what it calls
     When the updater and its manifest are read
     Then it fetches the raw Code.gs it was built beside
     And the manifest grants script projects and external requests
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::needsHumanOpensWithAsk
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::needsHumanOpensWithAsk
   Scenario: Agentic status opens with the ask
     When Agentic status is made for Needs human
     Then its first line asks the person to answer the Decision needed and set Ready for agent
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::only_the_tags_are_bold_in_the_agent's_feedback_(owner,_2026-11-01)::decisionTagBold
+  @test:tools/review-sheet-sync/review-sheet.test.ts::only_the_tags_are_bold_in_the_agent's_feedback_(owner,_2026-11-01)::decisionTagBold
   Scenario: the Decision needed tag is bold, its question and options are not
     When the agent's feedback with a decision block is styled
     Then only the tags and the No. reference are bold
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::only_the_tags_are_bold_in_the_agent's_feedback_(owner,_2026-11-01)::statusTagsBold
+  @test:tools/review-sheet-sync/review-sheet.test.ts::only_the_tags_are_bold_in_the_agent's_feedback_(owner,_2026-11-01)::statusTagsBold
   Scenario: the status line bolds its tag only
     When status lines are styled
     Then only their tags are bold, and an option's parenthesis is not
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::the_ask_comes_first_in_the_agent's_feedback_(owner,_2026-11-01)::bareProposalReviewAsk
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_ask_comes_first_in_the_agent's_feedback_(owner,_2026-11-01)::bareProposalReviewAsk
   Scenario: a bare proposal gets the review ask on top
     When a bare proposal gets its progress line
     Then it opens asking for a review of the proposed direction
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::the_ask_comes_first_in_the_agent's_feedback_(owner,_2026-11-01)::noDecisionNoAskLine
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_ask_comes_first_in_the_agent's_feedback_(owner,_2026-11-01)::noDecisionNoAskLine
   Scenario: no Decision needed block, no Decision needed status line
     When a Needs you line is added to feedback without a Decision needed block
     Then the line is dropped
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::the_ask_comes_first_in_the_agent's_feedback_(owner,_2026-11-01)::decisionKeepsAskLine
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_ask_comes_first_in_the_agent's_feedback_(owner,_2026-11-01)::decisionKeepsAskLine
   Scenario: a real Decision needed block keeps its status line
     When it is added to feedback with a Decision needed block
     Then the line is kept on top
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::the_timer_runs_every_minute_(owner,_2026-10-31)::timerMovesToOneMinute
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_timer_runs_every_minute_(owner,_2026-10-31)::timerMovesToOneMinute
   Scenario: a sheet on the old 5-minute timer moves itself to 1 minute, once
     When a sheet on the 5-minute timer is upgraded twice
     Then the old timer is removed and a 1-minute one made, once
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::statusBlockLines
+  @test:tools/review-sheet-sync/review-sheet.test.ts::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::statusBlockLines
   Scenario: the block is the ⏳ line and one linked line per PR
     When the status block is made
     Then it is the ⏳ line and one linked line per PR
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::statusBlockReplaces
+  @test:tools/review-sheet-sync/review-sheet.test.ts::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::statusBlockReplaces
   Scenario: it replaces the old block and never stacks, under the stale mark
     When the status block is put into a cell twice under a stale mark
     Then it replaces the old block and does not stack
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::peoplesAskShows
+  @test:tools/review-sheet-sync/review-sheet.test.ts::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::peoplesAskShows
   Scenario: the people's ask shows when they must answer
     When the status block is made for Needs human
     Then it carries the ask
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::missingDispositionCompact
+  @test:tools/review-sheet-sync/review-sheet.test.ts::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::missingDispositionCompact
   Scenario: a missing disposition names the comments compactly
     When comment numbers are named
     Then they are grouped compactly in order
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::Ready_for_agent:_Yes,_No,_Completed_(owner,_2026-10-31)::completedAfterPushAndPreview
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Ready_for_agent:_Yes,_No,_Completed_(owner,_2026-10-31)::completedAfterPushAndPreview
   Scenario: Completed once the agent pushed after the Ready and the preview of it is live
     When the agent pushed after the Ready and the preview is live
     Then Ready for agent becomes Completed
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::Ready_for_agent:_Yes,_No,_Completed_(owner,_2026-10-31)::notCompletedWhileRestaging
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Ready_for_agent:_Yes,_No,_Completed_(owner,_2026-10-31)::notCompletedWhileRestaging
   Scenario: not while the preview is restaging, nor before the agent has acted
     When the preview is restaging, or the agent has not acted since the Ready
     Then Ready for agent is left alone
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::Disposition_(agent)_shows_its_structure_(owner,_2026-10-31)::dispositionLabelsBold
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Disposition_(agent)_shows_its_structure_(owner,_2026-10-31)::dispositionLabelsBold
   Scenario: labels and disposition words are bold
     When the disposition cell is styled
     Then its labels and disposition words are bold
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::structured_overflow_lines_(owner,_2026-10-31)::semicolonsBullets
+  @test:tools/review-sheet-sync/review-sheet.test.ts::structured_overflow_lines_(owner,_2026-10-31)::semicolonsBullets
   Scenario: a; b; c becomes one bullet per line
     When "a (No. 326); b; c" and one item are turned into description text
     Then the list becomes one bullet per line and one item stays inline
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::structured_overflow_lines_(owner,_2026-10-31)::labelsAndNoRefsBold
+  @test:tools/review-sheet-sync/review-sheet.test.ts::structured_overflow_lines_(owner,_2026-10-31)::labelsAndNoRefsBold
   Scenario: line-start labels and No. references are bold
     When overflow lines with labels and No. references are styled
     Then the labels and the references are bold
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::hover_text_on_every_column_head_(owner,_2026-10-31)::everyHeadHasNote
+  @test:tools/review-sheet-sync/review-sheet.test.ts::hover_text_on_every_column_head_(owner,_2026-10-31)::everyHeadHasNote
   Scenario: every column of the six sheets' known heads has a note
     When the hover notes of every known column head are read
     Then each has a note, and Disposition mentions the committee only on the public-comment tab
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::hover_text_on_every_column_head_(owner,_2026-10-31)::noNoteNamesColour
+  @test:tools/review-sheet-sync/review-sheet.test.ts::hover_text_on_every_column_head_(owner,_2026-10-31)::noNoteNamesColour
   Scenario: no note names a colour
     When the hover notes are read
     Then none names a colour
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::hover_text_on_every_column_head_(owner,_2026-10-31)::knownHeadsNoted
+  @test:tools/review-sheet-sync/review-sheet.test.ts::hover_text_on_every_column_head_(owner,_2026-10-31)::knownHeadsNoted
   Scenario: known heads get their note; an unknown head keeps its own, and loses an old script note
     When the header notes are written to a tab with known, own and old-script notes
     Then known heads get their note, a person's own note is kept and an old script note is cleared
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::a_PR's_change_list_may_run_over_several_lines_(owner,_2026-10-31)::prChangeListKeptTogether
+  @test:tools/review-sheet-sync/review-sheet.test.ts::a_PR's_change_list_may_run_over_several_lines_(owner,_2026-10-31)::prChangeListKeptTogether
   Scenario: bullets and a label line stay with their PR
     When PR descriptions are split
     Then bullets and a label line stay with their PR
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::a_PR's_change_list_may_run_over_several_lines_(owner,_2026-10-31)::labelHeadsBullets
+  @test:tools/review-sheet-sync/review-sheet.test.ts::a_PR's_change_list_may_run_over_several_lines_(owner,_2026-10-31)::labelHeadsBullets
   Scenario: the label heads the bullets
     When a labelled bullet list is turned into description text
     Then the label heads the bullets
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::unconfirmed_dispositions_are_flagged_and_block_the_merge_(owner,_2026-10-31,_option_A)::unconfirmedListed
+  @test:tools/review-sheet-sync/review-sheet.test.ts::unconfirmed_dispositions_are_flagged_and_block_the_merge_(owner,_2026-10-31,_option_A)::unconfirmedListed
   Scenario: a comment whose committee Disposition is Pending or empty is listed
     When dispositions are checked against Pending and empty committee dispositions
     Then those comments are listed as not confirmed, and none is with no committee disposition
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::unconfirmed_dispositions_are_flagged_and_block_the_merge_(owner,_2026-10-31,_option_A)::mergeWaitsForConfirmed
+  @test:tools/review-sheet-sync/review-sheet.test.ts::unconfirmed_dispositions_are_flagged_and_block_the_merge_(owner,_2026-10-31,_option_A)::mergeWaitsForConfirmed
   Scenario: Ready for merge waits for confirmed dispositions
     When Ready for merge is set while dispositions are not confirmed
     Then the line says it will not merge until every disposition is complete and confirmed
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::Dispositions_confirmed,_an_Editor's_multi-select_(owner,_2026-10-31)::confirmedNosParsed
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Dispositions_confirmed,_an_Editor's_multi-select_(owner,_2026-10-31)::confirmedNosParsed
   Scenario: Yes (or All) confirms every comment; No none; typed numbers confirm those
     When Dispositions confirmed is read as All, Yes, No and typed numbers
     Then All and Yes confirm every comment, No none, and typed numbers those
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::Dispositions_confirmed,_an_Editor's_multi-select_(owner,_2026-10-31)::confirmedNotFlagged
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Dispositions_confirmed,_an_Editor's_multi-select_(owner,_2026-10-31)::confirmedNotFlagged
   Scenario: confirmed comments are no longer flagged; a stray number is
     When confirmed comments are checked
     Then they are no longer flagged, and a confirmed number outside the change set is
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::rows_on_the_people's_tabs_are_at_most_10_lines_high_(owner,_2026-10-31)::rowLinesFromWidth
+  @test:tools/review-sheet-sync/review-sheet.test.ts::rows_on_the_people's_tabs_are_at_most_10_lines_high_(owner,_2026-10-31)::rowLinesFromWidth
   Scenario: lines are estimated from the column width
     When row heights are estimated
     Then a tall cell gives 10 lines and a short one 1
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::rows_on_the_people's_tabs_are_at_most_10_lines_high_(owner,_2026-10-31)::consecutiveRowsOneCall
+  @test:tools/review-sheet-sync/review-sheet.test.ts::rows_on_the_people's_tabs_are_at_most_10_lines_high_(owner,_2026-10-31)::consecutiveRowsOneCall
   Scenario: consecutive rows are set in one call
     When rows 9, 3, 4 and 5 are grouped
     Then they give the runs 3 to 5 and 9
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::newerStepShows
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::newerStepShows
   Scenario: a step newer than the last push shows, with its time
     When the agent's step is newer than the last push
     Then the ⏳ line shows it with its time
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::idleOlderUnknownNothing
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::idleOlderUnknownNothing
   Scenario: idle, an older step, or an unknown word shows nothing new
     When the step is idle, an unknown word, or older than the push
     Then nothing new is shown
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::questionFirst
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::questionFirst
   Scenario: a question for a person comes first
     When a row needs a human answer while the agent has a step
     Then the ⏳ line asks the person first
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::toolStepsKnown
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::toolStepsKnown
   Scenario: every step the tool writes is one the sheet knows
     When the steps agent-record writes are compared with the sheet's
     Then each is known
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_status_line_comes_back_after_the_agent_rewrites_its_cell_(owner,_2026-10-31)::ownLinesNotAgentChange
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_status_line_comes_back_after_the_agent_rewrites_its_cell_(owner,_2026-10-31)::ownLinesNotAgentChange
   Scenario: the script's own lines do not count as the agent's change
     When the script's own lines are removed from a cell
     Then only the agent's text is left
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_status_line_comes_back_after_the_agent_rewrites_its_cell_(owner,_2026-10-31)::draftedProposalSaysReady
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_status_line_comes_back_after_the_agent_rewrites_its_cell_(owner,_2026-10-31)::draftedProposalSaysReady
   Scenario: a drafted proposal says to set Ready for agent
     When the agent has proposed
     Then the ⏳ line says the proposal is ready and to set Ready for agent
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::data_rows_look_like_data_rows_(owner,_2026-10-31:_\"why_row_3_bold\")::headerLookRowRestored
+  @test:tools/review-sheet-sync/review-sheet.test.ts::data_rows_look_like_data_rows_(owner,_2026-10-31:_\"why_row_3_bold\")::headerLookRowRestored
   Scenario: a row that took the header's look gets the last row's format back; plain rows are left
     When the data rows' formats are checked
     Then the one row that took the header's look gets a plain row's format back, and the others are left
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::Agentic_status_sits_left_of_its_filter_column_(owner,_2026-10-31)::statusMovedBeforeFilter
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Agentic_status_sits_left_of_its_filter_column_(owner,_2026-10-31)::statusMovedBeforeFilter
   Scenario: moves it from after Issue to just before the filter
     When Agentic status sits after Issue
     Then it is moved to just before its filter column
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::Agentic_status_sits_left_of_its_filter_column_(owner,_2026-10-31)::titleRowUnmergedRemerged
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Agentic_status_sits_left_of_its_filter_column_(owner,_2026-10-31)::titleRowUnmergedRemerged
   Scenario: unmerges the title row (B1) for the move and merges it again, keeping its text
     When the column is moved under a merged title row
     Then the title is unmerged, the column moved, and the title merged again with its text
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::Agentic_status_sits_left_of_its_filter_column_(owner,_2026-10-31)::alreadyPlacedLeft
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Agentic_status_sits_left_of_its_filter_column_(owner,_2026-10-31)::alreadyPlacedLeft
   Scenario: leaves it when it is already there
     When Agentic status already sits before its filter
     Then nothing moves
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::multiPickRowsNamed
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_Selected_Sections_dropdown_reminder_(core#472)::multiPickRowsNamed
   Scenario: names the rows holding two sections, which a single-pick rule marks Invalid
     When the Selected Sections cells are checked
     Then the rows holding two sections are named
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::reminderSkippedOnlyWhenDone
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_Selected_Sections_dropdown_reminder_(core#472)::reminderSkippedOnlyWhenDone
   Scenario: two picks are not taken as proof the tick is on: the reminder is skipped only when the person said it is done
     When the reminder's code is read
     Then it is skipped only when the person said the dropdown is done, never on two picks
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::reminderToLog
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_Selected_Sections_dropdown_reminder_(core#472)::reminderToLog
   Scenario: the reminder also goes to the execution log, for an Install run from the editor
     When the reminder's code is read
     Then it logs the message as well as showing it
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::the_Folio_Assistant_menu_and_version_check_(owner,_2026-11-01)::menuFolioAssistant
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_Folio_Assistant_menu_and_version_check_(owner,_2026-11-01)::menuFolioAssistant
   Scenario: the menu is named Folio Assistant and has an About item
     When the menu is added
     Then it is Folio Assistant with refresh, install, version and About
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::the_Folio_Assistant_menu_and_version_check_(owner,_2026-11-01)::configCarriesNewestBuild
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_Folio_Assistant_menu_and_version_check_(owner,_2026-11-01)::configCarriesNewestBuild
   Scenario: the Config tab carries the newest build, and a matching sheet says it is up to date
     When the version is shown with no newest build, then with a matching one
     Then the Config carries the newest build
     And without it the dialog points at the copy page, and a match says it is up to date with the project link
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::the_Folio_Assistant_menu_and_version_check_(owner,_2026-11-01)::olderSheetToldNewBuild
+  @test:tools/review-sheet-sync/review-sheet.test.ts::the_Folio_Assistant_menu_and_version_check_(owner,_2026-11-01)::olderSheetToldNewBuild
   Scenario: an older sheet is told a new build is available and how to get it
     When the version is shown on a sheet older than the newest build
     Then it says a new build is available and how to get it
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::keepsAskWithQuestion
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Needs_you_only_with_a_question_(Q-FBK-1_A)::keepsAskWithQuestion
   Scenario: keeps the line when the feedback holds a Decision needed block
     When the feedback holds a Decision needed block
     Then the Needs you line is kept
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::dropsAskWithoutQuestion
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Needs_you_only_with_a_question_(Q-FBK-1_A)::dropsAskWithoutQuestion
   Scenario: drops the Needs you line when there is no question
     When the feedback holds no question
     Then the Needs you line is dropped
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::dropsAskSubLineKeepsLink
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Needs_you_only_with_a_question_(Q-FBK-1_A)::dropsAskSubLineKeepsLink
   Scenario: drops the Needs you sub-line and keeps the PR link on the right text
     When the status block's ask sub-line is dropped
     Then the PR link stays on the PR's text
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::Where_to_review_and_PR_links_(Q-FBK-3_A)::whereLinksPreview
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Where_to_review_and_PR_links_(Q-FBK-3_A)::whereLinksPreview
   Scenario: links each selected section on the preview while there is one
     When the where-to-review line is made with a preview
     Then each selected section links its place on the preview
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::Where_to_review_and_PR_links_(Q-FBK-3_A)::whereFallsBackPublished
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Where_to_review_and_PR_links_(Q-FBK-3_A)::whereFallsBackPublished
   Scenario: falls back to the published draft, and flags no section
     When it is made with no preview, and with no section
     Then sections link the published draft, and no section is flagged
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::Where_to_review_and_PR_links_(Q-FBK-3_A)::finishedRowNoWarning
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Where_to_review_and_PR_links_(Q-FBK-3_A)::finishedRowNoWarning
   Scenario: a finished row with no section gets no warning; an open one does
     When it is made for a closed row, an open row and a reverted row
     Then the closed row gets nothing, the open row is warned and the reverted row still gets its sections
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::Where_to_review_and_PR_links_(Q-FBK-3_A)::repoRefsLinked
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Where_to_review_and_PR_links_(Q-FBK-3_A)::repoRefsLinked
   Scenario: every repo#n becomes a link
     When text with repo#n references is linked
     Then each becomes a link to its issue
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::a_refresh_keeps_the_links_an_agent_put_in_its_feedback_(owner,_2026-11-01:_\"Dont_know_where_link_is\")::keptLinksFoundInOrder
+  @test:tools/review-sheet-sync/review-sheet.test.ts::a_refresh_keeps_the_links_an_agent_put_in_its_feedback_(owner,_2026-11-01:_\"Dont_know_where_link_is\")::keptLinksFoundInOrder
   Scenario: each linked label is found again in the new text, in order
     When the agent's links are found again in new text
     Then each label is found in order
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::a_refresh_keeps_the_links_an_agent_put_in_its_feedback_(owner,_2026-11-01:_\"Dont_know_where_link_is\")::goneLabelDropped
+  @test:tools/review-sheet-sync/review-sheet.test.ts::a_refresh_keeps_the_links_an_agent_put_in_its_feedback_(owner,_2026-11-01:_\"Dont_know_where_link_is\")::goneLabelDropped
   Scenario: a label no longer in the text is dropped
     When a label is no longer in the text
     Then its link is dropped
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::a_refresh_keeps_the_links_an_agent_put_in_its_feedback_(owner,_2026-11-01:_\"Dont_know_where_link_is\")::noRichTextNoRuns
+  @test:tools/review-sheet-sync/review-sheet.test.ts::a_refresh_keeps_the_links_an_agent_put_in_its_feedback_(owner,_2026-11-01:_\"Dont_know_where_link_is\")::noRichTextNoRuns
   Scenario: a cell without rich text gives no runs
     When link runs are read from cells without rich text, with an error, and with runs
     Then the first two give none and the third gives only the linked run with text
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::finished_change_sets_are_hidden_and_struck_through::finishedRowsHidden
+  @test:tools/review-sheet-sync/review-sheet.test.ts::finished_change_sets_are_hidden_and_struck_through::finishedRowsHidden
   Scenario: Change merged and Closed rows are struck through across the row and hidden; others untouched
     When change sets are merged, open and closed
     Then the merged and closed rows are struck through and hidden, and remembered
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::finished_change_sets_are_hidden_and_struck_through::reopenedRowShown
+  @test:tools/review-sheet-sync/review-sheet.test.ts::finished_change_sets_are_hidden_and_struck_through::reopenedRowShown
   Scenario: an unchanged row is not touched again, and a reopened row is shown with the line removed
     When a remembered row is unchanged and another is reopened
     Then the unchanged row is not touched and the reopened row is shown without the line
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::people_make_change_sets_(Q-CS-1_C)::titleOnlyRowGetsId
+  @test:tools/review-sheet-sync/review-sheet.test.ts::people_make_change_sets_(Q-CS-1_C)::titleOnlyRowGetsId
   Scenario: a row with only a Title gets the next id over both tabs
     When a row holds only a Title
     Then it gets the next id over both tabs and the agent's other change set is appended
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::people_make_change_sets_(Q-CS-1_C)::agentSetNotAddedTwice
+  @test:tools/review-sheet-sync/review-sheet.test.ts::people_make_change_sets_(Q-CS-1_C)::agentSetNotAddedTwice
   Scenario: an agent change set already on the sheet is not added again, and a typed Title is kept
     When the agent's change set is already on the sheet with the people's title
     Then nothing is given or appended
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::people_make_change_sets_(Q-CS-1_C)::humanCsParsed
+  @test:tools/review-sheet-sync/review-sheet.test.ts::people_make_change_sets_(Q-CS-1_C)::humanCsParsed
   Scenario: Change Set (human) takes ids, several ids or new
     When Change Set (human) is read as empty, one id, several ids, new and unknown
     Then it gives nothing, the ids, a new note, or a note that the id is not a change set
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_copy_that_is_not_linked_to_a_repository_yet::Ready_for_agent_after_the_preview_was_built_(owner,_2026-10-31)::the_library_stub_each_sheet_keeps_(owner,_2026-10-31:_library,_latest_code)::Needs_human_says_what_the_person_must_do_(owner,_2026-10-31)::one_agent_column,_status_on_top_(owner,_2026-10-31,_option_A)::the_⏳_line_says_where_the_agent_is_(owner,_2026-10-31)::the_Selected_Sections_dropdown_reminder_(core#472)::Needs_you_only_with_a_question_(Q-FBK-1_A)::Review_Change_Sets_rows_people_start,_in_a_run::runAddsIdAndAgentSet
+  @test:tools/review-sheet-sync/review-sheet.test.ts::Review_Change_Sets_rows_people_start,_in_a_run::runAddsIdAndAgentSet
   Scenario: a Title-only row gets an id and a new agent change set is added at the end
     When a sheet with a Title-only row and a new agent change set is refreshed
     Then the row gets CS-008 and the agent's change set is added with its title

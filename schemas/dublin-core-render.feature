@@ -64,7 +64,7 @@ Feature: a Dublin Core record rendered as JSON-LD bound to DCMI Terms and as DC 
     Then its context sets no @base
     And the expanded @id is an absolute https item IRI
 
-  @test:schemas/dublin-core-render.test.ts::JSON-LD_bound_to_DCMI_Terms_—_expanded_by_a_real_processor::DC_XML_per_DCMI's_XML_guidelines::xmlWellFormed[${node.id.replace(/\s+/g,_"_")}]
+  @test:schemas/dublin-core-render.test.ts::DC_XML_per_DCMI's_XML_guidelines::xmlWellFormed[${node.id.replace(/\s+/g,_"_")}]
   Scenario Outline: is well-formed
     Given the DC XML rendering of catalogue item <item>
     When it is validated as XML
@@ -74,7 +74,7 @@ Feature: a Dublin Core record rendered as JSON-LD bound to DCMI Terms and as DC 
       | item |
       | each catalogue item that names a record |
 
-  @test:schemas/dublin-core-render.test.ts::JSON-LD_bound_to_DCMI_Terms_—_expanded_by_a_real_processor::DC_XML_per_DCMI's_XML_guidelines::xmlNamespacesOnContainer[${node.id.replace(/\s+/g,_"_")}]
+  @test:schemas/dublin-core-render.test.ts::DC_XML_per_DCMI's_XML_guidelines::xmlNamespacesOnContainer[${node.id.replace(/\s+/g,_"_")}]
   Scenario Outline: declares dc, dcterms and xsi on one namespaced container, and uses only dc:/dcterms: elements
     Given the DC XML rendering of catalogue item <item>
     When it is parsed
@@ -85,7 +85,7 @@ Feature: a Dublin Core record rendered as JSON-LD bound to DCMI Terms and as DC 
       | item |
       | each catalogue item that names a record |
 
-  @test:schemas/dublin-core-render.test.ts::JSON-LD_bound_to_DCMI_Terms_—_expanded_by_a_real_processor::DC_XML_per_DCMI's_XML_guidelines::xmlOnlyDcmiSchemes[${node.id.replace(/\s+/g,_"_")}]
+  @test:schemas/dublin-core-render.test.ts::DC_XML_per_DCMI's_XML_guidelines::xmlOnlyDcmiSchemes[${node.id.replace(/\s+/g,_"_")}]
   Scenario Outline: uses only DCMI encoding schemes in xsi:type
     Given the DC XML rendering of catalogue item <item>
     When its xsi:type attributes are read
@@ -95,7 +95,7 @@ Feature: a Dublin Core record rendered as JSON-LD bound to DCMI Terms and as DC 
       | item |
       | each catalogue item that names a record |
 
-  @test:schemas/dublin-core-render.test.ts::JSON-LD_bound_to_DCMI_Terms_—_expanded_by_a_real_processor::DC_XML_per_DCMI's_XML_guidelines::xmlListsInexpressible[${node.id.replace(/\s+/g,_"_")}]
+  @test:schemas/dublin-core-render.test.ts::DC_XML_per_DCMI's_XML_guidelines::xmlListsInexpressible[${node.id.replace(/\s+/g,_"_")}]
   Scenario Outline: carries every expressible value once, and LISTS the rest instead of dropping them
     Given the DC XML rendering of catalogue item <item>
     When its elements are counted
@@ -106,20 +106,20 @@ Feature: a Dublin Core record rendered as JSON-LD bound to DCMI Terms and as DC 
       | item |
       | each catalogue item that names a record |
 
-  @test:schemas/dublin-core-render.test.ts::JSON-LD_bound_to_DCMI_Terms_—_expanded_by_a_real_processor::DC_XML_per_DCMI's_XML_guidelines::xmlEscapesMarkup
+  @test:schemas/dublin-core-render.test.ts::DC_XML_per_DCMI's_XML_guidelines::xmlEscapesMarkup
   Scenario: escapes markup in a value rather than emitting it
     Given a record whose title is A <b> & "c"
     When it is rendered as DC XML
     Then the XML is well-formed
     And the title is written with &lt; &gt; &amp; and &quot; escapes
 
-  @test:schemas/dublin-core-render.test.ts::JSON-LD_bound_to_DCMI_Terms_—_expanded_by_a_real_processor::DC_XML_per_DCMI's_XML_guidelines::the_committed_renderings::committedRenderingsMatchFresh
+  @test:schemas/dublin-core-render.test.ts::the_committed_renderings::committedRenderingsMatchFresh
   Scenario: are byte-identical to a fresh render (what dc:render:check gates)
     When the planned renderings of the instance are computed
     Then there are two per catalogue item
     And each committed file is byte-identical to its fresh render
 
-  @test:schemas/dublin-core-render.test.ts::JSON-LD_bound_to_DCMI_Terms_—_expanded_by_a_real_processor::DC_XML_per_DCMI's_XML_guidelines::the_committed_renderings::renderingsDeterministic
+  @test:schemas/dublin-core-render.test.ts::the_committed_renderings::renderingsDeterministic
   Scenario: are deterministic
     When each record is rendered twice as JSON-LD and as XML
     Then both renders are identical

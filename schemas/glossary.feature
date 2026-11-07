@@ -81,20 +81,20 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
     Then there is one entry per term with no duplicate ids
     And one SKOS file is written per scheme
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::indexInstanceAndTypePages
+  @test:schemas/glossary.test.ts::the_glossary_pages::indexInstanceAndTypePages
   Scenario: there is an index, one page per instance that owns an authored scheme, and one per asset type, and each is an output
     When the glossary pages are rendered
     Then the pages are the index, one per instance with an authored scheme, and one per asset type and letter part
     And each page is also an output at its path
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::everyTermOnceOnItsPage
+  @test:schemas/glossary.test.ts::the_glossary_pages::everyTermOnceOnItsPage
   Scenario: every term appears exactly once across all the pages, and on the page its scheme belongs to
     When the term ids on every page are collected
     Then no term appears on two pages
     And every term appears, on the page its scheme belongs to
     And there are more terms than asset types
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::pagesHoldOnlyTheirTerms
+  @test:schemas/glossary.test.ts::the_glossary_pages::pagesHoldOnlyTheirTerms
   Scenario: the index holds no term; each instance's page holds its authored terms only; each type's page holds that type's extracted terms only
     When each page's terms are counted
     Then the index holds no term
@@ -102,79 +102,79 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
     And each type's pages hold that type's extracted terms, marked extracted and candidate
     And there is at least one authored term
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::pagesWithinSizeBudget
+  @test:schemas/glossary.test.ts::the_glossary_pages::pagesWithinSizeBudget
   Scenario: each page is under its stated size budget, and says so
     When each page's size is measured
     Then every page is within its budget
     And each unsplit page states its size and budget
     And the index budget is at most 64 KB and each type's below 1.4 MB
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::indexAndTypePagesLinked
+  @test:schemas/glossary.test.ts::the_glossary_pages::indexAndTypePagesLinked
   Scenario: the index links every per-type page, and each per-type page links back
     When the index and each type page are read
     Then the index links each type page and has children
     And each type page has its permalink, parent Glossary and a link back to the index
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::splitTypeLinksResolve
+  @test:schemas/glossary.test.ts::the_glossary_pages::splitTypeLinksResolve
   Scenario: a split type's term links name the part the target is on, and every one resolves
     When the term links across the parts of each split type are followed
     Then each lands on an entry of the part it names
     And no in-page link points at a term of another part
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::splitTypeCodeLinksToPart
+  @test:schemas/glossary.test.ts::the_glossary_pages::splitTypeCodeLinksToPart
   Scenario: on a split type, a term code links to the PART its target's label falls in
     Given a split type's scheme with terms alpha and zeta
     When a code naming z is linked
     Then the link goes to the t-z part with the term's anchor
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::pagesKeepFilterAndLetters
+  @test:schemas/glossary.test.ts::the_glossary_pages::pagesKeepFilterAndLetters
   Scenario: every page keeps the text filter, and the A–Z bar wherever it lists terms A–Z
     When every page that lists terms is read
     Then it has the text filter
     And where it lists terms A to Z it has the letters bar
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::eachTypeAboveFloor
+  @test:schemas/glossary.test.ts::extracted_KG_terms::eachTypeAboveFloor
   Scenario: each asset type contributes terms, above a floor (a vacuity guard, not an exact count)
     When the extracted terms are counted per asset type
     Then each type reaches its floor
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::extractedTermsAreSourcedCandidates
+  @test:schemas/glossary.test.ts::extracted_KG_terms::extractedTermsAreSourcedCandidates
   Scenario: every extracted term is a candidate whose source resolves to a file in the repository
     When the extracted terms are read
     Then there are some
     And each is a candidate whose source file exists
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::anchorNamesElementInFile
+  @test:schemas/glossary.test.ts::extracted_KG_terms::anchorNamesElementInFile
   Scenario: an anchored source names an element that is really in that file
     When the extracted terms with an anchored source are checked
     Then there are some
     And each anchor is found in its source file
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::definitionsVerbatimInAsset
+  @test:schemas/glossary.test.ts::extracted_KG_terms::definitionsVerbatimInAsset
   Scenario: no definition appears that is not verbatim in its asset
     When the definitions of extracted terms are compared with their assets
     Then more than 1000 terms have a definition
     And every definition is verbatim in its asset
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::dmnNotDefinedByRule
+  @test:schemas/glossary.test.ts::extracted_KG_terms::dmnNotDefinedByRule
   Scenario: a DMN decision is never defined by one of its rules' descriptions
     When each DMN decision term's definition is compared with its rules' descriptions
     Then there are DMN terms
     And no definition is a rule description
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::noTwoTermsMintOneIri
+  @test:schemas/glossary.test.ts::extracted_KG_terms::noTwoTermsMintOneIri
   Scenario: no two terms, authored or extracted, mint one IRI
     When every term's IRI is minted
     Then there are more than 2000 IRIs, all distinct
     And no glossary is invalid
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::extractedIriInHoldersNamespace
+  @test:schemas/glossary.test.ts::extracted_KG_terms::extractedIriInHoldersNamespace
   Scenario: an extracted term's IRI is in the namespace of the instance that holds the asset
     When each extracted scheme is compared with the instance holding its assets
     Then its namespace is that instance's namespace
     And each term's source is under that instance's root
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::rolesAndLanesNotReextracted
+  @test:schemas/glossary.test.ts::extracted_KG_terms::rolesAndLanesNotReextracted
   Scenario: roles and lanes are not re-extracted: the swimlane ledger carries them and is linked
     When the extracted terms are compared with the swimlane ledgers
     Then the ledgers carry terms
@@ -182,53 +182,53 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
     And no term comes from roles.json or from a BPMN lane
     And the index links the swimlane glossary
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::pagesTellExtractedFromAuthored
+  @test:schemas/glossary.test.ts::extracted_KG_terms::pagesTellExtractedFromAuthored
   Scenario: the pages tell extracted from authored, and only authored terms reach schema.org
     When all pages are read
     Then the extracted and authored marks count the extracted and authored terms
     And only authored pages carry schema.org JSON-LD, one per page, with the authored terms
     And each page states how many terms it holds
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::extractedWrittenUnderGenerated
+  @test:schemas/glossary.test.ts::extracted_KG_terms::extractedWrittenUnderGenerated
   Scenario: extracted schemes are written under a declared glossary directory's generated/, never over an authored file
     When the output files are listed
     Then there is one generated glossary per extracted scheme, under a declared glossary directory's generated/
     And none overwrites an authored file
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::authoredNotExtractedPrefix
+  @test:schemas/glossary.test.ts::extracted_KG_terms::authoredNotExtractedPrefix
   Scenario: an authored scheme may not take the extracted prefix
     When the authored schemes are read
     Then none has an id starting with the extracted prefix
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::extraction_helpers::localIdKeepsAtIdApart
+  @test:schemas/glossary.test.ts::extraction_helpers::localIdKeepsAtIdApart
   Scenario: a local id keeps `@id` and `id` apart, and always satisfies the schema
     When local ids are made from keys
     Then "@id" and "id" give different local ids
     And every local id satisfies the schema
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::extraction_helpers::xmlDecodingOnce
+  @test:schemas/glossary.test.ts::extraction_helpers::xmlDecodingOnce
   Scenario: XML decoding covers the predefined entities and numeric references, once
     When "a &amp;lt; b &#183; &#x41; <![CDATA[c]]>" is decoded
     Then it gives "a &lt; b · A c"
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::every_term_in_the_namespace_of_the_instance_that_owns_its_source::noTwoSchemesOneIri
+  @test:schemas/glossary.test.ts::every_term_in_the_namespace_of_the_instance_that_owns_its_source::noTwoSchemesOneIri
   Scenario: (a) no two schemes, in any instance, mint one scheme IRI
     When every scheme IRI is minted
     Then there is no collision finding and no duplicate IRI
     And there are more schemes than asset types
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::every_term_in_the_namespace_of_the_instance_that_owns_its_source::noTwoInstancesOneNamespace
+  @test:schemas/glossary.test.ts::every_term_in_the_namespace_of_the_instance_that_owns_its_source::noTwoInstancesOneNamespace
   Scenario: (b) no two instances resolve to one namespace
     When each instance's namespace is resolved
     Then there is more than one and none repeats
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::every_term_in_the_namespace_of_the_instance_that_owns_its_source::termMintedInOwnersNamespace
+  @test:schemas/glossary.test.ts::every_term_in_the_namespace_of_the_instance_that_owns_its_source::termMintedInOwnersNamespace
   Scenario: (c) every term with a repository source is minted in the namespace of the instance whose root holds it, authored and extracted alike
     When every term with a repository source is checked against the instance holding it
     Then more than 1000 terms and at least one authored term are checked
     And every IRI is in its owner's namespace
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::every_term_in_the_namespace_of_the_instance_that_owns_its_source::multiInstanceSchemeRefused
+  @test:schemas/glossary.test.ts::every_term_in_the_namespace_of_the_instance_that_owns_its_source::multiInstanceSchemeRefused
   Scenario: an authored scheme sourced in several instances with no defining source is refused, not guessed
     Given an authored scheme whose terms are sourced in two instances
     When its owner is resolved
@@ -237,44 +237,44 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
     And with no terms the owner is folio-assistant-core
     And paths and IRIs are resolved to owners and repository paths as expected
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::an_ordered_glossary_(owner,_2026-09-29:_logical,_not_alphabetical)::requiresOnlyEarlierTerms
+  @test:schemas/glossary.test.ts::an_ordered_glossary_(owner,_2026-09-29:_logical,_not_alphabetical)::requiresOnlyEarlierTerms
   Scenario: a term may require only earlier terms of its own glossary, never itself
     When ordered glossaries with various requires are validated
     Then a term requiring an earlier term is accepted
     And a forward, self or missing requirement is refused
     And an unordered glossary allows a forward requirement
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::an_ordered_glossary_(owner,_2026-09-29:_logical,_not_alphabetical)::skosOrderedCollection
+  @test:schemas/glossary.test.ts::an_ordered_glossary_(owner,_2026-09-29:_logical,_not_alphabetical)::skosOrderedCollection
   Scenario: the SKOS carries the order as an OrderedCollection, and each requires as dcterms:requires
     Given an ordered glossary where b requires a
     When it is rendered as SKOS
     Then an OrderedCollection lists a then b
     And b has dcterms:requires a
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::an_ordered_glossary_(owner,_2026-09-29:_logical,_not_alphabetical)::bootstrapTermsOrderedFromSchema
+  @test:schemas/glossary.test.ts::an_ordered_glossary_(owner,_2026-09-29:_logical,_not_alphabetical)::bootstrapTermsOrderedFromSchema
   Scenario: bootstrap's terms are one ordered, authored scheme, read from its schema in the schema's order
     When bootstrap's ordered scheme is found
     Then it is read from bootstrap/schemas/graph.schema.json
     And every term is authored
     And the labels follow the schema's $defs order
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::a_description_naming_another_term_links_to_it_(bean_qgjh)::inPageLinksLand
+  @test:schemas/glossary.test.ts::a_description_naming_another_term_links_to_it_(bean_qgjh)::inPageLinksLand
   Scenario: every in-page term link lands on an entry of the same page
     When every in-page term link is followed
     Then each lands on an entry of the same page
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::a_description_naming_another_term_links_to_it_(bean_qgjh)::onlySameSchemeIdLinks
+  @test:schemas/glossary.test.ts::a_description_naming_another_term_links_to_it_(bean_qgjh)::onlySameSchemeIdLinks
   Scenario: only an exact id of the SAME scheme links, and never the term itself
     Given a scheme with terms a and b
     When the codes a, b and c in a's description are linked
     Then only b is linked
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::a_description_naming_another_term_links_to_it_(bean_qgjh)::D4:_a_glossary's_licence_comes_from_the_licence-naming_row_(bean_gzkt)::licenceAsDctermsLicense
+  @test:schemas/glossary.test.ts::D4:_a_glossary's_licence_comes_from_the_licence-naming_row_(bean_gzkt)::licenceAsDctermsLicense
   Scenario: written as dcterms:license, the row a library item's licence uses too
     When the licence terms for CC0-1.0 are made
     Then they are dcterms:license "CC0-1.0"
 
-  @test:schemas/glossary.test.ts::this_repository::the_glossary_pages::extracted_KG_terms::a_description_naming_another_term_links_to_it_(bean_qgjh)::D4:_a_glossary's_licence_comes_from_the_licence-naming_row_(bean_gzkt)::noLicenceNothingWritten
+  @test:schemas/glossary.test.ts::D4:_a_glossary's_licence_comes_from_the_licence-naming_row_(bean_gzkt)::noLicenceNothingWritten
   Scenario: no licence: nothing written
     When the licence terms for no licence are made
     Then nothing is written
