@@ -406,6 +406,13 @@
       "status": "candidate"
     },
     {
+      "id": "extracted-statement.extractedstatementschema.derivedfrom",
+      "prefLabel": "ExtractedStatementSchema.derivedFrom",
+      "definition": "The id of the statement this one was derived from, when it was: a scenario candidate written from a recommendation names that recommendation, so a reviewer can check one against the other. Its `source` is still the library source, never the other statement.",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#ExtractedStatementSchema.derivedFrom",
+      "status": "candidate"
+    },
+    {
       "id": "extracted-statement.extractedstatementschema.id",
       "prefLabel": "ExtractedStatementSchema.id",
       "definition": "Stable within the list; the anchor the statement's row is published under.",
