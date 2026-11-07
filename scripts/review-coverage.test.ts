@@ -25,13 +25,13 @@ const rc = buildReviewComments({
 });
 
 describe("buildCoverage", () => {
-  it("gives the gate's facts: one block unread, one defect open", () => {
+  it("oneUnreadOneDefect", () => {
     const f = buildCoverage({ changeset, blocks, reviewComments: rc });
     expect(f.facts).toEqual({ uncoveredBlocks: 1, openDefects: 1, rendered: "absent", unreviewedPages: 0, undeterminedInputs: 0, measured: "absent", missedPages: 0 });
     expect(f.uncovered).toEqual(["prose:b"]);
   });
 
-  it("an edit after the verdict reopens that block", () => {
+  it("editReopensBlock", () => {
     const f = buildCoverage({ changeset, blocks: { ...blocks, "prose:a": { hash: "ha2" } }, reviewComments: rc });
     expect(f.uncovered).toEqual(["prose:a", "prose:b"]);
     expect(f.stale).toHaveLength(1);
@@ -59,12 +59,12 @@ describe("the rendered half (bean bnjs)", () => {
     check: { missed: ["x.html"], confirmed: [], unconfirmed: [] },
   };
 
-  it("every fact is supplied, and the counts are KNOWN when the build published them", () => {
+  it("renderedKnown", () => {
     const f = buildCoverage({ changeset, blocks, reviewComments: rc, rendered: renderedFacts([impact], measured) });
     expect(f.facts).toEqual({ uncoveredBlocks: 1, openDefects: 1, rendered: "known", unreviewedPages: 1, undeterminedInputs: 1, measured: "known", missedPages: 1 });
   });
 
-  it("the pins a page or input verdict may be recorded against include missed pages", () => {
+  it("pinsIncludeMissedPages", () => {
     const m = pinMaps(renderedFacts([impact], measured));
     expect([...m.pages]).toEqual([["doc/index.html", "pin-doc"], ["outline.json", "pin-doc"], ["x.html", "pin-x"]]);
     expect([...m.inputs]).toEqual([["_config.yml", "pin-cfg"]]);
@@ -93,14 +93,14 @@ describe("the command", () => {
   const run = (...extra: string[]) =>
     spawnSync("bun", ["run", SCRIPT, "--changeset", "changeset.json", "--blocks", "blocks.json", "--comments", "review-comments.json", "--todos", "todos", ...extra], { cwd: dir, encoding: "utf-8" });
 
-  it("prints only the facts on stdout", () => {
+  it("commandPrintsFacts", () => {
     setup();
     const r = run();
     expect(r.status).toBe(0);
     expect(JSON.parse(r.stdout)).toEqual({ uncoveredBlocks: 1, openDefects: 1, rendered: "absent", unreviewedPages: 0, undeterminedInputs: 0, measured: "absent", missedPages: 0 });
   });
 
-  it("refuses to commit verdicts on the base branch, and writes nothing", () => {
+  it("refusesBaseBranchCommit", () => {
     setup();
     const r = run("--commit");
     expect(r.status).toBe(1);
@@ -108,7 +108,7 @@ describe("the command", () => {
     expect(readdirSync(join(dir, "todos", "verdicts"))).toEqual([]);
   });
 
-  it("commits them on a feature branch, and a second run finds nothing new", () => {
+  it("commitsOnFeature", () => {
     const git = setup();
     git("switch", "-qc", "review/x");
     expect(run("--commit").status).toBe(0);

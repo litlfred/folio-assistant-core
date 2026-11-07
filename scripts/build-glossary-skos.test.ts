@@ -94,19 +94,19 @@ const rootRun = run(join(TMP, "folio/alpha"));
 const subRun = run(join(TMP, "subfolio/folio/alpha"));
 
 describe("paper glossary as SKOS", () => {
-  it("the builder runs clean for both papers", () => {
+  it("builderRunsClean", () => {
     expect(rootRun.code).toBe(0);
     expect(subRun.code).toBe(0);
   });
 
-  it("writes a folio-glossary/v1 scheme into the instance's declared glossary directory", () => {
+  it("writesSchemeIntoGlossaryDir", () => {
     const raw = JSON.parse(readFileSync(join(TMP, "glossary/paper-alpha.glossary.json"), "utf-8"));
     const g = GlossarySchema.parse(raw);
     expect(g.id).toBe("paper-alpha");
     expect(g.terms.length).toBe(3);
   });
 
-  it("chooses status by provenance", () => {
+  it("statusByProvenance", () => {
     const g = GlossarySchema.parse(JSON.parse(readFileSync(join(TMP, "glossary/paper-alpha.glossary.json"), "utf-8")));
     const by = Object.fromEntries(g.terms.map((t) => [t.id, t]));
     expect(by["foo-bar"]!.status).toBe("authored");
@@ -122,7 +122,7 @@ describe("paper glossary as SKOS", () => {
     expect(by["qux"]!.reason).toContain("no .md body");
   });
 
-  it("appears in collect(), in the owning instance's namespace, sub-instance included", () => {
+  it("appearsInCollect", () => {
     const c = collect(TMP);
     expect(c.findings.invalid).toEqual([]);
     const papers = c.glossaries.filter((s) => s.glossary.id === "paper-alpha");
@@ -131,7 +131,7 @@ describe("paper glossary as SKOS", () => {
     expect(papers.find((s) => s.instance === "subfolio")!.file).toBe("subfolio/glossary/paper-alpha.glossary.json");
   });
 
-  it("no IRI collides across schemes and instances", () => {
+  it("noIriCollision", () => {
     const c = collect(TMP);
     const iris = c.glossaries.flatMap((s) => [
       schemeIri(s.ns, s.glossary),
@@ -146,13 +146,13 @@ describe("paper glossary as SKOS", () => {
     expect(fooBar.length).toBe(2);
   });
 
-  it("keeps glossary.json's shape: no field a downstream --check would see as drift", () => {
+  it("glossaryJsonShapeKept", () => {
     const j = JSON.parse(readFileSync(join(TMP, "folio/alpha/glossary.json"), "utf-8"));
     expect(Object.keys(j).sort()).toEqual(["duplicates", "entries", "generated", "paper"]);
     expect(Object.keys(j.entries[0]).sort()).toEqual(["block", "chapter", "chapterTitle", "kind", "lean", "section", "slug"]);
   });
 
-  it("--check passes on a current scheme and fails on a stale one", () => {
+  it("checkPassesCurrentFailsStale", () => {
     expect(run(join(TMP, "folio/alpha"), true).code).toBe(0);
     const p = join(TMP, "glossary/paper-alpha.glossary.json");
     const good = readFileSync(p, "utf-8");
@@ -163,7 +163,7 @@ describe("paper glossary as SKOS", () => {
     expect(stale.out).toContain("out of date");
   });
 
-  it("refuses a scheme id another document in the directory already holds", () => {
+  it("refusesTakenSchemeId", () => {
     const p = join(TMP, "glossary/clash.glossary.json");
     writeFileSync(p, JSON.stringify({ $schema: "folio-glossary/v1", id: "paper-alpha", title: "clash", terms: [] }));
     const r = run(join(TMP, "folio/alpha"), true);
@@ -174,11 +174,11 @@ describe("paper glossary as SKOS", () => {
 });
 
 describe("helpers", () => {
-  it("localId lowercases and keeps only id characters", () => {
+  it("localIdLowercases", () => {
     expect(localId("Foo Bar")).toBe("foo-bar");
     expect(localId("--x_y.z")).toBe("x_y.z");
   });
-  it("definingParagraph finds the :defterm by explicit id or by label", () => {
+  it("definingParagraphFindsDefterm", () => {
     expect(definingParagraph("x\n\nA :defterm[Thing]{#thing-1} is.", "thing-1")?.text).toBe("A Thing is.");
     expect(definingParagraph("A :defterm[thing] is.", "thing")?.label).toBe("thing");
     expect(definingParagraph("A :refterm[thing] is.", "thing")).toBeUndefined();
@@ -186,7 +186,7 @@ describe("helpers", () => {
 });
 
 describe("an instance with no glossary directory", () => {
-  it("still writes glossary.json and passes --check, reporting the scheme as not written", () => {
+  it("noGlossaryDirStillWrites", () => {
     const bare = mkdtempSync(join(tmpdir(), "paper-glossary-bare-"));
     try {
       writeFileSync(

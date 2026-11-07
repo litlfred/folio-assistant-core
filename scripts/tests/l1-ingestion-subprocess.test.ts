@@ -94,7 +94,7 @@ function toExtract(model: ProcessModel, state: InstanceState): void {
 }
 
 describe("a call activity resolves to the process it names", () => {
-  test("l1-document-ingestion's phases are loaded, not left as bare ids", async () => {
+  test("callActivitiesResolve", async () => {
     const model = await loadProcessModel(bpmn("l1-document-ingestion"));
     const called = [...model.nodes.values()].filter((n) => n.calledElement).map((n) => n.id);
     expect(called.length).toBeGreaterThan(0);
@@ -106,7 +106,7 @@ describe("a call activity resolves to the process it names", () => {
 });
 
 describe("entering a subprocess", () => {
-  test("the phase opens by itself, and its steps are what is enabled", async () => {
+  test("phaseOpensItself", async () => {
     const model = await loadProcessModel(bpmn("l1-document-ingestion"));
     const state = startInstance(model, { id: "ing-1", subject: "uploads/a.pdf" });
     toExtract(model, state);
@@ -124,7 +124,7 @@ describe("entering a subprocess", () => {
     }
   });
 
-  test("completing the call activity itself is refused, and it says what to do instead", async () => {
+  test("completingCallRefused", async () => {
     const model = await loadProcessModel(bpmn("l1-document-ingestion"));
     const state = startInstance(model, { id: "ing-2", subject: "uploads/a.pdf" });
     toExtract(model, state);
@@ -140,7 +140,7 @@ describe("entering a subprocess", () => {
     }
   });
 
-  test("the parent advances when the child finishes, and keeps the record", async () => {
+  test("parentAdvancesWhenChildFinishes", async () => {
     const model = await loadProcessModel(bpmn("l1-document-ingestion"));
     const state = startInstance(model, { id: "ing-3", subject: "uploads/a.pdf" });
     toExtract(model, state);
@@ -159,7 +159,7 @@ describe("entering a subprocess", () => {
 });
 
 describe("the step a caller names is the leaf", () => {
-  test("completing a child's step by its own id works from the parent", async () => {
+  test("leafCompletedFromParent", async () => {
     const model = await loadProcessModel(bpmn("l1-document-ingestion"));
     const state = startInstance(model, { id: "ing-4", subject: "uploads/a.pdf" });
     toExtract(model, state);
@@ -173,7 +173,7 @@ describe("the step a caller names is the leaf", () => {
     ).toBe(true);
   });
 
-  test("a step that is enabled nowhere is still refused", async () => {
+  test("notEnabledStillRefused", async () => {
     const model = await loadProcessModel(bpmn("l1-document-ingestion"));
     const state = startInstance(model, { id: "ing-5", subject: "uploads/a.pdf" });
     expect(() => complete(model, state, "Task_Promote")).toThrow(/not enabled/);
@@ -182,7 +182,7 @@ describe("the step a caller names is the leaf", () => {
 });
 
 describe("the gate answers for a step inside a phase", () => {
-  test("a subprocess step is allowed when it is enabled, and says which phase", async () => {
+  test("gateAllowsEnabledPhaseStep", async () => {
     const model = await loadProcessModel(bpmn("l1-document-ingestion"));
     const state = startInstance(model, { id: "ing-6", subject: "uploads/a.pdf" });
     toExtract(model, state);
@@ -193,7 +193,7 @@ describe("the gate answers for a step inside a phase", () => {
     expect(verdict.reason).toContain(model.nodes.get("CallActivity_Extract")!.name);
   });
 
-  test("a step of a phase not yet entered is refused, not reported as unknown", async () => {
+  test("laterPhaseStepRefused", async () => {
     const model = await loadProcessModel(bpmn("l1-document-ingestion"));
     const state = startInstance(model, { id: "ing-7", subject: "uploads/a.pdf" });
     toExtract(model, state);
@@ -209,7 +209,7 @@ describe("the gate answers for a step inside a phase", () => {
 });
 
 describe("positionOf", () => {
-  test("reports the leaf and the phases above it, from state alone", async () => {
+  test("positionReportsLeaf", async () => {
     const model = await loadProcessModel(bpmn("l1-document-ingestion"));
     const state = startInstance(model, { id: "ing-8", subject: "uploads/a.pdf" });
     toExtract(model, state);
@@ -224,7 +224,7 @@ describe("positionOf", () => {
 });
 
 describe("a bean-marked step in a phase is still a work-plan write", () => {
-  test("findInModel reaches it — a parent-only lookup would find nothing", async () => {
+  test("findInModelReachesMarked", async () => {
     const model = await loadProcessModel(bpmn("l1-document-ingestion"));
 
     // Every bean-marked step of this process lives in one of its phases; none

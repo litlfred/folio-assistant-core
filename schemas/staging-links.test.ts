@@ -29,7 +29,7 @@ function contracts(): { file: string; json: Contract }[] {
 }
 
 describe("staging links in this layer's skill contracts", () => {
-  test("every output contract carries stagingLinks", () => {
+  test("outputContractsCarryStagingLinks", () => {
     const without = contracts()
       .filter((c) => c.file.endsWith("output.schema.json") && c.json?.properties?.stagingLinks === undefined)
       .map((c) => c.file);
@@ -39,7 +39,7 @@ describe("staging links in this layer's skill contracts", () => {
   // `definitions`, not `$defs`: the contracts declare draft-07, under which
   // `#/$defs/…` does not resolve (cat-harness 0886145). Without this guard a
   // copy left under `$defs` would drop out of the drift check below unseen.
-  test("every contract carrying stagingLinks points at its own draft-07 inline copy", () => {
+  test("stagingLinksPointInline", () => {
     const dangling = contracts()
       .filter((c) => c.json?.properties?.stagingLinks !== undefined)
       .filter((c) => c.json.properties!.stagingLinks!.$ref !== "#/definitions/stagingLinks" || c.json.definitions?.stagingLinks === undefined)
@@ -47,7 +47,7 @@ describe("staging links in this layer's skill contracts", () => {
     expect(dangling).toEqual([]);
   });
 
-  test.skipIf(CANON === undefined)("every inline copy is cat-harness's canonical definition", () => {
+  test.skipIf(CANON === undefined)("inlineCopyIsCanonical", () => {
     const { $schema: _s, $id: _i, ...canon } = JSON.parse(readFileSync(CANON!, "utf-8"));
     const drifted = contracts()
       .filter((c) => c.json?.definitions?.stagingLinks !== undefined)

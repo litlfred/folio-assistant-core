@@ -14,7 +14,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "55f670676f1c0eb4251131c354172df717a7b6c1",
+          "ref": "1bbce613283406c8667094114d83e0105fba993c",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -30,8 +30,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-07",
-              "ref": "55f670676f1c0eb4251131c354172df717a7b6c1",
-              "evidence": "owner litlfred, 2026-11-07, card 'Stack pins' option 1 in session_01VQDpPg681u1Pt3MCpbmx8J: record consent on the stacked, draft-only pins; stacked on litlfred/cat-harness#1032 head and folio-assistant#2985's tools pin; merge manager merges bottom-up"
+              "ref": "1bbce613283406c8667094114d83e0105fba993c",
+              "evidence": "owner litlfred, 2026-11-07, card 'Stack pins' option 1 in session_01VQDpPg681u1Pt3MCpbmx8J: record consent on the stacked pins; cat-harness#1032 head (contains core main's b606cb7) after core main moved to 204b906; merge manager merges bottom-up"
             }
           }
         }
@@ -56,7 +56,7 @@
               "by": "litlfred",
               "on": "2026-11-07",
               "ref": "9a4ccd9c7fbb089e58fbcdcdd0e0db7a404b50e2",
-              "evidence": "owner litlfred, 2026-11-07, card 'Stack pins' option 1 in session_01VQDpPg681u1Pt3MCpbmx8J: record consent on the stacked, draft-only pins; stacked on litlfred/cat-harness#1032 head and folio-assistant#2985's tools pin; merge manager merges bottom-up"
+              "evidence": "litlfred, 2026-11-07, via the merge manager (session_01VQDpPffYARDQ8juksAZScf): card 'Pin target' 'A. Never move back', and 'repin + merge open 12 hrs'; earlier in this session: 'align pins'. Align against folio-assistant#2985's pins, never moving a pin back; bean cat-tools-sm8r."
             }
           }
         }

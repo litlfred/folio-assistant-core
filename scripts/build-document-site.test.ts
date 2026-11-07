@@ -30,7 +30,7 @@ function scaffold(): string {
 }
 
 describe("build-document-site", () => {
-  test("a freshly scaffolded document folio builds: index, one page per document, block anchors intact", async () => {
+  test("scaffoldedFolioBuilds", async () => {
     const d = scaffold();
     const out = join(d, "_site");
     const r = await buildDocumentSite(d, out);
@@ -50,7 +50,7 @@ describe("build-document-site", () => {
     expect(landing).not.toContain("blocks)");
   });
 
-  test("a document's status is part of its title: heading, page title and landing list", async () => {
+  test("statusInTitle", async () => {
     const d = scaffold();
     const manifest = join(d, "folio", "handbook", "handbook.ts");
     writeFileSync(manifest, readFileSync(manifest, "utf-8").replace('title: "Handbook",', 'title: "Handbook",\n  meta: { status: "Working Draft" },'));
@@ -63,7 +63,7 @@ describe("build-document-site", () => {
     expect(html).toContain("<title>Handbook - Working Draft");
   });
 
-  test("every block's KG node is published, one per block and as the document's graph", async () => {
+  test("kgNodesPublished", async () => {
     const d = scaffold();
     const out = join(d, "_site");
     const r = await buildDocumentSite(d, out);
@@ -74,7 +74,7 @@ describe("build-document-site", () => {
     expect(graph["@graph"].map((n) => n.label)).toEqual(["prose:overview"]);
   });
 
-  test("a one-page document carries the edit-links runtime (✍ suggest) and the site its values.jsonld", async () => {
+  test("editRuntimeAndValues", async () => {
     const d = scaffold();
     const out = join(d, "_site");
     const r = await buildDocumentSite(d, out, { actions: { repo: "o/r" } });
@@ -87,7 +87,7 @@ describe("build-document-site", () => {
     expect(values["@graph"]).toEqual([]);
   });
 
-  test("an editor-checker profile for the content type is bundled, and the page config names it and the graph", async () => {
+  test("editorCheckerBundled", async () => {
     const d = scaffold();
     // An instance beside the folio declaring a ✍ suggest profile for documents (bean 4dx7).
     const prof = join(d, "prof");
@@ -104,7 +104,7 @@ describe("build-document-site", () => {
     expect(html).toContain('"profiles":[{"id":"doc-check","module":"../../assets/suggest/doc-check.js"}]');
   });
 
-  test("a block with no KG node, or a stale one, fails the build: the graph is never silently absent", async () => {
+  test("missingOrStaleKgNodeFails", async () => {
     const d = scaffold();
     const nodePath = join(d, "folio", "handbook", "introduction", "overview.jsonld");
     const committed = readFileSync(nodePath, "utf-8");
@@ -117,7 +117,7 @@ describe("build-document-site", () => {
     expect(stale.errors).toEqual(["handbook: introduction/overview.jsonld: KG node is stale (run gen-block-jsonld.ts)"]);
   });
 
-  test("pages are under the locale, data is not, and the landing stays at the root (#2527)", async () => {
+  test("pagesUnderLocale", async () => {
     const d = scaffold();
     const out = join(d, "_site");
     const r = await buildDocumentSite(d, out, { lazy: "always" });
@@ -135,7 +135,7 @@ describe("build-document-site", () => {
     expect(shell).toContain('fetch("../../handbook/blocks/" + String(n)');
   });
 
-  test("a Markdown table in a block renders as a <table>, not raw pipes (fz39)", async () => {
+  test("markdownTableRenders", async () => {
     const d = scaffold();
     appendFileSync(join(d, "folio", "handbook", "introduction", "overview.md"), "\n\n| Role | who |\n|---|---|\n| Bootstrapping Agent | you |\n");
     const out = join(d, "_site");
@@ -146,7 +146,7 @@ describe("build-document-site", () => {
     expect(html).not.toContain("| Bootstrapping Agent |");
   });
 
-  test("outline.json lists sections in manifest order, keyed exactly as the ChangeSet keys them (eb4l)", async () => {
+  test("outlineInManifestOrder", async () => {
     const d = scaffold();
     const out = join(d, "_site");
     await buildDocumentSite(d, out);
@@ -159,7 +159,7 @@ describe("build-document-site", () => {
     expect(new Set(sections.map((s) => s.key))).toEqual(csKeys);
   });
 
-  test("a folio with no document is an error, not an empty site", async () => {
+  test("noDocumentIsError", async () => {
     const d = mkdtempSync(join(tmpdir(), "docsite-empty-"));
     roots.push(d);
     expect(documentManifests(d)).toEqual([]);
@@ -170,7 +170,7 @@ describe("build-document-site", () => {
 });
 
 describe("the harness rail lands in the page, not in its stylesheet (owner, 2026-10-05)", () => {
-  test("every page's first <body and <main are the real tags, after the style", async () => {
+  test("bodyAndMainAfterStyle", async () => {
     // The rail injector finds a page's first body and main tags BY TEXT. A
     // CSS comment that named them put the whole navigation inside <style>,
     // and the published page lost both its rail and its gutters.
@@ -186,38 +186,38 @@ describe("the harness rail lands in the page, not in its stylesheet (owner, 2026
 });
 
 describe("paper content: math, glossary directives and citations (owner, 2026-10-05)", () => {
-  test("with math on, an equation is claimed before emphasis and marked for KaTeX", async () => {
+  test("mathClaimedBeforeEmphasis", async () => {
     const html = await renderDocumentHtml("Let $a_i * b_j$ hold, and\n\n$$\\sum_i x_i$$\n", { math: true });
     expect(html).toContain('class="language-math math-inline">a_i * b_j</code>');
     expect(html).toContain("math-display");
     expect(html).not.toContain("<em>");
   });
 
-  test("with math off, a document's dollar amounts stay prose", async () => {
+  test("mathOffDollarsStayProse", async () => {
     const html = await renderDocumentHtml("It cost $5 million and $3 more.", { math: false });
     expect(html).not.toContain("math-inline");
     expect(html).toContain("$5 million and $3 more.");
   });
 
-  test(":defterm becomes a definition with an id, :refterm links to it", async () => {
+  test("deftermAndRefterm", async () => {
     const html = await renderDocumentHtml("A :defterm[braid]{#braid-group} is here; see :refterm[braids]{#braid-group}.", { math: false });
     expect(html).toContain('<dfn class="defterm" id="term-braid-group">braid</dfn>');
     expect(html).toContain('<a class="refterm" href="#term-braid-group">braids</a>');
   });
 
-  test("a directive of any other name is put back as the text it was written as", async () => {
+  test("otherDirectiveKeptAsText", async () => {
     const html = await renderDocumentHtml("Ratio note:alpha stays.", { math: false });
     expect(html).toContain("note:alpha stays.");
   });
 
-  test("\\cite becomes a citation label, but not inside fenced code", () => {
+  test("citeOutsideFences", () => {
     const md = "As in \\cite{a, b}.\n```tex\n\\cite{c}\n```\n";
     const out = citationsToHtml(md);
     expect(out).toContain('<span class="cite" data-keys="a b">[a, b]</span>');
     expect(out).toContain("\\cite{c}");
   });
 
-  test("given a bibliography, each cited key links to its entry there (bean 63q4)", () => {
+  test("citedKeysLinkBibliography", () => {
     const url = "https://litlfred.github.io/folio-assistant/folio-assistant-core/bibliography/";
     const out = citationsToHtml("As in \\cite[p.~3]{garoufalidis2004, a:b}.", { bibliographyUrl: url });
     expect(out).toContain('data-keys="garoufalidis2004 a:b"');
@@ -227,23 +227,23 @@ describe("paper content: math, glossary directives and citations (owner, 2026-10
     expect(out).toContain("</a>, p. 3]</span>");
   });
 
-  test("without a bibliography, citations stay unlinked labels", () => {
+  test("citationsUnlinkedWithoutBibliography", () => {
     expect(citationsToHtml("\\cite{x}")).toBe('<span class="cite" data-keys="x">[x]</span>');
   });
 
-  test("renderDocumentHtml passes the bibliography through", async () => {
+  test("renderPassesBibliography", async () => {
     const html = await renderDocumentHtml("See \\cite{x}.", { math: false, bibliographyUrl: "/bib/" });
     expect(html).toContain('<a href="/bib/#ref-x">x</a>');
   });
 
-  test("the macro table is the viewer's: \\name -> tex from the paper manifest", () => {
+  test("macroTableFromManifest", () => {
     expect(katexMacros({ qou: { tex: "\\mathbf{Q}" } })["\\qou"]).toBe("\\mathbf{Q}");
     expect(katexMacros(undefined)["\\bigbowtie"]).toBe("\\bowtie");
   });
 });
 
 describe("lazy pages: the block text as data (bean v433)", () => {
-  test("splitBlocks keeps headings and anchors in the shell, never splits inside a fence", () => {
+  test("splitBlocksKeepsShell", () => {
     const md = [
       "# Chapter", "", '<a id="chap:one"></a>', "", "## Section", "",
       '<a id="prose:a"></a>', "Block A text.", "", "```", '<a id="prose:not-an-anchor"></a>', "# not a heading", "```", "",
@@ -259,7 +259,7 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     expect(s.shell).toContain("## Next");
   });
 
-  test("splitBlocks moves a figure or table frame's opener into its block, so the shell stays balanced", () => {
+  test("splitBlocksMovesFrameOpener", () => {
     // The frame opens before the anchor and closes after the text; an opener
     // left in the shell put every later block inside it (smart-ra, 2026-11-02).
     const md = [
@@ -275,7 +275,7 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     for (const b of s.blocks) expect(b.markdown.split("<div").length).toBe(b.markdown.split("</div>").length);
   });
 
-  test("--lazy always: a shell, chunked block JSON, and the whole text in index.hydrated.html", async () => {
+  test("lazyAlwaysShellChunksHydrated", async () => {
     const d = scaffold();
     appendFileSync(join(d, "folio", "handbook", "introduction", "overview.md"), "\n\n| Role | who |\n|---|---|\n| Bootstrapping Agent | you |\n");
     const out = join(d, "_site");
@@ -303,7 +303,7 @@ describe("lazy pages: the block text as data (bean v433)", () => {
     expect(outline.documents[0].lazy.of["prose:overview"]).toBe(0);
   });
 
-  test("auto stays one page below the threshold", async () => {
+  test("autoStaysOnePage", async () => {
     const d = scaffold();
     const out = join(d, "_site");
     await buildDocumentSite(d, out);
@@ -313,7 +313,7 @@ describe("lazy pages: the block text as data (bean v433)", () => {
 });
 
 describe("pageContents — the document's index for the harness rail", () => {
-  test("chapters are rows, their sections the rows' children, each pointing at the label anchor before its heading", async () => {
+  test("pageContentsChaptersRows", async () => {
     const { pageContents } = await import("./build-document-site.js");
     const html =
       `<h1>T</h1>\n<p><a id="chap:a"></a></p>\n<h2>Intro &amp; scope</h2>\n<p><a id="sec:1-1"></a></p>\n<h3>1.1 About</h3>\n` +

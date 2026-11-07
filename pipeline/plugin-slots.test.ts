@@ -13,26 +13,26 @@ import * as slots from "./plugin-slots.ts";
 const { extract } = slots.PIPELINE_IMPLEMENTATIONS["tabular-csvw"];
 
 describe("tabular-csvw", () => {
-  it("reads text with no magic bytes as delimited text", () => {
+  it("readsDelimitedTextWithoutMagic", () => {
     const r = extract(Buffer.from("name,age\nada,36\nalan,41\n"), { url: "p.csv", docId: "p", mimetype: null });
     expect(r?.$schema).toBe(TABULAR_CSVW_SCHEMA_ID);
     expect(JSON.stringify(r)).toContain("p.csv");
   });
 
-  it("is null for text that does not split into a table", () => {
+  it("nullForNonTabularText", () => {
     expect(extract(Buffer.from("just a line of prose\n"), { url: "a.txt", docId: "a", mimetype: null })).toBeNull();
   });
 
-  it("is null for a declared workbook that is not one, rather than throwing", () => {
+  it("nullForFakeWorkbook", () => {
     expect(extract(Buffer.from("not a zip"), { url: "b.xlsx", docId: "b", mimetype: slots.XLSX_MIMETYPE })).toBeNull();
   });
 
-  it("is null for a mimetype it has no reader for (an OpenDocument spreadsheet)", () => {
+  it("nullForUnreadableMimetype", () => {
     const ods = "application/vnd.oasis.opendocument.spreadsheet";
     expect(extract(Buffer.from("PK"), { url: "c.ods", docId: "c", mimetype: ods })).toBeNull();
   });
 
-  it("the pipeline-plugins node names this table", () => {
+  it("pluginNodeNamesTable", () => {
     const node = JSON.parse(readFileSync(join(import.meta.dir, "..", "pipeline-plugins", "tabular-csvw.json"), "utf-8"));
     expect(node.slot).toBe("tabular-csvw");
     const [file, name] = String(node.implementation).split("#");

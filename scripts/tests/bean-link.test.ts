@@ -10,7 +10,7 @@ import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.t
 import { loadProcessModel } from "@litlfred/cat-harness-tools/src/workflow/process-model.js";
 
 describe("the diagrams declare which operation each step performs", () => {
-  test("the editing process opens, notes, then closes — claim and resolve through the shared processes", async () => {
+  test("editingOpensNotesCloses", async () => {
     const model = await loadProcessModel(
       workflowFile(resolve(import.meta.dir, "../.."), "editing-hci-validation.bpmn"),
     );

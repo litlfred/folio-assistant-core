@@ -13,7 +13,7 @@ const CORE = join(import.meta.dir, "..");
 describe("tabular Tool nodes", () => {
   const tabular = tools("https://litlfred.github.io/folio-assistant").filter((t) => t.id === "tabular-csv" || t.id === "tabular-xlsx");
 
-  test("both are declared, and neither is a stub", () => {
+  test("bothDeclaredNotStub", () => {
     expect(tabular.map((t) => t.id).sort()).toEqual(["tabular-csv", "tabular-xlsx"]);
     for (const t of tabular) {
       expect((t.invoke as { manual?: boolean }).manual, t.id).toBeUndefined();
@@ -21,7 +21,7 @@ describe("tabular Tool nodes", () => {
     }
   });
 
-  test("each invokes a script that exists in this repository", () => {
+  test("scriptsExist", () => {
     for (const t of tabular) {
       const shell = (t.invoke as { shell: string }).shell;
       const script = shell.replace(/^bun run folio-assistant-core\//, "");
@@ -29,7 +29,7 @@ describe("tabular Tool nodes", () => {
     }
   });
 
-  test("each satisfies the tabular-metadata skill", () => {
+  test("satisfyTabularMetadata", () => {
     for (const t of tabular) expect(t.satisfies, t.id).toContain("tabular-metadata");
   });
 });

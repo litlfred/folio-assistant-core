@@ -23,7 +23,7 @@ describe("review-sheet-site", () => {
   const r = buildReviewSheetSite(repo, out);
   const dir = join(out, "review-sheet");
 
-  test("publishes the script, its manifest, the Config rows, a graph and a page", () => {
+  test("publishesScriptAndConfig", () => {
     expect(r.configs).toBe(1);
     const page = readFileSync(join(dir, "index.html"), "utf8");
     const code = readFileSync(join(dir, "Code.gs"), "utf8");
@@ -37,7 +37,7 @@ describe("review-sheet-site", () => {
     expect(g[1]["schema:isPartOf"]["@id"]).toBe("https://docs.google.com/spreadsheets/d/SHEETID/edit");
   });
 
-  test("a folio without a sheet config publishes nothing", () => {
+  test("noConfigNothing", () => {
     const empty = mkdtempSync(join(tmpdir(), "rs-empty-"));
     expect(buildReviewSheetSite(empty, join(empty, "_site")).configs).toBe(0);
   });

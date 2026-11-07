@@ -16,11 +16,11 @@ const REPO = resolve(import.meta.dir, "..", "..", "..");
 describe("collect scopes to the files the caller owns", () => {
   const whole = collect(REPO, () => true);
 
-  test("owning nothing reads nothing", () => {
+  test("owningNothingReadsNothing", () => {
     expect(collect(REPO, () => false)).toEqual([]);
   });
 
-  test("a mounted layer's records are left out, and nothing else changes", () => {
+  test("mountedLayerLeftOut", () => {
     const notIris = (rel: string) => !rel.startsWith("who-iris/");
     const scoped = collect(REPO, notIris);
     expect(scoped.every((r) => notIris(r.source))).toBe(true);

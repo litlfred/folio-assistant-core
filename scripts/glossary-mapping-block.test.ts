@@ -15,18 +15,18 @@ import { existsSync } from "node:fs";
 import { codeSpans, collect, mappingBlock, mappingStates, perTermMapping } from "./glossary-page.ts";
 
 describe("codeSpans — bean `mylx`, no raw backticks on a rendered page", () => {
-  test("backticks become code spans", () => {
+  test("backticksBecomeCodeSpans", () => {
     expect(codeSpans("a `b` c")).toBe("a <code>b</code> c");
   });
 
-  test("escaping happens FIRST, so a reason cannot smuggle markup in", () => {
+  test("escapeBeforeCodeSpans", () => {
     const out = codeSpans("<script>alert(1)</script> and `x`");
     expect(out).not.toContain("<script>");
     expect(out).toContain("&lt;script&gt;");
     expect(out).toContain("<code>x</code>");
   });
 
-  test("an unpaired backtick is left alone rather than opening a tag", () => {
+  test("unpairedBacktickLeft", () => {
     expect(codeSpans("a ` b")).toBe("a ` b");
   });
 });
@@ -34,33 +34,33 @@ describe("codeSpans — bean `mylx`, no raw backticks on a rendered page", () =>
 describe("the committed result, read the way the page reads it", () => {
   const states = mappingStates();
 
-  test("there is one, and it carries both targets", () => {
+  test("committedResultBothTargets", () => {
     // If this goes undefined the page silently switches to "not checked",
     // which is correct behaviour and a broken corpus — so assert it here.
     expect(states).toBeDefined();
     expect(new Set(states!.map((s) => s.target))).toEqual(new Set(["skos", "fhir"]));
   });
 
-  test("every row carries all three counts, and they sum to that scheme's candidates", () => {
+  test("rowsCarryThreeCounts", () => {
     for (const s of states!) {
       expect(s.mapped + s.unmapped + s.undetermined).toBeGreaterThan(0);
       expect(s.mapped).toBeGreaterThanOrEqual(0);
     }
   });
 
-  test("an undetermined row states WHY, and an unmapped one does not need to", () => {
+  test("undeterminedStatesWhy", () => {
     // The load-bearing distinction: silence is not a negative answer.
     for (const s of states!) {
       if (s.undetermined > 0) expect(s.reason).toBeTruthy();
     }
   });
 
-  test("the two targets cover the same schemes — neither is quietly skipped", () => {
+  test("targetsCoverSameSchemes", () => {
     const of = (t: string) => new Set(states!.filter((s) => s.target === t).map((s) => s.scheme));
     expect(of("skos")).toEqual(of("fhir"));
   });
 
-  test("a mapped row names its terms, so the page can badge exactly those", () => {
+  test("mappedRowNamesTerms", () => {
     for (const s of states!) {
       expect(s.mappedTerms.length).toBe(s.mapped);
     }
@@ -70,7 +70,7 @@ describe("the committed result, read the way the page reads it", () => {
 describe("the rendered pages say it", () => {
   const read = async (p: string) => await Bun.file(p).text();
 
-  test("every glossary page carries the mapping table", async () => {
+  test("glossaryPagesCarryTable", async () => {
     for (const p of [
       "cat-harness/docs/en/folio-assistant-core/glossary/index.md",
       "cat-harness/docs/en/folio-assistant-core/glossary/dmn-decisions/index.md",
@@ -84,7 +84,7 @@ describe("the rendered pages say it", () => {
     }
   });
 
-  test("a per-type page scopes its counts to its own terms", async () => {
+  test("perTypeCountsScoped", async () => {
     // dmn-decisions holds 9 terms; the index covers every scheme. If the
     // block ignored its `schemes` argument both would print the same total,
     // which is the bug this catches.
@@ -96,7 +96,7 @@ describe("the rendered pages say it", () => {
     expect(total(idx)).toBeGreaterThan(total(dmn));
   });
 
-  test("no raw backtick survives inside the mapping table", async () => {
+  test("noRawBacktickInTable", async () => {
     const html = await read("cat-harness/docs/en/folio-assistant-core/glossary/index.md");
     const table = /<table class="fa-gloss-mapping">[\s\S]*?<\/table>/.exec(html)?.[0] ?? "";
     expect(table.length).toBeGreaterThan(0);
@@ -110,7 +110,7 @@ describe("the third state at the PAGE level — nobody asked", () => {
     mappedTerms: [], ...over,
   }) as never;
 
-  test("no result at all says NOT CHECKED, and never renders as zero found", () => {
+  test("noResultSaysNotChecked", () => {
     // The `dh4f` guard. A page that printed "0 mapped" over a file nobody
     // wrote would present could-not-determine as a determined empty.
     const html = mappingBlock(undefined, ["kg-skills"]);
@@ -120,12 +120,12 @@ describe("the third state at the PAGE level — nobody asked", () => {
     expect(html).not.toContain("<table");
   });
 
-  test("a result that covers none of this page's schemes renders nothing", () => {
+  test("noPageSchemesRendersNothing", () => {
     // Not "0 of 0" — there is no question to answer for this page.
     expect(mappingBlock([row()], ["kg-tools"])).toBe("");
   });
 
-  test("counts are summed across the page's schemes, per target", () => {
+  test("countsSummedPerTarget", () => {
     const html = mappingBlock(
       [row({ scheme: "a", unmapped: 2 }), row({ scheme: "b", unmapped: 5 })],
       ["a", "b"],
@@ -133,7 +133,7 @@ describe("the third state at the PAGE level — nobody asked", () => {
     expect(html).toContain("<td>7</td>");
   });
 
-  test("a reason on any scheme is surfaced for the target", () => {
+  test("reasonSurfacedForTarget", () => {
     const html = mappingBlock(
       [row({ target: "fhir", unmapped: 0, undetermined: 4, reason: "host refused" })],
       ["kg-skills"],
@@ -152,16 +152,16 @@ describe("the page and the record key a scheme the same way (bean q3n9, owner ru
   const onPage = new Set(page.map((s) => `${s.instance}\0${s.glossary.id}`));
   const inRecord = new Set(states.map((r) => `${r.instance}\0${r.scheme}`));
 
-  test("the record has rows to compare", () => {
+  test("recordHasRows", () => {
     expect(states.length).toBeGreaterThan(0);
   });
 
-  test("every row's (instance, scheme) is a scheme the page shows under that instance", () => {
+  test("recordRowsOnPage", () => {
     const stray = [...inRecord].filter((k) => !onPage.has(k)).map((k) => k.replace("\0", " / "));
     expect(stray).toEqual([]);
   });
 
-  test("every scheme on the page with a candidate term has a row under the page's owner", () => {
+  test("pageSchemesHaveRows", () => {
     const missing = page
       .filter((s) => s.glossary.terms.some((t) => t.status !== "authored"))
       .map((s) => `${s.instance}\0${s.glossary.id}`)
@@ -176,21 +176,21 @@ describe("per term — bean `5yhm`, every term's state, none of them graded", ()
     ({ instance: "i", scheme: "s", target: "skos", mapped: 0, unmapped: 3, undetermined: 0, mappedTerms: [], ...over }) as never;
   const keys = ["a", "b", "c"].map((t) => ({ anchor: `x--s--${t}`, instance: "i", scheme: "s", term: t }));
 
-  test("all unmapped: one stated default, no marks", () => {
+  test("allUnmappedOneDefault", () => {
     const { note, marks } = perTermMapping([row()], keys);
     expect(note).toContain("<strong>unmapped</strong> on <code>skos</code>");
     expect(note).toContain("No entry says otherwise.");
     expect(marks.size).toBe(0);
   });
 
-  test("all undetermined: the default is undetermined, never unmapped", () => {
+  test("allUndeterminedDefault", () => {
     const { note, marks } = perTermMapping([row({ target: "fhir", unmapped: 0, undetermined: 3, reason: "r" })], keys);
     expect(note).toContain("<strong>undetermined</strong> on <code>fhir</code>");
     expect(note).not.toContain("unmapped");
     expect(marks.size).toBe(0);
   });
 
-  test("an exact match and a concept-only match are marked DIFFERENTLY, and name the concept", () => {
+  test("exactAndConceptMarkedApart", () => {
     const { marks, note } = perTermMapping(
       [
         row({
@@ -212,7 +212,7 @@ describe("per term — bean `5yhm`, every term's state, none of them graded", ()
     expect(note).toContain("2 entries say otherwise.");
   });
 
-  test("a mixed row with its undetermined terms named: no default, every entry says its own", () => {
+  test("mixedNamedUndetermined", () => {
     const { marks, note } = perTermMapping(
       [row({ target: "fhir", unmapped: 2, undetermined: 1, undeterminedTerms: ["c"], reason: "r" })],
       keys,
@@ -223,7 +223,7 @@ describe("per term — bean `5yhm`, every term's state, none of them graded", ()
     expect(marks.size).toBe(3);
   });
 
-  test("a mixed row that names NEITHER is `unknown`, never `unmapped` — the falsifier", () => {
+  test("mixedUnnamedIsUnknown", () => {
     const { marks } = perTermMapping([row({ unmapped: 2, undetermined: 1 })], keys);
     for (const k of keys) {
       expect(marks.get(k.anchor)).toContain("cannot be told from the committed result");
@@ -231,7 +231,7 @@ describe("per term — bean `5yhm`, every term's state, none of them graded", ()
     }
   });
 
-  test("two entries sharing a key are both `unknown`, never both badged", () => {
+  test("sharedKeyBothUnknown", () => {
     const dup = [
       { anchor: "i1--s--a", instance: "i", scheme: "s", term: "a" },
       { anchor: "i2--s--a", instance: "i", scheme: "s", term: "a" },
@@ -244,7 +244,7 @@ describe("per term — bean `5yhm`, every term's state, none of them graded", ()
     expect(marks.get("i2--s--a")).toContain("two entries share the id");
   });
 
-  test("one scheme id and term id in two instances: each reads its own row, neither is unknown", () => {
+  test("twoInstancesOwnRows", () => {
     const two = [
       { anchor: "ch--s--a", instance: "cat-harness", scheme: "s", term: "a" },
       { anchor: "fh--s--a", instance: "fhir-harness", scheme: "s", term: "a" },
@@ -260,13 +260,13 @@ describe("per term — bean `5yhm`, every term's state, none of them graded", ()
     expect(marks.get("fh--s--a") ?? "").not.toContain("cannot be told");
   });
 
-  test("no committed result: no note and no marks — the table already says Not checked", () => {
+  test("noResultNoNote", () => {
     const { note, marks } = perTermMapping(undefined, keys);
     expect(note).toBe("");
     expect(marks.size).toBe(0);
   });
 
-  test("the rendered type pages carry the per-term note", async () => {
+  test("typePagesCarryPerTermNote", async () => {
     // schema-fields is split by first letter (its page outgrew the budget), so
     // the note is on each part; the type's own page is a landing page.
     const parts = ["a-c", "d-e", "f-l", "m-o", "p-r", "s", "t-z"].map((r) => `cat-harness/docs/en/folio-assistant-core/glossary/schema-fields/${r}/index.md`);

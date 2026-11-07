@@ -40,7 +40,7 @@ function folio(): { root: string; fb: string; pub: string } {
 }
 
 describe("where a status goes: the declared todo-feedback directory", () => {
-  it("is read from the todos graph, and a graph without one is an error naming the remedy", () => {
+  it("feedbackDirFromTodosGraph", () => {
     const f = folio();
     expect(f.fb).toBe(join(f.root, "todos", "feedback"));
     writeFileSync(join(f.root, "todos", "todos.json"), JSON.stringify({ name: "f", directories: [{ id: "items", path: "items", graphTypologies: ["todo-items"] }] }));
@@ -50,7 +50,7 @@ describe("where a status goes: the declared todo-feedback directory", () => {
 });
 
 describe("a move", () => {
-  it("starts from the published comment, writes the node as JSON, and the next move reads the committed file", () => {
+  it("moveFromPublishedThenCommitted", () => {
     const f = folio();
     const r = moveComment({ id: "review-pr7-c1", to: "addressed", ...EDITOR, dir: f.fb, published: f.pub });
     expect(r).toMatchObject({ from: "open", to: "addressed" });
@@ -62,13 +62,13 @@ describe("a move", () => {
     expect(readCommitted(f.fb).get("review-pr7-c1")!.review.decision).toBe("d-7");
   });
 
-  it("refuses a move the task may not make, and writes nothing", () => {
+  it("refusesIllegalMove", () => {
     const f = folio();
     expect(() => moveComment({ id: "review-pr7-c1", to: "resolved", ...EDITOR, decision: "d", dir: f.fb, published: f.pub })).toThrow(/not a move/);
     expect(existsSync(join(f.fb, "review-pr7-c1.json"))).toBe(false);
   });
 
-  it("an unknown id is an error, not a new comment", () => {
+  it("unknownIdError", () => {
     const f = folio();
     expect(() => moveComment({ id: "review-pr7-c99", to: "addressed", ...EDITOR, dir: f.fb, published: f.pub })).toThrow(/no review comment/);
   });
@@ -83,7 +83,7 @@ describe("committed on the FEATURE branch — never the base", () => {
     return f.root;
   }
 
-  it("refuses the base branch and a detached HEAD; accepts a feature branch", () => {
+  it("featureBranchOnly", () => {
     const r = repo();
     expect(() => featureBranch("main", r)).toThrow(/FEATURE branch/);
     git(r, "checkout", "-q", "--detach");
@@ -92,7 +92,7 @@ describe("committed on the FEATURE branch — never the base", () => {
     expect(featureBranch("main", r)).toBe("edit/dosing");
   });
 
-  it("the command commits the move to the feature branch, and on main refuses before writing", () => {
+  it("commandCommitsOnFeature", () => {
     const r = repo();
     const cmd = (...extra: string[]) =>
       Bun.spawnSync(
@@ -114,7 +114,7 @@ describe("committed on the FEATURE branch — never the base", () => {
 });
 
 describe("the published file takes its statuses from the feature branch", () => {
-  it("a committed comment wins over the previously published copy", () => {
+  it("committedWinsOverPublished", () => {
     const f = folio();
     moveComment({ id: "review-pr7-c1", to: "addressed", ...EDITOR, dir: f.fb, published: f.pub });
     const next = buildReviewComments({

@@ -29,13 +29,13 @@ function fixture() {
 }
 
 describe("reading the L1 entry", () => {
-  it("with no structure file, takes the sorted sections and drops front matter", () => {
+  it("sortedSectionsNoFrontMatter", () => {
     const { l1 } = fixture();
     const s = readL1Sections(l1);
     expect(s.map((x) => [x.page, x.sectionId])).toEqual([[1, "sec-a"], [2, "sec-b"]]);
     expect(s[1].text.startsWith("Countries")).toBe(true);
   });
-  it("refuses a structure file it cannot read, rather than reading no sections", () => {
+  it("refusesUnreadableStructure", () => {
     const { l1 } = fixture();
     writeFileSync(join(l1, "structure.json"), JSON.stringify({ sections: [] }));
     expect(() => readL1Sections(l1)).toThrow();
@@ -43,17 +43,17 @@ describe("reading the L1 entry", () => {
 });
 
 describe("the folio's text as captured statements", () => {
-  it("removes Markdown markup so a sentence split by it still matches", () => {
+  it("removesMarkdownMarkup", () => {
     expect(plain("- **Countries** should | keep")).toBe("Countries should keep");
   });
-  it("does not use fragments shorter than 25 characters", () => {
+  it("noShortFragments", () => {
     const { folio } = fixture();
     expect(folioCaptured(folio).every((c) => c.text.length >= 25)).toBe(true);
   });
 });
 
 describe("coverage of a folio", () => {
-  it("captures what the folio holds and leaves the rest unaccounted", () => {
+  it("capturesHeldLeavesRest", () => {
     const { l1, folio } = fixture();
     const r = folioCoverage({ l1Dir: l1, folioDir: folio });
     const state = Object.fromEntries(r.sentences.map((s) => [s.location, s.state]));
@@ -62,7 +62,7 @@ describe("coverage of a folio", () => {
     expect("generatedAt" in r).toBe(false);
   });
 
-  it("a signed exclusion by text accounts for a sentence; an unsigned one does not", () => {
+  it("signedExclusionAccounts", () => {
     const { l1, folio } = fixture();
     const text = "In no event shall WHO be liable for damages.";
     const unsigned = folioCoverage({ l1Dir: l1, folioDir: folio, exclusions: [{ text, reason: "editorial" }] });
@@ -75,7 +75,7 @@ describe("coverage of a folio", () => {
     expect(signed.sentences.find((s) => s.location === "p2:s2")!.state).toBe("excluded");
   });
 
-  it("a quote captures a sentence only if the block holds it", () => {
+  it("quoteNeedsBlockToHoldIt", () => {
     const { l1, folio } = fixture();
     const quote = "The plan should name the resources needed to run the system.";
     const ok = folioCoverage({ l1Dir: l1, folioDir: folio, quotes: [{ block: "ch01/p-plan", quote }] });
@@ -87,7 +87,7 @@ describe("coverage of a folio", () => {
 });
 
 describe("the glossary as captured text", () => {
-  it("a sentence the glossary holds is captured, also across a dropped hyphen", () => {
+  it("glossaryTextCaptured", () => {
     const { l1, folio } = fixture();
     const glossary = join(folio, "..", "glossary");
     mkdirSync(glossary, { recursive: true });
@@ -110,7 +110,7 @@ describe("the glossary as captured text", () => {
 });
 
 describe("a quote that stands for an L1 sentence", () => {
-  it("captures the named L1 sentence when the block holds the corrected words", () => {
+  it("quoteStandsForL1Sentence", () => {
     const { l1, folio } = fixture();
     writeFileSync(join(l1, "sections", "sec-c.md"), "Each row should be noted in a in separate row of the sheet.\n");
     writeFileSync(join(folio, "ch01", "p-rows.md"), "Each row should be noted in a separate row of the sheet.\n");

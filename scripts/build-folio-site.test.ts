@@ -27,7 +27,7 @@ function scaffold(): string {
 }
 
 describe("build-folio-site", () => {
-  test("shells exist at <route>/<paper>/<chapter>/<section>/, and each is tiny", async () => {
+  test("tinyShellsPerLevel", async () => {
     const d = scaffold();
     const out = join(d, "_site");
     const r = await buildFolioSite(d, out);
@@ -49,7 +49,7 @@ describe("build-folio-site", () => {
     expect(existsSync(join(base, "assets", "folio-site.js"))).toBe(true);
   });
 
-  test("a block payload is the block's KG node plus its rendered html, and every label maps to its section page", async () => {
+  test("blockPayloadAndLabelMap", async () => {
     const d = scaffold();
     const out = join(d, "_site");
     await buildFolioSite(d, out);
@@ -69,7 +69,7 @@ describe("build-folio-site", () => {
     expect(shell.length).toBeLessThan(2048);
   });
 
-  test("a cross-reference carries its target page and printed number, so no index is fetched to follow it", () => {
+  test("crossRefCarriesTargetAndNumber", () => {
     const html = '<p>see <a href="#prop:x">prop:x</a>, <a href="#prop:x">this</a> and <a href="#nowhere">nowhere</a></p>';
     const out = resolveRefs(html, { "prop:x": "ch/sec" }, { "prop:x": "2.3.1" });
     expect(out).toContain('<a href="#prop:x" data-at="ch/sec">2.3.1</a>');
@@ -77,14 +77,14 @@ describe("build-folio-site", () => {
     expect(out).toContain('<a href="#nowhere">nowhere</a>');
   });
 
-  test("block page slugs keep the kind prefix and never collide", () => {
+  test("blockSlugsKeepKindPrefix", () => {
     const taken = new Set<string>();
     expect(blockSlug({ label: "prop:foo", root: "foo" }, taken)).toBe("prop-foo");
     expect(blockSlug({ label: "def:foo", root: "foo" }, taken)).toBe("def-foo");
     expect(blockSlug({ root: "prop-foo" }, taken)).toBe("prop-foo-2");
   });
 
-  test("the route is configurable, and a shell's links are relative to its own depth", async () => {
+  test("routeConfigurableRelativeLinks", async () => {
     const d = scaffold();
     const out = join(d, "_site");
     await buildFolioSite(d, out, { route: "docs/x" });
@@ -93,7 +93,7 @@ describe("build-folio-site", () => {
     expect(shellHtml("T", 0, {})).toContain('data-root="./"');
   });
 
-  test("section slugs drop the label prefix and never collide", () => {
+  test("sectionSlugsDropPrefix", () => {
     const taken = new Set<string>();
     expect(sectionSlug({ label: "sec:braid-group", title: "x" }, taken)).toBe("braid-group");
     expect(sectionSlug({ title: "Braid group" }, taken)).toBe("braid-group-2");
@@ -108,7 +108,7 @@ import { qaBlockHtml } from "./folio-site-qa.js";
 import { citationsToHtml, renderDocumentHtml, texInMarkdown } from "./build-document-site.js";
 
 describe("rendered-content handling and QA (owner, 2026-10-05)", () => {
-  test("a ```tex fence becomes its pre-rendered SVG only when the HASH matches", () => {
+  test("texFenceSvgOnHashMatch", () => {
     const md = "```tex\n\\begin{tikzcd} A \\ar[r] & B \\end{tikzcd}\n```\n";
     const real = createHash("sha256").update("\\begin{tikzcd} A \\ar[r] & B \\end{tikzcd}").digest("hex").slice(0, 12);
     const hit = texFences(md, { math: true, rendered: [{ hash: real, url: "rendered/x-0.svg" }], asset: () => "rendered/ch/x-0.svg" });
@@ -118,12 +118,12 @@ describe("rendered-content handling and QA (owner, 2026-10-05)", () => {
     expect(stale).toContain("[Diagram]");
   });
 
-  test("an equation fence with no SVG becomes display math, unwrapped and unlabelled", () => {
+  test("equationFenceBecomesDisplayMath", () => {
     const out = texFences("```tex\n\\begin{equation}\\label{eq:a} x = 1 \\end{equation}\n```\n", { math: true, rendered: [], asset: () => undefined });
     expect(out).toContain("$$\nx = 1\n$$");
   });
 
-  test("preamble \\newcommand and \\DeclareMathOperator become KaTeX macros", () => {
+  test("preambleMacrosToKatex", () => {
     const d = mkdtempSync(join(tmpdir(), "pre-"));
     roots.push(d);
     mkdirSync(join(d, "latex"));
@@ -131,7 +131,7 @@ describe("rendered-content handling and QA (owner, 2026-10-05)", () => {
     expect(preambleMacros(d)).toEqual({ "\\pp": "p", "\\ip": "\\langle #1,#2\\rangle", "\\Hom": "\\operatorname{Hom}" });
   });
 
-  test("TeX that Markdown misreads is rewritten to an equivalent KaTeX accepts", () => {
+  test("texRewrittenForKatex", () => {
     expect(texInMarkdown("$\\text{$n$-body}$")).toBe("$\\text{\\(n\\)-body}$");
     expect(texInMarkdown("| $\\langle a | b\\rangle$ | x |")).toContain("\\langle a \\vert  b\\rangle");
     expect(texInMarkdown("$a$$b$")).toBe("$a$ $b$");
@@ -139,14 +139,14 @@ describe("rendered-content handling and QA (owner, 2026-10-05)", () => {
     expect(texInMarkdown("$\\begin{psmallmatrix} a \\end{psmallmatrix}$")).toBe("$\\left(\\begin{smallmatrix} a \\end{smallmatrix}\\right)$");
   });
 
-  test("a citation wrapped across lines is one citation; fenced code is left alone", () => {
+  test("wrappedCitationIsOne", () => {
     expect(citationsToHtml("as in \\cite{a,\n  b}; done")).toBe('as in <span class="cite" data-keys="a b">[a, b]</span>; done');
     const fenced = "```tex\n\\cite{x}\n```\n\n\\cite{y}";
     expect(citationsToHtml(fenced)).toBe('```tex\n\\cite{x}\n```\n\n<span class="cite" data-keys="y">[y]</span>');
     expect(citationsToHtml("a\n\nb")).toBe("a\n\nb");
   });
 
-  test("the QA reads the HTML a reader gets: raw TeX, stray dollars and KaTeX errors are findings", async () => {
+  test("qaReadsReaderHtml", async () => {
     const html = await renderDocumentHtml("Fine $x^2$ and bad $\\frac{1$ and raw \\begin{foo} text.", { math: true });
     const { findings } = await qaBlockHtml("b", html, { math: true, macros: {} });
     const classes = findings.map((f) => f.class).sort();
@@ -158,7 +158,7 @@ describe("rendered-content handling and QA (owner, 2026-10-05)", () => {
 });
 
 import { leanStatus } from "./build-folio-site.js";
-test("Lean status reads a sorry outside comments only", () => {
+test("leanSorryOutsideComments", () => {
   expect(leanStatus("theorem t : 1 = 1 := rfl")).toBe("proved");
   expect(leanStatus("theorem t : P := by\n  sorry")).toBe("sorry");
   expect(leanStatus("-- sorry was here\n/- sorry -/\ntheorem t : 1 = 1 := rfl")).toBe("proved");

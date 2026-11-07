@@ -33,23 +33,23 @@ describe("size: recorded, measured, directory, absent", () => {
   const rows = cacheRows(fixtures());
   const by = Object.fromEntries(rows.map((r) => [r.id, r]));
 
-  test("a recorded size wins, and is labelled recorded, even when the file is not there", () => {
+  test("recordedSizeWins", () => {
     expect(by.rec.bytes).toBe(999);
     expect(by.rec.sizeBasis).toBe("recorded");
   });
-  test("an unrecorded size is measured from the file and labelled measured", () => {
+  test("unrecordedSizeMeasured", () => {
     expect(by.meas.bytes).toBe(5);
     expect(by.meas.sizeBasis).toBe("measured");
   });
-  test("a directory has no size of its own: its parts are counted, so it is not", () => {
+  test("directoryHasNoSize", () => {
     expect(by.dir.bytes).toBeUndefined();
     expect(by.dir.sizeBasis).toBe("directory");
   });
-  test("no path means absent, never zero", () => {
+  test("noPathAbsent", () => {
     expect(by.gone.bytes).toBeUndefined();
     expect(by.gone.sizeBasis).toBe("absent");
   });
-  test("the total counts known sizes only, and says how many it could not", () => {
+  test("totalCountsKnownOnly", () => {
     const s = summarise(rows);
     expect(s.knownBytes).toBe(999 + 5 + 10 + 10 + 10 + 10);
     expect(s.bySizeBasis).toEqual({ recorded: 1, measured: 5, directory: 1, absent: 1 });
@@ -58,10 +58,10 @@ describe("size: recorded, measured, directory, absent", () => {
 
 describe("dates: recorded or not, never invented", () => {
   const rows = cacheRows(fixtures());
-  test("fetchedAt only where the record says; the rest stay undefined", () => {
+  test("fetchedAtOnlyWhereRecorded", () => {
     expect(rows.filter((r) => r.fetchedAt).map((r) => r.id)).toEqual(["rec"]);
   });
-  test("last read is not recorded for ANY row — the owner's ruling, not a gap filled in", () => {
+  test("lastReadNeverRecorded", () => {
     expect(rows.every((r) => r.lastReadAt === undefined)).toBe(true);
   });
 });
@@ -69,26 +69,26 @@ describe("dates: recorded or not, never invented", () => {
 describe("eviction reports, and never names what must stay", () => {
   const evict = evictionCandidates(cacheRows(fixtures()));
   const ids = evict.map((e) => e.row.id);
-  test("expired comes first, then working copies with no lifetime, largest first", () => {
+  test("expiredFirstThenNoLifetime", () => {
     expect(ids[0]).toBe("exp");
     expect(ids.slice(1)).toEqual(["rec", "meas", "dir", "gone"]);
   });
-  test("an archival copy is never a candidate — it exists to outlive its source", () => {
+  test("archivalNeverCandidate", () => {
     expect(ids).not.toContain("arch");
   });
-  test("a fresh copy is never a candidate", () => {
+  test("freshNeverCandidate", () => {
     expect(ids).not.toContain("fresh");
   });
-  test("a compiled copy is not a no-expiry candidate: its lifetime is its inputs (bean gpdo)", () => {
+  test("compiledNotNoExpiryCandidate", () => {
     expect(ids).not.toContain("olean");
   });
-  test("every candidate carries its reason", () => {
+  test("everyCandidateHasReason", () => {
     expect(evict.every((e) => e.reason.length > 0)).toBe(true);
   });
 });
 
 describe("the real corpus", () => {
-  test("the index finds materialized copies at all, so the checks above are not over nothing", () => {
+  test("realCorpusHasCopies", () => {
     expect(cacheRows().length).toBeGreaterThan(0);
   });
 });

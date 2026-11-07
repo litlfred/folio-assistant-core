@@ -26,20 +26,20 @@ const smart = {
 };
 
 describe("figure-data schemas", () => {
-  test("a DIIG phases figure parses, and a wrong colour does not", () => {
+  test("diigFigureParsesWrongColourRefused", () => {
     expect(DiigPhasesFigureSchema.safeParse(diig).success).toBe(true);
     expect(DiigPhasesFigureSchema.safeParse({ ...diig, phases: [{ ...diig.phases[0], color: "green" }] }).success).toBe(false);
   });
-  test("an adaptation needs what it adapts", () => {
+  test("adaptationNeedsAdapts", () => {
     const a = { $schema: "diig-phases-adaptation/v1", adapts: "library/x/figure-data/f.json", thisDocument: diig.thisDocument };
     expect(DiigPhasesAdaptationSchema.safeParse(a).success).toBe(true);
     expect(DiigPhasesAdaptationSchema.safeParse({ ...a, adapts: "" }).success).toBe(false);
   });
-  test("a SMART approach figure parses, and needs three bands", () => {
+  test("smartFigureNeedsThreeBands", () => {
     expect(SmartGuidelinesApproachFigureSchema.safeParse(smart).success).toBe(true);
     expect(SmartGuidelinesApproachFigureSchema.safeParse({ ...smart, bands: smart.bands.slice(0, 2) }).success).toBe(false);
   });
-  test("an unknown field is refused", () => {
+  test("unknownFieldRefused", () => {
     expect(DiigPhasesFigureSchema.safeParse({ ...diig, extra: 1 }).success).toBe(false);
   });
 });

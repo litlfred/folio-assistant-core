@@ -14,19 +14,19 @@ const voice = (id: string, base?: string): VoiceProfile =>
   ({ id, rules: [], sources: [], ...(base ? { extends: { voiceId: base } } : {}) }) as unknown as VoiceProfile;
 
 describe("vendorVoiceFindings", () => {
-  test("fires on a vendor voice with no extends", () => {
+  test("vendorWithoutExtends", () => {
     const out = vendorVoiceFindings([{ where: "v.json", voice: voice("vendor") }], new Map());
     expect(out).toHaveLength(1);
     expect(out[0]).toMatch(/declares no `extends`/);
   });
 
-  test("fires on a base no instance ships", () => {
+  test("baseNoInstanceShips", () => {
     const out = vendorVoiceFindings([{ where: "v.json", voice: voice("vendor", "missing") }], new Map());
     expect(out).toHaveLength(1);
     expect(out[0]).toMatch(/which no instance serves/);
   });
 
-  test("fires on a cycle", () => {
+  test("extendsCycle", () => {
     const a = voice("a", "b");
     const b = voice("b", "a");
     const out = vendorVoiceFindings([{ where: "a.json", voice: a }], new Map([["a", a], ["b", b]]));
@@ -34,7 +34,7 @@ describe("vendorVoiceFindings", () => {
     expect(out[0]).toMatch(/cycle/);
   });
 
-  test("clean when the base resolves", () => {
+  test("resolvedBaseClean", () => {
     const base = voice("base");
     const out = vendorVoiceFindings([{ where: "v.json", voice: voice("vendor", "base") }], new Map([["base", base]]));
     expect(out).toEqual([]);

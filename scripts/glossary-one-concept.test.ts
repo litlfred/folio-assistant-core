@@ -22,12 +22,12 @@ describe("bootstrap's glossary describes bootstrap's vocabulary, not a copy of i
   const concepts = vocabularyConcepts(BOOTSTRAP, JSON.parse(readFileSync(join(BOOTSTRAP, "bootstrap.json"), "utf-8")));
   const src = collect(REPO).glossaries.find((s) => s.instance === "bootstrap" && s.glossary.id === "terms");
 
-  test("the vocabulary is found, and the glossary is there — neither side empty", () => {
+  test("vocabularyAndGlossaryPresent", () => {
     expect(concepts.size).toBeGreaterThan(0);
     expect(src?.glossary.terms.length ?? 0).toBeGreaterThan(0);
   });
 
-  test("every term's concept IRI is the vocabulary's, and none is minted under glossary/", () => {
+  test("conceptsAreVocabularyIris", () => {
     const skos = toSkos(src!.glossary, src!.ns) as { "@graph": Array<Record<string, unknown>> };
     const conceptIds = skos["@graph"].filter((n) => n["@type"] === "skos:Concept").map((n) => String(n["@id"]));
     expect(conceptIds.length).toBe(src!.glossary.terms.length);
@@ -38,7 +38,7 @@ describe("bootstrap's glossary describes bootstrap's vocabulary, not a copy of i
     }
   });
 
-  test("the ordered list and `requires` point at the same concepts", () => {
+  test("orderAndRequiresSameConcepts", () => {
     const skos = toSkos(src!.glossary, src!.ns) as { "@graph": Array<Record<string, unknown>> };
     const vocab = new Set(concepts.values());
     const order = skos["@graph"].find((n) => n["@type"] === "skos:OrderedCollection") as { "skos:memberList": { "@list": { "@id": string }[] } };
@@ -48,7 +48,7 @@ describe("bootstrap's glossary describes bootstrap's vocabulary, not a copy of i
     }
   });
 
-  test("an instance with no declared vocabulary mints its own, as before", () => {
+  test("noVocabularyMintsOwn", () => {
     expect(vocabularyConcepts(BOOTSTRAP, {}).size).toBe(0);
   });
 });

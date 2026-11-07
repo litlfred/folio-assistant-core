@@ -98,18 +98,18 @@ beforeAll(() => {
 afterAll(() => rmSync(dir, { recursive: true, force: true }));
 
 describe("docx-structure: pictures in table cells", () => {
-  test("a picture in a cell is written into that cell, labelled by the adjacent cell", () => {
+  test("cellPictureInCell", () => {
     const table = structure.items.find((i) => i.type === "table")!;
     expect(table.rows![1][0]).toBe("![Widget](media/image1.png)");
     expect(table.rows![2][0]).toMatch(/^!\[Arrow\]\(media\/image2(-rot90)?\.png\)$/);
   });
 
-  test("no image item is emitted for a cell picture; a standalone one still is", () => {
+  test("noImageItemForCellPicture", () => {
     const images = structure.items.filter((i) => i.type === "image");
     expect(images.map((i) => i.media)).toEqual(["media/image3.png"]);
   });
 
-  test("a rotated drawing is referenced as a rotated copy, written rotated", () => {
+  test("rotatedDrawingCopy", () => {
     if (!hasPillow) {
       // Recorded and warned, not silently dropped.
       expect(structure.warnings?.join(" ")).toContain("media/image2.png is rotated 90°");
@@ -130,7 +130,7 @@ describe("docx-to-folio: the table block holds its pictures", () => {
     alignment: structure.items.map((i) => ({ seq: i.seq, page: 1, method: "numbered" })),
   });
 
-  test("the cells hold the images, one figure block for the standalone picture only", () => {
+  test("tableBlockHoldsPictures", () => {
     const r = convert(structure, map(), { slug: "doc", library: "lib" });
     const table = r.anchors.blocks.find((b) => b.kind === "table")!;
     const md = r.files.find((f) => f.path.endsWith(`/${table.root}.md`))!.content;

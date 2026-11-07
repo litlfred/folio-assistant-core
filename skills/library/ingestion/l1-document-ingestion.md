@@ -368,6 +368,12 @@ requirement **met**, **unmet**, or **not yet derivable** — the last because th
 per-format arms (images, audio, tables, archives) are tracked separately and a
 check that cannot run must not read as a pass.
 
+**Then publish its statements.** Once the entry is complete and promoted, every
+statement extracted from it is published in the folio's working artifact and in
+the shared extraction viewer, each linked to the entry and its section, and CI
+keeps those pages current. That is a standard step, the same for every content
+type: [`publish-extracted-statements`](publish-extracted-statements.md).
+
 ## A manifest's title — the authority order, and never the page-1 parse
 
 A library entry's `manifest.jsonld` `title` is the first of these the entry has:
@@ -854,6 +860,7 @@ Proved on fixtures built at test time, all five branches mutation-checked.
 
 ## Related
 
+- [`publish-extracted-statements`](publish-extracted-statements.md): the step after promotion — every extracted statement published, with its source links.
 - [`library-ingestion`](../../../../cat-harness/library/skills/library-core/library-ingestion.md) — the basic flow this refines: the two entry points, the upload's retirement, the remote half
 - [`directory-conventions`](../../../../cat-harness/skills/kg/kg-core/directory-conventions.md) — the graph typologies and who declares them
 - [`bib-qa`](../cataloguing/bib-qa.md) — auditing what is already in `library/`
