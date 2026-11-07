@@ -6,7 +6,7 @@ import { copyFileSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-import { check, lanesOf } from "./dth-block-check";
+import { check, lanesOf, repeatedTableMarkers, sectionBlocksOf } from "./dth-block-check";
 
 const DMN = resolve(import.meta.dir, "../processes/content/decisions/draft-qa-gate.dmn");
 
@@ -80,5 +80,46 @@ describe("check", () => {
   it("flags a decision table that cites no passage, or a missing one", async () => {
     expect((await check(fixture({ passages: [] }), "dth-x")).errors).toEqual([expect.stringContaining("cites no meta.source.sourcePassages")]);
     expect((await check(fixture({ passages: ["folio/dth-x/gone.md"] }), "dth-x")).errors).toEqual([expect.stringContaining("gone.md does not exist")]);
+  });
+
+  it("flags a prose block that repeats a table block of its section as flattened PDF table text", async () => {
+    const repo = fixture();
+    const ch = join(repo, "folio", "dth-x", "ch01");
+    writeFileSync(
+      join(ch, "ch01.ts"),
+      `export default chapter({\n  title: "Chapter 1",\n  sections: [\n    section({ title: "Step 1", blocks: ["p-page-021", "t-step-1"] }),\n  ],\n});\n`,
+    );
+    writeFileSync(join(ch, "p-page-021.ts"), block("prose", { label: "prose:page-021" }, {}));
+    writeFileSync(join(ch, "t-step-1.ts"), block("table", { label: "tbl:step-1" }, {}));
+    writeFileSync(
+      join(ch, "t-step-1.md"),
+      "| INPUTS | STEPS | RESOURCES | OUTPUTS |\n| --- | --- | --- | --- |\n| Policies | Review | Template | List |\n\n| POTENTIAL RISKS | MITIGATION |\n| --- | --- |\n| Low capacity | Engage partners |\n",
+    );
+    writeFileSync(join(ch, "p-page-021.md"), "Chapter intro paragraph only.\n");
+    expect((await check(repo, "dth-x")).errors).toEqual([]);
+
+    writeFileSync(
+      join(ch, "p-page-021.md"),
+      "Chapter intro. STEP 1 INPUTS STEPS RESOURCES OUTPUTS - Policies Review POTENTIAL RISKS MITIGATION - Low capacity\n",
+    );
+    const r = await check(repo, "dth-x");
+    expect(r.errors).toEqual([
+      'folio/dth-x/ch01/p-page-021.md: prose block repeats flattened table text "INPUTS STEPS RESOURCES" from section table(s) t-step-1',
+      'folio/dth-x/ch01/p-page-021.md: prose block repeats flattened table text "POTENTIAL RISKS MITIGATION" from section table(s) t-step-1',
+    ]);
+  });
+});
+
+describe("repeatedTableMarkers", () => {
+  it("extracts section block lists and matches flattened markers against section tables", () => {
+    expect(sectionBlocksOf(`section({ blocks: ["p-1", "t-1"] }), section({ blocks: [\n  "p-2",\n  "t-2",\n] })`)).toEqual([
+      ["p-1", "t-1"],
+      ["p-2", "t-2"],
+    ]);
+    expect(repeatedTableMarkers("Intro text only.", ["| INPUTS | STEPS | RESOURCES | OUTPUTS |"])).toEqual([]);
+    expect(repeatedTableMarkers("Run-on INPUTS STEPS RESOURCES OUTPUTS text.", [])).toEqual([]);
+    expect(repeatedTableMarkers("Run-on INPUTS STEPS RESOURCES OUTPUTS text.", ["| INPUTS | STEPS | RESOURCES | OUTPUTS |"])).toEqual([
+      "INPUTS STEPS RESOURCES",
+    ]);
   });
 });
