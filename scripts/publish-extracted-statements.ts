@@ -201,7 +201,12 @@ export function renderPage(
       out.push("_No statements were extracted._", "");
       continue;
     }
-    out.push("| Id | Statement | Kind | Status | Source |", "|---|---|---|---|---|");
+    // A "Derived from" column only for a list that has one, so every other page is unchanged.
+    const derived = list.statements.some((s) => s.derivedFrom !== undefined);
+    out.push(
+      derived ? "| Id | Statement | Kind | Status | Derived from | Source |" : "| Id | Statement | Kind | Status | Source |",
+      derived ? "|---|---|---|---|---|---|" : "|---|---|---|---|---|",
+    );
     list.statements.forEach((s, i) => {
       const r = resolved[i]!;
       const entryLink = `[${cell(r.libraryId)}](${trimSlash(o.entryBase)}/${r.libraryId}/)`;
@@ -209,7 +214,8 @@ export function renderPage(
         ? `[${cell(r.label)}](${trimSlash(o.sectionBase)}/${r.sectionPath})`
         : cell(r.label);
       const source = sectionLink ? `${entryLink}: ${sectionLink}` : entryLink;
-      out.push(`| ${cell(s.id)} | ${cell(s.statement)} | ${cell(s.kind ?? "")} | ${cell(s.status ?? "")} | ${source} |`);
+      const from = derived ? ` ${cell(s.derivedFrom ?? "")} |` : "";
+      out.push(`| ${cell(s.id)} | ${cell(s.statement)} | ${cell(s.kind ?? "")} | ${cell(s.status ?? "")} |${from} ${source} |`);
     });
     if (o.tableAttr) out.push(o.tableAttr);
     out.push("");

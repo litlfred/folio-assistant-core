@@ -50,6 +50,13 @@ export const ExtractedStatementSchema = z
     kind: z.string().min(1).optional(),
     /** Its review state, as the extraction records it: published as is. */
     status: z.string().min(1).optional(),
+    /**
+     * The id of the statement this one was derived from, when it was: a
+     * scenario candidate written from a recommendation names that
+     * recommendation, so a reviewer can check one against the other. Its
+     * `source` is still the library source, never the other statement.
+     */
+    derivedFrom: z.string().min(1).optional(),
     source: StatementSourceSchema,
   })
   .strict();
