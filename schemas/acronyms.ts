@@ -15,6 +15,8 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, parse, resolve } from "node:path";
 
+import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+
 import { GlossarySchema, type LangText } from "./glossary.ts";
 
 /** A token is at most this many characters, so an all-capitals heading word is not read as one. */
@@ -223,7 +225,8 @@ function mdUnder(dir: string): string[] {
 export function folioWords(file: string): Set<string> {
   for (let d = dirname(resolve(file)); ; d = dirname(d)) {
     if (existsSync(join(d, "glossary"))) {
-      const top = existsSync(join(d, "folio")) ? join(d, "folio") : d;
+      const folio = folioDir(d);
+      const top = existsSync(folio) ? folio : d;
       let words = wordCache.get(top);
       if (!words) {
         words = new Set<string>();

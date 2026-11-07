@@ -65,6 +65,8 @@ import { createHash } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, resolve } from "node:path";
 
+import { directoryForGraph, folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+
 import type { AnchorBlock, ReviewAnchors } from "./docx-to-folio.js";
 import {
   IN_EDIT_STATUSES,
@@ -107,10 +109,24 @@ export interface StoreConfig {
    * `author_association`. Present: exactly these logins.
    */
   committee?: string[];
-  /** Base URL of the published site, for deep links (main and STAGING/<slug>/). */
+  /** Base URL of the published site, for deep links (main and branches/<slug>/). */
   site?: string;
   /** "owner/name" on GitHub: where change-set issues are opened. */
   repo?: string;
+}
+
+/**
+ * The folio's public-comment store: the directory its declaration gives graph
+ * typology `public-comments`.
+ */
+export function storeDirOf(repo: string): string {
+  return (
+    directoryForGraph(repo, "public-comments") ??
+    // declared-path-literal: the convention fallback for a folio that declares
+    // no `public-comments` directory. `import` creates the store on a first
+    // intake, so resolving to nothing would make the first intake impossible.
+    resolve(repo, "review/public-comment")
+  );
 }
 
 export class Store {
@@ -119,7 +135,7 @@ export class Store {
     readonly dir: string,
   ) {}
   static open(repo: string, dir?: string) {
-    return new Store(repo, resolve(repo, dir ?? "review/public-comment"));
+    return new Store(repo, dir === undefined ? storeDirOf(repo) : resolve(repo, dir));
   }
   config(): StoreConfig {
     const p = join(this.dir, "config.json");
@@ -127,13 +143,13 @@ export class Store {
     return JSON.parse(readFileSync(p, "utf-8"));
   }
   anchors(): ReviewAnchors {
-    const p = join(this.repo, "folio", this.config().document, "review-anchors.json");
+    const p = join(folioDir(this.repo), this.config().document, "review-anchors.json");
     if (!existsSync(p)) throw new Error(`no ${p}: run docx-to-folio.ts first`);
     return JSON.parse(readFileSync(p, "utf-8"));
   }
   /** Block text, for quote matching. Read lazily: most imports cite lines. */
   blockText(a: AnchorBlock): string {
-    const p = join(this.repo, "folio", this.config().document, a.chapter, `${a.root}.md`);
+    const p = join(folioDir(this.repo), this.config().document, a.chapter, `${a.root}.md`);
     return existsSync(p) ? readFileSync(p, "utf-8") : a.excerpt;
   }
   all(): PublicComment[] {

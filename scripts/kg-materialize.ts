@@ -193,6 +193,7 @@ const DEFAULT_INSTANCE = join(REPO, "cat-harness");
 // core. Re-exported so every caller and test keeps its import path.
 export { gitPartFetcher, type FetchedPart, type PartFetcher } from "@litlfred/cat-harness-tools/scripts/remote-tree.ts";
 import { gitPartFetcher, type FetchedPart, type PartFetcher } from "@litlfred/cat-harness-tools/scripts/remote-tree.ts";
+import { gateOwnsFile } from "@litlfred/cat-harness-tools/scripts/lib/gate-own.ts";
 
 // ── Resolving the request against the subscription and its snapshot ─────────
 
@@ -959,7 +960,13 @@ function flag(argv: string[], name: string): string | undefined {
 if (import.meta.main) {
   const argv = process.argv.slice(2);
   if (argv.includes("--check")) {
-    const roots = [...new Set([resolve(DEFAULT_INSTANCE), ...instanceRootsIn(REPO).map((r) => resolve(r))])];
+    // In a layer's PR checks only the instances the caller commits are judged
+    // (owner ruling 2026-11-05, "Move the checks"; cat-harness-tools
+    // `lib/gate-own.ts`): a mounted layer's parts are its own CI's. Unset,
+    // every instance is the caller's.
+    const roots = [...new Set([resolve(DEFAULT_INSTANCE), ...instanceRootsIn(REPO).map((r) => resolve(r))])].filter(
+      (r) => gateOwnsFile(relative(REPO, r)) !== false,
+    );
     const total: CheckReport = { findings: [], held: 0, stayedReferenced: 0, chosenNotHeld: 0, nodesHeld: 0 };
     for (const r of roots) {
       const rep = checkMaterializations(r);

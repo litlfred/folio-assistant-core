@@ -23,6 +23,9 @@
  *   table, `decisionId` is set, the table loads with `loadDecisionTable` (which
  *   refuses parse warnings) and has no unreadable FEEL expressions, and
  *   `meta.source.sourcePassages` names at least one file, each of which exists.
+ * - `prose(…)`: its `.md` companion does not repeat a `table(…)` block of the
+ *   same section as flattened PDF table text (markers `INPUTS STEPS RESOURCES`
+ *   or `POTENTIAL RISKS MITIGATION`, work item `ftpc`).
  *
  * A companion is `meta.bpmnFile` / `meta.dmnFile` beside the block, or the
  * block's own name with `.bpmn` / `.dmn`. It reports each failure and exits
@@ -33,6 +36,7 @@
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 
+import { folioDir } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { loadDecisionTable, unreadableExpressions } from "@litlfred/cat-harness-tools/src/workflow/decision-table.ts";
 
 import { metaOf } from "./glossary-validate.ts";
@@ -41,6 +45,9 @@ export interface Report {
   errors: string[];
   counts: { personas: number; processes: number; lanes: number; decisionTables: number; rules: number };
 }
+
+/** Flattened PDF step/risks table headers that must not be repeated in a prose block of a section with a table block. */
+export const FLATTENED_TABLE_MARKERS = ["INPUTS STEPS RESOURCES", "POTENTIAL RISKS MITIGATION"] as const;
 
 interface Lane {
   laneId?: unknown;
@@ -62,6 +69,21 @@ export function lanesOf(xml: string): Array<{ id: string | undefined; ref: strin
   }));
 }
 
+/** Each `blocks: [ … ]` list in a chapter manifest, as an array of block file roots. */
+export function sectionBlocksOf(src: string): string[][] {
+  return [...src.matchAll(/\bblocks:\s*\[([^\]]*)\]/g)].map((m) =>
+    [...m[1]!.matchAll(/"([^"]+)"/g)].map((q) => q[1]!),
+  );
+}
+
+/** Flattened table markers present in `proseMd` when the section also holds at least one `table(…)` block. */
+export function repeatedTableMarkers(proseMd: string, tableMds: readonly string[]): string[] {
+  if (tableMds.length === 0) return [];
+  const norm = (s: string) => s.replace(/[*_|`>#-]+/g, " ").replace(/\s+/g, " ");
+  const pNorm = norm(proseMd);
+  return FLATTENED_TABLE_MARKERS.filter((m) => pNorm.includes(m));
+}
+
 const stringField = (src: string, key: string) => new RegExp(`\\b${key}:\\s*"([^"]+)"`).exec(src)?.[1];
 
 function companion(file: string, named: unknown, ext: string): string {
@@ -71,7 +93,7 @@ function companion(file: string, named: unknown, ext: string): string {
 export async function check(repo: string, instance: string): Promise<Report> {
   const errors: string[] = [];
   const counts = { personas: 0, processes: 0, lanes: 0, decisionTables: 0, rules: 0 };
-  const files = walkTs(join(repo, "folio", instance)).map((f) => ({ f, src: readFileSync(f, "utf-8") }));
+  const files = walkTs(join(folioDir(repo), instance)).map((f) => ({ f, src: readFileSync(f, "utf-8") }));
   const rel = (p: string) => (p.startsWith(repo + "/") ? p.slice(repo.length + 1) : p);
 
   // Personas first: a process lane must name one of them.
@@ -122,7 +144,7 @@ export async function check(repo: string, instance: string): Promise<Report> {
           else if (!personaLabels.has(l.ref)) errors.push(`${rel(bpmn)}: lane ${l.id ?? "?"} names persona "${l.ref}", which no persona block declares`);
         }
       }
-      const svg = typeof meta.svgFile === "string" ? join(repo, "folio", instance, meta.svgFile) : "";
+      const svg = typeof meta.svgFile === "string" ? join(folioDir(repo), instance, meta.svgFile) : "";
       if (!svg || !existsSync(svg)) errors.push(`${rel(f)}: rendered SVG ${String(meta.svgFile ?? "(meta.svgFile not set)")} does not exist`);
     }
 
@@ -148,6 +170,34 @@ export async function check(repo: string, instance: string): Promise<Report> {
       if (passages.length === 0) errors.push(`${rel(f)}: decision table cites no meta.source.sourcePassages`);
       for (const p of passages) {
         if (typeof p !== "string" || !existsSync(join(repo, p))) errors.push(`${rel(f)}: source passage ${String(p)} does not exist`);
+      }
+    }
+
+    if (src.includes("export default chapter(")) {
+      const chDir = dirname(f);
+      for (const blocks of sectionBlocksOf(src)) {
+        const proseRoots: Array<{ root: string; mdPath: string; md: string }> = [];
+        const tableMds: Array<{ root: string; md: string }> = [];
+        for (const root of blocks) {
+          const tsPath = join(chDir, `${root}.ts`);
+          const mdPath = join(chDir, `${root}.md`);
+          if (!existsSync(tsPath) || !existsSync(mdPath)) continue;
+          const bSrc = readFileSync(tsPath, "utf-8");
+          if (bSrc.includes("export default prose(")) {
+            proseRoots.push({ root, mdPath, md: readFileSync(mdPath, "utf-8") });
+          } else if (bSrc.includes("export default table(")) {
+            tableMds.push({ root, md: readFileSync(mdPath, "utf-8") });
+          }
+        }
+        if (tableMds.length === 0) continue;
+        const norm = (s: string) => s.replace(/[*_|`>#-]+/g, " ").replace(/\s+/g, " ");
+        const allTables = tableMds.map((t) => t.root).join(", ");
+        for (const p of proseRoots) {
+          for (const marker of repeatedTableMarkers(p.md, tableMds.map((t) => t.md))) {
+            const matching = tableMds.filter((t) => norm(t.md).includes(marker)).map((t) => t.root).join(", ") || allTables;
+            errors.push(`${rel(p.mdPath)}: prose block repeats flattened table text "${marker}" from section table(s) ${matching}`);
+          }
+        }
       }
     }
   }

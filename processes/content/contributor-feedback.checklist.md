@@ -57,9 +57,9 @@ A document is still being written, and the Authoring Committee gives feedback on
 - Answered by the script, which compares the row's Blue cells with the basis the agent wrote.
 - Call `workflow_complete` with `node: "Gateway_FeedbackChanged"` and `outcome` set to the label that holds:
   - «changed» → `Task_Propose` (Propose a direction)
-  - «agreed» → `Task_QaGate` (QA-review the dispositions)
+  - «agreed» → `Task_QaGate` (QA gate: review dispositions against the people and the pull request)
 
-### 6. QA-review the dispositions (`Task_QaGate`)
+### 6. QA gate: review dispositions against the people and the pull request (`Task_QaGate`)
 
 - Who: the `QA reviewer (independent)` lane (role `qc-reviewer`).
 - Skill: `review-sheet-script`.
@@ -87,8 +87,16 @@ A document is still being written, and the Authoring Committee gives feedback on
 - Skill: `review-sheet-script`.
 - What: The agent merges the row's pull request, and Agentic status says merged.
 - Record it: `workflow_complete` with `node: "Task_Merge"`.
-- next: → `EndEvent_Merged` (Change merged)
+- next: → `Task_CloseChangeSet` (Close the change set: the issue, then the sheet row)
 
-## Done — Change merged (`EndEvent_Merged`)
+### 9. Close the change set: the issue, then the sheet row (`Task_CloseChangeSet`)
+
+- Who: the `Authoring agent` lane (role `authoring-agent`).
+- Skill: `review-sheet-agent-columns`.
+- What: Closing is one step with two tools, GitHub and the review sheet.
+- Record it: `workflow_complete` with `node: "Task_CloseChangeSet"`.
+- next: → `EndEvent_Merged` (Change merged and closed)
+
+## Done — Change merged and closed (`EndEvent_Merged`)
 
 - The instance completes here. `workflow_next` then reports nothing enabled — that, not this line, is the record of completion.

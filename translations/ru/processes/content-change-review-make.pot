@@ -21,7 +21,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-make.bpmn:128
 #. Diagram element documentation
-msgid "Agent commits all changes to the feature branch and pushes. The feature-staging.yml workflow automatically deploys to STAGING/<branch-slug>/ and comments the URL on the PR. For a rendered change the agent also produces the before/after preview (skill before-after-preview) and links it in the PR body."
+msgid "Agent commits all changes to the feature branch and pushes. The feature-staging.yml workflow automatically deploys to branches/<branch-slug>/ and comments the URL on the PR. For a rendered change the agent also produces the before/after preview (skill before-after-preview) and links it in the PR body."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/content-change-review-make.bpmn:59

@@ -51,15 +51,15 @@ describe("public-comment-site", () => {
     expect(r.links).toMatchObject({
       document: "../en/doc/index.html#prose%3A1-1-abc",
       before: "https://o.github.io/r/en/doc/index.html#prose%3A1-1-abc",
-      after: "https://o.github.io/r/STAGING/pc-1.1-definitions/en/doc/index.html#prose%3A1-1-abc",
+      after: "https://o.github.io/r/branches/pc-1.1-definitions/en/doc/index.html#prose%3A1-1-abc",
       pr: "https://github.com/o/r/pull/7",
-      review: "https://o.github.io/r/STAGING/pc-1.1-definitions/en/review/",
+      review: "https://o.github.io/r/branches/pc-1.1-definitions/en/review/",
       record: "https://github.com/o/r/blob/main/review/public-comment/comments/PC-0001.json",
     });
   });
 
   test("a comment or change-set with a pull request links its staging review page (owner, 2026-10-30)", () => {
-    expect(stagingReviewUrl("https://o.github.io/r/", "claude/x y")).toBe("https://o.github.io/r/STAGING/claude-x-y/en/review/");
+    expect(stagingReviewUrl("https://o.github.io/r/", "claude/x y")).toBe("https://o.github.io/r/branches/claude-x-y/en/review/");
     expect(stagingReviewUrl(undefined, "b", "https://p.example/STAGING/b/")).toBe("https://p.example/STAGING/b/en/review/");
     expect(stagingReviewUrl(undefined, "b")).toBeUndefined();
     // A comment whose own change has no PR takes the review page of a change-set it is in that has one.
@@ -68,10 +68,10 @@ describe("public-comment-site", () => {
     const cs = { id: "CS-001", title: "t", requirements: "r", refs: ["PC-0001"], status: "editing", issues: [], pr: { number: 9, branch: "claude/cs-1" } } as unknown as ChangeSet;
     const open = new Set([9]);
     const rows = siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r", repo: "o/r", changeSets: [cs], openPrs: open });
-    expect(rows[0]!.links.review).toBe("https://o.github.io/r/STAGING/claude-cs-1/en/review/");
+    expect(rows[0]!.links.review).toBe("https://o.github.io/r/branches/claude-cs-1/en/review/");
     const html = dashboardHtml(rows, { title: "T", slug: "doc", generated: "g", repo: "o/r", site: "https://o.github.io/r", changeSets: [cs], openPrs: open });
-    expect(html).toContain('<a href="https://github.com/o/r/pull/9">#9</a> <a class="review" href="https://o.github.io/r/STAGING/claude-cs-1/en/review/">review (staging)</a>');
-    expect(html).toContain('<a href="https://o.github.io/r/STAGING/claude-cs-1/en/review/">review (staging)</a>');
+    expect(html).toContain('<a href="https://github.com/o/r/pull/9">#9</a> <a class="review" href="https://o.github.io/r/branches/claude-cs-1/en/review/">review (staging)</a>');
+    expect(html).toContain('<a href="https://o.github.io/r/branches/claude-cs-1/en/review/">review (staging)</a>');
     // A merged PR has no preview: no review link, in the rows or the change-set table (owner, 2026-10-30).
     const merged = siteComments([noPr], anchors, { slug: "doc", site: "https://o.github.io/r", repo: "o/r", changeSets: [cs], openPrs: new Set([12]) });
     expect(merged[0]!.links.review).toBeUndefined();

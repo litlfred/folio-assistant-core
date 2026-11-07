@@ -242,7 +242,7 @@ Each sync does the steps below, in this order.
       suggestions and feedback conflict, or one asks for something the
       document cannot say without a decision, set *Needs human* and write
       what is needed in "agentic action taken".
-   4. Publish the branch's staging preview (`STAGING/<slug>/`).
+   4. Publish the branch's staging preview (`branches/<slug>/`).
    5. Write the Agent rows (skill
       [`review-sheet-agent-columns`](review-sheet-agent-columns.md), which
       applies to any work on a change set, in a sync or not), and nothing
@@ -251,7 +251,7 @@ Each sync does the steps below, in this order.
       done, the blocks or sections changed, who acted (the agent and its
       session) and the completion time (UTC, `YYYY-MM-DD HH:MMZ`) on each
       PC's row; and on the change-set's row the PR and
-      `STAGING/<slug>/en/review/` (Pull request, Staging review page), one
+      `branches/<slug>/en/review/` (Pull request, Staging review page), one
       line saying what the PR changes in the document (What the PRs changed)
       and the completion time (Agent completed), each on the same line as its
       PR's URL. The PR body names the feedback it answered by tab, row and column header,
@@ -545,7 +545,7 @@ what they mention.
    QA report (`review-sheet-script`, "The QA gate"). Once an Editor sets
    Ready for merge to Yes, that blurb is the summary: in the merge commit and
    as the closing comment on the change set's issue.
-4. The staging preview is published to `STAGING/<branch>/`. The dashboard links
+4. The staging preview is published to `branches/<branch>/`. The dashboard links
    each comment's anchor on `main` (before) and on the preview (after). See
    [`staging-review`](../../../../cat-harness/sdlc/skills/sdlc-core/staging-review.md).
 5. Merging moves the accepted comments to *incorporated*. The change-set is

@@ -55,23 +55,23 @@ Called from content-change-review after the committee approves. Approving is the
       <bpmn:outgoing>flow_approve_to_pipeline</bpmn:outgoing>
     </bpmn:task>
     <bpmn:exclusiveGateway id="GW_Merged" name="PR merged?">
-  <bpmn:documentation>Was the PR merged? `Yes` removes the STAGING/&lt;slug&gt;/ preview; `No` ends this run at End_NotMerged without deploying and without looping back into review (the lane note says why); the preview stays in place, and the next push starts a new run.</bpmn:documentation>
+  <bpmn:documentation>Was the PR merged? `Yes` removes the branches/&lt;slug&gt;/ preview; `No` ends this run at End_NotMerged without deploying and without looping back into review (the lane note says why); the preview stays in place, and the next push starts a new run.</bpmn:documentation>
       <bpmn:incoming>flow_approve_to_pipeline</bpmn:incoming>
       <bpmn:outgoing>p5</bpmn:outgoing>
       <bpmn:outgoing>p8</bpmn:outgoing>
     </bpmn:exclusiveGateway>
     <bpmn:endEvent id="End_NotMerged" name="Not merged: preview kept">
-      <bpmn:documentation>The approval did not end in a merge. Nothing is deployed and STAGING/&lt;slug&gt;/ is left up; a later push to the branch starts a new run of this process.</bpmn:documentation>
+      <bpmn:documentation>The approval did not end in a merge. Nothing is deployed and branches/&lt;slug&gt;/ is left up; a later push to the branch starts a new run of this process.</bpmn:documentation>
       <bpmn:incoming>p8</bpmn:incoming>
     </bpmn:endEvent>
-    <bpmn:task id="Task_CleanupStaging" name="Remove STAGING/&lt;slug&gt;/">
+    <bpmn:task id="Task_CleanupStaging" name="Remove branches/&lt;slug&gt;/">
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="feature-staging"/>
       </bpmn:extensionElements>
 
       <bpmn:documentation>
         When the PR is merged or closed, the cleanup job
-        removes the STAGING/&lt;slug&gt;/ directory from gh-pages
+        removes the branches/&lt;slug&gt;/ directory from gh-pages
         so stale previews don't accumulate.
       </bpmn:documentation>
       <bpmn:incoming>p5</bpmn:incoming>

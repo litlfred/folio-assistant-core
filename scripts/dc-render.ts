@@ -34,6 +34,11 @@
  * fresh render), or ORPHANED (a file in the directory no record produces —
  * the item it described is gone, and a reader would still find it).
  *
+ * In a layer's PR checks it judges only the caller's own instance (owner
+ * ruling 2026-11-05, "Move the checks"; cat-harness-tools `lib/gate-own.ts`):
+ * every root that mounts a catalogue instance ran this check over that
+ * instance's renderings, which are its own CI's to judge.
+ *
  * Usage:
  *   bun run folio-assistant-core/scripts/dc-render.ts <instance-root>          (e.g. an IRIS mirror)
  *   bun run folio-assistant-core/scripts/dc-render.ts <instance-root> --check
@@ -42,9 +47,13 @@ import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync
 import { basename, join, relative, resolve } from "path";
 
 import { resolveDirectories } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+import { gateOwnsFile } from "@litlfred/cat-harness-tools/scripts/lib/gate-own.ts";
 import { CatalogueNodeSchema, CatalogueSchema, type CatalogueNode } from "../schemas/catalogue.js";
 import { DublinCoreRecordSchema } from "../schemas/dublin-core.js";
 import { DC_JSONLD_SUFFIX, DC_XML_SUFFIX, renderDcJsonLd, renderDcXml } from "../schemas/dublin-core-render.js";
+
+/** The checkout root: the index when this layer is mounted, the one ownership is decided relative to. */
+const REPO = resolve(import.meta.dir, "..", "..");
 
 /** The subdirectory of the published root the renderings go in. */
 export const DC_RENDER_DIR = "dublin-core";
@@ -108,6 +117,10 @@ function main(argv: string[]): number {
     return 2;
   }
   const instance = resolve(arg);
+  if (argv.includes("--check") && gateOwnsFile(relative(REPO, instance)) === false) {
+    console.log(`dc-render --check: ${relative(REPO, instance)} is another layer's instance — not this caller's; its own CI judges its renderings.`);
+    return 0;
+  }
   if (!existsSync(join(instance, "catalogue", "catalogue.json"))) {
     console.error(`dc-render: ${arg} has no catalogue/catalogue.json — not a catalogue instance`);
     return 2;
