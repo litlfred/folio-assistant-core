@@ -21,14 +21,14 @@ const blocks: BlocksFile = { "prose:overview": { hash: "h1", renamedFrom: [] } }
 const base = { repo: "o/r", pr: 7, commit: "c1", blocks, now: "2026-09-23T08:00:00Z" };
 
 describe("buildReviewComments", () => {
-  it("writes the todo kind itself, with what was not ingested beside it", () => {
+  it("writesTodoKindAndRest", () => {
     const f = buildReviewComments({ ...base, comments: [pc(1, "block: prose:overview\nWhy?"), pc(2, "thanks"), pc(3, "block: x\nkind: rant")] });
     expect(f.comments.map((c) => c.$schema)).toEqual(["review-comment/1.0.0"]);
     expect(f.untagged).toBe(1);
     expect(f.malformed).toHaveLength(1);
   });
 
-  it("applies `resolve:` decisions in the same build, once, and does not count them as conversation (423d)", () => {
+  it("appliesResolveOnce", () => {
     const ed = (id: number, body: string, at: string): PrComment => ({ ...pc(id, body), user: "editor1", association: "COLLABORATOR", createdAt: at });
     const comments = [
       pc(1, "block: prose:overview\nkind: defect\n\nDose contradicts table 3."),
@@ -45,7 +45,7 @@ describe("buildReviewComments", () => {
     expect(buildReviewComments({ ...base, comments, existing: f }).comments).toEqual(f.comments);
   });
 
-  it("writes each newly decided comment for the caller to commit, and nothing on a second run (423d)", () => {
+  it("writesNewlyDecided", () => {
     const ed = (id: number, body: string): PrComment => ({ ...pc(id, body), user: "editor1", association: "OWNER", createdAt: "2026-09-23T07:10:00Z" });
     const f = buildReviewComments({ ...base, comments: [pc(1, "block: prose:overview\nWhy?"), pc(5, "block: prose:overview\nAnd?"), ed(2, "resolve: review-pr7-c1\ndecision: addressed")] });
     const dir = mkdtempSync(join(tmpdir(), "decided-"));
@@ -56,7 +56,7 @@ describe("buildReviewComments", () => {
     expect(writeDecided(f.comments, committed, dir)).toEqual([]);
   });
 
-  it("ingests verdicts from the same comments, and does not count them as untagged (px0t)", () => {
+  it("ingestsVerdicts", () => {
     const f = buildReviewComments({ ...base, comments: [pc(1, "block: prose:overview\nverdict: ok"), pc(2, "thanks")] });
     expect(f.comments).toEqual([]);
     expect(f.verdicts.map((v) => [v.targetLabel, v.verdict, v.blockHash])).toEqual([["prose:overview", "ok", "h1"]]);
@@ -65,7 +65,7 @@ describe("buildReviewComments", () => {
     expect(buildReviewComments({ ...base, comments: [], existing: f }).verdicts).toHaveLength(1);
   });
 
-  it("records a `page:` verdict against the build's pin, and refuses one the build cannot place (bnjs)", () => {
+  it("pageVerdictAtPin", () => {
     const rendered = { files: [{ path: "doc/index.html", role: "content", hash: "pin-doc" }], undetermined: [] };
     const f = buildReviewComments({ ...base, rendered, comments: [pc(1, "page: doc/index.html\nverdict: ok"), pc(2, "page: nope.html\nverdict: ok")] });
     expect(f.comments).toEqual([]);
@@ -74,7 +74,7 @@ describe("buildReviewComments", () => {
     expect(f.untagged).toBe(0);
   });
 
-  it("is idempotent over its own output, and keeps a status the process set", () => {
+  it("idempotentKeepsStatus", () => {
     const first = buildReviewComments({ ...base, comments: [pc(1, "block: prose:overview\nWhy?")] });
     const moved = { ...first, comments: [{ ...first.comments[0]!, status: "addressed" as const }] };
     const again = buildReviewComments({ ...base, comments: [pc(1, "block: prose:overview\nWhy?")], existing: moved });
@@ -82,7 +82,7 @@ describe("buildReviewComments", () => {
     expect(again.comments[0]!.status).toBe("addressed");
   });
 
-  it("follows a rename the next build makes, and orphans rather than drops", () => {
+  it("followsRenameOrphans", () => {
     const first = buildReviewComments({ ...base, comments: [pc(1, "block: prose:overview\nWhy?")] });
     const renamed = buildReviewComments({
       ...base,
@@ -101,7 +101,7 @@ describe("the command, offline, as the refresh job calls it", () => {
   let dir: string | undefined;
   afterEach(() => dir && rmSync(dir, { recursive: true, force: true }));
 
-  it("reads --blocks and --comments, writes a valid review-comments.json, and re-runs cleanly", () => {
+  it("commandWritesValidFile", () => {
     dir = mkdtempSync(join(tmpdir(), "review-comments-"));
     writeFileSync(join(dir, "blocks.json"), JSON.stringify(blocks));
     writeFileSync(join(dir, "comments.json"), JSON.stringify([pc(5, "block: prose:overview\nkind: defect\n\nWrong dose.")]));
@@ -120,7 +120,7 @@ describe("the command, offline, as the refresh job calls it", () => {
     expect(f.comments.map((c) => [c.id, c.review.kind, c.priority])).toEqual([["review-pr7-c5", "defect", "high"]]);
   });
 
-  it("refuses to run without a way to know the blocks", () => {
+  it("refusesWithoutBlocks", () => {
     const r = Bun.spawnSync(["bun", "run", resolve(import.meta.dir, "review-comments.ts"), "--repo", "o/r", "--pr", "7", "--out", "/dev/null"], { stderr: "pipe" });
     expect(r.exitCode).toBe(2);
   });

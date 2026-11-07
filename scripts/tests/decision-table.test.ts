@@ -19,14 +19,14 @@ import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.t
 const HERE = resolve(import.meta.dir, "../..");
 
 describe("the shipped tables", () => {
-  test("the draft QA gate blocks on critical and major, and says so by rule", async () => {
+  test("draftQaGateBlocks", async () => {
     const t = await loadDecisionTable(workflowFile(HERE, "draft-qa-gate.dmn"), "Decision_DraftQaGate");
     expect(evaluate(t, { failCritical: 1, failMajor: 0 }).rule).toBe("Rule_Critical");
     expect(evaluate(t, { failCritical: 0, failMajor: 2 }).rule).toBe("Rule_Major");
     expect(evaluate(t, { failCritical: 0, failMajor: 0 }).outcome).toBe("yes");
   });
 
-  test("a fact the table needs but did not get is an error, not a default", async () => {
+  test("missingFactIsError", async () => {
     const t = await loadDecisionTable(workflowFile(HERE, "draft-qa-gate.dmn"), "Decision_DraftQaGate");
     // A gate that answers on data it never received is the failure the whole
     // mechanism exists to remove.
@@ -36,7 +36,7 @@ describe("the shipped tables", () => {
 });
 
 describe("computed gateways in a running process", () => {
-  test("gateways without a table are still chosen, not computed", async () => {
+  test("gatewayWithoutTableChosen", async () => {
     const model = await loadProcessModel(workflowFile(HERE, "editing-hci-validation.bpmn"));
     const state = startInstance(model, { id: "d2", subject: "def:x" });
     complete(model, state, "Task_DescribeChange");

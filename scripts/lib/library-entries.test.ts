@@ -24,24 +24,24 @@ function lib(flat: string[], filed: Record<string, string[]>, declare = true): s
 }
 
 describe("libraryEntries", () => {
-  test("a flat library lists its subdirectories, sorted, and skips hidden ones", () => {
+  test("flatLibrarySorted", () => {
     const l = lib(["b-doc", "a-doc", ".git"], {}, false);
     expect(libraryEntries(l).map((e) => e.slug)).toEqual(["a-doc", "b-doc"]);
   });
 
-  test("filed and unfiled entries are listed together, and a group is never an entry", () => {
+  test("filedAndUnfiledTogether", () => {
     const l = lib(["unfiled"], { kg: ["deerwester-lsa"], process: ["mendling-7pmg"] });
     const got = libraryEntries(l);
     expect(got.map((e) => e.slug)).toEqual(["deerwester-lsa", "mendling-7pmg", "unfiled"]);
     expect(got.find((e) => e.slug === "deerwester-lsa")).toEqual({ slug: "deerwester-lsa", dir: join(l, "kg", "deerwester-lsa"), group: "kg" });
   });
 
-  test("an undeclared directory is an entry even when its name is a group code", () => {
+  test("undeclaredGroupNameIsEntry", () => {
     const l = lib(["kg"], {}, false);
     expect(libraryEntries(l).map((e) => e.slug)).toEqual(["kg"]);
   });
 
-  test("an absent library lists nothing", () => {
+  test("absentLibraryNothing", () => {
     expect(libraryEntries(join(tmpdir(), "no-such-library-6fez"))).toEqual([]);
   });
 });

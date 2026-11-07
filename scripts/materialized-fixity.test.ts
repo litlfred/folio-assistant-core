@@ -54,13 +54,13 @@ function fixture(): { dir: string; file: string } {
 describe("the corpus verifies", () => {
   const verdicts = run(REPO);
 
-  it("finds materialized artefacts at all", () => {
+  it("corpusHasArtefacts", () => {
     // Vacuity guard. A checker that swept nothing would report a clean corpus,
     // which is the `dh4f` shape this repository names.
     expect(verdicts.length).toBeGreaterThan(0);
   });
 
-  it("nothing has been edited in place", () => {
+  it("nothingEditedInPlace", () => {
     // THE RULE ITSELF. A mismatch means a copy of somebody else's artefact was
     // changed here without saying so.
     const edited = verdicts
@@ -69,13 +69,13 @@ describe("the corpus verifies", () => {
     expect(edited).toEqual([]);
   });
 
-  it("every verdict is exactly one of the five kinds", () => {
+  it("verdictOneOfFive", () => {
     for (const v of verdicts) {
       expect(["verified", "mismatch", "absent", "unverifiable", "covered-by-parts"]).toContain(v.kind);
     }
   });
 
-  it("an unverifiable artefact is never counted as verified", () => {
+  it("unverifiableNeverVerified", () => {
     for (const v of verdicts) {
       if (v.kind !== "verified") continue;
       // A verified verdict must have had something to verify against.
@@ -85,7 +85,7 @@ describe("the corpus verifies", () => {
 });
 
 describe("verify() keeps the four facts apart", () => {
-  it("bytes that match their digest are verified", () => {
+  it("matchingBytesVerified", () => {
     const { dir, file } = fixture();
     try {
       expect(verify({ source: "x", localPath: "sub/a.txt", abs: file, digest: HELLO }).kind).toBe("verified");
@@ -94,7 +94,7 @@ describe("verify() keeps the four facts apart", () => {
     }
   });
 
-  it("bytes that do NOT match are a mismatch, not an error about fixity", () => {
+  it("nonMatchingIsMismatch", () => {
     const { dir, file } = fixture();
     try {
       const v = verify({ source: "x", localPath: "sub/a.txt", abs: file, digest: "0".repeat(64) });
@@ -105,7 +105,7 @@ describe("verify() keeps the four facts apart", () => {
     }
   });
 
-  it("ABSENT BYTES ARE ABSENT, even when no digest was recorded", () => {
+  it("absentBytesAbsent", () => {
     // The ordering defect, pinned. Both fields are missing here; the verdict
     // must be the one about the bytes, because a materialized record with no
     // file is a broken claim whatever its fixity says.
@@ -113,7 +113,7 @@ describe("verify() keeps the four facts apart", () => {
     expect(v.kind).toBe("absent");
   });
 
-  it("a file with no digest is unverifiable, not verified", () => {
+  it("noDigestUnverifiable", () => {
     const { dir, file } = fixture();
     try {
       const v = verify({ source: "x", localPath: "sub/a.txt", abs: file });
@@ -123,7 +123,7 @@ describe("verify() keeps the four facts apart", () => {
     }
   });
 
-  it("an unsupported algorithm is unverifiable rather than a pass", () => {
+  it("unsupportedAlgorithmUnverifiable", () => {
     const { dir, file } = fixture();
     try {
       const v = verify({ source: "x", localPath: "sub/a.txt", abs: file, algorithm: "md5", digest: "x" });
@@ -133,7 +133,7 @@ describe("verify() keeps the four facts apart", () => {
     }
   });
 
-  it("a directory is covered by its node's verified parts, not called a gap", () => {
+  it("directoryCoveredByParts", () => {
     const { dir } = fixture();
     try {
       const item = { source: "n.json", localPath: "sub", abs: join(dir, "sub") };
@@ -146,7 +146,7 @@ describe("verify() keeps the four facts apart", () => {
     }
   });
 
-  it("a directory whose node declares no verified part is unverifiable", () => {
+  it("directoryWithoutPartsUnverifiable", () => {
     const { dir } = fixture();
     try {
       const item = { source: "n.json", localPath: "sub", abs: join(dir, "sub") };
@@ -158,19 +158,19 @@ describe("verify() keeps the four facts apart", () => {
 });
 
 describe("materializationsIn walks rather than reading a fixed shape", () => {
-  it("finds a record nested at any depth", () => {
+  it("findsNestedRecord", () => {
     const doc = { a: { b: [{ id: "x", materialization: { state: "materialized", localPath: "p" } }] } };
     const found = materializationsIn(doc, "s.json");
     expect(found.length).toBe(1);
     expect(found[0]!.id).toBe("x");
   });
 
-  it("ignores states that are not materialized", () => {
+  it("ignoresNonMaterialized", () => {
     const doc = { materialization: { state: "referenced", localPath: "p" } };
     expect(materializationsIn(doc, "s.json")).toEqual([]);
   });
 
-  it("finds BOTH a node's own record and its children's", () => {
+  it("findsNodeAndChildren", () => {
     // who-iris's shape: an item and the bitstreams beneath it.
     const doc = {
       id: "item/1",
@@ -182,7 +182,7 @@ describe("materializationsIn walks rather than reading a fixed shape", () => {
 });
 
 describe("the backfill records a baseline, and says so", () => {
-  it("only offers to fill FILES that have no digest", () => {
+  it("backfillOnlyUndigested", () => {
     const recs = collect(REPO);
     for (const r of backfillable(recs)) {
       expect(r.digest).toBeUndefined();
@@ -190,7 +190,7 @@ describe("the backfill records a baseline, and says so", () => {
     }
   });
 
-  it("writes a digest, and dates it with the field the schema already has", () => {
+  it("backfillWritesDatedDigest", () => {
     const doc: Record<string, unknown> = {
       materialization: { state: "materialized", localPath: "sub/a.txt" },
     };
@@ -207,7 +207,7 @@ describe("the backfill records a baseline, and says so", () => {
     expect(() => new Date(fx.verifiedAt!).toISOString()).not.toThrow();
   });
 
-  it("writes NOTHING the schema does not permit", () => {
+  it("backfillSchemaValid", () => {
     // The defect this replaced. The first backfill put a prose `note` inside
     // `fixity` to carry the caveat; `FixitySchema` is `.strict()` and permits
     // `algorithm`, `digest` and `verifiedAt` only, so 219 records were written
@@ -224,7 +224,7 @@ describe("the backfill records a baseline, and says so", () => {
     expect(FixitySchema.safeParse(fx).success).toBe(true);
   });
 
-  it("never overwrites a digest that is already there", () => {
+  it("backfillNeverOverwrites", () => {
     // A backfill that clobbered an ingestion-time digest would replace a
     // stronger claim with a weaker one, silently.
     const doc: Record<string, unknown> = {
@@ -248,17 +248,17 @@ describe("a mounted instance's bytes outside its declared directories", () => {
     ...(outsideMount ? { outsideMount } : {}),
   });
 
-  it("are unverifiable here, with the reason, not absent", () => {
+  it("mountedOutsideUnverifiable", () => {
     const v = verify(rec(true));
     expect(v.kind).toBe("unverifiable");
     expect(v.kind === "unverifiable" && v.why).toContain("does not mount it");
   });
 
-  it("are still absent when the instance is not a mount", () => {
+  it("notMountAbsent", () => {
     expect(verify(rec()).kind).toBe("absent");
   });
 
-  it("collect() marks them only for a mounted instance, and only outside its directories", () => {
+  it("collectMarksOnlyMountedOutside", () => {
     const root = mkdtempSync(join(tmpdir(), "fixity-mount-"));
     try {
       const inst = join(root, "lay");

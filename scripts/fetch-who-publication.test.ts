@@ -48,7 +48,7 @@ const URL_ = "https://www.who.int/publications/m/item/analysis-and-use-of-health
 
 describe("readItemPage", () => {
   const p = readItemPage(PAGE);
-  test("heading, subtitle, date and type from the header", () => {
+  test("headerFields", () => {
     expect(p).toMatchObject({
       title: "Analysis and use of health facility data: guidance for immunization programme managers",
       subtitle: "Working document",
@@ -56,16 +56,16 @@ describe("readItemPage", () => {
       type: "Publication",
     });
   });
-  test("the Overview keeps <p> and <div> paragraphs, drops inline tags, stops at the related items", () => {
+  test("overviewParagraphs", () => {
     expect(p.overview).toBe("Those in the target audience will find this useful.\n\nThis guidance focuses on use of routine data.");
     expect(p.overview).not.toContain("related item");
   });
-  test("details and the one download", () => {
+  test("detailsAndDownload", () => {
     expect(p.details).toEqual({ "Number of pages": "26", Copyright: "© World Health Organization 2018" });
     expect(p.downloads).toHaveLength(1);
     expect(fileNameOf(p.downloads[0]!)).toBe("facilityanalysisguide-immunization.pdf");
   });
-  test("a page without the heading block is refused, not read loosely", () => {
+  test("refusesPageWithoutHeading", () => {
     expect(() => readItemPage("<html><h1>Something</h1></html>")).toThrow();
   });
 });
@@ -73,20 +73,20 @@ describe("readItemPage", () => {
 describe("pageToRecord", () => {
   const rec = pageToRecord(readItemPage(PAGE), URL_, "2026-10-08T00:00:00Z");
   const field = (element: string, qualifier?: string) => rec.fields.find((f) => f.element === element && f.qualifier === qualifier)?.values[0]?.value;
-  test("only what the page states, in Dublin Core", () => {
+  test("onlyStatedInDublinCore", () => {
     expect(field("date", "issued")).toBe("2018-02-01");
     expect(field("format", "extent")).toBe("26 p.");
     expect(field("rights")).toBe("© World Health Organization 2018");
     expect(field("identifier", "uri")).toBe(URL_);
     expect(field("title", "alternative")).toBe("Working document");
   });
-  test("no publisher is inferred from the copyright line", () => {
+  test("noPublisherInferred", () => {
     expect(field("publisher")).toBeUndefined();
   });
 });
 
 describe("isoDate", () => {
-  test("d Month yyyy, and nothing else", () => {
+  test("isoDateOnlyDayMonthYear", () => {
     expect(isoDate("1 December 2025")).toBe("2025-12-01");
     expect(isoDate("December 2025")).toBeUndefined();
     expect(isoDate("1 Decembre 2025")).toBeUndefined();
@@ -94,7 +94,7 @@ describe("isoDate", () => {
 });
 
 describe("fetchWhoPublication destination checks (bean folio-core-xpsq)", () => {
-  test("refuses a page download link that points to http:// or an unexpected host", async () => {
+  test("refusesBadDownloadLink", async () => {
     const pageWithHref = (href: string) =>
       PAGE.replace(
         "https://cdn.who.int/media/docs/default-source/documents/ddi/facilityanalysisguide-immunization.pdf?sfvrsn=3cb62a74_2&amp;download=true",
@@ -127,7 +127,7 @@ describe("fetchWhoPublication destination checks (bean folio-core-xpsq)", () => 
     ).rejects.toThrow(/unexpected host/i);
   });
 
-  test("refuses a PDF download redirect to non-https or an unexpected host", async () => {
+  test("refusesBadPdfRedirect", async () => {
     const redirectToEvil: typeof fetch = (async (input: string | URL | Request) => {
       const u = String(input);
       if (u === URL_) {

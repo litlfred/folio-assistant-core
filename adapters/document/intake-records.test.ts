@@ -16,7 +16,7 @@ const base = {
 };
 
 describe("uploadRecords", () => {
-  test("the intake points at its Dublin Core record, and both validate", () => {
+  test("intakePointsAtValidRecord", () => {
     const { intake, record } = uploadRecords(base);
     expect(IntakeSchema.safeParse(intake).success).toBe(true);
     expect(DublinCoreRecordSchema.safeParse(record).success).toBe(true);
@@ -25,7 +25,7 @@ describe("uploadRecords", () => {
     expect(intake.files).toEqual([{ path: "my-paper.pdf", bytes: 10, sha256: "a".repeat(64), type: "upload", role: "original-bitstream" }]);
   });
 
-  test("the form's fields land on Dublin Core, normativeLevel as a qualified dc.type", () => {
+  test("formFieldsLandOnDublinCore", () => {
     const { record } = uploadRecords({ ...base, domain: "maternal health", normativeLevel: "recommendation", format: "pdf" });
     expect(dcValues(record, "title").map((v) => v.value)).toEqual(["My paper"]);
     expect(dcValues(record, "type").map((v) => v.value)).toEqual(["guideline"]);
@@ -34,13 +34,13 @@ describe("uploadRecords", () => {
     expect(dcValues(record, "format").map((v) => v.value)).toEqual(["pdf"]);
   });
 
-  test("an empty form field writes no Dublin Core field, rather than an empty one", () => {
+  test("emptyFieldWritesNoDcField", () => {
     const { record } = uploadRecords({ ...base, domain: "", normativeLevel: undefined });
     expect(dcValues(record, "subject")).toEqual([]);
     expect(dcValues(record, "type", "normativeLevel")).toEqual([]);
   });
 
-  test("a URL intake records where it came from, on both records", () => {
+  test("urlIntakeRecordsUpstream", () => {
     const { intake, record } = uploadRecords({ ...base, files: [], upstream: "https://arxiv.org/abs/1234.5678" });
     expect(intake.source.upstream).toBe("https://arxiv.org/abs/1234.5678");
     expect(record.provenance.source).toBe("https://arxiv.org/abs/1234.5678");
@@ -49,12 +49,12 @@ describe("uploadRecords", () => {
 
 describe("IntakeSchema", () => {
   const src = { capturedAt: "2026-09-20T20:30:54" };
-  test("an intake must say what it is a capture OF", () => {
+  test("intakeRequiresItem", () => {
     expect(IntakeSchema.safeParse({ $schema: "folio-intake/v1", doc_id: "x", source: src, files: [] }).success).toBe(false);
     expect(IntakeSchema.safeParse({ $schema: "folio-intake/v1", doc_id: "x", item: "item/1", source: src, files: [] }).success).toBe(true);
   });
 
-  test("an unzoned capture time is accepted; a compact one is not", () => {
+  test("unzonedCaptureTimeAccepted", () => {
     const ok = (capturedAt: string) =>
       IntakeSchema.safeParse({ $schema: "folio-intake/v1", doc_id: "x", title: "t", source: { capturedAt }, files: [] }).success;
     expect(ok("2026-09-20T20:30:54")).toBe(true);

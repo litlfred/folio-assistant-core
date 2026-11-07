@@ -29,28 +29,28 @@ describe("folio-intent.dmn — five requests, one sentence", () => {
   const load = () =>
     loadDecisionTable(workflowFile(HARNESS, "folio-intent.dmn"), "Decision_FolioIntent");
 
-  test("a bare non-folio directory is the ONE state that answers itself", async () => {
+  test("bareDirIsNewRepo", async () => {
     const t = await load();
     expect(
       evaluate(t, { statedIntent: "unstated", isFolio: false, repoHasContent: false }).outcome,
     ).toBe("new-repo");
   });
 
-  test("an existing folio is ambiguous — add-folio, new-repo and new-content all fit", async () => {
+  test("existingFolioAsks", async () => {
     const t = await load();
     expect(
       evaluate(t, { statedIntent: "unstated", isFolio: true, repoHasContent: true }).outcome,
     ).toBe("ask");
   });
 
-  test("somebody's repository is never overlaid on inference", async () => {
+  test("contentRepoAsks", async () => {
     const t = await load();
     expect(
       evaluate(t, { statedIntent: "unstated", isFolio: false, repoHasContent: true }).outcome,
     ).toBe("ask");
   });
 
-  test("what the user actually said beats every filesystem heuristic", async () => {
+  test("statedIntentWins", async () => {
     const t = await load();
     // The misspeak case: they are standing in a folio and said they want a
     // document. Scaffolding a second folio here is the bug this table exists
@@ -64,7 +64,7 @@ describe("folio-intent.dmn — five requests, one sentence", () => {
     ).toBe("overlay");
   });
 
-  test("every outcome the table can return names a real branch of the gateway", async () => {
+  test("outcomesAreBranches", async () => {
     const t = await load();
     const model = await loadProcessModel(workflowFile(HARNESS, "getting-started.bpmn"));
     const gateway = model.nodes.get("Gateway_Intent");
@@ -80,7 +80,7 @@ describe("pages-live-gate.dmn — 'could not check' is not 'not yet'", () => {
   const load = () =>
     loadDecisionTable(workflowFile(HARNESS, "pages-live-gate.dmn"), "Decision_PagesLive");
 
-  test("a measured 404 is `not-yet`; a failed request is `unknown`", async () => {
+  test("measured404NotYet", async () => {
     const t = await load();
     expect(evaluate(t, { pagesUrlKnown: true, probe: "not-found", ghPagesBranch: "present" }).outcome).toBe("not-yet");
     expect(evaluate(t, { pagesUrlKnown: true, probe: "error", ghPagesBranch: "present" }).outcome).toBe("unknown");
@@ -88,7 +88,7 @@ describe("pages-live-gate.dmn — 'could not check' is not 'not yet'", () => {
     expect(evaluate(t, { pagesUrlKnown: true, probe: "ok", ghPagesBranch: "present" }).outcome).toBe("live");
   });
 
-  test("no gh-pages branch is `unprovisioned`, before the address is considered (#2417)", async () => {
+  test("noBranchUnprovisioned", async () => {
     const t = await load();
     expect(evaluate(t, { pagesUrlKnown: true, probe: "ok", ghPagesBranch: "absent" }).outcome).toBe("unprovisioned");
     expect(evaluate(t, { pagesUrlKnown: false, probe: "unchecked", ghPagesBranch: "absent" }).outcome).toBe("unprovisioned");
@@ -96,12 +96,12 @@ describe("pages-live-gate.dmn — 'could not check' is not 'not yet'", () => {
     expect(evaluate(t, { pagesUrlKnown: true, probe: "ok", ghPagesBranch: "unknown" }).outcome).toBe("live");
   });
 
-  test("no URL means unknown whatever a probe claims to have found", async () => {
+  test("noUrlUnknown", async () => {
     const t = await load();
     expect(evaluate(t, { pagesUrlKnown: false, probe: "ok", ghPagesBranch: "present" }).outcome).toBe("unknown");
   });
 
-  test("the script's own decision agrees with the table it documents", async () => {
+  test("scriptAgreesWithTable", async () => {
     const t = await load();
     for (const pagesUrlKnown of [true, false]) {
       for (const probe of ["ok", "not-found", "error", "unchecked"] as const) {

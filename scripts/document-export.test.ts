@@ -29,7 +29,7 @@ const manifest: ExportManifest = {
   ],
 };
 
-test("latest names are stable: no commit, no date", () => {
+test("latestNamesStable", () => {
   expect(latestNames("dth-hrh")).toEqual({
     pdf: "dth-hrh-public-comment-latest.pdf",
     reviewDocx: "dth-hrh-public-comment-latest.docx",
@@ -38,13 +38,13 @@ test("latest names are stable: no commit, no date", () => {
   });
 });
 
-test("sizes read as a person says them", () => {
+test("humanSizes", () => {
   expect(humanBytes(900)).toBe("900 B");
   expect(humanBytes(812_000)).toBe("793 KB");
   expect(humanBytes(3_565_158)).toBe("3.4 MB");
 });
 
-test("the Export page lists every file with its details and both links", () => {
+test("exportPageListsFiles", () => {
   const html = renderExportIndex(manifest);
   for (const f of manifest.files) {
     expect(html).toContain(`href="${f.file}"`);
@@ -66,7 +66,7 @@ test("the Export page lists every file with its details and both links", () => {
   expect(html).toContain('<h2 id="details">');
 });
 
-test("the Word template ships with the script, so the pandoc version cannot pick the fonts", () => {
+test("wordTemplateShips", () => {
   const docx = readFileSync(REFERENCE_DOCX);
   expect(docx.subarray(0, 2).toString("latin1")).toBe("PK"); // a .docx is a zip
   expect(docx.toString("latin1")).toContain("word/theme/theme1.xml");

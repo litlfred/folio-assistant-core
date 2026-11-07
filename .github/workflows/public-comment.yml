@@ -70,7 +70,7 @@ jobs:
         with:
           ref: ${{ github.event.repository.default_branch }}
 
-      - uses: litlfred/cat-harness-tools/.github/actions/mount-layers@7b5c9852c66bac2afb33777777f1818e94b7329a # index.lock.json
+      - uses: litlfred/cat-harness-tools/.github/actions/mount-layers@9a4ccd9c7fbb089e58fbcdcdd0e0db7a404b50e2 # index.lock.json
 
       - name: Record the event, and bring the issues into line
         # The event's text is untrusted. The tool reads it from the event FILE,

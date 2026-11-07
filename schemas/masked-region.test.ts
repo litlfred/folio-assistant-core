@@ -30,15 +30,15 @@ const refusal = (v: unknown): string | undefined => {
 };
 
 describe("maskedRegions", () => {
-  it("accepts a region inside the declared raster, with a reason", () => {
+  it("acceptsRegionInsideRaster", () => {
     expect(refusal({ ...base, maskedRegions: [region] })).toBeUndefined();
   });
 
-  it("accepts a bitstream that masks nothing — absent is the normal case", () => {
+  it("acceptsNoMask", () => {
     expect(refusal(base)).toBeUndefined();
   });
 
-  it("refuses a region running past the raster's width or height", () => {
+  it("refusesRegionPastRaster", () => {
     // The defect: a region measured on one rendering and left behind when the
     // width changed. It still READS as a mask, and the part that fell outside
     // is simply not covered any more.
@@ -46,23 +46,23 @@ describe("maskedRegions", () => {
     expect(refusal({ ...base, maskedRegions: [{ ...region, y1: 900 }] })).toContain("outside the declared 300x212");
   });
 
-  it("refuses a region with no reason", () => {
+  it("refusesRegionWithoutReason", () => {
     const { reason: _drop, ...noReason } = region;
     expect(refusal({ ...base, maskedRegions: [noReason] })).toBeDefined();
   });
 
-  it("refuses a region of zero or negative area", () => {
+  it("refusesZeroArea", () => {
     expect(refusal({ ...base, maskedRegions: [{ ...region, x1: region.x0 }] })).toContain("positive area");
     expect(refusal({ ...base, maskedRegions: [{ ...region, y1: region.y0 - 1 }] })).toContain("positive area");
   });
 
-  it("refuses an empty list — absent and empty are different claims", () => {
+  it("refusesEmptyList", () => {
     // `[]` reads as "a mask list somebody emptied", which is a fact about an
     // edit rather than about the image. Absent says nothing was masked.
     expect(refusal({ ...base, maskedRegions: [] })).toBeDefined();
   });
 
-  it("refuses a mask on a bitstream that declares no pixel dimensions", () => {
+  it("refusesMaskWithoutDimensions", () => {
     // Coordinates in the raster's own pixels need a raster to be stated in.
     // Without dimensions the rectangle cannot be checked against anything and
     // could name pixels the file does not have.

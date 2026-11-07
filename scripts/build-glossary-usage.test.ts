@@ -56,7 +56,7 @@ function run(args: string[], cwd = REPO): Ran {
 }
 
 describe("build-glossary CLI argument handling", () => {
-  it("exits 2 with usage when given NO argument, rather than throwing", () => {
+  it("noArgumentUsage", () => {
     // The measured defect: this exited 1 with `Paper manifest not found:
     // <cwd>/<cwd-basename>.ts` and no usage line.
     const r = run([]);
@@ -67,7 +67,7 @@ describe("build-glossary CLI argument handling", () => {
     expect(r.stderr).not.toContain("Paper manifest not found");
   });
 
-  it("exits 2 and NAMES the directory when the path does not exist", () => {
+  it("missingDirNamed", () => {
     // A different mistake from omitting the argument, so it gets a different
     // message — a caller who mistyped a path needs to see which path arrived.
     const r = run([join(tmpdir(), "definitely-not-here-9c3f")]);
@@ -76,7 +76,7 @@ describe("build-glossary CLI argument handling", () => {
     expect(r.stderr).toContain("definitely-not-here-9c3f");
   });
 
-  it("a flag alone is still no argument — `--check` does not stand in for a path", () => {
+  it("flagAloneIsNoArgument", () => {
     // `positional` filters on the `--` prefix, so this is the case where the
     // list is empty although argv is not. Worth pinning: it is the shape a
     // caller hits when they remember the flag and forget the path.
@@ -85,7 +85,7 @@ describe("build-glossary CLI argument handling", () => {
     expect(r.stderr).toContain("Usage: build-glossary.ts <paper-dir>");
   });
 
-  it("an existing directory that is not a paper does NOT get the usage path", () => {
+  it("notPaperDirNoUsage", () => {
     // The boundary, and it matters in both directions: the fix must not turn a
     // real "this is not a paper" error into a usage message, because the two
     // have different remedies — supply an argument, versus point it at a paper.

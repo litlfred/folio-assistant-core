@@ -48,6 +48,34 @@ const LOCAL_ID = /^[a-z0-9][a-z0-9._-]*$/;
 const Iri = z.string().regex(/^[a-z][a-z0-9+.-]*:\/\/\S+$/i, "an absolute IRI");
 
 /**
+ * The subject area a scheme's (or a term's) translations BIND in
+ * (`dcterms:subject`): a lowercase local id such as `harness-vocabulary` or
+ * `digital-health-trust`.
+ *
+ * Owner, 2026-11-07 (glossary review, "scoped fixed terms"): layer precedence
+ * for a fixed translation applies only WITHIN a subject area. A lower layer's
+ * `policy` → `策略` (access policy) fixes the harness's own word; it does not
+ * bind a health guide's "policy" (`政策`). A match across subject areas is a
+ * sense check for a person, never a violation.
+ *
+ * Why not `scopeNote`: that is prose for a reader, and a check that compares
+ * prose would be reading it. `dcterms:subject` is the SKOS-compatible
+ * predicate for "what this is about" and takes an id a check can compare.
+ *
+ * A term with no subject, on itself or its scheme, binds only within its own
+ * scheme.
+ */
+export const SubjectSchema = z.string().regex(LOCAL_ID, "a lowercase local id, such as harness-vocabulary");
+
+/**
+ * Whether a term's translation into one locale has been signed off by a
+ * person. Absent means `unofficial`: every translation starts as a draft.
+ */
+export const TRANSLATION_STATUSES = ["official", "unofficial"] as const;
+export type TranslationStatus = (typeof TRANSLATION_STATUSES)[number];
+const BCP47 = /^[a-z]{2,3}(-[A-Za-z0-9]+)*$/;
+
+/**
  * Text in one language, or per language (BCP 47 keys). SKOS's multilingual
  * labels are why a plain string is not the only shape.
  */
@@ -185,6 +213,14 @@ export const TermSchema = z
      * `<bootstrap>/ns/Node`, not also `…ns/glossary/terms/node`.
      */
     iri: Iri.optional(),
+    /** Overrides the scheme's {@link SubjectSchema subject area} for this term. */
+    subject: SubjectSchema.optional(),
+    /**
+     * Per locale, whether this term's translation is signed off. The
+     * translation itself is in the scheme's `.po`, never here: this records
+     * only who stands behind it. A locale not listed is `unofficial`.
+     */
+    translationStatus: z.record(z.string().regex(BCP47), z.enum(TRANSLATION_STATUSES)).optional(),
     /** The thing the concept is about, an organization or an architecture element ({@link FocusSchema}): `foaf:focus`. */
     focus: FocusSchema.optional(),
     /** Where the term came from: a repository path (with #anchor) or an IRI. */
@@ -217,6 +253,8 @@ export const GlossarySchema = z
     modified: z.string().regex(/^\d{4}-\d{2}-\d{2}/).optional(),
     /** dcterms:source: what the terms were drawn from. */
     source: z.string().min(1).optional(),
+    /** The subject area this scheme's translations bind in ({@link SubjectSchema}): `dcterms:subject`. */
+    subject: SubjectSchema.optional(),
     /** The licence the terms are published under: an SPDX id or a URL. */
     license: z.string().min(1).optional(),
     terms: z.array(TermSchema).default([]),
@@ -290,6 +328,31 @@ export const GlossarySchema = z
     });
   });
 export type Glossary = z.infer<typeof GlossarySchema>;
+
+/**
+ * The subject area a term's translation binds in: its own, else its scheme's,
+ * else none (it binds only within its scheme).
+ */
+export function subjectOf(g: Pick<Glossary, "subject">, t: Pick<Term, "subject">): string | undefined {
+  return t.subject ?? g.subject;
+}
+
+/**
+ * A term's translation into `locale` is FIXED when the term is `authored` and
+ * its scheme's catalogue (`translations/<locale>/glossary/<instance>--<scheme>.po`)
+ * holds a non-empty, non-fuzzy `msgstr` for its `prefLabel`. Derived, never
+ * stored: the `.po` is the one place a translation lives, so there is no flag
+ * to fall out of step with it. `msgstr` is that entry's text, or undefined
+ * when the catalogue has none.
+ */
+export function isFixedTranslation(t: Pick<Term, "status">, msgstr: string | undefined, fuzzy = false): boolean {
+  return t.status === "authored" && !fuzzy && typeof msgstr === "string" && msgstr.trim() !== "";
+}
+
+/** The sign-off status of a term's translation into `locale`: `unofficial` unless recorded otherwise. */
+export function translationStatusOf(t: Pick<Term, "translationStatus">, locale: string): TranslationStatus {
+  return t.translationStatus?.[locale] ?? "unofficial";
+}
 
 /** The IRI of a scheme, and of a term in it: `<ns>glossary/<scheme>` and `…/<term>`. */
 export function schemeIri(ns: string, g: Pick<Glossary, "id">): string {
@@ -468,6 +531,7 @@ export function toSkos(
       ...(g.hasVersion ? { "dcterms:hasVersion": g.hasVersion } : {}),
       ...(g.modified ? { "dcterms:modified": g.modified } : {}),
       ...(g.source ? { "dcterms:source": g.source } : {}),
+      ...(g.subject ? { "dcterms:subject": g.subject } : {}),
       // The `licence-naming` row a library item's licence comes from too
       // (finding D4, bean `gzkt`): one row, so one predicate for both.
       ...licenceTerms(g.license),
@@ -494,6 +558,7 @@ export function toSkos(
     if (t.requires?.length) node["dcterms:requires"] = t.requires.map(ref);
     if (t.isDefinedBy) node["rdfs:isDefinedBy"] = { "@id": t.isDefinedBy };
     if (t.source) node["dcterms:source"] = t.source;
+    if (t.subject) node["dcterms:subject"] = t.subject;
     if (t.status !== "authored") node["skos:note"] = t.reason ? `${t.status}: ${t.reason}` : t.status;
     graph.push(node);
     if (isArchimateFocus(t.focus)) {

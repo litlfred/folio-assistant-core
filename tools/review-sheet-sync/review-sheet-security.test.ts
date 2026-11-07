@@ -13,23 +13,23 @@ const code = gs.replace(/\/\*[\s\S]*?\*\//g, "").replace(/\/\/.*$/gm, "");
 const manifest = JSON.parse(readFileSync(join(here, "appsscript.json"), "utf8"));
 
 describe("review-sheet.gs security", () => {
-  test("limits itself to the sheet it is bound to", () => {
+  test("onlyCurrentDoc", () => {
     expect(gs).toContain("@OnlyCurrentDoc");
   });
 
-  test("uses only the services that need no access beyond its own sheet", () => {
+  test("onlyOwnSheetServices", () => {
     const used = new Set(code.match(/\b[A-Z][A-Za-z]*(?:App|Service)\b/g) ?? []);
     expect([...used].sort()).toEqual(["LockService", "PropertiesService", "ScriptApp", "SpreadsheetApp"]);
   });
 
-  test("never fetches, mails, opens other files or runs strings as code", () => {
+  test("noFetchMailFilesEval", () => {
     for (const bad of [/\bUrlFetchApp\b/, /\bGmailApp\b/, /\bMailApp\b/, /\bDriveApp\b/, /\bDocumentApp\b/, /\bopenBy(Id|Url)\b/,
       /\beval\s*\(/, /\bnew\s+Function\b/, /\bHtmlService\b/, /\bsetTimeout\s*\(\s*['"]/]) {
       expect(bad.test(code)).toBe(false);
     }
   });
 
-  test("the recorded scopes are this sheet, triggers and a menu, and nothing else", () => {
+  test("recordedScopes", () => {
     expect(manifest.oauthScopes).toEqual([
       "https://www.googleapis.com/auth/spreadsheets.currentonly",
       "https://www.googleapis.com/auth/script.scriptapp",

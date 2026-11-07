@@ -22,7 +22,7 @@ describe("dependency advisory floors (bean folio-core-0b88)", () => {
     ["minimatch", "11.0.1"],
     ["zod", "4.6.6"],
   ] as const) {
-    test(`every resolved ${name} is >= ${floor}`, () => {
+    test(`resolvedAtOrAboveFloor[${name}]`, () => {
       const versions = resolved(name);
       expect(versions.length).toBeGreaterThan(0);
       expect(versions.filter((v) => Bun.semver.order(v, floor) < 0)).toEqual([]);

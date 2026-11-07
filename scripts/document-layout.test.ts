@@ -61,7 +61,7 @@ function unscopedSelectors(html: string, wrapper: string): string[] {
 const page = (d: string, f = "index.html") => readFileSync(join(d, "_site", "en", "handbook", f), "utf-8");
 
 describe("--document-layout", () => {
-  test("the page is a Jekyll page in the layout, its body raw and rendered unchanged", async () => {
+  test("jekyllPageRawBody", async () => {
     const d = scaffold();
     appendFileSync(join(d, "folio", "handbook", "introduction", "overview.md"), "\n\nLiteral {{ not.liquid }} and {% endraw %} here.\n");
     const r = await buildDocumentSite(d, join(d, "_site"), { documentLayout: "default", actions: { repo: "o/r" }, lazy: "never" });
@@ -79,7 +79,7 @@ describe("--document-layout", () => {
     expect(body).toContain("https://github.com/o/r/edit/main/folio/handbook/introduction/overview.md");
   });
 
-  test("every rule on the page, KaTeX and block actions included, is scoped under the page class", async () => {
+  test("rulesScopedUnderPageClass", async () => {
     const d = scaffold();
     await buildDocumentSite(d, join(d, "_site"), { documentLayout: "default", actions: { repo: "o/r" }, math: true, lazy: "never" });
     const body = rendered(page(d));
@@ -89,7 +89,7 @@ describe("--document-layout", () => {
     expect(body).not.toContain("prefers-color-scheme");
   });
 
-  test("anchored headings get ids for the theme's On this page; the anchors keep theirs", async () => {
+  test("headingIdsForOnThisPage", async () => {
     const d = scaffold();
     await buildDocumentSite(d, join(d, "_site"), { documentLayout: "default", lazy: "never" });
     const body = rendered(page(d));
@@ -98,7 +98,7 @@ describe("--document-layout", () => {
     expect(body).not.toContain("data-fa-visualiser-nav");
   });
 
-  test("headingIds: unique against the page, stable, and leaves an id alone", () => {
+  test("headingIdsUniqueStable", () => {
     const html = '<p><a id="s"></a></p>\n<h2>A</h2><span id="h-s"></span><p><a id="t"></a></p>\n<h3 id="mine">B</h3>';
     const out = headingIds(html);
     expect(out).toContain('<h2 id="h-s-2">A</h2>');
@@ -106,7 +106,7 @@ describe("--document-layout", () => {
     expect(headingIds(html)).toBe(out);
   });
 
-  test("a lazy page keeps its data hooks; its one-page version stays standalone", async () => {
+  test("lazyKeepsDataHooks", async () => {
     const d = scaffold();
     await buildDocumentSite(d, join(d, "_site"), { documentLayout: "default", lazy: "always", actions: { repo: "o/r" } });
     const body = rendered(page(d));
@@ -118,7 +118,7 @@ describe("--document-layout", () => {
     expect(page(d, "index.hydrated.html").startsWith("<!doctype html>")).toBe(true);
   });
 
-  test("without the flag the page is the standalone one", async () => {
+  test("noFlagStandalone", async () => {
     const d = scaffold();
     await buildDocumentSite(d, join(d, "_site"), { lazy: "never" });
     const p = page(d);
@@ -127,13 +127,13 @@ describe("--document-layout", () => {
     expect(p).not.toContain('id="h-');
   });
 
-  test("a layout that is not a bare name is refused", async () => {
+  test("badLayoutRefused", async () => {
     const d = scaffold();
     await expect(buildDocumentSite(d, join(d, "_site"), { documentLayout: "default\nx: y" })).rejects.toThrow(/not a layout name/);
     expect(() => themedDocumentPage("a b", "T", "")).toThrow(/not a layout name/);
   });
 
-  test("scopeCss puts every rule, media queries included, under the scope", () => {
+  test("scopeCssEverything", () => {
     const css = scopeCss(".a, b:hover { x:1 } :root { y:2 } @media (max-width: 1px) { .c { z:3 } }", ".s");
     expect(css).toContain(".s .a, .s b:hover { x:1 }");
     expect(css).toContain(".s { y:2 }");
@@ -141,7 +141,7 @@ describe("--document-layout", () => {
     expect(unscopedSelectors(`<style>${css}</style>`, ".s")).toEqual([]);
   });
 
-  test("scopeCss keeps a root state class on the root and leaves the block panel global", () => {
+  test("scopeCssRootStateAndPanel", () => {
     // `.s html.fa-bp .block-actions` matched nothing, so on a themed page the
     // block panel's rules never applied and the panel opened unstyled at the
     // foot of the page (smart-ra, 2026-11-02).
@@ -155,21 +155,21 @@ describe("--document-layout", () => {
 });
 
 describe("public-comment notes land on either kind of document page", () => {
-  test("standalone: before the closing body tag", () => {
+  test("standaloneNotesBeforeBody", () => {
     expect(atDocumentEnd("<html><body><main>x</main></body></html>", "<i>n</i>")).toBe("<html><body><main>x</main><i>n</i></body></html>");
   });
 
-  test("themed: before the end marker, escaped for the raw block it lands in", () => {
+  test("themedNotesBeforeMarker", () => {
     const p = `---\nlayout: default\n---\n{% raw %}\n<div>x</div>\n${DOCUMENT_END_MARKER}\n{% endraw %}\n`;
     const out = atDocumentEnd(p, "<i>{% endraw %} $& n</i>");
     expect(rendered(out)).toBe(`<div>x</div>\n<i>{% endraw %} $& n</i>${DOCUMENT_END_MARKER}`);
   });
 
-  test("a page with neither is an error, not a page without its notes", () => {
+  test("neitherIsError", () => {
     expect(() => atDocumentEnd("<div>x</div>", "<i>n</i>")).toThrow(/nowhere to add/);
   });
 
-  test("on a real themed build", async () => {
+  test("realThemedBuildNotes", async () => {
     const d = scaffold();
     await buildDocumentSite(d, join(d, "_site"), { documentLayout: "default", lazy: "never" });
     const out = atDocumentEnd(page(d), "<style>.pc-note { x:1 }</style><script>notes</script>");
