@@ -4,7 +4,8 @@
  * glossary is valid and published.
  */
 import { describe, expect, test } from "bun:test";
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { join, relative, resolve } from "node:path";
 
 import { GlossarySchema, isFixedTranslation, licenceTerms, schemeIri, subjectOf, termIri, toSkos, translationStatusOf, type Glossary } from "./glossary.ts";
@@ -746,8 +747,6 @@ describe("scoped fixed terms: subject area and translation status (owner, 2026-1
 });
 
 describe("a schema's terms take the subject area the schema publishes (owner, 2026-11-07: \"do it in the schema\")", () => {
-  const { mkdtempSync, writeFileSync } = require("node:fs") as typeof import("node:fs");
-  const { tmpdir } = require("node:os") as typeof import("node:os");
   const schema = (extra: Record<string, unknown>) => {
     const f = join(mkdtempSync(join(tmpdir(), "terms-")), "graph.schema.json");
     writeFileSync(f, JSON.stringify({ $id: "https://example.org/graph.schema.json", ...extra, $defs: { Node: { description: "A file.", uses: [] } } }));
