@@ -920,7 +920,7 @@
     {
       "id": "journey-maps",
       "prefLabel": "journey-maps",
-      "definition": "Journeys and workshops as knowledge-graph content: a DAK user scenario told as a journey map (`user-scenario` kind: ordered steps, per person what they do and feel, pain points, enablers, the record's trust state, and edges to stories, BPMN tasks, requirements, FHIR examples and building blocks), the `building-blocks` catalogue its steps use, a workshop that teaches from it (`workshop` kind: modules, objectives, questions for the room on each step, reference tables, sheets, job aids), the `journeys-viewer` visualiser that draws them for an instance and the layers it mounts, and the `check:journey-refs` gate that every reference they name resolves. Read before writing a journey or a workshop, before declaring the viewer, and before building a journey walkthrough app of your own.",
+      "definition": "Journeys and workshops as knowledge-graph content: a DAK user scenario told as a journey map (`user-scenario` kind: ordered steps, per person what they do and feel, pain points, enablers, the record's trust state, and edges to stories, BPMN tasks, requirements, FHIR examples, building blocks and the DAK's data sets, decision tables and indicators), the `building-blocks` catalogue its steps use, a workshop that teaches from it (`workshop` kind: modules, objectives, questions for the room on each step, reference tables, sheets, job aids), the `journeys-viewer` visualiser that draws them for an instance and the layers it mounts, and the `check:journey-refs` gate that every reference they name resolves. Read before writing a journey or a workshop, before declaring the viewer, and before building a journey walkthrough app of your own.",
       "notation": "journey-maps",
       "source": "cat-harness/skills/ui/ui-core/journey-maps.md",
       "status": "candidate"
@@ -1718,7 +1718,7 @@
     {
       "id": "test-plan-execution",
       "prefLabel": "test-plan-execution",
-      "definition": "Run a `test-plan/v1` against a system under test and take it to a certification decision — the five lanes of `test-plan-execution.bpmn` (requester, tester, untainted checker, certifier, attestation service), how the test data is bound, what the run and the report must record, the facts the certification table reads, and the four kg-audit criteria that judge a run afterwards. Read before executing a plan, re-executing a sample, or certifying a result.",
+      "definition": "Run a `test-plan/v1` against a system under test and take it to a certification decision — the five lanes of `test-plan-execution.bpmn` (requester, tester, untainted checker, certifier, attestation service), how the test data is bound, what the run and the report must record, the facts the certification table reads, and the kg-audit criteria that judge a run afterwards. Read before executing a plan, re-executing a sample, or certifying a result.",
       "notation": "test-plan-execution",
       "source": "cat-harness/sdlc/skills/sdlc-core/test-plan-execution.md",
       "status": "candidate"

@@ -24,3 +24,17 @@ Feature: checking the blocks of a digital transformation handbook
   Scenario: flags a decision table that cites no passage, or a missing one
     When a decision table cites no passage, and one cites a missing passage
     Then each is flagged
+
+  @test:scripts/dth-block-check.test.ts::check::proseRepeatingSectionTableFlagged
+  Scenario: A prose block that repeats its section's table as flattened PDF text is flagged
+    Given a section holding a prose block and a table block
+    When the prose is only an intro paragraph
+    Then the check reports no error
+    When the prose repeats the table's header rows as run-on text
+    Then one error is reported per repeated table header, naming the table block
+
+  @test:scripts/dth-block-check.test.ts::repeatedTableMarkers::repeatedTableMarkersMatchSectionTables
+  Scenario: Section block lists are extracted and flattened markers matched against section tables
+    Given chapter source with two section() calls
+    Then each section's block list is extracted
+    And a run-on header is a repeated marker only when a section table has that header

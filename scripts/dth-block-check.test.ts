@@ -82,7 +82,7 @@ describe("check", () => {
     expect((await check(fixture({ passages: ["folio/dth-x/gone.md"] }), "dth-x")).errors).toEqual([expect.stringContaining("gone.md does not exist")]);
   });
 
-  it("flags a prose block that repeats a table block of its section as flattened PDF table text", async () => {
+  it("proseRepeatingSectionTableFlagged", async () => {
     const repo = fixture();
     const ch = join(repo, "folio", "dth-x", "ch01");
     writeFileSync(
@@ -111,7 +111,7 @@ describe("check", () => {
 });
 
 describe("repeatedTableMarkers", () => {
-  it("extracts section block lists and matches flattened markers against section tables", () => {
+  it("repeatedTableMarkersMatchSectionTables", () => {
     expect(sectionBlocksOf(`section({ blocks: ["p-1", "t-1"] }), section({ blocks: [\n  "p-2",\n  "t-2",\n] })`)).toEqual([
       ["p-1", "t-1"],
       ["p-2", "t-2"],

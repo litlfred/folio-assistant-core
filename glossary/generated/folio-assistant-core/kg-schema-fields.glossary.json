@@ -406,6 +406,104 @@
       "status": "candidate"
     },
     {
+      "id": "extracted-statement.extractedstatementschema.id",
+      "prefLabel": "ExtractedStatementSchema.id",
+      "definition": "Stable within the list; the anchor the statement's row is published under.",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#ExtractedStatementSchema.id",
+      "status": "candidate"
+    },
+    {
+      "id": "extracted-statement.extractedstatementschema.kind",
+      "prefLabel": "ExtractedStatementSchema.kind",
+      "definition": "The kind the extraction gave it: recommendation, requirement, candidate, …",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#ExtractedStatementSchema.kind",
+      "status": "candidate"
+    },
+    {
+      "id": "extracted-statement.extractedstatementschema.statement",
+      "prefLabel": "ExtractedStatementSchema.statement",
+      "definition": "The statement as captured, verbatim. Never paraphrased here.",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#ExtractedStatementSchema.statement",
+      "status": "candidate"
+    },
+    {
+      "id": "extracted-statement.extractedstatementschema.status",
+      "prefLabel": "ExtractedStatementSchema.status",
+      "definition": "Its review state, as the extraction records it: published as is.",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#ExtractedStatementSchema.status",
+      "status": "candidate"
+    },
+    {
+      "id": "extracted-statement.extractedstatementsschema.title",
+      "prefLabel": "ExtractedStatementsSchema.title",
+      "definition": "What the list is, in a reader's words: a heading for its part of the page.",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#ExtractedStatementsSchema.title",
+      "status": "candidate"
+    },
+    {
+      "id": "extracted-statement.statementpageschema.entrybase",
+      "prefLabel": "StatementPageSchema.entryBase",
+      "definition": "URL prefix of the library viewer: an entry's link is `<entryBase>/<libraryId>/`.",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#StatementPageSchema.entryBase",
+      "status": "candidate"
+    },
+    {
+      "id": "extracted-statement.statementpageschema.out",
+      "prefLabel": "StatementPageSchema.out",
+      "definition": "The page to write.",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#StatementPageSchema.out",
+      "status": "candidate"
+    },
+    {
+      "id": "extracted-statement.statementpageschema.sectionbase",
+      "prefLabel": "StatementPageSchema.sectionBase",
+      "definition": "URL prefix of the sources: a section's link is `<sectionBase>/<repo-relative section file>`.",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#StatementPageSchema.sectionBase",
+      "status": "candidate"
+    },
+    {
+      "id": "extracted-statement.statementpageschema.statements",
+      "prefLabel": "StatementPageSchema.statements",
+      "definition": "The statement lists, in the order their parts appear.",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#StatementPageSchema.statements",
+      "status": "candidate"
+    },
+    {
+      "id": "extracted-statement.statementpageschema.tableattr",
+      "prefLabel": "StatementPageSchema.tableAttr",
+      "definition": "The content type's look, written after each table (for example a kramdown class).",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#StatementPageSchema.tableAttr",
+      "status": "candidate"
+    },
+    {
+      "id": "extracted-statement.statementsourceschema.instance",
+      "prefLabel": "StatementSourceSchema.instance",
+      "definition": "The DECLARED NAME of the instance holding the library; absent means this instance.",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#StatementSourceSchema.instance",
+      "status": "candidate"
+    },
+    {
+      "id": "extracted-statement.statementsourceschema.libraryid",
+      "prefLabel": "StatementSourceSchema.libraryId",
+      "definition": "The library entry: `library/<libraryId>/`.",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#StatementSourceSchema.libraryId",
+      "status": "candidate"
+    },
+    {
+      "id": "extracted-statement.statementsourceschema.page",
+      "prefLabel": "StatementSourceSchema.page",
+      "definition": "The page (or slide) the statement was read from, in the source's own numbering.",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#StatementSourceSchema.page",
+      "status": "candidate"
+    },
+    {
+      "id": "extracted-statement.statementsourceschema.sectionid",
+      "prefLabel": "StatementSourceSchema.sectionId",
+      "definition": "The section the statement was read from, when the extraction knows it.",
+      "source": "folio-assistant-core/schemas/extracted-statement.ts#StatementSourceSchema.sectionId",
+      "status": "candidate"
+    },
+    {
       "id": "glossary.glossaryschema.hasversion",
       "prefLabel": "GlossarySchema.hasVersion",
       "definition": "dcterms:hasVersion.",
@@ -452,6 +550,13 @@
       "prefLabel": "GlossarySchema.source",
       "definition": "dcterms:source: what the terms were drawn from.",
       "source": "folio-assistant-core/schemas/glossary.ts#GlossarySchema.source",
+      "status": "candidate"
+    },
+    {
+      "id": "glossary.glossaryschema.subject",
+      "prefLabel": "GlossarySchema.subject",
+      "definition": "The subject area this scheme's translations bind in ({@link SubjectSchema}): `dcterms:subject`.",
+      "source": "folio-assistant-core/schemas/glossary.ts#GlossarySchema.subject",
       "status": "candidate"
     },
     {
@@ -515,6 +620,20 @@
       "prefLabel": "TermSchema.source",
       "definition": "Where the term came from: a repository path (with #anchor) or an IRI.",
       "source": "folio-assistant-core/schemas/glossary.ts#TermSchema.source",
+      "status": "candidate"
+    },
+    {
+      "id": "glossary.termschema.subject",
+      "prefLabel": "TermSchema.subject",
+      "definition": "Overrides the scheme's {@link SubjectSchema subject area} for this term.",
+      "source": "folio-assistant-core/schemas/glossary.ts#TermSchema.subject",
+      "status": "candidate"
+    },
+    {
+      "id": "glossary.termschema.translationstatus",
+      "prefLabel": "TermSchema.translationStatus",
+      "definition": "Per locale, whether this term's translation is signed off. The translation itself is in the scheme's `.po`, never here: this records only who stands behind it. A locale not listed is `unofficial`.",
+      "source": "folio-assistant-core/schemas/glossary.ts#TermSchema.translationStatus",
       "status": "candidate"
     },
     {
