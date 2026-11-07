@@ -14,7 +14,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "e82653753b9d1d69c4609ff5e780058f41299809",
+          "ref": "55f670676f1c0eb4251131c354172df717a7b6c1",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -29,9 +29,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-06",
-              "ref": "e82653753b9d1d69c4609ff5e780058f41299809",
-              "evidence": "this session's user (litlfred), 2026-11-06 ~08:40Z: \"repin as needed. merge when green and ready for all your PRs within 6hr window\" — re-pin to mains for folio-assistant-core#654, which needs cat-harness-tools#1564 (https://claude.ai/code/session_01VQDpPfJKxVERPVKKWBTY8z)"
+              "on": "2026-11-07",
+              "ref": "55f670676f1c0eb4251131c354172df717a7b6c1",
+              "evidence": "owner litlfred, 2026-11-07, card 'Stack pins' option 1 in session_01VQDpPg681u1Pt3MCpbmx8J: record consent on the stacked, draft-only pins; stacked on litlfred/cat-harness#1032 head and folio-assistant#2985's tools pin; merge manager merges bottom-up"
             }
           }
         }
@@ -42,7 +42,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "7b5c9852c66bac2afb33777777f1818e94b7329a",
+          "ref": "9a4ccd9c7fbb089e58fbcdcdd0e0db7a404b50e2",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -54,9 +54,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-06",
-              "ref": "7b5c9852c66bac2afb33777777f1818e94b7329a",
-              "evidence": "this session's user (litlfred), 2026-11-06 ~08:40Z: \"repin as needed. merge when green and ready for all your PRs within 6hr window\" — re-pin to mains for folio-assistant-core#654, which needs cat-harness-tools#1564 (https://claude.ai/code/session_01VQDpPfJKxVERPVKKWBTY8z)"
+              "on": "2026-11-07",
+              "ref": "9a4ccd9c7fbb089e58fbcdcdd0e0db7a404b50e2",
+              "evidence": "owner litlfred, 2026-11-07, card 'Stack pins' option 1 in session_01VQDpPg681u1Pt3MCpbmx8J: record consent on the stacked, draft-only pins; stacked on litlfred/cat-harness#1032 head and folio-assistant#2985's tools pin; merge manager merges bottom-up"
             }
           }
         }
