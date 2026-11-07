@@ -14,7 +14,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "b606cb72bcacb2c6076fec2c9903cd3a55db0b4e",
+          "ref": "3cd95b95d834707e28ea6b289efaa8a3cd5d553a",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -30,8 +30,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-07",
-              "ref": "b606cb72bcacb2c6076fec2c9903cd3a55db0b4e",
-              "evidence": "litlfred, 2026-11-07, via the merge manager (session_01VQDpPffYARDQ8juksAZScf): card 'Pin target' 'A. Never move back', and 'repin + merge open 12 hrs'; earlier in this session: 'align pins'. Align against folio-assistant#2985's pins, never moving a pin back; bean cat-tools-sm8r."
+              "ref": "3cd95b95d834707e28ea6b289efaa8a3cd5d553a",
+              "evidence": "owner litlfred, 2026-11-07, card 'Stack pins' option 1 in session_01VQDpPg681u1Pt3MCpbmx8J: record consent on the stacked pins; cat-harness#1032 head 3cd95b9 (contains cat-harness main f538f18, which folio-assistant#2985 pins); merge manager merges bottom-up"
             }
           }
         }
