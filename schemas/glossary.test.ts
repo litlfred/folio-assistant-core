@@ -706,18 +706,18 @@ describe("scoped fixed terms: subject area and translation status (owner, 2026-1
     ],
   };
 
-  test("a scheme and a term may name a subject area; a term's overrides its scheme's", () => {
+  test("subjectOverridesScheme", () => {
     const g = GlossarySchema.parse(base);
     expect(subjectOf(g, g.terms[0]!)).toBe("harness-vocabulary");
     expect(subjectOf(g, g.terms[1]!)).toBe("process-modelling");
     expect(subjectOf({}, {})).toBeUndefined();
   });
 
-  test("a subject area is a local id, not prose", () => {
+  test("subjectIsLocalId", () => {
     expect(GlossarySchema.safeParse({ ...base, subject: "Harness vocabulary" }).success).toBe(false);
   });
 
-  test("translation status is official or unofficial per locale, and unofficial when absent", () => {
+  test("translationStatusPerLocale", () => {
     const g = GlossarySchema.parse(base);
     expect(translationStatusOf(g.terms[0]!, "fr")).toBe("official");
     expect(translationStatusOf(g.terms[0]!, "zh")).toBe("unofficial");
@@ -726,7 +726,7 @@ describe("scoped fixed terms: subject area and translation status (owner, 2026-1
     expect(GlossarySchema.safeParse(bad).success).toBe(false);
   });
 
-  test("a fixed translation is derived from the catalogue: authored, non-empty, not fuzzy", () => {
+  test("fixedTranslationFromCatalogue", () => {
     const g = GlossarySchema.parse(base);
     expect(isFixedTranslation(g.terms[0]!, "politique")).toBe(true);
     expect(isFixedTranslation(g.terms[0]!, "")).toBe(false);
@@ -735,7 +735,7 @@ describe("scoped fixed terms: subject area and translation status (owner, 2026-1
     expect(isFixedTranslation(g.terms[2]!, "brouillon")).toBe(false);
   });
 
-  test("the subject is published as dcterms:subject on the scheme and on an overriding term", () => {
+  test("subjectPublishedAsDctermsSubject", () => {
     const sk = toSkos(GlossarySchema.parse(base), "https://example.org/ns/") as { "@graph": Record<string, unknown>[] };
     const nodes = sk["@graph"];
     expect(nodes.find((n) => n["@type"] === "skos:ConceptScheme")!["dcterms:subject"]).toBe("harness-vocabulary");
@@ -753,13 +753,13 @@ describe("a schema's terms take the subject area the schema publishes (owner, 20
     return f;
   };
 
-  test("read from the schema's `subject`, not assumed", () => {
+  test("subjectReadFromSchema", () => {
     const g = termsOfSchema(schema({ subject: "harness-vocabulary" }), "schemas/graph.schema.json", { name: "bootstrap" });
     expect(g?.subject).toBe("harness-vocabulary");
     expect(GlossarySchema.safeParse(g).success).toBe(true);
   });
 
-  test("a schema that publishes none leaves the scheme without one", () => {
+  test("noSchemaSubjectNoSchemeSubject", () => {
     expect(termsOfSchema(schema({}), "schemas/graph.schema.json", { name: "bootstrap" })?.subject).toBeUndefined();
   });
 });

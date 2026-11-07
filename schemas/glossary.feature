@@ -278,3 +278,48 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
   Scenario: no licence: nothing written
     When the licence terms for no licence are made
     Then nothing is written
+
+  @test:schemas/glossary.test.ts::scoped_fixed_terms:_subject_area_and_translation_status_(owner,_2026-11-07)::subjectOverridesScheme
+  Scenario: A scheme and a term may name a subject area; a term's overrides its scheme's
+    Given a glossary scheme with subject "harness-vocabulary" and a term with subject "process-modelling"
+    Then a term without a subject takes the scheme's
+    And a term with one keeps its own
+    And with neither, there is no subject
+
+  @test:schemas/glossary.test.ts::scoped_fixed_terms:_subject_area_and_translation_status_(owner,_2026-11-07)::subjectIsLocalId
+  Scenario: A subject area is a local id, not prose
+    Given a glossary whose subject is "Harness vocabulary"
+    Then it does not parse
+
+  @test:schemas/glossary.test.ts::scoped_fixed_terms:_subject_area_and_translation_status_(owner,_2026-11-07)::translationStatusPerLocale
+  Scenario: Translation status is official or unofficial per locale, and unofficial when absent
+    Given a term whose translation status for fr is official
+    Then its status for fr is official and for zh unofficial
+    And a status of "signed" does not parse
+
+  @test:schemas/glossary.test.ts::scoped_fixed_terms:_subject_area_and_translation_status_(owner,_2026-11-07)::fixedTranslationFromCatalogue
+  Scenario: A fixed translation is derived from the catalogue: authored, non-empty, not fuzzy
+    Given an authored term and a candidate term
+    Then a non-empty, non-fuzzy translation of the authored term is fixed
+    And an empty, missing or fuzzy translation is not
+    And no translation of a candidate term is fixed
+
+  @test:schemas/glossary.test.ts::scoped_fixed_terms:_subject_area_and_translation_status_(owner,_2026-11-07)::subjectPublishedAsDctermsSubject
+  Scenario: The subject is published as dcterms:subject on the scheme and on an overriding term
+    When the glossary is rendered as SKOS
+    Then the ConceptScheme carries dcterms:subject "harness-vocabulary"
+    And the term that overrides it carries "process-modelling"
+    And a term that does not override it carries none
+
+  @test:schemas/glossary.test.ts::a_schema's_terms_take_the_subject_area_the_schema_publishes_(owner,_2026-11-07:_\"do_it_in_the_schema\")::subjectReadFromSchema
+  Scenario: A schema's terms take the subject the schema publishes
+    Given a graph schema that publishes subject "harness-vocabulary"
+    When its terms are read
+    Then the scheme's subject is "harness-vocabulary"
+    And the scheme is a valid glossary
+
+  @test:schemas/glossary.test.ts::a_schema's_terms_take_the_subject_area_the_schema_publishes_(owner,_2026-11-07:_\"do_it_in_the_schema\")::noSchemaSubjectNoSchemeSubject
+  Scenario: A schema that publishes no subject leaves the scheme without one
+    Given a graph schema with no subject
+    When its terms are read
+    Then the scheme has no subject
