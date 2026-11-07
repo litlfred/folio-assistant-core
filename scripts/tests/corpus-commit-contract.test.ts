@@ -35,7 +35,7 @@ function reachable(model: ProcessModel, without?: string): Set<string> {
 }
 
 describe("the corpus is a data store, and the one step that writes it names this contract", () => {
-  test("Task_Commit is the only step that writes the corpus store, and requires corpus-commit-contract", async () => {
+  test("onlyCommitWritesCorpus", async () => {
     const model = await load();
     const commit = model.nodes.get("Task_Commit")!;
     expect(commit.writes).toEqual(["corpus"]);
@@ -46,7 +46,7 @@ describe("the corpus is a data store, and the one step that writes it names this
 });
 
 describe("1. receive the write only after the editor accepts", () => {
-  test("the one flow into Task_Commit is Gateway_EditorDecision's `accept`", async () => {
+  test("oneFlowFromAccept", async () => {
     const model = await load();
     const into = [...model.flows.values()].filter((f) => f.to === "Task_Commit");
     expect(into).toHaveLength(1);
@@ -54,7 +54,7 @@ describe("1. receive the write only after the editor accepts", () => {
     expect(into[0]!.name).toBe("accept");
   });
 
-  test("without that flow, nothing reaches the corpus", async () => {
+  test("withoutAcceptNothingReaches", async () => {
     const model = await load();
     expect(reachable(model).has("Task_Commit")).toBe(true);
     const accept = [...model.flows.values()].find((f) => f.to === "Task_Commit")!;
@@ -67,7 +67,7 @@ describe("1. receive the write only after the editor accepts", () => {
     expect(intoEnd.map((f) => f.from)).toEqual(["GW_BeanClosedHow"]);
   });
 
-  test("run to the editor's decision, any other answer leaves Task_Commit not enabled", async () => {
+  test("onlyAcceptEnablesCommit", async () => {
     const model = await load();
     const outcomes = [...model.flows.values()].filter((f) => f.from === "Gateway_EditorDecision").map((f) => f.name!);
     expect(outcomes).toContain("accept");
@@ -95,7 +95,7 @@ describe("1. receive the write only after the editor accepts", () => {
 });
 
 describe("3. the commit-hygiene requirement holds, and may not be relaxed", () => {
-  test("Task_Commit's policy is relaxable=\"false\"", async () => {
+  test("commitNotRelaxable", async () => {
     const model = await load();
     expect(model.nodes.get("Task_Commit")!.relaxable).toBe(false);
   });

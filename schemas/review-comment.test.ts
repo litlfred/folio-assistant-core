@@ -49,14 +49,14 @@ const ingestOne = (body = "block: prose:overview\nkind: defect\nrole: clinical-s
   }).created[0];
 
 describe("the kind", () => {
-  it("is a todo: its parent is the harness todo, and a todo reader accepts it", () => {
+  it("kindIsTodo", () => {
     expect(ReviewCommentKind.order).toEqual(["carried-note", "themed", "todo", "review-comment"]);
     const c = ingestOne();
     // A reader that knows only todos still parses it — bar the tag itself.
     expect(TodoNodeSchema.safeParse({ ...c, $schema: "todo/1.0.0" }).success).toBe(true);
   });
 
-  it("is more structured: targetLabel is required, status is closed", () => {
+  it("targetLabelRequiredStatusClosed", () => {
     const c = ingestOne();
     const { targetLabel: _drop, ...noLabel } = c;
     expect(ReviewCommentSchema.safeParse(noLabel).success).toBe(false);
@@ -65,14 +65,14 @@ describe("the kind", () => {
 });
 
 describe("the lifecycle is closed, and only process tasks move it", () => {
-  it("the editor addresses, then resolves with a Decision", () => {
+  it("editorAddressesThenResolves", () => {
     const c = transition(ingestOne(), "addressed", EDITOR);
     expect(c.status).toBe("addressed");
     const done = transition(c, "resolved", EDITOR, { decision: "decision:7" });
     expect(done.review.decision).toBe("decision:7");
   });
 
-  it("refuses a move no task may make, a task not in the table, and a closed comment", () => {
+  it("refusesIllegalMoves", () => {
     const c = ingestOne();
     expect(() => transition(c, "resolved", EDITOR, { decision: "d" })).toThrow(/open → resolved is not a move/);
     expect(() => transition(c, "addressed", { process: "Process_Review", task: "Task_Consolidate" })).toThrow(/not a move/);
@@ -81,13 +81,13 @@ describe("the lifecycle is closed, and only process tasks move it", () => {
     expect(() => transition(closed, "open", EDITOR)).toThrow(/nothing — it is closed/);
   });
 
-  it("refuses to close without the Decision, in the transition and in the schema", () => {
+  it("closingNeedsDecision", () => {
     const c = transition(ingestOne(), "addressed", EDITOR);
     expect(() => transition(c, "resolved", EDITOR)).toThrow(/names the Decision/);
     expect(ReviewCommentSchema.safeParse({ ...c, status: "resolved" }).success).toBe(false);
   });
 
-  it("every transition names a BPMN task that exists", () => {
+  it("transitionsNameRealBpmnTasks", () => {
     for (const t of REVIEW_TRANSITIONS) {
       const xml = readFileSync(workflowFile(HARNESS, t.by.file), "utf-8");
       expect(xml).toContain(`<bpmn:process id="${t.by.process}"`);
@@ -97,7 +97,7 @@ describe("the lifecycle is closed, and only process tasks move it", () => {
 });
 
 describe("the tag", () => {
-  it("reads block, kind and role; a label may contain colons", () => {
+  it("tagReadsBlockKindRole", () => {
     expect(parseReviewTag("block: prose:overview\nkind: defect\nrole: clinical-sme\n\nText.")).toEqual({
       block: "prose:overview",
       kind: "defect",
@@ -106,11 +106,11 @@ describe("the tag", () => {
     });
   });
 
-  it("defaults kind to question and role to reviewer", () => {
+  it("tagDefaultsKindRole", () => {
     expect(parseReviewTag("block: tbl:doses\nWhy 5 mg?")).toMatchObject({ kind: "question", role: "reviewer", text: "Why 5 mg?" });
   });
 
-  it("an untagged comment is conversation, not a review comment; a bad tag is an error", () => {
+  it("untaggedIsConversation", () => {
     expect(parseReviewTag("LGTM, thanks!")).toBeNull();
     expect(parseReviewTag("See below.\nblock: prose:x")).toBeNull();
     expect(parseReviewTag("block: two labels")).toEqual({ error: expect.stringContaining("one label") });
@@ -123,7 +123,7 @@ describe("ingestion", () => {
   const run = (existing: { id: string }[] = []) =>
     ingestPrComments({ repo: "o/r", pr: 7, commit: "abc", comments, existing, blocks: new Map([["prose:overview", "h1"]]) });
 
-  it("creates one todo per tagged comment, counts the rest, and says what was malformed", () => {
+  it("ingestOnePerTaggedComment", () => {
     const r = run();
     expect(r.created.map((c) => c.id)).toEqual(["review-pr7-c1", "review-pr7-c4"]);
     expect(r.untagged).toBe(1);
@@ -131,11 +131,11 @@ describe("ingestion", () => {
     expect(r.created[0]).toMatchObject({ status: "open", origin: "human", review: { blockHash: "h1", orphaned: false } });
   });
 
-  it("a comment on a block that is not in the head is kept, orphaned from the start", () => {
+  it("offHeadCommentOrphaned", () => {
     expect(run().created[1].review).toMatchObject({ blockHash: null, orphaned: true });
   });
 
-  it("is idempotent: a re-run creates nothing", () => {
+  it("ingestionIdempotent", () => {
     const first = run();
     const again = run(first.created);
     expect(again.created).toEqual([]);
@@ -144,7 +144,7 @@ describe("ingestion", () => {
 });
 
 describe("re-anchoring across a ChangeSet", () => {
-  it("follows a rename, keeps the old label, and never touches status", () => {
+  it("reanchorFollowsRename", () => {
     const c = transition(ingestOne(), "addressed", EDITOR);
     const [moved] = reanchor([c], [{ change: "changed", label: "prose:summary", from: "prose:overview", aspects: ["renamed"] }]);
     expect(moved.targetLabel).toBe("prose:summary");
@@ -152,13 +152,13 @@ describe("re-anchoring across a ChangeSet", () => {
     expect(moved.status).toBe("addressed");
   });
 
-  it("a removed block orphans the comment — kept, never dropped", () => {
+  it("removedBlockOrphans", () => {
     const c = ingestOne();
     const [orphan] = reanchor([c], [{ change: "removed", label: "prose:overview" }]);
     expect(orphan).toMatchObject({ id: c.id, targetLabel: "prose:overview", status: "open", review: { orphaned: true } });
   });
 
-  it("an unrelated change leaves the comment alone", () => {
+  it("unrelatedChangeLeavesAlone", () => {
     expect(reanchor([ingestOne()], [{ change: "added", label: "prose:new" }])).toEqual([]);
   });
 });
@@ -167,20 +167,20 @@ describe("re-anchoring against the head's blocks (renamedFrom)", () => {
   const blocks = (entries: [string, string[]][]) =>
     new Map(entries.map(([label, renamedFrom]) => [label, { hash: `h-${label}`, renamedFrom }]));
 
-  it("follows a block's renamedFrom — even for a block the PR itself added", () => {
+  it("followsRenamedFrom", () => {
     const [c] = reanchorToBlocks([ingestOne()], blocks([["prose:summary", ["prose:overview"]]]));
     expect(c.targetLabel).toBe("prose:summary");
     expect(c.review.anchoredFrom).toEqual(["prose:overview"]);
   });
 
-  it("orphans a comment whose block is gone, and un-orphans it if the block returns", () => {
+  it("orphansAndUnorphans", () => {
     const [gone] = reanchorToBlocks([ingestOne()], blocks([["prose:other", []]]));
     expect(gone.review.orphaned).toBe(true);
     const [back] = reanchorToBlocks([gone], blocks([["prose:overview", []]]));
     expect(back.review.orphaned).toBe(false);
   });
 
-  it("returns every comment, and an anchored one unchanged", () => {
+  it("returnsAnchoredUnchanged", () => {
     const c = ingestOne();
     expect(reanchorToBlocks([c], blocks([["prose:overview", []]]))).toEqual([c]);
   });
@@ -192,7 +192,7 @@ describe("deciding from the page: a `resolve:` tag (owner, 2026-10-15)", () => {
   });
   const target = "review-pr7-c101";
 
-  it("parses the tag; anything without `resolve:` is not one", () => {
+  it("parsesResolveTag", () => {
     expect(parseDecisionTag(`resolve: ${target}\ndecision: Resolved\n\nFixed in table 3.`)).toEqual({ target, decision: "resolved", text: "Fixed in table 3." });
     expect(parseDecisionTag("block: prose:overview\n\nhi")).toBeNull();
     expect(parseDecisionTag("just talk")).toBeNull();
@@ -200,7 +200,7 @@ describe("deciding from the page: a `resolve:` tag (owner, 2026-10-15)", () => {
     expect(parseDecisionTag("resolve: prose:overview\ndecision: resolved")).toEqual({ error: expect.stringContaining("review comment id") });
   });
 
-  it("an editor moves a comment through the table: addressed, then resolved, naming the decision comment", () => {
+  it("editorMovesThroughTable", () => {
     const c = ingestOne();
     const r = applyDecisions([c], [
       decide(201, `resolve: ${target}\ndecision: addressed`),
@@ -214,7 +214,7 @@ describe("deciding from the page: a `resolve:` tag (owner, 2026-10-15)", () => {
     expect(d.review.decisions).toEqual([201, 202]);
   });
 
-  it("applies each decision once: a rebuild over its own output changes nothing", () => {
+  it("decisionsAppliedOnce", () => {
     const once = applyDecisions([ingestOne()], [decide(201, `resolve: ${target}\ndecision: addressed`)]);
     const twice = applyDecisions(once.comments, [decide(201, `resolve: ${target}\ndecision: addressed`)]);
     expect(twice.refused).toEqual([]);
@@ -222,13 +222,13 @@ describe("deciding from the page: a `resolve:` tag (owner, 2026-10-15)", () => {
     expect(twice.comments).toEqual(once.comments);
   });
 
-  it("refuses a move the table does not hold, and says why", () => {
+  it("refusesMoveNotInTable", () => {
     const r = applyDecisions([ingestOne()], [decide(201, `resolve: ${target}\ndecision: resolved`)]);
     expect(r.comments[0]!.status).toBe("open");
     expect(r.refused[0]!.error).toMatch(/open → resolved is not a move/);
   });
 
-  it("only the repository's people decide; the comment's own author may withdraw it", () => {
+  it("onlyRepoPeopleDecide", () => {
     const stranger = applyDecisions([ingestOne()], [decide(201, `resolve: ${target}\ndecision: addressed`, "drive-by", "NONE")]);
     expect(stranger.comments[0]!.status).toBe("open");
     expect(stranger.refused[0]!.error).toMatch(/may not decide/);
@@ -237,12 +237,12 @@ describe("deciding from the page: a `resolve:` tag (owner, 2026-10-15)", () => {
     expect(own.comments[0]!.status).toBe("withdrawn");
   });
 
-  it("a decision on an unknown comment is refused, not dropped", () => {
+  it("unknownCommentDecisionRefused", () => {
     const r = applyDecisions([ingestOne()], [decide(201, "resolve: review-pr7-c999\ndecision: addressed")]);
     expect(r.refused[0]!.error).toMatch(/no review comment `review-pr7-c999`/);
   });
 
-  it("survives a block move/rename and records the closing Decision on resolution (423d)", () => {
+  it("survivesMoveRecordsDecision", () => {
     const c = ingestOne();
     const [moved] = reanchorToBlocks([c], new Map([["prose:summary", { hash: "h2", renamedFrom: ["prose:overview"] }]]));
     expect(moved!.targetLabel).toBe("prose:summary");

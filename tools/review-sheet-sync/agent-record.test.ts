@@ -25,31 +25,31 @@ import {
 const comments = [["No.", "Change-sets"], ...["126", "127", "128", "129", "130", "131", "134", "135", "136", "137", "138", "139", "326"].map((n) => [n, "CS-001"]), ["132", "CS-003"], ["133", "CS-003"]];
 
 describe("agent-record (owner, 2026-10-31, option C)", () => {
-  test("numbers are grouped as the sheet reads them", () => {
+  test("numbersGrouped", () => {
     expect(nosLabel(["136"])).toBe("No. 136");
     expect(nosLabel(["139", "127", "128", "129", "130", "131", "134", "135", "138"])).toBe("Nos. 127 to 131, 134, 135, 138 and 139");
   });
-  test("the change set's numbers come from the sheet, so another change set's comments cannot slip in", () => {
+  test("numbersFromSheet", () => {
     const r = dispositions({ cs: "CS-001", comments, items: [{ nos: [136, 326], word: "Accepted", why: "Done." }, { rest: true, word: "Not accepted", why: "Already reflected." }] });
     expect(r.problems).toBe("");
     expect(r.text).toBe("Nos. 136 and 326: Accepted. Done.\nNos. 126 to 131, 134, 135 and 137 to 139: Not accepted. Already reflected.");
   });
-  test("the decision history is kept, in order, and new decisions are appended", () => {
+  test("historyKeptAppended", () => {
     const r = dispositions({ cs: "X", nos: [1], previous: "Decided (No. 1, d): A.\nNo. 1: Noted.", decided: ["Decided (No. 1, e): B."], overall: "All.", items: [{ nos: [1], word: "Noted" }] });
     expect(r.text).toBe("Decided (No. 1, d): A.\nDecided (No. 1, e): B.\n\nOverall: All.\nNo. 1: Noted.");
   });
-  test("the people's Blue word is used, and a different word is refused", () => {
+  test("blueWordUsed", () => {
     const blue = [["No.", "Disposition"], ["136", "Noted"], ["127", "Pending"]];
     expect(dispositions({ cs: "CS-001", comments, blue, items: [{ nos: [136] }, { rest: true, word: "Not accepted" }] }).text)
       .toContain("No. 136: Noted.");
     expect(dispositions({ cs: "CS-001", comments, blue, items: [{ nos: [136], word: "Accepted" }, { rest: true, word: "Not accepted" }] }).problems)
       .toBe("⚠ No. 136: Accepted here, Noted in the people's Disposition");
   });
-  test("a number outside the change set, or one left out, is a problem", () => {
+  test("numberOutsideOrMissing", () => {
     expect(dispositions({ cs: "CS-001", comments, items: [{ nos: [132], word: "Noted" }] }).problems).toContain("No. 132 is not in this change set");
     expect(dispositions({ cs: "CS-001", comments, items: [{ nos: [136], word: "Accepted" }] }).problems).toMatch(/^⚠ No disposition yet for Nos\. 126 to 131/);
   });
-  test("push takes the time from the clock and the full sha", () => {
+  test("pushTimeAndSha", () => {
     expect(push("e7b4094fd22055f205b52ba3c6c980b11285e228", 15, new Date("2026-10-31T15:27:40Z"))).toEqual({
       "PR head (change set)": "e7b4094fd22055f205b52ba3c6c980b11285e228",
       "Staging deploy (change set)": "building, expected 2026-10-31 15:42Z",
@@ -58,11 +58,11 @@ describe("agent-record (owner, 2026-10-31, option C)", () => {
     expect(() => push("e7b4094", 15)).toThrow(/full 40-character/);
     expect(done(new Date("2026-10-31T15:29:59Z"))).toEqual({ "Agent completed (UTC, change set)": "2026-10-31 15:29Z", "Agent step (change set)": "idle 2026-10-31 15:29Z" });
   });
-  test("the PR's review brief carries the same lines, without the decision history", () => {
+  test("briefSameLines", () => {
     expect(brief({ cs: "X", nos: [1, 2], previous: "Decided (No. 1, d): A.", overall: "All.", items: [{ nos: [1, 2], word: "Accepted", why: "Done." }] }, "3.1, second paragraph"))
       .toBe("<!-- review-brief -->\n- **Overall:** All.\n- **Nos. 1 and 2:** Accepted. Done.\n- **Where to look:** 3.1, second paragraph\n<!-- /review-brief -->");
   });
-  test("--pcs links each comment to its dashboard row by its Comment ref, a run spelled out", () => {
+  test("pcsLinksDashboard", () => {
     const d = "https://x.io/pc/";
     // On DPI-H the sheet's No. is one below the ref: No. 136 is PC-0137.
     const refs = { "127": "PC-0128", "128": "PC-0129", "129": "PC-0130", "134": "PC-0135" };
@@ -86,7 +86,7 @@ describe("review-sheet QA pass writes editing-hci-validation instances that sati
     return loaded.label;
   }
 
-  test("qaPass writes editing--<block>.json per changed block and checkCorpusGate allows the change", async () => {
+  test("qaPassWritesInstances", async () => {
     const repo = mkdtempSync(join(tmpdir(), "agent-record-gate-"));
     try {
       // The fixture is an instance with its own `beans/` in the checkout, so
@@ -170,7 +170,7 @@ describe("review-sheet QA pass writes editing-hci-validation instances that sati
     }
   });
 
-  test("discovers changed blocks from git diff (including DAK blocks and .md siblings) and supports --blocks", () => {
+  test("discoversBlocksFromGit", () => {
     const repo = mkdtempSync(join(tmpdir(), "agent-record-git-"));
     try {
       execFileSync("git", ["init", "-q", "-b", "main"], { cwd: repo });
@@ -213,7 +213,7 @@ describe("review-sheet QA pass writes editing-hci-validation instances that sati
     }
   });
 
-  test("refuses a failed, stale, or commit-less QA gate and writes no workflow instances", () => {
+  test("refusesBadQaGate", () => {
     const repo = mkdtempSync(join(tmpdir(), "agent-record-refuse-"));
     try {
       expect(() =>
@@ -231,7 +231,7 @@ describe("review-sheet QA pass writes editing-hci-validation instances that sati
     }
   });
 
-  test("blockLabelFor distinguishes block manifests from chapters, sections, and helpers", () => {
+  test("blockLabelForManifestsOnly", () => {
     const dir = mkdtempSync(join(tmpdir(), "agent-record-label-"));
     try {
       const p1 = join(dir, "b.ts");
@@ -250,7 +250,7 @@ describe("review-sheet QA pass writes editing-hci-validation instances that sati
     }
   });
 
-  test("editingWorkflowInstance records the change set, QA pass, and editor decision through Task_Commit", () => {
+  test("instanceRecordsDecision", () => {
     const inst = editingWorkflowInstance("prose:annex-1", {
       cs: "CS-001",
       qaGate: "Passed b20534f: all 6 checks green",

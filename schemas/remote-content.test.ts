@@ -72,7 +72,7 @@ const GATES_OK = {
 } as const;
 
 describe("Dublin Core — the three things a naive model loses", () => {
-  it("keeps BOTH identifier.uri values", () => {
+  it("keepsBothIdentifierUris", () => {
     // The second is a handle on iris.wpro.who.int, a regional instance merged
     // into the global one. It is the only evidence this repository holds of a
     // source host disappearing, so dropping it as a duplicate would discard
@@ -84,13 +84,13 @@ describe("Dublin Core — the three things a naive model loses", () => {
     ]);
   });
 
-  it("keeps BOTH subject.mesh values, with their language tags", () => {
+  it("keepsBothMeshWithLanguage", () => {
     const mesh = dcValues(DublinCoreRecordSchema.parse(RECORD), "subject", "mesh");
     expect(mesh).toHaveLength(2);
     expect(mesh.every((v) => v.language === "en")).toBe(true);
   });
 
-  it("distinguishes an absent language from an asserted one", () => {
+  it("absentLanguageDistinct", () => {
     // The record tags the title `en` and leaves the date untagged. Absence is
     // data: an untagged value is not an English value, it is a value whose
     // language nobody asserted.
@@ -99,7 +99,7 @@ describe("Dublin Core — the three things a naive model loses", () => {
     expect(dcValues(rec, "date", "issued")[0].language).toBeUndefined();
   });
 
-  it("spans qualifiers when asked for an element", () => {
+  it("elementSpansQualifiers", () => {
     // "What identifiers does this item have" must reach `govdoc` as well as
     // `uri` — a consumer enumerating the qualifiers it knew about would miss
     // the one it did not.
@@ -109,30 +109,30 @@ describe("Dublin Core — the three things a naive model loses", () => {
 });
 
 describe("materialization — the states and the gates", () => {
-  it("refuses `materialized` with no gates recorded", () => {
+  it("materializedNeedsGates", () => {
     const r = MaterializationSchema.safeParse({ state: "materialized", provenance: { upstream: "https://x" }, localPath: "library/x" });
     expect(r.success).toBe(false);
   });
 
-  it("refuses `materialized` with no local path", () => {
+  it("materializedNeedsLocalPath", () => {
     const r = MaterializationSchema.safeParse({ state: "materialized", provenance: { upstream: "https://x" }, gates: GATES_OK });
     expect(r.success).toBe(false);
   });
 
-  it("refuses gates on a node that was never materialized", () => {
+  it("gatesOnlyWhenMaterialized", () => {
     // A gate verdict on a `referenced` node claims a decision nobody had to make.
     const r = MaterializationSchema.safeParse({ state: "referenced", provenance: { upstream: "https://x" }, gates: GATES_OK });
     expect(r.success).toBe(false);
   });
 
-  it("separates `unknown` from `permitted`", () => {
+  it("unknownApartFromPermitted", () => {
     // The whole reason GateVerdict is three-valued: "no restrictions known in
     // context" is a state, not a green light.
     expect(unansweredGates(GATES_OK as never).sort()).toEqual(["copyright", "restrictions", "sourceLoss"]);
     expect(refusedGates(GATES_OK as never)).toEqual([]);
   });
 
-  it("reports four freshness verdicts, not a boolean", () => {
+  it("fourFreshnessVerdicts", () => {
     const base = { provenance: { upstream: "https://x" }, localPath: "library/x", gates: GATES_OK, purpose: "working" as const };
     expect(freshness(MaterializationSchema.parse({ state: "referenced", provenance: { upstream: "https://x" } }), new Date())).toBe("not-materialized");
     expect(freshness(MaterializationSchema.parse({ state: "materialized", ...base, purpose: "working" }), new Date())).toBe("no-expiry");
@@ -144,18 +144,18 @@ describe("materialization — the states and the gates", () => {
     ).toBe("fresh");
   });
 
-  it("has no default state — a node that does not say is invalid", () => {
+  it("noDefaultState", () => {
     expect(MaterializationSchema.safeParse({ provenance: { upstream: "https://x" } }).success).toBe(false);
   });
 
-  it("refuses a materialized copy that has not said WHY it was taken", () => {
+  it("materializedNeedsPurpose", () => {
     const r = MaterializationSchema.safeParse({
       state: "materialized", provenance: { upstream: "https://x" }, localPath: "library/x", gates: GATES_OK,
     });
     expect(r.success).toBe(false);
   });
 
-  it("refuses an archival copy with no fixity", () => {
+  it("archivalNeedsFixity", () => {
     // An archive that cannot demonstrate it is unchanged is a copy, and it
     // cannot be re-fetched to check — the thing it would be re-fetched from is
     // what it exists to survive.
@@ -166,7 +166,7 @@ describe("materialization — the states and the gates", () => {
     expect(r.success).toBe(false);
   });
 
-  it("refuses a WORKING copy that claims to have discharged sourceLoss", () => {
+  it("workingCannotDischargeSourceLoss", () => {
     // The derived sections are not the publication.
     const r = MaterializationSchema.safeParse({
       state: "materialized", provenance: { upstream: "https://x" }, localPath: "library/x", purpose: "working",
@@ -175,7 +175,7 @@ describe("materialization — the states and the gates", () => {
     expect(r.success).toBe(false);
   });
 
-  it("reports an archive as `permanent`, not as the `no-expiry` finding", () => {
+  it("archiveIsPermanent", () => {
     // no-expiry is a finding: a working copy nobody gave a lifetime cannot be
     // told from abandoned work. permanent is a specification: an archive is
     // SUPPOSED to outlive its source.
@@ -213,7 +213,7 @@ describe("catalogue — the model must not disagree with the corpus", () => {
     ...over,
   });
 
-  it("refuses a libraryId on a node that says it is not materialized", () => {
+  it("libraryIdNeedsMaterialized", () => {
     // A slug under library/ IS the bytes being here. Declaring otherwise makes
     // corpus-grep and the catalogue disagree about what exists.
     const r = CatalogueNodeSchema.safeParse(
@@ -222,7 +222,7 @@ describe("catalogue — the model must not disagree with the corpus", () => {
     expect(r.success).toBe(false);
   });
 
-  it("refuses bitstreams on a container", () => {
+  it("containerHasNoBitstreams", () => {
     const r = CatalogueNodeSchema.safeParse(
       node({
         kind: "container",
@@ -233,7 +233,7 @@ describe("catalogue — the model must not disagree with the corpus", () => {
     expect(r.success).toBe(false);
   });
 
-  it("counts the three states separately and never as a percentage", () => {
+  it("censusCountsStatesApart", () => {
     const nodes = [
       CatalogueNodeSchema.parse(node({ id: "a", materialization: { state: "referenced", provenance: { upstream: "https://a" } } })),
       CatalogueNodeSchema.parse(node({ id: "b", materialization: { state: "unknown", provenance: { upstream: "https://b" } } })),
@@ -248,14 +248,14 @@ describe("publicationBlockers — held is not published (bean cw35)", () => {
     size: gate("permitted"), retention: gate("permitted"), sourceLoss: gate("permitted"),
     copyright: gate(v), restrictions: gate(v),
   });
-  it("only copyright and restrictions decide, and only `permitted` passes", () => {
+  it("onlyCopyrightRestrictionsDecide", () => {
     expect(publicationBlockers(all("permitted"))).toEqual([]);
     expect(publicationBlockers(all("refused"))).toEqual(["copyright", "restrictions"]);
     // an unanswered licence is not a licence
     expect(publicationBlockers(all("unknown"))).toEqual(["copyright", "restrictions"]);
     expect(publicationBlockers({ ...all("permitted"), size: gate("refused") })).toEqual([]);
   });
-  it("no gates at all blocks on both", () => {
+  it("noGatesBlocksBoth", () => {
     expect(publicationBlockers(undefined)).toEqual(["copyright", "restrictions"]);
   });
 });

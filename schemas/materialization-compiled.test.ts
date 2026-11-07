@@ -33,35 +33,35 @@ const compiled = (over: Record<string, unknown> = {}) =>
   });
 
 describe("the schema", () => {
-  test("a compiled copy with its inputs parses", () => {
+  test("compiledWithInputsParses", () => {
     expect(compiled().success).toBe(true);
   });
-  test("a compiled copy WITHOUT inputs is refused: nothing could tell current from stale", () => {
+  test("compiledWithoutInputsRefused", () => {
     const r = compiled({ inputs: undefined });
     expect(r.success).toBe(false);
     expect(JSON.stringify(r.error?.issues)).toContain("requires `inputs`");
   });
-  test("toolchain and sourceRevision are both required inside inputs", () => {
+  test("toolchainAndRevisionRequired", () => {
     expect(compiled({ inputs: { toolchain: "x" } }).success).toBe(false);
     expect(compiled({ inputs: { sourceRevision: "x" } }).success).toBe(false);
   });
-  test("a compiled copy cannot discharge sourceLoss: it is derived, not the source", () => {
+  test("compiledCannotDischargeSourceLoss", () => {
     const r = compiled({ gates: { ...gates, sourceLoss: gate("permitted") } });
     expect(r.success).toBe(false);
     expect(JSON.stringify(r.error?.issues)).toContain("cannot discharge");
   });
-  test("inputs on a non-compiled copy is refused", () => {
+  test("inputsOnNonCompiledRefused", () => {
     expect(compiled({ purpose: "working" }).success).toBe(false);
   });
 });
 
 describe("freshness", () => {
-  test("a compiled copy with no expiry is input-bound, not a no-expiry finding", () => {
+  test("compiledNoExpiryInputBound", () => {
     const r = compiled();
     expect(r.success).toBe(true);
     if (r.success) expect(freshness(r.data, new Date())).toBe("input-bound");
   });
-  test("a stated expiry still wins", () => {
+  test("statedExpiryWins", () => {
     const r = compiled({ expiresAt: "2000-01-01T00:00:00Z" });
     if (r.success) expect(freshness(r.data, new Date())).toBe("expired");
   });
@@ -72,31 +72,31 @@ describe("compiledValidity: three answers, checked before use", () => {
   if (!m.success) throw new Error("fixture must parse");
   const rec = m.data;
 
-  test("valid when every stated input matches", () => {
+  test("validWhenInputsMatch", () => {
     expect(compiledValidity(rec, INPUTS)).toEqual({ verdict: "valid" });
   });
-  test("stale-inputs names each input that changed", () => {
+  test("staleNamesChangedInputs", () => {
     expect(compiledValidity(rec, { ...INPUTS, toolchain: "leanprover/lean4:v4.25.0", sourceRevision: "ffff" })).toEqual({
       verdict: "stale-inputs",
       differs: ["toolchain", "sourceRevision"],
     });
   });
-  test("a changed input digest alone is stale, even when the revision matches", () => {
+  test("changedDigestAloneStale", () => {
     expect(compiledValidity(rec, { ...INPUTS, inputDigest: "1".repeat(64) })).toEqual({
       verdict: "stale-inputs",
       differs: ["inputDigest"],
     });
   });
-  test("cannot-tell when the caller cannot state an input the record needs compared — never valid", () => {
+  test("cannotTellWithoutNeededInput", () => {
     const v = compiledValidity(rec, { toolchain: INPUTS.toolchain, sourceRevision: INPUTS.sourceRevision });
     expect(v.verdict).toBe("cannot-tell");
   });
-  test("a record without a digest is judged on toolchain and revision", () => {
+  test("noDigestJudgedOnToolchain", () => {
     const r = compiled({ inputs: { toolchain: INPUTS.toolchain, sourceRevision: INPUTS.sourceRevision } });
     if (!r.success) throw new Error("fixture must parse");
     expect(compiledValidity(r.data, { toolchain: INPUTS.toolchain, sourceRevision: INPUTS.sourceRevision })).toEqual({ verdict: "valid" });
   });
-  test("cannot-tell for anything that is not a compiled copy", () => {
+  test("cannotTellForNonCompiled", () => {
     const w = MaterializationSchema.parse({ state: "referenced", provenance: { upstream: "https://x" } });
     expect(compiledValidity(w, INPUTS).verdict).toBe("cannot-tell");
   });

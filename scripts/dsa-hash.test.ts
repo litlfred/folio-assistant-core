@@ -30,7 +30,7 @@ function loadWorkedVersion(ver: "v1" | "v2") {
 }
 
 describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
-  it("declares typologies/dsa.json with external nodeSchemas only (ODRL 2.2, DCAT 3, dcterms:source)", async () => {
+  it("typologyExternalSchemasOnly", async () => {
     const raw = JSON.parse(readFileSync(join(CORE_ROOT, "typologies", "dsa.json"), "utf-8")) as unknown;
     const node = GraphTypologyNodeSchema.parse(raw);
     expect(node.kind).toBe("dsa");
@@ -50,7 +50,7 @@ describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
     expect(tags.has("dcterms:source")).toBe(true);
   });
 
-  it("passes on the worked example and gives a new version a new hash", () => {
+  it("workedExamplePasses", () => {
     const dirResult = verifyDsaDirectory(DEFAULT_DSA_FIXTURE_DIR);
     expect(dirResult.ok).toBe(true);
     expect(dirResult.errors).toEqual([]);
@@ -65,7 +65,7 @@ describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
     expect(v2?.previousVersion).toBe(v1?.resourceId);
   });
 
-  it("fails on a one-byte change to the legal text", () => {
+  it("oneByteChangeFails", () => {
     const v1 = loadWorkedVersion("v1");
     const tampered = Buffer.from(v1.legalText);
     tampered[0] = tampered[0] === 0x23 ? 0x24 : 0x23;
@@ -79,7 +79,7 @@ describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
     expect(res.errors.some((e) => e.includes("SHA-256 mismatch"))).toBe(true);
   });
 
-  it("requires the Agreement's uid to be the version's fixed-version URL (consent rule 2)", () => {
+  it("uidIsFixedVersionUrl", () => {
     const v1 = loadWorkedVersion("v1");
     const res = verifyDsaVersion({
       legalText: v1.legalText,
@@ -90,7 +90,7 @@ describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
     expect(res.errors.some((e) => e.includes("fixed-version URL"))).toBe(true);
   });
 
-  it("fails when an amended version does not name the version it amends in dcat:previousVersion", () => {
+  it("amendedNamesPrevious", () => {
     const tmp = mkdtempSync(join(tmpdir(), "dsa-prev-"));
     try {
       for (const ver of ["v1", "v2"] as const) {
@@ -110,7 +110,7 @@ describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
     }
   });
 
-  it("requires the Agreement's dcterms:source to name the same distribution whose spdx:checksum is checked", () => {
+  it("sourceNamesCheckedDistribution", () => {
     const v1 = loadWorkedVersion("v1");
 
     const wrongSourceAgreement = {
@@ -136,7 +136,7 @@ describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
     expect(resMissing.errors.some((e) => e.includes("dcterms:source"))).toBe(true);
   });
 
-  it("rejects any field that is not in ODRL 2.2, DCAT 3 or DCMI Terms", () => {
+  it("rejectsUnknownField", () => {
     const v1 = loadWorkedVersion("v1");
 
     const customInAgreement = {
@@ -172,7 +172,7 @@ describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
     ).toBe(true);
   });
 
-  it("fails if a new version does not get a new hash", () => {
+  it("newVersionNewHash", () => {
     const tmp = mkdtempSync(join(tmpdir(), "dsa-hash-test-"));
     try {
       const v1 = loadWorkedVersion("v1");
@@ -221,7 +221,7 @@ describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
     }
   });
 
-  it("loads ODRL 2.2, DCAT 3 and DCMI Terms from SHA-256-pinned official context files and rejects made-up prefixed terms", () => {
+  it("pinnedContextsRejectMadeUp", () => {
     expect(OFFICIAL_CONTEXT_PROVENANCE.length).toBe(5);
     expect(ODRL_22_TERMS.has("Agreement")).toBe(true);
     expect(ODRL_22_TERMS.has("odrl:Agreement")).toBe(true);
@@ -258,7 +258,7 @@ describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
     }
   });
 
-  it("declares the check-dsa-hash Tool satisfying the four dsa-* skills", () => {
+  it("toolSatisfiesDsaSkills", () => {
     const coreTools = toolsOf(CORE_ROOT);
     const tool = coreTools.find((t) => t.id === "check-dsa-hash");
     expect(tool).toBeDefined();

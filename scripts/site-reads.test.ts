@@ -29,16 +29,16 @@ writeFileSync(
   }),
 );
 
-test("build-document-site reads the folio", () => {
+test("documentSiteReadsFolio", () => {
   expect(documentSite(R, ["--out", "_site"])).toEqual(["folio"]);
 });
 
-test("public-comment-site reads the comment store, or the one --store names, and the folio", () => {
+test("publicCommentSiteReads", () => {
   expect(publicCommentSite(R, ["--out", "_site"])).toEqual(["review/public-comment", "folio"]);
   expect(publicCommentSite(R, ["--store", "other/store"])).toEqual(["other/store", "folio"]);
 });
 
-test("gen-node-kind-pages reads the directories of the typologies holding a kind it renders: todos, and beans since ujiv", async () => {
+test("nodeKindPagesReads", async () => {
   const got = await nodeKindPages(R, ["--root", "."]);
   expect(got).toContain("todos");
   expect(got).toContain("review/public-comment");

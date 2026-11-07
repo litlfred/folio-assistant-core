@@ -91,7 +91,7 @@ const endOf = (root: string, subject: string) =>
   loadInstance(root, instanceId("Process_SampleImport", subject))!.history.map((h) => h.node).at(-1);
 
 describe("the whole item — a derived thumbnail's sourceLoss gate is unknown", () => {
-  test("the gates refuse, nothing lands, and the run ends Not imported", async () => {
+  test("wholeItemRefused", async () => {
     const root = fixture();
     const r = await runSampleImport({ root, instance: "who-iris", item: ITEM, subject: "whole", tools: engineTools(root), livenessFetcher: refuses });
     expect(r.status).toBe("completed");
@@ -104,7 +104,7 @@ describe("the whole item — a derived thumbnail's sourceLoss gate is unknown", 
 });
 
 describe("the ORIGINAL bundle only — every gate permitted", () => {
-  test("it materializes, lands as a trial, passes the import test, and ends Imported", async () => {
+  test("originalImported", async () => {
     const root = fixture();
     const r = await runSampleImport({ root, instance: "who-iris", item: ITEM, subject: "original", bundles: ["ORIGINAL"], tools: engineTools(root), livenessFetcher: refuses });
     expect(r.steps.find((s) => s.node === "Gateway_Gates")?.outcome).toBe("yes");
@@ -126,7 +126,7 @@ describe("the ORIGINAL bundle only — every gate permitted", () => {
 });
 
 describe("held bytes that no longer match their recorded fixity", () => {
-  test("the fetch substitute is refused rather than trusted", async () => {
+  test("tamperedRefused", async () => {
     const root = fixture();
     writeFileSync(join(root, "who-iris", "uploads", "wpr-rdo-2020-003-eng", "WPR-RDO-2020-003-eng.pdf"), "tampered");
     await expect(

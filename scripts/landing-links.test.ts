@@ -11,17 +11,17 @@ const decl = (directories: unknown[]) => ({ name: "f", directories }) as unknown
 const dir = (id: string, visualiser: unknown) => ({ id, path: `${id}/`, graphTypologies: ["archimate"], coverage: { visualiser } });
 
 describe("landingLinks", () => {
-  test("a page built at publish by a writer that exists is linked, as its directory", () => {
+  test("writerPageLinked", () => {
     const d = decl([dir("archimate", [{ ref: "archimate/index.html", title: "ArchiMate models", writer: ["p/gen.ts"] }])]);
     expect(landingLinks(d, (p) => p === "p/gen.ts")).toEqual([{ title: "ArchiMate models", href: "archimate/" }]);
   });
 
-  test("a page that neither exists nor has a writer that exists is not linked", () => {
+  test("noPageNoWriterNotLinked", () => {
     const d = decl([dir("archimate", [{ ref: "archimate/index.html", writer: ["p/gen.ts"] }])]);
     expect(landingLinks(d, () => false)).toEqual([]);
   });
 
-  test("staging-only, absolute and climbing refs are never linked from the landing", () => {
+  test("stagingAbsoluteClimbingNotLinked", () => {
     const d = decl([
       dir("a", [{ ref: "a/index.html", publish: "staging-only" }]),
       dir("b", "/b/index.html"),
@@ -30,30 +30,30 @@ describe("landingLinks", () => {
     expect(landingLinks(d, () => true)).toEqual([]);
   });
 
-  test("a bare string visualiser takes the directory id as its title; markdown maps to its served page", () => {
+  test("bareStringTitleAndMarkdown", () => {
     expect(landingLinks(decl([dir("notes", "notes/overview.md")]), () => true)).toEqual([{ title: "notes", href: "notes/overview.html" }]);
   });
 
-  test("no declaration, no links", () => {
+  test("noDeclarationNoLinks", () => {
     expect(landingLinks(undefined, () => true)).toEqual([]);
   });
 });
 
 describe("landingPage", () => {
-  test("is a Jekyll page in the named layout, its body held raw", () => {
+  test("landingPageRawBody", () => {
     const p = landingPage("default", "Documents", "<p>{{ not liquid }}</p>");
     expect(p.startsWith("---\nlayout: default\ntitle: \"Documents\"\nnav_order: 1\n---\n")).toBe(true);
     expect(p).toContain("{% raw %}\n<p>{{ not liquid }}</p>\n{% endraw %}");
   });
 
-  test("an endraw inside the body cannot close the raw block early, and renders unchanged", () => {
+  test("endrawCannotClose", () => {
     const body = "a {% endraw %} b";
     const p = landingPage("default", "D", body);
     const inner = p.slice(p.indexOf("{% raw %}\n") + "{% raw %}\n".length, p.lastIndexOf("\n{% endraw %}"));
     expect(unescapeRaw(inner)).toBe(body);
   });
 
-  test("a layout that is not a bare name is refused", () => {
+  test("badLayoutRefused", () => {
     expect(() => landingPage("default\ntitle: x", "D", "")).toThrow();
   });
 });

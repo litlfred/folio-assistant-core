@@ -18,33 +18,33 @@ const META = {
 
 describe("dspaceToRecord", () => {
   const rec = dspaceToRecord("58333fc5-9ec5-4d14-b341-5ae257dd0ad1", META, "https://iris.who.int/server/api/core/items/x", "2026-10-06T00:00:00Z");
-  test("qualified names split into element and qualifier", () => {
+  test("qualifiedNamesSplit", () => {
     expect(rec.fields.find((f) => f.element === "identifier" && f.qualifier === "isbn")?.values.length).toBe(2);
   });
-  test("an empty language or authority is absent, not empty", () => {
+  test("emptyLanguageAuthorityAbsent", () => {
     const isbn = rec.fields.find((f) => f.qualifier === "isbn")!.values[0]!;
     expect("language" in isbn).toBe(false);
     expect(rec.fields.find((f) => f.qualifier === "mesh")!.values[0]!.authority).toBe("D014611");
   });
-  test("a field whose only value is blank is dropped, not kept empty", () => {
+  test("blankOnlyFieldDropped", () => {
     expect(rec.fields.some((f) => f.element === "description")).toBe(false);
   });
 });
 
 describe("licenceFromRecord", () => {
   const url = "https://iris.who.int/items/58333fc5";
-  test("a recognised dc.rights is stated, quoting the field", () => {
+  test("recognisedRightsStated", () => {
     const l = licenceFromRecord(dspaceToRecord("u", META, "s", "t"), url);
     expect(l.status).toBe("stated");
     expect(l.id).toBe("CC-BY-NC-SA-3.0-IGO");
     expect(l.basis).toContain("dc.rights = 'CC BY-NC-SA 3.0 IGO'");
   });
-  test("a near-miss is NOT mapped: 3.0 without IGO is a different licence", () => {
+  test("nearMissNotMapped", () => {
     const l = licenceFromRecord(dspaceToRecord("u", { ...META, "dc.rights": [{ value: "CC BY-NC-SA 3.0" }] }, "s", "t"), url);
     expect(l.status).toBe("unknown");
     expect(l.searched?.[0]?.result).toContain("not a licence this recognises");
   });
-  test("no dc.rights is unknown, saying where it looked", () => {
+  test("noRightsUnknown", () => {
     const { "dc.rights": _r, ...rest } = META;
     expect(licenceFromRecord(dspaceToRecord("u", rest, "s", "t"), url).searched?.[0]?.where).toContain("dc.rights");
   });
@@ -54,7 +54,7 @@ describe("fetchItem destination checks (bean folio-core-xpsq)", () => {
   const UUID = "58333fc5-9ec5-4d14-b341-5ae257dd0ad1";
   const HANDLE_URL = "https://iris.who.int/handle/10665/340749";
 
-  test("refuses non-https handle URLs and unexpected hosts before any network call", async () => {
+  test("refusesBadHandleUrl", async () => {
     const neverCalled: typeof fetch = (async () => {
       throw new Error("should not be called");
     }) as unknown as typeof fetch;
@@ -68,7 +68,7 @@ describe("fetchItem destination checks (bean folio-core-xpsq)", () => {
     ).rejects.toThrow(/unexpected host/i);
   });
 
-  test("refuses server-supplied bitstreams.href or content.href pointing to another host or http://", async () => {
+  test("refusesForeignBitstreamHref", async () => {
     const makeStub = (contentHref: string): typeof fetch =>
       (async (input: string | URL | Request) => {
         const u = String(input);
@@ -129,7 +129,7 @@ describe("fetchItem destination checks (bean folio-core-xpsq)", () => {
     ).rejects.toThrow(/unexpected host/i);
   });
 
-  test("refuses a bitstream download that redirects to an unexpected host or http://", async () => {
+  test("refusesForeignRedirect", async () => {
     const redirectStub: typeof fetch = (async (input: string | URL | Request) => {
       const u = String(input);
       if (u === HANDLE_URL) {

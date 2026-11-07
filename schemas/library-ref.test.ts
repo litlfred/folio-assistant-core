@@ -32,7 +32,7 @@ const PLATFORM = resolve(REPO, "cat-harness");
 const WHO_IRIS = resolve(REPO, "who-iris");
 
 describe("instance discovery", () => {
-  it("finds instances by their DECLARED name, not by their published stub", () => {
+  it("findsInstancesByDeclaredName", () => {
     const roots = instanceRoots(REPO);
     // This used to read "not by DIRECTORY name", witnessed by a declared
     // `folio-assist-core` in a directory called `folio-assistant-core`. After
@@ -52,11 +52,11 @@ describe("instance discovery", () => {
     expect(roots.get("folio-assistant-core")).toBe(resolve(REPO, "folio-assistant-core"));
   });
 
-  it("finds the platform instance, whose directory is `cat-harness`", () => {
+  it("findsPlatformInstance", () => {
     expect(instanceRoots(REPO).get("cat-harness")).toBe(PLATFORM);
   });
 
-  it("the index ROOT is no instance, and the harness layer keeps its own name", () => {
+  it("indexRootIsNoInstance", () => {
     // Restated after the repository split. This read "the REPOSITORY is its
     // own instance": the root declared `folio-assistant` (owner 2026-09-20),
     // and the check was that it did not collide with the harness layer —
@@ -77,11 +77,11 @@ describe("instance discovery", () => {
 });
 
 describe("library location is read from the declaration", () => {
-  it("resolves a content instance's declared library graph", () => {
+  it("resolvesDeclaredLibrary", () => {
     expect(libraryDirOf(WHO_IRIS)).toBe(resolve(WHO_IRIS, "library"));
   });
 
-  it("the PLATFORM's library holds ONLY sources its methodologies cite", () => {
+  it("platformLibraryOnlyCitedSources", () => {
     // `cat-harness` held 1,431 files of somebody else's writing until bean
     // `frs5`. AGENTS.md states the rule — "folio-assistant is the platform,
     // not the content" — and until that move nothing checked it.
@@ -169,7 +169,7 @@ describe("library location is read from the declaration", () => {
     expect(uncited).toEqual([]);
   });
 
-  it("returns undefined for an instance that declares no library graph", () => {
+  it("noLibraryGraphUndefined", () => {
     // NOT the same as an empty directory, and not an error: `kg-navigation`
     // legitimately holds no corpus.
     expect(libraryDirOf(resolve(REPO, "kg-navigation"))).toBeUndefined();
@@ -179,12 +179,12 @@ describe("library location is read from the declaration", () => {
 describe("resolution keeps four failures apart", () => {
   const local = { libraryId: "wpr-rdo-2020-003-eng", sectionId: "page-012" };
 
-  it("resolves a bare reference against the citing instance", () => {
+  it("resolvesBareAgainstCitingInstance", () => {
     const r = resolveLibraryRef(local, WHO_IRIS, REPO);
     expect(r.ok).toBe(true);
   });
 
-  it("resolves the SAME reference when the instance is named explicitly", () => {
+  it("namedInstanceSameAsBare", () => {
     // The two forms must agree, or adding `instance` to an existing citation
     // would change what it means.
     const bare = resolveLibraryRef(local, WHO_IRIS, REPO);
@@ -193,7 +193,7 @@ describe("resolution keeps four failures apart", () => {
     if (bare.ok && named.ok) expect(named.path).toBe(bare.path);
   });
 
-  it("the platform citing a WHO document must NAME who-iris — and does resolve", () => {
+  it("platformMustNameWhoIris", () => {
     // The case bean `r1lz` predicted, now real rather than hypothetical. A
     // bare citation from the platform cannot work any more (it declares no
     // library), and the named one crosses the instance boundary and lands.
@@ -202,7 +202,7 @@ describe("resolution keeps four failures apart", () => {
     if (named.ok) expect(named.path).toContain("who-iris/library/wpr-rdo-2020-003-eng");
   });
 
-  it("an unknown instance is never silently treated as local", () => {
+  it("unknownInstanceNotLocal", () => {
     // The failure this rule exists for: falling back would turn "you cited
     // another repository and it is not here" into "that section is missing",
     // sending the reader to entirely the wrong place.
@@ -214,7 +214,7 @@ describe("resolution keeps four failures apart", () => {
     }
   });
 
-  it("a known instance with no library graph is its own finding", () => {
+  it("noLibraryGraphFinding", () => {
     // `bootstrap` is declared and legitimately holds no corpus — distinct
     // from a missing section, and distinct from an unknown instance. It is the
     // zero-install floor, so it will never hold one. (This named
@@ -231,7 +231,7 @@ describe("resolution keeps four failures apart", () => {
     if (!r.ok) expect(r.failure.kind).toBe("no-library-graph");
   });
 
-  it("a BARE reference from the platform now says `not-ingested`, and that is WORSE", () => {
+  it("bareFromPlatformNotIngested", () => {
     // The two answers are a sentence apart and send a reader to different
     // places: "this instance has no corpus, name the one that does" versus
     // "that document was never ingested".
@@ -253,19 +253,19 @@ describe("resolution keeps four failures apart", () => {
     if (!r.ok) expect(r.failure.kind).toBe("not-ingested");
   });
 
-  it("a document that was never ingested is distinct from a missing section", () => {
+  it("neverIngestedDistinct", () => {
     const r = resolveLibraryRef({ libraryId: "never-ingested" }, WHO_IRIS, REPO);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.failure.kind).toBe("not-ingested");
   });
 
-  it("a missing section in an ingested document is the fourth case", () => {
+  it("missingSectionFourthCase", () => {
     const r = resolveLibraryRef({ libraryId: "wpr-rdo-2020-003-eng", sectionId: "page-999" }, WHO_IRIS, REPO);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.failure.kind).toBe("no-such-section");
   });
 
-  it("every failure explains itself in one actionable line", () => {
+  it("everyFailureExplainsItself", () => {
     for (const ref of [
       { ...local, instance: "nope" },
       { ...local, instance: "kg-navigation" },
@@ -300,7 +300,7 @@ describe("an instance's library is ITS OWN, not the first one declared", () => {
     return root;
   }
 
-  it("ignores a repository-scoped entry even when it is declared FIRST", () => {
+  it("ignoresRepositoryScopedFirst", () => {
     const root = instance([
       { id: "other", path: "elsewhere/library/", scope: "repository", graphTypologies: ["library"] },
       { id: "library", path: "library/", graphTypologies: ["library"] },
@@ -309,7 +309,7 @@ describe("an instance's library is ITS OWN, not the first one declared", () => {
     rmSync(root, { recursive: true, force: true });
   });
 
-  it("and the answer does not change when the order does", () => {
+  it("orderDoesNotMatter", () => {
     // The whole point: the same declaration, written the other way round.
     const root = instance([
       { id: "library", path: "library/", graphTypologies: ["library"] },
@@ -319,7 +319,7 @@ describe("an instance's library is ITS OWN, not the first one declared", () => {
     rmSync(root, { recursive: true, force: true });
   });
 
-  it("REFUSES when an instance declares two of its own, rather than picking", () => {
+  it("refusesTwoOwnLibraries", () => {
     // `undefined` would say "this instance declares no library", which is a
     // different and wrong fact. Two libraries of one's own has no answer to
     // "where does this instance keep its corpus".
@@ -331,7 +331,7 @@ describe("an instance's library is ITS OWN, not the first one declared", () => {
     rmSync(root, { recursive: true, force: true });
   });
 
-  it("every real instance here resolves its own library, or declares none", () => {
+  it("realInstancesResolveOwn", () => {
     // Over the real repository, so a future declaration that breaks it says so.
     for (const inst of ["cat-harness", "who-iris", "folio-assistant-sci"]) {
       expect({ inst, dir: libraryDirOf(resolve(REPO, inst)) })
@@ -348,7 +348,7 @@ describe("an entry filed in a concern group resolves (bean 6fez)", () => {
   // Measured 2026-11-02: cat-harness filed its library into groups,
   // `library/<group>/<id>/`, and check:voices reported every one of its
   // sources "not ingested", because only `library/<id>/` was looked at.
-  it("finds `library/<group>/<id>/` when the library declares the group, and only then", () => {
+  it("groupedEntryResolves", () => {
     const root = mkdtempSync(join(tmpdir(), "grouped-ref-"));
     try {
       mkdirSync(join(root, "library", "kg", "doc", "sections"), { recursive: true });

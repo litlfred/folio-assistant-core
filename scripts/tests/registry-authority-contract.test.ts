@@ -22,7 +22,7 @@ const CORE = resolve(import.meta.dir, "../..");
 const load = (): Promise<ProcessModel> => loadProcessModel(workflowFile(CORE, "evidence-retrieval.bpmn"));
 
 describe("the lane names the external registry, and its task names this contract", () => {
-  test("Task_VerifyAuthority and Gateway_Authoritative sit in Lane_Trusted, which names external-registry", async () => {
+  test("trustedLaneNamesRegistry", async () => {
     const model = await load();
     for (const id of ["Task_VerifyAuthority", "Gateway_Authoritative"]) {
       expect(model.nodes.get(id)!.laneId).toBe("Lane_Trusted");
@@ -31,7 +31,7 @@ describe("the lane names the external registry, and its task names this contract
     expect(model.nodes.get("Task_VerifyAuthority")!.skills).toEqual(["registry-authority-contract"]);
   });
 
-  test("the registry's lane holds one activity, the readout — no step of this instance's own", async () => {
+  test("laneHoldsOneActivity", async () => {
     const model = await load();
     const held = [...model.nodes.values()].filter((n) => n.laneId === "Lane_Trusted" && n.kind === "activity").map((n) => n.id);
     expect(held).toEqual(["Task_VerifyAuthority"]);
@@ -39,7 +39,7 @@ describe("the lane names the external registry, and its task names this contract
 });
 
 describe("What happens when it does not answer: the work plan records it, and nothing invents a verdict", () => {
-  test("Gateway_Authoritative has two answers: `yes` goes on to grading, `no` opens the bean", async () => {
+  test("gatewayTwoAnswers", async () => {
     const model = await load();
     const out = [...model.flows.values()].filter((f) => f.from === "Gateway_Authoritative");
     expect(Object.fromEntries(out.map((f) => [f.name, f.to]))).toEqual({ yes: "Task_AppraiseGrade", no: "Task_RecordUnverified" });
@@ -49,7 +49,7 @@ describe("What happens when it does not answer: the work plan records it, and no
     expect(bean.writes).toEqual(["work-plan"]);
   });
 
-  test("run with a `no`, the unverified citation is recorded — it is neither dropped nor attached", async () => {
+  test("noRecordsUnverified", async () => {
     const model = await load();
     const state = startInstance(model, { id: "authority-no", subject: "content/rec.md" });
     for (let guard = 0; ; guard++) {

@@ -23,20 +23,20 @@ const CAPTURED = [
 ];
 
 describe("the marker list is closed (contract §1)", () => {
-  it("counts obligation, recommendation, negation and the listed permission forms", () => {
+  it("countsListedMarkers", () => {
     expect(markersOf("Children should be vaccinated.")).toEqual(["obligation"]);
     expect(markersOf("WHO recommends this.")).toEqual(["recommendation"]);
     expect(markersOf("It may be given at birth.")).toEqual(["permission"]);
     expect(markersOf("Pregnancy is not a reason to delay.")).toEqual(["negation"]);
   });
-  it("`should not` is not also `should`, and bare `may` is not a marker", () => {
+  it("shouldNotIsNegationBareMayNone", () => {
     expect(markersOf("It should not be given.")).toEqual(["negation"]);
     expect(markersOf("This may be associated with fever.")).toEqual([]);
   });
 });
 
 describe("coverage", () => {
-  it("captured, unaccounted, and per-page figures", () => {
+  it("capturedUnaccountedPerPage", () => {
     const r = coverage(PAGES, CAPTURED);
     expect(r.totals.normative).toBe(5);
     expect(r.totals.captured).toBe(3);
@@ -46,7 +46,7 @@ describe("coverage", () => {
     expect(exitCodeFor(r)).toBe(1);
   });
 
-  it("a SIGNED-OFF exclusion accounts for a sentence; a proposed one does not", () => {
+  it("signedExclusionAccounts", () => {
     const proposed = coverage(PAGES, CAPTURED, [{ location: "p2:s1", reason: "background-fact" }]);
     expect(proposed.sentences.find((s) => s.location === "p2:s1")?.state).toBe("unaccounted");
     const r = coverage(PAGES, CAPTURED, [
@@ -58,7 +58,7 @@ describe("coverage", () => {
     expect(exitCodeFor(r)).toBe(0);
   });
 
-  it("refuses a reason outside the fixed list, and a duplicate-of that resolves to nothing", () => {
+  it("refusesBadReasons", () => {
     expect(reasonProblem("not-important", new Set())).toContain("not one of the fixed reasons");
     expect(reasonProblem("duplicate-of:rec-9", new Set(["rec-1"]))).toContain("names no captured statement");
     expect(reasonProblem("duplicate-of:rec-1", new Set(["rec-1"]))).toBeNull();
@@ -67,7 +67,7 @@ describe("coverage", () => {
     expect(exitCodeFor(r)).toBe(1);
   });
 
-  it("no normative sentence at all: exit 0, null percentages", () => {
+  it("noNormativeExitZero", () => {
     const r = coverage([{ page: 1, text: "Nothing here binds anyone." }], []);
     expect(r.totals.accountedForPct).toBeNull();
     expect(exitCodeFor(r)).toBe(0);
@@ -75,16 +75,16 @@ describe("coverage", () => {
 });
 
 describe("inputs", () => {
-  it("form-feed plain text is pages numbered from 1", () => {
+  it("formFeedPages", () => {
     expect(parsePages("a\fb\fc").map((p) => p.page)).toEqual([1, 2, 3]);
   });
-  it("sentences split at terminal punctuation followed by a capital", () => {
+  it("sentenceSplit", () => {
     expect(sentencesOf("One. Two words.\nThree?")).toEqual(["One.", "Two words.", "Three?"]);
   });
 });
 
 describe("CLI", () => {
-  it("exits 1 below target and writes the §4 shape", () => {
+  it("cliExitsBelowTarget", () => {
     const d = mkdtempSync(join(tmpdir(), "l1cov-"));
     writeFileSync(join(d, "t.json"), JSON.stringify({ pages: PAGES }));
     writeFileSync(join(d, "c.json"), JSON.stringify(CAPTURED));

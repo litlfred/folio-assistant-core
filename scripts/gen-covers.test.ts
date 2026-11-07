@@ -24,12 +24,12 @@ describe("the catalogue asks for the covers, not the script", () => {
   const all = nodes(INSTANCE);
   const { covers, problems } = coversWanted(all, INSTANCE);
 
-  it("the real catalogue yields covers and no problems", () => {
+  it("catalogueYieldsCovers", () => {
     expect(problems).toEqual([]);
     expect(covers.length).toBeGreaterThan(0);
   });
 
-  it("every declared cover's bytes exist and match its recorded digest", () => {
+  it("coverBytesMatchDigest", () => {
     // R13, discharged for the case this script owns. `yl5w` is the general
     // version and is still open: three ORIGINAL bitstreams in this same
     // catalogue claim `materialized` and resolve to nothing, and
@@ -42,7 +42,7 @@ describe("the catalogue asks for the covers, not the script", () => {
     }
   });
 
-  it("every cover is the declared width, and the height is the page's own", () => {
+  it("declaredWidthOwnHeight", () => {
     // Width is shared so a listing has one column; height is NOT, and that is
     // the point. The three are 2:3, 0.705:1 and a scanned page — a forced
     // height would letterbox or crop two of them.
@@ -59,7 +59,7 @@ describe("the catalogue asks for the covers, not the script", () => {
 describe("a THUMBNAIL that does not declare itself derived is refused", () => {
   const all = nodes(INSTANCE);
 
-  it("stripping the declaration turns a cover into a problem", () => {
+  it("strippedDeclarationIsProblem", () => {
     const withCover = all.find((n) => n.bitstreams?.some((b) => b.bundle === "THUMBNAIL"));
     expect(withCover).toBeDefined();
 
@@ -73,7 +73,7 @@ describe("a THUMBNAIL that does not declare itself derived is refused", () => {
     expect(problems[0]).toContain("does not declare itself derived");
   });
 
-  it("the marker is a substring of an AUTHORED note, not something generated", () => {
+  it("markerInAuthoredNote", () => {
     // If the script wrote the sentence it checks for, the check would be
     // circular and would pass over any node the script had ever touched.
     for (const n of all) {
@@ -88,7 +88,7 @@ describe("a THUMBNAIL that does not declare itself derived is refused", () => {
     }
   });
 
-  it("no cover claims the Handle as what it was derived FROM", () => {
+  it("noHandleAsSource", () => {
     // R12, one step on: the Handle identifies the ITEM. Putting it on a
     // rendering asserts IRIS supplied the image.
     for (const n of all) {
@@ -104,7 +104,7 @@ describe("a THUMBNAIL that does not declare itself derived is refused", () => {
     }
   });
 
-  it("no cover is archival — a rendering answers no source-loss question", () => {
+  it("noArchivalCover", () => {
     for (const n of all) {
       const thumb = n.bitstreams?.find((b) => b.bundle === "THUMBNAIL");
       if (!thumb) continue;
@@ -128,7 +128,7 @@ describe("the check keeps its teeth where PyMuPDF is not installed", () => {
   // from the committed bytes.
   const { covers } = coversWanted(nodes(INSTANCE), INSTANCE);
 
-  it("PNG dimensions are readable from the file header, with no decoder", () => {
+  it("pngHeaderDimensions", () => {
     for (const c of covers) {
       const buf = readFileSync(join(INSTANCE, c.outPath));
       const size = pngSize(buf);
@@ -138,11 +138,11 @@ describe("the check keeps its teeth where PyMuPDF is not installed", () => {
     }
   });
 
-  it("every cover is the shared listing width", () => {
+  it("sharedListingWidth", () => {
     for (const c of covers) expect(c.declaredW).toBe(COVER_WIDTH);
   });
 
-  it("pngSize refuses bytes that are not a PNG rather than guessing", () => {
+  it("pngSizeRefusesNonPng", () => {
     // A corrupt file must report as unreadable, not as a dimension mismatch:
     // the two have different causes and different fixes.
     expect(pngSize(Buffer.alloc(4))).toBeUndefined();
@@ -153,7 +153,7 @@ describe("the check keeps its teeth where PyMuPDF is not installed", () => {
     expect(pngSize(wrongChunk)).toBeUndefined();
   });
 
-  it("a flipped byte changes the digest the node declares", () => {
+  it("flippedByteChangesDigest", () => {
     // The tamper case, asserted rather than only tried by hand: the digest is
     // what makes the backend-free path a real check instead of a file-exists
     // test wearing its clothes.
@@ -164,7 +164,7 @@ describe("the check keeps its teeth where PyMuPDF is not installed", () => {
     expect(createHash("sha256").update(buf).digest("hex")).not.toBe(c.declaredSha!);
   });
 
-  it("the declared byte count is the file's own length", () => {
+  it("declaredBytesIsLength", () => {
     for (const c of covers) {
       expect(c.declaredBytes).toBe(readFileSync(join(INSTANCE, c.outPath)).length);
     }
@@ -193,14 +193,14 @@ describe("a cover can outlive a PDF the repository does not hold", () => {
       ],
     }) as never;
 
-  it("a referenced ORIGINAL gives a cover with no source, and no problem", () => {
+  it("referencedOriginalNoSource", () => {
     const { covers, problems } = coversWanted([node("referenced")], INSTANCE);
     expect(problems).toEqual([]);
     expect(covers.length).toBe(1);
     expect(covers[0]!.sourcePdf).toBeUndefined();
   });
 
-  it("a materialized ORIGINAL with no bytes is still a problem (yl5w)", () => {
+  it("materializedMissingIsProblem", () => {
     const { covers, problems } = coversWanted([node("materialized", "uploads/x/missing.pdf")], INSTANCE);
     expect(covers.length).toBe(0);
     expect(problems.length).toBe(1);

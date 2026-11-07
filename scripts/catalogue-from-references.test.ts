@@ -59,7 +59,7 @@ function input(over: Partial<CatalogueInput> = {}): CatalogueInput {
 const parse = (s: string) => JSON.parse(s) as Record<string, unknown>;
 
 describe("planCatalogue", () => {
-  test("joins only entries with exactly one ledger row naming a known, titled reference", () => {
+  test("joinsOnlyUnambiguousEntries", () => {
     const plan = planCatalogue(input());
     expect(plan.joined.map((j) => j.slug)).toEqual(["milnor-1982", "neumann-zagier-1985"]);
     const why = Object.fromEntries(plan.skipped.map((s) => [s.slug, s.why]));
@@ -74,7 +74,7 @@ describe("planCatalogue", () => {
     });
   });
 
-  test("writes a valid node and Dublin Core record per joined entry", () => {
+  test("writesNodeAndRecord", () => {
     const plan = planCatalogue(input());
     expect(plan.writes.map((w) => `${w.action} ${w.path}`).sort()).toEqual([
       "create catalogue/nodes/item-milnor-1982.json",
@@ -94,7 +94,7 @@ describe("planCatalogue", () => {
     expect(rec.provenance).toEqual({ source: "folio/schema/references.ts#nz85", retrievedAt: "2026-10-29", method: "catalogue-from-references" });
   });
 
-  test("a re-run over its own output writes nothing, even on a later day", () => {
+  test("rerunWritesNothing", () => {
     const first = planCatalogue(input());
     const nodes = new Map<string, Record<string, unknown>>();
     const records = new Map<string, Record<string, unknown>>();
@@ -108,7 +108,7 @@ describe("planCatalogue", () => {
     expect(again.unchanged).toBe(4);
   });
 
-  test("a changed reference updates the record and its retrievedAt", () => {
+  test("changedReferenceUpdates", () => {
     const first = planCatalogue(input());
     const records = new Map<string, Record<string, unknown>>();
     for (const w of first.writes) if (w.path.includes("/records/")) records.set(w.path.split("/").pop()!, parse(w.content));
@@ -120,7 +120,7 @@ describe("planCatalogue", () => {
     expect((parse(w.content).provenance as { retrievedAt: string }).retrievedAt).toBe("2026-12-01");
   });
 
-  test("never overrides a node it did not write, and removes its own stale ones", () => {
+  test("neverOverridesForeignNode", () => {
     const nodes = new Map<string, Record<string, unknown>>([
       ["item-milnor-1982.json", { id: "item/b08c6c19", libraryId: "milnor-1982" }],
       ["item-old.json", { id: `${OWN_ID_PREFIX}old`, libraryId: "old", metadataRef: "catalogue/records/old.dc.json" }],

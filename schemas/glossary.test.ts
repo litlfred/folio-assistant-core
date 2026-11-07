@@ -51,7 +51,7 @@ import { discoverTools } from "@litlfred/cat-harness-tools/tools/discover.ts";
 // every other visualiser's, `en/<harness>/<visualiser>/`, computed by the
 // shared route helpers; the address without `en/` is only forwarded.
 describe("the glossary's route", () => {
-  test("the English pages are under `en/`, the translations under their own locale", () => {
+  test("englishUnderEnTranslationsUnderLocale", () => {
     expect(ROUTE).toBe("en/folio-assistant-core/glossary");
     expect(LEGACY_ROUTE).toBe("folio-assistant-core/glossary");
     expect(permalinkOf("index")).toBe("/en/folio-assistant-core/glossary/");
@@ -70,30 +70,30 @@ const ok = (v: unknown) => GlossarySchema.safeParse(v).success;
 const term = (over: Record<string, unknown> = {}) => ({ id: "t", prefLabel: "t", status: "candidate", ...over });
 
 describe("folio-glossary/v1", () => {
-  test("an authored term needs a definition; without one it is a candidate", () => {
+  test("authoredTermNeedsDefinition", () => {
     expect(ok(g({ terms: [term({ status: "authored" })] }))).toBe(false);
     expect(ok(g({ terms: [term({ status: "authored", definition: "d" })] }))).toBe(true);
     expect(ok(g({ terms: [term()] }))).toBe(true);
   });
 
-  test("could-not-extract says why", () => {
+  test("couldNotExtractSaysWhy", () => {
     expect(ok(g({ terms: [term({ status: "could-not-extract" })] }))).toBe(false);
     expect(ok(g({ terms: [term({ status: "could-not-extract", reason: "scanned page" })] }))).toBe(true);
   });
 
-  test("a match is an absolute IRI, and a broader/related reference is a local term or an IRI", () => {
+  test("matchIriBroaderLocalOrIri", () => {
     expect(ok(g({ terms: [term({ exactMatch: ["isco:2221"] })] }))).toBe(false);
     expect(ok(g({ terms: [term({ exactMatch: ["http://data.europa.eu/esco/isco/C2221"] })] }))).toBe(true);
     expect(ok(g({ terms: [term({ broader: ["nowhere"] })] }))).toBe(false);
     expect(ok(g({ terms: [term({ id: "a" }), term({ id: "b", broader: ["a"] })] }))).toBe(true);
   });
 
-  test("ids are unique, and an unknown key is refused rather than dropped", () => {
+  test("uniqueIdsUnknownKeyRefused", () => {
     expect(ok(g({ terms: [term(), term()] }))).toBe(false);
     expect(ok(g({ terms: [term({ definiton: "typo" })] }))).toBe(false);
   });
 
-  test("labels may be per language", () => {
+  test("labelsPerLanguage", () => {
     expect(ok(g({ terms: [term({ prefLabel: { en: "nurse", fr: "infirmière" } })] }))).toBe(true);
   });
 });
@@ -111,21 +111,21 @@ describe("SKOS", () => {
   const out = toSkos(glossary, NS) as { "@graph": Array<Record<string, unknown>> };
   const node = (id: string) => out["@graph"].find((n) => n["@id"] === id)!;
 
-  test("the scheme, each concept in it, and the IRIs follow the instance namespace", () => {
+  test("skosSchemeAndConceptIris", () => {
     expect(node(`${NS}glossary/s`)["@type"]).toBe("skos:ConceptScheme");
     expect(node(`${NS}glossary/s/a`)["skos:inScheme"]).toEqual({ "@id": `${NS}glossary/s` });
   });
 
-  test("an external concept is linked, never copied", () => {
+  test("externalConceptLinkedNotCopied", () => {
     expect(node(`${NS}glossary/s/a`)["skos:exactMatch"]).toEqual([{ "@id": "http://ex.org/c/1" }]);
     expect(out["@graph"].some((n) => n["@id"] === "http://ex.org/c/1")).toBe(false);
   });
 
-  test("members become a skos:Collection of external IRIs", () => {
+  test("membersBecomeCollection", () => {
     expect(node(`${NS}glossary/s#members`)["skos:member"]).toEqual([{ "@id": "http://ex.org/c/2" }]);
   });
 
-  test("a local broader resolves to the local IRI; a candidate says so in skos:note", () => {
+  test("localBroaderCandidateNote", () => {
     expect(node(`${NS}glossary/s/b`)["skos:broader"]).toEqual([{ "@id": `${NS}glossary/s/a` }]);
     expect(node(`${NS}glossary/s/b`)["skos:note"]).toBe("candidate");
     expect(node(`${NS}glossary/s/a`)["skos:notation"]).toBe("A1");
@@ -135,16 +135,16 @@ describe("SKOS", () => {
 describe("this repository", () => {
   const c = collect();
 
-  test("every glossary document validates, and there is at least one (vacuity guard)", () => {
+  test("everyGlossaryValidates", () => {
     expect(c.findings.invalid).toEqual([]);
     expect(c.glossaries.length).toBeGreaterThan(0);
   });
 
-  test("the harness's swimlane ledgers are a source, read under their new kind", () => {
+  test("swimlaneLedgersAreSource", () => {
     expect(c.ledgers.map((l) => l.instance).sort()).toEqual(["bootstrap", "cat-harness"]);
   });
 
-  test("core's terms live in core's namespace", () => {
+  test("coreTermsInCoreNamespace", () => {
     const core = c.glossaries.find((s) => s.instance === "folio-assistant-core")!;
     // Its declaration now carries an iriBase (bean yn2k), so the namespace is
     // read through it, as every other instance's is below.
@@ -153,7 +153,7 @@ describe("this repository", () => {
     expect(core.ns).toBe("https://litlfred.github.io/folio-assistant-core/v0/ns/");
   });
 
-  test("the page lists every term once, and SKOS is published for every scheme", () => {
+  test("everyTermOnceSkosPerScheme", () => {
     const pages = renderPages(c);
     const ids = [...pages.values()].flatMap((p) => [...p.matchAll(/<dt id="([^"]+)"/g)].map((m) => m[1]!));
     const terms = c.glossaries.flatMap((s) => s.glossary.terms);
@@ -186,7 +186,7 @@ describe("the glossary pages", () => {
   /** A type's term-holding pages: itself, or its parts when it is split. */
   const pagesOfType = (t: AssetType) => (LETTER_PARTS[t] ? LETTER_PARTS[t]!.map((r) => `${t}/${r}`) : [t]);
 
-  test("there is an index, one page per instance that owns an authored scheme, and one per asset type, and each is an output", () => {
+  test("indexInstanceAndTypePages", () => {
     expect([...pages.keys()]).toEqual(pageKeysOf(c));
     expect(pageKeysOf(c)).toEqual(["index", ...authoredKeys(c), ...PAGE_KEYS.slice(1)]);
     expect(authoredKeys(c) as string[]).toEqual(
@@ -199,7 +199,7 @@ describe("the glossary pages", () => {
     // the same budget, for the same reason, as the SKOS test above.
   }, 30_000);
 
-  test("every term appears exactly once across all the pages, and on the page its scheme belongs to", () => {
+  test("everyTermOnceOnItsPage", () => {
     const seen = new Map<string, string>();
     for (const [k, page] of pages) {
       for (const id of idsOn(page)) {
@@ -213,7 +213,7 @@ describe("the glossary pages", () => {
     for (const { s, t } of all) expect(seen.get(idOf(s, t))).toBe(pageOfTerm(s, t));
   });
 
-  test("the index holds no term; each instance's page holds its authored terms only; each type's page holds that type's extracted terms only", () => {
+  test("pagesHoldOnlyTheirTerms", () => {
     const n = counts(c);
     const index = pages.get("index")!;
     expect(idsOn(index)).toEqual([]);
@@ -234,7 +234,7 @@ describe("the glossary pages", () => {
     expect(n.authored).toBeGreaterThan(0);
   });
 
-  test("each page is under its stated size budget, and says so", () => {
+  test("pagesWithinSizeBudget", () => {
     for (const [k, page] of pages) {
       const bytes = Buffer.byteLength(page, "utf-8");
       expect(`${k} ${bytes <= budgetOf(k) ? "within" : `over: ${bytes} > ${budgetOf(k)}`}`).toBe(`${k} within`);
@@ -248,7 +248,7 @@ describe("the glossary pages", () => {
     for (const t of ASSET_TYPES) expect(budgetOf(t)).toBeLessThan(1.4 * 1024 * 1024);
   });
 
-  test("the index links every per-type page, and each per-type page links back", () => {
+  test("indexAndTypePagesLinked", () => {
     const index = pages.get("index")!;
     for (const t of ASSET_TYPES) {
       expect(index).toContain(`{{ '${permalinkOf(t)}' | relative_url }}`);
@@ -260,7 +260,7 @@ describe("the glossary pages", () => {
     expect(index).toContain("has_children: true\n");
   });
 
-  test("a split type's term links name the part the target is on, and every one resolves", () => {
+  test("splitTypeLinksResolve", () => {
     for (const t of ASSET_TYPES.filter((x) => LETTER_PARTS[x])) {
       const parts = pagesOfType(t);
       const anchors = new Map(parts.map((k) => [k, new Set(idsOn(pages.get(k as never)!))] as const));
@@ -280,7 +280,7 @@ describe("the glossary pages", () => {
     }
   });
 
-  test("on a split type, a term code links to the PART its target's label falls in", () => {
+  test("splitTypeCodeLinksToPart", () => {
     const s = {
       instance: "i",
       extracted: "kg-schema-fields",
@@ -291,7 +291,7 @@ describe("the glossary pages", () => {
     );
   });
 
-  test("every page keeps the text filter, and the A–Z bar wherever it lists terms A–Z", () => {
+  test("pagesKeepFilterAndLetters", () => {
     for (const [k, page] of pages) {
       if (!idsOn(page).length) continue;
       // A page whose every term is in an ordered scheme (bootstrap's) lists
@@ -320,7 +320,7 @@ describe("extracted KG terms", () => {
   // 5 s per-test limit on CI (5098-5140 ms, folio-assistant run 41358487974).
   const rendered = renderPages(c);
 
-  test("each asset type contributes terms, above a floor (a vacuity guard, not an exact count)", () => {
+  test("eachTypeAboveFloor", () => {
     const floors: Record<AssetType, number> = {
       "kg-skills": 200,
       "kg-tools": 80,
@@ -334,13 +334,13 @@ describe("extracted KG terms", () => {
     }
   });
 
-  test("every extracted term is a candidate whose source resolves to a file in the repository", () => {
+  test("extractedTermsAreSourcedCandidates", () => {
     expect(terms.length).toBeGreaterThan(0);
     const bad = terms.filter(({ t }) => t.status !== "candidate" || !t.source || !existsSync(join(REPO, pathOf(t.source))));
     expect(bad.map(({ t }) => t.source)).toEqual([]);
   });
 
-  test("an anchored source names an element that is really in that file", () => {
+  test("anchorNamesElementInFile", () => {
     const anchored = terms.filter(({ s, t }) => s.extracted !== "kg-skills" && anchorOf(t.source!));
     expect(anchored.length).toBeGreaterThan(0);
     const text = new Map<string, string>();
@@ -358,7 +358,7 @@ describe("extracted KG terms", () => {
     expect(missing.map(({ t }) => t.source)).toEqual([]);
   });
 
-  test("no definition appears that is not verbatim in its asset", () => {
+  test("definitionsVerbatimInAsset", () => {
     const withDef = terms.filter(({ t }) => t.definition);
     expect(withDef.length).toBeGreaterThan(1000);
     const tools = new Map(discoverTools(REPO).tools.map((t) => [t.id, t]));
@@ -406,7 +406,7 @@ describe("extracted KG terms", () => {
     expect(bad.map(({ t }) => `${t.source}: ${t.definition}`)).toEqual([]);
   });
 
-  test("a DMN decision is never defined by one of its rules' descriptions", () => {
+  test("dmnNotDefinedByRule", () => {
     const dmn = terms.filter(({ s }) => s.extracted === "kg-dmn-decisions");
     expect(dmn.length).toBeGreaterThan(0);
     for (const { t } of dmn) {
@@ -418,14 +418,14 @@ describe("extracted KG terms", () => {
     }
   });
 
-  test("no two terms, authored or extracted, mint one IRI", () => {
+  test("noTwoTermsMintOneIri", () => {
     const iris = c.glossaries.flatMap((s) => s.glossary.terms.map((t) => termIri(s.ns, s.glossary, t.id)));
     expect(iris.length).toBeGreaterThan(2000);
     expect(new Set(iris).size).toBe(iris.length);
     expect(c.findings.invalid).toEqual([]);
   });
 
-  test("an extracted term's IRI is in the namespace of the instance that holds the asset", () => {
+  test("extractedIriInHoldersNamespace", () => {
     for (const s of extracted) {
       const decl = instanceRootsIn(REPO)
         .map((r) => ({ r, d: readDeclaration(r) }))
@@ -436,7 +436,7 @@ describe("extracted KG terms", () => {
     }
   });
 
-  test("roles and lanes are not re-extracted: the swimlane ledger carries them and is linked", () => {
+  test("rolesAndLanesNotReextracted", () => {
     expect(c.ledgers.reduce((k, l) => k + l.terms, 0)).toBeGreaterThan(0);
     const types = new Set(extracted.map((s) => s.extracted));
     expect([...types].sort()).toEqual([...ASSET_TYPES].sort());
@@ -452,7 +452,7 @@ describe("extracted KG terms", () => {
     expect(rendered.get("index")).toContain("auto-docs/glossary/swimlane-glossary/");
   });
 
-  test("the pages tell extracted from authored, and only authored terms reach schema.org", () => {
+  test("pagesTellExtractedFromAuthored", () => {
     const pages = rendered;
     const all = [...pages.values()].join("\n");
     const n = counts(c);
@@ -483,7 +483,7 @@ describe("extracted KG terms", () => {
     }
   });
 
-  test("extracted schemes are written under a declared glossary directory's generated/, never over an authored file", () => {
+  test("extractedWrittenUnderGenerated", () => {
     const files = [...outputs(c).keys()].map((p) => relative(REPO, p).split("\\").join("/"));
     const gen = files.filter((p) => p.endsWith(".glossary.json"));
     expect(gen.length).toBe(extracted.length);
@@ -496,13 +496,13 @@ describe("extracted KG terms", () => {
     // over bun's 5 s default. A corpus budget, as above, not a hang guard.
   }, 30_000);
 
-  test("an authored scheme may not take the extracted prefix", () => {
+  test("authoredNotExtractedPrefix", () => {
     expect(c.glossaries.filter((s) => !s.extracted && s.glossary.id.startsWith(EXTRACTED_PREFIX))).toEqual([]);
   });
 });
 
 describe("extraction helpers", () => {
-  test("a local id keeps `@id` and `id` apart, and always satisfies the schema", () => {
+  test("localIdKeepsAtIdApart", () => {
     expect(localId("x.X.@id")).not.toBe(localId("x.X.id"));
     expect(localId("@id")).not.toBe(localId("id"));
     for (const k of ["Process_A.Task_B", "graph.GraphSchema.$schema", "x.Y.@context", "  weird  key!"]) {
@@ -510,7 +510,7 @@ describe("extraction helpers", () => {
     }
   });
 
-  test("XML decoding covers the predefined entities and numeric references, once", () => {
+  test("xmlDecodingOnce", () => {
     expect(decodeXml("a &amp;lt; b &#183; &#x41; <![CDATA[c]]>")).toBe("a &lt; b · A c");
   });
 });
@@ -541,20 +541,20 @@ describe("every term in the namespace of the instance that owns its source", () 
   const isPath = (src?: string) =>
     !!src && !/^[a-z][a-z0-9+.-]*:\/\//i.test(src) && existsSync(resolve(REPO, src.split("#", 2)[0]!));
 
-  test("(a) no two schemes, in any instance, mint one scheme IRI", () => {
+  test("noTwoSchemesOneIri", () => {
     expect(c.findings.invalid.filter((f) => f.includes("collision"))).toEqual([]);
     const iris = c.glossaries.map((s) => schemeIri(s.ns, s.glossary));
     expect(iris.length).toBeGreaterThan(ASSET_TYPES.length); // vacuity guard
     expect(iris.filter((x, i) => iris.indexOf(x) !== i)).toEqual([]);
   });
 
-  test("(b) no two instances resolve to one namespace", () => {
+  test("noTwoInstancesOneNamespace", () => {
     const all = [...nsOfName.values()];
     expect(all.length).toBeGreaterThan(1); // vacuity guard
     expect(all.filter((x, i) => all.indexOf(x) !== i)).toEqual([]);
   });
 
-  test("(c) every term with a repository source is minted in the namespace of the instance whose root holds it, authored and extracted alike", () => {
+  test("termMintedInOwnersNamespace", () => {
     const wrong: string[] = [];
     let checked = 0;
     let authored = 0;
@@ -578,7 +578,7 @@ describe("every term in the namespace of the instance that owns its source", () 
     expect(wrong).toEqual([]);
   });
 
-  test("an authored scheme sourced in several instances with no defining source is refused, not guessed", () => {
+  test("multiInstanceSchemeRefused", () => {
     const owners = instanceOwners(REPO);
     const g = (over: Record<string, unknown>) => GlossarySchema.parse({ $schema: "folio-glossary/v1", id: "x", title: "X", ...over });
     const mixed = g({
@@ -620,7 +620,7 @@ describe("an ordered glossary (owner, 2026-09-29: logical, not alphabetical)", (
   const g = (terms: unknown[], ordered = true) =>
     GlossarySchema.safeParse({ $schema: "folio-glossary/v1", id: "t", title: "T", ordered, terms });
 
-  test("a term may require only earlier terms of its own glossary, never itself", () => {
+  test("requiresOnlyEarlierTerms", () => {
     expect(g([term("a"), term("b", ["a"])]).success).toBe(true);
     expect(g([term("a", ["b"]), term("b")]).success).toBe(false); // forward
     expect(g([term("a", ["a"])]).success).toBe(false); // self
@@ -628,7 +628,7 @@ describe("an ordered glossary (owner, 2026-09-29: logical, not alphabetical)", (
     expect(g([term("a", ["b"]), term("b")], false).success).toBe(true); // unordered: forward allowed
   });
 
-  test("the SKOS carries the order as an OrderedCollection, and each requires as dcterms:requires", () => {
+  test("skosOrderedCollection", () => {
     const parsed = GlossarySchema.parse({
       $schema: "folio-glossary/v1",
       id: "t",
@@ -646,7 +646,7 @@ describe("an ordered glossary (owner, 2026-09-29: logical, not alphabetical)", (
     expect(b["dcterms:requires"]).toEqual([{ "@id": "https://example.org/ns#glossary/t/a" }]);
   });
 
-  test("bootstrap's terms are one ordered, authored scheme, read from its schema in the schema's order", () => {
+  test("bootstrapTermsOrderedFromSchema", () => {
     const c = collect();
     const boot = c.glossaries.find((s) => s.instance === "bootstrap" && s.glossary.ordered)!;
     expect(boot.file).toBe("bootstrap/schemas/graph.schema.json");
@@ -662,7 +662,7 @@ describe("a description naming another term links to it (bean qgjh)", () => {
   const c = collect();
   const pages = renderPages(c);
 
-  test("every in-page term link lands on an entry of the same page", () => {
+  test("inPageLinksLand", () => {
     for (const [k, page] of pages) {
       const ids = new Set([...page.matchAll(/<dt id="([^"]+)"/g)].map((m) => m[1]!));
       for (const m of page.matchAll(/<a href="#([^"]+--[^"]+--[^"]+)"><code>/g)) {
@@ -671,7 +671,7 @@ describe("a description naming another term links to it (bean qgjh)", () => {
     }
   });
 
-  test("only an exact id of the SAME scheme links, and never the term itself", () => {
+  test("onlySameSchemeIdLinks", () => {
     const s = { instance: "i", glossary: { id: "g", terms: [{ id: "a" }, { id: "b" }] } } as unknown as Parameters<
       typeof linkTermCodes
     >[0];
@@ -682,11 +682,11 @@ describe("a description naming another term links to it (bean qgjh)", () => {
 });
 
 describe("D4: a glossary's licence comes from the licence-naming row (bean gzkt)", () => {
-  test("written as dcterms:license, the row a library item's licence uses too", () => {
+  test("licenceAsDctermsLicense", () => {
     expect(licenceTerms("CC0-1.0")).toEqual({ "dcterms:license": "CC0-1.0" });
   });
 
-  test("no licence: nothing written", () => {
+  test("noLicenceNothingWritten", () => {
     expect(licenceTerms(undefined)).toEqual({});
   });
 });

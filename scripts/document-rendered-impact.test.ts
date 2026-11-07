@@ -41,39 +41,39 @@ const run = (changed: string[], site?: string) => documentRenderedImpact({ chang
 const line = (f: { role: string; path: string; anchors?: string[] }) => `${f.role}:${f.path}${f.anchors ? "#" + f.anchors.join(",") : ""}`;
 
 describe("documentRenderedImpact — blocks, from the ChangeSet", () => {
-  test("an edited, an added and a removed block each land on their own document's page, anchored at the label", () => {
+  test("blocksLandOnOwnPage", () => {
     const [doc] = run(["folio/doc/ch1/p-1.md", "folio/doc/ch1/p-2.ts", "folio/other/ch1/p-9.ts"]);
     expect(doc.renderer).toBe(DOCUMENT_RENDERER);
     expect(doc.files.map(line)).toEqual(["content:en/doc/index.html#prose:edited,prose:new", "content:en/other/index.html#prose:gone"]);
     expect(doc.undetermined).toEqual([]);
   });
 
-  test("the review list links each changed block", () => {
+  test("reviewListLinksBlocks", () => {
     expect(reviewList(run(["folio/doc/ch1/p-1.md"])[0]).map(line)).toEqual(["content:en/doc/index.html#prose:edited"]);
   });
 
-  test("the site prefix places the pages where the preview serves them", () => {
+  test("sitePrefixPlacesPages", () => {
     expect(run(["folio/doc/ch1/p-1.ts"], "smart-ra")[0].files.map((f) => f.path)).toEqual(["smart-ra/en/doc/index.html"]);
   });
 });
 
 describe("documentRenderedImpact — files the ChangeSet does not name", () => {
-  test("a chapter manifest moves the page and the outline; the document manifest also the document list", () => {
+  test("manifestMovesPageAndOutline", () => {
     expect(run(["folio/doc/ch1/ch1.ts"])[0].files.map(line)).toEqual(["content:en/doc/index.html", "index:outline.json"]);
     expect(run(["folio/doc/doc.ts"])[0].files.map(line)).toEqual(["content:en/doc/index.html", "index:index.html", "index:outline.json"]);
   });
 
-  test("a media file is the copied file and the page that shows it", () => {
+  test("mediaIsFileAndPage", () => {
     expect(run(["folio/doc/media/fig1.png"])[0].files.map(line)).toEqual(["content:en/doc/index.html", "data:en/doc/media/fig1.png"]);
   });
 
-  test("the comment store is the public-comment renderer's: the dashboard and every document page", () => {
+  test("commentStoreReachesDashboard", () => {
     const out = run(["review/public-comment/comments/PC-0001.json"]);
     expect(out.map((i) => i.renderer)).toEqual([DOCUMENT_RENDERER, PUBLIC_COMMENT_RENDERER]);
     expect(out[1].files.map(line)).toEqual(["content:en/doc/index.html", "content:en/folio-assistant-core/public-comments/folio/doc/index.html", "content:en/folio-assistant-core/public-comments/folio/other/index.html", "content:en/other/index.html"]);
   });
 
-  test("pages are under the locale and data is not (#2527); an outline's own page wins", () => {
+  test("pagesUnderLocaleOutlineWins", () => {
     // An outline published before the locale names its page where it was, and
     // that is the page the change alters on that site.
     const old = { documents: [{ slug: "doc", page: "doc/index.html" }, { slug: "other", page: "other/index.html" }] };
@@ -83,7 +83,7 @@ describe("documentRenderedImpact — files the ChangeSet does not name", () => {
     expect(documentRenderedImpact({ changed: ["folio/doc/ch1/p-1.md"], changeset })[0].files.map(line)).toEqual(["content:en/doc/index.html#prose:edited"]);
   });
 
-  test("anything else is undetermined with scope all, never no change", () => {
+  test("elseUndeterminedAll", () => {
     const [doc] = run(["dpi-h-ra.config.json", "folio-assistant"]);
     expect(doc.files).toEqual([]);
     expect(doc.undetermined.map((u) => [u.input, u.scope])).toEqual([["dpi-h-ra.config.json", "all"], ["folio-assistant", "all"]]);
@@ -96,19 +96,19 @@ describe("documentRenderedImpact — a file no builder of the site reads (bean e
   const reads: SiteReads = { reads: ["folio/", "library/", "review/public-comment/"], submodules: ["folio-assistant"] };
   const changed = ["beans/dpi-h-ra-7ss8--verify.md", "README.md", "input/fsh/x.fsh", "folio-assistant", "dpi-h-ra.json", "library/a.pdf", ".github/workflows/staging.yml"];
 
-  test("an undeclared directory or a root Markdown note is an input that reaches no page", () => {
+  test("unreadFileReachesNoPage", () => {
     const [doc] = documentRenderedImpact({ changed, changeset, outline, reads });
     expect(doc.inputs).toEqual([...changed].sort());
     expect(doc.files).toEqual([]);
     expect(doc.undetermined.map((u) => u.input).sort()).toEqual([".github/workflows/staging.yml", "dpi-h-ra.json", "folio-assistant", "library/a.pdf"]);
   });
 
-  test("the platform, a declared graph, the build definition and a root config stay any page", () => {
+  test("platformAndConfigMayBeRead", () => {
     for (const f of ["folio-assistant", "folio-assistant/cat-harness/x.ts", "library/a.pdf", ".github/x.yml", "package.json", "bun.lock"]) expect(siteMayRead(f, reads)).toBe(true);
     for (const f of ["beans/x.md", "AGENTS.md", "test/results/block-qa/x.json"]) expect(siteMayRead(f, reads)).toBe(false);
   });
 
-  test("with nothing declared to read, nothing is excluded: doubt carries", () => {
+  test("nothingDeclaredNothingExcluded", () => {
     expect(siteMayRead("beans/x.md", undefined)).toBe(true);
     expect(documentRenderedImpact({ changed: ["beans/x.md"], changeset, outline })[0].undetermined.map((u) => u.input)).toEqual(["beans/x.md"]);
   });
@@ -127,7 +127,7 @@ describe("documentRenderedImpact — a file no builder of the site reads (bean e
       return r;
     };
 
-    test("each step's script and its arguments; a step that runs no script is undefined", () => {
+    test("buildStepsScriptsAndArgs", () => {
       expect(buildSteps("bun run a/x.ts --out _site && bun run y.ts --root . ; jekyll build")).toEqual([
         { script: "a/x.ts", args: ["--out", "_site"] },
         { script: "y.ts", args: ["--root", "."] },
@@ -135,7 +135,7 @@ describe("documentRenderedImpact — a file no builder of the site reads (bean e
       ]);
     });
 
-    test("with a command: the union of its builders' reads, and a declared directory no builder reads is not read", async () => {
+    test("commandUnionOfReads", async () => {
       const r = repo("a", {
         "doc.ts": "export const siteReads = () => ['folio'];",
         "todo.ts": "export const siteReads = async (_r, args) => (args.includes('--todos') ? ['todos/items'] : []);",
@@ -146,18 +146,18 @@ describe("documentRenderedImpact — a file no builder of the site reads (bean e
       expect(siteMayRead("todos/items/a.md", got)).toBe(true);
     });
 
-    test("a step that is not a builder exporting siteReads, or a missing script: nothing excluded", async () => {
+    test("nonBuilderExcludesNothing", async () => {
       const r = repo("b", { "dumb.ts": "export const x = 1;", "doc.ts": "export const siteReads = () => ['folio'];" });
       expect(await siteReadsOf(r, "bun run b/doc.ts && bun run b/dumb.ts")).toBeUndefined();
       expect(await siteReadsOf(r, "bun run b/doc.ts && jekyll build")).toBeUndefined();
       expect(await siteReadsOf(r, "bun run b/gone.ts")).toBeUndefined();
     });
 
-    test("no command: the declared directories stand in", async () => {
+    test("noCommandDeclaredDirs", async () => {
       expect(await siteReadsOf(repo("c"))).toEqual({ reads: ["folio/", "beans/"], submodules: ["folio-assistant"] });
     });
 
-    test("no declaration: undefined, so nothing is excluded", async () => {
+    test("noDeclarationUndefined", async () => {
       const r = join(T, "none");
       mkdirSync(r);
       expect(await siteReadsOf(r, "bun run x.ts")).toBeUndefined();
@@ -170,11 +170,11 @@ describe("documentRenderedImpact — a lazy page (bean v433)", () => {
   const lazyOutline = { documents: [{ slug: "doc", lazy: { hydrated: "en/doc/index.hydrated.html", chunks: 3, of: { "prose:edited": 0, "prose:new": 1 } } }, { slug: "other" }] };
   const runLazy = (changed: string[]) => documentRenderedImpact({ changed, changeset, outline: lazyOutline })[0];
 
-  test("a text edit is its chunk and the hydrated page, not the shell", () => {
+  test("lazyTextEditChunkAndHydrated", () => {
     expect(runLazy(["folio/doc/ch1/p-1.md"]).files.map(line)).toEqual(["data:doc/blocks/000.json", "content:en/doc/index.hydrated.html#prose:edited"]);
   });
 
-  test("an added block reshapes the shell and shifts every chunk from its own on", () => {
+  test("lazyAddedBlockShiftsChunks", () => {
     expect(runLazy(["folio/doc/ch1/p-2.ts"]).files.map(line)).toEqual([
       "data:doc/blocks/001.json",
       "data:doc/blocks/002.json",
@@ -183,11 +183,11 @@ describe("documentRenderedImpact — a lazy page (bean v433)", () => {
     ]);
   });
 
-  test("a page that is not lazy is unchanged by any of this", () => {
+  test("nonLazyUnchanged", () => {
     expect(runLazy(["folio/other/ch1/p-9.ts"]).files.map(line)).toEqual(["content:en/other/index.html#prose:gone"]);
   });
 
-  test("the comment store also reaches the lazy page's notes and its hydrated page", () => {
+  test("commentStoreReachesLazyNotes", () => {
     const pc = documentRenderedImpact({ changed: ["review/public-comment/comments/PC-1.json"], changeset, outline: lazyOutline })[1];
     expect(pc.files.map(line)).toContain("data:doc/pc-notes.json");
     expect(pc.files.map(line)).toContain("content:en/doc/index.hydrated.html");
@@ -198,7 +198,7 @@ describe("documentRenderedImpact — a folio's library (library-site)", () => {
   const library = { dirs: ["library"], anchors: { "folio/doc/review-anchors.json": "library/v1" } };
   const lib = (changed: string[]) => documentRenderedImpact({ changed, changeset, outline, library });
 
-  test("an entry's structure reaches its page, its data and the library index; another file only its data", () => {
+  test("libraryStructureReachesPage", () => {
     const out = lib(["library/v1/structure.json", "library/v2/sections/s1.md"]);
     expect(out.map((i) => i.renderer)).toEqual([DOCUMENT_RENDERER, LIBRARY_RENDERER]);
     expect(out[0].undetermined).toEqual([]);
@@ -210,13 +210,13 @@ describe("documentRenderedImpact — a folio's library (library-site)", () => {
     ]);
   });
 
-  test("a folio's review anchors reach the entry they name (its edit links), not every page", () => {
+  test("reviewAnchorsReachEntry", () => {
     const out = lib(["folio/doc/review-anchors.json"]);
     expect(out[0].undetermined).toEqual([]);
     expect(out[1].files.map(line)).toContain("data:folio-assistant-core/library/v1/entries/v1.doc.json");
   });
 
-  test("libraryOf reads the declared library directories and the entry an anchors file names", () => {
+  test("libraryOfReadsDeclared", () => {
     const root = mkdtempSync(join(tmpdir(), "impact-lib-"));
     writeFileSync(join(root, "f.json"), JSON.stringify({ name: "f", directories: [{ id: "library", path: "library/", graphTypologies: ["library"] }, { id: "folio", path: "folio/", graphTypologies: ["folio"] }] }));
     mkdirSync(join(root, "library", "v1"), { recursive: true });

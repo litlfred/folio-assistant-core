@@ -37,40 +37,40 @@ function spawnResult(over: Partial<SpawnSyncReturns<Buffer>>): SpawnSyncReturns<
 }
 
 describe("pipelineFailedToRun", () => {
-  test("non-zero exit with NO stdout is a failure to run", () => {
+  test("nonZeroNoStdoutFailed", () => {
     // The reproduction: `bun run <missing>.ts` exits 1 having printed nothing.
     expect(pipelineFailedToRun(spawnResult({ status: 1 }), "")).toBe(true);
   });
 
-  test("non-zero exit WITH findings on stdout is a normal outcome", () => {
+  test("nonZeroWithFindingsNormal", () => {
     // `validate.ts` exits non-zero when it finds problems. Treating that as a
     // failure to run would suppress every real finding the tool exists for —
     // the opposite error, and just as bad.
     expect(pipelineFailedToRun(spawnResult({ status: 1 }), "✗ def:x missing .lean\n")).toBe(false);
   });
 
-  test("a clean run is not a failure", () => {
+  test("cleanRunNotFailure", () => {
     expect(pipelineFailedToRun(spawnResult({ status: 0 }), "all checks passed\n")).toBe(false);
   });
 
-  test("spawn error (no `bun` on PATH) is a failure to run", () => {
+  test("spawnErrorFailed", () => {
     expect(pipelineFailedToRun(spawnResult({ error: new Error("ENOENT") }), "")).toBe(true);
   });
 
-  test("killed by signal / timeout is a failure to run, even with partial stdout", () => {
+  test("killedFailed", () => {
     // A timed-out pipeline may have printed some checks before dying; those
     // are not a verdict on the whole corpus.
     expect(pipelineFailedToRun(spawnResult({ status: null, signal: "SIGTERM" }), "some output")).toBe(true);
   });
 
-  test("a clean run that printed nothing is NOT a failure", () => {
+  test("silentCleanRunNotFailure", () => {
     // Exit 0 is the pipeline's own word that it finished.
     expect(pipelineFailedToRun(spawnResult({ status: 0 }), "")).toBe(false);
   });
 });
 
 describe("resolveValidateScript", () => {
-  test("finds a pipeline — here, the platform's own copy", () => {
+  test("findsValidatePipeline", () => {
     // This test runs with the platform as the repo root, which carries
     // pipeline/validate.ts (`content/pipeline/` before rnfl). The scaffolded-folio case (no
     // content/pipeline/ at all) resolves to the platform's copy by the same

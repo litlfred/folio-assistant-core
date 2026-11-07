@@ -6,28 +6,28 @@ const AI = "TWG consideration? AI categorisation";
 const HU = "Consider by TWG? Human categorisation";
 
 describe("public-comment-routing", () => {
-  test("only the eight fixed categories, and unambiguous aliases, name a group", () => {
+  test("fixedCategoriesAndAliases", () => {
     expect(twgGroup(" core  architects ")).toBe("Core architects");
     expect(twgGroup("Metadata")).toBe("Metadata registries");
     expect(twgGroup("HWF team")).toBeUndefined();
     expect(twgGroup("Maybe - editorial?")).toBeUndefined();
   });
 
-  test("a human categorisation overrides the AI one", () => {
+  test("humanOverridesAi", () => {
     expect(commentRouting({ [AI]: "Clinical", [HU]: "No" })).toEqual({ group: "No", secondary: [], source: "human", raw: "No" });
     expect(commentRouting({ [AI]: "Clinical" })).toMatchObject({ group: "Clinical", source: "ai" });
     expect(commentRouting({ "Comment type": "P1" })).toBeUndefined();
     expect(commentRouting(undefined)).toBeUndefined();
   });
 
-  test("'A/ B' is a primary and a secondary; a value naming no category is kept raw", () => {
+  test("primaryAndSecondary", () => {
     expect(commentRouting({ [HU]: "Core architects/ WHO" })).toMatchObject({ group: "Core architects", secondary: ["WHO"] });
     const odd = commentRouting({ [HU]: "HWF team" })!;
     expect(odd.group).toBeUndefined();
     expect(odd.raw).toBe("HWF team");
   });
 
-  test("a change-set takes its comments' plurality; ties go to the more specific domain", () => {
+  test("changeSetPlurality", () => {
     const by = new Map([
       ["a", commentRouting({ [AI]: "Core architects" })],
       ["b", commentRouting({ [AI]: "Financial systems" })],
@@ -43,7 +43,7 @@ describe("public-comment-routing", () => {
     expect(overridden.group).toBe("Clinical");
     expect(overridden.derived).toBe("Financial systems");
   });
-  test("routing.json fills what the log left uncategorised; a person's entry beats the log's AI column", () => {
+  test("routingJsonFillsGaps", () => {
     const agent = { category: "Supply chain", by: "claude-agent", confidence: "medium" as const, rationale: "Product Registry." };
     expect(commentRouting(undefined, agent)).toMatchObject({ group: "Supply chain", source: "agent", confidence: "medium", rationale: "Product Registry." });
     // The log's AI column wins over an agent's entry ...
@@ -54,7 +54,7 @@ describe("public-comment-routing", () => {
     expect(commentRouting({ [HU]: "No" }, { category: "WHO", by: "litlfred" })).toMatchObject({ group: "No", source: "human" });
   });
 
-  test("a person's entry rules on a human label that names no category", () => {
+  test("personRulesUnmappedLabel", () => {
     const ruling = { category: "Metadata registries", by: "litlfred" };
     expect(commentRouting({ [AI]: "Core architects", [HU]: "HWF team" }, ruling)).toMatchObject({ group: "Metadata registries", source: "human", by: "litlfred" });
     // An agent's entry does not rule: the label stays unmapped.
