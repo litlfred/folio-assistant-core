@@ -13,4 +13,4 @@ permissions:
 
 jobs:
   cancel:
-    uses: litlfred/cat-harness-tools/.github/workflows/layer-cancel-on-close.yml@7e6976d3ecf5b42f9c11a6010958103e99e74cff # index.lock.json
+    uses: litlfred/cat-harness-tools/.github/workflows/layer-cancel-on-close.yml@7b5c9852c66bac2afb33777777f1818e94b7329a # index.lock.json

@@ -143,7 +143,10 @@ describe("pages and exports", () => {
       "references.dc.xml",
       "references.jsonld",
     ]);
-    expect(files.size).toBe(3 * (1 + EXPORTS.length));
+    // …and the route's self-ignoring marker (bean folio-assistant-uldr): the
+    // route is built at publish, so git and the mount digest leave it alone.
+    expect(files.size).toBe(3 * (1 + EXPORTS.length) + 1);
+    expect([...files.keys()].filter((p) => p.endsWith("/.gitignore"))).toHaveLength(1);
   });
 
   test("per-asset route (<route>/<sub-graph>/<asset>/) exports a library item and references extracted from it", () => {

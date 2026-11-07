@@ -1738,7 +1738,7 @@
     {
       "id": "block-qa.blockqareport.updated_at",
       "prefLabel": "BlockQaReport.updated_at",
-      "definition": "Report creation / last-update timestamp (ISO-8601 UTC).",
+      "definition": "Report creation / last-update timestamp (ISO-8601 UTC). Optional and no longer written, as {@link QaCriterionEntry.reviewed_at}.",
       "source": "cat-harness-tools/schemas/sdlc/block-qa.ts#BlockQaReport.updated_at",
       "status": "candidate"
     },
@@ -1927,15 +1927,22 @@
     {
       "id": "block-qa.qacriterionentry.reviewed_at",
       "prefLabel": "QaCriterionEntry.reviewed_at",
-      "definition": "When the audit ran (ISO-8601 UTC).",
+      "definition": "When the audit ran (ISO-8601 UTC). Optional, and no longer written by the platform's writers (owner rulings 2026-11-06: card \"QA dates\", option 1, derive the date; card \"Date source\", option 1, derive it ON READ): the date a verdict is shown and ordered by is DERIVED from {@link reviewed_tree} — the commit date of the commit carrying that tree (`tree-commits.json`, `entryDate` in `pipeline/qa-utils.ts`) — so the verdict's bytes carry no clock and a PR's QA output can be reused on main. The run's own time is in its run record. Kept readable for existing sidecars.",
       "source": "cat-harness-tools/schemas/sdlc/block-qa.ts#QaCriterionEntry.reviewed_at",
       "status": "candidate"
     },
     {
       "id": "block-qa.qacriterionentry.reviewed_sha",
       "prefLabel": "QaCriterionEntry.reviewed_sha",
-      "definition": "Repo HEAD at audit time (full git SHA). Producers must set this on every new entry; optional in the type only because legacy agent entries (pre-2026-06) omit it — matching the interchange schema (`tools/block-qa-schema/`), where it is likewise optional.",
+      "definition": "Repo HEAD at audit time (full git SHA). No longer written — superseded by `reviewed_tree` (bean 69lr) — and kept readable so existing sidecars validate. Legacy agent entries (pre-2026-06) omit it too.",
       "source": "cat-harness-tools/schemas/sdlc/block-qa.ts#QaCriterionEntry.reviewed_sha",
+      "status": "candidate"
+    },
+    {
+      "id": "block-qa.qacriterionentry.reviewed_tree",
+      "prefLabel": "QaCriterionEntry.reviewed_tree",
+      "definition": "Tree of repo HEAD at audit time (`HEAD^{tree}`, full git id, or the `unknown` sentinel outside git). Producers must set this on every new entry; optional in the type only because older entries carry `reviewed_sha` instead. The tree, not the commit, because a PR run's HEAD is GitHub's synthetic merge commit, which can vanish — the tree survives onto main unchanged (bean 69lr; owner card Q4, 2026-11-05).",
+      "source": "cat-harness-tools/schemas/sdlc/block-qa.ts#QaCriterionEntry.reviewed_tree",
       "status": "candidate"
     },
     {
@@ -2109,7 +2116,7 @@
     {
       "id": "block-qa.qascriptsidecar.last_run_at",
       "prefLabel": "QaScriptSidecar.last_run_at",
-      "definition": "ISO-8601 UTC timestamp of the most recent qa-sweep run.",
+      "definition": "ISO-8601 UTC timestamp of the most recent qa-sweep run. Optional and no longer written: the run's time is in its run record.",
       "source": "cat-harness-tools/schemas/sdlc/block-qa.ts#QaScriptSidecar.last_run_at",
       "status": "candidate"
     },
@@ -2335,6 +2342,104 @@
       "prefLabel": "BuiltAtPublishSchema.writer",
       "definition": "Package scripts that write it, in order — run as `bun run cat <script>`.",
       "source": "cat-harness-tools/schemas/kg/built-at-publish.ts#BuiltAtPublishSchema.writer",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.cacheinventoryschema.takenat",
+      "prefLabel": "CacheInventorySchema.takenAt",
+      "definition": "When the snapshot was taken (ISO date) and how. A snapshot is never a declaration.",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#CacheInventorySchema.takenAt",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.cacheschema.consumers",
+      "prefLabel": "CacheSchema.consumers",
+      "definition": "Who is known to read it, in words — INFORMATIVE. Which targets need a cache is derived, never taken from here (owner, 2026-11-05: \"not all rendering/CI/merge processes need all caches\"): a target needs it when the target's recorded read set (the CI cone, the writer cone) touches one of {@link materializes}, plus the `needs` closure of what it needs.",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#CacheSchema.consumers",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.cacheschema.derivedinputs",
+      "prefLabel": "CacheSchema.derivedInputs",
+      "definition": "What the key is a function of, in words — derived, never a hand glob list (a lock is allowed).",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#CacheSchema.derivedInputs",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.cacheschema.instance",
+      "prefLabel": "CacheSchema.instance",
+      "definition": "The instance whose workflows and scripts hold it.",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#CacheSchema.instance",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.cacheschema.location",
+      "prefLabel": "CacheSchema.location",
+      "definition": "The key prefix, image, ref or path the entries live under.",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#CacheSchema.location",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.cacheschema.materializes",
+      "prefLabel": "CacheSchema.materializes",
+      "definition": "The paths a restore lays down (checkout-relative, or `~/` for the home directory) — what lets a target's read set say it needs this cache. Absent: no read set can name it, so a plan restores it only through another cache's `needs`, or not at all (the safe direction: the target builds).",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#CacheSchema.materializes",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.cacheschema.needs",
+      "prefLabel": "CacheSchema.needs",
+      "definition": "The ids of the caches this one is built over, so restores and refreshes go in order (`Process_Cache`).",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#CacheSchema.needs",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.cacheschema.refresh",
+      "prefLabel": "CacheSchema.refresh",
+      "definition": "How a stale entry is brought up to date: `incremental` (only what changed — the changed writers, modules, layers or IG delta — over the restored entry) or `whole`. A refresh never rebuilds wholesale when an incremental one is valid (owner, 2026-11-05).",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#CacheSchema.refresh",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.cacheschema.stateinputs",
+      "prefLabel": "CacheSchema.stateInputs",
+      "definition": "Whether the producer reads MUTABLE STATE the tree does not pin — a branch-kept graph (`state:mount`: the work plan `beans/`, `qa-reports`, fsh-guts…). A producer that reads one must carry that ref's commit in its key, or its entry is never current (#2966: the publish pages read the work plan's finished instances, and a cache keyed on the tree alone served a stale page). REQUIRED, so no node is silent on it: - `none`: shown to read no state mount (by construction, or by a recorded read set that touches no state path); - `keyed`: every state ref it reads is in the key (`refs`); - `unkeyed`: it reads state the key does not carry — never current; - `unmeasured`: not shown either way yet — never current.",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#CacheSchema.stateInputs",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.cacheschema.verify",
+      "prefLabel": "CacheSchema.verify",
+      "definition": "How a restored entry is checked, or why it is not.",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#CacheSchema.verify",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.keyrecipeschema.expression",
+      "prefLabel": "KeyRecipeSchema.expression",
+      "definition": "The key text as the workflow writes it, for the reader.",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#KeyRecipeSchema.expression",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.keyrecipeschema.files",
+      "prefLabel": "KeyRecipeSchema.files",
+      "definition": "`hashFiles`: the files, checkout-relative (a lock, never a hand-picked glob of sources).",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#KeyRecipeSchema.files",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.keyrecipeschema.implementation",
+      "prefLabel": "KeyRecipeSchema.implementation",
+      "definition": "`script`: the mount-free implementation of the recipe.",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#KeyRecipeSchema.implementation",
+      "status": "candidate"
+    },
+    {
+      "id": "cache.keyrecipeschema.script",
+      "prefLabel": "KeyRecipeSchema.script",
+      "definition": "`cache:key` / `cache:key --base`: the package script fingerprinted.",
+      "source": "cat-harness-tools/schemas/sdlc/cache.ts#KeyRecipeSchema.script",
       "status": "candidate"
     },
     {
@@ -2769,6 +2874,13 @@
       "prefLabel": "CatHarnessDeclaration.mountDefaults",
       "definition": "What a downstream remote-mounts of this instance by default — `schemas/kg/remote-mount.ts`, bean `0mpw`.",
       "source": "cat-harness-tools/schemas/kg/cat-harness.ts#CatHarnessDeclaration.mountDefaults",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.catharnessdeclaration.moves",
+      "prefLabel": "CatHarnessDeclaration.moves",
+      "definition": "Paths this instance moved and still answers for, during the window of the two-phase move rule (sdlc skill `two-phase-move`). See the schema field.",
+      "source": "cat-harness-tools/schemas/kg/cat-harness.ts#CatHarnessDeclaration.moves",
       "status": "candidate"
     },
     {
@@ -3315,6 +3427,13 @@
       "prefLabel": "HarnessVisualiserSchema.alias",
       "definition": "Opt-in `<base>/<alias>/` redirect to the canonical route (bean `t4xb`).",
       "source": "cat-harness-tools/schemas/kg/cat-harness.ts#HarnessVisualiserSchema.alias",
+      "status": "candidate"
+    },
+    {
+      "id": "cat-harness.harnessvisualiserschema.builtonhostsite",
+      "prefLabel": "HarnessVisualiserSchema.builtOnHostSite",
+      "definition": "Its pages are built at publish on the HOST site (the site owner's, e.g. cat-harness's), at `<site>/<locale>/<harness>/<id>/`, so the publish plan derives those routes from this entry and the host lists none of them (bean folio-assistant-uldr, owner option \"1\", 2026-11-06). `translated`: it also writes one route per locale the checkout's translation sources hold, besides the page locale. The writer is the `renderedBy` Tool's `invoke.shell` script, and it marks each route it writes with a self-ignoring `.gitignore` (`*`), which keeps the route out of git and out of the mount digest.",
+      "source": "cat-harness-tools/schemas/kg/cat-harness.ts#HarnessVisualiserSchema.builtOnHostSite",
       "status": "candidate"
     },
     {
@@ -5177,6 +5296,209 @@
       "prefLabel": "DetangleNode.group",
       "definition": "The candidate grouping under test — a directory, a package, a proposed repo.",
       "source": "cat-harness-tools/schemas/kg/detangle.ts#DetangleNode.group",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.consentblockschema.granted",
+      "prefLabel": "ConsentBlockSchema.granted",
+      "definition": "Whether the person has said yes: drawn as a toggle.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#ConsentBlockSchema.granted",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.consentblockschema.until",
+      "prefLabel": "ConsentBlockSchema.until",
+      "definition": "Until when.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#ConsentBlockSchema.until",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.consentblockschema.what",
+      "prefLabel": "ConsentBlockSchema.what",
+      "definition": "What they may see.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#ConsentBlockSchema.what",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.consentblockschema.who",
+      "prefLabel": "ConsentBlockSchema.who",
+      "definition": "Who may see it.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#ConsentBlockSchema.who",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.fieldsblockschema.columns",
+      "prefLabel": "FieldsBlockSchema.columns",
+      "definition": "Two columns of fields, on a screen wide enough.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#FieldsBlockSchema.columns",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.headerblockschema.app",
+      "prefLabel": "HeaderBlockSchema.app",
+      "definition": "The app's or the facility's name.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#HeaderBlockSchema.app",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.headerblockschema.brand",
+      "prefLabel": "HeaderBlockSchema.brand",
+      "definition": "The brand colour of the bar's mark.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#HeaderBlockSchema.brand",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.headerblockschema.status",
+      "prefLabel": "HeaderBlockSchema.status",
+      "definition": "A status at the right: \"Offline (28d)\", \"Online · CA key active\".",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#HeaderBlockSchema.status",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.passcodeblockschema.digits",
+      "prefLabel": "PasscodeBlockSchema.digits",
+      "definition": "The digits.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#PasscodeBlockSchema.digits",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.passcodeblockschema.entry",
+      "prefLabel": "PasscodeBlockSchema.entry",
+      "definition": "Drawn as boxes being typed into (a verifier's entry) rather than a code held.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#PasscodeBlockSchema.entry",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.passcodeblockschema.shown",
+      "prefLabel": "PasscodeBlockSchema.shown",
+      "definition": "Shown, or drawn as dots.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#PasscodeBlockSchema.shown",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.personcardblockschema.actor",
+      "prefLabel": "PersonCardBlockSchema.actor",
+      "definition": "The actor shown: name and avatar from its persona.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#PersonCardBlockSchema.actor",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.personcardblockschema.banner",
+      "prefLabel": "PersonCardBlockSchema.banner",
+      "definition": "Drawn as a dark banner across the screen, as an EMR's patient bar.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#PersonCardBlockSchema.banner",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.personcardblockschema.name",
+      "prefLabel": "PersonCardBlockSchema.name",
+      "definition": "The name as the screen spells it, when it is not the persona's (\"Somsack Sengmany\").",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#PersonCardBlockSchema.name",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.personcardblockschema.subtitle",
+      "prefLabel": "PersonCardBlockSchema.subtitle",
+      "definition": "A line under the name.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#PersonCardBlockSchema.subtitle",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.qrblockschema.example",
+      "prefLabel": "QrBlockSchema.example",
+      "definition": "The FHIR example the code carries, `Type/id`: linked to its page.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#QrBlockSchema.example",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.qrblockschema.holder",
+      "prefLabel": "QrBlockSchema.holder",
+      "definition": "Whose it is, as the card prints it (\"Somsack Sengmany\").",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#QrBlockSchema.holder",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.qrblockschema.holdernote",
+      "prefLabel": "QrBlockSchema.holderNote",
+      "definition": "A line under the holder (\"Guardian: Khamla Sengmany\").",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#QrBlockSchema.holderNote",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.qrblockschema.label",
+      "prefLabel": "QrBlockSchema.label",
+      "definition": "What it is, under the title (\"Vaccine: Hep B birth dose\").",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#QrBlockSchema.label",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.qrblockschema.mode",
+      "prefLabel": "QrBlockSchema.mode",
+      "definition": "`show`: a code on this screen; `scan`: the camera reading one.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#QrBlockSchema.mode",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.qrblockschema.payload",
+      "prefLabel": "QrBlockSchema.payload",
+      "definition": "What the code encodes: drawn as a real QR code of this text.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#QrBlockSchema.payload",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.qrblockschema.title",
+      "prefLabel": "QrBlockSchema.title",
+      "definition": "The card's title (\"Digital Vaccine Certificate\").",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#QrBlockSchema.title",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.recordlistblockschema.example",
+      "prefLabel": "RecordListBlockSchema.example",
+      "definition": "A FHIR example, `Type/id`, whose resources are the rows when `rows` is absent (a Bundle's entries, else the resource itself); linked to its page either way.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#RecordListBlockSchema.example",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.recordlistblockschema.footnote",
+      "prefLabel": "RecordListBlockSchema.footnote",
+      "definition": "Small print under the rows.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#RecordListBlockSchema.footnote",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.recordlistblockschema.summary",
+      "prefLabel": "RecordListBlockSchema.summary",
+      "definition": "A chip beside the title (\"2 doses completed\").",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#RecordListBlockSchema.summary",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.recordrowschema.code",
+      "prefLabel": "RecordRowSchema.code",
+      "definition": "A code or an identifier, drawn in mono.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#RecordRowSchema.code",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.recordrowschema.detail",
+      "prefLabel": "RecordRowSchema.detail",
+      "definition": "A line under the label.",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#RecordRowSchema.detail",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.recordrowschema.struck",
+      "prefLabel": "RecordRowSchema.struck",
+      "definition": "Drawn struck through: a thing that must NOT be given (an allergy).",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#RecordRowSchema.struck",
+      "status": "candidate"
+    },
+    {
+      "id": "device-screen.statusbadgeblockschema.verdict",
+      "prefLabel": "StatusBadgeBlockSchema.verdict",
+      "definition": "A short verdict at the right (\"PASS\").",
+      "source": "cat-harness-tools/schemas/process/device-screen.ts#StatusBadgeBlockSchema.verdict",
       "status": "candidate"
     },
     {
@@ -10075,8 +10397,15 @@
     {
       "id": "qa-record-shapes.qawitness.sha",
       "prefLabel": "QaWitness.sha",
-      "definition": "Repo HEAD at review time.",
+      "definition": "Repo HEAD at review time — read from older sidecars, no longer written.",
       "source": "cat-harness-tools/schemas/kg/qa-record-shapes.ts#QaWitness.sha",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.qawitness.tree",
+      "prefLabel": "QaWitness.tree",
+      "definition": "Tree of repo HEAD at review time — what verdicts record since bean 69lr (owner card Q4, 2026-11-05): a PR run's HEAD commit can vanish, its tree cannot.",
+      "source": "cat-harness-tools/schemas/kg/qa-record-shapes.ts#QaWitness.tree",
       "status": "candidate"
     },
     {
@@ -10105,6 +10434,13 @@
       "prefLabel": "TranslationBlockQaReport.po",
       "definition": "The PO this verdict was measured against, repo-relative.",
       "source": "cat-harness-tools/schemas/kg/qa-record-shapes.ts#TranslationBlockQaReport.po",
+      "status": "candidate"
+    },
+    {
+      "id": "qa-record-shapes.translationblockqareport.updated_at",
+      "prefLabel": "TranslationBlockQaReport.updated_at",
+      "definition": "Optional and no longer written (owner rulings 2026-11-06, cards \"QA dates\" and \"Date source\"): the date is derived on read from the entries' `reviewed_tree`.",
+      "source": "cat-harness-tools/schemas/kg/qa-record-shapes.ts#TranslationBlockQaReport.updated_at",
       "status": "candidate"
     },
     {
@@ -11412,7 +11748,7 @@
     {
       "id": "script-qa.scriptqareport.updated_at",
       "prefLabel": "ScriptQaReport.updated_at",
-      "definition": "ISO-8601 UTC timestamp of last write.",
+      "definition": "ISO-8601 UTC timestamp of last write. Optional and no longer written (owner rulings 2026-11-06, cards \"QA dates\" and \"Date source\"): the date is derived on read from the entries' `reviewed_tree`.",
       "source": "cat-harness-tools/schemas/sdlc/script-qa.ts#ScriptQaReport.updated_at",
       "status": "candidate"
     },
@@ -15253,6 +15589,258 @@
       "status": "candidate"
     },
     {
+      "id": "user-scenario.buildingblockschema.components",
+      "prefLabel": "BuildingBlockSchema.components",
+      "definition": "The ArchiMate element keys that deploy this block.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#BuildingBlockSchema.components",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.buildingblockschema.jurisdiction",
+      "prefLabel": "BuildingBlockSchema.jurisdiction",
+      "definition": "Whose block it is: a country for its deployed system, `International` for what anyone can adopt.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#BuildingBlockSchema.jurisdiction",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.buildingblockschema.kind",
+      "prefLabel": "BuildingBlockSchema.kind",
+      "definition": "`tool`: software anyone can deploy · `system`: a deployed system · `standard`: a specification · `network`: a trust network.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#BuildingBlockSchema.kind",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.buildingblockschema.layer",
+      "prefLabel": "BuildingBlockSchema.layer",
+      "definition": "One of the catalogue's layers.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#BuildingBlockSchema.layer",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.buildingblockschema.short",
+      "prefLabel": "BuildingBlockSchema.short",
+      "definition": "A label for a crowded grid.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#BuildingBlockSchema.short",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.buildingblockschema.sowhat",
+      "prefLabel": "BuildingBlockSchema.soWhat",
+      "definition": "Why it matters for the journeys, in one sentence.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#BuildingBlockSchema.soWhat",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.buildingblockschema.what",
+      "prefLabel": "BuildingBlockSchema.what",
+      "definition": "What it is, in one sentence.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#BuildingBlockSchema.what",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.experienceschema.emotion",
+      "prefLabel": "ExperienceSchema.emotion",
+      "definition": "-2 distressed, -1 worried, 0 neutral, 1 reassured, 2 delighted.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#ExperienceSchema.emotion",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.experienceschema.feeling",
+      "prefLabel": "ExperienceSchema.feeling",
+      "definition": "In their own words.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#ExperienceSchema.feeling",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.fhirchangeschema.change",
+      "prefLabel": "FhirChangeSchema.change",
+      "definition": "What happens to it: \"Created as primarySource = false\".",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#FhirChangeSchema.change",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.fhirchangeschema.profile",
+      "prefLabel": "FhirChangeSchema.profile",
+      "definition": "The StructureDefinition id the record conforms to.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#FhirChangeSchema.profile",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.fhirchangeschema.profileof",
+      "prefLabel": "FhirChangeSchema.profileOf",
+      "definition": "Whose profile it is, as a chip beside it (\"Lao PDR\").",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#FhirChangeSchema.profileOf",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.fhirchangeschema.resource",
+      "prefLabel": "FhirChangeSchema.resource",
+      "definition": "As the room says it: \"Immunization ×2\", \"Group (household)\".",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#FhirChangeSchema.resource",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.fhirchangeschema.spec",
+      "prefLabel": "FhirChangeSchema.spec",
+      "definition": "The base standard's page.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#FhirChangeSchema.spec",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.handoffschema.carrier",
+      "prefLabel": "HandoffSchema.carrier",
+      "definition": "How it travels: a camera scan, a sync through a gateway, a QR on a phone.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#HandoffSchema.carrier",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.handoffschema.from",
+      "prefLabel": "HandoffSchema.from",
+      "definition": "Who or what it leaves: an actor id (drawn with the persona's name), or a place or system in words (\"Thai hospital\").",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#HandoffSchema.from",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.handoffschema.payload",
+      "prefLabel": "HandoffSchema.payload",
+      "definition": "What travels, in the data's own terms.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#HandoffSchema.payload",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.handoffschema.to",
+      "prefLabel": "HandoffSchema.to",
+      "definition": "Who or what it reaches, as `from`.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#HandoffSchema.to",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.illustrationschema.alt",
+      "prefLabel": "IllustrationSchema.alt",
+      "definition": "What the picture shows, for a reader who cannot see it; translatable page text, the caption the picture itself never carries.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#IllustrationSchema.alt",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.illustrationschema.prompt",
+      "prefLabel": "IllustrationSchema.prompt",
+      "definition": "The scene, as a prompt for an image generator: what to draw when `src` is absent. It asks for no readable text.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#IllustrationSchema.prompt",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.illustrationschema.src",
+      "prefLabel": "IllustrationSchema.src",
+      "definition": "The image, instance-relative (`docs/images/p3-mina.png`), with no text in it. Absent: not drawn yet.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#IllustrationSchema.src",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.illustrationstyleschema.cast",
+      "prefLabel": "IllustrationStyleSchema.cast",
+      "definition": "How each person is drawn, kept the same across steps. Every person is fictional.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#IllustrationStyleSchema.cast",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.illustrationstyleschema.notes",
+      "prefLabel": "IllustrationStyleSchema.notes",
+      "definition": "What to keep in mind: cultural notes, what never to draw.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#IllustrationStyleSchema.notes",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.illustrationstyleschema.prompt",
+      "prefLabel": "IllustrationStyleSchema.prompt",
+      "definition": "The style prefix every step's prompt is read with.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#IllustrationStyleSchema.prompt",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.journeypersonaschema.avatar",
+      "prefLabel": "JourneyPersonaSchema.avatar",
+      "definition": "A square picture of the person, a path from the instance root; the initials are the fallback.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#JourneyPersonaSchema.avatar",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.journeypersonaschema.color",
+      "prefLabel": "JourneyPersonaSchema.color",
+      "definition": "A CSS colour for the persona's lane and curve; assigned in order when absent.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#JourneyPersonaSchema.color",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.journeypersonaschema.icon",
+      "prefLabel": "JourneyPersonaSchema.icon",
+      "definition": "A glyph drawn in the avatar instead of the initials (a baby, who has none).",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#JourneyPersonaSchema.icon",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.journeypersonaschema.initials",
+      "prefLabel": "JourneyPersonaSchema.initials",
+      "definition": "Two letters for an avatar; derived from `name` when absent.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#JourneyPersonaSchema.initials",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.preconditionschema.description",
+      "prefLabel": "PreconditionSchema.description",
+      "definition": "Markdown.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#PreconditionSchema.description",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.realisedbyschema.process",
+      "prefLabel": "RealisedBySchema.process",
+      "definition": "The BPMN file, relative to the instance root.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#RealisedBySchema.process",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.realisedbyschema.tasks",
+      "prefLabel": "RealisedBySchema.tasks",
+      "definition": "Flow-node ids in that process. Omitted: the whole process.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#RealisedBySchema.tasks",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.recordschema.state",
+      "prefLabel": "RecordSchema.state",
+      "definition": "A code of the scenario's `trustLadder` code list.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#RecordSchema.state",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.referenceschema.rel",
+      "prefLabel": "ReferenceSchema.rel",
+      "definition": "What the link is to the step or journey: `specifies`, `illustrates`, `reading`. Free text.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#ReferenceSchema.rel",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.usesschema.block",
+      "prefLabel": "UsesSchema.block",
+      "definition": "A block id in a `building-blocks` catalogue.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#UsesSchema.block",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.usesschema.component",
+      "prefLabel": "UsesSchema.component",
+      "definition": "Which ArchiMate component plays it here, when the block names more than one.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#UsesSchema.component",
+      "status": "candidate"
+    },
+    {
+      "id": "user-scenario.usesschema.role",
+      "prefLabel": "UsesSchema.role",
+      "definition": "What the block does in THIS step, in one line.",
+      "source": "cat-harness-tools/schemas/process/user-scenario.ts#UsesSchema.role",
+      "status": "candidate"
+    },
+    {
       "id": "user-story.userstoryschema.role",
       "prefLabel": "UserStorySchema.role",
       "definition": "The role this story is told as.",
@@ -16188,6 +16776,300 @@
       "prefLabel": "WithheldEntrySchema.record",
       "definition": "Where a reader can see what the work IS without being shown the work — the catalogue record. `page` is a SITE-ROOT path (leading `/`) to a published record page; `uri` is the upstream identifier (a Handle IRI, say). Either may be absent; a viewer links `page` first, `uri` second, and nothing at all rather than a guess.",
       "source": "cat-harness-tools/schemas/content/withheld.ts#WithheldEntrySchema.record",
+      "status": "candidate"
+    },
+    {
+      "id": "work-plan.proposalapproval.path",
+      "prefLabel": "ProposalApproval.path",
+      "definition": "The proposal's path, as the plan's `proposal:` tag spells it.",
+      "source": "cat-harness-tools/schemas/sdlc/work-plan.ts#ProposalApproval.path",
+      "status": "candidate"
+    },
+    {
+      "id": "work-plan.workplantags.processes",
+      "prefLabel": "WorkPlanTags.processes",
+      "definition": "The processes it instantiates, in tag order, without duplicates.",
+      "source": "cat-harness-tools/schemas/sdlc/work-plan.ts#WorkPlanTags.processes",
+      "status": "candidate"
+    },
+    {
+      "id": "work-plan.workplantags.proposal",
+      "prefLabel": "WorkPlanTags.proposal",
+      "definition": "The proposal it was made from, when it names one.",
+      "source": "cat-harness-tools/schemas/sdlc/work-plan.ts#WorkPlanTags.proposal",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.tablerowschema.example",
+      "prefLabel": "TableRowSchema.example",
+      "definition": "A worked example from somewhere real.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#TableRowSchema.example",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.tablerowschema.question",
+      "prefLabel": "TableRowSchema.question",
+      "definition": "The question the row asks a room.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#TableRowSchema.question",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.tablerowschema.what",
+      "prefLabel": "TableRowSchema.what",
+      "definition": "What the row means, in one sentence.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#TableRowSchema.what",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopmoduleschema.carries",
+      "prefLabel": "WorkshopModuleSchema.carries",
+      "definition": "The question the module carries, in one line.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopModuleSchema.carries",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopmoduleschema.day",
+      "prefLabel": "WorkshopModuleSchema.day",
+      "definition": "Which day or session block it is in, when the workshop runs over several.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopModuleSchema.day",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopmoduleschema.objectives",
+      "prefLabel": "WorkshopModuleSchema.objectives",
+      "definition": "What a participant can do after it.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopModuleSchema.objectives",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopmoduleschema.sheet",
+      "prefLabel": "WorkshopModuleSchema.sheet",
+      "definition": "The sheet (`sheets[].id`) the module fills.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopModuleSchema.sheet",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopmoduleschema.tables",
+      "prefLabel": "WorkshopModuleSchema.tables",
+      "definition": "Tables (`tables[].id`) the module works through.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopModuleSchema.tables",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.about",
+      "prefLabel": "WorkshopPresentationSchema.about",
+      "definition": "A band on the overview naming what the walkthrough demonstrates, with `links`.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.about",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.badge",
+      "prefLabel": "WorkshopPresentationSchema.badge",
+      "definition": "A short badge beside the name (\"Interactive Spec\").",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.badge",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.closingquestion",
+      "prefLabel": "WorkshopPresentationSchema.closingQuestion",
+      "definition": "The line the Discussion view opens with (\"The technology works. What do countries need to agree on to make it real?\").",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.closingQuestion",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.devicedemo",
+      "prefLabel": "WorkshopPresentationSchema.deviceDemo",
+      "definition": "The instance's own device demo: an app that shows each moment's screen. The viewer does not draw the screens; its Device Demo view frames the app's own page for each (`href` + `#/demo/<id>` unless `route` says otherwise) and links each screen and the steps it shows both ways. `href` is a URL, or a path from the site's root (`vaxlink/`).",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.deviceDemo",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.ig",
+      "prefLabel": "WorkshopPresentationSchema.ig",
+      "definition": "Where the FHIR implementation guide the walkthrough demonstrates is published, so a step's examples, profiles and processes link to their pages. `href` is the IG's base: a URL, or a path from the site's root (`\"\"` when the IG is the site). `example` and `profile` are page patterns under it, with `{type}` and `{id}` filled in (the IG Publisher's own: `{type}-{id}.html`, `StructureDefinition-{id}.html`); `processes` is the page listing the business processes, each under a heading named for its BPMN process.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.ig",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.lede",
+      "prefLabel": "WorkshopPresentationSchema.lede",
+      "definition": "A line under it.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.lede",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.links",
+      "prefLabel": "WorkshopPresentationSchema.links",
+      "definition": "Links out (the IG, its source, its journeys), drawn in the `about` band; one with `frame` is also on the app bar, under that label.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.links",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.name",
+      "prefLabel": "WorkshopPresentationSchema.name",
+      "definition": "The app's name in its frame (\"VaxLink\"); the workshop title when absent.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.name",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.notes",
+      "prefLabel": "WorkshopPresentationSchema.notes",
+      "definition": "The presenter's note on each of the other views; a view without one shows none.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.notes",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.occasion",
+      "prefLabel": "WorkshopPresentationSchema.occasion",
+      "definition": "The occasion, first on the frame's top bar (\"WHO Pre-GDHF Vignette\").",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.occasion",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.presenternote",
+      "prefLabel": "WorkshopPresentationSchema.presenterNote",
+      "definition": "The presenter's note on the overview; a step's note is its `facilitatorCue`.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.presenterNote",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.recordof",
+      "prefLabel": "WorkshopPresentationSchema.recordOf",
+      "definition": "The actor whose record the trust ladder follows (\"Somsack's record\").",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.recordOf",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.scope",
+      "prefLabel": "WorkshopPresentationSchema.scope",
+      "definition": "Where the story moves, after the step range (\"Thailand ⇄ Lao PDR\").",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.scope",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.status",
+      "prefLabel": "WorkshopPresentationSchema.status",
+      "definition": "A status line at the right of the top bar.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.status",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.story",
+      "prefLabel": "WorkshopPresentationSchema.story",
+      "definition": "The story in one sentence: the overview's headline.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.story",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.subject",
+      "prefLabel": "WorkshopPresentationSchema.subject",
+      "definition": "What the story is about, beside the occasion.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.subject",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.tagline",
+      "prefLabel": "WorkshopPresentationSchema.tagline",
+      "definition": "One line under the name.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.tagline",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoppresentationschema.views",
+      "prefLabel": "WorkshopPresentationSchema.views",
+      "definition": "The ArchiMate views How it works shows first (the systems, the journeys as use cases), before the views each taught journey names: a model id of the instance's `cat-archimate.config.json` and a view id in it.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopPresentationSchema.views",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopresourceschema.body",
+      "prefLabel": "WorkshopResourceSchema.body",
+      "definition": "For a job aid: the short instructions themselves, Markdown, printed with it.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopResourceSchema.body",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopresourceschema.href",
+      "prefLabel": "WorkshopResourceSchema.href",
+      "definition": "A URL, or a path relative to the workshop file.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopResourceSchema.href",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopresourceschema.steps",
+      "prefLabel": "WorkshopResourceSchema.steps",
+      "definition": "Step refs, `<scenario id>#<step id>`.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopResourceSchema.steps",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopsheetschema.assessmentstrip",
+      "prefLabel": "WorkshopSheetSchema.assessmentStrip",
+      "definition": "Print the assessment strip across its foot.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopSheetSchema.assessmentStrip",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopsheetschema.fields",
+      "prefLabel": "WorkshopSheetSchema.fields",
+      "definition": "Write-in fields the sheet has besides the module questions.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopSheetSchema.fields",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopsheetschema.label",
+      "prefLabel": "WorkshopSheetSchema.label",
+      "definition": "As the room calls it: \"Sheet 4\".",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopSheetSchema.label",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopsheetschema.modules",
+      "prefLabel": "WorkshopSheetSchema.modules",
+      "definition": "The modules whose questions it carries, in order.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopSheetSchema.modules",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopstepschema.asktheroom",
+      "prefLabel": "WorkshopStepSchema.askTheRoom",
+      "definition": "The one question for the whole room.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopStepSchema.askTheRoom",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopstepschema.capabilities",
+      "prefLabel": "WorkshopStepSchema.capabilities",
+      "definition": "What had to exist for the step to work: the rows the assessment rates.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopStepSchema.capabilities",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopstepschema.facilitatorcue",
+      "prefLabel": "WorkshopStepSchema.facilitatorCue",
+      "definition": "A note to the facilitator on how to run the step.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopStepSchema.facilitatorCue",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopstepschema.scenario",
+      "prefLabel": "WorkshopStepSchema.scenario",
+      "definition": "The scenario id (`user-scenario`), looked up in this instance first.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopStepSchema.scenario",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshopstepschema.step",
+      "prefLabel": "WorkshopStepSchema.step",
+      "definition": "The step id in that scenario.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopStepSchema.step",
+      "status": "candidate"
+    },
+    {
+      "id": "workshop.workshoptableschema.module",
+      "prefLabel": "WorkshopTableSchema.module",
+      "definition": "The module that teaches it.",
+      "source": "cat-harness-tools/schemas/process/workshop.ts#WorkshopTableSchema.module",
       "status": "candidate"
     }
   ]
