@@ -161,21 +161,22 @@ export function redact(tabs: Tab[]): { columns: string[]; emails: number } {
   for (const t of tabs) {
     const blank = new Set(t.columns.flatMap((c, i) => (CONTACT_HEADER.test(c.header) ? [i] : [])));
     for (const i of blank) columns.push(`${t.name}!${t.columns[i].header}`);
+    const scrub = (text: string): string => {
+      emails += (text.match(EMAIL) ?? []).length;
+      EMAIL.lastIndex = 0;
+      return text.replace(EMAIL, "[email removed]");
+    };
     t.rows.forEach((row, r) => {
-      if (r < t.headerRow) return;
       row.forEach((c, i) => {
         if (!c) return;
-        if (blank.has(i) && c.v !== null && c.v !== "") {
+        // Notes and the rows above the header can hold an address too.
+        if (c.note) c.note = scrub(c.note);
+        if (r >= t.headerRow && blank.has(i) && c.v !== null && c.v !== "") {
           c.v = null;
           delete c.link;
           return;
         }
-        if (typeof c.v === "string" && EMAIL.test(c.v)) {
-          EMAIL.lastIndex = 0;
-          emails += (c.v.match(EMAIL) ?? []).length;
-          c.v = c.v.replace(EMAIL, "[email removed]");
-        }
-        EMAIL.lastIndex = 0;
+        if (typeof c.v === "string") c.v = scrub(c.v);
         if (c.link?.startsWith("mailto:")) delete c.link;
       });
     });

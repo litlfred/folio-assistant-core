@@ -36,7 +36,7 @@ const api = (rows: object[][] = []): ApiSpreadsheet => ({
   properties: { title: "Test log" },
   sheets: [
     sheet([
-      [cell("Instructions"), cell("Blue = people")],
+      [cell("Instructions"), cell("Blue = people", undefined, { note: "Ask c@example.org" })],
       header,
       [cell("CS-001"), cell("Clarify the scope"), cell(""), cell("No"), cell("Proposal: …", undefined, { hyperlink: "https://example.org/pr/1" }), cell("a.reviewer@example.org")],
       [cell("CS-002"), cell("Define the registry"), cell("Agree; contact b@example.org"), cell("Yes"), cell("2:245177"), cell("")],
@@ -68,7 +68,8 @@ describe("review-log archive (#682)", () => {
     const tabs = fromSheetsApi(merged);
     const r = redact(tabs);
     expect(r.columns).toEqual(["Review Change Sets!Submitter email"]);
-    expect(r.emails).toBe(1);
+    expect(r.emails).toBe(2);
+    expect(tabs[0].rows[0][1]?.note).toBe("Ask [email removed]");
     expect(tabs[0].rows[2][5]?.v).toBeNull();
     expect(tabs[0].rows[3][2]?.v).toBe("Agree; contact [email removed]");
   });
