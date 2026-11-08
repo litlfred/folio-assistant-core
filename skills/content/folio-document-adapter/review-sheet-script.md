@@ -716,7 +716,7 @@ The log's watcher runs it once a night, after its normal poll:
 1. Read the log a tab or two at a time (one read of a whole log is too large):
    `get_spreadsheet` with `includeGridData` and the fields in `ARCHIVE_FIELDS`,
    one range per tab. Each read is saved to a file.
-2. `bun run tools/review-sheet-sync/review-log-archive.ts --sheets <read1> --sheets <read2> … --sheet-id <id> --repo <document repo> --log-id <id> --document <doc> --role master|contributor --title "<log name>"`.
+2. `bun run folio-assistant-core/tools/review-sheet-sync/review-log-archive.ts --sheets <read1> --sheets <read2> … --sheet-id <id> --repo <document repo> --log-id <id> --document <doc> --role master|contributor --title "<log name>"`.
    It prints the commit message, or `unchanged`.
 3. If it changed, commit the two files on the document repository's main,
    with that message, as an agent change that is not content.
@@ -737,7 +737,7 @@ offline copy of the log, the feedback template returned with the
 line-numbered review PDF, or an archived workbook to restore. Run the
 archive first, so the master workbook is current.
 
-1. **Check.** `bun run tools/review-sheet-sync/review-log-import.ts check <returned.xlsx> --log review/public-comment/logs/<id>.json [--base <xlsx>] [--line-map library/<review version>/pdf-line-map.json] [--tab-map "Comments=Review Public Comments"] --out report.json`.
+1. **Check.** `bun run folio-assistant-core/tools/review-sheet-sync/review-log-import.ts check <returned.xlsx> --log review/public-comment/logs/<id>.json [--base <xlsx>] [--line-map library/<review version>/pdf-line-map.json] [--tab-map "Comments=Review Public Comments"] --out report.json`.
    The returned workbook is first validated against the template. Each tab
    must be a tab of the log, and its headers must be the template's. A
    renamed or missing column stops the import. An extra column is reported

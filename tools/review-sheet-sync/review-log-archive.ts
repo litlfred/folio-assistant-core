@@ -19,7 +19,7 @@
  * left in another cell is removed (returned spreadsheets hold reviewers'
  * emails and are never committed).
  *
- *   bun run tools/review-sheet-sync/review-log-archive.ts \
+ *   bun run folio-assistant-core/tools/review-sheet-sync/review-log-archive.ts \
  *     --sheets <read.json> [--sheets <read.json> …] [--sheet-id <id>] \
  *     --repo <document repo> --log-id dpi-h-master --document dpi-h-ra \
  *     --role master [--title <text>] [--commit]
