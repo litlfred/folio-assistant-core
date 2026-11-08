@@ -42,7 +42,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness-tools",
-          "ref": "fa5fb43f973a89581ca3f32145cd11c9137baa26",
+          "ref": "961b4d939d7d69874f44162d12407bd3f1d96c6b",
           "overrides": {
             "cat-harness-tools": {
               "whole": true
@@ -54,9 +54,9 @@
           "trust": {
             "consent": {
               "by": "litlfred",
-              "on": "2026-11-07",
-              "ref": "fa5fb43f973a89581ca3f32145cd11c9137baa26",
-              "evidence": "litlfred, 2026-11-07, via the merge manager (session_01VQDpPffYARDQ8juksAZScf): card 'Pin target' 'A. Never move back'; 'repin as needed'; window extended to 05:27Z. Follow-up: cat-harness past the journey-maps.md markup fix (6eed239), cat-harness-tools and bootstrap-tools at the newest commit any lock pins."
+              "on": "2026-11-08",
+              "ref": "961b4d939d7d69874f44162d12407bd3f1d96c6b",
+              "evidence": "Owner litlfred, 2026-11-08: card Q-CIB-4 A (13:23Z, release-gated CI, full rollout in phases; phase 4 = the other layers) and Q-MM-1 A (\"non-content can merge/repin + 12hr\", window to 2026-11-08 19:00Z). Tools-only re-pin to cat-harness-tools 961b4d9 (#1722): a non-release PR runs the fast tier of layer-pr-checks; cat-harness#1158."
             }
           }
         }
