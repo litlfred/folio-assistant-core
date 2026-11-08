@@ -666,17 +666,40 @@ and omits only section body extracts.
 
 ### Keywords — from the LSI weights, per section and per document
 
-`bun run cat library:keywords` writes `library/<slug>/keywords.json`
-(`folio-keywords/v1`) for every entry of every declared library: up to 12 for
-the document and up to 8 per section, fewer for a short section (one per ~20
-content tokens, at least 3). They are read from the **same** log-entropy matrix
-the LSI index is built from (`keywordsOf` in `pipeline/lsi.ts`), so a
-keyword means "frequent here, rare across this library" exactly as the index
-does — no second vocabulary. `library:keywords:check` fails on a stale file;
-re-run it after ingesting or re-splitting an entry. The Document panel shows
-them as chips, green where a heading also names the term (`evidence:
-["heading"]`) — the document saying it of itself. Withheld entries show them:
-they are derived terms, like captions, not the text.
+Keywords are **extracted content**, so they never live in the ingest record
+(cat-harness#1144). `bun run cat library:keywords` builds them at publish into
+the derived keywords graph: one `folio-keywords/v2` JSON-LD node per entry
+under the site's `assets/keywords/<instance>/<slug>.jsonld`, with an
+`index.json` beside them. Nothing is written inside `library/<slug>/`; the
+route is declared `builtAtPublish`, and `derive:publish` runs the writer. Up
+to 12 for the document and up to 8 per section, fewer for a short section (one
+per ~20 content tokens, at least 3).
+
+Each node holds six **variants** side by side, so they can be compared:
+
+| Variant | Method | Weighting | Terms scored |
+|---|---|---|---|
+| `lsi-log-entropy-surface` (default) | `lsi` | log-entropy | the words the text uses |
+| `lsi-tfidf-surface` | `lsi` | tf-idf | the words the text uses |
+| `lsi-log-entropy-latent` | `lsi` | log-entropy | latent scores, any term of the library |
+| `lsi-tfidf-latent` | `lsi` | tf-idf | latent scores, any term of the library |
+| `lsi-log-entropy-latent-rerank` | `lsi` | log-entropy | latent scores, only the words the text or its headings use |
+| `ca-latent` | `correspondence-analysis` | raw counts | latent scores, any term of the library |
+
+The default is read from the **same** log-entropy matrix the LSI index is
+built from (`keywordsOf` in `pipeline/lsi.ts`), so a keyword means "frequent
+here, rare across this library" exactly as the index does. A latent variant
+scores terms by the rank-k reconstruction (k = 100), so it can propose a term
+the text never uses (synonymy, Deerwester et al. 1990); it scores the top 300
+candidates. Correspondence analysis tends to favour rare proper names
+(authors, publishers), which the comparison shows.
+
+The Document panel computes the default variant in memory and shows it as
+chips, green where a heading also names the term (`evidence: ["heading"]`):
+the document saying it of itself. Withheld entries show them: they are
+derived terms, like captions, not the text. The `library-keywords` check in
+`bun run cat health` reports entries without keywords and any legacy
+`keywords.json` still committed.
 
 What the scoring does:
 
