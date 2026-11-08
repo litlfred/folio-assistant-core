@@ -35,14 +35,14 @@ The generic skill stays in cat-harness as the METHOD; the operation is a refinem
 | milnor-exposition-standard, compute-/detangler-integration-watcher | already moved to sci |
 | review-comments | already moved to core |
 | block-density, devils-advocate-watcher, evidence-review, exposition-swarm-drain, integration-audit, one-voice-integration-watcher, one-voice-style-guide, production-vs-exploratory-discipline, review-heatmap, scientific-accuracy, todo-review, voice-* (3), technical-documentation | stay as method; no refinement needed now (none names a higher layer) |
-| diff (step 3) | moved to core `content-lifecycle-ext`, with its `/diff` command and the session-coordinator binding |
+| diff (step 3) | moves to core `content-lifecycle-ext` with its `/diff` command and the session-coordinator binding, in a follow-up after cat-harness#1136 merges: adding it here first declared it twice in the composed checkout (`skill:commands`, `uml:overview`, `skills:docs` failed on #676). Bean folio-core-knsj tracks it |
 | html-rendering-qc (step 3) | already split: its math rows are sci `math-render-check`. Finding, not fixed here: it describes a `ui/app.js` viewer that no layer holds any more |
 | glossary-build (step 3) | split: the LaTeX chapter, `.tex` markers and Lean synonyms module go to sci `paper-glossary-build` (litlfred/folio-assistant-sci PR); core keeps the index, SKOS scheme, Markdown markers and rules |
 | staging-review (step 3) | kept whole: five cat-harness diagrams call it |
 | docs-generation | unchanged: names sci's skills only conditionally ("where that layer is mounted"), no repository |
 
 ## Summary of Changes
-- core: `content-plan`, `content-author`, `content-publish`, `content-retire` and `diff` (with the three contracts and the `/diff` command) in `content-lifecycle-ext`; role extensions for author, qc-reviewer, programme-manager, publication-manager, authoring-agent, build-pipeline and session-coordinator; `folio-content-lifecycle` links them locally; `glossary-build` loses its LaTeX half
+- core: `content-plan`, `content-author`, `content-publish`, `content-retire` (with the three contracts) in `content-lifecycle-ext`; role extensions for author, qc-reviewer, programme-manager, publication-manager, authoring-agent and build-pipeline; `folio-content-lifecycle` links them locally; `glossary-build` loses its LaTeX half
 - cat-harness: the same skills, contracts, bindings and command removed; staying prose reworded; three orphan schema pages removed
 - sci: new `paper-glossary-build`
 - cat-harness-tools: `gen-schema-docs` reports orphan schema pages (13 older ones listed for a person to delete)

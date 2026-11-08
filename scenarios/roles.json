@@ -201,12 +201,6 @@
         "content-publish",
         "content-retire"
       ]
-    },
-    {
-      "role": "session-coordinator",
-      "skills": [
-        "diff"
-      ]
     }
   ]
 }

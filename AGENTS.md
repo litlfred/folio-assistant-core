@@ -25,7 +25,7 @@ and the gates that judge content stay here.
 
 <!-- skills:index:begin -->
 
-_53 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
+_52 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
 
 **`skills/`** (1)
 
@@ -33,7 +33,7 @@ _53 skills in 8 directories, generated from each skill's front matter. `bun run 
 |---|---|
 | [`deep-document-research`](skills/deep-document-research.md) | Answer a question from a corpus this folio already holds, iteratively, and stop on a stated condition. |
 
-**`skills/content/content-lifecycle-ext/`** (10)
+**`skills/content/content-lifecycle-ext/`** (9)
 
 | Skill | What it is for |
 |---|---|
@@ -43,7 +43,6 @@ _53 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`content-publish`](skills/content/content-lifecycle-ext/content-publish.md) | Content Publication |
 | [`content-retire`](skills/content/content-lifecycle-ext/content-retire.md) | Content Retirement |
 | [`corpus-commit-contract`](skills/content/content-lifecycle-ext/corpus-commit-contract.md) | The contract the `corpus` role is held to when an accepted edit is committed into it: take the write only on the editor's acceptance, as one change with its QA sidecars, under the commit-hygiene… |
-| [`diff`](skills/content/content-lifecycle-ext/diff.md) | Show per-block content changes with viewer links, changelog, and undo impact analysis |
 | [`quality-control`](skills/content/content-lifecycle-ext/quality-control.md) | Apply the publication quality gates to an aggregate of QA output, and decide whether it clears. |
 | [`registry-authority-contract`](skills/content/content-lifecycle-ext/registry-authority-contract.md) | The contract the `external-registry` role is held to when a candidate source is checked against the body that publishes it: resolve the identifier through its own API and return the record, so… |
 | [`review-comments`](skills/content/content-lifecycle-ext/review-comments.md) | Reviewer comments on a folio's edit-set, from a tagged pull-request comment to a structured todo on the review page. |
