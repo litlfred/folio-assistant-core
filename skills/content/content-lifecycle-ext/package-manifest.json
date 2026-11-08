@@ -9,6 +9,7 @@
     "content-publish",
     "content-retire",
     "corpus-commit-contract",
+    "diff",
     "quality-control",
     "registry-authority-contract",
     "review-comments"
