@@ -19,7 +19,7 @@
  * - **Three states, not two**: `authored`, `candidate` (extracted, not yet
  *   curated), `could-not-extract` (visible, with its reason). A candidate is
  *   not a definition, and nobody reading the page should mistake one for it.
- * - **A term's IRI lives in the instance namespace**, never in the asset that
+ * - **A term's IRI lives in the layer namespace**, never in the asset that
  *   first defined it: moving the asset must not move the term.
  * - **Reuse is by membership, never by copying a definition.**
  * - **Not named `GlossaryEntry`**, which is already taken twice.
@@ -503,8 +503,8 @@ export function licenceTerms(license: string | undefined): Record<string, unknow
 }
 
 /**
- * The glossary as SKOS JSON-LD. `ns` is the declaring instance's namespace,
- * so the IRIs follow the instance, not the file (bean `lqo9`).
+ * The glossary as SKOS JSON-LD. `ns` is the declaring layer's namespace,
+ * so the IRIs follow the layer, not the file (bean `lqo9`).
  *
  * A candidate or could-not-extract term is emitted too, with its status as a
  * `skos:note` so a consumer reading only SKOS can still tell it is not a

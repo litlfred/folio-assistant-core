@@ -48,8 +48,8 @@ Feature: acronyms found in prose and checked against the glossary
     Then it holds exactly FDA and HL7 with their definitions as written
 
   @test:schemas/acronyms.test.ts::the_acronym-in-glossary_checker::mountedGlossaryCounts
-  Scenario: a glossary here or in a mounted instance counts
-    Given glossaries here and in a mounted instance
+  Scenario: a glossary here or in a mounted layer counts
+    Given glossaries here and in a mounted layer
     When the visible labels are collected
     Then WHO and HL7 are visible
     And of "WHO HL7 GS1 GS1" only GS1 is missing

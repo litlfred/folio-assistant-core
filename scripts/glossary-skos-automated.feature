@@ -7,18 +7,18 @@ Feature: automated matches published in the glossary's SKOS
     And other matched concepts become closeMatch links
 
   @test:scripts/glossary-skos-automated.test.ts::automatedMatches_—_the_record,_resolved_to_links_or_left_out::twoInstanceIdNotPublished
-  Scenario: an in-repo id two instances hold is NOT published, and is reported
-    When a match names an in-repo id two instances hold
+  Scenario: an in-repo id two layers hold is NOT published, and is reported
+    When a match names an in-repo id two layers hold
     Then it is not published and is reported
 
   @test:scripts/glossary-skos-automated.test.ts::automatedMatches_—_the_record,_resolved_to_links_or_left_out::otherInstanceOwnKey
-  Scenario: the same scheme and term id in another instance is another key: the row goes to its own instance only (bean q3n9)
-    When the same scheme and term id exist in another instance
-    Then the row goes to its own instance only, with nothing reported
+  Scenario: the same scheme and term id in another layer is another key: the row goes to its own layer only (bean q3n9)
+    When the same scheme and term id exist in another layer
+    Then the row goes to its own layer only, with nothing reported
 
   @test:scripts/glossary-skos-automated.test.ts::automatedMatches_—_the_record,_resolved_to_links_or_left_out::sharedCandidateKeyReported
-  Scenario: a candidate key two schemes of ONE instance share cannot be placed, so it is reported, never published twice
-    When two schemes of one instance share a candidate key
+  Scenario: a candidate key two schemes of ONE layer share cannot be placed, so it is reported, never published twice
+    When two schemes of one layer share a candidate key
     Then it is published nowhere and reported
 
   @test:scripts/glossary-skos-automated.test.ts::automatedMatches_—_the_record,_resolved_to_links_or_left_out::noResultPublishesNothing

@@ -3,11 +3,11 @@ Feature: validating a glossary's links
   @test:scripts/glossary-validate.test.ts::glossary-validate::resolvedSchemePasses
   Scenario: a scheme whose links all resolve passes
     When a scheme whose links all resolve is validated with capitalisation
-    Then there are no errors and the mounted instance is noted
+    Then there are no errors and the mounted layer is noted
 
   @test:scripts/glossary-validate.test.ts::glossary-validate::unknownMountedIriFails
-  Scenario: a mounted instance's IRI that names no term fails
-    When an exactMatch names a missing term of a mounted instance
+  Scenario: a mounted layer's IRI that names no term fails
+    When an exactMatch names a missing term of a mounted layer
     Then one error says it is not a term there
 
   @test:scripts/glossary-validate.test.ts::glossary-validate::unparsedSchemeReported

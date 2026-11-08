@@ -2,7 +2,7 @@
   "$schema": "folio-glossary/v1",
   "id": "platform",
   "title": "Folio Assistant platform terms (cat-harness)",
-  "description": "Terms the platform introduced in September 2026, each defined where its schema defines it and linked to the W3C concept it corresponds to, rather than copying that concept's definition. These are the platform terms whose source is in cat-harness, so they are minted in cat-harness's namespace (owner, 2026-09-24: a term lives in the namespace of the instance that owns its source). The file sits in core's glossary directory, which is the only one declared; where it sits does not decide whose it is.",
+  "description": "Terms the platform introduced in September 2026, each defined where its schema defines it and linked to the W3C concept it corresponds to, rather than copying that concept's definition. These are the platform terms whose source is in cat-harness, so they are minted in cat-harness's namespace (owner, 2026-09-24: a term lives in the namespace of the layer that owns its source). The file sits in core's glossary directory, which is the only one declared; where it sits does not decide whose it is.",
   "hasVersion": "2026-09-24",
   "modified": "2026-09-30",
   "license": "CC-BY-4.0",

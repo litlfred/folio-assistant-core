@@ -43,8 +43,8 @@ Staging prints the second line for you, built from **your own arguments**.
 
 **`--promote` writes the entry's JSON-LD nodes**, for that entry only, with the
 same `buildEntryNodes` the corpus generator uses. They are minted for the
-**destination**, not for staging: an entry's instance is read off where it sits,
-and `ingest-staging/` belongs to whichever instance holds it. You do **not**
+**destination**, not for staging: an entry's layer is read off where it sits,
+and `ingest-staging/` belongs to whichever layer holds it. You do **not**
 need `gen-library-jsonld` or `check:l1-complete --write` after promoting — the
 first is done, and the second's verdicts live on the `qa-reports` branch rather
 than on `main`.
@@ -154,7 +154,7 @@ no bytes to hash. Its `referenced.json` takes the `published` variant of
 `canonical`, `package_id`, `version`, and `read_from` / `read_at` naming the
 local record the identity was read off — no `sha256`, rather than a made-up
 one. `links` names where a reader goes instead (the publisher's page, and a
-`site_path` on this site such as the instance's artefact index), and the
+`site_path` on this site such as the layer's artefact index), and the
 library viewer shows them on the entry's row. Write it by hand — there is no
 file to run `referenced-source.py` on — then `gen-library-jsonld.ts --entry`
 for the manifest. The licence follows the usual rule: `stated` only with a
@@ -714,7 +714,7 @@ no verbatim text: `gen-library-viz` reads its blocks with `verbatim: false`.
 **Withheld is READ, never inferred from emptiness.** The flag, the gates and the
 record come from `withheld.json` — `folio-withheld/v1` carries an optional
 structured `gates[]` and `record{id, page, uri}` beside the `reason` sentence,
-which the instance's generator writes from its own data (the IRIS catalogue:
+which the layer's generator writes from its own data (the IRIS catalogue:
 `gen-iris-pages.ts`, from the catalogue's publication gates). A list that
 carries only the sentence still works: the row then says the sentence.
 

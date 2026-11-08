@@ -6,7 +6,7 @@ import { complete, enabled, startInstance } from "@litlfred/cat-harness-tools/sr
 import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
 
 /**
- * This instance's root; diagrams are found by NAME through its declared `processes` graphs (bean `63wl`).
+ * This layer's root; diagrams are found by NAME through its declared `processes` graphs (bean `63wl`).
  * The test lives in folio-assistant-core because the diagram does (bean `ho66`).
  */
 const HARNESS = resolve(import.meta.dir, "../..");

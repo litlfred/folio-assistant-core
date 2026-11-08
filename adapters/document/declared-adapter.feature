@@ -1,9 +1,9 @@
-Feature: the document content adapter is declared by this instance
+Feature: the document content adapter is declared by this layer
 
   @test:adapters/document/declared-adapter.test.ts::document_adapter_declaration::discoveredFromInstanceDeclaration
-  Scenario: is discovered from this instance's declaration
+  Scenario: is discovered from this layer's declaration
     When the built-in adapters are listed
-    Then the "document" adapter belongs to instance folio-assistant-core with class DocumentContentAdapter
+    Then the "document" adapter belongs to layer folio-assistant-core with class DocumentContentAdapter
     And it extends nothing
 
   @test:adapters/document/declared-adapter.test.ts::document_adapter_declaration::resolvesToExportedClass

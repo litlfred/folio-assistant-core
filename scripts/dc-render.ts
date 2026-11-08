@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Render every catalogue record as Dublin Core XML and DCMI-Terms JSON-LD,
- * into the instance's published root, and check that they are current.
+ * into the layer's published root, and check that they are current.
  *
  * @module folio-assistant-core/scripts/dc-render
  * @covers catalogue
@@ -21,12 +21,12 @@
  * ## Where
  *
  * `<published root>/dublin-core/<stem>.dc.xml` and `.dc.jsonld`, where the
- * published root is the directory the instance DECLARES `instanceRoot: true`
+ * published root is the directory the layer DECLARES `instanceRoot: true`
  * (for an IRIS mirror: `site/`, served at `/<instance>/`) and `<stem>` is the record's own
  * filename less `.dc.json`. The mount copies that directory whole
  * (`mount-instance-docs.ts`), so the renderings publish beside the item pages
  * with no pipeline change — the two files ARE the rendering pipeline's output.
- * An instance that declares no published root is refused, not given a guess.
+ * A layer that declares no published root is refused, not given a guess.
  *
  * ## `--check`
  *
@@ -34,10 +34,10 @@
  * fresh render), or ORPHANED (a file in the directory no record produces —
  * the item it described is gone, and a reader would still find it).
  *
- * In a layer's PR checks it judges only the caller's own instance (owner
+ * In a layer's PR checks it judges only the caller's own layer (owner
  * ruling 2026-11-05, "Move the checks"; cat-harness-tools `lib/gate-own.ts`):
- * every root that mounts a catalogue instance ran this check over that
- * instance's renderings, which are its own CI's to judge.
+ * every root that mounts a catalogue layer ran this check over that
+ * layer's renderings, which are its own CI's to judge.
  *
  * Usage:
  *   bun run folio-assistant-core/scripts/dc-render.ts <instance-root>          (e.g. an IRIS mirror)
@@ -58,7 +58,7 @@ const REPO = resolve(import.meta.dir, "..", "..");
 /** The subdirectory of the published root the renderings go in. */
 export const DC_RENDER_DIR = "dublin-core";
 
-/** The directory an instance declares as its published root (`instanceRoot: true`), or undefined. */
+/** The directory a layer declares as its published root (`instanceRoot: true`), or undefined. */
 export function publishedRootOf(instance: string): string | undefined {
   return resolveDirectories([{ name: "(local)", root: instance, own: true }]).find(
     // `instanceRoot` is carried through from the declared entry at run time;
@@ -68,7 +68,7 @@ export function publishedRootOf(instance: string): string | undefined {
   )?.absPath;
 }
 
-/** Where one record's two renderings live, given the instance and the item's `metadataRef`. */
+/** Where one record's two renderings live, given the layer and the item's `metadataRef`. */
 export function dcRenderingsFor(instance: string, metadataRef: string): { xml: string; jsonld: string } | undefined {
   const root = publishedRootOf(instance);
   if (root === undefined) return undefined;
@@ -92,7 +92,7 @@ export function itemsWithRecords(instance: string): CatalogueNode[] {
     .filter((n) => n.kind === "item" && n.metadataRef !== undefined && existsSync(join(instance, n.metadataRef)));
 }
 
-/** Every rendering the instance should hold, keyed by absolute path. */
+/** Every rendering the layer should hold, keyed by absolute path. */
 export function plannedRenderings(instance: string): Map<string, string> {
   const out = new Map<string, string>();
   for (const n of itemsWithRecords(instance)) {

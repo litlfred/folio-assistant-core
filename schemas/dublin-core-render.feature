@@ -115,7 +115,7 @@ Feature: a Dublin Core record rendered as JSON-LD bound to DCMI Terms and as DC 
 
   @test:schemas/dublin-core-render.test.ts::the_committed_renderings::committedRenderingsMatchFresh
   Scenario: are byte-identical to a fresh render (what dc:render:check gates)
-    When the planned renderings of the instance are computed
+    When the planned renderings of the layer are computed
     Then there are two per catalogue item
     And each committed file is byte-identical to its fresh render
 

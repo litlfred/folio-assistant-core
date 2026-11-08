@@ -89,7 +89,7 @@ describe("build-document-site", () => {
 
   test("editorCheckerBundled", async () => {
     const d = scaffold();
-    // An instance beside the folio declaring a ✍ suggest profile for documents (bean 4dx7).
+    // A layer beside the folio declaring a ✍ suggest profile for documents (bean 4dx7).
     const prof = join(d, "prof");
     mkdirSync(join(prof, "editor-checkers"), { recursive: true });
     writeFileSync(join(prof, "prof.json"), JSON.stringify({ name: "prof", directories: [{ id: "prof-editor-checkers", path: "editor-checkers/", graphTypologies: ["editor-checkers"] }] }));

@@ -143,9 +143,9 @@ describe("the third state at the PAGE level — nobody asked", () => {
 });
 
 describe("the page and the record key a scheme the same way (bean q3n9, owner ruling A)", () => {
-  // The page places a scheme under its owning instance; the record keys its
-  // rows by (instance, scheme). If the two ever derive the owner differently,
-  // a term on the page reads another instance's row, or none. Over the real
+  // The page places a scheme under its owning layer; the record keys its
+  // rows by (layer, scheme). If the two ever derive the owner differently,
+  // a term on the page reads another layer's row, or none. Over the real
   // checkout, in both directions.
   const states = mappingStates() ?? [];
   const page = collect().glossaries.filter((s) => s.file.endsWith(".glossary.json") && existsSync(s.file));

@@ -4,7 +4,7 @@
  *
  * Rule 1 of the route conventions (`skills/kg/kg-core/schema-management.md`):
  * a HANDLER rendering a KIND's assets lives at
- * `<base>/<handler>/<kind>/<optional subject>`. The handler is this instance
+ * `<base>/<handler>/<kind>/<optional subject>`. The handler is this layer
  * (folio-assistant-core), the kind is `public-comments`, and the subject is
  * the path of the materialised document in the folio, `folio/<slug>`
  * (owner, 2026-10-07: "url for review process should be more reflective of
@@ -18,7 +18,7 @@ import { join, relative } from "node:path";
 import { folioDir, readDeclaration } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { localisedPage } from "./document-site-route.js";
 
-/** This instance's declared name: the handler segment. */
+/** This layer's declared name: the handler segment. */
 export const HANDLER = (readDeclaration(join(import.meta.dir, "..")) as { name?: string } | undefined)?.name ?? "folio-assistant-core";
 
 /** The kind segment. */

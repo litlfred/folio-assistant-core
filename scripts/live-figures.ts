@@ -3,7 +3,7 @@
  * model's own drawing, not as the screenshot pasted into the text.
  *
  * Owner, 2026-10-31: *"i dont really like native UML, rather derived"*
- * (smart-ra#166, follow-up D3b). The instance's ArchiMate config maps a
+ * (smart-ra#166, follow-up D3b). The layer's ArchiMate config maps a
  * figure's block to the view it shows (`figures` in `cat-archimate.config.json`,
  * cat-harness-tools#1064), and `archimate-pages --out` draws every view as SVG
  * into the same site. Here each `<img>` in a mapped block is replaced by that
@@ -25,7 +25,7 @@ import { fromPageDir } from "./document-site-route.js";
 
 /** A document figure the config maps to a view, with where the site holds its drawing and its page. */
 export interface FigureTarget {
-  /** The block holding the figure, relative to the instance root (`figures[].block`). */
+  /** The block holding the figure, relative to the layer root (`figures[].block`). */
   block: string;
   label: string;
   model: string;
@@ -41,7 +41,7 @@ export interface FigureTarget {
 const req = createRequire(import.meta.url);
 
 /**
- * Every figure the instance's config maps to a view (`figures`), with the site
+ * Every figure the layer's config maps to a view (`figures`), with the site
  * paths `archimate-pages --out` writes for it. Delegates to `gen-archimate-pages`
  * when `figureTargets` is exported there (cat-harness-tools#1077), and computes
  * the same paths from the tools layer's ArchiMate modules otherwise.
@@ -125,7 +125,7 @@ export function liveFiguresFor(targets: FigureTarget[], repoRoot: string, pageDi
   return out;
 }
 
-/** {@link liveFiguresFor} for an instance: empty when it holds no ArchiMate config or maps no figure. */
+/** {@link liveFiguresFor} for a layer: empty when it holds no ArchiMate config or maps no figure. */
 export function liveFigures(repoRoot: string, pageDir: string): Map<string, LiveFigure> {
   return liveFiguresFor(figureTargets(repoRoot), repoRoot, pageDir);
 }

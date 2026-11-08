@@ -24,7 +24,7 @@
  * below read those files like any other voice, and say nothing about the one
  * property that makes them vendor voices — so a vendor voice with no `extends`
  * (a base voice filed in the wrong place) or one whose `extends` names a voice
- * no instance ships, or that cycles, passed. `resolveVoice` reports both
+ * no layer ships, or that cycles, passed. `resolveVoice` reports both
  * failures and had no caller in a gate: `skill-voice-review.ts` skips an
  * unresolvable chain on the stated ground that *"`check:voices` owns"* it,
  * which this file did not do until PR #2094. See {@link vendorVoiceFindings}.
@@ -54,11 +54,11 @@ import {
 import { isMechanicalRole, readRoleGraph, type RoleGraph } from "@litlfred/cat-harness-tools/schemas/process/role-graph.js";
 
 const ROOT = resolve(import.meta.dir, "..");
-/** The checkout, one level out: a cross-instance citation is resolved against sibling instances. */
+/** The checkout, one level out: a cross-layer citation is resolved against sibling layers. */
 const REPO_ROOT = resolve(ROOT, "..");
 
 /**
- * Every instance in this checkout that ships a `voices/` directory — FOUND,
+ * Every layer in this checkout that ships a `voices/` directory — FOUND,
  * not assumed to be this one.
  *
  * ## Measured, on the change that needed it
@@ -75,9 +75,9 @@ const REPO_ROOT = resolve(ROOT, "..");
  * making it, which is the only way to tell a guess from a finding.
  *
  * It is the same shape as `check-declared-assets`, fixed hours earlier the
- * same day: a checker pinned to one instance in a repository that has eight.
+ * same day: a checker pinned to one layer in a repository that has eight.
  * The remedy is the same and it is not "add who-style-guide to a list" — a
- * hardcoded list is a declaration nobody declared, and the next instance
+ * hardcoded list is a declaration nobody declared, and the next layer
  * would be invisible in exactly this way.
  *
  * One level down plus the root itself. Deeper is deliberately NOT walked: a
@@ -98,25 +98,25 @@ function instancesWithVoices(repoRoot: string): string[] {
 
 // No `LIBRARY` constant any more, and that is the change rather than a tidy-up.
 // This module composed `join(LIBRARY, libraryId, "sections", …)` against the
-// VOICE'S OWN instance root, which made a cross-instance citation
+// VOICE'S OWN layer root, which made a cross-layer citation
 // unrepresentable — the blocker on moving the three WHO voices out (beans
 // `z7ev`, `w095`), predicted by bean `r1lz` the day before the move was
-// decided. `resolveLibraryRef` reads the target instance's own declaration, so
-// where a corpus lives is answered once, by the instance that owns it.
+// decided. `resolveLibraryRef` reads the target layer's own declaration, so
+// where a corpus lives is answered once, by the layer that owns it.
 const MIN_QUOTE = 24;
 
 /**
- * Resolve a citation, in this instance or another.
+ * Resolve a citation, in this layer or another.
  *
  * Delegates to `folio-assist-core`'s `resolveLibraryRef` rather than composing
  * a path. Composing one is what this file did until 2026-09-20 — `join(LIBRARY,
- * …)` against the VOICE'S OWN instance root — which made a cross-instance
+ * …)` against the VOICE'S OWN layer root — which made a cross-layer
  * citation unrepresentable and was the blocker on moving the three WHO voices
  * out (beans `z7ev`, `w095`). Bean `r1lz` predicted it the day before the move
  * was decided.
  *
  * The resolver's four failure kinds are reported as they come back, unmerged:
- * "that instance is not in this checkout", "that instance holds no corpus",
+ * "that layer is not in this checkout", "that layer holds no corpus",
  * "that document was never ingested" and "that section is missing" need four
  * different fixes, and collapsing them sends a reader to the wrong one.
  */
@@ -124,21 +124,21 @@ function resolveCitation(
   src: { instance?: string; libraryId: string; sectionId?: string },
   citingRoot: string,
 ): { ok: true; path: string } | { ok: false; why: string } {
-  // The CITING instance, not always `cat-harness`. A BARE citation resolves
+  // The CITING layer, not always `cat-harness`. A BARE citation resolves
   // against whoever wrote it, so hardcoding one root would have answered a
-  // catalogue instance's voice's bare reference out of the platform's library —
+  // catalogue layer's voice's bare reference out of the platform's library —
   // the wrong corpus, reported as a confident resolution.
   const r = resolveLibraryRef(src, citingRoot, REPO_ROOT);
   return r.ok ? { ok: true, path: r.path } : { ok: false, why: explainFailure(r.failure) };
 }
 
 /**
- * The root of the instance a citation names, or the voice's own when it names
+ * The root of the layer a citation names, or the voice's own when it names
  * none.
  *
- * `undefined` means the name resolves to no instance in this repository, which
+ * `undefined` means the name resolves to no layer in this repository, which
  * is a DIFFERENT finding from "the file is not there" and is reported as one:
- * a typo in the instance name and a moved file are fixed in different places.
+ * a typo in the layer name and a moved file are fixed in different places.
  */
 function instanceRootFor(instance: string | undefined, ownRoot: string): string | undefined {
   if (instance === undefined) return ownRoot;
@@ -150,9 +150,9 @@ function instanceRootFor(instance: string | undefined, ownRoot: string): string 
 }
 
 /**
- * An instance's role graph, from its declared `scenarios` directory, or
+ * A layer's role graph, from its declared `scenarios` directory, or
  * `undefined` when it declares none. Cached: every voice addressing a role in
- * the same instance would otherwise re-read the same file.
+ * the same layer would otherwise re-read the same file.
  */
 const roleGraphs = new Map<string, RoleGraph | undefined>();
 function roleGraphOf(instanceRoot: string): RoleGraph | undefined {
@@ -168,7 +168,7 @@ function roleGraphOf(instanceRoot: string): RoleGraph | undefined {
 /**
  * The vendor-voice criterion: each voice found in a declared `voice-vendors`
  * directory declares `extends`, and its chain resolves against the voices
- * every instance ships — no missing base, no cycle.
+ * every layer ships — no missing base, no cycle.
  *
  * Pure over its inputs so a test can hand it a fixture: `vendors` are the
  * vendor voice files (path, for the message, and the parsed profile), and
@@ -228,7 +228,7 @@ function main(): number {
     return 0;
   }
 
-  // Each voice keeps the root it was LOADED from, because that is the instance
+  // Each voice keeps the root it was LOADED from, because that is the layer
   // a bare citation resolves against. Flattening them into one list and
   // resolving everything against `ROOT` is the bug this enumeration exists to
   // avoid, one step in.
@@ -243,10 +243,10 @@ function main(): number {
   // reports a finding as `<voiceId>/<ruleId>` — is keyed on the id alone.
   // `instanceOfSource`'s own comment says why a global map is wrong ("two
   // voices may legitimately derive same-named documents from different
-  // instances, and a global map would silently pick one") and then keys on
-  // `v.id`, which collides the moment two INSTANCES ship a voice of the same
+  // layers, and a global map would silently pick one") and then keys on
+  // `v.id`, which collides the moment two LAYERS ship a voice of the same
   // name. The loser's citations would then resolve against the winner's
-  // instance root: a wrong pass, reported in the same words as a right one.
+  // layer root: a wrong pass, reported in the same words as a right one.
   //
   // Refusing the duplicate is the fix rather than composite keys, because the
   // id is already load-bearing elsewhere and a duplicate is unworkable there
@@ -274,34 +274,34 @@ function main(): number {
   const problems: string[] = [];
 
   /**
-   * Which instance holds each declared source, from the VOICE that declares
+   * Which layer holds each declared source, from the VOICE that declares
    * it — so a rule citing that source need not repeat the answer.
    *
    * A voice's `sources[]` is where it says what it was derived from. A rule's
    * `source` says which of those, and where in it. Making every rule restate
-   * the instance would put one fact in two places and let them disagree: a
-   * voice pointing at one instance with a rule pointing at another is
+   * the layer would put one fact in two places and let them disagree: a
+   * voice pointing at one layer with a rule pointing at another is
    * representable, meaningless, and nothing would catch it.
    *
    * This became load-bearing with bean `frs5`, which moved the corpus out of
-   * the platform. Before it every citation resolved locally and the instance
+   * the platform. Before it every citation resolved locally and the layer
    * was never written down at all; after it, the four voices in `cat-harness/`
-   * cite documents in two other instances across dozens of rules.
+   * cite documents in two other layers across dozens of rules.
    *
    * Keyed per VOICE, not globally: two voices may legitimately derive
-   * same-named documents from different instances, and a global map would
+   * same-named documents from different layers, and a global map would
    * silently pick one.
    */
   const instanceOfSource = new Map<string, Map<string, string>>();
   /**
-   * Sources HELD ELSEWHERE: the voice names an instance this checkout does not
+   * Sources HELD ELSEWHERE: the voice names a layer this checkout does not
    * compose, and says where the document is held with a `url`. Owner, 2026-10-31
    * (fa#2781): "report as held elsewhere". Such a citation is not checked here,
    * since there is nothing here to check it against, and it is listed rather
    * than failed. A source with no `url` stays a problem: then nothing says
-   * where it is, and an unknown instance is most likely a typo.
+   * where it is, and an unknown layer is most likely a typo.
    */
-  const heldElsewhere = new Map<string, Map<string, string>>(); // voice -> instance -> url
+  const heldElsewhere = new Map<string, Map<string, string>>(); // voice -> layer -> url
   const elsewhere: string[] = [];
   const isHeldElsewhere = (voice: string, instance: string | undefined): string | undefined => {
     if (instance === undefined) return undefined;
@@ -349,10 +349,10 @@ function main(): number {
     } else if (src.path) {
       // A `#anchor` is a section within the file; check the file.
       const file = src.path.split("#")[0]!;
-      // Resolved through the CITED instance, exactly as the library branch
+      // Resolved through the CITED layer, exactly as the library branch
       // above does. It did not until 2026-09-21, and the asymmetry was
-      // invisible while every path happened to be instance-local: a voice
-      // citing a file in another instance could not pass however correctly it
+      // invisible while every path happened to be layer-local: a voice
+      // citing a file in another layer could not pass however correctly it
       // declared where that file was. It surfaced the moment `milnor` moved to
       // the science layer carrying one rule that cites a cat-harness module
       // — the rule was right, the checker was not.
@@ -385,10 +385,10 @@ function main(): number {
         const res = resolveCitation({ instance: s.instance, libraryId: s.libraryId }, rootOf.get(v.id)!);
         if (!res.ok) problems.push(`${v.id}: names source ${s.libraryId} — ${res.why}`);
       }
-      // Against the DECLARING instance: a `path` is a node of the voice's own
+      // Against the DECLARING layer: a `path` is a node of the voice's own
       // knowledge graph, so looking for it under the platform would report a
-      // catalogue instance's voice's own node as missing.
-      // Through the NAMED instance when the source names one, exactly as a
+      // catalogue layer's voice's own node as missing.
+      // Through the NAMED layer when the source names one, exactly as a
       // rule's `path` is resolved above: a voice addressing a role cites the
       // role graph that declares it, which is the dependency's, not its own.
       if (s.path) {
@@ -408,7 +408,7 @@ function main(): number {
   // general node (the role) — #1168, B2. A role id that resolves to nothing
   // scopes the voice to a lane nobody can act in, which switches it off in
   // silence; that is a problem, not a note.
-  const addressed = new Map<string, Set<string>>(); // instance root -> role ids some voice addresses
+  const addressed = new Map<string, Set<string>>(); // layer root -> role ids some voice addresses
   for (const { voice: v, root } of loaded) {
     for (const ref of v.activeIn?.roles ?? []) {
       const rolesRoot = instanceRootFor(ref.instance, root);
@@ -451,9 +451,9 @@ function main(): number {
 
   // Coverage, reported and never failed: which roles that READ prose no voice
   // addresses. It was the audit criterion \`role-declares-voice\` while the
-  // role carried its voice; now the voice points at the role, from an
-  // instance the role graph cannot see, so it is answered here, where both
-  // are visible. Only for instances some voice already addresses — a role
+  // role carried its voice; now the voice points at the role, from a
+  // layer the role graph cannot see, so it is answered here, where both
+  // are visible. Only for layers some voice already addresses — a role
   // graph no voice reaches is not this check's to grade.
   for (const [rolesRoot, ids] of addressed) {
     const unaddressed = (roleGraphOf(rolesRoot)?.roles ?? [])

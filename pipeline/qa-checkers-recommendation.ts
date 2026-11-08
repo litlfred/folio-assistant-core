@@ -26,7 +26,7 @@ const CORE_CODE_LISTS = join(import.meta.dir, "..", "code-lists");
  * The code lists a block can see, in overlay order: core's first, then every
  * `code-lists/` from the filesystem root down to the block's directory. The
  * nearest wins on an id collision, as `codeListDirs` orders a dependency
- * tree (deepest first, the instance last). Read from the filesystem, not the
+ * tree (deepest first, the layer last). Read from the filesystem, not the
  * declaration graph, because a checker is synchronous and runs per block.
  */
 export function codeListDirsFor(file: string): string[] {

@@ -3,11 +3,11 @@
  *
  * @module folio-assistant-core/scripts/lib/bytes
  *
- * **Moved from the IRIS catalogue instance's `scripts/lib/` on 2026-09-30 (bean `eayu`).** Owner:
+ * **Moved from the IRIS catalogue layer's `scripts/lib/` on 2026-09-30 (bean `eayu`).** Owner:
  * *"dspace scripts generic in folio-assistant"*. Nothing here is IRIS's: a
- * `localPath` is instance-relative for EVERY catalogue instance, so the
- * instance directory is now a parameter rather than `import.meta.dir/../..`,
- * which could only ever name that one instance.
+ * `localPath` is layer-relative for EVERY catalogue layer, so the
+ * layer directory is now a parameter rather than `import.meta.dir/../..`,
+ * which could only ever name that one layer.
  *
  * **This was the `yl5w` workaround, and `yl5w` is settled.** Every `localPath`
  * on an ORIGINAL bitstream pointed at `<that instance>/uploads/…` while the bytes sat
@@ -17,7 +17,7 @@
  * link that works, and the cover renderer, to have something to render.
  *
  * 2026-09-21 the owner ruled that a folio's sources live in the folio. The
- * three PDFs were `git mv`-ed to that instance's `uploads/<slug>/`, beside each item's
+ * three PDFs were `git mv`-ed to that layer's `uploads/<slug>/`, beside each item's
  * own `intake.json` and IRIS capture, and `check:catalogue` now verifies every
  * `localPath`. **So the fallback is gone rather than left in place**, and that
  * is what the old note promised: the declared path was already tried first, so
@@ -36,13 +36,13 @@ import { join, relative, sep } from "path";
 /**
  * The declared path, resolved against `instanceDir` — and nothing else is tried.
  *
- * Instance-relative, per `MaterializationSchema.localPath`: *"where the bytes
- * landed, instance-relative"*. Searching elsewhere is what the removed
+ * Layer-relative, per `MaterializationSchema.localPath`: *"where the bytes
+ * landed, layer-relative"*. Searching elsewhere is what the removed
  * fallback did, and it is precisely what made the contract unenforceable —
- * a resolver that finds the file one instance over reports a false claim as
+ * a resolver that finds the file one layer over reports a false claim as
  * true, which is the defect `yl5w` was opened for.
  *
- * `instanceDir` is the catalogue instance's root, the directory holding its
+ * `instanceDir` is the catalogue layer's root, the directory holding its
  * `<name>.json`. `name` is no longer read. It stays in the signature because
  * callers pass it and it is what a future fixity check would compare against;
  * drop it only alongside them.

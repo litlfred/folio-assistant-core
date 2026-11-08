@@ -3,14 +3,14 @@
  *
  * @module folio-assistant-core/scripts/lib/local-path
  *
- * Moved from the IRIS catalogue instance's `scripts/lib/` on 2026-09-30 (bean `eayu`, owner:
+ * Moved from the IRIS catalogue layer's `scripts/lib/` on 2026-09-30 (bean `eayu`, owner:
  * *"dspace scripts generic in folio-assistant"*). It was already generic — it
- * takes the instance directory as a parameter — so only its home changed.
+ * takes the layer directory as a parameter — so only its home changed.
  *
  * ## Why this is a module rather than four lines in the checker
  *
  * `check-catalogue.ts` is imperative top to bottom: importing it RUNS the
- * check against the real instance and may `process.exit(1)`. A test that
+ * check against the real layer and may `process.exit(1)`. A test that
  * imported it to reach one helper would run the gate as a side effect of
  * loading, and would then be asserting against whatever the corpus happens to
  * hold today rather than against a case it planted. So the decision lives
@@ -42,12 +42,12 @@ export interface LocalPathVerdict {
 }
 
 /**
- * Resolve one `localPath` against the instance it is relative to.
+ * Resolve one `localPath` against the layer it is relative to.
  *
- * `localPath` is **instance-relative** by the schema's own contract — *"where
- * the bytes landed, instance-relative"* — so this joins it to `instanceDir`
+ * `localPath` is **layer-relative** by the schema's own contract — *"where
+ * the bytes landed, layer-relative"* — so this joins it to `instanceDir`
  * and nowhere else. That is deliberate rather than incidental: bean `yl5w`'s
- * three failing claims name bytes that DO exist, one instance over, and a
+ * three failing claims name bytes that DO exist, one layer over, and a
  * resolver that searched the repository would have called them present and
  * made the contract unenforceable.
  */

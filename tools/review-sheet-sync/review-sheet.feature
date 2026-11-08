@@ -318,8 +318,8 @@ Feature: the review sheet script, built and run against a fake sheet
     Then the grey change leaves the proposal current and the blue change makes it stale
 
   @test:tools/review-sheet-sync/review-sheet.test.ts::sheet-sync_URLs_relative_to_the_folio's_site::urlsResolveAgainstIriBase
-  Scenario: resolve against the instance's iriBase, so a move to another org changes one line
-    Given a folio whose instance declares an iriBase and a relative section URL
+  Scenario: resolve against the layer's iriBase, so a move to another org changes one line
+    Given a folio whose layer declares an iriBase and a relative section URL
     When the Config is built
     Then the section URL is resolved against the iriBase
 

@@ -13,7 +13,7 @@ function term(id: string, prefLabel: string, extra: object = {}) {
   return { id, prefLabel, definition: `${prefLabel}.`, status: "candidate", source: "test", ...extra };
 }
 
-/** A repo holding instance `pc`, which mounts instance `sc` at `sc/`. */
+/** A repo holding layer `pc`, which mounts layer `sc` at `sc/`. */
 function fixture(pcTerms: object[], block?: object): string {
   const repo = mkdtempSync(join(tmpdir(), "glossary-validate-"));
   writeFileSync(join(repo, "pc.json"), JSON.stringify({ name: "pc" }));
@@ -94,7 +94,7 @@ function withModel(root: string, id: string, xml: string) {
   );
 }
 
-/** The `archimate` directory an instance holding a model declares: the config is found through it. */
+/** The `archimate` directory a layer holding a model declares: the config is found through it. */
 const ARCHIMATE_DIRS = [{ id: "archimate", path: "archimate/", graphTypologies: ["archimate"] }];
 
 /** `pc` (iriBase pc/) overlays `sc` (iriBase sc/), whose model 1.0 holds e1 and e2 serving e1. */

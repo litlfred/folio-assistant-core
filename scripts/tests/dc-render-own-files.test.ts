@@ -1,8 +1,8 @@
 /**
- * `dc:render:check` judges only the caller's own instance in a layer's PR
+ * `dc:render:check` judges only the caller's own layer in a layer's PR
  * checks (owner ruling 2026-11-05, "Move the checks"; cat-harness-tools
- * `lib/gate-own.ts`). Every root mounting a catalogue instance judged that
- * instance's renderings; that is the instance's own CI's to do.
+ * `lib/gate-own.ts`). Every root mounting a catalogue layer judged that
+ * layer's renderings; that is the layer's own CI's to do.
  *
  * @module scripts/tests/dc-render-own-files.test
  */

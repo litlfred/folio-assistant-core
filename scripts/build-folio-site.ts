@@ -286,7 +286,7 @@ export function preambleMacros(paperDir: string): Record<string, string> {
 }
 
 /**
- * The instance's declared repository (`<name>.json` → `repository`,
+ * The layer's declared repository (`<name>.json` → `repository`,
  * `owner/repo`), for the edit and feedback links. The declaration is the
  * file whose stem equals its own `name`, the rule `findDeclarationFile`
  * applies. Absent when there is none: then the links are not drawn, rather
@@ -389,7 +389,7 @@ export async function buildFolioSite(
   // (2026-10-05: "<base_url>/cat-harness/folio/<paper>/<chapter>/<section>"),
   // under the OUTPUT directory — not cat-harness's declared `folio/` graph, and
   // nothing is read from that directory. Resolving the declaration here would
-  // tie a URL to wherever an instance keeps its sources. `--route` overrides it.
+  // tie a URL to wherever a layer keeps its sources. `--route` overrides it.
   const route = (opts.route ?? "cat-harness/folio").replace(/^\/+|\/+$/g, "");
   const base = join(outDir, route);
   const math = opts.math ?? readHarnessConfig(repoRoot)?.contentType === "paper";

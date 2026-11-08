@@ -1,40 +1,40 @@
 #!/usr/bin/env bun
 /**
- * Check an instance's glossary and its links into the instances it mounts.
+ * Check a layer's glossary and its links into the layers it mounts.
  *
  *   bun run folio-assistant-core/scripts/glossary-validate.ts --instance <name> [--repo .] [--capitalized]
  *
- * The cross-instance glossary validator of the L2 DTH plan (litlfred/dth-pc#2,
+ * The cross-layer glossary validator of the L2 DTH plan (litlfred/dth-pc#2,
  * PC-6; dth-hrh#47). It started as dth-pc's `scripts/glossary/validate.ts`
  * and moved here because a validator is the platform's, not a folio's
- * (dth-pc AGENTS.md; owner, 2026-10-31). Every instance calls this one copy.
+ * (dth-pc AGENTS.md; owner, 2026-10-31). Every layer calls this one copy.
  *
  * It checks:
  *
  * - every scheme in `<repo>/glossary/*.glossary.json`, and in each mount, parses
  *   as `folio-glossary/v1` (which already refuses a bare id naming no term);
  * - every `broader`, `related` and SKOS match (`exactMatch`, `closeMatch`,
- *   `broadMatch`, `narrowMatch`) that names this instance's namespace, or a
- *   MOUNTED instance's, names a term that exists there. A match into a
+ *   `broadMatch`, `narrowMatch`) that names this layer's namespace, or a
+ *   MOUNTED layer's, names a term that exists there. A match into a
  *   namespace that is not mounted (GS1, HL7, …) is not checked, nor is an
  *   IRI into a mounted namespace outside its `glossary/` (a vocabulary class);
  * - every concept a block names in `meta.glossary` exists, here or in a mount;
  * - every ArchiMate element or view a block names in `meta.archimate`, and
- *   every figure-to-view mapping, exists in a mounted instance's model, or,
- *   for an IRI under this instance's own `iriBase`, in its own model;
- * - the overlay rule, for an instance whose own `archimate/` model tags its
+ *   every figure-to-view mapping, exists in a mounted layer's model, or,
+ *   for an IRI under this layer's own `iriBase`, in its own model;
+ * - the overlay rule, for a layer whose own `archimate/` model tags its
  *   items `overlay:base` or `overlay:owner` (a DTH's overlay on smart-ra): every
  *   element and relationship is a reference copy of a mounted item (same id,
- *   named by IRI) or owned by this instance and not in the base model; an
+ *   named by IRI) or owned by this layer and not in the base model; an
  *   `overlay:dth` copy from another DTH's overlay is noted, not checked;
  * - with `--capitalized`, every prefLabel starts with a capital (the DTH rule
  *   that KG concepts are Capitalized; owner, 2026-10-31). A name written
  *   with one lower-case letter before a capital, such as iHRIS or mHealth,
  *   counts as Capitalized: that is how its owner spells it.
  *
- * A mounted instance is any directory `<repo>/<d>/` holding `<d>.json`. It
+ * A mounted layer is any directory `<repo>/<d>/` holding `<d>.json`. It
  * reports each failure and exits 1 if there is one. ArchiMate links are
- * reported as unchecked, not failed, when no mounted instance holds a model,
+ * reported as unchecked, not failed, when no mounted layer holds a model,
  * or holds the model but not the version the link names.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -50,7 +50,7 @@ export interface Instance {
   name: string;
   ns: string;
   root: string;
-  /** The declared `iriBase`, under which the instance's own ArchiMate IRIs sit. */
+  /** The declared `iriBase`, under which the layer's own ArchiMate IRIs sit. */
   iriBase?: string;
 }
 
@@ -66,7 +66,7 @@ function instanceAt(root: string, file: string): Instance {
   return { name: d.name, ns: instanceNs(d.name, d.stub, d), root, iriBase: d.iriBase };
 }
 
-/** Every term and scheme IRI an instance's `glossary/` declares. */
+/** Every term and scheme IRI a layer's `glossary/` declares. */
 function glossaryOf(
   inst: Instance,
   errors: string[] = [],
@@ -93,7 +93,7 @@ function glossaryOf(
   return { known, bareIds, docs };
 }
 
-/** The instances mounted at the repository root: `<d>/<d>.json`. */
+/** The layers mounted at the repository root: `<d>/<d>.json`. */
 export function mountedInstances(repo: string, self: string): Instance[] {
   const out: Instance[] = [];
   for (const d of readdirSync(repo).sort()) {
@@ -103,7 +103,7 @@ export function mountedInstances(repo: string, self: string): Instance[] {
     try {
       out.push(instanceAt(p, `${d}.json`));
     } catch {
-      // not an instance declaration
+      // not a layer declaration
     }
   }
   return out;
@@ -179,7 +179,7 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
     }
     const inst = mounted.find((x) => r.startsWith(x.ns));
     if (!inst) return;
-    // Only glossary IRIs are glossary terms; a class of the instance's own
+    // Only glossary IRIs are glossary terms; a class of the layer's own
     // vocabulary (a `ns/BusinessProcess` class) is not checked here.
     if (!r.startsWith(`${inst.ns}glossary/`)) {
       otherIris.set(inst.name, (otherIris.get(inst.name) ?? 0) + 1);
@@ -204,15 +204,15 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
     notes.push(`${f}: ${g.terms.length} terms (${linked} matched to another scheme)`);
   }
 
-  // ArchiMate models of every mounted instance, keyed by model id, and this
-  // instance's own models (a DTH's overlay, linked under its own IRI base).
+  // ArchiMate models of every mounted layer, keyed by model id, and this
+  // layer's own models (a DTH's overlay, linked under its own IRI base).
   type Ids = { elements: Set<string>; relationships: Set<string>; views: Set<string> };
   type Item = { id: string; name?: string; properties: Array<{ key: string; value: string }> };
   type Loaded = { id: string; ids: Ids; items: Record<keyof Ids, Item[]> };
   const models = new Map<string, Ids>();
   const unmountedModels = new Map<string, number>();
   const loadModels = async (root: string): Promise<Loaded[]> => {
-    // The config and the directory it names, as the instance declares them,
+    // The config and the directory it names, as the layer declares them,
     // not a spelled `archimate/`.
     const cfgPath = archimateConfigPath(root);
     if (cfgPath === undefined) return [];
@@ -248,9 +248,9 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
   // The overlay rule: a DTH builds an overlay on the reference architecture
   // and does not add to it. Every element and relationship of its own model is
   // a reference copy (`overlay:base`, the mounted item's IRI, same id) or its
-  // own (`overlay:owner` = this instance), and an item it owns is not already
+  // own (`overlay:owner` = this layer), and an item it owns is not already
   // in a mounted model. A view may carry either tag. Checked only for a model
-  // that tags at least one item, so an instance that is not an overlay passes.
+  // that tags at least one item, so a layer that is not an overlay passes.
   const baseRe = /\/archimate\/([^/]+)\/(elements|relationships|views)\/([^/]+)\.jsonld$/;
   for (const l of ownModels) {
     const all = [...l.items.elements, ...l.items.relationships, ...l.items.views];
@@ -324,7 +324,7 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
     if (!a) continue;
     for (const x of [...(a.elements ?? []), ...(a.views ?? [])]) {
       const hit = String(x.iri).match(iriRe);
-      // A link into this instance's own model (its overlay).
+      // A link into this layer's own model (its overlay).
       if (ownBase && hit && String(x.iri).startsWith(ownBase)) {
         archLinks++;
         if (!own.has(hit[1])) errors.push(`${file}: ${x.iri} (${x.name}) names model ${hit[1]}, which ${self.name} does not hold`);

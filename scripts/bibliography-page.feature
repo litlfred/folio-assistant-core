@@ -80,10 +80,10 @@ Feature: the bibliography pages and their exports
     Then it carries the "✍ + Add reference (standalone node)" control and each of its fields
 
   @test:scripts/bibliography-page.test.ts::a_site_with_its_own_instance_(declared_at_the_checkout_root)_and_dependencies::rootInstanceIsOwn
-  Scenario: the root instance is the site's own; a dependency's clashing sub-graph id gets its layer prefix
-    Given a site whose root declares an instance, and a dependency with a clashing sub-graph id
+  Scenario: the root layer is the site's own; a dependency's clashing sub-graph id gets its layer prefix
+    Given a site whose root declares a layer, and a dependency with a clashing sub-graph id
     When the bibliography is collected
-    Then nothing is invalid and the own instance is site-x
+    Then nothing is invalid and the own layer is site-x
     And the dependency's sub-graph gets its layer prefix
 
   @test:scripts/bibliography-page.test.ts::a_site_with_its_own_instance_(declared_at_the_checkout_root)_and_dependencies::ownFirstDepsInClosedSection
@@ -98,14 +98,14 @@ Feature: the bibliography pages and their exports
     Then each holds only its layer's references, the dependency's saying it is a dependency
 
   @test:scripts/bibliography-page.test.ts::a_site_with_its_own_instance_(declared_at_the_checkout_root)_and_dependencies::noRootInstanceOneList
-  Scenario: with no instance at the root, the page stays one list
-    When a checkout without a root instance is written
+  Scenario: with no layer at the root, the page stays one list
+    When a checkout without a root layer is written
     Then its page has no dependencies section and lists by sub-graph
 
   @test:scripts/bibliography-page.test.ts::one_page,_one_id_per_entry_(bean_djj5)::firstKeepsRefKey
-  Scenario: the first keeps ref-<key>, which a citation links; the next is qualified by its instance
+  Scenario: the first keeps ref-<key>, which a citation links; the next is qualified by its layer
     When a page with two entries of the same key is rendered
-    Then the first keeps ref-<key> and the next is qualified by its instance
+    Then the first keeps ref-<key> and the next is qualified by its layer
 
   @test:scripts/bibliography-page.test.ts::one_page,_one_id_per_entry_(bean_djj5)::ownEntryKeepsRefKey
   Scenario: on an own site's page the own entry keeps ref-<key>, wherever it sorts
@@ -113,8 +113,8 @@ Feature: the bibliography pages and their exports
     Then the own entry keeps ref-<key> and the ids are distinct
 
   @test:scripts/bibliography-page.test.ts::one_instance's_own_bibliography,_for_its_page_inside_a_composed_site_(bean_djj5)::keepsInstanceAndNeeds
-  Scenario: keeps the instance and what it needs, transitively, and makes it own
-    When one instance's bibliography is taken
+  Scenario: keeps the layer and what it needs, transitively, and makes it own
+    When one layer's bibliography is taken
     Then it is its own, with its entries and the sub-graphs of what it needs
 
   @test:scripts/bibliography-page.test.ts::one_instance's_own_bibliography,_for_its_page_inside_a_composed_site_(bean_djj5)::pagesUnderInstance

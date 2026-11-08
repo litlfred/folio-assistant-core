@@ -8,7 +8,7 @@
  * skos? accesible in ihris page/search?"*, *"it should be part of general
  * pracice w/ glossary/ page"*.
  *
- * ## One scheme per asset type per instance
+ * ## One scheme per asset type per layer
  *
  * | scheme | asset | prefLabel | definition | notation | source |
  * |---|---|---|---|---|---|
@@ -18,7 +18,7 @@
  * | `kg-dmn-decisions` | a DMN decision | `name` | its own `<description>` | the element id | the table `#<element id>` |
  * | `kg-schema-fields` | a schema field with a doc comment | `<Declaration>.<field>` | the doc comment's first paragraph | none | the module `#<Declaration>.<field>` |
  *
- * A scheme is emitted only for an (instance, type) with at least one term: an
+ * A scheme is emitted only for a (layer, type) with at least one term: an
  * empty scheme is a declaration claiming a set that is not there (`dh4f`).
  *
  * ## What is NOT extracted here, and why
@@ -44,7 +44,7 @@
  *   summarised or completed.
  * - **`source` points at the asset**: a repository path, with an anchor
  *   naming the element inside a file that holds many.
- * - **IRIs are in the owning instance's namespace**, which is the instance
+ * - **IRIs are in the owning layer's namespace**, which is the layer
  *   whose root holds the asset. A skill in `folio-assistant-core/skills/` is
  *   core's even though `cat-harness.json` also declares that directory with
  *   `scope: "repository"`.
@@ -102,7 +102,7 @@ export function assetTypeWhat(t: AssetType): string {
   return TITLES[t].what;
 }
 
-/** One extracted scheme: the instance it belongs to, and the glossary itself. */
+/** One extracted scheme: the layer it belongs to, and the glossary itself. */
 export interface ExtractedScheme {
   instance: string;
   type: AssetType;
@@ -163,14 +163,14 @@ export function localId(key: string): string {
     .replace(/-+$/, "");
 }
 
-/** Instance roots, longest first, so a path resolves to the MOST specific owner. */
+/** Layer roots, longest first, so a path resolves to the MOST specific owner. */
 function owners(repo: string): Array<{ root: string; name: string; rel: string }> {
   const out: Array<{ root: string; name: string; rel: string }> = [];
   for (const root of instanceRootsIn(repo)) {
     const decl = readDeclaration(root);
     if (!decl) continue;
     const rel = posix(relative(repo, root));
-    // The repository root's own declaration owns nothing an instance does.
+    // The repository root's own declaration owns nothing a layer does.
     if (rel === "") continue;
     out.push({ root: resolve(root), name: decl.name, rel });
   }
@@ -182,7 +182,7 @@ function ownerOf(abs: string, own: ReturnType<typeof owners>): string | undefine
   return own.find((o) => p === o.root || p.startsWith(o.root + sep))?.name;
 }
 
-/** Declared directories of one graph typology, each at its declaring instance's own root. */
+/** Declared directories of one graph typology, each at its declaring layer's own root. */
 function ownDirectories(repo: string, kind: string): string[] {
   const out = new Set<string>();
   for (const root of instanceRootsIn(repo)) {
@@ -438,7 +438,7 @@ function schemaFields(repo: string, own: ReturnType<typeof owners>): Raw[] {
 
 // --- assembly ---------------------------------------------------------------
 
-/** Every extracted scheme in the repository, sorted by instance then type. */
+/** Every extracted scheme in the repository, sorted by layer then type. */
 export function extract(repo: string): Extraction {
   const own = owners(repo);
   const raws = [

@@ -1,5 +1,5 @@
 /**
- * A term's `related` terms are listed under it on its instance's page, with
+ * A term's `related` terms are listed under it on its layer's page, with
  * their definitions and sources: a handbook's consolidated term shows the
  * candidate definitions its working group is choosing between
  * (cat-harness-tools#1038, the page dth-hrh had drawn for itself).

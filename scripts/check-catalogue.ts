@@ -7,12 +7,12 @@
  *
  * ## Generic, and so in core (bean `eayu`, 2026-09-30)
  *
- * This lived in the IRIS catalogue instance's `scripts/`. The owner: *"dspace scripts generic in
+ * This lived in the IRIS catalogue layer's `scripts/`. The owner: *"dspace scripts generic in
  * folio-assistant"*. Nothing below is IRIS's — `CatalogueSchema`, Dublin Core
  * records, Handles, `localPath` and the publication gates are core vocabulary
- * any catalogue instance uses — and the IRIS catalogue instance is staged to become a CONTENT
+ * any catalogue layer uses — and the IRIS catalogue layer is staged to become a CONTENT
  * repository, which holds no code (kg-separation, bootstrap FR-7). So the
- * instance root is an argument, the same shape as `source-liveness.ts`.
+ * layer root is an argument, the same shape as `source-liveness.ts`.
  *
  * ## Why a script and not only a Zod schema
  *
@@ -64,7 +64,7 @@ if (!existsSync(join(INSTANCE, "catalogue", "catalogue.json"))) {
 }
 const REPO = repoRootFor(INSTANCE);
 /**
- * Where ingested content lives — READ from this instance's declaration.
+ * Where ingested content lives — READ from this layer's declaration.
  *
  * It was `join(REPO, "cat-harness", "library")`, with a comment promising the
  * move would be "a one-line change and a visible one". It was one line. But a
@@ -73,7 +73,7 @@ const REPO = repoRootFor(INSTANCE);
  * here and this is now read rather than written down.
  *
  * `instanceDirectoryForGraph`, not `directoryForGraph`: this script checks
- * THIS instance's catalogue against THIS instance's library, and a sibling
+ * THIS layer's catalogue against THIS layer's library, and a sibling
  * declaring one of its own is not an ambiguity to refuse over. Bean `a02m`.
  */
 const LIBRARY =

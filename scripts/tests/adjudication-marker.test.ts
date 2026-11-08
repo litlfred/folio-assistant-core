@@ -2,9 +2,9 @@
  * The callers of the shared adjudication half — moved here from
  * `cat-harness-tools/scripts/tests/adjudication-marker.test.ts` (bean `ho66`). Two
  * of the four callers (`ingest-l1-completeness-gate`, `content-change-review-committee`)
- * are this instance's diagrams, so standing alone cat-harness cannot read
+ * are this layer's diagrams, so standing alone cat-harness cannot read
  * them; the other two are cat-harness's own, reached here through the corpus
- * cat-harness serves, which includes this instance.
+ * cat-harness serves, which includes this layer.
  */
 import { describe, expect, test } from "bun:test";
 import { join } from "node:path";

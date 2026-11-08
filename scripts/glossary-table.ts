@@ -18,7 +18,7 @@
  *   "tables": [{ "glossary": "glossary/x.glossary.json", "block": "folio/doc/glossary/t.md", "kind": "terms" }] }
  * ```
  *
- * Paths are relative to the instance root.
+ * Paths are relative to the layer root.
  *
  * ## Kinds
  *

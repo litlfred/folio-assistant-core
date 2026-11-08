@@ -149,7 +149,7 @@ describe("this repository", () => {
   test("coreTermsInCoreNamespace", () => {
     const core = c.glossaries.find((s) => s.instance === "folio-assistant-core")!;
     // Its declaration now carries an iriBase (bean yn2k), so the namespace is
-    // read through it, as every other instance's is below.
+    // read through it, as every other layer's is below.
     const decl = readDeclaration(join(REPO_ROOT_FOR_NS, "folio-assistant-core"))!;
     expect(core.ns).toBe(instanceNs(decl.name, decl.stub, decl));
     expect(core.ns).toBe("https://litlfred.github.io/folio-assistant-core/v0/ns/");
@@ -462,7 +462,7 @@ describe("extracted KG terms", () => {
     expect((all.match(/data-fa-state="extracted"/g) ?? []).length).toBe(n.extracted);
     expect((all.match(/data-fa-state="authored"/g) ?? []).length).toBe(n.authored);
     expect((all.match(/candidate, extracted<\/span>/g) ?? []).length).toBe(n.extracted);
-    // Each instance's authored page carries the DefinedTermSet of its own
+    // Each layer's authored page carries the DefinedTermSet of its own
     // authored terms, and no other page carries one.
     const ldOf = (page: string) =>
       (JSON.parse(/<script type="application\/ld\+json">\n([\s\S]*?)\n<\/script>/.exec(page)![1]!) as { hasDefinedTerm: unknown[] }).hasDefinedTerm.length;
@@ -520,10 +520,10 @@ describe("extraction helpers", () => {
 /**
  * Owner, 2026-09-24: *"make sure all glossary terms properly localed to ihris
  * so [no] collision w/ other subgraphs. general rule/skill"*. A term lives in
- * the namespace of the instance that owns its source asset, never of whichever
- * instance happens to declare the `glossary/` directory. Each check below runs
+ * the namespace of the layer that owns its source asset, never of whichever
+ * layer happens to declare the `glossary/` directory. Each check below runs
  * over the REAL repository and works its answer out independently of
- * `collect()`: the instance holding a path is found here by walking the
+ * `collect()`: the layer holding a path is found here by walking the
  * declared roots, not by calling the code under test.
  */
 describe("every term in the namespace of the instance that owns its source", () => {
@@ -562,8 +562,8 @@ describe("every term in the namespace of the instance that owns its source", () 
     let authored = 0;
     for (const s of c.glossaries) {
       // A scheme whose own source is a repository path is DEFINED by that
-      // instance, and a term contributed from elsewhere (a code list extended
-      // by another package) is still the defining instance's.
+      // layer, and a term contributed from elsewhere (a code list extended
+      // by another package) is still the defining layer's.
       const defining = isPath(s.glossary.source) ? holder(s.glossary.source!.split("#", 2)[0]!) : undefined;
       for (const t of s.glossary.terms) {
         if (!isPath(t.source)) continue;
@@ -590,16 +590,16 @@ describe("every term in the namespace of the instance that owns its source", () 
       ],
     });
     expect("error" in schemeOwner(REPO, mixed, "folio-assistant-core", owners)).toBe(true);
-    // The code-list case: the scheme names the instance that DEFINES it.
+    // The code-list case: the scheme names the layer that DEFINES it.
     expect(schemeOwner(REPO, { ...mixed, source: "cat-harness-tools/schemas/content/odrl.ts" }, "folio-assistant-core", owners)).toEqual({ owner: "cat-harness-tools" });
-    // One instance holds every source: that instance, not the declaring one.
+    // One layer holds every source: that layer, not the declaring one.
     expect(schemeOwner(REPO, g({ terms: [mixed.terms[0]] }), "folio-assistant-core", owners)).toEqual({ owner: "cat-harness-tools" });
-    // No repository source at all: the instance whose directory holds the file.
+    // No repository source at all: the layer whose directory holds the file.
     expect(schemeOwner(REPO, g({ terms: [] }), "folio-assistant-core", owners)).toEqual({ owner: "folio-assistant-core" });
-    // A sub-instance, never the root, holds a path inside it.
+    // A sub-layer, never the root, holds a path inside it.
     expect(ownerOfPath(REPO, "cat-harness-tools/schemas/content/odrl.ts", owners)).toBe("cat-harness-tools");
-    // A path at the index root is held by NO instance. This read
-    // `.toBe("folio-assistant")` while the root declared that instance; the
+    // A path at the index root is held by NO layer. This read
+    // `.toBe("folio-assistant")` while the root declared that layer; the
     // separation removed the declaration (folio-assistant@3d4caf6e0f) and
     // the root is now an index of mounts, so a root file has no owner and a
     // scheme sourced there is refused ("in no instance") rather than credited.

@@ -2,11 +2,11 @@ Feature: a paper's glossary written as a SKOS scheme
 
   @test:scripts/build-glossary-skos.test.ts::paper_glossary_as_SKOS::builderRunsClean
   Scenario: the builder runs clean for both papers
-    When the builder runs for the root and the sub-instance papers
+    When the builder runs for the root and the sub-layer papers
     Then both exit 0
 
   @test:scripts/build-glossary-skos.test.ts::paper_glossary_as_SKOS::writesSchemeIntoGlossaryDir
-  Scenario: writes a folio-glossary/v1 scheme into the instance's declared glossary directory
+  Scenario: writes a folio-glossary/v1 scheme into the layer's declared glossary directory
     When the written scheme is read
     Then it is a valid folio-glossary/v1 named paper-alpha with three terms
 
@@ -18,17 +18,17 @@ Feature: a paper's glossary written as a SKOS scheme
     And a term with no Markdown body could not be extracted, with a reason
 
   @test:scripts/build-glossary-skos.test.ts::paper_glossary_as_SKOS::appearsInCollect
-  Scenario: appears in collect(), in the owning instance's namespace, sub-instance included
+  Scenario: appears in collect(), in the owning layer's namespace, sub-layer included
     When the glossaries are collected
     Then nothing is invalid
     And paper-alpha appears for rootfolio and subfolio, each in its own namespace
-    And the sub-instance's file is under subfolio/glossary
+    And the sub-layer's file is under subfolio/glossary
 
   @test:scripts/build-glossary-skos.test.ts::paper_glossary_as_SKOS::noIriCollision
-  Scenario: no IRI collides across schemes and instances
+  Scenario: no IRI collides across schemes and layers
     When every scheme and term IRI is minted
     Then at least ten IRIs, all distinct
-    And foo-bar is minted twice, once per instance
+    And foo-bar is minted twice, once per layer
 
   @test:scripts/build-glossary-skos.test.ts::paper_glossary_as_SKOS::glossaryJsonShapeKept
   Scenario: keeps glossary.json's shape: no field a downstream --check would see as drift
@@ -60,7 +60,7 @@ Feature: a paper's glossary written as a SKOS scheme
 
   @test:scripts/build-glossary-skos.test.ts::an_instance_with_no_glossary_directory::noGlossaryDirStillWrites
   Scenario: still writes glossary.json and passes --check, reporting the scheme as not written
-    Given an instance that declares no glossary directory
+    Given a layer that declares no glossary directory
     When the builder runs and then runs with --check
     Then it exits 0 saying the SKOS scheme was not written
     And --check exits 0

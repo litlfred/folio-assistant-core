@@ -17,7 +17,7 @@ import { join, resolve } from "path";
 
 import { coversWanted, nodes, pngSize, COVER_WIDTH, DERIVED_MARKER } from "./gen-covers.js";
 
-/** The worked example: the one catalogue instance in this checkout, read as DATA (same as `source-liveness.test.ts`). */
+/** The worked example: the one catalogue layer in this checkout, read as DATA (same as `source-liveness.test.ts`). */
 const INSTANCE = resolve(import.meta.dir, "..", "..", "who-iris");
 
 describe("the catalogue asks for the covers, not the script", () => {

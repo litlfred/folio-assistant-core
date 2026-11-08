@@ -60,20 +60,20 @@ function platformPipelineDir(): string {
  * automatically the platform's. Bean `yj6r` moved the glossary cluster —
  * `build-glossary` and its `:refterm` codemod — up into core, where the
  * `schemas/glossary.ts` they read already lived; before that they imported
- * UPWARD out of `cat-harness/` into a sibling instance the harness does not
+ * UPWARD out of `cat-harness/` into a sibling layer the harness does not
  * declare as a need.
  *
  * Resolving this as a SIBLING of the platform root, not through the platform's
  * own tree: `adapters/document/tools/` -> platform root -> its parent, which is
- * the checkout holding both instances. That parent hop is the whole reason this
+ * the checkout holding both layers. That parent hop is the whole reason this
  * is a separate function with a comment — it is the one place in this module
- * that assumes the two instances are checked out beside each other, which is
+ * that assumes the two layers are checked out beside each other, which is
  * true pre-split and is what #223 will remove.
  */
 function corePipelineDir(): string {
-  // Now WITHIN this module's own instance — the simplification the move bought.
+  // Now WITHIN this module's own layer — the simplification the move bought.
   // This used to hop out to the parent checkout and back down, the one place
-  // here that assumed the two instances sit beside each other. That assumption
+  // here that assumed the two layers sit beside each other. That assumption
   // is gone from this function; what remains of it is in `platformPipelineDir`,
   // pointing the other way and in the LEGAL direction.
   return resolve(import.meta.dir, "..", "..", "..", "scripts");

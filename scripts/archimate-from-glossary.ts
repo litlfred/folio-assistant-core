@@ -32,7 +32,7 @@
  * relationships to the other linked elements. A term that already has a focus
  * is never overwritten. Owner, 2026-11-02: "i dont want ArchiMate to be source
  * of SKOS (unless it was ingested)", then card B. So `--seed` reads only a
- * model held in the instance's `library/` (a source as received), named with
+ * model held in the layer's `library/` (a source as received), named with
  * `--from <path>` or as the configured model's file, and refuses an authored
  * model. After a seed the glossary is the source, and this Tool keeps the
  * model agreeing.
@@ -92,7 +92,7 @@ export interface Plan {
 const text = (v: LangText | undefined): string | undefined => (v === undefined ? undefined : typeof v === "string" ? v : (v.en ?? Object.values(v)[0]));
 const archiId = (seed: string): string => `id-${createHash("sha1").update(seed).digest("hex").slice(0, 32)}`;
 
-/** The terms of an instance's glossaries whose focus is an ArchiMate element. */
+/** The terms of a layer's glossaries whose focus is an ArchiMate element. */
 export function graphElements(instanceRoot: string): GraphElement[] {
   const dir = join(instanceRoot, "glossary");
   if (!existsSync(dir)) return [];
@@ -328,7 +328,7 @@ export function report(p: Plan, model: string): string {
 }
 
 /**
- * Whether a model file is ingested: held under the instance's `library/`,
+ * Whether a model file is ingested: held under the layer's `library/`,
  * where sources are kept as received. Only such a model may seed the
  * glossary; an authored model never does.
  */

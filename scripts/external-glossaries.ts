@@ -7,7 +7,7 @@
  * it in the DTH-HRH glossary ... make that a feature of any ingested external
  * library reference with a glossary".
  *
- * An instance names an external glossary the way it names any graph it does
+ * A layer names an external glossary the way it names any graph it does
  * not hold: a `remoteGraphs` entry with `graphTypologies: ["glossary"]` in its
  * declaration (the platform glossary page already lists those). An ingested
  * library entry's glossary (for example an L1 catalogue's SKOS scheme for a WHO
@@ -29,7 +29,7 @@ export interface ExternalGlossary {
   title?: string;
 }
 
-/** The external glossaries the instance at `repoRoot` declares, in declaration order. */
+/** The external glossaries the layer at `repoRoot` declares, in declaration order. */
 export function externalGlossaries(repoRoot: string): ExternalGlossary[] {
   const decl = readDeclaration(repoRoot);
   return (decl?.remoteGraphs ?? [])

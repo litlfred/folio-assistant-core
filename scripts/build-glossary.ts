@@ -11,7 +11,7 @@
  *     blocks) render in red with a "(also defined at …)" cross-link.
  *   - `<glossary dir>/paper-<paper>.glossary.json` — the same terms as a
  *     `folio-glossary/v1` SKOS scheme, written into the glossary directory
- *     the paper's INSTANCE declares, so core's glossary page picks it up
+ *     the paper's LAYER declares, so core's glossary page picks it up
  *     through `collect()` like any other scheme. See {@link toFolioGlossary}.
  *
  * ## Converged on SKOS, and stopped there (bean `lqo9`, ruling 2)
@@ -275,10 +275,10 @@ export function definingParagraph(md: string, slug: string): { label: string; te
  * | any other kind (theorem, remark, …) | found | `candidate`: a term introduced in passing, its sentence extracted rather than written as a definition |
  * | any | not found (no `.md`, or no `:defterm` for the slug) | `could-not-extract`, with the reason |
  *
- * **IRIs** are in the paper INSTANCE's namespace (`instanceNs`), never the
- * root's when the paper sits in a sub-instance, so two instances' papers
+ * **IRIs** are in the paper LAYER's namespace (`instanceNs`), never the
+ * root's when the paper sits in a sub-layer, so two layers' papers
  * cannot collide; the scheme id is `paper-<paper directory>`, unique in the
- * instance because a directory name is.
+ * layer because a directory name is.
  *
  * The slug is the term's `notation` (the paper's own code for it, used in
  * `\label{term:<slug>}`) and, normalised by {@link localId}, its id. A
@@ -354,9 +354,9 @@ export function toFolioGlossary(
 
 /**
  * Where the paper's scheme is written: the glossary directory the paper's
- * OWN instance declares (a sub-instance's, never the root's). That placement
- * is what puts the IRIs in the instance's namespace: `collect()` mints every
- * scheme's IRIs from the instance whose directory holds it (`instanceNs`).
+ * OWN layer declares (a sub-layer's, never the root's). That placement
+ * is what puts the IRIs in the layer's namespace: `collect()` mints every
+ * scheme's IRIs from the layer whose directory holds it (`instanceNs`).
  */
 export function paperSchemeTarget(
   paperDir: string,
@@ -391,8 +391,8 @@ export function paperSchemeTarget(
 
 /**
  * What a term's `source` path is relative to: the git checkout holding the
- * instance, as the KG extractor's sources are repository-relative. With no
- * checkout (a fixture, an unpacked tarball), the instance's sibling scope.
+ * layer, as the KG extractor's sources are repository-relative. With no
+ * checkout (a fixture, an unpacked tarball), the layer's sibling scope.
  */
 function checkoutRoot(instanceRoot: string): string {
   for (let dir = resolve(instanceRoot); ; ) {

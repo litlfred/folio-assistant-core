@@ -10,13 +10,13 @@
  * author or keep in step.
  *
  * - The terms are the authored schemes (not the extracted KG candidates)
- *   declared by the document's own instance and by the instances it `needs`
+ *   declared by the document's own layer and by the layers it `needs`
  *   directly: dth-pc links dth-pc, dth-sc, smart-ra (dpi-h-ra) and smart-base
  *   terms. The layers further down (bootstrap's "Process", "Role") are
  *   platform vocabulary, not the handbook's, and are left alone.
  * - A one-word label that is not an acronym ("Product", "Registry",
  *   "Traceability") links only from the document's own glossary, and never at
- *   the start of a sentence. Another instance's one-word term is too often the
+ *   the start of a sentence. Another layer's one-word term is too often the
  *   English word: "Product code" and "Product verification" in dth-pc are not
  *   smart-ra's Product.
  * - Each link goes to the term's own page (`glossary-page.ts`, `termPagePath`),
@@ -33,7 +33,7 @@
  *   "Concepts:" line (`[Stakeholder](https://…/ns/glossary/dpi-h-ra/stakeholder)`),
  *   is pointed at the term's entry instead. The IRI is the identifier the
  *   Markdown keeps; the page is where this build puts it (owner, 2026-10-31,
- *   "Through the glossary"). Every term of the instances above resolves this
+ *   "Through the glossary"). Every term of the layers above resolves this
  *   way, one-word or not.
  *
  * Opt-in: `build-document-site.ts --link-terms`.
@@ -57,7 +57,7 @@ export interface TermLink {
 type LangText = string | Record<string, string>;
 const labelOf = (l: LangText): string => (typeof l === "string" ? l : (l.en ?? Object.values(l)[0] ?? ""));
 
-/** The instance at `repoRoot` and the instances it needs directly. */
+/** The layer at `repoRoot` and the layers it needs directly. */
 export function neededInstances(repoRoot: string): Set<string> {
   for (const root of instanceRootsIn(repoRoot)) {
     if (resolve(root) !== resolve(repoRoot)) continue;
@@ -78,7 +78,7 @@ export async function termLinks(repoRoot: string, pageDir: string): Promise<Term
   const byLabel = new Map<string, TermLink>();
   const byIri = new Map<string, TermLink>();
   for (const s of collect(repoRoot).glossaries) {
-    // A scheme counts for the instance that declares it, so a term of dth-sc's is
+    // A scheme counts for the layer that declares it, so a term of dth-sc's is
     // dth-sc's even while the page credits it elsewhere (scheme-owner.ts).
     if (s.extracted || !wanted.has(s.declaredBy ?? s.instance)) continue;
     for (const t of s.glossary.terms) {

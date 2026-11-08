@@ -34,7 +34,7 @@
  * class extends. What stays here is only what a server needs: request parsing,
  * the RBAC checks, `Response` construction, the chat tool list and prompt, and
  * MCP tool registration. Step 3 moves this half to `cat-harness-tools`; the
- * owner ruled on 2026-10-01 that core does not depend on that instance.
+ * owner ruled on 2026-10-01 that core does not depend on that layer.
  * @module folio-assistant/adapters/document
  */
 
@@ -513,7 +513,7 @@ End every response with suggested follow-ups:
   registerMcpTools(server: McpServer): void {
     // Content tools only. The generic tools (`folio_init`, `skill_fetch`, the
     // README tools, …) are registered by the SERVER from the harness's Tool
-    // nodes, for every instance whatever its adapter — bean `zmdo`.
+    // nodes, for every layer whatever its adapter — bean `zmdo`.
     this.registerContentTools(server);
   }
 

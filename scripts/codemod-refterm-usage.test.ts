@@ -25,7 +25,7 @@
  *
  * These two scripts sat in different directories — `content/pipeline/` and
  * `scripts/tests/` — until bean `yj6r` moved both into
- * `folio-assistant-core/scripts/` for the instance-boundary work. **Being
+ * `folio-assistant-core/scripts/` for the layer-boundary work. **Being
  * adjacent is what made the second one visible**, and it was found by reading
  * the neighbour rather than by any check. Nothing in the gate set asks whether
  * a CLI refuses a missing argument, which is why one fix did not imply the

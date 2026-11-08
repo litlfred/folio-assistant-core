@@ -2,7 +2,7 @@
  * Which of folio-assistant-core's processes declare activity-log capture —
  * moved here from `cat-harness-tools/scripts/tests/log-writer.test.ts` (bean
  * `ho66`). The log writer is cat-harness code and its tests stay there;
- * `editing-hci-validation` and `content-lifecycle` are this instance's, so
+ * `editing-hci-validation` and `content-lifecycle` are this layer's, so
  * standing alone cat-harness has neither to read.
  *
  * Bean `folio-assistant-7uff`.
@@ -18,7 +18,7 @@ import { loadProcessModel } from "@litlfred/cat-harness-tools/src/workflow/proce
 describe("the process says whether running it is logged", () => {
   // Diagrams by NAME through the declared `processes` graphs (placement PR3, bean `63wl`).
   const diagram = (name: string): string => workflowFile(join(import.meta.dir, "../.."), name);
-  // The corpus cat-harness serves: its own diagrams and every instance stacked
+  // The corpus cat-harness serves: its own diagrams and every layer stacked
   // on it, this one included — `crdm-requirements` is cat-harness's.
   const CORPUS = join(import.meta.dir, "../../../cat-harness");
 

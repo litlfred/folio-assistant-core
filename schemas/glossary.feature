@@ -4,7 +4,7 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
   Scenario: the English pages are under `en/`, the translations under their own locale
     When the glossary's routes and page paths are computed
     Then the route is en/folio-assistant-core/glossary and the legacy route folio-assistant-core/glossary
-    And the index and instance pages have permalinks and paths under en/
+    And the index and layer pages have permalinks and paths under en/
     And the French page is under fr/
 
   @test:schemas/glossary.test.ts::folio-glossary/v1::authoredTermNeedsDefinition
@@ -35,9 +35,9 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
     Then it is accepted
 
   @test:schemas/glossary.test.ts::SKOS::skosSchemeAndConceptIris
-  Scenario: the scheme, each concept in it, and the IRIs follow the instance namespace
+  Scenario: the scheme, each concept in it, and the IRIs follow the layer namespace
     When a glossary is rendered as SKOS
-    Then the scheme is a skos:ConceptScheme at the instance namespace
+    Then the scheme is a skos:ConceptScheme at the layer namespace
     And each concept is inScheme of it
 
   @test:schemas/glossary.test.ts::SKOS::externalConceptLinkedNotCopied
@@ -72,7 +72,7 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
   @test:schemas/glossary.test.ts::this_repository::coreTermsInCoreNamespace
   Scenario: core's terms live in core's namespace
     When core's glossary is found
-    Then its namespace is the instance namespace of its declaration
+    Then its namespace is the layer namespace of its declaration
     And that is https://litlfred.github.io/folio-assistant-core/v0/ns/
 
   @test:schemas/glossary.test.ts::this_repository::everyTermOnceSkosPerScheme
@@ -82,9 +82,9 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
     And one SKOS file is written per scheme
 
   @test:schemas/glossary.test.ts::the_glossary_pages::indexInstanceAndTypePages
-  Scenario: there is an index, one page per instance that owns an authored scheme, and one per asset type, and each is an output
+  Scenario: there is an index, one page per layer that owns an authored scheme, and one per asset type, and each is an output
     When the glossary pages are rendered
-    Then the pages are the index, one per instance with an authored scheme, and one per asset type and letter part
+    Then the pages are the index, one per layer with an authored scheme, and one per asset type and letter part
     And each page is also an output at its path
 
   @test:schemas/glossary.test.ts::the_glossary_pages::everyTermOnceOnItsPage
@@ -95,10 +95,10 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
     And there are more terms than asset types
 
   @test:schemas/glossary.test.ts::the_glossary_pages::pagesHoldOnlyTheirTerms
-  Scenario: the index holds no term; each instance's page holds its authored terms only; each type's page holds that type's extracted terms only
+  Scenario: the index holds no term; each layer's page holds its authored terms only; each type's page holds that type's extracted terms only
     When each page's terms are counted
     Then the index holds no term
-    And each instance page holds its authored terms only, with permalink and a link from the index
+    And each layer page holds its authored terms only, with permalink and a link from the index
     And each type's pages hold that type's extracted terms, marked extracted and candidate
     And there is at least one authored term
 
@@ -169,10 +169,10 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
     And no glossary is invalid
 
   @test:schemas/glossary.test.ts::extracted_KG_terms::extractedIriInHoldersNamespace
-  Scenario: an extracted term's IRI is in the namespace of the instance that holds the asset
-    When each extracted scheme is compared with the instance holding its assets
-    Then its namespace is that instance's namespace
-    And each term's source is under that instance's root
+  Scenario: an extracted term's IRI is in the namespace of the layer that holds the asset
+    When each extracted scheme is compared with the layer holding its assets
+    Then its namespace is that layer's namespace
+    And each term's source is under that layer's root
 
   @test:schemas/glossary.test.ts::extracted_KG_terms::rolesAndLanesNotReextracted
   Scenario: roles and lanes are not re-extracted: the swimlane ledger carries them and is linked
@@ -212,25 +212,25 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
     Then it gives "a &lt; b · A c"
 
   @test:schemas/glossary.test.ts::every_term_in_the_namespace_of_the_instance_that_owns_its_source::noTwoSchemesOneIri
-  Scenario: (a) no two schemes, in any instance, mint one scheme IRI
+  Scenario: (a) no two schemes, in any layer, mint one scheme IRI
     When every scheme IRI is minted
     Then there is no collision finding and no duplicate IRI
     And there are more schemes than asset types
 
   @test:schemas/glossary.test.ts::every_term_in_the_namespace_of_the_instance_that_owns_its_source::noTwoInstancesOneNamespace
-  Scenario: (b) no two instances resolve to one namespace
-    When each instance's namespace is resolved
+  Scenario: (b) no two layers resolve to one namespace
+    When each layer's namespace is resolved
     Then there is more than one and none repeats
 
   @test:schemas/glossary.test.ts::every_term_in_the_namespace_of_the_instance_that_owns_its_source::termMintedInOwnersNamespace
-  Scenario: (c) every term with a repository source is minted in the namespace of the instance whose root holds it, authored and extracted alike
-    When every term with a repository source is checked against the instance holding it
+  Scenario: (c) every term with a repository source is minted in the namespace of the layer whose root holds it, authored and extracted alike
+    When every term with a repository source is checked against the layer holding it
     Then more than 1000 terms and at least one authored term are checked
     And every IRI is in its owner's namespace
 
   @test:schemas/glossary.test.ts::every_term_in_the_namespace_of_the_instance_that_owns_its_source::multiInstanceSchemeRefused
-  Scenario: an authored scheme sourced in several instances with no defining source is refused, not guessed
-    Given an authored scheme whose terms are sourced in two instances
+  Scenario: an authored scheme sourced in several layers with no defining source is refused, not guessed
+    Given an authored scheme whose terms are sourced in two layers
     When its owner is resolved
     Then with no defining source it is an error
     And with a defining source, or one term, the owner is cat-harness-tools

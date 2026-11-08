@@ -45,7 +45,7 @@ If you find yourself wanting a `theorem`, you want one of two things:
   `normative-statements` for how to carry one in this profile, and read it
   before reaching for a math kind.
 - an actual theorem — in which case this folio is a paper. Change the
-  instance's `index.config.json` entry to `"contentType": "paper"`
+  layer's `index.config.json` entry to `"contentType": "paper"`
   deliberately (the index is the one config), and know that
   you are taking on Lean and TeX as dependencies.
 

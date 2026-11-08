@@ -1,24 +1,24 @@
-Feature: resolving a reference into an instance's library
+Feature: resolving a reference into a layer's library
 
   @test:schemas/library-ref.test.ts::instance_discovery::findsInstancesByDeclaredName
-  Scenario: finds instances by their DECLARED name, not by their published stub
-    When the instance roots of the checkout are found
+  Scenario: finds layers by their DECLARED name, not by their published stub
+    When the layer roots of the checkout are found
     Then cat-harness is the platform directory and folio-assistant is not
     And folio-assistant-core is found at its own directory
 
   @test:schemas/library-ref.test.ts::instance_discovery::findsPlatformInstance
-  Scenario: finds the platform instance, whose directory is `cat-harness`
-    When the instance roots are found
+  Scenario: finds the platform layer, whose directory is `cat-harness`
+    When the layer roots are found
     Then cat-harness resolves to the platform directory
 
   @test:schemas/library-ref.test.ts::instance_discovery::indexRootIsNoInstance
-  Scenario: the index ROOT is no instance, and the harness layer keeps its own name
-    When the instance roots are found
-    Then folio-assistant is not an instance and the index root is not among the roots
+  Scenario: the index ROOT is no layer, and the harness layer keeps its own name
+    When the layer roots are found
+    Then folio-assistant is not a layer and the index root is not among the roots
     And cat-harness keeps its own name
 
   @test:schemas/library-ref.test.ts::library_location_is_read_from_the_declaration::resolvesDeclaredLibrary
-  Scenario: resolves a content instance's declared library graph
+  Scenario: resolves a content layer's declared library graph
     When the library directory of who-iris is read
     Then it is who-iris/library
 
@@ -28,18 +28,18 @@ Feature: resolving a reference into an instance's library
     Then every entry is cited, held or awaiting citation by its declaration
 
   @test:schemas/library-ref.test.ts::library_location_is_read_from_the_declaration::noLibraryGraphUndefined
-  Scenario: returns undefined for an instance that declares no library graph
-    When the library directory of an instance that declares none is read
+  Scenario: returns undefined for a layer that declares no library graph
+    When the library directory of a layer that declares none is read
     Then it is undefined
 
   @test:schemas/library-ref.test.ts::resolution_keeps_four_failures_apart::resolvesBareAgainstCitingInstance
-  Scenario: resolves a bare reference against the citing instance
+  Scenario: resolves a bare reference against the citing layer
     When a bare reference is resolved from who-iris
     Then it resolves
 
   @test:schemas/library-ref.test.ts::resolution_keeps_four_failures_apart::namedInstanceSameAsBare
-  Scenario: resolves the SAME reference when the instance is named explicitly
-    When the same reference is resolved bare and with instance who-iris named
+  Scenario: resolves the SAME reference when the layer is named explicitly
+    When the same reference is resolved bare and with layer who-iris named
     Then the named one resolves to the same path
 
   @test:schemas/library-ref.test.ts::resolution_keeps_four_failures_apart::platformMustNameWhoIris
@@ -48,13 +48,13 @@ Feature: resolving a reference into an instance's library
     Then it resolves to who-iris/library/wpr-rdo-2020-003-eng
 
   @test:schemas/library-ref.test.ts::resolution_keeps_four_failures_apart::unknownInstanceNotLocal
-  Scenario: an unknown instance is never silently treated as local
+  Scenario: an unknown layer is never silently treated as local
     When a reference naming "no-such-instance" is resolved
     Then it fails as unknown-instance
     And the explanation mentions the DECLARED NAME
 
   @test:schemas/library-ref.test.ts::resolution_keeps_four_failures_apart::noLibraryGraphFinding
-  Scenario: a known instance with no library graph is its own finding
+  Scenario: a known layer with no library graph is its own finding
     When a reference naming bootstrap is resolved
     Then it fails as no-library-graph
 
@@ -80,25 +80,25 @@ Feature: resolving a reference into an instance's library
 
   @test:schemas/library-ref.test.ts::an_instance's_library_is_ITS_OWN,_not_the_first_one_declared::ignoresRepositoryScopedFirst
   Scenario: ignores a repository-scoped entry even when it is declared FIRST
-    Given an instance declaring a repository-scoped library first and its own second
+    Given a layer declaring a repository-scoped library first and its own second
     When its library directory is read
     Then it is its own library/
 
   @test:schemas/library-ref.test.ts::an_instance's_library_is_ITS_OWN,_not_the_first_one_declared::orderDoesNotMatter
   Scenario: and the answer does not change when the order does
-    Given an instance declaring its own library first and a repository-scoped one second
+    Given a layer declaring its own library first and a repository-scoped one second
     When its library directory is read
     Then it is its own library/
 
   @test:schemas/library-ref.test.ts::an_instance's_library_is_ITS_OWN,_not_the_first_one_declared::refusesTwoOwnLibraries
-  Scenario: REFUSES when an instance declares two of its own, rather than picking
-    Given an instance declaring two libraries of its own
+  Scenario: REFUSES when a layer declares two of its own, rather than picking
+    Given a layer declaring two libraries of its own
     When its library directory is read
     Then it throws "no single answer"
 
   @test:schemas/library-ref.test.ts::an_instance's_library_is_ITS_OWN,_not_the_first_one_declared::realInstancesResolveOwn
-  Scenario: every real instance here resolves its own library, or declares none
-    When the library directories of the real instances are read
+  Scenario: every real layer here resolves its own library, or declares none
+    When the library directories of the real layers are read
     Then cat-harness, who-iris and folio-assistant-sci each resolve to their own library
     And smart-l1 has none
 

@@ -1,8 +1,8 @@
 /**
  * A paper's glossary as `folio-glossary/v1` (bean `lqo9`, ruling 2: "Converge on SKOS").
  *
- * A fixture repository with TWO instances, each holding a paper named `alpha`:
- * the root instance and a sub-instance. The builder is run as a process (as a
+ * A fixture repository with TWO layers, each holding a paper named `alpha`:
+ * the root layer and a sub-layer. The builder is run as a process (as a
  * paper's CI runs it), then core's `collect()` is asked what it sees.
  *
  * What must hold:
@@ -10,7 +10,7 @@
  * - status follows provenance: a definition block's term is `authored`, a
  *   term introduced in a theorem is `candidate`, a term with no `:defterm`
  *   paragraph is `could-not-extract` with its reason;
- * - IRIs are in the OWNING instance's namespace, the sub-instance's for its
+ * - IRIs are in the OWNING layer's namespace, the sub-layer's for its
  *   paper, so two papers with one name never collide;
  * - `glossary.json` keeps its shape (no new field), so a downstream
  *   `--check` does not fail on upgrade;
@@ -37,7 +37,7 @@ function write(rel: string, body: string): void {
   writeFileSync(p, body);
 }
 
-/** An instance declaring `folio/` and `glossary/`, with one paper `alpha` in it. */
+/** A layer declaring `folio/` and `glossary/`, with one paper `alpha` in it. */
 function instance(dir: string, name: string): void {
   const at = (rel: string) => (dir ? `${dir}/${rel}` : rel);
   write(
@@ -141,7 +141,7 @@ describe("paper glossary as SKOS", () => {
     // authored scheme with its one term.
     expect(iris.length).toBeGreaterThanOrEqual(10);
     expect(new Set(iris).size).toBe(iris.length);
-    // The same slug in the same-named paper of two instances is two concepts.
+    // The same slug in the same-named paper of two layers is two concepts.
     const fooBar = iris.filter((i) => i.endsWith("/paper-alpha/foo-bar"));
     expect(fooBar.length).toBe(2);
   });

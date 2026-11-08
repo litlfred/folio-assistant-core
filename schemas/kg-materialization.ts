@@ -189,7 +189,7 @@ export const KgNodesRecordSchema = z
     ref: z.string().regex(/^[0-9a-f]{40}$/),
     subgraph: z
       .object({
-        /** Instance-relative, as the substrate's own subgraph tree names it: `skills/sdlc`. */
+        /** Layer-relative, as the substrate's own subgraph tree names it: `skills/sdlc`. */
         path: RelPathSchema,
         /** The subgraph IRI the fetched file declares as its root `@id`; held records only. */
         iri: z.string().url().optional(),
@@ -204,7 +204,7 @@ export const KgNodesRecordSchema = z
         name: z.literal(SUBGRAPH_HYDRATED_FILE),
         /** Where upstream publishes it, at the pin. */
         upstream: z.string().url(),
-        /** Where it is held, relative to the subscriber instance. */
+        /** Where it is held, relative to the subscriber layer. */
         localPath: z.string().min(1),
         bytes: z.number().int().nonnegative(),
         fetchedAt: z.string().min(1),

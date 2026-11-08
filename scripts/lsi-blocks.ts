@@ -44,7 +44,7 @@
  * Usage:
  *   bun run folio-assistant-core/scripts/lsi-blocks.ts [--library <dir>]... [--json] [--near "<text>"] [--top N]
  *
- * With no `--library`, every directory any instance in the checkout declares
+ * With no `--library`, every directory any layer in the checkout declares
  * with the `library` typology.
  *
  * @module folio-assistant-core/scripts/lsi-blocks
@@ -130,7 +130,7 @@ export function blockUnits(libraries: string[]): BlockUnits {
           continue;
         }
         const id = block["@id"] ?? relative(lib, file).replace(/\.jsonld$/, "");
-        // `@id` is relative to each instance's base, so two libraries could
+        // `@id` is relative to each layer's base, so two libraries could
         // mint one. None do (2026-10-12); if one does, the second is reported
         // rather than silently overwriting the first's coordinates.
         if (seen.has(id)) {
@@ -146,7 +146,7 @@ export function blockUnits(libraries: string[]): BlockUnits {
   return out;
 }
 
-/** The library directories the instances in `repoRoot` declare. */
+/** The library directories the layers in `repoRoot` declare. */
 export function declaredLibraries(repoRoot: string): string[] {
   const dirs = new Set<string>();
   for (const root of instanceRootsIn(repoRoot)) {

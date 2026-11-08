@@ -52,7 +52,7 @@ export type Handler = (args: Record<string, unknown>) => Promise<{ content: { te
 export interface RunOptions {
   /** The repository root: where `beans/workflows/` and `fsh-guts/` live. */
   root: string;
-  /** The instance directory holding the store, relative to `root`, e.g. an IRIS mirror's directory. */
+  /** The layer directory holding the store, relative to `root`, e.g. an IRIS mirror's directory. */
   instance: string;
   item: string;
   subject: string;

@@ -22,7 +22,7 @@
  *
  * ## Why this still imports UP into `folio-assistant-core`, and what it waits on
  *
- * Bean `yj6r` is driving `cat-harness ->` sibling-instance imports to zero, and
+ * Bean `yj6r` is driving `cat-harness ->` sibling-layer imports to zero, and
  * this file's `schemas/dublin-core.js` import is one of the two that remain. The
  * bean's remedy is right and was not taken here, on measurement rather than
  * taste: the consumer moves UP, the schema stays — but this file's consumer is
@@ -41,16 +41,16 @@
  * exists to drive. The reason is `adapters/paper/index.ts`: `PaperContentAdapter
  * extends DocumentContentAdapter` and pulls five of its tool registrars besides,
  * and `adapters/paper/` is declared `layer: "sci"` by `BUILTIN_ADAPTERS` — a
- * DIFFERENT layer again, one above this one. So the closure is a three-instance
+ * DIFFERENT layer again, one above this one. So the closure is a three-layer
  * move: `document/` up to the core layer's own `adapters/`, `paper/` up to the
  * science layer's, and six test files after their subjects — plus a newly
  * declared `adapters/` directory in each of those two targets and a re-pointed
  * `BUILTIN_ADAPTERS` table, whose `module` strings are resolved by VARIABLE path
- * against this instance's root. That is a tranche with its own ruling to ask
+ * against this layer's root. That is a tranche with its own ruling to ask
  * for, not a leaf edit, and doing half of it is strictly worse than doing none.
  *
- * (The instance names are deliberately not spelled out above.
- * `check:reference-direction` counts a file naming SEVERAL instances above it as
+ * (The layer names are deliberately not spelled out above.
+ * `check:reference-direction` counts a file naming SEVERAL layers above it as
  * its failing criterion, and a note explaining an upward reference should not
  * itself become one.)
  *

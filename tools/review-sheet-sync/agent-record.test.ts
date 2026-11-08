@@ -89,7 +89,7 @@ describe("review-sheet QA pass writes editing-hci-validation instances that sati
   test("qaPassWritesInstances", async () => {
     const repo = mkdtempSync(join(tmpdir(), "agent-record-gate-"));
     try {
-      // The fixture is an instance with its own `beans/` in the checkout, so
+      // The fixture is a layer with its own `beans/` in the checkout, so
       // its workflow instances are written and read there. Without this the
       // store resolved `beans` to cat-harness's, which is kept on
       // `cat/cat-harness/beans` and is not mounted in CI.

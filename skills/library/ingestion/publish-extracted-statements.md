@@ -46,7 +46,7 @@ Each statement carries **two links**:
 
 The link is a [library reference](../../../schemas/library-ref.ts)
 (`instance`, `libraryId`, `sectionId`), so a statement from another
-instance's library resolves through that instance's declaration and never
+layer's library resolves through that layer's declaration and never
 through a relative path. **A statement whose section does not resolve is
 reported, never published without a link**: an untraceable statement is the
 failure this step exists to prevent.

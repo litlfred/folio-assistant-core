@@ -1,6 +1,6 @@
 /**
  * `landingLinks` — what a folio's landing page lists besides its documents:
- * the visualisations its instance declares, when they resolve.
+ * the visualisations its layer declares, when they resolve.
  */
 import { describe, expect, test } from "bun:test";
 import type { CatHarnessDeclaration } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
