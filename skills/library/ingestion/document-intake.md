@@ -379,6 +379,12 @@ meta: {
 }
 ```
 
+Then **publish the extracted statements**: every statement taken from the
+source is published in the artifact's own pages and in the shared extraction
+viewer, each linked to its library entry and section, and CI fails when those
+pages are stale. This is a standard step for every content type:
+[`publish-extracted-statements`](publish-extracted-statements.md).
+
 ## Structured-Document Processing
 
 ### Detecting normative structure
@@ -438,6 +444,7 @@ export default definition({
 | `editor` | Reviews generated narrative content |
 | `scientific-accuracy` | Checks extracted statements |
 | `ontologist` | Maps terminology to glossary |
+| `publish-extracted-statements` | Publishes the extracted statements, each linked to its library entry and section |
 
 ## Resuming Partial Processing
 
@@ -469,4 +476,6 @@ Before marking intake complete:
 - [ ] Chapter/section structure matches document
 - [ ] Cross-references mapped to `uses[]`
 - [ ] Content validation passes (`content_validate`)
+- [ ] Extracted statements published with source links, and their pages current
+      ([`publish-extracted-statements`](publish-extracted-statements.md))
 ```

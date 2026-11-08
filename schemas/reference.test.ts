@@ -78,23 +78,23 @@ const handbook = DublinCoreRecordSchema.parse({
 });
 
 describe("a reference node", () => {
-  test("sits at references/<key>, the IRI \\cite already resolves to", () => {
+  test("nodeAtReferencesKey", () => {
     expect(referenceIri("garoufalidis2004")).toBe("references/garoufalidis2004");
     expect(referenceToJsonLd(garoufalidis2004)["@id"]).toBe("references/garoufalidis2004");
   });
 
-  test("keeps fields CSL has and its typing omits (series, note, qou's library block)", () => {
+  test("keepsFieldsCslOmits", () => {
     expect((garoufalidis2004 as Record<string, unknown>).note).toContain("Casson Fest");
     expect((garoufalidis2004 as Record<string, unknown>).library).toBeDefined();
   });
 
-  test("refuses a key \\cite could not name", () => {
+  test("refusesUncitableKey", () => {
     for (const id of ["has space", "a/b", "#x", ""]) {
       expect(ReferenceNodeSchema.safeParse({ ...garoufalidis2004, id }).success).toBe(false);
     }
   });
 
-  test("its CSL item drops the node's own fields", () => {
+  test("cslItemDropsNodeFields", () => {
     const item = toCslItem(garoufalidis2004);
     expect(item.$schema).toBeUndefined();
     expect(item.library).toBeUndefined();
@@ -105,8 +105,8 @@ describe("a reference node", () => {
 
 describe("read as Dublin Core and BIBO", () => {
   const ld = referenceToJsonLd(garoufalidis2004);
-  test("typed as a fabio:Work and its BIBO class", () => expect(ld["@type"]).toEqual(["fabio:Work", "bibo:AcademicArticle"]));
-  test("the properties are dcterms and bibo terms", () => {
+  test("typedFabioWorkAndBibo", () => expect(ld["@type"]).toEqual(["fabio:Work", "bibo:AcademicArticle"]));
+  test("propertiesAreDctermsAndBibo", () => {
     expect(ld["dcterms:title"]).toBe("On the characteristic and deformation varieties of a knot");
     expect(ld["dcterms:creator"]).toEqual(["Garoufalidis, Stavros"]);
     expect(ld["dcterms:issued"]).toBe("2004");
@@ -115,7 +115,7 @@ describe("read as Dublin Core and BIBO", () => {
     expect(ld["bibo:pages"]).toBe("291-309");
     expect(ld["bibo:doi"]).toBe("10.2140/gtm.2004.7.291");
   });
-  test("every key is a prefixed term or a JSON-LD keyword", () => {
+  test("everyKeyPrefixedOrKeyword", () => {
     for (const k of Object.keys(ld)) expect(k.startsWith("@") || /^(dcterms|bibo|fabio|schema):/.test(k)).toBe(true);
   });
 });
@@ -127,7 +127,7 @@ describe("from a Dublin Core record (who-iris)", () => {
     heldAt: "who-iris/library/9789241548960-eng",
   });
 
-  test("carries what the record states", () => {
+  test("carriesWhatRecordStates", () => {
     expect(ref.title).toBe("WHO handbook for guideline development");
     expect(ref.author).toEqual([{ literal: "World Health Organization" }]);
     expect(ref.issued).toEqual({ "date-parts": [[2014, 12, 18]] });
@@ -139,20 +139,20 @@ describe("from a Dublin Core record (who-iris)", () => {
     expect(ref.type).toBe("book");
   });
 
-  test("uses date.issued, never date.accessioned", () => expect(yearOf(ref)).toBe("2014"));
+  test("usesDateIssued", () => expect(yearOf(ref)).toBe("2014"));
 
-  test("infers nothing the record lacks", () => {
+  test("infersNothingLacking", () => {
     for (const k of ["DOI", "volume", "page", "container-title", "editor"]) expect(k in ref).toBe(false);
   });
 
-  test("passes its own schema", () => expect(ReferenceNodeSchema.safeParse(ref).success).toBe(true));
+  test("passesOwnSchema", () => expect(ReferenceNodeSchema.safeParse(ref).success).toBe(true));
 
-  test("names: a person splits on the first comma; an organisation stays whole", () => {
+  test("personSplitsOrganisationWhole", () => {
     expect(dcCreatorToName("Grimm, Jacob Ludwig Karl")).toEqual({ family: "Grimm", given: "Jacob Ludwig Karl" });
     expect(dcCreatorToName("World Health Organization")).toEqual({ literal: "World Health Organization" });
   });
 
-  test("dates: year, year-month, full; anything else raw", () => {
+  test("datesYearMonthFullElseRaw", () => {
     expect(dcDateToCsl("2014")).toEqual({ "date-parts": [[2014]] });
     expect(dcDateToCsl("2014-12")).toEqual({ "date-parts": [[2014, 12]] });
     expect(dcDateToCsl("c. 1990")).toEqual({ raw: "c. 1990" });
@@ -176,14 +176,14 @@ describe("a journal article's container and locators (bean djj5)", () => {
     DOI: "10.2471/BLT.20.280701",
   };
 
-  test("CSL → Dublin Core writes dc.relation.ispartof and dc.citation.*", () => {
+  test("cslToDcWritesContainerLocators", () => {
     const rec = referenceToDublinCoreRecord(voo);
     const f = (e: string, q: string) => rec.fields.find((x) => x.element === e && x.qualifier === q)?.values[0]?.value;
     expect(f("relation", "ispartof")).toBe("Bulletin of the World Health Organization");
     expect([f("citation", "volume"), f("citation", "issue"), f("citation", "spage"), f("citation", "epage")]).toEqual(["99", "2", "155", "61"]);
   });
 
-  test("Dublin Core → CSL reads them back: the round trip keeps container, volume, issue and pages", () => {
+  test("dcToCslRoundTripKeepsLocators", () => {
     const back = dublinCoreToReference(DublinCoreRecordSchema.parse(referenceToDublinCoreRecord(voo)), { key: "voo2021" });
     expect(back["container-title"]).toBe(voo["container-title"]);
     expect([back.volume, back.issue, back.page]).toEqual(["99", "2", "155–61"]);
@@ -191,13 +191,13 @@ describe("a journal article's container and locators (bean djj5)", () => {
     expect(back.author).toEqual(voo.author);
   });
 
-  test("publisher-place, accessed, version and status survive the round trip", () => {
+  test("placeAccessedVersionStatusSurvive", () => {
     const etsi = { ...voo, type: "standard", "publisher-place": "Sophia Antipolis", accessed: { "date-parts": [[2021, 6, 27]] }, version: "1.1.1", status: "forthcoming" } as ReferenceNode;
     const back = dublinCoreToReference(DublinCoreRecordSchema.parse(referenceToDublinCoreRecord(etsi)), { key: "etsi" }) as Record<string, unknown>;
     expect([back["publisher-place"], back.accessed, back.version, back.status]).toEqual(["Sophia Antipolis", { "date-parts": [[2021, 6, 27]] }, "1.1.1", "forthcoming"]);
   });
 
-  test("a CSL type the IGs use (webpage, standard, legislation) survives as itself", () => {
+  test("igCslTypesSurvive", () => {
     for (const type of ["webpage", "standard", "legislation", "report", "book"]) {
       const back = dublinCoreToReference(DublinCoreRecordSchema.parse(referenceToDublinCoreRecord({ ...voo, type })), { key: "k" });
       expect(back.type).toBe(type);
@@ -209,13 +209,13 @@ describe("exports", () => {
   const who = dublinCoreToReference(handbook, { key: "who2014handbook" });
   const refs = [garoufalidis2004, who];
 
-  test("CSL-JSON: an array of CSL items, node fields dropped", () => {
+  test("cslJsonDropsNodeFields", () => {
     const items = JSON.parse(toCslJson(refs)) as Record<string, unknown>[];
     expect(items.map((i) => i.id)).toEqual(["garoufalidis2004", "who2014handbook"]);
     expect(items.every((i) => !("$schema" in i) && !("provenance" in i))).toBe(true);
   });
 
-  test("BibTeX: through the formatter references.bib is written with", () => {
+  test("bibtexThroughFormatter", () => {
     const bib = toBibtex(refs);
     expect(bib).toContain("@article{garoufalidis2004,");
     expect(bib).toContain("pages   = {291--309},");
@@ -223,7 +223,7 @@ describe("exports", () => {
     expect(bib).toContain("author    = {World Health Organization},");
   });
 
-  test("RIS: one record per reference, CRLF, ER-terminated", () => {
+  test("risOneRecordCrlf", () => {
     const ris = toRis(refs);
     const recs = ris.replace(/\r\n$/, "").split("\r\n\r\n");
     expect(recs).toHaveLength(2);
@@ -234,7 +234,7 @@ describe("exports", () => {
     for (const r of recs) expect(r.endsWith("ER  - ")).toBe(true);
   });
 
-  test("the JSON-LD @id joins the citations: same @base as content documents", () => {
+  test("jsonLdIdJoinsCitations", () => {
     const ctx = referenceToJsonLd(garoufalidis2004)["@context"] as Record<string, unknown>;
     expect(ctx["@base"]).toBe(FOLIO_BASE);
     expect(ctx).not.toHaveProperty("schema");
@@ -242,13 +242,13 @@ describe("exports", () => {
     expect(ctx["dcterms:hasVersion"]).toEqual({ "@type": "@id" });
   });
 
-  test("Dublin Core / BIBO JSON-LD: one @graph", () => {
+  test("jsonLdOneGraph", () => {
     const g = JSON.parse(toJsonLdGraph(refs)) as { "@context": object; "@graph": Record<string, unknown>[] };
     expect(g["@graph"].map((n) => n["@id"])).toEqual(["references/garoufalidis2004", "references/who2014handbook"]);
     expect(g["@graph"].every((n) => !("@context" in n))).toBe(true);
   });
 
-  test("Dublin Core XML: reuses 7eak renderDcXml for single and multi-record sets", () => {
+  test("dcXmlReusesRenderer", () => {
     const singleXml = toDublinCoreXml([garoufalidis2004]);
     expect(singleXml).toContain("<dcterms:title>On the characteristic and deformation varieties of a knot</dcterms:title>");
     expect(singleXml).toContain("<dcterms:creator>Garoufalidis, Stavros</dcterms:creator>");
@@ -260,7 +260,7 @@ describe("exports", () => {
     expect(multiXml).toContain("On the characteristic and deformation varieties of a knot");
   });
 
-  test("an empty set exports empty", () => {
+  test("emptySetExportsEmpty", () => {
     expect(toBibtex([])).toBe("");
     expect(toRis([])).toBe("");
     expect(JSON.parse(toCslJson([]))).toEqual([]);
@@ -269,7 +269,7 @@ describe("exports", () => {
 });
 
 describe("library items and genReferenceJsonLd", () => {
-  test("authorsRawToNames parses authors_raw strings into CSL names", () => {
+  test("authorsRawToCslNames", () => {
     expect(authorsRawToNames("Stavros Garoufalidis and Thang T. Q. Lê")).toEqual([
       { family: "Garoufalidis", given: "Stavros" },
       { family: "Lê", given: "Thang T. Q." },
@@ -277,7 +277,7 @@ describe("library items and genReferenceJsonLd", () => {
     expect(authorsRawToNames("World Health Organization")).toEqual([{ literal: "World Health Organization" }]);
   });
 
-  test("libraryItemToReference projects manifest.jsonld + structure metadata into a library ReferenceNode", () => {
+  test("libraryItemProjectsToReference", () => {
     const tmp = mkdtempSync(join(tmpdir(), "lib-ref-"));
     try {
       const entryDir = join(tmp, "garoufalidis2004");
@@ -335,7 +335,7 @@ describe("library items and genReferenceJsonLd", () => {
     }
   });
 
-  test("genReferenceJsonLd writes and checks references/<key>.jsonld from CSL-JSON entries", () => {
+  test("genReferenceJsonLdWritesAndChecks", () => {
     const tmp = mkdtempSync(join(tmpdir(), "gen-jsonld-"));
     try {
       const refsDir = join(tmp, "folio", "references");
@@ -353,7 +353,7 @@ describe("library items and genReferenceJsonLd", () => {
     }
   });
 
-  test("buildStandaloneReference builds a schema-valid folio-reference/v1 standalone node from fields or BibTeX", () => {
+  test("buildStandaloneReference", () => {
     const built = buildStandaloneReference({
       id: "smith2024",
       type: "article-journal",
@@ -397,7 +397,7 @@ describe("library items and genReferenceJsonLd", () => {
     expect(parseBibtexOrCsl(fromBib.cslJson).id).toBe("euler1736");
   });
 
-  test("buildStandaloneReference and newReferenceUrl enforce safeHref on URLs", () => {
+  test("safeHrefEnforced", () => {
     const unsafe = buildStandaloneReference({
       id: "badurl2024",
       title: "Unsafe URL Test",
@@ -418,7 +418,7 @@ describe("library items and genReferenceJsonLd", () => {
 });
 
 describe("declared", () => {
-  test("the references typology names the family its validator checks", () => {
+  test("typologyNamesValidatedFamily", () => {
     const kind = JSON.parse(readFileSync(join(CORE, "typologies", "references.json"), "utf-8"));
     const v = JSON.parse(readFileSync(join(CORE, "validators", "reference.json"), "utf-8"));
     expect(Object.keys(kind.nodeSchemas)).toEqual([REFERENCE_SCHEMA_TAG]);
@@ -428,7 +428,7 @@ describe("declared", () => {
 });
 
 describe("the declared vocabulary", () => {
-  test("folio-assistant-core.json declares exactly the reference prefixes the export binds itself", () => {
+  test("declaresExactlyReferencePrefixes", () => {
     const decl = JSON.parse(readFileSync(join(import.meta.dir, "..", "folio-assistant-core.json"), "utf-8")) as { jsonldPrefixes?: Record<string, string> };
     expect(decl.jsonldPrefixes).toEqual({ bibo: REFERENCE_CONTEXT.bibo, fabio: REFERENCE_CONTEXT.fabio });
   });

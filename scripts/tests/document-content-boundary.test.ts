@@ -45,7 +45,7 @@ function importsOf(file: string): string[] {
 
 describe("the document adapter's content half", () => {
   for (const file of CONTENT_FILES) {
-    test(`${file} imports nothing that moves to cat-harness-tools`, () => {
+    test(`importsNothingMoving[${file}]`, () => {
       const imports = importsOf(file);
       // Anti-vacuity: a regex that stopped matching would pass every file.
       expect(imports.length).toBeGreaterThan(0);
@@ -53,14 +53,14 @@ describe("the document adapter's content half", () => {
     });
   }
 
-  test("content.ts declares the class the server half extends", () => {
+  test("contentDeclaresClass", () => {
     const src = readFileSync(join(DIR, "content.ts"), "utf-8");
     expect(src).toContain("export class DocumentContent implements ContentSource");
     const server = readFileSync(join(DIR, "index.ts"), "utf-8");
     expect(server).toContain("export class DocumentContentAdapter extends DocumentContent implements ContentAdapter");
   });
 
-  test("the guard has teeth — the server half DOES import moving modules", () => {
+  test("guardHasTeeth", () => {
     // If index.ts stopped matching, the pattern list would be wrong, and the
     // assertions above would prove nothing.
     expect(importsOf("index.ts").filter((i) => MOVING.some((rx) => rx.test(i))).length).toBeGreaterThan(0);

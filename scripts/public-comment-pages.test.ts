@@ -29,18 +29,18 @@ const ctx: KindPagesContext = {
 
 describe("a change-set's page", () => {
   const [s] = ChangeSetPages.node!(sets[0]!, ctx);
-  test("lists each comment it answers, linked to the comment's own page, from its own harness only", () => {
+  test("changeSetListsComments", () => {
     expect(s!.id).toBe("comments");
     expect(s!.html).toContain('<a href="L/public-comment/ra/comments/PC-0001/">PC-0001</a>');
     expect(s!.html).not.toContain("L/public-comment/other/");
   });
-  test("says so when a reference names no comment, rather than dropping it", () => {
+  test("missingReferenceSaid", () => {
     expect(s!.html).toContain("PC-0009</td><td class=\"s\" colspan=\"2\">not found in ra");
   });
 });
 
 describe("the change-set dashboard", () => {
-  test("counts the comments in an open change-set; a merged set no longer covers its comments", () => {
+  test("dashboardCountsOpen", () => {
     const [cov] = ChangeSetPages.dashboard!(sets, ctx);
     expect(cov!.html).toContain("<li><b>1</b>in an open change-set</li><li><b>2</b>in none</li>");
     expect(cov!.html).toContain("PC-0002");
@@ -49,7 +49,7 @@ describe("the change-set dashboard", () => {
 });
 
 describe("coverage leaves out a comment whose decision changes nothing", () => {
-  test("noted and not-accepted are counted apart; an accepted comment still needs a change-set", () => {
+  test("decidedNoChangeApart", () => {
     const pool = [comment("PC-0001"), decided("PC-0004", "not-accepted"), decided("PC-0005", "noted"), decided("PC-0006", "accepted")];
     const c2: KindPagesContext = { ...ctx, nodesOf: (k) => (k === "public-comment" ? pool : k === "changeset" ? sets : []) };
     const [cov] = ChangeSetPages.dashboard!(sets, c2);
@@ -60,11 +60,11 @@ describe("coverage leaves out a comment whose decision changes nothing", () => {
 });
 
 describe("a comment's page", () => {
-  test("lists the change-sets it is in, with their status", () => {
+  test("commentListsChangeSets", () => {
     const [s] = PublicCommentPages.node!(comments[1]!, ctx);
     expect(s!.html).toContain('<a href="L/changeset/ra/changesets/CS-002/">CS-002</a> — Set CS-002 <span class="m">(merged)</span>');
   });
-  test("and says when it is in none", () => {
+  test("commentInNone", () => {
     expect(PublicCommentPages.node!(comments[2]!, ctx)[0]!.html).toContain("In no change-set yet.");
   });
 });

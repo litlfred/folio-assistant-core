@@ -24,19 +24,19 @@ const fig: DiigFigure = {
 };
 
 describe("diig-phases-svg", () => {
-  test("every label comes from the data", () => {
+  test("labelsFromData", () => {
     const svg = renderSvg(fig);
     for (const s of ["ONE", "TWO", "First step", "A guide", "Part", "(this document)", "PDF for print"]) expect(svg).toContain(s);
     expect(svg).toContain('id="tile-guide"');
     expect(svg).toContain('stroke-dasharray="5 3"');
   });
 
-  test("a tile links to its library entry", () => {
+  test("tileLinksLibraryEntry", () => {
     expect(resourceHref(fig.resources[0], "https://x/library/")).toBe("https://x/library/lib-a/");
     expect(renderSvg(fig, { libraryBase: "https://x/library/" })).toContain('href="https://x/library/lib-a/"');
   });
 
-  test("a tile naming an unknown resource or phase fails loudly", () => {
+  test("unknownResourceOrPhaseFails", () => {
     const bad = structuredClone(fig);
     bad.layout.tiles.push({ resource: "missing", columns: [1, 1], rows: [0, 0], outlinePhase: "01" });
     expect(() => renderSvg(bad)).toThrow(/unknown resource missing/);
@@ -45,7 +45,7 @@ describe("diig-phases-svg", () => {
     expect(() => renderSvg(badPhase)).toThrow(/unknown phase 09/);
   });
 
-  test("an adaptation adds tiles and moves 'this document' without copying the figure", () => {
+  test("adaptationAddsTiles", () => {
     const dir = mkdtempSync(join(tmpdir(), "diig-"));
     const basePath = join(dir, "base.json");
     writeFileSync(basePath, JSON.stringify(fig));

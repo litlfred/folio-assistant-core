@@ -49,14 +49,14 @@ function scaffold(anchorsExtra: Record<string, unknown> = {}): string {
 }
 
 describe("build-library-site (bean zcak)", () => {
-  test("the entry title says what the source is: public comment by default, the folio's own label when it gives one", () => {
+  test("entryTitleSaysSource", () => {
     const plain = scaffold();
     expect(entryView(plain, join(plain, "library", ENTRY))!.title).toBe("The Handbook — the version published for public comment");
     const labelled = scaffold({ sourceLabel: "the TWG outline it was seeded from" });
     expect(entryView(labelled, join(labelled, "library", ENTRY))!.title).toBe("The Handbook — the TWG outline it was seeded from");
   });
 
-  test("a section maps to the first folio block of the section with its number; one with no counterpart maps to nothing", () => {
+  test("sectionMapsToFolioBlock", () => {
     const d = scaffold();
     const editFor = materialisedEdits(d, ENTRY)!;
     expect(editFor({ id: "x", number: "1.1.1", title: "anything" })).toEqual({ path: "folio/doc/ch1/p-1-1-1.md", label: "prose:1-1-1" });
@@ -65,7 +65,7 @@ describe("build-library-site (bean zcak)", () => {
     expect(materialisedEdits(d, "some-other-entry")).toBeUndefined();
   });
 
-  test("the entry page is published under the handler route, with links to the library's files and edits into the folio", () => {
+  test("entryPageUnderHandlerRoute", () => {
     const d = scaffold();
     const out = join(d, "_site");
     const r = buildLibrarySite(d, out, { repo: "o/r" });
@@ -89,12 +89,12 @@ describe("build-library-site (bean zcak)", () => {
     expect(existsSync(join(out, HANDLER, "library", "index.html"))).toBe(false);
   });
 
-  test("it says what it reads: the library and the folio", () => {
+  test("saysWhatItReads", () => {
     const d = scaffold();
     expect(siteReads(d)).toEqual(["library", "folio"]);
   });
 
-  test("the page declares its sections to the rail: top level as rows, the next level as their children", () => {
+  test("sectionsDeclaredToRail", () => {
     const d = scaffold();
     const view = entryView(d, join(d, "library", ENTRY), "o/r")!;
     const decl = entryContents(view);

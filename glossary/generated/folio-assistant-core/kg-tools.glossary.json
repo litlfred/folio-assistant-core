@@ -159,6 +159,14 @@
       "status": "candidate"
     },
     {
+      "id": "publish-extracted-statements",
+      "prefLabel": "Publish extracted statements with source links",
+      "definition": "Render each declared page (a `folio-statement-page/v1` spec naming `folio-extracted-statements/v1` lists) as Markdown: every statement extracted from a library source, verbatim, with its kind and status, linked to its library entry and to the section it came from, labelled in the source's own unit (\"Catch up schedule, slide 7\"). A statement whose source does not resolve fails the run and nothing is written. `--check` fails when a committed page is stale.",
+      "notation": "publish-extracted-statements",
+      "source": "folio-assistant-core/tools/publish-extracted-statements/publish-extracted-statements.ts#publish-extracted-statements",
+      "status": "candidate"
+    },
+    {
       "id": "references-render",
       "prefLabel": "Reference list from reference nodes",
       "definition": "Rewrite each reference-list block of a document (a block whose `meta.referenceList` is set) from the folio-reference/v1 nodes its `cites` names, in that order: the node's `printed` text verbatim when it has one, otherwise WHO style (or the short `Authors. Title. Year.` form), as a numbered or bulleted list. The block's `.md` is generated whole. `--check` writes nothing and fails when a list is stale.",

@@ -49,7 +49,7 @@ function listOf(doc: Record<string, unknown>, predicate: string): unknown[] | un
 }
 
 describe("the duplicated DCTERMS namespace stays in step with the platform's", () => {
-  it("is byte-identical to `cat-harness-tools/schemas/kg/jsonld.ts`", () => {
+  it("dctermsNsMatchesPlatform", () => {
     // An unavoidable duplicate is fine; an unchecked one is not. If the
     // platform ever respells its DCTERMS_NS, this fails here rather than
     // producing two namespaces that look the same in a diff and join with
@@ -64,7 +64,7 @@ describe("the duplicated DCTERMS namespace stays in step with the platform's", (
 });
 
 describe("dcPredicate keeps the three identifier systems apart", () => {
-  it("does NOT collapse `identifier.uri` and `identifier.govdoc` onto one predicate", () => {
+  it("identifierUriGovdocApart", () => {
     // This is the whole reason dcPredicate exists. Collapsed onto
     // `dcterms:identifier` the Handle, the legacy regional URI and the WHO
     // govdoc number become an unordered bag of three strings and R1 ("resolve
@@ -76,12 +76,12 @@ describe("dcPredicate keeps the three identifier systems apart", () => {
     expect(gov).toBe(`${DSPACE_NS}dc.identifier.govdoc`);
   });
 
-  it("maps a BARE simple element onto the DCMI elements namespace, where the mapping is exact", () => {
+  it("bareElementToDcElements", () => {
     expect(dcPredicate({ schema: "dc", element: "title" })).toBe(`${DC_ELEMENTS_NS}title`);
     expect(dcPredicate({ schema: "dc", element: "description" })).toBe(`${DC_ELEMENTS_NS}description`);
   });
 
-  it("a qualifier on a simple element is a refinement, so it is minted rather than flattened", () => {
+  it("qualifierIsMintedRefinement", () => {
     // The measured record carries BOTH `dc.description` and
     // `dc.description.abstract`. Flattening the qualifier would merge "30 p."
     // with the abstract into one bag of two strings.
@@ -89,11 +89,11 @@ describe("dcPredicate keeps the three identifier systems apart", () => {
       .toBe(`${DSPACE_NS}dc.description.abstract`);
   });
 
-  it("mints for a schema prefix that is not `dc`", () => {
+  it("mintsForNonDcSchema", () => {
     expect(dcPredicate({ schema: "local", element: "title" })).toBe(`${DSPACE_NS}local.title`);
   });
 
-  it("mints for an element outside the fifteen", () => {
+  it("mintsForElementOutsideFifteen", () => {
     expect(dcPredicate({ schema: "dc", element: "provenance" })).toBe(`${DSPACE_NS}dc.provenance`);
   });
 });
@@ -101,7 +101,7 @@ describe("dcPredicate keeps the three identifier systems apart", () => {
 describe("the projection round-trips the record's repetition", () => {
   const doc = dublinCoreToJsonLd(STYLE_GUIDE);
 
-  it("keeps BOTH `dc.identifier.uri` values — the legacy host is not deduplicated", () => {
+  it("keepsBothIdentifierUris", () => {
     const values = listOf(doc, `${DSPACE_NS}dc.identifier.uri`);
     expect(values).toHaveLength(2);
     expect(values).toEqual([
@@ -110,7 +110,7 @@ describe("the projection round-trips the record's repetition", () => {
     ]);
   });
 
-  it("preserves SOURCE ORDER, which a plain array would discard", () => {
+  it("preservesSourceOrder", () => {
     // A JSON-LD array is an unordered set. DSpace stores a `place` on every
     // repeated field, so `@list` is what makes "which did the source give
     // first" answerable at all — and the legacy host is first here.
@@ -119,7 +119,7 @@ describe("the projection round-trips the record's repetition", () => {
     expect(values[1]["@value"]).toContain("iris.who.int");
   });
 
-  it("keeps BOTH `dc.subject.mesh` values, with their language tags and authority", () => {
+  it("keepsBothMeshSubjects", () => {
     const values = listOf(doc, `${DSPACE_NS}dc.subject.mesh`);
     expect(values).toHaveLength(2);
     // A controlled value is a NODE, not a literal: that is what makes it
@@ -138,7 +138,7 @@ describe("the projection round-trips the record's repetition", () => {
     ]);
   });
 
-  it("keeps both repeated dates", () => {
+  it("keepsRepeatedDates", () => {
     expect(listOf(doc, `${DSPACE_NS}dc.date.accessioned`)).toHaveLength(2);
     expect(listOf(doc, `${DSPACE_NS}dc.date.available`)).toHaveLength(2);
   });
@@ -147,21 +147,21 @@ describe("the projection round-trips the record's repetition", () => {
 describe("an absent language tag stays absent", () => {
   const doc = dublinCoreToJsonLd(STYLE_GUIDE);
 
-  it("emits `@language` where the record asserts one", () => {
+  it("emitsLanguageWhereAsserted", () => {
     const title = listOf(doc, `${DC_ELEMENTS_NS}title`);
     expect(title).toEqual([
       { "@value": "Publication and information products style guide", "@language": "en" },
     ]);
   });
 
-  it("emits NO `@language` where the record asserts none — never defaulting to `en` (R4)", () => {
+  it("noDefaultLanguage", () => {
     const author = listOf(doc, `${DSPACE_NS}dc.contributor.author`) as Record<string, unknown>[];
     expect(author).toHaveLength(1);
     expect(author[0]).not.toHaveProperty("@language");
     expect(Object.keys(author[0])).toEqual(["@value"]);
   });
 
-  it("both states occur in the ONE record, which is why the distinction is load-bearing", () => {
+  it("bothLanguageStatesInOneRecord", () => {
     const tagged = listOf(doc, `${DC_ELEMENTS_NS}title`) as Record<string, unknown>[];
     const untagged = listOf(doc, `${DSPACE_NS}dc.date.issued`) as Record<string, unknown>[];
     expect("@language" in tagged[0]).toBe(true);
@@ -170,7 +170,7 @@ describe("an absent language tag stays absent", () => {
 });
 
 describe("two `DcField` entries with one qualified name merge rather than colliding", () => {
-  it("joins their values in source order under a single predicate", () => {
+  it("sameNameFieldsMerge", () => {
     const split: DublinCoreRecord = {
       ...STYLE_GUIDE,
       fields: [
@@ -186,17 +186,17 @@ describe("two `DcField` entries with one qualified name merge rather than collid
 });
 
 describe("`@id` is the repository's own key, and the Handle judgement stays in the skill", () => {
-  it("mints from `rec.id` by default", () => {
+  it("idMintedFromRecordId", () => {
     expect(dublinCoreToJsonLd(STYLE_GUIDE)["@id"])
       .toBe(`${DSPACE_NS}item/18892cf3-5a4f-42a4-923c-a93f4a594dec`);
   });
 
-  it("lets a caller that wants Handle-keyed nodes say so, and own it", () => {
+  it("callerMaySetHandleId", () => {
     const doc = dublinCoreToJsonLd(STYLE_GUIDE, { id: "https://iris.who.int/handle/10665/332098" });
     expect(doc["@id"]).toBe("https://iris.who.int/handle/10665/332098");
   });
 
-  it("carries the item type and its provenance", () => {
+  it("carriesTypeAndProvenance", () => {
     const doc = dublinCoreToJsonLd(STYLE_GUIDE);
     expect(doc["@type"]).toBe(`${DSPACE_NS}Item`);
     expect(doc[`${DSPACE_NS}provenance`]).toEqual({
@@ -208,14 +208,14 @@ describe("`@id` is the repository's own key, and the Handle judgement stays in t
 });
 
 describe("the context defines every prefix the projection actually emits", () => {
-  it("binds dc, dcterms, dspace and rdf", () => {
+  it("contextBindsPrefixes", () => {
     expect(DUBLIN_CORE_CONTEXT.dc).toBe(DC_ELEMENTS_NS);
     expect(DUBLIN_CORE_CONTEXT.dcterms).toBe(DCTERMS_NS);
     expect(DUBLIN_CORE_CONTEXT.dspace).toBe(DSPACE_NS);
     expect(DUBLIN_CORE_CONTEXT.rdf).toBe("http://www.w3.org/1999/02/22-rdf-syntax-ns#");
   });
 
-  it("every predicate of every real record expands under a bound prefix", () => {
+  it("everyPredicateUnderBoundPrefix", () => {
     // The falsifier for the projection as a whole: a minted IRI under a stem
     // the context does not bind compacts to nothing and joins with nothing.
     const bound: string[] = Object.values(DUBLIN_CORE_CONTEXT).flatMap((v) =>
@@ -231,7 +231,7 @@ describe("the context defines every prefix the projection actually emits", () =>
 });
 
 describe("a DSpace locale becomes a BCP 47 tag", () => {
-  it("renders `en_US` as `en-US`, which N-Quads and xml:lang accept", () => {
+  it("dspaceLocaleToBcp47", () => {
     expect(bcp47("en_US")).toBe("en-US");
     expect(bcp47("en")).toBe("en");
   });

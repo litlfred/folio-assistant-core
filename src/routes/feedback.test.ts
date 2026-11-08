@@ -27,7 +27,7 @@ afterEach(() => {
 });
 
 describe("POST /api/feedback tag producer (bean c4rz)", () => {
-  test("populates TodoTags (roles, processes, tasks, identities, block reference) on created feedback items", async () => {
+  test("populatesTodoTags", async () => {
     const store = new FeedbackStore(tmp());
     const url = new URL("http://localhost/api/feedback");
     const req = new Request(url.toString(), {

@@ -94,7 +94,7 @@ function checkout(extra?: (root: string) => void): string {
 describe("collect", () => {
   const c = collect(checkout());
 
-  test("reads both kinds of source, as one list in citation order", () => {
+  test("readsBothSourcesInOrder", () => {
     expect(c.invalid).toEqual([]);
     expect(c.entries.map((e) => [e.subgraph, e.ref.id])).toEqual([
       ["folio-x-references", "aaronson2013"],
@@ -107,7 +107,7 @@ describe("collect", () => {
     ]);
   });
 
-  test("a catalogue record becomes a catalogue reference, linked to its record and its held copy", () => {
+  test("catalogueRecordBecomesReference", () => {
     const who = c.entries.find((e) => e.ref.id === "who-handbook")!.ref;
     expect(who.provenance).toBe("catalogue");
     expect(who.derivedFrom).toBe("iris-x/catalogue/records/who-handbook.dc.json");
@@ -115,7 +115,7 @@ describe("collect", () => {
     expect(who.ISBN).toBe("9789241548960");
   });
 
-  test("refuses a node whose file is not named for its key, and a bad node", () => {
+  test("refusesMisnamedAndBadNode", () => {
     const bad = collect(
       checkout((root) => {
         put(join(root, "folio-x"), "references/misnamed.json", { $schema: "folio-reference/v1", id: "other2020", type: "book" });
@@ -132,7 +132,7 @@ describe("pages and exports", () => {
   const files = outputs(c);
   const paths = [...files.keys()].map((p) => p.split("/").slice(-3).join("/"));
 
-  test("one page with five exports for the whole KG, and for each sub-graph", () => {
+  test("fiveExportsPerPage", () => {
     for (const where of ["bibliography", "folio-x-references", "iris-x-catalogue"]) {
       for (const f of ["index.md", ...EXPORTS.map(([n]) => n)]) expect(paths.some((p) => p.endsWith(`${where}/${f}`))).toBe(true);
     }
@@ -143,10 +143,13 @@ describe("pages and exports", () => {
       "references.dc.xml",
       "references.jsonld",
     ]);
-    expect(files.size).toBe(3 * (1 + EXPORTS.length));
+    // …and the route's self-ignoring marker (bean folio-assistant-uldr): the
+    // route is built at publish, so git and the mount digest leave it alone.
+    expect(files.size).toBe(3 * (1 + EXPORTS.length) + 1);
+    expect([...files.keys()].filter((p) => p.endsWith("/.gitignore"))).toHaveLength(1);
   });
 
-  test("per-asset route (<route>/<sub-graph>/<asset>/) exports a library item and references extracted from it", () => {
+  test("perAssetRouteExports", () => {
     const withLib = collect(
       checkout((root) => {
         put(join(root, "iris-x"), "library/knot-paper/manifest.jsonld", {
@@ -179,7 +182,7 @@ describe("pages and exports", () => {
     expect(assetDcXml).toContain("An Extracted Citation");
   });
 
-  test("a sub-graph page holds its sub-graph's references only, and its exports match", () => {
+  test("subgraphPageOwnRefsOnly", () => {
     const [page, bib] = ["index.md", "references.bib"].map((f) => [...files].find(([p]) => p.endsWith(`iris-x-catalogue/${f}`))![1]);
     expect(page).toContain('id="ref-who-handbook"');
     expect(page).not.toContain("garoufalidis2004");
@@ -187,13 +190,13 @@ describe("pages and exports", () => {
     expect(bib).not.toContain("garoufalidis2004");
   });
 
-  test("the whole-KG page links each sub-graph with its count", () => {
+  test("wholePageLinksSubgraphs", () => {
     const page = [...files].find(([p]) => p.endsWith("bibliography/index.md"))![1];
     expect(page).toContain('<a href="folio-x-references/">folio-x-references</a> (2)');
     expect(page).toContain('<a href="iris-x-catalogue/">iris-x-catalogue</a> (1)');
   });
 
-  test("each entry carries its own BibTeX, RIS and CSL-JSON export", () => {
+  test("entryCarriesOwnExports", () => {
     const e = c.entries.find((x) => x.ref.id === "garoufalidis2004")!;
     const html = entryHtml(e);
     for (const ext of ["bib", "ris", "csl.json"]) expect(html).toContain(`download="garoufalidis2004.${ext}"`);
@@ -205,30 +208,30 @@ describe("rendering", () => {
   const c = collect(checkout());
   const g = c.entries.find((e) => e.ref.id === "garoufalidis2004")!;
 
-  test("a citation reads author (year). title. container, volume, pages", () => {
+  test("citationFormat", () => {
     expect(citationHtml(g.ref)).toBe(
       "Garoufalidis, Stavros (2004). <cite>On the characteristic and deformation varieties of a knot</cite>. <i>Geometry and Topology Monographs</i>, 7, 291-309.",
     );
   });
 
-  test("HTML in a field is escaped", () => {
+  test("htmlEscaped", () => {
     expect(citationHtml({ ...g.ref, title: "<script>x</script>" })).toContain("&lt;script&gt;");
   });
 
-  test("anchors are URL-safe", () => expect(anchorOf("a:b/c")).toBe("ref-a-b-c"));
+  test("anchorsUrlSafe", () => expect(anchorOf("a:b/c")).toBe("ref-a-b-c"));
 
-  test("an empty page says so and still offers its exports", () => {
+  test("emptyPageSaysSo", () => {
     const p = renderPage({ title: "Bibliography: x", permalink: "/x/", intro: "x", entries: [] });
     expect(p).toContain("No references here yet.");
     expect(p).toContain('<a href="references.bib">BibTeX</a>');
   });
 
-  test("order: first author, then year", () => {
+  test("orderAuthorThenYear", () => {
     const [a, b] = [c.entries[0]!, c.entries[1]!];
     expect(byCitation(a, b)).toBeLessThan(0);
   });
 
-  test("includes the ✍ + Add reference standalone node form controls and passes safeHref and escaped-markup checks", () => {
+  test("addReferenceFormControls", () => {
     const html = addReferenceHtml({ targetDir: "folio-x/references" });
     expect(html).toContain("✍ + Add reference (standalone node)");
     expect(html).toContain('id="fa-bib-add-form"');
@@ -311,7 +314,7 @@ describe("a site with its own instance (declared at the checkout root) and depen
   const files = outputs(c);
   const page = (suffix: string) => [...files].find(([p]) => p.endsWith(suffix))![1];
 
-  test("the root instance is the site's own; a dependency's clashing sub-graph id gets its layer prefix", () => {
+  test("rootInstanceIsOwn", () => {
     expect(c.invalid).toEqual([]);
     expect(c.own).toBe("site-x");
     expect(c.subgraphs.map((s) => [s.instance, s.slug])).toEqual([
@@ -320,7 +323,7 @@ describe("a site with its own instance (declared at the checkout root) and depen
     ]);
   });
 
-  test("the whole page lists the site's own references first and the dependencies in a labelled, closed section", () => {
+  test("ownFirstDepsInClosedSection", () => {
     const root = page("bibliography/index.md");
     const own = root.indexOf('id="ref-zeta2020"');
     const deps = root.indexOf('<details class="fa-bib-deps"');
@@ -335,7 +338,7 @@ describe("a site with its own instance (declared at the checkout root) and depen
     expect(root).toContain("**Dependencies, by sub-graph:** <a href=\"dep-x-references/\">references</a> (1, dep-x)");
   });
 
-  test("each layer's sub-graph page holds only that layer's references", () => {
+  test("layerSubgraphPageOwnOnly", () => {
     expect(page("bibliography/references/index.md")).toContain('id="ref-zeta2020"');
     expect(page("bibliography/references/index.md")).not.toContain('id="ref-alpha2019"');
     const dep = page("bibliography/dep-x-references/index.md");
@@ -343,7 +346,7 @@ describe("a site with its own instance (declared at the checkout root) and depen
     expect(dep).toContain("a dependency of site-x");
   });
 
-  test("with no instance at the root, the page stays one list", () => {
+  test("noRootInstanceOneList", () => {
     const plain = [...outputs(collect(checkout()))].find(([p]) => p.endsWith("bibliography/index.md"))![1];
     expect(plain).not.toContain("<details class=\"fa-bib-deps\"");
     expect(plain).toContain("**By sub-graph:**");
@@ -359,12 +362,12 @@ describe("one page, one id per entry (bean djj5)", () => {
   const b = { ref, instance: "smart-immunizations", subgraph: "smart-immunizations-catalogue", file: "b" };
   const ids = (html: string) => [...html.matchAll(/<li id="([^"]+)"/g)].map((m) => m[1]);
 
-  test("the first keeps ref-<key>, which a citation links; the next is qualified by its instance", () => {
+  test("firstKeepsRefKey", () => {
     const page = renderPage({ title: "Bibliography", permalink: "/b/", intro: "x", entries: [a, b] });
     expect(ids(page)).toEqual(["ref-who-guideline-handbook", "ref-smart-immunizations-who-guideline-handbook"]);
   });
 
-  test("on an own site's page the own entry keeps ref-<key>, wherever it sorts", () => {
+  test("ownEntryKeepsRefKey", () => {
     const page = renderPage({ title: "Bibliography", permalink: "/b/", intro: "x", entries: [a, b], own: "smart-immunizations" });
     expect(ids(page)).toEqual(["ref-who-guideline-handbook", "ref-smart-trust-phw-who-guideline-handbook"]);
     expect(new Set(ids(page)).size).toBe(2);
@@ -389,14 +392,14 @@ describe("one instance's own bibliography, for its page inside a composed site (
   };
   const needs: Record<string, string[]> = { "smart-trust": ["smart-base"], "smart-base": [], "smart-immunizations": ["smart-base"] };
 
-  test("keeps the instance and what it needs, transitively, and makes it own", () => {
+  test("keepsInstanceAndNeeds", () => {
     const own = forInstance(c, "smart-trust", (n) => needs[n] ?? []);
     expect(own.own).toBe("smart-trust");
     expect(own.entries.map((e) => e.ref.id)).toEqual(["a", "b"]);
     expect(own.subgraphs.map((s) => s.instance)).toEqual(["smart-trust", "smart-base"]);
   });
 
-  test("its pages are served under /<instance>/", () => {
+  test("pagesUnderInstance", () => {
     const pages = outputs(forInstance(c, "smart-trust", (n) => needs[n] ?? []), "/smart-trust");
     const root = [...pages].find(([p]) => p.endsWith("bibliography/index.md"))![1];
     expect(root).toContain("permalink: /smart-trust/en/folio-assistant-core/bibliography/");

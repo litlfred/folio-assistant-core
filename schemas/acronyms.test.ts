@@ -11,25 +11,25 @@ import { abbreviationTable, findAcronyms, inlineExpansions, isAcronym, isCode, l
 import { checkAcronymInGlossary } from "../pipeline/qa-checkers-acronyms.ts";
 
 describe("isAcronym", () => {
-  test("capitals, digits and mixed forms are acronyms", () => {
+  test("capitalsDigitsMixedAreAcronyms", () => {
     for (const t of ["WHO", "GS1", "HL7", "eLMIS", "OpenHIE", "WHODrug", "ICD-11", "DH&I", "GHSC-PSM"]) expect(isAcronym(t)).toBe(true);
   });
-  test("words, names, Roman numerals and shouted headings are not", () => {
+  test("wordsNumeralsHeadingsNotAcronyms", () => {
     for (const t of ["Health", "McDonald", "II", "XIV", "A", "INTRODUCTION", "iPhone"]) expect(isAcronym(t)).toBe(false);
   });
 });
 
 describe("codes, plurals and words in capitals", () => {
-  test("a folio's own ids are codes, not acronyms", () => {
+  test("folioIdsAreCodes", () => {
     for (const t of ["PC-R-05", "PC-BP-01", "MFR001"]) expect(isCode(t)).toBe(true);
     for (const t of ["ICD-11", "ITU-T", "GS1"]) expect(isCode(t)).toBe(false);
   });
-  test("a plural is counted under its singular", () => {
+  test("pluralCountedUnderSingular", () => {
     expect(singular("GTINs")).toBe("GTIN");
     expect(singular("FAQs")).toBe("FAQ");
     expect(singular("eLMIS")).toBe("eLMIS");
   });
-  test("a word in capitals is dropped when the text spells it otherwise; WHO is kept", () => {
+  test("capitalsWordDroppedWhoKept", () => {
     const md = "RESOURCES and STEPS for RWANDA. The resources, the steps, Rwanda. Who said it? WHO did, OF course.";
     expect(findAcronyms(md).map((h) => h.acronym)).toEqual(["WHO"]);
     expect(lowerWords(md).has("rwanda")).toBe(true);
@@ -37,7 +37,7 @@ describe("codes, plurals and words in capitals", () => {
 });
 
 describe("findAcronyms", () => {
-  test("reads prose only, with lines", () => {
+  test("readsProseOnlyWithLines", () => {
     const md = "The WHO and GS1 standards.\n`FHIR` in code and [a link](https://x.org/HL7) are skipped.\nUNICEF too.";
     expect(findAcronyms(md)).toEqual([
       { acronym: "WHO", line: 1 },
@@ -48,12 +48,12 @@ describe("findAcronyms", () => {
 });
 
 describe("expansions", () => {
-  test("Long Name (ACR) gives the shortest run starting with the first letter", () => {
+  test("longNameExpansionShortestRun", () => {
     const m = inlineExpansions("Funded by the United States Agency for International Development (USAID) and the World Health Organization (WHO).");
     expect(m.get("USAID")).toBe("United States Agency for International Development");
     expect(m.get("WHO")).toBe("World Health Organization");
   });
-  test("an abbreviations table is read as written", () => {
+  test("abbreviationTableReadAsWritten", () => {
     const m = abbreviationTable("*Abbreviations*\n\n| Abbreviation | Definition |\n| --- | --- |\n| FDA | Food and Drugs Authority |\n| HL7 | Health Level Seven® |\n\n| Other | x |\n| --- | --- |\n| NO | no |");
     expect([...m]).toEqual([["FDA", "Food and Drugs Authority"], ["HL7", "Health Level Seven®"]]);
   });
@@ -70,20 +70,20 @@ describe("the acronym-in-glossary checker", () => {
   const md = join(root, "folio", "ch1", "p.md");
   writeFileSync(md, "WHO and HL7 work with GS1.\nGS1 again, and UNICEF.\n");
 
-  test("a glossary here or in a mounted instance counts", () => {
+  test("mountedGlossaryCounts", () => {
     const labels = visibleLabels(md);
     expect(labels.has("WHO")).toBe(true);
     expect(labels.has("HL7")).toBe(true);
     expect(missingAcronyms(findAcronyms("WHO HL7 GS1 GS1"), labels).map((h) => h.acronym)).toEqual(["GS1"]);
   });
 
-  test("warns, once per acronym, at its first line; never fails", () => {
+  test("warnsOncePerAcronym", () => {
     const r = checkAcronymInGlossary({ md });
     expect(r.result).toBe("warn");
     expect(r.hits.map((h) => [h.line, h.text.split(" ")[0]])).toEqual([[1, "GS1"], [2, "UNICEF"]]);
   });
 
-  test("n/a without prose", () => {
+  test("naWithoutProse", () => {
     expect(checkAcronymInGlossary({}).result).toBe("n/a");
     rmSync(root, { recursive: true, force: true });
   });

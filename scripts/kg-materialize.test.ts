@@ -160,7 +160,7 @@ function setSubscription(decl: string, patch: Record<string, unknown>): void {
 }
 
 describe("refused before any byte moves, with the reason", () => {
-  test("a subscription that does not exist", async () => {
+  test("refusesUnknownSubscription", async () => {
     const { inst } = checkout({ subgraphs: ["kb"] });
     const f = fixture();
     const r = await materialize({ instance: inst, subscription: "nope", subgraph: "kb", decisions: DECISIONS, fetch: f });
@@ -168,7 +168,7 @@ describe("refused before any byte moves, with the reason", () => {
     expect(r.state === "refused" && r.reason).toMatch(/no subscription `nope`/);
     expect(f.calls).toBe(0);
   });
-  test("a subgraph the subscription did not CHOOSE", async () => {
+  test("refusesUnchosenSubgraph", async () => {
     const { inst, snapDir } = checkout({ subgraphs: ["kb"] });
     const f = fixture();
     const r = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb-skills", decisions: DECISIONS, fetch: f });
@@ -177,38 +177,38 @@ describe("refused before any byte moves, with the reason", () => {
     expect(f.calls).toBe(0);
     expect(existsSync(join(snapDir, "ihris-kb"))).toBe(false);
   });
-  test("a chosen subgraph the cached snapshot does not DECLARE", async () => {
+  test("refusesUndeclaredChosenSubgraph", async () => {
     const { inst } = checkout({ subgraphs: ["kb", "ghost"] });
     const f = fixture();
     const r = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "ghost", decisions: DECISIONS, fetch: f });
     expect(r.state === "refused" && r.reason).toMatch(/chosen, but the cached snapshot .* does not declare it/);
     expect(f.calls).toBe(0);
   });
-  test("a snapshot at another pin: re-subscribe first", async () => {
+  test("refusesSnapshotAtOtherPin", async () => {
     const { inst } = checkout({ subgraphs: ["kb"] }, { snapshotRef: SHA2 });
     const r = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture() });
     expect(r.state === "refused" && r.reason).toMatch(/re-subscribe/);
   });
-  test("an asset under policy `none` (or no policy)", async () => {
+  test("refusesAssetUnderPolicyNone", async () => {
     const { inst } = checkout({ subgraphs: ["kb"] });
     const f = fixture();
     const r = await materialize({ instance: inst, subscription: "ihris-kb", asset: "library/report/report.pdf", decisions: DECISIONS, fetch: f });
     expect(r.state === "refused" && r.reason).toMatch(/asset policy `none`.*`on-demand` or `all`/);
     expect(f.calls).toBe(0);
   });
-  test("an asset outside every declared directory", async () => {
+  test("refusesAssetOutsideDirectories", async () => {
     const { inst } = checkout({ assets: { policy: "on-demand" } });
     const r = await materialize({ instance: inst, subscription: "ihris-kb", asset: "outside/x.txt", decisions: DECISIONS, fetch: fixture() });
     expect(r.state === "refused" && r.reason).toMatch(/outside every directory the snapshot declares/);
   });
-  test.each(["../etc/passwd", "/abs/path", "library/../x", "library/.hidden/x"])("an asset path %s", async (p) => {
+  test.each(["../etc/passwd", "/abs/path", "library/../x", "library/.hidden/x"])("refusesAssetPath[%s]", async (p) => {
     const { inst } = checkout({ assets: { policy: "all" } });
     const f = fixture();
     const r = await materialize({ instance: inst, subscription: "ihris-kb", asset: p, decisions: DECISIONS, fetch: f });
     expect(r.state).toBe("refused");
     expect(f.calls).toBe(0);
   });
-  test("a working copy that claims to discharge sourceLoss", async () => {
+  test("refusesWorkingDischargingSourceLoss", async () => {
     const { inst } = checkout({ subgraphs: ["kb"] });
     const d: KgDecisions = { ...DECISIONS, purpose: "working" };
     const r = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: d, fetch: fixture() });
@@ -217,7 +217,7 @@ describe("refused before any byte moves, with the reason", () => {
 });
 
 describe("the gates: an unanswered gate counts as a refusal", () => {
-  test("no decisions: stays referenced, nothing fetched, and the record says why", async () => {
+  test("noDecisionsStaysReferenced", async () => {
     const { inst, snapDir } = checkout({ subgraphs: ["kb"] });
     const f = fixture();
     const r = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", fetch: f, now: NOW });
@@ -232,7 +232,7 @@ describe("the gates: an unanswered gate counts as a refusal", () => {
     const [view] = partRecordsIn(snapDir, "ihris-kb").parts;
     expect(partState(view!, SHA)).toMatch(/^\? gates unanswered: .*no purpose stated/);
   });
-  test("a refused gate: ✗, and the refusing gate is named", async () => {
+  test("refusedGateNamed", async () => {
     const { inst, snapDir } = checkout({ subgraphs: ["kb"] });
     const d: KgDecisions = { ...DECISIONS, gates: { ...DECISIONS.gates, copyright: { verdict: "refused", basis: "no licence grants redistribution" } } };
     const f = fixture();
@@ -244,7 +244,7 @@ describe("the gates: an unanswered gate counts as a refusal", () => {
     const [view] = partRecordsIn(snapDir, "ihris-kb").parts;
     expect(partState(view!, SHA)).toMatch(/^✗ gate refused: `copyright`/);
   });
-  test("size is MEASURED, and over budget it refuses", async () => {
+  test("sizeMeasuredOverBudget", async () => {
     const { inst } = checkout({ subgraphs: ["kb"] });
     const r = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: { ...DECISIONS, maxBytes: 10 }, fetch: fixture(), now: NOW });
     expect(r.state).toBe("stayed-referenced");
@@ -252,14 +252,14 @@ describe("the gates: an unanswered gate counts as a refusal", () => {
     expect(r.record.refusal?.refused).toEqual(["size"]);
     expect(r.record.refusal?.gates.size.basis).toMatch(/measured .* in 3 of the 8 files .* over it/);
   });
-  test("sizeGate says what is not known rather than inventing a denominator", () => {
+  test("sizeGateNoInventedDenominator", () => {
     expect(sizeGate(100, 2, 1000).basis).toMatch(/the repository's whole was not enumerated/);
     expect(sizeGate(100, 2, 1000).verdict).toBe("permitted");
   });
 });
 
 describe("could-not-determine is never clean, and writes nothing", () => {
-  test("a fetch that throws", async () => {
+  test("throwingFetchCouldNotDetermine", async () => {
     const { inst, snapDir } = checkout({ subgraphs: ["kb"] });
     const failing: PartFetcher = () => {
       throw new Error("fatal: unable to access 'https://github.com/litlfred/ihris-kb.git/': 403");
@@ -269,18 +269,18 @@ describe("could-not-determine is never clean, and writes nothing", () => {
     expect(r.state === "could-not-determine" && r.reason).toMatch(/was not read: .*403/);
     expect(existsSync(join(snapDir, "ihris-kb"))).toBe(false);
   });
-  test("declared, but the commit holds nothing there: refused, not guessed", async () => {
+  test("emptyDeclaredPathRefused", async () => {
     const { inst } = checkout({ subgraphs: ["kb-skills"] });
     const { "skills/hello.md": _gone, ...without } = UPSTREAM;
     const r = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb-skills", decisions: DECISIONS, fetch: fixture(without) });
     expect(r.state === "refused" && r.reason).toMatch(/holds nothing at `skills`/);
   });
-  test("a subgraph path that is a file at the pin", async () => {
+  test("subgraphPathIsFileRefused", async () => {
     const { inst } = checkout({ subgraphs: ["kb"] });
     const r = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture({ ...UPSTREAM, kb: "a file" }, { kind: "blob" }) });
     expect(r.state === "refused" && r.reason).toMatch(/is a file at the pin/);
   });
-  test("a symbolic link in the part is refused", async () => {
+  test("symlinkRefused", async () => {
     const { inst } = checkout({ subgraphs: ["kb"] });
     const base = fixture();
     const linking: PartFetcher = (a, b, c) => {
@@ -294,7 +294,7 @@ describe("could-not-determine is never clean, and writes nothing", () => {
 });
 
 describe("slice 5: a chosen subgraph, materialised", () => {
-  test("bytes under tree/, a record that conforms, and every gate recorded", async () => {
+  test("materialisedWithRecordAndGates", async () => {
     const { inst, snapDir } = checkout({ subgraphs: ["kb"] });
     const r = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture(), now: NOW });
     expect(r.state).toBe("materialized");
@@ -320,7 +320,7 @@ describe("slice 5: a chosen subgraph, materialised", () => {
     expect(r.record.files?.[1]?.materialization.provenance.upstream).toBe(`https://github.com/litlfred/ihris-kb/blob/${SHA}/kb/intro.md`);
   });
 
-  test("check:materialized-fixity covers the copies, and does not read upstream's own records as ours", async () => {
+  test("fixityCoversCopiesNotUpstream", async () => {
     const { repo, inst } = checkout({ subgraphs: ["kb"] });
     await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture(), now: NOW });
     const verdicts = fixityRun(repo);
@@ -330,7 +330,7 @@ describe("slice 5: a chosen subgraph, materialised", () => {
     expect(verdicts.some((v) => v.record.localPath === "library/x.pdf")).toBe(false);
   });
 
-  test("an edit in place fails both gates", async () => {
+  test("editInPlaceFailsBoth", async () => {
     const { repo, inst, snapDir } = checkout({ subgraphs: ["kb"] });
     await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture(), now: NOW });
     appendFileSync(join(snapDir, "ihris-kb", "subgraphs", "kb", "tree", "intro.md"), "an edit\n");
@@ -340,7 +340,7 @@ describe("slice 5: a chosen subgraph, materialised", () => {
     expect(rep.findings.join("\n")).toMatch(/`intro\.md` does not match its digest/);
   });
 
-  test("a file ADDED in place: the tree digest catches what a per-file walk cannot", async () => {
+  test("addedFileCaughtByTreeDigest", async () => {
     const { repo, inst, snapDir } = checkout({ subgraphs: ["kb"] });
     await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture(), now: NOW });
     writeFileSync(join(snapDir, "ihris-kb", "subgraphs", "kb", "tree", "added.md"), "mine\n");
@@ -348,13 +348,13 @@ describe("slice 5: a chosen subgraph, materialised", () => {
     expect(checkMaterializations(inst).findings.join("\n")).toMatch(/`added\.md` is under the tree and in no file record/);
   });
 
-  test("the check is clean after a materialise, and counts what is chosen and not held", async () => {
+  test("checkCleanCountsChosenNotHeld", async () => {
     const { inst } = checkout({ subgraphs: ["kb", "kb-skills"] });
     await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture(), now: NOW });
     expect(checkMaterializations(inst)).toEqual({ findings: [], held: 1, stayedReferenced: 0, chosenNotHeld: 1, nodesHeld: 0 });
   });
 
-  test("re-running at the same pin with the same decisions writes nothing", async () => {
+  test("rerunWritesNothing", async () => {
     const { inst, snapDir } = checkout({ subgraphs: ["kb"] });
     await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture(), now: NOW });
     const file = join(snapDir, "ihris-kb", "subgraphs", "kb", "materialization.json");
@@ -364,7 +364,7 @@ describe("slice 5: a chosen subgraph, materialised", () => {
     expect(readFileSync(file, "utf8")).toBe(before);
   });
 
-  test("a refusal record is replaced once the gates pass", async () => {
+  test("refusalReplacedWhenGatesPass", async () => {
     const { inst } = checkout({ subgraphs: ["kb"] });
     await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", fetch: fixture(), now: NOW });
     const r = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture(), now: NOW });
@@ -372,7 +372,7 @@ describe("slice 5: a chosen subgraph, materialised", () => {
     expect(checkMaterializations(inst).findings).toEqual([]);
   });
 
-  test("a moved pin: the held part is stale, and re-materialising is refused as a refresh", async () => {
+  test("movedPinStaleAndRefused", async () => {
     const { inst, decl } = checkout({ subgraphs: ["kb"] });
     await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture(), now: NOW });
     setSubscription(decl, { ref: SHA2 });
@@ -382,7 +382,7 @@ describe("slice 5: a chosen subgraph, materialised", () => {
     expect(r.state).toBe("refused");
   });
 
-  test("a part no longer chosen, and bytes with no record, are findings", async () => {
+  test("unchosenAndUnrecordedFindings", async () => {
     const { inst, decl, snapDir } = checkout({ subgraphs: ["kb"] });
     await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture(), now: NOW });
     setSubscription(decl, { subgraphs: [] });
@@ -396,7 +396,7 @@ describe("slice 5: a chosen subgraph, materialised", () => {
 });
 
 describe("slice 6: one asset on demand", () => {
-  test.each(["on-demand", "all"] as const)("policy %s: the one file, its digest, its gates", async (policy) => {
+  test.each(["on-demand", "all"] as const)("assetOneFile[%s]", async (policy) => {
     const { repo, inst, snapDir } = checkout({ assets: { policy } });
     const r = await materialize({ instance: inst, subscription: "ihris-kb", asset: "library/report/report.pdf", decisions: DECISIONS, fetch: fixture(), now: NOW });
     expect(r.state).toBe("materialized");
@@ -411,12 +411,12 @@ describe("slice 6: one asset on demand", () => {
     expect(fixityRun(repo).filter((v) => v.kind !== "verified")).toEqual([]);
     expect(checkMaterializations(inst).findings).toEqual([]);
   });
-  test("a directory is not an asset", async () => {
+  test("directoryNotAsset", async () => {
     const { inst } = checkout({ assets: { policy: "on-demand" } });
     const r = await materialize({ instance: inst, subscription: "ihris-kb", asset: "library/report", decisions: DECISIONS, fetch: fixture() });
     expect(r.state === "refused" && r.reason).toMatch(/is a directory at the pin; an asset is one file/);
   });
-  test("an asset held, then the policy turned off, is a finding", async () => {
+  test("heldAssetPolicyOffFinding", async () => {
     const { inst, decl } = checkout({ assets: { policy: "on-demand" } });
     await materialize({ instance: inst, subscription: "ihris-kb", asset: "library/report/report.pdf", decisions: DECISIONS, fetch: fixture(), now: NOW });
     setSubscription(decl, { assets: { policy: "none" } });
@@ -425,7 +425,7 @@ describe("slice 6: one asset on demand", () => {
 });
 
 describe("the subscriptions page draws a part from its record", () => {
-  test("held, refused, unanswered and not-yet-held each draw differently", async () => {
+  test("cardsDrawEachState", async () => {
     const { repo, inst } = checkout({ subgraphs: ["kb", "kb-skills", "library"], assets: { policy: "on-demand" } });
     await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture(), now: NOW });
     await materialize({
@@ -445,13 +445,13 @@ describe("the subscriptions page draws a part from its record", () => {
     expect(page).toMatch(/\| subgraph `library` \| ✓ \| 🔗 chosen, not yet held \|/);
     expect(page).toMatch(/\| asset `library\/report\/report\.pdf` \| on demand \| ⬇ materialised — 1 file\(s\)/);
   });
-  test("bytes that no longer match draw ⚠, never ⬇", async () => {
+  test("mismatchDrawsWarning", async () => {
     const { repo, inst, snapDir } = checkout({ subgraphs: ["kb"] });
     await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb", decisions: DECISIONS, fetch: fixture(), now: NOW });
     appendFileSync(join(snapDir, "ihris-kb", "subgraphs", "kb", "tree", "intro.md"), "x");
     expect(render([], subscriptionCards(repo))).toMatch(/\| subgraph `kb` \| ✓ \| ⚠ the bytes do not match the record \(mismatch\) \|/);
   });
-  test("an unreadable record draws ?, never skipped", async () => {
+  test("unreadableRecordDrawsUnknown", async () => {
     const { repo, snapDir } = checkout({ subgraphs: ["kb"] });
     mkdirSync(join(snapDir, "ihris-kb", "subgraphs", "kb"), { recursive: true });
     writeFileSync(join(snapDir, "ihris-kb", "subgraphs", "kb", "materialization.json"), "{not json");
@@ -504,7 +504,7 @@ function nodesFixture(files: Record<string, string> = NODES_UPSTREAM): PartFetch
 }
 
 describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metadata only", () => {
-  test("a hit: the file lands beside a sha256 record, and --check holds it", async () => {
+  test("nodesHitLandsWithRecord", async () => {
     const { inst, snapDir } = nodesCheckout();
     const f = nodesFixture();
     const r = await materializeNodes({ instance: inst, subscription: "cat", path: "sdlc/skills", fetch: f, now: NOW });
@@ -533,7 +533,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     expect(again.state === "materialized" && again.changed).toBe(false);
   });
 
-  test("the root is REFUSED, pointing at index.jsonld — never read as an empty subgraph", async () => {
+  test("nodesRootRefused", async () => {
     const { inst, snapDir } = nodesCheckout();
     for (const path of ["", ".", "/"]) {
       const f = nodesFixture();
@@ -545,7 +545,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     expect(existsSync(join(snapDir, "cat"))).toBe(false);
   });
 
-  test("a missing file is refused, and nothing is written", async () => {
+  test("nodesMissingRefused", async () => {
     const { inst, snapDir } = nodesCheckout();
     const r = await materializeNodes({ instance: inst, subscription: "cat", path: "skills/nope", fetch: nodesFixture(), indexPackage: noPackage });
     expect(r.state).toBe("refused");
@@ -573,7 +573,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     return (a) => fetchSubgraphIndex({ ...a, urlFor: (url) => `file://${join(out, url.split("/").pop()!)}` });
   }
 
-  test("a nested subgraph the tree does not carry is read from the pin's package, verified, and recorded as from there", async () => {
+  test("nodesFromPinPackage", async () => {
     const { inst, snapDir } = nodesCheckout();
     const { [SDLC_HYDRATED_PATH]: _inTree, ...withoutFile } = NODES_UPSTREAM;
     const r = await materializeNodes({
@@ -592,7 +592,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     expect(checkMaterializations(inst).findings).toEqual([]);
   });
 
-  test("a package that holds another subgraph is not an answer: refused, saying where else it looked", async () => {
+  test("nodesPackageOtherSubgraphRefused", async () => {
     const { inst, snapDir } = nodesCheckout();
     const { [SDLC_HYDRATED_PATH]: _inTree, ...withoutFile } = NODES_UPSTREAM;
     const r = await materializeNodes({
@@ -607,7 +607,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     expect(existsSync(join(snapDir, "cat"))).toBe(false);
   });
 
-  test("a package that could not be fetched is could-not-determine, never 'not published'", async () => {
+  test("nodesPackageUnfetchedCouldNotDetermine", async () => {
     const { inst, snapDir } = nodesCheckout();
     const { [SDLC_HYDRATED_PATH]: _inTree, ...withoutFile } = NODES_UPSTREAM;
     const r = await materializeNodes({
@@ -622,7 +622,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     expect(existsSync(join(snapDir, "cat"))).toBe(false);
   });
 
-  test("a path outside every declared directory is refused before the fetch", async () => {
+  test("nodesPathOutsideRefused", async () => {
     const { inst } = nodesCheckout();
     const f = nodesFixture();
     const r = await materializeNodes({ instance: inst, subscription: "cat", path: "elsewhere/x", fetch: f });
@@ -630,7 +630,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     expect(f.calls).toBe(0);
   });
 
-  test("a schema-invalid file is refused, and nothing is written", async () => {
+  test("nodesInvalidFileRefused", async () => {
     const { inst, snapDir } = nodesCheckout();
     const bad = JSON.parse(SDLC_HYDRATED) as Record<string, unknown>;
     bad["@context"] = { inlined: "https://example.org/" }; // the contract: the context is never inlined
@@ -646,7 +646,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     expect(existsSync(join(snapDir, "cat"))).toBe(false);
   });
 
-  test("the pin: a snapshot at another pin, a copy held at another pin, and a remote serving another commit", async () => {
+  test("nodesPinChecked", async () => {
     const stale = nodesCheckout({ snapshotRef: SHA2 });
     const f = nodesFixture();
     const r1 = await materializeNodes({ instance: stale.inst, subscription: "cat", path: "sdlc/skills", fetch: f });
@@ -677,7 +677,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     expect(existsSync(join(fresh.snapDir, "cat"))).toBe(false);
   });
 
-  test("the size cap: over maxBytes stays referenced, with a record and no file", async () => {
+  test("nodesSizeCapReferenced", async () => {
     const { inst, snapDir } = nodesCheckout();
     const r = await materializeNodes({ instance: inst, subscription: "cat", path: "sdlc/skills", maxBytes: 1024, fetch: nodesFixture(), now: NOW });
     expect(r.state).toBe("stayed-referenced");
@@ -689,7 +689,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
     expect(checkMaterializations(inst).findings).toEqual([]);
   });
 
-  test("--check: an edit in place, and a file no record accounts for, are findings", async () => {
+  test("nodesCheckFindsEditAndExtra", async () => {
     const { inst, snapDir } = nodesCheckout();
     await materializeNodes({ instance: inst, subscription: "cat", path: "sdlc/skills", fetch: nodesFixture(), now: NOW });
     const dir = join(snapDir, "cat", "nodes", "sdlc", "skills");
@@ -702,7 +702,7 @@ describe("kg:materialize --nodes — one subgraph's index.hydrated.jsonld, metad
 });
 
 describe("a nested subgraph: chosen by its parent, materialised by its path (owner, 2026-10-24, ruling 4)", () => {
-  test("its parent chosen, the nested path is held apart from the parent's part, and both checks pass", async () => {
+  test("nestedHeldApart", async () => {
     const { repo, inst, snapDir } = checkout({ subgraphs: ["kb"] });
     const r = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb/nested", decisions: DECISIONS, fetch: fixture(), now: NOW });
     expect(r.state).toBe("materialized");
@@ -726,13 +726,13 @@ describe("a nested subgraph: chosen by its parent, materialised by its path (own
     expect(fixityRun(repo).every((v) => v.kind === "verified" || v.kind === "covered-by-parts")).toBe(true);
   });
 
-  test("a nested part alone does not count its parent as held", async () => {
+  test("nestedAloneNotParent", async () => {
     const { inst } = checkout({ subgraphs: ["kb"] });
     await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb/nested", decisions: DECISIONS, fetch: fixture(), now: NOW });
     expect(checkMaterializations(inst).chosenNotHeld).toBe(1);
   });
 
-  test("refused when its parent is not chosen, or when no declared directory holds the path", async () => {
+  test("nestedRefusedUnchosenOrOutside", async () => {
     const { inst } = checkout({ subgraphs: ["kb-skills"] });
     const f = fixture();
     const unchosen = await materialize({ instance: inst, subscription: "ihris-kb", subgraph: "kb/nested", decisions: DECISIONS, fetch: f });

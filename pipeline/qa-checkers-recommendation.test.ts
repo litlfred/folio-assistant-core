@@ -17,7 +17,7 @@ describe("the recommendation-strength-resolves checker", () => {
     return { dir, ts };
   };
 
-  it("reads strength as text, without executing the manifest", () => {
+  it("readsStrengthAsText", () => {
     expect(strengthOf('x({ label: "a", strength: { list: "l", code: "c" } })')).toMatchObject({ list: "l", code: "c", line: 1 });
     expect(strengthOf('x({ label: "a" })')).toBeUndefined();
     expect(strengthOf("x({ strength: { list: L, code: \"c\" } })")).toBeNull();
@@ -25,7 +25,7 @@ describe("the recommendation-strength-resolves checker", () => {
     expect(strengthOf('x({ title: "strength: { list: \\"l\\" }" }) // strength: {}')).toBeUndefined();
   });
 
-  it("passes a code in core's lists, fails one that is not, and names it", () => {
+  it("passesKnownCodeFailsUnknown", () => {
     const ok = block('  strength: { list: "grade-recommendation-strength", code: "strong" },\n');
     const bad = block('  strength: { list: "grade-recommendation-strength", code: "weak" },\n');
     try {
@@ -40,7 +40,7 @@ describe("the recommendation-strength-resolves checker", () => {
     }
   });
 
-  it("no strength is n/a, and a computed strength is a warning, never a pass", () => {
+  it("noStrengthNaComputedWarns", () => {
     const none = block("");
     const computed = block("  strength: { list: LIST, code: \"strong\" },\n");
     try {
@@ -52,7 +52,7 @@ describe("the recommendation-strength-resolves checker", () => {
     }
   });
 
-  it("a folio's own code list is seen, so its own grading resolves", () => {
+  it("folioOwnCodeListResolves", () => {
     const b = block('  strength: { list: "house-grading", code: "tier-1" },\n');
     try {
       expect(checkRecommendationStrengthResolves({ ts: b.ts }).result).toBe("fail");
@@ -67,7 +67,7 @@ describe("the recommendation-strength-resolves checker", () => {
     }
   });
 
-  it("the dispatch table the qa-checkers node names holds this checker", () => {
+  it("dispatchTableHoldsChecker", () => {
     expect(Object.keys(RECOMMENDATION_CHECKERS)).toEqual(["recommendation-strength-resolves"]);
   });
 });

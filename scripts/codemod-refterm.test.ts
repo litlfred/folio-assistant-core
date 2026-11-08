@@ -23,7 +23,7 @@ const rewrite = (md: string) => rewriteMarkdown(md, SLUGS, new Set());
 const WRAPPED = ":refterm[rigid monoidal category]{#rigid-monoidal-category}";
 
 describe("leaves non-prose alone", () => {
-  test("inline code", () => {
+  test("leavesInlineCode", () => {
     const out = rewrite("A `rigid monoidal category` and a bare rigid monoidal category.");
     expect(out).toContain("`rigid monoidal category`");
     expect(out).toContain(WRAPPED);
@@ -31,32 +31,32 @@ describe("leaves non-prose alone", () => {
     expect(out!.split(WRAPPED).length - 1).toBe(1);
   });
 
-  test("fenced code", () => {
+  test("leavesFencedCode", () => {
     const out = rewrite("```\nrigid monoidal category\n```\n\nAnd a bare rigid monoidal category.");
     expect(out).toContain("```\nrigid monoidal category\n```");
     expect(out!.split(WRAPPED).length - 1).toBe(1);
   });
 
-  test("inline math", () => {
+  test("leavesInlineMath", () => {
     const out = rewrite("Math $rigid monoidal category$ and bare rigid monoidal category.");
     expect(out).toContain("$rigid monoidal category$");
     expect(out!.split(WRAPPED).length - 1).toBe(1);
   });
 
-  test("display math", () => {
+  test("leavesDisplayMath", () => {
     const out = rewrite("$$\nrigid monoidal category\n$$\n\nbare rigid monoidal category.");
     expect(out).toContain("$$\nrigid monoidal category\n$$");
     expect(out!.split(WRAPPED).length - 1).toBe(1);
   });
 
-  test("an already-wrapped term is not re-wrapped", () => {
+  test("noRewrap", () => {
     // The one guard that IS live: text inside a textDirective.
     expect(rewrite(`Already ${WRAPPED} wrapped.`)).toBeNull();
   });
 });
 
 describe("rewrites prose wherever it appears", () => {
-  test("paragraph, heading, emphasis, table cell, container directive", () => {
+  test("rewritesProseEverywhere", () => {
     for (const md of [
       "A rigid monoidal category.",
       "# A rigid monoidal category heading",
@@ -70,11 +70,11 @@ describe("rewrites prose wherever it appears", () => {
     }
   });
 
-  test("a block does not re-wrap the term it defines itself", () => {
+  test("noSelfWrap", () => {
     expect(rewriteMarkdown("A rigid monoidal category.", SLUGS, SLUGS)).toBeNull();
   });
 
-  test("no known phrase, no change", () => {
+  test("noPhraseNoChange", () => {
     expect(rewrite("Nothing to see here.")).toBeNull();
   });
 });

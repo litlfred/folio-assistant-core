@@ -79,19 +79,19 @@ const anchors: ReviewAnchors = {
 };
 
 describe("citation parsing", () => {
-  test("line ranges, in every way a reviewer writes them", () => {
+  test("lineRangesParsed", () => {
     expect(parseLines("618–624")).toEqual([[618, 624]]);
     expect(parseLines("618-24")).toEqual([[618, 624]]);
     expect(parseLines("l. 618")).toEqual([[618, 618]]);
     expect(parseLines("618, 620–622")).toEqual([[618, 618], [620, 622]]);
     expect(parseLines(undefined)).toEqual([]);
   });
-  test("table and figure references", () => {
+  test("captionRefsParsed", () => {
     expect(parseCaptionRef("Table 3.1")).toBe("Table 3.1");
     expect(parseCaptionRef("see fig. 2.2 above")).toBe("Figure 2.2");
     expect(parseCaptionRef("lines 4-5")).toBeUndefined();
   });
-  test("section numbers", () => {
+  test("sectionNumbersParsed", () => {
     expect(parseSection("§3.4.5")).toBe("3.4.5");
     expect(parseSection("Section 2.1.")).toBe("2.1");
     expect(parseSection("Appendix C")).toBe("C");
@@ -99,27 +99,27 @@ describe("citation parsing", () => {
 });
 
 describe("resolveAnchor", () => {
-  test("printed page and lines land on the paragraph, and the section agrees", () => {
+  test("pageLinesLandOnParagraph", () => {
     const a = resolveAnchor({ section: "1.1.2", page: "9", lines: "42-46" }, "", anchors);
     expect(a).toMatchObject({ targetLabel: "prose:1-1-2-bbb", method: "page-line", confidence: "high" });
   });
-  test("a line on the second page of a block that crosses a page", () => {
+  test("secondPageOfBlock", () => {
     expect(resolveAnchor({ page: "21", lines: "3" }, "", anchors).targetLabel).toBe("prose:1-1-2-ccc");
   });
-  test("a cited table is the table, whatever the line column says", () => {
+  test("citedTableWins", () => {
     expect(resolveAnchor({ lines: "Table 2.2" }, "", anchors)).toMatchObject({ targetLabel: "tbl:2-2", method: "caption" });
   });
-  test("a section alone anchors to the section", () => {
+  test("sectionAloneAnchorsSection", () => {
     expect(resolveAnchor({ section: "3.4" }, "", anchors)).toMatchObject({ targetLabel: "sec:3-4", method: "section" });
   });
-  test("a quotation is found in the text", () => {
+  test("quotationFound", () => {
     const a = resolveAnchor({}, "The phrase “Building on this understanding, the G20” is vague.", anchors, (b) => b.excerpt);
     expect(a).toMatchObject({ targetLabel: "prose:1-1-2-bbb", method: "quote" });
   });
-  test("nothing resolvable is unplaced, not guessed", () => {
+  test("nothingIsUnplaced", () => {
     expect(resolveAnchor({}, "Overall useful.", anchors)).toMatchObject({ targetLabel: null, method: "unplaced" });
   });
-  test("a section that disagrees with the page is reported, not trusted", () => {
+  test("disagreeingSectionReported", () => {
     const a = resolveAnchor({ section: "3.4", page: "9", lines: "42" }, "", anchors);
     expect(a.confidence).toBe("low");
     expect(a.note).toContain("does NOT agree");
@@ -127,7 +127,7 @@ describe("resolveAnchor", () => {
 });
 
 describe("intake", () => {
-  test("the WHO comment matrix: reviewer block above, example row skipped", () => {
+  test("commentMatrixIntake", () => {
     const rows = [
       ["Comment matrix", null, null, null, null, null, null],
       ["Reviewer name", null, "Ada Example", null, null, null, null],
@@ -152,7 +152,7 @@ describe("intake", () => {
       suggestedRevision: "Two sentences.",
     });
   });
-  test("a form export: reviewer columns on every row", () => {
+  test("formExportIntake", () => {
     const t = tableRows([
       ["Name", "Email", "Organisation", "Section", "Page", "Comment"],
       ["B. Example", "b@x.org", "Org", "3.4", "", "Needs governance detail"],
@@ -160,7 +160,7 @@ describe("intake", () => {
     expect(t.rows[0].reviewer).toMatchObject({ name: "B. Example", organisation: "Org" });
     expect(t.rows[0].citation.section).toBe("3.4");
   });
-  test("a narrative is split only where it cites something", () => {
+  test("narrativeSplitAtCitations", () => {
     const r = narrativeRows(
       "Thank you for the draft.\n\nIn section 3.4 governance is thin.\n\nOn page 9, lines 42-46, the definition is long.\n\nWe look forward to the final.",
       { name: "C" },
@@ -190,7 +190,7 @@ describe("the store and the lifecycle", () => {
     { row: 10, reviewer: { name: "Ada", email: "ada@x.org", acknowledge: false }, citation: {}, text: "Two." },
   ];
 
-  test("import numbers comments, keeps the unplaced, and never writes an email", () => {
+  test("importNumbersNoEmail", () => {
     const s = tempStore();
     const r = importRows(s, rows, { channel: "comment-matrix", batch: "m1", sha256: "x" }, at);
     expect(r.created).toEqual(["PC-0001", "PC-0002"]);
@@ -204,7 +204,7 @@ describe("the store and the lifecycle", () => {
     expect(importRows(s, rows, { channel: "comment-matrix", batch: "m1-again", sha256: "x" }, at).alreadyImported).toBe(true);
   });
 
-  test("every move is a task in the diagram its transition names", () => {
+  test("movesAreDiagramTasks", () => {
     for (const t of PUBLIC_COMMENT_TRANSITIONS) {
       const bpmn = readFileSync(join(import.meta.dir, "..", "processes", "content", t.by.file), "utf-8");
       expect(bpmn).toContain(`<bpmn:process id="${t.by.process}"`);
@@ -212,12 +212,12 @@ describe("the store and the lifecycle", () => {
     }
   });
 
-  test("the public comment process calls its change phase", () => {
+  test("processCallsChangePhase", () => {
     const bpmn = readFileSync(join(import.meta.dir, "..", "processes", "content", "public-comment.bpmn"), "utf-8");
     expect(bpmn).toMatch(/<bpmn:callActivity id="CallActivity_MakeChange"[^>]*calledElement="Process_PublicCommentChange"/);
   });
 
-  test("triage → assign → recommend → decide → edit (author) → incorporate", () => {
+  test("fullLifecycle", () => {
     const s = tempStore();
     importRows(s, rows, { channel: "comment-matrix", batch: "m1", sha256: "y" }, at);
     let c: PublicComment = s.get("PC-0001");
@@ -236,7 +236,7 @@ describe("the store and the lifecycle", () => {
     expect(() => transition(c, "withdraw", { by: "x", at })).toThrow(/cannot withdraw from incorporated/);
   });
 
-  test("only an accepted decision is incorporated", () => {
+  test("onlyAcceptedIncorporated", () => {
     const s = tempStore();
     importRows(s, rows, { channel: "comment-matrix", batch: "m1", sha256: "z" }, at);
     const c = transition(s.get("PC-0001"), "decide", { by: "ed", at, decision: { code: "noted", reason: "already covered in 2.1" } });
@@ -244,7 +244,7 @@ describe("the store and the lifecycle", () => {
     expect(() => transition(c, "incorporate", { by: "ci", at, changeSet: { branch: "b" } })).toThrow(/only an accepted comment/);
   });
 
-  test("reassign moves the anchor and keeps the status", () => {
+  test("reassignKeepsStatus", () => {
     const s = tempStore();
     importRows(s, rows, { channel: "comment-matrix", batch: "m1", sha256: "w" }, at);
     const c = transition(s.get("PC-0002"), "reassign", { by: "co", at, anchor: { targetLabel: "sec:3-4", method: "section", confidence: "high", candidates: [] } });
@@ -252,7 +252,7 @@ describe("the store and the lifecycle", () => {
     expect(c.public.anchor.method).toBe("manual");
   });
 
-  test("list by page and line, by section, and the unplaced", () => {
+  test("listByPageSectionUnplaced", () => {
     const s = tempStore();
     importRows(s, rows, { channel: "comment-matrix", batch: "m1", sha256: "v" }, at);
     const all = s.all();
@@ -264,7 +264,7 @@ describe("the store and the lifecycle", () => {
 });
 
 describe("GitHub tags", () => {
-  test("parse", () => {
+  test("githubTagParsed", () => {
     expect(parseGithubTag("pc: PC-0042, PC-43\nrecommend: accepted modified\n\nShorter is better.")).toEqual({
       refs: ["PC-0042", "PC-0043"],
       changeSets: [],
@@ -281,7 +281,7 @@ describe("GitHub tags", () => {
     expect(parseGithubTag("pc: PC-1\nrecommend: maybe")).toMatchObject({ error: expect.stringContaining("is not one of") });
   });
 
-  test("by default the editor is the repository's owner, and only the owner decides", () => {
+  test("ownerIsDefaultEditor", () => {
     const s = tempStore();
     writeFileSync(join(s.dir, "config.json"), JSON.stringify({ document: "doc" }));
     importRows(s, [{ row: 1, reviewer: {}, citation: { section: "3.4" }, text: "One." }], { channel: "comment-matrix", batch: "m", sha256: "e" }, "t0");
@@ -292,7 +292,7 @@ describe("GitHub tags", () => {
     expect(isEditor({ editors: ["ed"] }, "x", "OWNER")).toBe(false);
   });
 
-  test("by default the committee is the repository's collaborators", () => {
+  test("collaboratorsDefaultCommittee", () => {
     const s = tempStore();
     writeFileSync(join(s.dir, "config.json"), JSON.stringify({ document: "doc", editors: ["ed"] }));
     importRows(s, [{ row: 1, reviewer: {}, citation: { section: "3.4" }, text: "One." }], { channel: "comment-matrix", batch: "m", sha256: "c" }, "t0");
@@ -305,7 +305,7 @@ describe("GitHub tags", () => {
     expect(isCommittee({ committee: ["cm"] }, "x", "OWNER")).toBe(false);
   });
 
-  test("a committee member recommends; only an editor decides; strangers are refused", () => {
+  test("committeeRecommendsEditorDecides", () => {
     const s = tempStore();
     importRows(s, [{ row: 1, reviewer: {}, citation: { section: "3.4" }, text: "One." }], { channel: "comment-matrix", batch: "m", sha256: "q" }, "t0");
     const ev = (login: string, body: string) => ({ login, body, url: "https://github.com/o/r/issues/1#issuecomment-1", at: "t1" });
@@ -332,7 +332,7 @@ describe("a consolidated review log (the DPI-H master log, 2026-10-05)", () => {
   const sheet = [header, row("1", "Pending", "", "Pending one."), row("2", "Accepted", "", "Accepted one."), row("3", "Not accepted", "Out of scope.", "Rejected one."), row("4", "Not accepted", "", "Rejected, no reason."), row("5", "Reviewed", "", "Reviewed one, mail me at tapas@who.int", "Q9 - Conformance and testing")];
   const consent = consentByName([["No.", "Name", "Consent to acknowledge", "Notes"], ["1", "Tapas Nair", "Yes", "Email: tapas@who.int"]]);
 
-  test("the comment type is the COMMENT type, not the stakeholder type; the rest are labels", () => {
+  test("logCommentTypeAndLabels", () => {
     const t = tableRows(sheet, consent);
     expect(t.rows).toHaveLength(5);
     const r = t.rows[0]!;
@@ -345,7 +345,7 @@ describe("a consolidated review log (the DPI-H master log, 2026-10-05)", () => {
     expect(nameKey("NAIR, Tapas")).toBe(nameKey("Tapas Nair"));
   });
 
-  test("the log's own statuses are recorded, never decisions: the comment arrives triaged with the log's words", () => {
+  test("logStatusesRecordedNotDecided", () => {
     expect(logStatusMove("Partially accepted")).toEqual({ decide: "accepted-modified" });
     expect(logStatusMove("Pending")).toBeUndefined();
     const s = tempStore();
@@ -367,7 +367,7 @@ describe("a consolidated review log (the DPI-H master log, 2026-10-05)", () => {
     for (const f of ["PC-0001", "PC-0005"]) expect(readFileSync(join(s.dir, "comments", `${f}.json`), "utf-8")).not.toContain("@who.int");
   });
 
-  test("a re-sent copy of the same log adds only the rows it has not seen", () => {
+  test("resentLogAddsNew", () => {
     const s = tempStore();
     const first = tableRows(sheet, consent).rows;
     importRows(s, first, { channel: "comment-matrix", batch: "log--master", sha256: "v1", sheet: "Master log", series: "log" });
@@ -378,7 +378,7 @@ describe("a consolidated review log (the DPI-H master log, 2026-10-05)", () => {
     expect(s.all()).toHaveLength(6);
   });
 
-  test("a lines cell gives line numbers only when it says lines", () => {
+  test("linesOnlyWhenSaid", () => {
     expect(lineRanges("618–624")).toEqual([[618, 624]]);
     expect(lineRanges("L339; L369")).toEqual([[339, 339], [369, 369]]);
     expect(lineRanges("Principle IX L392–427")).toEqual([[392, 427]]);
@@ -386,7 +386,7 @@ describe("a consolidated review log (the DPI-H master log, 2026-10-05)", () => {
     expect(lineRanges("A14.01")).toEqual([]);
   });
 
-  test("a section named by title or acronym, and a page with no usable line", () => {
+  test("sectionByTitleOrAcronym", () => {
     const named: ReviewAnchors = {
       ...anchors,
       sections: [...anchors.sections, { label: "sec:c-phsp", title: "Public Health Surveillance Platform", chapter: "ch1-intro" }],
@@ -429,7 +429,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     return { ...out, ...f };
   };
 
-  test("an agent's proposal has no issue; the comment's change-sets are derived, never stored on it", () => {
+  test("proposalHasNoIssue", () => {
     const s = store();
     expect(getChangeSet(s, "CS-001")).toMatchObject({ status: "proposed", issues: [] });
     expect(membership(s).get("PC-0001")!.map((c) => c.id)).toEqual(["CS-001"]);
@@ -438,7 +438,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(checkChangeSets(s).errors).toEqual([]);
   });
 
-  test("the Discuss form adopts its issue; a second issue on the same change-set is linked, not adopted", async () => {
+  test("discussFormAdoptsIssue", async () => {
     const s = store();
     const form = "### Change-set\n\nCS-001\n\n### Discussion\n\nShould this mention the G20?";
     expect(formFields(form)).toEqual({ cs: "CS-001", text: "Should this mention the G20?" });
@@ -459,7 +459,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(f.issues.get(61)!.body).not.toContain("public-comment-changeset");
   });
 
-  test("a decision anywhere opens the change-set's issue, and says why there", async () => {
+  test("decisionOpensIssue", async () => {
     const s = store();
     const r = await run(s, comment(50, "ed", "pc: PC-0001\ndecide: accepted\n\nAgreed."));
     expect(s.get("PC-0001").status).toBe("decided");
@@ -473,7 +473,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(s.get("PC-0002").public.decision?.code).toBe("accepted");
   });
 
-  test("a mention links an issue to a change-set, and opens at most a few issues at once", async () => {
+  test("mentionLinksIssue", async () => {
     const s = store(12);
     const r = await run(s, comment(70, "anyone", "PC-0003 is wrong, I think."));
     expect(getChangeSet(s, "CS-002")).toMatchObject({ issue: 100, issues: [70, 100] });
@@ -484,7 +484,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(many.log.join("\n")).toContain("too many to open from one mention");
   });
 
-  test("commands change the record, from the committee only, and re-render it", async () => {
+  test("commandsFromCommittee", async () => {
     const s = store();
     const f = fake();
     f.issues.set(60, { body: "", state: "open" });
@@ -504,7 +504,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(checkChangeSets(s).errors).toEqual([]);
   });
 
-  test("a new change-set from the dashboard's picks: the form makes it and adopts its issue", async () => {
+  test("newChangeSetFromForm", async () => {
     const s = store();
     const form = "### Title\n\nCite the WHO guidance\n\n### Comments\n\nPC-0006, PC-0007\n\n### Requirements\n\nAdd the citation.";
     expect(canonicalText(form)).toContain("cs-new: Cite the WHO guidance");
@@ -514,7 +514,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(getChangeSet(s, "CS-003")).toMatchObject({ refs: ["PC-0006", "PC-0007"], requirements: "Add the citation.", issue: 80, status: "discussing" });
   });
 
-  test("a hand edit of the rendered section is replaced; an edit below it is the person's own", async () => {
+  test("handEditReplaced", async () => {
     const s = store();
     const f = fake();
     f.issues.set(60, { body: "", state: "open" });
@@ -531,7 +531,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect((await run(s, ev(tail, f.issues.get(60)!.body), f)).log.filter((l) => l.includes("replaced"))).toEqual([]);
   });
 
-  test("the PR that closes a linked issue: editing, then incorporated; closed unmerged goes back", async () => {
+  test("prClosesLinkedIssue", async () => {
     const s = store();
     const f = fake();
     await run(s, comment(50, "ed", "pc: PC-0001, PC-0002\ndecide: accepted\n\nYes."), f);
@@ -549,7 +549,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(m.actions).toContainEqual({ kind: "state", issue: 100, state: "closed", reason: "completed" });
   });
 
-  test("a merge with comments still undecided leaves the change-set open and its issue open (D-1, bean uphx)", async () => {
+  test("mergeWithUndecidedStaysOpen", async () => {
     const s = store();
     const f = fake();
     await run(s, comment(50, "ed", "pc: PC-0001\ndecide: accepted\n\nYes."), f);
@@ -562,7 +562,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(m.log.join("\n")).toContain("1 of 2 comment(s) are not decided");
   });
 
-  test("a PR links change-sets only when its author is on the committee or an editor; a merge is allowed", async () => {
+  test("prLinksOnlyFromCommittee", async () => {
     const s = store();
     const f = fake();
     await run(s, comment(50, "ed", "pc: PC-0001, PC-0002\ndecide: accepted\n\nYes."), f);
@@ -595,7 +595,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(getChangeSet(s, "CS-001").status).toBe("incorporated");
   });
 
-  test("an issue edited by someone other than its author records nothing", async () => {
+  test("editByOtherRecordsNothing", async () => {
     const s = store();
     const before = "Context.";
     const after = "pc: PC-0001\ndecide: accepted\n\nContext.";
@@ -608,13 +608,13 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(s.get("PC-0001").status).toBe("decided");
   });
 
-  test("only a keyword links a PR to a change-set; a prose mention does not (bean 6xdf)", () => {
+  test("onlyKeywordLinks", () => {
     expect(linkedChangeSets("Closes CS-12, fixes CS-3 and resolves cs-7")).toEqual(["CS-012", "CS-003", "CS-007"]);
     expect(linkedChangeSets("Pin bump.\ncs: CS-236, CS-237\n")).toEqual(["CS-236", "CS-237"]);
     expect(linkedChangeSets("Staging for CS-236 and CS-237, which were reopened.")).toEqual([]);
   });
 
-  test("a settled change-set is never re-linked by another PR, even one that names it with a keyword (bean 6xdf)", async () => {
+  test("settledNeverRelinked", async () => {
     const s = store();
     const f = fake();
     await run(s, comment(50, "ed", "pc: PC-0001, PC-0002\ndecide: accepted\n\nYes."), f);
@@ -628,7 +628,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     }
   });
 
-  test("the record writer keeps $schema (bean 6xdf)", async () => {
+  test("writerKeepsSchema", async () => {
     const s = store();
     const f = fake();
     await run(s, comment(50, "ed", "pc: PC-0001\ndecide: accepted\n\nYes."), f);
@@ -638,7 +638,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(JSON.parse(readFileSync(join(s.dir, "changesets", "CS-001.json"), "utf-8")).$schema).toBe("changeset/1.0.0");
   });
 
-  test("reopening an incorporated change-set's issue puts it back to discussing (CS-236/237)", async () => {
+  test("reopenedBackToDiscussing", async () => {
     const s = store();
     const f = fake();
     await run(s, comment(50, "ed", "pc: PC-0001, PC-0002\ndecide: accepted\n\nYes."), f);
@@ -649,7 +649,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(getChangeSet(s, "CS-001").status).toBe("discussing");
   });
 
-  test("a primary issue closed by hand: reopened while comments still need a change; closed when none do", async () => {
+  test("closedByHandReopened", async () => {
     const s = store();
     const f = fake();
     await run(s, opened(60, "x", "cs: CS-002"), f);
@@ -661,7 +661,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(getChangeSet(s, "CS-002").status).toBe("closed");
   });
 
-  test("install writes the issue forms and workflows with the platform path filled, and keeps what is there", () => {
+  test("installWritesTemplates", () => {
     const repo = mkdtempSync(join(tmpdir(), "pc-install-"));
     const r = installTemplates(repo, { assistant: "platform" });
     expect(r.written.sort()).toEqual(["ISSUE_TEMPLATE/change-set-new.yml", "ISSUE_TEMPLATE/change-set.yml", "ISSUE_TEMPLATE/comment-decision.yml", "workflows/public-comment-check.yml", "workflows/public-comment.yml"]);
@@ -674,7 +674,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(installTemplates(repo, { assistant: "platform" }).kept).toHaveLength(5);
   });
 
-  test("check finds contradictions; the reconcile opens an issue for a change-set decided outside GitHub", () => {
+  test("checkFindsContradictions", () => {
     const s = store();
     const cs = getChangeSet(s, "CS-001");
     saveChangeSet(s, { ...cs, issue: 5, issues: [5] });
@@ -686,7 +686,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     expect(changeSets(s)).toHaveLength(2);
   });
 
-  test("a person in the committee or editor lane can re-route a change-set to another committee with a reason; the move survives re-ingest, and agents cannot make it (bean se3i, issue #197)", async () => {
+  test("personReroutesCommittee", async () => {
     const s = store();
     // Seed routing.json so CS-001's derived plurality committee is "Core architects".
     writeFileSync(

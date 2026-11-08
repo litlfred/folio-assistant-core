@@ -25,7 +25,7 @@ function fixture(): string {
 }
 
 describe("review anchors from the working document", () => {
-  test("indexes every chapter, section and block in reading order", async () => {
+  test("indexesInReadingOrder", async () => {
     const repo = fixture();
     const a = JSON.parse(await folioAnchors({ repo, document: "doc", library: "outline", source: "library/outline.md", sourceLabel: "the outline" }));
     expect(a.$schema).toBe("folio-review-anchors/v1");
@@ -40,13 +40,13 @@ describe("review anchors from the working document", () => {
     expect(a.source.docx.sha256).toMatch(/^[0-9a-f]{64}$/);
   });
 
-  test("is deterministic, so --check can compare bytes", async () => {
+  test("deterministic", async () => {
     const repo = fixture();
     const o = { repo, document: "doc", library: "outline", source: "library/outline.md", sourceLabel: "the outline" };
     expect(await folioAnchors(o)).toBe(await folioAnchors(o));
   });
 
-  test("a document authored from scratch needs no seed file", async () => {
+  test("noSeedFile", async () => {
     const repo = fixture();
     const a = JSON.parse(await folioAnchors({ repo, document: "doc" }));
     expect(a.library).toBeUndefined();

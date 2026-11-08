@@ -106,18 +106,18 @@ afterEach(() => rmSync(repo, { recursive: true, force: true }));
 const check = (files: string[]) => checkCorpusGate(repo, { files, platformRoot: INSTANCE_ROOT, labelFor });
 
 describe("what the gate ignores", () => {
-  test("non-content files are not its business", async () => {
+  test("ignoresNonContent", async () => {
     writeFileSync(join(repo, "README.md"), "hi\n");
     expect(await check(["README.md", "package.json", "src/thing.ts"])).toEqual([]);
   });
 
-  test("a .qa.json is machine-written by the sweep and is not a corpus write", async () => {
+  test("ignoresQaSidecar", async () => {
     block("x", "rem:x");
     // Gating these would make every qa-sweep look like an unauthorised edit.
     expect(await check(["folio/paper/ch/x.qa.json"])).toEqual([]);
   });
 
-  test("a .ts that is not a block manifest is skipped", async () => {
+  test("skipsNonManifestTs", async () => {
     mkdirSync(join(repo, "folio", "paper", "ch"), { recursive: true });
     writeFileSync(join(repo, "folio/paper/ch/helper.ts"), "export const n = 1;\n");
     expect(await check(["folio/paper/ch/helper.ts"])).toEqual([]);
@@ -125,7 +125,7 @@ describe("what the gate ignores", () => {
 });
 
 describe("refusing by default", () => {
-  test("a block with no instance is refused, and told how to start one", async () => {
+  test("noInstanceRefused", async () => {
     const f = block("carbon", "rem:carbon");
     const [finding] = await check([f]);
     expect(finding.allowed).toBe(false);
@@ -134,7 +134,7 @@ describe("refusing by default", () => {
     expect(finding.reason).toContain("workflow_start");
   });
 
-  test("an instance that has not reached the editor's decision is refused", async () => {
+  test("beforeDecisionRefused", async () => {
     const f = block("carbon", "rem:carbon");
     const model = await loadProcessModel(
       workflowFile(CORE, "editing-hci-validation.bpmn"),
@@ -151,7 +151,7 @@ describe("refusing by default", () => {
     expect(finding.reason).toContain("not enabled");
   });
 
-  test("a discarded change never authorises a write", async () => {
+  test("discardNeverAuthorises", async () => {
     const f = block("carbon", "rem:carbon");
     await authorise("rem:carbon", "discard");
     // The instance completed — but through the discard end event, so the commit
@@ -162,7 +162,7 @@ describe("refusing by default", () => {
 });
 
 describe("allowing what the process authorised", () => {
-  test("a block whose editor accepted the change is allowed", async () => {
+  test("acceptedAllowed", async () => {
     const f = block("carbon", "rem:carbon");
     await authorise("rem:carbon");
     const [finding] = await check([f]);
@@ -170,7 +170,7 @@ describe("allowing what the process authorised", () => {
     expect(finding.instance).toBe("editing--rem-carbon");
   });
 
-  test("a block already committed in an earlier round stays allowed", async () => {
+  test("alreadyCommittedAllowed", async () => {
     const f = block("carbon", "rem:carbon");
     const model = await loadProcessModel(
       workflowFile(CORE, "editing-hci-validation.bpmn"),
@@ -188,7 +188,7 @@ describe("allowing what the process authorised", () => {
     expect(finding.reason).toContain("already recorded");
   });
 
-  test("a sibling .md is checked against its block, and reported once", async () => {
+  test("siblingMdOnce", async () => {
     block("carbon", "rem:carbon");
     await authorise("rem:carbon");
     // One block's worth of work, not two problems.
@@ -199,7 +199,7 @@ describe("allowing what the process authorised", () => {
 });
 
 describe("it does not fail open", () => {
-  test("a manifest whose identity cannot be established is refused", async () => {
+  test("unknownIdentityRefused", async () => {
     const dir = join(repo, "folio", "paper", "ch");
     mkdirSync(dir, { recursive: true });
     // Reads as a manifest textually, but the module throws on import: the
@@ -214,7 +214,7 @@ describe("it does not fail open", () => {
     expect(finding.reason).toContain("does not fail open");
   });
 
-  test("an unloadable workflow policy stops the gate rather than emptying it", async () => {
+  test("unloadablePolicyStops", async () => {
     const platform = mkdtempSync(join(tmpdir(), "platform-"));
     mkdirSync(join(platform, "processes"), { recursive: true });
     mkdirSync(join(platform, "skills", "pkg"), { recursive: true });

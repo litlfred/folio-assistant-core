@@ -123,9 +123,17 @@ L1 document ingestion — a document to the L1 source knowledge graph.
 - Skill: `document-intake`.
 - What: The folder name IS the bibliography citation key, so a citation and a directory are the same string.
 - Record it: `workflow_complete` with `node: "Task_Promote"`.
+- next: → `CallActivity_PublishStatements` (Publish the extracted statements with source links)
+
+### 12. Publish the extracted statements with source links (`CallActivity_PublishStatements`)
+
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
+- Skill: `publish-extracted-statements`.
+- What: THE ENTRY IS COMPLETE HERE, so its statements are published here.
+- A subprocess (`Process_PublishExtractedStatements`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
 - next: → `Task_SummaryQueue` (Queue prose blocks for summary)
 
-### 12. Queue prose blocks for summary (`Task_SummaryQueue`)
+### 13. Queue prose blocks for summary (`Task_SummaryQueue`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `l1-document-ingestion`.
@@ -133,7 +141,7 @@ L1 document ingestion — a document to the L1 source knowledge graph.
 - Record it: `workflow_complete` with `node: "Task_SummaryQueue"`.
 - next: → `Task_Citeable` (Available to cite as an L1 source)
 
-### 13. Available to cite as an L1 source (`Task_Citeable`)
+### 14. Available to cite as an L1 source (`Task_Citeable`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
@@ -141,7 +149,7 @@ L1 document ingestion — a document to the L1 source knowledge graph.
 - Record it: `workflow_complete` with `node: "Task_Citeable"`.
 - next: → `Call_BeanClose` (Close the bean)
 
-### 14. Close the bean (`Call_BeanClose`)
+### 15. Close the bean (`Call_BeanClose`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `todo-manager`.

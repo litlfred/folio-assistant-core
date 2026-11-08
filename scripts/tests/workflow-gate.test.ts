@@ -36,7 +36,7 @@ const relax = (over: Partial<Relaxation> = {}): Relaxation => ({
 });
 
 describe("the base is strict and the content-type processes are not", () => {
-  test("the three content-agnostic processes enforce", async () => {
+  test("baseProcessesStrict", async () => {
     for (const f of ["editing-hci-validation", "draft-to-publication", "content-lifecycle"]) {
       expect((await loadProcessModel(workflowFile(CORE, `${f}.bpmn`))).enforcement).toBe("strict");
     }
@@ -44,7 +44,7 @@ describe("the base is strict and the content-type processes are not", () => {
 });
 
 describe("a strict process refuses a step it has not reached", () => {
-  test("committing before the findings gate is refused, with what to do about it", async () => {
+  test("commitBeforeGateRefused", async () => {
     const model = await editing();
     const state = startInstance(model, { id: "g1", subject: "def:x" });
     const v = checkGate(model, state, "Task_Commit", []);
@@ -55,7 +55,7 @@ describe("a strict process refuses a step it has not reached", () => {
     expect(v.reason).toContain('cannot be');
   });
 
-  test("an enabled step is allowed", async () => {
+  test("enabledStepAllowed", async () => {
     const model = await editing();
     const state = startInstance(model, { id: "g2", subject: "def:x" });
     expect(checkGate(model, state, "Task_DescribeChange", []).allowed).toBe(true);
@@ -63,7 +63,7 @@ describe("a strict process refuses a step it has not reached", () => {
 });
 
 describe("a declared relaxation permits a step, and is attributed", () => {
-  test("the SME branch may be skipped where a package declared it", async () => {
+  test("declaredRelaxationAttributed", async () => {
     const model = await editing();
     const state = startInstance(model, { id: "g3", subject: "def:x" });
     complete(model, state, "Task_DescribeChange");
@@ -83,7 +83,7 @@ describe("a declared relaxation permits a step, and is attributed", () => {
     expect(v.reason).toContain("no clinical SME here");
   });
 
-  test("a relaxation for a different process does not apply", async () => {
+  test("otherProcessRelaxationIgnored", async () => {
     const model = await editing();
     const state = startInstance(model, { id: "g4", subject: "def:x" });
     const other = relax({ process: "Process_Publication", activity: "Task_SmeReview" });
@@ -92,7 +92,7 @@ describe("a declared relaxation permits a step, and is attributed", () => {
 });
 
 describe("what a package may NOT relax", () => {
-  test("the steps that are the gate refuse to be named", async () => {
+  test("gateStepsNotRelaxable", async () => {
     const model = await editing();
     // If these were negotiable the base would not be strict, it would be a
     // suggestion: the editor seeing the findings, the decision, and the write.
@@ -102,13 +102,13 @@ describe("what a package may NOT relax", () => {
     }
   });
 
-  test("release authorisation cannot be relaxed either", async () => {
+  test("releaseNotRelaxable", async () => {
     const model = await loadProcessModel(workflowFile(CORE, "draft-to-publication.bpmn"));
     const r = relax({ process: "Process_Publication", activity: "Task_AuthorizeRelease" });
     expect(() => validateRelaxations([r], [model])).toThrow(/relaxable="false"/);
   });
 
-  test("a relaxation naming a process or activity that is not there fails at load", async () => {
+  test("unknownProcessOrActivityFails", async () => {
     const model = await editing();
     // Otherwise it sits in the file looking like policy while permitting
     // nothing, and nobody finds out until the day it matters.
