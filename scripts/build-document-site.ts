@@ -135,7 +135,7 @@ const PAGE_STYLE = `<style>
   a { color: var(--link); }
   a:focus-visible { outline: 3px solid var(--link); outline-offset: 2px; }
   h1, h2, h3 { line-height: 1.25; }
-${tableStyle()}  :target { scroll-margin-top: 1rem; }
+${tableStyle()}  :target, main [id] { scroll-margin-top: 1rem; }
   .katex-display { overflow-x: auto; overflow-y: hidden; }
   dfn.defterm { font-style: normal; font-weight: 600; }
   .cite { color: var(--muted); }
@@ -179,7 +179,7 @@ export { DOC_CLASS };
 
 /** The themed page's own rules: what the standalone stylesheet does that the theme does not. */
 const THEMED_STYLE = `
-.${DOC_CLASS} :target { scroll-margin-top: 4rem; }
+.${DOC_CLASS} :target, .${DOC_CLASS} [id] { scroll-margin-top: 4rem; }
 .${DOC_CLASS} .katex-display { overflow-x: auto; overflow-y: hidden; }
 .${DOC_CLASS} dfn.defterm { font-style: normal; font-weight: 600; }
 .${DOC_CLASS} .cite { opacity: .72; }
@@ -350,6 +350,25 @@ export const VALUES_FILE = "values.jsonld";
 export const SUGGEST_DIR = "assets/suggest";
 
 export const LAZY_THRESHOLD = 200;
+
+/**
+ * First in a lazy page's body, so it runs before any block is laid out: a
+ * page opened at a link draws its empty placeholders, and the links of blocks
+ * not shown, at no height, so the text arriving above the link never pushes
+ * it down (dth-hrh, owner 2026-10-31: "when this loads, it scrolls"). The
+ * loader then folds what is above the link (`data-fold`) and adds a
+ * "Show this chapter's text" button under each folded chapter's heading.
+ */
+export const LAZY_OPEN = `<script>if (location.hash.length > 1) document.documentElement.setAttribute("data-fa-open", "");</script>
+<style>
+html[data-fa-open] .fa-blk:not([data-filled]), html[data-fa-open] .fa-blk[data-fold] { min-height: 0; }
+html[data-fa-open] .fa-blk[data-below]:not([data-filled]) { min-height: 3rem; }
+html[data-fa-open] p:has(+ .fa-blk:not([data-filled])) > .block-actions,
+html[data-fa-open] p:has(+ .fa-blk[data-fold]) > .block-actions,
+html[data-fa-open] p:has(+ .fa-blk[data-fold]) > .pc-note { display: none; }
+.fa-unfold { font: inherit; font-size: .85rem; margin: .2rem 0 .8rem; padding: .35rem .8rem; border-radius: .4rem; cursor: pointer; }
+</style>
+`;
 export const LAZY_CHUNK = 40;
 
 export interface BlockSplit {
@@ -434,7 +453,7 @@ function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Re
   const ix = JSON.parse(document.getElementById("fa-blocks").textContent);
   const pending = new Map();
   let failed = false;
-  const fill = (data) => {
+  const fill = (data) => window.faKeepPlace(() => {
     for (const [label, html] of Object.entries(data)) {
       const ph = document.querySelector('.fa-blk[data-blk="' + CSS.escape(label) + '"]');
       if (!ph || ph.dataset.filled) continue;
@@ -442,7 +461,7 @@ function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Re
       ph.dataset.filled = "1";
       if (window.faMathObserve) window.faMathObserve(ph);
     }
-  };
+  });
   // Fetch fails when the page is opened from disk: the whole document is one
   // page away, so go there rather than show empty blocks.
   const load = (n) => {
@@ -452,44 +471,115 @@ function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Re
       .catch(() => { if (!failed) { failed = true; location.replace("index.hydrated.html" + location.search + location.hash); } }));
     return pending.get(n);
   };
-  const io = new IntersectionObserver((entries) => {
-    for (const e of entries) if (e.isIntersecting) { io.unobserve(e.target); load(ix.of[e.target.dataset.blk]); }
-  }, { rootMargin: "2000px 0px" });
-  for (const ph of document.querySelectorAll(".fa-blk")) io.observe(ph);
   // Blocks above the target fill in after it is reached (and figures and
   // math render), pushing it down the page. So jump (not the theme's smooth
   // scroll, which a growing page outruns) and hold the target where it
   // landed, each frame, until the reader scrolls, clicks or types, or the
   // page has kept still for a few seconds.
   let unpin = () => {};
+  let pinned = null;
   const pin = (el) => {
     unpin();
+    pinned = el;
     el.scrollIntoView({ behavior: "instant" });
     const top = el.getBoundingClientRect().top;
-    let still = performance.now(), frame;
+    let still = performance.now(), frame, lastY = scrollY;
     const hold = (now) => {
-      const d = el.getBoundingClientRect().top - top;
+      const d = el.getBoundingClientRect().top - top, dy = scrollY - lastY;
+      // A scroll that carried the target the other way is someone's own (a
+      // scrollbar drag fires none of the events below, and page-layout lands
+      // a link under the stuck bar): let it stand. Text growing above moves
+      // the target down, and the browser's anchoring then scrolls down too.
+      if (Math.abs(dy) > 2 && dy * d < 0) return unpin();
       if (Math.abs(d) > 1) { scrollBy({ top: d, behavior: "instant" }); still = now; }
+      lastY = scrollY;
       if (now - still > 4000) unpin(); else frame = requestAnimationFrame(hold);
     };
     const stop = ["wheel", "touchstart", "pointerdown", "keydown"];
-    const off = () => { cancelAnimationFrame(frame); for (const t of stop) removeEventListener(t, off, true); };
+    const off = () => { pinned = null; cancelAnimationFrame(frame); for (const t of stop) removeEventListener(t, off, true); };
     unpin = off;
     for (const t of stop) addEventListener(t, off, { capture: true, passive: true });
     frame = requestAnimationFrame(hold);
   };
+  // Whatever a later script adds above the pinned target (a comment count, a
+  // bar), it is put back in the same frame, so it is never seen to move. The
+  // hold above corrects a frame later; this is for additions we can wrap.
+  const keep = (f) => {
+    const t = pinned;
+    const y = t ? t.getBoundingClientRect().top : 0;
+    f();
+    if (!t || y >= innerHeight) return;
+    const d = t.getBoundingClientRect().top - y;
+    if (Math.abs(d) > 0.5) scrollBy({ top: d, behavior: "instant" });
+  };
+  window.faKeepPlace = keep;
+  const blks = [...document.querySelectorAll(".fa-blk")];
+  const loadAll = (list) => Promise.all([...new Set(list.map((b) => ix.of[b.dataset.blk]))].map(load));
+  // OPENED AT A LINK (#chap:, #prose:, a term), the page opens there and stays
+  // still (owner, 2026-10-31: "when this loads, it scrolls"). The text before
+  // the link loads in the background too, but stays folded under its chapter
+  // heading, so nothing above the reader grows: one tap opens a chapter, and
+  // the browser's find opens a block (\`hidden="until-found"\`). Below the
+  // link an empty block keeps its room, so the link can reach the top of the
+  // window before its text arrives. \`LAZY_OPEN\` drew all this at no height
+  // from the first paint.
+  const folded = new Set();
+  const unfold = (list) => keep(() => { for (const ph of list) { ph.removeAttribute("hidden"); delete ph.dataset.fold; folded.delete(ph); } });
+  let foldAt = null;
+  if (document.documentElement.hasAttribute("data-fa-open")) {
+    let id;
+    try { id = decodeURIComponent(location.hash.slice(1)); } catch { id = location.hash.slice(1); }
+    foldAt = document.getElementById(id) || (ix.ids[id] !== undefined ? blks.find((b) => ix.of[b.dataset.blk] === ix.ids[id]) : null) || null;
+  }
+  if (!foldAt) document.documentElement.removeAttribute("data-fa-open");
+  else {
+    const before = (a, b) => !!(b.compareDocumentPosition(a) & Node.DOCUMENT_POSITION_PRECEDING);
+    const heads = [...(blks[0].closest(".fa-doc, main") || document).querySelectorAll("h2")];
+    const groups = new Map();
+    for (const ph of blks) {
+      if (!before(ph, foldAt)) { ph.dataset.below = ""; continue; }
+      ph.dataset.fold = "";
+      ph.setAttribute("hidden", "until-found");
+      folded.add(ph);
+      const h = heads.filter((x) => before(x, ph)).pop() || null;
+      if (!groups.has(h)) groups.set(h, []);
+      groups.get(h).push(ph);
+    }
+    for (const [h, list] of groups) {
+      const b = document.createElement("button");
+      b.type = "button";
+      b.className = "fa-unfold";
+      b.textContent = "Show this chapter's text";
+      b.addEventListener("click", () => { b.disabled = true; b.textContent = "Opening…"; loadAll(list).then(() => { unfold(list); b.remove(); }); });
+      if (h) h.after(b); else list[0].before(b);
+    }
+    addEventListener("beforematch", (e) => { if (e.target.dataset && "fold" in e.target.dataset) unfold([e.target]); });
+    // Land now, before the first paint: the styles are in (a script waits for
+    // them), and nothing above the link will grow from here on.
+    if (foldAt.id) pin(foldAt);
+  }
   // A link to a block, or to a term inside one, loads its chunk and lands on it.
+  // A link back into the folded text opens all of it first.
   const go = () => {
     let id;
     try { id = decodeURIComponent(location.hash.slice(1)); } catch { id = location.hash.slice(1); }
     if (!id) return;
-    const n = ix.of[id] ?? ix.ids[id];
-    const land = () => { const el = document.getElementById(id); if (el) pin(el); };
-    if (n === undefined) land();
-    else load(n).then(land);
+    let n = ix.of[id] ?? ix.ids[id];
+    const el = document.getElementById(id);
+    const open = folded.size && (!el || [...folded].some((ph) => ph === el || ph.contains(el) || (el.compareDocumentPosition(ph) & Node.DOCUMENT_POSITION_FOLLOWING))) ? [...folded] : [];
+    const land = () => {
+      if (open.length) { for (const ph of open) { ph.removeAttribute("hidden"); delete ph.dataset.fold; folded.delete(ph); } for (const b of document.querySelectorAll(".fa-unfold")) b.remove(); }
+      const t = document.getElementById(id);
+      if (t) pin(t);
+    };
+    Promise.all([n === undefined ? null : load(n), loadAll(open)]).then(land);
   };
   addEventListener("hashchange", go);
   go();
+  const io = new IntersectionObserver((entries) => {
+    for (const e of entries) if (e.isIntersecting) { io.unobserve(e.target); load(ix.of[e.target.dataset.blk]); }
+  }, { rootMargin: "2000px 0px" });
+  for (const ph of blks) if (!folded.has(ph)) io.observe(ph);
   // Then the rest, one chunk at a time while the browser is idle, so the whole
   // text is there for reading on and for the browser's own find.
   const idle = window.requestIdleCallback || ((f) => setTimeout(f, 200));
@@ -969,7 +1059,7 @@ export async function buildDocumentSite(
       }
       lazyOf.set(d.slug, { hydrated: hydratedPage(d.slug), chunks: index.chunks, of: index.of });
       const shellHtml = await render(split.shell);
-      const note = `<p class="fa-one-page">The text loads as you read. <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
+      const note = LAZY_OPEN + `<p class="fa-one-page">The text loads as you read. <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
       const loader = lazyLoader(index, fromPageDir(documentPageDir(d.slug), `${documentDataDir(d.slug)}/blocks`));
       if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, note + headingIds(shellHtml), mathOpts, loader), true)));
       else writeFileSync(join(dir, "index.html"), withActions(page(title, pageContents(shellHtml) + note + shellHtml, mathOpts, loader), true));
