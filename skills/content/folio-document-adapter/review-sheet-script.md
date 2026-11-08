@@ -695,6 +695,70 @@ the review sheets:
   Contributor template while it is being drafted and authored, the Public
   Comment Review template once public comment opens.
 
+## Archiving the log
+
+Every review log keeps a copy in its document's knowledge graph, beside the
+comments and change-sets it reviews (issue #682; owner, 2026-11-08):
+
+| File | What |
+|---|---|
+| `review/public-comment/logs/<log-id>.json` | the log's `review-log/1.0.0` node: sheet id and link, document, role (master or contributor), each tab's header row and the role of each column, read from its header colour (blue = human, orange = editor, green = agent, grey = script), the workbook's SHA-256 |
+| `review/public-comment/logs/<log-id>.xlsx` | the log as a workbook: values and their types, hyperlinks, notes, fills, a frozen header row |
+
+The workbook is .xlsx, so a person opens it in Excel, Google Sheets, Numbers
+or LibreOffice. It is never a custom JSON. There is one workbook per log, and
+it is **overwritten**, never added to as a dated copy. Git history is the
+history, and each commit message lists the cells that changed. An unchanged
+log builds the same bytes, so it makes no commit.
+
+The log's watcher runs it once a night, after its normal poll:
+
+1. Read the log a tab or two at a time (one read of a whole log is too large):
+   `get_spreadsheet` with `includeGridData` and the fields in `ARCHIVE_FIELDS`,
+   one range per tab. Each read is saved to a file.
+2. `bun run tools/review-sheet-sync/review-log-archive.ts --sheets <read1> --sheets <read2> … --sheet-id <id> --repo <document repo> --log-id <id> --document <doc> --role master|contributor --title "<log name>"`.
+   It prints the commit message, or `unchanged`.
+3. If it changed, commit the two files on the document repository's main,
+   with that message, as an agent change that is not content.
+
+Never archived:
+- hidden helper tabs (Watch, RCS joins);
+- the Public Comment Source tab, and any tab of submitters or contributors;
+- contact columns: a header naming an email, phone, address or contact is
+  blanked;
+- any email address left in another cell, which is removed.
+
+The node records what was left out.
+
+## Importing offline feedback
+
+One process for feedback written outside the master log (issue #683): an
+offline copy of the log, the feedback template returned with the
+line-numbered review PDF, or an archived workbook to restore. Run the
+archive first, so the master workbook is current.
+
+1. **Check.** `bun run tools/review-sheet-sync/review-log-import.ts check <returned.xlsx> --log review/public-comment/logs/<id>.json [--base <xlsx>] [--line-map library/<review version>/pdf-line-map.json] [--tab-map "Comments=Review Public Comments"] --out report.json`.
+   The returned workbook is first validated against the template. Each tab
+   must be a tab of the log, and its headers must be the template's. A
+   renamed or missing column stops the import. An extra column is reported
+   and ignored. A dropdown value outside the master's values, or a page or
+   line that is not in the frozen review version, rejects the row.
+2. **Sort.** Every row with feedback is put in a group. Imported CS# and PC#
+   numbers are hints, never keys.
+
+   | Group | When |
+   |---|---|
+   | Add to existing | same number and same title: the changed human cells |
+   | Conflict | same number, another title (the number is wrong or reused); or a cell changed both offline and in the master since the copy was taken |
+   | Possible duplicate | no such number, but the same words as another row |
+   | New | none of these: the master gives it a number |
+   | Rejected | it failed validation |
+
+   `--base` is the archived workbook the copy was taken from (`git show <commit>:<file>`). With it, a cell changed only in the master is kept. Without it, a filled master cell may only be extended offline, and any other change to it is a conflict.
+3. **A person selects.** Post the review list the check printed and ask which rows to import. Give the lettered or numbered choices, with a recommendation: usually every Add and New, no Conflict.
+4. **Plan.** `review-log-import.ts plan report.json --log <node> --select <numbers> [--accept-conflicts] --out plan.json` gives the cell writes: A1 range and value, human columns only. A new row goes below the last row, and the sheet's script numbers it. A new comment from the PDF feedback template has only the script's columns (page, line, comment). It is not typed into the sheet. It goes to `--intake-out <csv>` for `public-comment.ts import --channel comment-matrix`, which numbers and places it. That CSV may hold names, so it stays out of the repository.
+5. **Write** the planned cells to the master log, and nothing else. Editor (orange), agent (green) and script (grey) cells are never written. The watcher then picks the new feedback up as usual.
+
 ## Published with the document's site
 
 `scripts/review-sheet-site.ts --out <site>` (package script
