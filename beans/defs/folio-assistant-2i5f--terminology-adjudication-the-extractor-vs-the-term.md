@@ -126,7 +126,7 @@ Owner, 2026-10-02 (issue #1836): *"split: build LEG 1 now as a SKILL + an
 OUTCOME SCHEMA … Leg 2 (two judges disagree about a mapping) stays waiting —
 do not build it."*
 
-- Skill [`term-disagreement`](../../../cat-harness/skills/library/library-core/term-disagreement.md)
+- Skill [`term-disagreement`](../../../cat-harness/library/skills/library-core/term-disagreement.md)
   (library-core): which `exact`/`concept` rows are disagreements at all (the
   concept-only pair always; a miss only where the authority is MEANT to cover
   the word; `undetermined` never), the three questions that choose an

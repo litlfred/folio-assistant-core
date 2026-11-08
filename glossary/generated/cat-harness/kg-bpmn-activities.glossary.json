@@ -731,7 +731,7 @@
       "prefLabel": "Accept it, and record where it came from",
       "definition": "Both branches land here. An unprompted offer is accepted as it stands — do not make somebody follow a process to hand over what they already have. Provenance is recorded whichever channel it arrived through: a description given in chat has a source and can be wrong, exactly as a PDF does.",
       "notation": "A_Accept",
-      "source": "cat-harness/processes/library/content-acquisition.bpmn#A_Accept",
+      "source": "cat-harness/library/processes/content-acquisition.bpmn#A_Accept",
       "status": "candidate"
     },
     {
@@ -739,7 +739,7 @@
       "prefLabel": "Ask for a link or a description",
       "definition": "Both forms, named together. A person who cannot find the file often knows exactly what it is, and a description in their own words is an acquired resource rather than a consolation prize. Asking for the upload first demands the one thing they may not have, before the cheaper answers have been offered. Say what happens if they do nothing.",
       "notation": "A_Ask",
-      "source": "cat-harness/processes/library/content-acquisition.bpmn#A_Ask",
+      "source": "cat-harness/library/processes/content-acquisition.bpmn#A_Ask",
       "status": "candidate"
     },
     {
@@ -747,7 +747,7 @@
       "prefLabel": "Point at the upload target",
       "definition": "Composed from the declaration by the `upload-url` Tool, never written by hand: the queue is declared with INSTANCE scope, and a forge URL needs the path relative to the REPOSITORY. Every failure is named — no origin remote, a non-GitHub forge, a declared-but-absent queue — because a URL is believed, and somebody sent to a wrong one cannot tell it from an empty directory. On failure, fall back to the conversation.",
       "notation": "A_PointToUpload",
-      "source": "cat-harness/processes/library/content-acquisition.bpmn#A_PointToUpload",
+      "source": "cat-harness/library/processes/content-acquisition.bpmn#A_PointToUpload",
       "status": "candidate"
     },
     {
@@ -755,7 +755,7 @@
       "prefLabel": "Route it, and watch the queue",
       "definition": "A file goes to ingestion; a link or a description goes to whatever will resolve it. Acquisition stops here — the moment a file is in the queue, library-ingestion owns it, and keeping that seam sharp is what lets a resource acquired through a channel that does not exist yet reach ingestion unchanged. An arrival may be minutes or days away, so it is watched rather than chased.",
       "notation": "A_Route",
-      "source": "cat-harness/processes/library/content-acquisition.bpmn#A_Route",
+      "source": "cat-harness/library/processes/content-acquisition.bpmn#A_Route",
       "status": "candidate"
     },
     {
@@ -763,7 +763,7 @@
       "prefLabel": "Give a link, a description, or neither",
       "definition": "\"Or neither\" is a real outcome, not a failure. The ask says what happens if nothing comes, and then that happens — the work proceeds without the resource and says so.",
       "notation": "P_Respond",
-      "source": "cat-harness/processes/library/content-acquisition.bpmn#P_Respond",
+      "source": "cat-harness/library/processes/content-acquisition.bpmn#P_Respond",
       "status": "candidate"
     },
     {
@@ -771,7 +771,7 @@
       "prefLabel": "Drop the file in the queue",
       "definition": "Through the forge's upload form, a commit, or any other route that lands the file in the declared queue. The agent watches rather than chases: an arrival may be minutes or days away.",
       "notation": "P_Upload",
-      "source": "cat-harness/processes/library/content-acquisition.bpmn#P_Upload",
+      "source": "cat-harness/library/processes/content-acquisition.bpmn#P_Upload",
       "status": "candidate"
     },
     {
@@ -843,7 +843,7 @@
       "prefLabel": "Edit it in place — it is your own content",
       "definition": "The ordinary path, drawn so the process does not read as though every edit needs a copy. Content in a writable directory is authored content and is edited where it lives; the copy-out is for somebody else's bytes, not for yours.",
       "notation": "Task_EditDirectly",
-      "source": "cat-harness/processes/library/copy-out-materialized.bpmn#Task_EditDirectly",
+      "source": "cat-harness/library/processes/copy-out-materialized.bpmn#Task_EditDirectly",
       "status": "candidate"
     },
     {
@@ -851,7 +851,7 @@
       "prefLabel": "Land the bytes in the copier's own folio/",
       "definition": "Into the copier's own declared `folio/`, never a scratch area — a directory nobody declared is a directory nobody gates, and the copy would be publishable by accident. The copy is NOT read-only: it is the copier's own content, makes no claim about anybody else's bytes, and freezing it too would mean the next person needs a copy of the copy.",
       "notation": "Task_Land",
-      "source": "cat-harness/processes/library/copy-out-materialized.bpmn#Task_Land",
+      "source": "cat-harness/library/processes/copy-out-materialized.bpmn#Task_Land",
       "status": "candidate"
     },
     {
@@ -859,7 +859,7 @@
       "prefLabel": "Read the original — and write nothing",
       "definition": "A read, and the only interaction this process has with the source. Its digest and `provenance` are carried forward: the digest so Task_VerifySourceUntouched has something to check against, and `provenance` so the copy can name what it came out of without re-deriving it.",
       "notation": "Task_ReadSource",
-      "source": "cat-harness/processes/library/copy-out-materialized.bpmn#Task_ReadSource",
+      "source": "cat-harness/library/processes/copy-out-materialized.bpmn#Task_ReadSource",
       "status": "candidate"
     },
     {
@@ -867,7 +867,7 @@
       "prefLabel": "Record what this is a copy of",
       "definition": "The step that is easy to omit and impossible to reconstruct afterwards. `provenance` is a PAIR: `upstream` is the remote thing, `local` is the original in this repository. A copy-out writes `local`; it does not overwrite `upstream`, and it does not reuse `upstream` for a local value. Without `local`, one rename later the copy is indistinguishable from original work and nothing downstream can repair it, because the information was never written down.",
       "notation": "Task_RecordProvenance",
-      "source": "cat-harness/processes/library/copy-out-materialized.bpmn#Task_RecordProvenance",
+      "source": "cat-harness/library/processes/copy-out-materialized.bpmn#Task_RecordProvenance",
       "status": "candidate"
     },
     {
@@ -875,7 +875,7 @@
       "prefLabel": "Verify the ORIGINAL still hashes to its digest",
       "definition": "`check:materialized-fixity`. Run against the SOURCE, not the copy — the copy is new content with no claim to verify, and the source is the thing a botched copy-out would have disturbed. A mismatch here means the copy-out was an edit in place wearing a copy's clothes, and it is the only signal that tells the two apart.",
       "notation": "Task_VerifySourceUntouched",
-      "source": "cat-harness/processes/library/copy-out-materialized.bpmn#Task_VerifySourceUntouched",
+      "source": "cat-harness/library/processes/copy-out-materialized.bpmn#Task_VerifySourceUntouched",
       "status": "candidate"
     },
     {
@@ -1682,7 +1682,7 @@
       "prefLabel": "Append WHO disclaimer (if DAK)",
       "definition": "For WHO SMART Guidelines content, automatically appends the WHO legal disclaimer: - Translation not created by WHO - English edition is authoritative original - WHO not responsible for translation accuracy Only applies when folio contentType includes WHO/DAK content.",
       "notation": "Task_AppendDisclaimer",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_AppendDisclaimer",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_AppendDisclaimer",
       "status": "candidate"
     },
     {
@@ -1690,7 +1690,7 @@
       "prefLabel": "Assign to qualified human translator",
       "definition": "The coordinator assigns the translation to a qualified translator, ideally a domain SME for the content area. For WHO content, the translator should be familiar with WHO SMART Guidelines terminology. The assignment includes: - The .pot file(s) from extraction - The domain glossary - Context notes (block kind, chapter, content area) - The deadline",
       "notation": "Task_AssignTranslator",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_AssignTranslator",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_AssignTranslator",
       "status": "candidate"
     },
     {
@@ -1698,7 +1698,7 @@
       "prefLabel": "Check translation completeness",
       "definition": "Verify that all msgid entries have msgstr translations. Partial translations are acceptable for initial submissions but must be flagged for follow-up. The coordinator checks: - % of strings translated - Any fuzzy-flagged entries - Missing critical sections",
       "notation": "Task_CheckCompleteness",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_CheckCompleteness",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_CheckCompleteness",
       "status": "candidate"
     },
     {
@@ -1706,7 +1706,7 @@
       "prefLabel": "Extract the POT",
       "definition": "Scan the source content and write the translatable strings to .pot files at the configured granularity: segment prose by paragraph, shield what must not be translated (math, code, labels, Lean companions) as placeholders, normalise whitespace, and extract metadata such as titles, alt text and captions. Tool: the translation_extract MCP tool.",
       "notation": "Task_ExtractPOT",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_ExtractPOT",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_ExtractPOT",
       "status": "candidate"
     },
     {
@@ -1714,7 +1714,7 @@
       "prefLabel": "Identify content and target locale",
       "definition": "The coordinator selects: - Which content nodes need translation (block, section, chapter, or folio) - The target locale (one of the supportedLocales in <name>.config.json) - The priority and deadline",
       "notation": "Task_IdentifyContent",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_IdentifyContent",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_IdentifyContent",
       "status": "candidate"
     },
     {
@@ -1722,7 +1722,7 @@
       "prefLabel": "Inject the PO",
       "definition": "Read the .po file and the source .md, substitute msgstr for msgid, unshield the placeholders, and write the translated .md to translations/<locale>/. Check structure (paragraph count, heading levels) and completeness (no empty msgstr), and lint (doubled punctuation, orphaned placeholders). Tool: the translation_inject MCP tool.",
       "notation": "Task_InjectPO",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_InjectPO",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_InjectPO",
       "status": "candidate"
     },
     {
@@ -1730,7 +1730,7 @@
       "prefLabel": "Prepare domain glossary",
       "definition": "Builds the locale term base for the target locale from the layered glossaries, has it reviewed, and hands it to the translator with the POT. Each layer's glossary is the directory it declares with the `glossary` graph typology. Precedence, within one subject area (the scheme's `subject`): the more authoritative (lower) layer fixes a term's translation; an instance layer only adds, and may not give a fixed term a second translation. A match in another subject area is a sense check for the reviewer, not a violation. Previous translations of related content are evidence for a term with no fixed form, not a source that overrides one. A fixed translation is an authored term with a non-empty, non-fuzzy msgstr in its scheme's catalogue (translation-manager, \"The locale term base\").",
       "notation": "Task_PrepareGlossary",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_PrepareGlossary",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_PrepareGlossary",
       "status": "candidate"
     },
     {
@@ -1738,7 +1738,7 @@
       "prefLabel": "Receive assignment and materials",
       "definition": "The translator receives: - .pot file with source strings (msgid) - Domain glossary with approved term translations - Context notes per string - Style guide and WHO terminology references Tools: Poedit, Weblate, Crowdin, or direct .po editing.",
       "notation": "Task_ReceiveAssignment",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_ReceiveAssignment",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_ReceiveAssignment",
       "status": "candidate"
     },
     {
@@ -1746,7 +1746,7 @@
       "prefLabel": "Request completion of remaining strings",
       "definition": "Return to the translator with a list of untranslated or fuzzy strings that need attention.",
       "notation": "Task_RequestMoreWork",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_RequestMoreWork",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_RequestMoreWork",
       "status": "candidate"
     },
     {
@@ -1754,7 +1754,7 @@
       "prefLabel": "Return for correction with annotations",
       "definition": "The reviewer annotates specific passages that need correction and returns to the translator with detailed feedback. Each annotation includes: - The passage in question - What is wrong (terminology, meaning, style) - The suggested correction or reference",
       "notation": "Task_ReturnForCorrection",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_ReturnForCorrection",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_ReturnForCorrection",
       "status": "candidate"
     },
     {
@@ -1762,7 +1762,7 @@
       "prefLabel": "Round-trip translation QA",
       "definition": "Back-translate the target-language .md into the source language and compare the meaning with the original. It catches semantic drift and terminology misses that a forward-only fluency check cannot see, and tells the two apart. Tool: the translation_validate MCP tool. No gateway follows: drift or clean, the translation goes to Task_SMEReview with the findings attached. Which of two readings is right is a human call (translation-manager, \"route drift to a human reviewer\"), and every translation in this workflow is reviewed and signed off anyway, so a clean result is evidence for the reviewer and never a way around them. The findings include `translation:glossary:check`'s: every glossary term translated against the locale term base, fixed before sign-off, with its glossary section in the KG QA report.",
       "notation": "Task_RoundTripQA",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_RoundTripQA",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_RoundTripQA",
       "status": "candidate"
     },
     {
@@ -1770,7 +1770,7 @@
       "prefLabel": "Sign off translation as official",
       "definition": "The reviewer signs off the translation, making it official. This records: - signedOffBy: the reviewer's identity - signedOffAt: the current timestamp - sourceHash: SHA-256 of the source .md - level: block | section | chapter | folio Tool: translation_signoff MCP tool",
       "notation": "Task_Signoff",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_Signoff",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_Signoff",
       "status": "candidate"
     },
     {
@@ -1778,7 +1778,7 @@
       "prefLabel": "Review translation for accuracy",
       "definition": "A subject-matter expert reviews the injected translated markdown for: - Clinical/technical accuracy of terminology - Preservation of meaning from the source - Cultural appropriateness for the target locale - Consistency with the domain glossary For WHO content: the SME verifies that normative statements (\"SHALL\", \"SHOULD\", \"MAY\") are translated with the correct force in the target language.",
       "notation": "Task_SMEReview",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_SMEReview",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_SMEReview",
       "status": "candidate"
     },
     {
@@ -1786,7 +1786,7 @@
       "prefLabel": "Submit completed .po file",
       "definition": "The translator submits the completed .po file back to the pipeline. This may happen via: - Git commit + push - Weblate/Crowdin sync - File upload to the coordinator",
       "notation": "Task_SubmitPO",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_SubmitPO",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_SubmitPO",
       "status": "candidate"
     },
     {
@@ -1794,7 +1794,7 @@
       "prefLabel": "Translate strings in preferred tool",
       "definition": "The translator works through each msgid, producing msgstr translations. They: - Follow the domain glossary for technical terms - Preserve placeholder tokens ({1}, {2}) in position - Mark uncertain translations as #fuzzy - Note any source ambiguities for the coordinator",
       "notation": "Task_TranslateInTool",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_TranslateInTool",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_TranslateInTool",
       "status": "candidate"
     },
     {
@@ -1802,7 +1802,7 @@
       "prefLabel": "Write status.json (official)",
       "definition": "Record the translation's standing in translations/<locale>/status.json. The `official` input says which: `false` records it as unofficial ({ official: false, generatedBy, generatedAt }), usable but shown with a warning badge; `true` records the human sign-off with the SHA-256 of the source .md, so a later change to the source marks it stale.",
       "notation": "Task_WriteStatus",
-      "source": "cat-harness/processes/library/human-translation-workflow.bpmn#Task_WriteStatus",
+      "source": "cat-harness/library/processes/human-translation-workflow.bpmn#Task_WriteStatus",
       "status": "candidate"
     },
     {
@@ -1810,7 +1810,7 @@
       "prefLabel": "Record it in library/ as referenced",
       "definition": "The referenced branch. Nothing is fetched and no bytes are written: the catalogue record says where the asset is and that we hold none. A reference is not a fetch — it stays navigable without being held, and materializing it later is `materialize-remote.bpmn`'s decision, with its purpose and five gates, not this flow's.",
       "notation": "Task_CatalogueReference",
-      "source": "cat-harness/processes/library/document-ingestion.bpmn#Task_CatalogueReference",
+      "source": "cat-harness/library/processes/document-ingestion.bpmn#Task_CatalogueReference",
       "status": "candidate"
     },
     {
@@ -1818,7 +1818,7 @@
       "prefLabel": "Extract its metadata into the KG",
       "definition": "THE METADATA STEP. What enters the knowledge graph is the asset's INDEX — what it is, how big, what type, when it says it was written — and, for a container, what is in it; its contents do not go in unless somebody asks, with a reason. The tool is `cat-harness-tools/scripts/extract-assets.ts`, writing a `folio-extraction/v1` record (`schemas/content/extraction.ts`). The media type is sniffed from the leading bytes, never taken from the extension.",
       "notation": "Task_ExtractMetadata",
-      "source": "cat-harness/processes/library/document-ingestion.bpmn#Task_ExtractMetadata",
+      "source": "cat-harness/library/processes/document-ingestion.bpmn#Task_ExtractMetadata",
       "status": "candidate"
     },
     {
@@ -1826,7 +1826,7 @@
       "prefLabel": "Place it in uploads/ by a declared route",
       "definition": "THE FIRST LINK: everything downstream of here takes a file that is already in the queue, so without this step how the file got there is governed by nothing. WHAT THIS STEP IS. The basic flow's ACCEPT step: choosing an arrival route, writing the bytes into the declared queue of the instance that will own them, and discharging what that route does not discharge for you. The routes, what each writer owes, and the two that are mechanisms against the one that is a persona are in the `upload-routes` skill; `upload-url` composes the forge URL for the web route from the declaration rather than from a literal, because a hand-written one can 404. WHY A PLAIN `bpmn:task` AND NOT A `userTask`. A `userTask` asserts a human performs it, and this lane is \"Contributor (human or agent)\" because both do; asserting human-only would be an `activity-fulfilment-kind` contradiction. A plain task asserts nothing about the performer. WHY THE BEAN OP IS `note` AND NOT `claim`. Placing a file claims nothing; it adds to a queue. What it owes the work plan is visibility. A note against the ingestion bean is what makes the queue's growth something another session can see.",
       "notation": "Task_Place",
-      "source": "cat-harness/processes/library/document-ingestion.bpmn#Task_Place",
+      "source": "cat-harness/library/processes/document-ingestion.bpmn#Task_Place",
       "status": "candidate"
     },
     {
@@ -1834,7 +1834,7 @@
       "prefLabel": "Place the asset in library/<slug>/",
       "definition": "The materialized branch. The asset lands in library/<slug>/ with its metadata record, its provenance and its fixity. The folder name IS the citation key, so a citation and a directory are the same string. The upload is then RETIRED, not left and not deleted: it moves to fsh-guts/uploads/ beside a sidecar naming where it came from and when, and `check:uploads-retired` finds one that was not. A refining process that derives content from the bytes does so before that retirement; `library-ingestion` carries the rule.",
       "notation": "Task_PlaceInLibrary",
-      "source": "cat-harness/processes/library/document-ingestion.bpmn#Task_PlaceInLibrary",
+      "source": "cat-harness/library/processes/document-ingestion.bpmn#Task_PlaceInLibrary",
       "status": "candidate"
     },
     {
@@ -2122,7 +2122,7 @@
       "prefLabel": "Answer the other four gates",
       "definition": "Restrictions, copyright, retention and source loss, each answered permitted, refused or unknown. They are four answers to one decision, and Gateway_Gates reads them with size through decisions/materialization-gate.dmn. RESTRICTIONS. 'No restrictions known in context' is a STATE, not a green light. GateVerdict is three-valued for this reason alone, and `unknown` is never rendered as `permitted`. COPYRIGHT. What the licence permits for THIS bitstream, and separately whether it permits the derivation. LICENSE-CONTENT.md exists in this repository and the ingestion pipeline does not read it. RETENTION. A copy with no expiry cannot be told from an abandoned one — the same argument bean-blocking makes about a block with no expiry. An ARCHIVAL copy is the exception and it is a specification rather than an omission: freshness() reports it `permanent`, not `no-expiry`. SOURCE LOSS. Not hypothetical. The one IRIS record this repository holds carries a handle on iris.wpro.who.int, a regional instance merged into the global one. Only an ARCHIVAL copy of the original bytes discharges this; a working copy cannot, because the derived sections are not the publication.",
       "notation": "Task_AnswerGates",
-      "source": "cat-harness/processes/library/materialize-remote.bpmn#Task_AnswerGates",
+      "source": "cat-harness/library/processes/materialize-remote.bpmn#Task_AnswerGates",
       "status": "candidate"
     },
     {
@@ -2130,7 +2130,7 @@
       "prefLabel": "Declare the node materialized",
       "definition": "The node's state moves from `referenced` to `materialized`, carrying purpose, localPath, gates and (archival) fixity. There is NO default state: a node that has not said is invalid, because 'the author did not say' and 'the author said they could not tell' are different facts.",
       "notation": "Task_Declare",
-      "source": "cat-harness/processes/library/materialize-remote.bpmn#Task_Declare",
+      "source": "cat-harness/library/processes/materialize-remote.bpmn#Task_Declare",
       "status": "candidate"
     },
     {
@@ -2138,7 +2138,7 @@
       "prefLabel": "Enumerate the source descriptor",
       "definition": "Resolve the request against the source's descriptor (one per corpus, in the declared sources/ of the instance that owns it, e.g. who-iris/sources/), read against cat-harness/schemas/library/source-descriptor.ts BEFORE any gate. Three things come from it and none may be guessed. (1) Which subset strategies the source supports — supportsSubset(). (2) Whether a subset stands on its own: when subsetIsSelfContained is false (mathlib), the request is closed over its dependencies here, and every gate after this one is asked about the CLOSURE, because a subset that omits what its members depend on is not a smaller corpus, it is one that does not build. (3) What enumerating the whole costs — enumerationCost(), which is undefined when the descriptor has no measured denominator; SIZE then refuses rather than estimates. A source with no descriptor is not an error here: it is an unknown, and SIZE refuses on it. The descriptor is CALLED here rather than restated.",
       "notation": "Task_Enumerate",
-      "source": "cat-harness/processes/library/materialize-remote.bpmn#Task_Enumerate",
+      "source": "cat-harness/library/processes/materialize-remote.bpmn#Task_Enumerate",
       "status": "candidate"
     },
     {
@@ -2146,7 +2146,7 @@
       "prefLabel": "Fetch, and record fixity",
       "definition": "Fetch, then record sha256 and byte count. Fixity is REQUIRED for an archival copy: an archive that cannot demonstrate it is unchanged is a copy, and it cannot be re-fetched to check, because the thing it would be re-fetched from is what it exists to survive. The data already exists — every structure.json carries sha256 and bytes, and nothing reads them as fixity.",
       "notation": "Task_Fetch",
-      "source": "cat-harness/processes/library/materialize-remote.bpmn#Task_Fetch",
+      "source": "cat-harness/library/processes/materialize-remote.bpmn#Task_Fetch",
       "status": "candidate"
     },
     {
@@ -2154,7 +2154,7 @@
       "prefLabel": "Declare the purpose: working or archival",
       "definition": "working or archival, and it is asked FIRST because three of the five gates mean different things under each. An archival copy keeps the original bytes, never expires, requires fixity, and is the only thing that discharges sourceLoss; a working copy keeps derived content and discharges none of that. A process that gated first and asked afterwards would be judging a copy whose obligations it did not yet know.",
       "notation": "Task_Purpose",
-      "source": "cat-harness/processes/library/materialize-remote.bpmn#Task_Purpose",
+      "source": "cat-harness/library/processes/materialize-remote.bpmn#Task_Purpose",
       "status": "candidate"
     },
     {
@@ -2162,7 +2162,7 @@
       "prefLabel": "Size the take and the whole",
       "definition": "What is being taken, and what the whole collection would cost. REFUSES when it cannot tell: 'three items' with no denominator is not a size answer. 0.7 TB is the measured reason the IRIS import is by reference.",
       "notation": "Task_Size",
-      "source": "cat-harness/processes/library/materialize-remote.bpmn#Task_Size",
+      "source": "cat-harness/library/processes/materialize-remote.bpmn#Task_Size",
       "status": "candidate"
     },
     {
@@ -2170,7 +2170,7 @@
       "prefLabel": "Leave it referenced, record why",
       "definition": "A refusal is not a failure of the process — it is the process working. The node stays `referenced`, which means the graph still knows it exists and where, and the refusing gate's basis is recorded so the next caller does not re-litigate it.",
       "notation": "Task_StayRef",
-      "source": "cat-harness/processes/library/materialize-remote.bpmn#Task_StayRef",
+      "source": "cat-harness/library/processes/materialize-remote.bpmn#Task_StayRef",
       "status": "candidate"
     },
     {
@@ -2590,7 +2590,7 @@
       "prefLabel": "Integrate: call existing processes",
       "definition": "The method's steps become a process whose judgement points call the processes that already exist (adjudication, options analysis, review) by calledElement. Nothing is re-implemented. A needed change to an existing process becomes a bean against its owner.",
       "notation": "A_Integrate",
-      "source": "cat-harness/processes/library/methodology-from-source.bpmn#A_Integrate",
+      "source": "cat-harness/library/processes/methodology-from-source.bpmn#A_Integrate",
       "status": "candidate"
     },
     {
@@ -2598,7 +2598,7 @@
       "prefLabel": "Establish origin and licence",
       "definition": "Authors, publication, identifier, and the licence the source itself states. No stated licence means reference only: headings, page ranges and a summary in our own words; the file stays in uploads/ (git-ignored) pinned by checksum. A method with no origin is a house process; write a skill instead.",
       "notation": "A_Origin",
-      "source": "cat-harness/processes/library/methodology-from-source.bpmn#A_Origin",
+      "source": "cat-harness/library/processes/methodology-from-source.bpmn#A_Origin",
       "status": "candidate"
     },
     {
@@ -2606,7 +2606,7 @@
       "prefLabel": "Place by ownership; declare the directory",
       "definition": "A domain-neutral method belongs to the harness and a domain method to the folio that owns the domain. If the session cannot write where it belongs, draft it where it can, say so in the file, and open a bean to move it.",
       "notation": "A_Place",
-      "source": "cat-harness/processes/library/methodology-from-source.bpmn#A_Place",
+      "source": "cat-harness/library/processes/methodology-from-source.bpmn#A_Place",
       "status": "candidate"
     },
     {
@@ -2614,7 +2614,7 @@
       "prefLabel": "Render the method: adopted vs refused",
       "definition": "What the source says, section by section, then a table of what this platform adopts and what it refuses, each with a reason. Extensions beyond the source (such as web plus mobile where the paper studied mobile) are stated as ours. Reported results are not imported as facts.",
       "notation": "A_Render",
-      "source": "cat-harness/processes/library/methodology-from-source.bpmn#A_Render",
+      "source": "cat-harness/library/processes/methodology-from-source.bpmn#A_Render",
       "status": "candidate"
     },
     {
@@ -2622,7 +2622,7 @@
       "prefLabel": "Every skill and tool used becomes a Tool",
       "definition": "Each script, CLI or checker the process relies on gets a Tool node (`tools/<id>/<id>.json`) that satisfies a named skill, validated by folio-assistant's ToolDefinitionSchema.",
       "notation": "A_Tools",
-      "source": "cat-harness/processes/library/methodology-from-source.bpmn#A_Tools",
+      "source": "cat-harness/library/processes/methodology-from-source.bpmn#A_Tools",
       "status": "candidate"
     },
     {
@@ -2630,7 +2630,7 @@
       "prefLabel": "Ingest into library/",
       "definition": "The harness's basic ingestion flow (`document-ingestion.bpmn`, `Process_Ingestion`): the source is accepted, its metadata goes into the KG, and it is catalogued in library/ — held if materialized, recorded as referenced if not. The flow makes no content-type decision: reading a document into sections and blocks — choosing the rung mechanically (embedded outline, pages, OCR), and writing section text only when the licence allows it — is a refinement in the layer above, which calls this same flow first.",
       "notation": "Call_Ingest",
-      "source": "cat-harness/processes/library/methodology-from-source.bpmn#Call_Ingest",
+      "source": "cat-harness/library/processes/methodology-from-source.bpmn#Call_Ingest",
       "status": "candidate"
     },
     {
@@ -2638,14 +2638,14 @@
       "prefLabel": "Related work: find, sort, ask",
       "definition": "Search beans, issues and open PRs for work the method touches, categorize and summarize them, and ask the owner whether and how to coordinate. CRDM calls the same sub-process.",
       "notation": "Call_RelatedWork",
-      "source": "cat-harness/processes/library/methodology-from-source.bpmn#Call_RelatedWork",
+      "source": "cat-harness/library/processes/methodology-from-source.bpmn#Call_RelatedWork",
       "status": "candidate"
     },
     {
       "id": "process_methodologyfromsource.o_review",
       "prefLabel": "Review the adoption",
       "notation": "O_Review",
-      "source": "cat-harness/processes/library/methodology-from-source.bpmn#O_Review",
+      "source": "cat-harness/library/processes/methodology-from-source.bpmn#O_Review",
       "status": "candidate"
     },
     {
@@ -3149,7 +3149,7 @@
       "prefLabel": "Adjudicate the conflict",
       "definition": "A human or agentic decision, never a merge rule. Which side wins depends on why the local edit was made, and a process that picked automatically would be choosing without the one fact that decides it.",
       "notation": "Task_Adjudicate",
-      "source": "cat-harness/processes/library/refresh-materialized.bpmn#Task_Adjudicate",
+      "source": "cat-harness/library/processes/refresh-materialized.bpmn#Task_Adjudicate",
       "status": "candidate"
     },
     {
@@ -3157,7 +3157,7 @@
       "prefLabel": "Re-materialize and record new fixity",
       "definition": "The gates are re-asked, not inherited: a licence can change, and a collection can grow past the size a caller agreed to. AND THE NEW FIXITY IS RECORDED IN THE SAME CHANGE. This step rewrites bytes that a materialization record describes, so leaving the old digest behind would make a CORRECT run of this process fail check:materialized-fixity as a mismatch — the gate reading \"somebody edited held content without saying so\" about the one process whose job is to replace it. This is the publication exception, stated as a rule rather than as a carve-out, because a list of permitted writers goes stale when a writer is added. The exception is NOT \"these actors may skip the rule\"; it is \"say what you did\". A writer that updates the digest alongside the bytes passes, and the record then describes what is actually there. A writer that does not fails, correctly, because it has forked upstream silently.",
       "notation": "Task_Apply",
-      "source": "cat-harness/processes/library/refresh-materialized.bpmn#Task_Apply",
+      "source": "cat-harness/library/processes/refresh-materialized.bpmn#Task_Apply",
       "status": "candidate"
     },
     {
@@ -3165,7 +3165,7 @@
       "prefLabel": "ARCHIVAL verify fixity — never re-fetch",
       "definition": "Re-compute the digest and compare. An archive is NEVER re-fetched — the source is what it exists to survive, so replacing it with today's version discards the state it was keeping. A mismatch means OUR copy rotted, and the remedy is restoration from a backup, not re-download.",
       "notation": "Task_Fixity",
-      "source": "cat-harness/processes/library/refresh-materialized.bpmn#Task_Fixity",
+      "source": "cat-harness/library/processes/refresh-materialized.bpmn#Task_Fixity",
       "status": "candidate"
     },
     {
@@ -3173,7 +3173,7 @@
       "prefLabel": "Keep the edit, re-pin",
       "definition": "The local edit wins, so nothing is re-materialized — and the pin moves to the upstream revision that was compared against. Re-pinning is the half that is easy to forget and is the reason this is a step rather than an absence: without it the same upstream change is detected as new on every cycle, and a contributor is asked the same settled question for ever. The record says the copy is deliberately divergent FROM a named revision, which is a different claim from being stale against an unknown one.",
       "notation": "Task_KeepLocal",
-      "source": "cat-harness/processes/library/refresh-materialized.bpmn#Task_KeepLocal",
+      "source": "cat-harness/library/processes/refresh-materialized.bpmn#Task_KeepLocal",
       "status": "candidate"
     },
     {
@@ -3181,7 +3181,7 @@
       "prefLabel": "What changed LOCALLY since",
       "definition": "The half nothing answers today. A materialized copy that was edited in place is not a copy any more, and overwriting it silently destroys work whose existence the process never established.",
       "notation": "Task_Local",
-      "source": "cat-harness/processes/library/refresh-materialized.bpmn#Task_Local",
+      "source": "cat-harness/library/processes/refresh-materialized.bpmn#Task_Local",
       "status": "candidate"
     },
     {
@@ -3189,7 +3189,7 @@
       "prefLabel": "Reconcile the two by hand",
       "definition": "Neither side wins whole: the contributor produces content that is neither the local copy nor the remote one, and THEN it is applied. Drawn as a separate step before Task_Apply rather than folded into it, because Task_Apply re-asks the five import gates against what is being materialized — and what is being materialized here is a hand-made artefact, which is exactly the case those gates should see rather than be told about.",
       "notation": "Task_Reconcile",
-      "source": "cat-harness/processes/library/refresh-materialized.bpmn#Task_Reconcile",
+      "source": "cat-harness/library/processes/refresh-materialized.bpmn#Task_Reconcile",
       "status": "candidate"
     },
     {
@@ -3197,7 +3197,7 @@
       "prefLabel": "Record the conflict: no decision, no re-pin",
       "definition": "Both copies stay and the conflict is written down with what each side says. Deliberately does not re-pin, which is the one thing separating it from Task_KeepLocal: the question is unresolved, so it must be asked again next cycle. Recording is not optional here for the reason A_RecordEntry is not optional in an adjudication — a judgement nobody wrote down is indistinguishable from a check that never ran, and a DEFERRAL nobody wrote down is indistinguishable from a refresh that silently did nothing.",
       "notation": "Task_RecordConflict",
-      "source": "cat-harness/processes/library/refresh-materialized.bpmn#Task_RecordConflict",
+      "source": "cat-harness/library/processes/refresh-materialized.bpmn#Task_RecordConflict",
       "status": "candidate"
     },
     {
@@ -3205,7 +3205,7 @@
       "prefLabel": "WORKING what changed upstream",
       "definition": "Compare the recorded upstreamVersion against the source. `could not reach the source` is a THIRD answer and is never reported as `unchanged` — an unreachable source is the sourceLoss gate firing late. Reachability is asked by `bun run cat sources:liveness <instance>` against the node's resolvable IRI, its Handle first: live, gone, or could not determine, never live on an error.",
       "notation": "Task_Upstream",
-      "source": "cat-harness/processes/library/refresh-materialized.bpmn#Task_Upstream",
+      "source": "cat-harness/library/processes/refresh-materialized.bpmn#Task_Upstream",
       "status": "candidate"
     },
     {
@@ -3460,7 +3460,7 @@
       "prefLabel": "Materialize remote content (the five gates)",
       "definition": "The shared subprocess. It resolves the request against the source descriptor, then asks size, restrictions, copyright, retention and source loss, and either fetches with fixity or leaves the content referenced. This process does not restate any of that; it waits for the outcome.",
       "notation": "Call_Materialize",
-      "source": "cat-harness/processes/library/sample-import.bpmn#Call_Materialize",
+      "source": "cat-harness/library/processes/sample-import.bpmn#Call_Materialize",
       "status": "candidate"
     },
     {
@@ -3468,7 +3468,7 @@
       "prefLabel": "Refresh materialized content",
       "definition": "Refresh is not re-import: what changed upstream, what changed locally since, and what to do when both did. The shared subprocess answers all three, and re-asks the five gates, since a licence can change and a collection can grow past the size agreed.",
       "notation": "Call_Refresh",
-      "source": "cat-harness/processes/library/sample-import.bpmn#Call_Refresh",
+      "source": "cat-harness/library/processes/sample-import.bpmn#Call_Refresh",
       "status": "candidate"
     },
     {
@@ -3476,7 +3476,7 @@
       "prefLabel": "Import into the store, and test the import",
       "definition": "The part only this process does. Load the landed sample into the chosen store and check what an import can get wrong: every item arrived (count against the request), identifiers survived (the descriptor's authoritative ones), structure validates against the store's schema, and provenance (source, revision, fixity) is attached to each node. A check that could not run is a failure, not a pass.",
       "notation": "Task_ImportTest",
-      "source": "cat-harness/processes/library/sample-import.bpmn#Task_ImportTest",
+      "source": "cat-harness/library/processes/sample-import.bpmn#Task_ImportTest",
       "status": "candidate"
     },
     {
@@ -3484,7 +3484,7 @@
       "prefLabel": "Land it in library/",
       "definition": "A permanent sample joins the library as an L1 source, with the materialization record (purpose, gates, fixity) beside it. From here refresh-materialized governs it.",
       "notation": "Task_Library",
-      "source": "cat-harness/processes/library/sample-import.bpmn#Task_Library",
+      "source": "cat-harness/library/processes/sample-import.bpmn#Task_Library",
       "status": "candidate"
     },
     {
@@ -3492,7 +3492,7 @@
       "prefLabel": "Record what failed",
       "definition": "Which check failed, on which items, and the evidence. The landed copy is not removed: a failed import is information about the source or the store, and deleting the copy would destroy the evidence.",
       "notation": "Task_RecordFindings",
-      "source": "cat-harness/processes/library/sample-import.bpmn#Task_RecordFindings",
+      "source": "cat-harness/library/processes/sample-import.bpmn#Task_RecordFindings",
       "status": "candidate"
     },
     {
@@ -3500,7 +3500,7 @@
       "prefLabel": "Scope the sample: items, store, permanence",
       "definition": "Three answers, recorded before anything is fetched. WHICH ITEMS: named by the source's identifiers, or by a subset strategy its descriptor supports. WHICH STORE: the knowledge graph or other structured store the import is tested against. PERMANENT OR TRIAL: a permanent sample lands in library/ and is refreshed; a trial lands in fsh-guts/ and is not. The purpose materialize-remote asks for (working or archival) is asked there, not here.",
       "notation": "Task_Scope",
-      "source": "cat-harness/processes/library/sample-import.bpmn#Task_Scope",
+      "source": "cat-harness/library/processes/sample-import.bpmn#Task_Scope",
       "status": "candidate"
     },
     {
@@ -3508,7 +3508,7 @@
       "prefLabel": "Keep it as a trial: the unpublished trashcan",
       "definition": "A trial goes to the kept trashcan: addressable, exported, never published. Its node declares `$schema: folio-fsh-guts/v1` and carries the bean or issue it was written under, since it was never moved from anywhere and a `movedFrom` would be invented provenance. It is NOT refreshed: a trial records what the source looked like when it was tried. Promoting a trial means running this process again with permanent = yes, so the gates are asked afresh.",
       "notation": "Task_Trial",
-      "source": "cat-harness/processes/library/sample-import.bpmn#Task_Trial",
+      "source": "cat-harness/library/processes/sample-import.bpmn#Task_Trial",
       "status": "candidate"
     },
     {
@@ -3955,7 +3955,7 @@
       "prefLabel": "Materialise the part",
       "definition": "The ONLY way bytes arrive. Purpose first, then the five gates — size, restrictions, copyright, retention, source loss — then fetch with fixity, or stay referenced with the refusing gate's basis recorded. Both ends of that subprocess return here and the walk continues: one part refused is not the subscription refused.",
       "notation": "Call_Materialize",
-      "source": "cat-harness/processes/library/subscribe-kg.bpmn#Call_Materialize",
+      "source": "cat-harness/library/processes/subscribe-kg.bpmn#Call_Materialize",
       "status": "candidate"
     },
     {
@@ -3963,7 +3963,7 @@
       "prefLabel": "Refresh the held part",
       "definition": "The shared refresh, called, not re-described: what changed upstream, what changed locally, and what to do when both did. An archival copy is fixity-checked and never re-fetched. Whatever that process decides — refreshed, kept divergent, or deferred — is the part's new state; this loop only moves to the next part.",
       "notation": "Call_Refresh",
-      "source": "cat-harness/processes/library/subscribe-kg.bpmn#Call_Refresh",
+      "source": "cat-harness/library/processes/subscribe-kg.bpmn#Call_Refresh",
       "status": "candidate"
     },
     {
@@ -3971,7 +3971,7 @@
       "prefLabel": "Choose subgraphs, the asset policy, harnesses",
       "definition": "Written to the entry as `subgraphs`, `assets.policy` (none, on-demand or all) and `harnesses`. Choosing is not holding: a chosen subgraph is still referenced until the gates below let it through. Choosing nothing is legitimate — a subscription with no parts chosen is a pinned reference, the case associatedHarnesses covers today.",
       "notation": "Task_Choose",
-      "source": "cat-harness/processes/library/subscribe-kg.bpmn#Task_Choose",
+      "source": "cat-harness/library/processes/subscribe-kg.bpmn#Task_Choose",
       "status": "candidate"
     },
     {
@@ -3979,7 +3979,7 @@
       "prefLabel": "Instantiate the harness: write its config",
       "definition": "Write `<harness>.config.json` at the repository root, plus the state directories the harness declares, and — where the checkout has a root `index.config.json` — add the harness to its `instances[]` (kg:instantiate does both), because the index, not the file, is then what reads as INSTANTIATED (index-config skill); a root config the index does not list fails check:landing-instance. That instantiation is what puts the harness in the navbar's bottom region. check:instance-render must be green on the result; a config that renders nothing is an entry pointing nowhere.",
       "notation": "Task_Instantiate",
-      "source": "cat-harness/processes/library/subscribe-kg.bpmn#Task_Instantiate",
+      "source": "cat-harness/library/processes/subscribe-kg.bpmn#Task_Instantiate",
       "status": "candidate"
     },
     {
@@ -3987,7 +3987,7 @@
       "prefLabel": "Name the substrate, pin a full commit SHA",
       "definition": "`owner/repo` and a 40-character commit SHA — never a branch, never an abbreviated SHA. The schema refuses anything else (SubscriptionSchema.ref), and this step exists so the refusal is met while choosing rather than at commit time. A tag replaces the SHA only once the substrate publishes releases.",
       "notation": "Task_Pin",
-      "source": "cat-harness/processes/library/subscribe-kg.bpmn#Task_Pin",
+      "source": "cat-harness/library/processes/subscribe-kg.bpmn#Task_Pin",
       "status": "candidate"
     },
     {
@@ -3995,7 +3995,7 @@
       "prefLabel": "Write the entry and cache the declaration",
       "definition": "The `subscriptions` entry in the subscriber's instance declaration — id, repository, ref, and nothing chosen yet — plus a cached copy of the substrate's declaration at the pin. The entry holds the choice and the pin, never state: whether a part is held is answered by its materialisation record, and a second answer here would be free to disagree with it.",
       "notation": "Task_Record",
-      "source": "cat-harness/processes/library/subscribe-kg.bpmn#Task_Record",
+      "source": "cat-harness/library/processes/subscribe-kg.bpmn#Task_Record",
       "status": "candidate"
     },
     {
@@ -4003,7 +4003,7 @@
       "prefLabel": "Record why it is not a substrate; write no entry",
       "definition": "No subscription entry is written for a repository that is not a substrate. What is recorded is the reason (non-conforming, no harness, or unreachable) and the pin it was asked at, so a later attempt at a different commit starts from what failed.",
       "notation": "Task_Refuse",
-      "source": "cat-harness/processes/library/subscribe-kg.bpmn#Task_Refuse",
+      "source": "cat-harness/library/processes/subscribe-kg.bpmn#Task_Refuse",
       "status": "candidate"
     },
     {
@@ -4011,7 +4011,7 @@
       "prefLabel": "Move the entry's ref and re-cache the declaration",
       "definition": "Only after every held part has been through the refresh. Moving the ref first would make the records of parts not yet refreshed describe a commit the entry no longer names. The cached declaration is replaced so the review that follows shows what the NEW pin offers, including subgraphs that did not exist at the old one.",
       "notation": "Task_RePin",
-      "source": "cat-harness/processes/library/subscribe-kg.bpmn#Task_RePin",
+      "source": "cat-harness/library/processes/subscribe-kg.bpmn#Task_RePin",
       "status": "candidate"
     },
     {
@@ -4019,7 +4019,7 @@
       "prefLabel": "Review what the substrate offers",
       "definition": "Every subgraph, asset class and harness the cached declaration names, each with its current state — referenced, materialised, unknown, stale, or refused by a gate. Shown whole, because a reader who sees only what was chosen cannot tell \"not offered\" from \"not taken\".",
       "notation": "Task_Review",
-      "source": "cat-harness/processes/library/subscribe-kg.bpmn#Task_Review",
+      "source": "cat-harness/library/processes/subscribe-kg.bpmn#Task_Review",
       "status": "candidate"
     },
     {
@@ -4027,7 +4027,7 @@
       "prefLabel": "Record how each part of the walk ended",
       "definition": "One line per offered part: materialised, referenced by choice, or referenced because a gate refused (and which). Nothing new is decided here; it is the account the visualizer and the next refresh read, written once rather than reconstructed from the loop.",
       "notation": "Task_Summarise",
-      "source": "cat-harness/processes/library/subscribe-kg.bpmn#Task_Summarise",
+      "source": "cat-harness/library/processes/subscribe-kg.bpmn#Task_Summarise",
       "status": "candidate"
     },
     {
@@ -4035,7 +4035,7 @@
       "prefLabel": "Fetch and validate the pinned declaration",
       "definition": "A sparse, shallow fetch of the substrate's root declaration only. Two questions: does it parse as bootstrap's KnowledgeGraphDeclarationSchema, and does it declare at least one harness? `could not fetch` is a third answer and is never read as `conforms`.",
       "notation": "Task_Validate",
-      "source": "cat-harness/processes/library/subscribe-kg.bpmn#Task_Validate",
+      "source": "cat-harness/library/processes/subscribe-kg.bpmn#Task_Validate",
       "status": "candidate"
     },
     {
@@ -4344,7 +4344,7 @@
       "prefLabel": "Adjudicate the flagged passage (human)",
       "definition": "A human SME or editor reviews the flagged passage. They may: - Accept the translation as-is (false positive) - Edit the translation and re-run QA - Reject and request re-translation The round trip establishes that two readings differ. Which one is right is a human call.",
       "notation": "Task_Adjudicate",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_Adjudicate",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_Adjudicate",
       "status": "candidate"
     },
     {
@@ -4352,7 +4352,7 @@
       "prefLabel": "Edit the flagged passage and re-inject",
       "definition": "The reviewer corrects the passage in the PO rather than sending the whole translation back. Flows to Task_PoInject, so the round-trip QA runs again over the corrected text — \"edit the translation and re-run QA\", which is what the adjudication step has always offered and what this process could not do. A userTask, not a service task: this is the one step here where a person edits content, and the lane's actor is the reviewer who just adjudicated.",
       "notation": "Task_EditTranslation",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_EditTranslation",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_EditTranslation",
       "status": "candidate"
     },
     {
@@ -4360,7 +4360,7 @@
       "prefLabel": "Check glossary terms (translation:glossary:check)",
       "definition": "After translating: run `translation:glossary:check --instance <dir> --locale <locale>`, fix the violations, and include its glossary section in the KG QA report. A term translated against the term base is a terminology miss, so it takes the drift branch to the adjudicator.",
       "notation": "Task_GlossaryCheck",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_GlossaryCheck",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_GlossaryCheck",
       "status": "candidate"
     },
     {
@@ -4368,7 +4368,7 @@
       "prefLabel": "Inject translations (PO → Markdown)",
       "definition": "Read the .po file and the source .md, substitute msgstr for msgid, unshield the placeholders, and write the translated .md to translations/<locale>/. Check structure (paragraph count, heading levels) and completeness (no empty msgstr), and lint (doubled punctuation, orphaned placeholders). Tool: the translation_inject MCP tool.",
       "notation": "Task_PoInject",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_PoInject",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_PoInject",
       "status": "candidate"
     },
     {
@@ -4376,7 +4376,7 @@
       "prefLabel": "Extract translatable strings (POT)",
       "definition": "Scan the source content and write the translatable strings to .pot files at the configured granularity: segment prose by paragraph, shield what must not be translated (math, code, labels, Lean companions) as placeholders, normalise whitespace, and extract metadata such as titles, alt text and captions. Tool: the translation_extract MCP tool.",
       "notation": "Task_PotExtract",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_PotExtract",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_PotExtract",
       "status": "candidate"
     },
     {
@@ -4384,7 +4384,7 @@
       "prefLabel": "Round-trip translation QA (back-translate)",
       "definition": "Back-translate the target-language .md into the source language and compare the meaning with the original. It catches semantic drift and terminology misses that a forward-only fluency check cannot see, and tells the two apart. Tool: the translation_validate MCP tool.",
       "notation": "Task_RoundTripQA",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_RoundTripQA",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_RoundTripQA",
       "status": "candidate"
     },
     {
@@ -4392,7 +4392,7 @@
       "prefLabel": "Sign off translation (human adjudicator)",
       "definition": "A human reviewer signs off the translation at the chosen hierarchy level (block, section, chapter, or folio). Updates status.json: { official: true, signedOffBy: \"...\", signedOffAt: \"...\", sourceHash: \"...\" } Tool: translation_signoff MCP tool",
       "notation": "Task_Signoff",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_Signoff",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_Signoff",
       "status": "candidate"
     },
     {
@@ -4400,7 +4400,7 @@
       "prefLabel": "Check staleness (source hash)",
       "definition": "On source content change: computes sha256(source.md) and compares to each translation's status.json sourceHash. If they differ, sets stale: true. The translation remains visible with a \"stale — needs re-adjudication\" indicator.",
       "notation": "Task_StalenessCheck",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_StalenessCheck",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_StalenessCheck",
       "status": "candidate"
     },
     {
@@ -4408,7 +4408,7 @@
       "prefLabel": "Build and review the locale term base",
       "definition": "Before translating: build the locale term base from the layered glossaries, review it, and translate with it. Precedence, within one subject area (the scheme's `subject`): the more authoritative (lower) layer fixes a term's translation; an instance layer only adds. A match in another subject area is a sense check, not a violation. Each layer's glossary is the directory it declares with the `glossary` graph typology. A fixed translation is an authored term with a non-empty, non-fuzzy msgstr in its scheme's catalogue.",
       "notation": "Task_TermBase",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_TermBase",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_TermBase",
       "status": "candidate"
     },
     {
@@ -4416,7 +4416,7 @@
       "prefLabel": "Produce translation (PO file)",
       "definition": "Translation of .pot → .po, with the locale term base, by one of: 1. Existing PO from the WHO SMART Base IG (Weblate/Crowdin/Launchpad) 2. FHIR/translation-utils po-translate CLI (DeepL/Google, tagged #fuzzy) 3. Agent (LLM) translation 4. Human translator Result: <locale>/block.po with msgid/msgstr pairs.",
       "notation": "Task_Translate",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_Translate",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_Translate",
       "status": "candidate"
     },
     {
@@ -4424,7 +4424,7 @@
       "prefLabel": "Write status.json (official)",
       "definition": "Record the translation's standing in translations/<locale>/status.json. The `official` input says which: `false` records it as unofficial ({ official: false, generatedBy, generatedAt }), usable but shown with a warning badge; `true` records the human sign-off with the SHA-256 of the source .md, so a later change to the source marks it stale.",
       "notation": "Task_WriteOfficial",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_WriteOfficial",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_WriteOfficial",
       "status": "candidate"
     },
     {
@@ -4432,7 +4432,7 @@
       "prefLabel": "Write status.json (unofficial)",
       "definition": "Record the translation's standing in translations/<locale>/status.json. The `official` input says which: `false` records it as unofficial ({ official: false, generatedBy, generatedAt }), usable but shown with a warning badge; `true` records the human sign-off with the SHA-256 of the source .md, so a later change to the source marks it stale.",
       "notation": "Task_WriteUnofficial",
-      "source": "cat-harness/processes/library/translation-workflow.bpmn#Task_WriteUnofficial",
+      "source": "cat-harness/library/processes/translation-workflow.bpmn#Task_WriteUnofficial",
       "status": "candidate"
     },
     {

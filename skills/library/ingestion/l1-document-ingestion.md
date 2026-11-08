@@ -14,7 +14,7 @@ graph-typologies:
 # L1 document ingestion
 
 **This is a refinement, not the entry point.** The harness's
-[`library-ingestion`](../../../../cat-harness/skills/library/library-core/library-ingestion.md)
+[`library-ingestion`](../../../../cat-harness/library/skills/library-core/library-ingestion.md)
 skill carries the basic flow every asset takes — an upload is accepted, its
 metadata goes into the knowledge graph, and the asset lands in `library/` if it
 is materialized — together with the two entry points, the upload's retirement
@@ -861,7 +861,7 @@ Proved on fixtures built at test time, all five branches mutation-checked.
 ## Related
 
 - [`publish-extracted-statements`](publish-extracted-statements.md): the step after promotion — every extracted statement published, with its source links.
-- [`library-ingestion`](../../../../cat-harness/skills/library/library-core/library-ingestion.md) — the basic flow this refines: the two entry points, the upload's retirement, the remote half
+- [`library-ingestion`](../../../../cat-harness/library/skills/library-core/library-ingestion.md) — the basic flow this refines: the two entry points, the upload's retirement, the remote half
 - [`directory-conventions`](../../../../cat-harness/skills/kg/kg-core/directory-conventions.md) — the graph typologies and who declares them
 - [`bib-qa`](../cataloguing/bib-qa.md) — auditing what is already in `library/`
 - [`tabular-metadata`](tabular-metadata.md) — the CSVW model behind the dataset arm
