@@ -7,9 +7,11 @@ name: glossary-build
 ## Role
 
 Maintain the project-wide glossary of defined terms. Builds the
-`glossary.json` index from every block's `defines: [...]` field,
-generates the `chapters/glossary.tex` chapter, writes the same terms as a
-SKOS scheme for the glossary page, and gates CI with `--check` mode.
+`glossary.json` index from every block's `defines: [...]` field, writes the
+same terms as a SKOS scheme for the glossary page, and gates CI with
+`--check` mode. A content type that typesets its folio adds its own outputs
+(a glossary chapter, typeset markup, a formal synonyms module); the layer
+that ships that content type documents them in its refinement of this skill.
 
 ## The SKOS scheme
 
@@ -43,7 +45,7 @@ A scheme not written yet is reported and does not fail.
 
 | Command | Purpose |
 |---------|---------|
-| `cd content && bun run pipeline/build-glossary.ts <paper-dir>` | Generate `glossary.json` + `chapters/glossary.tex` + the SKOS scheme |
+| `cd content && bun run pipeline/build-glossary.ts <paper-dir>` | Generate `glossary.json`, the SKOS scheme, and any outputs the content type adds |
 | `cd content && bun run pipeline/build-glossary.ts <paper-dir> --check` | CI gate — non-zero exit on duplicates or out-of-date JSON |
 | `cd content && bun run pipeline/glossary-candidates.ts <paper-dir>` | Phase C: propose candidate owner blocks per slug → `glossary-candidates.json` (gitignored) |
 | `cd content && bun run pipeline/apply-glossary-curation.ts <paper-dir>` | Dry-run: show edits implied by `glossary-curation.json` |
@@ -84,14 +86,13 @@ Every term registered in any block's `defines: [...]` field **must** be
 wrapped at every occurrence:
 
 - **Defining occurrence** (exactly one block): `:defterm[Visible]` /
-  `:defterm[Visible]{#slug}` in `.md`; `\defterm{slug}[{Visible}]` in
-  `.tex`.
+  `:defterm[Visible]{#slug}` in `.md`.
 - **Reference occurrences** (every other mention, anywhere in the
-  project): `:refterm[Visible]` / `:refterm[Visible]{#slug}` in `.md`;
-  `\refterm{slug}[{Visible}]` in `.tex`.
+  project): `:refterm[Visible]` / `:refterm[Visible]{#slug}` in `.md`.
 
-Plain text and `\emph{}` are not permitted for a defined term once its slug
-appears in any `defines[]` list.
+A content type with a typeset source format states the same two markers in
+that format in its refinement. Plain text and emphasis are not permitted for
+a defined term once its slug appears in any `defines[]` list.
 
 ## Validation rules (Phase B)
 
@@ -102,27 +103,6 @@ appears in any `defines[]` list.
 | `refterm-resolves` | error | `:refterm[X]` not declared in any block's `defines[]` |
 | `defterm-unique` | warning | Same slug declared by multiple blocks |
 | `term-mention-coverage` | warning (`--strict`) | Bare-text mention of a known slug not wrapped in `:refterm[…]` |
-
-## CI integration (formal-pipeline tie-in)
-
-If the project has a formal-proof pipeline (e.g. Lean), the glossary
-build can regenerate a synonyms module from `glossary.json`, emitting
-`abbrev`s to library synonyms:
-
-```lean
--- Auto-generated from glossary.json — do not edit by hand.
-namespace Project.Glossary
-open CategoryTheory
-abbrev MonoidalCategory := CategoryTheory.MonoidalCategory
-abbrev BraidedMonoidalCategory := CategoryTheory.BraidedMonoidalCategory
--- For non-library synonyms, emit a `def ... := sorry` stub
--- with a `-- Ref: [manuscript]` comment.
-end Project.Glossary
-```
-
-`abbrev` is preferred over `def` so that elaboration sees the library
-type definitionally. The formal-proof CI re-runs `--check` after this file is
-regenerated.
 
 Enable the strict-mode validator (`--strict`) in CI only **after** the first
 `:refterm` backfill batch lands.

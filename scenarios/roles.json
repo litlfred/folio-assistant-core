@@ -75,7 +75,8 @@
     {
       "role": "qc-reviewer",
       "skills": [
-        "quality-control"
+        "quality-control",
+        "content-publish"
       ]
     },
     {
@@ -89,7 +90,9 @@
         "dsa-checksum",
         "dsa-dcat-record",
         "dsa-odrl-source",
-        "review-sheet-script"
+        "review-sheet-script",
+        "content-author",
+        "content-plan"
       ]
     },
     {
@@ -114,7 +117,8 @@
       "role": "build-pipeline",
       "skills": [
         "document-publishing",
-        "quality-control"
+        "quality-control",
+        "content-publish"
       ]
     },
     {
@@ -163,7 +167,9 @@
     {
       "role": "author",
       "skills": [
-        "dsa-odrl-source"
+        "dsa-odrl-source",
+        "content-author",
+        "content-plan"
       ]
     },
     {
@@ -171,7 +177,8 @@
       "skills": [
         "dsa-catalogue-status",
         "dsa-checksum",
-        "dsa-dcat-record"
+        "dsa-dcat-record",
+        "content-publish"
       ]
     },
     {
@@ -185,6 +192,14 @@
       "role": "editor",
       "skills": [
         "review-sheet-script"
+      ]
+    },
+    {
+      "role": "programme-manager",
+      "skills": [
+        "content-plan",
+        "content-publish",
+        "content-retire"
       ]
     }
   ]

@@ -95,6 +95,23 @@ const CslDateSchema = z
   })
   .passthrough();
 
+/**
+ * One place a work can be read: its publisher's page, a repository record
+ * (a DSpace handle), a code forge, a pinned copy, a DOI or arXiv landing page.
+ * A reference lists every one it knows; {@link sourcesOf} adds the ones its
+ * CSL fields already imply.
+ */
+export const ReferenceSourceSchema = z
+  .object({
+    url: z.string().min(1),
+    /** What a reader sees for the link. */
+    label: z.string().min(1).optional(),
+    /** What kind of place it is: `canonical`, `repository`, `pinned`, `handle`, `doi`, `arxiv`, `mirror`. */
+    kind: z.string().min(1).optional(),
+  })
+  .strict();
+export type ReferenceSource = z.infer<typeof ReferenceSourceSchema>;
+
 export const ReferenceProvenanceSchema = z.enum(["authored", "catalogue", "library", "extracted"]);
 export type ReferenceProvenance = z.infer<typeof ReferenceProvenanceSchema>;
 
@@ -137,6 +154,8 @@ export const ReferenceNodeSchema = z
      * changing a word. Not CSL: dropped from CSL-JSON exports.
      */
     printed: z.string().min(1).optional(),
+    /** Every place the work can be read, beyond `URL`: alternates, mirrors, repository records. Not CSL. */
+    sources: z.array(ReferenceSourceSchema).optional(),
   })
   .passthrough();
 export type ReferenceNode = z.infer<typeof ReferenceNodeSchema>;
@@ -150,14 +169,39 @@ export type ReferenceNode = z.infer<typeof ReferenceNodeSchema>;
 export const ReferenceKind = nodeKind("folio-reference", [], ReferenceNodeSchema.shape);
 
 /**
- * The fragment id of a reference on a bibliography page: `ref-<key>`, with any
- * character that is not URL-fragment-safe replaced. One function, so the page
- * that draws an entry and every link to it agree.
+ * The path segment of a reference's own page: `<bibliography>/<sub-graph>/<segment>/`,
+ * a slash address with no `#` (owner, 2026-11-08: "a bib entry is a node in
+ * the KG"; clean break from the `#ref-<key>` anchors). The key, with the
+ * characters a path segment should not carry (`:` `+`) as `-`.
  */
-export const referenceAnchor = (key: string): string => `ref-${key.replace(/[^A-Za-z0-9_-]/g, "-")}`;
+export const referenceSegment = (key: string): string => key.replace(/[^A-Za-z0-9._-]/g, "-").replace(/^\.+/, "");
 
 /** The KG IRI of a reference: `references/<key>`, the one `\cite` already points at. */
 export const referenceIri = (key: string): string => resolveReferenceKey(key);
+
+/**
+ * Every place a reference says its work can be read, in the order a reader
+ * wants them: `URL`, the DOI and arXiv landing pages, then the node's own
+ * `sources`. One entry per address; nothing is guessed from a title.
+ */
+export function sourcesOf(ref: ReferenceNode): ReferenceSource[] {
+  const out: ReferenceSource[] = [];
+  const seen = new Set<string>();
+  const add = (s: ReferenceSource) => {
+    const k = s.url.replace(/\/+$/, "");
+    if (seen.has(k)) return;
+    seen.add(k);
+    out.push(s);
+  };
+  const doiUrl = ref.DOI ? `https://doi.org/${ref.DOI}` : undefined;
+  if (ref.URL && !(ref.DOI && ref.URL.includes(ref.DOI))) add({ url: ref.URL, kind: "canonical" });
+  if (doiUrl) add({ url: doiUrl, label: `doi:${ref.DOI}`, kind: "doi" });
+  const note = typeof ref.note === "string" ? ref.note : "";
+  const arxiv = /\barXiv:\s*([0-9]{4}\.[0-9]{4,5}(?:v[0-9]+)?|[a-z-]+(?:\.[A-Z]{2})?\/[0-9]{7})/.exec(note)?.[1];
+  if (arxiv) add({ url: `https://arxiv.org/abs/${arxiv}`, label: `arXiv:${arxiv}`, kind: "arxiv" });
+  for (const s of ref.sources ?? []) add(s);
+  return out;
+}
 
 /** The fields that are the node's and not CSL's. Dropped from a CSL-JSON export. */
 const NODE_FIELDS = new Set([
@@ -169,6 +213,7 @@ const NODE_FIELDS = new Set([
   "derivedFrom",
   "heldAt",
   "printed",
+  "sources",
   "library",
   "_comment",
   "_generated",
@@ -373,6 +418,14 @@ export function dublinCoreToReference(
   put("ISBN", first("identifier", "isbn"));
   put("DOI", first("identifier", "doi"));
   put("URL", first("identifier", "uri"));
+  // Every handle the record carries (a legacy one kept after a server merge
+  // too), and the repository record it was read from: the DSpace links.
+  const recSources: ReferenceSource[] = all("identifier", "uri")
+    .slice(1)
+    .map((url) => ({ url, kind: "handle" }));
+  const from = rec.provenance?.source;
+  if (typeof from === "string" && /^https?:\/\//.test(from)) recSources.push({ url: from, label: "repository record", kind: "repository" });
+  put("sources", recSources.length ? recSources : undefined);
   put("language", first("language", "iso") ?? first("language"));
   put("abstract", first("description", "abstract"));
   put("derivedFrom", opts.derivedFrom);
@@ -640,10 +693,26 @@ export function libraryItemToReference(
     typeof arxivObj === "object" && arxivObj !== null && typeof arxivObj.date === "string" && arxivObj.date.trim()
       ? arxivObj.date.trim()
       : undefined;
+  // A text source ingested from a forge names it (`source.upstream`): the
+  // repository at its branch is where a reader goes, the commit is the copy
+  // the library holds.
+  const upstream = ((structure?.raw as { source?: { upstream?: unknown } } | undefined)?.source?.upstream ?? undefined) as
+    | { repository?: string; commit?: string; ref?: string; path?: string }
+    | undefined;
+  const upstreamSources: ReferenceSource[] = [];
+  if (upstream && typeof upstream.repository === "string" && /^https:\/\//.test(upstream.repository)) {
+    const repo = upstream.repository.replace(/\/+$/, "").replace(/\.git$/, "");
+    const path = typeof upstream.path === "string" && upstream.path !== "." ? upstream.path.replace(/^\.?\/+/, "") : "";
+    const at = (rev: string) => `${repo}/${path ? (/\.[A-Za-z0-9]+$/.test(path) ? "blob" : "tree") : "tree"}/${encodeURIComponent(rev)}${path ? `/${path}` : ""}`;
+    if (upstream.ref) upstreamSources.push({ url: at(upstream.ref), label: `${repo.replace(/^https:\/\/[^/]+\//, "")} at ${upstream.ref}`, kind: "repository" });
+    else upstreamSources.push({ url: repo, kind: "repository" });
+    if (upstream.commit) upstreamSources.push({ url: at(upstream.commit), label: `copy held (commit ${upstream.commit.slice(0, 7)})`, kind: "pinned" });
+  }
   const sourceUrl =
     (typeof manifest.sourceUrl === "string" && manifest.sourceUrl.trim() ? manifest.sourceUrl.trim() : undefined) ??
     (arxivId ? `https://arxiv.org/abs/${arxivId}` : undefined) ??
-    (doi ? `https://doi.org/${doi}` : undefined);
+    (doi ? `https://doi.org/${doi}` : undefined) ??
+    upstreamSources[0]?.url;
 
   // Never `ingestedAt`: that is when the copy was made, not when the work was
   // published, and a bibliography that dates a 2004 paper 2026 is wrong
@@ -666,6 +735,8 @@ export function libraryItemToReference(
   if (sourceUrl) ref.URL = sourceUrl;
   if (typeof meta.abstract === "string" && meta.abstract.trim()) ref.abstract = meta.abstract.trim();
   if (arxivId) (ref as Record<string, unknown>).note = `arXiv:${arxivId}`;
+  const more = upstreamSources.filter((s) => s.url !== sourceUrl);
+  if (more.length) ref.sources = more;
   if (opts.derivedFrom) ref.derivedFrom = opts.derivedFrom;
   if (opts.heldAt) ref.heldAt = opts.heldAt;
   return ReferenceNodeSchema.parse(ref);

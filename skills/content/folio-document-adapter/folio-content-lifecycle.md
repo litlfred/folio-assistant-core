@@ -1,26 +1,26 @@
 ---
 name: folio-content-lifecycle
 description: >-
-  The content-folio half of the harness's content-lifecycle skills
-  (content-author, content-feedback, content-plan, content-publish,
-  content-review, content-test, content-validate, evidence-appraisal): binds
+  The content-folio half of the content-lifecycle skills (the harness's
+  content-feedback, content-review, content-test, content-validate and
+  evidence-appraisal; this layer's content-plan, content-author,
+  content-publish and content-retire): binds
   core lifecycle diagrams, quality-control and review-comments gates, and
   empirical vs. formal evidence rules.
 ---
 
 # Folio content lifecycle and evidence appraisal
 
-The harness package `skills/authoring/content-lifecycle/`
-([`content-plan`](../../../../cat-harness/skills/authoring/content-lifecycle/content-plan.md),
-[`content-author`](../../../../cat-harness/skills/authoring/content-lifecycle/content-author.md),
-[`content-validate`](../../../../cat-harness/skills/authoring/content-lifecycle/content-validate.md),
+The lifecycle stages are split across two layers. The harness's generic
+methods are [`content-validate`](../../../../cat-harness/skills/authoring/content-lifecycle/content-validate.md),
 [`content-review`](../../../../cat-harness/skills/authoring/content-lifecycle/content-review.md),
 [`content-test`](../../../../cat-harness/skills/authoring/content-lifecycle/content-test.md),
-[`content-publish`](../../../../cat-harness/skills/authoring/content-lifecycle/content-publish.md),
-[`content-feedback`](../../../../cat-harness/skills/authoring/content-lifecycle/content-feedback.md),
-[`content-retire`](../../../../cat-harness/skills/authoring/content-lifecycle/content-retire.md),
-and [`evidence-appraisal`](../../../../cat-harness/skills/authoring/content-lifecycle/evidence-appraisal.md))
-defines the generic lifecycle stages. In a content folio, apply these
+[`content-feedback`](../../../../cat-harness/skills/authoring/content-lifecycle/content-feedback.md) and
+[`evidence-appraisal`](../../../../cat-harness/skills/authoring/content-lifecycle/evidence-appraisal.md). This layer's
+operational stages are [`content-plan`](../content-lifecycle-ext/content-plan.md),
+[`content-author`](../content-lifecycle-ext/content-author.md),
+[`content-publish`](../content-lifecycle-ext/content-publish.md) and
+[`content-retire`](../content-lifecycle-ext/content-retire.md). In a content folio, apply these
 core-layer bindings and refinements alongside them.
 
 Processes:

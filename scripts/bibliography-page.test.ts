@@ -14,11 +14,12 @@ import { ReferenceNodeSchema } from "../schemas/reference.ts";
 import {
   EXPORTS,
   addReferenceHtml,
-  anchorOf,
+  segmentOf,
   buildStandaloneReference,
   byCitation,
   citationHtml,
   collect,
+  detailHtml,
   entryHtml,
   linksHtml,
   newReferenceUrl,
@@ -145,7 +146,8 @@ describe("pages and exports", () => {
     ]);
     // …and the route's self-ignoring marker (bean folio-assistant-uldr): the
     // route is built at publish, so git and the mount digest leave it alone.
-    expect(files.size).toBe(3 * (1 + EXPORTS.length) + 1);
+    // …and one own page per reference, `<sub-graph>/<key>/index.md` (owner, 2026-11-08).
+    expect(files.size).toBe(3 * (1 + EXPORTS.length) + 1 + c.entries.length);
     expect([...files.keys()].filter((p) => p.endsWith("/.gitignore"))).toHaveLength(1);
   });
 
@@ -184,7 +186,7 @@ describe("pages and exports", () => {
 
   test("subgraphPageOwnRefsOnly", () => {
     const [page, bib] = ["index.md", "references.bib"].map((f) => [...files].find(([p]) => p.endsWith(`iris-x-catalogue/${f}`))![1]);
-    expect(page).toContain('id="ref-who-handbook"');
+    expect(page).toContain('data-fa-bib-key="who-handbook" data-fa-bib-href="who-handbook/"');
     expect(page).not.toContain("garoufalidis2004");
     expect(bib).toContain("@book{who-handbook,");
     expect(bib).not.toContain("garoufalidis2004");
@@ -214,11 +216,18 @@ describe("rendering", () => {
     );
   });
 
+  test("untitledShowsPrintedText", () => {
+    const r = { $schema: "folio-reference/v1" as const, id: "x.r10", type: "document", issued: { "date-parts": [[2025]] }, note: "Gemini Team: Gemini 2.5 <b>. arXiv preprint (2025)" };
+    expect(citationHtml(r)).toBe('<span class="as-printed">Gemini Team: Gemini 2.5 &lt;b&gt;. arXiv preprint (2025)</span>');
+    expect(citationHtml({ ...r, printed: "As printed." })).toContain("As printed.");
+    expect(citationHtml({ ...r, note: undefined })).toBe("(2025).");
+  });
+
   test("htmlEscaped", () => {
     expect(citationHtml({ ...g.ref, title: "<script>x</script>" })).toContain("&lt;script&gt;");
   });
 
-  test("anchorsUrlSafe", () => expect(anchorOf("a:b/c")).toBe("ref-a-b-c"));
+  test("segmentsUrlSafe", () => expect(segmentOf("a:b/c+d.e")).toBe("a-b-c-d.e"));
 
   test("emptyPageSaysSo", () => {
     const p = renderPage({ title: "Bibliography: x", permalink: "/x/", intro: "x", entries: [] });
@@ -325,9 +334,9 @@ describe("a site with its own instance (declared at the checkout root) and depen
 
   test("ownFirstDepsInClosedSection", () => {
     const root = page("bibliography/index.md");
-    const own = root.indexOf('id="ref-zeta2020"');
+    const own = root.indexOf('data-fa-bib-key="zeta2020" data-fa-bib-href="references/zeta2020/"');
     const deps = root.indexOf('<details class="fa-bib-deps"');
-    const dep = root.indexOf('id="ref-alpha2019"');
+    const dep = root.indexOf('data-fa-bib-key="alpha2019" data-fa-bib-href="dep-x-references/alpha2019/"');
     expect(own).toBeGreaterThan(-1);
     expect(deps).toBeGreaterThan(own);
     expect(dep).toBeGreaterThan(deps);
@@ -339,10 +348,10 @@ describe("a site with its own instance (declared at the checkout root) and depen
   });
 
   test("layerSubgraphPageOwnOnly", () => {
-    expect(page("bibliography/references/index.md")).toContain('id="ref-zeta2020"');
-    expect(page("bibliography/references/index.md")).not.toContain('id="ref-alpha2019"');
+    expect(page("bibliography/references/index.md")).toContain('data-fa-bib-key="zeta2020"');
+    expect(page("bibliography/references/index.md")).not.toContain('data-fa-bib-key="alpha2019"');
     const dep = page("bibliography/dep-x-references/index.md");
-    expect(dep).toContain('id="ref-alpha2019"');
+    expect(dep).toContain('data-fa-bib-key="alpha2019"');
     expect(dep).toContain("a dependency of site-x");
   });
 
@@ -353,24 +362,69 @@ describe("a site with its own instance (declared at the checkout root) and depen
   });
 });
 
-describe("one page, one id per entry (bean djj5)", () => {
+describe("one page per entry, a slash address and no anchor (owner, 2026-11-08)", () => {
   // Two IGs' catalogues can each hold the same work under the same key
-  // (who-guideline-handbook in smart-trust-phw and smart-immunizations), and
-  // the combined page listed both as id="ref-<key>" (check:duplicate-ids).
+  // (who-guideline-handbook in smart-trust-phw and smart-immunizations, bean
+  // djj5): each has its own page under its own sub-graph.
   const ref = ReferenceNodeSchema.parse({ $schema: "folio-reference/v1", id: "who-guideline-handbook", type: "book", title: "WHO handbook for guideline development" });
-  const a = { ref, instance: "smart-trust-phw", subgraph: "smart-trust-phw-catalogue", file: "a" };
-  const b = { ref, instance: "smart-immunizations", subgraph: "smart-immunizations-catalogue", file: "b" };
-  const ids = (html: string) => [...html.matchAll(/<li id="([^"]+)"/g)].map((m) => m[1]);
+  const a = { ref, instance: "smart-trust-phw", subgraph: "catalogue", file: "a" };
+  const b = { ref, instance: "smart-immunizations", subgraph: "catalogue", file: "b" };
+  const c = {
+    entries: [a, b],
+    subgraphs: [
+      { id: "catalogue", instance: "smart-trust-phw", kind: "catalogue" as const, path: "p/catalogue", slug: "smart-trust-phw-catalogue" },
+      { id: "catalogue", instance: "smart-immunizations", kind: "catalogue" as const, path: "i/catalogue", slug: "smart-immunizations-catalogue" },
+    ],
+    assets: [],
+    invalid: [],
+  };
+  const files = outputs(c);
+  const find = (suffix: string) => [...files].find(([p]) => p.endsWith(suffix))?.[1];
 
-  test("firstKeepsRefKey", () => {
-    const page = renderPage({ title: "Bibliography", permalink: "/b/", intro: "x", entries: [a, b] });
-    expect(ids(page)).toEqual(["ref-who-guideline-handbook", "ref-smart-immunizations-who-guideline-handbook"]);
+  test("noAnchorIds", () => {
+    const index = find("bibliography/index.md")!;
+    expect(index).not.toMatch(/<li id=/);
+    expect(index).not.toContain("#ref-");
+    expect(index).toContain('data-fa-bib-href="smart-trust-phw-catalogue/who-guideline-handbook/"');
+    expect(index).toContain('data-fa-bib-href="smart-immunizations-catalogue/who-guideline-handbook/"');
   });
 
-  test("ownEntryKeepsRefKey", () => {
-    const page = renderPage({ title: "Bibliography", permalink: "/b/", intro: "x", entries: [a, b], own: "smart-immunizations" });
-    expect(ids(page)).toEqual(["ref-who-guideline-handbook", "ref-smart-trust-phw-who-guideline-handbook"]);
-    expect(new Set(ids(page)).size).toBe(2);
+  test("entryPageHoldsDetail", () => {
+    const page = find("smart-trust-phw-catalogue/who-guideline-handbook/index.md")!;
+    expect(page).toContain('title: "WHO handbook for guideline development"');
+    expect(page).toContain('<section class="fa-bib-detail" data-fa-bib-key="who-guideline-handbook">');
+    expect(page).toContain("<h3>Sources</h3>");
+    expect(page).toContain("No link to the work is recorded");
+    expect(page).toContain('<a href="../">All references of smart-trust-phw-catalogue</a>');
+  });
+
+  test("subgraphPageLinksBesideIt", () => {
+    expect(find("smart-immunizations-catalogue/index.md")).toContain('data-fa-bib-href="who-guideline-handbook/"');
+  });
+
+  test("detailListsEverySource", () => {
+    const r = ReferenceNodeSchema.parse({
+      $schema: "folio-reference/v1",
+      id: "dspace",
+      type: "document",
+      title: "DSpace 7 REST Contract",
+      URL: "https://github.com/DSpace/RestContract/tree/dspace-7_x",
+      DOI: "10.1/x",
+      sources: [
+        { url: "https://github.com/DSpace/RestContract/tree/1c16b57", label: "copy held", kind: "pinned" },
+        { url: "https://github.com/DSpace/RestContract/tree/dspace-7_x/", kind: "repository" },
+      ],
+    });
+    const html = detailHtml({ ref: r, instance: "core", subgraph: "library", file: "f" });
+    expect(html).toContain('href="https://github.com/DSpace/RestContract/tree/dspace-7_x"');
+    expect(html).toContain('href="https://doi.org/10.1/x"');
+    expect(html).toContain(">copy held</a> <small>(pinned)</small>");
+    // The trailing-slash twin of URL is the same place: listed once.
+    expect(html.match(/href="https:\/\/github.com\/DSpace\/RestContract\/tree\/dspace-7_x/g)).toHaveLength(1);
+  });
+
+  test("panelScriptOnEveryList", () => {
+    expect(find("bibliography/index.md")).toContain("fa-bib-panel");
   });
 });
 

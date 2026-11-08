@@ -92,7 +92,7 @@ const ASSETS_DIR = "assets";
 import { liveFigures, withLiveFigures } from "./live-figures.js";
 import { linkTerms, termLinks as glossaryTermLinks, type TermLink } from "./glossary-term-links.ts";
 import { externalGlossaries, firstGlossaryLabel, withExternalGlossaries } from "./external-glossaries.ts";
-import { referenceAnchor } from "../schemas/reference.ts";
+import { referenceSegment } from "../schemas/reference.ts";
 import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
@@ -599,10 +599,11 @@ export function citationsToHtml(markdown: string, opts: { bibliographyUrl?: stri
     // `\cite[p.~3]{k}`: the optional note is shown after the keys, `~` as a space.
     return text.replace(/\\cite[pt]?(?:\[([^\]]*)\])?\{([^}]+)\}/g, (_m, note: string | undefined, keys: string) => {
       const list = keys.split(",").map((k) => k.trim()).filter(Boolean);
-      // With a bibliography to point at, each key links to its entry there
-      // (bean 63q4): `<url>#ref-<key>`, the anchor the bibliography page draws.
-      const shown = opts.bibliographyUrl
-        ? list.map((k) => `<a href="${esc(opts.bibliographyUrl!)}#${esc(referenceAnchor(k))}">${esc(k)}</a>`).join(", ")
+      // With a bibliography to point at, each key links to its entry's own
+      // page there (bean 63q4): `<url>/<key>/`, a slash address, no `#`.
+      const base = opts.bibliographyUrl?.replace(/\/*$/, "/");
+      const shown = base
+        ? list.map((k) => `<a href="${esc(base)}${esc(referenceSegment(k))}/">${esc(k)}</a>`).join(", ")
         : esc(list.join(", "));
       const after = note?.trim() ? `, ${esc(note.trim().replace(/~/g, " "))}` : "";
       return `<span class="cite" data-keys="${esc(list.join(" "))}">[${shown}${after}]</span>`;
@@ -858,7 +859,7 @@ export async function buildDocumentSite(
      * lazy document stays standalone.
      */
     documentLayout?: string;
-    /** The published bibliography page each `\cite` key links into (`<url>#ref-<key>`). Absent: citations are not links. */
+    /** The published bibliography sub-graph page whose entries each `\cite` key links (`<url>/<key>/`). Absent: citations are not links. */
     bibliographyUrl?: string;
     /** Link each Capitalized glossary term in prose to its glossary entry (`glossary-term-links.ts`). */
     linkTerms?: boolean;

@@ -25,7 +25,7 @@ and the gates that judge content stay here.
 
 <!-- skills:index:begin -->
 
-_48 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
+_52 skills in 8 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
 
 **`skills/`** (1)
 
@@ -33,11 +33,15 @@ _48 skills in 8 directories, generated from each skill's front matter. `bun run 
 |---|---|
 | [`deep-document-research`](skills/deep-document-research.md) | Answer a question from a corpus this folio already holds, iteratively, and stop on a stated condition. |
 
-**`skills/content/content-lifecycle-ext/`** (5)
+**`skills/content/content-lifecycle-ext/`** (9)
 
 | Skill | What it is for |
 |---|---|
 | [`block-change-summary`](skills/content/content-lifecycle-ext/block-change-summary.md) | Post-delivery content block change summary for a folio edit-set: extract changed block labels across `.md`, `.ts` and content-type sibling files, present a per-chapter table with `.md`-first GitHub… |
+| [`content-author`](skills/content/content-lifecycle-ext/content-author.md) | Content Authoring |
+| [`content-plan`](skills/content/content-lifecycle-ext/content-plan.md) | Content Planning |
+| [`content-publish`](skills/content/content-lifecycle-ext/content-publish.md) | Content Publication |
+| [`content-retire`](skills/content/content-lifecycle-ext/content-retire.md) | Content Retirement |
 | [`corpus-commit-contract`](skills/content/content-lifecycle-ext/corpus-commit-contract.md) | The contract the `corpus` role is held to when an accepted edit is committed into it: take the write only on the editor's acceptance, as one change with its QA sidecars, under the commit-hygiene… |
 | [`quality-control`](skills/content/content-lifecycle-ext/quality-control.md) | Apply the publication quality gates to an aggregate of QA output, and decide whether it clears. |
 | [`registry-authority-contract`](skills/content/content-lifecycle-ext/registry-authority-contract.md) | The contract the `external-registry` role is held to when a candidate source is checked against the body that publishes it: resolve the identifier through its own API and return the record, so… |
@@ -57,7 +61,7 @@ _48 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`dsa-odrl-source`](skills/content/folio-document-adapter/dsa-odrl-source.md) | Bind a computable Data Sharing Agreement's W3C ODRL 2.2 `Agreement` to its signed legal text distribution using DCMI Metadata Terms `dcterms:source`, naming the exact `dcat:Distribution` whose… |
 | [`folio-board-diagram-interchange`](skills/content/folio-document-adapter/folio-board-diagram-interchange.md) | The content-folio half of the harness's board-diagram-interchange skill: binds processes/ui/board-place-note.bpmn and board-relocate.bpmn, folio board filters over pages and block kinds, and… |
 | [`folio-board-windows`](skills/content/folio-document-adapter/folio-board-windows.md) | The content-folio half of the harness's board-windows skill: binds processes/ui/board-open-close.bpmn, folio-glass pinning (todo/<id> and landing/<slot>), and content-type card chrome ([x],… |
-| [`folio-content-lifecycle`](skills/content/folio-document-adapter/folio-content-lifecycle.md) | The content-folio half of the harness's content-lifecycle skills (content-author, content-feedback, content-plan, content-publish, content-review, content-test, content-validate,… |
+| [`folio-content-lifecycle`](skills/content/folio-document-adapter/folio-content-lifecycle.md) | The content-folio half of the content-lifecycle skills (the harness's content-feedback, content-review, content-test, content-validate and evidence-appraisal; this layer's content-plan,… |
 | [`folio-content-profiles`](skills/content/folio-document-adapter/folio-content-profiles.md) | The content-folio half of the harness's content-profiles skill: how a document folio is structured prose and how a paper folio extends it, block-kind discovery across block-kinds/ graphs,… |
 | [`folio-editorial-workflow`](skills/content/folio-document-adapter/folio-editorial-workflow.md) | The content-folio half of the harness's editor, content-graph, md-authoring, canonical-watcher, and uses-editorial-review skills: routes glossary and notation work to ontologist and glossary-build,… |
 | [`folio-getting-started`](skills/content/folio-document-adapter/folio-getting-started.md) | The content-folio half of the harness's getting-started skill: binds processes/conduct/getting-started.bpmn and decisions/folio-intent.dmn, interprets describeRepository() content-type markers… |
@@ -106,7 +110,7 @@ _48 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`figure-rebuild`](skills/library/ingestion/figure-rebuild.md) | Turn a source publication's figures into computable diagrams when a folio is built from its L1 entry. |
 | [`l1-coverage`](skills/library/ingestion/l1-coverage.md) | Check that an L1 extraction accounted for every normative sentence in its source publication — captured as a node, or excluded for a fixed-list reason a person signed off. |
 | [`l1-document-ingestion`](skills/library/ingestion/l1-document-ingestion.md) | The detailed method for turning a DOCUMENT in `uploads/` into a complete L1 entry in `library/<bib-slug>/` — which rung reads it and why, what a complete L1 entry holds, why an inferred structure is… |
-| [`publish-extracted-statements`](skills/library/ingestion/publish-extracted-statements.md) | The standard step of adding source documents to a folio's working artifact: every statement extracted from a library source is published readably in the artifact's own pages AND in the shared extraction viewer, each with a link to its library entry and to the section it came from, and CI fails… |
+| [`publish-extracted-statements`](skills/library/ingestion/publish-extracted-statements.md) | The standard step of adding source documents to a folio's working artifact: every statement extracted from a library source is published readably in the artifact's own pages AND in the shared… |
 | [`tabular-metadata`](skills/library/ingestion/tabular-metadata.md) | Extract tabular metadata from a CSV or spreadsheet as CSVW — tables, rows, headers, columns, datatypes and location on sheet — recording every field as determined or explicitly undetermined. |
 
 **`skills/review/`** (1)

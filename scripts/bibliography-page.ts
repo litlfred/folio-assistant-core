@@ -79,8 +79,9 @@ import {
   nameText,
   newReferenceUrl,
   parseBibtexOrCsl,
-  referenceAnchor,
   referenceIri,
+  referenceSegment,
+  sourcesOf,
   toBibtex,
   toCslJson,
   toDublinCoreXml,
@@ -378,11 +379,18 @@ const esc = (s: string) =>
     .replace(/>/g, "&gt;")
     .replace(/"/g, "&quot;");
 
-/** The anchor of one reference on its page (`referenceAnchor`, shared with the links to it). */
-export const anchorOf = referenceAnchor;
+/** The path segment of one reference's own page (`referenceSegment`, shared with the links to it). */
+export const segmentOf = referenceSegment;
 
 /** One reference as a readable citation: authors (year). Title. Container, vol(issue), pages. Publisher. */
 export function citationHtml(r: ReferenceNode): string {
+  // An entry with no title, which an extracted reference often is (its parser
+  // sets a field only when the style says which it is), keeps the citation as
+  // the source printed it: say that text rather than a bare "(2025).".
+  if (!r.title) {
+    const asPrinted = r.printed ?? (typeof r.note === "string" ? r.note : undefined);
+    if (asPrinted?.trim()) return `<span class="as-printed">${esc(asPrinted.trim())}</span>`;
+  }
   const parts: string[] = [];
   const authors = (r.author ?? []).map(nameText);
   if (authors.length) parts.push(esc(authors.length > 3 ? `${authors.slice(0, 3).join("; ")}; et al.` : authors.join("; ")));
@@ -403,52 +411,135 @@ export function citationHtml(r: ReferenceNode): string {
 /** The links an entry carries: DOI, URL (checked via `safeHref`), its source, the library copy. */
 export function linksHtml(e: Entry): string {
   const r = e.ref;
-  const l: string[] = [];
-  if (r.DOI) {
-    const doiHref = safeHref(`https://doi.org/${r.DOI}`);
-    if (doiHref) l.push(`<a href="${esc(doiHref)}">doi:${esc(r.DOI)}</a>`);
-    else l.push(`doi:${esc(r.DOI)}`);
-  }
-  if (r.URL && !(r.DOI && r.URL.includes(r.DOI))) {
-    const urlHref = safeHref(r.URL);
-    if (urlHref) l.push(`<a href="${esc(urlHref)}">link</a>`);
-    else l.push(`<code>${esc(r.URL)}</code>`);
-  }
+  const l: string[] = sourcesOf(r).map((src) => sourceLinkHtml(src, src.kind === "canonical" ? "link" : undefined));
   if (r.ISBN) l.push(`ISBN ${esc(r.ISBN)}`);
   l.push(`source: <code>${esc(e.file)}</code>`);
   if (r.heldAt) l.push(`held: <code>${esc(r.heldAt)}</code>`);
   return l.join(" · ");
 }
 
-/** One entry: the citation, its key and provenance, its links, and its own export. */
-/**
- * The anchors of one page, handed out in the order its entries are shown. The
- * first entry for a key gets `ref-<key>`, which is what an in-text citation
- * links; a later entry for the same key on the same page (the same work in two
- * layers' catalogues, bean djj5) gets `ref-<instance>-<key>`, so no id
- * repeats (`check:duplicate-ids`).
- */
-export function pageAnchors(): (e: Entry) => string {
-  const used = new Set<string>();
-  return (e) => {
-    let id = anchorOf(e.ref.id);
-    if (used.has(id)) id = anchorOf(`${e.instance}-${e.ref.id}`);
-    for (let n = 2; used.has(id); n++) id = anchorOf(`${e.instance}-${e.ref.id}-${n}`);
-    used.add(id);
-    return id;
-  };
+/** One source as a link, or as code when its address is no safe link. */
+function sourceLinkHtml(src: { url: string; label?: string; kind?: string }, text?: string): string {
+  const href = safeHref(src.url);
+  const shown = esc(text ?? src.label ?? src.url.replace(/^https?:\/\//, ""));
+  return href ? `<a href="${esc(href)}" rel="noopener">${shown}</a>` : `<code>${esc(src.url)}</code>`;
 }
 
-export function entryHtml(e: Entry, anchor: (e: Entry) => string = (x) => anchorOf(x.ref.id)): string {
-  const r = e.ref;
-  const id = anchor(e);
+/** The href, from the page being written, of an entry's own page. */
+export type HrefOf = (e: Entry) => string;
+
+/** One reference's own export, as download links carrying the text. */
+function exportLinksHtml(r: ReferenceNode): string {
   const dl = (fmt: string, text: string, mime: string, ext: string) =>
     `<a download="${esc(r.id)}.${ext}" href="data:${mime};charset=utf-8,${encodeURIComponent(text)}">${fmt}</a>`;
-  return `<li id="${id}" data-fa-bib="${esc([r.id, r.title ?? "", ...(r.author ?? []).map(nameText), yearOf(r) ?? ""].join(" "))}">
+  return `${dl("BibTeX", toBibtex([r]), "application/x-bibtex", "bib")} · ${dl("RIS", toRis([r]), "application/x-research-info-systems", "ris")} · ${dl("CSL-JSON", toCslJson([r]), "application/vnd.citationstyles.csl+json", "csl.json")} · ${dl("DC XML", toDublinCoreXml([r]), "application/xml", "dc.xml")}`;
+}
+
+/**
+ * One entry of a list: the citation, its key (a link to the entry's own page,
+ * which the side panel loads), its provenance and links, and its own export.
+ * No `id`: an entry is addressed by its page, never by an anchor (owner,
+ * 2026-11-08, "clean break old IRIs").
+ */
+export function entryHtml(e: Entry, hrefOf: HrefOf = (x) => `${referenceSegment(x.ref.id)}/`): string {
+  const r = e.ref;
+  const href = esc(hrefOf(e));
+  return `<li data-fa-bib-key="${esc(r.id)}" data-fa-bib-href="${href}" data-fa-bib="${esc([r.id, r.title ?? "", ...(r.author ?? []).map(nameText), yearOf(r) ?? ""].join(" "))}">
   ${citationHtml(r)}<br>
-  <small><a href="#${id}"><code>${esc(r.id)}</code></a> · ${esc(r.provenance ?? "authored")} · ${linksHtml(e)}<br>
-  export: ${dl("BibTeX", toBibtex([r]), "application/x-bibtex", "bib")} · ${dl("RIS", toRis([r]), "application/x-research-info-systems", "ris")} · ${dl("CSL-JSON", toCslJson([r]), "application/vnd.citationstyles.csl+json", "csl.json")} · ${dl("DC XML", toDublinCoreXml([r]), "application/xml", "dc.xml")}</small>
+  <small><a class="fa-bib-open" href="${href}"><code>${esc(r.id)}</code></a> · ${esc(r.provenance ?? "authored")} · ${linksHtml(e)}<br>
+  export: ${exportLinksHtml(r)}</small>
 </li>`;
+}
+
+const nameList = (ns: ReferenceNode["author"]) => (ns ?? []).map(nameText).join("; ");
+const dateText = (d: unknown): string | undefined => {
+  const v = d as { "date-parts"?: unknown[][]; raw?: string; literal?: string } | undefined;
+  if (!v) return undefined;
+  if (Array.isArray(v["date-parts"]) && Array.isArray(v["date-parts"][0])) return v["date-parts"][0].join("-");
+  return v.raw ?? v.literal;
+};
+
+/**
+ * Everything one reference holds, as its own page shows it and the side
+ * panel loads it (`.fa-bib-detail`): the citation, every bibliographic field,
+ * every place the work can be read, where it sits in the KG, and its export.
+ */
+export function detailHtml(e: Entry, opts: { listHref?: string; listLabel?: string } = {}): string {
+  const r = e.ref as ReferenceNode & Record<string, unknown>;
+  const str = (k: string) => (typeof r[k] === "string" || typeof r[k] === "number" ? String(r[k]) : undefined);
+  const rows: [string, string | undefined][] = [
+    ["Title", r.title],
+    ["Authors", nameList(r.author) || undefined],
+    ["Editors", nameList(r.editor) || undefined],
+    ["Issued", dateText(r.issued)],
+    ["Type", r.type],
+    ["In", r["container-title"]],
+    ["Volume", str("volume")],
+    ["Issue", str("issue")],
+    ["Pages", r.page],
+    ["Publisher", r.publisher],
+    ["Place", str("publisher-place")],
+    ["Version", str("version")],
+    ["ISBN", r.ISBN],
+    ["DOI", r.DOI],
+    ["Language", r.language],
+    ["Accessed", dateText(r.accessed)],
+    ["As printed", r.printed],
+    ["Note", str("note")],
+    ["Abstract", r.abstract],
+  ];
+  const fields = rows
+    .filter((x): x is [string, string] => typeof x[1] === "string" && x[1].trim() !== "")
+    .map(([k, v]) => `<dt>${k}</dt><dd>${esc(v)}</dd>`)
+    .join("\n");
+  const sources = sourcesOf(r);
+  const sourceList = sources.length
+    ? `<ul class="fa-bib-sources">\n${sources.map((src) => `<li>${sourceLinkHtml(src)}${src.kind ? ` <small>(${esc(src.kind)})</small>` : ""}</li>`).join("\n")}\n</ul>`
+    : "<p>No link to the work is recorded for this reference.</p>";
+  const kg = [
+    `IRI <code>${esc(referenceIri(r.id))}</code>`,
+    `provenance: ${esc(r.provenance ?? "authored")}`,
+    `read from <code>${esc(e.file)}</code> (${esc(e.instance)}, sub-graph ${esc(e.subgraph)})`,
+    r.derivedFrom && r.derivedFrom !== e.file ? `derived from <code>${esc(r.derivedFrom)}</code>` : "",
+    r.heldAt ? `library copy: <code>${esc(r.heldAt)}</code>` : "",
+  ].filter(Boolean);
+  return `<section class="fa-bib-detail" data-fa-bib-key="${esc(r.id)}">
+<p class="fa-bib-cite">${citationHtml(r)}</p>
+<dl class="fa-bib-fields">
+${fields}
+</dl>
+<h3>Sources</h3>
+${sourceList}
+<h3>In the knowledge graph</h3>
+<ul>
+${kg.map((x) => `<li>${x}</li>`).join("\n")}
+</ul>
+<p><strong>Export:</strong> ${exportLinksHtml(r)}</p>
+${opts.listHref ? `<p><a href="${esc(opts.listHref)}">${esc(opts.listLabel ?? "All references")}</a></p>` : ""}
+</section>`;
+}
+
+/** A plain-text title for a reference's own page. */
+export function entryTitle(r: ReferenceNode): string {
+  const t = r.title ?? r.printed ?? (typeof r.note === "string" ? r.note : undefined) ?? r.id;
+  const one = t.replace(/\s+/g, " ").trim();
+  return one.length > 120 ? `${one.slice(0, 117)}…` : one;
+}
+
+/** A reference's own page: `<route>/<sub-graph>/<key>/`. */
+export function renderEntryPage(opts: { permalink: string; entry: Entry; listHref: string; listLabel: string }): string {
+  const title = entryTitle(opts.entry.ref);
+  return `---
+title: "${title.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"
+permalink: ${opts.permalink}
+${GENERATED_FM}
+---
+${GENERATED}
+
+# ${esc(title)}
+
+${detailHtml(opts.entry, { listHref: opts.listHref, listLabel: opts.listLabel })}
+`;
 }
 
 /**
@@ -517,8 +608,6 @@ function run(){var v=q.value.trim().toLowerCase(),k=0;
 document.querySelectorAll("li[data-fa-bib]").forEach(function(li){var ok=!v||(li.textContent+" "+li.getAttribute("data-fa-bib")).toLowerCase().indexOf(v)>=0;li.hidden=!ok;if(ok)k++;});n.textContent=k;}
 q.addEventListener("input",run);}
 document.querySelectorAll("details.fa-bib-deps").forEach(function(d){if(q)q.addEventListener("input",function(){if(q.value.trim())d.open=true;});});
-function openFor(){var h=location.hash&&document.getElementById(decodeURIComponent(location.hash.slice(1)));var d=h&&h.closest&&h.closest("details.fa-bib-deps");if(d&&!d.open){d.open=true;h.scrollIntoView();}}
-openFor();window.addEventListener("hashchange",openFor);
 var ALLOWED_URL_SCHEMES=["http:","https:","mailto:","tel:"];
 function safeHref(u){if(!u)return undefined;var s=String(u).replace(/[\\u0009\\u000A\\u000D]/g,"").trim();if(!s||s.indexOf("//")===0)return undefined;if(/^[#?./]/.test(s)||!/^[a-zA-Z][a-zA-Z0-9+.-]*:/.test(s))return s;var sc=s.slice(0,s.indexOf(":")+1).toLowerCase();return ALLOWED_URL_SCHEMES.indexOf(sc)>=0?s:undefined;}
 var form=document.getElementById("fa-bib-add-form");if(!form)return;
@@ -548,6 +637,35 @@ form.addEventListener("submit",function(ev){ev.preventDefault();var b=build();va
 build();})();
 </script>`;
 
+/**
+ * The detail panel: a click on an entry (or its key) loads the entry's own
+ * page and shows its \`.fa-bib-detail\` in the right-side panel, the same
+ * \`.fa-block-panel\` the section actions open (feedback, QA, TR). A modified
+ * click, or a page the fetch cannot read, goes to the entry's page instead.
+ */
+const PANEL_STYLE = `<style>
+.fa-bib-panel{position:fixed;top:0;right:0;bottom:0;z-index:2147482000;width:min(420px,92vw);overflow-y:auto;box-sizing:border-box;padding:14px 18px;background:var(--body-background-color,Canvas);color:var(--body-text-color,CanvasText);box-shadow:-4px 0 16px #0003;transform:translateX(105%);transition:transform .18s ease}
+.fa-bib-panel.open{transform:none}
+@media (prefers-reduced-motion:reduce){.fa-bib-panel{transition:none}}
+.fa-bib-panel .bp-x{position:absolute;top:10px;right:12px;border:0;background:none;color:inherit;font-size:18px;cursor:pointer;opacity:.7;min-width:44px;min-height:44px}
+.fa-bib-panel h3{font-size:1rem}
+.fa-bib-fields{display:grid;grid-template-columns:max-content 1fr;gap:.2rem .8rem;margin:.6rem 0}
+.fa-bib-fields dt{font-weight:600}.fa-bib-fields dd{margin:0;overflow-wrap:anywhere}
+li[data-fa-bib-href]{cursor:pointer}
+</style>`;
+
+const PANEL_SCRIPT = `<script>
+(function(){var panel,from;
+function close(){if(panel)panel.classList.remove("open");if(from&&from.focus)from.focus();from=null;}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x)e.textContent=x;return e;}
+function ensure(){if(panel)return panel;panel=el("aside","fa-block-panel fa-bib-panel");panel.tabIndex=-1;panel.setAttribute("aria-label","Reference details");document.body.appendChild(panel);document.addEventListener("keydown",function(e){if(e.key==="Escape")close();});return panel;}
+function show(href,origin){if(window.faBlockPanel&&window.faBlockPanel.close)window.faBlockPanel.close();from=origin;var p=ensure();var x=el("button","bp-x","\u2715");x.type="button";x.title="Close (Esc)";x.onclick=close;
+var page=el("a","",  "Open its own page");page.href=href;var body=el("div","bp-body","Loading\u2026");p.replaceChildren(x,el("h3","","Reference"),page,body);p.classList.add("open");p.focus();
+fetch(href).then(function(r){if(!r.ok)throw r.status;return r.text();}).then(function(t){var d=new DOMParser().parseFromString(t,"text/html");var sec=d.querySelector(".fa-bib-detail");if(!sec)throw 0;body.replaceChildren(document.importNode(sec,true));}).catch(function(){location.href=href;});}
+document.addEventListener("click",function(e){if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;var t=e.target;if(!t.closest)return;var li=t.closest("li[data-fa-bib-href]");if(!li||(t.closest("a,button,input,summary,select,textarea")&&!t.closest("a.fa-bib-open")))return;e.preventDefault();show(li.getAttribute("data-fa-bib-href"),li.querySelector("a.fa-bib-open")||li);});
+})();
+</script>`;
+
 /** The export files beside a page, by name. */
 export const EXPORTS = [
   ["references.bib", "BibTeX", toBibtex],
@@ -565,7 +683,7 @@ const plural = (n: number, one: string) => `${n} ${one}${n === 1 ? "" : "s"}`;
  * the page opens on the site's own bibliography. The filter and a link to an
  * entry's anchor open the section.
  */
-export function ownAndDependenciesHtml(own: string, entries: Entry[], anchor: (e: Entry) => string = pageAnchors()): string {
+export function ownAndDependenciesHtml(own: string, entries: Entry[], anchor?: HrefOf): string {
   const mine = entries.filter((e) => e.instance === own);
   const layers = [...new Set(entries.filter((e) => e.instance !== own).map((e) => e.instance))].sort((a, b) => a.localeCompare(b, "en"));
   const ownList = mine.length ? `<ol class="fa-bib">\n${mine.map((e) => entryHtml(e, anchor)).join("\n")}\n</ol>` : `<p>${esc(own)} has no references of its own yet.</p>`;
@@ -575,7 +693,7 @@ export function ownAndDependenciesHtml(own: string, entries: Entry[], anchor: (e
 ${layers
   .map((l) => {
     const ls = entries.filter((e) => e.instance === l);
-    return `<h3 id="fa-bib-dep-${esc(anchorOf(l).replace(/^ref-/, ""))}">${esc(l)} <small>(dependency, ${plural(ls.length, "reference")})</small></h3>
+    return `<h3 id="fa-bib-dep-${esc(segmentOf(l))}">${esc(l)} <small>(dependency, ${plural(ls.length, "reference")})</small></h3>
 <ol class="fa-bib fa-bib-dep" data-fa-bib-layer="${esc(l)}">
 ${ls.map((e) => entryHtml(e, anchor)).join("\n")}
 </ol>`;
@@ -589,12 +707,24 @@ ${deps}`;
 }
 
 /** A page: front matter, what it holds, its exports, the `+ Add reference` panel, the filter and the list. */
-export function renderPage(opts: { title: string; permalink: string; intro: string; entries: Entry[]; nav?: string; targetDir?: string; own?: string }): string {
-  const { title, permalink, intro, entries, nav, targetDir, own } = opts;
+export function renderPage(opts: {
+  title: string;
+  permalink: string;
+  intro: string;
+  entries: Entry[];
+  nav?: string;
+  targetDir?: string;
+  own?: string;
+  /** Each entry's own page, from this page. Default: `<key>/` beside it. */
+  hrefOf?: HrefOf;
+  /** A reference this page is also the own page of (a library asset's): its detail, above the list. */
+  detail?: string;
+}): string {
+  const { title, permalink, intro, entries, nav, targetDir, own, detail } = opts;
   const exports = EXPORTS.map(([f, label]) => `<a href="${f}">${label}</a>`).join(" · ");
   const addPanel = addReferenceHtml({ targetDir });
   const grouped = own !== undefined && entries.some((e) => e.instance !== own);
-  const anchor = pageAnchors();
+  const anchor = opts.hrefOf;
   const list = entries.length
     ? `<label for="fa-bib-q">Filter references</label>
 <input id="fa-bib-q" type="search" autocomplete="off" style="min-height:44px;width:100%;max-width:32rem">
@@ -616,14 +746,16 @@ ${GENERATED}
 # ${title}
 
 ${intro}
-
+${detail ? `\n${detail}\n` : ""}
 ${exportLead} ${exports}
 ${nav ? `\n${nav}\n` : ""}
 ${addPanel}
 
 ${list}
 
+${PANEL_STYLE}
 ${FILTER_SCRIPT}
+${PANEL_SCRIPT}
 `;
 }
 
@@ -658,6 +790,26 @@ export function forInstance(c: Collected, instance: string, needsOf: (name: stri
  */
 export function outputs(c: Collected, prefix = ""): Map<string, string> {
   const out = new Map<string, string>();
+  // Each entry's own page, `<route>/<sub-graph slug>/<segment>/`: the slash
+  // address the list links and the side panel loads (owner, 2026-11-08).
+  const slugOfSub = new Map(c.subgraphs.map((s) => [`${s.instance}\0${s.id}`, s.slug]));
+  const place = new Map<Entry, { slug: string; seg: string }>();
+  const taken = new Set<string>();
+  for (const e of c.entries) {
+    const slug = slugOfSub.get(`${e.instance}\0${e.subgraph}`);
+    if (slug === undefined) continue;
+    const base = referenceSegment(e.ref.id) || "reference";
+    let seg = base;
+    for (let n = 2; taken.has(`${slug}/${seg}`); n++) seg = `${base}-${n}`;
+    taken.add(`${slug}/${seg}`);
+    place.set(e, { slug, seg });
+  }
+  /** Hrefs from a page `depth` directories below the route. */
+  const hrefsAt = (depth: number, here?: string): HrefOf => (e) => {
+    const at = place.get(e);
+    if (!at) return "";
+    return depth === 1 && at.slug === here ? `${at.seg}/` : `${"../".repeat(depth)}${at.slug}/${at.seg}/`;
+  };
   const write = (dir: string, page: string, entries: Entry[]) => {
     out.set(join(dir, "index.md"), page);
     const refs = entries.map((e) => e.ref);
@@ -692,6 +844,7 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
       nav,
       targetDir: defaultTargetDir,
       own,
+      hrefOf: hrefsAt(0),
     }),
     c.entries,
   );
@@ -710,11 +863,16 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
         entries,
         nav: assetNav,
         targetDir: s.kind === "references" ? s.path : defaultTargetDir,
+        hrefOf: hrefsAt(1, s.slug),
       }),
       entries,
     );
   }
+  const assetDirs = new Set((c.assets ?? []).map((a) => `${a.slug}/${a.asset}`));
   for (const a of c.assets ?? []) {
+    // A library asset's page is its own reference's page too: the asset's
+    // slug is its key, so both live at `<sub-graph>/<asset>/`.
+    const assetRef = a.entries.find((e) => place.get(e)?.slug === a.slug && place.get(e)?.seg === a.asset);
     write(
       join(ROOT, a.slug, a.asset),
       renderPage({
@@ -722,8 +880,17 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
         permalink: `${prefix}/${ROUTE}/${a.slug}/${a.asset}/`,
         intro: `The reference for \`${a.path}\` (${a.instance}${own !== undefined && a.instance !== own ? `, a dependency of ${own}` : ""}) and any references extracted from it. [${a.slug}](../) · [All references](../../).`,
         entries: a.entries,
+        hrefOf: hrefsAt(2),
+        ...(assetRef ? { detail: detailHtml(assetRef) } : {}),
       }),
       a.entries,
+    );
+  }
+  for (const [e, at] of place) {
+    if (assetDirs.has(`${at.slug}/${at.seg}`)) continue;
+    out.set(
+      join(ROOT, at.slug, at.seg, "index.md"),
+      renderEntryPage({ permalink: `${prefix}/${ROUTE}/${at.slug}/${at.seg}/`, entry: e, listHref: "../", listLabel: `All references of ${at.slug}` }),
     );
   }
   // The route marks itself as built at publish, as the glossary's do (bean

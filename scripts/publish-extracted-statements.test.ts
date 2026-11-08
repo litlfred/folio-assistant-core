@@ -155,7 +155,7 @@ describe("derived statements", () => {
       statements: [{ id: "S1", statement: "s", ...(derivedFrom ? { derivedFrom } : {}), source: { libraryId: "deck", page: 7 } }],
     });
 
-  it("get a Derived from column only when the list has one", () => {
+  it("derivedFromColumnOnlyWhenListHasOne", () => {
     expect(renderPage([{ list: list("R01"), resolved }], base)).toContain("| S1 | s |  |  | R01 | [deck]");
     expect(renderPage([{ list: list(), resolved }], base)).not.toContain("Derived from");
   });
