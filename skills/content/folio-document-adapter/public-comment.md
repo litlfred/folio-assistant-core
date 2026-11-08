@@ -307,6 +307,18 @@ connector. No credential for it is
 committed. Google cannot stop the owner's own account editing any tab, so the
 one-writer rule is kept by the agent, not enforced by the sheet.
 
+Two exceptions are the review log's own tools (skill
+[`review-sheet-script`](review-sheet-script.md)):
+- **Archiving the log.** Every night the log is copied to
+  `review/public-comment/logs/<log-id>.xlsx` beside its `review-log/1.0.0`
+  node. The workbook is overwritten, git keeps the history, and no contact
+  details are copied.
+- **Importing offline feedback.** An offline copy, or the feedback template
+  returned with the line-numbered PDF, is imported only after it is checked
+  against the template and a person picks the rows. Then only those rows'
+  human cells are written. The person's pick is the owner's instruction for
+  those cells. Imported comment and change-set numbers are hints, never keys.
+
 ### Editorial change-sets may be drafted without waiting
 
 A change-set is **editorial** when it changes only wording, numbering,
