@@ -127,14 +127,14 @@
           "id": "*",
           "path": "cat-harness-tools",
           "upstreamPath": ".",
-          "treeDigest": "e52c479eade48e3b75bcc419998b6da57662c9dfc3c9e954113fbaca771bfebd",
-          "files": 3529
+          "treeDigest": "a729988c957721e436c25a4d57a45e70b5eb4990c1527526978eb84dc3806e2d",
+          "files": 3635
         }
       ],
       "trust": {
         "basis": "consent",
         "by": "litlfred",
-        "on": "2026-11-07",
+        "on": "2026-11-08",
         "ref": "961b4d939d7d69874f44162d12407bd3f1d96c6b",
         "approver": "unverified"
       }
