@@ -84,3 +84,9 @@ Feature: Publishing extracted statements
     Given a page spec citing a missing section
     When it is published
     Then it exits 1 and writes no page
+
+  @test:scripts/publish-extracted-statements.test.ts::derived_statements::derivedFromColumnOnlyWhenListHasOne
+  Scenario: Derived statements get a Derived from column only when the list has one
+    Given a list with a derivedFrom statement and a list without one
+    When each page is rendered
+    Then the first shows the Derived from column and the second does not
