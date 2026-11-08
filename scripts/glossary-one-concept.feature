@@ -16,6 +16,6 @@ Feature: bootstrap's glossary describes bootstrap's vocabulary, not a copy of it
     Then each points at a vocabulary concept
 
   @test:scripts/glossary-one-concept.test.ts::bootstrap's_glossary_describes_bootstrap's_vocabulary,_not_a_copy_of_it::noVocabularyMintsOwn
-  Scenario: an instance with no declared vocabulary mints its own, as before
-    When the concepts of an instance with no declared vocabulary are read
+  Scenario: a layer with no declared vocabulary mints its own, as before
+    When the concepts of a layer with no declared vocabulary are read
     Then there are none

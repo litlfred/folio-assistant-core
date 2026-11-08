@@ -41,7 +41,7 @@ belongs in a folio as data.
 | [`schemas/materialization.ts`](schemas/materialization.ts) | are the bytes here, and who decided they were allowed to be? |
 
 They are one chain, read in that order. The third names one process wherever
-remote content is held locally: a catalogue instance holding a few items of a
+remote content is held locally: a catalogue layer holding a few items of a
 large collection, or `bootstrap` fetching a harness and landing it locally.
 
 Outside that chain:

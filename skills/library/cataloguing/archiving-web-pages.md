@@ -39,7 +39,7 @@ as [`filing-dublin-core`](filing-dublin-core.md) describes:
 - **what came with it** — the asset list
 - the **producer** — which tool, which version
 
-The `.extraction.json` sidecars in an instance's `uploads/` carry `container`,
+The `.extraction.json` sidecars in a layer's `uploads/` carry `container`,
 `method`, `capturedAt`, `producer`, `readAt` and `assets[]`. Read one before
 inventing a shape.
 

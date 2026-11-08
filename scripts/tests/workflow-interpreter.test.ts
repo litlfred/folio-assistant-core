@@ -4,7 +4,7 @@
  * (bean `ho66`). The interpreter is cat-harness code, and its tests over
  * synthetic diagrams and over every shipped diagram stay there; these pin
  * what `editing-hci-validation` and `content-lifecycle` declare, and those
- * diagrams are this instance's.
+ * diagrams are this layer's.
  *
  * The workflow diagrams are the normative picture of how a change reaches the
  * corpus. These tests are about the claim that reading them at runtime buys
@@ -26,7 +26,7 @@ import { complete, enabled, startInstance, WorkflowError } from "@litlfred/cat-h
 import { instanceId, loadInstance, saveInstance } from "@litlfred/cat-harness-tools/src/workflow/store.js";
 import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
 
-/** This instance's root; its diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
+/** This layer's root; its diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
 const CORE = resolve(import.meta.dir, "../..");
 
 const bpmn = (stem: string): string => workflowFile(CORE, `${stem}.bpmn`);

@@ -14,7 +14,7 @@ import { join, resolve } from "node:path";
 
 import { checkLocalPath } from "./lib/local-path.ts";
 
-/** The worked example: the one catalogue instance in this checkout, read as DATA (same as `source-liveness.test.ts`). */
+/** The worked example: the one catalogue layer in this checkout, read as DATA (same as `source-liveness.test.ts`). */
 const INSTANCE = resolve(import.meta.dir, "..", "..", "who-iris");
 
 describe("checkLocalPath", () => {
@@ -60,9 +60,9 @@ describe("checkLocalPath", () => {
   });
 
   test("resolvesAgainstInstance", () => {
-    // `yl5w`'s three claims name bytes that DO exist one instance over. A
+    // `yl5w`'s three claims name bytes that DO exist one layer over. A
     // resolver that searched the repository would call them present and make
-    // the schema's "instance-relative" contract unenforceable.
+    // the schema's "layer-relative" contract unenforceable.
     const d = mkdtempSync(join(tmpdir(), "lp-"));
     mkdirSync(join(d, "sibling", "uploads"), { recursive: true });
     writeFileSync(join(d, "sibling", "uploads", "a.pdf"), "%PDF-1.4\n");

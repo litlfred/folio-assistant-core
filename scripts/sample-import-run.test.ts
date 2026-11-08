@@ -35,7 +35,7 @@ afterAll(() => {
 function fixture(): string {
   const root = mkdtempSync(join(tmpdir(), "sample-import-"));
   made.push(root);
-  // The trashcan is DECLARED, as the real root instance declares it: the
+  // The trashcan is DECLARED, as the real root layer declares it: the
   // writer resolves it and refuses to invent one (bean 9c7h). A path OTHER
   // than `fsh-guts/`, so a writer that spells the conventional path fails.
   writeDeclaration(root, JSON.stringify({

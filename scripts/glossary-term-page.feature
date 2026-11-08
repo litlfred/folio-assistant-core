@@ -1,9 +1,9 @@
 Feature: a page for each glossary term
 
   @test:scripts/glossary-term-page.test.ts::term_pages::onePagePerTerm
-  Scenario: one page per term, under its instance's page
+  Scenario: one page per term, under its layer's page
     When the term pages are made
-    Then there is one per term under its instance, with its permalink, out of the navigation
+    Then there is one per term under its layer, with its permalink, out of the navigation
 
   @test:scripts/glossary-term-page.test.ts::term_pages::definingSiteIsRow
   Scenario: the defining site is the glossary row, in the document and on the glossary page
@@ -28,5 +28,5 @@ Feature: a page for each glossary term
 
   @test:scripts/glossary-term-page.test.ts::term_pages::glossaryRowLinksTermPage
   Scenario: the glossary row links to the term page
-    When the instance's glossary page is read
+    When the layer's glossary page is read
     Then the term's row links its term page

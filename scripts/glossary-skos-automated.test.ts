@@ -34,7 +34,7 @@ const glossary = (id: string, terms: unknown[]): Glossary =>
   ({ $schema: "folio-glossary/v1", id, title: id, terms }) as unknown as Glossary;
 const source = (instance: string, ns: string, g: Glossary): GlossarySource => ({ instance, ns, file: `${g.id}.json`, glossary: g });
 
-// Two instances each hold an authored `platform` scheme, which is the real
+// Two layers each hold an authored `platform` scheme, which is the real
 // layout: `platform:actor` therefore names two terms and has no single IRI.
 const platformA = source("a", NS_A, glossary("platform", [
   { id: "policy", prefLabel: "Policy", status: "authored", exactMatch: [ODRL] },
@@ -63,9 +63,9 @@ const states: SchemeState[] = [
   row("skos", [
     // exact: the prefLabel of a concept with an external URI
     { term: "policy", exact: true, concepts: [ODRL], exactConcepts: [ODRL] },
-    // concept-only, via an in-repo id that two instances hold: unresolvable
+    // concept-only, via an in-repo id that two layers hold: unresolvable
     { term: "participant", exact: false, concepts: ["platform:actor"], exactConcepts: [] },
-    // concept-only, via an in-repo id exactly one instance holds
+    // concept-only, via an in-repo id exactly one layer holds
     { term: "book", exact: false, concepts: ["platform:ledger"], exactConcepts: [] },
   ]),
   row("fhir", [{ term: "book", exact: false, concepts: ["http://example.org/cs#book"], exactConcepts: [] }]),

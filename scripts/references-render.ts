@@ -22,7 +22,7 @@
  * ```
  *
  * `cites` is the list, in the order printed; each key names a
- * `folio-reference/v1` node (`schemas/reference.ts`) in one of the instance's
+ * `folio-reference/v1` node (`schemas/reference.ts`) in one of the layer's
  * own `references` directories. The block's `.md` sibling is the output: it
  * is generated whole, so nothing is typed in it.
  *
@@ -50,7 +50,7 @@
  *   bun run cat references:render --instance <dir> [--check]
  *
  * @module folio-assistant-core/scripts/references-render
- * @covers references, folio — it reads an instance's reference nodes and writes its reference-list blocks
+ * @covers references, folio — it reads a layer's reference nodes and writes its reference-list blocks
  */
 import { existsSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
 import { join, relative, resolve } from "node:path";
@@ -157,7 +157,7 @@ export function renderReferenceList(refs: readonly ReferenceNode[], opts: Partia
   return refs.map((r, i) => `${o.list === "bullet" ? "-" : `${i + 1}.`} ${entryText(r, o)}`).join("\n") + "\n";
 }
 
-/** Every reference node in the instance's own `references` directories, by key. */
+/** Every reference node in the layer's own `references` directories, by key. */
 export function referenceNodesOf(instanceRoot: string): Map<string, { ref: ReferenceNode; file: string }> {
   const decl = readDeclaration(instanceRoot);
   if (!decl) throw new Error(`${instanceRoot}: no cat-harness declaration`);
@@ -175,7 +175,7 @@ export function referenceNodesOf(instanceRoot: string): Map<string, { ref: Refer
   return out;
 }
 
-/** The `.ts` files under the instance's own folio directories that mention `referenceList`. */
+/** The `.ts` files under the layer's own folio directories that mention `referenceList`. */
 function candidateBlocks(instanceRoot: string): string[] {
   const decl = readDeclaration(instanceRoot)!;
   const out: string[] = [];
@@ -192,7 +192,7 @@ function candidateBlocks(instanceRoot: string): string[] {
   return out.sort();
 }
 
-/** Each reference-list block of the instance, and the `.md` it should hold. */
+/** Each reference-list block of the layer, and the `.md` it should hold. */
 export async function referenceListsOf(instanceRoot: string): Promise<Array<{ block: string; md: string; content: string }>> {
   const nodes = referenceNodesOf(instanceRoot);
   const out: Array<{ block: string; md: string; content: string }> = [];

@@ -3,7 +3,7 @@
  * here from `cat-harness-tools/scripts/tests/decision-table.test.ts` (bean `ho66`).
  * The decision-table engine is cat-harness code and its fixture tests stay
  * there; `draft-qa-gate.dmn` and `editing-hci-validation.bpmn` are this
- * instance's, so standing alone cat-harness has neither to read.
+ * layer's, so standing alone cat-harness has neither to read.
  *
  * These tests are about the difference between computing and choosing.
  */
@@ -15,7 +15,7 @@ import { loadProcessModel } from "@litlfred/cat-harness-tools/src/workflow/proce
 import { complete, enabled, startInstance } from "@litlfred/cat-harness-tools/src/workflow/instance.js";
 import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
 
-/** This instance's root; its diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
+/** This layer's root; its diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
 const HERE = resolve(import.meta.dir, "../..");
 
 describe("the shipped tables", () => {

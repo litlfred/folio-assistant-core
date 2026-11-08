@@ -2,7 +2,7 @@
  * The onboarding path's two decision tables — moved here from
  * `cat-harness-tools/scripts/tests/getting-started.test.ts` (bean `ho66`).
  * `folio-intent.dmn`, `pages-live-gate.dmn` and the `getting-started.bpmn`
- * they back are this instance's, so standing alone cat-harness has none of
+ * they back are this layer's, so standing alone cat-harness has none of
  * them to read; the repo scan and the Pages-address tests stay there.
  *
  * What is worth testing is that the places where a wrong answer would be
@@ -22,7 +22,7 @@ import { loadProcessModel } from "@litlfred/cat-harness-tools/src/workflow/proce
 import { outcomeFor, type PagesOutcome } from "@litlfred/cat-harness-tools/scripts/pages-bootstrap.js";
 import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
 
-/** This instance's root; its diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
+/** This layer's root; its diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
 const HARNESS = resolve(import.meta.dir, "../..");
 
 describe("folio-intent.dmn — five requests, one sentence", () => {

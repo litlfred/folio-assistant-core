@@ -1,20 +1,20 @@
 /**
- * folio-assistant-core's SURFACE for the instances that `needs` it: every
- * platform symbol such an instance uses, re-exported from the one module it
+ * folio-assistant-core's SURFACE for the layers that `needs` it: every
+ * platform symbol such a layer uses, re-exported from the one module it
  * may reach.
  *
- * An instance of core declares `"needs": ["folio-assistant-core"]` and never
- * names cat-harness — owner, 2026-10-06 (bean `g8jp`): an instance of core
+ * A layer on core declares `"needs": ["folio-assistant-core"]` and never
+ * names cat-harness — owner, 2026-10-06 (bean `g8jp`): a layer on core
  * depends on core, never on the layers below it. So those are reached TRANSITIVELY,
- * through here: the instance's own `platform.ts` imports this file and
+ * through here: the layer's own `platform.ts` imports this file and
  * nothing else outside its directory, and core decides which of its
- * dependencies' symbols it carries. When such an instance leaves for its own
+ * dependencies' symbols it carries. When such a layer leaves for its own
  * repository it remote-mounts core and core's dependency closure; a
  * re-export here resolves through core's mounted `scripts/` like any other
- * core module, and no import in the instance assumes a monorepo sibling.
+ * core module, and no import in the layer assumes a monorepo sibling.
  *
- * Grouped by the module each symbol comes from. Add a symbol here when an
- * instance of core needs it — never a direct climb from the instance, which
+ * Grouped by the module each symbol comes from. Add a symbol here when a
+ * layer on core needs it — never a direct climb from the layer, which
  * `cat-harness-tools/scripts/tests/instance-separation-imports.test.ts` refuses.
  *
  * @module folio-assistant-core/scripts/platform
@@ -34,7 +34,7 @@ export { subjectPage } from "@litlfred/cat-harness-tools/scripts/harness-tiles.j
 export { visualiserRoute, siteRootFrom } from "@litlfred/cat-harness-tools/schemas/kg/visualiser-route.js";
 export { declaredRoute, siteOwnerDir, visualiserPageDir, withRenderedBy, withRenderedByFrontMatter } from "@litlfred/cat-harness-tools/scripts/viewer-declarations.js";
 
-// ── cat-harness: Tool nodes, for an instance's own `tools` graph ──────────
+// ── cat-harness: Tool nodes, for a layer's own `tools` graph ──────────
 export { defineTool, type ToolDefinition } from "@litlfred/cat-harness-tools/schemas/tools/tool.js";
 export { toolTypeIri } from "@litlfred/cat-harness-tools/schemas/tools/tool-types.js";
 export { toolFactory, toolsFromFolders } from "@litlfred/cat-harness-tools/schemas/tools/tool-folders.js";

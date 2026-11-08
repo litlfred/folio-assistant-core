@@ -7,7 +7,7 @@ Feature: the external registry's lane in the evidence process
     And Task_VerifyAuthority requires registry-authority-contract
 
   @test:scripts/tests/registry-authority-contract.test.ts::the_lane_names_the_external_registry,_and_its_task_names_this_contract::laneHoldsOneActivity
-  Scenario: the registry's lane holds one activity, the readout — no step of this instance's own
+  Scenario: the registry's lane holds one activity, the readout — no step of this layer's own
     When the activities of the trusted lane are listed
     Then the only one is Task_VerifyAuthority
 

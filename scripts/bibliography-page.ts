@@ -11,7 +11,7 @@
  *
  * ## What it reads
  *
- * Every declared directory of every instance in the checkout, as the glossary
+ * Every declared directory of every layer in the checkout, as the glossary
  * page does:
  * - a `references` directory: each `*.json` file is a `folio-reference/v1`
  *   node (`schemas/reference.ts`);
@@ -34,8 +34,8 @@
  * | `<route>/<sub-graph>/` | the references of one declared directory |
  * | `<route>/<sub-graph>/#<key>` | one reference, with its own export |
  *
- * On a site that is its own index (an instance declared at the checkout root,
- * such as smart-ra), that instance is the site's own: the whole page lists its
+ * On a site that is its own index (a layer declared at the checkout root,
+ * such as smart-ra), that layer is the site's own: the whole page lists its
  * references first, then every other layer's in a closed "From dependencies"
  * section grouped by layer, so a reader sees the site's own bibliography
  * without the layers below it (owner, 2026-11-01). A sub-graph id two layers
@@ -57,7 +57,7 @@
  * Usage:  bun run folio-assistant-core/scripts/bibliography-page.ts [--check]
  *
  * @module folio-assistant-core/scripts/bibliography-page
- * @covers references, catalogue, docs — it reads every instance's references and catalogue directories
+ * @covers references, catalogue, docs — it reads every layer's references and catalogue directories
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
@@ -114,7 +114,7 @@ const GENERATED_FM = `generated: ${GENERATED_BY} — do not hand-edit; run \`bun
 /** One reference, and where it was found. */
 export interface Entry {
   ref: ReferenceNode;
-  /** The instance whose declaration holds the directory. */
+  /** The layer whose declaration holds the directory. */
   instance: string;
   /** The declared directory's id: the route's `<sub-graph>`. */
   subgraph: string;
@@ -129,7 +129,7 @@ export interface AssetView {
   slug: string;
   /** The asset slug within the sub-graph. */
   asset: string;
-  /** Instance name. */
+  /** Layer name. */
   instance: string;
   /** Repo-relative path of the asset directory or file. */
   path: string;
@@ -145,7 +145,7 @@ export interface SubgraphView {
   path: string;
   /**
    * Its route segment (`<route>/<slug>/`). The id itself, unless another
-   * instance declares the same id: then a dependency's is `<instance>-<id>`,
+   * layer declares the same id: then a dependency's is `<instance>-<id>`,
    * so each layer's `library` gets its own page instead of sharing one.
    */
   slug: string;
@@ -153,14 +153,14 @@ export interface SubgraphView {
 
 export interface Collected {
   entries: Entry[];
-  /** Every sub-graph that was scanned, with its instance, so an empty one is still listed. */
+  /** Every sub-graph that was scanned, with its layer, so an empty one is still listed. */
   subgraphs: SubgraphView[];
   /**
-   * The instance the site belongs to: the one declared at the checkout root
+   * The layer the site belongs to: the one declared at the checkout root
    * (a repository that is its own index, such as smart-ra). Every other
-   * instance in the checkout is one of its dependencies. `undefined` when no
-   * instance is declared at the root (the platform monorepo): then no
-   * instance is singled out and the page is one list.
+   * layer in the checkout is one of its dependencies. `undefined` when no
+   * layer is declared at the root (the platform monorepo): then no
+   * layer is singled out and the page is one list.
    */
   own?: string;
   /** Per-asset bibliography views (`<route>/<sub-graph>/<asset>/`). */
@@ -174,7 +174,7 @@ const rel = (repo: string, p: string) => relative(repo, p).split("\\").join("/")
  * The library copy each catalogue record describes, when one is held: an item
  * node (`nodes/*.json`, `folio-catalogue-node/v1`) names its record by
  * `metadataRef` and its library asset by `libraryId`, and the copy is held
- * when the instance's declared `library` directory has that asset. Keyed by
+ * when the layer's declared `library` directory has that asset. Keyed by
  * the record's path relative to the catalogue directory.
  */
 export function heldCopies(instanceRoot: string, catalogueDir: string): Map<string, string> {
@@ -425,7 +425,7 @@ export function linksHtml(e: Entry): string {
  * The anchors of one page, handed out in the order its entries are shown. The
  * first entry for a key gets `ref-<key>`, which is what an in-text citation
  * links; a later entry for the same key on the same page (the same work in two
- * instances' catalogues, bean djj5) gets `ref-<instance>-<key>`, so no id
+ * layers' catalogues, bean djj5) gets `ref-<instance>-<key>`, so no id
  * repeats (`check:duplicate-ids`).
  */
 export function pageAnchors(): (e: Entry) => string {
@@ -560,7 +560,7 @@ export const EXPORTS = [
 const plural = (n: number, one: string) => `${n} ${one}${n === 1 ? "" : "s"}`;
 
 /**
- * The list when a site has an own instance: its references first, then every
+ * The list when a site has an own layer: its references first, then every
  * dependency's, grouped by layer, in a closed `From dependencies` section so
  * the page opens on the site's own bibliography. The filter and a link to an
  * entry's anchor open the section.
@@ -629,7 +629,7 @@ ${FILTER_SCRIPT}
 
 /** Every file this generator owns, path → content. */
 /**
- * One instance's bibliography, as its own site lists it (owner, 2026-11-03:
+ * One layer's bibliography, as its own site lists it (owner, 2026-11-03:
  * a page per IG, bean djj5): its own references and those of the layers it
  * `needs`, transitively, with `own` set to it. Everything else in the
  * checkout belongs to other sites.
@@ -652,7 +652,7 @@ export function forInstance(c: Collected, instance: string, needsOf: (name: stri
 }
 
 /**
- * The pages and exports. `prefix` is the site path an instance's own site is
+ * The pages and exports. `prefix` is the site path a layer's own site is
  * served under inside a composed site (`/<instance>` for `--instance
  * <instance>`), so each page's permalink lands where its links point.
  */
@@ -740,9 +740,9 @@ function filesUnder(dir: string): string[] {
 
 if (import.meta.main) {
   const check = process.argv.includes("--check");
-  // `--instance <name>`: that instance's own bibliography, written under
+  // `--instance <name>`: that layer's own bibliography, written under
   // `--site` with permalinks under `/<name>/`, for a site that composes the
-  // instance's pages inside its own (an index staging an IG at `/<name>/`).
+  // layer's pages inside its own (an index staging an IG at `/<name>/`).
   const ii = process.argv.indexOf("--instance");
   const instance = ii >= 0 ? process.argv[ii + 1] : undefined;
   if (ii >= 0 && !instance) {

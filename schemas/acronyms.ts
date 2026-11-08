@@ -162,7 +162,7 @@ function texts(t: LangText): string[] {
  * The labels every glossary a file can see holds: `notation`, `prefLabel`
  * and `altLabel` of each term. A glossary is visible when it sits in a
  * `glossary/` directory of an ancestor of the file, or of a direct child of
- * that ancestor (a mounted instance, such as `dpi-h-ra/glossary/`).
+ * that ancestor (a mounted layer, such as `dpi-h-ra/glossary/`).
  */
 export function visibleLabels(file: string): Set<string> {
   const labels = new Set<string>();

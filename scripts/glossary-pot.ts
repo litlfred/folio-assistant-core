@@ -68,11 +68,11 @@ export function potForCheck(pot: string): string {
   return potWithoutTimestamp(pot).split("\n").filter((l) => !l.startsWith("#: ")).join("\n");
 }
 /**
- * The platform instance whose `translation-sources` directory holds the
+ * The platform layer whose `translation-sources` directory holds the
  * templates: cat-harness, the site the glossary page is published on, and the
  * same tree the BPMN templates are in.
  */
-// declared-path-literal: the platform instance, named as glossary-page.ts names its site.
+// declared-path-literal: the platform layer, named as glossary-page.ts names its site.
 const PLATFORM = join(REPO, "cat-harness");
 
 /**
@@ -153,9 +153,9 @@ export function templates(c: ReturnType<typeof collect>, repo: string = REPO): M
   return out;
 }
 
-/** The declared `translation-sources` directory of the platform instance. */
+/** The declared `translation-sources` directory of the platform layer. */
 export function translationsDir(root: string = PLATFORM): string {
-  // declared-path-literal: the convention fallback for an instance that
+  // declared-path-literal: the convention fallback for a layer that
   // declares nothing, as translate-bpmn and bpmn-pot-current.test.ts do.
   return directoryForGraph(root, "translation-sources") ?? join(root, "translations");
 }
@@ -164,7 +164,7 @@ export function potPath(dir: string, locale: string, name: string): string {
   return join(dir, locale, GLOSSARY_SUBDIR, `${name}.pot`);
 }
 
-/** The instance that owns template `name`: the scheme's owner, or core for the locale page it writes. */
+/** The layer that owns template `name`: the scheme's owner, or core for the locale page it writes. */
 export function templateOwner(name: string): string {
   return name === LOCALE_PAGE_TEMPLATE ? "folio-assistant-core" : name.split("--")[0];
 }
@@ -173,7 +173,7 @@ export function templateOwner(name: string): string {
  * Where template `name`'s catalogues live: the OWNER's declared
  * `translation-sources` directory. Owner, 2026-10-04: *"move things to
  * semantically appropriate place"* (bean riit). A scheme's translations sit
- * with the instance whose terms they translate, as its block-kind headings do.
+ * with the layer whose terms they translate, as its block-kind headings do.
  * An owner that declares no translation graph — `bootstrap`, a separate
  * repository this one cannot declare a directory in — falls back to the
  * platform's, and `glossary:pot:check` names each such template so the

@@ -95,7 +95,7 @@ export interface CatalogueInput {
   nodes: Map<string, Record<string, unknown>>;
   /** Existing records by file name under `records/`. */
   records: Map<string, Record<string, unknown>>;
-  /** Instance-relative paths. */
+  /** Layer-relative paths. */
   catalogueRel: string;
   libraryRel: string;
   /** retrievedAt for a record that is new or changed. */

@@ -1,4 +1,4 @@
-Feature: related terms on an instance's glossary page
+Feature: related terms on a layer's glossary page
 
   @test:scripts/glossary-related.test.ts::related_terms_on_an_instance's_page::openTermListsCandidates
   Scenario: an open term lists its candidates, open, with definition and linked source

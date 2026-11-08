@@ -92,17 +92,17 @@ Feature: the fixity of materialized copies
 
   @test:scripts/materialized-fixity.test.ts::a_mounted_instance's_bytes_outside_its_declared_directories::mountedOutsideUnverifiable
   Scenario: are unverifiable here, with the reason, not absent
-    When bytes of a mounted instance outside its directories are verified
+    When bytes of a mounted layer outside its directories are verified
     Then they are unverifiable, saying the checkout does not mount them
 
   @test:scripts/materialized-fixity.test.ts::a_mounted_instance's_bytes_outside_its_declared_directories::notMountAbsent
-  Scenario: are still absent when the instance is not a mount
-    When the same bytes of an instance that is not a mount are verified
+  Scenario: are still absent when the layer is not a mount
+    When the same bytes of a layer that is not a mount are verified
     Then they are absent
 
   @test:scripts/materialized-fixity.test.ts::a_mounted_instance's_bytes_outside_its_declared_directories::collectMarksOnlyMountedOutside
-  Scenario: collect() marks them only for a mounted instance, and only outside its directories
-    Given an instance with records inside and outside its declared directories
+  Scenario: collect() marks them only for a mounted layer, and only outside its directories
+    Given a layer with records inside and outside its declared directories
     When the records are collected before and after it is listed as a mount
     Then standalone, none is marked outside the mount
     And mounted, only the one outside its directories is marked, and the inside one is absent

@@ -3,7 +3,7 @@
  * from `cat-harness-tools/scripts/tests/workflow-gate.test.ts` (bean `ho66`). The
  * gate is cat-harness code and its fixture-only tests stay there; these pin
  * what `editing-hci-validation`, `draft-to-publication` and
- * `content-lifecycle` declare, and those diagrams are this instance's, so
+ * `content-lifecycle` declare, and those diagrams are this layer's, so
  * standing alone cat-harness has nothing for them to read.
  *
  * The decision in bean `bcnl`: **strict at the base, relaxable by content
@@ -23,7 +23,7 @@ import {
 } from "@litlfred/cat-harness-tools/src/workflow/gate.js";
 import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
 
-/** This instance's root; its diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
+/** This layer's root; its diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
 const CORE = resolve(import.meta.dir, "../..");
 const editing = () => loadProcessModel(workflowFile(CORE, "editing-hci-validation.bpmn"));
 

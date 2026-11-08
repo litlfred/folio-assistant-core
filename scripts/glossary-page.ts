@@ -3,12 +3,12 @@
  *
  * Owner, 2026-09-23: *"it should be part of general pracice w/ glossary/ page.
  * check harnesses"*, and *"put glossary into folio-assistant-core"*. So this is
- * core's, and it reads every instance in the repository rather than one:
+ * core's, and it reads every layer in the repository rather than one:
  *
  * - every `glossary` directory (core's kind): each `*.glossary.json`, validated
  *   as `folio-glossary/v1`, becomes SKOS JSON-LD at
  *   `docs/assets/glossary/<instance>--<scheme>.skos.jsonld` and rows on the page,
- *   where `<instance>` is the instance that OWNS the scheme's sources
+ *   where `<instance>` is the layer that OWNS the scheme's sources
  *   ({@link schemeOwner}), not the one declaring the directory;
  * - every `swimlane-glossary` directory (the harness's ledger): counted and
  *   linked to the page that already renders it, never copied, because a
@@ -18,7 +18,7 @@
  * - every KG asset with a title and a description (skills, Tools, BPMN
  *   activities, DMN decisions, documented schema fields), extracted by
  *   `glossary-extract.ts` into one `candidate` scheme per asset type per
- *   instance (bean `lqo9`, piece 1 as posed). Those schemes are GENERATED:
+ *   layer (bean `lqo9`, piece 1 as posed). Those schemes are GENERATED:
  *   written under core's glossary directory at
  *   `generated/<instance>/<type>.glossary.json`, beside the authored files and
  *   never over them, and the page shows them apart from authored terms.
@@ -31,7 +31,7 @@
  * extracted to glosasay / skos?"*): a auto-docs type returns `AutoDocItem[]`,
  * one row per artefact FILE for one sub-graph page, and emits no SKOS. The
  * extracted terms are per ELEMENT (one diagram holds dozens of activities),
- * need IRIs in the owning instance's namespace, and must land in the SKOS
+ * need IRIs in the owning layer's namespace, and must land in the SKOS
  * this page already publishes. `index/skills` and `index/processes` already
  * list the same artefacts per sub-graph, so a auto-docs glossary type over
  * them would be a third rendering. The existing auto-docs `glossary` type
@@ -42,7 +42,7 @@
  * Owner, 2026-09-24: *"Split per asset type"*. Extraction took the one page
  * from 9 KB to 1.4 MB. `glossary/` is now the index (authored terms, counts,
  * sources, and a link to every asset type's page) and `glossary/<type>/`
- * holds that type's extracted candidates from every instance. A term is on
+ * holds that type's extracted candidates from every layer. A term is on
  * exactly one page, and each page has a size budget ({@link PAGE_BUDGET})
  * that it states and `--check` enforces. The SKOS files are unchanged.
  *
@@ -51,13 +51,13 @@
  * `check:glossary`, and it is a gate.
  *
  * Search: the page carries a filter box over its own terms, and the site's
- * search indexes the page like any other. A cross-instance search index is
+ * search indexes the page like any other. A cross-layer search index is
  * bean `4pm8`'s and not built here.
  *
  * Usage:  bun run folio-assistant-core/scripts/glossary-page.ts [--check]
  *
  * @module folio-assistant-core/scripts/glossary-page
- * @covers glossary, swimlane-glossary, docs — it reads every instance's glossary
+ * @covers glossary, swimlane-glossary, docs — it reads every layer's glossary
  *   directory and links the harness's ledger without copying it
  */
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
@@ -108,7 +108,7 @@ const SITE = siteTarget(join(REPO, "cat-harness", "docs"));
  */
 const INTO_SITE = siteArg() !== undefined;
 /**
- * `--instance <name>` (with `--site`): write only that instance's page and its
+ * `--instance <name>` (with `--site`): write only that layer's page and its
  * schemes' SKOS. A repository's own site carries its glossary this way, at the
  * same route the platform site gives it, without the platform's other pages
  * (cat-harness-tools#1038: dth-hrh's handbook glossary). Links to pages the
@@ -176,8 +176,8 @@ function generatedDir(): string {
   return join(dir, "generated");
 }
 /**
- * Where an instance's extracted schemes are written: `generated/` inside the
- * instance's own declared `glossary` directory when it holds `generated/` (or
+ * Where a layer's extracted schemes are written: `generated/` inside the
+ * layer's own declared `glossary` directory when it holds `generated/` (or
  * core's `glossary/generated/` does not host `<instance>/`), else core's
  * `glossary/generated/`. Resolved from the declarations, never by naming a
  * higher layer's path here (bean rfev, owner 2026-10-20).
@@ -224,7 +224,7 @@ const blobUrl = (path: string): string => {
 
 export interface GlossarySource {
   /**
-   * The instance that OWNS the scheme: the one whose root holds its source
+   * The layer that OWNS the scheme: the one whose root holds its source
    * assets, which is not always the one whose `glossary` directory holds the
    * file (owner, 2026-09-24; see {@link schemeOwner}).
    */
@@ -232,7 +232,7 @@ export interface GlossarySource {
   ns: string;
   file: string;
   glossary: Glossary;
-  /** The instance whose declared `glossary` directory holds the file. Absent for an extracted scheme. */
+  /** The layer whose declared `glossary` directory holds the file. Absent for an extracted scheme. */
   declaredBy?: string;
   /** Set for a scheme `glossary-extract.ts` generated: which asset type it holds. */
   extracted?: AssetType;
@@ -242,7 +242,7 @@ export interface Findings {
 }
 
 /**
- * The instance's namespace: bean `lqo9` puts a term's IRI there, never in the
+ * The layer's namespace: bean `lqo9` puts a term's IRI there, never in the
  * asset. The rule is `instanceNamespace` (`schemas/instance-repositories.ts`),
  * shared with the `owner/repo → IRI` map so the two cannot disagree (bean `6rmv`).
  */
@@ -254,8 +254,8 @@ export function instanceNs(name: string, stub?: string, decl?: { iriBase?: strin
 //
 // Owner, 2026-09-24: *"make sure all glossary terms properly localed to ihris
 // so [no] collision w/ other subgraphs. general rule/skill"*. A scheme and its
-// terms live in the namespace of the instance that owns the SOURCE ASSET: in a
-// folio with sub-instances that is the sub-instance, never the root, even when
+// terms live in the namespace of the layer that owns the SOURCE ASSET: in a
+// folio with sub-layers that is the sub-layer, never the root, even when
 // the `glossary/` directory is declared at the root. `glossary-extract.ts`
 // already mints extracted terms that way; this is the same rule for authored
 // schemes, checked by `glossary.test.ts` for both.
@@ -264,13 +264,13 @@ export function instanceNs(name: string, stub?: string, decl?: { iriBase?: strin
  * A term or scheme `source` that names a file or directory in the repository,
  * without its anchor. `undefined` for an IRI, and for prose: a scheme's
  * `source` is dcterms:source, which may be a sentence ("Skills of
- * cat-harness"), and a sentence is held by no instance.
+ * cat-harness"), and a sentence is held by no layer.
  */
 export function repoPathOf(src: string | undefined, repo: string = REPO): string | undefined {
   return sharedRepoPathOf(src, repo);
 }
 
-/** Every instance root, longest first, so a path resolves to the MOST specific instance holding it. The repository root's instance comes last. */
+/** Every layer root, longest first, so a path resolves to the MOST specific layer holding it. The repository root's layer comes last. */
 export function instanceOwners(repo: string = REPO): Array<{ root: string; name: string; ns: string }> {
   const out: Array<{ root: string; name: string; ns: string }> = [];
   for (const root of instanceRootsIn(repo)) {
@@ -280,15 +280,15 @@ export function instanceOwners(repo: string = REPO): Array<{ root: string; name:
   return out.sort((a, b) => b.root.length - a.root.length);
 }
 
-/** The instance whose root holds a repository path. */
+/** The layer whose root holds a repository path. */
 export function ownerOfPath(repo: string, path: string, owners: readonly InstanceRoot[] = instanceOwners(repo)): string | undefined {
   return sharedOwnerOfPath(repo, path, owners);
 }
 
 /**
- * The instance that owns a scheme: `cat-harness-tools/scripts/lib/scheme-owner.ts`,
+ * The layer that owns a scheme: `cat-harness-tools/scripts/lib/scheme-owner.ts`,
  * the one rule the term-mapping record keys by too (bean `q3n9`, owner ruling
- * A, 2026-10-24). Re-exported here, with this checkout's instances as the
+ * A, 2026-10-24). Re-exported here, with this checkout's layers as the
  * default, for the callers that already import it from the page.
  */
 export function schemeOwner(
@@ -316,10 +316,10 @@ export function schemeOwner(
  * defined only by terms above it.
  */
 /**
- * The concepts an instance's declared VOCABULARY already mints, by local name:
+ * The concepts a layer's declared VOCABULARY already mints, by local name:
  * `Node` → `<ns>Node`. Read from the asset whose `role` is `vocabulary`
  * (bootstrap's `ns.jsonld`), each `@id` expanded through that file's own
- * `@context`. Empty when the instance declares none, or it cannot be read —
+ * `@context`. Empty when the layer declares none, or it cannot be read —
  * the glossary then mints its own IRIs, as before.
  */
 export function vocabularyConcepts(root: string, decl: { assets?: unknown }): Map<string, string> {
@@ -400,9 +400,9 @@ export function collect(repo: string = REPO): {
   ledgers: { instance: string; path: string; terms: number }[];
   external: { instance: string; id: string; url: string; title?: string }[];
   /**
-   * Every instance that DECLARES a `glossary` directory of its own, whether or
+   * Every layer that DECLARES a `glossary` directory of its own, whether or
    * not it holds an authored scheme yet. Each gets its own page (owner,
-   * 2026-10-15, "3a"), because the instance's Glossary tile opens it.
+   * 2026-10-15, "3a"), because the layer's Glossary tile opens it.
    */
   declaring: string[];
   findings: Findings;
@@ -414,7 +414,7 @@ export function collect(repo: string = REPO): {
   const declaring = new Set<string>();
   const owners = instanceOwners(repo);
   const nsOf = new Map(owners.map((o) => [o.name, o.ns] as const));
-  // No two instances may resolve to one namespace: every IRI minted in it
+  // No two layers may resolve to one namespace: every IRI minted in it
   // would be ambiguous about which sub-graph it belongs to.
   const byNs = new Map<string, string[]>();
   for (const o of owners) byNs.set(o.ns, [...(byNs.get(o.ns) ?? []), o.name]);
@@ -493,7 +493,7 @@ export function collect(repo: string = REPO): {
       if (g.graphTypologies.includes("glossary")) external.push({ instance: decl.name, id: g.id, url: g.url, title: g.title });
     }
   }
-  // Extracted schemes, in the OWNING instance's namespace. Derived here on
+  // Extracted schemes, in the OWNING layer's namespace. Derived here on
   // every run rather than read back from the committed files, so the page,
   // the SKOS and the scheme files are one derivation and `--check` compares
   // all three against it.
@@ -509,7 +509,7 @@ export function collect(repo: string = REPO): {
       extracted: s.type,
     });
   }
-  // No two schemes, in any instance, may mint one scheme IRI.
+  // No two schemes, in any layer, may mint one scheme IRI.
   const bySchemeIri = new Map<string, string[]>();
   for (const s of glossaries) {
     const iri = schemeIri(s.ns, s.glossary);
@@ -568,7 +568,7 @@ function sizeLabel(bytes: number): string {
  *
  * Measured 2026-10-02: `kg-schema-fields` was 1,042,497 bytes against its
  * 1 MiB budget on `main`, and every PR adding schema fields tipped it over.
- * Splitting by instance does not help, because one instance (cat-harness)
+ * Splitting by layer does not help, because one layer (cat-harness)
  * holds 1,613 of 1,841 terms. The ranges are FIXED rather than balanced, so
  * a term's URL does not move when other terms are added. The type's own URL
  * stays and becomes a landing page linking its parts.
@@ -604,10 +604,10 @@ export function partOfLabel(type: AssetType, label: string): string {
 /** One part of a split asset type's page: `<type>/<range>`. */
 export type PartKey = `${AssetType}/${string}`;
 /**
- * One instance's authored terms: `@<instance>`.
+ * One layer's authored terms: `@<instance>`.
  *
  * Owner, 2026-10-15 (option 1 of four): the authored terms leave the index
- * for one page per OWNING instance. The index had held every authored term
+ * for one page per OWNING layer. The index had held every authored term
  * since 2026-09-24, and a folio's site composes its own glossary with its
  * needs': dth-hrh's three schemes (177 terms) put the index at 224 KB against
  * its 64 KB budget, so the writer refused it. The address is the owner, a
@@ -616,7 +616,7 @@ export type PartKey = `${AssetType}/${string}`;
  * would do.
  */
 export type AuthoredKey = `@${string}`;
-/** Which page a term is on: its owning instance's for an authored scheme's, else its asset type, or a part of it. */
+/** Which page a term is on: its owning layer's for an authored scheme's, else its asset type, or a part of it. */
 export type PageKey = "index" | AuthoredKey | AssetType | PartKey;
 export function isAuthored(k: PageKey): k is AuthoredKey {
   return k.startsWith("@");
@@ -635,11 +635,11 @@ export const PAGE_KEYS: readonly PageKey[] = [
 ];
 
 /**
- * One page per instance that owns an authored scheme OR declares a glossary
- * directory, by instance name. The second half is what lets every instance's
+ * One page per layer that owns an authored scheme OR declares a glossary
+ * directory, by layer name. The second half is what lets every layer's
  * Glossary tile open a page of its own: the tile resolves
  * `glossary/instance/<instance>/` from the declaration, so the page must exist
- * for every instance the declaration covers, even before it authors a term.
+ * for every layer the declaration covers, even before it authors a term.
  */
 export function authoredKeys(c: Pick<ReturnType<typeof collect>, "glossaries"> & { declaring?: readonly string[] }): AuthoredKey[] {
   return [...new Set([...c.glossaries.filter((s) => !s.extracted).map((s) => s.instance), ...(c.declaring ?? [])])]
@@ -647,7 +647,7 @@ export function authoredKeys(c: Pick<ReturnType<typeof collect>, "glossaries"> &
     .map((i) => `@${i}` as const);
 }
 
-/** Every page: the index, each instance's authored terms, then {@link PAGE_KEYS}' asset types. */
+/** Every page: the index, each layer's authored terms, then {@link PAGE_KEYS}' asset types. */
 export function pageKeysOf(c: ReturnType<typeof collect>): PageKey[] {
   return ["index", ...authoredKeys(c), ...PAGE_KEYS.slice(1)];
 }
@@ -670,12 +670,12 @@ export function pageOf(s: GlossarySource): PageKey {
   return s.extracted ?? `@${s.instance}`;
 }
 /**
- * The directory every instance's page sits under, so an instance name cannot
+ * The directory every layer's page sits under, so a layer name cannot
  * meet an asset type's slug (`skills/`, `tools/`, …). Owner, 2026-10-15
  * ("3a"): `glossary/instance/<instance>/`, the sub-graph path the glossary
  * visualiser declares (`subgraphUnder: { glossary: "instance" }` in
  * `folio-assistant-core.json`), which `viewersOf` composes into each
- * instance's tile. It was `authored/` for the same day it existed.
+ * layer's tile. It was `authored/` for the same day it existed.
  */
 export const AUTHORED_DIR = "instance";
 export function pagePath(k: PageKey): string {
@@ -973,7 +973,7 @@ function termEntry(row: Row, marks?: ReadonlyMap<string, string>): string {
  * fetching it.
  *
  * **`undefined` still means "could not determine"**, and the page then says
- * the check has not run: no `cat-harness` instance to compute from, or a run
+ * the check has not run: no `cat-harness` layer to compute from, or a run
  * that threw. Rendering "0 mapped" over that would be `dh4f` exactly. A run
  * whose TARGET could not be consulted is not undefined — each such row
  * carries its `reason`, and the page shows it.
@@ -1061,7 +1061,7 @@ export function mappingBlock(states: SchemeState[] | undefined, schemes: readonl
 export interface TermKey {
   /** The entry's anchor, which keys its mark. */
   anchor: string;
-  /** The instance that owns the scheme: with `scheme`, the key the record's rows have too (bean `q3n9`). */
+  /** The layer that owns the scheme: with `scheme`, the key the record's rows have too (bean `q3n9`). */
   instance: string;
   scheme: string;
   term: string;
@@ -1126,9 +1126,9 @@ export function perTermMapping(
     seen.add(key);
   }
   for (const target of targets) {
-    // The record keys a row by (instance, scheme) (beans `wvzp`, `q3n9`),
-    // because a scheme id such as `kg-tools` is shared by every instance's
-    // extraction. Two entries on one page that still share instance, scheme
+    // The record keys a row by (layer, scheme) (beans `wvzp`, `q3n9`),
+    // because a scheme id such as `kg-tools` is shared by every layer's
+    // extraction. Two entries on one page that still share layer, scheme
     // and id cannot be told apart, so both are `unknown` rather than both badged.
     const answers = terms.map((k): TermStateAnswer =>
       shared.has(keyOf(k))
@@ -1177,14 +1177,14 @@ export const sourceKey = (s: Pick<GlossarySource, "instance" | "glossary">) => `
  * The record names a concept by its external URI where it has one, and
  * otherwise as `<scheme>:<id>`. That second form is not an IRI: `platform:`
  * would expand as a URI scheme nobody owns. So it is resolved to the authored
- * term's own IRI. If the scheme id is held by more than one instance (today
+ * term's own IRI. If the scheme id is held by more than one layer (today
  * `platform` is held by two), the value is left OUT and reported. The
  * `linked-data` voice's rule is that an invented address is worse than none
  * (`ld-link-is-the-node-release-address`).
  *
  * The same holds for the candidate itself. The record keys it by
- * (instance, scheme, id) (bean `q3n9`), so the same id in two instances'
- * schemes is two keys. A key that two schemes of ONE instance still share
+ * (layer, scheme, id) (bean `q3n9`), so the same id in two layers'
+ * schemes is two keys. A key that two schemes of ONE layer still share
  * cannot be placed. It is reported, never published into both.
  *
  * `exactMatch` goes only to the record's `exactConcepts`. Every other
@@ -1430,7 +1430,7 @@ ${items.join("\n")}
 `;
 }
 
-/** One asset type's page, or one part of a split type: its extracted terms, from every instance. */
+/** One asset type's page, or one part of a split type: its extracted terms, from every layer. */
 export function renderTypePage(c: ReturnType<typeof collect>, key: AssetType | PartKey): string {
   if (!isPart(key) && LETTER_PARTS[key]) return renderLandingPage(c, key);
   const type = isPart(key) ? splitPart(key)[0] : key;
@@ -1473,7 +1473,7 @@ ${FILTER_SCRIPT}
 }
 
 /**
- * One instance's authored terms: its ordered schemes in their own order, then
+ * One layer's authored terms: its ordered schemes in their own order, then
  * every other term A–Z. The terms the index held until 2026-10-15
  * ({@link AuthoredKey}), with the schema.org `DefinedTermSet` that went with them.
  */
@@ -1518,8 +1518,8 @@ ${
     ? `The glossaries **${esc(instance)}** owns: ${schemes.map((s) => `${esc(s.glossary.title)} (${s.glossary.terms.length} term${s.glossary.terms.length === 1 ? "" : "s"}, ${skosLink(s)})`).join(" · ")}.`
     : `**${esc(instance)}** declares a glossary directory and owns no authored glossary yet.`
 }${(() => {
-  // The instance's EXTRACTED terms stay on their asset type's page (a term is
-  // on exactly one page); this page names them so it is the instance's whole
+  // The layer's EXTRACTED terms stay on their asset type's page (a term is
+  // on exactly one page); this page names them so it is the layer's whole
   // glossary to a reader who arrived from its tile.
   const ex = c.glossaries.filter((s) => s.extracted && s.instance === instance);
   return ex.length > 0
@@ -1530,7 +1530,7 @@ ${
 **Size:** this page holds ${rows.length} terms and is ${size} before compression, within its budget of ${sizeLabel(budgetOf(key))}. There is no search index: the filter below runs over this page${rows.some((r) => !r.s.glossary.ordered) ? ", and the A–Z bar jumps within it" : ""}.
 
 ${(() => {
-  // An instance whose every scheme is ordered (bootstrap's) has no A–Z list;
+  // A layer whose every scheme is ordered (bootstrap's) has no A–Z list;
   // its page still gets the filter, over the ordered lists.
   const az = rows.filter((r) => !r.s.glossary.ordered);
   const lists = ordered.map(orderedBlock).join("\n\n");
@@ -1659,7 +1659,7 @@ export function termPagesOf(c: ReturnType<typeof collect>): Map<string, string> 
 }
 
 /**
- * The index's "Authored terms" section: where each instance's terms are. It
+ * The index's "Authored terms" section: where each layer's terms are. It
  * keeps the headings the terms had here — each ordered scheme's, then "every
  * other" — because each locale page mirrors this page's heading order and
  * `translation-drift` compares it; each heading now says where its terms are.
@@ -1678,7 +1678,7 @@ function authoredList(c: ReturnType<typeof collect>, keys: readonly AuthoredKey[
     : `<ul>\n${list}\n</ul>`;
 }
 
-/** The index: the counts, the sources, and a link to every instance's authored page and every asset type's page. */
+/** The index: the counts, the sources, and a link to every layer's authored page and every asset type's page. */
 export function renderIndex(
   c: ReturnType<typeof collect>,
   typePages: ReadonlyMap<AssetType | PartKey, string> = typePagesOf(c),
@@ -1825,7 +1825,7 @@ export type SchemeTranslations = ReadonlyMap<string, string>;
 export function readGlossaryTranslations(dirs: readonly string[] = allTranslationDirs()): Map<string, Map<string, SchemeTranslations>> {
   const out = new Map<string, Map<string, SchemeTranslations>>();
   // Every declared translation-sources directory (bean riit): a scheme's
-  // catalogues sit with the instance that owns it, not in one platform tree.
+  // catalogues sit with the layer that owns it, not in one platform tree.
   for (const dir of dirs) {
     if (!existsSync(dir)) continue;
     for (const locale of readdirSync(dir).sort()) {
@@ -2001,7 +2001,7 @@ export function typePagesOf(c: ReturnType<typeof collect>): Map<AssetType | Part
   return new Map(PAGE_KEYS.filter((k): k is AssetType | PartKey => k !== "index").map((k) => [k, renderTypePage(c, k)] as const));
 }
 
-/** Every instance's authored page, rendered. */
+/** Every layer's authored page, rendered. */
 export function authoredPagesOf(c: ReturnType<typeof collect>): Map<AuthoredKey, string> {
   return new Map(authoredKeys(c).map((k) => [k, renderAuthoredPage(c, k)] as const));
 }
@@ -2114,7 +2114,7 @@ if (import.meta.main) {
   // SKOS rather than invented, and this says which and why.
   for (const u of unresolved) console.warn(`! automated match not published: ${u}`);
   // Stale output: a scheme removed or renamed leaves its old SKOS behind, and
-  // an asset type or instance that stops contributing leaves its generated
+  // an asset type or layer that stops contributing leaves its generated
   // scheme. Both directories are this generator's alone.
   // The glossary's own pages directory is this generator's too: a page for
   // an asset type that is no longer extracted is an orphan.

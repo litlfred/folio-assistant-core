@@ -1,5 +1,5 @@
 /**
- * One concept per term: a glossary that describes terms its instance's
+ * One concept per term: a glossary that describes terms its layer's
  * vocabulary already defines uses the vocabulary's IRIs, never a second one.
  *
  * Owner, 2026-09-30 (bean `xsqm`, "one SKOS", option A). bootstrap's 22 terms

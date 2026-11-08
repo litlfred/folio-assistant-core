@@ -7,7 +7,7 @@ description: >
   Covers which records get one, which XML form is used and why, how every
   field maps from the record's own data (never composed), what cannot be
   expressed and how that is reported, and the gate. Read this before changing
-  the mapping, adding a catalogue instance, or linking a rendering from a page.
+  the mapping, adding a catalogue layer, or linking a rendering from a page.
 ---
 
 # Dublin Core renderings
@@ -30,11 +30,11 @@ record the item's page describes. A record no item names gets no rendering. A
 
 `<published root>/dublin-core/<stem>.dc.xml` and `<stem>.dc.jsonld`.
 
-- The **published root** is the directory the instance declares with
+- The **published root** is the directory the layer declares with
   `instanceRoot: true` (for an IRIS mirror, `site/`, served at `/<instance>/`).
   The mount copies it whole, so the renderings publish beside the item pages.
 - `<stem>` is the record's own filename without `.dc.json`.
-- An instance that declares no published root is **refused**, not given a
+- A layer that declares no published root is **refused**, not given a
   guessed one.
 
 The item page links both files, and only when they exist.

@@ -86,17 +86,17 @@ export interface MaterializedRecord {
   readonly id?: string;
   /** A human label for the artefact — a bitstream name, usually. */
   readonly name?: string;
-  /** Path to the bytes, relative to the instance that declared them. */
+  /** Path to the bytes, relative to the layer that declared them. */
   readonly localPath?: string;
   /** Absolute path to the bytes, when `localPath` resolved. */
   readonly abs?: string;
   readonly algorithm?: string;
   readonly digest?: string;
   /**
-   * The bytes sit outside every directory the declaring instance names, and
-   * that instance is MOUNTED into this checkout from its own repository
+   * The bytes sit outside every directory the declaring layer names, and
+   * that layer is MOUNTED into this checkout from its own repository
    * (`index.lock.json`). A mount carries only declared directories, so the
-   * bytes are not here by construction, not by loss: the instance's own
+   * bytes are not here by construction, not by loss: the layer's own
    * checkout still holds and verifies them.
    */
   readonly outsideMount?: boolean;
@@ -132,7 +132,7 @@ export type Verdict =
    */
   | { kind: "covered-by-parts"; record: MaterializedRecord; parts: number };
 
-/** Every instance declaration — `declarationPathIn`, never a shape heuristic. */
+/** Every layer declaration — `declarationPathIn`, never a shape heuristic. */
 function instanceDeclarations(repo: string): string[] {
   const out: string[] = [];
   const at = declarationPathIn(repo);
@@ -172,7 +172,7 @@ function jsonFilesUnder(dir: string, depth = 0): string[] {
   // vouched for by the part's own record beside it, file by file; the `.json`
   // INSIDE it is upstream's, and a materialization record there describes
   // upstream's checkout — read as ours, every `localPath` in it would resolve
-  // into this instance and report "bytes absent" for content that was never
+  // into this layer and report "bytes absent" for content that was never
   // claimed here.
   const skipTree = isKgPartDir(dir);
   const out: string[] = [];
@@ -238,7 +238,7 @@ export function materializationsIn(doc: unknown, source: string, inheritedId?: s
   return out;
 }
 
-/** Instance paths, repo-relative, that this checkout mounts from their own repositories. */
+/** Layer paths, repo-relative, that this checkout mounts from their own repositories. */
 export function mountedInstancePaths(repo = REPO): Set<string> {
   const out = new Set<string>();
   try {
@@ -252,7 +252,7 @@ export function mountedInstancePaths(repo = REPO): Set<string> {
   return out;
 }
 
-/** Is an instance-relative path inside one of the directories the instance declares? */
+/** Is a layer-relative path inside one of the directories the layer declares? */
 export function underDeclared(localPath: string, dirs: readonly string[]): boolean {
   const p = localPath.replace(/^\.\//, "");
   return dirs.some((d) => {
@@ -300,7 +300,7 @@ export function collect(repo = REPO, owns: (rel: string) => boolean = (rel) => g
           continue;
         }
         for (const rec of materializationsIn(parsed, relative(repo, f))) {
-          // `localPath` is INSTANCE-relative. Resolving it against the
+          // `localPath` is LAYER-relative. Resolving it against the
           // catalogue directory instead yields a plausible-looking path that
           // does not exist — a probe error made three times in one session on
           // 2026-09-22, each time returning a believable answer rather than

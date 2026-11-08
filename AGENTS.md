@@ -94,7 +94,7 @@ _48 skills in 8 directories, generated from each skill's front matter. `bun run 
 | [`bib-qa`](skills/library/cataloguing/bib-qa.md) | Bibliography quality-assurance agent — validates every reference in content/schema/references.ts against several QA checks: URL availability, URL resolution, metadata completeness, citation… |
 | [`filing-dublin-core`](skills/library/cataloguing/filing-dublin-core.md) | Cataloguing a source as it arrives — which facts are `dcterms`, which are this project's own, and why the line is drawn by the vocabulary rather than by convenience. |
 | [`glossary-build`](skills/library/cataloguing/glossary-build.md) | Glossary Build Skill |
-| [`glossary-terms`](skills/library/cataloguing/glossary-terms.md) | Add terms to an instance's glossary: local SKOS terms (folio-glossary/v1) with a definition, a code and links to external SKOS concepts, and references to whole external schemes. |
+| [`glossary-terms`](skills/library/cataloguing/glossary-terms.md) | Add terms to a layer's glossary: local SKOS terms (folio-glossary/v1) with a definition, a code and links to external SKOS concepts, and references to whole external schemes. |
 | [`ontologist`](skills/library/cataloguing/ontologist.md) | Semantic Ontologist — scans narrative text for ambiguous terms, generates a formal glossary/registry, and produces a mapping linking narrative strings to formal identifiers. |
 
 **`skills/library/ingestion/`** (7)

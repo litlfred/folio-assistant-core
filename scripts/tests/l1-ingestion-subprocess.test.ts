@@ -34,7 +34,7 @@ import {
 } from "@litlfred/cat-harness-tools/src/workflow/process-model.js";
 import { workflowFile } from "@litlfred/cat-harness-tools/scripts/known-skills.ts";
 
-/** This instance's root; diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
+/** This layer's root; diagrams are found by NAME through its declared `processes` graphs (bean `63wl`). */
 const CORE = resolve(import.meta.dir, "../..");
 
 const bpmn = (stem: string): string => workflowFile(CORE, `${stem}.bpmn`);

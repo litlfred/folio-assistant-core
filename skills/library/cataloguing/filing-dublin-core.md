@@ -58,7 +58,7 @@ Filing captures how the thing arrived, which nobody can reconstruct later:
 | what came with it | assets, sidecars, the parts of a multi-file capture |
 | the identifier the source claims for itself | a DOI or an arXiv id is the publisher's identity, not ours |
 
-The `.extraction.json` sidecars in an instance's `uploads/` model most of this —
+The `.extraction.json` sidecars in a layer's `uploads/` model most of this —
 `container`, `method`, `capturedAt`, `producer`, `readAt`, `assets[]`. Read one
 before designing a new shape.
 

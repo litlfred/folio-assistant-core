@@ -15,8 +15,8 @@ SKOS scheme for the glossary page, and gates CI with `--check` mode.
 
 The builder also writes `<glossary dir>/paper-<paper>.glossary.json`, a
 `folio-glossary/v1` scheme, into the glossary directory declared by the
-instance that holds the paper. Core's glossary page reads it through
-`collect()` and shows the paper's terms, in the instance's namespace, beside
+layer that holds the paper. Core's glossary page reads it through
+`collect()` and shows the paper's terms, in the layer's namespace, beside
 every other scheme. The rules (status by provenance,
 verbatim definitions, the slug as `notation`) are in
 [`glossary-terms`](glossary-terms.md).

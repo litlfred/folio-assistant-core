@@ -15,9 +15,9 @@
  * > subprocess. also need to know about refreshing amterialed remote content.
  * > general process used everywhere."*
  *
- * | instance | remote source | materialised locally | refresh today |
+ * | layer | remote source | materialised locally | refresh today |
  * |---|---|---|---|
- * | the IRIS catalogue instance | IRIS, 361.55 GB | three items under `library/` | nothing |
+ * | the IRIS catalogue layer | IRIS, 361.55 GB | three items under `library/` | nothing |
  * | `bootstrap` | a harness | the `cat-harness` checkout | `upstream-pins.json` + `check:upstream-pins` |
  *
  * The second row is the one that makes this a discovery rather than a design.
@@ -92,7 +92,7 @@
  */
 import { z } from "zod";
 
-// Bean `bf5l`: the source-side provenance pair lives in the BASE instance, so
+// Bean `bf5l`: the source-side provenance pair lives in the BASE layer, so
 // `cat-harness/schemas/intake.ts` can reach it without importing up the
 // declared dependency order. This import points DOWN and is legal.
 import {
@@ -222,7 +222,7 @@ export const MaterializationSchema = z
      * split is a correction to the corpus as much as to the model.
      */
     provenance: SourceProvenanceSchema,
-    /** Where the bytes landed, instance-relative. Present iff `materialized`. */
+    /** Where the bytes landed, layer-relative. Present iff `materialized`. */
     localPath: z.string().min(1).optional(),
     /** Bytes held locally. Absent means not measured, which is not zero. */
     bytes: z.number().int().nonnegative().optional(),

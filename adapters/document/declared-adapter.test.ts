@@ -1,12 +1,12 @@
 /**
- * This instance DECLARES the document adapter, and the harness finds it there.
+ * This layer DECLARES the document adapter, and the harness finds it there.
  *
  * Until 2026-09-30 the harness named this directory itself —
  * `../folio-assistant-core/adapters/document/index.ts` in
  * `src/builtin-adapters.ts` — and its test asserted `layer: "core"`. The
  * dependency is inverted now (bean `p11x`): the declaration lives in
  * `folio-assistant-core.json`, so the assertion that document is THIS
- * instance's lives with it.
+ * layer's lives with it.
  */
 import { describe, expect, test } from "bun:test";
 

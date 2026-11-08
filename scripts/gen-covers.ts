@@ -7,10 +7,10 @@
  *
  * ## Generic, and so in core (bean `eayu`, 2026-09-30)
  *
- * Moved from the IRIS catalogue instance's `scripts/`. Owner: *"dspace scripts generic in
+ * Moved from the IRIS catalogue layer's `scripts/`. Owner: *"dspace scripts generic in
  * folio-assistant"*. `THUMBNAIL` is a DSpace bundle, not an IRIS one, and the
  * node shape is core's `CatalogueNode`, so this renders covers for ANY
- * catalogue instance — the instance root is the first argument. The IRIS catalogue was
+ * catalogue layer — the layer root is the first argument. The IRIS catalogue was
  * the first to ask for them, which is why the owner's words below are IRIS's.
  *
  * Owner, 2026-09-20: *"do the needed things like extract cover avatar igf
@@ -60,7 +60,7 @@ import type { CatalogueNode, MaskedRegion } from "../schemas/catalogue.js";
 import { bytesFor } from "./lib/bytes.js";
 import { inputSiteReached } from "@litlfred/cat-harness-tools/schemas/sdlc/input-trace.ts";
 
-/** The platform checkout — where the renderer and the render cache live, never the instance. */
+/** The platform checkout — where the renderer and the render cache live, never the layer. */
 const REPO = resolve(import.meta.dir, "..", "..");
 const RENDERER = join(REPO, "cat-harness-tools", "scripts", "pdf-cover.py");
 
@@ -87,7 +87,7 @@ type Cover = {
    * never re-rendered here.
    */
   sourcePdf: string | undefined;
-  /** The declared THUMBNAIL bitstream, instance-relative. */
+  /** The declared THUMBNAIL bitstream, layer-relative. */
   outPath: string;
   declaredSha: string | undefined;
   declaredBytes: number | undefined;

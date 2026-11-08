@@ -51,7 +51,7 @@ the artifact">
     </bpmn:startEvent>
     <bpmn:serviceTask id="Task_Collect" name="Collect each statement
 with its source section">
-      <bpmn:documentation>For every statement extracted from the library entries the artifact draws on, read three things off files: the statement verbatim, the library entry it came from, and the section of that entry, as a library reference (instance, library id, section id). The section's label is read from the entry's structure: its title and its locator in the source's own unit (a slide, a page, a cell range, a line range). For example "Catch up schedule, slide 7".
+      <bpmn:documentation>For every statement extracted from the library entries the artifact draws on, read three things off files: the statement verbatim, the library entry it came from, and the section of that entry, as a library reference (layer, library id, section id). The section's label is read from the entry's structure: its title and its locator in the source's own unit (a slide, a page, a cell range, a line range). For example "Catch up schedule, slide 7".
 
 A statement whose section cannot be resolved is NOT published without a link: it is reported, because a statement nobody can trace is the failure this process exists to prevent.</bpmn:documentation>
       <bpmn:extensionElements>

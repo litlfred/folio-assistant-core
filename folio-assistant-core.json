@@ -1,10 +1,10 @@
 {
   "$schema": "cat-harness-declaration/1.0.0",
-  "_comment": "folio-assist-core \u2014 THE CONTENT LAYER, in folio-assistant-core/ per the owner (2026-09-20: \"use folio-assistant-core/\") \u2014 the DIRECTORY and the declared NAME are BOTH spelled out in full. They were briefly different -- directory `folio-assistant-core`, name `folio-assist-core` -- and this comment went on asserting the short name after the `name` field beside it had already been changed, so the file contradicted itself in adjacent lines. Corrected 2026-09-20. WHAT IS STILL SHORT, DELIBERATELY, IS THE LANDING CARD ID below: a card id is a PUBLISHED IDENTIFIER and does not move with a directory. `landing-sticky.test.ts` says so and bean `8xtj` records the cost of assuming the two are one string -- a session sweeping every spelling at once renamed the card by accident and had to put it back. Main created a folio-assistant-core/ stub the same day; the two were one instance under two paths, and instanceRoots is keyed on the declared name, so the stub and the populated one collided on one key and the stub won. Consolidated here, declared as a real instance on the owner's ruling of 2026-09-20 (\"Create f-a-core/ as a real instance now\"). It declared NO directories when it was created, deliberately, because the modules it would own were still interleaved under cat-harness/ and declaring a directory that is not there is the dh4f defect. They are NOT interleaved any more: bean frs5's branch wrote `schemas/` (dublin-core, catalogue, materialization, library-ref) and `folios/`, and they moved in here rather than staying under a SECOND directory declaring this same name. Two instances with one declared name is not a layout question: `instanceRoots` is keyed on the declared name, so the stub and the populated one were one key and the stub won. The original note read: the modules it will own are still interleaved with the harness's under cat-harness/, and declaring a directory that is not there is the dh4f defect \u2014 every consumer then scans nothing and reports a clean run over it. An instance that declares only what it has is honest; one that declares its target layout is a lie a gate cannot catch. scripts/repo-partition.ts is the machine-readable statement of what will move here.",
+  "_comment": "folio-assist-core \u2014 THE CONTENT LAYER, in folio-assistant-core/ per the owner (2026-09-20: \"use folio-assistant-core/\") \u2014 the DIRECTORY and the declared NAME are BOTH spelled out in full. They were briefly different -- directory `folio-assistant-core`, name `folio-assist-core` -- and this comment went on asserting the short name after the `name` field beside it had already been changed, so the file contradicted itself in adjacent lines. Corrected 2026-09-20. WHAT IS STILL SHORT, DELIBERATELY, IS THE LANDING CARD ID below: a card id is a PUBLISHED IDENTIFIER and does not move with a directory. `landing-sticky.test.ts` says so and bean `8xtj` records the cost of assuming the two are one string -- a session sweeping every spelling at once renamed the card by accident and had to put it back. Main created a folio-assistant-core/ stub the same day; the two were one layer under two paths, and instanceRoots is keyed on the declared name, so the stub and the populated one collided on one key and the stub won. Consolidated here, declared as a real layer on the owner's ruling of 2026-09-20 (\"Create f-a-core/ as a real instance now\"). It declared NO directories when it was created, deliberately, because the modules it would own were still interleaved under cat-harness/ and declaring a directory that is not there is the dh4f defect. They are NOT interleaved any more: bean frs5's branch wrote `schemas/` (dublin-core, catalogue, materialization, library-ref) and `folios/`, and they moved in here rather than staying under a SECOND directory declaring this same name. Two layers with one declared name is not a layout question: `instanceRoots` is keyed on the declared name, so the stub and the populated one were one key and the stub won. The original note read: the modules it will own are still interleaved with the harness's under cat-harness/, and declaring a directory that is not there is the dh4f defect \u2014 every consumer then scans nothing and reports a clean run over it. A layer that declares only what it has is honest; one that declares its target layout is a lie a gate cannot catch. scripts/repo-partition.ts is the machine-readable statement of what will move here.",
   "name": "folio-assistant-core",
-  "_skillPrefix_comment": "Skills from this instance install as fa-<name> (bean x4mt; owner ruling 2026-10-11: harnesses have their own prefix, e.g. cat, fa).",
+  "_skillPrefix_comment": "Skills from this layer install as fa-<name> (bean x4mt; owner ruling 2026-10-11: harnesses have their own prefix, e.g. cat, fa).",
   "skillPrefix": "fa",
-  "_title_comment": "The HUMAN display name for the LHS navbar's harness tabs (bean t3n8). Owner, 2026-10-05, picking the label when this instance was instantiated: \"Folio Assistant Core\". `name` stays the machine identifier.",
+  "_title_comment": "The HUMAN display name for the LHS navbar's harness tabs (bean t3n8). Owner, 2026-10-05, picking the label when this layer was instantiated: \"Folio Assistant Core\". `name` stays the machine identifier.",
   "title": "Folio Assistant Core",
   "repository": "litlfred/folio-assistant-core",
   "version": "0.1.0",
@@ -15,7 +15,7 @@
     "tone": 212,
     "reads": "a leaf of paper with lines \u2014 the folio itself"
   },
-  "_avatar_comment": "Keyed on the DECLARED NAME, which is `folio-assistant-core` \u2014 directory and name both spelled in full, per the owner's ruling of 2026-09-20 and as `folio-assistant-core/harness.json` records against itself. Moved here from cat-harness/schemas/avatars.ts, 2026-10-05 (bean sod4 #4): an instance declares its own mark.",
+  "_avatar_comment": "Keyed on the DECLARED NAME, which is `folio-assistant-core` \u2014 directory and name both spelled in full, per the owner's ruling of 2026-09-20 and as `folio-assistant-core/harness.json` records against itself. Moved here from cat-harness/schemas/avatars.ts, 2026-10-05 (bean sod4 #4): a layer declares its own mark.",
   "assets": [
     {
       "id": "agent-instructions",
@@ -43,7 +43,7 @@
       "src": "node-kinds.baseline.json",
       "role": "unkinded-baseline",
       "title": "Unkinded families \u2014 folio-assistant-core",
-      "description": "The families whose typology THIS instance declares (in its typologies/ graph) that predate node kinds and may stay unkinded; `node-kinds:check` fails on any other. Owner, 2026-10-15: split out of cat-harness's docs/_data/node-kinds.json, which spanned every layer and is now built at publish, so this layer's families are judged by its own commit. Written by `bun run cat node-kinds`, which only shrinks it; `--accept-unkinded` grows it deliberately."
+      "description": "The families whose typology THIS layer declares (in its typologies/ graph) that predate node kinds and may stay unkinded; `node-kinds:check` fails on any other. Owner, 2026-10-15: split out of cat-harness's docs/_data/node-kinds.json, which spanned every layer and is now built at publish, so this layer's families are judged by its own commit. Written by `bun run cat node-kinds`, which only shrinks it; `--accept-unkinded` grows it deliberately."
     }
   ],
   "_stickies_comment": "ONE card, because the owner's ruling is one card per harness: \"not all stickies should be cat harness they should be outputs (as if) each init harness ran ... each own intiaization sticky note to show sucess\". This layer takes the knowledge-graph overview, which was cat-harness's third card \u2014 content is this layer's subject, so the card that explains the sub-graphs belongs to it rather than to the platform that operates on them.",
@@ -56,7 +56,7 @@
         "themeId": "grumpy-cat"
       },
       "summary": "What a folio is",
-      "body": "The knowledge graph is four sub-graphs, and an instance declares which of them it holds.\n\n**Content** is what somebody authors and a reader reads \u2014 this layer's subject. **Skills** are the instructions an agent follows to do the work. **Processes** are the BPMN diagrams that say who does what, in which order, and where the gates are \u2014 they are executable, not illustrations. **Tools** are what an agent can call.\n\nGetting anything in is **acquisition**: unstructured and semi-structured sources arrive through `uploads/` or through the conversation, and are ingested into `library/`. It is a step rather than a graph typology of its own \u2014 there is no fifth directory to look for.\n\n**Scope:** the content model \u2014 what a folio IS. Not the skills and tools that operate on it, and not any particular folio's chapters.",
+      "body": "The knowledge graph is four sub-graphs, and a layer declares which of them it holds.\n\n**Content** is what somebody authors and a reader reads \u2014 this layer's subject. **Skills** are the instructions an agent follows to do the work. **Processes** are the BPMN diagrams that say who does what, in which order, and where the gates are \u2014 they are executable, not illustrations. **Tools** are what an agent can call.\n\nGetting anything in is **acquisition**: unstructured and semi-structured sources arrive through `uploads/` or through the conversation, and are ingested into `library/`. It is a step rather than a graph typology of its own \u2014 there is no fifth directory to look for.\n\n**Scope:** the content model \u2014 what a folio IS. Not the skills and tools that operate on it, and not any particular folio's chapters.",
       "links": [
         {
           "label": "Content",
@@ -105,7 +105,7 @@
       "id": "folio-assistant-core-docs",
       "path": "docs/",
       "instanceRoot": true,
-      "description": "This instance's own reader-facing pages, and the page `/folio-assistant-core/` serves. Without a docs directory the harness tile can only open this instance's section of the landing (`/#harness-folio-assistant-core`), and `harness-tiles.ts` reports that as a finding. Authored markdown, composed THROUGH just-the-docs like the FHIR IG layers' pages, so it gets the sidebar, search and layout. Declared in this instance's own file, not in `cat-harness.json`: `compose-docs.docsLayers` treats every docs-kind entry there as a composition layer, so declaring it there would overlay this `index.md` onto the site's own.",
+      "description": "This layer's own reader-facing pages, and the page `/folio-assistant-core/` serves. Without a docs directory the harness tile can only open this layer's section of the landing (`/#harness-folio-assistant-core`), and `harness-tiles.ts` reports that as a finding. Authored markdown, composed THROUGH just-the-docs like the FHIR IG layers' pages, so it gets the sidebar, search and layout. Declared in this layer's own file, not in `cat-harness.json`: `compose-docs.docsLayers` treats every docs-kind entry there as a composition layer, so declaring it there would overlay this `index.md` onto the site's own.",
       "graphTypologies": [
         "docs"
       ],
@@ -117,7 +117,7 @@
     {
       "id": "folio-assistant-core-translations",
       "path": "translations/",
-      "description": "The gettext side of folio-assistant-core's own strings, one directory per target locale: `block-kinds.pot`/`.po`, the headings of the block kinds this instance declares in block-kinds/, keyed `msgctxt \"block-kind:<kind>\"` with the node's English `heading` as msgid. Locale headings live in the translation graph, and kinds are not centrally managed, so the catalogue sits with the kinds rather than in cat-harness/translations/.",
+      "description": "The gettext side of folio-assistant-core's own strings, one directory per target locale: `block-kinds.pot`/`.po`, the headings of the block kinds this layer declares in block-kinds/, keyed `msgctxt \"block-kind:<kind>\"` with the node's English `heading` as msgid. Locale headings live in the translation graph, and kinds are not centrally managed, so the catalogue sits with the kinds rather than in cat-harness/translations/.",
       "graphTypologies": [
         "translation-sources"
       ]
@@ -125,7 +125,7 @@
     {
       "id": "folio-assistant-core-block-typologies",
       "path": "block-kinds/",
-      "description": "The document profile's block kinds (prose, example, remark, algorithm, simulator, equation, diagram, table, figure, recommendation), one folio-block-kind/v1 node per file. Kinds are discoverable and not centrally managed: cat-harness/schemas/block-kinds.ts finds these by scanning every instance's declared block-kinds graph.",
+      "description": "The document profile's block kinds (prose, example, remark, algorithm, simulator, equation, diagram, table, figure, recommendation), one folio-block-kind/v1 node per file. Kinds are discoverable and not centrally managed: cat-harness/schemas/block-kinds.ts finds these by scanning every layer's declared block-kinds graph.",
       "graphTypologies": [
         "block-kinds"
       ]
@@ -190,7 +190,7 @@
       "id": "core-schemas",
       "path": "schemas/",
       "description": "The schemas of the content layer's Node Kinds.",
-      "_description_comment": "The content layer's own schema nodes. Three today, and they are one chain: `dublin-core` is what a source system SAYS about an item, `catalogue` is the shape of the collection that item sits in, and `materialization` is whether any of its bytes are actually here. The third is the load-bearing one \u2014 see its module doc for why bootstrap fetching a harness and the IRIS catalogue instance fetching three items out of 361.55 GB are the same process with two names.",
+      "_description_comment": "The content layer's own schema nodes. Three today, and they are one chain: `dublin-core` is what a source system SAYS about an item, `catalogue` is the shape of the collection that item sits in, and `materialization` is whether any of its bytes are actually here. The third is the load-bearing one \u2014 see its module doc for why bootstrap fetching a harness and the IRIS catalogue layer fetching three items out of 361.55 GB are the same process with two names.",
       "graphTypologies": [
         "schemas",
         "cat-harness"
@@ -255,7 +255,7 @@
     {
       "id": "core-library",
       "path": "library/",
-      "description": "L1 source content this LAYER owns \u2014 the publications core's own vocabulary and methods are derived FROM, one `<bib-slug>/` per ingested document. Declared rather than borrowed because a method is placed by OWNERSHIP (`methodology-adoption` \u00a74): a paper core's methodology cites from another instance's library would not lift out with it. Holds Doc-Researcher (`arxiv-2510.21603v1`), the C2PA Technical Specification 2.5 (`c2pa-2026-specification-2-5`, CC-BY-4.0) and the DSpace 7 REST Contract (`dspace-7-rest-contract`, BSD-3-Clause). `ingest-document.ts` refuses to guess a destination when several are declared. `dependents: skip` because these are THIS layer's sources; a downstream folio's library is its own.",
+      "description": "L1 source content this LAYER owns \u2014 the publications core's own vocabulary and methods are derived FROM, one `<bib-slug>/` per ingested document. Declared rather than borrowed because a method is placed by OWNERSHIP (`methodology-adoption` \u00a74): a paper core's methodology cites from another layer's library would not lift out with it. Holds Doc-Researcher (`arxiv-2510.21603v1`), the C2PA Technical Specification 2.5 (`c2pa-2026-specification-2-5`, CC-BY-4.0) and the DSpace 7 REST Contract (`dspace-7-rest-contract`, BSD-3-Clause). `ingest-document.ts` refuses to guess a destination when several are declared. `dependents: skip` because these are THIS layer's sources; a downstream folio's library is its own.",
       "graphTypologies": [
         "library"
       ]
@@ -266,7 +266,7 @@
         "themeId": "analyst"
       },
       "path": "methodologies/",
-      "description": "The methodologies core adopts from its own corpus. A method belongs to the layer whose job it describes, so the directory lifts out with this instance and nothing else moves. Core's job is what a folio HOLDS, where it CAME FROM and how much is PRESENT \u2014 which is why a document-ingestion method is core's and not the harness's.",
+      "description": "The methodologies core adopts from its own corpus. A method belongs to the layer whose job it describes, so the directory lifts out with this layer and nothing else moves. Core's job is what a folio HOLDS, where it CAME FROM and how much is PRESENT \u2014 which is why a document-ingestion method is core's and not the harness's.",
       "graphTypologies": [
         "methodology"
       ]
@@ -302,7 +302,7 @@
         "branch": "cat/cat-harness/qa-reports",
         "keyedBy": "commit"
       },
-      "description": "What auditing THIS instance produced, kept so a consumer can tell \"never audited\" from \"audited clean\". Stored on the `qa-reports` branch keyed by commit (`storage`), not committed: a local run writes the working copy here and `.gitignore` keeps it out of the checkout (bean 7mwa) \u2014 a printed verdict cannot, which is why every QA verdict here is a sidecar. TWO kinds live here and the files declare which they are via $schema: kg-qa/v1, one per audited subject, in a tree mirroring the subject\u2019s own path, and ONE kg-qa-manifest/v1 recording the auditor\u2019s identity for all of them. The manifest moved here from skills/ on 2026-09-27: kg-audit.ts writes it unconditionally, so its old home created a skills/ directory holding no skills in every instance that has none. At declaration time that is 7 files across processes (1), scenarios (1), skills (1), tools (4). No qa-results/v1 and no witnesses: this instance runs no document build and no witness-producing computation, and declaring kinds it does not hold would be an over-claim. dependents: reproduce, because a dependent audits its OWN graph \u2014 these verdicts are about this instance\u2019s nodes, and inheriting them would attribute one instance\u2019s findings to another. Declared WITH its files in one commit, per bean dh4f: a declared-but-absent directory makes a consumer scan nothing and report a clean run over it. Since `storage` was added, a reader resolves it from the store rather than the checkout, so its absence on disk reads as `unknown`, not clean.",
+      "description": "What auditing THIS layer produced, kept so a consumer can tell \"never audited\" from \"audited clean\". Stored on the `qa-reports` branch keyed by commit (`storage`), not committed: a local run writes the working copy here and `.gitignore` keeps it out of the checkout (bean 7mwa) \u2014 a printed verdict cannot, which is why every QA verdict here is a sidecar. TWO kinds live here and the files declare which they are via $schema: kg-qa/v1, one per audited subject, in a tree mirroring the subject\u2019s own path, and ONE kg-qa-manifest/v1 recording the auditor\u2019s identity for all of them. The manifest moved here from skills/ on 2026-09-27: kg-audit.ts writes it unconditionally, so its old home created a skills/ directory holding no skills in every layer that has none. At declaration time that is 7 files across processes (1), scenarios (1), skills (1), tools (4). No qa-results/v1 and no witnesses: this layer runs no document build and no witness-producing computation, and declaring kinds it does not hold would be an over-claim. dependents: reproduce, because a dependent audits its OWN graph \u2014 these verdicts are about this layer\u2019s nodes, and inheriting them would attribute one layer\u2019s findings to another. Declared WITH its files in one commit, per bean dh4f: a declared-but-absent directory makes a consumer scan nothing and report a clean run over it. Since `storage` was added, a reader resolves it from the store rather than the checkout, so its absence on disk reads as `unknown`, not clean.",
       "graphTypologies": [
         "qa"
       ]
@@ -310,7 +310,7 @@
     {
       "id": "memory",
       "path": "memory/",
-      "description": "Agent memory about content authoring, review and publication: lessons (block kinds, the document render path, normative statements, locale directories) an agent carries between sessions, one `\"$schema\": \"folio-memory/v1\"` node each. Read by cat-harness's `agent-memory` assembler alongside every other instance's declared `memory` directory.",
+      "description": "Agent memory about content authoring, review and publication: lessons (block kinds, the document render path, normative statements, locale directories) an agent carries between sessions, one `\"$schema\": \"folio-memory/v1\"` node each. Read by cat-harness's `agent-memory` assembler alongside every other layer's declared `memory` directory.",
       "graphTypologies": [
         "memory"
       ]
@@ -352,7 +352,7 @@
       }
     }
   ],
-  "_visualisers_comment": "THE VISUALISERS THIS HARNESS DECLARES, at its own level (owner, 2026-10-09: \"I still want the harness to be where specific visualizers/pages are declared for the harness at the level \u2026 Need harness to declare visualizer is renderedBy\"). Until then the glossary directory named its page (`coverage.visualiser: cat-harness/docs/glossary/index.md`) \u2014 a page in another layer's tree at a URL nothing derived. The page is now at <base>/folio-assistant-core/glossary/, computed by visualiserRoute from this entry, drawn by the `glossary-page` Tool (scripts/glossary-page.ts), with <base>/glossary/ kept as its declared alias so no existing link breaks. It covers the glossary KIND rather than this instance's directory by id (bean folio-assistant-1nu0, owner 2026-10-15): the page already reads every instance's glossary directory, so a catalogue instance's glossary row opens it rather than reading \"no viewer yet\". Since owner choice \"3a\" (2026-10-15) each instance's tile opens ITS OWN page, <base>/folio-assistant-core/glossary/instance/<instance>/ \u2014 `subgraphs: \"instance\"` nested under the declared `subgraphUnder` path `instance/`, so a sub-graph page cannot collide with the per-asset-type pages (glossary/skills/, glossary/tools/, \u2026); the shared page stays the index.",
+  "_visualisers_comment": "THE VISUALISERS THIS HARNESS DECLARES, at its own level (owner, 2026-10-09: \"I still want the harness to be where specific visualizers/pages are declared for the harness at the level \u2026 Need harness to declare visualizer is renderedBy\"). Until then the glossary directory named its page (`coverage.visualiser: cat-harness/docs/glossary/index.md`) \u2014 a page in another layer's tree at a URL nothing derived. The page is now at <base>/folio-assistant-core/glossary/, computed by visualiserRoute from this entry, drawn by the `glossary-page` Tool (scripts/glossary-page.ts), with <base>/glossary/ kept as its declared alias so no existing link breaks. It covers the glossary KIND rather than this layer's directory by id (bean folio-assistant-1nu0, owner 2026-10-15): the page already reads every layer's glossary directory, so a catalogue layer's glossary row opens it rather than reading \"no viewer yet\". Since owner choice \"3a\" (2026-10-15) each layer's tile opens ITS OWN page, <base>/folio-assistant-core/glossary/instance/<instance>/ \u2014 `subgraphs: \"instance\"` nested under the declared `subgraphUnder` path `instance/`, so a sub-graph page cannot collide with the per-asset-type pages (glossary/skills/, glossary/tools/, \u2026); the shared page stays the index.",
   "visualisers": [
     {
       "id": "glossary",
@@ -382,17 +382,17 @@
       "builtOnHostSite": {}
     }
   ],
-  "_needs_comment": "The layer this instance sits on. Owner, 2026-09-20: \"So bootsteap, cat harness, fa-core, f-a, from bottom to top.\" Declared rather than hardcoded in the navbar, so the ordering is a fact of the repository and not of whichever consumer needed it first. `cat-harness-tools` added 2026-10-01 on owner ruling C1 (epic 7x5n, bean rmi6): the tool implementation layer sits BELOW this one, so core may use it and it may never use core.",
+  "_needs_comment": "The layer this one sits on. Owner, 2026-09-20: \"So bootsteap, cat harness, fa-core, f-a, from bottom to top.\" Declared rather than hardcoded in the navbar, so the ordering is a fact of the repository and not of whichever consumer needed it first. `cat-harness-tools` added 2026-10-01 on owner ruling C1 (epic 7x5n, bean rmi6): the tool implementation layer sits BELOW this one, so core may use it and it may never use core.",
   "needs": [
     "cat-harness",
     "cat-harness-tools"
   ],
-  "_jsonldPrefixes_comment": "The external vocabularies this instance's JSON-LD speaks (cat-harness schemas/jsonld-prefixes.ts; bean folio-assistant-63q4, owner 2026-10-14). BIBO and FaBiO type and describe reference nodes (schemas/reference.ts, referenceToJsonLd); dcterms comes from cat-harness, which this instance needs, so it is not repeated here.",
+  "_jsonldPrefixes_comment": "The external vocabularies this layer's JSON-LD speaks (cat-harness schemas/jsonld-prefixes.ts; bean folio-assistant-63q4, owner 2026-10-14). BIBO and FaBiO type and describe reference nodes (schemas/reference.ts, referenceToJsonLd); dcterms comes from cat-harness, which this layer needs, so it is not repeated here.",
   "jsonldPrefixes": {
     "bibo": "http://purl.org/ontology/bibo/",
     "fabio": "http://purl.org/spar/fabio/"
   },
-  "_builtAtPublish_comment": "Owner, 2026-10-14 (B1; schemas/built-at-publish.ts in cat-harness). This instance's JSON-LD @context is generated by `jsonld:contexts` (cat-harness-tools scripts/gen-instance-contexts.ts) from the prefixes its documents use, flattened with the prefix tables of every instance it needs. Those tables are read at the CHECKOUT's pins, not at pins this instance's commit names, so no commit of it can hold the file current: it is built at publish and never committed (bean folio-assistant-63q4).",
+  "_builtAtPublish_comment": "Owner, 2026-10-14 (B1; schemas/built-at-publish.ts in cat-harness). This layer's JSON-LD @context is generated by `jsonld:contexts` (cat-harness-tools scripts/gen-instance-contexts.ts) from the prefixes its documents use, flattened with the prefix tables of every layer it needs. Those tables are read at the CHECKOUT's pins, not at pins this layer's commit names, so no commit of it can hold the file current: it is built at publish and never committed (bean folio-assistant-63q4).",
   "builtAtPublish": [
     {
       "path": "ns/context/v1.jsonld",
@@ -403,8 +403,8 @@
       "reason": "the prefixes its documents use, flattened with the jsonldPrefixes of cat-harness and the layers below it at the checkout's pins"
     }
   ],
-  "_contentAdapters_comment": "Declared HERE, by the instance that ships the adapter, so cat-harness's composition root (`src/builtin-adapters.ts`) finds it by reading declarations instead of holding a `../folio-assistant-core/adapters/document/index.ts` path into the layer above it. That path was the last upward import out of cat-harness, and a variable one no static gate could see (bean p11x, `check:import-direction`).",
-  "_lsiUnitProviders_comment": "Declared HERE, by the instance that ships the provider, so `lsi:near` in cat-harness-tools finds it by reading declarations instead of importing a layer above it (bean ec2a step 3, owner decision A: one list per graph).",
+  "_contentAdapters_comment": "Declared HERE, by the layer that ships the adapter, so cat-harness's composition root (`src/builtin-adapters.ts`) finds it by reading declarations instead of holding a `../folio-assistant-core/adapters/document/index.ts` path into the layer above it. That path was the last upward import out of cat-harness, and a variable one no static gate could see (bean p11x, `check:import-direction`).",
+  "_lsiUnitProviders_comment": "Declared HERE, by the layer that ships the provider, so `lsi:near` in cat-harness-tools finds it by reading declarations instead of importing a layer above it (bean ec2a step 3, owner decision A: one list per graph).",
   "lsiUnitProviders": [
     {
       "graphKind": "blocks",
@@ -425,43 +425,43 @@
         "{tracked}"
       ],
       "outputs": [],
-      "because": "45 s \u2014 `glossary-page.ts --check` exits before its write loop \u2014 measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning instance 2026-10-06 (bean 0r7u)"
+      "because": "45 s \u2014 `glossary-page.ts --check` exits before its write loop \u2014 measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning layer 2026-10-06 (bean 0r7u)"
     },
     "glossary:pot:check": {
       "inputs": [
         "{tracked}"
       ],
       "outputs": [],
-      "because": "39 s \u2014 exits before writing; compares without the POT timestamp \u2014 measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning instance 2026-10-06 (bean 0r7u)"
+      "because": "39 s \u2014 exits before writing; compares without the POT timestamp \u2014 measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning layer 2026-10-06 (bean 0r7u)"
     },
     "check:catalogue": {
       "inputs": [
         "{tracked}"
       ],
       "outputs": [],
-      "because": "measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning instance 2026-10-06 (bean 0r7u)"
+      "because": "measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning layer 2026-10-06 (bean 0r7u)"
     },
     "check:materialized-fixity": {
       "outputs": [],
-      "because": "measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning instance 2026-10-06 (bean 0r7u)"
+      "because": "measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning layer 2026-10-06 (bean 0r7u)"
     },
     "check:voices": {
       "inputs": [
         "{tracked}"
       ],
       "outputs": [],
-      "because": "measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning instance 2026-10-06 (bean 0r7u)"
+      "because": "measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning layer 2026-10-06 (bean 0r7u)"
     },
     "dc:render:check": {
       "inputs": [
         "{tracked}"
       ],
       "outputs": [],
-      "because": "returns before `writeFileSync` \u2014 measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning instance 2026-10-06 (bean 0r7u)"
+      "because": "returns before `writeFileSync` \u2014 measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning layer 2026-10-06 (bean 0r7u)"
     },
     "kg:materialize:check": {
       "outputs": [],
-      "because": "`checkMaterializations` is offline and reads \u2014 measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning instance 2026-10-06 (bean 0r7u)"
+      "because": "`checkMaterializations` is offline and reads \u2014 measured 2026-10-01 (bean xpcu); moved from cat-harness-tools/scripts/task-io.ts to its owning layer 2026-10-06 (bean 0r7u)"
     },
     "check:dsa-hash": {
       "inputs": [
@@ -500,7 +500,7 @@
       "notes": "Base content type. All other types inherit Markdown translation."
     }
   ],
-  "_gateExemptions_comment": "Files of this instance that a gate below it admits, each with its reason, so the gate reads them here instead of naming this layer's files (owner, 2026-10-16, item 6b of the folio-assistant#2598 wrong-direction triage). `check:structure-accessor` (bean rkqp) refuses the quoted token \"structure.json\" outside the accessor in `cat-harness/schemas/document-structure.ts`; these two only test whether a library entry was ingested and never parse the file.",
+  "_gateExemptions_comment": "Files of this layer that a gate below it admits, each with its reason, so the gate reads them here instead of naming this layer's files (owner, 2026-10-16, item 6b of the folio-assistant#2598 wrong-direction triage). `check:structure-accessor` (bean rkqp) refuses the quoted token \"structure.json\" outside the accessor in `cat-harness/schemas/document-structure.ts`; these two only test whether a library entry was ingested and never parse the file.",
   "gateExemptions": {
     "files": [
       {

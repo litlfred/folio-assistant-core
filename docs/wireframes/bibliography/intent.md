@@ -17,7 +17,7 @@ On the index (`<route>/`):
 - a filter box with a live count;
 - per reference, in an ordered list: the citation (up to three authors then "et al.", year, title, container, volume, issue, pages, publisher); its key as a link to its own anchor; its provenance (`catalogue` or `authored`); its DOI or URL; its ISBN; the source file it was read from; where the library holds it; and its own export as BibTeX, RIS and CSL-JSON downloads.
 
-On each sub-graph's page (`<route>/<sub-graph>/`): the directory, its instance and kind, a link back to all references, the same four exports over that directory alone, and the filter and list.
+On each sub-graph's page (`<route>/<sub-graph>/`): the directory, its layer and kind, a link back to all references, the same four exports over that directory alone, and the filter and list.
 
 ## Observed
 

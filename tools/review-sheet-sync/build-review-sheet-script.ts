@@ -270,7 +270,7 @@ export function buildData(a: Anchors, m: LineMap, cfg: SheetSyncConfig) {
 export type SheetConfig = { CFG: Record<string, string>; COLS: Record<string, Record<string, string>>; DATA: unknown };
 
 /**
- * The folio's own site address: `iriBase` of the instance declaration at the
+ * The folio's own site address: `iriBase` of the layer declaration at the
  * repository root (`<instance>.json`), e.g. `https://litlfred.github.io/dth-hrh/`.
  */
 export function siteBase(repo: string): string | undefined {

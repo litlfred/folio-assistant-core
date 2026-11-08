@@ -43,7 +43,7 @@ done | sort -u
 
 ## 2. Link format
 
-The viewer runs on `localhost:<viewer_port>` (from the instance's viewer
+The viewer runs on `localhost:<viewer_port>` (from the layer's viewer
 configuration). Each block links via its label anchor:
 
 ```

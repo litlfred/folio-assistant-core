@@ -78,7 +78,7 @@
     {
       "id": "ld-link-is-the-node-release-address",
       "title": "A link names the node at its dereferenceable address; when it has none, say so instead of minting one",
-      "description": "Coercing a bare id to @id is not enough: \"owner\" then resolves against whatever @base is in force, naming a node that does not exist there. Emit the node's release address — <iriBase><version>/<path in its knowledge graph>[#fragment], the rule check:node-iris enforces — resolved through the OWNING instance's declaration. When the owner declares no iriBase, keep the value as a literal and record a finding naming the instance; an invented address is worse than an honest string.",
+      "description": "Coercing a bare id to @id is not enough: \"owner\" then resolves against whatever @base is in force, naming a node that does not exist there. Emit the node's release address — <iriBase><version>/<path in its knowledge graph>[#fragment], the rule check:node-iris enforces — resolved through the OWNING layer's declaration. When the owner declares no iriBase, keep the value as a literal and record a finding naming the layer; an invented address is worse than an honest string.",
       "category": "structure",
       "severity": "critical",
       "judgementOnly": true,

@@ -14,7 +14,7 @@ tested-by:
 # External registry — confirming a source's authority
 
 `external-registry` (declared below this layer) is played by an **external**
-actor: trusted registries and observatories outside this instance's control. A
+actor: trusted registries and observatories outside this layer's control. A
 role played by something we do not run is still a role, and its skills are its
 **contract**: what we rely on it to do. This skill is the
 part of that contract this layer's evidence diagram relies on, and nothing
@@ -38,7 +38,7 @@ What that lane's documentation and the task's say is the whole contract.
 ## What happens when it does not answer
 
 The decision is a readout of what the external API returns, not this
-instance's call. When that answer is uncertain or absent, `Gateway_Authoritative`
+layer's call. When that answer is uncertain or absent, `Gateway_Authoritative`
 takes the `no` branch and `Lane_WorkPlan` opens a bean for the unverified
 citation. The lane does not invent a verdict, and the citation is neither
 dropped nor silently kept. Whether a publisher is one this folio has declared
@@ -49,5 +49,5 @@ trusted is the folio's judgement, not the registry's.
 The test in `tested-by:` drives the evidence process with the harness's
 workflow engine and checks that a `no` from `Gateway_Authoritative` leads to
 the bean for the unverified citation and that no step in the registry's lane is
-a decision of this instance's. Lines 1 and 2 are the registry's own behaviour,
+a decision of this layer's. Lines 1 and 2 are the registry's own behaviour,
 on endpoints not yet chosen, and are not exercised.

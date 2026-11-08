@@ -22,9 +22,9 @@
  *    and that label belongs to one term only. The DTH specs name elements by
  *    the Capitalized KG concept (dth-pc and dth-sc AGENTS.md).
  *
- * Only an instance that declares an ArchiMate pages visualiser is read, and
- * each element links to the page `gen-archimate-pages.ts` writes for it. Of an
- * instance's models, the newest that depicts a term is the one shown.
+ * Only a layer that declares an ArchiMate pages visualiser is read, and
+ * each element links to the page `gen-archimate-pages.ts` writes for it. Of a
+ * layer's models, the newest that depicts a term is the one shown.
  */
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -33,7 +33,7 @@ import { directoriesForGraph, instanceRootsIn, readDeclaration } from "@litlfred
 const ARCHIMATE_CONFIG = "cat-archimate.config.json";
 
 /**
- * An instance's `cat-archimate.config.json`: at its root, or inside a
+ * A layer's `cat-archimate.config.json`: at its root, or inside a
  * directory it declares with graph typology `archimate`; undefined when
  * neither holds one. The rule of `configPath` in cat-harness-tools'
  * `archimate/scripts/check-archimate.ts`, restated because that module is
@@ -117,7 +117,7 @@ export async function archimateDepictions(repo: string, terms: readonly TermRef[
       dir = archimateDir(root, config);
       pageRoot = declaredPageRoot(decl, config.directory);
     } catch {
-      continue; // no pages are written for this instance, so there is nothing to link to
+      continue; // no pages are written for this layer, so there is nothing to link to
     }
     const seen = new Set<string>();
     for (const m of [...config.models].sort((a, b) => newestFirst(a.id, b.id))) {

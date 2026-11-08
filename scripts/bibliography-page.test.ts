@@ -1,6 +1,6 @@
 /**
  * The bibliography page (bean folio-assistant-63q4), over a fixture checkout
- * of two instances: one declaring a `references` directory, one a `catalogue`
+ * of two layers: one declaring a `references` directory, one a `catalogue`
  * whose item holds a library copy.
  */
 import { afterAll, describe, expect, test } from "bun:test";

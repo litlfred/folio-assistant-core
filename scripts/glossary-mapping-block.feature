@@ -81,8 +81,8 @@ Feature: the glossary pages' mapping table and per-term mapping state
     Then it has rows
 
   @test:scripts/glossary-mapping-block.test.ts::the_page_and_the_record_key_a_scheme_the_same_way_(bean_q3n9,_owner_ruling_A)::recordRowsOnPage
-  Scenario: every row's (instance, scheme) is a scheme the page shows under that instance
-    When each record row's instance and scheme are looked for on the page
+  Scenario: every row's (layer, scheme) is a scheme the page shows under that layer
+    When each record row's layer and scheme are looked for on the page
     Then none is missing from the page
 
   @test:scripts/glossary-mapping-block.test.ts::the_page_and_the_record_key_a_scheme_the_same_way_(bean_q3n9,_owner_ruling_A)::pageSchemesHaveRows
@@ -122,8 +122,8 @@ Feature: the glossary pages' mapping table and per-term mapping state
     Then both are marked as sharing the id
 
   @test:scripts/glossary-mapping-block.test.ts::per_term_—_bean_`5yhm`,_every_term's_state,_none_of_them_graded::twoInstancesOwnRows
-  Scenario: one scheme id and term id in two instances: each reads its own row, neither is unknown
-    When the same scheme and term id appear in two instances with their own rows
+  Scenario: one scheme id and term id in two layers: each reads its own row, neither is unknown
+    When the same scheme and term id appear in two layers with their own rows
     Then each reads its own row and neither is unknown
 
   @test:scripts/glossary-mapping-block.test.ts::per_term_—_bean_`5yhm`,_every_term's_state,_none_of_them_graded::noResultNoNote

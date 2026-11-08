@@ -6,9 +6,9 @@ Feature: checking vendor voices
     Then one finding says so
 
   @test:scripts/tests/check-voices-vendors.test.ts::vendorVoiceFindings::baseNoInstanceShips
-  Scenario: fires on a base no instance ships
+  Scenario: fires on a base no layer ships
     When a vendor voice extends a base nobody serves
-    Then one finding says no instance serves it
+    Then one finding says no layer serves it
 
   @test:scripts/tests/check-voices-vendors.test.ts::vendorVoiceFindings::extendsCycle
   Scenario: fires on a cycle

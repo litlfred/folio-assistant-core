@@ -21,8 +21,8 @@ Feature: checking a materialized localPath
     Then when the permission takes, it is unknown with a detail, never absent
 
   @test:scripts/local-path.test.ts::checkLocalPath::resolvesAgainstInstance
-  Scenario: it resolves against the INSTANCE and nowhere else
-    When a path present only in a sibling is checked against the instance
+  Scenario: it resolves against the LAYER and nowhere else
+    When a path present only in a sibling is checked against the layer
     Then it is missing
 
   @test:scripts/local-path.test.ts::the_who-iris_catalogue's_own_localPath_claims::catalogueClaimsResolve

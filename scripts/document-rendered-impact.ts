@@ -64,7 +64,7 @@
  * shut, so every PR that touches a bean would wait on a false alarm.
  *
  * What a builder reads is the BUILDER's to say, not a list here and not the
- * instance's declaration: the second run showed why. smart-ra declared
+ * layer's declaration: the second run showed why. smart-ra declared
  * `beans/` and `todos/`, so "declared" read as "read", yet the site renders
  * todos and never beans. So each builder exports `siteReads(repoRoot, args)`
  * (`build-document-site`: the folio; `public-comment-site`: the comment store
@@ -76,7 +76,7 @@
  * reaches no page ({@link siteMayRead}).
  *
  * Any doubt carries: a step in the command that is not a builder exporting
- * `siteReads` excludes nothing, and with no command the instance's declared
+ * `siteReads` excludes nothing, and with no command the layer's declared
  * directories stand in. The claim is checked, not trusted: the staging
  * build's diff counts any page it changed that the list did not name.
  *
@@ -158,7 +158,7 @@ function finish(renderer: string, inputs: string[], acc: Acc, opts: { base?: str
 
 /** What the document site's builders can read. */
 export interface SiteReads {
-  /** Directories the builders read (their `siteReads`), or the instance's declared ones; repo-relative. */
+  /** Directories the builders read (their `siteReads`), or the layer's declared ones; repo-relative. */
   reads: string[];
   /** Submodule paths (`.gitmodules`): the platform, whose code builds every page. */
   submodules: string[];
@@ -379,7 +379,7 @@ export function buildSteps(command: string): Array<{ script: string; args: strin
     });
 }
 
-/** The instance's declared directories and its submodules, or `undefined` when either cannot be read. */
+/** The layer's declared directories and its submodules, or `undefined` when either cannot be read. */
 function declaredReads(root: string): SiteReads | undefined {
   const decl = declarationPathIn(root);
   if (!decl) return undefined;

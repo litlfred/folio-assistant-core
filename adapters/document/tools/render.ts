@@ -100,7 +100,7 @@ export function registerLatexRenderTools(server: McpServer): void {
         let baseFolder = process.env.GDRIVE_FOLDER_PATH ?? "";
         if (!baseFolder) {
           const cfgPath = expectedInstanceConfigPath(REPO_ROOT);
-          // `undefined` = nothing declares an instance here; nothing to read.
+          // `undefined` = nothing declares a layer here; nothing to read.
           if (cfgPath !== undefined && existsSync(cfgPath)) {
             try {
               const cfg = JSON.parse(readFileSync(cfgPath, "utf-8"));

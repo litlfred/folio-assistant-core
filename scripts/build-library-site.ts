@@ -28,7 +28,7 @@
  *   bun run folio-assistant-core/scripts/build-library-site.ts [--repo <folio root>] --out _site
  *
  * Writes, at `<handler>/<library dir>/` (the route rule every viewer
- * follows: `<base>/<handler>/<kind>/<subject>`, handler = this instance,
+ * follows: `<base>/<handler>/<kind>/<subject>`, handler = this layer,
  * folio-assistant-core), the PAGES under the page locale and the DATA
  * where it was (issue #2527, `document-site-route.ts`):
  *
@@ -48,7 +48,7 @@ import { visualiserNavDeclaration, type VisualiserNavEntry } from "@litlfred/cat
 import { defaultBlockActions } from "./build-document-site.js";
 import { fromPageDir, localisedPage } from "./document-site-route.js";
 
-/** This instance: the HANDLER segment of every page it publishes. */
+/** This layer: the HANDLER segment of every page it publishes. */
 export const HANDLER = (readDeclaration(join(import.meta.dir, "..")) as { name?: string } | undefined)?.name ?? "folio-assistant-core";
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);

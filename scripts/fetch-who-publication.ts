@@ -15,7 +15,7 @@
  *
  * It sits beside `fetch-dspace-item.ts` because both are acquisition routes
  * the DAK library step calls. It is WHO-specific, so its natural home is the
- * IRIS catalogue instance; that instance left this repository (for its own
+ * IRIS catalogue layer; that layer left this repository (for its own
  * repository) on 2026-10-07, and the move is a follow-up there.
  *
  * ## What it writes, and what it reads where

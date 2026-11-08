@@ -6,7 +6,7 @@ has_children: false
 
 # folio-assistant-core
 
-**The content layer.** This instance defines what a *folio* is: the
+**The content layer.** This layer defines what a *folio* is: the
 content-object model, the block kinds, the `document` content adapter, and the
 `folio` graph typology itself.
 
@@ -15,7 +15,7 @@ content-object model, the block kinds, the `document` content adapter, and the
 It sits on [C@T Harness](https://github.com/litlfred/cat-harness) and may
 import from it. The harness never imports from this layer;
 `bun run cat check:partition:edges` reports any edge that runs the wrong way.
-Instances such as WHO IRIS sit on top of this one, and the navbar orders them
+Layers such as WHO IRIS sit on top of this one, and the navbar orders them
 by each declaration's `needs`.
 
 ## What it holds
@@ -37,7 +37,7 @@ kinds of block exist and what each one must carry. Each kind is a node in the
 The `document` adapter serves structured prose; the science layer's `paper`
 profile adds the kinds whose assertion is a formal mathematical claim.
 
-The rest of the instance supports that model. `validators/` names the checks
+The rest of the layer supports that model. `validators/` names the checks
 the code provides, one node per graph typology and schema family. `glossary/`
 holds the content vocabulary. `methodologies/` holds the authoring methods a
 folio draws on. `processes/` holds the executable BPMN diagrams for the
@@ -51,6 +51,6 @@ constants and vocabularies live in that folio's own repository. If you are
 about to write subject matter here, you are either in the wrong repository or
 writing something that belongs in a folio as data.
 
-The instance's
+The layer's
 [README](https://github.com/litlfred/folio-assistant-core/blob/main/README.md)
 sets out the scope boundary in full.

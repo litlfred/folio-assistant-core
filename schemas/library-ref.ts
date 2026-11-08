@@ -1,5 +1,5 @@
 /**
- * A reference to an L1 source — in this instance, or in another one.
+ * A reference to an L1 source — in this layer, or in another one.
  *
  * @module folio-assistant-core/schemas/library-ref
  * @graphNode schema
@@ -14,7 +14,7 @@
  *
  * That is exactly what `scripts/check-voices.ts` does. It resolves a
  * `libraryId` as `library/<id>/sections/<sec>.md` **against the voice's own
- * instance root**, so moving `voices/who-*.json` into `who-style-guide/` breaks
+ * layer root**, so moving `voices/who-*.json` into `who-style-guide/` breaks
  * every citation in all three — 25 rules whose provenance was the whole point
  * of writing them.
  *
@@ -25,24 +25,24 @@
  * this repository has already paid for it twice **this week**: a `../`-prefixed
  * declaration that silently resolved outside the checkout, and a test carrying
  * five hardcoded skill directories that had been wrong for months. The whole
- * reason `folio_init` writes a builder shim is so the path to another instance
+ * reason `folio_init` writes a builder shim is so the path to another layer
  * is written down **once**.
  *
- * So a cross-instance reference names the instance by its **declared name**,
- * and where that instance sits is discovered from declarations.
+ * So a cross-layer reference names the layer by its **declared name**,
+ * and where that layer sits is discovered from declarations.
  *
  * ## The three failures this must keep apart
  *
  * A resolver that returned `undefined` for all of these would make them one
  * problem, and they need three different fixes:
  *
- *   - the **instance** is not in this checkout → add it, or fix the name;
- *   - the instance is here but declares **no `library` graph** → it is not a
+ *   - the **layer** is not in this checkout → add it, or fix the name;
+ *   - the layer is here but declares **no `library` graph** → it is not a
  *     corpus and the citation is pointing at the wrong kind of thing;
  *   - the library and graph resolve but the **section file** is absent → the
  *     document was never ingested, or the section id is wrong.
  *
- * **An unresolvable instance is never silently treated as local.** Falling back
+ * **An unresolvable layer is never silently treated as local.** Falling back
  * would turn "you cited another repository's corpus and it is not here" into
  * "that section does not exist", which sends the next reader looking in the
  * wrong place entirely.
@@ -51,16 +51,16 @@ import { existsSync, readFileSync, readdirSync, statSync } from "fs";
 import { join, resolve } from "path";
 
 // The declaration filename comes from the harness, not a second copy of it
-// here. This instance already declares `"needs": ["cat-harness"]`, and the
+// here. This layer already declares `"needs": ["cat-harness"]`, and the
 // partition rules call core reading harness DOWNWARD -- so this is the
 // declared dependency being used, not a new one being created. Owner ruling,
 // 2026-09-21, bean `jijc`.
 import { declarationPathIn } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { libraryEntryDir } from "../scripts/lib/library-entries.ts";
 
-/** A citation into L1 content. `instance` absent means *this* instance. */
+/** A citation into L1 content. `instance` absent means *this* layer. */
 export interface LibraryRef {
-  /** The DECLARED NAME of the instance holding the corpus — not a path. */
+  /** The DECLARED NAME of the layer holding the corpus — not a path. */
   instance?: string;
   libraryId: string;
   sectionId?: string;
@@ -78,10 +78,10 @@ export type LibraryRefResult =
   | { ok: false; failure: LibraryRefFailure };
 
 /**
- * Every instance in a checkout, by its declared `name`.
+ * Every layer in a checkout, by its declared `name`.
  *
  * Discovery, not a list: each top-level directory holding a `harness.json` is
- * an instance, and its `name` is what a reference cites. A hardcoded table
+ * a layer, and its `name` is what a reference cites. A hardcoded table
  * would go stale at the next directory move, which is the failure this whole
  * module is avoiding.
  */
@@ -100,7 +100,7 @@ export function instanceRoots(repoRoot: string): Map<string, string> {
     } catch {
       // A declaration that does not parse is not this module's error to raise:
       // `readDeclaration` already throws on one, with a better message. Skipping
-      // here keeps one bad file from making every OTHER instance unresolvable.
+      // here keeps one bad file from making every OTHER layer unresolvable.
     }
   };
   consider(repoRoot);
@@ -112,11 +112,11 @@ export function instanceRoots(repoRoot: string): Map<string, string> {
 }
 
 /**
- * Where an instance keeps its L1 corpus.
+ * Where a layer keeps its L1 corpus.
  *
- * Reads the instance's own declaration rather than assuming `library/`: an
- * instance may put it anywhere, and that is the entire premise of declared
- * directories. Returns `undefined` when the instance declares no `library`
+ * Reads the layer's own declaration rather than assuming `library/`: a
+ * layer may put it anywhere, and that is the entire premise of declared
+ * directories. Returns `undefined` when the layer declares no `library`
  * graph at all, which is a different answer from "the directory is empty".
  */
 export function libraryDirOf(instanceRoot: string): string | undefined {
@@ -128,31 +128,31 @@ export function libraryDirOf(instanceRoot: string): string | undefined {
   } catch {
     return undefined;
   }
-  // THIS INSTANCE'S OWN, which is not "the first one declared".
+  // THIS LAYER'S OWN, which is not "the first one declared".
   //
   // `cat-harness/harness.json` declares FOUR library entries: its own empty
-  // `library/`, plus the libraries of the IRIS catalogue instance, the
+  // `library/`, plus the libraries of the IRIS catalogue layer, the
   // science layer and `agent-skills/library/` — all three `scope: "repository"`, declared there
   // because the consumers that scan libraries run from the repository root.
   // `find` took whichever came first and `resolve(instanceRoot, path)` then
-  // resolved a repository-scoped path against the INSTANCE, which is not
+  // resolved a repository-scoped path against the LAYER, which is not
   // where it lives.
   //
   // Measured consequence, found by review 2026-09-20: a bare citation to a
-  // document of the IRIS catalogue instance could report "never brought through uploads/ ->
+  // document of the IRIS catalogue layer could report "never brought through uploads/ ->
   // library/" about a document that is ingested, and declared in the same
   // file that was just read.
   //
   // `scope` is the discriminator, not `own`: every one of those entries is
   // cat-harness's own declaration. A repository-scoped entry names where
-  // ANOTHER instance keeps its corpus, and the caller asking
-  // `libraryDirOf(<that instance>)` gets it from that instance's own declaration.
+  // ANOTHER layer keeps its corpus, and the caller asking
+  // `libraryDirOf(<that instance>)` gets it from that layer's own declaration.
   const mine = dirs.filter(
     (d) => Array.isArray(d.graphTypologies) && d.graphTypologies.includes("library") && d.scope !== "repository",
   );
   if (mine.length === 0) return undefined;
   if (mine.length > 1) {
-    // Refuse rather than pick. An instance with two libraries of its own has
+    // Refuse rather than pick. A layer with two libraries of its own has
     // no answer to "where does this instance keep its corpus", and returning
     // `undefined` would say "it declares none" — a different, wrong fact.
     throw new Error(

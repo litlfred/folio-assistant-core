@@ -10,8 +10,8 @@
   task's bare id. The calling lane names the Role; the global task names the
   Skill. Shared within this layer only:
   cat-harness keeps its own in its own processes/global-tasks.bpmn. Every layer
-  uses that plain name: a diagram's identity is its instance plus its path, and
-  its IRIs carry the instance, so two layers' files do not collide.
+  uses that plain name: a diagram's identity is its layer plus its path, and
+  its IRIs carry the layer, so two layers' files do not collide.
 -->
 <bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL"
                   xmlns:bootstrap.processes="https://litlfred.github.io/bootstrap/v0/processes/ns/"

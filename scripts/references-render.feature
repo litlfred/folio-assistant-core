@@ -40,7 +40,7 @@ Feature: a document's reference list rendered from its reference nodes
 
   @test:scripts/references-render.test.ts::referenceListsOf::listFromCitedNodes
   Scenario: draws the block's .md from the nodes it cites, in cites order
-    When the reference lists of an instance citing b then a are drawn
+    When the reference lists of a layer citing b then a are drawn
     Then the block's Markdown lists them in cites order in the chosen style
 
   @test:scripts/references-render.test.ts::referenceListsOf::badKeyEmptyUnknownOption

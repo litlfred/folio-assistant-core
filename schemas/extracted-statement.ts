@@ -14,8 +14,8 @@
  *
  * ## Why the source is a library reference plus an optional page
  *
- * `source` is a {@link LibraryRef} (instance, library id, section id) so a
- * statement from another instance's library resolves through that instance's
+ * `source` is a {@link LibraryRef} (layer, library id, section id) so a
+ * statement from another layer's library resolves through that layer's
  * declaration, never through a relative path. Many extractions record the
  * PAGE a statement was read from rather than the section (a poster, a slide
  * deck, a table): `page` lets the generator find the section from the entry's
@@ -28,7 +28,7 @@ export const EXTRACTED_STATEMENTS_SCHEMA_ID = "folio-extracted-statements/v1" as
 
 export const StatementSourceSchema = z
   .object({
-    /** The DECLARED NAME of the instance holding the library; absent means this instance. */
+    /** The DECLARED NAME of the layer holding the library; absent means this layer. */
     instance: z.string().min(1).optional(),
     /** The library entry: `library/<libraryId>/`. */
     libraryId: z.string().min(1),

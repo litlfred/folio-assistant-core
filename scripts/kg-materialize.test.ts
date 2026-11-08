@@ -94,7 +94,7 @@ interface Sub {
   assets?: { policy: "none" | "on-demand" | "all" };
 }
 
-/** A checkout holding one subscriber instance, with a cached snapshot at the pin. */
+/** A checkout holding one subscriber layer, with a cached snapshot at the pin. */
 function checkout(sub: Sub = {}, opts: { snapshotRef?: string; substrate?: { file: string; raw: string } } = {}): { repo: string; inst: string; snapDir: string; decl: string } {
   const repo = tmp("kg-mat-repo-");
   const inst = join(repo, "example");

@@ -2,13 +2,13 @@
  * The `external-registry` role held to `registry-authority-contract`
  * (`skills/content/content-lifecycle-ext/registry-authority-contract.md`):
  * what a trusted registry is relied on for when a source's authority is
- * checked, and what this instance does when it does not answer.
+ * checked, and what this layer does when it does not answer.
  *
- * The registry is a party this instance does not run, on endpoints not yet
+ * The registry is a party this layer does not run, on endpoints not yet
  * chosen (the diagram is a strawperson), so its own lines 1 and 2 are not
  * exercised. What is ours is tested against `evidence-retrieval.bpmn` as the
  * harness's workflow engine reads it: the lane names the role, the registry's
- * lane decides nothing of this instance's, and an unconfirmed answer becomes
+ * lane decides nothing of this layer's, and an unconfirmed answer becomes
  * a bean for the unverified citation rather than a verdict.
  */
 import { describe, expect, test } from "bun:test";

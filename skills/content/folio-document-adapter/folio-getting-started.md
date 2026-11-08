@@ -13,7 +13,7 @@ The harness skill [`getting-started`](../../../../cat-harness/skills/conduct/con
 governs repository triage (`isFolio`, `repoHasContent`, `statedIntent`),
 selectable options via [`interaction-modality`](../../../../cat-harness/skills/conduct/conduct-core/interaction-modality.md),
 and `gh-pages` provisioning before GitHub Pages is switched on. In a content
-folio or an instance stacked on `folio-assistant-core`, apply these rules
+folio or a layer stacked on `folio-assistant-core`, apply these rules
 alongside it.
 
 Process: [`processes/conduct/getting-started.bpmn`](../../../processes/conduct/getting-started.bpmn).
@@ -25,10 +25,10 @@ Decision table: [`processes/conduct/decisions/folio-intent.dmn`](../../../proces
 a repository carries — `folio`, `harness`, `dak`, `sushi` — with the facts each
 states and any disagreement between them. `describeRepositoryClosure()`
 (`schemas/kg/harness-config.ts`) extends that through the dependency tree,
-attributing each membership to the instance that carried it.
+attributing each membership to the layer that carried it.
 
 - **`folio` and `harness` are distinct memberships.** The declaration
-  (`<name>.json`) says *this is an instance*; a config that declares
+  (`<name>.json`) says *this is a layer*; a config that declares
   `contentType` (`<name>.config.json` or inline in `index.config.json`) says
   *this authors folio content*. `isFolio` in `folio-intent.dmn` tests membership
   of `folio` specifically.

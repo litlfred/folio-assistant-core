@@ -7,7 +7,7 @@
  *   "tables": [{ "glossary": "glossary/x.glossary.json", "block": "folio/doc/glossary/t.md", "kind": "terms" }] }
  * ```
  *
- * Paths are relative to the instance root. The file lives at
+ * Paths are relative to the layer root. The file lives at
  * `<instance>/glossary/glossary-tables.json`, inside the `glossary` kind's
  * directory, so the kind lists this family beside `folio-glossary/v1`
  * (`typologies/glossary.json`) and `validators/glossary-tables.json` names

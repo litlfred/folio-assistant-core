@@ -1,8 +1,8 @@
 /**
- * Cross-instance library references, against THIS checkout rather than fixtures.
+ * Cross-layer library references, against THIS checkout rather than fixtures.
  *
  * Fixtures would prove the code branches; this proves it resolves the real
- * instances, which is the claim that matters — bean `r1lz` predicted the defect
+ * layers, which is the claim that matters — bean `r1lz` predicted the defect
  * a year of fixtures would not have caught: *"a skill derived from a source
  * text in another repo would cite evidence its own instance cannot resolve."*
  */
@@ -18,14 +18,14 @@ import { libraryEntries } from "../scripts/lib/library-entries.ts";
 const REPO = resolve(import.meta.dir, "../..");
 const PLATFORM = resolve(REPO, "cat-harness");
 /**
- * The instance that actually holds the WHO corpus, since bean `frs5`.
+ * The layer that actually holds the WHO corpus, since bean `frs5`.
  *
  * Before the move `cat-harness` held it and every assertion below resolved
- * LOCALLY — the cross-instance path was exercised only by an unknown-instance
+ * LOCALLY — the cross-layer path was exercised only by an unknown-instance
  * negative. That made this file's own opening claim ("this proves it resolves
  * the real instances") weaker than it read: the interesting case was the one
  * with no data behind it. Now the platform holds no library at all, so a
- * citation of a WHO document is a genuine cross-instance resolution, which is
+ * citation of a WHO document is a genuine cross-layer resolution, which is
  * exactly the situation bean `r1lz` predicted: *"a skill derived from a source
  * text in another repo would cite evidence its own instance cannot resolve."*
  */
@@ -37,15 +37,15 @@ describe("instance discovery", () => {
     // This used to read "not by DIRECTORY name", witnessed by a declared
     // `folio-assist-core` in a directory called `folio-assistant-core`. After
     // the owner's 2026-09-20 ruling — `cat-harness`, `folio-assistant-core`
-    // and `folio-assistant` are distinct instances — every name agrees with
+    // and `folio-assistant` are distinct layers — every name agrees with
     // its directory, so that witness is gone and a test asserting it would be
     // asserting a coincidence.
     //
     // The distinction that IS still live is name vs STUB. `cat-harness`
     // declares `stub: "folio-assistant"` — the stub names the published
     // artefact (`docs/folio-assistant/`, `_kg/folio-assistant.jsonld`) while
-    // the name names the instance. A consumer reaching for an instance by its
-    // stub gets the REPOSITORY, which is a different instance entirely.
+    // the name names the layer. A consumer reaching for a layer by its
+    // stub gets the REPOSITORY, which is a different layer entirely.
     expect(roots.get("cat-harness")).toBe(PLATFORM);
     expect(roots.get("folio-assistant")).not.toBe(PLATFORM);
     expect(roots.has("folio-assistant-core")).toBe(true);
@@ -64,7 +64,7 @@ describe("instance discovery", () => {
     // the root won, and the harness layer became unreachable by name,
     // silently. The separation removed the root's declaration
     // (folio-assistant@3d4caf6e0f, "remove root toolchain and folio-assistant
-    // declaration"): the root is now an INDEX that mounts instances from
+    // declaration"): the root is now an INDEX that mounts layers from
     // `index.lock.json` and is not one itself. So the collision this guarded
     // can no longer arise from the root, and the live rule is the converse —
     // no name resolves to the index root, and the harness layer still
@@ -196,7 +196,7 @@ describe("resolution keeps four failures apart", () => {
   it("platformMustNameWhoIris", () => {
     // The case bean `r1lz` predicted, now real rather than hypothetical. A
     // bare citation from the platform cannot work any more (it declares no
-    // library), and the named one crosses the instance boundary and lands.
+    // library), and the named one crosses the layer boundary and lands.
     const named = resolveLibraryRef({ ...local, instance: "who-iris" }, PLATFORM, REPO);
     expect(named.ok).toBe(true);
     if (named.ok) expect(named.path).toContain("who-iris/library/wpr-rdo-2020-003-eng");
@@ -216,14 +216,14 @@ describe("resolution keeps four failures apart", () => {
 
   it("noLibraryGraphFinding", () => {
     // `bootstrap` is declared and legitimately holds no corpus — distinct
-    // from a missing section, and distinct from an unknown instance. It is the
+    // from a missing section, and distinct from an unknown layer. It is the
     // zero-install floor, so it will never hold one. (This named
-    // `kg-navigation` until bean `byql` folded that instance into cat-harness,
-    // which made it an UNKNOWN instance and flipped the assertion.)
+    // `kg-navigation` until bean `byql` folded that layer into cat-harness,
+    // which made it an UNKNOWN layer and flipped the assertion.)
     //
     // This named `who-iris` until bean `frs5`, when who-iris gained the
-    // library it had been deliberately withholding. Moving the assertion to an
-    // instance that will never hold one is the point: an assertion that only
+    // library it had been deliberately withholding. Moving the assertion to a
+    // layer that will never hold one is the point: an assertion that only
     // holds until somebody does the obvious next thing is not testing the
     // distinction, it is testing the schedule.
     const r = resolveLibraryRef({ ...local, instance: "bootstrap" }, PLATFORM, REPO);
@@ -233,7 +233,7 @@ describe("resolution keeps four failures apart", () => {
 
   it("bareFromPlatformNotIngested", () => {
     // The two answers are a sentence apart and send a reader to different
-    // places: "this instance has no corpus, name the one that does" versus
+    // places: "this layer has no corpus, name the one that does" versus
     // "that document was never ingested".
     //
     // Between `frs5` and the owner's ruling the platform declared no library,
@@ -245,7 +245,7 @@ describe("resolution keeps four failures apart", () => {
     // them to name `who-iris`.
     //
     // Asserted rather than lamented: this is a real cost of declaring a
-    // directory an instance does not fill, it is the `dh4f` shape doing
+    // directory a layer does not fill, it is the `dh4f` shape doing
     // exactly what that bean says it does, and the core relocation is what
     // ends it. Pinning it here means the day it changes back, this says so.
     const r = resolveLibraryRef(local, PLATFORM, REPO);
@@ -320,7 +320,7 @@ describe("an instance's library is ITS OWN, not the first one declared", () => {
   });
 
   it("refusesTwoOwnLibraries", () => {
-    // `undefined` would say "this instance declares no library", which is a
+    // `undefined` would say "this layer declares no library", which is a
     // different and wrong fact. Two libraries of one's own has no answer to
     // "where does this instance keep its corpus".
     const root = instance([

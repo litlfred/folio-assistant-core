@@ -14,7 +14,7 @@
                     mapped onto the five branches. "unstated" until they have
                     been asked. This is a fact about the conversation, not a
                     guess about the user.
-    isFolio         the instance's entry in `index.config.json` (the one
+    isFolio         the layer's entry in `index.config.json` (the one
                     config, bean ymvt; a legacy `<name>.config.json` it
                     imports is overlaid by it) DECLARES a `contentType`. Not its mere presence, nor
                     its listing in the index: that is instantiation, the
@@ -86,7 +86,7 @@
         <outputEntry id="OE_SaidOverlay"><text>"overlay"</text></outputEntry>
       </rule>
       <rule id="Rule_SaidAddFolio">
-        <description>The user said they want another folio at top level in an instance they already have.</description>
+        <description>The user said they want another folio at top level in a layer they already have.</description>
         <inputEntry id="IE_SaidAddFolio_1"><text>"add-folio"</text></inputEntry>
         <inputEntry id="IE_SaidAddFolio_2"><text>-</text></inputEntry>
         <inputEntry id="IE_SaidAddFolio_3"><text>-</text></inputEntry>

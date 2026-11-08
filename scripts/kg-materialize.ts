@@ -64,7 +64,7 @@
  * part's path and the root licence, so only those blobs arrive. Injectable
  * ({@link PartFetcher}), so every judgement is tested over fixtures. The
  * bytes land in a temporary directory first: measuring is not materialising,
- * and nothing under the instance changes unless all five gates pass.
+ * and nothing under the layer changes unless all five gates pass.
  *
  * ## Metadata mode — `--nodes <subscription> <subgraph-path>` (bean `c1m4`)
  *
@@ -554,10 +554,10 @@ export async function materialize(opts: MaterializeOptions): Promise<Materialize
  * Where the substrate publishes one subgraph's hydrated file, repo-relative,
  * and the IRI suffix the file must declare — or why the request is not one.
  * Read from the SNAPSHOT's declaration (its `docs` directory and its name),
- * the way `subgraphOutDir` reads this instance's: the path is the unstable
+ * the way `subgraphOutDir` reads this layer's: the path is the unstable
  * half, so it is looked up rather than spelled. The snapshot's declaration is
  * the substrate's root `<name>.json` (`SubstrateSnapshotSchema.file`), so its
- * instance root IS the repository root and a declared path is repo-relative.
+ * layer root IS the repository root and a declared path is repo-relative.
  */
 export function nodesLocation(
   snap: SubstrateSnapshot,
@@ -608,7 +608,7 @@ export type NodesResult =
 
 export interface NodesOptions {
   subscription: string;
-  /** Instance-relative subgraph path in the substrate, e.g. `skills/sdlc`. */
+  /** Layer-relative subgraph path in the substrate, e.g. `skills/sdlc`. */
   path: string;
   instance?: string;
   /** The size cap. Absent: {@link DEFAULT_MAX_BYTES}. */
@@ -841,7 +841,7 @@ export interface CheckReport {
 }
 
 /**
- * Offline judgement of one instance's materialised parts. What it holds:
+ * Offline judgement of one layer's materialised parts. What it holds:
  *
  * - every record parses as {@link KgMaterializationRecordSchema} (so its
  *   inner records are valid `MaterializationSchema`), sits where the layout
@@ -960,10 +960,10 @@ function flag(argv: string[], name: string): string | undefined {
 if (import.meta.main) {
   const argv = process.argv.slice(2);
   if (argv.includes("--check")) {
-    // In a layer's PR checks only the instances the caller commits are judged
+    // In a layer's PR checks only the layers the caller commits are judged
     // (owner ruling 2026-11-05, "Move the checks"; cat-harness-tools
     // `lib/gate-own.ts`): a mounted layer's parts are its own CI's. Unset,
-    // every instance is the caller's.
+    // every layer is the caller's.
     const roots = [...new Set([resolve(DEFAULT_INSTANCE), ...instanceRootsIn(REPO).map((r) => resolve(r))])].filter(
       (r) => gateOwnsFile(relative(REPO, r)) !== false,
     );

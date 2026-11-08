@@ -1,5 +1,5 @@
 {
-  "_comment": "Moved here from the harness with its grant (move M4). Its grant — `content-authoring` — is now stated in this instance's `policies/content-agents.jsonld`, beside the actor, not in the harness's default policy. The description below is the harness's copy word for word while the move is in flight: the harness's scenario overlay accepts a redeclaration that only adds (owner, 2026-10-23), so it changes nothing the lower copy says until that copy is removed.",
+  "_comment": "Moved here from the harness with its grant (move M4). Its grant — `content-authoring` — is now stated in this layer's `policies/content-agents.jsonld`, beside the actor, not in the harness's default policy. The description below is the harness's copy word for word while the move is in flight: the harness's scenario overlay accepts a redeclaration that only adds (owner, 2026-10-23), so it changes nothing the lower copy says until that copy is removed.",
   "id": "deep-researcher",
   "title": "Deep researcher",
   "kind": "agent",

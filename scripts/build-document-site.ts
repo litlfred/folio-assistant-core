@@ -333,7 +333,7 @@ export async function documentGraph(
       continue;
     }
     const text = readFileSync(path, "utf-8");
-    // The generator names the context of the instance the file sits in
+    // The generator names the context of the layer the file sits in
     // (`atInstanceContext`, bean folio-assistant-63q4), so compare with that.
     if (text !== serialiseNode(atInstanceContext(blockToJsonLd(b, slug, [], [], contributions), path))) errors.push(`${rel}: KG node is stale (run gen-block-jsonld.ts)`);
     nodes.push({ rel, text });
@@ -515,7 +515,7 @@ function lazyLoader(index: { chunks: number; of: Record<string, number>; ids: Re
 //   paper manifest's `macros`.
 // - Math is OPT-IN. A document folio writes "$5 million" in prose, and
 //   `remark-math` would turn the text between two dollar signs into an
-//   equation. It is on by default only for a `contentType: "paper"` instance;
+//   equation. It is on by default only for a `contentType: "paper"` layer;
 //   `--math` / `--no-math` override.
 //
 // Directives and citations are handled whatever the content type, because
@@ -864,7 +864,7 @@ export async function buildDocumentSite(
     linkTerms?: boolean;
   } = {},
 ): Promise<SiteBuildResult> {
-  // Math defaults on only for a paper instance; see the note on renderDocumentHtml.
+  // Math defaults on only for a paper layer; see the note on renderDocumentHtml.
   const math = opts.math ?? readHarnessConfig(repoRoot)?.contentType === "paper";
   const docs = documentManifests(repoRoot);
   const result: SiteBuildResult = { documents: [], errors: [] };
@@ -891,7 +891,7 @@ export async function buildDocumentSite(
     const title = withStatus(manifest.title ?? d.slug, status);
     if (status && manifest.title) built.markdown = built.markdown.replace(`# ${manifest.title}\n`, `# ${title}\n`);
     const termLinks = opts.linkTerms ? await glossaryTermLinks(repoRoot, documentPageDir(d.slug)) : undefined;
-    // A figure that is a view of the instance's ArchiMate model is drawn from
+    // A figure that is a view of the layer's ArchiMate model is drawn from
     // the model, linked to the view's page (live-figures.ts); the PNG stays the fallback.
     const live = liveFigures(repoRoot, documentPageDir(d.slug));
     // The structured-assets page (structured-assets.ts): every requirement,
@@ -901,7 +901,7 @@ export async function buildDocumentSite(
     const assetKinds = new Set(assets.map((a) => a.kind));
     // Data element cards fold their table and link their glossary entry (Q-DE-1 A).
     const entryLinks = assetKinds.has("data-element") ? (termLinks ?? (await glossaryTermLinks(repoRoot, documentPageDir(d.slug)))) : [];
-    // External glossaries the instance cites, noted above the document's own
+    // External glossaries the layer cites, noted above the document's own
     // glossary (owner, 2026-11-02; external-glossaries.ts).
     const extGlossaries = externalGlossaries(repoRoot);
     const firstEntry = extGlossaries.length ? await firstGlossaryLabel(d.path) : undefined;
@@ -1042,7 +1042,7 @@ export function landingPage(layout: string, title: string, body: string): string
 
 /**
  * The other pages this folio's site publishes, for its landing page: every
- * visualisation the instance DECLARES (`coverage.visualiser`) whose page
+ * visualisation the layer DECLARES (`coverage.visualiser`) whose page
  * resolves — on disk, or built at publish by a declared `writer` whose scripts
  * exist (`visualisationResolves`, the one rule tiles and coverage also use).
  *
@@ -1051,7 +1051,7 @@ export function landingPage(layout: string, title: string, body: string): string
  * (2026-10-09, owner: "how is archimate visualizer integrated into smart-ra
  * landing page") — was reachable only by typing its address. The navbar's
  * tiles do not help a folio: on a foreign site they come from the PLATFORM's
- * `harness.json`, where a folio's instance is not listed.
+ * `harness.json`, where a folio's layer is not listed.
  *
  * A `ref` is repository-relative, and a folio's site is built from its root,
  * so the ref IS the site path; `index.html` becomes its directory, the form

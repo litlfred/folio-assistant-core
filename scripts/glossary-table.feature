@@ -16,12 +16,12 @@ Feature: the glossary and acronym tables drawn from a glossary
     Then the caption above and the footnotes below are kept
 
   @test:scripts/glossary-table.test.ts::glossary-table::refusesEscapingPath
-  Scenario: refuses a config path that leaves the instance
+  Scenario: refuses a config path that leaves the layer
     When a config naming ../g.json is validated
     Then it is refused
 
   @test:scripts/glossary-table.test.ts::glossary-table::drawsConfiguredTables
-  Scenario: draws every table the instance's config names
-    Given an instance config naming one terms table
+  Scenario: draws every table the layer's config names
+    Given a layer config naming one terms table
     When the tables are drawn
     Then there is one, starting with the Term header

@@ -1,7 +1,7 @@
 ---
 name: glossary-terms
 description: >
-  Add terms to an instance's glossary: local SKOS terms (folio-glossary/v1) with
+  Add terms to a layer's glossary: local SKOS terms (folio-glossary/v1) with
   a definition, a code and links to external SKOS concepts, and references to
   whole external schemes. Rendered on the glossary/ page; gated by
   check:glossary. Authored terms go to gettext (.pot) for translation; a
@@ -52,7 +52,7 @@ counts as that person: its author wrote the definition and marked it (see
 Terms are linked across the glossary, the narrative and the knowledge graph
 with a few shared joins, not a framework.
 
-**One join key: the SKOS term** (its id, or its IRI from another instance).
+**One join key: the SKOS term** (its id, or its IRI from another layer).
 Everything else points at it, and nothing copies it.
 
 | thing | how it names the term |
@@ -95,14 +95,14 @@ With `--all` it also lists terms the narrative never uses. The acronym report is
 
 Every folio follows these; none re-decides them.
 
-**The instance namespace.** A term's IRI is
-`<instance namespace>glossary/<scheme id>/<term id>`. The instance namespace is
-built from the instance's declaration (`iriBase`, `version`, and the stub of a
-sub-instance) by `instanceNs` in `folio-assistant-core/scripts/glossary-page.ts`;
+**The layer namespace.** A term's IRI is
+`<instance namespace>glossary/<scheme id>/<term id>`. The layer namespace is
+built from the layer's declaration (`iriBase`, `version`, and the stub of a
+sub-layer) by `instanceNs` in `folio-assistant-core/scripts/glossary-page.ts`;
 `schemeIri` and `termIri` are in `folio-assistant-core/schemas/glossary.ts`.
 For example:
 
-| instance | namespace |
+| layer | namespace |
 |---|---|
 | `folio-assistant-core` | `https://litlfred.github.io/folio-assistant-core/v0/ns/` |
 | `ihris` (its own site) | `https://litlfred.github.io/ihris/ihris/ns/` |
@@ -110,24 +110,24 @@ For example:
 The namespace is never the asset's path: moving the asset must not move the
 term.
 
-**A term is minted by the instance that owns its source.** A scheme and its terms live
-in the namespace of the instance whose root holds the SOURCE ASSET, not of the
-instance whose `glossary/` directory holds the file:
-- In a folio with sub-instances, that is the sub-instance
+**A term is minted by the layer that owns its source.** A scheme and its terms live
+in the namespace of the layer whose root holds the SOURCE ASSET, not of the
+layer whose `glossary/` directory holds the file:
+- In a folio with sub-layers, that is the sub-layer
   (`instanceNs(<sub-stub>)`, under the folio's own publication root). It is
-  never the root instance, even when the `glossary/` directory is declared at
+  never the root layer, even when the `glossary/` directory is declared at
   the root. In ihris, a term drawn from `ihris-manage` is minted in
   `ihris-manage`'s namespace, not `ihris`'s.
-- A code list extended by several packages belongs to the instance that
+- A code list extended by several packages belongs to the layer that
   DEFINES it. Say so with the scheme's own `source` (a repository path in that
-  instance). Each term's `source` still points at the package that
+  layer). Each term's `source` still points at the package that
   contributed it.
-- A scheme whose terms are sourced in several instances and that names no
+- A scheme whose terms are sourced in several layers and that names no
   defining `source` is refused, never guessed: split it, one scheme per
-  instance. `folio-assistant-core/glossary/` holds two `platform` schemes for
+  layer. `folio-assistant-core/glossary/` holds two `platform` schemes for
   that reason, core's and cat-harness's.
-- No two instances share a namespace, and a scheme IRI is unique across every
-  instance.
+- No two layers share a namespace, and a scheme IRI is unique across every
+  layer.
 
 `check:glossary` enforces all of this (`schemeOwner` and `collect` in
 `glossary-page.ts`, and the checks in `glossary.test.ts`); `glossary-extract.ts`
@@ -182,7 +182,7 @@ links to, not copies of.
 asset that carries a title and a description
 (`folio-assistant-core/scripts/glossary-extract.ts`): skills, Tool nodes, BPMN
 tasks and call activities, DMN decisions, and schema fields with a doc
-comment. One scheme per asset type per instance (`kg-skills`, `kg-tools`,
+comment. One scheme per asset type per layer (`kg-skills`, `kg-tools`,
 `kg-bpmn-activities`, `kg-dmn-decisions`, `kg-schema-fields`), written to
 `generated/<instance>/<type>.glossary.json` inside core's `glossary/`.
 
@@ -281,9 +281,9 @@ scheme catalogue holds a non-empty, non-fuzzy `msgstr` for its `prefLabel`
 (`isFixedTranslation`). There is no `#, fixed` flag and no label in the JSON,
 so the `.po` stays the one place a translation lives.
 
-**Precedence applies within a subject area.** Across the layers an instance
+**Precedence applies within a subject area.** Across the layers a layer
 `needs`, the more authoritative (lower) layer fixes a term's translation for
-its subject area, and an instance layer only adds. A match in a different
+its subject area, and a higher layer only adds. A match in a different
 subject area — the harness's `policy` (`策略`) in a health guide's sentence
 (`政策`) — is a **sense check** note for a person, never a violation.
 `translation:glossary:check` reads these fields. Use `scopeNote` for the
@@ -341,9 +341,9 @@ editor, decides it. Once decided:
 The paper builder (`folio-assistant-core/scripts/build-glossary.ts`, skill
 `glossary-build`) also writes the paper's terms as one
 `folio-glossary/v1` scheme, `paper-<paper directory>`, into the glossary
-directory the paper's OWN instance declares. The page picks it up through
-`collect()` like any other scheme, so the IRIs are in that instance's
-namespace (a sub-instance's for a paper in a sub-instance, never the root's).
+directory the paper's OWN layer declares. The page picks it up through
+`collect()` like any other scheme, so the IRIs are in that layer's
+namespace (a sub-layer's for a paper in a sub-layer, never the root's).
 
 | the owning block | its `:defterm` paragraph | status |
 |---|---|---|
@@ -353,7 +353,7 @@ namespace (a sub-instance's for a paper in a sub-instance, never the root's).
 
 The definition is the `:defterm` paragraph, verbatim, with directives replaced
 by their labels. The slug is the term's `notation`. Never edit the scheme:
-edit the paper and re-run the builder. An instance that declares no glossary directory gets a notice and
+edit the paper and re-run the builder. A layer that declares no glossary directory gets a notice and
 no scheme; add `{ "id": "glossary", "path": "glossary/", "dependents": "reproduce", "graphTypologies": ["glossary"] }`.
 
 ## Organizations and acronyms
@@ -455,7 +455,7 @@ into a glossary from a model someone authored in Archi. The words come from
 the source documents; the model only depicts them.
 
 The one exception is a model that was **ingested**: received from elsewhere
-and held as a source under the instance's `library/`. Such a model can seed
+and held as a source under the layer's `library/`. Such a model can seed
 the glossary once with `--seed --from library/<entry>/<file>.archimate`
 (`--write` to write). Every term an element of it already points at, and
 that has no `focus` yet, takes the element's type and its relationships to

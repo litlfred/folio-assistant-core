@@ -43,9 +43,9 @@ import { instanceId, saveInstance } from "@litlfred/cat-harness-tools/src/workfl
 
 /**
  * The platform the gate is pointed at — cat-harness, whose code this is — and
- * the instance whose diagram it gates. The test lives here, in
+ * the layer whose diagram it gates. The test lives here, in
  * folio-assistant-core, because its subject is `editing-hci-validation.bpmn`,
- * which this instance owns: standing alone, cat-harness has no such diagram
+ * which this layer owns: standing alone, cat-harness has no such diagram
  * (bean `ho66`).
  */
 const INSTANCE_ROOT = resolve(import.meta.dir, "../../../cat-harness");
