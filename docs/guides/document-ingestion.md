@@ -44,7 +44,7 @@ How a dropped file becomes an **L1 source** the corpus can cite — expressed as
        alt="BPMN swimlane diagram with two lanes: a contributor who has a file for the folio places it in uploads/ by a declared route; the Ingestion Engine then extracts its metadata into the knowledge graph and an exclusive gateway asks whether the asset is materialized - if it is, the asset is placed in library/<slug>/, and if it is only referenced it is recorded in library/ as referenced - and either path ends with the asset catalogued. The diagram makes no content-type decision and calls no subprocess.">
 </div>
 
-[Open the BPMN source](https://github.com/litlfred/folio-assistant/blob/main/cat-harness/processes/library/document-ingestion.bpmn){: .btn .btn-outline }
+[Open the BPMN source](https://github.com/litlfred/folio-assistant/blob/main/cat-harness/library/processes/document-ingestion.bpmn){: .btn .btn-outline }
 
 They are not the same directory under two names:
 

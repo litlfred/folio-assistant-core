@@ -55,7 +55,7 @@ import { join, resolve } from "path";
 // partition rules call core reading harness DOWNWARD -- so this is the
 // declared dependency being used, not a new one being created. Owner ruling,
 // 2026-09-21, bean `jijc`.
-import { declarationPathIn } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+import { declarationPathIn, optInDirectoriesForGraph } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { libraryEntryDir } from "../scripts/lib/library-entries.ts";
 
 /** A citation into L1 content. `instance` absent means *this* instance. */
@@ -150,7 +150,22 @@ export function libraryDirOf(instanceRoot: string): string | undefined {
   const mine = dirs.filter(
     (d) => Array.isArray(d.graphTypologies) && d.graphTypologies.includes("library") && d.scope !== "repository",
   );
-  if (mine.length === 0) return undefined;
+  if (mine.length === 0) {
+    // Not at the top level, so maybe inside a switched-on opt-in sub-graph,
+    // declared FROM WITHIN: cat-harness keeps its corpus at
+    // `library/corpus/`, named by `library/graph.json`, and switches it on for
+    // itself (cat-harness#1032). Asked of the instance's OWN list: the
+    // question is where this instance keeps its corpus, not what a folio
+    // above it shows.
+    const optIn = optInDirectoriesForGraph(instanceRoot, "library");
+    if (optIn.length > 1) {
+      throw new Error(
+        `${decl}: ${optIn.length} switched-on \`library\` sub-graph directories (${optIn.join(", ")}); ` +
+          `"where does this instance keep its corpus" has no single answer.`,
+      );
+    }
+    return optIn[0] !== undefined && existsSync(optIn[0]) ? optIn[0] : undefined;
+  }
   if (mine.length > 1) {
     // Refuse rather than pick. An instance with two libraries of its own has
     // no answer to "where does this instance keep its corpus", and returning
