@@ -71,6 +71,7 @@ import {
   resolveDirectories,
   forgeLocation,
 } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.ts";
+import { scopeLabel, siteScopeArg } from "./lib/site-scope.ts";
 import { withInlineCode } from "@litlfred/cat-harness-tools/schemas/content/inline-code.ts";
 import { instanceNamespace } from "@litlfred/cat-harness-tools/schemas/kg/instance-repositories.ts";
 import { GlossarySchema, schemeIri, toSkos, termIri, type AutomatedMatch, type Glossary, type LangText } from "../schemas/glossary.ts";
@@ -2098,9 +2099,24 @@ function filesUnder(dir: string): string[] {
   );
 }
 
+/** What {@link collect} found, kept to the instances in `scope` (all of it with none). */
+export function scoped<C extends Pick<ReturnType<typeof collect>, "glossaries" | "ledgers" | "external" | "declaring">>(c: C, scope: ReadonlySet<string> | undefined): C {
+  if (scope === undefined) return c;
+  const before = c.glossaries.length;
+  const out = {
+    ...c,
+    glossaries: c.glossaries.filter((s) => scope.has(s.instance)),
+    ledgers: c.ledgers.filter((l) => scope.has(l.instance)),
+    external: c.external.filter((e) => scope.has(e.instance)),
+    declaring: c.declaring.filter((d) => scope.has(d)),
+  };
+  console.log(`  scope ${scopeLabel(scope)}: ${out.glossaries.length} of ${before} scheme(s)`);
+  return out;
+}
+
 if (import.meta.main) {
   const check = process.argv.includes("--check");
-  const c = collect();
+  const c = scoped(collect(), siteScopeArg());
   if (c.findings.invalid.length) {
     console.error(`✗ ${c.findings.invalid.length} glossary document(s) do not validate as folio-glossary/v1:`);
     for (const f of c.findings.invalid) console.error(`  ${f}`);

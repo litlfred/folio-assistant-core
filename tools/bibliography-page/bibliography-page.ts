@@ -16,6 +16,7 @@ export default toolFactory((t) =>
       inputs: [
         { name: "check", schema: t("Flag"), required: false, arg: { flag: "--check" }, description: "Fail if a page or export is stale, instead of writing." },
         { name: "site", schema: t("RepoPath"), required: false, arg: { flag: "--site" }, description: "A site being built: write the pages at their declared route under it instead of under cat-harness's docs, as a repository's own site build does (`visualiser-writers.ts`)." },
+        { name: "scope", schema: t("Text"), required: false, arg: { flag: "--scope" }, description: "A scoped site build: the comma-separated instances whose pages this writer writes (the IG and the layer it lands on); every other instance's pages are linked on that layer's own site. Passed by the tools layer's `visualiser-writers.ts` (owner, 2026-11-08, Q-SZ-2 \"B\"). Absent: every instance." },
       ],
       outputs: [{ name: "pages", schema: t("RepoPath"), description: "The bibliography pages and their exports, under the published site directory." }],
     },

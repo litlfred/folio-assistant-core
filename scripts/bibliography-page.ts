@@ -59,6 +59,7 @@
  * @module folio-assistant-core/scripts/bibliography-page
  * @covers references, catalogue, docs — it reads every instance's references and catalogue directories
  */
+import { scopeLabel, siteScopeArg } from "./lib/site-scope.ts";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, dirname, join, relative, resolve } from "node:path";
 import { libraryEntries } from "./lib/library-entries.ts";
@@ -929,6 +930,14 @@ if (import.meta.main) {
       process.exit(2);
     }
     c = forInstance(all, instance, (n) => needs.get(n) ?? []);
+  }
+  // A scoped site (`--scope`, owner 2026-11-08 Q-SZ-2 "B") lists its scope's
+  // references only; every other layer's bibliography is on that layer's site.
+  const scope = siteScopeArg();
+  if (scope !== undefined) {
+    const before = c.entries.length;
+    c = { ...c, entries: c.entries.filter((e) => scope.has(e.instance)), subgraphs: c.subgraphs.filter((s) => scope.has(s.instance)), assets: (c.assets ?? []).filter((a) => scope.has(a.instance)) };
+    console.log(`  scope ${scopeLabel(scope)}: ${c.entries.length} of ${before} reference(s)`);
   }
   if (c.invalid.length) {
     console.error(`✗ ${c.invalid.length} reference(s) do not validate:`);
