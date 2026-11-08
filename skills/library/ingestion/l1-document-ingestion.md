@@ -9,6 +9,8 @@ description: >
 graph-typologies:
   - library
   - uploads
+uses-methodology:
+  - lsi
 ---
 
 # L1 document ingestion
