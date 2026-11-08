@@ -1,0 +1,59 @@
+{
+  "$schema": "kg-qa/v1",
+  "subject": {
+    "kind": "role",
+    "id": "authoring-committee",
+    "path": "scenarios/roles.json"
+  },
+  "source_hash": "sha256:49157ff415ae8c500681dfd5a48b962e5eaa9928738b61e8234b04235d617614",
+  "criteria": {
+    "role-skills-resolve": {
+      "result": "pass",
+      "findings": []
+    },
+    "role-inherits-resolves": {
+      "result": "n/a",
+      "findings": []
+    },
+    "role-binds-a-lane": {
+      "result": "pass",
+      "findings": []
+    },
+    "mechanical-role-untested": {
+      "result": "n/a",
+      "findings": []
+    },
+    "role-has-persona": {
+      "result": "pass",
+      "findings": []
+    },
+    "role-has-story": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "authoring-committee",
+          "detail": "no user story in scenarios/stories.json is told as role \"authoring-committee\" — nothing says what this reader came to do."
+        }
+      ]
+    },
+    "role-has-actor": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "authoring-committee",
+          "detail": "no declared actor lists role \"authoring-committee\" as one it can take on."
+        }
+      ]
+    },
+    "actor-kind-fits-role": {
+      "result": "pass",
+      "findings": []
+    }
+  },
+  "totals": {
+    "pass": 4,
+    "fail": 2,
+    "n/a": 2,
+    "unknown": 0
+  }
+}
