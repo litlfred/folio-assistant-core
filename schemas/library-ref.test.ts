@@ -7,7 +7,7 @@
  * text in another repo would cite evidence its own instance cannot resolve."*
  */
 import { describe, expect, it } from "bun:test";
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join, resolve } from "path";
 import { explainFailure, instanceRoots, libraryDirOf, resolveLibraryRef } from "./library-ref.js";
@@ -156,11 +156,17 @@ describe("library location is read from the declaration", () => {
     // in `awaitingCitation`. Same rule — by name, never by pattern — but the
     // entry's summaries are not held back, which is why it is not folded into
     // `heldEntries`. Once a methodology cites it, it leaves the list.
-    const decl = JSON.parse(readFileSync(declarationPathIn(PLATFORM)!, "utf8")) as {
-      directories?: Array<{ graphTypologies?: string[]; heldEntries?: string[]; awaitingCitation?: string[] }>;
-    };
+    type LibraryEntryDecl = { path?: string; graphTypologies?: string[]; heldEntries?: string[]; awaitingCitation?: string[] };
+    const decl = JSON.parse(readFileSync(declarationPathIn(PLATFORM)!, "utf8")) as { directories?: LibraryEntryDecl[] };
+    // The corpus entry is declared FROM WITHIN its sub-graph since
+    // cat-harness#1032 (`library/graph.json`), so its lists are read there too.
+    const nested = (decl.directories ?? []).flatMap((d) => {
+      const f = d.path ? join(PLATFORM, d.path, "graph.json") : undefined;
+      if (!f || !existsSync(f)) return [];
+      return ((JSON.parse(readFileSync(f, "utf8")) as { directories?: LibraryEntryDecl[] }).directories ?? []);
+    });
     const admitted = new Set(
-      (decl.directories ?? [])
+      [...(decl.directories ?? []), ...nested]
         .filter((d) => d.graphTypologies?.includes("library"))
         .flatMap((d) => [...(d.heldEntries ?? []), ...(d.awaitingCitation ?? [])]),
     );
@@ -333,9 +339,12 @@ describe("an instance's library is ITS OWN, not the first one declared", () => {
 
   it("realInstancesResolveOwn", () => {
     // Over the real repository, so a future declaration that breaks it says so.
-    for (const inst of ["cat-harness", "who-iris", "folio-assistant-sci"]) {
+    // cat-harness keeps its corpus inside its `library` sub-graph since
+    // cat-harness#1032, switched on for itself.
+    const own: Record<string, string> = { "cat-harness": "library/corpus", "who-iris": "library", "folio-assistant-sci": "library" };
+    for (const [inst, path] of Object.entries(own)) {
       expect({ inst, dir: libraryDirOf(resolve(REPO, inst)) })
-        .toEqual({ inst, dir: resolve(REPO, inst, "library") });
+        .toEqual({ inst, dir: resolve(REPO, inst, path) });
     }
     // Declares no corpus — a determined "none", not a failure. This was
     // `who-style-guide` (voices, no corpus) until it became a subgraph of

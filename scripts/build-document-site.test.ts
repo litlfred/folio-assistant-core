@@ -218,12 +218,13 @@ describe("paper content: math, glossary directives and citations (owner, 2026-10
   });
 
   test("citedKeysLinkBibliography", () => {
-    const url = "https://litlfred.github.io/folio-assistant/folio-assistant-core/bibliography/";
+    const url = "https://litlfred.github.io/folio-assistant/folio-assistant-core/bibliography/references/";
     const out = citationsToHtml("As in \\cite[p.~3]{garoufalidis2004, a:b}.", { bibliographyUrl: url });
     expect(out).toContain('data-keys="garoufalidis2004 a:b"');
-    expect(out).toContain(`<a href="${url}#ref-garoufalidis2004">garoufalidis2004</a>`);
-    // The anchor is the one the bibliography page draws: referenceAnchor, so `a:b` → `ref-a-b`.
-    expect(out).toContain(`<a href="${url}#ref-a-b">a:b</a>`);
+    expect(out).toContain(`<a href="${url}garoufalidis2004/">garoufalidis2004</a>`);
+    // The entry's own page, a slash address (referenceSegment): `a:b` → `a-b/`, no `#`.
+    expect(out).toContain(`<a href="${url}a-b/">a:b</a>`);
+    expect(out).not.toContain("#ref-");
     expect(out).toContain("</a>, p. 3]</span>");
   });
 
@@ -233,7 +234,7 @@ describe("paper content: math, glossary directives and citations (owner, 2026-10
 
   test("renderPassesBibliography", async () => {
     const html = await renderDocumentHtml("See \\cite{x}.", { math: false, bibliographyUrl: "/bib/" });
-    expect(html).toContain('<a href="/bib/#ref-x">x</a>');
+    expect(html).toContain('<a href="/bib/x/">x</a>');
   });
 
   test("macroTableFromManifest", () => {

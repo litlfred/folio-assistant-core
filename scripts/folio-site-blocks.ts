@@ -37,6 +37,8 @@ import { existsSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 
 import { readWitnessDoc, type QaWitness } from "@litlfred/cat-harness-tools/pipeline/qa-witness.js";
+import { entryDate } from "@litlfred/cat-harness-tools/pipeline/qa-utils.js";
+import { readTreeCommitIndex } from "@litlfred/cat-harness-tools/scripts/qa-site-assets.js";
 import { formalRefResolverConfigured, resolveCanonicalFormal, type FormalTreeCache } from "@litlfred/cat-harness-tools/schemas/formal-ref.js";
 import { configureLeanPackages, leanPackagesConfigured, type LeanPackage } from "@litlfred/cat-harness-tools/schemas/lean-packages.js";
 import { optionalPipelinePlugin } from "@litlfred/cat-harness-tools/pipeline/pipeline-plugins.js";
@@ -111,19 +113,49 @@ interface RawEntry {
   result?: string;
   severity?: string;
   reviewed_at?: string;
+  reviewed_tree?: string;
   notes?: string;
 }
 
 /**
- * Index of the most recent entry by `reviewed_at`; on a tie or a missing date,
- * the later position (an appended review supersedes the one before it).
+ * Tree id → commit date, from `repoRoot`'s first-parent history: the date a
+ * verdict on that tree is shown and ordered by (owner rulings 2026-11-06,
+ * cards "QA dates" and "Date source", option 1: derive the date ON READ from
+ * the reviewed tree; writers stamp no clock). Read once per root, through the
+ * same reader the deploy's `tree-commits` step uses. A checkout without git
+ * history dates nothing, and a verdict then falls back to its own legacy date.
  */
-export function latestEntryIndex(entries: readonly { reviewed_at?: string }[]): number {
+const treeDatesByRoot = new Map<string, Readonly<Record<string, string>>>();
+function treeDatesFor(repoRoot: string): Readonly<Record<string, string>> {
+  const cached = treeDatesByRoot.get(repoRoot);
+  if (cached) return cached;
+  let d: Readonly<Record<string, string>>;
+  try {
+    d = readTreeCommitIndex(repoRoot).dates ?? {};
+  } catch {
+    d = {};
+  }
+  treeDatesByRoot.set(repoRoot, d);
+  return d;
+}
+
+/**
+ * Index of the most recent entry by its date (`entryDate`: the reviewed tree's
+ * commit date from `treeDates`, else a legacy `reviewed_at`). On a tie or a
+ * missing date, the EARLIER position: order is the verdict (`list[0]` is a
+ * criterion's effective result in the platform's `qa-witness.ts`, and a new
+ * adjudication is inserted at the front). Verdicts on one tree share its date,
+ * so the tie is the common case once writers stamp no clock.
+ */
+export function latestEntryIndex(
+  entries: readonly { reviewed_at?: string; reviewed_tree?: string }[],
+  treeDates?: Readonly<Record<string, string>>,
+): number {
   let best = -1;
   let bestAt = "";
   entries.forEach((e, i) => {
-    const at = e.reviewed_at ?? "";
-    if (best < 0 || at >= bestAt) {
+    const at = entryDate(e, treeDates) ?? "";
+    if (best < 0 || at > bestAt) {
       best = i;
       bestAt = at;
     }
@@ -153,8 +185,10 @@ export function blockQaReport(subjectPath: string, repoRoot: string): BlockQaVie
   for (const view of doc.criteria) {
     const entries = Array.isArray(raw.criteria?.[view.id]) ? raw.criteria![view.id]! : [];
     if (entries.length === 0) continue;
-    const i = latestEntryIndex(entries);
+    const dates = treeDatesFor(repoRoot);
+    const i = latestEntryIndex(entries, dates);
     const e = entries[i]!;
+    const at = entryDate(e, dates);
     const w: QaWitness | undefined = view.witnesses[i];
     rows.push({
       id: view.id,
@@ -164,7 +198,7 @@ export function blockQaReport(subjectPath: string, repoRoot: string): BlockQaVie
       stale: w?.freshness === "stale",
       freshness: w?.freshness ?? "unknown",
       ...(w?.changed?.length ? { changed: w.changed } : {}),
-      ...(e.reviewed_at ? { at: e.reviewed_at.slice(0, 10) } : {}),
+      ...(at ? { at: at.slice(0, 10) } : {}),
       reviewer: w?.kind ?? "script",
       ...(w?.skill || w?.id ? { by: w.skill ?? w.id } : {}),
       ...(w?.model ? { model: w.model } : {}),

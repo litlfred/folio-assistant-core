@@ -23,7 +23,12 @@ import { runSampleImport, type Handler } from "./sample-import-run.ts";
 
 const REPO = resolve(import.meta.dir, "..", "..");
 const WHO_IRIS = join(REPO, "who-iris");
-const DIAGRAM = join(REPO, "cat-harness", "processes", "library", "sample-import.bpmn");
+// In cat-harness's `library` sub-graph since cat-harness#1032; under
+// `processes/library/` before it.
+const DIAGRAM = [
+  join(REPO, "cat-harness", "library", "processes", "sample-import.bpmn"),
+  join(REPO, "cat-harness", "processes", "library", "sample-import.bpmn"),
+].find((p) => existsSync(p)) ?? join(REPO, "cat-harness", "library", "processes", "sample-import.bpmn");
 const ITEM = "item/18892cf3-5a4f-42a4-923c-a93f4a594dec";
 
 const made: string[] = [];

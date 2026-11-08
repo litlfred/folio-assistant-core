@@ -35,8 +35,13 @@ describe("QA report", () => {
   test("latestVerdictShown", () => {
     expect(latestEntryIndex([{ reviewed_at: "2026-01-01" }, { reviewed_at: "2026-02-01" }])).toBe(1);
     expect(latestEntryIndex([{ reviewed_at: "2026-03-01" }, { reviewed_at: "2026-02-01" }])).toBe(0);
-    // No dates: the later position supersedes.
-    expect(latestEntryIndex([{}, {}])).toBe(1);
+    // A tie keeps position: list[0] is the effective verdict.
+    expect(latestEntryIndex([{}, {}])).toBe(0);
+    // Derived on read (owner rulings 2026-11-06, "QA dates" / "Date source"):
+    // an entry that records no date is dated by its reviewed tree's commit.
+    const T = (c: string) => c.repeat(40);
+    expect(latestEntryIndex([{ reviewed_tree: T("a") }, { reviewed_tree: T("b") }], { [T("a")]: "2026-11-05T00:00:00Z", [T("b")]: "2026-11-01T00:00:00Z" })).toBe(0);
+    expect(latestEntryIndex([{ reviewed_at: "2026-11-04" }, { reviewed_tree: T("b") }], { [T("b")]: "2026-11-05T00:00:00Z" })).toBe(1);
   });
 
   test("sidecarStaleMilnorFirst", () => {

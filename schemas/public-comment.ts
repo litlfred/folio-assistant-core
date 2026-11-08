@@ -592,3 +592,65 @@ export const ChangeSetSchema = ChangeSetKind.schema.superRefine((cs, ctx) => {
   });
 });
 export type ChangeSet = z.infer<typeof ChangeSetSchema>;
+
+// ── Review logs (issue #682) ─────────────────────────────────────
+
+export const REVIEW_LOG_SCHEMA = "review-log/1.0.0" as const;
+
+/**
+ * Who fills a column, read from the colour of its header: blue = a person
+ * (the reviewers, the committee), orange = an Editor, green = the agent,
+ * grey = the review sheet's script. The import writes only `human` cells.
+ */
+export const REVIEW_LOG_COLUMN_ROLES = ["human", "editor", "agent", "script"] as const;
+export type ReviewLogColumnRole = (typeof REVIEW_LOG_COLUMN_ROLES)[number];
+
+export const ReviewLogColumnSchema = z.object({
+  header: z.string(),
+  /** Absent when the header carries no role colour. */
+  role: z.enum(REVIEW_LOG_COLUMN_ROLES).optional(),
+});
+
+export const ReviewLogTabSchema = z.object({
+  name: z.string().min(1),
+  /** 1-based row of the column headers (a tab may open with an instructions row). */
+  headerRow: z.number().int().positive(),
+  rows: z.number().int().nonnegative(),
+  columns: z.array(ReviewLogColumnSchema),
+});
+
+/**
+ * One review log (a Google Sheet) of the document, as a NODE beside its
+ * comments and change-sets (owner, 2026-11-08: "part of the KG of a working
+ * doc - where its issue log(s) are"). Its workbook, `file`, sits beside it and
+ * is overwritten each night the log changed: git history is the history, so
+ * there is no list of snapshots (owner, same day). The workbook is .xlsx, a
+ * file a person opens in Excel, Google Sheets or Numbers, never a custom JSON.
+ */
+export const ReviewLogKind = nodeKind(REVIEW_LOG_SCHEMA, [], {
+  /** The log's id within the document (`dpi-h-master`); also its file names. */
+  id: z.string().regex(/^[a-z0-9][a-z0-9-]*$/),
+  title: z.string().min(1),
+  /** The Google Sheets id. */
+  sheetId: z.string().min(1),
+  url: z.string().url(),
+  /** The document under review (`dpi-h-ra`). */
+  document: z.string().min(1),
+  /** A master log of public comments, or a contributor (drafting) log. */
+  role: z.enum(["master", "contributor"]),
+  /** The workbook, relative to the repository root. */
+  file: z.string().regex(/\.xlsx$/),
+  /** SHA-256 of `file` as last written. */
+  sha256: z.string().regex(/^[0-9a-f]{64}$/),
+  /** When `file` last changed (ISO 8601). */
+  archivedAt: z.string().min(1),
+  tabs: z.array(ReviewLogTabSchema).min(1),
+  /**
+   * What was left out of the workbook so that no reviewer's contact details
+   * reach the repository: the columns blanked, and how many email addresses
+   * were removed from other cells.
+   */
+  redacted: z.object({ columns: z.array(z.string()).default([]), emails: z.number().int().nonnegative().default(0) }),
+});
+export const ReviewLogSchema = ReviewLogKind.schema;
+export type ReviewLog = z.infer<typeof ReviewLogSchema>;
