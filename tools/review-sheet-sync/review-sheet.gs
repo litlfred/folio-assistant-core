@@ -2281,9 +2281,14 @@ function peopleColumns(ss) {
   const want = [[CFG.RCS, 'Title', null], [CFG.RPC, CS_HUMAN, 'Change Set']];
   want.forEach(([tab, head, after]) => {
     const key = 'people:' + tab + '|' + head;
-    if (props.getProperty(key)) return;
     const sh = ss.getSheetByName(tab);
     if (!sh) return;
+    if (props.getProperty(key)) {
+      // A copy of a template keeps the template's whole-tab lock, so this
+      // check runs on every refresh, not once.
+      try { const s = readSheet(sh), c = s.header.indexOf(head); if (c >= 0) openInSheetLock(sh, c, s.top); } catch (err) { /* next run */ }
+      return;
+    }
     try {
       let s = readSheet(sh);
       let c = s.header.indexOf(head);
@@ -2305,6 +2310,7 @@ function peopleColumns(ss) {
         sh.getRange(s.top, c + 1, rows, 1).setBackground(sh.getRange(s.top, blue + 1).getBackground());
       }
       unlockColumn(sh, c);
+      openInSheetLock(sh, c, s.top);
       props.setProperty(key, '1');
     } catch (err) { /* tried again on the next run */ }
   });
@@ -2315,6 +2321,25 @@ function peopleColumns(ss) {
  * Ready columns' own: a lock that spans it is replaced by the parts left and
  * right of it, with the same description and editors.
  */
+/**
+ * The templates lock a whole tab to the owner and leave the people's
+ * columns open as its exceptions (owner, 2026-11-08, Q-TBL-1 A: Title stayed
+ * locked on the Public Comment template). Add column c (0-based), from the
+ * first data row down, to the exceptions of every whole-tab lock that does
+ * not already leave it open. Range locks are unlockColumn's job.
+ */
+function openInSheetLock(sh, c, top) {
+  const type = SpreadsheetApp.ProtectionType && SpreadsheetApp.ProtectionType.SHEET;
+  if (!type) return;
+  sh.getProtections(type).forEach(p => {
+    if (typeof p.getUnprotectedRanges !== 'function') return;
+    const open = p.getUnprotectedRanges();
+    const covered = open.some(r => r.getColumn() - 1 <= c && c <= r.getColumn() - 2 + r.getNumColumns() && r.getRow() <= top);
+    if (covered) return;
+    p.setUnprotectedRanges(open.concat([sh.getRange(top, c + 1, sh.getMaxRows() - top + 1, 1)]));
+  });
+}
+
 function unlockColumn(sh, c) {
   sh.getProtections(SpreadsheetApp.ProtectionType.RANGE).forEach(p => {
     if (p.getDescription() === READY_DESC) return;

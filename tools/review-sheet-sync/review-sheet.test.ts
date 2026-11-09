@@ -1995,3 +1995,28 @@ describe("Review Change Sets rows people start, in a run", () => {
     expect(T((rt.written["Review Change Sets"]["Title"][3] as unknown[])[0])).toBe("From an issue form");
   });
 });
+
+describe("Title opens in a template's whole-tab lock (Q-TBL-1 A)", () => {
+  const open = new Function("SpreadsheetApp", `${code}\nreturn openInSheetLock;`)({ ProtectionType: { SHEET: "SHEET" } }) as
+    (sh: unknown, c: number, top: number) => void;
+  const range = (row: number, col: number, n: number) => ({ getRow: () => row, getColumn: () => col, getNumColumns: () => n });
+  const lockWith = (ranges: ReturnType<typeof range>[]) => {
+    const set: ReturnType<typeof range>[][] = [];
+    const p = { getUnprotectedRanges: () => ranges.slice(), setUnprotectedRanges: (r: ReturnType<typeof range>[]) => set.push(r) };
+    const sh = { getMaxRows: () => 401, getProtections: (t: string) => (t === "SHEET" ? [p] : []), getRange: (r: number, c: number) => range(r, c, 1) };
+    return { sh, set };
+  };
+  test("addsTitleToExceptions", () => {
+    const { sh, set } = lockWith([range(3, 10, 4), range(3, 14, 2)]);
+    open(sh, 1, 3);
+    expect(set).toHaveLength(1);
+    expect(set[0]).toHaveLength(3);
+    expect(set[0][2].getColumn()).toBe(2);
+    expect(set[0][2].getRow()).toBe(3);
+  });
+  test("leavesAnOpenColumnAlone", () => {
+    const { sh, set } = lockWith([range(3, 2, 1)]);
+    open(sh, 1, 3);
+    expect(set).toHaveLength(0);
+  });
+});
