@@ -9,8 +9,8 @@ description: >
 
 # `dsa-odrl-source` — Make the ODRL Agreement cite the legal text distribution (P2.3)
 
-> Skill id: `dsa-odrl-source` · Package: `folio-document-adapter` · Process:
-> `folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn`
+> Skill id: `dsa-odrl-source` · Package: `dsa` · Process:
+> `folio-assistant-core/dsa/processes/dsa-document-lifecycle.bpmn`
 > (`Task_OdrlCitesText`, P2.3) · Checker:
 > `folio-assistant-core/scripts/check-dsa-hash.ts` (`bun run cat check:dsa-hash`)
 

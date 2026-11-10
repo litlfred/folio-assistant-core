@@ -10,8 +10,8 @@ description: >
 
 # `dsa-catalogue-status` — Set the catalogue status when an agreement changes or ends (P14.5)
 
-> Skill id: `dsa-catalogue-status` · Package: `folio-document-adapter` ·
-> Process: `folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn`
+> Skill id: `dsa-catalogue-status` · Package: `dsa` ·
+> Process: `folio-assistant-core/dsa/processes/dsa-document-lifecycle.bpmn`
 > (`Task_SetStatus`, P14.5) · Checker:
 > `folio-assistant-core/scripts/check-dsa-hash.ts` (`bun run cat check:dsa-hash`)
 

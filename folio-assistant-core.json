@@ -288,6 +288,15 @@
       ]
     },
     {
+      "id": "dsa",
+      "path": "dsa/",
+      "optIn": true,
+      "description": "The Data Sharing Agreement sub-graph \u2014 a NAMED SUB-GRAPH of this layer on the pattern of cat-harness's `work-plan/`, and OPT-IN: off in every layer, this one included, unless that layer lists `folio-assistant-core.dsa` in its own `enableSubgraphs` (owner, 2026-11-10, card Q-SG-1 C, wave 1). It holds the four DSA skills and the DSA document life cycle; the graphs inside it are declared FROM WITHIN, in `dsa/graph.json`. The `dsa` typology and `check:dsa-hash` stay outside it.",
+      "graphTypologies": [
+        "cat-harness"
+      ]
+    },
+    {
       "id": "scenarios",
       "path": "scenarios/",
       "graphTypologies": [
@@ -514,5 +523,6 @@
         "reason": "EXISTENCE only \u2014 whether a catalogue item's libraryId was ingested \u2014 and it never parses the file"
       }
     ]
-  }
+  },
+  "enableSubgraphs": ["folio-assistant-core.dsa"]
 }
