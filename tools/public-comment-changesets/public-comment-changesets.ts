@@ -11,7 +11,8 @@ export default toolFactory((t) =>
     invoke: { shell: "bun run folio-assistant-core/scripts/public-comment-changesets.ts" },
     io: {
       inputs: [
-        { name: "operation", schema: t("ChangeSetAction"), required: true, arg: { positional: 0 }, description: "The command: `reconcile` (the nightly run), `check` (validate the records, write nothing) or `github` (one issue event, as the workflow does)." },
+        // `ChangeSetAction` is added in cat-harness-tools#1761; cast until index.lock.json re-pins it.
+        { name: "operation", schema: t("ChangeSetAction" as Parameters<typeof t>[0]), required: true, arg: { positional: 0 }, description: "The command: `reconcile` (the nightly run), `check` (validate the records, write nothing) or `github` (one issue event, as the workflow does)." },
         { name: "store", schema: t("RepoPath"), required: false, arg: { flag: "--store" }, description: "The record's directory in the repository. Default `review/public-comment`." },
       ],
       outputs: [
