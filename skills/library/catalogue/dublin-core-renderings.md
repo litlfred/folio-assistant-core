@@ -89,7 +89,7 @@ the vocabulary, not from the value's shape.
   address.
 - **For multi-graph static edge search**, those anonymous nodes would become
   colliding blank nodes, so there
-  [`oxigraph-catalogue-search`](oxigraph-catalogue-search.md) governs: compound
+  [`oxigraph-catalogue-search`](../../../library-extras/skills/library-extras/oxigraph-catalogue-search.md) governs: compound
   resources are skolemized into content-addressed URIs
   (`https://<domain>/entity/item/{handle}#{prop}_{idx}`).
 

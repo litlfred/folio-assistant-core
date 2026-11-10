@@ -27,7 +27,7 @@
       "prefLabel": "audio-transcription",
       "definition": "Turn recorded speech (a meeting recording, a video with audio, an interview) into a transcript the library can cite, and choose WHICH open-source recogniser to run for the job: whisper.cpp by default, faster-whisper, WhisperX with pyannote, Vosk, NVIDIA Parakeet/Canary, or Distil-Whisper. Covers audio extraction, why two exports of one recogniser are one opinion, how to compare transcripts (WER, CER, DER), translation, and what blocks a run. Use when an upload contains audio or video, when someone asks which transcription tool to use, or before declaring a new transcription Tool.",
       "notation": "audio-transcription",
-      "source": "folio-assistant-core/skills/library/ingestion/audio-transcription.md",
+      "source": "folio-assistant-core/library-extras/skills/library-extras/audio-transcription.md",
       "status": "candidate"
     },
     {
@@ -43,7 +43,7 @@
       "prefLabel": "bib-photo-ingestion-watcher",
       "definition": "Integration-watcher for bib physical-review issues. When a page photo is uploaded to a `bib-physical-review` issue (or an in-repo source passage is agent-identified), OCR/read it, formalise the cited result (if the project has a formal-proof pipeline), confirm the project's usage matches the source, run machine + agent bib validation, then set the reference status to `validated` and refresh references.review.json. Use when processing a bib-physical-review issue that has an attached photo, or when ingesting an uploaded paper.",
       "notation": "bib-photo-ingestion-watcher",
-      "source": "folio-assistant-core/skills/library/cataloguing/bib-photo-ingestion-watcher.md",
+      "source": "folio-assistant-core/library-extras/skills/library-extras/bib-photo-ingestion-watcher.md",
       "status": "candidate"
     },
     {
@@ -176,7 +176,7 @@
       "prefLabel": "folio-board-diagram-interchange",
       "definition": "The content-folio half of the harness's board-diagram-interchange skill: binds processes/ui/board-place-note.bpmn and board-relocate.bpmn, folio board filters over pages and block kinds, and note-to-board arrow direction.",
       "notation": "folio-board-diagram-interchange",
-      "source": "folio-assistant-core/skills/content/folio-document-adapter/folio-board-diagram-interchange.md",
+      "source": "folio-assistant-core/board/skills/board/folio-board-diagram-interchange.md",
       "status": "candidate"
     },
     {
@@ -184,7 +184,7 @@
       "prefLabel": "folio-board-windows",
       "definition": "The content-folio half of the harness's board-windows skill: binds processes/ui/board-open-close.bpmn, folio-glass pinning (todo/<id> and landing/<slot>), and content-type card chrome ([x], [linksrc], [edit]).",
       "notation": "folio-board-windows",
-      "source": "folio-assistant-core/skills/content/folio-document-adapter/folio-board-windows.md",
+      "source": "folio-assistant-core/board/skills/board/folio-board-windows.md",
       "status": "candidate"
     },
     {
@@ -278,7 +278,7 @@
       "prefLabel": "oxigraph-catalogue-search",
       "definition": "How to compile, partition, distribute via CDN, and query digital library catalogue and Qualified Dublin Core metadata using Oxigraph in-memory WebAssembly on the static edge. Establishes the 2-tier on-demand loading hierarchy, upstream skolemization for zero blank nodes, append-only streaming partition writes, and SPARQL 1.1 cross-graph query recipes.",
       "notation": "oxigraph-catalogue-search",
-      "source": "folio-assistant-core/skills/library/catalogue/oxigraph-catalogue-search.md",
+      "source": "folio-assistant-core/library-extras/skills/library-extras/oxigraph-catalogue-search.md",
       "status": "candidate"
     },
     {

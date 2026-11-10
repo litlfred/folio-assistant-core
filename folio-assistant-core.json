@@ -288,6 +288,24 @@
       ]
     },
     {
+      "id": "board",
+      "path": "board/",
+      "optIn": true,
+      "description": "The board sub-graph \u2014 a NAMED SUB-GRAPH of this layer, OPT-IN: off in every layer, this one included, unless that layer lists `folio-assistant-core.board` in its own `enableSubgraphs` (owner, 2026-11-10, card Q-SG-1 C, wave 3). It holds the content-folio halves of the harness's board skills (board windows, board diagram interchange). The board processes stay in `processes/ui/`, because cat-harness's always-on `board-windows` skill and site script cite them. Declared FROM WITHIN in `board/graph.json`.",
+      "graphTypologies": [
+        "cat-harness"
+      ]
+    },
+    {
+      "id": "library-extras",
+      "path": "library-extras/",
+      "optIn": true,
+      "description": "The library extras sub-graph \u2014 a NAMED SUB-GRAPH of this layer, OPT-IN: off in every layer, this one included, unless that layer lists `folio-assistant-core.library-extras` in its own `enableSubgraphs` (owner, 2026-11-10, card Q-SG-1 C, wave 3). It holds library skills a layer reaches for rarely: audio transcription, the bibliography photo-ingestion watcher and Oxigraph catalogue search. The L1 ingestion skills and processes stay in `skills/library/` and `processes/library/`, because always-on content calls them. Declared FROM WITHIN in `library-extras/graph.json`.",
+      "graphTypologies": [
+        "cat-harness"
+      ]
+    },
+    {
       "id": "scenarios",
       "path": "scenarios/",
       "graphTypologies": [
@@ -514,5 +532,6 @@
         "reason": "EXISTENCE only \u2014 whether a catalogue item's libraryId was ingested \u2014 and it never parses the file"
       }
     ]
-  }
+  },
+  "enableSubgraphs": ["folio-assistant-core.board", "folio-assistant-core.library-extras"]
 }
