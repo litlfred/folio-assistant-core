@@ -20,12 +20,12 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: folio-assistant-core/glossary/folio-assistant-core.glossary.json:11
+#: folio-assistant-core/glossary/folio-assistant-core.glossary.json:12
 #. Glossary term definition: https://litlfred.github.io/folio-assistant-core/v0/ns/glossary/platform/glossary
-msgid "An instance's terms and what they mean, as a SKOS concept scheme: local terms linked to external concepts, plus external concepts listed without being copied."
-msgstr "Les termes d'une instance et ce qu'ils signifient, sous forme de schéma de concepts SKOS : des termes locaux liés à des concepts externes, plus des concepts externes listés sans être copiés."
+msgid "A layer's terms and what they mean, as a SKOS concept scheme: local terms linked to external concepts, plus external concepts listed without being copied."
+msgstr "Les termes d'une couche et ce qu'ils signifient, sous forme de schéma de concepts SKOS : des termes locaux liés à des concepts externes, plus des concepts externes listés sans être copiés."
 
-#: folio-assistant-core/glossary/folio-assistant-core.glossary.json:11
+#: folio-assistant-core/glossary/folio-assistant-core.glossary.json:12
 #. Glossary term label: https://litlfred.github.io/folio-assistant-core/v0/ns/glossary/platform/glossary
 msgid "glossary"
 msgstr "glossaire"
