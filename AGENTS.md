@@ -25,7 +25,14 @@ and the gates that judge content stay here.
 
 <!-- skills:index:begin -->
 
-_53 skills in 9 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
+_53 skills in 11 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
+
+**`board/skills/board/`** (2)
+
+| Skill | What it is for |
+|---|---|
+| [`folio-board-diagram-interchange`](board/skills/board/folio-board-diagram-interchange.md) | The content-folio half of the harness's board-diagram-interchange skill: binds processes/ui/board-place-note.bpmn and board-relocate.bpmn, folio board filters over pages and block kinds, and… |
+| [`folio-board-windows`](board/skills/board/folio-board-windows.md) | The content-folio half of the harness's board-windows skill: binds processes/ui/board-open-close.bpmn, folio-glass pinning (todo/<id> and landing/<slot>), and content-type card chrome ([x],… |
 
 **`dsa/skills/dsa/`** (4)
 
@@ -35,6 +42,14 @@ _53 skills in 9 directories, generated from each skill's front matter. `bun run 
 | [`dsa-checksum`](dsa/skills/dsa/dsa-checksum.md) | Compute and record the SHA-256 cryptographic digest of a signed Data Sharing Agreement's legal text as a W3C DCAT 3 `spdx:checksum` (`spdx:Checksum` with `spdx:checksumAlgorithm_sha256` and… |
 | [`dsa-dcat-record`](dsa/skills/dsa/dsa-dcat-record.md) | Write the W3C DCAT 3 `dcat:Resource` and `dcat:Distribution` catalogue record for a Data Sharing Agreement (`dcat:downloadURL`, `spdx:checksum`, `odrl:hasPolicy`) and link versions with… |
 | [`dsa-odrl-source`](dsa/skills/dsa/dsa-odrl-source.md) | Bind a computable Data Sharing Agreement's W3C ODRL 2.2 `Agreement` to its signed legal text distribution using DCMI Metadata Terms `dcterms:source`, naming the exact `dcat:Distribution` whose… |
+
+**`library-extras/skills/library-extras/`** (3)
+
+| Skill | What it is for |
+|---|---|
+| [`audio-transcription`](library-extras/skills/library-extras/audio-transcription.md) | Turn recorded speech (a meeting recording, a video with audio, an interview) into a transcript the library can cite, and choose WHICH open-source recogniser to run for the job: whisper.cpp by… |
+| [`bib-photo-ingestion-watcher`](library-extras/skills/library-extras/bib-photo-ingestion-watcher.md) | Integration-watcher for bib physical-review issues. |
+| [`oxigraph-catalogue-search`](library-extras/skills/library-extras/oxigraph-catalogue-search.md) | How to compile, partition, distribute via CDN, and query digital library catalogue and Qualified Dublin Core metadata using Oxigraph in-memory WebAssembly on the static edge. |
 
 **`skills/`** (1)
 
@@ -57,7 +72,7 @@ _53 skills in 9 directories, generated from each skill's front matter. `bun run 
 | [`registry-authority-contract`](skills/content/content-lifecycle-ext/registry-authority-contract.md) | The contract the `external-registry` role is held to when a candidate source is checked against the body that publishes it: resolve the identifier through its own API and return the record, so… |
 | [`review-comments`](skills/content/content-lifecycle-ext/review-comments.md) | Reviewer comments on a folio's edit-set, from a tagged pull-request comment to a structured todo on the review page. |
 
-**`skills/content/folio-document-adapter/`** (17)
+**`skills/content/folio-document-adapter/`** (15)
 
 | Skill | What it is for |
 |---|---|
@@ -65,8 +80,6 @@ _53 skills in 9 directories, generated from each skill's front matter. `bun run 
 | [`document-authoring`](skills/content/folio-document-adapter/document-authoring.md) | Author a **document** folio: policy guidance, a standard, a report, a handbook — anything whose content is structured prose rather than machine- checked mathematics. |
 | [`document-publishing`](skills/content/folio-document-adapter/document-publishing.md) | Take a document folio from corpus to published artifact — without a TeX installation. |
 | [`document-structure`](skills/content/folio-document-adapter/document-structure.md) | Decide and maintain the chapter/section skeleton of a document folio. |
-| [`folio-board-diagram-interchange`](skills/content/folio-document-adapter/folio-board-diagram-interchange.md) | The content-folio half of the harness's board-diagram-interchange skill: binds processes/ui/board-place-note.bpmn and board-relocate.bpmn, folio board filters over pages and block kinds, and… |
-| [`folio-board-windows`](skills/content/folio-document-adapter/folio-board-windows.md) | The content-folio half of the harness's board-windows skill: binds processes/ui/board-open-close.bpmn, folio-glass pinning (todo/<id> and landing/<slot>), and content-type card chrome ([x],… |
 | [`folio-content-lifecycle`](skills/content/folio-document-adapter/folio-content-lifecycle.md) | The content-folio half of the content-lifecycle skills (the harness's content-feedback, content-review, content-test, content-validate and evidence-appraisal; this layer's content-plan,… |
 | [`folio-content-profiles`](skills/content/folio-document-adapter/folio-content-profiles.md) | The content-folio half of the harness's content-profiles skill: how a document folio is structured prose and how a paper folio extends it, block-kind discovery across block-kinds/ graphs,… |
 | [`folio-editorial-workflow`](skills/content/folio-document-adapter/folio-editorial-workflow.md) | The content-folio half of the harness's editor, content-graph, md-authoring, canonical-watcher, and uses-editorial-review skills: routes glossary and notation work to ontologist and glossary-build,… |
@@ -86,32 +99,29 @@ _53 skills in 9 directories, generated from each skill's front matter. `bun run 
 | [`plan-request-gate`](skills/content/requirements-planning/plan-request-gate.md) | When somebody asks for a PLAN — "plan", "approach", "proposal", "how would you", "come up with" — produce a requirements document and a work plan, post or commit them where the governing methodology… |
 | [`requirement-definition`](skills/content/requirements-planning/requirement-definition.md) | What a requirement IS, said once for both requirements methodologies: a statement, a conformance level, a source, at least one success criterion with its verification method, and a sign-off owner. |
 
-**`skills/library/catalogue/`** (2)
+**`skills/library/catalogue/`** (1)
 
 | Skill | What it is for |
 |---|---|
 | [`dublin-core-renderings`](skills/library/catalogue/dublin-core-renderings.md) | Render a catalogue's Dublin Core records in the two standard forms an outside reader can use: Dublin Core XML, which a harvester reads, and JSON-LD bound to DCMI Metadata Terms. |
-| [`oxigraph-catalogue-search`](skills/library/catalogue/oxigraph-catalogue-search.md) | How to compile, partition, distribute via CDN, and query digital library catalogue and Qualified Dublin Core metadata using Oxigraph in-memory WebAssembly on the static edge. |
 
-**`skills/library/cataloguing/`** (9)
+**`skills/library/cataloguing/`** (8)
 
 | Skill | What it is for |
 |---|---|
 | [`archiving-arxiv`](skills/library/cataloguing/archiving-arxiv.md) | Materializing a paper from arXiv — why the version suffix is part of the identity rather than a detail, what to keep beside the PDF, and which facts must be read from the published API rather than… |
 | [`archiving-web-pages`](skills/library/cataloguing/archiving-web-pages.md) | Capturing a web page so it can be cited later — the two fidelities, what each one is evidence of, and why capturing only one of them loses something that cannot be recovered. |
 | [`bib-human-review`](skills/library/cataloguing/bib-human-review.md) | Human-validated bibliography workflow. |
-| [`bib-photo-ingestion-watcher`](skills/library/cataloguing/bib-photo-ingestion-watcher.md) | Integration-watcher for bib physical-review issues. |
 | [`bib-qa`](skills/library/cataloguing/bib-qa.md) | Bibliography quality-assurance agent — validates every reference in content/schema/references.ts against several QA checks: URL availability, URL resolution, metadata completeness, citation… |
 | [`filing-dublin-core`](skills/library/cataloguing/filing-dublin-core.md) | Cataloguing a source as it arrives — which facts are `dcterms`, which are this project's own, and why the line is drawn by the vocabulary rather than by convenience. |
 | [`glossary-build`](skills/library/cataloguing/glossary-build.md) | Glossary Build Skill |
 | [`glossary-terms`](skills/library/cataloguing/glossary-terms.md) | Add terms to a layer's glossary: local SKOS terms (folio-glossary/v1) with a definition, a code and links to external SKOS concepts, and references to whole external schemes. |
 | [`ontologist`](skills/library/cataloguing/ontologist.md) | Semantic Ontologist — scans narrative text for ambiguous terms, generates a formal glossary/registry, and produces a mapping linking narrative strings to formal identifiers. |
 
-**`skills/library/ingestion/`** (7)
+**`skills/library/ingestion/`** (6)
 
 | Skill | What it is for |
 |---|---|
-| [`audio-transcription`](skills/library/ingestion/audio-transcription.md) | Turn recorded speech (a meeting recording, a video with audio, an interview) into a transcript the library can cite, and choose WHICH open-source recogniser to run for the job: whisper.cpp by… |
 | [`document-intake`](skills/library/ingestion/document-intake.md) | Process uploaded documents (PDFs, scans, LaTeX, structured/normative guidelines, etc.) from uploads/ into structured content objects. |
 | [`figure-rebuild`](skills/library/ingestion/figure-rebuild.md) | Turn a figure into a computable diagram: every figure of a source publication when a folio is built from its L1 entry, and any hand-drawn figure in a folio, an IG or a demonstrator that is redrawn from a source. |
 | [`l1-coverage`](skills/library/ingestion/l1-coverage.md) | Check that an L1 extraction accounted for every normative sentence in its source publication — captured as a node, or excluded for a fixed-list reason a person signed off. |

@@ -12,7 +12,7 @@ description: >-
 
 # bib-photo-ingestion-watcher
 
-The automation half of the [`bib-human-review`](bib-human-review.md) workflow.
+The automation half of the [`bib-human-review`](../../../skills/library/cataloguing/bib-human-review.md) workflow.
 Companion to the status sidecar `content/schema/references.review.json`.
 
 ## Trigger

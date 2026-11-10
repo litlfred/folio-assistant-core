@@ -6,7 +6,9 @@
   "files": [
     "adapters/",
     "block-kinds/",
+    "board/",
     "content/",
+    "library-extras/",
     "dsa/",
     "glossary/",
     "methodologies/",
