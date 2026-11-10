@@ -1,6 +1,6 @@
 {
   "$schema": "folio-index-config/v1",
-  "instances": [
+  "layers": [
     {
       "name": "folio-assistant-core",
       "source": {
@@ -108,6 +108,11 @@
           }
         }
       }
+    }
+  ],
+  "harnesses": [
+    {
+      "name": "folio-assistant-core"
     }
   ],
   "site": {
