@@ -25,7 +25,7 @@ and the gates that judge content stay here.
 
 <!-- skills:index:begin -->
 
-_53 skills in 11 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
+_54 skills in 11 directories, generated from each skill's front matter. `bun run cat readme:sync` rewrites this list and `readme:sync:check` fails when it is stale. Skills this repository inherits are listed by the repositories that publish them._
 
 **`board/skills/board/`** (2)
 
@@ -105,7 +105,7 @@ _53 skills in 11 directories, generated from each skill's front matter. `bun run
 |---|---|
 | [`dublin-core-renderings`](skills/library/catalogue/dublin-core-renderings.md) | Render a catalogue's Dublin Core records in the two standard forms an outside reader can use: Dublin Core XML, which a harvester reads, and JSON-LD bound to DCMI Metadata Terms. |
 
-**`skills/library/cataloguing/`** (8)
+**`skills/library/cataloguing/`** (9)
 
 | Skill | What it is for |
 |---|---|
@@ -116,6 +116,7 @@ _53 skills in 11 directories, generated from each skill's front matter. `bun run
 | [`filing-dublin-core`](skills/library/cataloguing/filing-dublin-core.md) | Cataloguing a source as it arrives — which facts are `dcterms`, which are this project's own, and why the line is drawn by the vocabulary rather than by convenience. |
 | [`glossary-build`](skills/library/cataloguing/glossary-build.md) | Glossary Build Skill |
 | [`glossary-terms`](skills/library/cataloguing/glossary-terms.md) | Add terms to a layer's glossary: local SKOS terms (folio-glossary/v1) with a definition, a code and links to external SKOS concepts, and references to whole external schemes. |
+| [`mesh-subject-indexing`](skills/library/cataloguing/mesh-subject-indexing.md) | Assign Medical Subject Headings (MeSH) to a work as a DRAFT for a person to review, in the four stages of skill-pipeline-subject-indexing: over-generate concepts, filter them by NLM's own rules,… |
 | [`ontologist`](skills/library/cataloguing/ontologist.md) | Semantic Ontologist — scans narrative text for ambiguous terms, generates a formal glossary/registry, and produces a mapping linking narrative strings to formal identifiers. |
 
 **`skills/library/ingestion/`** (6)
