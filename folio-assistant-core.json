@@ -253,11 +253,11 @@
       ]
     },
     {
-      "id": "library",
+      "id": "core-library-graph",
       "path": "library/",
-      "description": "L1 source content this LAYER owns \u2014 the publications core's own vocabulary and methods are derived FROM, one `<bib-slug>/` per ingested document. Declared rather than borrowed because a method is placed by OWNERSHIP (`methodology-adoption` \u00a74): a paper core's methodology cites from another layer's library would not lift out with it. Holds Doc-Researcher (`arxiv-2510.21603v1`), the C2PA Technical Specification 2.5 (`c2pa-2026-specification-2-5`, CC-BY-4.0) and the DSpace 7 REST Contract (`dspace-7-rest-contract`, BSD-3-Clause). `ingest-document.ts` refuses to guess a destination when several are declared. `dependents: skip` because these are THIS layer's sources; a downstream folio's library is its own. The id is the CONVENTIONAL `library` since 2026-11-04 (owner, card 'Library rule' option 1): cat-harness's corpus became opt-in inside its `library` sub-graph, so the convention a layer above inherits — a `library/` of its own, by id and relative path (bean `wwi6`) — now comes from this layer, the one that owns content, as this entry's earlier text on cat-harness said it should. It was `core-library` until then, so as not to shadow the harness's entry.",
+      "description": "The library sub-graph of this layer, on the pattern of cat-harness's `library-graph`: the graphs inside it are declared FROM WITHIN, in `library/graph.json`. Its corpus (`library/corpus/`, id `library`) is OPT-IN (owner, 2026-11-10, card Q-SG-3 option A): off in every layer unless that layer lists `folio-assistant-core.library` in its own `enableSubgraphs`, core's own included, so a layer below no longer mounts core's three sources (about 29 MB). Only the nested corpus is opt-in, never a top-level `library`: a layer that does not declare its own `library` falls back to the built-in convention rather than losing it. The id is `core-library-graph`, not `library-graph`, so it does not shadow cat-harness's entry of that name.",
       "graphTypologies": [
-        "library"
+        "cat-harness"
       ]
     },
     {
@@ -285,6 +285,15 @@
       "description": "The BPMN core owns, by area: `content/` (authoring, editing and HCI validation, draft to publication, the content lifecycle, change review, evidence retrieval, contributor feedback), `library/` (L1 document ingestion and `deep-document-research`, Doc-Researcher's iterative loop), `conduct/` (getting started) and `ui/` (board interactions), with their DMN tables in each area's `decisions/`. A TOP-LEVEL directory, as the harness's diagrams are: `check:layout-norms` refuses a package subdirectory of an already-declared graph such as `methodologies/processes/`, and `workflowDirs` resolves only from a DECLARED directory.",
       "graphTypologies": [
         "processes"
+      ]
+    },
+    {
+      "id": "dsa",
+      "path": "dsa/",
+      "optIn": true,
+      "description": "The Data Sharing Agreement sub-graph \u2014 a NAMED SUB-GRAPH of this layer on the pattern of cat-harness's `work-plan/`, and OPT-IN: off in every layer, this one included, unless that layer lists `folio-assistant-core.dsa` in its own `enableSubgraphs` (owner, 2026-11-10, card Q-SG-1 C, wave 1). It holds the four DSA skills and the DSA document life cycle; the graphs inside it are declared FROM WITHIN, in `dsa/graph.json`. The `dsa` typology and `check:dsa-hash` stay outside it.",
+      "graphTypologies": [
+        "cat-harness"
       ]
     },
     {
@@ -533,5 +542,5 @@
       }
     ]
   },
-  "enableSubgraphs": ["folio-assistant-core.board", "folio-assistant-core.library-extras"]
+  "enableSubgraphs": ["folio-assistant-core.library", "folio-assistant-core.dsa", "folio-assistant-core.board", "folio-assistant-core.library-extras"]
 }

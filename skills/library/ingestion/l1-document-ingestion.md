@@ -11,6 +11,7 @@ graph-typologies:
   - uploads
 uses-methodology:
   - lsi
+  - correspondence-analysis
 ---
 
 # L1 document ingestion
