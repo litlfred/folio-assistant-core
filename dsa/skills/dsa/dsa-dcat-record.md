@@ -10,12 +10,12 @@ description: >
 
 # `dsa-dcat-record` — Write the DCAT 3 record and link versions (P2.4–5)
 
-> Skill id: `dsa-dcat-record` · Package: `folio-document-adapter` · Process:
-> `folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn`
+> Skill id: `dsa-dcat-record` · Package: `dsa` · Process:
+> `folio-assistant-core/dsa/processes/dsa-document-lifecycle.bpmn`
 > (`Task_Catalogue`, P2.4–5) · Checker:
 > `folio-assistant-core/scripts/check-dsa-hash.ts` (`bun run cat check:dsa-hash`)
 
-Whereas [`filing-dublin-core`](../../library/cataloguing/filing-dublin-core.md)
+Whereas [`filing-dublin-core`](../../../skills/library/cataloguing/filing-dublin-core.md)
 covers DCMI Metadata Terms on ingested library sources, a published Data
 Sharing Agreement requires a **W3C DCAT 3** catalogue record describing the
 agreement as a catalogued resource, its immutable legal text distribution and

@@ -10,8 +10,8 @@ description: >
 
 # `dsa-checksum` — Compute and record the SHA-256 of the legal text (P2.2)
 
-> Skill id: `dsa-checksum` · Package: `folio-document-adapter` · Process:
-> `folio-assistant-core/processes/content/dsa-document-lifecycle.bpmn`
+> Skill id: `dsa-checksum` · Package: `dsa` · Process:
+> `folio-assistant-core/dsa/processes/dsa-document-lifecycle.bpmn`
 > (`Task_Hash`, P2.2) · Checker: `folio-assistant-core/scripts/check-dsa-hash.ts`
 > (`bun run cat check:dsa-hash`)
 
