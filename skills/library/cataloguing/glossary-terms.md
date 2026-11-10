@@ -11,6 +11,8 @@ profiles: [document, paper]
 consulted: true
 graph-typologies:
   - glossary
+uses-methodology:
+  - automatic-term-extraction
 ---
 
 # Glossary terms
