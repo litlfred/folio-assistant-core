@@ -39,6 +39,11 @@
         "block": "library-is-l1"
       },
       {
+        "id": "the-library-entry-folder",
+        "title": "What is in a library entry folder",
+        "block": "the-library-entry-folder"
+      },
+      {
         "id": "the-pipeline",
         "title": "The pipeline",
         "asset": {
