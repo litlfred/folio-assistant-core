@@ -126,20 +126,39 @@ describe("library location is read from the declaration", () => {
     // is not an entry, the entries filed in it are.
     const entries = libraryEntries(dir!).map((e) => e.slug);
 
-    // `evidence:` lines across the methodology graph, as bib-slugs.
-    const methodologies = resolve(PLATFORM, "methodologies");
+    type LibraryEntryDecl = { path?: string; graphTypologies?: string[]; heldEntries?: string[]; awaitingCitation?: string[] };
+    const decl = JSON.parse(readFileSync(declarationPathIn(PLATFORM)!, "utf8")) as { directories?: LibraryEntryDecl[] };
+    // Sub-graph entries (`library/graph.json` since cat-harness#1032;
+    // `research/graph.json` since cat-harness#1181) are declared FROM WITHIN
+    // their sub-graph, with paths relative to the sub-graph directory.
+    const nested = (decl.directories ?? []).flatMap((d) => {
+      const f = d.path ? join(PLATFORM, d.path, "graph.json") : undefined;
+      if (!f || !existsSync(f)) return [];
+      const subs = (JSON.parse(readFileSync(f, "utf8")) as { directories?: LibraryEntryDecl[] }).directories ?? [];
+      return subs.map((s) => ({ ...s, path: s.path ? join(d.path!, s.path) : d.path }));
+    });
+    const allDirs = [...(decl.directories ?? []), ...nested];
+
+    // `evidence:` lines across the methodology graph (including opt-in
+    // sub-graphs such as `research/methodologies/`), as bib-slugs.
+    const methodologyDirs = allDirs
+      .filter((d) => d.graphTypologies?.includes("methodology") && d.path)
+      .map((d) => resolve(PLATFORM, d.path!))
+      .filter((p) => existsSync(p));
     const cited = new Set<string>();
-    for (const f of readdirSync(methodologies).filter((f) => f.endsWith(".md"))) {
-      const text = readFileSync(join(methodologies, f), "utf8");
-      // BOTH SPELLINGS OF THE FIELD'S LAYOUT, not both shapes of the field.
-      // `evidence` is an array in the schema; YAML writes a one-element array
-      // inline (`evidence: [library/x]`) or as a block list, and `swot` uses
-      // the block form. Matching only `evidence: library/x` read the block
-      // form as ZERO citations, which failed this test by declaring a real
-      // source uncited — a false finding, and in the direction that looks like
-      // a violation.
-      for (const m of text.matchAll(/^\s*(?:evidence:\s*)?-?\s*library\/(\S+?)\s*$/gm)) {
-        cited.add(m[1]!);
+    for (const methodologies of methodologyDirs) {
+      for (const f of readdirSync(methodologies).filter((f) => f.endsWith(".md"))) {
+        const text = readFileSync(join(methodologies, f), "utf8");
+        // BOTH SPELLINGS OF THE FIELD'S LAYOUT, not both shapes of the field.
+        // `evidence` is an array in the schema; YAML writes a one-element array
+        // inline (`evidence: [library/x]`) or as a block list, and `swot` uses
+        // the block form. Matching only `evidence: library/x` read the block
+        // form as ZERO citations, which failed this test by declaring a real
+        // source uncited — a false finding, and in the direction that looks like
+        // a violation.
+        for (const m of text.matchAll(/^\s*(?:evidence:\s*)?-?\s*library\/(\S+?)\s*$/gm)) {
+          cited.add(m[1]!);
+        }
       }
     }
 
@@ -156,17 +175,8 @@ describe("library location is read from the declaration", () => {
     // in `awaitingCitation`. Same rule — by name, never by pattern — but the
     // entry's summaries are not held back, which is why it is not folded into
     // `heldEntries`. Once a methodology cites it, it leaves the list.
-    type LibraryEntryDecl = { path?: string; graphTypologies?: string[]; heldEntries?: string[]; awaitingCitation?: string[] };
-    const decl = JSON.parse(readFileSync(declarationPathIn(PLATFORM)!, "utf8")) as { directories?: LibraryEntryDecl[] };
-    // The corpus entry is declared FROM WITHIN its sub-graph since
-    // cat-harness#1032 (`library/graph.json`), so its lists are read there too.
-    const nested = (decl.directories ?? []).flatMap((d) => {
-      const f = d.path ? join(PLATFORM, d.path, "graph.json") : undefined;
-      if (!f || !existsSync(f)) return [];
-      return ((JSON.parse(readFileSync(f, "utf8")) as { directories?: LibraryEntryDecl[] }).directories ?? []);
-    });
     const admitted = new Set(
-      [...(decl.directories ?? []), ...nested]
+      allDirs
         .filter((d) => d.graphTypologies?.includes("library"))
         .flatMap((d) => [...(d.heldEntries ?? []), ...(d.awaitingCitation ?? [])]),
     );
