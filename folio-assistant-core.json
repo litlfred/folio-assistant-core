@@ -253,13 +253,12 @@
       ]
     },
     {
-      "id": "library",
+      "id": "core-library-graph",
       "path": "library/",
-      "description": "L1 source content this LAYER owns \u2014 the publications core's own vocabulary and methods are derived FROM, one `<bib-slug>/` per ingested document. Declared rather than borrowed because a method is placed by OWNERSHIP (`methodology-adoption` \u00a74): a paper core's methodology cites from another layer's library would not lift out with it. Holds Doc-Researcher (`arxiv-2510.21603v1`), the C2PA Technical Specification 2.5 (`c2pa-2026-specification-2-5`, CC-BY-4.0) and the DSpace 7 REST Contract (`dspace-7-rest-contract`, BSD-3-Clause). `ingest-document.ts` refuses to guess a destination when several are declared. `dependents: skip` because these are THIS layer's sources; a downstream folio's library is its own. The id is the CONVENTIONAL `library` since 2026-11-04 (owner, card 'Library rule' option 1): cat-harness's corpus became opt-in inside its `library` sub-graph, so the convention a layer above inherits \u2014 a `library/` of its own, by id and relative path (bean `wwi6`) \u2014 now comes from this layer, the one that owns content, as this entry's earlier text on cat-harness said it should. It was `core-library` until then, so as not to shadow the harness's entry. OPT-IN (owner, 2026-11-10, card Q-SG-1 C): the three ingested sources (about 29 MB) are this layer's own evidence, which no layer below reads, so a whole mount leaves them out unless the layer lists `folio-assistant-core.library` in its `enableSubgraphs`.",
+      "description": "The library sub-graph of this layer, on the pattern of cat-harness's `library-graph`: the graphs inside it are declared FROM WITHIN, in `library/graph.json`. Its corpus (`library/corpus/`, id `library`) is OPT-IN (owner, 2026-11-10, card Q-SG-3 option A): off in every layer unless that layer lists `folio-assistant-core.library` in its own `enableSubgraphs`, core's own included, so a layer below no longer mounts core's three sources (about 29 MB). Only the nested corpus is opt-in, never a top-level `library`: a layer that does not declare its own `library` falls back to the built-in convention rather than losing it. The id is `core-library-graph`, not `library-graph`, so it does not shadow cat-harness's entry of that name.",
       "graphTypologies": [
-        "library"
-      ],
-      "optIn": true
+        "cat-harness"
+      ]
     },
     {
       "id": "core-methodologies",
@@ -515,5 +514,6 @@
         "reason": "EXISTENCE only \u2014 whether a catalogue item's libraryId was ingested \u2014 and it never parses the file"
       }
     ]
-  }
+  },
+  "enableSubgraphs": ["folio-assistant-core.library"]
 }
