@@ -198,6 +198,22 @@ describe("pages and exports", () => {
     expect(page).toContain('<a href="iris-x-catalogue/">iris-x-catalogue</a> (1)');
   });
 
+  test("entryPagesNestUnderTheirSubgraphPage", () => {
+    // Owner, 2026-11-10: entry pages sat at the top of a site's Pages list.
+    // Each names its sub-graph page as `parent`, and that page exists.
+    const titleOf = (s: string) => /^title: "(.*)"$/m.exec(s)?.[1];
+    const subgraphTitles = new Set([...files].filter(([p]) => /\/bibliography\/[^/]+\/index\.md$/.test(p)).map(([, s]) => titleOf(s)));
+    const entryPages = [...files].filter(([p, s]) => p.endsWith("/index.md") && s.includes("All references of "));
+    expect(entryPages.length).toBe(c.entries.length);
+    for (const [p, s] of entryPages) {
+      const slug = p.split("/").slice(-3)[0];
+      expect(s).toContain(`parent: "Bibliography: ${slug}"\ngrand_parent: "Bibliography"\n`);
+      expect(subgraphTitles.has(`Bibliography: ${slug}`)).toBe(true);
+    }
+    // …and each sub-graph page sits under the Bibliography page.
+    for (const [p, s] of files) if (/\/bibliography\/[^/]+\/index\.md$/.test(p)) expect(s).toContain('parent: "Bibliography"\n');
+  });
+
   test("entryCarriesOwnExports", () => {
     const e = c.entries.find((x) => x.ref.id === "garoufalidis2004")!;
     const html = entryHtml(e);
