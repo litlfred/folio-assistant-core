@@ -1,0 +1,59 @@
+{
+  "$schema": "kg-qa/v1",
+  "subject": {
+    "kind": "tool",
+    "id": "public-comment-changesets",
+    "path": null
+  },
+  "source_hash": "1caf9346efb0",
+  "criteria": {
+    "tool-invoke-path-resolves": {
+      "result": "pass",
+      "findings": []
+    },
+    "tool-satisfies-resolves": {
+      "result": "pass",
+      "findings": []
+    },
+    "tool-satisfies-contract-met": {
+      "result": "pass",
+      "findings": []
+    },
+    "tool-io-types-declared": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "public-comment-changesets",
+          "detail": "port \"operation\" references undeclared type https://litlfred.github.io/folio-assistant/cat-harness/tool-types.schema.json#/$defs/ChangeSetAction"
+        }
+      ]
+    },
+    "tool-args-shell-safe": {
+      "result": "fail",
+      "findings": [
+        {
+          "where": "public-comment-changesets",
+          "detail": "command-line input \"operation\" is , which can carry a shell payload"
+        }
+      ]
+    },
+    "tool-alternative-selectable": {
+      "result": "n/a",
+      "findings": []
+    },
+    "tool-downstream-fresh": {
+      "result": "n/a",
+      "findings": []
+    },
+    "tool-maintains-in-tree": {
+      "result": "n/a",
+      "findings": []
+    }
+  },
+  "totals": {
+    "pass": 3,
+    "fail": 2,
+    "n/a": 3,
+    "unknown": 0
+  }
+}
