@@ -7,6 +7,7 @@
     "adapters/",
     "block-kinds/",
     "content/",
+    "dsa/",
     "glossary/",
     "methodologies/",
     "processes/",
