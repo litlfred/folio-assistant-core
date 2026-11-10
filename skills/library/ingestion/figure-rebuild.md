@@ -1,12 +1,15 @@
 ---
 name: figure-rebuild
 description: >
-  Turn a source publication's figures into computable diagrams when a folio
-  is built from its L1 entry. Every declared figure gets a block, and each one
+  Turn a figure into a computable diagram: every figure of a source
+  publication when a folio is built from its L1 entry, and any hand-drawn
+  figure in a folio, an IG or a demonstrator that is redrawn from a source.
+  Every declared figure gets a block, and each one
   is rebuilt in the form its type calls for: an ArchiMate view, BPMN, DMN, a
   FHIR logical model, or an SVG generated from data, always from one schema-backed source. The PDF crop stays
-  beside the rebuild as the cited source. The figure-coverage check counts
-  what is missing and what is still only a picture.
+  beside the rebuild as the cited source, and the rebuild keeps the
+  original's layout. The figure-coverage check counts what is missing and
+  what is still only a picture.
 graph-typologies:
   - library
 ---
@@ -25,6 +28,42 @@ and carry it as data rather than as a picture. Two things go wrong otherwise:
    boxes, arrows and labels are pixels: no query can reach them.
 
 The rebuild form is picked by figure type (step 2).
+
+## Not only L1 folios
+
+The routes and rules here apply to **any** figure that is redrawn from a
+computable source, not only the figures of an L1 publication: a hand-drawn
+PNG on an IG's home page, a demonstrator's overview, a handbook figure in a
+DAK. The coverage steps (1 and 6) are the L1 part; everything else binds
+wherever a picture becomes data.
+
+Failure this prevents (smart-ips-pilgrimage, 2026-11-07): the IG's
+hand-drawn overview of actors, systems and numbered flows was redrawn in
+PlantUML. Two rules below were missed because this skill read as L1-only:
+the figure draws actors and systems, so its route is an **ArchiMate view**
+(and declaring that view turns on the ArchiMate subgraph); and PlantUML lays
+the boxes out itself, so the redraw no longer looked like the original. The
+commit said it "draws the same figure" with no picture to show it.
+
+## The redraw keeps the original's layout
+
+A rebuild is a transcription of the drawing, and where a box sits is part of
+the drawing: readers know the figure by its shape. So, for every route:
+
+- **Take the coordinates from the original.** Each box goes where the
+  original draws it, scaled to the original's canvas: `bpmndi` bounds for
+  BPMN, Archi `<bounds>` for an ArchiMate view, the data file's positions for
+  a generated SVG. Groups and regions the original draws (a country, a lane,
+  a phase) keep their place too.
+- **Never hand the layout to an auto-layout tool.** PlantUML, Graphviz and
+  Mermaid place boxes themselves and cannot hold a position, so they are a
+  rendering, never the source of a redrawn figure (§"Mermaid and PlantUML are renderings,
+  never a source").
+- **Show a side-by-side before asking for review.** Render the rebuild and
+  put it next to the original in the PR or review row. "Draws the same
+  figure" is a claim a reviewer checks by looking, so give them the picture.
+- **Say what differs.** ArchiMate notation draws typed boxes, not the
+  original's icons; list such differences in the PR rather than hiding them.
 
 ## The steps, after the folio is seeded
 
@@ -45,7 +84,7 @@ The rebuild form is picked by figure type (step 2).
    | a workflow with tasks, gateways, lanes | **BPMN 2.0** | the folio's `processes/`, or the DAK it is adapted from |
    | a decision or a transition rule | **DMN 1.3** | `processes/decisions/` |
    | classes, attributes, cardinalities | **FHIR logical models** (FSH), drawn as a UML class diagram generated from them | the upstream IG (e.g. smart-pcmt), else a litlfred FSH repo |
-   | a graph of named boxes and arrows | find what the boxes ARE (processes, actors, systems) and model it as **ArchiMate** elements and relationships | the reference architecture |
+   | a graph of named boxes and arrows | find what the boxes ARE (processes, actors, systems) and model it as **ArchiMate** elements and relationships | the reference architecture, or for an IG or demonstrator its own `archimate/` model (declared with graph typology `archimate`, so the archimate-pages visualiser draws it) |
    | phases, layers, nested shapes, a tree, a staircase | an **SVG generated from data**: a data file plus a generator Tool. The DIIG phases chart is the worked example: `diig-phases-figure/v1` data on the L1 library entry of each publication that prints it, drawn by Tool `diig-phases-svg` | the data on the source's L1 library entry; the folio commits the SVG, and adds only its own tiles in a `diig-phases-adaptation/v1` file |
    | a table of values drawn as a picture | a **table** block | the block |
    | a country example, a photograph, a screenshot, a third-party figure | **keep the cited picture** (`scope: "rebuild"` exclusion, signed off) | unchanged |
@@ -151,13 +190,15 @@ library:
 - A label that names a glossary concept (L1 Narrative, Digital adaptation
   kit, Localisation) links to the SKOS term, an `<a href>` around the text.
 
-### Mermaid is a rendering, never a source
+### Mermaid and PlantUML are renderings, never a source
 
 Mermaid is a drawing language, not a schema. Nothing downstream consumes it:
 no KG import, no validator, and the document site does not render it. Its node
 names are local strings with no IRI, so they cannot link to a glossary term,
 an ArchiMate element or a FHIR model. A hand-written `.mmd` is therefore a
-second copy of content, which the one-source rule forbids. Mermaid may appear
+second copy of content, which the one-source rule forbids. PlantUML is the
+same: its boxes are local strings, and its auto-layout cannot keep a redrawn
+figure's layout. Mermaid or PlantUML may appear
 only as a view GENERATED from a schema-backed source, when it lays out better
 than the native renderer, and then the generated text and SVG are build
 output, not authored files.
