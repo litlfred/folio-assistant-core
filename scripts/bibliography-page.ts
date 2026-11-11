@@ -576,11 +576,20 @@ function navParentFm(u: NavParent | undefined): string {
   return `parent: ${yamlQuoted(u.parent)}\n${u.grandParent !== undefined ? `grand_parent: ${yamlQuoted(u.grandParent)}\n` : ""}`;
 }
 
-/** The title of the route's page, and of one sub-graph's page. */
+/**
+ * The title of the route's page, and of one sub-graph's page. just-the-docs
+ * finds a page's children by TITLE across the whole composed site, so a
+ * layer's own bibliography composed at `/<layer>/` (`--instance`) names its
+ * layer: with five trees all titled `Bibliography` / `Bibliography: <slug>`,
+ * every copy adopted every other copy's children, the nav grew multiplicatively
+ * and the docs-site Jekyll build ran the hosted runner out of resources
+ * (folio-assistant run 42942756201).
+ */
 const BIB_TITLE = "Bibliography";
-const subgraphTitle = (slug: string) => `${BIB_TITLE}: ${slug}`;
+const bibTitle = (layer?: string) => (layer ? `${BIB_TITLE} (${layer})` : BIB_TITLE);
+const subgraphTitle = (slug: string, layer?: string) => `${bibTitle(layer)}: ${slug}`;
 /** A page under one sub-graph's page. */
-const underSubgraph = (slug: string): NavParent => ({ parent: subgraphTitle(slug), grandParent: BIB_TITLE });
+const underSubgraph = (slug: string, layer?: string): NavParent => ({ parent: subgraphTitle(slug, layer), grandParent: bibTitle(layer) });
 
 /** A reference's own page: `<route>/<sub-graph>/<key>/`, under its sub-graph's page. */
 export function renderEntryPage(opts: { permalink: string; entry: Entry; listHref: string; listLabel: string; under?: NavParent }): string {
@@ -848,6 +857,8 @@ export function forInstance(c: Collected, instance: string, needsOf: (name: stri
  */
 export function outputs(c: Collected, prefix = ""): Map<string, string> {
   const out = new Map<string, string>();
+  // The layer a prefixed site belongs to: its titles name it (see BIB_TITLE).
+  const layer = prefix.replace(/^\/+|\/+$/g, "") || undefined;
   // Each entry's own page, `<route>/<sub-graph slug>/<segment>/`: the slash
   // address the list links and the side panel loads (owner, 2026-11-08).
   const slugOfSub = new Map(c.subgraphs.map((s) => [`${s.instance}\0${s.id}`, s.slug]));
@@ -891,7 +902,7 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
   write(
     ROOT,
     renderPage({
-      title: BIB_TITLE,
+      title: bibTitle(layer),
       permalink: `${prefix}/${ROUTE}/`,
       intro:
         (own === undefined
@@ -915,8 +926,8 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
     write(
       join(ROOT, s.slug),
       renderPage({
-        title: subgraphTitle(s.slug),
-        under: { parent: BIB_TITLE },
+        title: subgraphTitle(s.slug, layer),
+        under: { parent: bibTitle(layer) },
         permalink: `${prefix}/${ROUTE}/${s.slug}/`,
         intro: `The references of \`${s.path}/\` (${s.instance}${own !== undefined && s.instance !== own ? `, a dependency of ${own}` : ""}, a \`${s.kind}\` directory). [All references](../).`,
         entries,
@@ -935,8 +946,8 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
     write(
       join(ROOT, a.slug, a.asset),
       renderPage({
-        title: `${subgraphTitle(a.slug)}/${a.asset}`,
-        under: underSubgraph(a.slug),
+        title: `${subgraphTitle(a.slug, layer)}/${a.asset}`,
+        under: underSubgraph(a.slug, layer),
         permalink: `${prefix}/${ROUTE}/${a.slug}/${a.asset}/`,
         intro: `The reference for \`${a.path}\` (${a.instance}${own !== undefined && a.instance !== own ? `, a dependency of ${own}` : ""}) and any references extracted from it. [${a.slug}](../) · [All references](../../).`,
         entries: a.entries,
@@ -950,7 +961,7 @@ export function outputs(c: Collected, prefix = ""): Map<string, string> {
     if (assetDirs.has(`${at.slug}/${at.seg}`)) continue;
     out.set(
       join(ROOT, at.slug, at.seg, "index.md"),
-      renderEntryPage({ permalink: `${prefix}/${ROUTE}/${at.slug}/${at.seg}/`, entry: e, listHref: "../", listLabel: `All references of ${at.slug}`, under: underSubgraph(at.slug) }),
+      renderEntryPage({ permalink: `${prefix}/${ROUTE}/${at.slug}/${at.seg}/`, entry: e, listHref: "../", listLabel: `All references of ${at.slug}`, under: underSubgraph(at.slug, layer) }),
     );
   }
   // The route marks itself as built at publish, as the glossary's do (bean

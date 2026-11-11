@@ -505,4 +505,20 @@ describe("one instance's own bibliography, for its page inside a composed site (
     const sub = [...pages].find(([p]) => p.endsWith("smart-trust-catalogue/index.md"))![1];
     expect(sub).toContain("permalink: /smart-trust/en/folio-assistant-core/bibliography/smart-trust-catalogue/");
   });
+
+  test("layerSiteTitlesNameTheLayer", () => {
+    // just-the-docs matches `parent` by title across the composed site: a
+    // layer's copy must not share the root's titles, or each tree adopts the
+    // others' pages (folio-assistant run 42942756201 ran out of resources).
+    const pages = outputs(forInstance(c, "smart-trust", (n) => needs[n] ?? []), "/smart-trust");
+    const root = [...pages].find(([p]) => p.endsWith("bibliography/index.md"))![1];
+    expect(root).toContain('title: "Bibliography (smart-trust)"\n');
+    const sub = [...pages].find(([p]) => p.endsWith("smart-trust-catalogue/index.md"))![1];
+    expect(sub).toContain('title: "Bibliography (smart-trust): smart-trust-catalogue"\n');
+    expect(sub).toContain('parent: "Bibliography (smart-trust)"\n');
+    for (const [p, s] of pages) {
+      if (!p.endsWith("index.md")) continue;
+      expect(s).not.toMatch(/^(parent|grand_parent): "Bibliography(: [^"]*)?"$/m);
+    }
+  });
 });
