@@ -237,6 +237,9 @@ describe("pages and exports", () => {
     for (const [p, s] of entryPages) {
       const slug = p.split("/").slice(-3)[0];
       expect(s).toContain(`parent: "Bibliography: ${slug}"\ngrand_parent: "Bibliography"\n`);
+      // …but stays out of the sidebar: just-the-docs writes the nav into every
+      // page, and 7,219 entries there ran the who-iris Jekyll build out of memory.
+      expect(s).toContain("nav_exclude: true\n");
       expect(subgraphTitles.has(`Bibliography: ${slug}`)).toBe(true);
     }
     // …and each sub-graph page sits under the Bibliography page.

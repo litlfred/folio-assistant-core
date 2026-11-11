@@ -591,12 +591,20 @@ const subgraphTitle = (slug: string, layer?: string) => `${bibTitle(layer)}: ${s
 /** A page under one sub-graph's page. */
 const underSubgraph = (slug: string, layer?: string): NavParent => ({ parent: subgraphTitle(slug, layer), grandParent: bibTitle(layer) });
 
-/** A reference's own page: `<route>/<sub-graph>/<key>/`, under its sub-graph's page. */
+/**
+ * A reference's own page: `<route>/<sub-graph>/<key>/`, under its sub-graph's
+ * page. It is kept out of the sidebar (`nav_exclude`), as glossary term pages
+ * are: just-the-docs writes the whole nav into every page, so 7,219 reference
+ * pages in it made every one of the site's ~8,600 pages carry them, and the
+ * who-iris Jekyll build ran out of memory (14 GB; 1.1 GB without them). The
+ * sub-graph's page lists them, and `parent` still gives the breadcrumb.
+ */
 export function renderEntryPage(opts: { permalink: string; entry: Entry; listHref: string; listLabel: string; under?: NavParent }): string {
   const title = entryTitle(opts.entry.ref);
   return `---
 title: ${yamlQuoted(title)}
 permalink: ${opts.permalink}
+nav_exclude: true
 ${navParentFm(opts.under)}${GENERATED_FM}
 ---
 ${GENERATED}
