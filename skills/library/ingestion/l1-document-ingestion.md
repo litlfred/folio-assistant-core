@@ -411,6 +411,36 @@ inferred inside it, else one section per page
 (`diagnostics.oversized_split`). A re-ingest renumbers the section ids of an
 entry cut this way, so its block summaries go stale and are redrafted.
 
+### Titles that do not match their text
+
+Four IRIS entries had section titles that did not match the words under them.
+`pdf-structure.py` now tidies an INFERRED table of contents before it splits
+(`diagnostics.headings_tidied`; an outline entry is never touched):
+
+- **A title cut to its last line** ("sanitaria universal", 10665/354399): a
+  title that opens in lower case is rejoined with the lines above it, up to the
+  bare number that opens it ("1.2 Función de la salud digital ... cobertura
+  sanitaria universal"). With no number above it, it is dropped.
+- **A body word set apart by a font** ("un", "comme", "On", 10665/264857), and
+  a reference's first author in capitals ("YOUNG,"): dropped.
+- **A diagram's labels** (an annex flowchart, 10665/329296): two or more
+  sections on one page, each with fewer than 30 words, are dropped as headings
+  and their words stay with the section before them.
+
+A page whose PDF draws its side panel and body before its headings
+(10665/342236) put every section one heading late. When the outline's first
+heading on a page sits in the later half of the page's text, and the page read
+in print order (top to bottom, a band of columns left column first) puts it
+near the top, that page is read in print order
+(`diagnostics.pages_read_in_print_order`).
+
+### The document's language is recorded, not read from the slug
+
+`structure.json` `source.languages` holds the languages the ingest was given
+(`--lang-hint`). A reader asks it, not the slug: an item's first edition keeps
+the bare slug whatever its language, so 10665/202203, which is Russian, has
+no `-rus`.
+
 ## Footnotes and their marks
 
 Owner, 2026-11-11: "also foot notes/marks". The `pdf-footnotes.py` arm reads
