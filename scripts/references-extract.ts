@@ -315,8 +315,17 @@ export function irisHandle(url: string): string | undefined {
   return m ? `10665-${m[1]}` : undefined;
 }
 
+/** Text without C0/C1 control characters or DEL; whitespace controls become a space. */
+export function stripControl(s: string): string {
+  return s.replace(/[\t\n\r]/g, " ").replace(/[\u0000-\u001f\u007f-\u009f]/g, "").replace(/ {2,}/g, " ").trim();
+}
+
 /** The node for one printed entry: only fields read without guessing. */
-export function toReference(key: string, printed: string, derivedFrom: string): ReferenceNode {
+export function toReference(key: string, printedRaw: string, derivedFrom: string): ReferenceNode {
+  // A PDF's text layer can carry control characters (a BEL before a WHO
+  // reference in 10665-349550); they are no part of the printed entry, and
+  // YAML refuses them in a page's front matter.
+  const printed = stripControl(printedRaw);
   const node: ReferenceNode = { $schema: REFERENCE_SCHEMA_TAG, id: key, type: "document", provenance: "extracted", derivedFrom, printed };
   const accessed = ACCESSED.exec(printed);
   const dated = accessed ? printed.replace(accessed[0], " ") : printed;
