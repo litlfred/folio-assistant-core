@@ -162,87 +162,89 @@ A figure description an agent drafted is NOT reported as what the figure shows. 
   <bpmndi:BPMNDiagram id="BPMNDiagram_DeepDocumentResearch">
     <bpmndi:BPMNPlane id="BPMNPlane_DeepDocumentResearch" bpmnElement="Collab_DeepDocumentResearch">
       <bpmndi:BPMNShape id="Shape_Participant_DDR" bpmnElement="Participant_DeepDocumentResearch" isHorizontal="true">
-        <dc:Bounds x="130" y="60" width="1560" height="380" />
+        <dc:Bounds x="130" y="60" width="1360" height="380" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Lane_DeepResearcher" bpmnElement="Lane_DeepResearcher" isHorizontal="true">
-        <dc:Bounds x="160" y="60" width="1530" height="380" />
+        <dc:Bounds x="160" y="60" width="1330" height="380" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Start_Question" bpmnElement="Start_Question">
-        <dc:Bounds x="210" y="182" width="36" height="36" />
-        
-      <bpmndi:BPMNLabel><dc:Bounds x="170" y="223" width="120" height="30"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <dc:Bounds x="200" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="180" y="223" width="90" height="40"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_GW_Held" bpmnElement="GW_Held" isMarkerVisible="true">
-        <dc:Bounds x="300" y="175" width="50" height="50" />
-        
-      <bpmndi:BPMNLabel><dc:Bounds x="270" y="130" width="112" height="40"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <dc:Bounds x="285" y="175" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="255" y="125" width="112" height="40"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_End_NotHeld" bpmnElement="End_NotHeld">
-        <dc:Bounds x="307" y="340" width="36" height="36" />
-        
-      <bpmndi:BPMNLabel><dc:Bounds x="255" y="381" width="140" height="30"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <dc:Bounds x="292" y="340" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="240" y="381" width="140" height="36"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_Plan" bpmnElement="A_Plan">
-        <dc:Bounds x="445" y="140" width="120" height="120" />
+        <dc:Bounds x="415" y="140" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_Search" bpmnElement="A_Search">
-        <dc:Bounds x="675" y="140" width="120" height="120" />
+        <dc:Bounds x="580" y="140" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_Refine" bpmnElement="A_Refine">
-        <dc:Bounds x="900" y="140" width="120" height="120" />
+        <dc:Bounds x="745" y="140" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_GW_Sufficient" bpmnElement="GW_Sufficient" isMarkerVisible="true">
-        <dc:Bounds x="1100" y="175" width="50" height="50" />
-        
-      <bpmndi:BPMNLabel><dc:Bounds x="1128.58" y="121.5" width="112" height="35" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <dc:Bounds x="915" y="175" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="945" y="120" width="110" height="35" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_A_Report" bpmnElement="A_Report">
-        <dc:Bounds x="1260" y="140" width="120" height="120" />
+        <dc:Bounds x="1080" y="140" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_End_Answered" bpmnElement="End_Answered">
-        <dc:Bounds x="1490" y="182" width="36" height="36" />
-        
-      <bpmndi:BPMNLabel><dc:Bounds x="1440" y="223" width="140" height="30"/></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <dc:Bounds x="1285" y="182" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1235" y="223" width="135" height="36"/></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Edge_F_1" bpmnElement="F_1">
-        <di:waypoint x="246" y="200"/><di:waypoint x="300" y="200"/>
+        <di:waypoint x="236" y="200"/><di:waypoint x="285" y="200"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Held" bpmnElement="F_Held">
-        <di:waypoint x="350" y="200" />
-        <di:waypoint x="445" y="200" />
+        <di:waypoint x="335" y="200" />
+        <di:waypoint x="415" y="200" />
+        <bpmndi:BPMNLabel><dc:Bounds x="355" y="178" width="40" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_NotHeld" bpmnElement="F_NotHeld">
-        <di:waypoint x="325" y="225"/><di:waypoint x="325" y="340"/>
-        <bpmndi:BPMNLabel><dc:Bounds x="329" y="274" width="90" height="17" /></bpmndi:BPMNLabel>
+        <di:waypoint x="310" y="225"/><di:waypoint x="310" y="340"/>
+        <bpmndi:BPMNLabel><dc:Bounds x="316" y="274" width="65" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_2" bpmnElement="F_2">
-        <di:waypoint x="565" y="200" />
-        <di:waypoint x="675" y="200" />
+        <di:waypoint x="535" y="200" />
+        <di:waypoint x="580" y="200" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_3" bpmnElement="F_3">
-        <di:waypoint x="795" y="200" />
-        <di:waypoint x="900" y="200" />
+        <di:waypoint x="700" y="200" />
+        <di:waypoint x="745" y="200" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_4" bpmnElement="F_4">
-        <di:waypoint x="1020" y="200" />
-        <di:waypoint x="1100" y="200" />
+        <di:waypoint x="865" y="200" />
+        <di:waypoint x="915" y="200" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Again" bpmnElement="F_Again">
-        <di:waypoint x="1125" y="225" />
-        <di:waypoint x="1125" y="300" />
-        <di:waypoint x="505" y="300" />
-        <di:waypoint x="505" y="240" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1129" y="236" width="90" height="53" /></bpmndi:BPMNLabel>
+        <di:waypoint x="940" y="225" />
+        <di:waypoint x="940" y="300" />
+        <di:waypoint x="475" y="300" />
+        <di:waypoint x="475" y="260" />
+        <bpmndi:BPMNLabel><dc:Bounds x="946" y="236" width="90" height="53" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Sufficient" bpmnElement="F_Sufficient">
-        <di:waypoint x="1150" y="200" />
-        <di:waypoint x="1260" y="200" />
+        <di:waypoint x="965" y="200" />
+        <di:waypoint x="1080" y="200" />
+        <bpmndi:BPMNLabel><dc:Bounds x="990" y="178" width="65" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_Exhausted" bpmnElement="F_Exhausted">
-        <di:waypoint x="1125" y="175" />
-        <di:waypoint x="1125" y="110" />
-        <di:waypoint x="1320" y="110" />
-        <di:waypoint x="1320" y="160" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1031" y="125" width="90" height="35" /></bpmndi:BPMNLabel>
+        <di:waypoint x="940" y="175" />
+        <di:waypoint x="940" y="100" />
+        <di:waypoint x="1140" y="100" />
+        <di:waypoint x="1140" y="140" />
+        <bpmndi:BPMNLabel><dc:Bounds x="835" y="105" width="95" height="35" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_F_5" bpmnElement="F_5">
-        <di:waypoint x="1380" y="200" />
-        <di:waypoint x="1490" y="200" />
+        <di:waypoint x="1200" y="200" />
+        <di:waypoint x="1285" y="200" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
