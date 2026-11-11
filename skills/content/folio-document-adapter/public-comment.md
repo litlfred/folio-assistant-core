@@ -533,7 +533,7 @@ what they mention.
 ### The PR
 
 1. Branch from `main`, named for the change. Open the PR at the first commit
-   ([`continual-progress`](../../../../cat-harness/sdlc/skills/sdlc-core/continual-progress.md)),
+   (`continual-progress` (opt-in `cat-harness.sdlc`)),
    with `Closes #<the primary issue>` (or any of its issues, or
    `Closes CS-012`, or a `cs: CS-012` line) in its body. Only those keywords
    link: a PR that mentions the id in passing, a pin bump say, does not.
@@ -559,7 +559,7 @@ what they mention.
    as the closing comment on the change set's issue.
 4. The staging preview is published to `branches/<branch>/`. The dashboard links
    each comment's anchor on `main` (before) and on the preview (after). See
-   [`staging-review`](../../../../cat-harness/sdlc/skills/sdlc-core/staging-review.md).
+   `staging-review`.
 5. Merging moves the accepted comments to *incorporated*. The change-set is
    *incorporated*, and its primary issue closed, only when **every** comment in
    it is settled (decided, incorporated, duplicate or withdrawn). If any is

@@ -21,9 +21,9 @@ skill is the one to read and change.
 
 | step | question it answers | skill | lives in |
 |---|---|---|---|
-| 1. What changed | Which blocks did this edit-set add, change, move or remove? | [`staging-review`](../../../cat-harness/sdlc/skills/sdlc-core/staging-review.md) | cat-harness |
+| 1. What changed | Which blocks did this edit-set add, change, move or remove? | `staging-review` (opt-in `cat-harness.sdlc`) | cat-harness |
 | 2. Where to look first | Which sections changed most, have open comments, and are failing or stale on QA? | [`review-heatmap`](../../../cat-harness/skills/authoring/authoring-core/review-heatmap.md) | cat-harness |
-| 3. What it looks like | Before/after pictures of a rendered change, and a measured count | [`before-after-preview`](../../../cat-harness/sdlc/skills/sdlc-core/before-after-preview.md), [`visual-diff`](../../../cat-harness/sdlc/skills/sdlc-core/visual-diff.md) | cat-harness |
+| 3. What it looks like | Before/after pictures of a rendered change, and a measured count | `before-after-preview`, `visual-diff` | cat-harness |
 | 4. Saying something | How a reviewer comments on a block, and how the comment follows a renamed block | [`review-comments`](../content/content-lifecycle-ext/review-comments.md) | core |
 | 5. The gate | Who reviews, and what passing means: Technical Officer first pass, Clinical SME clinical sign-off, Content Reviewer approval | [`content-review`](../../../cat-harness/skills/authoring/content-lifecycle/content-review.md) | cat-harness |
 

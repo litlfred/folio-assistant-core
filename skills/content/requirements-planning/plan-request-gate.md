@@ -35,7 +35,7 @@ applies.
 
 A request to *do* a thing is not a plan request, and does not acquire one by
 being large. That is the opening brief's job
-([`opening-brief`](../../../../cat-harness/sdlc/skills/sdlc-core/opening-brief.md)),
+(`opening-brief` (opt-in `cat-harness.sdlc`)),
 which is said in chat and does not stop.
 
 ## What to produce — two artefacts
@@ -53,7 +53,7 @@ which is said in chat and does not stop.
 ## Where they go — the methodology decides, the gate does not
 
 Which methodology governs is decided by the existing fork in
-[`crdm-detect`](../../../../cat-harness/sdlc/skills/crdm/crdm-detect.md) §"Which
+`crdm-detect` §"Which
 requirements methodology". This skill does not re-decide it, and **never
 blends the two** (`methodology-adoption`).
 
@@ -87,7 +87,7 @@ Get the sha after pushing: `git rev-parse HEAD`, then compose
 `https://github.com/<owner>/<repo>/blob/<sha>/<path>`. An issue comment is
 already absolute (`…/issues/<n>#issuecomment-<id>`). This binds every
 hand-over — a turn report, a PR body, an issue comment — not only a plan;
-[`turn-reporting`](../../../../cat-harness/sdlc/skills/sdlc-core/turn-reporting.md)
+`turn-reporting`
 rule 8 points here.
 
 ## Then STOP until sign-off is recorded on the issue (STRICT)
@@ -108,7 +108,7 @@ quotes it on the issue, dated, before starting.
 What is allowed before sign-off: the requirements document and its revisions
 (`docs/proposals/` or the issue), the beans that ARE the work plan, and the
 branch and draft PR that carry them —
-[`continual-progress`](../../../../cat-harness/sdlc/skills/sdlc-core/continual-progress.md)
+`continual-progress`
 still applies to the plan itself.
 
 **This gate does not replace the methodology's own sign-off steps.** CRDM's
@@ -135,5 +135,5 @@ comment's `created_at`.
 ## Cross-references
 
 - [`requirement-definition`](requirement-definition.md) — the one definition of a requirement, and the work-plan rule
-- [`crdm-detect`](../../../../cat-harness/sdlc/skills/crdm/crdm-detect.md), [`spec-kit`](../../../../cat-harness/sdlc/skills/spec-kit/spec-kit.md) — the methods, which point here
-- [`issue-working`](../../../../cat-harness/sdlc/skills/sdlc-core/issue-working.md) — what an issue is for, against a PR and a bean
+- `crdm-detect`, `spec-kit` — the methods, which point here
+- `issue-working` — what an issue is for, against a PR and a bean

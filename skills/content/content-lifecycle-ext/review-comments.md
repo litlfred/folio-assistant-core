@@ -247,7 +247,7 @@ build measured and the prediction missed; `input:` names one of its
 undetermined inputs. Each is pinned to that file's `hash` there, so it
 reopens when an input that reaches it is edited. A page or input the build
 does not list, or a build that published no rendered impact, is reported
-malformed with the reason. See [`rendered-impact`](../../../../cat-harness/sdlc/skills/sdlc-core/rendered-impact.md).
+malformed with the reason. See `rendered-impact` (opt-in `cat-harness.sdlc`).
 
 The `folio-review-comments` Tool ingests verdicts into the same
 `review-comments.json`, as its `verdicts` array
