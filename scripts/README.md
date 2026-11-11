@@ -29,6 +29,8 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`build-glossary.ts`](build-glossary.ts) | a file |  |
 | [`build-library-site.test.ts`](build-library-site.test.ts) | a file |  |
 | [`build-library-site.ts`](build-library-site.ts) | a file |  |
+| [`c-value.test.ts`](c-value.test.ts) | a file |  |
+| [`c-value.ts`](c-value.ts) | a file |  |
 | [`cache-index.test.ts`](cache-index.test.ts) | a file |  |
 | [`cache-index.ts`](cache-index.ts) | a file |  |
 | [`catalogue-from-references.test.ts`](catalogue-from-references.test.ts) | a file |  |
