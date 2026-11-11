@@ -4,7 +4,7 @@
 
 > **Generated, and not the authority.** This is `folio-assistant-core/processes/library/ingest-extract-structure.bpmn` (process `Process_ExtractStructure`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
 
-Extract the structure of an uploaded source: its text layer, OCR where it has none, sections, structure and claim candidates.
+Extract the structure of an uploaded source: its text layer, OCR where it has none or where a page's text layer fails the page check, sections, structure and claim candidates.
 
 ## Begin — Binary in hand (`StartEvent_Binary`)
 
@@ -25,17 +25,25 @@ Extract the structure of an uploaded source: its text layer, OCR where it has no
 - Skill: `document-intake`.
 - What: The document has a text layer: extract it with pdf-extract (pdfminer.six, then a zero-dependency content-stream reader).
 - Record it: `workflow_complete` with `node: "Task_ExtractText"`.
-- next: → `Task_Sections` (Split into sections/*.md with doc_brief front-matter)
+- next: → `Task_PageCheck` (Check each page; OCR pages that fail)
 
 ### 2. OCR to ocr/page-*.txt (`Task_Ocr`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
-- What: A document ingested this way keeps its text in ocr/ and only a stub in sections/, which the documented sections/ grep cannot see.
+- What: Each page is read in the document's languages (--lang-hint, from dc.language.iso), narrowed to the script the page shows.
 - Record it: `workflow_complete` with `node: "Task_Ocr"`.
 - next: → `Task_Sections` (Split into sections/*.md with doc_brief front-matter)
 
-### 3. Split into sections/*.md with doc_brief front-matter (`Task_Sections`)
+### 3. Check each page; OCR pages that fail (`Task_PageCheck`)
+
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
+- Skill: `l1-document-ingestion`.
+- What: Owner, 2026-11-11 (who-iris, card Q-ODD-1 = A): "force OCR when a page's text layer fails a quality check".
+- Record it: `workflow_complete` with `node: "Task_PageCheck"`.
+- next: → `Task_Sections` (Split into sections/*.md with doc_brief front-matter)
+
+### 4. Split into sections/*.md with doc_brief front-matter (`Task_Sections`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
@@ -43,7 +51,7 @@ Extract the structure of an uploaded source: its text layer, OCR where it has no
 - Record it: `workflow_complete` with `node: "Task_Sections"`.
 - next: → `Task_Structure` (Write structure.json)
 
-### 4. Write structure.json (`Task_Structure`)
+### 5. Write structure.json (`Task_Structure`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
@@ -51,7 +59,7 @@ Extract the structure of an uploaded source: its text layer, OCR where it has no
 - Record it: `workflow_complete` with `node: "Task_Structure"`.
 - next: → `Task_Candidates` (Extract claim candidates)
 
-### 5. Extract claim candidates (`Task_Candidates`)
+### 6. Extract claim candidates (`Task_Candidates`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.

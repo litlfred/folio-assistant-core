@@ -131,17 +131,25 @@ L1 document ingestion — a document to the L1 source knowledge graph.
 - Skill: `publish-extracted-statements`.
 - What: THE ENTRY IS COMPLETE HERE, so its statements are published here.
 - A subprocess (`Process_PublishExtractedStatements`): `workflow_next` reports its own steps; complete those — this call activity itself is not completable.
-- next: → `Task_SummaryQueue` (Queue prose blocks for summary)
+- next: → `Task_SummaryQueue` (Summarise prose blocks, in every language)
 
-### 13. Queue prose blocks for summary (`Task_SummaryQueue`)
+### 13. Summarise prose blocks, in every language (`Task_SummaryQueue`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `l1-document-ingestion`.
 - What: A QA sidecar of general document ingestion, drained slowly.
 - Record it: `workflow_complete` with `node: "Task_SummaryQueue"`.
+- next: → `Task_Errata` (Record errata in the source's own text)
+
+### 14. Record errata in the source's own text (`Task_Errata`)
+
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
+- Skill: `l1-document-ingestion`.
+- What: Owner, 2026-11-11 (who-iris, card Q-ODD-1 = A, and "add to L1 doc schema errata").
+- Record it: `workflow_complete` with `node: "Task_Errata"`.
 - next: → `Task_Citeable` (Available to cite as an L1 source)
 
-### 14. Available to cite as an L1 source (`Task_Citeable`)
+### 15. Available to cite as an L1 source (`Task_Citeable`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.
@@ -149,7 +157,7 @@ L1 document ingestion — a document to the L1 source knowledge graph.
 - Record it: `workflow_complete` with `node: "Task_Citeable"`.
 - next: → `Call_BeanClose` (Close the bean)
 
-### 15. Close the bean (`Call_BeanClose`)
+### 16. Close the bean (`Call_BeanClose`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `todo-manager`.
