@@ -71,6 +71,17 @@ export interface TermRef {
   label: string;
 }
 
+/**
+ * Site-root path of the page that cat-harness-tools' gen-archimate-pages.ts
+ * writes for one element or view: `/<pageRoot>/<model>/<kind>/<segment>/`.
+ * The kind segment is singular (`element/`, `view/`), as the generator has
+ * written it since cat-harness-tools cf14a4e (Q-THIN-4); the plural
+ * `elements/` and `views/` no longer exist on a built site.
+ */
+export function archimatePagePath(pageRoot: string, model: string, kind: "element" | "view", segment: string): string {
+  return `/${pageRoot}/${model}/${kind}/${segment}/`;
+}
+
 /** Newest first: "0.3.0-draft.1" before "0.2.0" before "0.2.0-draft.3". */
 export function newestFirst(a: string, b: string): number {
   const parse = (v: string) => {
@@ -128,7 +139,7 @@ export async function archimateDepictions(repo: string, terms: readonly TermRef[
         views: Array<{ id: string; name: string; nodes: Array<{ kind: string; ref?: string }> }>;
       };
       const slugOf: Map<string, string> = planSlugs(model);
-      const page = (kind: string, id: string) => `/${pageRoot}/${m.id}/${kind}/${slugOf.get(id) ?? id}/`;
+      const page = (kind: "element" | "view", id: string) => archimatePagePath(pageRoot, m.id, kind, slugOf.get(id) ?? id);
       const found = new Map<string, Depiction>();
       for (const e of model.elements) {
         const named = e.properties.filter((p) => p.key === "skosConcept").map((p) => conceptOf(p.value));
@@ -136,10 +147,10 @@ export async function archimateDepictions(repo: string, terms: readonly TermRef[
         for (const a of anchors) {
           if (seen.has(a)) continue;
           const d = found.get(a) ?? { instance: decl.name, model: m.id, elements: [], views: [] };
-          d.elements.push({ name: e.name, type: e.type, page: page("elements", e.id) });
+          d.elements.push({ name: e.name, type: e.type, page: page("element", e.id) });
           for (const v of model.views) {
             if (v.nodes.some((n) => n.kind === "element" && n.ref === e.id) && !d.views.some((x) => x.name === v.name)) {
-              d.views.push({ name: v.name, type: "view", page: page("views", v.id) });
+              d.views.push({ name: v.name, type: "view", page: page("view", v.id) });
             }
           }
           found.set(a, d);
