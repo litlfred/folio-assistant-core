@@ -200,12 +200,7 @@ export function splitEntries(lines: string[]): { n: number; text: string }[] {
   return out;
 }
 
-/** Where a list inside a section body ends: a stop heading, or ten lines with no citation in them. */
-function listLines(lines: string[], from: number): string[] {
-  return listSpan(lines, from).lines;
-}
-
-/** The list's lines and the index just past the last line it read. */
+/** Where a list inside a section body ends (a stop heading, or ten lines with no citation in them): its lines and the index just past the last line it read. */
 function listSpan(lines: string[], from: number): { lines: string[]; end: number } {
   const out: string[] = [];
   let end = from;
