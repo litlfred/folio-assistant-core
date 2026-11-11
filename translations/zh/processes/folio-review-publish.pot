@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: folio-review-publish\n"
-"POT-Creation-Date: 2026-11-04T12:14:26.156Z\n"
+"POT-Creation-Date: 2026-11-11T12:38:31.406Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: zh\n"
@@ -96,7 +96,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/folio-review-publish.bpmn:18
 #. Diagram element documentation
-msgid "Review a rendered folio and publish it, or send it back with changes. Shared by every authoring process: authoring-a-document (this instance) and authoring-a-paper (folio-assistant-sci) call it after they validate and render, so review, publish and committee feedback are drawn once. What differs by folio kind stays with the caller: its writing loop, its own check (the content profile for a document, the Lean build for a paper), and its renderer. It ends one of three ways. `Published`: the caller closes its bean. `Changes asked` and `Feedback in: changes asked`: the caller goes back to its writing loop."
+msgid "Review a rendered folio and publish it, or send it back with changes. Shared by every authoring process: authoring-a-document (this layer) and authoring-a-paper (folio-assistant-sci) call it after they validate and render, so review, publish and committee feedback are drawn once. What differs by folio kind stays with the caller: its writing loop, its own check (the content profile for a document, the Lean build for a paper), and its renderer. It ends one of three ways. `Published`: the caller closes its bean. `Changes asked` and `Feedback in: changes asked`: the caller goes back to its writing loop."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/folio-review-publish.bpmn:15
