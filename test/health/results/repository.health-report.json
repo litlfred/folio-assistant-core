@@ -2,13 +2,13 @@
   "$schema": "health-report/v1",
   "producer": {
     "script": "test/health/run.ts",
-    "script_hash": "ed14d383902c"
+    "script_hash": "e48001dfcdfa"
   },
   "subject": {
     "kind": "repository",
     "id": "litlfred/folio-assistant-core"
   },
-  "updated_at": "2026-11-07T18:36:43.780Z",
+  "updated_at": "2026-11-11T03:03:27.419Z",
   "verdict": "unknown",
   "checks": [
     {
@@ -84,7 +84,7 @@
       "measurements": [
         {
           "metric": "special-branch-bytes:qa-reports",
-          "value": 781568,
+          "value": 3057544,
           "unit": "bytes",
           "command": "git ls-remote --heads origin; git fetch --depth=1 + git ls-tree -r -l <tip> per budgeted branch (unique blobs summed)"
         },
@@ -138,7 +138,7 @@
       ],
       "measurements": [],
       "findings": [],
-      "reason": "no pages-serving observation could be read: qa-reports:main/d734f56401298f9a0d08130b4e8be35fdf67bbab — miss: main/7e00ff66455f2eec234f718822b1ad61e7ea65f8 has nothing under health"
+      "reason": "no pages-serving observation could be read: qa-reports:main/50422b586b1fa239ab199a89e27e587bd7ee1550 — miss: main/409f10e23d22a12182341b0572777f8858b01ff7 has nothing under health"
     },
     {
       "id": "remote-mounts",
@@ -168,6 +168,72 @@
         }
       ],
       "findings": []
+    },
+    {
+      "id": "lsi-indexes",
+      "state": "ok",
+      "summary": "Each declared prose graph that needs a latent semantic index: whether its stored index is fresh, and what each stored index found.",
+      "thresholds": [
+        {
+          "metric": "lsi-graphs-lacking-fresh-index",
+          "value": 0,
+          "unit": "count",
+          "basis": "a prose graph at or over the need-an-index threshold (100 units and 20,000 words, a house number with its basis in `scripts/lsi.ts`) with no fresh index answers `lsi query`, `lsi:near` and keyword extraction from a stale or missing index. `minor`: an index is a retrieval aid whose every output is a proposal (method `lsi`), so a missing one loses nothing; it moved here from the LSI viewer page (cat-harness#1144).",
+          "severity": "minor"
+        }
+      ],
+      "measurements": [],
+      "findings": [],
+      "reason": "not applicable: the LSI indexes are cat-harness's; this repository holds none"
+    },
+    {
+      "id": "library-keywords",
+      "state": "finding",
+      "summary": "Each library entry's LSI keywords: whether the extraction gives any, and any keywords.json still committed inside an entry.",
+      "thresholds": [
+        {
+          "metric": "library-keywords-entries-without",
+          "value": 0,
+          "unit": "count",
+          "basis": "a library entry the keyword extraction gives nothing has no keywords on the library viewer, the keyword viewer or in the derived keywords graph — usually a scanned page with no text layer, or sections under the LSI tool's minimum length. `minor`: keywords are derived proposals; nothing waits on them (cat-harness#1144).",
+          "severity": "minor"
+        },
+        {
+          "metric": "library-keywords-legacy-files",
+          "value": 0,
+          "unit": "count",
+          "basis": "keywords are EXTRACTED content, so they are built at publish into the derived keywords graph and do not live in the ingest record (owner, 2026-11-08, cat-harness#1144). A `keywords.json` still committed inside an entry is the old location: nothing reads it once the move lands, and it goes stale on every ingest.",
+          "severity": "minor"
+        }
+      ],
+      "measurements": [
+        {
+          "metric": "library-keywords-entries",
+          "value": 80,
+          "unit": "count",
+          "command": "bun run cat library:keywords"
+        },
+        {
+          "metric": "library-keywords-entries-without",
+          "value": 12,
+          "unit": "count",
+          "command": "bun run cat library:keywords"
+        },
+        {
+          "metric": "library-keywords-legacy-files",
+          "value": 0,
+          "unit": "count",
+          "command": "ls library/*/keywords.json"
+        }
+      ],
+      "findings": [
+        {
+          "summary": "12 entr(ies) the keyword extraction gives nothing: cat-harness/library/corpus/process/avila-2021-process-modeling-guidelines-slr, cat-harness/library/corpus/process/figl-strembeck-2015-flow-direction-experiment, cat-harness/library/corpus/process/hasic-2018-5pdm-decision-intelligence, cat-harness/library/corpus/process/hasic-2019-complexity-metrics-dmn, cat-harness/library/corpus/process/leopold-2016-bpmn-quality-issues-industry, …",
+          "metric": "library-keywords-entries-without",
+          "severity": "minor",
+          "action": "Open the entry's sections: a page with no text layer needs OCR at ingest (`l1-document-ingestion`); a very short entry has nothing to extract."
+        }
+      ]
     },
     {
       "id": "staging-preview-orphans",
@@ -286,19 +352,19 @@
       "measurements": [
         {
           "metric": "tracked-tree-bytes",
-          "value": 30032377,
+          "value": 29643885,
           "unit": "bytes",
           "command": "git ls-tree -r -l HEAD (blob sizes summed)"
         },
         {
           "metric": "git-dir-bytes",
-          "value": 13893871,
+          "value": 21704834,
           "unit": "bytes",
           "command": "du -sb .git"
         },
         {
           "metric": "pack-bytes",
-          "value": 12833792,
+          "value": 20470784,
           "unit": "bytes",
           "command": "git count-objects -v"
         },
@@ -310,7 +376,7 @@
         },
         {
           "metric": "git-dir-to-tree-ratio",
-          "value": 0.46,
+          "value": 0.73,
           "unit": "ratio",
           "command": "git-dir-bytes / tracked-tree-bytes"
         }
@@ -382,7 +448,7 @@
       "measurements": [
         {
           "metric": "bean-total",
-          "value": 204,
+          "value": 206,
           "unit": "count",
           "command": "beans/defs/*.md front matter"
         },
@@ -394,7 +460,7 @@
         },
         {
           "metric": "bean-resolved-inline",
-          "value": 202,
+          "value": 204,
           "unit": "count",
           "command": "beans/defs/*.md front matter"
         },
@@ -497,7 +563,7 @@
       ],
       "findings": [
         {
-          "summary": "202 completed or scrapped beans are still inline in `beans/defs/`.",
+          "summary": "204 completed or scrapped beans are still inline in `beans/defs/`.",
           "metric": "bean-resolved-inline",
           "severity": "minor",
           "action": "Run `beans archive`, which MOVES them to the archive rather than removing them — the one tidy-up in this sweep that is not a deletion. Confirm with the owner first all the same: it rewrites the store a sibling session may be reading."
