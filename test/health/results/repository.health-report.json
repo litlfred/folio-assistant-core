@@ -8,7 +8,7 @@
     "kind": "repository",
     "id": "litlfred/folio-assistant-core"
   },
-  "updated_at": "2026-11-11T03:03:27.419Z",
+  "updated_at": "2026-11-11T13:05:06.829Z",
   "verdict": "unknown",
   "checks": [
     {
@@ -84,7 +84,7 @@
       "measurements": [
         {
           "metric": "special-branch-bytes:qa-reports",
-          "value": 3057544,
+          "value": 3080469,
           "unit": "bytes",
           "command": "git ls-remote --heads origin; git fetch --depth=1 + git ls-tree -r -l <tip> per budgeted branch (unique blobs summed)"
         },
@@ -138,7 +138,7 @@
       ],
       "measurements": [],
       "findings": [],
-      "reason": "no pages-serving observation could be read: qa-reports:main/50422b586b1fa239ab199a89e27e587bd7ee1550 — miss: main/409f10e23d22a12182341b0572777f8858b01ff7 has nothing under health"
+      "reason": "no pages-serving observation could be read: qa-reports:main/84b3e034ec9d92643dfad9e434b484337dc7e0d6 — miss: main/24e459651b9a86266c2784d200475f82b20afa27 has nothing under health"
     },
     {
       "id": "remote-mounts",
@@ -188,7 +188,7 @@
     },
     {
       "id": "library-keywords",
-      "state": "finding",
+      "state": "ok",
       "summary": "Each library entry's LSI keywords: whether the extraction gives any, and any keywords.json still committed inside an entry.",
       "thresholds": [
         {
@@ -209,13 +209,13 @@
       "measurements": [
         {
           "metric": "library-keywords-entries",
-          "value": 80,
+          "value": 3,
           "unit": "count",
           "command": "bun run cat library:keywords"
         },
         {
           "metric": "library-keywords-entries-without",
-          "value": 12,
+          "value": 0,
           "unit": "count",
           "command": "bun run cat library:keywords"
         },
@@ -226,14 +226,7 @@
           "command": "ls library/*/keywords.json"
         }
       ],
-      "findings": [
-        {
-          "summary": "12 entr(ies) the keyword extraction gives nothing: cat-harness/library/corpus/process/avila-2021-process-modeling-guidelines-slr, cat-harness/library/corpus/process/figl-strembeck-2015-flow-direction-experiment, cat-harness/library/corpus/process/hasic-2018-5pdm-decision-intelligence, cat-harness/library/corpus/process/hasic-2019-complexity-metrics-dmn, cat-harness/library/corpus/process/leopold-2016-bpmn-quality-issues-industry, …",
-          "metric": "library-keywords-entries-without",
-          "severity": "minor",
-          "action": "Open the entry's sections: a page with no text layer needs OCR at ingest (`l1-document-ingestion`); a very short entry has nothing to extract."
-        }
-      ]
+      "findings": []
     },
     {
       "id": "staging-preview-orphans",
@@ -352,19 +345,19 @@
       "measurements": [
         {
           "metric": "tracked-tree-bytes",
-          "value": 29643885,
+          "value": 29762369,
           "unit": "bytes",
           "command": "git ls-tree -r -l HEAD (blob sizes summed)"
         },
         {
           "metric": "git-dir-bytes",
-          "value": 21704834,
+          "value": 135905799,
           "unit": "bytes",
           "command": "du -sb .git"
         },
         {
           "metric": "pack-bytes",
-          "value": 20470784,
+          "value": 134598656,
           "unit": "bytes",
           "command": "git count-objects -v"
         },
@@ -376,7 +369,7 @@
         },
         {
           "metric": "git-dir-to-tree-ratio",
-          "value": 0.73,
+          "value": 4.57,
           "unit": "ratio",
           "command": "git-dir-bytes / tracked-tree-bytes"
         }
