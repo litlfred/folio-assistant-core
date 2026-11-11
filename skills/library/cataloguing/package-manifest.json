@@ -10,6 +10,7 @@
     "filing-dublin-core",
     "glossary-build",
     "glossary-terms",
+    "mesh-subject-indexing",
     "ontologist"
   ],
   "lifecycleStages": [

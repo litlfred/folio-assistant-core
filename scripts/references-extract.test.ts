@@ -92,3 +92,10 @@ describe("listsOf", () => {
     expect(listsOf(root, dir)).toHaveLength(5);
   });
 });
+
+describe("control characters in the text layer", () => {
+  test("a BEL before an entry is dropped, not kept in `printed`", () => {
+    const n = toReference("x.1", "\u0007Vaccination coverage cluster surveys. Geneva: World Health Organization; 2018.", "library/x/sections/p.md");
+    expect(n.printed).toBe("Vaccination coverage cluster surveys. Geneva: World Health Organization; 2018.");
+  });
+});

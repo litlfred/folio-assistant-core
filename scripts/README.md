@@ -29,6 +29,8 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`build-glossary.ts`](build-glossary.ts) | a file |  |
 | [`build-library-site.test.ts`](build-library-site.test.ts) | a file |  |
 | [`build-library-site.ts`](build-library-site.ts) | a file |  |
+| [`c-value.test.ts`](c-value.test.ts) | a file |  |
+| [`c-value.ts`](c-value.ts) | a file |  |
 | [`cache-index.test.ts`](cache-index.test.ts) | a file |  |
 | [`cache-index.ts`](cache-index.ts) | a file |  |
 | [`catalogue-from-references.test.ts`](catalogue-from-references.test.ts) | a file |  |
@@ -111,6 +113,8 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`lsi-blocks.test.ts`](lsi-blocks.test.ts) | a file |  |
 | [`lsi-blocks.ts`](lsi-blocks.ts) | a file |  |
 | [`materialized-fixity.test.ts`](materialized-fixity.test.ts) | a file |  |
+| [`mesh-authority.test.ts`](mesh-authority.test.ts) | a file |  |
+| [`mesh-authority.ts`](mesh-authority.ts) | a file |  |
 | [`pdf-line-map.py`](pdf-line-map.py) | a file |  |
 | [`platform.ts`](platform.ts) | a file |  |
 | [`public-comment-changesets.ts`](public-comment-changesets.ts) | a file |  |

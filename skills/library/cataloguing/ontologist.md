@@ -7,6 +7,8 @@ description: >
   ensuring every term has a unique type/identity assignment before
   formalization proceeds.
 allowed-tools: Read Write Edit Bash Grep Glob
+uses-methodology:
+  - automatic-term-extraction
 ---
 
 # Semantic Ontologist (Ambiguity Detection & Glossary)

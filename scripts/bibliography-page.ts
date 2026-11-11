@@ -556,7 +556,12 @@ export function entryTitle(r: ReferenceNode): string {
 
 /** A YAML double-quoted string. */
 function yamlQuoted(s: string): string {
-  return `"${s.replace(/\\/g, "\\\\").replace(/"/g, '\\"')}"`;
+  // Control characters are escaped, never written raw: YAML refuses them even
+  // inside a double-quoted scalar, and one such title stops the whole build.
+  return `"${s
+    .replace(/\\/g, "\\\\")
+    .replace(/"/g, '\\"')
+    .replace(/[\u0000-\u001f\u007f-\u009f]/g, (c) => `\\x${c.charCodeAt(0).toString(16).padStart(2, "0")}`)}"`;
 }
 
 /**

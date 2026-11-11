@@ -18,6 +18,7 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-tools`, ho
 | [`archimate-from-glossary/`](archimate-from-glossary/) | _nothing declares what this holds_ | |
 | [`bibliography-page/`](bibliography-page/) | _nothing declares what this holds_ | |
 | [`block-actions/`](block-actions/) | _nothing declares what this holds_ | |
+| [`c-value-terms/`](c-value-terms/) | _nothing declares what this holds_ | |
 | [`catalogue-from-references/`](catalogue-from-references/) | _nothing declares what this holds_ | |
 | [`check-dsa-hash/`](check-dsa-hash/) | _nothing declares what this holds_ | |
 | [`diig-phases-svg/`](diig-phases-svg/) | _nothing declares what this holds_ | |
@@ -34,6 +35,7 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-tools`, ho
 | [`glossary-page/`](glossary-page/) | _nothing declares what this holds_ | |
 | [`glossary-table/`](glossary-table/) | _nothing declares what this holds_ | |
 | [`l1-coverage/`](l1-coverage/) | _nothing declares what this holds_ | |
+| [`mesh-authority/`](mesh-authority/) | _nothing declares what this holds_ | |
 | [`references-extract/`](references-extract/) | _nothing declares what this holds_ | |
 | [`references-render/`](references-render/) | _nothing declares what this holds_ | |
 | [`review-log-watch/`](review-log-watch/) | _nothing declares what this holds_ | |
