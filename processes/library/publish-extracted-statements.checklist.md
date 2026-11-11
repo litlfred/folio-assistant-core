@@ -16,7 +16,7 @@ Makes every statement extracted from a library source readable, with a link back
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `publish-extracted-statements`.
-- What: For every statement extracted from the library entries the artifact draws on, read three things off files: the statement verbatim, the library entry it came from, and the section of that entry, as a library reference (instance, library id, section id).
+- What: For every statement extracted from the library entries the artifact draws on, read three things off files: the statement verbatim, the library entry it came from, and the section of that entry, as a library reference (layer, library id, section id).
 - Record it: `workflow_complete` with `node: "Task_Collect"`.
 - next: → `Gateway_Any` (Any statements?)
 

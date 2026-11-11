@@ -251,6 +251,42 @@ term, verbatim, with `source: <file>#L<line>`; an acronym becomes the
 adopted or edited is never changed. Only a person moves a term to `authored`
 (`glossary-terms`). `--check` keeps the candidates in step with the L1 entry.
 
+## A source's reference list — its own bibliography, read by one tool
+
+Every source that prints a reference list gets its own bibliography, read the
+same way with the Tool `references-extract` (step `Task_References` of
+`ingest-build-l1-kg.bpmn`), never with a script of its own:
+
+```sh
+bun run cat references:extract --instance . [--entry <doc-id>] [--check]
+```
+
+It reads the L1 sections of each library entry. A list is a whole section
+whose title is a reference-list heading, or the lines after such a heading
+inside a section (chapter-end lists), in the six UN languages and Portuguese
+(References, Bibliography, Further reading, Références bibliographiques,
+Referencias, Литература, المراجع, 参考文献, …). Numbered lists are split on
+their own numbers; unnumbered ones where an entry closes and the next opens.
+Page numbers, running heads and section tabs between entries are skipped; a
+list ends at an annex, chapter or glossary heading, a table or figure, or a
+contents leader.
+
+Each entry becomes a `folio-reference/v1` node in the instance's declared
+`references` directory, keyed `<doc-id>.<section>.<n>`: `provenance:
+extracted`, `derivedFrom` the section file, and `printed` the entry exactly as
+the source prints it. Only fields read without guessing are set: `URL`, `DOI`,
+`ISBN`, `issued` (the work's year, not the access date), `accessed`, and
+`type: article-journal` for a journal's year;volume:pages. No title or author
+is parsed, because WHO, Vancouver and author-year styles disagree on where a
+title ends; the bibliography shows `printed` instead. A cited IRIS handle the
+library holds gets `heldAt`. An entry longer than any citation (the list ran
+into the text after it) is left out rather than kept wrong.
+
+The bibliography page lists the nodes under the document they came from
+(`bibliography/library/<doc-id>/`). Re-run the tool after a section is
+re-derived; `--check` fails when a node is stale or has no list left to come
+from. Nodes with any other `provenance` are never touched.
+
 ## Requirements and normative statements — every DAK and DTH source
 
 Requirement extraction is a general part of L1 ingestion for DAK and DTH

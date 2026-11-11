@@ -3,7 +3,7 @@
 
 ingested source material — attributed to its document, not folio content
 
-Held in the library [`folio-assistant-core/library/`](../README.md) as `dspace-7-rest-contract`.
+Held in the library [`folio-assistant-core/library/corpus/`](../) as `dspace-7-rest-contract`.
 
 | | |
 |---|---|

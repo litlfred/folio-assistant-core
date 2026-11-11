@@ -125,6 +125,8 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-scripts`, 
 | [`public-comment-site.ts`](public-comment-site.ts) | a file |  |
 | [`public-comment.test.ts`](public-comment.test.ts) | a file |  |
 | [`public-comment.ts`](public-comment.ts) | a file |  |
+| [`references-extract.test.ts`](references-extract.test.ts) | a file |  |
+| [`references-extract.ts`](references-extract.ts) | a file |  |
 | [`references-render.test.ts`](references-render.test.ts) | a file |  |
 | [`references-render.ts`](references-render.ts) | a file |  |
 | [`review-anchors-from-folio.test.ts`](review-anchors-from-folio.test.ts) | a file |  |

@@ -24,7 +24,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 
 - Who: the `Onboarding agent (system)` lane (role `onboarding-agent`).
 - Skill: `getting-started`.
-- What: Mechanical, read-only: does the instance's config (its `index.config.json` entry; a legacy `<name>.config.json` only as a fallback) declare a contentType, does the working tree hold somebody's existing project, and what has the user actually said.
+- What: Mechanical, read-only: does the layer's config (its `index.config.json` entry; a legacy `<name>.config.json` only as a fallback) declare a contentType, does the working tree hold somebody's existing project, and what has the user actually said.
 - Record it: `workflow_complete` with `node: "Task_ReadFacts"`.
 - next: → `Gateway_Intent` (What is the user asking for?)
 
@@ -70,7 +70,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 
 - Who: the `Onboarding agent (system)` lane (role `onboarding-agent`).
 - Skill: `getting-started`.
-- What: content/, uploads/, library/, the first manifests, <slug>.json and index.config.json (the instance's config inline in its entry; no <slug>.config.json), the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store.
+- What: content/, uploads/, library/, the first manifests, <slug>.json and index.config.json (the layer's config inline in its entry; no <slug>.config.json), the builder shim, AGENTS.md with its stubs, .mcp.json, the session-start hook and the beans store.
 - Record it: `workflow_complete` with `node: "Task_Scaffold"`.
 - next: → `Call_BeanOpen` (Open the bean)
 
@@ -129,7 +129,7 @@ Somebody said "create a folio": work out which request they meant, with the bran
 
 - Who: the `Publish — GitHub Pages` lane (role `publish-target`).
 - Skill: `getting-started`.
-- What: scripts/pages-bootstrap.ts: check the gh-pages branch first (absent is `unprovisioned`), derive the site URL from the git remote or the instance's config (its index.config.json entry), report whether a publish workflow exists and the Pages source it needs, and optionally probe until the site answers
+- What: scripts/pages-bootstrap.ts: check the gh-pages branch first (absent is `unprovisioned`), derive the site URL from the git remote or the layer's config (its index.config.json entry), report whether a publish workflow exists and the Pages source it needs, and optionally probe until the site answers.
 - Record it: `workflow_complete` with `node: "Task_PagesBootstrap"`.
 - next: → `Gateway_Live` (Is the site answering?)
 

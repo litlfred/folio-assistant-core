@@ -3,7 +3,7 @@
 
 ingested source material — attributed to its document, not folio content
 
-Held in the library [`folio-assistant-core/library/`](../README.md) as `arxiv-2510.21603v1`.
+Held in the library [`folio-assistant-core/library/corpus/`](../) as `arxiv-2510.21603v1`.
 
 | | |
 |---|---|
