@@ -3,7 +3,7 @@
 
 ingested source material — attributed to its document, not folio content
 
-Held in the library [`folio-assistant-core/library/`](../README.md) as `c2pa-2026-specification-2-5`.
+Held in the library [`folio-assistant-core/library/corpus/`](../) as `c2pa-2026-specification-2-5`.
 
 | | |
 |---|---|
