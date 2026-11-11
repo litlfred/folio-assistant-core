@@ -33,9 +33,10 @@ catalogue's Dublin Core record is kept in the catalogue, not in the entry
 ([`dublin-core`]({{ '/folio-assistant-core/schema/dublin-core.html' | relative_url }}),
 [`catalogue`]({{ '/folio-assistant-core/schema/catalogue.html' | relative_url }})).
 
-**The entry's address.** The entry is named by the URL its manifest is
-published at, `assets/library/jsonld/<instance>/<doc>/manifest.jsonld` on the
-site. The library page for the entry is a rendering of it, with its own
+**The entry's address.** The entry is named by
+`assets/library/jsonld/<instance>/source/<doc>` on the site: its manifest is
+published at that address plus `.jsonld`, and a small page at the address
+itself points to the entry's library page. The library page for the entry is a rendering of it, with its own
 address ([`library-iri`]({{ '/cat-harness/schema/library-iri.html' | relative_url }})).
 
 To see whether a given folder is complete, run
