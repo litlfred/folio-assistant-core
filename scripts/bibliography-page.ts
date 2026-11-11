@@ -197,7 +197,7 @@ export function heldCopies(instanceRoot: string, catalogueDir: string): Map<stri
 export function collect(repo: string = REPO): Collected {
   const out: Collected = { entries: [], subgraphs: [], assets: [], invalid: [] };
   const scanned: Omit<SubgraphView, "slug">[] = [];
-  const rawLibraryAssets: { subgraph: string; asset: string; instance: string; path: string; ownEntry: Entry }[] = [];
+  const rawLibraryAssets: { subgraph: string; asset: string; instance: string; path: string; ownEntry: Entry; catalogued?: boolean }[] = [];
   for (const root of instanceRootsIn(repo)) {
     const decl = readDeclaration(root);
     if (!decl) continue;
@@ -278,6 +278,10 @@ export function collect(repo: string = REPO): Collected {
         if (!existsSync(records)) continue;
         scanned.push({ id: d.id, instance: decl.name, kind: "catalogue", path: rel(repo, d.absPath) });
         const held = heldCopies(root, d.absPath);
+        // A held copy is a document too: its extracted reference lists are its
+        // own bibliography, at `<route>/<library sub-graph>/<asset>/`, with the
+        // catalogue record as the document's own reference (owner, 2026-11-11).
+        const libraryDir = dirs.find((x) => (x.graphTypologies ?? []).includes("library"));
         for (const f of readdirSync(records).filter((f) => f.endsWith(".dc.json")).sort()) {
           const p = join(records, f);
           const raw = JSON.parse(readFileSync(p, "utf-8")) as Record<string, unknown>;
@@ -292,7 +296,10 @@ export function collect(repo: string = REPO): Collected {
           const key = basename(f, ".dc.json");
           const heldAt = held.get(`records/${f}`);
           try {
-            push(dublinCoreToReference(r.data, { key, derivedFrom: rel(repo, p), ...(heldAt ? { heldAt: rel(repo, heldAt) } : {}) }), rel(repo, p));
+            const own = push(dublinCoreToReference(r.data, { key, derivedFrom: rel(repo, p), ...(heldAt ? { heldAt: rel(repo, heldAt) } : {}) }), rel(repo, p));
+            if (heldAt && libraryDir) {
+              rawLibraryAssets.push({ subgraph: libraryDir.id, asset: basename(heldAt), instance: decl.name, path: rel(repo, heldAt), ownEntry: own, catalogued: true });
+            }
           } catch (e) {
             out.invalid.push(`${rel(repo, p)}: ${e instanceof Error ? e.message : String(e)}`);
           }
@@ -343,9 +350,19 @@ export function collect(repo: string = REPO): Collected {
       (e) =>
         e !== la.ownEntry &&
         ((e.ref.derivedFrom !== undefined && (e.ref.derivedFrom === la.path || e.ref.derivedFrom.startsWith(`${la.path}/`))) ||
-          (e.ref.heldAt !== undefined && (e.ref.heldAt === la.path || e.ref.heldAt.startsWith(`${la.path}/`)))),
+          // A catalogued copy's page is its own reference list: an entry that
+          // only CITES it (heldAt) belongs to the document that printed it.
+          (!la.catalogued && e.ref.heldAt !== undefined && (e.ref.heldAt === la.path || e.ref.heldAt.startsWith(`${la.path}/`)))),
     );
-    const assetEntries = [la.ownEntry, ...extracted].sort(byCitation);
+    // A catalogued copy gets a page only when something was extracted from it.
+    if (la.catalogued && !extracted.some((e) => e.ref.provenance === "extracted")) continue;
+    if (la.catalogued && !scanned.some((s) => s.id === la.subgraph && s.instance === la.instance)) {
+      scanned.push({ id: la.subgraph, instance: la.instance, kind: "library", path: dirname(la.path) });
+      out.subgraphs.push({ id: la.subgraph, instance: la.instance, kind: "library", path: dirname(la.path), slug: slugOf(la.subgraph, la.instance) });
+      out.subgraphs.sort((a, b) => a.slug.localeCompare(b.slug, "en"));
+    }
+    // The document's own reference first, then its reference list in the order the document prints it.
+    const assetEntries = la.catalogued ? [la.ownEntry, ...extracted.sort(byPrintedOrder)] : [la.ownEntry, ...extracted].sort(byCitation);
     out.assets.push({
       subgraph: la.subgraph,
       slug: slugOf(la.subgraph, la.instance),
@@ -357,6 +374,16 @@ export function collect(repo: string = REPO): Collected {
   }
   out.assets.sort((a, b) => a.slug.localeCompare(b.slug, "en") || a.asset.localeCompare(b.asset, "en"));
   return out;
+}
+
+/** An extracted list in the document's order: by section, then the entry's number in it (`<doc>.<section>.<n>`). */
+export function byPrintedOrder(a: Entry, b: Entry): number {
+  const k = (e: Entry) => {
+    const m = /^(.*)\.(\d+)$/.exec(e.ref.id);
+    return m ? ([m[1]!, Number(m[2])] as const) : ([e.ref.id, 0] as const);
+  };
+  const [x, y] = [k(a), k(b)];
+  return x[0].localeCompare(y[0], "en", { numeric: true }) || x[1] - y[1];
 }
 
 /** First author's name, then year, then title, then key: how a reference list is read. */
@@ -445,7 +472,7 @@ function exportLinksHtml(r: ReferenceNode): string {
 export function entryHtml(e: Entry, hrefOf: HrefOf = (x) => `${referenceSegment(x.ref.id)}/`): string {
   const r = e.ref;
   const href = esc(hrefOf(e));
-  return `<li data-fa-bib-key="${esc(r.id)}" data-fa-bib-href="${href}" data-fa-bib="${esc([r.id, r.title ?? "", ...(r.author ?? []).map(nameText), yearOf(r) ?? ""].join(" "))}">
+  return `<li data-fa-bib-key="${esc(r.id)}" data-fa-bib-href="${href}" data-fa-bib="${esc([r.id, r.title ?? r.printed ?? "", ...(r.author ?? []).map(nameText), yearOf(r) ?? ""].join(" "))}">
   ${citationHtml(r)}<br>
   <small><a class="fa-bib-open" href="${href}"><code>${esc(r.id)}</code></a> · ${esc(r.provenance ?? "authored")} · ${linksHtml(e)}<br>
   export: ${exportLinksHtml(r)}</small>
