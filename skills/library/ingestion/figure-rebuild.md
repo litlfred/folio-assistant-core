@@ -65,6 +65,41 @@ the drawing: readers know the figure by its shape. So, for every route:
 - **Say what differs.** ArchiMate notation draws typed boxes, not the
   original's icons; list such differences in the PR rather than hiding them.
 
+### A pictured figure keeps its pictures: a styled view from the same model
+
+When the original draws people and systems as pictures (avatars, devices,
+logos) rather than boxes, readers expect to see those pictures. Keep the
+computable view and add a styled one; never trade one for the other.
+
+- **Two views, one source.** The ArchiMate (or BPMN) view stays the source
+  of record. A script reads the built model and draws an "as drawn" SVG from
+  it: the same element positions, a pictogram per role, the same flows. Offer
+  both on the page with a toggle. The script has a `--check` mode, like every
+  generated file.
+- **Pictograms come from the original, traced, not redrawn.** Crop each
+  pictogram from the original image, upscale it, smooth it (a Gaussian blur),
+  sharpen it (threshold again), then trace the outline to an SVG path (potrace).
+  Keep the paths in a data file next to the model (for example
+  `archimate/icons.json`) with a note on where each came from. A hand-drawn
+  stand-in looks wrong next to the original and invites "use the original".
+- **Logos come from the owner's own logo file.** Ask for it and trace it, or
+  embed it. Never redraw a logo or emblem freehand. When the original combines
+  a logo with an illustration (an IPS logo over a health-exchange diagram),
+  trace the illustration too and keep the two together.
+- **Everything is a link.** Each pictogram links to its role or actor page.
+  Each step marker links to its journey moment. Each narrative links to its
+  transaction (or its moment). Codes such as transaction ids go into the
+  link and its tooltip, not into the printed text.
+- **What a flow carries is drawn with its narrative.** A QR code, a key or a
+  document sits before the narrative, as one block, at the height of the
+  text. It must not float on its own beside the arrow.
+- **Respect the original's geometry.** Anchor a figure to the dividers the
+  original draws (for example a person's head on the central dashed line).
+  Draw nearly level arrows level. Keep text at a readable size, with a line
+  height that does not crowd.
+- **Review by looking.** Share the generated SVG (not a PNG) and a
+  side-by-side with the original, and iterate on the owner's notes.
+
 ## The steps, after the folio is seeded
 
 1. **Every declared figure has a block.** Run

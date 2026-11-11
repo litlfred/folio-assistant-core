@@ -67,7 +67,7 @@ a reason. Worked example: the measles L1 set,
 ## In the CRDM template
 
 CRDM's `REQ-###` keeps its own ID, priority, impact and scope fields
-([`crdm-requirements-template`](../../../../cat-harness/sdlc/skills/crdm/crdm-requirements-template.md)).
+(`crdm-requirements-template` (opt-in `cat-harness.sdlc`)).
 Its *Acceptance criteria* field IS the success criteria — at least one, each
 with a verification method — and it gains *Source* and *Sign-off owner* rows
 if it did not have them:
@@ -116,8 +116,8 @@ Delivers: req:plan-request#detect
 ```
 
 How a bean is created, parented and claimed is
-[`todo-manager`](../../../../cat-harness/work-plan/skills/work-plan/todo-manager.md)
-and [`bean-coordination`](../../../../cat-harness/work-plan/skills/work-plan/bean-coordination.md);
+`todo-manager` (opt-in `cat-harness.work-plan`)
+and `bean-coordination`;
 this section only says what its `## Done when` must contain when the bean
 delivers a requirement.
 

@@ -346,6 +346,58 @@ believe it ran.
 provisional kinds, titles, and content; `tables.json` for the layout-bearing
 parts that do not survive as text.
 
+#### Figures and captioned tables: describe, keep, transcribe
+
+Owner, 2026-11-11: "actually extract the figures", "and any tables too",
+"need summaries in all 6 UN", and "make sure all kg extractions happen as part
+of skills and processes". This is the method the image and table tasks of
+`processes/library/ingest-derive-content.bpmn` point at. It applies
+to every PDF entry, including one catalogued by reference whose PDF is not held.
+
+**1. Judge and describe every extracted image.** `pdf-images.py`
+and `pdf-vector-figures.py` give each image a geometry role only; geometry
+cannot tell a chart from a logo or a 2-pixel fragment of a cover. An agent
+opens every image (and every `vfig-` render) and records, in the library's
+`image-verdicts.json`:
+
+- `role`: `figure` (carries content), `logo`, or `decorative` (ornament,
+  background, blank, or a fragment too small to mean anything);
+- `saw`: the reason for the role;
+- `draft`: the English description, from the image and its caption only. No
+  number that cannot be read, no interpretation beyond the image;
+- `translations`: the same in `ar`, `zh`, `es`, `fr`, `ru`, so every figure has
+  all six UN languages (cat-harness-tools#1841). Each becomes its own `draft`
+  narrative; only a person confirms one (`bun run cat narratives`);
+- `shows` on a `vfig-` that renders a declared figure or table.
+
+Put the inspector in `attribution.<doc-id>`. Images with identical bytes reuse
+one verdict. Apply with `apply-image-verdicts.ts`.
+
+**2. Keep the figures, small.** Only images judged `figure` are
+kept, as WebP at quality 80 with the long side at most 1600 px (card Q-FIG-1 =
+A): about a seventh of the PNG bytes. Logos (the WHO emblem ruling of
+2026-09-21 still holds), decorative fragments and page scans are not kept. The
+sidecar's `file` names the `.webp`. An image `pdf-images.py` cannot decode is
+re-rendered from its placed rectangle on the page, never silently dropped.
+Check the size before committing and flag it on the merge card.
+
+**3. Transcribe each captioned table.** `pdf-tables.py`
+finds grids by geometry and, on WHO layouts, reports many false tables. For
+every table the structure declares (`structure.json` `figures`, kind `table`),
+an agent reads the rendered page (and the next, for a continued table), checks
+cell text against the text layer, and writes it as CSVW (card Q-FIG-2 = A):
+
+- `library/<entry>/tables/<label>.csv`, header row first;
+- `library/<entry>/tables.csvw.json`, `folio-tabular-csvw/v1`, one table per
+  CSV: `fac:group` for a two-row header, `fac:merged` for spanning cells (A1,
+  in CSV rows), plus `fac:label`, `fac:caption`, `fac:pages`, `fac:lang` (the
+  cells keep the document's language), `fac:notes` (footnotes), and
+  `fac:narrative`: a description of the table in all six UN languages, as
+  `draft`.
+
+A caption that points at something that is not a table (a box of prose, a
+list) is recorded as not a table, with the reason.
+
 ### Stage 4: Mapping (→ `mapped`)
 
 Interactive step — present extracted blocks to user for review:

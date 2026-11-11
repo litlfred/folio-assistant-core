@@ -251,6 +251,42 @@ term, verbatim, with `source: <file>#L<line>`; an acronym becomes the
 adopted or edited is never changed. Only a person moves a term to `authored`
 (`glossary-terms`). `--check` keeps the candidates in step with the L1 entry.
 
+## A source's reference list — its own bibliography, read by one tool
+
+Every source that prints a reference list gets its own bibliography, read the
+same way with the Tool `references-extract` (step `Task_References` of
+`ingest-build-l1-kg.bpmn`), never with a script of its own:
+
+```sh
+bun run cat references:extract --instance . [--entry <doc-id>] [--check]
+```
+
+It reads the L1 sections of each library entry. A list is a whole section
+whose title is a reference-list heading, or the lines after such a heading
+inside a section (chapter-end lists), in the six UN languages and Portuguese
+(References, Bibliography, Further reading, Références bibliographiques,
+Referencias, Литература, المراجع, 参考文献, …). Numbered lists are split on
+their own numbers; unnumbered ones where an entry closes and the next opens.
+Page numbers, running heads and section tabs between entries are skipped; a
+list ends at an annex, chapter or glossary heading, a table or figure, or a
+contents leader.
+
+Each entry becomes a `folio-reference/v1` node in the instance's declared
+`references` directory, keyed `<doc-id>.<section>.<n>`: `provenance:
+extracted`, `derivedFrom` the section file, and `printed` the entry exactly as
+the source prints it. Only fields read without guessing are set: `URL`, `DOI`,
+`ISBN`, `issued` (the work's year, not the access date), `accessed`, and
+`type: article-journal` for a journal's year;volume:pages. No title or author
+is parsed, because WHO, Vancouver and author-year styles disagree on where a
+title ends; the bibliography shows `printed` instead. A cited IRIS handle the
+library holds gets `heldAt`. An entry longer than any citation (the list ran
+into the text after it) is left out rather than kept wrong.
+
+The bibliography page lists the nodes under the document they came from
+(`bibliography/library/<doc-id>/`). Re-run the tool after a section is
+re-derived; `--check` fails when a node is stale or has no list left to come
+from. Nodes with any other `provenance` are never touched.
+
 ## Requirements and normative statements — every DAK and DTH source
 
 Requirement extraction is a general part of L1 ingestion for DAK and DTH
@@ -352,6 +388,149 @@ entries carry no confidence and count as 0. The third test is the one that
 catches a poor `font` tree; a poor tree with an empty share just under 25% is
 too close to good ones to separate by this measure.
 
+## A text layer that is not text
+
+Owner, 2026-11-11 (who-iris, card Q-ODD-1 = A): "force OCR when a page's text
+layer fails a quality check". A text layer can carry plenty of letters and
+still not be the page's words, and the character count the router used to
+look at cannot see it. `cat-harness-tools/scripts/_text_quality.py` checks
+EVERY page against the document's languages (`--lang-hint`, else the
+catalogue's `dc.language.iso`). Each check was measured on an IRIS PDF:
+
+| The text layer | Seen on | What the check counts |
+|---|---|---|
+| accents through the wrong code page ("dΘclaration") | 10665/231031, French | words mixing Greek and Latin letters, in a Latin-script document |
+| Persian in the wrong Arabic code points | 10665/94830-per | Arabic-script letters outside the language's alphabet |
+| words split by kerning ("au g m ente") | 10665/83270, French | a lone lower-case letter between two lower-case words |
+| fake bold, each word printed twice | 10665/66977-chi | words equal to the word before |
+| a font with no Unicode mapping | 10665/232378, Arabic | letters among characters that are not digits or table punctuation |
+
+The router runs the check in its probe. When any page fails, the document goes
+to `pdf-ocr+pdf-structure`: `pdf-ocr.py` reads every page and
+`pdf-structure.py --ocr` takes the OCR text **for the failing pages only**,
+keeping the outline and the text layer of the rest. They are listed in
+`structure.json` `source.ocr_pages`, each with its reason; `text_source` stays
+`embedded`. When most pages fail and there is no outline, the whole document
+is read from OCR (`pdf-ocr+pdf-pages`), as for a scan.
+
+**A page that holds two scripts.** OCR reads a page in the script its detector
+names, so a French article's Arabic abstract (10665/117378) came out as
+"er ie obus AU ball", and the Latin URLs in an Arabic toolkit's references
+(10665/75211-ara) as Arabic letters. A page whose mean word confidence is under
+70 is read again with each other installed script added (`ara+eng`,
+`fra+ara`), and the most confident read is kept when it gains 10 points. On
+the Arabic references page the confidence went from 54 to 86 and the URLs
+read correctly; a page of plain Arabic keeps its first read.
+
+## An outline that is not contents, and a section too long to be a block
+
+Owner, 2026-11-11: "split single blocks that hold a whole book". Eight IRIS
+PDFs came out as one section of 10,000 to 101,000 words, every one because an
+outline was present, was taken as the document's answer, and located no
+heading on any page:
+
+- Word bookmark names: `_tyjcwt`, `_Hlk62546849`, `_GoBack`, `_TOC_250000`
+  (10665/353150, 353151, 259268, 341997);
+- "Blank Page" (10665/385385), or the names of the files merged into the PDF
+  (10665/44118: `9789241547727_eng_Chapter1-4`);
+- a Russian edition carrying its English outline (10665/331525-rus).
+
+`pdf-structure.py` drops machine bookmark names from the outline, and sets the
+outline aside when nothing is left or when under half of what is left names a
+line the pages print (`diagnostics.outline_rejected` says which). The contents
+are then inferred, and must pass the three tests above, else the document is
+split by page.
+
+A section that still holds more than half of a document of 20 pages or more
+(and over 8,000 words), or over 20,000 words anywhere, is cut at the headings
+inferred inside it, else one section per page
+(`diagnostics.oversized_split`). A re-ingest renumbers the section ids of an
+entry cut this way, so its block summaries go stale and are redrafted.
+
+### Titles that do not match their text
+
+Four IRIS entries had section titles that did not match the words under them.
+`pdf-structure.py` now tidies an INFERRED table of contents before it splits
+(`diagnostics.headings_tidied`; an outline entry is never touched):
+
+- **A title cut to its last line** ("sanitaria universal", 10665/354399): a
+  title that opens in lower case is rejoined with the lines above it, up to the
+  bare number that opens it ("1.2 Función de la salud digital ... cobertura
+  sanitaria universal"). With no number above it, it is dropped.
+- **A body word set apart by a font** ("un", "comme", "On", 10665/264857), and
+  a reference's first author in capitals ("YOUNG,"): dropped.
+- **A diagram's labels** (an annex flowchart, 10665/329296): two or more
+  sections on one page, each with fewer than 30 words, are dropped as headings
+  and their words stay with the section before them.
+
+A page whose PDF draws its side panel and body before its headings
+(10665/342236) put every section one heading late. When the outline's first
+heading on a page sits in the later half of the page's text, and the page read
+in print order (top to bottom, a band of columns left column first) puts it
+near the top, that page is read in print order
+(`diagnostics.pages_read_in_print_order`).
+
+### The document's language is recorded, not read from the slug
+
+`structure.json` `source.languages` holds the languages the ingest was given
+(`--lang-hint`). A reader asks it, not the slug: an item's first edition keeps
+the bare slug whatever its language, so 10665/202203, which is Russian, has
+no `-rus`.
+
+## Footnotes and their marks
+
+Owner, 2026-11-11: "also foot notes/marks". The `pdf-footnotes.py` arm reads
+the page layout after `l1-blocks.ts` and writes `footnotes.json`
+(`folio-document-footnotes/v1`, `schemas/content/document-footnotes.ts`):
+
+- a **mark** is a superscript span (or one small and raised) whose text is 1-3
+  digits, a letter, or `* † ‡ §`;
+- a **note** is a line in the lower 40% of the page, smaller than the body
+  text, that opens with a mark; the small lines after it continue it;
+- a mark calls the note with the same mark on its page, else on the next.
+
+Only a note that a mark calls is a footnote, with every `marks[]` place that
+calls it (page and the words before the mark) and the `block` that holds its
+page. A small line opening with a number is as often a table row or a running
+footer (10665/311941: 159 such lines, none called), so those are kept as
+`uncalled_notes`, and marks with no note as `unlinked_marks`; nothing is
+dropped. The section text is not changed. OCR'd pages have no fonts and are
+listed in `pages_unread`. `check:l1-complete` reports the counts (`footnotes`)
+and fails only on a file that will not parse or names another entry.
+
+Numbered citations (`[12]`, or a superscript 12 whose reference is in a list
+at the end) are not footnotes; a superscript one shows up in `unlinked_marks`,
+where a reference-list extractor can pick it up.
+
+## Errata: errors in the source's own text
+
+Owner, 2026-11-11 (card Q-ODD-1 = A, and "add to L1 doc schema errata").
+Reading the blocks to summarise them finds errors that are in the publication,
+not the extraction: a workshop report titled June 2006 whose introduction says
+June 2005 (10665/205022), a Spanish edition announcing "nueve
+recomendaciones" where the English lists ten (10665/354399).
+
+**The block is never changed.** The agent records each one in
+`library/<bib-slug>/errata.json` (`folio-document-errata/v1`,
+`schemas/content/document-errata.ts`):
+
+| Field | What it holds |
+|---|---|
+| `id` | `e1`, `e2`, ... never reused |
+| `kind` | `error`, `inconsistency` (two places or two official editions disagree), `residue` (a placeholder, an editor's comment, contents page numbers "xx"), `translation` (an official translation says what its original does not) |
+| `block` / `page` | where it is printed; at least one |
+| `quote` | the words as printed, verbatim |
+| `reading` | the reading the evidence supports, when there is one |
+| `evidence` | what shows it, in a form a person can check |
+| `narrative` | the note a reader sees, a draft naming its model until a person confirms it in `bun run cat narratives` |
+
+The file is authored, so a re-ingest keeps it. An extraction defect (garbled
+OCR, a block cut in the wrong place) is not an erratum: re-derive the entry.
+Decisions about a document (personal data in a participant list, a "do not
+distribute" notice) are not errata either; ask the owner. `check:l1-complete`
+reports errata (`errata`) and fails only on a file that does not parse, names
+another entry, or points at a block the entry does not have.
+
 ## What a complete L1 entry holds
 
 ```
@@ -363,6 +542,8 @@ library/<bib-slug>/
   blocks/            the block projection consumers read
   manifest.jsonld    @id, @type folio:SourceDocument, contains[], provenance
   summaries.json     agent summaries of prose blocks, a QA sidecar (see below)
+  footnotes.json     footnotes and the marks that call them (pdf-footnotes.py arm)
+  errata.json        errors in the source's own text, authored (never a rung's)
   ocr/               page-NNN.txt, only where the source was scanned
 ```
 
@@ -623,9 +804,11 @@ bun run cat summaries:record -- drafts.json             # write drafts; validate
 ```
 
 `drafts.json` is `{drafted_by: {kind: "agent", id, model, session}, drafted_at,
-drafts: [{block, source_hash, text}]}`, with `source_hash` echoed from
-`summaries:next`. `record` refuses a state other than `draft`, a hash that no
-longer matches, and a block that already has a current summary.
+lang?, drafts: [{block, source_hash, text, lang?}]}`, with `source_hash` echoed
+from `summaries:next`. `lang` is a BCP 47 tag and defaults to `en`. `record`
+refuses a state other than `draft`, a hash that no longer matches, and a block
+that already has a current summary IN THAT LANGUAGE. A draft in a language the
+block does not have yet is added beside the others, which are kept unchanged.
 
 **Drain K at a time during ingestion work**, not all at once: a thousand
 unreviewed drafts at once is a buried reviewer. Write in your own words, from
@@ -645,6 +828,65 @@ and say so. The backlog is reported by `check:l1-complete` (`block-summaries`)
 and on the library page. It is advisory, never a gate. What the gate does fail
 is a sidecar that does not parse, names another entry, or holds a record for a
 block or source that is not there.
+
+**Special pages get one sentence saying what the page is**: a cover, title
+page, copyright or cataloguing page, a blank or near-blank page, a table of
+contents, an index, a reference list. Garbled OCR, text in the wrong script, or
+text that does not match the block's title is summarised as far as it can be,
+and the summary says so ("the extracted text of this page is garbled OCR; it
+appears to be a table of …"), so a reviewer sees an extraction defect instead
+of a confident account of noise.
+
+**A block too long to read whole** (a whole book extracted as one block) is
+summarised from its start, its headings and its end, at the 4-sentence length,
+and the scope is taken from the headings. Report the block as an extraction
+defect: it should have been split.
+
+### Summaries in every language
+
+**A block's summary is owed in every configured language**: the layer's
+`translation.supportedLocales`, which defaults to the six UN languages (ar,
+zh, en, fr, ru, es) (owner, 2026-11-11). The slot holds one narrative per
+language, each reviewed separately in `bun run cat narratives`. The order is:
+
+1. **English** first, from the block's text, as above.
+2. **The document's own language**, when it is not English, also written FROM
+   THE SOURCE TEXT, not from the English. It uses the document's own
+   terminology and checks the English against the source; when the two
+   disagree, the source wins and the English draft is reported for redrafting.
+   An edition in a language outside the configured set (Portuguese, Persian…)
+   still gets one in its own language.
+3. **Every other configured language**, translated from the current summary,
+   as below.
+
+```sh
+bun run cat summaries                                    # also prints the translations owed, per language
+bun run cat summaries:next -- --lang fr --n 50 [--entry <slug>]   # summarised blocks with no fr summary, WITH their current summaries
+bun run cat summaries:record -- drafts-fr.json           # drafts carry lang: "fr"
+```
+
+`check:l1-complete` reports the missing languages in its `block-summaries`
+detail. Like the summary backlog, it is advisory.
+
+### Translating a summary
+
+**Say the same thing, in the same length.** Translate the current summary
+faithfully and naturally: nothing added, nothing dropped, and its notes kept
+(garbled text, blank pages, a figure that does not match). It is a translation
+of the summary, never a new summary of the block.
+
+**Use WHO's established terms in the target language** (ВОЗ, منظمة الصحة
+العالمية, 世界卫生组织, OMS; World Health Assembly as each language's official
+name). Proper names, test and drug names (Xpert MTB/RIF, PrEP) and document
+codes (A42/10, EB95/8) stay as written. A title with no official translation
+stays in its original language. Use the target's own conventions: decimal
+commas in fr, es and ru, logical-order Unicode for Arabic and Persian (Persian
+letters ی and ک), Simplified Chinese with full-width punctuation.
+
+**Check before recording**: every block and `source_hash` copied exactly, the
+text is in the target script, and it is not the source summary unchanged.
+Record one language per file: `record` refuses the same block twice in one
+file.
 
 ### The Document panel — what a reader browses
 

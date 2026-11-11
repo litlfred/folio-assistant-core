@@ -50,9 +50,17 @@ Build the L1 knowledge graph from what ingestion derived: Dublin Core, the manif
 - Skill: `glossary-terms`.
 - What: The source's glossary and abbreviations sections become candidate terms of a folio-glossary/v1 scheme with the Tool glossary-from-source, verbatim, each with source file#line, and an acronym as the notation of the term it expands.
 - Record it: `workflow_complete` with `node: "Task_Glossary"`.
+- next: → `Task_References` (Extract reference lists)
+
+### 6. Extract reference lists (`Task_References`)
+
+- Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
+- Skill: `l1-document-ingestion`.
+- What: Each reference list of the source (a References, Bibliography or Further reading section, in any of the six UN languages) becomes folio-reference/v1 nodes with the Tool references-extract: one node per cited work, provenance extracted, derivedFrom the section it was read from, and printed the entry 
+- Record it: `workflow_complete` with `node: "Task_References"`.
 - next: → `Task_Link` (Link L1 nodes into the corpus graph)
 
-### 6. Link L1 nodes into the corpus graph (`Task_Link`)
+### 7. Link L1 nodes into the corpus graph (`Task_Link`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `document-intake`.

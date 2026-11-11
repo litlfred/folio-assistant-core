@@ -184,6 +184,35 @@ describe("pages and exports", () => {
     expect(assetDcXml).toContain("An Extracted Citation");
   });
 
+  test("catalogueHeldDocumentGetsItsOwnBibliography", () => {
+    const ext = (id: string, from: string, extra: Record<string, unknown> = {}) => ({
+      $schema: "folio-reference/v1",
+      id,
+      type: "document",
+      provenance: "extracted",
+      derivedFrom: from,
+      printed: `Printed entry ${id}. Geneva: WHO; 2001.`,
+      ...extra,
+    });
+    const withRefs = collect(
+      checkout((root) => {
+        const sec = "iris-x/library/who-handbook/sections/sec-009-references.md";
+        put(join(root, "folio-x"), "references/who-handbook.sec-009.2.json", ext("who-handbook.sec-009.2", sec));
+        put(join(root, "folio-x"), "references/who-handbook.sec-009.10.json", ext("who-handbook.sec-009.10", sec));
+        // Another document CITES the handbook: it belongs to that document, not here.
+        put(join(root, "folio-x"), "references/other.sec-001.1.json", ext("other.sec-001.1", "iris-x/library/other/sections/s.md", { heldAt: "iris-x/library/who-handbook" }));
+      }),
+    );
+    expect(withRefs.invalid).toEqual([]);
+    expect(withRefs.assets.map((a) => [a.subgraph, a.asset, a.entries.map((e) => e.ref.id)])).toEqual([
+      ["iris-x-library", "who-handbook", ["who-handbook", "who-handbook.sec-009.2", "who-handbook.sec-009.10"]],
+    ]);
+    const page = [...outputs(withRefs)].find(([p]) => p.endsWith("iris-x-library/who-handbook/index.md"))?.[1];
+    expect(page).toContain("Printed entry who-handbook.sec-009.10");
+    // Without an extracted list, a catalogued copy gets no page of its own.
+    expect(c.assets).toEqual([]);
+  });
+
   test("subgraphPageOwnRefsOnly", () => {
     const [page, bib] = ["index.md", "references.bib"].map((f) => [...files].find(([p]) => p.endsWith(`iris-x-catalogue/${f}`))![1]);
     expect(page).toContain('data-fa-bib-key="who-handbook" data-fa-bib-href="who-handbook/"');
@@ -196,6 +225,22 @@ describe("pages and exports", () => {
     const page = [...files].find(([p]) => p.endsWith("bibliography/index.md"))![1];
     expect(page).toContain('<a href="folio-x-references/">folio-x-references</a> (2)');
     expect(page).toContain('<a href="iris-x-catalogue/">iris-x-catalogue</a> (1)');
+  });
+
+  test("entryPagesNestUnderTheirSubgraphPage", () => {
+    // Owner, 2026-11-10: entry pages sat at the top of a site's Pages list.
+    // Each names its sub-graph page as `parent`, and that page exists.
+    const titleOf = (s: string) => /^title: "(.*)"$/m.exec(s)?.[1];
+    const subgraphTitles = new Set([...files].filter(([p]) => /\/bibliography\/[^/]+\/index\.md$/.test(p)).map(([, s]) => titleOf(s)));
+    const entryPages = [...files].filter(([p, s]) => p.endsWith("/index.md") && s.includes("All references of "));
+    expect(entryPages.length).toBe(c.entries.length);
+    for (const [p, s] of entryPages) {
+      const slug = p.split("/").slice(-3)[0];
+      expect(s).toContain(`parent: "Bibliography: ${slug}"\ngrand_parent: "Bibliography"\n`);
+      expect(subgraphTitles.has(`Bibliography: ${slug}`)).toBe(true);
+    }
+    // …and each sub-graph page sits under the Bibliography page.
+    for (const [p, s] of files) if (/\/bibliography\/[^/]+\/index\.md$/.test(p)) expect(s).toContain('parent: "Bibliography"\n');
   });
 
   test("entryCarriesOwnExports", () => {
@@ -459,5 +504,21 @@ describe("one instance's own bibliography, for its page inside a composed site (
     expect(root).toContain("permalink: /smart-trust/en/folio-assistant-core/bibliography/");
     const sub = [...pages].find(([p]) => p.endsWith("smart-trust-catalogue/index.md"))![1];
     expect(sub).toContain("permalink: /smart-trust/en/folio-assistant-core/bibliography/smart-trust-catalogue/");
+  });
+
+  test("layerSiteTitlesNameTheLayer", () => {
+    // just-the-docs matches `parent` by title across the composed site: a
+    // layer's copy must not share the root's titles, or each tree adopts the
+    // others' pages (folio-assistant run 42942756201 ran out of resources).
+    const pages = outputs(forInstance(c, "smart-trust", (n) => needs[n] ?? []), "/smart-trust");
+    const root = [...pages].find(([p]) => p.endsWith("bibliography/index.md"))![1];
+    expect(root).toContain('title: "Bibliography (smart-trust)"\n');
+    const sub = [...pages].find(([p]) => p.endsWith("smart-trust-catalogue/index.md"))![1];
+    expect(sub).toContain('title: "Bibliography (smart-trust): smart-trust-catalogue"\n');
+    expect(sub).toContain('parent: "Bibliography (smart-trust)"\n');
+    for (const [p, s] of pages) {
+      if (!p.endsWith("index.md")) continue;
+      expect(s).not.toMatch(/^(parent|grand_parent): "Bibliography(: [^"]*)?"$/m);
+    }
   });
 });

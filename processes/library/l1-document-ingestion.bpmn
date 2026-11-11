@@ -41,7 +41,7 @@ IT REFINES THE HARNESS FLOW BY CALLING IT. CallActivity_Basic runs the harness's
     </bpmn:extensionElements>
     <bpmn:laneSet id="Process_L1DocumentIngestion_LaneSet">
       <bpmn:lane id="Lane_1" name="Ingestion Engine (agent, runs unattended)" partitionElementRef="ingestion-agent">
-        <bpmn:documentation>Runs the whole pipeline from CallActivity_Basic through Task_Promote and CallActivity_PublishStatements, and then Task_SummaryQueue, where it drains a few prose blocks of the advisory summary queue — including the theme branch, which stays in THIS lane rather than dipping into Lane_2: deciding a document is a theme source is the engine asking its author a question, not a write to the shared work plan. It does not stop at a gap: Gateway_Complete's 'gap' branch leaves this lane only for Lane_2 to record the bean, then Flow_i8 returns here at CallActivity_Derive, until Gateway_Complete says complete.</bpmn:documentation>
+        <bpmn:documentation>Runs the whole pipeline from CallActivity_Basic through Task_Promote and CallActivity_PublishStatements, and then Task_SummaryQueue, where it drains a few prose blocks of the advisory summary queue, and Task_Errata, where it records errors found in the source's own text — including the theme branch, which stays in THIS lane rather than dipping into Lane_2: deciding a document is a theme source is the engine asking its author a question, not a write to the shared work plan. It does not stop at a gap: Gateway_Complete's 'gap' branch leaves this lane only for Lane_2 to record the bean, then Flow_i8 returns here at CallActivity_Derive, until Gateway_Complete says complete.</bpmn:documentation>
         <bpmn:flowNodeRef>StartEvent_Document</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>CallActivity_Basic</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Call_BeanOpen</bpmn:flowNodeRef>
@@ -59,6 +59,7 @@ IT REFINES THE HARNESS FLOW BY CALLING IT. CallActivity_Basic runs the harness's
         <bpmn:flowNodeRef>Task_Promote</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>CallActivity_PublishStatements</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_SummaryQueue</bpmn:flowNodeRef>
+        <bpmn:flowNodeRef>Task_Errata</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_OpenBean</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Task_Citeable</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>EndEvent_Ingested</bpmn:flowNodeRef>
@@ -221,18 +222,29 @@ The sub-process is the same for every content type. The content type decides onl
       <bpmn:incoming>Flow_i10</bpmn:incoming>
       <bpmn:outgoing>Flow_i10b</bpmn:outgoing>
     </bpmn:callActivity>
-    <bpmn:serviceTask id="Task_SummaryQueue" name="Queue prose blocks for summary">
+    <bpmn:serviceTask id="Task_SummaryQueue" name="Summarise prose blocks, in every language">
       <bpmn:documentation>A QA sidecar of general document ingestion, drained slowly.
 
 Nothing is written to ENQUEUE a block: the queue is derived (every prose block in every declared library, minus those whose summaries.json record is a current draft or confirmation), so a promoted entry is in it the moment its blocks are. A re-ingested document whose text changed re-enters it on its own, because the record's source_hash no longer matches.
 
 What an agent doing ingestion work does here is DRAIN a few: `bun run cat summaries:next -- --n K` hands it the next K blocks with their text, it writes a short summary of each in its own words, and `bun run cat summaries:record` writes them into library/&lt;bib-slug&gt;/summaries.json as drafts naming the agent and its model. The block itself stays verbatim and `ingested`.
 
+A library can ask for a summary in more than one language (who-iris: the six UN languages, owner 2026-11-11): the English draft, one in the document's own language read from the source, and translations of the English into the rest, each its own narrative in the block's slot. Method: skill l1-document-ingestion, "Summarising prose blocks".
+
 ADVISORY, never a gate: this step does not hold up Task_Citeable, and check:l1-complete reports the backlog (`block-summaries`) without failing on it. Confirming or rejecting a draft is a person's act, in `bun run cat narratives`.</bpmn:documentation>
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="l1-document-ingestion"/>
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_i10b</bpmn:incoming>
+      <bpmn:outgoing>Flow_i12a</bpmn:outgoing>
+    </bpmn:serviceTask>
+    <bpmn:serviceTask id="Task_Errata" name="Record errata in the
+source's own text">
+      <bpmn:documentation>Owner, 2026-11-11 (who-iris, card Q-ODD-1 = A, and "add to L1 doc schema errata"). Reading the blocks to summarise them finds errors that are in the publication itself, not in the extraction: a title that says June 2006 over an introduction that says June 2005, a Spanish edition announcing nine recommendations where the English lists ten. The block stays as printed. The agent records an erratum in library/&lt;bib-slug&gt;/errata.json (folio-document-errata/v1): the kind, the block or page, the words as printed, the reading the evidence supports, the evidence, and its note as a draft narrative a person confirms in `bun run cat narratives`. An extraction defect is not an erratum: it is fixed by re-deriving the entry. ADVISORY: check:l1-complete reports errata and fails only on a file that does not mean what it says. Method: skill l1-document-ingestion, "Errata: errors in the source's own text".</bpmn:documentation>
+      <bpmn:extensionElements>
+        <bootstrap.processes:skill ref="l1-document-ingestion"/>
+      </bpmn:extensionElements>
+      <bpmn:incoming>Flow_i12a</bpmn:incoming>
       <bpmn:outgoing>Flow_i12</bpmn:outgoing>
     </bpmn:serviceTask>
     <bpmn:task id="Task_Citeable" name="Available to cite
@@ -263,7 +275,8 @@ as an L1 source">
     <bpmn:sequenceFlow id="Flow_i9" name="complete" sourceRef="Gateway_Complete" targetRef="Task_Promote" />
     <bpmn:sequenceFlow id="Flow_i10" sourceRef="Task_Promote" targetRef="CallActivity_PublishStatements" />
     <bpmn:sequenceFlow id="Flow_i10b" sourceRef="CallActivity_PublishStatements" targetRef="Task_SummaryQueue" />
-    <bpmn:sequenceFlow id="Flow_i12" sourceRef="Task_SummaryQueue" targetRef="Task_Citeable" />
+    <bpmn:sequenceFlow id="Flow_i12a" sourceRef="Task_SummaryQueue" targetRef="Task_Errata" />
+    <bpmn:sequenceFlow id="Flow_i12" sourceRef="Task_Errata" targetRef="Task_Citeable" />
     <bpmn:sequenceFlow id="Flow_i11" sourceRef="Task_Citeable" targetRef="Call_BeanClose" />
     <bpmn:sequenceFlow id="SF_Bean_1" name="claimed" sourceRef="GW_BeanYours" targetRef="CallActivity_Basic"/>
     <bpmn:sequenceFlow id="SF_Bean_2" sourceRef="Call_BeanOpen" targetRef="GW_BeanYours"/>
@@ -315,6 +328,7 @@ as an L1 source">
       <bpmndi:BPMNShape id="Task_OpenBean_di" bpmnElement="Task_OpenBean"><dc:Bounds x="2275" y="310" width="180" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Promote_di" bpmnElement="Task_Promote"><dc:Bounds x="2525" y="110" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_SummaryQueue_di" bpmnElement="Task_SummaryQueue"><dc:Bounds x="2745" y="110" width="120" height="120" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Errata_di" bpmnElement="Task_Errata"><dc:Bounds x="2745" y="290" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Citeable_di" bpmnElement="Task_Citeable"><dc:Bounds x="2935" y="490" width="150" height="80" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Ingested_di" bpmnElement="EndEvent_Ingested"><dc:Bounds x="3362" y="512" width="36" height="36" /></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_i2_di" bpmnElement="Flow_i2">
@@ -363,17 +377,9 @@ as an L1 source">
         <di:waypoint x="2585" y="230" />
         <di:waypoint x="2585" y="310" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_i10b_di" bpmnElement="Flow_i10b">
-        <di:waypoint x="2645" y="370" />
-        <di:waypoint x="2805" y="370" />
-        <di:waypoint x="2805" y="230" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_i12_di" bpmnElement="Flow_i12">
-        <di:waypoint x="2865" y="170" />
-        <di:waypoint x="2900" y="170" />
-        <di:waypoint x="2900" y="530" />
-        <di:waypoint x="2935" y="530" />
-      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_i10b_di" bpmnElement="Flow_i10b"><di:waypoint x="2645" y="370" /><di:waypoint x="2700" y="370" /><di:waypoint x="2700" y="170" /><di:waypoint x="2745" y="170" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_i12a_di" bpmnElement="Flow_i12a"><di:waypoint x="2805" y="230" /><di:waypoint x="2805" y="290" /></bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_i12_di" bpmnElement="Flow_i12"><di:waypoint x="2865" y="350" /><di:waypoint x="2900" y="350" /><di:waypoint x="2900" y="530" /><di:waypoint x="2935" y="530" /></bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_i11_di" bpmnElement="Flow_i11">
         <di:waypoint x="3085" y="530" />
         <di:waypoint x="3182" y="530" />
