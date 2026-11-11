@@ -5,7 +5,7 @@
       "@base": "https://litlfred.github.io/folio/"
     }
   ],
-  "@id": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/nlm-mesh-indexing-policy-2026/manifest.jsonld",
+  "@id": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/nlm-mesh-indexing-policy-2026",
   "@type": [
     "cat-harness:SourceDocument"
   ],

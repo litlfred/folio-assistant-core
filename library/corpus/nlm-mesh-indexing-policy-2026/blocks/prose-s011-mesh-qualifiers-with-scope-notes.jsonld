@@ -14,7 +14,7 @@
   "kind": "prose",
   "title": "MeSH Qualifiers with Scope Notes",
   "text": "../sections/s011-mesh-qualifiers-with-scope-notes.md",
-  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/nlm-mesh-indexing-policy-2026/manifest.jsonld",
-  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/nlm-mesh-indexing-policy-2026/manifest.jsonld",
+  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/nlm-mesh-indexing-policy-2026",
+  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/nlm-mesh-indexing-policy-2026",
   "provenance": "ingested"
 }

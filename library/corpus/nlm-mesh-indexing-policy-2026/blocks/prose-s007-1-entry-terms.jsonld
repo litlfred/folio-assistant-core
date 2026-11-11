@@ -14,7 +14,7 @@
   "kind": "prose",
   "title": "1. Entry Terms",
   "text": "../sections/s007-1-entry-terms.md",
-  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/nlm-mesh-indexing-policy-2026/manifest.jsonld",
-  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/nlm-mesh-indexing-policy-2026/manifest.jsonld",
+  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/nlm-mesh-indexing-policy-2026",
+  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/nlm-mesh-indexing-policy-2026",
   "provenance": "ingested"
 }
