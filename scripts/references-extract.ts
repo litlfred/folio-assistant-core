@@ -48,6 +48,7 @@
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { basename, join, relative, resolve } from "node:path";
 import { instanceDirectoryForGraph } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.ts";
+import { STRUCTURE_FILENAME } from "@litlfred/cat-harness-tools/schemas/content/document-structure.js";
 import { REFERENCE_SCHEMA_TAG, ReferenceNodeSchema, type ReferenceNode } from "../schemas/reference.ts";
 
 /** A line that is only a reference-list heading. */
@@ -350,7 +351,7 @@ function heldItems(instanceRoot: string): Map<string, string> {
   const out = new Map<string, string>();
   const library = instanceDirectoryForGraph(instanceRoot, "library");
   if (!library || !existsSync(library)) return out;
-  for (const slug of readdirSync(library)) if (/^10665-\d+$/.test(slug) && existsSync(join(library, slug, "structure.json"))) out.set(slug, relative(instanceRoot, join(library, slug)));
+  for (const slug of readdirSync(library)) if (/^10665-\d+$/.test(slug) && existsSync(join(library, slug, STRUCTURE_FILENAME))) out.set(slug, relative(instanceRoot, join(library, slug)));
   return out;
 }
 
