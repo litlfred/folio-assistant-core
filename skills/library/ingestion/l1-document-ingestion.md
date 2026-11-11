@@ -623,9 +623,11 @@ bun run cat summaries:record -- drafts.json             # write drafts; validate
 ```
 
 `drafts.json` is `{drafted_by: {kind: "agent", id, model, session}, drafted_at,
-drafts: [{block, source_hash, text}]}`, with `source_hash` echoed from
-`summaries:next`. `record` refuses a state other than `draft`, a hash that no
-longer matches, and a block that already has a current summary.
+lang?, drafts: [{block, source_hash, text, lang?}]}`, with `source_hash` echoed
+from `summaries:next`. `lang` is a BCP 47 tag and defaults to `en`. `record`
+refuses a state other than `draft`, a hash that no longer matches, and a block
+that already has a current summary IN THAT LANGUAGE. A draft in a language the
+block does not have yet is added beside the others, which are kept unchanged.
 
 **Drain K at a time during ingestion work**, not all at once: a thousand
 unreviewed drafts at once is a buried reviewer. Write in your own words, from
@@ -645,6 +647,65 @@ and say so. The backlog is reported by `check:l1-complete` (`block-summaries`)
 and on the library page. It is advisory, never a gate. What the gate does fail
 is a sidecar that does not parse, names another entry, or holds a record for a
 block or source that is not there.
+
+**Special pages get one sentence saying what the page is**: a cover, title
+page, copyright or cataloguing page, a blank or near-blank page, a table of
+contents, an index, a reference list. Garbled OCR, text in the wrong script, or
+text that does not match the block's title is summarised as far as it can be,
+and the summary says so ("the extracted text of this page is garbled OCR; it
+appears to be a table of …"), so a reviewer sees an extraction defect instead
+of a confident account of noise.
+
+**A block too long to read whole** (a whole book extracted as one block) is
+summarised from its start, its headings and its end, at the 4-sentence length,
+and the scope is taken from the headings. Report the block as an extraction
+defect: it should have been split.
+
+### Summaries in every language
+
+**A block's summary is owed in every configured language**: the layer's
+`translation.supportedLocales`, which defaults to the six UN languages (ar,
+zh, en, fr, ru, es) (owner, 2026-11-11). The slot holds one narrative per
+language, each reviewed separately in `bun run cat narratives`. The order is:
+
+1. **English** first, from the block's text, as above.
+2. **The document's own language**, when it is not English, also written FROM
+   THE SOURCE TEXT, not from the English. It uses the document's own
+   terminology and checks the English against the source; when the two
+   disagree, the source wins and the English draft is reported for redrafting.
+   An edition in a language outside the configured set (Portuguese, Persian…)
+   still gets one in its own language.
+3. **Every other configured language**, translated from the current summary,
+   as below.
+
+```sh
+bun run cat summaries                                    # also prints the translations owed, per language
+bun run cat summaries:next -- --lang fr --n 50 [--entry <slug>]   # summarised blocks with no fr summary, WITH their current summaries
+bun run cat summaries:record -- drafts-fr.json           # drafts carry lang: "fr"
+```
+
+`check:l1-complete` reports the missing languages in its `block-summaries`
+detail. Like the summary backlog, it is advisory.
+
+### Translating a summary
+
+**Say the same thing, in the same length.** Translate the current summary
+faithfully and naturally: nothing added, nothing dropped, and its notes kept
+(garbled text, blank pages, a figure that does not match). It is a translation
+of the summary, never a new summary of the block.
+
+**Use WHO's established terms in the target language** (ВОЗ, منظمة الصحة
+العالمية, 世界卫生组织, OMS; World Health Assembly as each language's official
+name). Proper names, test and drug names (Xpert MTB/RIF, PrEP) and document
+codes (A42/10, EB95/8) stay as written. A title with no official translation
+stays in its original language. Use the target's own conventions: decimal
+commas in fr, es and ru, logical-order Unicode for Arabic and Persian (Persian
+letters ی and ک), Simplified Chinese with full-width punctuation.
+
+**Check before recording**: every block and `source_hash` copied exactly, the
+text is in the target script, and it is not the source summary unchanged.
+Record one language per file: `record` refuses the same block twice in one
+file.
 
 ### The Document panel — what a reader browses
 
