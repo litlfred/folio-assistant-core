@@ -14,7 +14,7 @@
   "kind": "prose",
   "title": "A.9.4.1. Single-Line Form (Comments)",
   "text": "../sections/s647-a-9-4-1-single-line-form-comments.md",
-  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/c2pa-2026-specification-2-5/manifest.jsonld",
-  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/c2pa-2026-specification-2-5/manifest.jsonld",
+  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/c2pa-2026-specification-2-5",
+  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/c2pa-2026-specification-2-5",
   "provenance": "ingested"
 }

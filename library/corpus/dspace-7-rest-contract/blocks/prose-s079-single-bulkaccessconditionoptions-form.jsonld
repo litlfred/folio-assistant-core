@@ -14,7 +14,7 @@
   "kind": "prose",
   "title": "Single bulkaccessconditionoptions-Form",
   "text": "../sections/s079-single-bulkaccessconditionoptions-form.md",
-  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/dspace-7-rest-contract/manifest.jsonld",
-  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/dspace-7-rest-contract/manifest.jsonld",
+  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/dspace-7-rest-contract",
+  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/dspace-7-rest-contract",
   "provenance": "ingested"
 }

@@ -14,7 +14,7 @@
   "kind": "prose",
   "title": "A.9.4.3.1. Single-Line (Referenced)",
   "text": "../sections/s650-a-9-4-3-1-single-line-referenced.md",
-  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/c2pa-2026-specification-2-5/manifest.jsonld",
-  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/c2pa-2026-specification-2-5/manifest.jsonld",
+  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/c2pa-2026-specification-2-5",
+  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/c2pa-2026-specification-2-5",
   "provenance": "ingested"
 }

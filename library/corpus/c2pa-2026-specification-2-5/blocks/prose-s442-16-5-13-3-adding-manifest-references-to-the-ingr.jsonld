@@ -14,7 +14,7 @@
   "kind": "prose",
   "title": "16.5.13.3. Adding manifest references to the ingredient assertion",
   "text": "../sections/s442-16-5-13-3-adding-manifest-references-to-the-ingr.md",
-  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/c2pa-2026-specification-2-5/manifest.jsonld",
-  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/c2pa-2026-specification-2-5/manifest.jsonld",
+  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/c2pa-2026-specification-2-5",
+  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/c2pa-2026-specification-2-5",
   "provenance": "ingested"
 }

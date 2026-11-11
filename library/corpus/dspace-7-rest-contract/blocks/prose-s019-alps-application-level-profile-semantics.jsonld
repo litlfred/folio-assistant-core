@@ -14,7 +14,7 @@
   "kind": "prose",
   "title": "ALPS - Application Level Profile Semantics",
   "text": "../sections/s019-alps-application-level-profile-semantics.md",
-  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/dspace-7-rest-contract/manifest.jsonld",
-  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/dspace-7-rest-contract/manifest.jsonld",
+  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/dspace-7-rest-contract",
+  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/dspace-7-rest-contract",
   "provenance": "ingested"
 }

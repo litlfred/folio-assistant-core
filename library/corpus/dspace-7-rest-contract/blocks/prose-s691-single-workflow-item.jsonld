@@ -14,7 +14,7 @@
   "kind": "prose",
   "title": "Single Workflow Item",
   "text": "../sections/s691-single-workflow-item.md",
-  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/dspace-7-rest-contract/manifest.jsonld",
-  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/dspace-7-rest-contract/manifest.jsonld",
+  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/dspace-7-rest-contract",
+  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/dspace-7-rest-contract",
   "provenance": "ingested"
 }

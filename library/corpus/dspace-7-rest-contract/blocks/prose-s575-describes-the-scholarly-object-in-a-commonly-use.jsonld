@@ -14,7 +14,7 @@
   "kind": "prose",
   "title": "Describes the scholarly object in a commonly used format",
   "text": "../sections/s575-describes-the-scholarly-object-in-a-commonly-use.md",
-  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/dspace-7-rest-contract/manifest.jsonld",
-  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/dspace-7-rest-contract/manifest.jsonld",
+  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/dspace-7-rest-contract",
+  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/dspace-7-rest-contract",
   "provenance": "ingested"
 }

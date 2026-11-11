@@ -14,7 +14,7 @@
   "kind": "prose",
   "title": "16.4.2. External Reference",
   "text": "../sections/s410-16-4-2-external-reference.md",
-  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/c2pa-2026-specification-2-5/manifest.jsonld",
-  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/c2pa-2026-specification-2-5/manifest.jsonld",
+  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/c2pa-2026-specification-2-5",
+  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/c2pa-2026-specification-2-5",
   "provenance": "ingested"
 }

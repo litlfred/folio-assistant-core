@@ -14,7 +14,7 @@
   "kind": "prose",
   "title": "What is CSRF and why is this necessary?",
   "text": "../sections/s186-what-is-csrf-and-why-is-this-necessary.md",
-  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/dspace-7-rest-contract/manifest.jsonld",
-  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/dspace-7-rest-contract/manifest.jsonld",
+  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/dspace-7-rest-contract",
+  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/dspace-7-rest-contract",
   "provenance": "ingested"
 }

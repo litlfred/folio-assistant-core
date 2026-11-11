@@ -16,7 +16,7 @@
   "pageStart": 6,
   "pageEnd": 7,
   "text": "../sections/sec-014-52-system-setting-and-baselines.md",
-  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/arxiv-2510.21603v1/manifest.jsonld",
-  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/arxiv-2510.21603v1/manifest.jsonld",
+  "derivedFrom": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/arxiv-2510.21603v1",
+  "sourceDocument": "https://litlfred.github.io/folio-assistant/assets/library/jsonld/folio-assistant-core/source/arxiv-2510.21603v1",
   "provenance": "ingested"
 }
