@@ -184,6 +184,35 @@ describe("pages and exports", () => {
     expect(assetDcXml).toContain("An Extracted Citation");
   });
 
+  test("catalogueHeldDocumentGetsItsOwnBibliography", () => {
+    const ext = (id: string, from: string, extra: Record<string, unknown> = {}) => ({
+      $schema: "folio-reference/v1",
+      id,
+      type: "document",
+      provenance: "extracted",
+      derivedFrom: from,
+      printed: `Printed entry ${id}. Geneva: WHO; 2001.`,
+      ...extra,
+    });
+    const withRefs = collect(
+      checkout((root) => {
+        const sec = "iris-x/library/who-handbook/sections/sec-009-references.md";
+        put(join(root, "folio-x"), "references/who-handbook.sec-009.2.json", ext("who-handbook.sec-009.2", sec));
+        put(join(root, "folio-x"), "references/who-handbook.sec-009.10.json", ext("who-handbook.sec-009.10", sec));
+        // Another document CITES the handbook: it belongs to that document, not here.
+        put(join(root, "folio-x"), "references/other.sec-001.1.json", ext("other.sec-001.1", "iris-x/library/other/sections/s.md", { heldAt: "iris-x/library/who-handbook" }));
+      }),
+    );
+    expect(withRefs.invalid).toEqual([]);
+    expect(withRefs.assets.map((a) => [a.subgraph, a.asset, a.entries.map((e) => e.ref.id)])).toEqual([
+      ["iris-x-library", "who-handbook", ["who-handbook", "who-handbook.sec-009.2", "who-handbook.sec-009.10"]],
+    ]);
+    const page = [...outputs(withRefs)].find(([p]) => p.endsWith("iris-x-library/who-handbook/index.md"))?.[1];
+    expect(page).toContain("Printed entry who-handbook.sec-009.10");
+    // Without an extracted list, a catalogued copy gets no page of its own.
+    expect(c.assets).toEqual([]);
+  });
+
   test("subgraphPageOwnRefsOnly", () => {
     const [page, bib] = ["index.md", "references.bib"].map((f) => [...files].find(([p]) => p.endsWith(`iris-x-catalogue/${f}`))![1]);
     expect(page).toContain('data-fa-bib-key="who-handbook" data-fa-bib-href="who-handbook/"');
