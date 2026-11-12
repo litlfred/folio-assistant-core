@@ -9,7 +9,7 @@ import { appendFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSyn
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 
-import { LAZY_OPEN, buildDocumentSite, citationsToHtml, documentManifests, katexMacros, renderDocumentHtml, splitBlocks, type Outline } from "./build-document-site.js";
+import { LAZY_OPEN, afterTitle, buildDocumentSite, downloadLinks, citationsToHtml, documentManifests, katexMacros, renderDocumentHtml, splitBlocks, type Outline } from "./build-document-site.js";
 import { readPositions } from "../schemas/changeset.js";
 import { initFolio } from "@litlfred/cat-harness-tools/scripts/init-folio.js";
 
@@ -61,6 +61,42 @@ describe("build-document-site", () => {
     const html = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
     expect(html).toMatch(/<h1[^>]*>\s*Handbook - Working Draft\s*<\/h1>/);
     expect(html).toContain("<title>Handbook - Working Draft");
+  });
+
+  test("downloadLinks", async () => {
+    const d = scaffold();
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out, { downloads: true });
+    expect(r.errors).toEqual([]);
+    const html = readFileSync(join(out, "en", "handbook", "index.html"), "utf-8");
+    // Under the title, relative to the page, by the export's stable names.
+    expect(html).toMatch(/<\/h1>\s*<p class="fa-downloads">/);
+    expect(html).toContain('href="export/handbook-public-comment-latest.docx" download');
+    expect(html).toContain('href="export/handbook-public-comment-latest.pdf" download');
+    expect(html).toContain('href="export/">all formats</a>');
+    expect(r.documents[0]!.downloads).toEqual({
+      docx: "en/handbook/export/handbook-public-comment-latest.docx",
+      pdf: "en/handbook/export/handbook-public-comment-latest.pdf",
+    });
+    const landing = readFileSync(join(out, "index.html"), "utf-8");
+    expect(landing).toContain('href="en/handbook/export/handbook-public-comment-latest.docx" download');
+    expect(landing).toContain('href="en/handbook/export/handbook-public-comment-latest.pdf" download');
+  });
+
+  test("noDownloadLinksByDefault", async () => {
+    const d = scaffold();
+    const out = join(d, "_site");
+    const r = await buildDocumentSite(d, out);
+    expect(r.errors).toEqual([]);
+    expect(readFileSync(join(out, "en", "handbook", "index.html"), "utf-8")).not.toContain("fa-downloads");
+    expect(readFileSync(join(out, "index.html"), "utf-8")).not.toContain("public-comment-latest");
+    expect(r.documents[0]!.downloads).toBeUndefined();
+  });
+
+  test("downloadLinksFromAnyPage", () => {
+    expect(downloadLinks("handbook", "en/handbook/assets")).toContain('href="../export/handbook-public-comment-latest.pdf"');
+    expect(afterTitle("<h1>T</h1><p>x</p>", "<p>L</p>")).toBe("<h1>T</h1>\n<p>L</p><p>x</p>");
+    expect(afterTitle("<p>x</p>", "<p>L</p>")).toBe("<p>L</p><p>x</p>");
   });
 
   test("kgNodesPublished", async () => {

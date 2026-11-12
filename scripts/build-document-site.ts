@@ -93,7 +93,8 @@ import { liveFigures, withLiveFigures } from "./live-figures.js";
 import { linkTerms, termLinks as glossaryTermLinks, type TermLink } from "./glossary-term-links.ts";
 import { externalGlossaries, firstGlossaryLabel, withExternalGlossaries } from "./external-glossaries.ts";
 import { referenceSegment } from "../schemas/reference.ts";
-import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
+import { DOC_CLASS, DOCUMENT_END_MARKER, documentDataDir, documentExportDir, documentPage, documentPageDir, fromPageDir, hydratedPage, REVIEW_PAGE_DIR } from "./document-site-route.js";
+import { latestNames } from "./document-export.ts";
 
 const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
@@ -146,6 +147,7 @@ ${tableStyle()}  :target, main [id] { scroll-margin-top: 1rem; }
   .cite { color: var(--muted); }
   .fa-blk:empty { min-height: 3rem; }
   .fa-one-page { font-size: .85rem; color: var(--muted); }
+  .fa-downloads { font-size: .9rem; color: var(--muted); }
   .fa-live-figure, .fa-live-figure img { display: block; max-width: 100%; height: auto; }
   .fa-live-figure-note { display: block; font-size: .85rem; color: var(--muted); }
 </style>`;
@@ -190,6 +192,7 @@ const THEMED_STYLE = `
 .${DOC_CLASS} .cite { opacity: .72; }
 .${DOC_CLASS} .fa-blk:empty { min-height: 3rem; }
 .${DOC_CLASS} .fa-one-page { font-size: .85rem; opacity: .72; }
+.${DOC_CLASS} .fa-downloads { font-size: .9rem; }
 .${DOC_CLASS} .pc-bar { position: static; background: none; }
 ${tableStyle(`.${DOC_CLASS}`)}`;
 
@@ -932,10 +935,46 @@ export function defaultBlockActions(repoRoot: string, over: Partial<BlockActions
   };
 }
 
+/**
+ * The document's downloads, as one line: the current Word (.docx) and PDF, by
+ * the export's STABLE names (`latestNames`), so the link is always the newest
+ * export and never names a commit; and the Export page, which lists every file
+ * with its commit, size and checksum. `from` is the directory of the page the
+ * line goes on, so the links are relative and the site works under any base.
+ *
+ * The files are written by `document-export.ts release`, a later site step,
+ * into {@link documentExportDir}; the page only links them. A folio turns the
+ * line on (`--downloads`) when its site build runs that step.
+ */
+export function downloadLinks(slug: string, from: string): string {
+  const dir = fromPageDir(from, documentExportDir(slug));
+  const latest = latestNames(slug);
+  const at = (f: string) => esc(`${dir}/${f}`);
+  return (
+    `<p class="fa-downloads">Download the current version: ` +
+    `<a href="${at(latest.reviewDocx)}" download type="application/vnd.openxmlformats-officedocument.wordprocessingml.document">Word (.docx)</a> · ` +
+    `<a href="${at(latest.pdf)}" download type="application/pdf">PDF</a> · ` +
+    `<a href="${esc(dir)}/">all formats</a></p>\n`
+  );
+}
+
+/** `line` just after the page's first `</h1>`, the document's title; at the top when it has none. */
+export function afterTitle(html: string, line: string): string {
+  const i = html.indexOf("</h1>");
+  return i < 0 ? line + html : html.slice(0, i + 5) + "\n" + line + html.slice(i + 5);
+}
+
+/** The current Word and PDF of a document, relative to the site root. */
+export function downloadTargets(slug: string): { docx: string; pdf: string } {
+  const latest = latestNames(slug);
+  return { docx: `${documentExportDir(slug)}/${latest.reviewDocx}`, pdf: `${documentExportDir(slug)}/${latest.pdf}` };
+}
+
 export interface SiteBuildResult {
   /** `title`: the manifest's title, with its `meta.status` (e.g. "Working Draft") when it declares one. */
   /** `assets`: the structured-assets page, relative to the site root, when the document has any structured block. */
-  documents: { slug: string; title: string; blocks: number; page: string; assets?: string }[];
+  /** `downloads`: the current Word and PDF, relative to the site root, when built with `downloads` ({@link downloadLinks}). */
+  documents: { slug: string; title: string; blocks: number; page: string; assets?: string; downloads?: { docx: string; pdf: string } }[];
   errors: string[];
 }
 
@@ -958,6 +997,8 @@ export async function buildDocumentSite(
     bibliographyUrl?: string;
     /** Link each Capitalized glossary term in prose to its glossary entry (`glossary-term-links.ts`). */
     linkTerms?: boolean;
+    /** Put the Word and PDF download links ({@link downloadLinks}) under each document's title, on its structured-assets page and on the landing. */
+    downloads?: boolean;
   } = {},
 ): Promise<SiteBuildResult> {
   // Math defaults on only for a paper layer; see the note on renderDocumentHtml.
@@ -1009,7 +1050,9 @@ export async function buildDocumentSite(
       );
       return assetKinds.size ? lightenDataElements(linkKindLabels(h, assetKinds), entryLinks) : h;
     };
-    const html = await render(built.markdown);
+    const pageDirOf = documentPageDir(d.slug);
+    const downloads = opts.downloads ? downloadLinks(d.slug, pageDirOf) : "";
+    const html = afterTitle(await render(built.markdown), downloads);
     // The page under the locale, its data where it was (document-site-route.ts).
     const dir = join(outDir, ...documentPageDir(d.slug).split("/"));
     const data = join(outDir, ...documentDataDir(d.slug).split("/"));
@@ -1063,7 +1106,7 @@ export async function buildDocumentSite(
         writeFileSync(join(data, "blocks", `${String(n).padStart(3, "0")}.json`), JSON.stringify(chunk));
       }
       lazyOf.set(d.slug, { hydrated: hydratedPage(d.slug), chunks: index.chunks, of: index.of });
-      const shellHtml = await render(split.shell);
+      const shellHtml = afterTitle(await render(split.shell), downloads);
       const note = LAZY_OPEN + `<p class="fa-one-page">The text loads as you read. <a href="index.hydrated.html">The whole document on one page.</a></p>\n<noscript><p><a href="index.hydrated.html">Read the whole document on one page.</a></p></noscript>\n`;
       const loader = lazyLoader(index, fromPageDir(documentPageDir(d.slug), `${documentDataDir(d.slug)}/blocks`));
       if (themed) writeFileSync(join(dir, "index.html"), themedDocumentPage(themed, title, withActions(page(title, note + headingIds(shellHtml), mathOpts, loader), true)));
@@ -1072,7 +1115,7 @@ export async function buildDocumentSite(
     if (assets.length) {
       const assetsDir = join(dir, ASSETS_DIR);
       mkdirSync(assetsDir, { recursive: true });
-      const body = structuredAssetsBody(title, assets);
+      const body = afterTitle(structuredAssetsBody(title, assets), opts.downloads ? downloadLinks(d.slug, `${pageDirOf}/${ASSETS_DIR}`) : "");
       const assetsTitle = `${title}: structured assets`;
       writeFileSync(join(assetsDir, "index.html"), themed ? themedDocumentPage(themed, assetsTitle, page(assetsTitle, body)) : page(assetsTitle, body));
     }
@@ -1090,11 +1133,23 @@ export async function buildDocumentSite(
     writeFileSync(join(data, "graph.jsonld"), JSON.stringify({ "@graph": graph.nodes.map((n) => JSON.parse(n.text) as unknown) }) + "\n");
     const media = join(dirname(d.path), "media");
     if (existsSync(media)) cpSync(media, join(dir, "media"), { recursive: true });
-    result.documents.push({ slug: d.slug, title, blocks: built.blockCount, page: documentPage(d.slug), ...(assets.length ? { assets: `${documentPageDir(d.slug)}/${ASSETS_DIR}/index.html` } : {}) });
+    result.documents.push({
+      slug: d.slug,
+      title,
+      blocks: built.blockCount,
+      page: documentPage(d.slug),
+      ...(assets.length ? { assets: `${documentPageDir(d.slug)}/${ASSETS_DIR}/index.html` } : {}),
+      ...(opts.downloads ? { downloads: downloadTargets(d.slug) } : {}),
+    });
   }
   const list = result.documents
     // A reader looks for the document by its title, not its folder name (owner, 2026-11-01).
-    .map((d) => `<li><a href="${esc(d.page)}">${esc(d.title)}</a>${d.assets ? ` · <a href="${esc(d.assets)}">structured assets</a>` : ""}</li>`)
+    .map(
+      (d) =>
+        `<li><a href="${esc(d.page)}">${esc(d.title)}</a>${d.assets ? ` · <a href="${esc(d.assets)}">structured assets</a>` : ""}` +
+        (d.downloads ? ` · download <a href="${esc(d.downloads.docx)}" download>Word (.docx)</a> or <a href="${esc(d.downloads.pdf)}" download>PDF</a>` : "") +
+        `</li>`,
+    )
     .join("\n");
   const outline: Outline = { $schema: OUTLINE_SCHEMA, documents: [] };
   for (const d of docs) {
@@ -1191,7 +1246,8 @@ if (import.meta.main) {
         "         [--landing-layout <name>]   (write the landing as a Jekyll page in that layout, e.g. default)\n" +
         "         [--document-layout <name>]  (write each document's page as a Jekyll page in that layout, e.g. default)\n" +
         "         [--bibliography-url <url>]  (link each \\cite key to its entry on this published bibliography page)\n" +
-        "         [--link-terms]              (link each Capitalized glossary term in prose to its glossary entry)",
+        "         [--link-terms]              (link each Capitalized glossary term in prose to its glossary entry)\n" +
+        "         [--downloads]               (link the current Word and PDF, written by document-export.ts release into <out>/en/<slug>/export, under each title)",
     );
     process.exit(0);
   }
@@ -1222,6 +1278,7 @@ if (import.meta.main) {
     ...(documentLayout ? { documentLayout } : {}),
     ...(bibliographyUrl ? { bibliographyUrl } : {}),
     ...(args.includes("--link-terms") ? { linkTerms: true } : {}),
+    ...(args.includes("--downloads") ? { downloads: true } : {}),
   });
   for (const d of r.documents) console.error(`  ${d.page}  ${d.blocks} block(s)`);
   if (r.errors.length > 0) {
