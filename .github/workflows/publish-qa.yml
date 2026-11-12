@@ -16,6 +16,6 @@ permissions:
   contents: write
 jobs:
   publish:
-    uses: litlfred/cat-harness-tools/.github/workflows/layer-qa-publish.yml@84c011b7acd1b711ddb88bff257b93adb32c37cf # index.lock.json
+    uses: litlfred/cat-harness-tools/.github/workflows/layer-qa-publish.yml@49b2eb15b14b52ae19422876bcc825607ebe22f4 # index.lock.json
     with:
       instance: folio-assistant-core
