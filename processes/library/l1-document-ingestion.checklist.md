@@ -123,9 +123,9 @@ L1 document ingestion — a document to the L1 source knowledge graph.
 - Skill: `document-intake`.
 - What: The folder name IS the bibliography citation key, so a citation and a directory are the same string.
 - Record it: `workflow_complete` with `node: "Task_Promote"`.
-- next: → `CallActivity_PublishStatements` (Publish the extracted statements with source links)
+- next: → `CallActivity_PublishStatements` (Publish the extracted statements)
 
-### 12. Publish the extracted statements with source links (`CallActivity_PublishStatements`)
+### 12. Publish the extracted statements (`CallActivity_PublishStatements`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `publish-extracted-statements`.
