@@ -196,7 +196,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:212
 #. Diagram label
-msgid "Publish the extracted statements with source links"
+msgid "Publish the extracted statements"
 msgstr ""
 
 #: ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn:142

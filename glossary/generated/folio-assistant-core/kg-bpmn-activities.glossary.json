@@ -1456,7 +1456,7 @@
     },
     {
       "id": "process_l1documentingestion.callactivity_publishstatements",
-      "prefLabel": "Publish the extracted statements with source links",
+      "prefLabel": "Publish the extracted statements",
       "definition": "THE ENTRY IS COMPLETE HERE, so its statements are published here. Every statement the extraction captured from this entry (a recommendation, a requirement, a candidate a person still has to rule on) becomes readable in two places: the folio's working artifact, in the pages its content profile renders, and the shared extraction viewer. Each one links back to the library entry and to the section it came from. WHY IN INGESTION AND NOT LATER. A statement nobody can read beside its source is reviewed from memory, or not at all. Publishing when the entry is promoted means a reviewer can check every extracted statement against its source the moment it exists. The sub-process is the same for every content type. The content type decides only how its pages look, through its adapter. An entry that yields no statements (a referenced source, a dataset) passes through it with nothing to publish, and says so.",
       "notation": "CallActivity_PublishStatements",
       "source": "folio-assistant-core/processes/library/l1-document-ingestion.bpmn#CallActivity_PublishStatements",
