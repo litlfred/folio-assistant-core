@@ -88,7 +88,9 @@ describe("build-document-site", () => {
     const out = join(d, "_site");
     const r = await buildDocumentSite(d, out);
     expect(r.errors).toEqual([]);
-    expect(readFileSync(join(out, "en", "handbook", "index.html"), "utf-8")).not.toContain("fa-downloads");
+    // The element, not the class name: the page's stylesheet carries a
+    // `.fa-downloads` rule whether or not the line is emitted.
+    expect(readFileSync(join(out, "en", "handbook", "index.html"), "utf-8")).not.toMatch(/class="fa-downloads"/);
     expect(readFileSync(join(out, "index.html"), "utf-8")).not.toContain("public-comment-latest");
     expect(r.documents[0]!.downloads).toBeUndefined();
   });
