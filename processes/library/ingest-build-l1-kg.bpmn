@@ -86,7 +86,7 @@ local path or remote URL">
       <bpmn:incoming>Flow_k4</bpmn:incoming>
       <bpmn:outgoing>Flow_k5</bpmn:outgoing>
     </bpmn:serviceTask>
-    <bpmn:serviceTask id="Task_Glossary" name="Read glossary and abbreviations into candidate terms">
+    <bpmn:serviceTask id="Task_Glossary" name="Read glossary into candidate terms">
       <bpmn:extensionElements>
         <bootstrap.processes:skill ref="glossary-terms"/>
       </bpmn:extensionElements>
@@ -139,8 +139,8 @@ the corpus graph">
       <bpmndi:BPMNShape id="Task_Bind_di" bpmnElement="Task_Bind"><dc:Bounds x="860" y="110" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Glossary_di" bpmnElement="Task_Glossary"><dc:Bounds x="1040" y="110" width="120" height="120" /></bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_References_di" bpmnElement="Task_References"><dc:Bounds x="1040" y="300" width="120" height="120" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Task_Link_di" bpmnElement="Task_Link"><dc:Bounds x="1220" y="320" width="150" height="80" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="EndEvent_KgBuilt_di" bpmnElement="EndEvent_KgBuilt"><dc:Bounds x="1430" y="342" width="36" height="36" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Task_Link_di" bpmnElement="Task_Link"><dc:Bounds x="1220" y="300" width="120" height="120" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="EndEvent_KgBuilt_di" bpmnElement="EndEvent_KgBuilt"><dc:Bounds x="1400" y="342" width="36" height="36" /></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_k1_di" bpmnElement="Flow_k1">
         <di:waypoint x="266" y="170" />
         <di:waypoint x="320" y="170" />
@@ -170,15 +170,15 @@ the corpus graph">
         <di:waypoint x="1220" y="360" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_k6_di" bpmnElement="Flow_k6">
-        <di:waypoint x="1370" y="360" />
-        <di:waypoint x="1430" y="360" />
+        <di:waypoint x="1340" y="360" />
+        <di:waypoint x="1400" y="360" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Shape_DSR_corpus" bpmnElement="DSR_corpus"><dc:Bounds x="1270" y="480" width="50" height="50" />
-        <bpmndi:BPMNLabel><dc:Bounds x="1324" y="496" width="90" height="18" /></bpmndi:BPMNLabel>
+      <bpmndi:BPMNShape id="Shape_DSR_corpus" bpmnElement="DSR_corpus"><dc:Bounds x="1255" y="480" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1315" y="496" width="90" height="18" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Edge_DOA_Task_Link" bpmnElement="DOA_Task_Link">
-        <di:waypoint x="1295" y="400" />
-        <di:waypoint x="1295" y="480" />
+        <di:waypoint x="1280" y="420" />
+        <di:waypoint x="1280" y="480" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

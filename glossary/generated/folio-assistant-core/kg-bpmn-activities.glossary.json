@@ -160,7 +160,7 @@
     },
     {
       "id": "process_buildl1kg.task_glossary",
-      "prefLabel": "Read glossary and abbreviations into candidate terms",
+      "prefLabel": "Read glossary into candidate terms",
       "definition": "The source's glossary and abbreviations sections become candidate terms of a folio-glossary/v1 scheme with the Tool glossary-from-source, verbatim, each with source file#line, and an acronym as the notation of the term it expands. Terms a person owns are never changed, and only a person moves a term to authored. A source with no such section skips this step with nothing written.",
       "notation": "Task_Glossary",
       "source": "folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn#Task_Glossary",

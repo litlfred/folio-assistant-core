@@ -42,9 +42,9 @@ Build the L1 knowledge graph from what ingestion derived: Dublin Core, the manif
 - Skill: `document-intake`.
 - What: Bind the folder name to the document's bibliography slug, so library/<bib-slug>/ and its citation key are the same string: a citation resolves to a directory without a lookup table between them.
 - Record it: `workflow_complete` with `node: "Task_Bind"`.
-- next: → `Task_Glossary` (Read glossary and abbreviations into candidate terms)
+- next: → `Task_Glossary` (Read glossary into candidate terms)
 
-### 5. Read glossary and abbreviations into candidate terms (`Task_Glossary`)
+### 5. Read glossary into candidate terms (`Task_Glossary`)
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `glossary-terms`.
