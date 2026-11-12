@@ -508,7 +508,7 @@
 
 <ul>
   <li><strong>Called by:</strong> <a href="kg-separation.html">A knowledge graph leaves for its own repositories</a>, <a href="sub-kg-lifecycle.html">A sub-KG is staged in place, then leaves for its own repository</a></li>
-  <li><strong>Calls:</strong> <code class="language-plaintext highlighter-rouge">Process_PublishVerification</code> (not loadable here), <code class="language-plaintext highlighter-rouge">Process_UpstreamAdoption</code> (not loadable here)</li>
+  <li><strong>Calls:</strong> none</li>
   <li><strong>Presented on:</strong> no docs page section shows this diagram</li>
   <li><strong>Running instances:</strong> none recorded</li>
 </ul>
@@ -599,7 +599,7 @@
     <tr>
       <td><a id="step-Task_Repoint"></a><strong>Re-point: livesAt, seam, mount or subscription</strong><br /><code class="language-plaintext highlighter-rouge">Task_Repoint</code></td>
       <td>Platform authoring agent</td>
-      <td><a href="../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"><code class="language-plaintext highlighter-rouge">sub-kg-lifecycle</code></a><br /><code class="language-plaintext highlighter-rouge">upstream-version-adoption</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"><code class="language-plaintext highlighter-rouge">sub-kg-lifecycle</code></a><br /><a href="../../../en/cat-harness/processes/skills/upstream-version-adoption.html"><code class="language-plaintext highlighter-rouge">upstream-version-adoption</code></a></td>
       <td>In the new repository <code class="language-plaintext highlighter-rouge">livesAt</code> goes (absent means it sits at the root of <code class="language-plaintext highlighter-rouge">repository</code>) and <code class="language-plaintext highlighter-rouge">platform.ts</code> points at where the platform now is. The host consumes it as a remote mount (a <code class="language-plaintext highlighter-rouge">source.remote</code> instance in its root <code class="language-plaintext highlighter-rouge">index.config.json</code>) if it imports its code, or a subscription if it only reads its content, pinned to a commit while staging. Additive: the host keeps its copy.</td>
     </tr>
     <tr>
@@ -611,20 +611,20 @@
     <tr>
       <td><a id="step-Task_Consume"></a><strong>Parent consumes, additively</strong><br /><code class="language-plaintext highlighter-rouge">Task_Consume</code></td>
       <td>Platform authoring agent</td>
-      <td>calls <code class="language-plaintext highlighter-rouge">Process_UpstreamAdoption</code><br /><code class="language-plaintext highlighter-rouge">upstream-version-adoption</code></td>
-      <td>The parent pins the pair (a commit while staging, a version once released) — a code dependency as a <code class="language-plaintext highlighter-rouge">source.remote</code> instance in its root <code class="language-plaintext highlighter-rouge">index.config.json</code> (remote-mount skill), never a submodule — repoints its imports, and keeps its own copy until it is green with the dependency declared.</td>
+      <td><a href="../../../en/cat-harness/processes/skills/upstream-version-adoption.html"><code class="language-plaintext highlighter-rouge">upstream-version-adoption</code></a></td>
+      <td>The parent pins the pair (a commit while staging, a version once released) — a code dependency as a <code class="language-plaintext highlighter-rouge">source.remote</code> instance in its root <code class="language-plaintext highlighter-rouge">index.config.json</code> (remote-mount skill), never a submodule — repoints its imports, and keeps its own copy until it is green with the dependency declared. Where <code class="language-plaintext highlighter-rouge">cat-harness.sdlc</code> is switched on, this step is the opt-in process <a href="../../../en/cat-harness/processes/skills/upstream-version-adoption.html"><code class="language-plaintext highlighter-rouge">upstream-version-adoption</code></a> (<code class="language-plaintext highlighter-rouge">Process_UpstreamAdoption</code>, sdlc/processes/upstream-version-adoption.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12).</td>
     </tr>
     <tr>
       <td><a id="step-Task_Release"></a><strong>First release</strong><br /><code class="language-plaintext highlighter-rouge">Task_Release</code></td>
       <td>Publication manager</td>
-      <td><code class="language-plaintext highlighter-rouge">package-release</code></td>
+      <td>—</td>
       <td>Tag each repository, publish /v&lt;major&gt;/. From here the two are versioned independently; a tools release lists the content majors it supports.</td>
     </tr>
     <tr>
       <td><a id="step-Task_Verify"></a><strong>Every identifier dereferences</strong><br /><code class="language-plaintext highlighter-rouge">Task_Verify</code></td>
       <td>Build pipeline</td>
-      <td>calls <code class="language-plaintext highlighter-rouge">Process_PublishVerification</code><br /><code class="language-plaintext highlighter-rouge">publish-verification</code></td>
-      <td>After the release is live, every published identifier resolves to the file it names.</td>
+      <td>—</td>
+      <td>After the release is live, every published identifier resolves to the file it names. Where <code class="language-plaintext highlighter-rouge">cat-harness.sdlc</code> is switched on, this step is the opt-in process <code class="language-plaintext highlighter-rouge">publish-verification</code> (<code class="language-plaintext highlighter-rouge">Process_PublishVerification</code>, sdlc/processes/publish-verification.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12).</td>
     </tr>
   </tbody>
 </table></div>

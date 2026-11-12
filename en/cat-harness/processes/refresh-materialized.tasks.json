@@ -273,11 +273,14 @@
      "href": "../../../en/cat-harness/processes/skills/materialize-remote.html"
     },
     {
-     "name": "adjudication"
+     "name": "adjudication",
+     "href": "../../../en/cat-harness/processes/skills/adjudication.html"
     }
    ],
    "calls": {
-    "name": "Process_Adjudication"
+    "name": "Adjudication",
+    "href": "adjudication.html",
+    "diagram": "adjudication.html"
    },
    "role": {
     "name": "user",
@@ -285,7 +288,8 @@
     "title": "User",
     "skills": [
      {
-      "name": "adjudication"
+      "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html"
      },
      {
       "name": "agent-permissions",
@@ -347,7 +351,8 @@
     "title": "User",
     "skills": [
      {
-      "name": "adjudication"
+      "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html"
      },
      {
       "name": "agent-permissions",

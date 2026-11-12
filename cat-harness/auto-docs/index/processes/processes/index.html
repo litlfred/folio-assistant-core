@@ -375,7 +375,7 @@
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/kg/copy-into-folio.bpmn"><code>Copy a knowledge-graph asset into a folio</code></a><br><span class="p">cat-harness/processes/kg/copy-into-folio.bpmn</span></td>
-  <td>Taking an asset from an upstream knowledge graph into your own folio so you can edit it, comment on it or raise todos against it — without touching the upstream source and without losing where it came from.<div class="f"><span class="k">activities</span> 8</div><div class="f"><span class="k">lanes</span> Folio author · Authoring agent · Source knowledge graph — read-only · Validation pipeline</div><div class="f"><span class="k">skills</span> directory-conventions, kg-affordances, todo-manager</div></td>
+  <td>Taking an asset from an upstream knowledge graph into your own folio so you can edit it, comment on it or raise todos against it — without touching the upstream source and without losing where it came from.<div class="f"><span class="k">activities</span> 8</div><div class="f"><span class="k">lanes</span> Folio author · Authoring agent · Source knowledge graph — read-only · Validation pipeline</div><div class="f"><span class="k">skills</span> directory-conventions, kg-affordances</div></td>
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/kg/graph-detanglement.bpmn"><code>A sub-graph wants to leave</code></a><br><span class="p">cat-harness/processes/kg/graph-detanglement.bpmn</span></td>
@@ -391,7 +391,7 @@
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/kg/kg-separation-move.bpmn"><code>Move the graph into its repositories</code></a><br><span class="p">cat-harness/processes/kg/kg-separation-move.bpmn</span></td>
-  <td>Creates the repositories, drains the open PRs until the source settles, seeds them, re-points the declaration and verifies a fresh clone, then has the parent consume the result additively, makes the first release and ch…<div class="f"><span class="k">activities</span> 8</div><div class="f"><span class="k">lanes</span> Administrator · Authoring agent · Build pipeline · Platform authoring agent · Publication manager</div><div class="f"><span class="k">skills</span> kg-separation, package-release, publish-verification, sub-kg-lifecycle, upstream-version-adoption</div></td>
+  <td>Creates the repositories, drains the open PRs until the source settles, seeds them, re-points the declaration and verifies a fresh clone, then has the parent consume the result additively, makes the first release and ch…<div class="f"><span class="k">activities</span> 8</div><div class="f"><span class="k">lanes</span> Administrator · Authoring agent · Build pipeline · Platform authoring agent · Publication manager</div><div class="f"><span class="k">skills</span> kg-separation, sub-kg-lifecycle, upstream-version-adoption</div></td>
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/kg/kg-separation-prepare.bpmn"><code>Prepare a graph to stand alone</code></a><br><span class="p">cat-harness/processes/kg/kg-separation-prepare.bpmn</span></td>
@@ -427,7 +427,11 @@
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/actor-role-administration.bpmn"><code>Actor and role administration</code></a><br><span class="p">cat-harness/processes/process/actor-role-administration.bpmn</span></td>
-  <td>Changing who can do what: adding an actor, opening or closing a role to one, granting or revoking a permission — and auditing the graph afterwards, because the declaration and the graph are two things that can disagree.<div class="f"><span class="k">activities</span> 6</div><div class="f"><span class="k">lanes</span> Administrator · Graph audit (system)</div><div class="f"><span class="k">skills</span> continual-progress, deletion-requires-confirmation, prepare-merge, role-model</div></td>
+  <td>Changing who can do what: adding an actor, opening or closing a role to one, granting or revoking a permission — and auditing the graph afterwards, because the declaration and the graph are two things that can disagree.<div class="f"><span class="k">activities</span> 6</div><div class="f"><span class="k">lanes</span> Administrator · Graph audit (system)</div><div class="f"><span class="k">skills</span> continual-progress, deletion-requires-confirmation, role-model</div></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/adjudication.bpmn"><code>Adjudication</code></a><br><span class="p">cat-harness/processes/process/adjudication.bpmn</span></td>
+  <td>A criterion's reviewer entries disagree and no mechanism can settle them: this is the judgement that does, and the record it must leave.<div class="f"><span class="k">activities</span> 3</div><div class="f"><span class="k">lanes</span> Feedback provider · Adjudicator</div><div class="f"><span class="k">skills</span> adjudication, content-feedback, untainted-verification</div></td>
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/ask-the-person.bpmn"><code>Ask the person</code></a><br><span class="p">cat-harness/processes/process/ask-the-person.bpmn</span></td>
@@ -435,7 +439,7 @@
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/crdm-close.bpmn"><code>CRDM close-out</code></a><br><span class="p">cat-harness/processes/process/crdm-close.bpmn</span></td>
-  <td>The stakeholders sign off, the BA confirms every criterion is met, the feature lands on <code>main</code> through the <code>merge-to-main</code> sub-process, and only then does the agent close the issue.<div class="f"><span class="k">activities</span> 5</div><div class="f"><span class="k">lanes</span> BA / Feature Requestor · Agent · Stakeholders</div><div class="f"><span class="k">skills</span> adjudication, crdm-requirements-workflow, merge-to-main</div></td>
+  <td>The stakeholders sign off, the BA confirms every criterion is met, the feature lands on <code>main</code> through the <code>merge-to-main</code> sub-process, and only then does the agent close the issue.<div class="f"><span class="k">activities</span> 5</div><div class="f"><span class="k">lanes</span> BA / Feature Requestor · Agent · Stakeholders</div><div class="f"><span class="k">skills</span> adjudication, crdm-requirements-workflow</div></td>
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/crdm-data-model.bpmn"><code>CRDM data model</code></a><br><span class="p">cat-harness/processes/process/crdm-data-model.bpmn</span></td>
@@ -443,7 +447,7 @@
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/crdm-deliver.bpmn"><code>CRDM Phase 6 — implement, MVP, acceptance</code></a><br><span class="p">cat-harness/processes/process/crdm-deliver.bpmn</span></td>
-  <td>One phase and not three, because the loops say so: an increment the BA rejects, an MVP that is not ready, and stakeholder findings all route back into implementation.<div class="f"><span class="k">activities</span> 9</div><div class="f"><span class="k">lanes</span> BA / Feature Requestor · Agent · Stakeholders</div><div class="f"><span class="k">skills</span> crdm-requirements-workflow, delivery-summary, feature-staging, prepare-merge, staging-review</div></td>
+  <td>One phase and not three, because the loops say so: an increment the BA rejects, an MVP that is not ready, and stakeholder findings all route back into implementation.<div class="f"><span class="k">activities</span> 9</div><div class="f"><span class="k">lanes</span> BA / Feature Requestor · Agent · Stakeholders</div><div class="f"><span class="k">skills</span> crdm-requirements-workflow, feature-staging, staging-review</div></td>
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/crdm-issue-linking.bpmn"><code>CRDM — link the work to an issue</code></a><br><span class="p">cat-harness/processes/process/crdm-issue-linking.bpmn</span></td>
@@ -463,11 +467,23 @@
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/crdm-signoff.bpmn"><code>CRDM Phase 5 — beans and sign-off</code></a><br><span class="p">cat-harness/processes/process/crdm-signoff.bpmn</span></td>
-  <td>The approved requirements become work-plan items, the BA signs off, and the branch is announced on the issue.<div class="f"><span class="k">activities</span> 7</div><div class="f"><span class="k">lanes</span> BA / Feature Requestor · Agent</div><div class="f"><span class="k">skills</span> adjudication, coordinate, crdm-requirements-workflow, kg-contribution-offer, placement, todo-manager</div></td>
+  <td>The approved requirements become work-plan items, the BA signs off, and the branch is announced on the issue.<div class="f"><span class="k">activities</span> 7</div><div class="f"><span class="k">lanes</span> BA / Feature Requestor · Agent</div><div class="f"><span class="k">skills</span> adjudication, crdm-requirements-workflow, kg-contribution-offer, placement</div></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/criterion-adjudication.bpmn"><code>Criterion adjudication</code></a><br><span class="p">cat-harness/processes/process/criterion-adjudication.bpmn</span></td>
+  <td>Two reviewer entries for ONE QA criterion disagree: ask the adjudication, then do the one of three things that a criterion disagreement admits.<div class="f"><span class="k">activities</span> 4</div><div class="f"><span class="k">lanes</span> Adjudicator</div><div class="f"><span class="k">skills</span> adjudication</div></td>
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/hand-back-to-discussion.bpmn"><code>Hand back to the discussion</code></a><br><span class="p">cat-harness/processes/process/hand-back-to-discussion.bpmn</span></td>
   <td>How a sibling agent gets a card, question, result, blocker or context in front of the person: through the discussion agent that is talking with them, never only in its own thread.<div class="f"><span class="k">activities</span> 8</div><div class="f"><span class="k">lanes</span> Sibling · Discussion agent</div><div class="f"><span class="k">skills</span> ask-the-person, hand-back-to-discussion, symbiotic-interaction</div></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/options-analysis.bpmn"><code>Options analysis</code></a><br><span class="p">cat-harness/processes/process/options-analysis.bpmn</span></td>
+  <td>A decision reached by a NAMED methodology, with its rejected options recorded.<div class="f"><span class="k">activities</span> 5</div><div class="f"><span class="k">lanes</span> Business analyst</div><div class="f"><span class="k">skills</span> decision-audit, literature-search, methodology-adoption, opening-brief</div></td>
+</tr>
+<tr>
+  <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/related-work.bpmn"><code>Related work: find, sort, summarize, ask to coordinate</code></a><br><span class="p">cat-harness/processes/process/related-work.bpmn</span></td>
+  <td>Before new work takes shape, find the work it touches.<div class="f"><span class="k">activities</span> 5</div><div class="f"><span class="k">lanes</span> Agent · User</div><div class="f"><span class="k">skills</span> interaction-modality</div></td>
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/render-kg-to-cdn.bpmn"><code>Render a Knowledge Graph to a CDN</code></a><br><span class="p">cat-harness/processes/process/render-kg-to-cdn.bpmn</span></td>
@@ -491,7 +507,7 @@
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/ui/harness-default-rendering.bpmn"><code>A harness's default rendering</code></a><br><span class="p">cat-harness/processes/ui/harness-default-rendering.bpmn</span></td>
-  <td>Renders a harness layer as its default interface: its left-hand nav and docs on its own theme's art, and a board of its todos and beans from which a reader reads, reviews and, when a write tool is available, proposes ch…<div class="f"><span class="k">activities</span> 7</div><div class="f"><span class="k">lanes</span> Build pipeline · Board renderer · Reviewer</div><div class="f"><span class="k">skills</span> content-feedback, content-review, harness-tiles, kg-affordances, liquid-templates, todo-manager</div></td>
+  <td>Renders a harness layer as its default interface: its left-hand nav and docs on its own theme's art, and a board of its todos and beans from which a reader reads, reviews and, when a write tool is available, proposes ch…<div class="f"><span class="k">activities</span> 7</div><div class="f"><span class="k">lanes</span> Build pipeline · Board renderer · Reviewer</div><div class="f"><span class="k">skills</span> content-feedback, content-review, harness-tiles, kg-affordances, liquid-templates</div></td>
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/ui/ingest-theme.bpmn"><code>Ingestion subprocess — ingest a theme</code></a><br><span class="p">cat-harness/processes/ui/ingest-theme.bpmn</span></td>
@@ -507,7 +523,7 @@
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/ui/web-app-publish.bpmn"><code>Publish a web app — declared, translated, built at its own route</code></a><br><span class="p">cat-harness/processes/ui/web-app-publish.bpmn</span></td>
-  <td>How any layer publishes an interactive app it holds as source, without becoming a harness (owner, 2026-11-11: cards Q-GAME-5 A and Q-GAME-7 A).<div class="f"><span class="k">activities</span> 7</div><div class="f"><span class="k">lanes</span> App author · CI/CD Pipeline · Translators</div><div class="f"><span class="k">skills</span> web-apps</div></td>
+  <td>How any layer publishes an interactive app it holds as source, without becoming a harness.<div class="f"><span class="k">activities</span> 7</div><div class="f"><span class="k">lanes</span> App author · CI/CD Pipeline · Translators</div><div class="f"><span class="k">skills</span> web-apps</div></td>
 </tr>
 <tr>
   <td><a href="https://github.com/litlfred/cat-harness/blob/main/processes/ui/wireframe-design-review.bpmn"><code>Wireframe design review</code></a><br><span class="p">cat-harness/processes/ui/wireframe-design-review.bpmn</span></td>

@@ -281,11 +281,11 @@
 
 <p>Candidate terms extracted from every BPMN task and call activity: <code class="language-plaintext highlighter-rouge">name</code> as the label, its own <code class="language-plaintext highlighter-rouge">&lt;documentation&gt;</code> as the definition, the element id as the code. Each is the asset’s own text, verbatim and not curated, and carries the badge “candidate, extracted”. A person promotes one by authoring it. Authored terms are on their owning instance’s page, and those pages, the counts and the sources are linked from the <a href="../../../../../en/folio-assistant-core/glossary/">glossary index</a>.</p>
 
-<p>From: bootstrap 38 (<a href="../../../../../assets/glossary/bootstrap--kg-bpmn-activities.skos.jsonld">SKOS</a>) · bootstrap-tools 7 (<a href="../../../../../assets/glossary/bootstrap-tools--kg-bpmn-activities.skos.jsonld">SKOS</a>) · cat-harness 359 (<a href="../../../../../assets/glossary/cat-harness--kg-bpmn-activities.skos.jsonld">SKOS</a>).</p>
+<p>From: bootstrap 38 (<a href="../../../../../assets/glossary/bootstrap--kg-bpmn-activities.skos.jsonld">SKOS</a>) · bootstrap-tools 7 (<a href="../../../../../assets/glossary/bootstrap-tools--kg-bpmn-activities.skos.jsonld">SKOS</a>) · cat-harness 376 (<a href="../../../../../assets/glossary/cat-harness--kg-bpmn-activities.skos.jsonld">SKOS</a>).</p>
 
 <p>One of 3 pages of this type, split by the first letter of the label: <a href="../../../../../en/folio-assistant-core/glossary/bpmn-activities/">all parts</a>.</p>
 
-<p><strong>Size:</strong> this page holds 130 terms and is 107 KB before compression, fetched in one request, within its budget of 1.0 MB. There is no search index: the filter below runs over this page, and the A–Z bar jumps within it.</p>
+<p><strong>Size:</strong> this page holds 132 terms and is 110 KB before compression, fetched in one request, within its budget of 1.0 MB. There is no search index: the filter below runs over this page, and the A–Z bar jumps within it.</p>
 
 <div class="table-wrapper"><table class="fa-gloss-mapping">
 <caption>Already somebody else's concept? — <code>check:term-mapping</code>, bean <code>7wou</code></caption>
@@ -300,7 +300,7 @@ be a term this corpus is right to coin.</p>
 
 <p><label for="fa-gloss-q">Filter terms</label>
 <input id="fa-gloss-q" type="search" autocomplete="off" style="min-height:44px;width:100%;max-width:32rem" /></p>
-<p aria-live="polite"><span id="fa-gloss-n">130</span> shown</p>
+<p aria-live="polite"><span id="fa-gloss-n">132</span> shown</p>
 
 <nav aria-label="Letters"><a href="#letter-E">E</a> <a href="#letter-F">F</a> <a href="#letter-G">G</a> <a href="#letter-H">H</a> <a href="#letter-I">I</a> <a href="#letter-J">J</a> <a href="#letter-K">K</a> <a href="#letter-L">L</a> <a href="#letter-M">M</a> <a href="#letter-N">N</a> <a href="#letter-O">O</a> <a href="#letter-P">P</a> <a href="#letter-Q">Q</a></nav>
 <h2 id="letter-E">
@@ -365,7 +365,7 @@ Establish who is acting <span class="fa-gloss-status">candidate, extracted</span
 Every identifier dereferences <span class="fa-gloss-status">candidate, extracted</span>
 </dt>
 <dd>
-<p>After the release is live, every published identifier resolves to the file it names.</p>
+<p>After the release is live, every published identifier resolves to the file it names. Where <code>cat-harness.sdlc</code> is switched on, this step is the opt-in process <code>publish-verification</code> (<code>Process_PublishVerification</code>, sdlc/processes/publish-verification.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12).</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/kg/kg-separation-move.bpmn"><code>cat-harness/processes/kg/kg-separation-move.bpmn#Task_Verify</code></a></p>
 </dd>
 <dt id="cat-harness--kg-bpmn-activities--process_methodologyfromsource.a_tools" data-fa-state="extracted" data-fa-gloss="">
@@ -511,6 +511,13 @@ Follow up, narrower <span class="fa-gloss-status">candidate, extracted</span>
 <p>The answer did not settle it: it named a kind rather than an option, or chose two. Ask once more, narrower, naming what the first answer left open. Once: an agent that keeps asking has stopped narrowing.</p>
 <p class="fa-gloss-meta">BPMN activities of bootstrap · source <a href="https://github.com/litlfred/bootstrap/blob/main/processes/human-agent-discussion.bpmn"><code>bootstrap/processes/human-agent-discussion.bpmn#A_FollowUp</code></a></p>
 </dd>
+<dt id="cat-harness--kg-bpmn-activities--process_optionsanalysis.a_frame" data-fa-state="extracted" data-fa-gloss="">
+Frame the decision and check the trigger <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>One sentence naming the KIND of thing being chosen, not the options — &quot;which cache strategy&quot;, never &quot;A or B&quot;. Then the trigger: is this irreversible, or would the answer surprise someone? If neither, say so and stop; the calling step decides without this subprocess. Stopping here is a correct outcome, not a skipped step.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/options-analysis.bpmn"><code>cat-harness/processes/process/options-analysis.bpmn#A_Frame</code></a></p>
+</dd>
 </dl>
 <h2 id="letter-G">
   
@@ -534,6 +541,13 @@ Give a link, a description, or neither <span class="fa-gloss-status">candidate, 
 <dd>
 <p>&quot;Or neither&quot; is a real outcome, not a failure. The ask says what happens if nothing comes, and then that happens — the work proceeds without the resource and says so.</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/library/processes/content-acquisition.bpmn"><code>cat-harness/library/processes/content-acquisition.bpmn#P_Respond</code></a></p>
+</dd>
+<dt id="cat-harness--kg-bpmn-activities--process_criterionadjudication.a_dispensation" data-fa-state="extracted" data-fa-gloss="">
+Grant a dispensation, with its reason <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>The rule applies and this subject is a stated exception. A <code>kind: &quot;human&quot;</code> entry with <code>result: &quot;pass&quot;</code> overrides the script's <code>fail</code> for that criterion, and ONLY while its <code>field_hash</code> matches the current source — so the dispensation is scoped to the version it was granted against, lapses when the block changes, and never becomes precedent. There is nothing to overturn later; the source moving overturns it. A dispensation with no <code>notes</code> is not a dispensation. It is an override somebody applied to get to green, and nobody can review it afterwards — which is why this step is not relaxable.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/criterion-adjudication.bpmn"><code>cat-harness/processes/process/criterion-adjudication.bpmn#A_Dispensation</code></a></p>
 </dd>
 <dt id="cat-harness--kg-bpmn-activities--process_actorroleadministration.task_grantorrevoke" data-fa-state="extracted" data-fa-gloss="">
 Grant or revoke a permission <span class="fa-gloss-status">candidate, extracted</span>
@@ -757,7 +771,7 @@ Land the bytes in the copier's own folio/ <span class="fa-gloss-status">candidat
 Land the feature's PRs <span class="fa-gloss-status">candidate, extracted</span>
 </dt>
 <dd>
-<p>Phase 6's &quot;explicit confirmation before merging to main&quot;, made a step that can refuse. Once per pull request the feature still has open, after the sign-off is recorded and before the issue is closed: an issue is not closed on a feature that is not on <code>main</code>. <code>merge-to-main.bpmn</code> reads each head's evidence live, establishes that the owner authorised THAT merge (a stakeholder sign-off or the BA's confirmation is acceptance of the feature, not authorisation to merge it, unless the owner's own words say so), records the authorisation, merges, and confirms the base. A PR the owner holds or refuses stays open, and A_Close then waits: the BA's authorisation to close does not cover a feature that did not land. An increment the owner asked to land earlier in Phase 6 went through the same sub-process at that time.</p>
+<p>Phase 6's &quot;explicit confirmation before merging to main&quot;, made a step that can refuse. Once per pull request the feature still has open, after the sign-off is recorded and before the issue is closed: an issue is not closed on a feature that is not on <code>main</code>. <code>merge-to-main.bpmn</code> reads each head's evidence live, establishes that the owner authorised THAT merge (a stakeholder sign-off or the BA's confirmation is acceptance of the feature, not authorisation to merge it, unless the owner's own words say so), records the authorisation, merges, and confirms the base. A PR the owner holds or refuses stays open, and A_Close then waits: the BA's authorisation to close does not cover a feature that did not land. An increment the owner asked to land earlier in Phase 6 went through the same sub-process at that time. Where <code>cat-harness.sdlc</code> is switched on, this step is the opt-in process <code>merge-to-main</code> (<code>Process_MergeToMain</code>, sdlc/processes/merge-to-main.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12).</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/crdm-close.bpmn"><code>cat-harness/processes/process/crdm-close.bpmn#Call_MergeToMain</code></a></p>
 </dd>
 <dt id="cat-harness--kg-bpmn-activities--process_themeuireview.a_locales" data-fa-state="extracted" data-fa-gloss="">
@@ -1105,7 +1119,7 @@ Package with digests <span class="fa-gloss-status">candidate, extracted</span>
 Parent consumes, additively <span class="fa-gloss-status">candidate, extracted</span>
 </dt>
 <dd>
-<p>The parent pins the pair (a commit while staging, a version once released) — a code dependency as a <code>source.remote</code> instance in its root <code>index.config.json</code> (remote-mount skill), never a submodule — repoints its imports, and keeps its own copy until it is green with the dependency declared.</p>
+<p>The parent pins the pair (a commit while staging, a version once released) — a code dependency as a <code>source.remote</code> instance in its root <code>index.config.json</code> (remote-mount skill), never a submodule — repoints its imports, and keeps its own copy until it is green with the dependency declared. Where <code>cat-harness.sdlc</code> is switched on, this step is the opt-in process <code>upstream-version-adoption</code> (<code>Process_UpstreamAdoption</code>, sdlc/processes/upstream-version-adoption.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12).</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/kg/kg-separation-move.bpmn"><code>cat-harness/processes/kg/kg-separation-move.bpmn#Task_Consume</code></a></p>
 </dd>
 <dt id="cat-harness--kg-bpmn-activities--process_crdm.call_needs" data-fa-state="extracted" data-fa-gloss="">
@@ -1301,7 +1315,7 @@ Propose the change <span class="fa-gloss-status">candidate, extracted</span>
 Prose and the code it describes <span class="fa-gloss-status">candidate, extracted</span>
 </dt>
 <dd>
-<p>Descend into Process_NarrativeCodeReview: judge what the pair checks could not settle (a stale pair, a false or undetermined claim), and send a disagreement with a checker to adjudication.</p>
+<p>Descend into Process_NarrativeCodeReview: judge what the pair checks could not settle (a stale pair, a false or undetermined claim), and send a disagreement with a checker to adjudication. Where <code>cat-harness.sdlc</code> is switched on, this step is the opt-in process <code>narrative-code-review</code> (<code>Process_NarrativeCodeReview</code>, sdlc/processes/narrative-code-review.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12).</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/content/review-task.bpmn"><code>cat-harness/processes/content/review-task.bpmn#Call_NarrativeCodeReview</code></a></p>
 </dd>
 <dt id="cat-harness--kg-bpmn-activities--process_harnessrendering.a_publish" data-fa-state="extracted" data-fa-gloss="">

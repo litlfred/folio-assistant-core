@@ -607,19 +607,19 @@
     <tr>
       <td><a id="step-Call_StageChange"></a><strong>Stage the change</strong><br /><code class="language-plaintext highlighter-rouge">Call_StageChange</code></td>
       <td>CI/CD Pipeline</td>
-      <td>calls <a href="content-change-review-stage.html">Stage the content change</a><br /><code class="language-plaintext highlighter-rouge">feature-staging</code></td>
+      <td>calls <a href="content-change-review-stage.html">Stage the content change</a><br /><a href="../../../en/cat-harness/processes/skills/feature-staging.html"><code class="language-plaintext highlighter-rouge">feature-staging</code></a></td>
       <td>content-change-review-stage.bpmn: build and deploy the branch to its staging preview, link it on the pull request, and watch the branch’s CI. Runs once per push.</td>
     </tr>
     <tr>
       <td><a id="step-Task_ReviewStaging"></a><strong>Review staged rendering</strong><br /><code class="language-plaintext highlighter-rouge">Task_ReviewStaging</code></td>
       <td>Content Author</td>
-      <td><code class="language-plaintext highlighter-rouge">staging-review</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/staging-review.html"><code class="language-plaintext highlighter-rouge">staging-review</code></a></td>
       <td>Author reviews the rendered feature branch at<br />&lt;pages-url&gt;/branches/&lt;branch-slug&gt;/ and compares<br />against the main site. The staging banner shows the commit SHA.<br />The agent’s before/after preview (skill before-after-preview) sits<br />beside the URLs, with its counts and status line.</td>
     </tr>
     <tr>
       <td><a id="step-Task_RequestRevision"></a><strong>Request further revisions</strong><br /><code class="language-plaintext highlighter-rouge">Task_RequestRevision</code></td>
       <td>Content Author</td>
-      <td><code class="language-plaintext highlighter-rouge">staging-review</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/staging-review.html"><code class="language-plaintext highlighter-rouge">staging-review</code></a></td>
       <td>Author provides feedback on what needs adjustment.<br />Agent iterates on the feature branch.</td>
     </tr>
     <tr>
@@ -631,7 +631,7 @@
     <tr>
       <td><a id="step-Task_SubmitForReview"></a><strong>Submit to review committee</strong><br /><code class="language-plaintext highlighter-rouge">Task_SubmitForReview</code></td>
       <td>Content Author</td>
-      <td><code class="language-plaintext highlighter-rouge">staging-review</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/staging-review.html"><code class="language-plaintext highlighter-rouge">staging-review</code></a></td>
       <td>Author submits the PR for formal review by the guidance review committee.<br />The branches/ URL is the review surface.</td>
     </tr>
     <tr>

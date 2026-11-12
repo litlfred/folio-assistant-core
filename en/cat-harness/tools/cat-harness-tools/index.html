@@ -236,6 +236,11 @@
 .tg-mcp{color:#b9a8ec}     /* 7.06:1 */
 .tg-inproc{color:#86b8f2}  /* 7.26:1 */
 .tg-manual{color:#f5a070}  /* 7.25:1 */
+.tg-action{color:#e6c07b}
+:root[data-fa-scheme="light"] .tg-action{color:#7a5a00}
+.tg-filter{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin:.5rem 0}
+.tg-filter button{font:inherit;font-size:.8rem;padding:.15rem .6rem;border-radius:3px;border:1px solid rgba(128,128,128,.5);background:transparent;color:inherit;cursor:pointer}
+.tg-filter button[aria-pressed="true"]{border-color:currentColor;font-weight:600}
 :root[data-fa-scheme="light"] .tg-shell{color:#0d6e5e}
 :root[data-fa-scheme="light"] .tg-mcp{color:#6b5b95}
 :root[data-fa-scheme="light"] .tg-inproc{color:#1d5fa8}
@@ -275,6 +280,8 @@
 
 <p>The Tool nodes <strong>cat-harness-tools</strong> declares in its <code class="language-plaintext highlighter-rouge">tools</code> graph — one instance’s slice of <a href="../">every instance’s tools</a>.</p>
 
+<p><strong>As an API:</strong> <a href="openapi.json">OpenAPI document</a> · <a href="mcp-tools.json">MCP tool list</a> · <a href="api/">API reference</a>.</p>
+
 <p>A <strong>skill</strong> states a capability generically: what an actor needs to know to
 perform a task. A <strong>Tool</strong> is one concrete way to exercise it, with an
 installation, an invocation and typed inputs and outputs. One skill may be
@@ -311,11 +318,11 @@ to do that</em>, never <em>this skill is a tool</em>.</p>
   </thead>
   <tbody>
     <tr>
-      <td><span class="tg-tag tg-inproc">inProcess</span></td>
+      <td><span class="tg-tag tg-inproc" data-surface="inProcess">inProcess</span></td>
       <td>1</td>
     </tr>
     <tr>
-      <td><span class="tg-tag tg-mcp">mcp</span></td>
+      <td><span class="tg-tag tg-mcp" data-surface="mcp">mcp</span></td>
       <td>1</td>
     </tr>
   </tbody>
@@ -356,6 +363,8 @@ tool advertising a capability the graph cannot locate.</p>
 </h2>
     
 
+<div class="tg-filter" id="tg-filter" role="group" aria-label="Filter by how a tool is reached"><span>Reached as:</span><button type="button" aria-pressed="true" data-surface="">all</button><button type="button" aria-pressed="false" data-surface="inProcess">inProcess (1)</button><button type="button" aria-pressed="false" data-surface="mcp">mcp (1)</button><span><span id="tg-shown">1</span> of 1 shown</span></div>
+
 <div class="table-wrapper"><table>
   <thead>
     <tr>
@@ -369,15 +378,28 @@ tool advertising a capability the graph cannot locate.</p>
   </thead>
   <tbody>
     <tr>
-      <td><a id="bpmn-engine"></a><a href="#bpmn-engine"><code class="language-plaintext highlighter-rouge">bpmn-engine</code></a><br />BPMN workflow engine</td>
+      <td><a id="bpmn-engine"></a><a href="bpmn-engine/"><code class="language-plaintext highlighter-rouge">bpmn-engine</code></a><br />BPMN workflow engine</td>
       <td>Run a declared BPMN process as an instance: <code class="language-plaintext highlighter-rouge">workflow_start</code> opens one for a subject, <code class="language-plaintext highlighter-rouge">workflow_next</code> reports what is enabled, <code class="language-plaintext highlighter-rouge">workflow_complete</code> records a step or answers a decision (a DMN-computed one from <code class="language-plaintext highlighter-rouge">facts</code>) and REFUSES a step that is not enabled. State is committed under the work plan, so which edge was taken is a record, not a memory.</td>
-      <td><span class="tg-tag tg-inproc">inProcess</span> <span class="tg-tag tg-mcp">mcp</span></td>
+      <td><span class="tg-tag tg-inproc" data-surface="inProcess">inProcess</span> <span class="tg-tag tg-mcp" data-surface="mcp">mcp</span></td>
       <td><code class="language-plaintext highlighter-rouge">process-state</code></td>
       <td>2 in / 1 out</td>
       <td><a href="https://github.com/litlfred/folio-assistant-core/blob/cat/cat-harness/qa-reports/index.json"><code class="language-plaintext highlighter-rouge">qa-reports</code></a></td>
     </tr>
   </tbody>
 </table></div>
+<script>
+(function(){
+  var bar=document.getElementById('tg-filter'); if(!bar) return;
+  var t=bar.nextElementSibling; while(t && !t.querySelector('table')) t=t.nextElementSibling; if(!t) return;
+  var rows=t.querySelectorAll('tbody tr'), out=document.getElementById('tg-shown');
+  bar.addEventListener('click',function(e){ var b=e.target.closest('button'); if(!b) return;
+    bar.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',String(x===b));});
+    var s=b.getAttribute('data-surface'), n=0;
+    rows.forEach(function(r){ var ok=!s || !!r.querySelector('[data-surface="'+s+'"]'); r.hidden=!ok; if(ok) n++; });
+    if(out) out.textContent=String(n); });
+})();
+</script>
+
 
           
 

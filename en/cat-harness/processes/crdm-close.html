@@ -281,11 +281,12 @@
 <div class="pt-diagram" data-panel="crdm-close.tasks.json">
 <img src="../../../assets/img/workflows/crdm-close.svg" alt="BPMN diagram: CRDM close-out" />
 <div class="pt-layer">
-<button type="button" class="pt-mark" data-task="S_FeatureSignoff" style="left:26.97%;top:73.58%" aria-expanded="false" aria-label="About step: Feature sign-off on issue" title="About: Feature sign-off on issue">i</button>
-<button type="button" class="pt-mark" data-task="BA_Confirm" style="left:42.12%;top:45.28%" aria-expanded="false" aria-label="About step: Confirm all criteria met" title="About: Confirm all criteria met">i</button>
-<button type="button" class="pt-mark" data-task="A_RecordSignoff" style="left:42.12%;top:6.6%" aria-expanded="false" aria-label="About step: Record the sign-off attestation" title="About: Record the sign-off attestation">i</button>
-<button type="button" class="pt-mark" data-task="Call_MergeToMain" style="left:74.44%;top:6.6%" aria-expanded="false" aria-label="About step: Land the feature's PRs" title="About: Land the feature's PRs">i</button>
-<button type="button" class="pt-mark" data-task="A_Close" style="left:89.6%;top:6.6%" aria-expanded="false" aria-label="About step: Close issue ONLY on BA authorisation" title="About: Close issue ONLY on BA authorisation">i</button>
+<button type="button" class="pt-mark" data-task="S_FeatureSignoff" style="left:26.96%;top:73.58%" aria-expanded="false" aria-label="About step: Feature sign-off on issue" title="About: Feature sign-off on issue">i</button>
+<a class="pt-go" href="adjudication.html" style="left:34.78%;top:63.21%;width:2.42%;height:4.53%" aria-label="Open subprocess: Confirm all criteria met" title="Open subprocess: Confirm all criteria met"></a>
+<button type="button" class="pt-mark" data-task="BA_Confirm" style="left:42.1%;top:45.28%" aria-expanded="false" aria-label="About step: Confirm all criteria met" title="About: Confirm all criteria met">i</button>
+<button type="button" class="pt-mark" data-task="A_RecordSignoff" style="left:42.1%;top:6.6%" aria-expanded="false" aria-label="About step: Record the sign-off attestation" title="About: Record the sign-off attestation">i</button>
+<button type="button" class="pt-mark" data-task="Call_MergeToMain" style="left:74.41%;top:6.6%" aria-expanded="false" aria-label="About step: Land the feature's PRs" title="About: Land the feature's PRs">i</button>
+<button type="button" class="pt-mark" data-task="A_Close" style="left:89.56%;top:6.6%" aria-expanded="false" aria-label="About step: Close issue ONLY on BA authorisation" title="About: Close issue ONLY on BA authorisation">i</button>
 </div>
 <div class="pt-panel" role="dialog" aria-label="Task details" hidden=""></div>
 </div>
@@ -505,7 +506,7 @@
 
 <ul>
   <li><strong>Called by:</strong> <a href="crdm-requirements.html">CRDM requirements</a></li>
-  <li><strong>Calls:</strong> <code class="language-plaintext highlighter-rouge">Process_Adjudication</code> (not loadable here), <code class="language-plaintext highlighter-rouge">Process_MergeToMain</code> (not loadable here)</li>
+  <li><strong>Calls:</strong> <a href="adjudication.html">Adjudication</a></li>
   <li><strong>Presented on:</strong> no docs page section shows this diagram</li>
   <li><strong>Running instances:</strong> none recorded</li>
 </ul>
@@ -574,25 +575,25 @@
     <tr>
       <td><a id="step-BA_Confirm"></a><strong>Confirm all criteria met</strong><br /><code class="language-plaintext highlighter-rouge">BA_Confirm</code></td>
       <td>BA / Feature Requestor</td>
-      <td>calls <code class="language-plaintext highlighter-rouge">Process_Adjudication</code><br /><code class="language-plaintext highlighter-rouge">adjudication</code></td>
+      <td>calls <a href="adjudication.html">Adjudication</a><br /><a href="../../../en/cat-harness/processes/skills/adjudication.html"><code class="language-plaintext highlighter-rouge">adjudication</code></a></td>
       <td>The business analyst confirms every acceptance criterion from the requirements is met. The issue closes only on their authorisation — an agent never closes an issue on its own say-so. It IS an adjudication with the requirement-set answers: an approval here moves the set to <code class="language-plaintext highlighter-rouge">accepted</code>, which <code class="language-plaintext highlighter-rouge">check:requirements</code> refuses unless it is a human’s and every approved member is <code class="language-plaintext highlighter-rouge">in-force</code>.</td>
     </tr>
     <tr>
       <td><a id="step-A_RecordSignoff"></a><strong>Record the sign-off attestation</strong><br /><code class="language-plaintext highlighter-rouge">A_RecordSignoff</code></td>
       <td>Agent</td>
-      <td>shared step <code class="language-plaintext highlighter-rouge">GT_RecordSignoff</code><br /><code class="language-plaintext highlighter-rouge">adjudication</code></td>
-      <td>THE RECORD, and not relaxable, because a judgement nobody wrote down is indistinguishable from one never made (<code class="language-plaintext highlighter-rouge">adjudication</code>, A_RecordEntry). Append one <code class="language-plaintext highlighter-rouge">requirement-signoff</code> record to <code class="language-plaintext highlighter-rouge">test/attestations/requirement-signoff/&lt;set slug&gt;.attestations.json</code> — who (kind, id, actor), at, scope (the set or one member), the outcome from the requirement-set code list, the stage it moves the set to, the reason, and the permalink to the issue comment where it was decided — and set the set’s <code class="language-plaintext highlighter-rouge">stage</code> to match.<br />GW_SignoffRecorded after this reads the record back, so this step cannot be skipped by completing it: a sign-off that left no attestation loops here again.</td>
+      <td>shared step <code class="language-plaintext highlighter-rouge">GT_RecordSignoff</code><br /><a href="../../../en/cat-harness/processes/skills/adjudication.html"><code class="language-plaintext highlighter-rouge">adjudication</code></a></td>
+      <td>THE RECORD, and not relaxable, because a judgement nobody wrote down is indistinguishable from one never made (<a href="../../../en/cat-harness/processes/skills/adjudication.html"><code class="language-plaintext highlighter-rouge">adjudication</code></a>, A_RecordEntry). Append one <code class="language-plaintext highlighter-rouge">requirement-signoff</code> record to <code class="language-plaintext highlighter-rouge">test/attestations/requirement-signoff/&lt;set slug&gt;.attestations.json</code> — who (kind, id, actor), at, scope (the set or one member), the outcome from the requirement-set code list, the stage it moves the set to, the reason, and the permalink to the issue comment where it was decided — and set the set’s <code class="language-plaintext highlighter-rouge">stage</code> to match.<br />GW_SignoffRecorded after this reads the record back, so this step cannot be skipped by completing it: a sign-off that left no attestation loops here again.</td>
     </tr>
     <tr>
       <td><a id="step-Call_MergeToMain"></a><strong>Land the feature’s PRs</strong><br /><code class="language-plaintext highlighter-rouge">Call_MergeToMain</code></td>
       <td>Agent</td>
-      <td>calls <code class="language-plaintext highlighter-rouge">Process_MergeToMain</code><br /><code class="language-plaintext highlighter-rouge">merge-to-main</code></td>
-      <td>Phase 6’s “explicit confirmation before merging to main”, made a step that can refuse. Once per pull request the feature still has open, after the sign-off is recorded and before the issue is closed: an issue is not closed on a feature that is not on <code class="language-plaintext highlighter-rouge">main</code>. <code class="language-plaintext highlighter-rouge">merge-to-main.bpmn</code> reads each head’s evidence live, establishes that the owner authorised THAT merge (a stakeholder sign-off or the BA’s confirmation is acceptance of the feature, not authorisation to merge it, unless the owner’s own words say so), records the authorisation, merges, and confirms the base. A PR the owner holds or refuses stays open, and A_Close then waits: the BA’s authorisation to close does not cover a feature that did not land. An increment the owner asked to land earlier in Phase 6 went through the same sub-process at that time.</td>
+      <td>—</td>
+      <td>Phase 6’s “explicit confirmation before merging to main”, made a step that can refuse. Once per pull request the feature still has open, after the sign-off is recorded and before the issue is closed: an issue is not closed on a feature that is not on <code class="language-plaintext highlighter-rouge">main</code>. <code class="language-plaintext highlighter-rouge">merge-to-main.bpmn</code> reads each head’s evidence live, establishes that the owner authorised THAT merge (a stakeholder sign-off or the BA’s confirmation is acceptance of the feature, not authorisation to merge it, unless the owner’s own words say so), records the authorisation, merges, and confirms the base. A PR the owner holds or refuses stays open, and A_Close then waits: the BA’s authorisation to close does not cover a feature that did not land. An increment the owner asked to land earlier in Phase 6 went through the same sub-process at that time. Where <code class="language-plaintext highlighter-rouge">cat-harness.sdlc</code> is switched on, this step is the opt-in process <code class="language-plaintext highlighter-rouge">merge-to-main</code> (<code class="language-plaintext highlighter-rouge">Process_MergeToMain</code>, sdlc/processes/merge-to-main.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12).</td>
     </tr>
     <tr>
       <td><a id="step-A_Close"></a><strong>Close issue ONLY on BA authorisation</strong><br /><code class="language-plaintext highlighter-rouge">A_Close</code></td>
       <td>Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></a></td>
       <td>Reachable only through BA_Confirm, which is the BA<br />saying every criterion is met. An agent must never close an issue without<br />that explicit authorisation — the gate is the preceding task, and this name<br />says so rather than leaving a reader to trace the flow for it.</td>
     </tr>
   </tbody>

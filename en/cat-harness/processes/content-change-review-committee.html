@@ -289,6 +289,7 @@
 <a class="pt-go" href="review-task.html" style="left:26.08%;top:25%;width:1.73%;height:5.22%" aria-label="Open subprocess: Review each slice" title="Open subprocess: Review each slice"></a>
 <button type="button" class="pt-mark" data-task="Call_ReviewSlices" style="left:31.29%;top:4.35%" aria-expanded="false" aria-label="About step: Review each slice" title="About: Review each slice">i</button>
 <button type="button" class="pt-mark" data-task="Task_WithdrawComment" style="left:41.37%;top:33.7%" aria-expanded="false" aria-label="About step: Withdraw a review comment" title="About: Withdraw a review comment">i</button>
+<a class="pt-go" href="adjudication.html" style="left:51.26%;top:54.35%;width:1.73%;height:5.22%" aria-label="Open subprocess: Adjudicate the disagreement" title="Open subprocess: Adjudicate the disagreement"></a>
 <button type="button" class="pt-mark" data-task="Call_Adjudication" style="left:56.47%;top:33.7%" aria-expanded="false" aria-label="About step: Adjudicate the disagreement" title="About: Adjudicate the disagreement">i</button>
 <button type="button" class="pt-mark" data-task="Task_ReviewUses" style="left:69.42%;top:4.35%" aria-expanded="false" aria-label="About step: Review the editorial dependencies" title="About: Review the editorial dependencies">i</button>
 <button type="button" class="pt-mark" data-task="Task_ReviewImpact" style="left:80.22%;top:4.35%" aria-expanded="false" aria-label="About step: Review impact assessment" title="About: Review impact assessment">i</button>
@@ -513,7 +514,7 @@
 
 <ul>
   <li><strong>Called by:</strong> <a href="content-change-review.html">Content Change and Review</a></li>
-  <li><strong>Calls:</strong> <code class="language-plaintext highlighter-rouge">Process_Adjudication</code> (not loadable here), <a href="review-task.html">Review task</a></li>
+  <li><strong>Calls:</strong> <a href="adjudication.html">Adjudication</a>, <a href="review-task.html">Review task</a></li>
   <li><strong>Presented on:</strong> no docs page section shows this diagram</li>
   <li><strong>Running instances:</strong> none recorded</li>
 </ul>
@@ -571,7 +572,7 @@
     <tr>
       <td><a id="step-Task_CompareBeforeAfter"></a><strong>Compare main vs staging</strong><br /><code class="language-plaintext highlighter-rouge">Task_CompareBeforeAfter</code></td>
       <td>Review Committee</td>
-      <td><code class="language-plaintext highlighter-rouge">staging-review</code><br /><code class="language-plaintext highlighter-rouge">visual-diff</code><br /><code class="language-plaintext highlighter-rouge">rendered-impact</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/staging-review.html"><code class="language-plaintext highlighter-rouge">staging-review</code></a><br /><code class="language-plaintext highlighter-rouge">visual-diff</code><br /><code class="language-plaintext highlighter-rouge">rendered-impact</code></td>
       <td>The review starts from the Change Set’s RENDERED list (skill<br />rendered-impact): every rendered file the change alters, predicted<br />from each renderer’s dependency cone and checked against the build.<br />The reviewer opens every content page on it, not only the pages the<br />author mentions; index files are listed but not reviewed. An input<br />the renderer could not place is shown as not known, never as no<br />change.<br />Review committee opens both URLs side by side:<br />- Main site: &lt;pages-url&gt;/ (current published state)<br />- Staging: &lt;pages-url&gt;/branches/&lt;branch-slug&gt;/<br />The staging banner shows the commit SHA so they can verify<br />what they are reviewing matches the PR. A changed figure, diagram<br />or table is also pictured before and after on the review page,<br />with the share of changed pixels in words (skill visual-diff,<br />Tool folio-block-screenshots). Anything the staging job cannot<br />picture (page chrome, scroll behaviour, a PDF page, an IG page) is<br />in the agent’s before/after preview (skill before-after-preview).</td>
     </tr>
     <tr>
@@ -583,7 +584,7 @@
     <tr>
       <td><a id="step-Task_SliceAndAssign"></a><strong>Slice the change and assign reviewers</strong><br /><code class="language-plaintext highlighter-rouge">Task_SliceAndAssign</code></td>
       <td>Review Coordinator</td>
-      <td><a href="../../../en/cat-harness/processes/skills/review-heatmap.html"><code class="language-plaintext highlighter-rouge">review-heatmap</code></a><br /><code class="language-plaintext highlighter-rouge">staging-review</code><br /><code class="language-plaintext highlighter-rouge">rendered-impact</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/review-heatmap.html"><code class="language-plaintext highlighter-rouge">review-heatmap</code></a><br /><a href="../../../en/cat-harness/processes/skills/staging-review.html"><code class="language-plaintext highlighter-rouge">staging-review</code></a><br /><code class="language-plaintext highlighter-rouge">rendered-impact</code></td>
       <td>From the ChangeSet, its rendered list (skill rendered-impact: each changed rendered page is assigned like a changed block) and the heat map on the review page: cut the change into slices a reviewer can hold (usually a section, or a run of sections where the heat map clusters), and assign each slice to a review lane by what it contains — clinical content to a clinical SME, a decision table to a QC reviewer, prose to a narrative reviewer. A block that needs no review (a pure rename, say) is WAIVED here with a written reason, which is what the coverage gate counts. Re-entered from GW_Covered when coverage is incomplete: the uncovered blocks become new slices.</td>
     </tr>
     <tr>
@@ -601,7 +602,7 @@
     <tr>
       <td><a id="step-Call_Adjudication"></a><strong>Adjudicate the disagreement</strong><br /><code class="language-plaintext highlighter-rouge">Call_Adjudication</code></td>
       <td>Review Committee</td>
-      <td>calls <code class="language-plaintext highlighter-rouge">Process_Adjudication</code><br /><code class="language-plaintext highlighter-rouge">adjudication</code></td>
+      <td>calls <a href="adjudication.html">Adjudication</a><br /><a href="../../../en/cat-harness/processes/skills/adjudication.html"><code class="language-plaintext highlighter-rouge">adjudication</code></a></td>
       <td>adjudication.bpmn. When the editor and a reviewer, or two reviewers, disagree about a finding, an adjudicator settles it and records why; the review comment moves to <code class="language-plaintext highlighter-rouge">adjudicated</code> with the Decision that closed it.<br />Permitted answers: <code class="language-plaintext highlighter-rouge">stands</code> — the finding is right and the author addresses it; <code class="language-plaintext highlighter-rouge">withdrawn</code> — the finding is wrong and the comment closes. Recorded on the comment, not branched: either way the flow goes on to the coverage check.</td>
     </tr>
     <tr>
@@ -625,7 +626,7 @@
     <tr>
       <td><a id="step-Task_Approve"></a><strong>Approve</strong><br /><code class="language-plaintext highlighter-rouge">Task_Approve</code></td>
       <td>Review Committee</td>
-      <td><code class="language-plaintext highlighter-rouge">decision-audit</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/decision-audit.html"><code class="language-plaintext highlighter-rouge">decision-audit</code></a></td>
       <td>The committee approves the change: the judgement, recorded with the<br />evidence it rests on. Approving is not merging: a self-authored<br />change cannot be approved through GitHub’s own review (the approver<br />may not be the PR’s author), and a merge needs the owner’s explicit<br />confirmation whoever approved.</td>
     </tr>
   </tbody>

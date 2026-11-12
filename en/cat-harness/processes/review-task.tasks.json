@@ -90,7 +90,8 @@
      "href": "../../../en/cat-harness/processes/skills/content-review.html"
     },
     {
-     "name": "staging-review"
+     "name": "staging-review",
+     "href": "../../../en/cat-harness/processes/skills/staging-review.html"
     }
    ],
    "role": {
@@ -99,7 +100,8 @@
     "title": "Reviewer / SME",
     "skills": [
      {
-      "name": "adjudication"
+      "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html"
      },
      {
       "name": "content-feedback",
@@ -110,7 +112,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-review.html"
      },
      {
-      "name": "decision-audit"
+      "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
       "name": "narrative-asserts-code"
@@ -119,7 +122,8 @@
       "name": "rendered-impact"
      },
      {
-      "name": "staging-review"
+      "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
       "name": "translation-manager",
@@ -129,7 +133,8 @@
       "name": "visual-diff"
      },
      {
-      "name": "voice-overlay-review"
+      "name": "voice-overlay-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html"
      }
     ]
    }
@@ -153,7 +158,8 @@
     "title": "Reviewer / SME",
     "skills": [
      {
-      "name": "adjudication"
+      "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html"
      },
      {
       "name": "content-feedback",
@@ -164,7 +170,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-review.html"
      },
      {
-      "name": "decision-audit"
+      "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
       "name": "narrative-asserts-code"
@@ -173,7 +180,8 @@
       "name": "rendered-impact"
      },
      {
-      "name": "staging-review"
+      "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
       "name": "translation-manager",
@@ -183,7 +191,8 @@
       "name": "visual-diff"
      },
      {
-      "name": "voice-overlay-review"
+      "name": "voice-overlay-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html"
      }
     ]
    }
@@ -207,7 +216,8 @@
     "title": "Reviewer / SME",
     "skills": [
      {
-      "name": "adjudication"
+      "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html"
      },
      {
       "name": "content-feedback",
@@ -218,7 +228,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-review.html"
      },
      {
-      "name": "decision-audit"
+      "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
       "name": "narrative-asserts-code"
@@ -227,7 +238,8 @@
       "name": "rendered-impact"
      },
      {
-      "name": "staging-review"
+      "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
       "name": "translation-manager",
@@ -237,7 +249,8 @@
       "name": "visual-diff"
      },
      {
-      "name": "voice-overlay-review"
+      "name": "voice-overlay-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html"
      }
     ]
    }
@@ -245,21 +258,19 @@
   "Call_NarrativeCodeReview": {
    "id": "Call_NarrativeCodeReview",
    "name": "Prose and the code it describes",
-   "type": "bpmn:CallActivity",
+   "type": "bpmn:Task",
    "stepHref": "review-task.html#step-Call_NarrativeCodeReview",
    "lane": "Reviewer / SME",
    "laneHref": "review-task.html#lane-Lane_Reviewer",
    "skills": [],
-   "calls": {
-    "name": "Process_NarrativeCodeReview"
-   },
    "role": {
     "name": "reviewer",
     "href": "../../../cat-harness/auto-docs/index/roles/index.html#a-cat-harness-scenarios-roles-json-reviewer",
     "title": "Reviewer / SME",
     "skills": [
      {
-      "name": "adjudication"
+      "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html"
      },
      {
       "name": "content-feedback",
@@ -270,7 +281,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-review.html"
      },
      {
-      "name": "decision-audit"
+      "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
       "name": "narrative-asserts-code"
@@ -279,7 +291,8 @@
       "name": "rendered-impact"
      },
      {
-      "name": "staging-review"
+      "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
       "name": "translation-manager",
@@ -289,7 +302,8 @@
       "name": "visual-diff"
      },
      {
-      "name": "voice-overlay-review"
+      "name": "voice-overlay-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html"
      }
     ]
    }
@@ -313,7 +327,8 @@
     "title": "Reviewer / SME",
     "skills": [
      {
-      "name": "adjudication"
+      "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html"
      },
      {
       "name": "content-feedback",
@@ -324,7 +339,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-review.html"
      },
      {
-      "name": "decision-audit"
+      "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
       "name": "narrative-asserts-code"
@@ -333,7 +349,8 @@
       "name": "rendered-impact"
      },
      {
-      "name": "staging-review"
+      "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
       "name": "translation-manager",
@@ -343,7 +360,8 @@
       "name": "visual-diff"
      },
      {
-      "name": "voice-overlay-review"
+      "name": "voice-overlay-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html"
      }
     ]
    }
@@ -382,6 +400,7 @@
      },
      {
       "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html",
       "via": "author"
      },
      {
@@ -401,6 +420,7 @@
      },
      {
       "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html",
       "via": "author"
      },
      {

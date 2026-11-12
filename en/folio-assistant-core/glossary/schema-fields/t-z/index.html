@@ -281,11 +281,11 @@
 
 <p>Candidate terms extracted from every schema field with a doc comment: <code class="language-plaintext highlighter-rouge">&lt;Declaration&gt;.&lt;field&gt;</code> as the label, the comment’s first paragraph as the definition. Each is the asset’s own text, verbatim and not curated, and carries the badge “candidate, extracted”. A person promotes one by authoring it. Authored terms are on their owning instance’s page, and those pages, the counts and the sources are linked from the <a href="../../../../../en/folio-assistant-core/glossary/">glossary index</a>.</p>
 
-<p>From: bootstrap-tools 45 (<a href="../../../../../assets/glossary/bootstrap-tools--kg-schema-fields.skos.jsonld">SKOS</a>) · cat-harness-tools 2527 (<a href="../../../../../assets/glossary/cat-harness-tools--kg-schema-fields.skos.jsonld">SKOS</a>).</p>
+<p>From: bootstrap-tools 45 (<a href="../../../../../assets/glossary/bootstrap-tools--kg-schema-fields.skos.jsonld">SKOS</a>) · cat-harness-tools 2523 (<a href="../../../../../assets/glossary/cat-harness-tools--kg-schema-fields.skos.jsonld">SKOS</a>).</p>
 
 <p>One of 7 pages of this type, split by the first letter of the label: <a href="../../../../../en/folio-assistant-core/glossary/schema-fields/">all parts</a>.</p>
 
-<p><strong>Size:</strong> this page holds 509 terms and is 297 KB before compression, fetched in one request, within its budget of 1.0 MB. There is no search index: the filter below runs over this page, and the A–Z bar jumps within it.</p>
+<p><strong>Size:</strong> this page holds 506 terms and is 294 KB before compression, fetched in one request, within its budget of 1.0 MB. There is no search index: the filter below runs over this page, and the A–Z bar jumps within it.</p>
 
 <div class="table-wrapper"><table class="fa-gloss-mapping">
 <caption>Already somebody else's concept? — <code>check:term-mapping</code>, bean <code>7wou</code></caption>
@@ -300,7 +300,7 @@ be a term this corpus is right to coin.</p>
 
 <p><label for="fa-gloss-q">Filter terms</label>
 <input id="fa-gloss-q" type="search" autocomplete="off" style="min-height:44px;width:100%;max-width:32rem" /></p>
-<p aria-live="polite"><span id="fa-gloss-n">509</span> shown</p>
+<p aria-live="polite"><span id="fa-gloss-n">506</span> shown</p>
 
 <nav aria-label="Letters"><a href="#letter-T">T</a> <a href="#letter-U">U</a> <a href="#letter-V">V</a> <a href="#letter-W">W</a></nav>
 <h2 id="letter-T">
@@ -360,27 +360,6 @@ TableRowSchema.what <span class="fa-gloss-status">candidate, extracted</span>
 <dd>
 <p>What the row means, in one sentence.</p>
 <p class="fa-gloss-meta">Schema fields of cat-harness-tools · source <a href="https://github.com/litlfred/cat-harness-tools/blob/main/schemas/process/workshop.ts"><code>cat-harness-tools/schemas/process/workshop.ts#TableRowSchema.what</code></a></p>
-</dd>
-<dt id="cat-harness-tools--kg-schema-fields--tabular-csvw.tabularcsvwschema.narrative" data-fa-state="extracted" data-fa-gloss="">
-TabularCsvwSchema.narrative <span class="fa-gloss-status">candidate, extracted</span>
-</dt>
-<dd>
-<p>What the data is about, under bean <code>ju0u</code>'s state machine, the same record v1 carries. Required on the same terms as <code>source</code>.</p>
-<p class="fa-gloss-meta">Schema fields of cat-harness-tools · source <a href="https://github.com/litlfred/cat-harness-tools/blob/main/schemas/library/tabular-csvw.ts"><code>cat-harness-tools/schemas/library/tabular-csvw.ts#TabularCsvwSchema.narrative</code></a></p>
-</dd>
-<dt id="cat-harness-tools--kg-schema-fields--tabular-csvw.tabularcsvwschema.source" data-fa-state="extracted" data-fa-gloss="">
-TabularCsvwSchema.source <span class="fa-gloss-status">candidate, extracted</span>
-</dt>
-<dd>
-<p>The technical-metadata block every ingest sidecar carries (<code>file</code>, <code>sha256</code>, <code>mimetype_sniffed</code>, ...), the same record <code>folio-tabular-records/v1</code> holds as <code>source</code> — bean <code>urat</code>. It is how <code>check-l1-complete</code> (<code>sourceBlockOf</code>) and <code>check-library-qa</code> learn what the entry was made from. Required (urat step 5): no committed record predates it, and an extractor's output, which has none, is &#123;@link TabularCsvwTablesSchema}. Not a CSVW key: &#123;@link toCsvw} never emits it.</p>
-<p class="fa-gloss-meta">Schema fields of cat-harness-tools · source <a href="https://github.com/litlfred/cat-harness-tools/blob/main/schemas/library/tabular-csvw.ts"><code>cat-harness-tools/schemas/library/tabular-csvw.ts#TabularCsvwSchema.source</code></a></p>
-</dd>
-<dt id="cat-harness-tools--kg-schema-fields--tabular-csvw.tabularcsvwschema.tables" data-fa-state="extracted" data-fa-gloss="">
-TabularCsvwSchema.tables <span class="fa-gloss-status">candidate, extracted</span>
-</dt>
-<dd>
-<p>One per sheet. A CSV has exactly one; a workbook is a <code>csvw:TableGroup</code>.</p>
-<p class="fa-gloss-meta">Schema fields of cat-harness-tools · source <a href="https://github.com/litlfred/cat-harness-tools/blob/main/schemas/library/tabular-csvw.ts"><code>cat-harness-tools/schemas/library/tabular-csvw.ts#TabularCsvwSchema.tables</code></a></p>
 </dd>
 <dt id="cat-harness-tools--kg-schema-fields--tabular-records.tabularrecordsschema.at-context" data-fa-state="extracted" data-fa-gloss="">
 TabularRecordsSchema.@context <span class="fa-gloss-status">candidate, extracted</span>

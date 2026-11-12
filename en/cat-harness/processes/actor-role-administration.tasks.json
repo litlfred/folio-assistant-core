@@ -5,73 +5,73 @@
   {
    "id": "Task_AddActor",
    "name": "Add an actor, and declare its kind",
-   "left": 43.61,
-   "top": 6.1,
+   "left": 42.48,
+   "top": 6.41,
    "box": {
-    "left": 35.9,
-    "top": 13.94,
+    "left": 37.03,
+    "top": 18.59,
     "width": 1.8,
-    "height": 4.18
+    "height": 3.08
    }
   },
   {
    "id": "Task_AssignRoles",
    "name": "Open or close a role to an actor",
-   "left": 43.61,
-   "top": 20.82,
+   "left": 42.48,
+   "top": 24.36,
    "box": {
-    "left": 35.9,
-    "top": 30.57,
+    "left": 37.03,
+    "top": 36.54,
     "width": 1.8,
-    "height": 4.18
+    "height": 3.08
    }
   },
   {
    "id": "Task_GrantOrRevoke",
    "name": "Grant or revoke a permission",
-   "left": 43.61,
-   "top": 37.46,
+   "left": 42.48,
+   "top": 42.31,
    "box": {
-    "left": 35.9,
-    "top": 45.3,
+    "left": 37.03,
+    "top": 54.49,
     "width": 1.8,
-    "height": 4.18
+    "height": 3.08
    }
   },
   {
    "id": "Task_RetireActor",
    "name": "Retire an actor — never delete one",
-   "left": 43.61,
-   "top": 53.14,
+   "left": 42.48,
+   "top": 60.26,
    "box": {
-    "left": 35.9,
-    "top": 60.98,
+    "left": 37.03,
+    "top": 72.44,
     "width": 1.8,
-    "height": 4.18
+    "height": 3.08
    }
   },
   {
    "id": "CallActivity_CodeChangeReview",
    "name": "Branch, gates, PR and review",
    "left": 68.05,
-   "top": 24.91,
+   "top": 32.69,
    "box": {
     "left": 62.59,
-    "top": 41.46,
+    "top": 44.87,
     "width": 1.8,
-    "height": 4.18
+    "height": 3.08
    }
   },
   {
    "id": "Task_RunKgAudit",
    "name": "Audit the graph",
    "left": 68.05,
-   "top": 76.13,
+   "top": 82.05,
    "box": {
     "left": 62.59,
-    "top": 92.68,
+    "top": 94.23,
     "width": 1.8,
-    "height": 4.18
+    "height": 3.08
    }
   }
  ],
@@ -312,21 +312,16 @@
   "CallActivity_CodeChangeReview": {
    "id": "CallActivity_CodeChangeReview",
    "name": "Branch, gates, PR and review",
-   "type": "bpmn:CallActivity",
+   "type": "bpmn:Task",
    "stepHref": "actor-role-administration.html#step-CallActivity_CodeChangeReview",
    "lane": "Administrator",
    "laneHref": "actor-role-administration.html#lane-Lane_Administrator",
    "skills": [
     {
-     "name": "prepare-merge"
-    },
-    {
-     "name": "continual-progress"
+     "name": "continual-progress",
+     "href": "../../../en/cat-harness/processes/skills/continual-progress.html"
     }
    ],
-   "calls": {
-    "name": "Process_CodeChangeReview"
-   },
    "role": {
     "name": "administrator",
     "href": "../../../cat-harness/auto-docs/index/roles/index.html#a-cat-harness-scenarios-roles-json-administrator",
@@ -390,7 +385,8 @@
     "title": "Build pipeline",
     "skills": [
      {
-      "name": "ci-health"
+      "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html"
      },
      {
       "name": "compiled-artefact-cache",
@@ -405,7 +401,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-validate.html"
      },
      {
-      "name": "feature-staging"
+      "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html"
      },
      {
       "name": "harness-projections",
@@ -416,7 +413,8 @@
       "href": "../../../en/cat-harness/processes/skills/kg-separation.html"
      },
      {
-      "name": "platform-gates"
+      "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
       "name": "prepare-merge"
@@ -447,7 +445,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "upstream-version-adoption"
+      "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
       "name": "watch"

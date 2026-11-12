@@ -5,10 +5,10 @@
   {
    "id": "Task_EditDirectly",
    "name": "Edit it in place — it is your own content",
-   "left": 41.97,
+   "left": 41.86,
    "top": 5.56,
    "box": {
-    "left": 36.68,
+    "left": 36.58,
     "top": 17.28,
     "width": 1.75,
     "height": 2.96
@@ -17,10 +17,10 @@
   {
    "id": "Task_ReadSource",
    "name": "Read the original — and write nothing",
-   "left": 41.97,
+   "left": 41.86,
    "top": 30.25,
    "box": {
-    "left": 36.68,
+    "left": 36.58,
     "top": 41.98,
     "width": 1.75,
     "height": 2.96
@@ -29,10 +29,10 @@
   {
    "id": "Task_Land",
    "name": "Land the bytes in the copier's own folio/",
-   "left": 56.57,
+   "left": 56.42,
    "top": 54.94,
    "box": {
-    "left": 51.28,
+    "left": 51.14,
     "top": 66.67,
     "width": 1.75,
     "height": 2.96
@@ -41,10 +41,10 @@
   {
    "id": "Task_RecordProvenance",
    "name": "Record what this is a copy of",
-   "left": 71.17,
+   "left": 70.97,
    "top": 54.94,
    "box": {
-    "left": 65.88,
+    "left": 65.7,
     "top": 66.67,
     "width": 1.75,
     "height": 2.96
@@ -53,10 +53,10 @@
   {
    "id": "Task_VerifySourceUntouched",
    "name": "Verify the ORIGINAL still hashes to its digest",
-   "left": 85.77,
+   "left": 85.53,
    "top": 79.63,
    "box": {
-    "left": 80.47,
+    "left": 80.26,
     "top": 91.36,
     "width": 1.75,
     "height": 2.96
@@ -84,7 +84,8 @@
     "title": "User",
     "skills": [
      {
-      "name": "adjudication"
+      "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html"
      },
      {
       "name": "agent-permissions",
@@ -187,7 +188,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-review.html"
      },
      {
-      "name": "decision-audit"
+      "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
       "name": "dmn-authoring",
@@ -202,7 +204,8 @@
       "href": "../../../en/cat-harness/processes/skills/kg-affordances.html"
      },
      {
-      "name": "staging-review"
+      "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
       "name": "todo-manager"
@@ -240,7 +243,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-review.html"
      },
      {
-      "name": "decision-audit"
+      "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
       "name": "dmn-authoring",
@@ -255,7 +259,8 @@
       "href": "../../../en/cat-harness/processes/skills/kg-affordances.html"
      },
      {
-      "name": "staging-review"
+      "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
       "name": "todo-manager"

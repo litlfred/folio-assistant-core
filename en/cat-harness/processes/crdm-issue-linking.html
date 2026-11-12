@@ -281,10 +281,11 @@
 <div class="pt-diagram" data-panel="crdm-issue-linking.tasks.json">
 <img src="../../../assets/img/workflows/crdm-issue-linking.svg" alt="BPMN diagram: CRDM — link the work to an issue" />
 <div class="pt-layer">
-<button type="button" class="pt-mark" data-task="Call_RelatedWork" style="left:32.59%;top:16.18%" aria-expanded="false" aria-label="About step: Related work: find, sort, ask" title="About: Related work: find, sort, ask">i</button>
-<button type="button" class="pt-mark" data-task="A_ScanIssues" style="left:51.41%;top:16.18%" aria-expanded="false" aria-label="About step: Scan open issues for match" title="About: Scan open issues for match">i</button>
-<button type="button" class="pt-mark" data-task="A_AskCreate" style="left:83.18%;top:16.18%" aria-expanded="false" aria-label="About step: Ask BA to create or link issue" title="About: Ask BA to create or link issue">i</button>
-<button type="button" class="pt-mark" data-task="A_LinkIssue" style="left:83.18%;top:57.35%" aria-expanded="false" aria-label="About step: Link to existing issue" title="About: Link to existing issue">i</button>
+<a class="pt-go" href="related-work.html" style="left:23.95%;top:44.12%;width:2.81%;height:7.06%" aria-label="Open subprocess: Related work: find, sort, ask" title="Open subprocess: Related work: find, sort, ask"></a>
+<button type="button" class="pt-mark" data-task="Call_RelatedWork" style="left:32.44%;top:16.18%" aria-expanded="false" aria-label="About step: Related work: find, sort, ask" title="About: Related work: find, sort, ask">i</button>
+<button type="button" class="pt-mark" data-task="A_ScanIssues" style="left:51.18%;top:16.18%" aria-expanded="false" aria-label="About step: Scan open issues for match" title="About: Scan open issues for match">i</button>
+<button type="button" class="pt-mark" data-task="A_AskCreate" style="left:82.81%;top:16.18%" aria-expanded="false" aria-label="About step: Ask BA to create or link issue" title="About: Ask BA to create or link issue">i</button>
+<button type="button" class="pt-mark" data-task="A_LinkIssue" style="left:82.81%;top:57.35%" aria-expanded="false" aria-label="About step: Link to existing issue" title="About: Link to existing issue">i</button>
 </div>
 <div class="pt-panel" role="dialog" aria-label="Task details" hidden=""></div>
 </div>
@@ -504,7 +505,7 @@
 
 <ul>
   <li><strong>Called by:</strong> <a href="crdm-requirements.html">CRDM requirements</a></li>
-  <li><strong>Calls:</strong> <code class="language-plaintext highlighter-rouge">Process_RelatedWork</code> (not loadable here)</li>
+  <li><strong>Calls:</strong> <a href="related-work.html">Related work: find, sort, summarize, ask to coordinate</a></li>
   <li><strong>Presented on:</strong> no docs page section shows this diagram</li>
   <li><strong>Running instances:</strong> none recorded</li>
 </ul>
@@ -557,25 +558,25 @@
     <tr>
       <td><a id="step-Call_RelatedWork"></a><strong>Related work: find, sort, ask</strong><br /><code class="language-plaintext highlighter-rouge">Call_RelatedWork</code></td>
       <td>Agent</td>
-      <td>calls <code class="language-plaintext highlighter-rouge">Process_RelatedWork</code></td>
+      <td>calls <a href="related-work.html">Related work: find, sort, summarize, ask to coordinate</a></td>
       <td>When the requirement is initiated or updated through a human-agent chat, search the beans and the repository’s issues and open PRs for relevance, categorize and summarize them, and ask the user whether and how to coordinate. Judgement decides the categories; the user decides the coordination.</td>
     </tr>
     <tr>
       <td><a id="step-A_ScanIssues"></a><strong>Scan open issues for match</strong><br /><code class="language-plaintext highlighter-rouge">A_ScanIssues</code></td>
       <td>Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></a></td>
       <td>Search open issues, then recently closed ones, by title and body keywords for one this request belongs to. Requirements may span several issues; note every relevant one.</td>
     </tr>
     <tr>
       <td><a id="step-A_AskCreate"></a><strong>Ask BA to create or link issue</strong><br /><code class="language-plaintext highlighter-rouge">A_AskCreate</code></td>
       <td>Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></a></td>
       <td>Ask — never create. Creating an issue without the<br />BA’s permission is the thing this step exists to prevent.</td>
     </tr>
     <tr>
       <td><a id="step-A_LinkIssue"></a><strong>Link to existing issue</strong><br /><code class="language-plaintext highlighter-rouge">A_LinkIssue</code></td>
       <td>Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></a></td>
       <td>A match was found: ask the person whether the requirements go on #NNN, then link the work there. The issue is where stakeholders sign off, so no phase proceeds without one.</td>
     </tr>
   </tbody>

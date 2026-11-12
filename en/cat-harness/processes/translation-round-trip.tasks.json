@@ -136,7 +136,8 @@
    "laneHref": "translation-round-trip.html#lane-Lane_RT_Back",
    "skills": [
     {
-     "name": "untainted-verification"
+     "name": "untainted-verification",
+     "href": "../../../en/cat-harness/processes/skills/untainted-verification.html"
     }
    ],
    "role": {
@@ -149,7 +150,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "untainted-verification"
+      "name": "untainted-verification",
+      "href": "../../../en/cat-harness/processes/skills/untainted-verification.html"
      }
     ]
    }
@@ -174,6 +176,7 @@
     "skills": [
      {
       "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html",
       "via": "adjudicator"
      },
      {
@@ -188,6 +191,7 @@
      },
      {
       "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html",
       "via": "adjudicator"
      },
      {
@@ -200,6 +204,7 @@
      },
      {
       "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html",
       "via": "reviewer"
      },
      {
@@ -208,6 +213,7 @@
      },
      {
       "name": "untainted-verification",
+      "href": "../../../en/cat-harness/processes/skills/untainted-verification.html",
       "via": "adjudicator"
      },
      {
@@ -216,6 +222,7 @@
      },
      {
       "name": "voice-overlay-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html",
       "via": "reviewer"
      }
     ]
@@ -230,7 +237,8 @@
    "laneHref": "translation-round-trip.html#lane-Lane_RT_Adjudicator",
    "skills": [
     {
-     "name": "untainted-verification"
+     "name": "untainted-verification",
+     "href": "../../../en/cat-harness/processes/skills/untainted-verification.html"
     },
     {
      "name": "translation-manager",
@@ -244,6 +252,7 @@
     "skills": [
      {
       "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html",
       "via": "adjudicator"
      },
      {
@@ -258,6 +267,7 @@
      },
      {
       "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html",
       "via": "adjudicator"
      },
      {
@@ -270,6 +280,7 @@
      },
      {
       "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html",
       "via": "reviewer"
      },
      {
@@ -278,6 +289,7 @@
      },
      {
       "name": "untainted-verification",
+      "href": "../../../en/cat-harness/processes/skills/untainted-verification.html",
       "via": "adjudicator"
      },
      {
@@ -286,6 +298,7 @@
      },
      {
       "name": "voice-overlay-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html",
       "via": "reviewer"
      }
     ]
@@ -300,7 +313,8 @@
    "laneHref": "translation-round-trip.html#lane-Lane_RT_Adjudicator",
    "skills": [
     {
-     "name": "untainted-verification"
+     "name": "untainted-verification",
+     "href": "../../../en/cat-harness/processes/skills/untainted-verification.html"
     }
    ],
    "role": {
@@ -310,6 +324,7 @@
     "skills": [
      {
       "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html",
       "via": "adjudicator"
      },
      {
@@ -324,6 +339,7 @@
      },
      {
       "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html",
       "via": "adjudicator"
      },
      {
@@ -336,6 +352,7 @@
      },
      {
       "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html",
       "via": "reviewer"
      },
      {
@@ -344,6 +361,7 @@
      },
      {
       "name": "untainted-verification",
+      "href": "../../../en/cat-harness/processes/skills/untainted-verification.html",
       "via": "adjudicator"
      },
      {
@@ -352,6 +370,7 @@
      },
      {
       "name": "voice-overlay-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html",
       "via": "reviewer"
      }
     ]

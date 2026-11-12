@@ -5,121 +5,121 @@
   {
    "id": "D_Constraints",
    "name": "State the constraints, with denominators",
-   "left": 22.26,
-   "top": 55.17,
+   "left": 21.17,
+   "top": 51.18,
    "box": {
     "left": 15.88,
-    "top": 61.29,
+    "top": 62.35,
     "width": 1.75,
-    "height": 2.67
+    "height": 2.82
    }
   },
   {
    "id": "E_Scope",
    "name": "Decide what may leave the repository",
-   "left": 22.26,
-   "top": 41.6,
+   "left": 21.17,
+   "top": 34.71,
    "box": {
     "left": 15.88,
-    "top": 47.72,
+    "top": 45.88,
     "width": 1.75,
-    "height": 2.67
+    "height": 2.82
    }
   },
   {
    "id": "A_Select",
    "name": "Cut the subgraph that leaves",
    "left": 21.17,
-   "top": 1.22,
+   "top": 1.76,
    "box": {
     "left": 15.88,
-    "top": 11.79,
+    "top": 12.94,
     "width": 1.75,
-    "height": 2.67
+    "height": 2.82
    }
   },
   {
    "id": "A_Serialize",
    "name": "Serialize to JSON-LD",
    "left": 33.58,
-   "top": 1.22,
+   "top": 1.76,
    "box": {
     "left": 28.28,
-    "top": 11.79,
+    "top": 12.94,
     "width": 1.75,
-    "height": 2.67
+    "height": 2.82
    }
   },
   {
    "id": "A_Package",
    "name": "Package with digests",
-   "left": 47.81,
-   "top": 3.45,
+   "left": 46.72,
+   "top": 1.76,
    "box": {
     "left": 41.42,
-    "top": 9.57,
+    "top": 12.94,
     "width": 1.75,
-    "height": 2.67
+    "height": 2.82
    }
   },
   {
    "id": "S_Sign",
    "name": "Sign the package and/or each asset",
    "left": 67.88,
-   "top": 21.69,
+   "top": 18.24,
    "box": {
     "left": 62.59,
-    "top": 32.26,
+    "top": 29.41,
     "width": 1.75,
-    "height": 2.67
+    "height": 2.82
    }
   },
   {
    "id": "E_HumanEyes",
    "name": "Human eyes on the rendered artefact",
-   "left": 68.98,
-   "top": 41.6,
+   "left": 67.88,
+   "top": 34.71,
    "box": {
     "left": 62.59,
-    "top": 47.72,
+    "top": 45.88,
     "width": 1.75,
-    "height": 2.67
+    "height": 2.82
    }
   },
   {
    "id": "D_Undetermined",
    "name": "Record the decision as still open",
-   "left": 84.31,
-   "top": 55.17,
+   "left": 83.21,
+   "top": 51.18,
    "box": {
     "left": 77.92,
-    "top": 61.29,
+    "top": 62.35,
     "width": 1.75,
-    "height": 2.67
+    "height": 2.82
    }
   },
   {
    "id": "A_Distribute",
    "name": "Publish to the origin (a cache may front it)",
    "left": 67.88,
-   "top": 68.74,
+   "top": 67.65,
    "box": {
     "left": 62.59,
-    "top": 79.31,
+    "top": 78.82,
     "width": 1.75,
-    "height": 2.67
+    "height": 2.82
    }
   },
   {
    "id": "P_Verify",
    "name": "Verify what arrived against what was signed",
    "left": 67.88,
-   "top": 84.76,
+   "top": 84.12,
    "box": {
     "left": 62.59,
-    "top": 95.33,
+    "top": 95.29,
     "width": 1.75,
-    "height": 2.67
+    "height": 2.82
    }
   }
  ],
@@ -148,7 +148,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-review.html"
      },
      {
-      "name": "decision-audit"
+      "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
       "name": "instance-publication",
@@ -168,7 +169,8 @@
       "href": "../../../en/cat-harness/processes/skills/render-kg-to-cdn.html"
      },
      {
-      "name": "staging-review"
+      "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      }
     ]
    }
@@ -207,6 +209,7 @@
      },
      {
       "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html",
       "via": "author"
      },
      {
@@ -226,6 +229,7 @@
      },
      {
       "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html",
       "via": "author"
      },
      {
@@ -257,7 +261,8 @@
     "title": "Build pipeline",
     "skills": [
      {
-      "name": "ci-health"
+      "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html"
      },
      {
       "name": "compiled-artefact-cache",
@@ -272,7 +277,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-validate.html"
      },
      {
-      "name": "feature-staging"
+      "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html"
      },
      {
       "name": "harness-projections",
@@ -283,7 +289,8 @@
       "href": "../../../en/cat-harness/processes/skills/kg-separation.html"
      },
      {
-      "name": "platform-gates"
+      "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
       "name": "prepare-merge"
@@ -314,7 +321,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "upstream-version-adoption"
+      "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
       "name": "watch"
@@ -341,7 +349,8 @@
     "title": "Build pipeline",
     "skills": [
      {
-      "name": "ci-health"
+      "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html"
      },
      {
       "name": "compiled-artefact-cache",
@@ -356,7 +365,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-validate.html"
      },
      {
-      "name": "feature-staging"
+      "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html"
      },
      {
       "name": "harness-projections",
@@ -367,7 +377,8 @@
       "href": "../../../en/cat-harness/processes/skills/kg-separation.html"
      },
      {
-      "name": "platform-gates"
+      "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
       "name": "prepare-merge"
@@ -398,7 +409,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "upstream-version-adoption"
+      "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
       "name": "watch"
@@ -425,7 +437,8 @@
     "title": "Build pipeline",
     "skills": [
      {
-      "name": "ci-health"
+      "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html"
      },
      {
       "name": "compiled-artefact-cache",
@@ -440,7 +453,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-validate.html"
      },
      {
-      "name": "feature-staging"
+      "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html"
      },
      {
       "name": "harness-projections",
@@ -451,7 +465,8 @@
       "href": "../../../en/cat-harness/processes/skills/kg-separation.html"
      },
      {
-      "name": "platform-gates"
+      "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
       "name": "prepare-merge"
@@ -482,7 +497,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "upstream-version-adoption"
+      "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
       "name": "watch"
@@ -526,7 +542,8 @@
    "laneHref": "kg-to-portal.html#lane-Lane_Editorial",
    "skills": [
     {
-     "name": "continual-progress"
+     "name": "continual-progress",
+     "href": "../../../en/cat-harness/processes/skills/continual-progress.html"
     }
    ],
    "role": {
@@ -550,6 +567,7 @@
      },
      {
       "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html",
       "via": "author"
      },
      {
@@ -569,6 +587,7 @@
      },
      {
       "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html",
       "via": "author"
      },
      {
@@ -590,7 +609,8 @@
    "laneHref": "kg-to-portal.html#lane-Lane_Deployment",
    "skills": [
     {
-     "name": "decision-audit"
+     "name": "decision-audit",
+     "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
     }
    ],
    "role": {
@@ -603,7 +623,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-review.html"
      },
      {
-      "name": "decision-audit"
+      "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
       "name": "instance-publication",
@@ -623,7 +644,8 @@
       "href": "../../../en/cat-harness/processes/skills/render-kg-to-cdn.html"
      },
      {
-      "name": "staging-review"
+      "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      }
     ]
    }

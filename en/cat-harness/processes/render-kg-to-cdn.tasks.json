@@ -6,48 +6,48 @@
    "id": "Task_Resolve",
    "name": "Determine which CDN, the root URL and the Subgraphs",
    "left": 23.8,
-   "top": 28.79,
+   "top": 24.36,
    "box": {
     "left": 18.11,
-    "top": 57.58,
+    "top": 48.72,
     "width": 1.89,
-    "height": 7.27
+    "height": 6.15
    }
   },
   {
    "id": "Call_GitHubPages",
    "name": "Render and push to GitHub Pages",
-   "left": 56.01,
-   "top": 6.06,
+   "left": 53.65,
+   "top": 5.13,
    "box": {
     "left": 47.96,
-    "top": 22.73,
+    "top": 29.49,
     "width": 1.89,
-    "height": 7.27
+    "height": 6.15
    }
   },
   {
    "id": "Call_ToolSubprocess",
    "name": "Render and push with that CDN's own Tool",
-   "left": 56.01,
-   "top": 34.85,
+   "left": 53.65,
+   "top": 41.03,
    "box": {
     "left": 47.96,
-    "top": 51.52,
+    "top": 65.38,
     "width": 1.89,
-    "height": 7.27
+    "height": 6.15
    }
   },
   {
    "id": "Task_Report",
    "name": "Report the push: status and message",
    "left": 70.93,
-   "top": 28.79,
+   "top": 24.36,
    "box": {
     "left": 65.24,
-    "top": 57.58,
+    "top": 48.72,
     "width": 1.89,
-    "height": 7.27
+    "height": 6.15
    }
   }
  ],
@@ -72,7 +72,8 @@
     "title": "Build pipeline",
     "skills": [
      {
-      "name": "ci-health"
+      "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html"
      },
      {
       "name": "compiled-artefact-cache",
@@ -87,7 +88,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-validate.html"
      },
      {
-      "name": "feature-staging"
+      "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html"
      },
      {
       "name": "harness-projections",
@@ -98,7 +100,8 @@
       "href": "../../../en/cat-harness/processes/skills/kg-separation.html"
      },
      {
-      "name": "platform-gates"
+      "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
       "name": "prepare-merge"
@@ -129,7 +132,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "upstream-version-adoption"
+      "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
       "name": "watch"
@@ -156,7 +160,8 @@
     "title": "Build pipeline",
     "skills": [
      {
-      "name": "ci-health"
+      "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html"
      },
      {
       "name": "compiled-artefact-cache",
@@ -171,7 +176,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-validate.html"
      },
      {
-      "name": "feature-staging"
+      "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html"
      },
      {
       "name": "harness-projections",
@@ -182,7 +188,8 @@
       "href": "../../../en/cat-harness/processes/skills/kg-separation.html"
      },
      {
-      "name": "platform-gates"
+      "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
       "name": "prepare-merge"
@@ -213,7 +220,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "upstream-version-adoption"
+      "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
       "name": "watch"
@@ -240,7 +248,8 @@
     "title": "Build pipeline",
     "skills": [
      {
-      "name": "ci-health"
+      "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html"
      },
      {
       "name": "compiled-artefact-cache",
@@ -255,7 +264,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-validate.html"
      },
      {
-      "name": "feature-staging"
+      "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html"
      },
      {
       "name": "harness-projections",
@@ -266,7 +276,8 @@
       "href": "../../../en/cat-harness/processes/skills/kg-separation.html"
      },
      {
-      "name": "platform-gates"
+      "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
       "name": "prepare-merge"
@@ -297,7 +308,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "upstream-version-adoption"
+      "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
       "name": "watch"
@@ -324,7 +336,8 @@
     "title": "Build pipeline",
     "skills": [
      {
-      "name": "ci-health"
+      "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html"
      },
      {
       "name": "compiled-artefact-cache",
@@ -339,7 +352,8 @@
       "href": "../../../en/cat-harness/processes/skills/content-validate.html"
      },
      {
-      "name": "feature-staging"
+      "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html"
      },
      {
       "name": "harness-projections",
@@ -350,7 +364,8 @@
       "href": "../../../en/cat-harness/processes/skills/kg-separation.html"
      },
      {
-      "name": "platform-gates"
+      "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
       "name": "prepare-merge"
@@ -381,7 +396,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "upstream-version-adoption"
+      "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
       "name": "watch"

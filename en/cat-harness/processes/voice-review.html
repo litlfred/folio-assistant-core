@@ -289,6 +289,7 @@
 <button type="button" class="pt-mark" data-task="Task_MechanicalHalf" style="left:39.79%;top:29.76%" aria-expanded="false" aria-label="About step: Run the rule's mechanical half" title="About: Run the rule's mechanical half">i</button>
 <button type="button" class="pt-mark" data-task="Task_OpenCitation" style="left:51.21%;top:29.76%" aria-expanded="false" aria-label="About step: Open the rule's citation" title="About: Open the rule's citation">i</button>
 <button type="button" class="pt-mark" data-task="Task_RuleIsWrong" style="left:69.79%;top:5.95%" aria-expanded="false" aria-label="About step: The RULE is the defect — bean it" title="About: The RULE is the defect — bean it">i</button>
+<a class="pt-go" href="criterion-adjudication.html" style="left:64.61%;top:76.19%;width:1.71%;height:5.71%" aria-label="Open subprocess: Adjudicate: prose, scope, or exception" title="Open subprocess: Adjudicate: prose, scope, or exception"></a>
 <button type="button" class="pt-mark" data-task="Task_Adjudicate" style="left:69.79%;top:53.57%" aria-expanded="false" aria-label="About step: Adjudicate: prose, scope, or exception" title="About: Adjudicate: prose, scope, or exception">i</button>
 <button type="button" class="pt-mark" data-task="Task_RecordOnSidecar" style="left:91.93%;top:29.76%" aria-expanded="false" aria-label="About step: Record on the block's QA sidecar" title="About: Record on the block's QA sidecar">i</button>
 </div>
@@ -510,7 +511,7 @@
 
 <ul>
   <li><strong>Called by:</strong> <a href="review-narrative.html">Narrative review</a></li>
-  <li><strong>Calls:</strong> <code class="language-plaintext highlighter-rouge">Process_CriterionAdjudication</code> (not loadable here)</li>
+  <li><strong>Calls:</strong> <a href="criterion-adjudication.html">Criterion adjudication</a></li>
   <li><strong>Presented on:</strong> no docs page section shows this diagram</li>
   <li><strong>Running instances:</strong> none recorded</li>
 </ul>
@@ -563,37 +564,37 @@
     <tr>
       <td><a id="step-Task_LoadActive"></a><strong>Load the active voices</strong><br /><code class="language-plaintext highlighter-rouge">Task_LoadActive</code></td>
       <td>Narrative reviewer</td>
-      <td><code class="language-plaintext highlighter-rouge">voice-overlay-review</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/voice-overlay-review.html"><code class="language-plaintext highlighter-rouge">voice-overlay-review</code></a></td>
       <td>The activated set only, never everything shipped. An id naming no shipped voice is an error rather than a skip — a folio that believes it is applying a voice and is applying nothing has the cleanest-looking output of the three.</td>
     </tr>
     <tr>
       <td><a id="step-Task_MechanicalHalf"></a><strong>Run the rule’s mechanical half</strong><br /><code class="language-plaintext highlighter-rouge">Task_MechanicalHalf</code></td>
       <td>Narrative reviewer</td>
-      <td><code class="language-plaintext highlighter-rouge">voice-overlay-review</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/voice-overlay-review.html"><code class="language-plaintext highlighter-rouge">voice-overlay-review</code></a></td>
       <td>Whatever <code class="language-plaintext highlighter-rouge">patterns</code> and <code class="language-plaintext highlighter-rouge">terminology</code> the rule carries. A <code class="language-plaintext highlighter-rouge">judgementOnly</code> rule has no mechanical half by declaration, which is different from nobody having written one yet.</td>
     </tr>
     <tr>
       <td><a id="step-Task_OpenCitation"></a><strong>Open the rule’s citation</strong><br /><code class="language-plaintext highlighter-rouge">Task_OpenCitation</code></td>
       <td>Narrative reviewer</td>
-      <td><code class="language-plaintext highlighter-rouge">voice-overlay-review</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/voice-overlay-review.html"><code class="language-plaintext highlighter-rouge">voice-overlay-review</code></a></td>
       <td>Every rule resolves to a real <code class="language-plaintext highlighter-rouge">library/</code> section or a KG node, and carries the quote it was read from. Opening it is what lets a reviewer say WHY the rule applies — and it is the only way to catch a rule that misread its own source.</td>
     </tr>
     <tr>
       <td><a id="step-Task_RuleIsWrong"></a><strong>The RULE is the defect — bean it</strong><br /><code class="language-plaintext highlighter-rouge">Task_RuleIsWrong</code></td>
       <td>Narrative reviewer</td>
-      <td><code class="language-plaintext highlighter-rouge">voice-overlay-review</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/voice-overlay-review.html"><code class="language-plaintext highlighter-rouge">voice-overlay-review</code></a></td>
       <td>A rule its own quote does not support is a finding against the voice, not against the block.</td>
     </tr>
     <tr>
       <td><a id="step-Task_Adjudicate"></a><strong>Adjudicate: prose, scope, or exception</strong><br /><code class="language-plaintext highlighter-rouge">Task_Adjudicate</code></td>
       <td>Narrative reviewer</td>
-      <td>calls <code class="language-plaintext highlighter-rouge">Process_CriterionAdjudication</code><br /><code class="language-plaintext highlighter-rouge">voice-overlay-review</code><br /><code class="language-plaintext highlighter-rouge">adjudication</code></td>
+      <td>calls <a href="criterion-adjudication.html">Criterion adjudication</a><br /><a href="../../../en/cat-harness/processes/skills/voice-overlay-review.html"><code class="language-plaintext highlighter-rouge">voice-overlay-review</code></a><br /><a href="../../../en/cat-harness/processes/skills/adjudication.html"><code class="language-plaintext highlighter-rouge">adjudication</code></a></td>
       <td>The same three outcomes as the base voice axis. The register is wrong for this block (fix the prose); the rule does not apply to this content (scope it on the voice, one edit rather than ten overrules); or the rule applies and this block is an exception (a reviewer entry saying why).</td>
     </tr>
     <tr>
       <td><a id="step-Task_RecordOnSidecar"></a><strong>Record on the block’s QA sidecar</strong><br /><code class="language-plaintext highlighter-rouge">Task_RecordOnSidecar</code></td>
       <td>Narrative reviewer</td>
-      <td><code class="language-plaintext highlighter-rouge">voice-overlay-review</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/voice-overlay-review.html"><code class="language-plaintext highlighter-rouge">voice-overlay-review</code></a></td>
       <td>Through <code class="language-plaintext highlighter-rouge">qa-merge-findings</code>, so the icon and the published witness agree with the decision. The adjudication LEADS the criterion and the script entry is kept beneath it: a disagreement between a checker and a reviewer is information.</td>
     </tr>
   </tbody>

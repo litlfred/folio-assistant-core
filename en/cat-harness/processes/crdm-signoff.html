@@ -281,14 +281,15 @@
 <div class="pt-diagram" data-panel="crdm-signoff.tasks.json">
 <img src="../../../assets/img/workflows/crdm-signoff.svg" alt="BPMN diagram: CRDM Phase 5 — beans and sign-off" />
 <div class="pt-layer">
-<button type="button" class="pt-mark" data-task="A_CreateBeans" style="left:21.1%;top:48.96%" aria-expanded="false" aria-label="About step: Phase 5: Create beans" title="About: Phase 5: Create beans">i</button>
-<button type="button" class="pt-mark" data-task="BA_Signoff" style="left:32.87%;top:6.25%" aria-expanded="false" aria-label="About step: Sign off on requirements" title="About: Sign off on requirements">i</button>
-<button type="button" class="pt-mark" data-task="A_RecordSignoff" style="left:32.87%;top:48.96%" aria-expanded="false" aria-label="About step: Record the sign-off attestation" title="About: Record the sign-off attestation">i</button>
-<button type="button" class="pt-mark" data-task="A_AnnounceBranch" style="left:90.96%;top:48.96%" aria-expanded="false" aria-label="About step: Announce the branch on the issue" title="About: Announce the branch on the issue">i</button>
-<button type="button" class="pt-mark" data-task="A_OfferKg" style="left:55.66%;top:48.96%" aria-expanded="false" aria-label="About step: Offer KG destinations for the agreed set" title="About: Offer KG destinations for the agreed set">i</button>
-<a class="pt-go" href="ask-the-person.html" style="left:62.1%;top:26.04%;width:1.76%;height:5%" aria-label="Open subprocess: Choose a destination, or none" title="Open subprocess: Choose a destination, or none"></a>
-<button type="button" class="pt-mark" data-task="BA_ChooseKg" style="left:67.43%;top:6.25%" aria-expanded="false" aria-label="About step: Choose a destination, or none" title="About: Choose a destination, or none">i</button>
-<button type="button" class="pt-mark" data-task="A_RecordKg" style="left:79.19%;top:48.96%" aria-expanded="false" aria-label="About step: Run placement, file a bean" title="About: Run placement, file a bean">i</button>
+<button type="button" class="pt-mark" data-task="A_CreateBeans" style="left:20.89%;top:48.96%" aria-expanded="false" aria-label="About step: Phase 5: Create beans" title="About: Phase 5: Create beans">i</button>
+<a class="pt-go" href="adjudication.html" style="left:27.26%;top:26.04%;width:1.75%;height:5%" aria-label="Open subprocess: Sign off on requirements" title="Open subprocess: Sign off on requirements"></a>
+<button type="button" class="pt-mark" data-task="BA_Signoff" style="left:32.54%;top:6.25%" aria-expanded="false" aria-label="About step: Sign off on requirements" title="About: Sign off on requirements">i</button>
+<button type="button" class="pt-mark" data-task="A_RecordSignoff" style="left:32.54%;top:48.96%" aria-expanded="false" aria-label="About step: Record the sign-off attestation" title="About: Record the sign-off attestation">i</button>
+<button type="button" class="pt-mark" data-task="A_AnnounceBranch" style="left:90.04%;top:48.96%" aria-expanded="false" aria-label="About step: Announce the branch on the issue" title="About: Announce the branch on the issue">i</button>
+<button type="button" class="pt-mark" data-task="A_OfferKg" style="left:55.1%;top:48.96%" aria-expanded="false" aria-label="About step: Offer KG destinations for the agreed set" title="About: Offer KG destinations for the agreed set">i</button>
+<a class="pt-go" href="ask-the-person.html" style="left:61.47%;top:26.04%;width:1.75%;height:5%" aria-label="Open subprocess: Choose a destination, or none" title="Open subprocess: Choose a destination, or none"></a>
+<button type="button" class="pt-mark" data-task="BA_ChooseKg" style="left:66.75%;top:6.25%" aria-expanded="false" aria-label="About step: Choose a destination, or none" title="About: Choose a destination, or none">i</button>
+<button type="button" class="pt-mark" data-task="A_RecordKg" style="left:78.4%;top:48.96%" aria-expanded="false" aria-label="About step: Run placement, file a bean" title="About: Run placement, file a bean">i</button>
 </div>
 <div class="pt-panel" role="dialog" aria-label="Task details" hidden=""></div>
 </div>
@@ -508,7 +509,7 @@
 
 <ul>
   <li><strong>Called by:</strong> <a href="crdm-requirements.html">CRDM requirements</a></li>
-  <li><strong>Calls:</strong> <code class="language-plaintext highlighter-rouge">Process_Adjudication</code> (not loadable here), <a href="ask-the-person.html">Ask the person</a></li>
+  <li><strong>Calls:</strong> <a href="adjudication.html">Adjudication</a>, <a href="ask-the-person.html">Ask the person</a></li>
   <li><strong>Presented on:</strong> no docs page section shows this diagram</li>
   <li><strong>Running instances:</strong> none recorded</li>
 </ul>
@@ -566,25 +567,25 @@
     <tr>
       <td><a id="step-A_CreateBeans"></a><strong>Phase 5: Create beans</strong><br /><code class="language-plaintext highlighter-rouge">A_CreateBeans</code></td>
       <td>Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">todo-manager</code></td>
+      <td>—</td>
       <td>The agent mints the implementation beans itself with<br /><code class="language-plaintext highlighter-rouge">beans create</code>, running the exact-title existence check first. The engine has<br />no <code class="language-plaintext highlighter-rouge">create</code> op — it claims, notes and resolves the instance’s OWN bean — so<br />what this step records here is a note that the plan now exists.</td>
     </tr>
     <tr>
       <td><a id="step-BA_Signoff"></a><strong>Sign off on requirements</strong><br /><code class="language-plaintext highlighter-rouge">BA_Signoff</code></td>
       <td>BA / Feature Requestor</td>
-      <td>calls <code class="language-plaintext highlighter-rouge">Process_Adjudication</code><br /><code class="language-plaintext highlighter-rouge">adjudication</code></td>
-      <td>The business analyst / requester signs off on the agreed requirement set, on the issue: what was agreed and what was deferred. Recorded as their decision, with its reason, never by an agent on their behalf. It IS an adjudication: it calls Process_Adjudication with the requirement-set answers, and every answer goes through A_RecordSignoff before anything follows it.</td>
+      <td>calls <a href="adjudication.html">Adjudication</a><br /><a href="../../../en/cat-harness/processes/skills/adjudication.html"><code class="language-plaintext highlighter-rouge">adjudication</code></a></td>
+      <td>The business analyst / requester signs off on the agreed requirement set, on the issue: what was agreed and what was deferred. Recorded as their decision, with its reason, never by an agent on their behalf. It IS an adjudication: it calls <a href="adjudication.html">Process_Adjudication</a> with the requirement-set answers, and every answer goes through A_RecordSignoff before anything follows it.</td>
     </tr>
     <tr>
       <td><a id="step-A_RecordSignoff"></a><strong>Record the sign-off attestation</strong><br /><code class="language-plaintext highlighter-rouge">A_RecordSignoff</code></td>
       <td>Agent</td>
-      <td>shared step <code class="language-plaintext highlighter-rouge">GT_RecordSignoff</code><br /><code class="language-plaintext highlighter-rouge">adjudication</code></td>
-      <td>THE RECORD, and not relaxable, because a judgement nobody wrote down is indistinguishable from one never made (<code class="language-plaintext highlighter-rouge">adjudication</code>, A_RecordEntry). Append one <code class="language-plaintext highlighter-rouge">requirement-signoff</code> record to <code class="language-plaintext highlighter-rouge">test/attestations/requirement-signoff/&lt;set slug&gt;.attestations.json</code> — who (kind, id, actor), at, scope (the set or one member), the outcome from the requirement-set code list, the stage it moves the set to, the reason, and the permalink to the issue comment where it was decided — and set the set’s <code class="language-plaintext highlighter-rouge">stage</code> to match.<br />GW_SignoffRecorded after this reads the record back, so this step cannot be skipped by completing it: a sign-off that left no attestation loops here again.</td>
+      <td>shared step <code class="language-plaintext highlighter-rouge">GT_RecordSignoff</code><br /><a href="../../../en/cat-harness/processes/skills/adjudication.html"><code class="language-plaintext highlighter-rouge">adjudication</code></a></td>
+      <td>THE RECORD, and not relaxable, because a judgement nobody wrote down is indistinguishable from one never made (<a href="../../../en/cat-harness/processes/skills/adjudication.html"><code class="language-plaintext highlighter-rouge">adjudication</code></a>, A_RecordEntry). Append one <code class="language-plaintext highlighter-rouge">requirement-signoff</code> record to <code class="language-plaintext highlighter-rouge">test/attestations/requirement-signoff/&lt;set slug&gt;.attestations.json</code> — who (kind, id, actor), at, scope (the set or one member), the outcome from the requirement-set code list, the stage it moves the set to, the reason, and the permalink to the issue comment where it was decided — and set the set’s <code class="language-plaintext highlighter-rouge">stage</code> to match.<br />GW_SignoffRecorded after this reads the record back, so this step cannot be skipped by completing it: a sign-off that left no attestation loops here again.</td>
     </tr>
     <tr>
       <td><a id="step-A_AnnounceBranch"></a><strong>Announce the branch on the issue</strong><br /><code class="language-plaintext highlighter-rouge">A_AnnounceBranch</code></td>
       <td>Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code><br /><code class="language-plaintext highlighter-rouge">coordinate</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></a></td>
       <td>On CREATING the feature branch, comment on the issue:<br />the branch name, the process and phase, and the beans claimed. Visibility is<br />the whole point — without it a sibling session or a human cannot tell that work<br />has begun, only that it has finished.<br />Deliberately on this edge and not inside Phase 6. The three loops back into<br />A_Implement (increment rejected, MVP not ready, feedback translated) re-enter<br />implementation on the SAME branch, and re-announcing on each would be noise.<br />Announce once, when the branch is created.<br />Before announcing, run the collision review that starts any new unit of work<br />(coordinate, “Starting new work”): open PRs and in-progress beans checked<br />against the branch’s files and subject, scaled to the blast radius, and the<br />result recorded in the bean before the first edit.</td>
     </tr>
     <tr>

@@ -5,60 +5,60 @@
   {
    "id": "Task_ReadFindings",
    "name": "Read the sidecar findings",
-   "left": 18.98,
+   "left": 18.73,
    "top": 27.78,
    "box": {
-    "left": 13.69,
+    "left": 13.5,
     "top": 62.96,
-    "width": 1.75,
+    "width": 1.73,
     "height": 8.89
    }
   },
   {
    "id": "Task_AdjudicateVoice",
    "name": "Adjudicate the voice findings",
-   "left": 33.21,
+   "left": 32.77,
    "top": 27.78,
    "box": {
-    "left": 27.92,
+    "left": 27.55,
     "top": 62.96,
-    "width": 1.75,
+    "width": 1.73,
     "height": 8.89
    }
   },
   {
    "id": "Call_VoiceOverlay",
    "name": "Voice overlay review",
-   "left": 48.18,
+   "left": 47.54,
    "top": 27.78,
    "box": {
-    "left": 42.88,
+    "left": 42.31,
     "top": 62.96,
-    "width": 1.75,
+    "width": 1.73,
     "height": 8.89
    }
   },
   {
    "id": "Task_ReviewTranslation",
    "name": "Review the translation",
-   "left": 72.63,
-   "top": 9.26,
+   "left": 69.86,
+   "top": 6.3,
    "box": {
-    "left": 65.51,
-    "top": 25.93,
-    "width": 1.75,
+    "left": 64.64,
+    "top": 41.48,
+    "width": 1.73,
     "height": 8.89
    }
   },
   {
    "id": "Task_RecordFindings",
    "name": "Record findings as advice",
-   "left": 92.7,
+   "left": 91.47,
    "top": 27.78,
    "box": {
-    "left": 87.41,
+    "left": 86.25,
     "top": 62.96,
-    "width": 1.75,
+    "width": 1.73,
     "height": 8.89
    }
   }
@@ -84,7 +84,8 @@
     "title": "Narrative reviewer",
     "skills": [
      {
-      "name": "adjudication"
+      "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html"
      },
      {
       "name": "content-feedback",
@@ -103,10 +104,12 @@
       "href": "../../../en/cat-harness/processes/skills/uses-editorial-review.html"
      },
      {
-      "name": "voice-editorial-review"
+      "name": "voice-editorial-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-editorial-review.html"
      },
      {
-      "name": "voice-overlay-review"
+      "name": "voice-overlay-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html"
      }
     ]
    }
@@ -120,14 +123,18 @@
    "laneHref": "review-narrative.html#lane-Lane_NarrativeReviewer",
    "skills": [
     {
-     "name": "voice-editorial-review"
+     "name": "voice-editorial-review",
+     "href": "../../../en/cat-harness/processes/skills/voice-editorial-review.html"
     },
     {
-     "name": "adjudication"
+     "name": "adjudication",
+     "href": "../../../en/cat-harness/processes/skills/adjudication.html"
     }
    ],
    "calls": {
-    "name": "Process_CriterionAdjudication"
+    "name": "Criterion adjudication",
+    "href": "criterion-adjudication.html",
+    "diagram": "criterion-adjudication.html"
    },
    "role": {
     "name": "narrative-reviewer",
@@ -135,7 +142,8 @@
     "title": "Narrative reviewer",
     "skills": [
      {
-      "name": "adjudication"
+      "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html"
      },
      {
       "name": "content-feedback",
@@ -154,10 +162,12 @@
       "href": "../../../en/cat-harness/processes/skills/uses-editorial-review.html"
      },
      {
-      "name": "voice-editorial-review"
+      "name": "voice-editorial-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-editorial-review.html"
      },
      {
-      "name": "voice-overlay-review"
+      "name": "voice-overlay-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html"
      }
     ]
    }
@@ -171,7 +181,8 @@
    "laneHref": "review-narrative.html#lane-Lane_NarrativeReviewer",
    "skills": [
     {
-     "name": "voice-overlay-review"
+     "name": "voice-overlay-review",
+     "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html"
     }
    ],
    "calls": {
@@ -185,7 +196,8 @@
     "title": "Narrative reviewer",
     "skills": [
      {
-      "name": "adjudication"
+      "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html"
      },
      {
       "name": "content-feedback",
@@ -204,10 +216,12 @@
       "href": "../../../en/cat-harness/processes/skills/uses-editorial-review.html"
      },
      {
-      "name": "voice-editorial-review"
+      "name": "voice-editorial-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-editorial-review.html"
      },
      {
-      "name": "voice-overlay-review"
+      "name": "voice-overlay-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html"
      }
     ]
    }
@@ -231,7 +245,8 @@
     "title": "Narrative reviewer",
     "skills": [
      {
-      "name": "adjudication"
+      "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html"
      },
      {
       "name": "content-feedback",
@@ -250,10 +265,12 @@
       "href": "../../../en/cat-harness/processes/skills/uses-editorial-review.html"
      },
      {
-      "name": "voice-editorial-review"
+      "name": "voice-editorial-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-editorial-review.html"
      },
      {
-      "name": "voice-overlay-review"
+      "name": "voice-overlay-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html"
      }
     ]
    }
@@ -277,7 +294,8 @@
     "title": "Narrative reviewer",
     "skills": [
      {
-      "name": "adjudication"
+      "name": "adjudication",
+      "href": "../../../en/cat-harness/processes/skills/adjudication.html"
      },
      {
       "name": "content-feedback",
@@ -296,10 +314,12 @@
       "href": "../../../en/cat-harness/processes/skills/uses-editorial-review.html"
      },
      {
-      "name": "voice-editorial-review"
+      "name": "voice-editorial-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-editorial-review.html"
      },
      {
-      "name": "voice-overlay-review"
+      "name": "voice-overlay-review",
+      "href": "../../../en/cat-harness/processes/skills/voice-overlay-review.html"
      }
     ]
    }

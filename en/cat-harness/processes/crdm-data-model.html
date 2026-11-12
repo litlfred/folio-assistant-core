@@ -509,6 +509,7 @@
   <li><strong>Called by:</strong> <a href="crdm-requirements.html">CRDM requirements</a></li>
   <li><strong>Calls:</strong> <a href="ask-the-person.html">Ask the person</a></li>
   <li><strong>Presented on:</strong> no docs page section shows this diagram</li>
+  <li><strong>Skill:</strong> <a href="../../../en/cat-harness/processes/skills/crdm-data-model.html"><code class="language-plaintext highlighter-rouge">crdm-data-model</code></a></li>
   <li><strong>Running instances:</strong> none recorded</li>
 </ul>
 <h2 id="lanes--who-acts">
@@ -570,31 +571,31 @@
     <tr>
       <td><a id="step-A_Entities"></a><strong>Identify entities from the BPA and requirements</strong><br /><code class="language-plaintext highlighter-rouge">A_Entities</code></td>
       <td>Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">crdm-data-model</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/crdm-data-model.html"><code class="language-plaintext highlighter-rouge">crdm-data-model</code></a></td>
       <td>Every verb in the BPA whose object is a candidate entity, and every noun in a requirement. An entity with no identifier is an attribute of something else — that test is decisive and belongs to the technique skill.</td>
     </tr>
     <tr>
       <td><a id="step-A_Relations"></a><strong>Relations and cardinalities, both ways</strong><br /><code class="language-plaintext highlighter-rouge">A_Relations</code></td>
       <td>Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">crdm-data-model</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/crdm-data-model.html"><code class="language-plaintext highlighter-rouge">crdm-data-model</code></a></td>
       <td>Stated in both directions, because “one attestation per report” and “one report per attestation” are different claims and a model with only the first cannot say whether a re-signature is an update or a second row.</td>
     </tr>
     <tr>
       <td><a id="step-BA_ConfirmEntities"></a><strong>Confirm the entities are the ones meant</strong><br /><code class="language-plaintext highlighter-rouge">BA_ConfirmEntities</code></td>
       <td>BA / Feature Requestor</td>
-      <td>calls <a href="ask-the-person.html">Ask the person</a><br /><code class="language-plaintext highlighter-rouge">crdm-data-model</code></td>
+      <td>calls <a href="ask-the-person.html">Ask the person</a><br /><a href="../../../en/cat-harness/processes/skills/crdm-data-model.html"><code class="language-plaintext highlighter-rouge">crdm-data-model</code></a></td>
       <td>A naming question. The BA owns the domain vocabulary; the agent does not guess, which is CRDM’s own rule for phase 1 and applies here with more force.</td>
     </tr>
     <tr>
       <td><a id="step-S_ConfirmCardinality"></a><strong>Confirm the cardinalities</strong><br /><code class="language-plaintext highlighter-rouge">S_ConfirmCardinality</code></td>
       <td>Stakeholders</td>
-      <td>calls <a href="ask-the-person.html">Ask the person</a><br /><code class="language-plaintext highlighter-rouge">crdm-data-model</code></td>
+      <td>calls <a href="ask-the-person.html">Ask the person</a><br /><a href="../../../en/cat-harness/processes/skills/crdm-data-model.html"><code class="language-plaintext highlighter-rouge">crdm-data-model</code></a></td>
       <td>An operational question, asked of the people who run the process because they know where the exceptions are.</td>
     </tr>
     <tr>
       <td><a id="step-A_Declare"></a><strong>Declare the model where a tool can read it</strong><br /><code class="language-plaintext highlighter-rouge">A_Declare</code></td>
       <td>Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">crdm-data-model</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/crdm-data-model.html"><code class="language-plaintext highlighter-rouge">crdm-data-model</code></a></td>
       <td>A model in prose is a proposal; a model in the declaration is a model. Ship a reader in the same change: a model that is only documentation goes inert.</td>
     </tr>
   </tbody>

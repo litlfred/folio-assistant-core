@@ -2738,6 +2738,14 @@
       "isTest": false
     },
     {
+      "module": "cat-harness-tools/schemas/test-preload.test.ts",
+      "instance": "cat-harness-tools",
+      "name": "test-preload.test",
+      "graphNode": "undeclared",
+      "summary": "The suite default reaches every test file, not only the first (Q-TMO-1).",
+      "isTest": true
+    },
+    {
       "module": "cat-harness-tools/schemas/test-preload.ts",
       "instance": "cat-harness-tools",
       "name": "test-preload",
@@ -13717,41 +13725,32 @@
       "exported": true
     },
     {
+      "id": "cat-harness-tools/schemas/content/document-errata.ts#documentErrataFields",
+      "name": "documentErrataFields",
+      "module": "cat-harness-tools/schemas/content/document-errata.ts",
+      "kind": "undetermined",
+      "note": "{ $schema: z.literal(DOCUMENT_ERRATA_SCHEMA), /** The library entry's slug, the directory this file sits in. */ entry: z.string().min(1), errata: z.array(Errat…",
+      "doc": "The fields of an errata sidecar: the {@link DocumentErrataKind}'s own, and the schema's.",
+      "fields": [],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [],
+      "exported": false
+    },
+    {
       "id": "cat-harness-tools/schemas/content/document-errata.ts#DocumentErrataSchema",
       "name": "DocumentErrataSchema",
       "module": "cat-harness-tools/schemas/content/document-errata.ts",
-      "kind": "zod-object",
-      "fields": [
-        {
-          "name": "$schema",
-          "type": "z.literal(DOCUMENT_ERRATA_SCHEMA)",
-          "optional": false,
-          "array": false
-        },
-        {
-          "name": "entry",
-          "type": "z.string().min(1)",
-          "optional": false,
-          "array": false,
-          "doc": "The library entry's slug, the directory this file sits in."
-        },
-        {
-          "name": "errata",
-          "type": "z.array(ErratumSchema).min(1)",
-          "optional": false,
-          "array": true
-        }
-      ],
+      "kind": "undetermined",
+      "note": "z.object(documentErrataFields).strict().superRefine(errataIdsUnique)",
+      "fields": [],
       "extendsNames": [],
       "values": [],
-      "refs": [
-        "cat-harness-tools/schemas/content/document-errata.ts#ErratumSchema"
-      ],
+      "refs": [],
       "unresolved": [],
-      "external": [
-        "DOCUMENT_ERRATA_SCHEMA",
-        "z"
-      ],
+      "external": [],
       "exported": true
     },
     {
@@ -13855,73 +13854,32 @@
       "exported": true
     },
     {
+      "id": "cat-harness-tools/schemas/content/document-footnotes.ts#documentFootnotesFields",
+      "name": "documentFootnotesFields",
+      "module": "cat-harness-tools/schemas/content/document-footnotes.ts",
+      "kind": "undetermined",
+      "note": "{ $schema: z.literal(DOCUMENT_FOOTNOTES_SCHEMA), entry: z.string().min(1), /** * `undetermined` when every page was OCR'd: OCR text has no fonts, so no * mark …",
+      "doc": "The fields of a footnotes sidecar: the {@link DocumentFootnotesKind}'s own, and the schema's.",
+      "fields": [],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [],
+      "exported": false
+    },
+    {
       "id": "cat-harness-tools/schemas/content/document-footnotes.ts#DocumentFootnotesSchema",
       "name": "DocumentFootnotesSchema",
       "module": "cat-harness-tools/schemas/content/document-footnotes.ts",
-      "kind": "zod-object",
-      "fields": [
-        {
-          "name": "$schema",
-          "type": "z.literal(DOCUMENT_FOOTNOTES_SCHEMA)",
-          "optional": false,
-          "array": false
-        },
-        {
-          "name": "entry",
-          "type": "z.string().min(1)",
-          "optional": false,
-          "array": false
-        },
-        {
-          "name": "status",
-          "type": "z.enum([\"determined\", \"undetermined\"])",
-          "optional": false,
-          "array": false,
-          "doc": "`undetermined` when every page was OCR'd: OCR text has no fonts, so no"
-        },
-        {
-          "name": "pages_unread",
-          "type": "z.array(z.number().int().min(1)).optional()",
-          "optional": true,
-          "array": true
-        },
-        {
-          "name": "body_size",
-          "type": "z.number().min(0)",
-          "optional": false,
-          "array": false,
-          "doc": "The span size carrying the most characters: what \"smaller than the body\" is measured against."
-        },
-        {
-          "name": "footnotes",
-          "type": "z.array(FootnoteSchema)",
-          "optional": false,
-          "array": true
-        },
-        {
-          "name": "uncalled_notes",
-          "type": "z.array(UncalledNoteSchema)",
-          "optional": false,
-          "array": true
-        },
-        {
-          "name": "unlinked_marks",
-          "type": "z.array(z.object({ page: z.number().int().min(1), mark: z.string().min(1), context: z.string() }).strict())",
-          "optional": false,
-          "array": true
-        }
-      ],
+      "kind": "undetermined",
+      "note": "z.object(documentFootnotesFields).strict().superRefine(noteIdsUnique)",
+      "fields": [],
       "extendsNames": [],
       "values": [],
-      "refs": [
-        "cat-harness-tools/schemas/content/document-footnotes.ts#FootnoteSchema",
-        "cat-harness-tools/schemas/content/document-footnotes.ts#UncalledNoteSchema"
-      ],
+      "refs": [],
       "unresolved": [],
-      "external": [
-        "DOCUMENT_FOOTNOTES_SCHEMA",
-        "z"
-      ],
+      "external": [],
       "exported": true
     },
     {
@@ -30057,6 +30015,13 @@
           "doc": "Its markdown is shown on a published page (an IG annex appended to its page), so its links address that page."
         },
         {
+          "name": "publishedByBuild",
+          "type": "z.literal(true).optional()",
+          "optional": true,
+          "array": false,
+          "doc": "Its directories are source a build Tool publishes at its own route, so the mount pass never copies them."
+        },
+        {
           "name": "recordsWork",
           "type": "z.boolean().optional()",
           "optional": true,
@@ -30067,6 +30032,13 @@
           "type": "z.enum([\"content\", \"context\", \"state\", \"derived\"])",
           "optional": false,
           "array": false
+        },
+        {
+          "name": "serialised",
+          "type": "z.boolean().optional()",
+          "optional": true,
+          "array": false,
+          "doc": "Whether a directory of this kind owes json, jsonld and schema.json at its URL (check:subgraph-coverage). Absent: owed unless `holds` is `state`. `false` for kinds whose files are not graph nodes: code, built pages, fixtures. Owner Q-SER-1 C / Q-SER-2 A, 2026-11-12: not all directories need to be harnessed."
         },
         {
           "name": "summary",
@@ -30375,6 +30347,13 @@
           "doc": "Is a graph of this kind's markdown SHOWN ON a published page, though the"
         },
         {
+          "name": "publishedByBuild",
+          "type": "true",
+          "optional": true,
+          "array": false,
+          "doc": "Is a directory of this kind SOURCE that a build Tool turns into pages at"
+        },
+        {
           "name": "recordsWork",
           "type": "boolean",
           "optional": true,
@@ -30387,6 +30366,13 @@
           "optional": false,
           "array": false,
           "doc": "Does a graph of this kind say what the layer **IS**, or where something"
+        },
+        {
+          "name": "serialised",
+          "type": "boolean",
+          "optional": true,
+          "array": false,
+          "doc": "Whether a directory of this kind owes json, jsonld and schema.json at its URL (check:subgraph-coverage). Absent: owed unless `holds` is `state`. `false` for kinds whose files are not graph nodes: code, built pages, fixtures. Owner Q-SER-1 C / Q-SER-2 A, 2026-11-12: not all directories need to be harnessed."
         },
         {
           "name": "summary",
@@ -44915,56 +44901,32 @@
       "exported": true
     },
     {
+      "id": "cat-harness-tools/schemas/library/tabular-csvw.ts#tabularCsvwFields",
+      "name": "tabularCsvwFields",
+      "module": "cat-harness-tools/schemas/library/tabular-csvw.ts",
+      "kind": "undetermined",
+      "note": "{ $schema: z.literal(TABULAR_CSVW_SCHEMA_ID), doc_id: z.string().min(1), /** One per sheet. A CSV has exactly one; a workbook is a `csvw:TableGroup`. */ tables…",
+      "doc": "The fields of a CSVW sidecar: the {@link TabularCsvwKind}'s own, and the schema's.",
+      "fields": [],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [],
+      "exported": false
+    },
+    {
       "id": "cat-harness-tools/schemas/library/tabular-csvw.ts#TabularCsvwSchema",
       "name": "TabularCsvwSchema",
       "module": "cat-harness-tools/schemas/library/tabular-csvw.ts",
-      "kind": "zod-object",
-      "fields": [
-        {
-          "name": "$schema",
-          "type": "z.literal(TABULAR_CSVW_SCHEMA_ID)",
-          "optional": false,
-          "array": false
-        },
-        {
-          "name": "doc_id",
-          "type": "z.string().min(1)",
-          "optional": false,
-          "array": false
-        },
-        {
-          "name": "tables",
-          "type": "z.array(CsvwTableSchema)",
-          "optional": false,
-          "array": true,
-          "doc": "One per sheet. A CSV has exactly one; a workbook is a `csvw:TableGroup`."
-        },
-        {
-          "name": "source",
-          "type": "z.record(z.string(), z.unknown())",
-          "optional": false,
-          "array": false,
-          "doc": "The technical-metadata block every ingest sidecar carries (`file`,"
-        },
-        {
-          "name": "narrative",
-          "type": "NarrativeSlotSchema",
-          "optional": false,
-          "array": false,
-          "doc": "What the data is about, under bean `ju0u`'s state machine, the same"
-        }
-      ],
+      "kind": "undetermined",
+      "note": "z.object(tabularCsvwFields)",
+      "fields": [],
       "extendsNames": [],
       "values": [],
-      "refs": [
-        "cat-harness-tools/schemas/content/narrative.ts#NarrativeSlotSchema",
-        "cat-harness-tools/schemas/library/tabular-csvw.ts#CsvwTableSchema"
-      ],
+      "refs": [],
       "unresolved": [],
-      "external": [
-        "TABULAR_CSVW_SCHEMA_ID",
-        "z"
-      ],
+      "external": [],
       "exported": true
     },
     {
@@ -61770,6 +61732,21 @@
       "exported": true
     },
     {
+      "id": "cat-harness-tools/schemas/sdlc/run-context.ts#runContextFields",
+      "name": "runContextFields",
+      "module": "cat-harness-tools/schemas/sdlc/run-context.ts",
+      "kind": "undetermined",
+      "note": "{ $schema: z.literal(RUN_CONTEXT_SCHEMA_TAG), platform: z.object({ commit: CommitShaSchema }).strict(), mounts: RunMountsSchema, /** The tool profile selected.…",
+      "doc": "The fields of a run context: the {@link RunContextKind}'s own, and the schema's.",
+      "fields": [],
+      "extendsNames": [],
+      "values": [],
+      "refs": [],
+      "unresolved": [],
+      "external": [],
+      "exported": false
+    },
+    {
       "id": "cat-harness-tools/schemas/sdlc/run-context.ts#RunContextRef",
       "name": "RunContextRef",
       "module": "cat-harness-tools/schemas/sdlc/run-context.ts",
@@ -61809,75 +61786,14 @@
       "id": "cat-harness-tools/schemas/sdlc/run-context.ts#RunContextSchema",
       "name": "RunContextSchema",
       "module": "cat-harness-tools/schemas/sdlc/run-context.ts",
-      "kind": "zod-object",
-      "doc": "One run's context, as a `folio-run-context/v1` document.",
-      "fields": [
-        {
-          "name": "$schema",
-          "type": "z.literal(RUN_CONTEXT_SCHEMA_TAG)",
-          "optional": false,
-          "array": false
-        },
-        {
-          "name": "platform",
-          "type": "z.object({ commit: CommitShaSchema }).strict()",
-          "optional": false,
-          "array": false
-        },
-        {
-          "name": "mounts",
-          "type": "RunMountsSchema",
-          "optional": false,
-          "array": false
-        },
-        {
-          "name": "profile",
-          "type": "z.object({ name: z.string().min(1), sha256: Sha256Schema }).strict().optional()",
-          "optional": true,
-          "array": false,
-          "doc": "The tool profile selected. Absent: the run selected none, and `releases[]` lists what it resolved anyway."
-        },
-        {
-          "name": "releases",
-          "type": "z.array(RunReleaseSchema)",
-          "optional": false,
-          "array": true
-        },
-        {
-          "name": "invoker",
-          "type": "RunInvokerSchema",
-          "optional": false,
-          "array": false
-        },
-        {
-          "name": "inputs",
-          "type": "z.array(HashBasisSchema)",
-          "optional": false,
-          "array": true
-        },
-        {
-          "name": "prov",
-          "type": "z.object({ activity: z.string().min(1) }).strict().optional()",
-          "optional": true,
-          "array": false,
-          "doc": "The PROV activity that records this context as `prov:used`. Absent until the run records one (step 3)."
-        }
-      ],
+      "kind": "undetermined",
+      "note": "z.object(runContextFields).strict().superRefine(releasesListedOnce)",
+      "fields": [],
       "extendsNames": [],
       "values": [],
-      "refs": [
-        "cat-harness-tools/schemas/kg/remote-mount.ts#CommitShaSchema",
-        "cat-harness-tools/schemas/sdlc/run-context.ts#RunInvokerSchema",
-        "cat-harness-tools/schemas/sdlc/run-context.ts#RunMountsSchema",
-        "cat-harness-tools/schemas/sdlc/run-context.ts#RunReleaseSchema",
-        "cat-harness-tools/schemas/sdlc/run-context.ts#Sha256Schema",
-        "cat-harness-tools/schemas/sdlc/test-run.ts#HashBasisSchema"
-      ],
+      "refs": [],
       "unresolved": [],
-      "external": [
-        "RUN_CONTEXT_SCHEMA_TAG",
-        "z"
-      ],
+      "external": [],
       "exported": true
     },
     {
@@ -84909,36 +84825,12 @@
       "array": false
     },
     {
-      "from": "cat-harness-tools/schemas/content/document-errata.ts#DocumentErrataSchema",
-      "to": "cat-harness-tools/schemas/content/document-errata.ts#ErratumSchema",
-      "via": "errata",
-      "kind": "field",
-      "optional": false,
-      "array": true
-    },
-    {
       "from": "cat-harness-tools/schemas/content/document-errata.ts#ErratumSchema",
       "to": "cat-harness-tools/schemas/content/narrative.ts#NarrativeSlotSchema",
       "via": "narrative",
       "kind": "field",
       "optional": false,
       "array": false
-    },
-    {
-      "from": "cat-harness-tools/schemas/content/document-footnotes.ts#DocumentFootnotesSchema",
-      "to": "cat-harness-tools/schemas/content/document-footnotes.ts#FootnoteSchema",
-      "via": "footnotes",
-      "kind": "field",
-      "optional": false,
-      "array": true
-    },
-    {
-      "from": "cat-harness-tools/schemas/content/document-footnotes.ts#DocumentFootnotesSchema",
-      "to": "cat-harness-tools/schemas/content/document-footnotes.ts#UncalledNoteSchema",
-      "via": "uncalled_notes",
-      "kind": "field",
-      "optional": false,
-      "array": true
     },
     {
       "from": "cat-harness-tools/schemas/content/document-footnotes.ts#FootnoteSchema",
@@ -89701,22 +89593,6 @@
       "array": false
     },
     {
-      "from": "cat-harness-tools/schemas/library/tabular-csvw.ts#TabularCsvwSchema",
-      "to": "cat-harness-tools/schemas/content/narrative.ts#NarrativeSlotSchema",
-      "via": "narrative",
-      "kind": "field",
-      "optional": false,
-      "array": false
-    },
-    {
-      "from": "cat-harness-tools/schemas/library/tabular-csvw.ts#TabularCsvwSchema",
-      "to": "cat-harness-tools/schemas/library/tabular-csvw.ts#CsvwTableSchema",
-      "via": "tables",
-      "kind": "field",
-      "optional": false,
-      "array": true
-    },
-    {
       "from": "cat-harness-tools/schemas/library/tabular-csvw.ts#TabularCsvwTablesSchema",
       "to": "cat-harness-tools/schemas/library/tabular-csvw.ts#TabularCsvwSchema",
       "via": "",
@@ -93885,54 +93761,6 @@
       "array": false
     },
     {
-      "from": "cat-harness-tools/schemas/sdlc/run-context.ts#RunContextSchema",
-      "to": "cat-harness-tools/schemas/kg/remote-mount.ts#CommitShaSchema",
-      "via": "platform",
-      "kind": "field",
-      "optional": false,
-      "array": false
-    },
-    {
-      "from": "cat-harness-tools/schemas/sdlc/run-context.ts#RunContextSchema",
-      "to": "cat-harness-tools/schemas/sdlc/run-context.ts#RunInvokerSchema",
-      "via": "invoker",
-      "kind": "field",
-      "optional": false,
-      "array": false
-    },
-    {
-      "from": "cat-harness-tools/schemas/sdlc/run-context.ts#RunContextSchema",
-      "to": "cat-harness-tools/schemas/sdlc/run-context.ts#RunMountsSchema",
-      "via": "mounts",
-      "kind": "field",
-      "optional": false,
-      "array": false
-    },
-    {
-      "from": "cat-harness-tools/schemas/sdlc/run-context.ts#RunContextSchema",
-      "to": "cat-harness-tools/schemas/sdlc/run-context.ts#RunReleaseSchema",
-      "via": "releases",
-      "kind": "field",
-      "optional": false,
-      "array": true
-    },
-    {
-      "from": "cat-harness-tools/schemas/sdlc/run-context.ts#RunContextSchema",
-      "to": "cat-harness-tools/schemas/sdlc/run-context.ts#Sha256Schema",
-      "via": "profile",
-      "kind": "field",
-      "optional": true,
-      "array": false
-    },
-    {
-      "from": "cat-harness-tools/schemas/sdlc/run-context.ts#RunContextSchema",
-      "to": "cat-harness-tools/schemas/sdlc/test-run.ts#HashBasisSchema",
-      "via": "inputs",
-      "kind": "field",
-      "optional": false,
-      "array": true
-    },
-    {
       "from": "cat-harness-tools/schemas/sdlc/run-context.ts#RunInvokerSchema",
       "to": "cat-harness-tools/schemas/kg/skill-package.ts#ActorKindSchema",
       "via": "kind",
@@ -97398,6 +97226,30 @@
       "note": "no validator is named for it, so no schema defines it"
     },
     {
+      "id": "folio-document-errata/v1",
+      "source": "node-kind",
+      "instance": "cat-harness-tools",
+      "parents": [],
+      "subclasses": [],
+      "typologies": [
+        "library"
+      ],
+      "page": "en/cat-harness-tools/folio-document-errata/v1/",
+      "note": "cat-harness-tools/schemas/content/document-errata.ts#DocumentErrataKind — an export this reader does not model as a declaration"
+    },
+    {
+      "id": "folio-document-footnotes/v1",
+      "source": "node-kind",
+      "instance": "cat-harness-tools",
+      "parents": [],
+      "subclasses": [],
+      "typologies": [
+        "library"
+      ],
+      "page": "en/cat-harness-tools/folio-document-footnotes/v1/",
+      "note": "cat-harness-tools/schemas/content/document-footnotes.ts#DocumentFootnotesKind — an export this reader does not model as a declaration"
+    },
+    {
       "id": "folio-document-images/v1",
       "source": "family",
       "instance": "cat-harness",
@@ -97650,6 +97502,18 @@
       ]
     },
     {
+      "id": "folio-run-context/v1",
+      "source": "node-kind",
+      "instance": "cat-harness-tools",
+      "parents": [],
+      "subclasses": [],
+      "typologies": [
+        "library"
+      ],
+      "page": "en/cat-harness-tools/folio-run-context/v1/",
+      "note": "cat-harness-tools/schemas/sdlc/run-context.ts#RunContextKind — an export this reader does not model as a declaration"
+    },
+    {
       "id": "folio-schema-graph/v1",
       "source": "family",
       "instance": "cat-harness",
@@ -97730,6 +97594,18 @@
         "beans",
         "sweep-marks"
       ]
+    },
+    {
+      "id": "folio-tabular-csvw/v1",
+      "source": "node-kind",
+      "instance": "cat-harness-tools",
+      "parents": [],
+      "subclasses": [],
+      "typologies": [
+        "library"
+      ],
+      "page": "en/cat-harness-tools/folio-tabular-csvw/v1/",
+      "note": "cat-harness-tools/schemas/library/tabular-csvw.ts#TabularCsvwKind — an export this reader does not model as a declaration"
     },
     {
       "id": "folio-test-run/v1",

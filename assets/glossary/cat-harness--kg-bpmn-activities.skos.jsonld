@@ -266,7 +266,7 @@
       ],
       "skos:definition": [
         {
-          "@value": "Called rather than restated. The mechanics of getting an edit reviewed and merged are not specific to the role graph, and a second description of them is a second thing free to disagree with the first."
+          "@value": "Called rather than restated. The mechanics of getting an edit reviewed and merged are not specific to the role graph, and a second description of them is a second thing free to disagree with the first. Where `cat-harness.sdlc` is switched on, this step is the opt-in process `code-change-review` (`Process_CodeChangeReview`, sdlc/processes/code-change-review.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12)."
         }
       ],
       "skos:notation": "CallActivity_CodeChangeReview",
@@ -371,6 +371,66 @@
       ],
       "skos:notation": "Task_RunKgAudit",
       "dcterms:source": "cat-harness/processes/process/actor-role-administration.bpmn#Task_RunKgAudit",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_adjudication.a_adjudicate",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Adjudicate the disagreement"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "The judgement itself, and the one step nothing here can check: if a mechanism could decide it, the process would not have been entered. It declares NO `cat-harness.processes:adjudication codes` on purpose, and that absence is the whole of bean `bvuk`. This step used to name three — stands, scope, dispensation — and six diagrams called it: `review-narrative` and `voice-review`, whose question those three answer, and four whose question they do not. `refresh-materialized` asks which side wins a local-vs-remote conflict; there is no criterion to scope there and no dispensation to grant, yet the outcome half ran regardless. Since the caller's question decides the permitted answers, the caller declares them: `cat-harness.processes:adjudication codes` on its OWN call activity, with its own gateway acting on them. `criterion-adjudication.bpmn` is that for the QA-criterion question. What could NOT be fixed by passing the codes as data, which was this bean's first recommendation: the three branches ran three different TASKS, so a caller handed `local-wins` would have had it pointing at `A_ScopeCriterion`. The branches had to move, not the enum."
+        }
+      ],
+      "skos:notation": "A_Adjudicate",
+      "dcterms:source": "cat-harness/processes/process/adjudication.bpmn#A_Adjudicate",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_adjudication.a_dispatch",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Dispatch with adjudicator_sees — never the artefact"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "`UntaintedDispatch` on the criterion declares what each party is given; the caller names a subject and a criterion and does not hand-assemble a brief, because the party composing a brief by hand is the producer. `untaintedPartitionDefects` reports `overlap` when the checker and the adjudicator can read the same file — one of them is then grading its own input, and the verdict measures nothing while raising no error."
+        }
+      ],
+      "skos:notation": "A_Dispatch",
+      "dcterms:source": "cat-harness/processes/process/adjudication.bpmn#A_Dispatch",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_adjudication.a_statefinding",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "State the finding and what it read"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Each provider says what it found and on what evidence. A finding that does not show what it read is an opinion, and an adjudicator cannot tell it from a finding about some other version of the block."
+        }
+      ],
+      "skos:notation": "A_StateFinding",
+      "dcterms:source": "cat-harness/processes/process/adjudication.bpmn#A_StateFinding",
       "skos:note": "candidate"
     },
     {
@@ -1226,7 +1286,7 @@
       ],
       "skos:definition": [
         {
-          "@value": "Phase 6's \"explicit confirmation before merging to main\", made a step that can refuse. Once per pull request the feature still has open, after the sign-off is recorded and before the issue is closed: an issue is not closed on a feature that is not on `main`. `merge-to-main.bpmn` reads each head's evidence live, establishes that the owner authorised THAT merge (a stakeholder sign-off or the BA's confirmation is acceptance of the feature, not authorisation to merge it, unless the owner's own words say so), records the authorisation, merges, and confirms the base. A PR the owner holds or refuses stays open, and A_Close then waits: the BA's authorisation to close does not cover a feature that did not land. An increment the owner asked to land earlier in Phase 6 went through the same sub-process at that time."
+          "@value": "Phase 6's \"explicit confirmation before merging to main\", made a step that can refuse. Once per pull request the feature still has open, after the sign-off is recorded and before the issue is closed: an issue is not closed on a feature that is not on `main`. `merge-to-main.bpmn` reads each head's evidence live, establishes that the owner authorised THAT merge (a stakeholder sign-off or the BA's confirmation is acceptance of the feature, not authorisation to merge it, unless the owner's own words say so), records the authorisation, merges, and confirms the base. A PR the owner holds or refuses stays open, and A_Close then waits: the BA's authorisation to close does not cover a feature that did not land. An increment the owner asked to land earlier in Phase 6 went through the same sub-process at that time. Where `cat-harness.sdlc` is switched on, this step is the opt-in process `merge-to-main` (`Process_MergeToMain`, sdlc/processes/merge-to-main.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12)."
         }
       ],
       "skos:notation": "Call_MergeToMain",
@@ -1951,6 +2011,86 @@
       ],
       "skos:notation": "BA_Signoff",
       "dcterms:source": "cat-harness/processes/process/crdm-signoff.bpmn#BA_Signoff",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_criterionadjudication.a_dispensation",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Grant a dispensation, with its reason"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "The rule applies and this subject is a stated exception. A `kind: \"human\"` entry with `result: \"pass\"` overrides the script's `fail` for that criterion, and ONLY while its `field_hash` matches the current source — so the dispensation is scoped to the version it was granted against, lapses when the block changes, and never becomes precedent. There is nothing to overturn later; the source moving overturns it. A dispensation with no `notes` is not a dispensation. It is an override somebody applied to get to green, and nobody can review it afterwards — which is why this step is not relaxable."
+        }
+      ],
+      "skos:notation": "A_Dispensation",
+      "dcterms:source": "cat-harness/processes/process/criterion-adjudication.bpmn#A_Dispensation",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_criterionadjudication.a_recordentry",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Write the entry that LEADS — keeping the checker's beneath it"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Not relaxable, and the one step here that is not. A judgement nobody wrote down is indistinguishable from a checker that was never run, so the judgement is free and the record is not. Do not resolve the disagreement away: both entries stay, the adjudication on top under the sweep's most-recent-matching-hash rule. A disagreement between a checker and a reviewer is information, and somebody re-running the check next month needs to find that a checker read it differently rather than a clean pass. `/api/relevance/adjudicate` reached the same rule independently — `human_adjudicated` written alongside, never over, the agent's `assessed_by`."
+        }
+      ],
+      "skos:notation": "A_RecordEntry",
+      "dcterms:source": "cat-harness/processes/process/criterion-adjudication.bpmn#A_RecordEntry",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_criterionadjudication.a_scopecriterion",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Scope the criterion so it stops applying here"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "One edit to the criterion rather than ten overrules on the blocks it should never have covered. This branch is the one an adjudicator under time pressure converts into a dispensation, and the conversion is a defect: a dispensation lapses when the source moves, so a mis-scoped criterion granted its way past comes back every time anybody touches the block."
+        }
+      ],
+      "skos:notation": "A_ScopeCriterion",
+      "dcterms:source": "cat-harness/processes/process/criterion-adjudication.bpmn#A_ScopeCriterion",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_criterionadjudication.call_adjudicate",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Adjudicate the criterion disagreement"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "The shared judgement — entry condition, untainted dispatch, person-or-agent restriction — asked with THIS question's permitted answers. `cat-harness.processes:adjudication codes` sits here rather than on `A_Adjudicate` inside it because the answers depend on what was asked, and the gateway below is what acts on them: the engine refuses a mismatch between the two. `Process_Adjudication` may also leave at `End_NotAdjudicable` — one entry and no other side is a review or a gate, not a disagreement — in which case nothing below runs and there is nothing to record."
+        }
+      ],
+      "skos:notation": "Call_Adjudicate",
+      "dcterms:source": "cat-harness/processes/process/criterion-adjudication.bpmn#Call_Adjudicate",
       "skos:note": "candidate"
     },
     {
@@ -3151,7 +3291,7 @@
       ],
       "skos:definition": [
         {
-          "@value": "The parent pins the pair (a commit while staging, a version once released) — a code dependency as a `source.remote` instance in its root `index.config.json` (remote-mount skill), never a submodule — repoints its imports, and keeps its own copy until it is green with the dependency declared."
+          "@value": "The parent pins the pair (a commit while staging, a version once released) — a code dependency as a `source.remote` instance in its root `index.config.json` (remote-mount skill), never a submodule — repoints its imports, and keeps its own copy until it is green with the dependency declared. Where `cat-harness.sdlc` is switched on, this step is the opt-in process `upstream-version-adoption` (`Process_UpstreamAdoption`, sdlc/processes/upstream-version-adoption.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12)."
         }
       ],
       "skos:notation": "Task_Consume",
@@ -3291,7 +3431,7 @@
       ],
       "skos:definition": [
         {
-          "@value": "After the release is live, every published identifier resolves to the file it names."
+          "@value": "After the release is live, every published identifier resolves to the file it names. Where `cat-harness.sdlc` is switched on, this step is the opt-in process `publish-verification` (`Process_PublishVerification`, sdlc/processes/publish-verification.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12)."
         }
       ],
       "skos:notation": "Task_Verify",
@@ -4494,6 +4634,106 @@
       "skos:note": "candidate"
     },
     {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_optionsanalysis.a_apply",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Apply it, and state each option's trade-offs"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Follow the selected methodology as written — adopted whole, not blended with another. At least two real options: one option is not a choice, and a straw option is worse than a short list because it makes the analysis look thorough while narrowing it. Never quantify the comparison to make it look measured. Where a method scores and sums, this platform takes the structure and refuses the arithmetic: the weights are invented and a total reads as a measurement."
+        }
+      ],
+      "skos:notation": "A_Apply",
+      "dcterms:source": "cat-harness/processes/process/options-analysis.bpmn#A_Apply",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_optionsanalysis.a_checkevidence",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Check the selected methodology's evidence base"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Before applying a methodology, establish that the thing being applied is what it claims to be. A methodology is adopted because it is somebody else's named, external work; this step checks that the `origin` it cites resolves to a source in a declared library, and reads the `methodology-evidence` QA sidecar for it. WHY THE CHECK IS HERE AND NOT AT ADOPTION. Adoption happens once; selection happens every time a decision is made. A source that was reachable when the methodology was adopted can stop being so, and a methodology adopted before this axis existed was never checked at all. Measured 2026-09-22: six methodologies cited an origin and NONE had that source in any library, so every selection made until then rested on an unverifiable citation. WHAT A GAP DOES AND DOES NOT DO. A missing source does NOT block the decision, and this step has no branch that stops the process — that would make a documentation gap into an outage, and the owner decides whether an unbacked methodology may still be used. It does two things: it runs `literature-search` to try to close the gap, and it puts the evidence state into the record `A_Record` writes, so a reader can tell a decision made on a verified method from one made on a citation nobody could follow. The third state is the one that matters. \"Source ingested\", \"source located but unreachable from here\" and \"no source found\" are three different facts, and `literature-search` exists largely to stop the middle one being reported as the last."
+        }
+      ],
+      "skos:notation": "A_CheckEvidence",
+      "dcterms:source": "cat-harness/processes/process/options-analysis.bpmn#A_CheckEvidence",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_optionsanalysis.a_frame",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Frame the decision and check the trigger"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "One sentence naming the KIND of thing being chosen, not the options — \"which cache strategy\", never \"A or B\". Then the trigger: is this irreversible, or would the answer surprise someone? If neither, say so and stop; the calling step decides without this subprocess. Stopping here is a correct outcome, not a skipped step."
+        }
+      ],
+      "skos:notation": "A_Frame",
+      "dcterms:source": "cat-harness/processes/process/options-analysis.bpmn#A_Frame",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_optionsanalysis.a_record",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Record the chosen option AND the rejected ones"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "The rejected options and why they lost are part of the output, not an appendix. A rejected option with no record is a dead end nobody marked, and the next agent walks into it — the same argument `bean-coordination` makes for `scrapped` over deleted. In a bean context the form is MADR's. Which methodology was followed is named here, so a reader can check the method rather than take the conclusion."
+        }
+      ],
+      "skos:notation": "A_Record",
+      "dcterms:source": "cat-harness/processes/process/options-analysis.bpmn#A_Record",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_optionsanalysis.a_select",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Select the methodology by context"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Ask the selection question in order, first yes decides: do the criteria RECUR with the same inputs having to produce the same answer; is this the CERTAINTY of a body of evidence behind a recommendation; is the context a BEAN recording a decision; otherwise a one-off choice among candidates. If none fits, that is a finding — say which question the decision is and that no adopted methodology covers it. Do not improvise one and do not stretch the nearest fit. The declared set is the contents of the `methodology` graph. Ask for it; do not remember it."
+        }
+      ],
+      "skos:notation": "A_Select",
+      "dcterms:source": "cat-harness/processes/process/options-analysis.bpmn#A_Select",
+      "skos:note": "candidate"
+    },
+    {
       "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_refreshmaterialized.task_adjudicate",
       "@type": "skos:Concept",
       "skos:inScheme": {
@@ -4651,6 +4891,101 @@
       ],
       "skos:notation": "Task_Upstream",
       "dcterms:source": "cat-harness/library/processes/refresh-materialized.bpmn#Task_Upstream",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_relatedwork.a_categorize",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Categorize and summarize"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Each hit gets a category (overlaps: coordinate; affected by; out of scope; unrelated) and a one-line summary with its state. Judgement, not a keyword score: say why each is in its category."
+        }
+      ],
+      "skos:notation": "A_Categorize",
+      "dcterms:source": "cat-harness/processes/process/related-work.bpmn#A_Categorize",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_relatedwork.a_record",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Record and act on the answer"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Write the chosen coordination where it will be found: bean links (--blocked-by, --parent), a line in the issue or PR body, or 'note only'. A declined coordination is recorded too."
+        }
+      ],
+      "skos:notation": "A_Record",
+      "dcterms:source": "cat-harness/processes/process/related-work.bpmn#A_Record",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_relatedwork.a_searchbeans",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Search beans for relevance"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "beans list --json / beans query over titles AND bodies, open and recently completed. A completed bean is evidence of a decision already made."
+        }
+      ],
+      "skos:notation": "A_SearchBeans",
+      "dcterms:source": "cat-harness/processes/process/related-work.bpmn#A_SearchBeans",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_relatedwork.a_searchissues",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Search issues and open PRs"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "The repository's issues (open and closed) and its open pull requests. An open PR touching the same files is the collision most worth finding early."
+        }
+      ],
+      "skos:notation": "A_SearchIssues",
+      "dcterms:source": "cat-harness/processes/process/related-work.bpmn#A_SearchIssues",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities/process_relatedwork.u_coordinate",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/cat-harness/v0/ns/glossary/kg-bpmn-activities"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "Coordinate? How?"
+        }
+      ],
+      "skos:notation": "U_Coordinate",
+      "dcterms:source": "cat-harness/processes/process/related-work.bpmn#U_Coordinate",
       "skos:note": "candidate"
     },
     {
@@ -4886,7 +5221,7 @@
       ],
       "skos:definition": [
         {
-          "@value": "Descend into Process_NarrativeCodeReview: judge what the pair checks could not settle (a stale pair, a false or undetermined claim), and send a disagreement with a checker to adjudication."
+          "@value": "Descend into Process_NarrativeCodeReview: judge what the pair checks could not settle (a stale pair, a false or undetermined claim), and send a disagreement with a checker to adjudication. Where `cat-harness.sdlc` is switched on, this step is the opt-in process `narrative-code-review` (`Process_NarrativeCodeReview`, sdlc/processes/narrative-code-review.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12)."
         }
       ],
       "skos:notation": "Call_NarrativeCodeReview",
@@ -5801,7 +6136,7 @@
       },
       "skos:prefLabel": [
         {
-          "@value": "Choose subgraphs, the asset policy, harnesses"
+          "@value": "Choose subgraphs, assets, harnesses"
         }
       ],
       "skos:definition": [

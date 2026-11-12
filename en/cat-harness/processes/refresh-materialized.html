@@ -288,6 +288,7 @@
 <button type="button" class="pt-mark" data-task="Task_Fixity" style="left:23.77%;top:82.58%" aria-expanded="false" aria-label="About step: ARCHIVAL verify fixity — never re-fetch" title="About: ARCHIVAL verify fixity — never re-fetch">i</button>
 <button type="button" class="pt-mark" data-task="Task_Upstream" style="left:27.62%;top:42.13%" aria-expanded="false" aria-label="About step: WORKING what changed upstream" title="About: WORKING what changed upstream">i</button>
 <button type="button" class="pt-mark" data-task="Task_Local" style="left:39.15%;top:42.13%" aria-expanded="false" aria-label="About step: What changed LOCALLY since" title="About: What changed LOCALLY since">i</button>
+<a class="pt-go" href="adjudication.html" style="left:43.19%;top:29.21%;width:1.85%;height:2.7%" aria-label="Open subprocess: Adjudicate the conflict" title="Open subprocess: Adjudicate the conflict"></a>
 <button type="button" class="pt-mark" data-task="Task_Adjudicate" style="left:48.77%;top:18.54%" aria-expanded="false" aria-label="About step: Adjudicate the conflict" title="About: Adjudicate the conflict">i</button>
 <button type="button" class="pt-mark" data-task="Task_Reconcile" style="left:64.15%;top:2.25%" aria-expanded="false" aria-label="About step: Reconcile the two by hand" title="About: Reconcile the two by hand">i</button>
 <button type="button" class="pt-mark" data-task="Task_Apply" style="left:83.77%;top:42.13%" aria-expanded="false" aria-label="About step: Re-materialize and record new fixity" title="About: Re-materialize and record new fixity">i</button>
@@ -512,7 +513,7 @@
 
 <ul>
   <li><strong>Called by:</strong> <a href="sample-import.html">Sample import into a structured data store</a>, <a href="subscribe-kg.html">Subscribe to an external knowledge graph</a></li>
-  <li><strong>Calls:</strong> <code class="language-plaintext highlighter-rouge">Process_Adjudication</code> (not loadable here)</li>
+  <li><strong>Calls:</strong> <a href="adjudication.html">Adjudication</a></li>
   <li><strong>Presented on:</strong> no docs page section shows this diagram</li>
   <li><strong>Running instances:</strong> none recorded</li>
 </ul>
@@ -588,7 +589,7 @@
     <tr>
       <td><a id="step-Task_Adjudicate"></a><strong>Adjudicate the conflict</strong><br /><code class="language-plaintext highlighter-rouge">Task_Adjudicate</code></td>
       <td>Contributor (human or agent)</td>
-      <td>calls <code class="language-plaintext highlighter-rouge">Process_Adjudication</code><br /><a href="../../../en/cat-harness/processes/skills/materialize-remote.html"><code class="language-plaintext highlighter-rouge">materialize-remote</code></a><br /><code class="language-plaintext highlighter-rouge">adjudication</code></td>
+      <td>calls <a href="adjudication.html">Adjudication</a><br /><a href="../../../en/cat-harness/processes/skills/materialize-remote.html"><code class="language-plaintext highlighter-rouge">materialize-remote</code></a><br /><a href="../../../en/cat-harness/processes/skills/adjudication.html"><code class="language-plaintext highlighter-rouge">adjudication</code></a></td>
       <td>A human or agentic decision, never a merge rule. Which side wins depends on why the local edit was made, and a process that picked automatically would be choosing without the one fact that decides it.</td>
     </tr>
     <tr>

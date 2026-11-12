@@ -5,48 +5,48 @@
   {
    "id": "Call_RelatedWork",
    "name": "Related work: find, sort, ask",
-   "left": 32.59,
+   "left": 32.44,
    "top": 16.18,
    "box": {
-    "left": 24.06,
+    "left": 23.95,
     "top": 44.12,
-    "width": 2.82,
+    "width": 2.81,
     "height": 7.06
    }
   },
   {
    "id": "A_ScanIssues",
    "name": "Scan open issues for match",
-   "left": 51.41,
+   "left": 51.18,
    "top": 16.18,
    "box": {
-    "left": 42.88,
+    "left": 42.69,
     "top": 44.12,
-    "width": 2.82,
+    "width": 2.81,
     "height": 7.06
    }
   },
   {
    "id": "A_AskCreate",
    "name": "Ask BA to create or link issue",
-   "left": 83.18,
+   "left": 82.81,
    "top": 16.18,
    "box": {
-    "left": 74.65,
+    "left": 74.32,
     "top": 44.12,
-    "width": 2.82,
+    "width": 2.81,
     "height": 7.06
    }
   },
   {
    "id": "A_LinkIssue",
    "name": "Link to existing issue",
-   "left": 83.18,
+   "left": 82.81,
    "top": 57.35,
    "box": {
-    "left": 74.65,
+    "left": 74.32,
     "top": 85.29,
-    "width": 2.82,
+    "width": 2.81,
     "height": 7.06
    }
   }
@@ -62,7 +62,9 @@
    "laneHref": "crdm-issue-linking.html#lane-Lane_Agent",
    "skills": [],
    "calls": {
-    "name": "Process_RelatedWork"
+    "name": "Related work: find, sort, summarize, ask to coordinate",
+    "href": "related-work.html",
+    "diagram": "related-work.html"
    },
    "role": {
     "name": "authoring-agent",
@@ -98,7 +100,8 @@
       "name": "branch-archaeology"
      },
      {
-      "name": "ci-health"
+      "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html"
      },
      {
       "name": "confirmation-waiver",
@@ -109,19 +112,23 @@
       "href": "../../../en/cat-harness/processes/skills/content-graph.html"
      },
      {
-      "name": "continual-progress"
+      "name": "continual-progress",
+      "href": "../../../en/cat-harness/processes/skills/continual-progress.html"
      },
      {
       "name": "coordinate"
      },
      {
-      "name": "crdm-detect"
+      "name": "crdm-detect",
+      "href": "../../../en/cat-harness/processes/skills/crdm-detect.html"
      },
      {
-      "name": "crdm-requirements-workflow"
+      "name": "crdm-requirements-workflow",
+      "href": "../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"
      },
      {
-      "name": "decision-audit"
+      "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
       "name": "decision-comparison",
@@ -139,7 +146,8 @@
       "href": "../../../en/cat-harness/processes/skills/directory-conventions.html"
      },
      {
-      "name": "feature-staging"
+      "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html"
      },
      {
       "name": "folio-init",
@@ -181,14 +189,16 @@
       "href": "../../../en/cat-harness/processes/skills/methodology-adoption.html"
      },
      {
-      "name": "opening-brief"
+      "name": "opening-brief",
+      "href": "../../../en/cat-harness/processes/skills/opening-brief.html"
      },
      {
       "name": "placement",
       "href": "../../../en/cat-harness/processes/skills/placement.html"
      },
      {
-      "name": "platform-gates"
+      "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
       "name": "pr-description"
@@ -211,7 +221,8 @@
       "href": "../../../en/cat-harness/processes/skills/session-state-machine.html"
      },
      {
-      "name": "staging-review"
+      "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
       "name": "sub-kg-lifecycle",
@@ -232,7 +243,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "upstream-version-adoption"
+      "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -260,7 +272,14 @@
    "laneHref": "crdm-issue-linking.html#lane-Lane_Agent",
    "skills": [
     {
-     "name": "crdm-requirements-workflow"
+     "name": "crdm-requirements-workflow",
+     "href": "../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html",
+     "methodologies": [
+      {
+       "name": "crdm",
+       "href": "../../../en/cat-harness/methodologies/cat-harness/crdm/"
+      }
+     ]
     }
    ],
    "role": {
@@ -297,7 +316,8 @@
       "name": "branch-archaeology"
      },
      {
-      "name": "ci-health"
+      "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html"
      },
      {
       "name": "confirmation-waiver",
@@ -308,19 +328,23 @@
       "href": "../../../en/cat-harness/processes/skills/content-graph.html"
      },
      {
-      "name": "continual-progress"
+      "name": "continual-progress",
+      "href": "../../../en/cat-harness/processes/skills/continual-progress.html"
      },
      {
       "name": "coordinate"
      },
      {
-      "name": "crdm-detect"
+      "name": "crdm-detect",
+      "href": "../../../en/cat-harness/processes/skills/crdm-detect.html"
      },
      {
-      "name": "crdm-requirements-workflow"
+      "name": "crdm-requirements-workflow",
+      "href": "../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"
      },
      {
-      "name": "decision-audit"
+      "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
       "name": "decision-comparison",
@@ -338,7 +362,8 @@
       "href": "../../../en/cat-harness/processes/skills/directory-conventions.html"
      },
      {
-      "name": "feature-staging"
+      "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html"
      },
      {
       "name": "folio-init",
@@ -380,14 +405,16 @@
       "href": "../../../en/cat-harness/processes/skills/methodology-adoption.html"
      },
      {
-      "name": "opening-brief"
+      "name": "opening-brief",
+      "href": "../../../en/cat-harness/processes/skills/opening-brief.html"
      },
      {
       "name": "placement",
       "href": "../../../en/cat-harness/processes/skills/placement.html"
      },
      {
-      "name": "platform-gates"
+      "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
       "name": "pr-description"
@@ -410,7 +437,8 @@
       "href": "../../../en/cat-harness/processes/skills/session-state-machine.html"
      },
      {
-      "name": "staging-review"
+      "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
       "name": "sub-kg-lifecycle",
@@ -431,7 +459,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "upstream-version-adoption"
+      "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -459,7 +488,14 @@
    "laneHref": "crdm-issue-linking.html#lane-Lane_Agent",
    "skills": [
     {
-     "name": "crdm-requirements-workflow"
+     "name": "crdm-requirements-workflow",
+     "href": "../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html",
+     "methodologies": [
+      {
+       "name": "crdm",
+       "href": "../../../en/cat-harness/methodologies/cat-harness/crdm/"
+      }
+     ]
     }
    ],
    "role": {
@@ -496,7 +532,8 @@
       "name": "branch-archaeology"
      },
      {
-      "name": "ci-health"
+      "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html"
      },
      {
       "name": "confirmation-waiver",
@@ -507,19 +544,23 @@
       "href": "../../../en/cat-harness/processes/skills/content-graph.html"
      },
      {
-      "name": "continual-progress"
+      "name": "continual-progress",
+      "href": "../../../en/cat-harness/processes/skills/continual-progress.html"
      },
      {
       "name": "coordinate"
      },
      {
-      "name": "crdm-detect"
+      "name": "crdm-detect",
+      "href": "../../../en/cat-harness/processes/skills/crdm-detect.html"
      },
      {
-      "name": "crdm-requirements-workflow"
+      "name": "crdm-requirements-workflow",
+      "href": "../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"
      },
      {
-      "name": "decision-audit"
+      "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
       "name": "decision-comparison",
@@ -537,7 +578,8 @@
       "href": "../../../en/cat-harness/processes/skills/directory-conventions.html"
      },
      {
-      "name": "feature-staging"
+      "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html"
      },
      {
       "name": "folio-init",
@@ -579,14 +621,16 @@
       "href": "../../../en/cat-harness/processes/skills/methodology-adoption.html"
      },
      {
-      "name": "opening-brief"
+      "name": "opening-brief",
+      "href": "../../../en/cat-harness/processes/skills/opening-brief.html"
      },
      {
       "name": "placement",
       "href": "../../../en/cat-harness/processes/skills/placement.html"
      },
      {
-      "name": "platform-gates"
+      "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
       "name": "pr-description"
@@ -609,7 +653,8 @@
       "href": "../../../en/cat-harness/processes/skills/session-state-machine.html"
      },
      {
-      "name": "staging-review"
+      "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
       "name": "sub-kg-lifecycle",
@@ -630,7 +675,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "upstream-version-adoption"
+      "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
       "name": "voice-authoring-guidance"
@@ -658,7 +704,14 @@
    "laneHref": "crdm-issue-linking.html#lane-Lane_Agent",
    "skills": [
     {
-     "name": "crdm-requirements-workflow"
+     "name": "crdm-requirements-workflow",
+     "href": "../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html",
+     "methodologies": [
+      {
+       "name": "crdm",
+       "href": "../../../en/cat-harness/methodologies/cat-harness/crdm/"
+      }
+     ]
     }
    ],
    "role": {
@@ -695,7 +748,8 @@
       "name": "branch-archaeology"
      },
      {
-      "name": "ci-health"
+      "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html"
      },
      {
       "name": "confirmation-waiver",
@@ -706,19 +760,23 @@
       "href": "../../../en/cat-harness/processes/skills/content-graph.html"
      },
      {
-      "name": "continual-progress"
+      "name": "continual-progress",
+      "href": "../../../en/cat-harness/processes/skills/continual-progress.html"
      },
      {
       "name": "coordinate"
      },
      {
-      "name": "crdm-detect"
+      "name": "crdm-detect",
+      "href": "../../../en/cat-harness/processes/skills/crdm-detect.html"
      },
      {
-      "name": "crdm-requirements-workflow"
+      "name": "crdm-requirements-workflow",
+      "href": "../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"
      },
      {
-      "name": "decision-audit"
+      "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html"
      },
      {
       "name": "decision-comparison",
@@ -736,7 +794,8 @@
       "href": "../../../en/cat-harness/processes/skills/directory-conventions.html"
      },
      {
-      "name": "feature-staging"
+      "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html"
      },
      {
       "name": "folio-init",
@@ -778,14 +837,16 @@
       "href": "../../../en/cat-harness/processes/skills/methodology-adoption.html"
      },
      {
-      "name": "opening-brief"
+      "name": "opening-brief",
+      "href": "../../../en/cat-harness/processes/skills/opening-brief.html"
      },
      {
       "name": "placement",
       "href": "../../../en/cat-harness/processes/skills/placement.html"
      },
      {
-      "name": "platform-gates"
+      "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html"
      },
      {
       "name": "pr-description"
@@ -808,7 +869,8 @@
       "href": "../../../en/cat-harness/processes/skills/session-state-machine.html"
      },
      {
-      "name": "staging-review"
+      "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html"
      },
      {
       "name": "sub-kg-lifecycle",
@@ -829,7 +891,8 @@
       "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
      },
      {
-      "name": "upstream-version-adoption"
+      "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html"
      },
      {
       "name": "voice-authoring-guidance"

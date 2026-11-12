@@ -281,11 +281,11 @@
 
 <p>Candidate terms extracted from every BPMN task and call activity: <code class="language-plaintext highlighter-rouge">name</code> as the label, its own <code class="language-plaintext highlighter-rouge">&lt;documentation&gt;</code> as the definition, the element id as the code. Each is the asset’s own text, verbatim and not curated, and carries the badge “candidate, extracted”. A person promotes one by authoring it. Authored terms are on their owning instance’s page, and those pages, the counts and the sources are linked from the <a href="../../../../../en/folio-assistant-core/glossary/">glossary index</a>.</p>
 
-<p>From: bootstrap 38 (<a href="../../../../../assets/glossary/bootstrap--kg-bpmn-activities.skos.jsonld">SKOS</a>) · bootstrap-tools 7 (<a href="../../../../../assets/glossary/bootstrap-tools--kg-bpmn-activities.skos.jsonld">SKOS</a>) · cat-harness 359 (<a href="../../../../../assets/glossary/cat-harness--kg-bpmn-activities.skos.jsonld">SKOS</a>).</p>
+<p>From: bootstrap 38 (<a href="../../../../../assets/glossary/bootstrap--kg-bpmn-activities.skos.jsonld">SKOS</a>) · bootstrap-tools 7 (<a href="../../../../../assets/glossary/bootstrap-tools--kg-bpmn-activities.skos.jsonld">SKOS</a>) · cat-harness 376 (<a href="../../../../../assets/glossary/cat-harness--kg-bpmn-activities.skos.jsonld">SKOS</a>).</p>
 
 <p>One of 3 pages of this type, split by the first letter of the label: <a href="../../../../../en/folio-assistant-core/glossary/bpmn-activities/">all parts</a>.</p>
 
-<p><strong>Size:</strong> this page holds 150 terms and is 123 KB before compression, fetched in one request, within its budget of 1.0 MB. There is no search index: the filter below runs over this page, and the A–Z bar jumps within it.</p>
+<p><strong>Size:</strong> this page holds 158 terms and is 129 KB before compression, fetched in one request, within its budget of 1.0 MB. There is no search index: the filter below runs over this page, and the A–Z bar jumps within it.</p>
 
 <div class="table-wrapper"><table class="fa-gloss-mapping">
 <caption>Already somebody else's concept? — <code>check:term-mapping</code>, bean <code>7wou</code></caption>
@@ -300,7 +300,7 @@ be a term this corpus is right to coin.</p>
 
 <p><label for="fa-gloss-q">Filter terms</label>
 <input id="fa-gloss-q" type="search" autocomplete="off" style="min-height:44px;width:100%;max-width:32rem" /></p>
-<p aria-live="polite"><span id="fa-gloss-n">150</span> shown</p>
+<p aria-live="polite"><span id="fa-gloss-n">158</span> shown</p>
 
 <nav aria-label="Letters"><a href="#letter-R">R</a> <a href="#letter-S">S</a> <a href="#letter-T">T</a> <a href="#letter-U">U</a> <a href="#letter-V">V</a> <a href="#letter-W">W</a></nav>
 <h2 id="letter-R">
@@ -438,6 +438,13 @@ Reconcile the two by hand <span class="fa-gloss-status">candidate, extracted</sp
 <p>Neither side wins whole: the contributor produces content that is neither the local copy nor the remote one, and THEN it is applied. Drawn as a separate step before Task_Apply rather than folded into it, because Task_Apply re-asks the five import gates against what is being materialized — and what is being materialized here is a hand-made artefact, which is exactly the case those gates should see rather than be told about.</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/library/processes/refresh-materialized.bpmn"><code>cat-harness/library/processes/refresh-materialized.bpmn#Task_Reconcile</code></a></p>
 </dd>
+<dt id="cat-harness--kg-bpmn-activities--process_relatedwork.a_record" data-fa-state="extracted" data-fa-gloss="">
+Record and act on the answer <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>Write the chosen coordination where it will be found: bean links (--blocked-by, --parent), a line in the issue or PR body, or 'note only'. A declined coordination is recorded too.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/related-work.bpmn"><code>cat-harness/processes/process/related-work.bpmn#A_Record</code></a></p>
+</dd>
 <dt id="cat-harness--kg-bpmn-activities--process_translationroundtrip.task_rt_record" data-fa-state="extracted" data-fa-gloss="">
 Record both witnesses <span class="fa-gloss-status">candidate, extracted</span>
 </dt>
@@ -507,6 +514,13 @@ Record the answer, and who gave it <span class="fa-gloss-status">candidate, extr
 <dd>
 <p>In the form the caller asked for — for bootstrap's harness question, a document conforming to discussion.output.schema.json with determinedBy asked. Who answered (a person or an agent) is part of the record. An answer about the context, the Role or the Process is recorded the same way, as the person's word.</p>
 <p class="fa-gloss-meta">BPMN activities of bootstrap · source <a href="https://github.com/litlfred/bootstrap/blob/main/processes/human-agent-discussion.bpmn"><code>bootstrap/processes/human-agent-discussion.bpmn#A_RecordAnswer</code></a></p>
+</dd>
+<dt id="cat-harness--kg-bpmn-activities--process_optionsanalysis.a_record" data-fa-state="extracted" data-fa-gloss="">
+Record the chosen option AND the rejected ones <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>The rejected options and why they lost are part of the output, not an appendix. A rejected option with no record is a dead end nobody marked, and the next agent walks into it — the same argument <code>bean-coordination</code> makes for <code>scrapped</code> over deleted. In a bean context the form is MADR's. Which methodology was followed is named here, so a reader can check the method rather than take the conclusion.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/options-analysis.bpmn"><code>cat-harness/processes/process/options-analysis.bpmn#A_Record</code></a></p>
 </dd>
 <dt id="cat-harness--kg-bpmn-activities--process_refreshmaterialized.task_recordconflict" data-fa-state="extracted" data-fa-gloss="">
 Record the conflict: no decision, no re-pin <span class="fa-gloss-status">candidate, extracted</span>
@@ -1008,12 +1022,33 @@ Schedule the refresh watcher <span class="fa-gloss-status">candidate, extracted<
 <p>Schedule a fresh session that follows <code>translation-refresh</code> on each layer, so a template that moves after today is caught by its check failing, not by a reader.</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/library/processes/multi-locale-translation.bpmn"><code>cat-harness/library/processes/multi-locale-translation.bpmn#Task_ML_Watcher</code></a></p>
 </dd>
+<dt id="cat-harness--kg-bpmn-activities--process_criterionadjudication.a_scopecriterion" data-fa-state="extracted" data-fa-gloss="">
+Scope the criterion so it stops applying here <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>One edit to the criterion rather than ten overrules on the blocks it should never have covered. This branch is the one an adjudicator under time pressure converts into a dispensation, and the conversion is a defect: a dispensation lapses when the source moves, so a mis-scoped criterion granted its way past comes back every time anybody touches the block.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/criterion-adjudication.bpmn"><code>cat-harness/processes/process/criterion-adjudication.bpmn#A_ScopeCriterion</code></a></p>
+</dd>
 <dt id="cat-harness--kg-bpmn-activities--process_sampleimport.task_scope" data-fa-state="extracted" data-fa-gloss="">
 Scope the sample: items, store, permanence <span class="fa-gloss-status">candidate, extracted</span>
 </dt>
 <dd>
 <p>Three answers, recorded before anything is fetched. WHICH ITEMS: named by the source's identifiers, or by a subset strategy its descriptor supports. WHICH STORE: the knowledge graph or other structured store the import is tested against. PERMANENT OR TRIAL: a permanent sample lands in library/ and is refreshed; a trial lands in fsh-guts/ and is not. The purpose materialize-remote asks for (working or archival) is asked there, not here.</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/library/processes/sample-import.bpmn"><code>cat-harness/library/processes/sample-import.bpmn#Task_Scope</code></a></p>
+</dd>
+<dt id="cat-harness--kg-bpmn-activities--process_relatedwork.a_searchbeans" data-fa-state="extracted" data-fa-gloss="">
+Search beans for relevance <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>beans list --json / beans query over titles AND bodies, open and recently completed. A completed bean is evidence of a decision already made.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/related-work.bpmn"><code>cat-harness/processes/process/related-work.bpmn#A_SearchBeans</code></a></p>
+</dd>
+<dt id="cat-harness--kg-bpmn-activities--process_relatedwork.a_searchissues" data-fa-state="extracted" data-fa-gloss="">
+Search issues and open PRs <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>The repository's issues (open and closed) and its open pull requests. An open PR touching the same files is the collision most worth finding early.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/related-work.bpmn"><code>cat-harness/processes/process/related-work.bpmn#A_SearchIssues</code></a></p>
 </dd>
 <dt id="cat-harness--kg-bpmn-activities--process_slicesqlitepublish.a_verify" data-fa-state="extracted" data-fa-gloss="">
 Search the published slice in a browser <span class="fa-gloss-status">candidate, extracted</span>
@@ -1035,6 +1070,13 @@ Seed both repositories <span class="fa-gloss-status">candidate, extracted</span>
 <dd>
 <p>Seed main, then bring the content and the tools in as reviewed pull requests with their history, so neither repository's first commit is unreviewable. The seed includes every publisher the declaration promises (<code>sub-kg-lifecycle</code> stage 10): a <code>qa</code> directory with <code>storage</code> needs <code>.github/workflows/publish-qa.yml</code>, the caller of the tools layer's <code>layer-qa-publish.yml</code>, and <code>test/results/</code> ignored. Without it the declared store is never written, and once the layer stops committing its results no reader finds them.</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/kg/kg-separation-move.bpmn"><code>cat-harness/processes/kg/kg-separation-move.bpmn#Task_Seed</code></a></p>
+</dd>
+<dt id="cat-harness--kg-bpmn-activities--process_optionsanalysis.a_select" data-fa-state="extracted" data-fa-gloss="">
+Select the methodology by context <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>Ask the selection question in order, first yes decides: do the criteria RECUR with the same inputs having to produce the same answer; is this the CERTAINTY of a body of evidence behind a recommendation; is the context a BEAN recording a decision; otherwise a one-off choice among candidates. If none fits, that is a finding — say which question the decision is and that no adopted methodology covers it. Do not improvise one and do not stretch the nearest fit. The declared set is the contents of the <code>methodology</code> graph. Ask for it; do not remember it.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/options-analysis.bpmn"><code>cat-harness/processes/process/options-analysis.bpmn#A_Select</code></a></p>
 </dd>
 <dt id="cat-harness--kg-bpmn-activities--process_copyintofolio.task_chooseasset" data-fa-state="extracted" data-fa-gloss="">
 Select upstream asset and target folio <span class="fa-gloss-status">candidate, extracted</span>
@@ -1126,6 +1168,13 @@ State the constraints, with denominators <span class="fa-gloss-status">candidate
 <dd>
 <p>Money, network traffic, graph size, latency. Each needs a NUMBER and each number needs a denominator, because a constraint with no denominator is a preference: &quot;the graph is too big&quot; is not a finding, &quot;6.2 MB per publication against a 100 GB free tier&quot; is. Say which figures were measured, which were quoted from a vendor, and which could not be obtained; a figure from a chat message is none of the three.</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/kg/kg-to-portal.bpmn"><code>cat-harness/processes/kg/kg-to-portal.bpmn#D_Constraints</code></a></p>
+</dd>
+<dt id="cat-harness--kg-bpmn-activities--process_adjudication.a_statefinding" data-fa-state="extracted" data-fa-gloss="">
+State the finding and what it read <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>Each provider says what it found and on what evidence. A finding that does not show what it read is an opinion, and an adjudicator cannot tell it from a finding about some other version of the block.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/adjudication.bpmn"><code>cat-harness/processes/process/adjudication.bpmn#A_StateFinding</code></a></p>
 </dd>
 <dt id="cat-harness--kg-bpmn-activities--process_humantranslation.task_submitpo" data-fa-state="extracted" data-fa-gloss="">
 Submit completed .po file <span class="fa-gloss-status">candidate, extracted</span>
@@ -1376,6 +1425,13 @@ Write the entry and cache the declaration <span class="fa-gloss-status">candidat
 <dd>
 <p>The <code>subscriptions</code> entry in the subscriber's layer declaration — id, repository, ref, and nothing chosen yet — plus a cached copy of the substrate's declaration at the pin. The entry holds the choice and the pin, never state: whether a part is held is answered by its materialisation record, and a second answer here would be free to disagree with it.</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/library/processes/subscribe-kg.bpmn"><code>cat-harness/library/processes/subscribe-kg.bpmn#Task_Record</code></a></p>
+</dd>
+<dt id="cat-harness--kg-bpmn-activities--process_criterionadjudication.a_recordentry" data-fa-state="extracted" data-fa-gloss="">
+Write the entry that LEADS — keeping the checker's beneath it <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>Not relaxable, and the one step here that is not. A judgement nobody wrote down is indistinguishable from a checker that was never run, so the judgement is free and the record is not. Do not resolve the disagreement away: both entries stay, the adjudication on top under the sweep's most-recent-matching-hash rule. A disagreement between a checker and a reviewer is information, and somebody re-running the check next month needs to find that a checker read it differently rather than a clean pass. <code>/api/relevance/adjudicate</code> reached the same rule independently — <code>human_adjudicated</code> written alongside, never over, the agent's <code>assessed_by</code>.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/criterion-adjudication.bpmn"><code>cat-harness/processes/process/criterion-adjudication.bpmn#A_RecordEntry</code></a></p>
 </dd>
 <dt id="cat-harness--kg-bpmn-activities--process_multilocaletranslation.task_ml_qareport" data-fa-state="extracted" data-fa-gloss="">
 Write the locale's QA report <span class="fa-gloss-status">candidate, extracted</span>

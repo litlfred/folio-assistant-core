@@ -281,11 +281,11 @@
 
 <p>Candidate terms extracted from every BPMN task and call activity: <code class="language-plaintext highlighter-rouge">name</code> as the label, its own <code class="language-plaintext highlighter-rouge">&lt;documentation&gt;</code> as the definition, the element id as the code. Each is the asset’s own text, verbatim and not curated, and carries the badge “candidate, extracted”. A person promotes one by authoring it. Authored terms are on their owning instance’s page, and those pages, the counts and the sources are linked from the <a href="../../../../../en/folio-assistant-core/glossary/">glossary index</a>.</p>
 
-<p>From: bootstrap 38 (<a href="../../../../../assets/glossary/bootstrap--kg-bpmn-activities.skos.jsonld">SKOS</a>) · bootstrap-tools 7 (<a href="../../../../../assets/glossary/bootstrap-tools--kg-bpmn-activities.skos.jsonld">SKOS</a>) · cat-harness 359 (<a href="../../../../../assets/glossary/cat-harness--kg-bpmn-activities.skos.jsonld">SKOS</a>).</p>
+<p>From: bootstrap 38 (<a href="../../../../../assets/glossary/bootstrap--kg-bpmn-activities.skos.jsonld">SKOS</a>) · bootstrap-tools 7 (<a href="../../../../../assets/glossary/bootstrap-tools--kg-bpmn-activities.skos.jsonld">SKOS</a>) · cat-harness 376 (<a href="../../../../../assets/glossary/cat-harness--kg-bpmn-activities.skos.jsonld">SKOS</a>).</p>
 
 <p>One of 3 pages of this type, split by the first letter of the label: <a href="../../../../../en/folio-assistant-core/glossary/bpmn-activities/">all parts</a>.</p>
 
-<p><strong>Size:</strong> this page holds 124 terms and is 103 KB before compression, fetched in one request, within its budget of 1.0 MB. There is no search index: the filter below runs over this page, and the A–Z bar jumps within it.</p>
+<p><strong>Size:</strong> this page holds 131 terms and is 111 KB before compression, fetched in one request, within its budget of 1.0 MB. There is no search index: the filter below runs over this page, and the A–Z bar jumps within it.</p>
 
 <div class="table-wrapper"><table class="fa-gloss-mapping">
 <caption>Already somebody else's concept? — <code>check:term-mapping</code>, bean <code>7wou</code></caption>
@@ -300,7 +300,7 @@ be a term this corpus is right to coin.</p>
 
 <p><label for="fa-gloss-q">Filter terms</label>
 <input id="fa-gloss-q" type="search" autocomplete="off" style="min-height:44px;width:100%;max-width:32rem" /></p>
-<p aria-live="polite"><span id="fa-gloss-n">124</span> shown</p>
+<p aria-live="polite"><span id="fa-gloss-n">131</span> shown</p>
 
 <nav aria-label="Letters"><a href="#letter-0-9">0–9</a> <a href="#letter-A">A</a> <a href="#letter-B">B</a> <a href="#letter-C">C</a> <a href="#letter-D">D</a></nav>
 <h2 id="letter-0-9">
@@ -399,6 +399,20 @@ Adjudicate the conflict <span class="fa-gloss-status">candidate, extracted</span
 <p>A human or agentic decision, never a merge rule. Which side wins depends on why the local edit was made, and a process that picked automatically would be choosing without the one fact that decides it.</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/library/processes/refresh-materialized.bpmn"><code>cat-harness/library/processes/refresh-materialized.bpmn#Task_Adjudicate</code></a></p>
 </dd>
+<dt id="cat-harness--kg-bpmn-activities--process_criterionadjudication.call_adjudicate" data-fa-state="extracted" data-fa-gloss="">
+Adjudicate the criterion disagreement <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>The shared judgement — entry condition, untainted dispatch, person-or-agent restriction — asked with THIS question's permitted answers. <code>cat-harness.processes:adjudication codes</code> sits here rather than on <code>A_Adjudicate</code> inside it because the answers depend on what was asked, and the gateway below is what acts on them: the engine refuses a mismatch between the two. <code>Process_Adjudication</code> may also leave at <code>End_NotAdjudicable</code> — one entry and no other side is a review or a gate, not a disagreement — in which case nothing below runs and there is nothing to record.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/criterion-adjudication.bpmn"><code>cat-harness/processes/process/criterion-adjudication.bpmn#Call_Adjudicate</code></a></p>
+</dd>
+<dt id="cat-harness--kg-bpmn-activities--process_adjudication.a_adjudicate" data-fa-state="extracted" data-fa-gloss="">
+Adjudicate the disagreement <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>The judgement itself, and the one step nothing here can check: if a mechanism could decide it, the process would not have been entered. It declares NO <code>cat-harness.processes:adjudication codes</code> on purpose, and that absence is the whole of bean <code>bvuk</code>. This step used to name three — stands, scope, dispensation — and six diagrams called it: <code>review-narrative</code> and <code>voice-review</code>, whose question those three answer, and four whose question they do not. <code>refresh-materialized</code> asks which side wins a local-vs-remote conflict; there is no criterion to scope there and no dispensation to grant, yet the outcome half ran regardless. Since the caller's question decides the permitted answers, the caller declares them: <code>cat-harness.processes:adjudication codes</code> on its OWN call activity, with its own gateway acting on them. <code>criterion-adjudication.bpmn</code> is that for the QA-criterion question. What could NOT be fixed by passing the codes as data, which was this bean's first recommendation: the three branches ran three different TASKS, so a caller handed <code>local-wins</code> would have had it pointing at <code>A_ScopeCriterion</code>. The branches had to move, not the enum.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/adjudication.bpmn"><code>cat-harness/processes/process/adjudication.bpmn#A_Adjudicate</code></a></p>
+</dd>
 <dt id="cat-harness--kg-bpmn-activities--process_translation.task_adjudicate" data-fa-state="extracted" data-fa-gloss="">
 Adjudicate the flagged passage (human) <span class="fa-gloss-status">candidate, extracted</span>
 </dt>
@@ -489,6 +503,13 @@ Append WHO disclaimer (if DAK) <span class="fa-gloss-status">candidate, extracte
 <dd>
 <p>For WHO SMART Guidelines content, automatically appends the WHO legal disclaimer: - Translation not created by WHO - English edition is authoritative original - WHO not responsible for translation accuracy Only applies when folio contentType includes WHO/DAK content.</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/library/processes/human-translation-workflow.bpmn"><code>cat-harness/library/processes/human-translation-workflow.bpmn#Task_AppendDisclaimer</code></a></p>
+</dd>
+<dt id="cat-harness--kg-bpmn-activities--process_optionsanalysis.a_apply" data-fa-state="extracted" data-fa-gloss="">
+Apply it, and state each option's trade-offs <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>Follow the selected methodology as written — adopted whole, not blended with another. At least two real options: one option is not a choice, and a straw option is worse than a short list because it makes the analysis look thorough while narrowing it. Never quantify the comparison to make it look measured. Where a method scores and sums, this platform takes the structure and refuses the arithmetic: the weights are invented and a total reads as a measurement.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/options-analysis.bpmn"><code>cat-harness/processes/process/options-analysis.bpmn#A_Apply</code></a></p>
 </dd>
 <dt id="bootstrap--kg-bpmn-activities--process_humanagentdiscussion.a_applydefault" data-fa-state="extracted" data-fa-gloss="">
 Apply the stated default, and say so <span class="fa-gloss-status">candidate, extracted</span>
@@ -665,7 +686,7 @@ Blind review per criterion <span class="fa-gloss-status">candidate, extracted</s
 Branch, gates, PR and review <span class="fa-gloss-status">candidate, extracted</span>
 </dt>
 <dd>
-<p>Called rather than restated. The mechanics of getting an edit reviewed and merged are not specific to the role graph, and a second description of them is a second thing free to disagree with the first.</p>
+<p>Called rather than restated. The mechanics of getting an edit reviewed and merged are not specific to the role graph, and a second description of them is a second thing free to disagree with the first. Where <code>cat-harness.sdlc</code> is switched on, this step is the opt-in process <code>code-change-review</code> (<code>Process_CodeChangeReview</code>, sdlc/processes/code-change-review.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12).</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/actor-role-administration.bpmn"><code>cat-harness/processes/process/actor-role-administration.bpmn#CallActivity_CodeChangeReview</code></a></p>
 </dd>
 <dt id="cat-harness--kg-bpmn-activities--process_themeuireview.a_branding" data-fa-state="extracted" data-fa-gloss="">
@@ -748,6 +769,13 @@ Build it locally and measure the file <span class="fa-gloss-status">candidate, e
 </h2>
     
 <dl class="fa-gloss">
+<dt id="cat-harness--kg-bpmn-activities--process_relatedwork.a_categorize" data-fa-state="extracted" data-fa-gloss="">
+Categorize and summarize <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>Each hit gets a category (overlaps: coordinate; affected by; out of scope; unrelated) and a one-line summary with its state. Judgement, not a keyword score: say why each is in its category.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/related-work.bpmn"><code>cat-harness/processes/process/related-work.bpmn#A_Categorize</code></a></p>
+</dd>
 <dt id="cat-harness--kg-bpmn-activities--process_mountdependency.task_checkagainstlock" data-fa-state="extracted" data-fa-gloss="">
 Check disk against lock against declaration <span class="fa-gloss-status">candidate, extracted</span>
 </dt>
@@ -804,6 +832,13 @@ Check the model parses and resolves <span class="fa-gloss-status">candidate, ext
 <p>Tool <code>archimate-check</code> (<code>archimate:validate</code>, on the layer root): every model the config names is held and parses, every box in every view draws an element the model holds, every relationship's ends are in the model.</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/ui/archimate-publish.bpmn"><code>cat-harness/processes/ui/archimate-publish.bpmn#A_Check</code></a></p>
 </dd>
+<dt id="cat-harness--kg-bpmn-activities--process_optionsanalysis.a_checkevidence" data-fa-state="extracted" data-fa-gloss="">
+Check the selected methodology's evidence base <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>Before applying a methodology, establish that the thing being applied is what it claims to be. A methodology is adopted because it is somebody else's named, external work; this step checks that the <code>origin</code> it cites resolves to a source in a declared library, and reads the <code>methodology-evidence</code> QA sidecar for it. WHY THE CHECK IS HERE AND NOT AT ADOPTION. Adoption happens once; selection happens every time a decision is made. A source that was reachable when the methodology was adopted can stop being so, and a methodology adopted before this axis existed was never checked at all. Measured 2026-09-22: six methodologies cited an origin and NONE had that source in any library, so every selection made until then rested on an unverifiable citation. WHAT A GAP DOES AND DOES NOT DO. A missing source does NOT block the decision, and this step has no branch that stops the process — that would make a documentation gap into an outage, and the owner decides whether an unbacked methodology may still be used. It does two things: it runs <code>literature-search</code> to try to close the gap, and it puts the evidence state into the record <code>A_Record</code> writes, so a reader can tell a decision made on a verified method from one made on a citation nobody could follow. The third state is the one that matters. &quot;Source ingested&quot;, &quot;source located but unreachable from here&quot; and &quot;no source found&quot; are three different facts, and <code>literature-search</code> exists largely to stop the middle one being reported as the last.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/options-analysis.bpmn"><code>cat-harness/processes/process/options-analysis.bpmn#A_CheckEvidence</code></a></p>
+</dd>
 <dt id="cat-harness--kg-bpmn-activities--process_humantranslation.task_checkcompleteness" data-fa-state="extracted" data-fa-gloss="">
 Check translation completeness <span class="fa-gloss-status">candidate, extracted</span>
 </dt>
@@ -840,7 +875,7 @@ Choose a destination, or none <span class="fa-gloss-status">candidate, extracted
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/crdm-signoff.bpmn"><code>cat-harness/processes/process/crdm-signoff.bpmn#BA_ChooseKg</code></a></p>
 </dd>
 <dt id="cat-harness--kg-bpmn-activities--process_subscribekg.task_choose" data-fa-state="extracted" data-fa-gloss="">
-Choose subgraphs, the asset policy, harnesses <span class="fa-gloss-status">candidate, extracted</span>
+Choose subgraphs, assets, harnesses <span class="fa-gloss-status">candidate, extracted</span>
 </dt>
 <dd>
 <p>Written to the entry as <code>subgraphs</code>, <code>assets.policy</code> (none, on-demand or all) and <code>harnesses</code>. Choosing is not holding: a chosen subgraph is still referenced until the gates below let it through. Choosing nothing is legitimate — a subscription with no parts chosen is a pinned reference, the case associatedHarnesses covers today.</p>
@@ -964,6 +999,13 @@ Consolidate findings <span class="fa-gloss-status">candidate, extracted</span>
 <dd>
 <p>One report from however many subprocesses ran. Findings are advice: a reviewer cannot accept the change.</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/content/review-task.bpmn"><code>cat-harness/processes/content/review-task.bpmn#Task_Consolidate</code></a></p>
+</dd>
+<dt id="cat-harness--kg-bpmn-activities--process_relatedwork.u_coordinate" data-fa-state="extracted" data-fa-gloss="">
+Coordinate? How? <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p><em>The asset carries no description.</em></p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/related-work.bpmn"><code>cat-harness/processes/process/related-work.bpmn#U_Coordinate</code></a></p>
 </dd>
 <dt id="cat-harness--kg-bpmn-activities--process_copyintofolio.task_copyanddeclareasset" data-fa-state="extracted" data-fa-gloss="">
 Copy asset into target folio and declare in assets[] <span class="fa-gloss-status">candidate, extracted</span>
@@ -1177,6 +1219,13 @@ Discuss it with the person <span class="fa-gloss-status">candidate, extracted</s
 <dd>
 <p>Bootstrap's human-agent discussion, given the composed question. Its <code>Ask ONE question</code> step is where this harness's delivery rule applies: Post the whole composed question as ordinary chat text BEFORE any card. This is the copy that survives: a card, once answered, shows only the chosen option, and a dismissed card shows nothing. Never &quot;see the card&quot;, never a request for a typed reply such as &quot;1y 2n&quot;. Then the card: Whatever the host calls its selection tool (<code>AskUserQuestion</code>, <code>request_decision</code>, a button card): the same letters and labels as the chat text, the recommended option marked. No host card tool: say so in the chat and keep each answer to one short choice. Its answer step: One tap on the card, or any answer the person prefers to give. Free text is always available and never required. A dismissal is NOT an answer and never selects the default as a choice; the question stays open in the chat. On an answer: Hand the answer back to the calling step, quoted. If it settles how a kind of thing is decided, it is a rule: write it into the governing skill in the same turn. On no answer: Do what the question said would happen with no answer, and say so. Nothing irreversible proceeds on a default: such a step waits for the person.</p>
 <p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/ask-the-person.bpmn"><code>cat-harness/processes/process/ask-the-person.bpmn#Call_Discuss</code></a></p>
+</dd>
+<dt id="cat-harness--kg-bpmn-activities--process_adjudication.a_dispatch" data-fa-state="extracted" data-fa-gloss="">
+Dispatch with adjudicator_sees — never the artefact <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p><code>UntaintedDispatch</code> on the criterion declares what each party is given; the caller names a subject and a criterion and does not hand-assemble a brief, because the party composing a brief by hand is the producer. <code>untaintedPartitionDefects</code> reports <code>overlap</code> when the checker and the adjudicator can read the same file — one of them is then grading its own input, and the verdict measures nothing while raising no error.</p>
+<p class="fa-gloss-meta">BPMN activities of cat-harness · source <a href="https://github.com/litlfred/cat-harness/blob/main/processes/process/adjudication.bpmn"><code>cat-harness/processes/process/adjudication.bpmn#A_Dispatch</code></a></p>
 </dd>
 <dt id="bootstrap--kg-bpmn-activities--process_completeinitialization.a_performstep" data-fa-state="extracted" data-fa-gloss="">
 Do it, then check again <span class="fa-gloss-status">candidate, extracted</span>

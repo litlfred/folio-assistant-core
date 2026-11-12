@@ -281,11 +281,11 @@
 
 <p>Candidate terms extracted from every schema field with a doc comment: <code class="language-plaintext highlighter-rouge">&lt;Declaration&gt;.&lt;field&gt;</code> as the label, the comment’s first paragraph as the definition. Each is the asset’s own text, verbatim and not curated, and carries the badge “candidate, extracted”. A person promotes one by authoring it. Authored terms are on their owning instance’s page, and those pages, the counts and the sources are linked from the <a href="../../../../../en/folio-assistant-core/glossary/">glossary index</a>.</p>
 
-<p>From: bootstrap-tools 45 (<a href="../../../../../assets/glossary/bootstrap-tools--kg-schema-fields.skos.jsonld">SKOS</a>) · cat-harness-tools 2527 (<a href="../../../../../assets/glossary/cat-harness-tools--kg-schema-fields.skos.jsonld">SKOS</a>).</p>
+<p>From: bootstrap-tools 45 (<a href="../../../../../assets/glossary/bootstrap-tools--kg-schema-fields.skos.jsonld">SKOS</a>) · cat-harness-tools 2523 (<a href="../../../../../assets/glossary/cat-harness-tools--kg-schema-fields.skos.jsonld">SKOS</a>).</p>
 
 <p>One of 7 pages of this type, split by the first letter of the label: <a href="../../../../../en/folio-assistant-core/glossary/schema-fields/">all parts</a>.</p>
 
-<p><strong>Size:</strong> this page holds 476 terms and is 282 KB before compression, fetched in one request, within its budget of 1.0 MB. There is no search index: the filter below runs over this page, and the A–Z bar jumps within it.</p>
+<p><strong>Size:</strong> this page holds 480 terms and is 285 KB before compression, fetched in one request, within its budget of 1.0 MB. There is no search index: the filter below runs over this page, and the A–Z bar jumps within it.</p>
 
 <div class="table-wrapper"><table class="fa-gloss-mapping">
 <caption>Already somebody else's concept? — <code>check:term-mapping</code>, bean <code>7wou</code></caption>
@@ -300,7 +300,7 @@ be a term this corpus is right to coin.</p>
 
 <p><label for="fa-gloss-q">Filter terms</label>
 <input id="fa-gloss-q" type="search" autocomplete="off" style="min-height:44px;width:100%;max-width:32rem" /></p>
-<p aria-live="polite"><span id="fa-gloss-n">476</span> shown</p>
+<p aria-live="polite"><span id="fa-gloss-n">480</span> shown</p>
 
 <nav aria-label="Letters"><a href="#letter-F">F</a> <a href="#letter-G">G</a> <a href="#letter-H">H</a> <a href="#letter-I">I</a> <a href="#letter-J">J</a> <a href="#letter-K">K</a> <a href="#letter-L">L</a></nav>
 <h2 id="letter-F">
@@ -1190,6 +1190,13 @@ GraphTypologyDef.published <span class="fa-gloss-status">candidate, extracted</s
 <p><code>false</code> keeps the kind out of every PUBLISHED graph: not one edge of a published artefact may lead to it (<code>isPublishedGraphTypology</code>). Absent means published. Was <code>UNPUBLISHED_GRAPH_TYPOLOGIES</code> in cat-harness.ts (sod4 #5).</p>
 <p class="fa-gloss-meta">Schema fields of cat-harness-tools · source <a href="https://github.com/litlfred/cat-harness-tools/blob/main/schemas/kg/graph-typology-registry.ts"><code>cat-harness-tools/schemas/kg/graph-typology-registry.ts#GraphTypologyDef.published</code></a></p>
 </dd>
+<dt id="cat-harness-tools--kg-schema-fields--graph-typology-registry.graphtypologydef.publishedbybuild" data-fa-state="extracted" data-fa-gloss="">
+GraphTypologyDef.publishedByBuild <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>Is a directory of this kind SOURCE that a build Tool turns into pages at publish, so the directory itself is never copied to the site?</p>
+<p class="fa-gloss-meta">Schema fields of cat-harness-tools · source <a href="https://github.com/litlfred/cat-harness-tools/blob/main/schemas/kg/graph-typology-registry.ts"><code>cat-harness-tools/schemas/kg/graph-typology-registry.ts#GraphTypologyDef.publishedByBuild</code></a></p>
+</dd>
 <dt id="cat-harness-tools--kg-schema-fields--graph-typology-registry.graphtypologydef.recordswork" data-fa-state="extracted" data-fa-gloss="">
 GraphTypologyDef.recordsWork <span class="fa-gloss-status">candidate, extracted</span>
 </dt>
@@ -1217,6 +1224,13 @@ GraphTypologyDef.schema <span class="fa-gloss-status">candidate, extracted</span
 <dd>
 <p>Where the shape of a node in this graph is defined — a repo-relative module path, or a <code>$schema</code> tag the files themselves carry.</p>
 <p class="fa-gloss-meta">Schema fields of cat-harness-tools · source <a href="https://github.com/litlfred/cat-harness-tools/blob/main/schemas/kg/graph-typology-registry.ts"><code>cat-harness-tools/schemas/kg/graph-typology-registry.ts#GraphTypologyDef.schema</code></a></p>
+</dd>
+<dt id="cat-harness-tools--kg-schema-fields--graph-typology-registry.graphtypologydef.serialised" data-fa-state="extracted" data-fa-gloss="">
+GraphTypologyDef.serialised <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>Whether a directory of this kind owes json, jsonld and schema.json at its URL (check:subgraph-coverage). Absent: owed unless <code>holds</code> is <code>state</code>. <code>false</code> for kinds whose files are not graph nodes: code, built pages, fixtures. Owner Q-SER-1 C / Q-SER-2 A, 2026-11-12: not all directories need to be harnessed.</p>
+<p class="fa-gloss-meta">Schema fields of cat-harness-tools · source <a href="https://github.com/litlfred/cat-harness-tools/blob/main/schemas/kg/graph-typology-registry.ts"><code>cat-harness-tools/schemas/kg/graph-typology-registry.ts#GraphTypologyDef.serialised</code></a></p>
 </dd>
 <dt id="cat-harness-tools--kg-schema-fields--graph-typology-registry.graphtypologydef.shownonpublishedpages" data-fa-state="extracted" data-fa-gloss="">
 GraphTypologyDef.shownOnPublishedPages <span class="fa-gloss-status">candidate, extracted</span>
@@ -1302,12 +1316,26 @@ GraphTypologyNodeSchema.published <span class="fa-gloss-status">candidate, extra
 <p><code>false</code>: never part of a published graph (sod4 #5).</p>
 <p class="fa-gloss-meta">Schema fields of cat-harness-tools · source <a href="https://github.com/litlfred/cat-harness-tools/blob/main/schemas/kg/graph-typology-node.ts"><code>cat-harness-tools/schemas/kg/graph-typology-node.ts#GraphTypologyNodeSchema.published</code></a></p>
 </dd>
+<dt id="cat-harness-tools--kg-schema-fields--graph-typology-node.graphtypologynodeschema.publishedbybuild" data-fa-state="extracted" data-fa-gloss="">
+GraphTypologyNodeSchema.publishedByBuild <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>Its directories are source a build Tool publishes at its own route, so the mount pass never copies them.</p>
+<p class="fa-gloss-meta">Schema fields of cat-harness-tools · source <a href="https://github.com/litlfred/cat-harness-tools/blob/main/schemas/kg/graph-typology-node.ts"><code>cat-harness-tools/schemas/kg/graph-typology-node.ts#GraphTypologyNodeSchema.publishedByBuild</code></a></p>
+</dd>
 <dt id="cat-harness-tools--kg-schema-fields--graph-typology-node.graphtypologynodeschema.rationale" data-fa-state="extracted" data-fa-gloss="">
 GraphTypologyNodeSchema.rationale <span class="fa-gloss-status">candidate, extracted</span>
 </dt>
 <dd>
 <p>WHY the kind sits in its layer and renders as it does: what a code comment said on a listed kind. Not read by any reader.</p>
 <p class="fa-gloss-meta">Schema fields of cat-harness-tools · source <a href="https://github.com/litlfred/cat-harness-tools/blob/main/schemas/kg/graph-typology-node.ts"><code>cat-harness-tools/schemas/kg/graph-typology-node.ts#GraphTypologyNodeSchema.rationale</code></a></p>
+</dd>
+<dt id="cat-harness-tools--kg-schema-fields--graph-typology-node.graphtypologynodeschema.serialised" data-fa-state="extracted" data-fa-gloss="">
+GraphTypologyNodeSchema.serialised <span class="fa-gloss-status">candidate, extracted</span>
+</dt>
+<dd>
+<p>Whether a directory of this kind owes json, jsonld and schema.json at its URL (check:subgraph-coverage). Absent: owed unless <code>holds</code> is <code>state</code>. <code>false</code> for kinds whose files are not graph nodes: code, built pages, fixtures. Owner Q-SER-1 C / Q-SER-2 A, 2026-11-12: not all directories need to be harnessed.</p>
+<p class="fa-gloss-meta">Schema fields of cat-harness-tools · source <a href="https://github.com/litlfred/cat-harness-tools/blob/main/schemas/kg/graph-typology-node.ts"><code>cat-harness-tools/schemas/kg/graph-typology-node.ts#GraphTypologyNodeSchema.serialised</code></a></p>
 </dd>
 <dt id="cat-harness-tools--kg-schema-fields--graph-typology-node.graphtypologynodeschema.shownonpublishedpages" data-fa-state="extracted" data-fa-gloss="">
 GraphTypologyNodeSchema.shownOnPublishedPages <span class="fa-gloss-status">candidate, extracted</span>

@@ -281,13 +281,13 @@
 <div class="pt-diagram" data-panel="crdm-requirements-definition.tasks.json">
 <img src="../../../assets/img/workflows/crdm-requirements-definition.svg" alt="BPMN diagram: CRDM Phases 2–4 — BPA and requirements" />
 <div class="pt-layer">
-<button type="button" class="pt-mark" data-task="A_MapWorkflow" style="left:19.21%;top:39.17%" aria-expanded="false" aria-label="About step: Phase 2: Map current workflow (BPA)" title="About: Phase 2: Map current workflow (BPA)">i</button>
-<button type="button" class="pt-mark" data-task="A_DefineReqs" style="left:30.72%;top:39.17%" aria-expanded="false" aria-label="About step: Phases 3–4: Define requirements + impact" title="About: Phases 3–4: Define requirements + impact">i</button>
-<a class="pt-go" href="wireframe-design-review.html" style="left:45.65%;top:55%;width:1.73%;height:4%" aria-label="Open subprocess: Wireframe candidates (web + mobile)" title="Open subprocess: Wireframe candidates (web + mobile)"></a>
-<button type="button" class="pt-mark" data-task="Call_Wireframe" style="left:50.86%;top:39.17%" aria-expanded="false" aria-label="About step: Wireframe candidates (web + mobile)" title="About: Wireframe candidates (web + mobile)">i</button>
-<button type="button" class="pt-mark" data-task="A_CompareOptions" style="left:62.37%;top:39.17%" aria-expanded="false" aria-label="About step: Phase 4a: Compare the viable options" title="About: Phase 4a: Compare the viable options">i</button>
-<button type="button" class="pt-mark" data-task="BA_ReviewReqs" style="left:73.88%;top:5%" aria-expanded="false" aria-label="About step: Review requirements and impact analysis" title="About: Review requirements and impact analysis">i</button>
-<button type="button" class="pt-mark" data-task="S_ApproveReqs" style="left:85.4%;top:74.17%" aria-expanded="false" aria-label="About step: Approve requirements" title="About: Approve requirements">i</button>
+<button type="button" class="pt-mark" data-task="A_MapWorkflow" style="left:19.2%;top:39.17%" aria-expanded="false" aria-label="About step: Phase 2: Map current workflow (BPA)" title="About: Phase 2: Map current workflow (BPA)">i</button>
+<button type="button" class="pt-mark" data-task="A_DefineReqs" style="left:30.71%;top:39.17%" aria-expanded="false" aria-label="About step: Phases 3–4: Define requirements + impact" title="About: Phases 3–4: Define requirements + impact">i</button>
+<a class="pt-go" href="wireframe-design-review.html" style="left:45.63%;top:55%;width:1.73%;height:4%" aria-label="Open subprocess: Wireframe candidates (web + mobile)" title="Open subprocess: Wireframe candidates (web + mobile)"></a>
+<button type="button" class="pt-mark" data-task="Call_Wireframe" style="left:50.85%;top:39.17%" aria-expanded="false" aria-label="About step: Wireframe candidates (web + mobile)" title="About: Wireframe candidates (web + mobile)">i</button>
+<button type="button" class="pt-mark" data-task="A_CompareOptions" style="left:62.35%;top:39.17%" aria-expanded="false" aria-label="About step: Phase 4a: Compare the viable options" title="About: Phase 4a: Compare the viable options">i</button>
+<button type="button" class="pt-mark" data-task="BA_ReviewReqs" style="left:73.86%;top:5%" aria-expanded="false" aria-label="About step: Review requirements and impact analysis" title="About: Review requirements and impact analysis">i</button>
+<button type="button" class="pt-mark" data-task="S_ApproveReqs" style="left:85.37%;top:74.17%" aria-expanded="false" aria-label="About step: Approve requirements" title="About: Approve requirements">i</button>
 </div>
 <div class="pt-panel" role="dialog" aria-label="Task details" hidden=""></div>
 </div>
@@ -576,7 +576,7 @@
     <tr>
       <td><a id="step-A_DefineReqs"></a><strong>Phases 3–4: Define requirements + impact</strong><br /><code class="language-plaintext highlighter-rouge">A_DefineReqs</code></td>
       <td>Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code><br /><a href="../../../en/cat-harness/processes/skills/data-modelling.html"><code class="language-plaintext highlighter-rouge">data-modelling</code></a></td>
+      <td><a href="../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></a><br /><a href="../../../en/cat-harness/processes/skills/data-modelling.html"><code class="language-plaintext highlighter-rouge">data-modelling</code></a></td>
       <td>Two skills, because this step is two things: the<br />requirements come from the CRDM process, the impact half is a question about<br />the entities and relations the change touches, which is what data modelling<br />answers; a folio-content skill such as <a href="../../../en/cat-harness/processes/skills/content-graph.html"><code class="language-plaintext highlighter-rouge">content-graph</code></a> is not one this<br />harness diagram can bind.</td>
     </tr>
     <tr>
@@ -594,7 +594,7 @@
     <tr>
       <td><a id="step-BA_ReviewReqs"></a><strong>Review requirements and impact analysis</strong><br /><code class="language-plaintext highlighter-rouge">BA_ReviewReqs</code></td>
       <td>BA / Feature Requestor</td>
-      <td><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></a></td>
       <td>The BA reviews the formal requirements and the<br />impact analysis the agent produced. When a requirement changes a rendered<br />surface, the BA (or the requester) also reviews the wireframe candidates, web<br />and mobile, shown wherever the requester will look (the conversation, the<br />issue, the pull request, or several) with staging deep links and screenshots,<br />and chooses one before implementation starts. The agent records<br />the choice; it never makes it.</td>
     </tr>
     <tr>

@@ -559,19 +559,19 @@
     <tr>
       <td><a id="step-Task_BuildStaging"></a><strong>Build staging site</strong><br /><code class="language-plaintext highlighter-rouge">Task_BuildStaging</code></td>
       <td>CI/CD Pipeline</td>
-      <td><code class="language-plaintext highlighter-rouge">feature-staging</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/feature-staging.html"><code class="language-plaintext highlighter-rouge">feature-staging</code></a></td>
       <td>feature-staging.yml triggers:<br />1. Regenerate docs (schema, skills, content-backed pages)<br />2. Render BPMN diagrams<br />3. Stamp build with commit SHA + timestamp + branch<br />4. Build Jekyll site with branches/ baseurl<br />5. Inject yellow staging banner into every HTML page<br />A draft pull request is staged too, from its first push. A build<br />takes about 22 minutes, and GitHub Pages about 3 to 4 more.</td>
     </tr>
     <tr>
       <td><a id="step-Task_DeployStaging"></a>**Deploy to branches/<slug>/**<br />`Task_DeployStaging`</slug></td>
       <td>CI/CD Pipeline</td>
-      <td><code class="language-plaintext highlighter-rouge">feature-staging</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/feature-staging.html"><code class="language-plaintext highlighter-rouge">feature-staging</code></a></td>
       <td>The stage job copies the built site into gh-pages under<br />branches/&lt;branch-slug&gt;/, then <code class="language-plaintext highlighter-rouge">staging-share.ts apply</code> keeps only<br />the files that differ from the live site.<br />The preview’s staging-sw.js serves every other file from the live<br />site and puts the staging banner back on it. Other previews and the<br />main site are left as they are.</td>
     </tr>
     <tr>
       <td><a id="step-Task_CommentPR"></a><strong>Comment staging URL on PR</strong><br /><code class="language-plaintext highlighter-rouge">Task_CommentPR</code></td>
       <td>CI/CD Pipeline</td>
-      <td><code class="language-plaintext highlighter-rouge">feature-staging</code><br /><code class="language-plaintext highlighter-rouge">rendered-impact</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/feature-staging.html"><code class="language-plaintext highlighter-rouge">feature-staging</code></a><br /><code class="language-plaintext highlighter-rouge">rendered-impact</code></td>
       <td>Bot comments or updates the staging URL on the PR.<br />Includes commit SHA, branch name, and build log link, and the<br />review list of rendered files the change alters (skill<br />rendered-impact), each linked on the preview and on main, with any<br />input the renderer could not place named as not known.</td>
     </tr>
     <tr>

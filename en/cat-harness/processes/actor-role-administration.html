@@ -285,12 +285,12 @@
 <div class="pt-diagram" data-panel="actor-role-administration.tasks.json">
 <img src="../../../assets/img/workflows/actor-role-administration.svg" alt="BPMN diagram: Actor and role administration" />
 <div class="pt-layer">
-<button type="button" class="pt-mark" data-task="Task_AddActor" style="left:43.61%;top:6.1%" aria-expanded="false" aria-label="About step: Add an actor, and declare its kind" title="About: Add an actor, and declare its kind">i</button>
-<button type="button" class="pt-mark" data-task="Task_AssignRoles" style="left:43.61%;top:20.82%" aria-expanded="false" aria-label="About step: Open or close a role to an actor" title="About: Open or close a role to an actor">i</button>
-<button type="button" class="pt-mark" data-task="Task_GrantOrRevoke" style="left:43.61%;top:37.46%" aria-expanded="false" aria-label="About step: Grant or revoke a permission" title="About: Grant or revoke a permission">i</button>
-<button type="button" class="pt-mark" data-task="Task_RetireActor" style="left:43.61%;top:53.14%" aria-expanded="false" aria-label="About step: Retire an actor — never delete one" title="About: Retire an actor — never delete one">i</button>
-<button type="button" class="pt-mark" data-task="CallActivity_CodeChangeReview" style="left:68.05%;top:24.91%" aria-expanded="false" aria-label="About step: Branch, gates, PR and review" title="About: Branch, gates, PR and review">i</button>
-<button type="button" class="pt-mark" data-task="Task_RunKgAudit" style="left:68.05%;top:76.13%" aria-expanded="false" aria-label="About step: Audit the graph" title="About: Audit the graph">i</button>
+<button type="button" class="pt-mark" data-task="Task_AddActor" style="left:42.48%;top:6.41%" aria-expanded="false" aria-label="About step: Add an actor, and declare its kind" title="About: Add an actor, and declare its kind">i</button>
+<button type="button" class="pt-mark" data-task="Task_AssignRoles" style="left:42.48%;top:24.36%" aria-expanded="false" aria-label="About step: Open or close a role to an actor" title="About: Open or close a role to an actor">i</button>
+<button type="button" class="pt-mark" data-task="Task_GrantOrRevoke" style="left:42.48%;top:42.31%" aria-expanded="false" aria-label="About step: Grant or revoke a permission" title="About: Grant or revoke a permission">i</button>
+<button type="button" class="pt-mark" data-task="Task_RetireActor" style="left:42.48%;top:60.26%" aria-expanded="false" aria-label="About step: Retire an actor — never delete one" title="About: Retire an actor — never delete one">i</button>
+<button type="button" class="pt-mark" data-task="CallActivity_CodeChangeReview" style="left:68.05%;top:32.69%" aria-expanded="false" aria-label="About step: Branch, gates, PR and review" title="About: Branch, gates, PR and review">i</button>
+<button type="button" class="pt-mark" data-task="Task_RunKgAudit" style="left:68.05%;top:82.05%" aria-expanded="false" aria-label="About step: Audit the graph" title="About: Audit the graph">i</button>
 </div>
 <div class="pt-panel" role="dialog" aria-label="Task details" hidden=""></div>
 </div>
@@ -510,7 +510,7 @@
 
 <ul>
   <li><strong>Called by:</strong> no call activity names this process</li>
-  <li><strong>Calls:</strong> <code class="language-plaintext highlighter-rouge">Process_CodeChangeReview</code> (not loadable here)</li>
+  <li><strong>Calls:</strong> none</li>
   <li><strong>Presented on:</strong> no docs page section shows this diagram</li>
   <li><strong>Running instances:</strong> none recorded</li>
 </ul>
@@ -592,8 +592,8 @@
     <tr>
       <td><a id="step-CallActivity_CodeChangeReview"></a><strong>Branch, gates, PR and review</strong><br /><code class="language-plaintext highlighter-rouge">CallActivity_CodeChangeReview</code></td>
       <td>Administrator</td>
-      <td>calls <code class="language-plaintext highlighter-rouge">Process_CodeChangeReview</code><br /><code class="language-plaintext highlighter-rouge">prepare-merge</code><br /><code class="language-plaintext highlighter-rouge">continual-progress</code></td>
-      <td>Called rather than restated. The mechanics of getting an edit reviewed and merged are not specific to the role graph, and a second description of them is a second thing free to disagree with the first.</td>
+      <td><a href="../../../en/cat-harness/processes/skills/continual-progress.html"><code class="language-plaintext highlighter-rouge">continual-progress</code></a></td>
+      <td>Called rather than restated. The mechanics of getting an edit reviewed and merged are not specific to the role graph, and a second description of them is a second thing free to disagree with the first. Where <code class="language-plaintext highlighter-rouge">cat-harness.sdlc</code> is switched on, this step is the opt-in process <code class="language-plaintext highlighter-rouge">code-change-review</code> (<code class="language-plaintext highlighter-rouge">Process_CodeChangeReview</code>, sdlc/processes/code-change-review.bpmn); it is not called from here, because a layer without that sub-graph does not have it (owner card Q-OPTIN-CALLS A, 2026-11-12).</td>
     </tr>
     <tr>
       <td><a id="step-Task_RunKgAudit"></a><strong>Audit the graph</strong><br /><code class="language-plaintext highlighter-rouge">Task_RunKgAudit</code></td>

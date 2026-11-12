@@ -285,12 +285,12 @@
 <div class="pt-diagram" data-panel="mount-dependency.tasks.json">
 <img src="../../../assets/img/workflows/mount-dependency.svg" alt="BPMN diagram: Remote-mount a dependency" />
 <div class="pt-layer">
-<button type="button" class="pt-mark" data-task="Task_DeclareMount" style="left:20.56%;top:9.57%" aria-expanded="false" aria-label="About step: Declare the mount: harness, repository, pin" title="About: Declare the mount: harness, repository, pin">i</button>
-<button type="button" class="pt-mark" data-task="Task_ResolveClosure" style="left:20.56%;top:54.26%" aria-expanded="false" aria-label="About step: Resolve the closure at the pin" title="About: Resolve the closure at the pin">i</button>
-<button type="button" class="pt-mark" data-task="Task_MountInstances" style="left:33.36%;top:54.26%" aria-expanded="false" aria-label="About step: Mount each layer at its declared path" title="About: Mount each layer at its declared path">i</button>
-<button type="button" class="pt-mark" data-task="Task_WriteLock" style="left:46.16%;top:54.26%" aria-expanded="false" aria-label="About step: Write the lock" title="About: Write the lock">i</button>
-<button type="button" class="pt-mark" data-task="Task_RenderAgentSurface" style="left:58.96%;top:54.26%" aria-expanded="false" aria-label="About step: Re-render the agent surface" title="About: Re-render the agent surface">i</button>
-<button type="button" class="pt-mark" data-task="Task_CheckAgainstLock" style="left:71.76%;top:54.26%" aria-expanded="false" aria-label="About step: Check disk against lock against declaration" title="About: Check disk against lock against declaration">i</button>
+<button type="button" class="pt-mark" data-task="Task_DeclareMount" style="left:20.46%;top:9.57%" aria-expanded="false" aria-label="About step: Declare the mount: harness, repository, pin" title="About: Declare the mount: harness, repository, pin">i</button>
+<button type="button" class="pt-mark" data-task="Task_ResolveClosure" style="left:20.46%;top:54.26%" aria-expanded="false" aria-label="About step: Resolve the closure at the pin" title="About: Resolve the closure at the pin">i</button>
+<button type="button" class="pt-mark" data-task="Task_MountInstances" style="left:33.19%;top:54.26%" aria-expanded="false" aria-label="About step: Mount each layer at its declared path" title="About: Mount each layer at its declared path">i</button>
+<button type="button" class="pt-mark" data-task="Task_WriteLock" style="left:45.93%;top:54.26%" aria-expanded="false" aria-label="About step: Write the lock" title="About: Write the lock">i</button>
+<button type="button" class="pt-mark" data-task="Task_RenderAgentSurface" style="left:58.67%;top:54.26%" aria-expanded="false" aria-label="About step: Re-render the agent surface" title="About: Re-render the agent surface">i</button>
+<button type="button" class="pt-mark" data-task="Task_CheckAgainstLock" style="left:71.4%;top:54.26%" aria-expanded="false" aria-label="About step: Check disk against lock against declaration" title="About: Check disk against lock against declaration">i</button>
 </div>
 <div class="pt-panel" role="dialog" aria-label="Task details" hidden=""></div>
 </div>
@@ -598,7 +598,7 @@
     <tr>
       <td><a id="step-Task_CheckAgainstLock"></a><strong>Check disk against lock against declaration</strong><br /><code class="language-plaintext highlighter-rouge">Task_CheckAgainstLock</code></td>
       <td>Build pipeline</td>
-      <td><a href="../../../en/cat-harness/processes/skills/remote-mount.html"><code class="language-plaintext highlighter-rouge">remote-mount</code></a><br /><code class="language-plaintext highlighter-rouge">ci-health</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/remote-mount.html"><code class="language-plaintext highlighter-rouge">remote-mount</code></a><br /><a href="../../../en/cat-harness/processes/skills/ci-health.html"><code class="language-plaintext highlighter-rouge">ci-health</code></a></td>
       <td><code class="language-plaintext highlighter-rouge">mount:remote:check</code>, with no network: the lock’s pins are the<br />declaration’s, and every locked directory is on disk and hashes to its<br />digest. Could-not-determine outranks missing, which outranks mounted.</td>
     </tr>
   </tbody>

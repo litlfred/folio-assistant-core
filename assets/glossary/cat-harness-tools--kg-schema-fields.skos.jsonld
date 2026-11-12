@@ -15119,25 +15119,6 @@
       "skos:note": "candidate"
     },
     {
-      "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/document-errata.documenterrataschema.entry",
-      "@type": "skos:Concept",
-      "skos:inScheme": {
-        "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields"
-      },
-      "skos:prefLabel": [
-        {
-          "@value": "DocumentErrataSchema.entry"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "The library entry's slug, the directory this file sits in."
-        }
-      ],
-      "dcterms:source": "cat-harness-tools/schemas/content/document-errata.ts#DocumentErrataSchema.entry",
-      "skos:note": "candidate"
-    },
-    {
       "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/document-errata.erratumschema.block",
       "@type": "skos:Concept",
       "skos:inScheme": {
@@ -15268,44 +15249,6 @@
         }
       ],
       "dcterms:source": "cat-harness-tools/schemas/content/document-errata.ts#ErratumSchema.reading",
-      "skos:note": "candidate"
-    },
-    {
-      "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/document-footnotes.documentfootnotesschema.body_size",
-      "@type": "skos:Concept",
-      "skos:inScheme": {
-        "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields"
-      },
-      "skos:prefLabel": [
-        {
-          "@value": "DocumentFootnotesSchema.body_size"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "The span size carrying the most characters: what \"smaller than the body\" is measured against."
-        }
-      ],
-      "dcterms:source": "cat-harness-tools/schemas/content/document-footnotes.ts#DocumentFootnotesSchema.body_size",
-      "skos:note": "candidate"
-    },
-    {
-      "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/document-footnotes.documentfootnotesschema.status",
-      "@type": "skos:Concept",
-      "skos:inScheme": {
-        "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields"
-      },
-      "skos:prefLabel": [
-        {
-          "@value": "DocumentFootnotesSchema.status"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "`undetermined` when every page was OCR'd: OCR text has no fonts, so no mark or note can be told from the body. `determined` otherwise, with the OCR'd pages that were not read in `pages_unread`."
-        }
-      ],
-      "dcterms:source": "cat-harness-tools/schemas/content/document-footnotes.ts#DocumentFootnotesSchema.status",
       "skos:note": "candidate"
     },
     {
@@ -20116,6 +20059,25 @@
       "skos:note": "candidate"
     },
     {
+      "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/graph-typology-node.graphtypologynodeschema.publishedbybuild",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "GraphTypologyNodeSchema.publishedByBuild"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Its directories are source a build Tool publishes at its own route, so the mount pass never copies them."
+        }
+      ],
+      "dcterms:source": "cat-harness-tools/schemas/kg/graph-typology-node.ts#GraphTypologyNodeSchema.publishedByBuild",
+      "skos:note": "candidate"
+    },
+    {
       "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/graph-typology-node.graphtypologynodeschema.rationale",
       "@type": "skos:Concept",
       "skos:inScheme": {
@@ -20132,6 +20094,25 @@
         }
       ],
       "dcterms:source": "cat-harness-tools/schemas/kg/graph-typology-node.ts#GraphTypologyNodeSchema.rationale",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/graph-typology-node.graphtypologynodeschema.serialised",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "GraphTypologyNodeSchema.serialised"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Whether a directory of this kind owes json, jsonld and schema.json at its URL (check:subgraph-coverage). Absent: owed unless `holds` is `state`. `false` for kinds whose files are not graph nodes: code, built pages, fixtures. Owner Q-SER-1 C / Q-SER-2 A, 2026-11-12: not all directories need to be harnessed."
+        }
+      ],
+      "dcterms:source": "cat-harness-tools/schemas/kg/graph-typology-node.ts#GraphTypologyNodeSchema.serialised",
       "skos:note": "candidate"
     },
     {
@@ -20477,6 +20458,25 @@
       "skos:note": "candidate"
     },
     {
+      "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/graph-typology-registry.graphtypologydef.publishedbybuild",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "GraphTypologyDef.publishedByBuild"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Is a directory of this kind SOURCE that a build Tool turns into pages at publish, so the directory itself is never copied to the site?"
+        }
+      ],
+      "dcterms:source": "cat-harness-tools/schemas/kg/graph-typology-registry.ts#GraphTypologyDef.publishedByBuild",
+      "skos:note": "candidate"
+    },
+    {
       "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/graph-typology-registry.graphtypologydef.recordswork",
       "@type": "skos:Concept",
       "skos:inScheme": {
@@ -20550,6 +20550,25 @@
         }
       ],
       "dcterms:source": "cat-harness-tools/schemas/kg/graph-typology-registry.ts#GraphTypologyDef.schema",
+      "skos:note": "candidate"
+    },
+    {
+      "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/graph-typology-registry.graphtypologydef.serialised",
+      "@type": "skos:Concept",
+      "skos:inScheme": {
+        "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields"
+      },
+      "skos:prefLabel": [
+        {
+          "@value": "GraphTypologyDef.serialised"
+        }
+      ],
+      "skos:definition": [
+        {
+          "@value": "Whether a directory of this kind owes json, jsonld and schema.json at its URL (check:subgraph-coverage). Absent: owed unless `holds` is `state`. `false` for kinds whose files are not graph nodes: code, built pages, fixtures. Owner Q-SER-1 C / Q-SER-2 A, 2026-11-12: not all directories need to be harnessed."
+        }
+      ],
+      "dcterms:source": "cat-harness-tools/schemas/kg/graph-typology-registry.ts#GraphTypologyDef.serialised",
       "skos:note": "candidate"
     },
     {
@@ -32732,44 +32751,6 @@
       "skos:note": "candidate"
     },
     {
-      "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/run-context.runcontextschema.profile",
-      "@type": "skos:Concept",
-      "skos:inScheme": {
-        "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields"
-      },
-      "skos:prefLabel": [
-        {
-          "@value": "RunContextSchema.profile"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "The tool profile selected. Absent: the run selected none, and `releases[]` lists what it resolved anyway."
-        }
-      ],
-      "dcterms:source": "cat-harness-tools/schemas/sdlc/run-context.ts#RunContextSchema.profile",
-      "skos:note": "candidate"
-    },
-    {
-      "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/run-context.runcontextschema.prov",
-      "@type": "skos:Concept",
-      "skos:inScheme": {
-        "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields"
-      },
-      "skos:prefLabel": [
-        {
-          "@value": "RunContextSchema.prov"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "The PROV activity that records this context as `prov:used`. Absent until the run records one (step 3)."
-        }
-      ],
-      "dcterms:source": "cat-harness-tools/schemas/sdlc/run-context.ts#RunContextSchema.prov",
-      "skos:note": "candidate"
-    },
-    {
       "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/run-context.runinvokerschema.id",
       "@type": "skos:Concept",
       "skos:inScheme": {
@@ -36586,63 +36567,6 @@
         }
       ],
       "dcterms:source": "cat-harness-tools/schemas/library/tabular-csvw.ts#SheetAnchorSchema.cell",
-      "skos:note": "candidate"
-    },
-    {
-      "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/tabular-csvw.tabularcsvwschema.narrative",
-      "@type": "skos:Concept",
-      "skos:inScheme": {
-        "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields"
-      },
-      "skos:prefLabel": [
-        {
-          "@value": "TabularCsvwSchema.narrative"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "What the data is about, under bean `ju0u`'s state machine, the same record v1 carries. Required on the same terms as `source`."
-        }
-      ],
-      "dcterms:source": "cat-harness-tools/schemas/library/tabular-csvw.ts#TabularCsvwSchema.narrative",
-      "skos:note": "candidate"
-    },
-    {
-      "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/tabular-csvw.tabularcsvwschema.source",
-      "@type": "skos:Concept",
-      "skos:inScheme": {
-        "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields"
-      },
-      "skos:prefLabel": [
-        {
-          "@value": "TabularCsvwSchema.source"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "The technical-metadata block every ingest sidecar carries (`file`, `sha256`, `mimetype_sniffed`, ...), the same record `folio-tabular-records/v1` holds as `source` — bean `urat`. It is how `check-l1-complete` (`sourceBlockOf`) and `check-library-qa` learn what the entry was made from. Required (urat step 5): no committed record predates it, and an extractor's output, which has none, is {@link TabularCsvwTablesSchema}. Not a CSVW key: {@link toCsvw} never emits it."
-        }
-      ],
-      "dcterms:source": "cat-harness-tools/schemas/library/tabular-csvw.ts#TabularCsvwSchema.source",
-      "skos:note": "candidate"
-    },
-    {
-      "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields/tabular-csvw.tabularcsvwschema.tables",
-      "@type": "skos:Concept",
-      "skos:inScheme": {
-        "@id": "https://litlfred.github.io/folio-assistant/cat-harness-tools/ns/glossary/kg-schema-fields"
-      },
-      "skos:prefLabel": [
-        {
-          "@value": "TabularCsvwSchema.tables"
-        }
-      ],
-      "skos:definition": [
-        {
-          "@value": "One per sheet. A CSV has exactly one; a workbook is a `csvw:TableGroup`."
-        }
-      ],
-      "dcterms:source": "cat-harness-tools/schemas/library/tabular-csvw.ts#TabularCsvwSchema.tables",
       "skos:note": "candidate"
     },
     {

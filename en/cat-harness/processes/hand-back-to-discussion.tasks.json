@@ -239,6 +239,7 @@
      },
      {
       "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html",
       "via": "authoring-agent"
      },
      {
@@ -257,6 +258,7 @@
      },
      {
       "name": "continual-progress",
+      "href": "../../../en/cat-harness/processes/skills/continual-progress.html",
       "via": "authoring-agent"
      },
      {
@@ -268,14 +270,17 @@
      },
      {
       "name": "crdm-detect",
+      "href": "../../../en/cat-harness/processes/skills/crdm-detect.html",
       "via": "authoring-agent"
      },
      {
       "name": "crdm-requirements-workflow",
+      "href": "../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html",
       "via": "authoring-agent"
      },
      {
       "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html",
       "via": "authoring-agent"
      },
      {
@@ -299,6 +304,7 @@
      },
      {
       "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html",
       "via": "authoring-agent"
      },
      {
@@ -359,6 +365,7 @@
      },
      {
       "name": "opening-brief",
+      "href": "../../../en/cat-harness/processes/skills/opening-brief.html",
       "via": "authoring-agent"
      },
      {
@@ -374,6 +381,7 @@
      },
      {
       "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html",
       "via": "authoring-agent"
      },
      {
@@ -414,6 +422,7 @@
      },
      {
       "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html",
       "via": "authoring-agent"
      },
      {
@@ -445,6 +454,7 @@
      },
      {
       "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html",
       "via": "authoring-agent"
      },
      {
@@ -542,6 +552,7 @@
      },
      {
       "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html",
       "via": "authoring-agent"
      },
      {
@@ -560,6 +571,7 @@
      },
      {
       "name": "continual-progress",
+      "href": "../../../en/cat-harness/processes/skills/continual-progress.html",
       "via": "authoring-agent"
      },
      {
@@ -571,14 +583,17 @@
      },
      {
       "name": "crdm-detect",
+      "href": "../../../en/cat-harness/processes/skills/crdm-detect.html",
       "via": "authoring-agent"
      },
      {
       "name": "crdm-requirements-workflow",
+      "href": "../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html",
       "via": "authoring-agent"
      },
      {
       "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html",
       "via": "authoring-agent"
      },
      {
@@ -602,6 +617,7 @@
      },
      {
       "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html",
       "via": "authoring-agent"
      },
      {
@@ -662,6 +678,7 @@
      },
      {
       "name": "opening-brief",
+      "href": "../../../en/cat-harness/processes/skills/opening-brief.html",
       "via": "authoring-agent"
      },
      {
@@ -677,6 +694,7 @@
      },
      {
       "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html",
       "via": "authoring-agent"
      },
      {
@@ -717,6 +735,7 @@
      },
      {
       "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html",
       "via": "authoring-agent"
      },
      {
@@ -748,6 +767,7 @@
      },
      {
       "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html",
       "via": "authoring-agent"
      },
      {
@@ -836,6 +856,7 @@
      },
      {
       "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html",
       "via": "authoring-agent"
      },
      {
@@ -854,6 +875,7 @@
      },
      {
       "name": "continual-progress",
+      "href": "../../../en/cat-harness/processes/skills/continual-progress.html",
       "via": "authoring-agent"
      },
      {
@@ -865,14 +887,17 @@
      },
      {
       "name": "crdm-detect",
+      "href": "../../../en/cat-harness/processes/skills/crdm-detect.html",
       "via": "authoring-agent"
      },
      {
       "name": "crdm-requirements-workflow",
+      "href": "../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html",
       "via": "authoring-agent"
      },
      {
       "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html",
       "via": "authoring-agent"
      },
      {
@@ -896,6 +921,7 @@
      },
      {
       "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html",
       "via": "authoring-agent"
      },
      {
@@ -956,6 +982,7 @@
      },
      {
       "name": "opening-brief",
+      "href": "../../../en/cat-harness/processes/skills/opening-brief.html",
       "via": "authoring-agent"
      },
      {
@@ -971,6 +998,7 @@
      },
      {
       "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html",
       "via": "authoring-agent"
      },
      {
@@ -1011,6 +1039,7 @@
      },
      {
       "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html",
       "via": "authoring-agent"
      },
      {
@@ -1042,6 +1071,7 @@
      },
      {
       "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html",
       "via": "authoring-agent"
      },
      {
@@ -1130,6 +1160,7 @@
      },
      {
       "name": "ci-health",
+      "href": "../../../en/cat-harness/processes/skills/ci-health.html",
       "via": "authoring-agent"
      },
      {
@@ -1148,6 +1179,7 @@
      },
      {
       "name": "continual-progress",
+      "href": "../../../en/cat-harness/processes/skills/continual-progress.html",
       "via": "authoring-agent"
      },
      {
@@ -1159,14 +1191,17 @@
      },
      {
       "name": "crdm-detect",
+      "href": "../../../en/cat-harness/processes/skills/crdm-detect.html",
       "via": "authoring-agent"
      },
      {
       "name": "crdm-requirements-workflow",
+      "href": "../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html",
       "via": "authoring-agent"
      },
      {
       "name": "decision-audit",
+      "href": "../../../en/cat-harness/processes/skills/decision-audit.html",
       "via": "authoring-agent"
      },
      {
@@ -1190,6 +1225,7 @@
      },
      {
       "name": "feature-staging",
+      "href": "../../../en/cat-harness/processes/skills/feature-staging.html",
       "via": "authoring-agent"
      },
      {
@@ -1250,6 +1286,7 @@
      },
      {
       "name": "opening-brief",
+      "href": "../../../en/cat-harness/processes/skills/opening-brief.html",
       "via": "authoring-agent"
      },
      {
@@ -1265,6 +1302,7 @@
      },
      {
       "name": "platform-gates",
+      "href": "../../../en/cat-harness/processes/skills/platform-gates.html",
       "via": "authoring-agent"
      },
      {
@@ -1305,6 +1343,7 @@
      },
      {
       "name": "staging-review",
+      "href": "../../../en/cat-harness/processes/skills/staging-review.html",
       "via": "authoring-agent"
      },
      {
@@ -1336,6 +1375,7 @@
      },
      {
       "name": "upstream-version-adoption",
+      "href": "../../../en/cat-harness/processes/skills/upstream-version-adoption.html",
       "via": "authoring-agent"
      },
      {

@@ -281,6 +281,7 @@
 <div class="pt-diagram" data-panel="crdm-deliver.tasks.json">
 <img src="../../../assets/img/workflows/crdm-deliver.svg" alt="BPMN diagram: CRDM Phase 6 — implement, MVP, acceptance" />
 <div class="pt-layer">
+<a class="pt-go" href="options-analysis.html" style="left:13.49%;top:18.94%;width:1.73%;height:3.64%" aria-label="Open subprocess: Options analysis how to implement" title="Open subprocess: Options analysis how to implement"></a>
 <button type="button" class="pt-mark" data-task="Call_OptionsAnalysis" style="left:18.71%;top:4.55%" aria-expanded="false" aria-label="About step: Options analysis how to implement" title="About: Options analysis how to implement">i</button>
 <button type="button" class="pt-mark" data-task="A_Implement" style="left:29.14%;top:4.55%" aria-expanded="false" aria-label="About step: Phase 6: Implement (feature branch + PR)" title="About: Phase 6: Implement (feature branch + PR)">i</button>
 <a class="pt-go" href="review-task.html" style="left:34.35%;top:18.94%;width:1.73%;height:3.64%" aria-label="Open subprocess: Audit the code nodes the increment adds" title="Open subprocess: Audit the code nodes the increment adds"></a>
@@ -510,7 +511,7 @@
 
 <ul>
   <li><strong>Called by:</strong> <a href="crdm-requirements.html">CRDM requirements</a></li>
-  <li><strong>Calls:</strong> <code class="language-plaintext highlighter-rouge">Process_OptionsAnalysis</code> (not loadable here), <a href="review-task.html">Review task</a></li>
+  <li><strong>Calls:</strong> <a href="options-analysis.html">Options analysis</a>, <a href="review-task.html">Review task</a></li>
   <li><strong>Presented on:</strong> no docs page section shows this diagram</li>
   <li><strong>Running instances:</strong> none recorded</li>
 </ul>
@@ -573,13 +574,13 @@
     <tr>
       <td><a id="step-Call_OptionsAnalysis"></a><strong>Options analysis how to implement</strong><br /><code class="language-plaintext highlighter-rouge">Call_OptionsAnalysis</code></td>
       <td>Agent</td>
-      <td>calls <code class="language-plaintext highlighter-rouge">Process_OptionsAnalysis</code></td>
-      <td>On the single edge from <code class="language-plaintext highlighter-rouge">Start_Process_CRDM_Deliver</code> into <code class="language-plaintext highlighter-rouge">A_Implement</code>, so the approach is chosen before any code exists. By Phase 6 the needs, requirements and data model are signed off, which is exactly the evidence an options analysis needs and the reason it belongs here rather than earlier: at <code class="language-plaintext highlighter-rouge">Call_Needs</code> there is nothing to weigh, and after <code class="language-plaintext highlighter-rouge">A_Implement</code> the choice has been made in code.<br />The three loop-backs into <code class="language-plaintext highlighter-rouge">A_Implement</code> — <code class="language-plaintext highlighter-rouge">_5</code> (increment rejected), <code class="language-plaintext highlighter-rouge">_7</code> (MVP not ready), <code class="language-plaintext highlighter-rouge">_13</code> (feedback translated) — deliberately BYPASS this call. Routing them through it would run the subprocess on every iteration of the inner loop, which is the ceremony this design refuses: a gate invoked on every pass stops being read. An iteration reworks an approach already chosen; if the APPROACH is what is wrong, that is not a loop iteration and it belongs to the calling step in <code class="language-plaintext highlighter-rouge">crdm-requirements.bpmn</code>.<br />Contrast <code class="language-plaintext highlighter-rouge">upstream-version-adoption</code>, where the loop DOES re-enter the analysis. There the loop-back returns to <code class="language-plaintext highlighter-rouge">A_Impact</code>, which re-gathers the evidence, so the second pass weighs genuinely different inputs. Here the loop returns to implementation with the evidence unchanged.<br /><code class="language-plaintext highlighter-rouge">A_Implement</code> carries a <code class="language-plaintext highlighter-rouge">note</code> on the bean (its claim is the OPEN that <a href="crdm-requirements.html"><code class="language-plaintext highlighter-rouge">Process_CRDM</code></a> calls first); this step carries no bean op, because <code class="language-plaintext highlighter-rouge">Process_OptionsAnalysis</code> ends with its own <code class="language-plaintext highlighter-rouge">decision-audit</code> note on the bean the caller claimed.</td>
+      <td>calls <a href="options-analysis.html">Options analysis</a></td>
+      <td>On the single edge from <code class="language-plaintext highlighter-rouge">Start_Process_CRDM_Deliver</code> into <code class="language-plaintext highlighter-rouge">A_Implement</code>, so the approach is chosen before any code exists. By Phase 6 the needs, requirements and data model are signed off, which is exactly the evidence an options analysis needs and the reason it belongs here rather than earlier: at <code class="language-plaintext highlighter-rouge">Call_Needs</code> there is nothing to weigh, and after <code class="language-plaintext highlighter-rouge">A_Implement</code> the choice has been made in code.<br />The three loop-backs into <code class="language-plaintext highlighter-rouge">A_Implement</code> — <code class="language-plaintext highlighter-rouge">_5</code> (increment rejected), <code class="language-plaintext highlighter-rouge">_7</code> (MVP not ready), <code class="language-plaintext highlighter-rouge">_13</code> (feedback translated) — deliberately BYPASS this call. Routing them through it would run the subprocess on every iteration of the inner loop, which is the ceremony this design refuses: a gate invoked on every pass stops being read. An iteration reworks an approach already chosen; if the APPROACH is what is wrong, that is not a loop iteration and it belongs to the calling step in <code class="language-plaintext highlighter-rouge">crdm-requirements.bpmn</code>.<br />Contrast <a href="../../../en/cat-harness/processes/skills/upstream-version-adoption.html"><code class="language-plaintext highlighter-rouge">upstream-version-adoption</code></a>, where the loop DOES re-enter the analysis. There the loop-back returns to <code class="language-plaintext highlighter-rouge">A_Impact</code>, which re-gathers the evidence, so the second pass weighs genuinely different inputs. Here the loop returns to implementation with the evidence unchanged.<br /><code class="language-plaintext highlighter-rouge">A_Implement</code> carries a <code class="language-plaintext highlighter-rouge">note</code> on the bean (its claim is the OPEN that <a href="crdm-requirements.html"><code class="language-plaintext highlighter-rouge">Process_CRDM</code></a> calls first); this step carries no bean op, because <a href="options-analysis.html"><code class="language-plaintext highlighter-rouge">Process_OptionsAnalysis</code></a> ends with its own <a href="../../../en/cat-harness/processes/skills/decision-audit.html"><code class="language-plaintext highlighter-rouge">decision-audit</code></a> note on the bean the caller claimed.</td>
     </tr>
     <tr>
       <td><a id="step-A_Implement"></a><strong>Phase 6: Implement (feature branch + PR)</strong><br /><code class="language-plaintext highlighter-rouge">A_Implement</code></td>
       <td>Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">prepare-merge</code></td>
+      <td>—</td>
       <td>Inner loop: agent claims a bean, implements on<br />feature branch, opens PR, posts summary to the issue.<br />When the requirement changes a rendered surface, implement against the<br />wireframe candidate the requester or BA chose in Phases 3–4<br />(<a href="wireframe-design-review.html">Process_WireframeDesignReview</a>, called from <a href="crdm-requirements-definition.html">Process_CRDM_Requirements</a>), not<br />against a fresh design; and the delivery summary links the chosen candidate<br />beside the after-screenshot, so the reviewer can see the build matches what was<br />approved.</td>
     </tr>
     <tr>
@@ -591,25 +592,25 @@
     <tr>
       <td><a id="step-A_DeployStaging"></a><strong>Deploy the MVP to staging</strong><br /><code class="language-plaintext highlighter-rouge">A_DeployStaging</code></td>
       <td>Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">feature-staging</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/feature-staging.html"><code class="language-plaintext highlighter-rouge">feature-staging</code></a></td>
       <td>An MVP is shared AS A branches/ DEPLOY, not as a<br />description of one. <code class="language-plaintext highlighter-rouge">feature-staging.yml</code> publishes the branch under<br /><code class="language-plaintext highlighter-rouge">branches/&lt;branch-slug&gt;/</code> on gh-pages and comments the URL on the PR, so the<br />stakeholder who tests it is looking at the built artefact rather than at a<br />screenshot — the same argument the merge discipline makes about rendered work: holding a rendered change back for assessment makes assessment harder, not safer.</td>
     </tr>
     <tr>
       <td><a id="step-A_Summary"></a><strong>Post summary to issue</strong><br /><code class="language-plaintext highlighter-rouge">A_Summary</code></td>
       <td>Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">delivery-summary</code><br /><code class="language-plaintext highlighter-rouge">staging-review</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/staging-review.html"><code class="language-plaintext highlighter-rouge">staging-review</code></a></td>
       <td>What was accomplished, what remains, and the staging links: one deep link per<br />changed page on the preview, with the same page on main (feedback-deep-links).</td>
     </tr>
     <tr>
       <td><a id="step-BA_ReviewIncrement"></a><strong>Review increment (test behaviour)</strong><br /><code class="language-plaintext highlighter-rouge">BA_ReviewIncrement</code></td>
       <td>BA / Feature Requestor</td>
-      <td><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></a></td>
       <td>Inner loop: the BA tests each delivered increment<br />against the acceptance criteria. They do not review code — they test behaviour.</td>
     </tr>
     <tr>
       <td><a id="step-BA_ShareMVP"></a><strong>Share MVP with stakeholders</strong><br /><code class="language-plaintext highlighter-rouge">BA_ShareMVP</code></td>
       <td>BA / Feature Requestor</td>
-      <td><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code><br /><code class="language-plaintext highlighter-rouge">staging-review</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></a><br /><a href="../../../en/cat-harness/processes/skills/staging-review.html"><code class="language-plaintext highlighter-rouge">staging-review</code></a></td>
       <td>Outer loop: the BA presents the accumulated increments<br />to stakeholders as a testable MVP. Staging URL, demo, or walkthrough.</td>
     </tr>
     <tr>
@@ -621,7 +622,7 @@
     <tr>
       <td><a id="step-BA_TranslateFeedback"></a><strong>Translate feedback into agent direction</strong><br /><code class="language-plaintext highlighter-rouge">BA_TranslateFeedback</code></td>
       <td>BA / Feature Requestor</td>
-      <td><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/crdm-requirements-workflow.html"><code class="language-plaintext highlighter-rouge">crdm-requirements-workflow</code></a></td>
       <td>The BA translates stakeholder findings into<br />actionable direction: new beans or bean updates for the agent.</td>
     </tr>
   </tbody>

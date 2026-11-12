@@ -288,6 +288,7 @@
 <button type="button" class="pt-mark" data-task="Task_EditContent" style="left:43.07%;top:11.11%" aria-expanded="false" aria-label="About step: Edit narrative content blocks" title="About: Edit narrative content blocks">i</button>
 <button type="button" class="pt-mark" data-task="Task_EditLogic" style="left:53.65%;top:11.11%" aria-expanded="false" aria-label="About step: Edit deterministic logic (if needed)" title="About: Edit deterministic logic (if needed)">i</button>
 <button type="button" class="pt-mark" data-task="Task_AssessImpact" style="left:64.23%;top:11.11%" aria-expanded="false" aria-label="About step: Assess downstream impact" title="About: Assess downstream impact">i</button>
+<a class="pt-go" href="options-analysis.html" style="left:69.53%;top:63.89%;width:1.75%;height:13.33%" aria-label="Open subprocess: Options analysis how to absorb the impact" title="Open subprocess: Options analysis how to absorb the impact"></a>
 <button type="button" class="pt-mark" data-task="Call_OptionsAnalysis" style="left:74.82%;top:11.11%" aria-expanded="false" aria-label="About step: Options analysis how to absorb the impact" title="About: Options analysis how to absorb the impact">i</button>
 <button type="button" class="pt-mark" data-task="Task_CommitPush" style="left:85.4%;top:11.11%" aria-expanded="false" aria-label="About step: Commit, push, update PR" title="About: Commit, push, update PR">i</button>
 </div>
@@ -509,7 +510,7 @@
 
 <ul>
   <li><strong>Called by:</strong> <a href="content-change-review.html">Content Change and Review</a></li>
-  <li><strong>Calls:</strong> <code class="language-plaintext highlighter-rouge">Process_OptionsAnalysis</code> (not loadable here)</li>
+  <li><strong>Calls:</strong> <a href="options-analysis.html">Options analysis</a></li>
   <li><strong>Presented on:</strong> no docs page section shows this diagram</li>
   <li><strong>Running instances:</strong> none recorded</li>
 </ul>
@@ -568,7 +569,7 @@
     <tr>
       <td><a id="step-Task_CreateBranch"></a><strong>Create feature branch</strong><br /><code class="language-plaintext highlighter-rouge">Task_CreateBranch</code></td>
       <td>Folio-Assistant Agent</td>
-      <td><code class="language-plaintext highlighter-rouge">feature-staging</code></td>
+      <td><a href="../../../en/cat-harness/processes/skills/feature-staging.html"><code class="language-plaintext highlighter-rouge">feature-staging</code></a></td>
       <td>Agent creates a feature branch from main.<br />Branch naming: feature/&lt;short-description&gt;<br />Opens a PR immediately (AGENTS.md: “open the PR at the first commit”).</td>
     </tr>
     <tr>
@@ -592,8 +593,8 @@
     <tr>
       <td><a id="step-Call_OptionsAnalysis"></a><strong>Options analysis how to absorb the impact</strong><br /><code class="language-plaintext highlighter-rouge">Call_OptionsAnalysis</code></td>
       <td>Folio-Assistant Agent</td>
-      <td>calls <code class="language-plaintext highlighter-rouge">Process_OptionsAnalysis</code></td>
-      <td>On the edge OUT of <code class="language-plaintext highlighter-rouge">Task_AssessImpact</code> and before <code class="language-plaintext highlighter-rouge">Task_CommitPush</code>, because the impact assessment is the evidence the options are weighed against. An analysis before it would compare ways of absorbing a downstream effect nobody has measured yet; one after the commit would be a rationalisation of a choice already pushed.<br />Not between <code class="language-plaintext highlighter-rouge">Task_AssessImpact</code> and <code class="language-plaintext highlighter-rouge">Task_ReviewImpact</code>: those are in different processes with no sequence flow between them; the assessment reaches the committee through <code class="language-plaintext highlighter-rouge">Task_CompareBeforeAfter</code>.<br />In the Agent lane, matching <code class="language-plaintext highlighter-rouge">upstream-version-adoption</code>: this step produces the options and their trade-offs, and <code class="language-plaintext highlighter-rouge">GW_Approved</code> in the committee review is where a decision is taken.<br />On the trigger: reaching this call is not the same as running the whole of it. <code class="language-plaintext highlighter-rouge">Process_OptionsAnalysis</code> opens with <code class="language-plaintext highlighter-rouge">A_Frame</code>, whose trigger is <code class="language-plaintext highlighter-rouge">opening-brief</code>’s — irreversibility and surprise, not size — and leaving at that first activity is a correct outcome rather than a skipped step. A copy-edit exits immediately; a logic change that moves an indicator (from <code class="language-plaintext highlighter-rouge">Task_EditLogic</code>) does not.</td>
+      <td>calls <a href="options-analysis.html">Options analysis</a></td>
+      <td>On the edge OUT of <code class="language-plaintext highlighter-rouge">Task_AssessImpact</code> and before <code class="language-plaintext highlighter-rouge">Task_CommitPush</code>, because the impact assessment is the evidence the options are weighed against. An analysis before it would compare ways of absorbing a downstream effect nobody has measured yet; one after the commit would be a rationalisation of a choice already pushed.<br />Not between <code class="language-plaintext highlighter-rouge">Task_AssessImpact</code> and <code class="language-plaintext highlighter-rouge">Task_ReviewImpact</code>: those are in different processes with no sequence flow between them; the assessment reaches the committee through <code class="language-plaintext highlighter-rouge">Task_CompareBeforeAfter</code>.<br />In the Agent lane, matching <a href="../../../en/cat-harness/processes/skills/upstream-version-adoption.html"><code class="language-plaintext highlighter-rouge">upstream-version-adoption</code></a>: this step produces the options and their trade-offs, and <code class="language-plaintext highlighter-rouge">GW_Approved</code> in the committee review is where a decision is taken.<br />On the trigger: reaching this call is not the same as running the whole of it. <a href="options-analysis.html"><code class="language-plaintext highlighter-rouge">Process_OptionsAnalysis</code></a> opens with <code class="language-plaintext highlighter-rouge">A_Frame</code>, whose trigger is <a href="../../../en/cat-harness/processes/skills/opening-brief.html"><code class="language-plaintext highlighter-rouge">opening-brief</code></a>’s — irreversibility and surprise, not size — and leaving at that first activity is a correct outcome rather than a skipped step. A copy-edit exits immediately; a logic change that moves an indicator (from <code class="language-plaintext highlighter-rouge">Task_EditLogic</code>) does not.</td>
     </tr>
     <tr>
       <td><a id="step-Task_CommitPush"></a><strong>Commit, push, update PR</strong><br /><code class="language-plaintext highlighter-rouge">Task_CommitPush</code></td>
