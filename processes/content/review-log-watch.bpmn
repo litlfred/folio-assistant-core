@@ -135,23 +135,23 @@
         <bpmndi:BPMNLabel><dc:Bounds x="180" y="179" width="116" height="30" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_ReadSheet_di" bpmnElement="Task_ReadSheet">
-        <dc:Bounds x="316" y="110" width="120" height="90" />
+        <dc:Bounds x="316" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_RunCheck_di" bpmnElement="Task_RunCheck">
-        <dc:Bounds x="496" y="110" width="120" height="90" />
+        <dc:Bounds x="496" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_Changed_di" bpmnElement="Gateway_Changed" isMarkerVisible="true">
         <dc:Bounds x="676" y="130" width="50" height="50" />
         <bpmndi:BPMNLabel><dc:Bounds x="636" y="90" width="130" height="30" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_AppendRows_di" bpmnElement="Task_AppendRows">
-        <dc:Bounds x="786" y="110" width="120" height="90" />
+        <dc:Bounds x="786" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_AgentPass_di" bpmnElement="Task_AgentPass">
-        <dc:Bounds x="966" y="110" width="120" height="90" />
+        <dc:Bounds x="966" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Accept_di" bpmnElement="Task_Accept">
-        <dc:Bounds x="1146" y="110" width="120" height="90" />
+        <dc:Bounds x="1146" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Done_di" bpmnElement="EndEvent_Done">
         <dc:Bounds x="1326" y="137" width="36" height="36" />
@@ -170,11 +170,11 @@
         <di:waypoint x="496" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Task_StallCheck_di" bpmnElement="Task_StallCheck">
-        <dc:Bounds x="496" y="250" width="120" height="90" />
+        <dc:Bounds x="496" y="235" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="WF03_di" bpmnElement="WF03">
-        <di:waypoint x="556" y="200" />
-        <di:waypoint x="556" y="250" />
+        <di:waypoint x="556" y="215" />
+        <di:waypoint x="556" y="235" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="WF09_di" bpmnElement="WF09">
         <di:waypoint x="616" y="295" />
@@ -195,17 +195,17 @@
         <di:waypoint x="966" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNShape id="Task_RecordStep_di" bpmnElement="Task_RecordStep">
-        <dc:Bounds x="1056" y="250" width="120" height="90" />
+        <dc:Bounds x="1056" y="235" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="WF07_di" bpmnElement="WF07">
-        <di:waypoint x="1026" y="200" />
+        <di:waypoint x="1026" y="215" />
         <di:waypoint x="1026" y="295" />
         <di:waypoint x="1056" y="295" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="WF10_di" bpmnElement="WF10">
         <di:waypoint x="1176" y="295" />
         <di:waypoint x="1206" y="295" />
-        <di:waypoint x="1206" y="200" />
+        <di:waypoint x="1206" y="215" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="WF08_di" bpmnElement="WF08">
         <di:waypoint x="1266" y="155" />
