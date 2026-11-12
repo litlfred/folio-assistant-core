@@ -8,7 +8,7 @@
     "kind": "repository",
     "id": "litlfred/folio-assistant-core"
   },
-  "updated_at": "2026-11-11T18:40:27.797Z",
+  "updated_at": "2026-11-12T08:18:22.321Z",
   "verdict": "unknown",
   "checks": [
     {
@@ -84,7 +84,7 @@
       "measurements": [
         {
           "metric": "special-branch-bytes:qa-reports",
-          "value": 3087345,
+          "value": 3186286,
           "unit": "bytes",
           "command": "git ls-remote --heads origin; git fetch --depth=1 + git ls-tree -r -l <tip> per budgeted branch (unique blobs summed)"
         },
@@ -138,7 +138,7 @@
       ],
       "measurements": [],
       "findings": [],
-      "reason": "no pages-serving observation could be read: qa-reports:main/87e75059f74a0ad6e019498d264f7fe858083949 — miss: main/84b3e034ec9d92643dfad9e434b484337dc7e0d6 has nothing under health"
+      "reason": "no pages-serving observation could be read: qa-reports:main/fe82de48efa3a636e11fccbdf4eecf72816c79c2 — miss: main/fe82de48efa3a636e11fccbdf4eecf72816c79c2 has nothing under health"
     },
     {
       "id": "remote-mounts",
@@ -209,7 +209,7 @@
       "measurements": [
         {
           "metric": "library-keywords-entries",
-          "value": 3,
+          "value": 4,
           "unit": "count",
           "command": "bun run cat library:keywords"
         },
@@ -345,19 +345,19 @@
       "measurements": [
         {
           "metric": "tracked-tree-bytes",
-          "value": 29765143,
+          "value": 30080376,
           "unit": "bytes",
           "command": "git ls-tree -r -l HEAD (blob sizes summed)"
         },
         {
           "metric": "git-dir-bytes",
-          "value": 14375989,
+          "value": 136223526,
           "unit": "bytes",
           "command": "du -sb .git"
         },
         {
           "metric": "pack-bytes",
-          "value": 13252608,
+          "value": 134907904,
           "unit": "bytes",
           "command": "git count-objects -v"
         },
@@ -369,7 +369,7 @@
         },
         {
           "metric": "git-dir-to-tree-ratio",
-          "value": 0.48,
+          "value": 4.53,
           "unit": "ratio",
           "command": "git-dir-bytes / tracked-tree-bytes"
         }
