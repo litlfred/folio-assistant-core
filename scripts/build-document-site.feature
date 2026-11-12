@@ -14,6 +14,24 @@ Feature: building a document folio's site
     When the site is built
     Then the title, heading and page title read "Handbook - Working Draft"
 
+  @test:scripts/build-document-site.test.ts::build-document-site::downloadLinks
+  Scenario: with --downloads, the current Word and PDF are linked under the title and on the landing
+    Given a freshly scaffolded document folio
+    When the site is built with downloads on
+    Then the handbook page has a download line just after its title
+    And it links export/handbook-public-comment-latest.docx and .pdf, and the export page
+    And the landing links the same two files beside the document
+
+  @test:scripts/build-document-site.test.ts::build-document-site::noDownloadLinksByDefault
+  Scenario: without --downloads, no page links an export that may not have been built
+    When the site is built
+    Then neither the handbook page nor the landing links a download
+
+  @test:scripts/build-document-site.test.ts::build-document-site::downloadLinksFromAnyPage
+  Scenario: the download links are relative to the page they are on
+    Then from the structured-assets page they climb one directory to export/
+    And with no title on the page, the line goes first
+
   @test:scripts/build-document-site.test.ts::build-document-site::kgNodesPublished
   Scenario: every block's KG node is published, one per block and as the document's graph
     When the site is built

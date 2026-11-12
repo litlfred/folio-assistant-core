@@ -31,6 +31,13 @@ export const localisedPage = (path: string): string => posix.join(PAGE_LOCALE, p
 /** The directory of a document's page: `en/<slug>`. */
 export const documentPageDir = (slug: string): string => localisedPage(slug);
 
+/**
+ * Where a document's exports go, beside its page: `document-export.ts release
+ * --out <site>/<documentExportDir>` writes the Word, PDF and offline files and
+ * their stable `-latest` copies there, and the page's download links point at them.
+ */
+export const documentExportDir = (slug: string): string => `${documentPageDir(slug)}/export`;
+
 /** A document's page: `en/<slug>/index.html`. */
 export const documentPage = (slug: string): string => `${documentPageDir(slug)}/index.html`;
 
