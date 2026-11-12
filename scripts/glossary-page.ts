@@ -67,7 +67,6 @@ import {
   instanceDirectoryForGraph,
   instanceRootsIn,
   readDeclaration,
-  repoRootFor,
   resolveDirectories,
   forgeLocation,
 } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.ts";
@@ -95,8 +94,10 @@ import {
   type OwnedScheme,
 } from "@litlfred/cat-harness-tools/scripts/lib/scheme-owner.ts";
 
+import { checkoutRootFor } from "./lib/checkout-root.ts";
+
 const CORE = resolve(import.meta.dir, "..");
-const REPO = repoRootFor(CORE);
+const REPO = checkoutRootFor(CORE);
 // declared-path-literal: the platform site the page publishes to, which is
 // cat-harness's `docs/`; core owns the page, the harness owns the site.
 // `--site <dir>`: a site being built (a repository's own, `visualiser-writers.ts`)

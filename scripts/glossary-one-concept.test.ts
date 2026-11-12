@@ -14,8 +14,9 @@ import { join, resolve } from "node:path";
 
 import { toSkos } from "../schemas/glossary.ts";
 import { collect, vocabularyConcepts } from "./glossary-page.ts";
+import { checkoutRootFor } from "./lib/checkout-root.ts";
 
-const REPO = resolve(import.meta.dir, "..", "..");
+const REPO = checkoutRootFor(resolve(import.meta.dir, ".."));
 const BOOTSTRAP = join(REPO, "bootstrap");
 
 describe("bootstrap's glossary describes bootstrap's vocabulary, not a copy of it", () => {
