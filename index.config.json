@@ -24,7 +24,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/cat-harness",
-          "ref": "cccdd94f7699c892bf7b1feadb24f40f7ce7ac97",
+          "ref": "edaa380219fbc4f949db2c1f2e08c9a45e6a26ad",
           "overrides": {
             "cat-harness": {
               "whole": true
@@ -40,8 +40,8 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-12",
-              "ref": "cccdd94f7699c892bf7b1feadb24f40f7ce7ac97",
-              "evidence": "litlfred, 2026-11-12, merge-manager thread: owner card Q-CONSENT-1 = A (re-pin + merge window to ~21:05Z 11-12, Q-WIN-1 C); bottom-up re-pin T2 (smart-ra#242), follow-up to Q-RA-241 A (Q-CASCADE-FREEZE B: mains read at re-pin). Coordinator session session_01EucfRpkvK7d4FJyuqypQzm."
+              "ref": "edaa380219fbc4f949db2c1f2e08c9a45e6a26ad",
+              "evidence": "Owner litlfred, 2026-11-12: smart-ra#242 bottom-up re-pin (owner 'a b then c', step c), Q-CASCADE-FREEZE B (re-pin just the moved layer), Q-CONSENT-1 A, merge window Q-WIN-1 C. Core T2b: cat-harness to main edaa380 (cat-harness#1281), so core's lock and cat-harness's agree on bootstrap-tools bbdaffb."
             }
           }
         }
