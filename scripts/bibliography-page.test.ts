@@ -501,6 +501,25 @@ describe("one instance's own bibliography, for its page inside a composed site (
     expect(own.subgraphs.map((s) => s.instance)).toEqual(["smart-trust", "smart-base"]);
   });
 
+  test("leavesOutALayerBelowsExtractedReferenceLists", () => {
+    // Owner, 2026-11-12 ("A. IGs list own refs only"): who-iris's per-document
+    // reference lists (`provenance: extracted`) stay on its own and the
+    // platform's bibliography, not in every IG composed above it.
+    const ex = (id: string, instance: string) => {
+      const e = mk(id, instance);
+      return { ...e, subgraph: `${instance}-references`, ref: { ...e.ref, provenance: "extracted" as const } };
+    };
+    const withLists = {
+      ...c,
+      entries: [...c.entries, ex("doc.1.1", "smart-base"), ex("own.1.1", "smart-trust")],
+      subgraphs: [...c.subgraphs, ...["smart-base", "smart-trust"].map((i) => ({ id: `${i}-references`, instance: i, kind: "references" as const, path: `${i}/references`, slug: `${i}-references` }))],
+    };
+    const own = forInstance(withLists, "smart-trust", (n) => needs[n] ?? []);
+    expect(own.entries.map((e) => e.ref.id)).toEqual(["a", "b", "own.1.1"]);
+    expect(own.subgraphs.map((s) => s.id)).not.toContain("smart-base-references");
+    expect(own.subgraphs.map((s) => s.id)).toContain("smart-trust-references");
+  });
+
   test("pagesUnderInstance", () => {
     const pages = outputs(forInstance(c, "smart-trust", (n) => needs[n] ?? []), "/smart-trust");
     const root = [...pages].find(([p]) => p.endsWith("bibliography/index.md"))![1];

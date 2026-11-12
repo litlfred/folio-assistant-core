@@ -854,12 +854,32 @@ export function forInstance(c: Collected, instance: string, needsOf: (name: stri
     for (const d of needsOf(n)) visit(d);
   };
   visit(instance);
+  // A layer below lends its references, but not the reference lists EXTRACTED
+  // from the documents it holds (`provenance: extracted`, e.g. a document
+  // library's `references/`): those belong to that layer's documents and are listed on
+  // its own and the platform's bibliography. Rendered inside every composed
+  // IG they were ~7.5k pages per IG and ran the staging Jekyll build past its
+  // 45-minute limit (owner, 2026-11-12, card: "A. IGs list own refs only").
+  const lent = (e: Entry) => keep.has(e.instance) && !(e.instance !== instance && e.ref.provenance === "extracted");
+  const entries = c.entries.filter(lent);
+  const listed = new Set(entries.map((e) => `${e.instance}\0${e.subgraph}`));
+  const emptied = new Set(
+    c.entries.filter((e) => keep.has(e.instance) && !lent(e)).map((e) => `${e.instance}\0${e.subgraph}`).filter((k) => !listed.has(k)),
+  );
+  const assets: AssetView[] = [];
+  for (const a of c.assets ?? []) {
+    if (!keep.has(a.instance)) continue;
+    const kept = a.entries.filter(lent);
+    // A held document's page that existed only for its extracted list goes with it.
+    if (kept.length < a.entries.length && kept.length <= 1) continue;
+    assets.push(kept.length === a.entries.length ? a : { ...a, entries: kept });
+  }
   return {
     ...c,
     own: instance,
-    entries: c.entries.filter((e) => keep.has(e.instance)),
-    subgraphs: c.subgraphs.filter((s) => keep.has(s.instance)),
-    assets: (c.assets ?? []).filter((a) => keep.has(a.instance)),
+    entries,
+    subgraphs: c.subgraphs.filter((s) => keep.has(s.instance) && !emptied.has(`${s.instance}\0${s.id}`)),
+    assets,
   };
 }
 
