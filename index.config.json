@@ -67,7 +67,7 @@
       "source": {
         "remote": {
           "repository": "litlfred/bootstrap",
-          "ref": "fdc84b22c30ace4b9476e56fa1cac2117e5aaf0a",
+          "ref": "f5c124f1a8067ce16b42fd251380c6d67e426374",
           "overrides": {
             "bootstrap": {
               "whole": true
@@ -77,7 +77,7 @@
             "consent": {
               "by": "litlfred",
               "on": "2026-11-12",
-              "ref": "fdc84b22c30ace4b9476e56fa1cac2117e5aaf0a",
+              "ref": "f5c124f1a8067ce16b42fd251380c6d67e426374",
               "evidence": "owner message 2026-11-12T06:04:48Z '+12hrs window' (repin+merge window to 2026-11-12T18:05Z): bottom-up re-pin cascade moving every pinned harness to its current main HEAD"
             }
           }
