@@ -1,0 +1,353 @@
+{
+ "$schema": "process-task-panel/v1",
+ "process": "Process_PublicCommentChange",
+ "markers": [
+  {
+   "id": "Task_AuthorEdits",
+   "name": "Edit the document as decided, on a feature branch",
+   "left": 32.89,
+   "top": 2.27,
+   "box": {
+    "left": 26.54,
+    "top": 23.86,
+    "width": 2.11,
+    "height": 5.45
+   }
+  },
+  {
+   "id": "CallActivity_ChangeSet",
+   "name": "Review the change set on its staging preview",
+   "left": 42.54,
+   "top": 34.09,
+   "box": {
+    "left": 36.18,
+    "top": 55.68,
+    "width": 2.11,
+    "height": 5.45
+   }
+  },
+  {
+   "id": "Task_QaGate",
+   "name": "QA gate: check dispositions against the people and the pull request",
+   "left": 57.46,
+   "top": 68.18,
+   "box": {
+    "left": 51.1,
+    "top": 89.77,
+    "width": 2.11,
+    "height": 5.45
+   }
+  },
+  {
+   "id": "Task_Incorporate",
+   "name": "Mark incorporated when the change set merges",
+   "left": 84.65,
+   "top": 34.09,
+   "box": {
+    "left": 78.29,
+    "top": 55.68,
+    "width": 2.11,
+    "height": 5.45
+   }
+  }
+ ],
+ "processHref": "public-comment-change.html",
+ "tasks": {
+  "Task_AuthorEdits": {
+   "id": "Task_AuthorEdits",
+   "name": "Edit the document as decided, on a feature branch",
+   "type": "bpmn:Task",
+   "stepHref": "public-comment-change.html#step-Task_AuthorEdits",
+   "lane": "Author (human or agentic)",
+   "laneHref": "public-comment-change.html#lane-Lane_Author",
+   "skills": [
+    {
+     "name": "public-comment",
+     "href": "../../../en/cat-harness/processes/skills/public-comment.html"
+    }
+   ],
+   "role": {
+    "name": "author",
+    "href": "../../../cat-harness/auto-docs/index/roles/index.html#a-cat-harness-scenarios-roles-json-author",
+    "title": "Author",
+    "skills": [
+     {
+      "name": "bpmn-authoring",
+      "href": "../../../en/cat-harness/processes/skills/bpmn-authoring.html"
+     },
+     {
+      "name": "content-review",
+      "href": "../../../en/cat-harness/processes/skills/content-review.html"
+     },
+     {
+      "name": "decision-audit"
+     },
+     {
+      "name": "dmn-authoring",
+      "href": "../../../en/cat-harness/processes/skills/dmn-authoring.html"
+     },
+     {
+      "name": "evidence-appraisal",
+      "href": "../../../en/cat-harness/processes/skills/evidence-appraisal.html"
+     },
+     {
+      "name": "kg-affordances",
+      "href": "../../../en/cat-harness/processes/skills/kg-affordances.html"
+     },
+     {
+      "name": "staging-review"
+     },
+     {
+      "name": "todo-manager"
+     },
+     {
+      "name": "voice-authoring-guidance"
+     }
+    ]
+   }
+  },
+  "CallActivity_ChangeSet": {
+   "id": "CallActivity_ChangeSet",
+   "name": "Review the change set on its staging preview",
+   "type": "bpmn:CallActivity",
+   "stepHref": "public-comment-change.html#step-CallActivity_ChangeSet",
+   "lane": "Change set — feature branch and staging",
+   "laneHref": "public-comment-change.html#lane-Lane_Pipeline",
+   "skills": [
+    {
+     "name": "staging-review"
+    }
+   ],
+   "calls": {
+    "name": "Content Change and Review",
+    "href": "content-change-review.html",
+    "diagram": "content-change-review.html"
+   },
+   "role": {
+    "name": "build-pipeline",
+    "href": "../../../cat-harness/auto-docs/index/roles/index.html#a-cat-harness-scenarios-roles-json-build-pipeline",
+    "title": "Build pipeline",
+    "skills": [
+     {
+      "name": "ci-health"
+     },
+     {
+      "name": "compiled-artefact-cache",
+      "href": "../../../en/cat-harness/processes/skills/compiled-artefact-cache.html"
+     },
+     {
+      "name": "content-test",
+      "href": "../../../en/cat-harness/processes/skills/content-test.html"
+     },
+     {
+      "name": "content-validate",
+      "href": "../../../en/cat-harness/processes/skills/content-validate.html"
+     },
+     {
+      "name": "feature-staging"
+     },
+     {
+      "name": "harness-projections",
+      "href": "../../../en/cat-harness/processes/skills/harness-projections.html"
+     },
+     {
+      "name": "kg-separation",
+      "href": "../../../en/cat-harness/processes/skills/kg-separation.html"
+     },
+     {
+      "name": "platform-gates"
+     },
+     {
+      "name": "prepare-merge"
+     },
+     {
+      "name": "publish-verification"
+     },
+     {
+      "name": "qa-reports"
+     },
+     {
+      "name": "remote-mount",
+      "href": "../../../en/cat-harness/processes/skills/remote-mount.html"
+     },
+     {
+      "name": "render-kg-to-cdn",
+      "href": "../../../en/cat-harness/processes/skills/render-kg-to-cdn.html"
+     },
+     {
+      "name": "sub-kg-lifecycle",
+      "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
+     },
+     {
+      "name": "todo-manager"
+     },
+     {
+      "name": "translation-manager",
+      "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
+     },
+     {
+      "name": "upstream-version-adoption"
+     },
+     {
+      "name": "watch"
+     }
+    ]
+   }
+  },
+  "Task_QaGate": {
+   "id": "Task_QaGate",
+   "name": "QA gate: check dispositions against the people and the pull request",
+   "type": "bpmn:Task",
+   "stepHref": "public-comment-change.html#step-Task_QaGate",
+   "lane": "QA reviewer (independent)",
+   "laneHref": "public-comment-change.html#lane-Lane_QaReviewer",
+   "skills": [
+    {
+     "name": "public-comment",
+     "href": "../../../en/cat-harness/processes/skills/public-comment.html"
+    }
+   ],
+   "role": {
+    "name": "qc-reviewer",
+    "href": "../../../cat-harness/auto-docs/index/roles/index.html#a-cat-harness-scenarios-roles-json-qc-reviewer",
+    "title": "QC reviewer",
+    "skills": [
+     {
+      "name": "adjudication",
+      "via": "reviewer"
+     },
+     {
+      "name": "content-feedback",
+      "href": "../../../en/cat-harness/processes/skills/content-feedback.html",
+      "via": "reviewer"
+     },
+     {
+      "name": "content-review",
+      "href": "../../../en/cat-harness/processes/skills/content-review.html",
+      "via": "reviewer"
+     },
+     {
+      "name": "decision-audit",
+      "via": "reviewer"
+     },
+     {
+      "name": "evidence-review",
+      "href": "../../../en/cat-harness/processes/skills/evidence-review.html"
+     },
+     {
+      "name": "narrative-asserts-code",
+      "via": "reviewer"
+     },
+     {
+      "name": "rendered-impact",
+      "via": "reviewer"
+     },
+     {
+      "name": "staging-review",
+      "via": "reviewer"
+     },
+     {
+      "name": "translation-manager",
+      "href": "../../../en/cat-harness/processes/skills/translation-manager.html",
+      "via": "reviewer"
+     },
+     {
+      "name": "untainted-verification"
+     },
+     {
+      "name": "visual-diff",
+      "via": "reviewer"
+     },
+     {
+      "name": "voice-overlay-review",
+      "via": "reviewer"
+     }
+    ]
+   }
+  },
+  "Task_Incorporate": {
+   "id": "Task_Incorporate",
+   "name": "Mark incorporated when the change set merges",
+   "type": "bpmn:Task",
+   "stepHref": "public-comment-change.html#step-Task_Incorporate",
+   "lane": "Change set — feature branch and staging",
+   "laneHref": "public-comment-change.html#lane-Lane_Pipeline",
+   "skills": [
+    {
+     "name": "public-comment",
+     "href": "../../../en/cat-harness/processes/skills/public-comment.html"
+    }
+   ],
+   "role": {
+    "name": "build-pipeline",
+    "href": "../../../cat-harness/auto-docs/index/roles/index.html#a-cat-harness-scenarios-roles-json-build-pipeline",
+    "title": "Build pipeline",
+    "skills": [
+     {
+      "name": "ci-health"
+     },
+     {
+      "name": "compiled-artefact-cache",
+      "href": "../../../en/cat-harness/processes/skills/compiled-artefact-cache.html"
+     },
+     {
+      "name": "content-test",
+      "href": "../../../en/cat-harness/processes/skills/content-test.html"
+     },
+     {
+      "name": "content-validate",
+      "href": "../../../en/cat-harness/processes/skills/content-validate.html"
+     },
+     {
+      "name": "feature-staging"
+     },
+     {
+      "name": "harness-projections",
+      "href": "../../../en/cat-harness/processes/skills/harness-projections.html"
+     },
+     {
+      "name": "kg-separation",
+      "href": "../../../en/cat-harness/processes/skills/kg-separation.html"
+     },
+     {
+      "name": "platform-gates"
+     },
+     {
+      "name": "prepare-merge"
+     },
+     {
+      "name": "publish-verification"
+     },
+     {
+      "name": "qa-reports"
+     },
+     {
+      "name": "remote-mount",
+      "href": "../../../en/cat-harness/processes/skills/remote-mount.html"
+     },
+     {
+      "name": "render-kg-to-cdn",
+      "href": "../../../en/cat-harness/processes/skills/render-kg-to-cdn.html"
+     },
+     {
+      "name": "sub-kg-lifecycle",
+      "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
+     },
+     {
+      "name": "todo-manager"
+     },
+     {
+      "name": "translation-manager",
+      "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
+     },
+     {
+      "name": "upstream-version-adoption"
+     },
+     {
+      "name": "watch"
+     }
+    ]
+   }
+  }
+ }
+}

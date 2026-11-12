@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+
+<html lang="en-US">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge">
+
+  <link rel="stylesheet" href="../../../../assets/css/just-the-docs-default.css">
+
+  <link rel="stylesheet" href="../../../../assets/css/just-the-docs-head-nav.css" id="jtd-head-nav-stylesheet">
+
+  
+
+  
+
+  
+    <script src="../../../../assets/js/vendor/lunr.min.js"></script>
+  
+
+  <script src="../../../../assets/js/just-the-docs.js"></script>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+
+
+
+  <!-- Begin Jekyll SEO tag v2.9.0 -->
+<title>folio-assistant-core — Code | Folio Assistant Core</title>
+<meta name="generator" content="Jekyll v4.4.1" />
+<meta property="og:title" content="folio-assistant-core — Code" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="What a folio IS — the content-object model, the block kinds, the adapters, and the folio graph typology itself." />
+<meta name="twitter:description" property="og:description" content="What a folio IS — the content-object model, the block kinds, the adapters, and the folio graph typology itself." />
+<link rel="canonical" href="https://litlfred.github.io/folio-assistant-core/en/cat-harness/code/folio-assistant-core/" />
+<meta property="og:url" content="https://litlfred.github.io/folio-assistant-core/en/cat-harness/code/folio-assistant-core/" />
+<meta property="og:site_name" content="Folio Assistant Core" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary" />
+<meta name="twitter:title" content="folio-assistant-core — Code" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebPage","description":"What a folio IS — the content-object model, the block kinds, the adapters, and the folio graph typology itself.","headline":"folio-assistant-core — Code","url":"https://litlfred.github.io/folio-assistant-core/en/cat-harness/code/folio-assistant-core/"}</script>
+<!-- End Jekyll SEO tag -->
+
+
+  <script type="application/json" id="fa-site-scheme">{"scheme": "dark"}</script><!-- fa-first-paint:begin -->
+<script>(function(){var d=document.documentElement,s=null,c="dark";try{s=localStorage.getItem("fa-color-scheme")}catch(e){}if(s!=="light"&&s!=="dark"){s="light";try{if(window.matchMedia&&window.matchMedia("(prefers-color-scheme: dark)").matches)s="dark"}catch(e){}}try{var n=document.getElementById("fa-site-scheme");if(n)c=JSON.parse(n.textContent).scheme==="light"?"light":"dark"}catch(e){}d.setAttribute("data-fa-scheme",s);var j=window.jtd;if(s!==c&&j&&typeof j.setTheme==="function"){try{j.setTheme(s)}catch(e){}}})();</script>
+<style>html{background-color:#27262b}html[data-fa-scheme="light"]{background-color:#ffffff}</style>
+<!-- fa-first-paint:end --><meta name="fa-render-regions" content="1">
+<script>document.documentElement.setAttribute("data-fa-render","pending");</script><style>
+  .bpmn-figure {
+    overflow-x: auto;
+    background: #fff;
+    border: 1px solid rgba(128, 128, 128, 0.35);
+    border-radius: 6px;
+    margin: 1em 0 0.4em;
+  }
+  .bpmn-figure img {
+    display: block;
+    width: 100%;
+    min-width: 1200px;
+    max-width: none;
+  }
+  .bpmn-source {
+    margin-top: 0;
+    font-size: 0.75rem;
+  }
+</style><script type="application/json" id="fa-translation-meta">{
+  "lang": "en",
+  "translationStatus": "",
+  "translationSource": "",
+  "supportedLocales": ["ar","zh","en","fr","ru","es"],
+  "availableLocales": null,
+  "translationQa":{
+    "key": "page.translation",
+    "slug": "en-cat-harness-code-folio-assistant-core-index.html",
+    "src": "../../../../assets/qa/en-cat-harness-code-folio-assistant-core-index.html/page.translation.json",
+    "index": "../../../../assets/qa/en-cat-harness-code-folio-assistant-core-index.html/qa-index.json",
+    "list": "../../../../assets/qa/translation-qa-pages.json"
+  },
+  "sweep":{
+    "absent": "folio-assistant-core publishes no translation QA sweep on this site",
+    "run": false,
+    "sweptAt": "",
+    "totalPages": 0,
+    "pagesWithTranslations": 0,
+    "complete": false
+  },
+  "statusSrc":"../../../../assets/translation-status/index.json"
+}</script><script type="application/json" id="fa-navbar-row" data-fa-row-src="harness-data"></script><script type="application/json" id="fa-site-links">{"kg":"https://litlfred.github.io/folio-assistant/folio-assistant-core/","jsonld":"https://litlfred.github.io/folio-assistant/folio-assistant-core/folio-assistant-core.jsonld","source":"https://github.com/litlfred/folio-assistant-core"}</script><meta name="fa-site-index-src" content="../../../../assets/harness/site.json">
+<meta name="fa-todo-src" content="../../../../assets/todos/index.json"><meta name="fa-todo-graph" content="../../../../todos.jsonld"><meta name="fa-zoom-src" content="../../../../assets/semantic-zoom.json"><meta name="fa-tiles" content="" data-fa-src="harness-data">
+<meta name="fa-glass-strip" content="[&quot;glass-todos&quot;,&quot;glass-settings&quot;]"><meta name="fa-baseurl" content="../../../.."><meta name="fa-staging" content=""><meta name="fa-search-index" content="">
+
+<meta name="fa-beans-src" content="../../../../assets/beans/index.json"><meta name="fa-processes-src" content="../../../../subgraph/index.jsonld"><meta name="fa-build-src" content="../../../../build.json"><link rel="stylesheet" href="../../../../assets/css/navbar-row.css?v=7d7d00921e0f">
+<link rel="stylesheet" href="../../../../assets/css/docs-ui.css?v=5386a6134c28"><link rel="stylesheet" href="../../../../assets/css/narrow-viewport.css?v=173ef819dbf2"><link rel="stylesheet" href="../../../../assets/css/work-plan.css?v=bd8c73337b01"><link rel="stylesheet" href="../../../../assets/css/themes.css?v=5c199f8420d3"><link rel="stylesheet" href="../../../../assets/css/uml.css?v=e677f91cbf66"><link rel="stylesheet" href="../../../../assets/css/avatars.css?v=c372ccbe0413"><script type="application/json" id="fa-declared-kinds">["beans","block-kinds","cat-harness","code","code-list","content-adapters","docs","folio","glossary","health","memory","methodology","pipeline-plugins","processes","qa","qa-checkers","scenarios","schemas","skills","software-library","tools","translation-sources","typologies","validators"]</script><script src="../../../../assets/js/harness-data.js" defer></script>
+<script src="../../../../assets/js/vendor/qrcode.js" defer></script>
+<script src="../../../../assets/js/vendor/qrcode_UTF8.js" defer></script><script src="../../../../assets/js/kg-render.js" defer></script><script src="../../../../assets/js/navbar-row.js?v=cc1885e41c70" defer></script>
+<script src="../../../../assets/js/docs-ui.js?v=0f40f53123fe" defer></script><script src="../../../../assets/js/edit-links.js?v=b4f948dbab24" defer></script><script src="../../../../assets/js/code-highlight.js?v=0f94772226c3" defer></script><script src="../../../../assets/js/work-plan.js" defer></script><script src="../../../../assets/js/process-index.js" defer></script><style>
+  .folio-landing { position: relative; margin: 0 0 2rem; }
+
+  /* WHAT IS LEFT HERE, AND WHY IT IS SO LITTLE.
+     `landing.html` emits exactly one folio-landing class —
+     `folio-landing folio-landing--plain` — the no-stickies fallback, which
+     renders the description and no art. The art path moved to the sticky
+     board (`fa-sticky--backdrop` in docs-ui.css), which composites text into
+     the picture through a declared `textRegion` and a scrim.
+
+     So this block used to carry fourteen selectors of which ELEVEN matched
+     nothing: every rule reaching for `folio-landing__art`,
+     `folio-landing__text` or `folio-landing--no-region`. Measured before they
+     were cut — those three classes appear in no markup in this repository and
+     on none of the 331 published pages that were inlining the CSS for them.
+     CSS has no error for a selector that matches nothing, which is the same
+     silence that let `.fa-sticky--backdrop > .fa-sticky-art` ship wrong.
+
+     The reasoning did not go with them. The blend-direction argument for the
+     fade is now at `.fa-sticky--backdrop::before`, where a scrim replaces it;
+     the region, overflow and breakpoint-parity lessons were already
+     re-derived and better stated on `.fa-landing-sticky--fixed`. What is NOT
+     carried over is the `cqw` container-query sizing: the successor scales
+     through `--fa-text-scale` rather than container queries, so a note about
+     `container-type` not being its own query container would be advice about
+     a mechanism nothing here uses. Bean `alox`, issue #873. */
+  .folio-landing--plain {
+    position: static; width: auto; height: auto; color: inherit;
+  }
+  .folio-landing--plain p { font-size: inherit; font-weight: inherit; }
+</style><style id="fa-page-ground" data-instance="folio-assistant-core">
+  /* Grumpy cat, the theme of folio-assistant-core. */
+  :root { --fa-page-scrim: rgba(39, 38, 43, 0.85); --fa-text-scrim: rgba(39, 38, 43, 0.96); }
+  :root[data-fa-scheme="light"] { --fa-page-scrim: rgba(255, 255, 255, 0.85); --fa-text-scrim: rgba(255, 255, 255, 0.96); }
+  /* The root carries the art, so it covers the whole viewport however short
+     the page; the body is made see-through so the art is not painted over. */
+  html:root body { background-color: transparent; }
+  html body .main-content { background-color: var(--fa-text-scrim); border-radius: 6px; }
+  html:root {
+    background-image:
+      linear-gradient(var(--fa-page-scrim), var(--fa-page-scrim)),
+      url("../../../../assets/img/harness/landing-laptop.webp");
+    background-repeat: no-repeat;
+    background-position: center top;
+    background-size: cover;
+    background-attachment: fixed;
+  }
+  @media (max-width: 48rem) {
+    html:root {
+      background-image:
+        linear-gradient(var(--fa-page-scrim), var(--fa-page-scrim)),
+        url("../../../../assets/img/harness/landing-card.webp");
+    }
+  }
+  @media (max-width: 30rem) {
+    html:root {
+      background-image:
+        linear-gradient(var(--fa-page-scrim), var(--fa-page-scrim)),
+        url("../../../../assets/img/harness/landing-mobile.webp");
+    }
+  }
+  /* Print and forced colours get the plain page: art is decoration. */
+  @media print, (forced-colors: active) {
+    html:root { background-image: none; }
+  }
+</style>
+
+<link rel="stylesheet" href="../../../../assets/css/navbar.css"><script src="../../../../assets/navbar/rail-187esqtwryu.js" defer></script><script src="../../../../assets/js/navbar.js" defer></script><link rel="stylesheet" href="../../../../assets/page-layout.css" data-fa-page-layout><script src="../../../../assets/page-layout.js" defer data-fa-page-layout></script><meta name="fa-pinned-data" content="../../../.."></head>
+
+<body><script type="application/json" id="fa-rail" data-fa-root="https://litlfred.github.io/folio-assistant" data-fa-to-root="../../../..">{"data":"rail-187esqtwryu","here":"/en/cat-harness/code/folio-assistant-core/"}</script><nav class="fa-nav" aria-label="folio-assistant" data-fa-rail="pending"><a href="../../../../">Folio Assistant Core</a></nav>
+  <a class="skip-to-main" href="#main-content">Skip to main content</a>
+  <svg xmlns="http://www.w3.org/2000/svg" class="d-none">
+  <symbol id="svg-link" viewBox="0 0 24 24">
+  <title>Link</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-link">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+  </svg>
+</symbol>
+
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+  <title>Menu</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-menu">
+    <line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line>
+  </svg>
+</symbol>
+
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+  <title>Expand</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-chevron-right">
+    <polyline points="9 18 15 12 9 6"></polyline>
+  </svg>
+</symbol>
+
+  <!-- Feather. MIT License: https://github.com/feathericons/feather/blob/master/LICENSE -->
+<symbol id="svg-external-link" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-external-link">
+  <title id="svg-external-link-title">(external link)</title>
+  <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line>
+</symbol>
+
+  
+    <symbol id="svg-doc" viewBox="0 0 24 24">
+  <title>Document</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file">
+    <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path><polyline points="13 2 13 9 20 9"></polyline>
+  </svg>
+</symbol>
+
+    <symbol id="svg-search" viewBox="0 0 24 24">
+  <title>Search</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-search">
+    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+  </svg>
+</symbol>
+
+  
+  
+    <!-- Bootstrap Icons. MIT License: https://github.com/twbs/icons/blob/main/LICENSE.md -->
+<symbol id="svg-copy" viewBox="0 0 16 16">
+  <title>Copy</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard" viewBox="0 0 16 16">
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1h1a1 1 0 0 1 1 1V14a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V3.5a1 1 0 0 1 1-1h1v-1z"/>
+    <path d="M9.5 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3zm-3-1A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3z"/>
+  </svg>
+</symbol>
+<symbol id="svg-copied" viewBox="0 0 16 16">
+  <title>Copied</title>
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-clipboard-check-fill" viewBox="0 0 16 16">
+    <path d="M6.5 0A1.5 1.5 0 0 0 5 1.5v1A1.5 1.5 0 0 0 6.5 4h3A1.5 1.5 0 0 0 11 2.5v-1A1.5 1.5 0 0 0 9.5 0h-3Zm3 1a.5.5 0 0 1 .5.5v1a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1-.5-.5v-1a.5.5 0 0 1 .5-.5h3Z"/>
+    <path d="M4 1.5H3a2 2 0 0 0-2 2V14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V3.5a2 2 0 0 0-2-2h-1v1A2.5 2.5 0 0 1 9.5 5h-3A2.5 2.5 0 0 1 4 2.5v-1Zm6.854 7.354-3 3a.5.5 0 0 1-.708 0l-1.5-1.5a.5.5 0 0 1 .708-.708L7.5 10.793l2.646-2.647a.5.5 0 0 1 .708.708Z"/>
+  </svg>
+</symbol>
+
+  
+</svg>
+
+  
+    
+
+  
+  <div class="main" id="top">
+    <div id="main-header" class="main-header fa-site-bar fa-page-bar"><a class="fa-page-bar-home" href="../../../../">Folio Assistant Core</a>
+  
+    
+
+<div class="search" role="search">
+  <div class="search-input-wrap">
+    <input type="text" id="search-input" class="search-input" tabindex="0" placeholder="Search Folio Assistant Core" autocomplete="off">
+    <label for="search-input" class="search-label">
+      <span class="sr-only">Search Folio Assistant Core</span>
+      <svg viewBox="0 0 24 24" class="search-icon" aria-hidden="true"><use xlink:href="#svg-search"></use></svg>
+    </label>
+  </div>
+  <div id="search-results" class="search-results"></div>
+</div>
+
+  
+  
+  
+<span class="fa-page-bar-locale" data-fa-slot="locale"></span></div>
+
+    <div class="main-content-wrap">
+      
+      <div id="main-content" class="main-content">
+        <main>
+          
+            <!--
+  Generated by scripts/state-visualizer.ts. Do not hand-edit: the next run
+  overwrites it, `state:visualizer:check` fails on the difference, and a
+  hand-edit here is a change nothing else in the tree knows about.
+-->
+<style>
+.sv-page a:not(.fa-workplan a) { color: inherit; text-decoration: underline; text-underline-offset: 0.15em; }
+.sv-page a:not(.fa-workplan a):hover { text-decoration-thickness: 2px; }
+.sv-sub { margin: 0 0 1.5rem; font-size: 0.9rem; opacity: 0.85; }
+.sv-h2 { font-size: 0.8rem; font-weight: 600; letter-spacing: 0.02em;
+  text-transform: uppercase; margin: 2rem 0 0.7rem; }
+.sv-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+.sv-list > li::before, .sv-counts > li::before { content: none; }
+.sv-item { border: 1px solid rgba(127,127,127,0.4); border-radius: 8px; padding: 0.8rem 1rem; }
+.sv-item.is-here { border-color: currentColor; }
+.sv-item h2, .sv-item h3 { font-size: 1rem; margin: 0 0 0.2rem; }
+.sv-item p { margin: 0; font-size: 0.85rem; }
+.sv-here { font-weight: 600; }
+.sv-tag { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.03em;
+  font-weight: 600; margin-left: 0.5rem; }
+.sv-counts { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 0.6rem 0 0; padding: 0; list-style: none; }
+.sv-count { border: 1px solid rgba(127,127,127,0.4); border-radius: 6px; padding: 0.4rem 0.7rem; min-width: 4.5rem; }
+.sv-count-v { display: block; font-size: 1.1rem; font-weight: 600; line-height: 1.25; }
+.sv-count-k { display: block; font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.03em; }
+.sv-page td { vertical-align: top; }
+</style>
+<div class="sv-page">
+<h1 id="code-folio-assistant-core">
+  
+  
+    <a href="#code-folio-assistant-core" class="anchor-heading" aria-labelledby="code-folio-assistant-core"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Code: folio-assistant-core
+  
+  
+</h1>
+    <p class="sv-sub">folio-assistant-core · 6 declared code directories · This instance is not a pinned mount here, so files are listed without links.</p><section class="sv-item">
+<h3>
+  
+  
+    <a href="#code-folio-assistant-core" class="anchor-heading" aria-labelledby="code-folio-assistant-core"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code>pipeline/</code> <span class="sv-tag">core-pipeline</span>
+  
+  
+</h3>
+    <p class="sv-sub">`pipeline/qa-checkers-recommendation.ts` and `pipeline/qa-checkers-acronyms.ts`, the automated checkers `qa-checkers/recommendation-strength-resolves.json` and `qa-checkers/acronym-in-glossary.json` name (`RECOMMENDATION_CHECKERS`, `ACRONYM_CHECKERS`), and `pipeline/plugin-slots.ts`, the table `pipeline-plugins/tabular-csvw.json` names (`PIPELINE_IMPLEMENTATIONS`). Under `pipeline/` because that is where the harness's `imports` input-site looks for a contributed checker, as for every layer.</p><p class="sv-sub">7 files</p><ul><li><code>plugin-slots.feature</code></li><li><code>plugin-slots.test.ts</code></li><li><code>plugin-slots.ts</code></li><li><code>qa-checkers-acronyms.ts</code></li><li><code>qa-checkers-recommendation.feature</code></li><li><code>qa-checkers-recommendation.test.ts</code></li><li><code>qa-checkers-recommendation.ts</code></li></ul></section>
+<section class="sv-item">
+<h3>
+  
+  
+    <a href="#code-folio-assistant-core" class="anchor-heading" aria-labelledby="code-folio-assistant-core"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code>adapters/</code> <span class="sv-tag">core-adapters</span>
+  
+  
+</h3>
+    <p class="sv-sub">The content layer's own ContentAdapters: `document/`. Its imports into `cat-harness-tools/src/`, `cat-harness/schemas/` and `cat-harness-tools/pipeline/` are DOWNWARD and therefore legal (core declares `needs: [&quot;cat-harness&quot;]`); nothing in the harness imports it. Its consuming tests live in `scripts/tests/`. It needs `tsconfig.json`'s `include` entry (without it `bun run typecheck` passes while covering fewer files) and the `BUILTIN_ADAPTERS` module path, which is resolved by variable specifier, so no static-import gate checks it. `paper/` is the science layer's, in that layer's own `adapters/paper/`.</p><p class="sv-sub">17 files</p><ul><li><code>README.md</code></li><li><code>document/content.ts</code></li><li><code>document/declared-adapter.feature</code></li><li><code>document/declared-adapter.test.ts</code></li><li><code>document/index.ts</code></li><li><code>document/intake-records.feature</code></li><li><code>document/intake-records.test.ts</code></li><li><code>document/intake-records.ts</code></li><li><code>document/paths.ts</code></li><li><code>document/resolver.ts</code></li><li><code>document/tools/_pipeline.ts</code></li><li><code>document/tools/audit.ts</code></li><li><code>document/tools/bib.ts</code></li><li><code>document/tools/qa.ts</code></li><li><code>document/tools/render.ts</code></li><li><code>document/tools/transform.ts</code></li><li><code>document/tools/validate.ts</code></li></ul></section>
+<section class="sv-item">
+<h3>
+  
+  
+    <a href="#code-folio-assistant-core" class="anchor-heading" aria-labelledby="code-folio-assistant-core"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code>src/</code> <span class="sv-tag">core-src</span>
+  
+  
+</h3>
+    <p class="sv-sub">Core's own server half: the HTTP routes that act on a folio's CONTENT — `routes/feedback.ts` (its feedback items), `routes/glossary.ts` (its glossary candidates), `routes/relevance.ts` (its bibliography relevance). A content package's server half lives with its content. The server in `cat-harness-tools` declares them by their `src/routes/*` path and finds them here through `needs`, since core needs `cat-harness-tools`; they import the server's contract (`route-groups`, `types`, `core/rbac`) DOWN from it.</p><p class="sv-sub">8 files</p><ul><li><code>README.md</code></li><li><code>routes/feedback.feature</code></li><li><code>routes/feedback.test.ts</code></li><li><code>routes/feedback.ts</code></li><li><code>routes/glossary.ts</code></li><li><code>routes/relevance.feature</code></li><li><code>routes/relevance.test.ts</code></li><li><code>routes/relevance.ts</code></li></ul></section>
+<section class="sv-item">
+<h3>
+  
+  
+    <a href="#code-folio-assistant-core" class="anchor-heading" aria-labelledby="code-folio-assistant-core"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code>scripts/</code> <span class="sv-tag">core-scripts</span>
+  
+  
+</h3>
+    <p class="sv-sub">Core's own executable surface, with every test beside its subject: the review-comment Tool and its move helper, the glossary extractors and builder (`build-glossary.ts`, its `:refterm` codemod `codemod-refterm.ts`), the sample-import pair, the materialisation trio (`check-materialized-fixity`, `backfill-materialized-fixity`, `cache-index`), `check-voices.ts` (every voice rule's citation resolved through `schemas/library-ref.ts` into a folio's `library/`), `build-document-site.ts` (which reads `schemas/changeset.ts`), and the document, bibliography, public-comment and tabular tools. Pipeline scripts are addressed by id, and `resolvePipelineScript` searches the folio, then the platform, then here. Two scripts are invocation surfaces, named by path and so not to be moved without updating their callers: `build-document-site.ts`, which a DOCUMENT folio's generated staging workflow names (`init-folio.ts` writes `folio-assistant-core/scripts/build-document-site.ts` and `init-folio.test.ts` pins it), and `review-comments.ts`, invoked by path from `folio-staging.yml`.</p><p class="sv-sub">314 files</p><ul><li><code>README.md</code></li><li><code>archimate-from-glossary.feature</code></li><li><code>archimate-from-glossary.test.ts</code></li><li><code>archimate-from-glossary.ts</code></li><li><code>back-matter-order.feature</code></li><li><code>back-matter-order.test.ts</code></li><li><code>back-matter-order.ts</code></li><li><code>backfill-materialized-fixity.ts</code></li><li><code>bibliography-page.feature</code></li><li><code>bibliography-page.test.ts</code></li><li><code>bibliography-page.ts</code></li><li><code>block-actions.feature</code></li><li><code>block-actions.test.ts</code></li><li><code>block-actions.ts</code></li><li><code>build-document-site.feature</code></li><li><code>build-document-site.test.ts</code></li><li><code>build-document-site.ts</code></li><li><code>build-folio-site.feature</code></li><li><code>build-folio-site.test.ts</code></li><li><code>build-folio-site.ts</code></li><li><code>build-glossary-skos.feature</code></li><li><code>build-glossary-skos.test.ts</code></li><li><code>build-glossary-usage.feature</code></li><li><code>build-glossary-usage.test.ts</code></li><li><code>build-glossary.ts</code></li><li><code>build-library-site.feature</code></li><li><code>build-library-site.test.ts</code></li><li><code>build-library-site.ts</code></li><li><code>c-value.feature</code></li><li><code>c-value.test.ts</code></li><li><code>c-value.ts</code></li><li><code>cache-index.feature</code></li><li><code>cache-index.test.ts</code></li><li><code>cache-index.ts</code></li><li><code>catalogue-from-references.feature</code></li><li><code>catalogue-from-references.test.ts</code></li><li><code>catalogue-from-references.ts</code></li><li><code>check-catalogue.ts</code></li><li><code>check-dsa-hash.ts</code></li><li><code>check-materialized-fixity.ts</code></li><li><code>check-reader-ids.feature</code></li><li><code>check-reader-ids.test.ts</code></li><li><code>check-reader-ids.ts</code></li><li><code>check-security-gate.feature</code></li><li><code>check-security-gate.test.ts</code></li><li><code>check-security-gate.ts</code></li><li><code>check-voices.ts</code></li><li><code>codemod-refterm-usage.feature</code></li><li><code>codemod-refterm-usage.test.ts</code></li><li><code>codemod-refterm.feature</code></li><li><code>codemod-refterm.test.ts</code></li><li><code>codemod-refterm.ts</code></li><li><code>dc-render.ts</code></li><li><code>diig-phases-svg.feature</code></li><li><code>diig-phases-svg.test.ts</code></li><li><code>diig-phases-svg.ts</code></li><li><code>document-export-reference.docx</code></li><li><code>document-export.feature</code></li><li><code>document-export.lua</code></li><li><code>document-export.test.ts</code></li><li><code>document-export.ts</code></li><li><code>document-layout.feature</code></li><li><code>document-layout.test.ts</code></li><li><code>document-rendered-impact.feature</code></li><li><code>document-rendered-impact.test.ts</code></li><li><code>document-rendered-impact.ts</code></li><li><code>document-site-route.ts</code></li><li><code>docx-offline.feature</code></li><li><code>docx-offline.py</code></li><li><code>docx-offline.test.ts</code></li><li><code>docx-structure.feature</code></li><li><code>docx-structure.py</code></li><li><code>docx-structure.test.ts</code></li><li><code>docx-to-folio.feature</code></li><li><code>docx-to-folio.test.ts</code></li><li><code>docx-to-folio.ts</code></li><li><code>dsa-hash.feature</code></li><li><code>dsa-hash.test.ts</code></li><li><code>dth-block-check.feature</code></li><li><code>dth-block-check.test.ts</code></li><li><code>dth-block-check.ts</code></li><li><code>external-glossaries.feature</code></li><li><code>external-glossaries.test.ts</code></li><li><code>external-glossaries.ts</code></li><li><code>fetch-dspace-item.feature</code></li><li><code>fetch-dspace-item.test.ts</code></li><li><code>fetch-dspace-item.ts</code></li><li><code>fetch-who-publication.feature</code></li><li><code>fetch-who-publication.test.ts</code></li><li><code>fetch-who-publication.ts</code></li><li><code>figure-coverage.feature</code></li><li><code>figure-coverage.test.ts</code></li><li><code>figure-coverage.ts</code></li><li><code>folio-l1-coverage.feature</code></li><li><code>folio-l1-coverage.test.ts</code></li><li><code>folio-l1-coverage.ts</code></li><li><code>folio-site-assets/folio-site.css</code></li><li><code>folio-site-assets/folio-site.js</code></li><li><code>folio-site-assets/qa-panel.js</code></li><li><code>folio-site-blocks.feature</code></li><li><code>folio-site-blocks.test.ts</code></li><li><code>folio-site-blocks.ts</code></li><li><code>folio-site-chrome-check.ts</code></li><li><code>folio-site-qa.ts</code></li><li><code>gen-covers.feature</code></li><li><code>gen-covers.test.ts</code></li><li><code>gen-covers.ts</code></li><li><code>glossary-acronyms.ts</code></li><li><code>glossary-archimate.feature</code></li><li><code>glossary-archimate.test.ts</code></li><li><code>glossary-archimate.ts</code></li><li><code>glossary-extract.ts</code></li><li><code>glossary-from-source.feature</code></li><li><code>glossary-from-source.test.ts</code></li><li><code>glossary-from-source.ts</code></li><li><code>glossary-links.feature</code></li><li><code>glossary-links.test.ts</code></li><li><code>glossary-links.ts</code></li><li><code>glossary-mapping-block.feature</code></li><li><code>glossary-mapping-block.test.ts</code></li><li><code>glossary-one-concept.feature</code></li><li><code>glossary-one-concept.test.ts</code></li><li><code>glossary-page.ts</code></li><li><code>glossary-pot.feature</code></li><li><code>glossary-pot.test.ts</code></li><li><code>glossary-pot.ts</code></li><li><code>glossary-related.feature</code></li><li><code>glossary-related.test.ts</code></li><li><code>glossary-skos-automated.feature</code></li><li><code>glossary-skos-automated.test.ts</code></li><li><code>glossary-table.feature</code></li><li><code>glossary-table.test.ts</code></li><li><code>glossary-table.ts</code></li><li><code>glossary-term-links.feature</code></li><li><code>glossary-term-links.test.ts</code></li><li><code>glossary-term-links.ts</code></li><li><code>glossary-term-page.feature</code></li><li><code>glossary-term-page.test.ts</code></li><li><code>glossary-validate.feature</code></li><li><code>glossary-validate.test.ts</code></li><li><code>glossary-validate.ts</code></li><li><code>intake-rows.py</code></li><li><code>kg-materialize.feature</code></li><li><code>kg-materialize.test.ts</code></li><li><code>kg-materialize.ts</code></li><li><code>l1-coverage.feature</code></li><li><code>l1-coverage.test.ts</code></li><li><code>l1-coverage.ts</code></li><li><code>landing-links.feature</code></li><li><code>landing-links.test.ts</code></li><li><code>lib/bytes.ts</code></li><li><code>lib/checkout-root.test.ts</code></li><li><code>lib/checkout-root.ts</code></li><li><code>lib/library-entries.feature</code></li><li><code>lib/library-entries.test.ts</code></li><li><code>lib/library-entries.ts</code></li><li><code>lib/local-path.ts</code></li><li><code>lib/safe-url.ts</code></li><li><code>lib/site-scope.feature</code></li><li><code>lib/site-scope.test.ts</code></li><li><code>lib/site-scope.ts</code></li><li><code>live-figures.feature</code></li><li><code>live-figures.test.ts</code></li><li><code>live-figures.ts</code></li><li><code>local-path.feature</code></li><li><code>local-path.test.ts</code></li><li><code>lsi-blocks.feature</code></li><li><code>lsi-blocks.test.ts</code></li><li><code>lsi-blocks.ts</code></li><li><code>materialized-fixity.feature</code></li><li><code>materialized-fixity.test.ts</code></li><li><code>mesh-authority.feature</code></li><li><code>mesh-authority.test.ts</code></li><li><code>mesh-authority.ts</code></li><li><code>pdf-line-map.py</code></li><li><code>platform.ts</code></li><li><code>public-comment-changesets.ts</code></li><li><code>public-comment-channels.feature</code></li><li><code>public-comment-channels.test.ts</code></li><li><code>public-comment-channels.ts</code></li><li><code>public-comment-pages.feature</code></li><li><code>public-comment-pages.test.ts</code></li><li><code>public-comment-pages.ts</code></li><li><code>public-comment-route.ts</code></li><li><code>public-comment-routing.feature</code></li><li><code>public-comment-routing.test.ts</code></li><li><code>public-comment-routing.ts</code></li><li><code>public-comment-site.feature</code></li><li><code>public-comment-site.test.ts</code></li><li><code>public-comment-site.ts</code></li><li><code>public-comment.feature</code></li><li><code>public-comment.test.ts</code></li><li><code>public-comment.ts</code></li><li><code>publish-extracted-statements.feature</code></li><li><code>publish-extracted-statements.test.ts</code></li><li><code>publish-extracted-statements.ts</code></li><li><code>references-extract.feature</code></li><li><code>references-extract.test.ts</code></li><li><code>references-extract.ts</code></li><li><code>references-render.feature</code></li><li><code>references-render.test.ts</code></li><li><code>references-render.ts</code></li><li><code>review-anchors-from-folio.feature</code></li><li><code>review-anchors-from-folio.test.ts</code></li><li><code>review-anchors-from-folio.ts</code></li><li><code>review-comment-move.feature</code></li><li><code>review-comment-move.test.ts</code></li><li><code>review-comment-move.ts</code></li><li><code>review-comments.feature</code></li><li><code>review-comments.test.ts</code></li><li><code>review-comments.ts</code></li><li><code>review-coverage.feature</code></li><li><code>review-coverage.test.ts</code></li><li><code>review-coverage.ts</code></li><li><code>review-sheet-site.feature</code></li><li><code>review-sheet-site.test.ts</code></li><li><code>review-sheet-site.ts</code></li><li><code>sample-import-check.ts</code></li><li><code>sample-import-run.feature</code></li><li><code>sample-import-run.test.ts</code></li><li><code>sample-import-run.ts</code></li><li><code>scope-css.ts</code></li><li><code>site-reads.feature</code></li><li><code>site-reads.test.ts</code></li><li><code>smart-approach-svg.feature</code></li><li><code>smart-approach-svg.test.ts</code></li><li><code>smart-approach-svg.ts</code></li><li><code>source-liveness.feature</code></li><li><code>source-liveness.test.ts</code></li><li><code>source-liveness.ts</code></li><li><code>stage-folio-local.feature</code></li><li><code>stage-folio-local.test.ts</code></li><li><code>stage-folio-local.ts</code></li><li><code>structured-assets.feature</code></li><li><code>structured-assets.test.ts</code></li><li><code>structured-assets.ts</code></li><li><code>tabular-columns.ts</code></li><li><code>tabular-csv.feature</code></li><li><code>tabular-csv.test.ts</code></li><li><code>tabular-csv.ts</code></li><li><code>tabular-dak.ts</code></li><li><code>tabular-xlsx.feature</code></li><li><code>tabular-xlsx.test.ts</code></li><li><code>tabular-xlsx.ts</code></li><li><code>term-passages.feature</code></li><li><code>term-passages.test.ts</code></li><li><code>term-passages.ts</code></li><li><code>test-fixtures/dsa-contexts/dcat-3-external.vocab.json</code></li><li><code>test-fixtures/dsa-contexts/dcat-3.vocab.json</code></li><li><code>test-fixtures/dsa-contexts/dublin_core_terms.ttl</code></li><li><code>test-fixtures/dsa-contexts/odrl-2.2.context.json</code></li><li><code>test-fixtures/dsa-contexts/provenance.json</code></li><li><code>test-fixtures/dsa-contexts/spdx-ontology.context.json</code></li><li><code>test-fixtures/dsa/v1/agreement.jsonld</code></li><li><code>test-fixtures/dsa/v1/agreement.md</code></li><li><code>test-fixtures/dsa/v1/dcat.jsonld</code></li><li><code>test-fixtures/dsa/v2/agreement.jsonld</code></li><li><code>test-fixtures/dsa/v2/agreement.md</code></li><li><code>test-fixtures/dsa/v2/dcat.jsonld</code></li><li><code>test-fixtures/library-structure.json</code></li><li><code>test-fixtures/scale-pair.changeset.json</code></li><li><code>test-fixtures/scale-pair.ts</code></li><li><code>tests/adjudication-marker.feature</code></li><li><code>tests/adjudication-marker.test.ts</code></li><li><code>tests/audit-tools.feature</code></li><li><code>tests/audit-tools.test.ts</code></li><li><code>tests/bean-link.feature</code></li><li><code>tests/bean-link.test.ts</code></li><li><code>tests/chat-prompt-injection.feature</code></li><li><code>tests/chat-prompt-injection.test.ts</code></li><li><code>tests/check-voices-vendors.feature</code></li><li><code>tests/check-voices-vendors.test.ts</code></li><li><code>tests/content-change-review.feature</code></li><li><code>tests/content-change-review.test.ts</code></li><li><code>tests/corpus-commit-contract.feature</code></li><li><code>tests/corpus-commit-contract.test.ts</code></li><li><code>tests/corpus-gate.feature</code></li><li><code>tests/corpus-gate.test.ts</code></li><li><code>tests/dc-render-own-files.feature</code></li><li><code>tests/dc-render-own-files.test.ts</code></li><li><code>tests/decision-table.feature</code></li><li><code>tests/decision-table.test.ts</code></li><li><code>tests/dependency-advisory-floors.feature</code></li><li><code>tests/dependency-advisory-floors.test.ts</code></li><li><code>tests/document-content-boundary.feature</code></li><li><code>tests/document-content-boundary.test.ts</code></li><li><code>tests/document-tools-path-containment.feature</code></li><li><code>tests/document-tools-path-containment.test.ts</code></li><li><code>tests/getting-started.feature</code></li><li><code>tests/getting-started.test.ts</code></li><li><code>tests/l1-ingestion-subprocess.feature</code></li><li><code>tests/l1-ingestion-subprocess.test.ts</code></li><li><code>tests/log-writer.feature</code></li><li><code>tests/log-writer.test.ts</code></li><li><code>tests/materialization-last-read.feature</code></li><li><code>tests/materialization-last-read.test.ts</code></li><li><code>tests/materialized-fixity-own-files.feature</code></li><li><code>tests/materialized-fixity-own-files.test.ts</code></li><li><code>tests/pipeline-resolution.feature</code></li><li><code>tests/pipeline-resolution.test.ts</code></li></ul><p class="sv-sub">First 300 of 314 files listed.</p></section>
+<section class="sv-item">
+<h3>
+  
+  
+    <a href="#code-folio-assistant-core" class="anchor-heading" aria-labelledby="code-folio-assistant-core"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code>templates/</code> <span class="sv-tag">core-templates</span>
+  
+  
+</h3>
+    <p class="sv-sub">Files this layer's tools WRITE INTO a folio that opts in, kept as real files rather than strings inside a script. `public-comment/github/` holds the issue forms and the two workflows that `scripts/public-comment-changesets.ts install` copies into a folio's `.github/` (`TEMPLATE_DIR`). They live here because this layer is the only one that installs them.</p><p class="sv-sub">8 files</p><ul><li><code>README.md</code></li><li><code>issue-forms/block-feedback.yml</code></li><li><code>issue-forms/change-set.yml</code></li><li><code>public-comment/github/ISSUE_TEMPLATE/change-set-new.yml</code></li><li><code>public-comment/github/ISSUE_TEMPLATE/change-set.yml</code></li><li><code>public-comment/github/ISSUE_TEMPLATE/comment-decision.yml</code></li><li><code>public-comment/github/workflows/public-comment-check.yml</code></li><li><code>public-comment/github/workflows/public-comment.yml</code></li></ul></section>
+<section class="sv-item">
+<h3>
+  
+  
+    <a href="#code-folio-assistant-core" class="anchor-heading" aria-labelledby="code-folio-assistant-core"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> <code>test/</code> <span class="sv-tag">cat-harness-tools-tests</span>
+  
+  
+</h3>
+    <p class="sv-sub">Tests of the code this layer holds, among them `composition-roots` (the declared tool groups and route mounting) and `mcp-graph-tools`.</p><p class="sv-sub">4 files</p><ul><li><code>attestations/block-qa/docs/source/guides-writing-a-document/1-scaffold-the-folio.attestations.json</code></li><li><code>attestations/block-qa/docs/source/process-publication-workflow/every-workflow-in-the-repo.attestations.json</code></li><li><code>attestations/block-qa/docs/source/process-publication-workflow/how-to-read-them.attestations.json</code></li><li><code>attestations/block-qa/docs/source/process-publication-workflow/the-work-plan-tasks-as-beans.attestations.json</code></li></ul></section>
+<h2 class="sv-h2">
+  
+  
+    <a href="#code-folio-assistant-core" class="anchor-heading" aria-labelledby="code-folio-assistant-core"><svg viewBox="0 0 16 16" aria-hidden="true"><use xlink:href="#svg-link"></use></svg></a> Instances holding code
+  
+  
+</h2>
+    <ul class="sv-list"><li><a href="../bootstrap-tools/">bootstrap-tools</a></li><li><a href="../cat-harness/">cat-harness</a></li><li><a href="../cat-harness-tools/">cat-harness-tools</a></li><li><span class="sv-here">folio-assistant-core</span></li></ul>
+</div>
+
+          
+
+          
+            
+          
+        </main>
+        
+<hr>
+<footer>
+  
+
+  <p class="text-small mb-0">Folio Assistant Core — built with <a href="https://litlfred.github.io/folio-assistant/">folio-assistant</a>.</p><p class="text-small mb-0 fa-build-stamp">
+  deployed
+  <a href="https://github.com/litlfred/folio-assistant/actions"><code>dev</code></a></p>
+
+
+  
+</footer>
+
+      </div>
+    </div>
+    
+      
+
+<div class="search-overlay"></div>
+
+    
+  </div>
+
+  
+    
+  
+</body>
+</html>

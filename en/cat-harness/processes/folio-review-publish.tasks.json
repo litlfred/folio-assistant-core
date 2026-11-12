@@ -1,0 +1,216 @@
+{
+ "$schema": "process-task-panel/v1",
+ "process": "Process_FolioReviewPublish",
+ "markers": [
+  {
+   "id": "Task_Review",
+   "name": "Review and record feedback",
+   "left": 37.54,
+   "top": 36.96,
+   "box": {
+    "left": 27.27,
+    "top": 57.61,
+    "width": 3.4,
+    "height": 5.22
+   }
+  },
+  {
+   "id": "Task_Publish",
+   "name": "Publish",
+   "left": 75.78,
+   "top": 4.35,
+   "box": {
+    "left": 65.51,
+    "top": 25,
+    "width": 3.4,
+    "height": 5.22
+   }
+  },
+  {
+   "id": "Call_ContributorFeedback",
+   "name": "Contributor feedback",
+   "left": 75.78,
+   "top": 69.57,
+   "box": {
+    "left": 65.51,
+    "top": 90.22,
+    "width": 3.4,
+    "height": 5.22
+   }
+  }
+ ],
+ "processHref": "folio-review-publish.html",
+ "tasks": {
+  "Task_Review": {
+   "id": "Task_Review",
+   "name": "Review and record feedback",
+   "type": "bpmn:UserTask",
+   "stepHref": "folio-review-publish.html#step-Task_Review",
+   "lane": "Reviewer",
+   "laneHref": "folio-review-publish.html#lane-Lane_Reviewer",
+   "skills": [
+    {
+     "name": "content-review",
+     "href": "../../../en/cat-harness/processes/skills/content-review.html"
+    },
+    {
+     "name": "staging-review"
+    }
+   ],
+   "role": {
+    "name": "reviewer",
+    "href": "../../../cat-harness/auto-docs/index/roles/index.html#a-cat-harness-scenarios-roles-json-reviewer",
+    "title": "Reviewer / SME",
+    "skills": [
+     {
+      "name": "adjudication"
+     },
+     {
+      "name": "content-feedback",
+      "href": "../../../en/cat-harness/processes/skills/content-feedback.html"
+     },
+     {
+      "name": "content-review",
+      "href": "../../../en/cat-harness/processes/skills/content-review.html"
+     },
+     {
+      "name": "decision-audit"
+     },
+     {
+      "name": "narrative-asserts-code"
+     },
+     {
+      "name": "rendered-impact"
+     },
+     {
+      "name": "staging-review"
+     },
+     {
+      "name": "translation-manager",
+      "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
+     },
+     {
+      "name": "visual-diff"
+     },
+     {
+      "name": "voice-overlay-review"
+     }
+    ]
+   }
+  },
+  "Task_Publish": {
+   "id": "Task_Publish",
+   "name": "Publish",
+   "type": "bpmn:ServiceTask",
+   "stepHref": "folio-review-publish.html#step-Task_Publish",
+   "lane": "Build pipeline",
+   "laneHref": "folio-review-publish.html#lane-Lane_Build",
+   "skills": [
+    {
+     "name": "content-publish",
+     "href": "../../../en/cat-harness/processes/skills/content-publish.html"
+    }
+   ],
+   "role": {
+    "name": "build-pipeline",
+    "href": "../../../cat-harness/auto-docs/index/roles/index.html#a-cat-harness-scenarios-roles-json-build-pipeline",
+    "title": "Build pipeline",
+    "skills": [
+     {
+      "name": "ci-health"
+     },
+     {
+      "name": "compiled-artefact-cache",
+      "href": "../../../en/cat-harness/processes/skills/compiled-artefact-cache.html"
+     },
+     {
+      "name": "content-test",
+      "href": "../../../en/cat-harness/processes/skills/content-test.html"
+     },
+     {
+      "name": "content-validate",
+      "href": "../../../en/cat-harness/processes/skills/content-validate.html"
+     },
+     {
+      "name": "feature-staging"
+     },
+     {
+      "name": "harness-projections",
+      "href": "../../../en/cat-harness/processes/skills/harness-projections.html"
+     },
+     {
+      "name": "kg-separation",
+      "href": "../../../en/cat-harness/processes/skills/kg-separation.html"
+     },
+     {
+      "name": "platform-gates"
+     },
+     {
+      "name": "prepare-merge"
+     },
+     {
+      "name": "publish-verification"
+     },
+     {
+      "name": "qa-reports"
+     },
+     {
+      "name": "remote-mount",
+      "href": "../../../en/cat-harness/processes/skills/remote-mount.html"
+     },
+     {
+      "name": "render-kg-to-cdn",
+      "href": "../../../en/cat-harness/processes/skills/render-kg-to-cdn.html"
+     },
+     {
+      "name": "sub-kg-lifecycle",
+      "href": "../../../en/cat-harness/processes/skills/sub-kg-lifecycle.html"
+     },
+     {
+      "name": "todo-manager"
+     },
+     {
+      "name": "translation-manager",
+      "href": "../../../en/cat-harness/processes/skills/translation-manager.html"
+     },
+     {
+      "name": "upstream-version-adoption"
+     },
+     {
+      "name": "watch"
+     }
+    ]
+   }
+  },
+  "Call_ContributorFeedback": {
+   "id": "Call_ContributorFeedback",
+   "name": "Contributor feedback",
+   "type": "bpmn:CallActivity",
+   "stepHref": "folio-review-publish.html#step-Call_ContributorFeedback",
+   "lane": "Authoring Committee",
+   "laneHref": "folio-review-publish.html#lane-Lane_Committee",
+   "skills": [
+    {
+     "name": "review-sheet-script",
+     "href": "../../../en/cat-harness/processes/skills/review-sheet-script.html"
+    }
+   ],
+   "calls": {
+    "name": "Contributor feedback on a working draft",
+    "href": "contributor-feedback.html",
+    "diagram": "contributor-feedback.html"
+   },
+   "role": {
+    "name": "authoring-committee",
+    "href": "../../../cat-harness/auto-docs/index/roles/index.html#a-scenarios-roles-json-authoring-committee",
+    "title": "Authoring Committee",
+    "skills": [
+     {
+      "name": "review-sheet-script",
+      "href": "../../../en/cat-harness/processes/skills/review-sheet-script.html"
+     }
+    ]
+   }
+  }
+ }
+}

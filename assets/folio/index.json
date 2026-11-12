@@ -1,0 +1,117 @@
+{
+  "$schema": "folio-graph-projection/v1",
+  "tile": {
+    "folio": {
+      "count": 2,
+      "unit": "stickies"
+    }
+  },
+  "directories": [
+    {
+      "dir": "cat-harness/folio",
+      "present": true,
+      "nodes": 1,
+      "files": [
+        {
+          "path": "README.md",
+          "bytes": 1384,
+          "size": "1.4 KB"
+        },
+        {
+          "path": "cat-harness.json",
+          "bytes": 2366,
+          "size": "2.3 KB"
+        }
+      ]
+    },
+    {
+      "dir": "folios",
+      "present": true,
+      "nodes": 1,
+      "files": [
+        {
+          "path": "README.md",
+          "bytes": 1606,
+          "size": "1.6 KB"
+        },
+        {
+          "path": "folio-assist-core.json",
+          "bytes": 2559,
+          "size": "2.5 KB"
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "id": "cat-harness",
+      "summary": "computable adjudication and agentic test harness",
+      "theme": "grumpy-cyborg-agents",
+      "anchor": "page:index",
+      "declaredIn": "cat-harness.json",
+      "links": [
+        {
+          "label": "cat-harness, in the source",
+          "href": "https://github.com/litlfred/cat-harness"
+        },
+        {
+          "label": "RTFM — the cat-harness docs",
+          "href": "/docs/cat-harness/concepts/agentic-harness.html"
+        },
+        {
+          "label": "The work plan is where you say what you are doing",
+          "href": "/docs/cat-harness/guides/beans-and-todos.html"
+        },
+        {
+          "label": "Make your first folio",
+          "href": "/docs/cat-harness/start/getting-started.html"
+        },
+        {
+          "label": "Know which kind of thing you are writing",
+          "href": "/docs/cat-harness/concepts/content-types.html"
+        },
+        {
+          "label": "The documentation you will never read",
+          "href": "/docs/cat-harness/guides/index.html"
+        }
+      ],
+      "chars": 431,
+      "file": "cat-harness/folio/cat-harness.json"
+    },
+    {
+      "id": "folio-assist-core",
+      "summary": "What a folio is",
+      "theme": "grumpy-cat",
+      "anchor": "page:index",
+      "declaredIn": "folio-assistant-core.json",
+      "links": [
+        {
+          "label": "Content",
+          "href": "/docs/cat-harness/concepts/content-types.html"
+        },
+        {
+          "label": "Skills",
+          "href": "/docs/cat-harness/concepts/skills.html"
+        },
+        {
+          "label": "Processes",
+          "href": "/folio-assistant-core/process/publication-workflow.html"
+        },
+        {
+          "label": "Tools",
+          "href": "/docs/cat-harness/concepts/architecture.html"
+        },
+        {
+          "label": "Acquisition",
+          "href": "/folio-assistant-core/guides/document-ingestion.html"
+        },
+        {
+          "label": "RTFM — folio-assist-core",
+          "href": "https://github.com/litlfred/folio-assistant/blob/main/folio-assistant-core/README.md"
+        }
+      ],
+      "chars": 812,
+      "file": "folios/folio-assist-core.json"
+    }
+  ]
+}
