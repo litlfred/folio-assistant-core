@@ -10776,6 +10776,22 @@
   // are drawn at 80% of the body text size, a little quieter than the prose.
   var FIGURE_TEXT_RATIO = 0.8;
 
+  function isBpmnSvg(scope) {
+    var svg = scope.querySelector("svg");
+    return !!(svg && svg.querySelector("[data-element-id]"));
+  }
+
+  // A plain figure that turns out to be a BPMN drawing is text-fitted. Also
+  // called when the inlined <svg> lands in a figure mounted while it was
+  // still an <object> (the Mermaid observer can mount mid-inlining).
+  function fitBpmn(scope) {
+    if (!isBpmnSvg(scope)) return false;
+    fitTextToBody(scope);
+    if (!scope.classList.contains("fa-textfit")) return false;
+    scope.classList.remove("fa-plain");
+    return true;
+  }
+
   function fitTextToBody(scope) {
     var svg = scope.querySelector("svg");
     var width = intrinsicWidth(scope);
@@ -10796,6 +10812,14 @@
     // drawn at, so a 555px PlantUML diagram arrived at more than twice its
     // size, text and all. The stylesheet reads this as `min(100%, natural)`;
     // with no natural size known it falls back to the column, as before.
+    // EVERY BPMN drawing is text-fitted, not only one in a `.bpmn-figure`
+    // (owner, 2026-11-12: "bpmn font size is 80% of main narrative size ...
+    // applies all bpmn"). An IG page embeds its BPMN as a bare
+    // `<object data="x.svg">`, which arrives here as a plain figure and was
+    // stretched to the column, so its labels came out anywhere from 66% to
+    // 95% of the body text. bpmn-js output is recognised by its
+    // `data-element-id` shapes, an attribute `scopeSvg` leaves alone.
+    if (isPlain && fitBpmn(scope)) isPlain = false;
     if (isPlain) {
       var art0 = scope.querySelector("svg, img, object");
       var natural = intrinsicWidth(scope) ||
@@ -11417,7 +11441,10 @@
             if (checked === undefined) a.removeAttribute("href");
             else a.setAttribute("href", new URL(checked, fileUrl).href);
           });
-          img.parentNode.replaceChild(scopeSvg(document.importNode(svg, true)), img);
+          var host = img.parentNode;
+          host.replaceChild(scopeSvg(document.importNode(svg, true)), img);
+          var mounted = host.closest && host.closest(".fa-figure-scope.fa-plain");
+          if (mounted) fitBpmn(mounted);
         })
         .catch(function (e) {
           console.warn("docs-ui: could not inline " + src + " (" + e.message + "); it stays a static image, so its links will not work.");
