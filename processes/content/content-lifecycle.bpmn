@@ -200,155 +200,161 @@
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_FolioLifecycle">
       <bpmndi:BPMNShape id="Participant_FolioLifecycle_di" bpmnElement="Participant_FolioLifecycle" isHorizontal="true">
-        <dc:Bounds x="160" y="80" width="2820" height="1650" />
+        <dc:Bounds x="160" y="60" width="1380" height="750" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_ProgMgr_di" bpmnElement="Lane_ProgMgr" isHorizontal="true">
-        <dc:Bounds x="190" y="80" width="2790" height="194" />
+        <dc:Bounds x="190" y="60" width="1350" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Editors_di" bpmnElement="Lane_Editors" isHorizontal="true">
-        <dc:Bounds x="190" y="274" width="2790" height="704" />
+        <dc:Bounds x="190" y="210" width="1350" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Qa_di" bpmnElement="Lane_Qa" isHorizontal="true">
-        <dc:Bounds x="190" y="978" width="2790" height="194" />
+        <dc:Bounds x="190" y="360" width="1350" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Review_di" bpmnElement="Lane_Review" isHorizontal="true">
-        <dc:Bounds x="190" y="1172" width="2790" height="194" />
+        <dc:Bounds x="190" y="510" width="1350" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_PubMgr_di" bpmnElement="Lane_PubMgr" isHorizontal="true">
-        <dc:Bounds x="190" y="1366" width="2790" height="364" />
+        <dc:Bounds x="190" y="660" width="1350" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="StartEvent_Initiative_di" bpmnElement="StartEvent_Initiative">
-        <dc:Bounds x="292" y="159" width="36" height="36" />
-        
-      <bpmndi:BPMNLabel>
-          <dc:Bounds x="225" y="177" width="110" height="30" />
-        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <dc:Bounds x="240" y="117" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="220" y="157" width="85" height="28" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Plan_di" bpmnElement="Task_Plan">
-        <dc:Bounds x="430" y="117" width="120" height="120" />
+        <dc:Bounds x="315" y="75" width="120" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Call_BeanOpen_di" bpmnElement="Call_BeanOpen">
+        <dc:Bounds x="315" y="225" width="120" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="GW_BeanYours_di" bpmnElement="GW_BeanYours" isMarkerVisible="true">
+        <dc:Bounds x="475" y="260" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="455" y="218" width="90" height="35" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="End_BeanNotYours_di" bpmnElement="End_BeanNotYours">
+        <dc:Bounds x="560" y="310" width="36" height="36" />
+        <bpmndi:BPMNLabel><dc:Bounds x="602" y="310" width="80" height="36" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_SeedBeans_di" bpmnElement="Task_SeedBeans">
-        <dc:Bounds x="660" y="651" width="120" height="120" />
+        <dc:Bounds x="690" y="225" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_Editing_di" bpmnElement="CallActivity_Editing">
-        <dc:Bounds x="1070" y="821" width="120" height="120" />
+        <dc:Bounds x="850" y="225" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Test_di" bpmnElement="Task_Test">
-        <dc:Bounds x="1430" y="1015" width="120" height="120" />
+        <dc:Bounds x="850" y="375" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="CallActivity_Publication_di" bpmnElement="CallActivity_Publication">
-        <dc:Bounds x="1610" y="1403" width="120" height="120" />
+        <dc:Bounds x="850" y="675" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Feedback_di" bpmnElement="Task_Feedback">
-        <dc:Bounds x="1790" y="1209" width="120" height="120" />
+        <dc:Bounds x="1030" y="525" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_FeedbackBeans_di" bpmnElement="Task_FeedbackBeans">
-        <dc:Bounds x="1970" y="651" width="120" height="120" />
+        <dc:Bounds x="1030" y="225" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Gateway_NextCycle_di" bpmnElement="Gateway_NextCycle" isMarkerVisible="true">
-        <dc:Bounds x="2235" y="152" width="50" height="50" />
-        
-      <bpmndi:BPMNLabel>
-          <dc:Bounds x="1742" y="92" width="110" height="28" />
-        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <dc:Bounds x="1065" y="110" width="50" height="50" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1045" y="68" width="90" height="35" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Retire_di" bpmnElement="Task_Retire">
-        <dc:Bounds x="2430" y="117" width="120" height="120" />
+        <dc:Bounds x="1175" y="75" width="120" height="120" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Call_BeanClose_di" bpmnElement="Call_BeanClose">
+        <dc:Bounds x="1325" y="75" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="EndEvent_Retired_di" bpmnElement="EndEvent_Retired">
-        <dc:Bounds x="2832" y="159" width="36" height="36" />
-        
-      <bpmndi:BPMNLabel>
-          <dc:Bounds x="2238" y="177" width="110" height="30" />
-        </bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <dc:Bounds x="1480" y="117" width="36" height="36" />
+        <bpmndi:BPMNLabel>
+          <dc:Bounds x="1460" y="157" width="76" height="28" />
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_DSR_work_plan" bpmnElement="DSR_work_plan">
+        <dc:Bounds x="725" y="825" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="630" y="832" width="90" height="36" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+
       <bpmndi:BPMNEdge id="H01_di" bpmnElement="H01">
-        <di:waypoint x="328" y="177" />
-        <di:waypoint x="430" y="177" />
+        <di:waypoint x="276" y="135" />
+        <di:waypoint x="315" y="135" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="H02_di" bpmnElement="H02">
-        <di:waypoint x="490" y="237" />
-        <di:waypoint x="490" y="371" />
-        <di:waypoint x="660" y="371" />
+        <di:waypoint x="375" y="195" />
+        <di:waypoint x="375" y="225" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="H03_di" bpmnElement="H03">
-        <di:waypoint x="720" y="771" />
-        <di:waypoint x="720" y="881" />
-        <di:waypoint x="1070" y="881" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="H04_di" bpmnElement="H04">
-        <di:waypoint x="1130" y="941" />
-        <di:waypoint x="1130" y="1075" />
-        <di:waypoint x="1430" y="1075" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="H05_di" bpmnElement="H05">
-        <di:waypoint x="1490" y="1135" />
-        <di:waypoint x="1490" y="1463" />
-        <di:waypoint x="1610" y="1463" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="H06_di" bpmnElement="H06">
-        <di:waypoint x="1670" y="1403" />
-        <di:waypoint x="1670" y="1269" />
-        <di:waypoint x="1790" y="1269" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="H07_di" bpmnElement="H07">
-        <di:waypoint x="1850" y="1209" />
-        <di:waypoint x="1850" y="711" />
-        <di:waypoint x="1970" y="711" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="H08_di" bpmnElement="H08">
-        <di:waypoint x="2030" y="651" />
-        <di:waypoint x="2030" y="177" />
-        <di:waypoint x="2235" y="177" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="H09_di" bpmnElement="H09">
-        <di:waypoint x="2260" y="152" />
-        <di:waypoint x="2260" y="130" />
-        <di:waypoint x="1130" y="130" />
-        <di:waypoint x="1130" y="821" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="H10_di" bpmnElement="H10">
-        <di:waypoint x="2285" y="177" />
-        <di:waypoint x="2430" y="177" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="H11_di" bpmnElement="H11">
-        <di:waypoint x="2550" y="177" />
-        <di:waypoint x="2610" y="177" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Call_BeanOpen_di" bpmnElement="Call_BeanOpen"><dc:Bounds x="660" y="311" width="120" height="120" /></bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge id="SF_Bean_1_di" bpmnElement="SF_Bean_1">
-        <di:waypoint x="720" y="566" />
-        <di:waypoint x="720" y="651" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="GW_BeanYours_di" bpmnElement="GW_BeanYours" isMarkerVisible="true"><dc:Bounds x="695" y="516" width="50" height="50" />
-        
-      <bpmndi:BPMNLabel><dc:Bounds x="521" y="377.5" width="90" height="35" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="End_BeanNotYours_di" bpmnElement="End_BeanNotYours"><dc:Bounds x="932" y="523" width="36" height="36" /></bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="SF_Bean_2_di" bpmnElement="SF_Bean_2">
-        <di:waypoint x="780" y="371" />
-        <di:waypoint x="805" y="371" />
-        <di:waypoint x="805" y="541" />
-        <di:waypoint x="745" y="541" />
+        <di:waypoint x="435" y="285" />
+        <di:waypoint x="475" y="285" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="SF_Bean_1_di" bpmnElement="SF_Bean_1">
+        <di:waypoint x="525" y="285" />
+        <di:waypoint x="690" y="285" />
+        <bpmndi:BPMNLabel><dc:Bounds x="580" y="265" width="50" height="16" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SF_Bean_3_di" bpmnElement="SF_Bean_3">
-        <di:waypoint x="720" y="516" />
-        <di:waypoint x="720" y="500" />
-        <di:waypoint x="950" y="500" />
-        <di:waypoint x="950" y="523" />
+        <di:waypoint x="500" y="310" />
+        <di:waypoint x="500" y="328" />
+        <di:waypoint x="560" y="328" />
+        <bpmndi:BPMNLabel><dc:Bounds x="502" y="332" width="55" height="16" /></bpmndi:BPMNLabel>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Call_BeanClose_di" bpmnElement="Call_BeanClose"><dc:Bounds x="2610" y="117" width="120" height="120" /></bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="H03_di" bpmnElement="H03">
+        <di:waypoint x="810" y="285" />
+        <di:waypoint x="850" y="285" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="H04_di" bpmnElement="H04">
+        <di:waypoint x="910" y="345" />
+        <di:waypoint x="910" y="375" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="H05_di" bpmnElement="H05">
+        <di:waypoint x="910" y="495" />
+        <di:waypoint x="910" y="675" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="H06_di" bpmnElement="H06">
+        <di:waypoint x="970" y="735" />
+        <di:waypoint x="1090" y="735" />
+        <di:waypoint x="1090" y="645" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="H07_di" bpmnElement="H07">
+        <di:waypoint x="1090" y="525" />
+        <di:waypoint x="1090" y="345" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="H08_di" bpmnElement="H08">
+        <di:waypoint x="1090" y="225" />
+        <di:waypoint x="1090" y="160" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="H09_di" bpmnElement="H09">
+        <di:waypoint x="1065" y="135" />
+        <di:waypoint x="910" y="135" />
+        <di:waypoint x="910" y="225" />
+        <bpmndi:BPMNLabel><dc:Bounds x="975" y="117" width="25" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="H10_di" bpmnElement="H10">
+        <di:waypoint x="1115" y="135" />
+        <di:waypoint x="1175" y="135" />
+        <bpmndi:BPMNLabel><dc:Bounds x="1135" y="117" width="20" height="14" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="H11_di" bpmnElement="H11">
+        <di:waypoint x="1295" y="135" />
+        <di:waypoint x="1325" y="135" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="SF_Bean_4_di" bpmnElement="SF_Bean_4">
-        <di:waypoint x="2730" y="177" />
-        <di:waypoint x="2832" y="177" />
+        <di:waypoint x="1445" y="135" />
+        <di:waypoint x="1480" y="135" />
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNShape id="Shape_DSR_work_plan" bpmnElement="DSR_work_plan"><dc:Bounds x="1285" y="1608" width="50" height="50" />
-        <bpmndi:BPMNLabel><dc:Bounds x="999" y="1307" width="90" height="36" /></bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Edge_DOA_Task_SeedBeans" bpmnElement="DOA_Task_SeedBeans">
-        <di:waypoint x="720" y="771" />
-        <di:waypoint x="720" y="1633" />
-        <di:waypoint x="1285" y="1633" /></bpmndi:BPMNEdge>
+        <di:waypoint x="750" y="345" />
+        <di:waypoint x="750" y="825" />
+      </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Edge_DOA_Task_FeedbackBeans" bpmnElement="DOA_Task_FeedbackBeans">
-        <di:waypoint x="2030" y="771" />
-        <di:waypoint x="2030" y="1633" />
-        <di:waypoint x="1335" y="1633" /></bpmndi:BPMNEdge>
+        <di:waypoint x="1150" y="285" />
+        <di:waypoint x="1180" y="285" />
+        <di:waypoint x="1180" y="850" />
+        <di:waypoint x="775" y="850" />
+      </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>
 </bpmn:definitions>
