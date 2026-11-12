@@ -86,7 +86,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:89
 #. Diagram label
-msgid "Read glossary and abbreviations into candidate terms"
+msgid "Read glossary into candidate terms"
 msgstr ""
 
 #: ../folio-assistant-core/processes/library/ingest-build-l1-kg.bpmn:70
