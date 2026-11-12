@@ -855,8 +855,8 @@ export function forInstance(c: Collected, instance: string, needsOf: (name: stri
   };
   visit(instance);
   // A layer below lends its references, but not the reference lists EXTRACTED
-  // from the documents it holds (`provenance: extracted`, e.g. who-iris's
-  // `references/`): those belong to that layer's documents and are listed on
+  // from the documents it holds (`provenance: extracted`, e.g. a document
+  // library's `references/`): those belong to that layer's documents and are listed on
   // its own and the platform's bibliography. Rendered inside every composed
   // IG they were ~7.5k pages per IG and ran the staging Jekyll build past its
   // 45-minute limit (owner, 2026-11-12, card: "A. IGs list own refs only").
