@@ -123,13 +123,15 @@ const MIN_QUOTE = 24;
 function resolveCitation(
   src: { instance?: string; libraryId: string; sectionId?: string },
   citingRoot: string,
-): { ok: true; path: string } | { ok: false; why: string } {
+): { ok: true; path: string } | { ok: false; why: string; notMounted: boolean } {
   // The CITING layer, not always `cat-harness`. A BARE citation resolves
   // against whoever wrote it, so hardcoding one root would have answered a
   // catalogue layer's voice's bare reference out of the platform's library —
   // the wrong corpus, reported as a confident resolution.
   const r = resolveLibraryRef(src, citingRoot, REPO_ROOT);
-  return r.ok ? { ok: true, path: r.path } : { ok: false, why: explainFailure(r.failure) };
+  return r.ok
+    ? { ok: true, path: r.path }
+    : { ok: false, why: explainFailure(r.failure), notMounted: r.failure.kind === "library-not-mounted" };
 }
 
 /**
@@ -303,6 +305,8 @@ function main(): number {
    */
   const heldElsewhere = new Map<string, Map<string, string>>(); // voice -> layer -> url
   const elsewhere: string[] = [];
+  // Citations into a corpus kept in an opt-in group the mount did not take.
+  const notMounted: string[] = [];
   const isHeldElsewhere = (voice: string, instance: string | undefined): string | undefined => {
     if (instance === undefined) return undefined;
     const url = heldElsewhere.get(voice)?.get(instance);
@@ -344,7 +348,9 @@ function main(): number {
       );
       if (!res.ok) {
         const from = citedInstance ? `${citedInstance}:` : "";
-        problems.push(`${where}: cites ${from}${src.libraryId}/${src.sectionId} — ${res.why}`);
+        // A corpus in an opt-in group this checkout's mount left out is not a
+        // wrong citation: listed with the citations held elsewhere, not failed.
+        (res.notMounted ? notMounted : problems).push(`${where}: cites ${from}${src.libraryId}/${src.sectionId} — ${res.why}`);
       }
     } else if (src.path) {
       // A `#anchor` is a section within the file; check the file.
@@ -383,7 +389,7 @@ function main(): number {
         // — "was this ingested at all", which is a different question from
         // "does this section exist" and gets its own finding.
         const res = resolveCitation({ instance: s.instance, libraryId: s.libraryId }, rootOf.get(v.id)!);
-        if (!res.ok) problems.push(`${v.id}: names source ${s.libraryId} — ${res.why}`);
+        if (!res.ok) (res.notMounted ? notMounted : problems).push(`${v.id}: names source ${s.libraryId} — ${res.why}`);
       }
       // Against the DECLARING layer: a `path` is a node of the voice's own
       // knowledge graph, so looking for it under the platform would report a
@@ -468,6 +474,11 @@ function main(): number {
   if (addressed.size > 0) console.log();
 
   // Listed, not failed: the denominator says how much was NOT checked here.
+  if (notMounted.length > 0) {
+    console.log(`${notMounted.length} citation(s) into a corpus this checkout's mount left out, not checked here:`);
+    for (const e of notMounted) console.log(`  ~ ${e}`);
+    console.log();
+  }
   if (elsewhere.length > 0) {
     console.log(`${elsewhere.length} citation(s) held elsewhere, not checked here (the instance is not in this checkout):`);
     for (const e of elsewhere) console.log(`  ~ ${e}`);

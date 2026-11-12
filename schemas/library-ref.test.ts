@@ -10,7 +10,7 @@ import { describe, expect, it } from "bun:test";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmSync, writeFileSync } from "fs";
 import { tmpdir } from "os";
 import { join, resolve } from "path";
-import { explainFailure, instanceRoots, libraryDirOf, resolveLibraryRef } from "./library-ref.js";
+import { explainFailure, instanceRoots, libraryDirOf, libraryLeftOutByMount, resolveLibraryRef } from "./library-ref.js";
 import { declarationPathIn } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
 import { writeDeclaration } from "../../cat-harness-tools/test/support/instance-fixture.js";
 import { libraryEntries } from "../scripts/lib/library-entries.ts";
@@ -390,5 +390,74 @@ describe("an entry filed in a concern group resolves (bean 6fez)", () => {
     } finally {
       rmSync(root, { recursive: true, force: true });
     }
+  });
+});
+
+describe("a corpus in an opt-in group the mount left out is not checked here", () => {
+  // smart-ra mounts cat-harness without `library/corpus/` (`cat-harness.library`
+  // is opt-in, and the lock lists it under `except`), yet cat-harness switches
+  // the group on for itself. Its always-on voices cite that corpus, and
+  // check:voices reported each citation as "declares no `library` graph": a
+  // wrong fact about a group the mount deliberately did not take.
+  function optInLayer(withCorpus: boolean): string {
+    const root = mkdtempSync(join(tmpdir(), "libopt-"));
+    mkdirSync(join(root, "library"), { recursive: true });
+    if (withCorpus) mkdirSync(join(root, "library", "corpus"), { recursive: true });
+    writeFileSync(
+      join(root, "library", "graph.json"),
+      JSON.stringify({
+        name: "library",
+        directories: [{ id: "library", path: "corpus/", subgraph: true, optIn: true, graphTypologies: ["library"] }],
+      }),
+    );
+    writeDeclaration(
+      root,
+      JSON.stringify({
+        name: "x",
+        enableSubgraphs: ["x.library"],
+        directories: [{ id: "library-graph", path: "library/", graphTypologies: ["cat-harness"] }],
+      }),
+    );
+    return root;
+  }
+  const leftOut = () => ({ chosen: false, lock: "index.lock.json" });
+  const taken = () => ({ chosen: true, lock: "index.lock.json" });
+  const ref = { libraryId: "some-doc", sectionId: "sec-1" };
+
+  it("leftOutByTheLockIsNotMounted", () => {
+    const root = optInLayer(false);
+    expect(libraryLeftOutByMount(root, leftOut)).toEqual({ dir: resolve(root, "library", "corpus"), lock: "index.lock.json" });
+    const r = resolveLibraryRef(ref, root, root, leftOut);
+    expect(r.ok).toBe(false);
+    if (!r.ok) {
+      expect(r.failure.kind).toBe("library-not-mounted");
+      expect(explainFailure(r.failure)).toContain("Not checked here");
+    }
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  it("takenByTheMountAndGoneIsStillAFinding", () => {
+    // The case the third state must not swallow: the lock says the mount took
+    // the corpus, and it is not there.
+    const root = optInLayer(false);
+    expect(libraryLeftOutByMount(root, taken)).toBeUndefined();
+    const r = resolveLibraryRef(ref, root, root, taken);
+    expect(r.ok).toBe(false);
+    if (!r.ok) expect(r.failure.kind).toBe("no-library-graph");
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  it("noLockIsStillAFinding", () => {
+    // No mount placed this layer, so nothing says the absence was chosen.
+    const root = optInLayer(false);
+    expect(libraryLeftOutByMount(root, () => undefined)).toBeUndefined();
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  it("aMountedCorpusResolvesAsBefore", () => {
+    const root = optInLayer(true);
+    expect(libraryDirOf(root)).toBe(resolve(root, "library", "corpus"));
+    expect(libraryLeftOutByMount(root, leftOut)).toBeUndefined();
+    rmSync(root, { recursive: true, force: true });
   });
 });

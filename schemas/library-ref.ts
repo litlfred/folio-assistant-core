@@ -42,6 +42,14 @@
  *   - the library and graph resolve but the **section file** is absent → the
  *     document was never ingested, or the section id is wrong.
  *
+ * A fifth answer is not a failure of the citation at all: the layer keeps
+ * its corpus in an **opt-in group this checkout's mount left out**
+ * (cat-harness's `library/corpus/`, `cat-harness.library`, in a folio that
+ * does not switch it on). Nothing here can be checked, and the lock says so,
+ * so it is reported as `library-not-mounted`, a third state that a gate lists
+ * rather than fails. A corpus the mount DID take and that is gone is still a
+ * finding.
+ *
  * **An unresolvable layer is never silently treated as local.** Falling back
  * would turn "you cited another repository's corpus and it is not here" into
  * "that section does not exist", which sends the next reader looking in the
@@ -56,6 +64,7 @@ import { join, resolve } from "path";
 // declared dependency being used, not a new one being created. Owner ruling,
 // 2026-09-21, bean `jijc`.
 import { declarationPathIn, optInDirectoriesForGraph } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.js";
+import { mountChoiceOf } from "@litlfred/cat-harness-tools/schemas/kg/remote-mount.js";
 import { libraryEntryDir } from "../scripts/lib/library-entries.ts";
 
 /** A citation into L1 content. `instance` absent means *this* layer. */
@@ -70,6 +79,7 @@ export interface LibraryRef {
 export type LibraryRefFailure =
   | { kind: "unknown-instance"; instance: string; known: string[] }
   | { kind: "no-library-graph"; instance: string; instanceRoot: string }
+  | { kind: "library-not-mounted"; instance: string; instanceRoot: string; dir: string; lock: string }
   | { kind: "not-ingested"; instanceRoot: string; libraryId: string }
   | { kind: "no-such-section"; path: string };
 
@@ -190,10 +200,35 @@ export function libraryDirOf(instanceRoot: string): string | undefined {
  * `structure.json` is what proves it was ingested. With it, the section file
  * itself.
  */
+/**
+ * The layer's corpus directory when it is an opt-in sub-graph that this
+ * checkout's mount chose NOT to take: declared, switched on by the layer for
+ * itself, absent on disk, and absent because the lock left it out. Any other
+ * absence answers `undefined`, so it stays a finding.
+ *
+ * `mountChoice` is {@link mountChoiceOf} unless a test supplies the lock's
+ * answer.
+ */
+export function libraryLeftOutByMount(
+  instanceRoot: string,
+  mountChoice: (instanceRoot: string, absDir: string) => { chosen: boolean; lock: string } | undefined = mountChoiceOf,
+): { dir: string; lock: string } | undefined {
+  let optIn: string[];
+  try {
+    optIn = optInDirectoriesForGraph(instanceRoot, "library");
+  } catch {
+    return undefined;
+  }
+  if (optIn.length !== 1 || existsSync(optIn[0]!)) return undefined;
+  const choice = mountChoice(instanceRoot, optIn[0]!);
+  return choice !== undefined && !choice.chosen ? { dir: optIn[0]!, lock: choice.lock } : undefined;
+}
+
 export function resolveLibraryRef(
   ref: LibraryRef,
   fromInstanceRoot: string,
   repoRoot: string,
+  mountChoice?: (instanceRoot: string, absDir: string) => { chosen: boolean; lock: string } | undefined,
 ): LibraryRefResult {
   let instanceRoot = fromInstanceRoot;
   if (ref.instance !== undefined) {
@@ -206,6 +241,13 @@ export function resolveLibraryRef(
   }
   const libraryDir = libraryDirOf(instanceRoot);
   if (!libraryDir) {
+    const leftOut = libraryLeftOutByMount(instanceRoot, mountChoice);
+    if (leftOut !== undefined) {
+      return {
+        ok: false,
+        failure: { kind: "library-not-mounted", instance: ref.instance ?? "(this instance)", instanceRoot, ...leftOut },
+      };
+    }
     return {
       ok: false,
       failure: { kind: "no-library-graph", instance: ref.instance ?? "(this instance)", instanceRoot },
@@ -238,6 +280,11 @@ export function explainFailure(f: LibraryRefFailure): string {
       return (
         `instance "${f.instance}" (${f.instanceRoot}) declares no \`library\` graph, so it holds no L1 ` +
         `corpus to cite. This is not "the section is missing" — the citation points at the wrong kind of thing.`
+      );
+    case "library-not-mounted":
+      return (
+        `instance "${f.instance}" keeps its corpus in ${f.dir}, an opt-in group this checkout's mount did not take ` +
+        `(${f.lock}). Not checked here: there is nothing on disk to check it against.`
       );
     case "not-ingested":
       return `${f.libraryId} is not ingested under ${f.instanceRoot} (no structure.json). The document was never brought through uploads/ → library/.`;
