@@ -3,7 +3,7 @@ import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { instanceNs } from "./glossary-page.ts";
-import { validate } from "./glossary-validate.ts";
+import { archimateIriOf, validate } from "./glossary-validate.ts";
 
 function scheme(id: string, terms: object[]) {
   return JSON.stringify({ $schema: "folio-glossary/v1", id, title: id, source: "test", terms });
@@ -131,6 +131,20 @@ describe("glossary-validate: the overlay rule and links into the instance's own 
     expect(all).toContain("overlay:base names an item mounted model 1.0 does not hold");
     expect(all).toContain("has neither overlay:base nor overlay:owner=pc");
     expect(all).toContain("overlay:owner is hr, not pc");
+  });
+
+  test("slashIrisPassLikeTheOlderForm", async () => {
+    // The slash IRI the site writes now, …/element/<id>, alongside the older …/elements/<id>.jsonld (Q-RAL-2 C).
+    const slash = (kind: string, id: string) => ({ "overlay:base": `https://x/sc/archimate/1.0/${kind}/${id}` });
+    const pc = archi([["e1", "One", slash("element", "e1")], ["e2", "Two", base("elements", "e2")], ["p1", "Mine", mine]], ["r1", "e2", "e1", slash("relationship", "r1")]);
+    const repo = overlayFixture(pc, {
+      archimate: { elements: [{ iri: "https://x/pc/archimate/0.1/element/p1", name: "Mine" }, { iri: "https://x/sc/archimate/1.0/element/e2", name: "Two" }] },
+    });
+    const r = await validate(repo, "pc");
+    expect(r.errors).toEqual([]);
+    expect(r.notes.join("\n")).toContain("pc archimate 0.1 overlay on 1.0: 1 owned, 3 reference copies checked");
+    expect(archimateIriOf("https://x/sc/archimate/0.1.0-draft.1/view/v1")).toMatchObject({ model: "0.1.0-draft.1", kind: "views", id: "v1" });
+    expect(archimateIriOf("https://x/sc/archimate/1.0/element/e1.jsonld")).toBeUndefined();
   });
 
   test("linkToMissingOwnItemFails", async () => {
