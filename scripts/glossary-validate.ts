@@ -61,6 +61,20 @@ export interface Report {
   notes: string[];
 }
 
+/**
+ * An ArchiMate node IRI, read as `{ model, kind, id }` with the kind plural,
+ * as the model's id sets are keyed. Two forms: the slash IRI the site writes
+ * now, `…/archimate/<model>/element/<id>` (cat-harness-tools Q-THIN-2 A,
+ * issue #1830), and the older `…/archimate/<model>/elements/<id>.jsonld`
+ * the DTH overlays were tagged with first (owner, Q-RAL-2 C, 2026-11-12).
+ */
+export function archimateIriOf(iri: string): { iri: string; model: string; kind: "elements" | "relationships" | "views"; id: string } | undefined {
+  const m = iri.match(/\/archimate\/([^/]+)\/(?:(element|relationship|view)s\/([^/]+)\.jsonld|(element|relationship|view)\/([^/.]+))$/);
+  if (!m) return undefined;
+  const kind = `${m[2] ?? m[4]}s` as "elements" | "relationships" | "views";
+  return { iri, model: m[1]!, kind, id: (m[3] ?? m[5])! };
+}
+
 function instanceAt(root: string, file: string): Instance {
   const d = JSON.parse(readFileSync(join(root, file), "utf-8"));
   return { name: d.name, ns: instanceNs(d.name, d.stub, d), root, iriBase: d.iriBase };
@@ -251,7 +265,6 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
   // own (`overlay:owner` = this layer), and an item it owns is not already
   // in a mounted model. A view may carry either tag. Checked only for a model
   // that tags at least one item, so a layer that is not an overlay passes.
-  const baseRe = /\/archimate\/([^/]+)\/(elements|relationships|views)\/([^/]+)\.jsonld$/;
   for (const l of ownModels) {
     const all = [...l.items.elements, ...l.items.relationships, ...l.items.views];
     if (!all.some((x) => x.properties.some((p) => p.key.startsWith("overlay:")))) {
@@ -262,7 +275,7 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
     // owned item must not be in them; one that is in another mounted version
     // (a newer draft still to drop it) is noted.
     const baseVersions = new Set(
-      all.map((x) => x.properties.find((p) => p.key === "overlay:base")?.value?.match(baseRe)?.[1]).filter((v): v is string => !!v),
+      all.map((x) => archimateIriOf(x.properties.find((p) => p.key === "overlay:base")?.value ?? "")?.model).filter((v): v is string => !!v),
     );
     const elsewhere = new Map<string, number>();
     let base = 0;
@@ -274,11 +287,11 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
         const b = x.properties.find((p) => p.key === "overlay:base")?.value;
         const o = x.properties.find((p) => p.key === "overlay:owner")?.value;
         if (b) {
-          const hit = b.match(baseRe);
-          if (!hit || hit[2] !== kind) errors.push(`${ctx}: overlay:base is not an ArchiMate ${kind.slice(0, -1)} IRI: ${b}`);
-          else if (hit[3] !== x.id) errors.push(`${ctx}: overlay:base names ${hit[3]}, not its own id`);
-          else if (!models.has(hit[1])) unmountedModels.set(hit[1], (unmountedModels.get(hit[1]) ?? 0) + 1);
-          else if (!models.get(hit[1])![kind].has(x.id)) errors.push(`${ctx}: overlay:base names an item mounted model ${hit[1]} does not hold`);
+          const hit = archimateIriOf(b);
+          if (!hit || hit.kind !== kind) errors.push(`${ctx}: overlay:base is not an ArchiMate ${kind.slice(0, -1)} IRI: ${b}`);
+          else if (hit.id !== x.id) errors.push(`${ctx}: overlay:base names ${hit.id}, not its own id`);
+          else if (!models.has(hit.model)) unmountedModels.set(hit.model, (unmountedModels.get(hit.model) ?? 0) + 1);
+          else if (!models.get(hit.model)![kind].has(x.id)) errors.push(`${ctx}: overlay:base names an item mounted model ${hit.model} does not hold`);
           else base++;
         } else if (o) {
           if (o !== self.name) errors.push(`${ctx}: overlay:owner is ${o}, not ${self.name}`);
@@ -300,7 +313,6 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
     if (fromDth) notes.push(`${fromDth} item(s) of the ${self.name} overlay are overlay:dth copies from another DTH's overlay: not checked`);
     for (const [v, n] of elsewhere) notes.push(`${n} item(s) the ${self.name} overlay owns are also in mounted model ${v}, which it does not overlay`);
   }
-  const iriRe = /\/archimate\/([^/]+)\/(elements|views)\/([^/]+)\.jsonld$/;
   let glosLinks = 0;
   let archLinks = 0;
   let unchecked = 0;
@@ -323,7 +335,9 @@ export async function validate(repo: string, instance: string, opts: { capitaliz
     const a = meta.archimate;
     if (!a) continue;
     for (const x of [...(a.elements ?? []), ...(a.views ?? [])]) {
-      const hit = String(x.iri).match(iriRe);
+      const parsed = archimateIriOf(String(x.iri));
+      // Links name elements and views only.
+      const hit = parsed && parsed.kind !== "relationships" ? ([parsed.iri, parsed.model, parsed.kind, parsed.id] as const) : null;
       // A link into this layer's own model (its overlay).
       if (ownBase && hit && String(x.iri).startsWith(ownBase)) {
         archLinks++;
