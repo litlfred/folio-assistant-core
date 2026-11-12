@@ -7,6 +7,16 @@
         "local": {
           "at": "."
         }
+      },
+      "site": {
+        "build": {
+          "home": "docs/index.md",
+          "keep": [
+            "v0",
+            "ns",
+            "0.1.0"
+          ]
+        }
       }
     },
     {

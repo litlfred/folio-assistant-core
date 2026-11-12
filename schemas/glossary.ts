@@ -32,6 +32,9 @@ import { z } from "zod";
 import { PROV_CONTEXT } from "@litlfred/cat-harness-tools/schemas/content/prov.ts";
 import { STANDARD_PREFIXES, applyVocabMapping, contextBindings, vocabMapping, type VocabMapping } from "@litlfred/cat-harness-tools/schemas/content/vocab-mapping.ts";
 import { fileURLToPath } from "node:url";
+import { join } from "node:path";
+
+import { checkoutRootFor } from "../scripts/lib/checkout-root.ts";
 
 export const GLOSSARY_SCHEMA_ID = "folio-glossary/v1" as const;
 
@@ -492,7 +495,7 @@ let licenceNaming: VocabMapping | undefined;
  * prefixes rather than terms: `dcterms:license`, as before the table existed.
  */
 export function licenceTerms(license: string | undefined): Record<string, unknown> {
-  licenceNaming ??= vocabMapping(fileURLToPath(new URL("../../cat-harness", import.meta.url)), "licence-naming");
+  licenceNaming ??= vocabMapping(join(checkoutRootFor(fileURLToPath(new URL("..", import.meta.url))), "cat-harness"), "licence-naming");
   const applied = applyVocabMapping(licenceNaming, { license });
   const curies = contextBindings([licenceNaming], {
     inContext: { dcterms: DCTERMS_NS },

@@ -21,8 +21,9 @@ import { localLoader } from "@litlfred/cat-harness-tools/scripts/publish-verify.
 import type { SchemeState } from "@litlfred/cat-harness-tools/scripts/check-term-mapping.ts";
 import { AUTOMATED_RUN, automatedGraphIri, termIri, toSkos, type Glossary } from "../schemas/glossary.ts";
 import { MATCHING_AGENT, automatedMatches, matchingAgentIri, sourceKey, type GlossarySource } from "./glossary-page.ts";
+import { checkoutRootFor } from "./lib/checkout-root.ts";
 
-const REPO = resolve(import.meta.dir, "..", "..");
+const REPO = checkoutRootFor(resolve(import.meta.dir, ".."));
 const SKOS = "http://www.w3.org/2004/02/skos/core#";
 const PROV = "http://www.w3.org/ns/prov#";
 const RDF_TYPE = "http://www.w3.org/1999/02/22-rdf-syntax-ns#type";

@@ -96,8 +96,7 @@
   },
   "scripts": {
     "typecheck": "tsc -p tsconfig.json",
-    "check:core-security-gate": "bun run scripts/check-security-gate.ts",
-    "security:gate": "bun run scripts/check-security-gate.ts"
+    "check:core-security-gate": "bun run scripts/check-security-gate.ts"
   },
   "overrides": {
     "undici": "^6.29.1",

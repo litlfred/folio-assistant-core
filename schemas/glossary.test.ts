@@ -44,8 +44,9 @@ import {
   type AssetType,
 } from "../scripts/glossary-extract.ts";
 import { instanceRootsIn, readDeclaration } from "@litlfred/cat-harness-tools/schemas/kg/cat-harness.ts";
+import { checkoutRootFor } from "../scripts/lib/checkout-root.ts";
 
-const REPO_ROOT_FOR_NS = resolve(import.meta.dir, "../..");
+const REPO_ROOT_FOR_NS = checkoutRootFor(resolve(import.meta.dir, ".."));
 import { parseFrontMatter } from "@litlfred/cat-harness-tools/schemas/kg/front-matter.ts";
 import { discoverTools } from "@litlfred/cat-harness-tools/tools/discover.ts";
 
@@ -312,7 +313,7 @@ describe("the glossary pages", () => {
  */
 describe("extracted KG terms", () => {
   const c = collect();
-  const REPO = resolve(import.meta.dir, "..", "..");
+  const REPO = checkoutRootFor(resolve(import.meta.dir, ".."));
   const extracted = c.glossaries.filter((s) => s.extracted);
   const terms = extracted.flatMap((s) => s.glossary.terms.map((t) => ({ s, t })));
   const pathOf = (src: string) => src.split("#", 2)[0]!;
@@ -527,7 +528,7 @@ describe("extraction helpers", () => {
  * declared roots, not by calling the code under test.
  */
 describe("every term in the namespace of the instance that owns its source", () => {
-  const REPO = resolve(import.meta.dir, "..", "..");
+  const REPO = checkoutRootFor(resolve(import.meta.dir, ".."));
   const c = collect();
   // Independent: every declared root, longest first.
   const roots = instanceRootsIn(REPO)
