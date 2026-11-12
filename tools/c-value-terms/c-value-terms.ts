@@ -12,9 +12,9 @@ export default toolFactory((t) =>
     io: {
       inputs: [
         { name: "files", schema: t("RepoPath"), required: true, arg: { positional: 0 }, description: "One or more Markdown or text files whose prose is read." },
-        { name: "maxLength", schema: t("Text"), required: false, arg: { flag: "--max-length" }, description: "Longest n-gram, in words. Default 5." },
-        { name: "minFreq", schema: t("Text"), required: false, arg: { flag: "--min-freq" }, description: "Fewest occurrences an n-gram needs to be scored. Default 3, the paper's cut-off." },
-        { name: "top", schema: t("Text"), required: false, arg: { flag: "--top" }, description: "How many candidates to print. Default 50." },
+        { name: "maxLength", schema: t("Count"), required: false, arg: { flag: "--max-length" }, description: "Longest n-gram, in words; 1 or more. Default 5." },
+        { name: "minFreq", schema: t("Count"), required: false, arg: { flag: "--min-freq" }, description: "Fewest occurrences an n-gram needs to be scored. Default 3, the paper's cut-off; 1 or more." },
+        { name: "top", schema: t("Count"), required: false, arg: { flag: "--top" }, description: "How many candidates to print; 1 or more. Default 50." },
         { name: "edgeStopwords", schema: t("Flag"), required: false, arg: { flag: "--edge-stopwords" }, description: "Drop n-grams that begin or end with a common English function word. Off by default, because the 1996 method has no such filter." },
         { name: "json", schema: t("Flag"), required: false, arg: { flag: "--json" }, description: "Print the candidates as JSON, each with its frequency, nesting counts and C-value." },
       ],

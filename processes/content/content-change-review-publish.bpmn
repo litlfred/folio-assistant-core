@@ -127,68 +127,68 @@ Called from content-change-review after the committee approves. Approving is the
   <bpmndi:BPMNDiagram id="BPMNDiagram_ContentChangeReviewPublish">
     <bpmndi:BPMNPlane id="BPMNPlane_ContentChangeReviewPublish" bpmnElement="Collaboration_ContentChangeReviewPublish">
       <bpmndi:BPMNShape id="Participant_ContentChangeReviewPublish_di" bpmnElement="Participant_ContentChangeReviewPublish" isHorizontal="true">
-        <dc:Bounds x="100" y="80" width="1420" height="430" />
+        <dc:Bounds x="100" y="80" width="1240" height="430" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Reviewer_di" bpmnElement="Lane_Reviewer" isHorizontal="true">
-        <dc:Bounds x="130" y="80" width="1390" height="150" />
+        <dc:Bounds x="130" y="80" width="1210" height="150" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Lane_Pipeline_di" bpmnElement="Lane_Pipeline" isHorizontal="true">
-        <dc:Bounds x="130" y="230" width="1390" height="280" />
+        <dc:Bounds x="130" y="230" width="1210" height="280" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Start_Publish_di" bpmnElement="Start_Publish">
-        <dc:Bounds x="242" y="137" width="36" height="36" />
+        <dc:Bounds x="202" y="137" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_Merge_di" bpmnElement="Task_Merge">
-        <dc:Bounds x="370" y="95" width="120" height="120" />
+        <dc:Bounds x="290" y="95" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="GW_Merged_di" bpmnElement="GW_Merged">
-        <dc:Bounds x="575" y="280" width="50" height="50" />
-        
-      <bpmndi:BPMNLabel><dc:Bounds x="555" y="258" width="90" height="18" /></bpmndi:BPMNLabel></bpmndi:BPMNShape>
+        <dc:Bounds x="465" y="280" width="50" height="50" />
+        <bpmndi:BPMNLabel><dc:Bounds x="445" y="258" width="90" height="18" /></bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_NotMerged_di" bpmnElement="End_NotMerged">
-        <dc:Bounds x="582" y="417" width="36" height="36" />
+        <dc:Bounds x="472" y="417" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_CleanupStaging_di" bpmnElement="Task_CleanupStaging">
-        <dc:Bounds x="710" y="245" width="120" height="120" />
+        <dc:Bounds x="580" y="245" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_RebuildMain_di" bpmnElement="Task_RebuildMain">
-        <dc:Bounds x="880" y="245" width="120" height="120" />
+        <dc:Bounds x="735" y="245" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Task_WatchMainCI_di" bpmnElement="Task_WatchMainCI">
-        <dc:Bounds x="1050" y="245" width="120" height="120" />
+        <dc:Bounds x="890" y="245" width="120" height="120" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="End_Pipeline_di" bpmnElement="End_Pipeline">
-        <dc:Bounds x="1262" y="287" width="36" height="36" />
+        <dc:Bounds x="1082" y="287" width="36" height="36" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="r0_di" bpmnElement="r0">
-        <di:waypoint x="278" y="155" />
-        <di:waypoint x="370" y="155" />
+        <di:waypoint x="238" y="155" />
+        <di:waypoint x="290" y="155" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="flow_approve_to_pipeline_di" bpmnElement="flow_approve_to_pipeline">
-        <di:waypoint x="490" y="155" />
-        <di:waypoint x="532" y="155" />
-        <di:waypoint x="532" y="305" />
-        <di:waypoint x="575" y="305" />
+        <di:waypoint x="410" y="155" />
+        <di:waypoint x="438" y="155" />
+        <di:waypoint x="438" y="305" />
+        <di:waypoint x="465" y="305" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="p5_di" bpmnElement="p5">
-        <di:waypoint x="625" y="305" />
-        <di:waypoint x="710" y="305" />
+        <di:waypoint x="515" y="305" />
+        <di:waypoint x="580" y="305" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="p8_di" bpmnElement="p8">
-        <di:waypoint x="600" y="330" />
-        <di:waypoint x="600" y="417" />
+        <di:waypoint x="490" y="330" />
+        <di:waypoint x="490" y="417" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="p6_di" bpmnElement="p6">
-        <di:waypoint x="830" y="305" />
-        <di:waypoint x="880" y="305" />
+        <di:waypoint x="700" y="305" />
+        <di:waypoint x="735" y="305" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="p7_di" bpmnElement="p7">
-        <di:waypoint x="1000" y="305" />
-        <di:waypoint x="1050" y="305" />
+        <di:waypoint x="855" y="305" />
+        <di:waypoint x="890" y="305" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="p7b_di" bpmnElement="p7b">
-        <di:waypoint x="1170" y="305" />
-        <di:waypoint x="1262" y="305" />
+        <di:waypoint x="1010" y="305" />
+        <di:waypoint x="1082" y="305" />
       </bpmndi:BPMNEdge>
     </bpmndi:BPMNPlane>
   </bpmndi:BPMNDiagram>

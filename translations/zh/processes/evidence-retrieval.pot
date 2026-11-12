@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: evidence-retrieval\n"
-"POT-Creation-Date: 2026-11-04T12:14:26.155Z\n"
+"POT-Creation-Date: 2026-11-11T12:38:31.405Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language: zh\n"
@@ -196,7 +196,7 @@ msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:61
 #. Diagram element documentation
-msgid "Task_VerifyAuthority and its gateway sit here rather than with Lane_Agent because the decision is a readout of what the external API returns, not this instance's call; when that answer is uncertain or absent, a bean is opened rather than a verdict invented."
+msgid "Task_VerifyAuthority and its gateway sit here rather than with Lane_Agent because the decision is a readout of what the external API returns, not this layer's call; when that answer is uncertain or absent, a bean is opened rather than a verdict invented."
 msgstr ""
 
 #: ../folio-assistant-core/processes/content/evidence-retrieval.bpmn:70
