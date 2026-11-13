@@ -24,8 +24,8 @@ operational stages are [`content-plan`](../content-lifecycle-ext/content-plan.md
 core-layer bindings and refinements alongside them.
 
 Processes:
-- [`processes/content/content-lifecycle.bpmn`](../../../processes/content/content-lifecycle.bpmn)
-- [`processes/content/evidence-retrieval.bpmn`](../../../processes/content/evidence-retrieval.bpmn)
+- `collab/processes/content/content-lifecycle.bpmn` (opt-in `folio-assistant-core.collab`)
+- `collab/processes/content/evidence-retrieval.bpmn` (opt-in `folio-assistant-core.collab`)
 
 ## 1. Validation, quality control, and review gates
 
@@ -48,7 +48,7 @@ Processes:
 ## 2. Evidence appraisal in content folios (`evidence-appraisal`)
 
 - **Declared grading system:** `Task_AppraiseGrade` in
-  `processes/content/evidence-retrieval.bpmn` grades a body of evidence assembled
+  `collab/processes/content/evidence-retrieval.bpmn` grades a body of evidence assembled
   for one PICO question against the grading system the folio declares (for a
   WHO guideline folio, the DAK layer's `grade` skill supplies the certainty
   levels, rating reasons, and EtD criteria).

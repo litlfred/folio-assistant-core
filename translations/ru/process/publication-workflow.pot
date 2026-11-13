@@ -35,15 +35,15 @@ msgid ", home — \"What it does\""
 msgstr ""
 
 #: docs/process/publication-workflow.md:342
-msgid "✎ Edit{: .fa-node-edit title=\"Edit ../folio-assistant-core/processes/content/content-lifecycle.bpmn\" } QA… TR… KG…"
+msgid "✎ Edit{: .fa-node-edit title=\"Edit ../folio-assistant-core/collab/processes/content/content-lifecycle.bpmn\" } QA… TR… KG…"
 msgstr ""
 
 #: docs/process/publication-workflow.md:291
-msgid "✎ Edit{: .fa-node-edit title=\"Edit ../folio-assistant-core/processes/content/draft-to-publication.bpmn\" } QA… TR… KG…"
+msgid "✎ Edit{: .fa-node-edit title=\"Edit ../folio-assistant-core/collab/processes/content/draft-to-publication.bpmn\" } QA… TR… KG…"
 msgstr ""
 
 #: docs/process/publication-workflow.md:210
-msgid "✎ Edit{: .fa-node-edit title=\"Edit ../folio-assistant-core/processes/content/editing-hci-validation.bpmn\" } KG…"
+msgid "✎ Edit{: .fa-node-edit title=\"Edit ../folio-assistant-core/collab/processes/content/editing-hci-validation.bpmn\" } KG…"
 msgstr ""
 
 #: docs/process/publication-workflow.md:259

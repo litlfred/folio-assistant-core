@@ -25,7 +25,6 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-tools`, ho
 | [`dublin-core-render/`](dublin-core-render/) | _nothing declares what this holds_ | |
 | [`figure-coverage/`](figure-coverage/) | _nothing declares what this holds_ | |
 | [`folio-block-qa-summary/`](folio-block-qa-summary/) | _nothing declares what this holds_ | |
-| [`folio-block-screenshots/`](folio-block-screenshots/) | _nothing declares what this holds_ | |
 | [`folio-changeset/`](folio-changeset/) | _nothing declares what this holds_ | |
 | [`folio-review-comment-move/`](folio-review-comment-move/) | _nothing declares what this holds_ | |
 | [`folio-review-comments/`](folio-review-comments/) | _nothing declares what this holds_ | |

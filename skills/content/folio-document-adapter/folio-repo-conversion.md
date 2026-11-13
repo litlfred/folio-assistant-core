@@ -47,7 +47,7 @@ Once the author has answered Q1–Q3 and chosen the declared `markers` in
 - **`library` bucket:** hand the selected reference documents to
   [`document-intake`](../../library/ingestion/document-intake.md) and
   [`l1-document-ingestion`](../../library/ingestion/l1-document-ingestion.md)
-  (`processes/library/l1-document-ingestion.bpmn`).
+  (`collab/processes/library/l1-document-ingestion.bpmn`).
 - **`content` bucket:** hand the author's own chapters and prose to
   [`document-authoring`](document-authoring.md)
   and [`document-structure`](document-structure.md)

@@ -29,7 +29,7 @@ can judge.
 The rung code — `scripts/ingest-document.ts`, the `pdf-*.py` rungs,
 `notebook-structure.ts` and OCR — lives in the harness. This skill is the
 METHOD that chooses among them; invoking harness code from here is a downward
-edge. The executable form is `processes/library/l1-document-ingestion.bpmn`,
+edge. The executable form is `collab/processes/library/l1-document-ingestion.bpmn`,
 which calls the harness's basic `Process_Ingestion` first and then the four
 `ingest-*` phases beside it.
 
@@ -1133,4 +1133,4 @@ Proved on fixtures built at test time, all five branches mutation-checked.
 - [`directory-conventions`](../../../../cat-harness/skills/kg/kg-core/directory-conventions.md) — the graph typologies and who declares them
 - [`bib-qa`](../cataloguing/bib-qa.md) — auditing what is already in `library/`
 - [`tabular-metadata`](tabular-metadata.md) — the CSVW model behind the dataset arm
-- `processes/library/l1-document-ingestion.bpmn` — this method, executable; it calls the harness's `Process_Ingestion` first
+- `collab/processes/library/l1-document-ingestion.bpmn` — this method, executable; it calls the harness's `Process_Ingestion` first

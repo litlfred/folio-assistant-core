@@ -27,7 +27,7 @@ _This page is generated from [`docs/source/concepts-document-content-type/`](htt
 ## Documents & policy guidance
 {: #documents-policy-guidance }
 
-[✎ Edit](https://github.com/litlfred/folio-assistant-core/edit/main/processes/content/authoring-a-document.bpmn){: .fa-node-edit title="Edit processes/content/authoring-a-document.bpmn" data-fa-link="edit" data-src="processes/content/authoring-a-document.bpmn" data-repo="litlfred/folio-assistant-core" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-kg" lang="en" dir="ltr" data-qa-family="kg" data-qa-key="documents-policy-guidance.kg" data-qa-label="Knowledge-graph QA" data-qa-noun="diagram" data-qa-src="{{ '/assets/qa/folio-assistant-core/concepts-document-content-type/documents-policy-guidance.kg.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/concepts-document-content-type/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Knowledge-graph QA: loading the verdict…" aria-label="Knowledge-graph QA: loading the verdict…"><span class="fa-qa-tag">KG</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button></span>
+[✎ Edit](https://github.com/litlfred/folio-assistant-core/edit/main/collab/processes/content/authoring-a-document.bpmn){: .fa-node-edit title="Edit collab/processes/content/authoring-a-document.bpmn" data-fa-link="edit" data-src="collab/processes/content/authoring-a-document.bpmn" data-repo="litlfred/folio-assistant-core" } <span class="fa-qa-badges"><button type="button" class="fa-qa-badge fa-qa-pending fa-qa-fam-kg" lang="en" dir="ltr" data-qa-family="kg" data-qa-key="documents-policy-guidance.kg" data-qa-label="Knowledge-graph QA" data-qa-noun="diagram" data-qa-src="{{ '/assets/qa/folio-assistant-core/concepts-document-content-type/documents-policy-guidance.kg.json' | relative_url }}" data-qa-index="{{ '/assets/qa/folio-assistant-core/concepts-document-content-type/qa-index.json' | relative_url }}" aria-expanded="false" aria-busy="true" title="Knowledge-graph QA: loading the verdict…" aria-label="Knowledge-graph QA: loading the verdict…"><span class="fa-qa-tag">KG</span><span class="fa-qa-glyph" aria-hidden="true">…</span></button></span>
 
 **Skill package:** `folio-document-adapter` ·
 **Adapter:** `document` ·
@@ -59,7 +59,7 @@ Relevant skill schemas:
        alt="BPMN swimlane diagram of document authoring: the author plans, the plan is seeded as beans, an agent scaffolds the folio and authors blocks, the build pipeline checks the declared profile before validating and rendering to Markdown, HTML and PDF, and a reviewer gates publication.">
 </div>
 
-[BPMN 2.0 source](https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/authoring-a-document.bpmn) · [full-size SVG]({{ '/assets/img/workflows/authoring-a-document.svg' | relative_url }})
+[BPMN 2.0 source](https://github.com/litlfred/folio-assistant-core/blob/main/collab/processes/content/authoring-a-document.bpmn) · [full-size SVG]({{ '/assets/img/workflows/authoring-a-document.svg' | relative_url }})
 {: .bpmn-source }
 
 ### Carrying a normative statement

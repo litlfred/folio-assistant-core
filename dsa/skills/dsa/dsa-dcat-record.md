@@ -46,7 +46,7 @@ normative SPDX checksum terms in §6.8.12 and ADMS status terms in §6.4.30),
   - `dcat:mediaType` — media type (for example, `"text/markdown"` or
     `"application/pdf"`).
   - `spdx:checksum` — SHA-256 checksum object (see
-    [`dsa-checksum`](dsa-checksum.md)).
+    [`dsa-checksum`](../../../skills/content/folio-document-adapter/dsa-checksum.md)).
 
 ## Versioning rules
 

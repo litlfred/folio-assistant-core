@@ -1,8 +1,8 @@
-<!-- GENERATED from folio-assistant-core/processes/content/evidence-retrieval.bpmn by cat-harness-tools/scripts/bpmn-checklist.ts. Do not edit: change the diagram and regenerate (bun run cat bpmn:checklist). -->
+<!-- GENERATED from folio-assistant-core/collab/processes/content/evidence-retrieval.bpmn by cat-harness-tools/scripts/bpmn-checklist.ts. Do not edit: change the diagram and regenerate (bun run cat bpmn:checklist). -->
 
 # Checklist — Evidence for a recommendation
 
-> **Generated, and not the authority.** This is `folio-assistant-core/processes/content/evidence-retrieval.bpmn` (process `Process_EvidenceRetrieval`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
+> **Generated, and not the authority.** This is `folio-assistant-core/collab/processes/content/evidence-retrieval.bpmn` (process `Process_EvidenceRetrieval`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
 
 Frame a question for a recommendation, retrieve and appraise evidence from trusted sources, and either attach it or record the gap; a change that states or alters no recommendation ends at its own event before any search.
 

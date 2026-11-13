@@ -99,15 +99,15 @@ msgid "✎ Edit{: .fa-node-edit title=\"Edit docs/source/process-publication-wor
 msgstr ""
 
 #: docs/process/publication-workflow.md:342
-msgid "✎ Edit{: .fa-node-edit title=\"Edit folio-assistant-core/processes/content/content-lifecycle.bpmn\" data-fa-link=\"edit\" data-src=\"folio-assistant-core/processes/content/content-lifecycle.bpmn\" data-repo=\"litlfred/folio-assistant\" } QA… TR… KG…"
+msgid "✎ Edit{: .fa-node-edit title=\"Edit folio-assistant-core/collab/processes/content/content-lifecycle.bpmn\" data-fa-link=\"edit\" data-src=\"folio-assistant-core/collab/processes/content/content-lifecycle.bpmn\" data-repo=\"litlfred/folio-assistant\" } QA… TR… KG…"
 msgstr ""
 
 #: docs/process/publication-workflow.md:291
-msgid "✎ Edit{: .fa-node-edit title=\"Edit folio-assistant-core/processes/content/draft-to-publication.bpmn\" data-fa-link=\"edit\" data-src=\"folio-assistant-core/processes/content/draft-to-publication.bpmn\" data-repo=\"litlfred/folio-assistant\" } QA… TR… KG…"
+msgid "✎ Edit{: .fa-node-edit title=\"Edit folio-assistant-core/collab/processes/content/draft-to-publication.bpmn\" data-fa-link=\"edit\" data-src=\"folio-assistant-core/collab/processes/content/draft-to-publication.bpmn\" data-repo=\"litlfred/folio-assistant\" } QA… TR… KG…"
 msgstr ""
 
 #: docs/process/publication-workflow.md:210
-msgid "✎ Edit{: .fa-node-edit title=\"Edit folio-assistant-core/processes/content/editing-hci-validation.bpmn\" data-fa-link=\"edit\" data-src=\"folio-assistant-core/processes/content/editing-hci-validation.bpmn\" data-repo=\"litlfred/folio-assistant\" } KG…"
+msgid "✎ Edit{: .fa-node-edit title=\"Edit folio-assistant-core/collab/processes/content/editing-hci-validation.bpmn\" data-fa-link=\"edit\" data-src=\"folio-assistant-core/collab/processes/content/editing-hci-validation.bpmn\" data-repo=\"litlfred/folio-assistant\" } KG…"
 msgstr ""
 
 #: docs/process/publication-workflow.md:164

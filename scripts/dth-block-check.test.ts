@@ -8,7 +8,7 @@ import { join, resolve } from "node:path";
 
 import { check, lanesOf, repeatedTableMarkers, sectionBlocksOf } from "./dth-block-check";
 
-const DMN = resolve(import.meta.dir, "../processes/content/decisions/draft-qa-gate.dmn");
+const DMN = resolve(import.meta.dir, "../collab/processes/content/decisions/draft-qa-gate.dmn");
 
 const bpmn = (lanes: Array<[string, string | null]>) =>
   `<?xml version="1.0"?>\n<bpmn:definitions xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL">\n` +

@@ -128,7 +128,7 @@
       "prefLabel": "dsa-checksum",
       "definition": "Compute and record the SHA-256 cryptographic digest of a signed Data Sharing Agreement's legal text as a W3C DCAT 3 `spdx:checksum` (`spdx:Checksum` with `spdx:checksumAlgorithm_sha256` and 64-character lowercase hex `spdx:checksumValue`), verified by `check:dsa-hash` (DSA building block B3, process steps P2.2 `Task_Hash` and P2.2a `Task_HashSummary`).",
       "notation": "dsa-checksum",
-      "source": "folio-assistant-core/dsa/skills/dsa/dsa-checksum.md",
+      "source": "folio-assistant-core/skills/content/folio-document-adapter/dsa-checksum.md",
       "status": "candidate"
     },
     {
@@ -214,7 +214,7 @@
     {
       "id": "folio-getting-started",
       "prefLabel": "folio-getting-started",
-      "definition": "The content-folio half of the harness's getting-started skill: binds processes/conduct/getting-started.bpmn and decisions/folio-intent.dmn, interprets describeRepository() content-type markers (folio, harness, dak, sushi), and routes new-content and specialised IG/DAK creation requests.",
+      "definition": "The content-folio half of the harness's getting-started skill: binds collab/processes/conduct/getting-started.bpmn and decisions/folio-intent.dmn, interprets describeRepository() content-type markers (folio, harness, dak, sushi), and routes new-content and specialised IG/DAK creation requests.",
       "notation": "folio-getting-started",
       "source": "folio-assistant-core/skills/content/folio-document-adapter/folio-getting-started.md",
       "status": "candidate"

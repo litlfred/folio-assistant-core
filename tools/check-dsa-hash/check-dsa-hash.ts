@@ -29,7 +29,10 @@ export default toolFactory((t) =>
         },
       ],
     },
-    satisfies: ["dsa-checksum", "dsa-odrl-source", "dsa-dcat-record", "dsa-catalogue-status"],
+    // Only the always-on `dsa-checksum`: the other DSA skills are in the opt-in
+    // `dsa` sub-graph, and an always-on Tool may not name what a downstream
+    // can switch off (owner, 2026-11-13, check:optin-refs).
+    satisfies: ["dsa-checksum"],
     requires: { runtime: ["bun"], network: false },
     selection: {
       when:

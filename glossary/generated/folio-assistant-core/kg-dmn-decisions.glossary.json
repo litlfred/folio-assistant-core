@@ -10,28 +10,28 @@
       "id": "decision_draftqagate",
       "prefLabel": "Draft QA green?",
       "notation": "Decision_DraftQaGate",
-      "source": "folio-assistant-core/processes/content/decisions/draft-qa-gate.dmn#Decision_DraftQaGate",
+      "source": "folio-assistant-core/collab/processes/content/decisions/draft-qa-gate.dmn#Decision_DraftQaGate",
       "status": "candidate"
     },
     {
       "id": "decision_foliointent",
       "prefLabel": "What is the user asking for?",
       "notation": "Decision_FolioIntent",
-      "source": "folio-assistant-core/processes/conduct/decisions/folio-intent.dmn#Decision_FolioIntent",
+      "source": "folio-assistant-core/collab/processes/conduct/decisions/folio-intent.dmn#Decision_FolioIntent",
       "status": "candidate"
     },
     {
       "id": "decision_pageslive",
       "prefLabel": "Is the published site answering?",
       "notation": "Decision_PagesLive",
-      "source": "folio-assistant-core/processes/conduct/decisions/pages-live-gate.dmn#Decision_PagesLive",
+      "source": "folio-assistant-core/collab/processes/conduct/decisions/pages-live-gate.dmn#Decision_PagesLive",
       "status": "candidate"
     },
     {
       "id": "decision_reviewcoveragegate",
       "prefLabel": "Every changed block and rendered page reviewed?",
       "notation": "Decision_ReviewCoverageGate",
-      "source": "folio-assistant-core/processes/content/decisions/review-coverage-gate.dmn#Decision_ReviewCoverageGate",
+      "source": "folio-assistant-core/collab/processes/content/decisions/review-coverage-gate.dmn#Decision_ReviewCoverageGate",
       "status": "candidate"
     }
   ]

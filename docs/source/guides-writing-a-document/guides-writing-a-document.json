@@ -17,13 +17,13 @@
         "title": "What a document folio is",
         "asset": {
           "kind": "bpmn",
-          "source": "processes/content/authoring-a-document.bpmn",
+          "source": "collab/processes/content/authoring-a-document.bpmn",
           "rendered": "../assets/img/workflows/authoring-a-document.svg",
           "alt": "BPMN swimlane diagram of document authoring, plan to published.",
           "sourceLinks": [
             {
               "text": "BPMN 2.0 source",
-              "href": "https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/authoring-a-document.bpmn"
+              "href": "https://github.com/litlfred/folio-assistant-core/blob/main/collab/processes/content/authoring-a-document.bpmn"
             }
           ],
           "linkStyle": "caption"

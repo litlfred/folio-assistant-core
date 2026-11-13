@@ -1,8 +1,8 @@
-<!-- GENERATED from folio-assistant-core/processes/library/l1-document-ingestion.bpmn by cat-harness-tools/scripts/bpmn-checklist.ts. Do not edit: change the diagram and regenerate (bun run cat bpmn:checklist). -->
+<!-- GENERATED from folio-assistant-core/collab/processes/library/l1-document-ingestion.bpmn by cat-harness-tools/scripts/bpmn-checklist.ts. Do not edit: change the diagram and regenerate (bun run cat bpmn:checklist). -->
 
 # Checklist — L1 document ingestion — a document to the L1 source knowledge graph
 
-> **Generated, and not the authority.** This is `folio-assistant-core/processes/library/l1-document-ingestion.bpmn` (process `Process_L1DocumentIngestion`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
+> **Generated, and not the authority.** This is `folio-assistant-core/collab/processes/library/l1-document-ingestion.bpmn` (process `Process_L1DocumentIngestion`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
 
 L1 document ingestion — a document to the L1 source knowledge graph.
 
@@ -145,7 +145,7 @@ L1 document ingestion — a document to the L1 source knowledge graph.
 
 - Who: the `Ingestion Engine (agent, runs unattended)` lane (role `ingestion-agent`).
 - Skill: `l1-document-ingestion`.
-- What: Owner, 2026-11-11 (who-iris, card Q-ODD-1 = A, and "add to L1 doc schema errata").
+- What: Owner, 2026-11-11 (card Q-ODD-1 = A, and "add to L1 doc schema errata").
 - Record it: `workflow_complete` with `node: "Task_Errata"`.
 - next: → `Task_Citeable` (Available to cite as an L1 source)
 

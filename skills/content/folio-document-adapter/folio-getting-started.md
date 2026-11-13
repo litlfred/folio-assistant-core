@@ -2,7 +2,7 @@
 name: folio-getting-started
 description: >-
   The content-folio half of the harness's getting-started skill: binds
-  processes/conduct/getting-started.bpmn and decisions/folio-intent.dmn,
+  collab/processes/conduct/getting-started.bpmn and decisions/folio-intent.dmn,
   interprets describeRepository() content-type markers (folio, harness, dak,
   sushi), and routes new-content and specialised IG/DAK creation requests.
 ---
@@ -16,8 +16,8 @@ and `gh-pages` provisioning before GitHub Pages is switched on. In a content
 folio or a layer stacked on `folio-assistant-core`, apply these rules
 alongside it.
 
-Process: [`processes/conduct/getting-started.bpmn`](../../../processes/conduct/getting-started.bpmn).
-Decision table: [`processes/conduct/decisions/folio-intent.dmn`](../../../processes/conduct/decisions/folio-intent.dmn).
+Process: `collab/processes/conduct/getting-started.bpmn` (opt-in `folio-assistant-core.collab`).
+Decision table: `collab/processes/conduct/decisions/folio-intent.dmn` (opt-in `folio-assistant-core.collab`).
 
 ## 1. Repository membership vs. `isFolio`
 

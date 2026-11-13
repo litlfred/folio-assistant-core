@@ -3,7 +3,7 @@
  * public-comment — intake and adjudication of public-review comments on a
  * document folio. Bean `v26p`, issue #197. Schema and lifecycle:
  * `folio-assistant-core/schemas/public-comment.ts`. Process:
- * `folio-assistant-core/processes/content/public-comment.bpmn`. Skill:
+ * `folio-assistant-core/collab/processes/content/public-comment.bpmn`. Skill:
  * `public-comment`.
  *
  * ## The store

@@ -5,4 +5,4 @@
 | Skill package | `skills/content/folio-document-adapter/package-manifest.json` |
 | Adapter | `adapters/document/` |
 | Vocabulary | `block-kinds/` — one `folio-block-kind/v1` node per kind |
-| Process | [`authoring-a-document.bpmn`](https://github.com/litlfred/folio-assistant-core/blob/main/processes/content/authoring-a-document.bpmn) |
+| Process | [`authoring-a-document.bpmn`](https://github.com/litlfred/folio-assistant-core/blob/main/collab/processes/content/authoring-a-document.bpmn) |
