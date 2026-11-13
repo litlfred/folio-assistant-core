@@ -1,9 +1,10 @@
 #!/usr/bin/env bun
 /**
  * l1-coverage — of the normative sentences in a publication, how many does an
- * L1 extraction account for? Issue #2405 FR-009; the report contract is
- * smart-kg's `docs/COVERAGE.md`, and this is the generic implementation that
- * contract says folio-assistant-core owns.
+ * L1 extraction account for? Issue #2405 FR-009; the report contract is the
+ * methodology `methodologies/l1-coverage.md` (moved here from smart-kg's
+ * `docs/COVERAGE.md` when smart-kg was deprecated, folio-assistant#3108), and
+ * this is its generic implementation.
  *
  * ## Why it exists
  *
@@ -61,7 +62,9 @@ export const MARKERS: { group: string; re: RegExp }[] = [
 /** Contract §2: the fixed exclusion reasons. `duplicate-of:<id>` is checked separately. */
 export const EXCLUSION_REASONS = ["background-fact", "manufacturer-statement", "editorial", "research-question"] as const;
 
-export const DEFINITION_VERSION = "smart-kg/docs/COVERAGE.md (markers §1, reasons §2) — folio-assistant-core l1-coverage v1";
+// The markers (§1) and reasons (§2) are unchanged since smart-kg/docs/COVERAGE.md, so reports made
+// before the move compare with these; the string names where the definition now lives.
+export const DEFINITION_VERSION = "folio-assistant-core/methodologies/l1-coverage.md (markers §1, reasons §2) — folio-assistant-core l1-coverage v1";
 export const MATCH_METHOD = "normalised-substring";
 
 export interface Page { page: number; text: string }

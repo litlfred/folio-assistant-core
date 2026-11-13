@@ -11,5 +11,6 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-methodolog
 | file | what it is | used by |
 |---|---|---|
 | [`doc-researcher.md`](doc-researcher.md) | Doc-Researcher |  |
+| [`l1-coverage.md`](l1-coverage.md) | L1 publication coverage |  |
 
 <!-- kg:subgraph:end -->
