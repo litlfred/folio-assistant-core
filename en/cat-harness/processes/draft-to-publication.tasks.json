@@ -5,156 +5,156 @@
   {
    "id": "Task_OpenReleaseBean",
    "name": "Open the bean",
-   "left": 17.99,
+   "left": 17.78,
    "top": 2.37,
    "box": {
-    "left": 12.77,
+    "left": 12.62,
     "top": 13.61,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.84
    }
   },
   {
    "id": "Task_BuildDraft",
    "name": "Build the draft publication",
-   "left": 41.01,
+   "left": 40.54,
    "top": 2.37,
    "box": {
-    "left": 35.79,
+    "left": 35.39,
     "top": 13.61,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.84
    }
   },
   {
    "id": "Task_PublicationQa",
    "name": "Run publication QA gates",
-   "left": 51.08,
+   "left": 50.5,
    "top": 2.37,
    "box": {
-    "left": 45.86,
+    "left": 45.34,
     "top": 13.61,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.84
    }
   },
   {
    "id": "CallActivity_Editing",
    "name": "Editing and HCI validation",
-   "left": 86.69,
+   "left": 85.71,
    "top": 2.37,
    "box": {
-    "left": 81.47,
+    "left": 80.55,
     "top": 13.61,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.84
    }
   },
   {
    "id": "Task_CirculateDraft",
    "name": "Circulate the draft",
-   "left": 15.47,
+   "left": 15.29,
    "top": 20.12,
    "box": {
-    "left": 10.25,
+    "left": 10.14,
     "top": 31.36,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.84
    }
   },
   {
    "id": "CallActivity_PublicComment",
    "name": "Release for public comment",
-   "left": 30.58,
+   "left": 30.23,
    "top": 76.33,
    "box": {
-    "left": 25.36,
+    "left": 25.07,
     "top": 87.57,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.84
    }
   },
   {
    "id": "Task_ReviewDraft",
    "name": "Review the draft publication",
-   "left": 41.73,
+   "left": 41.25,
    "top": 44.62,
    "box": {
-    "left": 36.51,
+    "left": 36.1,
     "top": 55.86,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.84
    }
   },
   {
    "id": "Task_SmeSignoff",
    "name": "Clinical or scientific sign-off",
-   "left": 28.78,
+   "left": 28.45,
    "top": 44.62,
    "box": {
-    "left": 23.56,
+    "left": 23.29,
     "top": 55.86,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.84
    }
   },
   {
    "id": "Task_OpenChangeBeans",
    "name": "Open beans for the change requests",
-   "left": 62.95,
+   "left": 62.24,
    "top": 20.12,
    "box": {
-    "left": 57.73,
+    "left": 57.08,
     "top": 31.36,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.84
    }
   },
   {
    "id": "Task_AuthorizeRelease",
    "name": "Authorise the release",
-   "left": 75.18,
+   "left": 74.33,
    "top": 44.62,
    "box": {
-    "left": 69.96,
+    "left": 69.17,
     "top": 55.86,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.84
    }
   },
   {
    "id": "Task_PublishRelease",
    "name": "Version, tag and publish",
-   "left": 73.74,
+   "left": 72.9,
    "top": 20.12,
    "box": {
-    "left": 68.53,
+    "left": 67.75,
     "top": 31.36,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.84
    }
   },
   {
    "id": "Task_CloseReleaseBeans",
    "name": "Close the release beans",
-   "left": 84.17,
+   "left": 83.22,
    "top": 20.12,
    "box": {
-    "left": 78.96,
+    "left": 78.06,
     "top": 31.36,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.84
    }
   },
   {
    "id": "Task_ArchiveReleaseBean",
    "name": "Close the bean",
-   "left": 94.24,
+   "left": 93.18,
    "top": 20.12,
    "box": {
-    "left": 89.03,
+    "left": 88.02,
     "top": 31.36,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.84
    }
   }

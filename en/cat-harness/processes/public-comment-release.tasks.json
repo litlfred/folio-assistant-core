@@ -5,84 +5,84 @@
   {
    "id": "Task_AgreeReleaseDate",
    "name": "Agree the release date and comment period",
-   "left": 21.9,
+   "left": 21.63,
    "top": 4.35,
    "box": {
-    "left": 16.61,
+    "left": 16.41,
     "top": 25,
-    "width": 1.75,
+    "width": 1.73,
     "height": 5.22
    }
   },
   {
    "id": "Task_BuildPcRelease",
    "name": "Build the public comment release",
-   "left": 32.48,
+   "left": 32.09,
    "top": 69.57,
    "box": {
-    "left": 27.19,
+    "left": 26.86,
     "top": 90.22,
-    "width": 1.75,
+    "width": 1.73,
     "height": 5.22
    }
   },
   {
    "id": "Task_SetUpChannels",
    "name": "Set up the comment channels, with instructions and links",
-   "left": 43.07,
+   "left": 42.55,
    "top": 36.96,
    "box": {
-    "left": 37.77,
+    "left": 37.32,
     "top": 57.61,
-    "width": 1.75,
+    "width": 1.73,
     "height": 5.22
    }
   },
   {
    "id": "Task_WriteAnnouncement",
    "name": "Write the announcement, with links",
-   "left": 53.65,
+   "left": 53,
    "top": 36.96,
    "box": {
-    "left": 48.36,
+    "left": 47.77,
     "top": 57.61,
-    "width": 1.75,
+    "width": 1.73,
     "height": 5.22
    }
   },
   {
    "id": "Task_Distribute",
    "name": "Distribute to the public",
-   "left": 64.23,
+   "left": 63.46,
    "top": 4.35,
    "box": {
-    "left": 58.94,
+    "left": 58.23,
     "top": 25,
-    "width": 1.75,
+    "width": 1.73,
     "height": 5.22
    }
   },
   {
    "id": "CallActivity_PublicComment",
    "name": "Public comment on the release",
-   "left": 74.82,
+   "left": 73.92,
    "top": 36.96,
    "box": {
-    "left": 69.53,
+    "left": 68.69,
     "top": 57.61,
-    "width": 1.75,
+    "width": 1.73,
     "height": 5.22
    }
   },
   {
    "id": "Task_ArchiveRelease",
    "name": "Archive the release with the review",
-   "left": 85.4,
+   "left": 84.37,
    "top": 69.57,
    "box": {
-    "left": 80.11,
+    "left": 79.14,
     "top": 90.22,
-    "width": 1.75,
+    "width": 1.73,
     "height": 5.22
    }
   }

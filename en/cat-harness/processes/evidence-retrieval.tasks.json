@@ -6,120 +6,120 @@
    "id": "Task_ReviewExisting",
    "name": "Review the existing guidance",
    "left": 27.7,
-   "top": 42.57,
+   "top": 43.45,
    "box": {
     "left": 22.48,
-    "top": 53.96,
+    "top": 55.08,
     "width": 1.73,
-    "height": 2.88
+    "height": 2.94
    }
   },
   {
    "id": "Task_FramePico",
    "name": "Frame the question as PICO",
    "left": 38.49,
-   "top": 42.57,
+   "top": 43.45,
    "box": {
     "left": 33.27,
-    "top": 53.96,
+    "top": 55.08,
     "width": 1.73,
-    "height": 2.88
+    "height": 2.94
    }
   },
   {
    "id": "Task_L1Sources",
    "name": "Search trusted L1 sources",
    "left": 50,
-   "top": 42.57,
+   "top": 43.45,
    "box": {
     "left": 44.78,
-    "top": 53.96,
+    "top": 55.08,
     "width": 1.73,
-    "height": 2.88
+    "height": 2.94
    }
   },
   {
    "id": "Task_L2L3Content",
    "name": "Search trusted L2 and L3 content",
    "left": 50,
-   "top": 22.18,
+   "top": 22.64,
    "box": {
     "left": 44.78,
-    "top": 33.57,
+    "top": 34.27,
     "width": 1.73,
-    "height": 2.88
+    "height": 2.94
    }
   },
   {
    "id": "Task_DataRepos",
    "name": "Query data repositories and statistical datasets",
    "left": 50,
-   "top": 3,
+   "top": 3.06,
    "box": {
     "left": 44.78,
-    "top": 14.39,
+    "top": 14.69,
     "width": 1.73,
-    "height": 2.88
+    "height": 2.94
    }
   },
   {
    "id": "Task_VerifyAuthority",
    "name": "Verify authority against the registry",
    "left": 61.51,
-   "top": 3,
+   "top": 3.06,
    "box": {
     "left": 56.29,
-    "top": 14.39,
+    "top": 14.69,
     "width": 1.73,
-    "height": 2.88
+    "height": 2.94
    }
   },
   {
    "id": "Task_RecordUnverified",
    "name": "Open a bean for the unverified citation",
    "left": 70.5,
-   "top": 66.55,
+   "top": 67.93,
    "box": {
     "left": 65.29,
-    "top": 77.94,
+    "top": 79.56,
     "width": 1.73,
-    "height": 2.88
+    "height": 2.94
    }
   },
   {
    "id": "Task_AppraiseGrade",
    "name": "Appraise and grade the body of evidence",
    "left": 79.5,
-   "top": 42.57,
+   "top": 43.45,
    "box": {
     "left": 74.28,
-    "top": 53.96,
+    "top": 55.08,
     "width": 1.73,
-    "height": 2.88
+    "height": 2.94
    }
   },
   {
    "id": "Task_RecordGap",
    "name": "Record the evidence gap",
    "left": 88.85,
-   "top": 66.55,
+   "top": 67.93,
    "box": {
     "left": 83.63,
-    "top": 77.94,
+    "top": 79.56,
     "width": 1.73,
-    "height": 2.88
+    "height": 2.94
    }
   },
   {
    "id": "Task_AttachEvidence",
    "name": "Attach the evidence",
    "left": 97.48,
-   "top": 42.57,
+   "top": 43.45,
    "box": {
     "left": 92.27,
-    "top": 53.96,
+    "top": 55.08,
     "width": 1.73,
-    "height": 2.88
+    "height": 2.94
    }
   }
  ],

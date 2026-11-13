@@ -5,84 +5,84 @@
   {
    "id": "A_RenderAvatars",
    "name": "Render every card as its avatar",
-   "left": 25.73,
+   "left": 25.64,
    "top": 25.78,
    "box": {
-    "left": 18.69,
+    "left": 18.63,
     "top": 40.63,
-    "width": 2.33,
+    "width": 2.32,
     "height": 3.75
    }
   },
   {
    "id": "A_Open",
    "name": "Project a window onto the board",
-   "left": 64.56,
+   "left": 64.35,
    "top": 25.78,
    "box": {
-    "left": 57.52,
+    "left": 57.34,
     "top": 40.63,
-    "width": 2.33,
+    "width": 2.32,
     "height": 3.75
    }
   },
   {
    "id": "A_Raise",
    "name": "Raise the window the reader selected",
-   "left": 80.1,
+   "left": 79.84,
    "top": 25.78,
    "box": {
-    "left": 73.06,
+    "left": 72.82,
     "top": 40.63,
-    "width": 2.33,
+    "width": 2.32,
     "height": 3.75
    }
   },
   {
    "id": "A_Close",
    "name": "Close the window back to its avatar",
-   "left": 64.56,
+   "left": 64.35,
    "top": 72.66,
    "box": {
-    "left": 57.52,
+    "left": 57.34,
     "top": 87.5,
-    "width": 2.33,
+    "width": 2.32,
     "height": 3.75
    }
   },
   {
    "id": "A_OfferWayBack",
    "name": "Leave a reachable way back",
-   "left": 80.1,
+   "left": 79.84,
    "top": 72.66,
    "box": {
-    "left": 73.06,
+    "left": 72.82,
     "top": 87.5,
-    "width": 2.33,
+    "width": 2.32,
     "height": 3.75
    }
   },
   {
    "id": "A_ResolveThreshold",
    "name": "Resolve the kind's zoom threshold",
-   "left": 64.56,
+   "left": 64.35,
    "top": 49.22,
    "box": {
-    "left": 57.52,
+    "left": 57.34,
     "top": 64.06,
-    "width": 2.33,
+    "width": 2.32,
     "height": 3.75
    }
   },
   {
    "id": "A_SwapToAvatar",
    "name": "Swap cards below the threshold; leave open windows alone",
-   "left": 80.1,
+   "left": 79.84,
    "top": 49.22,
    "box": {
-    "left": 73.06,
+    "left": 72.82,
     "top": 64.06,
-    "width": 2.33,
+    "width": 2.32,
     "height": 3.75
    }
   }

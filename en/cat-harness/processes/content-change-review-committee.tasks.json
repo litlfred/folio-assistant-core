@@ -5,120 +5,120 @@
   {
    "id": "Task_CompareBeforeAfter",
    "name": "Compare main vs staging",
-   "left": 19.78,
+   "left": 19.58,
    "top": 4.35,
    "box": {
-    "left": 14.57,
+    "left": 14.42,
     "top": 25,
-    "width": 1.73,
+    "width": 1.71,
     "height": 5.22
    }
   },
   {
    "id": "Task_IngestComments",
    "name": "Ingest tagged review comments",
-   "left": 19.78,
+   "left": 19.58,
    "top": 67.39,
    "box": {
-    "left": 14.57,
+    "left": 14.42,
     "top": 88.04,
-    "width": 1.73,
+    "width": 1.71,
     "height": 5.22
    }
   },
   {
    "id": "Task_SliceAndAssign",
    "name": "Slice the change and assign reviewers",
-   "left": 31.29,
+   "left": 30.97,
    "top": 67.39,
    "box": {
-    "left": 26.08,
+    "left": 25.81,
     "top": 88.04,
-    "width": 1.73,
+    "width": 1.71,
     "height": 5.22
    }
   },
   {
    "id": "Call_ReviewSlices",
    "name": "Review each slice",
-   "left": 31.29,
+   "left": 30.97,
    "top": 4.35,
    "box": {
-    "left": 26.08,
+    "left": 25.81,
     "top": 25,
-    "width": 1.73,
+    "width": 1.71,
     "height": 5.22
    }
   },
   {
    "id": "Task_WithdrawComment",
    "name": "Withdraw a review comment",
-   "left": 41.37,
+   "left": 40.94,
    "top": 33.7,
    "box": {
-    "left": 36.15,
+    "left": 35.78,
     "top": 54.35,
-    "width": 1.73,
+    "width": 1.71,
     "height": 5.22
    }
   },
   {
    "id": "Call_Adjudication",
    "name": "Adjudicate the disagreement",
-   "left": 56.47,
+   "left": 55.89,
    "top": 33.7,
    "box": {
-    "left": 51.26,
+    "left": 50.73,
     "top": 54.35,
-    "width": 1.73,
+    "width": 1.71,
     "height": 5.22
    }
   },
   {
    "id": "Task_ReviewUses",
    "name": "Review the editorial dependencies",
-   "left": 69.42,
+   "left": 68.7,
    "top": 4.35,
    "box": {
-    "left": 64.21,
+    "left": 63.54,
     "top": 25,
-    "width": 1.73,
+    "width": 1.71,
     "height": 5.22
    }
   },
   {
    "id": "Task_ReviewImpact",
    "name": "Review impact assessment",
-   "left": 80.22,
+   "left": 79.38,
    "top": 4.35,
    "box": {
-    "left": 75,
+    "left": 74.22,
     "top": 25,
-    "width": 1.73,
+    "width": 1.71,
     "height": 5.22
    }
   },
   {
    "id": "Task_RequestChanges",
    "name": "Request changes",
-   "left": 88.85,
+   "left": 87.93,
    "top": 33.7,
    "box": {
-    "left": 83.63,
+    "left": 82.77,
     "top": 54.35,
-    "width": 1.73,
+    "width": 1.71,
     "height": 5.22
    }
   },
   {
    "id": "Task_Approve",
    "name": "Approve",
-   "left": 97.48,
+   "left": 96.47,
    "top": 4.35,
    "box": {
-    "left": 92.27,
+    "left": 91.31,
     "top": 25,
-    "width": 1.73,
+    "width": 1.71,
     "height": 5.22
    }
   }

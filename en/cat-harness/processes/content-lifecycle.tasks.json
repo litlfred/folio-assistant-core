@@ -5,121 +5,121 @@
   {
    "id": "Task_Plan",
    "name": "Plan scope, team, artifacts",
-   "left": 20.14,
-   "top": 2.42,
+   "left": 19.89,
+   "top": 2.36,
    "box": {
-    "left": 14.93,
-    "top": 13.94,
-    "width": 1.73,
-    "height": 2.91
+    "left": 14.74,
+    "top": 13.58,
+    "width": 1.71,
+    "height": 2.83
    }
   },
   {
    "id": "Task_SeedBeans",
    "name": "Seed the work plan",
-   "left": 47.12,
-   "top": 20.61,
+   "left": 46.53,
+   "top": 20.07,
    "box": {
-    "left": 41.91,
-    "top": 32.12,
-    "width": 1.73,
-    "height": 2.91
+    "left": 41.38,
+    "top": 31.29,
+    "width": 1.71,
+    "height": 2.83
    }
   },
   {
    "id": "CallActivity_Editing",
    "name": "Editing and HCI validation",
-   "left": 58.63,
-   "top": 20.61,
+   "left": 57.9,
+   "top": 20.07,
    "box": {
-    "left": 53.42,
-    "top": 32.12,
-    "width": 1.73,
-    "height": 2.91
+    "left": 52.75,
+    "top": 31.29,
+    "width": 1.71,
+    "height": 2.83
    }
   },
   {
    "id": "Task_Test",
    "name": "Integration test and QA sweep",
-   "left": 58.63,
-   "top": 38.79,
+   "left": 57.9,
+   "top": 37.78,
    "box": {
-    "left": 53.42,
-    "top": 50.3,
-    "width": 1.73,
-    "height": 2.91
+    "left": 52.75,
+    "top": 49,
+    "width": 1.71,
+    "height": 2.83
    }
   },
   {
    "id": "CallActivity_Publication",
    "name": "Draft, review and publish",
-   "left": 58.63,
-   "top": 75.15,
+   "left": 57.9,
+   "top": 73.2,
    "box": {
-    "left": 53.42,
-    "top": 86.67,
-    "width": 1.73,
-    "height": 2.91
+    "left": 52.75,
+    "top": 84.42,
+    "width": 1.71,
+    "height": 2.83
    }
   },
   {
    "id": "Task_Feedback",
    "name": "Triage published feedback",
-   "left": 71.58,
-   "top": 56.97,
+   "left": 70.69,
+   "top": 55.49,
    "box": {
-    "left": 66.37,
-    "top": 68.48,
-    "width": 1.73,
-    "height": 2.91
+    "left": 65.54,
+    "top": 66.71,
+    "width": 1.71,
+    "height": 2.83
    }
   },
   {
    "id": "Task_FeedbackBeans",
    "name": "File feedback as beans",
-   "left": 71.58,
-   "top": 20.61,
+   "left": 70.69,
+   "top": 20.07,
    "box": {
-    "left": 66.37,
-    "top": 32.12,
-    "width": 1.73,
-    "height": 2.91
+    "left": 65.54,
+    "top": 31.29,
+    "width": 1.71,
+    "height": 2.83
    }
   },
   {
    "id": "Task_Retire",
    "name": "Retire or archive",
-   "left": 82.01,
-   "top": 2.42,
+   "left": 80.99,
+   "top": 2.36,
    "box": {
-    "left": 76.8,
-    "top": 13.94,
-    "width": 1.73,
-    "height": 2.91
+    "left": 75.84,
+    "top": 13.58,
+    "width": 1.71,
+    "height": 2.83
    }
   },
   {
    "id": "Call_BeanOpen",
    "name": "Open the bean",
-   "left": 20.14,
-   "top": 20.61,
+   "left": 19.89,
+   "top": 20.07,
    "box": {
-    "left": 14.93,
-    "top": 32.12,
-    "width": 1.73,
-    "height": 2.91
+    "left": 14.74,
+    "top": 31.29,
+    "width": 1.71,
+    "height": 2.83
    }
   },
   {
    "id": "Call_BeanClose",
    "name": "Close the bean",
-   "left": 92.81,
-   "top": 2.42,
+   "left": 91.65,
+   "top": 2.36,
    "box": {
-    "left": 87.59,
-    "top": 13.94,
-    "width": 1.73,
-    "height": 2.91
+    "left": 86.49,
+    "top": 13.58,
+    "width": 1.71,
+    "height": 2.83
    }
   }
  ],

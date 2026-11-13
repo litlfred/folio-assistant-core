@@ -5,192 +5,192 @@
   {
    "id": "Task_DetectModality",
    "name": "Detect the interaction modality",
-   "left": 14.75,
+   "left": 14.58,
    "top": 23.03,
    "box": {
-    "left": 9.53,
+    "left": 9.42,
     "top": 35.53,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Task_ReadFacts",
    "name": "Read the repository facts",
-   "left": 25.54,
+   "left": 25.25,
    "top": 23.03,
    "box": {
-    "left": 20.32,
+    "left": 20.09,
     "top": 35.53,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Task_AskIntent",
    "name": "Choose from the offered options",
-   "left": 34.89,
+   "left": 34.49,
    "top": 2.63,
    "box": {
-    "left": 29.68,
+    "left": 29.34,
     "top": 15.13,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Task_ScanRepo",
    "name": "Scan the repo for content worth importing",
-   "left": 46.4,
+   "left": 45.87,
    "top": 23.03,
    "box": {
-    "left": 41.19,
+    "left": 40.71,
     "top": 35.53,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Task_ChooseHarnessed",
    "name": "Choose what the harness reads",
-   "left": 46.4,
+   "left": 45.87,
    "top": 2.63,
    "box": {
-    "left": 41.19,
+    "left": 40.71,
     "top": 15.13,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Task_ConfirmImport",
    "name": "Import what, where, and who does it",
-   "left": 57.19,
+   "left": 56.54,
    "top": 2.63,
    "box": {
-    "left": 51.98,
+    "left": 51.38,
     "top": 15.13,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Task_CreateRepo",
    "name": "Create the repository",
-   "left": 46.4,
+   "left": 45.87,
    "top": 41.45,
    "box": {
-    "left": 41.19,
+    "left": 40.71,
     "top": 53.95,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Task_Scaffold",
    "name": "Scaffold the folio (folio_init)",
-   "left": 57.19,
+   "left": 56.54,
    "top": 23.03,
    "box": {
-    "left": 51.98,
+    "left": 51.38,
     "top": 35.53,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Task_SeedPlan",
    "name": "Seed the work plan",
-   "left": 89.57,
+   "left": 88.54,
    "top": 23.03,
    "box": {
-    "left": 84.35,
+    "left": 83.38,
     "top": 35.53,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Task_ProvisionGhPages",
    "name": "Provision gh-pages",
-   "left": 14.75,
+   "left": 14.58,
    "top": 61.18,
    "box": {
-    "left": 9.53,
+    "left": 9.42,
     "top": 73.68,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Task_PagesBootstrap",
    "name": "Start the Pages build and derive the URL",
-   "left": 26.98,
+   "left": 26.67,
    "top": 61.18,
    "box": {
-    "left": 21.76,
+    "left": 21.51,
     "top": 73.68,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Task_ReportUrl",
    "name": "Hand over the live link",
-   "left": 48.56,
+   "left": 48,
    "top": 61.18,
    "box": {
-    "left": 43.35,
+    "left": 42.85,
     "top": 73.68,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Task_ReportPending",
    "name": "Say where it will be",
-   "left": 48.56,
+   "left": 48,
    "top": 80.26,
    "box": {
-    "left": 43.35,
+    "left": 42.85,
     "top": 92.76,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Task_ReportUnknown",
    "name": "Say it could not be confirmed",
-   "left": 61.51,
+   "left": 60.8,
    "top": 80.26,
    "box": {
-    "left": 56.29,
+    "left": 55.65,
     "top": 92.76,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Call_BeanOpen",
    "name": "Open the bean",
-   "left": 67.99,
+   "left": 67.21,
    "top": 23.03,
    "box": {
-    "left": 62.77,
+    "left": 62.05,
     "top": 35.53,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   },
   {
    "id": "Call_BeanClose",
    "name": "Close the bean",
-   "left": 75.18,
+   "left": 74.32,
    "top": 61.18,
    "box": {
-    "left": 69.96,
+    "left": 69.16,
     "top": 73.68,
-    "width": 1.73,
+    "width": 1.71,
     "height": 3.16
    }
   }

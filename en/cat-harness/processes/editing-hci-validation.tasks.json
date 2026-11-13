@@ -5,204 +5,204 @@
   {
    "id": "Task_DescribeChange",
    "name": "Describe the intended change",
-   "left": 17.99,
+   "left": 17.83,
    "top": 3.12,
    "box": {
-    "left": 12.77,
+    "left": 12.66,
     "top": 14.1,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_ClaimBean",
    "name": "Open the bean",
-   "left": 17.99,
+   "left": 17.83,
    "top": 20.81,
    "box": {
-    "left": 12.77,
+    "left": 12.66,
     "top": 31.79,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "CallActivity_Evidence",
    "name": "Gather and verify the evidence",
-   "left": 29.14,
+   "left": 28.89,
    "top": 3.12,
    "box": {
-    "left": 23.92,
+    "left": 23.72,
     "top": 14.1,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_DraftEdit",
    "name": "Draft the block edit",
-   "left": 32.73,
+   "left": 32.46,
    "top": 20.81,
    "box": {
-    "left": 27.52,
+    "left": 27.29,
     "top": 31.79,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_SchemaValidate",
    "name": "Schema and constraint checks",
-   "left": 14.75,
+   "left": 14.62,
    "top": 75.14,
    "box": {
-    "left": 9.53,
+    "left": 9.45,
     "top": 86.13,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_SyntaxSpell",
    "name": "Syntax, spelling and links",
-   "left": 26.98,
+   "left": 26.75,
    "top": 75.14,
    "box": {
-    "left": 21.76,
+    "left": 21.58,
     "top": 86.13,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_BuildGates",
    "name": "Build and QA gates",
-   "left": 39.21,
+   "left": 38.88,
    "top": 75.14,
    "box": {
-    "left": 33.99,
+    "left": 33.71,
     "top": 86.13,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_AgentReview",
    "name": "Agent review of the change",
-   "left": 66.55,
+   "left": 65.99,
    "top": 68.79,
    "box": {
-    "left": 61.33,
+    "left": 60.82,
     "top": 79.77,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_SmeReview",
    "name": "Human / SME review",
-   "left": 77.34,
+   "left": 76.69,
    "top": 80.92,
    "box": {
-    "left": 72.12,
+    "left": 71.52,
     "top": 91.91,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_CollateFindings",
    "name": "Collate findings into a report",
-   "left": 72.3,
+   "left": 71.69,
    "top": 51.45,
    "box": {
-    "left": 67.09,
+    "left": 66.52,
     "top": 62.43,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_LogFindings",
    "name": "Log findings on the bean",
-   "left": 52.16,
+   "left": 51.72,
    "top": 20.81,
    "box": {
-    "left": 46.94,
+    "left": 46.55,
     "top": 31.79,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_ReviewFindings",
    "name": "Review the findings",
-   "left": 52.16,
+   "left": 51.72,
    "top": 3.12,
    "box": {
-    "left": 46.94,
+    "left": 46.55,
     "top": 14.1,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Call_OptionsAnalysis",
    "name": "Options analysis accept · revise · discard",
-   "left": 62.23,
+   "left": 61.71,
    "top": 20.81,
    "box": {
-    "left": 57.01,
+    "left": 56.54,
     "top": 31.79,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_RecordDecision",
    "name": "Record the decision and audit note",
-   "left": 65.83,
+   "left": 65.27,
    "top": 3.12,
    "box": {
-    "left": 60.61,
+    "left": 60.1,
     "top": 14.1,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_ReviseEdit",
    "name": "Revise the proposed change",
-   "left": 42.45,
+   "left": 42.09,
    "top": 20.81,
    "box": {
-    "left": 37.23,
+    "left": 36.92,
     "top": 31.79,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_Commit",
    "name": "Commit into the corpus",
-   "left": 80.94,
+   "left": 80.26,
    "top": 20.81,
    "box": {
-    "left": 75.72,
+    "left": 75.08,
     "top": 31.79,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   },
   {
    "id": "Task_ResolveBean",
    "name": "Close the bean",
-   "left": 91.37,
+   "left": 90.6,
    "top": 20.81,
    "box": {
-    "left": 86.15,
+    "left": 85.43,
     "top": 31.79,
-    "width": 1.73,
+    "width": 1.71,
     "height": 2.77
    }
   }
