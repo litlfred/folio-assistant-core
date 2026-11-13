@@ -31,17 +31,17 @@ Feature: feedback issues become Contributor Feedback rows
     When the agent's proposal, mechanical columns, Ready and tree marks change
     Then the feedback basis is the same
 
-  @test:tools/review-sheet-sync/feedback-issue.test.ts::feedbackBasis_with_grey_content_(a_\"2:\"_basis)::greyBasisMarked
+  @test:tools/review-sheet-sync/feedback-issue.test.ts::feedbackBasis_with_grey_content_(a_"2:"_basis)::greyBasisMarked
   Scenario: is marked 2: and differs from the blue-only basis
     When the bases with and without grey content are made
     Then the grey one is marked 2: and the blue-only one is not
 
-  @test:tools/review-sheet-sync/feedback-issue.test.ts::feedbackBasis_with_grey_content_(a_\"2:\"_basis)::greyBasisChangesWithGrey
+  @test:tools/review-sheet-sync/feedback-issue.test.ts::feedbackBasis_with_grey_content_(a_"2:"_basis)::greyBasisChangesWithGrey
   Scenario: changes when a grey content cell changes; the blue-only basis does not
     When a grey content cell changes
     Then the grey basis changes and the blue-only basis does not
 
-  @test:tools/review-sheet-sync/feedback-issue.test.ts::feedbackBasis_with_grey_content_(a_\"2:\"_basis)::greyBasisIgnoresAgent
+  @test:tools/review-sheet-sync/feedback-issue.test.ts::feedbackBasis_with_grey_content_(a_"2:"_basis)::greyBasisIgnoresAgent
   Scenario: ignores the agent's own columns
     When the agent's own columns change
     Then the grey basis is the same

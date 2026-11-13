@@ -108,3 +108,39 @@ Feature: resolving a reference into a layer's library
     When the entries are resolved
     Then doc resolves to library/kg/doc/structure.json, and its section sec-001 resolves
     And the entry in the undeclared group is not-ingested
+
+  @test:schemas/library-ref.test.ts::a_corpus_in_an_opt-in_group_the_mount_left_out_is_not_checked_here::leftOutByTheLockIsNotMounted
+  Scenario: a corpus the lock says the mount left out is not mounted, and is not checked here
+    Given a layer switching on an opt-in library group whose corpus is absent
+    And a lock saying the mount did not choose that group
+    When the corpus is looked up and a reference into it is resolved
+    Then the corpus directory is reported as left out by that lock
+    And the reference fails as library-not-mounted, explained as "Not checked here"
+
+  @test:schemas/library-ref.test.ts::a_corpus_in_an_opt-in_group_the_mount_left_out_is_not_checked_here::switchedOffAndLeftOutIsNotMounted
+  Scenario: a layer switching the group off still follows the lock's answer
+    Given a layer switching its opt-in library group off, with the corpus absent
+    When the corpus is looked up
+    Then a lock saying the mount left it out reports it left out by that lock
+    And a lock saying the mount took it reports nothing left out
+
+  @test:schemas/library-ref.test.ts::a_corpus_in_an_opt-in_group_the_mount_left_out_is_not_checked_here::takenByTheMountAndGoneIsStillAFinding
+  Scenario: a corpus the mount took and is gone is still a finding
+    Given a layer with an opt-in library group whose corpus is absent
+    And a lock saying the mount took that group
+    When the corpus is looked up and a reference into it is resolved
+    Then nothing is reported left out
+    And the reference fails as no-library-graph
+
+  @test:schemas/library-ref.test.ts::a_corpus_in_an_opt-in_group_the_mount_left_out_is_not_checked_here::noLockIsStillAFinding
+  Scenario: with no lock, an absent corpus is not excused
+    Given a layer with an opt-in library group whose corpus is absent, and no lock
+    When the corpus is looked up
+    Then nothing is reported left out
+
+  @test:schemas/library-ref.test.ts::a_corpus_in_an_opt-in_group_the_mount_left_out_is_not_checked_here::aMountedCorpusResolvesAsBefore
+  Scenario: a mounted corpus resolves as before
+    Given a layer with an opt-in library group whose corpus is present
+    When its library directory is read
+    Then it is the corpus directory
+    And nothing is reported left out, even by a lock saying the group was not chosen

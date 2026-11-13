@@ -943,7 +943,7 @@ describe("review-sheet.gs in drafting mode", () => {
   });
 });
 
-describe("a \"2:\" basis: a proposal also goes stale on the grey content its comments join (#348)", () => {
+describe('a "2:" basis: a proposal also goes stale on the grey content its comments join (#348)', () => {
   const pcRows = configRows(buildConfig(folio(), "review/public-comment/sheet-sync.json"));
   const exact = ["Title", "TWG (CS)"];
   const hdr = ["Change-set", "Title", "TWG (CS)", "Suggested Revisions", "TWG (PCs)", "Agentic status", "Committee Feedback (CL)", "Change Set Feedback (agent)", "Ready for agent"];
@@ -1707,7 +1707,7 @@ describe("the status line comes back after the agent rewrites its cell (owner, 2
   });
 });
 
-describe("data rows look like data rows (owner, 2026-10-31: \"why row 3 bold\")", () => {
+describe('data rows look like data rows (owner, 2026-10-31: "why row 3 bold")', () => {
   test("headerLookRowRestored", () => {
     const copies: Array<[number, number]> = [];
     // Row 1 instructions, row 2 header, rows 3-4 data; row 3 inherited the header's bold.
@@ -1897,7 +1897,7 @@ describe("Where to review and PR links (Q-FBK-3 A)", () => {
   });
 });
 
-describe("a refresh keeps the links an agent put in its feedback (owner, 2026-11-01: \"Dont know where link is\")", () => {
+describe('a refresh keeps the links an agent put in its feedback (owner, 2026-11-01: "Dont know where link is")', () => {
   const { keptLinks, linkRuns } = new Function("SpreadsheetApp", code + "\nreturn { keptLinks, linkRuns };")({}) as {
     keptLinks: (r: { text: string; url: string }[], t: string) => [number, number, string][];
     linkRuns: (range: object) => { text: string; url: string }[];

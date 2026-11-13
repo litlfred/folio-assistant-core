@@ -311,14 +311,14 @@ Feature: the folio glossary: its schema, its SKOS, its pages and its extracted t
     And the term that overrides it carries "process-modelling"
     And a term that does not override it carries none
 
-  @test:schemas/glossary.test.ts::a_schema's_terms_take_the_subject_area_the_schema_publishes_(owner,_2026-11-07:_\"do_it_in_the_schema\")::subjectReadFromSchema
+  @test:schemas/glossary.test.ts::a_schema's_terms_take_the_subject_area_the_schema_publishes_(owner,_2026-11-07:_"do_it_in_the_schema")::subjectReadFromSchema
   Scenario: A schema's terms take the subject the schema publishes
     Given a graph schema that publishes subject "harness-vocabulary"
     When its terms are read
     Then the scheme's subject is "harness-vocabulary"
     And the scheme is a valid glossary
 
-  @test:schemas/glossary.test.ts::a_schema's_terms_take_the_subject_area_the_schema_publishes_(owner,_2026-11-07:_\"do_it_in_the_schema\")::noSchemaSubjectNoSchemeSubject
+  @test:schemas/glossary.test.ts::a_schema's_terms_take_the_subject_area_the_schema_publishes_(owner,_2026-11-07:_"do_it_in_the_schema")::noSchemaSubjectNoSchemeSubject
   Scenario: A schema that publishes no subject leaves the scheme without one
     Given a graph schema with no subject
     When its terms are read
