@@ -92,10 +92,10 @@
 <meta name="fa-glass-strip" content="[&quot;glass-todos&quot;,&quot;glass-settings&quot;]"><meta name="fa-baseurl" content="../../../.."><meta name="fa-staging" content=""><meta name="fa-search-index" content="">
 
 <meta name="fa-beans-src" content="../../../../assets/beans/index.json"><meta name="fa-processes-src" content="../../../../subgraph/index.jsonld"><meta name="fa-build-src" content="../../../../build.json"><link rel="stylesheet" href="../../../../assets/css/navbar-row.css?v=7d7d00921e0f">
-<link rel="stylesheet" href="../../../../assets/css/docs-ui.css?v=5386a6134c28"><link rel="stylesheet" href="../../../../assets/css/narrow-viewport.css?v=173ef819dbf2"><link rel="stylesheet" href="../../../../assets/css/work-plan.css?v=bd8c73337b01"><link rel="stylesheet" href="../../../../assets/css/themes.css?v=5c199f8420d3"><link rel="stylesheet" href="../../../../assets/css/uml.css?v=e677f91cbf66"><link rel="stylesheet" href="../../../../assets/css/avatars.css?v=c372ccbe0413"><script type="application/json" id="fa-declared-kinds">["beans","block-kinds","cat-harness","code","code-list","content-adapters","docs","folio","glossary","health","memory","methodology","pipeline-plugins","processes","qa","qa-checkers","scenarios","schemas","skills","software-library","tools","translation-sources","typologies","validators"]</script><script src="../../../../assets/js/harness-data.js" defer></script>
+<link rel="stylesheet" href="../../../../assets/css/docs-ui.css?v=1eebbbe844d9"><link rel="stylesheet" href="../../../../assets/css/narrow-viewport.css?v=173ef819dbf2"><link rel="stylesheet" href="../../../../assets/css/work-plan.css?v=63b259829c69"><link rel="stylesheet" href="../../../../assets/css/themes.css?v=5c199f8420d3"><link rel="stylesheet" href="../../../../assets/css/uml.css?v=e677f91cbf66"><link rel="stylesheet" href="../../../../assets/css/avatars.css?v=c372ccbe0413"><script type="application/json" id="fa-declared-kinds">["beans","block-kinds","cat-harness","code","code-list","content-adapters","docs","folio","glossary","health","memory","methodology","pipeline-plugins","processes","qa","qa-checkers","scenarios","schemas","skills","software-library","tools","translation-sources","typologies","validators"]</script><script src="../../../../assets/js/harness-data.js" defer></script>
 <script src="../../../../assets/js/vendor/qrcode.js" defer></script>
 <script src="../../../../assets/js/vendor/qrcode_UTF8.js" defer></script><script src="../../../../assets/js/kg-render.js" defer></script><script src="../../../../assets/js/navbar-row.js?v=cc1885e41c70" defer></script>
-<script src="../../../../assets/js/docs-ui.js?v=829c614a8b9d" defer></script><script src="../../../../assets/js/edit-links.js?v=b4f948dbab24" defer></script><script src="../../../../assets/js/code-highlight.js?v=0f94772226c3" defer></script><script src="../../../../assets/js/work-plan.js" defer></script><script src="../../../../assets/js/process-index.js" defer></script><style>
+<script src="../../../../assets/js/docs-ui.js?v=829c614a8b9d" defer></script><script src="../../../../assets/js/edit-links.js?v=ee68944d6d0b" defer></script><script src="../../../../assets/js/code-highlight.js?v=0f94772226c3" defer></script><script src="../../../../assets/js/work-plan.js" defer></script><script src="../../../../assets/js/process-index.js" defer></script><style>
   .folio-landing { position: relative; margin: 0 0 2rem; }
 
   /* WHAT IS LEFT HERE, AND WHY IT IS SO LITTLE.
@@ -274,7 +274,7 @@
 
 <p><strong>Skill <code class="language-plaintext highlighter-rouge">data-modelling</code>:</strong> Build a data model: identify the entities a body of work is actually about, the relations between them, and the cardinalities — then declare it where the tools can read it. Process-agnostic technique; the CRDM phase that invokes it is <code class="language-plaintext highlighter-rouge">crdm-data-model</code>.</p>
 
-<p><strong>Named by:</strong> <a href="../crdm-close.html">CRDM close-out</a>, <a href="../crdm-data-model.html">CRDM data model</a>, <a href="../crdm-deliver.html">CRDM Phase 6 — implement, MVP, acceptance</a>, <a href="../crdm-needs.html">CRDM Phase 1 — needs</a>, <a href="../crdm-requirements-definition.html">CRDM Phases 2–4 — BPA and requirements</a>, <a href="../crdm-requirements.html">CRDM requirements</a>, <a href="../crdm-signoff.html">CRDM Phase 5 — beans and sign-off</a>, <a href="../options-analysis.html">Options analysis</a>, <a href="../swot-analysis.html">SWOT situation analysis</a>, <a href="../guideline-updates.html">Guideline Updates</a></p>
+<p><strong>Named by:</strong> <a href="../guideline-updates.html">Guideline Updates</a></p>
 
 <p><strong>One question, and everything else follows from it:</strong></p>
 
@@ -611,7 +611,7 @@ reads exactly like a valid name.</p>
 kind and id, resolvable in the knowledge graph, and projected by <code class="language-plaintext highlighter-rouge">kg-export</code>
 as an <code class="language-plaintext highlighter-rouge">@id</code> link, never a literal. The IRI that link carries is
 <code class="language-plaintext highlighter-rouge">&lt;doc dir&gt;/&lt;kind&gt;/&lt;id&gt;</code>, never <code class="language-plaintext highlighter-rouge">….jsonld#&lt;kind&gt;/&lt;id&gt;</code> — minted by the
-exporter, not by the model; <a href="kg-export.html"><code class="language-plaintext highlighter-rouge">kg-export</code></a> §”Subject IRIs — a
+exporter, not by the model; <a href="https://github.com/litlfred/cat-harness/blob/main/skills/kg/kg-core/kg-export.md"><code class="language-plaintext highlighter-rouge">kg-export</code></a> §”Subject IRIs — a
 path, not a <code class="language-plaintext highlighter-rouge">#fragment</code>” owns that rule. Use the helpers that already exist rather
 than inventing one:</p>
 

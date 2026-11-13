@@ -26,6 +26,40 @@
 }
 /* navbar-geometry:end */
 
+/* ── Typography: the one set of fonts and sizes ─────────────────────────
+ * Owner, 2026-11-12: consolidate the fonts used across the harnesses, with
+ * "fonts that are not custom, that browsers have". So no web font is loaded
+ * anywhere: each family is a stack of fonts the operating systems ship, and
+ * every stylesheet names a token here rather than a font or a size of its own.
+ *
+ * Mono does not lean on `ui-monospace` alone: Chrome does not support it, so
+ * the old `ui-monospace, monospace` fell through to Courier New on Windows.
+ * Named fonts follow it, one per platform (SF Mono/Menlo on macOS, Consolas
+ * on Windows, Liberation/DejaVu on Linux).
+ *
+ * Sizes are eight steps (11, 12, 14, 16, 18, 20, 24, 32px at a 16px root).
+ * A relative `em` size is still fine where a thing scales with its parent. */
+:root {
+  --fa-font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --fa-font-serif: Georgia, "Times New Roman", Times, serif;
+  --fa-font-mono: ui-monospace, "SF Mono", SFMono-Regular, Menlo, Consolas, "Liberation Mono", "DejaVu Sans Mono", monospace;
+  --fa-text-2xs: 0.6875rem;
+  --fa-text-xs: 0.75rem;
+  --fa-text-sm: 0.875rem;
+  --fa-text-base: 1rem;
+  --fa-text-md: 1.125rem;
+  --fa-text-lg: 1.25rem;
+  --fa-text-xl: 1.5rem;
+  --fa-text-2xl: 2rem;
+}
+/* The theme's own stacks (just-the-docs sets `-apple-system, …` on body and
+ * `"SFMono-Regular", …` on code) and the browser's Arial on form controls are
+ * brought onto the same tokens, so the sidebar, the page and a search box are
+ * one face. */
+body { font-family: var(--fa-font-sans); }
+code, kbd, pre, samp, tt { font-family: var(--fa-font-mono); }
+button, input, select, textarea { font-family: inherit; }
+
 /*
  * Docs-site UI affordances: the header QR toggle, and zoom / full-width
  * controls on the workflow figures.
@@ -300,7 +334,7 @@
   display: block;
   margin-top: 0.35rem;
   max-width: 13rem;
-  font-size: 0.65rem;
+  font-size: var(--fa-text-2xs);
   line-height: 1.3;
   opacity: 0.75;
   overflow-wrap: anywhere;
@@ -315,7 +349,7 @@
   align-items: center;
   gap: 0.3rem;
   margin: 0.3em 0 0.15em;
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
 }
 
 .fa-figure-tools button,
@@ -604,7 +638,7 @@
    they were looking at. */
 .fa-build-stamp {
   opacity: 0.6;
-  font-size: 0.7rem;
+  font-size: var(--fa-text-2xs);
 }
 
 .fa-build-stamp code {
@@ -1350,7 +1384,7 @@
   padding: 0.05em 0.4em;
   border: 1px solid transparent;
   border-radius: 4px;
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
   text-decoration: none;
   opacity: 0.35;
 }
@@ -1531,7 +1565,7 @@
   border: 1px solid var(--border-color, rgba(128, 128, 128, 0.35));
   border-radius: 6px;
   background: var(--sidebar-color, rgba(128, 128, 128, 0.08));
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
 }
 
 .fa-a11y-row {
@@ -1548,11 +1582,11 @@
 .fa-a11y-row input { margin-top: 0.15rem; width: 16px; height: 16px; flex: none; }
 .fa-a11y-text { display: flex; flex-direction: column; line-height: 1.3; }
 .fa-a11y-label { font-weight: 600; }
-.fa-a11y-hint { opacity: 0.75; font-size: 0.7rem; }
+.fa-a11y-hint { opacity: 0.75; font-size: var(--fa-text-2xs); }
 
 .fa-a11y-note {
   margin: 0.5rem 0 0;
-  font-size: 0.68rem;
+  font-size: var(--fa-text-2xs);
   opacity: 0.7;
 }
 
@@ -1749,7 +1783,7 @@
   padding: 4px 8px;
   border-radius: 4px;
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: var(--fa-text-xs);
   margin: 0 1px;
   transition: background 0.15s;
   color: var(--fa-sidelang-link);
@@ -1838,7 +1872,7 @@ a.fa-lang-tab:hover:not(.is-current) {
   margin: 0.3em 0 0.8em;
   padding: 5px 10px;
   border-radius: 6px;
-  font-size: 0.82rem;
+  font-size: var(--fa-text-sm);
   background: var(--fa-langbar-bg);
   color: var(--fa-langbar-fg);
 }
@@ -1935,7 +1969,7 @@ a.fa-lang-tab:hover:not(.is-current) {
   padding: 2px 7px;
   border-radius: 3px;
   text-decoration: none;
-  font-size: 0.8rem;
+  font-size: var(--fa-text-xs);
   transition: background 0.15s;
   color: var(--fa-langbar-link);
   cursor: pointer;
@@ -2061,7 +2095,7 @@ html:not([data-fa-scheme="light"]) .fa-page-bar {
 }
 .fa-page-bar .fa-bar-search[data-open="true"] .ig-search-input,
 .fa-page-bar .fa-bar-search[data-open="true"] .search-input {
-  font-size: 1rem;
+  font-size: var(--fa-text-base);
   padding: 0.5rem 0.75rem;
 }
 
@@ -2070,7 +2104,7 @@ html:not([data-fa-scheme="light"]) .fa-page-bar {
 .fa-page-lang-bar[data-fa-slotted] .fa-page-lang-toggle {
   gap: 0.6rem;
   font-weight: 700;
-  font-size: 1.1rem;
+  font-size: var(--fa-text-md);
   line-height: 1.2;
   white-space: nowrap;
 }
@@ -2104,7 +2138,7 @@ html:not([data-fa-scheme="light"]) .fa-page-bar {
   display: block;
   padding: 0.55rem 1.1rem;
   border-radius: 0;
-  font-size: 1rem;
+  font-size: var(--fa-text-base);
   font-weight: 400;
   color: var(--fa-barpanel-fg);
   background: transparent;
@@ -2186,7 +2220,7 @@ html:not([data-fa-scheme="light"]) .fa-page-bar {
   border-radius: 4px;
   background: none;
   font-family: inherit;
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
   color: inherit;
@@ -2214,13 +2248,13 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
  * nobody has, and an icon distinguished only by hue fails the same readers the
  * state glyphs exist for. */
 .fa-qa-tag {
-  font-size: 0.62rem;
+  font-size: var(--fa-text-2xs);
   font-weight: 700;
   letter-spacing: 0.04em;
   opacity: 0.85;
 }
 
-.fa-qa-glyph { font-size: 0.8rem; }
+.fa-qa-glyph { font-size: var(--fa-text-xs); }
 
 .fa-qa-fail { color: #b3261e; opacity: 1; }
 .fa-qa-warn { color: #8a6100; opacity: 1; }
@@ -2297,7 +2331,7 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
   border-left: 4px solid rgba(128, 128, 128, 0.55);
   border-radius: 6px;
   background: rgba(128, 128, 128, 0.06);
-  font-size: 0.82rem;
+  font-size: var(--fa-text-sm);
 }
 
 .fa-qa-panel:focus-visible { outline: 2px solid currentcolor; outline-offset: 2px; }
@@ -2317,9 +2351,9 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
   border-bottom: 1px solid rgba(128, 128, 128, 0.3);
 }
 
-.fa-qa-subject { font-family: var(--fa-mono, ui-monospace, monospace); font-size: 0.78rem; }
+.fa-qa-subject { font-family: var(--fa-font-mono); font-size: var(--fa-text-xs); }
 .fa-qa-counts { opacity: 0.75; font-variant-numeric: tabular-nums; }
-.fa-qa-sidecar-link { font-size: 0.72rem; font-family: var(--fa-mono, ui-monospace, monospace); }
+.fa-qa-sidecar-link { font-size: var(--fa-text-xs); font-family: var(--fa-font-mono); }
 .fa-qa-close { margin-left: auto; min-height: 2.2em; padding: 0.1em 0.6em; cursor: pointer; }
 
 .fa-qa-crit-list { margin: 0; padding: 0; list-style: none; }
@@ -2349,15 +2383,15 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
 
 .fa-qa-more { margin-top: 0.4em; opacity: 0.85; }
 .fa-qa-caret { width: 1em; flex: none; opacity: 0.7; }
-.fa-qa-crit-id { flex: 1 1 auto; font-size: 0.76rem; word-break: break-word; }
-.fa-qa-wcount { flex: none; opacity: 0.7; font-size: 0.72rem; }
+.fa-qa-crit-id { flex: 1 1 auto; font-size: var(--fa-text-xs); word-break: break-word; }
+.fa-qa-wcount { flex: none; opacity: 0.7; font-size: var(--fa-text-xs); }
 
 .fa-qa-chip {
   flex: none;
   padding: 0.1em 0.45em;
   border: 1px solid currentcolor;
   border-radius: 3px;
-  font-size: 0.68rem;
+  font-size: var(--fa-text-2xs);
   font-weight: 600;
   letter-spacing: 0.02em;
   white-space: nowrap;
@@ -2458,7 +2492,7 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
   padding: 2px 8px;
   border: 1px solid transparent;
   border-radius: 4px;
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
   font-variant-numeric: tabular-nums;
   cursor: default;
 }
@@ -2493,7 +2527,7 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
   background: var(--fa-trbadge-idle-bg);
   color: var(--fa-trbadge-idle-fg);
   font: inherit;
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
   cursor: pointer;
 }
 .fa-tr-drawer-toggle:focus-visible { outline: 2px solid currentcolor; outline-offset: 2px; }
@@ -2502,11 +2536,11 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
 /* The drawer itself is a `fa-qa-panel` (owner ruling: reuse the QA panel), so
    its box, border and focus ring are that panel's. Only its two sections are
    new: a fact list for the page and a table for the site. */
-.fa-tr-drawer h3 { font-size: 0.85rem; margin: 0.8em 0 0.3em; }
+.fa-tr-drawer h3 { font-size: var(--fa-text-sm); margin: 0.8em 0 0.3em; }
 .fa-tr-drawer__facts { display: grid; grid-template-columns: max-content 1fr; gap: 0.15em 0.8em; margin: 0; }
 .fa-tr-drawer__facts dt { font-weight: 600; }
 .fa-tr-drawer__facts dd { margin: 0; }
-.fa-tr-drawer__table { border-collapse: collapse; font-size: 0.8rem; }
+.fa-tr-drawer__table { border-collapse: collapse; font-size: var(--fa-text-xs); }
 .fa-tr-drawer__table th, .fa-tr-drawer__table td { padding: 0.2em 0.6em; text-align: start; border-bottom: 1px solid rgba(128, 128, 128, 0.3); }
 .fa-tr-drawer__table td[data-fa-tr-officiality="disagree"],
 .fa-tr-drawer__table td[data-fa-tr-officiality="unreadable"] { font-weight: 600; }
@@ -2550,7 +2584,7 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
   padding: 0.35rem 0.75rem;
   margin: 0.6em 0;
   color: var(--fa-trwarn-fg);
-  font-size: 0.85rem;
+  font-size: var(--fa-text-sm);
 }
 
 /* The summary IS the notice, so it carries the whole line and stays on one
@@ -2618,7 +2652,7 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
   border-radius: 4px;
   background: transparent;
   color: inherit;
-  font-size: 0.8rem;
+  font-size: var(--fa-text-xs);
   cursor: pointer;
 }
 
@@ -2660,8 +2694,8 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
   margin-bottom: 0.4em;
 }
 
-.fa-qa-witness-id { font-size: 0.74rem; word-break: break-all; }
-.fa-qa-witness-ver { opacity: 0.7; font-size: 0.72rem; }
+.fa-qa-witness-id { font-size: var(--fa-text-xs); word-break: break-all; }
+.fa-qa-witness-ver { opacity: 0.7; font-size: var(--fa-text-xs); }
 
 /* A human ruling outranks an agent's, which outranks a script's; the border
  * weight says so at a glance while the chip says so in words. */
@@ -2689,11 +2723,11 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
   flex: none;
   min-width: 9.5rem;
   opacity: 0.7;
-  font-size: 0.7rem;
+  font-size: var(--fa-text-2xs);
   text-transform: lowercase;
 }
 .fa-qa-field-value { word-break: break-word; }
-.fa-qa-mono { font-family: var(--fa-mono, ui-monospace, monospace); font-size: 0.74rem; }
+.fa-qa-mono { font-family: var(--fa-font-mono); font-size: var(--fa-text-xs); }
 
 /* An absent value is PRINTED as "not recorded". A blank cell reads as a value
  * the reader failed to notice; this reads as a fact about the sidecar. */
@@ -2701,7 +2735,7 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
 
 .fa-qa-changed { margin: 0.3em 0; }
 .fa-qa-changed ul { margin: 0.1em 0 0 1.2em; padding: 0; }
-.fa-qa-changed li { font-size: 0.75rem; }
+.fa-qa-changed li { font-size: var(--fa-text-xs); }
 
 .fa-qa-evidence { margin: 0.3em 0 0.6em; }
 .fa-qa-evidence pre {
@@ -2710,11 +2744,11 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
   overflow-x: auto;
   border-radius: 4px;
   background: rgba(128, 128, 128, 0.12);
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
   white-space: pre-wrap;
 }
 
-.fa-qa-notes { margin: 0.4em 0 0; font-size: 0.76rem; }
+.fa-qa-notes { margin: 0.4em 0 0; font-size: var(--fa-text-xs); }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) .fa-qa-res-fail,
@@ -2864,7 +2898,7 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
    * `!important` answers the theme's own, in kind, as this file already does
    * for `.site-footer`'s font-size. */
   overflow: hidden;
-  font-size: 1rem !important;
+  font-size: var(--fa-text-base) !important;
   line-height: 1.25;
   white-space: nowrap;
   text-overflow: ellipsis;
@@ -2909,7 +2943,7 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
   border: 2px solid currentColor;
   border-radius: 0.25rem;
   font-weight: 700;
-  font-size: 1rem;
+  font-size: var(--fa-text-base);
   line-height: 1;
   vertical-align: -0.32em;
 }
@@ -3017,7 +3051,7 @@ button.fa-qa-badge[aria-busy="true"] { opacity: 0.6; }
   border-radius: 6px;
   background: transparent;
   color: inherit;
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
   line-height: 1.2;
   text-align: center;
   text-decoration: none;
@@ -3124,7 +3158,7 @@ a.fa-tile[data-fa-readonly]:focus-visible {
   border-radius: 4px;
   background: transparent;
   color: inherit;
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
   cursor: pointer;
 }
 
@@ -3132,7 +3166,7 @@ a.fa-tile[data-fa-readonly]:focus-visible {
 
 .fa-tiles-title {
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--fa-text-xs);
   font-weight: 600;
   /* The heading takes focus when a view opens, so the panel announces what it
      became. It must not look like something to click. */
@@ -3215,7 +3249,7 @@ a.fa-tile[data-fa-readonly]:focus-visible {
 .fa-search-notice {
   margin: 0.4rem 0 0;
   padding: 0.35rem 0.5rem;
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
   line-height: 1.35;
   border-left: 3px solid var(--fa-search-border);
   background: var(--fa-search-bg);
@@ -3280,7 +3314,7 @@ a.fa-tile[data-fa-readonly]:focus-visible {
   border-radius: 4px;
   background: var(--fa-search-bg);
   color: var(--fa-search-fg);
-  font-size: 0.8rem;
+  font-size: var(--fa-text-xs);
 }
 
 /* `::placeholder` is rendered at a reduced opacity by every engine unless it
@@ -3363,7 +3397,7 @@ a.fa-tile[data-fa-readonly]:focus-visible {
   padding: 0.35rem 0.5rem;
   min-height: 2rem;
   color: var(--fa-search-fg);
-  font-size: 0.78rem;
+  font-size: var(--fa-text-xs);
   text-decoration: none;
 }
 
@@ -3377,7 +3411,7 @@ a.fa-tile[data-fa-readonly]:focus-visible {
 .fa-tiles .search-result-previews,
 .fa-tiles .search-no-result {
   color: var(--fa-search-muted);
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
 }
 
 /* ═══ Sticky todos ═══════════════════════════════════════════════════════
@@ -3449,7 +3483,7 @@ a.fa-tile[data-fa-readonly]:focus-visible {
 
 .fa-sticky-board-title {
   margin: 0;
-  font-size: 1.1rem;
+  font-size: var(--fa-text-md);
 }
 
 .fa-sticky-board-close,
@@ -3461,7 +3495,7 @@ a.fa-tile[data-fa-readonly]:focus-visible {
   border-radius: var(--fa-folio-radius, 6px);
   background: transparent;
   color: inherit;
-  font-size: 1.2rem;
+  font-size: var(--fa-text-lg);
   line-height: 1;
   cursor: pointer;
 }
@@ -3700,7 +3734,7 @@ a.fa-tile[data-fa-readonly]:focus-visible {
   padding: 0.1em 0.5em;
   border: 1px solid rgba(128, 128, 128, 0.4);
   border-radius: 999px;
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
   text-transform: lowercase;
 }
 
@@ -3720,7 +3754,7 @@ a.fa-tile[data-fa-readonly]:focus-visible {
   background: transparent;
   color: inherit;
   font: inherit;
-  font-size: 0.78rem;
+  font-size: var(--fa-text-xs);
   cursor: pointer;
 }
 
@@ -3765,13 +3799,13 @@ a.fa-tile[data-fa-readonly]:focus-visible {
   min-height: 2.75rem;
   display: inline-flex;
   align-items: center;
-  font-size: 0.78rem;
+  font-size: var(--fa-text-xs);
   opacity: 1;
 }
 
 .fa-sticky-body {
   margin-top: 0.6em;
-  font-size: 0.85rem;
+  font-size: var(--fa-text-sm);
 }
 .fa-sticky-body p { margin: 0 0 0.6em; white-space: pre-wrap; }
 .fa-sticky-body p:last-child { margin-bottom: 0; }
@@ -4096,11 +4130,11 @@ a.fa-tile[data-fa-readonly]:focus-visible {
   background: transparent;
   color: var(--fa-glass-ink);
   font: inherit;
-  font-size: 1.1rem;
+  font-size: var(--fa-text-md);
   font-weight: 700;
   cursor: pointer;
 }
-.fa-glass-home { font-size: 0.9rem; }
+.fa-glass-home { font-size: var(--fa-text-sm); }
 /* THE MOVE BAR — what ✜ is for, said on screen (owner, 2026-09-24:
    *"exploding icon outlines the avatar but appears to do nothing else"*). A
    second row of the sticky zoom bar, so it stays in reach and at full size
@@ -4119,9 +4153,9 @@ a.fa-tile[data-fa-readonly]:focus-visible {
   flex: 1 1 100%;
   max-width: 34rem;
   margin: 0;
-  font-size: 0.85rem;
+  font-size: var(--fa-text-sm);
 }
-.fa-glass-move-done { font-size: 0.9rem; }
+.fa-glass-move-done { font-size: var(--fa-text-sm); }
 .fa-sticky-layer[data-fa-glass-home="false"] .fa-glass-home {
   border-color: var(--fa-glass-accent);
   box-shadow: inset 0 0 0 2px var(--fa-glass-accent);
@@ -4253,7 +4287,7 @@ a.fa-tile[data-fa-readonly]:focus-visible {
  * corner above the title strip (#982); the title leaves room for it. */
 .fa-glass-asset > .fa-glass-badge {
   position: absolute; top: 0.3rem; right: 0.4rem; z-index: 3;
-  font-size: 1.35rem; line-height: 1;
+  font-size: var(--fa-text-lg); line-height: 1;
   filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.5));
   pointer-events: none;
 }
@@ -4261,7 +4295,7 @@ a.fa-tile[data-fa-readonly]:focus-visible {
 /* The pin control any block may carry ([data-fa-pin-control]): faint until
  * its block is hovered, full colour while the block is on the glass. */
 [data-fa-pin-control] {
-  font: inherit; font-size: 0.85rem; line-height: 1;
+  font: inherit; font-size: var(--fa-text-sm); line-height: 1;
   padding: 0.1rem 0.2rem; border: 0; background: none; color: inherit;
   cursor: pointer; opacity: 0.35; filter: grayscale(1);
 }
@@ -4295,14 +4329,14 @@ a.fa-glass-asset-name { text-decoration: underline; text-underline-offset: 2px; 
   border: 1px solid var(--fa-glass-edge);
   background: transparent;
   color: var(--fa-glass-ink);
-  font-size: 1.2rem;
+  font-size: var(--fa-text-lg);
   cursor: pointer;
 }
 /* The eye is a link, so it is centred as the buttons' text is. */
 a.fa-glass-asset-tool { display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; }
 a.fa-glass-asset-tool svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
 .fa-glass-notes { max-width: 40rem; margin: 1rem auto 0; }
-.fa-glass-notes p { padding: 0.5rem 0.75rem; margin: 0 0 0.5rem; font-size: 0.85rem; }
+.fa-glass-notes p { padding: 0.5rem 0.75rem; margin: 0 0 0.5rem; font-size: var(--fa-text-sm); }
 
 /* ── The tile strip, along the BOTTOM edge ────────────────────────────── */
 /* THE DOCK holds the strip and the tab that slides it away (`b8eq`). The
@@ -4353,7 +4387,7 @@ a.fa-glass-asset-tool svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
   background: transparent;
   color: var(--fa-glass-ink);
   font: inherit;
-  font-size: 0.85rem;
+  font-size: var(--fa-text-sm);
   font-weight: 700;
   cursor: pointer;
 }
@@ -4426,7 +4460,7 @@ a.fa-glass-asset-tool svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
   background: transparent;
   color: var(--fa-glass-ink);
   font: inherit;
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
   text-align: center;
   text-decoration: none;
   cursor: pointer;
@@ -4452,13 +4486,13 @@ a.fa-glass-asset-tool svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
   align-items: center;
   justify-content: center;
   text-align: center;
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
   line-height: 1.15;
   border: 1px dashed var(--fa-glass-edge);
 }
 .fa-glass-tiles .fa-tile svg { width: 1.6rem; height: 1.6rem; }
 .fa-glass-chrome-tile { font-weight: 700; }
-.fa-glass-tile-glyph { font-size: 1.6rem; line-height: 1; }
+.fa-glass-tile-glyph { font-size: var(--fa-text-xl); line-height: 1; }
 .fa-glass-tiles .fa-glass-chrome-tile[aria-expanded="true"] {
   border-color: var(--fa-glass-accent);
   box-shadow: inset 0 0 0 2px var(--fa-glass-accent);
@@ -4558,8 +4592,8 @@ a.fa-glass-asset-tool svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
   .fa-glass-panel[data-fa-panel="glass-settings"] .fa-glass-settings-actions .fa-glass-settings-note { flex: 0 1 auto; margin: 0; }
 }
 .fa-glass-panel-head { display: flex; align-items: center; gap: 0.5rem; }
-.fa-glass-panel-title { flex: 1 1 auto; margin: 0; font-size: 1.1rem; color: var(--fa-glass-ink); }
-.fa-glass-panel-status { color: var(--fa-glass-muted); font-size: 0.85rem; }
+.fa-glass-panel-title { flex: 1 1 auto; margin: 0; font-size: var(--fa-text-md); color: var(--fa-glass-ink); }
+.fa-glass-panel-status { color: var(--fa-glass-muted); font-size: var(--fa-text-sm); }
 .fa-glass-panel-more { color: var(--fa-glass-ink); text-decoration: underline; }
 .fa-glass-todo-list { list-style: none; margin: 0.5rem 0; padding: 0; }
 .fa-glass-todo { border-top: 1px solid var(--fa-glass-edge); padding: 0.5rem 0; }
@@ -4578,7 +4612,7 @@ a.fa-glass-asset-tool svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
 }
 .fa-glass-choice input { width: 1.4rem; height: 1.4rem; margin: 0; }
 .fa-glass-choice-label { font-weight: 600; }
-.fa-glass-choice-hint { color: var(--fa-glass-muted); font-size: 0.82rem; }
+.fa-glass-choice-hint { color: var(--fa-glass-muted); font-size: var(--fa-text-sm); }
 .fa-glass-opacity { display: flex; align-items: center; gap: 0.5rem; }
 .fa-glass-opacity input[type="range"] { flex: 1 1 auto; min-width: 6rem; height: 2.75rem; }
 .fa-glass-opacity-value { min-width: 3.5rem; font-variant-numeric: tabular-nums; font-weight: 700; }
@@ -4612,7 +4646,7 @@ a.fa-glass-asset-tool svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
   background: transparent;
   color: inherit;
   font: inherit;
-  font-size: 0.9rem;
+  font-size: var(--fa-text-sm);
   font-weight: 600;
   text-align: start;
   text-decoration: underline;
@@ -4631,13 +4665,13 @@ a.fa-glass-asset-tool svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
   background: #4a34b8;
   color: #ffffff;
   font: inherit;
-  font-size: 0.8rem;
+  font-size: var(--fa-text-xs);
   font-weight: 600;
   white-space: nowrap;
   cursor: pointer;
 }
 .fa-pullout::before { content: "\2934\00a0"; }
-.fa-pullout-state { font-size: 0.78rem; }
+.fa-pullout-state { font-size: var(--fa-text-xs); }
 
 /* The sheet is the glass's own chrome and is ALWAYS present, which is what
    keeps `:empty` above from hiding an open glass that holds no cards yet. It
@@ -4670,7 +4704,7 @@ a.fa-glass-asset-tool svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
   border: 1px dashed var(--fa-rule, rgba(128, 128, 128, 0.5));
   border-radius: var(--fa-folio-radius, 0);
   text-align: center;
-  font-size: 0.9rem;
+  font-size: var(--fa-text-sm);
 }
 
 /* The handle. ABOVE the layer's own z-index, so it stays reachable while the
@@ -4759,7 +4793,7 @@ a.fa-glass-asset-tool svg { width: 1.2rem; height: 1.2rem; fill: currentColor; }
      being body-level is what makes it certain rather than likely.
      12.46:1 on the dark chrome, computed rather than eyeballed. */
   color: var(--fa-handle-ink, #ffffff);
-  font-size: 0.85rem;
+  font-size: var(--fa-text-sm);
   white-space: nowrap;
   cursor: pointer;
 }
@@ -4972,7 +5006,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
   padding: 0 0.35em;
   border-radius: 999px;
   background: rgba(128, 128, 128, 0.3);
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
   font-variant-numeric: tabular-nums;
 }
 
@@ -5020,7 +5054,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
   padding: 0.1em 0.5em;
   border: 1px solid rgba(128, 128, 128, 0.35);
   border-radius: var(--fa-folio-radius, 4px);
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
 }
 
 .fa-sticky-rel-axis { opacity: 0.75; text-transform: lowercase; }
@@ -5047,7 +5081,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
   background: rgba(128, 128, 128, 0.08);
   color: inherit;
   font: inherit;
-  font-size: 0.78rem;
+  font-size: var(--fa-text-xs);
   cursor: pointer;
 }
 
@@ -5079,8 +5113,8 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
 .fa-sticky-process {
   display: block;
   margin-bottom: 0.25em;
-  font-family: var(--fa-mono, monospace);
-  font-size: 0.7rem;
+  font-family: var(--fa-font-mono);
+  font-size: var(--fa-text-2xs);
   opacity: 0.8;
 }
 
@@ -5098,7 +5132,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
 
 .fa-discarded-slot {
   margin-top: 0.5rem;
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
   opacity: 0.75;
 }
 
@@ -5143,11 +5177,11 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
   background: rgba(128, 128, 128, 0.15);
 }
 
-.fa-discarded-item-name { font-size: 0.78rem; }
+.fa-discarded-item-name { font-size: var(--fa-text-xs); }
 
 .fa-discarded-item-kind {
   flex: none;
-  font-size: 0.68rem;
+  font-size: var(--fa-text-2xs);
   opacity: 0.7;
   font-variant: small-caps;
 }
@@ -5172,7 +5206,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
   background: transparent;
   color: inherit;
   font: inherit;
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
   padding: 0.2rem 0;
   cursor: pointer;
   text-decoration: underline;
@@ -5180,7 +5214,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
 
 .fa-discarded-title {
   margin: 0.3rem 0 0.4rem;
-  font-size: 0.85rem;
+  font-size: var(--fa-text-sm);
 }
 
 /* `tabindex="-1"` makes this focusable so the reader is told which item
@@ -5196,7 +5230,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
   grid-template-columns: auto 1fr;
   gap: 0.1rem 0.5rem;
   margin: 0 0 0.5rem;
-  font-size: 0.7rem;
+  font-size: var(--fa-text-2xs);
 }
 
 .fa-discarded-meta dt { opacity: 0.7; }
@@ -5204,7 +5238,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
 
 .fa-discarded-summary {
   margin: 0 0 0.5rem;
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
   font-style: italic;
   opacity: 0.85;
 }
@@ -5215,13 +5249,13 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
  * Neither is colour-only: both say in words which state they are. */
 .fa-discarded-error {
   margin: 0.4rem 0;
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
   font-weight: 600;
 }
 
 .fa-discarded-none {
   margin: 0.4rem 0;
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
   opacity: 0.75;
 }
 
@@ -5230,7 +5264,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
   align-items: center;
   min-height: 1.75rem;
   margin-top: 0.6rem;
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
 }
 
 /* Discarding a sticky (bean `d1r6`). The crumpled glyph replaces the `×`,
@@ -5257,14 +5291,14 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
 
 .fa-discarded-local-title {
   margin: 0 0 0.2rem;
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
 }
 
 /* The limitation is TEXT, not a colour or an icon. A reader who believes
  * they cleared a todo for the team has been misled by the control. */
 .fa-discarded-local-note {
   margin: 0 0 0.4rem;
-  font-size: 0.68rem;
+  font-size: var(--fa-text-2xs);
   opacity: 0.75;
 }
 
@@ -5274,7 +5308,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
   justify-content: space-between;
   gap: 0.5rem;
   padding: 0.2rem 0;
-  font-size: 0.72rem;
+  font-size: var(--fa-text-xs);
 }
 
 .fa-discarded-restore {
@@ -5284,7 +5318,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
   background: transparent;
   color: inherit;
   font: inherit;
-  font-size: 0.68rem;
+  font-size: var(--fa-text-2xs);
   padding: 0.1rem 0.45rem;
   cursor: pointer;
 }
@@ -5375,7 +5409,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
   border-radius: 0.25rem;
   background: transparent;
   color: inherit;
-  font-size: 0.6rem;
+  font-size: var(--fa-text-2xs);
   line-height: 1;
   cursor: pointer;
 }
@@ -5388,7 +5422,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
 .fa-kinds-note,
 .fa-kinds-legend {
   margin: 0 0 0.5rem;
-  font-size: 0.68rem;
+  font-size: var(--fa-text-2xs);
   opacity: 0.75;
 }
 
@@ -5406,7 +5440,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
   align-items: center;
   gap: 0.5rem;
   padding: 0.22rem 0;
-  font-size: 0.74rem;
+  font-size: var(--fa-text-xs);
 }
 
 .fa-kinds-name { flex: 1; overflow-wrap: anywhere; }
@@ -5864,7 +5898,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
  *
  *     .site-footer { position: absolute; bottom: 0; left: 0;
  *                    padding: 1rem 2rem; width: 16.5rem;
- *                    font-size: .6875rem !important; }
+ *                    font-size: var(--fa-text-2xs) !important; }
  *
  * Measured on the deployed preview, not guessed: the block is pinned to the
  * bottom of a `position: fixed`, full-height column, so the items are laid out
@@ -5911,7 +5945,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
   padding-right: 0;
   padding-left: 0;
   /* The theme's `!important` has to be answered in kind. */
-  font-size: 0.75rem !important;
+  font-size: var(--fa-text-xs) !important;
 
   /* THE FIXED BOTTOM, as a column of its own: the stack scrolls, home does
    * not. `min-height: 0` for the same reason it appears on the middle region
@@ -6024,7 +6058,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
 .side-bar .fa-nav-bottom > a:last-child > .fa-nav-glyph {
   flex: none;
   width: var(--fa-nav-mark);
-  font-size: 1rem;
+  font-size: var(--fa-text-base);
   text-align: center;
 }
 
@@ -6239,7 +6273,7 @@ html:has(.fa-glass-band[data-fa-band-tools]) .main-content * {
     background: var(--fa-tip-bg);
     color: var(--fa-tip-ink);
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-    font-size: 0.8125rem;
+    font-size: var(--fa-text-sm);
     font-weight: 600;
     line-height: 1.3;
     letter-spacing: normal;
@@ -6643,7 +6677,7 @@ a.fa-harness-tab__body:focus-visible {
    * what made that safe — that block above is. */
   background: var(--fa-tile-ink);
   color: var(--fa-tile-ink-on);
-  font-size: 0.8125rem;
+  font-size: var(--fa-text-sm);
   font-weight: 700;
   line-height: 1;
 }
@@ -6684,7 +6718,7 @@ a.fa-harness-tab__body:focus-visible {
   margin: 0.15rem 0 0.35rem;
   padding: 0 0 0 1.75rem;
   list-style: none;
-  font-size: 0.6875rem;
+  font-size: var(--fa-text-2xs);
 }
 
 .fa-harness-graph {
@@ -6825,7 +6859,7 @@ a.fa-harness-tab__body:focus-visible {
   border-radius: 0.25rem;
   background: none;
   color: inherit;
-  font-size: 0.875rem;
+  font-size: var(--fa-text-sm);
   line-height: 1;
   cursor: pointer;
   opacity: 0.7;
@@ -6876,7 +6910,7 @@ a.fa-harness-tab__body:focus-visible {
   margin: 0;
   background: rgba(128, 128, 128, 0.22);
   color: inherit;
-  font-size: 0.625rem;
+  font-size: var(--fa-text-2xs);
 }
 
 .side-bar .fa-nav-kids .fa-nav-label { flex: 0 1 auto; min-width: 0; }
@@ -6916,7 +6950,7 @@ a.fa-harness-tab__body:focus-visible {
 }
 
 .fa-harness-sections__lead {
-  font-size: 0.875rem;
+  font-size: var(--fa-text-sm);
   opacity: 0.8;
 }
 
@@ -6930,12 +6964,12 @@ a.fa-harness-tab__body:focus-visible {
 
 .fa-harness-section__title {
   margin: 0 0 0.25rem;
-  font-size: 1.0625rem;
+  font-size: var(--fa-text-md);
 }
 
 .fa-harness-section__description {
   margin: 0 0 0.5rem;
-  font-size: 0.875rem;
+  font-size: var(--fa-text-sm);
 }
 
 .fa-harness-section__stats {
@@ -6943,7 +6977,7 @@ a.fa-harness-tab__body:focus-visible {
   flex-wrap: wrap;
   gap: 0.25rem 1.25rem;
   margin: 0 0 0.5rem;
-  font-size: 0.8125rem;
+  font-size: var(--fa-text-sm);
 }
 
 .fa-harness-section__stat {
@@ -6968,13 +7002,13 @@ a.fa-harness-tab__body:focus-visible {
   gap: 0.25rem 0.75rem;
   margin: 0;
   padding: 0;
-  font-size: 0.8125rem;
+  font-size: var(--fa-text-sm);
 }
 
 .fa-harness-section__gap,
 .fa-harness-section__findings,
 .fa-harness-section__subgraphs {
-  font-size: 0.8125rem;
+  font-size: var(--fa-text-sm);
   opacity: 0.85;
   margin: 0;
 }
@@ -6990,7 +7024,7 @@ a.fa-harness-tab__body:focus-visible {
   padding: 0 0.3rem;
   border: 1px solid currentColor;
   border-radius: 3px;
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
   text-align: center;
 }
 .fa-harness-section__subgraphs [data-fa-where="remote"] .fa-harness-section__where { border-style: dashed; }
@@ -7038,7 +7072,7 @@ a.fa-harness-tab__body:focus-visible {
   margin: 2rem 0 0;
   padding-top: 1rem;
   border-top: 1px solid var(--fa-rule, rgba(128, 128, 128, 0.35));
-  font-size: 0.8125rem;
+  font-size: var(--fa-text-sm);
 }
 
 .fa-provenance-summary {
@@ -7067,7 +7101,7 @@ a.fa-harness-tab__body:focus-visible {
 /* `!important` because just-the-docs sets `h3` with `!important` at every
  * breakpoint, which no selector can outrank otherwise. */
 .fa-provenance .fa-provenance-section {
-  font-size: 0.875rem !important;
+  font-size: var(--fa-text-sm) !important;
   font-weight: 600;
   margin: 1rem 0 0.25rem;
 }
@@ -7083,7 +7117,7 @@ a.fa-harness-tab__body:focus-visible {
 
 .fa-provenance-kind {
   display: inline-block;
-  font-size: 0.6875rem;
+  font-size: var(--fa-text-2xs);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   opacity: 0.75;
@@ -7091,7 +7125,7 @@ a.fa-harness-tab__body:focus-visible {
 }
 
 .fa-provenance-refs code {
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
   margin-right: 0.25rem;
 }
 
@@ -7115,13 +7149,13 @@ a.fa-harness-tab__body:focus-visible {
 }
 
 .fa-todo-listing-heading {
-  font-size: 1rem;
+  font-size: var(--fa-text-base);
   margin: 0 0 0.25rem;
 }
 
 .fa-todo-listing-lead,
 .fa-todo-listing-none {
-  font-size: 0.8125rem;
+  font-size: var(--fa-text-sm);
   opacity: 0.8;
   margin: 0 0 1rem;
 }
@@ -7148,7 +7182,7 @@ a.fa-harness-tab__body:focus-visible {
 }
 
 .fa-todo-listing-summary {
-  font-size: 0.9375rem;
+  font-size: var(--fa-text-base);
   margin: 0 0 0.5rem;
 }
 
@@ -7156,7 +7190,7 @@ a.fa-harness-tab__body:focus-visible {
   display: grid;
   grid-template-columns: auto 1fr;
   gap: 0.125rem 0.5rem;
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
   margin: 0 0 0.5rem;
 }
 
@@ -7175,7 +7209,7 @@ a.fa-harness-tab__body:focus-visible {
 }
 
 .fa-todo-listing-body {
-  font-size: 0.8125rem;
+  font-size: var(--fa-text-sm);
 }
 
 .fa-todo-listing-body p {
@@ -7189,7 +7223,7 @@ a.fa-harness-tab__body:focus-visible {
 
 .fa-todo-listing-links,
 .fa-todo-listing-relations {
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
   margin: 0.5rem 0 0;
 }
 
@@ -7211,7 +7245,7 @@ a.fa-harness-tab__body:focus-visible {
 
 .fa-todo-listing-toggle {
   cursor: pointer;
-  font-size: 0.8125rem;
+  font-size: var(--fa-text-sm);
   padding: 0.25rem 0;
 }
 
@@ -7281,7 +7315,7 @@ a.fa-harness-tab__body:focus-visible {
   overflow: hidden;
   max-width: 100%;
   margin: 0;
-  font-size: 0.8rem;
+  font-size: var(--fa-text-xs);
   line-height: 1.3;
   text-align: center;
   overflow-wrap: anywhere;
@@ -7348,7 +7382,7 @@ a.fa-harness-tab__body:focus-visible {
   gap: 0.5rem;
   padding: 0.375rem 0.5rem;
   border-bottom: 1px solid var(--fa-rule, rgba(128, 128, 128, 0.35));
-  font-size: 0.8125rem;
+  font-size: var(--fa-text-sm);
   font-weight: 600;
 }
 
@@ -7400,7 +7434,7 @@ a.fa-harness-tab__body:focus-visible {
   padding: 0 0.25rem;
   border-radius: 0.625rem;
   background: var(--fa-rule, rgba(128, 128, 128, 0.35));
-  font-size: 0.6875rem;
+  font-size: var(--fa-text-2xs);
   font-variant-numeric: tabular-nums;
 }
 
@@ -7444,12 +7478,12 @@ a.fa-harness-tab__body:focus-visible {
 
 .fa-relocate-title {
   margin: 0;
-  font-size: 0.9375rem;
+  font-size: var(--fa-text-base);
 }
 
 .fa-relocate-scope p {
   margin: 0 0 0.5rem;
-  font-size: 0.8125rem;
+  font-size: var(--fa-text-sm);
 }
 
 .fa-relocate-does-not {
@@ -7507,7 +7541,7 @@ a.fa-harness-tab__body:focus-visible {
   align-items: center;
   gap: 0.25rem 0.75rem;
   padding: 0 0.5rem 0.5rem;
-  font-size: 0.8125rem;
+  font-size: var(--fa-text-sm);
 }
 
 .fa-board-filter:empty {
@@ -7536,7 +7570,7 @@ a.fa-harness-tab__body:focus-visible {
 }
 
 .fa-sticky-filtered-out {
-  font-size: 0.8125rem;
+  font-size: var(--fa-text-sm);
   opacity: 0.8;
 }
 
@@ -7546,7 +7580,7 @@ a.fa-harness-tab__body:focus-visible {
 .fa-sticky-group-head {
   grid-column: 1 / -1;
   margin: 0.5rem 0 0;
-  font-size: 0.8125rem;
+  font-size: var(--fa-text-sm);
   font-weight: 600;
   overflow-wrap: anywhere;
 }
@@ -7627,7 +7661,7 @@ a.fa-harness-tab__body:focus-visible {
   min-height: 2.75rem;
   padding: 0.35rem 0.75rem;
   cursor: pointer;
-  font-size: 0.85rem;
+  font-size: var(--fa-text-sm);
   font-weight: 600;
   /* `list-style: none` plus the WebKit pseudo-element: Safari ignores the
      former on a summary and keeps drawing its own disclosure triangle, which
@@ -7665,7 +7699,7 @@ a.fa-harness-tab__body:focus-visible {
   border-radius: 999px;
   background: var(--fa-stickypanel-count-bg);
   color: var(--fa-stickypanel-count-fg);
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
   font-variant-numeric: tabular-nums;
   text-align: center;
 }
@@ -8023,7 +8057,7 @@ a.fa-harness-tab__body:focus-visible {
   background: transparent;
   /* Inherits the band's ink, for the reason at the top of this block. */
   color: inherit;
-  font-size: 0.85rem;
+  font-size: var(--fa-text-sm);
 }
 .fa-search-home .search-input:focus-visible {
   outline: 2px solid var(--link-color, #7253ed);
@@ -8069,7 +8103,7 @@ a.fa-harness-tab__body:focus-visible {
   border-radius: 4px;
   background: var(--fa-search-page-bg);
   color: inherit;
-  font-size: 0.8rem;
+  font-size: var(--fa-text-xs);
   line-height: 1.4;
   text-align: start;
   white-space: normal;
@@ -8154,11 +8188,11 @@ a.fa-harness-tab__body:focus-visible {
 .fa-sticky-board--bare > .fa-board-filter {
   gap: 0.35rem 0.6rem;
   margin: 0 0 0.6rem;
-  font-size: 0.78rem;
+  font-size: var(--fa-text-xs);
 }
 
 .fa-sticky-board--bare > .fa-board-filter .fa-board-filter-label {
-  font-size: 0.68rem;
+  font-size: var(--fa-text-2xs);
   letter-spacing: 0.02em;
   opacity: 0.72;
 }
@@ -8274,9 +8308,9 @@ a.fa-harness-tab__body:focus-visible {
   color: #1b1b1f;
   border-color: #8a8699;
 }
-.fa-sticky-away-title { margin: 0; font-size: 1rem; }
-.fa-sticky-away-text { margin: 0; font-size: 0.85rem; line-height: 1.35; }
-.fa-sticky-away-home { color: inherit; text-decoration: underline; font-size: 0.85rem; }
+.fa-sticky-away-title { margin: 0; font-size: var(--fa-text-base); }
+.fa-sticky-away-text { margin: 0; font-size: var(--fa-text-sm); line-height: 1.35; }
+.fa-sticky-away-home { color: inherit; text-decoration: underline; font-size: var(--fa-text-sm); }
 .fa-sticky-away .fa-sticky-tools,
 .fa-home-tools { display: flex; gap: 0.4rem; flex-wrap: wrap; justify-content: flex-end; }
 .fa-sticky-sendhome,
@@ -8289,7 +8323,7 @@ a.fa-harness-tab__body:focus-visible {
   background: transparent;
   color: inherit;
   font: inherit;
-  font-size: 0.85rem;
+  font-size: var(--fa-text-sm);
   cursor: pointer;
 }
 .fa-home-pin { margin-top: 0.4rem; }
@@ -8415,7 +8449,7 @@ a.fa-harness-tab__body:focus-visible {
   border: 1px solid var(--fa-glass-edge);
   border-radius: 6px;
   box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  font-size: 0.85rem;
+  font-size: var(--fa-text-sm);
   line-height: 1.35;
 }
 .fa-glass-meta[hidden] { display: none; }
@@ -8516,7 +8550,7 @@ a.fa-harness-tab__body:focus-visible {
   /* Above the art and the scrim, which sit at negative z inside the card. */
   position: relative;
   z-index: 1;
-  font-size: 0.9rem;
+  font-size: var(--fa-text-sm);
   line-height: 1.45;
   overflow-wrap: anywhere;
 }
@@ -8567,16 +8601,16 @@ a.fa-harness-tab__body:focus-visible {
   background: var(--fa-glass-card);
   padding: 0.45rem 0.55rem;
   border-top: 1px solid var(--fa-glass-edge);
-  font-size: 0.88rem;
+  font-size: var(--fa-text-sm);
   line-height: 1.45;
   overflow-wrap: anywhere;
 }
 .fa-glass-window[hidden],
 .fa-glass-asset[data-fa-zoom="avatar"] .fa-glass-window { display: none !important; }
-.fa-glass-window-meta { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.5rem; font-size: 0.84rem; }
+.fa-glass-window-meta { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 0.2rem 0.5rem; font-size: var(--fa-text-sm); }
 .fa-glass-window-meta dt { font-weight: 600; opacity: 0.8; }
 .fa-glass-window-meta dd { margin: 0; }
-.fa-glass-window-link { margin: 0.35rem 0 0; font-size: 0.84rem; }
+.fa-glass-window-link { margin: 0.35rem 0 0; font-size: var(--fa-text-sm); }
 .fa-glass-asset-tool[data-fa-control="window"][aria-expanded="true"] {
   background: var(--fa-glass-accent);
   color: #fff;
@@ -8612,8 +8646,8 @@ a.fa-harness-tab__body:focus-visible {
   color: var(--fa-glass-ink);
 }
 .fa-glass-confirm::backdrop { background: rgba(0, 0, 0, 0.45); }
-.fa-glass-confirm-title { margin: 0 0 0.5rem; font-size: 1rem; }
-.fa-glass-confirm p { margin: 0 0 0.6rem; font-size: 0.9rem; line-height: 1.45; }
+.fa-glass-confirm-title { margin: 0 0 0.5rem; font-size: var(--fa-text-base); }
+.fa-glass-confirm p { margin: 0 0 0.6rem; font-size: var(--fa-text-sm); line-height: 1.45; }
 .fa-glass-confirm a,
 .fa-glass-shelved-say a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .fa-glass-confirm-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: flex-end; }
@@ -8634,7 +8668,7 @@ a.fa-harness-tab__body:focus-visible {
 .fa-glass-shelved-say {
   max-width: 40rem;
   margin: 0 auto;
-  font-size: 0.9rem;
+  font-size: var(--fa-text-sm);
   color: var(--fa-glass-ink);
   background: var(--fa-glass-card);
 }
@@ -8657,7 +8691,7 @@ a.fa-harness-tab__body:focus-visible {
   border: 0;
   background: transparent;
   color: inherit;
-  font-size: 1.2rem;
+  font-size: var(--fa-text-lg);
   cursor: pointer;
 }
 .fa-glass-more { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 0.5rem; }
@@ -8672,7 +8706,7 @@ a.fa-harness-tab__body:focus-visible {
   padding: 0.35rem;
   border: 1px solid var(--fa-glass-edge);
   color: var(--fa-glass-ink);
-  font-size: 0.75rem;
+  font-size: var(--fa-text-xs);
   text-align: center;
   text-decoration: none;
   position: relative;
@@ -8751,15 +8785,15 @@ a.fa-harness-tab__body:focus-visible {
   -webkit-line-clamp: 4;
   line-clamp: 4;
   overflow: hidden;
-  font-size: 0.8rem;
+  font-size: var(--fa-text-xs);
   font-weight: 600;
   line-height: 1.25;
   overflow-wrap: anywhere;
 }
 .fa-sticky-tile-process {
   overflow: hidden;
-  font-family: var(--fa-mono, ui-monospace, monospace);
-  font-size: 0.65rem;
+  font-family: var(--fa-font-mono);
+  font-size: var(--fa-text-2xs);
   white-space: nowrap;
   text-overflow: ellipsis;
   opacity: 0.85;
@@ -8840,8 +8874,8 @@ a.fa-harness-tab__body:focus-visible {
 }
 .fa-fsh-confirm::backdrop,
 .fa-fsh-guts-dialog::backdrop { background: rgba(0, 0, 0, 0.45); }
-.fa-fsh-confirm-title { margin: 0 0 0.5rem; font-size: 1.05rem; }
-.fa-fsh-confirm p { margin: 0 0 0.6rem; font-size: 0.9rem; line-height: 1.4; }
+.fa-fsh-confirm-title { margin: 0 0 0.5rem; font-size: var(--fa-text-base); }
+.fa-fsh-confirm p { margin: 0 0 0.6rem; font-size: var(--fa-text-sm); line-height: 1.4; }
 .fa-fsh-confirm-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0.5rem; }
 .fa-fsh-confirm-actions button,
 .fa-fsh-guts-dialog-close {
@@ -8859,7 +8893,7 @@ a.fa-harness-tab__body:focus-visible {
 .fa-fsh-confirm-actions button:focus-visible,
 .fa-fsh-guts-dialog-close:focus-visible { outline: 2px solid var(--link-color, #7253ed); outline-offset: 2px; }
 .fa-fsh-guts-dialog-head { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; }
-.fa-fsh-guts-dialog-head h2 { margin: 0; font-size: 1.05rem; }
+.fa-fsh-guts-dialog-head h2 { margin: 0; font-size: var(--fa-text-base); }
 
 /* ── fsh-guts in the navbar's top (#1925) ─────────────────────────────────
  * The same row shape as ⌂ Home at the bottom: the glyph in the mark column,
@@ -8898,7 +8932,7 @@ a.fa-harness-tab__body:focus-visible {
   padding: 0 0.3rem;
   border-radius: 0.625rem;
   background: rgba(128, 128, 128, 0.3);
-  font-size: 0.6875rem;
+  font-size: var(--fa-text-2xs);
   font-variant-numeric: tabular-nums;
   text-align: center;
 }
@@ -8947,14 +8981,14 @@ a.fa-harness-tab__body:focus-visible {
   border-radius: 0.375rem;
   background: color-mix(in oklab, var(--fa-tile-ink) 18%, transparent);
   color: inherit;
-  font-size: 1.1rem;
+  font-size: var(--fa-text-md);
   cursor: pointer;
 }
 .fa-harness-tab__config:hover,
 .fa-harness-tab__config:focus-visible { background: color-mix(in oklab, var(--fa-tile-ink) 40%, transparent); }
 
 .fa-hc { display: grid; grid-template-columns: minmax(12rem, 16rem) minmax(0, 1fr); gap: 1rem; margin-top: 0.5rem; }
-.fa-hc-group h3, .fa-hc-title { font-size: 0.95rem; margin: 0.5rem 0 0.25rem; }
+.fa-hc-group h3, .fa-hc-title { font-size: var(--fa-text-base); margin: 0.5rem 0 0.25rem; }
 .fa-hc-group ul { list-style: none; margin: 0; padding: 0; }
 .fa-hc-item {
   display: flex;
@@ -8972,12 +9006,12 @@ a.fa-harness-tab__body:focus-visible {
   text-align: left;
   cursor: pointer;
 }
-.fa-hc-item code { color: var(--fa-glass-muted); font-size: 0.8rem; }
+.fa-hc-item code { color: var(--fa-glass-muted); font-size: var(--fa-text-xs); }
 .fa-hc-item[aria-current="true"] { border-width: 2px; font-weight: 600; }
 .fa-hc-back { display: none; min-height: 2.75rem; }
 .fa-hc-actions { display: flex; flex-wrap: wrap; gap: 0.5rem; }
 .fa-hc-link { display: inline-flex; align-items: center; min-height: 2.75rem; color: var(--fa-glass-ink); text-decoration: underline; overflow-wrap: anywhere; }
-.fa-hc-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+.fa-hc-table { width: 100%; border-collapse: collapse; font-size: var(--fa-text-sm); }
 .fa-hc-table th, .fa-hc-table td { text-align: left; vertical-align: top; padding: 0.25rem 0.4rem; border-bottom: 1px solid var(--fa-glass-edge); overflow-wrap: anywhere; }
 .fa-hc-skills .fa-hc-link { min-height: 0; }
 .fa-hc-gap, .fa-hc-note { color: var(--fa-glass-muted); }
@@ -9008,13 +9042,13 @@ a.fa-harness-tab__body:focus-visible {
   background: transparent;
   color: var(--fa-glass-ink);
   font: inherit;
-  font-size: 0.8rem;
+  font-size: var(--fa-text-xs);
   font-weight: 600;
   cursor: pointer;
 }
 .fa-glass-arrange:focus-visible { outline: 3px solid var(--fa-glass-accent); outline-offset: 2px; }
-.fa-glass-arrange-hint { color: var(--fa-glass-muted); font-size: 0.85rem; margin: 0.25rem 0 0.5rem; }
-.fa-glass-arrange-title { font-size: 0.95rem; margin: 1rem 0 0.4rem; color: var(--fa-glass-ink); }
+.fa-glass-arrange-hint { color: var(--fa-glass-muted); font-size: var(--fa-text-sm); margin: 0.25rem 0 0.5rem; }
+.fa-glass-arrange-title { font-size: var(--fa-text-base); margin: 1rem 0 0.4rem; color: var(--fa-glass-ink); }
 .fa-glass-arrange-list { list-style: none; margin: 0; padding: 0; }
 .fa-glass-arrange-row {
   display: flex;
@@ -9157,7 +9191,7 @@ table[data-fa-filtered] tr[hidden] { display: none !important; }
 .fa-render-failed,
 .fa-render-empty,
 .fa-workplan-failed {
-  font-size: 0.9rem;
+  font-size: var(--fa-text-sm);
   line-height: 1.5;
   margin: 0.75rem 0 0;
 }
@@ -9364,7 +9398,7 @@ table[data-fa-filtered] tr[hidden] { display: none !important; }
   white-space: nowrap;
 }
 .fa-block-id {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-family: var(--fa-font-mono);
   font-size: 0.8em;
   font-weight: 600;
   padding: 0.05em 0.4em;
@@ -9456,10 +9490,10 @@ a.fa-block-kind:hover, a.fa-block-kind:focus-visible { text-decoration: underlin
   margin-top: 1.4em;
   margin-bottom: 0.4em;
 }
-.main-content h3 { font-size: 1.3rem; }
-.main-content h4 { font-size: 1.125rem; }
-.main-content h5 { font-size: 1rem; }
-.main-content h6 { font-size: 0.95rem; font-style: italic; }
+.main-content h3 { font-size: var(--fa-text-lg); }
+.main-content h4 { font-size: var(--fa-text-md); }
+.main-content h5 { font-size: var(--fa-text-base); }
+.main-content h6 { font-size: var(--fa-text-base); font-style: italic; }
 
 /* External glossaries a document cites, noted above its own glossary
  * (folio-assistant-core external-glossaries.ts; owner, 2026-11-02: "link to

@@ -134,6 +134,9 @@
       "name": "kg-subgraph-layout"
     },
     {
+      "name": "kg-to-portal"
+    },
+    {
       "name": "l1-coverage"
     },
     {
@@ -174,9 +177,6 @@
     },
     {
       "name": "render-kg-to-cdn"
-    },
-    {
-      "name": "render-kg-to-github-pages"
     },
     {
       "name": "render-logging"
@@ -1990,7 +1990,7 @@
         "summary": "Publish bootstrap-tools' site",
         "description": "Dispatch bootstrap-tools' `pages.yml`: stage the README site and graph with `scripts/site.ts` and commit them onto `gh-pages`. Started with the standard GitHub CLI; the run is watched with `gh run watch`.",
         "tags": [
-          "render-kg-to-github-pages"
+          "kg-to-portal"
         ],
         "externalDocs": {
           "description": "The Tool's page",
@@ -2049,7 +2049,7 @@
           "network": true
         },
         "x-satisfies": [
-          "render-kg-to-github-pages"
+          "kg-to-portal"
         ],
         "x-selection": {
           "when": "Running the `pages.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
@@ -2064,8 +2064,7 @@
         "summary": "Build and publish the platform docs site",
         "description": "Dispatch the index's `docs-site.yml`: security gate, regenerate, compose each layer's site, build, export the graph, verify, restore previews, publish to gh-pages, judge the built site. Started with the standard GitHub CLI; the run is watched with `gh run watch`.",
         "tags": [
-          "render-kg-to-cdn",
-          "docs-generation"
+          "render-kg-to-cdn"
         ],
         "externalDocs": {
           "description": "The Tool's page",
@@ -2124,8 +2123,7 @@
           "network": true
         },
         "x-satisfies": [
-          "render-kg-to-cdn",
-          "docs-generation"
+          "render-kg-to-cdn"
         ],
         "x-selection": {
           "when": "Running the `docs-site.yml` workflow on demand instead of waiting for its trigger, or finding which workflow a CI step belongs to.",
