@@ -747,7 +747,7 @@ describe("scoped fixed terms: subject area and translation status (owner, 2026-1
   });
 });
 
-describe("a schema's terms take the subject area the schema publishes (owner, 2026-11-07: \"do it in the schema\")", () => {
+describe(`a schema's terms take the subject area the schema publishes (owner, 2026-11-07: "do it in the schema")`, () => {
   const schema = (extra: Record<string, unknown>) => {
     const f = join(mkdtempSync(join(tmpdir(), "terms-")), "graph.schema.json");
     writeFileSync(f, JSON.stringify({ $id: "https://example.org/graph.schema.json", ...extra, $defs: { Node: { description: "A file.", uses: [] } } }));

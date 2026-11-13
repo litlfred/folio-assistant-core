@@ -299,19 +299,19 @@ Feature: the review sheet script, built and run against a fake sheet
     When a row holds only the agent's proposal
     Then it gets no Change-set
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_\"2:\"_basis:_a_proposal_also_goes_stale_on_the_grey_content_its_comments_join_(#348)::greyBasisStaleOnJoinedCell
+  @test:tools/review-sheet-sync/review-sheet.test.ts::a_"2:"_basis:_a_proposal_also_goes_stale_on_the_grey_content_its_comments_join_(#348)::greyBasisStaleOnJoinedCell
   Scenario: a 2: basis is stale when a joined grey cell changes, and not when it does not
     Given a 2: basis
     When a joined grey cell changes
     Then the proposal goes stale, and not before
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_\"2:\"_basis:_a_proposal_also_goes_stale_on_the_grey_content_its_comments_join_(#348)::greyBasisIgnoresAgentColumns
+  @test:tools/review-sheet-sync/review-sheet.test.ts::a_"2:"_basis:_a_proposal_also_goes_stale_on_the_grey_content_its_comments_join_(#348)::greyBasisIgnoresAgentColumns
   Scenario: the agent's own columns are not part of it
     Given a 2: basis
     When the agent's own column changes
     Then the proposal is not stale
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_\"2:\"_basis:_a_proposal_also_goes_stale_on_the_grey_content_its_comments_join_(#348)::olderBasisIgnoresGrey
+  @test:tools/review-sheet-sync/review-sheet.test.ts::a_"2:"_basis:_a_proposal_also_goes_stale_on_the_grey_content_its_comments_join_(#348)::olderBasisIgnoresGrey
   Scenario: an older basis (no 2:) ignores grey content, and still goes stale on a blue cell
     Given an older basis without 2:
     When a grey cell changes, then a blue cell
@@ -709,7 +709,7 @@ Feature: the review sheet script, built and run against a fake sheet
     When the agent has proposed
     Then the ⏳ line says the proposal is ready and to set Ready for agent
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::data_rows_look_like_data_rows_(owner,_2026-10-31:_\"why_row_3_bold\")::headerLookRowRestored
+  @test:tools/review-sheet-sync/review-sheet.test.ts::data_rows_look_like_data_rows_(owner,_2026-10-31:_"why_row_3_bold")::headerLookRowRestored
   Scenario: a row that took the header's look gets the last row's format back; plain rows are left
     When the data rows' formats are checked
     Then the one row that took the header's look gets a plain row's format back, and the others are left
@@ -795,17 +795,17 @@ Feature: the review sheet script, built and run against a fake sheet
     When text with repo#n references is linked
     Then each becomes a link to its issue
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_refresh_keeps_the_links_an_agent_put_in_its_feedback_(owner,_2026-11-01:_\"Dont_know_where_link_is\")::keptLinksFoundInOrder
+  @test:tools/review-sheet-sync/review-sheet.test.ts::a_refresh_keeps_the_links_an_agent_put_in_its_feedback_(owner,_2026-11-01:_"Dont_know_where_link_is")::keptLinksFoundInOrder
   Scenario: each linked label is found again in the new text, in order
     When the agent's links are found again in new text
     Then each label is found in order
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_refresh_keeps_the_links_an_agent_put_in_its_feedback_(owner,_2026-11-01:_\"Dont_know_where_link_is\")::goneLabelDropped
+  @test:tools/review-sheet-sync/review-sheet.test.ts::a_refresh_keeps_the_links_an_agent_put_in_its_feedback_(owner,_2026-11-01:_"Dont_know_where_link_is")::goneLabelDropped
   Scenario: a label no longer in the text is dropped
     When a label is no longer in the text
     Then its link is dropped
 
-  @test:tools/review-sheet-sync/review-sheet.test.ts::a_refresh_keeps_the_links_an_agent_put_in_its_feedback_(owner,_2026-11-01:_\"Dont_know_where_link_is\")::noRichTextNoRuns
+  @test:tools/review-sheet-sync/review-sheet.test.ts::a_refresh_keeps_the_links_an_agent_put_in_its_feedback_(owner,_2026-11-01:_"Dont_know_where_link_is")::noRichTextNoRuns
   Scenario: a cell without rich text gives no runs
     When link runs are read from cells without rich text, with an error, and with runs
     Then the first two give none and the third gives only the linked run with text

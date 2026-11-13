@@ -73,7 +73,7 @@ describe("feedbackBasis", () => {
   });
 });
 
-describe("feedbackBasis with grey content (a \"2:\" basis)", () => {
+describe('feedbackBasis with grey content (a "2:" basis)', () => {
   const header = ["Change-set", "Title", "Suggested Revisions", "TWG (PCs)", "TWG (CS)", "Architect Feedback (AB)", "Architect Feedback (agent)", "Agentic status"];
   const row = ["CS-001", "Fix scope", "No. 1 \u00b7 Lengthen it", "Editorial", "", "", "Accept", "Not started"];
   const exact = ["Title", "TWG (CS)"];
