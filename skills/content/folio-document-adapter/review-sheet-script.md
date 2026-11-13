@@ -370,8 +370,9 @@ records, as a document property `ready:<CS>`, the time it first sees a row's
 Ready for agent at Yes (cleared on No). A Yes it first sees on a row the
 agent has already completed counts from that completion instead, since the
 script cannot know when it was set. When that time is later than **Staging
-built**, after the deploy checks, it writes `⚠ missing feedback from
-<time>`: the preview still shows the PR, but not the feedback an Editor has
+built**, after the deploy checks, it writes
+`⚠ missing feedback from <time>`: the preview still shows the PR, but not the
+feedback an Editor has
 just sent to the agent. Only the sheet says so; the review page cannot know
 the sheet. The same time makes **Agentic status** open with **Waiting on the
 agent since <time> (Ready for agent set)**, until the agent records a later
