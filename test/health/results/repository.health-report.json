@@ -8,7 +8,7 @@
     "kind": "repository",
     "id": "litlfred/folio-assistant-core"
   },
-  "updated_at": "2026-11-13T11:13:48.139Z",
+  "updated_at": "2026-11-13T11:46:22.596Z",
   "verdict": "unknown",
   "checks": [
     {
@@ -138,7 +138,7 @@
       ],
       "measurements": [],
       "findings": [],
-      "reason": "no pages-serving observation could be read: qa-reports:main/64297b5618938effefd1d699fe5a338efe24935a — miss: main/64297b5618938effefd1d699fe5a338efe24935a has nothing under health"
+      "reason": "no pages-serving observation could be read: qa-reports:main/c38c91ab3a25478f8e53d1a5b672ad88953cb128 — miss: main/64297b5618938effefd1d699fe5a338efe24935a has nothing under health"
     },
     {
       "id": "remote-mounts",
@@ -351,25 +351,25 @@
         },
         {
           "metric": "git-dir-bytes",
-          "value": 158862946,
+          "value": 41233342,
           "unit": "bytes",
           "command": "du -sb .git"
         },
         {
           "metric": "pack-bytes",
-          "value": 157521920,
+          "value": 39342080,
           "unit": "bytes",
           "command": "git count-objects -v"
         },
         {
           "metric": "pack-count",
-          "value": 1,
+          "value": 2,
           "unit": "count",
           "command": "git count-objects -v"
         },
         {
           "metric": "git-dir-to-tree-ratio",
-          "value": 5.27,
+          "value": 1.37,
           "unit": "ratio",
           "command": "git-dir-bytes / tracked-tree-bytes"
         }
