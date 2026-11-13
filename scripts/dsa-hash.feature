@@ -49,7 +49,8 @@ Feature: the Data Sharing Agreement kind and its hash check
     And a made-up prefixed term is rejected
     And a context file with the wrong bytes throws a SHA-256 mismatch
 
-  @test:scripts/dsa-hash.test.ts::dsa_kind_and_hash_check_(DSA_B3,_bean_folio-assistant-2z1t)::toolSatisfiesDsaSkills
-  Scenario: declares the check-dsa-hash Tool satisfying the four dsa-* skills
+  @test:scripts/dsa-hash.test.ts::dsa_kind_and_hash_check_(DSA_B3,_bean_folio-assistant-2z1t)::toolSatisfiesOnlyTheAlwaysOnDsaSkill
+  Scenario: declares the check-dsa-hash Tool satisfying only the always-on dsa-checksum skill
     When core's tools are read
-    Then check-dsa-hash satisfies the four dsa skills and runs its script
+    Then check-dsa-hash satisfies only dsa-checksum, since the other dsa skills are in the opt-in dsa sub-graph
+    And it runs bun run folio-assistant-core/scripts/check-dsa-hash.ts
