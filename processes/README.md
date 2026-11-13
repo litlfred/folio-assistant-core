@@ -10,9 +10,7 @@ Part of [Folio Assistant Core](../README.md) 0.1.0, declared as `core-processes`
 
 | file | what it is | used by |
 |---|---|---|
-| [`global-tasks.bpmn`](global-tasks.bpmn) | 1 global task, the steps several [Processes](https://litlfred.github.io/bootstrap/schemas/#process) share |  |
 | [`processes.json`](processes.json) | data |  |
-| [`conduct/`](conduct/) | _nothing declares what this holds_ | |
 | [`content/`](content/) | _nothing declares what this holds_ | |
 | [`library/`](library/) | _nothing declares what this holds_ | |
 | [`ui/`](ui/) | _nothing declares what this holds_ | |

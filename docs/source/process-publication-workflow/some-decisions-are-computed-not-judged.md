@@ -4,7 +4,7 @@ Exclusive gateways do not all ask the same kind of question. `Accept, revise or 
 A gateway carrying `<cat-harness.processes:decision ref="decisions/x.dmn#Decision_Id"/>` has its
 outcome computed from a **DMN decision table** under
 a `decisions/` directory beside the diagram (here,
-[`processes/content/decisions/`](https://github.com/litlfred/folio-assistant-core/tree/main/processes/content/decisions)).
+[`collab/processes/content/decisions/`](https://github.com/litlfred/folio-assistant-core/tree/main/processes/content/decisions)).
 The agent supplies facts — `{ failCritical: 0, failMajor: 2 }` — and the table
 returns the branch; `workflow_complete` refuses a hand-supplied outcome there,
 and records which rule fired.

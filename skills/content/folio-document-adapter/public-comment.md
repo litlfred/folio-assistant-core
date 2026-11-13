@@ -6,7 +6,7 @@ output: schemas/skills/public-comment/output.schema.json
 # public-comment
 
 > Skill id: `public-comment` · Package: `folio-document-adapter` · Process:
-> `folio-assistant-core/processes/content/public-comment.bpmn`
+> `folio-assistant-core/collab/processes/content/public-comment.bpmn`
 > (`Process_PublicComment`), which calls its change phase
 > `public-comment-change.bpmn` (`Process_PublicCommentChange`) · Tool: `folio-assistant-core/scripts/public-comment.ts`
 > · Schema: `folio-assistant-core/schemas/public-comment.ts`.

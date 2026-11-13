@@ -258,16 +258,13 @@ describe("dsa kind and hash check (DSA B3, bean folio-assistant-2z1t)", () => {
     }
   });
 
-  it("toolSatisfiesDsaSkills", () => {
+  it("toolSatisfiesOnlyTheAlwaysOnDsaSkill", () => {
+    // The Tool is always-on; the other DSA skills are in the opt-in `dsa`
+    // sub-graph, which a downstream can switch off (owner, 2026-11-13).
     const coreTools = toolsOf(CORE_ROOT);
     const tool = coreTools.find((t) => t.id === "check-dsa-hash");
     expect(tool).toBeDefined();
-    expect(tool!.satisfies).toEqual([
-      "dsa-checksum",
-      "dsa-odrl-source",
-      "dsa-dcat-record",
-      "dsa-catalogue-status",
-    ]);
+    expect(tool!.satisfies).toEqual(["dsa-checksum"]);
     expect(tool!.invoke).toEqual({
       shell: "bun run folio-assistant-core/scripts/check-dsa-hash.ts",
     });

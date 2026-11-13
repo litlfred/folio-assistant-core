@@ -1,8 +1,8 @@
-<!-- GENERATED from folio-assistant-core/processes/content/content-change-review-make.bpmn by cat-harness-tools/scripts/bpmn-checklist.ts. Do not edit: change the diagram and regenerate (bun run cat bpmn:checklist). -->
+<!-- GENERATED from folio-assistant-core/collab/processes/content/content-change-review-make.bpmn by cat-harness-tools/scripts/bpmn-checklist.ts. Do not edit: change the diagram and regenerate (bun run cat bpmn:checklist). -->
 
 # Checklist — Make the content change
 
-> **Generated, and not the authority.** This is `folio-assistant-core/processes/content/content-change-review-make.bpmn` (process `Process_ContentChangeReviewMake`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
+> **Generated, and not the authority.** This is `folio-assistant-core/collab/processes/content/content-change-review-make.bpmn` (process `Process_ContentChangeReviewMake`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
 
 Making one requested change to a folio's content on a feature branch: work out its scope, branch, edit the narrative and any deterministic logic, assess what else it touches and how to absorb that, and push.
 

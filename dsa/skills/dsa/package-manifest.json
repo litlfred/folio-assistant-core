@@ -1,7 +1,7 @@
 {
   "name": "dsa",
   "version": "0.1.0",
-  "description": "Data Sharing Agreement skills: the DCAT 3 catalogue record, its life-cycle status, the SHA-256 checksum of the signed legal text and the ODRL source binding, along `dsa/processes/dsa-document-lifecycle.bpmn`. Moved out of `folio-document-adapter` into the opt-in `dsa` sub-graph (owner, 2026-11-10, card Q-SG-1 C, wave 1).",
+  "description": "Data Sharing Agreement skills: the DCAT 3 catalogue record, its life-cycle status and the ODRL source binding, along `dsa/processes/dsa-document-lifecycle.bpmn`. Moved out of `folio-document-adapter` into the opt-in `dsa` sub-graph (owner, 2026-11-10, card Q-SG-1 C, wave 1). `dsa-checksum` went back to the always-on `folio-document-adapter` (owner, 2026-11-13): the always-on `check-dsa-hash` Tool satisfies it, and a Tool must satisfy a skill that is on wherever it is.",
   "docker": {
     "baseImage": "ubuntu:24.04",
     "aptPackages": []
@@ -14,7 +14,6 @@
   ],
   "skills": [
     "dsa-catalogue-status",
-    "dsa-checksum",
     "dsa-dcat-record",
     "dsa-odrl-source"
   ]

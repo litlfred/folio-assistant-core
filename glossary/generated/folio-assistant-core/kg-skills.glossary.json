@@ -214,7 +214,7 @@
     {
       "id": "folio-getting-started",
       "prefLabel": "folio-getting-started",
-      "definition": "The content-folio half of the harness's getting-started skill: binds processes/conduct/getting-started.bpmn and decisions/folio-intent.dmn, interprets describeRepository() content-type markers (folio, harness, dak, sushi), and routes new-content and specialised IG/DAK creation requests.",
+      "definition": "The content-folio half of the harness's getting-started skill: binds collab/processes/conduct/getting-started.bpmn and decisions/folio-intent.dmn, interprets describeRepository() content-type markers (folio, harness, dak, sushi), and routes new-content and specialised IG/DAK creation requests.",
       "notation": "folio-getting-started",
       "source": "folio-assistant-core/skills/content/folio-document-adapter/folio-getting-started.md",
       "status": "candidate"

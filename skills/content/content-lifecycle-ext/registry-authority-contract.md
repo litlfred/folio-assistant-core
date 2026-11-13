@@ -23,7 +23,7 @@ more. The registry list, its endpoints and the API bindings are not settled
 
 ## Where the diagrams lean on it
 
-`Lane_Trusted` in [`evidence-retrieval`](../../../processes/content/evidence-retrieval.bpmn)
+`Lane_Trusted` in `evidence-retrieval` (opt-in `folio-assistant-core.collab`)
 names this role and holds `Task_VerifyAuthority` and `Gateway_Authoritative`.
 What that lane's documentation and the task's say is the whole contract.
 

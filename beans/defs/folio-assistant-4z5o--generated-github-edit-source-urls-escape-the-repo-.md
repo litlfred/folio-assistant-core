@@ -12,7 +12,7 @@ parent: folio-assistant-o3xy
 
 Generated pages compose GitHub URLs by joining an instance-relative path that leaves the instance root, producing links with `/main/../` in them:
 
-    https://github.com/litlfred/folio-assistant/edit/main/../folio-assistant-core/processes/library/l1-document-ingestion.bpmn
+    https://github.com/litlfred/folio-assistant/edit/main/../folio-assistant-core/collab/processes/library/l1-document-ingestion.bpmn
     https://github.com/litlfred/folio-assistant/blob/main/folio-assistant-core/...   (the blob form is correct)
 
 The `edit/` form is broken on the published site. GitHub does not normalise `..` in that position.

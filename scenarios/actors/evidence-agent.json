@@ -8,6 +8,6 @@
   ],
   "capabilities": [],
   "meta": {
-    "workflow": "folio-assistant-core/processes/content/evidence-retrieval.bpmn#Lane_Agent"
+    "workflow": "folio-assistant-core/collab/processes/content/evidence-retrieval.bpmn#Lane_Agent"
   }
 }

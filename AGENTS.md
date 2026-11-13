@@ -48,7 +48,7 @@ _54 skills in 11 directories, generated from each skill's front matter. `bun run
 | [`registry-authority-contract`](skills/content/content-lifecycle-ext/registry-authority-contract.md) | The contract the `external-registry` role is held to when a candidate source is checked against the body that publishes it: resolve the identifier through its own API and return the record, so… |
 | [`review-comments`](skills/content/content-lifecycle-ext/review-comments.md) | Reviewer comments on a folio's edit-set, from a tagged pull-request comment to a structured todo on the review page. |
 
-**`skills/content/folio-document-adapter/`** (15)
+**`skills/content/folio-document-adapter/`** (16)
 
 | Skill | What it is for |
 |---|---|
@@ -56,10 +56,11 @@ _54 skills in 11 directories, generated from each skill's front matter. `bun run
 | [`document-authoring`](skills/content/folio-document-adapter/document-authoring.md) | Author a **document** folio: policy guidance, a standard, a report, a handbook — anything whose content is structured prose rather than machine- checked mathematics. |
 | [`document-publishing`](skills/content/folio-document-adapter/document-publishing.md) | Take a document folio from corpus to published artifact — without a TeX installation. |
 | [`document-structure`](skills/content/folio-document-adapter/document-structure.md) | Decide and maintain the chapter/section skeleton of a document folio. |
+| [`dsa-checksum`](skills/content/folio-document-adapter/dsa-checksum.md) | Compute and record the SHA-256 cryptographic digest of a signed Data Sharing Agreement's legal text as a W3C DCAT 3 `spdx:checksum` (`spdx:Checksum` with `spdx:checksumAlgorithm_sha256` and… |
 | [`folio-content-lifecycle`](skills/content/folio-document-adapter/folio-content-lifecycle.md) | The content-folio half of the content-lifecycle skills (the harness's content-feedback, content-review, content-test, content-validate and evidence-appraisal; this layer's content-plan,… |
 | [`folio-content-profiles`](skills/content/folio-document-adapter/folio-content-profiles.md) | The content-folio half of the harness's content-profiles skill: how a document folio is structured prose and how a paper folio extends it, block-kind discovery across block-kinds/ graphs,… |
 | [`folio-editorial-workflow`](skills/content/folio-document-adapter/folio-editorial-workflow.md) | The content-folio half of the harness's editor, content-graph, md-authoring, canonical-watcher, and uses-editorial-review skills: routes glossary and notation work to ontologist and glossary-build,… |
-| [`folio-getting-started`](skills/content/folio-document-adapter/folio-getting-started.md) | The content-folio half of the harness's getting-started skill: binds processes/conduct/getting-started.bpmn and decisions/folio-intent.dmn, interprets describeRepository() content-type markers… |
+| [`folio-getting-started`](skills/content/folio-document-adapter/folio-getting-started.md) | The content-folio half of the harness's getting-started skill: binds collab/processes/conduct/getting-started.bpmn and decisions/folio-intent.dmn, interprets describeRepository() content-type… |
 | [`folio-repo-conversion`](skills/content/folio-document-adapter/folio-repo-conversion.md) | The content-folio half of the harness's repo-conversion skill: outside-content evidence and refutation candidate scanning, content-type marker declarations, and dispatching library and content… |
 | [`normative-statements`](skills/content/folio-document-adapter/normative-statements.md) | Carry a **recommendation, requirement or rule** in a document folio — the thing an L1 health-policy guidance note, a standard, or a terms-of-reference document exists to state. |
 | [`public-comment-channels`](skills/content/folio-document-adapter/public-comment-channels.md) | Set up the channels a public-comment release goes out on (an offline Excel sheet, a Google Form, a GitHub issue form, and the review sheet), each limited to the release's fixed references, with the… |
@@ -112,12 +113,11 @@ _54 skills in 11 directories, generated from each skill's front matter. `bun run
 |---|---|
 | [`review`](skills/review/review.md) | Where to start when a person or an agent reviews a document folio larger than one chapter, such as a DAK or an L1 digital transformation handbook. |
 
-**`dsa/skills/dsa/`** (4) (opt-in `folio-assistant-core.dsa`)
+**`dsa/skills/dsa/`** (3) (opt-in `folio-assistant-core.dsa`)
 
 | Skill | What it is for |
 |---|---|
 | `dsa-catalogue-status` | Set the life-cycle status (`adms:status`, W3C DCAT 3 §6.4.30) on a Data Sharing Agreement's DCAT 3 catalogue record when the agreement is amended, renewed, terminated, or expires, while keeping all… |
-| `dsa-checksum` | Compute and record the SHA-256 cryptographic digest of a signed Data Sharing Agreement's legal text as a W3C DCAT 3 `spdx:checksum` (`spdx:Checksum` with `spdx:checksumAlgorithm_sha256` and… |
 | `dsa-dcat-record` | Write the W3C DCAT 3 `dcat:Resource` and `dcat:Distribution` catalogue record for a Data Sharing Agreement (`dcat:downloadURL`, `spdx:checksum`, `odrl:hasPolicy`) and link versions with… |
 | `dsa-odrl-source` | Bind a computable Data Sharing Agreement's W3C ODRL 2.2 `Agreement` to its signed legal text distribution using DCMI Metadata Terms `dcterms:source`, naming the exact `dcat:Distribution` whose… |
 

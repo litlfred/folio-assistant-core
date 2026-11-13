@@ -1,8 +1,8 @@
-<!-- GENERATED from folio-assistant-core/processes/content/public-comment-release.bpmn by cat-harness-tools/scripts/bpmn-checklist.ts. Do not edit: change the diagram and regenerate (bun run cat bpmn:checklist). -->
+<!-- GENERATED from folio-assistant-core/collab/processes/content/public-comment-release.bpmn by cat-harness-tools/scripts/bpmn-checklist.ts. Do not edit: change the diagram and regenerate (bun run cat bpmn:checklist). -->
 
 # Checklist — Release a draft for public comment
 
-> **Generated, and not the authority.** This is `folio-assistant-core/processes/content/public-comment-release.bpmn` (process `Process_PublicCommentRelease`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
+> **Generated, and not the authority.** This is `folio-assistant-core/collab/processes/content/public-comment-release.bpmn` (process `Process_PublicCommentRelease`) walked as a state machine. The diagram and the workflow engine decide; this list only reads them. Follow the `next:` line of each step rather than the order on the page, and record each step with the call it names, so the engine's committed state — not this list — says which edge was taken.
 
 The whole public comment cycle around the comments themselves.
 

@@ -15,7 +15,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 
 #: docs/process/evidence.md:61
-msgid "✎ Edit{: .fa-node-edit title=\"Edit ../folio-assistant-core/processes/content/evidence-retrieval.bpmn\" } KG…"
+msgid "✎ Edit{: .fa-node-edit title=\"Edit ../folio-assistant-core/collab/processes/content/evidence-retrieval.bpmn\" } KG…"
 msgstr ""
 
 #: docs/process/evidence.md:147

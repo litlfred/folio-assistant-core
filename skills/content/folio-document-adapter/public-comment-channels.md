@@ -12,7 +12,7 @@ description: >
 
 # Public comment channels and intake
 
-> Process: `folio-assistant-core/processes/content/public-comment-release.bpmn`
+> Process: `folio-assistant-core/collab/processes/content/public-comment-release.bpmn`
 > (`Process_PublicCommentRelease`): Task_SetUpChannels and
 > Task_WriteAnnouncement. Intake lands in `public-comment.bpmn`
 > (`Process_PublicComment`): StartEvent_CommentsReturned, then Task_Ingest,

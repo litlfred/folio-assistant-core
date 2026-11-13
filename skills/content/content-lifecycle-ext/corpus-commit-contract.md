@@ -21,7 +21,7 @@ rely on, and nothing more.
 
 ## Where the diagrams lean on it
 
-`Lane_Corpus` in [`editing-hci-validation`](../../../processes/content/editing-hci-validation.bpmn)
+`Lane_Corpus` in `editing-hci-validation` (opt-in `folio-assistant-core.collab`)
 names this role and holds one activity, `Task_Commit`. What that lane's
 documentation and the task's say is the whole contract.
 

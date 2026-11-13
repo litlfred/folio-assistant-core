@@ -7,7 +7,7 @@ import { join } from "node:path";
 
 import { evaluate, loadDecisionTable, unreadableExpressions } from "@litlfred/cat-harness-tools/src/workflow/decision-table.js";
 
-const table = await loadDecisionTable(join(import.meta.dir, "../../processes/content/decisions/review-coverage-gate.dmn"), "Decision_ReviewCoverageGate");
+const table = await loadDecisionTable(join(import.meta.dir, "../../collab/processes/content/decisions/review-coverage-gate.dmn"), "Decision_ReviewCoverageGate");
 const clean = { uncoveredBlocks: 0, openDefects: 0, rendered: "known", unreviewedPages: 0, undeterminedInputs: 0, measured: "known", missedPages: 0 };
 const decide = (f: Partial<typeof clean>) => evaluate(table, { ...clean, ...f });
 

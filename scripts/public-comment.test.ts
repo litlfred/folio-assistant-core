@@ -206,14 +206,14 @@ describe("the store and the lifecycle", () => {
 
   test("movesAreDiagramTasks", () => {
     for (const t of PUBLIC_COMMENT_TRANSITIONS) {
-      const bpmn = readFileSync(join(import.meta.dir, "..", "processes", "content", t.by.file), "utf-8");
+      const bpmn = readFileSync(join(import.meta.dir, "..", "collab", "processes", "content", t.by.file), "utf-8");
       expect(bpmn).toContain(`<bpmn:process id="${t.by.process}"`);
       expect(bpmn).toMatch(new RegExp(`<bpmn:\\w+ id="${t.by.task}"`));
     }
   });
 
   test("processCallsChangePhase", () => {
-    const bpmn = readFileSync(join(import.meta.dir, "..", "processes", "content", "public-comment.bpmn"), "utf-8");
+    const bpmn = readFileSync(join(import.meta.dir, "..", "collab", "processes", "content", "public-comment.bpmn"), "utf-8");
     expect(bpmn).toMatch(/<bpmn:callActivity id="CallActivity_MakeChange"[^>]*calledElement="Process_PublicCommentChange"/);
   });
 
@@ -781,7 +781,7 @@ describe("change-sets and their issues (issue #2183)", () => {
     ).toBe(false);
 
     // 6. Task_RerouteChangeSet in public-comment.bpmn is a person-only userTask.
-    const bpmn = readFileSync(join(import.meta.dir, "..", "processes", "content", "public-comment.bpmn"), "utf-8");
+    const bpmn = readFileSync(join(import.meta.dir, "..", "collab", "processes", "content", "public-comment.bpmn"), "utf-8");
     expect(bpmn).toMatch(/<bpmn:userTask\s+id="Task_RerouteChangeSet"/);
     expect(bpmn).not.toMatch(/<bpmn:(?:task|serviceTask)\s+id="Task_RerouteChangeSet"/);
   });

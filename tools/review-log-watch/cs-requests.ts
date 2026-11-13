@@ -22,7 +22,7 @@
  * Change Set (human) or TWG (human) always wins.
  *
  * It writes nothing. Skill: `review-log-watch` ("Change sets people make").
- * Process: `processes/content/public-comment-change.bpmn`.
+ * Process: `collab/processes/content/public-comment-change.bpmn`.
  */
 import { readFileSync } from "node:fs";
 

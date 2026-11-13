@@ -35,7 +35,7 @@ msgid "✎ Edit{: .fa-node-edit title=\"Edit ../folio-assistant-core/processes/l
 msgstr ""
 
 #: docs/guides/document-ingestion.md:83
-msgid "✎ Edit{: .fa-node-edit title=\"Edit ../folio-assistant-core/processes/library/l1-document-ingestion.bpmn\" } QA… TR… KG…"
+msgid "✎ Edit{: .fa-node-edit title=\"Edit ../folio-assistant-core/collab/processes/library/l1-document-ingestion.bpmn\" } QA… TR… KG…"
 msgstr ""
 
 #: docs/guides/document-ingestion.md:295
